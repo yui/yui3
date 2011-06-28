@@ -582,4 +582,4 @@ Y.mix(DOM, {
 })(Y);
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'dom-style', 'event-base']});
+}, '@VERSION@' ,{requires:['dom-core', 'dom-style']});

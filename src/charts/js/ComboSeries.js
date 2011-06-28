@@ -20,7 +20,6 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
      */
     drawSeries: function()
     {
-        this.get("graphic").clear();
         if(this.get("showAreaFill"))
         {
             this.drawFill.apply(this, this._getClosingPoints());
@@ -33,6 +32,46 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
         {
             this.drawPlots();
         }   
+    },
+    
+    /**
+     * Toggles visibility
+     *
+     * @method _toggleVisible
+     * @param {Boolean} visible indicates visibilitye
+     * @private
+     */
+    _toggleVisible: function(visible)
+    {
+        var markers,
+            marker,
+            len,
+            i;
+        if(this.get("showAreaFill") && this._path)
+        {
+            this._path.set("visible", visible);
+        }
+        if(this.get("showLines"))
+        {
+            this._lineGraphic.set("visible", visible);
+        }
+        if(this.get("showMarkers"))
+        {
+            markers = this.get("markers");
+            if(markers)
+            {
+                i = 0;
+                len = markers.length;
+                for(; i < len; ++i)
+                {
+                    marker = markers[i];
+                    if(marker)
+                    {
+                        marker.set("visible", visible);
+                    }
+                }
+            }
+        }
     },
 
     /**

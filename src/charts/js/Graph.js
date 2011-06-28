@@ -22,46 +22,28 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
      */
     syncUI: function()
     {
-        if(this.get("showBackground"))
-        {
-            var graphic = new Y.Graphic(),
-                graphicNode,
-                cb = this.get("contentBox"),
-                bg = this.get("styles").background,
-                border = bg.border,
-                weight = border.weight || 0,
-                w = this.get("width"),
-                h = this.get("height");
-            if(w)
-            {
-                w += weight * 2;
-                bg.width = w;
-            }   
-            if(h)
-            {
-                h += weight * 2;
-                bg.height = h;
-            }
-            graphic.render(cb);
-            this._background = graphic.getShape(bg);
-            graphicNode = Y.one(graphic.node);
-            graphicNode.setStyle("left", 0 - weight);
-            graphicNode.setStyle("top", 0 - weight);
-            graphicNode.setStyle("zIndex", -1);
-        }
-    },
-   
-    /**
-     * @private
-     */
-    renderUI: function()
-    {
-        var sc = this.get("seriesCollection"),
+        var background,
+            cb,
+            bg,
+            sc = this.get("seriesCollection"),
             series,
             i = 0,
             len = sc.length,
             hgl = this.get("horizontalGridlines"),
             vgl = this.get("verticalGridlines");
+        if(this.get("showBackground"))
+        {
+            background = this.get("background");
+            cb = this.get("contentBox");
+            bg = this.get("styles").background;
+            bg.stroke = bg.border;
+            bg.stroke.opacity = bg.stroke.alpha;
+            bg.fill.opacity = bg.fill.alpha;
+            bg.width = this.get("width");
+            bg.height = this.get("height");
+            bg.type = bg.shape;
+            background.set(bg);
+        }
         for(; i < len; ++i)
         {
             series = sc[i];
@@ -79,7 +61,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
             vgl.draw();
         }
     },
-
+   
     /**
      * @private
      * Hash of arrays containing series mapped to a series type.
@@ -353,7 +335,12 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
      */
     _updateStyles: function()
     {
-        this._background.update(this.get("styles").background);
+        var styles = this.get("styles").background,
+            border = styles.border;
+            border.opacity = border.alpha;
+            styles.stroke = border;
+            styles.fill.opacity = styles.fill.alpha;
+        this.get("background").set(styles);
         this._sizeChangeHandler();
     },
 
@@ -366,33 +353,25 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
             vgl = this.get("verticalGridlines"),
             w = this.get("width"),
             h = this.get("height"),
-            graphicNode,
-            x = 0,
-            y = 0,
             bg = this.get("styles").background,
-            weight;
+            weight,
+            background;
         if(bg && bg.border)
         {
             weight = bg.border.weight || 0;
         }
-        if(this._background)
+        if(this.get("showBackground"))
         {
-            graphicNode = Y.one(this._background.parentNode);
+            background = this.get("background");
             if(w && h)
             {
-                if(weight)
-                {
-                    w += weight * 2;
-                    h += weight * 2;
-                    x -= weight;
-                    y -= weight;
-                }
-                graphicNode.setStyle("width", w);
-                graphicNode.setStyle("height", h);
-                graphicNode.setStyle("left", x);
-                graphicNode.setStyle("top", y);
-                this._background.update({width:w, height:h});
+                background.set("width", w);
+                background.set("height", h);
             }
+        }
+        if(this._gridlines)
+        {
+            this._gridlines.clear();
         }
         if(hgl && hgl instanceof Y.Gridlines)
         {
@@ -415,11 +394,16 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
             this._callLater = true;
             return;
         }
+        var sc,
+            i,
+            len,
+            graphic = this.get("graphic");
+        graphic.set("autoDraw", false);
         this._callLater = false;
         this._drawing = true;
-        var sc = this.get("seriesCollection"),
-            i = 0,
-            len = sc.length;
+        sc = this.get("seriesCollection");
+        i = 0;
+        len = sc.length;
         for(; i < len; ++i)
         {
             sc[i].draw();
@@ -434,7 +418,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         {
             this._drawSeries();
         }
-    },
+    },  
 
     /**
      * @private
@@ -442,6 +426,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     _drawingCompleteHandler: function(e)
     {
         var series = e.currentTarget,
+            graphic,
             index = Y.Array.indexOf(this._dispatchers, series);
         if(index > -1)
         {
@@ -449,6 +434,11 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         }
         if(this._dispatchers.length < 1)
         {
+            graphic = this.get("graphic");
+            if(!graphic.get("autoDraw"))
+            {
+                graphic._redraw();
+            }
             this.fire("chartRendered");
         }
     },
@@ -547,13 +537,11 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 {
                     gl = val;
                     val.set("graph", this);
-                    val.render();
                     return val;
                 }
                 else if(val && val.axis)
                 {
                     gl = new Y.Gridlines({direction:"horizontal", axis:val.axis, graph:this, styles:val.styles});
-                    gl.render();
                     return gl;
                 }
             }
@@ -580,15 +568,76 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 {
                     gl = val;
                     val.set("graph", this);
-                    val.render();
                     return val;
                 }
                 else if(val && val.axis)
                 {
                     gl = new Y.Gridlines({direction:"vertical", axis:val.axis, graph:this, styles:val.styles});
-                    gl.render();
                     return gl;
                 }
+            }
+        },
+
+        /**
+         * Reference to graphic instance used for the background.
+         *
+         * @attribute background
+         * @type Graphic
+         * @readOnly
+         */
+        background: {
+            getter: function()
+            {
+                if(!this._background)
+                {
+                    this._backgroundGraphic = new Y.Graphic({render:this.get("contentBox")});
+                    this._backgroundGraphic.get("node").style.zIndex = -2;
+                    this._background = this._backgroundGraphic.getShape({type: "rect"});
+                }
+                return this._background;
+            }
+        },
+
+        /**
+         * Reference to graphic instance used for gridlines.
+         *
+         * @attribute gridlines
+         * @type Graphic
+         * @readOnly
+         */
+        gridlines: {
+            readOnly: true,
+
+            getter: function()
+            {
+                if(!this._gridlines)
+                {
+                    this._gridlinesGraphic = new Y.Graphic({render:this.get("contentBox")});
+                    this._gridlinesGraphic.get("node").style.zIndex = -1;
+                    this._gridlines = this._gridlinesGraphic.getShape({type: "path"});
+                }
+                return this._gridlines;
+            }
+        },
+        
+        /**
+         * Reference to graphic instance used for series.
+         *
+         * @attribute graphic
+         * @type Graphic
+         * @readOnly
+         */
+        graphic: {
+            readOnly: true,
+
+            getter: function() 
+            {
+                if(!this._graphic)
+                {
+                    this._graphic = new Y.Graphic({render:this.get("contentBox")});
+                    this._graphic.set("autoDraw", false);
+                }
+                return this._graphic;
             }
         }
 

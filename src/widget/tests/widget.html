@@ -36,7 +36,7 @@
 <body class="yui3-skin-sam">
 <div id="testbed" class="yui3-skin-foo"></div>
 <script>
-YUI({useBrowserConsole:false}).use('test', 'widget', 'console', function (Y) {
+YUI({useBrowserConsole:false}).use('test', 'widget', 'node-event-simulate', 'console', function (Y) {
 
     var suite = new Y.Test.Suite("Widget Tests");
 
@@ -49,7 +49,7 @@ YUI({useBrowserConsole:false}).use('test', 'widget', 'console', function (Y) {
     
             Y.Assert.isNull( w.getSkinName() );
         },
-    
+
         "getSkinName should return name from BB if available": function () {
             var bb = Y.Node.create( '<div class="yui3-skin-foo"><div></div></div>' ),
                 cb = bb.one( 'div' ),
@@ -128,7 +128,160 @@ YUI({useBrowserConsole:false}).use('test', 'widget', 'console', function (Y) {
             } catch(e) {
                 Y.Assert.fail("w.destroy() on a single box widget threw an exception" + e);
             }
+        }
+    }));
+
+    suite.add(new Y.Test.Case({
+
+        name:"UI Events",
+
+        testSingleSimple: function() {
+
+            var w, h, cb,
+                actualEvents = [],
+                expectedEvents = ["widget:click"];
+
+            w = new Y.Widget();
+            cb = w.get("contentBox");
+
+            cb.append("<p class='et'>Some Content For My Widget</p>");
+
+            h = function(e) { actualEvents.push(e.type); };
+
+            w.on("click", h);
+            w.render();
+
+            cb.one(".et").simulate("click");
+
+            Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
+
+            w.destroy();
         },
+
+        testSingleComplex: function() {
+
+            var w, h, cb
+                actualEvents = [],
+                expectedEvents = ["widget:render",
+                                  "widget:renderedChange",
+                                  "widget:render",
+                                  "widget:mousedown", 
+                                  "widget:mouseup",
+                                  "widget:mouseup",
+                                  "widget:mouseup",
+                                  "widget:mouseup",
+                                  "widget:mouseup",
+                                  "widget:mouseup",
+                                  "widget:click"];
+
+            w = new Y.Widget();
+            cb = w.get("contentBox");
+
+            cb.append("<p class='et'>Some Content For My Widget</p>");
+
+            h = function(e) { actualEvents.push(e.type); };
+
+            w.on({
+                "click": h,
+                "render": h,
+                "renderedChange": h
+            });
+
+            w.on("widget:mouseup", h);
+            w.on("foo|widget:mouseup", h);
+            w.on("mouseup", h);
+
+            w.after("widget:mouseup", h);
+            w.after("foo|widget:mouseup", h);
+            w.after("mouseup", h);
+
+            w.after({
+                "mousedown" : h,
+                "render" : h
+            });
+
+            w.render();
+            
+            cb.one(".et").simulate("mousedown");
+            cb.one(".et").simulate("mouseup");            
+            cb.one(".et").simulate("click");
+
+            Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
+
+            w.destroy();
+        },
+
+        testNested: function() {
+
+            var outer = new Y.Widget();
+            var inner = new Y.Widget();
+            var ocb = outer.get('contentBox');
+            var icb = inner.get('contentBox');
+
+            var expectedEvents = ["outerClick", "innerClick", "outerClick"];
+            var actualEvents = [];
+
+            outer.render();
+            ocb.setContent("<span class='oet'>Outer Content</span>");
+
+            inner.render(ocb);
+            icb.setContent("<span class='iet'>Inner Content</span>");
+
+            inner.after('click', function() {actualEvents.push("innerClick");});
+            outer.after('click', function() {actualEvents.push("outerClick");});
+
+            // Only outer
+            ocb.one(".oet").simulate("click");
+
+            // One Inner, One Outer
+            ocb.one(".iet").simulate("click");
+
+            Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
+            
+            outer.destroy();
+            inner.destroy();
+        },
+
+        testMultipleInstances : function() {
+
+            var actualEvents = [],
+                expectedEvents = ["clickOuter", "clickInner", "clickOuter"],
+                w1,
+                w2;
+
+            YUI().use('widget', function (Y) {
+
+                w1 = new Y.Widget({render:true});
+                w1.get('contentBox').append('<div class="w2-container"></div><span class="miouter">Outer</span>');
+
+                w1.on('click', function (e) {
+                    actualEvents.push("clickOuter");
+                });
+
+                YUI().use('widget', function (Y1) {
+
+                    w2 = new Y1.Widget({render:".w2-container"});
+                    w2.get('contentBox').append('<span class="miinner">Inner</span>');
+
+                    w2.on('click', function (e) {
+                        actualEvents.push("clickInner");
+                    });
+                });
+            });
+
+            Y.Node.one(".miouter").simulate("click"); // only outer, once.
+            Y.Node.one(".miinner").simulate("click"); // inner, bubbled to outer (once each, without JS errors)
+            
+            Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
+
+            w1.destroy();
+            w2.destroy();
+        }
+    }));
+
+    suite.add(new Y.Test.Case({
+
+        name:"clone",
         
         testWidgetClone : function() {
             var a = new Y.Widget();
@@ -164,6 +317,7 @@ YUI({useBrowserConsole:false}).use('test', 'widget', 'console', function (Y) {
         },
     
         testWidgetHashClone : function() {
+
             // When Widget's are properties of an object it seems to break apart
             // something not passed to the recursive call maybe?
     

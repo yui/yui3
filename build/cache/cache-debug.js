@@ -272,8 +272,25 @@ Y.extend(Cache, Y.Base, {
      * @protected
      */
     _defFlushFn: function(e) {
-        this._entries = [];
-        Y.log("Cache flushed", "info", "cache");
+        var entries = this._entries,
+            details = e.details[0],
+            pos;
+        
+        //passed an item, flush only that
+        if(details && LANG.isValue(details.request)) {
+            pos = this._position(details.request);
+            
+            if(LANG.isValue(pos)) {
+                entries.splice(pos,1);
+                
+                Y.log("Flushed cache item " + Y.dump(details.request), "info", "cache");
+            }
+        } 
+        //no item, flush everything
+        else {
+            this._entries = [];
+            Y.log("Cache flushed", "info", "cache");
+        }
     },
 
     /**
@@ -293,6 +310,33 @@ Y.extend(Cache, Y.Base, {
             return (request === entry.request);
         }
         return false;
+    },
+    
+    /**
+     * Returns position of a request in the entries array, otherwise null.
+     *
+     * @method _position
+     * @param request {Object} Request object.
+     * @return {Number} Array position if found, null otherwise.
+     * @protected
+     */
+    _position: function(request) {
+        // If cache is enabled...
+        var entries = this._entries,
+            length = entries.length,
+            i = length-1;
+        
+        if((this.get("max") === null) || this.get("max") > 0) {
+            // Loop through each cached entry starting from the newest
+            for(; i >= 0; i--) {
+                // Execute matching function
+                if(this._isMatch(request, entries[i])) {
+                    return i;
+                }
+            }
+        }
+        
+        return null;
     },
 
     /////////////////////////////////////////////////////////////////////////////
@@ -332,10 +376,10 @@ Y.extend(Cache, Y.Base, {
      *
      * @method flush
      */
-    flush: function() {
-        this.fire("flush");
+    flush: function(request) {
+        this.fire("flush", { request: (LANG.isValue(request) ? request : null) });
     },
-
+    
     /**
      * Retrieves cached object for given request, if available, and refreshes
      * entry in the cache. Returns null if there is no cache match.
@@ -349,33 +393,31 @@ Y.extend(Cache, Y.Base, {
         var entries = this._entries,
             length = entries.length,
             entry = null,
-            i = length-1;
+            pos;
 
         if((length > 0) && ((this.get("max") === null) || (this.get("max") > 0))) {
             this.fire("request", {request: request});
+            
+            pos = this._position(request);
+            
+            if(LANG.isValue(pos)) {
+                entry = entries[pos];
+                
+                this.fire("retrieve", {entry: entry});
 
-            // Loop through each cached entry starting from the newest
-            for(; i >= 0; i--) {
-                entry = entries[i];
-
-                // Execute matching function
-                if(this._isMatch(request, entry)) {
-                    this.fire("retrieve", {entry: entry});
-
-                    // Refresh the position of the cache hit
-                    if(i < length-1) {
-                        // Remove element from its original location
-                        entries.splice(i,1);
-                        // Add as newest
-                        entries[entries.length] = entry;
-                        Y.log("Refreshed cache entry: " + Y.dump(entry) +
-                                " for request: " +  Y.dump(request), "info", "cache");
-                    }
-
-                    Y.log("Retrieved cached response: " + Y.dump(entry) +
-                            " for request: " + Y.dump(request), "info", "cache");
-                    return entry;
+                // Refresh the position of the cache hit
+                if(pos < length-1) {
+                    // Remove element from its original location
+                    entries.splice(pos,1);
+                    // Add as newest
+                    entries[entries.length] = entry;
+                    Y.log("Refreshed cache entry: " + Y.dump(entry) +
+                            " for request: " +  Y.dump(request), "info", "cache");
                 }
+
+                Y.log("Retrieved cached response: " + Y.dump(entry) +
+                        " for request: " + Y.dump(request), "info", "cache");
+                return entry;
             }
         }
         return null;
@@ -385,9 +427,7 @@ Y.extend(Cache, Y.Base, {
 Y.Cache = Cache;
 
 
-
 }, '@VERSION@' ,{requires:['base']});
-
 YUI.add('cache-offline', function(Y) {
 
 /**
@@ -721,9 +761,7 @@ Y.extend(CacheOffline, Y.Cache, localStorage ? {
 Y.CacheOffline = CacheOffline;
 
 
-
 }, '@VERSION@' ,{requires:['cache-base', 'json']});
-
 YUI.add('cache-plugin', function(Y) {
 
 /**
@@ -769,9 +807,7 @@ Y.mix(CachePlugin, {
 Y.namespace("Plugin").Cache = CachePlugin;
 
 
-
 }, '@VERSION@' ,{requires:['plugin','cache-base']});
-
 
 
 YUI.add('cache', function(Y){}, '@VERSION@' ,{use:['cache-base','cache-offline','cache-plugin']});

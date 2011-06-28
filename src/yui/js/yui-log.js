@@ -1,6 +1,7 @@
 /**
  * Provides console log capability and exposes a custom event for
- * console implementations.
+ * console implementations. This module is a `core` YUI module, <a href="../classes/YUI.html#method_log">it's documentation is located under the YUI class</a>.
+ *
  * @module yui
  * @submodule yui-log
  */
@@ -46,8 +47,10 @@ INSTANCE.log = function(msg, cat, src, silent) {
             incl = c.logInclude;
             if (incl && !(src in incl)) {
                 bail = 1;
+            } else if (incl && (src in incl)) {
+                bail = !incl[src];
             } else if (excl && (src in excl)) {
-                bail = 1;
+                bail = excl[src];
             }
         }
         if (!bail) {

@@ -1,0 +1,45 @@
+<div class="intro">
+<p>
+A View represents a renderable piece of an application's user interface, and provides hooks for easily subscribing to and handling delegated DOM events on a view's container element.
+</p>
+
+<p>
+Views provide a generic structure for template- or DOM-based rendering. Views are template-agnostic, meaning that there's no actual template language built in, but you're welcome to use any template language you want (or none at all).
+</p>
+
+<p>
+A common practice is to associate a View instance with a <a href="../model/index.html">Model</a> instance so that the view is automatically re-rendered whenever the model changes, but this relationship is not required. A view may also be used standalone, associated with a <a href="../model-list/index.html">Model List</a>, or may even contain nested views.
+</p>
+
+<p>
+The `Y.View` class is meant to be extended by a custom class that defines a custom `render()` method and any necessary DOM event handlers.
+</p>
+</div>
+
+{{>getting-started}}
+
+<h2>Conventions Used in this Guide</h2>
+
+<p>
+This guide spends a lot of time talking about classes, subclasses, and instances of those classes and subclasses. To avoid confusion and unnecessary verbosity, the following conventions are used:
+</p>
+
+<ul>
+  <li><p>`Y.View` (in monospace) refers to <strong>a specific class, and not a subclass</strong>. In other words, it refers only to the `Y.View` class, and not to a `Y.CustomView` class that extends `Y.View`.</p></li>
+
+  <li><p>View (with initial caps) refers to <strong>a class or any subclass of that class</strong>. For instance, "View" could refer to `Y.View` or to a `Y.CustomView` class that extends `Y.View`.</p></li>
+
+  <li><p>view (without initial caps) refers to <strong>an instance of a class or subclass</strong>. So "view" could mean "an instance of `Y.View`" or "an instance of a `Y.CustomView` class that extends `Y.View`".</p></li>
+</ul>
+
+<h2>Using View</h2>
+
+<h3>Extending `Y.View`</h3>
+
+<h3>Handling DOM Events</h3>
+
+<h3>Rendering a View</h3>
+
+<h3>Associating a View with a Model or Model List</h3>
+
+<h2>Views vs. Widgets</h2>

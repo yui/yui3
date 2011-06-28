@@ -1,9 +1,21 @@
 {
     "event": {
-        "after": "node-base",
+        "use": [
+            "event-base",
+            "event-delegate",
+            "event-synthetic",
+            "event-mousewheel",
+            "event-mouseenter",
+            "event-key",
+            "event-focus",
+            "event-resize",
+            "event-hover",
+            "event-outside"
+        ],
+        "after": ["node-base"],
         "submodules": {
             "event-base": {
-                "after": "node-base",
+                "after": ["node-base"],
                 "requires": [
                     "event-custom-base"
                 ]
@@ -36,17 +48,22 @@
             },
             "event-mousewheel": {
                 "requires": [
-                    "event-synthetic"
+                    "node-base"
                 ]
             },
             "event-resize": {
                 "requires": [
-                    "event-synthetic"
+                    "node-base"
                 ]
             },
             "event-hover": {
                 "requires": [
                     "event-mouseenter"
+                ]
+            },
+            "event-outside": {
+                "requires": [
+                    "event-synthetic"
                 ]
             }
         },

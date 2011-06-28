@@ -1,5 +1,6 @@
 {
     "widget": {
+        "use": ["widget-base", "widget-htmlparser", "widget-uievents", "widget-skin"],
         "plugins": {
             "widget-child": {
                 "requires": [

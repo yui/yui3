@@ -17,7 +17,6 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
      */
     drawSeries: function()
     {
-        this.get("graphic").clear();
         this.drawFill.apply(this, this._getClosingPoints());
     },
     

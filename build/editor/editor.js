@@ -219,7 +219,7 @@ YUI.add('frame', function(Y) {
 
             Y.each(Frame.DOM_EVENTS, function(v, k) {
                 var fn = Y.bind(this._onDomEvent, this),
-                    kfn = ((Y.UA.ie) ? Y.throttle(fn, 200) : fn);
+                    kfn = ((Y.UA.ie && Frame.THROTTLE_TIME > 0) ? Y.throttle(fn, Frame.THROTTLE_TIME) : fn);
 
                 if (!inst.Node.DOM_EVENTS[k]) {
                     inst.Node.DOM_EVENTS[k] = 1;
@@ -658,7 +658,7 @@ YUI.add('frame', function(Y) {
         * @chainable        
         */
         focus: function(fn) {
-            if (Y.UA.ie) {
+            if (Y.UA.ie && Y.UA.ie < 9) {
                 try {
                     Y.one('win').focus();
                     this.getInstance().one('win').focus();
@@ -720,7 +720,14 @@ YUI.add('frame', function(Y) {
             return this;
         }
     }, {
-        
+        /**
+        * @static
+        * @property THROTTLE_TIME
+        * @description The throttle time for key events in IE
+        * @type Number
+        * @default 100
+        */
+        THROTTLE_TIME: 100,
         /**
         * @static
         * @property DOM_EVENTS
@@ -972,7 +979,7 @@ YUI.add('frame', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['base', 'node', 'selector-css3', 'substitute']});
+}, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute', 'yui-throttle'], skinnable:false});
 YUI.add('selection', function(Y) {
 
     /**
@@ -1170,6 +1177,7 @@ YUI.add('selection', function(Y) {
                     var s = el.style;
                     s.border = '1px solid #ccc';
                     s.lineHeight = '0';
+                    s.height = '0';
                     s.fontSize = '0';
                     s.marginTop = '5px';
                     s.marginBottom = '5px';
@@ -1323,7 +1331,7 @@ YUI.add('selection', function(Y) {
     * @static
     * @property REG_NON
     */
-    Y.Selection.REG_NON = /[\s\S|\n|\t]/gi;
+    Y.Selection.REG_NON = /[\s|\n|\t]/gi;
 
     /**
     * Regular Expression to remove all HTML from a string
@@ -1966,7 +1974,7 @@ YUI.add('selection', function(Y) {
     };
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['node']});
+}, '@VERSION@' ,{requires:['node'], skinnable:false});
 YUI.add('exec-command', function(Y) {
 
 
@@ -2624,7 +2632,7 @@ YUI.add('exec-command', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['frame']});
+}, '@VERSION@' ,{requires:['frame'], skinnable:false});
 YUI.add('editor-tab', function(Y) {
 
 
@@ -2692,7 +2700,7 @@ YUI.add('editor-tab', function(Y) {
     Y.Plugin.EditorTab = EditorTab;
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
+}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
 YUI.add('createlink-base', function(Y) {
 
 
@@ -2776,7 +2784,7 @@ YUI.add('createlink-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
+}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
 YUI.add('editor-base', function(Y) {
 
 
@@ -3665,7 +3673,7 @@ YUI.add('editor-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['base', 'frame', 'node', 'exec-command', 'selection', 'editor-para']});
+}, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command', 'selection'], skinnable:false});
 YUI.add('editor-lists', function(Y) {
 
 
@@ -3785,7 +3793,7 @@ YUI.add('editor-lists', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
+}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
 YUI.add('editor-bidi', function(Y) {
 
 
@@ -4117,7 +4125,7 @@ YUI.add('editor-bidi', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
+}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
 YUI.add('editor-para', function(Y) {
 
 
@@ -4470,7 +4478,7 @@ YUI.add('editor-para', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['node']});
+}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
 YUI.add('editor-br', function(Y) {
 
 
@@ -4602,8 +4610,8 @@ YUI.add('editor-br', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['node']});
+}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
 
 
-YUI.add('editor', function(Y){}, '@VERSION@' ,{skinnable:false, use:['frame', 'selection', 'exec-command', 'editor-base', 'editor-para', 'editor-br', 'editor-bidi', 'createlink-base']});
+YUI.add('editor', function(Y){}, '@VERSION@' ,{skinnable:false, use:['frame', 'selection', 'exec-command', 'editor-base', 'editor-para', 'editor-br', 'editor-bidi', 'editor-tab', 'createlink-base']});
 

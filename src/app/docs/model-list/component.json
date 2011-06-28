@@ -1,0 +1,13 @@
+{
+    "name"       : "model-list",
+    "displayName": "Model List",
+    "description": "Provides an API for working with an ordered list of models and for adding to, removing from, and sorting the list.",
+    "author"     : ["rgrove", "ericf"],
+
+    "tags": [
+        "infrastructure", "app", "beta", "collection", "datamodel", "list",
+        "model", "modellist", "mvc"
+    ],
+
+    "use": ["model-list"]
+}

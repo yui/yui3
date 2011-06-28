@@ -1,5 +1,13 @@
 {
     "dom": {
+        "use": [
+            "dom-base",
+            "dom-screen",
+            "dom-style",
+            "selector-native",
+            "selector"
+        ],
+
         "plugins": {
             "selector-css3": {
                 "requires": [
@@ -33,14 +41,17 @@
                 }
             }
         },
-        "requires": [
-            "oop"
-        ],
+
         "submodules": {
-            "dom-base": {
+            "dom-core": {
                 "requires": [
                     "oop",
                     "features"
+                ]
+            },
+            "dom-base": {
+                "requires": [
+                    "dom-core"
                 ]
             },
             "dom-screen": {

@@ -1,0 +1,91 @@
+<div class="intro">
+<p>
+The YUI App Framework is a rollup of the <a href="../controller/index.html">Controller</a>, <a href="../model/index.html">Model</a>, <a href="../model-list/index.html">Model List</a>, and <a href="../view/index.html">View</a> components, combined to form a simple MVC-style framework for writing single-page JavaScript applications.
+</p>
+
+<p>
+These components can be used separately or together to create functionality ranging in complexity from simple non-interactive views to rich, multiple-view apps with URL-based routing, data binding, and full client-server synchronization.
+</p>
+
+<p>
+If you've used <a href="http://www.documentcloud.org/">DocumentCloud</a>'s excellent <a href="http://documentcloud.github.com/backbone/">Backbone.js</a> framework, many of the classes and APIs provided by App Framework components will look familiar to you. There are important differences, though, and the App Framework takes full advantage of YUI's powerful component and event infrastructure under the hood.
+</p>
+</div>
+
+{{>getting-started}}
+
+<h2>Conventions Used in this Guide</h2>
+
+<p>
+This guide spends a lot of time talking about classes, subclasses, and instances of those classes and subclasses. To avoid confusion and unnecessary verbosity, the following conventions are used:
+</p>
+
+<ul>
+  <li><p>`Y.Model` (in monospace) refers to <strong>a specific class, and not a subclass</strong>. For instance, "`Y.View`" refers only to the `Y.View` class, and not to a `Y.CustomView` class that extends `Y.View`.</p></li>
+
+  <li><p>Model (with initial caps) refers to <strong>a class or any subclass of that class</strong>. For instance, "View" could refer to `Y.View` or to a `Y.CustomView` class that extends `Y.View`.</p></li>
+
+  <li><p>model (without initial caps) refers to <strong>an instance of a class or subclass</strong>. So "view" could mean "an instance of `Y.View`" or "an instance of a `Y.CustomView` class that extends `Y.View`".</p></li>
+
+  <li><p>For the sake of brevity, the terms List and list are used when referring to `Y.ModelList` classes/subclasses and instances thereof, respectively.</p></li>
+</ul>
+
+
+<h2>Components of the App Framework</h2>
+
+<p>
+The `app` module is a rollup module consisting of the following individual components. These components may also be used individually if you don't need all of them at the same time.
+</p>
+
+<p>
+This table contains brief descriptions of each component. For more detailed documentation, click the links to visit the appropriate user guide for each component.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Component</th>
+      <th>Module</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="../controller/index.html">Controller</a></td>
+      <td>`controller`</td>
+      <td>
+        <p>
+        Provides URL-based same-page routing using <a href="https://developer.mozilla.org/en/DOM/Manipulating_the_browser_history">HTML5 history</a> (`pushState`) or the location hash, depending on what the user's browser supports.
+        </p>
+      </td>
+    </tr>
+
+    <tr>
+      <td><a href="../model/index.html">Model</a></td>
+      <td>`model`</td>
+      <td>
+        A lightweight `Y.Attribute`-based data model with APIs for getting, setting, validating, and syncing attribute values to a persistence layer or server, as well as events for notifying subscribers of model changes.
+      </td>
+    </tr>
+
+    <tr>
+      <td><a href="../model-list/index.html">Model List</a></td>
+      <td>`model-list`</td>
+      <td>
+        <p>
+        An array-like ordered list of `Y.Model` instances with APIs for adding, removing, sorting, filtering, and performing other actions on models in the list. Acts as a bubble target for events fired by the models in the list.
+        </p>
+      </td>
+    </tr>
+
+    <tr>
+      <td><a href="../view/index.html">View</a></td>
+      <td>`view`</td>
+      <td>
+        <p>
+        Represents a piece of an application's user interface and is responsible for rendering content and handling DOM events. Views are commonly associated with Models or Model Lists and re-rendered when they change, although this isn't required.
+        </p>
+      </td>
+    </tr>
+  </tbody>
+</table>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="YUI" default="local">
+    <description>Graphics - Build All Modules</description>
+
+    <macrodef name="build-graphics">
+        <attribute name="target"/>
+        <sequential>
+            <ant antfile="build.graphics-base.xml" target="@{target}"/>
+            <ant antfile="build.graphics-svg.xml" target="@{target}"/>
+            <ant antfile="build.graphics-canvas.xml" target="@{target}"/>
+            <ant antfile="build.graphics-vml.xml" target="@{target}"/>
+            <ant antfile="build.graphics-svg-default.xml" target="@{target}"/>
+            <ant antfile="build.graphics-canvas-default.xml" target="@{target}"/>
+            <ant antfile="build.graphics-vml-default.xml" target="@{target}"/>
+        </sequential>
+    </macrodef>
+
+    <target name="local">
+        <build-graphics target="local"/>
+    </target>
+    <target name="deploy">
+        <build-graphics target="deploy"/>
+    </target>
+    <target name="all">
+        <build-graphics target="all"/>
+    </target>
+    <target name="clean">
+        <build-graphics target="clean"/>
+    </target>
+
+</project>

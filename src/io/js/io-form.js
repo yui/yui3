@@ -7,7 +7,7 @@
 
     var eUC = encodeURIComponent;
 
-    Y.mix(Y.io, {
+    Y.mix(Y.IO.prototype, {
        /**
         * @description Method to enumerate through an HTML form's elements collection
         * and return a string comprised of key-value pairs.
@@ -21,7 +21,7 @@
         */
         _serialize: function(c, s) {
             var data = [],
-                useDf = c.useDisabled || false,
+                df = c.useDisabled || false,
                 item = 0,
                 id = (typeof c.id === 'string') ? c.id : c.id.getAttribute('id'),
                 e, f, n, v, d, i, il, j, jl, o;
@@ -40,7 +40,7 @@
                 d = e.disabled;
                 n = e.name;
 
-                if (useDf ? n : n && !d) {
+                if (df ? n : n && !d) {
                     n = eUC(n) + '=';
                     v = eUC(e.value);
 

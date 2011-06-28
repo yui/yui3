@@ -32,7 +32,6 @@ Y.StackedComboSeries = Y.Base.create("stackedComboSeries", Y.ComboSeries, [Y.Sta
      */
     drawSeries: function()
     {
-        this.get("graphic").clear();
         if(this.get("showAreaFill"))
         {
             this.drawFill.apply(this, this._getStackedClosingPoints());

@@ -96,3 +96,36 @@ YUI().use('resize', function(Y) {
         </tr>
     </tbody>
 </table>
+
+<h4 id="resize-plugins">Resize Plugin for Widgets</h4>
+
+<p>Along with the standalone utility, a Resize plugin is available and can be plugged into Y.Node or Y.Widget instances. The plugin can be created by adding `resize-plugin` in your use statement, and then plugging in `Y.Plugin.Resize`.</p>
+
+```
+YUI().use('overlay', 'resize-plugin', function(Y) {
+    var overlay = new Y.Overlay({
+       width: "200px",
+       height: "300px",
+       srcNode: "#overlay",
+       visible: "true",
+       centered: "true" 
+    });
+    //Plug in the resizability plugin
+    overlay.plug(Y.Plugin.Resize);
+    overlay.render();
+});
+```
+<h5>Listening to events on a widget</h5>
+<p>With the resize plugin being plugged into a Y.Widget instance, resize events can be listened to under the `resize` namespace. The resize plugin will automatically change `width` and `height` attributes on the widget (and the `x` , `y` attributes if your widget uses `Y.WidgetPosition`).</p>
+
+```
+YUI().use('overlay', 'resize-plugin', function(Y) {
+    overlay.plug(Y.Plugin.Resize);
+    overlay.render();
+
+    overlay.resize.on('resize:resize', function(event) {
+       //this function will be called on resize. 
+    });
+});
+```
+

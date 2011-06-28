@@ -7,7 +7,9 @@
  */
 
 var Lang   = Y.Lang,
-    Native = Array.prototype;
+    Native = Array.prototype,
+
+    hasOwn = Object.prototype.hasOwnProperty;
 
 /**
  * Adds utilities to the YUI instance for working with arrays. Additional array
@@ -20,10 +22,10 @@ var Lang   = Y.Lang,
  * `Y.Array(thing)` returns an array created from _thing_. Depending on
  * _thing_'s type, one of the following will happen:
  *
- *   - Arrays are returned unmodified unless a non-zero _startIndex_ is
+ *  * Arrays are returned unmodified unless a non-zero _startIndex_ is
  *     specified.
- *   - Array-like collections (see `Array.test()`) are converted to arrays.
- *   - For everything else, a new array is created with _thing_ as the sole
+ *  * Array-like collections (see `Array.test()`) are converted to arrays.
+ *  * For everything else, a new array is created with _thing_ as the sole
  *     item.
  *
  * Note: elements that are also collections, such as `<form>` and `<select>`
@@ -76,9 +78,10 @@ Y.Array = YArray;
  * @method test
  * @param {object} obj Object to test.
  * @return {int} A number indicating the results of the test:
- *   - 0: Neither an array nor an array-like collection.
- *   - 1: Real array.
- *   - 2: Array-like collection.
+ *
+ *  * 0: Neither an array nor an array-like collection.
+ *  * 1: Real array.
+ *  * 2: Array-like collection.
  * @static
  */
 YArray.test = function (obj) {
@@ -101,6 +104,37 @@ YArray.test = function (obj) {
 };
 
 /**
+ * Dedupes an array of strings, returning an array that's guaranteed to contain
+ * only one copy of a given string.
+ *
+ * This method differs from `Y.Array.unique` in that it's optimized for use only
+ * with strings, whereas `unique` may be used with other types (but is slower).
+ * Using `dedupe` with non-string values may result in unexpected behavior.
+ *
+ * @method dedupe
+ * @param {String[]} array Array of strings to dedupe.
+ * @return {Array} Deduped copy of _array_.
+ * @static
+ * @since 3.4.0
+ */
+YArray.dedupe = function (array) {
+    var hash    = {},
+        results = [],
+        i, item, len;
+
+    for (i = 0, len = array.length; i < len; ++i) {
+        item = array[i];
+
+        if (!hasOwn.call(hash, item)) {
+            hash[item] = 1;
+            results.push(item);
+        }
+    }
+
+    return results;
+};
+
+/**
  * Executes the supplied function on each item in the array. This method wraps
  * the native ES5 `Array.forEach()` method if available.
  *
@@ -115,16 +149,25 @@ YArray.test = function (obj) {
  * @chainable
  * @static
  */
-YArray.each = Native.forEach ? function (array, fn, thisObj) {
+YArray.each = YArray.forEach = Native.forEach ? function (array, fn, thisObj) {
     Native.forEach.call(array || [], fn, thisObj || Y);
     return Y;
 } : function (array, fn, thisObj) {
     for (var i = 0, len = (array && array.length) || 0; i < len; ++i) {
-        fn.call(thisObj || Y, array[i], i, array);
+        if (i in array) {
+            fn.call(thisObj || Y, array[i], i, array);
+        }
     }
 
     return Y;
 };
+
+/**
+ * Alias for `each`.
+ *
+ * @method forEach
+ * @static
+ */
 
 /**
  * Returns an object using the first array as keys and the second as values. If
@@ -145,11 +188,13 @@ YArray.each = Native.forEach ? function (array, fn, thisObj) {
  */
 YArray.hash = function (keys, values) {
     var hash = {},
-        vlen = values && values.length,
+        vlen = (values && values.length) || 0,
         i, len;
 
     for (i = 0, len = keys.length; i < len; ++i) {
-        hash[keys[i]] = vlen && vlen > i ? values[i] : true;
+        if (i in keys) {
+            hash[keys[i]] = vlen > i && i in values ? values[i] : true;
+        }
     }
 
     return hash;
@@ -223,7 +268,7 @@ YArray.some = Native.some ? function (array, fn, thisObj) {
     return Native.some.call(array, fn, thisObj);
 } : function (array, fn, thisObj) {
     for (var i = 0, len = array.length; i < len; ++i) {
-        if (fn.call(thisObj, array[i], i, array)) {
+        if (i in array && fn.call(thisObj, array[i], i, array)) {
             return true;
         }
     }

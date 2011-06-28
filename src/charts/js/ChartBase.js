@@ -521,7 +521,7 @@ ChartBase.prototype = {
             node.set("innerHTML", msg);
             node.setStyle("top", y + "px");
             node.setStyle("left", x + "px");
-            node.removeClass("yui3-widget-hidden");
+            node.setStyle("visibility", "visible");
         }
     },
 
@@ -553,7 +553,7 @@ ChartBase.prototype = {
         node.set("innerHTML", "");
         node.setStyle("left", -10000);
         node.setStyle("top", -10000);
-        node.addClass("yui3-widget-hidden");
+        node.setStyle("visibility", "hidden");
     },
 
     /**
@@ -564,13 +564,13 @@ ChartBase.prototype = {
         var tt = this.get("tooltip"),
             id = this.get("id") + "_tooltip",
             cb = this.get("contentBox"),
-            oldNode = document.getElementById(id);
+            oldNode = DOCUMENT.getElementById(id);
         if(oldNode)
         {
             cb.removeChild(oldNode);
         }
         tt.node.setAttribute("id", id);
-        tt.node.addClass("yui3-widget-hidden");
+        tt.node.setStyle("visibility", "hidden");
         cb.appendChild(tt.node);
     },
 
@@ -623,7 +623,7 @@ ChartBase.prototype = {
      */
     _getTooltip: function()
     {
-        var node = document.createElement("div"),
+        var node = DOCUMENT.createElement("div"),
             tt = {
                 markerLabelFunction: this._tooltipLabelFunction,
                 planarLabelFunction: this._planarLabelFunction,
@@ -659,7 +659,7 @@ ChartBase.prototype = {
         node.setStyle("pointerEvents", "none");
         node.setStyle("zIndex", 3);
         node.setStyle("whiteSpace", "noWrap");
-        node.addClass("yui3-widget-hidden");
+        node.setStyle("visibility", "hidden");
         tt.node = Y.one(node);
         this._tooltip = tt;
         return tt;

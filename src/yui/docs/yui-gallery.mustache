@@ -1,0 +1,28 @@
+<div class="intro">
+<p>This example shows how to natively use a YUI Gallery module.</p>
+<p>It will load images from Flickr using the Gallery YQL module.</p>
+</div>
+
+<div class="example">
+    {{>yui-gallery}}
+</div>
+
+<h3>Loading Gallery Modules</h3>
+<p>If a Gallery module has been pushed to the CDN, it will be available to use as a first class
+YUI 3 module.</p>
+<p>To load a Gallery module, simply add its module name to your `YUI().use` call. In the code
+sample below we are using the `gallery-yql` module.</p>
+
+```
+YUI().use('gallery-yql', function(Y) {
+    //Y.yql is available here
+});
+```
+
+<h3>Flickr/YQL example</h3>
+<p>This simple example demonstrates using YQL to fetch images from Flickr by tag.</p>
+<p><strong>Note: </strong> We are using the YQL Gallery module directly from the `use` statement, no configuration needed.</p>
+
+```
+{{>yui-gallery-js}}
+```

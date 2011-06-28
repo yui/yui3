@@ -1,3 +1,4 @@
+(function () {
 var GLOBAL_ENV = YUI.Env;
 
 if (!GLOBAL_ENV._ready) {
@@ -6,11 +7,9 @@ if (!GLOBAL_ENV._ready) {
         GLOBAL_ENV.remove(YUI.config.doc, 'DOMContentLoaded', GLOBAL_ENV._ready);
     };
 
-    // if (!YUI.UA.ie) {
-        GLOBAL_ENV.add(YUI.config.doc, 'DOMContentLoaded', GLOBAL_ENV._ready);
-    // }
+    GLOBAL_ENV.add(YUI.config.doc, 'DOMContentLoaded', GLOBAL_ENV._ready);
 }
-
+})();
 YUI.add('event-base', function(Y) {
 
 /*
@@ -45,7 +44,7 @@ Y.publish('domready', {
     async: true
 });
 
-if (GLOBAL_ENV.DOMReady) {
+if (YUI.Env.DOMReady) {
     Y.fire('domready');
 } else {
     Y.Do.before(function() { Y.fire('domready'); }, YUI.Env, '_ready');
@@ -1126,10 +1125,12 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
             remove(wrapper.el, wrapper.type, wrapper.fn, wrapper.capture);
             delete _wrappers[key];
-            delete _el_events[domkey][key];
             delete Y._yuievt.events[key];
-            if (!Y.Object.size(_el_events[domkey])) {
-                delete _el_events[domkey];
+            if (_el_events[domkey]) {
+                delete _el_events[domkey][key];
+                if (!Y.Object.size(_el_events[domkey])) {
+                    delete _el_events[domkey];
+                }
             }
         },
 
@@ -2056,6 +2057,7 @@ Y.mix(SyntheticEvent, {
          */
         _on: function (args, delegate) {
             var handles  = [],
+                originalArgs = args.slice(),
                 extra    = this.processArgs(args, delegate),
                 selector = args[2],
                 method   = delegate ? 'delegate' : 'on',
@@ -2066,7 +2068,7 @@ Y.mix(SyntheticEvent, {
 
             if (!nodes.length && isString(selector)) {
                 handle = Y.on('available', function () {
-                    Y.mix(handle, Y[method].apply(Y, args), true);
+                    Y.mix(handle, Y[method].apply(Y, originalArgs), true);
                 }, selector);
 
                 return handle;
@@ -2434,7 +2436,7 @@ Y.Event.define = function (type, config, force) {
 };
 
 
-}, '@VERSION@' ,{requires:['node-base', 'event-custom']});
+}, '@VERSION@' ,{requires:['node-base', 'event-custom-complex']});
 YUI.add('event-mousewheel', function(Y) {
 
 /**
@@ -2627,7 +2629,6 @@ var ALT      = "+alt",
     META     = "+meta",
     SHIFT    = "+shift",
 
-    isString = Y.Lang.isString,
     trim     = Y.Lang.trim,
 
     eventDef = {
@@ -2641,32 +2642,33 @@ var ALT      = "+alt",
         },
 
         _typeRE: /^(up|down|press):/,
+        _keysRE: /^(?:up|down|press):|\+(alt|ctrl|meta|shift)/g,
 
         processArgs: function (args) {
-            // Y.delegate('key', fn, spec, '#container', '.filter')
-            // comes in as ['key', fn, spec, '#container', '.filter'], but
-            // node.delegate('key', fn, spec, '.filter')
-            // comes in as ['key', fn, containerEl, spec, '.filter']
-            var i    = isString(args[2]) ? 2 : 3,
-                spec = (isString(args[i])) ? args.splice(i,1)[0] : '',
+            var spec = args.splice(3,1)[0],
                 mods = Y.Array.hash(spec.match(/\+(?:alt|ctrl|meta|shift)\b/g) || []),
                 config = {
                     type: this._typeRE.test(spec) ? RegExp.$1 : null,
+                    mods: mods,
                     keys: null
                 },
-                bits = spec
-                        .replace(/^(?:up|down|press):|\+(alt|ctrl|meta|shift)/g, '')
-                        .split(/,/),
-                chr, uc, lc;
+                // strip type and modifiers from spec, leaving only keyCodes
+                bits = spec.replace(this._keysRE, ''),
+                chr, uc, lc, i;
 
-            spec = spec.replace(this._typeRE, '');
+            if (bits) {
+                bits = bits.split(',');
 
-            if (bits.length) {
                 config.keys = {};
 
                 // FIXME: need to support '65,esc' => keypress, keydown
                 for (i = bits.length - 1; i >= 0; --i) {
                     chr = trim(bits[i]);
+
+                    // catch sloppy filters, trailing commas, etc 'a,,'
+                    if (!chr) {
+                        continue;
+                    }
 
                     // non-numerics are single characters or key names
                     if (+chr == chr) {
@@ -2676,7 +2678,7 @@ var ALT      = "+alt",
 
                         if (this.KEY_MAP[lc]) {
                             config.keys[this.KEY_MAP[lc]] = mods;
-                            // FIXME: '65,enter' defaults to keydown for both
+                            // FIXME: '65,enter' defaults keydown for both
                             if (!config.type) {
                                 config.type = "down"; // safest
                             }
@@ -2711,27 +2713,24 @@ var ALT      = "+alt",
                 keys   = spec.keys,
                 method = (filter) ? "delegate" : "on";
 
-            if (keys) {
-                sub._detach = node[method](type, function (e) {
-                    var key = keys[e.keyCode];
+            // Note: without specifying any keyCodes, this becomes a
+            // horribly inefficient alias for 'keydown' (et al), but I
+            // can't abort this subscription for a simple
+            // Y.on('keypress', ...);
+            // Please use keyCodes or just subscribe directly to keydown,
+            // keyup, or keypress
+            sub._detach = node[method](type, function (e) {
+                var key = keys ? keys[e.keyCode] : spec.mods;
 
-                    if (key &&
-                        (!key[ALT]   || (key[ALT]   && e.altKey)) &&
-                        (!key[CTRL]  || (key[CTRL]  && e.ctrlKey)) &&
-                        (!key[META]  || (key[META]  && e.metaKey)) &&
-                        (!key[SHIFT] || (key[SHIFT] && e.shiftKey)))
-                    {
-                        notifier.fire(e);
-                    }
-                }, filter);
-            } else {
-                // Pass through to a plain old key(up|down|press)
-                // Note: this is horribly inefficient, but I can't abort this
-                // subscription for a simple Y.on('keypress', ...);
-                sub._detach = node[method](type,
-                    Y.bind(notifier.fire, notifier),
-                    filter);
-            }
+                if (key &&
+                    (!key[ALT]   || (key[ALT]   && e.altKey)) &&
+                    (!key[CTRL]  || (key[CTRL]  && e.ctrlKey)) &&
+                    (!key[META]  || (key[META]  && e.metaKey)) &&
+                    (!key[SHIFT] || (key[SHIFT] && e.shiftKey)))
+                {
+                    notifier.fire(e);
+                }
+            }, filter);
         },
 
         detach: function (node, sub, notifier) {

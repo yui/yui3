@@ -30,7 +30,17 @@ YUI.add('base-base', function(Y) {
         SHALLOW = "shallow",
         DESTRUCTOR = "destructor",
 
-        Attribute = Y.Attribute;
+        Attribute = Y.Attribute,
+
+        _wlmix = function(r, s, wlhash) {
+            var p;
+            for (p in s) {
+                if(wlhash[p]) { 
+                    r[p] = s[p];
+                }
+            }
+            return r;
+        };
 
     /**
      * <p>
@@ -111,6 +121,7 @@ YUI.add('base-base', function(Y) {
      * @private
      */
     Base._ATTR_CFG = Attribute._ATTR_CFG.concat("cloneDefaultValue");
+    Base._ATTR_CFG_HASH = Y.Array.hash(Base._ATTR_CFG);
 
     /**
      * <p>
@@ -387,10 +398,10 @@ YUI.add('base-base', function(Y) {
 
             if (attrs) {
                 for (attr in attrs) {
-                    if (attrs.hasOwnProperty(attr) && allCfgs[attr]) {
+                    if (allCfgs[attr]) {
                         cfgs = cfgs || {};
                         cfgs[attr] = allCfgs[attr];
-                        delete allCfgs[attr];
+                        allCfgs[attr] = null;
                     }
                 }
             }
@@ -402,12 +413,12 @@ YUI.add('base-base', function(Y) {
          * A helper method used by _getClasses and _getAttrCfgs, which determines both
          * the array of classes and aggregate set of attribute configurations
          * across the class hierarchy for the instance.
-         * 
+         *
          * @method _initHierarchyData
          * @private
          */
         _initHierarchyData : function() {
-            var c = this.constructor, 
+            var c = this.constructor,
                 classes = [],
                 attrs = [];
 
@@ -430,7 +441,7 @@ YUI.add('base-base', function(Y) {
          * A helper method, used by _initHierarchyData to aggregate 
          * attribute configuration across the instances class hierarchy.
          *
-         * The method will potect the attribute configuration value to protect the statically defined 
+         * The method will protect the attribute configuration value to protect the statically defined 
          * default value in ATTRS if required (if the value is an object literal, array or the 
          * attribute configuration has cloneDefaultValue set to shallow or deep).
          *
@@ -446,9 +457,9 @@ YUI.add('base-base', function(Y) {
                 cfg,
                 val,
                 path,
-                i, 
+                i,
                 clone, 
-                cfgProps = Base._ATTR_CFG,
+                cfgPropsHash = Base._ATTR_CFG_HASH,
                 aggAttrs = {};
 
             if (allAttrs) {
@@ -459,7 +470,9 @@ YUI.add('base-base', function(Y) {
                         if (attrs.hasOwnProperty(attr)) {
 
                             // Protect config passed in
-                            cfg = Y.mix({}, attrs[attr], true, cfgProps);
+                            //cfg = Y.mix({}, attrs[attr], true, cfgProps);
+                            //cfg = Y.Object(attrs[attr]);
+                            cfg = _wlmix({}, attrs[attr], cfgPropsHash);
 
                             val = cfg.value;
                             clone = cfg.cloneDefaultValue;
@@ -484,11 +497,11 @@ YUI.add('base-base', function(Y) {
 
                             if (path && aggAttrs[attr] && aggAttrs[attr].value) {
                                 O.setValue(aggAttrs[attr].value, path, val);
-                            } else if (!path){
+                            } else if (!path) {
                                 if (!aggAttrs[attr]) {
                                     aggAttrs[attr] = cfg;
                                 } else {
-                                    Y.mix(aggAttrs[attr], cfg, true, cfgProps);
+                                    _wlmix(aggAttrs[attr], cfg, cfgPropsHash);
                                 }
                             }
                         }
@@ -516,6 +529,8 @@ YUI.add('base-base', function(Y) {
                 ci,
                 ei,
                 el,
+                extProto,
+                exts,
                 classes = this._getClasses(),
                 attrCfgs = this._getAttrCfgs();
 
@@ -523,10 +538,11 @@ YUI.add('base-base', function(Y) {
 
                 constr = classes[ci];
                 constrProto = constr.prototype;
+                exts = constr._yuibuild && constr._yuibuild.exts; 
 
-                if (constr._yuibuild && constr._yuibuild.exts) {
-                    for (ei = 0, el = constr._yuibuild.exts.length; ei < el; ei++) {
-                        constr._yuibuild.exts[ei].apply(this, arguments);
+                if (exts) {
+                    for (ei = 0, el = exts.length; ei < el; ei++) {
+                        exts[ei].apply(this, arguments);
                     }
                 }
 
@@ -537,12 +553,21 @@ YUI.add('base-base', function(Y) {
                 if (constrProto.hasOwnProperty(INITIALIZER)) {
                     constrProto.initializer.apply(this, arguments);
                 }
+
+                if (exts) {
+                    for (ei = 0; ei < el; ei++) {
+                        extProto = exts[ei].prototype;
+                        if (extProto.hasOwnProperty(INITIALIZER)) {
+                            extProto.initializer.apply(this, arguments);
+                        }
+                    }
+                }
             }
         },
 
         /**
          * Destroys the class hierarchy for this instance by invoking
-         * the descructor method on the prototype of each class in the hierarchy.
+         * the destructor method on the prototype of each class in the hierarchy.
          *
          * @method _destroyHierarchy
          * @private
@@ -550,12 +575,23 @@ YUI.add('base-base', function(Y) {
         _destroyHierarchy : function() {
             var constr,
                 constrProto,
-                ci, cl,
+                ci, cl, ei, el, exts, extProto,
                 classes = this._getClasses();
 
             for (ci = 0, cl = classes.length; ci < cl; ci++) {
                 constr = classes[ci];
                 constrProto = constr.prototype;
+                exts = constr._yuibuild && constr._yuibuild.exts; 
+
+                if (exts) {
+                    for (ei = 0, el = exts.length; ei < el; ei++) {
+                        extProto = exts[ei].prototype;
+                        if (extProto.hasOwnProperty(DESTRUCTOR)) {
+                            extProto.destructor.apply(this, arguments);
+                        }
+                    }
+                }
+
                 if (constrProto.hasOwnProperty(DESTRUCTOR)) {
                     constrProto.destructor.apply(this, arguments);
                 }
@@ -634,6 +670,8 @@ YUI.add('base-build', function(Y) {
      */
     var Base = Y.Base,
         L = Y.Lang,
+        INITIALIZER = "initializer",
+        DESTRUCTOR = "destructor",
         build;
 
     Base._build = function(name, main, extensions, px, sx, cfg) {
@@ -650,7 +688,9 @@ YUI.add('base-build', function(Y) {
 
             dynamic = builtClass._yuibuild.dynamic,
 
-            i, l, val, extClass;
+            i, l, val, extClass, extProto,
+            initializer,
+            destructor;
 
         if (dynamic && aggregates) {
             for (i = 0, l = aggregates.length; i < l; ++i) {
@@ -665,10 +705,26 @@ YUI.add('base-build', function(Y) {
         for (i = 0, l = extensions.length; i < l; i++) {
             extClass = extensions[i];
 
+            extProto = extClass.prototype;
+            
+            initializer = extProto[INITIALIZER];
+            destructor = extProto[DESTRUCTOR];
+            delete extProto[INITIALIZER];
+            delete extProto[DESTRUCTOR];
+
             // Prototype, old non-displacing augment
             Y.mix(builtClass, extClass, true, null, 1);
+
              // Custom Statics
             _mixCust(builtClass, extClass, aggregates, custom);
+            
+            if (initializer) { 
+                extProto[INITIALIZER] = initializer;
+            }
+
+            if (destructor) {
+                extProto[DESTRUCTOR] = destructor;
+            }
 
             builtClass._yuibuild.exts.push(extClass);
         }
@@ -876,7 +932,7 @@ YUI.add('base-build', function(Y) {
      * <p>Mixes in a list of extensions to an existing class.</p>
      * @method Base.mix
      * @static
-     * @param {Function} main The existing class into which the extensions should be mixed.  The class needs to be Base or class derived from base (e.g. Widget)
+     * @param {Function} main The existing class into which the extensions should be mixed.  The class needs to be Base or a class derived from Base (e.g. Widget)
      * @param {Function[]} extensions The set of extension classes which will mixed into the existing main class.
      * @return {Function} The modified main class, with extensions mixed in.
      */
@@ -898,7 +954,7 @@ YUI.add('base-build', function(Y) {
      * @private
      */
     Base._buildCfg = {
-        custom : { 
+        custom : {
             ATTRS : function(prop, r, s) {
 
                 r.ATTRS = r.ATTRS || {};
@@ -925,5 +981,5 @@ YUI.add('base-build', function(Y) {
 }, '@VERSION@' ,{requires:['base-base']});
 
 
-YUI.add('base', function(Y){}, '@VERSION@' ,{use:['base-base', 'base-pluginhost', 'base-build'], after:['attribute-complex']});
+YUI.add('base', function(Y){}, '@VERSION@' ,{after:['attribute-complex'], use:['base-base', 'base-pluginhost', 'base-build']});
 

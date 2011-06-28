@@ -5,7 +5,7 @@
     "author"     : ["davglass", "eduardo.lundgren"],
 
     "tags": ["utility", "resize"],
-    "use" : ["resize"],
+    "use" : ["resize", "resize-plugin"],
 
     "examples": [
         {
@@ -28,6 +28,20 @@
             "description": "This example shows an 8-way image resize, providing the CSS needed for a common image-resize visual treatment.",
             "modules"    : ["resize"],
             "tags"       : ["resize", "node", "simple", "8way", "image"]
+        },
+        {
+            "name"       : "simple-resize-plugin",
+            "displayName": "Widget with simple Resize Plugin",
+            "description": "Plugs a widget with resize functionality.",
+            "modules"    : ["resize-plugin"],
+            "tags"       : ["resize", "widget", "simple"]
+        },
+        {
+            "name"       : "constrain-resize-plugin",
+            "displayName": "Widget with Resize Plugin under constraints",
+            "description": "Plugs a widget with resize functionality, and implements <code>ResizeConstrained</code>",
+            "modules"    : ["resize-plugin"],
+            "tags"       : ["resize", "widget", "constrained"]
         }
     ]
 }

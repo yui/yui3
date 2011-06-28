@@ -1,0 +1,45 @@
+<div class="intro">
+<p>
+A Model List is an array-like ordered list of <a href="../model/index.html">Model</a> instances with methods for adding, removing, sorting, filtering, and performing other actions on models in the list.
+</p>
+
+<p>
+A Model instance may exist in zero or more lists. All events fired by a model automatically bubble up to all the lists that contain that model, so lists serve as convenient aggregators for model events.
+</p>
+
+<p>
+`Y.ModelList` also exposes a sync API similar to the one used by `Y.Model`, making it easy to implement syncing logic to create, read, update, and delete lists of models on a persistence layer or remote server.
+</p>
+</div>
+
+{{>getting-started}}
+
+<h2>Conventions Used in this Guide</h2>
+
+<p>
+This guide spends a lot of time talking about classes, subclasses, and instances of those classes and subclasses. To avoid confusion and unnecessary verbosity, the following conventions are used:
+</p>
+
+<ul>
+  <li><p>`Y.ModelList` (in monospace) refers to <strong>a specific class, and not a subclass</strong>. In other words, it refers only to the `Y.ModelList` class, and not to a `Y.CustomModelList` class that extends `Y.ModelList`.</p></li>
+
+  <li><p>Model List or List (with initial caps) refer to <strong>a class or any subclass of that class</strong>. For instance, "List" could refer to `Y.ModelList` or to a `Y.CustomModelList` class that extends `Y.ModelList`.</p></li>
+
+  <li><p>model list or list (without initial caps) refer to <strong>an instance of a class or subclass</strong>. So "list" could mean "an instance of `Y.ModelList`" or "an instance of a `Y.CustomModelList` class that extends `Y.ModelList`".</p></li>
+</ul>
+
+<h2>Using Model List</h2>
+
+<h3>Instantiating a Model List</h3>
+
+<h3>Extending `Y.ModelList`</h3>
+
+<h3>List Attributes</h3>
+
+<h3>List Events</h3>
+
+<h3>List Methods</h3>
+
+<h2>Creating a Custom Sort Comparator</h2>
+
+<h2>Implementing a Sync Adapter</h2>

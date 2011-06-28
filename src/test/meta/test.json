@@ -1,10 +1,10 @@
 {
     "test": {
         "requires": [
-            "substitute", 
-            "node", 
-            "json", 
-            "event-simulate"
+            "event-simulate",
+            "event-custom",
+            "substitute",
+            "json-stringify"
         ], 
         "skinnable": true
     }

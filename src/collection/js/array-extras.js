@@ -93,6 +93,8 @@ A.unique = function(a, sort) {
     // implementation was not working, so I replaced it with the following.
     // Leaving it in so that the API doesn't get broken.
     if (sort) {
+        Y.log('The sort parameter is deprecated and will be removed in a future version of YUI.', 'warn', 'deprecated');
+
         if (L.isNumber(results[0])) {
             results.sort(A.numericSort);
         } else {
@@ -125,10 +127,12 @@ A.filter = Native.filter ?
             item;
 
         for (; i < len; ++i) {
-            item = a[i];
+            if (i in a) {
+                item = a[i];
 
-            if (f.call(o, item, i, a)) {
-                results.push(item);
+                if (f.call(o, item, i, a)) {
+                    results.push(item);
+                }
             }
         }
 
@@ -171,7 +175,7 @@ A.every = Native.every ?
     } :
     function(a, f, o) {
         for (var i = 0, l = a.length; i < l; ++i) {
-            if (!f.call(o, a[i], i, a)) {
+            if (i in a && !f.call(o, a[i], i, a)) {
                 return false;
             }
         }
@@ -200,7 +204,9 @@ A.map = Native.map ?
             results = a.concat();
 
         for (; i < len; ++i) {
-            results[i] = f.call(o, a[i], i, a);
+            if (i in a) {
+                results[i] = f.call(o, a[i], i, a);
+            }
         }
 
         return results;
@@ -239,7 +245,9 @@ A.reduce = Native.reduce ?
             result = init;
 
         for (; i < len; ++i) {
-            result = f.call(o, result, a[i], i, a);
+            if (i in a) {
+                result = f.call(o, result, a[i], i, a);
+            }
         }
 
         return result;
@@ -262,7 +270,7 @@ A.reduce = Native.reduce ?
 */
 A.find = function(a, f, o) {
     for (var i = 0, l = a.length; i < l; i++) {
-        if (f.call(o, a[i], i, a)) {
+        if (i in a && f.call(o, a[i], i, a)) {
             return a[i];
         }
     }
@@ -335,10 +343,3 @@ A.zip = function(a, a2) {
     });
     return results;
 };
-
-/**
- * forEach is an alias of Array.each.  This is part of the
- * collection module.
- * @method Array.forEach
- */
-A.forEach = A.each;

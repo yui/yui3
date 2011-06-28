@@ -1,5 +1,11 @@
 {
     "datatable": {
+        "use": [
+            "datatable-base",
+            "datatable-datasource",
+            "datatable-sort",
+            "datatable-scroll"
+        ],
         "submodules": {
             "datatable-base": {
                 "requires": [

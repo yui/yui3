@@ -89,7 +89,11 @@
             testJSONResults: function() {
                 var schema = {
                         resultListLocator: "response",
-                        resultFields: ["name", {key:"number", parser:Y.DataType.Number.parse}, "letter"]
+                        resultFields: [
+                            "name",
+                            { key:"number",
+                              parser:Y.DataType.Number.parse },
+                            "letter"]
                     },
                     data_in = {
                         response: [
@@ -173,9 +177,13 @@
             
             testJSONFieldLocators: function() {
                 var schema_1 = {
-                        metaFields: {total:"total"},
+                        metaFields: { total: "total" },
                         resultListLocator: "results",
-                        resultFields: [{key:"User ID", locator:"n"}, {key:"First Name", locator:"fname"}, {key:"Last Name", locator:"lname"}]
+                        resultFields: [
+                            { key: "User ID",    locator: "n" },
+                            { key: "First Name", locator: "fname" },
+                            { key: "Last Name",  locator: "lname" }
+                        ]
                     },
                     data_in_1 = {
                         "total":3,
@@ -186,10 +194,15 @@
                         ]
                     },
                     data_out_1 = Y.DataSchema.JSON.apply(schema_1, data_in_1),
+
                     schema_2 = {
-                        metaFields: {total:"qtyhits"},
+                        metaFields: { total: "qtyhits" },
                         resultListLocator: "results",
-                        resultFields: [{key:"UserID", locator:"id"}, {key:"FirstName", locator:"firstname"}, {key:"LastName", locator:"lastname"}]
+                        resultFields: [
+                            { key: "UserID",    locator:"id"},
+                            { key: "FirstName", locator:"firstname"},
+                            { key: "LastName",  locator:"lastname"}
+                        ]
                     },
                     data_in_2 = {
                         "qtyhits":3,
@@ -200,6 +213,7 @@
                         ]
                     },
                     data_out_2 = Y.DataSchema.JSON.apply(schema_2, data_in_2),
+
                 schema_3 = {
                     resultListLocator: "diary",
                     resultFields: [{ key: "name", locator: "value" }, { key: "mood", locator: "notes.mood"}]
@@ -221,6 +235,7 @@
                     ]
                 },
                 data_out_3 = Y.DataSchema.JSON.apply(schema_3, data_in_3);
+
 
                 ASSERT.isArray(data_out_1.results, "Expected results property.");
                 ASSERT.areSame(3, data_out_1.results.length, "Expected 3 results.");
@@ -244,7 +259,11 @@
                   var schema = {
                     metaFields: {total:"total"},
                     resultListLocator: "results",
-                    resultFields: [{key:"User ID", locator:"n"}, {key:"First Name", locator:"president.fname"}, {key:"Last Name", locator:"president.lastname"}]
+                    resultFields: [
+                        { key: "User ID",    locator: "n" },
+                        { key: "First Name", locator: "president.fname" },
+                        { key: "Last Name",  locator: "president.lastname" }
+                    ]
                 },
                 data_in = {
                     "total":10,
@@ -262,6 +281,7 @@
                 ASSERT.areSame("Thomas", data_out.results[2]["First Name"], "Expected last result.");
 
             },
+
             testJSONComplexLocators: function() {
                 var schema = {
                         metaFields: {metaTotal:"response['meta-total']", metaMessage:"response['data array'][1].response.message"},
@@ -275,7 +295,65 @@
                         ]
                     },
                     data_in = {
-request: "orig request", response: { "meta-total": 3, "data array" : [{ position: "array.item.0", "response": { "i t e m s": [ { /* result 0 */ name: "Bob", "customer.data": { "alert('id')":10, "phone/email": "123-4567", "catch":true }, "array-pets": [ { /* pet 0 */ "name":"Brutus", "breed": "bulldog" }, { /*  pet 1 */ "name":"Bobo", "breed": "bernese" } ] }, { /* result 1 */ name: "Fran", "customer.data": { "alert('id')":11, "phone/email": "234-5678", "catch":false}, "array-pets": [ { /*  pet 0 */ "name":"Fido", "breed": "french poodle" } ] } ] } }, { position: "array.item.1", "response": { "message": { type: "xyz", error: false } } }], metaid: { id:1234, date: new Date() } }                    },
+                        request: "orig request",
+                        response: {
+                            "meta-total": 3,
+                            "data array" : [
+                                {
+                                    position: "array.item.0",
+                                    response: {
+                                        "i t e m s": [
+                                            { /* result 0 */
+                                                name: "Bob",
+                                                "customer.data": {
+                                                    "alert('id')":10,
+                                                    "phone/email": "123-4567",
+                                                    "catch":true
+                                                },
+                                                "array-pets": [
+                                                    { /* pet 0 */
+                                                        "name":"Brutus",
+                                                        "breed": "bulldog"
+                                                    },
+                                                    { /*  pet 1 */
+                                                        "name":"Bobo",
+                                                        "breed": "bernese"
+                                                    }
+                                                ]
+                                            },
+                                            { /* result 1 */
+                                                name: "Fran",
+                                                "customer.data": {
+                                                    "alert('id')":11,
+                                                    "phone/email": "234-5678",
+                                                    "catch":false
+                                                },
+                                                "array-pets": [
+                                                    { /*  pet 0 */
+                                                        "name":"Fido",
+                                                        "breed": "poodle"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    position: "array.item.1",
+                                    response: {
+                                        "message": {
+                                            type: "xyz",
+                                            error: false
+                                        }
+                                    }
+                                }
+                            ],
+                            metaid: {
+                                id: 1234,
+                                date: new Date()
+                            }
+                        }
+                    },
                     data_out = Y.DataSchema.JSON.apply(schema, data_in);
 
                 ASSERT.isObject(data_out.meta, "Expected meta property.");
@@ -291,67 +369,60 @@ request: "orig request", response: { "meta-total": 3, "data array" : [{ position
                 ASSERT.areSame(2, data_out.results[0]["['array-pets']"].length, "Expected array length.");
             },
             
-            testJSONNested: function() {
-                var schema = {resultListLocator: "reference[1].fruit",
+            "test results as root array with no resultListLocator": function() {
+                var schema = {
                     resultFields: ["name","calories"]
                 },
-                data_in = {
-                    "profile":{
-                        "current":160,
-                        "target":150
-                    },
-                    "reference": [
-                        {
-                            "category":"exercise",
-                            "type":"expenditure",
-                            "activities":[
-                                {"name":"biking", "calories":550},
-                                {"name":"golf", "calories":1000},
-                                {"name":"running", "calories":650},
-                                {"name":"swimming", "calories":650},
-                                {"name":"walking", "calories":225}
-                            ]
-                        },
-                        {
-                            "category":"nutrition",
-                            "type":"intake",
-                            "fruit":[
-                                {"name":"apple", "calories":70},
-                                {"name":"banana", "calories":70},
-                                {"name":"orange", "calories":90},
-                            ],
-                            "vegetables":[
-                                {"name":"baked potato", "calories":150},
-                                {"name":"broccoli", "calories":50},
-                                {"name":"green beans", "calories":30}
-                            ]
-                        }
-                    ],
-                    "program": [
-                        {
-                            "category":"exercise",
-                            "schedule":[
-                                {"day":"sunday", "activity":"swimming"},
-                                {"day":"monday", "activity":"running"},
-                                {"day":"tuesday", "activity":"biking"},
-                                {"day":"wednesday", "activity":"running"},
-                                {"day":"thursday", "activity":"swimming"},
-                                {"day":"friday", "activity":"running"},
-                                {"day":"saturday", "activity":"golf"}
-                            ]
-                        },
-                        {
-                            "category":"diet",
-                            "schedule":[
-                            ]
-                        }
-                    ]
-                },
+                data_in = [
+                    {"name":"apple", "calories":70},
+                    {"name":"banana", "calories":70},
+                    {"name":"orange", "calories":90}
+                ],
                 data_out = Y.DataSchema.JSON.apply(schema, data_in);
                 
                 ASSERT.areSame(3, data_out.results.length, "Expected 3 results.");
                 ASSERT.areSame("apple", data_out.results[0].name, "Expected first result.");
                 ASSERT.areSame("orange", data_out.results[data_out.results.length-1].name, "Expected last result.");
+            },
+
+            "test nested locators failover to simple locators": function () {
+                var schema = {
+                    resultListLocator: "data",
+                    resultFields: ["fruit.name","cal[0].ries"]
+                },
+                data_in = {
+                    data: [
+                        {"fruit.name":"apple", "cal[0].ries":70},
+                        {"fruit.name":"banana", "cal[0].ries":70},
+                        {"fruit.name":"orange", "cal[0].ries":90}
+                    ]
+                },
+                data_out = Y.DataSchema.JSON.apply(schema, data_in);
+                
+                ASSERT.areSame(3, data_out.results.length, "Expected 3 results.");
+                ASSERT.areSame("apple", data_out.results[0]["fruit.name"], "Expected first result.");
+                ASSERT.areSame(90, data_out.results[2]["cal[0].ries"], "Expected first result.");
+                ASSERT.isUndefined(data_out.results[0].fruit);
+                ASSERT.isUndefined(data_out.results[0].cal);
+            },
+
+            "test utf-8 characters in locators": function () {
+                var schema = {
+                    resultListLocator: "deuxi\u00e8me",
+                    resultFields: ["uploaded","\u00e9mail"]
+                },
+                data_in = {
+                    "deuxi\u00e8me": [
+                        { uploaded: true,  "\u00e9mail": "result 1" },
+                        { uploaded: false, "\u00e9mail": "result 2" },
+                        { uploaded: true,  "\u00e9mail": "result 3" }
+                    ]
+                },
+                data_out = Y.DataSchema.JSON.apply(schema, data_in);
+                
+                ASSERT.areSame(3, data_out.results.length, "Expected 3 results.");
+                ASSERT.isTrue(data_out.results[0].uploaded, "Expected first result.");
+                ASSERT.areSame("result 3", data_out.results[2]["\u00e9mail"], "Expected first result.");
             },
 
             /*testJSONNestedSchema: function () {

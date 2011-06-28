@@ -7,188 +7,279 @@
  */
 
 /**
- * Adds the following Object utilities to the YUI instance
+ * Adds utilities to the YUI instance for working with objects.
+ *
  * @class Object
  */
 
-/**
- * Y.Object(o) returns a new object based upon the supplied object.
- * @method ()
- * @static
- * @param o the supplier object.
- * @return {Object} the new object.
- */
-var F = function() {},
+var hasOwn = Object.prototype.hasOwnProperty,
 
-// O = Object.create || function(o) {
-//     F.prototype = o;
-//     return new F();
-// },
+// If either MooTools or Prototype is on the page, then there's a chance that we
+// can't trust "native" language features to actually be native. When this is
+// the case, we take the safe route and fall back to our own non-native
+// implementations.
+win           = Y.config.win,
+unsafeNatives = win && !!(win.MooTools || win.Prototype),
 
-O = function(o) {
-    F.prototype = o;
-    return new F();
-},
-
-owns = function(o, k) {
-    return o && o.hasOwnProperty && o.hasOwnProperty(k);
-    // return Object.prototype.hasOwnProperty.call(o, k);
-},
-
-UNDEF,
+UNDEFINED, // <-- Note the comma. We're still declaring vars.
 
 /**
- * Extracts the keys, values, or size from an object
+ * Returns a new object that uses _obj_ as its prototype. This method wraps the
+ * native ES5 `Object.create()` method if available, but doesn't currently
+ * pass through `Object.create()`'s second argument (properties) in order to
+ * ensure compatibility with older browsers.
  *
- * @method _extract
- * @param o the object.
- * @param what what to extract (0: keys, 1: values, 2: size).
- * @return {boolean|Array} the extracted info.
+ * @method ()
+ * @param {Object} obj Prototype object.
+ * @return {Object} New object using _obj_ as its prototype.
  * @static
- * @private
  */
-_extract = function(o, what) {
-    var count = (what === 2), out = (count) ? 0 : [], i;
+O = Y.Object = (!unsafeNatives && Object.create) ? function (obj) {
+    // We currently wrap the native Object.create instead of simply aliasing it
+    // to ensure consistency with our fallback shim, which currently doesn't
+    // support Object.create()'s second argument (properties). Once we have a
+    // safe fallback for the properties arg, we can stop wrapping
+    // Object.create().
+    return Object.create(obj);
+} : (function () {
+    // Reusable constructor function for the Object.create() shim.
+    function F() {}
 
-    for (i in o) {
-        if (owns(o, i)) {
-            if (count) {
-                out++;
-            } else {
-                out.push((what) ? o[i] : i);
+    // The actual shim.
+    return function (obj) {
+        F.prototype = obj;
+        return new F();
+    };
+}()),
+
+/**
+ * Property names that IE doesn't enumerate in for..in loops, even when they
+ * should be enumerable. When `_hasEnumBug` is `true`, it's necessary to
+ * manually enumerate these properties.
+ *
+ * @property _forceEnum
+ * @type String[]
+ * @protected
+ * @static
+ */
+forceEnum = O._forceEnum = [
+    'hasOwnProperty',
+    'isPrototypeOf',
+    'propertyIsEnumerable',
+    'toString',
+    'toLocaleString',
+    'valueOf'
+],
+
+/**
+ * `true` if this browser has the JScript enumeration bug that prevents
+ * enumeration of the properties named in the `_forceEnum` array, `false`
+ * otherwise.
+ *
+ * See:
+ *   - <https://developer.mozilla.org/en/ECMAScript_DontEnum_attribute#JScript_DontEnum_Bug>
+ *   - <http://whattheheadsaid.com/2010/10/a-safer-object-keys-compatibility-implementation>
+ *
+ * @property _hasEnumBug
+ * @type {Boolean}
+ * @protected
+ * @static
+ */
+hasEnumBug = O._hasEnumBug = !{valueOf: 0}.propertyIsEnumerable('valueOf'),
+
+/**
+ * Returns `true` if _key_ exists on _obj_, `false` if _key_ doesn't exist or
+ * exists only on _obj_'s prototype. This is essentially a safer version of
+ * `obj.hasOwnProperty()`.
+ *
+ * @method owns
+ * @param {Object} obj Object to test.
+ * @param {String} key Property name to look for.
+ * @return {Boolean} `true` if _key_ exists on _obj_, `false` otherwise.
+ * @static
+ */
+owns = O.owns = function (obj, key) {
+    return !!obj && hasOwn.call(obj, key);
+}; // <-- End of var declarations.
+
+/**
+ * Alias for `owns()`.
+ *
+ * @method hasKey
+ * @param {Object} obj Object to test.
+ * @param {String} key Property name to look for.
+ * @return {Boolean} `true` if _key_ exists on _obj_, `false` otherwise.
+ * @static
+ */
+O.hasKey = owns;
+
+/**
+ * Returns an array containing the object's enumerable keys. Does not include
+ * prototype keys or non-enumerable keys.
+ *
+ * Note that keys are returned in enumeration order (that is, in the same order
+ * that they would be enumerated by a `for-in` loop), which may not be the same
+ * as the order in which they were defined.
+ *
+ * This method is an alias for the native ES5 `Object.keys()` method if
+ * available.
+ *
+ * @example
+ *
+ *     Y.Object.keys({a: 'foo', b: 'bar', c: 'baz'});
+ *     // => ['a', 'b', 'c']
+ *
+ * @method keys
+ * @param {Object} obj An object.
+ * @return {String[]} Array of keys.
+ * @static
+ */
+O.keys = (!unsafeNatives && Object.keys) || function (obj) {
+    if (!Y.Lang.isObject(obj)) {
+        throw new TypeError('Object.keys called on a non-object');
+    }
+
+    var keys = [],
+        i, key, len;
+
+    for (key in obj) {
+        if (owns(obj, key)) {
+            keys.push(key);
+        }
+    }
+
+    if (hasEnumBug) {
+        for (i = 0, len = forceEnum.length; i < len; ++i) {
+            key = forceEnum[i];
+
+            if (owns(obj, key)) {
+                keys.push(key);
             }
         }
     }
 
-    return out;
-};
-
-Y.Object = O;
-
-/**
- * Returns an array containing the object's keys
- * @method keys
- * @static
- * @param o an object.
- * @return {string[]} the keys.
- */
-// O.keys = Object.keys || function(o) {
-//     return _extract(o);
-// };
-
-O.keys = function(o) {
-    return _extract(o);
+    return keys;
 };
 
 /**
- * Returns an array containing the object's values
- * @method values
- * @static
- * @param o an object.
- * @return {Array} the values.
- */
-// O.values = Object.values || function(o) {
-//     return _extract(o, 1);
-// };
-
-O.values = function(o) {
-    return _extract(o, 1);
-};
-
-/**
- * Returns the size of an object
- * @method size
- * @static
- * @param o an object.
- * @return {int} the size.
- */
-O.size = Object.size || function(o) {
-    return _extract(o, 2);
-};
-
-/**
- * Returns true if the object contains a given key
- * @method hasKey
- * @static
- * @param o an object.
- * @param k the key to query.
- * @return {boolean} true if the object contains the key.
- */
-O.hasKey = owns;
-/**
- * Returns true if the object contains a given value
- * @method hasValue
- * @static
- * @param o an object.
- * @param v the value to query.
- * @return {boolean} true if the object contains the value.
- */
-O.hasValue = function(o, v) {
-    return (Y.Array.indexOf(O.values(o), v) > -1);
-};
-
-/**
- * Determines whether or not the property was added
- * to the object instance.  Returns false if the property is not present
- * in the object, or was inherited from the prototype.
+ * Returns an array containing the values of the object's enumerable keys.
  *
- * @method owns
+ * Note that values are returned in enumeration order (that is, in the same
+ * order that they would be enumerated by a `for-in` loop), which may not be the
+ * same as the order in which they were defined.
+ *
+ * @example
+ *
+ *     Y.Object.values({a: 'foo', b: 'bar', c: 'baz'});
+ *     // => ['foo', 'bar', 'baz']
+ *
+ * @method values
+ * @param {Object} obj An object.
+ * @return {Array} Array of values.
  * @static
- * @param o {any} The object being testing.
- * @param p {string} the property to look for.
- * @return {boolean} true if the object has the property on the instance.
  */
-O.owns = owns;
+O.values = function (obj) {
+    var keys   = O.keys(obj),
+        i      = 0,
+        len    = keys.length,
+        values = [];
+
+    for (; i < len; ++i) {
+        values.push(obj[keys[i]]);
+    }
+
+    return values;
+};
 
 /**
- * Executes a function on each item. The function
- * receives the value, the key, and the object
- * as parameters (in that order).
- * @method each
+ * Returns the number of enumerable keys owned by an object.
+ *
+ * @method size
+ * @param {Object} obj An object.
+ * @return {Number} The object's size.
  * @static
- * @param o the object to iterate.
- * @param f {Function} the function to execute on each item. The function
- * receives three arguments: the value, the the key, the full object.
- * @param c the execution context.
- * @param proto {boolean} include proto.
- * @return {YUI} the YUI instance.
  */
-O.each = function(o, f, c, proto) {
-    var s = c || Y, i;
+O.size = function (obj) {
+    return O.keys(obj).length;
+};
 
-    for (i in o) {
-        if (proto || owns(o, i)) {
-            f.call(s, o[i], i, o);
+/**
+ * Returns `true` if the object owns an enumerable property with the specified
+ * value.
+ *
+ * @method hasValue
+ * @param {Object} obj An object.
+ * @param {any} value The value to search for.
+ * @return {Boolean} `true` if _obj_ contains _value_, `false` otherwise.
+ * @static
+ */
+O.hasValue = function (obj, value) {
+    return Y.Array.indexOf(O.values(obj), value) > -1;
+};
+
+/**
+ * Executes a function on each enumerable property in _obj_. The function
+ * receives the value, the key, and the object itself as parameters (in that
+ * order).
+ *
+ * By default, only properties owned by _obj_ are enumerated. To include
+ * prototype properties, set the _proto_ parameter to `true`.
+ *
+ * @method each
+ * @param {Object} obj Object to enumerate.
+ * @param {Function} fn Function to execute on each enumerable property.
+ *   @param {mixed} fn.value Value of the current property.
+ *   @param {String} fn.key Key of the current property.
+ *   @param {Object} fn.obj Object being enumerated.
+ * @param {Object} [thisObj] `this` object to use when calling _fn_.
+ * @param {Boolean} [proto=false] Include prototype properties.
+ * @return {YUI} the YUI instance.
+ * @chainable
+ * @static
+ */
+O.each = function (obj, fn, thisObj, proto) {
+    var key;
+
+    for (key in obj) {
+        if (proto || owns(obj, key)) {
+            fn.call(thisObj || Y, obj[key], key, obj);
         }
     }
+
     return Y;
 };
 
 /**
- * Executes a function on each item, but halts if the
- * function returns true.  The function
- * receives the value, the key, and the object
- * as paramters (in that order).
+ * Executes a function on each enumerable property in _obj_, but halts if the
+ * function returns a truthy value. The function receives the value, the key,
+ * and the object itself as paramters (in that order).
+ *
+ * By default, only properties owned by _obj_ are enumerated. To include
+ * prototype properties, set the _proto_ parameter to `true`.
+ *
  * @method some
+ * @param {Object} obj Object to enumerate.
+ * @param {Function} fn Function to execute on each enumerable property.
+ *   @param {mixed} fn.value Value of the current property.
+ *   @param {String} fn.key Key of the current property.
+ *   @param {Object} fn.obj Object being enumerated.
+ * @param {Object} [thisObj] `this` object to use when calling _fn_.
+ * @param {Boolean} [proto=false] Include prototype properties.
+ * @return {Boolean} `true` if any execution of _fn_ returns a truthy value,
+ *   `false` otherwise.
  * @static
- * @param o the object to iterate.
- * @param f {Function} the function to execute on each item. The function
- * receives three arguments: the value, the the key, the full object.
- * @param c the execution context.
- * @param proto {boolean} include proto.
- * @return {boolean} true if any execution of the function returns true,
- * false otherwise.
  */
-O.some = function(o, f, c, proto) {
-    var s = c || Y, i;
+O.some = function (obj, fn, thisObj, proto) {
+    var key;
 
-    for (i in o) {
-        if (proto || owns(o, i)) {
-            if (f.call(s, o[i], i, o)) {
+    for (key in obj) {
+        if (proto || owns(obj, key)) {
+            if (fn.call(thisObj || Y, obj[key], key, obj)) {
                 return true;
             }
         }
     }
+
     return false;
 };
 
@@ -207,14 +298,14 @@ O.some = function(o, f, c, proto) {
  */
 O.getValue = function(o, path) {
     if (!Y.Lang.isObject(o)) {
-        return UNDEF;
+        return UNDEFINED;
     }
 
     var i,
         p = Y.Array(path),
         l = p.length;
 
-    for (i = 0; o !== UNDEF && i < l; i++) {
+    for (i = 0; o !== UNDEFINED && i < l; i++) {
         o = o[p[i]];
     }
 
@@ -242,14 +333,14 @@ O.setValue = function(o, path, val) {
         ref = o;
 
     if (leafIdx >= 0) {
-        for (i = 0; ref !== UNDEF && i < leafIdx; i++) {
+        for (i = 0; ref !== UNDEFINED && i < leafIdx; i++) {
             ref = ref[p[i]];
         }
 
-        if (ref !== UNDEF) {
+        if (ref !== UNDEFINED) {
             ref[p[i]] = val;
         } else {
-            return UNDEF;
+            return UNDEFINED;
         }
     }
 
@@ -257,17 +348,14 @@ O.setValue = function(o, path, val) {
 };
 
 /**
- * Returns true if the object has no properties of its own
+ * Returns `true` if the object has no enumerable properties of its own.
+ *
  * @method isEmpty
+ * @param {Object} obj An object.
+ * @return {Boolean} `true` if the object is empty.
  * @static
- * @return {boolean} true if the object is empty.
  * @since 3.2.0
  */
-O.isEmpty = function(o) {
-    for (var i in o) {
-        if (owns(o, i)) {
-            return false;
-        }
-    }
-    return true;
+O.isEmpty = function (obj) {
+    return !O.keys(obj).length;
 };

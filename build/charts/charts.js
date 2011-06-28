@@ -1,3546 +1,11 @@
 YUI.add('charts', function(Y) {
 
-/**
- * The Charts widget provides an api for displaying data
- * graphically.
- *
- * @module charts
- */
-var ISCHROME = Y.UA.chrome,
-    DRAWINGAPI,
-    canvas = document.createElement("canvas");
-if(document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"))
-{
-    DRAWINGAPI = "svg";
-}
-else if(canvas && canvas.getContext && canvas.getContext("2d"))
-{
-    DRAWINGAPI = "canvas";
-}
-else
-{
-    DRAWINGAPI = "vml";
-}
+var DOCUMENT = Y.config.doc,
+    LeftAxisLayout,
+    RightAxisLayout,
+    BottomAxisLayout,
+    TopAxisLayout;
 
-/**
- * Graphic is a simple drawing api that allows for basic drawing operations.
- *
- * @class Graphic
- * @constructor
- */
-var Graphic = function(config) {
-    
-    this.initializer.apply(this, arguments);
-};
-
-Graphic.prototype = {
-    /**
-     * Indicates whether or not the instance will size itself based on its contents.
-     *
-     * @property autoSize 
-     * @type String
-     */
-    autoSize: true,
-
-    /**
-     * Initializes the class.
-     *
-     * @method initializer
-     * @private
-     */
-    initializer: function(config) {
-        config = config || {};
-        var w = config.width || 0,
-            h = config.height || 0;
-        if(config.node)
-        {
-            this.node = config.node;
-            this._styleGroup(this.node);
-        }
-        else
-        {
-            this.node = this._createGraphics();
-            this.setSize(w, h);
-        }
-        this._initProps();
-    },
-
-    /** 
-     * Specifies a bitmap fill used by subsequent calls to other drawing methods.
-     * 
-     * @method beginBitmapFill
-     * @param {Object} config
-     */
-    beginBitmapFill: function(config) {
-       
-        var fill = {};
-        fill.src = config.bitmap.src;
-        fill.type = "tile";
-        this._fillProps = fill;
-        if(!isNaN(config.tx) ||
-            !isNaN(config.ty) ||
-            !isNaN(config.width) ||
-            !isNaN(config.height))
-        {
-            this._gradientBox = {
-                tx:config.tx,
-                ty:config.ty,
-                width:config.width,
-                height:config.height
-            };
-        }
-        else
-        {
-            this._gradientBox = null;
-        }
-    },
-
-    /**
-     * Specifes a solid fill used by subsequent calls to other drawing methods.
-     *
-     * @method beginFill
-     * @param {String} color Hex color value for the fill.
-     * @param {Number} alpha Value between 0 and 1 used to specify the opacity of the fill.
-     */
-    beginFill: function(color, alpha) {
-        if (color) {
-            this._fillAlpha = Y.Lang.isNumber(alpha) ? alpha : 1;
-            this._fillColor = color;
-            this._fillType = 'solid';
-            this._fill = 1;
-        }
-        return this;
-    },
-    
-    /** 
-     * Specifies a gradient fill used by subsequent calls to other drawing methods.
-     *
-     * @method beginGradientFill
-     * @param {Object} config
-     */
-    beginGradientFill: function(config) {
-        var alphas = config.alphas || [];
-        if(!this._defs)
-        {
-            this._defs = this._createGraphicNode("defs");
-            this.node.appendChild(this._defs);
-        }
-        this._fillAlphas = alphas;
-        this._fillColors = config.colors;
-        this._fillType =  config.type || "linear";
-        this._fillRatios = config.ratios || [];
-        this._fillRotation = config.rotation || 0;
-        this._fillWidth = config.width || null;
-        this._fillHeight = config.height || null;
-        this._fillX = !isNaN(config.tx) ? config.tx : NaN;
-        this._fillY = !isNaN(config.ty) ? config.ty : NaN;
-        this._gradientId = "lg" + Math.round(100000 * Math.random());
-        return this;
-    },
-
-    /**
-     * Removes all nodes.
-     *
-     * @method destroy
-     */
-    destroy: function()
-    {
-        this._removeChildren(this.node);
-        if(this.node && this.node.parentNode)
-        {
-            this.node.parentNode.removeChild(this.node);
-        }
-    },
-    
-    /**
-     * Removes all child nodes.
-     *
-     * @method _removeChildren
-     * @param {HTMLElement} node
-     * @private
-     */
-    _removeChildren: function(node)
-    {
-        if(node.hasChildNodes())
-        {
-            var child;
-            while(node.firstChild)
-            {
-                child = node.firstChild;
-                this._removeChildren(child);
-                node.removeChild(child);
-            }
-        }
-    },
-
-    /**
-     * Shows and and hides a the graphic instance.
-     *
-     * @method toggleVisible
-     * @param val {Boolean} indicates whether the instance should be visible.
-     */
-    toggleVisible: function(val)
-    {
-        this._toggleVisible(this.node, val);
-    },
-
-    /**
-     * Toggles visibility
-     *
-     * @method _toggleVisible
-     * @param {HTMLElement} node element to toggle
-     * @param {Boolean} val indicates visibilitye
-     * @private
-     */
-    _toggleVisible: function(node, val)
-    {
-        var children = Y.Selector.query(">/*", node),
-            visibility = val ? "visible" : "hidden",
-            i = 0,
-            len;
-        if(children)
-        {
-            len = children.length;
-            for(; i < len; ++i)
-            {
-                this._toggleVisible(children[i], val);
-            }
-        }
-        node.style.visibility = visibility;
-    },
-
-    /**
-     * Clears the graphics object.
-     *
-     * @method clear
-     */
-    clear: function() {
-        if(this._graphicsList)
-        {
-            while(this._graphicsList.length > 0)
-            {
-                this.node.removeChild(this._graphicsList.shift());
-            }
-        }
-        this.path = '';
-    },
-
-    /**
-     * Draws a bezier curve.
-     *
-     * @method curveTo
-     * @param {Number} cp1x x-coordinate for the first control point.
-     * @param {Number} cp1y y-coordinate for the first control point.
-     * @param {Number} cp2x x-coordinate for the second control point.
-     * @param {Number} cp2y y-coordinate for the second control point.
-     * @param {Number} x x-coordinate for the end point.
-     * @param {Number} y y-coordinate for the end point.
-     */
-    curveTo: function(cp1x, cp1y, cp2x, cp2y, x, y) {
-        this._shapeType = "path";
-        if(this.path.indexOf("C") < 0 || this._pathType !== "C")
-        {
-            this._pathType = "C";
-            this.path += ' C';
-        }
-        this.path += Math.round(cp1x) + ", " + Math.round(cp1y) + ", " + Math.round(cp2x) + ", " + Math.round(cp2y) + ", " + x + ", " + y + " ";
-        this._trackSize(x, y);
-    },
-
-    /**
-     * Draws a quadratic bezier curve.
-     *
-     * @method quadraticCurveTo
-     * @param {Number} cpx x-coordinate for the control point.
-     * @param {Number} cpy y-coordinate for the control point.
-     * @param {Number} x x-coordinate for the end point.
-     * @param {Number} y y-coordinate for the end point.
-     */
-    quadraticCurveTo: function(cpx, cpy, x, y) {
-        if(this.path.indexOf("Q") < 0 || this._pathType !== "Q")
-        {
-            this._pathType = "Q";
-            this.path += " Q";
-        }
-        this.path +=  Math.round(cpx) + " " + Math.round(cpy) + " " + Math.round(x) + " " + Math.round(y);
-    },
-
-    /**
-     * Draws a circle.
-     *
-     * @method drawCircle
-     * @param {Number} x y-coordinate
-     * @param {Number} y x-coordinate
-     * @param {Number} r radius
-     */
-	drawCircle: function(x, y, r) {
-        this._shape = {
-            x:x - r,
-            y:y - r,
-            w:r * 2,
-            h:r * 2
-        };
-        this._attributes = {cx:x, cy:y, r:r};
-        this._width = this._height = r * 2;
-        this._x = x - r;
-        this._y = y - r;
-        this._shapeType = "circle";
-        this._draw();
-	},
-
-    /**
-     * Draws an ellipse.
-     *
-     * @method drawEllipse
-     * @param {Number} x x-coordinate
-     * @param {Number} y y-coordinate
-     * @param {Number} w width
-     * @param {Number} h height
-     */
-    drawEllipse: function(x, y, w, h) {
-        this._shape = {
-            x:x,
-            y:y,
-            w:w,
-            h:h
-        };
-        this._width = w;
-        this._height = h;
-        this._x = x;
-        this._y = y;
-        this._shapeType = "ellipse";
-        this._draw();
-    },
-
-    /**
-     * Draws a rectangle.
-     *
-     * @method drawRect
-     * @param {Number} x x-coordinate
-     * @param {Number} y y-coordinate
-     * @param {Number} w width
-     * @param {Number} h height
-     */
-    drawRect: function(x, y, w, h) {
-        this._shape = {
-            x:x,
-            y:y,
-            w:w,
-            h:h
-        };
-        this._x = x;
-        this._y = y;
-        this._width = w;
-        this._height = h;
-        this.moveTo(x, y);
-        this.lineTo(x + w, y);
-        this.lineTo(x + w, y + h);
-        this.lineTo(x, y + h);
-        this.lineTo(x, y);
-        this._draw();
-    },
-
-    /**
-     * Draws a rectangle with rounded corners.
-     * 
-     * @method drawRect
-     * @param {Number} x x-coordinate
-     * @param {Number} y y-coordinate
-     * @param {Number} w width
-     * @param {Number} h height
-     * @param {Number} ew width of the ellipse used to draw the rounded corners
-     * @param {Number} eh height of the ellipse used to draw the rounded corners
-     */
-    drawRoundRect: function(x, y, w, h, ew, eh) {
-        this._shape = {
-            x:x,
-            y:y,
-            w:w,
-            h:h
-        };
-        this._x = x;
-        this._y = y;
-        this._width = w;
-        this._height = h;
-        this.moveTo(x, y + eh);
-        this.lineTo(x, y + h - eh);
-        this.quadraticCurveTo(x, y + h, x + ew, y + h);
-        this.lineTo(x + w - ew, y + h);
-        this.quadraticCurveTo(x + w, y + h, x + w, y + h - eh);
-        this.lineTo(x + w, y + eh);
-        this.quadraticCurveTo(x + w, y, x + w - ew, y);
-        this.lineTo(x + ew, y);
-        this.quadraticCurveTo(x, y, x, y + eh);
-        this._draw();
-	},
-
-    /**
-     * Draws a wedge.
-     * 
-     * @param {Number} x			x-coordinate of the wedge's center point
-     * @param {Number} y			y-coordinate of the wedge's center point
-     * @param {Number} startAngle	starting angle in degrees
-     * @param {Number} arc			sweep of the wedge. Negative values draw clockwise.
-     * @param {Number} radius		radius of wedge. If [optional] yRadius is defined, then radius is the x radius.
-     * @param {Number} yRadius		[optional] y radius for wedge.
-     */
-    drawWedge: function(x, y, startAngle, arc, radius, yRadius)
-    {
-        this._drawingComplete = false;
-        this.path = this._getWedgePath({x:x, y:y, startAngle:startAngle, arc:arc, radius:radius, yRadius:yRadius});
-        this._width = radius * 2;
-        this._height = this._width;
-        this._shapeType = "path";
-        this._draw();
-
-    },
-
-    /**
-     * Completes a drawing operation. 
-     *
-     * @method end
-     */
-    end: function() {
-        if(this._shapeType)
-        {
-            this._draw();
-        }
-        this._initProps();
-    },
-
-    /**
-     * Specifies a gradient to use for the stroke when drawing lines.
-     * Not implemented
-     *
-     * @method lineGradientStyle
-     * @private
-     */
-    lineGradientStyle: function() {
-    },
-     
-    /**
-     * Specifies a line style used for subsequent calls to drawing methods.
-     * 
-     * @method lineStyle
-     * @param {Number} thickness indicates the thickness of the line
-     * @param {String} color hex color value for the line
-     * @param {Number} alpha Value between 0 and 1 used to specify the opacity of the fill.
-     */
-    lineStyle: function(thickness, color, alpha, pixelHinting, scaleMode, caps, joints, miterLimit) {
-        this._stroke = 1;
-        this._strokeWeight = thickness;
-        if (color) {
-            this._strokeColor = color;
-        }
-        this._strokeAlpha = Y.Lang.isNumber(alpha) ? alpha : 1;
-    },
-    
-    /**
-     * Draws a line segment using the current line style from the current drawing position to the specified x and y coordinates.
-     * 
-     * @method lineTo
-     * @param {Number} point1 x-coordinate for the end point.
-     * @param {Number} point2 y-coordinate for the end point.
-     */
-    lineTo: function(point1, point2, etc) {
-        var args = arguments,
-            i,
-            len;
-        if (typeof point1 === 'string' || typeof point1 === 'number') {
-            args = [[point1, point2]];
-        }
-        len = args.length;
-        this._shapeType = "path";
-        if(this.path.indexOf("L") < 0 || this._pathType !== "L")
-        {
-            this._pathType = "L";
-            this.path += ' L';
-        }
-        for (i = 0; i < len; ++i) {
-            this.path += args[i][0] + ', ' + args[i][1] + " ";
-
-            this._trackSize.apply(this, args[i]);
-        }
-    },
-
-    /**
-     * Moves the current drawing position to specified x and y coordinates.
-     *
-     * @method moveTo
-     * @param {Number} x x-coordinate for the end point.
-     * @param {Number} y y-coordinate for the end point.
-     */
-    moveTo: function(x, y) {
-        this._pathType = "M";
-        this.path += ' M' + x + ', ' + y;
-    },
-
-    /**
-     * Generates a path string for a wedge shape
-     *
-     * @method _getWedgePath
-     * @param {Object} config attributes used to create the path
-     * @return String
-     * @private
-     */
-    _getWedgePath: function(config)
-    {
-        var x = config.x,
-            y = config.y,
-            startAngle = config.startAngle,
-            arc = config.arc,
-            radius = config.radius,
-            yRadius = config.yRadius || radius,
-            segs,
-            segAngle,
-            theta,
-            angle,
-            angleMid,
-            ax,
-            ay,
-            bx,
-            by,
-            cx,
-            cy,
-            i = 0,
-            path = ' M' + x + ', ' + y;  
-        
-        // limit sweep to reasonable numbers
-        if(Math.abs(arc) > 360)
-        {
-            arc = 360;
-        }
-        
-        // First we calculate how many segments are needed
-        // for a smooth arc.
-        segs = Math.ceil(Math.abs(arc) / 45);
-        
-        // Now calculate the sweep of each segment.
-        segAngle = arc / segs;
-        
-        // The math requires radians rather than degrees. To convert from degrees
-        // use the formula (degrees/180)*Math.PI to get radians.
-        theta = -(segAngle / 180) * Math.PI;
-        
-        // convert angle startAngle to radians
-        angle = (startAngle / 180) * Math.PI;
-        if(segs > 0)
-        {
-            // draw a line from the center to the start of the curve
-            ax = x + Math.cos(startAngle / 180 * Math.PI) * radius;
-            ay = y + Math.sin(startAngle / 180 * Math.PI) * yRadius;
-            path += " L" + Math.round(ax) + ", " +  Math.round(ay);
-            path += " Q";
-            for(; i < segs; ++i)
-            {
-                angle += theta;
-                angleMid = angle - (theta / 2);
-                bx = x + Math.cos(angle) * radius;
-                by = y + Math.sin(angle) * yRadius;
-                cx = x + Math.cos(angleMid) * (radius / Math.cos(theta / 2));
-                cy = y + Math.sin(angleMid) * (yRadius / Math.cos(theta / 2));
-                path +=  Math.round(cx) + " " + Math.round(cy) + " " + Math.round(bx) + " " + Math.round(by) + " ";
-            }
-            path += ' L' + x + ", " + y;
-        }
-        return path;
-    },
-
-    /**
-     * Sets the size of the graphics object.
-     * 
-     * @method setSize
-     * @param w {Number} width to set for the instance.
-     * @param h {Number} height to set for the instance.
-     */
-    setSize: function(w, h) {
-        if(this.autoSize)
-        {
-            if(w > this.node.getAttribute("width"))
-            {
-                this.node.setAttribute("width",  w);
-            }
-            if(h > this.node.getAttribute("height"))
-            {
-                this.node.setAttribute("height", h);
-            }
-        }
-    },
-
-    /**
-     * Updates the size of the graphics object
-     *
-     * @method _trackSize
-     * @param {Number} w width
-     * @param {Number} h height
-     * @private
-     */
-    _trackSize: function(w, h) {
-        if (w > this._width) {
-            this._width = w;
-        }
-        if (h > this._height) {
-            this._height = h;
-        }
-        this.setSize(w, h);
-    },
-
-    /**
-     * Sets the positon of the graphics object.
-     *
-     * @method setPosition
-     * @param {Number} x x-coordinate for the object.
-     * @param {Number} y y-coordinate for the object.
-     */
-    setPosition: function(x, y)
-    {
-        this.node.setAttribute("x", x);
-        this.node.setAttribute("y", y);
-    },
-
-    /**
-     * Adds the graphics node to the dom.
-     * 
-     * @method render
-     * @param {HTMLElement} parentNode node in which to render the graphics node into.
-     */
-    render: function(parentNode) {
-        var w = parentNode.get("width") || parentNode.get("offsetWidth"),
-            h = parentNode.get("height") || parentNode.get("offsetHeight");
-        parentNode = parentNode || Y.config.doc.body;
-        parentNode.appendChild(this.node);
-        this.setSize(w, h);
-        this._initProps();
-        return this;
-    },
-
-    /**
-     * Clears the properties
-     *
-     * @method _initProps
-     * @private
-     */
-    _initProps: function() {
-        this._shape = null;
-        this._fillColor = null;
-        this._strokeColor = null;
-        this._strokeWeight = 0;
-        this._fillProps = null;
-        this._fillAlphas = null;
-        this._fillColors = null;
-        this._fillType =  null;
-        this._fillRatios = null;
-        this._fillRotation = null;
-        this._fillWidth = null;
-        this._fillHeight = null;
-        this._fillX = NaN;
-        this._fillY = NaN;
-        this.path = '';
-        this._width = 0;
-        this._height = 0;
-        this._x = 0;
-        this._y = 0;
-        this._fill = null;
-        this._stroke = 0;
-        this._stroked = false;
-        this._pathType = null;
-        this._attributes = {};
-    },
-
-    /**
-     * Clears path properties
-     * 
-     * @method _clearPath
-     * @private
-     */
-    _clearPath: function()
-    {
-        this._shape = null;
-        this._shapeType = null;
-        this.path = '';
-        this._width = 0;
-        this._height = 0;
-        this._x = 0;
-        this._y = 0;
-        this._pathType = null;
-        this._attributes = {};
-    },
-
-    /**
-     * Completes a shape
-     *
-     * @method _draw
-     * @private 
-     */
-    _draw: function()
-    {
-        var shape = this._createGraphicNode(this._shapeType),
-            i,
-            gradFill;
-        if(this.path)
-        {
-            if(this._fill)
-            {
-                this.path += 'z';
-            }
-            shape.setAttribute("d", this.path);
-        }
-        else
-        {
-            for(i in this._attributes)
-            {
-                if(this._attributes.hasOwnProperty(i))
-                {
-                    shape.setAttribute(i, this._attributes[i]);
-                }
-            }
-        }
-        shape.setAttribute("stroke-width",  this._strokeWeight);
-        if(this._strokeColor)
-        {
-            shape.setAttribute("stroke", this._strokeColor);
-            shape.setAttribute("stroke-opacity", this._strokeAlpha);
-        }
-        if(!this._fillType || this._fillType === "solid")
-        {
-            if(this._fillColor)
-            {
-               shape.setAttribute("fill", this._fillColor);
-               shape.setAttribute("fill-opacity", this._fillAlpha);
-            }
-            else
-            {
-                shape.setAttribute("fill", "none");
-            }
-        }
-        else if(this._fillType === "linear")
-        {
-            gradFill = this._getFill();
-            gradFill.setAttribute("id", this._gradientId);
-            this._defs.appendChild(gradFill);
-            shape.setAttribute("fill", "url(#" + this._gradientId + ")");
-
-        }
-        this.node.appendChild(shape);
-        this._clearPath();
-    },
-
-    /**
-     * Returns ths actual fill object to be used in a drawing or shape
-     *
-     * @method _getFill
-     * @private
-     */
-    _getFill: function() {
-        var type = this._fillType,
-            fill;
-
-        switch (type) {
-            case 'linear': 
-                fill = this._getLinearGradient('fill');
-                break;
-            case 'radial': 
-                //fill = this._getRadialGradient('fill');
-                break;
-            case 'bitmap':
-                //fill = this._bitmapFill;
-                break;
-        }
-        return fill;
-    },
-
-    /**
-     * Returns a linear gradient fill
-     *
-     * @method _getLinearGradient
-     * @param {String} type gradient type
-     * @private
-     */
-    _getLinearGradient: function(type) {
-        var fill = this._createGraphicNode("linearGradient"),
-            prop = '_' + type,
-            colors = this[prop + 'Colors'],
-            ratios = this[prop + 'Ratios'],
-            alphas = this[prop + 'Alphas'],
-            w = this._fillWidth || (this._shape.w),
-            h = this._fillHeight || (this._shape.h),
-            r = this[prop + 'Rotation'],
-            i,
-            l,
-            color,
-            ratio,
-            alpha,
-            def,
-            stop,
-            x1, x2, y1, y2,
-            cx = w/2,
-            cy = h/2,
-            radCon,
-            tanRadians;
-        /*
-        if(r > 0 && r < 90)
-        {
-            r *= h/w;
-        }
-        else if(r > 90 && r < 180)
-        {
-
-            r =  90 + ((r-90) * w/h);
-        }
-*/
-        radCon = Math.PI/180;
-        tanRadians = parseFloat(parseFloat(Math.tan(r * radCon)).toFixed(8));
-        if(Math.abs(tanRadians) * w/2 >= h/2)
-        {
-            if(r < 180)
-            {
-                y1 = 0;
-                y2 = h;
-            }
-            else
-            {
-                y1 = h;
-                y2 = 0;
-            }
-            x1 = cx - ((cy - y1)/tanRadians);
-            x2 = cx - ((cy - y2)/tanRadians); 
-        }
-        else
-        {
-            if(r > 90 && r < 270)
-            {
-                x1 = w;
-                x2 = 0;
-            }
-            else
-            {
-                x1 = 0;
-                x2 = w;
-            }
-            y1 = ((tanRadians * (cx - x1)) - cy) * -1;
-            y2 = ((tanRadians * (cx - x2)) - cy) * -1;
-        }
-        /*
-        fill.setAttribute("spreadMethod", "pad");
-        
-        fill.setAttribute("x1", Math.round(100 * x1/w) + "%");
-        fill.setAttribute("y1", Math.round(100 * y1/h) + "%");
-        fill.setAttribute("x2", Math.round(100 * x2/w) + "%");
-        fill.setAttribute("y2", Math.round(100 * y2/h) + "%");
-        */
-        fill.setAttribute("gradientTransform", "rotate(" + r + ")");//," + (w/2) + ", " + (h/2) + ")");
-        fill.setAttribute("width", w);
-        fill.setAttribute("height", h);
-        fill.setAttribute("gradientUnits", "userSpaceOnUse");
-        l = colors.length;
-        def = 0;
-        for(i = 0; i < l; ++i)
-        {
-            alpha = alphas[i];
-            color = colors[i];
-            ratio = ratios[i] || i/(l - 1);
-            ratio = Math.round(ratio * 100) + "%";
-            alpha = Y.Lang.isNumber(alpha) ? alpha : "1";
-            def = (i + 1) / l;
-            stop = this._createGraphicNode("stop");
-            stop.setAttribute("offset", ratio);
-            stop.setAttribute("stop-color", color);
-            stop.setAttribute("stop-opacity", alpha);
-            fill.appendChild(stop);
-        }
-        return fill;
-    },
-
-    /**
-     * Creates a group element
-     *
-     * @method _createGraphics
-     * @private
-     */
-    _createGraphics: function() {
-        var group = this._createGraphicNode("svg");
-        this._styleGroup(group);
-        return group;
-    },
-
-    /**
-     * Styles a group element
-     *
-     * @method _styleGroup
-     * @private
-     */
-    _styleGroup: function(group)
-    {
-        group.style.position = "absolute";
-        group.style.top = "0px";
-        group.style.overflow = "visible";
-        group.style.left = "0px";
-        group.setAttribute("pointer-events", "none");
-    },
-
-    /**
-     * Creates a graphic node
-     *
-     * @method _createGraphicNode
-     * @param {String} type node type to create
-     * @param {String} pe specified pointer-events value
-     * @return HTMLElement
-     * @private
-     */
-    _createGraphicNode: function(type, pe)
-    {
-        var node = document.createElementNS("http://www.w3.org/2000/svg", "svg:" + type),
-            v = pe || "none";
-        if(type !== "defs" && type !== "stop" && type !== "linearGradient")
-        {
-            node.setAttribute("pointer-events", v);
-        }
-        if(type != "svg")
-        {
-            if(!this._graphicsList)
-            {
-                this._graphicsList = [];
-            }
-            this._graphicsList.push(node);
-        }
-        return node;
-    },
-
-    /**
-     * Creates a Shape instance and adds it to the graphics object.
-     *
-     * @method getShape
-     * @param {Object} config Object literal of properties used to construct a Shape.
-     * @return Shape
-     */
-    getShape: function(config) {
-        config.graphic = this;
-        return new Y.Shape(config); 
-    }
-
-};
-Y.Graphic = Graphic;
-
-/**
- * Set of drawing apis for canvas based classes.
- *
- * @class CanvasDrawingUtil
- * @constructor
- */
-function CanvasDrawingUtil()
-{
-    this.initializer.apply(this, arguments);
-}
-
-CanvasDrawingUtil.prototype = {
-    /**
-     * Initializes the class.
-     *
-     * @method initializer
-     * @private
-     */
-    initializer: function(config) {
-        this._dummy = this._createDummy();
-        this._canvas = this._createGraphic();
-        this._context = this._canvas.getContext('2d');
-        this._initProps();
-    },
-
-    /** 
-     * Specifies a bitmap fill used by subsequent calls to other drawing methods.
-     * 
-     * @method beginBitmapFill
-     * @param {Object} config
-     */
-    beginBitmapFill: function(config) {
-        var context = this._context,
-            bitmap = config.bitmap,
-            repeat = config.repeat || 'repeat';
-        this._fillWidth = config.width || null;
-        this._fillHeight = config.height || null;
-        this._fillX = !isNaN(config.tx) ? config.tx : NaN;
-        this._fillY = !isNaN(config.ty) ? config.ty : NaN;
-        this._fillType =  'bitmap';
-        this._bitmapFill = context.createPattern(bitmap, repeat);
-        return this;
-    },
-
-    /**
-     * Specifes a solid fill used by subsequent calls to other drawing methods.
-     *
-     * @method beginFill
-     * @param {String} color Hex color value for the fill.
-     * @param {Number} alpha Value between 0 and 1 used to specify the opacity of the fill.
-     */
-    beginFill: function(color, alpha) {
-        var context = this._context;
-        context.beginPath();
-        if (color) {
-            if (alpha) {
-               color = this._2RGBA(color, alpha);
-            } else {
-                color = this._2RGB(color);
-            }
-
-            this._fillColor = color;
-            this._fillType = 'solid';
-        }
-        return this;
-    },
-
-    /** 
-     * Specifies a gradient fill used by subsequent calls to other drawing methods.
-     *
-     * @method beginGradientFill
-     * @param {Object} config
-     */
-    beginGradientFill: function(config) {
-        var color,
-            alpha,
-            i = 0,
-            colors = config.colors,
-            alphas = config.alphas || [],
-            len = colors.length;
-        this._fillAlphas = alphas;
-        this._fillColors = colors;
-        this._fillType =  config.type || "linear";
-        this._fillRatios = config.ratios || [];
-        this._fillRotation = config.rotation || 0;
-        this._fillWidth = config.width || null;
-        this._fillHeight = config.height || null;
-        this._fillX = !isNaN(config.tx) ? config.tx : NaN;
-        this._fillY = !isNaN(config.ty) ? config.ty : NaN;
-        for(;i < len; ++i)
-        {
-            alpha = alphas[i];
-            color = colors[i];
-            if (alpha) {
-               color = this._2RGBA(color, alpha);
-            } else {
-                color = this._2RGB(color);
-            }
-            colors[i] = color;
-        }
-        this._context.beginPath();
-        return this;
-    },
-    
-    /**
-     * Specifies a line style used for subsequent calls to drawing methods.
-     * 
-     * @method lineStyle
-     * @param {Number} thickness indicates the thickness of the line
-     * @param {String} color hex color value for the line
-     * @param {Number} alpha Value between 0 and 1 used to specify the opacity of the fill.
-     */
-    lineStyle: function(thickness, color, alpha, pixelHinting, scaleMode, caps, joints, miterLimit) {
-        color = color || '#000000';
-        var context = this._context;
-        if(this._stroke)
-        {
-            context.stroke();
-        }
-        context.lineWidth = thickness;
-
-        if (thickness) {
-            this._stroke = 1;
-        } else {
-            this._stroke = 0;
-        }
-
-        if (color) {
-            this._strokeStyle = color;
-            if (alpha) {
-                this._strokeStyle = this._2RGBA(this._strokeStyle, alpha);
-            }
-        }
-        
-        if(!this._fill)
-        {
-            context.beginPath();
-        }
-
-        if (caps === 'butt') {
-            caps = 'none';
-        }
-        
-        if (context.lineCap) { // FF errors when trying to set
-            //context.lineCap = caps;
-        }
-        this._drawingComplete = false;
-        return this;
-    },
-
-    /**
-     * Draws a line segment using the current line style from the current drawing position to the specified x and y coordinates.
-     * 
-     * @method lineTo
-     * @param {Number} point1 x-coordinate for the end point.
-     * @param {Number} point2 y-coordinate for the end point.
-     */
-    lineTo: function(point1, point2, etc) {
-        var args = arguments, 
-            context = this._context,
-            i, len;
-        if (typeof point1 === 'string' || typeof point1 === 'number') {
-            args = [[point1, point2]];
-        }
-
-        for (i = 0, len = args.length; i < len; ++i) {
-            context.lineTo(args[i][0], args[i][1]);
-            this._updateShapeProps.apply(this, args[i]);
-            this._trackSize.apply(this, args[i]);
-        }
-        this._drawingComplete = false;
-        return this;
-    },
-
-    /**
-     * Moves the current drawing position to specified x and y coordinates.
-     *
-     * @method moveTo
-     * @param {Number} x x-coordinate for the end point.
-     * @param {Number} y y-coordinate for the end point.
-     */
-    moveTo: function(x, y) {
-        this._context.moveTo(x, y);
-        this._trackPos(x, y);
-        this._updateShapeProps(x, y);
-        this._drawingComplete = false;
-        return this;
-    },
-   
-    /**
-     * Clears the graphics object.
-     *
-     * @method clear
-     */
-    clear: function() {
-        this._initProps();
-        this._canvas.width = this._canvas.width;
-        this._canvas.height = this._canvas.height;
-        return this;
-    },
-
-    /**
-     * Draws a bezier curve.
-     *
-     * @method curveTo
-     * @param {Number} cp1x x-coordinate for the first control point.
-     * @param {Number} cp1y y-coordinate for the first control point.
-     * @param {Number} cp2x x-coordinate for the second control point.
-     * @param {Number} cp2y y-coordinate for the second control point.
-     * @param {Number} x x-coordinate for the end point.
-     * @param {Number} y y-coordinate for the end point.
-     */
-    curveTo: function(cp1x, cp1y, cp2x, cp2y, x, y) {
-        this._context.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y);
-        this._drawingComplete = false;
-        this._updateShapeProps(x, y);
-        this._trackSize(x, y);
-        this._trackPos(x, y);
-        return this;
-    },
-
-    /**
-     * Draws a quadratic bezier curve.
-     *
-     * @method quadraticCurveTo
-     * @param {Number} cpx x-coordinate for the control point.
-     * @param {Number} cpy y-coordinate for the control point.
-     * @param {Number} x x-coordinate for the end point.
-     * @param {Number} y y-coordinate for the end point.
-     */
-    quadraticCurveTo: function(controlX, controlY, anchorX, anchorY) {
-        this._context.quadraticCurveTo(controlX, controlY, anchorX, anchorY);
-        this._drawingComplete = false;
-        this._updateShapeProps(anchorX, anchorY);
-        return this;
-    },
-
-    /**
-     * Draws a circle.
-     *
-     * @method drawCircle
-     * @param {Number} x y-coordinate
-     * @param {Number} y x-coordinate
-     * @param {Number} r radius
-     */
-	drawCircle: function(x, y, radius) {
-        var context = this._context,
-            startAngle = 0,
-            endAngle = 2 * Math.PI;
-        this._shape = {
-            x:x - radius,
-            y:y - radius,
-            w:radius * 2,
-            h:radius * 2
-        };
-        this._drawingComplete = false;
-        this._trackPos(x, y);
-        this._trackSize(radius * 2, radius * 2);
-        context.beginPath();
-        context.arc(x, y, radius, startAngle, endAngle, false);
-        this._draw();
-        return this;
-    },
-    
-    /**
-     * Draws an ellipse.
-     *
-     * @method drawEllipse
-     * @param {Number} x x-coordinate
-     * @param {Number} y y-coordinate
-     * @param {Number} w width
-     * @param {Number} h height
-     */
-	drawEllipse: function(x, y, w, h) {
-        this._shape = {
-            x:x,
-            y:y,
-            w:w,
-            h:h
-        };
-        if(this._stroke && this._context.lineWidth > 0)
-        {
-            w -= this._context.lineWidth * 2;
-            h -= this._context.lineWidth * 2;
-            x += this._context.lineWidth;
-            y += this._context.lineWidth;
-        }
-        var context = this._context,
-            l = 8,
-            theta = -(45/180) * Math.PI,
-            angle = 0,
-            angleMid,
-            radius = w/2,
-            yRadius = h/2,
-            i = 0,
-            centerX = x + radius,
-            centerY = y + yRadius,
-            ax, ay, bx, by, cx, cy;
-        this._drawingComplete = false;
-        this._trackPos(x, y);
-        this._trackSize(x + w, y + h);
-
-        context.beginPath();
-        ax = centerX + Math.cos(0) * radius;
-        ay = centerY + Math.sin(0) * yRadius;
-        context.moveTo(ax, ay);
-        
-        for(; i < l; i++)
-        {
-            angle += theta;
-            angleMid = angle - (theta / 2);
-            bx = centerX + Math.cos(angle) * radius;
-            by = centerY + Math.sin(angle) * yRadius;
-            cx = centerX + Math.cos(angleMid) * (radius / Math.cos(theta / 2));
-            cy = centerY + Math.sin(angleMid) * (yRadius / Math.cos(theta / 2));
-            context.quadraticCurveTo(cx, cy, bx, by);
-        }
-        this._draw();
-        return this;
-	},
-
-    /**
-     * Draws a rectangle.
-     *
-     * @method drawRect
-     * @param {Number} x x-coordinate
-     * @param {Number} y y-coordinate
-     * @param {Number} w width
-     * @param {Number} h height
-     */
-    drawRect: function(x, y, w, h) {
-        var ctx = this._context;
-        this._shape = {
-            x:x,
-            y:y,
-            w:w,
-            h:h
-        };
-        this._drawingComplete = false;
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-        ctx.lineTo(x + w, y);
-        ctx.lineTo(x + w, y + h);
-        ctx.lineTo(x, y + h);
-        ctx.lineTo(x, y);
-        this._trackPos(x, y);
-        this._trackSize(w, h);
-        this._draw();
-        return this;
-    },
-
-    /**
-     * Draws a rectangle with rounded corners.
-     * 
-     * @method drawRect
-     * @param {Number} x x-coordinate
-     * @param {Number} y y-coordinate
-     * @param {Number} w width
-     * @param {Number} h height
-     * @param {Number} ew width of the ellipse used to draw the rounded corners
-     * @param {Number} eh height of the ellipse used to draw the rounded corners
-     */
-    drawRoundRect: function(x, y, w, h, ew, eh) {
-        this._shape = {
-            x:x,
-            y:y,
-            w:w,
-            h:h
-        };
-        var ctx = this._context;
-        this._drawingComplete = false;
-        ctx.beginPath();
-        ctx.moveTo(x, y + eh);
-        ctx.lineTo(x, y + h - eh);
-        ctx.quadraticCurveTo(x, y + h, x + ew, y + h);
-        ctx.lineTo(x + w - ew, y + h);
-        ctx.quadraticCurveTo(x + w, y + h, x + w, y + h - eh);
-        ctx.lineTo(x + w, y + eh);
-        ctx.quadraticCurveTo(x + w, y, x + w - ew, y);
-        ctx.lineTo(x + ew, y);
-        ctx.quadraticCurveTo(x, y, x, y + eh);
-        this._trackPos(x, y);
-        this._trackSize(w, h);
-        this._draw();
-        return this;
-    },
-
-    /**
-     * @private
-     * Draws a wedge.
-     * 
-     * @param x				x component of the wedge's center point
-     * @param y				y component of the wedge's center point
-     * @param startAngle	starting angle in degrees
-     * @param arc			sweep of the wedge. Negative values draw clockwise.
-     * @param radius		radius of wedge. If [optional] yRadius is defined, then radius is the x radius.
-     * @param yRadius		[optional] y radius for wedge.
-     */
-    drawWedge: function(cfg)
-    {
-        var x = cfg.x,
-            y = cfg.y, 
-            startAngle = cfg.startAngle, 
-            arc = cfg.arc, 
-            radius = cfg.radius, 
-            yRadius = cfg.yRadius,
-            segs,
-            segAngle,
-            theta,
-            angle,
-            angleMid,
-            ax,
-            ay,
-            bx,
-            by,
-            cx,
-            cy,
-            i = 0;
-
-        this._drawingComplete = false;
-        // move to x,y position
-        this.moveTo(x, y);
-        
-        yRadius = yRadius || radius;
-        
-        // limit sweep to reasonable numbers
-        if(Math.abs(arc) > 360)
-        {
-            arc = 360;
-        }
-        
-        // First we calculate how many segments are needed
-        // for a smooth arc.
-        segs = Math.ceil(Math.abs(arc) / 45);
-        
-        // Now calculate the sweep of each segment.
-        segAngle = arc / segs;
-        
-        // The math requires radians rather than degrees. To convert from degrees
-        // use the formula (degrees/180)*Math.PI to get radians.
-        theta = -(segAngle / 180) * Math.PI;
-        
-        // convert angle startAngle to radians
-        angle = (startAngle / 180) * Math.PI;
-        
-        // draw the curve in segments no larger than 45 degrees.
-        if(segs > 0)
-        {
-            // draw a line from the center to the start of the curve
-            ax = x + Math.cos(startAngle / 180 * Math.PI) * radius;
-            ay = y + Math.sin(startAngle / 180 * Math.PI) * yRadius;
-            this.lineTo(ax, ay);
-            // Loop for drawing curve segments
-            for(; i < segs; ++i)
-            {
-                angle += theta;
-                angleMid = angle - (theta / 2);
-                bx = x + Math.cos(angle) * radius;
-                by = y + Math.sin(angle) * yRadius;
-                cx = x + Math.cos(angleMid) * (radius / Math.cos(theta / 2));
-                cy = y + Math.sin(angleMid) * (yRadius / Math.cos(theta / 2));
-                this.quadraticCurveTo(cx, cy, bx, by);
-            }
-            // close the wedge by drawing a line to the center
-            this.lineTo(x, y);
-        }
-        this._trackPos(x, y);
-        this._trackSize(radius, radius);
-        this._draw();
-    },
-
-    /**
-     * Completes a drawing operation. 
-     *
-     * @method end
-     */
-    end: function() {
-        this._draw();
-        this._initProps();
-        return this;
-    },
-    
-    /**
-     * @private
-     * Not implemented
-     * Specifies a gradient to use for the stroke when drawing lines.
-     */
-    lineGradientStyle: function() {
-        return this;
-    },
-
-    /**
-     * Sets the size of the graphics object.
-     * 
-     * @method setSize
-     * @param w {Number} width to set for the instance.
-     * @param h {Number} height to set for the instance.
-     */
-    setSize: function(w, h)
-    {
-        this._canvas.width = w;
-        this._canvas.height = h;
-    },
-
-    /**
-     * Clears all values
-     *
-     * @method _initProps
-     * @private
-     */
-    _initProps: function() {
-        var context = this._context;
-        
-        context.fillStyle = 'rgba(0, 0, 0, 1)'; // use transparent when no fill
-        context.lineWidth = 1;
-        //context.lineCap = 'butt';
-        context.lineJoin = 'miter';
-        context.miterLimit = 3;
-        this._strokeStyle = 'rgba(0, 0, 0, 1)';
-
-        this._width = 0;
-        this._height = 0;
-        //this._shape = null;
-        this._x = 0;
-        this._y = 0;
-        this._fillType = null;
-        this._stroke = null;
-        this._bitmapFill = null;
-        this._drawingComplete = false;
-    },
-
-    /**
-     * Returns ths actual fill object to be used in a drawing or shape
-     *
-     * @method _getFill
-     * @private
-     */
-    _getFill: function() {
-        var type = this._fillType,
-            fill;
-
-        switch (type) {
-            case 'linear': 
-                fill = this._getLinearGradient('fill');
-                break;
-
-            case 'radial': 
-                fill = this._getRadialGradient('fill');
-                break;
-            case 'bitmap':
-                fill = this._bitmapFill;
-                break;
-            case 'solid': 
-                fill = this._fillColor;
-                break;
-        }
-        return fill;
-    },
-
-    /**
-     * Returns a linear gradient fill
-     *
-     * @method _getLinearGradient
-     * @private
-     */
-    _getLinearGradient: function(type) {
-        var prop = '_' + type,
-            colors = this[prop + 'Colors'],
-            ratios = this[prop + 'Ratios'],
-            x = !isNaN(this._fillX) ? this._fillX : this._shape.x,
-            y = !isNaN(this._fillY) ? this._fillY : this._shape.y,
-            w = this._fillWidth || (this._shape.w),
-            h = this._fillHeight || (this._shape.h),
-            ctx = this._context,
-            r = this[prop + 'Rotation'],
-            i,
-            l,
-            color,
-            ratio,
-            def,
-            grad,
-            x1, x2, y1, y2,
-            cx = x + w/2,
-            cy = y + h/2,
-            radCon = Math.PI/180,
-            tanRadians = parseFloat(parseFloat(Math.tan(r * radCon)).toFixed(8));
-        if(Math.abs(tanRadians) * w/2 >= h/2)
-        {
-            if(r < 180)
-            {
-                y1 = y;
-                y2 = y + h;
-            }
-            else
-            {
-                y1 = y + h;
-                y2 = y;
-            }
-            x1 = cx - ((cy - y1)/tanRadians);
-            x2 = cx - ((cy - y2)/tanRadians); 
-        }
-        else
-        {
-            if(r > 90 && r < 270)
-            {
-                x1 = x + w;
-                x2 = x;
-            }
-            else
-            {
-                x1 = x;
-                x2 = x + w;
-            }
-            y1 = ((tanRadians * (cx - x1)) - cy) * -1;
-            y2 = ((tanRadians * (cx - x2)) - cy) * -1;
-        }
-        grad = ctx.createLinearGradient(x1, y1, x2, y2);
-        l = colors.length;
-        def = 0;
-        for(i = 0; i < l; ++i)
-        {
-            color = colors[i];
-            ratio = ratios[i] || i/(l - 1);
-            grad.addColorStop(ratio, color);
-            def = (i + 1) / l;
-        }
-        
-        return grad;
-    },
-
-    /**
-     * Returns a radial gradient fill
-     *
-     * @method _getRadialGradient
-     * @private
-     */
-    _getRadialGradient: function(type) {
-        var prop = '_' + type,
-            colors = this[prop + "Colors"],
-            ratios = this[prop + "Ratios"],
-            i,
-            l,
-            w = this._fillWidth || this._shape.w,
-            h = this._fillHeight || this._shape.h,
-            x = !isNaN(this._fillX) ? this._fillX : this._shape.x,
-            y = !isNaN(this._fillY) ? this._fillY : this._shape.y,
-            color,
-            ratio,
-            def,
-            grad,
-            ctx = this._context;
-            x += w/2;
-            y += h/2;
-        grad = ctx.createRadialGradient(x, y, 1, x, y, w/2);
-        l = colors.length;
-        def = 0;
-        for(i = 0; i < l; ++i) {
-            color = colors[i];
-            ratio = ratios[i] || i/(l - 1);
-            grad.addColorStop(ratio, color);
-        }
-        return grad;
-    },
-   
-    /**
-     * Completes a shape or drawing
-     *
-     * @method _draw
-     * @private
-     */
-    _draw: function()
-    {
-        if(this._drawingComplete || !this._shape)
-        {
-            return;
-        }
-        var context = this._context,
-            fill;
-
-        if (this._fillType) {
-            fill = this._getFill();
-            if (fill) {
-                context.fillStyle = fill;
-            }
-            context.closePath();
-        }
-
-        if (this._fillType) {
-            context.fill();
-        }
-
-        if (this._stroke) {
-            context.strokeStyle = this._strokeStyle;
-            context.stroke();
-        }
-        this._drawingComplete = true;
-    },
-
-    /**
-     * @private
-     */
-    _drawingComplete: false,
-
-    /**
-     * Regex expression used for converting hex strings to rgb
-     *
-     * @property _reHex
-     * @private
-     */
-    _reHex: /^#?([0-9A-F]{2})([0-9A-F]{2})([0-9A-F]{2})$/i,
-
-    /**
-     * Parses hex color string and alpha value to rgba
-     *
-     * @method _2RGBA
-     * @private
-     */
-    _2RGBA: function(val, alpha) {
-        alpha = (alpha !== undefined) ? alpha : 1;
-        if (this._reHex.exec(val)) {
-            val = 'rgba(' + [
-                parseInt(RegExp.$1, 16),
-                parseInt(RegExp.$2, 16),
-                parseInt(RegExp.$3, 16)
-            ].join(',') + ',' + alpha + ')';
-        }
-        return val;
-    },
-
-    /**
-     * Creates dom element used for converting color string to rgb
-     *
-     * @method _createDummy
-     * @private
-     */
-    _createDummy: function() {
-        var dummy = Y.config.doc.createElement('div');
-        dummy.style.height = 0;
-        dummy.style.width = 0;
-        dummy.style.overflow = 'hidden';
-        Y.config.doc.documentElement.appendChild(dummy);
-        return dummy;
-    },
-
-    /**
-     * Creates canvas element
-     *
-     * @method _createGraphic
-     * @private
-     */
-    _createGraphic: function(config) {
-        var graphic = Y.config.doc.createElement('canvas');
-        // no size until drawn on
-        graphic.width = 600;
-        graphic.height = 600;
-        return graphic;
-    },
-
-    /**
-     * Converts color to rgb format
-     *
-     * @method _2RGB
-     * @private 
-     */
-    _2RGB: function(val) {
-        this._dummy.style.background = val;
-        return this._dummy.style.backgroundColor;
-    },
-    
-    /**
-     * Updates the size of the graphics object
-     *
-     * @method _trackSize
-     * @param {Number} w width
-     * @param {Number} h height
-     * @private
-     */
-    _trackSize: function(w, h) {
-        if (w > this._width) {
-            this._width = w;
-        }
-        if (h > this._height) {
-            this._height = h;
-        }
-    },
-
-    /**
-     * Updates the position of the current drawing
-     *
-     * @method _trackPos
-     * @param {Number} x x-coordinate
-     * @param {Number} y y-coordinate
-     * @private
-     */
-    _trackPos: function(x, y) {
-        if (x > this._x) {
-            this._x = x;
-        }
-        if (y > this._y) {
-            this._y = y;
-        }
-    },
-
-    /**
-     * Updates the position and size of the current drawing
-     *
-     * @method _updateShapeProps
-     * @param {Number} x x-coordinate
-     * @param {Number} y y-coordinate
-     * @private
-     */
-    _updateShapeProps: function(x, y)
-    {
-        var w,h;
-        if(!this._shape)
-        {
-            this._shape = {};
-        }
-        if(!this._shape.x)
-        {
-            this._shape.x = x;
-        }
-        else
-        {
-            this._shape.x = Math.min(this._shape.x, x);
-        }
-        if(!this._shape.y)
-        {
-            this._shape.y = y;
-        }
-        else
-        {
-            this._shape.y = Math.min(this._shape.y, y);
-        }
-        w = Math.abs(x - this._shape.x);
-        if(!this._shape.w)
-        {
-            this._shape.w = w;
-        }
-        else
-        {
-            this._shape.w = Math.max(w, this._shape.w);
-        }
-        h = Math.abs(y - this._shape.y);
-        if(!this._shape.h)
-        {
-            this._shape.h = h;
-        }
-        else
-        {
-            this._shape.h = Math.max(h, this._shape.h);
-        }
-    },
-    
-    /**
-     * Creates a Shape instance and adds it to the graphics object.
-     *
-     * @method getShape
-     * @param {Object} config Object literal of properties used to construct a Shape.
-     * @return Shape
-     */
-    getShape: function(config) {
-        config.graphic = this;
-        return new Y.Shape(config); 
-    }
-};
-
-Y.CanvasDrawingUtil = CanvasDrawingUtil;
-/**
- * CanvasGraphics is a fallback drawing api used for basic drawing operations when SVG is not available.
- *
- * @class CanvasGraphics
- * @constructor
- */
-Y.CanvasGraphic = Y.Base.create("graphic",  Y.CanvasDrawingUtil, [], {
-    autoSize: true,
-
-    /**
-     * Sets the size of the graphics object.
-     * 
-     * @method setSize
-     * @param w {Number} width to set for the instance.
-     * @param h {Number} height to set for the instance.
-     */
-    setSize: function(w, h) {
-        if(this.autoSize)
-        {
-            if(w > this.node.getAttribute("width"))
-            {
-                this.node.style.width = w + "px";
-                this._canvas.style.width = w + "px";
-                this._canvas.width = w;
-                this.node.setAttribute("width", w);
-            }
-            if(h > this.node.getAttribute("height"))
-            {
-                this.node.style.height = h + "px";
-                this._canvas.style.height = h + "px";
-                this._canvas.height = h;
-                this.node.setAttribute("height", h);
-            }
-        }
-    },
-
-    /**
-     * Updates the size of the graphics object
-     *
-     * @method _trackSize
-     * @param {Number} w width
-     * @param {Number} h height
-     * @private
-     */
-    _trackSize: function(w, h) {
-        if (w > this._width) {
-            this._width = w;
-        }
-        if (h > this._height) {
-            this._height = h;
-        }
-        this.setSize(w, h);
-    },
-
-    /**
-     * Sets the positon of the graphics object.
-     *
-     * @method setPosition
-     * @param {Number} x x-coordinate for the object.
-     * @param {Number} y y-coordinate for the object.
-     */
-    setPosition: function(x, y)
-    {
-        this.node.style.left = x + "px";
-        this.node.style.top = y + "px";
-    },
-
-    /**
-     * Adds the graphics node to the dom.
-     * 
-     * @method render
-     * @param {HTMLElement} parentNode node in which to render the graphics node into.
-     */
-    render: function(node) {
-        node = node || Y.config.doc.body;
-        this.node = document.createElement("div");
-        this.node.style.width = node.offsetWidth + "px";
-        this.node.style.height = node.offsetHeight + "px";
-        this.node.style.display = "block";
-        this.node.style.position = "absolute";
-        this.node.style.left = node.getStyle("left");
-        this.node.style.top = node.getStyle("top");
-        this.node.style.pointerEvents = "none";
-        node.appendChild(this.node);
-        this.node.appendChild(this._canvas);
-        this._canvas.width = node.offsetWidth > 0 ? node.offsetWidth : 100;
-        this._canvas.height = node.offsetHeight > 0 ? node.offsetHeight : 100;
-        this._canvas.style.position = "absolute";
-
-        return this;
-    },
-    
-    /**
-     * Shows and and hides a the graphic instance.
-     *
-     * @method toggleVisible
-     * @param val {Boolean} indicates whether the instance should be visible.
-     */
-    toggleVisible: function(val)
-    {
-        this.node.style.visibility = val ? "visible" : "hidden";
-    },
-
-    /**
-     * Creates a graphic node
-     *
-     * @method _createGraphicNode
-     * @param {String} type node type to create
-     * @param {String} pe specified pointer-events value
-     * @return HTMLElement
-     * @private
-     */
-    _createGraphicNode: function(pe)
-    {
-        var node = Y.config.doc.createElement('canvas');
-        node.style.pointerEvents = pe || "none";
-        if(!this._graphicsList)
-        {
-            this._graphicsList = [];
-        }
-        this._graphicsList.push(node);
-        return node;
-    },
-
-    /**
-     * Removes all nodes.
-     *
-     * @method destroy
-     */
-    destroy: function()
-    {
-        this._removeChildren(this.node);
-        if(this.node && this.node.parentNode)
-        {
-            this.node.parentNode.removeChild(this.node);
-        }
-    },
-    
-    /**
-     * Removes all child nodes.
-     *
-     * @method _removeChildren
-     * @param {HTMLElement} node
-     * @private
-     */
-    _removeChildren: function(node)
-    {
-        if(node.hasChildNodes())
-        {
-            var child;
-            while(node.firstChild)
-            {
-                child = node.firstChild;
-                this._removeChildren(child);
-                node.removeChild(child);
-            }
-        }
-    },
-
-    /**
-     * @private
-     * Reference to the node for the graphics object
-     */
-    node: null
-});
-
-if(DRAWINGAPI == "canvas")
-{
-    Y.Graphic = Y.CanvasGraphic;
-}
-/**
- * VMLGraphics is a fallback drawing api used for basic drawing operations when SVG is not available.
- *
- * @class VMLGraphics
- * @constructor
- */
-var VMLGraphics = function(config) {
-    
-    this.initializer.apply(this, arguments);
-};
-
-VMLGraphics.prototype = {
-    /**
-     * Indicates whether or not the instance will size itself based on its contents.
-     *
-     * @property autoSize 
-     * @type String
-     */
-    initializer: function(config) {
-        config = config || {};
-        var w = config.width || 0,
-            h = config.height || 0;
-        this.node = this._createGraphics();
-        this.setSize(w, h);
-        this._initProps();
-    },
-
-    /** 
-     * Specifies a bitmap fill used by subsequent calls to other drawing methods.
-     * 
-     * @method beginBitmapFill
-     * @param {Object} config
-     */
-    beginBitmapFill: function(config) {
-       
-        var fill = {};
-        fill.src = config.bitmap.src;
-        fill.type = "tile";
-        this._fillProps = fill;
-        if(!isNaN(config.tx) ||
-            !isNaN(config.ty) ||
-            !isNaN(config.width) ||
-            !isNaN(config.height))
-        {
-            this._gradientBox = {
-                tx:config.tx,
-                ty:config.ty,
-                width:config.width,
-                height:config.height
-            };
-        }
-        else
-        {
-            this._gradientBox = null;
-        }
-    },
-
-    /**
-     * Specifes a solid fill used by subsequent calls to other drawing methods.
-     *
-     * @method beginFill
-     * @param {String} color Hex color value for the fill.
-     * @param {Number} alpha Value between 0 and 1 used to specify the opacity of the fill.
-     */
-    beginFill: function(color, alpha) {
-        if (color) {
-            if (Y.Lang.isNumber(alpha)) {
-                this._fillProps = {
-                    type:"solid",
-                    opacity: alpha
-                };
-            }
-            this._fillColor = color;
-            this._fill = 1;
-        }
-        return this;
-    },
-
-    /** 
-     * Specifies a gradient fill used by subsequent calls to other drawing methods.
-     *
-     * @method beginGradientFill
-     * @param {Object} config
-     */
-    beginGradientFill: function(config) {
-        var type = config.type,
-            colors = config.colors,
-            alphas = config.alphas || [],
-            ratios = config.ratios || [],
-            fill = {
-                colors:colors,
-                ratios:ratios
-            },
-            len = alphas.length,
-            i = 0,
-            alpha,
-            oi,
-            rotation = config.rotation || 0;
-    
-        for(;i < len; ++i)
-        {
-            alpha = alphas[i];
-            alpha = Y.Lang.isNumber(alpha) ? alpha : 1;
-            oi = i > 0 ? i + 1 : "";
-            alphas[i] = Math.round(alpha * 100) + "%";
-            fill["opacity" + oi] = alpha;
-        }
-        if(type === "linear")
-        {
-            if(config)
-            {
-            }
-            if(rotation > 0 && rotation <= 90)
-            {
-                rotation = 450 - rotation;
-            }
-            else if(rotation <= 270)
-            {
-                rotation = 270 - rotation;
-            }
-            else if(rotation <= 360)
-            {
-                rotation = 630 - rotation;
-            }
-            else
-            {
-                rotation = 270;
-            }
-            fill.type = "gradientunscaled";
-            fill.angle = rotation;
-        }
-        else if(type === "radial")
-        {
-            fill.alignshape = false;
-            fill.type = "gradientradial";
-            fill.focus = "100%";
-            fill.focusposition = "50%,50%";
-        }
-        fill.ratios = ratios || [];
-        
-        if(!isNaN(config.tx) ||
-            !isNaN(config.ty) ||
-            !isNaN(config.width) ||
-            !isNaN(config.height))
-        {
-            this._gradientBox = {
-                tx:config.tx,
-                ty:config.ty,
-                width:config.width,
-                height:config.height
-            };
-        }
-        else
-        {
-            this._gradientBox = null;
-        }
-        this._fillProps = fill;
-    },
-
-    /**
-     * Clears the graphics object.
-     *
-     * @method clear
-     */
-    clear: function() {
-        this._path = '';
-        this._removeChildren(this.node);
-    },
-
-    /**
-     * Removes all nodes.
-     *
-     * @method destroy
-     */
-    destroy: function()
-    {
-        this._removeChildren(this.node);
-        this.node.parentNode.removeChild(this.node);
-    },
-
-    /**
-     * Removes all child nodes.
-     *
-     * @method _removeChildren
-     * @param node
-     * @private
-     */
-    _removeChildren: function(node)
-    {
-        if(node.hasChildNodes())
-        {
-            var child;
-            while(node.firstChild)
-            {
-                child = node.firstChild;
-                this._removeChildren(child);
-                node.removeChild(child);
-            }
-        }
-    },
-
-    /**
-     * Shows and and hides a the graphic instance.
-     *
-     * @method toggleVisible
-     * @param val {Boolean} indicates whether the instance should be visible.
-     */
-    toggleVisible: function(val)
-    {
-        this._toggleVisible(this.node, val);
-    },
-
-    /**
-     * Toggles visibility
-     *
-     * @method _toggleVisible
-     * @param {HTMLElement} node element to toggle
-     * @param {Boolean} val indicates visibilitye
-     * @private
-     */
-    _toggleVisible: function(node, val)
-    {
-        var children = Y.one(node).get("children"),
-            visibility = val ? "visible" : "hidden",
-            i = 0,
-            len;
-        if(children)
-        {
-            len = children.length;
-            for(; i < len; ++i)
-            {
-                this._toggleVisible(children[i], val);
-            }
-        }
-        node.style.visibility = visibility;
-    },
-
-    /**
-     * Draws a bezier curve.
-     *
-     * @method curveTo
-     * @param {Number} cp1x x-coordinate for the first control point.
-     * @param {Number} cp1y y-coordinate for the first control point.
-     * @param {Number} cp2x x-coordinate for the second control point.
-     * @param {Number} cp2y y-coordinate for the second control point.
-     * @param {Number} x x-coordinate for the end point.
-     * @param {Number} y y-coordinate for the end point.
-     */
-    curveTo: function(cp1x, cp1y, cp2x, cp2y, x, y) {
-        this._shape = "shape";
-        this._path += ' c ' + Math.round(cp1x) + ", " + Math.round(cp1y) + ", " + Math.round(cp2x) + ", " + Math.round(cp2y) + ", " + x + ", " + y;
-        this._trackSize(x, y);
-    },
-
-    /**
-     * Draws a quadratic bezier curve.
-     *
-     * @method quadraticCurveTo
-     * @param {Number} cpx x-coordinate for the control point.
-     * @param {Number} cpy y-coordinate for the control point.
-     * @param {Number} x x-coordinate for the end point.
-     * @param {Number} y y-coordinate for the end point.
-     */
-    quadraticCurveTo: function(cpx, cpy, x, y) {
-        this._path += ' qb ' + cpx + ", " + cpy + ", " + x + ", " + y;
-    },
-
-    /**
-     * Draws a circle.
-     *
-     * @method drawCircle
-     * @param {Number} x y-coordinate
-     * @param {Number} y x-coordinate
-     * @param {Number} r radius
-     */
-    drawCircle: function(x, y, r) {
-        this._width = this._height = r * 2;
-        this._x = x - r;
-        this._y = y - r;
-        this._shape = "oval";
-        this._draw();
-    },
-
-    /**
-     * Draws an ellipse.
-     *
-     * @method drawEllipse
-     * @param {Number} x x-coordinate
-     * @param {Number} y y-coordinate
-     * @param {Number} w width
-     * @param {Number} h height
-     */
-    drawEllipse: function(x, y, w, h) {
-        this._width = w;
-        this._height = h;
-        this._x = x;
-        this._y = y;
-        this._shape = "oval";
-        this._draw();
-    },
-
-    /**
-     * Draws a rectangle.
-     *
-     * @method drawRect
-     * @param {Number} x x-coordinate
-     * @param {Number} y y-coordinate
-     * @param {Number} w width
-     * @param {Number} h height
-     */
-    drawRect: function(x, y, w, h) {
-        this._x = x;
-        this._y = y;
-        this._width = w;
-        this._height = h;
-        this.moveTo(x, y);
-        this.lineTo(x + w, y);
-        this.lineTo(x + w, y + h);
-        this.lineTo(x, y + h);
-        this.lineTo(x, y);
-        this._draw();
-    },
-
-    /**
-     * Draws a rectangle with rounded corners.
-     * 
-     * @method drawRect
-     * @param {Number} x x-coordinate
-     * @param {Number} y y-coordinate
-     * @param {Number} w width
-     * @param {Number} h height
-     * @param {Number} ew width of the ellipse used to draw the rounded corners
-     * @param {Number} eh height of the ellipse used to draw the rounded corners
-     */
-    drawRoundRect: function(x, y, w, h, ew, eh) {
-        this._x = x;
-        this._y = y;
-        this._width = w;
-        this._height = h;
-        this.moveTo(x, y + eh);
-        this.lineTo(x, y + h - eh);
-        this.quadraticCurveTo(x, y + h, x + ew, y + h);
-        this.lineTo(x + w - ew, y + h);
-        this.quadraticCurveTo(x + w, y + h, x + w, y + h - eh);
-        this.lineTo(x + w, y + eh);
-        this.quadraticCurveTo(x + w, y, x + w - ew, y);
-        this.lineTo(x + ew, y);
-        this.quadraticCurveTo(x, y, x, y + eh);
-        this._draw();
-    },
-
-    /**
-     * Draws a wedge.
-     * 
-     * @param {Number} x			x-coordinate of the wedge's center point
-     * @param {Number} y			y-coordinate of the wedge's center point
-     * @param {Number} startAngle	starting angle in degrees
-     * @param {Number} arc			sweep of the wedge. Negative values draw clockwise.
-     * @param {Number} radius		radius of wedge. If [optional] yRadius is defined, then radius is the x radius.
-     * @param {Number} yRadius		[optional] y radius for wedge.
-     */
-    drawWedge: function(x, y, startAngle, arc, radius, yRadius)
-    {
-        this._drawingComplete = false;
-        this._width = radius;
-        this._height = radius;
-        yRadius = yRadius || radius;
-        this._path += this._getWedgePath({x:x, y:y, startAngle:startAngle, arc:arc, radius:radius, yRadius:yRadius});
-        this._width = radius * 2;
-        this._height = this._width;
-        this._shape = "shape";
-        this._draw();
-    },
-
-    /**
-     * Generates a path string for a wedge shape
-     *
-     * @method _getWedgePath
-     * @param {Object} config attributes used to create the path
-     * @return String
-     * @private
-     */
-    _getWedgePath: function(config)
-    {
-        var x = config.x,
-            y = config.y,
-            startAngle = config.startAngle,
-            arc = config.arc,
-            radius = config.radius,
-            yRadius = config.yRadius || radius,
-            path;  
-        if(Math.abs(arc) > 360)
-        {
-            arc = 360;
-        }
-        startAngle *= -65535;
-        arc *= 65536;
-        path = " m " + x + " " + y + " ae " + x + " " + y + " " + radius + " " + yRadius + " " + startAngle + " " + arc;
-        return path;
-    },
-    
-    /**
-     * Completes a drawing operation. 
-     *
-     * @method end
-     */
-    end: function() {
-        if(this._shape)
-        {
-            this._draw();
-        }
-        this._initProps();
-    },
-
-    /**
-     * Specifies a gradient to use for the stroke when drawing lines.
-     * Not implemented
-     *
-     * @method lineGradientStyle
-     * @private
-     */
-    lineGradientStyle: function() {
-    },
-    
-    /**
-     * Specifies a line style used for subsequent calls to drawing methods.
-     * 
-     * @method lineStyle
-     * @param {Number} thickness indicates the thickness of the line
-     * @param {String} color hex color value for the line
-     * @param {Number} alpha Value between 0 and 1 used to specify the opacity of the fill.
-     */
-    lineStyle: function(thickness, color, alpha, pixelHinting, scaleMode, caps, joints, miterLimit) {
-        this._stroke = 1;
-        this._strokeWeight = thickness * 0.7;
-        this._strokeColor = color;
-        this._strokeOpacity = Y.Lang.isNumber(alpha) ? alpha : 1;
-    },
-
-    /**
-     * Draws a line segment using the current line style from the current drawing position to the specified x and y coordinates.
-     * 
-     * @method lineTo
-     * @param {Number} point1 x-coordinate for the end point.
-     * @param {Number} point2 y-coordinate for the end point.
-     */
-    lineTo: function(point1, point2, etc) {
-        var args = arguments,
-            i,
-            len;
-        if (typeof point1 === 'string' || typeof point1 === 'number') {
-            args = [[point1, point2]];
-        }
-        len = args.length;
-        this._shape = "shape";
-        this._path += ' l ';
-        for (i = 0; i < len; ++i) {
-            this._path += ' ' + Math.round(args[i][0]) + ', ' + Math.round(args[i][1]);
-            this._trackSize.apply(this, args[i]);
-        }
-    },
-
-    /**
-     * Moves the current drawing position to specified x and y coordinates.
-     *
-     * @method moveTo
-     * @param {Number} x x-coordinate for the end point.
-     * @param {Number} y y-coordinate for the end point.
-     */
-    moveTo: function(x, y) {
-        this._path += ' m ' + Math.round(x) + ', ' + Math.round(y);
-    },
-
-    /**
-     * Sets the size of the graphics object.
-     * 
-     * @method setSize
-     * @param w {Number} width to set for the instance.
-     * @param h {Number} height to set for the instance.
-     */
-    setSize: function(w, h) {
-        w = Math.round(w);
-        h = Math.round(h);
-        this.node.style.width = w + 'px';
-        this.node.style.height = h + 'px';
-        this.node.coordSize = w + ' ' + h;
-        this._canvasWidth = w;
-        this._canvasHeight = h;
-    },
-   
-    /**
-     * Sets the positon of the graphics object.
-     *
-     * @method setPosition
-     * @param {Number} x x-coordinate for the object.
-     * @param {Number} y y-coordinate for the object.
-     */
-    setPosition: function(x, y)
-    {
-        x = Math.round(x);
-        y = Math.round(y);
-        this.node.style.left = x + "px";
-        this.node.style.top = y + "px";
-    },
-
-    /**
-     * Adds the graphics node to the dom.
-     * 
-     * @method render
-     * @param {HTMLElement} parentNode node in which to render the graphics node into.
-     */
-    render: function(parentNode) {
-        var w = Math.max(parentNode.offsetWidth || 0, this._canvasWidth),
-            h = Math.max(parentNode.offsetHeight || 0, this._canvasHeight);
-        parentNode = parentNode || Y.config.doc.body;
-        parentNode.appendChild(this.node);
-        this.setSize(w, h);
-        this._initProps();
-        return this;
-    },
-
-    /**
-     * @private
-     */
-    _shape: null,
-
-    /**
-     * Updates the size of the graphics object
-     *
-     * @method _trackSize
-     * @param {Number} w width
-     * @param {Number} h height
-     * @private
-     */
-    _trackSize: function(w, h) {
-        if (w > this._width) {
-            this._width = w;
-        }
-        if (h > this._height) {
-            this._height = h;
-        }
-    },
-
-    /**
-     * Clears the properties
-     *
-     * @method _initProps
-     * @private
-     */
-    _initProps: function() {
-        this._fillColor = null;
-        this._strokeColor = null;
-        this._strokeOpacity = null;
-        this._strokeWeight = 0;
-        this._fillProps = null;
-        this._path = '';
-        this._width = 0;
-        this._height = 0;
-        this._x = 0;
-        this._y = 0;
-        this._fill = null;
-        this._stroke = 0;
-        this._stroked = false;
-    },
-
-    /**
-     * Clears path properties
-     * 
-     * @method _clearPath
-     * @private
-     */
-    _clearPath: function()
-    {
-        this._shape = null;
-        this._path = '';
-        this._width = 0;
-        this._height = 0;
-        this._x = 0;
-        this._y = 0;
-    },
-
-    /**
-     * Completes a shape
-     *
-     * @method _draw
-     * @private 
-     */
-    _draw: function()
-    {
-        var shape = this._createGraphicNode(this._shape),
-            w = Math.round(this._width),
-            h = Math.round(this._height),
-            strokeNode,
-            fillProps = this._fillProps;
-            this.setSize(w, h);
-        if(this._path)
-        {
-            if(this._fill || this._fillProps)
-            {
-                this._path += ' x';
-            }
-            if(this._stroke)
-            {
-                this._path += ' e';
-            }
-            shape.path = this._path;
-            shape.coordSize = w + ', ' + h;
-        }
-        else
-        {
-            shape.style.display = "block";
-            shape.style.position = "absolute";
-            shape.style.left = this._x + "px";
-            shape.style.top = this._y + "px";
-        }
-        
-        if (this._fill) {
-            shape.fillColor = this._fillColor;
-        }
-        else
-        {
-            shape.filled = false;
-        }
-        if (this._stroke && this._strokeWeight > 0) {
-            shape.strokeColor = this._strokeColor;
-            shape.strokeWeight = this._strokeWeight;
-            if(Y.Lang.isNumber(this._strokeOpacity) && this._strokeOpacity < 1)
-            {    
-                strokeNode = this._createGraphicNode("stroke");
-                shape.appendChild(strokeNode);
-                strokeNode.opacity = this._strokeOpacity;
-            }
-        } else {
-            shape.stroked = false;
-        }
-        shape.style.width = w + 'px';
-        shape.style.height = h + 'px';
-        if (fillProps) {
-            shape.filled = true;
-            shape.appendChild(this._getFill());
-        }
-        this.node.appendChild(shape);
-        this._clearPath();
-    },
-
-    /**
-     * Returns ths actual fill object to be used in a drawing or shape
-     *
-     * @method _getFill
-     * @private
-     */
-    _getFill: function() {
-        var fill = this._createGraphicNode("fill"),
-            w = this._width,
-            h = this._height,
-            fillProps = this._fillProps,
-            prop,
-            pct,
-            i = 0,
-            colors,
-            colorstring = "",
-            len,
-            ratios,
-            hyp = Math.sqrt(Math.pow(w, 2) + Math.pow(h, 2)),
-            cx = 50,
-            cy = 50;
-        if(this._gradientBox)
-        {
-            cx= Math.round( (this._gradientBox.width/2 - ((this._x - this._gradientBox.tx) * hyp/w))/(w * w/hyp) * 100);
-            cy = Math.round( (this._gradientBox.height/2 - ((this._y - this._gradientBox.ty) * hyp/h))/(h * h/hyp) * 100);
-            fillProps.focussize = (this._gradientBox.width/w)/10 + " " + (this._gradientBox.height/h)/10;
-        }
-        if(fillProps.colors)
-        {
-            colors = fillProps.colors.concat();
-            ratios = fillProps.ratios.concat();
-            len = colors.length;
-            for(;i < len; ++i) {
-                pct = ratios[i] || i/(len-1);
-                pct = Math.round(100 * pct) + "%";
-                colorstring += ", " + pct + " " + colors[i];
-            }
-            if(parseInt(pct, 10) < 100)
-            {
-                colorstring += ", 100% " + colors[len-1];
-            }
-        }
-        for (prop in fillProps) {
-            if(fillProps.hasOwnProperty(prop)) {
-                fill.setAttribute(prop, fillProps[prop]);
-           }
-        }
-        fill.colors = colorstring.substr(2);
-        if(fillProps.type === "gradientradial")
-        {
-            fill.focusposition = cx + "%," + cy + "%";
-        }
-        return fill;
-    },
-
-    /**
-     * Creates a group element
-     *
-     * @method _createGraphics
-     * @private
-     */
-    _createGraphics: function() {
-        var group = this._createGraphicNode("group");
-        group.style.display = "inline-block";
-        group.style.position = 'absolute';
-        return group;
-    },
-
-    /**
-     * Creates a graphic node
-     *
-     * @method _createGraphicNode
-     * @param {String} type node type to create
-     * @param {String} pe specified pointer-events value
-     * @return HTMLElement
-     * @private
-     */
-    _createGraphicNode: function(type)
-    {
-        return document.createElement('<' + type + ' xmlns="urn:schemas-microsft.com:vml" class="vml' + type + '"/>');
-    
-    },
-    
-    /**
-     * Converts a shape type to the appropriate vml node type.
-     *
-     * @method _getNodeShapeType
-     * @param {String} type The shape to convert.
-     * @return String
-     * @private
-     */
-    _getNodeShapeType: function(type)
-    {
-        var shape = "shape";
-        if(this._typeConversionHash.hasOwnProperty(type))
-        {
-            shape = this._typeConversionHash[type];
-        }
-        return shape;
-    },
-
-    /**
-     * Used to convert certain shape types to the appropriate vml node type.
-     *
-     * @property _typeConversionHash
-     * @type Object
-     * @private
-     */
-    _typeConversionHash: {
-        circle: "oval",
-        ellipse: "oval",
-        rect: "rect"
-    },
-    
-    /**
-     * Creates a Shape instance and adds it to the graphics object.
-     *
-     * @method getShape
-     * @param {Object} config Object literal of properties used to construct a Shape.
-     * @return Shape
-     */
-    getShape: function(config) {
-        config.graphic = this;
-        return new Y.Shape(config); 
-    },
-
-    /**
-     * Adds a child to the <code>node</code>.
-     *
-     * @method addChild
-     * @param {HTMLElement} element to add
-     * @private
-     */
-    addChild: function(child)
-    {
-        this.node.appendChild(child);
-    }
-};
-
-if(DRAWINGAPI == "vml")
-{
-    var sheet = document.createStyleSheet();
-    sheet.addRule(".vmlgroup", "behavior:url(#default#VML)", sheet.rules.length);
-    sheet.addRule(".vmlgroup", "display:inline-block", sheet.rules.length);
-    sheet.addRule(".vmlgroup", "zoom:1", sheet.rules.length);
-    sheet.addRule(".vmlshape", "behavior:url(#default#VML)", sheet.rules.length);
-    sheet.addRule(".vmlshape", "display:inline-block", sheet.rules.length);
-    sheet.addRule(".vmloval", "behavior:url(#default#VML)", sheet.rules.length);
-    sheet.addRule(".vmloval", "display:inline-block", sheet.rules.length);
-    sheet.addRule(".vmlrect", "behavior:url(#default#VML)", sheet.rules.length);
-    sheet.addRule(".vmlrect", "display:block", sheet.rules.length);
-    sheet.addRule(".vmlfill", "behavior:url(#default#VML)", sheet.rules.length);
-    sheet.addRule(".vmlstroke", "behavior:url(#default#VML)", sheet.rules.length);
-    Y.Graphic = VMLGraphics;
-}
-
-/**
- * The Shape class creates a graphic object with editable 
- * properties.
- *
- * @class Shape
- * @extends Graphic
- * @constructor
- */
-function Shape(cfg)
-{
-    this._initialize(cfg);
-    this._draw();
-}
-
-Y.extend(Shape, Y.Graphic, {
-    /**
-     * Indicates the type of shape. 
-     *
-     * @property type 
-     * @type string
-     */
-    type: "shape",
-
-    /**
-     * Indicates whether or not the instance will size itself based on its contents.
-     *
-     * @property autoSize 
-     * @type string
-     */
-    autoSize: false,
-
-    /**
-     * Determines whether the instance will receive mouse events.
-     * 
-     * @property pointerEvents
-     * @type string
-     */
-    pointerEvents: "visiblePainted", 
-
-    /**
-     * Initializes the graphic instance.
-     *
-     * @method _initialize
-     * @private
-     */
-    _initialize: function(cfg) 
-    {
-        if(!cfg.graphic)
-        {
-            cfg.graphic = new Y.Graphic();
-        }
-        this._setProps(cfg);
-    },
-  
-    /**
-     * Updates properties for the shape.
-     *
-     * @method _setProps
-     * @param {Object} cfg Properties to update.
-     * @private
-     */
-    _setProps: function(cfg)
-    {
-        this.autoSize = cfg.autoSize || this.autoSize; 
-        this.pointerEvents = cfg.pointerEvents || this.pointerEvents;
-        this.width = cfg.width || this.width;
-        this.height = cfg.height || this.height;
-        this.border = cfg.border || this.border;
-        this.graphics = cfg.graphic || this.graphics;
-        this.canvas = this.graphics;
-        this.parentNode = this.graphics.node;
-        this.fill = cfg.fill || this.fill;
-        this.type = cfg.shape || this.type;
-        this.nodetype = this._getNodeShapeType(this.type); 
-        this.props = cfg.props || this.props;
-        this.path = cfg.path || this.path;
-    },
-
-    /**
-     * Draws the graphic.
-     *
-     * @method _draw
-     * @private
-     */
-    _draw: function()
-    {
-        var cx,
-            cy,
-            rx,
-            ry,
-            parentNode = this.parentNode,
-            borderWeight = 0,
-            fillWidth = this.width || 0,
-            fillHeight = this.height || 0;
-        if(!this.node)
-        {
-            this.node = this._createGraphicNode(this.nodetype, this.pointerEvents);
-            parentNode.appendChild(this.node);
-        }
-        if(this.type == "wedge")
-        {
-            this.path = this._getWedgePath(this.props);
-        }
-        if(this.nodetype == "path")
-        {
-            this._setPath();
-        }
-        if(this.border && this.border.weight && this.border.weight > 0)
-        {
-            borderWeight = this.border.weight;
-            fillWidth -= borderWeight * 2;
-            fillHeight -= borderWeight * 2;
-        }
-        this._addBorder();
-        if(this.nodetype === "ellipse")
-        {
-            rx = this.width/2;
-            cx = this.width/2;
-            ry = this.height/2;
-            cy = this.height/2;
-            rx -= borderWeight;
-            ry -= borderWeight;
-            this.node.setAttribute("cx", cx);
-            this.node.setAttribute("cy", cy);
-            this.node.setAttribute("rx", rx);
-            this.node.setAttribute("ry", ry);
-        }
-        else
-        {
-            this.node.setAttribute("width", fillWidth);
-            this.node.setAttribute("height", fillHeight);
-            this.node.style.width = fillWidth + "px";
-            this.node.style.height = fillHeight + "px";
-        }
-        this._addFill();
-        parentNode.style.width = this.width + "px";
-        parentNode.style.height = this.height + "px";
-        parentNode.setAttribute("width", this.width);
-        parentNode.setAttribute("height", this.height);
-        this.node.style.visibility = "visible";
-        this.node.setAttribute("x", borderWeight); 
-        this.node.setAttribute("y", borderWeight); 
-        return this;       
-    },
-
-    /**
-     * Adds a path to the shape node.
-     * 
-     * @method _setPath
-     * @private
-     */
-    _setPath: function()
-    {
-        if(this.path)
-        {
-            this.path += " Z";
-            this.node.setAttribute("d", this.path);
-        }
-    },
-
-    /**
-     * Adds a border to the shape node.
-     *
-     * @method _addBorder
-     * @private
-     */
-    _addBorder: function()
-    {
-        if(this.border && this.border.weight && this.border.weight > 0)
-        {
-            var borderAlpha = this.border.alpha;
-            this.border.color = this.border.color || "#000000";
-            this.border.weight = this.border.weight || 1;
-            this.border.alpha = Y.Lang.isNumber(borderAlpha) ? borderAlpha : 1;
-            this.border.linecap = this.border.linecap || "square";
-            this.node.setAttribute("stroke", this.border.color);
-            this.node.setAttribute("stroke-linecap", this.border.linecap);
-            this.node.setAttribute("stroke-width",  this.border.weight);
-            this.node.setAttribute("stroke-opacity", this.border.alpha);
-        }
-        else
-        {
-            this.node.setAttribute("stroke", "none");
-        }
-    },
-
-    /**
-     * Adds a fill to the shape node.
-     *
-     * @method _addFill
-     * @private
-     */
-    _addFill: function()
-    {
-        var fillAlpha;
-        if(this.fill.type === "linear" || this.fill.type === "radial")
-        {
-            this.beginGradientFill(this.fill);
-            this.node.appendChild(this._getFill());
-        }
-        else if(this.fill.type === "bitmap")
-        {
-            this.beginBitmapFill(this.fill);
-            this.node.appendChild(this._getFill());
-        }
-        else
-        {
-            if(!this.fill.color)
-            {
-                this.node.setAttribute("fill", "none");
-            }
-            else
-            {
-                fillAlpha = this.fill.alpha; 
-                this.fill.alpha = Y.Lang.isNumber(fillAlpha) ? fillAlpha : 1;
-                this.node.setAttribute("fill", this.fill.color);
-                this.node.setAttribute("fill-opacity", fillAlpha);
-            }
-        }
-    },
-
-    /**
-     * Completes a drawing operation. 
-     *
-     * @method end
-     */
-    end: function()
-    {
-        this._setPath();
-    },
-
-    /**
-     * Updates the properties of the shape instance.
-     *
-     * @method update
-     * @param {Object} cfg Object literal containing properties to update.
-     */
-    update: function(cfg)
-    {
-        this._setProps(cfg);
-        this._draw();
-        return this;
-    },
-    
-    /**
-     * Converts a shape type to the appropriate node attribute.
-     *
-     * @private
-     * @method _getNodeShapeType
-     * @param {String} type The type of shape.
-     * @return String
-     */
-    _getNodeShapeType: function(type)
-    {
-        if(this._typeConversionHash.hasOwnProperty(type))
-        {
-            type = this._typeConversionHash[type];
-        }
-        return type;
-    },
-
-    /**
-     * Sets the visibility of a shape.
-     * 
-     * @method toggleVisible
-     * @param {Boolean} val indicates whether or not the shape is visible.
-     */
-    toggleVisible: function(val)
-    {
-        var visibility = val ? "visible" : "hidden";
-        if(this.node)
-        {
-            this.node.style.visibility = visibility;
-        }
-    },
-
-    /**
-     * Adds a class to the shape's node.
-     *
-     * @method addClass
-     * @param {String} className Name of the class to add.
-     */
-    addClass: function(className)
-    {
-        var node = this.node;
-        if(node)
-        {
-            if(node.className && node.className.baseVal)
-            {
-                node.className.baseVal = Y.Lang.trim([node.className.baseVal, className].join(' '));
-            }
-            else
-            {
-                node.setAttribute("class", className);
-            }
-        }
-    },
-
-    /**
-     * Positions the parent node of the shape.
-     *
-     * @method setPosition
-     * @param {Number}, x The x-coordinate
-     * @param {Number}, y The y-coordinate
-     */
-    setPosition: function(x, y)
-    {
-        var pNode = Y.one(this.parentNode),
-            hotspot = this.hotspot;
-        pNode.setStyle("position", "absolute");
-        pNode.setStyle("left", x);
-        pNode.setStyle("top", y);
-        if(hotspot)
-        {
-            hotspot.setStyle("position", "absolute");
-            hotspot.setStyle("left", x);
-            hotspot.setStyle("top", y);
-        }
-    },
-
-    /**
-     * Used to convert shape declarations to the appropriate node type.
-     *
-     * @property _typeConversionHash
-     * @type Object
-     * @private
-     */
-    _typeConversionHash: {
-        circle: "ellipse",
-        wedge: "path"
-    }
-});
-
-Y.Shape = Shape;
-/**
- * The Shape class creates a graphic object with editable 
- * properties.
- *
- * @class CanvasShape
- * @extends CanvasGraphic
- * @constructor
- */
-function CanvasShape(cfg)
-{
-    this._dummy = this._createDummy();
-    this._canvas = this._createGraphic();
-    this.node = this._canvas;
-    this._context = this._canvas.getContext('2d');
-    this._initialize(cfg);
-    this._validate();
-}
-
-Y.extend(CanvasShape, Y.CanvasDrawingUtil, {
-    /**
-     * Indicates the type of shape. 
-     *
-     * @property type 
-     * @type string
-     */
-    type: "shape",
-
-    /**
-     * Indicates whether or not the instance will size itself based on its contents.
-     *
-     * @property autoSize 
-     * @type string
-     */
-    autoSize: false,
-
-    /**
-     * Initializes the graphic instance.
-     *
-     * @method _initialize
-     * @private
-     */
-    _initialize: function(cfg) 
-    {
-        this._canvas.style.position = "absolute";
-        if(cfg.graphic)
-        {
-            cfg.graphic.node.appendChild(this._canvas);
-        }
-        this._setProps(cfg);
-    },
-  
-    /**
-     * Updates properties for the shape.
-     *
-     * @method _setProps
-     * @param {Object} cfg Properties to update.
-     * @private
-     */
-    _setProps: function(cfg)
-    {
-        this.autoSize = cfg.autoSize || this.autoSize; 
-        this.width = cfg.width || this.width;
-        this.height = cfg.height || this.height;
-        this.border = cfg.border || this.border;
-        this.graphics = cfg.graphic || this.graphics;
-        this.fill = cfg.fill || this.fill;
-        this.type = cfg.shape || this.type;
-        this.props = cfg.props || this.props;
-        this.path = cfg.path || this.path;
-        this.props = cfg.props || this.props;
-        this.parentNode = this.graphics.node;
-    },
-
-    /**
-     * Draws the graphic.
-     *
-     * @method _validate
-     * @private
-     */
-    _validate: function()
-    {
-        var w = this.width,
-            h = this.height,
-            border = this.border,
-            type = this.type,
-            fill = this.fill;
-        this.clear();
-        this.setSize(this.width, this.height);
-        this._canvas.style.top = "0px";
-        this._canvas.style.left = "0px";
-        if(border && border.weight && border.weight > 0)
-        {
-            border.color = border.color || "#000";
-            border.alpha = border.alpha || 1;
-            this.lineStyle(border.weight, border.color, border.alpha);
-        }
-        if(fill.type === "radial" || fill.type === "linear")
-        {
-            this.beginGradientFill(fill);
-        }
-        else if(fill.type === "bitmap")
-        {
-            this.beginBitmapFill(fill);
-        }   
-        else
-        {
-            this.beginFill(fill.color, fill.alpha);
-        }
-        switch(type)
-        {
-            case "circle" :
-                this.drawEllipse(0, 0, w, h);
-            break;
-            case "rect" :
-                this.drawRect(0, 0, w, h);
-            break;
-            case "wedge" :
-                this.drawWedge(this.props);
-            break;
-        }
-        return this;       
-    },
-
-    /**
-     * Updates the properties of the shape instance.
-     *
-     * @method update
-     * @param {Object} cfg Object literal containing properties to update.
-     */
-    update: function(cfg)
-    {
-        this._setProps(cfg);
-        this._validate();
-        return this;
-    },
-
-    /**
-     * Sets the visibility of a shape.
-     * 
-     * @method toggleVisible
-     * @param {Boolean} val indicates whether or not the shape is visible.
-     */
-    toggleVisible: function(val)
-    {
-        var visibility = val ? "visible" : "hidden";
-        if(this.node)
-        {
-            this.node.style.visibility = visibility;
-        }
-    },
-
-    /**
-     * Positions the parent node of the shape.
-     *
-     * @method setPosition
-     * @param {Number}, x The x-coordinate
-     * @param {Number}, y The y-coordinate
-     */
-    setPosition: function(x, y)
-    {
-        var pNode = Y.one(this.parentNode);
-        pNode.setStyle("position", "absolute");
-        pNode.setStyle("left", x);
-        pNode.setStyle("top", y);
-    },
-    
-    /**
-     * Adds a class to the shape's node.
-     *
-     * @method addClass
-     * @param {String} className Name of the class to add.
-     */
-    addClass: function(val)
-    {
-        if(this.node)
-        {
-            this.node.style.pointerEvents = "painted";
-            this.node.setAttribute("class", val);
-        }
-    }
-});
-
-Y.CanvasShape = CanvasShape;
-
-if(DRAWINGAPI == "canvas")
-{
-    Y.Shape = Y.CanvasShape;
-}
-/**
- * VMLShape is a fallback class for Shape. It creates a graphic object with editable properties when 
- * SVG is not available.
- *
- * @class VMLShape
- * @constructor
- */
-function VMLShape(cfg)
-{
-    this._initialize(cfg);
-    this._draw();
-}
-
-VMLShape.prototype = {
-    /**
-     * Indicates the type of shape. 
-     *
-     * @property type 
-     * @type string
-     */
-    type: "shape",
-    
-    /**
-     * Initializes the graphic instance.
-     *
-     * @method _initialize
-     * @private
-     */
-    _initialize: function(cfg) 
-    {
-        if(!cfg.graphic)
-        {
-            cfg.graphic = new Y.Graphic();
-        }
-        this._setProps(cfg);
-    },
-
-    /**
-     * @private
-     */
-    width: 0,
-
-    /**
-     * @private
-     */
-    height: 0,
-
-    /**
-     * Updates properties for the shape.
-     *
-     * @method _setProps
-     * @param {Object} cfg Properties to update.
-     * @private
-     */
-    _setProps: function(cfg) {
-        this.width = cfg.width && cfg.width >= 0 ? cfg.width : this.width;
-        this.height = cfg.height && cfg.height >= 0 ? cfg.height : this.height;
-        this.border = cfg.border || this.border;
-        this.graphics = cfg.graphic || this.graphics;
-        this.canvas = this.graphics;
-        this.parentNode = this.graphics.node;
-        this.fill = cfg.fill || this.fill;
-        this.type = cfg.shape || this.type;
-        this.props = cfg.props || this.props;
-    },
-
-    /**
-     * Draws the graphic.
-     *
-     * @method _draw
-     * @private
-     */
-    _draw: function()
-    {
-        var path,
-            borderWeight = 0,
-            fillWidth = this.width || 0,
-            fillHeight = this.height || 0;
-        this.graphics.setSize(fillWidth, fillHeight);
-        if(this.node)
-        {
-            this.node.style.visible = "hidden";
-        }
-        else if(!this.node)
-        {
-            this.node = this.graphics._createGraphicNode(this.graphics._getNodeShapeType(this.type));
-            this.graphics.node.appendChild(this.node);
-        }
-        if(this.type === "wedge")
-        {
-            path = this.graphics._getWedgePath(this.props);
-            if(this.fill)
-            {
-                path += ' x';
-            }
-            if(this.border)
-            {
-                path += ' e';
-            }
-            this.node.path = path;
-        }
-        this._addBorder();
-        if(this.border && this.border.weight && this.border.weight > 0)
-        {
-            borderWeight = this.border.weight;
-            fillWidth -= borderWeight;
-            fillHeight -= borderWeight;
-        }
-        this.node.style.width = Math.max(fillWidth, 0) + "px";
-        this.node.style.height = Math.max(fillHeight, 0) + "px";
-        this._addFill();
-        return this;
-    },
-    
-    /**
-     * Adds a border to the shape node.
-     *
-     * @method _addBorder
-     * @private
-     */
-    _addBorder: function()
-    {
-        if(this.border && this.border.weight && this.border.weight > 0)
-        {
-            var borderAlpha = this.border.alpha,
-                borderWeight = this.borderWeight;
-            borderAlpha = Y.Lang.isNumber(borderAlpha) ? borderAlpha : 1;
-            borderWeight = Y.Lang.isNumber(borderWeight) ? borderWeight : 1;
-            this.node.strokecolor = this.border.color || "#000000";
-            this.node.strokeweight = borderWeight;
-            if(borderAlpha < 1)
-            {
-                if(!this._strokeNode)
-                {
-                    this._strokeNode = this.graphics._createGraphicNode("stroke");
-                    this.node.appendChild(this._strokeNode);
-                }
-                this._strokeNode.opacity = borderAlpha;
-            }
-            else if(this._strokeNode)
-            {
-                this._strokeNode.opacity = borderAlpha;
-            }
-            this.node.stroked = true;
-        }
-        else
-        {
-            this.node.stroked = false;
-        }
-    },
-
-    /**
-     * Adds a fill to the shape node.
-     *
-     * @method _addFill
-     * @private
-     */
-    _addFill: function()
-    {
-        var fillAlpha;
-        this.node.filled = true;
-        if(this.fill.type === "linear" || this.fill.type === "radial")
-        {
-            this.graphics.beginGradientFill(this.fill);
-            this.node.appendChild(this.graphics._getFill());
-        }
-        else if(this.fill.type === "bitmap")
-        {
-            this.graphics.beginBitmapFill(this.fill);
-            this.node.appendChild(this.graphics._getFill());
-        }
-        else
-        {
-            if(!this.fill.color)
-            {
-                this.node.filled = false;
-            }
-            else
-            {
-                if(this.fillnode)
-                {
-                    this.graphics._removeChildren(this.fillnode);
-                }
-                fillAlpha = this.fill.alpha;
-                fillAlpha = Y.Lang.isNumber(fillAlpha) ? fillAlpha : 1;
-                this.fill.alpha = fillAlpha;
-                this.fillnode = this.graphics._createGraphicNode("fill");
-                this.fillnode.type = "solid";
-                this.fillnode.color = this.fill.color;
-                this.fillnode.opacity = fillAlpha;
-                this.node.appendChild(this.fillnode);
-            }
-        }
-    },
-    
-    /**
-     * Adds a class to the shape's node.
-     *
-     * @method addClass
-     * @param {String} className Name of the class to add.
-     */
-    addClass: function(val)
-    {
-        var node = this.node;
-        if(node)
-        {
-            Y.one(node).addClass(val);
-        }
-    },
-
-    /**
-     * Sets the visibility of a shape.
-     * 
-     * @method toggleVisible
-     * @param {Boolean} val indicates whether or not the shape is visible.
-     */
-    toggleVisible: function(val)
-    {
-        var visibility = val ? "visible" : "hidden";
-        if(this.node)
-        {
-            Y.one(this.node).setStyle("visibility", visibility);
-        }
-    },
-
-    /**
-     * Positions the parent node of the shape.
-     *
-     * @method setPosition
-     * @param {Number}, x The x-coordinate
-     * @param {Number}, y The y-coordinate
-     */
-    setPosition: function(x, y)
-    {
-        var pNode = Y.one(this.parentNode);
-        pNode.setStyle("position", "absolute");
-        pNode.setStyle("left", x);
-        pNode.setStyle("top", y);
-    },
-    
-    /**
-     * Updates the properties of the shape instance.
-     *
-     * @method update
-     * @param {Object} cfg Object literal containing properties to update.
-     */
-    update: function(cfg)
-    {
-        this._setProps(cfg);
-        this._draw();
-        return this;
-    }
-};
-
-Y.VMLShape = VMLShape;
-
-if (DRAWINGAPI == "vml") {
-    Y.Shape = VMLShape;
-}
 /**
  * The Renderer class is a base class for chart components that use the <code>styles</code>
  * attribute.
@@ -3657,6 +122,1607 @@ Y.augment(Renderer, Y.Attribute);
 Y.Renderer = Renderer;
 
 /**
+ * Algorithmic strategy for rendering a left axis.
+ *
+ * @class LeftAxisLayout
+ * @constructor
+ */
+LeftAxisLayout = function() {};
+
+LeftAxisLayout.prototype = {
+    /**
+     *  Default margins for text fields.
+     *
+     *  @private
+     *  @method _getDefaultMargins
+     *  @return Object
+     */
+    _getDefaultMargins: function() 
+    {
+        return {
+            top: 0,
+            left: 0,
+            right: 4,
+            bottom: 0
+        };
+    },
+
+    /**
+     * Sets the length of the tick on either side of the axis line.
+     *
+     * @method setTickOffset
+     * @protected
+     */
+    setTickOffsets: function()
+    {
+        var host = this,
+            majorTicks = host.get("styles").majorTicks,
+            tickLength = majorTicks.length,
+            halfTick = tickLength * 0.5,
+            display = majorTicks.display;
+        host.set("topTickOffset",  0);
+        host.set("bottomTickOffset",  0);
+        
+        switch(display)
+        {
+            case "inside" :
+                host.set("rightTickOffset",  tickLength);
+                host.set("leftTickOffset", 0);
+            break;
+            case "outside" : 
+                host.set("rightTickOffset", 0);
+                host.set("leftTickOffset",  tickLength);
+            break;
+            case "cross":
+                host.set("rightTickOffset", halfTick); 
+                host.set("leftTickOffset",  halfTick);
+            break;
+            default:
+                host.set("rightTickOffset", 0);
+                host.set("leftTickOffset", 0);
+            break;
+        }
+    },
+    
+    /**
+     * Draws a tick
+     *
+     * @method drawTick
+     * @param {Object} pt Point on the axis in which the tick will intersect.
+     * @param {Object} tickStyle Hash of properties to apply to the tick.
+     * @protected
+     */
+    drawTick: function(pt, tickStyles)
+    {
+        var host = this,
+            style = host.get("styles"),
+            padding = style.padding,
+            tickLength = tickStyles.length,
+            start = {x:padding.left, y:pt.y},
+            end = {x:tickLength + padding.left, y:pt.y};
+        host.drawLine(start, end, tickStyles);
+    },
+
+    /**
+     * Calculates the coordinates for the first point on an axis.
+     *
+     * @method getLineStart
+     * @return {Object}
+     * @protected
+     */
+    getLineStart: function()
+    {
+        var style = this.get("styles"),
+            padding = style.padding,
+            majorTicks = style.majorTicks,
+            tickLength = majorTicks.length,
+            display = majorTicks.display,
+            pt = {x:padding.left, y:0};
+        if(display === "outside")
+        {
+            pt.x += tickLength;
+        }
+        else if(display === "cross")
+        {
+            pt.x += tickLength/2;
+        }
+        return pt; 
+    },
+    
+    /**
+     * Calculates the point for a label.
+     *
+     * @method getLabelPoint
+     * @param {Object} point Point on the axis in which the tick will intersect.
+     * @return {Object} 
+     * @protected
+     */
+    getLabelPoint: function(point)
+    {
+        return {x:point.x - this.get("leftTickOffset"), y:point.y};
+    },
+    
+    /**
+     * Updates the value for the <code>maxLabelSize</code> for use in calculating total size.
+     *
+     * @method updateMaxLabelSize
+     * @param {HTMLElement} label to measure
+     * @protected
+     */
+    updateMaxLabelSize: function(label)
+    {
+        var host = this,
+            props = this._labelRotationProps,
+            rot = props.rot,
+            absRot = props.absRot,
+            sinRadians = props.sinRadians,
+            cosRadians = props.cosRadians,
+            m11 = props.m11,
+            m12 = props.m12,
+            m21 = props.m21,
+            m22 = props.m22,
+            max;
+        if(!DOCUMENT.createElementNS)
+        {
+            label.style.filter = 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
+            host.set("maxLabelSize", Math.max(host.get("maxLabelSize"), label.offsetWidth));
+        }
+        else
+        {
+            label.style.msTransform = "rotate(0deg)";
+            if(rot === 0)
+            {
+                max = label.offsetWidth;
+            }
+            else if(absRot === 90)
+            {
+                max = label.offsetHeight;
+            }
+            else
+            {
+                max = (cosRadians * label.offsetWidth) + (sinRadians * label.offsetHeight);
+            }
+            host.set("maxLabelSize",  Math.max(host.get("maxLabelSize"), max));
+        }
+    },
+
+    /**
+     * Rotate and position title.
+     *
+     * @method positionTitle
+     * @param {HTMLElement} label to rotate position
+     * @protected
+     */
+    positionTitle: function(label)
+    {
+        var host = this,
+            max,
+            styles = host.get("styles").title,
+            props = this._getTextRotationProps(styles),
+            rot = props.rot,
+            absRot = props.absRot,
+            sinRadians = props.sinRadians,
+            cosRadians = props.cosRadians,
+            x = 0,
+            y = this.get("height")/2,
+            leftOffset = 0,
+            topOffset = 0,
+            labelWidth = label.offsetWidth,
+            labelHeight = label.offsetHeight;
+        if(Y.config.doc.createElementNS)
+        {
+            if(rot === 0)
+            {
+                max = labelWidth;
+                topOffset -= labelHeight * 0.5;
+            }
+            else if(absRot === 90)
+            {
+                max = labelHeight;
+                if(rot === 90)
+                {
+                    leftOffset += labelHeight;
+                    topOffset -= labelWidth * 0.5;
+                }
+                else
+                {
+                    topOffset += labelWidth * 0.5;
+                }
+            }
+            else
+            {
+                max = (cosRadians * labelWidth) + (sinRadians * labelHeight);
+                if(rot > 0)
+                {
+                    topOffset -= ((sinRadians * labelWidth) + (cosRadians * labelHeight))/2;
+                    leftOffset += Math.min(labelHeight, (sinRadians * labelHeight));
+                }
+                else
+                {
+                    topOffset += (sinRadians * labelWidth)/2 - (cosRadians * labelHeight)/2;
+                }
+            }
+        }
+        else
+        {
+            if(rot === 0)
+            {
+                topOffset -= labelHeight * 0.5;
+                max = labelWidth;
+            }
+            else if(rot === 90)
+            {
+                topOffset -= labelWidth * 0.5;
+                max = labelHeight;
+            }
+            else if(rot === -90)
+            {
+                topOffset -= labelWidth * 0.5;
+                max = labelHeight;
+            }
+            else
+            {
+                max = (cosRadians * labelWidth) + (sinRadians * labelHeight);
+                topOffset -= ((sinRadians * labelWidth) + (cosRadians * labelHeight))/2;
+            }
+        }
+        y += topOffset;
+        x += leftOffset;
+        label.style.left = x + "px";
+        label.style.top = y + "px";
+        this._titleSize = max;
+        this._rotate(label, props);
+    },
+
+    /**
+     * Rotate and position labels.
+     *
+     * @method positionLabel
+     * @param {HTMLElement} label to rotate position
+     * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
+     * against.
+     * @protected
+     */
+    positionLabel: function(label, pt)
+    {
+        var host = this,
+            tickOffset = host.get("leftTickOffset"),
+            style = host.get("styles").label,
+            margin = 0,
+            leftOffset = pt.x + this._titleSize,
+            topOffset = pt.y,
+            props = this._labelRotationProps,
+            rot = props.rot,
+            absRot = props.absRot,
+            sinRadians = props.sinRadians,
+            cosRadians = props.cosRadians,
+            maxLabelSize = host.get("maxLabelSize"),
+            labelWidth = Math.round(label.offsetWidth),
+            labelHeight = Math.round(label.offsetHeight);
+        if(style.margin && style.margin.right)
+        {
+            margin = style.margin.right;
+        }
+        if(!DOCUMENT.createElementNS)
+        {
+            label.style.filter = null; 
+            labelWidth = Math.round(label.offsetWidth);
+            labelHeight = Math.round(label.offsetHeight);
+            if(rot === 0)
+            {
+                leftOffset = labelWidth;
+                topOffset -= labelHeight * 0.5;
+            }
+            else if(absRot === 90)
+            {
+                leftOffset = labelHeight;
+                topOffset -= labelWidth * 0.5;
+            }
+            else if(rot > 0)
+            {
+                leftOffset = (cosRadians * labelWidth) + (labelHeight * rot/90);
+                topOffset -= (sinRadians * labelWidth) + (cosRadians * (labelHeight * 0.5));
+            }
+            else
+            {
+                leftOffset = (cosRadians * labelWidth) + (absRot/90 * labelHeight);
+                topOffset -= cosRadians * (labelHeight * 0.5);
+            }
+            leftOffset += tickOffset;
+            label.style.left = ((pt.x + this._titleSize + maxLabelSize) - leftOffset) + "px";
+            label.style.top = topOffset + "px";
+            this._rotate(label, this._labelRotationProps);
+            return;
+        }
+        label.style.msTransform = "rotate(0deg)";
+        labelWidth = Math.round(label.offsetWidth);
+        labelHeight = Math.round(label.offsetHeight);
+        if(rot === 0)
+        {
+            leftOffset -= labelWidth;
+            topOffset -= labelHeight * 0.5;
+        }
+        else if(rot === 90)
+        {
+            topOffset -= labelWidth * 0.5;
+        }
+        else if(rot === -90)
+        {
+            leftOffset -= labelHeight;
+            topOffset += labelWidth * 0.5;
+        }
+        else
+        {
+            if(rot < 0)
+            {
+                leftOffset -= (cosRadians * labelWidth) + (sinRadians * labelHeight);
+                topOffset += (sinRadians * labelWidth) - (cosRadians * (labelHeight * 0.6)); 
+            }
+            else
+            {
+                leftOffset -= (cosRadians * labelWidth);
+                topOffset -= (sinRadians * labelWidth) + (cosRadians * (labelHeight * 0.6));
+            }
+        }
+        label.style.left = (host.get("maxLabelSize") + leftOffset) + "px";
+        label.style.top = topOffset + "px";
+        this._rotate(label, this._labelRotationProps);
+    },
+
+    /**
+     * @protected
+     *
+     * Calculates the size and positions the content elements.
+     *
+     * @method setSizeAndPosition
+     * @protected
+     */
+    setSizeAndPosition: function()
+    {
+        var host = this,
+            labelSize = host.get("maxLabelSize"),
+            style = host.get("styles"),
+            leftTickOffset = host.get("leftTickOffset"),
+            sz = labelSize + leftTickOffset,
+            graphic = host.get("graphic"),
+            margin = style.label.margin;
+        if(margin && margin.right)
+        {
+            sz += margin.right;
+        }
+        sz += this._titleSize;
+        sz = Math.round(sz);
+        host.set("width", sz);
+        host.get("contentBox").setStyle("width", sz);
+        graphic.set("x", sz - leftTickOffset);
+    },
+    
+    /**
+     * Adjust the position of the Axis widget's content box for internal axes.
+     *
+     * @method offsetNodeForTick
+     * @param {Node} cb Content box of the Axis.
+     * @protected
+     */
+    offsetNodeForTick: function(cb)
+    {
+    },
+
+    /**
+     * Sets the width of the axis based on its contents.
+     *
+     * @method setCalculatedSize
+     * @protected
+     */
+    setCalculatedSize: function()
+    {
+        var host = this,
+            style = host.get("styles"),
+            label = style.label,
+            tickOffset = host.get("leftTickOffset"),
+            max = host.get("maxLabelSize"),
+            ttl = Math.round(this._titleSize + tickOffset + max + label.margin.right);
+        host.get("contentBox").setStyle("width", ttl);
+        host.set("width", ttl);
+    }
+};
+
+Y.LeftAxisLayout = LeftAxisLayout;
+/**
+ * RightAxisLayout contains algorithms for rendering a right axis.
+ *
+ * @constructor
+ * @class RightAxisLayout
+ */
+RightAxisLayout = function(){};
+
+RightAxisLayout.prototype = {
+    /**
+     *  Default margins for text fields.
+     *
+     *  @private
+     *  @method _getDefaultMargins
+     *  @return Object
+     */
+    _getDefaultMargins: function() 
+    {
+        return {
+            top: 0,
+            left: 4,
+            right: 0,
+            bottom: 0
+        };
+    },
+
+    /**
+     * Sets the length of the tick on either side of the axis line.
+     *
+     * @method setTickOffset
+     * @protected
+     */
+    setTickOffsets: function()
+    {
+        var host = this,
+            majorTicks = host.get("styles").majorTicks,
+            tickLength = majorTicks.length,
+            halfTick = tickLength * 0.5,
+            display = majorTicks.display;
+        host.set("topTickOffset",  0);
+        host.set("bottomTickOffset",  0);
+        
+        switch(display)
+        {
+            case "inside" :
+                host.set("leftTickOffset", tickLength);
+                host.set("rightTickOffset", 0);
+            break;
+            case "outside" : 
+                host.set("leftTickOffset", 0);
+                host.set("rightTickOffset", tickLength);
+            break;
+            case "cross" :
+                host.set("rightTickOffset", halfTick);
+                host.set("leftTickOffset", halfTick);
+            break;
+            default:
+                host.set("leftTickOffset", 0);
+                host.set("rightTickOffset", 0);
+            break;
+        }
+    },
+
+    /**
+     * Draws a tick
+     *
+     * @method drawTick
+     * @param {Object} pt Point on the axis in which the tick will intersect.
+     * @param {Object) tickStyle Hash of properties to apply to the tick.
+     * @protected
+     */
+    drawTick: function(pt, tickStyles)
+    {
+        var host = this,
+            style = host.get("styles"),
+            padding = style.padding,
+            tickLength = tickStyles.length,
+            start = {x:padding.left, y:pt.y},
+            end = {x:padding.left + tickLength, y:pt.y};
+        host.drawLine(start, end, tickStyles);
+    },
+    
+    /**
+     * Calculates the coordinates for the first point on an axis.
+     *
+     * @method getLineStart
+     * @return {Object}
+     * @protected
+     */
+    getLineStart: function()
+    {
+        var host = this,
+            style = host.get("styles"),
+            padding = style.padding,
+            majorTicks = style.majorTicks,
+            tickLength = majorTicks.length,
+            display = majorTicks.display,
+            pt = {x:padding.left, y:padding.top};
+        if(display === "inside")
+        {
+            pt.x += tickLength;
+        }
+        else if(display === "cross")
+        {
+            pt.x += tickLength/2;
+        }
+        return pt;
+    },
+    
+    /**
+     * Calculates the point for a label.
+     *
+     * @method getLabelPoint
+     * @param {Object} point Point on the axis in which the tick will intersect.
+     * @return {Object} 
+     * @protected
+     */
+    getLabelPoint: function(point)
+    {
+        return {x:point.x + this.get("rightTickOffset"), y:point.y};
+    },
+    
+    /**
+     * Updates the value for the <code>maxLabelSize</code> for use in calculating total size.
+     *
+     * @method updateMaxLabelSize
+     * @param {HTMLElement} label to measure
+     * @protected
+     */
+    updateMaxLabelSize: function(label)
+    {
+        var host = this,
+            props = this._labelRotationProps,
+            rot = props.rot,
+            absRot = props.absRot,
+            sinRadians = props.sinRadians,
+            cosRadians = props.cosRadians,
+            m11 = props.m11,
+            m12 = props.m12,
+            m21 = props.m21,
+            m22 = props.m22,
+            max;
+        if(!DOCUMENT.createElementNS)
+        {
+            label.style.filter = 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
+            host.set("maxLabelSize", Math.max(host.get("maxLabelSize"), label.offsetWidth));
+        }
+        else
+        {
+            label.style.msTransform = "rotate(0deg)";
+            if(rot === 0)
+            {
+                max = label.offsetWidth;
+            }
+            else if(absRot === 90)
+            {
+                max = label.offsetHeight;
+            }
+            else
+            {
+                max = (cosRadians * label.offsetWidth) + (sinRadians * label.offsetHeight);
+            }
+            host.set("maxLabelSize",  Math.max(host.get("maxLabelSize"), max));
+        }
+    },
+
+    /**
+     * Rotate and position title.
+     *
+     * @method positionTitle
+     * @param {HTMLElement} label to rotate position
+     * @protected
+     */
+    positionTitle: function(label)
+    {
+        var host = this,
+            max,
+            styles = host.get("styles").title,
+            margin = styles.margin,
+            props = this._getTextRotationProps(styles),
+            rot = props.rot,
+            absRot = props.absRot,
+            sinRadians = props.sinRadians,
+            cosRadians = props.cosRadians,
+            x = 0,
+            y = this.get("height")/2,
+            leftOffset = this.get("maxLabelSize") + margin.left + this.get("rightTickOffset") + this.get("styles").label.margin.left,
+            topOffset = 0,
+            labelWidth = label.offsetWidth,
+            labelHeight = label.offsetHeight;
+        if(Y.config.doc.createElementNS)
+        {
+            if(rot === 0)
+            {
+                max = labelWidth;
+                topOffset -= labelHeight * 0.5;
+            }
+            else if(absRot === 90)
+            {
+                max = labelHeight;
+                if(rot === 90)
+                {
+                    topOffset -= labelWidth * 0.5;
+                    leftOffset += labelHeight;
+                }
+                else
+                {
+                    topOffset += labelWidth * 0.5;
+                }
+            }
+            else
+            {
+                max = (cosRadians * labelWidth) + (sinRadians * labelHeight);
+                if(rot > 0)
+                {
+                    topOffset -= ((sinRadians * labelWidth) + (cosRadians * labelHeight))/2;
+                    leftOffset += Math.min(labelHeight, (sinRadians * labelHeight));
+                }
+                else
+                {
+                    topOffset += (sinRadians * labelWidth)/2 - (cosRadians * labelHeight)/2;
+                }
+            }
+        }
+        else
+        {
+            if(rot === 0)
+            {
+                topOffset -= labelHeight * 0.5;
+                max = labelWidth;
+            }
+            else if(rot === 90)
+            {
+                topOffset -= labelWidth * 0.5;
+                max = labelHeight;
+            }
+            else if(rot === -90)
+            {
+                topOffset -= labelWidth * 0.5;
+                max = labelHeight;
+            }
+            else
+            {
+                max = (cosRadians * labelWidth) + (sinRadians * labelHeight);
+                topOffset -= ((sinRadians * labelWidth) + (cosRadians * labelHeight))/2;
+            }
+        }
+        y += topOffset;
+        x += leftOffset;
+        label.style.left = x + "px";
+        label.style.top = y + "px";
+        this._titleSize = max;
+        this._rotate(label, props);
+    },
+
+    /**
+     * Rotate and position labels.
+     *
+     * @method positionLabel
+     * @param {HTMLElement} label to rotate position
+     * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
+     * against.
+     * @protected
+     */
+    positionLabel: function(label, pt)
+    {
+        var host = this,
+            tickOffset = host.get("rightTickOffset"),
+            style = host.get("styles").label,
+            margin = 0,
+            leftOffset = pt.x,
+            topOffset = pt.y,
+            props = this._labelRotationProps,
+            rot = props.rot,
+            absRot = props.absRot,
+            sinRadians = props.sinRadians,
+            cosRadians = props.cosRadians,
+            labelWidth = Math.round(label.offsetWidth),
+            labelHeight = Math.round(label.offsetHeight);
+        if(style.margin && style.margin.left)
+        {
+            margin = style.margin.left;
+        }
+        if(!DOCUMENT.createElementNS)
+        {
+            label.style.filter = null;
+            if(rot === 0)
+            {
+                topOffset -= labelHeight * 0.5;
+            }
+            else if(absRot === 90)
+            {
+                topOffset -= labelWidth * 0.5;
+            }
+            else if(rot > 0)
+            {
+                topOffset -= (cosRadians * (labelHeight * 0.5));
+            }
+            else
+            {
+                topOffset -= (sinRadians * labelWidth) +  (cosRadians * (labelHeight * 0.5));
+            }
+            leftOffset += margin;
+            leftOffset += tickOffset;
+            label.style.left = leftOffset + "px";
+            label.style.top = topOffset + "px";
+            this._rotate(label, props);
+            return;
+        }
+        label.style.msTransform = "rotate(0deg)";
+        labelWidth = Math.round(label.offsetWidth);
+        labelHeight = Math.round(label.offsetHeight);
+        if(rot === 0)
+        {
+            topOffset -= labelHeight * 0.5;
+        }
+        else if(rot === 90)
+        {
+            leftOffset += labelHeight;
+            topOffset -= labelWidth * 0.5;
+        }
+        else if(rot === -90)
+        {
+            topOffset += labelWidth * 0.5;
+        }
+        else if(rot < 0)
+        {
+            topOffset -= (cosRadians * (labelHeight * 0.6)); 
+        }
+        else
+        {
+            topOffset -= cosRadians * (labelHeight * 0.6);
+            leftOffset += sinRadians * labelHeight;
+        }
+        leftOffset += margin;
+        leftOffset += tickOffset;
+        label.style.left = leftOffset + "px";
+        label.style.top = topOffset + "px";
+        this._rotate(label, props);
+    },
+
+    /**
+     * Calculates the size and positions the content elements.
+     *
+     * @method setSizeAndPosition
+     * @protected
+     */
+    setSizeAndPosition: function()
+    {
+        var host = this,
+            label = host.get("styles").label,
+            labelSize = host.get("maxLabelSize"),
+            tickOffset = host.get("rightTickOffset"),
+            sz = tickOffset + labelSize;
+        if(label.margin && label.margin.left)
+        {
+            sz += label.margin.left;
+        }
+        sz += this._titleSize;
+        host.set("width", sz);
+        host.get("contentBox").setStyle("width", sz);
+    },
+    
+    /**
+     * Adjusts position for inner ticks.
+     *
+     * @method offsetNodeForTick
+     * @param {Node} cb contentBox of the axis
+     * @protected
+     */
+    offsetNodeForTick: function(cb)
+    {
+        var host = this,
+            tickOffset = host.get("leftTickOffset"),
+            offset = 0 - tickOffset;
+        cb.setStyle("left", offset);
+    },
+
+    /**
+     * Assigns a height based on the size of the contents.
+     *
+     * @method setCalculatedSize
+     * @protected
+     */
+    setCalculatedSize: function()
+    {
+        var host = this,
+            style = host.get("styles").label,
+            ttl = Math.round(host.get("rightTickOffset") + host.get("maxLabelSize") + this._titleSize + host.get("styles").title.margin.left + style.margin.left);
+        host.set("width", ttl);
+    }
+};
+
+Y.RightAxisLayout = RightAxisLayout;
+/**
+ * Contains algorithms for rendering a bottom axis.
+ *
+ * @class BottomAxisLayout
+ * @Constructor
+ */
+BottomAxisLayout = function(){};
+
+BottomAxisLayout.prototype = {
+    /**
+     *  Default margins for text fields.
+     *
+     *  @private
+     *  @method _getDefaultMargins
+     *  @return Object
+     */
+    _getDefaultMargins: function() 
+    {
+        return {
+            top: 4,
+            left: 0,
+            right: 0,
+            bottom: 0
+        };
+    },
+
+    /**
+     * Sets the length of the tick on either side of the axis line.
+     *
+     * @method setTickOffsets
+     * @protected
+     */
+    setTickOffsets: function()
+    {
+        var host = this,
+            majorTicks = host.get("styles").majorTicks,
+            tickLength = majorTicks.length,
+            halfTick = tickLength * 0.5,
+            display = majorTicks.display;
+        host.set("leftTickOffset",  0);
+        host.set("rightTickOffset",  0);
+
+        switch(display)
+        {
+            case "inside" :
+                host.set("topTickOffset", tickLength);
+                host.set("bottomTickOffset", 0);
+            break;
+            case "outside" : 
+                host.set("topTickOffset", 0);
+                host.set("bottomTickOffset", tickLength);
+            break;
+            case "cross":
+                host.set("topTickOffset",  halfTick);
+                host.set("bottomTickOffset",  halfTick);
+            break;
+            default:
+                host.set("topTickOffset", 0);
+                host.set("bottomTickOffset", 0);
+            break;
+        }
+    },
+
+    /**
+     * Calculates the coordinates for the first point on an axis.
+     *
+     * @method getLineStart
+     * @protected
+     */
+    getLineStart: function()
+    {
+        var style = this.get("styles"),
+            padding = style.padding,
+            majorTicks = style.majorTicks,
+            tickLength = majorTicks.length,
+            display = majorTicks.display,
+            pt = {x:0, y:padding.top};
+        if(display === "inside")
+        {
+            pt.y += tickLength;
+        }
+        else if(display === "cross")
+        {
+            pt.y += tickLength/2;
+        }
+        return pt; 
+    },
+    
+    /**
+     * Draws a tick
+     *
+     * @method drawTick
+     * @param {Object} pt hash containing x and y coordinates
+     * @param {Object} tickStyles hash of properties used to draw the tick
+     * @protected
+     */
+    drawTick: function(pt, tickStyles)
+    {
+        var host = this,
+            style = host.get("styles"),
+            padding = style.padding,
+            tickLength = tickStyles.length,
+            start = {x:pt.x, y:padding.top},
+            end = {x:pt.x, y:tickLength + padding.top};
+        host.drawLine(start, end, tickStyles);
+    },
+
+    /**
+     * Calculates the point for a label.
+     *
+     * @method getLabelPoint
+     * @param {Object} pt Object containing x and y coordinates
+     * @return Object
+     * @protected
+     */
+    getLabelPoint: function(point)
+    {
+        return {x:point.x, y:point.y + this.get("bottomTickOffset")};
+    },
+    
+    /**
+     * Updates the value for the <code>maxLabelSize</code> for use in calculating total size.
+     *
+     * @method updateMaxLabelSize
+     * @param {HTMLElement} label to measure
+     * @protected
+     */
+    updateMaxLabelSize: function(label)
+    {
+        var host = this,
+            props = this._labelRotationProps,
+            rot = props.rot,
+            absRot = props.absRot,
+            sinRadians = props.sinRadians,
+            cosRadians = props.cosRadians,
+            m11 = props.m11,
+            m12 = props.m12,
+            m21 = props.m21,
+            m22 = props.m22,
+            max;
+        if(!DOCUMENT.createElementNS)
+        {
+            label.style.filter = 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
+            host.set("maxLabelSize", Math.max(host.get("maxLabelSize"), label.offsetHeight));
+        }
+        else
+        {
+            label.style.msTransform = "rotate(0deg)";
+            if(rot === 0)
+            {
+                max = label.offsetHeight;
+            }
+            else if(absRot === 90)
+            {
+                max = label.offsetWidth;
+            }
+            else
+            {
+                max = (sinRadians * label.offsetWidth) + (cosRadians * label.offsetHeight); 
+            }
+            host.set("maxLabelSize",  Math.max(host.get("maxLabelSize"), max));
+        }
+    },
+    
+    /**
+     * Rotate and position title.
+     *
+     * @method positionTitle
+     * @param {HTMLElement} label to rotate position
+     * @protected
+     */
+    positionTitle: function(label)
+    {
+        var host = this,
+            max,
+            styles = host.get("styles").title,
+            props = this._getTextRotationProps(styles),
+            rot = props.rot,
+            absRot = props.absRot,
+            sinRadians = props.sinRadians,
+            cosRadians = props.cosRadians,
+            x = this.get("width")/2,
+            y = this.get("maxLabelSize") + this.get("styles").label.margin.top + styles.margin.top + this.get("bottomTickOffset"),
+            leftOffset = 0,
+            topOffset = 0,
+            labelWidth = label.offsetWidth,
+            labelHeight = label.offsetHeight;
+        if(Y.config.doc.createElementNS)
+        {
+            if(rot === 0)
+            {
+                max = labelHeight;
+                leftOffset -= labelWidth * 0.5;
+            }
+            else if(absRot === 90)
+            {
+                max = labelWidth;
+                if(rot === -90)
+                {
+                    topOffset += labelWidth;
+                    leftOffset -= labelHeight;
+                }
+            }
+            else
+            {
+                max = (sinRadians * labelWidth) + (cosRadians * labelHeight);
+                if(rot > 0)
+                {
+                    leftOffset -= (cosRadians * labelWidth)/2 - (sinRadians * labelHeight)/2;
+                }
+                else
+                {
+                    topOffset += (sinRadians * labelWidth) - (cosRadians * labelHeight)/2;
+                    leftOffset -= (cosRadians * labelWidth)/2 + (sinRadians * labelHeight)/2;
+                }
+            }
+        }
+        else
+        {
+            if(rot === 0)
+            {
+                leftOffset -= labelWidth * 0.5;
+                max = labelHeight;
+            }
+            else if(rot === 90)
+            {
+                leftOffset -= labelHeight * 0.5;
+                max = labelWidth;
+            }
+            else if(rot === -90)
+            {
+                leftOffset -= labelHeight * 0.5;
+                max = labelWidth;
+            }
+            else
+            {
+                max = (sinRadians * labelWidth) + (cosRadians * labelHeight);
+                leftOffset -= ((cosRadians * labelWidth) + (sinRadians * labelHeight))/2;
+            }
+        }
+        x += leftOffset;
+        y += topOffset;
+        label.style.left = x + "px";
+        label.style.top = y + "px";
+        this._titleSize = max;
+        this._rotate(label, props);
+    },
+    
+    /**
+     * Rotate and position labels.
+     *
+     * @method positionLabel
+     * @param {HTMLElement} label to rotate position
+     * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
+     * against.
+     * @protected
+     */
+    positionLabel: function(label, pt)
+    {
+        var host = this,
+            tickOffset = host.get("bottomTickOffset"),
+            style = host.get("styles").label,
+            margin = 0,
+            props = this._labelRotationProps,
+            rot = props.rot,
+            absRot = props.absRot,
+            sinRadians = props.sinRadians,
+            cosRadians = props.cosRadians,
+            leftOffset = Math.round(pt.x),
+            topOffset = Math.round(pt.y),
+            labelWidth = Math.round(label.offsetWidth),
+            labelHeight = Math.round(label.offsetHeight);
+        if(style.margin && style.margin.top)
+        {
+            margin = style.margin.top;
+        }
+        if(!DOCUMENT.createElementNS)
+        {
+            label.style.filter = null;
+            labelWidth = Math.round(label.offsetWidth);
+            labelHeight = Math.round(label.offsetHeight);
+            if(absRot === 90)
+            {
+                leftOffset -= labelHeight * 0.5;
+            }
+            else if(rot < 0)
+            {
+                leftOffset -= cosRadians * labelWidth;
+                leftOffset -= sinRadians * (labelHeight * 0.5);
+            }
+            else if(rot > 0)
+            {
+               leftOffset -= sinRadians * (labelHeight * 0.5);
+            }
+            else
+            {
+                leftOffset -= labelWidth * 0.5;
+            }
+            topOffset += margin;
+            topOffset += tickOffset;
+            label.style.left = Math.round(leftOffset) + "px";
+            label.style.top = Math.round(topOffset) + "px";
+            this._rotate(label, props);
+            return;
+        }
+        label.style.msTransform = "rotate(0deg)";
+        labelWidth = Math.round(label.offsetWidth);
+        labelHeight = Math.round(label.offsetHeight);
+        if(rot === 0)
+        {
+            leftOffset -= labelWidth * 0.5;
+        }
+        else if(absRot === 90)
+        {
+            if(rot === 90)
+            {
+                leftOffset += labelHeight * 0.5;
+            }
+            else
+            {
+                topOffset += labelWidth;
+                leftOffset -= labelHeight * 0.5;
+            }
+        }
+        else 
+        {
+            if(rot < 0)
+            {
+                leftOffset -= (cosRadians * labelWidth) + (sinRadians * (labelHeight * 0.6));
+                topOffset += sinRadians * labelWidth;
+            }
+            else
+            {
+                leftOffset += Math.round(sinRadians * (labelHeight * 0.6));
+            }
+        }
+        topOffset += margin;
+        topOffset += tickOffset;
+        label.style.left = Math.round(leftOffset) + "px";
+        label.style.top = Math.round(topOffset) + "px";
+        this._rotate(label, props);
+    },
+    
+    /**
+     * Calculates the size and positions the content elements.
+     *
+     * @method setSizeAndPosition
+     * @protected
+     */
+    setSizeAndPosition: function()
+    {
+        var host = this,
+            labelSize = host.get("maxLabelSize"),
+            tickLength = host.get("bottomTickLength"),
+            style = host.get("styles"),
+            sz = tickLength + labelSize,
+            margin = style.label.margin;
+        if(margin && margin.top)
+        {   
+            sz += margin.top;
+        }
+        sz = Math.round(sz);
+        host.set("height", sz);
+    },
+
+    /**
+     * Adjusts position for inner ticks.
+     *
+     * @method offsetNodeForTick
+     * @param {Node} cb contentBox of the axis
+     * @protected
+     */
+    offsetNodeForTick: function(cb)
+    {
+        var host = this;
+        host.get("contentBox").setStyle("top", 0 - host.get("topTickOffset"));
+    },
+
+    /**
+     * Assigns a height based on the size of the contents.
+     *
+     * @method setCalculatedSize
+     * @protected
+     */
+    setCalculatedSize: function()
+    {
+        var host = this,
+            style = host.get("styles").label,
+            ttl = Math.round(host.get("bottomTickOffset") + host.get("maxLabelSize") + style.margin.top + this.get("styles").title.margin.top + this._titleSize);
+        host.set("height", ttl);
+    }
+};
+Y.BottomAxisLayout = BottomAxisLayout;
+/**
+ * Contains algorithms for rendering a top axis.
+ *
+ * @class TopAxisLayout
+ * @constructor
+ */
+TopAxisLayout = function(){};
+
+TopAxisLayout.prototype = {
+    /**
+     *  Default margins for text fields.
+     *
+     *  @private
+     *  @method _getDefaultMargins
+     *  @return Object
+     */
+    _getDefaultMargins: function() 
+    {
+        return {
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 4
+        };
+    },
+    
+    /**
+     * Sets the length of the tick on either side of the axis line.
+     *
+     * @method setTickOffsets
+     * @protected
+     */
+    setTickOffsets: function()
+    {
+        var host = this,
+            majorTicks = host.get("styles").majorTicks,
+            tickLength = majorTicks.length,
+            halfTick = tickLength * 0.5,
+            display = majorTicks.display;
+        host.set("leftTickOffset",  0);
+        host.set("rightTickOffset",  0);
+        switch(display)
+        {
+            case "inside" :
+                host.set("bottomTickOffset", tickLength);
+                host.set("topTickOffset", 0);
+            break;
+            case "outside" : 
+                host.set("bottomTickOffset", 0);
+                host.set("topTickOffset",  tickLength);
+            break;
+            case "cross" :
+                host.set("topTickOffset", halfTick);
+                host.set("bottomTickOffset", halfTick);
+            break;
+            default:
+                host.set("topTickOffset", 0);
+                host.set("bottomTickOffset", 0);
+            break;
+        }
+    },
+
+    /**
+     * Calculates the coordinates for the first point on an axis.
+     *
+     * @method getLineStart
+     * @protected
+     */
+    getLineStart: function()
+    {
+        var host = this,
+            style = host.get("styles"),
+            padding = style.padding,
+            majorTicks = style.majorTicks,
+            tickLength = majorTicks.length,
+            display = majorTicks.display,
+            pt = {x:0, y:padding.top};
+        if(display === "outside")
+        {
+            pt.y += tickLength;
+        }
+        else if(display === "cross")
+        {
+            pt.y += tickLength/2;
+        }
+        return pt; 
+    },
+    
+    /**
+     * Draws a tick
+     *
+     * @method drawTick
+     * @param {Object} pt hash containing x and y coordinates
+     * @param {Object} tickStyles hash of properties used to draw the tick
+     * @protected
+     */
+    drawTick: function(pt, tickStyles)
+    {
+        var host = this,
+            style = host.get("styles"),
+            padding = style.padding,
+            tickLength = tickStyles.length,
+            start = {x:pt.x, y:padding.top},
+            end = {x:pt.x, y:tickLength + padding.top};
+        host.drawLine(start, end, tickStyles);
+    },
+    
+    /**
+     * Calculates the point for a label.
+     *
+     * @method getLabelPoint
+     * @param {Object} pt hash containing x and y coordinates
+     * @return Object
+     * @protected
+     */
+    getLabelPoint: function(pt)
+    {
+        return {x:pt.x, y:pt.y - this.get("topTickOffset")};
+    },
+    
+    /**
+     * Updates the value for the <code>maxLabelSize</code> for use in calculating total size.
+     *
+     * @method updateMaxLabelSize
+     * @param {HTMLElement} label to measure
+     * @protected
+     */
+    updateMaxLabelSize: function(label)
+    {
+        var host = this,
+            props = this._labelRotationProps,
+            rot = props.rot,
+            absRot = props.absRot,
+            sinRadians = props.sinRadians,
+            cosRadians = props.cosRadians,
+            m11 = props.m11,
+            m12 = props.m12,
+            m21 = props.m21,
+            m22 = props.m22,
+            max;
+        if(!DOCUMENT.createElementNS)
+        {
+            label.style.filter = 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
+            host.set("maxLabelSize", Math.max(host.get("maxLabelSize"), label.offsetHeight));
+        }
+        else
+        {
+            label.style.msTransform = "rotate(0deg)";
+            if(rot === 0)
+            {
+                max = label.offsetHeight;
+            }
+            else if(absRot === 90)
+            {
+                max = label.offsetWidth;
+            }
+            else
+            {
+                max = (sinRadians * label.offsetWidth) + (cosRadians * label.offsetHeight); 
+            }
+            host.set("maxLabelSize",  Math.max(host.get("maxLabelSize"), max));
+        }
+    },
+
+    /**
+     * Rotate and position title.
+     *
+     * @method positionTitle
+     * @param {HTMLElement} label to rotate position
+     * @protected
+     */
+    positionTitle: function(label)
+    {
+        var host = this,
+            max,
+            styles = host.get("styles").title,
+            props = this._getTextRotationProps(styles),
+            rot = props.rot,
+            absRot = props.absRot,
+            sinRadians = props.sinRadians,
+            cosRadians = props.cosRadians,
+            x = this.get("width")/2,
+            y = styles.margin.top,
+            leftOffset = 0,
+            topOffset = 0,
+            labelWidth = label.offsetWidth,
+            labelHeight = label.offsetHeight;
+        if(Y.config.doc.createElementNS)
+        {
+            if(rot === 0)
+            {
+                max = labelHeight;
+                leftOffset -= labelWidth * 0.5;
+            }
+            else if(absRot === 90)
+            {
+                max = labelWidth;
+                if(rot === 90)
+                {
+                    leftOffset += labelHeight/2;
+                }
+                else
+                {
+                    topOffset += labelWidth;
+                    leftOffset -= labelHeight/2;
+                }
+            }
+            else
+            {
+                max = (sinRadians * labelWidth) + (cosRadians * labelHeight);
+                if(rot > 0)
+                {
+                    leftOffset -= (cosRadians * labelWidth)/2 - (sinRadians * labelHeight)/2;
+                }
+                else
+                {
+                    topOffset += (sinRadians * labelWidth);
+                    leftOffset -= (cosRadians * labelWidth)/2 + (sinRadians * labelHeight)/2;
+                }
+            }
+        }
+        else
+        {
+            if(rot === 0)
+            {
+                leftOffset -= labelWidth * 0.5;
+                max = labelHeight;
+            }
+            else if(rot === 90)
+            {
+                leftOffset -= labelHeight * 0.5;
+                max = labelWidth;
+            }
+            else if(rot === -90)
+            {
+                leftOffset -= labelHeight * 0.5;
+                max = labelWidth;
+            }
+            else
+            {
+                max = (sinRadians * labelWidth) + (cosRadians * labelHeight);
+                leftOffset -= ((cosRadians * labelWidth) + (sinRadians * labelHeight))/2;
+            }
+        }
+        x += leftOffset;
+        y += topOffset;
+        label.style.left = x + "px";
+        label.style.top = y + "px";
+        this._titleSize = max;
+        this._rotate(label, props);
+    },
+
+    /**
+     * Rotate and position labels.
+     *
+     * @method positionLabel
+     * @param {HTMLElement} label to rotate position
+     * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
+     * against.
+     * @protected
+     */
+    positionLabel: function(label, pt)
+    {
+        var host = this,
+            tickOffset = host.get("topTickOffset"),
+            style = host.get("styles").label,
+            titleStyles = host.get("styles").title,
+            totalTitleSize = this.get("title") ? this._titleSize + titleStyles.margin.top + titleStyles.margin.bottom : 0,
+            margin = 0,
+            leftOffset = pt.x,
+            topOffset = pt.y + totalTitleSize,
+            props = this._labelRotationProps,
+            rot = props.rot,
+            absRot = props.absRot,
+            sinRadians = props.sinRadians,
+            cosRadians = props.cosRadians,
+            maxLabelSize = host.get("maxLabelSize"),
+            labelWidth = Math.round(label.offsetWidth),
+            labelHeight = Math.round(label.offsetHeight);
+        if(style.margin && style.margin.bottom)
+        {
+            margin = style.margin.bottom;
+        }
+        if(!DOCUMENT.createElementNS)
+        {
+            label.style.filter = null;
+            labelWidth = Math.round(label.offsetWidth);
+            labelHeight = Math.round(label.offsetHeight);
+            if(rot === 0)
+            {
+                leftOffset -= labelWidth * 0.5;
+            }
+            else if(absRot === 90)
+            {
+                leftOffset -= labelHeight * 0.5;
+            }
+            else if(rot > 0)
+            {
+                leftOffset -= (cosRadians * labelWidth) + Math.min((sinRadians * labelHeight), (rot/180 * labelHeight));
+                topOffset -= (sinRadians * labelWidth) + (cosRadians * (labelHeight));
+                topOffset += maxLabelSize;
+            }
+            else
+            {
+                leftOffset -= sinRadians * (labelHeight * 0.5);
+                topOffset -= (sinRadians * labelWidth) + (cosRadians * (labelHeight));
+                topOffset += maxLabelSize;
+            }
+            topOffset -= tickOffset;
+            label.style.left = leftOffset;
+            label.style.top = topOffset;
+            this._rotate(label, props);
+            return;
+        }
+        label.style.msTransform = "rotate(0deg)";
+        labelWidth = Math.round(label.offsetWidth);
+        labelHeight = Math.round(label.offsetHeight);
+        if(rot === 0)
+        {
+            leftOffset -= labelWidth * 0.5;
+            topOffset -= labelHeight;
+        }
+        else if(rot === 90)
+        {
+            leftOffset += labelHeight * 0.5;
+            topOffset -= labelWidth;
+        }
+        else if(rot === -90)
+        {
+            leftOffset -= labelHeight * 0.5;
+            topOffset -= 0;
+        }
+        else if(rot < 0)
+        {
+            leftOffset -= (sinRadians * (labelHeight * 0.6));
+            topOffset -= (cosRadians * labelHeight);
+        }
+        else
+        {
+            leftOffset -= (cosRadians * labelWidth) - (sinRadians * (labelHeight * 0.6));
+            topOffset -= (sinRadians * labelWidth) + (cosRadians * labelHeight);
+        }
+        topOffset -= tickOffset;
+        label.style.left = leftOffset + "px";
+        label.style.top = (host.get("maxLabelSize") + topOffset) + "px";
+        this._rotate(label, props);
+    },
+
+    /**
+     * Calculates the size and positions the content elements.
+     *
+     * @method setSizeAndPosition
+     * @protected
+     */
+    setSizeAndPosition: function()
+    {
+        var host = this,
+            labelSize = host.get("maxLabelSize"),
+            tickOffset = host.get("topTickOffset"),
+            style = host.get("styles"),
+            margin = style.label.margin,
+            graphic = host.get("graphic"),
+            sz = tickOffset + labelSize,
+            titleMargin = style.title.margin;
+        if(margin && margin.bottom)
+        {
+            sz += margin.bottom;
+        }
+        if(this.get("title"))
+        {
+            sz += this._titleSize + titleMargin.top + titleMargin.bottom;
+        }
+        host.set("height", sz);
+        graphic.set("y", sz - tickOffset);
+    },
+    
+    /**
+     * Adjusts position for inner ticks.
+     *
+     * @method offsetNodeForTick
+     * @param {Node} cb contentBox of the axis
+     * @protected
+     */
+    offsetNodeForTick: function(cb)
+    {
+    },
+
+    /**
+     * Assigns a height based on the size of the contents.
+     *
+     * @method setCalculatedSize
+     * @protected
+     */
+    setCalculatedSize: function()
+    {
+        var host = this,
+            styles = host.get("styles"),
+            labelMargin = styles.label.margin,
+            titleMargin = styles.title.margin,
+            totalLabelSize = labelMargin.top + labelMargin.bottom + host.get("maxLabelSize"),
+            totalTitleSize = host.get("title") ? titleMargin.top + titleMargin.bottom + host._titleSize : 0,
+            ttl = Math.round(host.get("topTickOffset") + totalLabelSize + totalTitleSize);
+        host.set("height", ttl);
+    }
+};
+Y.TopAxisLayout = TopAxisLayout;
+
+/**
  * The Axis class. Generates axes for a chart.
  *
  * @class Axis
@@ -3689,30 +1755,17 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     /**
      * @private
      */
-    _positionChangeHandler: function(e)
-    {
-        var position = this.get("position");
-        if(position == "none")
-        {
-            return;
-        }
-        this._layout =this.getLayout(this.get("position"));
-        if(this.get("rendered"))
-        {
-            this._drawAxis();
-        }
-    },
-
-    /**
-     * @private
-     */
     renderUI: function()
     {
-        var pos = this.get("position");
+        var pos = this.get("position"),
+            layoutClass = this._layoutClasses[pos];
         if(pos && pos != "none")
         {
-            this._layout =this.getLayout(pos);
-            this._setCanvas();
+            this._layout = new layoutClass();
+            if(this._layout)
+            {
+                this._setCanvas();
+            }
         }
     },
    
@@ -3721,10 +1774,35 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
      */
     syncUI: function()
     {
+        var layout = this._layout,
+            defaultMargins,
+            styles,
+            label,
+            title,
+            i;
+        if(layout)
+        {
+            defaultMargins = layout._getDefaultMargins();
+            styles = this.get("styles");
+            label = styles.label.margin;
+            title =styles.title.margin;
+            //need to defaultMargins method to the layout classes.
+            for(i in defaultMargins)
+            {
+                if(defaultMargins.hasOwnProperty(i))
+                {
+                    label[i] = label[i] === undefined ? defaultMargins[i] : label[i];
+                    title[i] = title[i] === undefined ? defaultMargins[i] : title[i];
+                }
+            }
+        }
         this._drawAxis();
     },
 
     /**
+     * Creates a graphic instance to be used for the axis line and ticks.
+     *
+     * @method _setCanvas
      * @private
      */
     _setCanvas: function()
@@ -3754,11 +1832,10 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     },
 	
     /**
-     * @protected
-     *
      * Gets the default value for the <code>styles</code> attribute. Overrides
      * base implementation.
      *
+     * @protected
      * @method _getDefaultStyles
      * @return Object
      */
@@ -3798,10 +1875,22 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 fontSize:"85%",
                 rotation: 0,
                 margin: {
-                    top:4,
-                    right:4,
-                    bottom:4,
-                    left:4
+                    top: undefined,
+                    right: undefined,
+                    bottom: undefined,
+                    left: undefined
+                }
+            },
+            title: {
+                color:"#808080",
+                alpha: 1,
+                fontSize:"85%",
+                rotation: undefined,
+                margin: {
+                    top: undefined,
+                    right: undefined,
+                    bottom: undefined,
+                    left: undefined
                 }
             },
             hideOverlappingLabelTicks: false
@@ -3811,6 +1900,9 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     },
 
     /**
+     * Updates the axis when the size changes.
+     *
+     * @method _handleSizeChange
      * @private
      */
     _handleSizeChange: function(e)
@@ -3827,49 +1919,94 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             this._drawAxis();
         }
     },
-
+   
     /**
+     * Maps key values to classes containing layout algorithms
+     *
+     * @property _layoutClasses
      * @private
      */
-    _layout: null,
-
-    /**
-     * @private 
-     */
-    getLayout: function(pos)
+    _layoutClasses: 
     {
-        var l;
-        switch(pos)
-        {
-            case "top" :
-                l = new Y.TopAxisLayout({axisRenderer:this});
-            break;
-            case "bottom" : 
-                l = new Y.BottomAxisLayout({axisRenderer:this});
-            break;
-            case "left" :
-                l = new Y.LeftAxisLayout({axisRenderer:this});
-            break;
-            case "right" :
-                l = new Y.RightAxisLayout({axisRenderer:this});
-            break;
-        }
-        return l;
+        top : TopAxisLayout,
+        bottom: BottomAxisLayout,
+        left: LeftAxisLayout,
+        right : RightAxisLayout
     },
     
     /**
+     * Draws a line segment between 2 points
+     *
+     * @method drawLine
+     * @param {Object} startPoint x and y coordinates for the start point of the line segment
+     * @param {Object} endPoint x and y coordinates for the for the end point of the line segment
+     * @param {Object} line styles (weight, color and alpha to be applied to the line segment)
      * @private
      */
     drawLine: function(startPoint, endPoint, line)
     {
-        var graphic = this.get("graphic");
-        graphic.lineStyle(line.weight, line.color, line.alpha);
-        graphic.moveTo(startPoint.x, startPoint.y);
-        graphic.lineTo(endPoint.x, endPoint.y);
-        graphic.end();
+        var path = this.get("path");
+        path.set("stroke", {
+            weight: line.weight, 
+            color: line.color, 
+            opacity: line.alpha
+        });
+        path.moveTo(startPoint.x, startPoint.y);
+        path.lineTo(endPoint.x, endPoint.y);
     },
 
     /**
+     * Generates the properties necessary for rotating and positioning a text field.
+     *
+     * @method _getTextRotationProps
+     * @param {Object} style properties for the text field
+     * @return Object
+     * @private
+     */
+    _getTextRotationProps: function(styles)
+    {
+        if(styles.rotation === undefined)
+        {
+            switch(this.get("position"))
+            {
+                case "left" :
+                    styles.rotation = -90;
+                break; 
+                case "right" : 
+                    styles.rotation = 90;
+                break;
+                default :
+                    styles.rotation = 0;
+                break;
+            }
+        }
+        var rot =  Math.min(90, Math.max(-90, styles.rotation)),
+            absRot = Math.abs(rot),
+            radCon = Math.PI/180,
+            sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
+            cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
+            m11 = cosRadians,
+            m12 = rot > 0 ? -sinRadians : sinRadians,
+            m21 = -m12,
+            m22 = m11;
+        return {
+            rot: rot,
+            absRot: absRot,
+            radCon: radCon,
+            sinRadians: sinRadians,
+            cosRadians: cosRadians,
+            m11: m11,
+            m12: m12,
+            m21: m21,
+            m22: m22,
+            textAlpha: styles.alpha
+        };
+    },
+
+    /**
+     * Draws an axis. 
+     *
+     * @method _drawAxis
      * @private
      */
     _drawAxis: function ()
@@ -3881,9 +2018,10 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         }
         this._drawing = true;
         this._callLater = false;
-        if(this.get("position") != "none")
+        if(this._layout)
         {
             var styles = this.get("styles"),
+                labelStyles = styles.label,
                 majorTickStyles = styles.majorTicks,
                 drawTicks = majorTickStyles.display != "none",
                 tickPoint,
@@ -3891,19 +2029,22 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 len,
                 majorUnitDistance,
                 i = 0,
+                layout = this._layout,
                 layoutLength,
                 position,
                 lineStart,
                 label,
-                layout = this._layout,
                 labelFunction = this.get("labelFunction"),
                 labelFunctionScope = this.get("labelFunctionScope"),
                 labelFormat = this.get("labelFormat"),
-                graphic = this.get("graphic");
-            graphic.clear();
-            layout.setTickOffsets();
+                graphic = this.get("graphic"),
+                path = this.get("path");
+            graphic.set("autoDraw", false);
+            path.clear();
+            this._labelRotationProps = this._getTextRotationProps(labelStyles);
+            layout.setTickOffsets.apply(this);
             layoutLength = this.getLength();
-            lineStart = layout.getLineStart();
+            lineStart = layout.getLineStart.apply(this);
             len = this.getTotalMajorUnits(majorUnit);
             majorUnitDistance = this.getMajorUnitDistance(len, layoutLength, majorUnit);
             this.set("edgeOffset", this.getEdgeOffset(len, layoutLength) * 0.5);
@@ -3911,7 +2052,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             this.drawLine(lineStart, this.getLineEnd(tickPoint), styles.line);
             if(drawTicks) 
             {
-               layout.drawTick(tickPoint, majorTickStyles);
+               layout.drawTick.apply(this, [tickPoint, majorTickStyles]);
             }
             if(len < 1)
             {
@@ -3920,28 +2061,30 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             }
             this._createLabelCache();
             this._tickPoints = [];
-            layout.set("maxLabelSize", 0); 
+            this.set("maxLabelSize", 0); 
+            this._titleSize = 0;
             for(; i < len; ++i)
             {
                 if(drawTicks) 
                 {
-                    layout.drawTick(tickPoint, majorTickStyles);
+                    layout.drawTick.apply(this, [tickPoint, majorTickStyles]);
                 }
                 position = this.getPosition(tickPoint);
-                label = this.getLabel(tickPoint);
+                label = this.getLabel(tickPoint, labelStyles);
                 label.innerHTML = labelFunction.apply(labelFunctionScope, [this.getLabelByIndex(i, len), labelFormat]);
                 tickPoint = this.getNextPoint(tickPoint, majorUnitDistance);
             }
             this._clearLabelCache();
-            layout.setSizeAndPosition();
+            this._updateTitle();
+            layout.setSizeAndPosition.apply(this);
             if(this.get("overlapGraph"))
             {
-               layout.offsetNodeForTick(this.get("contentBox"));
+               layout.offsetNodeForTick.apply(this, [this.get("contentBox")]);
             }
-            layout.setCalculatedSize();
+            layout.setCalculatedSize.apply(this);
             for(i = 0; i < len; ++i)
             {
-                layout.positionLabel(this.get("labels")[i], this._tickPoints[i]);
+                layout.positionLabel.apply(this, [this.get("labels")[i], this._tickPoints[i]]);
             }
         }
         this._drawing = false;
@@ -3951,24 +2094,89 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         }
         else
         {
+            this._updatePathElement();
             this.fire("axisRendered");
         }
     },
 
     /**
-     * @private
+     *  Updates path.
+     *
+     *  @method _updatePathElement
+     *  @private
      */
-    _labels: null,
+    _updatePathElement: function()
+    {
+        var path = this.get("path"),
+            graphic = this.get("graphic");
+        if(path)
+        {
+            path.end();
+            graphic._redraw();
+        }
+    },
 
     /**
-     * @private 
-     */
-    _labelCache: null,
-
-    /**
+     * Updates the content and style properties for a title field.
+     *
+     * @method _updateTitle
      * @private
      */
-    getLabel: function(pt, pos)
+    _updateTitle: function()
+    {
+        var i,
+            styles,
+            customStyles,
+            title = this.get("title"),
+            titleTextField = this._titleTextField,
+            parentNode;
+        if(title !== null && title !== undefined)
+        {
+            customStyles = {
+                    rotation: "rotation",
+                    margin: "margin",
+                    alpha: "alpha"
+            };
+            styles = this.get("styles").title;
+            if(!titleTextField)
+            {
+                titleTextField = Y.config.doc.createElement('span');
+                titleTextField.setAttribute("class", "axisTitle");
+                this.get("contentBox").appendChild(titleTextField);
+            }
+            titleTextField.setAttribute("style", "display:block;white-space:nowrap;position:absolute;");
+            for(i in styles)
+            {
+                if(styles.hasOwnProperty(i) && !customStyles.hasOwnProperty(i))
+                {
+                    titleTextField.style[i] = styles[i];
+                }
+            }
+            titleTextField.innerHTML = title;
+            this._titleTextField = titleTextField;
+            this._layout.positionTitle.apply(this, [titleTextField]);
+        }
+        else if(titleTextField)
+        {
+            parentNode = titleTextField.parentNode;
+            if(parentNode)
+            {
+                parentNode.removeChild(titleTextField);
+            }
+            this._titleTextField = null;
+        }
+    },
+
+    /**
+     * Creates or updates an axis label.
+     *
+     * @method getLabel
+     * @param {Object} pt x and y coordinates for the label
+     * @param {Object} styles styles applied to label
+     * @return HTMLElement 
+     * @private
+     */
+    getLabel: function(pt, styles)
     {
         var i,
             label,
@@ -3977,15 +2185,14 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 margin: "margin",
                 alpha: "alpha"
             },
-            cache = this._labelCache,
-            styles = this.get("styles").label;
+            cache = this._labelCache;
         if(cache.length > 0)
         {
             label = cache.shift();
         }
         else
         {
-            label = document.createElement("span");
+            label = DOCUMENT.createElement("span");
             label.style.display = "block";
             label.style.whiteSpace = "nowrap";
             Y.one(label).addClass("axisLabel");
@@ -3994,7 +2201,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         label.style.position = "absolute";
         this._labels.push(label);
         this._tickPoints.push({x:pt.x, y:pt.y});
-        this._layout.updateMaxLabelSize(label);
+        this._layout.updateMaxLabelSize.apply(this, [label]);
         for(i in styles)
         {
             if(styles.hasOwnProperty(i) && !customStyles.hasOwnProperty(i))
@@ -4006,6 +2213,9 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     },   
 
     /**
+     * Creates a cache of labels that can be re-used when the axis redraws.
+     *
+     * @method _createLabelCache
      * @private
      */
     _createLabelCache: function()
@@ -4029,6 +2239,9 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     },
     
     /**
+     * Removes axis labels from the dom and clears the label cache.
+     *
+     * @method _clearLabelCache
      * @private
      */
     _clearLabelCache: function()
@@ -4047,11 +2260,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         }
         this._labelCache = [];
     },
-
-    /**
-     * @private
-     */
-    _calculateSizeByTickLength: true,
 
     /**
      * @private 
@@ -4178,6 +2386,72 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             p = point.x - padding.left;
         }
         return p;
+    },
+
+    /**
+     * Rotates and positions a text field.
+     *
+     * @method _rotate
+     * @param {HTMLElement} label text field to rotate and position
+     * @param {Object} props properties to be applied to the text field. 
+     * @private
+     */
+    _rotate: function(label, props)
+    {
+        var rot = props.rot,
+            absRot,
+            radCon,
+            sinRadians,
+            cosRadians,
+            m11,
+            m12,
+            m21,
+            m22,
+            filterString,
+            textAlpha;
+        if(Y.config.doc.createElementNS)
+        {
+            label.style.MozTransformOrigin =  "0 0";
+            label.style.MozTransform = "rotate(" + rot + "deg)";
+            label.style.webkitTransformOrigin = "0 0";
+            label.style.webkitTransform = "rotate(" + rot + "deg)";
+            label.style.msTransformOrigin =  "0 0";
+            label.style.msTransform = "rotate(" + rot + "deg)";
+            label.style.OTransformOrigin =  "0 0";
+            label.style.OTransform = "rotate(" + rot + "deg)";
+        }
+        else
+        {
+            textAlpha = props.textAlpha;
+            absRot = props.absRot;
+            radCon = props.radCon;
+            sinRadians = props.sinRadians;
+            cosRadians = props.cosRadians;
+            m11 = props.m11;
+            m12 = props.m12;
+            m21 = props.m21;
+            m22 = props.m22;
+            if(Y.Lang.isNumber(textAlpha) && textAlpha < 1 && textAlpha > -1 && !isNaN(textAlpha))
+            {
+                filterString = "progid:DXImageTransform.Microsoft.Alpha(Opacity=" + Math.round(textAlpha * 100) + ")";
+            }
+            if(rot !== 0)
+            {
+                if(filterString)
+                {
+                    filterString += " ";
+                }
+                else
+                {
+                    filterString = ""; 
+                }
+                filterString += 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
+            }
+            if(filterString)
+            {
+                label.style.filter = filterString;
+            }
+        }
     }
 }, {
     ATTRS: 
@@ -4202,7 +2476,24 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          * @type Graphic
          */
         graphic: {},
-        
+     
+        path: {
+            readOnly: true,
+
+            getter: function()
+            {
+                if(!this._path)
+                {
+                    var graphic = this.get("graphic");
+                    if(graphic)
+                    {
+                        this._path = graphic.getShape({type:"path"});
+                    }
+                }
+                return this._path;
+            }
+        },
+
         /**
          * Contains the contents of the axis. 
          *
@@ -4218,8 +2509,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          * @type String
          */
         position: {
-            lazyAdd: false,
-
             setOnce: true,
 
             setter: function(val)
@@ -4331,7 +2620,29 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          * @attribute labelFunctionScope
          * @type Object
          */
-        labelFunctionScope: {}
+        labelFunctionScope: {},
+        
+        /**
+         * Length in pixels of largest text bounding box. Used to calculate the height of the axis.
+         *
+         * @attribute maxLabelSize
+         * @type Number
+         * @protected
+         */
+        maxLabelSize: {
+            value: 0
+        },
+        
+        /**
+         *  Title for the axis. When specified, the title will display. The position of the title is determined by the axis position. 
+         *  <dl>
+         *      <dt>top</dt><dd>Appears above the axis and it labels. The default rotation is 0.</dd>
+         *      <dt>right</dt><dd>Appears to the right of the axis and its labels. The default rotation is 90.</dd>
+         *      <dt>bottom</dt><dd>Appears below the axis and its labels. The default rotation is 0.</dd>
+         *      <dt>left</dt><dd>Appears to the left of the axis and its labels. The default rotation is -90.</dd>
+         *  </dl>
+         */
+        title: {}
             
         /**
          * Style properties used for drawing an axis. This attribute is inherited from <code>Renderer</code>. Below are the default values:
@@ -4385,1430 +2696,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          */
     }
 });
-/**
- * Algorithmic strategy for rendering a left axis.
- *
- * @class LeftAxisLayout
- * @extends Base
- * @param {Object} config
- * @constructor
- */
-function LeftAxisLayout(config)
-{
-    LeftAxisLayout.superclass.constructor.apply(this, arguments);
-}
-
-LeftAxisLayout.ATTRS = {
-    /**
-     * Reference to the <code>Axis</code> using the strategy.
-     *
-     * @attribute axisRenderer
-     * @type Axis
-     * @protected
-     */
-    axisRenderer: {
-        value: null
-    },
-
-    /**
-     * @private
-     */
-    maxLabelSize: {
-        value: 0
-    }
-};
-
-Y.extend(LeftAxisLayout, Y.Base, {
-    /**
-     * Sets the length of the tick on either side of the axis line.
-     *
-     * @method setTickOffset
-     * @protected
-     */
-    setTickOffsets: function()
-    {
-        var ar = this.get("axisRenderer"),
-            majorTicks = ar.get("styles").majorTicks,
-            tickLength = majorTicks.length,
-            halfTick = tickLength * 0.5,
-            display = majorTicks.display;
-        ar.set("topTickOffset",  0);
-        ar.set("bottomTickOffset",  0);
-        
-        switch(display)
-        {
-            case "inside" :
-                ar.set("rightTickOffset",  tickLength);
-                ar.set("leftTickOffset", 0);
-            break;
-            case "outside" : 
-                ar.set("rightTickOffset", 0);
-                ar.set("leftTickOffset",  tickLength);
-            break;
-            case "cross":
-                ar.set("rightTickOffset", halfTick); 
-                ar.set("leftTickOffset",  halfTick);
-            break;
-            default:
-                ar.set("rightTickOffset", 0);
-                ar.set("leftTickOffset", 0);
-            break;
-        }
-    },
-    
-    /**
-     * Draws a tick
-     *
-     * @method drawTick
-     * @param {Object} pt Point on the axis in which the tick will intersect.
-     * @param {Object) tickStyle Hash of properties to apply to the tick.
-     * @protected
-     */
-    drawTick: function(pt, tickStyles)
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles"),
-            padding = style.padding,
-            tickLength = tickStyles.length,
-            start = {x:padding.left, y:pt.y},
-            end = {x:tickLength + padding.left, y:pt.y};
-        ar.drawLine(start, end, tickStyles);
-    },
-
-    /**
-     * Calculates the coordinates for the first point on an axis.
-     *
-     * @method getLineStart
-     * @return {Object}
-     * @protected
-     */
-    getLineStart: function()
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles"),
-            padding = style.padding,
-            majorTicks = style.majorTicks,
-            tickLength = majorTicks.length,
-            display = majorTicks.display,
-            pt = {x:padding.left, y:0};
-        if(display === "outside")
-        {
-            pt.x += tickLength;
-        }
-        else if(display === "cross")
-        {
-            pt.x += tickLength/2;
-        }
-        return pt; 
-    },
-    
-    /**
-     * Calculates the point for a label.
-     *
-     * @method getLabelPoint
-     * @param {Object} point Point on the axis in which the tick will intersect.
-     * @return {Object} 
-     * @protected
-     */
-    getLabelPoint: function(point)
-    {
-        var ar = this.get("axisRenderer");
-        return {x:point.x - ar.get("leftTickOffset"), y:point.y};
-    },
-    
-    /**
-     * Updates the value for the <code>maxLabelSize</code> for use in calculating total size.
-     *
-     * @method updateMaxLabelSize
-     * @param {HTMLElement} label to measure
-     * @protected
-     */
-    updateMaxLabelSize: function(label)
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles").label,
-            rot =  Math.min(90, Math.max(-90, style.rotation)),
-            absRot = Math.abs(rot),
-            radCon = Math.PI/180,
-            sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
-            cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
-            m11 = cosRadians,
-            m12 = rot > 0 ? -sinRadians : sinRadians,
-            m21 = -m12,
-            m22 = m11,
-            max;
-        if(!document.createElementNS)
-        {
-            label.style.filter = 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
-            this.set("maxLabelSize", Math.max(this.get("maxLabelSize"), label.offsetWidth));
-        }
-        else
-        {
-            label.style.msTransform = "rotate(0deg)";
-            if(rot === 0)
-            {
-                max = label.offsetWidth;
-            }
-            else if(absRot === 90)
-            {
-                max = label.offsetHeight;
-            }
-            else
-            {
-                max = (cosRadians * label.offsetWidth) + (sinRadians * label.offsetHeight);
-            }
-            this.set("maxLabelSize",  Math.max(this.get("maxLabelSize"), max));
-        }
-    },
-
-    /**
-     * Rotate and position labels.
-     *
-     * @method positionLabel
-     * @param {HTMLElement} label to rotate position
-     * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
-     * against.
-     * @protected
-     */
-    positionLabel: function(label, pt)
-    {
-        var ar = this.get("axisRenderer"),
-            tickOffset = ar.get("leftTickOffset"),
-            style = ar.get("styles").label,
-            labelAlpha = style.alpha,
-            filterString,
-            margin = 0,
-            leftOffset = pt.x,
-            topOffset = pt.y,
-            rot =  Math.min(90, Math.max(-90, style.rotation)),
-            absRot = Math.abs(rot),
-            radCon = Math.PI/180,
-            sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
-            cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
-            m11 = cosRadians,
-            m12 = rot > 0 ? -sinRadians : sinRadians,
-            m21 = -m12,
-            m22 = m11,
-            maxLabelSize = this.get("maxLabelSize"),
-            labelWidth = Math.round(label.offsetWidth),
-            labelHeight = Math.round(label.offsetHeight);
-        if(style.margin && style.margin.right)
-        {
-            margin = style.margin.right;
-        }
-        if(!document.createElementNS)
-        {
-            label.style.filter = null; 
-            labelWidth = Math.round(label.offsetWidth);
-            labelHeight = Math.round(label.offsetHeight);
-            if(rot === 0)
-            {
-                leftOffset = labelWidth;
-                topOffset -= labelHeight * 0.5;
-            }
-            else if(absRot === 90)
-            {
-                leftOffset = labelHeight;
-                topOffset -= labelWidth * 0.5;
-            }
-            else if(rot > 0)
-            {
-                leftOffset = (cosRadians * labelWidth) + (labelHeight * rot/90);
-                topOffset -= (sinRadians * labelWidth) + (cosRadians * (labelHeight * 0.5));
-            }
-            else
-            {
-                leftOffset = (cosRadians * labelWidth) + (absRot/90 * labelHeight);
-                topOffset -= cosRadians * (labelHeight * 0.5);
-            }
-            leftOffset += tickOffset;
-            label.style.left = ((pt.x + maxLabelSize) - leftOffset) + "px";
-            label.style.top = topOffset + "px";
-            if(filterString)
-            {
-                filterString += " ";
-            }
-            if(Y.Lang.isNumber(labelAlpha) && labelAlpha < 1 && labelAlpha > -1 && !isNaN(labelAlpha))
-            {
-                filterString = "progid:DXImageTransform.Microsoft.Alpha(Opacity=" + Math.round(labelAlpha * 100) + ")";
-            }
-            if(rot !== 0)
-            {
-                if(filterString)
-                {
-                    filterString += " ";
-                }
-                else
-                {
-                    filterString = ""; 
-                }
-                filterString += 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
-            }
-            if(filterString)
-            {
-                label.style.filter = filterString;
-            }
-            return;
-        }
-        label.style.msTransform = "rotate(0deg)";
-        labelWidth = Math.round(label.offsetWidth);
-        labelHeight = Math.round(label.offsetHeight);
-        if(rot === 0)
-        {
-            leftOffset -= labelWidth;
-            topOffset -= labelHeight * 0.5;
-        }
-        else if(rot === 90)
-        {
-            topOffset -= labelWidth * 0.5;
-        }
-        else if(rot === -90)
-        {
-            leftOffset -= labelHeight;
-            topOffset += labelWidth * 0.5;
-        }
-        else
-        {
-            if(rot < 0)
-            {
-                leftOffset -= (cosRadians * labelWidth) + (sinRadians * labelHeight);
-                topOffset += (sinRadians * labelWidth) - (cosRadians * (labelHeight * 0.6)); 
-            }
-            else
-            {
-                leftOffset -= (cosRadians * labelWidth);
-                topOffset -= (sinRadians * labelWidth) + (cosRadians * (labelHeight * 0.6));
-            }
-        }
-        leftOffset -= tickOffset;
-        label.style.left = (this.get("maxLabelSize") + leftOffset) + "px";
-        label.style.top = topOffset + "px";
-        label.style.MozTransformOrigin =  "0 0";
-        label.style.MozTransform = "rotate(" + rot + "deg)";
-        label.style.webkitTransformOrigin = "0 0";
-        label.style.webkitTransform = "rotate(" + rot + "deg)";
-        label.style.msTransformOrigin =  "0 0";
-        label.style.msTransform = "rotate(" + rot + "deg)";
-        label.style.OTransformOrigin =  "0 0";
-        label.style.OTransform = "rotate(" + rot + "deg)";
-    },
-
-    /**
-     * @protected
-     *
-     * Calculates the size and positions the content elements.
-     *
-     * @method setSizeAndPosition
-     * @protected
-     */
-    setSizeAndPosition: function()
-    {
-        var labelSize = this.get("maxLabelSize"),
-            ar = this.get("axisRenderer"),
-            style = ar.get("styles"),
-            leftTickOffset = ar.get("leftTickOffset"),
-            sz = labelSize + leftTickOffset,
-            graphic = ar.get("graphic"),
-            margin = style.label.margin;
-        if(margin && margin.right)
-        {
-            sz += margin.right;
-        }
-        sz = Math.round(sz);
-        ar.set("width", sz);
-        ar.get("contentBox").setStyle("width", sz);
-        Y.one(graphic.node).setStyle("left", labelSize + margin.right);
-    },
-    
-    /**
-     * Adjust the position of the Axis widget's content box for internal axes.
-     *
-     * @method offsetNodeForTick
-     * @param {Node} cb Content box of the Axis.
-     * @protected
-     */
-    offsetNodeForTick: function(cb)
-    {
-    },
-
-    /**
-     * Sets the width of the axis based on its contents.
-     *
-     * @method setCalculatedSize
-     * @protected
-     */
-    setCalculatedSize: function()
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles"),
-            label = style.label,
-            tickOffset = ar.get("leftTickOffset"),
-            max = this.get("maxLabelSize"),
-            ttl = Math.round(tickOffset + max + label.margin.right);
-        ar.get("contentBox").setStyle("width", ttl);
-        ar.set("width", ttl);
-    }
-});
-
-Y.LeftAxisLayout = LeftAxisLayout;
-/**
- * RightAxisLayout contains algorithms for rendering a right axis.
- *
- * @constructor
- * @class RightAxisLayout
- * @extends Base
- * @param {Object} config
- */
-function RightAxisLayout(config)
-{
-    RightAxisLayout.superclass.constructor.apply(this, arguments);
-}
-
-RightAxisLayout.ATTRS = {
-    /**
-     * Reference to the <code>Axis</code> using the strategy.
-     *
-     * @attribute axisRenderer
-     * @type Axis
-     * @protected
-     */
-    axisRenderer: {
-        value: null
-    }
-};
-
-Y.extend(RightAxisLayout, Y.Base, {
-    /**
-     * Sets the length of the tick on either side of the axis line.
-     *
-     * @method setTickOffset
-     * @protected
-     */
-    setTickOffsets: function()
-    {
-        var ar = this.get("axisRenderer"),
-            majorTicks = ar.get("styles").majorTicks,
-            tickLength = majorTicks.length,
-            halfTick = tickLength * 0.5,
-            display = majorTicks.display;
-        ar.set("topTickOffset",  0);
-        ar.set("bottomTickOffset",  0);
-        
-        switch(display)
-        {
-            case "inside" :
-                ar.set("leftTickOffset", tickLength);
-                ar.set("rightTickOffset", 0);
-            break;
-            case "outside" : 
-                ar.set("leftTickOffset", 0);
-                ar.set("rightTickOffset", tickLength);
-            break;
-            case "cross" :
-                ar.set("rightTickOffset", halfTick);
-                ar.set("leftTickOffset", halfTick);
-            break;
-            default:
-                ar.set("leftTickOffset", 0);
-                ar.set("rightTickOffset", 0);
-            break;
-        }
-    },
-
-    /**
-     * Draws a tick
-     *
-     * @method drawTick
-     * @param {Object} pt Point on the axis in which the tick will intersect.
-     * @param {Object) tickStyle Hash of properties to apply to the tick.
-     * @protected
-     */
-    drawTick: function(pt, tickStyles)
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles"),
-            padding = style.padding,
-            tickLength = tickStyles.length,
-            start = {x:padding.left, y:pt.y},
-            end = {x:padding.left + tickLength, y:pt.y};
-        ar.drawLine(start, end, tickStyles);
-    },
-    
-    /**
-     * Calculates the coordinates for the first point on an axis.
-     *
-     * @method getLineStart
-     * @return {Object}
-     * @protected
-     */
-    getLineStart: function()
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles"),
-            padding = style.padding,
-            majorTicks = style.majorTicks,
-            tickLength = majorTicks.length,
-            display = majorTicks.display,
-            pt = {x:padding.left, y:padding.top};
-        if(display === "inside")
-        {
-            pt.x += tickLength;
-        }
-        else if(display === "cross")
-        {
-            pt.x += tickLength/2;
-        }
-        return pt;
-    },
-    
-    /**
-     * Calculates the point for a label.
-     *
-     * @method getLabelPoint
-     * @param {Object} point Point on the axis in which the tick will intersect.
-     * @return {Object} 
-     * @protected
-     */
-    getLabelPoint: function(point)
-    {
-        var ar = this.get("axisRenderer");
-        return {x:point.x + ar.get("rightTickOffset"), y:point.y};
-    },
-    
-    /**
-     * Updates the value for the <code>maxLabelSize</code> for use in calculating total size.
-     *
-     * @method updateMaxLabelSize
-     * @param {HTMLElement} label to measure
-     * @protected
-     */
-    updateMaxLabelSize: function(label)
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles").label,
-            rot =  Math.min(90, Math.max(-90, style.rotation)),
-            absRot = Math.abs(rot),
-            radCon = Math.PI/180,
-            sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
-            cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
-            m11 = cosRadians,
-            m12 = rot > 0 ? -sinRadians : sinRadians,
-            m21 = -m12,
-            m22 = m11,
-            max;
-        if(!document.createElementNS)
-        {
-            label.style.filter = 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
-            this.set("maxLabelSize", Math.max(this.get("maxLabelSize"), label.offsetWidth));
-        }
-        else
-        {
-            label.style.msTransform = "rotate(0deg)";
-            if(rot === 0)
-            {
-                max = label.offsetWidth;
-            }
-            else if(absRot === 90)
-            {
-                max = label.offsetHeight;
-            }
-            else
-            {
-                max = (cosRadians * label.offsetWidth) + (sinRadians * label.offsetHeight);
-            }
-            this.set("maxLabelSize",  Math.max(this.get("maxLabelSize"), max));
-        }
-    },
-
-    /**
-     * Rotate and position labels.
-     *
-     * @method positionLabel
-     * @param {HTMLElement} label to rotate position
-     * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
-     * against.
-     * @protected
-     */
-    positionLabel: function(label, pt)
-    {
-        var ar = this.get("axisRenderer"),
-            tickOffset = ar.get("rightTickOffset"),
-            style = ar.get("styles").label,
-            labelAlpha = style.alpha,
-            filterString,
-            margin = 0,
-            leftOffset = pt.x,
-            topOffset = pt.y,
-            rot =  Math.min(Math.max(style.rotation, -90), 90),
-            absRot = Math.abs(rot),
-            radCon = Math.PI/180,
-            sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
-            cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
-            m11 = cosRadians,
-            m12 = rot > 0 ? -sinRadians : sinRadians,
-            m21 = -m12,
-            m22 = m11,
-            labelWidth = Math.round(label.offsetWidth),
-            labelHeight = Math.round(label.offsetHeight);
-        if(style.margin && style.margin.right)
-        {
-            margin = style.margin.right;
-        }
-        if(!document.createElementNS)
-        {
-            label.style.filter = null;
-            if(rot === 0)
-            {
-                topOffset -= labelHeight * 0.5;
-            }
-            else if(absRot === 90)
-            {
-                topOffset -= labelWidth * 0.5;
-            }
-            else if(rot > 0)
-            {
-                topOffset -= (cosRadians * (labelHeight * 0.5));
-            }
-            else
-            {
-                topOffset -= (sinRadians * labelWidth) +  (cosRadians * (labelHeight * 0.5));
-            }
-            leftOffset += margin;
-            leftOffset += tickOffset;
-            label.style.left = leftOffset + "px";
-            label.style.top = topOffset + "px";
-            if(Y.Lang.isNumber(labelAlpha) && labelAlpha < 1 && labelAlpha > -1 && !isNaN(labelAlpha))
-            {
-                filterString = "progid:DXImageTransform.Microsoft.Alpha(Opacity=" + Math.round(labelAlpha * 100) + ")";
-            }
-            if(rot !== 0)
-            {
-                if(filterString)
-                {
-                    filterString += " ";
-                }
-                else
-                {
-                    filterString = ""; 
-                }
-                filterString += 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
-            }
-            if(filterString)
-            {
-                label.style.filter = filterString;
-            }
-            return;
-        }
-        label.style.msTransform = "rotate(0deg)";
-        labelWidth = Math.round(label.offsetWidth);
-        labelHeight = Math.round(label.offsetHeight);
-        if(rot === 0)
-        {
-            topOffset -= labelHeight * 0.5;
-        }
-        else if(rot === 90)
-        {
-            leftOffset += labelHeight;
-            topOffset -= labelWidth * 0.5;
-        }
-        else if(rot === -90)
-        {
-            topOffset += labelWidth * 0.5;
-        }
-        else if(rot < 0)
-        {
-            topOffset -= (cosRadians * (labelHeight * 0.6)); 
-        }
-        else
-        {
-            topOffset -= cosRadians * (labelHeight * 0.6);
-            leftOffset += sinRadians * labelHeight;
-        }
-        leftOffset += margin;
-        leftOffset += tickOffset;
-        label.style.left = leftOffset + "px";
-        label.style.top = topOffset + "px";
-        label.style.MozTransformOrigin =  "0 0";
-        label.style.MozTransform = "rotate(" + rot + "deg)";
-        label.style.webkitTransformOrigin = "0 0";
-        label.style.webkitTransform = "rotate(" + rot + "deg)";
-        label.style.msTransformOrigin =  "0 0";
-        label.style.msTransform = "rotate(" + rot + "deg)";
-        label.style.OTransformOrigin =  "0 0";
-        label.style.OTransform = "rotate(" + rot + "deg)";
-    },
-
-    /**
-     * Calculates the size and positions the content elements.
-     *
-     * @method setSizeAndPosition
-     * @protected
-     */
-    setSizeAndPosition: function()
-    {
-        var ar = this.get("axisRenderer"),
-            label = ar.get("styles").label,
-            labelSize = this.get("maxLabelSize"),
-            tickOffset = ar.get("rightTickOffset"),
-            sz = tickOffset + labelSize;
-        if(label.margin && label.margin.weight)
-        {
-            sz += label.margin.weight;
-        }
-        ar.set("width", sz);
-        ar.get("contentBox").setStyle("width", sz);
-    },
-    
-    /**
-     * Adjusts position for inner ticks.
-     *
-     * @method offsetNodeForTick
-     * @param {Node} cb contentBox of the axis
-     * @protected
-     */
-    offsetNodeForTick: function(cb)
-    {
-        var ar = this.get("axisRenderer"),
-            tickOffset = ar.get("leftTickOffset"),
-            offset = 0 - tickOffset;
-        cb.setStyle("left", offset);
-    },
-
-    /**
-     * Assigns a height based on the size of the contents.
-     *
-     * @method setCalculatedSize
-     * @protected
-     */
-    setCalculatedSize: function()
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles").label,
-            ttl = Math.round(ar.get("rightTickOffset") + this.get("maxLabelSize") + style.margin.left);
-        ar.set("width", ttl);
-    }
-});
-
-Y.RightAxisLayout = RightAxisLayout;
-/**
- * Contains algorithms for rendering a bottom axis.
- *
- * @class BottomAxisLayout
- * @Constructor
- */
-function BottomAxisLayout(config)
-{
-    BottomAxisLayout.superclass.constructor.apply(this, arguments);
-}
-
-BottomAxisLayout.ATTRS = {
-    /**
-     * Reference to the <code>Axis</code> using the strategy.
-     *
-     * @attribute axisRenderer
-     * @type Axis
-     * @protected
-     */
-    axisRenderer: {
-        value:null
-    },
-    
-    /**
-     * Length in pixels of largest text bounding box. Used to calculate the height of the axis.
-     *
-     * @attribute maxLabelSize
-     * @type Number
-     * @protected
-     */
-    maxLabelSize: {
-        value: 0
-    }
-};
-
-Y.extend(BottomAxisLayout, Y.Base, {
-    /**
-     * Sets the length of the tick on either side of the axis line.
-     *
-     * @method setTickOffsets
-     * @protected
-     */
-    setTickOffsets: function()
-    {
-        var ar = this.get("axisRenderer"),
-            majorTicks = ar.get("styles").majorTicks,
-            tickLength = majorTicks.length,
-            halfTick = tickLength * 0.5,
-            display = majorTicks.display;
-        ar.set("leftTickOffset",  0);
-        ar.set("rightTickOffset",  0);
-
-        switch(display)
-        {
-            case "inside" :
-                ar.set("topTickOffset", tickLength);
-                ar.set("bottomTickOffset", 0);
-            break;
-            case "outside" : 
-                ar.set("topTickOffset", 0);
-                ar.set("bottomTickOffset", tickLength);
-            break;
-            case "cross":
-                ar.set("topTickOffset",  halfTick);
-                ar.set("bottomTickOffset",  halfTick);
-            break;
-            default:
-                ar.set("topTickOffset", 0);
-                ar.set("bottomTickOffset", 0);
-            break;
-        }
-    },
-
-    /**
-     * Calculates the coordinates for the first point on an axis.
-     *
-     * @method getLineStart
-     * @protected
-     */
-    getLineStart: function()
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles"),
-            padding = style.padding,
-            majorTicks = style.majorTicks,
-            tickLength = majorTicks.length,
-            display = majorTicks.display,
-            pt = {x:0, y:padding.top};
-        if(display === "inside")
-        {
-            pt.y += tickLength;
-        }
-        else if(display === "cross")
-        {
-            pt.y += tickLength/2;
-        }
-        return pt; 
-    },
-    
-    /**
-     * Draws a tick
-     *
-     * @method drawTick
-     * @param {Object} pt hash containing x and y coordinates
-     * @param {Object} tickStyles hash of properties used to draw the tick
-     * @protected
-     */
-    drawTick: function(pt, tickStyles)
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles"),
-            padding = style.padding,
-            tickLength = tickStyles.length,
-            start = {x:pt.x, y:padding.top},
-            end = {x:pt.x, y:tickLength + padding.top};
-        ar.drawLine(start, end, tickStyles);
-    },
-
-    /**
-     * Calculates the point for a label.
-     *
-     * @method getLabelPoint
-     * @param {Object} pt hash containing x and y coordinates
-     * @return Object
-     * @protected
-     */
-    getLabelPoint: function(point)
-    {
-        var ar = this.get("axisRenderer");
-        return {x:point.x, y:point.y + ar.get("bottomTickOffset")};
-    },
-    
-    /**
-     * Updates the value for the <code>maxLabelSize</code> for use in calculating total size.
-     *
-     * @method updateMaxLabelSize
-     * @param {HTMLElement} label to measure
-     * @protected
-     */
-    updateMaxLabelSize: function(label)
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles").label,
-            rot =  Math.min(90, Math.max(-90, style.rotation)),
-            absRot = Math.abs(rot),
-            radCon = Math.PI/180,
-            sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
-            cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
-            m11 = cosRadians,
-            m12 = rot > 0 ? -sinRadians : sinRadians,
-            m21 = -m12,
-            m22 = m11,
-            max;
-        if(!document.createElementNS)
-        {
-            label.style.filter = 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
-            this.set("maxLabelSize", Math.max(this.get("maxLabelSize"), label.offsetHeight));
-        }
-        else
-        {
-            label.style.msTransform = "rotate(0deg)";
-            if(rot === 0)
-            {
-                max = label.offsetHeight;
-            }
-            else if(absRot === 90)
-            {
-                max = label.offsetWidth;
-            }
-            else
-            {
-                max = (sinRadians * label.offsetWidth) + (cosRadians * label.offsetHeight); 
-            }
-            this.set("maxLabelSize",  Math.max(this.get("maxLabelSize"), max));
-        }
-    },
-    
-    /**
-     * Rotate and position labels.
-     *
-     * @method positionLabel
-     * @param {HTMLElement} label to rotate position
-     * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
-     * against.
-     * @protected
-     */
-    positionLabel: function(label, pt)
-    {
-        var ar = this.get("axisRenderer"),
-            tickOffset = ar.get("bottomTickOffset"),
-            style = ar.get("styles").label,
-            labelAlpha = style.alpha,
-            filterString,
-            margin = 0,
-            leftOffset = Math.round(pt.x),
-            topOffset = Math.round(pt.y),
-            rot =  Math.min(90, Math.max(-90, style.rotation)),
-            absRot = Math.abs(rot),
-            radCon = Math.PI/180,
-            sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
-            cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
-            m11 = cosRadians,
-            m12 = rot > 0 ? -sinRadians : sinRadians,
-            m21 = -m12,
-            m22 = m11,
-            labelWidth = Math.round(label.offsetWidth),
-            labelHeight = Math.round(label.offsetHeight);
-        if(style.margin && style.margin.top)
-        {
-            margin = style.margin.top;
-        }
-        if(!document.createElementNS)
-        {
-            m11 = cosRadians;
-            m12 = rot > 0 ? -sinRadians : sinRadians;
-            m21 = -m12;
-            m22 = m11;
-            label.style.filter = null;
-            labelWidth = Math.round(label.offsetWidth);
-            labelHeight = Math.round(label.offsetHeight);
-            if(absRot === 90)
-            {
-                leftOffset -= labelHeight * 0.5;
-            }
-            else if(rot < 0)
-            {
-                leftOffset -= cosRadians * labelWidth;
-                leftOffset -= sinRadians * (labelHeight * 0.5);
-            }
-            else if(rot > 0)
-            {
-               leftOffset -= sinRadians * (labelHeight * 0.5);
-            }
-            else
-            {
-                leftOffset -= labelWidth * 0.5;
-            }
-            topOffset += margin;
-            topOffset += tickOffset;
-            label.style.left = Math.round(leftOffset) + "px";
-            label.style.top = Math.round(topOffset) + "px";
-            if(Y.Lang.isNumber(labelAlpha) && labelAlpha < 1 && labelAlpha > -1 && !isNaN(labelAlpha))
-            {
-                filterString = "progid:DXImageTransform.Microsoft.Alpha(Opacity=" + Math.round(labelAlpha * 100) + ")";
-            }
-            if(rot !== 0)
-            {
-                if(filterString)
-                {
-                    filterString += " ";
-                }
-                else
-                {
-                    filterString = ""; 
-                }
-                filterString += 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
-            }
-            if(filterString)
-            {
-                label.style.filter = filterString;
-            }
-            return;
-        }
-        label.style.msTransform = "rotate(0deg)";
-        labelWidth = Math.round(label.offsetWidth);
-        labelHeight = Math.round(label.offsetHeight);
-        if(rot === 0)
-        {
-            leftOffset -= labelWidth * 0.5;
-        }
-        else if(absRot === 90)
-        {
-            if(rot === 90)
-            {
-                leftOffset += labelHeight * 0.5;
-            }
-            else
-            {
-                topOffset += labelWidth;
-                leftOffset -= labelHeight * 0.5;
-            }
-        }
-        else 
-        {
-            if(rot < 0)
-            {
-                leftOffset -= (cosRadians * labelWidth) + (sinRadians * (labelHeight * 0.6));
-                topOffset += sinRadians * labelWidth;
-            }
-            else
-            {
-                leftOffset += Math.round(sinRadians * (labelHeight * 0.6));
-            }
-        }
-        topOffset += margin;
-        topOffset += tickOffset;
-        label.style.left = Math.round(leftOffset) + "px";
-        label.style.top = Math.round(topOffset) + "px";
-        label.style.MozTransformOrigin =  "0 0";
-        label.style.MozTransform = "rotate(" + rot + "deg)";
-        label.style.webkitTransformOrigin = "0 0";
-        label.style.webkitTransform = "rotate(" + rot + "deg)";
-        label.style.msTransformOrigin =  "0 0";
-        label.style.msTransform = "rotate(" + rot + "deg)";
-        label.style.OTransformOrigin =  "0 0";
-        label.style.OTransform = "rotate(" + rot + "deg)";
-    },
-    
-    /**
-     * Calculates the size and positions the content elements.
-     *
-     * @method setSizeAndPosition
-     * @protected
-     */
-    setSizeAndPosition: function()
-    {
-        var labelSize = this.get("maxLabelSize"),
-            ar = this.get("axisRenderer"),
-            tickLength = ar.get("bottomTickLength"),
-            style = ar.get("styles"),
-            sz = tickLength + labelSize,
-            margin = style.label.margin;
-        if(margin && margin.top)
-        {   
-            sz += margin.top;
-        }
-        sz = Math.round(sz);
-        ar.set("height", sz);
-    },
-
-    /**
-     * Adjusts position for inner ticks.
-     *
-     * @method offsetNodeForTick
-     * @param {Node} cb contentBox of the axis
-     * @protected
-     */
-    offsetNodeForTick: function(cb)
-    {
-        var ar = this.get("axisRenderer");
-        ar.get("contentBox").setStyle("top", 0 - ar.get("topTickOffset"));
-    },
-
-    /**
-     * Assigns a height based on the size of the contents.
-     *
-     * @method setCalculatedSize
-     * @protected
-     */
-    setCalculatedSize: function()
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles").label,
-            ttl = Math.round(ar.get("bottomTickOffset") + this.get("maxLabelSize") + style.margin.top);
-        ar.set("height", ttl);
-    }
-});
-
-Y.BottomAxisLayout = BottomAxisLayout;
-/**
- * Contains algorithms for rendering a top axis.
- *
- * @class TopAxisLayout
- * @constructor
- */
-function TopAxisLayout(config)
-{
-    TopAxisLayout.superclass.constructor.apply(this, arguments);
-}
-
-TopAxisLayout.ATTRS = {
-    /**
-     * Reference to the <code>Axis</code> using the strategy.
-     *
-     * @attribute axisRenderer
-     * @type Axis
-     * @protected
-     */
-    axisRenderer: {
-        value: null
-    },
-
-    /**
-     * Length in pixels of largest text bounding box. Used to calculate the height of the axis.
-     *
-     * @attribute maxLabelSize
-     * @type Number
-     * @protected
-     */
-    maxLabelSize: {
-        value: 0
-    }
-};
-
-Y.extend(TopAxisLayout, Y.Base, {
-    /**
-     * Sets the length of the tick on either side of the axis line.
-     *
-     * @method setTickOffsets
-     * @protected
-     */
-    setTickOffsets: function()
-    {
-        var ar = this.get("axisRenderer"),
-            majorTicks = ar.get("styles").majorTicks,
-            tickLength = majorTicks.length,
-            halfTick = tickLength * 0.5,
-            display = majorTicks.display;
-        ar.set("leftTickOffset",  0);
-        ar.set("rightTickOffset",  0);
-        switch(display)
-        {
-            case "inside" :
-                ar.set("bottomTickOffset", tickLength);
-                ar.set("topTickOffset", 0);
-            break;
-            case "outside" : 
-                ar.set("bottomTickOffset", 0);
-                ar.set("topTickOffset",  tickLength);
-            break;
-            case "cross" :
-                ar.set("topTickOffset", halfTick);
-                ar.set("bottomTickOffset", halfTick);
-            break;
-            default:
-                ar.set("topTickOffset", 0);
-                ar.set("bottomTickOffset", 0);
-            break;
-        }
-    },
-
-    /**
-     * Calculates the coordinates for the first point on an axis.
-     *
-     * @method getLineStart
-     * @protected
-     */
-    getLineStart: function()
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles"),
-            padding = style.padding,
-            majorTicks = style.majorTicks,
-            tickLength = majorTicks.length,
-            display = majorTicks.display,
-            pt = {x:0, y:padding.top};
-        if(display === "outside")
-        {
-            pt.y += tickLength;
-        }
-        else if(display === "cross")
-        {
-            pt.y += tickLength/2;
-        }
-        return pt; 
-    },
-    
-    /**
-     * Draws a tick
-     *
-     * @method drawTick
-     * @param {Object} pt hash containing x and y coordinates
-     * @param {Object} tickStyles hash of properties used to draw the tick
-     * @protected
-     */
-    drawTick: function(pt, tickStyles)
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles"),
-            padding = style.padding,
-            tickLength = tickStyles.length,
-            start = {x:pt.x, y:padding.top},
-            end = {x:pt.x, y:tickLength + padding.top};
-        ar.drawLine(start, end, tickStyles);
-    },
-    
-    /**
-     * Calculates the point for a label.
-     *
-     * @method getLabelPoint
-     * @param {Object} pt hash containing x and y coordinates
-     * @return Object
-     * @protected
-     */
-    getLabelPoint: function(pt)
-    {
-        var ar = this.get("axisRenderer");
-        return {x:pt.x, y:pt.y - ar.get("topTickOffset")};
-    },
-    
-    /**
-     * Updates the value for the <code>maxLabelSize</code> for use in calculating total size.
-     *
-     * @method updateMaxLabelSize
-     * @param {HTMLElement} label to measure
-     * @protected
-     */
-    updateMaxLabelSize: function(label)
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles").label,
-            rot =  Math.min(90, Math.max(-90, style.rotation)),
-            absRot = Math.abs(rot),
-            radCon = Math.PI/180,
-            sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
-            cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
-            m11 = cosRadians,
-            m12 = rot > 0 ? -sinRadians : sinRadians,
-            m21 = -m12,
-            m22 = m11,
-            max;
-        if(!document.createElementNS)
-        {
-            label.style.filter = 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
-            this.set("maxLabelSize", Math.max(this.get("maxLabelSize"), label.offsetHeight));
-        }
-        else
-        {
-            label.style.msTransform = "rotate(0deg)";
-            if(rot === 0)
-            {
-                max = label.offsetHeight;
-            }
-            else if(absRot === 90)
-            {
-                max = label.offsetWidth;
-            }
-            else
-            {
-                max = (sinRadians * label.offsetWidth) + (cosRadians * label.offsetHeight); 
-            }
-            this.set("maxLabelSize",  Math.max(this.get("maxLabelSize"), max));
-        }
-    },
-
-    /**
-     * Rotate and position labels.
-     *
-     * @method positionLabel
-     * @param {HTMLElement} label to rotate position
-     * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
-     * against.
-     * @protected
-     */
-    positionLabel: function(label, pt)
-    {
-        var ar = this.get("axisRenderer"),
-            tickOffset = ar.get("topTickOffset"),
-            style = ar.get("styles").label,
-            labelAlpha = style.alpha,
-            filterString,
-            margin = 0,
-            leftOffset = pt.x,
-            topOffset = pt.y,
-            rot =  Math.max(-90, Math.min(90, style.rotation)),
-            absRot = Math.abs(rot),
-            radCon = Math.PI/180,
-            sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
-            cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
-            m11,
-            m12,
-            m21,
-            m22,
-            maxLabelSize = this.get("maxLabelSize"),
-            labelWidth = Math.round(label.offsetWidth),
-            labelHeight = Math.round(label.offsetHeight);
-        rot = Math.min(90, rot);
-        rot = Math.max(-90, rot);
-        if(style.margin && style.margin.bottom)
-        {
-            margin = style.margin.bottom;
-        }
-        if(!document.createElementNS)
-        {
-            label.style.filter = null;
-            labelWidth = Math.round(label.offsetWidth);
-            labelHeight = Math.round(label.offsetHeight);
-            m11 = cosRadians;
-            m12 = rot > 0 ? -sinRadians : sinRadians;
-            m21 = -m12;
-            m22 = m11;
-            if(rot === 0)
-            {
-                leftOffset -= labelWidth * 0.5;
-            }
-            else if(absRot === 90)
-            {
-                leftOffset -= labelHeight * 0.5;
-            }
-            else if(rot > 0)
-            {
-                leftOffset -= (cosRadians * labelWidth) + Math.min((sinRadians * labelHeight), (rot/180 * labelHeight));
-                topOffset -= (sinRadians * labelWidth) + (cosRadians * (labelHeight));
-                topOffset += maxLabelSize;
-            }
-            else
-            {
-                leftOffset -= sinRadians * (labelHeight * 0.5);
-                topOffset -= (sinRadians * labelWidth) + (cosRadians * (labelHeight));
-                topOffset += maxLabelSize;
-            }
-            topOffset -= tickOffset;
-            label.style.left = leftOffset;
-            label.style.top = topOffset;
-            if(Y.Lang.isNumber(labelAlpha) && labelAlpha < 1 && labelAlpha > -1 && !isNaN(labelAlpha))
-            {
-                filterString = "progid:DXImageTransform.Microsoft.Alpha(Opacity=" + Math.round(labelAlpha * 100) + ")";
-            }
-            if(rot !== 0)
-            {
-                if(filterString)
-                {
-                    filterString += " ";
-                }
-                else
-                {
-                    filterString = ""; 
-                }
-                filterString += 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
-            }
-            if(filterString)
-            {
-                label.style.filter = filterString;
-            }
-            return;
-        }
-        label.style.msTransform = "rotate(0deg)";
-        labelWidth = Math.round(label.offsetWidth);
-        labelHeight = Math.round(label.offsetHeight);
-        if(rot === 0)
-        {
-            leftOffset -= labelWidth * 0.5;
-            topOffset -= labelHeight;
-        }
-        else if(rot === 90)
-        {
-            leftOffset += labelHeight * 0.5;
-            topOffset -= labelWidth;
-        }
-        else if(rot === -90)
-        {
-            leftOffset -= labelHeight * 0.5;
-            topOffset -= 0;
-        }
-        else if(rot < 0)
-        {
-            
-            leftOffset -= (sinRadians * (labelHeight * 0.6));
-            topOffset -= (cosRadians * labelHeight);
-        }
-        else
-        {
-            leftOffset -= (cosRadians * labelWidth) - (sinRadians * (labelHeight * 0.6));
-            topOffset -= (sinRadians * labelWidth) + (cosRadians * labelHeight);
-        }
-        topOffset -= tickOffset;
-        label.style.left = leftOffset + "px";
-        label.style.top = (this.get("maxLabelSize") + topOffset) + "px";
-        label.style.MozTransformOrigin =  "0 0";
-        label.style.MozTransform = "rotate(" + rot + "deg)";
-        label.style.webkitTransformOrigin = "0 0";
-        label.style.webkitTransform = "rotate(" + rot + "deg)";
-        label.style.msTransformOrigin =  "0 0";
-        label.style.msTransform = "rotate(" + rot + "deg)";
-        label.style.OTransformOrigin =  "0 0";
-        label.style.OTransform = "rotate(" + rot + "deg)";
-    },
-
-    /**
-     * Calculates the size and positions the content elements.
-     *
-     * @method setSizeAndPosition
-     * @protected
-     */
-    setSizeAndPosition: function()
-    {
-        var labelSize = this.get("maxLabelSize"),
-            ar = this.get("axisRenderer"),
-            tickOffset = ar.get("topTickOffset"),
-            style = ar.get("styles"),
-            margin = style.label.margin,
-            graphic = ar.get("graphic"),
-            sz = tickOffset + labelSize;
-        if(margin && margin.bottom)
-        {
-            sz += margin.bottom;
-        }
-        ar.set("height", sz);
-        Y.one(graphic.node).setStyle("top", labelSize + margin.bottom);
-    },
-    
-    /**
-     * Adjusts position for inner ticks.
-     *
-     * @method offsetNodeForTick
-     * @param {Node} cb contentBox of the axis
-     * @protected
-     */
-    offsetNodeForTick: function(cb)
-    {
-    },
-
-    /**
-     * Assigns a height based on the size of the contents.
-     *
-     * @method setCalculatedSize
-     * @protected
-     */
-    setCalculatedSize: function()
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles").label,
-            ttl = Math.round(ar.get("topTickOffset") + this.get("maxLabelSize") + style.margin.bottom);
-        ar.set("height", ttl);
-    }
-});
-
-Y.TopAxisLayout = TopAxisLayout;
-
 /**
  * AxisType is an abstract class that manages the data for an axis.
  *
@@ -7637,16 +4524,28 @@ Lines.prototype = {
      */
     _getGraphic: function()
     {
-        var graph = this.get("graph");
+        var graphic = this.get("graphic") || this.get("graph").get("graphic");
         if(!this._lineGraphic)
         {
-            this._lineGraphic = new Y.Graphic();
-            this._lineGraphic.render(graph.get("contentBox"));
+            this._lineGraphic = graphic.getShape({type: "path"});
         }
         this._lineGraphic.clear();
-        this._lineGraphic.setSize(graph.get("width"), graph.get("height"));
-        this.autoSize = false;
         return this._lineGraphic;
+    },
+    
+    /**
+     * Toggles visibility
+     *
+     * @method _toggleVisible
+     * @param {Boolean} visible indicates visibilitye
+     * @private
+     */
+    _toggleVisible: function(visible)
+    {
+        if(this._lineGraphic)
+        {
+            this._lineGraphic.set("visible", visible);
+        }
     },
 
     /**
@@ -7684,8 +4583,12 @@ Lines.prototype = {
             discontinuousType = styles.discontinuousType,
             discontinuousDashLength = styles.discontinuousDashLength,
             discontinuousGapSpace = styles.discontinuousGapSpace,
-            graphic = this._getGraphic();
-        graphic.lineStyle(styles.weight, lc, lineAlpha);
+            path = this._getGraphic();
+        path.set("stroke", {
+            weight: styles.weight, 
+            color: lc, 
+            opacity: lineAlpha
+        });
         for(i = 0; i < len; i = ++i)
         {
             nextX = xcoords[i];
@@ -7699,13 +4602,13 @@ Lines.prototype = {
             if(noPointsRendered)
             {
                 noPointsRendered = false;
-                graphic.moveTo(nextX, nextY);
+                path.moveTo(nextX, nextY);
             }
             else if(lastPointValid)
             {
                 if(lineType != "dashed")
                 {
-                    graphic.lineTo(nextX, nextY);
+                    path.lineTo(nextX, nextY);
                 }
                 else
                 {
@@ -7716,7 +4619,7 @@ Lines.prototype = {
             }
             else if(!connectDiscontinuousPoints)
             {
-                graphic.moveTo(nextX, nextY);
+                path.moveTo(nextX, nextY);
             }
             else
             {
@@ -7728,14 +4631,14 @@ Lines.prototype = {
                 }
                 else
                 {
-                    graphic.lineTo(nextX, nextY);
+                    path.lineTo(nextX, nextY);
                 }
             }
             lastValidX = nextX;
             lastValidY = nextY;
             lastPointValid = true;
         }
-        graphic.end();
+        path.end();
     },
     
     /**
@@ -7762,11 +4665,15 @@ Lines.prototype = {
             y,
             i = 0,
             styles = this.get("styles").line,
-            graphic = this._getGraphic(),
+            path = this._getGraphic(),
             lineAlpha = styles.alpha,
             color = styles.color || this._getDefaultColor(this.get("graphOrder"), "line");
-        graphic.lineStyle(styles.weight, color, lineAlpha);
-        graphic.moveTo(xcoords[0], ycoords[0]);
+        path.set("stroke", { 
+            weight: styles.weight, 
+            color: color, 
+            opacity: lineAlpha
+        });
+        path.moveTo(xcoords[0], ycoords[0]);
         for(; i < len; i = ++i)
         {
             x = curvecoords[i].endx;
@@ -7775,9 +4682,9 @@ Lines.prototype = {
             cx2 = curvecoords[i].ctrlx2;
             cy1 = curvecoords[i].ctrly1;
             cy2 = curvecoords[i].ctrly2;
-            graphic.curveTo(cx1, cy1, cx2, cy2, x, y);
+            path.curveTo(cx1, cy1, cx2, cy2, x, y);
         }
-        graphic.end();
+        path.end();
     },
 
     /**
@@ -7805,31 +4712,31 @@ Lines.prototype = {
             xCurrent = xStart,
             yCurrent = yStart,
             i,
-            graphic = this._getGraphic();
+            path = this._getGraphic();
         xDelta = Math.cos(radians) * segmentLength;
         yDelta = Math.sin(radians) * segmentLength;
         
         for(i = 0; i < segmentCount; ++i)
         {
-            graphic.moveTo(xCurrent, yCurrent);
-            graphic.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
+            path.moveTo(xCurrent, yCurrent);
+            path.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
             xCurrent += xDelta;
             yCurrent += yDelta;
         }
         
-        graphic.moveTo(xCurrent, yCurrent);
+        path.moveTo(xCurrent, yCurrent);
         delta = Math.sqrt((xEnd - xCurrent) * (xEnd - xCurrent) + (yEnd - yCurrent) * (yEnd - yCurrent));
         
         if(delta > dashSize)
         {
-            graphic.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
+            path.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
         }
         else if(delta > 0)
         {
-            graphic.lineTo(xCurrent + Math.cos(radians) * delta, yCurrent + Math.sin(radians) * delta);
+            path.lineTo(xCurrent + Math.cos(radians) * delta, yCurrent + Math.sin(radians) * delta);
         }
         
-        graphic.moveTo(xEnd, yEnd);
+        path.moveTo(xEnd, yEnd);
     },
 
     /**
@@ -7884,6 +4791,39 @@ function Fills(cfg)
 
 Fills.prototype = {
     /**
+     * Returns a path shape used for drawing fills.
+     *
+     * @method _getPath
+     * @return Path
+     * @private
+     */
+    _getPath: function()
+    {
+        var path = this._path;
+        if(!path)
+        {
+            path = this.get("graph").get("graphic").getShape({type:"path"});
+            this._path = path;
+        }
+        return path;
+    },
+    
+    /**
+     * Toggles visibility
+     *
+     * @method _toggleVisible
+     * @param {Boolean} visible indicates visibilitye
+     * @private
+     */
+    _toggleVisible: function(visible)
+    {   
+        if(this._path)
+        {
+            this._path.set("visible", visible);
+        }
+    },
+
+    /**
      * Draws fill
      *
      * @method drawFill
@@ -7904,11 +4844,15 @@ Fills.prototype = {
             nextY,
             i = 1,
             styles = this.get("styles").area,
-            graphic = this.get("graphic"),
+            path = this._getPath(),
             color = styles.color || this._getDefaultColor(this.get("graphOrder"), "slice");
-        graphic.clear();
-        graphic.beginFill(color, styles.alpha);
-        graphic.moveTo(firstX, firstY);
+        path.clear();
+        path.set("fill", {
+            color: color, 
+            opacity: styles.alpha
+        });
+        path.set("stroke", {weight: 0});
+        path.moveTo(firstX, firstY);
         for(; i < len; i = ++i)
         {
             nextX = xcoords[i];
@@ -7919,11 +4863,11 @@ Fills.prototype = {
                 lastValidY = nextY;
                 continue;
             }
-            graphic.lineTo(nextX, nextY);
+            path.lineTo(nextX, nextY);
             lastValidX = nextX;
             lastValidY = nextY;
         }
-        graphic.end();
+        path.end();
     },
 	
     /**
@@ -7952,10 +4896,14 @@ Fills.prototype = {
             firstX = xcoords[0],
             firstY = ycoords[0],
             styles = this.get("styles").area,
-            graphic = this.get("graphic"),
+            path = this._getPath(),
             color = styles.color || this._getDefaultColor(this.get("graphOrder"), "slice");
-        graphic.beginFill(color, styles.alpha);
-        graphic.moveTo(firstX, firstY);
+        path.set("fill", {
+            color: color, 
+            opacity: styles.alpha
+        });
+        path.set("stroke", {weight: 0});
+        path.moveTo(firstX, firstY);
         for(; i < len; i = ++i)
         {
             x = curvecoords[i].endx;
@@ -7964,20 +4912,20 @@ Fills.prototype = {
             cx2 = curvecoords[i].ctrlx2;
             cy1 = curvecoords[i].ctrly1;
             cy2 = curvecoords[i].ctrly2;
-            graphic.curveTo(cx1, cy1, cx2, cy2, x, y);
+            path.curveTo(cx1, cy1, cx2, cy2, x, y);
         }
         if(this.get("direction") === "vertical")
         {
-            graphic.lineTo(this._leftOrigin, y);
-            graphic.lineTo(this._leftOrigin, firstY);
+            path.lineTo(this._leftOrigin, y);
+            path.lineTo(this._leftOrigin, firstY);
         }
         else
         {
-            graphic.lineTo(x, this._bottomOrigin);
-            graphic.lineTo(firstX, this._bottomOrigin);
+            path.lineTo(x, this._bottomOrigin);
+            path.lineTo(firstX, this._bottomOrigin);
         }
-        graphic.lineTo(firstX, firstY);
-        graphic.end();
+        path.lineTo(firstX, firstY);
+        path.end();
     },
     
     /**
@@ -8012,14 +4960,18 @@ Fills.prototype = {
             firstX,
             firstY,
             styles = this.get("styles").area,
-            graphic = this.get("graphic"),
+            path = this._getPath(),
             color = styles.color || this._getDefaultColor(this.get("graphOrder"), "slice");
         firstX = xcoords[0];
         firstY = ycoords[0];
         curvecoords = this.getCurveControlPoints(xcoords, ycoords);
         len = curvecoords.length;
-        graphic.beginFill(color, styles.alpha);
-        graphic.moveTo(firstX, firstY);
+        path.set("fill", {
+            color: color, 
+            opacity: styles.alpha
+        });
+        path.set("stroke", {weight: 0});
+        path.moveTo(firstX, firstY);
         for(; i < len; i = ++i)
         {
             x = curvecoords[i].endx;
@@ -8028,7 +4980,7 @@ Fills.prototype = {
             cx2 = curvecoords[i].ctrlx2;
             cy1 = curvecoords[i].ctrly1;
             cy2 = curvecoords[i].ctrly2;
-            graphic.curveTo(cx1, cy1, cx2, cy2, x, y);
+            path.curveTo(cx1, cy1, cx2, cy2, x, y);
         }
         if(order > 0)
         {
@@ -8037,7 +4989,7 @@ Fills.prototype = {
             curvecoords = this.getCurveControlPoints(prevXCoords, prevYCoords);
             i = 0;
             len = curvecoords.length;
-            graphic.lineTo(prevXCoords[0], prevYCoords[0]);
+            path.lineTo(prevXCoords[0], prevYCoords[0]);
             for(; i < len; i = ++i)
             {
                 x = curvecoords[i].endx;
@@ -8046,25 +4998,25 @@ Fills.prototype = {
                 cx2 = curvecoords[i].ctrlx2;
                 cy1 = curvecoords[i].ctrly1;
                 cy2 = curvecoords[i].ctrly2;
-                graphic.curveTo(cx1, cy1, cx2, cy2, x, y);
+                path.curveTo(cx1, cy1, cx2, cy2, x, y);
             }
         }
         else
         {
             if(this.get("direction") === "vertical")
             {
-                graphic.lineTo(this._leftOrigin, ycoords[ycoords.length-1]);
-                graphic.lineTo(this._leftOrigin, firstY);
+                path.lineTo(this._leftOrigin, ycoords[ycoords.length-1]);
+                path.lineTo(this._leftOrigin, firstY);
             }
             else
             {
-                graphic.lineTo(xcoords[xcoords.length-1], this._bottomOrigin);
-                graphic.lineTo(firstX, this._bottomOrigin);
+                path.lineTo(xcoords[xcoords.length-1], this._bottomOrigin);
+                path.lineTo(firstX, this._bottomOrigin);
             }
 
         }
-        graphic.lineTo(firstX, firstY);
-        graphic.end();
+        path.lineTo(firstX, firstY);
+        path.end();
     },
     
     /**
@@ -8214,9 +5166,7 @@ Plots.prototype = {
             offsetHeight = h/2,
             fillColors = null,
             borderColors = null,
-            graphOrder = this.get("graphOrder"),
-            hotspot,
-            isChrome = ISCHROME;
+            graphOrder = this.get("graphOrder");
         if(Y.Lang.isArray(style.fill.color))
         {
             fillColors = style.fill.color.concat(); 
@@ -8226,10 +5176,6 @@ Plots.prototype = {
             borderColors = style.border.colors.concat();
         }
         this._createMarkerCache();
-        if(isChrome)
-        {
-            this._createHotspotCache();
-        }
         for(; i < len; ++i)
         {
             top = (ycoords[i] - offsetHeight);
@@ -8248,20 +5194,12 @@ Plots.prototype = {
             {
                 style.border.colors = borderColors[i % borderColors.length];
             }
+
+            style.x = left;
+            style.y = top;
             marker = this.getMarker(style, graphOrder, i);
-            marker.setPosition(left, top);
-            if(isChrome)
-            {
-                hotspot = this.getHotspot(style, graphOrder, i);
-                hotspot.setPosition(left, top);
-                hotspot.parentNode.style.zIndex = 5;
-            }
         }
         this._clearMarkerCache();
-        if(isChrome)
-        {
-            this._clearHotspotCache();
-        }
     },
 
     /**
@@ -8308,7 +5246,7 @@ Plots.prototype = {
      * @private
      */
     _markerCache: null,
-    
+   
     /**
      * Gets and styles a marker. If there is a marker in cache, it will use it. Otherwise
      * it will create one.
@@ -8322,7 +5260,13 @@ Plots.prototype = {
      */
     getMarker: function(styles, order, index)
     {
-        var marker;
+        var marker,
+            border = styles.border;
+        styles.id = "series_" + order + "_" + index;
+        //fix name differences between graphic layer
+        border.opacity = border.alpha;
+        styles.stroke = border;
+        styles.fill.opacity = styles.fill.alpha;
         if(this._markerCache.length > 0)
         {
             while(!marker)
@@ -8335,7 +5279,7 @@ Plots.prototype = {
                 marker = this._markerCache.shift();
 
             }
-            marker.update(styles);
+            marker.set(styles);
         }
         else
         {
@@ -8358,15 +5302,13 @@ Plots.prototype = {
      */
     _createMarker: function(styles, order, index)
     {
-        var graphic = new Y.Graphic(),
+        var graphic = this.get("graphic"),
             marker,
             cfg = Y.clone(styles);
-        graphic.render(this.get("graph").get("contentBox"));
-        graphic.node.setAttribute("id", "markerParent_" + order + "_" + index);
-        cfg.graphic = graphic;
-        marker = new Y.Shape(cfg); 
+        graphic.set("autoDraw", false);
+        cfg.type = cfg.shape;
+        marker = graphic.getShape(cfg); 
         marker.addClass("yui3-seriesmarker");
-        marker.node.setAttribute("id", "series_" + order + "_" + index);
         return marker;
     },
     
@@ -8391,6 +5333,33 @@ Plots.prototype = {
     },
     
     /**
+     * Toggles visibility
+     *
+     * @method _toggleVisible
+     * @param {Boolean} visible indicates visibilitye
+     * @private
+     */
+    _toggleVisible: function(visible)
+    {
+        var marker,
+            markers = this.get("markers"),
+            i = 0,
+            len;
+        if(markers)
+        {
+            len = markers.length;
+            for(; i < len; ++i)
+            {
+                marker = markers[i];
+                if(marker)
+                {
+                    marker.set("visible", visible);
+                }
+            }
+        }
+    },
+
+    /**
      * Removes unused markers from the marker cache
      *
      * @method _clearMarkerCache
@@ -8400,15 +5369,13 @@ Plots.prototype = {
     {
         var len = this._markerCache.length,
             i = 0,
-            graphic,
             marker;
         for(; i < len; ++i)
         {
             marker = this._markerCache[i];
             if(marker)
             {
-                graphic = marker.graphics;
-                graphic.destroy();
+                marker.destroy();
             }
         }
         this._markerCache = [];
@@ -8428,22 +5395,21 @@ Plots.prototype = {
         {
             var w,
                 h,
-                markerStyles,
                 styles = Y.clone(this.get("styles").marker),
                 state = this._getState(type),
                 xcoords = this.get("xcoords"),
                 ycoords = this.get("ycoords"),
                 marker = this._markers[i],
-                graphicNode = marker.parentNode;
                 markerStyles = state == "off" || !styles[state] ? styles : styles[state]; 
                 markerStyles.fill.color = this._getItemColor(markerStyles.fill.color, i);
                 markerStyles.border.color = this._getItemColor(markerStyles.border.color, i);
-                marker.update(markerStyles);
+                markerStyles.stroke = markerStyles.border;
+                marker.set(markerStyles);
                 w = markerStyles.width;
                 h = markerStyles.height;
-                graphicNode.style.left = (xcoords[i] - w/2) + "px";
-                graphicNode.style.top = (ycoords[i] - h/2) + "px";
-                marker.toggleVisible(this.get("visible"));
+                marker.set("x", (xcoords[i] - w/2));
+                marker.set("y",  (ycoords[i] - h/2));
+                marker.set("visible", this.get("visible"));
         }
     },
 
@@ -8535,133 +5501,7 @@ Plots.prototype = {
     /**
      * @private
      */
-    _stateSyles: null,
-
-    /**
-     * Collection of hotspots to be used in the series.
-     *
-     * @private
-     */
-    _hotspots: null,
-
-    /**
-     * Collection of hotspots to be re-used on a series redraw.
-     *
-     * @private
-     */
-    _hotspotCache: null,
-    
-    /**
-     * Gets and styles a hotspot. If there is a hotspot in cache, it will use it. Otherwise
-     * it will create one.
-     *
-     * @method getHotspot
-     * @param {Object} styles Hash of style properties.
-     * @param {Number} order Order of the series.
-     * @param {Number} index Index within the series associated with the hotspot.
-     * @return Shape
-     * @protected
-     */
-    getHotspot: function(hotspotStyles, order, index)
-    {
-        var hotspot,
-            styles = Y.clone(hotspotStyles);
-        styles.fill = {
-            type: "solid",
-            color: "#000",
-            alpha: 0
-        };
-        styles.border = {
-            weight: 0
-        };
-        if(this._hotspotCache.length > 0)
-        {
-            while(!hotspot)
-            {
-                if(this._hotspotCache.length < 1)
-                {
-                    hotspot = this._createHotspot(styles, order, index);
-                    break;
-                }
-                hotspot = this._hotspotCache.shift();
-
-            }
-            hotspot.update(styles);
-        }
-        else
-        {
-            hotspot = this._createHotspot(styles, order, index);
-        }
-        this._hotspots.push(hotspot);
-        return hotspot;
-    },   
-    
-    /**
-     * Creates a shape to be used as a hotspot.
-     *
-     * @method _createHotspot
-     * @param {Object} styles Hash of style properties.
-     * @param {Number} order Order of the series.
-     * @param {Number} index Index within the series associated with the hotspot.
-     * @return Shape
-     * @private
-     */
-    _createHotspot: function(styles, order, index)
-    {
-        var graphic = new Y.Graphic(),
-            hotspot,
-            cfg = Y.clone(styles);
-        graphic.render(this.get("graph").get("contentBox"));
-        graphic.node.setAttribute("id", "hotspotParent_" + order + "_" + index);
-        cfg.graphic = graphic;
-        hotspot = new Y.Shape(cfg); 
-        hotspot.addClass("yui3-seriesmarker");
-        hotspot.node.setAttribute("id", "hotspot_" + order + "_" + index);
-        return hotspot;
-    },
-    
-    /**
-     * Creates a cache of hotspots for reuse.
-     *
-     * @method _createHotspotCache
-     * @private
-     */
-    _createHotspotCache: function()
-    {
-        if(this._hotspots && this._hotspots.length > 0)
-        {
-            this._hotspotCache = this._hotspots.concat();
-        }
-        else
-        {
-            this._hotspotCache = [];
-        }
-        this._hotspots = [];
-    },
-    
-    /**
-     * Removes unused hotspots from the hotspot cache
-     *
-     * @method _clearHotspotCache
-     * @private
-     */
-    _clearHotspotCache: function()
-    {
-        var len = this._hotspotCache.length,
-            i = 0,
-            graphic,
-            hotspot;
-        for(; i < len; ++i)
-        {
-            hotspot = this._hotspotCache[i];
-            if(hotspot)
-            {
-                graphic = hotspot.graphics;
-                graphic.destroy();
-            }
-        }
-        this._hotspotCache = [];
-    }
+    _stateSyles: null
 };
 
 Y.augment(Plots, Y.Attribute);
@@ -8713,9 +5553,7 @@ Histogram.prototype = {
             calculatedSizeKey,
             config,
             fillColors = null,
-            borderColors = null,
-            hotspot,
-            isChrome = ISCHROME;
+            borderColors = null;
         if(Y.Lang.isArray(style.fill.color))
         {
             fillColors = style.fill.color.concat(); 
@@ -8737,10 +5575,6 @@ Histogram.prototype = {
         setSize = style[setSizeKey];
         calculatedSize = style[calculatedSizeKey];
         this._createMarkerCache();
-        if(isChrome)
-        {
-            this._createHotspotCache();
-        }
         for(; i < seriesLen; ++i)
         {
             renderer = seriesCollection[i];
@@ -8762,12 +5596,17 @@ Histogram.prototype = {
         offset -= seriesSize/2;
         for(i = 0; i < len; ++i)
         {
+            if(isNaN(xcoords[i]) || isNaN(ycoords[i]))
+            {
+                continue;
+            }
             config = this._getMarkerDimensions(xcoords[i], ycoords[i], calculatedSize, offset);
             top = config.top;
-            calculatedSize = config.calculatedSize;
             left = config.left;
             style[setSizeKey] = setSize;
-            style[calculatedSizeKey] = calculatedSize;
+            style[calculatedSizeKey] = config.calculatedSize;
+            style.x = left;
+            style.y = top;
             if(fillColors)
             {
                 style.fill.color = fillColors[i % fillColors.length];
@@ -8777,19 +5616,8 @@ Histogram.prototype = {
                 style.border.colors = borderColors[i % borderColors.length];
             }
             marker = this.getMarker(style, graphOrder, i);
-            marker.setPosition(left, top);
-            if(isChrome)
-            {
-                hotspot = this.getHotspot(style, graphOrder, i);
-                hotspot.setPosition(left, top);
-                hotspot.parentNode.style.zIndex = 5;
-            }
         }
         this._clearMarkerCache();
-        if(isChrome)
-        {
-            this._clearHotspotCache();
-        }
     },
     
     /**
@@ -8912,7 +5740,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
                 this.draw();
             }
         });
-        this.after("visibleChange", this._toggleVisible);
+        this.after("visibleChange", this._handleVisibleChange);
     },
   
     /**
@@ -9010,8 +5838,9 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
      */
     _setCanvas: function()
     {
-        this.set("graphic", new Y.Graphic());
-        this.get("graphic").render(this.get("graph").get("contentBox"));
+        var graph = this.get("graph"),
+            graphic = graph.get("graphic");
+        this.set("graphic", graphic);
     },
 
     /**
@@ -9057,6 +5886,8 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
             xMarkerPlaneOffset = this.get("xMarkerPlaneOffset"),
             yMarkerPlaneOffset = this.get("yMarkerPlaneOffset"),
             graphic = this.get("graphic");
+        graphic.set("width", w);
+        graphic.set("height", h);
         dataLength = xData.length;
         xOffset *= 0.5;
         yOffset *= 0.5;
@@ -9064,10 +5895,6 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         if(direction === "vertical")
         {
             yData = yData.reverse();
-        }
-        if(graphic)
-        {
-            graphic.setSize(w, h);
         }
         this._leftOrigin = Math.round(((0 - xMin) * xScaleFactor) + leftPadding + xOffset);
         this._bottomOrigin =  Math.round((dataHeight + topPadding + yOffset) - (0 - yMin) * yScaleFactor);
@@ -9114,7 +5941,6 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         var graph = this.get("graph"),
             w = graph.get("width"),
             h = graph.get("height");
-
         if(this.get("rendered"))
         {
             if((isFinite(w) && isFinite(h) && w > 0 && h > 0) && ((this.get("xData") && this.get("yData")) || this._updateAxisData()))
@@ -9243,37 +6069,11 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
      *
      * Shows/hides contents of the series.
      *
-     * @method _toggleVisible
+     * @method _handleVisibleChange
      */
-    _toggleVisible: function(e) 
+    _handleVisibleChange: function(e) 
     {
-        var graphic = this.get("graphic"),
-            markers = this.get("markers"),
-            i = 0,
-            len,
-            visible = this.get("visible"),
-            marker;
-        if(graphic)
-        {
-            graphic.toggleVisible(visible);
-        }
-        if(markers)
-        {
-            len = markers.length;
-            for(; i < len; ++i)
-            {
-                marker = markers[i];
-                if(marker)
-                {
-                    marker.toggleVisible(visible);
-                }
-            }
-
-        }
-        if(this._lineGraphic)
-        {
-            this._lineGraphic.toggleVisible(visible);
-        }
+        this._toggleVisible(this.get("visible"));
     }
 }, {
     ATTRS: {
@@ -9573,14 +6373,6 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
  */
 Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
     /**
-     * @private
-     */
-    renderUI: function()
-    {
-        this._setNode();
-    },
-    
-    /**
      * @protected
      *
      * Draws the series.
@@ -9688,7 +6480,6 @@ Y.LineSeries = Y.Base.create("lineSeries", Y.CartesianSeries, [Y.Lines], {
      */
     drawSeries: function()
     {
-        this.get("graphic").clear();
         this.drawLines();
     },
 
@@ -9775,7 +6566,7 @@ Y.LineSeries = Y.Base.create("lineSeries", Y.CartesianSeries, [Y.Lines], {
  * @uses CurveUtil
  * @uses Lines
  */
-Y.SplineSeries = Y.Base.create("splineSeries",  Y.CartesianSeries, [Y.CurveUtil, Y.Lines], {
+Y.SplineSeries = Y.Base.create("splineSeries",  Y.LineSeries, [Y.CurveUtil, Y.Lines], {
     /**
      * @protected
      *
@@ -9785,7 +6576,6 @@ Y.SplineSeries = Y.Base.create("splineSeries",  Y.CartesianSeries, [Y.CurveUtil,
      */
     drawSeries: function()
     {
-        this.get("graphic").clear();
         this.drawSpline();
     }
 }, {
@@ -9848,7 +6638,6 @@ Y.AreaSplineSeries = Y.Base.create("areaSplineSeries", Y.CartesianSeries, [Y.Fil
      */
     drawSeries: function()
     {
-        this.get("graphic").clear();
         this.drawAreaSpline();
     }
 }, {
@@ -9972,10 +6761,18 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
     _getMarkerDimensions: function(xcoord, ycoord, calculatedSize, offset)
     {
         var config = {
-            top: ycoord,
             left: xcoord + offset
         };
-        config.calculatedSize = this._bottomOrigin - config.top;
+        if(this._bottomOrigin >= ycoord)
+        {
+            config.top = ycoord;
+            config.calculatedSize = this._bottomOrigin - config.top;
+        }
+        else
+        {
+            config.top = this._bottomOrigin;
+            config.calculatedSize = ycoord - this._bottomOrigin;
+        }
         return config;
     },
 
@@ -9999,6 +6796,7 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
                 ycoords = this.get("ycoords"),
                 marker = this._markers[i],
                 graph = this.get("graph"),
+                seriesStyles,
                 seriesCollection = graph.seriesTypes[this.get("type")],
                 seriesLen = seriesCollection.length,
                 seriesSize = 0,
@@ -10006,17 +6804,19 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
                 renderer,
                 n = 0,
                 xs = [],
-                order = this.get("order");
+                order = this.get("order"),
+                config;
             markerStyles = state == "off" || !styles[state] ? styles : styles[state]; 
             markerStyles.fill.color = this._getItemColor(markerStyles.fill.color, i);
             markerStyles.border.color = this._getItemColor(markerStyles.border.color, i);
-            markerStyles.height = this._bottomOrigin - ycoords[i];
-            marker.update(markerStyles);
+            config = this._getMarkerDimensions(xcoords[i], ycoords[i], styles.width, offset);
+            markerStyles.height = config.calculatedSize;
+            marker.set(markerStyles);
             for(; n < seriesLen; ++n)
             {
-                renderer = seriesCollection[n].get("markers")[i];
                 xs[n] = xcoords[i] + seriesSize;
-                seriesSize += renderer.width;
+                seriesStyles = seriesCollection[n].get("styles").marker;
+                seriesSize += seriesStyles.width;
                 if(order > n)
                 {
                     offset = seriesSize;
@@ -10025,8 +6825,11 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
             }
             for(n = 0; n < seriesLen; ++n)
             {
-                renderer = Y.one(seriesCollection[n]._graphicNodes[i]);
-                renderer.setStyle("left", (xs[n] - seriesSize/2) + "px");
+                renderer = seriesCollection[n].get("markers")[i];
+                if(renderer && renderer !== undefined)
+                {
+                    renderer.set("x", (xs[n] - seriesSize/2));
+                }
             }
         }
     }
@@ -10089,21 +6892,21 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
     /**
      * @private
      */
-    renderUI: function()
-    {
-        this._setNode();
-    },
-
-    /**
-     * @private
-     */
     _getMarkerDimensions: function(xcoord, ycoord, calculatedSize, offset)
     {
         var config = {
-            top: ycoord + offset,
-            left: this._leftOrigin
+            top: ycoord + offset
         };
-        config.calculatedSize = xcoord - config.left;
+        if(xcoord >= this._leftOrigin)
+        {
+            config.left = this._leftOrigin;
+            config.calculatedSize = xcoord - config.left;
+        }
+        else
+        {
+            config.left = xcoord;
+            config.calculatedSize = this._leftOrigin - xcoord;
+        }
         return config;
     },
     
@@ -10129,22 +6932,25 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
                 graph = this.get("graph"),
                 seriesCollection = graph.seriesTypes[this.get("type")],
                 seriesLen = seriesCollection.length,
+                seriesStyles,
                 seriesSize = 0,
                 offset = 0,
                 renderer,
                 n = 0,
                 ys = [],
-                order = this.get("order");
+                order = this.get("order"),
+                config;
             markerStyles = state == "off" || !styles[state] ? styles : styles[state]; 
             markerStyles.fill.color = this._getItemColor(markerStyles.fill.color, i);
             markerStyles.border.color = this._getItemColor(markerStyles.border.color, i);
-            markerStyles.width = (xcoords[i] - this._leftOrigin);
-            marker.update(markerStyles);
+            config = this._getMarkerDimensions(xcoords[i], ycoords[i], styles.height, offset);
+            markerStyles.width = config.calculatedSize;
+            marker.set(markerStyles);
             for(; n < seriesLen; ++n)
             {
-                renderer = seriesCollection[n].get("markers")[i];
                 ys[n] = ycoords[i] + seriesSize;
-                seriesSize += renderer.height;
+                seriesStyles = seriesCollection[n].get("styles").marker;
+                seriesSize += seriesStyles.width; 
                 if(order > n)
                 {
                     offset = seriesSize;
@@ -10154,7 +6960,10 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
             for(n = 0; n < seriesLen; ++n)
             {
                 renderer = Y.one(seriesCollection[n]._graphicNodes[i]);
-                renderer.setStyle("top", (ys[n] - seriesSize/2));
+                if(renderer && renderer !== undefined)
+                {
+                    renderer.setStyle("top", (ys[n] - seriesSize/2));
+                }
             }
         }
     }
@@ -10232,7 +7041,6 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
      */
     drawSeries: function()
     {
-        this.get("graphic").clear();
         this.drawFill.apply(this, this._getClosingPoints());
     },
     
@@ -10323,7 +7131,6 @@ Y.StackedAreaSplineSeries = Y.Base.create("stackedAreaSplineSeries", Y.AreaSerie
      */
     drawSeries: function()
     {
-        this.get("graphic").clear();
         this._stackCoordinates();
         this.drawStackedAreaSpline();
     }
@@ -10364,7 +7171,6 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
      */
     drawSeries: function()
     {
-        this.get("graphic").clear();
         if(this.get("showAreaFill"))
         {
             this.drawFill.apply(this, this._getClosingPoints());
@@ -10377,6 +7183,46 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
         {
             this.drawPlots();
         }   
+    },
+    
+    /**
+     * Toggles visibility
+     *
+     * @method _toggleVisible
+     * @param {Boolean} visible indicates visibilitye
+     * @private
+     */
+    _toggleVisible: function(visible)
+    {
+        var markers,
+            marker,
+            len,
+            i;
+        if(this.get("showAreaFill") && this._path)
+        {
+            this._path.set("visible", visible);
+        }
+        if(this.get("showLines"))
+        {
+            this._lineGraphic.set("visible", visible);
+        }
+        if(this.get("showMarkers"))
+        {
+            markers = this.get("markers");
+            if(markers)
+            {
+                i = 0;
+                len = markers.length;
+                for(; i < len; ++i)
+                {
+                    marker = markers[i];
+                    if(marker)
+                    {
+                        marker.set("visible", visible);
+                    }
+                }
+            }
+        }
     },
 
     /**
@@ -10603,7 +7449,6 @@ Y.StackedComboSeries = Y.Base.create("stackedComboSeries", Y.ComboSeries, [Y.Sta
      */
     drawSeries: function()
     {
-        this.get("graphic").clear();
         if(this.get("showAreaFill"))
         {
             this.drawFill.apply(this, this._getStackedClosingPoints());
@@ -10663,7 +7508,6 @@ Y.ComboSplineSeries = Y.Base.create("comboSplineSeries", Y.ComboSeries, [Y.Curve
      */
     drawSeries: function()
     {
-        this.get("graphic").clear();
         if(this.get("showAreaFill"))
         {
             this.drawAreaSpline();
@@ -10712,7 +7556,6 @@ Y.StackedComboSplineSeries = Y.Base.create("stackedComboSplineSeries", Y.Stacked
 	 */
 	drawSeries: function()
     {
-        this.get("graphic").clear();
         if(this.get("showAreaFill"))
         {
             this.drawStackedAreaSpline();
@@ -10819,7 +7662,6 @@ Y.StackedAreaSeries = Y.Base.create("stackedAreaSeries", Y.AreaSeries, [Y.Stacki
      */
 	drawSeries: function()
     {
-        this.get("graphic").clear();
         this.drawFill.apply(this, this._getStackedClosingPoints());
     }
 }, {
@@ -10880,14 +7722,8 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
             negativeBaseValues,
             positiveBaseValues,
             useOrigin = order === 0,
-            totalWidth = len * w,
-            hotspot,
-            isChrome = ISCHROME;
+            totalWidth = len * w;
         this._createMarkerCache();
-        if(isChrome)
-        {
-            this._createHotspotCache();
-        }
         if(totalWidth > this.get("width"))
         {
             ratio = this.width/totalWidth;
@@ -10956,20 +7792,11 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
             left -= w/2;
             style.width = w;
             style.height = h;
+            style.x = left;
+            style.y = top;
             marker = this.getMarker(style, graphOrder, i);
-            marker.setPosition(left, top);
-            if(isChrome)
-            {
-                hotspot = this.getHotspot(style, graphOrder, i);
-                hotspot.setPosition(left, top);
-                hotspot.parentNode.style.zIndex = 5;
-            }
         }
         this._clearMarkerCache();
-        if(isChrome)
-        {
-            this._clearHotspotCache();
-        }
     },
 
     /**
@@ -10992,14 +7819,12 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
                 marker = this._markers[i],
                 offset = 0;        
             styles = this.get("styles").marker;
-            markerStyles = state == "off" || !styles[state] ? styles : styles[state]; 
-            markerStyles.height = marker.height;
-            marker.update(markerStyles);
             offset = styles.width * 0.5;
-            if(marker.parentNode)
-            {
-                Y.one(marker.parentNode).setStyle("left", (xcoords[i] - offset));
-            }
+            markerStyles = state == "off" || !styles[state] ? styles : styles[state]; 
+            markerStyles.height = marker.get("height");
+            markerStyles.x = (xcoords[i] - offset);
+            markerStyles.y = marker.get("y");
+            marker.set(markerStyles);
         }
     },
 	
@@ -11148,14 +7973,8 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
             negativeBaseValues,
             positiveBaseValues,
             useOrigin = order === 0,
-            totalHeight = len * h,
-            hotspot,
-            isChrome = ISCHROME;
+            totalHeight = len * h;
         this._createMarkerCache();
-        if(isChrome)
-        {
-            this._createHotspotCache();
-        }
         if(totalHeight > this.get("height"))
         {
             ratio = this.height/totalHeight;
@@ -11222,20 +8041,11 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
             top -= h/2;        
             style.width = w;
             style.height = h;
+            style.x = left;
+            style.y = top;
             marker = this.getMarker(style, graphOrder, i);
-            marker.setPosition(left, top);
-            if(isChrome)
-            {
-                hotspot = this.getHotspot(style, graphOrder, i);
-                hotspot.setPosition(left, top);
-                hotspot.parentNode.style.zIndex = 5;
-            }
         }
         this._clearMarkerCache();
-        if(isChrome)
-        {
-            this._clearHotspotCache();
-        }
     },
 
     /**
@@ -11257,12 +8067,10 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
                 styles = this.get("styles").marker,
                 h = styles.height,
                 markerStyles = state == "off" || !styles[state] ? styles : styles[state]; 
-            markerStyles.width = marker.width;
-            marker.update(markerStyles);
-            if(marker.parentNode)
-            {
-                Y.one(marker.parentNode).setStyle("top", (ycoords[i] - h/2));
-            }
+            markerStyles.y = (ycoords[i] - h/2);
+            markerStyles.x = marker.get("x");
+            markerStyles.width = marker.get("width");
+            marker.set(markerStyles);
         }
     },
 	
@@ -11419,14 +8227,14 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             }
             cb.removeChild(this._map);
         }
-        this._image = document.createElement("img"); 
+        this._image = DOCUMENT.createElement("img"); 
         this._image.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAABCAYAAAD9yd/wAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABJJREFUeNpiZGBgSGPAAgACDAAIkABoFyloZQAAAABJRU5ErkJggg==";
         cb.appendChild(this._image);
         this._image.setAttribute("usemap", "#" + id);
         this._image.style.zIndex = 3;
         this._image.style.opacity = 0;
         this._image.setAttribute("alt", "imagemap");
-        this._map = document.createElement("map");
+        this._map = DOCUMENT.createElement("map");
         this._map.style.zIndex = 5;
         cb.appendChild(this._map);
         this._map.setAttribute("name", id);
@@ -11585,7 +8393,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             wedgeStyle,
             marker,
             graphOrder = this.get("graphOrder"),
-            isCanvas = DRAWINGAPI == "canvas";
+            isCanvas = Y.Graphic.NAME == "canvasGraphic";
 
         for(; i < itemCount; ++i)
         {
@@ -11653,21 +8461,19 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
                     color:tfc ? tfc.shift() : this._getDefaultColor(i, "slice"),
                     alpha:tfa ? tfa.shift() : null
                 },
-                shape: "wedge",
-                props: {
-                    arc: angle,
-                    radius: radius,
-                    startAngle: startAngle,
-                    x: halfWidth,
-                    y: halfHeight
-                },
+                type: "pieslice",
+                arc: angle,
+                radius: radius,
+                startAngle: startAngle,
+                cx: halfWidth,
+                cy: halfHeight,
                 width: w,
                 height: h
             };
             marker = this.getMarker(wedgeStyle, graphOrder, i);
             if(isCanvas)
             {
-                this._addHotspot(wedgeStyle.props, graphOrder, i);
+                this._addHotspot(wedgeStyle, graphOrder, i);
             }
         }
         this._clearMarkerCache();
@@ -11675,10 +8481,10 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
 
     _addHotspot: function(cfg, seriesIndex, index)
     {
-        var areaNode = document.createElement("area"),
+        var areaNode = DOCUMENT.createElement("area"),
             i = 1,
-            x = cfg.x,
-            y = cfg.y, 
+            x = cfg.cx,
+            y = cfg.cy, 
             arc = cfg.arc,
             startAngle = cfg.startAngle - arc, 
             endAngle = cfg.startAngle,
@@ -11742,21 +8548,28 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             indexStyles = this._mergeStyles(markerStyles, {});
             indexStyles.fill.color = indexStyles.fill.colors[i % indexStyles.fill.colors.length];
             indexStyles.fill.alpha = indexStyles.fill.alphas[i % indexStyles.fill.alphas.length];
-            marker.update(indexStyles);
+            marker.set(indexStyles);
         }
     },
     
     /**
+     * Creates a shape to be used as a marker.
+     *
+     * @method _createMarker
+     * @param {Object} styles Hash of style properties.
+     * @param {Number} order Order of the series.
+     * @param {Number} index Index within the series associated with the marker.
+     * @return Shape
      * @private
      */
     _createMarker: function(styles, order, index)
     {
-        var cfg = Y.clone(styles),
-            marker;
-        cfg.graphic = this.get("graphic");
-        marker = new Y.Shape(cfg);
+        var graphic = this.get("graphic"),
+            marker,
+            cfg = Y.clone(styles);
+        graphic.set("autoDraw", false);
+        marker = graphic.getShape(cfg); 
         marker.addClass("yui3-seriesmarker");
-        marker.node.setAttribute("id", "series_" + order + "_" + index);
         return marker;
     },
     
@@ -11771,9 +8584,9 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         for(; i < len; ++i)
         {
             marker = this._markerCache[i];
-            if(marker && marker.node && marker.parentNode)
+            if(marker)
             {
-                marker.parentNode.removeChild(marker.node);
+                marker.destroy();
             }
         }
         this._markerCache = [];
@@ -12015,28 +8828,17 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
  * @uses Renderer
  */
 Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
-    /**
-     * @private
-     */
-    render: function()
-    {
-        this._setCanvas();
-    },
+    _path: null,
 
     /**
      * @private
      */
     remove: function()
     {
-        var graphic = this.get("graphic"),
-            gNode;
-        if(graphic)
+        var path = this._path;
+        if(path)
         {
-            gNode = graphic.node;
-            if(gNode)
-            {
-                Y.one(gNode).remove();
-            }
+            path.destroy();
         }
     },
 
@@ -12060,7 +8862,7 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
      */
     _drawGridlines: function()
     {
-        var graphic = this.get("graphic"),
+        var path,
             axis = this.get("axis"),
             axisPosition = axis.get("position"),
             points,
@@ -12093,47 +8895,37 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
             points = axis.get("tickPoints");
             l = points.length;
         }
-        if(!graphic)
-        {
-            this._setCanvas();
-            graphic = this.get("graphic");
-        }
-        graphic.clear();
-        graphic.setSize(w, h);
-        graphic.lineStyle(weight, color, alpha);
+        path = graph.get("gridlines");
+        path.set("width", w);
+        path.set("height", h);
+        path.set("stroke", {
+            weight: weight,
+            color: color,
+            opacity: alpha
+        });
         for(; i < l; ++i)
         {
-            lineFunction(graphic, points[i], w, h);
+            lineFunction(path, points[i], w, h);
         }
-        graphic.end();
+        path.end();
     },
 
     /**
      * @private
      */
-    _horizontalLine: function(graphic, pt, w, h)
+    _horizontalLine: function(path, pt, w, h)
     {
-        graphic.moveTo(0, pt.y);
-        graphic.lineTo(w, pt.y);
+        path.moveTo(0, pt.y);
+        path.lineTo(w, pt.y);
     },
 
     /**
      * @private
      */
-    _verticalLine: function(graphic, pt, w, h)
+    _verticalLine: function(path, pt, w, h)
     {
-        graphic.moveTo(pt.x, 0);
-        graphic.lineTo(pt.x, h);
-    },
-
-    /**
-     * @private
-     * Creates a <code>Graphic</code> instance.
-     */
-    _setCanvas: function()
-    {
-        this.set("graphic", new Y.Graphic());
-        this.get("graphic").render(this.get("graph").get("contentBox"));
+        path.moveTo(pt.x, 0);
+        path.lineTo(pt.x, h);
     },
     
     /**
@@ -12211,46 +9003,28 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
      */
     syncUI: function()
     {
-        if(this.get("showBackground"))
-        {
-            var graphic = new Y.Graphic(),
-                graphicNode,
-                cb = this.get("contentBox"),
-                bg = this.get("styles").background,
-                border = bg.border,
-                weight = border.weight || 0,
-                w = this.get("width"),
-                h = this.get("height");
-            if(w)
-            {
-                w += weight * 2;
-                bg.width = w;
-            }   
-            if(h)
-            {
-                h += weight * 2;
-                bg.height = h;
-            }
-            graphic.render(cb);
-            this._background = graphic.getShape(bg);
-            graphicNode = Y.one(graphic.node);
-            graphicNode.setStyle("left", 0 - weight);
-            graphicNode.setStyle("top", 0 - weight);
-            graphicNode.setStyle("zIndex", -1);
-        }
-    },
-   
-    /**
-     * @private
-     */
-    renderUI: function()
-    {
-        var sc = this.get("seriesCollection"),
+        var background,
+            cb,
+            bg,
+            sc = this.get("seriesCollection"),
             series,
             i = 0,
             len = sc.length,
             hgl = this.get("horizontalGridlines"),
             vgl = this.get("verticalGridlines");
+        if(this.get("showBackground"))
+        {
+            background = this.get("background");
+            cb = this.get("contentBox");
+            bg = this.get("styles").background;
+            bg.stroke = bg.border;
+            bg.stroke.opacity = bg.stroke.alpha;
+            bg.fill.opacity = bg.fill.alpha;
+            bg.width = this.get("width");
+            bg.height = this.get("height");
+            bg.type = bg.shape;
+            background.set(bg);
+        }
         for(; i < len; ++i)
         {
             series = sc[i];
@@ -12268,7 +9042,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
             vgl.draw();
         }
     },
-
+   
     /**
      * @private
      * Hash of arrays containing series mapped to a series type.
@@ -12542,7 +9316,12 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
      */
     _updateStyles: function()
     {
-        this._background.update(this.get("styles").background);
+        var styles = this.get("styles").background,
+            border = styles.border;
+            border.opacity = border.alpha;
+            styles.stroke = border;
+            styles.fill.opacity = styles.fill.alpha;
+        this.get("background").set(styles);
         this._sizeChangeHandler();
     },
 
@@ -12555,33 +9334,25 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
             vgl = this.get("verticalGridlines"),
             w = this.get("width"),
             h = this.get("height"),
-            graphicNode,
-            x = 0,
-            y = 0,
             bg = this.get("styles").background,
-            weight;
+            weight,
+            background;
         if(bg && bg.border)
         {
             weight = bg.border.weight || 0;
         }
-        if(this._background)
+        if(this.get("showBackground"))
         {
-            graphicNode = Y.one(this._background.parentNode);
+            background = this.get("background");
             if(w && h)
             {
-                if(weight)
-                {
-                    w += weight * 2;
-                    h += weight * 2;
-                    x -= weight;
-                    y -= weight;
-                }
-                graphicNode.setStyle("width", w);
-                graphicNode.setStyle("height", h);
-                graphicNode.setStyle("left", x);
-                graphicNode.setStyle("top", y);
-                this._background.update({width:w, height:h});
+                background.set("width", w);
+                background.set("height", h);
             }
+        }
+        if(this._gridlines)
+        {
+            this._gridlines.clear();
         }
         if(hgl && hgl instanceof Y.Gridlines)
         {
@@ -12604,11 +9375,16 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
             this._callLater = true;
             return;
         }
+        var sc,
+            i,
+            len,
+            graphic = this.get("graphic");
+        graphic.set("autoDraw", false);
         this._callLater = false;
         this._drawing = true;
-        var sc = this.get("seriesCollection"),
-            i = 0,
-            len = sc.length;
+        sc = this.get("seriesCollection");
+        i = 0;
+        len = sc.length;
         for(; i < len; ++i)
         {
             sc[i].draw();
@@ -12623,7 +9399,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         {
             this._drawSeries();
         }
-    },
+    },  
 
     /**
      * @private
@@ -12631,6 +9407,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     _drawingCompleteHandler: function(e)
     {
         var series = e.currentTarget,
+            graphic,
             index = Y.Array.indexOf(this._dispatchers, series);
         if(index > -1)
         {
@@ -12638,6 +9415,11 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         }
         if(this._dispatchers.length < 1)
         {
+            graphic = this.get("graphic");
+            if(!graphic.get("autoDraw"))
+            {
+                graphic._redraw();
+            }
             this.fire("chartRendered");
         }
     },
@@ -12736,13 +9518,11 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 {
                     gl = val;
                     val.set("graph", this);
-                    val.render();
                     return val;
                 }
                 else if(val && val.axis)
                 {
                     gl = new Y.Gridlines({direction:"horizontal", axis:val.axis, graph:this, styles:val.styles});
-                    gl.render();
                     return gl;
                 }
             }
@@ -12769,15 +9549,76 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 {
                     gl = val;
                     val.set("graph", this);
-                    val.render();
                     return val;
                 }
                 else if(val && val.axis)
                 {
                     gl = new Y.Gridlines({direction:"vertical", axis:val.axis, graph:this, styles:val.styles});
-                    gl.render();
                     return gl;
                 }
+            }
+        },
+
+        /**
+         * Reference to graphic instance used for the background.
+         *
+         * @attribute background
+         * @type Graphic
+         * @readOnly
+         */
+        background: {
+            getter: function()
+            {
+                if(!this._background)
+                {
+                    this._backgroundGraphic = new Y.Graphic({render:this.get("contentBox")});
+                    this._backgroundGraphic.get("node").style.zIndex = -2;
+                    this._background = this._backgroundGraphic.getShape({type: "rect"});
+                }
+                return this._background;
+            }
+        },
+
+        /**
+         * Reference to graphic instance used for gridlines.
+         *
+         * @attribute gridlines
+         * @type Graphic
+         * @readOnly
+         */
+        gridlines: {
+            readOnly: true,
+
+            getter: function()
+            {
+                if(!this._gridlines)
+                {
+                    this._gridlinesGraphic = new Y.Graphic({render:this.get("contentBox")});
+                    this._gridlinesGraphic.get("node").style.zIndex = -1;
+                    this._gridlines = this._gridlinesGraphic.getShape({type: "path"});
+                }
+                return this._gridlines;
+            }
+        },
+        
+        /**
+         * Reference to graphic instance used for series.
+         *
+         * @attribute graphic
+         * @type Graphic
+         * @readOnly
+         */
+        graphic: {
+            readOnly: true,
+
+            getter: function() 
+            {
+                if(!this._graphic)
+                {
+                    this._graphic = new Y.Graphic({render:this.get("contentBox")});
+                    this._graphic.set("autoDraw", false);
+                }
+                return this._graphic;
             }
         }
 
@@ -13331,7 +10172,7 @@ ChartBase.prototype = {
             node.set("innerHTML", msg);
             node.setStyle("top", y + "px");
             node.setStyle("left", x + "px");
-            node.removeClass("yui3-widget-hidden");
+            node.setStyle("visibility", "visible");
         }
     },
 
@@ -13363,7 +10204,7 @@ ChartBase.prototype = {
         node.set("innerHTML", "");
         node.setStyle("left", -10000);
         node.setStyle("top", -10000);
-        node.addClass("yui3-widget-hidden");
+        node.setStyle("visibility", "hidden");
     },
 
     /**
@@ -13374,13 +10215,13 @@ ChartBase.prototype = {
         var tt = this.get("tooltip"),
             id = this.get("id") + "_tooltip",
             cb = this.get("contentBox"),
-            oldNode = document.getElementById(id);
+            oldNode = DOCUMENT.getElementById(id);
         if(oldNode)
         {
             cb.removeChild(oldNode);
         }
         tt.node.setAttribute("id", id);
-        tt.node.addClass("yui3-widget-hidden");
+        tt.node.setStyle("visibility", "hidden");
         cb.appendChild(tt.node);
     },
 
@@ -13433,7 +10274,7 @@ ChartBase.prototype = {
      */
     _getTooltip: function()
     {
-        var node = document.createElement("div"),
+        var node = DOCUMENT.createElement("div"),
             tt = {
                 markerLabelFunction: this._tooltipLabelFunction,
                 planarLabelFunction: this._planarLabelFunction,
@@ -13469,7 +10310,7 @@ ChartBase.prototype = {
         node.setStyle("pointerEvents", "none");
         node.setStyle("zIndex", 3);
         node.setStyle("whiteSpace", "noWrap");
-        node.addClass("yui3-widget-hidden");
+        node.setStyle("visibility", "hidden");
         tt.node = Y.one(node);
         this._tooltip = tt;
         return tt;
@@ -13567,7 +10408,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         this.get("styles");
         if(this.get("interactionType") == "planar")
         {
-            overlay = document.createElement("div");
+            overlay = DOCUMENT.createElement("div");
             this.get("contentBox").appendChild(overlay);
             this._overlay = Y.one(overlay); 
             this._overlay.setStyle("position", "absolute");
@@ -13928,7 +10769,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 maximum:"maximum",
                 minimum:"minimum", 
                 roundingMethod:"roundingMethod",
-                alwaysShowZero:"alwaysShowZero"
+                alwaysShowZero:"alwaysShowZero",
+                title:"title"
             },
             dp = this.get("dataProvider"),
             ai,

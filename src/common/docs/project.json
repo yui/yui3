@@ -2,7 +2,7 @@
     "projectName": "YUI 3",
 
     "apiDocs": "api",
-    "yuiVersion": "3.3.0",
+    "yuiVersion": "3.4.0pr2",
     "yuiSeedUrl": "build/yui/yui-min.js",
 
     "componentDefaults": {

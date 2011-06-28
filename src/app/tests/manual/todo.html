@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Todo List</title>
+    <link rel="stylesheet" href="assets/todo.css">
+</head>
+<body>
+
+<div id="doc">
+    <div id="todo-app">
+        <h1>Todo List</h1>
+
+        <input type="text" id="new-todo" class="todo-input"
+                placeholder="What do you want to do today?">
+
+        <ul id="todo-list"></ul>
+        <div id="todo-stats"></div>
+    </div>
+</div>
+
+<script type="text/template" id="todo-item-template">
+    <div class="todo-view">
+        <input type="checkbox" class="todo-checkbox" {checked}>
+        <span class="todo-content">{text}</span>
+        <a href="#" class="todo-remove" title="Remove this task"></a>
+    </div>
+    <div class="todo-edit">
+        <input type="text" class="todo-input" value="{text}">
+    </div>
+</script>
+
+<script type="text/template" id="todo-stats-template">
+    <span class="todo-count">
+        <span class="todo-remaining">{numRemaining}</span>
+        <span class="todo-remaining-label">{remainingLabel}</span> left.
+    </span>
+    <a href="#" class="todo-clear">
+        Clear <span class="todo-done">{numDone}</span>
+        completed <span class="todo-done-label">{doneLabel}</span>
+    </a>
+</script>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+var Y = YUI({
+    allowRollup: false,
+    filter: 'raw',
+    modules: {
+        "todo": {
+            "fullpath": "todo.js",
+            "requires": ["event-focus", "json", "model", "model-list", "view"]
+        }
+    }
+}).use('todo', function (Y) {
+    new Y.TodoAppView();
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,37 @@
+<div class="intro">
+<p>This example shows how to use the core of YUI.</p>
+</div>
+
+<div class="example">
+    {{>yui-core}}
+</div>
+
+<h3>Setting up the YUI Instance</h3>
+<p>Here we will create our `YUI` instance, loading 'node' so we can work with DOM elements in the example.</p>
+
+```
+YUI().use('node' ...
+```
+
+<h3>Using the callback</h3>
+<p>The <code>use</code> method will dynamically fetch anything required for 'node' if it isn't already on the page.
+If dynamic loading is required, the last parameter supplied to <code>use</code> should be a function to execute when
+the load is complete.  This function will be executed whether or not dynamic loading is required, so it
+is the preferred pattern for using <code>YUI</code>.</p>
+
+```
+YUI().use('node' function(Y) ...
+```
+
+<p>
+The function is supplied a reference to the <code>YUI</code> instance, so we can wrap all of our implementation code inside of
+the <code>use</code> statement without saving an external reference to the instance somewhere else.
+</p>
+<p>
+Now that we know all of the modules are loaded, we can use node to update DOM nodes.
+</p>
+
+<h3>Full Javascript</h3>
+```
+{{>yui-core-js}}
+```

@@ -35,14 +35,14 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             }
             cb.removeChild(this._map);
         }
-        this._image = document.createElement("img"); 
+        this._image = DOCUMENT.createElement("img"); 
         this._image.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAABCAYAAAD9yd/wAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABJJREFUeNpiZGBgSGPAAgACDAAIkABoFyloZQAAAABJRU5ErkJggg==";
         cb.appendChild(this._image);
         this._image.setAttribute("usemap", "#" + id);
         this._image.style.zIndex = 3;
         this._image.style.opacity = 0;
         this._image.setAttribute("alt", "imagemap");
-        this._map = document.createElement("map");
+        this._map = DOCUMENT.createElement("map");
         this._map.style.zIndex = 5;
         cb.appendChild(this._map);
         this._map.setAttribute("name", id);
@@ -201,7 +201,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             wedgeStyle,
             marker,
             graphOrder = this.get("graphOrder"),
-            isCanvas = DRAWINGAPI == "canvas";
+            isCanvas = Y.Graphic.NAME == "canvasGraphic";
 
         for(; i < itemCount; ++i)
         {
@@ -269,21 +269,19 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
                     color:tfc ? tfc.shift() : this._getDefaultColor(i, "slice"),
                     alpha:tfa ? tfa.shift() : null
                 },
-                shape: "wedge",
-                props: {
-                    arc: angle,
-                    radius: radius,
-                    startAngle: startAngle,
-                    x: halfWidth,
-                    y: halfHeight
-                },
+                type: "pieslice",
+                arc: angle,
+                radius: radius,
+                startAngle: startAngle,
+                cx: halfWidth,
+                cy: halfHeight,
                 width: w,
                 height: h
             };
             marker = this.getMarker(wedgeStyle, graphOrder, i);
             if(isCanvas)
             {
-                this._addHotspot(wedgeStyle.props, graphOrder, i);
+                this._addHotspot(wedgeStyle, graphOrder, i);
             }
         }
         this._clearMarkerCache();
@@ -291,10 +289,10 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
 
     _addHotspot: function(cfg, seriesIndex, index)
     {
-        var areaNode = document.createElement("area"),
+        var areaNode = DOCUMENT.createElement("area"),
             i = 1,
-            x = cfg.x,
-            y = cfg.y, 
+            x = cfg.cx,
+            y = cfg.cy, 
             arc = cfg.arc,
             startAngle = cfg.startAngle - arc, 
             endAngle = cfg.startAngle,
@@ -358,21 +356,28 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             indexStyles = this._mergeStyles(markerStyles, {});
             indexStyles.fill.color = indexStyles.fill.colors[i % indexStyles.fill.colors.length];
             indexStyles.fill.alpha = indexStyles.fill.alphas[i % indexStyles.fill.alphas.length];
-            marker.update(indexStyles);
+            marker.set(indexStyles);
         }
     },
     
     /**
+     * Creates a shape to be used as a marker.
+     *
+     * @method _createMarker
+     * @param {Object} styles Hash of style properties.
+     * @param {Number} order Order of the series.
+     * @param {Number} index Index within the series associated with the marker.
+     * @return Shape
      * @private
      */
     _createMarker: function(styles, order, index)
     {
-        var cfg = Y.clone(styles),
-            marker;
-        cfg.graphic = this.get("graphic");
-        marker = new Y.Shape(cfg);
+        var graphic = this.get("graphic"),
+            marker,
+            cfg = Y.clone(styles);
+        graphic.set("autoDraw", false);
+        marker = graphic.getShape(cfg); 
         marker.addClass("yui3-seriesmarker");
-        marker.node.setAttribute("id", "series_" + order + "_" + index);
         return marker;
     },
     
@@ -387,9 +392,9 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         for(; i < len; ++i)
         {
             marker = this._markerCache[i];
-            if(marker && marker.node && marker.parentNode)
+            if(marker)
             {
-                marker.parentNode.removeChild(marker.node);
+                marker.destroy();
             }
         }
         this._markerCache = [];

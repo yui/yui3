@@ -195,6 +195,7 @@
                     var s = el.style;
                     s.border = '1px solid #ccc';
                     s.lineHeight = '0';
+                    s.height = '0';
                     s.fontSize = '0';
                     s.marginTop = '5px';
                     s.marginBottom = '5px';
@@ -359,7 +360,7 @@
     * @static
     * @property REG_NON
     */
-    Y.Selection.REG_NON = /[\s\S|\n|\t]/gi;
+    Y.Selection.REG_NON = /[\s|\n|\t]/gi;
 
     /**
     * Regular Expression to remove all HTML from a string

@@ -22,6 +22,8 @@
             },
             "scrollview-scrollbars" : {
                 "requires" : [
+		    "classnamemanager",
+                    "transition",
                     "plugin"
                 ],
                 "skinnable" : true,

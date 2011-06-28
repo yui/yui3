@@ -565,6 +565,43 @@ suite.add( new Y.Test.Case({
 		}
 }));
 
+suite.add( new Y.Test.Case({
+	
+		name: "Change Value by mousedown",
+	
+		setUp: function () {
+			Y.one('body').append('<span id="testbed"></span>');
+		},
+	
+		tearDown: function () {
+			Y.one('#testbed').remove(true);
+		},
+	
+		"test mousedown on 90 degree": function() { //string must start with "test
+			Y.one('#testbed').append('<div id="dial"></div><div id="ref"></div>');
+			var testbed = Y.one("#dial"),
+				ref     = Y.one("#ref"),
+				dial, ring, newValue;
+			dial = new Y.Dial({handleDistance: 1, value: 0, min: 0, max: 100 }).render( testbed );
+			ring = Y.one('.yui3-dial-ring'),
+			Y.on('mouseover', function(e){
+                var ang = 90;
+                newValue = dial._getNewValueFromMousedown(ang);// this was added for #2530306.  Handles lots of cases of min and max wrapped and not, neg and pos
+                dial._prevAng = ang;
+                dial._handleValuesBeyondMinMax(e, newValue);
+                //var foo = 3; // a good place to insert a breakpoint for visual inspection 
+            }, ring);
+			//simulate a mouseover on the ring, NOT any other event that will fire other functions
+    		ring.simulate("mouseover");			
+			Y.Assert.areEqual( 25, dial.get('value')   );
+			dial.destroy();
+		} //,
+		
+}));
+
+
+
+
 /*
 suite.add( new Y.Test.Case({
     name: "Bugs",

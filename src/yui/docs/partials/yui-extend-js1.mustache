@@ -1,0 +1,17 @@
+function Bird(name) {
+    this.name = name;
+}
+
+Bird.prototype.flighted   = true;  // Default for all Birds
+Bird.prototype.isFlighted = function () { return this.flighted };
+Bird.prototype.getName    = function () { return this.name };
+
+function Chicken(name) {
+    // Chain the constructors
+    Chicken.superclass.constructor.call(this, name);
+}
+// Chickens are birds
+Y.extend(Chicken, Bird);
+
+// Define the Chicken prototype methods/members
+Chicken.prototype.flighted = false; // Override default for all Chickens

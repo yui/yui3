@@ -226,7 +226,7 @@
 
             Y.each(Frame.DOM_EVENTS, function(v, k) {
                 var fn = Y.bind(this._onDomEvent, this),
-                    kfn = ((Y.UA.ie) ? Y.throttle(fn, 200) : fn);
+                    kfn = ((Y.UA.ie && Frame.THROTTLE_TIME > 0) ? Y.throttle(fn, Frame.THROTTLE_TIME) : fn);
 
                 if (!inst.Node.DOM_EVENTS[k]) {
                     inst.Node.DOM_EVENTS[k] = 1;
@@ -682,7 +682,7 @@
         * @chainable        
         */
         focus: function(fn) {
-            if (Y.UA.ie) {
+            if (Y.UA.ie && Y.UA.ie < 9) {
                 try {
                     Y.one('win').focus();
                     this.getInstance().one('win').focus();
@@ -746,7 +746,14 @@
             return this;
         }
     }, {
-        
+        /**
+        * @static
+        * @property THROTTLE_TIME
+        * @description The throttle time for key events in IE
+        * @type Number
+        * @default 100
+        */
+        THROTTLE_TIME: 100,
         /**
         * @static
         * @property DOM_EVENTS

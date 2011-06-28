@@ -1,0 +1,15 @@
+{
+ "calendar-base": {
+            	"requires": [
+                	"widget",
+                    "substitute",
+                    "datatype-date",
+                    "datatype-date-math"
+            	],
+                "lang" : [
+                    "en", 
+                    "ru"
+                ],
+                "skinnable": true
+			}
+}

@@ -12,21 +12,21 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
     /**
      * @private
      */
-    renderUI: function()
-    {
-        this._setNode();
-    },
-
-    /**
-     * @private
-     */
     _getMarkerDimensions: function(xcoord, ycoord, calculatedSize, offset)
     {
         var config = {
-            top: ycoord + offset,
-            left: this._leftOrigin
+            top: ycoord + offset
         };
-        config.calculatedSize = xcoord - config.left;
+        if(xcoord >= this._leftOrigin)
+        {
+            config.left = this._leftOrigin;
+            config.calculatedSize = xcoord - config.left;
+        }
+        else
+        {
+            config.left = xcoord;
+            config.calculatedSize = this._leftOrigin - xcoord;
+        }
         return config;
     },
     
@@ -52,22 +52,25 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
                 graph = this.get("graph"),
                 seriesCollection = graph.seriesTypes[this.get("type")],
                 seriesLen = seriesCollection.length,
+                seriesStyles,
                 seriesSize = 0,
                 offset = 0,
                 renderer,
                 n = 0,
                 ys = [],
-                order = this.get("order");
+                order = this.get("order"),
+                config;
             markerStyles = state == "off" || !styles[state] ? styles : styles[state]; 
             markerStyles.fill.color = this._getItemColor(markerStyles.fill.color, i);
             markerStyles.border.color = this._getItemColor(markerStyles.border.color, i);
-            markerStyles.width = (xcoords[i] - this._leftOrigin);
-            marker.update(markerStyles);
+            config = this._getMarkerDimensions(xcoords[i], ycoords[i], styles.height, offset);
+            markerStyles.width = config.calculatedSize;
+            marker.set(markerStyles);
             for(; n < seriesLen; ++n)
             {
-                renderer = seriesCollection[n].get("markers")[i];
                 ys[n] = ycoords[i] + seriesSize;
-                seriesSize += renderer.height;
+                seriesStyles = seriesCollection[n].get("styles").marker;
+                seriesSize += seriesStyles.width; 
                 if(order > n)
                 {
                     offset = seriesSize;
@@ -77,7 +80,10 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
             for(n = 0; n < seriesLen; ++n)
             {
                 renderer = Y.one(seriesCollection[n]._graphicNodes[i]);
-                renderer.setStyle("top", (ys[n] - seriesSize/2));
+                if(renderer && renderer !== undefined)
+                {
+                    renderer.setStyle("top", (ys[n] - seriesSize/2));
+                }
             }
         }
     }

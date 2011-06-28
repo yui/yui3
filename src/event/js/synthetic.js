@@ -437,6 +437,7 @@ Y.mix(SyntheticEvent, {
          */
         _on: function (args, delegate) {
             var handles  = [],
+                originalArgs = args.slice(),
                 extra    = this.processArgs(args, delegate),
                 selector = args[2],
                 method   = delegate ? 'delegate' : 'on',
@@ -447,7 +448,7 @@ Y.mix(SyntheticEvent, {
 
             if (!nodes.length && isString(selector)) {
                 handle = Y.on('available', function () {
-                    Y.mix(handle, Y[method].apply(Y, args), true);
+                    Y.mix(handle, Y[method].apply(Y, originalArgs), true);
                 }, selector);
 
                 return handle;

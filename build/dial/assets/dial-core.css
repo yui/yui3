@@ -34,18 +34,8 @@ v\:fill {
 	top:0;
 	left:0;
 }
-.yui3-skin-sam .yui3-dial-hidden {
-	/*visibility:hidden;*/
-	display:none;
-	/*
-	left:-10000px;
-	zoom:1;	opacity:0;
-	filter:alpha(opacity=0);
-	border:solid 20px red;
-	display:none;*/
+.yui3-dial-content .yui3-dial-ring .yui3-dial-hidden {
+	/* [#2530206] using opacity instead of display:none;. display:none was mis-positioning the marker when we set the dial value on ring mousedown. */
+	opacity:0;
+	filter:alpha(opacity=0);	
 }
-/*.yui3-dial-marker-vml{
-	opacity:1;
-	filter:alpha(opacity=100);
-	zoom:1;
-}*/

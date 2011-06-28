@@ -31,30 +31,17 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     /**
      * @private
      */
-    _positionChangeHandler: function(e)
-    {
-        var position = this.get("position");
-        if(position == "none")
-        {
-            return;
-        }
-        this._layout =this.getLayout(this.get("position"));
-        if(this.get("rendered"))
-        {
-            this._drawAxis();
-        }
-    },
-
-    /**
-     * @private
-     */
     renderUI: function()
     {
-        var pos = this.get("position");
+        var pos = this.get("position"),
+            layoutClass = this._layoutClasses[pos];
         if(pos && pos != "none")
         {
-            this._layout =this.getLayout(pos);
-            this._setCanvas();
+            this._layout = new layoutClass();
+            if(this._layout)
+            {
+                this._setCanvas();
+            }
         }
     },
    
@@ -63,10 +50,35 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
      */
     syncUI: function()
     {
+        var layout = this._layout,
+            defaultMargins,
+            styles,
+            label,
+            title,
+            i;
+        if(layout)
+        {
+            defaultMargins = layout._getDefaultMargins();
+            styles = this.get("styles");
+            label = styles.label.margin;
+            title =styles.title.margin;
+            //need to defaultMargins method to the layout classes.
+            for(i in defaultMargins)
+            {
+                if(defaultMargins.hasOwnProperty(i))
+                {
+                    label[i] = label[i] === undefined ? defaultMargins[i] : label[i];
+                    title[i] = title[i] === undefined ? defaultMargins[i] : title[i];
+                }
+            }
+        }
         this._drawAxis();
     },
 
     /**
+     * Creates a graphic instance to be used for the axis line and ticks.
+     *
+     * @method _setCanvas
      * @private
      */
     _setCanvas: function()
@@ -96,11 +108,10 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     },
 	
     /**
-     * @protected
-     *
      * Gets the default value for the <code>styles</code> attribute. Overrides
      * base implementation.
      *
+     * @protected
      * @method _getDefaultStyles
      * @return Object
      */
@@ -140,10 +151,22 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 fontSize:"85%",
                 rotation: 0,
                 margin: {
-                    top:4,
-                    right:4,
-                    bottom:4,
-                    left:4
+                    top: undefined,
+                    right: undefined,
+                    bottom: undefined,
+                    left: undefined
+                }
+            },
+            title: {
+                color:"#808080",
+                alpha: 1,
+                fontSize:"85%",
+                rotation: undefined,
+                margin: {
+                    top: undefined,
+                    right: undefined,
+                    bottom: undefined,
+                    left: undefined
                 }
             },
             hideOverlappingLabelTicks: false
@@ -153,6 +176,9 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     },
 
     /**
+     * Updates the axis when the size changes.
+     *
+     * @method _handleSizeChange
      * @private
      */
     _handleSizeChange: function(e)
@@ -169,49 +195,94 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             this._drawAxis();
         }
     },
-
+   
     /**
+     * Maps key values to classes containing layout algorithms
+     *
+     * @property _layoutClasses
      * @private
      */
-    _layout: null,
-
-    /**
-     * @private 
-     */
-    getLayout: function(pos)
+    _layoutClasses: 
     {
-        var l;
-        switch(pos)
-        {
-            case "top" :
-                l = new Y.TopAxisLayout({axisRenderer:this});
-            break;
-            case "bottom" : 
-                l = new Y.BottomAxisLayout({axisRenderer:this});
-            break;
-            case "left" :
-                l = new Y.LeftAxisLayout({axisRenderer:this});
-            break;
-            case "right" :
-                l = new Y.RightAxisLayout({axisRenderer:this});
-            break;
-        }
-        return l;
+        top : TopAxisLayout,
+        bottom: BottomAxisLayout,
+        left: LeftAxisLayout,
+        right : RightAxisLayout
     },
     
     /**
+     * Draws a line segment between 2 points
+     *
+     * @method drawLine
+     * @param {Object} startPoint x and y coordinates for the start point of the line segment
+     * @param {Object} endPoint x and y coordinates for the for the end point of the line segment
+     * @param {Object} line styles (weight, color and alpha to be applied to the line segment)
      * @private
      */
     drawLine: function(startPoint, endPoint, line)
     {
-        var graphic = this.get("graphic");
-        graphic.lineStyle(line.weight, line.color, line.alpha);
-        graphic.moveTo(startPoint.x, startPoint.y);
-        graphic.lineTo(endPoint.x, endPoint.y);
-        graphic.end();
+        var path = this.get("path");
+        path.set("stroke", {
+            weight: line.weight, 
+            color: line.color, 
+            opacity: line.alpha
+        });
+        path.moveTo(startPoint.x, startPoint.y);
+        path.lineTo(endPoint.x, endPoint.y);
     },
 
     /**
+     * Generates the properties necessary for rotating and positioning a text field.
+     *
+     * @method _getTextRotationProps
+     * @param {Object} style properties for the text field
+     * @return Object
+     * @private
+     */
+    _getTextRotationProps: function(styles)
+    {
+        if(styles.rotation === undefined)
+        {
+            switch(this.get("position"))
+            {
+                case "left" :
+                    styles.rotation = -90;
+                break; 
+                case "right" : 
+                    styles.rotation = 90;
+                break;
+                default :
+                    styles.rotation = 0;
+                break;
+            }
+        }
+        var rot =  Math.min(90, Math.max(-90, styles.rotation)),
+            absRot = Math.abs(rot),
+            radCon = Math.PI/180,
+            sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
+            cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
+            m11 = cosRadians,
+            m12 = rot > 0 ? -sinRadians : sinRadians,
+            m21 = -m12,
+            m22 = m11;
+        return {
+            rot: rot,
+            absRot: absRot,
+            radCon: radCon,
+            sinRadians: sinRadians,
+            cosRadians: cosRadians,
+            m11: m11,
+            m12: m12,
+            m21: m21,
+            m22: m22,
+            textAlpha: styles.alpha
+        };
+    },
+
+    /**
+     * Draws an axis. 
+     *
+     * @method _drawAxis
      * @private
      */
     _drawAxis: function ()
@@ -223,9 +294,10 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         }
         this._drawing = true;
         this._callLater = false;
-        if(this.get("position") != "none")
+        if(this._layout)
         {
             var styles = this.get("styles"),
+                labelStyles = styles.label,
                 majorTickStyles = styles.majorTicks,
                 drawTicks = majorTickStyles.display != "none",
                 tickPoint,
@@ -233,19 +305,22 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 len,
                 majorUnitDistance,
                 i = 0,
+                layout = this._layout,
                 layoutLength,
                 position,
                 lineStart,
                 label,
-                layout = this._layout,
                 labelFunction = this.get("labelFunction"),
                 labelFunctionScope = this.get("labelFunctionScope"),
                 labelFormat = this.get("labelFormat"),
-                graphic = this.get("graphic");
-            graphic.clear();
-            layout.setTickOffsets();
+                graphic = this.get("graphic"),
+                path = this.get("path");
+            graphic.set("autoDraw", false);
+            path.clear();
+            this._labelRotationProps = this._getTextRotationProps(labelStyles);
+            layout.setTickOffsets.apply(this);
             layoutLength = this.getLength();
-            lineStart = layout.getLineStart();
+            lineStart = layout.getLineStart.apply(this);
             len = this.getTotalMajorUnits(majorUnit);
             majorUnitDistance = this.getMajorUnitDistance(len, layoutLength, majorUnit);
             this.set("edgeOffset", this.getEdgeOffset(len, layoutLength) * 0.5);
@@ -253,7 +328,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             this.drawLine(lineStart, this.getLineEnd(tickPoint), styles.line);
             if(drawTicks) 
             {
-               layout.drawTick(tickPoint, majorTickStyles);
+               layout.drawTick.apply(this, [tickPoint, majorTickStyles]);
             }
             if(len < 1)
             {
@@ -262,28 +337,30 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             }
             this._createLabelCache();
             this._tickPoints = [];
-            layout.set("maxLabelSize", 0); 
+            this.set("maxLabelSize", 0); 
+            this._titleSize = 0;
             for(; i < len; ++i)
             {
                 if(drawTicks) 
                 {
-                    layout.drawTick(tickPoint, majorTickStyles);
+                    layout.drawTick.apply(this, [tickPoint, majorTickStyles]);
                 }
                 position = this.getPosition(tickPoint);
-                label = this.getLabel(tickPoint);
+                label = this.getLabel(tickPoint, labelStyles);
                 label.innerHTML = labelFunction.apply(labelFunctionScope, [this.getLabelByIndex(i, len), labelFormat]);
                 tickPoint = this.getNextPoint(tickPoint, majorUnitDistance);
             }
             this._clearLabelCache();
-            layout.setSizeAndPosition();
+            this._updateTitle();
+            layout.setSizeAndPosition.apply(this);
             if(this.get("overlapGraph"))
             {
-               layout.offsetNodeForTick(this.get("contentBox"));
+               layout.offsetNodeForTick.apply(this, [this.get("contentBox")]);
             }
-            layout.setCalculatedSize();
+            layout.setCalculatedSize.apply(this);
             for(i = 0; i < len; ++i)
             {
-                layout.positionLabel(this.get("labels")[i], this._tickPoints[i]);
+                layout.positionLabel.apply(this, [this.get("labels")[i], this._tickPoints[i]]);
             }
         }
         this._drawing = false;
@@ -293,24 +370,89 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         }
         else
         {
+            this._updatePathElement();
             this.fire("axisRendered");
         }
     },
 
     /**
-     * @private
+     *  Updates path.
+     *
+     *  @method _updatePathElement
+     *  @private
      */
-    _labels: null,
+    _updatePathElement: function()
+    {
+        var path = this.get("path"),
+            graphic = this.get("graphic");
+        if(path)
+        {
+            path.end();
+            graphic._redraw();
+        }
+    },
 
     /**
-     * @private 
-     */
-    _labelCache: null,
-
-    /**
+     * Updates the content and style properties for a title field.
+     *
+     * @method _updateTitle
      * @private
      */
-    getLabel: function(pt, pos)
+    _updateTitle: function()
+    {
+        var i,
+            styles,
+            customStyles,
+            title = this.get("title"),
+            titleTextField = this._titleTextField,
+            parentNode;
+        if(title !== null && title !== undefined)
+        {
+            customStyles = {
+                    rotation: "rotation",
+                    margin: "margin",
+                    alpha: "alpha"
+            };
+            styles = this.get("styles").title;
+            if(!titleTextField)
+            {
+                titleTextField = Y.config.doc.createElement('span');
+                titleTextField.setAttribute("class", "axisTitle");
+                this.get("contentBox").appendChild(titleTextField);
+            }
+            titleTextField.setAttribute("style", "display:block;white-space:nowrap;position:absolute;");
+            for(i in styles)
+            {
+                if(styles.hasOwnProperty(i) && !customStyles.hasOwnProperty(i))
+                {
+                    titleTextField.style[i] = styles[i];
+                }
+            }
+            titleTextField.innerHTML = title;
+            this._titleTextField = titleTextField;
+            this._layout.positionTitle.apply(this, [titleTextField]);
+        }
+        else if(titleTextField)
+        {
+            parentNode = titleTextField.parentNode;
+            if(parentNode)
+            {
+                parentNode.removeChild(titleTextField);
+            }
+            this._titleTextField = null;
+        }
+    },
+
+    /**
+     * Creates or updates an axis label.
+     *
+     * @method getLabel
+     * @param {Object} pt x and y coordinates for the label
+     * @param {Object} styles styles applied to label
+     * @return HTMLElement 
+     * @private
+     */
+    getLabel: function(pt, styles)
     {
         var i,
             label,
@@ -319,15 +461,14 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 margin: "margin",
                 alpha: "alpha"
             },
-            cache = this._labelCache,
-            styles = this.get("styles").label;
+            cache = this._labelCache;
         if(cache.length > 0)
         {
             label = cache.shift();
         }
         else
         {
-            label = document.createElement("span");
+            label = DOCUMENT.createElement("span");
             label.style.display = "block";
             label.style.whiteSpace = "nowrap";
             Y.one(label).addClass("axisLabel");
@@ -336,7 +477,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         label.style.position = "absolute";
         this._labels.push(label);
         this._tickPoints.push({x:pt.x, y:pt.y});
-        this._layout.updateMaxLabelSize(label);
+        this._layout.updateMaxLabelSize.apply(this, [label]);
         for(i in styles)
         {
             if(styles.hasOwnProperty(i) && !customStyles.hasOwnProperty(i))
@@ -348,6 +489,9 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     },   
 
     /**
+     * Creates a cache of labels that can be re-used when the axis redraws.
+     *
+     * @method _createLabelCache
      * @private
      */
     _createLabelCache: function()
@@ -371,6 +515,9 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     },
     
     /**
+     * Removes axis labels from the dom and clears the label cache.
+     *
+     * @method _clearLabelCache
      * @private
      */
     _clearLabelCache: function()
@@ -389,11 +536,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         }
         this._labelCache = [];
     },
-
-    /**
-     * @private
-     */
-    _calculateSizeByTickLength: true,
 
     /**
      * @private 
@@ -520,6 +662,72 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             p = point.x - padding.left;
         }
         return p;
+    },
+
+    /**
+     * Rotates and positions a text field.
+     *
+     * @method _rotate
+     * @param {HTMLElement} label text field to rotate and position
+     * @param {Object} props properties to be applied to the text field. 
+     * @private
+     */
+    _rotate: function(label, props)
+    {
+        var rot = props.rot,
+            absRot,
+            radCon,
+            sinRadians,
+            cosRadians,
+            m11,
+            m12,
+            m21,
+            m22,
+            filterString,
+            textAlpha;
+        if(Y.config.doc.createElementNS)
+        {
+            label.style.MozTransformOrigin =  "0 0";
+            label.style.MozTransform = "rotate(" + rot + "deg)";
+            label.style.webkitTransformOrigin = "0 0";
+            label.style.webkitTransform = "rotate(" + rot + "deg)";
+            label.style.msTransformOrigin =  "0 0";
+            label.style.msTransform = "rotate(" + rot + "deg)";
+            label.style.OTransformOrigin =  "0 0";
+            label.style.OTransform = "rotate(" + rot + "deg)";
+        }
+        else
+        {
+            textAlpha = props.textAlpha;
+            absRot = props.absRot;
+            radCon = props.radCon;
+            sinRadians = props.sinRadians;
+            cosRadians = props.cosRadians;
+            m11 = props.m11;
+            m12 = props.m12;
+            m21 = props.m21;
+            m22 = props.m22;
+            if(Y.Lang.isNumber(textAlpha) && textAlpha < 1 && textAlpha > -1 && !isNaN(textAlpha))
+            {
+                filterString = "progid:DXImageTransform.Microsoft.Alpha(Opacity=" + Math.round(textAlpha * 100) + ")";
+            }
+            if(rot !== 0)
+            {
+                if(filterString)
+                {
+                    filterString += " ";
+                }
+                else
+                {
+                    filterString = ""; 
+                }
+                filterString += 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
+            }
+            if(filterString)
+            {
+                label.style.filter = filterString;
+            }
+        }
     }
 }, {
     ATTRS: 
@@ -544,7 +752,24 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          * @type Graphic
          */
         graphic: {},
-        
+     
+        path: {
+            readOnly: true,
+
+            getter: function()
+            {
+                if(!this._path)
+                {
+                    var graphic = this.get("graphic");
+                    if(graphic)
+                    {
+                        this._path = graphic.getShape({type:"path"});
+                    }
+                }
+                return this._path;
+            }
+        },
+
         /**
          * Contains the contents of the axis. 
          *
@@ -560,8 +785,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          * @type String
          */
         position: {
-            lazyAdd: false,
-
             setOnce: true,
 
             setter: function(val)
@@ -673,7 +896,29 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          * @attribute labelFunctionScope
          * @type Object
          */
-        labelFunctionScope: {}
+        labelFunctionScope: {},
+        
+        /**
+         * Length in pixels of largest text bounding box. Used to calculate the height of the axis.
+         *
+         * @attribute maxLabelSize
+         * @type Number
+         * @protected
+         */
+        maxLabelSize: {
+            value: 0
+        },
+        
+        /**
+         *  Title for the axis. When specified, the title will display. The position of the title is determined by the axis position. 
+         *  <dl>
+         *      <dt>top</dt><dd>Appears above the axis and it labels. The default rotation is 0.</dd>
+         *      <dt>right</dt><dd>Appears to the right of the axis and its labels. The default rotation is 90.</dd>
+         *      <dt>bottom</dt><dd>Appears below the axis and its labels. The default rotation is 0.</dd>
+         *      <dt>left</dt><dd>Appears to the left of the axis and its labels. The default rotation is -90.</dd>
+         *  </dl>
+         */
+        title: {}
             
         /**
          * Style properties used for drawing an axis. This attribute is inherited from <code>Renderer</code>. Below are the default values:

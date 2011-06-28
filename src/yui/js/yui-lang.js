@@ -38,7 +38,7 @@ TRIMREGEX = /^\s+|\s+$/g,
 // the case, we take the safe route and fall back to our own non-native
 // implementation.
 win           = Y.config.win,
-unsafeNatives = !!(win.MooTools || win.Prototype);
+unsafeNatives = win && !!(win.MooTools || win.Prototype);
 
 /**
  * Determines whether or not the provided item is an array.
@@ -137,6 +137,7 @@ L.isNumber = function(o) {
  * @param o The object to test.
  * @param failfn {boolean} fail if the input is a function.
  * @return {boolean} true if o is an object.
+ * @see isPlainObject
  */
 L.isObject = function(o, failfn) {
     var t = typeof o;

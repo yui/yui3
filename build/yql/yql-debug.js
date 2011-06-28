@@ -26,7 +26,7 @@ YUI.add('yql', function(Y) {
         if (!params.env) {
             params.env = Y.YQLRequest.ENV;
         }
-
+        
         this._params = params;
         this._opts = opts;
         this._callback = callback;
@@ -128,11 +128,12 @@ YUI.add('yql', function(Y) {
      * @param {String} sql The SQL statement to execute
      * @param {Function} callback The callback to execute after the query (optional).
      * @param {Object} params An object literal of extra parameters to pass along (optional).
+     * @param {Object} opts An object literal of configuration options (optional): proto (http|https), base (url)
      */
-	Y.YQL = function(sql, callback, params) {
-        return new Y.YQLRequest(sql, callback, params).send();
+	Y.YQL = function(sql, callback, params, opts) {
+        return new Y.YQLRequest(sql, callback, params, opts).send();
     };
 
 
 
-}, '@VERSION@' ,{requires:['jsonp']});
+}, '@VERSION@' ,{requires:['jsonp', 'jsonp-url']});

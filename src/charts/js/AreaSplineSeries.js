@@ -17,7 +17,6 @@ Y.AreaSplineSeries = Y.Base.create("areaSplineSeries", Y.CartesianSeries, [Y.Fil
      */
     drawSeries: function()
     {
-        this.get("graphic").clear();
         this.drawAreaSpline();
     }
 }, {

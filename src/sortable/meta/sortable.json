@@ -8,7 +8,8 @@
         "plugins": {
             "sortable-scroll": {
                 "requires": [
-                    "dd-scroll"
+                    "dd-scroll",
+                    "sortable"
                 ]
             }
         }

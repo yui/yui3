@@ -1,0 +1,41 @@
+<div class="intro">
+<p>The YUI Global Object includes several useful type-checking methods in the `Lang`
+object.  In addition to the `'isXYZ'` type check methods, YUI3 includes
+`Y.Lang.type`, which returns a string representing the type of the tested
+object.  Click the "Check" button in each row to evaluate the data.</p>
+
+</div>
+
+<div class="example">
+    {{>yui-isa}}
+</div>
+
+<h3>Type Checking with YUI</h3>
+
+```
+YUI().use('node', function(Y) {
+    // This method is in the core of the library, so we don't have to use() any
+    // additional modules to access it.  However, this example requires 'node'.
+```
+
+<h3>Checking types</h3>
+<p>In this example, we use a few of the type-checking methods available in
+`Lang` to test various types of data.</p>
+
+```
+// Test the input using Y.Lang type checking methods
+var checkType = function (val) {
+    return {
+        'object'  : Y.Lang.isObject(val),
+        'array'   : Y.Lang.isArray(val),
+        'function': Y.Lang.isFunction(val),
+        'type'    : Y.Lang.type(val)
+    };
+};
+```
+
+<h3>Full Source</h3>
+
+```
+{{>yui-isa-js}}
+```

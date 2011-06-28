@@ -1,8 +1,10 @@
 build_tmp*/
 build_rollup_tmp*/
+node_modules/
 tmp/
 CVS/
 .DS_Store
 .*.swp
 .svn
 *~
+src/build.log

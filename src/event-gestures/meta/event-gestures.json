@@ -1,6 +1,6 @@
 {
     "event-gestures": {
-
+        "use": ["event-flick", "event-move"],
         "submodules": {
             "event-flick": {
                 "requires": [

@@ -4,10 +4,44 @@
 <title>Dial Widget Manual Test</title>
 
 <!-- Source File and Seed for YUI3-->
-<link rel="stylesheet" type="text/css" href="../../../../build/cssreset/reset-min.css">
-<link type="text/css" rel="stylesheet" href="../../../../build/cssfonts/fonts-min.css">
+<link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/3.3.0/build/cssfonts/fonts-min.css" />
+<link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/3.3.0/build/cssfonts/reset-min.css" />
 
+<!-- get from 3.3.0 Release
+<script src="http://yui.yahooapis.com/3.3.0/build/yui/yui-min.js"></script> -->
+
+<!-- get from lastSuccessful
+<script type="text/javascript" src="http://yuibuild.corp.yahoo.com/yui3/lastSuccessful/build/yui/yui-min.js"></script>-->
+
+<!-- get from local copy of 3.3.0 
+<script src="../yui_3.3.0/yui/build/yui/yui.js"></script>-->
+
+
+<!-- get all from gitroot
+<script src="file:///C|/dev/gitroot/yui3/build/yui/yui.js"></script> -->
+
+<!-- get all from gitroot -->
 <script src="../../../../build/yui/yui.js"></script>
+
+<!-- get just dial from a local js dir 
+<script src="js/dial_local.js"></script>-->
+
+<!-- ///////////////////   for iPad (not on vger network) need these ////////////////////////-->
+	<!-- conniffcolletion need these new CSS files when using post 3.3.0 Dial.js re-architecture (no ...handle-user class) 
+	<link type="text/css" rel="stylesheet" href="http://conniffcollection.com/dial/assets/dial-core.css" />
+	<link type="text/css" rel="stylesheet" href="http://conniffcollection.com/dial/assets/skins/sam/dial-skin.css" />
+-->
+	<!-- get just dial from conniffcollection/dial/js dir  **** MUST BE UPDATED FTP **** -->
+	<!--<script src="http://conniffcollection.com/dial/js/yui.js"></script>-->
+	<!--<script src="http://conniffcollection.com/dial/js/dial.js"></script>-->
+	<!--<script src="http://conniffcollection.com/build/yui/yui-min.js"></script> ftp'd the whole build subdir over to conniffco -->
+		
+
+<!-- ///////////////////////////////////////////////////////////////////////////////////////-->
+
+<!-- need these new CSS files when using post 3.3.0 Dial.js re-architecture (no ...handle-user class) 
+<link type="text/css" rel="stylesheet" href="assets/dial-core.css" />
+<link type="text/css" rel="stylesheet" href="assets/skins/sam/dial-skin.css" />-->
 
 <style>
 .intro-sentence{
@@ -26,7 +60,7 @@ p{margin:40px;}
 </style>
 </head>
 <body class="yui3-skin-sam"> 
-    <span id="dial_container">This is a Dial Widget. It supports keyboard input and screen readers.</span>
+    <span id="dial_container">This is a Dial Widget. It supports keyboard input and screen readers. done?</span>
 	<ul class="steps">
 		<li><a class="xx d_min">-minor</a><a class="xx i_min">+minor</a></li>
 		<li><a class="xx d_maj">-major</a><a class="xx i_maj">+major</a></li>
@@ -109,6 +143,7 @@ p{margin:40px;}
 			stepsPerRevolution:100,
 			value: 35,
 			diameter: 100,
+			decimalPlaces: 3,
 			strings: {label: '-48...40', resetStr: 'Reset', tooltipHandle: 'Drag handle to set value'}
         });
         dialThree.render("#dial_three");

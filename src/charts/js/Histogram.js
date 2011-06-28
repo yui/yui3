@@ -45,9 +45,7 @@ Histogram.prototype = {
             calculatedSizeKey,
             config,
             fillColors = null,
-            borderColors = null,
-            hotspot,
-            isChrome = ISCHROME;
+            borderColors = null;
         if(Y.Lang.isArray(style.fill.color))
         {
             fillColors = style.fill.color.concat(); 
@@ -69,10 +67,6 @@ Histogram.prototype = {
         setSize = style[setSizeKey];
         calculatedSize = style[calculatedSizeKey];
         this._createMarkerCache();
-        if(isChrome)
-        {
-            this._createHotspotCache();
-        }
         for(; i < seriesLen; ++i)
         {
             renderer = seriesCollection[i];
@@ -94,12 +88,17 @@ Histogram.prototype = {
         offset -= seriesSize/2;
         for(i = 0; i < len; ++i)
         {
+            if(isNaN(xcoords[i]) || isNaN(ycoords[i]))
+            {
+                continue;
+            }
             config = this._getMarkerDimensions(xcoords[i], ycoords[i], calculatedSize, offset);
             top = config.top;
-            calculatedSize = config.calculatedSize;
             left = config.left;
             style[setSizeKey] = setSize;
-            style[calculatedSizeKey] = calculatedSize;
+            style[calculatedSizeKey] = config.calculatedSize;
+            style.x = left;
+            style.y = top;
             if(fillColors)
             {
                 style.fill.color = fillColors[i % fillColors.length];
@@ -109,19 +108,8 @@ Histogram.prototype = {
                 style.border.colors = borderColors[i % borderColors.length];
             }
             marker = this.getMarker(style, graphOrder, i);
-            marker.setPosition(left, top);
-            if(isChrome)
-            {
-                hotspot = this.getHotspot(style, graphOrder, i);
-                hotspot.setPosition(left, top);
-                hotspot.parentNode.style.zIndex = 5;
-            }
         }
         this._clearMarkerCache();
-        if(isChrome)
-        {
-            this._clearHotspotCache();
-        }
     },
     
     /**

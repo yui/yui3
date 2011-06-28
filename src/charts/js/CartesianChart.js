@@ -27,7 +27,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         this.get("styles");
         if(this.get("interactionType") == "planar")
         {
-            overlay = document.createElement("div");
+            overlay = DOCUMENT.createElement("div");
             this.get("contentBox").appendChild(overlay);
             this._overlay = Y.one(overlay); 
             this._overlay.setStyle("position", "absolute");
@@ -388,7 +388,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 maximum:"maximum",
                 minimum:"minimum", 
                 roundingMethod:"roundingMethod",
-                alwaysShowZero:"alwaysShowZero"
+                alwaysShowZero:"alwaysShowZero",
+                title:"title"
             },
             dp = this.get("dataProvider"),
             ai,

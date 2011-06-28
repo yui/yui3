@@ -1,3 +1,9 @@
+var DOCUMENT = Y.config.doc,
+    LeftAxisLayout,
+    RightAxisLayout,
+    BottomAxisLayout,
+    TopAxisLayout;
+
 /**
  * The Renderer class is a base class for chart components that use the <code>styles</code>
  * attribute.
