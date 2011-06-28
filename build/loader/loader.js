@@ -1727,7 +1727,9 @@ Y.Loader.prototype = {
 
         r = r || this.required;
 
-        var i, j, s, m, type = this.loadType;
+        var i, j, s, m, type = this.loadType,
+        ignore = this.ignore ? YArray.hash(this.ignore) : false;
+
         for (i in r) {
             if (r.hasOwnProperty(i)) {
                 m = this.getModule(i);
@@ -1735,6 +1737,9 @@ Y.Loader.prototype = {
                 if (((this.loaded[i] || ON_PAGE[i]) &&
                         !this.forceMap[i] && !this.ignoreRegistered) ||
                         (type && m && m.type != type)) {
+                    delete r[i];
+                }
+                if (ignore && ignore[i]) {
                     delete r[i];
                 }
                 // remove anything this module supersedes
