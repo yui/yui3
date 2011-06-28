@@ -256,7 +256,7 @@ Y.Loader = function(o) {
      * @type string
      * @default http://yui.yahooapis.com/[YUI VERSION]/build/
      */
-    self.base = Y.Env.meta.base;
+    self.base = Y.Env.meta.base + Y.Env.meta.root;
 
     /**
      * Base path for the combo service
@@ -1972,7 +1972,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
      */
     loadNext: function(mname) {
         // It is possible that this function is executed due to something
-        // else one the page loading a YUI module.  Only react when we
+        // else on the page loading a YUI module.  Only react when we
         // are actively loading something
         if (!this._loading) {
             return;
@@ -2257,11 +2257,18 @@ Y.log('attempting to load ' + s[i] + ', ' + self.base, 'info', 'loader');
      * Generates the full url for a module
      * method _url
      * @param {string} path the path fragment.
+     * @param {String} name The name of the module
+     * @pamra {String} [base=self.base] The base url to use
      * @return {string} the full url.
      * @private
      */
     _url: function(path, name, base) {
         return this._filter((base || this.base || '') + path, name);
+    },
+    resolve: function(s) {
+        s = s || this.sorted;
+
+
     }
 };
 
