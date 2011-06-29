@@ -17,6 +17,7 @@
     background-color:#6d6e6e;
 	-moz-box-shadow:0 0 17px rgba(0,0,0,0.58);
 	-webkit-box-shadow:0 0 17px rgba(0,0,0,0.58);
+	box-shadow:0 0 17px rgba(0,0,0,0.58);
     -moz-border-radius:7px;
     -webkit-border-radius:7px;
     border-radius:7px;
@@ -50,9 +51,9 @@
 .yui3-skin-night .yui3-overlay-content .yui3-widget-ft{
 	background-color:#575858;
 	border-top:solid 1px #494a4a;
-	border-radius:0 0 7px 7px;
 	-moz-border-radius:0 0 7px 7px;
 	-webkit-border-radius:0 0 7px 7px;
+	border-radius:0 0 7px 7px;
 	padding:17px 25px 20px;
 	text-align:center;
 	/*font-size:92%;*/
@@ -102,9 +103,9 @@
 
 .yui3-skin-night .yui3-overlay .yui3-widget-ft li:last-child a {
 	border:solid 1px #520E00;
-	box-shadow: 0 1px #7D5D57; 
 	-moz-box-shadow: 0 1px #7D5D57; 
 	-webkit-box-shadow: 0 1px #7D5D57;
+	box-shadow: 0 1px #7D5D57; 
 	background-color:#901704;
 	background: -moz-linear-gradient(
 	100% 0% 270deg,
@@ -118,7 +119,7 @@
         from(#ab1c0b),
         to(#7b1400)     
     );
-	margin-right: 0px;
+	margin-right: 0;
 }
 
 

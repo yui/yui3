@@ -167,7 +167,7 @@ var Dt = {
 	 * @param oDate {Date} Date.
 	 * @param oConfig {Object} (Optional) Object literal of configuration values:
 	 *  <dl>
-	 *   <dt>format {String} (Optional)</dt>
+	 *   <dt>format {HTML} (Optional)</dt>
 	 *   <dd>
 	 *   <p>
 	 *   Any strftime string is supported, such as "%I:%M:%S %p". strftime has several format specifiers defined by the Open group at 
@@ -249,7 +249,7 @@ var Dt = {
 	 *   See Y.DataType.Date.Locale for more information.
 	 *  </dd>
 	 * </dl>
-	 * @return {String} Formatted date for display.
+	 * @return {HTML} Formatted date for display.
 	 */
 	format : function (oDate, oConfig) {
 		oConfig = oConfig || {};
@@ -330,6 +330,7 @@ var Dt = {
 };
 
 Y.mix(Y.namespace("DataType.Date"), Dt);
+
 /**
  * @module datatype
 */
@@ -427,6 +428,7 @@ Y.DataType.Date.Locale["en-GB"] = Y.merge(YDateEn, {
 	r: "%l:%M:%S %P %Z"
 });
 Y.DataType.Date.Locale["en-AU"] = Y.merge(YDateEn);
+
 
 
 
