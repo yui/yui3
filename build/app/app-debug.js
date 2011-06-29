@@ -706,7 +706,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
 });
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'base-build', 'history'], optional:['querystring-parse']});
+}, '@VERSION@' ,{optional:['querystring-parse'], requires:['array-extras', 'base-build', 'history']});
 YUI.add('model', function(Y) {
 
 /**
@@ -756,6 +756,54 @@ var GlobalEnv = YUI.namespace('Env.Model'),
         * `validate`: The model failed to validate.
     **/
     EVT_ERROR = 'error';
+
+function Transaction() {
+    this._events = [];
+};
+
+Transaction.prototype.end = function () {
+    var notifiedModels = [],
+        model, changed, lastChange;
+
+    // reset lastChange properties
+    Y.each(this._events, function (event) {
+        model = event.target;
+        model.lastChange = {};
+    });
+
+    // update changed and lastChange
+    Y.each(this._events, function (event) {
+        model = event.target;
+
+        model.changed[event.attrName] = event.newVal;
+        model.lastChange[event.attrName] = {
+            newVal : event.newVal,
+            prevVal: event.prevVal,
+            src    : event.src || null
+        };
+    });
+
+    // notify models once
+    Y.each(this._events, function (event) {
+        model = event.target;
+
+        if (!event.silent && YArray.indexOf(notifiedModels, model) === -1) {
+            // Lazy publish for the change event.
+            if (!model._changeEvent) {
+                model._changeEvent = model.publish(EVT_CHANGE, {
+                    preventable: false
+                });
+            }
+
+            model.fire(EVT_CHANGE, {changed: model.lastChange});
+
+            // this model is already notified about the change
+            notifiedModels.push(model);
+        }
+    }, this);
+};
+
+Y.Transaction = Transaction;
 
 function Model() {
     Model.superclass.constructor.apply(this, arguments);
@@ -1165,6 +1213,7 @@ Y.Model = Y.extend(Model, Y.Base, {
     **/
     setAttrs: function (attributes, options) {
         var idAttribute = this.idAttribute,
+            immediate = false,
             changed, e, key, lastChange, transaction;
 
         if (!this._validate(attributes)) {
@@ -1172,7 +1221,13 @@ Y.Model = Y.extend(Model, Y.Base, {
         }
 
         options || (options = {});
-        transaction = options._transaction = {};
+
+        if (!Lang.isValue(options.transaction)) {
+            options.transaction = new Transaction(options);
+            immediate = true;
+        }
+
+        transaction = options.transaction;
 
         // When a custom id attribute is in use, always keep the default `id`
         // attribute in sync.
@@ -1193,34 +1248,8 @@ Y.Model = Y.extend(Model, Y.Base, {
             }
         }
 
-        if (!YObject.isEmpty(transaction)) {
-            changed    = this.changed;
-            lastChange = this.lastChange = {};
-
-            for (key in transaction) {
-                if (YObject.owns(transaction, key)) {
-                    e = transaction[key];
-
-                    changed[key] = e.newVal;
-
-                    lastChange[key] = {
-                        newVal : e.newVal,
-                        prevVal: e.prevVal,
-                        src    : e.src || null
-                    };
-                }
-            }
-
-            if (!options.silent) {
-                // Lazy publish for the change event.
-                if (!this._changeEvent) {
-                    this._changeEvent = this.publish(EVT_CHANGE, {
-                        preventable: false
-                    });
-                }
-
-                this.fire(EVT_CHANGE, {changed: lastChange});
-            }
+        if (immediate) {
+            transaction.end();
         }
 
         return this;
@@ -1450,8 +1479,8 @@ Y.Model = Y.extend(Model, Y.Base, {
         } else {
             e.newVal = this.get(attrName);
 
-            if (e._transaction) {
-                e._transaction[attrName] = e;
+            if (e.transaction) {
+                e.transaction._events.push(e);
             }
         }
     }
