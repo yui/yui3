@@ -79,8 +79,8 @@
         //Click handler
         Y.on("click", function(e) {
             var axisName = document.getElementById("axisSelector").value,
-                rotation = document.getElementById("rotation").value,
-                color = document.getElementById("color").value,
+                rotation = parseFloat(document.getElementById("rotation").value),
+                color = Y.Escape.html(document.getElementById("color").value),
                 label = null,
                 axis;
             if(axisName)
