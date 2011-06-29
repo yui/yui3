@@ -117,8 +117,8 @@ VMLGraphic.ATTRS = {
     },
 
     /**
-     * When overflow is set to true, by default, the viewBox will resize to greater values but not values. (for performance)
-     * When resizing the viewBox down is desirable, set the resizeDown value to true.
+     * When overflow is set to true, by default, the contentBounds will resize to greater values but not values. (for performance)
+     * When resizing the contentBounds down is desirable, set the resizeDown value to true.
      *
      * @attribute resizeDown 
      * @type Boolean

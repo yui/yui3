@@ -320,9 +320,9 @@ Y.extend(SVGShape, Y.BaseGraphic, {
 	},
 
 	/**
-	 * Returns a linear gradient fill
+	 * Creates a gradient fill
 	 *
-	 * @method _getLinearGradient
+	 * @method _setGradientFill
 	 * @param {String} type gradient type
 	 * @private
 	 */
@@ -339,14 +339,23 @@ Y.extend(SVGShape, Y.BaseGraphic, {
 			w = this.get("width"),
 			h = this.get("height"),
 			rotation = fill.rotation,
-			i,
+			radCon = Math.PI/180,
+			sinRadians = parseFloat(parseFloat(Math.sin(rotation * radCon)).toFixed(8)),
+			cosRadians = parseFloat(parseFloat(Math.cos(rotation * radCon)).toFixed(8)),
+            tanRadians = parseFloat(parseFloat(Math.tan(rotation * radCon)).toFixed(8)),
+			hyp = Math.sqrt((w * w) + (h * h)),
+            tx = (sinRadians * hyp),
+            ty = (cosRadians * hyp),
+            i,
 			len,
 			def,
 			stop,
+            x = this.get("x"),
+            y = this.get("y"),
 			x1 = "0%", 
 			x2 = "100%", 
-			y1 = "50%", 
-			y2 = "50%",
+			y1 = "0%", 
+			y2 = "0%",
 			cx = fill.cx,
 			cy = fill.cy,
 			fx = fill.fx,
@@ -354,14 +363,45 @@ Y.extend(SVGShape, Y.BaseGraphic, {
 			r = fill.r;
 		if(type == "linear")
 		{
-			gradientNode.setAttribute("gradientTransform", "rotate(" + rotation + "," + (w/2) + ", " + (h/2) + ")");
+            cx = w/2;
+            cy = h/2;
+            if(Math.abs(tanRadians) * w/2 >= h/2)
+            {
+                if(rotation < 180)
+                {
+                    y1 = 0;
+                    y2 = h;
+                }
+                else
+                {
+                    y1 = h;
+                    y2 = 0;
+                }
+                x1 = cx - ((cy - y1)/tanRadians);
+                x2 = cx - ((cy - y2)/tanRadians); 
+            }
+            else
+            {
+                if(rotation > 90 && rotation < 270)
+                {
+                    x1 = w;
+                    x2 = 0;
+                }
+                else
+                {
+                    x1 = 0;
+                    x2 = w;
+                }
+                y1 = ((tanRadians * (cx - x1)) - cy) * -1;
+                y2 = ((tanRadians * (cx - x2)) - cy) * -1;
+            }
+            gradientNode.setAttribute("spreadMethod", "pad");
 			gradientNode.setAttribute("width", w);
 			gradientNode.setAttribute("height", h);
-			gradientNode.setAttribute("x1", x1);
-			gradientNode.setAttribute("y1", y1);
-			gradientNode.setAttribute("x2", x2);
-			gradientNode.setAttribute("y2", y2);
-			gradientNode.setAttribute("gradientUnits", "userSpaceOnUse");
+            gradientNode.setAttribute("x1", Math.round(100 * x1/w) + "%");
+            gradientNode.setAttribute("y1", Math.round(100 * y1/h) + "%");
+            gradientNode.setAttribute("x2", Math.round(100 * x2/w) + "%");
+            gradientNode.setAttribute("y2", Math.round(100 * y2/h) + "%");
 		}
 		else
 		{
