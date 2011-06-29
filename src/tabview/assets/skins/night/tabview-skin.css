@@ -85,9 +85,11 @@
 .yui3-skin-night #tabview-header li:first-child a{
 	-moz-border-radius:6px 0 0 6px;
 	-webkit-border-radius:6px 0 0 6px;
+	border-radius:6px 0 0 6px;
 }
 .yui3-skin-night #tabview-header li:last-child a{
 	border-right-style:solid;
 	-moz-border-radius:0 6px 6px 0;
 	-webkit-border-radius:0 6px 6px 0;
+	border-radius:0 6px 6px 0;
 }

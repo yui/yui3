@@ -11,6 +11,7 @@
     border: 1px solid #303030;
 	-moz-box-shadow: 0 0 17px rgba(0,0,0,0.58);
 	-webkit-box-shadow: 0 0 17px rgba(0,0,0,0.58);
+	box-shadow: 0 0 17px rgba(0,0,0,0.58);
 	margin: 5px 0 0 8px;
 }
 
@@ -19,8 +20,9 @@
 	font-size:100%;
     -moz-border-radius: 13px;
     -webkit-border-radius: 13px;
-    box-shadow: 1px 1px 4px rgba(0,0,0,0.6) inset;
+    border-radius: 13px;
     -webkit-box-shadow: inset 1px 1px 4px rgba(0,0,0,0.9);
+    box-shadow: 1px 1px 4px rgba(0,0,0,0.6) inset;
 
     border: none;
 	padding-left:0.6em;
