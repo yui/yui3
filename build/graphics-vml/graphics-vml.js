@@ -749,23 +749,19 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 			rotation = fill.rotation || 0;
 		if(type === "linear")
 		{
-			if(rotation > 0 && rotation <= 90)
-			{
-				rotation = 450 - rotation;
-			}
-			else if(rotation <= 270)
-			{
-				rotation = 270 - rotation;
-			}
-			else if(rotation <= 360)
-			{
-				rotation = 630 - rotation;
-			}
-			else
-			{
-				rotation = 270;
-			}
-			gradientProps.type = "gradient";//"gradientunscaled";
+            if(rotation <= 270)
+            {
+                rotation = Math.abs(rotation - 270);
+            }
+			else if(rotation < 360)
+            {
+                rotation = 270 + (360 - rotation);
+            }
+            else
+            {
+                rotation = 270;
+            }
+            gradientProps.type = "gradient";//"gradientunscaled";
 			gradientProps.angle = rotation;
 		}
 		else if(type === "radial")
@@ -834,23 +830,19 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 			rotation = fill.rotation || 0;
 		if(type === "linear")
 		{
-			if(rotation > 0 && rotation <= 90)
-			{
-				rotation = 450 - rotation;
-			}
-			else if(rotation <= 270)
-			{
-				rotation = 270 - rotation;
-			}
-			else if(rotation <= 360)
-			{
-				rotation = 630 - rotation;
-			}
-			else
-			{
-				rotation = 270;
-			}
-			this._fillNode.type = "gradient";//"gradientunscaled";
+            if(rotation <= 270)
+            {
+                rotation = Math.abs(rotation - 270);
+            }
+			else if(rotation < 360)
+            {
+                rotation = 270 + (360 - rotation);
+            }
+            else
+            {
+                rotation = 270;
+            }
+            this._fillNode.type = "gradient";//"gradientunscaled";
 			this._fillNode.angle = rotation;
 		}
 		else if(type === "radial")
@@ -2068,8 +2060,8 @@ VMLGraphic.ATTRS = {
     },
 
     /**
-     * When overflow is set to true, by default, the viewBox will resize to greater values but not values. (for performance)
-     * When resizing the viewBox down is desirable, set the resizeDown value to true.
+     * When overflow is set to true, by default, the contentBounds will resize to greater values but not values. (for performance)
+     * When resizing the contentBounds down is desirable, set the resizeDown value to true.
      *
      * @attribute resizeDown 
      * @type Boolean
