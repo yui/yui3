@@ -13,14 +13,16 @@
             "displayName": "Simple YQL Query",
             "description": "Create a simple YQL Query to retrieve data from the Yahoo! Weather YQL table.",
             "modules"    : ["yql"],
-            "tags"       : ["yql", "simple"]
+            "tags"       : ["yql", "simple"],
+            "hideTableOfContents": true
         },
         {
             "name"       : "yql-requery",
             "displayName": "Reusing a YQL query",
             "description": "Use the Flickr Recent Photos YQL table to pull in a small set of recent Flickr images every 8 seconds.",
             "modules"    : ["yql"],
-            "tags"       : ["yql", "simple", "refresh", "flickr"]
+            "tags"       : ["yql", "simple", "refresh", "flickr"],
+            "hideTableOfContents": true
         }
     ]
 }

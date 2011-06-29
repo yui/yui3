@@ -504,8 +504,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
             CLASS_NAMES = ScrollView.CLASS_NAMES,
 
-            height = sv.get('height'),
-            width = sv.get('width'),
+            height = bb.get('offsetHeight'),
+            width = bb.get('offsetWidth'),
 
             // Use bb instead of cb. cb doesn't gives us the right results
             // in FF (due to overflow:hidden)
