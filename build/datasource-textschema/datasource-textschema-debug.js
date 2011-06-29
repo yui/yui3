@@ -80,18 +80,18 @@ Y.extend(DataSourceTextSchema, Y.Plugin.Base, {
      * @protected
      */
     _beforeDefDataFn: function(e) {
-        var data = (Y.DataSource.IO && (this.get("host") instanceof Y.DataSource.IO) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
-            response = Y.DataSchema.Text.apply.call(this, this.get("schema"), data);
-            
-        // Default
-        if(!response) {
-            response = {
-                meta: {},
-                results: data
-            };
-        }
-        
-        this.get("host").fire("response", Y.mix({response:response}, e));
+        var schema = this.get('schema'),
+            payload = e.details[0],
+            // TODO: Do I need to sniff for DS.IO + isString(responseText)?
+            data = e.data.responseText || e.data;
+
+        payload.response = Y.DataSchema.Text.apply.call(this, schema, data) || {
+            meta: {},
+            results: data
+        };
+
+        this.get("host").fire("response", payload);
+
         return new Y.Do.Halt("DataSourceTextSchema plugin halted _defDataFn");
     }
 });

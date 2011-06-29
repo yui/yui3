@@ -79,19 +79,19 @@ Y.extend(DSFn, Y.DataSource.Local, {
      */
     _defRequestFn: function(e) {
         var fn = this.get("source"),
-            response;
+            payload = e.details[0];
             
         if (fn) {
             try {
-                e.data = fn(e.request, this, e);
+                payload.data = fn(e.request, this, e);
             } catch (ex) {
-                e.error = ex;
+                payload.error = ex;
             }
         } else {
-            e.error = new Error("Function data failure");
+            payload.error = new Error("Function data failure");
         }
 
-        this.fire("data", e);
+        this.fire("data", payload);
             
         return e.tId;
     }

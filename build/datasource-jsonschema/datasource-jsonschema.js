@@ -82,18 +82,17 @@ Y.extend(DataSourceJSONSchema, Y.Plugin.Base, {
      * @protected
      */
     _beforeDefDataFn: function(e) {
-        var data = e.data ? (e.data.responseText ?  e.data.responseText : e.data) : e.data,
-            response = Y.DataSchema.JSON.apply.call(this, this.get("schema"), data);
-            
-        // Default
-        if(!response) {
-            response = {
-                meta: {},
-                results: data
-            };
-        }
+        var data = e.data && (e.data.responseText || e.data),
+            schema = this.get('schema'),
+            payload = e.details[0];
         
-        this.get("host").fire("response", Y.mix({response:response}, e));
+        payload.response = Y.DataSchema.JSON.apply.call(this, schema, data) || {
+            meta: {},
+            results: data
+        };
+
+        this.get("host").fire("response", payload);
+
         return new Y.Do.Halt("DataSourceJSONSchema plugin halted _defDataFn");
     }
 });

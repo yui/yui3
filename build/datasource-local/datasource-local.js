@@ -93,18 +93,19 @@ Y.mix(DSLocal, {
      */
     issueCallback: function (e, caller) {
         var callbacks = e.on || e.callback,
-            callback = callbacks && callbacks.success;
+            callback = callbacks && callbacks.success,
+            payload = e.details[0];
 
-        e.error = (e.error || e.response.error);
+        payload.error = (e.error || e.response.error);
 
-        if (e.error) {
-            caller.fire("error", e);
+        if (payload.error) {
+            caller.fire("error", payload);
             callback = callbacks && callbacks.failure;
         }
 
         if (callback) {
             //TODO: this should be executed from a specific context
-            callback(e);
+            callback(payload);
         }
     }
 });
@@ -255,15 +256,16 @@ Y.extend(DSLocal, Y.Base, {
      * @protected
      */
     _defRequestFn: function(e) {
-        var data = this.get("source");
+        var data = this.get("source"),
+            payload = e.details[0];
         
         // Problematic data
         if(LANG.isUndefined(data)) {
-            e.error = new Error("Local source undefined");
+            payload.error = new Error("Local source undefined");
         }
 
-        e.data = data;
-        this.fire("data", e);
+        payload.data = data;
+        this.fire("data", payload);
     },
 
     /**
@@ -294,10 +296,11 @@ Y.extend(DSLocal, Y.Base, {
             response = {
                 results: (LANG.isArray(data)) ? data : [data],
                 meta: (meta) ? meta : {}
-            };
+            },
+            payload = e.details[0];
 
-        e.response = response;
-        this.fire("response", e);
+        payload.response = response;
+        this.fire("response", payload);
     },
 
     /**

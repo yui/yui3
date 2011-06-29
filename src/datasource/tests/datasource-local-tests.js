@@ -38,6 +38,7 @@ suite.add(new Y.Test.Case({
             requestCallback, dataCallback, responseCallback;
         
         ds.on("request", function (e) {
+            Assert.areSame("dataSourceLocal:request", e.type);
             Assert.isNumber(e.tId, "request: Expected transaction ID.");
             Assert.areSame("a", e.request, "request: Expected request.");
             Assert.areSame("callback", e.callback, "request: Expected callback.");
@@ -45,6 +46,7 @@ suite.add(new Y.Test.Case({
         });
 
         ds.on("data", function (e) {
+            Assert.areSame("dataSourceLocal:data", e.type);
             Assert.isNumber(e.tId, "data: Expected transaction ID.");
             Assert.areSame("a", e.request, "data: Expected request.");
             Assert.areSame("callback", e.callback, "data: Expected callback.");
@@ -53,6 +55,7 @@ suite.add(new Y.Test.Case({
         });
         
         ds.on("response", function (e) {
+            Assert.areSame("dataSourceLocal:response", e.type);
             Assert.isNumber(e.tId, "response: Expected transaction ID.");
             Assert.areSame("a", e.request, "response: Expected request.");
             Assert.areSame("callback", e.callback, "response: Expected callback.");
@@ -78,6 +81,7 @@ suite.add(new Y.Test.Case({
             errorCallback;
 
         ds.on("error", function (e) {
+            Assert.areSame("dataSourceLocal:error", e.type);
             Assert.isNumber(e.tId, "error: Expected transaction ID.");
             Assert.areSame("a", e.request, "error: Expected request.");
             Assert.areSame("callback", e.callback, "error: Expected callback.");
@@ -92,7 +96,7 @@ suite.add(new Y.Test.Case({
             on: "callback"
         });
 
-        Assert.isTrue(errorCallback)
+        Assert.isTrue(errorCallback);
     },
 
     "test sendRequest({ callback: { ... }}) is alias for on: { ... }": function () {
@@ -167,7 +171,7 @@ suite.add(new Y.Test.Case({
             callback: "callback"
         });
 
-        Assert.isTrue(errorCallback)
+        Assert.isTrue(errorCallback);
     }
 }));
 

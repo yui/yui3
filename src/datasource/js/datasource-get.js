@@ -41,7 +41,8 @@ Y.DataSource.Get = Y.extend(DSGet, Y.DataSource.Local, {
             get  = this.get("get"),
             guid = Y.guid().replace(/\-/g, '_'),
             generateRequest = this.get( "generateRequestCallback" ),
-            o;
+            payload = e.details[0],
+            self = this;
 
         /**
          * Stores the most recent request id for validation against stale
@@ -55,20 +56,22 @@ Y.DataSource.Get = Y.extend(DSGet, Y.DataSource.Local, {
 
         // Dynamically add handler function with a closure to the callback stack
         // for access to guid
-        YUI.Env.DataSource.callbacks[guid] = Y.bind(function(response) {
+        YUI.Env.DataSource.callbacks[guid] = function(response) {
             delete YUI.Env.DataSource.callbacks[guid];
             delete Y.DataSource.Local.transactions[e.tId];
 
-            var process = this.get('asyncMode') !== "ignoreStaleResponses" ||
-                          this._last === guid;
+            var process = self.get('asyncMode') !== "ignoreStaleResponses" ||
+                          self._last === guid;
 
             if (process) {
-                this.fire("data", Y.mix({ data: response }, e));
+                payload.data = response;
+
+                self.fire("data", payload);
             } else {
                 Y.log("DataSource ignored stale response for id " + e.tId + "(" + e.request + ")", "info", "datasource-get");
             }
 
-        }, this);
+        };
 
         // Add the callback param to the request url
         uri += e.request + generateRequest.call( this, guid );
@@ -78,22 +81,26 @@ Y.DataSource.Get = Y.extend(DSGet, Y.DataSource.Local, {
         Y.DataSource.Local.transactions[e.tId] = get.script(uri, {
             autopurge: true,
             // Works in Firefox only....
-            onFailure: Y.bind(function(e, o) {
+            onFailure: function (o) {
                 delete YUI.Env.DataSource.callbacks[guid];
                 delete Y.DataSource.Local.transactions[e.tId];
 
-                e.error = new Error(o.msg || "Script node data failure");
+                payload.error = new Error(o.msg || "Script node data failure");
+
                 Y.log("Script node data failure", "error", "datasource-get");
-                this.fire("data", e);
-            }, this, e),
-            onTimeout: Y.bind(function(e, o) {
+
+                self.fire("data", payload);
+            },
+            onTimeout: function(o) {
                 delete YUI.Env.DataSource.callbacks[guid];
                 delete Y.DataSource.Local.transactions[e.tId];
 
-                e.error = new Error(o.msg || "Script node data timeout");
+                payload.error = new Error(o.msg || "Script node data timeout");
+
                 Y.log("Script node data timeout", "error", "datasource-get");
-                this.fire("data", e);
-            }, this, e)
+
+                self.fire("data", payload);
+            }
         });
 
         return e.tId;
