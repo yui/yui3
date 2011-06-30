@@ -13,11 +13,13 @@ The Loader build provides a Makefile for easy building. The Makefile contains th
    * `build` - A passthrough to `ant all` (requires nodejs and python)
    * `meta` - Runs the `scripts/meta_join.py` to build the meta data (requires python)
    * `check` - Runs the `scripts/meta_check.js` to check meta-data for inconsistencies (requires nodejs)
-   * `test` - Runs a series of NodeJS based CLI tests (requires nodejs)
+   * `test` - Runs a series of NodeJS based CLI tests (requires nodejs with yuitest installed)
    * `gallery` - Fetches and updates the meta-data with the latest gallery build (requires nodejs)
 
 Testing
 -------
+
+    npm -g i yuitest
 
 There is one set of automated CLI tests that can be run with `make test`. This will do a simple
 `Loader` call for a module and then check the Loader's `sorted` array for that module. A very simple
