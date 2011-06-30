@@ -9,6 +9,7 @@ Development
 
 The Loader build provides a Makefile for easy building. The Makefile contains the following targets:
 
+   * `all` - Runs `build` then `test` (the default)
    * `build` - A passthrough to `ant all` (requires nodejs and python)
    * `meta` - Runs the `scripts/meta_join.py` to build the meta data (requires python)
    * `check` - Runs the `scripts/meta_check.js` to check meta-data for inconsistencies (requires nodejs)
