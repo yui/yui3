@@ -30,7 +30,8 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 		var host = this,
             graphic = cfg.graphic;
         host._graphic = graphic;
-		host.createNode(); 
+		host.createNode();
+        this._updateHandler();
 	},
 
 	/**
@@ -819,15 +820,18 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 	_updateHandler: function(e)
 	{
 		var node = this.node;
-		if(node)
-		{
-			node.style.visible = "hidden";
-		}
-		this._draw();
-		if(node)
-		{
-			node.style.visible = "visible";
-		}
+		if(this.initialized)
+        {
+            if(node)
+            {
+                node.style.visible = "hidden";
+            }
+            this._draw();
+            if(node)
+            {
+                node.style.visible = "visible";
+            }
+        }
 	},
 
 	/**

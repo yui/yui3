@@ -306,7 +306,8 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
     getShape: function(cfg)
     {
         cfg.graphic = this;
-        var shape = new this._shapeClass[cfg.type](cfg);
+        var shapeClass = this._getShapeClass(cfg.type),
+            shape = new shapeClass(cfg);
         this.addShape(shape);
         return shape;
     },
@@ -500,6 +501,19 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
     getShapeById: function(id)
     {
         return this._shapes[id];
+    },
+
+    /**
+     * @private
+     */
+    _getShapeClass: function(val)
+    {
+        var shape = this._shapeClass[val];
+        if(shape)
+        {
+            return shape;
+        }
+        return val;
     },
 
     /**
