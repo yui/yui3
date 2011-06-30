@@ -41,6 +41,12 @@
                 height:200px;
                 display:none;
             }
+            .yui3-datatable {
+              outline:none;
+            }
+            .yui3-datatable-hidden, .yui3-chart-hidden, .yui3-overlay-hidden {
+              display:none;
+            }
 
         </style>
         <script type="text/javascript" src="http://localhost:8888/yui3/build/yui/yui-debug.js"></script> 
@@ -53,11 +59,11 @@
       <span><code>Y.Plugin.Modal</code> is a widget-level plugin that can be used by any widget. It makes that widget appear modally. This means that you cannot interact with any elements on the page apart from the widget. It fires events when the mask is opened and closed.</span>
       </div>
 
-      <div id="ac">
+<!--       <div id="ac">
         <label for="ac-input">Y.Autocomplete with modality: Enter the name of a US state:</label><br>
         <input id="ac-input" type="text">
       </div>
-
+ -->
 
       <div id="dt"></div>
       <div id="chart"></div>
@@ -71,8 +77,7 @@
 
         <p>
         <input type="button" id="openDTButton" value="Launch Modal Datatable">
-        <input type="button" id="openChartBtn" value="Launch Modal Chart">
-        <input type="button" id="openDialBtn" value="Launch Modal Dial">
+        <!-- <input type="button" id="openChartBtn" value="Launch Modal Chart"> -->
         <input type="button" id="OpenOverlayBtn" value="Launch Modal Overlay">
         </p>
 
@@ -88,24 +93,7 @@
         <script>
             YUI({filter:'raw'}).use('widget-modality', 'overlay',"autocomplete", "autocomplete-filters", "autocomplete-highlighters","datatable-base","charts","dial", function(Y) {
               
-              
-
-              //Autocomplete
-              var states = [
-                'Alabama',
-                'Alaska',
-                'Arizona',
-                'Arkansas',
-                'California',
-              ];
-
-              var ac = new Y.AutoComplete({
-                inputNode: '#ac-input',
-                source   : states
-              });
-              ac.plug(Y.Plugin.Modal);
-
-              ac.render();
+            
 
 
               //DataTable
@@ -119,9 +107,11 @@
                   columnset: cols,
                   recordset: data,
                   summary: "Price sheet for inventory parts",
-                  caption: "Example table with simple columns"
+                  caption: "Example table with simple columns",
+                  visible:false
 
               }).plug(Y.Plugin.Modal);
+              dt.render('#dt');
 
 
               //Charts
@@ -172,18 +162,22 @@
                nest.plug(Y.Plugin.Modal);
 
                Y.one("#openDTButton").on('click', function(e) {
-                 dt.render("#dt");
+                 dt.show();
+                   Y.one('.yui3-widget-mask').on('click', function(e) {
+                    if (dt.get('visible')) {
+                      dt.hide();
+                    }
+                    if (mychart.get('visible')) {
+                      mychart.hide();
+                    }
+                    
+                 });
                });
 
-               Y.one('#openChartBtn').on('click', function(e) {
-                Y.one('#chart').setStyle('display', 'block');
-                 mychart.render('#chart');
-               });
-
-               Y.one('#openDialBtn').on('click', function(e) {
-                 dial.render('#dial');
-               });
-
+               // Y.one('#openChartBtn').on('click', function(e) {
+               //  Y.one('#chart').setStyle('display', 'block');
+               //   mychart.render('#chart');
+               // });
                Y.one("#OpenOverlayBtn").on('click', function(e){
                   overlay.set('visible', true); 
                });
@@ -211,9 +205,7 @@
                   }
 
                });
-               
-
-
+              
 
 
                Y.all('.randomLinks').each(function(n) {
