@@ -1050,9 +1050,23 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix(Y.CanvasDrawing.prototype, {
 	 * @method translate
 	 * @param {Number} x The x-coordinate
 	 * @param {Number} y The y-coordinate
-	 * @protected
 	 */
 	translate: function(x, y)
+	{
+		this._translateX = x;
+		this._translateY = y;
+		this._translate.apply(this, arguments);
+	},
+
+	/**
+	 * Applies translate transformation.
+	 *
+	 * @method translate
+	 * @param {Number} x The x-coordinate
+	 * @param {Number} y The y-coordinate
+	 * @protected
+	 */
+	_translate: function(x, y)
 	{
 		var translate = "translate(" + x + "px, " + y + "px)";
 		this._updateTransform("translate", /translate\(.*\)/, translate);
@@ -1507,6 +1521,48 @@ CanvasShape.ATTRS =  {
 		getter: function()
 		{
 			return this._rotation;
+		}
+	},
+
+	/**
+	 * Performs a translate on the x-coordinate. When translating x and y coordinates,
+	 * use the <code>translate</code> method.
+	 *
+	 * @attribute translateX
+	 * @type Number
+	 */
+	translateX: {
+		getter: function()
+		{
+			return this._translateX;
+		},
+
+		setter: function(val)
+		{
+			this._translateX = val;
+			this._translate(val, this._translateY);
+			return val;
+		}
+	},
+	
+	/**
+	 * Performs a translate on the y-coordinate. When translating x and y coordinates,
+	 * use the <code>translate</code> method.
+	 *
+	 * @attribute translateX
+	 * @type Number
+	 */
+	translateY: {
+		getter: function()
+		{
+			return this._translateY;
+		},
+
+		setter: function(val)
+		{
+			this._translateY = val;
+			this._translate(this._translateX, val);
+			return val;
 		}
 	},
 
@@ -2391,7 +2447,8 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
     getShape: function(cfg)
     {
         cfg.graphic = this;
-        var shape = new this._shapeClass[cfg.type](cfg);
+        var shapeClass = this._getShapeClass(cfg.type),
+            shape = new shapeClass(cfg);
         this.addShape(shape);
         return shape;
     },
@@ -2506,6 +2563,19 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
             }
         }
         this._node.style.visibility = visibility;
+    },
+
+    /**
+     * @private
+     */
+    _getShapeClass: function(val)
+    {
+        var shape = this._shapeClass[val];
+        if(shape)
+        {
+            return shape;
+        }
+        return val;
     },
     
     /**
