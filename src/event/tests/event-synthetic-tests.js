@@ -115,7 +115,7 @@ suite.add(new Y.Test.Case({
         Y.Assert.isNotUndefined(Y.Node.DOM_EVENTS.mouseout);
     },
 
-    "Y.Event.define should register a new synth in DOM_EVENTS": function () {
+    "Y.Event.define(type, {...}) should register a new synth in DOM_EVENTS": function () {
         Y.Event.define('synth', {
             index: 0
         });
@@ -140,7 +140,32 @@ suite.add(new Y.Test.Case({
         }, true);
 
         areSame(2, Y.Node.DOM_EVENTS.synth.eventDef.index);
+    },
+
+    "Y.Event.define({ type: ...}) should register a new synth in DOM_EVENTS": function () {
+        delete Y.Node.DOM_EVENTS.synth;
+
+        Y.Event.define({
+            type: 'synth',
+            index: 3
+        });
+
+        Y.Assert.isNotUndefined(Y.Node.DOM_EVENTS.synth);
+        Y.Assert.isNotUndefined(Y.Env.evt.plugins.synth);
+        Y.Assert.isNotUndefined(Y.Node.DOM_EVENTS.synth.eventDef);
+        areSame(Y.Node.DOM_EVENTS.synth, Y.Env.evt.plugins.synth);
+        areSame(3, Y.Node.DOM_EVENTS.synth.eventDef.index);
+    },
+
+    "Y.Event.define({...}, true) should overwrite existing synth": function () {
+        Y.Event.define({
+            type: 'synth',
+            index: 2
+        }, true);
+
+        areSame(2, Y.Node.DOM_EVENTS.synth.eventDef.index);
     }
+
 }));
 
 suite.add(new Y.Test.Case({

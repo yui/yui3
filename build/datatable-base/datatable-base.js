@@ -1125,17 +1125,22 @@ Y.extend(DTBase, Y.Widget, {
     */
     renderUI: function() {
         // TABLE
-        return (this._addTableNode(this.get("contentBox")) &&
+        this._addTableNode(this.get("contentBox"));
+
         // COLGROUP
-        this._addColgroupNode(this._tableNode) &&
+        this._addColgroupNode(this._tableNode);
+
         // THEAD
-        this._addTheadNode(this._tableNode) &&
+        this._addTheadNode(this._tableNode);
+
         // Primary TBODY
-        this._addTbodyNode(this._tableNode) &&
+        this._addTbodyNode(this._tableNode);
+
         // Message TBODY
-        this._addMessageNode(this._tableNode) &&
+        this._addMessageNode(this._tableNode);
+
         // CAPTION
-        this._addCaptionNode(this._tableNode));
+        this._addCaptionNode(this._tableNode);
    },
 
     /**
@@ -1229,8 +1234,7 @@ Y.extend(DTBase, Y.Widget, {
     * @returns Y.Node
     */
     _addCaptionNode: function(tableNode) {
-        this._captionNode = tableNode.createCaption();
-        return this._captionNode;
+        this._captionNode = Y.Node.create('<caption></caption>');
     },
 
     ////////////////////////////////////////////////////////////////////////////
@@ -1305,8 +1309,16 @@ Y.extend(DTBase, Y.Widget, {
      * @protected
      */
     _uiSetCaption: function(val) {
-        val = YisValue(val) ? val : "";
-        this._captionNode.setContent(val);
+        var caption = this._captionNode,
+            parent  = caption.get('parentNode'),
+            method  = val ? (!parent && 'prepend') : (parent && 'removeChild');
+
+        caption.setContent(val || '');
+
+        if (method) {
+            // prepend of remove necessary
+            this._tableNode[method](caption);
+        }
     },
 
 
