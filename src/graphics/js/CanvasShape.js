@@ -287,7 +287,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix(Y.CanvasDrawing.prototype, {
 			this._stroke = 0;
 		}
 		if (opacity) {
-			this._strokeStyle = this._2RGBA(color, opacity);
+			this._strokeStyle = this._toRGBA(color, opacity);
 		}
 		else
 		{
@@ -345,11 +345,11 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix(Y.CanvasDrawing.prototype, {
 			if (isNumber(opacity)) 
 			{
 				opacity = Math.max(0, Math.min(1, opacity));
-				color = this._2RGBA(color, opacity);
+				color = this._toRGBA(color, opacity);
 			} 
 			else 
 			{
-				color = this._2RGB(color);
+				color = TORGB(color);
 			}
 
 			this._fillColor = color;

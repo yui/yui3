@@ -39,7 +39,7 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 	 */
 	createNode: function()
 	{
-		var node,
+        var node,
 			x = this.get("x"),
 			y = this.get("y"),
             w = this.get("width"),
@@ -129,6 +129,8 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 			}
 
 			this.node = node;
+            this._strokeFlag = false;
+            this._fillFlag = false;
 	},
 
 	/**
@@ -291,6 +293,10 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 	 */
 	_strokeChangeHandler: function(e)
 	{
+        if(!this._strokeFlag)
+        {
+            return;
+        }
 		var node = this.node,
 			stroke = this.get("stroke"),
 			strokeOpacity,
@@ -358,6 +364,7 @@ Y.extend(VMLShape, Y.BaseGraphic, {
             }
 			node.stroked = false;
 		}
+        this._strokeFlag = false;
 	},
 
 	/**
@@ -421,6 +428,10 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 	 */
 	_fillChangeHandler: function(e)
 	{
+        if(!this._fillFlag)
+        {
+            return;
+        }
 		var node = this.node,
 			fill = this.get("fill"),
 			fillOpacity,
@@ -490,6 +501,7 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 			}
 		}
 		node.filled = filled;
+        this._fillFlag = false;
 	},
 
 	/**
@@ -820,18 +832,7 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 	_updateHandler: function(e)
 	{
 		var node = this.node;
-		if(this.initialized)
-        {
-            if(node)
-            {
-                node.style.visible = "hidden";
-            }
-            this._draw();
-            if(node)
-            {
-                node.style.visible = "visible";
-            }
-        }
+        this._draw();
 	},
 
 	/**
@@ -1168,7 +1169,8 @@ VMLShape.ATTRS = {
 					fill.color = null;
 				}
 			}
-			return fill;
+			this._fillFlag = true;
+            return fill;
 		}
 	},
 
@@ -1204,6 +1206,7 @@ VMLShape.ATTRS = {
 				}
 			}
 			stroke = tmpl;
+            this._strokeFlag = true;
 			return stroke;
 		}
 	},
