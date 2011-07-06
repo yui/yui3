@@ -16,6 +16,16 @@ function SVGDrawing(){}
 
 SVGDrawing.prototype = {
     /**
+     * Indicates the type of shape
+     *
+     * @private
+     * @property _type
+     * @readOnly
+     * @type String
+     */
+    _type: "path",
+   
+    /**
      * Draws a bezier curve.
      *
      * @method curveTo
@@ -304,14 +314,105 @@ SVGDrawing.prototype = {
         this._pathArray[pathArrayLen] = this._pathArray[pathArrayLen].concat([x, y]);
         this._trackSize(x, y);
     },
-
+ 
     /**
      * Completes a drawing operation. 
      *
      * @method end
      */
-    end: function() {
-        this._draw();
+    end: function()
+    {
+        this._closePath();
+        this._graphic.addToRedrawQueue(this);    
+    },
+
+    /**
+     * Clears the path.
+     *
+     * @method clear
+     */
+    clear: function()
+    {
+        this._left = 0;
+        this._right = 0;
+        this._top = 0;
+        this._bottom = 0;
+        this._pathArray = [];
+        this._path = "";
+    },
+
+    /**
+     * Draws the path.
+     *
+     * @method _closePath
+     * @private
+     */
+    _closePath: function()
+    {
+        var pathArray,
+            segmentArray,
+            pathType,
+            len,
+            val,
+            val2,
+            i,
+            path = "",
+            node = this.node,
+            tx = this.get("translateX"),
+            ty = this.get("translateY"),
+            left = this._left,
+            top = this._top,
+            fill = this.get("fill");
+        if(this._pathArray)
+        {
+            pathArray = this._pathArray.concat();
+            while(pathArray && pathArray.length > 0)
+            {
+                segmentArray = pathArray.shift();
+                len = segmentArray.length;
+                pathType = segmentArray[0];
+                path += " " + pathType + (segmentArray[1] - left);
+                switch(pathType)
+                {
+                    case "L" :
+                    case "M" :
+                    case "Q" :
+                        for(i = 2; i < len; ++i)
+                        {
+                            val = (i % 2 === 0) ? top : left;
+                            val = segmentArray[i] - val;
+                            path += ", " + val;
+                        }
+                    break;
+                    case "C" :
+                        for(i = 2; i < len; ++i)
+                        {
+                            val = (i % 2 === 0) ? top : left;
+                            val2 = segmentArray[i];
+                            val2 -= val;
+                            path += " " + val2;
+                        }
+                    break;
+
+                }
+            }
+            if(fill && fill.color)
+            {
+                path += 'z';
+            }
+            if(path)
+            {
+                node.setAttribute("d", path);
+            }
+            //Use transform to handle positioning.
+            this._transformArgs = this._transformArgs || {};
+            this._transformArgs.translate = [left + tx, top + ty];
+            
+            this._path = path;
+            this._fillChangeHandler();
+            this._strokeChangeHandler();
+            this._updateTransform();
+        }
     },
 
     /**
@@ -1440,7 +1541,7 @@ SVGPath = function(cfg)
 	SVGPath.superclass.constructor.apply(this, arguments);
 };
 SVGPath.NAME = "svgPath";
-Y.extend(SVGPath, Y.SVGShape, Y.merge(Y.SVGDrawing.prototype, {
+Y.extend(SVGPath, Y.SVGShape, Y.mix({
     /**
      * Left edge of the path
      *
@@ -1482,80 +1583,6 @@ Y.extend(SVGPath, Y.SVGShape, Y.merge(Y.SVGDrawing.prototype, {
      * @type String
      */
     _type: "path",
-
-    /**
-     * Draws the path.
-     *
-     * @method _draw
-     * @private
-     */
-    _draw: function()
-    {
-        var pathArray,
-            segmentArray,
-            pathType,
-            len,
-            val,
-            val2,
-            i,
-            path = "",
-            node = this.node,
-            tx = this.get("translateX"),
-            ty = this.get("translateY"),
-            left = this._left,
-            top = this._top,
-            fill = this.get("fill");
-        if(this._pathArray)
-        {
-            pathArray = this._pathArray.concat();
-            while(pathArray && pathArray.length > 0)
-            {
-                segmentArray = pathArray.shift();
-                len = segmentArray.length;
-                pathType = segmentArray[0];
-                path += " " + pathType + (segmentArray[1] - left);
-                switch(pathType)
-                {
-                    case "L" :
-                    case "M" :
-                    case "Q" :
-                        for(i = 2; i < len; ++i)
-                        {
-                            val = (i % 2 === 0) ? top : left;
-                            val = segmentArray[i] - val;
-                            path += ", " + val;
-                        }
-                    break;
-                    case "C" :
-                        for(i = 2; i < len; ++i)
-                        {
-                            val = (i % 2 === 0) ? top : left;
-                            val2 = segmentArray[i];
-                            val2 -= val;
-                            path += " " + val2;
-                        }
-                    break;
-
-                }
-            }
-            if(fill && fill.color)
-            {
-                path += 'z';
-            }
-            if(path)
-            {
-                node.setAttribute("d", path);
-            }
-            //Use transform to handle positioning.
-            this._transformArgs = this._transformArgs || {};
-            this._transformArgs.translate = [left + tx, top + ty];
-            
-            this._path = path;
-            this._fillChangeHandler();
-            this._strokeChangeHandler();
-            this._updateTransform();
-        }
-    },
    
     /**
      * Applies translate transformation.
@@ -1576,35 +1603,10 @@ Y.extend(SVGPath, Y.SVGShape, Y.merge(Y.SVGDrawing.prototype, {
 	/**
 	 * @private
 	 */ 
-	_updateHandler: function()
-	{
-		//do nothing
-	},
- 
-    /**
-     * Completes a drawing operation. 
-     *
-     * @method end
-     */
-    end: function()
+    _draw: function()
     {
-        this._draw();
-        this._graphic.addToRedrawQueue(this);    
-    },
-
-    /**
-     * Clears the path.
-     *
-     * @method clear
-     */
-    clear: function()
-    {
-        this._left = 0;
-        this._right = 0;
-        this._top = 0;
-        this._bottom = 0;
-        this._pathArray = [];
-        this._path = "";
+        this._fillChangeHandler();
+        this._strokeChangeHandler();
     },
 
     /**
@@ -1632,7 +1634,7 @@ Y.extend(SVGPath, Y.SVGShape, Y.merge(Y.SVGDrawing.prototype, {
     },
 
 	_path: ""
-}));
+}, Y.SVGDrawing.prototype));
 
 SVGPath.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
 	/**
@@ -1897,7 +1899,7 @@ SVGPieSlice = function()
 	SVGPieSlice.superclass.constructor.apply(this, arguments);
 };
 SVGPieSlice.NAME = "svgPieSlice";
-Y.extend(SVGPieSlice, Y.SVGPath, {
+Y.extend(SVGPieSlice, Y.SVGShape, Y.mix({
     /**
      * Indicates the type of shape
      *
@@ -1913,7 +1915,7 @@ Y.extend(SVGPieSlice, Y.SVGPath, {
 	 * @private
 	 * @method _updateHandler
 	 */
-	_updateHandler: function(e)
+	_draw: function(e)
 	{
         var x = this.get("cx"),
             y = this.get("cy"),
@@ -1922,10 +1924,10 @@ Y.extend(SVGPieSlice, Y.SVGPath, {
             radius = this.get("radius");
         this.clear();
         this.drawWedge(x, y, startAngle, arc, radius);
-		this._draw();
+		this.end();
 	}
- });
-SVGPieSlice.ATTRS = Y.mix(Y.SVGPath.ATTRS, {
+ }, Y.SVGDrawing.prototype));
+SVGPieSlice.ATTRS = Y.mix({
     cx: {
         value: 0
     },
@@ -1962,7 +1964,7 @@ SVGPieSlice.ATTRS = Y.mix(Y.SVGPath.ATTRS, {
     radius: {
         value: 0
     }
-});
+}, Y.SVGShape.ATTRS);
 Y.SVGPieSlice = SVGPieSlice;
 /**
  * Graphic is a simple drawing api that allows for basic drawing operations.

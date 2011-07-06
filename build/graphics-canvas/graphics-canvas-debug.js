@@ -10,7 +10,11 @@ var SHAPE = "canvasShape",
     CanvasEllipse,
 	CanvasCircle,
     CanvasPieSlice,
-    TORGB = Y.Color.toRGB;
+    Y_Color = Y.Color,
+    PARSE_INT = parseInt,
+    RE = RegExp,
+    TORGB = Y_Color.toRGB,
+    TOHEX = Y_Color.toHex;
 
 /**
  * Set of drawing apis for canvas based classes.
@@ -24,26 +28,22 @@ function CanvasDrawing()
 
 CanvasDrawing.prototype = {
     /**
-     * Regex expression used for converting hex strings to rgb
-     *
-     * @property _reHex
-     * @private
-     */
-    _reHex: /^#?([0-9A-F]{2})([0-9A-F]{2})([0-9A-F]{2})$/i,
-
-    /**
      * Parses hex color string and alpha value to rgba
      *
-     * @method _2RGBA
+     * @method _toRGBA
      * @private
      */
-    _2RGBA: function(val, alpha) {
+    _toRGBA: function(val, alpha) {
         alpha = (alpha !== undefined) ? alpha : 1;
-        if (this._reHex.exec(val)) {
+        if (!Y_Color.re_RGB.test(val)) {
+            val = TOHEX(val);
+        }
+
+        if(Y_Color.re_hex.exec(val)) {
             val = 'rgba(' + [
-                parseInt(RegExp.$1, 16),
-                parseInt(RegExp.$2, 16),
-                parseInt(RegExp.$3, 16)
+                PARSE_INT(RE.$1, 16),
+                PARSE_INT(RE.$2, 16),
+                PARSE_INT(RE.$3, 16)
             ].join(',') + ',' + alpha + ')';
         }
         return val;
@@ -52,10 +52,10 @@ CanvasDrawing.prototype = {
     /**
      * Converts color to rgb format
      *
-     * @method _2RGB
+     * @method _toRGB
      * @private 
      */
-    _2RGB: function(val) {
+    _toRGB: function(val) {
         return TORGB(val);
     },
 
@@ -514,11 +514,11 @@ CanvasDrawing.prototype = {
             if(isNumber(opacity))
             {
                 opacity = Math.max(0, Math.min(1, opacity));
-                color = this._2RGBA(color, opacity);
+                color = this._toRGBA(color, opacity);
             }
             else
             {
-                color = this._2RGB(color);
+                color = TORGB(color);
             }
             offset = stop.offset || i/(len - 1);
             gradient.addColorStop(offset, color);
@@ -600,11 +600,11 @@ CanvasDrawing.prototype = {
             if(isNumber(opacity))
             {
                 opacity = Math.max(0, Math.min(1, opacity));
-                color = this._2RGBA(color, opacity);
+                color = this._toRGBA(color, opacity);
             }
             else
             {
-                color = this._2RGB(color);
+                color = TORGB(color);
             }
             offset = stop.offset || i/(len - 1);
             offset *= stopMultiplier;
@@ -970,7 +970,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix(Y.CanvasDrawing.prototype, {
 			this._stroke = 0;
 		}
 		if (opacity) {
-			this._strokeStyle = this._2RGBA(color, opacity);
+			this._strokeStyle = this._toRGBA(color, opacity);
 		}
 		else
 		{
@@ -1028,11 +1028,11 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix(Y.CanvasDrawing.prototype, {
 			if (isNumber(opacity)) 
 			{
 				opacity = Math.max(0, Math.min(1, opacity));
-				color = this._2RGBA(color, opacity);
+				color = this._toRGBA(color, opacity);
 			} 
 			else 
 			{
-				color = this._2RGB(color);
+				color = TORGB(color);
 			}
 
 			this._fillColor = color;
@@ -2052,7 +2052,7 @@ CanvasPieSlice = function()
 	CanvasPieSlice.superclass.constructor.apply(this, arguments);
 };
 CanvasPieSlice.NAME = "canvasPieSlice";
-Y.extend(CanvasPieSlice, Y.CanvasPath, {
+Y.extend(CanvasPieSlice, Y.CanvasShape, {
     /**
      * Indicates the type of shape
      *
@@ -2068,7 +2068,7 @@ Y.extend(CanvasPieSlice, Y.CanvasPath, {
 	 * @private
 	 * @method _updateHandler
 	 */
-	_updateHandler: function(e)
+	_draw: function(e)
 	{
         var x = this.get("cx"),
             y = this.get("cy"),
@@ -2081,10 +2081,10 @@ Y.extend(CanvasPieSlice, Y.CanvasPath, {
         this._top = y;
         this._bottom = radius;
         this.drawWedge(x, y, startAngle, arc, radius);
-		this._draw();
+		this.end();
 	}
  });
-CanvasPieSlice.ATTRS = Y.mix(Y.CanvasPath.ATTRS, {
+CanvasPieSlice.ATTRS = Y.mix({
     cx: {
         value: 0
     },
@@ -2121,7 +2121,7 @@ CanvasPieSlice.ATTRS = Y.mix(Y.CanvasPath.ATTRS, {
     radius: {
         value: 0
     }
-});
+}, Y.CanvasShape.ATTRS);
 Y.CanvasPieSlice = CanvasPieSlice;
 /**
  * CanvasGraphic is a simple drawing api that allows for basic drawing operations.
