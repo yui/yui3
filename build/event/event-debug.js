@@ -1618,8 +1618,7 @@ Y.delegate = Y.Event.delegate = delegate;
 }, '@VERSION@' ,{requires:['node-base']});
 YUI.add('event-synthetic', function(Y) {
 
-/**
- * Define new DOM events that can be subscribed to from Nodes.
+/* Define new DOM events that can be subscribed to from Nodes.
  *
  * @module event
  * @submodule event-synthetic
@@ -2397,9 +2396,14 @@ Y.SyntheticEvent = SyntheticEvent;
 Y.Event.define = function (type, config, force) {
     var eventDef, Impl, synth;
 
-    if (config) {
-        eventDef = (isObject(type)) ? type : Y.merge({ type: type }, config);
+    if (type && type.type) {
+        eventDef = type;
+        force = config;
+    } else if (config) {
+        eventDef = Y.merge({ type: type }, config);
+    }
 
+    if (eventDef) {
         if (force || !Y.Node.DOM_EVENTS[eventDef.type]) {
             Impl = function () {
                 SyntheticEvent.apply(this, arguments);
