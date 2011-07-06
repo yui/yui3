@@ -2294,7 +2294,8 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
     getShape: function(cfg)
     {
         cfg.graphic = this;
-        var shape = new this._shapeClass[cfg.type](cfg);
+        var shapeClass = this._getShapeClass(cfg.type),
+            shape = new shapeClass(cfg);
         this.addShape(shape);
         return shape;
     },
@@ -2419,6 +2420,19 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
         }
         this._contentNode.style.visibility = visibility;
         this._node.style.visibility = visibility;
+    },
+
+    /**
+     * @private
+     */
+    _getShapeClass: function(val)
+    {
+        var shape = this._shapeClass[val];
+        if(shape)
+        {
+            return shape;
+        }
+        return val;
     },
 
     /**

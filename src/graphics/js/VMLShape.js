@@ -30,7 +30,8 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 		var host = this,
             graphic = cfg.graphic;
         host._graphic = graphic;
-		host.createNode(); 
+		host.createNode();
+        this._updateHandler();
 	},
 
 	/**
@@ -424,13 +425,39 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 			fill = this.get("fill"),
 			fillOpacity,
 			fillstring,
-			filled = false;
+			filled = false,
+            i,
+            gradient;
 		if(fill)
 		{
 			if(fill.type == "radial" || fill.type == "linear")
 			{
 				filled = true;
-				this._setGradientFill(node, fill);
+				gradient = this._getGradientFill(fill);
+                if(this._fillNode)
+                {
+                    for(i in gradient)
+                    {
+                        if(gradient.hasOwnProperty(i))
+                        {
+                            this._fillNode.setAttribute(i, gradient[i]);
+                        }
+                    }
+                }
+                else
+                {
+                    fillstring = '<fill xmlns="urn:schemas-microsft.com:vml" class="vmlfill" style="behavior:url(#default#VML);display:inline-block;"';
+                    for(i in gradient)
+                    {
+                        if(gradient.hasOwnProperty(i))
+                        {
+                            fillstring += ' ' + i + '="' + gradient[i] + '"';
+                        }
+                    }
+                    fillstring += ' />';
+                    this._fillNode = DOCUMENT.createElement(fillstring);
+                    node.appendChild(this._fillNode);
+                }
 			}
 			else if(fill.color)
 			{
@@ -527,7 +554,6 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 			fx += cx;
 			fy += cy;
 			gradientProps.focussize = (gradientBoxWidth/w)/10 + "% " + (gradientBoxHeight/h)/10 + "%";
-			//gradientProps.focusSize = ((r - cx) * 10) + "% " + ((r - cy) * 10) + "%"; 
 			gradientProps.alignshape = false;
 			gradientProps.type = "gradientradial";
 			gradientProps.focus = "100%";
@@ -556,86 +582,6 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 		}
 		gradientProps.colors = colorstring.substr(2);
 		return gradientProps;
-	},
-
-	_setGradientFill: function(node, fill)
-	{
-		this._updateFillNode(node);
-		var gradientBoxWidth,
-			gradientBoxHeight,
-			type = fill.type,
-			w = this.get("width"),
-			h = this.get("height"),
-			isNumber = IS_NUM,
-			stop,
-			stops = fill.stops,
-			len = stops.length,
-			opacity,
-			color,
-			i = 0,
-			oi,
-			colorstring = "",
-			cx = fill.cx,
-			cy = fill.cy,
-			fx = fill.fx,
-			fy = fill.fy,
-			r = fill.r,
-			pct,
-			rotation = fill.rotation || 0;
-		if(type === "linear")
-		{
-            if(rotation <= 270)
-            {
-                rotation = Math.abs(rotation - 270);
-            }
-			else if(rotation < 360)
-            {
-                rotation = 270 + (360 - rotation);
-            }
-            else
-            {
-                rotation = 270;
-            }
-            this._fillNode.type = "gradient";//"gradientunscaled";
-			this._fillNode.angle = rotation;
-		}
-		else if(type === "radial")
-		{
-			gradientBoxWidth = w * (r * 2);
-			gradientBoxHeight = h * (r * 2);
-			fx = r * 2 * (fx - 0.5);
-			fy = r * 2 * (fy - 0.5);
-			fx += cx;
-			fy += cy;
-			this._fillNode.focussize = (gradientBoxWidth/w)/10 + "% " + (gradientBoxHeight/h)/10 + "%";
-			//this._fillNode.focusSize = ((r - cx) * 10) + "% " + ((r - cy) * 10) + "%"; 
-			this._fillNode.alignshape = false;
-			this._fillNode.type = "gradientradial";
-			this._fillNode.focus = "100%";
-			this._fillNode.focusposition = Math.round(fx * 100) + "% " + Math.round(fy * 100) + "%";
-		}
-		for(;i < len; ++i) {
-			stop = stops[i];
-			color = stop.color;
-			opacity = stop.opacity;
-			opacity = isNumber(opacity) ? opacity : 1;
-			pct = stop.offset || i/(len-1);
-			pct *= (r * 2);
-			if(pct <= 1)
-			{
-				pct = Math.round(100 * pct) + "%";
-				oi = i > 0 ? i + 1 : "";
-				this._fillNode["opacity" + oi] = opacity + "";
-				colorstring += ", " + pct + " " + color;
-			}
-		}
-		pct = stops[1].offset || 0;
-		pct *= 100;
-		if(parseInt(pct, 10) < 100)
-		{
-			colorstring += ", 100% " + color;
-		}
-		this._fillNode.colors.value = colorstring.substr(2);
 	},
 
 	/**
@@ -874,15 +820,18 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 	_updateHandler: function(e)
 	{
 		var node = this.node;
-		if(node)
-		{
-			node.style.visible = "hidden";
-		}
-		this._draw();
-		if(node)
-		{
-			node.style.visible = "visible";
-		}
+		if(this.initialized)
+        {
+            if(node)
+            {
+                node.style.visible = "hidden";
+            }
+            this._draw();
+            if(node)
+            {
+                node.style.visible = "visible";
+            }
+        }
 	},
 
 	/**

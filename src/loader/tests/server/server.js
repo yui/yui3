@@ -34,7 +34,8 @@ if (!Object.keys(tests).length) {
     console.error('NO TEST SPECIFIED: RLS, STAR, LOCAL, COMBO');
     console.error('export STAR=1; ./server.js');
     console.error('export LOCAL=1; export STAR=1; ./server.js');
-    console.error('export LOCAL=1; export STAR=1; export COMBO=1; ./server.js #The normal test to run');
+    console.error('export LOCAL=1; export STAR=1; export COMBO=1; ./server.js');
+    console.error('export LOCAL=1; export STAR=1; export COMBO=1; export LOADER=1; ./server.js #The normal test to run');
     console.error('export LOCAL=1; export STAR=1; export COMBO=1; export RLS=1; ./server.js');
     console.error('export LOCAL=1; export STAR=1; export COMBO=1; export LOADER=1; export RLS=1; ./server.js');
     process.exit(1);

@@ -34,7 +34,7 @@ Y.extend(VMLPath, Y.VMLShape, Y.merge(Y.VMLDrawing.prototype, {
             node = this.node,
             w = this.get("width"),
             h = this.get("height"),
-            path = this.get("path"),
+            path = this._path,
             pathEnd = "";
         node.style.visible = "hidden";
         this._fillChangeHandler();
