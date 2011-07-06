@@ -86,6 +86,32 @@ suite.add(new Y.Test.Case({
                 Assert.areSame(countC, currentC);
             }, 300);
         }, 300);
+    },
+
+    "setInterval should fire first sendRequest immediately, async": function () {
+        var ds = new Y.DataSource.Local(),
+            count = 0,
+            interval;
+
+        interval = ds.setInterval(100, {
+            callback: {
+                success: function () {
+                    count++;
+                }
+            }
+        });
+
+        Assert.areSame(0, count, "first sendRequest should be async");
+
+        this.wait(function(){
+            Assert.areSame(1, count);
+
+            this.wait(function(){
+                Y.assert((count > 1));
+
+                ds.clearInterval(interval);
+            }, 300);
+        }, 50);
     }
 }));
 

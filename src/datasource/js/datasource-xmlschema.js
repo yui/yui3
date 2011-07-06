@@ -78,18 +78,18 @@ Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
      * @protected
      */
     _beforeDefDataFn: function(e) {
-        var data = (Y.DataSource.IO && (this.get("host") instanceof Y.DataSource.IO) && e.data.responseXML && (e.data.responseXML.nodeType === 9)) ? e.data.responseXML : e.data,
-            response = Y.DataSchema.XML.apply.call(this, this.get("schema"), data);
-            
-        // Default
-        if(!response) {
-            response = {
-                meta: {},
-                results: data
-            };
-        }
-        
-        this.get("host").fire("response", Y.mix({response:response}, e));
+        var schema = this.get('schema'),
+            payload = e.details[0],
+            // TODO: Do I need to sniff for DS.IO + responseXML.nodeType 9?
+            data = e.data.responseXML || e.data;
+
+        payload.response = Y.DataSchema.Text.apply.call(this, schema, data) || {
+            meta: {},
+            results: data
+        };
+
+        this.get("host").fire("response", payload);
+
         return new Y.Do.Halt("DataSourceXMLSchema plugin halted _defDataFn");
     }
 });

@@ -66,6 +66,7 @@ suite.add(new Y.Test.Case({
         });
 
         ds.on("request", function (e) {
+            Assert.areSame("dataSourceGet:request", e.type);
             Assert.isNumber(e.tId, "request: Expected transaction ID.");
             Assert.areSame("q=select%20*%20from%20search.web%20where%20query%3D%22pizza%22", e.request, "Expected same request.");
             Assert.areSame("callback", e.callback, "request: Expected callback.");
@@ -73,6 +74,7 @@ suite.add(new Y.Test.Case({
         });
 
         ds.on("data", function (e) {
+            Assert.areSame("dataSourceGet:data", e.type);
             Assert.isNumber(e.tId, "data: Expected transaction ID.");
             Assert.areSame("q=select%20*%20from%20search.web%20where%20query%3D%22pizza%22", e.request, "Expected same request.");
             Assert.areSame("callback", e.callback, "data: Expected callback.");
@@ -81,6 +83,7 @@ suite.add(new Y.Test.Case({
         });
 
         ds.on("response", function (e) {
+            Assert.areSame("dataSourceGet:response", e.type);
             Assert.isNumber(e.tId, "response: Expected transaction ID.");
             Assert.areSame("q=select%20*%20from%20search.web%20where%20query%3D%22pizza%22", e.request, "Expected same request.");
             Assert.areSame("callback", e.callback, "response: Expected callback.");
@@ -120,6 +123,7 @@ suite.add(new Y.Test.Case({
         });
 
         ds.on("error", function (e) {
+            Assert.areSame("dataSourceGet:error", e.type);
             Assert.isNumber(e.tId, "error: Expected transaction ID.");
             Assert.areSame("a", e.request, "error: Expected request.");
             Assert.areSame("callback", e.callback, "error: Expected callback.");

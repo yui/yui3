@@ -63,7 +63,7 @@ Y.mix(DSIO, {
          * @default null
          */
          ioConfig: {
-         	value: null
+            value: null
          }
     }
 });
@@ -90,14 +90,18 @@ Y.extend(DSIO, Y.DataSource.Local, {
     * @private
     */
     successHandler: function (id, response, e) {
-        var defIOConfig = this.get("ioConfig");
+        var defIOConfig = this.get("ioConfig"),
+            payload = e.details[0];
 
         delete Y.DataSource.Local.transactions[e.tId];
 
-        this.fire("data", Y.mix({data:response}, e));
+        payload.data = response;
+        this.fire("data", payload);
+
         Y.log("Received IO data response for \"" + e.request + "\"", "info", "datasource-io");
+
         if (defIOConfig && defIOConfig.on && defIOConfig.on.success) {
-        	defIOConfig.on.success.apply(defIOConfig.context || Y, arguments);
+            defIOConfig.on.success.apply(defIOConfig.context || Y, arguments);
         }
     },
 
@@ -111,16 +115,21 @@ Y.extend(DSIO, Y.DataSource.Local, {
     * @private
     */
     failureHandler: function (id, response, e) {
-        var defIOConfig = this.get("ioConfig");
+        var defIOConfig = this.get("ioConfig"),
+            payload = e.details[0];
         
         delete Y.DataSource.Local.transactions[e.tId];
 
-        e.error = new Error("IO data failure");
+        payload.error = new Error("IO data failure");
         Y.log("IO data failure", "error", "datasource-io");
-        this.fire("data", Y.mix({data:response}, e));
+
+        payload.data = response;
+        this.fire("data", payload);
+
         Y.log("Received IO data failure for \"" + e.request + "\"", "info", "datasource-io");
+
         if (defIOConfig && defIOConfig.on && defIOConfig.on.failure) {
-        	defIOConfig.on.failure.apply(defIOConfig.context || Y, arguments);
+            defIOConfig.on.failure.apply(defIOConfig.context || Y, arguments);
         }
     },
     
