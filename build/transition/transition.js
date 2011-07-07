@@ -58,11 +58,7 @@ Transition.HIDE_TRANSITION = 'fadeOut';
 
 Transition._toHyphen = function(property) {
     property = property.replace(/([A-Z]?)([a-z]+)([A-Z]?)/g, function(m0, m1, m2, m3) {
-        var str = '';
-        if (m1) {
-            str += '-' + m1.toLowerCase();
-        }
-        str += m2;
+        var str = ((m1) ? '-' + m1.toLowerCase() : '') + m2;
         
         if (m3) {
             str += '-' + m3.toLowerCase();
@@ -87,7 +83,7 @@ Y.Array.each(VENDORS, function(val) { // then vendor specific
     }
 });
 
-TRANSITION_CAMEL = CAMEL_VENDOR_PREFIX + 'Transition';
+TRANSITION_CAMEL = CAMEL_VENDOR_PREFIX + TRANSITION_CAMEL;
 TRANSITION_PROPERTY_CAMEL = CAMEL_VENDOR_PREFIX + 'TransitionProperty';
 TRANSITION_PROPERTY = VENDOR_PREFIX + 'transition-property';
 TRANSITION_DURATION = VENDOR_PREFIX + 'transition-duration';
@@ -321,7 +317,7 @@ Transition.prototype = {
         for (name in attrs) {
             hyphy = Transition._toHyphen(name);
             attr = attrs[name];
-            if (attrs.hasOwnProperty(name) && attr.transition === anim) {
+            if ((attr = attrs[name]) && attr.transition === anim) {
                 if (name in node.style) { // only native styles allowed
                     duration += anim._prepDur(attr.duration) + ',';
                     delay += anim._prepDur(attr.delay) + ',';
@@ -440,15 +436,18 @@ Transition.prototype = {
     },
 
     destroy: function() {
-        var anim = this;
+        var anim = this,
+            node = anim._node;
         /*
         if (anim._detach) {
             anim._detach.detach();
         }
         */
         //anim._node[ON_TRANSITION_END] = null;
-        node.removeEventListener(TRANSITION_END, anim._onNativeEnd, false);
-        anim._node = null;
+        if (node) {
+            node.removeEventListener(TRANSITION_END, anim._onNativeEnd, false);
+            anim._node = null;
+        }
     }
 };
 
@@ -775,8 +774,7 @@ Y.mix(Transition.prototype, {
             i;
 
         for (name in attrs) {
-            attribute = attrs[name];
-            if ((attribute && attribute.transition === anim)) {
+            if ((attribute = attrs[name]) && attribute.transition === anim) {
                 d = attribute.duration;
                 delay = attribute.delay;
                 elapsed = (time - delay) / 1000;
@@ -839,8 +837,7 @@ Y.mix(Transition.prototype, {
             unit, begin, end;
 
         for (name in attrs) {
-            attribute = attrs[name];
-            if (attrs.hasOwnProperty(name) && (attribute && attribute.transition === anim)) {
+            if ((attribute = attrs[name]) && attribute.transition === anim) {
                 duration = attribute.duration * 1000;
                 delay = attribute.delay * 1000;
                 easing = attribute.easing;
