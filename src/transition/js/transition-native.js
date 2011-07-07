@@ -6,18 +6,31 @@
 * @requires node-style
 */
 
-var TRANSITION = '-webkit-transition',
-    TRANSITION_CAMEL = 'WebkitTransition',
-    TRANSITION_PROPERTY_CAMEL = 'WebkitTransitionProperty',
-    TRANSITION_PROPERTY = '-webkit-transition-property',
-    TRANSITION_DURATION = '-webkit-transition-duration',
-    TRANSITION_TIMING_FUNCTION = '-webkit-transition-timing-function',
-    TRANSITION_DELAY = '-webkit-transition-delay',
-    TRANSITION_END = 'webkitTransitionEnd',
-    ON_TRANSITION_END = 'onwebkittransitionend',
-    TRANSFORM_CAMEL = 'WebkitTransform',
+var CAMEL_VENDOR_PREFIX = '',
+    VENDOR_PREFIX = '',
+    DOCUMENT = Y.config.doc,
+    DOCUMENT_ELEMENT = 'documentElement',
+    TRANSITION = 'transition',
+    TRANSITION_CAMEL = 'Transition',
+    TRANSITION_PROPERTY_CAMEL,
+    TRANSITION_PROPERTY,
+    TRANSITION_DURATION,
+    TRANSITION_TIMING_FUNCTION,
+    TRANSITION_DELAY,
+    TRANSITION_END,
+    ON_TRANSITION_END,
+    TRANSFORM_CAMEL,
 
     EMPTY_OBJ = {},
+
+    VENDORS = [
+        'Webkit',
+        'Moz'
+    ],
+
+    VENDOR_TRANSITION_END = {
+        Webkit: 'webkitTransitionEnd'
+    },
 
 /**
  * A class for constructing transition instances.
@@ -30,11 +43,6 @@ Transition = function() {
     this.init.apply(this, arguments);
 };
 
-Transition.fx = {};
-Transition.toggles = {};
-
-Transition._hasEnd = {};
-
 Transition._toCamel = function(property) {
     property = property.replace(/-([a-z])/gi, function(m0, m1) {
         return m1.toUpperCase();
@@ -42,6 +50,9 @@ Transition._toCamel = function(property) {
 
     return property;
 };
+
+Transition.SHOW_TRANSITION = 'fadeIn';
+Transition.HIDE_TRANSITION = 'fadeOut';
 
 Transition._toHyphen = function(property) {
     property = property.replace(/([A-Z]?)([a-z]+)([A-Z]?)/g, function(m0, m1, m2, m3) {
@@ -61,15 +72,38 @@ Transition._toHyphen = function(property) {
     return property;
 };
 
-
-Transition._reKeywords = /^(?:node|duration|iterations|easing|delay|on|onstart|onend)$/i;
-
 Transition.useNative = false;
 
-if (TRANSITION in Y.config.doc.documentElement.style) {
-    Transition.useNative = true;
-    Transition.supported = true; // TODO: remove
-}
+Y.Array.each(VENDORS, function(val) { // then vendor specific
+    var property = val + TRANSITION_CAMEL;
+    if (property in DOCUMENT[DOCUMENT_ELEMENT].style) {
+        CAMEL_VENDOR_PREFIX = val;
+        VENDOR_PREFIX = Transition._toHyphen(val) + '-';
+
+        Transition.useNative = true;
+        Transition.supported = true; // TODO: remove
+    }
+});
+
+TRANSITION_CAMEL = CAMEL_VENDOR_PREFIX + 'Transition';
+TRANSITION_PROPERTY_CAMEL = CAMEL_VENDOR_PREFIX + 'TransitionProperty';
+TRANSITION_PROPERTY = VENDOR_PREFIX + 'transition-property';
+TRANSITION_DURATION = VENDOR_PREFIX + 'transition-duration';
+TRANSITION_TIMING_FUNCTION = VENDOR_PREFIX + 'transition-timing-function';
+TRANSITION_DELAY = VENDOR_PREFIX + 'transition-delay';
+TRANSITION_END = 'transitionend';
+ON_TRANSITION_END = 'on' + CAMEL_VENDOR_PREFIX.toLowerCase() + 'transitionend';
+
+TRANSITION_END = VENDOR_TRANSITION_END[CAMEL_VENDOR_PREFIX] || TRANSITION_END;
+
+TRANSFORM_CAMEL = CAMEL_VENDOR_PREFIX + 'Transform';
+
+Transition.fx = {};
+Transition.toggles = {};
+
+Transition._hasEnd = {};
+
+Transition._reKeywords = /^(?:node|duration|iterations|easing|delay|on|onstart|onend)$/i;
 
 Y.Node.DOM_EVENTS[TRANSITION_END] = 1; 
 
@@ -262,7 +296,7 @@ Transition.prototype = {
             computed = getComputedStyle(node),
             attrs = Transition._nodeAttrs[uid],
             cssText = '',
-            cssTransition = computed[TRANSITION_PROPERTY],
+            cssTransition = computed[Transition._toCamel(TRANSITION_PROPERTY)],
 
             transitionText = TRANSITION_PROPERTY + ': ',
             duration = TRANSITION_DURATION + ': ',
@@ -275,9 +309,9 @@ Transition.prototype = {
         // preserve existing transitions
         if (cssTransition !== 'all') {
             transitionText += cssTransition + ',';
-            duration += computed[TRANSITION_DURATION] + ',';
-            easing += computed[TRANSITION_TIMING_FUNCTION] + ',';
-            delay += computed[TRANSITION_DELAY] + ',';
+            duration += computed[Transition._toCamel(TRANSITION_DURATION)] + ',';
+            easing += computed[Transition._toCamel(TRANSITION_TIMING_FUNCTION)] + ',';
+            delay += computed[Transition._toCamel(TRANSITION_DELAY)] + ',';
 
         }
 
@@ -308,7 +342,7 @@ Transition.prototype = {
         if (!Transition._hasEnd[uid]) {
             //anim._detach = Y.on(TRANSITION_END, anim._onNativeEnd, node);
             //node[ON_TRANSITION_END] = anim._onNativeEnd;
-            node.addEventListener(TRANSITION_END, anim._onNativeEnd, false);
+            node.addEventListener(TRANSITION_END, anim._onNativeEnd, '');
             Transition._hasEnd[uid] = true;
 
         }
@@ -358,7 +392,7 @@ Transition.prototype = {
 
     _endNative: function(name) {
         var node = this._node,
-            value = node.ownerDocument.defaultView.getComputedStyle(node, '')[TRANSITION_PROPERTY];
+            value = node.ownerDocument.defaultView.getComputedStyle(node, '')[Transition._toCamel(TRANSITION_PROPERTY)];
 
         if (typeof value === 'string') {
             value = value.replace(new RegExp('(?:^|,\\s)' + name + ',?'), ',');
@@ -496,7 +530,7 @@ Y.Node.prototype.show = function(name, config, callback) {
                 callback = config;
                 config = name;
             }
-            name = this.SHOW_TRANSITION; 
+            name = Transition.SHOW_TRANSITION; 
         }    
         this.transition(name, config, callback);
     }    
@@ -528,7 +562,7 @@ Y.Node.prototype.hide = function(name, config, callback) {
                 callback = config;
                 config = name;
             }
-            name = this.HIDE_TRANSITION; 
+            name = Transition.HIDE_TRANSITION; 
         }    
         this.transition(name, config, callback);
     } else if (name && !Y.Transition) { Y.log('unable to transition hide; missing transition module', 'warn', 'node'); // end if on nex

@@ -9,7 +9,7 @@ li {
     Xoverflow: hidden;
 }
 </style> 
-<script src="../../../../build/yui/yui.js"></script> 
+<script src="../../../../build/yui/yui-min.js"></script> 
 <!--script src="http://yui.yahooapis.com/3.3.0/build/yui/yui.js"></script--> 
 </head>
 <body> 
@@ -23,22 +23,17 @@ li {
 
 <script type="text/javascript">
  
-YUI({filter:'debug'}).use('transition', 'event-custom-complex', 'selector-native', 'node-style', function(Y) {
+YUI({filter:'raw'}).use('transition', 'event-custom-complex', 'selector-native', 'node-style', function(Y) {
     var nodes = Y.all('ul li'),
-        show = false,
         node = nodes.item(0);
 
     document.onclick = function() {
-        nodes.toggleView('size');
-        console.log(node);
-        /*
-        if (!show) {
-            nodes.hide();
-        } else {
-            nodes.show();
-        }
-        */
-        show = ! show;
+        node.transition({
+            width: 0
+        }, function(e) {
+            node.setStyle('opacity', 0);
+            Y.log(e); 
+        });
     };
 
 
