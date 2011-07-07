@@ -12,19 +12,15 @@ VMLPath = function()
 
 VMLPath.NAME = "vmlPath";
 Y.extend(VMLPath, Y.VMLShape, Y.merge(Y.VMLDrawing.prototype, {
-    /**
-     * Indicates the type of shape
-     *
-     * @property _type
-     * @readOnly
-     * @type String
-     */
-    _type: "shape",
-
+	/**
+	 * @private
+	 */
     _draw: function()
-    {
-        this._fillChangeHandler();
-        this._strokeChangeHandler();
+    {   
+        var host = this;
+            host._fillChangeHandler();
+            host._strokeChangeHandler();
+        host._updateTransform();
     }
 }));
 VMLPath.ATTRS = Y.merge(Y.VMLShape.ATTRS, {

@@ -12,6 +12,15 @@ VMLShape.NAME = "vmlShape";
 
 Y.extend(VMLShape, Y.BaseGraphic, {
 	/**
+	 * Indicates the type of shape
+	 *
+	 * @property _type
+	 * @readOnly
+	 * @type String
+	 */
+	_type: "shape",
+    
+    /**
 	 * @private
 	 */
 	init: function()
@@ -810,20 +819,6 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 	 */
 	_draw: function()
 	{
-		var host = this,
-            node = host.node;
-		if(!node)
-		{
-		   host.createNode(); 
-		}
-		else
-		{
-			host._fillChangeHandler();
-			host._strokeChangeHandler();
-            node.style.width = this.get("width") + "px";
-            node.style.height = this.get("height") + "px"; 
-		}
-		host._updateTransform();
 	},
 
 	/**
@@ -831,8 +826,14 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 	 */
 	_updateHandler: function(e)
 	{
-		var node = this.node;
+		var host = this,
+            node = host.node;
+        host._fillChangeHandler();
+        host._strokeChangeHandler();
+        node.style.width = this.get("width") + "px";
+        node.style.height = this.get("height") + "px"; 
         this._draw();
+		host._updateTransform();
 	},
 
 	/**
