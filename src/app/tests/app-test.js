@@ -20,7 +20,7 @@ controllerSuite = new Y.Test.Suite({
     name: 'Controller',
 
     setUp: function () {
-        this.oldPath = Y.config.win.location.pathname;
+        this.oldPath = Y.config.win.location.toString();
 
         if (!html5) {
             Y.config.win.location.hash = '';
@@ -1175,6 +1175,23 @@ modelListSuite.add(new Y.Test.Case({
         list.create({}, function () { calls += 1; });
 
         Assert.areSame(2, calls);
+    },
+
+    'create() should pass an error to the callback if one occurs': function () {
+        var calls = 0,
+            list  = this.createList(),
+            model = this.createModel();
+
+        model.sync = function (action, options, callback) {
+            callback('Oh noes!');
+        };
+
+        list.create(model, function (err) {
+            calls += 1;
+            Assert.areSame('Oh noes!', err);
+        });
+
+        Assert.areSame(1, calls);
     },
 
     'get() should return an array of attribute values from all models in the list': function () {
