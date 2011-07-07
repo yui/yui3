@@ -21,7 +21,7 @@ suite.add(new Y.Test.Case({
             received;
 
         ds.sendRequest({
-            callback: {
+            on: {
                 success: function (e) {
                     request = e.request;
                     received = e.response.results;
@@ -38,6 +38,7 @@ suite.add(new Y.Test.Case({
             requestCallback, dataCallback, responseCallback;
         
         ds.on("request", function (e) {
+            Assert.areSame("dataSourceLocal:request", e.type);
             Assert.isNumber(e.tId, "request: Expected transaction ID.");
             Assert.areSame("a", e.request, "request: Expected request.");
             Assert.areSame("callback", e.callback, "request: Expected callback.");
@@ -45,6 +46,7 @@ suite.add(new Y.Test.Case({
         });
 
         ds.on("data", function (e) {
+            Assert.areSame("dataSourceLocal:data", e.type);
             Assert.isNumber(e.tId, "data: Expected transaction ID.");
             Assert.areSame("a", e.request, "data: Expected request.");
             Assert.areSame("callback", e.callback, "data: Expected callback.");
@@ -53,6 +55,7 @@ suite.add(new Y.Test.Case({
         });
         
         ds.on("response", function (e) {
+            Assert.areSame("dataSourceLocal:response", e.type);
             Assert.isNumber(e.tId, "response: Expected transaction ID.");
             Assert.areSame("a", e.request, "response: Expected request.");
             Assert.areSame("callback", e.callback, "response: Expected callback.");
@@ -65,7 +68,7 @@ suite.add(new Y.Test.Case({
 
         ds.sendRequest({
             request: "a",
-            callback: "callback"
+            on: "callback"
         });
 
         Assert.isTrue(requestCallback);
@@ -76,6 +79,82 @@ suite.add(new Y.Test.Case({
     testLocalError: function() {
         var ds = new Y.DataSource.Local({ source: ["a","b","c","d"] }),
             errorCallback;
+
+        ds.on("error", function (e) {
+            Assert.areSame("dataSourceLocal:error", e.type);
+            Assert.isNumber(e.tId, "error: Expected transaction ID.");
+            Assert.areSame("a", e.request, "error: Expected request.");
+            Assert.areSame("callback", e.callback, "error: Expected callback.");
+            Assert.isObject(e.response, "error: Expected normalized response object.");
+            Assert.isObject(e.error, "error: Expected error.");
+            errorCallback = true;
+        });
+
+        ds.set("source", undefined);
+        ds.sendRequest({
+            request: "a",
+            on: "callback"
+        });
+
+        Assert.isTrue(errorCallback);
+    },
+
+    "test sendRequest({ callback: { ... }}) is alias for on: { ... }": function () {
+        var data = ["a","b","c","d"],
+            ds = new Y.DataSource.Local({ source: data }),
+            request = null,
+            received, requestCallback, dataCallback, responseCallback,
+            errorCallback,
+            handle;
+
+        ds.sendRequest({
+            callback: {
+                success: function (e) {
+                    request = e.request;
+                    received = e.response.results;
+                }
+            }
+        });
+        
+        Assert.isUndefined(request);
+        ArrayAssert.itemsAreSame(data, received);
+
+        handle = ds.on({
+            request: function (e) {
+                Assert.isNumber(e.tId, "request: Expected transaction ID.");
+                Assert.areSame("a", e.request, "request: Expected request.");
+                Assert.areSame("callback", e.callback, "request: Expected callback.");
+                requestCallback = true;
+            },
+            data: function (e) {
+                Assert.isNumber(e.tId, "data: Expected transaction ID.");
+                Assert.areSame("a", e.request, "data: Expected request.");
+                Assert.areSame("callback", e.callback, "data: Expected callback.");
+                Assert.isArray(e.data, "data: Expected raw data.");
+                dataCallback = true;
+            },
+            response: function (e) {
+                Assert.isNumber(e.tId, "response: Expected transaction ID.");
+                Assert.areSame("a", e.request, "response: Expected request.");
+                Assert.areSame("callback", e.callback, "response: Expected callback.");
+                Assert.isArray(e.data, "response: Expected raw data.");
+                Assert.isObject(e.response, "response: Expected normalized response object.");
+                Assert.isArray(e.response.results, "response: Expected parsed results.");
+                Assert.isObject(e.response.meta, "response: Expected parsed meta data.");
+                responseCallback = true;
+            }
+        });
+
+        ds.sendRequest({
+            request: "a",
+            callback: "callback"
+        });
+
+        Assert.isTrue(requestCallback);
+        Assert.isTrue(dataCallback);
+        Assert.isTrue(responseCallback);
+        handle.detach();
+
 
         ds.on("error", function (e) {
             Assert.isNumber(e.tId, "error: Expected transaction ID.");
@@ -92,7 +171,7 @@ suite.add(new Y.Test.Case({
             callback: "callback"
         });
 
-        Assert.isTrue(errorCallback)
+        Assert.isTrue(errorCallback);
     }
 }));
 

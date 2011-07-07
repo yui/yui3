@@ -68,7 +68,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     html5: html5,
 
     /**
-    Root path from which all routes should be evaluated.
+    Absolute root path from which all routes should be evaluated.
 
     For example, if your controller is running on a page at
     `http://example.com/myapp/` and you add a route with the path `/`, your
@@ -704,7 +704,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
 });
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'base-build', 'history'], optional:['querystring-parse']});
+}, '@VERSION@' ,{optional:['querystring-parse'], requires:['array-extras', 'base-build', 'history']});
 YUI.add('model', function(Y) {
 
 /**
@@ -1587,7 +1587,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     This property is `null` by default, and is intended to be overridden in a
     subclass or specified as a config property at instantiation time. It will be
     used to create model instances automatically based on attribute hashes
-    passed to the `add()`, `create()`, and `remove()` methods.
+    passed to the `add()`, `create()`, and `refresh()` methods.
 
     @property model
     @type Model
@@ -2163,12 +2163,12 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
             Y.error('Model not in list.');
             return;
         }
-    
+
         facade = Y.merge(options, {
             index: index,
             model: model
         });
-    
+
         options.silent ? this._defRemoveFn(facade) :
                 this.fire(EVT_REMOVE, facade);
 

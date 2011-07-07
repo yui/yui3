@@ -164,6 +164,7 @@ suite.add(new Y.Test.Case({
         });
 
         ds.on("request", function (e) {
+            Assert.areSame("dataSourceIO:request", e.type);
             Assert.isNumber(e.tId, "request: Expected transaction ID.");
             Assert.isUndefined(e.request, "request: Expected undefined request.");
             Assert.areSame("callback", e.callback, "request: Expected callback.");
@@ -171,6 +172,7 @@ suite.add(new Y.Test.Case({
         });
 
         ds.on("data", function (e) {
+            Assert.areSame("dataSourceIO:data", e.type);
             Assert.isNumber(e.tId, "data: Expected transaction ID.");
             Assert.isUndefined(e.request, "data: Expected undefined request.");
             Assert.areSame("callback", e.callback, "data: Expected callback.");
@@ -179,6 +181,7 @@ suite.add(new Y.Test.Case({
         });
 
         ds.on("response", function (e) {
+            Assert.areSame("dataSourceIO:response", e.type);
             Assert.isNumber(e.tId, "response: Expected transaction ID.");
             Assert.isUndefined(e.request, "response: Expected undefined request.");
             Assert.areSame("callback", e.callback, "response: Expected callback.");
@@ -219,6 +222,7 @@ suite.add(new Y.Test.Case({
         });
 
         ds.on("error", function (e) {
+            Assert.areSame("dataSourceIO:error", e.type);
             Assert.isNumber(e.tId, "error: Expected transaction ID.");
             Assert.areSame("a", e.request, "error: Expected request.");
             Assert.areSame("callback", e.callback, "error: Expected callback.");

@@ -66,7 +66,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     html5: html5,
 
     /**
-    Root path from which all routes should be evaluated.
+    Absolute root path from which all routes should be evaluated.
 
     For example, if your controller is running on a page at
     `http://example.com/myapp/` and you add a route with the path `/`, your
