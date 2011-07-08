@@ -9,7 +9,7 @@ SVGPath = function(cfg)
 	SVGPath.superclass.constructor.apply(this, arguments);
 };
 SVGPath.NAME = "svgPath";
-Y.extend(SVGPath, Y.SVGShape, Y.mix({
+Y.extend(SVGPath, Y.SVGShape, {
     /**
      * Left edge of the path
      *
@@ -101,8 +101,11 @@ Y.extend(SVGPath, Y.SVGShape, Y.mix({
         return bounds;
     },
 
+    /**
+     *  @private
+     */
 	_path: ""
-}, Y.SVGDrawing.prototype));
+});
 
 SVGPath.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
 	/**

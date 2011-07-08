@@ -10,7 +10,7 @@ CanvasShape = function(cfg)
 
 CanvasShape.NAME = "canvasShape";
 
-Y.extend(CanvasShape, Y.BaseGraphic, Y.mix(Y.CanvasDrawing.prototype, {
+Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	/**
      * @private
      */
@@ -806,7 +806,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix(Y.CanvasDrawing.prototype, {
             }
         }
 	}
-}));
+}, Y.CanvasDrawing.prototype));
 
 CanvasShape.ATTRS =  {
 	/**

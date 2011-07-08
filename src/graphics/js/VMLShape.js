@@ -10,7 +10,7 @@ VMLShape = function()
 
 VMLShape.NAME = "vmlShape";
 
-Y.extend(VMLShape, Y.BaseGraphic, {
+Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 	/**
 	 * Indicates the type of shape
 	 *
@@ -950,7 +950,7 @@ Y.extend(VMLShape, Y.BaseGraphic, {
             }
         }
     }
-});
+}, Y.VMLDrawing.prototype));
 
 VMLShape.ATTRS = {
 	/**

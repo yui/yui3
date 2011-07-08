@@ -11,18 +11,18 @@ VMLPath = function()
 };
 
 VMLPath.NAME = "vmlPath";
-Y.extend(VMLPath, Y.VMLShape, Y.merge(Y.VMLDrawing.prototype, {
+Y.extend(VMLPath, Y.VMLShape, {
 	/**
 	 * @private
 	 */
-    _draw: function()
+    _updateHandler: function()
     {   
         var host = this;
             host._fillChangeHandler();
             host._strokeChangeHandler();
         host._updateTransform();
     }
-}));
+});
 VMLPath.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 	/**
 	 * Indicates the width of the shape
