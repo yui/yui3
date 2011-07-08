@@ -2,12 +2,6 @@
     "plugin": {
         "requires": [
             "base-base"
-        ],
-        "plugins": {
-            "pluginattr": {
-                "path": "plugin/pluginattr-min.js",
-                "requires": ["plugin"]
-            }
-        }
+        ]
     }
 }

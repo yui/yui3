@@ -45,59 +45,99 @@ suite.add(new Y.Test.Case({
         Y.Assert.isFunction(state.get('foo', 'setter'));
     },
 
-    "test addHostAttr(name, class, { setter })": function () {
+    "test addHostAttr(name, class, class, setter)": function () {
         var setterCalled = false,
-            test = this;
+            test = this,
+            Plugin, configVal, attr, instance;
 
-        Y.Plugin.addHostAttr('foo', this.Host, {
-            setter: function (val) {
+        Plugin = Y.Base.create('testPlugin', Y.Plugin.Base, [], {
+            initializer: function () {
+                configVal = this.get('bar');
+            }
+        }, {
+            NS: 'foo',
+            ATTRS: {
+                bar: {
+                    value: 'bar'
+                }
+            }
+        });
+
+        Y.Plugin.addHostAttr('foo', this.Host, Plugin,
+            function (val) {
                 setterCalled = true;
 
-                this.plug(test.Plugin);
-                return test.Plugin;
-            }
-        });
+                return { bar: "PASS" };
+            });
 
-        var attr = this.Host.ATTRS.foo;
+        attr = this.Host.ATTRS.foo;
 
         Y.Assert.isNotUndefined(attr);
         Y.Assert.isFalse(attr.lazyAdd);
         Y.Assert.isFunction(attr.setter, "setter");
 
-        var instance = new this.Host({ foo: true });
+        instance = new this.Host({ foo: true });
 
         Y.Assert.isTrue(setterCalled);
+        Y.Assert.areSame("PASS", configVal);
     },
 
-    "test addHostAttr(name, class, { getter })": function () {
-        var getterCalled = false,
-            test = this;
+    "test addHostAttr(name, class, class, setterThatReturnsFalse)": function () {
+        var setterCalled = false,
+            test = this,
+            Plugin, configVal, attr, instance;
 
-        Y.Plugin.addHostAttr('foo', this.Host, {
-            setter: function (val) {
-                this.plug(test.Plugin);
-                return test.Plugin;
-            },
-            getter: function () {
-                getterCalled = true;
-
-                return this[test.Plugin.NS];
+        Plugin = Y.Base.create('testPlugin', Y.Plugin.Base, [], {
+            initializer: function () {
+                configVal = this.get('bar');
+            }
+        }, {
+            NS: 'foo',
+            ATTRS: {
+                bar: {
+                    value: 'bar'
+                }
             }
         });
 
-        var attr = this.Host.ATTRS.foo;
+        Y.Plugin.addHostAttr('foo', this.Host, Plugin,
+            function (val) {
+                setterCalled = true;
+
+                if (typeof val === 'boolean') {
+                    val = { bar: ''+val };
+                } else if (val === 'unplug') {
+                    val = false;
+                } else {
+                    val = { bar: "PASS" };
+                }
+
+                return val;
+            });
+
+        attr = this.Host.ATTRS.foo;
 
         Y.Assert.isNotUndefined(attr);
         Y.Assert.isFalse(attr.lazyAdd);
         Y.Assert.isFunction(attr.setter, "setter");
-        Y.Assert.isFunction(attr.getter, "getter");
 
-        var instance = new this.Host({ foo: true }),
-            value = instance.get('foo');
+        instance = new this.Host({ foo: true });
 
-        Y.Assert.isTrue(getterCalled);
-        Y.Assert.isObject(value);
-        Y.Assert.isInstanceOf(this.Plugin, value);
+        Y.Assert.isTrue(setterCalled);
+        Y.Assert.areSame("true", configVal);
+
+        instance = new this.Host({ foo: "PASS" });
+
+        Y.Assert.isTrue(setterCalled);
+        Y.Assert.areSame("PASS", configVal);
+
+        instance.set("foo", false);
+
+        Y.Assert.isNotUndefined(instance.foo);
+
+        instance.set("foo", "unplug");
+
+        Y.Assert.isUndefined(instance.foo);
     },
 
     "test new Host({ trigger: true }) plugs Plugin": function () {
