@@ -84,6 +84,7 @@
                 ASSERT.areSame("bar", data_out.meta.nested, "Expected second meta.");
                 ASSERT.isArray(data_out.results, "Expected results property.");
                 ASSERT.areSame(0, data_out.results.length, "Expected zero results.");
+                ASSERT.isUndefined(data_out.error, "Schema with only metaFields should not be an error");
             },
 
             testJSONResults: function() {
