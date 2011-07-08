@@ -170,6 +170,20 @@ suite.add(new Y.Test.Case({
         });
 
         Assert.isTrue(errorCallback);
+    },
+
+    "test sendRequest() does not throw an error": function () {
+        var data = ["a","b","c","d"],
+            ds = new Y.DataSource.Local({ source: data }),
+            responseCallback;
+
+        ds.on("response", function (e) {
+            responseCallback = true;
+        });
+
+        ds.sendRequest();
+        
+        Assert.isTrue(responseCallback);
     }
 }));
 
