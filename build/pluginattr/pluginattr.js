@@ -1,3 +1,5 @@
+YUI.add('pluginattr', function(Y) {
+
 var Lang       = Y.Lang,
     isString   = Lang.isString,
     isObject   = Lang.isObject,
@@ -19,32 +21,23 @@ var Lang       = Y.Lang,
  * use()d after the host instance is instantiated, you can also pass the
  * instance as the second parameter.</p>
  *
- * <p>To allow custom (de)activation behavior, pass an attribute
- * configuration object instead of the plugin class as the third parameter.
- * For example, to translate special activation values to meaningful plugin
- * configuration, override the setter.  To have attribute access respond
- * with more useful (truthy) data, override the getter.</p>
- *
- * <p>Note: the setter should return what was passed to it or
- * <code>Y.Attribute.INVALID_VALUE</code>.</p>
+ * <p>To allow custom values to be passed to the trigger attribute, pass a
+ * preprocessor function as the fourth parameter. The value assigned to the
+ * attribute will be translated by this function prior to getting passed to
+ * plug() as the configuration.  Return false from this function to cause
+ * the plugin to be unplugged.</p>
  *
  * <pre><code>
- * Y.Plugin.addHostAttr('filters', Y.Console, {
- *      setter: function (val, attr) {
- *          var method = (val === false) ? 'unplug' : 'plug',
- *              config = Y.Lang.isObject(val) ? val : {};
- *
- *          if (Y.Lang.isString(val) || Y.Lang.isArray(val)) {
+ * Y.Plugin.addHostAttr('filters', Y.Console, Y.Plugin.ConsoleFilters,
+ *      function (config) {
+ *          if (Y.Lang.isString(config) || Y.Lang.isArray(config)) {
  *              config = {
  *                  defaultVisibility: false,
- *                  category: Y.Array.hash(Y.Array(val));
+ *                  category: Y.Array.hash(Y.Array(config))
  *              };
  *          }
- *          
- *          config.host = this;
- *          this[method](Y.Plugin.ConsoleFilters, config);
  *
- *         return val;
+ *         return config;
  *     }
  * });
  *
@@ -56,37 +49,40 @@ var Lang       = Y.Lang,
  * @param name {String} The attribute name to trigger plug and unplug
  * @param host {Function|Object} The class or instance to receive the
  *                               triggering attribute
- * @param plugin {Function|Object} The plugin class or getter/setter config
- * @param force {Boolean} Redefine the existing host attribue if found
+ * @param plugin {Function} The plugin class
+ * @param [setter] {Function} Attribute value preprocessor
+ * @param [force] {Boolean} Redefine an existing host attribue?
  * @static
  */
-Y.Plugin.addHostAttr = function (name, host, plugin, force) {
-    if (!isString(name) || !isObject(host) || !isObject(plugin)) {
+Y.Plugin.addHostAttr = function (name, host, plugin, setter, force) {
+    if (!isString(name) || !isObject(host) || !isFunction(plugin)) {
         return false;
     }
 
-    var attrDef = { lazyAdd: false };
+    if (!isFunction(setter)) {
+        setter = null;
+    }
 
-    if (isFunction(plugin)) {
-        attrDef.setter = function (val, attr) {
-            var method = (val !== false) ? 'plug' : 'unplug',
+    var attrDef = {
+        lazyAdd: false,
+        setter : function (val, attr) {
+            var value  = setter ? setter(val) : val,
+                method = (value !== false) ? 'plug' : 'unplug',
                 ret    = Y.Attribute.INVALID_VALUE,
-                conf   = (isObject(val)) ? val : {};
+                conf   = (isObject(value)) ? value : {};
 
             // For now, disallow subattribute as a trigger or
             // plugin attribute setter
             if (attr.indexOf('.') === -1) {
-                ret = val;
+                ret = value;
                 conf.host = this;
 
                 this[method](plugin, conf);
             }
 
             return ret;
-        };
-    } else {
-        Y.mix(attrDef, plugin, true);
-    }
+        }
+    };
 
     if (isFunction(host)) {
         if (host.ATTRS && (force || !host.ATTRS[name])) {
@@ -99,3 +95,6 @@ Y.Plugin.addHostAttr = function (name, host, plugin, force) {
 
     return true;
 };
+
+
+}, '@VERSION@' ,{requires:['plugin']});

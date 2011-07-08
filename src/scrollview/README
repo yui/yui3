@@ -9,7 +9,16 @@ performance.
 * Fixed _uiDimensionsChange code which was looking explicitly for 
   the "width" attribute. Just plain wrong.
 
-* Added vertical paging support
+* Added vertical paging support.
+
+* Removed DOMSubtreeModified event listening which was only really kicking
+  in for Webkit and was too heavy handed. User now needs to call syncUI() 
+  manually on all browsers, if the content of the scrollview is changed, 
+  and may potentially result in dimension changes.
+
+* Broke out use of transform3d into a seperate method, and added a protected
+  flag, _forceHWTransforms, to allow for customization if required (H/W acceleration
+  related glitches or changing the set of browsers for which we attempt to force it).
 
 3.3.0
 
