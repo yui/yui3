@@ -62,8 +62,7 @@ Y.mix(Transition.prototype, {
             i;
 
         for (name in attrs) {
-            attribute = attrs[name];
-            if ((attribute && attribute.transition === anim)) {
+            if ((attribute = attrs[name]) && attribute.transition === anim) {
                 d = attribute.duration;
                 delay = attribute.delay;
                 elapsed = (time - delay) / 1000;
@@ -126,8 +125,7 @@ Y.mix(Transition.prototype, {
             unit, begin, end;
 
         for (name in attrs) {
-            attribute = attrs[name];
-            if (attrs.hasOwnProperty(name) && (attribute && attribute.transition === anim)) {
+            if ((attribute = attrs[name]) && attribute.transition === anim) {
                 duration = attribute.duration * 1000;
                 delay = attribute.delay * 1000;
                 easing = attribute.easing;

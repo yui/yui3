@@ -1,12 +1,6 @@
 var Y_Node = Y.Node;
 
-Y_Node.SHOW_TRANSITION = null;
-Y_Node.HIDE_TRANSITION = null;
-
 Y.mix(Y_Node.prototype, {
-    SHOW_TRANSITION: Y_Node.SHOW_TRANSITION,
-    HIDE_TRANSITION: Y_Node.HIDE_TRANSITION,
-
     /**
      * Makes the node visible.
      * If the "transition" module is loaded, show optionally

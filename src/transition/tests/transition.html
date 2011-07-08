@@ -326,7 +326,7 @@ YUI({
                 var node = Y.one('.demo'),
                     test = this;
 
-                node.transition('fadeOut', {height: 0});
+                node.transition('fadeOut', {height: '0px'});
                 
                 Y.later(750, null, function(e) {
                     test.resume(function() { 
@@ -746,7 +746,7 @@ YUI({
                     width: 0,
                     height: 0,
                     opacity: 0,
-                    borderWidth: '1px',
+                    borderTopWidth: '1px',
                     foo: 0, // ignore non-supported
                     paddingTop: '100px'
                 }, function(e) {
@@ -756,7 +756,7 @@ YUI({
                         Y.Assert.areEqual('0px', node.getComputedStyle('height'));
                         Y.Assert.areEqual('0', node.getComputedStyle('opacity'));
                         Y.Assert.areEqual('100px', node.getComputedStyle('paddingTop'));
-                        Y.Assert.areEqual('1px', node.getStyle('borderWidth'));
+                        Y.Assert.areEqual('1px', node.getStyle('borderTopWidth'));
                     });
                 });
 
@@ -836,7 +836,7 @@ YUI({
                         Y.Assert.areEqual(1, parseInt(e.elapsedTime));
                         node.setStyle('height', '100px');
                         if (Y.UA.webkit) {
-                            Y.Assert.areEqual('matrix(-1, 1.22465e-16, -1.22465e-16, -1, 0, 0)', node.getComputedStyle('WebkitTransform'));
+                            Y.Assert.areEqual('matrix(-1, 0.00000000000000012246467991473532, -0.00000000000000012246467991473532, -1, 0, 0)', node.getComputedStyle('WebkitTransform'));
                         }
                     });
                 });

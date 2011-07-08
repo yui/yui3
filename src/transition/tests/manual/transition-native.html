@@ -11,6 +11,8 @@
     position:relative;
     -webkit-transition-property: width, height, top, left, opacity;
     -webkit-transition-duration: 1s;
+    -moz-transition-property: width, height, top, left, opacity;
+    -moz-transition-duration: 1s;
 }
 </style> 
 
@@ -22,15 +24,15 @@
     var node = document.getElementById('demo'),
         computed = getComputedStyle(node, ''); 
 
+    console.log(computed['MozTransitionProperty']);
     node.addEventListener('webkitTransitionEnd', function(e) {
         console.log(e.propertyName);
         console.log(e.elapsedTime);
         console.log(node.style[e.propertyName]);
-    });
+    }, false);
 
     document.onclick = function() {
         var w = parseFloat(computed.width) + 100;
-        console.log(w);
         node.style.width = w + 'px'; 
     };
  
