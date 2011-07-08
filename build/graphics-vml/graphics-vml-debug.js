@@ -313,8 +313,17 @@ VMLShape = function()
 
 VMLShape.NAME = "vmlShape";
 
-Y.extend(VMLShape, Y.BaseGraphic, {
+Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 	/**
+	 * Indicates the type of shape
+	 *
+	 * @property _type
+	 * @readOnly
+	 * @type String
+	 */
+	_type: "shape",
+    
+    /**
 	 * @private
 	 */
 	init: function()
@@ -1113,20 +1122,6 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 	 */
 	_draw: function()
 	{
-		var host = this,
-            node = host.node;
-		if(!node)
-		{
-		   host.createNode(); 
-		}
-		else
-		{
-			host._fillChangeHandler();
-			host._strokeChangeHandler();
-            node.style.width = this.get("width") + "px";
-            node.style.height = this.get("height") + "px"; 
-		}
-		host._updateTransform();
 	},
 
 	/**
@@ -1134,8 +1129,14 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 	 */
 	_updateHandler: function(e)
 	{
-		var node = this.node;
+		var host = this,
+            node = host.node;
+        host._fillChangeHandler();
+        host._strokeChangeHandler();
+        node.style.width = this.get("width") + "px";
+        node.style.height = this.get("height") + "px"; 
         this._draw();
+		host._updateTransform();
 	},
 
 	/**
@@ -1252,7 +1253,7 @@ Y.extend(VMLShape, Y.BaseGraphic, {
             }
         }
     }
-});
+}, Y.VMLDrawing.prototype));
 
 VMLShape.ATTRS = {
 	/**
@@ -1563,22 +1564,18 @@ VMLPath = function()
 };
 
 VMLPath.NAME = "vmlPath";
-Y.extend(VMLPath, Y.VMLShape, Y.merge(Y.VMLDrawing.prototype, {
-    /**
-     * Indicates the type of shape
-     *
-     * @property _type
-     * @readOnly
-     * @type String
-     */
-    _type: "shape",
-
-    _draw: function()
-    {
-        this._fillChangeHandler();
-        this._strokeChangeHandler();
+Y.extend(VMLPath, Y.VMLShape, {
+	/**
+	 * @private
+	 */
+    _updateHandler: function()
+    {   
+        var host = this;
+            host._fillChangeHandler();
+            host._strokeChangeHandler();
+        host._updateTransform();
     }
-}));
+});
 VMLPath.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 	/**
 	 * Indicates the width of the shape

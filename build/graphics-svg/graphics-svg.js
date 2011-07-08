@@ -456,7 +456,7 @@ SVGShape = function(cfg)
 
 SVGShape.NAME = "svgShape";
 
-Y.extend(SVGShape, Y.BaseGraphic, {
+Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
     /**
      * @private
      */
@@ -1196,7 +1196,7 @@ Y.extend(SVGShape, Y.BaseGraphic, {
             this._graphic._contentNode.removeChild(this.node);
         }
     }
- });
+ }, Y.SVGDrawing.prototype));
 	
 SVGShape.ATTRS = {
 	/**
@@ -1541,7 +1541,7 @@ SVGPath = function(cfg)
 	SVGPath.superclass.constructor.apply(this, arguments);
 };
 SVGPath.NAME = "svgPath";
-Y.extend(SVGPath, Y.SVGShape, Y.mix({
+Y.extend(SVGPath, Y.SVGShape, {
     /**
      * Left edge of the path
      *
@@ -1633,8 +1633,11 @@ Y.extend(SVGPath, Y.SVGShape, Y.mix({
         return bounds;
     },
 
+    /**
+     *  @private
+     */
 	_path: ""
-}, Y.SVGDrawing.prototype));
+});
 
 SVGPath.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
 	/**
