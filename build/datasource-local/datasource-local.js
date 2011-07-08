@@ -366,9 +366,11 @@ Y.extend(DSLocal, Y.Base, {
      */
     sendRequest: function(request) {
         var tId = DSLocal._tId++,
-            callbacks = request.on || request.callback;
+            callbacks;
 
         request = request || {};
+
+        callbacks = request.on || request.callback;
 
         this.fire("request", {
             tId: tId,

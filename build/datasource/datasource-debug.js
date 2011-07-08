@@ -1269,7 +1269,7 @@ Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
             // TODO: Do I need to sniff for DS.IO + responseXML.nodeType 9?
             data = e.data.responseXML || e.data;
 
-        payload.response = Y.DataSchema.Text.apply.call(this, schema, data) || {
+        payload.response = Y.DataSchema.XML.apply.call(this, schema, data) || {
             meta: {},
             results: data
         };

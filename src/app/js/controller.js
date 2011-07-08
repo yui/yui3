@@ -33,6 +33,11 @@ var HistoryHash = Y.HistoryHash,
     win      = Y.config.win,
     location = win.location,
 
+    // We have to queue up pushState calls to avoid race conditions, since the
+    // popstate event doesn't actually provide any info on what URL it's
+    // associated with.
+    saveQueue = [],
+
     /**
     Fired when the controller is ready to begin dispatching to route handlers.
 
@@ -66,7 +71,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     html5: html5,
 
     /**
-    Root path from which all routes should be evaluated.
+    Absolute root path from which all routes should be evaluated.
 
     For example, if your controller is running on a page at
     `http://example.com/myapp/` and you add a route with the path `/`, your
@@ -117,6 +122,15 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     instantiated.
 
     @property _dispatched
+    @type Boolean
+    @default undefined
+    @protected
+    **/
+
+    /**
+    Whether or not we're currently in the process of dispatching to routes.
+
+    @property _dispatching
     @type Boolean
     @default undefined
     @protected
@@ -302,7 +316,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @see save()
     **/
     replace: function (url) {
-        return this._save(url, true);
+        return this._queue(url, true);
     },
 
     /**
@@ -410,7 +424,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @see replace()
     **/
     save: function (url) {
-        return this._save(url);
+        return this._queue(url);
     },
 
     // -- Protected Methods ----------------------------------------------------
@@ -426,6 +440,34 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     **/
     _decode: function (string) {
         return decodeURIComponent(string.replace(/\+/g, ' '));
+    },
+
+    /**
+    Shifts the topmost `_save()` call off the queue and executes it. Does
+    nothing if the queue is empty.
+
+    @method _dequeue
+    @chainable
+    @see _queue
+    @protected
+    **/
+    _dequeue: function () {
+        var self = this,
+            fn;
+
+        // If window.onload hasn't yet fired, wait until it has before
+        // dequeueing. This will ensure that we don't call pushState() before an
+        // initial popstate event has fired.
+        if (!YUI.Env.windowLoaded) {
+            Y.once('load', function () {
+                self._dequeue();
+            });
+
+            return this;
+        }
+
+        fn = saveQueue.shift();
+        return fn ? fn() : this;
     },
 
     /**
@@ -445,10 +487,10 @@ Y.Controller = Y.extend(Controller, Y.Base, {
             routes = self.match(path),
             req;
 
-        self._dispatched = true;
+        self._dispatching = self._dispatched = true;
 
         if (!routes || !routes.length) {
-            return this;
+            return self;
         }
 
         req = self._getRequest(path);
@@ -476,7 +518,9 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         }
 
         next();
-        return this;
+
+        self._dispatching = false;
+        return self._dequeue();
     },
 
     /**
@@ -618,6 +662,45 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     },
 
     /**
+    Queues up a `_save()` call to run after all previously-queued calls have
+    finished.
+
+    This is necessary because if we make multiple `_save()` calls before the
+    first call gets dispatched, then both calls will dispatch to the last call's
+    URL.
+
+    All arguments passed to `_queue()` will be passed on to `_save()` when the
+    queued function is executed.
+
+    @method _queue
+    @chainable
+    @see _dequeue
+    @protected
+    **/
+    _queue: function () {
+        var args = arguments,
+            self = this;
+
+        saveQueue.push(function () {
+            if (html5) {
+                // Wrapped in a timeout to ensure that _save() calls are always
+                // processed asynchronously. This ensures consistency between
+                // HTML5- and hash-based history.
+                setTimeout(function () {
+                    self._save.apply(self, args);
+                }, 1);
+            } else {
+                self._dispatching = true; // otherwise we'll dequeue too quickly
+                self._save.apply(self, args);
+            }
+
+            return this;
+        });
+
+        return !this._dispatching ? this._dequeue() : this;
+    },
+
+    /**
     Removes the `root` URL from the from of _path_ (if it's there) and returns
     the result. The returned path will always have a leading `/`.
 
@@ -654,6 +737,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         this._history[replace ? 'replace' : 'add'](null, {
             url: typeof url === 'string' ? this._joinURL(url) : url
         });
+
         return this;
     } : function (url, replace) {
         this._ready = true;
@@ -679,11 +763,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         var self = this;
 
         if (self._ready) {
-            // We need to yield control to the UI thread to allow the browser to
-            // update window.location before we dispatch.
-            setTimeout(function () {
-                self._dispatch(self._getPath());
-            }, 1);
+            self._dispatch(self._getPath());
         }
     },
 

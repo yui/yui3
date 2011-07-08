@@ -89,7 +89,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     This property is `null` by default, and is intended to be overridden in a
     subclass or specified as a config property at instantiation time. It will be
     used to create model instances automatically based on attribute hashes
-    passed to the `add()`, `create()`, and `remove()` methods.
+    passed to the `add()`, `create()`, and `refresh()` methods.
 
     @property model
     @type Model
@@ -666,12 +666,12 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
             Y.error('Model not in list.');
             return;
         }
-    
+
         facade = Y.merge(options, {
             index: index,
             model: model
         });
-    
+
         options.silent ? this._defRemoveFn(facade) :
                 this.fire(EVT_REMOVE, facade);
 
