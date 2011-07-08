@@ -4,12 +4,17 @@
 <style> 
 li {
     background:#ccc;
+    border:10px solid green;
     Xheight: 100px;
     width: 100px;
     Xoverflow: hidden;
 }
 </style> 
-<script src="../../../../build/yui/yui-min.js"></script> 
+<script src="../../../../build/yui-core/yui-core-min.js"></script> 
+<script src="../../../../build/transition-native/transition-native-min.js"></script> 
+<script src="../../../../build/dom-core/dom-core-min.js"></script> 
+<script src="../../../../build/node-core/node-core-min.js"></script> 
+<script src="../../../../build/dom-style/dom-style-min.js"></script> 
 <!--script src="http://yui.yahooapis.com/3.3.0/build/yui/yui.js"></script--> 
 </head>
 <body> 
@@ -23,14 +28,16 @@ li {
 
 <script type="text/javascript">
  
-YUI({filter:'raw'}).use('transition', 'event-custom-complex', 'selector-native', 'node-style', function(Y) {
-    var nodes = Y.all('ul li'),
+YUI({filter:'min'}).use('node-core', 'transition-native', 'dom-style', function(Y) {
+    var nodes = document.getElementsByTagName('li'),
         node = nodes.item(0);
 
     document.onclick = function() {
-        node.transition({
-            width: 0
-        }, function(e) {
+        new Y.Transition(node, {
+            'borderWidth': 0,
+            borderColor: 'yellow',
+            width: 10
+        }).run(function(e) {
             node.setStyle('opacity', 0);
             Y.log(e); 
         });
