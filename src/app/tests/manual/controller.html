@@ -23,18 +23,14 @@
 document.getElementById('log').value = '';
 
 var Y = YUI({filter: 'raw',}).use('controller', 'node', function (Y) {
-    var logEl = document.getElementById('log'),
+    var logEl      = document.getElementById('log'),
+        controller = new Y.Controller();
 
-        controller = new Y.Controller({
-            dispatchOnInit: true,
-            routes: [
-                {path: '/*anything', callback: index}
-            ]
-        });
-
-    function index(req) {
+    controller.route('/*anything', function (req) {
         log('route called, path: ' + req.path);
-    }
+    });
+
+    controller.dispatch();
 
     function log(message) {
         logEl.value += message + '\n';

@@ -258,6 +258,34 @@ controllerSuite.add(new Y.Test.Case({
         this.wait(1000);
     },
 
+    'consecutive save() calls should dispatch to the correct routes': function () {
+        var paths      = [],
+            test       = this,
+            controller = this.controller = new Y.Controller();
+
+        controller.route('/one', function (req) {
+            paths.push(req.path);
+        });
+
+        controller.route('/two', function (req) {
+            paths.push(req.path);
+        });
+
+        controller.route('/three', function (req) {
+            paths.push(req.path);
+
+            test.resume(function () {
+                ArrayAssert.itemsAreSame(['/one', '/two', '/three'], paths);
+            });
+        });
+
+        controller.save('/one');
+        controller.save('/two');
+        controller.save('/three');
+
+        this.wait(2000);
+    },
+
     '_joinURL() should normalize / separators': function () {
         var controller = this.controller = new Y.Controller();
 
