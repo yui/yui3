@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Chrome early pushState bug</title>
+</head>
+<body>
+
+<h1>Chrome early pushState bug</h1>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+window.onpopstate = function (e) {
+    console.log('popstate: ' + window.location.pathname);
+    console.log(e);
+};
+
+// Create a new YUI instance and populate it with the required modules.
+YUI({filter: 'raw'}).use('controller', function (Y) {
+    var controller = new Y.Controller({
+            root: '/mysite',
+
+            routes: [
+                {path: '/',    callback: function () { console.log('Hello!'); }},
+                {path: '/pie', callback: function () { console.log('Mmm. Pie.'); }}
+            ]
+        });
+
+    window.controller = controller;
+    controller.save("/pie");
+    controller.save("/");
+    controller.save("/pie");
+});
+</script>
+
+</body>
+</html>
