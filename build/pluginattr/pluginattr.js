@@ -1,3 +1,5 @@
+YUI.add('pluginattr', function(Y) {
+
 var Lang       = Y.Lang,
     isString   = Lang.isString,
     isObject   = Lang.isObject,
@@ -93,3 +95,6 @@ Y.Plugin.addHostAttr = function (name, host, plugin, setter, force) {
 
     return true;
 };
+
+
+}, '@VERSION@' ,{requires:['plugin']});
