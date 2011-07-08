@@ -1,5 +1,5 @@
 YUI({
-    base: '../../../build/',
+    base: '../../../../build/',
     filter: 'RAW',
     debug: true
 }).use('calendar',  function(Y) {
