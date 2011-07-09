@@ -90,7 +90,7 @@ Y.View = Y.extend(View, Y.Base, {
     events: {},
 
     /**
-    `Y.Model` instance associated with this view instance.
+    Model instance associated with this view instance.
 
     This is entirely optional. There's no requirement that views be associated
     with models, but if you do intend to associate your view with a model, then
@@ -99,6 +99,20 @@ Y.View = Y.extend(View, Y.Base, {
 
     @property model
     @type Model
+    @default undefined
+    **/
+
+    /**
+    ModelList instance associated with this view instance.
+
+    This is entirely optional. There's no requirement that views be associated
+    with model lists, but if you do intend to associate your view with a model
+    list, then specifying that list instance at instantiation time will cause a
+    reference to be stored here for convenience.
+
+    @property modelList
+    @type ModelList
+    @default undefined
     **/
 
     /**
@@ -127,6 +141,7 @@ Y.View = Y.extend(View, Y.Base, {
         // Use config properties if present; otherwise default to prototype
         // properties.
         config.model && (this.model = config.model);
+        config.modelList && (this.modelList = config.modelList);
         config.template && (this.template = config.template);
 
         // Merge events from the config into events in `this.events`, then

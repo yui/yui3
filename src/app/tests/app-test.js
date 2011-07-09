@@ -1733,6 +1733,13 @@ viewSuite.add(new Y.Test.Case({
         Assert.areSame(model, view.model);
     },
 
+    'initializer should allow setting a model list reference at init': function () {
+        var modelList = new Y.ModelList(),
+            view      = new Y.View({modelList: modelList});
+
+        Assert.areSame(modelList, view.modelList);
+    },
+
     'initializer should allow setting a template at init': function () {
         var template = {},
             view     = new Y.View({template: template});
