@@ -1,7 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="YUI" default="local">
-    <description>Rollup build file for json, stringify</description>
-    <property file="build.properties" />
-    <import file="${builddir}/3.x/bootstrap.xml" 
-            description="Default Build Properties and Targets" />
+    <description>Build All Modules</description>
+
+    <macrodef name="build-submodules">
+        <attribute name="target"/>
+        <sequential>
+            <subant target="@{target}">
+                <fileset dir="." includes="build.*.xml"/>
+            </subant>
+        </sequential>
+    </macrodef>
+
+    <target name="local">
+        <build-submodules target="local"/>
+    </target>
+    <target name="deploy">
+        <build-submodules target="deploy"/>
+    </target>
+    <target name="all">
+        <build-submodules target="all"/>
+    </target>
+    <target name="clean">
+        <build-submodules target="clean"/>
+    </target>
+    <target name="tests">
+        <build-submodules target="clean"/>
+    </target>
+
 </project>
