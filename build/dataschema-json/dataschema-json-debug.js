@@ -170,7 +170,7 @@ SchemaJSON = {
             } else {
                 data_out.results = results;
             }
-        } else {
+        } else if (schema.resultListLocator) {
             data_out.results = [];
             data_out.error = new Error("JSON results retrieval failure");
             Y.log("JSON data could not be parsed: " + Y.dump(json_in), "error", "dataschema-json");
