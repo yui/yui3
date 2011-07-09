@@ -16,11 +16,11 @@ YUI.add('later-test', function(Y) {
 
                 Y.Assert.areSame(0, count);
                 
-                // test after 50ms to make sure it's only executed once.
+                // test after 150ms to make sure it's only executed once.
                 this.wait(function () {
                     Y.Assert.areSame(1, count);
                     Y.Assert.areSame(context, testContext);
-                }, 50);
+                }, 150);
             },
 
             "test later(10, obj, callback)": function() {
@@ -35,11 +35,11 @@ YUI.add('later-test', function(Y) {
 
                 Y.Assert.areSame(0, count);
                 
-                // test after 50ms to make sure it's only executed once.
+                // test after 150ms to make sure it's only executed once.
                 this.wait(function () {
                     Y.Assert.areSame(1, count);
                     Y.Assert.areSame(context, testContext);
-                }, 50);
+                }, 150);
             },
 
             "test later(10, obj, methodString)": function() {
@@ -56,11 +56,11 @@ YUI.add('later-test', function(Y) {
 
                 Y.Assert.areSame(0, count);
                 
-                // test after 50ms to make sure it's only executed once.
+                // test after 150ms to make sure it's only executed once.
                 this.wait(function () {
                     Y.Assert.areSame(1, count);
                     Y.Assert.areSame(context, testContext);
-                }, 50);
+                }, 150);
             },
 
             "test later(10, null, callback, argArray)": function() {
@@ -77,11 +77,11 @@ YUI.add('later-test', function(Y) {
 
                 Y.Assert.areSame(0, count);
                 
-                // test after 50ms to make sure it's only executed once.
+                // test after 150ms to make sure it's only executed once.
                 this.wait(function () {
                     Y.Assert.areSame(1, count);
                     Y.ArrayAssert.itemsAreSame(["ARG1", 2, obj], data);
-                }, 50);
+                }, 150);
             },
 
             "test later(0, null, callback, obj)": function() {
@@ -143,12 +143,12 @@ YUI.add('later-test', function(Y) {
 
                 Y.Assert.areSame(0, count);
                 
-                // test after 50ms to make sure it's executed more than once.
+                // test after 150ms to make sure it's executed more than once.
                 this.wait(function () {
                     Y.assert((count > 1));
                     Y.Assert.areSame(context, testContext);
                     handle.cancel();
-                }, 50);
+                }, 150);
             },
 
             "test later(10, obj, callback, null, true)": function() {
@@ -164,12 +164,12 @@ YUI.add('later-test', function(Y) {
 
                 Y.Assert.areSame(0, count);
                 
-                // test after 50ms to make sure it's executed more than once.
+                // test after 150ms to make sure it's executed more than once.
                 this.wait(function () {
                     Y.assert((count > 1));
                     Y.Assert.areSame(context, testContext);
                     handle.cancel();
-                }, 50);
+                }, 150);
             },
 
             "test later(10, obj, methodString, null, true)": function() {
@@ -187,12 +187,12 @@ YUI.add('later-test', function(Y) {
 
                 Y.Assert.areSame(0, count);
                 
-                // test after 50ms to make sure it's executed more than once.
+                // test after 150ms to make sure it's executed more than once.
                 this.wait(function () {
                     Y.assert((count > 1));
                     Y.Assert.areSame(context, testContext);
                     handle.cancel();
-                }, 50);
+                }, 150);
             },
 
             "test later(10, null, callback, argArray, true)": function() {
@@ -209,7 +209,7 @@ YUI.add('later-test', function(Y) {
                 Y.Assert.areSame(0, count);
                 Y.Assert.areSame(0, args.length);
                 
-                // test after 50ms to make sure it's only executed once.
+                // test after 150ms to make sure it's only executed once.
                 this.wait(function () {
                     Y.assert((count > 1));
                     Y.assert((args.length > 1));
@@ -219,7 +219,7 @@ YUI.add('later-test', function(Y) {
                     Y.Assert.isObject(args[0][2]);
                     Y.Assert.isTrue(obj["prop" + count]);
                     Y.ArrayAssert.itemsAreSame(args[0], args[1]);
-                }, 50);
+                }, 150);
             },
 
             "test cancel later(10, null, callback, null, true)": function() {
@@ -237,8 +237,8 @@ YUI.add('later-test', function(Y) {
                         Y.assert((count > 1));
                         Y.Assert.areSame(currentCount, count,
                             "callback executed after clearInterval");
-                    }, 50);
-                }, 50);
+                    }, 150);
+                }, 150);
             }
 
         }));
