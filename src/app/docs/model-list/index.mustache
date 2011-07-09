@@ -132,7 +132,7 @@ The `create()` method accepts an optional callback function, which will be execu
 </p>
 
 ```
-pie.create({type: 'watermelon chiffon'}, function (err) {
+pies.create({type: 'watermelon chiffon'}, function (err) {
   if (!err) {
     // The save operation was successful!
   }
@@ -145,7 +145,7 @@ The `refresh()` method removes any models that are already in the list and then 
 
 ```
 // Remove all existing models from the list and add new ones.
-pie.refresh([
+pies.refresh([
   {type: 'lemon meringue'},
   {type: 'banana cream'}
 ]);
@@ -477,8 +477,13 @@ Y.PieList = Y.Base.create('pieList', Y.ModelList, [], {
 
   // Custom sync layer.
   sync: function (action, options, callback) {
+    var data;
+
     if (action === 'read') {
-      callback(null, localStorage.getItem('pies') || []);
+      data = localStorage.getItem('pies') || [];
+      callback(null, data);
+    } else {
+      callback('Unsupported sync action: ' + action);
     }
   }
 });
