@@ -168,7 +168,7 @@ SchemaJSON = {
             } else {
                 data_out.results = results;
             }
-        } else {
+        } else if (schema.resultListLocator) {
             data_out.results = [];
             data_out.error = new Error("JSON results retrieval failure");
         }

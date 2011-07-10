@@ -5,7 +5,7 @@
     "author"     : ["rgrove", "ericf"],
 
     "tags": [
-        "infrastructure", "app", "beta", "mvc", "view"
+        "infrastructure", "app", "beta", "mvc", "view", "template"
     ],
 
     "use": ["view"]

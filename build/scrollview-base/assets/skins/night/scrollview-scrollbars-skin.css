@@ -6,7 +6,7 @@
 
 .yui3-skin-night .yui3-scrollview-scrollbar {
     -webkit-transform: translate3d(0, 0, 0);
-    -moz-transform: translate3d(0, 0, 0); 
+    -moz-transform: translate(0, 0); 
 }
 
 .yui3-skin-night .yui3-scrollview-scrollbar .yui3-scrollview-first,
@@ -49,7 +49,7 @@
     -moz-border-radius:0; 
     -moz-border-radius-bottomright:3px; 
     -moz-border-radius-bottomleft:3px; 
-    -moz-transform: translate3d(0, 0, 0);
+    -moz-transform: translate(0, 0);
 }
 
 .yui3-skin-night .yui3-scrollview-scrollbar .yui3-scrollview-middle {
@@ -58,9 +58,10 @@
     -moz-border-radius: 0; 
 
     -webkit-transform: translate3d(0,0,0) scaleY(1); 
-    -webkit-transform-origin-y: 0;
-    -moz-transform: translate3d(0,0,0) scaleY(1); 
-    -moz-transform-origin-y: 0;
+    -webkit-transform-origin: 0 0;
+
+    -moz-transform: translate(0,0) scaleY(1); 
+    -moz-transform-origin: 0 0;
 }
 
 .yui3-skin-night .yui3-scrollview-scrollbar-horiz .yui3-scrollview-first,
@@ -90,7 +91,7 @@
     -webkit-transform: translate3d(0,0,0) scaleX(1); 
     -webkit-transform-origin: 0 0;
 
-    -moz-transform: translate3d(0,0,0) scaleX(1); 
+    -moz-transform: translate(0,0) scaleX(1); 
     -moz-transform-origin: 0 0;
 }
 
