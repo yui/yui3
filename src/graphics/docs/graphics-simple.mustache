@@ -1,0 +1,53 @@
+<style scoped>
+#custom-doc { width: 95%; min-width: 950px; }
+#pagetitle {background-image: url(../../assets/bg_hd.gif);}
+#mygraphiccontainer {
+    position: relative;
+    width: 700px;
+    height:400px;
+}
+</style>
+<div class="intro">
+This example shows how to use the `Graphics` to create a basic shape.
+</div>
+<div class="example">
+{{>graphics-simple-source}}
+</div>
+
+<h2>HTML</h2>
+```
+<div id="mygraphiccontainer"></div>
+```
+
+<h2>CSS</h2>
+```
+#mygraphiccontainer {
+    position: relative;
+    width: 700px;
+    height:400px;
+}
+```
+
+<h2>Javascript</h2>
+<p>Create a `Graphic` instance</p>
+```
+    var mygraphic = new Y.Graphic({render:"#mygraphiccontainer"});
+```
+
+<p>Use the `getShape` method to create an ellipse.</p>
+```
+    var myellipse = mygraphic.getShape({
+        type: "ellipse",
+        fill: {
+            color: "#9aa"
+        },
+        stroke: {
+            weight: 2,
+            color: "#000"
+        }
+    });
+```
+<h2>Complete Example Source</h2>
+```
+{{>graphics-simple-source}}
+```

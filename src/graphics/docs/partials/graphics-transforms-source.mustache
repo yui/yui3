@@ -1,0 +1,66 @@
+<div id="mygraphiccontainer"></div>
+<div>
+    <button type="button" id="rotate">Rotate</button><br/>
+    <button type="button" id="translate">Translate</button><br/>
+</div>
+<script>
+    YUI().use('graphics', function (Y) 
+    { 
+        var mygraphic = new Y.Graphic({render:"#mygraphiccontainer"});
+        var myrect = mygraphic.getShape({
+            type: "rect",
+            stroke: {
+                color:"#000",
+                weight: 1
+            },
+            fill: {
+                color: "#fde"
+            },
+            width:40,
+            height:50
+        });
+            
+        var myellipse = mygraphic.getShape({
+            type: "ellipse",
+            stroke: {
+                color: "#ddd",
+                weight: 2
+            },
+            fill: {
+                color:"#f00",
+                opacity: 0.5
+            },
+            width: 100,
+            height: 30,
+            x:100,
+            y:50
+        });
+            
+        var mycircle = mygraphic.getShape({
+            type: "circle",
+            stroke: {
+                color:"#ff0",
+                weight: 1
+            },
+            fill: {
+                color:"#00f"
+            },
+            radius: 12,
+            x: -5,
+            y: -5
+        });
+        function rotateShapes(e)
+        {
+            myrect.set("rotation", 45);
+            myellipse.set("rotation", 45);
+        }
+
+        function translateShapes(e)
+        {
+            mycircle.set("translateX", 50);
+            mycircle.set("translateY", 60);
+        }
+        Y.on("click", rotateShapes, "#rotate");
+        Y.on("click", translateShapes, "#translate");
+    });
+</script>

@@ -1,0 +1,48 @@
+<div id="mygraphiccontainer"></div>
+<script>
+    YUI().use('graphics', function (Y) 
+    { 
+            var mygraphic = new Y.Graphic({render:"#mygraphiccontainer"});
+            var myrect = mygraphic.getShape({
+				type: "rect",
+				stroke: {
+                    color:"#000",
+                    weight: 1
+                },
+                fill: {
+                    type: "linear",
+                    rotation: 271,
+                    stops: [
+                        {color: "#ff6666", opacity: 1, offset: 0},
+                        {color: "#00ffff", opacity: 1, offset: 0.5},
+                        {color: "#000000", opacity: 1, offset: 1}
+                    ]
+                },
+                width:685,
+                height:400
+            });
+            var mycircle = mygraphic.getShape({
+				type: "circle",
+                radius: 50,
+                x: 0,
+                y: 0,
+                fill: {
+                    type: "radial",
+                    stops: [
+                        {color: "#ff6666", offset: 0},
+                        {color: "#00ffff", offset: 0.4},
+                        {color: "#000000", offset: 0.7}
+                    ],
+                    cx: .5,
+                    cy: .5,
+                    fx: 0.1,
+                    fy: 0.3,
+                    r: 0.5
+                },
+                stroke: {
+                    color: "#000"
+                }
+            });
+
+    });
+</script>

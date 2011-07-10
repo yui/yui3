@@ -1,0 +1,54 @@
+<div id="mygraphiccontainer"></div>
+<script>
+    YUI().use('graphics', function (Y) 
+    { 
+        var mygraphic = new Y.Graphic({render: "#mygraphiccontainer"}),
+            connector = mygraphic.getShape({
+				type: "path",
+				stroke: {
+					weight: 1,
+					color: "#000",
+					opacity: 1,
+					dashstyle: [3, 4]
+				}
+            }),
+            diamond1 = mygraphic.getShape({
+                type: "path",
+                stroke: {
+                    weight: 1,
+                    color: "#000"
+                },
+                fill: {
+                    color: "#f00"
+                }
+            }),
+            diamond2 = mygraphic.getShape({
+                type: "path",
+                stroke: {
+                    weight: 1,
+                    color: "#000"
+                },
+                fill: {
+                    color: "#f00"
+                }
+            });
+
+            diamond1.moveTo(60, 60);
+            diamond1.lineTo(80, 40);
+            diamond1.lineTo(100, 60);
+            diamond1.lineTo(80, 80);
+            diamond1.lineTo(60, 60);
+            diamond1.end();
+
+			connector.moveTo(100, 60);
+            connector.lineTo(450, 220);
+            connector.end();
+
+            diamond2.moveTo(450, 220);
+            diamond2.lineTo(470, 200);
+            diamond2.lineTo(490, 220);
+            diamond2.lineTo(470, 240);
+            diamond2.lineTo(450, 220);
+            diamond2.end();
+    });
+</script>

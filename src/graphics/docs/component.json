@@ -1,0 +1,66 @@
+{
+	"name" : "graphics",
+	"displayName" : "Graphics",
+	"description" : "The Graphics module provides a JavaScript API for creating shapes in a variety of formats across all A-grade browsers.",
+	"author" : "tripp",
+	"tags" : ["graphics"],
+	"use" : ["graphics"],
+	"examples" : [
+		{
+			"name" : "graphics-simple",
+			"displayName" : "Basic Graphics Implementation",
+			"description" : "Shows how to create a Graphic instance and add shapes.",
+			"modules" : ["graphics"],
+			"tags" : ["graphics"],
+            		"hideTableOfContents": true
+		},
+		{
+			"name" : "graphics-path",
+			"displayName" : "Basic Path example.",
+			"description" : "Shows how to draw lines and polygons.",
+			"modules" : ["graphics"],
+			"tags" : ["graphics"],
+            		"hideTableOfContents": true
+		},
+		{
+			"name" : "graphics-gradients",
+			"displayName" : "Create Gradient Fills.",
+			"description" : "Shows how to create linear and radial gradient fills.",
+			"modules" : ["graphics"],
+			"tags" : ["graphics"],
+            		"hideTableOfContents": true
+		},
+		{
+			"name" : "graphics-drag",
+			"displayName" : "Basic drag with graphic object.",
+			"description" : "Shows how to add drag to a shape.",
+			"modules" : ["graphics"],
+			"tags" : ["graphics"],
+            		"hideTableOfContents": true
+		},
+		{
+			"name" : "graphics-transforms",
+			"displayName" : "Transform example.",
+			"description" : "Shows how to apply transforms to shape.",
+			"modules" : ["graphics"],
+			"tags" : ["graphics"],
+            		"hideTableOfContents": true
+		},
+		{
+			"name" : "graphics-customshape",
+			"displayName" : "Custom Shape Example",
+			"description" : "Shows how to use a custom shape with the Graphics module.",
+			"modules" : ["graphics"],
+			"tags" : ["graphics"],
+            		"hideTableOfContents": true
+		},
+		{
+			"name" : "graphics-muddyglass",
+			"displayName" : "Transparent Glass with Shadow Example",
+			"description" : "Shows to use the graphics api to draw a realistic glass.",
+			"modules" : ["graphics"],
+			"tags" : ["graphics"],
+            		"hideTableOfContents": true
+		}
+	]	
+}
