@@ -1392,11 +1392,6 @@
             "base-base"
         ]
     }, 
-    "pluginattr": {
-        "requires": [
-            "plugin"
-        ]
-    }, 
     "pluginhost": {
         "use": [
             "pluginhost-base", 
@@ -1560,6 +1555,11 @@
         }, 
         "requires": [
             "scrollview-base"
+        ]
+    }, 
+    "scrollview-list": {
+        "requires": [
+            "plugin"
         ]
     }, 
     "scrollview-paginator": {
