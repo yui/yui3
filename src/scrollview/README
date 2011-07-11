@@ -20,6 +20,7 @@ performance.
   flag, _forceHWTransforms, to allow for customization if required (H/W acceleration
   related glitches or changing the set of browsers for which we attempt to force it).
 
+* Created Scrollview-List plugin to add CSS Classnames to immediate <li> elements on scrollview.
 3.3.0
 
 * Fixed shared scrollbar node across multiple instances.
