@@ -8,26 +8,43 @@
  */
 Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     /**
+     * Storage for `xDisplayName` attribute.
+     *
+     * @property _xDisplayName
+     * @type String
      * @private
      */
     _xDisplayName: null,
 
     /**
+     * Storage for `yDisplayName` attribute.
+     *
+     * @property _yDisplayName
+     * @type String
      * @private
      */
     _yDisplayName: null,
     
     /**
+     * Th x-coordinate for the left edge of the series.
+     *
+     * @property _leftOrigin
+     * @type String
      * @private
      */
     _leftOrigin: null,
 
     /**
+     * The y-coordinate for the bottom edge of the series.
+     * 
+     * @property _bottomOrigin
+     * @type String
      * @private
      */
     _bottomOrigin: null,
 
     /**
+     * @method render
      * @private
      */
     render: function()
@@ -39,6 +56,9 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     },
 
     /**
+     * Adds event listeners.
+     *
+     * @method addListeners
      * @private
      */
     addListeners: function()
@@ -82,6 +102,10 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     },
   
     /**
+     * Event handler for the xAxisChange event.
+     *
+     * @method _xAxisChangeHandler
+     * @param {Object} e Event object.
      * @private
      */
     _xAxisChangeHandler: function(e)
@@ -92,6 +116,10 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     },
     
     /**
+     * Event handler the yAxisChange event.
+     *
+     * @method _yAxisChangeHandler
+     * @param {Object} e Event object.
      * @private
      */
     _yAxisChangeHandler: function(e)
@@ -102,12 +130,20 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     },
 
     /**
+     * Constant used to generate unique id.
+     *
+     * @property GUID
+     * @type String
      * @private
      */
     GUID: "yuicartesianseries",
 
     /**
-     * @private (protected)
+     * Event handler for xDataChange event.
+     *
+     * @method _xDataChangeHandler
+     * @param {Object} event Event object.
+     * @private 
      */
     _xDataChangeHandler: function(event)
     {
@@ -119,7 +155,11 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     },
 
     /**
-     * @private (protected)
+     * Event handler for yDataChange event.
+     *
+     * @method _yDataChangeHandler
+     * @param {Object} event Event object.
+     * @private 
      */
     _yDataChangeHandler: function(event)
     {
@@ -131,6 +171,10 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     },
 
     /**
+     * Checks to ensure that both xAxis and yAxis data are available. If so, set the `xData` and `yData` attributes and return `true`. Otherwise, return `false`.
+     *
+     * @method _updateAxisData
+     * @return Boolean
      * @private 
      */
     _updateAxisData: function()
@@ -157,6 +201,9 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     },
 
     /**
+     * Draws the series is the xAxis and yAxis data are both available.
+     *
+     * @method validate
      * @private
      */
     validate: function()
@@ -168,11 +215,10 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     },
 
     /**
-     * @protected
-     *
-     * Creates a <code>Graphic</code> instance.
+     * Creates a `Graphic` instance.
      *
      * @method _setCanvas
+     * @protected
      */
     _setCanvas: function()
     {
@@ -182,11 +228,10 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     },
 
     /**
-     * @protected
-     *
      * Calculates the coordinates for the series.
      *
      * @method setAreaData
+     * @protected
      */
     setAreaData: function()
     {
@@ -268,11 +313,10 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     },
 
     /**
-     * @protected
-     *
      * Draws the series.
      *
      * @method draw
+     * @protected
      */
     draw: function()
     {
@@ -310,18 +354,20 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     },
     
     /**
+     * Default value for plane offsets when the parent chart's `interactiveType` is `planar`. 
+     *
+     * @property _defautlPlaneOffset
      * @private
      */
     _defaultPlaneOffset: 4,
     
     /**
-     * @protected
-     *
-     * Gets the default value for the <code>styles</code> attribute. Overrides
+     * Gets the default value for the `styles` attribute. Overrides
      * base implementation.
      *
      * @method _getDefaultStyles
      * @return Object
+     * @protected
      */
     _getDefaultStyles: function()
     {
@@ -334,54 +380,49 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     },
 
     /**
-     * @protected
-     *
      * Collection of default colors used for lines in a series when not specified by user.
      *
      * @property _defaultLineColors
      * @type Array
+     * @protected
      */
     _defaultLineColors:["#426ab3", "#d09b2c", "#000000", "#b82837", "#b384b5", "#ff7200", "#779de3", "#cbc8ba", "#7ed7a6", "#007a6c"],
 
     /**
-     * @protected
-     *
      * Collection of default colors used for marker fills in a series when not specified by user.
      *
      * @property _defaultFillColors
      * @type Array
+     * @protected
      */
     _defaultFillColors:["#6084d0", "#eeb647", "#6c6b5f", "#d6484f", "#ce9ed1", "#ff9f3b", "#93b7ff", "#e0ddd0", "#94ecba", "#309687"],
     
     /**
-     * @protected
-     *
      * Collection of default colors used for marker borders in a series when not specified by user.
      *
      * @property _defaultBorderColors
      * @type Array
+     * @protected
      */
     _defaultBorderColors:["#205096", "#b38206", "#000000", "#94001e", "#9d6fa0", "#e55b00", "#5e85c9", "#adab9e", "#6ac291", "#006457"],
     
     /**
-     * @protected
-     *
      * Collection of default colors used for area fills, histogram fills and pie fills in a series when not specified by user.
      *
      * @property _defaultSliceColors
      * @type Array
+     * @protected
      */
     _defaultSliceColors: ["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"],
 
     /**
-     * @protected
-     *
      * Parses a color based on a series order and type.
      *
      * @method _getDefaultColor
      * @param {Number} index Index indicating the series order.
      * @param {String} type Indicates which type of object needs the color.
      * @return String
+     * @protected
      */
     _getDefaultColor: function(index, type)
     {
@@ -403,11 +444,11 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     },
     
     /**
-     * @protected
-     *
      * Shows/hides contents of the series.
      *
      * @method _handleVisibleChange
+     * @param {Object} e Event object.
+     * @protected
      */
     _handleVisibleChange: function(e) 
     {
@@ -458,6 +499,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          *
          * @attribute categoryDisplayName
          * @type String
+         * @readOnly
          */
         categoryDisplayName: {
             readOnly: true,
@@ -473,6 +515,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          *
          * @attribute valueDisplayName
          * @type String
+         * @readOnly
          */
         valueDisplayName: {
             readOnly: true,
@@ -495,7 +538,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         },
 
         /**
-         * Order of this instance of this <code>type</code>.
+         * Order of this instance of this `type`.
          *
          * @attribute order
          * @type Number
@@ -527,7 +570,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         ycoords: {},
         
         /**
-         * Reference to the <code>Graph</code> in which the series is drawn into.
+         * Reference to the `Graph` in which the series is drawn into.
          *
          * @attribute graph
          * @type Graph
@@ -535,7 +578,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         graph: {},
 
         /**
-         * Reference to the <code>Axis</code> instance used for assigning 
+         * Reference to the `Axis` instance used for assigning 
          * x-values to the graph.
          *
          * @attribute xAxis
@@ -544,7 +587,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         xAxis: {},
         
         /**
-         * Reference to the <code>Axis</code> instance used for assigning 
+         * Reference to the `Axis` instance used for assigning 
          * y-values to the graph.
          *
          * @attribute yAxis
@@ -554,7 +597,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         
         /**
          * Indicates which array to from the hash of value arrays in 
-         * the x-axis <code>Axis</code> instance.
+         * the x-axis `Axis` instance.
          *
          * @attribute xKey
          * @type String
@@ -563,7 +606,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
 
         /**
          * Indicates which array to from the hash of value arrays in 
-         * the y-axis <code>Axis</code> instance.
+         * the y-axis `Axis` instance.
          *
          * @attribute yKey
          * @type String

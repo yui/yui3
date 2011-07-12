@@ -8,16 +8,27 @@
  */
 Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], { 
     /**
+     * Image map used for interactivity when rendered with canvas.
+     *
+     * @property _map
+     * @type HTMLElement
      * @private
      */
     _map: null,
 
     /**
+     * Image used for image map when rendered with canvas.
+     *
+     * @property _image
+     * @type HTMLElement
      * @private
      */
     _image: null,
 
     /**
+     * Creates or updates the image map when rendered with canvas.
+     *
+     * @method _setMap
      * @private
      */
     _setMap: function()
@@ -51,16 +62,25 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
     },
 
     /**
+     * Storage for `categoryDisplayName` attribute.
+     *
+     * @property _categoryDisplayName
      * @private
      */
     _categoryDisplayName: null,
     
     /**
+     * Storage for `valueDisplayName` attribute.
+     *
+     * @property _valueDisplayName
      * @private
      */
     _valueDisplayName: null,
 
     /**
+     * Adds event listeners.
+     *
+     * @method addListeners
      * @private
      */
     addListeners: function()
@@ -83,6 +103,9 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
     },
     
     /**
+     * Draws the series.
+     *
+     * @method validate
      * @private
      */
     validate: function()
@@ -92,6 +115,10 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
     },
 
     /**
+     * Event handler for the categoryAxisChange event.
+     *
+     * @method _categoryAxisChangeHandler
+     * @param {Object} e Event object.
      * @private
      */
     _categoryAxisChangeHandler: function(e)
@@ -102,6 +129,10 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
     },
     
     /**
+     * Event handler for the valueAxisChange event.
+     *
+     * @method _valueAxisChangeHandler
+     * @param {Object} e Event object.
      * @private
      */
     _valueAxisChangeHandler: function(e)
@@ -114,14 +145,18 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
     /**
      * Constant used to generate unique id.
      *
+     * @property GUID
+     * @type String
      * @private
      */
     GUID: "pieseries",
 	
     /**
-     * @private (protected)
-     * Handles updating the graph when the x < code>Axis</code> values
-     * change.
+     * Event handler for categoryDataChange event.
+     *
+     * @method _categoryDataChangeHandler
+     * @param {Object} event Event object.
+     * @private 
      */
     _categoryDataChangeHandler: function(event)
     {
@@ -132,9 +167,11 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
     },
 
     /**
-     * @private (protected)
-     * Handles updating the chart when the y <code>Axis</code> values
-     * change.
+     * Event handler for valueDataChange event.
+     *
+     * @method _valueDataChangeHandler
+     * @param {Object} event Event object.
+     * @private 
      */
     _valueDataChangeHandler: function(event)
     {
@@ -145,11 +182,10 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
     },
    
     /**
-     * @protected
-     *
      * Draws the series. Overrides the base implementation.
      *
      * @method draw
+     * @protected
      */
     draw: function()
     {
@@ -165,7 +201,10 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
     },
 
     /**
-     * @private
+     * Draws the markers
+     *
+     * @method drawPlots
+     * @protected
      */
     drawPlots: function()
     {
@@ -287,6 +326,15 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         this._clearMarkerCache();
     },
 
+    /**
+     *  Adds an interactive map when rendering in canvas.
+     *
+     *  @method _addHotspot
+     *  @param {Object} cfg Object containing data used to draw the hotspot
+     *  @param {Number} seriesIndex Index of series in the `seriesCollection`.
+     *  @param {Number} index Index of the marker using the hotspot.
+     *  @private
+     */
     _addHotspot: function(cfg, seriesIndex, index)
     {
         var areaNode = DOCUMENT.createElement("area"),
@@ -338,10 +386,10 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
     /**
      * Resizes and positions markers based on a mouse interaction.
      *
-     * @protected
      * @method updateMarkerState
      * @param {String} type state of the marker
      * @param {Number} i index of the marker
+     * @protected
      */
     updateMarkerState: function(type, i)
     {
@@ -382,6 +430,9 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
     },
     
     /**
+     * Creates a cache of markers for reuse.
+     *
+     * @method _createMarkerCache
      * @private
      */
     _clearMarkerCache: function()
@@ -401,6 +452,10 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
     },
 
     /**
+     * Gets the default style values for the markers.
+     *
+     * @method _getPlotDefaults
+     * @return Object
      * @private
      */
     _getPlotDefaults: function()
@@ -426,28 +481,49 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
     },
 
     /**
-     * @private
+     * Collection of default colors used for lines in a series when not specified by user.
+     *
+     * @property _defaultLineColors
+     * @type Array
+     * @protected
      */
     _defaultLineColors:["#426ab3", "#d09b2c", "#000000", "#b82837", "#b384b5", "#ff7200", "#779de3", "#cbc8ba", "#7ed7a6", "#007a6c"],
 
     /**
-     * @private
+     * Collection of default colors used for marker fills in a series when not specified by user.
+     *
+     * @property _defaultFillColors
+     * @type Array
+     * @protected
      */
     _defaultFillColors:["#6084d0", "#eeb647", "#6c6b5f", "#d6484f", "#ce9ed1", "#ff9f3b", "#93b7ff", "#e0ddd0", "#94ecba", "#309687"],
     
     /**
-     * @private
+     * Collection of default colors used for marker borders in a series when not specified by user.
+     *
+     * @property _defaultBorderColors
+     * @type Array
+     * @protected
      */
     _defaultBorderColors:["#205096", "#b38206", "#000000", "#94001e", "#9d6fa0", "#e55b00", "#5e85c9", "#adab9e", "#6ac291", "#006457"],
     
     /**
-     * @private
+     * Collection of default colors used for area fills, histogram fills and pie fills in a series when not specified by user.
+     *
+     * @property _defaultSliceColors
+     * @type Array
+     * @protected
      */
     _defaultSliceColors: ["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"],
 
     /**
-     * @private
-     * @description Colors used if style colors are not specified
+     * Colors used if style colors are not specified
+     *
+     * @method _getDefaultColor
+     * @param {Number} index Index indicating the series order.
+     * @param {String} type Indicates which type of object needs the color.
+     * @return String
+     * @protected
      */
     _getDefaultColor: function(index, type)
     {
@@ -481,7 +557,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         },
         
         /**
-         * Order of this instance of this <code>type</code>.
+         * Order of this instance of this `type`.
          *
          * @attribute order
          * @type Number
@@ -489,7 +565,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         order: {},
 
         /**
-         * Reference to the <code>Graph</code> in which the series is drawn into.
+         * Reference to the `Graph` in which the series is drawn into.
          *
          * @attribute graph
          * @type Graph
@@ -497,7 +573,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         graph: {},
         
         /**
-         * Reference to the <code>Axis</code> instance used for assigning 
+         * Reference to the `Axis` instance used for assigning 
          * category values to the graph.
          *
          * @attribute categoryAxis
@@ -513,7 +589,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         },
         
         /**
-         * Reference to the <code>Axis</code> instance used for assigning 
+         * Reference to the `Axis` instance used for assigning 
          * series values to the graph.
          *
          * @attribute categoryAxis
@@ -530,7 +606,10 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
 
         /**
          * Indicates which array to from the hash of value arrays in 
-         * the category <code>Axis</code> instance.
+         * the category `Axis` instance.
+         *
+         * @attribute categoryKey
+         * @type String
          */
         categoryKey: {
             value: null,
@@ -542,7 +621,10 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         },
         /**
          * Indicates which array to from the hash of value arrays in 
-         * the value <code>Axis</code> instance.
+         * the value `Axis` instance.
+         *
+         * @attribute valueKey
+         * @type String
          */
         valueKey: {
             value: null,
@@ -592,18 +674,20 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         },
         
         /**
+         * @attribute slices
+         * @type Array
          * @private
          */
         slices: null
         
         /**
-         * Style properties used for drawing markers. This attribute is inherited from <code>MarkerSeries</code>. Below are the default values:
+         * Style properties used for drawing markers. This attribute is inherited from `MarkerSeries`. Below are the default values:
          *  <dl>
          *      <dt>fill</dt><dd>A hash containing the following values:
          *          <dl>
          *              <dt>colors</dt><dd>An array of colors to be used for the marker fills. The color for each marker is retrieved from the 
          *              array below:<br/>
-         *              <code>["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"]</code>
+         *              `["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"]`
          *              </dd>
          *              <dt>alphas</dt><dd>An array of alpha references (Number from 0 to 1) indicating the opacity of each marker fill. The default value is [1].</dd>
          *          </dl>
@@ -612,14 +696,14 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
          *          <dl>
          *              <dt>color</dt><dd>An array of colors to be used for the marker borders. The color for each marker is retrieved from the
          *              array below:<br/>
-         *              <code>["#205096", "#b38206", "#000000", "#94001e", "#9d6fa0", "#e55b00", "#5e85c9", "#adab9e", "#6ac291", "#006457"]</code>
+         *              `["#205096", "#b38206", "#000000", "#94001e", "#9d6fa0", "#e55b00", "#5e85c9", "#adab9e", "#6ac291", "#006457"]`
          *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the marker border. The default value is 1.</dd>
          *              <dt>weight</dt><dd>Number indicating the width of the border. The default value is 1.</dd>
          *          </dl>
          *      </dd>
-         *      <dt>over</dt><dd>hash containing styles for markers when highlighted by a <code>mouseover</code> event. The default 
+         *      <dt>over</dt><dd>hash containing styles for markers when highlighted by a `mouseover` event. The default 
          *      values for each style is null. When an over style is not set, the non-over value will be used. For example,
-         *      the default value for <code>marker.over.fill.color</code> is equivalent to <code>marker.fill.color</code>.</dd>
+         *      the default value for `marker.over.fill.color` is equivalent to `marker.fill.color`.</dd>
          *  </dl>
          *
          * @attribute styles

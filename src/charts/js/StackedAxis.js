@@ -17,7 +17,10 @@ StackedAxis.NAME = "stackedAxis";
 Y.extend(StackedAxis, Y.NumericAxis,
 {
     /**
-     * @private
+     * Calculates the maximum and minimum values for the `Axis`.
+     *
+     * @method _updateMinAndMax
+     * @private 
      */
     _updateMinAndMax: function()
     {

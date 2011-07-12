@@ -23,7 +23,7 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
     /**
      * @protected
      *
-     * Method used by <code>styles</code> setter. Overrides base implementation.
+     * Method used by `styles` setter. Overrides base implementation.
      *
      * @method _setStyles
      * @param {Object} newStyles Hash of properties to update.
@@ -41,7 +41,7 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
     /**
      * @protected
      *
-     * Gets the default value for the <code>styles</code> attribute. Overrides
+     * Gets the default value for the `styles` attribute. Overrides
      * base implementation.
      *
      * @method _getDefaultStyles
@@ -67,12 +67,12 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
         }
         
         /**
-         * Style properties used for drawing area fills. This attribute is inherited from <code>Renderer</code>. Below are the default values:
+         * Style properties used for drawing area fills. This attribute is inherited from `Renderer`. Below are the default values:
          *
          *  <dl>
          *      <dt>color</dt><dd>The color of the fill. The default value is determined by the order of the series on the graph. The color will be 
          *      retrieved from the following array:
-         *      <code>["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"]</code>
+         *      `["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"]`
          *      </dd>
          *      <dt>alpha</dt><dd>Number between 0 and 1 that indicates the opacity of the fill. The default value is 1</dd>
          *  </dl>

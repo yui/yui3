@@ -8,6 +8,8 @@ function Lines(){}
 
 Lines.prototype = {
     /**
+     * @property _lineDefaults
+     * @type Object
      * @private
      */
     _lineDefaults: null,
@@ -237,7 +239,7 @@ Lines.prototype = {
     },
 
     /**
-     * Default values for <code>styles</code> attribute.
+     * Default values for `styles` attribute.
      *
      * @method _getLineDefaults
      * @return Object

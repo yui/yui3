@@ -8,11 +8,10 @@ function Histogram(){}
 
 Histogram.prototype = {
     /**
-     * @protected
-     *
      * Draws the series.
      *
      * @method drawSeries
+     * @protected
      */
     drawSeries: function()
     {
@@ -113,11 +112,19 @@ Histogram.prototype = {
     },
     
     /**
-     * @private
+     * Collection of default colors used for marker fills in a series when not specified by user.
+     *
+     * @property _defaultFillColors
+     * @type Array
+     * @protected
      */
     _defaultFillColors: ["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"],
     
     /**
+     * Gets the default style values for the markers.
+     *
+     * @method _getPlotDefaults
+     * @return Object
      * @private
      */
     _getPlotDefaults: function()

@@ -7,6 +7,10 @@
  */
 Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
     /**
+     * Calculates and returns a `seriesCollection`.
+     *
+     * @method _getSeriesCollection
+     * @return Array
      * @private
      */
     _getSeriesCollection: function()
@@ -45,6 +49,11 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
     },
 
     /**
+     * Creates `Axis` instances.
+     *
+     * @method _parseAxes
+     * @param {Object} val Object containing `Axis` instances or objects in which to construct `Axis` instances.
+     * @return Object
      * @private
      */
     _parseAxes: function(hash)
@@ -93,6 +102,9 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
     },
 
     /**
+     * Adds axes to the chart.
+     *
+     * @method _addAxes
      * @private
      */
     _addAxes: function()
@@ -130,6 +142,9 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
     },
 
     /**
+     * Renders the Graph.
+     *
+     * @method _addSeries
      * @private
      */
     _addSeries: function()
@@ -146,6 +161,10 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
     },
 
     /**
+     * Parse and sets the axes for the chart.
+     *
+     * @method _parseSeriesAxes
+     * @param {Array} c A collection `PieSeries` instance.
      * @private
      */
     _parseSeriesAxes: function(c)
@@ -187,6 +206,10 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
     },
 
     /**
+     * Generates and returns a key-indexed object containing `Axis` instances or objects used to create `Axis` instances.
+     *
+     * @method _getDefaultAxes
+     * @return Object
      * @private
      */
     _getDefaultAxes: function()
@@ -228,6 +251,7 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
      * @method getSeriesItem
      * @param series Reference to a series.
      * @param index Index of the specified item within a series.
+     * @return Object
      */
     getSeriesItems: function(series, index)
     {
@@ -247,6 +271,10 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
     },
 
     /**
+     * Handler for sizeChanged event.
+     *
+     * @method _sizeChanged
+     * @param {Object} e Event object.
      * @private
      */
     _sizeChanged: function(e)
@@ -255,6 +283,9 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
     },
 
     /**
+     * Redraws the chart instance.
+     *
+     * @method _redraw
      * @private
      */
     _redraw: function()
