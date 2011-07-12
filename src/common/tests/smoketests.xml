@@ -76,6 +76,9 @@
         <url>yui/tests/array.html</url>
         <url>substitute/tests/substitute.html</url>
         <url>loader/tests/index.html</url>
+        <url>scrollview/tests/scrollview-list-unit-test.html</url>
+        <url>widget-modality/tests/unit-tests.html</url>
+
 
         <!--
         <url>test/tests/testformat.html</url>

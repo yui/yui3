@@ -918,6 +918,7 @@ Y.extend(Widget, Y.Base, {
     /**
      * Sets the disabled state for the UI
      *
+     * @method _uiSetDisabled
      * @protected
      * @param {boolean} val
      */
@@ -928,6 +929,7 @@ Y.extend(Widget, Y.Base, {
     /**
      * Sets the focused state for the UI
      *
+     * @method _uiSetFocused
      * @protected
      * @param {boolean} val
      * @param {string} src String representing the source that triggered an update to 

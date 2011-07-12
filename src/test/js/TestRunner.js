@@ -772,7 +772,7 @@
              * @return {Void}
              * @static
              * @private
-             * @name _runTest
+             * @method _runTest
              */
             _runTest : function (node) {
             

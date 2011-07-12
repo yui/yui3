@@ -1,11 +1,12 @@
+    /**
+     * @module test
+     */
 
-    
     /**
      * The DateAssert object provides functions to test JavaScript Date objects
      * for a variety of cases.
      *
      * @class DateAssert
-     * @namespace
      * @static
      */
      

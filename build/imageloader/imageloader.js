@@ -5,7 +5,6 @@ YUI.add('imageloader', function(Y) {
  * enabling faster load times and a more responsive UI.
  *
  * @module imageloader
- * @requires base-base, node-style, node-screen
  */
 
 
@@ -364,6 +363,7 @@ YUI.add('imageloader', function(Y) {
          * node is an img and the classNameAction is "enhanced", then node
          * class name is removed and also the src attribute is set to the 
          * image URL as well as clearing the style background image.
+         * @method _updateNodeClassName
          * @param node {Y.Node} The node to act on.
          * @private
          */

@@ -8,6 +8,7 @@
         <ant antfile="build.scrollview-base-ie.xml" target="local" />
     	<ant antfile="build.scrollview-scrollbars.xml" target="local" />
     	<ant antfile="build.scrollview-paginator.xml" target="local" />
+        <ant antfile="build.scrollview-list.xml" target="local" />
     </target>
 
     <target name="deploy">
@@ -16,6 +17,7 @@
         <ant antfile="build.scrollview-base-ie.xml" target="deploy" />
     	<ant antfile="build.scrollview-scrollbars.xml" target="deploy" />
     	<ant antfile="build.scrollview-paginator.xml" target="deploy" />
+        <ant antfile="build.scrollview-list.xml" target="deploy" />
     </target>
 
     <target name="all">
@@ -24,6 +26,7 @@
         <ant antfile="build.scrollview-base-ie.xml" target="all" />
     	<ant antfile="build.scrollview-scrollbars.xml" target="all" />
     	<ant antfile="build.scrollview-paginator.xml" target="all" />
+        <ant antfile="build.scrollview-list.xml" target="all" />
     </target>
 
     <target name="clean">
@@ -32,6 +35,7 @@
         <ant antfile="build.scrollview-base-ie.xml" target="clean" />
     	<ant antfile="build.scrollview-scrollbars.xml" target="clean" />
     	<ant antfile="build.scrollview-paginator.xml" target="clean" />
+        <ant antfile="build.scrollview-list.xml" target="clean" />
     </target>
 
 </project>

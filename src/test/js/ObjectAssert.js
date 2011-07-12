@@ -1,3 +1,6 @@
+    /**
+     * @module test
+     */
 
     /**
      * The ObjectAssert object provides functions to test JavaScript objects

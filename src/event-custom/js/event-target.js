@@ -125,6 +125,7 @@ var L = Y.Lang,
 
 
 ET.prototype = {
+    constructor: ET,
 
     /**
      * Listen to a custom event hosted by this object one time.
@@ -585,6 +586,11 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      * turned on or off (publish can't be turned off before it
      * it published) by setting the events 'monitor' config.
      *
+     * @method _monitor
+     * @param what {String} 'attach', 'detach', 'fire', or 'publish'
+     * @param type {String} Name of the event being monitored
+     * @param o {Object} Information about the event interaction, such as
+     *                  fire() args, subscription category, publish config
      * @private
      */
     _monitor: function(what, type, o) {
