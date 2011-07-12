@@ -1,0 +1,70 @@
+<style scoped>
+#custom-doc { width: 95%; min-width: 950px; }
+#pagetitle {background-image: url(../../assets/bg_hd.gif);}
+#mygraphiccontainer {
+    position: relative;
+    width: 700px;
+    height:200px;
+}
+</style>
+<div class="intro">
+<p>
+This example shows how to drag a shape instance. When using `DD-Drag`, you normally assign an `HTMLElement` to the drag's `node` attribute. Since shape instances act as a normalization layer across browsers, you never directly interact with their
+underlying dom elements. This is true when using drag as well. When creating a drag for a shape, assign the shape instance to the drag's `node` attribute.
+a shape.
+</p>
+</div>
+<div class="example">
+{{>graphics-drag-source}}
+</div>
+
+<h2>HTML</h2>
+```
+<div id="mygraphiccontainer"></div>
+```
+
+<h2>CSS</h2>
+```
+#mygraphiccontainer {
+    position: relative;
+    width: 700px;
+    height:200px;
+}
+```
+
+<h2>Javascript</h2>
+
+<p>Create a `Graphic` instance.</p>
+```
+var mygraphic = new Y.Graphic({render: "#mygraphiccontainer"}); 
+```
+
+<p>Create a `Rect` instance with the `getShape` method.</p>
+```
+    var myrect = mygraphic.getShape({
+        type: "rect",
+        stroke: {
+            color:"#000",
+            weight: 1
+        },
+        fill: {
+            color: "#fc0"
+        },
+        width:40,
+        height:50
+    });
+```
+
+<p>Create a drag instance for the shape.</p>
+
+```
+    var mydrag = new Y.DD.Drag({
+        node: myrect
+    });
+```
+
+<h2>Complete Example Source</h2>
+
+```
+{{>graphics-drag-source}}
+```

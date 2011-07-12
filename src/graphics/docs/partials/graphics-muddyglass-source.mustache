@@ -1,0 +1,97 @@
+<div id="mygraphiccontainer"></div>
+<script>
+    YUI({filter:"raw"}).use('graphics', function (Y) 
+    { 
+        var mygraphic = new Y.Graphic({render:"#mygraphiccontainer"});
+        var shadow = mygraphic.getShape({
+            type: "ellipse",
+            stroke: {
+                color: "#ddd",
+                weight: 0
+            },
+            fill: {
+                type: "radial",
+                stops: [
+                    {color: "#000", opacity: 0.7, offset: 0},
+                    {color: "#000", opacity: 0.4, offset: 0.5},
+                    {color: "#000", opacity: 0.1, offset: 0.7}
+                ],
+                cx: .6,
+                cy: .6,
+                fx: 0.1,
+                fy: 0.3,
+                r: 0.8
+            },
+            width: 280,
+            height: 20,
+            x:318,
+            y:420
+        });
+
+        var milk = mygraphic.getShape({
+            x: 314,
+            y: 180,
+            type: "rect",
+            stroke: {
+                color:"#6c3f27",
+                weight: 1,
+                opacity:0.3
+            },
+            fill: {
+                type: "linear",
+                rotation: 0,
+                stops: [
+                    {color: "#d1c4bd", opacity:0.9, offset: 0},
+                    {color: "#a78c7e", opacity: 0.9, offset: 0.4},
+                    {color: "#6c3f27", opacity: 0.9, offset: 0.7}
+                ]
+            },
+            width:142,
+            height:230
+        });
+			
+        var myrect = mygraphic.getShape({
+            x: 310,
+            y: 110,
+            type: "rect",
+            stroke: {
+                color:"#90ad8c",
+                weight: 1,
+                opacity:0.6
+            },
+            fill: {
+                type: "linear",
+                rotation: 90,
+                stops: [
+                    {color: "#90ad8c", opacity:0.3, offset: 0},
+                    {color: "#819c7d", opacity: 0.3, offset: 0.8},
+                    {color: "#40563d", opacity: 0.7, offset: 1.0}
+                ]
+            },
+            width:150,
+            height:325
+        });
+
+        var reflect = mygraphic.getShape({
+            x: 310,
+            y: 113,
+            type: "rect",
+            stroke: {
+                color:"#90ad8c",
+                weight: 1,
+                opacity:0.0
+            },
+            fill: {
+                type: "linear",
+                rotation: 0,
+                stops: [
+                    {color: "#fff", opacity:0.0, offset: 0.2},
+                    {color: "#fff", opacity: 0.4, offset: 0.3},
+                    {color: "#fff", opacity: 0.0, offset: 0.4}
+                ]
+            },
+            width:150,
+            height:318
+        });
+    });
+</script>

@@ -145,15 +145,6 @@ VMLDrawing.prototype = {
         this._currentY = y;
         return this;
     },
-    
-    /**
-     * Completes a drawing operation. 
-     *
-     * @method end
-     */
-    end: function() {
-        this._draw();
-    },
 
     /**
      * Draws a line segment using the current line style from the current drawing position to the specified x and y coordinates.
@@ -200,6 +191,71 @@ VMLDrawing.prototype = {
         this._trackSize(x, y);
         this._currentX = x;
         this._currentY = y;
+    },
+
+    /**
+     * Draws the graphic.
+     *
+     * @method _draw
+     * @private
+     */
+    _closePath: function()
+    {
+        var fill = this.get("fill"),
+            stroke = this.get("stroke"),
+            node = this.node,
+            w = this.get("width"),
+            h = this.get("height"),
+            path = this._path,
+            pathEnd = "";
+        node.style.visible = "hidden";
+        this._fillChangeHandler();
+        this._strokeChangeHandler();
+        if(path)
+        {
+            if(fill && fill.color)
+            {
+                pathEnd += ' x';
+            }
+            if(stroke)
+            {
+                pathEnd += ' e';
+            }
+        }
+        if(path)
+        {
+            node.path = path + pathEnd;
+        }
+        if(w && h)
+        {
+            node.coordSize =  w + ', ' + h;
+            node.style.position = "absolute";
+            node.style.width = w + "px";
+            node.style.height = h + "px";
+        }
+        this._path = path;
+        node.style.visible = "visible";
+        this._updateTransform();
+    },
+
+    /**
+     * Completes a drawing operation. 
+     *
+     * @method end
+     */
+    end: function()
+    {
+        this._closePath();
+    },
+
+    /**
+     * Clears the path.
+     *
+     * @method clear
+     */
+    clear: function()
+    {
+		this._path = "";
     },
 
     /**

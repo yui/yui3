@@ -81,8 +81,9 @@ var imp = Y.config.doc && Y.config.doc.implementation,
     useLazyFacade = Y.config.lazyEventFacade,
 
     buttonMap = {
-        2: 3,
-        4: 2
+        0: 1, // left click
+        4: 2, // middle click
+        2: 3  // right click
     },
     relatedTargetMap = {
         mouseout: 'toElement',
@@ -134,7 +135,7 @@ var imp = Y.config.doc && Y.config.doc.implementation,
 
             // for click events, which is normalized for which mouse button was
             // clicked.
-            if (e.button) {
+            if (e.button !== undefined) {
                 this.which = this.button = buttonMap[e.button] || e.button;
             }
 
@@ -199,7 +200,7 @@ IELazyFacade._lazyProperties = {
     button: function () {
         var e = this._event;
 
-        return (e.button) ?
+        return (e.button !== undefined) ?
             (buttonMap[e.button] || e.button) :
             (e.which || e.charCode || this.charCode);
     },

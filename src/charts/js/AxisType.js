@@ -8,6 +8,7 @@
  */
 Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     /**
+     * @method bindUI
      * @private
      */
     bindUI: function()
@@ -28,6 +29,10 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     },
 
     /**
+     * Handles changes to `dataProvider`.
+     *
+     * @method _dataProviderChangeHandler
+     * @param {Object} e Event object.
      * @private
      */
     _dataProviderChangeHandler: function(e)
@@ -52,41 +57,74 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     },
 
     /**
+     * Constant used to generate unique id.
+     *
+     * @property GUID
+     * @type String
      * @private
      */
     GUID: "yuibaseaxis",
 	
     /**
+     * Type of data used in `Axis`.
+     *
+     * @property _type
+     * @readOnly
      * @private
      */
     _type: null,
 	
     /**
+     * Storage for `setMaximum` attribute.
+     *
+     * @property _setMaximum
+     * @type Object
      * @private
      */
     _setMaximum: null,
 	
     /**
+     * Storage for `dataMaximum` attribute.
+     *
+     * @property _dataMaximum
+     * @type Object
      * @private
      */
     _dataMaximum: null,
 	
     /**
+     * Storage for `setMinimum` attribute.
+     *
+     * @property _setMinimum
+     * @type Object
      * @private
      */
     _setMinimum: null,
 	
     /**
+     * Reference to data array.
+     *
+     * @property _data
+     * @type Array
      * @private
      */
     _data: null,
 
     /**
+     * Indicates whether the all data is up to date.
+     *
+     * @property _updateTotalDataFlag
+     * @type Boolean
      * @private
      */
     _updateTotalDataFlag: true,
 
     /**
+     * Storage for `dataReady` attribute.
+     *
+     * @property _dataReady
+     * @type Boolean
+     * @readOnly
      * @private
      */
     _dataReady: false,
@@ -94,6 +132,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     /**
      * Adds an array to the key hash.
      *
+     * @method addKey
      * @param value Indicates what key to use in retrieving
      * the array.
      */
@@ -103,6 +142,12 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
 	},
 
     /**
+     * Gets an array of values based on a key.
+     *
+     * @method _getKeyArray
+     * @param {String} key Value key associated with the data array.
+     * @param {Array} data Array in which the data resides.
+     * @return Array
      * @private
      */
     _getKeyArray: function(key, data)
@@ -120,6 +165,11 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     },
 
     /**
+     * Sets data by key
+     *
+     * @method _setDataByKey
+     * @param {String} key Key value to use.
+     * @param {Array} data Array to use.
      * @private 
      */
     _setDataByKey: function(key, data)
@@ -139,6 +189,9 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     },
 
     /**
+     * Updates the total data array.
+     *
+     * @method _updateTotalData
      * @private
      */
     _updateTotalData: function()
@@ -210,6 +263,9 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     },
 
     /**
+     * Calculates the maximum and minimum values for the `Axis`.
+     *
+     * @method _updateMinAndMax
      * @private 
      */
     _updateMinAndMax: function() 
@@ -291,8 +347,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
      * Gets the distance that the first and last ticks are offset from there respective
      * edges.
      *
-     * @attribute getEdgeOffset
-     * @type Method
+     * @method getEdgeOffset
      * @param {Number} ct Number of ticks on the axis.
      * @param {Number} l Length (in pixels) of the axis.
      * @return Number
@@ -323,6 +378,10 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     },
 
     /**
+     * Updates the `Axis` after a change in keys.
+     *
+     * @method _keyChangeHandler
+     * @param {Object} e Event object.
      * @private
      */
     _keyChangeHandler: function(e)
@@ -416,7 +475,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
         },
 
         /**
-         * Instance of <code>ChartDataProvider</code> that the class uses
+         * Instance of `ChartDataProvider` that the class uses
          * to build its own data.
          *
          * @attribute dataProvider
@@ -430,8 +489,8 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
         },
 
         /**
-         * The maximum value contained in the <code>data</code> array. Used for
-         * <code>maximum</code> when <code>autoMax</code> is true.
+         * The maximum value contained in the `data` array. Used for
+         * `maximum` when `autoMax` is true.
          *
          * @attribute dataMaximum
          * @type Number
@@ -478,8 +537,8 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
         },
 
         /**
-         * The minimum value contained in the <code>data</code> array. Used for
-         * <code>minimum</code> when <code>autoMin</code> is true.
+         * The minimum value contained in the `data` array. Used for
+         * `minimum` when `autoMin` is true.
          *
          * @attribute dataMinimum
          * @type Number
@@ -569,7 +628,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
 
         /**
          * Array containing all the keys in the axis.
-         *
+        
          * @attribute keyCollection
          * @type Array
          */
@@ -592,13 +651,15 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
         },
         
         /**
-         * Method used for formatting a label.
+         * Method used for formatting a label. This attribute allows for the default label formatting method to overridden. The method use would need
+         * to implement the arguments below and return a `String`.
+         * <dl>
+         *      <dt>val</dt><dd>Label to be formatted. (`String`)</dd>
+         *      <dt>format</dt><dd>Template for formatting label. (optional)</dd>
+         * </dl>
          *
          * @attribute labelFunction
          * @type Function
-         * @param {String} val label to be formatted.
-         * @param {Object} format temlate for formatting a label.
-         * @return String
          */
         labelFunction: {
             value: function(val, format)

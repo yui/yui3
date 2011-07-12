@@ -16,22 +16,36 @@ CategoryAxis.NAME = "categoryAxis";
 Y.extend(CategoryAxis, Y.AxisType,
 {
     /**
+     * Object storing key data.
+     *
+     * @property _indices
      * @private
      */
     _indices: null,
 
     /**
+     * Constant used to generate unique id.
+     *
+     * @property GUID
+     * @type String
      * @private
      */
     GUID: "yuicategoryaxis",
 
     /**
+     * Type of data used in `Axis`.
+     *
+     * @property _dataType
+     * @readOnly
      * @private
      */
     _type: "category",
         
     /**
-     * @private
+     * Calculates the maximum and minimum values for the `Axis`.
+     *
+     * @method _updateMinAndMax
+     * @private 
      */
     _updateMinAndMax: function()
     {
@@ -40,6 +54,12 @@ Y.extend(CategoryAxis, Y.AxisType,
     },
 
     /**
+     * Gets an array of values based on a key.
+     *
+     * @method _getKeyArray
+     * @param {String} key Value key associated with the data array.
+     * @param {Array} data Array in which the data resides.
+     * @return Array
      * @private
      */
     _getKeyArray: function(key, data)
@@ -64,7 +84,12 @@ Y.extend(CategoryAxis, Y.AxisType,
     },
 
     /**
-     * @private
+     * Sets data by key
+     *
+     * @method _setDataByKey
+     * @param {String} key Key value to use.
+     * @param {Array} data Array to use.
+     * @private 
      */
     _setDataByKey: function(key)
     {
@@ -114,6 +139,8 @@ Y.extend(CategoryAxis, Y.AxisType,
      * Returns the total number of majorUnits that will appear on an axis.
      *
      * @method getTotalMajorUnits
+     * @param {Object} majorUnit Object containing properties related to the majorUnit.
+     * @param {Number} len Length of the axis.
      * @return Number
      */
     getTotalMajorUnits: function(majorUnit, len)

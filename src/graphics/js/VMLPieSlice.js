@@ -6,7 +6,7 @@ VMLPieSlice = function()
 	VMLPieSlice.superclass.constructor.apply(this, arguments);
 };
 VMLPieSlice.NAME = "vmlPieSlice";
-Y.extend(VMLPieSlice, Y.VMLPath, {
+Y.extend(VMLPieSlice, Y.VMLShape, Y.mix({
     /**
      * Indicates the type of shape
      *
@@ -15,21 +15,6 @@ Y.extend(VMLPieSlice, Y.VMLPath, {
      * @type String
      */
     _type: "shape",
-	/**
-	 * Initializes the shape
-	 *
-	 * @private
-	 * @method _initialize
-	 */
-	initializer: function(cfg)
-	{
-		var host = this,
-            graphic = cfg.graphic;
-		host.createNode(); 
-        host._graphic = graphic;
-        host._updateHandler();
-        graphic.addToRedrawQueue(this);
-	},
 
 	/**
 	 * Change event listener
@@ -37,7 +22,7 @@ Y.extend(VMLPieSlice, Y.VMLPath, {
 	 * @private
 	 * @method _updateHandler
 	 */
-	_updateHandler: function(e)
+	_draw: function(e)
 	{
         var x = this.get("cx"),
             y = this.get("cy"),
@@ -46,10 +31,10 @@ Y.extend(VMLPieSlice, Y.VMLPath, {
             radius = this.get("radius");
         this.clear();
         this.drawWedge(x, y, startAngle, arc, radius);
-		this._draw();
+		this.end();
 	}
- });
-VMLPieSlice.ATTRS = Y.mix(Y.VMLPath.ATTRS, {
+ }, Y.VMLDrawing.prototype));
+VMLPieSlice.ATTRS = Y.mix({
     cx: {
         value: 0
     },
@@ -86,5 +71,5 @@ VMLPieSlice.ATTRS = Y.mix(Y.VMLPath.ATTRS, {
     radius: {
         value: 0
     }
-});
+}, Y.VMLShape.ATTRS);
 Y.VMLPieSlice = VMLPieSlice;

@@ -119,7 +119,7 @@ TopAxisLayout.prototype = {
     },
     
     /**
-     * Updates the value for the <code>maxLabelSize</code> for use in calculating total size.
+     * Updates the value for the `maxLabelSize` for use in calculating total size.
      *
      * @method updateMaxLabelSize
      * @param {HTMLElement} label to measure

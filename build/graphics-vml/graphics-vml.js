@@ -146,15 +146,6 @@ VMLDrawing.prototype = {
         this._currentY = y;
         return this;
     },
-    
-    /**
-     * Completes a drawing operation. 
-     *
-     * @method end
-     */
-    end: function() {
-        this._draw();
-    },
 
     /**
      * Draws a line segment using the current line style from the current drawing position to the specified x and y coordinates.
@@ -201,6 +192,71 @@ VMLDrawing.prototype = {
         this._trackSize(x, y);
         this._currentX = x;
         this._currentY = y;
+    },
+
+    /**
+     * Draws the graphic.
+     *
+     * @method _draw
+     * @private
+     */
+    _closePath: function()
+    {
+        var fill = this.get("fill"),
+            stroke = this.get("stroke"),
+            node = this.node,
+            w = this.get("width"),
+            h = this.get("height"),
+            path = this._path,
+            pathEnd = "";
+        node.style.visible = "hidden";
+        this._fillChangeHandler();
+        this._strokeChangeHandler();
+        if(path)
+        {
+            if(fill && fill.color)
+            {
+                pathEnd += ' x';
+            }
+            if(stroke)
+            {
+                pathEnd += ' e';
+            }
+        }
+        if(path)
+        {
+            node.path = path + pathEnd;
+        }
+        if(w && h)
+        {
+            node.coordSize =  w + ', ' + h;
+            node.style.position = "absolute";
+            node.style.width = w + "px";
+            node.style.height = h + "px";
+        }
+        this._path = path;
+        node.style.visible = "visible";
+        this._updateTransform();
+    },
+
+    /**
+     * Completes a drawing operation. 
+     *
+     * @method end
+     */
+    end: function()
+    {
+        this._closePath();
+    },
+
+    /**
+     * Clears the path.
+     *
+     * @method clear
+     */
+    clear: function()
+    {
+		this._path = "";
     },
 
     /**
@@ -256,8 +312,17 @@ VMLShape = function()
 
 VMLShape.NAME = "vmlShape";
 
-Y.extend(VMLShape, Y.BaseGraphic, {
+Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 	/**
+	 * Indicates the type of shape
+	 *
+	 * @property _type
+	 * @readOnly
+	 * @type String
+	 */
+	_type: "shape",
+    
+    /**
 	 * @private
 	 */
 	init: function()
@@ -285,7 +350,7 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 	 */
 	createNode: function()
 	{
-		var node,
+        var node,
 			x = this.get("x"),
 			y = this.get("y"),
             w = this.get("width"),
@@ -375,6 +440,8 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 			}
 
 			this.node = node;
+            this._strokeFlag = false;
+            this._fillFlag = false;
 	},
 
 	/**
@@ -537,6 +604,10 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 	 */
 	_strokeChangeHandler: function(e)
 	{
+        if(!this._strokeFlag)
+        {
+            return;
+        }
 		var node = this.node,
 			stroke = this.get("stroke"),
 			strokeOpacity,
@@ -604,6 +675,7 @@ Y.extend(VMLShape, Y.BaseGraphic, {
             }
 			node.stroked = false;
 		}
+        this._strokeFlag = false;
 	},
 
 	/**
@@ -667,6 +739,10 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 	 */
 	_fillChangeHandler: function(e)
 	{
+        if(!this._fillFlag)
+        {
+            return;
+        }
 		var node = this.node,
 			fill = this.get("fill"),
 			fillOpacity,
@@ -736,6 +812,7 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 			}
 		}
 		node.filled = filled;
+        this._fillFlag = false;
 	},
 
 	/**
@@ -1044,20 +1121,6 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 	 */
 	_draw: function()
 	{
-		var host = this,
-            node = host.node;
-		if(!node)
-		{
-		   host.createNode(); 
-		}
-		else
-		{
-			host._fillChangeHandler();
-			host._strokeChangeHandler();
-            node.style.width = this.get("width") + "px";
-            node.style.height = this.get("height") + "px"; 
-		}
-		host._updateTransform();
 	},
 
 	/**
@@ -1065,19 +1128,14 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 	 */
 	_updateHandler: function(e)
 	{
-		var node = this.node;
-		if(this.initialized)
-        {
-            if(node)
-            {
-                node.style.visible = "hidden";
-            }
-            this._draw();
-            if(node)
-            {
-                node.style.visible = "visible";
-            }
-        }
+		var host = this,
+            node = host.node;
+        host._fillChangeHandler();
+        host._strokeChangeHandler();
+        node.style.width = this.get("width") + "px";
+        node.style.height = this.get("height") + "px"; 
+        this._draw();
+		host._updateTransform();
 	},
 
 	/**
@@ -1194,7 +1252,7 @@ Y.extend(VMLShape, Y.BaseGraphic, {
             }
         }
     }
-});
+}, Y.VMLDrawing.prototype));
 
 VMLShape.ATTRS = {
 	/**
@@ -1414,7 +1472,8 @@ VMLShape.ATTRS = {
 					fill.color = null;
 				}
 			}
-			return fill;
+			this._fillFlag = true;
+            return fill;
 		}
 	},
 
@@ -1450,6 +1509,7 @@ VMLShape.ATTRS = {
 				}
 			}
 			stroke = tmpl;
+            this._strokeFlag = true;
 			return stroke;
 		}
 	},
@@ -1503,81 +1563,18 @@ VMLPath = function()
 };
 
 VMLPath.NAME = "vmlPath";
-Y.extend(VMLPath, Y.VMLShape, Y.merge(Y.VMLDrawing.prototype, {
-    /**
-     * Indicates the type of shape
-     *
-     * @property _type
-     * @readOnly
-     * @type String
-     */
-    _type: "shape",
-
-    /**
-     * Draws the graphic.
-     *
-     * @method _draw
-     * @private
-     */
-    _draw: function()
-    {
-        var fill = this.get("fill"),
-            stroke = this.get("stroke"),
-            node = this.node,
-            w = this.get("width"),
-            h = this.get("height"),
-            path = this._path,
-            pathEnd = "";
-        node.style.visible = "hidden";
-        this._fillChangeHandler();
-        this._strokeChangeHandler();
-        if(path)
-        {
-            if(fill && fill.color)
-            {
-                pathEnd += ' x';
-            }
-            if(stroke)
-            {
-                pathEnd += ' e';
-            }
-        }
-        if(path)
-        {
-            node.path = path + pathEnd;
-        }
-        if(w && h)
-        {
-            node.coordSize =  w + ', ' + h;
-            node.style.position = "absolute";
-            node.style.width = w + "px";
-            node.style.height = h + "px";
-        }
-        this._path = path;
-        node.style.visible = "visible";
-        this._updateTransform();
-    },
-
-    /**
-     * Completes a drawing operation. 
-     *
-     * @method end
-     */
-    end: function()
-    {
-        this._draw();
-    },
-
-    /**
-     * Clears the path.
-     *
-     * @method clear
-     */
-    clear: function()
-    {
-		this._path = "";
+Y.extend(VMLPath, Y.VMLShape, {
+	/**
+	 * @private
+	 */
+    _updateHandler: function()
+    {   
+        var host = this;
+            host._fillChangeHandler();
+            host._strokeChangeHandler();
+        host._updateTransform();
     }
-}));
+});
 VMLPath.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 	/**
 	 * Indicates the width of the shape
@@ -1808,7 +1805,7 @@ VMLPieSlice = function()
 	VMLPieSlice.superclass.constructor.apply(this, arguments);
 };
 VMLPieSlice.NAME = "vmlPieSlice";
-Y.extend(VMLPieSlice, Y.VMLPath, {
+Y.extend(VMLPieSlice, Y.VMLShape, Y.mix({
     /**
      * Indicates the type of shape
      *
@@ -1817,21 +1814,6 @@ Y.extend(VMLPieSlice, Y.VMLPath, {
      * @type String
      */
     _type: "shape",
-	/**
-	 * Initializes the shape
-	 *
-	 * @private
-	 * @method _initialize
-	 */
-	initializer: function(cfg)
-	{
-		var host = this,
-            graphic = cfg.graphic;
-		host.createNode(); 
-        host._graphic = graphic;
-        host._updateHandler();
-        graphic.addToRedrawQueue(this);
-	},
 
 	/**
 	 * Change event listener
@@ -1839,7 +1821,7 @@ Y.extend(VMLPieSlice, Y.VMLPath, {
 	 * @private
 	 * @method _updateHandler
 	 */
-	_updateHandler: function(e)
+	_draw: function(e)
 	{
         var x = this.get("cx"),
             y = this.get("cy"),
@@ -1848,10 +1830,10 @@ Y.extend(VMLPieSlice, Y.VMLPath, {
             radius = this.get("radius");
         this.clear();
         this.drawWedge(x, y, startAngle, arc, radius);
-		this._draw();
+		this.end();
 	}
- });
-VMLPieSlice.ATTRS = Y.mix(Y.VMLPath.ATTRS, {
+ }, Y.VMLDrawing.prototype));
+VMLPieSlice.ATTRS = Y.mix({
     cx: {
         value: 0
     },
@@ -1888,7 +1870,7 @@ VMLPieSlice.ATTRS = Y.mix(Y.VMLPath.ATTRS, {
     radius: {
         value: 0
     }
-});
+}, Y.VMLShape.ATTRS);
 Y.VMLPieSlice = VMLPieSlice;
 /**
  * VMLGraphic is a simple drawing api that allows for basic drawing operations.

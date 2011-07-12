@@ -12,10 +12,10 @@ CurveUtil.prototype = {
     /**
      * Creates an array of start, end and control points for splines.
      *
-     * @protected
      * @param {Array} xcoords Collection of x-coordinates used for calculate the curves
      * @param {Array} ycoords Collection of y-coordinates used for calculate the curves
-     * @return {Object}
+     * @return Object
+     * @protected
      */
     getCurveControlPoints: function(xcoords, ycoords) 
     {
@@ -84,6 +84,11 @@ CurveUtil.prototype = {
 	},
 
     /**
+     * Gets the control points for the curve.
+     *
+     * @method getControlPoints
+     * @param {Array} vals Collection of values coords used to generate control points.
+     * @return Array
      * @private
      */
 	getControlPoints: function(vals) 
