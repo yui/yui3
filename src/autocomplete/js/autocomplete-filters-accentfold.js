@@ -89,7 +89,7 @@ Y.mix(Y.namespace('AutoCompleteFilters'), {
     /**
      * Accent folding version of <code>subWordMatch()</code>.
      *
-     * @method subWordMatchFolde
+     * @method subWordMatchFold
      * @param {String} query Query to match
      * @param {Array} results Results to filter
      * @return {Array} Filtered results

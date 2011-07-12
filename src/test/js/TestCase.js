@@ -21,6 +21,10 @@
          * Special rules for the test case. Possible subobjects
          * are fail, for tests that should fail, and error, for
          * tests that should throw an error.
+         *
+         * @property _should
+         * @type Object
+         * @protected
          */
         this._should = {};
         
@@ -33,6 +37,9 @@
         if (!Y.Lang.isString(this.name)){
             /**
              * Name for the test case.
+             *
+             * @property name
+             * @type String
              */
             this.name = "testCase" + Y.guid();
         }

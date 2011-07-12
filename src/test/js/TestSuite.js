@@ -21,6 +21,8 @@
     
         /**
          * Array of test suites and
+         * @property items
+         * @type Array
          * @private
          */
         this.items = [];
