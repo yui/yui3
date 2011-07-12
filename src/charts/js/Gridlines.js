@@ -7,9 +7,19 @@
  * @uses Renderer
  */
 Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
+    /**
+     * Reference to the `Path` element used for drawing Gridlines.
+     *
+     * @property _path
+     * @type Path
+     * @private
+     */
     _path: null,
 
     /**
+     * Removes the Gridlines.
+     *
+     * @method remove
      * @private
      */
     remove: function()
@@ -22,11 +32,10 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
     },
 
     /**
-     * @protected
-     *
      * Draws the gridlines
      *
      * @method draw
+     * @protected
      */
     draw: function()
     {
@@ -37,6 +46,9 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
     },
 
     /**
+     * Algorithm for drawing gridlines
+     *
+     * @method _drawGridlines
      * @private
      */
     _drawGridlines: function()
@@ -90,6 +102,13 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
     },
 
     /**
+     * Algorithm for horizontal lines.
+     *
+     * @method _horizontalLine
+     * @param {Path} path Reference to path element
+     * @param {Object} pt Coordinates corresponding to a major unit of an axis.
+     * @param {Number} w Width of the Graph
+     * @param {Number} h Height of the Graph
      * @private
      */
     _horizontalLine: function(path, pt, w, h)
@@ -99,6 +118,13 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
     },
 
     /**
+     * Algorithm for vertical lines.
+     *
+     * @method _verticalLine
+     * @param {Path} path Reference to path element
+     * @param {Object} pt Coordinates corresponding to a major unit of an axis.
+     * @param {Number} w Width of the Graph
+     * @param {Number} h Height of the Graph
      * @private
      */
     _verticalLine: function(path, pt, w, h)
@@ -108,13 +134,12 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
     },
     
     /**
-     * @protected
-     *
-     * Gets the default value for the <code>styles</code> attribute. Overrides
+     * Gets the default value for the `styles` attribute. Overrides
      * base implementation.
      *
      * @method _getDefaultStyles
      * @return Object
+     * @protected
      */
     _getDefaultStyles: function()
     {
@@ -140,7 +165,7 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
         direction: {},
         
         /**
-         * Indicate the <code>Axis</code> in which to bind
+         * Indicate the `Axis` in which to bind
          * the gridlines.
          *
          * @attribute axis
@@ -149,7 +174,7 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
         axis: {},
         
         /**
-         * Indicates the <code>Graph</code> in which the gridlines 
+         * Indicates the `Graph` in which the gridlines 
          * are drawn.
          *
          * @attribute graph

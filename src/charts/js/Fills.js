@@ -62,6 +62,8 @@ Fills.prototype = {
      * Draws fill
      *
      * @method drawFill
+     * @param {Array} xcoords The x-coordinates for the series.
+     * @param {Array} ycoords The y-coordinates for the series.
      * @protected
      */
     drawFill: function(xcoords, ycoords)
@@ -255,12 +257,15 @@ Fills.prototype = {
     },
     
     /**
+     * Storage for default area styles.
+     *
+     * @property _defaults
      * @private
      */
     _defaults: null,
 
     /**
-     * Concatanates coordinate array with correct coordinates for closing an area fill.
+     * Concatenates coordinate array with correct coordinates for closing an area fill.
      *
      * @method _getClosingPoints
      * @return Array
@@ -340,6 +345,10 @@ Fills.prototype = {
     },
 
     /**
+     * Returns default values for area styles.
+     *
+     * @method _getAreaDefaults
+     * @return Object
      * @private
      */
     _getAreaDefaults: function()

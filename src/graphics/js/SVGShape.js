@@ -10,7 +10,7 @@ SVGShape = function(cfg)
 
 SVGShape.NAME = "svgShape";
 
-Y.extend(SVGShape, Y.BaseGraphic, {
+Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
     /**
      * @private
      */
@@ -750,7 +750,7 @@ Y.extend(SVGShape, Y.BaseGraphic, {
             this._graphic._contentNode.removeChild(this.node);
         }
     }
- });
+ }, Y.SVGDrawing.prototype));
 	
 SVGShape.ATTRS = {
 	/**

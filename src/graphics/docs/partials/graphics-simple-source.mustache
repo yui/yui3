@@ -1,0 +1,24 @@
+<div id="mygraphiccontainer"></div>
+<script>
+    YUI().use('graphics', function (Y) 
+    { 
+        //create a graphic instance
+        var mygraphic = new Y.Graphic({autoSize:true, render:"#mygraphiccontainer"});
+        
+        //create an ellipse with getShape
+        var myellipse = mygraphic.getShape({
+            type: "ellipse",
+            fill: {
+                color: "#9aa"
+            },
+            stroke: {
+                weight: 2,
+                color: "#000"
+            },
+            width: 150,
+            height: 100,
+            x: 35,
+            y: 35
+        });
+    });
+</script>

@@ -1,0 +1,115 @@
+<style scoped>
+#custom-doc { width: 95%; min-width: 950px; }
+#pagetitle {background-image: url(../../assets/bg_hd.gif);}
+#mygraphiccontainer {
+    position: relative;
+    width: 700px;
+    height:200px;
+}
+</style>
+<div class="intro">
+This example shows how to apply transforms to shapes.
+</div>
+<div class="example">
+{{>graphics-transforms-source}}
+</div>
+
+<h2>HTML</h2>
+```
+<div id="mygraphiccontainer"></div>
+<div>
+    <button type="button" id="rotate">Rotate</button><br/>
+    <button type="button" id="translate">Translate</button><br/>
+</div>
+```
+
+<h2>CSS</h2>
+```
+#mygraphiccontainer {
+    position: relative;
+    width: 700px;
+    height:200px;
+}
+```
+
+<h2>Javascript</h2>
+
+<p>Create a `Graphic` instance.</p>
+```
+    var mygraphic = new Y.Graphic({render:"#mygraphiccontainer"});
+```
+<p>Create an ellipse, recangle and circle.</p>
+```
+    var myrect = mygraphic.getShape({
+        type: "rect",
+        stroke: {
+            color:"#000",
+            weight: 1
+        },
+        fill: {
+            color: "#fde"
+        },
+        width:40,
+        height:50
+    });
+        
+    var myellipse = mygraphic.getShape({
+        type: "ellipse",
+        stroke: {
+            color: "#ddd",
+            weight: 2
+        },
+        fill: {
+            color:"#f00",
+            opacity: 0.5
+        },
+        width: 100,
+        height: 30,
+        x:100,
+        y:50
+    });
+        
+    var mycircle = mygraphic.getShape({
+        type: "circle",
+        stroke: {
+            color:"#ff0",
+            weight: 1
+        },
+        fill: {
+            color:"#00f"
+        },
+        radius: 12,
+        x: -5,
+        y: -5
+    });
+```
+
+<p>Add a method to apply a rotation to the rectangle and ellipse.</p>
+
+```
+    function rotateShapes(e)
+    {
+        myrect.set("rotation", 45);
+        myellipse.set("rotation", 45);
+    }
+```
+
+<p>Add a method to apply a translate to the circle.</p>
+```
+    function translateShapes(e)
+    {
+        mycircle.set("translateX", 50);
+        mycircle.set("translateY", 60);
+    }
+```
+
+<p>Add click listeners to the buttons.</p>
+```
+    Y.on("click", rotateShapes, "#rotate");
+    Y.on("click", translateShapes, "#translate");
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>graphics-transforms-source}}
+```

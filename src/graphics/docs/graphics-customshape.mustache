@@ -1,0 +1,122 @@
+<style scoped>
+#custom-doc { width: 95%; min-width: 950px; }
+#pagetitle {background-image: url(../../assets/bg_hd.gif);}
+#mygraphiccontainer {
+    position: relative;
+    width: 400px;
+    height: 300px;
+}
+</style>
+<div class="intro">
+<p>
+This example shows how to use the `Graphics` to create a custom shape. Currently, the `Graphics` module has four shapes:
+</p>
+<ul>
+    <li>rect</li>
+    <li>circle</li>
+    <li>ellipse</li>
+    <li>path</li>
+</ul>
+<p>
+You can also create your own custom shapes. If you need to have reusable shapes, you can do this by extending the `Shape` class. Once you have created a custom class, you can instantiate it by passing 
+a reference of your class in the `type` attribute of your config to the `getShape` method. In this example, we will create shape called `RoundedRect`.
+</p>
+</div>
+<div class="example">
+{{>graphics-customshape-source}}
+</div>
+
+<h2>HTML</h2>
+```
+<div id="mygraphiccontainer"></div>
+```
+
+<h2>CSS</h2>
+```
+#mygraphiccontainer {
+    position: relative;
+    width: 400px;
+    height: 300px;
+}
+```
+<h2>Javascript</h2>
+
+<p>Create a custom class. When creating shapes, add a method called `_draw`. This is where you will put your drawing logic for the custom shape. You will also need to mix in any attributes that you need.</p>
+
+```
+    var RoundedRect = function()
+    {
+        RoundedRect.superclass.constructor.apply(this, arguments);
+    }
+    RoundedRect.NAME = "roundedRect";
+    Y.extend(RoundedRect, Y.Shape, {
+        _draw: function()
+        {
+            var w = this.get("width"),
+                h = this.get("height"),
+                x = this.get("x"),
+                y = this.get("y"),
+                ew = this.get("ellipseWidth"),
+                eh = this.get("ellipseHeight");
+            this.clear();
+            this.moveTo(x, y + eh);
+            this.lineTo(x, y + h - eh);
+            this.quadraticCurveTo(x, y + h, x + ew, y + h);
+            this.lineTo(x + w - ew, y + h);
+            this.quadraticCurveTo(x + w, y + h, x + w, y + h - eh);
+            this.lineTo(x + w, y + eh);
+            this.quadraticCurveTo(x + w, y, x + w - ew, y);
+            this.lineTo(x + ew, y);
+            this.quadraticCurveTo(x, y, x, y + eh);
+            this.end();
+        }
+    }, {
+        ATTRS: Y.mix({
+            ellipseWidth: {
+                value: 4
+            },
+
+            ellipseHeight: {
+                value: 4
+            }
+        }, Y.Shape.ATTRS)
+    }); 
+    Y.RoundedRect = RoundedRect;
+```
+<p>Create a `Graphic` instance and render it to an `HTMLElement`</p>
+```
+    var mygraphic = new Y.Graphic({render: "#mygraphiccontainer"}),
+```
+
+<p>Using the `getShape` method, add an instance of the custom class to the `Graphic` instance.</p>
+
+```
+    myroundrect = mygraphic.getShape({
+        type: Y.RoundedRect,
+        width: 300,
+        height: 200,
+        x: 50,
+        y: 50,
+        ellipseWidth: 12,
+        ellipseHeight: 12,
+        fill: {
+            type: "linear",
+            stops: [
+                {color: "#9aa9bb", offset: 0},
+                {color: "#eeefff", offset: 0.4},
+                {color: "#00000f", offset: 0.8},
+                {color: "#9aa9bb", offset: 1}
+            ],
+            rotation: 45
+        },
+        stroke: {
+            weight: 2,
+            color: "#000"
+        }
+    });
+
+```
+<h2>Complete Example Source</h2>
+```
+{{>graphics-customshape-source}}
+```

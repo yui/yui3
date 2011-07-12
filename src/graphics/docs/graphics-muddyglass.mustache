@@ -1,0 +1,157 @@
+<style scoped>
+#custom-doc { width: 95%; min-width: 950px; }
+#pagetitle {background-image: url(../../assets/bg_hd.gif);}
+#mygraphiccontainer {
+    top: 20px;
+    left: 20px;
+    position: relative;
+    width: 680px;
+    height:500px;
+}
+.example {
+    background: url(../assets/graphics/img/curtain.png) no-repeat center;
+}
+</style>
+<div class="intro">
+<p>
+In this advanced example, we'll create a glass of milk by layering transparent gradients. Since gradient opacity does not work in IE <= 8, there will be a noticeable degradation in those browsers.
+</p>
+</div>
+<div class="example">
+{{>graphics-muddyglass-source}}
+</div>
+<h2>HTML</h2>
+```
+<div id="mygraphiccontainer"></div>
+```
+
+<h2>CSS</h2>
+```
+#mygraphiccontainer {
+    top: 20px;
+    left: 20px;
+    position: relative;
+    width: 680px;
+    height:500px;
+}
+.example {
+    background: url(../assets/graphics/img/curtain.png) no-repeat center;
+}
+```
+
+<h2>Javascript</h2>
+
+<p>Create a `Graphic` instance</p>
+```
+    var mygraphic = new Y.Graphic({render:"#mygraphiccontainer"});
+```
+
+<p>Create a radial gradient to act as a shadow for the glass.</p>
+
+```
+    var mygraphic = new Y.Graphic({render:"#mygraphiccontainer"});
+    var shadow = mygraphic.getShape({
+        type: "ellipse",
+        stroke: {
+            color: "#ddd",
+            weight: 0
+        },
+        fill: {
+            type: "radial",
+            stops: [
+                {color: "#000", opacity: 0.7, offset: 0},
+                {color: "#000", opacity: 0.4, offset: 0.5},
+                {color: "#000", opacity: 0.1, offset: 0.7}
+            ],
+            cx: .6,
+            cy: .6,
+            fx: 0.1,
+            fy: 0.3,
+            r: 0.8
+        },
+        width: 280,
+        height: 20,
+        x:318,
+        y:420
+    });
+```
+
+<p>Create a rectangle with a linear gradient for the chocolate milk.</p>
+
+```
+    var milk = mygraphic.getShape({
+        x: 314,
+        y: 180,
+        type: "rect",
+        stroke: {
+            color:"#6c3f27",
+            weight: 1,
+            opacity:0.3
+        },
+        fill: {
+            type: "linear",
+            rotation: 0,
+            stops: [
+                {color: "#d1c4bd", opacity:0.9, offset: 0},
+                {color: "#a78c7e", opacity: 0.9, offset: 0.4},
+                {color: "#6c3f27", opacity: 0.9, offset: 0.7}
+            ]
+        },
+        width:142,
+        height:230
+    });
+```
+
+<p>Add another linear gradient rectangle for the glass.</p>
+
+```
+    var myrect = mygraphic.getShape({
+        x: 310,
+        y: 110,
+        type: "rect",
+        stroke: {
+            color:"#90ad8c",
+            weight: 1,
+            opacity:0.6
+        },
+        fill: {
+            type: "linear",
+            rotation: 90,
+            stops: [
+                {color: "#90ad8c", opacity:0.3, offset: 0},
+                {color: "#819c7d", opacity: 0.3, offset: 0.8},
+                {color: "#40563d", opacity: 0.7, offset: 1.0}
+            ]
+        },
+        width:150,
+        height:325
+    });
+```
+<p>Create the linear gradient for the reflection.</p>
+```
+    var reflect = mygraphic.getShape({
+        x: 310,
+        y: 113,
+        type: "rect",
+        stroke: {
+            color:"#90ad8c",
+            weight: 1,
+            opacity:0.0
+        },
+        fill: {
+            type: "linear",
+            rotation: 0,
+            stops: [
+                {color: "#fff", opacity:0.0, offset: 0.2},
+                {color: "#fff", opacity: 0.4, offset: 0.3},
+                {color: "#fff", opacity: 0.0, offset: 0.4}
+            ]
+        },
+        width:150,
+        height:318
+    });
+```
+<h2>Complete Example Source</h2>
+```
+{{>graphics-muddyglass-source}}
+```

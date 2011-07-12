@@ -1,0 +1,69 @@
+<div id="mygraphiccontainer"></div>
+<script>
+YUI({filter:"raw"}).use('graphics', function (Y) 
+{ 
+    var RoundedRect = function()
+    {
+        RoundedRect.superclass.constructor.apply(this, arguments);
+    }
+    RoundedRect.NAME = "roundedRect";
+    Y.extend(RoundedRect, Y.Shape, {
+        _draw: function()
+        {
+            var w = this.get("width"),
+                h = this.get("height"),
+                x = this.get("x"),
+                y = this.get("y"),
+                ew = this.get("ellipseWidth"),
+                eh = this.get("ellipseHeight");
+            this.clear();
+            this.moveTo(x, y + eh);
+            this.lineTo(x, y + h - eh);
+            this.quadraticCurveTo(x, y + h, x + ew, y + h);
+            this.lineTo(x + w - ew, y + h);
+            this.quadraticCurveTo(x + w, y + h, x + w, y + h - eh);
+            this.lineTo(x + w, y + eh);
+            this.quadraticCurveTo(x + w, y, x + w - ew, y);
+            this.lineTo(x + ew, y);
+            this.quadraticCurveTo(x, y, x, y + eh);
+            this.end();
+        }
+    }, {
+        ATTRS: Y.mix({
+            ellipseWidth: {
+                value: 4
+            },
+
+            ellipseHeight: {
+                value: 4
+            }
+        }, Y.Shape.ATTRS)
+    }); 
+    Y.RoundedRect = RoundedRect;
+    
+    var mygraphic = new Y.Graphic({render: "#mygraphiccontainer"}),
+        myroundrect = mygraphic.getShape({
+            type: Y.RoundedRect,
+            width: 300,
+            height: 200,
+            x: 50,
+            y: 50,
+            ellipseWidth: 12,
+            ellipseHeight: 12,
+            fill: {
+                type: "linear",
+                stops: [
+                    {color: "#9aa9bb", offset: 0},
+                    {color: "#eeefff", offset: 0.4},
+                    {color: "#00000f", offset: 0.8},
+                    {color: "#9aa9bb", offset: 1}
+                ],
+                rotation: 45
+            },
+            stroke: {
+                weight: 2,
+                color: "#000"
+            }
+        });
+    });
+</script>

@@ -1,0 +1,104 @@
+<style scoped>
+#custom-doc { width: 95%; min-width: 950px; }
+#pagetitle {background-image: url(../../assets/bg_hd.gif);}
+#mygraphiccontainer {
+    position: relative;
+    width: 700px;
+    height:300px;
+}
+</style>
+<div class="intro">
+This example shows how to draw shapes and line segments with the `Path` shape.
+</div>
+<div class="example">
+{{>graphics-path-source}}
+</div>
+
+<h2>HTML</h2>
+```
+<div id="mygraphiccontainer"></div>
+```
+
+<h2>CSS</h2>
+```
+#mygraphiccontainer {
+    position: relative;
+    width: 700px;
+    height:300px;
+}
+```
+
+<h2>Javascript</h2>
+<p>Create a `Graphic` instance</p>
+```
+    var mygraphic = new Y.Graphic({render:"#mygraphiccontainer"});
+```
+
+<p>Create two path elements for end shapes. Give each a red fill and a black stroke.</p>
+
+```
+var diamond1 = mygraphic.getShape({
+        type: "path",
+        stroke: {
+            weight: 1,
+            color: "#000"
+        },
+        fill: {
+            color: "#f00"
+        }
+    });
+
+var diamond2 = mygraphic.getShape({
+        type: "path",
+        stroke: {
+            weight: 1,
+            color: "#000"
+        },
+        fill: {
+            color: "#f00"
+        }
+    });
+```
+<p>Create a path for the connecting segment. Give it a black dashed stroke and no fill. The `dashstyle` property of the stroke attribute allows for the creation of a dashed stroke. The first value is 
+the length of the dash and the second value is the gap space between dashes.</p>
+```
+var connector = mygraphic.getShape({
+        type: "path",
+        stroke: {
+            weight: 1,
+            color: "#000",
+            opacity: 1,
+            dashstyle: [3, 4]
+        }
+    });
+```
+<p>Draw the first diamond.</p>
+
+```
+diamond1.moveTo(60, 60);
+diamond1.lineTo(80, 40);
+diamond1.lineTo(100, 60);
+diamond1.lineTo(80, 80);
+diamond1.lineTo(60, 60);
+diamond1.end();
+```
+<p>Draw the connector segment.</p>
+```
+connector.moveTo(100, 60);
+connector.lineTo(450, 220);
+connector.end();
+```
+
+<p>Draw the second diamond.</p>
+```
+diamond2.moveTo(450, 220);
+diamond2.lineTo(470, 200);
+diamond2.lineTo(490, 220);
+diamond2.lineTo(470, 240);
+diamond2.lineTo(450, 220);
+diamond2.end();
+```
+<h2>Complete Example Source</h2>
+```
+{{>graphics-path-source}}
+```

@@ -19,6 +19,10 @@ function Plots(cfg)
 
 Plots.prototype = {
     /**
+     * Storage for default marker styles.
+     *
+     * @property _plotDefaults
+     * @type Object
      * @private
      */
     _plotDefaults: null,
@@ -87,7 +91,7 @@ Plots.prototype = {
 
     /**
      * Gets the default values for series that use the utility. This method is used by
-     * the class' <code>styles</code> attribute's getter to get build default values.
+     * the class' `styles` attribute's getter to get build default values.
      *
      * @method _getPlotDefaults
      * @return Object
@@ -119,6 +123,8 @@ Plots.prototype = {
     /**
      * Collection of markers to be used in the series.
      *
+     * @property _markers
+     * @type Array
      * @private
      */
     _markers: null,
@@ -126,6 +132,8 @@ Plots.prototype = {
     /**
      * Collection of markers to be re-used on a series redraw.
      *
+     * @property _markerCache
+     * @type Array
      * @private
      */
     _markerCache: null,
@@ -312,7 +320,7 @@ Plots.prototype = {
     },
 
     /**
-     * Method used by <code>styles</code> setter. Overrides base implementation.
+     * Method used by `styles` setter. Overrides base implementation.
      *
      * @method _setStyles
      * @param {Object} newStyles Hash of properties to update.
@@ -329,6 +337,8 @@ Plots.prototype = {
      * Combines new styles with existing styles.
      *
      * @method _parseMarkerStyles
+     * @param {Object} Object containing style properties for the marker.
+     * @return Object
      * @private
      */
     _parseMarkerStyles: function(val)
@@ -379,6 +389,8 @@ Plots.prototype = {
     },
     
     /**
+     * @property _statSyles
+     * @type Object
      * @private
      */
     _stateSyles: null

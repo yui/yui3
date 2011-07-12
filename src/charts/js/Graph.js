@@ -1,5 +1,5 @@
 /**
- * Graph manages and contains series instances for a <code>CartesianChart</code>
+ * Graph manages and contains series instances for a `CartesianChart`
  * instance.
  *
  * @class Graph
@@ -8,6 +8,10 @@
  * @uses Renderer
  */
 Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
+    /**
+     * @method bindUI
+     * @private
+     */
     bindUI: function()
     {
         var bb = this.get("boundingBox");
@@ -18,6 +22,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     },
 
     /**
+     * @method syncUI
      * @private
      */
     syncUI: function()
@@ -63,8 +68,11 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     },
    
     /**
+     * Object of arrays containing series mapped to a series type.
+     *
+     * @property seriesTypes
+     * @type Object
      * @private
-     * Hash of arrays containing series mapped to a series type.
      */
     seriesTypes: null,
 
@@ -105,12 +113,12 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     },
 
     /**
-     * @protected
-     * Adds dispatcher to a <code>_dispatcher</code> used to
+     * Adds dispatcher to a `_dispatcher` used to
      * to ensure all series have redrawn before for firing event.
      *
      * @method addDispatcher
      * @param {CartesianSeries} val series instance to add
+     * @protected
      */
     addDispatcher: function(val)
     {
@@ -122,19 +130,29 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     },
 
     /**
+     * Collection of series to be displayed in the graph.
+     *
+     * @property _seriesCollection
+     * @type Array
      * @private 
-     * @description Collection of series to be displayed in the graph.
      */
     _seriesCollection: null,
     
     /**
+     * Object containing key value pairs of `CartesianSeries` instances.
+     *
+     * @property _seriesDictionary
+     * @type Object
      * @private
      */
     _seriesDictionary: null,
 
     /**
-     * @private
      * Parses series instances to be displayed in the graph.
+     *
+     * @method _parseSeriesCollection
+     * @param {Array} Collection of `CartesianSeries` instances or objects container `CartesianSeries` attributes values.
+     * @private
      */
     _parseSeriesCollection: function(val)
     {
@@ -178,8 +196,11 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     },
 
     /**
-     * @private
      * Adds a series to the graph.
+     *
+     * @method _addSeries
+     * @param {CartesianSeries} series Series to add to the graph.
+     * @private
      */
     _addSeries: function(series)
     {
@@ -207,6 +228,10 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     },
 
     /**
+     * Creates a `CartesianSeries` instance from an object containing attribute key value pairs.
+     *
+     * @method createSeries
+     * @param {Object} seriesData Series attribute key value pairs.
      * @private
      */
     _createSeries: function(seriesData)
@@ -235,6 +260,11 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     },
 
     /**
+     * Returns a specific `CartesianSeries` class based on key value.
+     *
+     * @method _getSeries
+     * @param {String} type Key value for the series class.
+     * @return CartesianSeries
      * @private
      */
     _getSeries: function(type)
@@ -313,6 +343,10 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     },
 
     /**
+     * Event handler for marker events.
+     *
+     * @method _markerEventHandler
+     * @param {Object} e Event object.
      * @private
      */
     _markerEventHandler: function(e)
@@ -326,11 +360,18 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     },
 
     /**
+     * Collection of `CartesianSeries` instances to be redrawn.
+     *
+     * @property _dispatchers
+     * @type Array
      * @private
      */
     _dispatchers: null,
 
     /**
+     * Updates the `Graph` styles.
+     *
+     * @method _updateStyles
      * @private
      */
     _updateStyles: function()
@@ -345,6 +386,10 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     },
 
     /**
+     * Event handler for size changes.
+     *
+     * @method _sizeChangeHandler
+     * @param {Object} e Event object.
      * @private
      */
     _sizeChangeHandler: function(e)
@@ -385,6 +430,9 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     },
 
     /**
+     * Draws each series.
+     *
+     * @method _drawSeries
      * @private
      */
     _drawSeries: function()
@@ -421,6 +469,10 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     },  
 
     /**
+     * Event handler for series drawingComplete event.
+     *
+     * @method _drawingCompleteHandler
+     * @param {Object} e Event object.
      * @private
      */
     _drawingCompleteHandler: function(e)
@@ -444,13 +496,12 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     },
 
     /**
-     * @protected
-     *
-     * Gets the default value for the <code>styles</code> attribute. Overrides
+     * Gets the default value for the `styles` attribute. Overrides
      * base implementation.
      *
      * @method _getDefaultStyles
      * @return Object
+     * @protected
      */
     _getDefaultStyles: function()
     {
@@ -471,8 +522,8 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
 }, {
     ATTRS: {
         /**
-         * Collection of series. When setting the <code>seriesCollection</code> the array can contain a combination of either
-         * <code>CartesianSeries</code> instances or object literals with properties that will define a series.
+         * Collection of series. When setting the `seriesCollection` the array can contain a combination of either
+         * `CartesianSeries` instances or object literals with properties that will define a series.
          *
          * @attribute seriesCollection
          * @type CartesianSeries
@@ -491,7 +542,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         },
        
         /**
-         * Indicates whether the <code>Graph</code> has a background.
+         * Indicates whether the `Graph` has a background.
          *
          * @attribute showBackground
          * @type Boolean
@@ -502,10 +553,11 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         },
 
         /**
-         * Read-only hash lookup for all series on in the <code>Graph</code>.
+         * Read-only hash lookup for all series on in the `Graph`.
          *
          * @attribute seriesDictionary
          * @type Object
+         * @readOnly
          */
         seriesDictionary: {
             readOnly: true,
@@ -517,7 +569,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         },
 
         /**
-         * Reference to the horizontal <code>Gridlines</code> instance.
+         * Reference to the horizontal `Gridlines` instance.
          *
          * @attribute horizontalGridlines
          * @type Gridlines
@@ -548,7 +600,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         },
         
         /**
-         * Reference to the vertical <code>Gridlines</code> instance.
+         * Reference to the vertical `Gridlines` instance.
          *
          * @attribute verticalGridlines
          * @type Gridlines

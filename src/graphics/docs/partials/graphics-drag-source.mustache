@@ -1,0 +1,23 @@
+<div id="mygraphiccontainer"></div>
+<script>
+    YUI().use('graphics', 'dd-drag', function (Y) 
+    { 
+        var mygraphic = new Y.Graphic({render: "#mygraphiccontainer"}); 
+        var myrect = mygraphic.getShape({
+            type: "rect",
+            stroke: {
+                color:"#000",
+                weight: 1
+            },
+            fill: {
+                color: "#fc0"
+            },
+            width:40,
+            height:50
+        });
+    
+        var mydrag = new Y.DD.Drag({
+            node: myrect
+        });
+    });
+</script>
