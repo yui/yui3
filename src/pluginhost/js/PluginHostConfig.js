@@ -3,14 +3,21 @@
      * @submodule pluginhost-config
      */
 
-    /**
-     * Constructor and static configuration support for plugins
-     * 
-     * @for Plugin.Host
-     */
     var PluginHost = Y.Plugin.Host,
         L = Y.Lang;
 
+    /**
+     * A protected initialization method, used by the host class to initialize
+     * plugin configurations passed the constructor, through the config object.
+     * 
+     * Host objects should invoke this method at the appropriate time in their
+     * construction lifecycle.
+     * 
+     * @method _initConfigPlugins
+     * @param {Object} config The configuration object passed to the constructor
+     * @protected
+     * @for Plugin.Host
+     */
     PluginHost.prototype._initConfigPlugins = function(config) {
 
         // Class Configuration
