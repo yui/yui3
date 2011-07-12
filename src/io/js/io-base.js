@@ -34,9 +34,11 @@
 	* @return object
 	*/
 	function IO () {
+
 		var io = this;
-		
-		this._init(io);
+
+		io._uid = 'io:' + _i++;
+		io._init(io);
 		Y.io._map[io._uid] = io;
 	}
 
@@ -44,15 +46,6 @@
 		//--------------------------------------
 		//  Properties
 		//--------------------------------------
-	   /**
-		* @description Unique id assigned each IO instance.
-		*
-		* @property _id
-		* @private
-		* @static
-		* @type int
-		*/
-		_uid: 'io:' + _i++,
 
 	   /**
 		* @description A counter that increments for each transaction.
