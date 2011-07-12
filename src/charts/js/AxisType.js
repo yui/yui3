@@ -69,6 +69,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
      * Type of data used in `Axis`.
      *
      * @property _type
+     * @type String 
      * @readOnly
      * @private
      */

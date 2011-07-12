@@ -1,9 +1,12 @@
 /**
  * The Axis class. Generates axes for a chart.
  *
+ * @module charts
  * @class Axis
- * @extends Renderer
+ * @extends Widget
+ * @uses Renderer
  * @constructor
+ * @param {Object} config (optional) Configuration parameters for the Chart.
  */
 Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     /**
@@ -211,6 +214,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
      * Maps key values to classes containing layout algorithms
      *
      * @property _layoutClasses
+     * @type Object
      * @private
      */
     _layoutClasses: 
