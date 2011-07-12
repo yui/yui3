@@ -543,8 +543,8 @@
                         fired = {},
                         typePrefix = 'event:' + Y.stamp(el),
                         // cribbed from the event-base-ie.js conditional loading
-                        imp = Y.config.doc.implementation,
-                        testIE = !imp || !imp.hasFeature('Events', '2.0'),
+                        imp = Y.config.doc && Y.config.doc.implementation,
+                        testIE = !(imp && imp.hasFeature && imp.hasFeature('Events', '2.0')),
                         handle;
 
                     // custom simulation because Y.Event.simulate attempts to
