@@ -317,7 +317,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 		var host = this,
 			val = arguments[0];
 		AttributeLite.prototype.set.apply(host, arguments);
-		if(host.initialized && val != "x" && val != "y")
+		if(host.initialized)
 		{
 			host._updateHandler();
 		}
@@ -385,8 +385,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 */
 	_translate: function(x, y)
 	{
-		var translate = "translate(" + x + "px, " + y + "px)";
-		this._updateTransform("translate", /translate\(.*\)/, translate);
+		this._addTransform("translate", [x + "px", y + "px"]);
 	},
 
 	/**
@@ -424,20 +423,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	{
 		var rotate = "rotate(" + deg + "deg)";
 		this._rotation = deg;
-		this._updateTransform("rotate", /rotate\(.*\)/, rotate);
-	},
-
-	/**
-	 * An array of x, y values which indicates the transformOrigin in which to rotate the shape. Valid values range between 0 and 1 representing a 
-	 * fraction of the shape's corresponding bounding box dimension. The default value is [0.5, 0.5].
-	 *
-	 * @attribute transformOrigin
-	 * @type Array
-	 */
-	_transformOrigin: function(x, y)
-	{
-		var node = this.get("node");
-		node.style.MozTransformOrigin = (100 * x) + "% " + (100 * y) + "%";
+		this._addTransform("rotate", [deg + "deg"]);
 	},
 
 	/**
@@ -458,40 +444,71 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	matrix: function(a, b, c, d, e, f)
 	{
 	},
+	
+    /**
+	 * @private
+	 */
+	_addTransform: function(type, args)
+	{
+		if(!this._transformArgs)
+		{
+			this._transformArgs = {};
+		}
+		this._transformArgs[type] = Array.prototype.slice.call(args, 0);
+		if(this.initialized)
+        {
+            this._updateTransform();
+        }
+	},
 
 	/**
 	 * @private
 	 */
-	_updateTransform: function(type, test, val)
+	_updateTransform: function()
 	{
-		var node = this.get("node"),
+		var node = this.node,
+			key,
+			args,
+			val,
 			transform = node.style.MozTransform || node.style.webkitTransform || node.style.msTransform || node.style.OTransform,
+			test,
 			transformOrigin = this.get("transformOrigin");
-		if(transform && transform.length > 0)
+		for(key in this._transformArgs)
 		{
-			if(transform.indexOf(type) > -1)
+            if(key && this._transformArgs.hasOwnProperty(key))
 			{
-				transform = transform.replace(test, val);
-			}
-			else
-			{
-				transform += " " + val;
+				val = key + "(" + this._transformArgs[key].toString() + ")";
+				if(transform && transform.length > 0)
+				{
+					test = new RegExp(key + '(.*)');
+					if(transform.indexOf(key) > -1)
+					{
+						transform = transform.replace(test, val);
+					}
+					else
+					{
+						transform += " " + val;
+					}
+				}
+				else
+				{
+					transform = val;
+				}
 			}
 		}
-		else
-		{
-			transform = val;
-		}
+        this._graphic.addToRedrawQueue(this);    
 		transformOrigin = (100 * transformOrigin[0]) + "% " + (100 * transformOrigin[1]) + "%";
 		node.style.MozTransformOrigin = transformOrigin; 
 		node.style.webkitTransformOrigin = transformOrigin;
 		node.style.msTransformOrigin = transformOrigin;
 		node.style.OTransformOrigin = transformOrigin;
-		node.style.MozTransform = transform;
-		node.style.webkitTransform = transform;
-		node.style.msTransform = transform;
-		node.style.OTransform = transform;
-		this._graphic.addToRedrawQueue(this);    
+        if(transform)
+		{
+            node.style.MozTransform = transform;
+            node.style.webkitTransform = transform;
+            node.style.msTransform = transform;
+            node.style.OTransform = transform;
+		}
 	},
 
 	/**
@@ -500,7 +517,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	_updateHandler: function()
 	{
 		this._draw();
-		this._graphic.addToRedrawQueue(this);    
+		this._updateTransform();
 	},
 	
 	/**
@@ -510,6 +527,8 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	{
         this.clear();
 		this._paint();
+		node.style.left = this.get("x") + "px";
+		node.style.top = this.get("y") + "px";
 	},
 
 	/**
