@@ -8643,11 +8643,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "base-base"
         ]
     }, 
-    "pluginattr": {
-        "requires": [
-            "plugin"
-        ]
-    }, 
     "pluginhost": {
         "use": [
             "pluginhost-base", 
@@ -8811,6 +8806,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }, 
         "requires": [
             "scrollview-base"
+        ]
+    }, 
+    "scrollview-list": {
+        "requires": [
+            "plugin"
         ]
     }, 
     "scrollview-paginator": {
@@ -9165,7 +9165,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'bfa4168f56b3fe75d19bfd18b6442f97';
+YUI.Env[Y.version].md5 = '1b47db5a8eb8bb0bdf3898b5aeeab181';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
