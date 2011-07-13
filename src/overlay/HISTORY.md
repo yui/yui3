@@ -1,6 +1,12 @@
 Overlay
 =======
 
+3.4.0
+-----
+
+  * No changes, see Widget and extensions for changes to
+    dependencies.
+
 3.3.0
 -----
 
