@@ -3911,7 +3911,7 @@ Y.Get = {
     /**
      * The number of request required before an automatic purge.
      * Can be configured via the 'purgethreshold' config
-     * property PURGE_THRESH
+     * @property PURGE_THRESH
      * @static
      * @type int
      * @default 20
@@ -4637,7 +4637,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2011.07.06-19-30',
+            GALLERY_VERSION = 'gallery-2011.07.13-21-54',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
