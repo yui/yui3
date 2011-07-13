@@ -1,0 +1,34 @@
+<div class="intro">
+    <p>The Cache Utility provides a basic caching mechanism for storing key/value pairs in local JavaScript memory.
+</div>
+
+<div class="example">
+    {{>cache-basic-source}}
+</div>
+
+```
+YUI().use("cache-base", function(Y) {
+    // Configure Cache maximum size, expires in the constructor
+    var cache = new Y.Cache({max:5, expires:3600000});
+
+    // Add entries to the Cache
+    cache.add("key1", "value1");
+    cache.add("key2", "value2");
+
+    // Retrieve a cached entry
+    var cachedentry = cache.retrieve("key1");
+
+    // Cached entry is an object with a request property and a response property
+    alert("cached key: " + cachedentry.request +
+        "/cached value: " + cachedentry.response);
+
+    // Flush the cache
+    cache.flush();
+});
+```
+
+<h2>Complete Example Source</h2>
+
+```
+    {{>cache-basic-source}}
+```
