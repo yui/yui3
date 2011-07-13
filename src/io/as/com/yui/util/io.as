@@ -123,7 +123,7 @@ package com.yui.util
             }
 
             if (e is IOErrorEvent) {
-                o.c = { status: 0, statusText: encodeURI(e.target.text) };
+                o.c = { status: 0, statusText: e.type };
             }
 			else if (e is SecurityErrorEvent) {
 				o.c = { status: 0, statusText: 'Security Violation.' };
