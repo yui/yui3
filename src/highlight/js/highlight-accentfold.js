@@ -88,7 +88,7 @@ Highlight = Y.mix(Y.Highlight, {
 
         // Tack on the remainder of the haystack that wasn't highlighted, if
         // any.
-        if (startPos < haystack.length - 1) {
+        if (startPos < haystack.length) {
             results.push([haystack.substr(startPos)]);
         }
 
