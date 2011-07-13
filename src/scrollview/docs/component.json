@@ -1,0 +1,9 @@
+{
+    "name"       : "scrollview",
+    "displayName": "ScrollView",
+    "description": "ScrollView provides a scrollable content widget with flick velocity based inertia for both touch and mouse.",
+    "author"     : "sdesai",
+
+    "tags": ["scrollview", "widget"],
+    "use" : ["scrollview"]
+}
