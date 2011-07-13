@@ -19,18 +19,3 @@ event-move
 Provides "gesturemovestart", "gesturemove" and "gesturemoveend" 
 events, which can be used to normalize drag type interactions
 across touch and mouse devices.
-
-The tests/manual/gestures.html page provides an example of how
-they can be used.
-
-3.3.0
-
-* Use touches current target if already set, as opposed
-  to over-riding it with touch current target
-
-* Flick "y" axis param now handled correctly.
-
-3.2.0
-
-* New beta component
-
