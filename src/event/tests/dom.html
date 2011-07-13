@@ -542,10 +542,18 @@
                         el = node._node,
                         fired = {},
                         typePrefix = 'event:' + Y.stamp(el),
+                        imp, testIE, handle;
+
+                    // Wrapped in a try/catch because the test may be blowing
+                    // up in IE due to property access (guessing FTL)
+                    try {
                         // cribbed from the event-base-ie.js conditional loading
-                        imp = Y.config.doc && Y.config.doc.implementation,
-                        testIE = !(imp && imp.hasFeature && imp.hasFeature('Events', '2.0')),
-                        handle;
+                        imp = Y.config.doc && Y.config.doc.implementation;
+                        testIE = !(imp && imp.hasFeature
+                                    && imp.hasFeature('Events', '2.0'));
+                    } catch (e) {
+                        testIE = true;
+                    }
 
                     // custom simulation because Y.Event.simulate attempts to
                     // correct e.button and doesn't accept e.which
