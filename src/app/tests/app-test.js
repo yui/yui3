@@ -1381,6 +1381,24 @@ modelListSuite.add(new Y.Test.Case({
         ArrayAssert.itemsAreSame(['zero', 'one'], list.get('foo'));
     },
 
+    'refresh() should sort the new models in the list': function () {
+        var list = this.createList();
+
+        list.comparator = function (model) {
+            return model.get('bar');
+        };
+
+        list.refresh([
+            {foo: 'item 1', bar: 1},
+            {foo: 'item 4', bar: 4},
+            {foo: 'item 3', bar: 3},
+            {foo: 'item 5', bar: 5},
+            {foo: 'item 2', bar: 2}
+        ]);
+
+        ArrayAssert.itemsAreSame([1, 2, 3, 4, 5], list.get('bar'));
+    },
+
     'remove() should remove a single model from the list': function () {
         var list = this.createList();
 
@@ -1611,6 +1629,37 @@ modelListSuite.add(new Y.Test.Case({
         list.sort({test: 'test'});
 
         Assert.areSame(2, calls);
+    },
+
+    '`refresh` event facade should contain sorted models': function () {
+        var calls = 0,
+            list  = this.createList();
+
+        list.comparator = function (model) {
+            return model.get('bar');
+        };
+
+        list.once('refresh', function (e) {
+            var values = [];
+
+            calls += 1;
+
+            Y.Array.each(e.models, function (model) {
+                values.push(model.get('bar'));
+            });
+
+            ArrayAssert.itemsAreSame([1, 2, 3, 4, 5], values);
+        });
+
+        list.refresh([
+            {foo: 'item 1', bar: 1},
+            {foo: 'item 4', bar: 4},
+            {foo: 'item 3', bar: 3},
+            {foo: 'item 5', bar: 5},
+            {foo: 'item 2', bar: 2}
+        ]);
+
+        Assert.areSame(1, calls);
     },
 
     '`refresh` event should be preventable': function () {

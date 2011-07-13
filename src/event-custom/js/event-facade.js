@@ -51,21 +51,21 @@ Y.EventFacade = function(e, currentTarget) {
 
     /**
      * Node reference for the targeted eventtarget
-     * @propery target
+     * @property target
      * @type Node
      */
     this.target = e.target;
 
     /**
      * Node reference for the element that the listener was attached to.
-     * @propery currentTarget
+     * @property currentTarget
      * @type Node
      */
     this.currentTarget = currentTarget;
 
     /**
      * Node reference to the relatedTarget
-     * @propery relatedTarget
+     * @property relatedTarget
      * @type Node
      */
     this.relatedTarget = e.relatedTarget;

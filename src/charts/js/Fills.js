@@ -260,6 +260,7 @@ Fills.prototype = {
      * Storage for default area styles.
      *
      * @property _defaults
+     * @type Object
      * @private
      */
     _defaults: null,
