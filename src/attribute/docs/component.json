@@ -1,0 +1,9 @@
+{
+    "name"       : "attribute",
+    "displayName": "Attribute",
+    "description": "The Attribute utility allows you to add attributes to any class through an augmentable Attribute interface. The interface adds get and set methods to your class to retrieve and store attribute values, as well as support for change events that can be used to listen for changes in attribute values.",
+    "author"     : "sdesai",
+
+    "tags": ["attribute", "infrastructure"],
+    "use" : ["attribute"]
+}
