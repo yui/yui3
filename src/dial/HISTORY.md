@@ -1,17 +1,6 @@
 Dial Change History
 ===================
 
-3.3.0
------
-
-  * New Beta Component
-    Deprecated _setLabelString, _setTooltipString, _setResetString. 
-    Instead, use DialObjName.set('strings',{'label':'My new label',
-    'resetStr';'My New Reset'});   before DialObjName.render();
-    One or more strings can be changed at a time.
-    Removed _setXYResetString. Now done through CSS.
-    Not called by Dial.js anymore.
-
 3.4.0
 -----
 
@@ -56,4 +45,15 @@ Dial Change History
   * When mousedown is used to set its value, Dial now has intuitive handling of
     different configurations of min, max where stepsPerRevolution is
     greater than or less than one revolution. [Ticket #2530306]
+
+3.3.0
+-----
+
+  * New Beta Component
+    Deprecated _setLabelString, _setTooltipString, _setResetString. 
+    Instead, use DialObjName.set('strings',{'label':'My new label',
+    'resetStr';'My New Reset'});   before DialObjName.render();
+    One or more strings can be changed at a time.
+    Removed _setXYResetString. Now done through CSS.
+    Not called by Dial.js anymore.
 
