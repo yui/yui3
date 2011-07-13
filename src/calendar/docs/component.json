@@ -1,0 +1,21 @@
+{
+    "name"       : "calendar",
+    "displayName": "Calendar",
+    "description": "Provides an interactive visual representation of a range of dates in one or more month grids",
+    "author"     : "allenr",
+
+    "tags": ["widget", "calendar"],
+    "use" : ["calendar"],
+
+    "examples": [
+        {
+            "name"       : "calendar-simple",
+            "displayName": "Simple Single Pane Selectable Calendar Example",
+            "description": "How to create a single-pane calendar with selectable dates",
+            "modules"    : ["calendar"],
+            "tags"       : ["calendar"],
+
+            "hideTableOfContents": true
+        }
+    ]
+}
