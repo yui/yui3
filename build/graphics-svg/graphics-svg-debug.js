@@ -988,7 +988,10 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 			this._transformArgs = {};
 		}
 		this._transformArgs[type] = Array.prototype.slice.call(args, 0);
-		this._updateTransform();
+		if(this.initialized)
+        {
+            this._updateTransform();
+        }
 	},
 
 	/**
