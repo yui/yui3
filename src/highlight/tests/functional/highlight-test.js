@@ -136,7 +136,7 @@ suite.add(new Y.Test.Case({
     'allFold() should not ignore haystack remainders of length one': function () {
         Assert.areSame(
             'föo <b class="yui3-highlight">bá</b>r',
-            Hi.allFold('föo bár', ['bar'])
+            Hi.allFold('föo bár', ['ba'])
         );
     },
 
