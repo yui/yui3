@@ -1730,9 +1730,12 @@ Y.TopAxisLayout = TopAxisLayout;
 /**
  * The Axis class. Generates axes for a chart.
  *
+ * @module charts
  * @class Axis
- * @extends Renderer
+ * @extends Widget
+ * @uses Renderer
  * @constructor
+ * @param {Object} config (optional) Configuration parameters for the Chart.
  */
 Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     /**
@@ -1940,6 +1943,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
      * Maps key values to classes containing layout algorithms
      *
      * @property _layoutClasses
+     * @type Object
      * @private
      */
     _layoutClasses: 
@@ -2818,6 +2822,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
      * Type of data used in `Axis`.
      *
      * @property _type
+     * @type String 
      * @readOnly
      * @private
      */
@@ -5250,6 +5255,7 @@ Fills.prototype = {
      * Storage for default area styles.
      *
      * @property _defaults
+     * @type Object
      * @private
      */
     _defaults: null,
@@ -6268,7 +6274,8 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     /**
      * Default value for plane offsets when the parent chart's `interactiveType` is `planar`. 
      *
-     * @property _defautlPlaneOffset
+     * @property _defaultPlaneOffset
+     * @type Number
      * @private
      */
     _defaultPlaneOffset: 4,

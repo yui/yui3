@@ -356,7 +356,8 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     /**
      * Default value for plane offsets when the parent chart's `interactiveType` is `planar`. 
      *
-     * @property _defautlPlaneOffset
+     * @property _defaultPlaneOffset
+     * @type Number
      * @private
      */
     _defaultPlaneOffset: 4,
