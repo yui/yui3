@@ -1,5 +1,9 @@
 /**
- * Draws ellipses
+ * Draws an ellipse
+ *
+ * @module graphics
+ * @class CanvasEllipse
+ * @constructor
  */
 CanvasEllipse = function(cfg)
 {
@@ -19,6 +23,9 @@ Y.extend(CanvasEllipse, CanvasShape, {
 	_type: "ellipse",
 
 	/**
+     * Draws the shape.
+     *
+     * @method _draw
 	 * @private
 	 */
 	_draw: function()

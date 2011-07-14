@@ -1,7 +1,10 @@
 /**
  * Base class for creating shapes.
  *
+ * @module graphics
  * @class VMLShape
+ * @constructor
+ * @param {Object} cfg (optional) Attribute configs
  */
 VMLShape = function() 
 {
@@ -21,8 +24,12 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 	_type: "shape",
     
     /**
-	 * @private
-	 */
+     * Init method, invoked during construction.
+     * Calls `initializer` method.
+     *
+     * @method init
+     * @protected
+     */
 	init: function()
 	{
 		this.initializer.apply(this, arguments);
@@ -44,6 +51,10 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 	},
 
 	/**
+	 * Creates the dom node for the shape.
+	 *
+     * @method createNode
+	 * @return HTMLElement
 	 * @private
 	 */
 	createNode: function()
@@ -185,7 +196,8 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 	 * Set the position of the shape in page coordinates, regardless of how the node is positioned.
 	 *
 	 * @method setXY
-	 * @param {Array} Contains X & Y values for new position (coordinates are page-based)
+	 * @param {Array} Contains x & y values for new position (coordinates are page-based)
+     *
 	 */
 	setXY: function(xy)
 	{
@@ -712,7 +724,7 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 	/**
 	 * Applies a skew to the x-coordinate
 	 *
-	 * @method skewX:q
+	 * @method skewX
 	 * @param {Number} x x-coordinate
 	 */
 	 skewX: function(x)
@@ -721,10 +733,10 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 	 },
 
 	/**
-	 * Applies a skew to the x-coordinate
+	 * Applies a skew to the y-coordinate
 	 *
-	 * @method skewX:q
-	 * @param {Number} x x-coordinate
+	 * @method skewY
+	 * @param {Number} y y-coordinate
 	 */
 	 skewY: function(y)
 	 {
@@ -732,16 +744,20 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 	 },
 
 	/**
+     * Storage for `rotation` atribute.
+     *
+     * @property _rotation
+     * @type Number
 	 * @private
 	 */
 	_rotation: 0,
 
-	 /**
-	  * Applies a rotation.
-	  *
-	  * @method rotate
-	  * @param
-	  */
+	/**
+	 * Applies a rotation.
+	 *
+	 * @method rotate
+	 * @param {Number} deg The degree of the rotation.
+	 */
 	 rotate: function(deg)
 	 {
 		this._rotation = deg;
@@ -818,6 +834,9 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 	},
 
 	/**
+	 * Draws the shape.
+	 *
+	 * @method _draw
 	 * @private
 	 */
 	_draw: function()

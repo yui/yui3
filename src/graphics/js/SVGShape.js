@@ -1,7 +1,10 @@
 /**
  * Base class for creating shapes.
  *
+ * @module graphics
  * @class SVGShape
+ * @constructor
+ * @param {Object} cfg (optional) Attribute configs
  */
 SVGShape = function(cfg)
 {
@@ -12,7 +15,11 @@ SVGShape.NAME = "svgShape";
 
 Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
     /**
-     * @private
+     * Init method, invoked during construction.
+     * Calls `initializer` method.
+     *
+     * @method init
+     * @protected
      */
 	init: function()
 	{
@@ -78,7 +85,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 * Set the position of the shape in page coordinates, regardless of how the node is positioned.
 	 *
 	 * @method setXY
-	 * @param {Array} Contains X & Y values for new position (coordinates are page-based)
+	 * @param {Array} Contains x & y values for new position (coordinates are page-based)
 	 */
 	setXY: function(xy)
 	{
@@ -164,8 +171,9 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	/**
 	 * Creates the dom node for the shape.
 	 *
-	 * @private
+     * @method createNode
 	 * @return HTMLElement
+	 * @private
 	 */
 	createNode: function()
 	{
@@ -183,8 +191,13 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 			node.setAttribute("pointer-events", pointerEvents);
 		}
 	},
-
-	/**
+	
+    /**
+     * Parses event to determine if it is a dom interaction event.
+     *
+     * @method isMouseEvent
+     * @param {String} type Type of event
+     * @return Boolean
 	 * @private
 	 */
 	isMouseEvent: function(type)
@@ -197,6 +210,12 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	},
 	
 	/**
+     * Overrides default `before` method. Checks to see if its a dom interaction event. If so, 
+     * return an event attached to the `node` element. If not, return the normal functionality.
+     *
+     * @method before
+     * @param {String} type event type
+     * @param {Object} callback function
 	 * @private
 	 */
 	before: function(type, fn)
@@ -209,6 +228,12 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	},
 	
 	/**
+     * Overrides default `on` method. Checks to see if its a dom interaction event. If so, 
+     * return an event attached to the `node` element. If not, return the normal functionality.
+     *
+     * @method on
+     * @param {String} type event type
+     * @param {Object} callback function
 	 * @private
 	 */
 	on: function(type, fn)
@@ -221,6 +246,12 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	},
 	
 	/**
+     * Overrides default `after` method. Checks to see if its a dom interaction event. If so, 
+     * return an event attached to the `node` element. If not, return the normal functionality.
+     *
+     * @method after
+     * @param {String} type event type
+     * @param {Object} callback function
 	 * @private
 	 */
 	after: function(type, fn)
@@ -432,9 +463,15 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 		}
 	},
 
-	/**
-	 * @private
-	 */
+    /**
+     * Sets the value of an attribute.
+     *
+     * @method set
+     * @param {String|Object} name The name of the attribute. Alternatively, an object of key value pairs can 
+     * be passed in to set multiple attributes at once.
+     * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as 
+     * the name param.
+     */
 	set: function() 
 	{
 		var host = this;
@@ -484,10 +521,10 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 },
 
 	/**
-	 * Applies a skew to the x-coordinate
+	 * Applies a skew to the y-coordinate
 	 *
-	 * @method skewX
-	 * @param {Number} x x-coordinate
+	 * @method skewY
+	 * @param {Number} y y-coordinate
 	 */
 	 skewY: function(y)
 	 {
@@ -495,16 +532,20 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 },
 
 	/**
+     * Storage for `rotation` atribute.
+     *
+     * @property _rotation
+     * @type Number
 	 * @private
 	 */
 	 _rotation: 0,
 
-	 /**
-	  * Applies a rotation.
-	  *
-	  * @method rotate
-	  * @param
-	  */
+	/**
+	 * Applies a rotation.
+	 *
+	 * @method rotate
+	 * @param {Number} deg The degree of the rotation.
+	 */
 	 rotate: function(deg)
 	 {
 		this._rotation = deg;
@@ -526,13 +567,24 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 * Applies a matrix transformation
 	 *
 	 * @method matrix
+     * @param {Number} a
+     * @param {Number} b
+     * @param {Number} c
+     * @param {Number} d
+     * @param {Number} e
+     * @param {Number} f
 	 */
 	matrix: function(a, b, c, d, e, f)
 	{
 		this._addTransform("matrix", arguments);
 	},
 
-	/**
+    /**
+     * Adds a transform to the shape.
+     *
+     * @method _addTransform
+     * @param {String} type The transform being applied.
+     * @param {Array} args The arguments for the transform.
 	 * @private
 	 */
 	_addTransform: function(type, args)
@@ -549,6 +601,9 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	},
 
 	/**
+     * Applies all transforms.
+     *
+     * @method _updateTransform
 	 * @private
 	 */
 	_updateTransform: function()
@@ -601,7 +656,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	},
 
 	/**
-	 * Updates the shape.
+	 * Draws the shape.
 	 *
 	 * @method _draw
 	 * @private
@@ -621,10 +676,10 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	},
 
 	/**
-	 * Change event listener
-	 *
+     * Updates `Shape` based on attribute changes.
+     *
+     * @method _updateHandler
 	 * @private
-	 * @method _updateHandler
 	 */
 	_updateHandler: function(e)
 	{
@@ -634,6 +689,8 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	/**
 	 * Storage for translateX
 	 *
+     * @property _translateX
+     * @type Number
 	 * @private
 	 */
 	_translateX: 0,
@@ -641,6 +698,8 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	/**
 	 * Storage for translateY
 	 *
+     * @property _translateY
+     * @type Number
 	 * @private
 	 */
 	_translateY: 0,
@@ -746,6 +805,11 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
         return (toy - (x - tox) * sinRadians + (y - toy) * cosRadians);
     },
 
+    /**
+     * Destroys the instance.
+     *
+     * @method destroy
+     */
     destroy: function()
     {
         if(this._graphic && this._graphic._contentNode)
@@ -1072,7 +1136,7 @@ SVGShape.ATTRS = {
 	/**
 	 * Reference to the parent graphic instance
 	 *
-	 * @graphic
+	 * @attribute graphic
 	 * @type SVGGraphic
 	 * @readOnly
 	 */

@@ -16,6 +16,13 @@ var Y_LANG = Y.Lang,
 
 function VMLDrawing() {}
 
+/**
+ * Set of drawing methods for VML based classes.
+ *
+ * @module graphics
+ * @class VMLDrawing
+ * @constructor
+ */
 VMLDrawing.prototype = {
     /**
      * @private
