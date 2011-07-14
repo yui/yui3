@@ -3935,7 +3935,7 @@ Y.Get = {
     /**
      * The number of request required before an automatic purge.
      * Can be configured via the 'purgethreshold' config
-     * property PURGE_THRESH
+     * @property PURGE_THRESH
      * @static
      * @type int
      * @default 20
@@ -4315,8 +4315,8 @@ add('load', '3', {
 });
 // 0
 add('load', '4', {
-    "name": "widget-base-ie", 
-    "trigger": "widget-base", 
+    "name": "scrollview-base-ie", 
+    "trigger": "scrollview-base", 
     "ua": "ie"
 });
 // autocomplete-list-keys-sniff.js

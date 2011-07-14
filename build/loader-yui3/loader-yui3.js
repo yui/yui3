@@ -290,7 +290,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "charts": {
         "requires": [
             "dom", 
-            "datatype", 
+            "datatype-number", 
+            "datatype-date", 
             "event-custom", 
             "event-mouseenter", 
             "widget", 
@@ -1993,7 +1994,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '1b47db5a8eb8bb0bdf3898b5aeeab181';
+YUI.Env[Y.version].md5 = '20993ff9fea6bbdb5d6ad6a449ef95af';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

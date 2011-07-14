@@ -17,8 +17,9 @@ var SHAPE = "canvasShape",
     TOHEX = Y_Color.toHex;
 
 /**
- * Set of drawing apis for canvas based classes.
+ * Set of drawing methods for canvas based classes.
  *
+ * @module graphics
  * @class CanvasDrawing
  * @constructor
  */
@@ -31,6 +32,8 @@ CanvasDrawing.prototype = {
      * Parses hex color string and alpha value to rgba
      *
      * @method _toRGBA
+     * @param {Object} val Color value to parse. Can be hex string, rgb or name.
+     * @param {Number} alpha Numeric value between 0 and 1 representing the alpha level.
      * @private
      */
     _toRGBA: function(val, alpha) {
@@ -53,6 +56,7 @@ CanvasDrawing.prototype = {
      * Converts color to rgb format
      *
      * @method _toRGB
+     * @param val Color value to convert.
      * @private 
      */
     _toRGB: function(val) {
@@ -83,6 +87,11 @@ CanvasDrawing.prototype = {
     },
     
 	/**
+     * Tracks coordinates. Used to calculate the start point of dashed lines. 
+     *
+     * @method _updateCoords
+     * @param {Number} x x-coordinate
+     * @param {Number} y y-coordinate
 	 * @private
 	 */
     _updateCoords: function(x, y)
@@ -92,7 +101,10 @@ CanvasDrawing.prototype = {
     },
 
 	/**
-	 * @private
+     * Clears the coordinate arrays. Called at the end of a drawing operation.  
+	 * 
+     * @method _clearAndUpdateCoords
+     * @private
 	 */
     _clearAndUpdateCoords: function()
     {
@@ -102,6 +114,9 @@ CanvasDrawing.prototype = {
     },
 
 	/**
+     * Moves the shape's dom node.
+     *
+     * @method _updateNodePosition
 	 * @private
 	 */
     _updateNodePosition: function()
@@ -124,7 +139,13 @@ CanvasDrawing.prototype = {
     _properties: null,
     
     /**
-     * Adds a method to the drawing queue
+     * Queues up a method to be executed when a shape redraws.
+     *
+     * @method _updateDrawingQueue
+     * @param {Array} val An array containing data that can be parsed into a method and arguments. The value at zero-index of the array is a string reference of
+     * the drawing method that will be called. All subsequent indices are argument for that method. For example, `lineTo(10, 100)` would be structured as:
+     * `["lineTo", 10, 100]`.
+     * @private
      */
     _updateDrawingQueue: function(val)
     {
@@ -451,6 +472,7 @@ CanvasDrawing.prototype = {
      * Returns a linear gradient fill
      *
      * @method _getLinearGradient
+     * @return CanvasGradient
      * @private
      */
     _getLinearGradient: function() {
@@ -530,6 +552,7 @@ CanvasDrawing.prototype = {
      * Returns a radial gradient fill
      *
      * @method _getRadialGradient
+     * @return CanvasGradient
      * @private
      */
     _getRadialGradient: function() {
@@ -637,6 +660,10 @@ CanvasDrawing.prototype = {
     },
    
     /**
+     * Indicates a drawing has completed.
+     *
+     * @property _drawingComplete
+     * @type Boolean
      * @private
      */
     _drawingComplete: false,
@@ -645,6 +672,7 @@ CanvasDrawing.prototype = {
      * Creates canvas element
      *
      * @method _createGraphic
+     * @return HTMLCanvasElement
      * @private
      */
     _createGraphic: function(config) {
@@ -684,7 +712,9 @@ Y.CanvasDrawing = CanvasDrawing;
 /**
  * Base class for creating shapes.
  *
+ * @module graphics
  * @class CanvasShape
+ * @constructor
  */
 CanvasShape = function(cfg)
 {
@@ -694,8 +724,12 @@ CanvasShape = function(cfg)
 CanvasShape.NAME = "canvasShape";
 
 Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
-	/**
-     * @private
+    /**
+     * Init method, invoked during construction.
+     * Calls `initializer` method.
+     *
+     * @method init
+     * @protected
      */
     init: function()
 	{
@@ -815,9 +849,9 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	/**
 	 * Value function for fill attribute
 	 *
-	 * @private
 	 * @method _getDefaultFill
 	 * @return Object
+	 * @private
 	 */
 	_getDefaultFill: function() {
 		return {
@@ -833,9 +867,9 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	/**
 	 * Value function for stroke attribute
 	 *
-	 * @private
 	 * @method _getDefaultStroke
 	 * @return Object
+	 * @private
 	 */
 	_getDefaultStroke: function() 
 	{
@@ -850,6 +884,8 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	/**
 	 * Left edge of the path
 	 *
+     * @property _left
+     * @type Number
 	 * @private
 	 */
 	_left: 0,
@@ -857,6 +893,8 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	/**
 	 * Right edge of the path
 	 *
+     * @property _right
+     * @type Number
 	 * @private
 	 */
 	_right: 0,
@@ -864,6 +902,8 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	/**
 	 * Top edge of the path
 	 *
+     * @property _top
+     * @type Number
 	 * @private
 	 */
 	_top: 0, 
@@ -871,6 +911,8 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	/**
 	 * Bottom edge of the path
 	 *
+     * @property _bottom
+     * @type Number
 	 * @private
 	 */
 	_bottom: 0,
@@ -878,8 +920,9 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	/**
 	 * Creates the dom node for the shape.
 	 *
-	 * @private
+     * @method createNode
 	 * @return HTMLElement
+	 * @private
 	 */
 	createNode: function()
 	{
@@ -896,6 +939,11 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	},
 
 	/**
+     * Parses event to determine if it is a dom interaction event.
+     *
+     * @method isMouseEvent
+     * @param {String} type Type of event
+     * @return Boolean
 	 * @private
 	 */
 	isMouseEvent: function(type)
@@ -908,6 +956,12 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	},
 	
 	/**
+     * Overrides default `before` method. Checks to see if its a dom interaction event. If so, 
+     * return an event attached to the `node` element. If not, return the normal functionality.
+     *
+     * @method before
+     * @param {String} type event type
+     * @param {Object} callback function
 	 * @private
 	 */
 	before: function(type, fn)
@@ -920,6 +974,12 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	},
 	
 	/**
+     * Overrides default `on` method. Checks to see if its a dom interaction event. If so, 
+     * return an event attached to the `node` element. If not, return the normal functionality.
+     *
+     * @method on
+     * @param {String} type event type
+     * @param {Object} callback function
 	 * @private
 	 */
 	on: function(type, fn)
@@ -932,6 +992,12 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	},
 	
 	/**
+     * Overrides default `after` method. Checks to see if its a dom interaction event. If so, 
+     * return an event attached to the `node` element. If not, return the normal functionality.
+     *
+     * @method after
+     * @param {String} type event type
+     * @param {Object} callback function
 	 * @private
 	 */
 	after: function(type, fn)
@@ -947,6 +1013,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 * Adds a stroke to the shape node.
 	 *
 	 * @method _strokeChangeHandler
+     * @param {Object} stroke Properties of the `stroke` attribute.
 	 * @private
 	 */
 	_setStrokeProps: function(stroke)
@@ -992,9 +1059,15 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 		}
 	},
 
-	/**
-	 * @private
-	 */
+    /**
+     * Sets the value of an attribute.
+     *
+     * @method set
+     * @param {String|Object} name The name of the attribute. Alternatively, an object of key value pairs can 
+     * be passed in to set multiple attributes at once.
+     * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as 
+     * the name param.
+     */
 	set: function() 
 	{
 		var host = this,
@@ -1009,7 +1082,8 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	/**
 	 * Adds a fill to the shape node.
 	 *
-	 * @method _fillChangeHandler
+	 * @method _setFillProps 
+     * @param {Object} fill Properties of the `fill` attribute.
 	 * @private
 	 */
 	_setFillProps: function(fill)
@@ -1074,7 +1148,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	/**
 	 * Applies a skew to the x-coordinate
 	 *
-	 * @method skewX:q
+	 * @method skewX
 	 * @param {Number} x x-coordinate
 	 */
 	 skewX: function(x)
@@ -1082,16 +1156,20 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 },
 
 	/**
-	 * Applies a skew to the x-coordinate
+	 * Applies a skew to the y-coordinate
 	 *
-	 * @method skewX:q
-	 * @param {Number} x x-coordinate
+	 * @method skewY
+	 * @param {Number} y y-coordinate
 	 */
 	 skewY: function(y)
 	 {
 	 },
 
 	/**
+     * Storage for `rotation` atribute.
+     *
+     * @property _rotation
+     * @type Number
 	 * @private
 	 */
 	_rotation: 0,
@@ -1100,7 +1178,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 * Applies a rotation.
 	 *
 	 * @method rotate
-	 * @param
+	 * @param {Number} deg The degree of the rotation.
 	 */
 	rotate: function(deg)
 	{
@@ -1123,12 +1201,23 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 * Applies a matrix transformation
 	 *
 	 * @method matrix
+     * @param {Number} a
+     * @param {Number} b
+     * @param {Number} c
+     * @param {Number} d
+     * @param {Number} e
+     * @param {Number} f
 	 */
 	matrix: function(a, b, c, d, e, f)
 	{
 	},
 	
     /**
+     * Adds a transform to the shape.
+     *
+     * @method _addTransform
+     * @param {String} type The transform being applied.
+     * @param {Array} args The arguments for the transform.
 	 * @private
 	 */
 	_addTransform: function(type, args)
@@ -1145,6 +1234,9 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	},
 
 	/**
+     * Applies all transforms.
+     *
+     * @method _updateTransform
 	 * @private
 	 */
 	_updateTransform: function()
@@ -1195,6 +1287,9 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	},
 
 	/**
+     * Updates `Shape` based on attribute changes.
+     *
+     * @method _updateHandler
 	 * @private
 	 */
 	_updateHandler: function()
@@ -1204,10 +1299,14 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	},
 	
 	/**
+	 * Updates the shape.
+	 *
+	 * @method _draw
 	 * @private
 	 */
 	_draw: function()
 	{
+        var node = this.node;
         this.clear();
 		this._paint();
 		node.style.left = this.get("x") + "px";
@@ -1492,6 +1591,11 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
         return (toy - (x - tox) * sinRadians + (y - toy) * cosRadians);
     },
 
+    /**
+     * Destroys the instance.
+     *
+     * @method destroy
+     */
     destroy: function()
     {
         var node = this.node,
@@ -1545,7 +1649,7 @@ CanvasShape.ATTRS =  {
 
 	/**
 	 * Performs a translate on the x-coordinate. When translating x and y coordinates,
-	 * use the <code>translate</code> method.
+	 * use the `translate` method.
 	 *
 	 * @attribute translateX
 	 * @type Number
@@ -1566,7 +1670,7 @@ CanvasShape.ATTRS =  {
 	
 	/**
 	 * Performs a translate on the y-coordinate. When translating x and y coordinates,
-	 * use the <code>translate</code> method.
+	 * use the `translate` method.
 	 *
 	 * @attribute translateX
 	 * @type Number
@@ -1586,7 +1690,7 @@ CanvasShape.ATTRS =  {
 	},
 
 	/**
-	 * Dom node of the shape
+	 * Dom node for the shape
 	 *
 	 * @attribute node
 	 * @type HTMLElement
@@ -1815,9 +1919,12 @@ Y.extend(CanvasPath, Y.CanvasShape, {
      */
     _type: "path",
 
-    /**
-     * @private
-     */
+	/**
+	 * Draws the shape.
+	 *
+	 * @method _draw
+	 * @private
+	 */
     _draw: function()
     {
         this._paint();
@@ -1915,6 +2022,10 @@ CanvasPath.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 Y.CanvasPath = CanvasPath;
 /**
  * Draws rectangles
+ *
+ * @module graphics
+ * @class CanvasRect
+ * @constructor
  */
 CanvasRect = function()
 {
@@ -1932,6 +2043,9 @@ Y.extend(CanvasRect, Y.CanvasShape, {
 	_type: "rect",
 
 	/**
+	 * Draws the shape.
+	 *
+	 * @method _draw
 	 * @private
 	 */
 	_draw: function()
@@ -1946,7 +2060,11 @@ Y.extend(CanvasRect, Y.CanvasShape, {
 CanvasRect.ATTRS = Y.CanvasShape.ATTRS;
 Y.CanvasRect = CanvasRect;
 /**
- * Draws ellipses
+ * Draws an ellipse
+ *
+ * @module graphics
+ * @class CanvasEllipse
+ * @constructor
  */
 CanvasEllipse = function(cfg)
 {
@@ -1966,6 +2084,9 @@ Y.extend(CanvasEllipse, CanvasShape, {
 	_type: "ellipse",
 
 	/**
+     * Draws the shape.
+     *
+     * @method _draw
 	 * @private
 	 */
 	_draw: function()
@@ -1981,6 +2102,10 @@ CanvasEllipse.ATTRS = CanvasShape.ATTRS;
 Y.CanvasEllipse = CanvasEllipse;
 /**
  * Draws an circle
+ *
+ * @module graphics
+ * @class CanvasCircle
+ * @constructor
  */
 CanvasCircle = function(cfg)
 {
@@ -2000,6 +2125,9 @@ Y.extend(CanvasCircle, Y.CanvasShape, {
 	_type: "circle",
 
 	/**
+     * Draws the shape.
+     *
+     * @method _draw
 	 * @private
 	 */
 	_draw: function()
@@ -2057,6 +2185,7 @@ CanvasCircle.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	 * Radius of the circle
 	 *
 	 * @attribute radius
+     * @type Number
 	 */
 	radius: {
 		lazyAdd: false
@@ -2065,6 +2194,10 @@ CanvasCircle.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 Y.CanvasCircle = CanvasCircle;
 /**
  * Draws pie slices
+ *
+ * @module graphics
+ * @class CanvasPieSlice
+ * @constructor
  */
 CanvasPieSlice = function()
 {
@@ -2145,6 +2278,7 @@ Y.CanvasPieSlice = CanvasPieSlice;
 /**
  * CanvasGraphic is a simple drawing api that allows for basic drawing operations.
  *
+ * @module graphics
  * @class CanvasGraphic
  * @constructor
  */
@@ -2156,6 +2290,12 @@ function CanvasGraphic(config) {
 CanvasGraphic.NAME = "canvasGraphic";
 
 CanvasGraphic.ATTRS = {
+    /**
+     * Whether or not to render the `Graphic` automatically after to a specified parent node after init. This can be a Node instance or a CSS selector string.
+     * 
+     * @attribute render
+     * @type Node | String 
+     */
     render: {},
 	
     /**
@@ -2229,6 +2369,12 @@ CanvasGraphic.ATTRS = {
         }
     },
 
+	/**
+	 * Indicates the width of the `Graphic`. 
+	 *
+	 * @attribute width
+	 * @type Number
+	 */
     width: {
         setter: function(val)
         {
@@ -2240,6 +2386,12 @@ CanvasGraphic.ATTRS = {
         }
     },
 
+	/**
+	 * Indicates the height of the `Graphic`. 
+	 *
+	 * @attribute height 
+	 * @type Number
+	 */
     height: {
         setter: function(val)
         {
@@ -2343,6 +2495,12 @@ CanvasGraphic.ATTRS = {
         value: true
     },
 
+	/**
+	 * Indicates whether the `Graphic` and its children are visible.
+	 *
+	 * @attribute visible
+	 * @type Boolean
+	 */
     visible: {
         value: true,
 
@@ -2356,11 +2514,19 @@ CanvasGraphic.ATTRS = {
 
 Y.extend(CanvasGraphic, Y.BaseGraphic, {
     /**
+     * Storage for `x` attribute.
+     *
+     * @property _x
+     * @type Number
      * @private
      */
     _x: 0,
 
     /**
+     * Storage for `y` attribute.
+     *
+     * @property _y
+     * @type Number
      * @private
      */
     _y: 0,
@@ -2383,9 +2549,11 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
     },
 
     /**
-     * @private
+     * Storage for `resizeDown` attribute.
+     *
      * @property _resizeDown 
      * @type Boolean
+     * @private
      */
     _resizeDown: false,
     
@@ -2393,6 +2561,7 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
      * Initializes the class.
      *
      * @method initializer
+     * @param {Object} config Optional attributes 
      * @private
      */
     initializer: function(config) {
@@ -2477,6 +2646,7 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
      *
      * @method addShape
      * @param {Shape} shape The shape instance to be added to the graphic.
+     * @private
      */
     addShape: function(shape)
     {
@@ -2496,7 +2666,7 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
      * Removes a shape instance from from the graphic instance.
      *
      * @method removeShape
-     * @param {Shape|String}
+     * @param {Shape|String} shape The instance or id of the shape to be removed.
      */
     removeShape: function(shape)
     {
@@ -2585,6 +2755,10 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
     },
 
     /**
+     * Returns a shape class. Used by `getShape`. 
+     *
+     * @param {Shape | String} val Indicates which shape class. 
+     * @return Function 
      * @private
      */
     _getShapeClass: function(val)
@@ -2598,6 +2772,10 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
     },
     
     /**
+     * Look up for shape classes. Used by `getShape` to retrieve a class for instantiation.
+     *
+     * @property _shapeClass
+     * @type Object
      * @private
      */
     _shapeClass: {
@@ -2636,6 +2814,13 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
         this.set("autoDraw", autoDraw);
     },
 
+    /**
+     * Returns a document fragment to for attaching shapes.
+     *
+     * @method _getDocFrag
+     * @return DocumentFragment
+     * @private
+     */
     _getDocFrag: function()
     {
         if(!this._frag)
@@ -2645,6 +2830,12 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
         return this._frag;
     },
     
+    /**
+     * Redraws all shapes.
+     *
+     * @method _redraw
+     * @private
+     */
     _redraw: function()
     {
         var box = this.get("resizeDown") ? this._getUpdatedContentBounds() : this._contentBounds;
@@ -2664,7 +2855,7 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
      * Adds a shape to the redraw queue. 
      *
      * @method addToRedrawQueue
-     * @param shape {CanvasShape}
+     * @param Shape shape The shape instance to add to the queue
      */
     addToRedrawQueue: function(shape)
     {
@@ -2689,6 +2880,13 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
         }
     },
 
+    /**
+     * Recalculates and returns the `contentBounds` for the `Graphic` instance.
+     *
+     * @method _getUpdateContentBounds
+     * @return {Object} 
+     * @private
+     */
     _getUpdatedContentBounds: function()
     {
         var bounds,
