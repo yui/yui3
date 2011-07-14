@@ -28,7 +28,7 @@ Y_Node.ATTRS = {
     /**
      * Allows for getting and setting the text of an element.
      * Formatting is preserved and special characters are treated literally.
-     * @config text
+     * @config for
      * @type String
      */
     'for': {

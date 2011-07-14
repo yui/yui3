@@ -3292,7 +3292,6 @@ YUI.Env.aliases = {
     "resize": ["resize-base","resize-proxy","resize-constrain"],
     "slider": ["slider-base","slider-value-range","clickable-rail","range-slider"],
     "text": ["text-accentfold","text-wordbreak"],
-    "transition": ["transition-native","transition-timer"],
     "widget": ["widget-base","widget-htmlparser","widget-uievents","widget-skin"],
     "yui-rls": ["yui-base","get","features","intl-base","rls","yui-log","yui-later"]
 };
@@ -3911,7 +3910,7 @@ Y.Get = {
     /**
      * The number of request required before an automatic purge.
      * Can be configured via the 'purgethreshold' config
-     * property PURGE_THRESH
+     * @property PURGE_THRESH
      * @static
      * @type int
      * @default 20
@@ -4281,14 +4280,30 @@ add('load', '3', {
 }, 
     "trigger": "dom-style"
 });
-// 0
+// transition-test.js
 add('load', '4', {
+    "name": "transition-timer", 
+    "test": function (Y) {
+    var DOCUMENT = Y.config.doc,
+        node = (DOCUMENT) ? DOCUMENT.documentElement: null,
+        ret = true;
+
+    if (node && node.style) {
+        ret = !('MozTransition' in node.style || 'WebkitTransition' in node.style);
+    } 
+
+    return ret;
+}, 
+    "trigger": "transition"
+});
+// 0
+add('load', '5', {
     "name": "widget-base-ie", 
     "trigger": "widget-base", 
     "ua": "ie"
 });
 // autocomplete-list-keys-sniff.js
-add('load', '5', {
+add('load', '6', {
     "name": "autocomplete-list-keys", 
     "test": function (Y) {
     // Only add keyboard support to autocomplete-list if this doesn't appear to
@@ -4307,7 +4322,7 @@ add('load', '5', {
     "trigger": "autocomplete-list"
 });
 // graphics-canvas.js
-add('load', '6', {
+add('load', '7', {
     "name": "graphics-canvas-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -4317,7 +4332,7 @@ add('load', '6', {
     "trigger": "graphics"
 });
 // dd-gestures-test.js
-add('load', '7', {
+add('load', '8', {
     "name": "dd-gestures", 
     "test": function(Y) {
     return (Y.config.win && ('ontouchstart' in Y.config.win && !Y.UA.chrome));
@@ -4325,7 +4340,7 @@ add('load', '7', {
     "trigger": "dd-drag"
 });
 // selector-test.js
-add('load', '8', {
+add('load', '9', {
     "name": "selector-css2", 
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -4336,7 +4351,7 @@ add('load', '8', {
     "trigger": "selector"
 });
 // history-hash-ie-test.js
-add('load', '9', {
+add('load', '10', {
     "name": "history-hash-ie", 
     "test": function (Y) {
     var docMode = Y.config.doc && Y.config.doc.documentMode;
