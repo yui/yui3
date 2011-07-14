@@ -4283,8 +4283,8 @@ add('load', '3', {
 });
 // 0
 add('load', '4', {
-    "name": "widget-base-ie", 
-    "trigger": "widget-base", 
+    "name": "scrollview-base-ie", 
+    "trigger": "scrollview-base", 
     "ua": "ie"
 });
 // autocomplete-list-keys-sniff.js

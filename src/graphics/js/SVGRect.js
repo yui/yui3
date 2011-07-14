@@ -1,5 +1,9 @@
 /**
  * Draws rectangles
+ *
+ * @module graphics
+ * @class SVGRect
+ * @constructor
  */
 SVGRect = function()
 {

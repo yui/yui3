@@ -1,6 +1,7 @@
 /**
  * CanvasGraphic is a simple drawing api that allows for basic drawing operations.
  *
+ * @module graphics
  * @class CanvasGraphic
  * @constructor
  */
@@ -12,6 +13,12 @@ function CanvasGraphic(config) {
 CanvasGraphic.NAME = "canvasGraphic";
 
 CanvasGraphic.ATTRS = {
+    /**
+     * Whether or not to render the `Graphic` automatically after to a specified parent node after init. This can be a Node instance or a CSS selector string.
+     * 
+     * @attribute render
+     * @type Node | String 
+     */
     render: {},
 	
     /**
@@ -85,6 +92,12 @@ CanvasGraphic.ATTRS = {
         }
     },
 
+	/**
+	 * Indicates the width of the `Graphic`. 
+	 *
+	 * @attribute width
+	 * @type Number
+	 */
     width: {
         setter: function(val)
         {
@@ -96,6 +109,12 @@ CanvasGraphic.ATTRS = {
         }
     },
 
+	/**
+	 * Indicates the height of the `Graphic`. 
+	 *
+	 * @attribute height 
+	 * @type Number
+	 */
     height: {
         setter: function(val)
         {
@@ -199,6 +218,12 @@ CanvasGraphic.ATTRS = {
         value: true
     },
 
+	/**
+	 * Indicates whether the `Graphic` and its children are visible.
+	 *
+	 * @attribute visible
+	 * @type Boolean
+	 */
     visible: {
         value: true,
 
@@ -212,11 +237,19 @@ CanvasGraphic.ATTRS = {
 
 Y.extend(CanvasGraphic, Y.BaseGraphic, {
     /**
+     * Storage for `x` attribute.
+     *
+     * @property _x
+     * @type Number
      * @private
      */
     _x: 0,
 
     /**
+     * Storage for `y` attribute.
+     *
+     * @property _y
+     * @type Number
      * @private
      */
     _y: 0,
@@ -239,9 +272,11 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
     },
 
     /**
-     * @private
+     * Storage for `resizeDown` attribute.
+     *
      * @property _resizeDown 
      * @type Boolean
+     * @private
      */
     _resizeDown: false,
     
@@ -249,6 +284,7 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
      * Initializes the class.
      *
      * @method initializer
+     * @param {Object} config Optional attributes 
      * @private
      */
     initializer: function(config) {
@@ -333,6 +369,7 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
      *
      * @method addShape
      * @param {Shape} shape The shape instance to be added to the graphic.
+     * @private
      */
     addShape: function(shape)
     {
@@ -352,7 +389,7 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
      * Removes a shape instance from from the graphic instance.
      *
      * @method removeShape
-     * @param {Shape|String}
+     * @param {Shape|String} shape The instance or id of the shape to be removed.
      */
     removeShape: function(shape)
     {
@@ -441,6 +478,10 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
     },
 
     /**
+     * Returns a shape class. Used by `getShape`. 
+     *
+     * @param {Shape | String} val Indicates which shape class. 
+     * @return Function 
      * @private
      */
     _getShapeClass: function(val)
@@ -454,6 +495,10 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
     },
     
     /**
+     * Look up for shape classes. Used by `getShape` to retrieve a class for instantiation.
+     *
+     * @property _shapeClass
+     * @type Object
      * @private
      */
     _shapeClass: {
@@ -492,6 +537,13 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
         this.set("autoDraw", autoDraw);
     },
 
+    /**
+     * Returns a document fragment to for attaching shapes.
+     *
+     * @method _getDocFrag
+     * @return DocumentFragment
+     * @private
+     */
     _getDocFrag: function()
     {
         if(!this._frag)
@@ -501,6 +553,12 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
         return this._frag;
     },
     
+    /**
+     * Redraws all shapes.
+     *
+     * @method _redraw
+     * @private
+     */
     _redraw: function()
     {
         var box = this.get("resizeDown") ? this._getUpdatedContentBounds() : this._contentBounds;
@@ -520,7 +578,7 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
      * Adds a shape to the redraw queue. 
      *
      * @method addToRedrawQueue
-     * @param shape {CanvasShape}
+     * @param Shape shape The shape instance to add to the queue
      */
     addToRedrawQueue: function(shape)
     {
@@ -545,6 +603,13 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
         }
     },
 
+    /**
+     * Recalculates and returns the `contentBounds` for the `Graphic` instance.
+     *
+     * @method _getUpdateContentBounds
+     * @return {Object} 
+     * @private
+     */
     _getUpdatedContentBounds: function()
     {
         var bounds,

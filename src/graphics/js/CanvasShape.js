@@ -1,7 +1,9 @@
 /**
  * Base class for creating shapes.
  *
+ * @module graphics
  * @class CanvasShape
+ * @constructor
  */
 CanvasShape = function(cfg)
 {
@@ -11,8 +13,12 @@ CanvasShape = function(cfg)
 CanvasShape.NAME = "canvasShape";
 
 Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
-	/**
-     * @private
+    /**
+     * Init method, invoked during construction.
+     * Calls `initializer` method.
+     *
+     * @method init
+     * @protected
      */
     init: function()
 	{
@@ -132,9 +138,9 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	/**
 	 * Value function for fill attribute
 	 *
-	 * @private
 	 * @method _getDefaultFill
 	 * @return Object
+	 * @private
 	 */
 	_getDefaultFill: function() {
 		return {
@@ -150,9 +156,9 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	/**
 	 * Value function for stroke attribute
 	 *
-	 * @private
 	 * @method _getDefaultStroke
 	 * @return Object
+	 * @private
 	 */
 	_getDefaultStroke: function() 
 	{
@@ -167,6 +173,8 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	/**
 	 * Left edge of the path
 	 *
+     * @property _left
+     * @type Number
 	 * @private
 	 */
 	_left: 0,
@@ -174,6 +182,8 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	/**
 	 * Right edge of the path
 	 *
+     * @property _right
+     * @type Number
 	 * @private
 	 */
 	_right: 0,
@@ -181,6 +191,8 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	/**
 	 * Top edge of the path
 	 *
+     * @property _top
+     * @type Number
 	 * @private
 	 */
 	_top: 0, 
@@ -188,6 +200,8 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	/**
 	 * Bottom edge of the path
 	 *
+     * @property _bottom
+     * @type Number
 	 * @private
 	 */
 	_bottom: 0,
@@ -195,8 +209,9 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	/**
 	 * Creates the dom node for the shape.
 	 *
-	 * @private
+     * @method createNode
 	 * @return HTMLElement
+	 * @private
 	 */
 	createNode: function()
 	{
@@ -213,6 +228,11 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	},
 
 	/**
+     * Parses event to determine if it is a dom interaction event.
+     *
+     * @method isMouseEvent
+     * @param {String} type Type of event
+     * @return Boolean
 	 * @private
 	 */
 	isMouseEvent: function(type)
@@ -225,6 +245,12 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	},
 	
 	/**
+     * Overrides default `before` method. Checks to see if its a dom interaction event. If so, 
+     * return an event attached to the `node` element. If not, return the normal functionality.
+     *
+     * @method before
+     * @param {String} type event type
+     * @param {Object} callback function
 	 * @private
 	 */
 	before: function(type, fn)
@@ -237,6 +263,12 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	},
 	
 	/**
+     * Overrides default `on` method. Checks to see if its a dom interaction event. If so, 
+     * return an event attached to the `node` element. If not, return the normal functionality.
+     *
+     * @method on
+     * @param {String} type event type
+     * @param {Object} callback function
 	 * @private
 	 */
 	on: function(type, fn)
@@ -249,6 +281,12 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	},
 	
 	/**
+     * Overrides default `after` method. Checks to see if its a dom interaction event. If so, 
+     * return an event attached to the `node` element. If not, return the normal functionality.
+     *
+     * @method after
+     * @param {String} type event type
+     * @param {Object} callback function
 	 * @private
 	 */
 	after: function(type, fn)
@@ -264,6 +302,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 * Adds a stroke to the shape node.
 	 *
 	 * @method _strokeChangeHandler
+     * @param {Object} stroke Properties of the `stroke` attribute.
 	 * @private
 	 */
 	_setStrokeProps: function(stroke)
@@ -309,15 +348,21 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 		}
 	},
 
-	/**
-	 * @private
-	 */
+    /**
+     * Sets the value of an attribute.
+     *
+     * @method set
+     * @param {String|Object} name The name of the attribute. Alternatively, an object of key value pairs can 
+     * be passed in to set multiple attributes at once.
+     * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as 
+     * the name param.
+     */
 	set: function() 
 	{
 		var host = this,
 			val = arguments[0];
 		AttributeLite.prototype.set.apply(host, arguments);
-		if(host.initialized && val != "x" && val != "y")
+		if(host.initialized)
 		{
 			host._updateHandler();
 		}
@@ -326,7 +371,8 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	/**
 	 * Adds a fill to the shape node.
 	 *
-	 * @method _fillChangeHandler
+	 * @method _setFillProps 
+     * @param {Object} fill Properties of the `fill` attribute.
 	 * @private
 	 */
 	_setFillProps: function(fill)
@@ -385,14 +431,13 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 */
 	_translate: function(x, y)
 	{
-		var translate = "translate(" + x + "px, " + y + "px)";
-		this._updateTransform("translate", /translate\(.*\)/, translate);
+		this._addTransform("translate", [x + "px", y + "px"]);
 	},
 
 	/**
 	 * Applies a skew to the x-coordinate
 	 *
-	 * @method skewX:q
+	 * @method skewX
 	 * @param {Number} x x-coordinate
 	 */
 	 skewX: function(x)
@@ -400,16 +445,20 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 },
 
 	/**
-	 * Applies a skew to the x-coordinate
+	 * Applies a skew to the y-coordinate
 	 *
-	 * @method skewX:q
-	 * @param {Number} x x-coordinate
+	 * @method skewY
+	 * @param {Number} y y-coordinate
 	 */
 	 skewY: function(y)
 	 {
 	 },
 
 	/**
+     * Storage for `rotation` atribute.
+     *
+     * @property _rotation
+     * @type Number
 	 * @private
 	 */
 	_rotation: 0,
@@ -418,26 +467,13 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 * Applies a rotation.
 	 *
 	 * @method rotate
-	 * @param
+	 * @param {Number} deg The degree of the rotation.
 	 */
 	rotate: function(deg)
 	{
 		var rotate = "rotate(" + deg + "deg)";
 		this._rotation = deg;
-		this._updateTransform("rotate", /rotate\(.*\)/, rotate);
-	},
-
-	/**
-	 * An array of x, y values which indicates the transformOrigin in which to rotate the shape. Valid values range between 0 and 1 representing a 
-	 * fraction of the shape's corresponding bounding box dimension. The default value is [0.5, 0.5].
-	 *
-	 * @attribute transformOrigin
-	 * @type Array
-	 */
-	_transformOrigin: function(x, y)
-	{
-		var node = this.get("node");
-		node.style.MozTransformOrigin = (100 * x) + "% " + (100 * y) + "%";
+		this._addTransform("rotate", [deg + "deg"]);
 	},
 
 	/**
@@ -454,62 +490,116 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 * Applies a matrix transformation
 	 *
 	 * @method matrix
+     * @param {Number} a
+     * @param {Number} b
+     * @param {Number} c
+     * @param {Number} d
+     * @param {Number} e
+     * @param {Number} f
 	 */
 	matrix: function(a, b, c, d, e, f)
 	{
 	},
-
-	/**
+	
+    /**
+     * Adds a transform to the shape.
+     *
+     * @method _addTransform
+     * @param {String} type The transform being applied.
+     * @param {Array} args The arguments for the transform.
 	 * @private
 	 */
-	_updateTransform: function(type, test, val)
+	_addTransform: function(type, args)
 	{
-		var node = this.get("node"),
+		if(!this._transformArgs)
+		{
+			this._transformArgs = {};
+		}
+		this._transformArgs[type] = Array.prototype.slice.call(args, 0);
+		if(this.initialized)
+        {
+            this._updateTransform();
+        }
+	},
+
+	/**
+     * Applies all transforms.
+     *
+     * @method _updateTransform
+	 * @private
+	 */
+	_updateTransform: function()
+	{
+		var node = this.node,
+			key,
+			args,
+			val,
 			transform = node.style.MozTransform || node.style.webkitTransform || node.style.msTransform || node.style.OTransform,
+			test,
 			transformOrigin = this.get("transformOrigin");
-		if(transform && transform.length > 0)
+		for(key in this._transformArgs)
 		{
-			if(transform.indexOf(type) > -1)
+            if(key && this._transformArgs.hasOwnProperty(key))
 			{
-				transform = transform.replace(test, val);
-			}
-			else
-			{
-				transform += " " + val;
+				val = key + "(" + this._transformArgs[key].toString() + ")";
+				if(transform && transform.length > 0)
+				{
+					test = new RegExp(key + '(.*)');
+					if(transform.indexOf(key) > -1)
+					{
+						transform = transform.replace(test, val);
+					}
+					else
+					{
+						transform += " " + val;
+					}
+				}
+				else
+				{
+					transform = val;
+				}
 			}
 		}
-		else
-		{
-			transform = val;
-		}
+        this._graphic.addToRedrawQueue(this);    
 		transformOrigin = (100 * transformOrigin[0]) + "% " + (100 * transformOrigin[1]) + "%";
 		node.style.MozTransformOrigin = transformOrigin; 
 		node.style.webkitTransformOrigin = transformOrigin;
 		node.style.msTransformOrigin = transformOrigin;
 		node.style.OTransformOrigin = transformOrigin;
-		node.style.MozTransform = transform;
-		node.style.webkitTransform = transform;
-		node.style.msTransform = transform;
-		node.style.OTransform = transform;
-		this._graphic.addToRedrawQueue(this);    
+        if(transform)
+		{
+            node.style.MozTransform = transform;
+            node.style.webkitTransform = transform;
+            node.style.msTransform = transform;
+            node.style.OTransform = transform;
+		}
 	},
 
 	/**
+     * Updates `Shape` based on attribute changes.
+     *
+     * @method _updateHandler
 	 * @private
 	 */
 	_updateHandler: function()
 	{
 		this._draw();
-		this._graphic.addToRedrawQueue(this);    
+		this._updateTransform();
 	},
 	
 	/**
+	 * Updates the shape.
+	 *
+	 * @method _draw
 	 * @private
 	 */
 	_draw: function()
 	{
+        var node = this.node;
         this.clear();
 		this._paint();
+		node.style.left = this.get("x") + "px";
+		node.style.top = this.get("y") + "px";
 	},
 
 	/**
@@ -790,6 +880,11 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
         return (toy - (x - tox) * sinRadians + (y - toy) * cosRadians);
     },
 
+    /**
+     * Destroys the instance.
+     *
+     * @method destroy
+     */
     destroy: function()
     {
         var node = this.node,
@@ -843,7 +938,7 @@ CanvasShape.ATTRS =  {
 
 	/**
 	 * Performs a translate on the x-coordinate. When translating x and y coordinates,
-	 * use the <code>translate</code> method.
+	 * use the `translate` method.
 	 *
 	 * @attribute translateX
 	 * @type Number
@@ -864,7 +959,7 @@ CanvasShape.ATTRS =  {
 	
 	/**
 	 * Performs a translate on the y-coordinate. When translating x and y coordinates,
-	 * use the <code>translate</code> method.
+	 * use the `translate` method.
 	 *
 	 * @attribute translateX
 	 * @type Number
@@ -884,7 +979,7 @@ CanvasShape.ATTRS =  {
 	},
 
 	/**
-	 * Dom node of the shape
+	 * Dom node for the shape
 	 *
 	 * @attribute node
 	 * @type HTMLElement

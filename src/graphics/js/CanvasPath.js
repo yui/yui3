@@ -20,9 +20,12 @@ Y.extend(CanvasPath, Y.CanvasShape, {
      */
     _type: "path",
 
-    /**
-     * @private
-     */
+	/**
+	 * Draws the shape.
+	 *
+	 * @method _draw
+	 * @private
+	 */
     _draw: function()
     {
         this._paint();

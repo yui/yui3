@@ -1,0 +1,73 @@
+<div class="intro">
+    <p>DataSchema.XML can be used to retrieve data held in HTML TABLE elements.</p>
+</div>
+
+<div class="example">
+    {{>dataschema-table-source}}
+</div>
+
+<p>DataSource.XML's `apply()` method supports passing in DOM nodes or document fragments. Use XPath strings to define data locations. In this example, we are retrieving data held in the rows of a TABLE element.</p>
+
+```
+YUI().use("dataschema-xml", function(Y) {
+    var tableEl = Y.Node.getDOMNode(Y.one("#simple")),
+        schema = {
+            // Each record is held in a TR
+            resultListLocator: "tr",
+            // Note that the XPath indexes are 1-based!
+            resultFields: [
+                {key:"beverage", locator:"td[1]"},
+                {key:"price", locator:"td[2]"}
+            ]
+        },
+        data_out = Y.DataSchema.XML.apply(schema, tableEl));
+
+    alert(data_out);
+});
+```
+
+<p>If the table has a THEAD element and/or multiple TBODY elements, special considerations must be taken to apply the schema to the appropriate collection of TR elements. In the following complex example we leverage the power of the Node API to</p>
+
+<ul>
+    <li>Access the contents of the THEAD to generate our schema dynamically;</li>
+    <li>and access only the TR elements contained in TBODY elements for data values, ignoring those TR elements in the THEAD.</li>
+</ul>
+
+```
+YUI().use("dataschema-xml", function(Y) {
+    // This function generates a schema based on contents of a TABLE element
+    var getSchemaFromTableNode = function(tableNode) {
+        var fields = [],
+            // Each record is held in a TR
+            schema = {resultListLocator:"tr"},
+            // Each field name is held in a TH
+            thList = tableNode.all("th");
+
+        // Generate field definitions based on TH
+        thList.each(function(thNode, i){
+            // Note that the XPath indexes are 1-based!
+            fields.push({key:thNode.get("text"), locator:"td["+(i+1)+"]"});
+        });
+        schema.resultFields = fields;
+        return schema;
+    };
+
+    var tableNode = Y.one("#complex"),
+        // Generate schema dynamically
+        schema = getSchemaFromTableNode(tableNode),
+        // Create a temporary TBODY container to hold all data TRs
+        tbody = document.createElement("tbody"),
+        tbodyContainer = document.createDocumentFragment().appendChild(tbody);
+
+    // Grab each TR in a TBODY but don't include TRs from the THEAD
+    Y.all("#complex tbody tr").each(function(trNode, i){
+        // Cloning the TR keeps it in the document (optional)
+        // Append each TR to the container
+        tbodyContainer.appendChild(Y.Node.getDOMNode(trNode).cloneNode(true));
+    })
+
+    var data_out = Y.DataSchema.XML.apply(schema, tbodyContainer));
+
+    alert(data_out);
+});
+```

@@ -15,8 +15,9 @@ var SHAPE = "canvasShape",
     TOHEX = Y_Color.toHex;
 
 /**
- * Set of drawing apis for canvas based classes.
+ * Set of drawing methods for canvas based classes.
  *
+ * @module graphics
  * @class CanvasDrawing
  * @constructor
  */
@@ -29,6 +30,8 @@ CanvasDrawing.prototype = {
      * Parses hex color string and alpha value to rgba
      *
      * @method _toRGBA
+     * @param {Object} val Color value to parse. Can be hex string, rgb or name.
+     * @param {Number} alpha Numeric value between 0 and 1 representing the alpha level.
      * @private
      */
     _toRGBA: function(val, alpha) {
@@ -51,6 +54,7 @@ CanvasDrawing.prototype = {
      * Converts color to rgb format
      *
      * @method _toRGB
+     * @param val Color value to convert.
      * @private 
      */
     _toRGB: function(val) {
@@ -81,6 +85,11 @@ CanvasDrawing.prototype = {
     },
     
 	/**
+     * Tracks coordinates. Used to calculate the start point of dashed lines. 
+     *
+     * @method _updateCoords
+     * @param {Number} x x-coordinate
+     * @param {Number} y y-coordinate
 	 * @private
 	 */
     _updateCoords: function(x, y)
@@ -90,7 +99,10 @@ CanvasDrawing.prototype = {
     },
 
 	/**
-	 * @private
+     * Clears the coordinate arrays. Called at the end of a drawing operation.  
+	 * 
+     * @method _clearAndUpdateCoords
+     * @private
 	 */
     _clearAndUpdateCoords: function()
     {
@@ -100,6 +112,9 @@ CanvasDrawing.prototype = {
     },
 
 	/**
+     * Moves the shape's dom node.
+     *
+     * @method _updateNodePosition
 	 * @private
 	 */
     _updateNodePosition: function()
@@ -122,7 +137,13 @@ CanvasDrawing.prototype = {
     _properties: null,
     
     /**
-     * Adds a method to the drawing queue
+     * Queues up a method to be executed when a shape redraws.
+     *
+     * @method _updateDrawingQueue
+     * @param {Array} val An array containing data that can be parsed into a method and arguments. The value at zero-index of the array is a string reference of
+     * the drawing method that will be called. All subsequent indices are argument for that method. For example, `lineTo(10, 100)` would be structured as:
+     * `["lineTo", 10, 100]`.
+     * @private
      */
     _updateDrawingQueue: function(val)
     {
@@ -449,6 +470,7 @@ CanvasDrawing.prototype = {
      * Returns a linear gradient fill
      *
      * @method _getLinearGradient
+     * @return CanvasGradient
      * @private
      */
     _getLinearGradient: function() {
@@ -528,6 +550,7 @@ CanvasDrawing.prototype = {
      * Returns a radial gradient fill
      *
      * @method _getRadialGradient
+     * @return CanvasGradient
      * @private
      */
     _getRadialGradient: function() {
@@ -635,6 +658,10 @@ CanvasDrawing.prototype = {
     },
    
     /**
+     * Indicates a drawing has completed.
+     *
+     * @property _drawingComplete
+     * @type Boolean
      * @private
      */
     _drawingComplete: false,
@@ -643,6 +670,7 @@ CanvasDrawing.prototype = {
      * Creates canvas element
      *
      * @method _createGraphic
+     * @return HTMLCanvasElement
      * @private
      */
     _createGraphic: function(config) {

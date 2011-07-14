@@ -12,6 +12,13 @@ var SHAPE = "svgShape",
 
 function SVGDrawing(){}
 
+/**
+ * Set of drawing methods for SVG based classes.
+ *
+ * @module graphics
+ * @class SVGDrawing
+ * @constructor
+ */
 SVGDrawing.prototype = {
     /**
      * Indicates the type of shape

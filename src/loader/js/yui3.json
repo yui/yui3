@@ -268,7 +268,8 @@
     "charts": {
         "requires": [
             "dom", 
-            "datatype", 
+            "datatype-number", 
+            "datatype-date", 
             "event-custom", 
             "event-mouseenter", 
             "widget", 
