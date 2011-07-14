@@ -10,12 +10,7 @@ li {
     Xoverflow: hidden;
 }
 </style> 
-<script src="../../../../build/yui-core/yui-core-min.js"></script> 
-<script src="../../../../build/transition-native/transition-native-min.js"></script> 
-<script src="../../../../build/dom-core/dom-core-min.js"></script> 
-<script src="../../../../build/node-core/node-core-min.js"></script> 
-<script src="../../../../build/dom-style/dom-style-min.js"></script> 
-<!--script src="http://yui.yahooapis.com/3.3.0/build/yui/yui.js"></script--> 
+<script src="../../../../build/yui/yui-debug.js"></script> 
 </head>
 <body> 
 <p> this is some text above the li</p>
@@ -28,7 +23,7 @@ li {
 
 <script type="text/javascript">
  
-YUI({filter:'min'}).use('node-core', 'transition-native', 'dom-style', function(Y) {
+YUI({filter:'raw'}).use('transition', function(Y) {
     var nodes = document.getElementsByTagName('li'),
         node = nodes.item(0);
 
