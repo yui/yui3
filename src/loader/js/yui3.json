@@ -1714,20 +1714,18 @@
         ]
     }, 
     "transition": {
-        "use": [
-            "transition-native", 
-            "transition-timer"
-        ]
-    }, 
-    "transition-native": {
         "requires": [
-            "node-base"
+            "node-style"
         ]
     }, 
     "transition-timer": {
+        "condition": {
+            "name": "transition-timer", 
+            "test": "transition-test.js", 
+            "trigger": "transition"
+        }, 
         "requires": [
-            "transition-native", 
-            "node-style"
+            "transition"
         ]
     }, 
     "uploader": {

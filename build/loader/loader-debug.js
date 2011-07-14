@@ -4314,20 +4314,28 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }, 
     "transition": {
-        "use": [
-            "transition-native", 
-            "transition-timer"
-        ]
-    }, 
-    "transition-native": {
         "requires": [
-            "node-base"
+            "node-style"
         ]
     }, 
     "transition-timer": {
+        "condition": {
+            "name": "transition-timer", 
+            "test": function (Y) {
+    var DOCUMENT = Y.config.doc,
+        node = (DOCUMENT) ? DOCUMENT.documentElement: null,
+        ret = true;
+
+    if (node && node.style) {
+        ret = !('MozTransition' in node.style || 'WebkitTransition' in node.style);
+    } 
+
+    return ret;
+}, 
+            "trigger": "transition"
+        }, 
         "requires": [
-            "transition-native", 
-            "node-style"
+            "transition"
         ]
     }, 
     "uploader": {
@@ -4510,7 +4518,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '20993ff9fea6bbdb5d6ad6a449ef95af';
+YUI.Env[Y.version].md5 = '13e620660ee428a0b4d4597efbd9fefa';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

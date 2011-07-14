@@ -210,7 +210,6 @@ var WIDGET         = 'widget',
         },
 
         _detachUIHandles : function () {
-            console.log(this);
             Y.each(this._uiHandles, function(h){
                 h.detach();
             });

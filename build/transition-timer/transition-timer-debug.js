@@ -336,4 +336,4 @@ Transition.behaviors.top = Transition.behaviors.bottom = Transition.behaviors.ri
 Y.Transition = Transition;
 
 
-}, '@VERSION@' ,{requires:['transition-native', 'node-style']});
+}, '@VERSION@' ,{requires:['transition']});
