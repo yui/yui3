@@ -160,7 +160,12 @@ YUI.add('anim-base', function(Y) {
          */
         node: {
             setter: function(node) {
-                node = Y.one(node);
+                if (node) {
+                    if (typeof node == 'string' || node.nodeType) {
+                        node = Y.one(node);
+                    }
+                }
+
                 this._node = node;
                 if (!node) {
                     Y.log(node + ' is not a valid node', 'warn', 'Anim');
@@ -1204,5 +1209,5 @@ Y.Anim.behaviors.xy = {
 }, '@VERSION@' ,{requires:['anim-base', 'node-screen']});
 
 
-YUI.add('anim', function(Y){}, '@VERSION@' ,{skinnable:false, use:['anim-base', 'anim-color', 'anim-curve', 'anim-easing', 'anim-node-plugin', 'anim-scroll', 'anim-xy']});
+YUI.add('anim', function(Y){}, '@VERSION@' ,{use:['anim-base', 'anim-color', 'anim-curve', 'anim-easing', 'anim-node-plugin', 'anim-scroll', 'anim-xy'], skinnable:false});
 
