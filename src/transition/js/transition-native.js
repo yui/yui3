@@ -51,9 +51,6 @@ Transition._toCamel = function(property) {
     return property;
 };
 
-Transition.SHOW_TRANSITION = 'fadeIn';
-Transition.HIDE_TRANSITION = 'fadeOut';
-
 Transition._toHyphen = function(property) {
     property = property.replace(/([A-Z]?)([a-z]+)([A-Z]?)/g, function(m0, m1, m2, m3) {
         var str = ((m1) ? '-' + m1.toLowerCase() : '') + m2;
@@ -67,6 +64,9 @@ Transition._toHyphen = function(property) {
 
     return property;
 };
+
+Transition.SHOW_TRANSITION = 'fadeIn';
+Transition.HIDE_TRANSITION = 'fadeOut';
 
 Transition.useNative = false;
 
