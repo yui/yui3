@@ -80,6 +80,7 @@ Y.Array.each(VENDORS, function(val) { // then vendor specific
 
         Transition.useNative = true;
         Transition.supported = true; // TODO: remove
+        Transition._VENDOR_PREFIX = val;
     }
 });
 
