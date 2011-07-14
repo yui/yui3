@@ -1,0 +1,34 @@
+<style scoped>
+#ac-input { width: 250px; }
+</style>
+
+<div class="intro">
+<p>
+This example demonstrates how to instantiate a simple Calendar, with an initial date setting of September 2011. The Calendar is preconfigured to show the previous and next month's dates.
+</p>
+
+<p>
+Try clicking on the "Toggle showing the next month" and "Toggle showing the previous month" to change the initial settings for showing the previous and next months' dates.
+</p>
+</div>
+
+<div class="example">
+    {{>calendar-simple-source}}
+</div>
+
+<h2>HTML</h2>
+
+```
+<div id="demo" class="yui3-skin-sam">
+<div id="mycalendar"></div>
+<br>
+<a href="#" id="togglePrevMonth">Toggle Show Previous Month</a><br>
+<a href="#" id="toggleNextMonth">Toggle Show Next Month</a><br>
+</div>
+```
+
+<h2>Complete Example Source</h2>
+
+```
+{{>calendar-simple-source}}
+```

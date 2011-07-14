@@ -1,0 +1,9 @@
+{
+    "name"       : "widget",
+    "displayName": "Widget",
+    "description": "Widget is the foundation class from which all YUI 3 widgets are derived.",
+    "author"     : "sdesai",
+
+    "tags": ["widget", "widget"],
+    "use" : ["widget"]
+}

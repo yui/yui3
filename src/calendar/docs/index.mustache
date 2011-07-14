@@ -1,0 +1,192 @@
+<div class="intro">
+<p>
+<img src="{{componentAssets}}/img/calendar-screenshot.png" alt="Screenshot of the Calendar widget" style="border: 1px solid #bfbfbf; float:right; height:161px; margin: 0 0 8px 8px; width:272px;">
+The Calendar widget is a visual representation of a range of dates in blocks of one or more months, which allows the user to select dates and navigate the date range.</p>
+
+<p>
+In addition to the core logic for displaying a date range and allowing date selection and navigation, Calendar also provides options for custom date filtering, custom formatting of individual dates, various display options, internationalization, flexible templates, additional navigation plugins, and more.
+</p>
+
+<p>
+Calendar is highly modular and easy to extend so that it can be modified or used as the basis for custom implementations and widgets.
+</p>
+</div>
+
+{{>getting-started}}
+
+<h2>Using Calendar</h2>
+<h3>Quick Start</h3>
+
+<p>
+Here's an easy way to create an instance of a Calendar with just a few lines of code.
+</p>
+
+```
+YUI().use('calendar', function (Y) {
+
+  // Add the yui3-skin-sam class to the body so the default
+  // Calendar widget skin will be applied.
+  Y.one('body').addClass('yui3-skin-sam');
+
+  // Create a new instance of Calendar, setting its width 
+  // and height, allowing the dates from the previous
+  // and next month to be visible and setting the initial
+  // date to be November, 1982.
+  var calendar = new Y.Calendar({
+          contentBox: "#mycalendar",
+          height:'200px',
+          width:'600px',
+          showPrevMonth: true,
+          showNextMonth: true,
+          date: new Date(1982,11,1)}).render();
+
+});
+```
+
+<p>
+For a more complete discussion of how to use, configure, and customize Calendar, read on.
+</p>
+
+<h3>Configuring Calendar</h3>
+
+<p>
+Except for `contentBox`, all configuration attributes are optional. This list only contain the most interesting attributes. For a complete list of all attributes, please refer to the <a href="/yui/3/api/module_calendar.html">API docs</a>.
+</p>
+
+<h4>CalendarBase Config Attributes</h4>
+
+<p>
+These attributes are provided by `CalendarBase`, which is the core foundation for the Calendar widget. They are available on all Calendar instances.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>`width`</td>
+      <td>`300px`</td>
+      <td>
+        The width of the calendar widget.
+      </td>
+    </tr>
+    <tr>
+      <td>`height`</td>
+      <td>`200px`</td>
+      <td>
+        The height of the calendar widget.
+      </td>
+    </tr>
+    <tr>
+      <td>`date`</td>
+      <td>Today's date on the user's system</td>
+      <td>
+        The date corresponding to the month and the year to be displayed. The date assigned to this attribute will always be normalized to the noon on the first of the month. In a multi-pane calendar, the month and the year of the first pane will correspond to this date.
+      </td>
+    </tr>
+    <tr>
+      <td>`customRenderer`</td>
+      <td>`null`</td>
+      <td>
+        An object containing a `rules` attribute and a `filterFunction` attribute. See the [[#Custom Rendering]] section for details on how these attributes work.
+      </td>
+    </tr>
+    <tr>
+      <td>`showPrevMonth`</td>
+      <td>`false`</td>
+      <td>
+        Whether the dates from the previous month should be shown in the empty cells of the month grid before the first of the month (if there are any).
+      </td>
+    </tr>
+    <tr>
+      <td>`showNextMonth`</td>
+      <td>`false`</td>
+      <td>
+        Whether the dates from the next month should be shown in the empty cells of the month grid after the last of the month (if there are any).
+      </td>
+    </tr>
+    <tr>
+      <td>`headerFormat`</td>
+      <td>`"%B, %Y"`</td>
+      <td>
+        The formatting for the header of the Calendar. This attribute can be either a String with the formatting tokens used by the `strftime` specification, or a callback function that will receive a `Date` object as an argument and output a `String`.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4>Calendar Config Attributes</h4>
+
+<p>
+These attributes are provided by `Calendar`, which is the complete implementation of Calendar widget that includes user interactivity (navigation and selection). They are available on all instances of `Calendar`.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>`selectionMode`</td>
+      <td>`single`</td>
+      <td>
+        The configuration for the type of date selection allowed by the calendar. The `selectionMode` can be either `"single"` or `"multiple"`.
+      </td>
+    </tr>
+    <tr>
+      <td>`startDate`</td>
+      <td>`null`</td>
+      <td>
+        Specification for the earliest month which the Calendar will display. In a multi-pane calendar, this is the earliest month that will appear in the first pane.
+      </td>
+    </tr>
+    <tr>
+      <td>`endDate`</td>
+      <td>`null`</td>
+      <td>
+        Specification for the latest month which the Calendar will display. In a multi-pane calendar, this is the latest month that will appear in the last pane.
+      </td>
+    </tr>
+    <tr>
+      <td>`enabledDatesRule`</td>
+      <td>`null`</td>
+      <td>
+        The name of the rule that should be matched by enabled dates. If specified, a `customRenderer` definition is required (see [[#Custom Rendering]] for more information). Only dates matching the rule will be enabled for interaction; all other dates will be disabled. Cannot be specified simultaneously with the `disabledDatesRule` attribute.
+      </td>
+    </tr>
+    <tr>
+      <td>`disabledDatesRule`</td>
+      <td>`null`</td>
+      <td>
+        The name of the rule that should be matched by disabled dates. If specified, a `customRenderer` definition is required (see [[#Custom Rendering]] for more information). Only dates not matching the rule will be enabled for interaction; all other dates will be disabled. Cannot be specified simultaneously with the `enabledDatesRule` attribute.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Custom Rendering</h3>
+
+<p>
+Custom rendering description goes here.
+</p>
+
+<h2>Calendar Navigation Plugins</h2>
+
+<h2>Known Issues</h2>
+
+<ul class="spaced">
+  <li>
+    <p>
+    The calendar is currently not enabled with popup functionality: it will be released as a calendar plugin in 3.5
+    </p>
+  </li>
+</ul>

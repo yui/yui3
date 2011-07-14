@@ -44,7 +44,7 @@ p{margin:40px;}
 </body>
 </html>
 <script>
-    YUI({lang:'es', filter:'raw'}).use("dial", function(Y) {
+    YUI({lang:'es'}).use("dial", function(Y) {          //, filter:'raw'  this make it really hard to clear cache on iPad
 
         var dial = new Y.Dial({
 			min:-220,

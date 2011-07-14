@@ -567,6 +567,14 @@
                         wrapper.fire(Y.Event.getEvent(config, el));
                     }
 
+                    // debugging
+                    handle = node.on('mouseup', function (e) {});
+                    mouseEvent('mouseup', { button: 0, which: 1 });
+                    handle.detach();
+
+                    Y.Assert.isTrue(true);
+
+                    /*
                     handle = node.on(['mouseup', 'click'], function (e) {
                         fired[e.type] = true;
                         Y.Assert.areSame(1, e.button);
@@ -609,6 +617,7 @@
                     handle.detach();
 
                     Y.Assert.isTrue(fired.mouseup);
+                    */
                 }
 
 

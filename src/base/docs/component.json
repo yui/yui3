@@ -1,0 +1,9 @@
+{
+    "name"       : "base",
+    "displayName": "Base",
+    "description": "Base is designed to be a low-level foundation class from which other attribute- and event target-based classes in the YUI library can be derived.",
+    "author"     : "sdesai",
+
+    "tags": ["base", "infrastructure"],
+    "use" : ["base"]
+}

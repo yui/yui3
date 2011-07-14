@@ -1,0 +1,103 @@
+// START WRAPPER: The YUI.add wrapper is added by the build system, when you use YUI Builder to build your component from the raw source in this file
+// YUI.add("mycomponent", function(Y) {
+
+    /* Any frequently used shortcuts, strings and constants */
+    var Lang = Y.Lang;
+
+    /* MyComponent class constructor */
+    function MyComponent(config) {
+        MyComponent.superclass.constructor.apply(this, arguments);
+    }
+
+    /* 
+     * Required NAME static field, to identify the class and 
+     * used as an event prefix, to generate class names etc. (set to the 
+     * class name in camel case). 
+     */
+    MyComponent.NAME = "myComponent";
+
+    /*
+     * The attribute configuration for the component. This defines the core user facing state of the component
+     */
+    MyComponent.ATTRS = {
+
+        attrA : {
+            value: "A"                     // The default value for attrA, used if the user does not set a value during construction.
+
+            /*
+            , valueFn: "_defAttrAVal"      // Can be used as a substitute for "value", when you need access to "this" to set the default value.
+             
+            , setter: "_setAttrA"          // Used to normalize attrA's value while during set. Refers to a prototype method, to make customization easier
+            , getter: "_getAttrA"          // Used to normalize attrA's value while during get. Refers to a prototype method, to make customization easier
+            , validator: "_validateAttrA"  // Used to validate attrA's value before updating it. Refers to a prototype method, to make customization easier
+
+            , readOnly: true               // Cannot be set by the end user. Can be set by the component developer at any time, using _set
+            , writeOnce: true              // Can only be set once by the end user (usually during construction). Can be set by the component developer at any time, using _set
+            
+            , lazyAdd: false               // Add (configure) the attribute during initialization. 
+            
+                                           // You only need to set lazyAdd to false if your attribute is
+                                           // setting some other state in your setter which needs to be set during initialization 
+                                           // (not generally recommended - the setter should be used for normalization. 
+                                           // You should use listeners to update alternate state). 
+
+            , broadcast: 1                 // Whether the attribute change event should be broadcast or not.
+            */
+        }
+
+        // ... attrB, attrC, attrD ... attribute configurations. 
+
+        // Can also include attributes for the super class if you want to override or add configuration parameters
+    };
+
+    /* MyComponent extends the Base class */
+    Y.extend(MyComponent, Y.Base, {
+
+        initializer: function() {
+            /*
+             * initializer is part of the lifecycle introduced by 
+             * the Base class. It is invoked during construction,
+             * and can be used to setup instance specific state or publish events which
+             * require special configuration (if they don't need custom configuration, 
+             * events are published lazily only if there are subscribers).
+             *
+             * It does not need to invoke the superclass initializer. 
+             * init() will call initializer() for all classes in the hierarchy.
+             */
+
+             this.publish("myEvent", {
+                defaultFn: this._defMyEventFn,
+                bubbles:false
+             });
+        },
+
+        destructor : function() {
+            /*
+             * destructor is part of the lifecycle introduced by 
+             * the Base class. It is invoked when destroy() is called,
+             * and can be used to cleanup instance specific state.
+             *
+             * It does not need to invoke the superclass destructor. 
+             * destroy() will call initializer() for all classes in the hierarchy.
+             */
+        },
+
+        /* MyComponent specific methods */
+
+        doSomethingPublic : function() {
+            // Public method
+        },
+
+        _doSomethingPrivate : function() {
+            // Private/Protected method
+        },
+
+        _defMyEventFn : function(e) {
+            // The default behavior for the "myEvent" event.
+        }
+    });
+
+    Y.namespace("MyApp").MyComponent = MyComponent;
+
+// }, "3.1.0", {requires:["base"]});
+// END WRAPPER
