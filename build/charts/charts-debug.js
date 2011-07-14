@@ -12871,4 +12871,4 @@ function Chart(cfg)
 Y.Chart = Chart;
 
 
-}, '@VERSION@' ,{requires:['dom', 'datatype', 'event-custom', 'event-mouseenter', 'widget', 'widget-position', 'widget-stack', 'graphics']});
+}, '@VERSION@' ,{requires:['dom', 'datatype-number', 'datatype-date', 'event-custom', 'event-mouseenter', 'widget', 'widget-position', 'widget-stack', 'graphics']});

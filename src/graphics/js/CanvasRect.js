@@ -1,5 +1,9 @@
 /**
  * Draws rectangles
+ *
+ * @module graphics
+ * @class CanvasRect
+ * @constructor
  */
 CanvasRect = function()
 {
@@ -17,6 +21,9 @@ Y.extend(CanvasRect, Y.CanvasShape, {
 	_type: "rect",
 
 	/**
+	 * Draws the shape.
+	 *
+	 * @method _draw
 	 * @private
 	 */
 	_draw: function()

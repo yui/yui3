@@ -1,5 +1,9 @@
 /**
  * Draws an circle
+ *
+ * @module graphics
+ * @class CanvasCircle
+ * @constructor
  */
 CanvasCircle = function(cfg)
 {
@@ -19,6 +23,9 @@ Y.extend(CanvasCircle, Y.CanvasShape, {
 	_type: "circle",
 
 	/**
+     * Draws the shape.
+     *
+     * @method _draw
 	 * @private
 	 */
 	_draw: function()
@@ -76,6 +83,7 @@ CanvasCircle.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	 * Radius of the circle
 	 *
 	 * @attribute radius
+     * @type Number
 	 */
 	radius: {
 		lazyAdd: false

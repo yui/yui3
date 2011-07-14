@@ -3935,7 +3935,7 @@ Y.Get = {
     /**
      * The number of request required before an automatic purge.
      * Can be configured via the 'purgethreshold' config
-     * property PURGE_THRESH
+     * @property PURGE_THRESH
      * @static
      * @type int
      * @default 20
@@ -4315,8 +4315,8 @@ add('load', '3', {
 });
 // 0
 add('load', '4', {
-    "name": "widget-base-ie", 
-    "trigger": "widget-base", 
+    "name": "scrollview-base-ie", 
+    "trigger": "scrollview-base", 
     "ua": "ie"
 });
 // autocomplete-list-keys-sniff.js
@@ -4669,7 +4669,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2011.07.06-19-30',
+            GALLERY_VERSION = 'gallery-2011.07.13-21-54',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -7462,7 +7462,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "charts": {
         "requires": [
             "dom", 
-            "datatype", 
+            "datatype-number", 
+            "datatype-date", 
             "event-custom", 
             "event-mouseenter", 
             "widget", 
@@ -9165,7 +9166,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '1b47db5a8eb8bb0bdf3898b5aeeab181';
+YUI.Env[Y.version].md5 = '20993ff9fea6bbdb5d6ad6a449ef95af';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

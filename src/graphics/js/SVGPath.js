@@ -1,8 +1,10 @@
 /**
  * The SVGPath class creates a shape through the use of drawing methods.
  *
+ * @module graphics
  * @class SVGPath
  * @extends SVGShape
+ * @constructor
  */
 SVGPath = function(cfg)
 {
@@ -13,42 +15,46 @@ Y.extend(SVGPath, Y.SVGShape, {
     /**
      * Left edge of the path
      *
-     * @private
      * @property _left
+     * @type Number
+     * @private
      */
     _left: 0,
 
     /**
      * Right edge of the path
      *
-     * @private
      * @property _right
+     * @type Number
+     * @private
      */
     _right: 0,
     
     /**
      * Top edge of the path
      *
-     * @private
      * @property _top
+     * @type Number
+     * @private
      */
     _top: 0, 
     
     /**
      * Bottom edge of the path
      *
-     * @private
      * @property _bottom
+     * @type Number
+     * @private
      */
     _bottom: 0,
 
     /**
      * Indicates the type of shape
      *
-     * @private
      * @property _type
      * @readOnly
      * @type String
+     * @private
      */
     _type: "path",
    
@@ -69,8 +75,11 @@ Y.extend(SVGPath, Y.SVGShape, {
     },
   
 	/**
+	 * Draws the shape.
+	 *
+	 * @method _draw
 	 * @private
-	 */ 
+	 */
     _draw: function()
     {
         this._fillChangeHandler();

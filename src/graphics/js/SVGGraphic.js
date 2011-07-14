@@ -1,7 +1,8 @@
 /**
  * Graphic is a simple drawing api that allows for basic drawing operations.
  *
- * @class Graphic
+ * @module graphics
+ * @class SVGGraphic
  * @constructor
  */
 SVGGraphic = function(cfg) {
@@ -358,7 +359,7 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
      * Removes a shape instance from from the graphic instance.
      *
      * @method removeShape
-     * @param {Shape|String}
+     * @param {Shape|String} shape The instance or id of the shape to be removed.
      */
     removeShape: function(shape)
     {
@@ -640,8 +641,8 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
      * Returns a reference to a gradient definition based on an id and type.
      *
      * @method getGradientNode
-     * @key {String} id that references the gradient definition
-     * @type {String} description of the gradient type
+     * @param {String} key id that references the gradient definition
+     * @param {String} type description of the gradient type
      * @return HTMLElement
      */
     getGradientNode: function(key, type)

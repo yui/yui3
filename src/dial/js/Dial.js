@@ -434,7 +434,7 @@
             Y.on("key", Y.bind(this._onLeftRightKey, this), boundingBox, keyLeftRightSpec);
 			Y.on('mouseenter', function(){this.one('.' + Dial.CSS_CLASSES.resetString).removeClass(Dial.CSS_CLASSES.hidden);}, this._centerButtonNode);
 			Y.on('mouseleave', function(){this.one('.' + Dial.CSS_CLASSES.resetString).addClass(Dial.CSS_CLASSES.hidden);}, this._centerButtonNode);
-			Y.on('click', Y.bind(this._resetDial, this), this._centerButtonNode);
+			Y.on('gesturemovestart', Y.bind(this._resetDial, this), this._centerButtonNode);  //[#2530441]    
 			// Needed to replace mousedown/up with gesturemovestart/end to make behavior on touch devices work the same.
 			Y.on('gesturemovestart', function(e){e.stopPropagation();}, this._centerButtonNode); //[#2530206] need to add so mousedown doesn't propagate to ring and move the handle
 			Y.on('gesturemovestart', Y.bind(function(){this._handleNode.focus();}, this), this._handleNode);
@@ -1001,6 +1001,7 @@
 		_resetDial : function(e){
 			this.set('value', this._originalValue);
 			this._handleNode.focus();
+			this._resetString.addClass(Dial.CSS_CLASSES.hidden); //[#2530441]
 		},
 		
 		/**

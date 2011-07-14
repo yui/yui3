@@ -1,0 +1,66 @@
+{
+    "name"       : "dataschema",
+    "displayName": "DataSchema",
+    "description": "Applies a given schema against data of arbitrary formats, normalizing input such as JSON, XML, or delimited text into a JavaScript object with known properties. The value of the DataSchema Utility is in its ability to translate data from a variety of sources into a consistent format for consumption by components in a predictable manner.",
+    "author"     : ["lsmith", "jenny"],
+
+    "tags": ["utility", "dataschema"],
+    "use" : ["dataschema"],
+
+    "examples": [
+        {
+            "name"       : "dataschema-array",
+            "displayName": "DataSchema.Array",
+            "description": "Schema parsing a JavaScript array.",
+            "modules"    : ["dataschema"],
+            "tags"       : ["dataschema"],
+
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "dataschema-json",
+            "displayName": "DataSchema.JSON",
+            "description": "Schema parsing JSON data.",
+            "modules"    : ["dataschema"],
+            "tags"       : ["dataschema"],
+
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "dataschema-xml",
+            "displayName": "DataSchema.XML for XML Data",
+            "description": "Schema parsing XML data.",
+            "modules"    : ["dataschema"],
+            "tags"       : ["dataschema"],
+
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "dataschema-table",
+            "displayName": "DataSchema.XML for HTML Tables",
+            "description": "Schema parsing data held in TABLE elements.",
+            "modules"    : ["dataschema"],
+            "tags"       : ["dataschema"],
+
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "dataschema-text",
+            "displayName": "DataSchema.Text",
+            "description": "Schema parsing delimited plain-text data.",
+            "modules"    : ["dataschema"],
+            "tags"       : ["dataschema"],
+
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "dataschema-parsing",
+            "displayName": "Enforcing DataTypes",
+            "description": "Parsing data into specified types as the schema is being applied.",
+            "modules"    : ["dataschema"],
+            "tags"       : ["dataschema"],
+
+            "hideTableOfContents": true
+        }
+    ]
+}

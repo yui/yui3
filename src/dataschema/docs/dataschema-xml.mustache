@@ -1,0 +1,69 @@
+<div class="intro">
+    <p>DataSchema.XML normalizes arbitrary XML data against a given schema into an object with known properties.</p>
+
+    <p><strong>Note:</strong> XML parsing currently has known issues on the Android WebKit browser.</p>
+</div>
+
+<div class="example">
+    {{>dataschema-xml-source}}
+</div>
+
+<p>In order to use DataSchema.XML, input data must be an XML document.</p>
+
+```
+YUI().use("datatype-xml", "dataschema-xml", function(Y) {
+    var data_in = Y.DataType.XML.parse('<root><session>34637542</session><category name="music" id="5"><results><song id="59672468"><title>I Kissed A Girl</title><rank>1</rank><artist id="30326214">Katy Perry</artist></song><song id="47973564"><title>Shake It</title><rank>2</rank><artist id="45575683">Metro Station</artist></song><song id="52207363"><title>Bleeding Love</title><rank>3</rank><artist id="37956508">Leona Lewis</artist></song></results></category></root>'),
+        schema = {
+            resultListLocator: "song",
+            // Or simply ["title", "artist", "rank"]
+            resultFields: [{key:"title"}, {key:"artist"}, {key:"rank"}]
+        },
+        data_out = Y.DataSchema.XML.apply(schema, data_in));
+
+    alert(data_out);
+});
+```
+
+<p>The data itself can get fairly complex, with deeply nested nodes and values held in attributes. In your schema, you can use XPath notation to define these locations.</p>
+
+```
+YUI().use("datatype-xml", "dataschema-xml", function(Y) {
+    var data_in = Y.DataType.XML.parse('<Response><Session>542235629</Session><Tracks  start="1" count="10" total="98" errorCount="0"  defaultSort="popularity+"  description="Top 100 Tracks"  name="Top 100 Tracks"  ><Track id="59672468" rating="-1" title="I Kissed A Girl"><Artist id="30326214" rating="-1">Katy Perry</Artist><ItemInfo><ChartPosition last="26" this="1"/></ItemInfo></Track><Track id="47973564" rating="-1" title="Shake It"><Artist id="45575683" rating="-1">Metro Station</Artist><ItemInfo><ChartPosition last="27" this="2"/></ItemInfo></Track><Track id="52207363" rating="-1" title="Bleeding Love"><Artist id="37956508" rating="-1">Leona Lewis</Artist><ItemInfo><ChartPosition last="28" this="3"/></ItemInfo></Track></Tracks></Response>'),
+        schema = {
+            metaFields: {session:"//Session", total:"//Tracks/@total"},
+            resultListLocator: "//Track",
+            resultFields: [
+                {key:"song", locator:"@title"},
+                {key:"artist", locator:"Artist"},
+                {key:"rank", locator:"ItemInfo/ChartPosition/@this"}
+            ]
+        },
+        data_out = Y.DataSchema.XML.apply(schema, data_in));
+
+    alert(data_out);
+});
+```
+
+<p>Nested schemas are supported as of version 3.1:</p>
+
+```
+YUI().use("datatype-xml", "dataschema-xml", function(Y) {
+    var data_in = Y.DataType.XML.parse('<desserts><dessert type="treat"><name>cupcake</name><flavors><flavor name="chocolate"/><flavor name="red velvet"/></flavors></dessert><dessert type="treat"><name>ice cream</name><flavors><flavor name="chocolate"/><flavor name="strawberry"/><flavor name="vanilla"/></flavors></dessert><dessert type="treat"><name>pie</name><flavors><flavor name="banana cream"/><flavor name="blueberry"/><flavor name="cherry"/></flavors></dessert><dessert type="beverage"><name>hot chocolate</name></dessert><dessert type="beverage"><name>port wine</name></dessert></desserts>'),
+        schema = {
+            resultListLocator: "dessert",
+            resultFields: [
+                {key:"type", locator:"@type"},
+                {key:"name", locator:"name"},
+                {key:"flavors", schema: {
+                    resultListLocator: "flavor",
+                    resultFields: [
+                        {key:"flavor", locator:"@name"}
+                    ]
+                }}
+            ]
+        },
+        data_out = Y.DataSchema.XML.apply(schema, data_in));
+
+    alert(data_out);
+});
+```

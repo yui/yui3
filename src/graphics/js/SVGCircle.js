@@ -1,5 +1,9 @@
 /**
  * Draws an circle
+ *
+ * @module graphics
+ * @class SVGCircle
+ * @constructor
  */
  SVGCircle = function(cfg)
  {
