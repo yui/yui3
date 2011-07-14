@@ -1,0 +1,24 @@
+<div class="intro">
+    <p>DataSource.Text normalizes delimited text data against a given schema into an object with known properties.</p>
+</div>
+
+<div class="example">
+    {{>dataschema-text-source}}
+</div>
+
+<p>In order to use DataSchema.Text, input data must be delimited text. Define as your schema's `resultDelimiter` property the string that separates each result, and define as your schema's `fieldDelimiter` property the string that separates each field of each result.</p>
+
+```
+YUI().use("dataschema-text", function(Y) {
+    var data_in = "notebooks, 100, spiral-bound\\npencils, 300, #2 with erasers\\npens, 500, blue ink",
+        schema = {
+            resultDelimiter: "\\n",
+            fieldDelimiter: ",",
+            // Or simply: ["product", "quantity", "detail"]
+            resultFields: [{key:"product"}, {key:"quantity"}, {key:"detail"}]
+        },
+        data_out = Y.DataSchema.Text.apply(schema, data_in));
+
+    alert(data_out);
+});
+```
