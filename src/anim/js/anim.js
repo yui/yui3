@@ -158,7 +158,12 @@
          */
         node: {
             setter: function(node) {
-                node = Y.one(node);
+                if (node) {
+                    if (typeof node == 'string' || node.nodeType) {
+                        node = Y.one(node);
+                    }
+                }
+
                 this._node = node;
                 if (!node) {
                     Y.log(node + ' is not a valid node', 'warn', 'Anim');
