@@ -1699,15 +1699,24 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
         'should fire the handler once': function() {
             var i = 0,
                 test = this,
-                node = Y.all('body');
+                nodelist = Y.all('body');
 
-            node.once('click', function() {
+            nodelist.once('click', function() {
                 i++;
                 Assert.areEqual(1, i);
             });
 
-            node.item(0).simulate('click');
-            node.item(0).simulate('click');
+            nodelist.item(0).simulate('click');
+            nodelist.item(0).simulate('click');
+
+            i = 0;
+            nodelist.onceAfter('click', function () {
+                i++;
+                Assert.areEqual(1, i);
+            });
+
+            nodelist.item(0).simulate('click');
+            nodelist.item(0).simulate('click');
         },
 
         'should pop the nodelist': function() {
