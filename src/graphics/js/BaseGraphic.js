@@ -12,6 +12,13 @@ var SETTER = "setter",
     STR = "string",
     WRITE_ONCE = "writeOnce",
     BaseGraphic,
+	/**
+	 * AttributeLite provides Attribute-like getters and setters for shape classes in the Graphics module. It provides a get/set API without the event infastructure.
+     * This class is temporary and a work in progress.
+	 *
+	 * @class AttributeLite
+	 * @constructor
+	 */
     AttributeLite = function()
     {
         var host = this; // help compression
@@ -24,12 +31,6 @@ var SETTER = "setter",
         host.prototype = Y.mix(AttributeLite.prototype, host.prototype);
     };
 
-	/**
-	 * AttributeLite provides Attribute-like getters and setters for shape classes in the Graphics module. It provides a get/set API without the event infastructure.
-	 *
-	 * @class AttributeLite
-	 * @constructor
-	 */
     AttributeLite.prototype = {
 		/**
 		 * Initializes the attributes for a shape. If an attribute config is passed into the constructor of the host, 
@@ -133,7 +134,7 @@ var SETTER = "setter",
          * Sets the value of an attribute.
          *
          * @method set
-         * @param {String}|{Object} name The name of the attribute. Alternatively, an object of key value pairs can 
+         * @param {String|Object} name The name of the attribute. Alternatively, an object of key value pairs can 
          * be passed in to set multiple attributes at once.
          * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as 
          * the name param.
@@ -158,7 +159,14 @@ var SETTER = "setter",
         },
 
 		/**
-		 * @private
+         * Provides setter logic. Used by `set`.
+         *
+         * @method _set
+         * @param {String|Object} name The name of the attribute. Alternatively, an object of key value pairs can 
+         * be passed in to set multiple attributes at once.
+         * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as 
+         * the name param.
+		 * @protected
 		 */
 		_set: function(attr, val)
 		{
@@ -185,11 +193,18 @@ var SETTER = "setter",
 			}
 		}
 	};
+    Y.mix(AttributeLite, Y.EventTarget, false, null, 1);
 	Y.AttributeLite = AttributeLite;
 
-    //BaseGraphic serves as the base class for the graphic layer. It serves the same purpose as
-    //Base but uses a lightweight getter/setter class instead of Attribute.
-    //This classs is temporary and a work in progress.
+    /**
+     * BaseGraphic serves as the base class for the graphic layer. It serves the same purpose as
+     * Base but uses a lightweight getter/setter class instead of Attribute.
+     * This class is temporary and a work in progress.
+     *
+     * @class BaseGraphic
+     * @constructor
+     * @param {Object} cfg Key value pairs for attributes
+     */
     BaseGraphic = function(cfg)
     {
         var host = this,
@@ -214,7 +229,11 @@ var SETTER = "setter",
 
     BaseGraphic.prototype = {
         /**
-         * @private
+         * Init method, invoked during construction.
+         * Fires an init event after calling `initializer` on implementers.
+         *
+         * @method init
+         * @protected 
          */
         init: function()
         {
@@ -227,8 +246,8 @@ var SETTER = "setter",
     };
 //Straightup augment, no wrapper functions
 Y.mix(BaseGraphic, Y.AttributeLite, false, null, 1);
-Y.mix(BaseGraphic, Y.EventTarget, false, null, 1);
 Y.mix(BaseGraphic, PluginHost, false, null, 1);
+BaseGraphic.prototype.constructor = BaseGraphic;
 BaseGraphic.plug = PluginHost.plug;
 BaseGraphic.unplug = PluginHost.unplug;
 Y.BaseGraphic = BaseGraphic;

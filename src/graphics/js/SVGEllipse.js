@@ -1,5 +1,9 @@
 /**
  * Draws an ellipse
+ *
+ * @module graphics
+ * @class SVGEllipse
+ * @constructor
  */
 SVGEllipse = function(cfg)
 {

@@ -1,0 +1,83 @@
+<div class="intro">
+    <p>DataSchema.Array normalizes arbitrary JavaScript array data against a given schema into an object with known properties.</p>
+</div>
+
+<div class="example">
+    {{>dataschema-array-source}}
+</div>
+
+<p>In order to use DataSchema.Array, input data must be a JavaScript array. Within that array, you may have...</p>
+
+<p>...JavaScript objects</p>
+
+```
+YUI().use("dataschema-array", function(Y) {
+    var data_in = [
+            {make:"Chevrolet",model:"Bel Air",year:1957},
+            {make:"Dodge",model:"Dart",year:1964},
+            {make:"Ford",model:"Mustang",year:1968}
+        ],
+        schema = {
+            // Or simply: ["make", "model", "year"]
+            resultFields: [{key:"make"}, {key:"model"}, {key:"year"}]
+        },
+        data_out = Y.DataSchema.Array.apply(schema, data_in));
+
+    alert(data_out);
+});
+```
+
+<p>...JavaScript arrays</p>
+
+```
+YUI().use("dataschema-array", function(Y) {
+    var data_in = [
+            ["Chevrolet", "Bel Air", 1957],
+            ["Dodge", "Dart", 1964],
+            ["Ford", "Mustang", 1968]
+        ],
+        schema = {
+            // Or simply: ["make", "model", "year"]
+            resultFields: [{key:"make"}, {key:"model"}, {key:"year"}]
+        },
+        data_out = Y.DataSchema.Array.apply(schema, data_in));
+
+    alert(data_out);
+});
+```
+
+<p>...primitive data types</p>
+
+```
+YUI().use("dataschema-array", function(Y) {
+    var data_in = [
+            "1957 Chevrolet Bel Air", "1964 Dodge Dart", "1968 Ford Mustang"
+        ],
+        schema = {
+            // Or simply: ["make", "model", "year"]
+            resultFields: [{key:"make"}, {key:"model"}, {key:"year"}]
+        },
+        data_out = Y.DataSchema.Array.apply(schema, data_in));
+
+    alert(data_out);
+});
+```
+
+<p>...or even a combination.</p>
+
+```
+YUI().use("dataschema-array", function(Y) {
+    var data_in = [
+            {make:"Chevrolet",model:"Bel Air",year:1957},
+            ["Dodge", "Dart", 1964],
+            "1968 Ford Mustang"
+        ],
+        schema = {
+            // Or simply: ["make", "model", "year"]
+            resultFields: [{key:"make"}, {key:"model"}, {key:"year"}]
+        },
+        data_out = Y.DataSchema.Array.apply(schema, data_in));
+
+    alert(data_out);
+});
+```

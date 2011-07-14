@@ -1,0 +1,38 @@
+<div class="intro">
+    <p>OfflineCache stores data in HTML 5 localStorage when available so that data persists across browser sessions. When localStorage is disabled or altogether unavailable (i.e., IE6 and IE7) data is simply cached in local JavaScript memory and will not persist across browser sessions.</p>
+</div>
+
+<div class="example">
+    {{>cache-basic-source}}
+</div>
+
+```
+YUI().use("cache-offline", function(Y) {
+    var cache = new Y.CacheOffline({
+        sandbox:"6-hr-cache", // Pass in a unique identifier
+        expires:21600000 // Expire data after 6 hours
+    });
+
+    // Add entries to the Cache
+    cache.add("key1", "value1");
+    cache.add("key2", "value2");
+
+    // Retrieve a cached entry
+    var cachedentry = cache.retrieve("key1");
+
+    // Cached entry is an object with the following properties
+    alert("cached key: " + cachedentry.request +
+        " cached value: " + cachedentry.response +
+        " cached at: " + cachedentry.cached +
+        " expires at: " + cachedentry.expires);
+
+    // Flush the cache
+    cache.flush();
+});
+```
+
+<h2>Complete Example Source</h2>
+
+```
+    {{>cache-offline-source}}
+```

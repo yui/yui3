@@ -121,6 +121,11 @@ suite.add(new Y.Test.Case({
             Hi.allFold('<foo> bar', 'bar')
         );
 
+        Assert.areSame(
+            '<b class="yui3-highlight">ds</b>w',
+            Hi.allFold('dsw', 'ds')
+        );
+
         Assert.areSame('<b class="yui3-highlight">O&#x27;Neal</b>', Hi.allFold("O'Neal", "O'Neal"));
     },
 

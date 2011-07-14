@@ -1,0 +1,107 @@
+<div class="intro">
+    <p>DataSchema.JSON normalizes arbitrary JSON data against a given schema into an object with known properties.</p>
+</div>
+
+<div class="example">
+    {{>dataschema-json-source}}
+</div>
+
+<p>In order to use DataSchema.JSON, input data must be a JavaScript object.</p>
+
+```
+YUI().use("dataschema-json", function(Y) {
+    var data_in = {
+            total:10,
+            results:[
+                {n:1, fname:"George", lname:"Washington"},
+                {n:2, fname:"John", lname:"Adams"},
+                {n:3, fname:"Thomas", lname:"Jefferson"},
+                {n:4, fname:"James", lname:"Madison"},
+                {n:5, fname:"James", lname:"Monroe"},
+                {n:6, fname:"John", mname:"Quincy", lname:"Adams"},
+                {n:7, fname:"Andrew", lname:"Jackson"},
+                {n:8, fname:"Martin", lname:"Van Buren"},
+                {n:9, fname:"William", mName:"Henry", lname:"Harrison"},
+                {n:10, fname:"John", lname:"Tyler"}
+            ]
+        },
+        schema = {
+            metaFields: {total:"total"},
+            resultListLocator: "results",
+            // Or simply: ["n", "fname", "lname"]
+            resultFields: [{key:"n"}, {key:"fname"}, {key:"lname"}]
+        },
+        data_out = Y.DataSchema.JSON.apply(schema, data_in));
+
+    alert(data_out);
+});
+```
+
+<p>The data itself can get fairly complex, with deeply nested arrays and objects. In your schema, you can use dot notation and the array-index syntax to define these locations. When necessary, you can also use object-bracket notation to define locations that might otherwise be invalid with dot notation.</p>
+
+```
+YUI().use("dataschema-json", function(Y) {
+        var data_in = {
+            "profile":{
+                "current":160,
+                "target":150
+            },
+            "reference": [
+                {
+                    "category":"exercise",
+                    "type":"expenditure",
+                    "activities":[
+                        {"name":"biking", "calories":550},
+                        {"name":"golf", "calories":1000},
+                        {"name":"running", "calories":650},
+                        {"name":"swimming", "calories":650},
+                        {"name":"walking", "calories":225}
+                    ]
+                },
+                {
+                    "category":"nutrition",
+                    "type":"intake",
+                    "fruit":[
+                        {"name":"apple", "calories":70},
+                        {"name":"banana", "calories":70},
+                        {"name":"orange", "calories":90},
+                    ],
+                    "vegetables":[
+                        {"name":"baked potato", "calories":150},
+                        {"name":"broccoli", "calories":50},
+                        {"name":"green beans", "calories":30}
+                    ]
+                }
+            ],
+            "program": [
+                {
+                    "category":"exercise",
+                    "weekly schedule":[
+                        {"day":"sunday", "activity":"swimming"},
+                        {"day":"monday", "activity":"running"},
+                        {"day":"tuesday", "activity":"biking"},
+                        {"day":"wednesday", "activity":"running"},
+                        {"day":"thursday", "activity":"swimming"},
+                        {"day":"friday", "activity":"running"},
+                        {"day":"saturday", "activity":"golf"}
+                    ]
+                },
+                {
+                    "category":"diet",
+                    "schedule":[
+                    ]
+                }
+            ]
+        },
+        schema = {
+            metaFields: {current:"profile.current", target:"profile.target",
+                reference:"reference[0].activities"},
+            resultListLocator: "program[0]['weekly schedule']",
+            // Or simply: ["day", "activity"]
+            resultFields: [{key:"day"}, {key:"activity"}]
+        },
+        data_out = Y.DataSchema.Array.apply(schema, data_in));
+
+    alert(data_out);
+});
+```

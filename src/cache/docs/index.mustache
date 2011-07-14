@@ -1,0 +1,233 @@
+<div class="intro">
+    <p>The Cache Utility provides a basic caching mechanism for storing key/value pairs in local JavaScript memory. As a subclass of Plugin, it is designed to seamlessly integrate with other components (such as <a href="/../datasource/" title="YUI 3: DataSource">DataSource</a>).</p>
+</div>
+
+<h2 id="upgrade">Upgrade Notes</h2>
+
+<dl>
+    <dt>Cache as a plugin has changed</dt>
+    <dd>Implementers upgrading from version 3.1.1 or earlier who are using Cache as a plugin now need to point to Y.Plugin.Cache instead of Y.Cache.</dd>
+</dl>
+
+{{>getting-started}}
+
+<h2 id="using">Using the {{displayName}}</h2>
+
+<p>This section describes how to use the {{displayName}} in further detail.</p>
+
+<h3 id="base">Basic caching</h3>
+
+<p>Basic caching allows you to store frequently used data in local JavaScript memory. In cases where data is retrieved over the wire from a server, you can store the response in a local cache and eliminate future trips to the server for better performance and reduced server load.</p>
+
+<p>Use the following Attributes to configure your Cache instance:</p>
+
+<table>
+<thead>
+    <tr>
+        <th>Attribute</th>
+        <th>Default</th>
+        <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>`max`</td>
+        <td>`0`</td>
+        <td>The maximum number of entries the cache can hold. <strong>The cache is disabled by default!</strong> Set this value to a number greater than zero to turn on caching.</td>
+    </tr>
+    <tr>
+        <td>`size`</td>
+        <td>n/a</td>
+        <td>Read-only. Returns the number of entries currently stored in the cache.</td>
+    </tr>
+    <tr>
+        <td>`entries`</td>
+        <td>n/a</td>
+        <td>Read-only. Returns an array of the entries currently stored in the cache.</td>
+    </tr>
+    <tr>
+        <td>`expires`</td>
+        <td>`0`</td>
+        <td>By default, expiration is disabled. To enable expiration of data, set this value to the Date when the data should expire, or the relative number of milliseconds from collection that the data should expire.</td>
+    </tr>
+    <tr>
+        <td>`uniqueKeys`</td>
+        <td>`false`</td>
+        <td>When calling add() with an entry, checks to see if the key is already stored in the cache. Enforcing unique keys requires iterating through all stored entries, so setting this attribute to `false` is more performant. Note: If expiration is enabled, you should probably set uniqueKeys to `false` to avoid problems if data is cached multiple times with conflicting expirations.</td>
+    </tr>
+</tbody>
+</table>
+
+<p>Here are the ways you can set the `max` value</strong> of a cache. <strong>You must set a `max` value to turn on caching.</strong></p>
+        
+```
+// Configure Cache maximum size in the constructor
+var myCache = new Y.Cache({max:5});
+
+// Set the maximum size at runtime
+myCache.set("max", 10);
+
+```
+
+<p><strong>Cache key/value pairs with the `add()` method.</strong></p>
+
+```
+// Add entries to the Cache
+myCache.add("key1", "value1");
+```
+<p><strong>Retrieve cached entries with the `retrieve()` method.</strong> If there is no match for the given key, then `null` will be returned. Cached entries contain the properties `request`, `response`, `cached`, and `expires`.</p>
+
+```
+// Retrieve a cached entry
+var cachedEntry = cache.retrieve("key1");
+```
+
+<p>By default, cached entries may contain duplicate keys: if you add an entry for request "foo" with value "bar" and then add another entry for request "foo" with value "bat", the cache will contain both entries. Retrieving an entry for request "foo" will only retrieve the newest value. However, setting `uniqueKeys` to `true` will validate for the uniqueness of keys stored in the cache.</p>
+
+```
+// Enforce unique keys in the constructor
+var myCache = new Y.Cache({max:5, uniqueKeys:true});
+
+// Enforce unique keys at runtime
+myCache.set("uniqueKeys", true);
+```
+
+<p>A cache may be flushed of all its entries with the `flush()` method.</p>
+
+```
+// Flush the cache
+myCache.flush();
+```
+<h3 id="offline">Offline caching</h3>
+
+<p>The CacheOffline cache extends basic caching functionality by storing data in the <a href="http://stackoverflow.com/questions/2010892/storing-objects-in-html5-localstorage" title="Storing Objects in HTML5 localStorage - Stack Overflow">HTML5 localStorage object</a> on browsers where that is supported, so that data can be available when the browser is offline and can persist across browser sessions. In cases where HTML5 localStorage is not available (i.e., IE 6 and IE 7), the functionality falls back to basic caching in local JavaScript memory.</p>
+
+```
+var myCache = new Y.CacheOffline();
+```
+
+<p>Use the following Attributes to configure your CacheOffline instance:</p>
+
+<table>
+<thead>
+    <tr>
+        <th>Attribute</th>
+        <th>Default</th>
+        <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>`sandbox`</td>
+        <td>`"default"`</td>
+        <td>A unique identifier used to sandbox each cache instance's entries from other entries. This string persists across browser sessions so take care that it is not dynamically generated.</td>
+    </tr>
+    <tr>
+        <td>`expires`</td>
+        <td>`86400000`</td>
+        <td>By default, data will expire one day after it is cached. This Attribute accepts a Data value, or a number of milliseconds.</td>
+    </tr>
+    <tr>
+        <td>`max`</td>
+        <td>`null`</td>
+        <td>Read-only. This Attribute is disabled for CacheOffline &#8212; there is no notion of capping the number of entries in a cache. Each browser implements a maximum localStorage byte size.</td>
+    </tr>
+    <tr>
+        <td>`uniqueKeys`</td>
+        <td>`true`</td>
+        <td>Read-only. This Attribute is disabled for CacheOffline. All stored keys are unique.</td>
+    </tr>
+</tbody>
+</table>
+
+<h3 id="plugin">Cache as a plugin</h3>
+
+<p>Use the `plug(Y.Plugin.Cache)` method on a host object to enable caching. The Y.Plugin.Cache class is available in the "cache-plugin" submodule.</p>
+
+```
+// Define a max value to enable plugging.
+myWidget.plug(Y.Plugin.Cache, {max:3});
+myWidget.cache.add("key", "value");
+```
+
+<p>The Cache plugin also accepts a `cache` value to enable you to point to any number of Cache implementations. Y.Cache and Y.CacheOffline are currently available.</p>
+
+```
+// Define a max value to enable plugging.
+myWidget.plug(Y.Plugin.Cache, {cache:Y.CacheOffline});
+```
+
+<p>The Y.Plugin.DataSourceCache plugin enables seamless caching of DataSource responses.</p>
+
+```
+// Use a basic cache
+myDataSource.plug(Y.Plugin.DataSourceCache, {
+cache: Y.Cache, // this is the default, this line is not needed
+max: 100
+});
+
+// Use the "cache" configuration property to enable offline caching
+myDataSource.plug(Y.Plugin.DataSourceCache, {
+cache: Y.CacheOffline,
+sandbox: "my3HrCache",
+expires: 10800000 // 3 hours
+});
+```
+
+<p>Once the DataSourceCache plugin is enabled, it handles caching and retrieval of values without the need for extra code. Furthermore, all the methods and properties of the Cache instance is available on the host's `cache` namespace.</p>
+
+```
+// Flush myDataSource's cache.
+myDataSource.cache.flush();
+```
+
+<h3 id="events">Events</h3>
+
+<table>
+<thead>
+    <tr>
+        <th>Event</th>
+        <th>When</th>
+        <th class="wrap">Properties available on the Event facade passed to handler</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>`add`</td>
+        <td>Entry is added to the cache.</td>
+        <td><dl>
+            <dt>`entry`</dt>
+            <dd>The cached entry.</dd>
+        </dl></td>
+    </tr>
+    <tr>
+        <td>`request`</td>
+        <td>Entry is requested from the cache.</td>
+        <td><dl>
+            <dt>`request`</dt>
+            <dd>The request value.</dd>
+        </dl></td>
+    </tr>
+    <tr>
+        <td>`retrieve`</td>
+        <td>Entry is retrieved from the cache.</td>
+        <td><dl>
+            <dt>`entry`</dt>
+            <dd>The retrieved entry.</dd>
+        </dl></td>
+    </tr>
+    <tr>
+        <td>`flush`</td>
+        <td>Cache is flushed.</td>
+        <td>none</td>
+    </tr>
+    <tr>
+        <td>`error`</td>
+        <td>CacheOffline only. Fired when an entry could not be added, most likely due to exceeding the browser quota for the localStorage object.</td>
+        <td><dl>
+            <dt>`error`</dt>
+            <dd>The error object.</dd>
+        </dl></td>
+    </tr>
+</tbody>
+</table>

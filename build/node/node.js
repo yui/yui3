@@ -534,6 +534,23 @@ Y.mix(Y.NodeList.prototype, {
      */
     after: function(type, fn, context) {
         return Y.after.apply(Y, this._prepEvtArgs.apply(this, arguments));
+    },
+
+    /**
+     * Applies an one-time event listener to each Node bound to the NodeList
+     * that will be called only after all on() handlers are called and the
+     * event is not prevented.
+     *
+     * @method onceAfter
+     * @param {String} type The event being listened for
+     * @param {Function} fn The handler to call when the event fires
+     * @param {Object} context The context to call the handler with.
+     * Default is the NodeList instance.
+     * @return {Object} Returns an event handle that can later be use to detach().
+     * @see Event.on
+     */
+    onceAfter: function(type, fn, context) {
+        return Y.onceAfter.apply(Y, this._prepEvtArgs.apply(this, arguments));
     }
 });
 
@@ -592,13 +609,7 @@ Y.mix(Y.Node.prototype, {
 });
 var Y_Node = Y.Node;
 
-Y_Node.SHOW_TRANSITION = null;
-Y_Node.HIDE_TRANSITION = null;
-
 Y.mix(Y_Node.prototype, {
-    SHOW_TRANSITION: Y_Node.SHOW_TRANSITION,
-    HIDE_TRANSITION: Y_Node.HIDE_TRANSITION,
-
     /**
      * Makes the node visible.
      * If the "transition" module is loaded, show optionally

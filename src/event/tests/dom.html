@@ -19,7 +19,7 @@
         YUI({
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
             allowRollup: false,
-            lazyEventFacade: true,
+            //lazyEventFacade: true,
             logExclude: {
                 yui:true, get: true, 'selector-native': true, loader: true,
                 Dom: true, Selector: true, Node: true, attribute: true, base: true, widget: true}
@@ -34,6 +34,18 @@
             Y.Test.Runner.add(new Y.Test.Case({
 
                 name: "DOM Event Tests",
+
+                _should: {
+                    error: {
+                        // This test fakes the processing of click and mouseup
+                        // events without actually triggering them (because
+                        // Event.simulate tries to correct e.button and doesn't
+                        // accept e.which as simulated event config) which
+                        // runs afoul of the document.createEventObject(e)
+                        // used to allow getters
+                        "test left and right click, mouseup": Y.config.lazyEventFacade
+                    }
+                },
 
                 test_on_with_string: function() {
 
@@ -542,21 +554,11 @@
                         el = node._node,
                         fired = {},
                         typePrefix = 'event:' + Y.stamp(el),
-                        imp, testIE, handle;
-
-                    // Wrapped in a try/catch because the test may be blowing
-                    // up in IE due to property access (guessing FTL)
-                    try {
                         // cribbed from the event-base-ie.js conditional loading
-                        imp = Y.config.doc && Y.config.doc.implementation;
+                        imp = Y.config.doc && Y.config.doc.implementation,
                         testIE = !(imp && imp.hasFeature
-                                    && imp.hasFeature('Events', '2.0'));
-                    } catch (e) {
-                        testIE = true;
-                    }
-
-                    Y.Assert.isTrue(true);
-                    /*
+                                    && imp.hasFeature('Events', '2.0')),
+                        handle;
 
                     // custom simulation because Y.Event.simulate attempts to
                     // correct e.button and doesn't accept e.which
@@ -612,7 +614,6 @@
                     handle.detach();
 
                     Y.Assert.isTrue(fired.mouseup);
-                    */
                 }
 
 

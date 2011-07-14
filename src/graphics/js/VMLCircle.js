@@ -1,5 +1,9 @@
 /**
- * Draws an circle
+ * Draws a circle
+ *
+ * @module graphics
+ * @class VMLCircle
+ * @constructor
  */
 VMLCircle = function(cfg)
 {
@@ -21,7 +25,7 @@ Y.extend(VMLCircle, VMLShape, {
 
 VMLCircle.ATTRS = Y.merge(VMLShape.ATTRS, {
 	/**
-	 * Horizontal radius for the circle.
+	 * Radius for the circle.
 	 *
 	 * @attribute radius
 	 * @type Number
