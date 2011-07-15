@@ -1,0 +1,43 @@
+{
+    "name"       : "console",
+    "displayName": "Console",
+    "description": "Message logging UI. Typically used as a development tool.",
+    "author"     : "lsmith",
+
+    "tags": ["widget", "console", "development"],
+    "use" : ["console"],
+
+    "examples": [
+        {
+            "name"       : "console_basic",
+	        "displayName": "Creating a Console for Debugging",
+	        "description": "The basics of setting up a Console",
+	        "modules": ["console","console-filters"],
+	        "tags": ["console", "console-filters", "filter", "draggable"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "console_yui_config",
+	        "displayName": "YUI Configuration to Filter Log Messages",
+	        "description": "Using your YUI instance configuration to filter which messages are reported in the Console",
+	        "modules": ["console"],
+	        "tags": ["console", "debug", "filter", "log"],
+
+            "**noteForTheExample**": ["console","selector-css3","json-stringify"],
+
+	        "hideTableOfContents": true
+        },
+
+        {
+            "name": "console_global",
+	        "displayName": "Creating a Universal Console",
+	        "description": "Using the Console's logSource attribute to consolidate log messages from multiple YUI instances into one Console",
+	        "modules": ["console"],
+	        "tags": ["console", "debug", "log", "Y.Global", "sandbox"],
+
+	        "hideTableOfContents": true
+        }
+    ]
+}

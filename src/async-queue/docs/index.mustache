@@ -1,0 +1,311 @@
+<div class="intro" class="component">
+    <p>
+        AsyncQueue allows you create a chain of function callbacks executed via
+        <code>setTimeout</code> that are guaranteed to run in order.  This can
+        enable progressive incremental rendering of your UI so your users can
+        begin to see and interact with your page while the infrastructure is
+        being built.  Similarly, process-intensive operations that will lock up
+        the UI while the JavaScript is being executed can be broken up into
+        chunks, helping to keep your interface responsive.
+    </p>
+</div>
+
+{{>getting-started}}
+
+<h2 id="using">Using AsyncQueue</h2>
+
+<h3 id="interacting">Creating and interacting with an AsyncQueue</h3>
+
+<p>
+    AsyncQueues manage an array of callbacks that can be either simple function
+    references or <a href="#callbacks">objects with specific keys</a>.  The
+    primary methods on AsyncQueue are <code>add</code> and
+    <code>run</code>.
+</p>
+
+<p>
+    When <code>run()</code> is invoked, each callback is executed in turn,
+    either synchronously or via <code>setTimeout</code> (depending on the
+    configuration of the callback or of the AsyncQueue instance).
+</p>
+
+<p>
+    Queued callbacks can also be promoted to the top of the queue or removed
+    from it.
+</p>
+
+```
+var q = new Y.AsyncQueue(callbackB, someTask, callbackA, callbackC);
+q.add(callbackD, callbackE); // B, someTask, A, C, D, E
+q.promote(callbackA);        // A, B, someTask, C, D, E
+q.remove(someTask);          // A, B, C, D, E
+q.run();                     // execute A, then B, then C, then D, then E
+
+```
+
+
+<h4 id="stopping">Pausing and stopping an AsyncQueue</h4>
+
+<p>
+    In addition to <code>run()</code>, AsyncQueue instances also have
+    <code>pause()</code> and <code>stop()</code> methods to interrupt the run
+    state.
+</p>
+
+<p>
+    To wait for an external process to complete, such as an XHR request, call
+    <code>pause()</code>, then <code>run()</code> again to resume
+    execution.
+</p>
+                
+<p>
+    Call <code>stop()</code> to terminate execution and flush the AsyncQueue.
+</p>
+
+```
+// Seed the instance with callbacks
+var q = new Y.AsyncQueue(
+    MyApp.doSomething,
+
+    // The second callback will pause the Queue and send an XHR for data
+    function () {
+        q.pause();
+
+        // Send the asynchronous XHR
+        Y.io(MyApp.getDataUri(), { on: {
+            success : function (xid,o) {
+                try {
+                    var data = Y.JSON.parse(o.responseText);
+                }
+                catch (e) {
+                    MyApp.showErrorStatus();
+                    q.stop();
+                }
+
+                MyApp.processData(data);
+
+                // In the XHR callback, restart the AsyncQueue if successful
+                q.run();
+            },
+            failure : function () {
+                MyApp.showErrorStatus();
+                // Stop the AsyncQueue if anything goes wrong
+                q.stop();
+            }
+        }});
+    },
+
+    // The third callback will do partial updates until complete
+    {
+        fn:    Y.bind(MyApp.updateUI,MyApp),
+        until: function () {
+            return MyApp.remainingData >= 0;
+        }
+    },
+    MyApp.doSomethingElse);
+
+q.run();
+```
+
+
+<h4 id="callbacks">About AsyncQueue callbacks</h4>
+
+<p>
+    AsyncQueue callbacks can be simple function references or object literals
+    with the following keys:
+</p>
+
+<table>
+<thead>
+    <tr>
+        <th>property</th>
+        <th>description</th>
+        <th>default</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td><code>fn</code></td>
+        <td><strong>Required</strong>.  The callback function to execute.</td>
+        <td>(none)</td>
+    </tr>
+    <tr>
+        <td><code>context</code></td>
+        <td>The context from which to execute the callback function.</td>
+        <td>The AsyncQueue instance</td>
+    </tr>
+    <tr>
+        <td><code>args</code></td>
+        <td>Array of arguments that will be passed as individual args to the callback function.</td>
+        <td>(none)</td>
+    </tr>
+    <tr>
+        <td><code>timeout</code></td>
+        <td>Millisecond delay before each execution of this callback.  Set to -1 to trigger synchronous execution.</td>
+        <td>10</td>
+    </tr>
+    <tr>
+        <td><code>iterations</code></td>
+        <td>The number of times to execute this callback before shifting it from the queue.</td>
+        <td>1</td>
+    </tr>
+    <tr>
+        <td><code>until</code></td>
+        <td>A function that will return <code>true</code> when the current callback can be shifted from the queue.</td>
+        <td>a function that tests against <code>iterations</code></td>
+    </tr>
+    <tr>
+        <td><code>id</code></td>
+        <td>Name given to this callback for ease of reference.</td>
+        <td>(none)</td>
+    </tr>
+    <tr>
+        <td><code>autoContinue</code></td>
+        <td>Set to <code>false</code> to automatically <code>pause()</code> after this callback.</td>
+        <td>true</td>
+    </tr>
+</tbody>
+</table>
+
+<h4 id="defaults">Class- and instance-level callback defaults</h4>
+
+<p>
+    AsyncQueue provides three places to configure callbacks (in decreasing
+    precedence order):
+</p>
+
+<ol>
+    <li>The callback object</li>
+    <li>The AsyncQueue instance's <code>defaults</code> collection</li>
+    <li>The class static <code>defaults</code> collection</li>
+</ol>
+
+```
+// All AsyncQueue instances will execute all callbacks synchronously by default
+Y.AsyncQueue.defaults.timeout = -1;
+
+var q = new Y.AsyncQueue();
+
+// run every callback in this instance twice before moving to the next callback
+q.defaults.iterations = 2;
+
+q.add(functionA,
+      {
+        fn: functionB,
+        timeout: 100 // this callback will be executed asynchronously
+      });
+
+// functionA executes twice immediately, then after 100 milliseconds functionB
+// is executed, then after another 100ms functionB is executed again.
+q.run();
+```
+
+
+<h4 id="sync">Synchronous mode for callback execution</h4>
+<p>
+    One of the main goals of the AsyncQueue is to provide a mechanism to
+    prevent process-intensive operations from locking up the UI.  By default,
+    AsyncQueue callbacks are executed via <code>setTimeout</code> to facilitate
+    this.  The <code>timeout</code> configuration accepts -1 as a value to
+    trigger synchronous callback execution.  Use this setting with caution.
+</p>
+                
+<h4 id="chaining">About timeout chaining</h4>
+
+<p>
+    Timeout chaining is a strategy to address the lack of <a
+    href="http://en.wikipedia.org/wiki/Thread_(computer_science)">multithreading</a>
+    in JavaScript.  When complex or iterative code executes it can cause the
+    page to stop responding until the running JavaScript process completes; it
+    can also cause "non-responsive script" or "long-running script" dialogs to
+    be presented to the user.  Both outcomes are detrimental to user
+    experience.
+</p>
+
+<p>
+    To address this, the operation can be split into chunks, and
+    <code>setTimeout</code> can be used to yield control back to other
+    operations between each chunk.  A common use case for this technique is to
+    allow browser reflows to display DOM modifications incrementally while
+    batches of work are being done in JavaScript.  For iterative functions, the
+    code can execute a portion of the overall work, then schedule itself to run
+    via <code>setTimeout</code>.
+</p>
+
+<p>The basic form of an iterative timeout chain is:</p>
+
+```
+(function () {
+
+    /* do a chunk of the work */
+
+    if (/* process completion check fails */) {
+        // Schedule myself for re-execution, picking up where I left off
+        setTimeout(arguments.callee,0);
+    }
+})();
+```
+
+
+<p>
+    When dealing with <code>setTimeout</code>, it's easy to introduce race
+    conditions.  Because all timeouts are scheduled against the same timer and
+    only one can run at a time, when two timeouts are separately scheduled, it
+    is possible for them to execute out of intended order.
+</p>
+
+<p>
+    AsyncQueue supports both "chunked operations" (by specifying callback
+    timeouts) and "iterative operations" (by specifying callback
+    <code>iterations</code> or <code>until</code> functions).  Furthermore,
+    AsyncQueue manages the callback sequence and can therefore guarantee the
+    execution order, so you avoid race conditions.
+</p>
+
+<h4 id="events">Exposed events</h4>
+<p>
+    AsyncQueue is based on EventTarget and instances emit the following events
+    throughout their lifecycle:
+</p>
+
+<table>
+<thead>
+    <tr>
+        <th>Event</th>
+        <th>When</th>
+        <th>Event payload</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td><code>add</code></td>
+        <td>Callbacks are added to the AsyncQueue.</td>
+        <td><code>{ callbacks: (Array of callbacks added) }</code></td>
+    </tr>
+    <tr>
+        <td><code>promote</code></td>
+        <td>A callback is promoted.</td>
+        <td><code>{ callback : (callback) }</code></td>
+    </tr>
+    <tr>
+        <td><code>remove</code></td>
+        <td>A callback is removed.</td>
+        <td><code>{ callback : (callback) }</code></td>
+    </tr>
+    <tr>
+        <td><code>execute</code></td>
+        <td>A callback is executed.</td>
+        <td><code>{ callback : (callback) }</code></td>
+    </tr>
+    <tr>
+        <td><code>shift</code></td>
+        <td>A callback is shifted from the AsyncQueue.</td>
+        <td><code>{ callback : (callback) }</code></td>
+    </tr>
+    <tr>
+        <td><code>complete</code></td>
+        <td>After the last callback is finished executing.  <em>NOT</em> fired after <code>stop()</code>.</td>
+        <td>(none)</td>
+    </tr>
+</tbody>
+</table>

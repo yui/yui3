@@ -1,0 +1,21 @@
+{
+    "name"       : "async-queue",
+    "displayName": "AsyncQueue",
+    "description": "Executes a queue of functions asynchronously.",
+    "author"     : "lsmith",
+
+    "tags": ["util", "async-queue", "queue"],
+    "use" : ["async-queue"],
+
+    "examples": [
+        {
+            "name"       : "queue_app",
+            "displayName": "Building a UI with AsyncQueue",
+            "description": "This example employs AsyncQueue to incrementally construct an application interface; this illustrates the approach you'd take to allow chunked rendering of the UI in a process-intensive application.",
+            "modules"    : ["async-queue", "transition"],
+            "tags"       : ["async-queue", "transition"],
+
+            "hideTableOfContents": true
+        }
+    ]
+}
