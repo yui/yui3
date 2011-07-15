@@ -764,6 +764,8 @@ baseSuite.add(new Y.Test.Case({
         Assert.areSame('io', this.ac.get('source').type);
     },
 
+    // TODO: mock io requests
+
     'JSONP strings should be turned into JSONP source objects': function () {
         // Absolute URL.
         this.ac.set('source', 'http://example.com/?callback={callback}');
@@ -785,6 +787,8 @@ baseSuite.add(new Y.Test.Case({
         Assert.areSame('jsonp', this.ac.get('source').type);
     },
 
+    // TODO: mock JSONP requests
+
     'YQL strings should be turned into YQL source objects': function () {
         this.ac.set('source', 'select * from search.suggest where q="{query}"');
         Assert.areSame('yql', this.ac.get('source').type);
@@ -795,6 +799,8 @@ baseSuite.add(new Y.Test.Case({
         this.ac.set('source', 'use "http://example.com/foo.env"; select * from search.suggest where q="{query}"');
         Assert.areSame('yql', this.ac.get('source').type);
     },
+
+    // TODO: mock YQL requests
 
     // -- Other stuff ----------------------------------------------------------
     'sourceType should override source type detection for extra types': function () {
