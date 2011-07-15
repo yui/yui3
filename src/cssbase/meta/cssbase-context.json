@@ -8,7 +8,6 @@
             "cssfonts-context", 
             "cssgrids-context"
         ], 
-        "path": "cssbase/base-context-min.css", 
         "type": "css"
     }
 }

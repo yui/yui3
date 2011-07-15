@@ -1,6 +1,5 @@
 {
     "cssfonts": {
-        "path": "cssfonts/fonts-min.css", 
         "type": "css"
     }
 }
