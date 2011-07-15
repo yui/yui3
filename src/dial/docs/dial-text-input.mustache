@@ -5,15 +5,7 @@
 </div>
 
 <div class="example yui3-skin-sam">
-	<style type="text/css">
-    {{>dial-text-input-source-css}}
-	</style>
-		
-    {{>dial-text-input-source-html}}
-	
-	<script>
-    {{>dial-text-input-source-js}}
-	</script>
+{{>dial-text-input-source}}
 </div>
 
 <h3>Creating the Dial and a Text Input</h3>
@@ -25,8 +17,7 @@
 <p>This example includes an element to contain the Dial and a text input field.</p>
 
 ```
-<div id="demo"></div>
-<input id="myTextInput" value=""/>
+{{>dial-text-input-markup}}
 ```
 
 <h4>The JavaScript</h4>
@@ -43,18 +34,9 @@ This renders it in the container and makes it usable.</p>
 <p>Some commonly used configuration attributes are shown below. 
 </p>
 
+<!-- intentionally using dial-basic-script here -->
 ```
-YUI().use('dial', function(Y) {
-
-	var dial = new Y.Dial({
-		min:-220,
-		max:220,
-		stepsPerRevolution:100,
-		value: 30
-	});
-	dial.render("#demo");
-	
-});
+{{>dial-basic-script}}
 ```
 
 
@@ -91,15 +73,7 @@ theInput.on( "keyup", updateDial );
 ```
 
 
-<h3>Full Code Listing</h3>
-<h4>The Markup</h4>
-
+<h3>Complete Example Source</h3>
 ```
-<div id="demo"></div>
-<input id="myTextInput" value=""/>
-```
-
-<h4>The JavaScript</h4>
-```
-{{>dial-text-input-source-js}}
+{{>dial-text-input-complete}}
 ```

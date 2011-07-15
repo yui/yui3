@@ -28,7 +28,7 @@ The rest of the markup and CSS in this example is just for the Hubble telescope 
 </p>
 
 ```
-<div id="demo"></div>
+{{>dial-basic-markup}}
 ```
 
 <h4>The JavaScript</h4>
@@ -38,31 +38,7 @@ The rest of the markup and CSS in this example is just for the Hubble telescope 
 <p>During instatiation of a Dial, several configuration attributes can be set (see the code-block below); note the construction-time event subscription:</p>
 
 ```
-YUI().use('dial', function(Y) {
-
-	var dial = new Y.Dial({
-			// The units in this example are Altitude in Kilometers...
-			min:-35, 		// min altitude -35 Kilometers (below earth's surface)
-			max:559, 		// max altitude = Hubble's orbit
-			stepsPerRevolution:30, 	// One revolution of the Dial's handle will change the altitude this many units
-			value: 0,		// starting altitude of sea level
-			diameter: 100,		// diameter of the ring of the dial control in pixels
-			minorStep: 1,		// keyboard (arrow key) changes this many units
-			majorStep: 10,		// keyboard pg up/down changes this many units
-			decimalPlaces: 2,	// display this many digits to the right of the decimal point
-			
-			// an object literal containing key-value pairs of the visible HTML strings in the Dial UI
-			strings:{label:'Altitude in Kilometers:', resetStr: 'Reset', tooltipHandle: 'Drag to set'},
-			
-			// construction-time event subscription.
-			// Whenever the value of this dial object changes, the event handler function (setSceneY) fires
-            after : {
-                valueChange: Y.bind( setSceneY, dial )
-            }
-	});
-	dial.render("#demo");
-	
-});
+{{>dial-interactive-script}}
 ```
 
 
@@ -71,8 +47,8 @@ YUI().use('dial', function(Y) {
 <p>
 Preceding the code that instantiates the `Dial` widget, declare the event handler.
 We can use the value of the `Dial` to do whatever we want, but
-in this example the event handler updates the CSS `top` property of the pictorial scene `&lt;div id="scene"&gt;` of Hubble's relationship to Earth.
-This scene is moved up or down inside a framing element `&lt;div class="viewframe"&gt;` that has CSS `overflow:hidden;`.
+in this example the event handler updates the CSS `top` property of the pictorial scene `<div id="scene">` of Hubble's relationship to Earth.
+This scene is moved up or down inside a framing element `<div class="viewframe">` that has CSS `overflow:hidden;`.
 The reason `e.newVal` is multiplied by `10` is so that the scene moves 10px for every 1 kilometer of the `Dial`'s value.
 </p>
 
@@ -86,26 +62,12 @@ The reason `e.newVal` is multiplied by `10` is so that the scene moves 10px for 
 * overflow set to hidden.
 */
 setSceneY = function(e) {
-	Y.one('#scene').setStyle('top', (originY + (e.newVal * 10)) + 'px');
+    Y.one('#scene').setStyle('top', (originY + (e.newVal * 10)) + 'px');
 }
 ```
 
 
-<h3>Full Code Listing</h3>
-
-<h4>The Markup</h4>
+<h3>Complete Example Source</h3>
 ```
-	{{>dial-interactive-source-html}}
-```
-
-
-<h4>The JavaScript</h4>
-```
-	{{>dial-interactive-source-js}}
-```
-
-
-<h4>The CSS</h4>
-```
-	{{>dial-interactive-source-css}}
+{{>dial-interactive-complete}}
 ```

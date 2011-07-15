@@ -3,7 +3,7 @@
 </div>
 
 <div class="example yui3-skin-sam">
-    {{>dial-image-background-source}}
+{{>dial-image-background-source}}
 </div>
 
 <h3>Creating a Dial With Images as Backgrounds</h3>
@@ -17,7 +17,7 @@ This can be done with CSS, providing the images can be contained within the dime
 <p>The only markup requirement is an element to contain the `Dial`</p>
 
 ```
-<div id="demo"></div>
+{{>dial-image-background-markup}}
 ```
 
 <h4>The JavaScript</h4>
@@ -36,17 +36,7 @@ This renders it in the container and makes it usable.</p>
 </p>
 
 ```
-YUI().use('dial', function(Y) {
-
-	var dial = new Y.Dial({
-		min:-220,
-		max:220,
-		stepsPerRevolution:100,
-		value: 30
-	});
-    dial.render("#demo");
-	
-});
+{{>dial-image-background-script}}
 ```
 <h4>The CSS</h4>
 
@@ -62,5 +52,10 @@ To make these changes, we only need to do two things. </p>
 </ol>	
 
 ```
-{{>dial-image-background-source-css}}
+{{>dial-image-background-css}}
+```
+<h3>Complete Example Source</h3>
+
+```
+{{>dial-image-background-complete}}
 ```
