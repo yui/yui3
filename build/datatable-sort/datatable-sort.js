@@ -223,7 +223,7 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
     */
     _beforeCreateTheadThNode: function(o) {
         if(o.column.get("sortable")) {
-            o.value = Y.substitute(this.get("template"), {
+            o.value = Y.Lang.sub(this.get("template"), {
                 link_class: o.link_class || "",
                 link_title: "title",
                 link_href: "#",
@@ -310,4 +310,4 @@ Y.namespace("Plugin").DataTableSort = DataTableSort;
 
 
 
-}, '@VERSION@' ,{requires:['datatable-base','plugin','recordset-sort'], lang:['en']});
+}, '@VERSION@' ,{lang:['en'], requires:['datatable-base','plugin','recordset-sort']});

@@ -1029,7 +1029,7 @@ proto = {
     log: NOOP,
     message: NOOP,
     // this is replaced if the dump module is included
-    dump: NOOP,
+    dump: function (o) { return ''+o; },
 
     /**
      * Report an error.  The reporting mechanism is controled by

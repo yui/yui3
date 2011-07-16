@@ -573,7 +573,7 @@ Y.extend(DTBase, Y.Widget, {
     */
     _createTheadTrNode: function(o, isFirst, isLast) {
         //TODO: custom classnames
-        var tr = Ycreate(Ysubstitute(this.get("trTemplate"), o)),
+        var tr = Ycreate(fromTemplate(this.get("trTemplate"), o)),
             i = 0,
             columns = o.columns,
             len = columns.length,
@@ -637,7 +637,7 @@ Y.extend(DTBase, Y.Widget, {
         o.rowspan = column.rowSpan;
         o.abbr = column.get("abbr");
         o.classnames = column.get("classnames");
-        o.value = Ysubstitute(this.get("thValueTemplate"), o);
+        o.value = fromTemplate(this.get("thValueTemplate"), o);
 
         /*TODO
         // Clear minWidth on hidden Columns
@@ -646,7 +646,7 @@ Y.extend(DTBase, Y.Widget, {
         }
         */
         
-        return Ycreate(Ysubstitute(this.thTemplate, o));
+        return Ycreate(fromTemplate(this.thTemplate, o));
     },
 
     /**
@@ -724,7 +724,7 @@ Y.extend(DTBase, Y.Widget, {
     * @returns Y.Node
     */
     _createTbodyTrNode: function(o) {
-        var tr = Ycreate(Ysubstitute(this.get("trTemplate"), {id:o.record.get("id")})),
+        var tr = Ycreate(fromTemplate(this.get("trTemplate"), {id:o.record.get("id")})),
             i = 0,
             allKeys = this.get("columnset").keys,
             len = allKeys.length;
@@ -789,7 +789,7 @@ Y.extend(DTBase, Y.Widget, {
         o.headers = column.headers;
         o.classnames = column.get("classnames");
         o.value = this.formatDataCell(o);
-        return Ycreate(Ysubstitute(this.tdTemplate, o));
+        return Ycreate(fromTemplate(this.tdTemplate, o));
     },
     
     /**
@@ -816,10 +816,10 @@ Y.extend(DTBase, Y.Widget, {
         o.data = record.get("data");
         o.value = record.getValue(column.get("field"));
         return YLang.isString(formatter) ?
-            Ysubstitute(formatter, o) : // Custom template
+            fromTemplate(formatter, o) : // Custom template
             YLang.isFunction(formatter) ?
                 formatter.call(this, o) :  // Custom function
-                Ysubstitute(this.get("tdValueTemplate"), o);  // Default template
+                fromTemplate(this.get("tdValueTemplate"), o);  // Default template
     },
 
     _initRecordset: function () {

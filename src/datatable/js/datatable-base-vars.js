@@ -1,6 +1,6 @@
 var YLang = Y.Lang,
     YisValue = YLang.isValue,
-    Ysubstitute = Y.Lang.substitute,
+    fromTemplate = Y.Lang.sub,
     YNode = Y.Node,
     Ycreate = YNode.create,
     YgetClassName = Y.ClassNameManager.getClassName,
