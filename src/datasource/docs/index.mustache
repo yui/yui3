@@ -247,68 +247,45 @@ YUI().use("datasource-function", "datasource-polling", function(Y) {
     <tr>
         <td><code>request</code></td>
         <td>Request is made.</td>
-        <td><dl>
-            <dt><code>tId</code></dt>
-            <dd>Unique transaction ID.</dd>
-            <dt><code>request</code></dt>
-            <dd>The request value.</dd>
-            <dt><code>callback</code></dt>
-            <dd>The callback object.</dd>
-            <dt><code>cfg</code></dt>
-            <dd>The configuration object.</dd>
-       </dl></td>
+        <td>
+            <dl>
+                <dt><code>tId</code></dt>
+                    <dd>Unique transaction ID.</dd>
+                <dt><code>request</code></dt>
+                    <dd>The request value.</dd>
+                <dt><code>callback</code></dt>
+                    <dd>The callback object.</dd>
+                <dt><code>cfg</code></dt>
+                    <dd>The configuration object.</dd>
+            </dl>
+       </td>
     </tr>
     <tr>
         <td><code>data</code></td>
         <td>Raw data is received from the source.</td>
-        <td><dl>
-            <dt><code>tId</code></dt>
-            <dd>Unique transaction ID.</dd>
-            <dt><code>request</code></dt>
-            <dd>The request value.</dd>
-            <dt><code>callback</code></dt>
-            <dd>The callback object.</dd>
-            <dt><code>cfg</code></dt>
-            <dd>The configuration object.</dd>
-            <dt><code>data</code></dt>
-            <dd>The raw data.</dd>
-        </dl></td>
+        <td>
+            All properties from `request` plus
+            <dl>
+                <dt><code>data</code></dt>
+                    <dd>The raw data.</dd>
+            </dl>
+        </td>
     </tr>
     <tr>
         <td><code>response</code></td>
         <td>Response is returned to a callback function.</td>
-        <td><dl>
-            <dt><code>tId</code></dt>
-            <dd>Unique transaction ID.</dd>
-            <dt><code>request</code></dt>
-            <dd>The request value.</dd>
-            <dt><code>callback</code></dt>
-            <dd>The callback object.</dd>
-            <dt><code>cfg</code></dt>
-            <dd>The configuration object.</dd>
-            <dt><code>data</code></dt>
-            <dd>The raw data.</dd>
-            <dt><code>response</code></dt>
-            <dd>Data normalized into a response object.</dd>
-        </dl></td>
+        <td>
+            All properties from `data` plus
+            <dl>
+                <dt><code>response</code></dt>
+                    <dd>Data normalized into a response object.</dd>
+            </dl>
+        </td>
     </tr>
     <tr>
         <td><code>error</code></td>
-        <td>An error is encountered</td>
-        <td><dl>
-            <dt><code>tId</code></dt>
-            <dd>Unique transaction ID.</dd>
-            <dt><code>request</code></dt>
-            <dd>The request value.</dd>
-            <dt><code>callback</code></dt>
-            <dd>The callback object.</dd>
-            <dt><code>cfg</code></dt>
-            <dd>The configuration object.</dd>
-            <dt><code>data</code></dt>
-            <dd>The raw data.</dd>
-            <dt><code>response</code></dt>
-            <dd>Data normalized into a response object.</dd>
-        </dl></td>
+        <td>After `response` event, before the configured failure callback is executed.</td>
+        <td>Same properties as the `response` event</td>
     </tr>
 </tbody>
 </table>

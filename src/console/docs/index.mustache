@@ -371,10 +371,10 @@ YUI().use('console','overlay', function (Y) {
 </p>
 
 ```
-<script src="http://yui.yahooapis.com/{$yui3CurrentVersion}/build/yui/yui-min.js"></script>
+<script src="http://yui.yahooapis.com/{{yuiVersion}}/build/yui/yui-min.js"></script>
 <!-- Include debug messages from the node module -->
-<script src="http://yui.yahooapis.com/{$yui3CurrentVersion}/build/node/node-debug.js"></script>
-<script type="text/javascript">
+<script src="http://yui.yahooapis.com/{{yuiVersion}}/build/node/node-debug.js"></script>
+<script>
 YUI().use('overlay', function (Y) {
     // Overlay requires Node.  Any other missing dependencies are automatically
     // loaded, excluding node-min.js since the node module  is already provided

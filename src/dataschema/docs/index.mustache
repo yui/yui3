@@ -1,5 +1,12 @@
 <div class="intro">
-    <p>The DataSchema Utility applies a given schema against data of arbitrary formats, normalizing input such as JSON, XML, or delimited text into a JavaScript object with known properties. The value of the DataSchema Utility is in its ability to translate data from a variety of sources into a consistent format for consumption by components in a predictable manner.</p>
+    <p>
+        The DataSchema Utility applies a given schema against data of arbitrary
+        formats, normalizing input such as JSON, XML, or delimited text into a
+        JavaScript object with known properties. The value of the DataSchema
+        Utility is in its ability to translate data from a variety of sources
+        into a consistent format for consumption by components in a predictable
+        manner.
+    </p>
 </div>
 
 {{>getting-started}}
@@ -10,7 +17,11 @@
 
 <h3 id="basics">DataSchema basics</h3>
 
-<p>DataSchema classes are standalone static utilities that accept data input plus a schema definition and return a JavaScript object with the following properties:</p>
+<p>
+    DataSchema classes are standalone static utilities that accept data input
+    plus a schema definition and return a JavaScript object with the following
+    properties:
+</p>
 
 <table>
 <thead>
@@ -34,11 +45,17 @@
 </tbody>
 </table>
 
-<p>Note that the schema you define will depend on which subclass of DataSchema is being used.</p>
+<p>
+    Note that the schema you define will depend on which subclass of DataSchema
+    is being used.
+</p>
 
 <h4 id="array">DataSchema.Array</h4>
 
-<p>Use DataSchema.Array when working with JavaScript arrays. These arrays may contain JavaScript objects, other arrays, or primitive values.</p>
+<p>
+    Use DataSchema.Array when working with JavaScript arrays. These arrays may
+    contain JavaScript objects, other arrays, or primitive values.
+</p>
 
 ```
 // A sample array of objects
@@ -61,7 +78,7 @@
 ];
 ```
 
-<p>Define a schema with the following properties for your array data:
+<p>Define a schema with the following properties for your array data:</p>
 
 <table>
 <thead>
@@ -91,7 +108,11 @@ var myOutput = Y.DataSchema.Array.apply(mySchema, myData));
 
 <h4 id="json">DataSchema.JSON</h4>
 
-<p>Use DataSchema.JSON when working with JavaScript objects or JSON data. Typically, your data will hold meta values as well as an internal array of tabular data.</p>
+<p>
+    Use DataSchema.JSON when working with JavaScript objects or JSON data.
+    Typically, your data will hold meta values as well as an internal array of
+    tabular data.
+</p>
 
 ```
 // Sample JSON data
@@ -117,7 +138,11 @@ var myOutput = Y.DataSchema.Array.apply(mySchema, myData));
 };
 ```
 
-<p>Locators are string values in your schema that use dot notation or bracket syntax to point to data values within the object. Define a schema with the following properties for your object data:</p>
+<p>
+    Locators are string values in your schema that use dot notation or bracket
+    syntax to point to data values within the object. Define a schema with the
+    following properties for your object data:
+</p>
 
 <table>
 <thead>
@@ -159,12 +184,18 @@ var myOutput = Y.DataSchema.JSON.apply(mySchema, myData));
 
 <h4 id="xml">DataSchema.XML</h4>
 
-<p><strong>Note:</strong> XML parsing currently has known issues on the Android WebKit browser.
+<p>
+    <strong>Note:</strong> XML parsing currently has known issues on the
+    Android WebKit browser.
+</p>
 
-<p>Use DataSchema.XML when working with XML data. As with JSON data, your XML data may hold meta values as well as an internal node list of tabular data.</p>
+<p>
+    Use DataSchema.XML when working with XML data. As with JSON data, your XML
+    data may hold meta values as well as an internal node list of tabular
+    data.
+</p>
 
 ```
-$xml = <<<END
 // Sample XML data
 <Response>
     <Session>542235629</Session>
@@ -187,7 +218,11 @@ $xml = <<<END
 </Response>
 ```
 
-<p>Locators are XPath string values in your schema that point to data values within the XML. Define a schema with the following properties for your XML data:</p>
+<p>
+    Locators are XPath string values in your schema that point to data values
+    within the XML. Define a schema with the following properties for your XML
+    data:
+</p>
 
 <table>
 <thead>
@@ -229,7 +264,10 @@ var myOutput = Y.DataSchema.XML.apply(mySchema, myData));
 
 <h4 id="text">DataSchema.Text</h4>
 
-<p>Use DataSchema.Text when working with delimited textual data. Typically, your data will not contain meta values.</p>
+<p>
+    Use DataSchema.Text when working with delimited textual data. Typically,
+    your data will not contain meta values.
+</p>
 
 ```
 // Sample text data
@@ -279,7 +317,13 @@ var myOutput = Y.DataSchema.Text.apply(mySchema, myData));
 
 <h3 id="plugin">DataSchema as a DataSource plugin</h3>
 
-<p>DataSchema plugins integrate DataSource's retrieval functionality with schema-based normalization of the retrieved data for further consumption by another component. There are currently four available DataSource plugins: DataSourceArraySchema, DataSourceJSONSchema, DataSourceXMLSchema, and DataSourceTextSchema.</p>
+<p>
+    DataSchema plugins integrate DataSource's retrieval functionality with
+    schema-based normalization of the retrieved data for further consumption by
+    another component. There are currently four available DataSource plugins:
+    DataSourceArraySchema, DataSourceJSONSchema, DataSourceXMLSchema, and
+    DataSourceTextSchema.
+</p>
 
 ```
 myDataSource.plug({fn: Y.Plugin.DataSourceJSONSchema, cfg: {
@@ -298,4 +342,7 @@ myDataSource.sendRequest({
 
 <h2 id="knownissues">Known Issues</h2>
 
-<p><strong>Known Android issues (bugs 2529621, 2529758, 2529775):</strong> XML parsing is currently buggy on the Android WebKit browser.</p>
+<p>
+    <strong>Known Android issues (bugs 2529621, 2529758, 2529775):</strong> XML
+    parsing is currently buggy on the Android WebKit browser.
+</p>

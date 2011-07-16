@@ -189,13 +189,16 @@ Y.extend(DSLocal, Y.Base, {
          * </dd>
          * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
          * <dt>data (Object)</dt> <dd>Raw data.</dd>
-         * <dt>response (Object)</dt> <dd>Normalized response object with the following properties:
-         *     <dl>
-         *         <dt>results (Object)</dt> <dd>Parsed results.</dd>
-         *         <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
-         *         <dt>error (Boolean)</dt> <dd>Error flag.</dd>
-         *     </dl>
-         * </dd>
+         * <dt>response (Object)</dt>
+         *     <dd>Normalized response object with the following properties:
+         *         <dl>
+         *             <dt>results (Object)</dt> <dd>Parsed results.</dd>
+         *             <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
+         *             <dt>error (Boolean)</dt> <dd>Error flag.</dd>
+         *         </dl>
+         *     </dd>
+         * <dt>error</dt>
+         *     <dd>Any error that occurred along the transaction lifecycle.</dd>
          * </dl>
          * @preventable _defResponseFn
          */
@@ -220,13 +223,16 @@ Y.extend(DSLocal, Y.Base, {
          * </dd>
          * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
          * <dt>data (Object)</dt> <dd>Raw data.</dd>
-         * <dt>response (Object)</dt> <dd>Normalized response object with the following properties:
-         *     <dl>
-         *         <dt>results (Object)</dt> <dd>Parsed results.</dd>
-         *         <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
-         *         <dt>error (Object)</dt> <dd>Error object.</dd>
-         *     </dl>
-         * </dd>
+         * <dt>response (Object)</dt>
+         *     <dd>Normalized response object with the following properties:
+         *         <dl>
+         *             <dt>results (Object)</dt> <dd>Parsed results.</dd>
+         *             <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
+         *             <dt>error (Object)</dt> <dd>Error object.</dd>
+         *         </dl>
+         *     </dd>
+         * <dt>error</dt>
+         *     <dd>Any error that occurred along the transaction lifecycle.</dd>
          * </dl>
          */
 

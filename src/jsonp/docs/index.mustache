@@ -147,21 +147,39 @@ YUI.Env.JSONP.yui_3_3_0_1_1294184187597423({"foo":"bar"});
     <tbody>
         <tr>
             <td>timeout</td>
-            <td>This value, defined as milliseconds, is a time threshold for the transaction (e.g., <code>{ timeout: 2000 }</code> ). When this limit is reached, the transaction's <code>on.timeout</code> callback will be executed if supplied.</td>
+            <td>
+                This value, defined as milliseconds, is a time threshold for
+                the transaction (e.g., <code>{ timeout: 2000 }</code> ). When
+                this limit is reached, the transaction's
+                <code>on.timeout</code> callback will be executed if
+                supplied.
+            </td>
         </tr>
         <tr>
             <td>context</td>
-            <td>Defines what will be &quot;<code>this</code>&quot; in the callbacks.  If undefined, the default will be the JSONPRequest instance.</td>
+            <td>
+                Defines what will be &quot;<code>this</code>&quot; in the
+                callbacks.  If undefined, the default will be the JSONPRequest
+                instance.
+            </td>
         </tr>
         <tr>
             <td>args</td>
-            <td>An array of additional arguments that will be passed to the callbacks as second, third, and so on arguments.</td>
+            <td>
+                An array of additional arguments that will be passed to the
+                callbacks as second, third, and so on arguments.
+            </td>
         </tr>
         <tr>
-            <td>on (required)</td>
-            <td><p>This object defines the callbacks to be used for the transaction.  At least an <code>on.success</code> handler must be defined.</p>
+            <td>on</td>
+            <td>
+                <p>
+                    <strong>Required</strong>. This object defines the
+                    callbacks to be used for the transaction.  At least an
+                    <code>on.success</code> handler must be defined.
+                </p>
                 <ul>
-                    <li>success (required)</li>
+                    <li>success (<strong>required</strong>)</li>
                     <li>failure</li>
                     <li>timeout</li>
                 </ul>
@@ -169,7 +187,13 @@ YUI.Env.JSONP.yui_3_3_0_1_1294184187597423({"foo":"bar"});
         </tr>
         <tr>
             <td>format</td>
-            <td>Preprocessor function to stitch together the supplied URL (first argument), the proxy function name (internally generated), and any additional arguments passed to <code>send()</code>.  See <a href="#format">Customizing the JSONP URL</a> for more detail.</td>
+            <td>
+                Preprocessor function to stitch together the supplied URL
+                (first argument), the proxy function name (internally
+                generated), and any additional arguments passed to
+                <code>send()</code>.  See <a href="#format">Customizing the
+                JSONP URL</a> for more detail.
+            </td>
         </tr>
     </tbody>
 </table>
