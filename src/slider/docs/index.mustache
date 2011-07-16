@@ -1,0 +1,605 @@
+<div id="promo" class="component">
+    <p>
+        The Slider widget is a UI control that enables the user to adjust
+        values in a finite range along a horizontal or vertical axis.
+        Typically, the Slider widget is used in a web application as a visual
+        replacement for an input box that takes a number as input.
+    </p>
+</div>
+				
+{{>getting-started}}
+				
+<h2 id="using">Using Sliders</h2>
+			
+<h3 id="anatomy">Anatomy of a Slider</h3>
+
+<h4>DOM structure</h4>
+
+<p>
+    A Slider is comprised of a thumb that slides along a rail.  In the DOM, the
+    thumb is a child of the rail element.  The visualization of the rail is
+    created by applying a CSS background image to the rail element and two
+    child elements used to display the rail's end caps.  The thumb contains two
+    <code>&lt;img&gt;</code> elements, one for the thumb graphic and one for
+    its shadow.  Using an <code>&lt;img&gt;</code> in the DOM rather than a
+    background image for the thumb circumvents a performance issue in older
+    versions of Internet Explorer.
+</p>
+
+<p>
+    The rail element is contained within the standard <code>contentBox</code>
+    and <code>boundingBox</code> common to all YUI 3 Widgets.
+</p>
+
+<p>
+    Like other form controls, Sliders are inline elements.
+</p>
+
+<p>
+    The complete markup of a Slider is as follows:
+</p>
+                
+```
+<!-- boundingBox -->
+<span class="yui3-widget yui3-sliderbase yui-slider">
+    <!-- contentBox -->
+    <span class="yui3-slider-content yui3-slider-x"><!-- or slider-y -->
+
+        <!-- rail -->
+        <span class="yui3-slider-rail">
+            <span class="yui3-slider-rail-cap-left"></span><!-- or cap-top -->
+            <span class="yui3-slider-rail-cap-right"></span><!-- or cap-bottom -->
+
+            <!-- thumb -->
+            <span class="yui3-slider-thumb">
+                <img class="yui3-slider-thumb-shadow">
+                <img class="yui3-slider-thumb-image">
+            </span>
+        </span>
+
+    </span>
+</span>
+```
+
+<h4 id="appearance">Appearance</h4>
+
+<p>
+    This is the appearance of a Slider with default Sam skin applied:
+</p>
+
+<img src="{{componentAssets}}/images/horiz_slider.png" alt="Horizontal Sliderwith default Sam skin">
+
+<img src="{{componentAssets}}/images/vert_slider.png" alt="Vertical Slider with default Sam skin">
+
+<p>
+    See the <a href="#skinning">skinning</a> section below for tips on creating
+    your own skin or using one of the prepackaged skins available for Slider as
+    of version 3.1.
+</p>
+
+<h4 id="thumb_placement">Thumb and end cap placement</h4>
+
+<p>
+    The Slider thumb is positioned within the dimensional boundaries of the
+    rail element.  The skin CSS positions the rail's end caps just outside the
+    rail.  The rail element's height or width, for vertical or horizontal
+    Sliders respectively, is configured by the <code>length</code> attribute.
+    The default <code>length</code> is 150px.  Due to the end caps, the actual
+    footprint of the Slider is a few pixels longer than the
+    <code>length</code>.
+</p>
+
+<img src="{{componentAssets}}/images/anatomy.png" alt="illustration of the parts and config properties of a Slider">
+
+<h3 id="instantiating">Instantiating and configuring a Slider</h3>
+
+<p>
+    There is no required configuration to instantiate a Slider.  By default,
+    Sliders are horizontal, 150px wide, and report values from 0 to 100.  Below
+    are the configuration attributes available for Slider (excluding those
+    inherited from Widget):
+</p>
+
+<table>
+<thead>
+    <tr>
+        <th>Property</th>
+        <th>Description</th>
+        <th>Default</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td><code>axis</code></td>
+        <td>Specifies horizontal or vertical Slider (&quot;y&quot; for vertical)</td>
+        <td>&quot;x&quot;</td>
+    </tr>
+    <tr>
+        <td><code>min</code></td>
+        <td>Value at the far left or top of the rail</td>
+        <td>0</td>
+    </tr>
+    <tr>
+        <td><code>max</code></td>
+        <td>Value at the far right or bottom of the rail</td>
+        <td>100</td>
+    </tr>
+    <tr>
+        <td><code>value</code></td>
+        <td>The initial value, which will be translated into initial thumb placement</td>
+        <td>0</td>
+    </tr>
+    <tr>
+        <td><code>length</code></td>
+        <td>Height of vertical Slider rail; width of horizontal Slider rail</td>
+        <td>150px</td>
+    </tr>
+    <tr>
+        <td><code>thumbUrl</code></td>
+        <td>The path to an image to use as the <code>&lt;img&gt;</code> for the thumb</td>
+        <td>Appropriate thumb image for the configured axis in the current skin</td>
+    </tr>
+    <tr>
+        <td><code>clickableRail</code></td>
+        <td>Clicking on the rail moves the thumb to that point</td>
+        <td>true</td>
+    </tr>
+</tbody>
+</table>
+                
+<p>
+    Here are a few ways to instantiate a Slider:
+</p>
+
+```
+YUI({...}).use('slider',function (Y) {
+
+    // Default everything
+    var slider = new Y.Slider();
+    slider.render("#slider_parent");
+
+    // Use a custom thumb and width
+    var slider = new Y.Slider({
+        length : '200px',
+        thumbImage : '/path/to/local/thumb-image.png'
+    });
+    slider.render('#slider_parent');
+
+    // Vertical slider with values that increase from bottom to top and
+    // initialize the thumb in the middle.
+    var slider = new Y.Slider({
+        axis        : 'y',
+        min         : 100,
+        max         : 0,
+        value       : 50
+    });
+    slider.render('#slider_parent');
+});
+```
+
+<h3 id="value">Setting and constraining the Slider value</h3>
+
+<h4>Setting and getting Slider values</h4>
+
+<p>
+    Like any input element, the most important thing about a Slider is its
+    <code>value</code>.  Though <code>value</code> is managed as an attribute,
+    Slider provides two convenience methods for accessing it:
+</p>
+
+<ul>
+    <li><code>getValue()</code></li>
+    <li><code>setValue(newVal)</code></li>
+</ul>
+
+```
+// Specify value at construction
+var slider = new Y.Slider({
+    value  : 50
+});
+
+// Get and set the value as an attribute
+var val = slider.get('value');
+
+slider.set('value',val + 10);
+
+// Use the Slider API convenience methods
+val = slider.getValue();
+
+slider.setValue(val - 20);
+```
+
+
+<h4 id="min_max">Constraining Slider values</h4>
+
+<p>
+    A Slider's <code>value</code> is constrained between the configured
+    <code>min</code> and <code>max</code> attribute values.  Values outside
+    this range are treated as the closer of <code>min</code> or
+    <code>max</code>.
+</p>
+
+```
+// Create a horizontal Slider 300px wide with values from -100 to 100
+var slider = new Y.Slider({
+    length : 300,
+    min    : -100,
+    max    : 100
+});
+
+slider.setValue(-200); // same as setValue(-100)
+```
+
+<p>
+    By default, <code>min</code> is <code>0</code>, <code>max</code> is
+    <code>100</code> and <code>value</code> is <code>0</code>.
+</p>
+
+<h4 id="vert_min_max"><code>min</code> and <code>max</code> for vertical Sliders</h4>
+
+<p>
+    Vertical Sliders associate the top edge of the rail with the
+    <code>min</code> value and the bottom edge of the rail with the
+    <code>max</code>.  If you prefer values to increase from bottom to top,
+    just flip the specified <code>min</code> and <code>max</code> values.
+</p>
+
+```
+// Create a vertical Slider with value 0 at the bottom, 100 at the top
+var v_slider = new Y.Slider({
+    axis  : 'y',
+    min   : 100, // vertical Sliders have min at the top
+    max   : 0,
+    value : 33   // initial value
+});
+```
+
+<h4 id="hidden">Sync the UI if the Slider was rendered off the DOM</h4>
+
+<p>
+    If a Slider is rendered off the DOM, you must call the Slider's
+    <code>syncUI()</code> method after attaching it to the DOM in order for the
+    thumb to be placed correctly.  When off DOM, the dimensional information
+    necessary to place the thumb is unavailable.
+</p>
+
+```
+// Create a Slider and render it to an element not on the DOM
+var container = Y.Node.create("<div></div>");
+
+var slider = new Y.Slider({ value: 30 });
+
+slider.render( container );
+
+...
+
+// Insert the Slider's container into the DOM
+Y.one( "body" ).insert( container );
+
+// Call syncUI() to sync the thumb to the current value
+slider.syncUI();
+```
+
+<h3 id="events">Slider events</h3>
+
+<p>
+    Sliders fire the following events during operation:
+</p>
+
+<table>
+<thead>
+    <tr>
+        <th>Event</th>
+        <th>When</th>
+        <th>Payload</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td><code>slideStart</code></td>
+        <td>Beginning a thumb drag</td>
+        <td><code>{ ddEvent: (drag:start event) }</code></td>
+    </tr>
+    <tr>
+        <td><code>thumbMove</code></td>
+        <td>The thumb position is being changed</td>
+        <td><code>{ ddEvent : (drag:drag event) }</code></td>
+    </tr>
+    <tr>
+        <td><code>valueChange</code></td>
+        <td>The value attribute is changed by any means</td>
+        <td>Normal change event signature (<code>newVal</code>, <code>prevVal</code>, etc).  When dragging, extra event property <code>ddEvent : (drag:drag event)</code> is added</td>
+    </tr>
+    <tr>
+        <td><code>slideEnd</code></td>
+        <td>Finishing a thumb drag</td>
+        <td><code>{ ddEvent: (drag:end event) }</code></td>
+    </tr>
+    <tr>
+        <td><code>railMouseDown</code></td>
+        <td>The rail was clicked</td>
+        <td><code>{ ev: (DOM mousedown event) }</code></td>
+    </tr>
+</tbody>
+</table>
+
+<p>
+    This is not an exhaustive list.  See the <a href="{{apiDocs}}/module_slider.html">API docs</a> for a complete listing.
+</p>
+
+<h3 id="skinning">Skinning</h3>
+
+<p>
+    Like all widgets in YUI, Slider is skinnable and ships by default with the
+    Sam skin.  To apply the skin CSS, assign the skin's class name to a parent
+    element of the Slider.  Typically it's adequate to just add the class to
+    the <code>&lt;body&gt;</code> tag.
+</p>
+
+```
+<body class="yui3-skin-sam">
+```
+
+<h4 id="skin_thumbUrl">Using custom thumb or rail images</h4>
+
+<p>
+    You can use alternate rail images by specifying a new image path in your
+    CSS, and alternate thumbs can be targeted in the Slider configuration.
+</p>
+
+```
+<style type="text/css">
+// The rail and end cap images are shared in a sprite
+.yui3-skin-sam .yui3-slider-x .yui3-slider-rail,
+.yui3-skin-sam .yui3-slider-x .yui3-slider-rail-cap-left,
+.yui3-skin-sam .yui3-slider-x .yui3-slider-rail-cap-right {
+    background-image: url(/path/to/new/rail.png);
+}
+</style>
+
+<script>
+YUI().use( "slider", function (Y) {
+
+    var slider = new Y.Slider({
+        thumbUrl: '/path/to/new/thumb.png'
+    });
+
+    slider.render("#slider_parent");
+
+});
+</script>
+```
+
+<h4 id="skins">Available skins</h4>
+
+<p>
+    Slider is provided with several alternate skins that can be applied by
+    configuring a skin override in your YUI instance configuration.
+</p>
+
+```
+YUI({
+    skin: {
+        overrides: {
+            slider: [ 'round-dark' ]
+        }
+    }
+}).use( "slider", ... );
+```
+
+<p>
+    The available skins are each provided in a light and dark theme.  A few
+    include optional thumbs or rails (for both light and dark).
+</p>
+
+<table>
+<thead>
+    <tr>
+        <th>Skin class</th>
+        <th>Visualization</th>
+        <th>Optional</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td rowspan="2"><code>yui3-skin-sam</code></td>
+        <td><img src="{{componentAssets}}/images/sam.png" alt="Slider with Sam skin"></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td><img src="{{componentAssets}}/images/sam_lines.png" alt="Slider with Sam skin and alternate rail image"></td>
+        <td>
+            <code>rail-x-lines.png</code>
+        </td>
+    </tr>
+    <tr>
+        <td><code>yui3-skin-sam-dark</code></td>
+        <td><img src="{{componentAssets}}/images/sam_dark.png" alt="Slider with Dark Sam skin"></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td rowspan="4"><code>yui3-skin-capsule</code></td>
+        <td><img src="{{componentAssets}}/images/capsule.png" alt="Slider with Capsule skin"></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td><img src="{{componentAssets}}/images/capsule_thumb.png" alt="Slider with Capsule skin and alternate thumb image"></td>
+        <td>
+            <code>thumb-x-line.png</code>
+        </td>
+    </tr>
+    <tr>
+        <td><img src="{{componentAssets}}/images/capsule_dots.png" alt="Slider with Sam skin and alternate rail image"></td>
+        <td>
+            <code>rail-x-dots.png</code>
+        </td>
+    </tr>
+    <tr>
+        <td><img src="{{componentAssets}}/images/capsule_lines.png" alt="Slider with Sam skin and alternate rail image"></td>
+        <td>
+            <code>rail-x-lines.png</code>
+        </td>
+    </tr>
+    <tr>
+        <td><code>yui3-skin-capsule-dark</code></td>
+        <td><img src="{{componentAssets}}/images/capsule_dark.png" alt="Slider with Dark Capsule skin"></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td rowspan="2"><code>yui3-skin-round</code></td>
+        <td><img src="{{componentAssets}}/images/round.png" alt="Slider with Round skin"></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td><img src="{{componentAssets}}/images/round_thumb.png" alt="Slider with Round skin and alternate thumb image"></td>
+        <td>
+            <code>thumb-x-grip.png</code>
+        </td>
+    </tr>
+    <tr>
+        <td><code>yui3-skin-audio-light</code></td>
+        <td><img src="{{componentAssets}}/images/audio_light.png" alt="Slider with Light Audio skin"></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td><code>yui3-skin-audio</code></td>
+        <td><img src="{{componentAssets}}/images/audio.png" alt="Slider with Audio skin"></td>
+        <td></td>
+    </tr>
+</tbody>
+</table>
+
+<p>
+    Here's an example illustrating using the capsule skin with provided
+    alternate rail and thumb:
+</p>
+
+```
+<style type="text/css">
+// The rail and end cap images are shared in a sprite
+.yui3-skin-capsule .yui3-slider-x .yui3-slider-rail,
+.yui3-skin-capsule .yui3-slider-x .yui3-slider-rail-cap-left,
+.yui3-skin-capsule .yui3-slider-x .yui3-slider-rail-cap-right {
+    background-image: url(/path/to/build/slider/assets/skins/capsule/rail-x-lines.png);
+}
+</style>
+
+<script>
+YUI({ skin: { overrides: { slider: [ 'capsule' ] } } })
+  .use( "slider", function (Y) {
+
+    var slider = new Y.Slider({
+        axis    : 'y',
+        min     : 1,
+        max     : 5,
+        value   : 3,
+        length  : '100px',
+        thumbUrl: Y.config.base + '/slider/assets/skins/capsule/thumb-x-line.png'
+    });
+
+    slider.render("#slider_parent");
+
+});
+</script>
+```
+
+<h4 id="skin_sprites">Skin image sprites</h4>
+
+<p>
+    To reduce the number of resource requests for Slider's visual treatment,
+    the rail and end caps are combined into one image sprite, and thumb and
+    shadow into another (examples shown below with borders added for
+    clarity).
+</p>
+
+<style type="text/css">
+    .sprite-example {
+        border: 1px solid #d9d9d9;
+    }
+</style>
+
+<img src="{{componentAssets}}/images/thumb.png" alt="Thumb image sprite showing both thumb and shadow" class="sprite-example">
+
+<p>
+    Thumb and shadow sprite.  As noted <a href="#anatomy">above</a>, the thumb
+    and shadow are both represented as <code>&lt;img&gt;</code>s in the DOM.
+    This sprite allows both <code>&lt;img&gt;</code>s to reference the same
+    <code>src</code> URL, but masked and positioned appropriately by the skin
+    CSS.  Thumb image and shadow for vertical Sliders are set next to each
+    other horizontally as shown. Horizontal Slider thumb sprites are stacked
+    vertically.
+</p>
+<img src="{{componentAssets}}/images/rail.png" alt="Rail sprite showing the repeatable rail and both end caps" class="sprite-example">
+
+<p>
+    Rail image (repeated across <code>length</code>), top cap, and bottom cap
+    sprite.  This sprite is assigned in the skin CSS as the
+    <code>background-image</code> for the rail element and the two end caps.
+    The CSS <code>background</code> for the rail is set to repeat vertically or
+    horizontally, relative to the Slider <code>axis</code>.  The image need be
+    only as tall (vertical) or wide (horizontal) as the end caps unless the
+    rail includes a more involved repeating section, such as the audio skin.
+    End caps should be aligned against the top edge for vertical rails, or the
+    left edge for horizontal rails.
+</p>
+
+<p>
+    Standard heights and widths are used for the placement of the image bits
+    within the sprites to allow for minimal differences between the CSS in one
+    skin versus another.  This allows you to start from an existing skin and
+    change very little of the CSS (potentially only swapping image URLs) to
+    achieve a new look and feel.
+</p>
+
+<h3 id="extending">Extending Slider</h3>
+
+<p>
+    Slider is built up from a base implementation (<code>Y.SliderBase</code>)
+    that has no notion of value.  It is just a draggable thumb on a rail.  The
+    <code>slider-value-range</code> submodule provides an extension class that
+    adds the attributes, API, and logic relating the thumb's position to a
+    <code>value</code> within a <code>min</code>imum and <code>max</code>imum
+    range.  Similarly, the <code>clickableRail</code> implementation is
+    relegated to an extension class.  These classes are combined with
+    <code>Y.Base.build</code> to generate the <code>Y.Slider</code> class.
+</p>
+
+<p>
+    If you want to use a different value algorithm or decorate the basic Slider
+    in other ways, you can write an extension class or <code>Y.extend</code> an
+    existing extension class and create a new Slider implementation with
+    <code>Y.Base.build</code>.
+</p>
+
+```
+YUI().use( "slider-base", function (Y) {
+
+    // Define a new extension class to calculate values differently
+    function MyValueClass() {
+        this._initValueAlgo();
+    }
+
+    // Add attribute configuration and prototype to decorate the Slider
+    Y.mix( MyValueClass, {
+        
+        ATTRS: { /* new configuration attributes */ },
+
+        prototype: { /* additional prototype members and methods */ }
+    });
+
+
+    // Combine SliderBase with the new extension class any others to
+    // create a new Slider
+    Y.MySlider = Y.Base.build( "slider", Y.SliderBase, [
+        Y.ClickableRail,  // Should also support rail clicks
+        MyValueClass      // Use the new value methods and attributes
+    ] );
+
+
+    // Instantiate and use the new Slider class as you would Y.Slider
+    var slider = new Y.MySlider({ /* config */ });
+
+    slider.render( "#slider_parent" );
+
+});
+```

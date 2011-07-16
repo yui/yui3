@@ -1,0 +1,288 @@
+<div class="intro component">
+    <p>
+        The Recordset utility allows the storage and retrieval of objects with
+        similar properties.
+    </p>
+</div>
+				
+{{>getting-started}}
+				
+<h2 id="using">Using Recordsets</h2>
+				
+<h3 id="basics">Recordset basics</h3>
+
+<p>
+    A recordset in its simplest form is a collection of records, where records
+    can be considered to be object literals. Recordset allows the user to
+    handle this collection of records with a consistent API.
+</p>
+
+<p>
+    Recordset augments the functionality of <code>Y.Arraylist</code> but goes a
+    step further, by allowing the developer to quickly store and retrieve
+    objects with similar properties. Additional submodules can be plugged into
+    a <code>Y.Recordset</code> instance to enable sorting, filtering and
+    indexing by specific keys.
+</p>
+				
+<p>
+    Initializing a recordset is straight-forward:
+</p>
+
+```
+YUI().use("recordset-base", function(Y) {
+    var data = [
+		{a:3, b:2, c:1},
+		{a:9, b:8, c:7},
+		{a:1, b:2, c:3}
+	],
+
+	//Recordset is created with the objects from the data array
+	myRecordset = new Y.Recordset({records: data}),
+
+	//Empty recordsets can also be created
+	anEmptyRecordset = new Y.Recordset(); 
+
+});
+```
+
+                
+<h3 id="crud">Adding, Removing, Updating and Emptying</h3>
+
+<p>
+    A <code>Y.Recordset</code> can be filled with a single, or an array of
+    object literals. Under the hood, Recordset will convert these objects into
+    <code>record</code> instances - essentially creating a light wrapper around
+    them.
+</p>
+
+<p>
+    More information on performing operations on Recordset can be seen the the
+    documentation for the <a href="../examples/recordset/recordset_basic.html">
+    <code>recordset-base</code> sub-module. </a>
+</p>
+				
+<h4 id="add">Adding Records</h4>
+
+```
+var data = [
+    {key:"a", label:"Column A"},
+    {key:"b", label:"Column B"},
+    {key:"c", label:"Column C"}
+],
+myRecordset = new Y.Recordset({records:data});
+
+//Adding a single record to the end of a recordset
+myRecordset.add({key:"d", label:"Column D"});
+
+//Adding multiple records at the 2nd index of the recordset
+myRecordset.add([
+    {key:"e", label:"Column E"},
+    {key:"f", label:"Column F"}
+], 2);
+```
+
+<h4 id="remove">Removing Records</h4>
+
+```
+var data = [
+    {key:"a", label:"Column A"},
+    {key:"b", label:"Column B"},
+    {key:"c", label:"Column C"}
+],
+myRecordset = new Y.Recordset({records:data});
+
+//removes the record stored at index 2 (in this case {key:"c", label:"Column C"} is removed)
+myRecordset.remove(2);
+
+//Removes 2 records starting at index zero
+myRecordset.remove(0,2);
+```
+
+<h4>Updating Records</h4>
+
+```
+var data = [
+    {key:"a", label:"Column A"},
+    {key:"b", label:"Column B"},
+    {key:"c", label:"Column C"}
+],
+
+myRecordset = new Y.Recordset({records:data});
+
+//overwite the record at index 2 with the following record
+myRecordset.update({key:"d", label:"Column D"}, 2);
+
+//You can also update multiple records at a time.
+//Here we are updating indices 0 and 1 of the recordset with the corresponding two objects.
+myRecordset.update([
+    {key:"e", label:"Column E"},
+    {key: "f", label: "Column F"}
+], 0);
+```
+
+<h4>Emptying a Recordset</h4>
+
+```
+var data = [
+    {key:"a", label:"Column A"},
+    {key:"b", label:"Column B"},
+    {key:"c", label:"Column C"}
+],
+
+myRecordset = new Y.Recordset({records:data});
+myRecordset.empty();
+```
+
+<h3 id="events">Events</h3>
+				
+<p>
+    The Recordset Utility fires custom events in addition attribute change
+    events. Details on these events are shown below. The sub-module responsible
+    for firing each event is represented in square braces.
+</p>
+
+<table>
+	<thead>
+		<tr>
+			<th>Event [sub-module]</th>
+			<th>Payload</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>add</code> [base]</td>
+			<td><strong>added:</strong> an array of new records that were added (can contain a single record)<br/>
+		        <strong>index:</strong> index that the addition started at
+			</td>
+		</tr>
+		<tr>
+			<td><code>remove</code> [base]</td>
+			<td><strong>removed:</strong> an array of records that were removed (can contain a single record)<br/>
+		        <strong>index:</strong> index that the removals started at<br/>
+				<strong>range:</strong> range of records that were removed
+			</td>
+		</tr>
+		<tr>
+			<td><code>update</code> [base]</td>
+			<td><strong>updated:</strong> an array of records that updated (added to the recordset)<br/>
+		        <strong>index:</strong> index that the updates started at<br/>
+				<strong>range:</strong> range of records that were updated
+			</td>
+		</tr>
+		<tr>
+			<td><code>empty</code> [base]</td>
+			<td>Empty object bag</td>
+		</tr>
+		<tr>
+			<td><code>change</code> [base]</td>
+			<td>Empty object bag, fired whenever records in the recordset change (ie: they are added, removed, updated, or emptied)</td>
+		</tr>
+		<tr>
+			<td><code>sort</code> [sort]</td>
+			<td><strong>field:</strong> A string representing the key to sort by<br/>
+		        <strong>desc:</strong> Boolean representing whether sorting order is descending<br/>
+				<strong>sorter:</strong> The comparison function being used to sort
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<h3 id="sorting">Sorting</h3>
+
+<p>
+    The <code>RecordsetSort</code> plugin allows a recordset to have default
+    and custom sorting functionality. Various helper methods and attributes are
+    provided. A brief listing is shown below. Refer to the documentation for
+    the <a href="../examples/recordset/recordset_sort.html">
+    <code>RecordsetSort</code> plugin</a> to see code snippets.
+</p>
+
+<dl>
+	<dt><code>sort(key,desc,function [optional])</code></dt>
+		<dd>
+            Sorts a recordset by the value in the provided key. Recordset is
+            sorted in descending order if <code>desc</code> is truthy. Optional
+            custom comparison function can be supplied to sort by.
+        </dd>
+    <dt><code>resort()</code></dt>
+        <dd>Resorts a recordset using last-used sorting arguments</dd>
+    <dt><code>reverse()</code></dt>
+        <dd>Reverses the recordset without performing any sort operations</dd>
+    <dt><code>flip()</code></dt>
+        <dd>
+            Resorts the recordset in ascending order if the last sort arguments
+            specified descending, and vice versa.
+        </dd>
+    <dt><code>lastSortProperties Attribute</code></dt>
+        <dd>
+            An object bag with <code>field</code>, <code>desc</code> and
+            <code>sorter</code> keys listing the last-used arguments to sort
+            by.
+        </dd>
+    <dt><code>isSorted Attribute</code></dt>
+        <dd>A boolean representing if the Recordset is in a sorted state.</dd>
+</dl>
+
+<h3 id="filtering">Filtering</h3>
+
+<p>
+    The <code>RecordsetFilter</code> plugin allows a recordset to be filtered,
+    and returns subsets of that recordset (as a separate recordset instance).
+    Refer to the documentation for the <a
+    href="../examples/recordset/recordset_filter.html">
+    <code>RecordsetFilter</code> plugin to see code snippets.</a>
+</p>
+
+<dl>
+	<dt><code>filter(key or function, value)</code></dt>
+		<dd>
+            If a key/value pair is passed in, returns a recordset with records
+            that match the key/value pair. Supports a custom function for more
+            advanced filtering. The custom function must return a boolean.
+        </dd>
+    <dt><code>reject(function)</code></dt>
+        <dd>
+            The inverse of filter. Executes the supplied function on each item.
+            Returns a new Recordset containing the items that the supplied
+            function returned <code>false</code> for.
+        </dd>
+    <dt><code>grep(pattern)</code></dt>
+        <dd>
+            Iterates over the Recordset, returning a new Recordset of all the
+            elements that match the supplied regular expression
+        </dd>
+</dl>
+
+
+<h3 id="indexing">Indexing</h3>
+
+<p>
+    In the <code>recordset-base</code> submodule, the <code>table</code>
+    attribute stores an associative array that hashes all records within the
+    recordset by their unique YUIDs. This table is kept in sync with the
+    recordset through custom events.
+</p>
+
+<p>
+    To allow for customization when indexing, there is the
+    <code>RecordsetIndexer</code> plugin. Refer to the <a
+    href="../examples/recordset/recordset_indexer.html"><code>RecordsetIndexer</code>
+    documentation</a> for full details.
+</p>
+
+
+<dl>
+	<dt><code>createTable(key)</code></dt>
+		<dd>
+            Creates a hash table with the given key with all existing records
+            in the recordset.
+        </dd>
+    <dt><code>getTable(key)</code></dt>
+        <dd>Get a hash table that hashes records by a given key.</dd>
+    <dt><code>hashTables</code> attribute</dt>
+        <dd>
+            An object bag, with each property referring to a user-created hash
+            table.
+        </dd>
+</dl>

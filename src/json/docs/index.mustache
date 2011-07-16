@@ -1,0 +1,396 @@
+<div class="intro component">
+    <p>
+        The JSON module is an implementation of the ECMA 5 specification for
+        transforming data to and from <a
+        href="http://en.wikipedia.org/wiki/JSON">JavaScript Object
+        Notation</a>.  JSON is a safe, efficient, and reliable data interchange
+        format.  This module provides a JavaScript implementation of the spec,
+        based on <a
+        href="https://github.com/douglascrockford/JSON-js/blob/master/json2.js">Douglas
+        Crockford's json2.js</a>.  For browsers with native support it defers
+        to the native implementation.
+    </p>
+</div>
+                
+{{>getting-started}}
+                
+<h2 id="using">Using the JSON Utility</h2>
+
+<h3 id="modules">JSON module overview</h3>
+
+<p>
+    The JSON module adds the namespace <code>JSON</code> to your YUI instance.
+    Its methods are static, available from this namespace.
+</p>
+
+<p>
+    To minimize the code footprint when some functionality is not required,
+    JSON has been broken up into the following modules:
+</p>
+
+<dl>
+    <dt><code>json-parse</code></dt>
+    <dd>
+        Adds <code>Y.JSON.parse(..)</code> method to the YUI instance.  Use
+        this module if all you will be doing is parsing JSON strings.
+    </dd>
+
+    <dt><code>json-stringify</code></dt>
+    <dd>
+        Adds <code>Y.JSON.stringify(..)</code> method and its supporting
+        methods and properties to the YUI instance.  Use this module if all you
+        will be doing is serializing JavaScript objects to JSON strings.
+    </dd>
+
+    <dt><code>json</code></dt>
+    <dd>
+        A rollup of <code>json-parse</code> and <code>json-stringify</code>
+        modules.  Use this if you need to both parse JSON strings and serialize
+        objects to JSON strings.
+    </dd>
+</dl>
+
+<h3 id="parse">Parsing JSON strings into native JavaScript values</h3>
+
+<p>
+    Provided a string containing data in JSON format, simply pass the string to
+    <code>parse</code> and capture the return value.
+</p>
+
+```
+YUI().use('json-parse', function (Y) {
+
+var jsonString = '{"products":['+
+    '{"id":1,"price":0.99,"inStock":true,"name":"grapes"},'+
+    '{"id":2,"price":3.5,"inStock":false,"name":"passion fruit"},'+
+    '{"id":3,"price":2.5,"inStock":true,"name":"bananas"}'+
+']}';
+
+// JSON.parse throws a SyntaxError when passed invalid JSON
+try {
+    var data = Y.JSON.parse(jsonString);
+}
+catch (e) {
+    alert("Invalid product data");
+}
+
+// We can now interact with the data
+for (var i = data.products.length - 1; i >= 0; --i) {
+    var p = data.products[i];
+    if (p.price < 1) {
+        p.price += 1; // Price increase!
+    }
+}
+
+});
+```
+
+<h4 id="reviver">Using the &quot;reviver&quot; parameter</h4>
+
+<p>
+    The optional second parameter to <code>parse</code> accepts a function that
+    will be executed on each member of the parsed JavaScript object.  Each call
+    to the reviver function is passed the key and associated value, and is
+    executed from the context of the object containing the key.  If the return
+    value of the reviver is <code>undefined</code>, the key will be omitted
+    from the returned object.
+</p>
+
+<p>
+    Typical uses of reviver functions are filtering, formatting, and value
+    conversion.
+</p>
+
+
+```
+YUI().use('json-parse', function (Y) {
+
+    var jsonString = '{"products":['+
+        '{"id":1,"price":0.99,"inStock":true,"name":"grapes"},'+
+        '{"id":2,"price":3.5,"inStock":false,"name":"passion fruit"},'+
+        '{"id":3,"price":2.5,"inStock":true,"name":"bananas"}'+
+    ']}';
+
+    // Remove all out of stock entries and bananas.  Format prices.
+    var currencySymbol = '$';
+    var reviver = function (key,val) {
+        if (key === 'inStock' && !val) {
+            return undefined;
+        } else if (val === 'bananas') {
+            return undefined;
+        } else if (key === 'price') {
+            val += val % 1 ? "0" : ".00";
+            var pIdx = val.indexOf('.');
+            val = pIdx ? "0" + val : val;
+            val = currencySymbol + val.substr(0,pIdx + 3);
+        }
+
+        return val;
+    };
+
+    // JSON.parse throws a SyntaxError when passed invalid JSON
+    try {
+        var data = Y.JSON.parse(jsonString,reviver);
+    }
+    catch (e) {
+        alert("Invalid product data");
+    }
+
+    // We can now interact with the data
+    alert(data.products.length); // 1
+    alert(data.products[0].price); // $0.99
+
+});
+```
+
+<h4 id="avoid_eval">A word of caution against using <code>eval</code></h4>
+
+<p>
+    JSON data format is a <em>subset</em> of JavaScript notation, meaning that
+    it is possible to use JavaScript <code>eval</code> to transform JSON data
+    to live data.  However, it is unsafe practice to assume that data reaching
+    your code is not malicious.  <code>eval</code> is capable of executing
+    JavaScript's full syntax, including calling functions and accessing cookies
+    with all the privileges of a <code>&lt;script&gt;</code>.  To ensure that
+    the data is safe, the JSON module's <code>parse</code> method inspects the
+    incoming string (using methods derived from Douglas Crockford's <a
+    href="https://github.com/douglascrockford/JSON-js/blob/master/json2.js">json2.js</a>)
+    and verifies that it is safe before giving it the green light to parse.
+</p>
+
+```
+// UNSAFE
+var data = eval('(' + shouldBeJsonData + ')');
+
+// Safe
+var data = Y.JSON.parse(shouldBeJsonData);
+```
+
+<h3 id="stringify">Creating JSON strings from JavaScript objects</h3>
+
+<p>
+    To convert a JavaScript object (or any permissable value) to a JSON string,
+    pass that object to <code>Y.JSON.stringify</code> and capture the returned
+    string.
+</p>
+
+```
+YUI().use("json-stringify", function (Y) {
+
+    var myData = {
+        troop : [
+            { name: "Ashley", age: 12 },
+            { name: "Abby", age:9 }
+        ]
+    }; 
+
+    var jsonStr = Y.JSON.stringify(myData);
+
+    alert(jsonStr); // {"troop":[{"name":"Ashley","age":12},{"name":"Abby","age":9}]}
+});
+```
+
+<h4 id="whitelist">Using a whitelist</h4>
+
+<p>
+    To serialize only a fixed subset of keys, provide an array of key names as
+    the second parameter to <code>stringify</code>.
+</p>
+
+```
+YUI().use("json-stringify", function (Y) {
+
+    // a detailed object record set
+    var records = [
+        {id:1, name: "Bob",   age: 47, favorite_color: "blue"},
+        {id:2, name: "Sally", age: 30, favorite_color: "mauve"},
+        {id:3, name: "Tommy", age: 13, favorite_color: "black"},
+        {id:4, name: "Chaz",  age: 26, favorite_color: "plaid"}
+    ];
+
+    // Use an array of acceptable object key names as a whitelist.
+    // To create a JSON string with only age and id
+    var jsonStr = Y.JSON.stringify(records,["id","age"]);
+
+    alert(jsonStr);
+    // [{"id":1,"age":47},{"id":2,"age":30},{"id":3,"age":13},{"id":4,"age":26}]
+
+});
+```
+
+<h4 id="replacer">Using a custom &quot;replacer&quot; function</h4>
+
+<p>
+    For more granular control of how values in your object are serialized, you
+    can pass a replacer function as the second parameter to
+    <code>stringify</code>.  The replacer will be called for each key value
+    pair, and executed from the context of the key's host object.  The return
+    value of the replacer will be serialized in place of the raw value.
+</p>
+
+```
+YUI().use("json-stringify", function (Y) {
+
+    // a detailed object record set
+    var records = [
+        {id:1, name: "Bob",   birthdate: "2/27/1964", favorite_color: "blue"},
+        {id:2, name: "Sally", birthdate: "9/30/1983", favorite_color: "mauve"},
+        {id:3, name: "Tommy", birthdate: "3/11/1990", favorite_color: "black"},
+        {id:4, name: "Chaz",  birthdate: "5/22/1975", favorite_color: "plaid"}
+    ];
+
+    // Create a replacer to blacklist the id and convert the birthdate to a Date
+    var replacer = function (key,val) {
+        // blacklist id and favorite_color
+        if (key === 'id' || key === 'favorite_color') {
+            return undefined;
+
+        // convert birthdate to a Date instance (serialized as UTC date string)
+        } else if (key === 'birthdate') {
+            var d = new Date(),
+                bd = val.split('/');
+            d.setFullYear(bd[2],bd[0]-1,bd[1]);
+            d.setHours(0,0,0);
+            return d;
+        }
+
+        return val;
+    };
+
+    var jsonStr = Y.JSON.stringify(records,replacer);
+
+    alert(jsonStr);
+    // [{"name":"Bobby","birthdate":"1964-02-28T08:00:00Z"},{"name":"Sally","birthdate":"1983-09-30T07:00:00Z"},{"name":"Tommy","birthdate":"1990-03-11T08:00:00Z"},{"name":"Chaz","birthdate":"1975-05-23T07:00:00Z"}]
+
+});
+```
+
+<h4 id="format">Formatting JSON output</h4>
+
+<p>
+    To create readable JSON, pass a string or number as the third parameter to
+    <code>stringify</code>.  Object and Array members will be separated with
+    newlines and indented.  If a string is supplied, that string will be used
+    for the indentation.  If a number is passed, that number of spaces will be
+    used.
+</p>
+
+```
+YUI().use('json-stringify', function (Y) {
+
+    var fam = {
+        family: "Franklin",
+        children: [ "Bob", "Emily", "Sam" ]
+    };
+
+    // format serialization with four spaces
+    var jsonStr = Y.JSON.stringify(fam,null,4);
+
+    alert(jsonStr);
+    /*
+    {
+        "family": "Franklin",
+        "children": [
+            "Bob",
+            "Emily",
+            "Sam"
+        ]
+    }
+    */
+
+});
+```
+
+<h3 id="errors">Catching JSON errors</h3>
+
+<p>
+    ECMA 5 states that <code>parse</code> should throw an error when an invalid
+    JSON string is input.  It also states that <code>stringify</code> should
+    throw an error when an object with cyclical references is input.
+</p>
+
+<p>
+    For this reason, it is recommended that both <code>parse</code> and
+    <code>stringify</code> be called from within
+    <code>try</code>/<code>catch</code> blocks.
+</p>
+
+```
+try {
+    // BOOM
+    Y.JSON.parse("{'this string': is, not_valid: ['J','S','O','N'] }");
+}
+catch (e) {
+    alert("A string may eval to the same object, but might not be valid JSON");
+}
+
+// This is safe to stringify
+var myData = {
+    troop : [
+        { name: "Ashley", age: 12 },
+        { name: "Abby", age:9 }
+    ]
+}; 
+
+// Create a cyclical reference
+myData.troop[0]["NEWKEY"] = myData;
+
+try {
+    // BOOM
+    jsonStr = Y.JSON.stringify(myData);
+} catch (e) {
+    alert("Cyclical references can sneak in.  Remember to wrap stringify.");
+}
+```
+
+<h3 id="native">Notes about current native JSON support</h3>
+
+<p>
+    Native JSON support in JavaScript is defined in the ECMAScript 5
+    specification, which was finalized in September 2009.  However, most of the
+    major browser vendors had already implemented this feature in recent
+    versions of their JavaScript engines while the spec was still in draft.  As
+    a result of the timing and the fact that native JSON is a new feature,
+    there are gotchas involved in leveraging the disparate native
+    behaviors.
+</p>
+
+<p>
+    In general, it is preferable to use the native behavior for
+    <code>JSON.parse</code> as it is much faster and safer than any JavaScript
+    implementation.  There are also very few known critical issues with
+    supporting browsers.
+</p>
+
+
+<p>
+    Stringify has more pitfalls and inconsistencies, but they may not affect
+    your use cases.  As with <code>parse</code>, the native implementation of
+    <code>stringify</code> is faster, but only marginally so with reasonably
+    sized input.  In most cases, choosing the JavaScript implementation will
+    not affect performance and may be preferable for its cross browser
+    consistency.
+</p>
+
+
+<p>
+    As noted above, the JSON module will leverage native behavior in
+    implementing browsers by default.  However, you can choose to opt out of
+    leveraging native <code>parse</code> or <code>stringify</code> by setting
+    the <code>Y.JSON.useNativeParse</code> and
+    <code>Y.JSON.useNativeStringify</code> static properties.
+</p>
+
+
+```
+YUI().use('json', function (Y) {
+
+    // Always use the JavaScript implementation for parsing
+    Y.JSON.useNativeParse = false;
+
+    // Always use the JavaScript implementation for stringifying
+    Y.JSON.useNativeStringify = false;
+
+    //...
+});
+```

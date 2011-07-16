@@ -1,0 +1,24 @@
+{
+    "name": "stylesheet",
+    "displayName": "StyleSheet", 
+    "description": "StyleSheet addresses the need to apply style or style changes to multiple elements without incurring the cost of a page reflow for each element.",
+
+    "author": "lsmith",
+
+    "tags": ["stylesheet", "css"],
+    "use": ["stylesheet"],
+
+    "examples": [
+
+        {
+            "name": "stylesheet_theme",
+	        "displayName": "Adjusting a Page Theme on the Fly",
+	        "modules": ["stylesheet","overlay","slider","dd"],
+	        "description": "Use StyleSheet to adjust the CSS rules applying a page theme from user input",
+	        "useModules": ["stylesheet","overlay","slider","dd-plugin"],
+
+                "hideTableOfContents": true
+        }
+
+    ]
+}

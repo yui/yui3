@@ -1,0 +1,81 @@
+{
+    "name": "datasource",
+    "displayName": "DataSource",
+    "description": "The DataSource Utility provides a common configurable interface for other components to fetch tabular data from a variety of local or remote sources.",
+
+    "author": ["jenny","lsmith"],
+    "use": ["datasource"],
+    "tags": [],
+
+    "examples": [
+        {
+            "name": "datasource_local",
+            "displayName": "DataSource.Local",
+            "modules": ["datasource", "dataschema"],
+            "description": "The Local DataSource manages retrieval of in-page data, from JavaScript arrays and objects to DOM elements.",
+	        "useModules": ["dump", "node", "datasource-local", "datasource-arrayschema", "datasource-jsonschema", "datasource-xmlschema"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "datasource_get",
+            "displayName": "DataSource.Get",
+            "modules": ["datasource", "dataschema"],
+            "description": "The Get DataSource, which manages retrieval of data from remote sources via the Get Utility, can be useful for accessing data from cross-domain servers without the need for a proxy.",
+	        "useModules": ["json-stringify", "node", "datasource-get", "datasource-jsonschema"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "datasource_io",
+            "displayName": "DataSource.IO",
+            "modules": ["datasource", "dataschema"],
+            "description": "The IO DataSource manages retrieval of data from remote sources, via the IO Utility.",
+	        "useModules": ["dump", "node", "datasource-io", "datasource-jsonschema", "datasource-xmlschema"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "datasource_function",
+            "displayName": "DataSource.Function",
+            "modules": ["datasource", "dataschema"],
+            "description": "The Function DataSource, which manages retrieval of data from a JavaScript function, provides a highly customizeable mechanism for implementer-defined data retrieval algorithms",
+	        "useModules": ["dump", "node", "datasource-function", "datasource-arrayschema", "datasource-jsonschema"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "datasource_caching",
+            "displayName": "DataSource with Caching",
+            "modules": ["datasource", "dataschema", "cache"],
+            "description": "Use the DataSourceCache plugin to enable caching and reduce server calls to remote sources.",
+	        "useModules": ["json-stringify","node", "datasource-get", "datasource-jsonschema", "datasource-cache", "datatype-date"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "datasource_offlinecache",
+            "displayName": "DataSource with Offline Cache",
+            "modules": ["datasource", "dataschema", "cache"],
+            "description": "The DataSourceCache plugin supports offline caching so that cached data persists across browser sessions.",
+	        "useModules": ["json-stringify","node", "datasource-get", "datasource-jsonschema", "datasource-cache", "cache-offline", "datatype-date"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "datasource_polling",
+            "displayName": "DataSource with Polling",
+            "modules": ["datasource"],
+            "description": "Use the Pollable extension to enable polling in your DataSource.",
+	        "useModules": ["dump", "node", "datasource-function", "datasource-polling"],
+
+            "hideTableOfContents": true
+        }
+    ]
+}
