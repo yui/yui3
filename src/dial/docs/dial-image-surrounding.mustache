@@ -56,7 +56,7 @@ YUI().use('dial', function(Y) {
 <p>After rendering the `Dial`, we create and insert the image object.</p>
 ```
 //Create an image node.
-var im = Y.Node.create('<img src="{{{componentAssets}}}/images/cold_hot.png"/>');
+var im = Y.Node.create('<img src="{{{dialPathAssets}}}/images/cold_hot.png"/>');
 	
 //Position it absolutely to the correct spot depending on it's size.
 im.setStyles({'position':'absolute', 'top':'-3px', 'left':'-9px'});
@@ -68,11 +68,12 @@ Y.one('.yui3-dial-north-mark').insert(im, 'before');
 ```
 
 <h4>The CSS</h4>
-
 <p> 
-Here, we are just cleaning out the visible styles of the ring and the center button.
-This is optional.
+In the CSS, we're just cleaning out the visible styles of the ring and the 
+center button to allow for the images.
 </p>
+
+<h3>Complete Example Source</h3>
 ```
-{{>dial-image-surrounding-source-css}}
+{{>dial-image-surrounding-complete}}
 ```

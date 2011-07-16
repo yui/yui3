@@ -134,7 +134,7 @@ If both the current URL and the `initialState` config property contain state inf
 <h4>Adding, Replacing, and Getting State Values</h4>
 
 <p>
-Use the <code><a href="/yui/3/api/HistoryBase.html#method_add">add()</a></code> or <code><a href="/yui/3/api/HistoryBase.html#method_addValue">addValue()</a></code> methods to change the state and create a new browser history entry for the new state. The user can then navigate back to the previous state using the browser's back button, and forward again to the new state using the browser's forward button.
+Use the <code><a href="{{apiDocs}}/classes/HistoryBase.html#method_add">add()</a></code> or <code><a href="{{apiDocs}}/classes/HistoryBase.html#method_addValue">addValue()</a></code> methods to change the state and create a new browser history entry for the new state. The user can then navigate back to the previous state using the browser's back button, and forward again to the new state using the browser's forward button.
 </p>
 
 <p>
@@ -183,7 +183,7 @@ history.addValue('sloths', 'slow', {merge: false});
 ```
 
 <p>
-The <code><a href="/yui/3/api/HistoryBase.html#method_replace">replace()</a></code> and <code><a href="/yui/3/api/HistoryBase.html#method_replaceValue">replaceValue()</a></code> methods work just like `add()` and `addValue()`, except that they replace the current browser history entry instead of adding a new entry. 
+The <code><a href="{{apiDocs}}/classes/HistoryBase.html#method_replace">replace()</a></code> and <code><a href="{{apiDocs}}/classes/HistoryBase.html#method_replaceValue">replaceValue()</a></code> methods work just like `add()` and `addValue()`, except that they replace the current browser history entry instead of adding a new entry. 
 </p>
 
 ```
@@ -200,7 +200,7 @@ history.replace({
 ```
 
 <p>
-Use the <code><a href="/yui/3/api/HistoryBase.html#method_get">get()</a></code> method to get the current state, or the value of a single item in the current state.
+Use the <code><a href="{{apiDocs}}/classes/HistoryBase.html#method_get">get()</a></code> method to get the current state, or the value of a single item in the current state.
 </p>
 
 ```
@@ -237,7 +237,7 @@ The History Utility fires events when the history state changes. Changes can be 
 <h4>history:change Event</h4>
 
 <p>
-There are several ways to subscribe to History events. The most common is to subscribe to the global <code><a href="/yui/3/api/HistoryBase.html#event_history%3Achange">history:change</a></code> event. This event fires whenever the history state changes for any reason, regardless of the source of the change, even if it came from a different History or YUI instance.
+There are several ways to subscribe to History events. The most common is to subscribe to the global <code><a href="{{apiDocs}}/classes/HistoryBase.html#event_history%3Achange">history:change</a></code> event. This event fires whenever the history state changes for any reason, regardless of the source of the change, even if it came from a different History or YUI instance.
 </p>
 
 ```
@@ -270,7 +270,7 @@ history.on('change', function (e) {
 <h4>Property-specific Events</h4>
 
 <p>
-To be notified when a specific state property is added or changed, subscribe to the instance-level <code><a href="/yui/3/api/HistoryBase.html#event_%5Bkey%5DChange">[key]Change</a></code> event, where `[key]` is the name of the property. To be notified when a state property is removed, subscribe to <code><a href="/yui/3/api/HistoryBase.html#event_%5Bkey%5DRemove">[key]Remove</a></code>.
+To be notified when a specific state property is added or changed, subscribe to the instance-level <code><a href="{{apiDocs}}/classes/HistoryBase.html#event_%5Bkey%5DChange">[key]Change</a></code> event, where `[key]` is the name of the property. To be notified when a state property is removed, subscribe to <code><a href="{{apiDocs}}/classes/HistoryBase.html#event_%5Bkey%5DRemove">[key]Remove</a></code>.
 </p>
 
 ```
@@ -288,7 +288,7 @@ history.on('kittensRemove', function (e) {
 ```
 
 <p>
-See the <a href="/yui/3/api/HistoryBase.html#events">API docs</a> for more details.
+See the <a href="{{apiDocs}}/classes/HistoryBase.html#events">API docs</a> for more details.
 </p>
 
 <h4>Filtering by Event Source</h4>
@@ -455,7 +455,7 @@ Versions of YUI 3 prior to 3.2.0 included the Browser History Manager. In YUI 3.
 <h3>API Equivalency: Methods</h3>
 
 <p>
-The table below provides a quick reference to help you translate API methods from the deprecated Browser History Manager to the new History Utility. See the <a href="/yui/3/api/HistoryBase.html#methods">API documentation</a> for details on the new API.
+The table below provides a quick reference to help you translate API methods from the deprecated Browser History Manager to the new History Utility. See the <a href="{{apiDocs}}/classes/HistoryBase.html#methods">API documentation</a> for details on the new API.
 </p>
 
 <table>
@@ -497,7 +497,7 @@ The table below provides a quick reference to help you translate API methods fro
 <h3>API Equivalency: Events</h3>
 
 <p>
-The table below provides a quick reference to help you translate API events from the deprecated Browser History Manager to the new History Utility. See the <a href="/yui/3/api/HistoryBase.html#events">API documentation</a> for details on the new API.
+The table below provides a quick reference to help you translate API events from the deprecated Browser History Manager to the new History Utility. See the <a href="{{apiDocs}}/classes/HistoryBase.html#events">API documentation</a> for details on the new API.
 </p>
 
 <table>

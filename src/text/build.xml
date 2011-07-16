@@ -1,7 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="YUI" default="local">
-    <description>Rollup build file for Text</description>
-    <property file="build.properties" />
-    <import file="${builddir}/3.x/bootstrap.xml" 
-            description="Default Build Properties and Targets" />
+    <description>Build All Modules</description>
+
+    <macrodef name="build-text">
+        <attribute name="target"/>
+        <sequential>
+            <subant target="@{target}">
+                <fileset dir="." includes="text*.xml"/>
+            </subant>
+        </sequential>
+    </macrodef>
+
+    <target name="local">
+        <build-text target="local"/>
+    </target>
+    <target name="deploy">
+        <build-text target="deploy"/>
+    </target>
+    <target name="all">
+        <build-text target="all"/>
+    </target>
+    <target name="clean">
+        <build-text target="clean"/>
+    </target>
+
 </project>

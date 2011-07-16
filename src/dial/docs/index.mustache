@@ -1,10 +1,13 @@
 <div class="intro" style="min-height:181px;">
-	<p>
-		<img src="{{{componentAssets}}}/images/dial_drag.png" alt="Screenshot of the Dial widget" style="border: 1px solid #bfbfbf; float:right; height:146px; margin: 0 0 8px 8px; width:154px;">
-		The Dial widget is a circular value input control. It's like a real-world, analog volume control dial, but with much finer UI control. 
-		Have you ever needed a slider with a 2000 unit range, wanted 1 unit accuracy, but didn't have 2000 pixels of real estate for a slider?
-		The Dial widget is made for cases like this. 
-	</p>
+    <p>
+        <img src="{{{componentAssets}}}/images/dial_drag.png" alt="Screenshot of the Dial widget" style="border: 1px solid #bfbfbf; float:right; height:146px; margin: 0 0 8px 8px; width:154px;">
+        The Dial widget is a circular value input control. It's like a real-world, analog volume control dial, but with much finer UI control. 
+        Have you ever needed a slider with a 2000 unit range, wanted 1 unit accuracy, but didn't have 2000 pixels of real estate for a slider?
+        The Dial widget is made for cases like this. 
+    </p>
+    <p>
+        The user sets the value of the dial by dragging its handle or clicking on the ring.
+    </p>
 </div>
 
 {{>getting-started}}
@@ -17,7 +20,8 @@
 		The major parts of a Dial are a ring, a marker, a user-draggable handle, and a reset button.
 		The ring is the background element and container of the other elements. 
 		The marker is always displayed at a fixed but configurable distance from the dial center. 
-		Its position around the dial indicates the current angle as the user drags the handle to adjust the value.
+		Its position around the dial indicates the current value as the user drags the handle or clicks 
+        on the ring to adjust the value.
 		When not being dragged, the handle occupies the same space as the marker, and the marker is not displayed.
 		When the keyboard is used for input, the marker is not displayed. 
 		The reset button restores the dial to the initial configuration value.
@@ -63,7 +67,7 @@
 				
 	<p>Some commonly used configuration attributes are shown below.</p>
 ```
-YUI({...}).use('dial', function(Y) {
+YUI().use('dial', function(Y) {
 	var dial = new Y.Dial({
 		min:-220,
 		max:220,
@@ -77,7 +81,7 @@ YUI({...}).use('dial', function(Y) {
 	the `selector` of a container object. 
 	This renders it in the container and makes it usable.</p>
 ```
-var dial = new Y.Dial({ ... });
+var dial = new Y.Dial();
 dial.render("#demo");
 ```
 
@@ -190,7 +194,7 @@ Values outside this range are treated as the closer of `min` or `max`.</p>
 By this means, a `Dial` can be configured to "go around and around," allowing a very large range of values.</p>
 
 ```
-YUI({...}).use("dial", function(Y) {
+YUI().use("dial", function(Y) {
 
 	var dial = new Y.Dial({
 		min:-520,
@@ -211,8 +215,8 @@ YUI({...}).use("dial", function(Y) {
 
 <h4>CSS</h4>
 
-	<p>The core structural CSS for the Dial is shown below. Widths and heights are in %. 
-	These respond to the "diameter" configuration property</p>
+	<p>The core structural CSS for the Dial is shown below. Widths and heights of elements 
+    are computed based on the "diameter" configuration property.</p>
 
 ```
 /* VML implementation for IE */

@@ -4,9 +4,10 @@
     "description": "The Dial widget is a circular value input control.",
     "author"     : "jconniff",
 
-    "tags": ["widget", "beta"],
+    "tags": ["widget", "beta", "dial", "round", "knob", "gauge", "wheel"],
     "use" : ["dial"],
-
+    "dialPathAssets" : "http://yuilibrary.com/yui/docs/assets/dial",
+    
     "examples": [
         {
             "name"       : "dial-basic",
@@ -43,15 +44,5 @@
             "modules"    : ["dial"],
             "tags"       : ["dial", "interactive", "image", "hubble", "earth", "space", "round", "knob", "gauge", "wheel"]
         }
-    ],
-    "pages": {
-        "anim-drop-example": {
-            "displayName": "Animated Drop Targets",
-            "layout"     : "anim-drop-example"
-        },
-        "photo-browser-example": {
-            "displayName": "Photo Browser",
-            "layout"     : "photo-browser-example"
-        }
-    }
+    ]
 }

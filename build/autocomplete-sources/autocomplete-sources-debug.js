@@ -76,11 +76,12 @@ Y.mix(ACBase.prototype, {
         // Private internal _sendRequest method that will be assigned to
         // ioSource.sendRequest once io-base and json-parse are available.
         function _sendRequest(request) {
-            var query = request.query;
+            var cacheKey = request.request,
+                query    = request.query;
 
             // Return immediately on a cached response.
-            if (cache[query]) {
-                that[_SOURCE_SUCCESS](cache[query], request);
+            if (cache[cacheKey]) {
+                that[_SOURCE_SUCCESS](cache[cacheKey], request);
                 return;
             }
 
@@ -101,7 +102,7 @@ Y.mix(ACBase.prototype, {
                         }
 
                         if (data) {
-                            cache[query] = data;
+                            cache[cacheKey] = data;
                             that[_SOURCE_SUCCESS](data, request);
                         }
                     }
@@ -149,10 +150,11 @@ Y.mix(ACBase.prototype, {
             lastRequest, loading;
 
         function _sendRequest(request) {
-            var query = request.query;
+            var cacheKey = request.request,
+                query    = request.query;
 
-            if (cache[query]) {
-                that[_SOURCE_SUCCESS](cache[query], request);
+            if (cache[cacheKey]) {
+                that[_SOURCE_SUCCESS](cache[cacheKey], request);
                 return;
             }
 
@@ -165,7 +167,7 @@ Y.mix(ACBase.prototype, {
             //
             // http://yuilibrary.com/projects/yui3/ticket/2529371
             source._config.on.success = function (data) {
-                cache[query] = data;
+                cache[cacheKey] = data;
                 that[_SOURCE_SUCCESS](data, request);
             };
 
@@ -288,16 +290,17 @@ Y.mix(ACBase.prototype, {
         }
 
         function _sendRequest(request) {
-            var query = request.query,
+            var cacheKey = request.request,
+                query    = request.query,
                 callback, env, maxResults, opts, yqlQuery;
 
-            if (cache[query]) {
-                that[_SOURCE_SUCCESS](cache[query], request);
+            if (cache[cacheKey]) {
+                that[_SOURCE_SUCCESS](cache[cacheKey], request);
                 return;
             }
 
             callback = function (data) {
-                cache[query] = data;
+                cache[cacheKey] = data;
                 that[_SOURCE_SUCCESS](data, request);
             };
 
@@ -477,4 +480,4 @@ Y.mix(ACBase.SOURCE_TYPES, {
 }, true);
 
 
-}, '@VERSION@' ,{requires:['autocomplete-base'], optional:['io-base', 'json-parse', 'jsonp', 'yql']});
+}, '@VERSION@' ,{optional:['io-base', 'json-parse', 'jsonp', 'yql'], requires:['autocomplete-base']});

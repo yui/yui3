@@ -44,6 +44,11 @@ AutoComplete Change History
     JSONP sources that used both a `{query}` placeholder in the source string
     and a custom `requestTemplate` value. [Ticket #2529895]
 
+  * Fixed a bug in which JSONP, XHR, and YQL requests were cached solely based
+    on the query rather than on the complete request. This could result in
+    cache collisions when two requests with the same query but different
+    parameters (provided by a requestTemplate) were made. [Ticket #2530410]
+
   * Fixed a bug that caused the `&` character to be treated as an up arrow
     key in Firefox. [Ticket #2530455]
 

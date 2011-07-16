@@ -1,7 +1,7 @@
 {
     "name"       : "cache",
     "displayName": "Cache",
-    "description": "Provides a basic caching mechanism for storing key/value pairs in local JavaScript memory. As a subclass of Plugin, it is designed to seamlessly integrate with other components (such as <a href='/yui/docs/guides/datasource/' title='YUI 3: DataSource'>DataSource</a>).",
+    "description": "Provides a basic caching mechanism for storing key/value pairs in local JavaScript memory. As a subclass of Plugin, it is designed to seamlessly integrate with other components (such as DataSource).",
     "author"     : ["lsmith", "jenny"],
 
     "tags": ["utility", "cache"],
