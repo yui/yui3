@@ -694,7 +694,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
                 self._save.apply(self, args);
             }
 
-            return this;
+            return self;
         });
 
         return !this._dispatching ? this._dequeue() : this;
