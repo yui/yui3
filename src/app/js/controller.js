@@ -245,16 +245,10 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     **/
     dispatch: function () {
         this.once(EVT_READY, function () {
-            var hash = this._getHashPath();
-
             this._ready = true;
 
-            if (html5 && hash && hash.charAt(0) === '/') {
-                // This is an HTML5 browser and we have a hash-based path in the
-                // URL, so we need to upgrade the URL to a non-hash URL. This
-                // will trigger a `history:change` event, which will in turn
-                // trigger a dispatch.
-                this._history.replace(null, {url: this._joinURL(hash)});
+            if (html5 && this.upgrade()) {
+                return;
             } else {
                 this._dispatch(this._getPath());
             }
@@ -459,6 +453,31 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     save: function (url) {
         return this._queue(url);
     },
+
+    /**
+    Upgrades a hash-based URL to an HTML5 URL if necessary. In non-HTML5
+    browsers, this method is a noop.
+
+    @method upgrade
+    @return {Boolean} `true` if the URL was upgraded, `false` otherwise.
+    **/
+    upgrade: html5 ? function () {
+        var hash = this._getHashPath();
+
+        if (hash && hash.charAt(0) === '/') {
+            // This is an HTML5 browser and we have a hash-based path in the
+            // URL, so we need to upgrade the URL to a non-hash URL. This
+            // will trigger a `history:change` event, which will in turn
+            // trigger a dispatch.
+            this.once(EVT_READY, function () {
+                this.replace(hash);
+            });
+
+            return true;
+        }
+
+        return false;
+    } : function () { return false; },
 
     // -- Protected Methods ----------------------------------------------------
 
