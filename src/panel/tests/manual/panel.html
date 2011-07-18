@@ -15,58 +15,45 @@
               border-bottom:1px dotted #333;
             }
             #desc span {
-              background:#fffcb2;
+              background:#a3350d;
               padding:2px;
+              color:#f27243;
             }
 
 
-            .yui3-widget-mask {
+           .yui3-widget-mask {
                 background:rgba(0,0,0,0.6);
             }
 
-            .yui3-widget {
-              /*outline:none;*/
-            }
-
-            .yui3-panel {
-                background:white;
+            .yui3-panel-content {
                 box-shadow: 0 0 5px #333;
                 padding:15px;
-                border-radius:5px;
-               /* outline:none;*/
-            }
+                border-radius:2px;
 
-            #chart {
-                margin:10px 10px 10px 10px;
-                width:90%;
-                max-width: 800px;
-                height:200px;
-                display:none;
             }
-            .yui3-datatable {
-              outline:none;
-            }
-/*            .yui3-datatable-hidden, .yui3-chart-hidden, .yui3-panel-hidden {
-              display:none;
-            }*/
 
         </style>
         <script type="text/javascript" src="http://localhost:8888/yui3/build/yui/yui-debug.js"></script> 
     </head>
 
-    <body class='yui3-skin-sam'>
+    <body class='yui3-skin-night'>
 
       <div id="desc">
       <h1><code>Y.WidgetModality</code> Manual Tests</h1>
       <span><code>Y.WidgetModality</code> is a widget extension that can be implemented when creating a new Widget. It makes that widget appear modally, through the <code>modal</code> attribute. By default, this attribute is set to <code>false</code></span>
       </div>
 
-        <div id="nestedOverlay"></div>
+        <div id="nestedPanel"></div>
         <div id="overlay" class="yui3-loading">
-            Here's some content that should go into a modal overlay. Let's see if it works...
-            <p><input type="button" id="closeOverlayBtn" value="Close Overlay"></p>
-            <p><input type="button" id="openNestedOverlayBtn" value="Open Nested Overlay"></p>
-        </div>
+          <div class="yui3-widget-hd">The new YUI3 Panel...</div>
+           <div class="yui3-widget-bd">Here's some content that should go into a modal overlay. Let's see if it works...</div>
+            <div class="yui3-widget-ft">
+              <ul>
+                <li id="closePanelBtn">Close Panel</li>
+                <li id="openNestedPanelBtn">Open Nested Panel</li>
+              </ul>
+            </div>
+          </div>
 
         <p>
         Enable modality for main panel: <input id="modalMain" type="checkbox" name="main" value="main"/>
@@ -74,7 +61,7 @@
         Enable modality for nested panel: <input id="modalNest" type="checkbox" name="main" value="nest"/>
         <br/>
         <!-- <input type="button" id="openChartBtn" value="Launch Modal Chart"> -->
-        <p><input type="button" id="OpenOverlayBtn" value="Launch Modal Overlay"></p>
+        <p><input type="button" id="OpenPanelBtn" value="Launch Modal Panel"></p>
         </p>
 
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec elit mi, tempus in tincidunt non, imperdiet sed augue. Nullam turpis magna, gravida vel venenatis at, dignissim non augue. Phasellus posuere erat nec ligula consectetur nec facilisis purus consectetur. Integer ipsum nisi, aliquam at ultrices quis, dictum a mauris. Ut posuere ultrices justo non convallis. Nunc a diam et est pretium fermentum. Nunc eget nunc non odio vestibulum vehicula et faucibus neque. Praesent turpis ligula, pharetra id vehicula a, sollicitudin sit amet lectus. Pellentesque pellentesque ante sed leo congue ullamcorper. Praesent at metus nisl. Vivamus at tortor sed sapien aliquet volutpat. Suspendisse vehicula, dolor ac vestibulum dapibus, nisi nulla ultrices odio, ac fermentum dolor risus congue tortor. Sed vel ligula in justo lacinia condimentum vel id est. Suspendisse interdum ligula quis odio congue consequat. Suspendisse potenti. Cras id accumsan eros. Duis gravida metus ac diam volutpat et dignissim justo pulvinar. Duis semper ornare dui, non condimentum nibh pretium id. Aenean dapibus purus eu nisl hendrerit a malesuada dolor vehicula.</p>
@@ -98,12 +85,13 @@
                  width: 300,
                  height: 300,
                  visible: false,
-                 centered: true                
+                 centered:true
+          
               });
 
               panel.render();
 
-               Y.one("#OpenOverlayBtn").on('click', function(e){
+               Y.one("#OpenPanelBtn").on('click', function(e){
                     isMainPanelModal = Y.one('#modalMain').get('checked');
                     
                     panel.set('modal', isMainPanelModal);
@@ -114,17 +102,17 @@
                     panel.show();
                });
 
-               Y.one("#closeOverlayBtn").on('click', function(e) {
+               Y.one("#closePanelBtn").on('click', function(e) {
                     panel.hide();
                });
 
-               Y.one('#openNestedOverlayBtn').on('click', function(e) {
+               Y.one('#openNestedPanelBtn').on('click', function(e) {
                   isNestedPanelModal = Y.one('#modalNest').get('checked');
 
                   if (!(nest instanceof Y.Panel)) {
                     nest = new Y.Panel({
-                      headerContent:"My Overlay Header",
-                      bodyContent:"My Overlay Body <a href='closeNest.html' id='closeNest'>Close</a>",
+                      headerContent:"My Panel Header",
+                      bodyContent:"My Panel Body <a href='closeNest.html' id='closeNest'>Close</a>",
                       footerContent:"My Footer Content",
                       visible:false,
                       width:350,
@@ -140,7 +128,7 @@
                       });
                     });  
 
-                    nest.render('#nestedOverlay');  
+                    nest.render('#nestedPanel');  
                   }
  
 
