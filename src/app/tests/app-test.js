@@ -226,6 +226,40 @@ controllerSuite.add(new Y.Test.Case({
         this.wait(500);
     },
 
+    'removeRoot() should remove the root URL from a given path': function () {
+        var controller = this.controller = new Y.Controller();
+
+        controller.root = '/';
+        Assert.areSame('/bar', controller.removeRoot('/bar'));
+        Assert.areSame('/bar', controller.removeRoot('bar'));
+
+        controller.root = '/foo';
+        Assert.areSame('/bar', controller.removeRoot('/foo/bar'));
+
+        controller.root = '/foo/';
+        Assert.areSame('/bar', controller.removeRoot('/foo/bar'));
+
+        controller.root = '/moo';
+        Assert.areSame('/foo/bar', controller.removeRoot('/foo/bar'));
+    },
+
+    'removeRoot() should strip the "http://foo.com" portion of the URL, if any': function () {
+        var controller = this.controller = new Y.Controller();
+
+        Assert.areSame('/foo/bar', controller.removeRoot('http://example.com/foo/bar'));
+        Assert.areSame('/foo/bar', controller.removeRoot('https://example.com/foo/bar'));
+        Assert.areSame('/foo/bar', controller.removeRoot('http://user:pass@example.com/foo/bar'));
+        Assert.areSame('/foo/bar', controller.removeRoot('http://example.com:8080/foo/bar'));
+        Assert.areSame('/foo/bar', controller.removeRoot('http://user:pass@example.com:8080/foo/bar'));
+
+        controller.root = '/foo';
+        Assert.areSame('/bar', controller.removeRoot('http://example.com/foo/bar'));
+        Assert.areSame('/bar', controller.removeRoot('https://example.com/foo/bar'));
+        Assert.areSame('/bar', controller.removeRoot('http://user:pass@example.com/foo/bar'));
+        Assert.areSame('/bar', controller.removeRoot('http://example.com:8080/foo/bar'));
+        Assert.areSame('/bar', controller.removeRoot('http://user:pass@example.com:8080/foo/bar'));
+    },
+
     'replace() should replace the current history entry': function () {
         var test       = this,
             controller = this.controller = new Y.Controller();
@@ -296,23 +330,6 @@ controllerSuite.add(new Y.Test.Case({
         controller.root = '/foo/';
         Assert.areSame('/foo/bar', controller._joinURL('bar'));
         Assert.areSame('/foo/bar', controller._joinURL('/bar'));
-    },
-
-    '_removeRoot() should remove the root URL from a given path': function () {
-        var controller = this.controller = new Y.Controller();
-
-        controller.root = '/';
-        Assert.areSame('/bar', controller._removeRoot('/bar'));
-        Assert.areSame('/bar', controller._removeRoot('bar'));
-
-        controller.root = '/foo';
-        Assert.areSame('/bar', controller._removeRoot('/foo/bar'));
-
-        controller.root = '/foo/';
-        Assert.areSame('/bar', controller._removeRoot('/foo/bar'));
-
-        controller.root = '/moo';
-        Assert.areSame('/foo/bar', controller._removeRoot('/foo/bar'));
     }
 }));
 

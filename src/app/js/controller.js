@@ -171,6 +171,17 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     **/
     _regexUrlQuery: /\?([^#]*).*$/,
 
+    /**
+    Regex that matches everything before the path portion of an HTTP or HTTPS
+    URL. This will be used to strip this part of the URL from a string when we
+    only want the path.
+
+    @property _regexUrlStrip
+    @type RegExp
+    @protected
+    **/
+    _regexUrlStrip: /^https?:\/\/[^\/]*/i,
+
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function (config) {
         var self = this;
@@ -283,6 +294,28 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         return YArray.filter(this._routes, function (route) {
             return path.search(route.regex) > -1;
         });
+    },
+
+    /**
+    Removes the `root` URL from the from of _path_ (if it's there) and returns
+    the result. The returned path will always have a leading `/`.
+
+    @method removeRoot
+    @param {String} path URL path.
+    @return {String} Rootless path.
+    **/
+    removeRoot: function (path) {
+        var root = this.root;
+
+        // Strip out the non-path part of the URL, if any (e.g.
+        // "http://foo.com"), so that we're left with just the path.
+        path = path.replace(this._regexUrlStrip, '');
+
+        if (root && path.indexOf(root) === 0) {
+            path = path.substring(root.length);
+        }
+
+        return path.charAt(0) === '/' ? path : '/' + path;
     },
 
     /**
@@ -543,9 +576,9 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @protected
     **/
     _getPath: html5 ? function () {
-        return this._removeRoot(location.pathname);
+        return this.removeRoot(location.pathname);
     } : function () {
-        return this._getHashPath() || this._removeRoot(location.pathname);
+        return this._getHashPath() || this.removeRoot(location.pathname);
     },
 
     /**
@@ -698,25 +731,6 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         });
 
         return !this._dispatching ? this._dequeue() : this;
-    },
-
-    /**
-    Removes the `root` URL from the from of _path_ (if it's there) and returns
-    the result. The returned path will always have a leading `/`.
-
-    @method _removeRoot
-    @param {String} path URL path.
-    @return {String} Rootless path.
-    @protected
-    **/
-    _removeRoot: function (path) {
-        var root = this.root;
-
-        if (root && path.indexOf(root) === 0) {
-            path = path.substring(root.length);
-        }
-
-        return path.charAt(0) === '/' ? path : '/' + path;
     },
 
     /**
