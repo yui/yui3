@@ -1,0 +1,15 @@
+{
+    "panel": {
+        "requires": [
+            "widget", 
+            "widget-stdmod", 
+            "widget-position", 
+            "widget-position-align", 
+            "widget-stack", 
+            "widget-position-constrain",
+            "widget-modality",
+            "widget-autohide"
+        ], 
+        "skinnable": true
+    }
+}
