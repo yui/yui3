@@ -370,6 +370,7 @@ controllerSuite.add(new Y.Test.Case({
 
             Assert.isObject(req);
             Assert.isFunction(next);
+            Assert.areSame(next, req.next);
             Assert.isObject(req.params);
             Assert.isTrue(Y.Object.isEmpty(req.params));
             Assert.areSame('/foo', req.path);

@@ -528,7 +528,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
 
         req = self._getRequest(path);
 
-        function next(err) {
+        req.next = function (err) {
             var callback, matches, route;
 
             if (err) {
@@ -546,11 +546,11 @@ Y.Controller = Y.extend(Controller, Y.Base, {
                     req.params = matches.concat();
                 }
 
-                callback.call(self, req, next);
+                callback.call(self, req, req.next);
             }
-        }
+        };
 
-        next();
+        req.next();
 
         self._dispatching = false;
         return self._dequeue();
