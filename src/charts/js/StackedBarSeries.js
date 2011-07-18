@@ -70,6 +70,11 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
             left = xcoords[i];
             if(!isNumber(top) || !isNumber(left))
             {
+                if(useOrigin)
+                {
+                    positiveBaseValues[i] = this._leftOrigin;
+                    negativeBaseValues[i] = this._leftOrigin;
+                }
                 continue;
             }
             if(useOrigin)

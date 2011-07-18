@@ -14,6 +14,7 @@
         <url>cache/tests/cache.html</url>
         <url>cache/tests/cacheoffline.html</url>
         <url timeout="600000">charts/tests/charts.html</url>
+        <url>charts/tests/seriestests.html</url>
         <url>classnamemanager/tests/classnamemanager.html</url>
         <url>collection/tests/arraylist.html</url>
         <url>collection/tests/collection.html</url>

@@ -220,11 +220,10 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 		this._context = node.getContext('2d');
 		node.setAttribute("overflow", "visible");
         node.style.overflow = "visible";
-        node.setAttribute("class", "yui3-" + SHAPE);
-		node.setAttribute("class", "yui3-" + this.name);
 		node.setAttribute("id", id);
 		id = "#" + id;
 		this.node = node;
+		this.addClass("yui3-" + SHAPE + " yui3-" + this.name);
 	},
 
 	/**
