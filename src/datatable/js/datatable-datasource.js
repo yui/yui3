@@ -166,7 +166,9 @@ Y.extend(DataTableDataSource, Y.Plugin.Base, {
      * @param e {Event.Facade} DataSource Event Facade object.
      */
     onDataReturnInitializeTable : function(e) {
-        this.get("host").set("recordset", new Y.Recordset({records: e.response.results}));
+        var records = (e.response && e.response.results) || [];
+
+        this.get("host").get("recordset").set("records", records);
     }
 });
 
