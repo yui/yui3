@@ -1,12 +1,8 @@
-Charts
-============
-
-Provides an API for visualizing data across browsers and platforms.
-
-Change History
---------------
+Charts Change History
+=====================
 
 3.4.0
+-----
 
   * #2530143 Refactor to use Graphics API
   * #2530223 Fixed bug in which negative value markers were not displayed in column/bar series.
@@ -22,5 +18,6 @@ Change History
   * #2529840 Changed stacked bar and column series to handle cases in which the item value is at or rounded to zero.
 
 3.3.0
+-----
 
   * Initial release.
