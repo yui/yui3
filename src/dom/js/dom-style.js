@@ -132,7 +132,7 @@ Y.mix(Y_DOM, {
             doc = node[OWNER_DOCUMENT];
 
         if (node[STYLE] && doc[DEFAULT_VIEW] && doc[DEFAULT_VIEW][GET_COMPUTED_STYLE]) {
-            val = doc[DEFAULT_VIEW][GET_COMPUTED_STYLE](node, null)[att];
+            val = (doc[DEFAULT_VIEW][GET_COMPUTED_STYLE](node, null) || {})[att];
         }
         return val;
     }
