@@ -173,6 +173,17 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     **/
     _regexUrlQuery: /\?([^#]*).*$/,
 
+    /**
+    Regex that matches everything before the path portion of an HTTP or HTTPS
+    URL. This will be used to strip this part of the URL from a string when we
+    only want the path.
+
+    @property _regexUrlStrip
+    @type RegExp
+    @protected
+    **/
+    _regexUrlStrip: /^https?:\/\/[^\/]*/i,
+
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function (config) {
         var self = this;
@@ -236,16 +247,10 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     **/
     dispatch: function () {
         this.once(EVT_READY, function () {
-            var hash = this._getHashPath();
-
             this._ready = true;
 
-            if (html5 && hash && hash.charAt(0) === '/') {
-                // This is an HTML5 browser and we have a hash-based path in the
-                // URL, so we need to upgrade the URL to a non-hash URL. This
-                // will trigger a `history:change` event, which will in turn
-                // trigger a dispatch.
-                this._history.replace(null, {url: this._joinURL(hash)});
+            if (html5 && this.upgrade()) {
+                return;
             } else {
                 this._dispatch(this._getPath());
             }
@@ -285,6 +290,28 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         return YArray.filter(this._routes, function (route) {
             return path.search(route.regex) > -1;
         });
+    },
+
+    /**
+    Removes the `root` URL from the from of _path_ (if it's there) and returns
+    the result. The returned path will always have a leading `/`.
+
+    @method removeRoot
+    @param {String} path URL path.
+    @return {String} Rootless path.
+    **/
+    removeRoot: function (path) {
+        var root = this.root;
+
+        // Strip out the non-path part of the URL, if any (e.g.
+        // "http://foo.com"), so that we're left with just the path.
+        path = path.replace(this._regexUrlStrip, '');
+
+        if (root && path.indexOf(root) === 0) {
+            path = path.substring(root.length);
+        }
+
+        return path.charAt(0) === '/' ? path : '/' + path;
     },
 
     /**
@@ -427,6 +454,31 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         return this._queue(url);
     },
 
+    /**
+    Upgrades a hash-based URL to an HTML5 URL if necessary. In non-HTML5
+    browsers, this method is a noop.
+
+    @method upgrade
+    @return {Boolean} `true` if the URL was upgraded, `false` otherwise.
+    **/
+    upgrade: html5 ? function () {
+        var hash = this._getHashPath();
+
+        if (hash && hash.charAt(0) === '/') {
+            // This is an HTML5 browser and we have a hash-based path in the
+            // URL, so we need to upgrade the URL to a non-hash URL. This
+            // will trigger a `history:change` event, which will in turn
+            // trigger a dispatch.
+            this.once(EVT_READY, function () {
+                this.replace(hash);
+            });
+
+            return true;
+        }
+
+        return false;
+    } : function () { return false; },
+
     // -- Protected Methods ----------------------------------------------------
 
     /**
@@ -495,7 +547,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
 
         req = self._getRequest(path);
 
-        function next(err) {
+        req.next = function (err) {
             var callback, matches, route;
 
             if (err) {
@@ -513,11 +565,11 @@ Y.Controller = Y.extend(Controller, Y.Base, {
                     req.params = matches.concat();
                 }
 
-                callback.call(self, req, next);
+                callback.call(self, req, req.next);
             }
-        }
+        };
 
-        next();
+        req.next();
 
         self._dispatching = false;
         return self._dequeue();
@@ -543,9 +595,9 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @protected
     **/
     _getPath: html5 ? function () {
-        return this._removeRoot(location.pathname);
+        return this.removeRoot(location.pathname);
     } : function () {
-        return this._getHashPath() || this._removeRoot(location.pathname);
+        return this._getHashPath() || this.removeRoot(location.pathname);
     },
 
     /**
@@ -694,29 +746,10 @@ Y.Controller = Y.extend(Controller, Y.Base, {
                 self._save.apply(self, args);
             }
 
-            return this;
+            return self;
         });
 
         return !this._dispatching ? this._dequeue() : this;
-    },
-
-    /**
-    Removes the `root` URL from the from of _path_ (if it's there) and returns
-    the result. The returned path will always have a leading `/`.
-
-    @method _removeRoot
-    @param {String} path URL path.
-    @return {String} Rootless path.
-    @protected
-    **/
-    _removeRoot: function (path) {
-        var root = this.root;
-
-        if (root && path.indexOf(root) === 0) {
-            path = path.substring(root.length);
-        }
-
-        return path.charAt(0) === '/' ? path : '/' + path;
     },
 
     /**
