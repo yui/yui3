@@ -156,6 +156,7 @@
         "requires": [
             "autocomplete-base", 
             "event-resize", 
+            "node-region", 
             "selector-css3", 
             "shim-plugin", 
             "widget", 
