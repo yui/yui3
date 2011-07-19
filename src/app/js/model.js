@@ -526,7 +526,7 @@ Y.Model = Y.extend(Model, Y.Base, {
 
       * `create`: Store a newly-created model for the first time.
       * `delete`: Delete an existing model.
-      * 'read'  : Load an existing model.
+      * `read`  : Load an existing model.
       * `update`: Update an existing model.
 
     @param {Object} [options] Sync options. It's up to the custom sync
