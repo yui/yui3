@@ -221,16 +221,17 @@ YUI.add('widget-position-align', function(Y) {
 
                 this._uiHandles = [
                     Y.one(WINDOW).on(RESIZE, syncAlign),
-                    Y.on(SCROLL, syncAlign)
+                    Y.on(SCROLL, syncAlign),
+                    this.after("destroy", this._detachUIHandles)
                 ];
             },
 
             _detachUIHandles : function () {
+                if (this._uiHandles) {
+                    new Y.EventHandle(this._uiHandles).detach();
 
-                Y.each(this._uiHandles, function(h){
-                    h.detach();
-                });
-                this._uiHandles = null;
+                    this._uiHandles = null;
+                }
             },
 
             _syncAlign: function() {
