@@ -16,6 +16,8 @@ AutoComplete Change History
     force a specific source type, overriding the automatic source type
     detection. [Ticket #2529974]
 
+  * A pre-existing `listNode` may now be specified at initialization time.
+
   * Added `subWordMatch` filters and highlighters. [Contributed by Tobias
     Schultze]
 
