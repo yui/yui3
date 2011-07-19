@@ -545,7 +545,8 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     _afterActiveItemChange: function (e) {
         var inputNode = this._inputNode,
             newVal    = e.newVal,
-            prevVal   = e.prevVal;
+            prevVal   = e.prevVal,
+            node;
 
         // The previous item may have disappeared by the time this handler runs,
         // so we need to be careful.
@@ -561,7 +562,11 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         }
 
         if (this.get('scrollIntoView')) {
-            (newVal || inputNode).scrollIntoView();
+            node = newVal || inputNode;
+
+            if (!node.inRegion(Y.DOM.viewportRegion(), true)) {
+                node.scrollIntoView();
+            }
         }
     },
 

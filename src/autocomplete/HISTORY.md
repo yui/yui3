@@ -16,6 +16,10 @@ AutoComplete Change History
     force a specific source type, overriding the automatic source type
     detection. [Ticket #2529974]
 
+  * The `scrollIntoView` config option is now much smarter. It will only scroll
+    if the selected result isn't fully visible. If the result is already
+    entirely within the visible area of the viewport, no scrolling will occur.
+
   * A pre-existing `listNode` may now be specified at initialization time.
 
   * Added `subWordMatch` filters and highlighters. [Contributed by Tobias
