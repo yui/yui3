@@ -189,6 +189,21 @@ controllerSuite.add(new Y.Test.Case({
         Assert.areSame(two, routes[1].callback);
     },
 
+    'hasRoute() should return `true` if one or more routes match the given path': function () {
+        var controller = this.controller = new Y.Controller(),
+            routes;
+
+        function noop () {}
+
+        controller.route('/:foo', noop);
+        controller.route(/foo/, noop);
+        controller.route('/bar', noop);
+
+        Assert.isTrue(controller.hasRoute('/foo'));
+        Assert.isTrue(controller.hasRoute('/bar'));
+        Assert.isFalse(controller.hasRoute('/baz/quux'));
+    },
+
     'dispatch() should dispatch to the first route that matches the current URL': function () {
         var test       = this,
             controller = this.controller = new Y.Controller();

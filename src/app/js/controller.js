@@ -258,6 +258,19 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     },
 
     /**
+    Returns `true` if this controller has at least one route that matches the
+    specified URL path, `false` otherwise.
+
+    @method hasRoute
+    @param {String} path URL path to match.
+    @return {Boolean} `true` if there's at least one matching route, `false`
+      otherwise.
+    **/
+    hasRoute: function (path) {
+        return !!this.match(path).length;
+    },
+
+    /**
     Returns an array of route objects that match the specified URL path.
 
     This method is called internally to determine which routes match the current
