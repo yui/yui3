@@ -17,7 +17,10 @@
 <div id="mychart"></div>
 <script type="text/javascript" src="../../../build/yui/yui-min.js"></script>
 <script>            
-YUI().use('charts', 'test', 'console', function (Y) 
+YUI({
+    allowRollup: false,
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+}).use('charts', 'test', 'console', function (Y) 
 { 
     Y.namespace("example.test");
     var suite = new Y.Test.Suite("Y.Charts");

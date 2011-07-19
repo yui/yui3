@@ -1,9 +1,10 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE HTML>
 <html>
 <head>
+<meta charset="utf-8">
 <title>Datatable Tests</title>
-<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.2.0/build/cssreset/reset-min.css">
-<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.2.0/build/cssbase/base-min.css">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.3.0/build/cssreset/reset-min.css">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.3.0/build/cssbase/base-min.css">
 <script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
 
 <style>
@@ -416,6 +417,33 @@ _should: {
                 caption = table.get('boundingBox').one('caption');
                 Y.Assert.isNotNull(caption);
                 Y.Assert.areSame('Caption set', caption.get('text'));
+            },
+
+            "test Recordset does not lose plugins on load": function () {
+                var data = [ {a:1,b:1,c:1}, {a:2,b:2,c:2}, {a:3,b:3,c:3} ],
+                    recordset,
+                    source, table;
+
+                source = new Y.DataSource.Local({ source: data });
+                source.plug(Y.Plugin.DataSourceArraySchema, {
+                    resultFields: ['a','b','c']
+                });
+
+                table = new Y.DataTable.Base({
+                    columnset: [ { key: 'a', sortable: true }, 'b', 'c' ]
+                }); 
+                table.plug(Y.Plugin.DataTableDataSource, {
+                    datasource: source
+                });
+                table.plug(Y.Plugin.DataTableSort);
+
+                table.render("#base");
+
+                table.datasource.load();
+                
+                recordset = table.get("recordset");
+                Y.Assert.isObject(recordset);
+                Y.Assert.isObject(recordset.sort);
             }
         });
 

@@ -5849,21 +5849,24 @@ Histogram.prototype = {
                 continue;
             }
             config = this._getMarkerDimensions(xcoords[i], ycoords[i], calculatedSize, offset);
-            top = config.top;
-            left = config.left;
-            style[setSizeKey] = setSize;
-            style[calculatedSizeKey] = config.calculatedSize;
-            style.x = left;
-            style.y = top;
-            if(fillColors)
+            if(!isNaN(config.calculatedSize) && config.calculatedSize > 0)
             {
-                style.fill.color = fillColors[i % fillColors.length];
+                top = config.top;
+                left = config.left;
+                style[setSizeKey] = setSize;
+                style[calculatedSizeKey] = config.calculatedSize;
+                style.x = left;
+                style.y = top;
+                if(fillColors)
+                {
+                    style.fill.color = fillColors[i % fillColors.length];
+                }
+                if(borderColors)
+                {
+                    style.border.colors = borderColors[i % borderColors.length];
+                }
+                marker = this.getMarker(style, graphOrder, i);
             }
-            if(borderColors)
-            {
-                style.border.colors = borderColors[i % borderColors.length];
-            }
-            marker = this.getMarker(style, graphOrder, i);
         }
         this._clearMarkerCache();
     },
@@ -8064,9 +8067,14 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
             
             if(!isNumber(top) || !isNumber(left))
             {
+                if(useOrigin)
+                {
+                    negativeBaseValues[i] = this._bottomOrigin;
+                    positiveBaseValues[i] = this._bottomOrigin;
+                }
+                
                 continue;
             }
-            
             if(useOrigin)
             {
                 h = Math.abs(this._bottomOrigin - top);
@@ -8098,7 +8106,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
                 }
                 else if(top <= this._bottomOrigin)
                 {
-                    top = positiveBaseValues[i] - (this._bottomOrigin - ycoords[i]);
+                    top = positiveBaseValues[i] - (this._bottomOrigin - top);
                     h = positiveBaseValues[i] - top;
                     positiveBaseValues[i] = top;
                 }
@@ -8315,6 +8323,11 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
             left = xcoords[i];
             if(!isNumber(top) || !isNumber(left))
             {
+                if(useOrigin)
+                {
+                    positiveBaseValues[i] = this._leftOrigin;
+                    negativeBaseValues[i] = this._leftOrigin;
+                }
                 continue;
             }
             if(useOrigin)

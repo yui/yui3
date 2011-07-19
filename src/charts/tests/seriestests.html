@@ -1,0 +1,293 @@
+<html>
+<head>
+<title>Chart Series Tests</title>
+<link type="text/css" rel="stylesheet" href="../../../build/logreader/assets/skins/sam/logreader.css" />
+<style type="text/css">
+#mychart {
+    width: 400px;
+    height: 300px;
+}
+</style>
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+</head>
+<body class="yui3-skin-sam">
+    <h1>Chart Series Tests</h1>
+    <div id="mychart"></div>
+    <div id="c"></div>
+<script type="text/javascript">  
+    
+    YUI({
+        allowRollup: false,
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+    }).use('charts', 'test', 'event-simulate', 'console', function (Y) {
+
+    Y.namespace("Tests");
+    
+    Y.Tests.ChartSeriesEvents = (function(){
+    
+            var ASSERT = Y.Assert,
+                ObjectAssert = Y.ObjectAssert;
+            
+            
+            //-------------------------------------------------------------------------
+            // Chart Event Test Case
+            //-------------------------------------------------------------------------
+            function ChartEventTestCase(cfg, type)
+            {
+                ChartEventTestCase.superclass.constructor.call(this);
+                this.eventType = type;
+                this.attrCfg = cfg;
+                this.name = "Event '" + type + "' Tests";
+                this.result = null;
+            }
+        
+            Y.extend(ChartEventTestCase, Y.Test.Case, {
+                //---------------------------------------------------------------------
+                // Setup and teardown of test harnesses
+                //---------------------------------------------------------------------
+                
+                /*
+                 * Sets up several event handlers used to test UserAction mouse events.
+                 */
+                setUp : function() 
+                {
+                    
+                    //create the chart 
+                    this.chart = new Y.Chart(this.attrCfg);
+                    this.contentBox = this.chart.get("contentBox");
+                
+                    //reset the result
+                    this.result = null;
+                    
+                    //assign event handler                
+                    //this.handler = Y.on(this.eventType, Y.bind(this.handleEvent,this), this.element);
+                    this.handler = Y.delegate(this.eventType, Y.bind(this.handleEvent, this), this.contentBox, ".yui3-seriesmarker");
+                },
+                
+                /*
+                 * Removes event handlers that were used during the test.
+                 */
+                tearDown : function() 
+                {
+                    Y.detach(this.handler);
+                    //remove the element
+                    this.chart.destroy();
+                },
+                
+                //---------------------------------------------------------------------
+                // Event handler
+                //---------------------------------------------------------------------
+                
+                /*
+                 * Uses to trap and assign the event object for interrogation.
+                 * @param {Event} event The event object created from the event.
+                 */
+                handleEvent : function(event) 
+                {
+                    this.result = event;
+                }
+            });
+
+            function ChartMarkerEventTestCase()
+            {
+                ChartMarkerEventTestCase.superclass.constructor.apply(this, arguments);
+            }
+
+            Y.extend(ChartMarkerEventTestCase, ChartEventTestCase, {
+                getMarkerData: function(e)
+                {
+                    var type = e.type,
+                        cb = this.chart.get("contentBox"),
+                        markerNode = e.currentTarget,
+                        strArr = markerNode.getAttribute("id").split("_"),
+                        seriesIndex = strArr[1],
+                        series = this.chart.getSeries(parseInt(seriesIndex, 10)),
+                        index = strArr[2],
+                        items = this.chart.getSeriesItems(series, index),
+                        x = e.pageX - cb.getX(),
+                        y = e.pageY - cb.getY();
+                    return {categoryItem:items.category, valueItem:items.value, node:markerNode, x:x, y:y, series:series, index:index, seriesIndex:seriesIndex};
+                },
+
+                seriesKeys: ["miscellaneous", "expenses", "revenue"],
+
+                //Simulate a mouseover event to test to ensure that the correct series data is associated with
+                //the correct marker.
+                //Tests bug fix #2530533 
+                testDefault: function()
+                {
+                    var currentSeries,
+                        keys = {},
+                        key,
+                        i = 0,
+                        len = this.seriesKeys.length,
+                        categoryKey,
+                        seriesKey,
+                        categoryDisplayName,
+                        seriesDisplayName,
+                        categoryValue,
+                        seriesValue,
+                        marker,
+                        markerData,
+                        //determine category and series axes by direction of chart
+                        direction = this.chart.get("direction"),
+                        categoryAxis = direction == "horizontal" ? "x" : "y",
+                        seriesAxis = direction == "horizontal" ? "y" : "x";
+                    for(; i < len; ++i)
+                    {
+                        keys[this.seriesKeys[i]] = i;
+                    }
+                    
+                    for(key in keys)
+                    {
+                        if(keys.hasOwnProperty(key))
+                        {
+                            currentSeries = this.chart.getSeries(key);
+                            if(currentSeries)
+                            {
+                                i = 0;
+                                len = currentSeries.get("markers").length || 0;
+                                categoryKey = currentSeries.get(categoryAxis + "Key");
+                                seriesKey = currentSeries.get(seriesAxis + "Key");
+                                categoryDisplayName = currentSeries.get(categoryAxis + "DisplayName");
+                                seriesDisplayName = currentSeries.get(seriesAxis + "DisplayName");
+                                for(; i < len; ++i)
+                                {
+                                    marker = currentSeries.get("markers")[i];
+                                    if(marker)
+                                    {
+                                        Y.Assert.isNumber(marker.get("width"));
+                                        Y.Assert.isNumber(marker.get("height"));
+                                        Y.Event.simulate(marker.get("node"), "mouseover"); 
+                                        markerData = this.getMarkerData(this.result);                
+                                        categoryValue = this.chart.get("dataProvider")[markerData.index][categoryKey];
+                                        seriesValue = this.chart.get("dataProvider")[markerData.index][seriesKey];
+                                        Y.assert(markerData.categoryItem.displayName == categoryDisplayName);
+                                        Y.assert(markerData.valueItem.displayName == seriesDisplayName);
+                                        Y.assert(markerData.series == currentSeries);
+                                        Y.assert(markerData.categoryItem.key == categoryKey);
+                                        Y.assert(markerData.valueItem.key == seriesKey);
+                                        Y.assert(markerData.categoryItem.value == categoryValue);
+                                        Y.assert(markerData.valueItem.value == seriesValue);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            Y.ChartMarkerEventTestCase = ChartMarkerEventTestCase;
+            
+            var DataProviderWithZeros = [
+                        {category:"1/1/2010", miscellaneous:1000, expenses:0, revenue:2200},
+                        {category:"2/1/2010", miscellaneous:0, expenses:0, revenue:100},
+                        {category:"3/1/2010", miscellaneous:0, expenses:0, revenue:1500},
+                        {category:"4/1/2010", miscellaneous:0, expenses:500, revenue:2800},
+                        {category:"5/1/2010", miscellaneous:0, expenses:0, revenue:2650},
+                        {category:"6/1/2010", miscellaneous:0, expenses:0, revenue:1200}
+                ],
+                SeriesKeys = ["miscellaneous", "expenses", "revenue"],
+                DataProviderWithNull = [
+                        {category:"1/1/2010", miscellaneous:1000, expenses:null, revenue:2200},
+                        {category:"2/1/2010", expenses:null, revenue:100},
+                        {category:"3/1/2010", expenses:null, revenue:1500},
+                        {category:"4/1/2010", expenses:500, revenue:2800},
+                        {category:"5/1/2010", expenses:null, revenue:2650},
+                        {category:"6/1/2010", expenses:null, revenue:1200}
+                ],
+                DataProvider,
+                suite  = new Y.Test.Suite("Chart Series Tests"),
+                zeroValueColumnMouseOverTests = new Y.ChartMarkerEventTestCase({
+                    type: "column",
+                    render: "#mychart",
+                    dataProvider: DataProviderWithZeros,
+                    seriesKeys: SeriesKeys
+                }, "mouseover"),
+                zeroValueBarMouseOverTests = new Y.ChartMarkerEventTestCase({
+                    type: "bar",
+                    render: "#mychart",
+                    dataProvider: DataProviderWithZeros,
+                    seriesKeys: SeriesKeys
+                }, "mouseover"),
+                zeroValueStackedColumnMouseOverTests = new Y.ChartMarkerEventTestCase({
+                    type: "column",
+                    stacked: true,
+                    render: "#mychart",
+                    dataProvider: DataProviderWithZeros,
+                    seriesKeys: SeriesKeys
+                }, "mouseover"),
+                zeroValueStackedBarMouseOverTests = new Y.ChartMarkerEventTestCase({
+                    type: "bar",
+                    stacked: true,
+                    render: "#mychart",
+                    dataProvider: DataProviderWithZeros,
+                    seriesKeys: SeriesKeys
+                }, "mouseover"),
+                nullValueColumnMouseOverTests = new Y.ChartMarkerEventTestCase({
+                    type: "column",
+                    render: "#mychart",
+                    dataProvider: DataProviderWithNull,
+                    seriesKeys: SeriesKeys
+                }, "mouseover"),
+                nullValueBarMouseOverTests = new Y.ChartMarkerEventTestCase({
+                    type: "bar",
+                    render: "#mychart",
+                    dataProvider: DataProviderWithNull,
+                    seriesKeys: SeriesKeys
+                }, "mouseover"),
+                nullValueStackedColumnMouseOverTests = new Y.ChartMarkerEventTestCase({
+                    type: "column",
+                    stacked: true,
+                    render: "#mychart",
+                    dataProvider: DataProviderWithNull,
+                    seriesKeys: SeriesKeys
+                }, "mouseover"),
+                nullValueStackedBarMouseOverTests = new Y.ChartMarkerEventTestCase({
+                    type: "bar",
+                    stacked: true,
+                    render: "#mychart",
+                    dataProvider: DataProviderWithNull,
+                    seriesKeys: SeriesKeys
+                }, "mouseover"),
+                zeroValueComboMouseOverTests = new Y.ChartMarkerEventTestCase({
+                    render: "#mychart",
+                    dataProvider: DataProviderWithZeros,
+                    seriesKeys: SeriesKeys
+                }, "mouseover"),
+                nullValueComboMouseOverTests = new Y.ChartMarkerEventTestCase({
+                    render: "#mychart",
+                    dataProvider: DataProviderWithNull,
+                    seriesKeys: SeriesKeys
+                }, "mouseover");
+            
+            suite.add(zeroValueColumnMouseOverTests);
+            suite.add(zeroValueBarMouseOverTests);
+            suite.add(zeroValueStackedColumnMouseOverTests);
+            suite.add(zeroValueStackedBarMouseOverTests);
+            suite.add(nullValueColumnMouseOverTests);
+            suite.add(nullValueBarMouseOverTests);
+            suite.add(nullValueStackedColumnMouseOverTests);
+            suite.add(nullValueStackedBarMouseOverTests);
+            suite.add(zeroValueComboMouseOverTests);
+            suite.add(nullValueComboMouseOverTests);
+            
+            //return it
+            return suite;
+        
+        })();
+    
+        var r = new Y.Console({
+            verbose : true,
+            newestOnTop : false
+        });
+        
+        r.render('#c');
+    
+        //add to the testrunner and run
+        Y.Test.Runner.add(Y.Tests.ChartSeriesEvents);
+        Y.Test.Runner.run();
+});
+
+</script>
+</body>
+</html>

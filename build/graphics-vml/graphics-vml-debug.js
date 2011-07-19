@@ -1565,6 +1565,22 @@ VMLShape.ATTRS = {
 	},
 
 	/**
+	 * Dom node for the shape.
+	 *
+	 * @attribute node
+	 * @type HTMLElement
+	 * @readOnly
+	 */
+	node: {
+		readOnly: true,
+
+		getter: function()
+		{
+			return this.node;
+		}
+	},
+
+	/**
 	 * Reference to the container Graphic.
 	 *
 	 * @attribute graphic

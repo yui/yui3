@@ -69,9 +69,14 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
             
             if(!isNumber(top) || !isNumber(left))
             {
+                if(useOrigin)
+                {
+                    negativeBaseValues[i] = this._bottomOrigin;
+                    positiveBaseValues[i] = this._bottomOrigin;
+                }
+                
                 continue;
             }
-            
             if(useOrigin)
             {
                 h = Math.abs(this._bottomOrigin - top);
@@ -103,7 +108,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
                 }
                 else if(top <= this._bottomOrigin)
                 {
-                    top = positiveBaseValues[i] - (this._bottomOrigin - ycoords[i]);
+                    top = positiveBaseValues[i] - (this._bottomOrigin - top);
                     h = positiveBaseValues[i] - top;
                     positiveBaseValues[i] = top;
                 }

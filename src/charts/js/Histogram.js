@@ -92,21 +92,24 @@ Histogram.prototype = {
                 continue;
             }
             config = this._getMarkerDimensions(xcoords[i], ycoords[i], calculatedSize, offset);
-            top = config.top;
-            left = config.left;
-            style[setSizeKey] = setSize;
-            style[calculatedSizeKey] = config.calculatedSize;
-            style.x = left;
-            style.y = top;
-            if(fillColors)
+            if(!isNaN(config.calculatedSize) && config.calculatedSize > 0)
             {
-                style.fill.color = fillColors[i % fillColors.length];
+                top = config.top;
+                left = config.left;
+                style[setSizeKey] = setSize;
+                style[calculatedSizeKey] = config.calculatedSize;
+                style.x = left;
+                style.y = top;
+                if(fillColors)
+                {
+                    style.fill.color = fillColors[i % fillColors.length];
+                }
+                if(borderColors)
+                {
+                    style.border.colors = borderColors[i % borderColors.length];
+                }
+                marker = this.getMarker(style, graphOrder, i);
             }
-            if(borderColors)
-            {
-                style.border.colors = borderColors[i % borderColors.length];
-            }
-            marker = this.getMarker(style, graphOrder, i);
         }
         this._clearMarkerCache();
     },
