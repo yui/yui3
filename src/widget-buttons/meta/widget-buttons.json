@@ -1,0 +1,9 @@
+{
+    "widget-buttons": {
+        "requires": [
+            "widget",
+            "base-build"
+        ], 
+        "skinnable": false
+    }
+}
