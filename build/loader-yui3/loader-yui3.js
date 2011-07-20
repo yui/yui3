@@ -165,7 +165,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "autocomplete-base", 
             "event-resize", 
-            "node-region", 
+            "node-screen", 
             "selector-css3", 
             "shim-plugin", 
             "widget", 
@@ -2014,7 +2014,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '8e1679f3bdf84eb0e825c8e9e8c8c879';
+YUI.Env[Y.version].md5 = 'a1ef06e7414fd9ca85c7ef3238c28d3e';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

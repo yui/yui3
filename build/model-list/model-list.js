@@ -473,7 +473,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
       * `create`: Store a list of newly-created models for the first time.
       * `delete`: Delete a list of existing models.
-      * 'read'  : Load a list of existing models.
+      * `read`  : Load a list of existing models.
       * `update`: Update a list of existing models.
 
       Currently, model lists only make use of the `read` action, but other

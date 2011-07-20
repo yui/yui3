@@ -566,7 +566,9 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         if (this.get('scrollIntoView')) {
             node = newVal || inputNode;
 
-            if (!node.inRegion(Y.DOM.viewportRegion(), true)) {
+            if (!node.inRegion(Y.DOM.viewportRegion(), true)
+                    || !node.inRegion(this._contentBox, true)) {
+
                 node.scrollIntoView();
             }
         }
@@ -838,4 +840,4 @@ Y.AutoCompleteList = List;
 Y.AutoComplete = List;
 
 
-}, '@VERSION@' ,{skinnable:true, lang:['en'], requires:['autocomplete-base', 'event-resize', 'node-region', 'selector-css3', 'shim-plugin', 'widget', 'widget-position', 'widget-position-align'], after:['autocomplete-sources']});
+}, '@VERSION@' ,{lang:['en'], after:['autocomplete-sources'], requires:['autocomplete-base', 'event-resize', 'node-screen', 'selector-css3', 'shim-plugin', 'widget', 'widget-position', 'widget-position-align'], skinnable:true});

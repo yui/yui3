@@ -1103,7 +1103,7 @@ AutoCompleteBase.prototype = {
             textLocator;
 
         if (unfiltered && listLocator) {
-            unfiltered = listLocator(unfiltered);
+            unfiltered = listLocator.call(this, unfiltered);
         }
 
         if (unfiltered && unfiltered.length) {
@@ -1116,7 +1116,10 @@ AutoCompleteBase.prototype = {
             // as we go.
             for (i = 0, len = unfiltered.length; i < len; ++i) {
                 result = unfiltered[i];
-                text   = textLocator ? textLocator(result) : result.toString();
+
+                text = textLocator ?
+                        textLocator.call(this, result) :
+                        result.toString();
 
                 results.push({
                     display: Escape.html(text),
@@ -1129,7 +1132,7 @@ AutoCompleteBase.prototype = {
             // filter returns an array of (potentially fewer) result objects,
             // which is then passed to the next filter, and so on.
             for (i = 0, len = filters.length; i < len; ++i) {
-                results = filters[i](query, results.concat());
+                results = filters[i].call(this, query, results.concat());
 
                 if (!results) {
                     Y.log("Filter didn't return anything.", 'warn', 'autocomplete-base');
@@ -1158,7 +1161,7 @@ AutoCompleteBase.prototype = {
                 // an array of result objects), and these strings are then added
                 // to each result object.
                 if (highlighter) {
-                    highlighted = highlighter(query, results.concat());
+                    highlighted = highlighter.call(this, query, results.concat());
 
                     if (!highlighted) {
                         Y.log("Highlighter didn't return anything.", 'warn', 'autocomplete-base');
@@ -1178,7 +1181,7 @@ AutoCompleteBase.prototype = {
                 // objects), and these strings/Nodes are then added to each
                 // result object.
                 if (formatter) {
-                    formatted = formatter(query, results.concat());
+                    formatted = formatter.call(this, query, results.concat());
 
                     if (!formatted) {
                         Y.log("Formatter didn't return anything.", 'warn', 'autocomplete-base');

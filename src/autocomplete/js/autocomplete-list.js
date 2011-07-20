@@ -564,7 +564,9 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         if (this.get('scrollIntoView')) {
             node = newVal || inputNode;
 
-            if (!node.inRegion(Y.DOM.viewportRegion(), true)) {
+            if (!node.inRegion(Y.DOM.viewportRegion(), true)
+                    || !node.inRegion(this._contentBox, true)) {
+
                 node.scrollIntoView();
             }
         }

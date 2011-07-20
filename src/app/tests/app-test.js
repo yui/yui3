@@ -189,6 +189,21 @@ controllerSuite.add(new Y.Test.Case({
         Assert.areSame(two, routes[1].callback);
     },
 
+    'hasRoute() should return `true` if one or more routes match the given path': function () {
+        var controller = this.controller = new Y.Controller(),
+            routes;
+
+        function noop () {}
+
+        controller.route('/:foo', noop);
+        controller.route(/foo/, noop);
+        controller.route('/bar', noop);
+
+        Assert.isTrue(controller.hasRoute('/foo'));
+        Assert.isTrue(controller.hasRoute('/bar'));
+        Assert.isFalse(controller.hasRoute('/baz/quux'));
+    },
+
     'dispatch() should dispatch to the first route that matches the current URL': function () {
         var test       = this,
             controller = this.controller = new Y.Controller();
@@ -517,6 +532,27 @@ modelSuite.add(new Y.Test.Case({
 
         model.destroy({'delete': true}, mock.callback);
         Y.Mock.verify(mock);
+    },
+
+    'destroy() should remove the model from all lists': function () {
+        var model     = new Y.Model(),
+            listOne   = new Y.ModelList(),
+            listTwo   = new Y.ModelList(),
+            listThree = new Y.ModelList();
+
+        listOne.add(model);
+        listTwo.add(model);
+        listThree.add(model);
+
+        Assert.areSame(1, listOne.size(), 'model should be added to list one');
+        Assert.areSame(1, listTwo.size(), 'model should be added to list two');
+        Assert.areSame(1, listThree.size(), 'model should be added to list three');
+
+        model.destroy();
+
+        Assert.areSame(0, listOne.size(), 'model should be removed from list one');
+        Assert.areSame(0, listTwo.size(), 'model should be removed from list two');
+        Assert.areSame(0, listThree.size(), 'model should be removed from list three');
     }
 }));
 

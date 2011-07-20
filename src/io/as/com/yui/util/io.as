@@ -20,14 +20,13 @@ package com.yui.util
         private var httpError:Function;
         private var httpTimeout:Function;
         private var loaderMap:Object = {};
-        private var yid:String;
+        private var vars:Object = root.loaderInfo.parameters;
 
         public function io() {
-            yid = root.loaderInfo.parameters.yid;
             ExternalInterface.addCallback("send", send);
             ExternalInterface.addCallback("abort", abort);
             ExternalInterface.addCallback("isInProgress", isInProgress);
-            ExternalInterface.call('YUI.applyTo', yid, 'io.xdrReady', [yid]);
+            ExternalInterface.call('YUI.applyTo', vars.yid, 'io.xdrReady', [vars.yid, vars.uid]);
         }
 
         public function send(uri:String, cfg:Object):void {
@@ -164,7 +163,7 @@ package com.yui.util
         }
 
         private function dispatch(a:Object):void {
-            ExternalInterface.call('YUI.applyTo', yid, 'io.xdrResponse', a);
+            ExternalInterface.call('YUI.applyTo', vars.yid, 'io.xdrResponse', a);
         }
 
         private function setRequestHeaders(request:URLRequest, headers:Object):void {
