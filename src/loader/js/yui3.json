@@ -1397,7 +1397,8 @@
             "widget-stack", 
             "widget-position-constrain", 
             "widget-modality", 
-            "widget-autohide"
+            "widget-autohide", 
+            "widget-buttons"
         ], 
         "skinnable": true
     }, 
@@ -1775,7 +1776,8 @@
         "requires": [
             "widget", 
             "event-outside", 
-            "base-build"
+            "base-build", 
+            "event-key"
         ], 
         "skinnable": false
     }, 
@@ -1799,6 +1801,13 @@
         "requires": [
             "widget-base"
         ]
+    }, 
+    "widget-buttons": {
+        "requires": [
+            "widget", 
+            "base-build"
+        ], 
+        "skinnable": false
     }, 
     "widget-child": {
         "requires": [
