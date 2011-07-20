@@ -163,7 +163,7 @@ Y.Model = Y.extend(Model, Y.Base, {
 
         function finish(err) {
             if (!err) {
-                YArray.each(self.lists, function (list) {
+                YArray.each(self.lists.concat(), function (list) {
                     list.remove(self, options);
                 });
 
