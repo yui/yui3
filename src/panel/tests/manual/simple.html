@@ -24,16 +24,6 @@
               outline:none;
             }
 
-           .yui3-widget-mask {
-                background:rgba(0,0,0,0.6);
-            }
-
-            .yui3-panel-content {
-                box-shadow: 0 0 5px #333;
-                border-radius:2px;
-                background:white;
-
-            }
 
             .yui3-panel-content .yui3-widget-bd {
               padding:15px;
@@ -93,21 +83,34 @@
 
               panel.render();
               // panel.plug([Y.Plugin.Resize, Y.Plugin.Drag]);
-
-              panel.set('buttons', [
-                {
-                  value: "Ok",
-                  defaultFn: function(e) { e.preventDefault(); alert("I Pressed Okay."); },
-                  href: "http://www.google.com",
-                  section: Y.WidgetStdMod.FOOTER
-                },
-                {
-                  value: "Cancel",
-                  defaultFn: function(e) { e.preventDefault(); alert("I Pressed Cancel."); },
-                  href: "http://www.google.com",
-                  section: Y.WidgetStdMod.FOOTER
-                }
-              ]);
+              var button1 = {
+                value: "Ok",
+                defaultFn: function(e) { e.preventDefault(); alert("I Pressed Okay."); },
+                href: "http://www.google.com",
+                section: Y.WidgetStdMod.FOOTER
+              };
+              var button2 = {
+                value: "Cancel",
+                defaultFn: function(e) { e.preventDefault(); alert("I Pressed Cancel."); },
+                href: "http://www.google.com",
+                section: Y.WidgetStdMod.FOOTER
+              };
+              panel.addButton(button1);
+              panel.addButton(button2);
+              // panel.set('buttons', [
+              //   {
+              //     value: "Ok",
+              //     defaultFn: function(e) { e.preventDefault(); alert("I Pressed Okay."); },
+              //     href: "http://www.google.com",
+              //     section: Y.WidgetStdMod.FOOTER
+              //   },
+              //   {
+              //     value: "Cancel",
+              //     defaultFn: function(e) { e.preventDefault(); alert("I Pressed Cancel."); },
+              //     href: "http://www.google.com",
+              //     section: Y.WidgetStdMod.FOOTER
+              //   }
+              // ]);
             });
         </script>
     </body>
