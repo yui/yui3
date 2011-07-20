@@ -51,20 +51,13 @@ WidgetButtons.ATTRS = {
         //available options are: value, href, defaultFn
         value: [
             {
-                value: '<img src="http://cdn4.iconfinder.com/data/icons/sanscons/black/16x16/close.gif">',
+                value: 'Close',
                 defaultFn: function(e) {
-                    alert("Close was clicked");
+                    //alert("I pressed close");
+                    this.hide();
                 },
                 section: Y.WidgetStdMod.HEADER
             }
-
-            // {
-            //     value: "Ok",
-            //     defaultFn: function(e) {
-            //         alert("Ok was clicked");
-            //     },
-            //     section: Y.WidgetStdMod.FOOTER
-            // }
         ],
         validator: Y.Lang.isArray
     }
@@ -95,6 +88,8 @@ WidgetButtons.prototype = {
             this._hdBtnNode = CREATE(WidgetButtons.TEMPLATES.wrapper);
             this._ftBtnNode = CREATE(WidgetButtons.TEMPLATES.wrapper);
             this._createButtons();
+
+
             
         },
 
@@ -103,7 +98,7 @@ WidgetButtons.prototype = {
             var self = this;
 
             Y.each(this._buttonsArray, function(o) {
-               self._hookEventsToButton(o); 
+               self._attachEventsToButton(o); 
             });
 
             this.after(BUTTON_CHANGE, this._afterButtonsChange);
@@ -119,6 +114,13 @@ WidgetButtons.prototype = {
             }
 
         },
+
+        addButton: function (button) {
+            var btns = this.get('buttons');
+            btns.push(button);
+            this.set('buttons', btns);
+        },
+
 
         _createButtons : function () {
             var btns = this.get('buttons'),
@@ -156,8 +158,8 @@ WidgetButtons.prototype = {
         },
 
         //object with properties node, cb
-        _hookEventsToButton : function (o) {
-            this._uiHandlesButtons.push(o.node.on(CLICK, o.cb));
+        _attachEventsToButton : function (o) {
+            this._uiHandlesButtons.push(o.node.on(CLICK, o.cb, this));
         },
 
         _afterButtonsChange : function (e) {
