@@ -21,4 +21,4 @@
  * @uses WidgetPositionConstrain
  * @param {Object} object The user configuration for the instance.
  */
-Y.Panel = Y.Base.create("panel", Y.Widget, [Y.WidgetStdMod, Y.WidgetPosition, Y.WidgetStack, Y.WidgetPositionAlign, Y.WidgetPositionConstrain, Y.WidgetModality, Y.WidgetAutohide]);
+Y.Panel = Y.Base.create("panel", Y.Widget, [Y.WidgetStdMod, Y.WidgetPosition, Y.WidgetStack, Y.WidgetPositionAlign, Y.WidgetPositionConstrain, Y.WidgetModality, Y.WidgetAutohide, Y.WidgetButtons]);

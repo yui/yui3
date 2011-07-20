@@ -23,7 +23,7 @@ YUI.add('panel', function(Y) {
  * @uses WidgetPositionConstrain
  * @param {Object} object The user configuration for the instance.
  */
-Y.Panel = Y.Base.create("panel", Y.Widget, [Y.WidgetStdMod, Y.WidgetPosition, Y.WidgetStack, Y.WidgetPositionAlign, Y.WidgetPositionConstrain, Y.WidgetModality, Y.WidgetAutohide]);
+Y.Panel = Y.Base.create("panel", Y.Widget, [Y.WidgetStdMod, Y.WidgetPosition, Y.WidgetStack, Y.WidgetPositionAlign, Y.WidgetPositionConstrain, Y.WidgetModality, Y.WidgetAutohide, Y.WidgetButtons]);
 
 
-}, '@VERSION@' ,{requires:['widget', 'widget-stdmod', 'widget-position', 'widget-stack', 'widget-position-align', 'widget-position-constrain', 'widget-modality', 'widget-autohide']});
+}, '@VERSION@' ,{requires:['widget', 'widget-stdmod', 'widget-position', 'widget-stack', 'widget-position-align', 'widget-position-constrain', 'widget-modality', 'widget-autohide', 'widget-buttons']});

@@ -74,7 +74,11 @@
         <a href="#d" class="randomLinks">Random Link 4</a>
                 
         <script>
-            YUI({filter:'raw'}).use('panel', function(Y) {
+            YUI(
+              {
+                  filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+              }
+            ).use('panel', function(Y) {
               
               var isMainPanelModal, isNestedPanelModal, panel, nest;
 

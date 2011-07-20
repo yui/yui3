@@ -9,3 +9,19 @@
 .yui3-widget-tmp-forcesize .yui3-panel-content {
     overflow:hidden !important;
 }
+
+.yui3-panel .yui3-widget-hd .yui3-widget-button-wrapper {
+	display: inline-block;
+	position: absolute;
+	right: 0.3em;
+	top: 0.3em;
+}
+.yui3-panel .yui3-widget-ft {
+	min-height:25px;
+}
+.yui3-panel .yui3-widget-ft .yui3-widget-button-wrapper {
+	position:absolute;
+	display:inline-block;
+	right: 1em;
+	bottom: 0.5em;
+}

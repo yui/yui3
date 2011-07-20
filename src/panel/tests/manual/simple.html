@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+
+        <style>
+            body {
+                font-family: sans-serif;
+                font-size:12px;
+                line-height:18px;
+            }
+
+            #desc {
+              margin-bottom:20px;
+              border-bottom:1px dotted #333;
+            }
+            #desc span {
+              background:#a3350d;
+              padding:2px;
+              color:#f27243;
+            }
+
+            .yui3-panel {
+              outline:none;
+            }
+
+           .yui3-widget-mask {
+                background:rgba(0,0,0,0.6);
+            }
+
+            .yui3-panel-content {
+                box-shadow: 0 0 5px #333;
+                border-radius:2px;
+                background:white;
+
+            }
+
+            .yui3-panel-content .yui3-widget-bd {
+              padding:15px;
+            }
+
+        </style>
+        <script type="text/javascript" src="http://localhost:8888/yui3/build/yui/yui-debug.js"></script> 
+    </head>
+
+    <body class='yui3-skin-sam'>
+
+      <div id="desc">
+      <h1><code>Y.WidgetModality</code> Manual Tests</h1>
+      <span><code>Y.WidgetModality</code> is a widget extension that can be implemented when creating a new Widget. It makes that widget appear modally, through the <code>modal</code> attribute. By default, this attribute is set to <code>false</code></span>
+      </div>
+
+        <div id="panelContent">
+          <div class="yui3-widget-bd">Here's some stuff that is supposed to be inside this panel.
+
+          <p>Nullam et enim id lectus rhoncus convallis. Vivamus molestie diam sed est hendrerit condimentum. Phasellus fringilla libero a ligula aliquet placerat. Aliquam consectetur dignissim purus non scelerisque. Integer vel sem eu lacus tincidunt auctor. Vivamus vitae lobortis urna. Suspendisse potenti. Donec hendrerit viverra felis, in faucibus odio scelerisque eu. Vestibulum sem velit, posuere at pulvinar semper, ornare ut felis. Etiam at consectetur mi. Sed id nisi est, ac feugiat eros. Nulla facilisi. Ut porttitor tellus sit amet diam consequat ac sagittis lacus porta. Suspendisse nibh justo, fringilla a congue id, faucibus sed nibh. Sed vitae lorem mattis lectus ultrices suscipit eu ac mauris.</p>
+        </div></div>
+
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec elit mi, tempus in tincidunt non, imperdiet sed augue. Nullam turpis magna, gravida vel venenatis at, dignissim non augue. Phasellus posuere erat nec ligula consectetur nec facilisis purus consectetur. Integer ipsum nisi, aliquam at ultrices quis, dictum a mauris. Ut posuere ultrices justo non convallis. Nunc a diam et est pretium fermentum. Nunc eget nunc non odio vestibulum vehicula et faucibus neque. Praesent turpis ligula, pharetra id vehicula a, sollicitudin sit amet lectus. Pellentesque pellentesque ante sed leo congue ullamcorper. Praesent at metus nisl. Vivamus at tortor sed sapien aliquet volutpat. Suspendisse vehicula, dolor ac vestibulum dapibus, nisi nulla ultrices odio, ac fermentum dolor risus congue tortor. Sed vel ligula in justo lacinia condimentum vel id est. Suspendisse interdum ligula quis odio congue consequat. Suspendisse potenti. Cras id accumsan eros. Duis gravida metus ac diam volutpat et dignissim justo pulvinar. Duis semper ornare dui, non condimentum nibh pretium id. Aenean dapibus purus eu nisl hendrerit a malesuada dolor vehicula.</p>
+
+
+
+                
+        <script>
+            YUI(
+              {
+                  filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+              }
+            ).use('panel','resize-plugin', 'dd-plugin', function(Y) {
+
+              var panel = new Y.Panel({
+                width:500,
+                modal:true,
+                srcNode: "#panelContent",
+                visible:true,
+                centered: true,
+                headerContent: "This is the header content for this panel"
+                // headerButtons: [
+                //   {
+                //     value: "Ok",
+                //     defaultFn: function(e) { e.preventDefault(); alert("I Pressed Okay."); },
+                //     href: "http://www.google.com"
+                //   },
+
+                //   {
+                //     value: "Close",
+                //     defaultFn: function(e) { e.preventDefault(); panel.hide(); },
+                //     href: "http://www.yahoo.com"
+                //   }
+                // ]
+              });
+
+
+              panel.render();
+              // panel.plug([Y.Plugin.Resize, Y.Plugin.Drag]);
+
+              panel.set('buttons', [
+                {
+                  value: "Ok",
+                  defaultFn: function(e) { e.preventDefault(); alert("I Pressed Okay."); },
+                  href: "http://www.google.com",
+                  section: Y.WidgetStdMod.FOOTER
+                },
+                {
+                  value: "Cancel",
+                  defaultFn: function(e) { e.preventDefault(); alert("I Pressed Cancel."); },
+                  href: "http://www.google.com",
+                  section: Y.WidgetStdMod.FOOTER
+                }
+              ]);
+            });
+        </script>
+    </body>
+
+</html>
