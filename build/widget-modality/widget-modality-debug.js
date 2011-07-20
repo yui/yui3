@@ -147,7 +147,7 @@ var WIDGET         = 'widget',
         // *** Instance Members *** //
 
         _maskNode   : WidgetModal._GET_MASK(),
-        _uiHandles  : null,
+        _uiHandlesModal  : null,
 
         /**
          * Synchronizes the UI and hooks up methods to the widget's lifecycle.
@@ -351,18 +351,18 @@ var WIDGET         = 'widget',
          */
         _attachUIHandles : function () {
 
-            if (this._uiHandles) { return; }
+            if (this._uiHandlesModal) { return; }
 
             var bb = this.get(BOUNDING_BOX),
             maskNode = this.get('maskNode');
 
-            this._uiHandles = [
+            this._uiHandlesModal = [
                 bb.on('clickoutside', Y.bind(this._focus, this)),
                 bb.on('focusoutside', Y.bind(this._focus, this))
             ];
 
             if ( ! supportsPosFixed) {
-                this._uiHandles.push(Y.one('win').on('scroll', Y.bind(function(e){
+                this._uiHandlesModal.push(Y.one('win').on('scroll', Y.bind(function(e){
                     maskNode.setStyle('top', maskNode.get('docScrollY'));
                 }, this)));
             }
@@ -374,10 +374,10 @@ var WIDGET         = 'widget',
          * @method _detachUIHandles
          */
         _detachUIHandles : function () {
-            Y.each(this._uiHandles, function(h){
+            Y.each(this._uiHandlesModal, function(h){
                 h.detach();
             });
-            this._uiHandles = null;
+            this._uiHandlesModal = null;
         },
 
         /**
