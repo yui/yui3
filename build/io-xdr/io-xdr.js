@@ -175,15 +175,15 @@ YUI.add('io-xdr', function(Y) {
 				// across Flash's ExternalInterface.
 				_cB[o.id] = c;
 				w.setTimeout(function() {
-					if (o.c.send) {
+					try {
 						o.c.send(uri, { id: o.id,
 										uid: o.uid,
 										method: c.method,
 										data: c.data,
 										headers: c.headers });
 					}
-					else {
-						io.xdrResponse(o, c, 'transport error');
+					catch(e) {
+						io.xdrResponse('transport error', o, c);
 						delete _cB[o.id];
 					}
 				}, Y.io.xdr.delay);
@@ -242,7 +242,7 @@ YUI.add('io-xdr', function(Y) {
                 case 'timeout':
                 case 'abort':
 				case 'transport error':
-					o.e = e;
+					o.c = { status: 0, statusText: e };
                 case 'failure':
                     io.failure(_data(o, u, d), c);
                     delete m[o.id];
@@ -285,7 +285,7 @@ YUI.add('io-xdr', function(Y) {
 	* @description Fires event "io:xdrReady"
 	*
 	* @method xdrReady
-	* @private
+	* @protected
 	* @static
 	* @param {number} yid - YUI sandbox id.
 	* @param {number} uid - IO instance id.
