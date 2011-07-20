@@ -1,18 +1,21 @@
 YUI.add('dataschema-json', function(Y) {
 
 /**
- * Provides a DataSchema implementation which can be used to work with JSON data.
- *
- * @module dataschema
- * @submodule dataschema-json
- */
+Provides a DataSchema implementation which can be used to work with JSON data.
+
+@module dataschema
+@submodule dataschema-json
+**/
 
 /**
- * JSON subclass for the DataSchema Utility.
- * @class DataSchema.JSON
- * @extends DataSchema.Base
- * @static
- */
+Provides a DataSchema implementation which can be used to work with JSON data.
+
+See the `apply` method for usage.
+
+@class DataSchema.JSON
+@extends DataSchema.Base
+@static
+**/
 var LANG = Y.Lang,
     isFunction = LANG.isFunction,
     isObject   = LANG.isObject,
@@ -97,14 +100,124 @@ SchemaJSON = {
     },
 
     /**
-     * Applies a given schema to given JSON data.
-     *
-     * @method apply
-     * @param schema {Object} Schema to apply.
-     * @param data {Object} JSON data.
-     * @return {Object} Schema-parsed data.
-     * @static
-     */
+    Applies a schema to an array of data located in a JSON structure, returning
+    a normalized object with results in the `results` property. Additional
+    information can be parsed out of the JSON for inclusion in the `meta`
+    property of the response object.  If an error is encountered during
+    processing, an `error` property will be added.
+
+    The input _data_ is expected to be an object or array.  If it is a string,
+    it will be passed through `Y.JSON.parse()`.
+
+    If _data_ contains an array of data records to normalize, specify the
+    _schema.resultListLocator_ as a dot separated path string just as you would
+    reference it in JavaScript.  So if your _data_ object has a record array at
+    _data.response.results_, use _schema.resultListLocator_ =
+    "response.results". Bracket notation can also be used for array indices or
+    object properties (e.g. "response['results']");  This is called a "path
+    locator"
+
+    Field data in the result list is extracted with field identifiers in
+    _schema.resultFields_.  Field identifiers are objects with the following
+    properties:
+
+      * `key`   : <strong>(required)</strong> The path locator (String)
+      * `parser`: A function or the name of a function on `Y.Parsers` used
+            to convert the input value into a normalized type.  Parser
+            functions are passed the value as input and are expected to
+            return a value.
+
+    If no value parsing is needed, you can use path locators (strings) 
+    instead of field identifiers (objects) -- see example below.
+
+    If no processing of the result list array is needed, _schema.resultFields_
+    can be omitted; the `response.results` will point directly to the array.
+
+    If the result list contains arrays, `response.results` will contain an
+    array of objects with key:value pairs assuming the fields in
+    _schema.resultFields_ are ordered in accordance with the data array
+    values.
+
+    If the result list contains objects, the identified _schema.resultFields_
+    will be used to extract a value from those objects for the output result.
+
+    To extract additional information from the JSON, include an array of
+    path locators in _schema.metaFields_.  The collected values will be
+    stored in `response.meta`.
+
+
+    @example
+        // Process array of arrays
+        var schema = {
+                resultListLocator: 'produce.fruit',
+                resultFields: [ 'name', 'color' ]
+            },
+            data = {
+                produce: {
+                    fruit: [
+                        [ 'Banana', 'yellow' ],
+                        [ 'Orange', 'orange' ],
+                        [ 'Eggplant', 'purple' ]
+                    ]
+                }
+            };
+
+        var response = Y.DataSchema.JSON.apply(schema, data);
+
+        // response.results[0] is { name: "Banana", color: "yellow" }
+
+        
+        // Process array of objects + some metadata
+        schema.metaFields = [ 'lastInventory' ];
+
+        data = {
+            produce: {
+                fruit: [
+                    { name: 'Banana', color: 'yellow', price: '1.96' },
+                    { name: 'Orange', color: 'orange', price: '2.04' },
+                    { name: 'Eggplant', color: 'purple', price: '4.31' }
+                ]
+            },
+            lastInventory: '2011-07-19'
+        };
+
+        response = Y.DataSchema.JSON.apply(schema, data);
+
+        // response.results[0] is { name: "Banana", color: "yellow" }
+        // response.meta.lastInventory is '2001-07-19'
+
+
+        // Use parsers
+        schema.resultFields = [
+            {
+                key: 'name',
+                parser: function (val) { return val.toUpperCase(); }
+            },
+            {
+                key: 'price',
+                parser: 'number' // Uses Y.Parsers.number
+            }
+        ];
+
+        response = Y.DataSchema.JSON.apply(schema, data);
+
+        // Note price was converted from a numeric string to a number
+        // response.results[0] looks like { fruit: "BANANA", price: 1.96 }
+     
+    @method apply
+    @param {Object} [schema] Schema to apply.  Supported configuration
+        properties are:
+      @param {String} [schema.resultListLocator] Path locator for the
+          location of the array of records to flatten into `response.results`
+      @param {Array} [schema.resultFields] Field identifiers to
+          locate/assign values in the response records. See above for
+          details.
+      @param {Array} [schema.metaFields] Path locators to extract extra
+          non-record related information from the data object.
+    @param {Object|Array|String} data JSON data or its string serialization.
+    @return {Object} An Object with properties `results` and `meta`
+    @static
+    **/
     apply: function(schema, data) {
         var data_in = data,
             data_out = { results: [], meta: {} };
