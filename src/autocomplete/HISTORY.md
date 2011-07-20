@@ -25,6 +25,10 @@ AutoComplete Change History
   * Added `subWordMatch` filters and highlighters. [Contributed by Tobias
     Schultze]
 
+  * The `this` object now refers to the current AutoComplete instance instead of
+    the window in list locators, text locators, filters, formatters, and
+    highlighters.
+
   * Added an `originEvent` property to the event facade of `select` events. It
     contains an event facade of the DOM event that triggered the selection if
     the selection was triggered by a DOM event.
