@@ -210,8 +210,9 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         }
 
         // Fire a 'ready' event once we're ready to route. We wait first for all
-        // subclass initializers to finish, and then an additional 20ms to allow
-        // the browser to fire an initial `popstate` event if it wants to.
+        // subclass initializers to finish, then for window.onload, and then an
+        // additional 20ms to allow the browser to fire a useless initial
+        // `popstate` event if it wants to (and Chrome always wants to).
         self.publish(EVT_READY, {
             defaultFn  : self._defReadyFn,
             fireOnce   : true,
@@ -219,9 +220,11 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         });
 
         self.once('initializedChange', function () {
-            setTimeout(function () {
-                self.fire(EVT_READY, {dispatched: !!self._dispatched});
-            }, 20);
+            Y.once('load', function () {
+                setTimeout(function () {
+                    self.fire(EVT_READY, {dispatched: !!self._dispatched});
+                }, 20);
+            });
         });
     },
 

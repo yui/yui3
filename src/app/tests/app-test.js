@@ -532,6 +532,27 @@ modelSuite.add(new Y.Test.Case({
 
         model.destroy({'delete': true}, mock.callback);
         Y.Mock.verify(mock);
+    },
+
+    'destroy() should remove the model from all lists': function () {
+        var model     = new Y.Model(),
+            listOne   = new Y.ModelList(),
+            listTwo   = new Y.ModelList(),
+            listThree = new Y.ModelList();
+
+        listOne.add(model);
+        listTwo.add(model);
+        listThree.add(model);
+
+        Assert.areSame(1, listOne.size(), 'model should be added to list one');
+        Assert.areSame(1, listTwo.size(), 'model should be added to list two');
+        Assert.areSame(1, listThree.size(), 'model should be added to list three');
+
+        model.destroy();
+
+        Assert.areSame(0, listOne.size(), 'model should be removed from list one');
+        Assert.areSame(0, listTwo.size(), 'model should be removed from list two');
+        Assert.areSame(0, listThree.size(), 'model should be removed from list three');
     }
 }));
 
