@@ -21,7 +21,7 @@
             }
 
             .yui3-panel {
-              outline:none;
+              
             }
 
 
@@ -64,39 +64,56 @@
                 srcNode: "#panelContent",
                 visible:true,
                 centered: true,
-                headerContent: "This is the header content for this panel"
-                // headerButtons: [
-                //   {
-                //     value: "Ok",
-                //     defaultFn: function(e) { e.preventDefault(); alert("I Pressed Okay."); },
-                //     href: "http://www.google.com"
-                //   },
-
-                //   {
-                //     value: "Close",
-                //     defaultFn: function(e) { e.preventDefault(); panel.hide(); },
-                //     href: "http://www.yahoo.com"
-                //   }
-                // ]
+                headerContent: "This is the header content for this panel",
+                focusOn: [],
+                buttons: 
+                [
+                  {
+                    value: "Ok",
+                    defaultFn: function(e) { 
+                      e.preventDefault(); 
+                      panel.hide();
+                    },
+                    href: "http://www.google.com",
+                    section: Y.WidgetStdMod.FOOTER
+                  }
+                ]
               });
 
+              panel.set('hideOn', [{ node: panel.get('boundingBox'), eventName: "clickoutside"}]);
+
+              panel.plug([Y.Plugin.Resize, Y.Plugin.Drag]);
+              // var button1 = {
+              //   value: "Ok",
+              //   defaultFn: function(e) { e.preventDefault(); alert("I Pressed Okay."); },
+              //   href: "http://www.google.com",
+              //   section: Y.WidgetStdMod.FOOTER
+              // };
+              // panel.addButton(button1);
+              //panel.render();
+              // panel.plug([Y.Plugin.Resize, Y.Plugin.Drag]);
+              // var button1 = {
+              //   value: "Ok",
+              //   defaultFn: function(e) { e.preventDefault(); alert("I Pressed Okay."); },
+              //   href: "http://www.google.com",
+              //   section: Y.WidgetStdMod.FOOTER
+              // };
+              // var button2 = {
+              //   value: "Cancel",
+              //   defaultFn: function(e) { e.preventDefault(); alert("I Pressed Cancel."); },
+              //   href: "http://www.google.com",
+              //   section: Y.WidgetStdMod.FOOTER
+              // };
+              // panel.addButton(button1);
+              // panel.addButton(button2);
+
+
+              // panel.header().setContent("Title text");
+              // panel.body().empty();
+              // panel.setStdModContent(Y.WidgetStdMod.FOOTER, "New content");
+              // panel.setStdModContent(Y.WidgetStdMod.FOOTER, "New content3 ", Y.WidgetStdMod.AFTER);
 
               panel.render();
-              // panel.plug([Y.Plugin.Resize, Y.Plugin.Drag]);
-              var button1 = {
-                value: "Ok",
-                defaultFn: function(e) { e.preventDefault(); alert("I Pressed Okay."); },
-                href: "http://www.google.com",
-                section: Y.WidgetStdMod.FOOTER
-              };
-              var button2 = {
-                value: "Cancel",
-                defaultFn: function(e) { e.preventDefault(); alert("I Pressed Cancel."); },
-                href: "http://www.google.com",
-                section: Y.WidgetStdMod.FOOTER
-              };
-              panel.addButton(button1);
-              panel.addButton(button2);
               // panel.set('buttons', [
               //   {
               //     value: "Ok",
