@@ -184,7 +184,7 @@ YUI.add('editor-base', function(Y) {
                             if (sel._selection.pasteHTML) {
                                 sel._selection.pasteHTML(EditorBase.TABKEY);
                             } else {
-                                console.log('IE9 is here.. SHould be default behaviour now');
+                                //console.log('IE9 is here.. SHould be default behaviour now');
                                 this.execCommand('inserthtml', EditorBase.TABKEY);
                             }
                         }
