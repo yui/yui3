@@ -487,7 +487,7 @@ You can then implement the `initializer`, `destructor`, `renderUI`, `bindUI` and
 along with the methods which support the attribute state handling and API.</p>
 
 <p>
-The <a href="../examples/widget/widget-extend.html">"Extending The Widget Class"</a> example walks you through the step-by-step process involved in implementing a Spinner widget using this template structure. The example along with the template file should provide a good jumping off point for developing your own widgets.
+The <a href="widget-extend.html">"Extending The Widget Class"</a> example walks you through the step-by-step process involved in implementing a Spinner widget using this template structure. The example along with the template file should provide a good jumping off point for developing your own widgets.
 </p>
 
 <p>Additionally, the template structure shown above is captured in this <a href="{{componentAssets}}/mywidget.js.txt">"MyWidget" template file</a>, which you can use as a starting point to develop your own widgets.</p>
@@ -522,7 +522,7 @@ These code reuse mechanisms are known as <a href="../base/#plugins"><em>Plugins<
                 <p>Something baked into the class, but implemented so that it can also be re-used to build other classes.</p></li>
 
             <li>
-                <p><a href="../examples/widget/widget-parentchild-listbox.html">WidgetParent, WidgetChild</a> and <a href="../examples/widget/widget-tooltip.html">WidgetPosition, WidgetStack</a> are good examples of extensions.</p>
+                <p><a href="widget-parentchild-listbox.html">WidgetParent, WidgetChild</a> and <a href="widget-tooltip.html">WidgetPosition, WidgetStack</a> are good examples of extensions.</p>
                 <p>
                 A `Tree` widget class always needs Parent/Child support. However, so does a `Menu` widget class. 
                 We want to reuse the Parent/Child support across both classes, without forcing them to extend a shared base class. 
@@ -544,7 +544,7 @@ These code reuse mechanisms are known as <a href="../base/#plugins"><em>Plugins<
                 <p>A feature which you may only want to apply to one instance, out of the ten instances of your widget on a page, is a plugin.</p></li>
 
             <li>
-                <p>The <a href="../examples/overlay/overlay-anim-plugin.html">Animation</a> and <a href="../examples/overlay/overlay-io-plugin.html">IO</a> plugin examples are good use cases.</p>
+                <p>The <a href="../overlay/overlay-anim-plugin.html">Animation</a> and <a href="../overlay/overlay-io-plugin.html">IO</a> plugin examples are good use cases.</p>
 
                 <p>
                 You don't want to have to bake Animation or IO support into a class (potentially resulting in the need to ship `MyAnimatedWidget`, `MyIOEnabledWidget`, `MyAnimatedAndIOEnabledWidget` and `MyWidget` classes). 
@@ -657,16 +657,16 @@ These code reuse mechanisms are known as <a href="../base/#plugins"><em>Plugins<
 <p>Below are some examples showing how you can use some of these extensions:</p>
 
 <ul>
-    <li>Using Extensions: <a href="../examples/widget/widget-build.html">Building Custom Widget Classes</a></li>
-    <li>Widget-Position, Widget-Stack: <a href="../examples/widget/widget-tooltip.html">A Simple Tooltip Widget</a></li>
-    <li>Widget-Parent, Widget-Child: <a href="../examples/widget/widget-parentchild-listbox.html">A Heirarchical ListBox Widget</a></li>
+    <li>Using Extensions: <a href="widget-build.html">Building Custom Widget Classes</a></li>
+    <li>Widget-Position, Widget-Stack: <a href="widget-tooltip.html">A Simple Tooltip Widget</a></li>
+    <li>Widget-Parent, Widget-Child: <a href="widget-parentchild-listbox.html">A Heirarchical ListBox Widget</a></li>
 </ul>
 
 <p>You can also look at some of the bundled widgets which are built using extensions:</p>
 
 <ul>
-    <li><a href="../examples/overlay/index.html">Overlay</a><p>Uses widget-position, widget-position-align, widget-position-constrain, widget-stack, widget-stdmod</p></li>
-    <li><a href="../examples/tabview/index.html">TabView</a><p>Uses widget-parent, widget-child</p></li>
+    <li><a href="../overlay/index.html">Overlay</a><p>Uses widget-position, widget-position-align, widget-position-constrain, widget-stack, widget-stdmod</p></li>
+    <li><a href="../tabview/index.html">TabView</a><p>Uses widget-parent, widget-child</p></li>
 </ul>
 
 <p>The <a href="{{componentAssets}}/../base/myextension.js.txt">"MyExtension" template file</a> provides a starting point for you to create your own extensions.</p>
@@ -679,9 +679,9 @@ These code reuse mechanisms are known as <a href="../base/#plugins"><em>Plugins<
     <li><a href="{{apiDocs}}/WidgetAnim.html">Widget Animation Plugin</a> (api documentation)</li>
     <li><a href="{{apiDocs}}/Plugin.Drag.html">Widget (and Node) Drag/Drop Plugin</a> (api documentation)</li>
 
-    <li><a href="../examples/widget/widget-plugin.html">Creating Widget Plugins</a> (example)</li>
-    <li><a href="../examples/overlay/overlay-io-plugin.html">Creating An Overlay IO Plugin</a> (example)</li>
-    <li><a href="../examples/overlay/overlay-io-anim.html">Creating An Overlay Animation Plugin</a> (example)</li>
+    <li><a href="widget-plugin.html">Creating Widget Plugins</a> (example)</li>
+    <li><a href="../overlay/overlay-io-plugin.html">Creating An Overlay IO Plugin</a> (example)</li>
+    <li><a href="../overlay/overlay-io-anim.html">Creating An Overlay Animation Plugin</a> (example)</li>
 </ul>
 
 <p>Additionally, the YUI Gallery is another source for plugins which provide additional functionality for YUI Widgets, such as the <a href="http://yuilibrary.com/gallery/show/overlay-modal">Modal Overlay Plugin</a> and the <a href="http://yuilibrary.com/gallery/show/widget-io">Widget IO Plugin</a>.</p>

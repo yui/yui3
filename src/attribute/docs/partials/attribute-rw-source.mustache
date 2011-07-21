@@ -1,0 +1,114 @@
+<div id="writeInitial">
+    <p>Construct o1, setting initial values for both foo and bar in the constructor: </p>
+    <label>foo: <input type="text" value="Initial Foo" class="fooVal"></label>
+    <label>bar: <input type="text" value="Initial Bar" class="barVal"></label>
+    <button type="button" class="do">Initial Values</button>
+    <div class="example-out"></div>
+</div>
+<div id="writeAgain">
+    <p>Try setting values again, after they've been set once: </p>
+    <label>foo: <input type="text" value="Set Foo Again" class="fooVal"></label>
+    <label>bar: <input type="text" value="Set Bar Again" class="barVal"></label>
+    <button type="button" class="do">Set Again</button>
+    <div class="example-out"></div>
+</div>
+<div id="writeInternally">
+    <p>Call a MyClass method, which sets foo internally (using _set): </p>
+    <label>foo: <input type="text" value="Set Foo Internally" class="fooVal"></label>
+    <button type="button" class="do">Set Internal</button>
+    <div class="example-out"></div>
+</div>
+
+<script type="text/javascript">
+YUI().use("node", "attribute", "escape", function(Y) {
+
+    // Setup a custom class with attribute support
+    function MyClass(cfg) {
+
+        var attrs = {
+            "foo" : {
+                value: "Default Foo",
+                readOnly: true
+            },
+     
+            "bar" : {
+                value: "Default Bar",
+                writeOnce: true
+            }
+        }
+
+        this.addAttrs(attrs, cfg);
+    }
+
+    MyClass.prototype.doSomething = function(val) {
+        // ... Do something which requires
+        // MyClass to change the value
+        // of foo ...
+
+        // Host code can reset value of 
+        // readOnly attributes interally,
+        // by working with the private _set
+        // property
+
+        this._set("foo", val);
+    };
+
+    Y.augment(MyClass, Y.Attribute);
+
+    function displayValues(o, title, node) {
+        var str = 
+            '<div class="myclass"><div class="myclass-title">' 
+            + title + 
+            '</div><ul class="myclass-attrs"><li>foo (readOnly): ' 
+            + Y.Escape.html(o.get("foo")) 
+            + '</li><li>bar (writeOnce): '
+            + Y.Escape.html(o.get("bar"))
+            + '</li></ul></div>';
+
+        Y.one(node).set("innerHTML", str);
+    }
+
+    var o1;
+
+    Y.on("click", function() {
+
+        var fooVal = Y.one("#writeInitial .fooVal").get("value");
+        var barVal = Y.one("#writeInitial .barVal").get("value");
+
+        o1 = new MyClass({
+            foo: fooVal,
+            bar: barVal
+        });
+
+        displayValues(o1, "Attempt to set initial values in constructor", "#writeInitial .example-out");
+
+    }, "#writeInitial .do");
+
+    Y.on("click", function() {
+
+        if (o1) {
+            var fooVal = Y.one("#writeAgain .fooVal").get("value");
+            var barVal = Y.one("#writeAgain .barVal").get("value");
+
+            // Attempt to reset values:
+            o1.set("foo", fooVal);
+            o1.set("bar", barVal);
+    
+            displayValues(o1, "Attempt to set values again, using set", "#writeAgain .example-out");
+        }
+
+    }, "#writeAgain .do");
+
+    Y.on("click", function() {
+
+        if (o1) {
+            var val = Y.one("#writeInternally .fooVal").get("value");
+            // Call method, which sets foo internally...
+            o1.doSomething(val);
+
+            displayValues(o1, "Set the value of foo (readOnly) internally", "#writeInternally .example-out");
+        }
+
+    }, "#writeInternally .do");
+});
+</script>

@@ -1,0 +1,77 @@
+<div id="scrollview-container">
+    <div id="scrollview-header">
+        <h1>Basic ScrollView</h1>
+    </div>
+    <div id="scrollview-content" class="yui3-scrollview-loading">
+        <ul>
+            <li>AC/DC</li>
+            <li>Aerosmith</li>
+            <li>Billy Joel</li>
+            <li>Bob Dylan</li>
+            <li>Bob Seger</li>
+            <li>Bon Jovi</li>
+            <li>Bruce Springsteen</li>
+            <li>Creed</li>
+            <li>Creedence Clearwater Revival</li>
+            <li>Dave Matthews Band</li>
+            <li>Def Leppard</li>
+            <li>Eagles</li>
+            <li>Eminem</li>
+            <li>Fleetwood Mac</li>
+            <li>Green Day</li>
+            <li>Guns N' Roses</li>
+            <li>James Taylor</li>
+            <li>Jay-Z</li>
+            <li>Jimi Hendrix</li>
+            <li>Led Zeppelin</li>
+            <li>Lynyrd Skynyrd</li>
+            <li>Metallica</li>
+            <li>Motley Crue</li>
+            <li>Neil Diamond</li>
+            <li>Nirvana</li>
+            <li>Ozzy Osbourne</li>
+            <li>Pearl Jam</li>
+            <li>Pink Floyd</li>
+            <li>Queen</li>
+            <li>Rod Stewart</li>
+            <li>Rush</li>
+            <li>Santana</li>
+            <li>Simon and Garfunkel</li>
+            <li>Steve Miller Band</li>
+            <li>The Beatles</li>
+            <li>The Doors</li>
+            <li>The Police</li>
+            <li>The Rolling Stones</li>
+            <li>Tom Petty</li>
+            <li>U2</li>
+            <li>Van Halen</li>
+            <li>Willie Nelson</li>
+            <li>ZZ Top</li>
+        </ul>
+    </div>
+</div>
+
+<div id="additional-content">
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquam hendrerit elit id vulputate. Pellentesque pellentesque erat rutrum velit facilisis sodales convallis tellus lacinia. Curabitur gravida mi sit amet nulla suscipit sed congue dolor volutpat. Aenean sem tortor, pretium et euismod in, imperdiet sit amet urna. Ut ante nisi, auctor mattis suscipit a, ullamcorper eget leo. Phasellus sagittis ante at lectus rutrum ut sollicitudin sem malesuada. Duis ultrices sapien et nulla tincidunt malesuada. Mauris ante turpis, dignissim eu tincidunt vitae, placerat quis diam. In augue nisl, cursus at rutrum ut, scelerisque et erat. Suspendisse potenti. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris orci dui, aliquam ut convallis ut, dapibus et erat. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aliquam erat volutpat. Mauris placerat elit id lectus rhoncus in dignissim justo mollis. Donec nec odio sapien. In iaculis euismod felis non laoreet. Mauris ornare varius neque, et congue erat porta a. Aliquam nec auctor lectus. Etiam ut ipsum a nibh iaculis fringilla.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquam hendrerit elit id vulputate. Pellentesque pellentesque erat rutrum velit facilisis sodales convallis tellus lacinia. Curabitur gravida mi sit amet nulla suscipit sed congue dolor volutpat. Aenean sem tortor, pretium et euismod in, imperdiet sit amet urna. Ut ante nisi, auctor mattis suscipit a, ullamcorper eget leo. Phasellus sagittis ante at lectus rutrum ut sollicitudin sem malesuada. Duis ultrices sapien et nulla tincidunt malesuada. Mauris ante turpis, dignissim eu tincidunt vitae, placerat quis diam. In augue nisl, cursus at rutrum ut, scelerisque et erat. Suspendisse potenti. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris orci dui, aliquam ut convallis ut, dapibus et erat. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aliquam erat volutpat. Mauris placerat elit id lectus rhoncus in dignissim justo mollis. Donec nec odio sapien. In iaculis euismod felis non laoreet. Mauris ornare varius neque, et congue erat porta a. Aliquam nec auctor lectus. Etiam ut ipsum a nibh iaculis fringilla.</p>
+</div>
+
+<script type="text/javascript" charset="utf-8">
+
+    YUI().use('scrollview-base', function(Y) {
+
+        var scrollView = new Y.ScrollView({
+            id:"scrollview",
+            srcNode: '#scrollview-content',
+            height: 310,
+            flick: {
+                minDistance:10,
+                minVelocity:0.3,
+                axis: "y"
+            }
+        });
+
+        scrollView.render();
+    });
+
+</script>

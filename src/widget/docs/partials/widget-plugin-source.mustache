@@ -1,0 +1,14 @@
+<div id="demo"></div>
+<script type="text/javascript">
+YUI().use("widget", "gallery-widget-io", function(Y) {
+    var widget = new Y.Widget();
+
+    widget.plug(Y.Plugin.WidgetIO, {
+        uri : '{{componentAssets}}/news.php?query=web+browser',
+        loading: '<img class="yui3-loading" width="32px" height="32px" src="{{componentAssets}}/img/ajax-loader.gif">'
+    });
+
+    widget.render('#demo');
+    widget.io.refresh();
+});
+</script>

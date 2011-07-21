@@ -1,0 +1,228 @@
+<div id="speeddate">
+
+    <h1>Communicating With Attribute Events On Speed Dates</h1>
+
+    <div id="john">
+        <button type="button" class="hi">Hi, I'm John</button>
+
+        <span class="interests disabled">
+            I enjoy: 
+            <label><input type="checkbox" class="interest" value="Sunsets" disabled="disabled"> Sunsets</label>
+            <label><input type="checkbox" class="interest" value="Reading Specifications" disabled="disabled"> Reading Specifications</label> 
+            <label><input type="checkbox" class="interest" value="Saving Whales" disabled="disabled"> Saving Whales</label>
+            <label><input type="checkbox" class="interest" value="Knitting" disabled="disabled"> Knitting</label>
+        </span>
+        <div class="shirt"></div>
+    </div>
+
+    <div id="jane">
+        <button type="button" class="hi" disabled="disabled">Hey, I'm Jane</button>
+        <button type="button" class="movingOn" disabled="disabled">I'm Moving On...</button> <span class="reconsider disabled">(unless he likes whales, and avoids knitting <em class="message"></em>)</span>
+        <div class="shirt"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+// Get a new instance of YUI and 
+// load it with the required set of modules
+
+YUI().use("collection", "event", "node", "attribute", "substitute", function(Y) {
+
+    // Setup custom class which we want to add managed attribute support to
+
+    function SpeedDater(cfg) {
+        // When constructed, setup the initial attributes for the instance, by calling the addAttrs method.
+        var attrs = {
+            name : {
+                writeOnce:true
+            },
+
+            personality : {
+                value:50
+            },
+
+            available : {
+                value:true
+            }, 
+
+            interests : {
+                value : []
+            }
+        };
+
+        this.addAttrs(attrs, cfg);
+    }
+
+    // The HTML template representing the SpeedDater name tag.
+    SpeedDater.NAMETAG = '<div class="sd-nametag"> \
+                            <div class="sd-hd">Hello!</div> \
+                            <div class="sd-bd"> \
+                                <p>I\'m <span class="sd-name">{name}</span> and my PersonalityQuotientIndex is <span class="sd-personality">{personality}</span></p> \
+                                <p>I enjoy <span class="sd-interests">{interests}</span>.</p> \
+                            </div> \
+                            <div class="sd-ft sd-availability">{available}</div> \
+                         </div>';
+
+    // Method used to render the visual representation of a SpeedDater object's state (in this case as a name tag)
+    SpeedDater.prototype.applyNameTag = function(where) {
+
+        var tokens = {
+            name: this.get("name"),
+            available: (this.get("available")) ? "" : "Sorry, moving on",
+            personality: this.get("personality"),
+            interests: (this.get("interests").length == 0) ? "absolutely nothing" : this.get("interests").join(", ")
+        };
+
+        this.nameTag = Y.Node.create(Y.substitute(SpeedDater.NAMETAG, tokens));
+        Y.one(where).appendChild(this.nameTag);
+
+        this.listenForChanges();
+    };
+
+    // Method used to attach attribute change event listeners, so that the SpeedDater instance 
+    // will react to changes in attribute state, and update what's rendered on the page
+    SpeedDater.prototype.listenForChanges = function() {
+
+        // Sync up the UI for "available", after the value of the "available" attribute has changed:
+        this.after("availableChange", function(e) {
+            var taken = (e.newVal) ? "" : "Oh, is that the time?";
+            this.nameTag.one(".sd-availability").set("innerHTML", taken);
+        });
+
+        // Sync up the UI for "name", after the value of the "name" attribute has changed:
+        this.after("nameChange", function(e) {
+            var name = e.newVal;
+            this.nameTag.one(".sd-name").set("innerHTML", name);
+        });
+
+        // Sync up the UI for "personality", after the value of the "personality" attribute has changed:
+        this.after("personalityChange", function(e) {
+            var personality = e.newVal;
+
+            var personalityEl = this.nameTag.one(".sd-personality");
+            personalityEl.set("innerHTML", personality);
+
+            if (personality > 90) {
+                personalityEl.addClass("sd-max");
+            }
+        });
+
+        // Sync up the UI for "interests", after the value of the "interests" attribute has changed:
+        this.after("interestsChange", function(e) {
+            var interests = (e.newVal.length == 0) ? "absolutely nothing" : this.get("interests").join(", ");
+            this.nameTag.one(".sd-interests").set("innerHTML", interests);
+        });
+    };
+
+    // Augment custom class with Attribute
+    Y.augment(SpeedDater, Y.Attribute);
+
+    var john, jane;
+
+    Y.on("click", function() {
+
+        if (!john) {
+
+            john = new SpeedDater({
+                name: "John",
+                personality: 78
+            });
+            john.applyNameTag("#john .shirt");
+
+            Y.one("#jane .hi").set("disabled", false); 
+        }
+
+    }, "#john .hi");
+
+    Y.on("click", function() {
+
+        if (!jane) {
+
+            jane = new SpeedDater({
+                name: "Jane",
+                personality: 82,
+                interests: ["Popcorn", "Saving Whales"]
+            });
+            jane.applyNameTag("#jane .shirt");
+
+            // Update Jane's interests state, after John's interests state changes...
+            john.after("interestsChange", function(e) {
+
+                var janesInterests = jane.get("interests"),
+                    johnsInterests = e.newVal,
+
+                    readingSpecs = "Reading Specifications";
+    
+                // If it turns out that John enjoys reading specs, then Jane can admit it too...
+                if (Y.Array.indexOf(johnsInterests, readingSpecs) !== -1) {
+                    if(Y.Array.indexOf(janesInterests, readingSpecs) == -1) {
+                        janesInterests.push(readingSpecs);
+                    }
+                } else {
+                    janesInterests = Y.Array.reject(janesInterests, function(item){return (item == readingSpecs);});
+                }
+
+                jane.set("interests", janesInterests);
+                jane.set("available", true);
+
+                setMessage("");
+            });
+
+            // We can also listen before an attribute changes its value, and decide if we want to
+            // allow the state change to occur or not. Invoking e.preventDefault() stops the state from
+            // being updated. 
+
+            // In this case, Jane can change her mind about making herself unavailable, if John likes 
+            // saving whales, as long as he doesn't dig knitting too.
+ 
+            jane.on("availableChange", function(e) {
+                var johnsInterests = john.get("interests");
+                var janeAvailable = e.newVal;
+                if (janeAvailable === false && Y.Array.indexOf(johnsInterests, "Saving Whales") !== -1 &&  Y.Array.indexOf(johnsInterests, "Knitting") == -1 ) {
+                    // Reconsider..
+                    e.preventDefault();
+
+                    setMessage("... which he does");
+                };
+            });
+
+            enableExampleUI();
+        }
+
+    }, "#jane .hi");
+
+    Y.on("click", function() { 
+        jane.set("available", false); 
+    }, "#jane .movingOn");
+
+    // A delegate DOM event listener which will update John's interests, based on the checkbox state, whenever
+    // a checkbox is clicked.
+    Y.delegate("click", function() {
+        var interests = [];
+
+        Y.Node.all("#john input[type=checkbox].interest").each(function(checkbox) {
+            if (checkbox.get("checked")) {
+                interests.push(checkbox.get("value"));
+            }
+        });
+        john.set("interests", interests);
+
+    }, "#john", "input[type=checkbox].interest");
+
+
+    // Example helpers...
+    function enableExampleUI() {
+        Y.all("#jane button").set("disabled", false);
+        Y.all("#john button").set("disabled", false);
+        Y.all("#john input").set("disabled", false);
+        Y.one("#john .interests").removeClass("disabled");
+        Y.one("#jane .reconsider").removeClass("disabled");
+    }
+    
+    function setMessage(msg) {
+        Y.one("#jane .message").set("innerHTML", msg);      
+    }
+
+ });
+</script>

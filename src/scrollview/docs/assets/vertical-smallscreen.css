@@ -1,0 +1,18 @@
+body {
+    min-height: 420px;
+    overflow:hidden;
+}
+
+#additional-content {
+    display:none;
+}
+
+#scrollview-container {
+    float:none;
+    width:100%;
+    margin:0;
+}
+
+#scrollview {
+    border:0;
+}

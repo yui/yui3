@@ -5,5 +5,17 @@
     "author"     : "sdesai",
 
     "tags": ["intl", "utility"],
-    "use" : ["intl"]
+    "use" : ["intl"],
+    
+    "examples": [
+        {
+            "name"       : "intl-basic",
+            "displayName": "Language Resource Bundles",
+            "description": "How to create components which use language resource bundles.",
+            "modules"    : ["intl"],
+            "tags"       : ["intl", "loader"],
+
+            "hideTableOfContents": true
+        }
+    ]
 }
