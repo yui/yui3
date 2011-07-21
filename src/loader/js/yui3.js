@@ -1350,6 +1350,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "array-invoke", 
             "arraylist", 
             "base-build", 
+            "escape", 
             "json-parse", 
             "model"
         ]
@@ -2012,4 +2013,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'a1ef06e7414fd9ca85c7ef3238c28d3e';
+YUI.Env[Y.version].md5 = '564a4b53dfc9be9dae4d78490578e039';
