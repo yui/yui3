@@ -1,0 +1,120 @@
+<div class="intro">
+    <p>This example shows how to create a basic ScrollView widget. The base ScrollView widget doesn't have a scrollbar indicator or pagination support.</p>
+</div>
+
+<div class="example newwindow">
+    <a href="scrollview-base-example.html" target="_blank" class="button">
+        View Example in New Window
+    </a>
+</div>
+
+<h2>The Basic ScrollView Widget</h2>
+
+<p>In this example, we'll create a basic ScrollView instance, without any additional feature plugins applied. This is the lightest version of the ScrollView widget. In later examples, we'll see how we can pull in different modules and plugins to provide additional features.</p>
+
+<h3>Modules Used</h3>
+
+<p>Since we only need the basic scrollview for this example, we pull in the `scrollview-base` module, the lightest version of ScrollView:</p>
+
+```
+YUI().use('scrollview-base', function(Y) {
+    ...
+});
+
+```
+
+<p>The `scrollview-base` module provides a ScrollView without any plugins applied. We'll see in the <a href="scrollview.html">Scrollview With Scroll Indicators</a> example, that the `scrollview` module provides a base ScrollView bundled with scroll indicator support.</p>
+
+<h3>Instantiating The ScrollView Widget</h3>
+
+<p>The ScrollView provides support for scrollable content. In general this content can be anything, but most often it is in the form of a list, to be scrolled through. For this example, we'll provide the content for the scrollview in the form of a list, as shown below:</p>
+
+```
+<div id="scrollview-content" class="yui3-scrollview-loading">
+    <ul>
+        <li>AC/DC</li>
+        <li>Aerosmith</li>
+        <li>Billy Joel</li>
+        <li>Bob Dylan</li>
+        ...
+    </ul>
+</div>
+```
+<p>We add the `yui3-scrollview-loading` class as described in the <a href="../widget/index.html#hidingmarkup">Widget Progressive Enhancement</a> section, and provide a custom rule to hide this progressively enhanced content while the scrollview is being rendered:</p>
+
+```
+.yui3-js-enabled .yui3-scrollview-loading {
+    visibility:hidden;
+}
+```
+
+<p>To instantiate the ScrollView instance, we provide it with the `srcNode` attribute during construction, so it uses the markup above for it's content, as shown below. We could also add the content dynamically, however providing the markup on the page, allows users without JavaScript enabled to still see the content.</p>
+
+```
+YUI().use('scrollview-base', function(Y) {
+
+    var scrollView = new Y.ScrollView({
+        id:"scrollview",
+        srcNode: '#scrollview-content',
+        height: 310,
+        flick: {
+            minDistance:10,
+            minVelocity:0.3,
+            axis: "y"
+        }
+    });
+
+    scrollView.render();
+});
+```
+
+<p>For this example, since we want a vertically scrolling ScrollView widget, we also give it a height during construction. Without the height, the ScrollView widget would be as tall as it's content list, and there would be no need to scroll. We also give the ScrollView widget bounding box an id ("scrollview") which we can target in the example CSS. Finally, we constrain flicks so that only flicks along the "y" axis are picked up.</p>
+
+<p>As the last step, to see the functional ScrollView on the page, we call `scrollView.render()`.</p>
+
+<h3>Controlling Sensitivity</h3>
+
+<p>The scroll dynamics for the ScrollView widget can be controlled by tweaking the following attributes, either during construction or after:</p>
+
+<dl>
+    <dt>flick</dt>
+    <dd>Defines the minimum distance and/or minimum velocity which define a flick. It can be set to 0 to disable flick support completely.</dd>
+
+    <dt>bounce</dt>
+    <dd>Defines how quickly the velocity of the scrollview content decreases during a bounce (when the scrollview hits the edge of it's scroll limits). It can be set to 0 to disable bounce completely.</dd>
+
+    <dt>deceleration</dt>
+    <dd>Defines how quickly the velocity of the scrollview content decreases in response to a flick.</dd>
+</dl>
+
+<p>Additional details about these parameters and a few other static properties which can be used to modify scroll dynamics are discussed in the <a href="index.html#attributes">ScrollView documentation</a>.</p>
+
+<h3>Modifying Layout For Small Screen Devices</h3>
+
+<p>This example also shows how you can modify the look and feel for your page/application, based on the size of the device you're delivering it to. For this example, when the maximum width of the device is 480px or less, we provide additional CSS rules which hide additional content and make the scrollview a full screen Widget, using media queries:</p>
+
+```
+<link media="handheld, only screen and (max-device-width: 480px)" 
+      href="{{componentAssets}}/examples-smallscreen.css" 
+      type="text/css" 
+      rel="stylesheet">
+```
+
+<p>The CSS in the above file, which is only served to devices matching the criteria in the `media` attribute, hides additional content and makes the ScrollView fill the width of the browser:</p>
+
+```
+#additional-content {
+    display:none;
+}
+
+.yui3-scrollview {
+    border:0;
+    margin:0;
+    width:100%;
+    float:none;
+}
+```
+<h2>Complete Example Source</h2>
+```
+{{>scrollview-base-source}}
+```

@@ -1,0 +1,321 @@
+<style type="text/css" scoped>
+
+    #boxParent {
+        overflow:hidden;
+        background-color:#004c6d;
+        height:25em;
+        padding:10px;
+        margin:5px;
+    }
+
+    #boxParent .yui3-box p, #attrs p {
+        margin:2px;
+    }
+
+    .attrs {
+        border:1px solid #000;
+        background-color:#cdcdcd;
+        margin:5px;
+    }
+
+    .attrs .header {
+        font-weight:bold;
+        background-color:#aaa;
+        padding:5px;
+    }
+
+    .attrs .body {
+        padding:10px;
+    }
+ 
+    .attrs .body .hints li {
+        padding-bottom:10px;
+    }
+
+    .attrs .footer {
+        padding:0px 20px 10px 20px;
+    }
+
+    .attrs label {
+        font-weight:bold;
+        display:block;
+        float:left;
+        width:4em;
+    }
+
+    .attrs .hint {
+        font-size:85%;
+        color: #004c6d;
+    }
+
+    .attrs .fields {
+        border-top:1px solid #aaa;
+        padding:10px;
+    }
+
+    .yui3-box {
+        padding:5px;
+        border:1px solid #000;
+        width:8em;
+        height:8em;
+        text-align:center;
+        color:#000;
+    }
+
+    .yui3-box .color, .yui3-box .coord {
+        font-family:courier;
+    }
+
+</style>
+
+<div class="intro">
+    <p>The <a href="attribute-basic.html">"Basic Attribute Configuration" example</a> shows how you can add attributes to a host class, and set up default values for them using the attribute configuration object. This example explores how you can configure `setter`, `getter` and `validator` functions for individual attributes, which can be used to modify or normalize attribute values during get and set invocations, and prevent invalid values from being stored.</p> 
+</div>
+
+<div class="example">
+    {{>attribute-getset-source}}
+</div>
+
+<h2>Getter, Setter And Validator Functions</h2>
+
+<p>Attribute lets you configure `getter` and `setter` functions for each attribute. These functions are invoked when the user calls Attribute's `get` and `set` methods, and provide a way to modify the value returned or the value stored respectively.</p>
+
+<p>You can also define a `validator` function for each attribute, which is used to validate the final value before it gets stored.</p>
+
+<p>All these functions receive the value and name of the attribute being set or retrieved, as shown in the example code below. The name is not used in this example, but is provided to support use cases where you may wish to share the same function between different attributes.</p>
+
+<h3>Creating The Box Class - The X, Y And XY Attributes</h3>
+
+<p>In this example, we'll set up a custom `Box` class representing a positionable element, with `x`, `y` and `xy` attributes.</p>
+
+<p>Only the `xy` attribute will actually store the page co-ordinate position of the box. The `x` and `y` attributes provide the user a convenient way to set only one of the co-ordinates. 
+However we don't want to store the actual values in the `x` and `y` attributes, to avoid having to constantly synchronize all three. 
+
+The `getter` and `setter` functions provide us with an easy way to achieve this. We'll define `getter` and `setter` functions for both the `x` and `y` attributes, which simply pass through to the `xy` attribute to store and retrieve values:</p>
+
+```
+// Setup a custom class with attribute support
+function Box(cfg) {
+
+    ...
+          
+    // Attribute configuration
+    var attrs = {
+
+        "parent" : {
+            value: null
+        },
+
+        "x" : {
+            setter: function(val, name) {
+                // Pass through x value to xy
+                this.set("xy", [parseInt(val), this.get("y")]);
+            },
+
+            getter: function(val, name) {
+                // Get x value from xy
+                return this.get("xy")[0];
+            }
+        },
+
+        "y" : {
+            setter: function(val, name) {
+                // Pass through y value to xy
+                this.set("xy", [this.get("x"), parseInt(val)]);
+            },
+
+            getter: function() {
+                // Get y value from xy
+                return this.get("xy")[1];
+            }
+        },
+
+        "xy" : {
+            // Actual stored xy co-ordinates
+            value: [0, 0],
+
+            setter: function(val, name) {
+                // Constrain XY value to the parent element.
+
+                // Returns the constrained xy value, which will
+                // be the final value stored.
+                return this.constrain(val);
+            },
+
+            validator: function(val, name) {
+                // Ensure we only store a valid data value
+                return (Y.Lang.isArray(val) && 
+                        val.length == 2 && 
+                        Y.Lang.isNumber(val[0]) && Y.Lang.isNumber(val[1]));
+            }
+        },
+
+    ...
+
+    this.addAttrs(attrs, cfg);
+
+    ...
+}
+```
+
+<p>The `validator` function for `xy` ensures that only valid values finally end up being stored.</p>
+
+<p>The `xy` attribute also has a `setter` function configured, which makes sure that the box is always constrained to it's parent element. The `constrain` method which it delegates to, takes the xy value the user is trying to set and returns a constrained value if the x or y values fall outside the parent box. The value which is returned by the `setter` is the value which is ultimately stored for the `xy` attribute:</p>
+
+```
+// Get min, max unconstrained values for X. 
+// Using Math.round to handle FF3's sub-pixel region values
+Box.prototype.getXConstraints = function() {
+    var parentRegion = this.get("parent").get("region");
+    return [Math.round(parentRegion.left + Box.BUFFER), 
+            Math.round(parentRegion.right - this._node.get("offsetWidth") - Box.BUFFER)];
+};
+
+// Get min, max unconstrained values for Y.  
+// Using Math.round to handle FF3's sub-pixel region values
+Box.prototype.getYConstraints = function() {
+    var parentRegion = this.get("parent").get("region");
+    return [Math.round(parentRegion.top + Box.BUFFER), 
+            Math.round(parentRegion.bottom - this._node.get("offsetHeight") - Box.BUFFER)];
+};
+
+// Constrains given x,y values
+Box.prototype.constrain = function(val) {
+
+    // If the X value places the box outside it's parent,
+    // modify it's value to place the box inside it's parent.
+
+    var xConstraints = this.getXConstraints();
+
+    if (val[0] < xConstraints[0]) {
+        val[0] = xConstraints[0];
+    } else {
+        if (val[0] > xConstraints[1]) {
+            val[0] = xConstraints[1];
+        }
+    }
+
+    // If the Y value places the box outside it's parent,
+    // modify it's value to place the box inside it's parent.
+
+    var yConstraints = this.getYConstraints();
+
+    if (val[1] < yConstraints[0]) {
+        val[1] = yConstraints[0];
+    } else {
+        if (val[1] > yConstraints[1]) {
+            val[1] = yConstraints[1];
+        }
+    }
+
+    return val;
+};
+```
+
+<p>The `setter`, `getter` and `validator` functions are invoked with the host object as the context, so that they can refer to the host object using "`this`", as we see in the `setter` function for `xy`.</p>
+
+<h3>The Color Attribute - Normalizing Stored Values Through Get</h3>
+
+<p>The `Box` class also has a `color` attribute which also has a `getter` and `validator` functions defined:</p>
+
+```
+...
+"color" : {
+    value: "olive",
+
+    getter: function(val, name) {
+        if (val) {
+            return Y.Color.toHex(val);
+        } else {
+            return null;
+        }
+    },
+
+    validator: function(val, name) {
+        return (Y.Color.re_RGB.test(val) || Y.Color.re_hex.test(val) 
+                    || Y.Color.KEYWORDS[val]);
+    }
+}
+...
+```
+
+<p>The role of the `getter` handler in this case is to normalize the actual stored value of the `color` attribute, so that users always receive the hex value, regardless of the actual value stored, which maybe a color keyword (e.g. `"red"`), an rgb value (e.g.`rbg(255,0,0)`), or a hex value (`#ff0000`). The `validator` ensures the the stored value is one of these three formats.</p>
+
+<h3>Syncing Changes Using Attribute Change Events</h3>
+
+<p>Another interesting aspect of this example, is it's use of attribute change events to listen for changes to the attribute values. `Box`'s `_bind` method configures a set of attribute change event listeners which monitor changes to the `xy`, `color` and `parent` attributes and update the rendered DOM for the Box in response:</p>
+
+```
+// Bind listeners for attribute change events
+Box.prototype._bind = function() {
+
+    // Reflect any changes in xy, to the rendered Node
+    this.after("xyChange", this._syncXY);
+
+    // Reflect any changes in color, to the rendered Node
+    // and output the color value received from get
+    this.after("colorChange", this._syncColor);
+
+    // Append the rendered node to the parent provided
+    this.after("parentChange", this._syncParent);
+
+};
+```
+
+<p>Since only `xy` stores the final co-ordinates, we don't need to monitor the `x` and `y` attributes individually for changes.</p>
+
+<h3>DOM Event Listeners And Delegation</h3>
+
+<p>Although not an integral part of the example, it's worth highlighting the code which is used to setup the DOM event listeners for the form elements used by the example:</p>
+
+```
+// Set references to form controls
+var xTxt = Y.one("#x");
+var yTxt = Y.one("#y");
+var colorTxt = Y.one("#color");
+
+// Use event delegation for the action button clicks
+Y.delegate("click", function(e) {
+
+    // Get Node target from the event object. 
+
+    // We already know it's a button which has an action because
+    // of our selector (button.action), so all we need to do is 
+    // route it based on the id.
+    var id = e.currentTarget.get("id");
+
+    switch (id) {
+        case "setXY":
+            box.set("xy", [parseInt(xTxt.get("value")), parseInt(yTxt.get("value"))]);
+            break;
+        case "setX":
+            box.set("x", parseInt(xTxt.get("value")));
+            break;
+        case "setY":
+            box.set("y", parseInt(yTxt.get("value")));
+            break;
+        case "setColor":
+            box.set("color", Y.Lang.trim(colorTxt.get("value")));
+            break;
+        case "setAll":
+            box.set("xy", [parseInt(xTxt.get("value")), parseInt(yTxt.get("value"))]);
+            box.set("color", Y.Lang.trim(colorTxt.get("value")));
+            break;
+        case "getAll":
+            getAll();
+            break;
+        default:
+            break;
+    }
+
+}, "#attrs", "click", "button.action");
+```
+
+<p>Rather than attach individual listeners to each button, the above code uses YUI 3's `delegate` support, to listen for clicks from `buttons` with an `action` class which bubble up to the `attrs` element.</p>
+<p>The delegate listener uses the <a href="{{apiDocs}}/DOMEventFacade.html">Event Facade</a> which normalizes cross-browser access to DOM event properties, such as `currentTarget`, to route to the appropriate button handler. Note the use of selector syntax when we specify the elements for the listener (e.g. `#attrs`, `button.actions`) and the use of the <a href="{{apiDocs}}/Node.html">Node</a> facade when dealing with references to HTML elements (e.g. `xTxt, yTxt, colorTxt`).</p>
+
+<h2>Complete Example Source</h2>
+
+```
+{{>attribute-getset-source}}
+```

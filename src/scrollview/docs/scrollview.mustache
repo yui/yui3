@@ -1,0 +1,119 @@
+<div class="intro">
+    <p>This example shows how to create a ScrollView widget with a scrollbar indicator.  It also illustrates a technique for suppressing link behavior during a scroll &mdash; a technique you may require if you have a ScrollView instance heavily populated by links, as in this example.</p>
+</div>
+
+<div class="example newwindow">
+    <a href="scrollview-example.html" target="_blank" class="button">
+        View Example in New Window
+    </a>
+</div>
+
+<h2>The ScrollView Widget With A Scroll Indicator</h2>
+
+<p>In this example, we'll create a ScrollView instance, which also has a scrollbar indicator.</p>
+
+<h3>Modules Used</h3>
+
+<p>Since we want to use the base ScrollView, along with the ScrollViewScrollbars plugin, which provides the scrollbar indicator we use the `scrollview` module, instead of the `scrollview-base` module we used for the basic ScrollView example:</p>
+
+```
+// Pulls in scrollview-base and scrollview-scrollbars plugin 
+// and plugs it in (at the class level)
+
+YUI().use('scrollview', function(Y) {
+    ...
+});
+```
+
+<p>The `scrollview` module pulls in the basic ScrollView and also the ScrollViewScrollbars plugin. It has code which plugs the scrollbar plugin into the ScrollView base class:</p>
+
+```
+Y.Base.plug(Y.ScrollView, Y.Plugin.ScrollViewScrollbars);
+```
+
+<h3>Instantiating The ScrollView Widget</h3>
+
+<p>As with the <a href="scrollview-base.html">Base ScrollView</a> example, we provide the markup for the ScrollView content on the page, as shown below:</p>
+
+```
+<div id="scrollview-content" class="yui3-scrollview-loading">
+    <ul>
+        <li>AC/DC</li>
+        <li>Aerosmith</li>
+        <li>Billy Joel</li>
+        <li>Bob Dylan</li>
+        ...
+    </ul>
+</div>
+```
+
+<p>And we instantiate the ScrollView instance in the same way, providing the `srcNode` attribute during construction, so it uses the markup above for it's content:</p>
+
+```
+YUI().use('scrollview', function(Y) {
+
+    var scrollView = new Y.ScrollView({
+        id: "scrollview",
+        srcNode: '#scrollview-content',
+        height: 310,
+        flick: {
+            minDistance:10,
+            minVelocity:0.3,
+            axis: "y"
+        }
+    });
+
+    scrollView.render();
+});
+```
+
+<p>Again, for this example, since we want a vertically scrolling ScrollView widget, we also give it a height during construction and constrain flicks to the "y" axis.</p>
+
+<p>As the last step, to see the functional ScrollView on the page, we call `scrollView.render()`.</p>
+
+<p>The only difference, compared to the <a href="scrollview-base.html">Base ScrollView</a> example, is that the ScrollViewScrollbars plugin has been pulled down and plugged in by the `scrollview` module code shown above, so the ScrollView now has a scroll indicator. The scroll indicator is styled with rounded corners in browsers which support CSS rounded corners natively.</p>
+
+<h3>Accessing The Scrollbars Plugin API</h3>
+
+<p>As discussed in the <a href="index.html#scrollbars">ScrollBar Plugin</a> documentation, the API to control scrollbars is available on the scrollview instance, through the `scrollView.scrollbars` property. The ScrollBar plugin doesn't have too complex of an api, just a few methods to hide and show the scrollbars:</p>
+
+```
+    /* 
+      scrollView.scrollbars is an instance of the ScrollViewScrollbars plugin 
+    */
+    scrollView.scrollbars.hide();
+    scrollView.scrollbars.show(); 
+    scrollView.scrollbars.flash();
+});
+```
+
+<h3>Suppressing Default Link Behavior</h3>
+
+<p>In this example, the scrolling surface is populated with links. To prevent links' default action (page navigation) from taking place after a scroll, we look at the `lastScrolledAmt` property of our ScrollView instance; on a simple click, that number will be very close to zero, whereas after scroll that number will be much higher.  In this case, we're using a 2px threshold.</p>
+
+```
+var content = scrollView.get("contentBox"); 
+
+content.delegate("click", function(e) {
+    // Prevent links from navigating as part of a scroll gesture
+    if (Math.abs(scrollView.lastScrolledAmt) > 2) {
+        e.preventDefault();
+        Y.log("Link behavior suppressed.")
+    }
+}, "a");
+```
+
+<p>We also prevent default on mousedown, to prevent the native "drag link to desktop" behavior on certain browsers.</p>
+
+```
+content.delegate("mousedown", function(e) {
+    // Prevent default anchor drag behavior, on browsers 
+    // which let you drag anchors to the desktop
+    e.preventDefault();
+}, "a");
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>scrollview-source}}
+```

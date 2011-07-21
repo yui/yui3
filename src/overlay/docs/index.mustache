@@ -2,7 +2,7 @@
     <p>Overlay is a positionable and stackable widget, which also provides support for the standard module format layout, with a header, body and footer section.
 
     <p>The overlay is built by extending the <a href="{{apiDocs}}/Widget.html">`Widget`</a> class and adding the <a href="{{apiDocs}}/WidgetPosition.html">`WidgetPosition`</a>, <a href="{{apiDocs}}/WidgetStack.html">`WidgetStack`</a>, <a href="{{apiDocs}}/WidgetPositionAlign.html">`WidgetPositionAlign`</a>, <a href="{{apiDocs}}/WidgetPositionConstrain.html">`WidgetPositionConstrain`</a> and <a href="{{apiDocs}}/WidgetStdMod.html">`WidgetStdMod`</a> extensions, 
-    and doesn't actually need to add any implementation code of its own. The <a href="../examples/widget/widget-build.html">"Creating Custom Widget Classes"</a> example shows how you can use these extensions to build classes which mix and match some of the above features.</p>
+    and doesn't actually need to add any implementation code of its own. The <a href="../widget/widget-build.html">"Creating Custom Widget Classes"</a> example shows how you can use these extensions to build classes which mix and match some of the above features.</p>
 </div>
 
 {{>getting-started}}
@@ -185,7 +185,7 @@ overlay.move([100,200]);
 
 ```
 
-<p>The <a href="../examples/overlay/overlay-xy.html">Basic XY Positioning</a> example shows basic positioning in action.</p>
+<p>The <a href="overlay-xy.html">Basic XY Positioning</a> example shows basic positioning in action.</p>
 
 <h4>Extended XY Positioning</h4>
 
@@ -246,7 +246,7 @@ overlay.set("centered", true);
 
 ```
 
-<p>The <a href="../examples/overlay/overlay-align.html">"Alignment Support"</a> example shows aligned positioning support in action.</p>
+<p>The <a href="overlay-align.html">"Alignment Support"</a> example shows aligned positioning support in action.</p>
 
 <p>Note that currently alignment/centering is not maintained when the viewport is scrolled, window resized etc. Support to re-align the overlay on a default and custom set of trigger events will be 
 provided in a future release.</p>
@@ -261,7 +261,7 @@ overlay.set("constrain", "#constrainingNode");
 overlay.set("constrain", true);
 ```
 
-<p>The <a href="../examples/overlay/overlay-constrain.html">"Constrain Support"</a> example shows constrained positioning in action.</p>
+<p>The <a href="overlay-constrain.html">"Constrain Support"</a> example shows constrained positioning in action.</p>
 
 <h3 id="stacking">Stacking</h3>
 
@@ -286,7 +286,7 @@ var overlay = new Y.Overlay({
 
 ```
 
-<p>The <a href="../examples/overlay/overlay-stack.html">"Stack Support"</a> example creates a simple "bringToTop" implementation based on the `zIndex` attribute. 
+<p>The <a href="overlay-stack.html">"Stack Support"</a> example creates a simple "bringToTop" implementation based on the `zIndex` attribute. 
 This support will be provided as part of Overlay itself (or more precisely, as part of `WidgetStack`) in a future release.</p>
 
 <h3 id="content">Setting Section Content</h3>
@@ -378,7 +378,7 @@ overlay.setStdModContent(
 
 <p>The content change events mentioned above, will be fired when content is set through the `setStdModContent` method just as they would when setting the content using the attribute.</p>
 
-<p>The <a href="../examples/overlay/overlay-stdmod.html">Standard Module</a> example provides a way to exercise the above content attributes and methods.</p>
+<p>The <a href="overlay-stdmod.html">Standard Module</a> example provides a way to exercise the above content attributes and methods.</p>
 
 <h3 id="markup">Markup Structure</h3>
 

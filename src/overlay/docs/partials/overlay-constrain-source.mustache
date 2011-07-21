@@ -1,0 +1,74 @@
+<div class="overlay-example" id="overlay-example">
+    <div id="constrain-box"></div>
+</div>
+
+<script type="text/javascript">
+YUI().use("overlay", "slider", function(Y) {
+
+    /* Create Overlay from script */
+    var overlay = new Y.Overlay({
+        id:"overlay",
+
+        width:"140px",
+        height:"120px",
+
+        headerContent: "Constrained",
+        bodyContent: "Use the sliders to move the overlay",
+        footerContent: '<label><input type="checkbox" id="constrain"> Constrain </label>',
+
+        align:{node:"#constrain-box", points:["cc", "cc"]},
+        constrain:"#constrain-box",
+
+        render: "#overlay-example"
+    });
+
+    var checkbox = Y.one("#constrain");
+
+    function enableConstraints(constrain) {
+        if (constrain) {
+            overlay.set("constrain", "#constrain-box");
+            overlay.set("headerContent", "Constrained");
+        } else {
+            overlay.set("constrain", false);
+            overlay.set("headerContent", "Unconstrained");
+        }
+    };
+
+    checkbox.on("click", function(e) {
+        enableConstraints(this.get("checked"));
+    });
+
+    checkbox.set("checked", true);
+    enableConstraints(true);
+
+    var overlayXY = Y.one("#overlay").getXY();
+    var constrainRegion = Y.one("#constrain-box").get("region");
+
+    var sx = new Y.Slider({
+        id:"x",
+        length: "450px",
+        min: constrainRegion.left - 50,
+        max: constrainRegion.right + 50,
+        value: overlayXY[0],
+        render:"#overlay-example"
+    });
+
+    var sy = new Y.Slider({
+        id:"y",
+        axis: 'y',
+        length: "400px",
+        min: constrainRegion.top - 50, 
+        max:constrainRegion.bottom + 50,
+        value: overlayXY[1],
+        render: "#overlay-example"
+    });
+
+    sx.after("valueChange", function(e) {
+        overlay.set("x", e.newVal);
+    });
+
+    sy.after("valueChange", function(e) {
+        overlay.set("y", e.newVal);
+    });
+});
+</script>

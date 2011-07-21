@@ -1,0 +1,144 @@
+<div class="attrs">
+    <div class="header">Enter a new value and click the "Change Value" button:</div>
+    <div class="body">
+        <p>
+            <label for="attrSel">Attribute</label>: 
+            <select id="attrSel">
+                <option value="foo">foo</option>
+                <option value="bar">bar</option>
+                <option value="foobar">foobar</option>
+            </select>
+            <label id="preventFoobar" class="hidden"><input type="checkbox" checked="true"> Prevent change</label>
+        </p>
+        <p><label for="currentVal">Current Value</label>: <span id="currentVal"></span></p>
+        <p><label for="newVal">New Value</label>: <input type="text" id="newVal" /></p>
+    </div>
+    <div class="footer">
+        <button type="button" id="changeValue">Change Value</button>
+    </div>
+</div>
+
+<div id="example-out"></div>
+
+<script type="text/javascript">
+// Get a new YUI instance 
+YUI().use("node", "attribute", "escape", function(Y) {
+
+    // Setup a custom class with attribute support
+    function MyClass(cfg) {
+
+        // Setup attribute configuration
+        var attrs = {
+            "foo" : {
+                value:5
+            },
+     
+            "bar" : {
+                value:"Hello World!"
+            },
+    
+            "foobar" : {
+                value:true
+            }
+        };
+
+        this.addAttrs(attrs, cfg);
+    }
+
+    Y.augment(MyClass, Y.Attribute);
+
+    var o1 = new MyClass();
+
+    function displayEvent(e, title) {
+        var str = '<div class="event"><div class="event-title">' + title + '</div>';
+
+        if (e) {
+            str += 
+            '<ul class="event-props"><li>e.attrName: ' 
+            + e.attrName 
+            + '</li><li>e.prevVal: '
+            + Y.Escape.html(e.prevVal + "")
+            + '</li><li>e.newVal: '
+            + Y.Escape.html(e.newVal + "")
+            + '</li></ul></div>';
+        }
+
+        str += '</div>';
+ 
+        Y.one("#example-out").prepend(str);
+    }
+
+    // Start Example Form Handling
+    var attrSel = Y.one("#attrSel");
+    var newValTxt = Y.one("#newVal");
+    var currentValSpan = Y.one("#currentVal");
+    var preventFoobarChk = Y.one("#preventFoobar input[type=checkbox]");
+    var preventFoobarLbl = Y.one("#preventFoobar");
+
+    var attrOpts = attrSel.get("options");
+
+    function updateVal() {
+        var selIndex = attrSel.get("selectedIndex");
+        var attr = attrOpts.item(selIndex).get("value");
+        o1.set(attr, newValTxt.get("value"));
+    }
+
+    Y.on("click", updateVal, "#changeValue");
+
+    function populateCurrentValue() {
+        var selIndex = attrSel.get("selectedIndex");
+        var attr = attrOpts.item(selIndex).get("value");
+
+        currentValSpan.set("innerHTML", Y.Escape.html(o1.get(attr) + ""));
+        newValTxt.set("value", "");
+
+        if (attr === "foobar") {
+            preventFoobarLbl.removeClass("hidden");
+        } else {
+            preventFoobarLbl.addClass("hidden");
+        }
+    }
+
+    populateCurrentValue();
+
+    Y.on("change", populateCurrentValue, attrSel);
+    // End Example Form Handling
+
+    // Attribute Change Event Listners
+
+    o1.after("fooChange", function(e) {
+        displayEvent(e, "After fooChange");
+        currentValSpan.set("innerHTML", Y.Escape.html(e.newVal+""));
+    });
+
+    o1.after("barChange", function(e) {
+        displayEvent(e, "After barChange");
+        currentValSpan.set("innerHTML", Y.Escape.html(e.newVal+""));
+    });
+
+    o1.on("foobarChange", function(e) {
+
+        if (preventFoobarChk.get("checked")) {
+
+            // Calling preventDefault, in an "on" listener
+            // will prevent the attribute change from occuring
+            // and the after listener being called.
+
+            e.preventDefault();
+            displayEvent(null, "On foobarChange (prevented)");
+        }
+
+    });
+
+    o1.after("foobarChange", function(e) {
+
+        // This foobar after listener will not get called, 
+        // if we end up preventing default in the "on" 
+        // listener above.
+
+        displayEvent(e, "After foobarChange");
+        currentValSpan.set("innerHTML", Y.Escape.html(e.newVal+""));
+    });
+
+});
+</script>

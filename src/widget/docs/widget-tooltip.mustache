@@ -1,0 +1,459 @@
+<style type="text/css" scoped>
+    .yui3-tooltip {
+        position:absolute;
+    }
+
+    .yui3-tooltip-content {
+        color: #000;
+        padding: 2px 5px;
+        border-color: #D4C237 #A6982B #A6982B #A6982B;
+        border-width: 1px;
+        border-style: solid;
+        background-color: #FFEE69;
+    }
+
+    .yui3-tooltip-hidden {
+        visibility:hidden;
+    }
+
+    div.yui3-hastooltip {
+        border:1px solid #243356;
+        background-color:#406ED9;
+        color:#ffffff;
+        width:25em;
+        margin:20px 0px;
+        padding:5px;
+        cursor:default;
+    }
+
+    div.yui3-hastooltip span {
+        font-style:italic;
+        font-weight:bold;
+        color:#ABCEFF;
+    }
+
+    .yui3-tooltip-content strong {
+        font-weight:bold;
+    }
+</style>
+
+<div class="intro">
+    <p>This is an advanced example, in which we create a Tooltip widget, by extending the base `Widget` class, and adding `WidgetStack` and `WidgetPosition` extensions, through `Base.build`.</p>
+</div>
+
+<div class="example">
+    {{>widget-tooltip-source}}
+</div>
+
+<h2>Creating A Tooltip Widget Class</h2>
+
+<h3>Basic Class Structure</h3>
+
+<p>As with the basic <a href="widget-extend.html">"Extending Widget"</a> example, the `Tooltip` class will extend the `Widget` base class and follows the same pattern we use for other classes which extend Base.</p>
+
+<p>Namely:</p>
+
+<ul>
+    <li>Set up the constructor to invoke the superclass constructor</li>
+    <li>Define a `NAME` property, to identify the class</li>
+    <li>Define the default attribute configuration, using the `ATTRS` property</li>
+    <li>Implement prototype methods</li>
+</ul>
+
+<p>This basic structure is shown below:</p>
+
+```
+/* 
+ *  Required NAME static field, used to identify the Widget class and 
+ *  used as an event prefix, to generate class names etc. (set to the 
+ *  class name in camel case). 
+ */
+Tooltip.NAME = "tooltip";
+
+/* Default Tooltip Attributes */
+Tooltip.ATTRS = {
+
+    /* 
+     * The tooltip content. This can either be a fixed content value, 
+     * or a map of id-to-values, designed to be used when a single
+     * tooltip is mapped to multiple trigger elements.
+     */
+    content : {
+        value: null
+    },
+
+    /* 
+     * The set of nodes to bind to the tooltip instance. Can be a string, 
+     * or a node instance.
+     */
+    triggerNodes : {
+        value: null,
+        setter: function(val) {
+            if (val && Lang.isString(val)) {
+                val = Node.all(val);
+            }
+            return val;
+        }
+    },
+
+    /*
+     * The delegate node to which event listeners should be attached.
+     * This node should be an ancestor of all trigger nodes bound
+     * to the instance. By default the document is used.
+     */
+    delegate : {
+        value: null,
+        setter: function(val) {
+            return Y.one(val) || Y.one("document");
+        }
+    },
+
+    /*
+     * The time to wait, after the mouse enters the trigger node,
+     * to display the tooltip
+     */
+    showDelay : {
+        value:250
+    },
+
+    /*
+     * The time to wait, after the mouse leaves the trigger node,
+     * to hide the tooltip
+     */
+    hideDelay : {
+        value:10
+    },
+
+    /*
+     * The time to wait, after the tooltip is first displayed for 
+     * a trigger node, to hide it, if the mouse has not left the 
+     * trigger node
+     */
+    autoHideDelay : {
+        value:2000
+    },
+
+    /*
+     * Override the default visibility set by the widget base class
+     */
+    visible : {
+        value:false
+    },
+
+    /*
+     * Override the default XY value set by the widget base class,
+     * to position the tooltip offscreen
+     */
+    xy: {
+        value:[Tooltip.OFFSCREEN_X, Tooltip.OFFSCREEN_Y]
+    }
+};
+
+Y.extend(Tooltip, Y.Widget, { 
+    // Prototype methods/properties
+});
+```
+
+<h3>Adding WidgetPosition and WidgetStack Extension Support</h3>
+
+<p>The Tooltip class also needs basic positioning and stacking (z-index, shimming) support. As with the <a href="widget-build.html">Custom Widget Classes</a> example, we use
+`Base.create` to create a new `Tooltip` class with this support:</p>
+
+```
+   var Tooltip = Y.Base.create("tooltip", Y.Widget, [Y.WidgetPosition, Y.WidgetStack], 
+                                     { ... prototype properties ... },
+                                     { ... static properties ... },  
+```
+
+<h3>Lifecycle Methods: initializer, destructor</h3>
+
+<p>The `initializer` method is invoked during the `init` lifecycle phase, after the attributes are configured for each class. `Tooltip` uses it 
+to setup the private state variables it will use to store the trigger node currently being serviced by the tooltip instance, event handles and show/hide timers.</p>
+
+```
+initializer : function(config) {
+
+    this._triggerClassName = this.getClassName("trigger");
+
+    // Currently bound trigger node information
+    this._currTrigger = {
+        node: null,
+        title: null,
+        mouseX: Tooltip.OFFSCREEN_X,
+        mouseY: Tooltip.OFFSCREEN_Y
+    };
+
+    // Event handles - mouse over is set on the delegate
+    // element, mousemove and mouseleave are set on the trigger node
+    this._eventHandles = {
+        delegate: null,
+        trigger: {
+            mouseMove : null,
+            mouseOut: null
+        }
+    };
+
+    // Show/hide timers
+    this._timers = {
+        show: null,
+        hide: null
+    };
+
+    // Publish events introduced by Tooltip. Note the triggerEnter event is preventable,
+    // with the default behavior defined in the _defTriggerEnterFn method 
+    this.publish("triggerEnter", {defaultFn: this._defTriggerEnterFn, preventable:true});
+    this.publish("triggerLeave", {preventable:false});
+}
+```
+
+<p>The `destructor` is used to clear out stored state, detach any event handles and clear out the show/hide timers:</p>
+
+```
+destructor : function() {
+    this._clearCurrentTrigger();
+    this._clearTimers();
+    this._clearHandles();
+}
+```
+
+<h3>Lifecycle Methods: bindUI, syncUI</h3>
+
+<p>The `bindUI` and `syncUI` are invoked by the base Widget class' `renderer` method.</p>
+
+<p>`bindUI` is used to bind the attribute change listeners used to update the rendered UI from the current state of the widget and also to bind
+the DOM listeners required to enable the UI for interaction.</p>
+
+<p>`syncUI` is used to sync the UI state from the current widget state, when initially rendered.</p>
+
+<p><em>NOTE:</em> Widget's `renderer` method also invokes the `renderUI` method, which is responsible for laying down any additional content elements a widget requires. However
+tooltip does not have any additional elements in needs to add to the DOM, outside of the default Widget boundingBox and contentBox.</p>
+
+```
+bindUI : function() {
+    this.after("delegateChange", this._afterSetDelegate);
+    this.after("nodesChange", this._afterSetNodes);
+
+    this._bindDelegate();
+},
+
+syncUI : function() {
+    this._uiSetNodes(this.get("triggerNodes"));
+}
+```
+
+<h3>Attribute Supporting Methods</h3>
+
+<p>Tooltip's `triggerNodes`, which defines the set of nodes which should trigger this tooltip instance,
+has a couple of supporting methods associated with it.</p>
+
+<p>The `_afterSetNodes` method is the default attribute change event handler for the `triggerNodes`
+attribute. It invokes the `_uiSetNodes` method, which marks all trigger nodes with a trigger class name (`yui-tooltip-trigger`) when set.</p>
+
+```
+_afterSetNodes : function(e) {
+    this._uiSetNodes(e.newVal);
+},
+
+_uiSetNodes : function(nodes) {
+    if (this._triggerNodes) {
+        this._triggerNodes.removeClass(this._triggerClassName);
+    }
+
+    if (nodes) {
+        this._triggerNodes = nodes;
+        this._triggerNodes.addClass(this._triggerClassName);
+    }
+},
+```
+
+<p>Similarly the `_afterSetDelegate` method is the default attribute change listener for the `delegate` attribute,
+and invokes `_bindDelegate` to set up the listeners when a new delegate node is set. We use `Y.delegate` support, along with Event's `mouseenter` support, 
+which means the only thing we need to do is tell delegate which node we want to act as the delegate, and which elements we want to target using the `"." + this._triggerClassName` selector.</p>
+
+```
+_afterSetDelegate : function(e) {
+    this._bindDelegate(e.newVal);
+},
+
+_bindDelegate : function() {
+    var eventHandles = this._eventHandles;
+
+    if (eventHandles.delegate) {
+        eventHandles.delegate.detach();
+        eventHandles.delegate = null;
+    }
+    eventHandles.delegate = Y.delegate("mouseenter", Y.bind(this._onNodeMouseEnter, this), this.get("delegate"), "." + this._triggerClassName);
+},
+```
+
+<h3>DOM Event Handlers</h3>
+
+<p>Tooltips interaction revolves around the `mouseenter`, `mousemove` and `mouseleave` DOM events. The mousenter listener is the only listener set up initially, on the `delegate` node:</p>
+
+```
+_onNodeMouseEnter : function(e) {
+    var node = e.currentTarget;
+    if (node && (!this._currTrigger.node || !node.compareTo(this._currTrigger.node))) {
+        this._enterTrigger(node, e.pageX, e.pageY);
+    }
+}
+```
+
+<p>Since the `mouseenter` implementation doesn't invoke it's listeners for `mouseover` events generated from elements nested 
+inside the targeted node (for example when mousing out of a child element of a trigger node), there are no additional checks we need to perform other than to see if the node is the current trigger, before handing off to 
+the `_enterTrigger` method to setup the current trigger state and attach mousemove and mouseleave listeners on the current trigger node.</p>
+
+<p>The mouseleave listener delegates to the `_leaveTrigger` method, and again, since the `mouseleave` implementation deals with nested elements, we don't need to perform any additional target checks:</p>
+
+```
+_onNodeMouseLeave : function(e) {
+    this._leaveTrigger(e.currentTarget);
+}
+```
+
+<p>The mouse move listener delegates to the `_overTrigger` method to store the current mouse XY co-ordinates (used to position the Tooltip when it is displayed after the `showDelay`):</p>
+
+```
+_onNodeMouseMove : function(e) {
+    this._overTrigger(e.pageX, e.pageY);
+}
+```
+
+<h3>Trigger Event Delegates: _enterTrigger, _leaveTrigger, _overTrigger</h3>
+
+<p>As seen above, the DOM event handlers delegate to the `_enterTrigger, _leaveTrigger and _overTrigger` methods to update the 
+Tooltip state based on the currently active trigger node.</p>
+
+<p>The `_enterTrigger` method sets the current trigger state (which node is the current tooltip trigger, 
+what the current mouse XY position is, etc.). The method also fires the `triggerEnter` event, whose default function actually handles 
+showing the tooltip after the configured `showDelay` period. The `triggerEnter` event can be prevented by listeners, allowing 
+users to prevent the tooltip from being shown if required. (`triggerEnter` listeners are passed the current trigger node and pageX, pageY mouse co-ordinates as event facade properties):</p>
+
+```
+_enterTrigger : function(node, x, y) {
+    this._setCurrentTrigger(node, x, y);
+    this.fire("triggerEnter", null, node, x, y);
+},
+
+_defTriggerEnterFn : function(e) {
+    var node = e.node;
+    if (!this.get("disabled")) {
+        this._clearTimers();
+        var delay = (this.get("visible")) ? 0 : this.get("showDelay");
+        this._timers.show = Y.later(delay, this, this._showTooltip, [node]);
+    }
+},
+```
+
+<p>Similarly the `_leaveTrigger` method is invoked when the mouse leaves a trigger node, and clears any stored state, timers and listeners before setting up
+the `hideDelay` timer. It fires a `triggerLeave` event, but cannot be prevented, and has no default behavior to prevent:</p>
+
+```
+_leaveTrigger : function(node) {
+    this.fire("triggerLeave");
+
+    this._clearCurrentTrigger();
+    this._clearTimers();
+
+    this._timers.hide = Y.later(this.get("hideDelay"), this, this._hideTooltip);
+},
+```
+
+<p>As mentioned previously, the `_overTrigger` method simply stores the current mouse XY co-ordinates for use when the tooltip is shown:</p>
+
+```
+_overTrigger : function(x, y) {
+    this._currTrigger.mouseX = x;
+    this._currTrigger.mouseY = y;
+}
+```
+
+<h3>Setting Tooltip Content</h3>
+
+<p>Since the content for a tooltip is usually a function of the trigger node and not constant, `Tooltip` provides a number of ways to set the content.</p>
+
+<ol>
+    <li>Setting the `content` attribute to a string or node. In this case, the value of the `content` attribute is used
+    for all triggerNodes</li>
+    <li>Setting the `content` attribute to an object literal, containing a map of triggerNode id to content. The content for a trigger node
+    will be set using the map, when the tooltip is triggered for the node.</li>
+    <li>Setting the title attribute on the trigger node. The value of the title attribute is used to set the tooltip content,
+    when triggered for the node.</li>
+    <li>By calling the `setTriggerContent` method to set content for a specific trigger node, in a `triggerEnter` event listener.</li>
+</ol>
+
+<p>The precedence of these methods is handled in the `_setTriggerContent` method, invoked when the mouse enters a trigger:</p>
+
+```
+_setTriggerContent : function(node) {
+    var content = this.get("content");
+    if (content && !(content instanceof Node || Lang.isString(content))) {
+        content = content[node.get("id")] || node.getAttribute("title");
+    }
+    this.setTriggerContent(content);
+},
+
+setTriggerContent : function(content) {
+    var contentBox = this.get("contentBox");
+    contentBox.set("innerHTML", "");
+
+    if (content) {
+        if (content instanceof Node) {
+            for (var i = 0, l = content.size(); i < l; ++i) {
+                contentBox.appendChild(content.item(i));
+            }
+        } else if (Lang.isString(content)) {
+            contentBox.set("innerHTML", content);
+        }
+    }
+}
+```
+
+<p>Calling the public `setTriggerContent` in a `triggerEvent` listener will over-ride content set using the `content` attribute or the trigger node's title value.</p>
+
+<h3>Using Tooltip</h3>
+
+<p>For this example, we set up 4 DIV elements which will act as tooltip triggers. They are all marked using a `yui-hastooltip` class, so that they can be queried using a simple selector, passed as the value for the `triggerNodes` attribute in the tooltip's constructor Also all 4 trigger nodes are contained in a wrapper DIV with `id="delegate"` which will act as the `delegate` node.</p>
+
+```
+var tt = new Tooltip({
+    triggerNodes:".yui3-hastooltip",
+    delegate: "#delegate",
+    content: {
+        tt3: "Tooltip 3 (from lookup)"
+    },
+    shim:false,
+    zIndex:2
+});
+tt.render();
+```
+
+<p>The tooltip content for each of the trigger nodes is setup differently. The first trigger node uses the title attribute to set it's content. The third trigger node's content is set using the content map set in the constructor above. The second trigger node's content is set using a `triggerEnter` event listener and the `setTriggerContent` method as shown below:</p>
+
+```
+tt.on("triggerEnter", function(e) {
+    var node = e.node;
+    if (node && node.get("id") == "tt2") {
+        this.setTriggerContent("Tooltip 2 (from triggerEvent)");
+    }
+});
+```
+
+<p>The fourth trigger node's content is set using it's title attribute, however it also has a `triggerEvent` listener which prevents the tooltip from being displayed for it, if the checkbox is checked.</p>
+
+```
+var prevent = Y.one("#prevent");
+tt.on("triggerEnter", function(e) {
+    var node = e.node;
+    if (prevent.get("checked")) {
+        if (node && node.get("id") == "tt4") {
+            e.preventDefault();
+        }
+    }
+});
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>widget-tooltip-source}}
+```

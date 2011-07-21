@@ -5,5 +5,68 @@
     "author"     : "sdesai",
 
     "tags": ["attribute", "infrastructure"],
-    "use" : ["attribute"]
+    "use" : ["attribute"],
+    
+    "examples": [
+        {
+            "name"       : "attribute-basic",
+            "displayName": "Basic Attribute Configuration",
+            "description": "Use the Attribute API to define, set and get attribute values.",
+            "modules"    : ["attribute"],
+            "tags"       : ["attribute", "base"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "attribute-rw",
+            "displayName": "Read-Only and Write-Once Attributes",
+            "description": "Configure attributes to be readOnly or writeOnce.",
+            "modules"    : ["attribute"],
+            "tags"       : ["attribute", "base"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "attribute-event",
+            "displayName": "Attribute Change Events",
+            "description": "How to listen for changes in attribute values.",
+            "modules"    : ["attribute"],
+            "tags"       : ["attribute", "base", "event"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "attribute-basic-speeddate",
+            "displayName": "Attribute Based Speed Dating",
+            "description": "Create a basic SpeedDater class, with Attribute support.",
+            "modules"    : ["attribute"],
+            "tags"       : ["attribute", "base"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "attribute-event-speeddate",
+            "displayName": "Attribute Event Based Speed Dating",
+            "description": "Refactors the basic Speed Dating example, to use attribute change events to update rendered elements, and have two instances react to another.",
+            "modules"    : ["attribute"],
+            "tags"       : ["attribute", "base", "event"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "attribute-getset",
+            "displayName": "Attribute Getters, Setters and Validators",
+            "description": "Add custom methods to get and set attribute values and provide validation support.",
+            "modules"    : ["attribute"],
+            "tags"       : ["attribute", "base"],
+
+            "hideTableOfContents": true
+        }
+    ]
+    
 }
