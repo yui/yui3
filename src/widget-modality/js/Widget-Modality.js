@@ -162,7 +162,7 @@ var WIDGET         = 'widget',
         // *** Instance Members *** //
 
         _maskNode   : WidgetModal._GET_MASK(),
-        _uiHandlesModal  : [],
+        _uiHandlesModal  : null,
 
         /**
          * Synchronizes the UI and hooks up methods to the widget's lifecycle.
@@ -371,7 +371,8 @@ var WIDGET         = 'widget',
             var bb = this.get(BOUNDING_BOX),
             maskNode = this.get('maskNode'),
             focusOn = this.get('focusOn'),
-            hide = Y.bind(this._focus, this),
+            focus = Y.bind(this._focus, this),
+            uiHandles = [],
             i = 0,
             o = {node: undefined, ev: undefined, keyCode: undefined};
 
@@ -383,17 +384,17 @@ var WIDGET         = 'widget',
 
                 //no keycode or node defined
                 if (!o.node && !o.keyCode && o.ev) {
-                    this._uiHandlesModal.push(bb.on(o.ev, hide));
+                    uiHandles.push(bb.on(o.ev, focus));
                 }
 
                 //node defined, no keycode (not a keypress)
                 else if (o.node && !o.keyCode && o.ev) {
-                    this._uiHandlesModal.push(o.node.on(o.ev, hide));
+                    uiHandles.push(o.node.on(o.ev, focus));
                 }
 
                 //node defined, keycode defined, event defined (its a key press)
                 else if (o.node && o.keyCode && o.ev) {
-                    this._uiHandlesModal.push(o.node.on(o.ev, hide, o.keyCode));
+                    uiHandles.push(o.node.on(o.ev, focus, o.keyCode));
                 }
                 
                 else {
@@ -403,10 +404,12 @@ var WIDGET         = 'widget',
             }
 
             if ( ! supportsPosFixed) {
-                this._uiHandlesModal.push(Y.one('win').on('scroll', Y.bind(function(e){
+                uiHandles.push(Y.one('win').on('scroll', Y.bind(function(e){
                     maskNode.setStyle('top', maskNode.get('docScrollY'));
                 }, this)));
             }
+
+            this._uiHandlesModal = uiHandles;
         },
 
         /**
