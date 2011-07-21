@@ -1,8 +1,12 @@
 /**
  * Traditional autocomplete dropdown list widget, just like Mom used to make.
  *
- * @module autocomplete
  * @submodule autocomplete-list
+ */
+
+/**
+ * Traditional autocomplete dropdown list widget, just like Mom used to make.
+ * 
  * @class AutoCompleteList
  * @extends Widget
  * @uses AutoCompleteBase

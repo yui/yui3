@@ -40,7 +40,7 @@
     <p>We create an IO plugin class for `Overlay` called `StdModIOPlugin`. The plugin adds IO capabilities to the Overlay, bound to one of its standard module sections <em>(header, body or footer)</em>.</p>
 </div>
 
-<div class="example>
+<div class="example">
     {{>overlay-io-plugin-source}}
 </div>
 
@@ -134,7 +134,7 @@ methods on the host Overlay instance, or monitor any Overlay events
 <p>The base `WidgetIO` plugin implements the `initializer`
 and `destructor` lifecycle methods.  For the purposes of this example,
 we will extend the `StdModIO` plugin's `initializer` so that it
-activates the Flash based <a href="../../io/#xdr">XDR</a> transport so that the
+activates the Flash based <a href="../io/#xdr">XDR</a> transport so that the
 plugin is able to dispatch both in-domain and cross-domain requests
 (the transport used for any particular uri is controlled through the plugin's
 `cfg` attribute).</p>
@@ -151,7 +151,7 @@ initializer: function() {
     Y.io.transport({
         id:'flash',
         yid: Y.id,
-        src:'../../build/io/io.swf?stamp=' + (new Date()).getTime()
+        src:'../build/io/io.swf?stamp=' + (new Date()).getTime()
     });
 }
 ```
