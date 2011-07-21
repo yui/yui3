@@ -11,7 +11,6 @@
  * UI implementation) for a text input field or textarea. Must be mixed into a
  * <code>Y.Base</code>-derived class to be useful.
  *
- * @module autocomplete
  * @submodule autocomplete-base
  */
 

@@ -4,6 +4,14 @@ views, and controllers) for writing single-page JavaScript applications.
 
 @main app
 @module app
+@since 3.4.0
+**/
+
+/**
+Provides URL-based routing using HTML5 `pushState()` or the location hash.
+
+@submodule controller
+@since 3.4.0
 **/
 
 /**
@@ -13,10 +21,10 @@ This makes it easy to wire up route handlers for different application states
 while providing full back/forward navigation support and bookmarkable, shareable
 URLs.
 
-@submodule controller
 @class Controller
 @constructor
-@uses Base
+@extends Base
+@since 3.4.0
 **/
 
 var HistoryHash = Y.HistoryHash,
