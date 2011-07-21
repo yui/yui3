@@ -1,0 +1,22 @@
+<ul id="demo">
+    <li><em>click me if you don't mind...</em></li>
+    <li><em>click me if you don't mind...</em></li>
+    <li><em>click me if you don't mind...</em></li>
+    <li><em>click me if you don't mind...</em></li>
+</ul>
+
+<script type="text/javascript">
+YUI().use('node', function(Y) {
+    var nodes = Y.all('#demo li');
+
+    var onClick = function(e) {
+        e.currentTarget.addClass('yui3-pass'); // e.currentTarget === #demo li 
+        e.target.setContent('thanks for the click!'); // e.target === #demo li or #demo li em
+        e.container.setStyle('border', '5px solid blue'); // e.container === #demo
+
+        nodes.filter(':not(.yui3-pass)').setContent('Click me too please!');
+    };
+
+    Y.one('#demo').delegate('click', onClick, 'li');
+});
+</script>

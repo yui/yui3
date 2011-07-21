@@ -1,0 +1,16 @@
+<ul id="demo">
+    <li><p>i am <em>lorem</em></p></li>
+    <li><p>i am <strong>ispum</strong></p></li>
+</ul>
+
+<script type="text/javascript">
+YUI().use('node', function(Y) {
+    var onClick = function(e) {
+        e.currentTarget.setContent(e.type + ': ' + e.target.get('tagName'));
+        this.addClass('yui3-pass');
+    };
+
+    Y.all('#demo li').on('click', onClick);
+});
+</script>
+

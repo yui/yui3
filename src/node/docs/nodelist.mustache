@@ -1,0 +1,44 @@
+<link href="{{componentAssets}}/node.css" rel="stylesheet" type="text/css">
+<div class="intro">
+    <p>This example demonstrates how to use a <code>NodeList</code> instance to work with multiple nodes.</p>
+</div>
+
+<div class="example">
+{{>nodelist-source}}
+</div>
+
+<h2>Setting up the Node</h2>
+<p>First we need some HTML to work with.</p>
+```
+<ul id="demo">
+    <li>lorem</li>
+    <li>ispum</li>
+    <li>dolor</li>
+    <li>sit</li>
+</ul>
+```
+
+<h2>Geting a NodeList Instance</h2>
+<p>We will use the <code>all</code> method of our YUI instance to get a <code>NodeList</code> instance to work with.</p>
+```
+var nodes = Y.all('#demo li');
+```
+
+<h2>Accessing NodeList Properties</h2>
+<p>As with <code>Node</code>, simple type of properties (strings, numbers, booleans) pass directly to/from the underlying HTMLElement, however properties representing HTMLElements return Node instances.</p>
+<p>In this example, we will listen for a <code>click</code> event to trigger the property change.</p>
+<p>Note that the context of the handler is set to the NodeList, so <code>this</code> refers to our NodeList instance.  The <code>currentTarget</code> property of the event object is set to the current Node instance.</p>
+```
+var onClick = function(e) {
+    // this === nodes
+    this.setContent('thanks from all of us!');
+
+    // e.currentTarget === #demo li
+    e.currentTarget.setStyle('backgroundColor', 'green');
+};
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>nodelist-source}}
+```

@@ -1,0 +1,43 @@
+<link href="{{componentAssets}}/node.css" rel="stylesheet" type="text/css">
+<div class="intro">
+    <p>This example shows how to style an element using Node.</p>
+</div>
+
+<div class="example">
+{{>node-style-source}}
+</div>
+
+<h2>Setting up the HTML</h2>
+<p>First we need some HTML to work with.</p>
+```
+<div id="demo">
+    <p>Click me to change my color and show some style information.</p>
+</div>
+```
+<h2>Using Style Methods</h2>
+<p>In this example, we will set the node's color and compare the style and computedStyle values when our demo node is clicked.</p>
+```
+var onClick = function(e) {
+    var node = e.currentTarget;
+    if (!node.one('dl')) { // only create the DL once
+        node.setStyle('color', 'green');
+        var styleColor = node.getStyle('color'),
+            computedColor = node.getComputedStyle('color');
+
+        node.append('<dl>' +
+            '<dt>style.color</dt><dd>' + styleColor + '</dd>' +
+            '<dt>computedStyle.color</dt><dd>' + computedColor + '</dd>' +
+        '</dl>');
+    }
+};
+```
+
+<p>The last step is to assign the click handler.</p>
+```
+Y.one('#demo').on('click', onClick);
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>node-style-source}}
+```

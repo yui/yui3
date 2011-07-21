@@ -1,0 +1,24 @@
+<link href="{{componentAssets}}/node.css" rel="stylesheet" type="text/css">
+<div class="intro">
+    <p>This example shows how to show and hide <code>Node</code> instances.</p>
+</div>
+
+<div class="example">
+{{>node-view-source}}
+</div>
+
+<h2>Showing a Node</h2>
+<p>By default, Node instances are hidden using the CSS <code>display</code> property.  Calling the <code>show</code> method displays the node.</p>
+```
+    Y.one('#demo').show();
+```
+
+<h2>Hiding a Node</h2>
+<p>The opposite of <code>show</code>, the <code>hide</code> method sets the node's CSS <code>display</code> property to <code>none</code>.</p>
+```
+    Y.one('#demo').hide();
+```
+<h2>Complete Example Source</h2>
+```
+{{>node-view-source}}
+```
