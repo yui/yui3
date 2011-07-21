@@ -1,0 +1,123 @@
+// START WRAPPER: The YUI.add wrapper is added by the build system, when you use YUI Builder to build your component from the raw source in this file
+// YUI.add("myplugin", function(Y) {
+
+    /* Any frequently used shortcuts, strings and constants */
+    var Lang = Y.Lang;
+
+    /* MyPlugin class constructor */
+    function MyPlugin(config) {
+        MyPlugin.superclass.constructor.apply(this, arguments);
+    }
+
+    /* 
+     * Required NAME static field, to identify the class and 
+     * used as an event prefix, to generate class names etc. (set to the 
+     * class name in camel case). 
+     */
+    MyPlugin.NAME = "myPlugin";
+
+    /* 
+     * Required NS static field, to identify the property on the host which will 
+     * be used to refer to the plugin instance ( e.g. host.feature.doSomething() ).
+     */
+    MyPlugin.NS = "feature";     
+
+    /*
+     * The attribute configuration for the plugin. This defines the core user-facing state of the plugin
+     */
+    MyPlugin.ATTRS = {
+
+        attrA : {
+            value: "A"                     // The default value for attrA, used if the user does not set a value during construction.
+
+            /*
+            , valueFn: "_defAttrAVal"      // Can be used as a substitute for "value", when you need access to "this" to set the default value.
+             
+            , setter: "_setAttrA"          // Used to normalize attrA's value while during set. Refers to a prototype method, to make customization easier
+            , getter: "_getAttrA"          // Used to normalize attrA's value while during get. Refers to a prototype method, to make customization easier
+            , validator: "_validateAttrA"  // Used to validate attrA's value before updating it. Refers to a prototype method, to make customization easier
+
+            , readOnly: true               // Cannot be set by the end user. Can be set by the component developer at any time, using _set
+            , writeOnce: true              // Can only be set once by the end user (usually during construction). Can be set by the component developer at any time, using _set
+            
+            , lazyAdd: false               // Add (configure) the attribute during initialization. 
+            
+                                           // You only need to set lazyAdd to false if your attribute is
+                                           // setting some other state in your setter which needs to be set during initialization 
+                                           // (not generally recommended - the setter should be used for normalization. 
+                                           // You should use listeners to update alternate state). 
+
+            , broadcast: 1                 // Whether the attribute change event should be broadcast or not.
+            */
+        }
+        
+        // ... attrB, attrC, attrD ... attribute configurations. 
+
+        // Can also include attributes for the super class if you want to override or add configuration parameters
+    };
+
+    /* MyPlugin extends the base Plugin.Base class */
+    Y.extend(MyPlugin, Y.Plugin.Base, {
+
+        initializer: function() {
+            /*
+             * initializer is part of the lifecycle introduced by 
+             * the Base class. It is invoked during construction, when
+             * the plugin is plugged into the host, and can be used to 
+             * register listeners or to inject logic before or after methods
+             * on the host.
+             *             
+             * It does not need to invoke the superclass initializer. 
+             * init() will call initializer() for all classes in the hierarchy.
+             */
+
+             // See Y.Do.before, Y.Do.after
+             this.beforeHostMethod("show", this._beforeHostShowMethod);
+             this.afterHostMethod("show", this._afterHostShowMethod);
+
+             // See Y.EventTarget.on, Y.EventTarget.after
+             this.onHostEvent("render", this._onHostRenderEvent);             
+             this.afterHostEvent("render", this._afterHostRenderEvent);
+             
+        },
+
+        destructor : function() {
+            /*
+             * destructor is part of the lifecycle introduced by 
+             * the Base class. It is invoked when the plugin is unplugged.
+             *
+             * Any listeners registered using Plugin.Base's onHostEvent/afterHostEvent methods,
+             * or any methods displaced using it's beforeHostMethod/afterHostMethod methods 
+             * will be detached/restored by Plugin.Base's destructor.
+             *
+             * We only need to clean up anything we change on the host
+             *             
+             * It does not need to invoke the superclass destructor. 
+             * destroy() will call initializer() for all classes in the hierarchy.
+             */
+        },
+
+        /* Supporting Methods */
+
+        _onHostRenderEvent : function(e) {
+            /* React on the host render event */
+        },
+
+        _afterHostRenderEvent : function(e) {
+            /* React after the host render event */
+        },
+        
+        _beforeHostShowMethod : function() {
+            /* Inject logic before the host's show method is called. */
+        },
+
+        _afterHostShowMethod : function() {
+            /* Inject logic after the host's show method is called. */
+        }
+
+    });
+
+    Y.namespace("Plugin.MyApp").MyPlugin = MyPlugin;
+
+// }, "3.2.0", {requires:["plugin"]});
+// END WRAPPER

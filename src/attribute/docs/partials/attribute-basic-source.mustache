@@ -1,0 +1,96 @@
+<div id="createo1">
+    <button type="button" class="do">Create First Instance</button> Construct o1, with default attribute values
+    <div class="example-out"></div>
+</div>
+<div id="updateo1">
+    <button type="button" class="do">Update First Instance</button> Update the first instance, using set
+    <div class="example-out"></div>
+</div>
+<div id="createo2">
+    <button type="button" class="do">Create Second Instance</button> Create the second instance, passing initial values to the constructor
+    <div class="example-out"></div>
+</div>
+
+<script type="text/javascript">
+
+// Get a new instance of YUI and 
+// load it with the required set of modules
+
+YUI().use("node", "attribute", function(Y) {
+
+    // Setup custom class which we want to 
+    // add managed attribute support to
+
+    function MyClass(cfg) {
+
+        // When constructed, setup the initial attributes for the instance, by calling the addAttrs method.
+        var attrs = {
+            // Add 3 attributes, foo, bar and foobar
+            "foo" : {
+                value:5
+            },
+     
+            "bar" : {
+                value:"Hello World!"
+            },
+    
+            "foobar" : {
+                value:true
+            }
+        };
+
+        this.addAttrs(attrs, cfg);
+    }
+
+    // Augment custom class with Attribute
+    Y.augment(MyClass, Y.Attribute);
+
+    function displayValues(o, title, node) {
+        var str = 
+            '<div class="myclass"><div class="myclass-title">' 
+            + title + 
+            '</div><ul class="myclass-attrs"><li>foo: ' 
+            + o.get("foo") 
+            + '</li><li>bar: '
+            + o.get("bar")
+            + '</li><li>foobar: '
+            + o.get("foobar")
+            + '</li></ul></div>';
+
+        Y.one(node).set("innerHTML", str);
+    }
+
+    Y.on("click", function() {
+
+        // Create a new instance, but don't provide any initial attribute values.
+        var o1 = new MyClass();
+
+        // Display current values
+        displayValues(o1, "o1 with default values, set during construction", "#createo1 .example-out");
+
+        Y.on("click", function() {
+
+            // Update values, using the "set" method
+            o1.set("foo", 10);
+            o1.set("bar", "Hello New World!");
+            o1.set("foobar", false);
+
+            displayValues(o1, "o1 values updated using set, after construction", "#updateo1 .example-out");
+
+        }, "#updateo1 .do");
+
+    }, "#createo1 .do");
+
+    Y.on("click", function() {
+
+        var o2 = new MyClass({
+            foo: 7,
+            bar: "Aloha World!",
+            foobar: false
+        });
+
+        displayValues(o2, "o2 values set during construction", "#createo2 .example-out");
+
+    }, "#createo2 .do");
+});
+</script>

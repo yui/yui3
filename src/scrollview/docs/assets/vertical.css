@@ -1,0 +1,79 @@
+html, body {
+    margin:0;
+    padding:0;
+    font-family: arial,helvetica,clean,sans-serif;    
+}
+
+#additional-content {
+    display:block;
+    margin:10px;
+}
+
+#additional-content p {
+    margin-bottom:5px;
+}
+
+/* === scrollview styles === */
+
+#scrollview {
+    border:1px solid #000;
+    border-top:0;
+}
+
+#scrollview-content li {
+    border-bottom: 1px solid #ccc;
+    padding: 8px;
+    font-size: 140%;
+    font-weight: bold;
+    background-color:#fff;
+}
+
+/* For IE 6/7 - needs a background color (above) to pick up events, and zoom, to fill the UL */
+#scrollview-content li {
+    *zoom:1;
+}
+
+/* For IE7 - needs zoom, otherwise clipped content is not rendered */
+#scrollview-content ul {
+    *zoom:1;
+}
+
+/* === scrollview container and header styles === */
+
+#scrollview-container {
+    width:400px;
+    float:left;
+    margin:0 10px;
+}
+
+#scrollview-header {
+    background-color:#6d83a1;
+    border:1px solid #000;
+    border-bottom:#2d3033;
+
+    height:44px;
+
+    background: -webkit-gradient(
+        linear,
+        left top,
+        left bottom,
+        from(#d8dee6),
+        color-stop(0.01, #b0bccc),
+        color-stop(0.49, #889bb3),
+        color-stop(0.50, #8094ae),
+        to(#6d83a1)     
+    );
+}
+
+#scrollview-header h1 {
+	color: #fff;
+
+    margin:0;
+	padding:10px 0;
+
+	text-align:center;
+
+	font-size:150%;
+	font-weight:bold;
+    text-shadow: 0 -1px 0 rgba(0,0,0,0.7);    
+}

@@ -1,0 +1,138 @@
+<div class="intro">
+    <p>This example shows how to create a ScrollView widget with pagination support, using the ScrollViewPaginator plugin.</p>
+</div>
+
+<div class="example newwindow">
+    <a href="scrollview-paging-example.html" target="_blank" class="button">
+        View Example in New Window
+    </a>
+</div>
+
+<h2>ScrollView with Pagination Support</h2>
+
+<p>In this example, we'll create a ScrollView instance which has pagination support enabled. This allows the ScrollView to scroll between discrete page boundaries in the content, as opposed to continuous scrolling. Pagination is only supported for horizontal ScrollViews currently.</p>
+
+<h3>Modules Used</h3>
+
+<p>For this example, since we want both pagination and scrollbar indicator support enabled, we use the `scrollview` module as we did for the <a href="scrollview-horiz.html">Horizontal ScrollView</a> example to get the base ScrollView with scrollbar support.</p>
+
+<p>Additionally we pull down the `scrollview-paginator` module, which provides the `ScrollViewPaginator` plugin:</p>
+
+```
+
+// Pull in the scrollview widget, and the paginator plugin
+
+YUI().use('scrollview', 'scrollview-paginator', function(Y) {
+    ...
+});
+
+```
+
+<h3>Instantiating The ScrollView Widget</h3>
+
+<p>As with the <a href="scrollview-horiz.html">Horizontal ScrollView</a> example, we provide the markup for the ScrollView content on the page, as shown below:</p>
+
+```
+<!-- Content with a width which would require scrolling -->
+<div id="scrollview-content" style="" class="yui3-scrollview-loading">
+    <ul>
+        <li><img src="..."></li>
+        <li><img src="..."></li>
+        <li><img src="..."></li>
+        <li><img src="..."></li>
+    </ul>
+</div>
+```
+
+<p>And we instantiate the ScrollView instance in the same way, by providing a fixed width for the widget, and constraining flicks to the "x" axis:</p> 
+
+```
+// Constraining the width, instead of the height for horizontal scrolling
+var scrollView = new Y.ScrollView({
+    id: '#scrollview',
+    srcNode: '#scrollview-content',
+    width : 320,
+    flick: {
+        minDistance:10,
+        minVelocity:0.3,
+        axis: "x"
+    }
+});
+```
+
+<p>As we did in the Horizontal ScrollView example, we add CSS which switches the LIs to layout horizontally:</p>
+
+```
+/* To layout horizontal LIs */
+#scrollview-content {
+    white-space:nowrap;
+}
+
+#scrollview-content li {
+    display:inline-block;
+    background-color:#fff;
+}
+
+/* For IE 6/7 - needs inline block hack (and the background color mentioned above) */
+#scrollview-content li {
+    *display:inline;
+    *zoom:1;
+}
+```
+
+<p>This gives us a ScrollView instance with scrollbar indicator support. However it doesn't have pagination support available yet.</p>
+
+<h3>Plugging In Pagination Support</h3>
+
+<p>To add pagination support to the ScrollView instance, we plug in the `ScrollViewPaginator` plugin, providing the `selector` attribute configuration argument to it. The `selector` tells
+the paginator which list of elements inside the ScrollView content box define page boundaries at which the ScrollView should stop when scrolling. For this example, each LI defines a ScrollView page:</p>
+
+```
+scrollView.plug(Y.Plugin.ScrollViewPaginator, {
+    selector: 'li'
+});
+```
+
+<p>The ScrollView now has pagination support activated, and will stop at page boundaries when the user flicks the content, or drags the content past the halfway point of the current page.</p>
+
+<h3>Accessing The Paginator Plugin API</h3>
+
+<p>Similar to the ScrollBar indicator plugin, the ScrollBarPaginator API is now available on the ScrollView instance, on the namespace defined by the plugin, which is `scrollView.pages`. 
+The `pages` property can be used to manage the page state of the ScrollView, as shown below:</p>
+
+```
+Y.one('#scrollview-next').on('click', Y.bind(scrollView.pages.next, scrollView.pages));
+Y.one('#scrollview-prev').on('click', Y.bind(scrollView.pages.prev, scrollView.pages));
+```
+
+<p>The above code calls the plugin's `next()` and `prev()` methods when the respective button is clicked. The <a href="index.html#paginator">ScrollView Paginator</a> documentation provides additional examples of the API available through the `pages` property.</p>
+
+<h3>Setting Up A Click Listener On the Content</h3>
+
+<p>For this example, we also set up a click listener on the images. For touch devices, the click event does not fire when dragging or flicking, so there's no special handling required when setting up a click listener. However to also support mouse based devices, we need to distinguish between a click and drag or flick. In order to do this we set up a check in our click listener, to make sure we only respond to the click if the ScrollView wasn't dragged, by checking the `lastScrolledAmt` property, which is reset whenever a drag/flick gesture ends:</p>
+
+```
+Y.one("#scrollview-content").delegate("click", function(e) {
+    // For mouse based devices, we need to make sure the click isn't fired
+    // and the end of a drag/scroll. We use 2 as an arbitrary threshold.
+    if (Math.abs(scrollView.lastScrolledAmt) < 2) {
+        alert(e.currentTarget.getAttribute("alt"));
+    }
+}, "img");
+```
+
+<h3>Preventing Native Behavior For Content</h3>
+
+<p>As with the Horizontal ScrollView example, since we have images which act as drag/flick targets, we need to stop the default image drag/drop behavior in certain browsers (for example gecko and IE), by preventing default on the underlying mousedown event. If we don't prevent default, the image will be natively draggable by default, and interfere with scrolling:</p>
+
+```
+// Prevent the image from being natively dragged
+content.delegate("mousedown", function(e) {
+    e.preventDefault();
+}, "img");
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>scrollview-paging-source}}
+```

@@ -4,6 +4,54 @@
     "description": "Widget is the foundation class from which all YUI 3 widgets are derived.",
     "author"     : "sdesai",
 
-    "tags": ["widget", "widget"],
-    "use" : ["widget"]
+    "tags": ["widget", "infrastructure"],
+    "use" : ["widget"],
+
+    "examples" : [
+        {
+            "name"       : "widget-extend",
+            "displayName": "Extending the Base Widget Class",
+            "description": "Shows how to extend the base widget class, to create your own Widgets.",
+            "modules"    : ["widget", "event"],
+            "tags"       : ["widget", "infrastructure"],
+
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "widget-build",
+            "displayName": "Creating Custom Widget Classes With Extensions",
+            "description": "Shows how to use Base.create and mix/match extensions to create custom Widget classes.",
+            "modules"    : ["widget", "base", "widget-postion", "widget-position", "widget-position-align", "widget-stdmod"],
+            "tags"       : ["widget", "infrastructure", "extentions"],
+
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "widget-plugin",
+            "displayName": "Creating a Widget Plugin",
+            "description": "Shows how to create an IO plugin for Widget.",
+            "modules"    : ["widget", "plugin"],
+            "tags"       : ["widget", "infrastructure", "plugins"],
+
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "widget-tooltip",
+            "displayName": "Creating a Simple Tooltip Widget With Extensions",
+            "description": "Shows how to extend the Widget class, and add WidgetPosition and WidgetStack to create a Tooltip widget class.",
+            "modules"    : ["widget", "base", "widget-stack", "widget-positon"],
+            "tags"       : ["widget", "infrastructure", "tooltip", "extensions"],
+
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "widget-parentchild-listbox",
+            "displayName": "Creating a Hierarchical ListBox Widget",
+            "description": "Shows how to extend the Widget class, and add WidgetParent and WidgetChild to create a simple ListBox widget.",
+            "modules"    : ["widget", "widget-parent", "widget-child", "base"],
+            "tags"       : ["widget", "infrastructure"],
+
+            "hideTableOfContents": true
+        }
+    ]
 }

@@ -1,0 +1,163 @@
+<style scoped>
+#out .word {
+    margin:0.3em 0.3em 0.3em 1em;
+}
+
+#out .speaking {
+    font-size:108%;
+    color:#00aa00;
+    margin-top:1em;
+    margin-bottom:1em;
+}
+</style>
+
+<div class="intro">
+    <p>This example shows how you can define language resource bundles for your custom module implementations; it also illustrates how YUI Loader can load the correct bundle based on the language you've chosen for your YUI instance.</p>    
+</div>
+
+<div class="example">
+    {{>intl-basic-source}}
+</div>
+
+<h3>Defining your Custom Module</h3>
+
+<p>We use Loader's groups support to add a custom module called "translator" under the group "myapp". We set this configuration using YUI_config, so it's applied to all our YUI instances. The "lang" property in the module's metadata specifies
+which set of languages it supports.</p>
+
+```
+YUI_config = {
+    filter:"raw",
+    groups: {
+        myapp: {
+            base: '{{componentAssets}}',
+            modules : {
+                "translator" : {
+                    lang: ["en", "fr", "es"]
+                }
+            }
+        }
+    }
+};
+```
+
+<h3>What Language Resource Bundles Look Like</h3>
+
+<p>The language resource bundles for any module follows the pattern below:</p>
+
+```
+YUI.add("lang/translator_fr", function(Y) {
+
+    Y.Intl.add(
+
+        "translator",     // Associated Module
+        "fr",             // BCP 47 Language Tag
+
+        {                 // Translated String Key/Value Pairs
+            hello:"Bonjour",
+            goodbye: "Au revoir"
+        }
+
+    );
+
+}, "3.1.0");
+```
+
+<p>The `"lang/[for-module]_[lang]"` passed to `YUI.add` is the default module name used for language resource bundles, and the `Y.Intl.add` method is used to register the string name/value pair hash for a given module and language combination.
+
+<h3>Generating Language Resource Bundles</h3>
+
+<p>YUI Builder will handle the creation of the boiler plate code shown above, from the raw language files found in the module's `src/[module]/lang` subdirectory. The raw files under the `lang` directory contain just the string name/value pairs for each language.</p>
+
+<p>As the component developer, the only thing you need to do is specify the `component.lang` property in the build properties file:</p>
+
+```
+# In your component's build properties file (src/[module]/build.properties for example):
+component.lang=en,fr,es
+```
+
+<p>Provide the raw string name/value pairs in the `src/[component]/lang` subdirectory in your component's source area:</p>
+
+```
+// Contents of the raw src/[component]/lang/[component]_fr.js file
+{
+    hello:"Bonjour",
+    goodbye: "Au revoir"
+}
+```
+
+<p>And whenever you build your component code, the language resource bundles will be built and deployed too.</p>
+
+<p>You can checkout the <a href="http://yuilibrary.com/yui3"></a>YUI 3 Source Code</code> and see the source code and build configuration files for the "console" and "datatype-date-format" modules to see a concrete example of this.</p>
+
+<h3>Accessing Localized Resources In Your Class</h3>
+
+<p>The Translator class implementation gets access to the localized strings by using `Y.Intl.get`, passing in the module name whose strings we need access to:</p>
+
+```
+function Translator() {
+    // Get localized strings in the current language
+    this._strs = Y.Intl.get("translator");
+}
+
+Translator.prototype = {
+
+    hi : function() {
+        return this._strs.hello;
+    },
+
+    bye : function() {
+        return this._strs.goodbye;
+    }
+
+    ...
+}
+```
+
+
+<h3>Specifying the Language for an Instance</h3>
+
+<p>We specify the language to use for each instance, using the "lang" configuration property for the instance.</p>
+
+<h4> An English instance</h4>
+
+```
+YUI({
+    lang:"en"
+}).use("node-base", "translator", function(Y) {
+    var translator = new Y.Translator(),
+        out = Y.one("#out");
+
+    say("Speaking in: " + Y.Intl.getLang("translator"), out);
+    say(translator.hi(), out);
+    say(translator.bye(), out);
+});
+```
+
+<h4>A French YUI Instance</h4>
+
+```
+YUI({
+    lang:"fr"
+}).use("node-base", "translator", function(Y) {
+    ...
+});
+```
+
+<h4>A Spanish YUI Instance</h4>
+
+```
+YUI({
+    lang:"es"
+}).use("node-base", "translator", function(Y) {
+    ...
+});
+```
+
+<h3>Modules Shipping With Language Resource Bundles</h3>
+
+<p>As mentioned above, the `datatype` module (specifically the `datatype-date-format` module) and `console` are shipped with language resource bundles. Datatype ships with over 50 different languages supported, and Console ships with en and es language resource bundles, mainly as a demonstration of how language resource bundles are defined and used for Widget development.</p>
+
+<h2>Complete Example Source</h2>
+```
+{{>intl-basic-source}}
+```
