@@ -11,7 +11,17 @@
     "examples": [
 
         {
-            "name": "datatype_dateformat_lang",
+            "name": "datatype-dateformat",
+            "displayName": "DataType.Date.format()",
+            "modules": ["datatype"],
+            "description": "Formatting dates into strings.",
+	        "useModules": ["node", "datatype-date", "escape"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "datatype-dateformat-lang",
             "displayName": "Formatting Dates Using Language Resource Bundles",
             "modules": ["datatype", "intl"],
             "description": "Formatting dates into strings using pre-packaged language resource bundles.",
@@ -21,17 +31,7 @@
         },
 
         {
-            "name": "datatype_dateformat",
-            "displayName": "DataType.Date.format()",
-            "modules": ["datatype"],
-            "description": "Formatting dates into strings.",
-	        "useModules": ["node", "datatype-date", "escape"],
-
-                "hideTableOfContents": true
-            },
-
-        {
-            "name": "datatype_dateparse",
+            "name": "datatype-dateparse",
             "displayName": "DataType.Date.parse()",
             "modules": ["datatype"],
             "description": "Parsing data into dates.",
@@ -41,7 +41,7 @@
         },
 
         {
-            "name": "datatype_numberformat",
+            "name": "datatype-numberformat",
             "displayName": "DataType.Number.format()",
             "modules": ["datatype"],
             "description": "Formatting numbers into strings.",
@@ -51,7 +51,7 @@
         },
 
         {
-            "name": "datatype_numberparse",
+            "name": "datatype-numberparse",
             "displayName": "DataType.Number.parse()",
             "modules": ["datatype"],
             "description": "Parsing data into numbers.",
@@ -61,7 +61,7 @@
         },
 
         {
-            "name": "datatype_xmlformat",
+            "name": "datatype-xmlformat",
             "displayName": "DataType.XML.format()",
             "modules": ["datatype"],
             "description": "Formatting XML documents into strings.",
@@ -71,7 +71,7 @@
         },
 
         {
-            "name": "datatype_xmlparse",
+            "name": "datatype-xmlparse",
             "displayName": "DataType.XML.parse()",
             "modules": ["datatype"],
             "description": "Parsing strings into XML documents.",

@@ -1,0 +1,44 @@
+<style scoped>
+/* custom styles for this example */
+#demo label {display:block;}
+#demo fieldset {margin:1em;}
+#demo .short label, #demo .medium label {display:inline;}
+#demo .short input {width:2em;}
+#demo .medium input {width:5em;}
+</style>
+
+<div class="intro">
+    <p>The Number module of the DataType Utility allows you to take a number and format it into a string with the following configuration parameters: `decimalPlaces`, `decimalSeparator`, `thousandsSeparator`, `prefix`, and `suffix`. Although this method allows you to specify HTML values, in this example the formatted output will be escaped for security.</p>
+</div>
+
+<div class="example">
+    {{>datatype-numberformat-source}}
+</div>
+
+<p>To output a number as a string, simply call the <code>format()</code> function of the DataType.Number class:</p>
+
+```
+YUI().use("datatype-number", function(Y) {
+    alert(Y.DataType.Number.format(123123123));
+
+    // This alerts the string "123123123"
+});
+```
+
+The `format()` function also takes a variety of configuration parameters that manipulate the value of the string. This is helpful, for instance, when displaying numbers as currency:
+
+```
+YUI().use("datatype-number", function(Y) {
+    alert(Y.DataType.Number.format(123123123.176,{
+        prefix: "&#165;",
+        thousandsSeparator: ".",
+        decimalSeparator: ",",
+        decimalPlaces: 2,
+        suffix: " (YEN)"
+    }));
+
+    // This alerts the string "&#165;123.123.123,18 (YEN)"
+});
+```
+
+<p><strong>Note:</strong> Although this method allows you to specify HTML values, in this example the formatted output will be escaped for security.</p>

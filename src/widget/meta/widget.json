@@ -56,8 +56,6 @@
             }
         },
 
-        "skinnable": true,
-
         "submodules": {
             "widget-base": {
                 "requires": [
@@ -68,7 +66,8 @@
                     "node-base",
                     "node-style",
                     "classnamemanager"
-                ]
+                ],
+        	   "skinnable": true
             },
             "widget-htmlparser": {
                 "requires": [

@@ -1,0 +1,29 @@
+<form id="demo">
+    <fieldset>
+        <input type="button" id="demo_btn" value="Show XML as a string">
+        <div id="demo_output" class="output">&nbsp;</div>
+    </fieldset>
+</form>
+
+<script>
+YUI().use("node", "datatype-xml", function (Y) {
+    Y.on("click", function(e){
+        var myXMLDoc = Y.DataType.XML.parse("<myroot><item type='foo'><name>Abc</name><rank>1</rank></item><item type='bar'><name>Def</name><rank>2</rank></item><item type='bat'><name>Ghhi</name><rank>3</rank></item></myroot>"),
+            output = Y.DataType.XML.format(myXMLDoc);
+
+        if(output === "") {
+            output += "(Invalid XML document)"
+        }
+        Y.one("#demo_output").setContent(output.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"));
+    }, "#demo_btn");
+});
+</script>
+
+<p>To output an XML document as a string, simply call the <code>format()</code> function of the DataType.XML class:</p>
+
+```
+YUI().use("datatype-xml", function(Y) {
+    var myXMLDoc = Y.DataType.XML.parse("<myroot><item type='foo'><name>Abc</name><rank>1</rank></item><item type='bar'><name>Def</name><rank>2</rank></item><item type='bat'><name>Ghhi</name><rank>3</rank></item></myroot>");
+    alert(Y.DataType.XML.format(myXMLDoc));
+});
+```
