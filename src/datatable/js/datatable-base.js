@@ -207,9 +207,7 @@ Y.extend(DTBase, Y.Widget, {
      * @protected
      */
     _afterColumnsetChange: function (e) {
-        if(this.get("rendered")) {
-            this._uiSetColumnset(e.newVal);
-        }
+        this._uiSetColumnset(e.newVal);
     },
 
     /**
@@ -236,9 +234,18 @@ Y.extend(DTBase, Y.Widget, {
     * @protected
     */
     _afterRecordsetChange: function (e) {
-        if(this.get("rendered")) {
-            this._uiSetRecordset(e.newVal);
-        }
+        this._uiSetRecordset(e.newVal);
+    },
+
+    /**
+    * Updates the UI if Recordset records are changed.
+    *
+    * @method _afterRecordsChange
+    * @param e {Event} Custom event for the attribute change.
+    * @protected
+    */
+    _afterRecordsChange: function (e) {
+        this._uiSetRecordset(this.get('recordset'));
     },
 
     /**
@@ -249,9 +256,7 @@ Y.extend(DTBase, Y.Widget, {
      * @protected
      */
     _afterSummaryChange: function (e) {
-        if(this.get("rendered")) {
-            this._uiSetSummary(e.newVal);
-        }
+        this._uiSetSummary(e.newVal);
     },
 
     /**
@@ -262,29 +267,14 @@ Y.extend(DTBase, Y.Widget, {
      * @protected
      */
     _afterCaptionChange: function (e) {
-        if(this.get("rendered")) {
-            this._uiSetCaption(e.newVal);
-        }
+        this._uiSetCaption(e.newVal);
     },
 
-    /////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
     //
     // METHODS
     //
-    /////////////////////////////////////////////////////////////////////////////
-    /**
-    * Initializer.
-    *
-    * @method initializer
-    * @param config {Object} Config object.
-    * @private
-    */
-    initializer: function(config) {
-        this.after("columnsetChange", this._afterColumnsetChange);
-        this.after("recordsetChange", this._afterRecordsetChange);
-        this.after("summaryChange", this._afterSummaryChange);
-        this.after("captionChange", this._afterCaptionChange);
-    },
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
     * Destructor.
@@ -435,9 +425,13 @@ Y.extend(DTBase, Y.Widget, {
     * @private
     */
     bindUI: function() {
-        var theadFilter = "thead."+CLASS_COLUMNS+">tr>th",
-            tbodyFilter ="tbody."+CLASS_DATA+">tr>td",
-            msgFilter = "tbody."+CLASS_MSG+">tr>td";
+        this.after({
+            columnsetChange: this._afterColumnsetChange,
+            recordsetChange: this._afterRecordsetChange,
+            summaryChange  : this._afterSummaryChange,
+            captionChange  : this._afterCaptionChange,
+            "recordset:recordsChange": this._afterRecordsChange
+        });
     },
     
     delegate: function(type) {
@@ -673,13 +667,13 @@ Y.extend(DTBase, Y.Widget, {
      * @protected
      */
     _uiSetRecordset: function(rs) {
-        var i = 0,//TODOthis.get("state.offsetIndex")
-            len = rs.getLength(), //TODOthis.get("state.pageLength")
-            oldTbody = this._tbodyNode,
+        var oldTbody = this._tbodyNode,
             parent = oldTbody.get("parentNode"),
             nextSibling = oldTbody.next(),
+            columns = this.get('columnset').keys,
+            cellValueTemplate = this.get('tdValueTemplate'),
             o = {},
-            newTbody;
+            newTbody, i, len, column, formatter;
 
         // Replace TBODY with a new one
         //TODO: split _addTbodyNode into create/attach
@@ -689,10 +683,42 @@ Y.extend(DTBase, Y.Widget, {
         newTbody.remove();
         this._tbodyNode = newTbody;
         o.tbody = newTbody;
-        
+
+        o.rowTemplate = this.get('trTemplate');
+        o.columns = [];
+
+        // Build up column data to avoid passing through Attribute APIs inside
+        // render loops for rows and cells
+        for (i = columns.length - 1; i >= 0; --i) {
+            column = columns[i];
+            o.columns[i] = {
+                column : column,
+                fields : column.get('field'),
+                classes: column.get('classnames')
+            }
+
+            formatter = column.get('formatter');
+            if (!YLang.isFunction(formatter)) {
+                // Convert non-function formatters into functions
+                // String formatters are treated as alternate value templates
+                // Any other value for formatter is ignored, falling back to
+                // to the configured tdValueTemplate attribute value.
+                if (!YLang.isString(formatter)) {
+                    formatter = cellValueTemplate;
+                }
+                formatter = Y.bind(fromTemplate, this, formatter);
+            }
+
+            o.columns[i].formatter = formatter;
+        }
+
+
         // Iterate Recordset to use existing TR when possible or add new TR
-        for(; i<len; ++i) {
-            o.record = rs.getRecord(i);
+        // TODO i = this.get("state.offsetIndex")
+        // TODO len =this.get("state.pageLength")
+        for (i = 0, len = rs.size(); i < len; ++i) {
+            o.record = rs.item(i);
+            o.data   = o.record.get("data");
             o.rowindex = i;
             this._addTbodyTrNode(o); //TODO: sometimes rowindex != recordindex
         }
@@ -709,9 +735,10 @@ Y.extend(DTBase, Y.Widget, {
     * @protected
     */
     _addTbodyTrNode: function(o) {
-        var tbody = o.tbody,
-            record = o.record;
-        o.tr = tbody.one("#"+record.get("id")) || this._createTbodyTrNode(o);
+        var row = o.tbody.one("#" + o.record.get("id"));
+
+        o.tr = row || this._createTbodyTrNode(o);
+
         this._attachTbodyTrNode(o);
     },
 
@@ -724,19 +751,22 @@ Y.extend(DTBase, Y.Widget, {
     * @returns Y.Node
     */
     _createTbodyTrNode: function(o) {
-        var tr = Ycreate(fromTemplate(this.get("trTemplate"), {id:o.record.get("id")})),
-            i = 0,
-            allKeys = this.get("columnset").keys,
-            len = allKeys.length;
+        var columns = o.columns,
+            i, len, columnInfo;
 
-        o.tr = tr;
+        o.tr = Ycreate(fromTemplate(o.rowTemplate, { id: o.data.id }));
         
-        for(; i<len; ++i) {
-            o.column = allKeys[i];
+        for (i = 0, len = columns.length; i < len; ++i) {
+            columnInfo = columns[i];
+            o.column = columnInfo.column;
+            o.field  = columnInfo.fields;
+            o.classnames = columnInfo.classes;
+            o.formatter = columnInfo.formatter;
+
             this._addTbodyTdNode(o);
         }
         
-        return tr;
+        return o.tr;
     },
 
     /**
@@ -751,13 +781,12 @@ Y.extend(DTBase, Y.Widget, {
             tr = o.tr,
             index = o.rowindex,
             nextSibling = tbody.get("children").item(index) || null,
-            isEven = (index%2===0);
+            isOdd = (index % 2);
             
-        if(isEven) {
-            tr.replaceClass(CLASS_ODD, CLASS_EVEN);
-        }
-        else {
+        if(isOdd) {
             tr.replaceClass(CLASS_EVEN, CLASS_ODD);
+        } else {
+            tr.replaceClass(CLASS_ODD, CLASS_EVEN);
         }
         
         tbody.insertBefore(tr, nextSibling);
@@ -784,11 +813,9 @@ Y.extend(DTBase, Y.Widget, {
     * @returns Y.Node
     */
     _createTbodyTdNode: function(o) {
-        var column = o.column;
-        //TODO: attributes? or methods?
-        o.headers = column.headers;
-        o.classnames = column.get("classnames");
-        o.value = this.formatDataCell(o);
+        o.headers = o.column.headers;
+        o.value   = this.formatDataCell(o);
+
         return Ycreate(fromTemplate(this.tdTemplate, o));
     },
     
@@ -810,16 +837,9 @@ Y.extend(DTBase, Y.Widget, {
      * @param @param o {Object} {record, column, tr, headers, classnames}.
      */
     formatDataCell: function(o) {
-        var record = o.record,
-            column = o.column,
-            formatter = column.get("formatter");
-        o.data = record.get("data");
-        o.value = record.getValue(column.get("field"));
-        return YLang.isString(formatter) ?
-            fromTemplate(formatter, o) : // Custom template
-            YLang.isFunction(formatter) ?
-                formatter.call(this, o) :  // Custom function
-                fromTemplate(this.get("tdValueTemplate"), o);  // Default template
+        o.value = o.data[o.field];
+
+        return o.formatter.call(this, o);
     },
 
     _initRecordset: function () {
