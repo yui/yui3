@@ -4,7 +4,7 @@
     "description": "Provides a wrapper for working with DOM nodes.",
     "author"     : "msweeney",
 
-    "tags": ["dom", "node"],
+    "tags": ["core", "dom", "node"],
     "use" : ["node"],
 
     "examples": [
