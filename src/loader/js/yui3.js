@@ -1850,7 +1850,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }, 
     "widget": {
-        "skinnable": true, 
         "use": [
             "widget-base", 
             "widget-htmlparser", 
@@ -1882,7 +1881,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "node-base", 
             "node-style", 
             "classnamemanager"
-        ]
+        ], 
+        "skinnable": true
     }, 
     "widget-base-ie": {
         "condition": {
@@ -2013,4 +2013,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '564a4b53dfc9be9dae4d78490578e039';
+YUI.Env[Y.version].md5 = 'b665a3777ecbd41824771e4d2a177325';
