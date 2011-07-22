@@ -275,7 +275,7 @@ YUI.add('io-upload-iframe', function(Y) {
 				isInProgress: function() {
 					return Y.one('#io_iframe' + o.id) ? true : false;
 				},
-				conn: io
+				io: io
 			};
 		},
 
