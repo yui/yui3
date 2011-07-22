@@ -872,7 +872,8 @@ AutoCompleteBase.prototype = {
                 requestTemplate = this.get(REQUEST_TEMPLATE);
             }
 
-            request = requestTemplate ? requestTemplate(query) : query;
+            request = requestTemplate ?
+                requestTemplate.call(this, query) : query;
 
             Y.log('sendRequest: ' + request, 'info', 'autocomplete-base');
 
