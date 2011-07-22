@@ -1,0 +1,208 @@
+<style type="text/css" scoped>
+/* Hide overlay markup while loading, if js is enabled */
+.yui3-js-enabled .yui3-overlay-loading {
+    top:-1000em;
+    left:-1000em;
+    position:absolute;
+}
+
+/* Overlay Look/Feel */
+.yui3-overlay-content {
+    padding:3px;
+    border:1px solid #000;
+    background-color:#aaa;
+}
+
+.yui3-overlay-content .yui3-widget-hd {
+    padding:5px;
+    border:2px solid #aa0000;
+    background-color:#fff;
+}
+
+.yui3-overlay-content .yui3-widget-bd {
+    padding:5px;
+    border:2px solid #0000aa;
+    background-color:#fff;
+}
+
+.yui3-overlay-content .yui3-widget-ft {
+    padding:5px;
+    border:2px solid #00aa00;
+    background-color:#fff;
+}
+
+/* Example Layout CSS */
+.overlay-example {
+    padding:5px;
+    zoom:1;
+}
+
+.overlay-example .fields {
+    float:left;
+    width:20em;
+}
+
+.overlay-example label {
+    display:block;
+    font-weight:bold;
+    margin-bottom:3px
+}
+
+.overlay-example select {
+    width:19em;
+} 
+
+.overlay-example textarea {
+    width:19em;
+    height:15em;
+}
+
+.overlay-example .filler {
+    margin-left:21em;
+    margin-top:1em;
+    color:#999;
+}
+
+.overlay-example:after {
+    content:".";
+    display:block;
+    height:0;
+    visibility:hidden;
+    clear:both;
+}
+</style>
+
+<div class="intro">
+    <p>This example shows how you can work either the `headerContent, bodyContent, footerContent` attributes, to replace content in the Overlay's standard module sections, or use the `setStdModContent(section, content, where)` method to insert content <em>before</em>, or append it <em>after</em> existing content in the section.</p>    
+</div>
+
+<div class="example">
+    {{>overlay-stdmod-source}}
+</div>
+
+<h2>Overlay's Standard Module Support</h2>
+
+<h3>Setting Up The YUI Instance</h3>
+
+<p>To create an instance of an Overlay on you page, the only module you need to request is the `overlay` module. The `overlay` module will pull in the `widget`, `widget-stack`, `widget-position`, `widget-position-align`, `widget-position-constrain` and `widget-stdmod` extensions it uses.</p>
+
+```
+YUI({...}).use("overlay", function(Y) {
+    // We'll write example code here, where we have a Y.Overlay class available.
+});
+```
+
+<p>Note, using the `overlay` module, will also pull down the default CSS required for overlay, on top of which we only need to add our required look/feel CSS for the example.</p>
+
+<h3>Creating The Overlay From Markup</h3>
+
+<p>For this example, we'll create the overlay instance from markup which already exists on the page, and is shown below. We mark the existing markup with the `yui3-overlay-loading` class, so that we can hide it while the rich control is being instantiated:</p>
+
+```
+<div id="overlay" class="yui3-overlay-loading">
+    <div class="yui3-widget-hd">Overlay Header</div>
+    <div class="yui3-widget-bd">Overlay Body</div>
+    <div class="yui3-widget-ft">Overlay Footer</div>
+</div>
+```
+
+<h3>Instantiating The Overlay</h3>
+
+<p>To create an overlay instance, we use the overlay constructor `Y.Overlay`, and pass it the `srcNode` reference for the existing markup on the page:</p>
+
+```
+var overlay = new Y.Overlay({
+    srcNode:"#overlay",
+    width:"20em",
+    align: {
+        node:"#overlay-stdmod > .filler",
+        points:["tl", "tl"]
+    }
+});
+overlay.render();
+```
+
+<p>We also set it's width and align it to the filler paragraph in the example box ("#overlay-stdmod > .filler"). We don't pass any node references to the `render` method, so the Overlay is rendered in the location of the contentBox provided.</p>
+
+<h3>Setting Content</h3>
+
+<p>
+The example provides a set of input fields, allowing the user to set content in either of the 3 standard module sections which Overlay supports using Overlay's `setStdModContent` method. 
+The content can either be inserted before, appended after, or replace existing content in the specified section.</p>
+
+<p>
+Additionally the new content can be converted to a node instance before being added to the specified section. Although it has no impact on the example, if the new content is added as a string, innerHTML is used to insert before or append after the existing section content, removing any event listeners which may have been attached to elements inside the section. The ability to convert the content to a node instance is provided in the example to illustrate Overlay's ability to handle both content formats.
+</p>
+
+```
+// Hold onto input field references.
+var content = Y.one("#content");
+var where = Y.one("#where");
+var section = Y.one("#section");
+var asString = Y.one("#asString");
+
+Y.on("click", function() {
+
+    // New content to be added. For this example, we escape the HTML since it's coming from an unknown source,
+    // however Overlay accepts HTML strings as content (you should ensure it's coming from a trusted source).
+    var newContent = Y.Escape.html(content.get("value"));
+
+    // If the "Set content as string" checkbox is checked, we pass new content into the 
+    // setStdModContent method as string (innerHTML will be used to set the new content).
+    
+    // If it's not checked, we create a node reference from the string,
+    // and pass the new content into the setStdModContent as a node reference.
+
+    if (! asString.get("checked") ) {
+        newContent = Y.Node.create(newContent);
+    }
+
+    overlay.setStdModContent(section.get("value"), newContent, where.get("value"));
+
+}, "#setContent");
+```
+
+<h3>CSS: Overlay Look/Feel</h3>
+
+<p>As with the other basic overlay examples, the overlay.css Sam Skin file (build/overlay/assets/skins/sam/overlay.css) provides the default functional CSS for the overlay. Namely the CSS rules to hide the overlay, and position it absolutely. However there's no default out-of-the-box look/feel applied to the Overlay widget.</p>
+
+<p>The example provides it's own look and feel for the Overlay, by defining rules for the content box, header, body and footer sections:</p>
+
+```
+/* Hide overlay markup while loading, if js is enabled */
+.yui3-js-enabled .yui3-overlay-loading {
+    top:-1000em;
+    left:-1000em;
+    position:absolute;
+}
+
+/* Overlay Look/Feel */
+.yui3-overlay-content {
+    padding:3px;
+    border:1px solid #000;
+    background-color:#aaa;
+}
+
+.yui3-overlay-content .yui3-widget-hd {
+    padding:5px;
+    border:2px solid #aa0000;
+    background-color:#fff;
+}
+
+.yui3-overlay-content .yui3-widget-bd {
+    padding:5px;
+    border:2px solid #0000aa;
+    background-color:#fff;
+}
+
+.yui3-overlay-content .yui3-widget-ft {
+    padding:5px;
+    border:2px solid #00aa00;
+    background-color:#fff;
+}
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>overlay-stdmod-source}}
+```

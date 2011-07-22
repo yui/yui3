@@ -4,15 +4,23 @@ YUI.add('model', function(Y) {
 Attribute-based data model with APIs for getting, setting, validating, and
 syncing attribute values, as well as events for being notified of model changes.
 
+@submodule model
+@since 3.4.0
+**/
+
+/**
+Attribute-based data model with APIs for getting, setting, validating, and
+syncing attribute values, as well as events for being notified of model changes.
+
 In most cases, you'll want to create your own subclass of `Y.Model` and
 customize it to meet your needs. In particular, the `sync()` and `validate()`
 methods are meant to be overridden by custom implementations. You may also want
 to override the `parse()` method to parse non-generic server responses.
 
-@submodule model
 @class Model
 @constructor
-@uses Base
+@extends Base
+@since 3.4.0
 **/
 
 var GlobalEnv = YUI.namespace('Env.Model'),
@@ -43,8 +51,8 @@ var GlobalEnv = YUI.namespace('Env.Model'),
     @param {String} src Source of the error. May be one of the following (or any
       custom error source defined by a Model subclass):
 
-        * `parse`: An error parsing a JSON response.
-        * `validate`: The model failed to validate.
+      * `parse`: An error parsing a JSON response.
+      * `validate`: The model failed to validate.
     **/
     EVT_ERROR = 'error';
 

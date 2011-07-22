@@ -3,6 +3,13 @@ YUI.add('model-list', function(Y) {
 /**
 Provides an API for managing an ordered list of Model instances.
 
+@submodule model-list
+@since 3.4.0
+**/
+
+/**
+Provides an API for managing an ordered list of Model instances.
+
 In addition to providing convenient `add`, `create`, `refresh`, and `remove`
 methods for managing the models in the list, ModelLists are also bubble targets
 for events on the model instances they contain. This means, for example, that
@@ -13,15 +20,16 @@ ModelLists also maintain sort order efficiently as models are added and removed,
 based on a custom `comparator` function you may define (if no comparator is
 defined, models are sorted in insertion order).
 
-@submodule model-list
 @class ModelList
-@constructor
+@extends Base
 @uses ArrayList
-@uses Base
+@constructor
+@since 3.4.0
 **/
 
-var Lang   = Y.Lang,
-    YArray = Y.Array,
+var AttrProto = Y.Attribute.prototype,
+    Lang      = Y.Lang,
+    YArray    = Y.Array,
 
     /**
     Fired when a model is added to the list.
@@ -224,6 +232,68 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     },
 
     /**
+    If _name_ refers to an attribute on this ModelList instance, returns the
+    value of that attribute. Otherwise, returns an array containing the values
+    of the specified attribute from each model in this list.
+
+    @method get
+    @param {String} name Attribute name or object property path.
+    @return {Any|Array} Attribute value or array of attribute values.
+    @see Model.get()
+    **/
+    get: function (name) {
+        if (this.attrAdded(name)) {
+            return AttrProto.get.apply(this, arguments);
+        }
+
+        return this.invoke('get', name);
+    },
+
+    /**
+    If _name_ refers to an attribute on this ModelList instance, returns the
+    HTML-escaped value of that attribute. Otherwise, returns an array containing
+    the HTML-escaped values of the specified attribute from each model in this
+    list.
+
+    The values are escaped using `Escape.html()`.
+
+    @method getAsHTML
+    @param {String} name Attribute name or object property path.
+    @return {String|String[]} HTML-escaped value or array of HTML-escaped
+      values.
+    @see Model.getAsHTML()
+    **/
+    getAsHTML: function (name) {
+        if (this.attrAdded(name)) {
+            return Y.Escape.html(AttrProto.get.apply(this, arguments));
+        }
+
+        return this.invoke('getAsHTML', name);
+    },
+
+
+    /**
+    If _name_ refers to an attribute on this ModelList instance, returns the
+    URL-encoded value of that attribute. Otherwise, returns an array containing
+    the URL-encoded values of the specified attribute from each model in this
+    list.
+
+    The values are encoded using the native `encodeURIComponent()` function.
+
+    @method getAsURL
+    @param {String} name Attribute name or object property path.
+    @return {String|String[]} URL-encoded value or array of URL-encoded values.
+    @see Model.getAsURL()
+    **/
+    getAsURL: function (name) {
+        if (this.attrAdded(name)) {
+            return encodeURIComponent(AttrProto.get.apply(this, arguments));
+        }
+
+        return this.invoke('getAsURL', name);
+    },
+
+    /**
     Returns the model with the specified _clientId_, or `null` if not found.
 
     @method getByClientId
@@ -255,7 +325,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
     @method invoke
     @param {String} name Name of the method to call on each model.
-    @param {any} *args Zero or more arguments to pass to the invoked method.
+    @param {Any} *args Zero or more arguments to pass to the invoked method.
     @return {Array} Array of return values, indexed according to the index of
       the model on which the method was called.
     **/
@@ -778,41 +848,5 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
 Y.augment(ModelList, Y.ArrayList);
 
-/**
-Returns an array containing the values of the specified attribute from each
-model in this list.
 
-@method get
-@param {String} name Attribute name or object property path.
-@return {Array} Array of attribute values.
-@see Model.get()
-**/
-
-/**
-Returns an array containing the HTML-escaped versions of the values of the
-specified string attributes from each model in this list. The values are escaped
-using `Y.Escape.html()`.
-
-@method getAsHTML
-@param {String} name Attribute name or object property path.
-@return {String[]} Array of HTML-escaped attribute values.
-@see Model.getAsHTML()
-**/
-
-/**
-Returns an array containing the URL-encoded versions of the values of the
-specified string attributes from each model in this list. The values are encoded
-using the native `encodeURIComponent()` function.
-
-@method getAsURL
-@param {String} name Attribute name or object property path.
-@return {String[]} Array of URL-encoded attribute values.
-@see Model.getAsURL()
-**/
-
-Y.ArrayList.addMethod(ModelList.prototype, [
-    'get', 'getAsHTML', 'getAsURL'
-]);
-
-
-}, '@VERSION@' ,{requires:['array-extras', 'array-invoke', 'arraylist', 'base-build', 'json-parse', 'model']});
+}, '@VERSION@' ,{requires:['array-extras', 'array-invoke', 'arraylist', 'base-build', 'escape', 'json-parse', 'model']});

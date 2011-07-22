@@ -1,0 +1,64 @@
+ul, li {
+    margin: 0;
+    padding: 0;
+}
+div#demo,
+ul#demo li {
+    background: #cfb192;
+    border: 1px solid #71241a;
+}
+
+div#demo p {
+    background: #cfb192;
+}
+
+ul#demo2 li {
+    background: #dadada;
+    border: 1px solid #71241a;
+}
+
+div#demo p,
+ul#demo li,
+ul#demo2 li {
+    list-style: none;
+    padding: 1em;
+    zoom:1;
+}
+
+ul#demo,
+ul#demo2 {
+    width: 10em;
+}
+
+.yui3-fail {
+    background:red;
+}
+
+#demo .yui3-pass,
+#demo2 .yui3-pass {
+    background:green;
+}
+
+#demo dt {
+    font-weight:bold;
+}
+
+#demo dt::after {
+    content':';
+}
+
+#demo dd {
+    margin-bottom:0.5em;
+}
+
+span#demo {
+    background:#ffa928;
+    display:block;
+    height:10px;
+    width:10px;
+}
+
+.yui3-data-win, .yui3-data-doc {
+	cursor:pointer;
+}
+}

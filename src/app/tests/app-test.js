@@ -1283,6 +1283,15 @@ modelListSuite.add(new Y.Test.Case({
         ArrayAssert.itemsAreSame(['one', 'two'], list.get('foo'));
     },
 
+    'get() should return a list attribute if there is one': function () {
+        var list = this.createList();
+
+        list.addAttr('foo', {value: '<listfoo>'});
+        list.add([{foo: 'modelfoo-one'}, {foo: 'modelfoo-two'}]);
+
+        Assert.areSame('<listfoo>', list.get('foo'));
+    },
+
     'getAsHTML() should return an array of HTML-escaped attribute values': function () {
         var list = this.createList();
 
@@ -1290,11 +1299,29 @@ modelListSuite.add(new Y.Test.Case({
         ArrayAssert.itemsAreSame(['&lt;foo&gt;', '&lt;bar&gt;'], list.getAsHTML('foo'));
     },
 
+    'getAsHTML() should return a list attribute if there is one': function () {
+        var list = this.createList();
+
+        list.addAttr('foo', {value: '<listfoo>'});
+        list.add([{foo: 'modelfoo-one'}, {foo: 'modelfoo-two'}]);
+
+        Assert.areSame('&lt;listfoo&gt;', list.getAsHTML('foo'));
+    },
+
     'getAsURL() should return an array of URL-encoded attribute values': function () {
         var list = this.createList();
 
         list.add([{foo: 'a b'}, {foo: 'c d'}]);
         ArrayAssert.itemsAreSame(['a%20b', 'c%20d'], list.getAsURL('foo'));
+    },
+
+    'getAsURL() should return a list attribute if there is one': function () {
+        var list = this.createList();
+
+        list.addAttr('foo', {value: 'list foo'});
+        list.add([{foo: 'modelfoo-one'}, {foo: 'modelfoo-two'}]);
+
+        Assert.areSame('list%20foo', list.getAsURL('foo'));
     },
 
     'getByClientId() should look up a model by its clientId': function () {

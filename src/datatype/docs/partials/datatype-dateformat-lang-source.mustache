@@ -1,0 +1,175 @@
+<div id="demo">
+
+    <div class="output"><span>Default Date Formatting (no language specified):</span> <span id="default_lang_output"></span></div>
+    <div class="output"><span>Date Formatted for "fr-FR":</span> <span id="single_lang_output"></span></div>
+
+    <form id="switchlang">
+        <fieldset>
+            <label for="demo_lang">Language:
+                <select id="demo_lang"></select>
+            </label>
+            <input type="button" id="demo_btn" value="Format Current Date/Time">
+            <div id="event_output">&nbsp;</div>
+        </fieldset>
+    </form>
+
+    <div id="demo_output" class="output"></div>
+
+</div>
+
+<script>
+
+var langNames = {
+    "ar": "العربية",
+    "ar-JO": "العربية (الأردن)",
+    "ca": "català",
+    "ca-ES": "català (Espanya)",
+    "da": "dansk",
+    "da-DK": "dansk (Danmark)",
+    "de": "Deutsch",
+    "de-AT": "Deutsch (Österreich)",
+    "de-DE": "Deutsch (Deutschland)",
+    "el": "ελληνικά",
+    "el-GR": "ελληνικά (Ελλάδα)",
+    "en": "English",
+    "en-AU": "English (Australia)",
+    "en-CA": "English (Canada)",
+    "en-GB": "English (U.K.)",
+    "en-IE": "English (Ireland)",
+    "en-IN": "English (India)",
+    "en-JO": "English (Jordan)",
+    "en-MY": "English (Malaysia)",
+    "en-NZ": "English (New Zealand)",
+    "en-PH": "English (Philippines)",
+    "en-SG": "English (Singapore)",
+    "en-US": "English (U.S.)",
+    "es": "español",
+    "es-AR": "español (Argentina)",
+    "es-BO": "español (Bolivia)",
+    "es-CL": "español (Chile)",
+    "es-CO": "español (Colombia)",
+    "es-EC": "español (Ecuador)",
+    "es-ES": "español (España)",
+    "es-MX": "español (México)",
+    "es-PE": "español (Perú)",
+    "es-PY": "español (Paraguay)",
+    "es-US": "español (Estados Unidos)",
+    "es-UY": "español (Uruguay)",
+    "es-VE": "español (Venezuela)",
+    "fi": "suomi",
+    "fi-FI": "suomi (Suomi)",
+    "fr": "français",
+    "fr-BE": "français (Belgique)",
+    "fr-CA": "français (Canada)",
+    "fr-FR": "français (France)",
+    "hi": "हिंदी",
+    "hi-IN": "हिंदी (भारत)",
+    "id": "Bahasa Indonesia",
+    "id-ID": "Bahasa Indonesia (Indonesia)",
+    "it": "italiano",
+    "it-IT": "italiano (Italia)",
+    "ja": "日本語",
+    "ja-JP": "日本語 (日本)",
+    "ko": "한국어",
+    "ko-KR": "한국어 (대한민국)",
+    "ms": "Bahasa Melayu",
+    "ms-MY": "Bahasa Melayu (Malaysia)",
+    "nb": "norsk",
+    "nb-NO": "norsk (Norge)",
+    "nl": "Nederlands",
+    "nl-BE": "Nederlands (België)",
+    "nl-NL": "Nederlands (Nederland)",
+    "pl": "polski",
+    "pl-PL": "polski (Polska)",
+    "pt": "português",
+    "pt-BR": "português (Brasil)",
+    "ro": "română",
+    "ro-RO": "română (România)",
+    "ru": "русский",
+    "ru-RU": "русский (Россия)",
+    "sv": "svenska",
+    "sv-SE": "svenska (Sverige)",
+    "th": "ไทย",
+    "th-TH": "ไทย (ประเทศไทย)",
+    "tr": "Türkçe",
+    "tr-TR": "Türkçe (Türkiye)",
+    "vi": "Tiếng Việt",
+    "vi-VN": "Tiếng Việt (Việt Nam)",
+    "zh-Hans": "中文（简体）",
+    "zh-Hans-CN": "中文 (中国)",
+    "zh-Hant": "繁體中文",
+    "zh-Hant-HK": "中文 (香港)",
+    "zh-Hant-TW": "中文 (臺灣)"
+};
+
+function isRTL(lang) {
+    var pos = lang.indexOf("-");
+    if (pos >= 0) {
+        lang = lang.substring(0, pos);
+    }
+    // currently Arabic is our only RTL language
+    return lang === "ar";
+}
+    
+
+// Default Date Format (no language specified)
+YUI().use("node", "datatype-date", function (Y) {
+    
+    Y.one("#default_lang_output").setContent(
+        Y.DataType.Date.format(new Date(), {format:"%x"})
+    );
+
+});
+
+// Configure the YUI instance to use fr-FR
+YUI({lang:"fr-FR"}).use("node", "datatype-date", function (Y) {
+
+    Y.one("#single_lang_output").setContent(
+        Y.DataType.Date.format(new Date(), {format:"%x"})
+    );
+    
+});
+
+YUI().use("node", "datatype-date", function (Y) {
+
+    // Insert the languages available for the datatype-date module
+    var availLangs = Y.Intl.getAvailableLangs("datatype-date-format"),
+        select = Y.one("#demo_lang"),
+        i, lang, langName, dir;
+
+    for (i = 0; i < availLangs.length; i++) {
+        lang = availLangs[i];
+        langName = langNames[lang] || lang;
+        dir = isRTL(lang) ? "rtl" : "ltr";
+        select.append('<option value="' + lang + '" dir="' + dir + '">' + langName + '</option>');
+        select.addClass("yui3-avail-languages");
+    }
+
+    // Listen for language change
+    Y.Intl.on("intl:langChange", function(e) {
+        Y.one("#event_output").setContent('Language for "' + e.module + '" changed to "' + e.newVal + '"');
+    });
+
+    Y.on("click", function(e) {
+
+        var lang = Y.one("#demo_lang").get("value"),
+            output = Y.one("#demo_output");
+
+        // Pull down a new language resource bundle for datatype-date
+        Y.use("lang/datatype-date-format_" + lang, function(Y) {
+
+            // You only need to set the language explicitly when switching languages,
+            // It is not required for the single language use case instances shown previously.
+            Y.Intl.setLang("datatype-date-format", lang);
+
+            var formattedDate = Y.DataType.Date.format(new Date(), {format:"%c"}),
+                rtl = isRTL(lang);
+
+            output.setContent(formattedDate)
+            output.setAttribute("dir", rtl ? "rtl" : "ltr")
+            output.toggleClass("rtl", rtl);
+        });
+
+    }, "#demo_btn");
+});
+</script>

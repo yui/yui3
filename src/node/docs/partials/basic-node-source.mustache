@@ -1,0 +1,20 @@
+<div id="demo">
+    <p><em>Click me.</em></p>
+</div>
+
+<script type="text/javascript">
+YUI().use('node', function(Y) {
+    var node = Y.one('#demo p');
+
+    var onClick = function(e) {
+        // e.target === node || #demo p em
+        var tag = e.target.get('parentNode.tagName');
+
+        // e.currentTarget === node
+        e.currentTarget.one('em').setContent('I am a child of ' + tag + '.');
+    };
+
+    node.on('click', onClick);
+});
+
+</script>

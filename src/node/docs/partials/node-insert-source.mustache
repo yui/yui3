@@ -1,0 +1,19 @@
+<ul id="demo">
+    <li>foo</li>
+    <li>bar</li>
+</ul>
+
+<script type="text/javascript">
+YUI().use('node', function(Y) {
+    var onClick = function(e) {
+        var node = e.currentTarget;
+        node.prepend('<em>prepended</em> &nbsp;'); // added as firstChild 
+        node.append('&nbsp; <em>appended</em>');  // added as lastChild
+        node.insert('&nbsp; <strong>before last child</strong> &nbsp;', node.get('lastChild')); // added before lastChild 
+        node.insert('&nbsp; <strong>before childNodes[1]</strong> &nbsp;', 1); // added before childNodes[1]
+    };
+
+    Y.all('#demo li').on('click', onClick);
+});
+</script>
+

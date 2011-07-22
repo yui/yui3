@@ -1,0 +1,112 @@
+{
+    "name"       : "node",
+    "displayName": "Node",
+    "description": "Provides a wrapper for working with DOM nodes.",
+    "author"     : "msweeney",
+
+    "tags": ["core", "dom", "node"],
+    "use" : ["node"],
+
+    "examples": [
+        {
+            "name"       : "basic-node",
+            "displayName": "Node Basics",
+            "description": "Using selectors and property accessors with Node.",
+            "modules"    : ["node"],
+            "tags"       : ["dom", "node"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "dom-node",
+            "displayName": "DOM Methods",
+            "description": "Using DOM methods with Node.",
+            "modules"    : ["node"],
+            "tags"       : ["dom", "node"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "event-node",
+            "displayName": "NodeList Events",
+            "description": "Using events with NodeList instances.",
+            "modules"    : ["node"],
+            "tags"       : ["dom", "node", "nodelist", "event"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "nodelist",
+            "displayName": "NodeList",
+            "description": "NodeList provides Node functionality for multiple nodes.",
+            "modules"    : ["node"],
+            "tags"       : ["dom", "node", "nodelist"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "node-evt-delegation",
+            "displayName": "Delegating Node Events",
+            "description": "Using a single event listener to handle events on multiple nodes.",
+            "modules"    : ["node"],
+            "tags"       : ["dom", "node", "event", "delegate"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "node-screen",
+            "displayName": "Measuring the Window and Document",
+            "description": "This example demonstrates how to measure the size of the window and document.",
+            "modules"    : ["node"],
+            "tags"       : ["dom", "node", "node-screen"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "node-xy",
+            "displayName": "Node Positioning",
+            "description": "This example demonstrates how to position an element in page coordinates.",
+            "modules"    : ["node"],
+            "tags"       : ["dom", "node", "node-screen"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "node-style",
+            "displayName": "Node Styling",
+            "description": "This example demonstrates how to set styles and get style information.",
+            "modules"    : ["node"],
+            "tags"       : ["dom", "node", "node-style", "style"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "node-insert",
+            "displayName": "Adding Node Content",
+            "description": "This example demonstrates how to insert content into a Node.",
+            "modules"    : ["node"],
+            "tags"       : ["dom", "node"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "node-view",
+            "displayName": "Showing and Hiding",
+            "description": "This example demonstrates how to show and hide a Node.",
+            "modules"    : ["node"],
+            "tags"       : ["dom", "node"],
+
+            "hideTableOfContents": true
+        }
+
+    ]
+}

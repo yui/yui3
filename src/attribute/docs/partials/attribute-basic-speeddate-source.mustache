@@ -1,0 +1,149 @@
+<div id="speeddate">
+
+    <h1>Speed Dating With Attributes</h1>
+
+    <div id="john">
+        <button type="button" class="hi">Hi I'm John</button>
+        <button type="button" class="taken" disabled="disabled">I like Jane</button>
+        <div class="shirt"></div>
+    </div>
+
+    <div id="jane">
+        <button type="button" disabled="disabled" class="hi">Hey, I'm Jane</button>
+        <button type="button" class="upgrade" disabled="disabled">No way!, I save whales too!</button>
+        <button type="button" class="taken" disabled="disabled">I like John</button>
+        <div class="shirt"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+// Get a new instance of YUI and 
+// load it with the required set of modules
+
+YUI().use("node", "attribute", "substitute", function(Y) {
+
+    // Setup custom class which we want to 
+    // add managed attribute support to
+
+    function SpeedDater(cfg) {
+
+        // When constructed, setup the initial attributes for the
+        // instance, by calling the addAttrs method.
+
+        var attrs = {
+            // Add 3 attributes: name, personality, available
+            name : {
+                writeOnce:true
+            },
+    
+            personality : {
+                value:50
+            },
+    
+            available : {
+                value:true
+            }
+        };
+
+        this.addAttrs(attrs, cfg);
+    }
+
+    // Setup static property to hold attribute config
+
+    SpeedDater.NAMETAG = '<div class="sd-nametag"><div class="sd-hd">Hello!</div><div class="sd-bd">I\'m <span class="sd-name">{name}</span> and my PersonalityQuotientIndex is <span class="sd-personality">{personality}</span></div><div class="sd-ft sd-availability">{available}</div></div>';
+
+    SpeedDater.prototype.applyNameTag = function(where) {
+
+        var tokens = {
+            name: this.get("name"),
+            available: (this.get("available")) ? "I'm still looking " : "Sorry, I'm taken",
+            personality: this.get("personality")
+        };
+
+        var str = Y.substitute(SpeedDater.NAMETAG, tokens);
+        this.nameTag = Y.Node.create(str);
+        Y.one(where).appendChild(this.nameTag);
+    };
+
+    SpeedDater.prototype.updateNameTag = function() {
+
+        var taken = (this.get("available")) ? "I'm still looking " : "Sorry, I'm taken";
+        var name = this.get("name");
+        var personality = this.get("personality");
+
+        this.nameTag.one(".sd-name").set("innerHTML", name);
+        this.nameTag.one(".sd-availability").set("innerHTML", taken);
+
+        var personalityEl = this.nameTag.one(".sd-personality"); 
+        personalityEl.set("innerHTML", personality);
+
+        if (personality > 90) {
+            personalityEl.addClass("sd-max");
+        }
+    }
+
+    // Augment custom class with Attribute
+    Y.augment(SpeedDater, Y.Attribute);
+    
+    var john, jane;
+
+    Y.on("click", function() {
+
+        if (!john) {
+
+            // Set both name and personality during construction 
+            john = new SpeedDater({
+                name: "John",
+                personality: 76.43
+            });
+            john.applyNameTag("#john .shirt");
+
+            Y.one("#jane .hi").set("disabled", false); 
+        }
+
+    }, "#john .hi");
+
+    Y.on("click", function() {
+
+        if (!jane) {
+
+            // Set name during construction
+            jane = new SpeedDater({
+                name: "Jane"
+            });
+
+            // Set personality after construction
+            jane.set("personality", 82);
+
+            jane.applyNameTag("#jane .shirt");
+
+            Y.all("#jane button").set("disabled", false);
+            Y.all("#john button").set("disabled", false); 
+        }
+
+    }, "#jane .hi");
+
+    Y.on("click", function() {
+
+        john.set("available", false);
+        john.updateNameTag();
+        
+    }, "#john .taken");
+
+    Y.on("click", function() {
+
+        jane.set("available", false);
+        jane.updateNameTag();
+
+    }, "#jane .taken");
+
+    Y.on("click", function() {
+
+        jane.set("personality", 98);
+        jane.updateNameTag();
+
+    }, "#jane .upgrade");
+
+ });
+</script>

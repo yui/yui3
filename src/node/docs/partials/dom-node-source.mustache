@@ -1,0 +1,21 @@
+<ul id="demo">
+    <li>lorem</li>
+    <li>ispum</li>
+    <li>dolor</li>
+    <li>sit</li>
+</ul>
+
+<ul id="demo2">
+    <li>foo</li>
+</ul>
+
+<script type="text/javascript">
+YUI().use('node', function(Y) {
+    var onClick = function(e) {
+        var node = Y.one('#demo2').appendChild(e.currentTarget);
+        node.addClass('yui3-pass');
+    };
+
+    Y.all('#demo li').on('click', onClick);
+});
+</script>

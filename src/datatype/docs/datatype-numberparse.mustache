@@ -1,0 +1,38 @@
+<style scoped>
+/* custom styles for this example */
+#demo label {display:block;}
+#demo fieldset {margin:1em;}
+</style>
+
+<div class="intro">
+    <p>The Number module of the DataType Utility allows you to take a data value and convert it to a number.</p>
+</div>
+
+<div class="example">
+    {{>datatype-numberparse-source}}
+</div>
+
+<p>To convert a data value to a number, simply call the `parse()` function of the DataType.Number class:</p>
+
+```
+YUI().use("datatype-number", function(Y) {
+    var output = Y.DataType.Number.parse("123123.123");
+    // output is the number 123123.123
+});
+```
+
+<p>Under the hood, the data value is converted to a number via `+data`, not `parseInt()`. When the resulting value is `NaN`, then null is returned:</p>
+
+```
+YUI().use("datatype-number", function(Y) {
+    var output = Y.DataType.Number.parse("$100");
+    // output is null
+
+    output = Y.DataType.Number.parse("20 dollars");
+    // output is null
+
+    output = Y.DataType.Number.parse(new Date("Jan 1, 2000"));
+    // output is 946713600000
+
+});
+```

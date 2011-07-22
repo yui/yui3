@@ -1,0 +1,22 @@
+<form id="demo">
+    <fieldset>
+        <label for="demo_input">String to parse:</label>
+        <textarea type="text" id="demo_input"><myroot><item type='foo'><name>Abc</name><rank>1</rank></item><item type='bar'><name>Def</name><rank>2</rank></item><item type='bat'><name>Ghi</name><rank>3</rank></item></myroot></textarea>
+        <input type="button" id="demo_btn" value="Alert node type of parsed output">
+    </fieldset>
+</form>
+
+<script>
+YUI().use("node", "datatype-xml", function (Y) {
+    Y.on("click", function(e){
+        var input = Y.one("#demo_input").get("value"),
+            output = Y.DataType.XML.parse(input);
+                
+        if(output === "") {
+            output += "(Invalid value)"
+        }
+        
+        alert("node type: " + output.nodeType);
+    }, "#demo_btn");
+});
+</script>

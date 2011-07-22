@@ -1,0 +1,217 @@
+<style type="text/css" scoped>
+/* Hide overlay markup while loading, if js is enabled */
+.yui3-js-enabled .yui3-overlay-loading {
+    top:-1000em;
+    left:-1000em;
+    position:absolute;
+}
+
+/* Overlay Look/Feel */
+.yui3-overlay-content {
+    padding:3px;
+    border:1px solid #000;
+    background-color:#aaa;
+}
+
+.yui3-overlay-content .yui3-widget-hd {
+    padding:5px;
+    border:2px solid #aa0000;
+    background-color:#fff;
+}
+
+.yui3-overlay-content .yui3-widget-bd {
+    padding:5px;
+    border:2px solid #0000aa;
+    background-color:#fff;
+}
+
+.yui3-overlay-content .yui3-widget-ft {
+    padding:5px;
+    border:2px solid #00aa00;
+    background-color:#fff;
+}
+
+/* Example Layout CSS */
+.overlay-example {
+    padding:5px;
+    height:25em;
+}
+
+.overlay-example select {
+    width:35em;
+} 
+</style>
+
+<div class="intro">
+    <p>This example shows how you can work with the `zIndex` attribute which the Overlay supports, to implement a simple `bringToTop` function. The example code also listens for changes in the `zIndex` attribute, which it uses to update the content of the overlay, when it is brought to the top of the stack.</p>    
+</div>
+
+<div class="example">
+    {{>overlay-stack-source}}
+</div>
+
+<h2>Basic Overlay Stackability (zIndex and shim support)</h2>
+
+<h3>Setting Up The YUI Instance</h3>
+
+<p>As with the <a href="overlay-xy.html">"Basic XY Positioning"</a> example, to create an instance of an Overlay on your page, the only module you need to request is the `overlay` module. The `overlay` module will pull in the `widget`, `widget-stack`, `widget-position`, `widget-position-align`, `widget-position-constrain` and `widget-stdmod` extensions it uses.</p>
+
+```
+YUI({...}).use("overlay", function(Y) {
+    // We'll write example code here, where we have a Y.Overlay class available.
+});
+```
+
+<p>Using the `overlay` module will also pull down the default CSS required for overlay, on top of which we only need to add our required look/feel CSS for the example.</p>
+
+<h3>Instantiating The Overlay</h3>
+
+<p>For this example we'll instantiate Overlays from script, as we did for the <a href="overlay-align.html">"Alignment Support"</a> example. We'll create 6 Overlay instances and give them increasing zIndex and xy attribute values:</p>
+
+```
+function getOverlayXY(xy, i) {
+    return [xy[0] + i * 60, xy[1] + i * 40];
+}
+
+for (var i = 0; i < n; ++i) {
+
+    ovrXY = getOverlayXY(xy, i);
+    ovrZIndex = i+1;
+
+    // Setup n Overlays, with increasing zIndex values and xy positions
+    overlay = new Y.Overlay({
+        zIndex:ovrZIndex,
+        xy:ovrXY,
+
+        width:"8em",
+        height:"8em",
+        headerContent: 'Overlay <span class="yui3-ovr-number">' + i + '</span>',
+        bodyContent: "zIndex = " + ovrZIndex
+    });
+
+    overlay.render("#overlay-stack");
+
+    ...
+
+}
+```
+
+<p>We store the Overlay instances in an `overlays` array, which we'll later use to sort the Overlays by their zIndex values. We also setup a listener for the `zIndex` attribute change event, which will update the body section of the Overlay to display its new zIndex value.</p>
+
+```
+overlays.push(overlay);
+
+// Update body whenever zIndex changes
+overlay.after("zIndexChange", function(e) {
+    this.set("bodyContent", "zIndex = " + e.newVal);
+});
+```
+
+<h3>Handling MouseDown Using Widget.getByNode</h3>
+
+<p>The `Widget` class has a static `getByNode` method which can be used to retrieve Widget instances based on a node reference. The method will return the closest Widget which contains the given node.</p>
+
+<p>
+We'll use this method in a click listener bound to the container of the example ("#overlay-stack"). Target nodes of click events bubbled up to this example container, will be passed to the `Widget.getByNode` method, to see if an Overlay was clicked on.
+</p>
+
+```
+function onStackMouseDown(e) {
+    var widget = Y.Widget.getByNode(e.target);
+
+    // If user clicked on an Overlay, bring it to the top of the stack
+    if (widget && widget instanceof Y.Overlay) {
+        bringToTop(widget);
+    }
+}
+
+Y.on("mousedown", onStackMouseDown, "#overlay-stack");
+```
+
+<p>If an Overlay was clicked on, we invoke the simple bringToTop method which will set the zIndex of the clicked Overlay to the highest current Overlay zIndex value.</p>
+
+<h3>The `bringToTop` Implementation</h3>
+
+<p>We use a basic comparator function to sort the array of Overlays we have. The comparator makes sure the array element we're dealing with <a href="../widget/widget-build.html">has a `WidgetStack` implementation</a> (which Overlays do) and if so, sorts them in descending `zIndex` attribute value order:</p>
+
+```
+// zIndex comparator
+function byZIndexDesc(a, b) {
+    if (!a || !b || !a.hasImpl(Y.WidgetStack) || !b.hasImpl(Y.WidgetStack)) {
+        return 0;
+    } else {
+        var aZ = a.get("zIndex");
+        var bZ = b.get("zIndex");
+
+        if (aZ > bZ) {
+            return -1;
+        } else if (aZ < bZ) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+}
+```
+
+<p>Once sorted, for the purposes of the example, we simply switch the `zIndex` of the "highest" Overlay, with the Overlay which was clicked on, giving the selected Overlay the highest zIndex value:</p>
+
+```
+function bringToTop(overlay) {
+
+    // Sort overlays by their numerical zIndex values
+    overlays.sort(byZIndexDesc);
+
+    // Get the highest one
+    var highest = overlays[0];
+
+    // If the overlay is not the highest one, switch zIndices
+    if (highest !== overlay) {
+        var highestZ = highest.get("zIndex");
+        var overlayZ = overlay.get("zIndex");
+
+        overlay.set("zIndex", highestZ);
+        highest.set("zIndex", overlayZ);
+    }
+}
+```
+
+<h3>CSS: Overlay Look/Feel</h3>
+
+<p>As mentioned in the <a href="overlay-xy.html">"Basic XY Positioning"</a> example, the overlay.css Sam Skin file (build/overlay/assets/skins/sam/overlay.css) provides the default functional CSS for the overlay. Namely the CSS rules to hide the overlay, and position it absolutely. However there's no default out-of-the-box look/feel applied to the Overlay widget.</p>
+
+<p>The example provides it's own look and feel for the Overlay, by defining rules for the content box, header and body sections:</p>
+
+```
+/* Overlay Look/Feel */
+.yui3-overlay-content {
+    padding:2px;
+    border:1px solid #000;
+    background-color:#aaa;
+    font-size:93%;
+}
+
+.yui3-overlay-content .yui3-widget-hd {
+    font-weight:bold;
+    text-align:center;
+    padding:2px;
+    border:2px solid #aa0000;
+    background-color:#fff;
+}
+
+.yui3-overlay-content .yui3-widget-bd {
+    text-align:left;
+    padding:2px;
+    border:2px solid #0000aa;
+    background-color:#fff;
+}
+
+.yui3-overlay-content .yui3-widget-hd .yui3-ovr-number {
+    color:#aa0000;
+}
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>overlay-stack-source}}
+```

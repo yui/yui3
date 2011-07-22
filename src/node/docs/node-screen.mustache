@@ -1,0 +1,51 @@
+<link href="{{componentAssets}}/node.css" rel="stylesheet" type="text/css">
+<div class="intro">
+    <p>This example shows how to measure the size of the window and document.</p>
+</div>
+
+<div class="example">
+{{>node-screen-source}}
+</div>
+
+<h2>Setting up the HTML</h2>
+<p>First we need some HTML to work with.</p>
+```
+<dl id="demo">
+    <dt>Window size</dt>
+    <dd class="yui3-data-win">Click me to find out</dd>
+    <dt>Document size</dt>
+    <dd class="yui3-data-doc">Click me to find out</dd>
+</dl>
+```
+
+<h2>Getting the Dimensions</h2>
+<p>In this example, we will listen for clicks on the <code>DD</code> elements and update them with screen information.</p>
+```
+var onClick = function(e) {
+    var target = e.target,
+        h, w;
+
+    if (target.test('dd')) {
+        if (target.test('.yui3-data-win')) {
+            h = target.get('winHeight');
+            w = target.get('winWidth');
+        } else if (target.test('.yui3-data-doc')) {
+            h = target.get('docHeight');
+            w = target.get('docWidth');
+
+        }
+        target.set('innerHTML', 'width: ' + w + ' height: ' + h);
+    }
+};
+```
+
+<h2>Adding a Click Listener</h2>
+<p>Now we just assign the click handler to the <code>DL</code> that will allow us to use event bubbling to handle clicks on each <code>DD</code>.</p>
+```
+Y.one('#demo').on('click', onClick);
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>node-screen-source}}
+```

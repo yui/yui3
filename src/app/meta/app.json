@@ -18,6 +18,7 @@
                     "array-invoke",
                     "arraylist",
                     "base-build",
+                    "escape",
                     "json-parse",
                     "model"
                 ]

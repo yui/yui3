@@ -1,0 +1,11 @@
+<span id="demo"></span>
+
+<script type="text/javascript">
+YUI().use('node', function(Y) {
+    var onClick = function(e) {
+        Y.one('#demo').setXY([e.pageX, e.pageY]);
+    };
+
+    Y.one('document').on('click', onClick);
+});
+</script>

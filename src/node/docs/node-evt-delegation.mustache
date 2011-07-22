@@ -1,0 +1,47 @@
+<link href="{{componentAssets}}/node.css" rel="stylesheet" type="text/css">
+<div class="intro">
+    <p>This example demonstrates using a single event listener on a list to delegate clicks on the list items.</p>
+</div>
+
+<div class="example">
+{{>node-evt-delegation-source}}
+</div>
+
+<h2>Setting up the HTML</h2>
+<p>First we need some HTML to work with.</p>
+```
+<ul id="demo">
+    <li>click me if you don't mind...</li>
+    <li>click me if you don't mind...</li>
+    <li>click me if you don't mind...</li>
+    <li>click me if you don't mind...</li>
+</ul>
+```
+
+<h2>Geting a NodeList Instance</h2>
+<p>We will use the <code>all</code> method of our YUI instance to get a <code>NodeList</code> instance to work with.</p>
+```
+var nodes = Y.all('#demo li');
+```
+
+<h2>Delegating Node Events</h2>
+<p>In this example, we will listen for a <code>click</code> event on the list and handle it at the item level and use information from the <code>event</code> object to update the nodes.</p>
+```
+var onClick = function(e) {
+    e.currentTarget.addClass('yui-pass'); // e.currentTarget === #demo li
+    e.target.setContent('thanks for the click!'); // e.target === #demo li or #demo li em
+    e.container.setStyle('border', '5px solid blue'); // e.container === #demo
+
+    nodes.filter(':not(.yui3-pass)').setContent('Click me too please!');
+};
+```
+
+<p>Now we just assign the handler to the <code>UL</code> using the <code>delegate</code> method to handle clicks on each <code>LI</code>.</p>
+```
+Y.one('#demo').delegate('click', onClick, 'li');
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>node-evt-delegation-source}}
+```

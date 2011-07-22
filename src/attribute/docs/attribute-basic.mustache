@@ -1,0 +1,191 @@
+<style type="text/css" scoped>
+    .example-out .myclass-attrs {
+        font-family:courier;
+        margin-top:2px;
+    }
+
+    .example-out .myclass-title {
+        font-weight:bold;
+        font-family:arial;
+        color:#8dd5e7;
+        margin-top:5px;
+        margin-bottom:3px;
+    }
+
+    .example-out {
+        overflow:auto;
+        border:1px solid #000;
+        color:#ffffff;
+        background-color:#004C6D;
+        margin:5px;
+        height:8em;
+        padding:2px 2px 2px 5px;
+    }
+</style>
+
+<div class="intro">
+    <p>This example provides an introduction to the Attribute utility, showing how you can use it to add attribute support to your own custom classes.</p>
+    <p>
+    It is geared towards users who want to create their own classes from scratch and add Attribute support. In most cases you should consider extending the <a href="../base/index.html">`Base`</a> class when you need managed attribute support, 
+    instead of augmenting Attribute directly, especially if you expect your class to be extended. <a href="../base/index.html">`Base`</a> does the work described in this example for you, in addition to making it easier for users to extend you class.
+    </p>    
+</div>
+
+<div class="example">
+    {{>attribute-basic-source}}
+</div>
+
+<h2>Setting Up Your Own Class To Use Attribute</h2>
+
+<p>In this example, we'll show how you can use the Attribute utility to add managed attributes to your own object classes. Later examples will show how you can configure more advanced attribute properties, and work with attribute change events.</p>
+
+<h3>Creating A YUI Instance</h3>
+
+<p>Before we get into attribute, a quick note on how we set up the instance of YUI we'll use for the examples. For all of the attribute examples, we'll setup our own instance of the YUI object and download the files we require on demand using the code pattern shown below:</p>
+
+```
+<script type="text/javascript">
+
+    // Create our local YUI instance, to avoid
+    // modifying the global YUI object
+
+    YUI({...}).use("attribute", "node", function(Y) {
+
+        // Example code is written inside this function,
+        // which gets passed our own YUI instance, Y, loaded
+        // with the modules we asked for - "attribute" and "node"
+
+    });
+</script>
+```
+
+<p>The call to `YUI()` will create and return a new instance of the global YUI object for us to use. However this instance does not yet have all the modules we need for the examples.</p>
+
+<p>To load the modules, we invoke `use()` and pass it the list of modules we'd like populated on our new YUI instance - in this case, `attribute` and `node`.
+
+The YUI instance will pull down the source files for modules if they don't already exist on the page, plus any or their dependencies.
+When the source files are done downloading, the callback function which we pass in as the 3rd argument to `use()`, is invoked. Our custom YUI instance, `Y`, is passed to the callback, populated with the classes which make up the requested modules.</p>
+
+<p>This callback function is where we'll write all our example code. By working inside the callback function, we don't pollute the global namespace and we're also able to download the files we need on demand, rather than have them be on the page up front.</p>
+
+<p>The configuration object passed to `YUI()` when creating the instance is used to specify how (<em>combined, separate, debug, min etc.</em>) we want the files downloaded, and from where. The API documentation for the <a href="{{apiDocs}}/YUI.html">YUI object</a>, provides more information about the configuration options available.</p>
+
+<h3>Defining Your Custom Class</h3>
+
+<p>The first step in the example is to create the constructor function for our new class, to which we want to add attribute support. In our example, this class is called `MyClass`.
+
+We then augment `MyClass` with `Y.Attribute`, so that it receives all of `Attribute's` methods:</p>
+
+```
+function MyClass(cfg) {
+    ...
+}
+
+Y.augment(MyClass, Y.Attribute);
+```
+
+<h3>Adding Attributes</h3>
+
+<p>We can now set up any attributes we need for `MyClass` using the `addAttrs` method. For the basic example we add 3 attributes - `foo`,`bar`, and `foobar`, and provide an initial `value` for each. 
+
+The same object literal we use to provide the initial value for the attribute will also be used in the other examples to configure attribute properties such as `readOnly` or `writeOnce`, and define `getter`, `setter` and `validator` methods for the attribute.</p>
+
+<p>In this example, the default set of attributes which `MyClass` will support gets passed to `addAttrs` to set up the attributes for each instance during construction.</p>
+
+The complete definition for `MyClass` is shown below:</p>
+
+```
+// Setup custom class which we want to add managed attribute support to
+function MyClass(cfg) {
+
+    // When constructed, setup the initial attributes for the 
+    // instance, by calling the addAttrs method.
+    var attrs = {
+        // Add 3 attributes, foo, bar and foobar
+        "foo" : {
+            value:5
+        },
+ 
+        "bar" : {
+            value:"Hello World!"
+        },
+
+        "foobar" : {
+            value:true
+        }
+    };
+
+    this.addAttrs(attrs, cfg);
+}
+
+// Augment custom class with Attribute 
+Y.augment(MyClass, Y.Attribute);
+```
+
+<p>The `addAttrs` method, in addition to the default attribute configuration, also accepts an object literal (associative array) of name/value pairs which can be used to over-ride the default initial values of the attributes. This is useful for classes which wish to allow the user to set the value of attributes as part of object construction, as shown by the use of the `cfg` argument above.</p>
+
+<p>
+As mentioned previously, if you expect your class to be extended, <a href="../base/index.html">Base</a> provides a more convenient way for you to define the same attribute configuration statically for your class, so that it can be easily modified by extended classes. Base will take care of isolating the static configuration, so that it isn't modified across instances. 
+</p>
+
+<h3>Using Attributes</h3>
+
+<p>Now that we have `MyClass` defined with a set of attributes it supports, users can get and set attribute values on instances of `MyClass`:</p>
+
+<p>We construct the first instance, `o1`, without setting any initial attribute values in the constructor, but use Attribute's `set()` method to set values after construction:</p>
+
+```
+// Create a new instance, but don't provide any initial attribute values.
+var o1 = new MyClass();
+
+// Display current values
+displayValues(o1, "o1 with default values, set during construction", 
+                "#createo1 .example-out");
+
+...
+
+// Update values, using the "set" method
+o1.set("foo", 10);
+o1.set("bar", "Hello New World!");
+o1.set("foobar", false);
+
+displayValues(o1, "o1 values updated using set, after construction", 
+                "#updateo1 .example-out");
+```
+
+<p>For the second instance that, `o2` we set the initial values of the attributes, using the constructor configuration argument:</p>
+
+```
+var o2 = new MyClass({
+    foo: 7,
+    bar: "Aloha World!",
+    foobar: false
+});
+```
+
+<p>The `displayValues()` method uses Attribute's `get()` method to retrieve the current values of the attributes, to display:</p>
+
+```
+function displayValues(o, title, node) {
+    var str = 
+        '<div class="myclass"><div class="myclass-title">' 
+        + title + 
+        ':</div><ul class="myclass-attrs"><li>foo:' 
+        + o.get("foo") 
+        + '</li><li>bar:'
+        + o.get("bar")
+        + '</li><li>foobar:'
+        + o.get("foobar")
+        + '</li></ul></div>';
+
+    // Use the Y.one() method to get the first element which 
+    // matches the selector passed in, to output the string to...       
+    Y.one(node).set("innerHTML", str);
+}
+```
+
+<h2>Complete Example Source</h2>
+
+```
+{{>attribute-basic-source}}
+```
