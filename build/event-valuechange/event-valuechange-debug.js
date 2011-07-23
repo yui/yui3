@@ -339,21 +339,13 @@ VC = {
  * the various key events across browsers.
  * </p>
  *
- * <p>
- * This event is provided by the <code>event-valuechange</code> module.
- * </p>
+ * @example
  *
- * <p>
- * <strong>Usage example:</strong>
- * </p>
- *
- * <code><pre>
- * YUI().use('event-valuechange', function (Y) {
- * &nbsp;&nbsp;Y.one('input').on('valueChange', function (e) {
- * &nbsp;&nbsp;&nbsp;&nbsp;// Handle valueChange events on the first input element on the page.
- * &nbsp;&nbsp;});
- * });
- * </pre></code>
+ *     YUI().use('event-valuechange', function (Y) {
+ *       Y.one('input').on('valueChange', function (e) {
+ *         // Handle valueChange events on the first input element on the page.
+ *       });
+ *     });
  *
  * @event valueChange
  * @param {EventFacade} e Event facade with the following additional
