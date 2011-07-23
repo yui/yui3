@@ -26,8 +26,8 @@ AutoComplete Change History
     Schultze]
 
   * The `this` object now refers to the current AutoComplete instance instead of
-    the window in list locators, text locators, filters, formatters, and
-    highlighters.
+    the window in list locators, text locators, filters, formatters,
+    highlighters, and requestTemplate functions.
 
   * Added an `originEvent` property to the event facade of `select` events. It
     contains an event facade of the DOM event that triggered the selection if
@@ -53,6 +53,9 @@ AutoComplete Change History
     query instead of being appended to the source URL. This affected XHR and
     JSONP sources that used both a `{query}` placeholder in the source string
     and a custom `requestTemplate` value. [Ticket #2529895]
+
+  * Fixed a bug that caused the `requestTemplate` function to be called twice
+    for an XHR request instead of just once.
 
   * Fixed a bug in which JSONP, XHR, and YQL requests were cached solely based
     on the query rather than on the complete request. This could result in

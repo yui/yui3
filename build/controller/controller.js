@@ -271,6 +271,16 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     },
 
     /**
+    Gets the current route path, relative to the `root` (if any).
+
+    @method getPath
+    @return {String} Current route path.
+    **/
+    getPath: function () {
+        return this._getPath();
+    },
+
+    /**
     Returns `true` if this controller has at least one route that matches the
     specified URL path, `false` otherwise.
 

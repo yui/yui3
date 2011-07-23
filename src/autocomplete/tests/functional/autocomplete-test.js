@@ -301,6 +301,21 @@ baseSuite.add(new Y.Test.Case({
         Assert.areSame('/ac?q=foo%20%26%20bar&a=aardvark', rt('foo & bar'));
     },
 
+    '`this` object in requestTemplate functions should be the AutoComplete instance': function () {
+        var ac    = this.ac,
+            calls = 0;
+
+        this.ac.set('requestTemplate', function () {
+            calls += 1;
+            Assert.areSame(ac, this);
+        });
+
+        this.ac.set('source', ['foo', 'bar']);
+        this.ac.sendRequest('foo');
+
+        Assert.areSame(1, calls);
+    },
+
     'resultFilters should accept a function, array of functions, string, array of strings, or null': function () {
         var filter = function () {};
 
@@ -847,14 +862,18 @@ baseSuite.add(new Y.Test.Case({
     },
 
     'requestTemplate should be appended to XHR source URLs': function () {
-        var source = '/foo?q={query}';
+        var query  = 'monkey pants',
+            source = '/foo?q={query}';
 
         this.ac.set('source', source);
         this.ac.set('requestTemplate', '&bar=baz');
 
         Assert.areSame(
-            '/foo?q=monkey%20pants&bar=baz',
-            this.ac._getXHRUrl(source, 'monkey pants')
+            '/foo?q=' + encodeURIComponent(query) + '&bar=baz',
+            this.ac._getXHRUrl(source, {
+                query  : query,
+                request: this.ac.get('requestTemplate').call(this.ac, query)
+            })
         );
     }
 }));
