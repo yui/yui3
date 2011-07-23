@@ -97,6 +97,24 @@ YUI({useBrowserConsole:false}).use('test', 'widget', 'node-event-simulate', 'con
                 Y.Assert.fail("w.destroy() on a rendered widget threw an exception" + e);
             }
         },
+        
+        testRenderedDeepDestroy: function() {
+            var w = new Y.Widget({id:"foo"}).render();
+            var nref = Y.Node.create('<div id="deep">Foo</div>');
+
+            w.get("contentBox").appendChild(nref);
+
+            try {
+                w.destroy(true);
+
+                Y.Assert.isNull(Y.Node.one("#foo"), "Bounding box still in DOM");
+                Y.Assert.isNull(Y.Node.one("#deep"), "Deep content box still in DOM");
+                Y.Assert.isNull(Y.Node.getDOMNode(nref), "Deep content still in Node cache");
+
+            } catch(e) {
+                Y.Assert.fail("w.destroy(true) on a rendered widget threw an exception" + e);
+            }
+        },
     
         testUnrenderedDestroy: function() {
             var w = new Y.Widget();
@@ -121,6 +139,7 @@ YUI({useBrowserConsole:false}).use('test', 'widget', 'node-event-simulate', 'con
             var w = new MyWidget({
                 id:"foo"
             });
+            w.render();
 
             try {
                 w.destroy();
@@ -128,7 +147,36 @@ YUI({useBrowserConsole:false}).use('test', 'widget', 'node-event-simulate', 'con
             } catch(e) {
                 Y.Assert.fail("w.destroy() on a single box widget threw an exception" + e);
             }
-        }
+        },
+
+        testSingleBoxDeepDestroy: function() {
+
+            function MyWidget() {
+                MyWidget.superclass.constructor.apply(this, arguments);
+            };
+            MyWidget.NAME = "myWidget";
+
+            Y.extend(MyWidget, Y.Widget, {
+                CONTENT_TEMPLATE:null
+            });
+
+            var w = new MyWidget({
+                id:"foo"
+            });
+            w.render();
+
+            var nref = Y.Node.create('<div id="deep_single">Foo</div>');
+            w.get("contentBox").appendChild(nref);
+
+            try {
+                w.destroy(true);
+                Y.Assert.isNull(Y.Node.one("#foo"), "Bounding box still in DOM");
+                Y.Assert.isNull(Y.Node.one("#deep_single"), "Deep content box still in DOM");
+                Y.Assert.isNull(Y.Node.getDOMNode(nref), "Deep content still in Node cache");
+            } catch(e) {
+                Y.Assert.fail("w.destroy(true) on a single box widget threw an exception" + e);
+            }
+        }        
     }));
 
     suite.add(new Y.Test.Case({
