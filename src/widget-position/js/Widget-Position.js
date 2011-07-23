@@ -185,6 +185,7 @@
          * Default validator for the XY attribute
          *
          * @method _validateXY
+         * @protected
          * @param {Array} val The XY page co-ordinate value which is being set.
          * @return {boolean} true if valid, false if not.
          */
@@ -197,6 +198,7 @@
          * to the XY attribute, which is the sole store for the XY state.
          *
          * @method _setX
+         * @protected
          * @param {Number} val The X page co-ordinate value
          */
         _setX : function(val) {
@@ -208,6 +210,7 @@
          * to the XY attribute, which is the sole store for the XY state.
          *
          * @method _setY
+         * @protected
          * @param {Number} val The Y page co-ordinate value
          */
         _setY : function(val) {
@@ -219,6 +222,7 @@
          * the XY attribute, which is the sole store for the XY state.
          *
          * @method _getX
+         * @protected 
          * @return {Number} The X page co-ordinate value
          */
         _getX : function() {
@@ -230,6 +234,7 @@
          * the XY attribute, which is the sole store for the XY state.
          *
          * @method _getY
+         * @protected 
          * @return {Number} The Y page co-ordinate value
          */
         _getY : function() {
