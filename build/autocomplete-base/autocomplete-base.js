@@ -1159,7 +1159,8 @@ AutoCompleteBase.prototype = {
                 // an array of result objects), and these strings are then added
                 // to each result object.
                 if (highlighter) {
-                    highlighted = highlighter.call(this, query, results.concat());
+                    highlighted = highlighter.call(this, query,
+                            results.concat());
 
                     if (!highlighted) {
                         return;
@@ -1576,7 +1577,7 @@ AutoCompleteBase.prototype = {
     _onResponse: function (query, e) {
         // Ignore stale responses that aren't for the current query.
         if (query === (this.get(QUERY) || '')) {
-            this._parseResponse(query, e.response, e.data);
+            this._parseResponse(query || '', e.response, e.data);
         }
     },
 
@@ -1624,4 +1625,4 @@ AutoCompleteBase.prototype = {
 Y.AutoCompleteBase = AutoCompleteBase;
 
 
-}, '@VERSION@' ,{optional:['autocomplete-sources'], requires:['array-extras', 'base-build', 'escape', 'event-valuechange', 'node-base']});
+}, '@VERSION@' ,{requires:['array-extras', 'base-build', 'escape', 'event-valuechange', 'node-base'], optional:['autocomplete-sources']});

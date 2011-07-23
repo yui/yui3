@@ -68,8 +68,6 @@ Highlighters = Y.mix(Y.namespace('AutoCompleteHighlighters'), {
         // The caseSensitive parameter is only intended for use by
         // phraseMatchCase(). It's intentionally undocumented.
 
-        if (!query) { return results; }
-
         return YArray.map(results, function (result) {
             return Highlight.all(result.text, [query], {
                 caseSensitive: caseSensitive
