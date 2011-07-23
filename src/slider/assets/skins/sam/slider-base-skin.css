@@ -1,6 +1,6 @@
 /* Horizontal Slider */
 
-/* Use thumbUrl /build/slider/assets/skins/sam/thumb-x.png */
+/* Use thumbUrl /build/slider-base/assets/skins/sam/thumb-x.png */
 
 .yui3-skin-sam .yui3-slider-x .yui3-slider-rail,
 .yui3-skin-sam .yui3-slider-x .yui3-slider-rail-cap-left,
@@ -44,7 +44,7 @@
 
 /* Vertical Slider */
 
-/* Use thumbUrl /build/slider/assets/skins/sam/thumb-y.png */
+/* Use thumbUrl /build/slider-base/assets/skins/sam/thumb-y.png */
 
 .yui3-skin-sam .yui3-slider-y .yui3-slider-rail,
 .yui3-skin-sam .yui3-slider-y .yui3-slider-rail-cap-top,
