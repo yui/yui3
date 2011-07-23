@@ -17,11 +17,11 @@ YUI().use("overlay", "substitute", "json", "gallery-widget-io", function(Y) {
             Y.on('io:xdrReady', function() {
                 transportAvailable = true;
             });
-            
+
             Y.io.transport({
                 id:'flash',
                 yid: Y.id,
-                src:'../build/io/io.swf?stamp=' + (new Date()).getTime()
+                src:'../build/io-xdr/io.swf?stamp=' + (new Date()).getTime()
             });
         },
 

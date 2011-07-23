@@ -1,33 +1,32 @@
 /**
- * The Recordset utility provides a standard way for dealing with
- * a collection of similar objects.
- * @module recordset
- * @submodule recordset-base
- */
+The Recordset utility provides a standard way for dealing with
+a collection of similar objects.
+@module recordset
+@submodule recordset-base
+**/
 
 
 var ArrayList = Y.ArrayList,
 Lang = Y.Lang,
 
 /**
-     * The Recordset utility provides a standard way for dealing with
-     * a collection of similar objects.
-     *
-     * Provides the base Recordset implementation, which can be extended to add
-     * additional functionality, such as custom indexing. sorting, and filtering.
-     *
-     * @class Recordset
-     * @extends Base
-     * @augments ArrayList
-     * @param config {Object} Configuration object literal with initial attribute values
-     * @constructor
-     */
+The Recordset utility provides a standard way for dealing with
+a collection of similar objects.
 
+Provides the base Recordset implementation, which can be extended to add
+additional functionality, such as custom indexing. sorting, and filtering.
+
+@class Recordset
+@extends Base
+@uses ArrayList
+@param config {Object} Configuration object with initial attribute values
+@constructor
+**/
 Recordset = Y.Base.create('recordset', Y.Base, [], {
 
 
     /**
-     * @description Publish default functions for events. Create the initial hash table.
+     * Publish default functions for events. Create the initial hash table.
      *
      * @method initializer
      * @protected
@@ -130,10 +129,11 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
         },
 
     /**
-     * @description Helper method called upon by add() - it is used to create a new record(s) in the recordset
+     * Helper method called upon by add() - it is used to create a new
+     * record(s) in the recordset
      *
      * @method _defAddFn
-     * @return {Y.Record} A Record instance.
+     * @return {Record} A Record instance.
      * @private
      */
     _defAddFn: function(e) {
@@ -158,7 +158,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     },
 
     /**
-     * @description Helper method called upon by remove() - it is used to remove record(s) from the recordset
+     * Helper method called upon by remove() - it is used to remove record(s) from the recordset
      *
      * @method _defRemoveFn
      * @private
@@ -193,7 +193,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     },
 
     /**
-     * @description Helper method called upon by update() - it is used to update the recordset
+     * Helper method called upon by update() - it is used to update the recordset
      *
      * @method _defUpdateFn
      * @private
@@ -211,7 +211,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     //---------------------------------------------
 
     /**
-     * @description Method called whenever "recordset:add" event is fired. It adds the new record(s) to the hashtable.
+     * Method called whenever "recordset:add" event is fired. It adds the new record(s) to the hashtable.
      *
      * @method _defAddHash
      * @private
@@ -227,7 +227,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     },
 
     /**
-     * @description Method called whenever "recordset:remove" event is fired. It removes the record(s) from the recordset.
+     * Method called whenever "recordset:remove" event is fired. It removes the record(s) from the recordset.
      *
      * @method _defRemoveHash
      * @private
@@ -244,7 +244,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
 
 
     /**
-     * @description Method called whenever "recordset:update" event is fired. It updates the record(s) by adding the new ones and removing the overwritten ones.
+     * Method called whenever "recordset:update" event is fired. It updates the record(s) by adding the new ones and removing the overwritten ones.
      *
      * @method _defUpdateHash
      * @private
@@ -266,7 +266,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     },
 
     /**
-     * @description Method called whenever "recordset:empty" event is fired. It empties the hash table.
+     * Method called whenever "recordset:empty" event is fired. It empties the hash table.
      *
      * @method _defEmptyHash
      * @private
@@ -276,7 +276,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     },
 
     /**
-     * @description Sets up the hashtable with all the records currently in the recordset
+     * Sets up the hashtable with all the records currently in the recordset
      *
      * @method _setHashTable
      * @private
@@ -297,11 +297,11 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
 
 
     /**
-     * @description Helper method - it takes an object bag and converts it to a Y.Record
+     * Helper method - it takes an object bag and converts it to a Y.Record
      *
      * @method _changeToRecord
-     * @param obj {Object || Y.Record} Any objet literal or Y.Record instance
-     * @return {Y.Record} A Record instance.
+     * @param obj {Object|Record} Any objet literal or Y.Record instance
+     * @return {Record} A Record instance.
      * @private
      */
     _changeToRecord: function(obj) {
@@ -322,7 +322,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     // Events
     //---------------------------------------------
     /**
-     * @description Event that is fired whenever the recordset is changed. Note that multiple simultaneous changes still fires this event once. (ie: Adding multiple records via an array will only fire this event once at the completion of all the additions)
+     * Event that is fired whenever the recordset is changed. Note that multiple simultaneous changes still fires this event once. (ie: Adding multiple records via an array will only fire this event once at the completion of all the additions)
      *
      * @method _recordSetUpdated
      * @private
@@ -338,7 +338,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
 
 
     /**
-     * @description Syncs up the private hash methods with their appropriate triggering events.
+     * Syncs up the private hash methods with their appropriate triggering events.
      *
      * @method _syncHashTable
      * @private
@@ -368,12 +368,11 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     // Public Methods
     //---------------------------------------------
     /**
-     * @description Returns the record with particular ID or index
+     * Returns the record with particular ID or index
      *
      * @method getRecord
      * @param i {String, Number} The ID of the record if a string, or the index if a number.
-     * @return {Y.Record} An Y.Record instance
-     * @public
+     * @return {Record} A Y.Record instance
      */
     getRecord: function(i) {
 
@@ -388,25 +387,23 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
 
 
     /**
-     * @description Returns the record at a particular index
+     * Returns the record at a particular index
      *
      * @method getRecordByIndex
      * @param i {Number} Index at which the required record resides
-     * @return {Y.Record} An Y.Record instance
-     * @public
+     * @return {Record} A Y.Record instance
      */
     getRecordByIndex: function(i) {
         return this._items[i];
     },
 
     /**
-     * @description Returns a range of records beginning at particular index
+     * Returns a range of records beginning at particular index
      *
      * @method getRecordsByIndex
      * @param index {Number} Index at which the required record resides
      * @param range {Number} (Optional) Number of records to retrieve. The default is 1
      * @return {Array} An array of Y.Record instances
-     * @public
      */
     getRecordsByIndex: function(index, range) {
         var i = 0,
@@ -421,24 +418,25 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     },
 
     /**
-     * @description Returns the length of the recordset
+     * Returns the length of the recordset
      *
      * @method getLength
      * @return {Number} Number of records in the recordset
-     * @public
      */
     getLength: function() {
         return this.size();
     },
 
     /**
-     * @description Returns an array of values for a specified key in the recordset
-     *
-     * @method getValuesByKey
-     * @param index {Number} (optional) Index at which the required record resides
-     * @return {Array} An array of values for the given key
-     * @public
-     */
+    Gets an array of values for a data _key_ in the set's records.  If no _key_
+    is supplied, the returned array will contain the full data object for each
+    record.
+
+    @method getValuesByKey
+    @param {String} [key] Data property to get from all records
+    @return {Array} An array of values for the given _key_ if supplied.
+        Otherwise, an array of each record's data hash.
+    **/
     getValuesByKey: function(key) {
         var i = 0,
         len = this._items.length,
@@ -451,13 +449,12 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
 
 
     /**
-     * @description Adds one or more Records to the RecordSet at the given index. If index is null, then adds the Records to the end of the RecordSet.
+     * Adds one or more Records to the RecordSet at the given index. If index is null, then adds the Records to the end of the RecordSet.
      *
      * @method add
-     * @param oData {Y.Record, Object Literal, Array} A Y.Record instance, An object literal of data or an array of object literals
-     * @param index {Number} (optional) Index at which to add the record(s)
-     * @return {Y.Recordset} The updated recordset instance
-     * @public
+     * @param {Record|Object|Array} oData A Y.Record instance, An object literal of data or an array of object literals
+     * @param [index] {Number} [index] Index at which to add the record(s)
+     * @return {Recordset} The updated recordset instance
      */
     add: function(oData, index) {
 
@@ -488,14 +485,15 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     },
 
     /**
-     * @description Removes one or more Records to the RecordSet at the given index. If index is null, then removes a single Record from the end of the RecordSet.
-     *
-     * @method remove
-     * @param index {Number} (optional) Index at which to remove the record(s) from
-     * @param range {Number} (optional) Number of records to remove (including the one at the index)
-     * @return {Y.Recordset} The updated recordset instance
-     * @public
-     */
+    Removes one or more Records to the RecordSet at the given index. If index
+    is null, then removes a single Record from the end of the RecordSet.
+    
+    @method remove
+    @param {Number} [index] Index at which to remove the record(s) from
+    @param {Number} [range] Number of records to remove (including the one
+        at the index)
+    @return {Recordset} The updated recordset instance
+    **/
     remove: function(index, range) {
         var remRecords = [];
 
@@ -515,11 +513,10 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     },
 
     /**
-     * @description Empties the recordset
+     * Empties the recordset
      *
      * @method empty
-     * @return {Y.Recordset} The updated recordset instance
-     * @public
+     * @return {Recordset} The updated recordset instance
      */
     empty: function() {
         this.fire('empty', {});
@@ -527,14 +524,15 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     },
 
     /**
-     * @description Updates the recordset with the new records passed in. Overwrites existing records when updating the index with the new records.
-     *
-     * @method update
-     * @param data {Y.Record, Object Literal, Array} A Y.Record instance, An object literal of data or an array of object literals
-     * @param index {Number} (optional) The index to start updating from. 
-     * @return {Y.Recordset} The updated recordset instance
-     * @public
-     */
+    Updates the recordset with the new records passed in. Overwrites existing
+    records when updating the index with the new records.
+    
+    @method update
+    @param {Record|Object|Array} data A Y.Record instance, An object literal of
+        data or an array of object literals
+    @param {Number} [index] The index to start updating from. 
+    @return {Recordset} The updated recordset instance
+    **/
     update: function(data, index) {
         var rec,
         arr,
@@ -558,15 +556,13 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     }
 
 
-},
-{
+}, {
     ATTRS: {
 
         /**
-        * @description An array of records that the recordset is storing
+        * An array of records that the recordset is storing
         *
         * @attribute records
-        * @public
         * @type array
         */
         records: {
@@ -610,27 +606,24 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
         },
 
         /**
-    * @description A hash table where the ID of the record is the key, and the record instance is the value.
-    *
-    * @attribute table
-    * @public
-    * @type object
-    */
+        A hash table where the ID of the record is the key, and the record
+        instance is the value.
+        
+        @attribute table
+        @type object
+        **/
         table: {
-            //Initially, create the hash table with all records currently in the recordset
             valueFn: '_setHashTable'
         },
 
         /**
-    * @description The ID to use as the key in the hash table.
-    *
-    * @attribute key
-    * @public
-    * @type string
-    */
+        The ID to use as the key in the hash table.
+        
+        @attribute key
+        @type string
+        **/
         key: {
             value: 'id',
-            //set to readonly true. If you want custom hash tables, you should use the recordset-indexer plugin.
             readOnly: true
         }
 

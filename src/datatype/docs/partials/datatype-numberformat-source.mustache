@@ -1,0 +1,37 @@
+<form id="demo">
+    <fieldset>
+        <label for="demo_number">Number to format: <input type="text" id="demo_number"></label>
+    </fieldset>
+    <fieldset class="short">
+        <label for="demo_thousandsSeparator">Thousands separator: <input type="text" id="demo_thousandsSeparator"></label>
+        <label for="demo_decimalSeparator">Decimal separator: <input type="text" id="demo_decimalSeparator"></label>
+        <label for="demo_decimalPlaces">Decimal places: <input type="text" id="demo_decimalPlaces"></label>
+    </fieldset>
+    <fieldset class="medium">
+        <label for="demo_prefix">Prefix: <input type="text" id="demo_prefix"></label>
+        <label for="demo_suffix">Suffix: <input type="text" id="demo_suffix"></label>
+    </fieldset>
+    <fieldset>
+        <input type="button" id="demo_btn" value="Show formatted string">: <span id="demo_output">&nbsp;</span>
+    </fieldset>
+</form>
+
+<script>
+YUI().use("node", "datatype-number", "escape", function (Y) {
+    Y.on("click", function(e){
+        var number = Y.DataType.Number.parse(Y.one("#demo_number").get("value")),
+            output = Y.DataType.Number.format(number, {
+                    prefix: Y.one("#demo_prefix").get("value"),
+                    thousandsSeparator: Y.one("#demo_thousandsSeparator").get("value"),
+                    decimalSeparator:Y.one("#demo_decimalSeparator").get("value"),
+                    decimalPlaces: Y.DataType.Number.parse(Y.one("#demo_decimalPlaces").get("value")),
+                    suffix: Y.one("#demo_suffix").get("value")
+                });
+                
+        if(output === "") {
+            output += "(Invalid number)"
+        }
+        Y.one("#demo_output").setContent(Y.Escape.html(output));
+    }, "#demo_btn");
+});
+</script>

@@ -79,7 +79,7 @@
 
 		/**
          * diameter of the circular background object.
-		 * Other objects scale accordingly
+		 * Other objects scale accordingly.
 		 * Set this only before rendering.
          *
          * @attribute diameter
@@ -93,7 +93,7 @@
 
 		/**
          * diameter of the handle object which users drag to change the value.
-		 * Dial sets the pixel dimension of the marker equal to markerDiameter * diameter
+		 * Dial sets the pixel dimension of the handle equal to handleDiameter * diameter.
 		 * Set this only before rendering.
          *
          * @attribute handleDiameter
@@ -107,8 +107,7 @@
 
 		/**
          * diameter of the marker object which follows the angle of the handle during value changes.
-		 * Scaled relative to the diameter attribute
-		 * Dial sets the pixel dimension of the marker equal to markerDiameter * diameter
+		 * Dial sets the pixel dimension of the marker equal to markerDiameter * diameter.
 		 * Set this only before rendering.
          *
          * @attribute markerDiameter
@@ -122,7 +121,7 @@
 
 		/**
          * diameter of the center button object.
-		 * Dial sets the pixel dimension of the centerButton equal to centerButtonDiameter * diameter
+		 * Dial sets the pixel dimension of the centerButton equal to centerButtonDiameter * diameter.
 		 * Set this only before rendering.
          *
          * @attribute centerButtonDiameter
@@ -213,7 +212,7 @@
 
 		/**
 		 * distance from the center of the dial to the 
-		 * resting place of the center of the handle and marker. 
+		 * center of the marker and handle, when at rest. 
 		 * The value is a percent of the radius of the dial.
          *
          * @attribute handleDistance
@@ -470,7 +469,7 @@
 		
 		/**
 		 * handles the user dragging the handle around the Dial, calculates the angle, 
-		 * checks for wrapping around top center, handles exceeding min or max values 
+		 * checks for wrapping around top center 
 		 *
 		 * @method _handleDrag
          * @param e {DOMEvent} the drag event object
@@ -650,10 +649,10 @@
 		},
 
 		/**
-		 * returns the XY of the fixed position, handleDistance, from the center of the Dial (resting position)
-		 * The XY also represents the angle related to the current value
+		 * returns the XY of the fixed position, handleDistance, from the center of the Dial (resting position).
+		 * The XY also represents the angle related to the current value.
 		 * If typeArray is true, [X,Y] is returned.
-		 * If typeArray is false, the XY of the node passed is set.
+		 * If typeArray is false, the XY of the obj node passed in is set.
 		 *
 		 * @method _setNodeToFixedRadius
 		 * @param obj {Node}
@@ -699,13 +698,13 @@
         },
 
 		/**
-		 * sets the sizes of ring, center-button, marker and handle VML ovals in pixels.
-		 * Needed only in some IE versions 
-		 * that ignore percent style sizes/offsets.
+		 * sets the sizes of ring, center-button, marker, handle, and VML ovals in pixels.
+		 * Needed only because some IE versions 
+		 * ignore CSS percent sizes/offsets.
 		 * so these must be set in pixels.
 		 * Normally these are set in % of the ring.
 		 *
-		 * @method _setSizes       //FIXME: this name should have VML removed, doing for all.
+		 * @method _setSizes
 		 * @protected
 		 */
 		_setSizes : function(){
@@ -975,7 +974,7 @@
 		/**
 		 * sets Dial value to dial's max attr
 		 *
-		 * @method _decrMajor
+		 * @method _setToMax
 		 * @protected
 		 */
 		_setToMax : function(){
@@ -985,7 +984,7 @@
 		/**
 		 * sets Dial value to dial's min attr
 		 *
-		 * @method _decrMajor
+		 * @method _setToMin
 		 * @protected
 		 */
 		_setToMin : function(){
@@ -1005,7 +1004,8 @@
 		},
 		
 		/**
-		 * returns the handle angle associated with the current value of the Dial. Returns a number between 0 and 360.
+		 * returns the handle angle associated with the current value of the Dial. 
+		 * Returns a number between 0 and 360.
 		 *
 		 * @method _getAngleFromValue
 		 * @param newVal {Number} the current value of the Dial
