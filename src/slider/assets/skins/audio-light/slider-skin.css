@@ -1,6 +1,6 @@
 /* Horizontal Slider */
 
-/* Use thumbUrl /build/slider/assets/skins/audio/thumb-x.png */
+/* Use thumbUrl /build/slider-base/assets/skins/audio/thumb-x.png */
 
 .yui3-skin-audio-light .yui3-slider-x .yui3-slider-rail,
 .yui3-skin-audio-light .yui3-slider-x .yui3-slider-rail-cap-left,
@@ -46,7 +46,7 @@
 
 /* Vertical Slider */
 
-/* Use thumbUrl /build/slider/assets/skins/audio/thumb-y.png */
+/* Use thumbUrl /build/slider-base/assets/skins/audio/thumb-y.png */
 
 .yui3-skin-audio-light .yui3-slider-y .yui3-slider-rail,
 .yui3-skin-audio-light .yui3-slider-y .yui3-slider-rail-cap-top,

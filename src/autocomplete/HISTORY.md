@@ -33,8 +33,8 @@ AutoComplete Change History
     contains an event facade of the DOM event that triggered the selection if
     the selection was triggered by a DOM event.
 
-  * Small performance improvement for filters and highlighters operating on
-    empty query strings. [Ticket #2529949]
+  * Small performance improvement for filters operating on empty query strings.
+    [Ticket #2529949]
 
   * Result list alignment is now updated both when results change and when
     the window is resized instead of only when the list becomes visible. This

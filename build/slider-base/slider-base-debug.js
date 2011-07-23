@@ -447,8 +447,8 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
                 base = 'http://yui.yahooapis.com/' + Y.version + '/build/';
             }
 
-            // <img src="/path/to/build/slider/assets/skins/sam/thumb-x.png">
-            this.set('thumbUrl', base + 'slider/assets/skins/' +
+            // <img src="/path/to/build/slider-base/assets/skins/sam/thumb-x.png">
+            this.set('thumbUrl', base + 'slider-base/assets/skins/' +
                                  skin + '/thumb-' + this.axis + '.png');
 
         }
@@ -575,6 +575,7 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
         }
     }
 });
+
 
 
 }, '@VERSION@' ,{requires:['widget', 'substitute', 'dd-constrain']});

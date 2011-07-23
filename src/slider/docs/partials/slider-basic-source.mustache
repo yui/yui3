@@ -1,0 +1,80 @@
+<div id="demo" class="yui3-skin-sam">
+
+    <h4>Horizontal Slider</h4>
+    <p>
+        <label for="horiz_value">Value: </label>
+            <input id="horiz_value" value="0">
+        <span class="horiz_slider"></span>
+    </p>
+
+    <h4>Vertical Slider</h4>
+    <p><label for="vert_value">Value: </label><input id="vert_value" value="30"></p>
+    <div class="vert_slider"></div>
+
+</div>
+<script type="text/javascript">
+// Create a YUI instance and request the slider module and its dependencies
+YUI().use("slider", function (Y) {
+
+var xInput,  // input tied to xSlider
+    yInput,  // input tied to ySlider
+    xSlider; // horizontal Slider
+
+// Function to pass input value back to the Slider
+function updateSlider( e ) {
+    var data   = this.getData(),
+        slider = data.slider,
+        value  = parseInt( this.get( "value" ), 10 );
+
+    if ( data.wait ) {
+        data.wait.cancel();
+    }
+
+    // Update the Slider on a delay to allow time for typing
+    data.wait = Y.later( 200, slider, function () {
+        data.wait = null;
+        this.set( "value", value );
+    } );
+}
+
+// Function to update the input value from the Slider value
+function updateInput( e ) {
+    this.set( "value", e.newVal );
+}
+    
+
+
+// Create a horizontal Slider using all defaults
+xSlider = new Y.Slider();
+
+// Link the input value to the Slider
+xInput = Y.one( "#horiz_value" );
+xInput.setData( { slider: xSlider } );
+
+// Pass the input as the 'this' object inside updateInput
+xSlider.after( "valueChange", updateInput, xInput );
+xInput.on( "keyup", updateSlider );
+    
+// Render the Slider next to the input
+xSlider.render('.horiz_slider')
+
+    
+// Create the vertical Slider.
+yInput = Y.one( "#vert_value" );
+yInput.setData( "slider", new Y.Slider({
+            axis: 'y',
+            min   : 100,      // min is the value at the top
+            max   : -100,     // max is the value at the bottom
+            value : 30,       // initial value
+            length: '201px',  // rail extended to afford all values
+
+            // construction-time event subscription
+            after : {
+                valueChange: Y.bind( updateInput, yInput )
+            }
+        }).render( ".vert_slider" ) // render returns the Slider
+    )                               // set( "data", ... ) returns the Node
+    .on( "keyup", updateSlider );   // chain the keyup subscription
+
+});
+</script>
