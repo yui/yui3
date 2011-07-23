@@ -864,7 +864,7 @@ AutoCompleteBase.prototype = {
         if (query || query === '') {
             this._set(QUERY, query);
         } else {
-            query = this.get(QUERY);
+            query = this.get(QUERY) || '';
         }
 
         if (source) {
@@ -1578,7 +1578,7 @@ AutoCompleteBase.prototype = {
      */
     _onResponse: function (query, e) {
         // Ignore stale responses that aren't for the current query.
-        if (query === this.get(QUERY)) {
+        if (query === (this.get(QUERY) || '')) {
             this._parseResponse(query, e.response, e.data);
         }
     },
