@@ -1,30 +1,11 @@
 YUI.add('widget-buttons', function(Y) {
 
 /**
- * "widget-autohide" is a widget-level plugin that allows widgets to be hidden
- * when certain events occur.
+ * Provides header/footer button support for Widgets that implement the WidgetStdMod extension
  *
- * By default, the widget will be hidden when the following events occur
- * <ul>
- *   <li>something is clicked outside the widget's bounding box</li>
- *   <li>something is focussed outside the widget's bounding box</li>
- *   <li>the escape key is pressed</li>
- * </ul>
- *
- * Events can be added or removed from this list through the "hideOn" attribute.
- * The following code demonstrates how to do this. Suppose I want to close the widget when
- * another node is resized.
- * <code>widget.plug(Y.Plugin.Autohide, {hideOn: [{node: resize, eventName: 'resize:end'}]});</code>.
- * The hideOn attribute must be an array of objects. For more details on this attribute, refer to the API docs for it.
- *
- * This module was originally part of the overlay-extras package by Eric Ferraiuolo but was promoted and abstracted
- * into the core library.
- *
- * @module widget-autohide
- * @author eferraiuolo, tilomitra
- * @since 3.4.0
+ * @module widget-buttons
+ * @author tilomitra
  */
-
 
 var BOUNDING_BOX        = "boundingBox",
     VISIBLE             = "visible",
@@ -39,40 +20,106 @@ var BOUNDING_BOX        = "boundingBox",
     getCN               = Y.ClassNameManager.getClassName,
     CREATE              = Y.Node.create;
 
+
+/**
+ * Widget extension, which can be used to add header/footer buttons support to a widget that implements the WidgetStdMod extension, 
+ *
+ * @class WidgetButtons
+ * @param {Object} config User configuration object
+ */
 function WidgetButtons(config) {
 
     Y.after(this._renderUIButtons, this, RENDER_UI);
     Y.after(this._bindUIButtons, this, BIND_UI);
     Y.after(this._syncUIButtons, this, SYNC_UI);
 
+
 }
 
+/**
+ * Static property used to define the default attribute 
+ * configuration introduced by WidgetButtons.
+ * 
+ * @property WidgetButtons.ATTRS
+ * @type Object
+ * @static
+ */
 WidgetButtons.ATTRS = {
+
+
+    /**
+     * @attribute buttons
+     * @type {Array}
+     * @default [
+            {
+                type: "close"
+            }
+        ],
+     * @description An array of objects, with each object corresponding to a button that you want to be added to the widget. Each button can have upto 4 properties:
+     * type: {string} Use one of the default buttons provided by the WidgetButtons class. Set this to "close" if you want the 
+     * [x] at the top-right corner of the window. If this key has a value, then values for the remaining properties below don't need to be provided.
+     * value: {string} HTML string or text that should be shown on the button
+     * action: {function} The callback function that should be executed when the button is clicked.
+     * href: {string} (optional) The link to redirect to if the button is clicked> If not supplied, defaults to "#"
+     * section: {string || object} Whether the button should be placed in the header or footer. Represented as "header" or "footer"
+     */
     buttons: {
 
-        //available options are: value, href, defaultFn
         value: [
             {
-                value: 'Close',
-                defaultFn: function(e) {
-                    //alert("I pressed close");
-                    this.hide();
-                },
-                section: Y.WidgetStdMod.HEADER
+                type: "close"
             }
         ],
         validator: Y.Lang.isArray
     }
 
 };
+
+
+/**
+ * Static hash of buttons that have all their properties defined, so that they can be used by supplying a value to the "type" property in the button attribute.
+ * The "close" button is currently defined in this object (sets the [x] in the top-right of the header). 
+ * 
+ * @property WidgetButtons.DEFAULT_BUTTONS
+ * @static
+ * @type object
+ */
+WidgetButtons.DEFAULT_BUTTONS = {
+    "close": {
+        value:'<div style="background:url(../../assets/skins/sam/sprite_icons.gif) no-repeat; width:13px; height:13px; background-position: 0 2px;"></div>',
+        action: function(e) {
+                    e.preventDefault();
+                    this.hide();
+                },
+        section: Y.WidgetStdMod.HEADER
+    }
+};
+
+/**
+ * Static hash of default class names used for the inner <span> ("content"), the <a> ("button"), and the outer span ("wrapper")
+ * 
+ * @property WidgetButtons.BUTTON_CLASS_NAMES
+ * @static
+ * @type object
+ */
 WidgetButtons.BUTTON_CLASS_NAMES = {
     button: getCN(BTN),
-    Content: getCN(BTN_CONTENT),
+    content: getCN(BTN_CONTENT),
     wrapper: Y.Widget.getClassName(BTN_WRAPPER)
 };
 
+
+/**
+ * Object used to specify the HTML template for the buttons. Consists of the following properties 
+ * defaultTemplate: Specifies the HTML markup for each button
+ * wrapper: Specifies the HTML markup for the wrapper, which is a DOM Element that wraps around all the buttons
+ * 
+ * @property WidgetButtons.TEMPLATES
+ * @static
+ * @type object
+ */
 WidgetButtons.TEMPLATES = {
-    defaultTemplate: "<a href={href} class='"+WidgetButtons.BUTTON_CLASS_NAMES.button+"'><span class='"+WidgetButtons.BUTTON_CLASS_NAMES.Content+"'>{value}</a>",
+    defaultTemplate: "<a href={href} class='"+WidgetButtons.BUTTON_CLASS_NAMES.button+"'><span class='"+WidgetButtons.BUTTON_CLASS_NAMES.content+"'>{value}</a>",
     wrapper: "<span class='"+WidgetButtons.BUTTON_CLASS_NAMES.wrapper+"'></span>"
 };
 
@@ -84,6 +131,15 @@ WidgetButtons.prototype = {
         _buttonsArray : [],
         _uiHandlesButtons : [],
 
+        /**
+         * Creates the button nodes based on whether they are defined as being in the header or footer
+         * <p>
+         * This method is invoked after renderUI is invoked for the Widget class
+         * using YUI's aop infrastructure.
+         * </p>
+         * @method _renderUIButtons
+         * @protected
+         */
         _renderUIButtons : function () {
             
             this._removeButtonNode(true,true);
@@ -95,6 +151,15 @@ WidgetButtons.prototype = {
             
         },
 
+        /**
+         * Binds event listeners to listen for events on the buttons. 
+         * <p>
+         * This method is invoked after bindUI is invoked for the Widget class
+         * using YUI's aop infrastructure.
+         * </p>
+         * @method _bindUIButtons
+         * @protected
+         */
         _bindUIButtons : function () {
 
             var self = this;
@@ -102,10 +167,19 @@ WidgetButtons.prototype = {
             Y.each(this._buttonsArray, function(o) {
                self._attachEventsToButton(o); 
             });
-
             this.after(BUTTON_CHANGE, this._afterButtonsChange);
+
         },
 
+        /**
+         * Binds event listeners to listen for events on the buttons
+         * <p>
+         * This method is invoked after bindUI is invoked for the Widget class
+         * using YUI's aop infrastructure.
+         * </p>
+         * @method _bindUIButtons
+         * @protected
+         */
         _syncUIButtons : function () {
 
             if (this._hdBtnNode.hasChildNodes()) {
@@ -117,22 +191,42 @@ WidgetButtons.prototype = {
 
         },
 
+        /**
+         * Add a button to the existing set of buttons
+         *
+         * @method _bindUIButtons
+         * @param button {object} The object literal consisting of the button's properties and callback function
+         * @public
+         */
         addButton: function (button) {
             var btns = this.get('buttons');
             btns.push(button);
             this.set('buttons', btns);
         },
 
-
+        /**
+         * Iterate through the buttons attribute, create Y.Node instances of each button and append them to either the _hdBtnNode or _ftBtnNode nodes.
+         *
+         * @method _createButtons
+         * @protected
+         */
         _createButtons : function () {
             var btns = this.get('buttons'),
             template = '',
             html = '',
             node,
-            self = this;
+            self = this,
+            defBtns;
 
 
             Y.each(btns, function(o) {
+
+                //Check to see if the type property is defined, and if a button corresponds to that type.
+                if (o.type && WidgetButtons.DEFAULT_BUTTONS[o.type]) {
+                    o = WidgetButtons.DEFAULT_BUTTONS[o.type];
+                }
+
+
                 template = Y.Lang.sub(WidgetButtons.TEMPLATES.defaultTemplate, {
                     href: o.href || '#',
                     value: o.value
@@ -141,7 +235,7 @@ WidgetButtons.prototype = {
                 //create Y.Node instance of button
                 node = CREATE(template);
                 //push the node onto an array of all the buttons
-                self._buttonsArray.push({node: node, cb: o.defaultFn});
+                self._buttonsArray.push({node: node, cb: o.action});
 
                 //append it to the wrapper node
                 if (o.section === Y.WidgetStdMod.HEADER) {
@@ -151,7 +245,7 @@ WidgetButtons.prototype = {
                     self._ftBtnNode.appendChild(node);
                 }
                 else {
-                    Y.log("Warning: One of the buttons did not have the specified sections property.");
+                    Y.log("Warning: One of the buttons did not have the specified sections property, and was not attached to the appropriate section.");
                 }
                 
             });
@@ -159,37 +253,57 @@ WidgetButtons.prototype = {
             return true;
         },
 
-        //object with properties node, cb
+        /**
+         * Attaches the event listeners to execute the callback function after button click.
+         *
+         * @method _attachEventsToButton
+         * @protected
+         */
         _attachEventsToButton : function (o) {
-            this._uiHandlesButtons.push(o.node.on(CLICK, o.cb, this));
+            this._uiHandlesButtons.push(o.node.after(CLICK, o.cb, this));
         },
 
+        /**
+         * Attaches the event listeners to execute the callback function after button click.
+         *
+         * @method _attachEventsToButton
+         * @protected
+         */
         _afterButtonsChange : function (e) {
-            Y.log(e);
             this._detachEventsFromButtons();
             this._renderUIButtons();
             this._bindUIButtons();
             this._syncUIButtons();
         },
 
+        /**
+         * Removes the header and footer button wrappers from the DOM if they exist
+         *
+         * @method _removeButtonNode
+         * @param fromHd {bool} Whether to remove the header button wrapper
+         * @param fromFt {bool} Whether to remove the footer button wrapper
+         * @protected
+         */
         _removeButtonNode : function(fromHd, fromFt) {
 
-            if (fromHd && this._hdBtnNode) {
-                
-                if (this._hdBtnNode.hasChildNodes() && this._hdBtnNode.inDoc()) {
-                    this._hdBtnNode.remove();
-                }
+            if (fromHd && this._hdBtnNode && this._hdBtnNode.hasChildNodes()) {
+                this._hdBtnNode.remove();
+                this._hdBtnNode = null;
             }
 
-            if (fromFt && this._ftBtnNode) {
-                
-                if (this._ftBtnNode.hasChildNodes() && this._ftBtnNode.inDoc()) {
-                    this._ftBtnNode.remove();
-                }
+            if (fromFt && this._ftBtnNode && this._ftBtnNode.hasChildNodes()) {
+                this._ftBtnNode.remove();
+                this._ftBtnNode = null;
             }
 
         },
 
+        /**
+         * Detaches all event listeners from the buttons
+         *
+         * @method _detachEventsFromButtons
+         * @protected
+         */
         _detachEventsFromButtons : function () {
             Y.each(this._uiHandlesButtons, function(h){
                 h.detach();
