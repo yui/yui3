@@ -93,7 +93,7 @@ var WIDGET         = 'widget',
              * @description Whether the widget should be modal or not.
              */
             modal: {
-                value:true,
+                value:false,
                 validator: isBoolean
             },
 
