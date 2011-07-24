@@ -111,7 +111,7 @@
               panel.addButton(
                 {
                     value: "Add Item",
-                    defaultFn: function(e) { 
+                    action: function(e) { 
                       e.preventDefault(); 
                       addItem();
                     },
@@ -121,7 +121,7 @@
               panel.addButton(
                 {
                     value: "Remove All Items",
-                    defaultFn: function(e) { 
+                    action: function(e) { 
                       e.preventDefault(); 
                       removeAllItemsConfirm();
                     },
@@ -176,7 +176,7 @@
                       
                       {
                           value: "Yes",
-                          defaultFn: function(e) { 
+                          action: function(e) { 
                             e.preventDefault(); 
                             nestedPanel.hide();
                             panel.hide();
@@ -186,7 +186,7 @@
                       },
                       {
                           value: "No",
-                          defaultFn: function(e) { 
+                          action: function(e) { 
                             e.preventDefault(); 
                             nestedPanel.hide();
                           },
