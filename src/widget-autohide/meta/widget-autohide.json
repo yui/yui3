@@ -3,7 +3,8 @@
         "requires": [
             "widget",
             "event-outside",
-            "base-build"
+            "base-build",
+            "event-key"
         ], 
         "skinnable": false
     }
