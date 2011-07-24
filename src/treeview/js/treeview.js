@@ -1,7 +1,7 @@
 /**
  * Create a node within a hierarchical root built with TreeView
  * 
- * @module treeView
+ * @module treeview
  */
 
 var TREEVIEW = 'treeview'	;
@@ -33,138 +33,127 @@ var KEY = {
  *
  * @class TreeView
  * @extends Widget
+ * @uses WidgetParent
  * @param config {Object} Configuration object
  * @constructor
  */
-var TreeView = function () {
-	TreeView.superclass.constructor.apply(this,arguments);
-};
-
-Y.mix(TreeView,{
     /**
      * The identity of the widget.
      *
      * @property TreeView.NAME
      * @type String
+	 * @value "treeview"
      * @static
      */
-	NAME: TREEVIEW,
-	
-	
 
-    /**
-     * Static property used to define the default attribute configuration of
-     * the Widget.
-     *
-     * @property Slider.ATTRS
-     * @Type Object
-     * @static
-     */
-    ATTRS : {
-		currentFocus: {
-			value:null,
-			validator: function(node) { 
-				return this._genericNodeValidator(node,CURRENT_FOCUS);
-			}
-		}
+Y.TreeView = Y.Base.create(
+	TREEVIEW, 
+	Y.Widget, 
+	[Y.WidgetParent], 
+	{
 
-	},
-	HTML_PARSER: {
-	}
-	
-});
-
-Y.extend(TreeView,Y.TreeNode,{
-
-	BOUNDING_TEMPLATE: '<div></div>',
-	CONTENT_TEMPLATE:'<ul></ul>',
-	
-	_isRoot: true,
-	
-	initializer: function (config) {
-		config = config || {};
-		if (PARENT in config) {
-			Y.log(this.getString('cantHaveParent'));
-			delete config[PARENT];
-		}
-		this.set(ROOT,this);
-		TreeView.superclass.initializer.apply(this,arguments);
+		CONTENT_TEMPLATE:'<ul class="' + C_CHILDREN + '></ul>',
 		
-		this.after(CURRENT_FOCUS + CHANGE, this._afterCurrentFocusChange);
 		
-	},
-	renderUI : function () {
-		Y.log(Y.substitute('_renderUI [{me}]',{me:this}));
-		var cb   = this.get(CONTENT_BOX);
-		cb.addClass(C_CHILDREN);
-		this._childContainerEl = cb;
-		for (var i = 0;i < this._children.length; i++) {
-			this._children[i].render(cb);
-		}	
-		Q.run();
-	},
-	bindUI: function () {
-		var bb = this.get(BOUNDING_BOX);
-		Y.on('click',Y.bind(this._onClick,this),bb);
-		Y.on('key',this._onKey,bb,'press:' + [KEY.UP,KEY.DOWN,KEY.LEFT,KEY.RIGHT,KEY.ENTER,KEY.PLUS,KEY.MINUS,KEY.HOME,KEY.END].join(','),this);
-		Y.on('key',this._onShiftedKey,bb,'press:' + [KEY.PLUS,KEY.MINUS].join(',') + '+shift',this);
-	},
-	_onClick: function (ev) {
-		var target = ev.target;
-		var node = this.getNodeByElement(target);
-		console.log('_onClick',this,arguments,node);
-		if (node) {
-			if (target.hasClass(C_LABEL) /*|| target.hasClass(C_MAGNET) */ ) {
-				node.fire(CLICK_EVENT,{node:node});
-			} else if (target.hasClass(C_CONTENT)) {
+		bindUI: function () {
+			var bb = this.get(BOUNDING_BOX);
+			this.after('treenode:click',this._afterNodeClick);
+			Y.on('key',this._onKey,bb,'press:' + [KEY.UP,KEY.DOWN,KEY.LEFT,KEY.RIGHT,KEY.ENTER,KEY.PLUS,KEY.MINUS,KEY.HOME,KEY.END].join(','),this);
+			Y.on('key',this._onShiftedKey,bb,'press:' + [KEY.PLUS,KEY.MINUS].join(',') + '+shift',this);
+		},
+		_afterNodeClick: function (ev) {
+			Y.log(Y.substitute('_afterNodeClick; node: {target}', ev));
+			var node = ev.target,
+				domTarget = ev.domEvent.target;
+			if (node.get(BOUNDING_BOX) === domTarget) {
+				ev.halt();
 				node.toggle();
 			}
+		},
+		_onKey: function (ev) {
+			Y.log(Y.substitute('_onKey: {keyCode}', ev));
+			switch(ev.keyCode) {
+				case KEY.UP:
+					break;
+				case KEY.DOWN:
+					break;
+				case KEY.LEFT:
+					break;
+				case KEY.RIGHT:
+					break;
+				case KEY.ENTER:
+					break;
+				case KEY.PLUS:
+					break;
+				case KEY.MINUS:
+					break;
+				case KEY.HOME:
+					break;
+				case KEY.END:
+					break;
+			}
+		},
+		_onShiftedKey: function (ev) {
+			Y.log(Y.substitute('_onShiftedKey: {keyCode}',ev));
+			switch(ev.keyCode) {
+				case KEY.PLUS:
+					break;
+				case KEY.MINUS:
+					break;
+			}
+		},
+		
+		getNodeByElement : function (el) {
+			// var node = el.ancestor('.' + getCN(TREENODE));
+			// return node && _nodes[node.get('id')];
+		},
+		
+		_afterCurrentFocusChange: function (ev) {
+			Y.log(Y.substitute('_afterCurrentFocusChange, node: {node}, newVal: {newVal}, prevVal: {prevVal}',ev));
+			if (ev.node !== ev.newVal) {return; }
+			(ev.prevVal && ev.prevVal.blur());
+			(ev.newVal  && Y.Lang.isUndefined(ev.node) && ev.newVal.focus());
 		}
 	},
-	_onKey: function (ev) {
-		console.log('_onKey',ev.keyCode,this);
-		switch(ev.keyCode) {
-			case KEY.UP:
-				break;
-			case KEY.DOWN:
-				break;
-			case KEY.LEFT:
-				break;
-			case KEY.RIGHT:
-				break;
-			case KEY.ENTER:
-				break;
-			case KEY.PLUS:
-				break;
-			case KEY.MINUS:
-				break;
-			case KEY.HOME:
-				break;
-			case KEY.END:
-				break;
-		}
-	},
-	_onShiftedKey: function (ev) {
-		console.log('_onShiftedKey',ev.keyCode);
-		switch(ev.keyCode) {
-			case KEY.PLUS:
-				break;
-			case KEY.MINUS:
-				break;
-		}
-	},
-	
-	getNodeByElement : function (el) {
-		var node = el.ancestor('.' + getCN(TREENODE));
-		return node && _nodes[node.get('id')];
-	},
-	
-	_afterCurrentFocusChange: function (ev) {
-		console.log('_afterCurrentFocusChange',ev);
-		if (ev.node !== ev.newVal) {return; }
-		(ev.prevVal && ev.prevVal.blur());
-		(ev.newVal  && Y.Lang.isUndefined(ev.node) && ev.newVal.focus());
-	}
-});
+	{
+		
+		
 
-Y.TreeView = TreeView;
+		/**
+		 * Static property used to define the default attribute configuration of
+		 * the Widget.
+		 *
+		 * @property Slider.ATTRS
+		 * @Type Object
+		 * @static
+		 */
+		ATTRS : {
+			// currentFocus: {
+				// value:null,
+				// validator: function(node) { 
+					// return this._genericNodeValidator(node,CURRENT_FOCUS);
+				// }
+			// },
+			defaultChildType: {
+				value:'TreeNode'
+			}
+
+		},
+		HTML_PARSER: {
+			boundingBox:  function (srcNode) {
+				return srcNode;
+			},
+
+			contentBox: '>ul',
+			children: function (srcNode) {
+				this._childrenContainer = srcNode.one('ul');
+				var children = [];
+				srcNode.all('>ul>li, >ol>li').each(function(srcNode) {
+					children.push(new Y.TreeNode({srcNode:srcNode}));
+				});
+				return children;
+			}
+		}
+	}
+);
+

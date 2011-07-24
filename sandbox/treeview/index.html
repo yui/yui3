@@ -21,7 +21,7 @@
 </style>
 </head>
 <body class="yui-skin-sam">
-	<div class="yui-d1"> 
+	<div class="yui3-d1"> 
 		<div id="hd">
 			<h1>TreeView</h1>
 
@@ -30,6 +30,9 @@
 		</div>
 		<hr/>
 		<div id="markup">
+			<ul></ul>
+		</div>
+		<div id="markup1">
 			<ul>
 				<li class="expanded">List 0
 					<ul>
@@ -59,8 +62,8 @@ YUI({combine:false,filter:'raw', base:"../../build/", debug:true, useBrowserCons
 
 	
 	var tv, PARENT 		= 'parent',
-			PREVIOUS	= 'previousSibling',
-			NEXT 		= 'nextSibling',
+			PREVIOUS	= 'previous',
+			NEXT 		= 'next',
 			ROOT		= 'root',
 			CONTENT		= 'content',
 			A = Y.Assert;
@@ -233,13 +236,26 @@ YUI({combine:false,filter:'raw', base:"../../build/", debug:true, useBrowserCons
 		Y.Test.Runner.add(testCase);
 		
 
-switch (4) {
+switch (2) {
 	case 1:
 		Y.Test.Runner.run();
 		break;
 	case 2:
-		tv = new Y.TreeView({contentBox:'#markup'});
-		tv.render();
+		var tv1 = new Y.TreeView({children:[
+			{content:'List 0',children: [
+				{content:'List 0-0', children: [
+					{content:'item 0-0-0'},
+					{content:Y.Node.create('<a target="_new" href="www.elsewhere.com" title="go elsewhere">elsewhere</a>')}
+				]}
+			]},
+			{content:'List 1',children: [
+				{content:'List 1-0', children: [
+					{content:'item 1-0-0'},
+					{content:Y.Node.create('<a target="_new" href="www.elsewhere.com" title="go elsewhere">elsewhere</a>')}
+				]}
+			]}
+		]});
+		tv1.render('.pepe');
 		break;
 	case 3:	
 		var makeBranch = function (parent,label) {
@@ -262,9 +278,11 @@ switch (4) {
 		console.groupEnd();
 		break;
 	case 4:
-		tv = new Y.TreeView({content:"primero"});
-		var t1 = new Y.TreeNode({parent:tv,content:'child 1'});
-		var t2 = new Y.TreeNode({parent:t1,content:'child 2'});
+		tv = new Y.TreeView();
+		var t1 = new Y.TreeNode({content:'child 1'});
+		tv.add(t1);
+		//var t2 = new Y.TreeNode({content:'child 2'});
+		t1.add({content:'child 2'});
 		tv.render('#bd');
 		console.group('focus');
 		//t2.focus();
@@ -272,6 +290,10 @@ switch (4) {
 		break;
 
 //		tv.destroy();
+	case 5:
+		tv = new Y.TreeView({srcNode:'#markup'});
+		tv.render();
+		break;
 }
 		
 	});

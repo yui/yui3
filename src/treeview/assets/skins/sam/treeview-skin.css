@@ -1,91 +1,104 @@
-li.yui-treenode ,li.yui-treeview-content {
+li.yui3-treenode  {
 	list-style:none;
-
+	background-image: url(treeview-sprite.gif);
+	background-repeat:no-repeat;
+	cursor:pointer;
 }
-ul.yui-treenode-children {
-	padding:0;
-	margin:0;
-}
-
-.yui-treenode-magnet {
-	color:black;
-	text-decoration:none;
-}
-.yui-treenode-content {
+li.yui3-treenode {
 	padding-left:18px;
 	min-height:22px;
 }
 
-/* first or middle sibling, no children */
-.yui-treenode-toggle-first-leaf,.yui-treenode-toggle-middle-leaf {
-    background: url(treeview-sprite.gif) 0 -5600px no-repeat; 
+ul.yui3-treenode-children {
+	padding:0;
+	margin:0;
+}
+
+/* The following are ordered by the offset within the image sprite file.  
+ If any icon was missing, it would be easy to find out that way, just looking into the sprite
+ */
+
+/* Last sibling, collapsable */
+.yui3-treenode-toggle-last-minus {
+    cursor:pointer ;
+    background-position: 0 0px; 
+}
+
+/* Last sibling, collapsable, hover */
+.yui3-treenode-toggle-last-minus:hover {
+    background-position: 0 -800px; 
+}
+/* last sibling, no children */
+.yui3-treenode-toggle-last-leaf {
+    background-position: 0 -1600px; 
 	cursor:pointer ;
 }
 
-/* first or middle sibling, collapsable */
-.yui-treenode-toggle-first-minus,.yui-treenode-toggle-middle-minus {
+
+/* Last sibling, expandable */
+.yui3-treenode-toggle-last-plus { 
     cursor:pointer ;
-    background: url(treeview-sprite.gif) 0 -4000px no-repeat; 
+    background-position: 0 -2400px; 
 }
-.yui-treenode-toggle-first-minus:hover,.yui-treenode-toggle-middle-minus:hover {
-    background: url(treeview-sprite.gif) 0 -4800px no-repeat; 
+
+/* Last sibling, expandable, hover */
+.yui3-treenode-toggle-last-plus:hover { 
+    background-position: 0 -3200px; 
+}
+
+
+/* first or middle sibling, collapsable */
+.yui3-treenode-toggle-first-minus,
+.yui3-treenode-toggle-middle-minus {
+    cursor:pointer ;
+    background-position: 0 -4000px; 
+}
+.yui3-treenode-toggle-first-minus:hover,
+.yui3-treenode-toggle-middle-minus:hover {
+    background-position: 0 -4800px; 
+}
+/* first or middle sibling, no children */
+.yui3-treenode-toggle-first-leaf,
+.yui3-treenode-toggle-middle-leaf {
+    background-position: 0 -5600px; 
+	cursor:pointer ;
 }
 
 
 /* first or middle sibling, expandable */
-.yui-treenode-toggle-first-plus,.yui-treenode-toggle-middle-plus {
+.yui3-treenode-toggle-first-plus,
+.yui3-treenode-toggle-middle-plus {
     cursor:pointer ;
-    background: url(treeview-sprite.gif) 0 -6400px no-repeat; 
+    background-position: 0 -6400px; 
 }
 /* first or middle sibling, expandable, hover */
-.yui-treenode-toggle-first-plus:hover,.yui-treenode-toggle-middle-plus:hover {
-    background: url(treeview-sprite.gif) 0 -7200px no-repeat; 
+.yui3-treenode-toggle-first-plus:hover,
+.yui3-treenode-toggle-middle-plus:hover {
+    background-position: 0 -7200px; 
 }
 
-.yui-treenode-toggle-first-plus     ul.yui-treenode-children,
-.yui-treenode-toggle-middle-plus   ul.yui-treenode-children ,
-.yui-treenode-toggle-last-plus       ul.yui-treenode-children  {
+.yui3-treenode-toggle-first-plus     ul.yui3-treenode-children,
+.yui3-treenode-toggle-middle-plus   ul.yui3-treenode-children ,
+.yui3-treenode-toggle-last-plus       ul.yui3-treenode-children  {
 	display:none;
 }
 
-div.yui-treenode-label {
-	display:inline;
+
+/* ---------------------------------------------------- */
+
+
+.yui3-treenode-magnet {
+	color:black;
+	text-decoration:none;
 }
 
-.yui-treenode-focused {
+.yui3-treenode-focused  > div.yui3-treenode-content{
 	background-color:cyan;
 }
 
-/* last sibling, no children */
-.yui-treenode-toggle-last-leaf {
-    background: url(treeview-sprite.gif) 0 -1600px no-repeat; 
-	cursor:pointer ;
-}
-
-/* Last sibling, collapsable */
-.yui-treenode-toggle-last-minus {
-    cursor:pointer ;
-    background: url(treeview-sprite.gif) 0 0px no-repeat; 
-}
-
-/* Last sibling, collapsable, hover */
-.yui-treenode-toggle-last-minus:hover {
-    background: url(treeview-sprite.gif) 0 -800px no-repeat; 
-}
-
-/* Last sibling, expandable */
-.yui-treenode-toggle-last-plus { 
-    cursor:pointer ;
-    background: url(treeview-sprite.gif) 0 -2400px no-repeat; 
-}
-
-/* Last sibling, expandable, hover */
-.yui-treenode-toggle-last-plus:hover { 
-    background: url(treeview-sprite.gif) 0 -3200px no-repeat; 
-}
 
 /* Loading icon * /
-.yui-treenode-toggle-loading { 
+.yui3-treenode-toggle-loading { 
     width:18px; height:22px; 
     background: url(treeview-loading.gif) 0 0 no-repeat; 
 }
@@ -94,15 +107,13 @@ div.yui-treenode-label {
 .ygtvlabel, .ygtvlabel:link, .ygtvlabel:visited, .ygtvlabel:hover { 
     margin-left:2px;
     text-decoration: none;
-    background-color: white; /* workaround for IE font smoothing bug */
+    background-color: white; /* workaround for IE font smoothing bug * /
 	cursor:pointer;
 }
 
 .ygtvcontent {
 	cursor:default;
 }
-
-.ygtvspacer { height: 22px; width: 12px; }
 
 .ygtvfocus {
 	background-color: #c0e0e0;

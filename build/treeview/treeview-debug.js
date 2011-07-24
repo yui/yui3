@@ -3,14 +3,14 @@ YUI.add('treeview', function(Y) {
 /**
  * Create a node within a hierarchical root built with TreeView
  * 
- * @module treeNode
+ * @module treeview
  */
 
 var TREENODE = 'treenode',
 
 	CONTENT_BOX  = 'contentBox',
 	BOUNDING_BOX = 'boundingBox',
-	RENDERED	 = 'rendered',
+	// RENDERED	 = 'rendered',
 	EXPANDED 	= 'expanded',
 	FOCUSED	= 'focused',
 	
@@ -23,13 +23,13 @@ var TREENODE = 'treenode',
 	// PROPAGATE_HIGHLIGHT_DOWN = 2,
 	// PROPAGATE_HIGHLIGHT_BOTH = 3,
 	
-	PARENT 		= 'parent',
-	PREVIOUS	= 'previousSibling',
-	NEXT 		= 'nextSibling',
-	ROOT		= 'root',
+	// PARENT 		= 'parent',
+	// PREVIOUS	= 'previous',
+	// NEXT 		= 'next',
+	// ROOT		= 'root',
 	CONTENT		= 'content',
-	CURRENT_FOCUS = 'currentFocus',
-	CHANGE		= 'Change',
+	// CURRENT_FOCUS = 'currentFocus',
+	// CHANGE		= 'Change',
 	
 
 	getCN     = Y.ClassNameManager.getClassName,
@@ -41,676 +41,282 @@ var TREENODE = 'treenode',
 	FIRST =		'first',
 	MIDDLE =	'middle',
 	LAST =		'last',
-	LABEL = 	'label',
 	//MAGNET = 	'magnet',
 	CHILDREN = 	'children',
 	
-	C_LABEL = 		getCN(TREENODE, LABEL),
 	//C_MAGNET = 		getCN(TREENODE, MAGNET),
 	C_CHILDREN =	getCN(TREENODE, CHILDREN),
-	C_CONTENT =		getCN(TREENODE, CONTENT),
 	
-	NODE_MARKUP = 		'<div class ="' + C_LABEL + '"></div>',
 	//MAGNET_MARKUP = 	'<a class ="' + C_MAGNET + '" href ="#">&#160;</a>',
 	CHILDREN_MARKUP = 	'<ul class ="' + C_CHILDREN + '"></ul>',
 	
-	CLICK_EVENT = 		'click',
+	// CLICK_EVENT = 		'click',
+	// FOCUS_EVENT  =		'focus',
 	TOGGLE_EVENT = 		'toggle',
 	EXPAND_EVENT = 		'expand',
-	COLLAPSE_EVENT = 	'collapse',
-	FOCUS_EVENT  =		'focus',
+	COLLAPSE_EVENT = 	'collapse';
 	
 	
 	
-	Q = new Y.Queue(),
-	
-	_nodes = {};
 
 /**
  * Create a hierarchical tree
  *
  * @class TreeNode
  * @extends Widget
+ * @uses WidgetChild
+ * @uses WidgetParent
  * @param config {Object} Configuration object
  * @constructor
  */
-var TreeNode = function () {
-	TreeNode.superclass.constructor.apply(this,arguments);
-};
 
-Y.mix(TreeNode,{
-    /**
-     * The identity of the widget.
-     *
-     * @property TreeNode.NAME
-     * @type String
-     * @static
-     */
-	NAME: TREENODE,
-	
-	
+Y.TreeNode = Y.Base.create(
+	TREENODE, 
+	Y.Widget, 
+	[Y.WidgetParent, Y.WidgetChild], 
+	{
 
-    /**
-     * Static property used to define the default attribute configuration of
-     * the Widget.
-     *
-     * @property Slider.ATTRS
-     * @Type Object
-     * @static
-     */
-    ATTRS : {
-		children: {
-			readOnly:true,
-			getter: function() {
-				return Y.mix({},this._children);
-			}
-		},
-		dataLoader: {
-			value: null
-		},
-		depth: {
-			value:undefined
-		},
-		editable: {
-			value:false
-		},
-		enableHighlight: {
-			value:false
-		},
-		expanded: {
-			value:false
-		},
-		// highlightState: {
-			// value:NOT_HIGHLIGHTED
-		// },
-		// propagateHighlight: {
-			// value: PROPAGATE_HIGHLIGHT_NONE
-		// },
-		isLeaf: {
-			value: false
-		},
-		multiExpand: {
-			value:true
-		},
-		next: {
-			value: null,
-			validator: function(node) { 
-				return this._genericNodeValidator(node,NEXT);
-			}
-		},
-		previous: {
-			value: null,
-			validator: function(node) { 
-				return this._genericNodeValidator(node,PREVIOUS);
-			}
-		},
-		parent: {
-			value:null,
-			validator: function(node) { 
-				return this._genericNodeValidator(node,PARENT);
-			}
-		},
-		root: {
-			value: null,
-			readOnly: true
-		},
-		content: {
-			value: null,
-			setter: function (value) {
-				return this._contentSetter(value);
-			}
-		},
-		container: {
-			writeOnce:true
-		},
-		strings: {
-			value: {
-				badContent:'Rejected attempt to set invalid content [{val}] on node [{me}]',
-				orphan:'TreeNode [{me}] was already an orphan',
-				setParent:'Setting new parent [{parent}] of [{me}]',
-				setNextSibling:'Setting new next sibling [{next}] of [{me}]',
-				setPreviousSibling:'Setting new previous sibling [{previous}] of [{me}]',
-				nextSiblingNotChild:'Position of next sibling [{next}] amongst parent [{parent}] children not found',
-				previousSiblingNotChild:'Position of previous sibling [{previous}] amongst parent [{parent}] children not found',
-				moving:'Moving [{node}] under [{parent}] in between [{previous}] and [{next}]',
-				removing:'Removing child [{child}] from parent [{me}]',
-				inserting:'Inserting child [{child}] into [{me}] at position [{position}]',
-				positionOutOfBounds:'Tried to insert child [{child}] out of bounds at position [{position}] under parent [{me}]',
-				positionNotInParent:'Cannot insert node [{child}] before a node [{position}] that is not a child of this node [{me}]',
-				positionArgumentInvalid:'Argument position in method insertNode should be an integer, a TreeNode reference or undefined, was [{position}]',
-				cantHaveParent:'Config "parent" ignored. The TreeView object is the root of the tree, it can\'t have a parent.',
-				needsParent:'When looking for the root of [{me}] found no parent above [{brokenRoot}]'
-				
-			}
-		},
-		tabIndex: {
-			value: -1
-		}
+
+		// _dontPropagate: false,
+		_lastToggleClass: '',
 		
-	},
-	HTML_PARSER: {
-		content: function(contentBox) {
-			var child = contentBox.get('firstChild');
-			var tag = child.get('nodeName').toUpperCase();
-			if ( tag == 'UL' || tag == 'OL') {
-				return '';
-			} 
-			if (child.get('nodeType') == 3) {
-				return Y.Lang.trim(child.get('textContent')) || undefined;
-			}
-			return child;
-		},
-		children: ['>ul>li,>ol>li'],
-		/*function (contentBox) {
-			var ul = contentBox.query('ul');
-			var ol = contentBox.query('ol');
-			if (ol && ((ul && Y.DOM.contains(ol,ul)) || !ul)) {
-				ul = ol;
-			}
-			return ul?ul.queryAll('li'):undefined;
-		},*/
-		yuiconfig: function(contentBox) { 
-	        return contentBox.getAttribute('yuiconfig'); 
-	    }
-	}
-	
-});
+		BOUNDING_TEMPLATE: '<li></li>',
 
-Y.extend(TreeNode,Y.Widget,{
-
-	_children: null,
-	_childContainerEl: null,
-	_labelContainerEl: null,
-	_dontPropagate: false,
-	_lastToggleClass: '',
-	
-	BOUNDING_TEMPLATE: '<li></li>',
-	
-	initializer: function (config) {
-		Y.log(Y.substitute('initializer [{me}]',{me:this}));
-		this._children = [];
-		this.set('locale','es');
-		this.set('strings', {
-			badContent:'Rechazada la asignaci&oacute;n de contenido inv&aacute;lido [{val}] al nodo [{me}]',
-			orphan:'El TreeNode [{me}] ya era hu&eacute;rfano',
-			setParent:'Estableciendo nuevo padre [{parent}] para [{me}]',
-			setNextSibling:'Estableciendo nuevo hermano siguiente [{next}] para [{me}]',
-			setPreviousSibling:'Estableciendo nuevo hermano previo [{previous}] para [{me}]',
-			nextSiblingNotChild:'No se ha encontrado la position del hermano siguiente [{next}] entre los hijos del padre [{parent}]',
-			previousSiblingNotChild:'No se ha encontrado la position del hermano previo [{previous}] entre los hijos del padre [{parent}]',
-			moving:'Moviendo [{node}] bajo [{parent}] entre [{previous}] y [{next}]',
-			removing:'Retirando el hijo [{child}] del padre [{me}]',
-			inserting:'Insertando el hijo [{child}] bajo el padre [{me}] en la posici&oacute;n [{position}]',
-			positionOutOfBounds:'Rechazado el intento de insertar el hijo [{child}] fuera de rango en la posici&oacute;n [{position}] bajo el padre [{me}]',
-			positionNotInParent:'No se puede insertar el nodo [{child}] antes de un nodo [{position}] que no es hijo de este padre [{me}]',
-			positionArgumentInvalid:"El argumento 'position' en el m&eacute;todo 'insertNode' debe ser un entero, un TreeNode o 'undefined', fue [{position}]",
-			cantHaveParent:'Se ignorar&aacute; el Atributo "parent". El objeto TreeView es la ra&iacute;z del &aacute;rbol, no puede tener padre.',
-			needsParent:'Al buscar la ra&iacute;z para [{me}] no se pudo encontrar el padre de [{brokenRoot}]'
-		});
-
-
-		config = config || {};
+		ROOT_TYPE: Y.TreeView,
 
 		
-		this.on(PARENT + CHANGE,  this._onParentChange);
-		this.on(NEXT + CHANGE,   this._onNextSiblingChange);
-		this.on(PREVIOUS + CHANGE,  this._onPreviousSiblingChange);	
 		
-		this.on(CONTENT + CHANGE,    this._onContentChange);	
-		
-		this.after(FOCUSED + CHANGE, this._afterNodeFocusedChange);
-
-		this.publish(CLICK_EVENT,{defaultFn:this._defClickFn});
-		this.publish(TOGGLE_EVENT,{defaultFn:this._defToggleFn});
-		this.publish(EXPAND_EVENT,{defaultFn:this._defExpandFn});
-		this.publish(COLLAPSE_EVENT,{defaultFn:this._defCollapseFn});
-
-	
-		if (PARENT in config) {
-			this._changeParent(config[PARENT]);
-		}
-		if (NEXT in config) {
-			this._changeNextSibling(config[NEXT]);
-		}
-		
-		if (PREVIOUS in config) {
-			this._changePreviousSibling(config[PREVIOUS]);
-		}
-
-		if (CONTENT in config) {
-			console.log('content',this,this.get(CONTENT) && (this.get(CONTENT).get('innerHTML') || this.get(CONTENT).get('textContent')));
-		}
-		if ('yuiconfig' in config) {
-			console.log('yuiconfig',this,config.yuiconfig);
-		}
-		if (CHILDREN in config) {
-			config[CHILDREN].each(function (node) {
-				console.log('child',this,node.get('innerHTML'));
-				(new Y.TreeNode({parent:this,contentBox:node}));
-			},this);
-		}
-		this.on('render',function(ev) {
-			this._findRoot();
-		});
-		var parent = this.get(PARENT);
-		if (parent  && parent.get(RENDERED)) {
-			this.render(parent._childContainerEl);
-			Q.run();
-		}
-	},
-	
-	destructor: function () {
-		for (var i = 0;i < this._children.length;i++) {
-			this._children[i].destructor();
-		}
-		var cb = this.get(CONTENT_BOX);
-		cb.set('innerHTML','');
-		cb.removeClass(this._lastToggleClass);
-	},
-		
-	renderUI : function () {
+		renderUI : function () {
+			Y.log(Y.substitute('_renderUI [{me}]',{me:this}));
 			
-        Q.add({fn:this._renderUIContainer,context:this,name:'renderUIContainer'});
-        Q.add({fn:this._renderUIChildren,context:this,name:'renderUIChildren'});
-	},
-	_findRoot : function () {
-		var self = this;
-		var findParent = function (node) {
-			var root, parent = node.get(PARENT);
-			if (parent) {
-				root = findParent(parent);
+			var container = Y.Node.create(CHILDREN_MARKUP);
+			//container.set('tabIndex',0);
+			this._childrenContainer = container;
+			this.get(BOUNDING_BOX).appendChild(container);
+			this.get(CONTENT_BOX).setContent(this.get(CONTENT));
+
+		},
+		_contentSetter: function(value) {
+			if (Y.Lang.isNull(value)) {
+				return null;
+			}
+			if (value instanceof Y.Node) {
+				return value;
+			}
+			if (value.nodeType && value.nodeType == 1) {
+				return Y.get(value);
+			}
+			if (Y.Lang.isString(value)) {
+				return value;
+			}
+			Y.log(Y.substitute(this.getString('badContent'),{me:this,val:value}),'error');
+			return Y.Attribute.INVALID_VALUE;
+		},
+		bindUI: function () {
+			// this.after('parentChange',     		this._syncParentChange);
+			// this.after('nextChange',   	this._syncNextChange);
+			// this.after('previousChange',	this._syncPreviousChange);	
+			// this.after('contentChange',    this._syncContentChange);	
+			this.publish(EXPAND_EVENT,  { defaultFn: this._defExpandFn    ,emitFacade:true});
+			this.publish(COLLAPSE_EVENT,{ defaultFn: this._defCollapseFn  ,emitFacade:true});
+			this.publish(TOGGLE_EVENT,  { defaultFn: this._defToggleFn    ,emitFacade:true});
+			
+
+		},
+		syncUI: function () {
+			
+			var toggleClass = getCN(
+				TREENODE, 
+				TOGGLE,
+				(this.next()?(this.previous()?MIDDLE:FIRST):LAST) ,
+				(this.isEmpty()?LEAF:(this.get(EXPANDED)?MINUS:PLUS))
+			);
+			this.get(BOUNDING_BOX).replaceClass(this._lastToggleClass,toggleClass);
+			this._lastToggleClass = toggleClass;
+		},
+		toggle : function() {
+			Y.log('toggle');
+			if (!this.isEmpty()) {
+				this.fire(TOGGLE_EVENT,{node:this});
+			}
+		},
+		_defToggleFn: function(ev) {
+			if (ev.node !== this) { return; }
+			Y.log(Y.substitute('_defToggleFn; node: {node}',ev));
+			if (this.get(EXPANDED)) {
+				this.collapse();
 			} else {
-				if (node._isRoot) {
-					root = node;
-				} else {
-					Y.error(Y.substitute(self.getString('needsParent'),{me:self,brokenRoot:node}));
+				this.expand();
+			}
+			ev.stopPropagation();
+		},
+		expand: function()  {
+			Y.log('expand');
+			if (this.get(EXPANDED)) {return;}
+			this.fire(EXPAND_EVENT,{node:this});
+		},
+		_defExpandFn: function (ev) {
+			if (ev.node !== this) { return; }
+			Y.log(Y.substitute('_defExpandFn; ev.node: {node}',ev));
+			this.set(EXPANDED,true);
+			this.syncUI();
+		},
+		collapse: function() {
+			Y.log('collapse');
+			if (!this.get(EXPANDED)) {return; }
+			this.fire(COLLAPSE_EVENT,{node:this});
+		},
+		_defCollapseFn: function(ev) {
+			if (ev.node !== this) { return; }
+			Y.log(Y.substitute('_defCollapseFn; ev.node: {node}',ev));
+			this.set(EXPANDED,false);
+			this.syncUI();
+		},
+		_onDocFocus: function (evt) {
+			var bFocused = this.get(BOUNDING_BOX).contains(evt.target); // contains() checks invoking node also
+			this._focusTaken = bFocused;
+			this.some(function (child) {
+				if (child._focusTaken) {
+					bFocused = false;
+					return true;
 				}
-			}
-			node._set(ROOT,root);
-			return root;
-		};
-		findParent(this);
-	},
-		
-	_renderUIContainer: function () {
-		Y.log(Y.substitute('_renderUIContainer [{me}]',{me:this}));
-		var cb   = this.get(CONTENT_BOX);
-		/*
-		console.log('antes1',this.get(BOUNDING_BOX).get('innerHTML'));
-		if (this === this.get(ROOT)) {
-			cb.set('innerHTML','');
+			},this);
+
+			this._hasDOMFocus = bFocused;
+			console.log('focus',this.get(CONTENT),this.get(BOUNDING_BOX).contains(evt.target),bFocused, this._focusTaken);
+			this._set(FOCUSED, bFocused, { src: Y.Widget.UI_SRC });
 		}
-		//console.log('antes',this.get(BOUNDING_BOX).get('innerHTML'));
-		if (cb.get('nodeName').toUpperCase() == 'LI') {
-			var bb = this.get(BOUNDING_BOX);
-			var newCb = Y.Node.create('<div></div>');
-			bb.replaceChild(newCb,cb);
-			var attrs =	cb.get('attributes');
-			if (attrs) {
-				attrs.each(function(a) {
-					newCb.setAttribute(a.get('name'),a.get('value'));
-				});
+/*
+		
+		_genericNodeValidator: function (node,who) {
+			// The new node must be either a TreeNode instance or null
+			// If the new node is the same as the existing, don't waste time
+			// Besides, it prevents looping forever into updating reciprocal relationships
+			// You've been warned!
+			var prevVal = this.get(who);
+			//console.log('node validator',who,this,node,prevVal,(node === null && prevVal !== null) || (node instanceof TreeNode && node !== prevVal));
+			return (node === null && prevVal !== null) || (node instanceof Y.TreeNode && node !== prevVal);
+		},
+		
+		_onContentChange: function (e) {
+			var newContent = e.newVal;
+			var container = this.get('container');
+			if (container) {
+				container.set('innerHTML','');
+				container.appendChild(newContent);
 			}
-			var children = 	cb.get(CHILDREN);
-			if (children) {
-				children.each(function(e) {
-					if (e.get('nodeName').toUpperCase() == 'UL' || e.get('nodeName').toUpperCase() == 'OL') {
-						var grandChildren = e.get(CHILDREN);
-						if (grandChildren) {
-							grandChildren.each(function(ee) {
-								newCb.appendChild(ee);
-							});
-						}
-					} else {
-						newCb.appendChild(e);
-					}
-				});
-			}
-			cb = newCb;
+		},
+		_syncContentChange: function (e) {
+		
+		},
+		
+		
+		toString : function() {
+			return (this.get(CONTENT) && this.get(CONTENT).get('textContent')) || this._yuid;
+		},
+		
+
+		_afterNodeFocusedChange: function (ev){
+			Y.log(Y.substitute('_afterFocusedChange',ev,this);
+			if (ev.target != this) { return; }
+			console.log('_afterFocusedChange 1',ev,this);
+			this.get(ROOT).set(CURRENT_FOCUS,this,{node:this});
 		}
 		*/
-				
-		
-		var container = Y.Node.create(NODE_MARKUP);
-		container.set('tabIndex',0);
-		this._labelContainerEl = container;
-		cb.appendChild(container);
-		this.set('container',container);
-		var newContent = this.get('content');
-		if (newContent instanceof Y.Node) {
-			container.appendChild(newContent);
-		}
-		//cb.appendChild(Y.Node.create(MAGNET_MARKUP));
-		//console.log('despues',this.get(BOUNDING_BOX).get('innerHTML'));
-		
-		_nodes[this.get(BOUNDING_BOX).get('id')] = this;
 	},
-	_renderUIChildren: function () {
-
-		Y.log(Y.substitute('_renderUIChildren [{me}]',{me:this}));
-		var cb   = this.get(CONTENT_BOX);
-		cb.appendChild(Y.Node.create(CHILDREN_MARKUP));
-		this._childContainerEl = cb.query('.' + C_CHILDREN);
-		for (var i = 0;i < this._children.length; i++) {
-			Q.add({fn:this._children[i].render,context:this._children[i],args:[this._childContainerEl],name:'render'});
-		}
-	
-	},
-	bindUI: function () {
-		this.after('parentChange',     		this._syncParentChange);
-		this.after('nextSiblingChange',   	this._syncNextSiblingChange);
-		this.after('previousSiblingChange',	this._syncPreviousSiblingChange);	
-		
-		this.after('contentChange',    this._syncContentChange);	
-		
-		this.addTarget(this.get(PARENT));
-		
+	{
+		/**
+		 * The identity of the widget.
+		 *
+		 * @property TreeNode.NAME
+		 * @type String
+		 * @static
+		 */
 		
 
-	},
-	syncUI: function () {
-		var isNull = Y.Lang.isNull;
-		
-		if (this._isRoot) { return; }
-		var toggleClass = getCN(TREENODE, TOGGLE,
-			(isNull(this.get(NEXT))?LAST:(isNull(this.get(PREVIOUS))?FIRST:MIDDLE)) ,
-			(this._children.length>0?(this.get(EXPANDED)?MINUS:PLUS):LEAF));
-		this.get(CONTENT_BOX).replaceClass(this._lastToggleClass,toggleClass);
-		this._lastToggleClass = toggleClass;
-	},
-	
-	_genericNodeValidator: function (node,who) {
-		// The new node must be either a TreeNode instance or null
-		// If the new node is the same as the existing, don't waste time
-		// Besides, it prevents looping forever into updating reciprocal relationships
-		// You've been warned!
-		var prevVal = this.get(who);
-		//console.log('node validator',who,this,node,prevVal,(node === null && prevVal !== null) || (node instanceof TreeNode && node !== prevVal));
-		return (node === null && prevVal !== null) || (node instanceof TreeNode && node !== prevVal);
-	},
-	
-	_contentSetter: function(value) {
-		if (Y.Lang.isNull(value)) {
-			return null;
-		}
-		if (value instanceof Y.Node) {
-			return value;
-		}
-		if (value.nodeType && value.nodeType == 1) {
-			return Y.get(value);
-		}
-		if (Y.Lang.isString(value)) {
-			value = Y.Lang.trim(value);
-			return value?Y.Node.create(value):null;
-		}
-		Y.log(Y.substitute(this.getString('badContent'),{me:this,val:value}),'error');
-		return Y.Attribute.INVALID_VALUE;
-	},
-	
-	_onContentChange: function (e) {
-		var newContent = e.newVal;
-		var container = this.get('container');
-		if (container) {
-			container.set('innerHTML','');
-			container.appendChild(newContent);
-		}
-	},
-	_syncContentChange: function (e) {
-	
-	},
-	
-	_detach:  function(newParent,oldParent) {
-		var parent = oldParent || this.get(PARENT), found = false;
-		if (parent && parent !== newParent) {
-			var siblings = parent._children;
-			for (var i = 0; i < siblings.length;i++) {
-				if (this === siblings[i]) {
-					siblings.splice(i,1);
-					found = true;
-					break;
+		/**
+		 * Static property used to define the default attribute configuration of
+		 * the Widget.
+		 *
+		 * @property Slider.ATTRS
+		 * @Type Object
+		 * @static
+		 */
+		ATTRS : {
+/*			dataLoader: {
+				value: null
+			},
+			editable: {
+				value:false
+			},
+			enableHighlight: {
+				value:false
+			},
+			isLeaf: {
+				value: false
+			},
+			multiExpand: {
+				value:true
+			},
+			container: {
+				writeOnce:true
+			},
+	*/		
+			expanded: {
+				value:false
+			},
+			content: {
+				value: null,
+				setter: '_contentSetter'
+			},
+			defaultChildType: {
+				value:'TreeNode'
+			},
+			tabIndex: {
+				value:-1
+			}
+		},
+		HTML_PARSER: {
+			boundingBox: function(srcNode) {
+				return srcNode;
+			},
+			content: function(srcNode) {
+				if (srcNode.hasChildNodes()) {
+					var child = srcNode.get('firstChild');
+					var tag = child.get('nodeName').toUpperCase();
+					if ( tag == 'UL' || tag == 'OL') {
+						return '';
+					} 
+					if (child.get('nodeType') == 3) {
+						return Y.Lang.trim(child.get('textContent')) || undefined;
+					}
+					return child;
 				}
-			}
-			if (!found && siblings.length) {
-				Y.error(Y.substitute(this.getString('orphan'),{me:this}));
-			}
-		}
-		var next = this.get(NEXT),
-			previous = this.get(PREVIOUS);
-		if (next) {
-			next.set(PREVIOUS, previous,{internal:true});
-		}
-		if (previous) {
-			previous.set(NEXT,next,{internal:true});
-		}			
-	},
-	
-	_onParentChange : function(e) {
-		if (e.internal) { return; }
-		var newParent = e.newVal;
-		this._detach(newParent,e.prevVal);
-		this._changeParent(newParent);
-	},
-	_changeParent: function (newParent) {
-		var siblings;
+			 },
+			children: function (srcNode) {
+				this._childrenContainer = srcNode.one('ul');
+				var children = [];
+				srcNode.all('>ul>li, >ol>li').each(function(srcNode) {
+					children.push(new Y.TreeNode({srcNode:srcNode}));
+				});
+				return children;
+			},
 
-		Y.log(Y.substitute(this.getString('setParent'),{parent:newParent,me:this}));
-		this.set(NEXT,null,{internal:true});
-		siblings = newParent._children;
-		var previous = siblings.length && siblings[siblings.length -1];
-		if (previous) {
-			this.set(PREVIOUS,previous,{internal:true});
-			previous.set(NEXT,this,{internal:true});
-		}
-		siblings.push(this);
-	},
-	_syncParentChange: function (e) {
-		if (e.internal) { return; }
-		Q.add({fn:this._move,context:this,name:'_move'});
-	},
-	_onNextSiblingChange : function(e) {
-		if (e.internal) { return; }
-		var next = e.newVal;
-		this._detach(next && next.get(PARENT));
-		this._changeNextSibling(next);
-	},
-	_changeNextSibling: function (next) {
-		var	newParent,siblings, previous, found,i;
-
-		Y.log(Y.substitute(this.getString('setNextSibling'),{next:next,me:this}));
-		newParent = next && next.get(PARENT);
-		if (newParent) {
-			siblings = newParent._children;
-			found = false;
-			for (i = 0;i < siblings.length;i++){
-				if (next === siblings[i]) {
-					//console.log('::::n',next,i,siblings.length);
-					siblings.splice(i,0,this);
-					found = true;
-					break;
-				}
-			}
-			if (!found && siblings.length) {
-				Y.error(Y.substitute(this.getString('nextSiblingNotChild'),{me:this,next:next,parent:newParent}));
-			}
-			this.set(PARENT,newParent,{internal:true});
-		}
-		this.set(NEXT,next,{internal:true});
-		previous = next.get(PREVIOUS);
-		if (previous) {
-			this.set(PREVIOUS,previous,{internal:true});
-			previous.set(NEXT,this,{internal:true});
-		}
-		next.set(PREVIOUS,this,{internal:true});
-	},
-	_syncNextSiblingChange: function (e) {
-		if (e.internal) { return; }
-		Q.add({fn:this._move,context:this,name:'_move'});
-	},
-	_onPreviousSiblingChange : function(e) {
-		if (e.internal){ return; }
-		var previous = e.newVal;
-		this._detach(previous && previous.get(PARENT));
-		this._changePreviousSibling(previous);
-	},
-	_changePreviousSibling: function (previous) {
-		var	newParent,siblings, next, found,i;
-		Y.log(Y.substitute(this.getString('setPreviousSibling'),{previous:previous,me:this}));
-		newParent = previous && previous.get(PARENT);
-		if (newParent) {
-			siblings = newParent._children;
-			found = false;
-			for (i = 0;i < siblings.length;i++){
-				if (previous === siblings[i]) {
-					//console.log('::::p',previous,i,siblings.length);
-					siblings.splice(i+1, 0, this);
-					found = true;
-					break;
-				}
-			}
-			if (!found && siblings.length) {
-				Y.error(Y.substitute(this.getString('previousSiblingNotChild'),{me:this,previous:previous,parent:newParent}));
-			}
-			this.set(PARENT,newParent,{internal:true});
-		}
-		this.set(PREVIOUS,previous,{internal:true});
-		next = previous.get(NEXT);
-		if (next) {
-			this.set(NEXT,next,{internal:true});
-			next.set(PREVIOUS,this,{internal:true});
-		}
-		previous.set(NEXT,this,{internal:true});
-
-	},
-	_syncPreviousSiblingChange: function (e) {
-		if (e.internal) { return; }
-		Q.add({fn:this._move,context:this,name:'_move'});
-	},
-		
-	_move: function () {
-		var myBB = this.get(BOUNDING_BOX),
-			parent = this.get(PARENT),
-			parentContainer = parent && parent._childContainerEl,
-			next= this.get(NEXT),
-			nextBB = next && next.get(BOUNDING_BOX);
-			
-		Y.log(Y.substitute(this.getString('moving'),{
-			node:this,
-			parent:parent,
-			previous:this.get(PREVIOUS),
-			next:next
-		}));
-		if (parentContainer) {
-			if (nextBB) {
-				parentContainer.insertBefore(myBB,nextBB);
-			} else {
-				parentContainer.appendChild(myBB);
+			yuiconfig: function(srcNode) { 
+				// debugger;
+				 return srcNode.getAttribute('yuiconfig'); 
+			},
+			expanded: function (srcNode) {
+				return srcNode.hasClass('expanded');
 			}
 		}
-		this.syncUI();
-	},
-	
-	removeChild: function (node) {
-		Y.log(Y.substitute(this.getString('removing'),{child:node,me:this}));
-		node.set(PARENT,null);
-		return node;
-	},
-	appendChild: function(node) {
-		return this.insertNode(node);
-	},
-	insertChild: function (node, position) {
-		var next;
-		Y.log(Y.substitute(this.getString('inserting'),{child:node,me:this,position:position}));
-		if (node.get(PREVIOUS) || node.get(PREVIOUS) || node.get(PARENT)) {
-			Y.error('Cannot insert a node attached elsewhere [' + node + ']');
-			return false;
-		}
-		if (Y.Lang.isNumber(position)) {
-			if (position >=0 && position < this._children.length) {
-				next = this._children[next];
-			} else {
-				Y.error(Y.substritute(this.getString('positionOutOfBounds'),{child:node,position:next,me:this}));
-				return false;
-			}
-		} else {
-			next = position;
-		}
-		if (next instanceof TreeNode) {
-			if (next.get(PARENT) !== this) {
-				Y.error(Y.substitute(this.getString('positionNotInParent'),{child:node,position:next,me:this }));
-				return false;
-			}
-			node.set(NEXT,next);
-		} else if (Y.Lang.isUndefined(next)) {
-			node.set(PARENT,this);
-		} else {
-			Y.error(Y.substitute(this.getString('positionArgumentInvalid'), {child:node,position:next,me:this }));
-			return false;
-		}
-		return node;
-	},
-	toString : function() {
-		return (this.get(CONTENT) && this.get(CONTENT).get('textContent')) || this._yuid;
-	},
-	
-	_defClickFn: function (ev) {
-		console.log('_defClickFn',this,arguments);
-		if (ev.node !== this) { return; }
-		console.log('_defClickFn 2',this,arguments);
-		this.toggle();
-		//this.focus();
-	},
-	toggle : function() {
-		console.log('toggle',this,arguments);
-		if (this._children.length) {
-			this.fire(TOGGLE_EVENT,{node:this});
-		}
-	},
-	_defToggleFn: function(ev) {
-		if (ev.node !== this) { return; }
-		console.log('_defToggleFn',this,arguments);
-		if (this.get(EXPANDED)) {
-			this.collapse();
-		} else {
-			this.expand();
-		}
-		ev.stopPropagation();
-	},
-	expand: function()  {
-		console.log('expand',this,arguments);
-		if (this.get(EXPANDED)) {return;}
-		this.fire(EXPAND_EVENT,{node:this});
-	},
-	_defExpandFn: function (ev) {
-		if (ev.node !== this) { return; }
-		console.log('_defExpandFn',this,arguments);
-		this.set(EXPANDED,true);
-		this.syncUI();
-	},
-	collapse: function() {
-		console.log('collapse',this,arguments);
-		if (!this.get(EXPANDED)) {return; }
-		this.fire(COLLAPSE_EVENT,{node:this});
-	},
-	_defCollapseFn: function(ev) {
-		if (ev.node !== this) { return; }
-		console.log('_defCollapseFn',this,arguments);
-		this.set(EXPANDED,false);
-		this.syncUI();
-	},
-	_afterNodeFocusedChange: function (ev){
-		console.log('_afterFocusedChange',ev,this);
-		if (ev.target != this) { return; }
-		console.log('_afterFocusedChange 1',ev,this);
-		this.get(ROOT).set(CURRENT_FOCUS,this,{node:this});
 	}
-});
-
-Y.TreeNode = TreeNode;
+);
 
 /**
  * Create a node within a hierarchical root built with TreeView
  * 
- * @module treeView
+ * @module treeview
  */
 
 var TREEVIEW = 'treeview'	;
@@ -742,142 +348,131 @@ var KEY = {
  *
  * @class TreeView
  * @extends Widget
+ * @uses WidgetParent
  * @param config {Object} Configuration object
  * @constructor
  */
-var TreeView = function () {
-	TreeView.superclass.constructor.apply(this,arguments);
-};
-
-Y.mix(TreeView,{
     /**
      * The identity of the widget.
      *
      * @property TreeView.NAME
      * @type String
+	 * @value "treeview"
      * @static
      */
-	NAME: TREEVIEW,
-	
-	
 
-    /**
-     * Static property used to define the default attribute configuration of
-     * the Widget.
-     *
-     * @property Slider.ATTRS
-     * @Type Object
-     * @static
-     */
-    ATTRS : {
-		currentFocus: {
-			value:null,
-			validator: function(node) { 
-				return this._genericNodeValidator(node,CURRENT_FOCUS);
-			}
-		}
+Y.TreeView = Y.Base.create(
+	TREEVIEW, 
+	Y.Widget, 
+	[Y.WidgetParent], 
+	{
 
-	},
-	HTML_PARSER: {
-	}
-	
-});
-
-Y.extend(TreeView,Y.TreeNode,{
-
-	BOUNDING_TEMPLATE: '<div></div>',
-	CONTENT_TEMPLATE:'<ul></ul>',
-	
-	_isRoot: true,
-	
-	initializer: function (config) {
-		config = config || {};
-		if (PARENT in config) {
-			Y.log(this.getString('cantHaveParent'));
-			delete config[PARENT];
-		}
-		this.set(ROOT,this);
-		TreeView.superclass.initializer.apply(this,arguments);
+		CONTENT_TEMPLATE:'<ul class="' + C_CHILDREN + '></ul>',
 		
-		this.after(CURRENT_FOCUS + CHANGE, this._afterCurrentFocusChange);
 		
-	},
-	renderUI : function () {
-		Y.log(Y.substitute('_renderUI [{me}]',{me:this}));
-		var cb   = this.get(CONTENT_BOX);
-		cb.addClass(C_CHILDREN);
-		this._childContainerEl = cb;
-		for (var i = 0;i < this._children.length; i++) {
-			this._children[i].render(cb);
-		}	
-		Q.run();
-	},
-	bindUI: function () {
-		var bb = this.get(BOUNDING_BOX);
-		Y.on('click',Y.bind(this._onClick,this),bb);
-		Y.on('key',this._onKey,bb,'press:' + [KEY.UP,KEY.DOWN,KEY.LEFT,KEY.RIGHT,KEY.ENTER,KEY.PLUS,KEY.MINUS,KEY.HOME,KEY.END].join(','),this);
-		Y.on('key',this._onShiftedKey,bb,'press:' + [KEY.PLUS,KEY.MINUS].join(',') + '+shift',this);
-	},
-	_onClick: function (ev) {
-		var target = ev.target;
-		var node = this.getNodeByElement(target);
-		console.log('_onClick',this,arguments,node);
-		if (node) {
-			if (target.hasClass(C_LABEL) /*|| target.hasClass(C_MAGNET) */ ) {
-				node.fire(CLICK_EVENT,{node:node});
-			} else if (target.hasClass(C_CONTENT)) {
+		bindUI: function () {
+			var bb = this.get(BOUNDING_BOX);
+			this.after('treenode:click',this._afterNodeClick);
+			Y.on('key',this._onKey,bb,'press:' + [KEY.UP,KEY.DOWN,KEY.LEFT,KEY.RIGHT,KEY.ENTER,KEY.PLUS,KEY.MINUS,KEY.HOME,KEY.END].join(','),this);
+			Y.on('key',this._onShiftedKey,bb,'press:' + [KEY.PLUS,KEY.MINUS].join(',') + '+shift',this);
+		},
+		_afterNodeClick: function (ev) {
+			Y.log(Y.substitute('_afterNodeClick; node: {target}', ev));
+			var node = ev.target,
+				domTarget = ev.domEvent.target;
+			if (node.get(BOUNDING_BOX) === domTarget) {
+				ev.halt();
 				node.toggle();
 			}
+		},
+		_onKey: function (ev) {
+			Y.log(Y.substitute('_onKey: {keyCode}', ev));
+			switch(ev.keyCode) {
+				case KEY.UP:
+					break;
+				case KEY.DOWN:
+					break;
+				case KEY.LEFT:
+					break;
+				case KEY.RIGHT:
+					break;
+				case KEY.ENTER:
+					break;
+				case KEY.PLUS:
+					break;
+				case KEY.MINUS:
+					break;
+				case KEY.HOME:
+					break;
+				case KEY.END:
+					break;
+			}
+		},
+		_onShiftedKey: function (ev) {
+			Y.log(Y.substitute('_onShiftedKey: {keyCode}',ev));
+			switch(ev.keyCode) {
+				case KEY.PLUS:
+					break;
+				case KEY.MINUS:
+					break;
+			}
+		},
+		
+		getNodeByElement : function (el) {
+			// var node = el.ancestor('.' + getCN(TREENODE));
+			// return node && _nodes[node.get('id')];
+		},
+		
+		_afterCurrentFocusChange: function (ev) {
+			Y.log(Y.substitute('_afterCurrentFocusChange, node: {node}, newVal: {newVal}, prevVal: {prevVal}',ev));
+			if (ev.node !== ev.newVal) {return; }
+			(ev.prevVal && ev.prevVal.blur());
+			(ev.newVal  && Y.Lang.isUndefined(ev.node) && ev.newVal.focus());
 		}
 	},
-	_onKey: function (ev) {
-		console.log('_onKey',ev.keyCode,this);
-		switch(ev.keyCode) {
-			case KEY.UP:
-				break;
-			case KEY.DOWN:
-				break;
-			case KEY.LEFT:
-				break;
-			case KEY.RIGHT:
-				break;
-			case KEY.ENTER:
-				break;
-			case KEY.PLUS:
-				break;
-			case KEY.MINUS:
-				break;
-			case KEY.HOME:
-				break;
-			case KEY.END:
-				break;
+	{
+		
+		
+
+		/**
+		 * Static property used to define the default attribute configuration of
+		 * the Widget.
+		 *
+		 * @property Slider.ATTRS
+		 * @Type Object
+		 * @static
+		 */
+		ATTRS : {
+			// currentFocus: {
+				// value:null,
+				// validator: function(node) { 
+					// return this._genericNodeValidator(node,CURRENT_FOCUS);
+				// }
+			// },
+			defaultChildType: {
+				value:'TreeNode'
+			}
+
+		},
+		HTML_PARSER: {
+			boundingBox:  function (srcNode) {
+				return srcNode;
+			},
+
+			contentBox: '>ul',
+			children: function (srcNode) {
+				this._childrenContainer = srcNode.one('ul');
+				var children = [];
+				srcNode.all('>ul>li, >ol>li').each(function(srcNode) {
+					children.push(new Y.TreeNode({srcNode:srcNode}));
+				});
+				return children;
+			}
 		}
-	},
-	_onShiftedKey: function (ev) {
-		console.log('_onShiftedKey',ev.keyCode);
-		switch(ev.keyCode) {
-			case KEY.PLUS:
-				break;
-			case KEY.MINUS:
-				break;
-		}
-	},
-	
-	getNodeByElement : function (el) {
-		var node = el.ancestor('.' + getCN(TREENODE));
-		return node && _nodes[node.get('id')];
-	},
-	
-	_afterCurrentFocusChange: function (ev) {
-		console.log('_afterCurrentFocusChange',ev);
-		if (ev.node !== ev.newVal) {return; }
-		(ev.prevVal && ev.prevVal.blur());
-		(ev.newVal  && Y.Lang.isUndefined(ev.node) && ev.newVal.focus());
 	}
-});
-
-Y.TreeView = TreeView;
+);
 
 
 
-}, '@VERSION@' ,{requires:['widget','queue']});
+
+}, '@VERSION@' ,{requires:['widget', 'widget-child', 'widget-parent', 'substitute','selector-css3']});
