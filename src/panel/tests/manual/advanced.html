@@ -99,6 +99,7 @@
                 width: 250,
                 centered: true,
                 visible: false,
+                modal:true,
                 headerContent: "Add A New Product",
                 plugins: [Y.Plugin.Drag]
               }),
@@ -172,11 +173,12 @@
                     zIndex: 5,
                     centered:true,
                     width:400,
+                    modal:true,
                     buttons: [
                       
                       {
                           value: "Yes",
-                          action: function(e) { 
+                          action  : function(e) { 
                             e.preventDefault(); 
                             nestedPanel.hide();
                             panel.hide();
