@@ -1,0 +1,426 @@
+<div class="intro">
+    <p>The Internationalization utility supports the management of localized resources such as strings and formatting patterns.</p>
+</div>
+
+<h2 id="scenarios">Usage Scenarios for the Internationalization Utility</h2>
+
+<p>The YUI Internationalization utility supports externalization, that is,
+separating data that needs to change for different languages or markets
+from the code of a software product, so that the same code can be used
+worldwide.</p>
+
+<p>Depending on the kind of software you create with YUI, you will interact
+with the Internationalization utility in different ways.</p>
+
+<h3 id="monolingualApps">Monolingual Applications</h3>
+
+<p>Many applications using YUI are not internationalized themselves; they
+use one user interface language to target one market.
+However, such applications still want language-sensitive modules that
+they rely on to be internationalized and localized for their language.
+For example, an application using Chinese to target Hong Kong wants dates
+to be displayed in a Chinese format appropriate for Hong Kong, and so
+relies on the DataType utility to provide such formats.</p>
+
+<p>If the modules that such an application uses support the language of
+the application, the problem is solved by simply
+<a href="#prefLang">requesting preferred languages</a>. Otherwise, the
+application may be able to fill the gap by
+<a href="#appResources">providing resources to modules</a>.</p>
+
+<h3 id="multilingualApps">Multilingual Applications</h3>
+
+<p>An application that's intended for users in different markets or
+using different languages has to be internationalized.<p>
+
+<p>Primarily, this means developing its code in the form of
+<a href="#intlModules">internationalized modules</a>, determining
+the preferred user interface language(s),
+<a href="#prefLang">requesting preferred languages</a>, and possibly
+<a href="#appResources">providing resources to modules</a>.</p>
+
+<p>Optionally, an application can provide a user interface element
+that lets the user <a href="#switchingLangs">switch languages</a>
+on the fly.</p>
+
+<h3 id="intlModules">Internationalized Modules</h3>
+
+<p>A module whose functionality is sensitive to different markets and
+languages and that's intended for use by multilingual applications
+or by different monolingual applications
+has to be <a href="#modules">internationalized</a>.</p>
+
+{{>getting-started}}
+
+<h2 id="using">Using the Internationalization Utility</h2>
+
+<h3 id="bcp47">Using BCP 47 Language Tags</h3>
+
+<p>BCP 47 language tags are the identifiers for languages used on the internet.
+BCP stands for IETF Best Current Practice, and BCP 47 is currently the combination
+of <a href="http://tools.ietf.org/html/rfc5646">RFC 5646</a> and
+<a href="http://tools.ietf.org/html/rfc4647">RFC 4647</a>.
+These tags allow the description of languages in varying levels of detail, from
+"Chinese" ("zh") to "Chinese written in traditional characters as used in Taiwan"
+("zh-Hant-TW") and more. Typical components ("subtags") are ISO 639 language codes,
+ISO 15924 script codes, and ISO 3166 country codes. Subtags are separated by
+hyphens.</p>
+
+<p>Here are the language tags for some popular languages:</p>
+
+<table>
+<tr><th>Language Tag<th>Description
+<tr><td>zh-Hans-CN<td>Chinese, simplified characters, China
+<tr><td>es<td>Spanish
+<tr><td>en<td>English
+<tr><td>hi-IN<td>Hindi, India
+<tr><td>ar<td>Arabic
+<tr><td>en-US<td>English, U.S.A.
+<tr><td>id-ID<td>Indonesian, Indonesia
+<tr><td>pt-BR<td>Portuguese, Brazil
+<tr><td>ru-RU<td>Russian, Russia
+<tr><td>fr<td>French
+<tr><td>ja-JP<td>Japanese, Japan
+<tr><td>es-MX<td>Spanish, Mexico
+</table>
+
+<p>BCP 47 also defines a "Lookup" algorithm, which is commonly used to determine
+the best language for a user interface. Its input is an ordered list of
+languages that the user prefers, and the list of languages that the software
+supports. When looking for a language, the algorithm uses a fallback that
+successively simplifies a language tag. For example, when looking for
+a requested "zh-Hans-CN", it also checks whether "zh-Hans" or "zh" are
+available.</p>
+
+<p>The Internationalization utility provides the Lookup algorithm as the
+`Intl.lookupBestLang` method, and the YUI loader uses it to determine
+the best language based on an application's request and a module's language
+support.</p>
+
+<p>When requesting a language, it's generally a good idea to be specific and
+include the country, because in some cases the differences between countries
+are significant. For example, "3/5/10" means "March 5, 2010" in U.S. English,
+but "3 May 2010" in British English.</p>
+
+<p>When providing language support, on the other hand, you should also support
+the less specific variant without country ("en", "es", "zh-Hans", etc.), so that
+the fallback finds something when a request includes a country that you don't
+support. Where the usage in different countries using the same language diverges
+siginificantly, try to be neutral, e.g., by formatting dates in ISO notation
+as 2010-03-05.</p>
+
+<h3 id="applications">Internationalizing Applications</h3>
+
+<h4 id="prefLang">Requesting Preferred Languages</h4>
+
+<p>When creating a YUI instance, you can specify a list of preferred languages.</p>
+
+<p>For a monolingual application, this list starts with the user interface
+language of the application, but it may include other languages that
+users are likely to understand, in case a module doesn't support the
+preferred language. For example, an application in Arabic for Morocco might
+specify French as a second choice since French is widely spoken in Morocco.</p>
+
+<p>A multilingual application might maintain user language preferences as part of
+the application, derive the preference list from the `Accept-Language`
+header provided by the browser, or determine the list in some other fashion.</p>
+
+<p>The preference list is specified as the `lang` property of the YUI
+instance's config object. The YUI instance uses it to select the best available
+language for each module and load the necessary resource bundles.</p>
+
+```
+// Create new YUI instance, specify preferred languages,
+// and populate it with the required modules
+YUI({lang:"ar-MA,fr-FR"}).use('datatype-date', function(Y) {
+
+    // DataType available, and hopefully localized into one of the preferred languages
+
+});
+```
+
+<h4 id="appResources">Providing Resources to Modules</h4>
+
+<p>In some cases, a module is internationalized, but doesn't have a resource
+bundle for the desired language. It may however have specified the contents
+of the resource bundle needed. In such a case, the application can register
+a resource bundle for its language with the Internationalization utility and
+set the language of that module.</p>
+
+<p>For example, date formatting in the DataType utility has support for a
+large number of languages built in, but Punjabi is not one of them. If
+you need date formatting for Punjabi, you can provide a resource bundle for this
+language (see the <a href="../datatype/index.html#addDateFormat">DataType</a>
+documentation for information on the contents of the resource bundle):</p>
+
+```
+YUI().use("intl", "datatype-date-format", function(Y) {
+    // provide data for Punjabi in India
+    Y.Intl.add("datatype-date-format", "pa-IN", {
+            "a":["ਐਤ.","ਸੋਮ.","ਮੰਗਲ.","ਬੁਧ.","ਵੀਰ.","ਸ਼ੁਕਰ.","ਸ਼ਨੀ."],
+            "A":["ਐਤਵਾਰ","ਸੋਮਵਾਰ","ਮੰਗਲਵਾਰ","ਬੁਧਵਾਰ","ਵੀਰਵਾਰ","ਸ਼ੁੱਕਰਵਾਰ","ਸ਼ਨੀਚਰਵਾਰ"],
+            "b":["ਜਨਵਰੀ","ਫ਼ਰਵਰੀ","ਮਾਰਚ","ਅਪ੍ਰੈਲ","ਮਈ","ਜੂਨ","ਜੁਲਾਈ","ਅਗਸਤ","ਸਤੰਬਰ","ਅਕਤੂਬਰ","ਨਵੰਬਰ","ਦਸੰਬਰ"],
+            "B":["ਜਨਵਰੀ","ਫ਼ਰਵਰੀ","ਮਾਰਚ","ਅਪ੍ਰੈਲ","ਮਈ","ਜੂਨ","ਜੁਲਾਈ","ਅਗਸਤ","ਸਤੰਬਰ","ਅਕਤੂਬਰ","ਨਵੰਬਰ","ਦਸੰਬਰ"],
+            "c":"%a, %Y %b %d %l:%M:%S %p %Z",
+            "p":["ਸਵੇਰੇ","ਸ਼ਾਮ"],
+            "P":["ਸਵੇਰੇ","ਸ਼ਾਮ"],
+            "x":"%d/%m/%Y",
+            "X":"%l:%M:%S %p"
+        });
+    // switch to Punjabi
+    Y.Intl.setLang("datatype-date-format", "pa-IN");
+    // now dates are formatted in Punjabi
+    alert(Y.DataType.Date.format(new Date(), {format:"%A %x %X"}));
+});
+```
+
+<h4 id="switchingLangs">Switching Languages</h4>
+
+<p>Some applications let the user change the user interface language on the fly.
+The Internationalization utility offers some low-level support for this:</p>
+
+<ul>
+    <li>Applications that want to make the languages offered reflect the actually
+        available languages in one or more modules can obtain the necessary
+        information from `Intl.getAvailableLangs`.
+    <li>Once a new language has been selected, the application can load the
+        required resource bundles and call `Intl.setLang` to
+        switch localizable modules to the new language.
+    <li>Modules that have language sensitive behavior, whether relying on
+        their own resource bundles or on other modules', can listen to
+        `intl:langChange` events to find out about language changes.
+</ul>
+
+<p>The <a href="../datatype/datatype_dateformat_lang.html">Formatting
+Dates Using Language Resource Bundles</a> example shows how to use these interfaces.</p>
+
+<h3 id="modules">Internationalizing Modules</h3>
+
+<h4 id="externalizing">Externalizing Resources</h4>
+
+<p>Externalization means moving all language-sensitive data into external data files,
+also known as "resource bundles". Most of this data will be user interface strings
+that have to be translated, but there may also be patterns strings, font names, or
+other items. Resource bundles store this data as simple key-value pairs.</p>
+
+<p>The first resource bundle you always have to provide for an internationalized module
+is the root bundle, identified by the empty language tag "" and using the bundle name
+<code>lang/<i>module</i></code>.
+
+This is the bundle that will be used when an application requests a language that your module does
+not support. Additional languages are identified by their BCP 47 language tags, and their resource
+bundles use the names <code>lang/<i>module</i>_<i>language</i></code>.</p>
+
+<p>If you've used resource bundles in Java or other internationalization libraries,
+you may be familiar with the fallback mechanisms in their ResourceBundle classes.
+These do not exist in YUI, so that the loader doesn't have to load multiple bundles.
+As a consequence, each YUI resource bundle must provide the complete set of key-value
+pairs that the module needs.</p>
+
+<p>YUI currently supports two source formats for resource bundles: JSON-style
+JavaScript source files, and Yahoo Resource Bundle format.</p>
+
+<p>In JSON-style format, a resource bundle is a simple object whose properties
+represent the bundle's key-value pairs. Source files use the JavaScript suffix
+".js" and can contain comments, so that you can provide localizers with the
+information they need for correct localization.
+Here is a family of JSON files providing the same set of strings in English,
+German, and simplified Chinese:</p>
+
+<table>
+<tr>
+    <th></th>
+    <th>English <span style="text-transform:none">(root)</span></th>
+    <th>German<th>Simplified Chinese</th>
+</tr>    
+<tr>
+    <th>File</th>
+    <td>greetings.js</td>
+    <td>greetings_de.js</td>
+    <td>greetings_zh-Hans.js</td>
+</tr>
+<tr>
+    <th>Contents</th>
+    <td>
+    ```
+    {
+      HELLO: "Hello!",
+      GOODBYE: "Goodbye!"
+    }
+    ```
+    </td>
+    <td>
+    ```
+    {
+      HELLO: "Hallo!",
+      GOODBYE: "Tschüß!"
+    }
+    ```
+    </td>
+    <td>
+    ```
+    {
+      HELLO: "你好！",
+      GOODBYE: "再见！"
+    }
+    ```
+    </td>
+</table>
+
+<p>The <a href="#yrb">Yahoo Resource Bundles format</a> is a simple
+text format for resource bundles that Yahoo open-sourced in 2009.
+It uses the file name suffix ".pres".
+Here are the same resource bundles as above in YRB format:</p>
+
+<table>
+<tr>
+    <th></th>
+    <th>English <span style="text-transform:none">(root)</span></th>
+    <th>German</th>
+    <th>Simplified Chinese</th>
+</tr>
+<tr>
+    <th>File</th>
+    <td>greetings.pres</td>
+    <td>greetings_de.pres</td>
+    <td>greetings_zh-Hans.pres</td>
+</tr>
+<tr>
+    <th>Contents</th>
+    <td>
+    ```
+    HELLO = Hello!
+    GOODBYE = Goodbye!
+    ```
+    </td>
+    <td>
+    ```
+    HELLO = Hallo!
+    GOODBYE = Tschüß!
+    ```
+    </td>
+    <td>
+    ```
+    HELLO = 你好！
+    GOODBYE = 再见！
+    ```
+    </td>
+</tr>
+</table>
+
+<h4 id="packaging">Packaging Resources</h4>
+
+<p>The YUI loader expects resource bundles in a specific format. If you use the YUI Builder
+to build your module, resource bundles in JSON or YRB format will be automatically
+converted into the format expected by the loader. All you have to do is provide the source
+files in the <code>src/<i>module</i>/lang/</code> directory, and specify the list of
+available languages as the `component.lang` property of the module's
+build.properties file:</p>
+
+```
+component.lang=de,zh-Hans
+```
+                
+<p>If you use some other build process, you have to produce JavaScript files in the
+following format:</p>
+
+```
+YUI.add("lang/greetings_zh-Hans", function(Y) {
+
+    Y.Intl.add(
+
+        "greetings",     // associated module 
+        "zh-Hans",       // BCP 47 language tag
+
+        // key-value pairs for this module and language 
+        {
+            HELLO: "你好！",   
+            GOODBYE: "再见！"
+        }
+    );
+}, "3.1.0");
+```
+
+<h4 id="specifying">Specifying Available Languages</h4>
+
+<p>The YUI loader also needs to be told that your module uses resource bundles,
+and for which languages it has resource bundles available. You provide this
+information as the `lang` property of the module meta data:</p>
+
+```
+modules: {
+    "greetings": {
+        lang: ["de", "zh-Hans"]
+    }
+}
+```
+
+<h4 id="obtaining">Obtaining Resources</h4>
+
+<p>To access its resources, a module simply calls `Intl.get` with its
+module name. When instantiating YUI, the application will have requested its
+user interface language, so `Intl.get` will return the appropriate
+localized resource bundle.</p>
+
+```
+function Greetings() {
+    // Get localized strings in the current language
+    this.resources = Y.Intl.get("greetings");
+}
+ 
+Greetings.prototype = {
+
+    hello: function() {
+        return this.resources.HELLO;
+    },
+
+    goodbye: function() {
+        return this.resources.GOODBYE;
+    }
+}               
+```
+
+<h3 id="yrb">Yahoo Resource Bundle Format</h3>
+
+<p>The Yahoo Resource Bundle (YRB) format is a simple text format for
+resource bundles. It's similar to Java properties files, but based
+on UTF-8 and with additional heredoc support.</p>
+
+<ul>
+    <li>Files are encoded in UTF-8. The first line may be prefixed with a byte order mark (BOM).</li>
+    <li>Lines whose first non-whitespace character is “#” are comment lines and are ignored.</li>
+    <li>Lines that contain only whitespace characters and are not part of a heredoc string are ignored.</li>
+    <li>Key-value definitions come in two forms:
+        <ul>
+            <li>The simple form has a key string, followed by “=”, followed by the value, all on one line.
+                The tokens may or may not be surrounded by whitespace characters. Leading and trailing
+                whitespace is trimmed from both key and value. The value cannot start with "<<<";
+                for values starting with this character sequence, use the heredoc form.
+            </li>
+            <li>The heredoc form starts with a key string, followed by “=”, followed by “<<<”,
+                followed by an identifier, all on one line.
+                The tokens may or may not be surrounded by whitespace characters
+                Leading and trailing whitespace is trimmed from both key and identifier.
+                The heredoc form ends with a termination line that contains only the identifier,
+                possibly followed by a semicolon.
+                The lines between these two lines, except comment lines, form the heredoc string.
+                The line break before the termination line is removed, all other line breaks are preserved.
+            </li>
+        </ul>
+    </li>
+    <li>Lines that are not comment lines, whitespace lines, or part of a key-value definition are illegal.</li>
+    <li>The following escape sequences are recognized in values:
+        <ul>
+            <li>“\\” stands for “\”.</li>
+            <li>“\n” stands for the newline character, U+000A.</li>
+            <li>“\t” stands for the horizontal tab character, U+0009.</li>
+            <li>“\ ” stands for the space character, U+0020. This is only needed if the value of a key-value
+                pair starts or ends with a space character.</li>
+            <li>“\#” stands for the number sign character, U+0023. This is only needed if a line within a
+                heredoc string starts with this character.</li>
+        </ul>
+    </li>
+    <li>A sequence of “\” followed by a character not listed above is illegal.
+        A “\” immediately preceding the end of the file is illegal.</li>
+    <li>Only the characters horizontal tab, U+0009, and space, U+0020, are considered whitespace.</li>
+</ul>

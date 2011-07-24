@@ -1,5 +1,6 @@
 {
     "widget": {
+        "use": ["widget-base", "widget-htmlparser", "widget-uievents", "widget-skin"],
         "plugins": {
             "widget-child": {
                 "requires": [
@@ -55,8 +56,6 @@
             }
         },
 
-        "skinnable": true,
-
         "submodules": {
             "widget-base": {
                 "requires": [
@@ -67,7 +66,8 @@
                     "node-base",
                     "node-style",
                     "classnamemanager"
-                ]
+                ],
+        	   "skinnable": true
             },
             "widget-htmlparser": {
                 "requires": [

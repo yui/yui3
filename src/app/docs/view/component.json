@@ -1,0 +1,12 @@
+{
+    "name"       : "view",
+    "displayName": "View",
+    "description": "Represents a renderable piece of an application's UI, and provides hooks for subscribing to delegated DOM events on a view container.",
+    "author"     : ["rgrove", "ericf"],
+
+    "tags": [
+        "infrastructure", "app", "beta", "mvc", "view", "template"
+    ],
+
+    "use": ["view"]
+}

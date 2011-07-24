@@ -185,6 +185,21 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
     suite.add( new Y.Test.Case({
         name: 'Y.Node Instance',
 
+        'should cache node': function() {
+            var node = Y.Node.create('<div id="test-caching" />');
+            node.appendTo('body');
+            Assert.areEqual(node, Y.Node._instances[node._yuid]);
+            Assert.areEqual(Y.one('#test-caching'), node);
+            node.remove(true);
+        },
+
+        'should get fresh node after destroy': function() {
+            var node = Y.Node.create('<div id="test-caching2" />');
+            node.appendTo('body');
+            node.destroy();
+            Assert.areNotEqual(Y.one('#test-caching2'), node);
+        },
+
         test_get: function() {
             var node = Y.one('#test-nodes'),
                 nodes = Y.all('#test-nodes *');
@@ -455,7 +470,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             Y.one('#test-select').set('value', 1);
             Assert.areEqual(1, Y.one('#test-select').get('value'), "Y.one('#test-select').set('value', 1)");
             Y.one('#test-select').set('value', 'baz');
-            Assert.areEqual('baz', Y.one('#test-select').get('value'), "Y.one('#test-select').set('value', 1)");
+            Assert.areEqual('baz', Y.one('#test-select').get('value'), "Y.one('#test-select').set('value', 'baz')");
         },
 
         test_dom_methods: function() {
@@ -668,8 +683,6 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
 
             node.setStyle('float', 'left');
             Assert.areEqual('left', node.getStyle('float'), "setStyle('float', 'left')");
-            node.setStyle('float', 'left');
-            Assert.areEqual('left', node.getStyle('float'), "setStyle('float', 'left')");
             
             nodes.setStyle('marginTop', '1em');
             Assert.areEqual('1em', nodes.getStyle('marginTop')[2], "setStyle('marginTop', '1em'");
@@ -693,17 +706,24 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
         test_getComputedStyle: function() {
             var node = Y.one('#test-computed'),
                 domNode = byId('test-computed'),
-                bw = (Y.UA.ie && Y.UA.ie < 8) ? 4 : 3,
                 w = node.get('offsetWidth'),
-                h = node.get('offsetHeight');
+                h = node.get('offsetHeight'),
+                bt = parseFloat(node.getComputedStyle('borderTopWidth')),
+                bb = parseFloat(node.getComputedStyle('borderBottomWidth')),
+                bl = parseFloat(node.getComputedStyle('borderLeftWidth')),
+                br = parseFloat(node.getComputedStyle('borderRightWidth')),
+                pt = parseFloat(node.getComputedStyle('paddingTop')),
+                pb = parseFloat(node.getComputedStyle('paddingBottom')),
+                pl = parseFloat(node.getComputedStyle('paddingLeft')),
+                pr = parseFloat(node.getComputedStyle('paddingRight'));
 
             if (!Y.UA.ie || document.compatMode !== 'BackCompat') {
-                w = w - 20 - 2 * bw;
-                h = h - 20 - 2 * bw;
+                w = w - (pl + pr) - (bl + br);
+                h = h - (pt + pb) - (bt + bb);
             }
 
-            Assert.areEqual(bw + 'px', node.getComputedStyle('borderTopWidth'), "borderTopWidth: medium");
-            Assert.areEqual(h, Math.ceil(parseFloat(node.getComputedStyle('height'))), "height: auto (offset minus padding and border)");
+            Assert.areEqual(parseInt(bt), parseInt(node.getComputedStyle('borderTopWidth')), "borderTopWidth: medium");
+            Assert.areEqual(parseInt(h), parseInt(node.getComputedStyle('height')), "height: auto (offset minus padding and border)");
             domNode.style.padding = '1em';
             Assert.areEqual('13px', node.getComputedStyle('paddingTop'), "padding 13px");
             Assert.areEqual('visible', node.getComputedStyle('visibility'), "visibility");
@@ -714,7 +734,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             domNode.style.margin = 'auto';
             Assert.areEqual('0px', node.getComputedStyle('marginTop'), "margin auto");
 
-            Assert.areEqual(w, Math.round(parseFloat(node.getComputedStyle('width'))), "percent width (from CSS)");
+            Assert.areEqual(parseInt(w), parseInt(node.getComputedStyle('width')), "percent width (from CSS)");
         },
 
         test_setStyles: function() {
@@ -1006,6 +1026,12 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
 
             // ensure remove doesnt fail when no parent
             node = Y.Node.create('<div/>');
+            node.remove();
+
+            // or after destroy
+            node = Y.Node.create('<div/>');
+            node.appendTo('body');
+            node.destroy();
             node.remove();
         },
 
@@ -1377,6 +1403,11 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             Assert.areEqual('', select.get('value'));
         },
 
+        test_label_for: function() {
+            var label = Y.Node.create('<label for="foo">');
+            Assert.areEqual('foo', label.get('for'));
+        },
+
         test_destroy: function() {
             var node = Y.Node.create('<div><em>foo</em><strong>bar</strong></div>');
                 nodes = node.all('em, strong');
@@ -1420,6 +1451,124 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             node.setStyle('display', 'none');
             node.show(1);
             Assert.areEqual('block', node.getStyle('display'));
+            node.setStyle('display', 'block');
+        },
+
+        'should show the node and fire callback': function() {
+            var node = Y.one('body'),
+                called = false;
+
+            node.setStyle('display', 'none');
+
+            node.show(function() {
+                called = true;
+            });
+
+            Assert.isTrue(called);
+            node.setStyle('display', 'block');
+        },
+
+        'should show the node and treat function as callback': function() {
+            var node = Y.one('body'),
+                called = false;
+
+            node.setStyle('display', 'none');
+
+            node.show(null, function() {
+                called = true;
+            });
+
+            Assert.isTrue(called);
+            node.setStyle('display', 'block');
+        },
+
+        'should hide the node and fire callback': function() {
+            var node = Y.one('body'),
+                called = false;
+
+            node.hide(function() {
+                called = true;
+            });
+
+            Assert.isTrue(called);
+            node.setStyle('display', 'block');
+        },
+
+        'should hide the node and treat function as callback': function() {
+            var node = Y.one('body'),
+                called = false;
+
+            node.hide(null, function() {
+                called = true;
+            });
+
+            Assert.isTrue(called);
+            node.setStyle('display', 'block');
+        },
+
+        'should toggle the node view on': function() {
+            var node = Y.one('body');
+
+            node.setStyle('display', 'none');
+            node.toggleView();
+
+            Assert.areEqual('block', node.getStyle('display'));
+        },
+
+        'should toggle the node view on and fire callback': function() {
+            var node = Y.one('body'),
+                called = false;
+
+            node.setStyle('display', 'none');
+
+            node.toggleView('foo', function() {
+                called = true;
+            });
+
+            Assert.isTrue(called);
+            Assert.areEqual('block', node.getStyle('display'));
+        },
+
+        'should force toggle the node view on': function() {
+            var node = Y.one('body'),
+                called = false;
+
+            node.toggleView(true);
+
+            Assert.areEqual('block', node.getStyle('display'));
+        },
+
+        'should force toggle the node view on and fire callback': function() {
+            var node = Y.one('body'),
+                called = false;
+
+            node.toggleView(true, function() {
+                called = true;
+            });
+
+            Assert.isTrue(called);
+            Assert.areEqual('block', node.getStyle('display'));
+        },
+
+        'should force toggle the node view off': function() {
+            var node = Y.one('body');
+
+            node.toggleView(false);
+
+            Assert.areEqual('none', node.getStyle('display'));
+            node.setStyle('display', 'block');
+        },
+
+        'should force toggle the node view off and fire callback': function() {
+            var node = Y.one('body'),
+                called = false;
+
+            node.toggleView(false, function() {
+                called = true;
+            });
+
+            Assert.isTrue(called);
+            Assert.areEqual('none', node.getStyle('display'));
             node.setStyle('display', 'block');
         },
 
@@ -1550,15 +1699,24 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
         'should fire the handler once': function() {
             var i = 0,
                 test = this,
-                node = Y.all('body');
+                nodelist = Y.all('body');
 
-            node.once('click', function() {
+            nodelist.once('click', function() {
                 i++;
                 Assert.areEqual(1, i);
             });
 
-            node.item(0).simulate('click');
-            node.item(0).simulate('click');
+            nodelist.item(0).simulate('click');
+            nodelist.item(0).simulate('click');
+
+            i = 0;
+            nodelist.onceAfter('click', function () {
+                i++;
+                Assert.areEqual(1, i);
+            });
+
+            nodelist.item(0).simulate('click');
+            nodelist.item(0).simulate('click');
         },
 
         'should pop the nodelist': function() {
@@ -1623,11 +1781,28 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             ArrayAssert.itemsAreEqual(nodelist1._nodes.concat(Y.one('ul')._node, Y.one('li')._node), nodelist2._nodes);
         },
 
+        'should return nodelist from empty concat': function() {
+            var nodelist = Y.Node.create('<div></div>').get('childNodes');
+            ArrayAssert.itemsAreEqual([], nodelist.concat()._nodes);
+        },
+
+        'should return nodelist from empty slice': function() {
+            var nodelist = Y.Node.create('<div></div>').get('childNodes');
+            ArrayAssert.itemsAreEqual([], nodelist.slice()._nodes);
+        },
+
+        'should return nodelist from empty splice': function() {
+            var nodelist = Y.Node.create('<div></div>').get('childNodes');
+            ArrayAssert.itemsAreEqual([], nodelist.splice()._nodes);
+        },
+
         'should slice the nodes': function() {
             var nodelist1 = Y.all('div');
                 nodelist2 = nodelist1.slice(1, 4);
+                nodelist3 = nodelist1.slice(0, 3);
             
             ArrayAssert.itemsAreEqual(nodelist1._nodes.slice(1, 4), nodelist2._nodes);
+            ArrayAssert.itemsAreEqual(nodelist1._nodes.slice(0, 3), nodelist3._nodes);
         },
 
         'should splice the nodes': function() {
@@ -1644,6 +1819,15 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             var node = Y.Node.create('<div><span><em>foo</em></span><strong>bar</strong></div>');
             node.empty();
             Assert.areEqual(0, node.get('childNodes').size());
+        },
+
+        'should empty the node and recursively destroy': function() {
+            var node = Y.Node.create('<div><span><em>foo</em></span><strong>bar</strong></div>'),
+                node2 = node.one('em');
+
+            Assert.areEqual(node2, node.one('em'));
+            node.empty(true);
+            Assert.areNotEqual(node2, node.one('em'));
         },
 
         'should empty the nodelist': function() {
@@ -1690,9 +1874,86 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             var node2 = Y.Node.create('<div id="bar"/>');
             Assert.areEqual('foo', node1.testThis());
             Assert.areEqual('bar', node2.testThis());
+        },
+
+        'should clear inline styles': function() {
+            var node = Y.Node.create('<div/>');
+            document.body.appendChild(node._node);
+            node.setStyle('paddingTop', '10px');
+            Assert.areEqual('10px', node.getStyle('paddingTop'));
+            node.setStyle('');
+            Assert.areEqual('0px', node.getStyle('paddingTop'));
+            document.body.removeChild(node._node);
+        },
+
+        'should apply inline opacity': function() {
+            var node = Y.Node.create('<div/>');
+            document.body.appendChild(node._node);
+            node.setStyle('opacity', '0.5');
+            Assert.areEqual('0.5', node.getStyle('opacity'));
+            node.setStyle('');
+            Assert.areEqual('1', node.getStyle('opacity'));
+            document.body.removeChild(node._node);
+        },
+
+        'should accept document Node instance': function() {
+            Y.DOM._fragClones = {};
+            var node = Y.Node.create('<div/>', Y.one(document));
+            Assert.areEqual('DIV', node.get('tagName'));
+        },
+
+        'should destroy recursively': function() {
+            var node = Y.one('#test-nodes');
+            node.one('ul')._bar = 'bar';
+            node.destroy(true);
+
+            Assert.isUndefined(Y.one('#test-nodes ul')._bar);
+        },
+
+        'should return the DOM node': function() {
+            var node = document.getElementById('test-nodes');
+
+            Assert.areEqual(node, Y.one('#test-nodes').getDOMNode());
+        },
+
+        'should return the DOM nodes': function() {
+            var nodes = document.getElementsByTagName('input');
+
+            ArrayAssert.itemsAreEqual(nodes, Y.all(nodes).getDOMNodes());
         }
     })); 
 
+    suite.add( new Y.Test.Case({
+        name: 'generateID',
+
+        'should generate a unique ID': function() {
+            var node = Y.Node.create('<div/>'),
+                id = node.generateID();
+            Assert.isTrue(node.get('id') !== '');
+            Assert.areEqual(node.get('id'), id);
+        },
+        
+        'should return exising ID': function() {
+            var node = Y.Node.create('<div id="foo"/>'),
+                id = node.generateID();
+
+            Assert.areEqual('foo', node.get('id'));
+            Assert.areEqual('foo', id);
+        }
+        
+    })); 
+
+    suite.add( new Y.Test.Case({
+        name: 'new Y.Node()',
+
+        'should generate a fresh instance': function() {
+            Assert.areNotEqual(Y.one('body'), Y.Node('body'));
+        },
+
+        'compareTo should pass': function() {
+            Assert.isTrue(Y.one('body').compareTo(Y.Node('body')));
+        }
+    })); 
     Y.Test.Runner.add(suite);
 
     Y.on('load', function() {

@@ -68,13 +68,6 @@
                 Assert.areSame(-1, A.lastIndexOf([], 'a', -10));
             },
 
-            testEach: function () {
-                var data = this.data;
-                A.each(data, function (item, index) {
-                    Assert.areEqual(data[index], item);
-                });
-            },
-
             testMap: function () {
                 var data = this.data;
                 var results = A.map(data, function (item, i, array) {
@@ -93,6 +86,19 @@
                     Assert.areEqual(5, this.x);
                     Assert.areNotEqual(6, this.x);
                 }, { x: 5 });
+            },
+
+            'map() should handle sparse arrays correctly': function () {
+                var calls = 0,
+                    foo   = Array(5);
+
+                foo.push('foo');
+
+                Y.Array.map(foo, function () {
+                    calls += 1;
+                });
+
+                Assert.areSame(1, calls);
             },
 
             testReduce: function () {
@@ -116,6 +122,20 @@
                 var result = A.reduce(data, 0, function (sum, item) {
                     Assert.areEqual("asdf", this.y);
                 }, { y: "asdf" });
+            },
+
+            'reduce() should handle sparse arrays correctly': function () {
+                var calls = 0,
+                    foo   = Array(5);
+
+                foo.push('foo');
+
+                Y.Array.reduce(foo, true, function () {
+                    calls += 1;
+                    return true;
+                });
+
+                Assert.areSame(1, calls);
             },
 
             testFind: function () {
@@ -150,6 +170,19 @@
                 Assert.areEqual(5, result, 'Last item not found!');
             },
 
+            'find() should handle sparse arrays correctly': function () {
+                var calls = 0,
+                    foo   = Array(5);
+
+                foo.push('foo');
+
+                Y.Array.find(foo, function () {
+                    calls += 1;
+                });
+
+                Assert.areSame(1, calls);
+            },
+
             testFilter: function () {
                 var data   = this.data,
                     obj    = {},
@@ -177,6 +210,19 @@
                 });
                 Assert.isArray(result);
                 ArrayAssert.isEmpty(result);
+            },
+
+            'filter() should handle sparse arrays correctly': function () {
+                var calls = 0,
+                    foo   = Array(5);
+
+                foo.push('foo');
+
+                Y.Array.filter(foo, function () {
+                    calls += 1;
+                });
+
+                Assert.areSame(1, calls);
             },
 
             testReject: function () {
@@ -250,6 +296,20 @@
                 Assert.isFalse(result);
             },
 
+            'every() should handle sparse arrays correctly': function () {
+                var calls = 0,
+                    foo   = Array(5);
+
+                foo.push('foo');
+
+                Y.Array.every(foo, function () {
+                    calls += 1;
+                    return true;
+                });
+
+                Assert.areSame(1, calls);
+            },
+
             testUnique: function() {
                 var obj = {};
 
@@ -264,6 +324,8 @@
 
         var r = new Y.Console({ verbose: true, newestOnTop: false });
         r.render('#logger');
+
+        TestRunner.setName("Collection");
         TestRunner.add(method_test);
         TestRunner.run();
     });

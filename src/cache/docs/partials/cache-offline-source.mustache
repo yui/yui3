@@ -1,0 +1,92 @@
+<form id="demo1" class="demo">
+    <h6>CacheOffline Instance #1</h6>
+    <fieldset>
+        <label for="demo1_expires">Data expires after: <input type="text" id="demo1_expires" class="med" value="86400000"> milliseconds
+        <input type="button" id="demo1_setExpires" value="Set expires"></label>
+    </fieldset>
+    <fieldset>
+        <label for="demo1_addKey">Key: <input type="text" id="demo1_addKey"></label>
+        <label for="demo1_addValue">Value: <input type="text" id="demo1_addValue"></label>
+        <input type="button" id="demo1_add" value="Cache value">
+    </fieldset>
+    <fieldset>
+        <label for="demo1_retrieveKey">Key: <input type="text" id="demo1_retrieveKey"></label>
+        <input type="button" id="demo1_retrieve" value="Retrieve value">
+    </fieldset>
+    <fieldset>
+        <input type="button" id="demo1_flush" value="Flush cache"></label>
+    </fieldset>
+</form>
+
+<form id="demo2" class="demo">
+    <h6>CacheOffline Instance #2</h6>
+    <fieldset>
+        <label for="demo2_expires">Data expires after: <input type="text" id="demo2_expires" class="med" value="86400000"> milliseconds
+        <input type="button" id="demo2_setExpires" value="Set expires"></label>
+    </fieldset>
+    <fieldset>
+        <label for="demo2_addKey">Key: <input type="text" id="demo2_addKey"></label>
+        <label for="demo2_addValue">Value: <input type="text" id="demo2_addValue"></label>
+        <input type="button" id="demo2_add" value="Cache value">
+    </fieldset>
+    <fieldset>
+        <label for="demo2_retrieveKey">Key: <input type="text" id="demo2_retrieveKey"></label>
+        <input type="button" id="demo2_retrieve" value="Retrieve value">
+    </fieldset>
+    <fieldset>
+        <input type="button" id="demo2_flush" value="Flush cache"></label>
+    </fieldset>
+</form>
+
+
+<script>
+YUI().use("node", "datatype-number", "cache-offline" ,function (Y) {
+    var cache1 = new Y.CacheOffline({sandbox:"instance1"});
+
+    Y.on("click", function(e){
+        cache1.set("expires", Y.DataType.Number.parse(Y.one("#demo1_expires").get("value")));
+        alert("Cache 1 \"expires\" set to " + cache1.get("expires") + ".");
+    }, "#demo1_setExpires");
+
+    Y.on("click", function(e){
+        cache1.add(Y.one("#demo1_addKey").get("value"), Y.one("#demo1_addValue").get("value"));
+        var msg = "Value cached. Cache 1 \"size\" is now " + cache1.get("size") + ".";
+        alert(msg);
+    }, "#demo1_add");
+
+    Y.on("click", function(e){
+        var entry = cache1.retrieve(Y.one("#demo1_retrieveKey").get("value")),
+            output = entry ? entry.response : "Value not cached.";
+        alert(output);
+    }, "#demo1_retrieve");
+
+    Y.on("click", function(e){
+        cache1.flush();
+        alert("Cache 1 flushed.");
+    }, "#demo1_flush");
+
+    var cache2 = new Y.CacheOffline({sandbox:"instance2"});
+
+    Y.on("click", function(e){
+        cache2.set("expires", Y.DataType.Number.parse(Y.one("#demo2_expires").get("value")));
+        alert("Cache 2 \"expires\" set to " + cache2.get("expires") + ".");
+    }, "#demo2_setExpires");
+
+    Y.on("click", function(e){
+        cache2.add(Y.one("#demo2_addKey").get("value"), Y.one("#demo2_addValue").get("value"));
+        var msg = "Value cached. Cache 2 \"size\" is now " + cache2.get("size") + ".";
+        alert(msg);
+    }, "#demo2_add");
+
+    Y.on("click", function(e){
+        var entry = cache2.retrieve(Y.one("#demo2_retrieveKey").get("value")),
+            output = entry ? entry.response : "Value not cached.";
+        alert(output);
+    }, "#demo2_retrieve");
+
+    Y.on("click", function(e){
+        cache2.flush();
+        alert("Cache 2 flushed.");
+    }, "#demo2_flush");
+});
+</script>

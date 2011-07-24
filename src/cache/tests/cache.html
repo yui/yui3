@@ -3,7 +3,6 @@
 <head>
 <title>Cache Tests</title>
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<script type="text/javascript" src="../../../build/cache/cache-debug.js"></script>
 </head>
 
 <body class="yui3-skin-sam">
@@ -13,10 +12,9 @@
 <script type="text/javascript">
 (function() {
     YUI({
-        base: "../../../build/",
-        //filter: "debug",
-        logInclude:{"TestRunner":true},
-        useConsole: true
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+        allowRollup: false,
+        useBrowserConsole: false
     }).use("console", "test", "dump", "cache", function(Y) {
         
         // Set up the page
@@ -44,11 +42,6 @@
                 var cache = new Y.Cache();
                 cache.destroy();
                 ARRAYASSERT.isEmpty(cache.get("entries"), "Expected empty array.");
-            },
-            
-            testPlugin: function() {
-                ASSERT.areSame("cache", Y.Plugin.Cache.NS, "Expected namespace.");
-                ASSERT.areSame("cachePlugin", Y.Plugin.Cache.NAME, "Expected name.");
             }
         });
         
@@ -181,6 +174,15 @@
                 cache.add(2, "b");
                 cache.flush();
                 ASSERT.areSame(0, cache.get("size"), "Expected empty cache.");
+            },
+            
+            testFlushItem: function() {
+                var cache = new Y.Cache({max:2});
+                cache.add(1, "a");
+                cache.add(2, "b");
+                cache.flush(1);
+                ASSERT.areSame(1, cache.get("size"), "Expected single item");
+                ASSERT.areSame("b", cache.get("entries")[0].response, "Expected 'b'");
             }
         });
     

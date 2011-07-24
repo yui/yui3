@@ -1,0 +1,31 @@
+<h2>Getting Started</h2>
+
+<p>
+To include the source files for {{displayName}} and its dependencies, first load
+the YUI seed file if you haven't already loaded it.
+</p>
+
+```
+<script src="http://yui.yahooapis.com/{{{yuiVersion}}}/build/yui/yui-min.js"></script>
+```
+
+<p>
+Next, create a new YUI instance for your application and populate it with the
+modules you need by specifying them as arguments to the `YUI().use()` method.
+YUI will automatically load any dependencies required by the modules you
+specify.
+</p>
+
+```
+// Create a new YUI instance and populate it with the required modules.
+YUI().use({{{useParams}}}, function (Y) {
+  // {{{displayName}}} is available and ready for use. Add implementation
+  // code here.
+});
+```
+
+<p>
+For more information on creating YUI instances and on the
+<a href="{{apiDocs}}/classes/YUI.html#method_use">`use()` method</a>, see the 
+documentation for the <a href="../yui/index.html">YUI Global object</a>.
+</p>

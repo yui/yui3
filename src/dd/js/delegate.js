@@ -115,7 +115,8 @@
         initializer: function(cfg) {
             this._handles = [];
             //Create a tmp DD instance under the hood.
-            var conf = Y.clone(this.get('dragConfig') || {}),
+            //var conf = Y.clone(this.get('dragConfig') || {}),
+            var conf = this.get('dragConfig') || {},
                 cont = this.get(CONT);
 
             conf.node = _tmpNode.cloneNode(true);
@@ -130,6 +131,9 @@
             //On end drag, detach the listeners
             this.dd.after('drag:end', Y.bind(this._afterDragEnd, this));
             this.dd.on('dragNodeChange', Y.bind(this._onNodeChange, this));
+            this.dd.after('drag:mouseup', function() {
+                this._unprep();
+            });
 
             //Attach the delegate to the container
             this._handles.push(Y.delegate(Y.DD.Drag.START_EVENT, Y.bind(this._delMouseDown, this), cont, this.get(NODES)));

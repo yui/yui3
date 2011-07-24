@@ -65,9 +65,16 @@ DataSourceCacheExtension.prototype = {
      */
     _beforeDefRequestFn: function(e) {
         // Is response already in the Cache?
-        var entry = (this.retrieve(e.request)) || null;
-        if(entry && entry.response) {
-            this.get("host").fire("response", Y.mix(entry, e));
+        var entry = (this.retrieve(e.request)) || null,
+            payload = e.details[0];
+
+        if (entry && entry.response) {
+            payload.cached   = entry.cached;
+            payload.response = entry.response;
+            payload.data     = entry.data;
+
+            this.get("host").fire("response", payload);
+
             return new Y.Do.Halt("DataSourceCache extension halted _defRequestFn");
         }
     },

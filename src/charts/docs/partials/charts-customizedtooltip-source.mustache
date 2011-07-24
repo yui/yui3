@@ -1,0 +1,45 @@
+<html>
+<head>
+</head>
+<body>
+<div id="mychart"></div>
+<script type="text/javascript">
+(function() {
+    YUI().use('charts', function (Y) 
+    { 
+        var myDataValues = [ 
+            {category:"5/1/2010", Miscellaneous:2000, Expenses:3700, Revenue:2200}, 
+            {category:"5/2/2010", Miscellaneous:50, Expenses:9100, Revenue:100}, 
+            {category:"5/3/2010", Miscellaneous:400, Expenses:1100, Revenue:1500}, 
+            {category:"5/4/2010", Miscellaneous:200, Expenses:1900, Revenue:2800}, 
+            {category:"5/5/2010", Miscellaneous:5000, Expenses:5000, Revenue:2650}
+        ];
+        
+        var myTooltip = {
+            styles: { 
+                backgroundColor: "#333",
+                color: "#eee",
+                borderColor: "#eee",
+                textAlign: "center",
+                padding: "2px 8px 2px 8px"
+            },
+            markerLabelFunction: function(categoryItem, valueItem, itemIndex, series, seriesIndex)
+            {
+                var msg = "<span style=\"text-decoration:underline\">" + valueItem.displayName + " for " + 
+                categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]) + 
+                "</span><br/><div style=\"margin-top:5px;font-weight:bold\">" + valueItem.axis.get("labelFunction").apply(this, [valueItem.value, {prefix:"$", decimalPlaces:2}]) + "</div>";
+                return msg; 
+            }
+        };
+
+        var mychart = new Y.Chart({
+                            dataProvider:myDataValues, 
+                            type:"bar",
+                            render:"#mychart", 
+                            tooltip: myTooltip
+                        });
+    });
+})();
+</script>
+</body>
+</html>

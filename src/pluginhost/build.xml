@@ -1,9 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="YuiBase" default="local">
-    <description>Component Build File</description>
+<project name="YUI" default="local">
+    <description>Build All Modules</description>
 
-    <property environment="env" />
+    <macrodef name="build-module">
+        <attribute name="target"/>
+        <sequential>
+            <ant antfile="build-base.xml" target="@{target}"/>
+            <ant antfile="build-config.xml" target="@{target}"/>
+        </sequential>
+    </macrodef>
 
-    <property file="build.properties" />
-    <import file="${builddir}/3.x/bootstrap.xml" description="Default Build Properties and Targets" />
+    <target name="local">
+        <build-module target="local"/>
+    </target>
+    <target name="deploy">
+        <build-module target="deploy"/>
+    </target>
+    <target name="all">
+        <build-module target="all"/>
+    </target>
+    <target name="clean">
+        <build-module target="clean"/>
+    </target>
+
 </project>

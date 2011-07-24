@@ -16,8 +16,9 @@
 
     <script>
         YUI({
-            filter: 'raw',
-            filters: { 'event': 'debug' }
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+            allowRollup: false,
+            lazyEventFacade: true
         }).use('console', 'test', 'event', 'event-simulate', 'window-focus', function (Y) {
 
             var Assert = Y.Assert;
@@ -251,6 +252,7 @@
 
             }));
 
+	    Y.Test.Runner.setName("EventFocusBlur");
             Y.Test.Runner.run();
 
         });

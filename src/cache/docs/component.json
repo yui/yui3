@@ -1,0 +1,30 @@
+{
+    "name"       : "cache",
+    "displayName": "Cache",
+    "description": "Provides a basic caching mechanism for storing key/value pairs in local JavaScript memory. As a subclass of Plugin, it is designed to seamlessly integrate with other components (such as DataSource).",
+    "author"     : ["lsmith", "jenny"],
+
+    "tags": ["utility", "cache"],
+    "use" : ["cache"],
+
+    "examples": [
+        {
+            "name"       : "cache-basic",
+            "displayName": "Basic Caching",
+            "description": "Basic caching functionality with the Cache Utility.",
+            "modules"    : ["cache"],
+            "tags"       : ["cache"],
+
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "cache-offline",
+            "displayName": "Offline Caching",
+            "description": "Offline caching implements HTML 5 localStorage when available, to allow data to persist across browser sessions.",
+            "modules"    : ["cache"],
+            "tags"       : ["cache"],
+
+            "hideTableOfContents": true
+        }
+    ]
+}

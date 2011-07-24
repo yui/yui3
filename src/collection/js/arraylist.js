@@ -169,10 +169,15 @@ Y.mix( ArrayList, {
      * <code>_item</code> method in case there is any special behavior that is
      * appropriate for API mirroring.</p>
      *
+     * <p>If the iterated method returns a value, the return value from the
+     * added method will be an array of values with each value being at the
+     * corresponding index for that item.  If the iterated method does not
+     * return a value, the added method will be chainable.
+     *
      * @method addMethod
      * @static
-     * @param dest { Object } Object or prototype to receive the iterator method
-     * @param name { String | Array } Name of method of methods to create
+     * @param dest {Object} Object or prototype to receive the iterator method
+     * @param name {String|String[]} Name of method of methods to create
      */
     addMethod: function ( dest, names ) {
 
@@ -189,7 +194,7 @@ Y.mix( ArrayList, {
                     var result = item[ name ].apply( item, args );
 
                     if ( result !== undefined && result !== item ) {
-                        ret.push( result );
+                        ret[i] = result;
                     }
                 }, this);
 

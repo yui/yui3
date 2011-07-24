@@ -1,0 +1,67 @@
+{
+    "name"       : "scrollview",
+    "displayName": "ScrollView",
+    "description": "ScrollView provides a scrollable content widget with flick velocity based inertia for both touch and mouse.",
+    "author"     : "sdesai",
+
+    "tags": ["scrollview", "widget"],
+    "use" : ["scrollview"],
+
+    "examples": [
+        {
+            "name"       : "scrollview-base",
+            "displayName": "Basic ScrollView Without a Scroll Indicator",
+            "description": "This example creates a basic ScrollView which doesn't include a scrollbar indicator.",
+            "modules"    : ["scrollview-base"],
+            "tags"       : ["scrollview", "widget"],
+
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "scrollview",
+            "displayName": "ScrollView with Scroll Indicator and Link Suppression Behavior",
+            "description": "This example shows the classic Scrollview implementation, including scroll indicators (bars) and including code to suppress link navigation while scrolling.",
+            "modules"    : ["scrollview"],
+            "tags"       : ["scrollview", "widget"],
+
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "scrollview-horiz",
+            "displayName": "Horizontal ScrollView",
+            "description": "This example creates a horizontal ScrollView.",
+            "modules"    : ["scrollview"],
+            "tags"       : ["scrollview", "widget"],
+
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "scrollview-paging",
+            "displayName": "ScrollView With Pagination",
+            "description": "This example creates a horizontal ScrollView with pagination support.",
+            "modules"    : ["scrollview", "scrollview-paginator"],
+            "tags"       : ["scrollview", "widget"],
+
+            "hideTableOfContents": true
+        }
+    ],
+
+    "pages": {
+        "scrollview-base-example": {
+            "displayName": "ScrollView: Basic ScrollView Without a Scroll Indicator",
+            "layout"     : "scrollview-vertical-example"
+        },
+        "scrollview-example": {
+            "displayName": "ScrollView: ScrollView with Scroll Indicator and Link Suppression Behavior",
+            "layout"     : "scrollview-vertical-example"
+        },
+        "scrollview-horiz-example": {
+            "displayName": "ScrollView: Horizontal ScrollView",
+            "layout"     : "scrollview-horizontal-example"
+        },
+        "scrollview-paging-example": {
+            "displayName": "ScrollView: ScrollView with Pagination",
+            "layout"     : "scrollview-horizontal-example"
+        }
+    }
+}

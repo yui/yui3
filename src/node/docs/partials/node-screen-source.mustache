@@ -1,0 +1,29 @@
+<dl id="demo">
+    <dt>Window size</dt>
+    <dd class="yui3-data-win">Click me to find out</dd>
+    <dt>Document size</dt>
+    <dd class="yui3-data-doc">Click me to find out</dd>
+</dl>
+
+<script type="text/javascript">
+YUI().use('node', function(Y) {
+    var onClick = function(e) {
+        var target = e.target,
+            h, w;
+
+        if (target.test('dd')) {
+            if (target.test('.yui3-data-win')) {
+                h = target.get('winHeight');
+                w = target.get('winWidth');
+            } else if (target.test('.yui3-data-doc')) {
+                h = target.get('docHeight');
+                w = target.get('docWidth');
+
+            }
+            target.set('innerHTML', 'width: ' + w + ' height: ' + h);
+        }
+    };
+
+    Y.one('#demo').on('click', onClick);
+});
+</script>

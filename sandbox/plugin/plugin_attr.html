@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf=8">
+    <title>Test Page</title>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="x">
+</div>
+
+<script src="../../build/yui/yui.js"></script>
+<script>
+/*
+YUI({ filter: 'raw' }).use('console-filters', 'dd-plugin', function (Y) {
+
+//Y.Plugin.addHostAttr('filters', Y.Console, Y.Plugin.ConsoleFilters);
+Y.Plugin.addHostAttr('draggable', Y.Node, Y.Plugin.Drag);
+Y.Plugin.addHostAttr('draggable', Y.Widget, Y.Plugin.Drag);
+
+var konsole = new Y.Console({
+    filters: true
+}).render('#x'),
+    box = konsole.get('boundingBox');
+
+//Y.Plugin.addHostAttr('draggable', konsole, Y.Plugin.Drag);
+konsole.set('draggable', { handles: ['.yui3-console-hd'] });
+
+Y.log("Foo a little", "bally", "hoo");
+Y.log("Info");
+Y.log("Warn", "warn");
+Y.log("ERROR!!!", "error");
+});
+*/
+YUI({ filter: 'raw' }).use('datatable', 'datasource', 'pluginattr', function (Y) {
+
+    Y.DataSource.Schema = {
+        'json': Y.Plugin.DataSourceJSONSchema
+    };
+    Y.DataSource.Type = {
+        'yql': Y.DataSource.Get
+    };
+
+    Y.Plugin.addHostAttr('sortable', Y.DataTable.Base, Y.Plugin.DataTableSort);
+    Y.Plugin.addHostAttr('datasource', Y.DataTable.Base, {
+        setter: function (val) {
+            var Source = Y.DataSource.Type[val.type];
+
+            this.plug(Y.Plugin.DataTableDataSource, {
+                datasource: new Source(val)
+            });
+        }
+    });
+                
+    Y.Plugin.addHostAttr('schema', Y.DataSource.Local, {
+        setter: function (val) {
+            var plugin = Y.DataSource.Schema[val.type];
+            this.plug(plugin, { /* host: this,*/ schema: val });
+        }
+    });
+    Y.Plugin.addHostAttr('cache', Y.DataSource.Local, {
+        setter: function (val) {
+            this.plug(Y.Plugin.DataSourceCache({ host: this, max: val }));
+        }
+    });
+
+    var table = new Y.DataTable.Base({
+        columnset: [
+            "Title",
+            "Phone",
+            { key: "Rating.AverageRating", label: "Rating", sortable: true }
+        ],
+        summary: "Pizza places near 94089",
+        caption: "Table with pizza",
+        sortable: true,
+        datasource: {
+            type: 'yql',
+            source: "http://query.yahooapis.com/v1/public/yql?format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys",
+            cache: 3,
+            schema: {
+                type: 'json',
+                resultListLocator: "query.results.Result",
+                resultFields: ["Title", "Phone", "Rating.AverageRating"]
+            }
+        }
+    }).render("#x");
+
+    /*
+    var myDataSource = new Y.DataSource.Get({
+        source: "http://query.yahooapis.com/v1/public/yql?format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys",
+    });
+     
+    myDataSource
+        .plug(Y.Plugin.DataSourceJSONSchema, {
+            schema: {
+                resultListLocator: "query.results.Result",
+                resultFields: ["Title", "Phone", "Rating.AverageRating"]
+            }
+        })
+        .plug(Y.Plugin.DataSourceCache, {
+            max: 3
+        });
+     
+    var table = new Y.DataTable.Base({
+        columnset: cols,
+        summary: "Pizza places near 98089",
+        caption: "Table with JSON data from YQL"
+    });
+     
+    table
+        .plug(Y.Plugin.DataTableDataSource, {
+            datasource: myDataSource
+        })
+        .render("#x");
+     
+    */
+    table.datasource.load({
+        request: "&q=select%20*%20from%20local.search%20where%20zip%3D%2794089%27%20and%20query%3D%27chinese%27"
+    });
+
+});
+</script>
+</body>
+</html>

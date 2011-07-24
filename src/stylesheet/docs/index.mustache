@@ -1,0 +1,544 @@
+<div class="intro component">
+    <p>
+        The StyleSheet module normalizes the dynamic creation and modification
+        of CSS stylesheets on a page.  This makes it easy to manage the
+        development, storage, and reapplication of personalized user
+        stylesheets.  Because it targets styles at the CSS level, it also
+        allows you to modify styles applied to a CSS pseudo-element such as
+        <code>p::first-letter</code>, or pseudo-class such as
+        <code>a:hover</code>.
+    </p>
+
+    <p>
+        StyleSheet is capable of creating new stylesheets from scratch or
+        modifying existing stylesheets held as properties of
+        <code>&lt;link&gt;</code> or <code>&lt;style&gt;</code> elements.  It
+        should be noted that not all browsers support reading or modifying
+        external stylesheets from other domains.
+    </p>
+</div>
+
+{{>getting-started}}
+
+<h2 id="using">Using the StyleSheet Utility</h2>
+
+<h3 id="instantiating">Instantiating a <code>Y.StyleSheet</code></h3>
+
+<p>
+    The <code>Y.StyleSheet</code> constructor is written to support both
+    function syntax and normal constructor syntax making the <code>new</code>
+    prefix unnecessary (but harmless).
+</p>
+
+<p>
+    The constructor has no required parameters.  Passing no arguments will
+    create a new, empty StyleSheet instance.
+</p>
+
+```
+// These are equivalent; both create new empty StyleSheets
+var myStyleSheet = new Y.StyleSheet();
+
+var myOtherStyleSheet = Y.StyleSheet();
+```
+
+<p>
+    To seed a new StyleSheet with a number of CSS rules, you can pass the
+    constructor any of the following:
+</p>
+
+<ol>
+    <li>
+        a <code>&lt;style&gt;</code> or <code>&lt;link&gt;</code> node
+        reference,
+    </li>
+    <li>
+        the id of a <code>&lt;style&gt;</code> or <code>&lt;link&gt;</code>
+        node, or
+    </li>
+    <li>a string of CSS</li>
+</ol>
+
+```
+<link id="local" type="text/css" rel="stylesheet" href="local_file.css">
+<style id="styleblock" type="text/css">
+    .some select.or {
+        margin-right: 2em;
+    }
+</style>
+```
+
+```
+YUI().use('node','stylesheet', function (Y) {
+
+    // Node or HTMLElement reference for a style or locally sourced link element
+    var sheet = Y.StyleSheet(Y.one("#styleblock"));
+    sheet = Y.StyleSheet(Y.DOM.byId('local'));
+
+    // OR the id of a style element or locally sourced link element
+    sheet = Y.StyleSheet('#local');
+
+    // OR string of css text
+    var css = ".moduleX .alert { background: #fcc; font-weight: bold; } " +
+              ".moduleX .warn  { background: #eec; } " +
+              ".hide_messages .moduleX .alert, " +
+              ".hide_messages .moduleX .warn { display: none; }";
+
+    sheet = new Y.StyleSheet(css);
+
+    //...
+});
+```
+
+<p>
+    Be aware that the <a
+    href="http://en.wikipedia.org/wiki/Same_origin_policy">Same Origin
+    policy</a> prevents access in some browsers to the style data of
+    <code>&lt;link&gt;</code> elements with <code>href</code>s pointing to
+    other domains.  Attempts to seed a <code>Y.StyleSheet</code> instance with
+    a cross-domain <code>&lt;link&gt;</code> may result in a security
+    error.
+</p>
+
+```
+<link id="remote" type="text/css" rel="stylesheet" href="http://other.domain.com/remote_file.css">
+```
+
+```
+// ERROR - Same Origin Policy prevents access to remote stylesheets
+var styleSheet = Y.StyleSheet('remote');
+```
+
+<h3 id="registry">Getting a StyleSheet by registered name</h3>
+
+<p>
+    <code>Y.StyleSheet</code> supports registering instances by name allowing
+    them to be recalled by that same name elsewhere in your code.  Internally,
+    <code>Y.StyleSheet</code> maintains a registry of all created StyleSheet
+    instances, using a unique generated id that the host node is tagged with.
+    This allows future attempts to create a StyleSheet instance from the same
+    node to return the previously created instance associated with that id.
+</p>
+
+<p>
+    Register a StyleSheet instance manually using the static
+    <code>register</code> method or pass the desired name as a second parameter
+    to the constructor.
+</p>
+
+```
+var sheetA = Y.StyleSheet('my_stylesheet');
+
+// Create a registry alias to sheetA.  We'll call it bob.
+Y.StyleSheet.register(sheetA, 'bob');
+
+// Create another StyleSheet passing the name as the second parameter
+var css = ".some .css { white-space: pre-wrap; color: pink; }";
+var sheetB = Y.StyleSheet(css, 'my sheet');
+
+// Meanwhile, elsewhere in your code
+
+// sheetA is the same instance as sheet1 and sheet2
+var sheet1 = Y.StyleSheet(Y.one('#my_stylesheet')),
+    sheet2 = Y.StyleSheet('bob');
+
+// sheetB is the same instance as sheet3
+var sheet3 = Y.StyleSheet('my sheet');
+```
+
+<p>
+    If an unregistered name is passed as the <em>first</em> argument to the
+    constructor, a new empty StyleSheet will be created and registered with
+    that name.  This allows you to use the following code pattern:
+</p>
+
+```
+// Whichever of these executes first, an empty StyleSheet will be created
+// and registered as 'MyApp'.
+
+// In one area of your app
+Y.StyleSheet('MyApp').set('.module .messages', { display: 'none' });
+
+//...
+
+// In another area of your app
+Y.StyleSheet('MyApp').unset('.module .messages','display');
+```
+
+<h3 id="first_param">Summary of how the constructor handles the first argument</h3>
+
+<p>
+    When nothing is passed as the first argument, a new StyleSheet instance is
+    created.
+</p>
+
+<p>
+    When a <code>&lt;style&gt;</code> or <code>&lt;link&gt;</code> element is
+    passed as the first argument, it is inspected for the id stamp that
+    StyleSheet tags known host nodes with.  If it finds one, it will return the
+    associated StyleSheet from the registry.  If not, it will stamp the node
+    and seed the instance from the node's CSS content.
+</p>
+
+<p>
+    When a string is passed as the first argument, StyleSheet does the
+    following things in order:
+</p>
+
+<ol>
+    <li>
+        Check the registry for an instance associated to that name.  If found,
+        return the instance.
+    </li>
+    <li>
+        Check the DOM for a <code>&lt;style&gt;</code> or
+        <code>&lt;link&gt;</code> node with that id.  If found, check the
+        registry for an instance associated to its tagged id if present.  If
+        found, return that instance.  If not, use that node to seed a new
+        StyleSheet instance.
+    </li>
+    <li>
+        Check the string for a curly brace { character.  If found, create a new
+        instance seeded with the string as initial <code>cssText</code>.
+    </li>
+    <li>
+        Create a new empty StyleSheet and register the instance by the provided
+        string.
+    </li>
+</ol>
+
+<h3 id="set">Creating and modifying CSS style rules</h3>
+
+<p>
+    The core method of StyleSheet instances is <code>set(selector,
+    style_properties)</code>.  It will create or alter a CSS rule using the
+    property:value pairs in <code>style_properties</code> targeting the
+    provided <code>selector</code>.  In essence, it looks very much like
+    natural CSS syntax, <em>except style properties must be in JavaScript's
+    camelCase</em>.
+</p>
+
+```
+Y.StyleSheet('MyApp').set(
+    "q.uoted select.or[str=ing]", {
+        fontSize   : "150%",         // note the camel casing
+        background : "#030 url(/images/bg_image.png) scroll repeat-y top left",
+        cssFloat   : "left",
+        opacity    : 0.5
+    });
+```
+
+<p>
+    Rather than continually add new rules that will override one another,
+    StyleSheet manages one rule per selector and modifies them in place.  This
+    may be relevant if you have two or more rules with selectors of the same
+    specificity.
+</p>
+
+<p>
+    As with regular CSS syntax, comma-separated selectors are supported, but
+    internally StyleSheet splits them up into individual rules because browser
+    support for multiple selectors is not consistent.  This means calling
+    <code>set(..)</code> with such a selector string <em>will incur multiple
+    repaints or reflows</em>, but limited to the number of atomic
+    selectors.
+</p>
+
+```
+// This is valid, but will trigger 3 reflows
+Y.StyleSheet('MyApp').set(
+    '.foo, .bar, .baz', {
+        borderRight: "1em solid #f00"
+    });
+```
+
+<h3 id="normalized_properties">Some style properties are normalized</h3>
+
+<p>
+    Two style properties have differing implementation between browsers, namely
+    <code>float</code> and <code>opacity</code>.  StyleSheet instances will
+    normalize these properties for you.
+</p>
+
+<p>
+    Because &quot;float&quot; is a reserved word in JavaScript, it is supported
+    by the name <code>cssFloat</code> in W3C compliant browsers and
+    <code>styleFloat</code> in IE.  StyleSheet will accept any of these to set
+    the <code>float</code> property.
+</p>
+
+```
+// Any of these will work
+Y.StyleSheet('MyApp').set('.foo', {
+    "float"    : "left",   // "float" must be quoted
+    cssFloat   : "right",
+    styleFloat : "none"
+});
+```
+
+<p>
+    IE does not support the <code>opacity</code> style property, but has
+    equivalent functionality offered by its proprietary <code>filter</code>
+    property, though using a different value syntax.  StyleSheet will translate
+    <code>opacity</code> to <code>filter</code> for IE, but it <em>will
+    not</em> translate <code>filter</code> to <code>opacity</code> for
+    W3C-compliant browsers.
+</p>
+
+<h3 id="unset">Removing and resetting CSS style rules</h3>
+
+<p>
+    When you want to remove a particular rule or style property from affecting
+    the cascade, use <code>unset(selector,propert[y|ies])</code>.
+</p>
+
+<p>
+    <code>unset(..)</code> can be called in any of the following ways, with the
+    noted result:
+</p>
+
+<ul>
+    <li>
+        <code>unset('.foo')</code> &mdash; removes the rule associated to the
+        selector entirely.
+    </li>
+    <li>
+        <code>unset('.foo','font')</code> &mdash; unsets the <code>font</code>
+        property and any child properties (e.g.
+        'font-weight','font-variant','font-size','line-height', and
+        'font-family').  If there are no set properties left, the rule is
+        removed.
+    </li>
+    <li>
+        <code>unset('.foo',['font','border',...])</code> &mdash; same as above,
+        but the rule is modified only once with the final applicable
+        <code>cssText</code>.
+    </li>
+</ul>
+
+<p>
+    It is important to note that there is a difference between setting a style
+    property to its default value and unsetting it.  The former can be achieved
+    by calling <code>set(selector, { property: &quot;auto&quot; })</code> (or
+    the respective default value for that property).
+</p>
+
+<p>
+    However, as the CSS is reapplied to the page, the &quot;auto&quot; value
+    will override any value for that property that may have cascaded in from
+    another rule.  This is different than removing the property assignment
+    entirely, as this allows cascading values through.
+</p>
+
+```
+Y.StyleSheet('MyApp').set('.foo', { background: 'auto' });
+
+// is NOT the same as
+
+Y.StyleSheet('MyApp').unset('.foo','background');
+```
+
+<h3 id="not_selector">A note on selector strings</h3>
+
+<p>
+    Though the StyleSheet Utility takes selector strings as input to its API,
+    it <em>does not</em> leverage the YUI selector engine.  YUI's selector
+    functionality supplements native CSS support for DOM access, but
+    accomplishes this through efficient DOM traversal.  Since the StyleSheet
+    Utility uses the browser's built-in stylesheet and rule objects, it can not
+    handle selectors that are not supported by the browser's native CSS
+    parser.
+</p>
+
+```
+// This will not cause a style change in IE 6, for example
+Y.StyleSheet('MyApp').set('input[type=checkbox]:checked', {
+    verticalAlign : 'super'
+});
+```
+
+<h3 id="disable">Disabling and enabling a StyleSheet</h3>
+
+<p>
+    Disabling a StyleSheet effectively turns it off; no CSS from that
+    stylesheet is applied to the page.  Disabling a StyleSheet does not remove
+    the host node from the page, and style can be reapplied by enabling the
+    StyleSheet again.
+</p>
+
+<p>
+    When StyleSheets are disabled, it is still possible to change their style
+    rules via <code>set</code> and <code>unset</code>.
+</p>
+
+```
+var sheet = Y.StyleSheet(styleNode);
+
+sheet.disable();
+sheet.set('.foo', { backgroundColor: '#900', color: '#fff' });
+sheet.set('.bar', { borderBottomColor: '#369' });
+sheet.unset('.baz');
+sheet.enable();
+```
+
+<h3 id="static">Static methods</h3>
+
+<p>
+    <code>Y.StyleSheet</code> exposes a few static methods.
+</p>
+
+<div class="apisummary">
+<table>
+<thead>
+    <tr>
+        <th>Method</th>
+        <th>Use for</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>
+```
+Y.StyleSheet.register(instance, name)
+```
+        </td>
+        <td>Use to assign a named registry entry for a StyleSheet instance.</td>
+    </tr>
+    <tr>
+        <td>
+```
+Y.StyleSheet.toCssText(property_obj, starting_cssText)
+```
+        </td>
+        <td>Use to translate an object of style property:value pairs to a single <code>cssText</code> string.  The optional second argument is a <code>cssText</code> string of a style's &quot;before&quot; state.</td>
+    </tr>
+</tbody>
+</table>
+</div>
+
+<p>
+    <code>Y.StyleSheet.toCssText</code> is used internally to assemble the
+    <code>cssText</code> strings for updating the stylesheet rules.  However,
+    it may also be helpful for avoiding reflow overhead when substantially
+    modifying a single element's style.
+</p>
+
+```
+var el           = Y.one('some_element'),
+    changes      = { color : '#684', fontWeight: 'bold', padding: '2em' },
+    currentStyle = el.getStyle('cssText');
+
+el.setStyle('cssText',
+    Y.StyleSheet.toCssText(changes, currentStyle));
+```
+
+<h2 id="mechanism">How <code>Y.StyleSheet</code> works</h2>
+
+<p>
+    Browsers grant access via the DOM API to stylesheets included in markup as
+    <code>&lt;link&gt;</code> or <code>&lt;style&gt;</code> elements.  Despite
+    differing implementations across the browser spectrum, they all support
+    adding, removing, and modifying CSS rules.
+</p>
+
+<p>
+    CSS rules are comprised of a selector and collection of style
+    property:value pairs enclosed in curly braces.
+</p>
+
+```
+/* |            This is a CSS rule          |
+   |    selectorText    |  style properties | */
+   div.this-is a .rule  { font-color: #f00; }
+```
+
+<p>
+    In JavaScript, each rule object has a <code>selectorText</code> property
+    and a <code>style</code> property that operates in the same way as the
+    <code>style</code> property on regular DOM elements, such as
+    <code>&lt;p&gt;</code> or <code>&lt;strong&gt;</code> elements.
+</p>
+
+<p>
+    Arguably the most valuable property of the style collection is
+    <code>cssText</code> which corresponds to the serialized summary of
+    property:value pairs applied by this collection (e.g. "font-size: 100%;
+    color: #FF0000;").  The reason this property is important is that
+    modifications to the string value will cause changes to repopulate the
+    individual style properties <em>while only triggering a single repaint or
+    reflow</em> by the browser.
+</p>
+
+```
+var el = document.getElementById('some_element');
+
+el.style.borderBottom = '3px solid #eee'; // reflow
+el.style.borderTop    = '3px solid #ccc'; // another reflow
+el.style.fontWeight   = 'bold';           // another reflow
+
+// Vs. three changes in one reflow
+el.style.cssText += '; border-bottom: 3px solid #eee; border-top: 3px solid #ccc; font-weight: bold';
+```
+
+<p>
+    <code>Y.StyleSheet</code> leverages this mechanism in addition to applying
+    modifications at the CSS rule level rather than modifying each targeted DOM
+    node directly.  This means changing multiple style properties on multiple
+    elements (that can be identified by a single selector) will only ever incur
+    one repaint or reflow.
+</p>
+
+<p>
+    It must be noted that all reflows are not the same.  The scope of a reflow
+    is greatly affected by what element triggered it.  For example, changing a
+    style of an absolutely positioned element will trigger a very limited
+    reflow because the browser understands that not much <em>could</em> change
+    as a result.  Stylesheet modifications on the other hand are not tied to an
+    element, but the page as a whole.  The CSS cascade must be recalculated and
+    applied, resulting in a full page reflow.  This means it may be more
+    efficient to individually update many elements than to change the
+    stylesheet.
+</p>
+
+<h2 id="knownissues">Known Issues</h2>
+
+<p>
+    <strong>Unable to set style values with
+    <code>!important</code></strong>.
+</p>
+
+<p>
+    CSS syntax for declaring that a style value has <code>important</code>
+    priority is to include the <code>!important</code> flag after the
+    value.
+</p>
+
+```
+.some-class {
+    color: #000 !important;
+}
+```
+
+<p>
+    However, the DOM API for modifying stylesheets does not parse out the
+    <code>!important</code> flag from the assigned value string, and thus
+    considers the entire string to be an invalid value.
+</p>
+
+```
+el.style.color = "#000 !important"; // Error
+```
+
+<p>
+    StyleSheet will support <code>!important</code> in the value string in a
+    future release, but for now the only way to assign an
+    <code>!important</code> style is by creating a new StyleSheet, passing a
+    CSS text string to the constructor.
+</p>
+
+```
+var sheet = new Y.StyleSheet();
+sheet.set(".foo", { color: "#000 !important" }); // FAIL
+
+new Y.StyleSheet(".foo { color: #000 !important; }"); // WORKS
+```

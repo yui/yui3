@@ -1,0 +1,9 @@
+{
+    "name"       : "plugin",
+    "displayName": "Plugin",
+    "description": "Plugins allow you to unobtrusively add functionality to objects (referred to as the \"host\" object), generally nodes and widgets.",
+    "author"     : "sdesai",
+
+    "tags": ["plugin", "infrastructure"],
+    "use" : ["plugin"]
+}

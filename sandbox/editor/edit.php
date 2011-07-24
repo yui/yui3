@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
     <title>YUI: Editor</title>
@@ -26,10 +26,14 @@
             padding: 5px;
             _background-color: orange;
         }
-        #test1 button {
+        #test1 a {
+            padding: 5px;
+            margin: 3px;
+            display: inline-block;
             background-color: #ccc;
+            font-size: 60%;
         }
-        #test1 button.selected {
+        #test1 a.selected {
             background-color: green;
         }
         #stub {
@@ -50,6 +54,14 @@
         #test_render {
             position: absolute;
             top: 500px;
+        }
+        #board {
+            position: absolute;
+            top: 10px;
+            right: 3px;
+            width: 220px;
+            border: 1px solid black;
+            padding: .5em;
         }
 	</style>
 </head>
@@ -81,29 +93,31 @@
             <option value="6">32</option>
             <option value="7">48</option>
         </select>
-        <button value="bold">Bold</button>
-        <button value="italic">Italic</button>
-        <button value="underline">Underline</button>
-        <button value="foo">Foo</button>
-        <button value="img">InsertImage</button>
-        <button value="wrap">Wrap</button>
-        <button value="inserthtml">InsertHTML</button>
-        <button value="addclass">AddClass</button>
-        <button value="removeclass">RemoveClass</button>
-        <button value="bidi">BiDi</button>
-        <button value="indent">Indent</button>
-        <button value="outdent">Outdent</button>
-        <button value="insertorderedlist">InsertOrderedList</button>
-        <button value="insertunorderedlist">InsertUnOrderedList</button>
-        <button value="createlink">createlink</button>
-        <button value="inserthorizontalrule">inserthorizontalrule</button>
-        <button value="backcolor">backcolor</button>
-        <button value="forecolor">forecolor</button>
-        <button value="justifycenter">justifycenter</button>
-        <button value="justifyleft">justifyleft</button>
-        <button value="justifyright">justifyright</button>
-        <button value="justifyfull">justifyfull</button>
-        <button value="replacecontent">ReplaceContent</button>
+        <a href ="#" value="bold">Bold</a>
+        <a href ="#" value="italic">Italic</a>
+        <a href ="#" value="underline">Underline</a>
+        <a href ="#" value="foo">Foo</a>
+        <a href ="#" value="img">InsertImage</a>
+        <a href ="#" value="wrap">Wrap</a>
+        <a href ="#" value="inserthtml">InsertHTML</a>
+        <a href ="#" value="addclass">AddClass</a>
+        <a href ="#" value="removeclass">RemoveClass</a>
+        <a href ="#" value="bidi">BiDi</a>
+        <a href ="#" value="indent">Indent</a>
+        <a href ="#" value="outdent">Outdent</a>
+        <a href ="#" value="insertorderedlist">InsertOrderedList</a>
+        <a href ="#" value="insertunorderedlist">InsertUnOrderedList</a>
+        <a href ="#" value="createlink">createlink</a>
+        <a href ="#" value="inserthorizontalrule">inserthorizontalrule</a>
+        <a href ="#" value="nocolor">nocolor</a>
+        <a href ="#" value="backcolor">backcolor</a>
+        <a href ="#" value="forecolor">forecolor</a>
+        <a href ="#" value="justifycenter">justifycenter</a>
+        <a href ="#" value="justifyleft">justifyleft</a>
+        <a href ="#" value="justifyright">justifyright</a>
+        <a href ="#" value="justifyfull">justifyfull</a>
+        <a href ="#" value="replacecontent">ReplaceContent</a>
+        <a href ="#" value="insertbr">InsertBR</a>
     </div>
     <div id="test"></div>
     <div id="smilies"></div>
@@ -114,10 +128,28 @@
 <button id="setHTML">Set HTML</button>
 <button id="focusEditor">Focus Editor</button>
 <!--button id="showEditor">Show Editor</button-->
+<div id="board">
+    <b>This is bold</b><br><br>
+    <strong>This is strong</strong><br><br>
+    <span style="font-weight: bold">This is font-weight bold</span><br><br>
+    <i>This is italic</i><br><br>
+    <span style="font-style: italic">This is font-style italic</span><br><br>
+    <u>This is underline</u><br><br>
+    <span style="text-decoration: underline">This is text-decoration: underline</span><br><br>
+    <span style="font-weight: bold; text-decoration: underline; font-style:italic;">This is a multi styled element.</span>
+</div>
 
 <div id="stub">
 </div>
-<!--Above the HR
+<!--
+    <b>This is bold</b><br><br>
+    <strong>This is strong</strong><br><br>
+    <span style="font-weight: bold">This is font-weight bold</span><br><br>
+    <i>This is italic</i><br><br>
+    <span style="font-style: italic">This is font-style italic</span><br><br>
+    <u>This is underline</u><br><br>
+    <span style="text-decoration: underline">This is text-decoration: underline</span><br><br>
+    <span style="font-weight: bold; text-decoration: underline; font-style:italic;">This is a multi styled element.</span>
 <hr size="1">
 <?php //include('mail.php'); ?>
     <ul>
@@ -183,8 +215,8 @@ This is some <strong>other</strong> loose test.
 <ul>
 </div-->
 
-<!--script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(time()); ?>"></script-->
-<script type="text/javascript" src="http://yui.yahooapis.com/3.2.0/build/yui/yui-debug.js"></script>
+<script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(time()); ?>"></script>
+<!--script type="text/javascript" src="http://yui.yahooapis.com/3.2.0/build/yui/yui-debug.js"></script-->
 
 
 <script type="text/javascript" src="js/editor-base.js?bust=<?php echo(time()); ?>"></script>
@@ -229,8 +261,9 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
             'orange',
             'yellow'
         ];
+    
 
-    Y.delegate('mousedown', function(e) {
+    Y.delegate('click', function(e) {
         e.halt();
         e.target.toggleClass('selected');
         var cmd = e.target.get('innerHTML').toLowerCase(),
@@ -249,6 +282,10 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
             case 'inserthtml':
                 val = ' <span style="color: red; background-color: blue;">Inserted Text (' + (new Date()).toString() + ')</span> ';
                 break;
+            case 'nocolor':
+                cmd = 'backcolor';
+                val = '#ffffff';
+                break;
             case 'backcolor':
             case 'forecolor':
                 val = bColors[bCount];
@@ -262,7 +299,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
         editor.focus(function() {
             editor.execCommand(cmd, val);
         });
-    }, '#test1 > div', 'button');
+    }, '#test1 > div', 'a');
 
     Y.on('change', function(e) {
         var cmd = e.currentTarget.get('id'),
@@ -314,7 +351,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
         */
     }, 'img');
 
-    var buttons = Y.all('#test1 button');
+    var buttons = Y.all('#test1 a');
     var f_options = Y.all('#fontname option');
     var s_options = Y.all('#fontsize option');
 
@@ -326,7 +363,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
 
             buttons.removeClass('selected');
             buttons.each(function(v) {
-                if (cmds[v.get('value')]) {
+                if (cmds[v.get('innerHTML').toLowerCase()]) {
                     v.addClass('selected');
                 }
             });
@@ -376,6 +413,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
 
     editor = new Y.EditorBase({
         content: Y.one('#stub').get('innerHTML'),
+        //defaultblock: 'div',
         /*
         linkedcss: [
             'http://yui.yahooapis.com/2.8.1/build/reset/reset.css',
@@ -383,9 +421,29 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
             'http://yui.yahooapis.com/2.8.1/build/grids/grids.css'
         ],
         */
-        extracss: 'body { color: red; } p,div { border: 1px solid green; padding: 8px; margin: 15px; } div { border: 1px solid purple; }'
+        //extracss: 'body { color: red; } p,div { border: 1px solid green; padding: 8px; margin: 15px; } div { border: 1px solid purple; } blockquote { border: 1px solid orange; }'
+        extracss: 'body { color: red; } p { border: 1px solid green; padding: 8px; margin: 15px; } blockquote { border: 1px solid orange; } div { border: 1px solid purple; padding: 0; margin: 0; }'
     });
-    editor.plug(Y.Plugin.EditorBR);
+    //editor.plug(Y.Plugin.EditorBR);
+    editor.plug(Y.Plugin.EditorPara);
+    editor.plug(Y.Plugin.EditorBidi);
+    editor.plug(Y.Plugin.EditorLists);
+    editor.on('dom:keydown', function(e) {
+        if (e.keyCode === 13) {
+            //editor.set('content', ' ');
+            //e.frameEvent.halt();
+        /*
+            if (e.ctrlKey) {
+                console.log('Control Pressed');
+                //editor.execCommand('insertbr');
+                e.frameEvent.halt();
+            } else {
+                //console.log('Not Pressed');
+            }
+            //console.log(e);
+            */
+        }
+    });
     //editor.plug(Y.Plugin.EditorPara);
 
     /*
@@ -448,20 +506,12 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
         */
     });
 
-    editor.on('dom:keydown', function(e) {
-        if (e.keyCode === 13) {
-            if (e.ctrlKey) {
-                console.log('Control Pressed');
-                editor.execCommand('insertbr');
-                e.frameEvent.halt();
-            } else {
-                //console.log('Not Pressed');
-            }
-            //console.log(e);
-        }
-    });
     editor.on('frame:ready', function() {
         Y.log('frame:ready, set content', 'info', 'editor');
+        var inst = this.getInstance();
+        //this.set('content', '<p>' + inst.Selection.CURSOR + '</p>');
+        //this.set('content', '<div><div>' + inst.Selection.CURSOR + '</div><br><div>This is some content below the HR</div></div>');
+        //this.set('content', ' ');
 
         //This stops image resizes, but for all images!!
         //editor.execCommand('enableObjectResizing', false);

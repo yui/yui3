@@ -305,6 +305,10 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
         return content;
     },
 
+    _defContentGetter: function(content) {
+        return this.get('panelNode').getContent();
+    },
+
     // find panel by ID mapping from label href
     _defPanelNodeValueFn: function() {
         var href = this.get('contentBox').get('href') || '',
@@ -358,7 +362,7 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
          */
         content: {
             setter: '_defContentSetter',
-            validator: Lang.isString
+            getter: '_defContentGetter'
         },
 
         /**
@@ -394,4 +398,4 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
 });
 
 
-}, '@VERSION@' ,{requires:['substitute', 'node-pluginhost', 'node-focusmanager', 'tabview-base', 'widget', 'widget-parent', 'widget-child']});
+}, '@VERSION@' ,{requires:['node-pluginhost', 'node-focusmanager', 'tabview-base', 'widget', 'widget-parent', 'widget-child']});

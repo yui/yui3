@@ -1,0 +1,101 @@
+<style scoped>
+/* custom styles for this example */
+#demo .output {margin-bottom:1em; padding:10px; border:1px solid #D9D9D9;}
+</style>
+
+<form id="demo">
+    <h4>Array of objects</h4>
+    <h6>Data</h6>
+    <pre>
+[
+    {make:"Chevrolet", model:"Bel Air", year:1957},
+    {make:"Dodge", model:"Dart", year:1964},
+    {make:"Ford", model:"Mustang", year:1968}
+]
+    </pre>
+    
+    <h6>Schema</h6>
+    <pre>
+{
+    resultFields: [{key:"make"}, {key:"model"}, {key:"year"}]
+}
+    </pre>
+
+    <h6>Normalized data</h6>
+    <input type="button" id="demo_apply_objects" value="Apply schema =>">
+    <div id="demo_output_objects" class="output"></div>
+
+    <h4>Array of arrays</h4>
+    <h6>Data</h6>
+    <pre>
+[
+    ["Chevrolet", "Bel Air", 1957],
+    ["Dodge", "Dart", 1964],
+    ["Ford", "Mustang", 1968]
+]
+    </pre>
+    
+    <h6>Schema</h6>
+    <pre>
+{
+    resultFields: [{key:"make"}, {key:"model"}, {key:"year"}]
+}
+    </pre>
+    
+    <h6>Normalized data</h6>
+    <input type="button" id="demo_apply_arrays" value="Apply schema =>">
+    <div id="demo_output_arrays" class="output"></div>
+
+    <h4>Simple array of primitives</h4>
+    <h6>Data</h6>
+    <pre>
+[
+    "1957 Chevrolet Bel Air", "1964 Dodge Dart", "1968 Ford Mustang"
+]
+    </pre>
+    
+    <h6>Schema</h6>
+    <pre>
+{
+    resultFields: [{key:"make"}, {key:"model"}, {key:"year"}]
+}
+    </pre>
+    
+    <h6>Normalized data</h6>
+    <input type="button" id="demo_apply_simple" value="Apply schema =>">
+    <div id="demo_output_simple" class="output"></div>
+</form>
+
+
+
+<script>
+YUI().use("dump", "node", "dataschema-array", function (Y) {
+    Y.on("click", function(e){
+        var data_in = [{make:"Chevrolet",model:"Bel Air",year:1957},
+                {make:"Dodge",model:"Dart",year:1964},
+                {make:"Ford",model:"Mustang",year:1968}],
+            schema = {
+                resultFields: [{key:"make"}, {key:"model"}, {key:"year"}] // Or simply: ["make", "model", "year"]
+            };
+        Y.one("#demo_output_objects").setContent(Y.dump(Y.DataSchema.Array.apply(schema, data_in)));
+    }, "#demo_apply_objects");
+
+    Y.on("click", function(e){
+        var data_in = [["Chevrolet", "Bel Air", 1957],
+                ["Dodge", "Dart", 1964],
+                ["Ford", "Mustang", 1968]],
+            schema = {
+                resultFields: [{key:"make"}, {key:"model"}, {key:"year"}] // Or simply: ["make", "model", "year"]
+            };
+        Y.one("#demo_output_arrays").setContent(Y.dump(Y.DataSchema.Array.apply(schema, data_in)));
+    }, "#demo_apply_arrays");
+
+    Y.on("click", function(e){
+        var data_in = ["1957 Chevrolet Bel Air", "1964 Dodge Dart", "1968 Ford Mustang"],
+            schema = {
+                resultFields: [{key:"make"}, {key:"model"}, {key:"year"}] // Or simply: ["make", "model", "year"]
+            };
+        Y.one("#demo_output_simple").setContent(Y.dump(Y.DataSchema.Array.apply(schema, data_in)));
+    }, "#demo_apply_simple");
+});
+</script>

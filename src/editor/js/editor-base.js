@@ -1,14 +1,21 @@
 
     /**
      * Base class for Editor. Handles the business logic of Editor, no GUI involved only utility methods and events.
-     * @module editor
-     * @submodule editor-base
+     *
+     *      var editor = new Y.EditorBase({
+     *          content: 'Foo'
+     *      });
+     *      editor.render('#demo');
+     *
+     * @main editor
      */     
     /**
      * Base class for Editor. Handles the business logic of Editor, no GUI involved only utility methods and events.
      * @class EditorBase
      * @for EditorBase
      * @extends Base
+     * @module editor
+     * @submodule editor-base
      * @constructor
      */
     
@@ -158,8 +165,11 @@
             
             switch (e.changedType) {
                 case 'keydown':
-                    inst.later(100, inst, inst.Selection.cleanCursor);
-                    //inst.Selection.cleanCursor();
+                    if (!Y.UA.gecko) {
+                        if (!EditorBase.NC_KEYS[e.changedEvent.keyCode] && !e.changedEvent.shiftKey && !e.changedEvent.ctrlKey && (e.changedEvent.keyCode !== 13)) {
+                            //inst.later(100, inst, inst.Selection.cleanCursor);
+                        }
+                    }
                     break;
                 case 'tab':
                     if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
@@ -167,13 +177,16 @@
                         Y.log('Overriding TAB key to insert HTML: HALTING', 'info', 'editor');
                         if (Y.UA.webkit) {
                             this.execCommand('inserttext', '\t');
-                        } else {
+                        } else if (Y.UA.gecko) {
+                            this.frame.exec._command('inserthtml', EditorBase.TABKEY);
+                        } else if (Y.UA.ie) {
                             sel = new inst.Selection();
-                            sel.setCursor();
-                            cur = sel.getCursor();
-                            cur.insert(EditorBase.TABKEY, 'before');
-                            sel.focusCursor();
-                            inst.Selection.cleanCursor();
+                            if (sel._selection.pasteHTML) {
+                                sel._selection.pasteHTML(EditorBase.TABKEY);
+                            } else {
+                                //console.log('IE9 is here.. SHould be default behaviour now');
+                                this.execCommand('inserthtml', EditorBase.TABKEY);
+                            }
                         }
                     }
                     break;
@@ -208,9 +221,13 @@
 
                 //Bold and Italic styles
                 var s = el.currentStyle || el.style;
-
                 if ((''+s.fontWeight) == 'bold') { //Cast this to a string
                     cmds.bold = 1;
+                }
+                if (Y.UA.ie) {
+                    if (s.fontWeight > 400) {
+                        cmds.bold = 1;
+                    }
                 }
                 if (s.fontStyle == 'italic') {
                     cmds.italic = 1;
@@ -360,36 +377,71 @@
             this.frame.on('dom:keydown', Y.bind(this._onFrameKeyDown, this));
 
             if (Y.UA.ie) {
-                //this.frame.on('dom:activate', Y.bind(this._onFrameActivate, this));
-                this.frame.on('dom:keyup', Y.throttle(Y.bind(this._onFrameKeyUp, this), 800));
-                this.frame.on('dom:keypress', Y.throttle(Y.bind(this._onFrameKeyPress, this), 800));
-            } else {
-                this.frame.on('dom:keyup', Y.bind(this._onFrameKeyUp, this));
-                this.frame.on('dom:keypress', Y.bind(this._onFrameKeyPress, this));
+                this.frame.on('dom:activate', Y.bind(this._onFrameActivate, this));
+                this.frame.on('dom:beforedeactivate', Y.bind(this._beforeFrameDeactivate, this));
             }
+            this.frame.on('dom:keyup', Y.bind(this._onFrameKeyUp, this));
+            this.frame.on('dom:keypress', Y.bind(this._onFrameKeyPress, this));
+            this.frame.on('dom:paste', Y.bind(this._onPaste, this));
 
             inst.Selection.filter();
             this.fire('ready');
+        },
+        /**
+        * Caches the current cursor position in IE.
+        * @method _beforeFrameDeactivate
+        * @private
+        */
+        _beforeFrameDeactivate: function(e) {
+            if (e.frameTarget.test('html')) { //Means it came from a scrollbar
+                return;
+            }
+            var inst = this.getInstance(),
+                sel = inst.config.doc.selection.createRange();
+            
+            if (sel.compareEndPoints && !sel.compareEndPoints('StartToEnd', sel)) {
+                sel.pasteHTML('<var id="yui-ie-cursor">');
+            }
         },
         /**
         * Moves the cached selection bookmark back so IE can place the cursor in the right place.
         * @method _onFrameActivate
         * @private
         */
-        _onFrameActivate: function() {
-            if (this._lastBookmark) {
-                try {
-                    Y.log('IE Activate handler, resetting cursor position', 'info', 'editor');
-                    var inst = this.getInstance(),
-                        sel = inst.config.doc.selection.createRange(),
-                        bk = sel.moveToBookmark(this._lastBookmark);
-                    
-                    sel.select();
-                    this._lastBookmark = null;
-                } catch (e) {
-                    Y.log('IE Activate handler, FAILED', 'warn', 'editor');
-                }
+        _onFrameActivate: function(e) {
+            if (e.frameTarget.test('html')) { //Means it came from a scrollbar
+                return;
             }
+            var inst = this.getInstance(),
+                sel = new inst.Selection(),
+                range = sel.createRange(),
+                cur = inst.all('#yui-ie-cursor');
+
+            if (cur.size()) {
+                cur.each(function(n) {
+                    n.set('id', '');
+                    if (range.moveToElementText) {
+                        try {
+                            range.moveToElementText(n._node);
+                            var moved = range.move('character', -1);
+                            if (moved === -1) { //Only move up if we actually moved back.
+                                range.move('character', 1);
+                            }
+                            range.select();
+                            range.text = '';
+                        } catch (e) {}
+                    }
+                    n.remove();
+                });
+            }
+        },
+        /**
+        * Fires nodeChange event
+        * @method _onPaste
+        * @private
+        */
+        _onPaste: function(e) {
+            this.fire('nodeChange', { changedNode: e.frameTarget, changedType: 'paste', changedEvent: e.frameEvent });
         },
         /**
         * Fires nodeChange event
@@ -452,7 +504,7 @@
             sel = new inst.Selection();
 
             this._currentSelection = sel;
-
+            
             if (sel && sel.anchorNode) {
                 this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keydown', changedEvent: e.frameEvent });
                 if (EditorBase.NC_KEYS[e.keyCode]) {
@@ -482,7 +534,8 @@
         * @private
         */
         _onFrameKeyUp: function(e) {
-            var sel = this._currentSelection;
+            var inst = this.frame.getInstance(),
+                sel = new inst.Selection(e);
 
             if (sel && sel.anchorNode) {
                 this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keyup', selection: sel, changedEvent: e.frameEvent  });
@@ -638,7 +691,7 @@
         * @property TABKEY
         * @description The HTML markup to use for the tabkey
         */
-        TABKEY: '<span class="tab">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+        TABKEY: '<span class="tab">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
         /**
         * @static
         * @method FILTER_RGB
@@ -745,6 +798,11 @@
                     if (str === '') {
                         str = '<br class="yui-cursor">';
                     }
+                    if (str === ' ') {
+                        if (Y.UA.gecko) {
+                            str = '<br class="yui-cursor">';
+                        }
+                    }
                     return this.frame.set('content', str);
                 },
                 getter: function() {
@@ -802,7 +860,7 @@
 
     /**
     * @event nodeChange
-    * @description Fired from mouseup & keyup.
+    * @description Fired from several mouse/key/paste event points.
     * @param {Event.Facade} event An Event Facade object with the following specific properties added:
     * <dl>
     *   <dt>changedEvent</dt><dd>The event that caused the nodeChange</dd>

@@ -1,15 +1,11 @@
 
-
-    /**
-     * Plugin for Editor to paragraph auto wrapping and correction.
-     * @module editor
-     * @submodule editor-para
-     */     
     /**
      * Plugin for Editor to paragraph auto wrapping and correction.
      * @class Plugin.EditorPara
      * @extends Base
      * @constructor
+     * @module editor
+     * @submodule editor-para
      */
 
 
@@ -26,10 +22,23 @@
         * @method _fixFirstPara
         */
         _fixFirstPara: function() {
-            var host = this.get(HOST), inst = host.getInstance(), sel;
-            inst.one('body').set('innerHTML', '<' + P + '>' + inst.Selection.CURSOR + '</' + P + '>');
+            Y.log('Fix First Paragraph', 'info', 'editor-para');
+            var host = this.get(HOST), inst = host.getInstance(), sel, n,
+                body = inst.config.doc.body,
+                html = body.innerHTML,
+                col = ((html.length) ? true : false);
+
+            if (html === BR) {
+                html = '';
+                col = false;
+            }
+
+            body.innerHTML = '<' + P + '>' + html + inst.Selection.CURSOR + '</' + P + '>';
+
+            n = inst.one(FIRST_P);
             sel = new inst.Selection();
-            sel.focusCursor(true, false);
+
+            sel.selectNode(n, true, col);
         },
         /**
         * nodeChange handler to handle fixing an empty document.
@@ -53,7 +62,9 @@
 
                     if (b) {
                         if (b.previous() || b.next()) {
-                            b.remove();
+                            if (b.ancestor(P)) {
+                                b.remove();
+                            }
                         }
                     }
                     if (!para.test(btag)) {
@@ -86,6 +97,16 @@
                     }
                     break;
                 case 'enter':
+                    if (Y.UA.ie) {
+                        if (e.changedNode.test('br')) {
+                            e.changedNode.remove();
+                        } else if (e.changedNode.test('p, span')) {
+                            var b = e.changedNode.one('br.yui-cursor');
+                            if (b) {
+                                b.remove();
+                            }
+                        }
+                    }
                     if (Y.UA.webkit) {
                         //Webkit doesn't support shift+enter as a BR, this fixes that.
                         if (e.changedEvent.shiftKey) {
@@ -161,10 +182,9 @@
                         }
                     }
                     break;
-                case 'keydown':
-                    if (inst.config.doc.childNodes.length < 2) {
-                        var cont = inst.config.doc.body.innerHTML;
-                        if (cont && cont.length < 5 && cont.toLowerCase() == BR) {
+                case 'keyup':
+                    if (Y.UA.gecko) {
+                        if (inst.config.doc && inst.config.doc.body && inst.config.doc.body.innerHTML.length < 2) {
                             this._fixFirstPara();
                         }
                     }
@@ -243,7 +263,7 @@
             }
             if (Y.UA.gecko) {
                 if (e.changedNode && !e.changedNode.test(btag)) {
-                    var p = e.changedNode.ancestor(btag);
+                    p = e.changedNode.ancestor(btag);
                     if (p) {
                         this._lastPara = p;
                     }

@@ -1,0 +1,843 @@
+<div class="intro">
+<p>
+Model is a lightweight <a href="../attribute/index.html">Attribute</a>-based data model with methods for getting, setting, validating, and syncing attribute values to a persistence layer or server, as well as events for notifying listeners of model changes.
+</p>
+
+<p>
+The `Y.Model` class is intended to be extended by a custom class that defines
+custom model attributes, validators, and behaviors.
+</p>
+</div>
+
+{{>getting-started}}
+
+<h2>What is a Model?</h2>
+
+<p>
+A model is a class that manages data, state, and behavior associated with an application or a part of an application.
+</p>
+
+<p>
+For example, in a photo gallery, you might use a model to represent each photo. The model would contain information about the image file, a caption, tags, etc., along with methods for working with this data. The model would also be responsible for validating any new data before accepting it.
+</p>
+
+<p>
+A Model instance is often associated with a <a href="../view/index.html">View</a> instance, which is responsible for rendering the visual representation of the data contained in the model and updating that representation when the model changes.
+</p>
+
+<h2>Using Model</h2>
+
+<h3>Extending `Y.Model`</h3>
+
+<p>
+The first step in creating a custom Model class is to extend `Y.Model`. This allows you to define the data attributes your Model class will manage, as well as helper methods, validators, and (optionally) a sync layer for your Model class.
+</p>
+
+<p>
+In this example, we'll create a `Y.PieModel` class. Each instance of this class will represent a delicious pie, fresh from the oven.
+</p>
+
+```
+// Create a new Y.PieModel class that extends Y.Model.
+Y.PieModel = Y.Base.create('pieModel', Y.Model, [], {
+  // Add prototype methods for your Model here if desired. These methods will be
+  // available to all instances of your Model.
+
+  // Returns true if all the slices of the pie have been eaten.
+  allGone: function () {
+    return this.get('slices') === 0;
+  },
+
+  // Consumes a slice of pie, or fires an `error` event if there are no slices
+  // left.
+  eatSlice: function () {
+    if (this.allGone()) {
+      this.fire('error', {
+        type : 'eat',
+        error: "Oh snap! There isn't any pie left."
+      });
+    } else {
+      this.set('slices', this.get('slices') - 1);
+      Y.log('You just ate a slice of delicious ' + this.get('type') + ' pie!');
+    }
+  }
+}, {
+  ATTRS: {
+    // Add custom model attributes here. These attributes will contain your
+    // model's data. See the docs for Y.Attribute to learn more about defining 
+    // attributes.
+
+    slices: {
+      value: 6 // default value
+    },
+
+    type: {
+      value: 'apple'
+    }
+  }
+});
+```
+
+<p>
+Now we can create instances of `Y.PieModel` to represent delicious pies.
+</p>
+
+<p>
+Each instance will have a `type` attribute containing the type of the pie and a `slices` attribute containing the number of slices remaining. We can call the `allGone()` method to check whether there are any slices left, and the `eatSlice()` method to eat a slice.
+</p>
+
+```
+// Bake a delicious new pecan pie.
+var pecanPie = new Y.PieModel({type: 'pecan'});
+
+pecanPie.on('error', function (e) {
+  Y.log(e.error);
+});
+
+pecanPie.eatSlice(); // => "You just ate a slice of delicious pecan pie!"
+Y.log(pecanPie.get('slices')); // => 5
+```
+
+<p>
+Five slices later, our pie will be all gone. If we try to eat another slice, we'll get an `error` event.
+</p>
+
+```
+// 5 slices later...
+pecanPie.eatSlice(); // => "Oh snap! There isn't any pie left."
+```
+
+<h3>Model Attributes</h3>
+
+<p>
+A Model's data is represented by <a href="../attribute/index.html">attributes</a>. The Model class itself provides two built-in attributes, `clientId` and `id`. The rest are up to you to define when you extend `Y.Model`.
+</p>
+
+<h4>Built-in Attributes</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Default Value</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>`clientId`</td>
+      <td><em>generated id</em></td>
+      <td>
+        <p>
+        An automatically generated client-side only unique identifier that's used to identify model instances that don't yet have an `id`. The client id is guaranteed to be unique among all models on the current page, but is not unique across pageviews. Client ids are never included in `toJSON()` output.
+        </p>
+      </td>
+    </tr>
+
+    <tr>
+      <td>`id`</td>
+      <td>`null`</td>
+      <td>
+        <p>
+        A globally unique identifier for the model instance. If this is `null`, then the model instance is assumed to be "new" (meaning it hasn't yet been saved to a persistence layer). If the model represents data that's stored in a database of some kind, it usually makes sense to use the database's primary key here.
+        </p>
+
+        <p>
+        If your persistence layer uses a primary key with a name other than `id`, you can override the `idAttribute` property and set it to the name of your custom id attribute when extending `Y.Model` (be sure to define a corresponding attribute as well). The `id` attribute will then act as an alias for your custom id attribute.
+        </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4>Custom Attributes</h4>
+
+<p>
+Custom attributes are where all your model's data should live. They're defined when you extend the `Y.Model` class to create a custom model class, and may be set either by passing a config object into the constructor when you instantiate a model or by calling the model's `set()` or `setAttrs()` methods.
+</p>
+
+<p>
+Attributes can specify default values, getters and setters, validators, and more. For details, see the documentation for the <a href="../attribute/index.html">Attribute</a> component.
+</p>
+
+<h3>Model Properties</h3>
+
+<p>
+The following properties are available on Model instances. The `idAttribute` property may be overridden when extending `Y.Model`; the others are intended to be read-only.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>`changed`</td>
+      <td>Object</td>
+      <td>
+        <p>
+        Hash of attributes that have changed since the last time the model was saved.
+        </p>
+      </td>
+    </tr>
+
+    <tr>
+      <td>`idAttribute`</td>
+      <td>String</td>
+      <td>
+        <p>
+        Name of the attribute to use as the unique id for the model. Defaults to "id", but you may override this property when extending `Y.Model` if you want to specify a custom id attribute.
+        </p>
+      </td>
+    </tr>
+
+    <tr>
+      <td>`lastChange`</td>
+      <td>Object</td>
+      <td>
+        <p>
+        Hash of attributes that were changed in the most recent `change` event. Each item in this hash is an object with the following properties:
+        </p>
+
+        <dl style="margin-top: 1em;">
+          <dt><strong>`newVal`</strong></dt>
+          <dd>
+            <p>
+            The new value of the attribute after it changed.
+            </p>
+          </dd>
+
+          <dt><strong>`prevVal`</strong></dt>
+          <dd>
+            <p>
+            The old value of the attribute before it changed.
+            </p>
+          </dd>
+
+          <dt><strong>`src`</strong></dt>
+          <dd>
+            <p>
+            The source of the change, or `null` if no source was specified when the change was made.
+            </p>
+          </dd>
+        </dl>
+      </td>
+    </tr>
+
+    <tr>
+      <td>`lists`</td>
+      <td>Array</td>
+      <td>
+        <p>
+        Array of <a href="../model-list/index.html">ModelList</a> instances that contain this model.
+        </p>
+
+        <p>
+        This property is updated automatically when the model is added to or removed from a ModelList instance. You shouldn't alter it manually. When working with models in a list, you should always add and remove models using the list's `add()` and `remove()` methods.
+        </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Model Events</h3>
+
+<p>
+Model instances provide the following events:
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Event</th>
+      <th>When</th>
+      <th>Payload</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>`change`</td>
+      <td>
+        <p>
+        One or more attributes on the model are changed.
+        </p>
+      </td>
+      <td>
+        <dl>
+          <dt><strong>changed (<em>Object</em>)</strong></dt>
+          <dd>
+            <p>
+            Hash of change information for each attribute that changed. Keys are attribute names, values are objects with the following properties:
+            </p>
+
+            <dl style="margin-top: 1em;">
+              <dt><strong>`newVal`</strong></dt>
+              <dd>
+                <p>
+                The new value of the attribute after it changed.
+                </p>
+              </dd>
+
+              <dt><strong>`prevVal`</strong></dt>
+              <dd>
+                <p>
+                The old value of the attribute before it changed.
+                </p>
+              </dd>
+
+              <dt><strong>`src`</strong></dt>
+              <dd>
+                <p>
+                The source of the change, or `null` if no source was specified when the change was made.
+                </p>
+              </dd>
+            </dl>
+          </dd>
+        </dl>
+      </td>
+    </tr>
+
+    <tr>
+      <td>`error`</td>
+      <td>
+        <p>
+        An error occurs, such as when the model fails validation or a sync layer response can't be parsed.
+        </p>
+      </td>
+      <td>
+        <dl>
+          <dt><strong>error</strong></dt>
+          <dd>
+            <p>
+              Error message, object, or exception generated by the error. Calling `toString()` on this should result in a meaningful error message.
+            </p>
+          </dd>
+
+          <dt><strong>src</strong></dt>
+          <dd>
+            <p>
+            Source of the error. May be one of the following default sources, or any custom error source used by your Model subclass):
+            </p>
+
+            <dl style="margin-top: 1em;">
+              <dt><strong>`parse`</strong></dt>
+              <dd>
+                <p>
+                An error parsing a response from a sync layer.
+                </p>
+              </dd>
+
+              <dt><strong>`validate`</strong></dt>
+              <dd>
+                <p>
+                The model failed to validate.
+                </p>
+              </dd>
+            </dl>
+          </dd>
+        </dl>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+When a model is in one or more <a href="../model-list/index.html">model lists</a>, the model's events bubble up to all the lists it's in. This makes it easy to subscribe to events at the list level to be notified whenever any model in the list changes or experiences an error. See the <a href="../model-list/index.html">Model List User Guide</a> for more details.
+</p>
+
+<h4>Change Events</h4>
+
+<p>
+In addition to the master `change` event, which is fired whenever one or more attributes are changed, there are also change events for each individual attribute.
+</p>
+
+<p>
+Attribute-level change events follow the naming scheme <code><em>name</em>Change</code>, where <em>name</em> is the name of an attribute.
+</p>
+
+```
+// Bake a new pie model.
+var pie = new Y.PieModel();
+
+// Listen for all attribute changes.
+pie.on('change', function (e) {
+  Y.log('change fired: ' + Y.Object.keys(e.changed).join(', '));
+});
+
+// Listen for changes to the `slices` attribute.
+pie.on('slicesChange', function (e) {
+  Y.log('slicesChange fired');
+});
+
+// Listen for changes to the `type` attribute.
+pie.on('typeChange', function (e) {
+  Y.log('typeChange fired');
+});
+
+// Change multiple attributes at once.
+pie.setAttrs({
+  slices: 3,
+  type  : 'maple custard'
+});
+
+// => "slicesChange fired"
+// => "typeChange fired"
+// => "change fired: slices, type"
+```
+
+<h4>Firing Your Own Error Events</h4>
+
+<p>
+In your custom model class, there may be situations beyond just parsing and validating in which an `error` event would be useful. For example, in the `Y.PieModel` class, we fire an error when someone tries to eat a slice of pie and there are no slices left.
+</p>
+
+```
+// Consumes a slice of pie, or fires an `error` event if there are no slices
+// left.
+eatSlice: function () {
+  if (this.allGone()) {
+    this.fire('error', {
+      type : 'eat',
+      error: "Oh snap! There isn't any pie left."
+    });
+  } else {
+    this.set('slices', this.get('slices') - 1);
+    Y.log('You just ate a slice of delicious ' + this.get('type') + ' pie!');
+  }
+}
+```
+
+<p>
+When firing an error event, set the `type` property to something that users of your class can use to identify the type of error that has occurred. In the example above, we set it to "eat", because it occurred when the caller tried to eat a slice of pie.
+</p>
+
+<p>
+The `error` property should be set to an error message, an Error object, or anything else that provides information about the error and has a `toString()` method that returns an error message string.
+</p>
+
+<h3>Working with Model Data</h3>
+
+<h4>Getting and Setting Attribute Values</h4>
+
+<p>
+Model's `get()` and `set()` methods are the main ways of interacting with model attributes. Unsurprisingly, they allow you to get and set the value of a single attribute.
+</p>
+
+```
+var pie = new Y.PieModel();
+
+// Set the value of the `type` attribute.
+pie.set('type', 'banana cream');
+
+// Get the value of the `type` attribute.
+pie.get('type'); // => "banana cream"
+```
+
+<p>
+Model also provides two convenience methods for getting and escaping an attribute value in a single step. The `getAsHTML()` method returns an HTML-escaped value, and the `getAsURL()` method returns a URL-encoded value.
+</p>
+
+```
+pie.set('type', 'strawberries & cream');
+
+pie.getAsHTML('type'); // => "strawberries &amp; cream"
+pie.getAsURL('type');  // => "strawberries%20%26%20cream"
+```
+
+<p>
+The `getAttrs()` and `setAttrs()` methods may be used to get and set multiple attributes at once. `getAttrs()` returns a hash of all attribute values, while `setAttrs()` accepts a hash of attribute values. When you set multiple attributes at once using `setAttrs()`, only a single `change` event is fired, and it contains all the attributes that changed.
+</p>
+
+```
+pie.setAttrs({
+  slices: 6,
+  type  : 'marionberry'
+});
+
+pie.getAttrs();
+// => {
+//   clientId: "pieModel_1",
+//   destroyed: false,
+//   id: null,
+//   initialized: true,
+//   slices: 6,
+//   type: "marionberry"
+// }
+```
+
+<p>
+The `destroyed` and `initialized` attributes you see in the sample output above are lifecycle attributes provided by `Y.Base`, and aren't actually model data.
+</p>
+
+<p>
+To get a slightly more useful representation of model data, you may want to use the `toJSON()` method. The `toJSON()` method excludes the `clientId`, `destroyed`, and `initialized` attributes, making the resulting object more suitable for serialization and for storing in a persistence layer.
+</p>
+
+```
+pie.toJSON();
+// => {
+//   id: null,
+//   slices: 6,
+//   type: "marionberry"
+// }
+```
+
+<p>
+If a custom `idAttribute` is in use, the `toJSON()` output will include that id attribute instead of `id`.
+</p>
+
+```
+// toJSON() output with a custom id attribute.
+pie.toJSON();
+// => {
+//   customId: null,
+//   slices: 6,
+//   type: "marionberry"
+// }
+```
+
+<p>
+If you'd like to customize the serialized representation of your models, you may override the `toJSON()` method.
+</p>
+
+<p>
+When using the `set()` and `setAttrs()` methods, you may pass an optional `options` argument. If `options.silent` is `true`, no `change` event will be fired.
+</p>
+
+```
+// Set attributes without firing a `change` event.
+pie.set('slices', 0, {silent: true});
+
+pie.setAttrs({
+  slices: 0,
+  type  : 'chocolate cream'
+}, {silent: true});
+```
+
+<p>
+After making changes to a model's attributes, you may call the `undo()` method to undo the previous change.
+</p>
+
+```
+var pie = new Y.PieModel({slices: 6});
+
+pie.set('slices', 5);
+pie.undo();
+pie.get('slices'); // => 6
+```
+
+<p>
+Note that there's only a single level of undo, so it's not possible to revert past the most recent change.
+</p>
+
+<h4>Validating Changes</h4>
+
+<p>
+Validating model changes as they occur is a good way to ensure that the data in your models isn't nonsense, especially when dealing with user input.
+</p>
+
+<p>
+There are two ways to validate model attributes. One way is to define an attribute validator function for an individual attribute when you extend `Y.Model`.
+</p>
+
+```
+// Defining an individual attribute validator.
+Y.PieModel = Y.Base.create('pieModel', Y.Model, [], {
+  // ... prototype methods and properties ...
+}, {
+  ATTRS: {
+    slices: {
+      value: 6,
+      validator: function (value) {
+        return typeof value === 'number' && value >= 0 && value <= 10;
+      }
+    },
+
+    // ...
+  }
+});
+```
+
+<p>
+For more details on attribute validators, see the <a href="../attribute/index.html">Attribute User Guide</a>.
+</p>
+
+<p>
+The second way to validate changes is to provide a custom `validate()` method when extending `Y.Model`. When one or more model attributes are changed, this method will receive a hash of attributes that have changed. If the `validate()` method returns anything other than `null` or `undefined`, it will be considered a validation failure and an `error` event will be fired with the returned value as the error message.
+</p>
+
+```
+// Defining a model-wide `validator()` method.
+Y.PieModel = Y.Base.create('pieModel', Y.Model, [], {
+  // ... prototype methods and properties ...
+
+  validate: function (attributes) {
+    var slices;
+
+    switch (attributes.type) {
+    case 'rhubarb':
+      return 'Eww. No. Not allowed.';
+
+    case 'maple custard':
+      slices = Y.Lang.isValue(attributes.slices) ?
+          attributes.slices : this.get('slices');
+
+      if (slices < 10) {
+        return "Making fewer than 10 slices of maple custard pie would be " +
+            "silly, because I'm just going to eat 8 of them as soon as it's " +
+            "out of the oven.";
+      }
+    }
+  }
+}, {
+  // ... attributes ...
+});
+```
+
+<h4>Loading and Saving Model Data</h4>
+
+<p>
+Calling a model's `load()` and `save()` methods will result in a behind-the-scenes call to the model's `sync()` method specifying the appropriate action.
+</p>
+
+<p>
+The default `sync()` method does nothing, but by overriding it and providing your own sync layer, you can make it possible to create, read, update, and delete models from a persistence layer or a server. See [[#Implementing a Model Sync Layer]] for more details.
+</p>
+
+<p>
+The `load()` and `save()` methods each accept two optional parameters: an options object and a callback function. If provided, the options object will be passed to the sync layer, and the callback will be called after the load or save operation is finished. You may provide neither parameter, or just an options object, or just a callback.
+</p>
+
+<p>
+The callback function will receive two parameters: an error (this parameter will be `null` or `undefined` if the operation was successful) and a response (which is the result of calling the model's `parse()` method with whatever response the sync layer returned).
+</p>
+
+<p>
+The `load()` method automatically updates the model with the response data before calling the callback.
+</p>
+
+```
+var pie = new Y.PieModel({id: 'pie123'});
+
+// Load a pie model, passing a callback that will run when the model has
+// been loaded.
+pie.load(function (err, response) {
+  if (!err) {
+    // Success! The model now contains the loaded data.
+  }
+});
+```
+
+<p>
+The `save()` method will do one of two things: if the model is new (meaning it doesn't yet have an `id` value), it will call `sync()` with the "create" action. If the model is not new, then it will call `sync()` with the "update" action.
+</p>
+
+<p>
+If the sync layer returns a response, then `save()` will update the model's attributes with the response data before calling the callback function.
+</p>
+
+```
+// Save a pie model, passing a callback that will run when the model has
+// been saved.
+pie.save(function (err, response) {
+  if (!err) {
+    // Success! The model has been saved. If the sync layer returned a response,
+    // then the model has also been updated with any new data in the response.
+  }
+});
+```
+
+<h2>The Model Lifecycle</h2>
+
+<p>
+When a model is first created and doesn't yet have an `id` value, it's considered "new". The `isNew()` method will tell you whether or not a model is new.
+</p>
+
+<p>
+Once a model has an `id` value, either because one was manually set or because the model received one when it was loaded or saved, the model is no longer considered new, since it is assumed to exist in a persistence layer or on a server somewhere.
+</p>
+
+<p>
+If a model is new or if any of its attributes have changed since the model was last loaded or saved, the model is considered "modified". The `isModified()` method will tell you whether or not a model is modified. A successful call to `load()` or `save()` will reset a model's "modified" flag.
+</p>
+
+<p>
+Finally, a model's `destroy()` method can be used to destroy the model instance. Calling `destroy()` with no arguments will destroy only the local model instance, while calling `destroy({'delete': true})` will both destroy the local model instance and call the sync layer with the "delete" action to delete the model from a persistence layer or server.
+</p>
+
+<h2>Implementing a Model Sync Layer</h2>
+
+<p>
+A model's `save()`, `load()`, and `destroy()` methods all internally call the model's `sync()` method to carry out an action. The default `sync()` method doesn't actually do anything, but by overriding the `sync()` method, you can provide a custom sync layer.
+</p>
+
+<p>
+A sync layer might make Ajax requests to a remote server, or it might act as a wrapper around local storage, or any number of other things.
+</p>
+
+<h3>The `sync()` Method</h3>
+
+<p>
+When the `sync()` method is called, it receives three arguments:
+</p>
+
+<dl>
+  <dt><strong>`action` (<em>String</em>)</strong></dt>
+  <dd>
+    <p>
+    A string that indicates the intended sync action. May be one of the following values:
+    </p>
+
+    <dl>
+      <dt><strong>`create`</strong></dt>
+      <dd>
+        <p>
+        Create a new model record. The "create" action occurs when a model is saved and doesn't yet have an `id` value.
+        </p>
+      </dd>
+
+      <dt><strong>`read`</strong></dt>
+      <dd>
+        <p>
+        Read an existing model record. The record should be identified based on the `id` attribute of the model.
+        </p>
+      </dd>
+
+      <dt><strong>`update`</strong></dt>
+      <dd>
+        <p>
+        Update an existing model record. The "update" action occurs when a model is saved and already has an `id` value. The record to be updated should be identified based on the `id` attribute of the model.
+        </p>
+      </dd>
+
+      <dt><strong>`delete`</strong></dt>
+      <dd>
+        <p>
+        Delete an existing model record. The record to be deleted should be identified based on the `id` attribute of the model.
+        </p>
+      </dd>
+    </dl>
+  </dd>
+
+  <dt><strong>`options` (<em>Object</em>)</strong></dt>
+  <dd>
+    <p>
+    A hash containing any options that were passed to the `save()`, `load()` or `destroy()` method. This may be used to pass custom options to a sync layer.
+    </p>
+  </dd>
+
+  <dt><strong>`callback` (<em>Function</em>)</strong></dt>
+  <dd>
+    <p>
+    A callback function that should be called when the sync operation is complete. The callback expects to receive the following arguments:
+    </p>
+
+    <dl>
+      <dt><strong>`err`</strong></dt>
+      <dd>
+        <p>
+        Error message or object if an error occured, `null` or `undefined` if the operation was successful.
+        </p>
+      </dd>
+
+      <dt><strong>`response`</strong></dt>
+      <dd>
+        <p>
+        Response from the persistence layer, if any. This will be passed to the `parse()` method to be parsed.
+        </p>
+      </dd>
+    </dl>
+  </dd>
+</dl>
+
+<p>
+Implementing a sync layer is as simple as handling the requested sync action and then calling the callback function. Here's a sample sync layer that stores records in local storage (note: this example requires the `json-stringify` module):
+</p>
+
+```
+Y.PieModel = Y.Base.create('pieModel', Y.Model, [], {
+  // ... prototype methods and properties ...
+
+  // Custom sync layer.
+  sync: function (action, options, callback) {
+    var data;
+
+    switch (action) {
+      case 'create':
+        data = this.toJSON();
+
+        // Use the current timestamp as an id just to simplify the example. In a
+        // real sync layer, you'd want to generate an id that's more likely to
+        // be globally unique.
+        data.id = Y.Lang.now(); 
+
+        // Store the new record in localStorage, then call the callback.
+        localStorage.setItem(data.id, Y.JSON.stringify(data));
+        callback(null, data);
+        return;
+
+      case 'read':
+        // Look for an item in localStorage with this model's id.
+        data = localStorage.getItem(this.get('id'));
+
+        if (data) {
+          callback(null, data);
+        } else {
+          callback('Model not found.');
+        }
+
+        return;
+
+      case 'update':
+        data = this.toJSON();
+
+        // Update the record in localStorage, then call the callback.
+        localStorage.setItem(this.get('id'), Y.JSON.stringify(data));
+        callback(null, data);
+        return;
+
+      case 'delete':
+        localStorage.removeItem(this.get('id'));
+        callback();
+        return;
+
+      default:
+        callback('Invalid action');
+    }
+  }
+}, {
+  // ... attributes ...
+});
+```
+
+<h3>The `parse()` Method</h3>
+
+<p>
+Depending on the kind of response your sync layer returns, you may need to override the `parse()` method as well. The default `parse()` implementation knows how to parse JavaScript objects and JSON strings that can be parsed into JavaScript objects representing a hash of attributes. If your response data is in another format, override the `parse()` method to provide a custom parser implementation.
+</p>
+
+<p>
+If an error occurs while parsing a response, fire an `error` event with `type` "parse".
+</p>
+
+<p>
+This sample demonstrates a custom parser for responses in which the model data is contained in a `data` property of the response object.
+</p>
+
+```
+// Custom response parser.
+parse: function (response) {
+  if (response.data) {
+    return response.data;
+  }
+
+  this.fire('error', {
+    type : 'parse',
+    error: 'No data in the response.'
+  });
+}
+```

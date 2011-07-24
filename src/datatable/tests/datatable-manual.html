@@ -1,0 +1,270 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Datatable Tests</title>
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.2.0/build/cssreset/reset-min.css">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.2.0/build/cssbase/base-min.css">
+<script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
+
+<style>
+	html {
+		font-family: sans-serif;
+		font-size: smaller;
+	}
+	
+	.message {
+		padding: 5px;
+		font-size:120%;
+		background: #FFFCB6;
+		border:1px solid #C9C675;
+	}
+	
+	#results dt {
+		font-weight:bold;
+		padding:3px;
+		display:block;
+	}
+	#results dd {
+		font-weight:normal;
+		color:grey;
+	}
+	#results dd span {
+		color: red;
+		font-weight:bold;
+	}
+</style>
+</head>
+
+<body class="yui3-skin-sam">
+<h1>Datatable Tests</h1>
+
+<p>To test the performance of various datatables, look at the following sections in the code:
+	
+	<pre>
+//large or small dataset.
+data: large,
+
+//---------------------------------------------
+// Special instructions
+//---------------------------------------------
+
+_should: {
+	ignore: {
+	//ignore following tests (good to do if you are doing a large dataset)
+		testBaseDatatable: true,
+		testXYDatatable: true,
+		testXDatatable: true,
+		testYDatatable_FixedCol: true,
+		testYDatatable_AutoCol: true,
+		testXYDatatable_BigHeaders: false
+	}
+}
+	</pre>
+	
+	Toggle <code>data</code> from <code>large</code> to <code>small</code> to get a different sized dataset. The <code>ignore</code> object determines which table to load. If testing performance, it is recommended that you only enable 1 table at a time.</p>
+	<hr>
+<p><input type="button" value="Run Tests" id="btnRun" disabled=true></p>
+	<hr>
+<div id="results">
+	<h3>Test Results</h3>
+</div>
+
+<h3>Base Datatable</h3>
+<div id="base"></div>
+
+<h3>Scrolling XY Datatable (Set columnwidths)</h3>
+<P>A general XY scrolling datatable. Column widths are provided for all columns, table width and height is provided.</p>
+<div id="scrolling-xy"></div>
+
+<h3>Scrolling X Datatable (Auto Columns)</h3>
+<p>A X-scrolling datatable. Column A and B have specified widths. The rest of the columns do not have any widths specified. Only a height of 200px is specified.</p>
+<div id="scrolling-x"></div>
+
+<h3>Scrolling Y Datatable</h3>
+<p>A Y-scrolling datatable. Column widths are provided for all columns, table height is provided. Since all cols have specified width, you may see this table overflowing past its container div (the blue div in the background). </p>
+<div id="scrolling-y"></div>
+
+<h3>Scrolling Datatable with no ColumnWidth</h3>
+<p>A Y-scrolling datatable, where only the first 2 columns have a specified width. Only the table height is provided.</p>
+<div id="scrolling-colwidth"></div>
+
+<h3>Scrolling Datatable with Big Headers</h3>
+<p>A XY-scrolling datatable, where only the first 2 columns have a specified width. Table height and width is provided. The table headers are of larger width than the table contents</p>
+<div id="scrolling-bigcols"></div>
+
+
+<script type="text/javascript">
+
+
+ 
+(function() {
+    YUI({
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+        allowRollup: false,
+        useBrowserConsole: true
+    }).use("console", "test", "dump", "datatable","node","json-parse", function(Y) {
+	
+
+        // Set up the page
+        var ASSERT = Y.Assert,
+            ARRAYASSERT = Y.ArrayAssert,
+            BTNRUN = Y.one("#btnRun"),
+			TestRunner = Y.Test.Runner;
+        BTNRUN.set("disabled", false);
+		TestRunner.subscribe(TestRunner.TEST_CASE_COMPLETE_EVENT, testCompleted);
+        Y.on("click", function(e){
+			TestRunner.run();
+	        BTNRUN.set("value", 'Running...');
+	        BTNRUN.set("disabled", true);
+
+        }, BTNRUN);
+		
+		function testCompleted() {
+			BTNRUN.set("value", 'Test Completed');
+			Y.log('Test Completed');
+		}
+        var myConsole = new Y.Console().render();
+
+
+
+
+
+		
+		//large data set
+		var large = [];
+		for (var i=0; i<500; i++) {
+			large[i] = {a: i+1, b:i+2, c:i+3, d: i+4, e: i+5, f: i+6, g:i+7};
+		}
+		
+		//small data set
+		var small = [{a:3, b:2, c:1, d:6, e:7, f:2, g:0}, {a:9, b:8, c:7, d:6, e:7, f:2, g:0}, {a:1, b:2, c:3, d:6, e:7, f:2, g:0},
+				{a:3, b:2, c:1, d:6, e:7, f:2, g:0}, {a:9, b:8, c:7, d:6, e:7, f:2, g:0}, {a:1, b:2, c:3, d:6, e:7, f:2, g:0},
+				{a:3, b:2, c:1, d:6, e:7, f:2, g:0}, {a:9, b:8, c:7, d:6, e:7, f:2, g:0}, {a:1, b:2, c:3, d:6, e:7, f:2, g:0},
+				{a:3, b:2, c:1, d:6, e:7, f:2, g:0}, {a:9, b:8, c:7, d:6, e:7, f:2, g:0}, {a:1, b:2, c:3, d:6, e:7, f:2, g:0}];
+
+        var testBasic = new Y.Test.Case({
+            name: "API Tests",
+			nestedcols: [
+		            {label:"Grandparent", children:[
+		                {key: "a"},
+		                {label:"Parent", children: [
+		                    {key:"b"},
+		                    {key:"c"}
+		                ]}
+		            ]}
+		        ],
+		        cols: [{key:"a", field:"a", label:"AAA", sortable:true, className: ["oneClass", "anotherClass"], width:'75px'},{key:"b", abbr:"bbb", className:"myClass", width: '120px'},{key:"c", width:'75px'},{key:"d", width:'150px'},{key:"3", width:'75px'},{key:"f", width:'150px'},{key:"g", width:'75px'}],
+
+			 	cols2: [{key:"a", field:"a", label:"AAA", sortable:true, className: ["oneClass", "anotherClass"], width:'75px'},{key:"b", abbr:"bbb", className:"myClass", width:'75px'},{key:"c"},{key:"d"},{key:"e"},{key:"f"},{key:"g"}],
+
+				cols3: [{key:"a", field:"a", label:"Lorem Ipsum Dolor SIt Amet", sortable:true, className: ["oneClass", "anotherClass"], width:'5px'},{key:"b", abbr:"Lorem Ipsum Dolor SIt Amet", className:"myClass", width:'75px'},{key:"Lorem Ipsum Dolor SIt Amet"},{key:"Lorem Ipsum Dolor SIt Amet"},{key:"Lorem Ipsum Dolor SIt Amet"},{key:"Lorem Ipsum Dolor SIt Amet"},{key:"Lorem Ipsum Dolor SIt Amet"}],
+				
+				
+				//large or small dataset.
+				data: large,
+				
+				//---------------------------------------------
+			    // Special instructions
+			    //---------------------------------------------
+
+			    _should: {
+			        ignore: {
+						//ignore following tests (good to do if you are doing a large dataset)
+			            testBaseDatatable: 				false,
+			 			testXYDatatable: 				true,
+						testXDatatable: 				true,
+						testYDatatable_FixedCol: 		true,
+						testYDatatable_AutoCol: 		true,
+						testXYDatatable_BigHeaders: 	true
+			        }
+			    },
+
+		    //---------------------------------------------
+		    // Setup and tear down
+		    //---------------------------------------------
+
+		    setUp : function () {
+		        
+				//create recordset
+				//this.rs = new Y.Recordset({records:this.initialData});
+
+				//Some Ways to access recordset properties
+				//Y.log(rs.getRecordByIndex(0).getValue('a'));
+		        //Y.log(rs.get('records').length);
+		    },
+
+		    tearDown : function () {
+				delete this.dt;
+		    },
+		
+			
+			/////////////////////////////////////////////////////////////////////////////
+			//
+			// Tests
+			//
+			/////////////////////////////////////////////////////////////////////////////
+			
+			
+			
+			testBaseDatatable: function() {
+				var sel = "#base";
+				this.dt = new Y.DataTable.Base({columnset:this.cols, recordset:this.data, caption:"Base"}); 
+			    this.dt.render(sel);
+			},
+			
+			testXYDatatable: function() {
+				var sel = '#scrolling-xy';
+				this.dt =  new Y.DataTable.Base({columnset:this.cols, recordset:this.data, tdValueTemplate:"plug then render {value}", caption: "ScrollingDataTable"});  
+				this.dt.plug(Y.Plugin.DataTableScroll, {width:"200px", height:"300px", scroll:"xy"});
+			    this.dt.render(sel);				
+			},
+			
+			testXDatatable: function() {
+				var sel = "#scrolling-x";
+				
+				this.dt =  new Y.DataTable.Base({columnset:this.cols2, recordset:this.data, caption:"ScrollingDataTable"});
+				this.dt.plug(Y.Plugin.DataTableScroll, {width:"150px", scroll:"x"});    
+				
+			    this.dt.render(sel);
+				
+			},
+			
+			testYDatatable_FixedCol: function() {
+				var sel = "#scrolling-y";
+				
+				this.dt =  new Y.DataTable.Base({columnset:this.cols, recordset:this.data, tdValueTemplate:"plug then render {value}", caption:"ScrollingDataTable"});
+				this.dt.plug(Y.Plugin.DataTableScroll, {height:"300px", scroll:"y"});    
+			    this.dt.render(sel);
+			},
+			
+			testYDatatable_AutoCol: function() {
+				var sel = "#scrolling-colwidth";
+				
+				this.dt =  new Y.DataTable.Base({columnset:this.cols2, recordset:this.data, tdValueTemplate:"plug then render {value}", caption:"ScrollingDataTable"});
+				this.dt.plug(Y.Plugin.DataTableScroll, {height:"250px", scroll:"y"});    
+			    this.dt.render(sel);
+			},
+			
+			testXYDatatable_BigHeaders: function() {
+				var sel = "#scrolling-bigcols";
+				
+				this.dt =  new Y.DataTable.Base({columnset:this.cols3, recordset:this.data, tdValueTemplate:"plug then render {value}", caption:"ScrollingDataTable"});
+				this.dt.plug(Y.Plugin.DataTableScroll, {height:"250px", width:"400px", scroll:"xy"});    
+			    this.dt.render(sel);
+			}
+			
+			
+			
+        });
+
+        var suite = new Y.Test.Suite({name:"Datatable Test Suite"});
+        suite.add(testBasic);
+
+        Y.Test.Runner.setName("Datatable Test Runner");
+        Y.Test.Runner.add(suite);
+        //Y.Test.Runner.run();
+    });
+})();
+</script>
+</body>
+</html>

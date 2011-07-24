@@ -1,6 +1,10 @@
 The Slider widget
     The Slider widget creates an input UI involving a draggable thumb, representing a value, sliding along a rail, representing the finite value range.
 
+3.3.0
+    * Default thumbUrl no longer broken when using the seed file from the combo
+      service.
+
 3.2.0
     * Leverages touch events when the UA supports them
     * (un)Swapped skin files for audio and audio-light skins

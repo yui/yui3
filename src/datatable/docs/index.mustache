@@ -1,0 +1,483 @@
+<div class="intro component">
+    <p>
+        The DataTable widget is responsible for rendering columnar data into a
+        highly customizable and fully accessible HTML table.  The core
+        functionality of DataTable is to visualize structured data as a table.
+        A variety of Plugins can then be used to add features to the table such
+        as sorting and scrolling.
+    </p>
+</div>
+				
+{{>getting-started}}
+				
+<h2 id="using">Using DataTables</h2>
+
+<h3 id="basics">DataTable basics</h3>
+
+<p>
+    A basic DataTable is comprised of columns and rows. Define the columns you
+    want to display in your DataTable with the <code>columnset</code>
+    attribute. Rows are created for you based on the data you define using the
+    <code>recordset</code> attribute. Under the hood, the DataTable class uses
+    a Columnset instance and a Recordset instance to manage column and row data
+    properties.
+</p>
+                
+<h3 id="columns">Working with columns</h3>
+
+<p>
+    A <code>columnset</code> can be defined with a simple array of
+    <code>keys</code>. As long as these keys exist in your data, DataTable will
+    display these columns of data in the table. Note that your data may contain
+    other columns that are not displayed if they are not defined in the
+    <code>columnset</code> array. A Columnset will be created containing a
+    Column instance for each item in your array, with the <code>key</code>
+    values you provided.
+</p>
+                
+```
+// Creates a Columnset with 3 Columns. "cost" is not rendered.
+var cols = ["id","name","price"];
+
+// Columns must match data parameter names
+var data = [
+    {id:"ga-3475", name:"gadget", price:"$6.99", cost:"$5.99"},
+    {id:"sp-9980", name:"sprocket", price:"$3.75", cost:"$3.25"},
+    {id:"wi-0650", name:"widget", price:"$4.25", cost:"$3.75"}
+];
+
+// Creates a DataTable with 3 columns and 3 rows
+var table = new Y.DataTable.Base({
+    columnset: cols,
+    recordset: data
+}).render("#example");
+```
+
+<p>
+    For greater flexibility, the <code>columnset</code> array accepts
+    configuration objects as well as simple column name strings.  When
+    identifying a column with a configuration object, use the <code>key</code>
+    property to reference the column name string.  Below are a few other
+    available column configurations.
+</p>
+
+<p>
+    Use the <code>label</code> attribute to customize the rendered column
+    header:
+</p>
+
+```
+// The label is the text that will be rendered in the table head
+var cols = [
+    { key: "id", label: "ID" },
+    { key: "name", label: "Name" },
+    { key: "price", label: "Price" }
+];
+```
+
+<p>
+    Use the <code>abbr</code> attribute to set the screen-reader friendly
+    "abbr" on each TH element:
+</p>
+
+```
+// The attr attribute enhances the screen-reader experience
+var cols = [
+    {
+        key: "mfr-parts-database-id",
+        label: "Mfr Part ID",
+        abbr: "ID"
+    },
+    {
+        key: "mfr-parts-database-name",
+        label: "Mfr Part Name",
+        abbr: "Name"
+    },
+    {
+        key: "mfr-parts-database-price",
+        label: "Wholesale Price",
+        abbr: "Price"
+    }
+];
+```
+
+<p>
+    Use the <code>children</code> attribute to created nested column headers.
+    Parent columns are for display purposes only, not associated with any data,
+    and should not have a <code>key</code> attribute of their own.
+</p>
+
+```
+var nestedCols = [
+    {
+        label: "Train Schedule",
+        children: [ // Use children to define nested relationships
+            { key: "track" },
+            {
+                label: "Route",
+                children: [
+                    { key: "from" },
+                    { key: "to" }
+                ]
+            }
+        ]
+    }
+];
+
+var data = [
+    { track: "1", from: "Paris", to: "Amsterdam" },
+    { track: "2", from: "Paris", to: "London" },
+    { track: "3", from: "Paris", to: "Zurich" }
+];
+
+var table = new Y.DataTable.Base({
+    columnset: nestedCols,
+    recordset: data,
+    summary: "Train schedule",
+    caption: "Table with nested column headers"
+}).render("#nested");
+```
+
+<h3 id="data">Working with row data</h3>
+				
+<p>
+    Pass an array of data to the <code>recordset</code> attribute, and
+    DataTable will create a <code>Recordset</code> of <code>Record</code>
+    instances to populate the table. Note that you should only define columns
+    for data you want to display -- all other data is not displayed.
+</p>
+
+```
+// Creates a Recordset with 3 records
+var data = [
+    { id: "ga-3475", name: "gadget", price: "$6.99", cost: "$5.99"},
+    { id: "sp-9980", name: "sprocket", price: "$3.75", cost: "$3.25"},
+    { id: "wi-0650", name: "widget", price: "$4.25", cost: "$3.75"}
+];
+
+// Creates a DataTable with 3 columns and 3 rows ("cost" is not displayed)
+var table = new Y.DataTable.Base({
+    columnset: [ "id", "name", "price" ],
+    recordset: data
+}).render("#example");
+```
+
+<p>
+    Data can be stored in one format but be displayed in a different format.
+    For instance, prices can be stored as numbers but be displayed as "$2.99",
+    and birthdays can be stored as date objects but be displayed as
+    "12/9/2009". Simple formatting can be defined with a string template on the
+    column definition.
+</p>
+
+```
+var cols = [ "id", "name", { key: "price", formatter: "\${value}" } ];
+
+var data = [
+    { id: "ga-3475", name: "gadget", price: 6.99 },
+    { id: "sp-9980", name: "sprocket", price: 3.75 },
+    { id: "wi-0650", name: "widget", price: 4.25 }
+];
+
+var table = new Y.DataTable.Base({
+    columnset: cols,
+    recordset: data,
+    caption: "Data formatting with string template"
+}).render("#template");
+```
+
+<p>
+    When a calculation is needed, define a custom function that generates
+    markup for the cell. The custom formatter function receives an object with
+    the following properties:
+</p>
+
+<table>
+<thead>
+    <tr>
+        <th>Property</th>
+        <th>Value</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td><code>tbody</code></td>
+        <td>The <code>&lt;tbody&gt;</code> node containing the cell.</td>
+    </tr>
+    <tr>
+        <td><code>tr</code></td>
+        <td>The <code>&lt;tr&gt;</code> node containing the cell.</td>
+    </tr>
+    <tr>
+        <td><code>td</code></td>
+        <td>The cell <code>&lt;td&gt;</code> node.</td>
+    </tr>
+    <tr>
+        <td><code>value</code></td>
+        <td>Usually the value stored in the <code>Record</code> for the column.  This is the default content that will be displayed.</td>
+    </tr>
+    <tr>
+        <td><code>record</code></td>
+        <td>The <code>Record</code> instance containing the data for all cells in the row.</td>
+    </tr>
+    <tr>
+        <td><code>data</code></td>
+        <td>The raw data collection from the <code>Record</code> instance.</td>
+    </tr>
+    <tr>
+        <td><code>rowindex</code></td>
+        <td>The row number of the <code>&lt;tr&gt;</code> node containing the cell (zero based).</td>
+    </tr>
+    <tr>
+        <td><code>column</code></td>
+        <td>The <code>Column</code> instance for the cell's column.</td>
+    </tr>
+    <tr>
+        <td><code>classnames</code></td>
+        <td>The classname corresponding to the ID of the cell's column.</td>
+    </tr>
+    <tr>
+        <td><code>headers</code></td>
+        <td>The Array of IDs from all <code>&lt;th&gt;</code>s corresponding to the cell (mostly relevant to nested headers).</td>
+    </tr>
+</tbody>
+</table>
+
+```
+// The custom formatter function recieves an object
+var calculate = function (o) {
+    var cost  = o.record.getValue("cost"),
+        price = o.record.getValue("price");
+
+    return "$" + (price - cost).toFixed(2);
+};
+
+// Assign the custom formatter in the column definition
+var cols = [ "id", "name", { key: "profit", formatter: calculate } ];
+
+var data = [
+    { id: "ga-3475", name: "gadget", price: 6.99, cost: 4.99 },
+    { id: "sp-9980", name: "sprocket", price: 3.75, cost: 2.75 },
+    { id: "wi-0650", name: "widget", price: 4.25, cost: 3.25 }
+];
+
+var table = new Y.DataTable.Base({
+    columnset: cols,
+    recordset: data,
+    caption: "Data formatting with custom function"
+}).render("#function");
+```
+
+<p>
+    Integrate with the <a href="../datasource/">DataSource</a> data abstraction
+    utility to easily load data from remote sources and implement features such
+    as caching and polling.
+</p>
+
+```
+var cols = [
+    "Title",
+    "Phone",
+    { key: "Rating.AverageRating", label: "Rating" }
+];
+
+var myDataSource = new Y.DataSource.Get({
+    source: "http://query.yahooapis.com/v1/public/yql?&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys"
+});
+
+myDataSource.plug(Y.Plugin.DataSourceJSONSchema, {
+    schema: {
+        resultListLocator: "query.results.Result",
+        resultFields: [ "Title", "Phone", "Rating.AverageRating" ]
+    }
+}),
+
+var table = new Y.DataTable.Base({
+    columnset: cols,
+    summary: "Pizza places near 98089"
+});
+
+table.plug(Y.Plugin.DataTableDataSource, {
+    datasource: myDataSource
+})
+
+table.render("#pizza");
+
+// Load the data into the table
+table.datasource.load({
+    request: "&q=select%20*%20from%20local.search%20where%20zip%3D%2794089%27%20and%20query%3D%27pizza%27"
+});
+
+// Make another request later
+table.datasource.load({
+    request: "&q=select%20*%20from%20local.search%20where%20zip%3D%2794089%27%20and%20query%3D%27chinese%27"
+});
+```
+
+<p>
+    Enable DataSource caching.
+</p>
+
+```
+var cols = [
+    "Title",
+    "Phone",
+    { key: "Rating.AverageRating", label: "Rating" }
+];
+
+var myDataSource = new Y.DataSource.Get({
+    source: "http://query.yahooapis.com/v1/public/yql?format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys"
+});
+
+myDataSource
+    .plug(Y.Plugin.DataSourceJSONSchema, {
+        schema: {
+            resultListLocator: "query.results.Result",
+            resultFields: ["Title", "Phone", "Rating.AverageRating"]
+        }
+    })
+    .plug(Y.Plugin.DataSourceCache, {
+        max: 3
+    });
+
+var table = new Y.DataTable.Base({
+    columnset: cols,
+    summary: "Pizza places near 98089",
+    caption: "Table with JSON data from YQL"
+});
+
+table
+    .plug(Y.Plugin.DataTableDataSource, {
+        datasource: myDataSource
+    })
+    .render("#pizza");
+
+table.datasource.load({
+    request: "&q=select%20*%20from%20local.search%20where%20zip%3D%2794089%27%20and%20query%3D%27chinese%27"
+});
+```
+
+<p>
+    Enable DataSource polling.
+</p>
+
+```
+var cols = ["Title", "Phone", "Rating"];
+
+var myDataSource = new Y.DataSource.IO({
+    source: "/path/to/service.php?"
+});
+
+myDataSource.plug(Y.Plugin.DataSourceXMLSchema, {
+    schema: {
+        resultListLocator: "Result",
+        resultFields: [
+            { key: "Title", locator: "*[local-name() ='Title']" },
+            { key: "Phone", locator: "*[local-name() ='Phone']" },
+            { key: "Rating", locator: "*[local-name()='Rating']/*[local-name()='AverageRating']" }
+        ]
+    }
+});
+
+var table = new Y.DataTable.Base({
+    columnset: cols,
+    summary: "Chinese restaurants near 98089",
+    caption: "Table with XML data from same-domain script"
+});
+
+table
+    .plug(Y.Plugin.DataTableDataSource, {
+        datasource: myDataSource,
+        initialRequest: "zip=94089&query=chinese"
+    })
+    .render("#chinese");
+
+myDataSource.setInterval(5000, {
+    request: "zip=94089&query=chinese",
+    callback: {
+        success: Y.bind(table.datasource.onDataReturnInitializeTable, table.datasource),
+        failure: Y.bind(table.datasource.onDataReturnInitializeTable, table.datasource)
+    }
+});
+```
+
+<h3 id="sorting">Column sorting</h3>
+
+<p>
+    Column sorting functionality can be added with the DataTableSort plugin
+    (provided by the <code>datatable-sort</code> module, or in the
+    <code>datatable</code> rollup module). Indicate which columns are sortable
+    by setting <code>sortable: true</code> in your column definitions.
+</p>
+
+```
+var cols = [
+    { key: "Company", sortable: true },
+    { key: "Phone" },
+    { key: "Contact", sortable: true }
+];
+
+var data = [
+    { Company: "Company Bee", Phone: "415-555-1234", Contact: "Sally Spencer"},
+    { Company: "Acme Company", Phone: "650-555-4444", Contact: "John Jones"},
+    { Company: "Indutrial Industries", Phone: "408-555-5678", Contact: "Robin Smith"}
+];
+
+var table = new Y.DataTable.Base({
+    columnset: cols,
+    recordset: data,
+    summary: "Contacts list",
+    caption: "Table with simple column sorting",
+    plugins: [ Y.Plugin.DataTableSort ]
+}).render("#sort");
+```
+
+<h3 id="scrolling">Scrolling</h3>
+				
+<p>
+    <strong>Note:</strong> Scrolling is not currently supported on the Android
+    WebKit brow
+ser.
+
+<p>
+    Scrolling functionality can be added with the DataTableScroll plugin
+    (provided by the <code>datatable-scroll</code> module or in the
+    <code>datatable</code> rollup module). Horizontal scrolling is enabled by
+    setting a <code>width</code> attribute value; fixed header vertical
+    scrolling is enabled by setting a <code>height</code> attribute value; and
+    xy-scrolling is enabled by setting both <code>width</code> and
+    <code>height</code> values.
+</p>
+
+```
+var cols = [
+    { key: "Company" },
+    { key: "Phone" },
+    { key: "Contact" }
+];
+
+var data = [
+    { Company: "Company Bee", Phone: "415-555-1234", Contact: "Sally Spencer"},
+    { Company: "Acme Company", Phone: "650-555-4444", Contact: "John Jones"},
+    { Company: "Indutrial Industries", Phone: "408-555-5678", Contact: "Robin Smith"}
+];
+
+var table = new Y.DataTable.Base({
+    columnset: cols,
+    recordset: data,
+});
+
+table
+    .plug(Y.Plugin.DataTableScroll, {
+        width: "300px",
+        height: "200px"
+    })
+    .render("#scroll");
+```
+
+<h2 id="knownissues">Known Issues</h2>
+
+<p>
+    <strong>Known Android issue (bug 2529761):</strong> Scrolling is not
+    currently supported on the Android WebKit browser.
+</p>

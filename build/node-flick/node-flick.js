@@ -337,6 +337,7 @@ YUI.add('node-flick', function(Y) {
         /**
          * Internal utility method to set the X offset position
          *
+         * @method _setX
          * @param {Number} val
          * @private
          */
@@ -347,6 +348,7 @@ YUI.add('node-flick', function(Y) {
         /**
          * Internal utility method to set the Y offset position
          * 
+         * @method _setY
          * @param {Number} val
          * @private
          */
@@ -358,6 +360,7 @@ YUI.add('node-flick', function(Y) {
          * Internal utility method to move the node to a given XY position,
          * using transitions, if specified.
          *
+         * @method _move
          * @param {Number} x The X offset position
          * @param {Number} y The Y offset position
          * @param {Number} duration The duration to use for the transition animation
@@ -391,6 +394,7 @@ YUI.add('node-flick', function(Y) {
         /**
          * Internal utility method to perform the transition step
          *
+         * @method _anim
          * @param {Number} x The X offset position
          * @param {Number} y The Y offset position
          * @param {Number} duration The duration to use for the transition animation
@@ -422,6 +426,7 @@ YUI.add('node-flick', function(Y) {
          * Internal utility method to constrain the offset value
          * based on the bounce criteria. 
          *
+         * @method _bounce
          * @param {Number} x The offset value to constrain.
          * @param {Number} max The max offset value.
          *

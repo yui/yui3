@@ -1,61 +1,78 @@
-YUI({
-    base: '../../../build/',
-    //filter: 'DEBUG',
-    filter: 'RAW',
-    logExclude: {
-        'YUI': true,
-        Event: true,
-        Base: true,
-        Attribute: true,
-        augment: true,
-        useConsole: true
-    }
-}).use('yql', 'console', 'test', 'substitute', 'selector-css3', function(Y) {
-        var myConsole = new Y.Console({
-            height: Y.one(window).get('winHeight') + 'px',
-            width: '375px'
-        }).render();    
-            
+YUI.add('yql-tests', function(Y) {
 
     var template = {
         name: 'YQL Test',
+
         setUp : function() {
         },
-        
+
         tearDown : function() {
         },
+
         test_load: function() {
             Y.Assert.isFunction(Y.YQL);
             Y.Assert.isFunction(Y.YQLRequest);
         },
+
         test_query: function() {
-            var returnedQuery;
+            var test = this;
+            
             Y.YQL('select * from weather.forecast where location=62896', function(r) {
-                returnedQuery = r;
+                test.resume(function() {
+                    Y.Assert.isObject(r, 'Query Failure');
+                    Y.Assert.isObject(r.query, 'Query object not present');
+                    Y.Assert.areEqual(1, r.query.count, 'Query Count not correct');
+                });
             });
-            var wait = function() {
-                Y.Assert.isObject(returnedQuery);
-                Y.Assert.isObject(returnedQuery.query);
-                Y.Assert.areEqual(1, returnedQuery.query.count);
-            };
-            this.wait(wait, 1500);
+
+            this.wait();
         },
+
+        test_https: function() {
+            var test = this;
+
+            Y.YQL('select * from weather.forecast where location=62896', function(r) {
+
+                test.resume(function() {
+                    Y.Assert.isObject(r, 'Query Failure');
+                    Y.Assert.isObject(r.query, 'Query object not present');
+                    Y.Assert.areEqual(1, r.query.count, 'Query Count not correct');
+                });
+
+            }, {}, {proto:"https"});
+
+            this.wait();
+        },
+
         test_failed: function() {
-            var returnedQuery;
+            var test = this;
+
             Y.YQL('select * from weatherFOO.forecast where location=62896', function(r) {
-                returnedQuery = r;
+                test.resume(function() {
+                    Y.Assert.isObject(r, 'Query Failure');
+                    Y.Assert.isObject(r.error, 'Query did not produce an error object');
+                });
             });
-            var wait = function() {
-                Y.Assert.isObject(returnedQuery);
-                Y.Assert.isObject(returnedQuery.error);
-            };
-            this.wait(wait, 1500);
+
+            this.wait();
+        },
+        test_escaped: function() {
+            var test = this;
+            
+            Y.YQL("select * from html where url = \"http://instantwatcher.com/genres/506\" and xpath='//div[@id=\"titles\"]/ul/li/a'", function(r) {
+                test.resume(function() {
+                    Y.Assert.isObject(r, 'Query Failure');
+                    Y.Assert.isObject(r.query, 'Query object not present');
+                });
+            });
+
+            this.wait();
         }
     };
     var suite = new Y.Test.Suite("YQL");
     
     suite.add(new Y.Test.Case(template));
     Y.Test.Runner.add(suite);
-    Y.Test.Runner.run();
+
 });
 

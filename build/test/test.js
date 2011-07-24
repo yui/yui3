@@ -23,6 +23,10 @@ YUI.add('test', function(Y) {
          * Special rules for the test case. Possible subobjects
          * are fail, for tests that should fail, and error, for
          * tests that should throw an error.
+         *
+         * @property _should
+         * @type Object
+         * @protected
          */
         this._should = {};
         
@@ -35,6 +39,9 @@ YUI.add('test', function(Y) {
         if (!Y.Lang.isString(this.name)){
             /**
              * Name for the test case.
+             *
+             * @property name
+             * @type String
              */
             this.name = "testCase" + Y.guid();
         }
@@ -145,6 +152,8 @@ YUI.add('test', function(Y) {
     
         /**
          * Array of test suites and
+         * @property items
+         * @type Array
          * @private
          */
         this.items = [];
@@ -973,7 +982,7 @@ YUI.add('test', function(Y) {
              * @return {Void}
              * @static
              * @private
-             * @name _runTest
+             * @method _runTest
              */
             _runTest : function (node) {
             
@@ -1208,7 +1217,10 @@ YUI.add('test', function(Y) {
         return new TestRunner();
         
     })();
-  
+    /**
+     * @module test
+     */
+
     /**
      * The Assert object provides functions to test JavaScript values against
      * known and expected results. Whenever a comparison (assertion) fails,
@@ -1644,8 +1656,7 @@ YUI.add('test', function(Y) {
      * from which more specific assertion errors can be derived.
      *
      * @param {String} message The message to display when the error occurs.
-     * @namespace Assert
-     * @class Error
+     * @class Assert.Error
      * @constructor
      */ 
     Y.Assert.Error = function (message){
@@ -1709,9 +1720,8 @@ YUI.add('test', function(Y) {
      * @param {String} message The message to display when the error occurs.
      * @param {Object} expected The expected value.
      * @param {Object} actual The actual value that caused the assertion to fail.
-     * @namespace Assert 
      * @extends Assert.Error
-     * @class ComparisonFailure
+     * @class Assert.ComparisonFailure
      * @constructor
      */ 
     Y.Assert.ComparisonFailure = function (message, expected, actual){
@@ -1766,9 +1776,8 @@ YUI.add('test', function(Y) {
      *
      * @param {String} message The message to display when the error occurs.
      * @param {Object} unexpected The unexpected value.
-     * @namespace Assert
      * @extends Assert.Error
-     * @class UnexpectedValue
+     * @class Assert.UnexpectedValue
      * @constructor
      */ 
     Y.Assert.UnexpectedValue = function (message, unexpected){
@@ -1812,9 +1821,8 @@ YUI.add('test', function(Y) {
      * a test was expected to fail but did not.
      *
      * @param {String} message The message to display when the error occurs.
-     * @namespace Assert
      * @extends Assert.Error
-     * @class ShouldFail
+     * @class Assert.ShouldFail
      * @constructor
      */  
     Y.Assert.ShouldFail = function (message){
@@ -1839,9 +1847,8 @@ YUI.add('test', function(Y) {
      * a test is expected to throw an error but doesn't.
      *
      * @param {String} message The message to display when the error occurs.
-     * @namespace Assert
      * @extends Assert.Error
-     * @class ShouldError
+     * @class Assert.ShouldError
      * @constructor
      */  
     Y.Assert.ShouldError = function (message){
@@ -1868,9 +1875,8 @@ YUI.add('test', function(Y) {
      *
      * @param {Error} cause The unexpected error that caused this error to be 
      *                      thrown.
-     * @namespace Assert
      * @extends Assert.Error
-     * @class UnexpectedError
+     * @class Assert.UnexpectedError
      * @constructor
      */  
     Y.Assert.UnexpectedError = function (cause){
@@ -1904,7 +1910,10 @@ YUI.add('test', function(Y) {
     //inherit methods
     Y.extend(Y.Assert.UnexpectedError, Y.Assert.Error);
     
-   
+    /**
+     * @module test
+     */
+
     /**
      * The ArrayAssert object provides functions to test JavaScript array objects
      * for a variety of cases.
@@ -2225,6 +2234,9 @@ YUI.add('test', function(Y) {
         }
         
     };
+    /**
+     * @module test
+     */
 
     /**
      * The ObjectAssert object provides functions to test JavaScript objects
@@ -2330,14 +2342,15 @@ YUI.add('test', function(Y) {
 
         }     
     };
+    /**
+     * @module test
+     */
 
-    
     /**
      * The DateAssert object provides functions to test JavaScript Date objects
      * for a variety of cases.
      *
      * @class DateAssert
-     * @namespace
      * @static
      */
      
@@ -2645,14 +2658,15 @@ YUI.add('test', function(Y) {
         return "1.." + results.total + "\n" + serializeToTAP(results);
     };
         
-
+    /**
+     * @module test
+     */
 
     Y.namespace("Coverage.Format");
 
     /**
      * Contains specific formatting options for coverage information.
-     * @namespace Coverage
-     * @class Format
+     * @class Coverage.Format
      * @static
      */
     
@@ -2852,6 +2866,10 @@ YUI.add('test', function(Y) {
     
     };
     /**
+     * @module test
+     */
+
+    /**
      * Creates a new mock object.
      * @class Mock
      * @constructor
@@ -2999,6 +3017,7 @@ YUI.add('test', function(Y) {
 
     /**
      * Defines a custom mock validator for a particular argument.
+     * @class Mock.Value
      * @param {Function} method The method to run on the argument. This should
      *      throw an assertion error if the value is invalid.
      * @param {Array} originalArgs The first few arguments to pass in
@@ -3007,7 +3026,6 @@ YUI.add('test', function(Y) {
      * @param {String} message The message to display if validation fails. If
      *      not specified, the default assertion error message is displayed.
      * @return {void}
-     * @namespace Mock
      * @constructor Value
      * @static
      */
@@ -3026,7 +3044,6 @@ YUI.add('test', function(Y) {
 
     /**
      * Mock argument validator that accepts any value as valid.
-     * @namespace Mock.Value
      * @property Any
      * @type Function
      * @static
@@ -3035,7 +3052,6 @@ YUI.add('test', function(Y) {
 
     /**
      * Mock argument validator that accepts only Boolean values as valid.
-     * @namespace Mock.Value
      * @property Boolean
      * @type Function
      * @static
@@ -3044,7 +3060,6 @@ YUI.add('test', function(Y) {
 
     /**
      * Mock argument validator that accepts only numeric values as valid.
-     * @namespace Mock.Value
      * @property Number
      * @type Function
      * @static
@@ -3053,7 +3068,6 @@ YUI.add('test', function(Y) {
 
     /**
      * Mock argument validator that accepts only String values as valid.
-     * @namespace Mock.Value
      * @property String
      * @type Function
      * @static
@@ -3062,7 +3076,6 @@ YUI.add('test', function(Y) {
 
     /**
      * Mock argument validator that accepts only non-null objects values as valid.
-     * @namespace Mock.Value
      * @property Object
      * @type Function
      * @static
@@ -3071,7 +3084,6 @@ YUI.add('test', function(Y) {
 
     /**
      * Mock argument validator that accepts onlyfunctions as valid.
-     * @namespace Mock.Value
      * @property Function
      * @type Function
      * @static
@@ -3087,4 +3099,4 @@ if (typeof YUITest == "undefined" || !YUITest) {
 }
 
 
-}, '@VERSION@' ,{requires:['substitute','event-base','json-stringify']});
+}, '@VERSION@' ,{requires:['event-simulate','event-custom','substitute','json-stringify']});

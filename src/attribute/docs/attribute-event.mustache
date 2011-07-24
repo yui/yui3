@@ -1,0 +1,209 @@
+<style type="text/css" scoped>
+    #example-out .event {
+        padding:2px 2px 2px 5px;
+    }
+    
+    #example-out .event-props {
+        font-family:courier;
+        margin-top:2px;
+    }
+
+    #example-out .event-title {
+        font-weight:bold;
+        font-family:arial;
+        color:#8dd5e7;
+        margin-top:5px;
+        margin-bottom:3px;
+    }
+
+    #example-out {
+        margin:5px;
+        border:1px solid #000;
+        color:#ffffff;
+        background-color:#004c6d;
+        overflow:auto;
+        height:20em;
+    }
+
+    .attrs {
+        border:1px solid #000;
+        background-color:#cdcdcd;
+        margin:5px;
+    }
+
+    .attrs .header {
+        font-weight:bold;
+        background-color:#aaa;
+        padding:5px;
+    }
+
+    .attrs .body {
+        padding:10px;
+    }
+
+    .attrs .footer {
+        padding:5px;
+    }
+
+    .attrs label {
+        display:block;
+        float:left;
+        clear:left;
+        font-weight:bold;
+        width:8em;
+    }
+
+    .attrs #preventFoobar.hidden {
+        display:none;
+    }
+
+    .attrs #preventFoobar {
+        margin-left:5px;
+        display:inline;
+        float:none;
+        clear:none;
+    }
+</style>
+
+<div class="intro">
+    <p>Attribute change events are one of the key benefits of using attributes to maintain state for your objects, instead of regular object properties. This example shows how you can listen for attribute change events and work with the event payload they receive.</p> 
+</div>
+
+<div class="example">
+    {{>attribute-event-source}}
+</div>
+
+<h2>Listening For Attribute Change Events</h2>
+
+<p>In this example, we'll look at how you can setup listeners for attribute change events, and work with the event payload which the listeners receive.</p>
+
+<h3>Setting Up A Custom Class With Attribute</h3>
+
+<p>We start by setting up the same custom class we created for the <a href="attribute-basic.html">basic example</a> with 3 attributes `foo`, `bar` and `foobar`, using the code below:</p>
+
+```
+YUI().use("attribute", "node", function(Y) {
+
+    // Setup a custom class with attribute support
+    function MyClass(cfg) {
+
+        // Setup attribute configuration
+        var attrs = {
+            "foo" : {
+                value:5
+            },
+     
+            "bar" : {
+                value:"Hello World!"
+            },
+    
+            "foobar" : {
+                value:true
+            }
+        };
+
+        this.addAttrs(attrs, cfg);
+    }
+
+    Y.augment(MyClass, Y.Attribute);
+
+});
+```
+
+<h3>Registering Event Listeners</h3>
+
+<p>Once we have an instance of the custom class, we can use the `on` and `after` methods provided by Attribute, to listen for changes in the value of each of the attributes:</p>
+
+```
+var o1 = new MyClass();
+
+...
+
+// Event Listners
+o1.after("fooChange", function(e) {
+    displayEvent(e, "After fooChange");
+    currentValSpan.set("innerHTML", Y.Escape.html(e.newVal+""));
+});
+
+o1.after("barChange", function(e) {
+    displayEvent(e, "After barChange");
+    currentValSpan.set("innerHTML", Y.Escape.html(e.newVal+""));
+});
+
+o1.on("foobarChange", function(e) {
+
+    if (preventFoobarChk.get("checked")) {
+
+        // Calling preventDefault, in an "on" listener
+        // will prevent the attribute change from occuring
+        // and the after listener being called.
+
+        e.preventDefault();
+        displayEvent(null, "On foobarChange (prevented)");
+    }
+
+});
+
+o1.after("foobarChange", function(e) {
+
+    // This foobar after listener will not get called, 
+    // if we end up preventing default in the "on" 
+    // listener above.
+
+    displayEvent(e, "After foobarChange");
+    currentValSpan.set("innerHTML", Y.Escape.html(e.newVal+""));
+});
+```
+
+<p>As seen in the above code, the event type for attribute change events is created by concatenating the attribute name with `"Change"` (e.g. `"fooChange"`), and this event type is used for both the `on` and `after` subscription methods. Whenever an attribute value is changed through Attribute's `set` method, both "on" and "after" subscribers are notified.</p>
+
+<h3>On vs. After</h3>
+
+<p><strong>on :</strong> Subscribers to the "on" moment, will be notified <em>before</em> any actual state change has occurred. This provides the opportunity to prevent the state change from occurring, using the `preventDefault` method of the event facade object passed to the subscriber. If you use `get` to retrieve the value of the attribute in an "on" subscriber, you will receive the current, unchanged value. However the event facade provides access to the value which the attribute is being set to, through it's `newVal` property.</p>
+
+<p><strong>after :</strong> Subscribers to the "after" moment, will be notified <em>after</em> the attribute's state has been updated. This provides the opportunity to update state in other parts of your application, in response to a change in the attribute's state.</p>
+
+<p>Based on the definition above, `after` listeners are not invoked if state change is prevented, for example, due to one of the `on` listeners calling `preventDefault` on the event object, as is done in the `on` listener for the `foobar` attribute:</p>
+
+```
+o1.on("foobarChange", function(event) {
+
+    // Calling preventDefault, in an "on" listener
+    // will prevent the attribute change from occurring
+    // and prevent the after listeners from being called
+    displayEvent(event, "on foobarChange (change prevented)");
+
+    event.preventDefault();
+});
+```
+
+<p>For primitive values (non-Object values), the `after` listeners will also not be invoked if there is no change in the actual value of the attribute. That is, if the new value of the attribute is the same as the current value (based on the identity operator, `===`), the `after` listeners will not be notified because there is no change in state. You can see this, by setting an attribute to the same value twice in a row.</p>
+
+<h3>Event Facade</h3>
+
+<p>The event object (an instance of <a href="{{apiDocs}}/EventFacade.html">EventFacade</a>) passed to attribute change event subscribers, has the following interesting properties and methods related to attribute management:</p>
+
+<dl>
+    <dt>newVal</dt>
+    <dd>The value which the attribute will be set to (in the case of "on" subscribers), or has been set to (in the case of "after" subscribers</dd>
+    <dt>prevVal</dt>
+    <dd>The value which the attribute is currently set to (in the case of "on" subscribers), or was previously set to (in the case of "after" subscribers</dd>
+    <dt>attrName</dt>
+    <dd>The name of the attribute which is being set</dd>
+    <dt>subAttrName</dt>
+    <dd>Attribute also allows you to set nested properties of attributes which have values which are objects through the 
+    `set` method (e.g. `o1.set("x.y.z")`). This property will contain the path to the property which was changed.</dd>
+    <dt>preventDefault()<dt>
+    <dd>This method can be called in an "on" subscriber to prevent the attribute's value from being updated (the default behavior). Calling this method in an "after" listener has no impact, since the default behavior has already been invoked.</dd>
+    <dt>stopImmediatePropagation()</dt>
+    <dd>This method can be called in "on" or "after" subscribers, and will prevent the rest of the subscriber stack from
+    being invoked, but will not prevent the attribute's value from being updated.</dd>
+</dl>
+
+<p>The <a href="attribute-event-speeddate.html">"Attribute Event Based Speed Dating" example</a> provides a look at how you can leverage attribute change events in your applications, to decouple logic both within your class, and when interacting with other objects.</p>
+
+<h2>Complete Example Source</h2>
+
+```
+{{>attribute-event-source}}
+```

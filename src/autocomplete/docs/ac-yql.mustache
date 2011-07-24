@@ -1,0 +1,40 @@
+<style scoped>
+#ac-input { width: 250px; }
+</style>
+
+<div class="intro">
+<p>
+This example demonstrates how to provide autocomplete suggestions using a YQL query as the source. In this case, we're using a custom <a href="http://developer.yahoo.com/yql/console/?q=select%20*%20from%20search.suggest%20where%20query%3D%22yui%20autocomplete%22&amp;env=http%3A%2F%2Fpieisgood.org%2Fyql%2Ftables.env"><code>search.suggest</code> YQL table</a> to provide suggestions based on popular Yahoo! Search queries.
+</p>
+</div>
+
+<div class="example">
+    {{>ac-yql-source}}
+</div>
+
+<h2>HTML</h2>
+
+```
+<div id="demo" class="yui3-skin-sam">
+  <label for="ac-input">Search:</label><br>
+  <input id="ac-input" type="text">
+</div>
+```
+
+<h2>JavaScript</h2>
+
+```
+YUI().use('autocomplete', 'autocomplete-highlighters', function (Y) {
+  Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
+    resultHighlighter: 'phraseMatch',
+    source: 'select * from search.suggest where query="{query}"',
+    yqlEnv: 'http://pieisgood.org/yql/tables.env'
+  });
+});
+```
+
+<h2>Complete Example Source</h2>
+
+```
+{{>ac-yql-source}}
+```

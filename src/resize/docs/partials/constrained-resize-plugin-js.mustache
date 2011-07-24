@@ -1,0 +1,84 @@
+    YUI().use('overlay', 'resize-plugin', 'resize-constrain', 'dd-plugin', 'yql', function(Y) {
+
+      var weatherWidget;
+
+      var getWeather = function() {
+        
+        Y.YQL('select * from google.igoogle.weather where weather="Sunnyvale";', processWeather);
+      };
+
+      var processWeather = function(r) {
+
+        var weather = r.query.results.xml_api_reply.weather,
+        template = {
+
+          currentTemp: '<div id="mainContainer"><span id="mainImage">{mainImage}</span><h2 id="temp">{temp}<p>{condition}</p></h2><div class="clearfix"></div><div id="otherInfo">{wind}</p><p>{humidity}</p></div></div>',
+          otherDays: '<div class="day"><h3 class="dayOfWeek">{dayOfWeek}</h3>{image}<h4 class="forecast">{dayForecast}</h4></div>',
+          gUrl: 'http://www.google.com'
+        },
+
+        currentData = {
+          mainImage: '<img src="' + template.gUrl + weather.current_conditions.icon.data + '">',
+          temp: weather.current_conditions.temp_f.data + '&#176;F',
+          condition: weather.current_conditions.condition.data,
+          wind: weather.current_conditions.wind_condition.data,
+          humidity: weather.current_conditions.humidity.data
+        },
+
+        currentHTML = '',
+        futureHTML = '<div id="futureDays">';
+
+        currentHTML = Y.Lang.sub(template.currentTemp, currentData);
+        
+
+        for (var i = 0; i < weather.forecast_conditions.length; i++) {
+
+          var futureData = {
+            dayOfWeek: weather.forecast_conditions[i].day_of_week.data,
+            image: '<img src="' + template.gUrl + weather.forecast_conditions[i].icon.data + '">',
+            dayForecast: weather.forecast_conditions[i].high.data + '&#176;F'
+          };
+          futureHTML += Y.Lang.sub(template.otherDays, futureData);
+          
+        }
+
+        futureHTML += "</div>";
+        currentHTML = currentHTML + futureHTML;
+        Y.one('#weatherWidgetContent').append(currentHTML);
+
+        createOverlay();
+    };
+
+    var createOverlay = function() {
+      
+      weatherWidget = new Y.Overlay({
+         width: "250px",
+         height:"300px",
+         srcNode: "#weatherWidget",
+         visible: false,
+         align: {node:".example", points:["tc", "bc"]}
+      });
+
+      //allow resizability and draggability
+      weatherWidget.plug([Y.Plugin.Resize, Y.Plugin.Drag]);
+
+      //we can plug in the resizeConstrained plugin on the 'resize' namespace
+      weatherWidget.resize.plug(Y.Plugin.ResizeConstrained, {
+        minWidth: 250,
+        minHeight: 170,
+        maxWidth: 250,
+        maxHeight: 300,
+        preserveRatio: false
+      });
+
+      weatherWidget.render();
+      Y.one('#launchOverlay').set('disabled', false).set('value', 'Launch Weather Widget');
+    };
+
+    getWeather();
+
+    Y.one("#launchOverlay").on('click', function() {
+       weatherWidget.set('visible', true); 
+    });
+
+});

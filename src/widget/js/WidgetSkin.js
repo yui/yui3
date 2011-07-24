@@ -1,3 +1,10 @@
+/**
+ * Provides skin related utlility methods.
+ *
+ * @module widget
+ * @submodule widget-skin
+ */
+
 var BOUNDING_BOX = "boundingBox",
     CONTENT_BOX = "contentBox",
     SKIN = "skin",
@@ -11,6 +18,7 @@ var BOUNDING_BOX = "boundingBox",
  * (name) portion.  Otherwise, returns null.
  *
  * @method getSkinName
+ * @for Widget
  * @return {String} the name of the skin, or null (yui3-skin-sam => sam)
  */
 

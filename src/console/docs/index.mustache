@@ -1,0 +1,663 @@
+<div class="intro component" style="overflow: hidden;">
+    <p>
+        <img alt="Screen capture of the Console UI"
+            src="{{componentAssets}}/images/small.png"
+            height="203" width="200" style="border: 0 none; float: right; margin-left: 2em;">
+
+        The Console tool provides a display to read log messages emitted by the
+        YUI logging subsytem. With this tool, you can tap into the rich
+        event-driven messages included with the YUI Library's debug files.
+        This messaging allows you to get a fuller picture of the inner workings
+        of any YUI Library component.
+    </p>
+
+    <p>
+        Additionally, when building your own Widgets, utilities or
+        applications, you can include your own log statements and use the
+        Console to aid in development and debugging.  As a simple message
+        display mechanism, you can also repurpose Console through extention or
+        configuration to listen to a different input source and display
+        messages differently.
+    </p>
+</div>
+
+{{>getting-started}}
+
+<h3 id="sam">Trigger the CSS skin</h3>
+
+<p>
+    For the default &quot;Sam&quot; skin to apply to the Console UI, you'll
+    need to apply the <code>yui3-skin-sam</code> class name to an element that
+    is a parent of the element in which the Console lives. You can usually
+    accomplish this simply by putting the class on the
+    <code>&#60;body&#62;</code> tag:
+</p>
+
+```
+<body class="yui3-skin-sam">
+```
+
+<p>
+    For more information on skinning YUI components and making use of default
+    skins, see our <a
+    href="http://developer.yahoo.com/yui/articles/skinning/">Understanding YUI
+    Skins</a> article.
+</p>
+
+<h2 id="logging">The YUI logging subsystem</h2>
+
+<p>
+    The entry point to YUI's logging subsystem is the YUI instance's <code>log(..)</code> method.
+</p>
+
+```
+//       message     category  source
+Y.log("Hello world!", "info",  "myapp");
+```
+
+<p>
+    If the YUI instance is configured with <code>debug</code> set to
+    <code>true</code> (the default), any calls to <code>Y.log(..)</code> will
+    be printed to the browser's native <code>console</code> if it has one, and
+    broadcast through the <code>yui:log</code> event.
+</p>
+
+<p>
+    When a Console is instantiated, the native console reporting of YUI log
+    messages is disabled in favor of reporting in the Console UI.  If you wish
+    to preserve native console reporting, set the
+    <code>useBrowserConsole</code> configuration attribute to <code>true</code>
+    during Console construction.
+</p>
+
+<h2 id="using">Using the Console Widget</h2>
+
+<h3 id="setup">Instantiating and configuring a Console</h3>
+
+<h4>Instantiation</h4>
+
+<p>
+    Creating an instance of Console is very easy; there are no required
+    configuration attributes, and it is typically rendered without reference to
+    an existing DOM element.
+</p>
+
+```
+YUI({..}).use('console', function (Y) {
+
+    // Console has no required configuration
+    var yconsole = new Y.Console();
+
+    yconsole.render();
+
+    // In fact, you often don't even need to store the instance
+    new Y.Console().render();
+
+    /* YOUR CODE HERE */
+});
+```
+
+<p>
+    By default, Console instances are positioned absolutely in the top right
+    corner of the page.  As seen below and in <a
+    href="../examples/console/">the examples</a>, this is configurable by
+    setting the <code>style</code> attribute.
+</p>
+
+<h4 id="config">Common configuration attributes</h4>
+
+<p>
+    Below are some common configuration attributes.  Refer to the API docs for
+    a complete list of configuration options.
+</p>
+
+<table>
+<thead>
+    <tr>
+        <th>Attribute</th>
+        <th>Description</th>
+        <th>Default</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td><code>logLevel</code></td>
+        <td>Set to &quot;warn&quot; or &quot;error&quot; to omit messages of lesser severity</td>
+        <td>&quot;info&quot;</td>
+    </tr>
+    <tr>
+        <td><code>newestOnTop</code></td>
+        <td>Set to false to place new messages <em>below</em> prior messages</td>
+        <td>true</td>
+    </tr>
+    <tr>
+        <td><code>consoleLimit</code></td>
+        <td>Limit the number of messages displayed in the UI</td>
+        <td>300</td>
+    </tr>
+    <tr>
+        <td><code>height</code></td>
+        <td>Specify the height of the Console.  Useful for displaying more messages</td>
+        <td>&quot;300px&quot;</td>
+    </tr>
+    <tr>
+        <td><code>style</code></td>
+        <td>Relationship of the Console to the page content.  Supported values are &quot;inline&quot;, &quot;block&quot;, and &quot;separate&quot;</td>
+        <td>&quot;separate&quot; (absolute positioned in the top right corner)</td>
+    </tr>
+</tbody>
+</table>
+
+<h4 id="buffer">The print loop</h4>
+
+<p>
+    Incoming log messages are buffered and printed in a scheduled batch cycle
+    to lessen the impact to the normal operation of the page.  The print loop
+    renders a fixed number of buffered messages at a time.
+</p>
+
+<p>
+    The print loop behavior can be configured with the
+    <code>printTimeout</code> and <code>printLimit</code> configuration
+    attributes.  The former controls the millisecond timeout between iterations
+    of the print loop.  The latter limits the number of entries to add to the
+    Console in each iteration of the print loop.  By default their respective
+    values are 100 and 50.
+</p>
+
+<h4 id="universal">Share a Console between YUI instances</h4>
+
+<p>
+    Console behaves like any other YUI module and remains sandboxed inside the
+    particular YUI instance that spawned it.  However, it is possible to create
+    a universal Console to report the activity in the logging subsystems of
+    every YUI instance on the page.
+</p>
+
+<p>
+    To support cross YUI instance communication, a shared global EventTarget
+    named <code>Y.Global</code> is exposed on every YUI instance, and
+    <code>yui:log</code> events are configured to bubble to this
+    EventTarget.
+</p>
+
+<p>
+    Console has attributes <code>logSource</code> and <code>logEvent</code>
+    that can be used to link the Console instance up to an entirely different
+    messaging subsystem.  By setting the Console's <code>logSource</code> to
+    <code>Y.Global</code> and leaving the <code>logEvent</code> alone, the
+    single Console instance will receive log messages from every YUI instance
+    on the page.
+</p>
+
+```
+YUI().use('console','overlay', function (Y) {
+
+    // Create a universal Console
+    new Y.Console({ logSource: Y.Global }).render();
+
+    /* YOUR CODE HERE */
+
+    });
+
+    YUI().use('dd', function (Y) {
+
+    // Y.log statements here will be reported in the Console generated in the
+    // other YUI instance.
+
+});
+```
+
+<p>
+    Look at the <a href="../examples/console/console_global.html">Creating a
+    universal Console</a> example for reference.
+</p>
+
+<h3 id="display">Console display</h3>
+
+<h4>Anatomy of the Console</h4>
+
+<p>
+    The Console has a very simple display, split into a header, body, and
+    footer.
+</p>
+
+<img src="{{componentAssets}}/images/console_anatomy.png" alt="visual demarcation of Console's header, body, and footer">
+
+<p>
+    The default placement of a Console is absolutely positioned in the top
+    right corner of the page.  This can be configured with the
+    <code>style</code> attribute.  The <a
+    href="/yui/3/examples/console/console_basic.html">Creating a Console for
+    debugging</a> example illustrates how to accomplish this.
+</p>
+
+<h4 id="anatomy">Anatomy of a message</h4>
+
+<p>
+    Incoming log messages are normalized to objects with the following
+    properties:
+</p>
+
+<table>
+<thead>
+    <tr>
+        <th>Property</th>
+        <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td><code>message</code></td>
+        <td>The message text</td>
+    </tr>
+    <tr>
+        <td><code>category</code></td>
+        <td>The category or log level of the message (e.g. &quot;info&quot;, &quot;warn&quot;, or &quot;note&quot;)</td>
+    </tr>
+    <tr>
+        <td><code>source</code></td>
+        <td>The name of the source module</td>
+    </tr>
+    <tr>
+        <td><code>localTime</code></td>
+        <td>The time the message was received</td>
+    </tr>
+    <tr>
+        <td><code>elapsedTime</code></td>
+        <td>The time elapsed since the last message was received</td>
+    </tr>
+    <tr>
+        <td><code>totalTime</code></td>
+        <td>The time elapsed since the Console was instantiated</td>
+    </tr>
+</tbody>
+</table>
+
+<p>
+    These message objects are eventually rendered into the Console body like
+    this:
+</p>
+
+<img src="{{componentAssets}}/images/message_anatomy.png" alt="visual demarcation of the various parts of a Console entry">
+
+<p>
+    Log messages from the standard <code>logLevel</code> categories
+    &quot;info&quot;, &quot;warn&quot;, and &quot;error&quot; get special
+    visual treatment.  Specifically, the category is omitted from the message
+    meta and &quot;warn&quot; and &quot;error&quot; messages include an icon
+    and specific coloring.
+</p>
+
+<img src="{{componentAssets}}/images/info_warn_error.png" alt="One of each info, warn, and error type messages">
+
+<h3 id="controls">Console interaction</h3>
+
+<h4 id="collapse">Collapsing, expanding, hiding and showing</h4>
+
+<p>
+    Collapse and expand the Console with the Collapse/Expand button in the
+    header or by setting the <code>collapsed</code> attribute to
+    <code>true</code> or calling the instance's <code>collapse()</code> and
+    <code>expand()</code> methods.
+</p>
+
+<img src="{{componentAssets}}/images/collapsed.png" alt="A collapsed Console">
+
+<p>
+    Calling the instance's <code>hide()</code> method will entirely remove the
+    UI from the page.  <code>show()</code> will cause it to reappear.
+</p>
+
+<h4 id="pause">Pausing</h4>
+
+<p>
+    Pause the Console with either the checkbox in the Console footer or by
+    setting the <code>paused</code> attribute.
+</p>
+
+<p>
+    When paused, messages will accumulate in the buffer, but will not be
+    displayed until the Console is unpaused.
+</p>
+
+<h4 id="clear">Clearing and resetting</h4>
+
+<p>
+    Flush the body of messages by clicking the Clear button in the Console
+    footer or calling the instance's <code>clearConsole()</code> method.
+</p>
+
+<p>
+    Clearing the Console will also flush the buffered messages not yet
+    printed.
+</p>
+
+<p>
+    Calling the instance's <code>reset()</code> method will clear the Console,
+    flush the buffer, unpause, and reseed the Console's
+    <code>startTime</code>.
+</p>
+
+<h3 id="filter">Filtering Console messages</h3>
+
+<p>
+    Log messages can typically be filtered in two ways: by category (or
+    <code>logLevel</code>) and by source.  Category filtering is only available
+    at the Console level, but source filtering can be accomplished at the YUI
+    config level or the Console level (via the <a
+    href="../console-filters/">ConsoleFilters plugin</a>).  Each approach below
+    has a varying degree of impact to your page's performance.
+</p>
+
+<h4 id="debug_files">Using debug files</h4>
+
+<p>
+    All YUI module files come in three flavors:
+</p>
+
+<ul>
+    <li><code><em>module</em>-min.js</code> (min version)</li>
+    <li><code><em>module</em>.js</code> (raw version)</li>
+    <li><code><em>module</em>-debug.js</code> (debug version)</li>
+</ul>
+
+<p>
+    Of these, only the debug version includes <code>Y.log(..)</code>
+    statements.  Explicitly including <code>&lt;script&gt;</code> tags in your
+    source pointing to either the raw or min version of a module will
+    effectively filter out messages from that module.  The combo service
+    supports combining any mixture of min, raw, and debug files as well.
+</p>
+
+```
+<script src="http://yui.yahooapis.com/{{yuiVersion}}/build/yui/yui-min.js"></script>
+<!-- Include debug messages from the node module -->
+<script src="http://yui.yahooapis.com/{{yuiVersion}}/build/node/node-debug.js"></script>
+<script>
+YUI().use('overlay', function (Y) {
+    // Overlay requires Node.  Any other missing dependencies are automatically
+    // loaded, excluding node-min.js since the node module  is already provided
+    // by the inline script tag.
+});
+</script>
+```
+
+<p>Th
+    is has the least impact on page performance.
+</p>
+
+<h4 id="yui_config">Choose which modules log</h4>
+
+<p>
+    There are five YUI instance configurations that affect the logging
+    subsystem behavior:
+</p>
+
+<table>
+<thead>
+    <tr>
+        <th>Property</th>
+        <th>Example</th>
+        <th>Role</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td><code>debug</code></td>
+        <td><code>Y.config.debug = false;</code></td>
+        <td>If <code>false</code>, calls to <code>Y.log(..)</code> do nothing</td>
+    </tr>
+    <tr>
+        <td><code>filter</code></td>
+        <td><code>Y.config.filter = 'raw';</code></td>
+        <td>Set to &quot;raw&quot; or &quot;debug&quot; to specify a default version of all included modules.  Default value is &quot;min&quot;</td>
+    </tr>
+    <tr>
+        <td><code>filters</code></td>
+        <td><pre><code>Y.config.filters = {
+event: 'debug',
+node: 'raw'
+};</code></pre></td>
+        <td>Like <code>filter</code> but can be used to specify file version on a per-module basis.</td>
+    </tr>
+    <tr>
+        <td><code>logInclude</code></td>
+        <td><pre><code>Y.config.logInclude = {
+node: true
+};</code></pre></td>
+        <td>Allow only log messages assigned to the specified sources to propagate.  Note a single module may use multiple sources.</td>
+    </tr>
+    <tr>
+        <td><code>logExclude</code></td>
+        <td><pre><code>Y.config.logExclude = {
+attribute: true
+};</code></pre></td>
+        <td>Prevent log messages from the specified sources from propagating.  Typically either <code>logInclude</code> or <code>logExclude</code> is configured, not both.</td>
+    </tr>
+</tbody>
+</table>
+
+```
+// Setting debug to true is unnecessary, but is included for illustration.
+// Setting filter to 'raw' facilitates stepping through module code during
+// debugging.  Specifying 'debug' filters for slider and dd will result in all
+// log statements from those modules being included.
+YUI({
+    debug: true,
+    useBrowserConsole: false,
+    filter: 'raw',
+    filters: {
+        slider: 'debug',
+        dd: 'debug'
+    }
+}).use('slider', 'console', function (Y) {
+    ...
+});
+
+// Request the debug version of all loaded files, but only allow log statements
+// from the sources 'node' and 'dom-screen'.
+YUI({
+    useBrowserConsole: false,
+    filter: 'debug',
+    logInclude: {
+        node: true,
+        "dom-screen": true
+    }
+}).use('slider', 'console', function (Y) {
+    ...
+});
+```
+
+<p>
+    Specifying the <code>filters</code> config to include only debug versions
+    of the modules you want log messages from is effectively the same as the
+    prior option, and has the same effect on page performance.  Specifying a
+    &quot;debug&quot; filter and filtering sources via <code>logInclude</code>
+    or <code>logExclude</code> has a greater impact because the calls to
+    <code>Y.log(..)</code> are still present in all modules, even though they
+    will be ignored.
+</p>
+
+<p>
+    Look at the <a href="../examples/console/console_yui_config.html">YUI
+    configuration to filter log messages</a> example for reference.
+</p>
+
+<h4 id="log_level"><code>logLevel</code></h4>
+
+<p>
+    Most log statements in YUI 3 modules are &quot;info&quot; messages.
+    Changing the <code>logLevel</code> configuration for your Console instance
+    will limit the messages that display in the Console.  Obviously, the debug
+    files must be used for this as well.
+</p>
+
+```
+YUI({
+    useBrowserConsole: false,
+    filter: 'debug' // use all debug files
+}).use('overlay', 'console', function (Y) {
+
+    // Only allow 'warn' or 'error' messages to display
+    new Y.Console({ logLevel: 'warn' }).render();
+
+});
+```
+
+<p>
+    Console will actually default its <code>logLevel</code> attribute from the
+    so named YUI configuration property if it is specified.  Note that unlike
+    the attributes listed in the previous option, setting the
+    <code>logLevel</code> in the YUI config will not alter the behavior of the
+    logging subsystem.  The configuration is simply used as a default value for
+    instantiated Consoles.
+</p>
+
+```
+// Include debug version of the dom module, but only broadcast log messages
+// from the 'dom-screen' source that are warnings or errors.
+YUI({
+    useBrowserConsole: false,
+    filters: { dom: 'debug' },
+    logInclude: { 'dom-screen': true },
+    logLevel: 'warn'   // this has no affect on Y.log statements
+}).use('dd','console', function (Y) {
+
+    // With the YUI config above, these are now equivalent
+    var consoleA = new Y.Console();
+    var consoleB = new Y.Console({ logLevel: 'warn' });
+
+});
+```
+
+<p>
+    <code>logLevel</code> filtering, as with any filtering occurring at the
+    Console, has a greater impact on page performance, since all messages,
+    regardless of their category, are being broadcast from the logging
+    subsystem to the Console before any preventative action is taken.
+</p>
+
+<h4 id="entry">Preventing the Console's <code>entry</code> event</h4>
+
+<p>
+    Within Console, messages are transfered to the print loop buffer via an
+    <code>entry</code> event.  For fine grained control over which messages
+    reach the Console body, implementers can subscribe to the event and prevent
+    messages from being displayed by calling <code>preventDefault()</code> on
+    the event.
+</p>
+
+```
+var yconsole = new Y.Console();
+yconsole.on('entry', function (e) {
+    
+    // the normalized message object is stored on the event in the 'message'
+    // property.
+    if (/Frank/.test(e.message.message)) {
+        e.preventDefault(); // we don't talk about Frank here.
+    }
+
+});
+```
+
+<p>
+    The signature of the normalized message is <a href="#anatomy">noted
+    above</a>.
+</p>
+
+<p>
+    This approach affords the most flexibility, as you can filter by
+    arbitrarily complex criteria, and is the only option here not limited to
+    comparing the category or source.
+</p>
+
+<p>
+    This flexibility comes at a cost, though.  Because the subscriber code is
+    necessarily executed for every log message received, there is a greater
+    impact on page performance .
+</p>
+
+<h4 id="console-filters">ConsoleFilters plugin</h4>
+
+<p>
+<img src="{{componentAssets}}/images/console_filters.png" alt="Console with the ConsoleFilters UI added" style="float: right; margin-left: 2em;">
+
+    For runtime display filtering by both category and source, the <a
+    href="../console-filters/">ConsoleFilters plugin</a> can be added to the
+    Console.
+</p>
+
+```
+YUI({..}).use('console-filters', function (Y) {
+    new Y.Console({
+        newestOnTop: false,
+        plugins: [ Y.Plugin.ConsoleFilters ]
+    }).render();
+
+    // OR
+
+    var yconsole = new Y.Console({..});
+    yconsole.plug(Y.Plugin.ConsoleFilters);
+
+    yconsole.render();
+});
+```
+
+<p style="clear: right;">
+    The ConsoleFilters plugin adds a set of checkboxes to the Console footer,
+    one for each category and source currently reported.  Only those messages
+    that match one of the checked categories and sources will be displayed.
+</p>
+
+<p>
+    Unlike any of the prior options, messages filtered from the display by the
+    ConsoleFilters plugin can be redisplayed by rechecking the corresponding
+    category or source checkbox.
+</p>
+
+<p>
+    This approach has the greatest affect on page performance because in order
+    to support reassembling the Console contents in real time, all Console
+    messages are stored in memory and more conditional logic is inserted into
+    the path from log statement to Console display.
+</p>
+
+<p>
+    Look at the <a href="../examples/console/console_filter.html">ConsoleFilters
+    plugin</a> example.
+</p>
+
+<h3 id="events">Console events</h3>
+
+<p>
+    In addition to the standard <code><em>attribute</em>Change</code> events
+    and others common to all Widgets, Console broadcasts the following
+    events:
+</p>
+
+<table>
+<thead>
+    <tr>
+        <th>Event</th>
+        <th>When</th>
+        <th>Payload</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td><code>reset</code></td>
+        <td>In response to calls to an instance's <code>reset()</code> method.  The default function for the event performs the reset detailed above.</td>
+        <td>none</td>
+    </tr>
+    <tr>
+        <td><code>entry</code></td>
+        <td>In response to messages being received from the <code>yui:log</code>.  The default function for the event sends the normalized message object to the print loop buffer.</td>
+        <td>{ message : (<a href="#anatomy">normalized message object</a>) }</td>
+    </tr>
+</tbody>
+</table>
+
+<p>
+    This is not an exhaustive list.  See the <a href="{{apiDocs}}/module_console.html">API docs</a> for a complete listing.
+</p>

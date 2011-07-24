@@ -1,0 +1,139 @@
+<div class="intro">
+<p> The Sortable Utility allows you to create a sortable list from a container and a group of children. It also allows you to join lists together in various ways.</p>
+</div>
+
+{{>getting-started}}
+
+
+<h4 id="basic">A Basic Sortable List</h4>
+<p>The most common use case of a sortable list is an Unordered List.</p>
+<p>Below is the sample markup used to create a `container` and a list.</p>
+
+```
+<div id="demo">
+    <ul>
+        <li>Item #1</li>
+        <li>Item #2</li>
+        <li>Item #3</li>
+        <li>Item #4</li>
+        <li>Item #5</li>
+        <li>Item #6</li>
+        <li>Item #7</li>
+        <li>Item #8</li>
+        <li>Item #9</li>
+        <li>Item #10</li>
+    </ul>
+</div>
+```
+
+<p>To turn this into a sortable list, you just need to create the `Sortable` object and tell it the `container` and the `nodes`.</p>
+<p>The `nodes` can be any selector string that matches a child of the `container`. For performance reasons you will want to make the `container` an element that is as close to the `nodes` as possible. The farther away in the DOM the `container` is from the `nodes` the worse the performance will be.</p>
+
+```
+YUI().use('sortable', function(Y) {
+    var sortable = new Y.Sortable({
+        container: '#demo',
+        nodes: 'li',
+        opacity: '.1'
+    });
+});
+```
+
+<h4 id="events">Events</h4>
+
+<p>Sortable uses `DD.Delegate` under the hood to handle the Drag and Drop operations. It sets itself as the `bubbleTarget` of the `Delegate` instance, so all `DD`-related events are bubbled to it.</p>
+<p>For more information on `DD` related events, see the <a href="../dd/#events">events section on the Drag and Drop page</a>.</p>
+
+
+<h4 id="joining">Joining Lists</h4>
+
+<p>By default, a `Sortable` list can only interact with itself; you can't drag from one `Sortable` list to another. But a `Sortable` instance can be configured to be joined with another `Sortable` instance.</p>
+<p>There are four ways a `Sortable` list can be joined: `inner`, `outer`, `full` and `none` (`none` is the default).</p>
+
+<table>
+    <thead>
+        <tr>
+            <th nowrap="nowrap">Join Type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td nowrap="nowrap">`inner`</td>
+            <td>Items in the joined list can be moved into the main list but items in the main list can not be moved to the joined list.</td>
+        </tr>
+        <tr class="odd">
+            <td nowrap="nowrap">`outer`</td>
+            <td>Items in the main list can be moved into the joined list but items in the joined list can not be moved to the main list.</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`full`</td>
+            <td>All items in both lists can be moved into and out of any other joined list.</td>
+        </tr>
+        <tr class="odd">
+            <td nowrap="nowrap">`none`</td>
+            <td>The default join type. No interaction with other lists.</td>
+        </tr>
+    </tbody>
+</table>
+
+```
+YUI().use('sortable', function(Y) {
+    var sortable1 = new Y.Sortable({
+        container: '#demo1',
+        nodes: 'li',
+        opacity: '.1'
+    });
+
+    var sortable2 = new Y.Sortable({
+        container: '#demo2',
+        nodes: 'li',
+        opacity: '.1'
+    });
+
+    sortable1.join(sortable2, 'full');
+});
+```
+
+<p>You can also join multiple lists in multiple ways to get the experience you are looking for.</p>
+
+```
+YUI().use('sortable', function(Y) {
+    var sortable1 = new Y.Sortable({
+        container: '#demo1',
+        nodes: 'li',
+        opacity: '.1'
+    });
+
+    var sortable2 = new Y.Sortable({
+        container: '#demo2',
+        nodes: 'li',
+        opacity: '.1'
+    });
+
+    var sortable3 = new Y.Sortable({
+        container: '#demo3',
+        nodes: 'li',
+        opacity: '.1'
+    });
+
+    sortable1.join(sortable2, 'inner');
+    sortable2.join(sortable3, 'outer');
+
+    sortable3.join(sortable1, 'full');
+    sortable3.join(sortable2, 'full');
+});
+```
+
+<h4 id="plugins">Using DD Plugins</h4>
+<p>The `DD.Delegate` object bound to a `Sortable` instance is exposed to allow you to easily attach plugins to a `Sortable` instance.</p>
+<p>The `Sortable` instance has a `delegate` namespace, which is a reference to the internal `DD.Delegate` instance.</p>
+
+```
+var sortable = new Y.Sortable({
+    container: '#demo',
+    nodes: 'li'
+});
+
+sortable.delegate.dd.plug(SomeDDPlugin);
+```

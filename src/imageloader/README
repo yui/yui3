@@ -2,6 +2,12 @@ ImageLoader - Release Notes
 
 Development Master
 
+3.4.0
+
+ - Added classNameAction option for ImgGroup. Setting to "enhanced" means that when
+   using className on an <img> element, the src attribute is replaced rather than
+   simply removing the class name.
+
 3.3.0
  - No change
 

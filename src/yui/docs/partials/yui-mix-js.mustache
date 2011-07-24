@@ -1,0 +1,38 @@
+var Logging = function () {
+    var logger = null;
+    
+    return {
+        initLogger : function (logNode) {
+            if (!logger) {
+                logger = Y.one(logNode);
+            }
+        },
+
+        log : function (message) {
+            if (logger) {
+                logger.append('<p>' + message + '</p>');
+            }
+        }
+    }
+}();
+
+var PageController = function () {
+    var app_const = 12345;
+
+    return {
+
+        getConst : function () { 
+            return app_const;
+        },
+
+        logConst : function () {
+            this.initLogger('#demo_logger');
+            this.log('PageController class constant = ' + this.getConst() +
+                      ', logged courtesy of object augmentation via Y.mix.');
+        }
+    };
+}();
+
+Y.mix(PageController, Logging);
+
+Y.on('click', PageController.logConst, '#demo_btn', PageController);

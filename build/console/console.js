@@ -30,7 +30,6 @@ var getCN = Y.ClassNameManager.getClassName,
     ERROR          = 'error',
     HEIGHT         = 'height',
     INFO           = 'info',
-    INNER_HTML     = 'innerHTML',
     LAST_TIME      = 'lastTime',
     PAUSE          = 'pause',
     PAUSED         = 'paused',
@@ -182,7 +181,7 @@ Y.Console = Y.extend(Console, Y.Widget,
      */
     clearConsole : function () {
         // TODO: clear event listeners from console contents
-        this._body.set(INNER_HTML,'');
+        this._body.empty();
 
         this._cancelPrintLoop();
 
@@ -342,9 +341,7 @@ Y.Console = Y.extend(Console, Y.Widget,
 
         this.get('logSource').detach(this._evtCat + '*');
         
-        Y.Event.purgeElement(bb, true);
-
-        bb.set('innerHTML','');
+        bb.purge(true);
     },
 
     /**
@@ -361,7 +358,7 @@ Y.Console = Y.extend(Console, Y.Widget,
         // Apply positioning to the bounding box if appropriate
         var style = this.get('style');
         if (style !== 'block') {
-            this.get('boundingBox').addClass('yui3-'+style+'-console');
+            this.get('boundingBox').addClass(this.getClassName(style));
         }
     },
 
@@ -793,7 +790,9 @@ Y.Console = Y.extend(Console, Y.Widget,
     },
 
     /**
-     * Set the height of the Console container.  Set the body height to the difference between the configured height and the calculated heights of the header and footer.
+     * Set the height of the Console container.  Set the body height to the
+     * difference between the configured height and the calculated heights of
+     * the header and footer.
      * Overrides Widget.prototype._uiSetHeight.
      *
      * @method _uiSetHeight
@@ -839,11 +838,11 @@ Y.Console = Y.extend(Console, Y.Widget,
             after  = e.newVal;
 
         if ((!prop || prop === TITLE) && before.title !== after.title) {
-            cb.all(DOT+C_CONSOLE_TITLE).set(INNER_HTML, after.title);
+            cb.all(DOT+C_CONSOLE_TITLE).setContent(after.title);
         }
 
         if ((!prop || prop === PAUSE) && before.pause !== after.pause) {
-            cb.all(DOT+C_PAUSE_LABEL).set(INNER_HTML, after.pause);
+            cb.all(DOT+C_PAUSE_LABEL).setContent(after.pause);
         }
 
         if ((!prop || prop === CLEAR) && before.clear !== after.clear) {
@@ -928,7 +927,7 @@ Y.Console = Y.extend(Console, Y.Widget,
         bb[method](C_COLLAPSED);
 
         if (button) {
-            button.set('innerHTML',str);
+            button.setContent(str);
         }
 
         this._uiSetHeight(v ? this._head.get('offsetHeight'): this.get(HEIGHT));
@@ -1515,4 +1514,4 @@ Y.Console = Y.extend(Console, Y.Widget,
 });
 
 
-}, '@VERSION@' ,{requires:['substitute','widget'], lang:['en', 'es' ]});
+}, '@VERSION@' ,{lang:['en', 'es' ], requires:['substitute','widget','yui-log']});

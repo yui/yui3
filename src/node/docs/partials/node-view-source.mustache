@@ -1,0 +1,20 @@
+<button id="show">show</button>
+<button id="hide">hide</button>
+
+<div id="demo"><p>lorem ipsum dolor sit</p></div>
+
+<script type="text/javascript">
+YUI().use('node', function(Y) {
+    Y.delegate('click', function(e) {
+        var buttonID = e.currentTarget.get('id'),
+            node = Y.one('#demo');
+            
+        if (buttonID === 'show') {
+            node.show();
+        } else if (buttonID == 'hide') {
+            node.hide();
+        }
+
+    }, document, 'button');
+});
+</script>

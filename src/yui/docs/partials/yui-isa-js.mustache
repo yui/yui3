@@ -1,0 +1,48 @@
+YUI().use('node', function(Y) {
+    // This method is in the core of the library, so we don't have to use() any
+    // additional modules to access it.  However, this example requires 'node'.
+
+    var checkType = function (val) {
+        return {
+            'object'  : Y.Lang.isObject(val),
+            'array'   : Y.Lang.isArray(val),
+            'function': Y.Lang.isFunction(val),
+            'type'    : Y.Lang.type(val)
+        };
+    };
+
+    var populateRow = function (e, data) {
+        var target = e.target;
+            cell = target.get('parentNode'),
+            row  = cell.get('parentNode');
+
+        row.removeChild(cell);
+
+        var td0 = document.createElement('td'),
+            td1 = td0.cloneNode(false),
+            td2 = td0.cloneNode(false);
+            td3 = td0.cloneNode(false);
+
+        var results = checkType(data);
+
+        td0.appendChild(document.createTextNode(results['object']   ? 'Y' : 'N'));
+        td1.appendChild(document.createTextNode(results['array']    ? 'Y' : 'N'));
+        td2.appendChild(document.createTextNode(results['function'] ? 'Y' : 'N'));
+        td3.appendChild(document.createTextNode(results['type']));
+
+        row.appendChild(td0);
+        row.appendChild(td1);
+        row.appendChild(td2);
+        row.appendChild(td3);
+    };
+
+    var foo = function () {};
+    var f = Y.one('#demo');
+
+    Y.on('click',populateRow, '#demo-1', Y, null);
+    Y.on('click',populateRow, '#demo-2', Y, []);
+    Y.on('click',populateRow, '#demo-3', Y, {});
+    Y.on('click',populateRow, '#demo-4', Y, foo);
+    Y.on('click',populateRow, '#demo-5', Y, new foo());
+
+});

@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>Recordset Tests</title>
-<script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
+<script type="text/javascript" src="../../../build/yui/yui-min.js"></script>
 </head>
 
 <body class="yui3-skin-sam">
@@ -12,10 +12,8 @@
 <script type="text/javascript">
 (function() {
     YUI({
-        base: "../../../build/",
-        filter: "debug",
-        logInclude:{"TestRunner":true},
-        useConsole: true
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+        allowRollup: false
     }).use("console", "test", "dump", "recordset", function(Y) {
 	
 
@@ -72,12 +70,45 @@
 			},
 			
 			//---------------------------------------------
+		    // Instantiation
+		    //---------------------------------------------
+
+			testCreateEmptyRecordset: function() {
+				var rs = new Y.Recordset(),
+					rem;
+					
+				rs.on('remove', function(e) {
+					rem = e.removed;
+				});
+				
+				//instantiate empty recordset
+				Y.Assert.isTrue(rs instanceof Y.Recordset);
+				
+				
+				//perform operations on it
+				rs.add({a:1, b:2, c:3});
+				Y.ObjectAssert.areEqual(rs.getRecord(0).getValue(), {a:1, b:2, c:3});
+				
+				rs.add([{a:'hey', b:'yo', c:'hi!'}, {a:2, b:5, c:6}]);
+				Y.ObjectAssert.areEqual(rs.getRecord(2).getValue(), {a:2, b:5, c:6});
+				Y.Assert.areEqual(3, rs.getLength());
+				
+				rs.remove(2);
+				Y.Assert.areEqual(2, rs.getLength());
+				Y.ObjectAssert.areEqual(rem[0].getValue(), {a:2, b:5, c:6});
+				
+			},
+			
+			//---------------------------------------------
 		    // Get Records
 		    //---------------------------------------------
 			
 			testGetRecords: function() {
 				var newRecord,newRecord1, newRecord2, id;
-								
+				//this.rs.get('records');
+				// var newrs = new Y.Recordset({records: [{a:10,b:10,c:10}]});
+				// newrs.get('records');		
+						
 				//Single Record
 				newRecord1 = this.rs.getRecordByIndex(1);
 				newRecord2 = this.rs.getRecord(1);
@@ -97,7 +128,6 @@
 				Y.ObjectAssert.areEqual(newRecord, this.rs.getRecordByIndex(0));
 								
 			},
-		
 		
 			//---------------------------------------------
 		    // Add Records
@@ -239,153 +269,7 @@
 					Y.Assert.isUndefined(retval[i]);
 				}
 			},
-			
-			/** These are OLD UPDATE TESTS - Update was split up into update() and splice()
-			 *
-			 *
-			//---------------------------------------------
-		    // Update Records - without overwriteFlag
-		    //---------------------------------------------
-		
-			testUpdateRecordAtIndexWithoutOverwriteFlag: function() {
-				var newRecord, index=1, oldRecord;
-				
 
-				//Update record at given index with new record
-				newRecord = new Y.Record({data:{a:'newA', b:'newB', c:'newC'}});
-				oldRecord = this.rs.getRecordByIndex(index);
-				
-				this.rs.on('update', function(e) {
-					Y.ObjectAssert.areEqual(newRecord, e.data.updated[0], 'Updated record is != to new record');
-					Y.ObjectAssert.areEqual(oldRecord, e.data.overwritten[0], 'Overwritten record is != to old record');
-					Y.Assert.areEqual(1, e.data.overwritten.length, 'overwritten array is not of expected length');
-					Y.Assert.areEqual(index, e.index, "correct index was modified");
-				});
-						
-				this.rs.update(newRecord, index);
-				Y.ObjectAssert.areEqual(newRecord.getValue(), this.rs.getRecordByIndex(index).getValue());
-				
-
-				
-				
-			},
-			
-			testUpdateRecordsAtIndexWithoutOverwriteFlag: function() {
-				
-				var newRecords = [], index=0, oldRecord, a, b;
-				
-				oldRecord = this.rs.getRecordByIndex(index);
-				a = new Y.Record({data:{a:'newA', b:'newB', c:'newC'}});
-				b = new Y.Record({data:{a:'newD', b:'newE', c:'newF'}});
-				
-				newRecords.push(a);
-				newRecords.push(b);
-				
-				this.rs.on('update', function(e) {
-					Y.ObjectAssert.areEqual(newRecords, e.data.updated, 'Updated record is != to new record');
-					Y.ObjectAssert.areEqual(oldRecord, e.data.overwritten[0], 'Overwritten record is != to old record');
-					Y.Assert.areEqual(1, e.data.overwritten.length, 'overwritten array is not of expected length');
-					Y.Assert.areEqual(index, e.index, "correct index was modified");
-				});
-				
-				this.rs.update(newRecords, index);
-				
-				//check that the two elements in the recordset are the same as the ones pushed in
-				Y.ObjectAssert.areEqual(a.getValue(), this.rs.getRecordByIndex(0).getValue());
-				Y.ObjectAssert.areEqual(b.getValue(), this.rs.getRecordByIndex(1).getValue());
-				Y.ObjectAssert.areEqual(this.initialData[1], this.rs.getRecordByIndex(2).getValue());
-				
-				//3 initial records + 1 more added  (the other was just over-written)= 4 total records in recordset
-				Y.Assert.areEqual(4, this.rs.get('records').length);	
-				
-			},
-			
-			//---------------------------------------------
-		    // Update Records - with overwriteFlag
-		    //---------------------------------------------
-			
-			testUpdateRecordAtIndexWithOverwriteFlag: function() {
-				var newRecord, oldRecord, index=1;
-				
-				newRecord = new Y.Record({data: {a:'newG', b:'newH', c:'newI'}});
-				oldRecord = this.rs.getRecordByIndex(index);
-				
-				this.rs.on('update', function(e) {
-					//console.log(e.data);
-					Y.ObjectAssert.areEqual(newRecord, e.data.updated[0], 'Updated record is != to new record');
-					Y.ObjectAssert.areEqual(oldRecord, e.data.overwritten[0], 'Overwritten record is != to old record');
-					Y.Assert.areEqual(1, e.data.overwritten.length, 'overwritten array is not of expected length');
-					Y.Assert.areEqual(1, e.data.updated.length);
-					Y.Assert.areEqual(index, e.index, "correct index was modified");
-				});
-				
-				
-				this.rs.update(newRecord, index, true);
-				Y.ObjectAssert.areEqual(newRecord.getValue(), this.rs.getRecordByIndex(index).getValue());
-			},
-			
-			testUpdateRecordsAtIndexWithOverwriteFlag: function() {
-				
-				var newRecords = [], index=0, oldRecords=[], a, b, c;
-				
-				oldRecords = this.rs.getRecordsByIndex(index,3);
-				//console.log(oldRecords);
-				a = new Y.Record({data:{a:'newA', b:'newB', c:'newC'}});
-				b = new Y.Record({data:{a:'newD', b:'newE', c:'newF'}});
-				c = new Y.Record({data:{a:'newG', b:'newH', c:'newI'}});
-				
-				newRecords.push(a);
-				newRecords.push(b);
-				newRecords.push(c);
-				
-				this.rs.on('update', function(e) {
-					Y.ObjectAssert.areEqual(newRecords, e.data.updated, 'Updated record is != to new record');
-					
-					for(var i=0; i < oldRecords.length; i++) {
-						//Y.ObjectAssert.areEqual(oldRecords[i].getValue(), e.data.overwritten[i].getValue(), 'Overwritten record is != to old record');
-					}
-					
-					Y.Assert.areEqual(3, e.data.overwritten.length, 'overwritten array is not of expected length');
-					Y.Assert.areEqual(index, e.index, "correct index was modified");
-				});
-				
-				this.rs.update(newRecords, index, true);
-				
-				//check that the two elements in the recordset are the same as the ones pushed in
-				Y.ObjectAssert.areEqual(a.getValue(), this.rs.getRecordByIndex(0).getValue());
-				Y.ObjectAssert.areEqual(b.getValue(), this.rs.getRecordByIndex(1).getValue());
-				Y.ObjectAssert.areEqual(c.getValue(), this.rs.getRecordByIndex(2).getValue());
-				
-				//3 initial records - all 3 overwritten
-				Y.Assert.areEqual(3, this.rs.get('records').length);	
-				
-			},
-			
-			
-			testUpdateRecordWithData: function() {
-				var oData = {a:'newJ', b:'newK', c:'newL'}, oldRecord, index=2;
-				
-				oldRecord = this.rs.getRecordByIndex(index);
-				this.rs.on('update', function(e) {
-
-					Y.ObjectAssert.areEqual(oData, e.data.updated[0].getValue(), 'Updated record != equal to new record');
-					Y.ObjectAssert.areEqual(oldRecord, e.data.overwritten[0], 'Overwritten record != equal to old record');
-					Y.Assert.areEqual(1, e.data.overwritten.length, 'overwritten array is not of expected length');
-					Y.Assert.areEqual(1, e.data.updated.length);
-					Y.Assert.areEqual(index, e.index, "correct index was modified");
-				});
-
-				this.rs.update(oData, index);
-				Y.ObjectAssert.areEqual(oData, this.rs.getRecordByIndex(index).getValue());
-				
-			},
-			
-			 * 
-			 *<-- END OLD UPDATE TESTS -->
-			 */
-			
-			
-			
 			testUpdateRecordAtIndex: function() {
 				var newRecord, oldRecord, index=1;
 				var o = {a:'newG', b:'newH', c:'newI'};
@@ -481,7 +365,7 @@
 				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(1).get('id')], this.rs.getRecordByIndex(1));
 				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(2).get('id')], this.rs.getRecordByIndex(2));
 				//console.log(hashTable);
-				Y.Assert.areEqual(2, Y.Object.size(hashTable));
+				Y.Assert.areEqual(3, Y.Object.size(hashTable));
 			},
 			
 			
@@ -1030,7 +914,6 @@
 							
 							
 			}
-						
 			
 			
         });

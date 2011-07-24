@@ -1,5 +1,4 @@
-/**
- * Define new DOM events that can be subscribed to from Nodes.
+/* Define new DOM events that can be subscribed to from Nodes.
  *
  * @module event
  * @submodule event-synthetic
@@ -9,6 +8,7 @@ var DOMMap   = Y.Env.evt.dom_map,
     YLang    = Y.Lang,
     isObject = YLang.isObject,
     isString = YLang.isString,
+    isArray  = YLang.isArray,
     query    = Y.Selector.query,
     noop     = function () {};
 
@@ -66,7 +66,8 @@ Notifier.prototype.fire = function (e) {
         sub      = handle.sub,
         thisObj  = sub.context,
         delegate = sub.filter,
-        event    = e || {};
+        event    = e || {},
+        ret;
 
     if (this.emitFacade) {
         if (!e || !e.preventDefault) {
@@ -91,10 +92,102 @@ Notifier.prototype.fire = function (e) {
     }
 
     sub.context = thisObj || event.currentTarget || ce.host;
-    ce.fire.apply(ce, args);
+    ret = ce.fire.apply(ce, args);
     sub.context = thisObj; // reset for future firing
+
+    // to capture callbacks that return false to stopPropagation.
+    // Useful for delegate implementations
+    return ret;
 };
 
+/**
+ * Manager object for synthetic event subscriptions to aggregate multiple synths on the same node without colliding with actual DOM subscription entries in the global map of DOM subscriptions.  Also facilitates proper cleanup on page unload.
+ *
+ * @class SynthRegistry
+ * @constructor
+ * @param el {HTMLElement} the DOM element
+ * @param yuid {String} the yuid stamp for the element
+ * @param key {String} the generated id token used to identify an event type +
+ *                     element in the global DOM subscription map.
+ * @private
+ */
+function SynthRegistry(el, yuid, key) {
+    this.handles = [];
+    this.el      = el;
+    this.key     = key;
+    this.domkey  = yuid;
+}
+
+SynthRegistry.prototype = {
+    constructor: SynthRegistry,
+
+    // A few object properties to fake the CustomEvent interface for page
+    // unload cleanup.  DON'T TOUCH!
+    type      : '_synth',
+    fn        : noop,
+    capture   : false,
+
+    /**
+     * Adds a subscription from the Notifier registry.
+     *
+     * @method register
+     * @param handle {EventHandle} the subscription
+     * @since 3.4.0
+     */
+    register: function (handle) {
+        handle.evt.registry = this;
+        this.handles.push(handle);
+    },
+
+    /**
+     * Removes the subscription from the Notifier registry.
+     *
+     * @method _unregisterSub
+     * @param sub {Subscription} the subscription
+     * @since 3.4.0
+     */
+    unregister: function (sub) {
+        var handles = this.handles,
+            events = DOMMap[this.domkey],
+            i;
+
+        for (i = handles.length - 1; i >= 0; --i) {
+            if (handles[i].sub === sub) {
+                handles.splice(i, 1);
+                break;
+            }
+        }
+
+        // Clean up left over objects when there are no more subscribers.
+        if (!handles.length) {
+            delete events[this.key];
+            if (!Y.Object.size(events)) {
+                delete DOMMap[this.domkey];
+            }
+        }
+    },
+
+    /**
+     * Used by the event system's unload cleanup process.  When navigating
+     * away from the page, the event system iterates the global map of element
+     * subscriptions and detaches everything using detachAll().  Normally,
+     * the map is populated with custom events, so this object needs to
+     * at least support the detachAll method to duck type its way to
+     * cleanliness.
+     *
+     * @method detachAll
+     * @private
+     * @since 3.4.0
+     */
+    detachAll : function () {
+        var handles = this.handles,
+            i = handles.length;
+
+        while (--i >= 0) {
+            handles[i].detach();
+        }
+    }
+};
 
 /**
  * <p>Wrapper class for the integration of new events into the YUI event
@@ -116,6 +209,7 @@ function SyntheticEvent() {
 
 Y.mix(SyntheticEvent, {
     Notifier: Notifier,
+    SynthRegistry: SynthRegistry,
 
     /**
      * Returns the array of subscription handles for a node for the given event
@@ -136,30 +230,18 @@ Y.mix(SyntheticEvent, {
         var el     = node._node,
             yuid   = Y.stamp(el),
             key    = 'event:' + yuid + type + '_synth',
-            events = DOMMap[yuid] || (DOMMap[yuid] = {});
-
-        if (!events[key] && create) {
-            events[key] = {
-                type      : '_synth',
-                fn        : noop,
-                capture   : false,
-                el        : el,
-                key       : key,
-                domkey    : yuid,
-                notifiers : [],
-
-                detachAll : function () {
-                    var notifiers = this.notifiers,
-                        i = notifiers.length;
-
-                    while (--i >= 0) {
-                        notifiers[i].detach();
-                    }
-                }
-            };
+            events = DOMMap[yuid];
+            
+        if (create) {
+            if (!events) {
+                events = DOMMap[yuid] = {};
+            }
+            if (!events[key]) {
+                events[key] = new SynthRegistry(el, yuid, key);
+            }
         }
 
-        return (events[key]) ? events[key].notifiers : null;
+        return (events && events[key]) || null;
     },
 
     /**
@@ -180,7 +262,7 @@ Y.mix(SyntheticEvent, {
             this.subCount = 0;
 
             synth[method](sub.node, sub, this.notifier, sub.filter);
-            synth._unregisterSub(sub);
+            this.registry.unregister(sub);
 
             delete sub.fn;
             delete sub.node;
@@ -354,6 +436,8 @@ Y.mix(SyntheticEvent, {
          */
         _on: function (args, delegate) {
             var handles  = [],
+                originalArgs = args.slice(),
+                extra    = this.processArgs(args, delegate),
                 selector = args[2],
                 method   = delegate ? 'delegate' : 'on',
                 nodes, handle;
@@ -363,7 +447,7 @@ Y.mix(SyntheticEvent, {
 
             if (!nodes.length && isString(selector)) {
                 handle = Y.on('available', function () {
-                    Y.mix(handle, Y[method].apply(Y, args), true);
+                    Y.mix(handle, Y[method].apply(Y, originalArgs), true);
                 }, selector);
 
                 return handle;
@@ -371,13 +455,11 @@ Y.mix(SyntheticEvent, {
 
             Y.Array.each(nodes, function (node) {
                 var subArgs = args.slice(),
-                    extra, filter;
+                    filter;
 
                 node = Y.one(node);
 
                 if (node) {
-                    extra = this.processArgs(subArgs, delegate);
-
                     if (delegate) {
                         filter = subArgs.splice(3, 1)[0];
                     }
@@ -385,12 +467,10 @@ Y.mix(SyntheticEvent, {
                     // (type, fn, el, thisObj, ...) => (fn, thisObj, ...)
                     subArgs.splice(0, 4, subArgs[1], subArgs[3]);
 
-                    if (!this.preventDups || !this.getSubs(node, args,null,true)) {
-                        handle = this._getNotifier(node, subArgs, extra,filter);
-
-                        this[method](node, handle.sub, handle.notifier, filter);
-
-                        handles.push(handle);
+                    if (!this.preventDups ||
+                        !this.getSubs(node, args, null, true))
+                    {
+                        handles.push(this._subscribe(node, method, subArgs, extra, filter));
                     }
                 }
             }, this);
@@ -402,10 +482,12 @@ Y.mix(SyntheticEvent, {
 
         /**
          * Creates a new Notifier object for use by this event's
-         * <code>on(...)</code> or <code>delegate(...)</code> implementation.
+         * <code>on(...)</code> or <code>delegate(...)</code> implementation
+         * and register the custom event proxy in the DOM system for cleanup.
          *
-         * @method _getNotifier
+         * @method _subscribe
          * @param node {Node} the Node hosting the event
+         * @param method {String} "on" or "delegate"
          * @param args {Array} the subscription arguments passed to either
          *              <code>Y.on(...)</code> or <code>Y.delegate(...)</code>
          *              after running through <code>processArgs(args)</code> to
@@ -415,22 +497,22 @@ Y.mix(SyntheticEvent, {
          * @param filter {String|Function} the selector string or function
          *              filter passed to <code>Y.delegate(...)</code> (not
          *              present when called from <code>Y.on(...)</code>)
-         * @return {SyntheticEvent.Notifier}
+         * @return {EventHandle}
          * @private
          * @since 3.2.0
          */
-        _getNotifier: function (node, args, extra, filter) {
+        _subscribe: function (node, method, args, extra, filter) {
             var dispatcher = new Y.CustomEvent(this.type, this.publishConfig),
                 handle     = dispatcher.on.apply(dispatcher, args),
                 notifier   = new Notifier(handle, this.emitFacade),
                 registry   = SyntheticEvent.getRegistry(node, this.type, true),
                 sub        = handle.sub;
 
-            handle.notifier   = notifier;
-
             sub.node   = node;
             sub.filter = filter;
-            sub._extra = extra;
+            if (extra) {
+                this.applyArgExtras(extra, sub);
+            }
 
             Y.mix(dispatcher, {
                 eventDef     : this,
@@ -443,31 +525,36 @@ Y.mix(SyntheticEvent, {
                 _delete      : SyntheticEvent._deleteSub
             }, true);
 
-            registry.push(handle);
+            handle.notifier = notifier;
+
+            registry.register(handle);
+
+            // Call the implementation's "on" or "delegate" method
+            this[method](node, sub, notifier, filter);
 
             return handle;
         },
 
         /**
-         * Removes the subscription from the Notifier registry.
+         * <p>Implementers MAY provide this method definition.</p>
          *
-         * @method _unregisterSub
-         * @param sub {Subscription} the subscription
-         * @private
-         * @since 3.2.0
+         * <p>Implement this function if you want extra data extracted during
+         * processArgs to be propagated to subscriptions on a per-node basis.
+         * That is to say, if you call <code>Y.on('xyz', fn, xtra, 'div')</code>
+         * the data returned from processArgs will be shared
+         * across the subscription objects for all the divs.  If you want each
+         * subscription to receive unique information, do that processing
+         * here.</p>
+         *
+         * <p>The default implementation adds the data extracted by processArgs
+         * to the subscription object as <code>sub._extra</code>.</p>
+         *
+         * @method applyArgExtras
+         * @param extra {any} Any extra data extracted from processArgs
+         * @param sub {Subscription} the individual subscription
          */
-        _unregisterSub: function (sub) {
-            var notifiers = SyntheticEvent.getRegistry(sub.node, this.type),
-                i;
-
-            if (notifiers) {
-                for (i = notifiers.length - 1; i >= 0; --i) {
-                    if (notifiers[i].sub === sub) {
-                        notifiers.splice(i, 1);
-                        break;
-                    }
-                }
-            }
+        applyArgExtras: function (extra, sub) {
+            sub._extra = extra;
         },
 
         /**
@@ -520,25 +607,27 @@ Y.mix(SyntheticEvent, {
          *              for inclusion in the returned array
          * @param first {Boolean} stop after the first match (used to check for
          *              duplicate subscriptions)
-         * @return {Array} detach handles for the matching subscriptions
+         * @return {EventHandle[]} detach handles for the matching subscriptions
          */
         getSubs: function (node, args, filter, first) {
-            var notifiers = SyntheticEvent.getRegistry(node, this.type),
-                handles = [],
-                i, len, handle;
+            var registry = SyntheticEvent.getRegistry(node, this.type),
+                handles  = [],
+                allHandles, i, len, handle;
 
-            if (notifiers) {
+            if (registry) {
+                allHandles = registry.handles;
+
                 if (!filter) {
                     filter = this.subMatch;
                 }
 
-                for (i = 0, len = notifiers.length; i < len; ++i) {
-                    handle = notifiers[i];
+                for (i = 0, len = allHandles.length; i < len; ++i) {
+                    handle = allHandles[i];
                     if (filter.call(this, handle.sub, args)) {
                         if (first) {
                             return handle;
                         } else {
-                            handles.push(notifiers[i]);
+                            handles.push(allHandles[i]);
                         }
                     }
                 }
@@ -685,38 +774,46 @@ Y.SyntheticEvent = SyntheticEvent;
  * @in event-synthetic
  */
 Y.Event.define = function (type, config, force) {
-    if (!config) {
-        config = {};
+    var eventDef, Impl, synth;
+
+    if (type && type.type) {
+        eventDef = type;
+        force = config;
+    } else if (config) {
+        eventDef = Y.merge({ type: type }, config);
     }
 
-    var eventDef = (isObject(type)) ? type : Y.merge({ type: type }, config),
-        Impl, synth;
+    if (eventDef) {
+        if (force || !Y.Node.DOM_EVENTS[eventDef.type]) {
+            Impl = function () {
+                SyntheticEvent.apply(this, arguments);
+            };
+            Y.extend(Impl, SyntheticEvent, eventDef);
+            synth = new Impl();
 
-    if (force || !Y.Node.DOM_EVENTS[eventDef.type]) {
-        Impl = function () {
-            SyntheticEvent.apply(this, arguments);
-        };
-        Y.extend(Impl, SyntheticEvent, eventDef);
-        synth = new Impl();
+            type = synth.type;
 
-        type = synth.type;
+            Y.Node.DOM_EVENTS[type] = Y.Env.evt.plugins[type] = {
+                eventDef: synth,
 
-        Y.Node.DOM_EVENTS[type] = Y.Env.evt.plugins[type] = {
-            eventDef: synth,
+                on: function () {
+                    return synth._on(toArray(arguments));
+                },
 
-            on: function () {
-                return synth._on(toArray(arguments));
-            },
+                delegate: function () {
+                    return synth._on(toArray(arguments), true);
+                },
 
-            delegate: function () {
-                return synth._on(toArray(arguments), true);
-            },
+                detach: function () {
+                    return synth._detach(toArray(arguments));
+                }
+            };
 
-            detach: function () {
-                return synth._detach(toArray(arguments));
-            }
-        };
-
+        }
+    } else if (isString(type) || isArray(type)) {
+        Y.Array.each(toArray(type), function (t) {
+            Y.Node.DOM_EVENTS[t] = 1;
+        });
     }
 
     return synth;

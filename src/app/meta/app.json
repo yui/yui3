@@ -1,0 +1,32 @@
+{
+    "app": {
+        "use": ["controller", "model", "model-list", "view"],
+
+        "submodules": {
+            "controller": {
+                "optional": ["querystring-parse"],
+                "requires": ["array-extras", "base-build", "history"]
+            },
+
+            "model": {
+                "requires": ["base-build", "escape", "json-parse"]
+            },
+
+            "model-list": {
+                "requires": [
+                    "array-extras",
+                    "array-invoke",
+                    "arraylist",
+                    "base-build",
+                    "escape",
+                    "json-parse",
+                    "model"
+                ]
+            },
+
+            "view": {
+                "requires": ["base-build", "node-event-delegate"]
+            }
+        }
+    }
+}

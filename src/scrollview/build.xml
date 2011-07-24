@@ -1,37 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="YUI" default="local">
-    <description>ScrollView - Build All Modules</description>
+    <description>Build All Modules</description>
+
+    <macrodef name="build-module">
+        <attribute name="target"/>
+        <sequential>
+            <ant antfile="build.scrollview.xml" target="@{target}"/>
+            <ant antfile="build.scrollview-base.xml" target="@{target}"/>
+            <ant antfile="build.scrollview-base-ie.xml" target="@{target}"/>
+            <ant antfile="build.scrollview-list.xml" target="@{target}"/>
+            <ant antfile="build.scrollview-paginator.xml" target="@{target}"/>
+            <ant antfile="build.scrollview-scrollbars.xml" target="@{target}"/>
+        </sequential>
+    </macrodef>
 
     <target name="local">
-    	<ant antfile="build.scrollview.xml" target="local" />
-    	<ant antfile="build.scrollview-base.xml" target="local" />
-        <ant antfile="build.scrollview-base-ie.xml" target="local" />
-    	<ant antfile="build.scrollview-scrollbars.xml" target="local" />
-    	<ant antfile="build.scrollview-paginator.xml" target="local" />
+        <build-module target="local"/>
     </target>
-
     <target name="deploy">
-    	<ant antfile="build.scrollview.xml" target="deploy" />
-    	<ant antfile="build.scrollview-base.xml" target="deploy" />
-        <ant antfile="build.scrollview-base-ie.xml" target="deploy" />
-    	<ant antfile="build.scrollview-scrollbars.xml" target="deploy" />
-    	<ant antfile="build.scrollview-paginator.xml" target="deploy" />
+        <build-module target="deploy"/>
     </target>
-
     <target name="all">
-    	<ant antfile="build.scrollview.xml" target="all" />
-    	<ant antfile="build.scrollview-base.xml" target="all" />
-        <ant antfile="build.scrollview-base-ie.xml" target="all" />
-    	<ant antfile="build.scrollview-scrollbars.xml" target="all" />
-    	<ant antfile="build.scrollview-paginator.xml" target="all" />
+        <build-module target="all"/>
     </target>
-
     <target name="clean">
-    	<ant antfile="build.scrollview.xml" target="clean" />
-    	<ant antfile="build.scrollview-base.xml" target="clean" />
-        <ant antfile="build.scrollview-base-ie.xml" target="clean" />
-    	<ant antfile="build.scrollview-scrollbars.xml" target="clean" />
-    	<ant antfile="build.scrollview-paginator.xml" target="clean" />
+        <build-module target="clean"/>
     </target>
 
 </project>

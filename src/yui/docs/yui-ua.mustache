@@ -1,0 +1,84 @@
+<div class="intro">
+<p>This example demonstrates how to access YUI's built-in user-agent
+information to learn things about the environment in which your code
+is running.  This includes information like what browser, version, and
+operating system are being used; it also includes context information
+like whether you're code is running on a mobile browser, running in a
+secure page, or running under Adobe Air or Google Caja.</p>  
+
+<p><strong>Note:</strong> We strongly recommend using feature
+detection rather than user-agent sniffing to fork code. Fork on the
+user-agent information only when absolutely necessary to do so (for 
+example, in cases where browsers do not report their own capabilities
+accurately).</p>
+</div>
+
+<div class="example">
+    {{>yui-ua}}
+</div>
+
+<h3>First, a word of caution</h3>
+
+<p><strong>Please DO NOT use this in place of feature detection</strong>.
+Though many browsers have known JavaScript implementation quirks, it is bad
+practice and unsafe coding to make the assumption that because the page is being
+viewed in browser X that you can rely on feature Y being available.  Check for
+feature Y if you need it.</p>
+
+<p>Browser sniffing is an imprecise science, and relies on many things in the
+browser environment to be just right.  Though many techniques are very
+accurate, 100% accuracy can't be guaranteed.</p>
+
+<p>Use the `UA` object to inform you of what browser your
+page is being viewed in, but avoid using this technique unless feature detection
+will not serve your purpose.</p>
+
+<h3>What UA looks like</h3>
+
+<p>`UA` is an object literal containing keys for most major user
+agents.  The key corresponding to the current browser is assigned a version
+number.  All others have value 0, with the exception of the `mobile`
+property, which is a string value indicating the name of a supported mobile 
+device that was detected or null.</p>
+
+```
+if (Y.UA.gecko > 0) {}  // e.g. Firefox
+if (Y.UA.ie > 0) {}     // Microsoft Internet Explorer
+
+// Or leverage boolean coercion -- 0 evaluates as false
+if (Y.UA.opera) {}  // Opera
+if (Y.UA.webkit) {} // Safari, Webkit
+```
+
+<p>There's more information on the `UA` object and value
+ranges in the API Documentation.</p>
+
+<h3>Instantiate YUI</h3>
+
+```
+YUI().use('node', function(Y) {
+    // This method is in the core of the library, so we don't have to use() any
+    // additional modules to access it.  However, this example requires 'node'.
+```
+
+<h3>User Agent Info</h3>
+<p>In this simple example, we use the `each` to iterate the `UA` object.</p>
+
+```
+var results = Y.one('#demo'), ua = '', patform = '';
+
+Y.each(Y.UA, function(v, k) {
+    var info = k + ': ' + v;
+    results.append('<p>' + info + '</p>');
+
+    if (v) {
+        if (Y.Lang.isNumber(v)) {
+            ua = info;
+        } else {
+            platform = v;
+        }
+    }
+});
+
+results.append('<p>Your browser is ' + ua + ', ' + platform + '</p>');
+```

@@ -15,7 +15,7 @@
 
 /**
  * Base class for the DataTable widget.
- * @class DataSource.Base
+ * @class DataTable.Base
  * @extends Widget
  * @constructor
  */
@@ -62,6 +62,7 @@ Y.mix(DTBase, {
         * @type Array | Y.Recordset
         */
         recordset: {
+            valueFn: '_initRecordset',
             setter: "_setRecordset"
         },
 
@@ -78,15 +79,19 @@ Y.mix(DTBase, {
         },*/
 
         /**
-        * @attribute strings
-        * @description The collection of localizable strings used to label
-        * elements of the UI.
-        * @type Object
+        * @attribute summary
+        * @description Summary.
+        * @type String
         */
-        strings: {
-            valueFn: function() {
-                return Y.Intl.get("datatable-base");
-            }
+        summary: {
+        },
+
+        /**
+        * @attribute caption
+        * @description Caption
+        * @type String
+        */
+        caption: {
         },
 
         /**
@@ -142,7 +147,7 @@ Y.extend(DTBase, Y.Widget, {
     * @property thTemplate
     * @description Tokenized markup template for TH node creation.
     * @type String
-    * @default '<th id="{id}" rowspan="{rowspan}" colspan="{colspan}"><div class="'+CLASS_LINER+'">{value}</div></th>'
+    * @default '<th id="{id}" rowspan="{rowspan}" colspan="{colspan}" class="{classnames}" abbr="{abbr}"><div class="'+CLASS_LINER+'">{value}</div></th>'
     */
     thTemplate: TEMPLATE_TH,
 
@@ -184,18 +189,6 @@ Y.extend(DTBase, Y.Widget, {
     //
     /////////////////////////////////////////////////////////////////////////////
     /**
-     * Updates the UI if changes are made to any of the strings in the strings
-     * attribute.
-     *
-     * @method _afterStringsChange
-     * @param e {Event} Custom event for the attribute change.
-     * @protected
-     */
-    _afterStringsChange: function (e) {
-        this._uiSetStrings(e.newVal);
-    },
-
-    /**
     * @method _setColumnset
     * @description Converts Array to Y.Columnset.
     * @param columns {Array | Y.Columnset}
@@ -207,11 +200,11 @@ Y.extend(DTBase, Y.Widget, {
     },
 
     /**
-     * Updates the UI if changes are made to Columnset.
+     * Updates the UI if Columnset is changed.
      *
      * @method _afterColumnsetChange
      * @param e {Event} Custom event for the attribute change.
-     * @private
+     * @protected
      */
     _afterColumnsetChange: function (e) {
         this._uiSetColumnset(e.newVal);
@@ -232,32 +225,56 @@ Y.extend(DTBase, Y.Widget, {
         rs.addTarget(this);
         return rs;
     },
-
+    
     /**
+    * Updates the UI if Recordset is changed.
+    *
     * @method _afterRecordsetChange
-    * @description Adds bubble target.
-    * @param records {Array | Y.Recordset}
-    * @returns Y.Recordset
-    * @private
+    * @param e {Event} Custom event for the attribute change.
+    * @protected
     */
     _afterRecordsetChange: function (e) {
         this._uiSetRecordset(e.newVal);
     },
 
-    /////////////////////////////////////////////////////////////////////////////
+    /**
+    * Updates the UI if Recordset records are changed.
+    *
+    * @method _afterRecordsChange
+    * @param e {Event} Custom event for the attribute change.
+    * @protected
+    */
+    _afterRecordsChange: function (e) {
+        this._uiSetRecordset(this.get('recordset'));
+    },
+
+    /**
+     * Updates the UI if summary is changed.
+     *
+     * @method _afterSummaryChange
+     * @param e {Event} Custom event for the attribute change.
+     * @protected
+     */
+    _afterSummaryChange: function (e) {
+        this._uiSetSummary(e.newVal);
+    },
+
+    /**
+     * Updates the UI if caption is changed.
+     *
+     * @method _afterCaptionChange
+     * @param e {Event} Custom event for the attribute change.
+     * @protected
+     */
+    _afterCaptionChange: function (e) {
+        this._uiSetCaption(e.newVal);
+    },
+
+    ////////////////////////////////////////////////////////////////////////////
     //
     // METHODS
     //
-    /////////////////////////////////////////////////////////////////////////////
-    /**
-    * Initializer.
-    *
-    * @method initializer
-    * @param config {Object} Config object.
-    * @private
-    */
-    initializer: function(config) {
-    },
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
     * Destructor.
@@ -268,7 +285,7 @@ Y.extend(DTBase, Y.Widget, {
     destructor: function() {
          this.get("recordset").removeTarget(this);
     },
-
+    
     ////////////////////////////////////////////////////////////////////////////
     //
     // RENDER
@@ -283,17 +300,22 @@ Y.extend(DTBase, Y.Widget, {
     */
     renderUI: function() {
         // TABLE
-        return (this._addTableNode(this.get("contentBox")) &&
+        this._addTableNode(this.get("contentBox"));
+
         // COLGROUP
-        this._addColgroupNode(this._tableNode) &&
+        this._addColgroupNode(this._tableNode);
+
         // THEAD
-        this._addTheadNode(this._tableNode) &&
+        this._addTheadNode(this._tableNode);
+
         // Primary TBODY
-        this._addTbodyNode(this._tableNode) &&
+        this._addTbodyNode(this._tableNode);
+
         // Message TBODY
-        this._addMessageNode(this._tableNode) &&
+        this._addMessageNode(this._tableNode);
+
         // CAPTION
-        this._addCaptionNode(this._tableNode));
+        this._addCaptionNode(this._tableNode);
    },
 
     /**
@@ -321,7 +343,7 @@ Y.extend(DTBase, Y.Widget, {
     */
     _addColgroupNode: function(tableNode) {
         // Add COLs to DOCUMENT FRAGMENT
-        var len = this.get("columnset").get("keys").length,
+        var len = this.get("columnset").keys.length,
             i = 0,
             allCols = ["<colgroup>"];
 
@@ -387,9 +409,7 @@ Y.extend(DTBase, Y.Widget, {
     * @returns Y.Node
     */
     _addCaptionNode: function(tableNode) {
-        //TODO: node.createCaption
-        this._captionNode = tableNode.invoke("createCaption");
-        return this._captionNode;
+        this._captionNode = Y.Node.create('<caption></caption>');
     },
 
     ////////////////////////////////////////////////////////////////////////////
@@ -405,128 +425,25 @@ Y.extend(DTBase, Y.Widget, {
     * @private
     */
     bindUI: function() {
-        var tableNode = this._tableNode,
-            contentBox = this.get("contentBox"),
-            theadFilter = "thead."+CLASS_COLUMNS+">tr>th",
-            tbodyFilter ="tbody."+CLASS_DATA+">tr>td",
-            msgFilter = "tbody."+CLASS_MSG+">tr>td";
-            
-        // Define custom events that wrap DOM events. Simply pass through DOM
-        // event facades.
-        //TODO: do we need queuable=true?
-        //TODO: All the other events.
-        /**
-         * Fired when a TH element has a click.
-         *
-         * @event theadCellClick
-         */
-        this.publish("theadCellClick", {defaultFn: this._defTheadCellClickFn, emitFacade:false, queuable:true});
-        /**
-         * Fired when a THEAD>TR element has a click.
-         *
-         * @event theadRowClick
-         */
-        this.publish("theadRowClick", {defaultFn: this._defTheadRowClickFn, emitFacade:false, queuable:true});
-        /**
-         * Fired when the THEAD element has a click.
-         *
-         * @event theadClick
-         */
-        this.publish("theadClick", {defaultFn: this._defTheadClickFn, emitFacade:false, queuable:true});
-        /**
-         * Fired when a TH element has a mouseenter.
-         *
-         * @event theadCellMouseenter
-         */
-        this.publish("theadCellMouseenter", {defaultFn: this._defTheadCellMouseenterFn, emitFacade:false, queuable:true});
-        /**
-         * Fired when a THEAD>TR element has a mouseenter.
-         *
-         * @event theadRowMouseenter
-         */
-        this.publish("theadRowMouseenter", {defaultFn: this._defTheadRowMouseenterFn, emitFacade:false, queuable:true});
-        /**
-         * Fired when the THEAD element has a mouseenter.
-         *
-         * @event theadMouseenter
-         */
-        this.publish("theadMouseenter", {defaultFn: this._defTheadMouseenterFn, emitFacade:false, queuable:true});
-        /**
-         * Fired when a TD element has a click.
-         *
-         * @event tbodyCellClick
-         */
-        this.publish("tbodyCellClick", {defaultFn: this._defTbodyCellClickFn, emitFacade:false, queuable:true});
-        /**
-         * Fired when a TBODY>TR element has a click.
-         *
-         * @event tbodyRowClick
-         */
-        this.publish("tbodyRowClick", {defaultFn: this._defTbodyRowClickFn, emitFacade:false, queuable:true});
-        /**
-         * Fired when the TBODY element has a click.
-         *
-         * @event tbodyClick
-         */
-        this.publish("tbodyClick", {defaultFn: this._defTbodyClickFn, emitFacade:false, queuable:true});
-
-        // Bind to THEAD DOM events
-        tableNode.delegate(FOCUS, this._onDomEvent, theadFilter, this, "theadCellFocus");
-        tableNode.delegate(KEYDOWN, this._onDomEvent, theadFilter, this, "theadCellKeydown");
-        tableNode.delegate(MOUSEENTER, this._onDomEvent, theadFilter, this, "theadCellMouseenter");
-        tableNode.delegate(MOUSELEAVE, this._onDomEvent, theadFilter, this, "theadCellMouseleave");
-        tableNode.delegate(MOUSEUP, this._onDomEvent, theadFilter, this, "theadCellMouseup");
-        tableNode.delegate(MOUSEDOWN, this._onDomEvent, theadFilter, this, "theadCellMousedown");
-        tableNode.delegate(CLICK, this._onDomEvent, theadFilter, this, "theadCellClick");
-        // Since we can't listen for click and dblclick on the same element...
-        contentBox.delegate(DOUBLECLICK, this._onEvent, theadFilter, this, "theadCellDoubleclick");
-
-        // Bind to TBODY DOM events
-        tableNode.delegate(FOCUS, this._onDomEvent, tbodyFilter, this, "tbodyCellFocus");
-        tableNode.delegate(KEYDOWN, this._onDomEvent, tbodyFilter, this, "tbodyCellKeydown");
-        tableNode.delegate(MOUSEENTER, this._onDomEvent, tbodyFilter, this, "tbodyCellMouseenter");
-        tableNode.delegate(MOUSELEAVE, this._onDomEvent, tbodyFilter, this, "tbodyCellMouseleave");
-        tableNode.delegate(MOUSEUP, this._onDomEvent, tbodyFilter, this, "tbodyCellMouseup");
-        tableNode.delegate(MOUSEDOWN, this._onDomEvent, tbodyFilter, this, "tbodyCellMousedown");
-        tableNode.delegate(CLICK, this._onDomEvent, tbodyFilter, this, "tbodyCellClick");
-        // Since we can't listen for click and dblclick on the same element...
-        contentBox.delegate(DOUBLECLICK, this._onEvent, tbodyFilter, this, "tbodyCellDoubleclick");
-
-        // Bind to message TBODY DOM events
-        tableNode.delegate(FOCUS, this._onDomEvent, msgFilter, this, "msgCellFocus");
-        tableNode.delegate(KEYDOWN, this._onDomEvent, msgFilter, this, "msgCellKeydown");
-        tableNode.delegate(MOUSEENTER, this._onDomEvent, msgFilter, this, "msgCellMouseenter");
-        tableNode.delegate(MOUSELEAVE, this._onDomEvent, msgFilter, this, "msgCellMouseleave");
-        tableNode.delegate(MOUSEUP, this._onDomEvent, msgFilter, this, "msgCellMouseup");
-        tableNode.delegate(MOUSEDOWN, this._onDomEvent, msgFilter, this, "msgCellMousedown");
-        tableNode.delegate(CLICK, this._onDomEvent, msgFilter, this, "msgCellClick");
-        // Since we can't listen for click and dblclick on the same element...
-        contentBox.delegate(DOUBLECLICK, this._onDomEvent, msgFilter, this, "msgCellDoubleclick");
+        this.after({
+            columnsetChange: this._afterColumnsetChange,
+            recordsetChange: this._afterRecordsetChange,
+            summaryChange  : this._afterSummaryChange,
+            captionChange  : this._afterCaptionChange,
+            "recordset:recordsChange": this._afterRecordsChange
+        });
     },
     
-    /**
-    * On DOM event, fires corresponding custom event.
-    *
-    * @method _onDomEvent
-    * @param e {DOMEvent} The original DOM event facade.
-    * @param type {String} Corresponding custom event to fire.
-    * @private
-    */
-    _onDomEvent: function(e, type) {
-        this.fire(type, e);
+    delegate: function(type) {
+        //TODO: is this necessary?
+        if(type==="dblclick") {
+            this.get("boundingBox").delegate.apply(this.get("boundingBox"), arguments);
+        }
+        else {
+            this.get("contentBox").delegate.apply(this.get("contentBox"), arguments);
+        }
     },
-
-    //TODO: abstract this out
-    _defTheadCellClickFn: function(e) {
-        this.fire("theadRowClick", e);
-    },
-
-    _defTheadRowClickFn: function(e) {
-        this.fire("theadClick", e);
-    },
-
-    _defTheadClickFn: function(e) {
-    },
+    
 
     ////////////////////////////////////////////////////////////////////////////
     //
@@ -545,20 +462,10 @@ Y.extend(DTBase, Y.Widget, {
         this._uiSetColumnset(this.get("columnset"));
         // DATA ROWS
         this._uiSetRecordset(this.get("recordset"));
-        // STRINGS
-        this._uiSetStrings(this.get("strings"));
-    },
-
-    /**
-     * Updates all strings.
-     *
-     * @method _uiSetStrings
-     * @param strings {Object} Collection of new strings.
-     * @protected
-     */
-    _uiSetStrings: function (strings) {
-        this._uiSetSummary(strings.summary);
-        this._uiSetCaption(strings.caption);
+        // SUMMARY
+        this._uiSetSummary(this.get("summary"));
+        // CAPTION
+        this._uiSetCaption(this.get("caption"));
     },
 
     /**
@@ -569,6 +476,7 @@ Y.extend(DTBase, Y.Widget, {
      * @protected
      */
     _uiSetSummary: function(val) {
+        val = YisValue(val) ? val : "";
         this._tableNode.set("summary", val);
     },
 
@@ -580,7 +488,16 @@ Y.extend(DTBase, Y.Widget, {
      * @protected
      */
     _uiSetCaption: function(val) {
-        this._captionNode.setContent(val);
+        var caption = this._captionNode,
+            parent  = caption.get('parentNode'),
+            method  = val ? (!parent && 'prepend') : (parent && 'removeChild');
+
+        caption.setContent(val || '');
+
+        if (method) {
+            // prepend of remove necessary
+            this._tableNode[method](caption);
+        }
     },
 
 
@@ -597,7 +514,7 @@ Y.extend(DTBase, Y.Widget, {
      * @protected
      */
     _uiSetColumnset: function(cs) {
-        var tree = cs.get("tree"),
+        var tree = cs.tree,
             thead = this._theadNode,
             i = 0,
             len = tree.length,
@@ -650,7 +567,7 @@ Y.extend(DTBase, Y.Widget, {
     */
     _createTheadTrNode: function(o, isFirst, isLast) {
         //TODO: custom classnames
-        var tr = Ycreate(Ysubstitute(this.get("trTemplate"), o)),
+        var tr = Ycreate(fromTemplate(this.get("trTemplate"), o)),
             i = 0,
             columns = o.columns,
             len = columns.length,
@@ -693,6 +610,8 @@ Y.extend(DTBase, Y.Widget, {
     _addTheadThNode: function(o) {
         o.th = this._createTheadThNode(o);
         this._attachTheadThNode(o);
+        //TODO: assign all node pointers: thNode, thLinerNode, thLabelNode
+        o.column.thNode = o.th;
     },
 
     /**
@@ -708,11 +627,11 @@ Y.extend(DTBase, Y.Widget, {
         
         // Populate template object
         o.id = column.get("id");//TODO: validate 1 column ID per document
-        o.colspan = column.get("colSpan");
-        o.rowspan = column.get("rowSpan");
-        //TODO o.abbr = column.get("abbr");
+        o.colspan = column.colSpan;
+        o.rowspan = column.rowSpan;
+        o.abbr = column.get("abbr");
         o.classnames = column.get("classnames");
-        o.value = Ysubstitute(this.get("thValueTemplate"), o);
+        o.value = fromTemplate(this.get("thValueTemplate"), o);
 
         /*TODO
         // Clear minWidth on hidden Columns
@@ -721,15 +640,13 @@ Y.extend(DTBase, Y.Widget, {
         }
         */
         
-        //column._set("thNode", o.th);
-
-        return Ycreate(Ysubstitute(this.thTemplate, o));
+        return Ycreate(fromTemplate(this.thTemplate, o));
     },
 
     /**
     * Attaches header cell element.
     *
-    * @method _attachTheadTrNode
+    * @method _attachTheadThNode
     * @param o {Object} {value, column, tr}.
     * @protected
     */
@@ -750,25 +667,64 @@ Y.extend(DTBase, Y.Widget, {
      * @protected
      */
     _uiSetRecordset: function(rs) {
-        var i = 0,//TODOthis.get("state.offsetIndex")
-            len = rs.getLength(), //TODOthis.get("state.pageLength")
-            tbody = this._tbodyNode,
-            parent = tbody.get("parentNode"),
-            nextSibling = tbody.next(),
-            o = {tbody:tbody}; //TODO: not sure best time to do this -- depends on sdt
+        var oldTbody = this._tbodyNode,
+            parent = oldTbody.get("parentNode"),
+            nextSibling = oldTbody.next(),
+            columns = this.get('columnset').keys,
+            cellValueTemplate = this.get('tdValueTemplate'),
+            o = {},
+            newTbody, i, len, column, formatter;
 
-        // Move TBODY off DOM
-        tbody.remove();
+        // Replace TBODY with a new one
+        //TODO: split _addTbodyNode into create/attach
+        oldTbody.remove();
+        oldTbody = null;
+        newTbody = this._addTbodyNode(this._tableNode);
+        newTbody.remove();
+        this._tbodyNode = newTbody;
+        o.tbody = newTbody;
+
+        o.rowTemplate = this.get('trTemplate');
+        o.columns = [];
+
+        // Build up column data to avoid passing through Attribute APIs inside
+        // render loops for rows and cells
+        for (i = columns.length - 1; i >= 0; --i) {
+            column = columns[i];
+            o.columns[i] = {
+                column : column,
+                fields : column.get('field'),
+                classes: column.get('classnames')
+            }
+
+            formatter = column.get('formatter');
+            if (!YLang.isFunction(formatter)) {
+                // Convert non-function formatters into functions
+                // String formatters are treated as alternate value templates
+                // Any other value for formatter is ignored, falling back to
+                // to the configured tdValueTemplate attribute value.
+                if (!YLang.isString(formatter)) {
+                    formatter = cellValueTemplate;
+                }
+                formatter = Y.bind(fromTemplate, this, formatter);
+            }
+
+            o.columns[i].formatter = formatter;
+        }
+
 
         // Iterate Recordset to use existing TR when possible or add new TR
-        for(; i<len; ++i) {
-            o.record = rs.getRecord(i);
+        // TODO i = this.get("state.offsetIndex")
+        // TODO len =this.get("state.pageLength")
+        for (i = 0, len = rs.size(); i < len; ++i) {
+            o.record = rs.item(i);
+            o.data   = o.record.get("data");
             o.rowindex = i;
             this._addTbodyTrNode(o); //TODO: sometimes rowindex != recordindex
         }
         
-        // Re-attach TBODY to DOM
-        parent.insert(tbody, nextSibling);
+        // TBODY to DOM
+        parent.insert(this._tbodyNode, nextSibling);
     },
 
     /**
@@ -779,9 +735,10 @@ Y.extend(DTBase, Y.Widget, {
     * @protected
     */
     _addTbodyTrNode: function(o) {
-        var tbody = o.tbody,
-            record = o.record;
-        o.tr = tbody.one("#"+record.get("id")) || this._createTbodyTrNode(o);
+        var row = o.tbody.one("#" + o.record.get("id"));
+
+        o.tr = row || this._createTbodyTrNode(o);
+
         this._attachTbodyTrNode(o);
     },
 
@@ -794,19 +751,22 @@ Y.extend(DTBase, Y.Widget, {
     * @returns Y.Node
     */
     _createTbodyTrNode: function(o) {
-        var tr = Ycreate(Ysubstitute(this.get("trTemplate"), {id:o.record.get("id")})),
-            i = 0,
-            allKeys = this.get("columnset").get("keys"),
-            len = allKeys.length;
+        var columns = o.columns,
+            i, len, columnInfo;
 
-        o.tr = tr;
+        o.tr = Ycreate(fromTemplate(o.rowTemplate, { id: o.data.id }));
         
-        for(; i<len; ++i) {
-            o.column = allKeys[i];
+        for (i = 0, len = columns.length; i < len; ++i) {
+            columnInfo = columns[i];
+            o.column = columnInfo.column;
+            o.field  = columnInfo.fields;
+            o.classnames = columnInfo.classes;
+            o.formatter = columnInfo.formatter;
+
             this._addTbodyTdNode(o);
         }
         
-        return tr;
+        return o.tr;
     },
 
     /**
@@ -821,13 +781,12 @@ Y.extend(DTBase, Y.Widget, {
             tr = o.tr,
             index = o.rowindex,
             nextSibling = tbody.get("children").item(index) || null,
-            isEven = (index%2===0);
+            isOdd = (index % 2);
             
-        if(isEven) {
-            tr.replaceClass(CLASS_ODD, CLASS_EVEN);
-        }
-        else {
+        if(isOdd) {
             tr.replaceClass(CLASS_EVEN, CLASS_ODD);
+        } else {
+            tr.replaceClass(CLASS_ODD, CLASS_EVEN);
         }
         
         tbody.insertBefore(tr, nextSibling);
@@ -854,12 +813,10 @@ Y.extend(DTBase, Y.Widget, {
     * @returns Y.Node
     */
     _createTbodyTdNode: function(o) {
-        var column = o.column;
-        //TODO: attributes? or methods?
-        o.headers = column.get("headers");
-        o.classnames = column.get("classnames");
-        o.value = this.formatDataCell(o);
-        return Ycreate(Ysubstitute(this.tdTemplate, o));
+        o.headers = o.column.headers;
+        o.value   = this.formatDataCell(o);
+
+        return Ycreate(fromTemplate(this.tdTemplate, o));
     },
     
     /**
@@ -880,10 +837,13 @@ Y.extend(DTBase, Y.Widget, {
      * @param @param o {Object} {record, column, tr, headers, classnames}.
      */
     formatDataCell: function(o) {
-        var record = o.record;
-        o.data = record.get("data");
-        o.value = record.getValue(o.column.get("key"));
-        return Ysubstitute(this.get("tdValueTemplate"), o);
+        o.value = o.data[o.field];
+
+        return o.formatter.call(this, o);
+    },
+
+    _initRecordset: function () {
+        return new Y.Recordset({ records: [] });
     }
 });
 

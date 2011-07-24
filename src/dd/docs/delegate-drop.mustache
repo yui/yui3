@@ -1,0 +1,81 @@
+<div class="intro">
+<p>This example shows how to create multiple draggable items efficiently, still allowing for Drop Targets.</p>
+</div>
+
+<div class="example">
+    {{>delegate-drop-source}}
+</div>
+
+<h3>Setting up the Delegate container and items</h3>
+<p>First we need to create an HTML Node to act as the delegate container and give it some nodes to make draggable.</p>
+
+```
+{{>delegate-drop-source-html}}
+```
+
+<p>Now we give them some CSS to make them visible.</p>
+
+```
+{{>delegate-drop-source-css}}
+```
+
+<h3>Setting up the YUI Instance</h3>
+<p>Now we need to create our YUI instance and tell it to load the `dd-delegate` module.</p>
+
+```
+YUI().use('dd-delegate', 'dd-drop-plugin');
+```
+
+<h3>Making the Nodes draggable</h3>
+<p>Now that we have a YUI instance with the `dd-delegate` module, we need to instantiate the `Delegate` instance on this container and nodes.</p>
+
+```
+YUI().use('dd-delegate', 'dd-drop-plugin', function(Y) {
+    var del = new Y.DD.Delegate({
+        container: '#demo',
+        nodes: 'li'
+    });
+});
+```
+
+<h3>Listening to some events</h3>
+<p>The `Delegate` object is a bubble target for the `DD.Drag` instances. So you can listen on it for all drag related events.</p>
+
+```
+YUI().use('dd-delegate', 'dd-drop-plugin', function(Y) {
+    var del = new Y.DD.Delegate({
+        container: '#demo',
+        nodes: 'li'
+    });
+
+    del.on('drag:end', function(e) {
+        del.get('currentNode').setStyles({
+            top: 0,
+            left: 0
+        });
+    });
+
+});
+```
+
+<h3>Adding a Drop Target</h3>
+<p>Now we can add a normal Drop Target to the page.</p>
+
+```
+    var drop = Y.one('#drop').plug(Y.Plugin.Drop);
+```
+
+<p>Once that is created, we can add a `drop:hit` listener and manipulate the drag instance as we normally would.</p>
+
+```
+var drop = Y.one('#drop').plug(Y.Plugin.Drop);
+drop.drop.on('drop:hit', function(e) {
+    drop.set('innerHTML', 'You dropped: <strong>' + e.drag.get('node').get('innerHTML') + '</strong>');
+});
+```
+
+<h3>Full Javascript Source</h3>
+
+```
+{{>delegate-drop-source-js}}
+```

@@ -35,12 +35,18 @@ YUI(yConfig).use('node', 'jsonp', 'jsonp-url', 'yql', function(Y) {
 
     var res = Y.one('#res');
     
-    Y.YQL('select * from weather.forecast where location=<?php echo($zip); ?>', function(r) {
+    var q = Y.YQL('select * from weather.forecast where location=<?php echo($zip); ?>', function(r) {
         var el = Y.Node.create('<div class="mod"></div>');
         el.set('innerHTML', '<h2>Weather for <?php echo($zip); ?></h2>' +
             r.query.results.channel.item.description);
+        res.setContent(new Date() + '<br>');
         res.appendChild(el);
     });
+
+    Y.later(3000, null, function() {
+        console.log('sending...');
+        q.send();
+    }, null, true);
 });
 </script>
 </body>

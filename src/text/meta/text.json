@@ -1,5 +1,7 @@
 {
     "text": {
+        "use": ["text-accentfold", "text-wordbreak"],
+
         "submodules": {
             "text-accentfold": {
                 "requires": [

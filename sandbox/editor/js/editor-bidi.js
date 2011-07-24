@@ -1,23 +1,19 @@
 YUI.add('editor-bidi', function(Y) {
 
-
-    /**
-     * Plugin for Editor to support BiDirectional (bidi) text operations.
-     * @module editor
-     * @submodule editor-bidi
-     */     
     /**
      * Plugin for Editor to support BiDirectional (bidi) text operations.
      * @class Plugin.EditorBidi
      * @extends Base
      * @constructor
+     * @module editor
+     * @submodule editor-bidi
      */
 
 
     var EditorBidi = function() {
         EditorBidi.superclass.constructor.apply(this, arguments);
     }, HOST = 'host', DIR = 'dir', BODY = 'BODY', NODE_CHANGE = 'nodeChange',
-    B_C_CHANGE = 'bidiContextChange', FIRST_P = BODY + ' > p';
+    B_C_CHANGE = 'bidiContextChange', FIRST_P = BODY + ' > p', STYLE = 'style';
 
     Y.extend(EditorBidi, Y.Base, {
         /**
@@ -46,10 +42,12 @@ YUI.add('editor-bidi', function(Y) {
             
             if (sel.isCollapsed) {
                 node = EditorBidi.blockParent(sel.focusNode);
-                direction = node.getStyle('direction');
-                if (direction !== this.lastDirection) {
-                    host.fire(B_C_CHANGE, { changedTo: direction });
-                    this.lastDirection = direction;
+                if (node) {
+                    direction = node.getStyle('direction');
+                    if (direction !== this.lastDirection) {
+                        host.fire(B_C_CHANGE, { changedTo: direction });
+                        this.lastDirection = direction;
+                    }
                 }
             } else {
                 host.fire(B_C_CHANGE, { changedTo: 'select' });
@@ -116,7 +114,8 @@ YUI.add('editor-bidi', function(Y) {
         * @property BLOCKS
         * @static
         */
-        BLOCKS: Y.Selection.BLOCKS+',LI,HR,' + BODY,
+        //BLOCKS: Y.Selection.BLOCKS+',LI,HR,' + BODY,
+        BLOCKS: Y.Selection.BLOCKS,
         /**
         * Template for creating a block element
         * @static
@@ -227,6 +226,28 @@ YUI.add('editor-bidi', function(Y) {
             host: {
                 value: false
             }
+        },
+        /**
+        * Regex for testing/removing text-align style from an element
+        * @static
+        * @property RE_TEXT_ALIGN
+        */
+        RE_TEXT_ALIGN: /text-align:\s*\w*\s*;/,
+        /**
+        * Method to test a node's style attribute for text-align and removing it.
+        * @static
+        * @method removeTextAlign
+        */
+        removeTextAlign: function(n) {
+            if (n) {
+                if (n.getAttribute(STYLE).match(EditorBidi.RE_TEXT_ALIGN)) {
+                    n.setAttribute(STYLE, n.getAttribute(STYLE).replace(EditorBidi.RE_TEXT_ALIGN, ''));
+                }
+                if (n.hasAttribute('align')) {
+                    n.removeAttribute('align');
+                }
+            }
+            return n;
         }
     });
     
@@ -239,32 +260,68 @@ YUI.add('editor-bidi', function(Y) {
      * @for Plugin.ExecCommand
      * @property COMMANDS.bidi
      */
-
+    //TODO -- This should not add this command unless the plugin is added to the instance..
     Y.Plugin.ExecCommand.COMMANDS.bidi = function(cmd, direction) {
         var inst = this.getInstance(),
             sel = new inst.Selection(),
+            ns = this.get(HOST).get(HOST).editorBidi,
             returnValue, block,
-            selected, selectedBlocks;
+            selected, selectedBlocks, dir;
+
+        if (!ns) {
+            Y.error('bidi execCommand is not available without the EditorBiDi plugin.');
+            return;
+        }
 
         inst.Selection.filterBlocks();
+        if (sel.anchorNode.test(BODY)) {
+            return;
+        }
         if (sel.isCollapsed) { // No selection
             block = EditorBidi.blockParent(sel.anchorNode);
+            //Remove text-align attribute if it exists
+            block = EditorBidi.removeTextAlign(block);
+            if (!direction) {
+                //If no direction is set, auto-detect the proper setting to make it "toggle"
+                dir = block.getAttribute(DIR);
+                if (!dir || dir == 'ltr') {
+                    direction = 'rtl';
+                } else {
+                    direction = 'ltr';
+                }
+            }
             block.setAttribute(DIR, direction);
+            if (Y.UA.ie) {
+                var b = block.all('br.yui-cursor');
+                if (b.size() === 1 && block.get('childNodes').size() == 1) {
+                    b.remove();
+                }
+            }
             returnValue = block;
         } else { // some text is selected
             selected = sel.getSelected();
             selectedBlocks = [];
             selected.each(function(node) {
-                if (!node.test(BODY)) { // workaround for a YUI bug
-                   selectedBlocks.push(EditorBidi.blockParent(node));
-                }
+                selectedBlocks.push(EditorBidi.blockParent(node));
             });
             selectedBlocks = inst.all(EditorBidi.addParents(selectedBlocks));
-            selectedBlocks.setAttribute(DIR, direction);
+            selectedBlocks.each(function(n) {
+                var d = direction;
+                //Remove text-align attribute if it exists
+                n = EditorBidi.removeTextAlign(n);
+                if (!d) {
+                    dir = n.getAttribute(DIR);
+                    if (!dir || dir == 'ltr') {
+                        d = 'rtl';
+                    } else {
+                        d = 'ltr';
+                    }
+                }
+                n.setAttribute(DIR, d);
+            });
             returnValue = selectedBlocks;
         }
-
-        this.get(HOST).get(HOST).editorBidi.checkForChange();
+        ns._checkForChange();
         return returnValue;
     };
 

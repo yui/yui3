@@ -113,6 +113,8 @@ function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Objec
 	* @event wrongflashversion
     */
 	else {
+		    var event = {};
+		    event.type = "wrongflashversion";
 			this.publish("wrongflashversion", {fireOnce:true});
 	     	this.fire("wrongflashversion", event);
 		}		
@@ -202,4 +204,4 @@ Y.augment(SWF, Y.EventTarget);
 Y.SWF = SWF;
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['event-custom','node','swfdetect']});

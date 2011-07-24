@@ -2,15 +2,12 @@ YUI.add('dd-drop', function(Y) {
 
     /**
      * Provides the ability to create a Drop Target.
-     * @module dd
-     * @submodule dd-drop
-     */     
-    /**
-     * Provides the ability to create a Drop Target.
      * @class Drop
      * @extends Base
      * @constructor
      * @namespace DD
+     * @module dd
+     * @submodule dd-drop
      */
 
     var NODE = 'node',
@@ -20,47 +17,47 @@ YUI.add('dd-drop', function(Y) {
         /**
         * @event drop:over
         * @description Fires when a drag element is over this target.
-        * @param {Event.Facade} event An Event Facade object with the following specific property added:
+        * @param {EventFacade} event An EventFacade object with the following specific property added:
         * <dl>
         * <dt>drop</dt><dd>The drop object at the time of the event.</dd>
         * <dt>drag</dt><dd>The drag object at the time of the event.</dd>
         * </dl>        
         * @bubbles DDM
-        * @type {Event.Custom}
+        * @type {CustomEvent}
         */
         EV_DROP_OVER = 'drop:over',
         /**
         * @event drop:enter
         * @description Fires when a drag element enters this target.
-        * @param {Event.Facade} event An Event Facade object with the following specific property added:
+        * @param {EventFacade} event An EventFacade object with the following specific property added:
         * <dl>
         * <dt>drop</dt><dd>The drop object at the time of the event.</dd>
         * <dt>drag</dt><dd>The drag object at the time of the event.</dd>
         * </dl>        
         * @bubbles DDM
-        * @type {Event.Custom}
+        * @type {CustomEvent}
         */
         EV_DROP_ENTER = 'drop:enter',
         /**
         * @event drop:exit
         * @description Fires when a drag element exits this target.
-        * @param {Event.Facade} event An Event Facade object
+        * @param {EventFacade} event An EventFacade object
         * @bubbles DDM
-        * @type {Event.Custom}
+        * @type {CustomEvent}
         */
         EV_DROP_EXIT = 'drop:exit',
 
         /**
         * @event drop:hit
         * @description Fires when a draggable node is dropped on this Drop Target. (Fired from dd-ddm-drop)
-        * @param {Event.Facade} event An Event Facade object with the following specific property added:
+        * @param {EventFacade} event An EventFacade object with the following specific property added:
         * <dl>
         * <dt>drop</dt><dd>The best guess on what was dropped on.</dd>
         * <dt>drag</dt><dd>The drag object at the time of the event.</dd>
         * <dt>others</dt><dd>An array of all the other drop targets that was dropped on.</dd>
         * </dl>        
         * @bubbles DDM
-        * @type {Event.Custom}
+        * @type {CustomEvent}
         */
         
 

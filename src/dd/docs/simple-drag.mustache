@@ -1,0 +1,45 @@
+<div class="intro">
+<p>This example shows a simple drag interaction that doesn't require a drop interaction.</p>
+</div>
+
+<div class="example">
+    {{>simple-drag-source}}
+</div>
+
+<h3>Setting up the Node</h3>
+<p>First we need to create an HTML Node to make draggable.</p>
+```
+<div id="demo">Drag Me</div>
+```
+
+<p>Now we give that Node some CSS to make it visible.</p>
+
+```
+#demo {
+    height: 100px;
+    width: 100px;
+    border: 1px solid black;
+    background-color: #8DD5E7;
+    cursor: move;
+}
+```
+
+<h3>Setting up the YUI Instance</h3>
+<p>Now we need to create our YUI instance and tell it to load the `dd-drag` module.</p>
+
+```
+YUI().use('dd-drag');
+```
+
+
+<h3>Making the Node draggable</h3>
+<p>Now that we have a YUI instance with the `dd-drag` module, we need to instantiate the `Drag` instance on this Node.</p>
+
+```
+YUI().use('dd-drag', function(Y) {
+    //Selector of the node to make draggable
+    var dd = new Y.DD.Drag({
+        node: '#demo'
+    });   
+});
+```

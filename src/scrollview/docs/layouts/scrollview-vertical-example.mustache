@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>ScrollView With Scrollbar Indicator</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <style>
+            /* Avoid resource latency for these, since they hide unenhanced content */
+            .yui3-js-enabled .yui3-scrollview-loading {
+                visibility:hidden;
+            }
+
+            #additional-content {
+                display:none;
+            }
+        </style>
+
+        <link rel="stylesheet" href="../build/cssreset/cssreset-min.css" type="text/css" charset="utf-8">
+        <link rel="stylesheet" href="{{componentAssets}}/vertical.css" type="text/css" charset="utf-8">
+        <link media="handheld, only screen and (max-device-width: 480px)" href="{{componentAssets}}/vertical-smallscreen.css" type="text/css" rel="stylesheet" charset="utf-8">
+
+        <script src="{{yuiSeedUrl}}"></script>    
+    </head>
+
+    <body class="yui3-skin-sam">
+        {{>layout_content}}
+    </body>
+</html>

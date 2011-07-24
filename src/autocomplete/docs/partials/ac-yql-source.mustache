@@ -1,0 +1,14 @@
+<div id="demo" class="yui3-skin-sam">
+  <label for="ac-input">Search:</label><br>
+  <input id="ac-input" type="text">
+</div>
+
+<script>
+YUI().use('autocomplete', 'autocomplete-highlighters', function (Y) {
+  Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
+    resultHighlighter: 'phraseMatch',
+    source: 'select * from search.suggest where query="{query}"',
+    yqlEnv: 'http://pieisgood.org/yql/tables.env'
+  });
+});
+</script>

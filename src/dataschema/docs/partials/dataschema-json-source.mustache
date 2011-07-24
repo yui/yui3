@@ -1,0 +1,200 @@
+<style scoped>
+/* custom styles for this example */
+#demo .output {margin-bottom:1em; padding:10px; border:1px solid #D9D9D9;}
+</style>
+
+<form id="demo">
+    <h4>Basic example</h4>
+    <h6>Data</h6>
+    <pre>
+{
+    "total":10,
+    "results":[
+        {"n":1, "fname":"George", "lname":"Washington"},
+        {"n":2, "fname":"John", "lname":"Adams"},
+        {"n":3, "fname":"Thomas", "lname":"Jefferson"},
+        {"n":4, "fname":"James", "lname":"Madison"},
+        {"n":5, "fname":"James", "lname":"Monroe"},
+        {"n":6, "fname":"John", "mname":"Quincy", "lname":"Adams"},
+        {"n":7, "fname":"Andrew", "lname":"Jackson"},
+        {"n":8, "fname":"Martin", "lname":"Van Buren"},
+        {"n":9, "fname":"William", "mname":"Henry", "lname":"Harrison"},
+        {"n":10, "fname":"John", "lname":"Tyler"}
+    ]
+}
+    </pre>
+    
+    <h6>Schema</h6>
+    <pre>
+{
+    metaFields: {total:"total"},
+    resultListLocator: "results",
+    resultFields: [{key:"n"}, {key:"fname"}, {key:"lname"}]
+}
+    </pre>
+
+    <h6>Normalized data</h6>
+    <input type="button" id="demo_apply_basic" value="Apply schema =>">
+    <div id="demo_output_basic" class="output"></div>
+
+    <h4>Complex example</h4>
+    <h6>Data</h6>
+    <pre>
+{
+    "profile":{
+        "current":160,
+        "target":150
+    },
+    "reference": [
+        {
+            "category":"exercise",
+            "type":"expenditure",
+            "activities":[
+                {"name":"biking", "calories":550},
+                {"name":"golf", "calories":1000},
+                {"name":"running", "calories":650},
+                {"name":"swimming", "calories":650},
+                {"name":"walking", "calories":225}
+            ]
+        },
+        {
+            "category":"nutrition",
+            "type":"intake",
+            "fruit":[
+                {"name":"apple", "calories":70},
+                {"name":"banana", "calories":70},
+                {"name":"orange", "calories":90},
+            ],
+            "vegetables":[
+                {"name":"baked potato", "calories":150},
+                {"name":"broccoli", "calories":50},
+                {"name":"green beans", "calories":30}
+            ]
+        }
+    ],
+    "program": [
+        {
+            "category":"exercise",
+            "schedule":[
+                {"day":"sunday", "activity":"swimming"},
+                {"day":"monday", "activity":"running"},
+                {"day":"tuesday", "activity":"biking"},
+                {"day":"wednesday", "activity":"running"},
+                {"day":"thursday", "activity":"swimming"},
+                {"day":"friday", "activity":"running"},
+                {"day":"saturday", "activity":"golf"}
+            ]
+        },
+        {
+            "category":"diet",
+            "schedule":[
+            ]
+        }
+    ]
+}
+    </pre>
+
+    <h6>Schema</h6>
+    <pre>
+{
+    metaFields: {current:"profile.current", target:"profile.target",
+        reference:"reference[0].activities"},
+    resultListLocator: "program[0].schedule",
+    resultFields: [{key:"day"}, {key:"activity"}]
+}
+    </pre>
+
+    <h6>Normalized data</h6>
+    <input type="button" id="demo_apply_complex" value="Apply schema =>">
+    <div id="demo_output_complex" class="output"></div>
+</form>
+
+
+<script>
+YUI().use("dump", "node", "dataschema-json", function (Y) {
+    Y.on("click", function(e){
+        var data_in = {
+                "total":10,
+                "results":[
+                    {"n":1, "fname":"George", "lname":"Washington"},
+                    {"n":2, "fname":"John", "lname":"Adams"},
+                    {"n":3, "fname":"Thomas", "lname":"Jefferson"},
+                    {"n":4, "fname":"James", "lname":"Madison"},
+                    {"n":5, "fname":"James", "lname":"Monroe"},
+                    {"n":6, "fname":"John", "mname":"Quincy", "lname":"Adams"},
+                    {"n":7, "fname":"Andrew", "lname":"Jackson"},
+                    {"n":8, "fname":"Martin", "lname":"Van Buren"},
+                    {"n":9, "fname":"William", "mname":"Henry", "lname":"Harrison"},
+                    {"n":10, "fname":"John", "lname":"Tyler"}
+                ]
+            },
+            schema = {
+                metaFields: {total:"total"},
+                resultListLocator: "results",
+                resultFields: [{key:"n"}, {key:"fname"}, {key:"lname"}] // Or simply: ["n", "fname", "lname"]
+            };
+        Y.one("#demo_output_basic").setContent(Y.dump(Y.DataSchema.JSON.apply(schema, data_in)));
+    }, "#demo_apply_basic");
+
+    Y.on("click", function(e){
+        var data_in = {
+                "profile":{
+                    "current":160,
+                    "target":150
+                },
+                "reference": [
+                    {
+                        "category":"exercise",
+                        "type":"expenditure",
+                        "activities":[
+                            {"name":"biking", "calories":550},
+                            {"name":"golf", "calories":1000},
+                            {"name":"running", "calories":650},
+                            {"name":"swimming", "calories":650},
+                            {"name":"walking", "calories":225}
+                        ]
+                    },
+                    {
+                        "category":"nutrition",
+                        "type":"intake",
+                        "fruit":[
+                            {"name":"apple", "calories":70},
+                            {"name":"banana", "calories":70},
+                            {"name":"orange", "calories":90},
+                        ],
+                        "vegetables":[
+                            {"name":"baked potato", "calories":150},
+                            {"name":"broccoli", "calories":50},
+                            {"name":"green beans", "calories":30}
+                        ]
+                    }
+                ],
+                "program": [
+                    {
+                        "category":"exercise",
+                        "weekly schedule":[
+                            {"day":"sunday", "activity":"swimming"},
+                            {"day":"monday", "activity":"running"},
+                            {"day":"tuesday", "activity":"biking"},
+                            {"day":"wednesday", "activity":"running"},
+                            {"day":"thursday", "activity":"swimming"},
+                            {"day":"friday", "activity":"running"},
+                            {"day":"saturday", "activity":"golf"}
+                        ]
+                    },
+                    {
+                        "category":"diet",
+                        "schedule":[
+                        ]
+                    }
+                ]
+            },
+            schema = {
+                metaFields: {current:"profile.current", target:"profile.target", reference:"reference[0].activities"},
+                resultListLocator: "program[0]['weekly schedule']",
+                resultFields: [{key:"day"}, {key:"activity"}] // Or simply: ["day", "activity"]
+            };
+        Y.one("#demo_output_complex").setContent(Y.dump(Y.DataSchema.JSON.apply(schema, data_in)));
+    }, "#demo_apply_complex");
+});
+</script>

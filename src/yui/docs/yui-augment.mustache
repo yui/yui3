@@ -1,0 +1,63 @@
+<div class="intro">
+<p>Create Class Hierarchies with `extend`</p>
+</div>
+
+<div class="example">
+    {{>yui-augment}}
+</div>
+
+
+<h3>Using `augment`</h3>
+
+```
+YUI().use('node', function(Y) {
+    // This method is in the 'oop' module.  Since we require 'node'
+    // for this example, and 'node' requires 'oop', the 'oop' module
+    // will be loaded automatically.
+```
+
+<h3>The example: Any class can be an `EventTarget`</h3>
+
+<p>This example creates a custom class, then augments it with
+`EventTarget`. Using the packaged functionality of `EventTarget`, the code for
+`Foo` is able to focus on the functionality unique to its
+purpose.</p>
+
+```
+{{>yui-augment-js}}
+```
+
+<h3>Composition, not inheritance</h3>
+<p>If `Foo` were a part of a class hierarchy, it would be improper
+to include `EventTarget` in the inheritance chain, because its custom event
+functionality is not an intrinsic characteristic but rather an ancillary, generic
+capability that many classes share.</p>
+
+<p>Unlike `extend`ed classes, the relationship between a class and
+the classes augmenting it is not an indication of type hierarchy.  The intent
+of `augment` is to aid in extracting nonessential behaviors or
+behaviors shared by many classes, allowing for a composition-style class
+architecture.</p>
+
+<img src="{{componentAssets}}/composition_diagram.png" alt="Diagram showing class hierarchy, highlighting has-a relationship"/>
+
+<p>This may appear similar to multiple inheritance, but it's not.
+`augment` simply adds the public methods and members from one class
+prototype to another class prototype.  Instances of the augmented class will
+not pass `instanceof` tests for the class(es) which augmented
+it.</p>
+
+```
+YUI().use('oop', function(Y) {
+
+    function Foo() {}
+    Foo.prototype.doSomething = function () { /* something */ };
+
+    function Bar() {}
+    Y.augment(Bar, Foo);
+
+    var b = new Bar();
+    if (b instanceof Bar) {} // true 
+    if (b instanceof Foo) {} // FALSE
+});
+```

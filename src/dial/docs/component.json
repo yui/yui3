@@ -1,0 +1,48 @@
+{
+    "name"       : "dial",
+    "displayName": "Dial",
+    "description": "The Dial widget is a circular value input control.",
+    "author"     : "jconniff",
+
+    "tags": ["widget", "beta", "dial", "round", "knob", "gauge", "wheel"],
+    "use" : ["dial"],
+    "dialPathAssets" : "http://stage.yuilibrary.com/yui/docs/assets/dial",
+    
+    "examples": [
+        {
+            "name"       : "dial-basic",
+            "displayName": "Basic Dial",
+            "description": "Create a Dial from existing markup on the page - a simple use case.",
+            "modules"    : ["dial"],
+            "tags"       : ["dial", "round", "knob", "gauge", "wheel"]
+        },
+        {
+            "name"       : "dial-text-input",
+            "displayName": "Dial Linked With Text Input",
+            "description": "Link a Dial with a text input field.",
+            "modules"    : ["dial"],
+            "tags"       : ["dial", "input", "round", "knob", "gauge", "wheel"]
+        },
+        {
+            "name"       : "dial-image-background",
+            "displayName": "Dial With Image Background",
+            "description": "Use image backgrounds to control the visual display of a Dial.",
+            "modules"    : ["dial"],
+            "tags"       : ["dial", "image", "background", "ball", "bearing", "round", "knob", "gauge", "wheel"]
+        },
+        {
+            "name"       : "dial-image-surrounding",
+            "displayName": "Dial With a Surrounding Image",
+            "description": "Use images to surround a Dial instance and provide additional styling.",
+            "modules"    : ["dial"],
+            "tags"       : ["dial", "image", "background", "heater", "dashboard", "air", "conditioning", "climate", "control", "round", "knob", "gauge", "wheel"]
+        },
+        {
+            "name"       : "dial-interactive",
+            "displayName": "Dial With Interactive UI",
+            "description": "This example employs Dial to drive an interactive UI.",
+            "modules"    : ["dial"],
+            "tags"       : ["dial", "interactive", "image", "hubble", "earth", "space", "round", "knob", "gauge", "wheel"]
+        }
+    ]
+}

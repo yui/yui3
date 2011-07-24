@@ -1,8 +1,17 @@
 {
     "dom": {
+        "use": [
+            "dom-base",
+            "dom-screen",
+            "dom-style",
+            "selector-native",
+            "selector"
+        ],
+
         "plugins": {
             "selector-css3": {
                 "requires": [
+                    "selector-native",
                     "selector-css2"
                 ]
             },
@@ -12,7 +21,7 @@
                 ],
                 "condition": {
                    "trigger": "dom-style",
-                   "ua": "ie"
+                   "test": "ie-style-test.js"
                 }
             },
 
@@ -20,41 +29,50 @@
                 "requires": [
                     "dom-base"
                 ]
+            },
+
+            "selector-css2": {
+                "requires": [
+                    "selector-native"
+                ],
+                "condition": {
+                   "trigger": "selector",
+                   "test": "selector-test.js"
+                }
             }
-        }, 
-        "requires": [
-            "oop"
-        ], 
+        },
+
         "submodules": {
+            "dom-core": {
+                "requires": [
+                    "oop",
+                    "features"
+                ]
+            },
             "dom-base": {
                 "requires": [
-                    "oop"
+                    "dom-core"
                 ]
-            }, 
+            },
             "dom-screen": {
                 "requires": [
-                    "dom-base", 
+                    "dom-base",
                     "dom-style"
                 ]
-            }, 
+            },
             "dom-style": {
                 "requires": [
                     "dom-base"
                 ]
-            }, 
-            "selector": {
-                "requires": [
-                    "dom-base"
-                ]
-            }, 
-            "selector-css2": {
-                "requires": [
-                    "selector-native"
-                ]
-            }, 
+            },
             "selector-native": {
                 "requires": [
                     "dom-base"
+                ]
+            },
+            "selector": {
+                "requires": [
+                    "selector-native"
                 ]
             }
         }

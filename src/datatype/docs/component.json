@@ -1,0 +1,84 @@
+{
+    "name": "datatype",
+    "displayName": "DataType",
+    "description": "The DataType Utility provides a functionality to parse data into known JavaScript entities, such as numbers, dates, and XML documents, as well as convert such entities into formatted strings.",
+
+    "author": ["jenny","lsmith"],
+
+    "use": ["datatype"],
+    "tags": ["utility", "datatype"],
+
+    "examples": [
+
+        {
+            "name": "datatype-dateformat",
+            "displayName": "DataType.Date.format()",
+            "modules": ["datatype"],
+            "description": "Formatting dates into strings.",
+	        "useModules": ["node", "datatype-date", "escape"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "datatype-dateformat-lang",
+            "displayName": "Formatting Dates Using Language Resource Bundles",
+            "modules": ["datatype", "intl"],
+            "description": "Formatting dates into strings using pre-packaged language resource bundles.",
+	        "useModules": ["node", "datatype-date"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "datatype-dateparse",
+            "displayName": "DataType.Date.parse()",
+            "modules": ["datatype"],
+            "description": "Parsing data into dates.",
+	        "useModules": ["node", "datatype-date"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "datatype-numberformat",
+            "displayName": "DataType.Number.format()",
+            "modules": ["datatype"],
+            "description": "Formatting numbers into strings.",
+	        "useModules": ["node", "datatype-number", "escape"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "datatype-numberparse",
+            "displayName": "DataType.Number.parse()",
+            "modules": ["datatype"],
+            "description": "Parsing data into numbers.",
+	        "useModules": ["node", "datatype-number"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "datatype-xmlformat",
+            "displayName": "DataType.XML.format()",
+            "modules": ["datatype"],
+            "description": "Formatting XML documents into strings.",
+	        "useModules": ["node", "datatype-xml"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "datatype-xmlparse",
+            "displayName": "DataType.XML.parse()",
+            "modules": ["datatype"],
+            "description": "Parsing strings into XML documents.",
+	        "useModules": ["node", "datatype-xml"],
+
+            "hideTableOfContents": true
+        }
+
+    ]
+}

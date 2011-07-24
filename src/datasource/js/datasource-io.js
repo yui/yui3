@@ -61,7 +61,7 @@ Y.mix(DSIO, {
          * @default null
          */
          ioConfig: {
-         	value: null
+            value: null
          }
     }
 });
@@ -78,6 +78,59 @@ Y.extend(DSIO, Y.DataSource.Local, {
         this._queue = {interval:null, conn:null, requests:[]};
     },
 
+    /**
+    * IO success callback.
+    *
+    * @method successHandler
+    * @param id {String} Transaction ID.
+    * @param response {String} Response.
+    * @param e {Event.Facade} Event facade.
+    * @private
+    */
+    successHandler: function (id, response, e) {
+        var defIOConfig = this.get("ioConfig"),
+            payload = e.details[0];
+
+        delete Y.DataSource.Local.transactions[e.tId];
+
+        payload.data = response;
+        this.fire("data", payload);
+
+        Y.log("Received IO data response for \"" + e.request + "\"", "info", "datasource-io");
+
+        if (defIOConfig && defIOConfig.on && defIOConfig.on.success) {
+            defIOConfig.on.success.apply(defIOConfig.context || Y, arguments);
+        }
+    },
+
+    /**
+    * IO failure callback.
+    *
+    * @method failureHandler
+    * @param id {String} Transaction ID.
+    * @param response {String} Response.
+    * @param e {Event.Facade} Event facade.
+    * @private
+    */
+    failureHandler: function (id, response, e) {
+        var defIOConfig = this.get("ioConfig"),
+            payload = e.details[0];
+        
+        delete Y.DataSource.Local.transactions[e.tId];
+
+        payload.error = new Error("IO data failure");
+        Y.log("IO data failure", "error", "datasource-io");
+
+        payload.data = response;
+        this.fire("data", payload);
+
+        Y.log("Received IO data failure for \"" + e.request + "\"", "info", "datasource-io");
+
+        if (defIOConfig && defIOConfig.on && defIOConfig.on.failure) {
+            defIOConfig.on.failure.apply(defIOConfig.context || Y, arguments);
+        }
+    },
+    
     /**
     * @property _queue
     * @description Object literal to manage asynchronous request/response
@@ -122,26 +175,8 @@ Y.extend(DSIO, Y.DataSource.Local, {
             request = e.request,
             cfg = Y.merge(defIOConfig, e.cfg, {
                 on: Y.merge(defIOConfig, {
-                    success: function (id, response, e) {
-                        delete Y.DataSource.Local.transactions[e.tId];
-
-                        this.fire("data", Y.mix({data:response}, e));
-                        Y.log("Received IO data response for \"" + request + "\"", "info", "datasource-io");
-                        if (defIOConfig && defIOConfig.on && defIOConfig.on.success) {
-                        	defIOConfig.on.success.apply(defIOConfig.context || Y, arguments);
-                        }
-                    },
-                    failure: function (id, response, e) {
-                        delete Y.DataSource.Local.transactions[e.tId];
-
-                        e.error = new Error("IO data failure");
-                        Y.log("IO data failure", "error", "datasource-io");
-                        this.fire("data", Y.mix({data:response}, e));
-                        Y.log("Received IO data failure for \"" + request + "\"", "info", "datasource-io");
-                        if (defIOConfig && defIOConfig.on && defIOConfig.on.failure) {
-                        	defIOConfig.on.failure.apply(defIOConfig.context || Y, arguments);
-                        }
-                    }
+                    success: this.successHandler,
+                    failure: this.failureHandler
                 }),
                 context: this,
                 "arguments": e

@@ -11,10 +11,10 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2010.11.03-19-46',
+            GALLERY_VERSION = '@GALLERY@',
             TNT = '2in3',
-            TNT_VERSION = '4',
-            YUI2_VERSION = '2.8.2',
+            TNT_VERSION = '@TNT@',
+            YUI2_VERSION = '@YUI2@',
             COMBO_BASE = CDN_BASE + 'combo?',
             META = { version: VERSION,
                               root: ROOT,
@@ -53,6 +53,7 @@ if (!YUI.Env[Y.version]) {
             comboBase: COMBO_BASE,
             update: galleryUpdate,
             patterns: { 'gallery-': { },
+                        'lang/gallery-': {},
                         'gallerycss-': { type: 'css' } }
         };
 

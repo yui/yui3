@@ -130,7 +130,8 @@ PositionConstrain.prototype = {
      * passed in, the current position and the value of "constrain" will be used respectively.
      * 
      * The widget's position will be changed to the constrained position.
-     * 
+     *
+     * @method constrain 
      * @param {Array} xy Optional. The xy values to constrain
      * @param {Node | boolean} node Optional. The node to constrain to, or true for the viewport
      */

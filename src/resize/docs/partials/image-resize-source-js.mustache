@@ -1,0 +1,12 @@
+YUI().use('resize', function(Y) {
+    var resize = new Y.Resize({
+        //Selector of the node to resize
+        node: '#demo'
+    });   
+	resize.plug(Y.Plugin.ResizeConstrained, {
+		constrain: '#demoContainer',
+		minHeight: 50,
+		minWidth: 50
+	});
+});
+

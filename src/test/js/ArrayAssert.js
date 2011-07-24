@@ -1,4 +1,7 @@
-   
+    /**
+     * @module test
+     */
+
     /**
      * The ArrayAssert object provides functions to test JavaScript array objects
      * for a variety of cases.

@@ -18,8 +18,7 @@ if (Y.UA.ie && !Y.HistoryBase.nativeHashChange) {
 
         iframe      = GlobalEnv._iframe,
         win         = Y.config.win,
-        location    = win.location,
-        lastUrlHash = '';
+        location    = win.location;
 
     /**
      * Gets the raw (not decoded) current location hash from the IE iframe,
@@ -60,21 +59,22 @@ if (Y.UA.ie && !Y.HistoryBase.nativeHashChange) {
             return;
         }
 
-        Y.log('updating history iframe: ' + hash, 'info', 'history');
-
-        iframeDoc.open().close();
+        Y.log('updating history iframe: ' + hash + ', replace: ' + !!replace, 'info', 'history');
 
         if (replace) {
             iframeLocation.replace(hash.charAt(0) === '#' ? hash : '#' + hash);
         } else {
+            iframeDoc.open().close();
             iframeLocation.hash = hash;
         }
     };
 
-    Do.after(HistoryHash._updateIframe, HistoryHash, 'replaceHash', HistoryHash, true);
+    Do.before(HistoryHash._updateIframe, HistoryHash, 'replaceHash', HistoryHash, true);
 
     if (!iframe) {
         Y.on('domready', function () {
+            var lastUrlHash = HistoryHash.getHash();
+
             // Create a hidden iframe to store history state, following the
             // iframe-hiding recommendations from
             // http://www.paciellogroup.com/blog/?p=604.
@@ -107,7 +107,7 @@ if (Y.UA.ie && !Y.HistoryBase.nativeHashChange) {
             // Update the iframe with the initial location hash, if any. This
             // will create an initial history entry that the user can return to
             // after the state has changed.
-            HistoryHash._updateIframe(HistoryHash.getHash() || '#');
+            HistoryHash._updateIframe(lastUrlHash || '#');
 
             // Listen for hashchange events and keep the iframe's hash in sync
             // with the parent frame's hash.

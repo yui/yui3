@@ -1,0 +1,348 @@
+<div class="intro">
+    <p>
+        The DataSchema Utility applies a given schema against data of arbitrary
+        formats, normalizing input such as JSON, XML, or delimited text into a
+        JavaScript object with known properties. The value of the DataSchema
+        Utility is in its ability to translate data from a variety of sources
+        into a consistent format for consumption by components in a predictable
+        manner.
+    </p>
+</div>
+
+{{>getting-started}}
+
+<h2 id="using">Using the DataSchema</h2>
+
+<p>This section describes how to use the DataSchema in further detail.</p>
+
+<h3 id="basics">DataSchema basics</h3>
+
+<p>
+    DataSchema classes are standalone static utilities that accept data input
+    plus a schema definition and return a JavaScript object with the following
+    properties:
+</p>
+
+<table>
+<thead>
+    <tr>
+        <th>Property</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>`results`</td>
+        <td>Array</td>
+        <td>An array of data.</td>
+    </tr>
+    <tr>
+        <td>`meta`</td>
+        <td>Object</td>
+        <td>Arbitrary data values filtered from the input data.</td>
+    </tr>
+</tbody>
+</table>
+
+<p>
+    Note that the schema you define will depend on which subclass of DataSchema
+    is being used.
+</p>
+
+<h4 id="array">DataSchema.Array</h4>
+
+<p>
+    Use DataSchema.Array when working with JavaScript arrays. These arrays may
+    contain JavaScript objects, other arrays, or primitive values.
+</p>
+
+```
+// A sample array of objects
+[
+    {make:"Chevrolet",model:"Bel Air",year:1957},
+    {make:"Dodge",model:"Dart",year:1964},
+    {make:"Ford",model:"Mustang",year:1968}
+];
+
+// A sample array of arrays
+[
+    ["Chevrolet", "Bel Air", 1957],
+    ["Dodge", "Dart", 1964],
+    ["Ford", "Mustang", 1968]
+];
+
+// A sample array of primitives
+[
+    "1957 Chevrolet Bel Air", "1964 Dodge Dart", "1968 Ford Mustang"
+];
+```
+
+<p>Define a schema with the following properties for your array data:</p>
+
+<table>
+<thead>
+    <tr>
+        <th>Property</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>`resultsField`</td>
+        <td>Array</td>
+        <td>Keys to assign to the values contained in the array.</td>
+    </tr>
+</tbody>
+</table>
+
+```
+var mySchema = {
+        resultFields: [{key:"make"}, {key:"model"}, {key:"year"}]
+};
+
+// Returns an object with the properties "results" and "meta"
+var myOutput = Y.DataSchema.Array.apply(mySchema, myData));
+```
+
+<h4 id="json">DataSchema.JSON</h4>
+
+<p>
+    Use DataSchema.JSON when working with JavaScript objects or JSON data.
+    Typically, your data will hold meta values as well as an internal array of
+    tabular data.
+</p>
+
+```
+// Sample JSON data
+{
+    "profile":{
+        "current":160,
+        "target":150
+    },
+    "program": [
+        {
+            "category":"exercise",
+            "weekly schedule":[
+                {"day":"sunday", "activity":"swimming"},
+                {"day":"monday", "activity":"running"},
+                {"day":"tuesday", "activity":"biking"},
+                {"day":"wednesday", "activity":"running"},
+                {"day":"thursday", "activity":"swimming"},
+                {"day":"friday", "activity":"running"},
+                {"day":"saturday", "activity":"golf"}
+            ]
+        }
+    ]
+};
+```
+
+<p>
+    Locators are string values in your schema that use dot notation or bracket
+    syntax to point to data values within the object. Define a schema with the
+    following properties for your object data:
+</p>
+
+<table>
+<thead>
+    <tr>
+        <th>Property</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>`metaFields`</td>
+        <td>Object</td>
+        <td>Key/locator pairs that point to arbitrary data values.</td>
+    </tr>
+    <tr>
+        <td>`resultListLocator`</td>
+        <td>String</td>
+        <td>Locator to an internal array of tabular data.</td>
+    </tr>
+    <tr>
+        <td>`resultFields`</td>
+        <td>Array</td>
+        <td>Keys to assign to the values contained in the array.</td>
+    </tr>
+</tbody>
+</table>
+
+```
+var mySchema = {
+    metaFields: {current:"profile.current", target:"profile.target"},
+    resultListLocator: "program[0]['weekly schedule']",
+    resultFields: [{key:"day"}, {key:"activity"}]
+};
+
+// Returns an object with the properties "results" and "meta"
+var myOutput = Y.DataSchema.JSON.apply(mySchema, myData));
+```
+
+<h4 id="xml">DataSchema.XML</h4>
+
+<p>
+    <strong>Note:</strong> XML parsing currently has known issues on the
+    Android WebKit browser.
+</p>
+
+<p>
+    Use DataSchema.XML when working with XML data. As with JSON data, your XML
+    data may hold meta values as well as an internal node list of tabular
+    data.
+</p>
+
+```
+// Sample XML data
+<Response>
+    <Session>542235629</Session>
+    <Tracks start="1" count="10" total="98" errorCount="0"
+        defaultSort="popularity+" description="Top 100 Tracks"
+        name="Top 100 Tracks">
+        <Track id="59672468" rating="-1" title="I Kissed A Girl">
+            <Artist id="30326214" rating="-1">Katy Perry</Artist>
+            <ItemInfo><ChartPosition last="26" this="1"/></ItemInfo>
+        </Track>
+        <Track id="47973564" rating="-1" title="Shake It">
+            <Artist id="45575683" rating="-1">Metro Station</Artist>
+            <ItemInfo><ChartPosition last="27" this="2"/></ItemInfo>
+        </Track>
+        <Track id="52207363" rating="-1" title="Bleeding Love">
+            <Artist id="37956508" rating="-1">Leona Lewis</Artist>
+            <ItemInfo><ChartPosition last="28" this="3"/></ItemInfo>
+        </Track>
+    </Tracks>
+</Response>
+```
+
+<p>
+    Locators are XPath string values in your schema that point to data values
+    within the XML. Define a schema with the following properties for your XML
+    data:
+</p>
+
+<table>
+<thead>
+    <tr>
+        <th>Property</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>`metaFields`</td>
+        <td>Object</td>
+        <td>Key/locator pairs that point to arbitrary data values.</td>
+    </tr>
+    <tr>
+        <td>`resultListLocator`</td>
+        <td>String</td>
+        <td>Locator to an internal node list of tabular data.</td>
+    </tr>
+    <tr>
+        <td>`resultFields`</td>
+        <td>Array</td>
+        <td>Keys to assign to the values contained in the array. Locators may be defined to point to complex nested values or values held in attributes.</td>
+    </tr>
+</tbody>
+</table>
+
+```
+var mySchema = {
+    metaFields: {session:"//Session", total:"//Tracks/@total"},
+    resultListLocator: "Track", // node name or XPath
+    resultFields: [{key:"song", locator:"@title"}, {key:"artist", locator:"Artist"}, {key:"rank", locator:"ItemInfo/ChartPosition/@this"}]
+};
+
+// Returns an object with the properties "results" and "meta"
+var myOutput = Y.DataSchema.XML.apply(mySchema, myData));
+```
+
+<h4 id="text">DataSchema.Text</h4>
+
+<p>
+    Use DataSchema.Text when working with delimited textual data. Typically,
+    your data will not contain meta values.
+</p>
+
+```
+// Sample text data
+notebooks, 100, spiral-bound
+pencils, 300, #2 erasers
+pens, 500, blue ink
+```
+
+<p>Define a schema with the following properties for your text data:</p>
+
+<table>
+<thead>
+    <tr>
+        <th>Property</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>`resultDelimiter`</td>
+        <td>String</td>
+        <td>Delimiter separating each row of tabular data</td>
+    </tr>
+    <tr>
+        <td>`fieldDelimiter`</td>
+        <td>String</td>
+        <td>Delimiter separating each column of tabular data</td>
+    </tr>
+    <tr>
+        <td>`resultFields`</td>
+        <td>Array</td>
+        <td>Keys to assign to the values contained in each field (column).</td>
+    </tr>
+</tbody>
+</table>
+
+```
+var mySchema = {
+    resultDelimiter: "\\n",
+    fieldDelimiter: ",",
+    resultFields: [{key:"product"}, {key:"quantity"}, {key:"detail"}];
+
+// Returns an object with the properties "results" and "meta"
+var myOutput = Y.DataSchema.Text.apply(mySchema, myData));
+```
+
+<h3 id="plugin">DataSchema as a DataSource plugin</h3>
+
+<p>
+    DataSchema plugins integrate DataSource's retrieval functionality with
+    schema-based normalization of the retrieved data for further consumption by
+    another component. There are currently four available DataSource plugins:
+    DataSourceArraySchema, DataSourceJSONSchema, DataSourceXMLSchema, and
+    DataSourceTextSchema.
+</p>
+
+```
+myDataSource.plug({fn: Y.Plugin.DataSourceJSONSchema, cfg: {
+    schema: {
+        resultListLocator: "ResultSet.Result",
+        resultFields: ["Title"]
+    }
+}});
+
+// myCallback functions will receive the schema-normalized response object
+myDataSource.sendRequest({
+    request: myRequest,
+    callback: myCallback
+});
+```
+
+<h2 id="knownissues">Known Issues</h2>
+
+<p>
+    <strong>Known Android issues (bugs 2529621, 2529758, 2529775):</strong> XML
+    parsing is currently buggy on the Android WebKit browser.
+</p>

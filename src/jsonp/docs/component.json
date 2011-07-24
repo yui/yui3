@@ -1,0 +1,42 @@
+{
+    "name": "jsonp",
+	"displayName": "JSONP",
+	"description": "JSONP provides a JSONPRequest object for reusable cross-domain requests to web services that support JSONP output and a Y.jsonp(..) method to instantiate and send a JSONPRequest.",
+	"author": "lsmith",
+
+    "use": ["jsonp", "jsonp-url"],
+    "tags": ["utility", "jsonp"],
+
+    "examples": [
+
+        {
+            "name": "jsonp_github",
+	        "displayName": "Getting Cross Domain JSON Data Using Y.jsonp()",
+	        "description": "Get basic <a href='http://github.com'>GitHub</a> user info using a <code>Y.jsonp(url, callback)</code>.",
+	        "modules": ["jsonp"],
+	        "useModules": ["jsonp", "node"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "jsonp_gallery",
+	        "displayName": "Reusing a JSONPRequest Instance to Poll a Remote Server",
+	        "description": "Create a reusable JSONPRequest object to poll the YUILibrary.com Gallery web service, fetching info on a random Gallery module.",
+	        "modules": ["jsonp", "transition"],
+	        "useModules": ["jsonp", "transition"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "jsonp_fail",
+	        "displayName": "Advanced Configuration of JSONP Requests",
+	        "description": "Handle timeout or connection failures, override the 'this' object of the callback, and provide additional arguments to the callback",
+	        "modules": ["jsonp"],
+	        "useModules": ["jsonp-base", "node"],
+
+            "hideTableOfContents": true
+        }
+    ]
+}

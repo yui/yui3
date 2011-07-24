@@ -1,0 +1,38 @@
+YUI().use('dd-drop', 'dd-constrain', function(Y) {
+        var data = {
+            'drag1': { color: 'white', size: 'x-small', price: '$5.00' },
+            'drag2': { color: 'blue', size: 'small', price: '$6.00' },
+            'drag3': { color: 'green', size: 'medium', price: '$7.00' },
+            'drag4': { color: 'red', size: 'large', price: '$10.00' },
+            'drag5': { color: 'purple', size: 'x-large', price: '$15.00' }
+        };
+        var drags = Y.Node.all('#play div.drag');
+        drags.each(function(v, k) {
+            var thisData = {};
+            Y.mix(thisData, data[v.get('id')]);
+            var dd = new Y.DD.Drag({
+                node: v,
+                dragMode: 'intersect',
+                data: thisData
+            }).plug(Y.Plugin.DDConstrained, {
+                constrain2node: '#play'
+            });
+            dd.on('drag:end', function(e) {
+                e.preventDefault();
+            });
+        });
+
+        var drop = new Y.DD.Drop({
+            node: '#drop'
+        });
+        drop.on('drop:hit', function(e) {
+            var drag = e.drag;
+            var data = drag.get('data');
+            var out = ['id: ' + drag.get('node').get('id')];
+            Y.each(data, function(v, k) {
+                out[out.length] = k + ': ' + v;
+            });
+            var str = '<p><strong>Dropped</strong>: ' + out.join(', ') + '</p>';
+            this.get('node').set('innerHTML', str);
+        });
+});

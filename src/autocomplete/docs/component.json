@@ -1,0 +1,81 @@
+{
+    "name"       : "autocomplete",
+    "displayName": "AutoComplete",
+    "description": "Provides automatic input completion or suggestions for text input fields and textareas.",
+    "author"     : "rgrove",
+
+    "tags": ["widget", "autocomplete"],
+    "use" : ["autocomplete"],
+
+    "examples": [
+        {
+            "name"       : "ac-local",
+            "displayName": "Basic Local Data",
+            "description": "How to provide autocomplete suggestions from a local array.",
+            "modules"    : ["autocomplete"],
+            "tags"       : ["autocomplete"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "ac-jsonp",
+            "displayName": "Remote Data via JSONP",
+            "description": "How to provide autocomplete suggestions using a remote JSONP source.",
+            "modules"    : ["autocomplete"],
+            "tags"       : ["autocomplete", "jsonp"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "ac-yql",
+            "displayName": "Remote Data via YQL",
+            "description": "How to provide autocomplete suggestions using a YQL query source.",
+            "modules"    : ["autocomplete"],
+            "tags"       : ["autocomplete", "yql"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "ac-datasource",
+            "displayName": "Remote Data via DataSource",
+            "description": "How to provide autocomplete suggestions using a DataSource instance.",
+            "modules"    : ["autocomplete", "datasource"],
+            "tags"       : ["autocomplete", "datasource"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "ac-tagging",
+            "displayName": "Tag Completion Using Query Delimiters",
+            "description": "How to implement delimited tag completion.",
+            "modules"    : ["autocomplete"],
+            "tags"       : ["autocomplete", "tagging", "delimiter"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "ac-flickr",
+            "displayName": "Find Photos on Flickr (Custom Formatting, YQL Source)",
+            "description": "How to find and select Flickr photos using a YQL source and a custom autocomplete result formatter.",
+            "modules"    : ["autocomplete"],
+            "tags"       : ["autocomplete", "flickr", "formatter", "yql", "photos"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "ac-filter",
+            "displayName": "Filter a Set of Existing Items on a Page",
+            "description": "How to use autocomplete-base to filter a set of existing items on a page.",
+            "modules"    : ["autocomplete"],
+            "tags"       : ["autocomplete", "filter", "pie"],
+
+            "hideTableOfContents": true
+        }
+    ]
+}

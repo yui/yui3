@@ -1,6 +1,18 @@
+/**
+ * Provides a case-insenstive comparator which can be used for array sorting.
+ * 
+ * @module arraysort
+ */
+
 var LANG = Y.Lang,
     ISVALUE = LANG.isValue,
     ISSTRING = LANG.isString;
+
+/**
+ * Provides a case-insenstive comparator which can be used for array sorrting.
+ *
+ * @class ArraySort
+ */
 
 Y.ArraySort = {
     /**
@@ -28,10 +40,10 @@ Y.ArraySort = {
         }
 
         if(ISSTRING(a)) {
-            a.toLowerCase();
+            a = a.toLowerCase();
         }
         if(ISSTRING(b)) {
-            b.toLowerCase();
+            b = b.toLowerCase();
         }
         if(a < b) {
             return (desc) ? 1 : -1;

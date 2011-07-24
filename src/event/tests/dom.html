@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html>
 <head>
     <title>YUI DOM Event Tests</title>
@@ -17,8 +17,10 @@
     <!-- Initialization process //-->
     <script type="text/javascript">
         YUI({
-            filter: 'debug'
-            , logExclude: {
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+            allowRollup: false,
+            //lazyEventFacade: true,
+            logExclude: {
                 yui:true, get: true, 'selector-native': true, loader: true,
                 Dom: true, Selector: true, Node: true, attribute: true, base: true, widget: true}
         }).use('console', 'test', 'node', 'event-simulate', function (Y) {
@@ -32,6 +34,18 @@
             Y.Test.Runner.add(new Y.Test.Case({
 
                 name: "DOM Event Tests",
+
+                _should: {
+                    error: {
+                        // This test fakes the processing of click and mouseup
+                        // events without actually triggering them (because
+                        // Event.simulate tries to correct e.button and doesn't
+                        // accept e.which as simulated event config) which
+                        // runs afoul of the document.createEventObject(e)
+                        // used to allow getters
+                        "test left and right click, mouseup": Y.config.lazyEventFacade
+                    }
+                },
 
                 test_on_with_string: function() {
 
@@ -533,12 +547,80 @@
                     // Y.Event.simulate(document.getElementById('clicker2'), 'click');
 
                     Y.Assert.areEqual(2, count);
+                },
+
+                "test left and right click, mouseup": function () {
+                    var node = Y.one('#clicker1'),
+                        el = node._node,
+                        fired = {},
+                        typePrefix = 'event:' + Y.stamp(el),
+                        // cribbed from the event-base-ie.js conditional loading
+                        imp = Y.config.doc && Y.config.doc.implementation,
+                        testIE = !(imp && imp.hasFeature
+                                    && imp.hasFeature('Events', '2.0')),
+                        handle;
+
+                    // custom simulation because Y.Event.simulate attempts to
+                    // correct e.button and doesn't accept e.which
+                    function mouseEvent(type, config) {
+                        var key = typePrefix + type,
+                            wrapper = Y.Env.evt.dom_wrappers[key];
+
+                        config.type = type;
+                        config.target = el;
+
+                        wrapper.fire(Y.Event.getEvent(config, el));
+                    }
+
+                    handle = node.on(['mouseup', 'click'], function (e) {
+                        fired[e.type] = true;
+                        Y.Assert.areSame(1, e.button);
+                        Y.Assert.areSame(1, e.which);
+                    });
+
+                    // FF 5-, Chrome, Opera 11- left mouseup,click
+                    mouseEvent('mouseup', { button: 0, which: 1 });
+                    mouseEvent('click', { button: 0, which: 1 });
+
+                    if (testIE) {
+                        // IE 6 - 8 left click
+                        mouseEvent('click', { button: 1 });
+                    }
+
+                    handle.detach();
+
+                    Y.Assert.isTrue(fired.mouseup);
+                    Y.Assert.isTrue(fired.click);
+
+                    fired = {};
+
+                    handle = node.on(['mouseup', 'click'], function (e) {
+                        fired[e.type] = true;
+                        Y.Assert.areSame(3, e.button);
+                        Y.Assert.areSame(3, e.which);
+                    });
+
+
+                    // FF, Chrome, Opera, right mouseup
+                    // Not simulating right 'click' because I can't get the
+                    // event to be triggered manually
+                    mouseEvent('mouseup', { button: 2, which: 3 });
+
+                    if (testIE) {
+                        // IE 6 - 8 left click
+                        mouseEvent('mouseup', { button: 2 });
+                    }
+
+                    handle.detach();
+
+                    Y.Assert.isTrue(fired.mouseup);
                 }
 
 
             }));
 
             //run all tests
+            Y.Test.Runner.setName("DOMEvents");
             Y.Test.Runner.run();
 
             /* finishing the testing process */

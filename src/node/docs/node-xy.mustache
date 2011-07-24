@@ -1,0 +1,33 @@
+<link href="{{componentAssets}}/node.css" rel="stylesheet" type="text/css">
+<div class="intro">
+    <p>This example shows how to position an element based on the document XY coordinate system.</p>
+    <p>Click anywhere on the page, and the little orange box will move to the click position.</p>
+</div>
+
+<div class="example">
+{{>node-xy-source}}
+</div>
+
+<h2>Setting up the HTML</h2>
+<p>First we need some HTML to work with.</p>
+```
+<span id="demo"></span>
+```
+
+<h2>Getting the Dimensions</h2>
+<p>In this example, we will listen for clicks on the document and update the position of our demo node to match the click position.</p>
+```
+var onClick = function(e) {
+    Y.one('#demo').setXY([e.pageX, e.pageY]);
+};
+```
+
+<p>The last step is to assign the click handler to the <code>document</code> to capture all <code>click</code> events.</p>
+```
+Y.one('document').on('click', onClick);
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>node-xy-source}}
+```

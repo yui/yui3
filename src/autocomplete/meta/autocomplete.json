@@ -1,5 +1,9 @@
 {
     "autocomplete": {
+        "use": [
+            "autocomplete-base", "autocomplete-sources", "autocomplete-list",
+            "autocomplete-plugin"
+        ],
         "submodules": {
             "autocomplete-base": {
                 "plugins": {
@@ -42,8 +46,7 @@
                 },
 
                 "optional": [
-                    "jsonp",
-                    "yql"
+                    "autocomplete-sources"
                 ],
 
                 "requires": [
@@ -56,6 +59,8 @@
             },
 
             "autocomplete-list": {
+                "after": ["autocomplete-sources"],
+
                 "lang": ["en"],
 
                 "plugins": {
@@ -85,13 +90,29 @@
 
                 "requires": [
                     "autocomplete-base",
+                    "event-resize",
+                    "node-screen",
+                    "selector-css3",
+                    "shim-plugin",
                     "widget",
                     "widget-position",
-                    "widget-position-align",
-                    "widget-stack"
+                    "widget-position-align"
                 ],
 
                 "skinnable": true
+            },
+
+            "autocomplete-sources": {
+                "optional": [
+                    "io-base",
+                    "json-parse",
+                    "jsonp",
+                    "yql"
+                ],
+
+                "requires": [
+                    "autocomplete-base"
+                ]
             }
         }
     }

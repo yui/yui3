@@ -77,7 +77,9 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
          *      <dt>offset</dt>
          *          <dd>Pixel offset from top/left of the slider to the new
          *          thumb position</dd>
-         *      <dt>ddEvent</dt>
+         *      <dt>ddEvent (deprecated)</dt>
+         *          <dd><code>drag:drag</code> event from the thumb</dd>
+         *      <dt>originEvent</dt>
          *          <dd><code>drag:drag</code> event from the thumb</dd>
          *  </dl>
          */
@@ -272,11 +274,16 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
          * @param event {Event} The event object for the slideStart with the
          *                      following extra properties:
          *  <dl>
-         *      <dt>ddEvent</dt>
+         *      <dt>ddEvent (deprecated)</dt>
+         *          <dd><code>drag:start</code> event from the thumb</dd>
+         *      <dt>originEvent</dt>
          *          <dd><code>drag:start</code> event from the thumb</dd>
          *  </dl>
          */
-        this.fire( 'slideStart', { ddEvent: e } );
+        this.fire('slideStart', {
+           ddEvent: e, // for backward compatibility
+           originEvent: e
+        });
     },
 
     /**
@@ -293,7 +300,8 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
         Y.log("Thumb position: " + thumbXY + ", Rail position: " + railXY, "info", "slider");
         this.fire( 'thumbMove', {
             offset : (thumbXY - railXY),
-            ddEvent: e
+            ddEvent: e, // for backward compatibility
+            originEvent: e
         } );
     },
 
@@ -313,11 +321,16 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
          * @param event {Event} The event object for the slideEnd with the
          *                      following extra properties:
          *  <dl>
-         *      <dt>ddEvent</dt>
+         *      <dt>ddEvent (deprecated)</dt>
+         *          <dd><code>drag:end</code> event from the thumb</dd>
+         *      <dt>originEvent</dt>
          *          <dd><code>drag:end</code> event from the thumb</dd>
          *  </dl>
          */
-        this.fire( 'slideEnd', { ddEvent: e } );
+        this.fire('slideEnd', {
+            ddEvent: e,
+            originEvent: e
+        });
     },
 
     /**
@@ -389,10 +402,12 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
     },
 
     /** 
-     * Ensures the stored length value is a string with a quantity and unit.
+     * <p>Ensures the stored length value is a string with a quantity and unit.
      * Unit will be defaulted to &quot;px&quot; if not included.  Rejects
      * values less than or equal to 0 and those that don't at least start with
-     * a number.
+     * a number.</p>
+     *
+     * <p>Currently only pixel lengths are supported.</p>
      *
      * @method _setLength
      * @param v {String} proposed value for the length attribute
@@ -420,14 +435,20 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
      * @protected
      */
     _initThumbUrl: function () {
-        var url     = this.get( 'thumbUrl' ),
-            skin    = this.getSkinName() || 'sam',
-            skinDir = Y.config.base + 'slider/assets/skins/' + skin;
+        if (!this.get('thumbUrl')) {
+            var skin = this.getSkinName() || 'sam',
+                base = Y.config.base;
 
-        if ( !url ) {
-            // <img src="/path/to/build/slider/assets/skins/sam/thumb-x.png">
-            url = skinDir + '/thumb-' + this.axis + '.png';
-            this.set( 'thumbUrl', url );
+            // Unfortunate hack to avoid requesting image resources from the
+            // combo service.  The combo service does not serve images.
+            if (base.indexOf('http://yui.yahooapis.com/combo') === 0) {
+                base = 'http://yui.yahooapis.com/' + Y.version + '/build/';
+            }
+
+            // <img src="/path/to/build/slider-base/assets/skins/sam/thumb-x.png">
+            this.set('thumbUrl', base + 'slider-base/assets/skins/' +
+                                 skin + '/thumb-' + this.axis + '.png');
+
         }
     },
 
@@ -528,7 +549,7 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
          * CSS).  This corresponds to the movable range of the thumb.
          *
          * @attribute length
-         * @type {String | Number} e.g. "200px", "6em", or 200 (defaults to px)
+         * @type {String | Number} e.g. "200px" or 200
          * @default 150px
          */
         length: {

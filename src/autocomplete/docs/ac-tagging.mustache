@@ -1,0 +1,103 @@
+<style scoped>
+#ac-input { width: 250px; }
+</style>
+
+<div class="intro">
+<p>
+This example demonstrates how to use the `queryDelimiter` config, a custom result filter, and a couple of event handlers to provide suggestions as a user enters tags in an input field. The result list is prepopulated with suggested tags and is displayed immediately when the input field receives focus rather than waiting for the user to begin typing.
+</p>
+</div>
+
+<div class="example">
+    {{>ac-tagging-source}}
+</div>
+
+<h2>HTML</h2>
+
+```
+<div id="demo" class="yui3-skin-sam">
+  <label for="ac-input">Tags:</label><br>
+  <input id="ac-input" type="text">
+</div>
+```
+
+<h2>JavaScript</h2>
+
+<h3>Tags Array</h3>
+
+<p>
+While a remote result source could also be used, in this example we'll use the following local array of suggested tags to keep things simple:
+</p>
+
+```
+var tags = [
+  'css',
+  'css3',
+  'douglas crockford',
+  'ecmascript',
+  'html',
+  'html5',
+  'java',
+  'javascript',
+  'json',
+  'node.js',
+  'pie',
+  'yui'
+];
+```
+
+<h2>Implementation</h2>
+
+```
+YUI().use('autocomplete', 'autocomplete-filters', 'autocomplete-highlighters', function (Y) {
+  var inputNode = Y.one('#ac-input');
+
+  inputNode.plug(Y.Plugin.AutoComplete, {
+    activateFirstItem: true,
+    allowTrailingDelimiter: true,
+    minQueryLength: 0,
+    queryDelay: 0,
+    queryDelimiter: ',',
+    source: tags,
+    resultHighlighter: 'startsWith',
+
+    // Chain together a startsWith filter followed by a custom result filter
+    // that only displays tags that haven't already been selected.
+    resultFilters: ['startsWith', function (query, results) {
+      // Split the current input value into an array based on comma delimiters.
+      var selected = inputNode.ac.get('value').split(/\s*,\s*/);
+
+      // Pop the last item off the array, since it represents the current query
+      // and we don't want to filter it out.
+      selected.pop();
+
+      // Convert the array into a hash for faster lookups.
+      selected = Y.Array.hash(selected);
+
+      // Filter out any results that are already selected, then return the
+      // array of filtered results.
+      return Y.Array.filter(results, function (result) {
+        return !selected.hasOwnProperty(result.text);
+      });
+    }]
+  });
+
+  // When the input node receives focus, send an empty query to display the full
+  // list of tag suggestions.
+  inputNode.on('focus', function () {
+    inputNode.ac.sendRequest('');
+  });
+
+  // After a tag is selected, send an empty query to update the list of tags.
+  inputNode.ac.after('select', function () {
+    inputNode.ac.sendRequest('');
+    inputNode.ac.show();
+  });
+});
+```
+
+<h2>Complete Example Source</h2>
+
+```
+{{>ac-tagging-source}}
+```

@@ -1,0 +1,362 @@
+<style type="text/css" scoped>
+
+/* Standard Module Widget CSS */
+.yui3-standardmodule-hidden {
+    display:none;
+}
+
+.yui3-standardmodule {
+    margin:10px;
+}
+
+.yui3-standardmodule-content {
+    padding:3px;
+    border:1px solid #666;
+}
+
+.yui3-standardmodule-content .yui3-widget-hd {
+    padding:5px;
+    border:2px solid #aa0000;
+    background-color:#fff;
+    overflow:auto;
+}
+
+.yui3-standardmodule-content .yui3-widget-bd {
+    padding:5px;
+    border:2px solid #0000aa;
+    background-color:#fff;
+    overflow:auto;
+}
+
+.yui3-standardmodule-content .yui3-widget-ft {
+    padding:5px;
+    border:2px solid #00aa00;
+    background-color:#fff;
+    overflow:auto;
+}
+
+/* Positionable Widget CSS */
+.yui3-positionable {
+    position:absolute;
+}
+
+.yui3-positionable-content {
+    text-align:center;
+    border:1px solid #000;
+    background-color:#999966;
+    color:#fff;
+    padding:10px;
+}
+
+.yui3-positionable-hidden {
+    visibility:hidden;
+}
+
+/* Alignable Widget CSS */
+.yui3-alignable {
+    position:absolute;
+}
+
+.yui3-alignable-content {
+    text-align:center;
+    border:1px solid #000000;
+    background-color:#004C6D;
+    color:#fff;
+    padding:2px;
+}
+
+.yui3-alignable-hidden {
+    visibility:hidden;
+}
+
+
+/* Example Layout CSS */
+.widget-build-example {
+    border:1px solid #ccc;
+    padding:5px;
+}
+
+.widget-build-example button, .widget-build-example label, .widget-build-example select, .widget-build-example input {
+    margin-right:5px;
+}
+
+.widget-build-example button.fail {
+    color:#cc0000;
+    margin-left:10px;
+}
+
+.widget-build-example .filler {
+    color:#999;
+}
+
+#x, #y {
+    width:3em;
+}
+
+#widget-build-examples dd {
+    margin-left:0;
+}
+
+#widget-build-examples dt {
+    margin-bottom:1em;
+    margin-top:1em;
+}
+
+#widget2-example, #widget3-example {
+    height:15em;
+}
+
+#widget2-example select, #widget3-example select {
+    width:100%;
+}
+
+#alignment p {
+    color:#dddd00;
+}
+</style>
+
+<div class="intro">
+    <p>This example shows how you can mix and match the `WidgetPosition`, `WidgetPositionAlign`, `WidgetStack` and `WidgetStdMod` extensions to build custom versions of the `Widget` class, using `Base.create`.</p>    
+</div>
+
+<div class="example">
+    {{>widget-build-source}}
+</div>
+
+<h2>Creating Custom Widget Classes</h2>
+
+<p>The `Base` class provides a `create` method which can be used to create custom versions of classes which derive from `Base` by adding extension classes to them.</p>
+
+<p>Widget currently ships with four such extensions: `WidgetPosition`, `WidgetStack`, `WidgetPositionAlign` and `WidgetStdMod`.
+These extensions are used to create the basic `Overlay` widget, but can also be used individually, to create custom versions of the base `Widget` class.</p>
+
+<h2>Widget with WidgetStdMod support</h2>
+
+<p>Adding the `WidgetStdMod` extension to Widget, creates a statically positioned Widget, with support for standard module format sections - header, body and footer, which maybe useful in portal type use cases, where the positioning/stacking capabilities which come bundled with Overlay are not required.</p>
+
+<p>To create a custom class, we use <a href="{{apiDocs}}/Base.html#method_Base.create">`Base.create`</a>, which is described in detail on the documention page for <a href="../base/index.html#extensions">Base</a>.</p>
+
+<p>We pass in `Widget` as the main class we want to add extensions to, and `WidgetStdMod` as the extension we'd like added to the main class:</p>
+
+```
+var StandardModule = Y.Base.create("standardModule", Y.Widget, [Y.WidgetStdMod]);
+
+// Render from Markup
+var stdmod = new StandardModule({
+    contentBox: "#widget1",
+    width:"12em",
+    height:"12em"
+});
+stdmod.render();
+```
+
+<p>`Base.create` will:</p>
+<ol>
+    <li>Create a new class which extends `Widget`</li>
+    <li>Aggregate known `Base` and `Widget` fields, such as `ATTRS` and `HTML_PARSER` from `WidgetStdMod` on the new class</li>
+    <li>Augment prototype methods from `WidgetStdMod` onto the new class prototype</li>
+</ol>
+
+<p>The first argument to create is the `NAME` of the new class we are creating, just like the `NAME` we define when extending the Widget class directly.</p>
+
+<p>Note that the `Widget` class is unchanged, allowing you to still create `Widget` instances without any standard module support, along with `StandardModule` instances which have standard module support.</p>
+
+<h3>Testing It Out</h3>
+
+<p>The example attempts to set content on an instance of the newly created `StandardModule` class, using the `setStdModContent` method which is added by the extension (which would otherwise not exist on the Widget instance).</p>
+
+```
+var contentInput = Y.one("#content");
+var sectionInput = Y.one("#section");
+
+// This should work, since the StandardModule widget has settable 
+// header/body/footer sections
+Y.on("click", function(e) {
+
+    var content = Y.Escape.html(contentInput.get("value"));
+    var section = sectionInput.get("value");
+
+    stdmod.setStdModContent(section, content);
+
+}, "#setContent");
+```
+
+<p>To verify that no unrequested features are added, we also attempt to move the instance using the `move` method, which is not part of the base Widget class, and would be added by the `WidgetPosition` extension. This verifies that the other example classes we'll create, which do create new classes which use `WidgetPosition`, have not modified the base Widget class.</p>
+
+```
+// This shoud fail, since the StandardModule widget is not positionable
+Y.on("click", function(e) {
+    try {
+        stdmod.move([0,0]);
+    } catch (e) {
+        alert("move() is " + typeof stdmod.move + ", stdmod.hasImpl(Y.WidgetPosition) : "
+        + stdmod.hasImpl(Y.WidgetPosition));
+    }
+}, "#tryMove");
+```
+
+<p>Note that `Base.create` adds a `hasImpl` method to the built class, which allows you to query whether or not it has a particular extension applied.</p>
+
+<h3>CSS Considerations</h3>
+
+<p>We need to define the CSS which goes with this new `StandardModule` class we have created. The only rule really required out of the box is the rule which handles visibility (`yui-standardmodule-hidden`). The "standardmodule" used in the class name comes from the `NAME` property we set up for the new class, and is used to prefix all state related classes added to the widgets bounding box.
+Since the `StandardModule` class is not positionable, we use `display:none` to define the `hidden` state.</p>
+
+```
+
+/* Visibility - How to handle visibility for this new widget */
+.yui3-standardmodule-hidden {
+    display:none;
+}
+```
+
+<p>The other "yui-standardmodule" rules are only used to create the required look/feel for this particular example, and do not impact the StandardModule widget's functionality.</p>
+
+<h2>Widget with WidgetPosition and WidgetStack support</h2>
+
+<p>As with `StandardModule`, we use `Base.create` to create the new `Positionable` widget class. This time we add `WidgetPosition` and `WidgetStack` support to the base `Widget` class to create a basic XY positionable widget, with shimming and z-index support.</p>
+
+```
+var Positionable = Y.Base.create("positionable", Y.Widget, 
+                            [Y.WidgetPosition, Y.WidgetStack]);
+
+// Render from markup
+var positionable = new Positionable({
+    contentBox: "#widget2",
+    width:"10em",
+    height:"10em",
+    zIndex:1
+});
+positionable.render("#widget2-example");
+
+var xy = Y.one("#widget2-example > p").getXY();
+
+positionable.move(xy[0], xy[1]);
+```
+
+<p>We <strong>don't</strong> add `WidgetPositionAlign` or `WidgetStdMod` support, so the widget doesn't have extended positioning support (align, center) or standard module support. Hence we position it manually using the `move` method which the `WidgetPosition` extension provides.</p>
+
+<h3>Testing It Out</h3>
+
+<p>We should now be able to invoke the `move` method on an instance of the newly created `Positionable` class:</p>
+
+```
+// This should work, since Positionable has basic XY Positioning support
+Y.on("click", function(e) {
+    var x = parseInt(xInput.get("value"));
+    var y = parseInt(yInput.get("value"));
+
+    positionable.move(x,y);
+
+}, "#move");
+```
+
+<p>And, as with the `StandardModule` class, we should not be allowed to invoke any methods from an extension which we didn't request:</p>
+
+```
+// This should fail, since Positionable does not have Standard Module sections
+Y.on("click", function(e) {
+    try {
+        positionable.setStdModContent("header", "new content");
+    } catch (e) {
+        alert("setStdModContent() is " + typeof positionable.setStdModContent + 
+            ", positionable.hasImpl(Y.WidgetStdMod) : " + positionable.hasImpl(Y.WidgetStdMod));
+    }
+}, "#tryContent");
+```
+
+<h3>CSS Considerations</h3>
+
+<p>Since now we have a positionable widget, with z-index support, we set the widget to be absolutely positioned by default, and control it's hidden state using `visibility` as opposed to `display`</p>
+
+```
+/* Define absolute positioning as the default for positionable widgets */
+.yui3-positionable {
+    position:absolute;
+}
+
+/* 
+   In order to be able to position the widget when hidden, we define hidden
+   to use visibility, as opposed to display
+*/
+.yui3-positionable-hidden {
+    visibility:hidden;
+}
+```
+
+<h2>Widget with WidgetPosition, WidgetStack and WidgetPositionAlign support</h2>
+
+<p>Lastly, we'll attempt to create a new widget class, which, in addition to basic positioning and stacking support, also has extended positioning support, allowing us to align it with other elements on the page.</p>
+
+<p>Again, we use `Base.create` to create our new `Alignable` widget class, by combining `WidgetPosition`, `WidgetStack` and `WidgetPositionAlign` with the base widget class:</p>
+
+```
+var Alignable = Y.Base.create("alignable", Y.Widget, 
+                    [Y.WidgetPosition, Y.WidgetPositionAlign, Y.WidgetStack]);
+
+var alignable = new Alignable({
+    width:"13em",
+    align : {
+        node: "#widget3-example",
+        points: ["cc", "cc"]
+    },
+    zIndex:1
+});
+alignable.get("contentBox").set("innerHTML", 
+    '<strong>Alignable Widget</strong><div id="alignment"><p>#widget3-example</p> \
+    <p>[center, center]</p></div>');
+alignable.render("#widget3-example");
+```
+
+<h3>Testing It Out</h3>
+
+<p>We'll attempt to align an instance of the `Alignable` class, using some of the additional attributes which `WidgetPositionAlign` adds to the base `Widget` class: `align` and `centered`:</p>
+
+```
+// Align left-center egde of widget to 
+// right-center edge of the node with id "widget3-example"
+alignable.set("align", {node:"#widget3-example", points:["lc", "rc"]});
+
+// Align top-right corner of widget to 
+// bottom-right corner of the node with id "widget3-example"
+alignable.set("align", {node:"#widget3-example", points:["tr", "br"]});
+
+// Center the widget in the node with id "widget3-example"
+alignable.set("centered", "widget3-example");
+
+// Align the right-center edge of the widget to 
+// the right center edge of the viewport (since a node is not provided to 'align')
+alignable.set("align", {points:["rc", "rc"]});
+
+// Center the widget in the viewport (wince a node is not provided to 'centered')
+alignable.set("centered", true);
+
+// Return the node to it's original alignment 
+// (centered in the node with id "widget3-example")
+// NOTE: centered is a shortcut for align : { points:["cc", "cc"] }
+alignable.set("align", {node:"#widget3-example", points:["cc", "cc"]});
+```
+
+<h3>CSS Considerations</h3>
+
+<p>The `Alignable` widget class, has the same core CSS rules as the `Positionable` class, to define how it is positioned and how it is hidden:</p>
+
+```
+/* Define absolute positioning as the default for alignable widgets */
+.yui3-alignable {
+    position:absolute;
+}
+
+/* 
+   In order to be able to position the widget when hidden, we define hidden
+   to use visibility, as opposed to display
+*/
+.yui3-alignable-hidden {
+    visibility:hidden;
+}
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>widget-build-source}}
+```

@@ -8,7 +8,7 @@
 
         <style>
         #testNode, #testNode2 {
-            background-color: blue;
+            background-color: #ddd;
             width:200px;
             height:200px;
             font-family:monospace;
@@ -21,7 +21,7 @@
         }
 
         #testNode.active {
-            background-color:red;
+            background-color:#aaa;
         }
         </style>
 
@@ -31,7 +31,9 @@
 
     <body id="bd">
 
+        Left Mouse or Finger
         <div id="testNode"></div>
+        Center Mouse or Finger, no flick, needs to move 10px
         <div id="testNode2"></div>
 
         <script>
@@ -45,7 +47,7 @@
                 };
 
                 var moveStartHandler = function(e) {
-                    //Y.log("MoveStart: " + e.target + ", " + e.currentTarget);
+                    Y.log("MoveStart: " + e.target + ", " + e.currentTarget);
 
                     e.target.set("innerHTML", "");
                     e.target.append("<div>gesturemovestart, page:" + [e.pageX, e.pageY, e.button] + "</div>");

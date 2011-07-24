@@ -2,6 +2,9 @@ YUI Event Simulation Utilities
 Module Name: "event-simulate"
 Documentation: http://developer.yahoo.com/yui/3/event
 
+3.3.0
+    * Updated to work with IE9's DOM2 implementation.
+
 3.2.0
     * No changes.
 

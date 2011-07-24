@@ -67,32 +67,33 @@ Y.extend(DataSourceArraySchema, Y.Plugin.Base, {
      * Parses raw data into a normalized response.
      *
      * @method _beforeDefDataFn
-     * <dl>
-     * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
-     * <dt>request (Object)</dt> <dd>The request.</dd>
-     * <dt>callback (Object)</dt> <dd>The callback object with the following properties:
+     * @param tId {Number} Unique transaction ID.
+     * @param request {Object} The request.
+     * @param callback {Object} The callback object with the following properties:
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
      *     </dl>
-     * </dd>
-     * <dt>data (Object)</dt> <dd>Raw data.</dd>
-     * </dl>
+     * @param data {Object} Raw data.
      * @protected
      */
     _beforeDefDataFn: function(e) {
         var data = (Y.DataSource.IO && (this.get("host") instanceof Y.DataSource.IO) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
-            response = Y.DataSchema.Array.apply.call(this, this.get("schema"), data);
+            response = Y.DataSchema.Array.apply.call(this, this.get("schema"), data),
+            payload = e.details[0];
             
         // Default
-        if(!response) {
+        if (!response) {
             response = {
                 meta: {},
                 results: data
             };
         }
         
-        this.get("host").fire("response", Y.mix({response:response}, e));
+        payload.response = response;
+
+        this.get("host").fire("response", payload);
+
         return new Y.Do.Halt("DataSourceArraySchema plugin halted _defDataFn");
     }
 });

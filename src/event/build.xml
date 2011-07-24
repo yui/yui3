@@ -1,27 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="YUI" default="local">
-    <description>Event - Build All Modules</description>
+    <description>Build All Modules</description>
 
-    <macrodef name="build-event">
+    <macrodef name="build-submodules">
         <attribute name="target"/>
         <sequential>
-            <ant antfile="build-event.xml" target="@{target}"/>
-            <ant antfile="build-base-ie.xml" target="@{target}"/>
-            <ant antfile="build-touch.xml" target="@{target}"/>
+            <subant target="@{target}">
+                <fileset dir="." includes="build.*.xml"/>
+            </subant>
         </sequential>
     </macrodef>
 
     <target name="local">
-        <build-event target="local"/>
+        <build-submodules target="local"/>
     </target>
     <target name="deploy">
-        <build-event target="deploy"/>
+        <build-submodules target="deploy"/>
     </target>
     <target name="all">
-        <build-event target="all"/>
+        <build-submodules target="all"/>
     </target>
     <target name="clean">
-        <build-event target="clean"/>
+        <build-submodules target="clean"/>
+    </target>
+    <target name="tests">
+        <build-submodules target="clean"/>
     </target>
 
 </project>

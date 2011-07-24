@@ -1,0 +1,243 @@
+<div class="intro">
+    <p>
+    Plugins allow you to unobtrusively add functionality to objects (referred to as the "host" object) such as nodes and widgets. 
+    Plugins can inherit from the `Plugin.Base` class, but this is not a hard requirement as we'll see later.
+    </p>
+
+    <p>
+    Plugins are used to add atomic pieces of functionality or features to component instances (hosts), without having  to bake support or even 
+    knowledge of the feature into the component class. This allows features to be mixed and matched per component instance, without having to build all 
+    features into a monolithic component class or having to ship multiple versions of the component class with varying combinations of features.
+    </p>
+</div>
+
+{{>getting-started}}
+
+<h2 id="using">Creating Plugins</h2>
+
+<h3 id="simple">Simple Plugins</h3>
+
+<p>
+For the most basic plugins, which don't have any events or attributes of their own, and which don't modify the behavior
+of the host by listening for any host events, or overriding any of the host's methods, plugins can simply be basic JavaScript classes.
+</p>
+
+<p>
+The only requirement for the class is that it has a static namespace property `NS` with a value assigned to it. 
+The value of the `NS` property is used to define the property on the host instance which will refer to 
+the plugin when it's plugged into the host.
+</p>
+
+<p>
+When plugins are plugged into a host instance a new instance of the plugin is created, 
+and a reference to the host is added to the configuration object passed to the plugin's constructor, 
+so that the plugin has a way to reference the host object. (similarly, when plugins are unplugged from a host 
+object they are destroyed).
+</p>
+
+<p>So, putting this all together, a simple plugin class may look something like the following:</p>
+
+```
+// This AnchorPlugin is designed to be added to Node instances (the host will be a Node instance)
+
+function AnchorPlugin(config) {
+
+    // Hold onto the host instance (a Node in this case), 
+    // for other plugin methods to use.
+
+    this._node = config.host;
+}
+
+// When plugged into a node instance, the plugin will be 
+// available on the "anchors" property.
+AnchorPlugin.NS = "anchors"
+
+AnchorPlugin.prototype = {
+    disable: function() {
+        var node = this._node;
+        var anchors = node.queryAll("a");
+        anchors.addClass("disabled");
+        anchors.setAttribute("disabled", true);
+    }
+};
+
+```
+
+<p>To use the `AnchorPlugin`, the user would plug it into a Node reference they were holding on to:</p>
+
+```
+var container = Y.one("div.actions");
+container.plug(AnchorPlugin);
+
+```
+
+<p>And invoke methods on the plugin, through the namespace it is bound to:</p>
+
+```
+container.anchors.disable();
+
+```
+
+<h3 id="advanced">Advanced Plugins</h3>
+
+<p>For basic features, simple plugin classes as described above may suffice. However, when you have more complex features which you'd like to encapsulate, the ability to use 
+attributes and events for your plugin implementation becomes useful. More importantly, for many plugins, you'll be looking to modify the default 
+behavior of the host instance in some way (for example an Animation Plugin may want to change the default show/hide behavior of a Widget, to be animated).</p>
+
+<p>For these richer plugins, you should extend the base plugin class <a href="{{apiDocs}}/Plugin.Base.html">`Plugin.Base`</a>. </p>
+
+<p>`Plugin` is a subclass of `Base`, thereby providing managed attributes, lifecycle methods, and custom event support. Additionally it allows the plugin code to 
+either listen for and react to events fired by the host or inject custom logic before or after methods invoked on the host object (through the YUI 3 <a href="{{apiDocs}}/Do.html">AOP</a> infrastructure).
+`Plugin.Base` also sets up `host` as an attribute, so you can access it through `this.get("host")` in your plugin implementation code.
+</p>
+
+<h4 id="extendingplugin">Extending Plugin.Base</h4>
+
+<p>You can extend the `Plugin.Base` class, just as you would extend the <a href="../base/index.html">`Base`</a> class. One thing to note when comparing this to simple plugins 
+is that the host reference is automatically set up as an attribute by the `Plugin.Base` class, so a reference to it does not need to be set up explicitly.</p>
+
+<p>The class structure for an advanced plugin follows the pattern for all classes derived from Base, with the addition of the `NS` property to define
+the namespace for the plugin (see the <a href="../base/index.html">Base</a> documentation for details about NAME and ATTRS).</p>
+
+
+```
+// A plugin class designed to animate Widget's show and hide methods.
+function WidgetAnimPlugin(config) {
+    WidgetAnimPlugin.superclass.constructor.apply(this, arguments);
+}
+
+// Define Static properties NAME (to identify the class) and NS (to identify the namespace)
+WidgetAnimPlugin.NAME = 'widgetAnimPlugin';
+WidgetAnimPlugin.NS = 'fx';
+
+// Attribute definitions for the plugin
+WidgetAnimPlugin.ATTRS = {
+
+    animHidden : {
+        ...
+    },
+
+    animVisible: {
+        ...
+    }
+};
+
+// Extend Plugin.Base
+Y.extend(WidgetAnimPlugin, Y.Plugin.Base, {
+
+    // Add any required prototype methods
+
+});
+
+```
+
+<p>The plugin class structure described above is captured in this <a href="{{componentAssets}}/myplugin.js.txt">"MyPlugin" Template File</a>, which you can use as a starting point to create your own plugins derived from `Plugin.Base`.</p>
+
+<h4 id="pluginlisteners">Plugin Listeners</h4>
+
+<p>The main value obtained by extending `Plugin.Base` is the ability to react to events fired by the host  
+using `Plugin.Base`'s <a href="{{apiDocs}}/Plugin.Base.html#method_onHostEvent">`onHostEvent`</a> and <a href="{{apiDocs}}/Plugin.Base.html#method_afterHostEvent">`afterHostEvent`</a> methods, or 
+modify methods on the host, using <a href="{{apiDocs}}/Plugin.Base.html#method_beforeHostMethod">`beforeHostMethod`</a> and <a href="{{apiDocs}}/Plugin.Base.html#method_afterHostMethod">`afterHostMethod`</a>.</p>
+
+<p>The value of doing this through the above `Plugin.Base` methods as opposed to working with the host directly, is that any listeners added by the plugin using the above methods are removed when the plugin is unplugged. 
+This is important. Plugins should clean up after themselves when unplugged from the host.</p>
+
+<h5>Events</h5>
+
+<p>As mentioned, plugins which derive from `Plugin.Base` have the ability to listen for events on the host object and react to them.</p>
+
+<p>For example, all widgets fire a `render` event when they are rendered. Your widget-specific plugin may need to know when this occurs, 
+so that it can inject custom elements into the markup the host renders. It can do this through the `afterHostEvent` method:</p>
+
+```
+// A plugin which introduces rounded corners to a widget.
+function RoundedCornersPlugin(config) {
+    //...
+}
+
+RoundedCornersPlugin.NAME = 'roundedCornersPlugin';
+RoundedCornersPlugin.NS = 'corners';
+
+Y.extend(RoundedCornersPlugin, Y.Plugin.Base, {
+
+    // Automatically called by Base, during construction
+    initializer: function(config) { 
+         // "render" is a widget event 
+        this.afterHostEvent('render', this.insertCornerElements);
+    },
+
+    insertCornerElements: function() {
+        var widget = this.get("host");
+        var boundingBox = widget.get("boundingBox");
+
+        var tl = Y.Node.create(TL_TEMPLATE);
+        //...
+
+        boundingBox.appendChild(tlNode);
+        boundingBox.appendChild(trNode);
+        boundingBox.appendChild(blNode);
+        boundingBox.appendChild(brNode);
+    }
+});
+
+```
+
+<h5>Methods</h5>
+
+<p>In some cases, your plugin may need to override the logic in the host class' methods. The `beforeHostMethod` and `afterHostMethod` methods provided by `Plugin.Base` 
+allow you to insert custom plugin logic before or after a method is executed on the host object.</p>
+
+<p>For example, to animate the way a widget is shown or hidden, we may need to override the method
+which actually flips the visibility style attribute on the widget's bounding box and replace it with an animated opacity implementation, 
+as shown below:</p>
+    
+```
+// A plugin class designed to animate Widget's show and hide methods.
+function WidgetAnimPlugin(config) {
+    //...
+}
+
+WidgetAnimPlugin.NAME = 'widgetAnimPlugin';
+WidgetAnimPlugin.NS = 'fx';
+
+WidgetAnimPlugin.ATTRS = {
+
+    animHidden : {
+        //...
+    },
+
+    animVisible: {
+        //...
+    }
+};
+
+// Extend Plugin.Base, and override the default
+// method _uiSetVisible, used by Widget to flip the visibility
+Y.extend(WidgetAnimPlugin, Y.Plugin.Base, {
+
+    initializer : function(config) {
+
+        // Override Widget's _uiSetVisible method, with the custom animated method
+        this.beforeHostMethod("_uiSetVisible", this._uiAnimSetVisible);
+    },
+
+    _uiAnimSetVisible : function(show) {
+        // Instead of flipping visibility, use the animation
+        // instances configured for the plugin to animate
+        // hide/show.
+        if (this.get("host").get("rendered")) {
+            if (show) {
+                this.get("animHidden").stop();
+                this.get("animVisible").run();
+            } else {
+                this.get("animVisible").stop();
+                this.get("animHidden").run();
+            }
+
+            // Prevent the default method from being invoked.
+            return new Y.Do.Prevent();
+        }
+    }
+});
+
+```

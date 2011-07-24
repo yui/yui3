@@ -2,15 +2,12 @@ YUI.add('dd-delegate', function(Y) {
 
     /**
      * Provides the ability to drag multiple nodes under a container element using only one Y.DD.Drag instance as a delegate.
-     * @module dd
-     * @submodule dd-delegate
-     */     
-    /**
-     * Provides the ability to drag multiple nodes under a container element using only one Y.DD.Drag instance as a delegate.
      * @class Delegate
      * @extends Base
      * @constructor
      * @namespace DD
+     * @module dd
+     * @submodule dd-delegate
      */
 
 
@@ -131,6 +128,9 @@ YUI.add('dd-delegate', function(Y) {
             //On end drag, detach the listeners
             this.dd.after('drag:end', Y.bind(this._afterDragEnd, this));
             this.dd.on('dragNodeChange', Y.bind(this._onNodeChange, this));
+            this.dd.after('drag:mouseup', function() {
+                this._unprep();
+            });
 
             //Attach the delegate to the container
             this._handles.push(Y.delegate(Y.DD.Drag.START_EVENT, Y.bind(this._delMouseDown, this), cont, this.get(NODES)));

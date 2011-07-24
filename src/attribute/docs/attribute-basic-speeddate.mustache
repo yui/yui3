@@ -1,0 +1,345 @@
+<style type="text/css" scoped>
+    #speeddate h1 {
+        font-size: 108%;
+        color:#000;
+        margin-bottom:2em;
+    }
+
+    #john {
+        margin-bottom:10px;
+    }
+
+    .sd-nametag {
+        border:1px solid #000;
+        text-align:center;
+        width:25em;
+        margin:20px;
+        
+        background-color:#00f;
+
+        border-radius: 10px;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+                
+        box-shadow: 3px 3px 3px #888;
+        -moz-box-shadow: 3px 3px 3px #888;
+        -webkit-box-shadow: 3px 3px 3px #888;
+    }
+
+    .sd-nametag .sd-hd, .sd-nametag .sd-ft {
+        padding:5px;
+        text-align:center;
+        font-size:108%;
+        font-weight:900;
+        color:#fff;
+    }
+
+    .sd-nametag .sd-hd {    
+        border-top-right-radius: 10px;
+        border-top-left-radius: 10px;
+        -moz-border-radius-topright: 10px;
+        -moz-border-radius-topleft: 10px;
+        -webkit-border-top-right-radius: 10px;
+        -webkit-border-top-left-radius: 10px;
+    }
+
+    .sd-nametag .sd-ft {    
+        border-bottom-right-radius: 10px;
+        border-bottom-left-radius: 10px;
+        -moz-border-radius-bottomright: 10px;
+        -moz-border-radius-bottomleft: 10px;
+        -webkit-border-bottom-right-radius: 10px;
+        -webkit-border-bottom-left-radius: 10px;
+    }
+
+    .sd-nametag .sd-bd {
+        background-color:#fff;
+        padding:1em;
+    }
+
+    .sd-nametag .sd-bd .sd-name, 
+    .sd-nametag .sd-bd .sd-personality {
+        font-size:108%;
+        font-weight:900;
+        font-family:monospace;
+        text-decoration:underline;
+        color:#00a;
+    }
+
+    .sd-nametag .sd-bd .sd-personality.sd-max {
+        color:#f00;
+    }
+
+</style>
+
+<div class="intro">
+    <p>
+        This example builds on the <a href="attribute-basic.html">"Basic Configuration" example</a>, 
+        showing how you can use attribute to model objects in your application.
+    </p>
+    
+    <p>
+        As with the basic example, it is geared towards users who want to create their own classes from 
+        scratch and add attribute support. In most cases you should consider extending the 
+        <a href="../base/index.html">`Base`</a> class when you need attribute support, instead 
+        of augmenting Attribute directly. <a href="../base/index.html">`Base`</a> does the work described 
+        in this example for you, in addition to making it easier for users to extend you class.
+    </p>    
+</div>
+
+<div class="example">
+    {{>attribute-basic-speeddate-source}}
+</div>
+
+<h2>Setting Up a SpeedDater Class</h2>
+
+<p>In this example, we'll create a custom `SpeedDater` class, and show how you can use attributes to manage the state for a Speed Dater.
+In the <a href="attribute-event-speeddate.html">"Attribute Event Based Speed Dating" example</a> we'll modify this example to leverage attribute change events.</p>
+
+<h3>Creating A YUI Instance</h3>
+
+<p>As with the other attribute <a href="attribute-basic.html">examples</a>, we'll setup our own instance of the YUI object and request the modules we require using the code pattern shown below:</p>
+
+```
+<script type="text/javascript">
+
+    // Create our local YUI instance, to avoid
+    // modifying the global YUI object
+
+    YUI({...}).use("attribute", "node", ... function(Y) {
+
+        // Example code is written inside this function,
+        // which gets passed our own YUI instance, Y, populated
+        // with the modules we asked for (e.g. Y.Attribute, Y.Node etc.)
+
+    });
+</script>
+```
+
+<h3>Defining The SpeedDater Class</h3>
+
+<p>The first step in the example is to create the constructor function for our new class, to which we want to add attribute support. In our example, this class is called `SpeedDater`.
+We then augment `SpeedDater` with `Y.Attribute`, so that it receives all of `Attribute's` methods, in addition to any it may defined itself:</p>
+
+```
+// Setup custom class which we want to add attribute support to
+function SpeedDater(cfg) {
+    ...
+}
+
+// Augment custom class with Attribute
+Y.augment(SpeedDater, Y.Attribute);
+```
+
+<h3>Adding Attributes</h3>
+
+<p>
+We can now set up any attributes we need for `SpeedDater` using Attribute's `addAttrs()` method. 
+
+For this example we add 3 attributes - `name`, `personality`, and `available`. 
+
+We provide an default initial `value` for `personality` and `available`, but don't have anything for `name`.
+
+As mentioned in the basic example, the same object literal we use to provide the initial value for the attribute can also be used to configure attribute properties such as `readOnly` or 
+`writeOnce`, and to define `getter`, `setter` and `validator` methods for the attribute. For `name`, we configure it to be `writeOnce`, 
+meaning that it's value can be set once by the user, but not modified after that single set.
+</p>
+
+<p>
+The default set of attributes which `SpeedDater` will support is passed to `addAttrs` to set up the attributes for each instance during construction.
+</p>
+
+<p>
+As mentioned previously, if you expect your class to be extended, <a href="../base/index.html">Base</a> provides a more convenient way for you to define the same attribute configuration statically for your class, so that it can be modified by extended classes. 
+Base will take care of isolating the static configuration, so that it isn't modified across instances. 
+</p>
+
+The complete definition for `SpeedDater` is shown below:</p>
+
+```
+// Setup custom class which we want to 
+// add managed attribute support to
+
+function SpeedDater(cfg) {
+
+    // When constructed, setup the initial attributes for the
+    // instance, by calling the addAttrs method.
+
+    var attrs = {
+        // Add 3 attributes: name, personality, available
+        name : {
+            writeOnce:true
+        },
+
+        personality : {
+            value:50
+        },
+
+        available : {
+            value:true
+        }
+    };
+
+    this.addAttrs(attrs, cfg);
+}
+
+SpeedDater.prototype.applyNameTag = function(where) {
+    // Method used to render the visual representation of a 
+    // SpeedDater object's state (in this case as a name tag)
+};
+
+SpeedDater.prototype.updateNameTag = function() {
+    // Method used to update the rendered state of SpeedDater in the DOM.
+}
+
+// Template to use form the markup    
+SpeedDater.NAMETAG = "<div class="sd-nametag"><div class="sd-hd">Hello!</div>... </div>";
+
+// Augment custom class with Attribute
+Y.augment(SpeedDater, Y.Attribute);
+```
+
+<p>
+The `addAttrs()` method, in addition to the default attribute configuration, also accepts an object literal (associative array) of name/value pairs which can be 
+used to over-ride the default initial values of the attributes. This is useful for classes which wish to allow the user the set the value of attributes as part of object 
+construction, as shown by the use of the `cfg` argument above.
+</p>
+
+<h3>Using Attributes</h3>
+
+<p>Now that we have `SpeedDater` defined with the set of attributes it supports, we can create multiple instances of `SpeedDater` defining the initial 
+attribute state for each instance through the constructor. We can also update the instance's attribute state after construction, using the `get` and 
+`set` methods defined by Attribute.</p>
+
+<p>We create a first instance, `john`, setting up the intial state using Attribute's constructor configuration object support:</p>
+
+```
+// Set both name and personality during construction 
+john = new SpeedDater({
+    name: "John",
+    personality: 76.43
+});
+```
+
+<p>For the second instance that we create, `jane`, we set the value of the personality attribute, after construction:</p>
+
+```
+// Set name during construction
+jane = new SpeedDater({
+    name: "Jane"
+});
+
+// Set personality after construction. The initial value for personality 
+// in this case, will be the value defined when the attribute was added 
+// using addAttrs (above)
+jane.set("personality", 82);
+```
+
+<p>We render the current attribute state of each instance to the DOM, using the `applyNameTag()` method defined on SpeedDater's prototype:</p>
+
+```
+// Render the sticker with john's state information to the DOM
+john.applyNameTag("#john .shirt");
+
+// Render the sticker with jane's state information to the DOM
+jane.applySicker("#jane .shirt");
+```
+
+<p>Although not directly related to working with Attributes, it's worth taking a look at the `applyNameTag()` and `updateNameTag()` implementations, since they establish
+a commonly used pattern.</p>
+
+<p>The `applyNameTag()` method handles rendering the initial visual representation for a speed dater object's state (in this case a name tag). It uses tokens in an HTML "template" string, which it replaces with the values 
+of attributes using the `substitute()` utility method:</p>
+
+```
+// A template for the markup representing the SpeedDater object..
+SpeedDater.NAMETAG = '<div class="sd-nametag"> \
+                        <div class="sd-hd">Hello!</div> \
+                        <div class="sd-bd">I\'m <span class="sd-name">{name}</span> \ 
+                        and my PersonalityQuotientIndex is \ 
+                        <span class="sd-personality">{personality}</span> \
+                        </div> \
+                        <div class="sd-ft sd-availability">{available}</div> \
+                     </div>';
+```
+
+```
+// A rendering method, used to create the initial markup for the SpeedDater.
+SpeedDater.prototype.applyNameTag = function(where) {
+
+    // This example uses an HTML template string containing placeholder 
+    // tokens (SpeedDater.NAMETAG above), and Y.substitute to replace the 
+    // tokens with the current attribute values.  
+
+    var tokens = {
+        // Get attribute values and map them to the tokens in the HTML template string
+        name: this.get("name"),
+        available: (this.get("available")) ? "I'm still looking " : "Sorry, I'm taken",
+        personality: this.get("personality")
+    };
+
+    // Create a new Node element, from the token substituted string... 
+    this.nameTag = Y.Node.create(Y.substitute(SpeedDater.NAMETAG, tokens));
+
+    // ... and append it to the DOM
+    Y.one(where).appendChild(this.nameTag);
+};
+```
+
+<p>The `updateNameTag()` method handles updating this visual representation with the current state, when requested by the user</p>
+
+```
+// An update method, used to refresh the rendered content, after 
+// an attribute value is changed.
+SpeedDater.prototype.updateNameTag = function() {
+
+    // Get current attribute values...
+    var taken = (this.get("available")) ? "I'm still looking " : "Sorry, I'm taken";
+    var name = this.get("name");
+    var personality = this.get("personality");
+
+    // Find the corresponding element, and replace the innerHTML with the new value
+    this.nameTag.one(".sd-name").set("innerHTML", name);
+    this.nameTag.one(".sd-availability").set("innerHTML", taken);
+
+    var personalityEl = this.nameTag.one(".sd-personality"); 
+    personalityEl.set("innerHTML", personality);
+
+    if (personality > 90) {
+        personalityEl.addClass("sd-max");
+    }
+}
+```
+
+<p>Each instance's state can be now be updated using Attribute's `set` method, and the subsequent call to SpeedDater's `updateNameTag()` method will update the visual representation (the rendered DOM) of the object:</p>
+
+```
+Y.on("click", function() {
+
+    john.set("available", false);
+    john.updateNameTag();
+    
+}, "#john .taken");
+
+Y.on("click", function() {
+
+    jane.set("available", false);
+    jane.updateNameTag();
+
+}, "#jane .taken");
+
+Y.on("click", function() {
+
+    jane.set("personality", 98);
+    jane.updateNameTag();
+
+}, "#jane .upgrade");
+```
+
+<p>In the <a href="attribute-event-speeddate.html">"Attribute Event Based Speed Dating" example</a>, we'll see how we can use Attribute change events to eliminate the need for users to call `updateNameTag()` each time they set an attribute, and have the two instances communicate with one another.</p>
+
+<h2>Complete Example Source</h2>
+
+```
+{{>attribute-basic-speeddate-source}}
+```

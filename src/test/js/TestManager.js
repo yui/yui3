@@ -111,6 +111,7 @@
         /**
          * Handles TestRunner.COMPLETE_EVENT, storing the results and beginning
          * the loop again.
+         * @method _handleTestRunnerComplete
          * @param {Object} data Data about the event.
          * @return {Void}
          * @private
@@ -144,6 +145,7 @@
         /**
          * Processes the results of a test page run, outputting log messages
          * for failed tests.
+         * @method _processResults
          * @return {Void}
          * @private
          * @static
@@ -171,6 +173,7 @@
         
         /**
          * Loads the next test page into the iframe.
+         * @method _run
          * @return {Void}
          * @static
          * @private
@@ -195,6 +198,7 @@
         /**
          * Signals that a test page has been loaded. This should be called from
          * within the test page itself to notify the TestManager that it is ready.
+         * @method load
          * @return {Void}
          * @static
          */
@@ -218,6 +222,7 @@
         
         /**
          * Sets the pages to be loaded.
+         * @method setPages
          * @param {String[]} pages An array of URLs to load.
          * @return {Void}
          * @static
@@ -228,6 +233,7 @@
         
         /**
          * Begins the process of running the tests.
+         * @method start
          * @return {Void}
          * @static
          */
@@ -324,6 +330,7 @@
     
         /**
          * Stops the execution of tests.
+         * @method stop
          * @return {Void}
          * @static
          */

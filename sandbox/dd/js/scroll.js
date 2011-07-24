@@ -3,16 +3,12 @@ YUI.add('dd-scroll', function(Y) {
     /**
      * Base scroller class used to create the Plugin.DDNodeScroll and Plugin.DDWinScroll.
      * This class should not be called on it's own, it's designed to be a plugin.
-     * @module dd
-     * @submodule dd-scroll
-     */
-    /**
-     * Base scroller class used to create the Plugin.DDNodeScroll and Plugin.DDWinScroll.
-     * This class should not be called on it's own, it's designed to be a plugin.
      * @class Scroll
      * @extends Base
      * @namespace DD
      * @constructor
+     * @module dd
+     * @submodule dd-scroll
      */
 
     var S = function() {
@@ -326,7 +322,7 @@ YUI.add('dd-scroll', function(Y) {
     /**
      * Extends the Scroll class to make the window scroll while dragging.
      * @class DDWindowScroll
-     * @extends DD.Scroll
+     * @extends Scroll
      * @namespace Plugin
      * @constructor
      */
@@ -371,7 +367,7 @@ YUI.add('dd-scroll', function(Y) {
     /**
      * Extends the Scroll class to make a parent node scroll while dragging.
      * @class DDNodeScroll
-     * @extends DD.Scroll
+     * @extends Scroll
      * @namespace Plugin
      * @constructor
      */

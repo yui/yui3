@@ -1,19 +1,23 @@
 {
     "io": {
+        "use": [
+             "io-base",
+             "io-xdr",
+             "io-form",
+             "io-upload-iframe",
+             "io-queue"
+         ],
         "submodules": {
             "io-base": {
                 "requires": [
-                    "event-custom-base"
-                ],
-                "optional": [
+                    "event-custom-base",
                     "querystring-stringify-simple"
                 ]
             }, 
             "io-form": {
                 "requires": [
                     "io-base", 
-                    "node-base", 
-                    "node-style"
+                    "node-base"
                 ]
             }, 
             "io-queue": {

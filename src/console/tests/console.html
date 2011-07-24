@@ -8,17 +8,13 @@
 
 <div id="log"></div>
 <script src="../../../build/yui/yui.js"></script>
+<script src="console-tests.js"></script>
 <script>
 YUI({
-    filter: 'raw',
-    modules: {
-        'console-test': {
-            fullpath: 'testsuite.js',
-            requires: ['console-filters','test']
-        }
-    },
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+    allowRollup: false,
     useBrowserConsole: false
-}).use('console-filters', 'console-test', function (Y) {
+}).use('console-filters', 'console-tests', function (Y) {
 
     new Y.Console({
         style: 'block',

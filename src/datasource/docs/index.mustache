@@ -1,0 +1,291 @@
+<div class="intro component">
+    <p>
+        The DataSource Utility provides a consistent API for the retrieval of
+        data from arbitrary sources over a variety of supported protocols.
+        DataSource plugins and extensions enable additional functionality such
+        as schema normalization, caching, and polling of data.
+    </p>
+</div>
+				
+{{>getting-started}}
+				
+<h2 id="using">Using DataSources</h2>
+			
+<h3 id="basics">DataSource basics</h3>
+
+<p>
+    The DataSource Utility uses a callback mechanism to manage the data
+    retrieval process across a wide variety of potential sources. Define your
+    callback object with custom functions that will execute when the data
+    returns from your source. The <code>sendRequest()</code> method accepts an
+    object literal with properties for the request value, a callback object,
+    and/or any configuration values for the request.
+</p>
+
+```
+myDataSource.sendRequest({
+    request: myRequest,
+    callback: {
+        success: function(e){
+            alert(e.response);
+        },
+        failure: function(e){
+            alert(e.error.message);
+        }
+    }
+});
+```
+
+				
+<p>
+    You must instantiate the appropriate DataSource subclass for your source of
+    data.
+</p>
+
+<h4 id="local">Local sources</h4>
+
+<p>
+    Use DataSource.Local when you are working with data that is held in local
+    memory, such as a JavaScript array or object.
+</p>
+
+```
+var myDataSource = new Y.DataSource.Local({source:["a", "b", "c"]});
+```
+
+<h4 id="get">Remote sources with the Get Utility</h4>
+
+<p>
+    Use DataSource.Get to access data coming from a server via the Get Utility.
+    The Get Utility supports data retrieval from cross-domain resources without
+    the need for a proxy, but the server must return JSON data and support a
+    script callback parameter in order for the response to return properly.
+    This parameter specifies the name of the internally defined function that
+    the return data will be wrapped in when it returns to the page. 
+</p>
+
+```
+var myDataSource = new Y.DataSource.Get({
+    source: "http://query.yahooapis.com/v1/public/yql?format=json&"
+});
+```
+
+<p>
+    You should not modify the internally assigned value of this script callback
+    parameter. However, you may need to set the parameter name to a different
+    value so that your server will accept it. By default, the script callback
+    parameter name is <code>"callback"</code>, but this value can be changed
+    via the Attribute <code>scriptCallbackParam</code>.
+</p>
+
+```
+// By default the request is sent to
+// "http://query.yahooapis.com/v1/public/yql?format=json&q=foo&callback=YUI.Env.DataSource.callbacks[0]"
+myDataSource.sendRequest({
+    request: "q=foo",
+    callback: myCallback
+});
+
+// But the parameter name can be customized to match the server requirement
+myDataSource.set("scriptCallbackParam", "cbFunc");
+
+// So now the request is sent to
+// "http://query.yahooapis.com/v1/public/yql?format=json&q=foo&cbFunc=YUI.Env.DataSource.callbacks[0]"
+myDataSource.sendRequest({
+    request: "q=foo",
+    callback: myCallback
+});
+```
+
+<p>
+    Use the DataSourceJSONSchema plugin to normalize the data that is sent to
+    your callack.
+</p>
+
+```
+// Normalize the data sent to myCallback
+myDataSource.plug({fn: Y.Plugin.DataSourceJSONSchema, cfg: {
+    schema: {
+        resultListLocator: "myResults",
+        resultFields: ["myField1", "myField2"]
+    }
+}});
+```
+
+<h4 id="io">Remote sources with the IO Utility</h4>
+
+<p>
+    DataSource.IO is used to access data coming from a server via the IO
+    Utility. Note that accessing a cross-domain server will require a
+    same-domain proxy or enabling IO's XDR feature, in order to bypass standard
+    browser security restrictions.
+</p>
+
+```
+var myDataSource = new Y.DataSource.IO({source:"./myScript.php"});
+```
+
+<p>
+    The IO Utility supports retrieval of multiple data formats, including JSON,
+    XML, and plain text. Use the appropriate DataSchema plugin to normalize the
+    data that is sent to your callback.
+</p>
+
+```
+myDataSource.plug({fn: Y.Plugin.DataSourceXMLSchema, cfg: {
+    schema: {
+        resultListLocator: "resultNodeName",
+        resultFields: [{key:"myField1", locator:"xpath/to/value"}]
+    }
+}});
+```
+
+<h4 id="function">Sources using custom functions</h4>
+
+<p>
+    Defining your own JavaScript function that returns data for a given request
+    allows full customization of the data retrieval mechanism.
+</p>
+
+```
+var myDataSource = new Y.DataSource.Function({
+    source: function (request) {
+        return data;
+    }
+});
+```
+
+<p>
+    Since your data can return data of any format, you may consider ways to
+    taking advantage of the built-in infrastructure, including using a
+    DataSchema plugin to normalize the data that is sent to your callback.
+</p>
+                
+```
+var myDataSource = new Y.DataSource.Function({
+    source: function (request) {
+        return [["ann", 123], ["bill", 456]];
+    }
+});
+
+myDataSource.plug({fn: Y.Plugin.DataSourceArraySchema, cfg: {
+    schema: {
+        resultFields: ["name","id"]
+    }
+}});
+```
+
+<h3 id="caching">Caching</h3>
+
+<p>
+    The DataSourceCache plugin provides integrated caching functionality to
+    your DataSource instance. Use the DataSource's <code>plug()</code> method
+    to instantiate a Cache instance. Set the <code>max</code> Attribute value
+    to the maximum number of entries the Cache should hold.
+</p>
+
+```
+myDataSource.plug({fn:Y.Plugin.DataSourceCache, cfg:{max:3}});
+```
+
+<p>
+    Once the plugin is enabled, it will handle caching and retrieval of values
+    seamlessly for you without the need for extra code. However, all the
+    methods and properties of the Cache instance is available on the DataSource
+    instance's <code>cache</code> namepace.
+</p>
+
+```
+// Flush myDataSource's cache.
+myDataSource.cache.flush();
+
+// Disable myDataSource's cache
+myDataSource.cache.set("max", 0);
+```
+
+<h3 id="polling">Polling</h3>
+
+<p>
+    Pollable is a DataSource extension that enhances the class with polling
+    functionality. Once the extension is applied, all instances of DataSource
+    will have available on their prototype the methods that enable and disable
+    requests sent at regular intervals. To apply the extension, simply include
+    the <code>datasource-polling</code> sub-module in your
+    <code>YUI.use()</code> statement.
+</p>
+
+```
+YUI().use("datasource-function", "datasource-polling", function(Y) {
+    var myFunction = function() {
+            return new Date();
+        },
+        myDataSource = new Y.DataSource.Function({source:myFunction}),
+        callback = {
+            success: function(e){
+                alert("At the tone the time will be: " + e.response.results[0]);
+            },
+            failure: function(e){
+                alert("Could not retrieve data: " + e.error.message);
+            }
+        },
+        id = myDataSource.setInterval(1000, null,callback); // Starts polling
+
+        myDataSource.clearInterval(id); // Ends polling
+});
+```
+
+<h3 id="events">Events</h3>
+<table>
+<thead>
+    <tr>
+        <th>Event</th>
+        <th>When</th>
+        <th>Event properties</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td><code>request</code></td>
+        <td>Request is made.</td>
+        <td>
+            <dl>
+                <dt><code>tId</code></dt>
+                    <dd>Unique transaction ID.</dd>
+                <dt><code>request</code></dt>
+                    <dd>The request value.</dd>
+                <dt><code>callback</code></dt>
+                    <dd>The callback object.</dd>
+                <dt><code>cfg</code></dt>
+                    <dd>The configuration object.</dd>
+            </dl>
+       </td>
+    </tr>
+    <tr>
+        <td><code>data</code></td>
+        <td>Raw data is received from the source.</td>
+        <td>
+            All properties from `request` plus
+            <dl>
+                <dt><code>data</code></dt>
+                    <dd>The raw data.</dd>
+            </dl>
+        </td>
+    </tr>
+    <tr>
+        <td><code>response</code></td>
+        <td>Response is returned to a callback function.</td>
+        <td>
+            All properties from `data` plus
+            <dl>
+                <dt><code>response</code></dt>
+                    <dd>Data normalized into a response object.</dd>
+            </dl>
+        </td>
+    </tr>
+    <tr>
+        <td><code>error</code></td>
+        <td>After `response` event, before the configured failure callback is executed.</td>
+        <td>Same properties as the `response` event</td>
+    </tr>
+</tbody>
+</table>

@@ -1,0 +1,430 @@
+<div class="intro">
+	<p>
+		<img src="{{componentAssets}}/img/graphics.png" alt="Screenshot of the Graphics" style="border: 1px solid #bfbfbf; float:right; height:150px; margin: 0 0 8px 8px; width:275px;">
+		The Graphics module provides a JavaScript API for creating shapes in a variety of formats across all A-grade browsers. Based on device and browser capabilities, Graphics leverages SVG, HTML Canvas and VML to render its graphical elements. 
+	</p>
+	<p>
+	The Graphics module features a `Graphic` class that allows you to easily create and manage shapes. Currently, a `Graphic` instance can be used to create predifined shapes and free-form polygons with fill and stroke properties.
+	</p>
+</div>
+{{>getting-started}}
+
+<h2 id="using">Using the Graphics module</h2>
+
+<p>The `Graphic` class acts a factory and container for shapes. You need at least one `Graphic` instance to create shapes for your application.</p>
+
+<h3 id="instantiating">Instantiating A Graphic instance</h3>
+
+<p>All you need to instantiate a Graphic instance is an HTML element in which to render. Alternatively, you can attach your instance to the body of your page.</p>
+
+<h4>CSS</h4>
+```
+#mygraphiccontainer {
+    width: 600px;
+    height: 400px;
+}
+```
+<h4>HTML</h4>
+```
+<div id="mygraphiccontainer"></div>
+```
+<h4>JavaScript</h4>
+```
+
+// Instantiate a graphic instance
+var mygraphic = new Y.Graphic({
+    render: "#mygraphiccontainer"
+});
+```
+
+    <p>By default, `Graphic` will size to its parent container. The API also provides the option of explicitly setting its `width` and `height` attributes. Additionally, the Graphic class provides an `autoSize` attribute. When set to true, the Graphic instance will expand to fit its contents.
+
+
+<h3>Creating shapes</h3>
+<p>Shapes are created using the `getShape` method. The `getShape` method takes a config parameter that defines the shape and its properties. When creating a shape, the shape is determined by the `type`
+attribute. The `Graphics` module includes four pre-defined shapes. They can be created by passing a `String` reference.</p>
+<table>
+    <tr>
+        <th>key</th>
+        <th>shape</th>
+    </tr>
+    <tr>
+        <td>circle</td>
+        <td>Y.Circle</td>
+    </tr>
+    <tr>
+        <td>ellipse</td>
+        <td>Y.Ellipse</td>
+    </tr>
+    <tr>.
+        <td>rect</td>
+        <td>Y.Rect</td>
+    </tr>
+    <tr>
+        <td>path</td>
+        <td>Y.Path</td>
+    </tr>
+</table>
+
+<p>Alternatively, you can create your own custom class and pass it directly through the `type` attribute.</p>
+
+<p>The below code would create a 300x200 rectangle with a blue fill and a red border.</p>
+
+```
+var mygraphic = new Y.Graphic({render:"#mygraphiccontainer"}),
+    myrect = mygraphic.getShape({
+        type: "rect",
+        width: 300,
+        height: 200,
+        fill: {
+            color: "#0000ff"
+        },
+        stroke: {
+            weight: 2,
+            color: "#ff0000"
+        },
+        x: 50,
+        y: 100
+    });
+```
+<p>This code would create an instance of a custom shape that you have created.</p>
+```
+var mygraphic = new Y.Graphic({render:"#mygraphiccontainer"}),
+    myrect = mygraphic.getShape({
+        type: Y.MyCustomShape,
+        width: 300,
+        height: 200,
+        fill: {
+            color: "#0000ff"
+        },
+        stroke: {
+            weight: 2,
+            color: "#ff0000"
+        },
+        x: 50,
+        y: 100
+    });
+```
+
+<h3 id="aboutgraphic">Working with the Graphic Class</h3>
+<p>The `Graphics` module uses different technologies based on browser capabilities. The `Graphics` module normalizes these different technologies with a consistent API. Ideally, you should not
+have to interact directly with the underlying technologies or their corresponding HTML elements. Both the `Graphic` and `Shape` classes provide APIs for sizing, positioning and customization.</p>
+
+<h4 id="graphicattributes">Graphic Attributes</h4>
+
+<p>The `Graphic` class exposes the following attributes.</p>
+    <table>
+	<tr>
+        <th>Attribute</th>
+	    <th>Type</th>
+	    <th>Description</th>
+	</tr>
+	<tr>
+	    <td>`id`</td>
+        <td>`String`</td>
+	    <td>Unique identifier for the `Graphic` instance. If not explicity set, one will be generated.</td></tr>
+	<tr>
+	    <td>`shapes`</td>
+        <td>`Object`</td>
+	    <td>Key value pairs containing all shape instances contained in the `Graphic` instance.</td>
+	</tr>
+	<tr>
+	    <td>`contentBounds`</td>
+        <td>`Object`</td>
+	    <td>Object containing size and coordinate data for the content of a Graphic in relation to the coordinate space of the `Graphic` instance. The following values are included: `top`, `right`, `bottom`, `left`, `width` and `height`.</td>
+	</tr>
+	<tr>
+	    <td>`node`</td>
+        <td>`HTMLElement`</td>
+	    <td>Outermost HTMLElement of the `Graphic` instance. (read-only)</td>
+	</tr>
+	<tr>
+	    <td>`width`</td>
+        <td>`Number`</td>
+	    <td>The width of the `Graphic` instance.</td>
+	</tr>
+	<tr>
+	    <td>`height`</td>
+        <td>`Number`</td>
+	    <td>The height of the `Graphic` instance.</td>
+	</tr>
+	<tr>
+	    <td>`autoSize`</td>
+	    <td>`boolean`</td>
+        <td>Determines how the size of instance is calculated. If true, the width and height are determined by the size of the contents. If false, the width and height values are either explicitly set or determined by the size of the parent node's dimensions. The default value is false.</td>
+	</tr>
+	<tr>
+	    <td>`resizeDown`</td>
+	    <td>`boolean`</td>
+        <td>When overflow is set to true, by default, `the contentBounds` will resize to greater values but not to smaller values. (for performance) When resizing the `contentBounds` down is desirable, set the resizeDown value to true. The default value is false.</td>
+	</tr>
+	<tr>
+	    <td>`x`</td>
+        <td>`Number`</td>
+	    <td>Indicates the x-coordinate for the instance.</td>
+	</tr>
+	<tr>
+	    <td>`y`</td>
+        <td>`Number`</td>
+	    <td>Indicates the y-coordinate for the instance.</td>
+	</tr>
+	<tr>
+	    <td>`autoDraw`</td>
+	    <td>`boolean`</td>
+	    <td>Indicates whether or not the instance will automatically redraw after a change is made to a shape. When performing multiple operations, such adding many shapes, `autoDraw` can be set to false. Calling `_redraw` will force a redraw when `autoDraw` is `false`.</td>
+	</tr>
+	<tr>
+	    <td>`visible`</td>
+	    <td>`boolean`</td>
+	    <td>Toggles visibility for a `Graphic` instance.</td>
+	</tr>
+    </table>
+
+<h4 id="graphicmethods">Graphic Methods</h4>
+
+<p>The `Graphic` class also has the following public methods.</p>
+    <table>
+        <tr>
+            <th>`Method`</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>getXY</td>
+            <td>Returns an array containing the current position of the graphic instance in page coordinates.</td>
+        </tr>
+        <tr>
+            <td>getShape</td>
+            <td>Generates and returns a shape instance by type.</td>
+        </tr>
+        <tr>
+            <td>removeShape</td>
+            <td>Removes a shape instance from from the graphic instance.</td>
+        </tr>
+        <tr>
+            <td>removeAllShapes</td>
+            <td>Removes all shape instances</td>
+        </tr>
+        <tr>
+            <td>destroy</td>
+            <td>Destroys the graphic instance and all its children.</td>
+        </tr>
+        <tr>
+            <td>getShapeById</td>
+            <td>Returns a shape instance based on an id.</td>
+        </tr>
+        <tr>
+            <td>batch</td>
+            <td>Allows for creating multiple shapes in order to batch appending and redraw operations.</td>
+        </tr>
+    </table>
+
+<h3 id="aboutshapes">Working with Shapes</h3>
+
+<h4 id="shapeattributes">Shape Attributes</h4>
+
+<p>Each shape shares a common set of attributes. Attributes shared across all shapes are listed below:</p>
+
+    <table>
+        <tr>
+            <th>Attribute</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>`id`</td>
+            <td>`String`</td>
+            <td>Unique identifier for the `Shape` instance. If not explicity set, one will be generated.</td></tr>
+        </tr>
+        <tr>
+            <td>`node`</td>
+            <td>`HTMLElement`</td>
+            <td>HTMLElement of the `Shape` instance. (read-only)</td>
+        </tr>
+        <tr>
+            <td>`x`</td>
+            <td>`Number`</td>
+            <td>The x-coordinate of the shape.</td>
+        </tr>
+        <tr>
+            <td>`y`</td>
+            <td>`Number`</td>
+            <td>The y-coordinate of the shape.</td>
+        </tr>
+        <tr>
+            <td>`width`</td>
+            <td>`Number`</td>
+            <td>The width of the `Shape` instance.</td>
+        </tr>
+        <tr>
+            <td>`height`</td>
+            <td>`Number`</td>
+            <td>The height of the `Shape` instance.</td>
+        </tr>
+        <tr>
+            <td>`visible`</td>
+            <td>`boolean`</td>
+            <td>Toggles visibility for a `Shape` instance.</td>
+        </tr>
+        <tr>
+            <td>`fill`</td>
+            <td>`Object`</td>
+            <td>
+                Contains information about the fill of the shape. 
+            </td>
+        </tr>
+        <tr>
+            <td>stroke</td>
+            <td>`Object`</td>
+            <td>
+                Contains information about the stroke of the shape.
+            </td>
+        </tr>
+        <tr>
+            <td>`rotation`</td>
+            <td>`Number` (0 - 360)</td>
+            <td>Rotates the shape.</td>
+        </tr>
+        <tr>
+            <td>`transformOrigin`</td>
+            <td>`Array`</td>
+            <td>The x and y values for the transformOrigin of a transform.</td>
+        </tr>
+        <tr>
+            <td>`translateX`</td>
+            <td>`Number`</td>
+            <td>The x-coordinate for applying a translate transform.</td>
+        </tr>
+        <tr>
+            <td>`translateY`</td>
+            <td>`Number`</td>
+            <td>The x-coordinate for applying a translate transform.</td>
+        </tr>
+    </table>
+
+<h4 id="shapemethods">Shape Methods</h4>
+
+<p>Shapes can also be manipulated by the following methods:</p>
+<table>
+    <tr>
+        <th>Method</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>`addClass`</td>
+        <td>Adds a class to the underlying HTMLElement.</td>
+    </tr>
+    <tr>
+        <td>`removeClass`</td>
+        <td>Removes a class to the underlying HTMLElement.</td>
+    </tr>
+    <tr>
+        <td>`getXY`</td>
+        <td>Gets the current position of the shape in page coordinates. Returns an array, `[x, y,]`, with the coordinates.</td>
+    </tr>
+    <tr>
+        <td>`setXY`</td>
+        <td>Sets the current position of the shape in page coordinates. Accepts an array, `[x, y]`, with the coordinates.</td>
+    </tr>
+    <tr>
+        <td>`get`</td>
+        <td>Returns the value of a given attribute.</td>
+    </tr>
+    <tr>
+        <td>`set`</td>
+        <td>Sets the value of an attribute.</td>
+    </tr>
+</table>
+
+<h4 id="drawingmethods">Drawing Methods</h4>
+
+<p>Unlike the other included shapes, the `Path` class is not pre-defined. Setting the size, fill and/or stroke of a pre-defined shape will render the shape. This is not true with the `Path`. To render
+a `Path` instance, its drawing methods need to be leveraged. Available drawing methods include:
+<dl>
+    <dt>moveTo</dt><dd>Moves to a coordinate point without drawing a line.</dd>
+    <dt>lineTo</dt><dd>Draws a line segment from the current point to the specified point.</dd>
+    <dt>curveTo</dt><dd>Draws a curve based on a start point, end point and two control points.</dd>
+    <dt>quadraticCurveTo</dt><dd>Draws a quadratic curve based on a start point, end point and two control points.</dd>
+    <dt>end</dt><dd>Ends a drawing operation. The shape will draw after end is called.</dd>
+    <dt>clear</dt><dd>Clears all contents of the path element.</dd>
+</dl>
+</p>
+<p>These drawing methods can also be leveraged when creating custom shapes.</p>
+
+<h4 id="strokesandfills">Strokes and Fills</h4>
+
+<p>All `Shape` instances contain `stroke` and `fill` attributes. They are used to define the colors for a `Shape`.</p>
+
+<h5 id="definingstrokes">Defining a Stroke</h5>
+<p>The `stroke` attribute has four properties.</p>
+    <dl>
+       <dt>color</dt><dd>The color of the stroke.</dd>
+       <dt>weight</dt><dd>Number that indicates the width of the stroke.</dd>
+       <dt>opacity</dt><dd>Number between 0 and 1 that indicates the opacity of the stroke. The default value is 1.</dd>
+       <dt>dashstyle</dt>Indicates whether to draw a dashed stroke. When set to "none", a solid stroke is drawn. When set to an array, the first index indicates the
+       length of the dash. The second index indicates the length of gap.
+    </dl>
+<p>The code below would set a 2 pixel solid red stroke on `myshape`.</p>
+```
+    myshape.set("stroke", {
+        color: "#ff0000",
+        weight: 2
+    });
+```
+<p>The `dashstyle` property can be used to create a dashed stroke on a shape.</p>
+```
+    myshape.set("stroke", {
+        color: "#ff0000",
+        weight: 2,
+        dashstyle: [3, 2]
+    });
+```
+
+<h5 id="definingfills">Defining a Fill</h5>
+<p>The `fill` attribute has the following properties.</p>
+        <dl>
+           <dt>color</dt><dd>The color of the fill.</dd>
+           <dt>opacity</dt><dd>Number between 0 and 1 that indicates the opacity of the fill. The default value is 1.</dd>
+           <dt>type</dt><dd>Type of fill.
+               <dl>
+                   <dt>solid</dt><dd>Solid single color fill. (default)</dd>
+                   <dt>linear</dt><dd>Linear gradient fill.</dd>
+                   <dt>radial</dt><dd>Radial gradient fill.</dd>
+               </dl>
+           </dd>
+        </dl>
+
+<p>If a `linear` or `radial` is specified as the fill type. The following additional property is used:
+        <dl>
+           <dt>stops</dt><dd>An array of objects containing the following properties:
+               <dl>
+                   <dt>color</dt><dd>The color of the stop.</dd>
+                   <dt>opacity</dt><dd>Number between 0 and 1 that indicates the opacity of the stop. The default value is 1. Note: No effect for IE <= 8</dd>
+                   <dt>offset</dt><dd>Number between 0 and 1 indicating where the color stop is positioned.</dd> 
+               </dl>
+           </dd>
+           <p>Linear gradients also have the following property:</p>
+           <dt>rotation</dt><dd>Linear gradients flow left to right by default. The rotation property allows you to change the flow by rotation. (e.g. A rotation of 180 would make the gradient pain from right to left.)</dd>
+           
+           <p>Radial gradients have the following additional properties:</p>
+           <dt>cx</dt><dd>The x-coordinate of the center of the gradient circle.</dd>
+           <dt>cy</dt><dd>The y-coordinate of the center of the gradient circle.</dd>
+           <dt>r</dt><dd>Radius of the gradient circle.</dd>
+           <dt>fx</dt><dd>Focal point x-coordinate of the gradient.</dd>
+           <dt>fy</dt><dd>Focal point y-coordinate of the gradient.</dd>
+        </dl>
+
+<h2 id="issues">Known Issues</h2>
+<ul class="spaced">
+    <li>
+        <p>Radial gradients need to be finalized. The current implementation can only be approximated to work in vml. Need to ensure normalizations are not adversely affecting other technologies.</p>
+    </li>
+    <li>
+        <p>Linear gradient rotations need some minor bug fixes.</p>
+    </li>
+    <li>
+        <p>The Canvas implementation of the path element lacks the ability to have interactivity.</p>
+    </li>
+    <li>
+        <p>`Graphic` should extend `Base`. It currently does not.</p>
+    </li>
+</ul>

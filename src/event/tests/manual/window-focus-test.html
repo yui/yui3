@@ -19,7 +19,9 @@
     // logExclude: {deprecated: 1,
     // Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
 
-		YUI({ }).use('console', 'event-focus', function (Y) {
+		YUI({
+            lazyEventFacade: true
+        }).use('console', 'event-focus', function (Y) {
 
 			(new Y.Console()).render();
 

@@ -9,7 +9,7 @@ YUI.add('querystring-parse', function(Y) {
  *
  * <p>The <code>querystring</code> module is a rollup of <code>querystring-parse</code> and
  * <code>querystring-stringify</code>.</p>
- * 
+ *
  * <p>As their names suggest, <code>querystring-parse</code> adds support for parsing
  * Query String data (Y.QueryString.parse) and <code>querystring-stringify</code> for serializing
  * JavaScript data into Query Strings (Y.QueryString.stringify).  You may choose to
@@ -64,7 +64,7 @@ pieceParser = function (eq) {
             return ret;
         }
         // ["foo[][bar][][baz]", "foo[][bar][]", "baz"]
-        tail = sliced[2]; 
+        tail = sliced[2];
         head = sliced[1];
 
         // array: key[]=val
@@ -111,6 +111,11 @@ mergeObjects = function(params, addition) {
  * @module querystring
  * @submodule querystring-parse
  * @for QueryString
+ * @method parse
+ * @param qs {String} Querystring to be parsed into an object.
+ * @param sep {String} (optional) Character that should join param k=v pairs together. Default: "&"
+ * @param eq  {String} (optional) Character that should join keys to their values. Default: "="
+ * @public
  * @static
  */
 QueryString.parse = function (qs, sep, eq) {
@@ -134,6 +139,9 @@ QueryString.parse = function (qs, sep, eq) {
  * @module querystring
  * @submodule querystring-parse
  * @for QueryString
+ * @method unescape
+ * @param s {String} String to be decoded.
+ * @public
  * @static
  **/
 QueryString.unescape = function (s) {
@@ -143,4 +151,4 @@ QueryString.unescape = function (s) {
 
 
 
-}, '@VERSION@' ,{requires:['collection']});
+}, '@VERSION@' ,{requires:['array-extras', 'yui-base']});

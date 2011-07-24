@@ -128,8 +128,20 @@ Y.ClickableRail = Y.mix(ClickableRail, {
 
                 this._uiMoveThumb(xy);
 
+                // Set e.target for DD's IE9 patch which calls
+                // e.target._node.setCapture() to allow imgs to be dragged.
+                // Without this, setCapture is called from the rail and rail
+                // clicks on other Sliders may have their thumb movements
+                // overridden by a different Slider (the thumb on the wrong
+                // Slider moves).
+                e.target = this.thumb.one('img') || this.thumb;
+
                 // Delegate to DD's natural behavior
                 dd._handleMouseDownEvent(e);
+
+                // TODO: this won't trigger a slideEnd if the rail is clicked
+                // check if dd._move(e); dd._dragThreshMet = true; dd.start();
+                // will do the trick.  Is that even a good idea?
             }
         },
 

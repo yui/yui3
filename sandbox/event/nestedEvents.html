@@ -11,9 +11,9 @@
                 function MyEventTarget() {
 
                     this.publish("myevent", {
-                        queuable:false, // setting to true does not change anything 
+                        queuable:false, // setting to true does not change anything
                         emitFacade:true,
-                       
+
                         defaultFn: function(e) {
                             Y.log("Default Function For:" + e.val);
                         }
@@ -31,8 +31,8 @@
 
                 met.on("myevent", function(e) {
                     if (e.val == "top") {
-                        e.preventDefault();  // Moving to after the nested fire, throws JS execption "Y.Env._eventstack is null"
                         this.fire("myevent", {val:"nested"});
+                        e.preventDefault();  // Moving to after the nested fire, throws JS execption "Y.Env._eventstack is null"
                     }
                 });
 

@@ -1,14 +1,12 @@
 YUI.add('editor-tab', function(Y) {
-    /**
-     * Handles tab and shift-tab indent/outdent support.
-     * @module editor
-     * @submodule editor-tab
-     */     
+
     /**
      * Handles tab and shift-tab indent/outdent support.
      * @class Plugin.EditorTab
      * @constructor
      * @extends Base
+     * @module editor
+     * @submodule editor-tab
      */
     
     var EditorTab = function() {

@@ -14,7 +14,7 @@ YUI.add('querystring-parse-simple', function(Y) {
  * without the additional support for arrays, objects, and so on.</p>
  * <p>This provides a friendly way to deserialize basic query strings, without necessitating
  * a lot of code for simple use-cases.</p>
- * 
+ *
  * @module querystring
  * @submodule querystring-parse-simple
  * @for QueryString
@@ -30,6 +30,11 @@ var QueryString = Y.namespace("QueryString");
  * @module querystring
  * @submodule querystring-parse
  * @for QueryString
+ * @method parse
+ * @param qs {String} Querystring to be parsed into an object.
+ * @param sep {String} (optional) Character that should join param k=v pairs together. Default: "&"
+ * @param eq  {String} (optional) Character that should join keys to their values. Default: "="
+ * @public
  * @static
  */
 QueryString.parse = function (qs, sep, eq) {
@@ -61,6 +66,9 @@ QueryString.parse = function (qs, sep, eq) {
  * @module querystring
  * @submodule querystring-parse
  * @for QueryString
+ * @method unescape
+ * @param s {String} String to be decoded.
+ * @public
  * @static
  **/
 QueryString.unescape = function (s) {
@@ -68,4 +76,4 @@ QueryString.unescape = function (s) {
 };
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['yui-base']});

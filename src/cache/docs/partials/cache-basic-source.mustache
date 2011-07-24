@@ -1,0 +1,70 @@
+<style scoped>
+/* custom styles for this example */
+#demo fieldset {display:block; border:0;}
+#demo .short {width:2em;}
+</style>
+
+<form id="demo">
+    <fieldset>
+        <label for="demo_max">Cache max: <input type="text" id="demo_max" class="short" value="0"> <input type="button" id="demo_setMax" value="Set max"></label>
+        <label for="demo_setUniqueKeys">Enforce unique keys: <input type="checkbox" id="demo_setUniqueKeys"></label>
+    </fieldset>
+    <fieldset>
+        <label for="demo_expires">Data expires after: <input type="text" id="demo_expires" class="med" value="86400000"> milliseconds
+        <input type="button" id="demo_setExpires" value="Set expires"></label>
+    </fieldset>
+    <fieldset>
+        <label for="demo_addKey">Key: <input type="text" id="demo_addKey"></label>
+        <label for="demo_addValue">Value: <input type="text" id="demo_addValue"></label>
+        <input type="button" id="demo_add" value="Cache value">
+    </fieldset>
+    <fieldset>
+        <label for="demo_retrieveKey">Key: <input type="text" id="demo_retrieveKey"></label>
+        <input type="button" id="demo_retrieve" value="Retrieve value">
+    </fieldset>
+    <fieldset>
+        <input type="button" id="demo_flush" value="Flush cache"></label>
+    </fieldset>
+</form>
+
+
+
+<script>
+YUI().use("node", "datatype-number", "cache-base" ,function (Y) {
+    var cache = new Y.Cache();
+    
+    Y.on("click", function(e){
+        cache.set("max", Y.DataType.Number.parse(Y.one("#demo_max").get("value")));
+        alert("Cache max set to " + cache.get("max") + ".");
+    }, "#demo_setMax");
+    
+    Y.on("click", function(e){
+        cache.set("uniqueKeys", Y.one("#demo_setUniqueKeys").get("checked"));
+        alert("Cache uniqueKeys set to " + cache.get("uniqueKeys") + ".");
+    }, "#demo_setUniqueKeys");
+
+    Y.on("click", function(e){
+        cache.set("expires", Y.DataType.Number.parse(Y.one("#demo_expires").get("value")));
+        alert("Cache \"expires\" set to " + cache.get("expires") + ".");
+    }, "#demo_setExpires");
+
+    Y.on("click", function(e){
+        cache.add(Y.one("#demo_addKey").get("value"), Y.one("#demo_addValue").get("value"));
+        var msg = cache.get("max") ?
+            "Value cached. Cache size is now " + cache.get("size") + "." :
+            "Cache max is " + cache.get("max") + ". Value not cached."
+        alert(msg);
+    }, "#demo_add");
+
+    Y.on("click", function(e){
+        var entry = cache.retrieve(Y.one("#demo_retrieveKey").get("value")),
+            output = entry ? entry.response : "Value not cached.";
+        alert(output);
+    }, "#demo_retrieve");
+
+    Y.on("click", function(e){
+        cache.flush();
+        alert("Cache flushed.");
+    }, "#demo_flush");
+});
+</script>

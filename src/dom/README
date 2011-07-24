@@ -1,3 +1,14 @@
+Note: as of 3.2.0, the dom-style-ie module is no longer included in the
+dom.js rollup for static builds.
+
+
+version 3.3.0
+- IE alpha filter for opacity no longer affects existing filters
+- Fixes for IE9, Firefox 4, and Chrome creators
+- setStyle(node, '') now clears inline styles
+- adds ancestors method
+
+
 version 3.2.0
 - CSS "transform" vendor prefix is now optional with set/getStyle
 - #2528747 Dom references document

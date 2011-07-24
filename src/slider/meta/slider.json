@@ -1,5 +1,11 @@
 {
     "slider": {
+        "use": [
+            "slider-base",
+            "slider-value-range",
+            "clickable-rail",
+            "range-slider"
+        ],
         "submodules": {
 
             "slider-base": {

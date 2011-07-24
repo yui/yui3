@@ -1,0 +1,58 @@
+<div id="out"></div>
+
+<script>
+(function() {
+
+    var say = function(msg, node, cls) {
+        node.append('<p class="' + cls + '">' + msg + '</p>');
+    };
+
+    YUI_config = {
+        filter:"raw",
+        groups: {
+            myapp: {
+                base: '{{componentAssets}}/',
+                modules : {
+                    "translator" : {
+                        lang: ["en", "fr", "es"]
+                    }
+                }
+            }
+        }
+    };
+
+    YUI({
+        lang:"en"
+    }).use("node-base", "translator", function(Y) {
+        var translator = new Y.Translator(),
+            out = Y.one("#out");
+
+        say("Speaking in: " + Y.Intl.getLang("translator"), out, "speaking");
+        say(translator.hi(), out, "word");
+        say(translator.bye(), out, "word");
+    });
+
+    YUI({
+        lang:"fr"
+    }).use("node-base", "translator", function(Y) {
+        var translator = new Y.Translator(),
+            out = Y.one("#out");
+
+        say("Speaking in: " + Y.Intl.getLang("translator"), out, "speaking");
+        say(translator.hi(), out, "word");
+        say(translator.bye(), out, "word");
+    });
+
+    YUI({
+        lang:"es"
+    }).use("node-base", "translator", function(Y) {
+        var translator = new Y.Translator(),
+            out = Y.one("#out");
+
+        say("Speaking in: " + Y.Intl.getLang("translator"), out, "speaking");
+        say(translator.hi(), out, "word");
+        say(translator.bye(), out, "word");
+    });
+
+}());
+</script>

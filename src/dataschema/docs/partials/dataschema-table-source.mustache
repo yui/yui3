@@ -1,0 +1,179 @@
+<style scoped>
+/* custom styles for this example */
+#demo .output {margin-bottom:1em; padding:10px; border:1px solid #D9D9D9;}
+#complex tbody, #complex thead {
+    border:3px solid #CCC;
+}
+</style>
+
+<form id="demo">
+    <h4>Simple Table</h4>
+    <h6>Data</h6>
+
+    <table id="simple">
+    <tr>
+        <td>coffee</td>
+        <td>1.25</td>
+    </tr>
+    <tr>
+        <td>juice</td>
+        <td>2.00</td>
+    </tr>
+    <tr>
+        <td>tea</td>
+        <td>1.25</td>
+    </tr>
+    <tr>
+        <td>soda</td>
+        <td>1.00</td>
+    </tr>
+    </table>
+
+    
+    <h6>Schema</h6>
+    <pre>
+{
+    // Each record is held in a TR
+    resultListLocator: "tr",
+    // Note that the XPath indexes are 1-based!
+    resultFields: [{key:"beverage", locator:"td[1]"}, {key:"price", locator:"td[2]"}]
+}
+    </pre>
+
+    <h6>Normalized data</h6>
+    <input type="button" id="demo_apply_basic" value="Apply schema =>">
+    <div id="demo_output_basic" class="output"></div>
+
+    <h4>Complex table</h4>
+    <h6>Data</h6>
+
+    <table id="complex">
+    <thead>
+        <tr>
+            <th>item</th>
+            <th>price</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>hamburger</td>
+            <td>4.00</td>
+        </tr>
+        <tr>
+            <td>cheeseburger</td>
+            <td>4.50</td>
+        </tr>
+        <tr>
+            <td>veggie burger</td>
+            <td>4.00</td>
+        </tr>
+        <tr>
+            <td>salmon burger</td>
+            <td>5.00</td>
+        </tr>
+    </tbody>
+    <tbody>
+        <tr>
+            <td>french fries</td>
+            <td>1.50</td>
+        </tr>
+        <tr>
+            <td>onion rings</td>
+            <td>2.00</td>
+        </tr>
+        <tr>
+            <td>fruit salad</td>
+            <td>2.50</td>
+        </tr>
+        <tr>
+            <td>side salad</td>
+            <td>2.00</td>
+        </tr>
+    </tbody>
+    <tbody>
+        <tr>
+            <td>coffee</td>
+            <td>1.25</td>
+        </tr>
+        <tr>
+            <td>juice</td>
+            <td>2.00</td>
+        </tr>
+        <tr>
+            <td>tea</td>
+            <td>1.25</td>
+        </tr>
+        <tr>
+            <td>soda</td>
+            <td>1.00</td>
+        </tr>
+    </tbody>
+    </table>
+
+    <h6>Schema</h6>
+    <pre>
+// This schema is dynamically generated
+{
+    // Each record is held in a TR
+    resultListLocator: "tr",
+    // Note that the XPath indexes are 1-based!
+    resultFields: [{key:"beverage", locator:"td[1]"}, {key:"price", locator:"td[2]"}]
+}
+    </pre>
+
+    <h6>Normalized data</h6>
+    <input type="button" id="demo_apply_complex" value="Apply schema =>">
+    <div id="demo_output_complex" class="output"></div>
+</form>
+
+
+<script>
+YUI().use("dump", "node", "datatype-xml", "dataschema-xml", function (Y) {
+    Y.on("click", function(e){
+        var tableEl = Y.Node.getDOMNode(Y.one("#simple")),
+            schema = {
+                // Each record is held in a TR
+                resultListLocator: "tr",
+                // Note that the XPath indexes are 1-based!
+                resultFields: [{key:"beverage", locator:"td[1]"}, {key:"price", locator:"td[2]"}]
+            };
+        Y.one("#demo_output_basic").setContent(Y.dump(Y.DataSchema.XML.apply(schema, tableEl)));
+    }, "#demo_apply_basic");
+
+
+    Y.on("click", function(e){
+        // This function generates a schema based on contents of a TABLE element
+        var getSchemaFromTableNode = function(tableNode) {
+            var fields = [],
+                // Each record is held in a TR
+                schema = {resultListLocator:"tr"},
+                // Each field name is held in a TH
+                thList = tableNode.all("th");
+                
+            // Generate field definitions based on TH
+            thList.each(function(thNode, i){
+                // Note that the XPath indexes are 1-based!
+                fields.push({key:thNode.get("text"), locator:"td["+(i+1)+"]"});
+            });
+            schema.resultFields = fields;
+            return schema;
+        };
+        
+        var tableNode = Y.one("#complex"),
+            // Generate schema dynamically
+            schema = getSchemaFromTableNode(tableNode),
+            // Create a temporary TBODY container to hold all data TRs
+            tbody = document.createElement("tbody"),
+            tbodyContainer = document.createDocumentFragment().appendChild(tbody);
+
+        // Grab each TR in a TBODY but don't include TRs from the THEAD
+        Y.all("#complex tbody tr").each(function(trNode, i){
+            // Cloning the TR keeps it in the document (optional)
+            // Append each TR to the container
+            tbodyContainer.appendChild(Y.Node.getDOMNode(trNode).cloneNode(true));
+        })
+
+        Y.one("#demo_output_complex").setContent(Y.dump(Y.DataSchema.XML.apply(schema, tbodyContainer)));
+    }, "#demo_apply_complex");
+});
+</script>

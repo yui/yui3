@@ -77,28 +77,24 @@ Y.extend(DSFn, Y.DataSource.Local, {
      */
     _defRequestFn: function(e) {
         var fn = this.get("source"),
-            response;
+            payload = e.details[0];
             
-            if(fn) {
-                try {
-                    response = fn(e.request, this, e);
-                    this.fire("data", Y.mix({data:response}, e));
-                }
-                catch(error) {
-                    e.error = error;
-                    Y.log("Function execution failure", "error", "datasource-function");
-                    this.fire("data", e);
-                }
+        if (fn) {
+            try {
+                payload.data = fn(e.request, this, e);
+            } catch (ex) {
+                Y.log("Function execution failure", "error", "datasource-function");
+                payload.error = ex;
             }
-            else {
-                e.error = new Error("Function data failure");
-                Y.log("Function data failure", "error", "datasource-function");
-                this.fire("data", e);
-            }
+        } else {
+            Y.log("Function data failure", "error", "datasource-function");
+            payload.error = new Error("Function data failure");
+        }
+
+        this.fire("data", payload);
             
         return e.tId;
     }
 });
   
 Y.DataSource.Function = DSFn;
-    

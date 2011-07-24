@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+    <link type="text/css" rel="stylesheet" href="assets/test.css">
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+<script src="../../../build/yui/yui.js"></script>
+<script src="event-hover-tests.js"></script>
+<script>
+YUI({
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+    allowRollup: false,
+    lazyEventFacade: true,
+    useBrowserConsole: false
+})
+.use('console-filters', 'event-hover-tests', function (Y) {
+
+    new Y.Console({
+        style: 'block',
+        entryTemplate: '<div class="{entry_class} {cat_class} {src_class}">'+
+            '<pre class="{entry_content_class}">{message}</pre>'+
+        '</div>',
+        on: {
+            entry: function (e) {
+                var m = e.message,
+                    node;
+
+                if (m.category === 'info' &&
+                    /\s(?:case|suite)\s|yuitests\d+|began/.test(m.message)) {
+                        m.category = 'status';
+                } else if (m.category === 'fail') {
+                    this.printBuffer();
+                    m.category = 'error';
+                }
+            }
+        },
+        after: {
+            render: function () {
+                this.get('contentBox').insertBefore( this._foot, this._body );
+            }
+        }
+    }).plug(Y.Plugin.ConsoleFilters, {
+        category: {
+            pass: false,
+            status: false
+        }
+      })
+      .render( "#log" );
+
+    Y.Test.Runner.run();
+});
+</script>
+</body>
+</html>

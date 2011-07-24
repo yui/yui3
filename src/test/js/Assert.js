@@ -1,4 +1,7 @@
-  
+    /**
+     * @module test
+     */
+
     /**
      * The Assert object provides functions to test JavaScript values against
      * known and expected results. Whenever a comparison (assertion) fails,
@@ -434,8 +437,7 @@
      * from which more specific assertion errors can be derived.
      *
      * @param {String} message The message to display when the error occurs.
-     * @namespace Assert
-     * @class Error
+     * @class Assert.Error
      * @constructor
      */ 
     Y.Assert.Error = function (message){
@@ -499,9 +501,8 @@
      * @param {String} message The message to display when the error occurs.
      * @param {Object} expected The expected value.
      * @param {Object} actual The actual value that caused the assertion to fail.
-     * @namespace Assert 
      * @extends Assert.Error
-     * @class ComparisonFailure
+     * @class Assert.ComparisonFailure
      * @constructor
      */ 
     Y.Assert.ComparisonFailure = function (message, expected, actual){
@@ -556,9 +557,8 @@
      *
      * @param {String} message The message to display when the error occurs.
      * @param {Object} unexpected The unexpected value.
-     * @namespace Assert
      * @extends Assert.Error
-     * @class UnexpectedValue
+     * @class Assert.UnexpectedValue
      * @constructor
      */ 
     Y.Assert.UnexpectedValue = function (message, unexpected){
@@ -602,9 +602,8 @@
      * a test was expected to fail but did not.
      *
      * @param {String} message The message to display when the error occurs.
-     * @namespace Assert
      * @extends Assert.Error
-     * @class ShouldFail
+     * @class Assert.ShouldFail
      * @constructor
      */  
     Y.Assert.ShouldFail = function (message){
@@ -629,9 +628,8 @@
      * a test is expected to throw an error but doesn't.
      *
      * @param {String} message The message to display when the error occurs.
-     * @namespace Assert
      * @extends Assert.Error
-     * @class ShouldError
+     * @class Assert.ShouldError
      * @constructor
      */  
     Y.Assert.ShouldError = function (message){
@@ -658,9 +656,8 @@
      *
      * @param {Error} cause The unexpected error that caused this error to be 
      *                      thrown.
-     * @namespace Assert
      * @extends Assert.Error
-     * @class UnexpectedError
+     * @class Assert.UnexpectedError
      * @constructor
      */  
     Y.Assert.UnexpectedError = function (cause){

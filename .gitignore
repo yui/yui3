@@ -1,7 +1,11 @@
-build_tmp*/
+build_docs/
 build_rollup_tmp*/
+build_tmp*/
+node_modules/
+tmp/
+CVS/
 .DS_Store
 .*.swp
 .svn
-CVS/
 *~
+src/build.log

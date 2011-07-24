@@ -50,9 +50,11 @@ Pollable.prototype = {
      *     </dl>
      * @return {Number} Interval ID.
      */
-    setInterval: function(msec, callback) {
-        var x = Y.later(msec, this, this.sendRequest, [ callback ], true);
+    setInterval: function(msec, request) {
+        var x = Y.later(msec, this, this.sendRequest, [ request ], true);
         this._intervals[x.id] = x;
+        // First call happens immediately, but async
+        Y.later(0, this, this.sendRequest, [request]);
         return x.id;
     },
 

@@ -1,0 +1,30 @@
+    YUI().use('dd-delegate', 'dd-drop-plugin', 'dd-constrain', 'dd-proxy', function(Y) {
+        var del = new Y.DD.Delegate({
+            container: '#demo',
+            nodes: 'li'
+        });
+
+        del.on('drag:start', function(e) {
+            e.target.get('node').setStyle('opacity', '.5');
+        });
+        del.on('drag:end', function(e) {
+            e.target.get('node').setStyle('opacity', '1');
+        });
+        
+        del.dd.plug(Y.Plugin.DDConstrained, {
+            constrain2node: '#play'
+        });
+
+        del.dd.plug(Y.Plugin.DDProxy, {
+            moveOnEnd: false,
+            cloneNode: true
+        });
+
+        var drop = Y.one('#drop').plug(Y.Plugin.Drop);
+        drop.drop.on('drop:hit', function(e) {
+            drop.set('innerHTML', 'You dropped: <strong>' + e.drag.get('node').get('innerHTML') + '</strong>');
+        });
+        
+
+    });
+

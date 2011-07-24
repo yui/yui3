@@ -10,7 +10,8 @@
 <script src="../../../../build/yui/yui.js"></script>
 <script>
 var Y = YUI({
-    filter: 'raw',
+    allowRollup: false,
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
     modules: {
         'test-console': {
             fullpath : '../assets/test-console.js',

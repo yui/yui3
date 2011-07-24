@@ -4,30 +4,29 @@
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <title>Node</title>
 <style>
-#foo {
-    display:none;
-    padding:20px;
-
-}
 </style>
-<script type="text/javascript" src="../../build/yui/yui.js"></script>
+<!--script type="text/javascript" src="../../build/yui/yui.js"></script-->
+<script src="http://yui.yahooapis.com/3.2.0/build/yui/yui-min.js"></script> 
 </head>
 
 <body>
-<div id="foo">
-    <div id="bar">bar</div>
-</div>
+<form>
+    <select id="test-select">
+        <option id="test-option">1</option>
+        <option>2</option>
+    </select>
+</form>
 <script type="text/javascript">
 
-
 YUI({filter:'raw'}).use('node', function(Y) {
-    var node = Y.Node.create('<div><p>foo<span><strong><em>bar</em></strong></span></p></div>'),
-        nodes = node.all('*');
-
-    Y.log(nodes.item(nodes.size() - 1));
+    //var node = document.getElementById('test-select');
+    var node = document.createElement('select');
+    node.innerHTML = '<option>1</option><option>2</option>';
+    //Y.DOM.setValue(node, 2);
+    node.value = '2';
+    console.log(node.value === '2');
+    console.log(Y.DOM.getValue(document.getElementById('test-option')));
 });
-
-
 
 </script>
 </body>

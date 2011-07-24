@@ -1,7 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="YUI" default="local">
-    <description>Rollup build file for base</description>
-    <property file="build.properties" />
-    <import file="${builddir}/3.x/bootstrap.xml" 
-            description="Default Build Properties and Targets" />
+    <description>Build All Modules</description>
+
+    <macrodef name="build-module">
+        <attribute name="target"/>
+        <sequential>
+            <ant antfile="base-base.xml" target="@{target}"/>
+            <ant antfile="base-build.xml" target="@{target}"/>
+            <ant antfile="base-pluginhost.xml" target="@{target}"/>
+        </sequential>
+    </macrodef>
+
+    <target name="local">
+        <build-module target="local"/>
+    </target>
+    <target name="deploy">
+        <build-module target="deploy"/>
+    </target>
+    <target name="all">
+        <build-module target="all"/>
+    </target>
+    <target name="clean">
+        <build-module target="clean"/>
+    </target>
+
 </project>

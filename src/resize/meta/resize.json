@@ -1,9 +1,23 @@
 {
     "resize": {
+        "use": [ "resize-base", "resize-proxy", "resize-constrain" ],
+        "plugins": {
+            "resize-plugin": {
+                "requires": [
+                    "resize-base",
+                    "plugin"
+                ],
+
+                "optional": [
+                    "resize-constrain"
+                ]
+            }
+        },
         "submodules": {
 
             "resize-base": {
                 "requires": [
+					"base",
 					"widget",
 					"substitute",
 					"event",

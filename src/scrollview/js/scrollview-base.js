@@ -31,25 +31,22 @@ var getClassName = Y.ClassNameManager.getClassName,
 
     BOUNDING_BOX = "boundingBox",
     CONTENT_BOX = "contentBox",
-    
+
     EMPTY = "",
     ZERO = "0s",
-    
+
     IE = Y.UA.ie,
 
     NATIVE_TRANSITIONS = Y.Transition.useNative,
-    
+
     _constrain = function (val, min, max) { 
         return Math.min(Math.max(val, min), max);
     };
-
-Y.Node.DOM_EVENTS.DOMSubtreeModified = true;
 
 /**
  * ScrollView provides a scrollable widget, supporting flick gestures, across both touch and mouse based devices. 
  *
  * @class ScrollView
- * @namespace 
  * @param config {Object} Object literal with initial attribute values
  * @extends Widget
  * @constructor
@@ -130,11 +127,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             sv._fixIESelect(bb, cb);
         }
 
-        // TODO: Fires way to often when using non-native transitions, due to property change
-        if (NATIVE_TRANSITIONS) {
-            cb.on('DOMSubtreeModified', Y.bind(sv._uiDimensionsChange, sv));
-        }
-
         if (flick) {
             cb.on("flick", Y.bind(sv._flick, sv), flick);
         }
@@ -201,7 +193,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             };
 
             if (NATIVE_TRANSITIONS) {
-                transition.transform = 'translate3D('+ xMove +'px,'+ yMove +'px, 0px)';
+                transition.transform = this._transform(xMove, yMove);
             } else {
                 if (xSet) { transition.left = xMove + PX; }
                 if (ySet) { transition.top = yMove + PX; }
@@ -217,13 +209,37 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         } else {
             if (NATIVE_TRANSITIONS) {
-                cb.setStyle('transform', 'translate3D('+ xMove +'px,'+ yMove +'px, 0px)');
+                cb.setStyle('transform', this._transform(xMove, yMove));
             } else {
                 if (xSet) { cb.setStyle(LEFT, xMove + PX); }
                 if (ySet) { cb.setStyle(TOP, yMove + PX); }
             }
         }
     },
+
+    /**
+     * Utility method, to create the translate transform string with the 
+     * x, y translation amounts provided.
+     *
+     * @method _transform
+     * @param {Number} x Number of pixels to translate along the x axis
+     * @param {Number} y Number of pixels to translate along the y axis
+     * @private
+     */
+    _transform : function(x, y) {
+        // TODO: Would we be better off using a Matrix for this?
+        return (this._forceHWTransforms) ? 'translate('+ x +'px,'+ y +'px) translateZ(0px)' : 'translate('+ x +'px,'+ y +'px)';
+    },
+
+    /**
+     * Flag driving whether or not we should try and force H/W acceleration when transforming. Currently enabled by default for Webkit.
+     * Used by the _transform method.
+     *
+     * @property _forceHWTransforms
+     * @type boolean
+     * @protected
+     */
+    _forceHWTransforms: Y.UA.webkit,
 
     /**
      * <p>Used to control whether or not ScrollView's internal
@@ -448,9 +464,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         var duration = e.duration,
             easing = e.easing,
             val = e.newVal;
-            
-        duration = duration || this._snapToEdge ? 400 : 0;
-        easing = easing || this._snapToEdge ? ScrollView.SNAP_EASING : null;
 
         if(e.src !== UI) {
             if (e.attrName == SCROLL_X) {
@@ -473,6 +486,11 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * 
      */
     _uiScrollTo : function(x, y, duration, easing) {
+
+        // TODO: This doesn't seem right. This is not UI logic. 
+        duration = duration || this._snapToEdge ? 400 : 0;
+        easing = easing || this._snapToEdge ? ScrollView.SNAP_EASING : null;
+
         this.scrollTo(x, y, duration, easing);
     },
 
@@ -486,7 +504,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     _afterDimChange: function() {
         this._uiDimensionsChange();
     },
-    
+
     /**
      * This method gets invoked whenever the height or width attributes change,
      * allowing us to determine which scrolling axes need to be enabled.
@@ -501,8 +519,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
             CLASS_NAMES = ScrollView.CLASS_NAMES,
 
-            height = sv.get('height'),
-            width = sv.get('width'),
+            height = bb.get('offsetHeight'),
+            width = bb.get('offsetWidth'),
 
             // Use bb instead of cb. cb doesn't gives us the right results
             // in FF (due to overflow:hidden)
@@ -921,7 +939,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     EASING : 'cubic-bezier(0, 0.1, 0, 1.0)',
 
     /**
-     * The default easing to use when animatiing the bounce snap back.
+     * The default easing to use when animating the bounce snap back.
      *
      * @property ScrollView.SNAP_EASING
      * @type String

@@ -1,0 +1,182 @@
+<style scoped>
+/* custom styles for this example */
+#demo .output {margin-bottom:1em; padding:10px; border:1px solid #D9D9D9;}
+</style>
+
+<form id="demo">
+    <h4>Basic example</h4>
+    <h6>Data</h6>
+    <pre>
+&lt;root&gt;
+    &lt;session&gt;34637542&lt;/session&gt;
+    &lt;category name="music" id="5"&gt;&lt;results&gt;
+        &lt;song id="59672468"&gt;
+            &lt;title&gt;I Kissed A Girl&lt;/title&gt;
+            &lt;rank&gt;1&lt;/rank&gt;
+            &lt;artist id="30326214"&gt;Katy Perry&lt;/artist&gt;
+        &lt;/song&gt;
+        &lt;song id="47973564"&gt;
+            &lt;title&gt;Shake It&lt;/title&gt;
+            &lt;rank&gt;2&lt;/rank&gt;
+            &lt;artist id="45575683"&gt;Metro Station&lt;/artist&gt;
+        &lt;/song&gt;
+        &lt;song id="52207363"&gt;
+            &lt;title&gt;Bleeding Love&lt;/title&gt;
+            &lt;rank&gt;3&lt;/rank&gt;
+            &lt;artist id="37956508"&gt;Leona Lewis&lt;/artist&gt;
+        &lt;/song&gt;
+    &lt;/results&gt;&lt;/category&gt;
+&lt;/root&gt;
+    </pre>
+    
+    <h6>Schema</h6>
+    <pre>
+{
+    resultListLocator: "song",
+    resultFields: [{key:"title"}, {key:"artist"}, {key:"rank"}]
+}
+    </pre>
+
+    <h6>Normalized data</h6>
+    <input type="button" id="demo_apply_basic" value="Apply schema =>">
+    <div id="demo_output_basic" class="output"></div>
+
+    <h4>Complex example</h4>
+    <h6>Data</h6>
+    <pre>
+&lt;Response&gt;
+    &lt;Session&gt;542235629&lt;/Session&gt;
+    &lt;Tracks  start="1" count="10" total="98" errorCount="0"
+        defaultSort="popularity+" description="Top 100 Tracks"
+        name="Top 100 Tracks"&gt;
+        &lt;Track id="59672468" rating="-1" title="I Kissed A Girl"&gt;
+            &lt;Artist id="30326214" rating="-1"&gt;Katy Perry&lt;/Artist&gt;
+            &lt;ItemInfo&gt;&lt;ChartPosition last="26" this="1"/&gt;&lt;/ItemInfo&gt;
+        &lt;/Track&gt;
+        &lt;Track id="47973564" rating="-1" title="Shake It"&gt;
+            &lt;Artist id="45575683" rating="-1"&gt;Metro Station&lt;/Artist&gt;
+            &lt;ItemInfo&gt;&lt;ChartPosition last="27" this="2"/&gt;&lt;/ItemInfo&gt;
+        &lt;/Track&gt;
+        &lt;Track id="52207363" rating="-1" title="Bleeding Love"&gt;
+            &lt;Artist id="37956508" rating="-1"&gt;Leona Lewis&lt;/Artist&gt;
+            &lt;ItemInfo&gt;&lt;ChartPosition last="28" this="3"/&gt;&lt;/ItemInfo&gt;
+        &lt;/Track&gt;
+    &lt;/Tracks&gt;
+&lt;/Response&gt;
+        </pre>
+
+    <h6>Schema</h6>
+    <pre>
+{
+    metaFields: {session:"//Session", total:"//Tracks/@total"},
+    resultListLocator: "//Track",
+    resultFields: [{key:"song", locator:"@title"},
+        {key:"artist", locator:"Artist"},
+        {key:"rank", locator:"ItemInfo/ChartPosition/@this"}]
+}
+    </pre>
+
+    <h6>Normalized data</h6>
+    <input type="button" id="demo_apply_complex" value="Apply schema =>">
+    <div id="demo_output_complex" class="output"></div>
+
+    <h4>Nested example</h4>
+    <h6>Data</h6>
+    <pre>
+&lt;desserts&gt;
+    &lt;dessert type="treat"&gt;
+        &lt;name&gt;cupcake&lt;/name&gt;
+        &lt;flavors&gt;
+            &lt;flavor name="chocolate"/&gt;
+            &lt;flavor name="red velvet"/&gt;
+        &lt;/flavors&gt;
+    &lt;/dessert&gt;
+    &lt;dessert type="treat"&gt;
+        &lt;name&gt;ice cream&lt;/name&gt;
+        &lt;flavors&gt;
+            &lt;flavor name="chocolate"/&gt;
+            &lt;flavor name="strawberry"/&gt;
+            &lt;flavor name="vanilla"/&gt;
+        &lt;/flavors&gt;
+    &lt;/dessert&gt;
+    &lt;dessert type="treat"&gt;
+        &lt;name&gt;pie&lt;/name&gt;
+        &lt;flavors&gt;
+            &lt;flavor name="banana cream"/&gt;
+            &lt;flavor name="blueberry"/&gt;
+            &lt;flavor name="cherry"/&gt;
+        &lt;/flavors&gt;
+    &lt;/dessert&gt;
+    &lt;dessert type="beverage"&gt;
+        &lt;name&gt;hot chocolate&lt;/name>&gt;
+    &lt;/dessert&gt;
+    &lt;dessert type="beverage"&gt;
+        &lt;name&gt;port wine&lt;/name&gt;
+    &lt;/dessert&gt;
+&lt;/desserts&gt;
+</pre>
+
+    <h6>Schema</h6>
+    <pre>
+{
+    resultListLocator: "dessert",
+    resultFields: [
+        {key:"type", locator:"@type"},
+        {key:"name", locator:"name"},
+        {key:"flavors", schema: {
+            resultListLocator: "flavor",
+            resultFields: [
+                {key:"flavor", locator:"@name"}
+            ]
+        }}
+    ]
+}
+    </pre>
+
+    <h6>Normalized data</h6>
+    <input type="button" id="demo_apply_nested" value="Apply schema =>">
+    <div id="demo_output_nested" class="output"></div>
+</form>
+
+
+<script>
+YUI().use("dump", "node", "datatype-xml", "dataschema-xml", function (Y) {
+    Y.on("click", function(e){
+        var data_in = Y.DataType.XML.parse('<root><session>34637542</session><category name="music" id="5"><results><song id="59672468"><title>I Kissed A Girl</title><rank>1</rank><artist id="30326214">Katy Perry</artist></song><song id="47973564"><title>Shake It</title><rank>2</rank><artist id="45575683">Metro Station</artist></song><song id="52207363"><title>Bleeding Love</title><rank>3</rank><artist id="37956508">Leona Lewis</artist></song></results></category></root>'),
+            schema = {
+                resultListLocator: "song",
+                resultFields: [{key:"title"}, {key:"artist"}, {key:"rank"}] // Or simply ["title", "artist", "rank"]
+            };
+        Y.one("#demo_output_basic").setContent(Y.dump(Y.DataSchema.XML.apply(schema, data_in)));
+    }, "#demo_apply_basic");
+
+
+    Y.on("click", function(e){
+        var data_in = Y.DataType.XML.parse('<Response><Session>542235629</Session><Tracks  start="1" count="10" total="98" errorCount="0"  defaultSort="popularity+"  description="Top 100 Tracks"  name="Top 100 Tracks"  ><Track id="59672468" rating="-1" title="I Kissed A Girl"><Artist id="30326214" rating="-1">Katy Perry</Artist><ItemInfo><ChartPosition last="26" this="1"/></ItemInfo></Track><Track id="47973564" rating="-1" title="Shake It"><Artist id="45575683" rating="-1">Metro Station</Artist><ItemInfo><ChartPosition last="27" this="2"/></ItemInfo></Track><Track id="52207363" rating="-1" title="Bleeding Love"><Artist id="37956508" rating="-1">Leona Lewis</Artist><ItemInfo><ChartPosition last="28" this="3"/></ItemInfo></Track></Tracks></Response>'),
+            schema = {
+                metaFields: {session:"//Session", total:"//Tracks/@total"},
+                resultListLocator: "//Track",
+                resultFields: [{key:"song", locator:"@title"}, {key:"artist", locator:"Artist"}, {key:"rank", locator:"ItemInfo/ChartPosition/@this"}]
+            };
+        Y.one("#demo_output_complex").setContent(Y.dump(Y.DataSchema.XML.apply(schema, data_in)));
+    }, "#demo_apply_complex");
+
+    Y.on("click", function(e){
+        var data_in = Y.DataType.XML.parse('<desserts><dessert type="treat"><name>cupcake</name><flavors><flavor name="chocolate"/><flavor name="red velvet"/></flavors></dessert><dessert type="treat"><name>ice cream</name><flavors><flavor name="chocolate"/><flavor name="strawberry"/><flavor name="vanilla"/></flavors></dessert><dessert type="treat"><name>pie</name><flavors><flavor name="banana cream"/><flavor name="blueberry"/><flavor name="cherry"/></flavors></dessert><dessert type="beverage"><name>hot chocolate</name></dessert><dessert type="beverage"><name>port wine</name></dessert></desserts>'),
+            schema = {
+                resultListLocator: "dessert",
+                resultFields: [
+                    {key:"type", locator:"@type"},
+                    {key:"name", locator:"name"},
+                    {key:"flavors", schema: {
+                        resultListLocator: "flavor",
+                        resultFields: [
+                            {key:"flavor", locator:"@name"}
+                        ]
+                    }}
+                ]
+            };
+        Y.one("#demo_output_nested").setContent(Y.dump(Y.DataSchema.XML.apply(schema, data_in)));
+    }, "#demo_apply_nested");
+});
+</script>

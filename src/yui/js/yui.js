@@ -19,20 +19,20 @@ if (typeof YUI != 'undefined') {
  * is available.  This is a self-instantiable factory function.  You
  * can invoke it directly like this:
  *
- * YUI().use('*', function(Y) {
- *   // ready
- * });
+ *      YUI().use('*', function(Y) {
+ *          // ready
+ *      });
  *
  * But it also works like this:
  *
- * var Y = YUI();
+ *      var Y = YUI();
  *
  * @class YUI
  * @constructor
  * @global
  * @uses EventTarget
  * @param o* {object} 0..n optional configuration objects.  these values
- * are store in Y.config.  See config for the list of supported
+ * are store in Y.config.  See <a href="config.html">Config</a> for the list of supported
  * properties.
  */
     /*global YUI*/
@@ -137,6 +137,7 @@ if (typeof YUI != 'undefined') {
         getLoader = function(Y, o) {
             var loader = Y.Env._loader;
             if (loader) {
+                //loader._config(Y.config);
                 loader.ignoreRegistered = false;
                 loader.onEnd = null;
                 loader.data = null;
@@ -171,7 +172,7 @@ if (docEl && docClass.indexOf(DOC_LABEL) == -1) {
 }
 
 if (VERSION.indexOf('@') > -1) {
-    VERSION = '3.2.0'; // dev time hack for cdn test
+    VERSION = '3.3.0'; // dev time hack for cdn test
 }
 
 proto = {
@@ -221,7 +222,12 @@ proto = {
             loader._config(o);
         }
     },
-
+    /**
+    * Old way to apply a config to the instance (calls `applyConfig` under the hood)
+    * @private
+    * @method _config
+    * @param {Object} o The config to apply
+    */
     _config: function(o) {
         this.applyConfig(o);
     },
@@ -229,6 +235,7 @@ proto = {
     /**
      * Initialize this YUI instance
      * @private
+     * @method _init
      */
     _init: function() {
         var filter,
@@ -254,51 +261,85 @@ proto = {
                 _idx: 0,
                 _used: {},
                 _attached: {},
+                _missed: [],
                 _yidx: 0,
                 _uidx: 0,
                 _guidp: 'y',
                 _loaded: {},
-                serviced: {},
-                getBase: G_ENV && G_ENV.getBase ||
+                // serviced: {},
+                // Regex in English:
+                // I'll start at the \b(simpleyui).
+                // 1. Look in the test string for "simpleyui" or "yui" or
+                //    "yui-base" or "yui-rls" or "yui-foobar" that comes after a word break.  That is, it
+                //    can't match "foyui" or "i_heart_simpleyui". This can be anywhere in the string.
+                // 2. After #1 must come a forward slash followed by the string matched in #1, so
+                //    "yui-base/yui-base" or "simpleyui/simpleyui" or "yui-pants/yui-pants".
+                // 3. The second occurence of the #1 token can optionally be followed by "-debug" or "-min",
+                //    so "yui/yui-min", "yui/yui-debug", "yui-base/yui-base-debug". NOT "yui/yui-tshirt".
+                // 4. This is followed by ".js", so "yui/yui.js", "simpleyui/simpleyui-min.js"
+                // 0. Going back to the beginning, now. If all that stuff in 1-4 comes after a "?" in the string,
+                //    then capture the junk between the LAST "&" and the string in 1-4.  So
+                //    "blah?foo/yui/yui.js" will capture "foo/" and "blah?some/thing.js&3.3.0/build/yui-rls/yui-rls.js"
+                //    will capture "3.3.0/build/"
+                //
+                // Regex Exploded:
+                // (?:\?             Find a ?
+                //   (?:[^&]*&)      followed by 0..n characters followed by an &
+                //   *               in fact, find as many sets of characters followed by a & as you can
+                //   ([^&]*)         capture the stuff after the last & in \1
+                // )?                but it's ok if all this ?junk&more_junk stuff isn't even there
+                // \b(simpleyui|     after a word break find either the string "simpleyui" or
+                //    yui(?:-\w+)?   the string "yui" optionally followed by a -, then more characters
+                // )                 and store the simpleyui or yui-* string in \2
+                // \/\2              then comes a / followed by the simpleyui or yui-* string in \2
+                // (?:-(min|debug))? optionally followed by "-min" or "-debug"
+                // .js               and ending in ".js"
+                _BASE_RE: /(?:\?(?:[^&]*&)*([^&]*))?\b(simpleyui|yui(?:-\w+)?)\/\2(?:-(min|debug))?\.js/,
+                parseBasePath: function(src, pattern) {
+                    var match = src.match(pattern),
+                        path, filter;
 
-    function(srcPattern, comboPattern) {
-        var b, nodes, i, src, match;
-        // get from querystring
-        nodes = (doc && doc.getElementsByTagName('script')) || [];
-        for (i = 0; i < nodes.length; i = i + 1) {
-            src = nodes[i].src;
-            if (src) {
+                    if (match) {
+                        path = RegExp.leftContext || src.slice(0, src.indexOf(match[0]));
 
-                match = src.match(srcPattern);
-                b = match && match[1];
-                if (b) {
-                    // this is to set up the path to the loader.  The file
-                    // filter for loader should match the yui include.
-                    filter = match[2];
+                        // this is to set up the path to the loader.  The file
+                        // filter for loader should match the yui include.
+                        filter = match[3];
 
-                    if (filter) {
-                        match = filter.indexOf('js');
-
-                        if (match > -1) {
-                            filter = filter.substr(0, match);
+                        // extract correct path for mixed combo urls
+                        // http://yuilibrary.com/projects/yui3/ticket/2528423
+                        if (match[1]) {
+                            path += '?' + match[1];
+                        }
+                        path = {
+                            filter: filter,
+                            path: path
                         }
                     }
+                    return path;
+                },
+                getBase: G_ENV && G_ENV.getBase ||
+                        function(pattern) {
+                            var nodes = (doc && doc.getElementsByTagName('script')) || [],
+                                path = Env.cdn, parsed,
+                                i, len, src;
 
-                    // extract correct path for mixed combo urls
-                    // http://yuilibrary.com/projects/yui3/ticket/2528423
-                    match = src.match(comboPattern);
-                    if (match && match[3]) {
-                        b = match[1] + match[3];
-                    }
+                            for (i = 0, len = nodes.length; i < len; ++i) {
+                                src = nodes[i].src;
+                                if (src) {
+                                    parsed = Y.Env.parseBasePath(src, pattern);
+                                    if (parsed) {
+                                        filter = parsed.filter;
+                                        path = parsed.path;
+                                        break;
+                                    }
+                                }
+                            }
 
-                    break;
-                }
-            }
-        }
+                            // use CDN default
+                            return path;
+                        }
 
-        // use CDN default
-        return b || Env.cdn;
-    }
             };
 
             Env = Y.Env;
@@ -339,19 +380,20 @@ proto = {
             useBrowserConsole: true,
             throwFail: true,
             bootstrap: true,
-            fetchCSS: true
+            cacheUse: true,
+            fetchCSS: true,
+            use_rls: @YUI_RLS@
         };
 
-        Y.config.base = YUI.config.base ||
-            Y.Env.getBase(/^(.*)yui\/yui([\.\-].*)js(\?.*)?$/,
-                          /^(.*\?)(.*\&)(.*)yui\/yui[\.\-].*js(\?.*)?$/);
+        Y.config.lang = Y.config.lang || 'en-US';
 
-        if (!filter || (!('-min.-debug.').indexOf(filter))) {
-            filter = '-min.';
+        Y.config.base = YUI.config.base || Y.Env.getBase(Y.Env._BASE_RE);
+        
+        if (!filter || (!('mindebug').indexOf(filter))) {
+            filter = 'min';
         }
-
-        Y.config.loaderPath = YUI.config.loaderPath ||
-            'loader/loader' + (filter || '-min.') + 'js';
+        filter = (filter) ? '-' + filter : filter;
+        Y.config.loaderPath = YUI.config.loaderPath || 'loader/loader' + filter + '.js';
 
     },
 
@@ -365,13 +407,7 @@ proto = {
         var i, Y = this,
             core = [],
             mods = YUI.Env.mods,
-            extras = Y.config.core || ['get',
-                                        'rls',
-                                        'intl-base',
-                                        'loader',
-                                        'yui-log',
-                                        'yui-later',
-                                        'yui-throttle'];
+            extras = Y.config.core || @YUI_CORE@;
 
         for (i = 0; i < extras.length; i++) {
             if (mods[extras[i]]) {
@@ -389,11 +425,11 @@ proto = {
      * Executes a method on a YUI instance with
      * the specified id if the specified method is whitelisted.
      * @method applyTo
-     * @param id {string} the YUI instance id.
-     * @param method {string} the name of the method to exectute.
+     * @param id {String} the YUI instance id.
+     * @param method {String} the name of the method to exectute.
      * Ex: 'Object.keys'.
      * @param args {Array} the arguments to apply to the method.
-     * @return {object} the return value from the applied method or null.
+     * @return {Object} the return value from the applied method or null.
      */
     applyTo: function(id, method, args) {
         if (!(method in APPLY_TO_AUTH)) {
@@ -423,21 +459,20 @@ proto = {
      *
      * http://yuilibrary.com/projects/builder
      *
-     * The build system will produce the YUI.add wrapper for you module, along
+     * The build system will produce the `YUI.add` wrapper for you module, along
      * with any configuration info required for the module.
      * @method add
-     * @param name {string} module name.
+     * @param name {String} module name.
      * @param fn {Function} entry point into the module that
      * is used to bind module to the YUI instance.
-     * @param version {string} version string.
-     * @param details {object} optional config data:
-     * requires: features that must be present before this module can be
-     * attached.
-     * optional: optional features that should be present if loadOptional
+     * @param version {String} version string.
+     * @param details {Object} optional config data:
+     * @param details.requires {Array} features that must be present before this module can be attached.
+     * @param details.optional {Array} optional features that should be present if loadOptional
      * is defined.  Note: modules are not often loaded this way in YUI 3,
      * but this field is still useful to inform the user that certain
      * features in the component will require additional dependencies.
-     * use: features that are included within this module which need to
+     * @param details.use {Array} features that are included within this module which need to
      * be attached automatically when this module is attached.  This
      * supports the YUI 3 rollup system -- a module with submodules
      * defined will need to have the submodules listed in the 'use'
@@ -481,29 +516,53 @@ proto = {
      * @method _attach
      * @private
      */
-    _attach: function(r, fromLoader) {
+    _attach: function(r, moot) {
         var i, name, mod, details, req, use, after,
             mods = YUI.Env.mods,
+            aliases = YUI.Env.aliases,
             Y = this, j,
             done = Y.Env._attached,
             len = r.length, loader;
 
-        // Y.log('attaching: ' + r, 'info', 'yui');
+        //console.info('attaching: ' + r, 'info', 'yui');
 
         for (i = 0; i < len; i++) {
             if (!done[r[i]]) {
                 name = r[i];
                 mod = mods[name];
+                if (aliases && aliases[name]) {
+                    Y._attach(aliases[name]);
+                    continue;
+                }
                 if (!mod) {
                     loader = Y.Env._loader;
+                    if (loader && loader.moduleInfo[name]) {
+                        mod = loader.moduleInfo[name];
+                        if (mod.use) {
+                            moot = true;
+                        }
+                    }
 
                     // Y.log('no js def for: ' + name, 'info', 'yui');
 
-                    if (!loader || !loader.moduleInfo[name]) {
-                        Y.message('NOT loaded: ' + name, 'warn', 'yui');
+                    //if (!loader || !loader.moduleInfo[name]) {
+                    //if ((!loader || !loader.moduleInfo[name]) && !moot) {
+                    if (!moot) {
+                        if (name.indexOf('skin-') === -1) {
+                            Y.Env._missed.push(name);
+                            Y.message('NOT loaded: ' + name, 'warn', 'yui');
+                        }
                     }
                 } else {
                     done[name] = true;
+                    //Don't like this, but in case a mod was asked for once, then we fetch it
+                    //We need to remove it from the missed list
+                    for (j = 0; j < Y.Env._missed.length; j++) {
+                        if (Y.Env._missed[j] === name) {
+                            Y.message('Found: ' + name + ' (was reported as missing earlier)', 'warn', 'yui');
+                            Y.Env._missed.splice(j, 1);
+                        }
+                    }
                     details = mod.details;
                     req = details.requires;
                     use = details.use;
@@ -523,19 +582,7 @@ proto = {
                     if (after) {
                         for (j = 0; j < after.length; j++) {
                             if (!done[after[j]]) {
-                                if (!Y._attach(after)) {
-                                    return false;
-                                }
-                                break;
-                            }
-                        }
-                    }
-
-
-                    if (use) {
-                        for (j = 0; j < use.length; j++) {
-                            if (!done[use[j]]) {
-                                if (!Y._attach(use)) {
+                                if (!Y._attach(after, true)) {
                                     return false;
                                 }
                                 break;
@@ -552,6 +599,19 @@ proto = {
                         }
                     }
 
+                    if (use) {
+                        for (j = 0; j < use.length; j++) {
+                            if (!done[use[j]]) {
+                                if (!Y._attach(use)) {
+                                    return false;
+                                }
+                                break;
+                            }
+                        }
+                    }
+
+
+
                 }
             }
         }
@@ -564,37 +624,44 @@ proto = {
      * is executed, the requirements are analyzed, and one of
      * several things can happen:
      *
-     * - All requirements are available on the page --  The modules
+     *  * All requirements are available on the page --  The modules
      *   are attached to the instance.  If supplied, the use callback
      *   is executed synchronously.
      *
-     * - Modules are missing, the Get utility is not available OR
+     *  * Modules are missing, the Get utility is not available OR
      *   the 'bootstrap' config is false -- A warning is issued about
      *   the missing modules and all available modules are attached.
      *
-     * - Modules are missing, the Loader is not available but the Get
+     *  * Modules are missing, the Loader is not available but the Get
      *   utility is and boostrap is not false -- The loader is bootstrapped
      *   before doing the following....
      *
-     * - Modules are missing and the Loader is available -- The loader
+     *  * Modules are missing and the Loader is available -- The loader
      *   expands the dependency tree and fetches missing modules.  When
      *   the loader is finshed the callback supplied to use is executed
      *   asynchronously.
      *
-     * @param modules* {string} 1-n modules to bind (uses arguments array).
-     * @param *callback {function} callback function executed when
+     * @method use
+     * @param modules* {String} 1-n modules to bind (uses arguments array).
+     * @param *callback {Function} callback function executed when
      * the instance has the required functionality.  If included, it
      * must be the last parameter.
-     * <code>
-     * // loads and attaches drag and drop and its dependencies
-     * YUI().use('dd', function(Y) &#123;&#125);
-     * // attaches all modules that are available on the page
-     * YUI().use('*', function(Y) &#123;&#125);
-     * // intrinsic YUI gallery support (since 3.1.0)
-     * YUI().use('gallery-yql', function(Y) &#123;&#125);
-     * // intrinsic YUI 2in3 support (since 3.1.0)
-     * YUI().use('yui2-datatable', function(Y) &#123;&#125);.
-     * </code>
+     *
+     * @example
+     *      // loads and attaches dd and its dependencies
+     *      YUI().use('dd', function(Y) {});
+     *
+     *      // loads and attaches dd and node as well as all of their dependencies (since 3.4.0)
+     *      YUI().use(['dd', 'node'], function(Y) {});
+     *
+     *      // attaches all modules that are available on the page
+     *      YUI().use('*', function(Y) {});
+     *
+     *      // intrinsic YUI gallery support (since 3.1.0)
+     *      YUI().use('gallery-yql', function(Y) {});
+     *
+     *      // intrinsic YUI 2in3 support (since 3.1.0)
+     *      YUI().use('yui2-datatable', function(Y) {});
      *
      * @return {YUI} the YUI instance.
      */
@@ -602,7 +669,10 @@ proto = {
         var args = SLICE.call(arguments, 0),
             callback = args[args.length - 1],
             Y = this,
-            key;
+            i = 0,
+            name,
+            Env = Y.Env,
+            provisioned = true;
 
         // The last argument supplied to use can be a load complete callback
         if (Y.Lang.isFunction(callback)) {
@@ -610,30 +680,67 @@ proto = {
         } else {
             callback = null;
         }
+        if (Y.Lang.isArray(args[0])) {
+            args = args[0];
+        }
+
+        if (Y.config.cacheUse) {
+            while ((name = args[i++])) {
+                if (!Env._attached[name]) {
+                    provisioned = false;
+                    break;
+                }
+            }
+
+            if (provisioned) {
+                if (args.length) {
+                    Y.log('already provisioned: ' + args, 'info', 'yui');
+                }
+                Y._notify(callback, ALREADY_DONE, args);
+                return Y;
+            }
+        }
+
+        if (Y.config.cacheUse) {
+            while ((name = args[i++])) {
+                if (!Env._attached[name]) {
+                    provisioned = false;
+                    break;
+                }
+            }
+
+            if (provisioned) {
+                if (args.length) {
+                    Y.log('already provisioned: ' + args, 'info', 'yui');
+                }
+                Y._notify(callback, ALREADY_DONE, args);
+                return Y;
+            }
+        }
 
         if (Y._loading) {
             Y._useQueue = Y._useQueue || new Y.Queue();
             Y._useQueue.add([args, callback]);
         } else {
-            key = args.join();
-
-            if (Y.Env.serviced[key]) {
-                Y.log('already provisioned: ' + key, 'info', 'yui');
-                Y._notify(callback, ALREADY_DONE, args);
-            } else {
-                Y._use(args, function(Y, response) {
-                    Y.log('caching request: ' + key, 'info', 'yui');
-                    Y.Env.serviced[key] = true;
-                    Y._notify(callback, response, args);
-                });
-            }
+            Y._use(args, function(Y, response) {
+                Y._notify(callback, response, args);
+            });
         }
 
         return Y;
     },
-
+    /**
+    * Notify handler from Loader for attachment/load errors
+    * @method _notify
+    * @param callback {Function} The callback to pass to the `Y.config.loadErrorFn`
+    * @param response {Object} The response returned from Loader
+    * @param args {Array} The aruments passed from Loader
+    * @private
+    */
     _notify: function(callback, response, args) {
-        if (callback) {
+        if (!response.success && this.config.loadErrorFn) {
+            this.config.loadErrorFn.call(this, this, callback, response, args);
+        } else if (callback) {
             try {
                 callback(this, response);
             } catch (e) {
@@ -641,14 +748,24 @@ proto = {
             }
         }
     },
-
+    
+    /**
+    * This private method is called from the `use` method queue. To ensure that only one set of loading
+    * logic is performed at a time.
+    * @method _use
+    * @private
+    * @param args* {String} 1-n modules to bind (uses arguments array).
+    * @param *callback {Function} callback function executed when
+    * the instance has the required functionality.  If included, it
+    * must be the last parameter.
+    */
     _use: function(args, callback) {
 
         if (!this.Array) {
             this._attach(['yui-base']);
         }
 
-        var len, loader, handleBoot,
+        var len, loader, handleBoot, handleRLS,
             Y = this,
             G_ENV = YUI.Env,
             mods = G_ENV.mods,
@@ -810,13 +927,44 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
 
         } else if (len && Y.config.use_rls) {
 
+            G_ENV._rls_queue = G_ENV._rls_queue || new Y.Queue();
+
             // server side loader service
-            Y.Get.script(Y._rls(args), {
-                onEnd: function(o) {
+            handleRLS = function(instance, argz) {
+
+                var rls_end = function(o) {
                     handleLoader(o);
+                    G_ENV._rls_in_progress = false;
+                    if (G_ENV._rls_queue.size()) {
+                        G_ENV._rls_queue.next()();
+                    }
                 },
-                data: args
+                rls_url = instance._rls(argz);
+
+                if (rls_url) {
+                    Y.log('Fetching RLS url', 'info', 'rls');
+                    instance.rls_oncomplete(function(o) {
+                        rls_end(o);
+                    });
+                    instance.Get.script(rls_url, {
+                        data: argz
+                    });
+                } else {
+                    rls_end({
+                        data: argz
+                    });
+                }
+            };
+
+            G_ENV._rls_queue.add(function() {
+                Y.log('executing queued rls request', 'info', 'rls');
+                G_ENV._rls_in_progress = true;                
+                Y.rls_locals(Y, args, handleRLS);
             });
+
+            if (!G_ENV._rls_in_progress && G_ENV._rls_queue.size()) {
+                G_ENV._rls_queue.next()();
+            }
 
         } else if (boot && len && Y.Get && !Env.bootstrapped) {
 
@@ -856,19 +1004,19 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
 
     /**
      * Returns the namespace specified and creates it if it doesn't exist
-     * <pre>
-     * YUI.namespace("property.package");
-     * YUI.namespace("YAHOO.property.package");
-     * </pre>
-     * Either of the above would create YUI.property, then
-     * YUI.property.package (YAHOO is scrubbed out, this is
+     * 
+     *      YUI.namespace("property.package");
+     *      YUI.namespace("YAHOO.property.package");
+     * 
+     * Either of the above would create `YUI.property`, then
+     * `YUI.property.package` (`YAHOO` is scrubbed out, this is
      * to remain compatible with YUI2)
      *
      * Be careful when naming packages. Reserved words may work in some browsers
      * and not others. For instance, the following will fail in Safari:
-     * <pre>
-     * YUI.namespace("really.long.nested.namespace");
-     * </pre>
+     * 
+     *      YUI.namespace("really.long.nested.namespace");
+     * 
      * This fails because "long" is a future reserved word in ECMAScript
      *
      * @method namespace
@@ -896,19 +1044,22 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
     // this is replaced if the log module is included
     log: NOOP,
     message: NOOP,
+    // this is replaced if the dump module is included
+    dump: function (o) { return ''+o; },
 
     /**
      * Report an error.  The reporting mechanism is controled by
-     * the 'throwFail' configuration attribute.  If throwFail is
+     * the `throwFail` configuration attribute.  If throwFail is
      * not specified, the message is written to the Logger, otherwise
      * a JS error is thrown
      * @method error
-     * @param msg {string} the error message.
-     * @param e {Error} Optional JS error that was caught.  If supplied
-     * and throwFail is specified, this error will be re-thrown.
+     * @param msg {String} the error message.
+     * @param e {Error|String} Optional JS error that was caught, or an error string.
+     * @param data Optional additional info
+     * and `throwFail` is specified, this error will be re-thrown.
      * @return {YUI} this YUI instance.
      */
-    error: function(msg, e) {
+    error: function(msg, e, data) {
 
         var Y = this, ret;
 
@@ -928,23 +1079,23 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
     /**
      * Generate an id that is unique among all YUI instances
      * @method guid
-     * @param pre {string} optional guid prefix.
-     * @return {string} the guid.
+     * @param pre {String} optional guid prefix.
+     * @return {String} the guid.
      */
     guid: function(pre) {
-        var id = this.Env._guidp + (++this.Env._uidx);
+        var id = this.Env._guidp + '_' + (++this.Env._uidx);
         return (pre) ? (pre + id) : id;
     },
 
     /**
-     * Returns a guid associated with an object.  If the object
-     * does not have one, a new one is created unless readOnly
+     * Returns a `guid` associated with an object.  If the object
+     * does not have one, a new one is created unless `readOnly`
      * is specified.
      * @method stamp
-     * @param o The object to stamp.
-     * @param readOnly {boolean} if true, a valid guid will only
+     * @param o {Object} The object to stamp.
+     * @param readOnly {Boolean} if `true`, a valid guid will only
      * be returned if the object has one assigned to it.
-     * @return {string} The object's guid or null.
+     * @return {String} The object's guid or null.
      */
     stamp: function(o, readOnly) {
         var uid;
@@ -1034,11 +1185,11 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
 
 /**
  * The config object contains all of the configuration options for
- * the YUI instance.  This object is supplied by the implementer
- * when instantiating a YUI instance.  Some properties have default
+ * the `YUI` instance.  This object is supplied by the implementer
+ * when instantiating a `YUI` instance.  Some properties have default
  * values if they are not supplied by the implementer.  This should
  * not be updated directly because some values are cached.  Use
- * applyConfig() to update the config object on a YUI instance that
+ * `applyConfig()` to update the config object on a YUI instance that
  * has already been configured.
  *
  * @class config
@@ -1082,7 +1233,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
 /**
  * Set to true if the yui seed file was dynamically loaded in
  * order to bootstrap components relying on the window load event
- * and the 'domready' custom event.
+ * and the `domready` custom event.
  *
  * @property injected
  * @type boolean
@@ -1090,7 +1241,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
  */
 
 /**
- * If throwFail is set, Y.error will generate or re-throw a JS Error.
+ * If `throwFail` is set, `Y.error` will generate or re-throw a JS Error.
  * Otherwise the failure is logged.
  *
  * @property throwFail
@@ -1138,14 +1289,14 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
  * The default date format
  * @property dateFormat
  * @type string
- * @deprecated use configuration in DataType.Date.format() instead.
+ * @deprecated use configuration in `DataType.Date.format()` instead.
  */
 
 /**
  * The default locale
  * @property locale
  * @type string
- * @deprecated use config.lang instead.
+ * @deprecated use `config.lang` instead.
  */
 
 /**
@@ -1158,7 +1309,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
 /**
  * The number of dynamic nodes to insert by default before
  * automatically removing them.  This applies to script nodes
- * because remove the node will not make the evaluated script
+ * because removing the node will not make the evaluated script
  * unavailable.  Dynamic CSS is not auto purged, because removing
  * a linked style sheet will also remove the style definitions.
  * @property purgethreshold
@@ -1187,7 +1338,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
  */
 
 /**
- * The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?
+ * The YUI combo service base dir. Ex: `http://yui.yahooapis.com/combo?`
  * For dynamic loading.
  * @property comboBase
  * @type string
@@ -1216,12 +1367,11 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
  * </dl>
  * You can also define a custom filter, which must be an object literal
  * containing a search expression and a replace string:
- * <pre>
- *  myFilter: &#123;
- *      'searchExp': "-min\\.js",
- *      'replaceStr': "-debug.js"
- *  &#125;
- * </pre>
+ * 
+ *      myFilter: {
+ *          'searchExp': "-min\\.js",
+ *          'replaceStr': "-debug.js"
+ *      }
  *
  * For dynamic loading.
  *
@@ -1230,7 +1380,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
  */
 
 /**
- * The 'skin' config let's you configure application level skin
+ * The `skin` config let's you configure application level skin
  * customizations.  It contains the following attributes which
  * can be specified to override the defaults:
  *
@@ -1336,23 +1486,22 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
 /**
  * A hash of module definitions to add to the list of YUI components.
  * These components can then be dynamically loaded side by side with
- * YUI via the use() method. This is a hash, the key is the module
+ * YUI via the `use()` method. This is a hash, the key is the module
  * name, and the value is an object literal specifying the metdata
- * for the module.  * See Loader.addModule for the supported module
- * metadata fields.  Also @see groups, which provides a way to
+ * for the module.  See `Loader.addModule` for the supported module
+ * metadata fields.  Also see groups, which provides a way to
  * configure the base and combo spec for a set of modules.
- * <code>
- * modules: {
- * &nbsp; mymod1: {
- * &nbsp;   requires: ['node'],
- * &nbsp;   fullpath: 'http://myserver.mydomain.com/mymod1/mymod1.js'
- * &nbsp; },
- * &nbsp; mymod2: {
- * &nbsp;   requires: ['mymod1'],
- * &nbsp;   fullpath: 'http://myserver.mydomain.com/mymod2/mymod2.js'
- * &nbsp; }
- * }
- * </code>
+ * 
+ *      modules: {
+ *          mymod1: {
+ *              requires: ['node'],
+ *              fullpath: 'http://myserver.mydomain.com/mymod1/mymod1.js'
+ *          },
+ *          mymod2: {
+ *              requires: ['mymod1'],
+ *              fullpath: 'http://myserver.mydomain.com/mymod2/mymod2.js'
+ *          }
+ *      }
  *
  * @property modules
  * @type object
@@ -1361,39 +1510,37 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
 /**
  * A hash of module group definitions.  It for each group you
  * can specify a list of modules and the base path and
- * combo spec to use when dynamically loading the modules.  @see
- * @see modules for the details about the modules part of the
- * group definition.
- * <code>
- * &nbsp; groups: {
- * &nbsp;     yui2: {
- * &nbsp;         // specify whether or not this group has a combo service
- * &nbsp;         combine: true,
- * &nbsp;
- * &nbsp;         // the base path for non-combo paths
- * &nbsp;         base: 'http://yui.yahooapis.com/2.8.0r4/build/',
- * &nbsp;
- * &nbsp;         // the path to the combo service
- * &nbsp;         comboBase: 'http://yui.yahooapis.com/combo?',
- * &nbsp;
- * &nbsp;         // a fragment to prepend to the path attribute when
- * &nbsp;         // when building combo urls
- * &nbsp;         root: '2.8.0r4/build/',
- * &nbsp;
- * &nbsp;         // the module definitions
- * &nbsp;         modules:  {
- * &nbsp;             yui2_yde: {
- * &nbsp;                 path: "yahoo-dom-event/yahoo-dom-event.js"
- * &nbsp;             },
- * &nbsp;             yui2_anim: {
- * &nbsp;                 path: "animation/animation.js",
- * &nbsp;                 requires: ['yui2_yde']
- * &nbsp;             }
- * &nbsp;         }
- * &nbsp;     }
- * &nbsp; }
- * </code>
- * @property modules
+ * combo spec to use when dynamically loading the modules.
+ * 
+ *      groups: {
+ *          yui2: {
+ *              // specify whether or not this group has a combo service
+ *              combine: true,
+ * 
+ *              // the base path for non-combo paths
+ *              base: 'http://yui.yahooapis.com/2.8.0r4/build/',
+ * 
+ *              // the path to the combo service
+ *              comboBase: 'http://yui.yahooapis.com/combo?',
+ * 
+ *              // a fragment to prepend to the path attribute when
+ *              // when building combo urls
+ *              root: '2.8.0r4/build/',
+ * 
+ *              // the module definitions
+ *              modules:  {
+ *                  yui2_yde: {
+ *                      path: "yahoo-dom-event/yahoo-dom-event.js"
+ *                  },
+ *                  yui2_anim: {
+ *                      path: "animation/animation.js",
+ *                      requires: ['yui2_yde']
+ *                  }
+ *              }
+ *          }
+ *      }
+ * 
+ * @property groups
  * @type object
  */
 
@@ -1427,7 +1574,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
 
 /**
  * The default YUI 2 version to build yui2 module urls.  This is for
- * intrinsic YUI 2 support via the 2in3 project.  Also @see the '2in3'
+ * intrinsic YUI 2 support via the 2in3 project.  Also see the '2in3'
  * config for pulling different revisions of the wrapped YUI 2
  * modules.
  * @since 3.1.0
@@ -1469,28 +1616,62 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
  */
 
 /**
+ * A callback to execute when the loader fails to load one or
+ * more resource.  This could be because of a script load
+ * failure.  It can also fail if a javascript module fails
+ * to register itself, but only when the 'requireRegistration'
+ * is true.  If this function is defined, the use() callback will
+ * only be called when the loader succeeds, otherwise it always
+ * executes unless there was a javascript error when attaching
+ * a module.
+ *
+ * @since 3.3.0
+ * @property loadErrorFn
+ * @type Function
+ */
+
+/**
+ * When set to true, the YUI loader will expect that all modules
+ * it is responsible for loading will be first-class YUI modules
+ * that register themselves with the YUI global.  If this is
+ * set to true, loader will fail if the module registration fails
+ * to happen after the script is loaded.
+ *
+ * @since 3.3.0
+ * @property requireRegistration
+ * @type boolean
+ * @default false
+ */
+
+/**
+ * Cache serviced use() requests.
+ * @since 3.3.0
+ * @property cacheUse
+ * @type boolean
+ * @default true
+ * @deprecated no longer used
+ */
+
+/**
  * The parameter defaults for the remote loader service.
  * Requires the rls submodule.  The properties that are
  * supported:
- * <pre>
- * m: comma separated list of module requirements.  This
+ * 
+ *  * `m`: comma separated list of module requirements.  This
  *    must be the param name even for custom implemetations.
- * v: the version of YUI to load.  Defaults to the version
+ *  * `v`: the version of YUI to load.  Defaults to the version
  *    of YUI that is being used.
- * gv: the version of the gallery to load (@see the gallery config)
- * env: comma separated list of modules already on the page.
+ *  * `gv`: the version of the gallery to load (see the gallery config)
+ *  * `env`: comma separated list of modules already on the page.
  *      this must be the param name even for custom implemetations.
- * lang: the languages supported on the page (@see the lang config)
- * '2in3v':  the version of the 2in3 wrapper to use (@see the 2in3 config).
- * '2v': the version of yui2 to use in the yui 2in3 wrappers
- *       (@see the yui2 config)
- * filt: a filter def to apply to the urls (@see the filter config).
- * filts: a list of custom filters to apply per module
- *        (@see the filters config).
- * tests: this is a map of conditional module test function id keys
+ *  * `lang`: the languages supported on the page (see the lang config)
+ *  * `'2in3v'`:  the version of the 2in3 wrapper to use (see the 2in3 config).
+ *  * `'2v'`: the version of yui2 to use in the yui 2in3 wrappers
+ *  * `filt`: a filter def to apply to the urls (see the filter config).
+ *  * `filts`: a list of custom filters to apply per module
+ *  * `tests`: this is a map of conditional module test function id keys
  * with the values of 1 if the test passes, 0 if not.  This must be
  * the name of the querystring param in custom templates.
- *</pre>
  *
  * @since 3.2.0
  * @property rls
@@ -1508,12 +1689,12 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
  * of the remote loader service url.  The default is determined
  * by the rls config -- each property that has a value will be
  * represented.
- *
- * ex: m={m}&v={v}&env={env}&lang={lang}&filt={filt}&tests={tests}
- *
- *
+ * 
  * @since 3.2.0
  * @property rls_tmpl
+ * @example
+ *      m={m}&v={v}&env={env}&lang={lang}&filt={filt}&tests={tests}
+ *
  */
 
 /**

@@ -1,0 +1,216 @@
+<div class="intro">
+    <p>ScrollView's main use case is to provide a scrollable content widget for touch devices on which overflow scrollbars are not natively supported. However, it is built on top of YUI's cross-platform/browser gesture and transition layers, so it can also be used to provide flickable scrolling on mouse-based devices across on all the A-grade browsers.</p>
+    <p>The `ScrollViewScrollbars` plugin can be added to the base scrollview to provide a scroll indicator. The `ScrollViewPaginator` plugin can be added to provide a cross-platform paginated scrolling implementation (a simple carousel).</p>
+</div>
+
+{{>getting-started}}
+
+<h2 id="using">Using ScrollView</h2>
+
+<h3 id="instantiating">Instantiating A ScrollView</h3>
+
+<p>`ScrollView` extends the `Widget` class, and hence follows the same pattern as any widget constructor, accepting a configuration object to set the initial configuration for the widget.</p>
+
+<h4>Instantiating From Markup: Progressive Enhancement</h4>
+
+<p>A ScrollView widget is instantiated from markup by specifying the `srcNode` which contains the content to be scrolled. The content is usually in the form of a list, but doesn't necessarily have to be:</p>
+
+```
+<div id="scrollable" class="yui3-scrollview-loading">
+    <ul>
+        <li>AC/DC</li>
+        <li>Aerosmith</li>
+        <li>Bob Dylan</li>
+        <li>Bob Seger</li>
+        ...
+    </ul>
+</div>
+```
+<p>The `yui3-scrollview-loading` class is applied by the developer to progressively enhanced markup, and can be used along with the `yui3-js-enabled` class applied to the document element, to hide the scrollview markup from view, while the JS is being loaded. The examples show how to set up a `yui3-scrollview-loading` rule to hide progressively enhanced content.</p>  
+
+<p>When instantiating from markup, a reference to the `srcNode` is provided to the constructor as part of the configuration object. This reference can be a node reference, or a selector string which can be used to identify the node. If the selector string is too broad (returns multiple nodes), the first node found will be used.
+The following code references the markup shown above, while constructing the scrollview:</p>
+
+```
+YUI({...}).use("scrollview", function(Y) {
+
+    var scrollview = new Y.ScrollView({
+        srcNode:"#scrollable",
+        height:"20em"
+    });
+
+});
+```
+
+<p>Generally, a ScrollView widget will be scrollable either horizontally (along the X axis) or vertically (along the Y axis). The ScrollView determines which direction it can scroll in based on whether or not its content is taller (vertically scrolled) or wider (horizontally scrolled) than its height or width respectively, as you would expect
+from native overflow handling. In the above example the widget is given a fixed height, so that it will scroll vertically, when the content gets larger than the specified height. In most use cases you will provide either a height or a width to the ScrollView widget constructor.</p>  
+
+<p>Following instantiation, a call to `render` is required to have the ScrollView's state reflected in the DOM, as with all YUI 3 widgets:</p>
+
+```
+    var scrollview = new Y.ScrollView({ ... });
+    scrollview.render();
+```
+
+<h3 id="attributes">Attributes</h3>
+
+<p>ScrollView provides the following core attributes, in addition to the attributes provided by the base <a href="../widget/index.html#attributes">Widget</a> class:</p>
+
+<table>
+    <tr><th>Attribute</th><th>Description</th></tr>
+    <tr><td>`scrollX`</td><td>The number of pixels to scroll the widget's content by, along the X axis (vertically).</td></tr>
+    <tr><td>`scrollY`</td><td>The number of pixels to scroll the widget's content by, along the Y axis (horizontally).</td></tr>
+</table>
+
+<p>Additionally, the following attributes control the sensitivity and scroll dynamics, per instance:</p>
+
+<table>
+    <tr><th>Attribute</th><th>Description</th><th>Default</th></tr>
+    <tr><td>`flick`</td><td>An object which specifies the minimum distance and minimum velocity (in pixels/ms - generally around 0.5) which should constitute a flick gesture. Can be set to false to disable flick support, in which case the ScrollView content can only be dragged to scroll it.</td><td>`{minDistance:10, minVelocity:0.3}`</td></tr>
+    <tr><td>`deceleration`</td><td>A drag coefficient, which defines how quickly the velocity of the scrollview content decreases after a flick, when it's still with in the min and max bounds for the widget. The closer this is to 1, the less friction there is after a flick.</td><td>`0.98`</td></tr>
+    <tr><td>`bounce`</td><td>A drag coefficient, which defines how quickly the velocity of the scrollview content decreases after a flick, when it's past the min and max bounds for the widget. Can be set to 0 to disable bounce behavior.</td><td>`0.1`</td></tr>
+</table>
+
+<h3>Static Properties Controlling Scroll Dynamics</h3>
+
+<p>The following properties are provided as static properties and can be used to define default values affecting scroll dynamics for all ScrollViews on the page:</p>
+
+<table>
+    <tr><th>Static Property</th><th>Description</th><th>Default</th></tr>
+    <tr><td>`Y.ScrollView.BOUNCE_RANGE`</td><td>The default bounce distance in pixels.</td><td>`150`</td></tr>
+    <tr><td>`Y.ScrollView.FRAME_STEP`</td><td>The default time interval used when animating the flick deceleration.</td><td>`30`</td></tr>
+    <tr><td>`Y.ScrollView.EASING`</td><td>The default easing used when scrolling to a given X or Y.</td><td>`cubic-bezier(0, 0.1, 0, 1.0)`</td></tr>
+    <tr><td>`Y.ScrollView.SNAP_EASING`</td><td>The default easing used for the snap back animation when scrolled past the min or max bounds for the widget.</td><td>`ease-out`</td></tr>                
+</table>
+
+<h3 id="markup">Markup Structure</h3>
+
+<p>The final rendered ScrollView has the markup structure shown below (shown for a vertical scrollview):</p>
+
+```
+<!-- Bounding Box, with overflow setting and fixed dimension (in this case height) -->
+<div class="yui3-widget yui3-scrollview yui3-scrollview-vert" style="height: 310px;">
+
+    <!-- Content Box, which is scrolled using either top/left, or transform:translate, where supported -->
+    <div class="yui3-scrollview-content" id="scrollable" style="left: 0px; top: 0px;">
+        ... scrollable content. generally a list ...
+    </div>
+
+    <!-- Scrollbar indicator, if Scrollbar Plugin is added (added by default for the "scrollview" module) -->
+    <div class="yui3-scrollview-scrollbar yui3-scrollview-scrollbar-vert">
+        <span class="yui3-scrollview-child yui3-scrollview-first"></span>
+        <span class="yui3-scrollview-child yui3-scrollview-middle"></span>
+        <span class="yui3-scrollview-child yui3-scrollview-last"></span>
+    </div>
+
+</div>
+```
+
+<p>The `yui3-scrollview-vert`, or `yui3-scrollview-horiz` classes applied to the bounding box can be used to style the scrollview based on its scroll orientation.</p>
+
+<h3 id="css">CSS</h3>
+
+<p>The core structural css for the ScrollView is shown below, and is pretty straightforward. It simply sets up the bounding box and the content box as positioned elements, and sets overflow hidden, so that the 
+content beyond the bounding box area is hidden, until scrolled into view.</p>
+
+```
+/* Bounding Box */
+.yui3-scrollview {
+    position: relative; /* To provide positioning context */ 
+    overflow: hidden;   /* To clip scrolled content */
+    ...
+}
+
+/* Content Box */
+.yui3-scrollview-content {
+    position:relative; /* To allow positioning */
+}
+```
+
+<p>Since the scrollable content is commonly set up as a list (for semantic reasons), the core css for ScrollView also ships with a rule targeting list items (`LI`s), so that list content works out of the box, for both vertical and horizontal scrollviews (inline-block is used so that we can trivially support the horizontal use case):</p>
+
+```
+.yui3-scrollview-content ul {
+    margin:0;
+    padding:0;
+}
+
+.yui3-scrollview-content li {
+    padding:0;
+    margin:0;
+
+    list-style:none;
+    
+    /* cross browser inline block */
+    display: -moz-inline-stack;
+    display: inline-block;
+    *display: inline;
+
+    ...
+}
+```
+<p>The above rules can of course be over-ridden for cases in which you don't want lists inside ScrollView handled specially.</p>
+
+<h3 id="scrollbars">ScrollBar Plugin</h3>
+
+<p>The ScrollBar plugin provides a visual scroll indicator to let the user know how much scrollable content there is, and the current scroll position they're at.</p>
+
+<p>When using the `scrollview` module, the `ScrollViewScrollbars` plugin is automatically pulled down and plugged in for all ScrollView instances (plugged in at the class level).</p>
+
+<p>However, the user can also choose to pull down just the base scrollview module (`scrollview-base`) and add scrollbar support optionally (when and if required).</p>
+
+```
+YUI({...}).use("scrollview-base", "scrollview-scrollbars", function(Y) {
+
+    /* ScrollView without scrollbar indicator */
+    var scrollview = new Y.ScrollView({
+        srcNode:"#scrollable",
+        height:"20em"
+    });
+
+    /* Add scrollbar indicator support */
+    scrollview.plug(Y.Plugin.ScrollViewScrollbars);
+
+    /* 
+      scrollview.scrollbars is an instance of the ScrollViewScrollbars 
+      plugin 
+    */
+    scrollview.scrollbars.hide();
+    scrollview.scrollbars.show(); 
+    scrollview.scrollbars.flash();
+});
+```
+<p>When the `ScrollViewScrollbars` plugin is plugged in to a ScrollView instance, a `scrollbars` property (the namespace for the plugin) is added to the ScrollView instance, which points to an instance of the plugin, as shown above. The plugin provides public `hide()`, `show()` and `flash()` methods for the scroll indicator.</p>
+
+<h3 id="paginator">Paginator Plugin</h3>
+
+<p>The `ScrollViewPaginator` plugin adds pagination support to ScrollView, so that it recognizes, and stops at, discrete page boundaries within its content, as opposed to scrolling continuously (it effectively makes ScrollView behave like a simple Carousel).</p>
+
+<p>Adding the `scrollview-paginator` module to the `use` statement will pull down and add the `Plugin.ScrollViewPaginator` plugin class to the YUI instance. It can then be plugged in to ScrollView instances requiring pagination support, as shown below:</p>
+```
+YUI({...}).use("scrollview-base", "scrollview-paginator", function(Y) {
+
+    /* ScrollView without paginator */
+    var scrollview = new Y.ScrollView({
+        srcNode:"#scrollable",
+        height:"20em"
+    });
+
+    /* Plug in pagination support */
+    scrollview.plug(Y.Plugin.ScrollViewPaginator, {
+        selector: "li" // elements definining page boundaries
+    });
+
+    /* 
+       scrollview.pages is an instance of the ScrollViewPaginator 
+       plugin 
+    */
+    scrollview.pages.set("index", 3);
+    scrollview.pages.scrollTo(3, 0.6, "ease-in");
+    scrollview.pages.next();
+    scrollview.pages.get("total");
+});
+```
+<p>The paginator plugin accepts a `selector` attribute as part of its configuration, which selects the list of elements to be used to establish page boundaries. In the example above, each `LI` within the ScrollView's content box, defines a <em>page</em> in the ScrollView.</p>
+
+<p>When plugged in, the plugin API is available on the `pages` property of the scrollview widget instance, and can be used to set the current page, or retrieve paging information.</p>

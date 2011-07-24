@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="YUI" default="local">
+    <property file="build.parse.properties" />
+    <import file="${builddir}/3.x/bootstrap.xml" 
+            description="Default Build Properties and Targets" />
+
+    <!--
+    To allow for minification, eval can't be referenced directly in the code,
+    but indirect eval throws errors in some browsers (e.g. BlackBerry). So
+    a placeholder token is replaced after generating the min file.
+    See Ticket #2530295 -->
+    <target name="replace-eval" description="Replaces indirect eval code with direct eval for BlackBerry">
+        <replaceregexp match="EVAL_TOKEN" replace="eval" flags="g">
+            <fileset dir="${component.builddir}" includes="${component.basefilename}*.js" />
+        </replaceregexp>
+    </target>
+
+    <target name="local" depends="clean, init, build, minify, replace-eval, lint" description="Build and Deploy to Local Build Directory"/>
+</project>

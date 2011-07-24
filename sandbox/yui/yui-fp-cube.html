@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>YUI-FP</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+
+    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?3.2.0/build/cssreset/reset-min.css&3.2.0/build/cssfonts/fonts-min.css&3.2.0/build/scrollview/assets/skins/sam/scrollview-base.css&3.2.0/build/widget/assets/skins/sam/widget.css&3.2.0/build/scrollview/assets/skins/sam/scrollview-paginator.css&3.2.0/build/tabview/assets/skins/sam/tabview.css">
+   <link href="yui-fp.css" rel="stylesheet" type="text/css">
+    <style type="text/css">
+
+    #nav {
+      -webkit-perspective-origin: 50% 200px;
+      -webkit-perspective: 900;
+    }
+
+    #cube {
+      position: relative;
+      margin: 0 auto;
+      -webkit-transform-style: preserve-3d;
+      -webkit-transition: -webkit-transform 0.3s linear;
+      height: 200px;
+      width: 500px;
+    }
+
+    .face {
+      position: absolute;
+      height: 200px;
+      width: 460px;
+      padding: 20px;
+      font-size: 11px;
+      line-height: 1em;
+      color: #fff;
+      border: 1px solid #333;
+      background-color: rgba(33, 66, 99, 0.85);
+      -webkit-border-radius: 4px;
+    }
+    #cube .top  {
+      visibility: hidden
+      -webkit-transform: rotateX(90deg) translateZ(200px);
+    }
+    #cube .one {
+      -webkit-transform: translateZ(250px);
+    }
+    #cube .two {
+      -webkit-transform: rotateY(90deg) translateZ(250px);
+    }
+    #cube .three {
+      -webkit-transform: rotateY(180deg) translateZ(250px);
+    }
+    #cube .four {
+      -webkit-transform: rotateY(-90deg) translateZ(250px);
+    }
+    #cube .bottom {
+      visibility: hidden
+      -webkit-transform: rotateX(-90deg) rotate(180deg) translateZ(200px) ;
+    }
+  </style>
+</head>
+
+<body class="yui-skin-sam yui3-skin-sam">
+    <header>
+        <div class="main">
+            <input type="text" id="searchbox" name="searchbox" value="Yahoo! Search">
+        </div>
+        <div class="sub">
+            TODAY - <span class="date">August 31, 2010</span>
+        </div>
+    </header>
+    <section id="yui-main-blah">
+
+  <div id="nav">
+      <div id="cube">
+          <div class="face top">
+              Top
+          </div>
+          <div class="face one">
+              <img src="http://l1.yimg.com/a/i/ww/news/2010/10/01/nfl.jpg">
+              <div class="yui-cap">
+                  <h2>Player let $21 million check sit in house</h2>
+                  <p>For a couple of weeks, Washington's Albert Haynesworth didn't deposit an enormous check.</p>
+              </div>
+          </div>
+          <div class="face two">
+              <img src="http://l.yimg.com/a/i/ww/news/2010/10/01/aybar.jpg">
+              <div class="yui-cap">
+                  <h2>Hitter's embarrassing moment at the plate</h2>
+                  <p>Players and coaches can't stop laughing after the Angels' Erick Aybar gets hit by a pitch.</p>
+              </div>
+
+          </div>
+          <div class="face three">
+              <img src="http://l.yimg.com/a/i/ww/news/2010/09/30/home-discount.jpg">
+              <div class="yui-cap yui-cap-c">
+                  <h2>How to get a home at a $100,000 discount</h2>
+                  <p>Fannie and Freddie are unloading homes that cost much less than comparable properties just blocks away.</p>
+              </div>
+          </div>
+          <div class="face four">
+              <img src="http://l.yimg.com/a/i/ww/news/2010/09/30/boss-pd.jpg">
+              <div class="yui-cap">
+                  <h2>Career advice your boss won't tell you</h2>
+                  <p>Playing it safe won't guarantee a smooth ride at work, and may end up hurting you.</p>
+              </div>
+          </div>
+          <div class="face bottom">
+              Bottom
+          </div>
+      </div>
+  </div>
+    </section>
+    <section id="yui-news">
+        <div id="yui-news-sections" class="yui3-tabview-loading">
+            <ul>
+                <li><a href="#news-general">News</a></li>
+                <li><a href="#news-world">World</a></li>
+                <li><a href="#news-local">Sports</a></li>
+                <li><a href="#news-finance">Business</a></li>
+            </ul>
+            <div>
+                <div id="news-general">
+                    <div class="yui-headline">
+                        <img src="http://l.yimg.com/a/i/ww/news/2010/10/01/rouse2.jpg">
+                        <div class="yui-cap">
+                            <h2>Top <br> Headlines</h2>
+                            <div>
+                                <h3>Jokes and tears as W.H. chief of staff exits</h3>
+                                <p>The mood at Rahm Emanuel's official sendoff shows that this is no ordinary staff change.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <ul>
+                        <li><a href="#">Attacks show vulnerability of U.S.-led mission in Pakistan</a></li>
+                        <li><a href="#">Americans tread water in huge gulf between the rich and poor</a></li>
+                        <li><a href="#">U.S. apologizes for 1940s syphilis experiment in Guatemala</a></li>
+                        <li><a href="#">One large trader triggered May's 'flash crash,' report finds</a></li>
+                        <li><a href="#">Attorneys: Blake-agent transactions came during UNC tenure</a></li>
+                        <li><a href="#">Mehserle's lawyer seeks new trial</a></li>
+                        <li><a href="#">ConsumerWatch: Opting Out Of Phone Books</a></li>
+                        <li><a href="#">Fla. gunman kills 1, wounds 5 before fatally shooting himself</a></li>
+                    </ul>
+                </div>
+                <div id="news-world">
+                    <div class="yui-headline">
+                        <img src="http://d.yimg.com/a/p/afp/20101001/capt.photo_1285976649619-1-0.jpg">
+                        <div class="yui-cap">
+                            <h2>Top <br> Headlines</h2>
+                            <div>
+                                <h3>Pakistan says NATO halt temporary</h3>
+                                <p>Pakistan's ambassador to the United States on Friday promised that his country would reopen its border crossing with Afghanistan to US-led forces once it can be confident of security.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <ul>
+                        <li><a href="#">Dozens killed in Indonesian train crash</a></li>
+                        <li><a href="#">Ecuador revolt: Attempted coup or uprising?</a></li>
+                        <li><a href="#">Cuba to add new docks, terminal at Cienfuegos port</a></li>
+                        <li><a href="#">Anti-American cleric vies for more power in Iraq</a></li>
+                        <li><a href="#">Chinese, Japanese leaders meet in Europe amid spat</a></li>
+                        <li><a href="#">Iraq's marathon: Fight over leader, then posts</a></li>
+                        <li><a href="#">Chavez decrees expropriation of farm business</a></li>
+                        <li><a href="#">US working to accept exiled Cuban prisoners</a></li>
+                    </ul>
+                </div>
+                <div id="news-sports">
+                    <div class="yui-headline">
+                        <img src="http://l.yimg.com/a/i/ww/news/2010/10/04/poulter-pd.jpg">
+                        <div class="yui-cap">
+                            <h2>Top <br> Headlines</h2>
+                            <div>
+                                <h3>Thrilling finish to Ryder Cup</h3>
+                                <p>The United States stages a stirring rally in its golfing showdown with Europe - but falls short.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <ul>
+                        <li><a href="#">Wardrobe malfunction: US Ryder Cup golfers soaked</a></li>
+                        <li><a href="#">New York Mets brace for shakeup</a></li>
+                        <li><a href="#">NFL fines Ravens LT Oher, S Zbikowksi each $5,000</a></li>
+                        <li><a href="#">If Armstrong doped, teammates say they saw nothing</a></li>
+                        <li><a href="#">Injured Torres out for Spain</a></li>
+                        <li><a href="#">NFL fines coordinator $40,000 for obscene gesture</a></li>
+                        <li><a href="#">McDowell adds a Ryder Cup to his resume</a></li>
+                        <li><a href="#">Noah and Bulls agree on five-year extension</a></li>
+                    </ul>
+                </div>
+                <div id="news-finance">
+                    <div class="yui-headline">
+                        <img src="http://d.yimg.com/a/p/rids/20101001/i/r3042285636.jpg">
+                        <div class="yui-cap">
+                            <h2>Top <br> Headlines</h2>
+                            <div>
+                                <h3>Wall St extends rally as resource stocks gain</h3>
+                                <p>Wall Street extended the rally on Friday, led by gains in resource stocks after data in China showed a pick-up in manufacturing activity.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <ul>
+                        <li><a href="#">Choice of CEO signals new direction for HP</a></li>
+                        <li><a href="#">1 large trader led to May 6 stock market plunge</a></li>
+                        <li><a href="#">Americans tread water in gulf between rich, poor</a></li>
+                        <li><a href="#">Stocks nudge higher as manufacturing improves</a></li>
+                        <li><a href="#">Japan's central bank cuts key rate to around zero</a></li>
+                        <li><a href="#">Sanofi-Aventis launches Genzyme takeover battle</a></li>
+                        <li><a href="#">August factory orders decline 0.5 percent</a></li>
+                        <li><a href="#">Living without a bank: Fees and confusion galore</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="yui-apps">
+        <ul>
+            <li id="login">
+                <h2 class="greeting">Hi, Shanying </h2>
+                <p><a href="#" class="logout">Sign Out</a></p>
+                <p id="config"><a href="#" class="configicon">Config</a></p>
+            </li>
+            <li id="mail">
+                <h2>Yahoo! Mail <span class="summary">4</span></h2>
+                <p>Hello you have 4 new emails</p>
+            </li>
+            <li id="weather">
+                <h2>Sunnyvale, CA <span class="summary">72&deg;F</span></h2>
+                <p>Today: Sunny, 58&deg;F - 7&deg;F</p>
+                <p>Tomorrow: Sunny, 55&deg;F - 81&deg;F</p>
+            </li>
+            <li id="stocks">
+                <div class="stock">
+                    <h2 class="stock-name">Dow Jones</h2>
+                    <p class="stock-amount">10,301.00</p>
+                    <p class="stock-change stock-up">+133.96 (1.32%)</p>
+                </div>
+                <div class="stock">
+                    <h2 class="stock-name">Nasdaq</h2>
+                    <p class="stock-amount">2,123.00</p>
+                    <p class="stock-change stock-up">+35.87 (1.66%)</p>
+                </div>
+            </li>
+            <li id="nfl">
+                <div id="nfl-result">
+                    <div id="nfl-home">
+                        <h2>New Orleans</h2>
+                        <p>123</p>
+                    </div>
+                    <div id="nfl-time">Final</div>
+                    <div id="nfl-away">
+                        <h2>Houston</h2>
+                        <p>115</p>
+                    </div>
+                </div>
+            </li>
+            <li id="fb">
+                <h2>Facebook</h2>
+                <p>View your Facebook activity from Yahoo!</p>
+                <p><button>Connect with Facebook</button></p>
+            </li>
+            <li id="horoscope">
+                <h2>Cancer <span>(6/22-7/22)</span></h2>
+                <p>You're an incredibly emotional creature -- that's your major claim to fame. For now, you're leading even more so than usual.</p>
+            </li>
+        </ul>
+    </section>
+
+    <!-- JS -->
+    <script type="text/javascript" src="http://yui.yahooapis.com/combo?3.2.0/build/yui/yui-min.js&3.2.0/build/oop/oop-min.js&3.2.0/build/event-custom/event-custom-min.js&3.2.0/build/attribute/attribute-base-min.js&3.2.0/build/event/event-base-min.js&3.2.0/build/pluginhost/pluginhost-min.js&3.2.0/build/dom/dom-min.js&3.2.0/build/node/node-min.js&3.2.0/build/event/event-synthetic-min.js&3.2.0/build/base/base-base-min.js&3.2.0/build/base/base-pluginhost-min.js&3.2.0/build/classnamemanager/classnamemanager-min.js&3.2.0/build/widget/widget-min.js&3.2.0/build/event/event-touch-min.js&3.2.0/build/event-gestures/event-gestures-min.js&3.2.0/build/transition/transition-native-min.js&3.2.0/build/scrollview/scrollview-base-min.js&3.2.0/build/plugin/plugin-min.js&3.2.0/build/scrollview/scrollview-paginator-min.js&3.2.0/build/base/base-build-min.js&3.2.0/build/event/event-delegate.js&3.2.0/build/collection/arraylist-min.js&3.2.0/build/widget/widget-parent-min.js&3.2.0/build/widget/widget-child-min.js&3.2.0/build/tabview/tabview-base-min.js&3.2.0/build/tabview/tabview-min.js"></script>
+
+  <script type="text/javascript">
+    YUI().use('node', 'event-gestures', 'event-key', function(Y) {
+        var x = 0, y = 0, cube = Y.one('#cube'), i,
+            startX, endX, startY, endY,
+
+            transform = function(newx, newy) {
+                x = (newx === 0) ? 0 : newx || x;
+                y = (newy === 0) ? 0 : newy || y;
+                cube.setStyle('webkitTransform', 'rotateX(' + x + 'deg) rotateY(' + y + 'deg)');
+            };
+
+        y += 90; transform(); y += 90; transform(); y += 90; transform(); y += 90; transform();
+
+        cube.set('tabIndex', -1);
+        cube.focus();
+
+        cube.on('keydown', function(e) {
+            var code = e.keyCode; Y.log('keydown');
+            switch(code) {
+                case 37: // left
+                    return transform(0, y - 90);
+                case 38: // up
+                    return transform(x + 90, 0);
+                case 39: // right
+                    return transform(0, y + 90);
+                case 40: // down
+                    return transform(x - 90, 0);
+            };
+        });
+
+        cube.on('gesturemovestart', function(e) {
+            e.preventDefault(); Y.log('gesturemovestart');
+            startX = e.pageX;
+            startY = e.pageY;
+        });
+
+        cube.on('gesturemoveend', function(e) {
+            e.preventDefault();
+            endX = e.pageX; Y.log('gesturemoveend -- startX - ' + startX + ': ' + endX);
+
+            deltaX = startX - endX;
+            if (Math.abs(deltaX) > 20) {
+                y = (startX < endX) ? y + 90 : y - 90;
+            } else {
+                y = (startX < (endX+2)) ? y + 90 : y - 90;
+            }
+
+            transform();
+        });
+
+        Y.mix(Y.config.win, {
+            foo: 'bar'
+        });
+
+    });
+
+  </script>
+</body>
+</html>

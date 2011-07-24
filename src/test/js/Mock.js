@@ -1,4 +1,8 @@
     /**
+     * @module test
+     */
+
+    /**
      * Creates a new mock object.
      * @class Mock
      * @constructor
@@ -146,6 +150,7 @@
 
     /**
      * Defines a custom mock validator for a particular argument.
+     * @class Mock.Value
      * @param {Function} method The method to run on the argument. This should
      *      throw an assertion error if the value is invalid.
      * @param {Array} originalArgs The first few arguments to pass in
@@ -154,7 +159,6 @@
      * @param {String} message The message to display if validation fails. If
      *      not specified, the default assertion error message is displayed.
      * @return {void}
-     * @namespace Mock
      * @constructor Value
      * @static
      */
@@ -173,7 +177,6 @@
 
     /**
      * Mock argument validator that accepts any value as valid.
-     * @namespace Mock.Value
      * @property Any
      * @type Function
      * @static
@@ -182,7 +185,6 @@
 
     /**
      * Mock argument validator that accepts only Boolean values as valid.
-     * @namespace Mock.Value
      * @property Boolean
      * @type Function
      * @static
@@ -191,7 +193,6 @@
 
     /**
      * Mock argument validator that accepts only numeric values as valid.
-     * @namespace Mock.Value
      * @property Number
      * @type Function
      * @static
@@ -200,7 +201,6 @@
 
     /**
      * Mock argument validator that accepts only String values as valid.
-     * @namespace Mock.Value
      * @property String
      * @type Function
      * @static
@@ -209,7 +209,6 @@
 
     /**
      * Mock argument validator that accepts only non-null objects values as valid.
-     * @namespace Mock.Value
      * @property Object
      * @type Function
      * @static
@@ -218,7 +217,6 @@
 
     /**
      * Mock argument validator that accepts onlyfunctions as valid.
-     * @namespace Mock.Value
      * @property Function
      * @type Function
      * @static

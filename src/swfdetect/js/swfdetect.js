@@ -61,11 +61,28 @@ else if(uA.ie) {
 }
 
 		
-Y.SWFDetect = {		
+Y.SWFDetect = {
+
+	/**
+	 * Returns the version of either the Flash Player plugin (in Mozilla/WebKit/Opera browsers),
+	 * or the Flash Player ActiveX control (in IE), as a String of the form "MM.mm.rr", where
+	 * MM is the major version, mm is the minor version, and rr is the revision.
+	 * @method getFlashVersion
+	 */	
+	
 	getFlashVersion : function () {
 		return (String(uA.flashMajor) + "." + String(uA.flashMinor) + "." + String(uA.flashRev));
 	},
-	
+
+	/**
+	 * Checks whether the version of the Flash player installed on the user's machine is greater
+	 * than or equal to the one specified. If it is, this method returns true; it is false otherwise.
+	 * @method isFlashVersionAtLeast
+	 * @return {Boolean} Whether the Flash player version is greater than or equal to the one specified.
+	 * @param flashMajor {int} The Major version of the Flash player to compare against.
+	 * @param flashMinor {int} The Minor version of the Flash player to compare against.
+	 * @param flashRev {int} The Revision version of the Flash player to compare against.
+	 */	
 	isFlashVersionAtLeast : function (flashMajor, flashMinor, flashRev) {
 		var uaMajor    = makeInt(uA.flashMajor),
 			uaMinor    = makeInt(uA.flashMinor),

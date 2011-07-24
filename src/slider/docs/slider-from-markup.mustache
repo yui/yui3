@@ -1,0 +1,540 @@
+<style scoped>
+    #demo {
+        background: #fff;
+        border: 1px solid #999;
+        color: #000;
+    }
+
+    #demo .demo-content {
+        padding: 1ex 1em;
+    }
+
+    #volume_control {
+        height: 25px;
+        line-height: 25px;
+        background: url({{componentAssets}}/images/sprite.png) repeat-x 0 0;
+        position: relative;
+    }
+
+    #volume_control label {
+        font-weight: bold;
+        margin: 0 1ex 0 1em;
+        zoom: 1;
+    }
+
+    #volume {
+        border: 1px inset #999;
+        height: 16px;
+        margin-top: 3px;
+        padding: 0 3px;
+        text-align: right;
+        width: 2em;
+    }
+
+    /* Support open/close action for the slider */
+    #demo .volume-hide #volume_slider {
+        display: none;
+    }
+
+    #volume_icon {
+        background: url({{componentAssets}}/images/sprite.png) no-repeat 0 -25px;
+        border: 0 none;
+        height: 25px;
+        vertical-align: top;
+        width: 31px;
+    }
+
+    /* move the button text offscreen left */
+    #volume_icon p {
+        text-indent: -9999px;
+    }
+
+    /*
+     * adjust the speaker icon sprite in accordance with volume level and
+     * active state
+    */
+    #demo .volume-hide .level_0 { background-position: 0 -25px; }
+    #demo .volume-hide .level_1 { background-position: 0 -50px; }
+    #demo .volume-hide .level_2 { background-position: 0 -75px; }
+    #demo .volume-hide .level_3 { background-position: 0 -100px; }
+
+    #demo .level_0,
+    #demo .level_0:hover {
+        background-position: 0 -125px;
+    }
+    #demo .level_1,
+    #demo .level_1:hover {
+        background-position: 0 -150px;
+    }
+    #demo .level_2,
+    #demo .level_2:hover {
+        background-position: 0 -175px;
+    }
+    #demo .level_3,
+    #demo .level_3:hover {
+        background-position: 0 -200px;
+    }
+
+    #volume_slider {
+        position: absolute;
+        top: 25px;
+    }
+
+    /* rail image on the containing box rather than the rail element */
+    #volume_slider {
+        background: url({{componentAssets}}/images/sprite.png) no-repeat 0 -259px;
+        height: 116px;
+        width: 31px;
+        padding-top: 9px;
+        cursor: arrow;
+    }
+
+    #volume_slider .yui3-slider-rail {
+        background-image: none;
+        width: 31px;
+    }
+
+    #volume_slider .yui3-slider-thumb {
+        height: 17px;
+        width: 31px;
+        overflow: hidden;
+    }
+
+    #volume_slider .yui3-slider-thumb img {
+        position: absolute;
+        top: -225px;
+    }
+
+    #volume_slider .yui3-slider-disabled .yui3-slider-thumb img {
+        top: -242px;
+    }
+
+    #demo_sprite {
+        display: inline;
+        float: left;
+        margin-right: 1em;
+    }
+</style>
+
+<div class="intro">
+    <p>This example illustrates a few points:</p>
+    <ol>
+        <li>How to create a Slider using existing markup</li>
+        <li>How to disable a Slider</li>
+        <li>How to use an image sprite to create a custom Slider skin</li>
+    </ol>
+
+    <p>The visualization of the Slider is based on the volume control in Mac OS X 10.5, with additional controls included for illustration.  <strong>Click on the speaker icon to show the Slider</strong>.</p>
+</div>
+
+<div class="example">
+    {{>slider-from-markup-source}}
+</div>
+
+<h3 id="prog_enh">Progressive Enhancement</h3>
+<p>The <a href="http://en.wikipedia.org/wiki/Progressive_enhancement">Progressive Enhancement</a> strategy recommends that your page not contain markup that will only be useful in cases where JavaScript is available.  For this reason, Slider does not include an `HTML_PARSER` to reuse existing markup.  However, it is possible to override a couple methods to accomplish the task.</p>
+
+<p>The starting markup for the volume control area is as follows:</p>
+
+```
+<div id="volume_control" class="volume-hide">
+    <label for="volume">volume</label><input type="text" size="3" maxlength="3" name="volume" id="volume" value="50">
+    <button type="button" id="volume_icon" class="level_2" title="Open volume slider"><p>Open</p></button>
+
+    <span id="volume_slider">
+        <span class="yui3-slider-rail">
+            <span class="yui3-slider-thumb"><img src="assets/images/sprite.png" height="384" width="31"></span>
+        </span>
+    </span>
+
+    <label for="mute"><input type="checkbox" id="mute"> mute</label>
+</div>
+```
+
+<p>To tell the Slider to use the existing rail and thumb elements, override the `renderRail` and `renderThumb` methods.</p>
+
+```
+var volume = new Y.Slider({
+    axis  : 'y',
+    min   : 100, // reverse min and max to make the top
+    max   : 0,   // equal 100 and the bottom 0
+    value : 50,
+    length: '105px'
+});
+
+// Override renderRail to just return the existing rail node
+volume.renderRail = function () {
+    return Y.one( "#volume_slider span.yui3-slider-rail" );
+};
+// Override renderThumb to just return the existing thumb node
+volume.renderThumb = function () {
+    return this.rail.one( "span.yui3-slider-thumb" );
+};
+
+volume.render( "#volume_slider" );
+```
+
+<h3 id="syncui">Hide and show the Slider</h3>
+<p>By default, we want the Slider to be hidden until the user clicks on the speaker icon.  However, we want to support muting or changing the value of the Slider while it is hidden.</p>
+
+```
+var control = Y.one('#volume_control'),
+    icon    = Y.one('#volume_icon'),
+    open    = false;
+
+function showHideSlider(e) {
+    control.toggleClass('volume-hide');
+    open = !open;
+
+    if (e) {
+        e.preventDefault();
+    }
+}
+
+icon.on('click', showHideSlider);
+
+// Also support hiding the Slider when the user clicks outside the
+// Slider element.
+function handleDocumentClick(e) {
+    if (open && !icon.contains(e.target) &&
+            !volume.get('boundingBox').contains(e.target)) {
+        showHideSlider();
+    }
+}
+
+Y.one( 'doc' ).on('click', handleDocumentClick );
+```
+
+<h3 id="demo_mute">Mute and unmute</h3>
+<p>We want to disable the Slider and input and set the value to 0 if a user checks the mute checkbox.  The value should be returned to the last assigned value when unmuted.  To disable the Slider, set its `disabled` attribute to `true`.</p>
+
+```
+var volInput   = Y.one('#volume'),
+    mute       = Y.one('#mute'),
+    beforeMute = 0;
+
+function muteVolume(e) {
+    // Set disabled to false if currently true; true if currently false
+    var disabled = !volume.get('disabled');
+    volume.set('disabled', disabled);
+
+    if (disabled) {
+        beforeMute = volume.getValue();
+        volume.setValue(0);
+        volInput.set('disabled','disabled');
+    } else {
+        volume.setValue(beforeMute);
+        volInput.set('disabled','');
+    }
+}
+
+mute.on('click', muteVolume);
+```
+
+<h3>Skinning and CSS</h3>
+<img id="demo_sprite" src="assets/images/sprite.png" height="384" width="31" alt="Sprite of all custom image resources for this example">
+<p>We'll be using the image sprite to the left to create a custom skin.  In this design, to keep things simple, the Slider's container and end caps are all rendered together at the bottom of the sprite.</p>
+
+<p>Slider's thumb range is constrained by the rail element, so it wouldn't be appropriate to use this image as the rail's background&#8212;the thumb would slide off the ends.  Instead, the rail image is assigned as the background to the Slider's containing element `#volume_slider`.  Then the default skin background image is removed on the rail.</p>
+
+```
+/* rail image on the containing box rather than the rail element */
+#volume_slider {
+    background: url("assets/images/sprite.png") no-repeat 0 -259px;
+    height: 116px;
+    width: 31px;
+    padding-top: 9px;
+}
+
+#volume_slider .yui3-slider-rail {
+    background-image: none;
+    width: 31px;
+}
+
+#volume_slider .yui3-slider-thumb {
+    height: 17px;
+    width: 31px;
+    overflow: hidden;
+}
+
+#volume_slider .yui3-slider-thumb img {
+    position: absolute;
+    top: -225px;
+}
+
+#volume_slider .yui3-slider-disabled .yui3-slider-thumb img {
+    top: -242px;
+}
+```
+
+<p>You can see the full CSS and JavaScript for the other controls in the <a href="#full_code_listing">Full Code Listing</a> below.</p>
+
+
+<h3 id="full_code_listing">Full Code Listing</h3>
+<p>Here is the full markup, CSS, and JavaScript for the entire example, including the volume input and mute controls, and CSS for placing the Slider and setting up the volume icon sprite positioning.</p>
+
+<h4>Markup</h4>
+```
+<div id="demo">
+
+    <div id="volume_control" class="volume-hide">
+        <label for="volume">volume</label><input type="text" size="3" maxlength="3" name="volume" id="volume" value="50">
+        <button type="button" id="volume_icon" class="level_2" title="Open volume slider"><p>Open</p></button>
+        <span id="volume_slider">
+            <span class="yui3-slider-rail">
+                <span class="yui3-slider-thumb"><img src="assets/images/sprite.png" height="384" width="31"></span>
+            </span>
+        </span>
+        <label for="mute"><input type="checkbox" id="mute"> mute</label>
+    </div>
+
+    <div class="demo-content">
+        <p>Nulla facilisi. In vel sem. Morbi id urna in diam dignissim feugiat. Proin molestie tortor eu velit. Aliquam erat volutpat. Nullam ultrices, diam tempus vulputate egestas, eros pede varius leo, sed imperdiet lectus est ornare odio.</p>
+        <p>Phasellus wisi purus, interdum vitae, rutrum accumsan, viverra in, velit. Sed enim risus, congue non, tristique in, commodo eu, metus. Aenean tortor mi, imperdiet id, gravida eu, posuere eu, felis.</p>
+    </div>
+</div>
+```
+
+<h4 id="full_js">JavaScript</h4>
+```
+YUI().use("slider", function (Y) {
+
+var control    = Y.one('#volume_control'),
+    volInput   = Y.one('#volume'),
+    icon       = Y.one('#volume_icon'),
+    mute       = Y.one('#mute'),
+    open       = false,
+    level      = 2,
+    beforeMute = 0,
+    wait,
+    volume;
+
+// The style.top is known because of a fixed height control bar, but the
+// style.left remains unknown until run time.
+Y.one("#volume_slider").setStyle('left',icon.get('offsetLeft')+'px');
+
+volume = new Y.Slider({
+    axis  : 'y',
+    min   : 100,
+    max   : 0,
+    value : 50,
+    length: '105px'
+});
+
+volume.renderRail = function () {
+    return Y.one( "#volume_slider span.yui3-slider-rail" );
+};
+volume.renderThumb = function () {
+    return this.rail.one( "span.yui3-slider-thumb" );
+};
+
+volume.render( "#volume_slider" );
+
+// Initialize event listeners
+volume.after('valueChange', updateInput);
+volume.after('valueChange', updateIcon);
+
+mute.on('click', muteVolume);
+
+volInput.on({
+    keydown : handleInput,
+    keyup   : updateVolume
+});
+
+icon.on('click', showHideSlider);
+
+Y.one( 'doc' ).on('click', handleDocumentClick );
+
+// Support functions
+function updateInput(e) {
+    if (e.src !== 'KEY') {
+        volInput.set('value',e.newVal);
+    }
+}
+
+function updateIcon(e) {
+    var newLevel = e.newVal && Math.ceil(e.newVal / 34);
+
+    if (level !== newLevel) {
+        icon.replaceClass('level_'+level, 'level_'+newLevel);
+        level = newLevel;
+    }
+}
+
+function muteVolume(e) {
+    var disabled = !volume.get('disabled');
+    volume.set('disabled', disabled);
+
+    if (disabled) {
+        beforeMute = volume.getValue();
+        volume.setValue(0);
+        volInput.set('disabled','disabled');
+    } else {
+        volume.setValue(beforeMute);
+        volInput.set('disabled','');
+    }
+}
+
+function handleInput(e) {
+    // Allow only numbers and various other control keys
+    if (e.keyCode > 57) {
+        e.halt();
+    }
+}
+
+function updateVolume(e) {
+    // delay input processing to give the user time to type
+    if (wait) {
+        wait.cancel();
+    }
+
+    wait = Y.later(400, null, function () {
+        var value = parseInt(volInput.get('value'),10) || 0;
+
+        if (value > 100) {
+            volInput.set('value', 100);
+            value = 100
+        }
+
+        volume.setValue( value );
+    });
+}
+
+function showHideSlider(e) {
+    control.toggleClass('volume-hide');
+    open = !open;
+
+    if (e) {
+        e.preventDefault();
+    }
+}
+
+function handleDocumentClick(e) {
+    if (open && !icon.contains(e.target) &&
+            !volume.get('boundingBox').contains(e.target)) {
+        showHideSlider();
+    }
+}
+
+});
+```
+
+<h4 id="full_css">CSS</h4>
+```
+#demo {
+    background: #fff;
+    border: 1px solid #999;
+    color: #000;
+}
+
+#demo .demo-content {
+    padding: 1ex 1em;
+}
+
+#volume_control {
+    height: 25px;
+    line-height: 25px;
+    background: url("assets/images/sprite.png") repeat-x 0 0;
+    position: relative;
+}
+
+#volume_control label {
+    font-weight: bold;
+    margin: 0 1ex 0 1em;
+    zoom: 1;
+}
+
+#volume {
+    border: 1px inset #999;
+    height: 16px;
+    margin-top: 3px;
+    padding: 0 3px;
+    text-align: right;
+    width: 2em;
+}
+
+/* Support open/close action for the slider */
+#demo .volume-hide #volume_slider {
+    display: none;
+}
+
+#volume_icon {
+    background: url("assets/images/sprite.png") no-repeat 0 -25px;
+    border: 0 none;
+    height: 25px;
+    vertical-align: top;
+    width: 31px;
+}
+
+/* move the button text offscreen left */
+#volume_icon p {
+    text-indent: -9999px;
+}
+
+/*
+ * adjust the speaker icon sprite in accordance with volume level and
+ * active state
+*/
+#demo .volume-hide .level_0 { background-position: 0 -25px; }
+#demo .volume-hide .level_1 { background-position: 0 -50px; }
+#demo .volume-hide .level_2 { background-position: 0 -75px; }
+#demo .volume-hide .level_3 { background-position: 0 -100px; }
+
+#demo .level_0,
+#demo .level_0:hover {
+    background-position: 0 -125px;
+}
+#demo .level_1,
+#demo .level_1:hover {
+    background-position: 0 -150px;
+}
+#demo .level_2,
+#demo .level_2:hover {
+    background-position: 0 -175px;
+}
+#demo .level_3,
+#demo .level_3:hover {
+    background-position: 0 -200px;
+}
+
+#volume_slider {
+    position: absolute;
+    top: 25px;
+}
+
+/* rail image on the containing box rather than the rail element */
+#volume_slider {
+    background: url("assets/images/sprite.png") no-repeat 0 -259px;
+    height: 116px;
+    width: 31px;
+    padding-top: 9px;
+    cursor: arrow;
+}
+
+#volume_slider .yui3-slider-rail {
+    background-image: none;
+    width: 31px;
+}
+
+#volume_slider .yui3-slider-thumb {
+    height: 17px;
+    width: 31px;
+    overflow: hidden;
+}
+
+#volume_slider .yui3-slider-thumb img {
+    position: absolute;
+    top: -225px;
+}
+
+#volume_slider .yui3-slider-disabled .yui3-slider-thumb img {
+    top: -242px;
+}
+
+#demo_sprite {
+    display: inline;
+    float: left;
+    margin-right: 1em;
+}
+```
+

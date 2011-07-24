@@ -1,0 +1,21 @@
+{
+    "name"       : "history",
+    "displayName": "History",
+    "description": "Provides browser history management functionality using a simple add/get/replace paradigm.",
+    "author"     : "rgrove",
+
+    "tags": ["utility", "history", "html5", "hashchange", "pushstate"],
+    "use" : ["history"],
+
+    "examples": [
+        {
+            "name"       : "history-tabview",
+            "displayName": "History + TabView",
+            "description": "Demonstrates how to add browser history support to a TabView widget using the History Utility.",
+            "modules"    : ["history", "tabview"],
+            "tags"       : ["history", "tabview"],
+
+            "hideTableOfContents": true
+        }
+    ]
+}

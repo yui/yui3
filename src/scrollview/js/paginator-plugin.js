@@ -4,9 +4,10 @@
  * @module scrollview-paginator
  */
 
-var UI = Y.ScrollView.UI_SRC,
+var UI = (Y.ScrollView) ? Y.ScrollView.UI_SRC : "ui",
     INDEX = "index",
     SCROLL_X = "scrollX",
+    SCROLL_Y = "scrollY",
     TOTAL = "total",
     BOUNDING_BOX = "boundingBox",
     CONTENT_BOX = "contentBox";
@@ -117,6 +118,8 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         var host = this._host,
             cb = host.get(CONTENT_BOX),
             bb = host.get(BOUNDING_BOX),
+            vert = host._scrollsVertical,
+            size = (vert) ? host._scrollHeight : host._scrollWidth,
             pageSelector = this.get("selector"),
             pages,
             offsets;
@@ -126,8 +129,8 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
 
         this.set(TOTAL, pages.size());
 
-        this._pgOff = offsets = pages.get("offsetLeft");
-        offsets.push(host._scrollWidth - bb.get("offsetWidth"));
+        this._pgOff = offsets = pages.get((vert) ? "offsetTop" : "offsetLeft");
+        offsets.push(size - bb.get((vert) ? "offsetHeight" : "offsetWidth"));
     },
 
     /**
@@ -147,7 +150,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             pageCount = this.get(TOTAL);
 
         if (velocity) {
-            Y.log("Handling flick - increment: " + inc + ", pageIndex: " + pageIndex, "scrollview-paginator");
 
             if (inc && pageIndex < pageCount-1) {
                 this.set(INDEX, pageIndex+1);
@@ -180,9 +182,9 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      _scrollEnded: function(e) {
          var host = this._host,
              pageIndex = this.get(INDEX),
-             pageCount = this.get(TOTAL);
+             pageCount = this.get(TOTAL),
+             trans = PaginatorPlugin.SNAP_TO_CURRENT;
 
-         Y.log("_scrollEnded - onGME: " + e.onGestureMoveEnd + ", flicking: " + host._flicking + ", halfway: " + host._scrolledHalfway + ", forward: " + host._scrolledForward, "scrollview-paginator");
 
          if(e.onGestureMoveEnd && !host._flicking) {
              if(host._scrolledHalfway) {
@@ -191,10 +193,10 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
                  } else if (pageIndex > 0) {
                      this.set(INDEX, pageIndex-1);
                  } else {
-                     this.snapToCurrent();
+                     this.snapToCurrent(trans.duration, trans.easing);
                  }
              } else {
-                 this.snapToCurrent();
+                 this.snapToCurrent(trans.duration, trans.easing);
              }
          }
 
@@ -257,38 +259,49 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */
     scrollTo: function(index, duration, easing) {
         var host = this._host,
-            x = host.get(SCROLL_X);
+            vert = host._scrollsVertical,
+            scrollAxis = (vert) ? SCROLL_Y : SCROLL_X, 
+            scrollVal = this._pgOff[index];
 
-        if(host._scrollsHorizontal) {
-            x = this._pgOff[index];
-
-            host.set(SCROLL_X, x, {
-                duration: duration,
-                easing: easing
-            });
-        }
+        host.set(scrollAxis, scrollVal, {
+            duration: duration,
+            easing: easing
+        });
     },
     
     /**
      * Snaps the scrollview to the currently selected page
      *
      * @method snapToCurrent
+     * @param duration {Number} The number of ms the animation should last
+     * @param easing {String} The timing function to use in the animation
      */
-    snapToCurrent: function() {
-        var host = this._host;
+    snapToCurrent: function(duration, easing) {
+        var host = this._host,
+            vert = host._scrollsVertical;
 
         host._killTimer();
 
-        Y.log("snapToCurrent:" + this.get(INDEX), "scrollview-paginator");
 
-        host.set(SCROLL_X, this._pgOff[this.get(INDEX)], {
-            duration: 300,
-            easing: 'ease-out'
+        host.set((vert) ? SCROLL_Y : SCROLL_X, this._pgOff[this.get(INDEX)], {
+            duration: duration,
+            easing: easing
         });
     },
-    
+
     _prevent: new Y.Do.Prevent()
-    
+
 });
+
+/**
+ * The default snap to current duration and easing values used on scroll end. 
+ * 
+ * @property SNAP_TO_CURRENT
+ * @static
+ */
+PaginatorPlugin.SNAP_TO_CURRENT = {
+    duration : 300,
+    easing : 'ease-out'
+};
 
 Y.namespace('Plugin').ScrollViewPaginator = PaginatorPlugin;

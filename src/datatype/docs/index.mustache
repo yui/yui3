@@ -1,0 +1,186 @@
+<div class="intro component">
+    <p>
+        The DataType Utility provides type-conversion and string-formatting
+        convenience methods for numbers, dates, and XML documents.
+    </p>
+    
+    <p>
+        <strong>Note:</strong> In evolving the internationalization
+        infrastructure, we have deprecated <code>config.locale</code>,
+        <code>config.dateformat</code>, and <code>DataType.Date.Locale</code>.
+        These properties will be removed beginning with the 3.4.0 release.
+    </p>
+</div>
+				
+{{>getting-started}}
+				
+<h2 id="using">Using the DataType utility</h2>
+			
+<h3 id="dates">Dates</h3>
+
+<h4 id="formattingdates">Formatting dates</h4>
+
+<p>
+    <code>DataType.Date.format()</code> will output dates as strings formatted
+    using <code>strftime</code> tokens. Some of the formats are localizable, so
+    be sure to specify the <code>lang</code> property of the YUI instance's
+    config object.
+</p>
+
+```
+YUI({lang:"ko-KR"}).use("datatype-date", function(Y) {
+    // display the current date and time in localized format
+    alert(Y.DataType.Date.format(new Date(), {format:"%x %X"}));
+});
+```
+
+<p>
+    <a name="addDateFormat"></a>The module has support for a large number of
+    languages built in.  If you need a language that's not supported, you can
+    register the necessary localized data yourself using facilities of the <a
+    href="../intl">Internationalization utility</a>.  The resource bundle you
+    provide needs to have properties corresponding to the locale-sensitive <a
+    href="../api/DataType.Date.html#method_format"> strftime format
+    specifiers</a>:
+</p>
+                
+<ul>
+    <li><b>a:</b> list of abbreviated weekday names, from Sunday to Saturday
+    <li><b>A:</b> list of full weekday names, from Sunday to Saturday
+    <li><b>b:</b> list of abbreviated month names, from January to December
+    <li><b>B:</b> list of full month names, from January to December
+    <li><b>c:</b> preferred date and time representation
+    <li><b>p:</b> list of strings corresponding to "AM" and "PM"
+    <li><b>P:</b> same as "p", but lower case
+    <li><b>x:</b> preferred date representation without the time
+    <li><b>X:</b> preferred time representation without the date
+</ul>
+
+```
+YUI().use("intl", "datatype-date-format", function(Y) {
+    // provide data for Punjabi in India
+    Y.Intl.add("datatype-date-format", "pa-IN", {
+        "a":["ਐਤ.","ਸੋਮ.","ਮੰਗਲ.","ਬੁਧ.","ਵੀਰ.","ਸ਼ੁਕਰ.","ਸ਼ਨੀ."],
+        "A":["ਐਤਵਾਰ","ਸੋਮਵਾਰ","ਮੰਗਲਵਾਰ","ਬੁਧਵਾਰ","ਵੀਰਵਾਰ","ਸ਼ੁੱਕਰਵਾਰ","ਸ਼ਨੀਚਰਵਾਰ"],
+        "b":["ਜਨਵਰੀ","ਫ਼ਰਵਰੀ","ਮਾਰਚ","ਅਪ੍ਰੈਲ","ਮਈ","ਜੂਨ","ਜੁਲਾਈ","ਅਗਸਤ","ਸਤੰਬਰ","ਅਕਤੂਬਰ","ਨਵੰਬਰ","ਦਸੰਬਰ"],
+        "B":["ਜਨਵਰੀ","ਫ਼ਰਵਰੀ","ਮਾਰਚ","ਅਪ੍ਰੈਲ","ਮਈ","ਜੂਨ","ਜੁਲਾਈ","ਅਗਸਤ","ਸਤੰਬਰ","ਅਕਤੂਬਰ","ਨਵੰਬਰ","ਦਸੰਬਰ"],
+        "c":"%a, %Y %b %d %l:%M:%S %p %Z",
+        "p":["ਸਵੇਰੇ","ਸ਼ਾਮ"],
+        "P":["ਸਵੇਰੇ","ਸ਼ਾਮ"],
+        "x":"%d/%m/%Y",
+        "X":"%l:%M:%S %p"
+    });
+    // switch to Punjabi
+    Y.Intl.setLang("datatype-date-format", "pa-IN");
+    // now dates are formatted in Punjabi
+    alert(Y.DataType.Date.format(new Date(), {format:"%A %x %X"}));
+});
+```
+
+<h4 id="parsingdates">Parsing dates</h4>
+
+<p>
+    <code>DataType.Date.parse()</code> accepts any value supported by the
+    JavaScript <code>Date()</code> constructor and converts it to a Date
+    object. Invalid values will return null.
+</p>
+
+```
+var date1 = Y.DataType.Date.parse("December 17, 1995 03:24:00");
+
+var date2 = Y.DataType.Date.parse(1995,11,17);
+
+var date3 = Y.DataType.Date.parse(1995,11,17,3,24,0);
+
+var date4 = Y.DataType.Date.parse(948548583);
+```
+
+<h3 id="numbers">Numbers</h3>
+
+<h4 id="formattingnumbers">Formatting numbers</h4>
+
+<p>
+    JavaScript Number values can be formatted with a variety options into
+    string values using <code>DataType.Number.format()</code>.
+</p>
+
+```
+alert(Y.DataType.Number.format(123123123.176,{
+    prefix: "€",
+    thousandsSeparator: ".",
+    decimalSeparator: ",",
+    decimalPlaces: 2,
+    suffix: " (EUR)"
+}));
+```
+
+<h4 id="parsingnumbers">Parsing numbers</h4>
+
+<p>
+    String values can be converted into Number objects with
+    <code>DataType.Number.parse()</code>.
+</p>
+
+```
+var number = Y.DataType.Number.parse("123123");
+```
+
+<h3 id="xml">XML</h3>
+
+<h4 id="formattingxml">Formatting XML</h4>
+
+<p>
+    <code>DataType.XML.format()</code> will accept an XML document and return
+    its string representation. Note that browsers may slightly differ in the
+    exact string that is returned.
+</p>
+
+```
+var myString = Y.DataType.XML.format(myXMLDocument);
+```
+
+<h4 id="parsingxml">Parsing XML</h4>
+
+<p>
+    <code>DataType.XML.parse()</code> will accept a string representation of
+    XML and return an XML document object. Note that browsers differ in their
+    handling of invalid syntax but will in general return an XML document even
+    under error conditions.
+</p>
+
+```
+var myXMLDocument = Y.DataType.XML.parse("<myroot><item type='foo'><name>Abc</name><rank>1</rank></item><item type='bar'><name>Def</name><rank>2</rank></item><item type='bat'><name>Ghhi</name><rank>3</rank></item></myroot>");
+```
+
+<h3 id="parsers">Y.Parsers shortcuts</h3>
+
+<p>
+    The functions <code>DataType.Date.parse()</code> and
+    <code>DataType.Number.parse()</code> are registered with the
+    <code>Parsers</code> object for seamless integration with the DataSchema
+    Utility. For dynamic type enforcing when data is being normalized against a
+    schema, simply point to the appropriate function using the built-in
+    shortcut in your schema definition. Parsing your data in this manner is
+    essential if your numerical or date data comes over the wire as JSON, since
+    all the values will be strings.
+</p>
+
+```
+YUI().use("datatype", "dataschema", function(Y) {
+    var data_in = {
+            "results":[
+                {"string":"aardvark", "number":"1", "date":"Jan 1, 2001"},
+                {"string":"bat", "number":"2", "date":"Feb 2, 2002"},
+                {"string":"camel", "number":"3", "date":"March 3, 2003"}
+            ]
+        },
+        schema = {
+            resultListLocator: "results",
+            resultFields: [
+                "string", // needs no parsing
+                {key:"number", parser: "number"}, // converts string values to numbers
+                {key:"date", parser: "date"}] // converts string values to dates
+        },
+        data_out = Y.DataSchema.JSON.apply(schema, data_in);
+});
+```

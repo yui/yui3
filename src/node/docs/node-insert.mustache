@@ -1,0 +1,42 @@
+<link href="{{componentAssets}}/node.css" rel="stylesheet" type="text/css">
+<div class="intro">
+    <p>This example demonstrates how insert content when working with <code>NodeList</code> instances.</p>
+    <p>Clicking a box will update its content.</p>
+</div>
+
+<div class="example">
+{{>node-insert-source}}
+</div>
+
+<h2>Setting up the NodeList</h2>
+<p>First we need some HTML to work with.</p>
+```
+<ul id="demo">
+    <li>foo</li>
+    <li>bar</li>
+</ul>
+```
+<h2>Adding Content</h2>
+<p>Next we will add a handler to run when the event is fired. In our handler we will add content to the node.</p>
+<p>Note that the event handler receives an event object with its <code>currentTarget</code> set to the current Node instance, and the actual node clicked as the <code>target</code>.  The context of the handler is the NodeList instance, so <code>this</code> refers to our NodeList instance.</p>
+<p>Note also that <code>prepend</code> inserts content as the <code>firstChild</code> of the Node instance, <code>append</code> inserts content as the <code>lastChild</code>, and <code>insert</code> places content before the specified node or childNode index.</p>
+```
+    var onClick = function(e) {
+        var node = e.currentTarget;
+        node.prepend('<em>prepended</em> &nbsp;'); // added as firstChild
+        node.append('&nbsp; <em>appended</em>');  // added as lastChild
+        node.insert('&nbsp; <strong>before last child</strong> &nbsp;', node.get('lastChild')); // added before lastChild
+        node.insert('&nbsp; <strong>before childNodes[1]</strong> &nbsp;', 1); // added before childNodes[1]
+    };
+```
+
+<h2>Attaching Events</h2>
+<p>We can assign our handler to all of the items by using the <code>all</code> method to get a <code>NodeList</code> instance and using the <code>on</code> method to subscribe to the event.</p>
+```
+Y.all('#demo li').on('click', onClick);
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>node-insert-source}}
+```

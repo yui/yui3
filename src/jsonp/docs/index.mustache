@@ -1,0 +1,325 @@
+<div class="intro component">
+        <p>
+            The JSONP Utility is a specialized API for communicating with web
+            services that provide JSON responses wrapped in a callback
+            function.  A typical JSONP request URL might look like
+            &quot;http://example.com/service.php?callback=handleData&quot; and
+            receive a text response in the form of
+            <code>handleData({"records":[....]});</code>.
+        </p>
+
+        <p>
+            The nature of YUI 3's sandbox model complicates JSONP transactions
+            because JSONP relies on a global access point to process the
+            response, but YUI 3 implementation code is typically wrapped in a
+            <code>use(...)</code> callback and is therefore not globally
+            accessible.  The JSONP module provides a proxy system for
+            channeling JSONP responses back into your YUI instance sandbox.
+        </p>
+
+        <p>
+            <strong>Security Note:</strong> JSONP is an inherently unsecure
+            communication method, since it involves the transfer of unvalidated
+            JavaScript.  It is by convention alone that the format is
+            associated with JSON, but in reality, the response can include any
+            arbitrary JavaScript, potentially opening your page to attack.
+            <em>Be cautious about which services you communicate with via
+            JSONP</em>.  For safe JSON communication, use the <a
+            href="http://developer.yahoo.com/yui/3/json/">JSON module</a> in
+            conjunction with the <a
+            href="http://developer.yahoo.com/yui/3/io/">IO module</a> wherever
+            possible.
+        </p>
+</div>
+
+{{>getting-started}}
+
+<h2 id="using">Using the JSONP Utility</h2>
+
+<h3 id="basic">Instantiation and the <code>Y.jsonp</code> method</h3>
+
+<p>
+    The JSONP utility provides the <code>Y.jsonp(url, callback)</code> method
+    for single transactions as well as a <code>Y.JSONPRequest</code> class to
+    manage reusable connections.
+</p>
+
+
+<p>
+    The first argument to either the <code>Y.jsonp</code> method or the
+    <code>Y.JSONPRequest</code> constructor is the URL of the JSONP service,
+    and the second is a callback function or <a href="#config">configuration
+    object</a> that contains a callback function.  When the service responds
+    with the data, the callback will be executed with the response data as the
+    first parameter.
+</p>
+
+
+<p>
+    In place of the JSONP callback name in the URL, include the string
+    &quot;{callback}&quot;.  This placeholder will be used for a proxy function
+    that will route the data to your callback.
+</p>
+
+
+```
+// instead of service.php?callback=handleJSONP
+var url = "http://example.com/service.php?callback={callback}";
+
+function handleJSONP(response) {
+    // response is a JavaScript object. No parsing necessary
+    Y.one("#output").setContent(response.outputHTML);
+}
+
+Y.jsonp(url, handleJSONP);
+
+// or
+var service = new Y.JSONPRequest(url, handleJSONP);
+service.send();
+```
+
+<h4 id="timing">Sending JSONP requests</h4>
+
+<p>
+    <code>Y.jsonp(url, callback)</code> will dispatch the request immediately.
+    JSONPRequest instances will dispatch the request each time their
+    <code>send()</code> method is called.
+</p>
+
+
+```
+// request sent immediately
+Y.jsonp(url, handleJSONP);
+
+// No request sent
+var service = new Y.JSONPRequest(url, handleJSONP);
+
+// ...until now
+service.send();
+
+// ...and now again
+service.send();
+```
+
+<p>
+    <code>Y.jsonp(url, callback)</code> is a convenience wrapper to instantiate
+    a JSONPRequest instance and call its <code>send()</code> method.
+</p>
+
+
+<p>
+    This will generate a request to a URL like this one (note that the
+    <code>{callback}</code> placeholder has been replaced with a dynamically
+    generated callback name):
+</p>
+
+
+```
+http://example.com/service.php?callback=YUI.Env.JSONP.yui_3_3_0_1_1294184187597423
+```
+
+<p>
+    The server will then be expected to respond with a JavaScript value wrapped
+    in a call to that function, like this:
+</p>
+
+```
+YUI.Env.JSONP.yui_3_3_0_1_1294184187597423({"foo":"bar"});
+```
+
+<h3 id="config">Configuring the connection</h3>
+
+<p>
+    The second argument to either <code>Y.jsonp</code> or the
+    <code>Y.JSONPRequest</code> constructor can be a success callback function
+    or for more control, it can be a configuration object.  The supported keys
+    of this object are:
+</p>
+
+
+<table>
+    <thead>
+        <tr>
+            <th>Property</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>timeout</td>
+            <td>
+                This value, defined as milliseconds, is a time threshold for
+                the transaction (e.g., <code>{ timeout: 2000 }</code> ). When
+                this limit is reached, the transaction's
+                <code>on.timeout</code> callback will be executed if
+                supplied.
+            </td>
+        </tr>
+        <tr>
+            <td>context</td>
+            <td>
+                Defines what will be &quot;<code>this</code>&quot; in the
+                callbacks.  If undefined, the default will be the JSONPRequest
+                instance.
+            </td>
+        </tr>
+        <tr>
+            <td>args</td>
+            <td>
+                An array of additional arguments that will be passed to the
+                callbacks as second, third, and so on arguments.
+            </td>
+        </tr>
+        <tr>
+            <td>on</td>
+            <td>
+                <p>
+                    <strong>Required</strong>. This object defines the
+                    callbacks to be used for the transaction.  At least an
+                    <code>on.success</code> handler must be defined.
+                </p>
+                <ul>
+                    <li>success (<strong>required</strong>)</li>
+                    <li>failure</li>
+                    <li>timeout</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>format</td>
+            <td>
+                Preprocessor function to stitch together the supplied URL
+                (first argument), the proxy function name (internally
+                generated), and any additional arguments passed to
+                <code>send()</code>.  See <a href="#format">Customizing the
+                JSONP URL</a> for more detail.
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<p>
+    This is an example of a configuration object, with a set of properties
+    defined.
+</p>
+
+```
+var url     = "http://example.com/service.php?callback={callback}",
+    service = new Y.JSONPRequest(url, {
+        on: {
+            success: MyApp.handleJSONP,
+            timeout: MyApp.handleTimeout
+        },
+        context: MyApp
+        timeout: 3000,          // 3 second timeout
+        args: [new Date(), 100] // e.g. handleJSONP(data, date, number)
+    });
+
+service.send();
+
+// or
+Y.jsonp(url, {
+    on: {
+        success: MyApp.handleJSONP,
+        timeout: MyApp.handleTimeout
+    },
+    context: MyApp
+    timeout: 3000,          // 3 second timeout
+    args: [new Date(), 100] // e.g. handleJSONP(data, date, number)
+});
+```
+
+<h3 id="url">Parsing the callback from the URL</h3>
+
+<p>
+    An extension for the <code>jsonp</code> module is the
+    <code>jsonp-url</code> module which provides a few additional features.
+</p>
+
+
+<ol>
+    <li>
+        If you have a global function or a function available from the YUI
+        instance (e.g. <code>Y.MyApp.handleJSONP</code>), you can include the
+        name in the URL and omit the second parameter entirely.
+    </li>
+    <li>
+        The URL passed as the first parameter need not include the
+        &quot;{callback}&quot; string.  If it is not found, it will look for
+        &quot;callback=&quot;, then fall back to adding the query parameter
+        onto the URL.
+    </li>
+</ol>
+
+```
+Y.MyApp.handleJSONP = function (data) {
+    Y.one("#output").setContent(data.outputHTML);
+};
+
+Y.jsonp("http://example.com/service.php?callback=Y.MyApp.handleJSONP");
+
+// or
+Y.jsonp("http://example.com/service.php", {
+    context: Y.MyApp,
+    on: {
+        success: Y.MyApp.handleJSONP,
+        failure: Y.MyApp.handleFailure
+    }
+});
+```
+
+<h3 id="format">Customizing the JSONP URL</h3>
+
+<p>
+    The default URL formatter simply replaces the &quot;{callback}&quot;
+    placehold with the name of the generated proxy function.  If you want to
+    customize the URL generation process, you can provide a <code>format</code>
+    function in the configuration.  The function will receive the configured
+    URL (with &quot;{callback}&quot; placeholder), the string name of the proxy
+    function, and any additional arguments that were passed to
+    <code>send()</code>.
+</p>
+
+```
+// Our custom formatter will expect a URL with an additional placeholder for
+// username that must be supplied in send("bill");
+// e.g. http://example.com/bill/json?fn=YUI.Env.JSONP._12345
+function prepareJSONPUrl(url, proxy, username) {
+    return Y.Lang.sub(url, {
+        callback: proxy,
+        name: username || "user"
+    });
+}
+
+var url = "http://example.com/{name}/json?fn={callback}";
+
+var service = new Y.JSONPRequest(url, {
+        format: prepareJSONPUrl,
+        on: {
+            success: handleJSONP
+        }
+    });
+
+service.send("apipkin");
+service.send("tivac");
+service.send("razass");
+```
+
+<h2 id="issues">Known Issues</h2>
+
+<ul>
+    <li>
+        Unlike the XMLHttpRequest calls generated by the IO utility, JSONP
+        requests can't be aborted, since they rely on dynamic script insertion
+        (which provides less low-level control than XHR). Keep this in mind
+        when deciding which method to use.
+    </li>
+
+    <li>
+        Since most browsers don't enforce execution order for dynamically
+        inserted scripts, JSONP callbacks may not be called in the same order
+        that the requests were sent. On the other hand, some browsers
+        <em>do</em> enforce execution order, so in these browsers a slow
+        request may block the execution of subsequent JSONP callbacks.
+    </li>
+</ul>

@@ -19,6 +19,7 @@ var DOCUMENT_ELEMENT = 'documentElement',
     GET_COMPUTED_STYLE = 'getComputedStyle',
     GET_BOUNDING_CLIENT_RECT = 'getBoundingClientRect',
 
+    WINDOW = Y.config.win,
     DOCUMENT = Y.config.doc,
     UNDEFINED = undefined,
 
@@ -33,7 +34,6 @@ var DOCUMENT_ELEMENT = 'documentElement',
 
     re_color = /color$/i,
     re_unit = /width|height|top|left|right|bottom|margin|padding/i;
-
 
 Y.Array.each(VENDOR_TRANSFORM, function(val) {
     if (val in DOCUMENT[DOCUMENT_ELEMENT].style) {
@@ -57,8 +57,7 @@ Y.mix(Y_DOM, {
      */
     setStyle: function(node, att, val, style) {
         style = style || node.style;
-        var CUSTOM_STYLES = Y_DOM.CUSTOM_STYLES,
-            current;
+        var CUSTOM_STYLES = Y_DOM.CUSTOM_STYLES;
 
         if (style) {
             if (val === null || val === '') { // normalize unsetting
@@ -74,6 +73,9 @@ Y.mix(Y_DOM, {
                 } else if (typeof CUSTOM_STYLES[att] === 'string') {
                     att = CUSTOM_STYLES[att];
                 }
+            } else if (att === '') { // unset inline styles
+                att = 'cssText';
+                val = '';
             }
             style[att] = val; 
         }
@@ -239,6 +241,8 @@ Y_DOM.CUSTOM_STYLES.transform = {
         return Y_DOM[GET_COMPUTED_STYLE](node, TRANSFORM);
     }
 };
+
+
 })(Y);
 (function(Y) {
 var PARSE_INT = parseInt,
@@ -316,4 +320,4 @@ Y.Color = {
 
 
 
-}, '@VERSION@' ,{requires:['dom-base']});
+}, '@VERSION@' ,{requires:['dom-core']});

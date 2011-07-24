@@ -1,0 +1,54 @@
+<div class="overlay-example" id="overlay-position">
+
+    <label>X: <input type="text" id="x" value="0" ></label>
+    <label>Y: <input type="text" id="y" value="0" ></label>
+    <button type="button" id="move">Move</button>
+    <button type="button" id="show">Show</button>
+    <button type="button" id="hide">Hide</button>
+
+    <div id="overlay" class="yui3-overlay-loading">
+        <div class="yui3-widget-hd">Overlay Header</div>
+        <div class="yui3-widget-bd">Overlay Body</div>
+        <div class="yui3-widget-ft">Overlay Footer</div>
+    </div>
+
+    <p class="filler">
+        <select class="needs-shim">
+            <option>Prevent IE6 Bleedthrough</option>
+        </select>
+        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc pretium quam eu mi varius pulvinar. Duis orci arcu, ullamcorper sit amet, luctus ut, interdum ac, quam. Pellentesque euismod. Nam tincidunt, purus in ultrices congue, urna neque posuere arcu, aliquam tristique purus sapien id nulla. Etiam rhoncus nulla at leo. Cras scelerisque nisl in nibh. Sed eget odio. Morbi elit elit, porta a, convallis sit amet, rhoncus non, felis. Mauris nulla pede, pretium eleifend, porttitor at, rutrum id, orci. Quisque non urna. Nulla aliquam rhoncus est. 
+    </p>
+</div>
+
+<script type="text/javascript">
+YUI().use("overlay", function(Y) {
+
+    var xy = Y.one("#overlay-position").getXY();
+
+    // Create an overlay from markup
+    var overlay = new Y.Overlay({
+        srcNode:"#overlay",
+        width:"10em",
+        height:"10em",
+        xy:[xy[0] + 10, xy[1] + 35]
+    });
+    overlay.render();
+
+    var xInput = Y.one("#x");
+    var yInput = Y.one("#y");
+
+    // Using round to round sub-pixel values for FF3 just 
+    // to make the text box values prettier.
+    xInput.set("value", Math.round(overlay.get("x")));
+    yInput.set("value", Math.round(overlay.get("y")));
+
+    Y.on("click", function(e) {
+        var x = parseInt(xInput.get("value"));
+        var y = parseInt(yInput.get("value"));
+        overlay.move(x,y);
+    }, "#move");
+
+    Y.on("click", Y.bind(overlay.show, overlay), "#show");
+    Y.on("click", Y.bind(overlay.hide, overlay), "#hide");
+});
+</script>

@@ -1,11 +1,12 @@
-
+    /**
+     * @module test
+     */
 
     Y.namespace("Coverage.Format");
 
     /**
      * Contains specific formatting options for coverage information.
-     * @namespace Coverage
-     * @class Format
+     * @class Coverage.Format
      * @static
      */
     

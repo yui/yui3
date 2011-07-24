@@ -1,5 +1,11 @@
 {
     "recordset": {
+        "use": [
+            "recordset-base",
+            "recordset-sort",
+            "recordset-filter",
+            "recordset-indexer"
+        ],
 		"submodules": {
 			"recordset-base": {
 				"requires": ["base", "arraylist"]
@@ -7,11 +13,12 @@
 			"recordset-sort": {
 				"requires": [
 					"arraysort",
-					"recordset-base"					
+					"recordset-base",
+					"plugin"					
 				]
 			},
 			"recordset-filter": {
-				"requires": ["recordset-base", "array-extras"]
+				"requires": ["recordset-base", "array-extras", "plugin"]
 			},
 			"recordset-indexer": {
 				"requires": ["recordset-base", "plugin"]

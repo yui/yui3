@@ -1,5 +1,8 @@
 SWFDetect Utility - Release Notes
 
+3.3.0
+    Added API documentation
+
 3.2.0
 	Contribution by Ryan Cannon: #2529113 fixed logic in isFlashVersionAtLeast() to 
 	account for omitted minor and revision versions of the Flash player.

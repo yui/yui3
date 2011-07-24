@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>DataType.Date.Math Tests</title>
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+</head>
+
+<body class="yui3-skin-sam">
+<h1>DataType.Date.Math Tests</h1>
+<p><input type="button" value="Run Tests" id="btnRun" disabled=true></p>
+
+<script type="text/javascript">
+
+(function() {
+    YUI({
+        base: "../../../build/",
+        //filter: "debug",
+        logInclude:{"TestRunner":true},
+        useConsole: true
+    }).use("console", "test", "dump", "datatype-date-math", function(Y) {
+        
+        // Set up the page
+        var ASSERT = Y.Assert,
+            ARRAYASSERT = Y.ArrayAssert,
+            btnRun = Y.one("#btnRun"),
+            myConsole = new Y.Console().render();
+            
+        btnRun.set("disabled", false);
+        Y.on("click", function(){
+            Y.Test.Runner.run();
+        }, btnRun);
+
+
+        var testValidDate = new Y.Test.Case({
+            name: "isValidDate Tests",
+        
+            testValidDate: function() {
+                var validDate = new Date(1982, 11, 2);
+                ASSERT.isTrue(Y.DataType.Date.isValidDate(validDate), "Expected true.");
+            },
+
+            testInvalidDate: function() {
+                var invalidDate = new Date("Invalid date string");
+                ASSERT.isFalse(Y.DataType.Date.isValidDate(invalidDate), "Expected false.")
+            }
+        });
+
+        var testDateMath = new Y.Test.Case({
+            name: "DateMath Tests",
+        
+            testAddMonths: function() {
+                var initDate = new Date(1982, 11, 2);
+                var finalDate = new Date (1983, 10, 2);
+                ASSERT.areEqual(Y.DataType.Date.addMonths(initDate, 11).getTime(), finalDate.getTime(), "Expected true.");
+            },
+
+            testAddYears: function() {
+                var initDate = new Date(1982, 11, 2);
+                var finalDate = new Date (1989, 11, 2);
+                ASSERT.areEqual(Y.DataType.Date.addYears(initDate, 7).getTime(), finalDate.getTime(), "Expected true.");
+            }
+        });
+
+        var testDaysInMonth = new Y.Test.Case({
+            name: "DaysInMonth Tests",
+        
+            testDaysInMonth: function() {
+                var initDate = new Date(1982, 10, 1);
+                ASSERT.areSame(Y.DataType.Date.daysInMonth(initDate), 30, "Expected true.");
+            }
+        });
+        
+
+        var suite = new Y.Test.Suite({name:"DataType.Date.Math Test Suite"});
+        suite.add(testValidDate);
+        suite.add(testDateMath);
+        suite.add(testDaysInMonth);
+
+        Y.Test.Runner.setName("DataType.Date.Math Test Runner");
+        Y.Test.Runner.add(suite);
+        Y.Test.Runner.run();
+    });
+})();
+</script>
+</body>
+</html>

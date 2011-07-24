@@ -1,0 +1,174 @@
+<div class="intro component" style="overflow: hidden; padding-bottom: 1em;">
+    <p>
+        <img src="{{componentAssets}}/images/small.png" alt="Screen capture of a Console with the ConsoleFilters plugin" height="203" width="200" style="border: 0 none; margin-left: 2em; float: right;">
+        The Console Filters plugin provides controls for visually filtering <a
+        href="../console/">Console</a> messages by category and source.  The
+        plugin creates two sets of checkboxes in the Console footer, one for
+        known categories, the other for known sources.  Only messages matching
+        a checked category and source will be displayed.
+    </p>
+</div>
+				
+{{>getting-started}}
+				
+<h3 id="sam">Trigger the CSS skin</h3>
+
+<p>
+    For the default &quot;Sam&quot; skin to apply to the Console UI, you'll
+    need to apply the <code>yui-skin-sam</code> class name to an element that
+    is a parent of the element in which the Console lives. You can usually
+    accomplish this simply by putting the class on the
+    <code>&#60;body&#62;</code> tag:
+</p>
+
+```
+<body class="yui-skin-sam">
+```
+
+
+<p>
+    For more information on skinning YUI components and making use of default
+    skins, see our <a
+    href="http://developer.yahoo.com/yui/articles/skinning/">Understanding YUI
+    Skins</a> article.
+</p>
+
+<h2 id="using">Using `Plugin.ConsoleFilters`</h2>
+
+<p>
+    The Console Filters plugin adds a set of controls to the Console footer to
+    allow interactive control of which log messages are displayed.  It differs
+    from <a href="../console/#filter">other means of Console filtering</a> by
+    supporting display-only filtering.  Messages that are filtered from view
+    are not destroyed, and can be shown again by changing the filters.
+</p>
+
+<h3 id="plug">Adding and configuring Plugin.ConsoleFilters</h3>
+
+<p>
+    The Console Filters plugin has no required configuration or markup.  All
+    you need to do is plug it into your Console instance and the additional
+    functionality will be available.
+</p>
+
+```
+var yconsole = new Y.Console();
+yconsole.plug(Y.Plugin.ConsoleFilters);
+
+// OR
+
+var yconsole = new Y.Console({
+    /* any other configuration */
+    plugins: [ Y.Plugin.ConsoleFilters ]
+});
+```
+			
+<h4 id="config">Configuration</h4>
+
+<p>
+    ConsoleFilters manages a <code>category</code> attribute for known
+    categories and a <code>source</code> attribute for known sources.  The
+    value of these attributes is an object literal with an entry for each
+    category or source, respectively, mapping to a boolean indicating whether
+    or not to display associated messages.
+</p>
+
+<p>
+    These attributes will be updated whenever a message with an unknown
+    category or source is received by the Console.  When a new category or
+    source is received, its initial visibility is set according to the value of
+    the <code>defaultVisibility</code> attribute.
+</p>
+
+```
+// Configure the ConsoleFilters to show attribute messages, but default all
+// others to hidden.
+var yconsole = new Y.Console({
+    plugins: [ {
+        fn: Y.Plugin.ConsoleFilters,
+        cfg: {
+            defaultVisibility: false,
+            source: {
+                attribute: true
+            }
+        }
+    }]});
+
+// OR
+var yconsole = new Y.Console();
+yconsole.plug(Y.Plugin.ConsoleFilters, {
+    defaultVisibility: false,
+    source: {
+        attribute: true
+    }
+});
+```
+
+<h3 id="display">The ConsoleFilters UI</h3>
+
+<p>
+    The Console Filters plugin adds two groups of checkboxes to the Console
+    footer.  The upper set is for known categories; the lower for known
+    sources.
+</p>
+
+<img src="{{componentAssets}}/images/console_filters_anatomy.png" alt="Screen capture of a Console footer with checkbox groups identified for categories and sources">
+
+<p>
+    As new categories or sources are received by the Console, corresponding
+    checkboxes are added to the respective group.  You can see this in the <a
+    href="../examples/console/console_filter.html">Using the ConsoleFilters
+    plugin</a> example.
+</p>
+
+<h3 id="controls">Interacting with the Console Filters plugin</h3>
+
+<p>
+    Checking and unchecking the filter checkboxes will cause the Console body
+    to repopulate with only those messages that match both a checked category
+    and a checked source.
+</p>
+
+<p>
+    Typically, interaction with the Console Filters plugin occurs via the UI.
+    However, it does provide an API under the <code>filter</code> namespace on
+    your Console instance.  Through this API you can <code>get</code> or
+    <code>set</code> any of <a href="#plug">the attributes noted above</a> or
+    use the following convenience methods:
+</p>
+                
+<ul>
+    <li><code>hideCategory(cat1, cat2, ...catN)</code></li>
+    <li><code>showCategory(cat1, cat2, ...catN)</code></li>
+    <li><code>hideSource(src1, src2, ...srcN)</code></li>
+    <li><code>showSource(src1, src2, ...srcN)</code></li>
+</ul>
+
+```
+// Setting visibility states via the attributes
+yconsole.filter.set('source.attribute', false);
+yconsole.filter.set('source.event', false);
+yconsole.filter.set('category.info', true);
+
+// Equivalent operations, using the convenience methods
+yconsole.filter.hideSource('attribute','event');
+yconsole.filter.showCategory('info');
+```
+
+<p>
+    Updating the attributes via <code>set</code> or any of the hide or show
+    methods will check or uncheck the corresponding checkbox in the UI.
+</p>
+
+<h3 id="events">Events</h3>
+
+<p>
+    The Console Filters plugin does not emit any events other than the
+    corresponding change events for its attributes.
+</p>
+
+<ul>
+    <li><code>categoryChange</code></li>
+    <li><code>sourceChange</code></li>
+    <li><code>defaultVisibilityChange</code></li>
+</ul>

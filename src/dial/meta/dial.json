@@ -5,8 +5,12 @@
 			"dd-drag", 
 			"substitute", 
 			"event-mouseenter", 
-			"transition"		
+			"event-move",
+			"event-key",
+			"transition",
+			"intl"
 		], 
+		"lang": ["en", "es"],
 		"skinnable": true
 	}
 }

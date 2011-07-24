@@ -33,6 +33,13 @@
         var testEventTarget = new Y.Test.Case({
             name: "AOP tests",
 
+            _should: {
+                ignore: {
+                    // Trac ticket noted as value
+                    "test originalRetVal not overwritten by nested call": 2530030
+                }
+            },
+
             test_alter_return: function() {
 
                 var et = new Y.EventTarget(), count = 0;
@@ -54,10 +61,35 @@
                 et.fire('yay');
                 Y.Assert.areEqual(2, count);
 
+            },
+
+            "test originalRetVal not overwritten by nested call": function () {
+                var obj = {
+                    a: function () {
+                        this.b();
+                        return 'A';
+                    },
+
+                    b: function () {
+                        return 'B';
+                    }
+                }
+
+                Y.Do.after(function () {
+                    return Y.Do.originalRetVal.toLowerCase();
+                }, obj, 'a');
+
+                Y.Do.after(function () {
+                    // It doesn't matter what happens here, but for example, we
+                    // don't interfere with the return value
+                }, obj, 'b');
+
+                Y.Assert.areSame('a', obj.a());
             }
         });
 
 
+        Y.Test.Runner.setName("AOP");
         Y.Test.Runner.add(testEventTarget);
         Y.Test.Runner.run();
     });

@@ -62,6 +62,13 @@
         var testEventTarget = new Y.Test.Case({
             name: "Custom event tests",
 
+            _should: {
+                fail: {
+                    testStopFnOnceFromBubbleTarget: "ticket pending",
+                    testStopFnFromBubbleTarget: "ticket pending"
+                }
+            },
+
             testAugment: function() {
 
                 var fired = false;
@@ -118,7 +125,7 @@
                         node: '#demo',
                         to: { opacity: 0 }
                     }),
-                    count = 0.
+                    count = 0;
                     tester = function() {
                         count++;
                         Y.detach('foo', tester);
@@ -145,7 +152,7 @@
                     }
                 };
 
-                anim.on('end', onEnd);
+                // anim.on('end', onEnd);
 
                 anim.run();
                 anim.run();
@@ -458,6 +465,156 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                 Y.Assert.areEqual(1, count);
             },
 
+            testPreventFromBubbleTarget: function () {
+                var count = 0,
+                    target = new Y.EventTarget({ prefix: 'x' });
+
+                target.publish('foo', {
+                    emitFacade: true,
+                    preventedFn: function() {
+                        count++;
+                    }
+                });
+
+                target.addTarget(Y);
+
+                Y.on('x:foo', function(e) {
+                    e.preventDefault();
+                });
+
+                target.fire('foo');
+
+                Y.Assert.areEqual(1, count);
+            },
+
+            testPreventedFnOnceFromBubbleTarget: function () {
+                var count = 0,
+                    target = new Y.EventTarget({ prefix: 'x' });
+
+                target.publish('foo', {
+                    emitFacade: true,
+                    preventedFn: function() {
+                        count++;
+                    }
+                });
+
+                target.addTarget(Y);
+
+                Y.on('x:foo', function(e) {
+                    e.preventDefault();
+                });
+
+                Y.on('x:foo', function(e) {
+                    e.preventDefault();
+                });
+
+                target.fire('foo');
+
+                Y.Assert.areEqual(1, count);
+
+                target.on('foo', function (e) {
+                    e.preventDefault();
+                });
+
+                target.fire('foo');
+
+                Y.Assert.areEqual(2, count);
+            },
+
+            testStopFnOnce: function () {
+                var count = 0,
+                    target = new Y.EventTarget({ prefix: 'a' });
+
+                target.publish('foo', {
+                    emitFacade: true,
+                    stoppedFn: function () {
+                        count++;
+                    }
+                });
+
+                target.on('foo', function (e) {
+                    e.stopPropagation();
+                });
+
+                target.on('foo', function (e) {
+                    e.stopPropagation();
+                });
+
+                target.fire('foo');
+
+                Y.Assert.areEqual(1, count);
+            },
+
+            testStopFnFromBubbleTarget: function () {
+                var count = 0,
+                    origin = new Y.EventTarget({ prefix: 'a' }),
+                    targetB = new Y.EventTarget({ prefix: 'b' });
+
+                origin.publish('foo', {
+                    emitFacade: true,
+                    stoppedFn: function () {
+                        count++;
+                    }
+                });
+
+                targetB.on('foo', function (e) {
+                    e.stopPropagation();
+                });
+
+                origin.fire('foo');
+
+                Y.Assert.areEqual(1, count);
+            },
+
+            testStopFnOnceFromBubbleTarget: function () {
+                var count = 0,
+                    origin = new Y.EventTarget({ prefix: 'a' }),
+                    targetB = new Y.EventTarget({ prefix: 'b' }),
+                    targetC = new Y.EventTarget({ prefix: 'c' });
+
+                origin.publish('foo', {
+                    emitFacade: true,
+                    stoppedFn: function() {
+                        count++;
+                    }
+                });
+
+                targetB.addTarget(targetC);
+                origin.addTarget(targetB);
+
+                targetB.on('foo', function (e) {
+                    e.stopPropagation();
+                });
+
+                targetB.on('foo', function (e) {
+                    e.stopPropagation();
+                });
+
+                origin.fire('foo');
+
+                Y.Assert.areEqual(1, count, "stopProp called twice from bubble target resulted in stoppedFn called wrong number of times");
+
+                count = 0;
+
+                targetC.on('foo', function (e) {
+                    e.stopPropagation();
+                });
+
+                origin.fire('foo');
+
+                Y.Assert.areEqual(1, count, "stopProp called from intermediate bubble target didn't prevent stoppedFn call from subsequent bubble target");
+
+                count = 0;
+
+                origin.on('foo', function (e) {
+                    e.stopPropagation();
+                });
+
+                origin.fire('foo');
+
+                Y.Assert.areEqual(1, count, "stopProp called from event origin subscription didn't prevent calls to stoppedFn from bubble target");
+            },
+
             testDetachHandle: function() {
                 var count = 0, handle, handle2;
                 Y.publish('y:foo', {
@@ -569,7 +726,6 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                 Y.Assert.areEqual(1, s3);
                 Y.Assert.areEqual(1, s4);
 
-
                 Y.Global.on('y:bar', function(e) {
                     Y.Assert.areEqual(0, e.stopped);
                     // Y.Assert.areEqual(0, e._event.stopped);
@@ -579,6 +735,8 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
 
                 o.fire('y:bar');
                 o.fire('y:bar');
+
+                Y.Global.detachAll();
 
             },
 
@@ -949,9 +1107,25 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
 
                 Y.Assert.isTrue(result);
 
+            },
+
+            test_onceAfter: function () {
+                var a = new Y.EventTarget({ emitFacade: true, prefix: 'a' }),
+                    result = '';
+
+                a.on('foo', function () { result += 'A'; });
+                a.once('foo', function () { result += 'B'; });
+                a.after('foo', function () { result += 'C'; });
+                a.onceAfter('foo', function () { result += 'D'; });
+
+                a.fire('foo');
+                a.fire('foo');
+
+                Y.Assert.areSame("ABCDAC", result);
             }
         });
 
+        Y.Test.Runner.setName("CustomEvent");
         Y.Test.Runner.add(testEventTarget);
         Y.Test.Runner.run();
     });

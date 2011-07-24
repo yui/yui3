@@ -28,6 +28,8 @@ Filters = Y.mix(Y.namespace('AutoCompleteFilters'), {
         // The caseSensitive parameter is only intended for use by
         // charMatchCase(). It's intentionally undocumented.
 
+        if (!query) { return results; }
+
         var queryChars = YArray.unique((caseSensitive ? query :
                 query.toLowerCase()).split(''));
 
@@ -71,6 +73,8 @@ Filters = Y.mix(Y.namespace('AutoCompleteFilters'), {
         // The caseSensitive parameter is only intended for use by
         // phraseMatchCase(). It's intentionally undocumented.
 
+        if (!query) { return results; }
+
         if (!caseSensitive) {
             query = query.toLowerCase();
         }
@@ -107,6 +111,8 @@ Filters = Y.mix(Y.namespace('AutoCompleteFilters'), {
         // The caseSensitive parameter is only intended for use by
         // startsWithCase(). It's intentionally undocumented.
 
+        if (!query) { return results; }
+
         if (!caseSensitive) {
             query = query.toLowerCase();
         }
@@ -130,6 +136,59 @@ Filters = Y.mix(Y.namespace('AutoCompleteFilters'), {
     },
 
     /**
+     * Returns an array of results in which all the words of the query match
+     * either whole words or parts of words in the result. Non-word characters
+     * like whitespace and certain punctuation are ignored. Case-insensitive.
+     *
+     * This is basically a combination of <code>wordMatch()</code> (by ignoring
+     * whitespace and word order) and <code>phraseMatch()</code> (by allowing
+     * partial matching instead of requiring the entire word to match).
+     *
+     * Example use case: Trying to find personal names independently of name
+     * order (Western or Eastern order) and supporting immediate feedback by
+     * allowing partial occurences. So queries like "J. Doe", "Doe, John", and
+     * "J. D." would all match "John Doe".
+     *
+     * @method subWordMatch
+     * @param {String} query Query to match
+     * @param {Array} results Results to filter
+     * @return {Array} Filtered results
+     * @static
+     */
+    subWordMatch: function (query, results, caseSensitive) {
+        // The caseSensitive parameter is only intended for use by
+        // subWordMatchCase(). It's intentionally undocumented.
+
+        if (!query) { return results; }
+
+        var queryWords = WordBreak.getUniqueWords(query, {
+            ignoreCase: !caseSensitive
+        });
+
+        return YArray.filter(results, function (result) {
+            var resultText = caseSensitive ? result.text :
+                    result.text.toLowerCase();
+
+            return YArray.every(queryWords, function (queryWord) {
+                return resultText.indexOf(queryWord) !== -1;
+            });
+        });
+    },
+
+    /**
+     * Case-sensitive version of <code>subWordMatch()</code>.
+     *
+     * @method subWordMatchCase
+     * @param {String} query Query to match
+     * @param {Array} results Results to filter
+     * @return {Array} Filtered results
+     * @static
+     */
+    subWordMatchCase: function (query, results) {
+        return Filters.subWordMatch(query, results, true);
+    },
+
+    /**
      * Returns an array of results that contain all of the words in the query,
      * in any order. Non-word characters like whitespace and certain punctuation
      * are ignored. Case-insensitive.
@@ -143,6 +202,8 @@ Filters = Y.mix(Y.namespace('AutoCompleteFilters'), {
     wordMatch: function (query, results, caseSensitive) {
         // The caseSensitive parameter is only intended for use by
         // wordMatchCase(). It's intentionally undocumented.
+
+        if (!query) { return results; }
 
         var options    = {ignoreCase: !caseSensitive},
             queryWords = WordBreak.getUniqueWords(query, options);

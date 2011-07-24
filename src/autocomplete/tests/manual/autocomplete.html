@@ -95,23 +95,18 @@
         <input type="text" id="ac-input">
     </div>
 
-    <fieldset id="data-sources">
+    <fieldset>
         <legend>Source</legend>
         <div>
-            <input type="radio" id="ds-none" name="ds" value="none">
-            <label for="ds-none">None</label>
-
-            <input type="radio" id="ds-local" name="ds" value="local" checked="checked">
-            <label for="ds-local">Local</label>
-
-            <input type="radio" id="ds-flickr" name="ds" value="flickr">
-            <label for="ds-flickr">Remote (Flickr)</label>
-
-            <input type="radio" id="ds-search" name="ds" value="search">
-            <label for="ds-search">Remote (Y! Search)</label>
-
-            <input type="radio" id="ds-twitter" name="ds" value="twitter">
-            <label for="ds-twitter">Remote (Twitter Search)</label>
+            <select id="source">
+                <option value="none">None</option>
+                <option value="local" selected>Local (Array)</option>
+                <option value="function">Local (Function)</option>
+                <option value="flickr">Remote (Flickr)</option>
+                <option value="search">Remote (Y! Search)</option>
+                <option value="twitter">Remote (Twitter Search)</option>
+                <option value="xhr">Remote (XHR)</option>
+            </select>
         </div>
     </fieldset>
 
@@ -209,14 +204,18 @@ Y.Object.each(Y.AutoCompleteHighlighters, function (highlighter, name) {
 });
 
 // Handle clicks on datasource radio buttons.
-Y.delegate('click', function (e) {
-    switch (e.currentTarget.get('value')) {
+Y.one('#source').on('change', function (e) {
+    switch (e.target.get('value')) {
     case 'none':
         useNone();
         break;
 
     case 'local':
         useLocal();
+        break;
+
+    case 'function':
+        useFunction();
         break;
 
     case 'flickr':
@@ -230,8 +229,12 @@ Y.delegate('click', function (e) {
     case 'twitter':
         useTwitter();
         break;
+
+    case 'xhr':
+        useXHR();
+        break;
     }
-}, '#data-sources', 'input[type="radio"]');
+});
 
 // Handle clicks on filters.
 Y.delegate('click', setFilters, '#filters', 'input[type="checkbox"]');
@@ -320,6 +323,20 @@ function setHighlighter() {
 }
 
 // -- DataSource functions -----------------------------------------------------
+function useNone() {
+    Y.log('using no source', 'info', 'autocomplete');
+
+    autoComplete.detachAll('test|*');
+
+    autoComplete.setAttrs({
+        maxResults       : 0,
+        resultFormatter  : null,
+        resultListLocator: null,
+        resultTextLocator: null,
+        source           : null
+    });
+}
+
 function useLocal() {
     Y.log('using local array source', 'info', 'autocomplete');
 
@@ -334,8 +351,8 @@ function useLocal() {
     });
 }
 
-function useNone() {
-    Y.log('using no source', 'info', 'autocomplete');
+function useFunction() {
+    Y.log('using local function source', 'info', 'autocomplete');
 
     autoComplete.detachAll('test|*');
 
@@ -344,7 +361,7 @@ function useNone() {
         resultFormatter  : null,
         resultListLocator: null,
         resultTextLocator: null,
-        source           : null
+        source           : function (query) { return ExampleData.arrayStates; }
     });
 }
 
@@ -372,7 +389,8 @@ function useSearch() {
         resultFormatter  : null,
         resultListLocator: null,
         resultTextLocator: null,
-        source           : 'select * from search.suggest where query="{query}"'
+        source           : 'select * from search.suggest where query="{query}"',
+        yqlEnv           : 'http://pieisgood.org/yql/tables.env'
     });
 }
 
@@ -387,6 +405,20 @@ function useTwitter() {
         resultListLocator: 'results',
         resultTextLocator: 'text',
         source           : 'http://search.twitter.com/search.json?q={query}&callback={callback}&rpp={maxResults}&result_type=recent'
+    });
+}
+
+function useXHR() {
+    Y.log('using XHR source', 'info', 'autocomplete');
+
+    autoComplete.detachAll('test|*');
+
+    autoComplete.setAttrs({
+        maxResults       : 5,
+        resultFormatter  : null,
+        resultListLocator: null,
+        resultTextLocator: null,
+        source           : '../assets/xhr-data.json?query={query}'
     });
 }
 

@@ -1,0 +1,68 @@
+<style scoped>
+/* custom styles for this example */
+#demo .output {margin-bottom:1em; padding:10px; border:1px solid #D9D9D9;}
+</style>
+
+<form id="demo">
+    <h4>Basic example</h4>
+    <h6>Data</h6>
+    <pre>
+{
+    "results":[
+        {"string":"aardvark", "number":"1", "date":"Jan 1, 2001"},
+        {"string":"bat", "number":"2", "date":"Feb 2, 2002"},
+        {"string":"camel", "number":"3", "date":"March 3, 2003"}
+    ]
+}
+    </pre>
+
+    <h6>Schema</h6>
+    <pre>
+{
+    resultListLocator: "results",
+    resultFields: [
+        "string", // needs no parsing
+        {key:"number", parser: "number"}, // point to built-in shortcut
+        {key:"date", parser: Y.DataType.Date.parse}] // point to function
+}
+    </pre>
+
+    <h6>Normalized data</h6>
+    <input type="button" id="demo_apply_parsing" value="Apply schema =>">
+    <div id="demo_output_parsing" class="output"></div>
+
+</form>
+
+<script>
+YUI().use("dump", "node", "datatype", "dataschema", function (Y) {
+    Y.on("click", function(e){
+        var data_in = {
+                "results":[
+                    {"string":"aardvark", "number":"1", "date":"Jan 1, 2001"},
+                    {"string":"bat", "number":"2", "date":"Feb 2, 2002"},
+                    {"string":"camel", "number":"3", "date":"March 3, 2003"}
+                ]
+            },
+            schema = {
+                resultListLocator: "results",
+                resultFields: [
+                    "string", // needs no parsing
+                    {key:"number", parser: "number"}, // point parser to built-in function shortcut
+                    {key:"date", parser: Y.DataType.Date.parse}] // point parser to built-in function
+            },
+            data_out = Y.DataSchema.JSON.apply(schema, data_in).results,
+            output = [],
+            result;
+
+        for(var i=0; i<data_out.length; i++) {
+            result = data_out[i];
+            output.push("<p>string: " + result.string + " [" + Y.Lang.type(result.string) + "]" +
+                ", number: " + result.number + " [" + Y.Lang.type(result.number) + "]" +
+                ", date: " + result.date + " [" + Y.Lang.type(result.date) + "]</p>");
+        }
+        output = output.join("");
+
+        Y.one("#demo_output_parsing").setContent(output);
+    }, "#demo_apply_parsing");
+});
+</script>

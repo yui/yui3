@@ -1,0 +1,122 @@
+{
+	"name" : "charts",
+	"displayName" : "Charts",
+	"description" : "The charts module provides a JavaScript API for visualizing data in a variety of formats accross all A-grade browsers.",
+	"author" : "tripp",
+	"tags" : ["widget", "charts"],
+	"use" : ["charts"],
+	"examples" : [
+		{
+			"name" : "charts-simple",
+			"displayName" : "Basic Charts Implementation",
+			"description" : "Shows how to use Charts to create a basic chart.",
+			"modules" : ["charts"],
+			"tags" : ["charts"],
+            		"hideTableOfContents": true
+		},
+		{
+			"name" : "charts-multiseries",
+			"displayName" : "Chart with Multiple Series",
+			"description" : "Shows how to create a chart with multiple series.",
+			"modules" : ["charts"],
+			"tags" : ["charts"],
+            		"hideTableOfContents": true
+		},
+		{
+			"name" : "charts-column",
+			"displayName" : "Specify Chart Type",
+			"description" : "Shows how to create a column chart with multiple series.",
+			"modules" : ["charts"],
+			"tags" : ["charts"],
+            		"hideTableOfContents": true
+		},
+		{
+			"name" : "charts-stackedcolumn",
+			"displayName" : "Create Stacked Chart",
+			"description" : "Shows how to create a column chart with a stacked numeric axis.",
+			"modules" : ["charts"],
+			"tags" : ["charts"],
+            		"hideTableOfContents": true
+		},
+		{
+			"name" : "charts-timeaxis",
+			"displayName" : "Create a Chart with a Time Axis",
+			"description" : "Shows how to create a chart with a time axis.",
+			"modules" : ["charts"],
+			"tags" : ["charts"],
+            		"hideTableOfContents": true
+		},
+		{
+			"name" : "charts-gridlines",
+			"displayName" : "Add Gridlines to a Chart",
+			"description" : "Shows how to add gridlines to a chart.",
+			"modules" : ["charts"],
+			"tags" : ["charts"],
+            		"hideTableOfContents": true
+		},
+		{
+			"name" : "charts-stackedarea",
+			"displayName" : "Create a Stacked Area Chart with Planar Based Events",
+			"description" : "Shows how to create a chart with planar based events.",
+			"modules" : ["charts"],
+			"tags" : ["charts"],
+            		"hideTableOfContents": true
+		},
+		{
+			"name" : "charts-globalstyles",
+			"displayName" : "Customize a Chart",
+			"description" : "Shows how to use a chart's styles attribute to customize a chart.",
+			"modules" : ["charts"],
+			"tags" : ["charts"],
+            		"hideTableOfContents": true
+		},
+		{
+			"name" : "charts-customizedtooltip",
+			"displayName" : "Customize a Chart's Tooltip",
+			"description" : "Shows how to customize the default tooltip of a chart.",
+			"modules" : ["charts"],
+			"tags" : ["charts"],
+            		"hideTableOfContents": true
+		},
+		{
+			"name" : "charts-objectstyles",
+			"displayName" : "Define a Chart's Axes and Series",
+			"description" : "Shows how to explicitly define the axes and series for a chart.",
+			"modules" : ["charts"],
+			"tags" : ["charts"],
+            		"hideTableOfContents": true
+		},
+		{
+			"name" : "charts-pie",
+			"displayName" : "Pie Chart",
+			"description" : "Shows how ot use charts to create a pie chart.",
+			"modules" : ["charts"],
+			"tags" : ["charts"],
+            		"hideTableOfContents": true
+		},
+		{
+			"name" : "charts-dualaxes",
+			"displayName" : "Dual Axes Chart",
+			"description" : "Shows how to create a chart with multiple value axes.",
+			"modules" : ["charts"],
+			"tags" : ["charts"],
+            		"hideTableOfContents": true
+		},
+		{
+			"name" : "charts-axisupdate",
+			"displayName" : "Update Chart Axis",
+			"description" : "Shows how to access a chart instance's value axis after the chart has rendered.",
+			"modules" : ["charts"],
+			"tags" : ["charts"],
+            		"hideTableOfContents": true
+		},
+		{
+			"name" : "charts-seriesupdate",
+			"displayName" : "Update Chart Series",
+			"description" : "Shows how to access a chart instance's seriesCollection after the chart has rendered.",
+			"modules" : ["charts"],
+			"tags" : ["charts"],
+            		"hideTableOfContents": true
+		}
+	]	
+}

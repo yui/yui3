@@ -1,0 +1,25 @@
+<style scoped>
+/* custom styles for this example */
+#demo input, #demo label {display:block;}
+#demo fieldset {margin:1em;}
+#demo textarea {width:40em;height:8em;}
+</style>
+
+<div class="intro">
+    <p>The XML module of the DataType Utility allows you to take a string and convert it to an XML document.</p>
+</div>
+
+<div class="example">
+    {{>datatype-xmlparse-source}}
+</div>
+
+<p>To convert a string to an XML document, simply call the <code>parse()</code> function of the DataType.XML class:</p>
+
+```
+YUI().use("datatype-xml", function(Y) {
+    var output = Y.DataType.XML.parse("<myroot><item type='foo'><name>Abc</name><rank>1</rank></item><item type='bar'><name>Def</name><rank>2</rank></item><item type='bat'><name>Ghi</name><rank>3</rank></item></myroot>");
+    // output is an XML document
+});
+```
+
+

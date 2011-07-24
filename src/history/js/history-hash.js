@@ -217,7 +217,7 @@ Y.extend(HistoryHash, HistoryBase, {
         return prefix && hash.indexOf(prefix) === 0 ?
                     hash.replace(prefix, '') : hash;
     } : function () {
-        var hash   = location.hash.substr(1),
+        var hash   = location.hash.substring(1),
             prefix = HistoryHash.hashPrefix;
 
         // Slight code duplication here, but execution speed is of the essence
@@ -290,11 +290,13 @@ Y.extend(HistoryHash, HistoryBase, {
      * @static
      */
     replaceHash: function (hash) {
+        var base = location.href.replace(/#.*$/, '');
+
         if (hash.charAt(0) === '#') {
-            hash = hash.substr(1);
+            hash = hash.substring(1);
         }
 
-        location.replace('#' + (HistoryHash.hashPrefix || '') + hash);
+        location.replace(base + '#' + (HistoryHash.hashPrefix || '') + hash);
     },
 
     /**
@@ -307,7 +309,7 @@ Y.extend(HistoryHash, HistoryBase, {
      */
     setHash: function (hash) {
         if (hash.charAt(0) === '#') {
-            hash = hash.substr(1);
+            hash = hash.substring(1);
         }
 
         location.hash = (HistoryHash.hashPrefix || '') + hash;
@@ -322,56 +324,48 @@ Y.extend(HistoryHash, HistoryBase, {
 // YUIDoc.
 
 /**
- * <p>
- * Synthetic <code>window.onhashchange</code> event that normalizes differences
- * across browsers and provides support for browsers that don't natively support
- * <code>onhashchange</code>.
- * </p>
- *
- * <p>
- * This event is provided by the <code>history-hash</code> module.
- * </p>
- *
- * <p>
- * <strong>Usage example:</strong>
- * </p>
- *
- * <code><pre>
- * YUI().use('history-hash', function (Y) {
- * &nbsp;&nbsp;Y.on('hashchange', function (e) {
- * &nbsp;&nbsp;&nbsp;&nbsp;// Handle hashchange events on the current window.
- * &nbsp;&nbsp;}, Y.config.win);
- * });
- * </pre></code>
- *
- * @event hashchange
- * @param {EventFacade} e Event facade with the following additional
- *   properties:
- *
- * <dl>
- *   <dt>oldHash</dt>
- *   <dd>
- *     Previous hash fragment value before the change.
- *   </dd>
- *
- *   <dt>oldUrl</dt>
- *   <dd>
- *     Previous URL (including the hash fragment) before the change.
- *   </dd>
- *
- *   <dt>newHash</dt>
- *   <dd>
- *     New hash fragment value after the change.
- *   </dd>
- *
- *   <dt>newUrl</dt>
- *   <dd>
- *     New URL (including the hash fragment) after the change.
- *   </dd>
- * </dl>
- * @for YUI
- * @since 3.2.0
- */
+Synthetic <code>window.onhashchange</code> event that normalizes differences
+across browsers and provides support for browsers that don't natively support
+<code>onhashchange</code>.
+
+This event is provided by the <code>history-hash</code> module.
+
+@example
+
+    YUI().use('history-hash', function (Y) {
+      Y.on('hashchange', function (e) {
+        // Handle hashchange events on the current window.
+      }, Y.config.win);
+    });
+
+@event hashchange
+@param {EventFacade} e Event facade with the following additional
+  properties:
+
+<dl>
+  <dt>oldHash</dt>
+  <dd>
+    Previous hash fragment value before the change.
+  </dd>
+
+  <dt>oldUrl</dt>
+  <dd>
+    Previous URL (including the hash fragment) before the change.
+  </dd>
+
+  <dt>newHash</dt>
+  <dd>
+    New hash fragment value after the change.
+  </dd>
+
+  <dt>newUrl</dt>
+  <dd>
+    New URL (including the hash fragment) after the change.
+  </dd>
+</dl>
+@for YUI
+@since 3.2.0
+**/
 
 hashNotifiers = GlobalEnv._notifiers;
 
@@ -444,22 +438,24 @@ if (HistoryBase.nativeHashChange) {
 
         GlobalEnv._hashPoll = Y.later(50, null, function () {
             var newHash = HistoryHash.getHash(),
-                newUrl;
+                facade, newUrl;
 
             if (oldHash !== newHash) {
                 newUrl = HistoryHash.getUrl();
 
-                YArray.each(hashNotifiers.concat(), function (notifier) {
-                    notifier.fire({
-                        oldHash: oldHash,
-                        oldUrl : oldUrl,
-                        newHash: newHash,
-                        newUrl : newUrl
-                    });
-                });
+                facade = {
+                    oldHash: oldHash,
+                    oldUrl : oldUrl,
+                    newHash: newHash,
+                    newUrl : newUrl
+                };
 
                 oldHash = newHash;
                 oldUrl  = newUrl;
+
+                YArray.each(hashNotifiers.concat(), function (notifier) {
+                    notifier.fire(facade);
+                });
             }
         }, null, true);
     }

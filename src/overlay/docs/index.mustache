@@ -1,0 +1,453 @@
+<div class="intro">
+    <p>Overlay is a positionable and stackable widget, which also provides support for the standard module format layout, with a header, body and footer section.
+
+    <p>The overlay is built by extending the <a href="{{apiDocs}}/Widget.html">`Widget`</a> class and adding the <a href="{{apiDocs}}/WidgetPosition.html">`WidgetPosition`</a>, <a href="{{apiDocs}}/WidgetStack.html">`WidgetStack`</a>, <a href="{{apiDocs}}/WidgetPositionAlign.html">`WidgetPositionAlign`</a>, <a href="{{apiDocs}}/WidgetPositionConstrain.html">`WidgetPositionConstrain`</a> and <a href="{{apiDocs}}/WidgetStdMod.html">`WidgetStdMod`</a> extensions, 
+    and doesn't actually need to add any implementation code of its own. The <a href="../widget/widget-build.html">"Creating Custom Widget Classes"</a> example shows how you can use these extensions to build classes which mix and match some of the above features.</p>
+</div>
+
+{{>getting-started}}
+
+<h2 id="using">Using Overlay</h2>
+
+<h3 id="instantiating">Instantiating The Overlay</h3>
+
+<p>The Overlay widget extends the `Widget` class, and hence the Overlay constructor follows the same pattern as any Widget constructor, accepting a configuration object to set the initial configuration for the widget.</p>
+
+<h4>Instantiating From Markup: Progressive Enhancement</h4>
+
+<p>The overlay can be instantiated from markup, by specifying the `srcNode` which contains the header, body and footer content for the overlay:</p>
+
+```
+<div id="myContent">
+    <div class="yui3-widget-hd">Overlay Header</div>
+    <div class="yui3-widget-bd">Overlay Body</div>
+    <div class="yui3-widget-ft">Overlay Footer</div>
+</div>
+
+```
+
+<p>The header, body and footer sections provided in markup need to be marked with the class name which `Overlay` (or more accurately, `WidgetStdMod`) expects for the section ("yui3-widget-hd", "yui3-widget-bd" and "yui3-widget-ft") as shown above. 
+All of these sections are optional. If content is set via the API at a later point the corresponding section will be created dynamically.</p>
+
+<p>When instantiating from markup, a reference to the `srcNode` is provided in the configuration object. This reference can be a node reference, or a selector string which can be used to identify the node. If the selector string is too broad (returns multiple nodes), the first node found will be used.
+The following code targets the markup shown above:</p>
+
+```
+YUI({...}).use("overlay", function(Y) {
+
+    //...
+    var overlay = new Y.Overlay({
+        // Specify a reference to a node which already exists 
+        // on the page and contains header/body/footer content
+        srcNode:"#myContent",
+
+        // Also set some of the attributes inherited from
+        // the base Widget class.
+        visible:false,
+        width:"20em"
+    });
+    //...
+
+});
+
+```
+
+<p>Following instantiation, a call to `render` is required to have the Overlay's state reflected in the DOM, as with all YUI 3 widgets:</p>
+
+```
+var overlay = new Y.Overlay({ ... });
+overlay.render();
+
+```
+
+<p>Note that you could set the state of the Overlay multiple times (modifying content, changing dimensions etc.) before rendering. 
+When the `render` method is invoked, the state of the Overlay at that point in time will be reflected in the DOM.</p>
+
+<p>When `render` is invoked, the overlay's content box will be wrapped by the bounding box (another DIV), to provide the <a href="../widget/index.html#markup">nested box structure</a> common to all widgets.</p>
+
+<h4>Instantiating From Script</h4>
+
+<p>You can also create Overlay instances entirely from script, setting content programmatically, using the `headerContent`, `bodyContent` and `footerContent` attributes.</p>
+
+```
+var overlay = new Y.Overlay({
+    headerContent:"My Overlay Header",
+    bodyContent:"My Overlay Body",
+    footerContent:"My Footer Content",
+    //...
+});
+overlay.render("#parentNode");
+
+```
+
+<p>Content can be strings containing markup (innerHTML will be used to set the content), or `Node` references, in which case they will be appended to the section (header, body or footer) node.</p>
+
+<p>The `render` method can be passed a node reference (or a selector string) as shown above, to specify the node
+under which the overlay's bounding box should be added to the DOM. When rendering an overlay instance which has not been created from markup 
+(so it does not have a position in the DOM) if this argument is not provided the overlay will be added to the document's body element (inserted as the first child to avoid the potential for "operation aborted" errors in IE6).
+</p>
+
+<h3 id="attributes">Attributes</h3>
+
+<p>Overlay adds the following key attributes (through the extensions mentioned above), in addition to the attributes provided by the base <a href="../widget/index.html#attributes">Widget</a> class:</p>
+
+<table>
+    <tr><th>Attribute</th><th>Description</th></tr>
+    <tr><td>`x`, `y` and `xy`</td><td>Positioning attributes, to set the XY position in page coordinates on the Overlay's bounding box. Set to [0,0] by default</td></tr>
+    <tr><td>`zIndex`</td><td>Sets the z-index on the Overlay's bounding box. Set to 0 by default.</td></tr>
+    <tr><td>`shim`</td><td>Boolean, indicating whether or not an iframe shim should be added to the Overlay to protect against select box bleed through. It is only enabled by default for IE6.</td></tr>
+    <tr><td>`align`</td><td>Used to align a specific point on the Overlay's bounding box to a specific point on another node, or the viewport. Set to null by default.</td></tr>
+    <tr><td>`centered`</td><td>Used to center the Overlay inside another node, or inside the viewport. Set to false by default.</td></tr>
+    <tr><td>`constrain`</td><td>Used to specify a node to constrain the Overlay to, when setting the XY position. Can also be set to true, to constrain to the viewport. Set to false by default.</td></tr>
+    <tr><td>`headerContent`</td><td>Used to set the content of the Overlay's header section. No default value set.</td></tr>
+    <tr><td>`bodyContent`</td><td>Used to set the content of the Overlay's body section. No default value set.</td></tr>
+    <tr><td>`footerContent`</td><td>Used to set the content of the Overlay's footer section. No default value set.</td></tr>
+    <tr><td>`fillHeight`</td><td>Specifies which of the 3 sections - header, body or footer, should be automatically sized to fill out the height of the Overlay if a fixed height has been set. Set to WidgetStdMod.BODY by default. Can be disabled by setting to null.</td></tr>
+</table>
+
+<h3 id="positioning">Positioning</h3>
+
+<h4>Basic XY Positioning</h4>
+
+<p>Overlay provides basic XY positioning support through its `x`, `y` and `xy` attributes as well as a convenience `move` method which wraps the `xy` attribute.</p>
+
+<p>The xy position of the overlay can be set in the constructor, as with any attribute value:</p>
+
+```
+var overlay = new Y.Overlay({
+    srcNode:"#myContent",
+    xy: [200,100]
+});
+overlay.render();
+
+// or
+
+var overlay = new Y.Overlay({
+    srcNode:"#myContent",
+    x: 200,
+    y: 100
+});
+overlay.render();
+
+// or
+
+var overlay = new Y.Overlay({
+    srcNode:"#myContent",
+    x: 200 // y defaults to 0
+});
+overlay.render();
+
+```
+
+<p>The overlay's default position, if xy values are not provided, will be 0,0. Note that xy are page coordinates, not relative coordinates.</p>
+
+<p>Changes in the overlay's position, when set programmatically through the API, can be monitored by listening for the attribute `xyChange` event. Listeners
+to this event will receive an event facade, which contains previous and new xy values:</p>
+
+```
+// Listen to the "on" moment, if you're interested in
+// preventing the change in position from occurring.
+overlay.on("xyChange", function(e) {
+
+    var currPosition = e.prevVal;
+    var newPosition = e.newVal;
+
+    if (newPosition[0] > MAX_X || newPosition[1] > MAX_Y) {
+        // Stop move from occurring. 
+        e.preventDefault();
+    }
+});
+
+// Listen to the "after" moment, if you're just interested 
+// in being notified when the position has been changed.
+overlay.after("xyChange", function(e) {
+    var position = e.newVal;
+    console.log("Overlay has been moved to: " + position[0] + "," position[1]);
+});
+
+```
+
+<p>Note that changing just the `x` or `y` attribute value, individually, will still fire the `xy` change event. The `x` and 
+`y` attribute values are simply convenience wrappers which end up setting the `xy` attribute.</p>
+
+<p>XY position can also be set after construction, as with any attribute, using `set` to change the attribute value directly, or using the `move` method:</p>
+
+```
+overlay.set("x", 100);
+
+overlay.set("y", 200);
+
+overlay.set("xy", [100,200]);
+
+overlay.move(100,200);
+
+overlay.move([100,200]);
+
+```
+
+<p>The <a href="overlay-xy.html">Basic XY Positioning</a> example shows basic positioning in action.</p>
+
+<h4>Extended XY Positioning</h4>
+
+<p>Overlay also provides support to help position it relative to another node on the page, or the viewport, through the `align` and `centered` attributes, as well as 
+the corresponding `align()` and `centered()` convenience methods, through the application of the `WidgetPositionAlign` extension.</p>
+
+<p>The `align` attribute accepts as a value an object literal with the following properties:</p>
+<dl>
+    <dt>node</dt>
+    <dd>
+      The node to which the Widget is to be aligned. If set to null, or not provided, the Overlay is aligned to the viewport
+    </dd>
+    <dt>points</dt>
+    <dd>
+      <p>
+      A two element array, defining the two points on the Overlay and node which are to be aligned. The first element is the point on the Overlay, and the second element is the point on the node (or viewport).
+      Supported alignment points are defined as static properties on <a href="{{apiDocs}}/WidgetPositionAlign.html#property_WidgetPostionAlign.TL">`WidgetPositionAlign`</a>. For example:
+      </p>
+      <p>
+      `[Y.WidgetPositionAlign.TR, Y.WidgetPositionAlign.TL]` aligns the Top-Right corner of the Overlay with the
+      Top-Left corner of the node/viewport, and `[Y.WidgetPositionAlign.CC, Y.WidgetPositionAlign.TC]` aligns the Center of the 
+      Overlay with the Top-Center edge of the node/viewport.
+      </p>
+    </dd>
+</dl>
+
+```
+// Align the:
+// top-left corner of the overlay, with the 
+// top-right corner of the node with id = "okBtn"
+overlay.set("align", {
+    node:"#okBtn",
+    points:[Y.WidgetPositionAlign.TL, Y.WidgetPositionAlign.TR]
+});
+
+// Align the:
+// right-center edge of the overlay, with the 
+// right-center edge of the viewport (no node specified)
+overlay.set("align", {
+    points:[Y.WidgetPositionAlign.RC, Y.WidgetPositionAlign.RC]
+});
+
+// Align the:
+// center of the overlay, with the 
+// top-left corner of the node with id = "okBtn"
+overlay.align("#okBtn", [Y.WidgetPositionAlign.CC, Y.WidgetPositionAlign.TL]);
+
+```
+
+<p>The `centered` property can either by set to `true` to center the Overlay in the viewport, or set to a selector string or node reference to center the Overlay in a particular node.</p>
+
+```
+// Center the overlay in the node with id = "module"
+overlay.set("centered", "#module");
+
+// Center the overlay in the viewport
+overlay.set("centered", true);
+
+```
+
+<p>The <a href="overlay-align.html">"Alignment Support"</a> example shows aligned positioning support in action.</p>
+
+<p>Note that currently alignment/centering is not maintained when the viewport is scrolled, window resized etc. Support to re-align the overlay on a default and custom set of trigger events will be 
+provided in a future release.</p>
+
+<p>In addition to being able to align the overlay to a given element (or the viewport), overlay also supports the ability to constrain its XY position to a given node, or to the viewport.</p>
+
+```
+// Constrains the XY position to a given node:
+overlay.set("constrain", "#constrainingNode");
+
+// Or to the viewport
+overlay.set("constrain", true);
+```
+
+<p>The <a href="overlay-constrain.html">"Constrain Support"</a> example shows constrained positioning in action.</p>
+
+<h3 id="stacking">Stacking</h3>
+
+<p>
+The Overlay provides basic stacking support in the form of a `zIndex` attribute and a `shim` attribute. The shimming support protects against &lt;select&gt; box bleed through on 
+IE6 (It is enabled by default for IE6) by adding an iframe shim to the overlay's bounding box (positioned underneath the content box). The default value of the `zIndex` attribute is 0.</p>
+
+<p>Using the `zIndex` and `shim` attributes is the same as any other attribute, with the ability to set values in the constructor, or at a later point in time:</p>
+
+```
+// Disable shim for all browsers, set zIndex to 10
+var overlay = new Y.Overlay({
+    shim:false, // Disable for all browsers, including IE6
+    zIndex:10
+});
+
+// Set zIndex to 10. Shim is enabled for IE6 but disabled for all
+// other browsers (default value)
+var overlay = new Y.Overlay({
+    zIndex:10
+});
+
+```
+
+<p>The <a href="overlay-stack.html">"Stack Support"</a> example creates a simple "bringToTop" implementation based on the `zIndex` attribute. 
+This support will be provided as part of Overlay itself (or more precisely, as part of `WidgetStack`) in a future release.</p>
+
+<h3 id="content">Setting Section Content</h3>
+
+<p>Overlay uses the standard module format for its rendering. It provides a header, body and footer section as described above (through the `WidgetStdMod` extension).</p>
+
+<h4>Replacing Content</h4>
+
+<p>The content for each of these sections is settable either through the `headerContent`, `bodyContent` and `footerContent` attributes. Setting the content
+through these properties will replace any existing content in the section. The content can either be specified as a string, in which case innerHTML will be used to set the new content, or 
+specified as a `Node` instance, in which case the content will be added to the respective section using `appendChild` after clearing existing content.</p>
+
+```
+var overlay = new Y.Overlay({
+    headerContent: '<span class="title">My Header Content</span>',
+    bodyContent: '<div class="mod">My Body Content</div>'
+    // Don't want a footer
+});
+
+// or 
+
+overlay.set("headerContent", '<span class="title">My Header Content</span>');
+
+// or 
+
+var headerContent = Y.Node.create("<span></span>");
+headerContent.set("innerHTML", "My Header Content");
+headerContent.addClass("title"); 
+
+overlay.set("headerContent", headerContent);
+
+```
+            
+<p>Overlay will not create the section if there has been no content set for it. (So, for example, the overlay above will not have a footer section). Also, if the section doesn't exist it will be created,
+the first time content is set for it.</p>
+
+<p>As with any attribute change, you can listen for (and prevent) changes in content by listening for the corresponding attribute change event:</p>
+
+```
+overlay.on("bodyContentChange", function(e) {
+    if (someCondition) {
+        // Don't allow body content to be updated
+        e.preventDefault():
+    }
+});
+
+overlay.after("bodyContentChange", function(e) {
+    // body section has been modified
+});
+
+```
+
+<p>Setting content in any of the sections will fire Widget's `contentUpdate` event, which can be monitored if you want to be notified of changes to any section. However, this event is purely a catch-all notification
+event. It cannot be prevented to stop the content change from occurring:</p>
+
+```
+overlay.after("contentUpdate", function(e) {
+    // Content has been updated in one of the standard module sections.
+});
+
+```
+
+<h4>Inserting/Appending Content</h4>
+
+<p>Setting content using the attributes mentioned above always results in content being replaced. If you need to insert content before, or append content after existing content in the section, you can use the `setStdModContent(section, content, where)` method Overlay provides:</p>
+
+```
+overlay.setStdModContent(
+    Y.WidgetStdMod.HEADER,       // Section
+    "New Content To Insert",   // Content
+    Y.WidgetStdMod.BEFORE        // Where
+);
+
+overlay.setStdModContent(
+    Y.WidgetStdMod.FOOTER,      // Section
+    "New Content To Append",  // Content
+    Y.WidgetStdMod.AFTER        // Where
+);
+
+```
+
+<ul>
+    <li>The `section` argument specifies which section is to be updated. The constants `WidgetStdMod.HEADER`, `WidgetStdMod.BODY` and `WidgetStdMod.FOOTER` define valid values.</li>
+    <li>The `content` argument specifies the new content to be added which, as with the attributes, can be a string HTML value or a node reference.</li>
+    <li>The `where` argument specifies whether the content should be added before, after, or replace existing content. The constants `WidgetStdMod.BEFORE`, `WidgetStdMod.AFTER` and `WidgetStdMod.REPLACE`</p> define valid values.</li>
+</ul>
+
+<p><em>Note, the above `WidgetStdMod` constants define the set of valid values wherever the API expects a "section" or "where" argument.</em></p>
+
+<p>The content change events mentioned above, will be fired when content is set through the `setStdModContent` method just as they would when setting the content using the attribute.</p>
+
+<p>The <a href="overlay-stdmod.html">Standard Module</a> example provides a way to exercise the above content attributes and methods.</p>
+
+<h3 id="markup">Markup Structure</h3>
+
+<p>The final rendered Overlay has the markup structure shown below:</p>
+
+```
+<div class="yui3-widget yui3-overlay yui3-widget-positioned yui3-widget-stacked">
+    <!--Bounding Box-->
+    <div class="yui3-overlay-content yui3-widget-stdmod">
+    <!--Content Box-->
+        <div class="yui3-widget-hd">Overlay Header Content</div>
+            <!--Header Section-->
+        <div class="yui3-widget-bd">Overlay Body Content</div>
+            <!--Body Section-->
+        <div class="yui3-widget-ft">Overlay Footer Content</div>
+            <!--Footer Section-->
+    </div>
+
+    <iframe class="yui3-widget-shim"></iframe>
+        <!-- Stacking shim, if enabled-->
+
+</div>
+
+```
+
+<p>The bounding box is absolutely positioned by default, and top/left positioning and z-index values are applied to it. The nested bounding box/content box structure is discussed in detail on the <a href="../widget/index.html#markup">Widget markup discussion</a>.</p>
+
+<p>In addition to the default classes applied to the bounding box and content box for all widgets ("yui3-overlay", "yui3-overlay-content", "yui3-widget"), the `WidgetStdMod`, `WidgetPositioned` and `WidgetStack` extensions also mark the appropriate boxes with 
+"yui3-widget-stdmod", "yui3-widget-positioned" and "yui3-widget-stacked" classes as shown above.</p>
+
+<p>The iframe shim, added if `shim` is enabled, is added to the bounding box, as sibling to the content box and stacked underneath it (using a -ve z-index).</p>
+
+<h3 id="css">CSS</h3>
+
+<p>Overlay is a generic, foundation widget and doesn't ship with a default look/feel out of the box. Its Sam Skin (build/overlay/assets/skins/sam/overlay.css) implementation consists only of core functional rules, to control how it is positioned and how it is hidden:</p>
+
+```
+.yui3-overlay {
+    position:absolute;
+}
+
+.yui3-overlay-hidden {
+    visibility:hidden
+}
+
+```
+
+<p>Since it includes the `WidgetStack` extension, the following functional CSS is also provided (through build/widget/assets/skins/sam/widget-stack.css) to handle the shim element,
+(along with the Gecko/Mac scroll bar support CSS mentioned above)</p>
+
+```
+.yui3-widget-stacked .yui3-widget-shim {
+    opacity: 0;
+    filter: alpha(opacity=0);
+    position: absolute;
+    border: none;
+    top: 0px;
+    left: 0px;
+    padding: 0;
+    margin: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    /* 
+       We'll be setting these programmatically for IE6, 
+       to account for cases where height is not set 
+    */
+    _width: 0;
+    _height: 0;
+}
+
+```

@@ -1,0 +1,40 @@
+<style scope>
+/* custom styles for this example */
+#demo .output {margin-bottom:1em; padding:10px; border:1px solid #D9D9D9;}
+</style>
+
+<form id="demo">
+    <h6>Data</h6>
+    <pre>
+notebooks, 100, spiral-bound
+pencils, 300, #2 with erasers
+pens, 500, blue ink
+    </pre>
+    
+    <h6>Schema</h6>
+    <pre>
+{
+    resultDelimiter: "\n",
+    fieldDelimiter: ",",
+    resultFields: [{key:"product"}, {key:"quantity"}, {key:"detail"}]
+}
+    </pre>
+
+    <h6>Normalized data</h6>
+    <input type="button" id="demo_apply" value="Apply schema =>">
+    <div id="demo_output" class="output"></div>
+</form>
+
+<script>
+YUI().use("dump", "node", "dataschema-text", function (Y) {
+    Y.on("click", function(e){
+        var data_in = "notebooks, 100, spiral-bound\npencils, 300, #2 with erasers\npens, 500, blue ink\n",
+            schema = {
+                resultDelimiter: "\n",
+                fieldDelimiter: ",",
+                resultFields: [{key:"product"}, {key:"quantity"}, {key:"detail"}] // Or simply: ["product", "quantity", "detail"]
+            };
+        Y.one("#demo_output").setContent(Y.dump(Y.DataSchema.Text.apply(schema, data_in)));
+    }, "#demo_apply");
+});
+</script>

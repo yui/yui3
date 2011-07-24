@@ -22,6 +22,8 @@
             },
             "scrollview-scrollbars" : {
                 "requires" : [
+		    "classnamemanager",
+                    "transition",
                     "plugin"
                 ],
                 "skinnable" : true,
@@ -31,9 +33,15 @@
                 "requires" : [
                     "plugin"
                 ],
-                "skinnable" : true,
                 "path": "scrollview/scrollview-paginator-min.js"
+            },
+            "scrollview-list" : {
+                "requires" : [
+                    "plugin"
+                ],
+                "path": "scrollview/scrollview-list-min.js"
             }
+
         },
         "requires" : [
             "scrollview-base",

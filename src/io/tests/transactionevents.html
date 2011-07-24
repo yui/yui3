@@ -40,7 +40,7 @@
 						Y.Assert.areSame(t.success[i], actual[i]);
 					}
         		};
-        		Y.io('get.php', {
+        		Y.io('http.php?a=200', {
         			on: {
         				start: function() {
         					actual.push('start');

@@ -1,29 +1,48 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-<title>Dial Widget</title>
+<title>Dial Widget Manual Test</title>
 
 <!-- Source File and Seed for YUI3-->
-<link rel="stylesheet" type="text/css" href="../../../../build/cssreset/reset-min.css">
-<link type="text/css" rel="stylesheet" href="../../../../build/cssfonts/fonts-min.css">
+<link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/3.3.0/build/cssfonts/fonts-min.css" />
+<link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/3.3.0/build/cssfonts/reset-min.css" />
 
-<script src="../../../../build/yui/yui-min.js"></script>
+<!-- get from 3.3.0 Release
+<script src="http://yui.yahooapis.com/3.3.0/build/yui/yui-min.js"></script> -->
 
-<script>
-    YUI().use("dial", function(Y) {
+<!-- get from lastSuccessful
+<script type="text/javascript" src="http://yuibuild.corp.yahoo.com/yui3/lastSuccessful/build/yui/yui-min.js"></script>-->
 
-        var dial = new Y.Dial({
-            srcNode: ".dial_container",
-            min:-400,
-            max:400,
-            stepsPerRev:365,
-            value: 80,
-            diameter: 100
-        });
-        dial.render();
-        dial.focus();
-    }); 
-</script>
+<!-- get from local copy of 3.3.0 
+<script src="../yui_3.3.0/yui/build/yui/yui.js"></script>-->
+
+
+<!-- get all from gitroot
+<script src="file:///C|/dev/gitroot/yui3/build/yui/yui.js"></script> -->
+
+<!-- get all from gitroot -->
+<script src="../../../../build/yui/yui.js"></script>
+
+<!-- get just dial from a local js dir 
+<script src="js/dial_local.js"></script>-->
+
+<!-- ///////////////////   for iPad (not on vger network) need these ////////////////////////-->
+	<!-- conniffcolletion need these new CSS files when using post 3.3.0 Dial.js re-architecture (no ...handle-user class) 
+	<link type="text/css" rel="stylesheet" href="http://conniffcollection.com/dial/assets/dial-core.css" />
+	<link type="text/css" rel="stylesheet" href="http://conniffcollection.com/dial/assets/skins/sam/dial-skin.css" />
+-->
+	<!-- get just dial from conniffcollection/dial/js dir  **** MUST BE UPDATED FTP **** -->
+	<!--<script src="http://conniffcollection.com/dial/js/yui.js"></script>-->
+	<!--<script src="http://conniffcollection.com/dial/js/dial.js"></script>-->
+	<!--<script src="http://conniffcollection.com/build/yui/yui-min.js"></script> ftp'd the whole build subdir over to conniffco -->
+		
+
+<!-- ///////////////////////////////////////////////////////////////////////////////////////-->
+
+<!-- need these new CSS files when using post 3.3.0 Dial.js re-architecture (no ...handle-user class) 
+<link type="text/css" rel="stylesheet" href="assets/dial-core.css" />
+<link type="text/css" rel="stylesheet" href="assets/skins/sam/dial-skin.css" />-->
+
 <style>
 .intro-sentence{
     margin:3em;
@@ -31,10 +50,159 @@
 body{
     margin-top:30px;
 }
+.steps{
+	margin:20px;
+}
+.steps li{margin-bottom:1em;}
+.steps li a {margin-right:2em; border:solid 1px #dddddd; background-color:#eeeeee; padding:3px 6px; cursor:pointer;}
+#myOtherNode {margin-bottom: 1em;}
+p{margin:40px;}
 </style>
 </head>
 <body class="yui3-skin-sam"> 
-    <span class="intro-sentence">This is a Dial Widget. It supports keyboard input and screen readers.</span>
-    <div class="dial_container"></div>
+    <span id="dial_container">This is a Dial Widget. It supports keyboard input and screen readers. done?</span>
+	<ul class="steps">
+		<li><a class="xx d_min">-minor</a><a class="xx i_min">+minor</a></li>
+		<li><a class="xx d_maj">-major</a><a class="xx i_maj">+major</a></li>
+		<li><a class="xx min">min</a><a class="xx max">max</a></li>
+		<li><a class="xx orig">origin</a></li>
+	</ul>
+	<input id="myOtherNode" value="hello">
+    <br>
+	<span id="dial_container_big">test a larger size. <p>increment controls don't affect this one.</p></span>
+	<span id="dial_container_small">test a small size. </span>
+	<p>test min max _______________________</p>
+	<p>
+	<span id="dial_one"></span>
+	<span id="dial_two"></span>
+	<span id="dial_three"></span>
+	<span id="dial_four"></span>
+	<p></p>
+	
 </body>
 </html>
+<script>
+    YUI({lang:'es', filter:'raw'}).use("dial", function(Y) {
+
+        var dial = new Y.Dial({
+			min:-220,
+			max:220,
+			stepsPerRevolution:100,
+			value: 60,
+			diameter: 100
+        });
+        dial.render("#dial_container");
+
+        var dialBig = new Y.Dial({
+			min:-220,
+			max:220,
+			stepsPerRevolution:100,
+			value: 0,
+			diameter: 439,
+			centerButtonDiameter: 0.2,
+			handleDiameter: 0.4,
+			markerDiameter: 0.02,
+			handleDistance: 0.5
+        });
+		dialBig.set('strings', {'label':'Label change using Dial.set', 'resetStr': 'set back to orig', 'tooltipHandle': 'test change tooltip'});
+        dialBig.render("#dial_container_big");
+
+        var dialSmall = new Y.Dial({
+			min:-220,
+			max:220,
+			stepsPerRevolution:100,
+			value: 80,
+			diameter: 37,
+			strings: {label: 'My small pre-render label', resetStr: 'Reset Long', tooltipHandle: 'Drag small handle to set value'}
+        });
+        dialSmall.render("#dial_container_small");
+///////////// check min max issues ////////////////////////////////
+        var dialOne = new Y.Dial({
+			min:2,
+			max:99,
+			stepsPerRevolution:100,
+			value: 5,
+			diameter: 100,
+			strings: {label: '2...99', resetStr: 'Reset', tooltipHandle: 'Drag handle to set value'}
+        });
+        dialOne.render("#dial_one");
+
+        var dialTwo = new Y.Dial({
+			min:-2,
+			max:5,
+			stepsPerRevolution:100,
+			value: 3,
+			diameter: 100,
+			strings: {label: '-2...5', resetStr: 'Reset', tooltipHandle: 'Drag handle to set value'}
+        });
+        dialTwo.render("#dial_two");
+
+        var dialThree = new Y.Dial({
+			min:-48,
+			max:40,
+			stepsPerRevolution:100,
+			value: 35,
+			diameter: 100,
+			decimalPlaces: 3,
+			strings: {label: '-48...40', resetStr: 'Reset', tooltipHandle: 'Drag handle to set value'}
+        });
+        dialThree.render("#dial_three");
+
+        var dialFour = new Y.Dial({
+			min:-28,
+			max:28,
+			stepsPerRevolution:10,
+			value: 60,
+			diameter: 100,
+			strings: {label: '-28...28', resetStr: 'Reset', tooltipHandle: 'Drag handle to set value'}
+        });
+        dialFour.render("#dial_four");
+
+
+
+
+
+
+		Y.on('click', function(e){
+			if(e.target.hasClass('i_min')){
+				dial._incrMinor();
+			}
+			if(e.target.hasClass('d_min')){
+				dial._decrMinor();
+			}
+			if(e.target.hasClass('i_maj')){
+				dial._incrMajor();
+			}
+			if(e.target.hasClass('d_maj')){
+				dial._decrMajor();
+			}
+	
+	
+			if(e.target.hasClass('min')){
+				dial._setToMin();
+			}
+			if(e.target.hasClass('max')){
+				dial._setToMax();
+			}
+	
+			if(e.target.hasClass('orig')){
+				dial._resetDial();
+			}
+	
+	
+		}, '.xx');
+	
+		// update value of the Dial from another object's value when it gets a keyup event
+		Y.on('keyup', function(e){
+			dial.set('value', e.target.get('value') - 0);
+		}, '#myOtherNode');
+	
+		// update the value of another object when the Dial changes value
+		dial.after('valueChange', function(e){
+			Y.one('#myOtherNode').set('value', e.target.get('value'));
+			Y.log('dial._angle: ' + dial._angle + '... prevAng: ' + dial._prevAng + '...wrapping: ' + dial._timesWrapped);	
+		});
+		
+		
+    }); 
+</script>

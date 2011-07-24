@@ -30,7 +30,7 @@ var DOCUMENT_ELEMENT = 'documentElement',
     SCROLL_NODE;
 
 if (Y.UA.ie) {
-    if (Y.config.doc[COMPAT_MODE] !== 'quirks') {
+    if (Y.config.doc[COMPAT_MODE] !== 'BackCompat') {
         SCROLL_NODE = DOCUMENT_ELEMENT; 
     } else {
         SCROLL_NODE = 'body';
@@ -176,7 +176,7 @@ Y.mix(Y_DOM, {
                             }
 
                         if ((scrollTop || scrollLeft)) {
-                            if (!Y.UA.ios) {
+                            if (!Y.UA.ios || (Y.UA.ios >= 4.2)) {
                                 xy[0] += scrollLeft;
                                 xy[1] += scrollTop;
                             }

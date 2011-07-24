@@ -1,7 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="YUI" default="local">
-    <description>Rollup build file for Resize</description>
-    <property file="build.properties" />
-    <import file="${builddir}/3.x/bootstrap.xml"
-            description="Default Build Properties and Targets" />
+    <description>Resize Build</description>
+
+
+    <macrodef name="build-resize">
+        <attribute name="target"/>
+        <sequential>
+            <ant antfile="build.resize.xml" target="@{target}"/>
+            <ant antfile="build.plugin.xml" target="@{target}"/>
+        </sequential>
+    </macrodef>
+
+    <target name="local">
+        <build-resize target="local"/>
+    </target>
+    <target name="deploy">
+        <build-resize target="deploy"/>
+    </target>
+    <target name="all">
+        <build-resize target="all"/>
+    </target>
+    <target name="clean">
+        <build-resize target="clean"/>
+    </target>
+
+
+
 </project>
+
+

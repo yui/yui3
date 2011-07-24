@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="YuiBase" default="local">
-    <description>Attribute Build File</description>
-    <exec executable="python" failonerror="true">
-        <arg value="meta_join.py"/>
-    </exec>
-    <property file="build.properties" />
-    <import file="${builddir}/3.x/bootstrap.xml" description="Default Build Properties and Targets" />
-    
+<project name="componentbuild" default="local">
+    <description>YUI Core Build</description>
+
+    <target name="local">
+        <ant antfile="../yui/build.xml" target="local" useNativeBasedir="true" />
+    </target>
+    <target name="deploy">
+        <ant antfile="../yui/build.xml" target="deploy" useNativeBasedir="true" />
+    </target>
+    <target name="all">
+        <ant antfile="../yui/build.xml" target="all" useNativeBasedir="true" />
+    </target>
+    <target name="clean">
+        <ant antfile="../yui/build.xml" target="clean" useNativeBasedir="true" />
+    </target>
+
 </project>

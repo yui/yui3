@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Controller Test</title>
+    <script>
+        window.addEventListener('popstate', function () {
+            console.log('popstate');
+        }, false);
+    </script>
+</head>
+<body>
+
+<textarea id="log" cols="80" rows="10"></textarea>
+
+<p>
+<button id="push">pushState</button>
+<a href="http://www.yahoo.com/">Yahoo!</a>
+</p>
+
+<script src="http://platypus-lan:3000/build/yui/yui.js"></script>
+<script>
+document.getElementById('log').value = '';
+
+var Y = YUI({filter: 'raw',}).use('controller', 'node', function (Y) {
+    var logEl      = document.getElementById('log'),
+        controller = new Y.Controller();
+
+    controller.route('/*anything', function (req) {
+        log('route called, path: ' + req.path);
+    });
+
+    controller.dispatch();
+
+    function log(message) {
+        logEl.value += message + '\n';
+    }
+
+    Y.one('#push').on('click', function () {
+        controller.save('/' + Y.Lang.now());
+    });
+});
+</script>
+
+</body>
+</html>

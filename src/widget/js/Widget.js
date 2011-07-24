@@ -46,7 +46,7 @@ var L = Y.Lang,
     DIV = "<div></div>",
     CHANGE = "Change",
     LOADING = "loading",
- 
+
     _UISET = "_uiSet",
 
     EMPTY_STR = "",
@@ -184,7 +184,7 @@ ATTRS[BOUNDING_BOX] = {
 
 /**
  * @attribute contentBox
- * @description A DOM node that is a direct descendent of a Widget's bounding box that 
+ * @description A DOM node that is a direct descendant of a Widget's bounding box that 
  * houses its content.
  * @type String | Node
  * @writeOnce
@@ -204,7 +204,7 @@ ATTRS[CONTENT_BOX] = {
  * method), while being removed from the default tab flow.  A value of 
  * null removes the "tabIndex" attribute from the widget's bounding box.
  * @type Number
- * @default 0
+ * @default null
  */
 ATTRS[TAB_INDEX] = {
     value: null,
@@ -421,12 +421,64 @@ Y.extend(Widget, Y.Base, {
             delete _instances[bbGuid];
         }
 
+        this._destroyBox();
+    },
+
+    /**
+     * <p>
+     * Destroy lifecycle method. Fires the destroy
+     * event, prior to invoking destructors for the
+     * class hierarchy.
+     *
+     * Overrides Base's implementation, to support arguments to destroy
+     * </p>
+     * <p>
+     * Subscribers to the destroy
+     * event can invoke preventDefault on the event object, to prevent destruction
+     * from proceeding.
+     * </p>
+     * @method destroy
+     * @param destroyAllNodes {Boolean} If true, all nodes contained within the Widget are removd and destroyed. Defaults to false due to potentially high run-time cost. 
+     * @return {Widget} A reference to this object
+     * @chainable
+     */
+    destroy: function(destroyAllNodes) {
+        this._destroyAllNodes = destroyAllNodes;
+        return Widget.superclass.destroy.apply(this);
+    },
+
+    /**
+     * Removes and destroys the widgets rendered boundingBox, contentBox,
+     * and detaches bound UI events.
+     *
+     * @method _destroyBox
+     * @protected 
+     */
+    _destroyBox : function() {
+
+        var boundingBox = this.get(BOUNDING_BOX),
+            contentBox = this.get(CONTENT_BOX),
+            deep = this._destroyAllNodes,
+            same = boundingBox && boundingBox.compareTo(contentBox);
+
         if (this.UI_EVENTS) {
             this._destroyUIEvents();
         }
 
         this._unbindUI(boundingBox);
-        boundingBox.remove(TRUE);
+
+        if (deep) {
+            // Removes and destroys all child nodes.
+            boundingBox.empty();
+            boundingBox.remove(TRUE);
+        } else {
+            if (contentBox) {
+                contentBox.remove(TRUE);
+            }
+            if (!same) {
+                boundingBox.remove(TRUE);
+            }
+        }
     },
 
     /**
@@ -897,6 +949,7 @@ Y.extend(Widget, Y.Base, {
     /**
      * Sets the disabled state for the UI
      *
+     * @method _uiSetDisabled
      * @protected
      * @param {boolean} val
      */
@@ -907,6 +960,7 @@ Y.extend(Widget, Y.Base, {
     /**
      * Sets the focused state for the UI
      *
+     * @method _uiSetFocused
      * @protected
      * @param {boolean} val
      * @param {string} src String representing the source that triggered an update to 

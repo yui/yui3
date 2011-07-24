@@ -1,16 +1,19 @@
 {
     "transition": {
-        "submodules": {
-            "transition-native": {
-                "requires": [
-                    "node-base"
-                ]
-            },
+        "requires": [
+            "node-style"
+        ],
+
+        "plugins": {
             "transition-timer": {
                 "requires": [
-                    "transition-native",
-                    "node-style"
-                ]
+                    "transition"
+                ],
+
+                "condition": { 
+                   "trigger": "transition", 
+                   "test": "transition-test.js" 
+                }
             }
         }
     }

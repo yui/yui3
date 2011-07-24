@@ -1,0 +1,38 @@
+<div class="intro">
+    <p>DataSchema supports a <code>parser</code> property that enforces type conversion on data as the schema is being applied.  The <code>parser</code> property can point to one of the following types of parsing functions:</p>
+
+    <ul>
+        <li>A DataType subclass parse function, like <code>Y.DataType.Number.parse</code></li>
+        <li>A registered shortcut to a DataType subclass parse function, like <code>"number"</code></li>
+        <li>A custom function</li>
+    </ul>
+</div>
+
+<div class="example">
+    {{>dataschema-parsing-source}}
+</div>
+
+<p>Use the <code>parser</code> property in your schema's <code>resultFields</code> definition to point to a parsing function. Parsing your data in this manner is essential if your numerical or date data comes over the wire as JSON, since all the values will be strings.</p>
+
+```
+YUI().use("datatype", "dataschema", function(Y) {
+    var data_in = {
+            "results":[
+                {"string":"aardvark", "number":"1", "date":"Jan 1, 2001"},
+                {"string":"bat", "number":"2", "date":"Feb 2, 2002"},
+                {"string":"camel", "number":"3", "date":"March 3, 2003"}
+            ]
+        },
+        schema = {
+            resultListLocator: "results",
+            resultFields: [
+                // needs no parsing
+                "string",
+                // point parser to built-in function shortcut
+                {key:"number", parser: "number"},
+                // point parser to built-in function
+                {key:"date", parser: Y.DataType.Date.parse}]
+        },
+        data_out = Y.DataSchema.JSON.apply(schema, data_in).results;
+});
+```

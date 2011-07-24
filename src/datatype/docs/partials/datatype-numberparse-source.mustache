@@ -1,0 +1,24 @@
+<form id="demo">
+    <fieldset>
+        <label for="demo_input">Value to parse: <input type="text" id="demo_input"></label>
+    </fieldset>
+    <fieldset>
+        <input type="submit" id="demo_btn" value="Alert parsed number">
+    </fieldset>
+</form>
+
+<script>
+YUI().use("node", "datatype-number", function (Y) {
+    Y.on("submit", function(e){
+        e.halt();
+        
+        var input = Y.one("#demo_input").get("value"),
+            output = Y.DataType.Number.parse(input);
+                
+        if(output === "") {
+            output += "(Invalid value)"
+        }
+        alert(output);
+    }, "#demo");
+});
+</script>

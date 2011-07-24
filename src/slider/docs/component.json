@@ -1,0 +1,43 @@
+{
+    "name": "slider",
+	"displayName": "Slider",
+	"description": "The Slider widget is a UI control that enables the user to adjust values in a finite range along a horizontal or vertical axis.",
+	"author": "lsmith",
+
+    "tags": ["widget", "slider"],
+    "use": ["slider"],
+
+    "examples": [
+
+        {
+            "name": "slider-basic",
+	        "displayName": "Basic Sliders",
+	        "modules": ["slider"],
+	        "description": "The basics of setting up a horizontal and vertical Slider",
+	        "useModules": ["slider"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "slider-from-markup",
+	        "displayName": "Creating a Slider from Existing Markup",
+	        "modules": ["slider"],
+	        "description": "Creating a horizontal Slider from existing markup",
+	        "useModules": ["slider"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "slider-skin",
+	        "displayName": "Alternate Skins",
+	        "modules": ["slider"],
+	        "description": "Specifying an alternate skin for a Slider instance",
+	        "useModules": ["slider"],
+
+            "hideTableOfContents": true
+        }
+
+    ]
+}

@@ -1,0 +1,36 @@
+<style scoped>
+/* custom styles for this example */
+#demo .output {margin-bottom:1em; padding:10px; border:1px solid #D9D9D9;}
+</style>
+
+<div class="intro">
+    <p>The Date module of the DataType Utility allows you to take a data value and convert it to a number. The `parse()` method will accept <a href="https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Global_Objects/Date">any value supported by JavaScript's `Date()` constructor</a>.</p>
+</div>
+
+<div class="example">
+    {{>datatype-dateparse-source}}
+</div>
+
+<p>To convert a data value to a date, simply call the `parse()` function of the DataType.Date class:</p>
+
+```
+YUI().use("datatype-date", function(Y) {
+    var date = Y.DataType.Date.parse("Jan 7, 2003");
+    // date is a JavaScript Date object
+});
+```
+
+<p>Under the hood, the data value is converted to a date via the `Date()` constructor:</p>
+
+```
+YUI().use("datatype-date", function(Y) {
+    // These all return dates
+    var date = Y.DataType.Date.parse("December 17, 1995 03:24:00");
+
+    date = Y.DataType.Date.parse(1995,11,17);
+
+    date = Y.DataType.Date.parse(1995,11,17,3,24,0);
+
+    date = Y.DataType.Date.parse(948548583);
+});
+```

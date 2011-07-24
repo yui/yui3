@@ -1,0 +1,28 @@
+{
+    "name"       : "yql",
+    "displayName": "YQL Query",
+    "description": "YQL provides developers the ablity to access and shape data across the Internet using one language rather than learn multiple APIs.",
+    "author"     : "davglass",
+
+    "tags": ["utility", "data", "api", "json", "webservice"],
+    "use" : ["yql"],
+
+    "examples": [
+        {
+            "name"       : "simple-yql",
+            "displayName": "Simple YQL Query",
+            "description": "Create a simple YQL Query to retrieve data from the Yahoo! Weather YQL table.",
+            "modules"    : ["yql"],
+            "tags"       : ["yql", "simple"],
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "yql-requery",
+            "displayName": "Reusing a YQL query",
+            "description": "Use the Flickr Recent Photos YQL table to pull in a small set of recent Flickr images every 8 seconds.",
+            "modules"    : ["yql"],
+            "tags"       : ["yql", "simple", "refresh", "flickr"],
+            "hideTableOfContents": true
+        }
+    ]
+}

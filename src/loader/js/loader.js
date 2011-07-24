@@ -12,7 +12,6 @@
  * @submodule loader-base
  */
 
-
 var NOT_FOUND = {},
     NO_REQUIREMENTS = [],
     MAX_URL_LENGTH = (Y.UA.ie) ? 2048 : 8192,
@@ -102,7 +101,7 @@ Y.Env.meta = META;
  *
  *  </li>
  *  <li>filters: per-component filter specification.  If specified
- *  for a given component, this overrides the filter config</li>
+ *  for a given component, this overrides the filter config. _Note:_ This does not work on combo urls, use the filter property instead.</li>
  *  <li>combine:
  *  Use the YUI combo service to reduce the number of http connections
  *  required to load your dependencies</li>
@@ -257,7 +256,7 @@ Y.Loader = function(o) {
      * @type string
      * @default http://yui.yahooapis.com/[YUI VERSION]/build/
      */
-    self.base = Y.Env.meta.base;
+    self.base = Y.Env.meta.base + Y.Env.meta.root;
 
     /**
      * Base path for the combo service
@@ -282,7 +281,14 @@ Y.Loader = function(o) {
      */
     self.combine = o.base &&
         (o.base.indexOf(self.comboBase.substr(0, 20)) > -1);
-
+    
+    /**
+    * The default seperator to use between files in a combo URL
+    * @property comboSep
+    * @type {String}
+    * @default Ampersand
+    */
+    self.comboSep = '&';
     /**
      * Max url length for combo urls.  The default is 2048 for
      * internet explorer, and 8192 otherwise.  This is the URL
@@ -352,9 +358,9 @@ Y.Loader = function(o) {
      * Should we allow rollups
      * @property allowRollup
      * @type boolean
-     * @default true
+     * @default false
      */
-    self.allowRollup = true;
+    self.allowRollup = false;
 
     /**
      * A filter to apply to result urls.  This filter will modify the default
@@ -468,14 +474,16 @@ Y.Loader = function(o) {
     cache = GLOBAL_ENV._renderedMods;
 
     if (cache) {
-        oeach(cache, function(v, k) {
-            self.moduleInfo[k] = Y.merge(v);
+        oeach(cache, function modCache(v, k) {
+            //self.moduleInfo[k] = Y.merge(v);
+            self.moduleInfo[k] = v;
         });
 
         cache = GLOBAL_ENV._conditions;
 
-        oeach(cache, function(v, k) {
-            self.conditions[k] = Y.merge(v);
+        oeach(cache, function condCache(v, k) {
+            //self.conditions[k] = Y.merge(v);
+            self.conditions[k] = v;
         });
 
     } else {
@@ -483,8 +491,10 @@ Y.Loader = function(o) {
     }
 
     if (!GLOBAL_ENV._renderedMods) {
-        GLOBAL_ENV._renderedMods = Y.merge(self.moduleInfo);
-        GLOBAL_ENV._conditions = Y.merge(self.conditions);
+        //GLOBAL_ENV._renderedMods = Y.merge(self.moduleInfo);
+        //GLOBAL_ENV._conditions = Y.merge(self.conditions);
+        GLOBAL_ENV._renderedMods = self.moduleInfo;
+        GLOBAL_ENV._conditions = self.conditions;
     }
 
     self._inspectPage();
@@ -492,6 +502,12 @@ Y.Loader = function(o) {
     self._internal = false;
 
     self._config(o);
+
+    self.testresults = null;
+
+    if (Y.config.tests) {
+        self.testresults = Y.config.tests;
+    }
 
     /**
      * List of rollup files found in the library metadata
@@ -582,9 +598,13 @@ Y.Loader.prototype = {
             'replaceStr': '-debug.js'
         }
     },
-
-   _inspectPage: function() {
-       oeach(ON_PAGE, function(v, k) {
+    /*
+    * Check the pages meta-data and cache the result.
+    * @method _inspectPage
+    * @private
+    */
+    _inspectPage: function() {
+        oeach(ON_PAGE, function(v, k) {
            if (v.details) {
                var m = this.moduleInfo[k],
                    req = v.details.requires,
@@ -592,7 +612,9 @@ Y.Loader.prototype = {
                if (m) {
                    if (!m._inspected && req && mr.length != req.length) {
                        // console.log('deleting ' + m.name);
+                       // m.requres = YObject.keys(Y.merge(YArray.hash(req), YArray.hash(mr)));
                        delete m.expanded;
+                       // delete m.expanded_map;
                    }
                } else {
                    m = this.addModule(v.details, k);
@@ -600,23 +622,21 @@ Y.Loader.prototype = {
                m._inspected = true;
            }
        }, this);
-   },
-
-// returns true if b is not loaded, and is required
-// directly or by means of modules it supersedes.
+    },
+    /*
+    * returns true if b is not loaded, and is required directly or by means of modules it supersedes.
+    * @private
+    * @method _requires
+    * @param {String} mod1 The first module to compare
+    * @param {String} mod2 The second module to compare
+    */
    _requires: function(mod1, mod2) {
 
         var i, rm, after_map, s,
             info = this.moduleInfo,
             m = info[mod1],
             other = info[mod2];
-            // key = mod1 + mod2;
 
-        // if (this.tested[key]) {
-            // return this.tested[key];
-        // }
-
-        // if (loaded[mod2] || !m || !other) {
         if (!m || !other) {
             return false;
         }
@@ -669,7 +689,11 @@ Y.Loader.prototype = {
 
         return false;
     },
-
+    /**
+    * Apply a new config to the Loader instance
+    * @method _config
+    * @param {Object} o The new configuration
+    */
     _config: function(o) {
         var i, j, val, f, group, groupName, self = this;
         // apply config values
@@ -719,6 +743,10 @@ Y.Loader.prototype = {
             }
         }
 
+        if (self.lang) {
+            self.require('intl-base', 'intl');
+        }
+
     },
 
     /**
@@ -750,7 +778,7 @@ Y.Loader.prototype = {
      * @private
      */
     _addSkin: function(skin, mod, parent) {
-        var mdef, pkg, name,
+        var mdef, pkg, name, nmod,
             info = this.moduleInfo,
             sinf = this.skin,
             ext = info[mod] && info[mod].ext;
@@ -761,7 +789,7 @@ Y.Loader.prototype = {
             if (!info[name]) {
                 mdef = info[mod];
                 pkg = mdef.pkg || mod;
-                this.addModule({
+                nmod = {
                     name: name,
                     group: mdef.group,
                     type: 'css',
@@ -769,17 +797,24 @@ Y.Loader.prototype = {
                     path: (parent || pkg) + '/' + sinf.base + skin +
                           '/' + mod + '.css',
                     ext: ext
-                });
+                };
+                if (mdef.base) {
+                    nmod.base = mdef.base;
+                }
+                if (mdef.configFn) {
+                    nmod.configFn = mdef.configFn;
+                }
+                this.addModule(nmod, name);
 
-                // Y.log('adding skin ' + name + ', '
-                // + parent + ', ' + pkg + ', ' + info[name].path);
+                Y.log('adding skin ' + name + ', ' + parent + ', ' + pkg + ', ' + info[name].path);
             }
         }
 
         return name;
     },
 
-    /** Add a new module group
+    /**
+     * Add a new module group
      * <dl>
      *   <dt>name:</dt>      <dd>required, the group name</dd>
      *   <dt>base:</dt>      <dd>The base dir for this module group</dd>
@@ -815,7 +850,8 @@ Y.Loader.prototype = {
         }
     },
 
-    /** Add a new module to the component metadata.
+    /**
+     * Add a new module to the component metadata.
      * <dl>
      *     <dt>name:</dt>       <dd>required, the component name</dd>
      *     <dt>type:</dt>       <dd>required, the component type (js or css)
@@ -857,6 +893,7 @@ Y.Loader.prototype = {
      *           This should be one of three values: 'before', 'after', or
      *           'instead'.  The default is 'after'.
      *       </dd>
+     *     <dt>testresults:</dt><dd>a hash of test results from Y.Features.all()</dd>
      * </dl>
      * @method addModule
      * @param {object} o An object containing the module data.
@@ -866,8 +903,17 @@ Y.Loader.prototype = {
      * the object passed in did not provide all required attributes.
      */
     addModule: function(o, name) {
-
         name = name || o.name;
+
+        if (this.moduleInfo[name]) {
+            //This catches temp modules loaded via a pattern
+            // The module will be added twice, once from the pattern and
+            // Once from the actual add call, this ensures that properties
+            // that were added to the module the first time around (group: gallery)
+            // are also added the second time around too.
+            o = Y.merge(this.moduleInfo[name], o);
+        }
+
         o.name = name;
 
         if (!o || !o.name) {
@@ -881,16 +927,15 @@ Y.Loader.prototype = {
         if (!o.path && !o.fullpath) {
             o.path = _path(name, name, o.type);
         }
-
         o.supersedes = o.supersedes || o.use;
 
         o.ext = ('ext' in o) ? o.ext : (this._internal) ? false : true;
-        o.requires = o.requires || [];
+        o.requires = this.filterRequires(o.requires) || [];
 
         // Handle submodule logic
         var subs = o.submodules, i, l, sup, s, smod, plugins, plug,
             j, langs, packName, supName, flatSup, flatLang, lang, ret,
-            overrides, skinname, triggermod, when,
+            overrides, skinname, when,
             conditions = this.conditions, trigger;
             // , existing = this.moduleInfo[name], newr;
 
@@ -998,8 +1043,11 @@ Y.Loader.prototype = {
                     l++;
                 }
             }
-            o.supersedes = YObject.keys(YArray.hash(sup));
-            o.rollup = (l < 4) ? l : Math.min(l - 1, 4);
+            //o.supersedes = YObject.keys(YArray.hash(sup));
+            o.supersedes = YArray.dedupe(sup);
+            if (this.allowRollup) {
+                o.rollup = (l < 4) ? l : Math.min(l - 1, 4);
+            }
         }
 
         plugins = o.plugins;
@@ -1011,7 +1059,6 @@ Y.Loader.prototype = {
                     plug.path = plug.path || _path(name, i, o.type);
                     plug.requires = plug.requires || [];
                     plug.group = o.group;
-                    // plug.requires.push(name);
                     this.addModule(plug, i);
                     if (o.skinnable) {
                         this._addSkin(this.skin.defaultSkin, i, name);
@@ -1036,12 +1083,6 @@ Y.Loader.prototype = {
                     // the trigger requires the conditional mod,
                     // so it should appear before the conditional
                     // mod if we do not intersede.
-                    //
-                    // triggermod = this.getModule(trigger);
-                    // if (triggermod) {
-                    //     triggermod.after = triggermod.after || [];
-                    //     triggermod.after.push(name);
-                    // }
                 }
             } else { // after the trigger
                 o.after = o.after || [];
@@ -1072,11 +1113,73 @@ Y.Loader.prototype = {
      * @param {string[] | string*} what the modules to load.
      */
     require: function(what) {
-        var a = (typeof what === 'string') ? arguments : what;
+        var a = (typeof what === 'string') ? YArray(arguments) : what;
         this.dirty = true;
-        Y.mix(this.required, YArray.hash(a));
-    },
+        this.required = Y.merge(this.required, YArray.hash(this.filterRequires(a)));
 
+        this._explodeRollups();
+    },
+    /**
+    * Grab all the items that were asked for, check to see if the Loader
+    * meta-data contains a "use" array. If it doesm remove the asked item and replace it with 
+    * the content of the "use".
+    * This will make asking for: "dd"
+    * Actually ask for: "dd-ddm-base,dd-ddm,dd-ddm-drop,dd-drag,dd-proxy,dd-constrain,dd-drop,dd-scroll,dd-drop-plugin"
+    * @private
+    * @method _explodeRollups
+    */
+    _explodeRollups: function() {
+        var self = this, m,
+        r = self.required;
+        if (!self.allowRollup) {
+            oeach(r, function(v, name) {
+                m = self.getModule(name);
+                if (m && m.use) {
+                    //delete r[name];
+                    YArray.each(m.use, function(v) {
+                        m = self.getModule(v);
+                        if (m && m.use) {
+                            //delete r[v];
+                            YArray.each(m.use, function(v) {
+                                r[v] = true;
+                            });
+                        } else {
+                            r[v] = true;
+                        }
+                    });
+                }
+            });
+            self.required = r;
+        }
+
+    },
+    /**
+    * Explodes the required array to remove aliases and replace them with real modules
+    * @method filterRequires
+    * @param {Array} r The original requires array
+    * @return {Array} The new array of exploded requirements
+    */
+    filterRequires: function(r) {
+        if (r) {
+            if (!Y.Lang.isArray(r)) {
+                r = [r];
+            }
+            r = Y.Array(r);
+            var c = [];
+            for (var i = 0; i < r.length; i++) {
+                var mod = this.getModule(r[i]);
+                if (mod && mod.use) {
+                    for (var o = 0; o < mod.use.length; o++) {
+                        c.push(mod.use[o]);
+                    }
+                } else {
+                    c.push(r[i]);
+                }
+            }
+            r = c;
+        }
+        return r;
+    },
     /**
      * Returns an object containing properties for all modules required
      * in order to load the requested module
@@ -1086,24 +1189,23 @@ Y.Loader.prototype = {
      */
     getRequires: function(mod) {
 
-        // if (mod.name == 'node-base') {
-            // eval('debugger;');
-        // }
-
         if (!mod || mod._parsed) {
             // Y.log('returning no reqs for ' + mod.name);
             return NO_REQUIREMENTS;
         }
 
-        var i, m, j, add, packName, lang,
+        var i, m, j, add, packName, lang, testresults = this.testresults,
             name = mod.name, cond, go,
             adddef = ON_PAGE[name] && ON_PAGE[name].details,
-            d,
+            d, k, m1,
             r, old_mod,
             o, skinmod, skindef,
             intl = mod.lang || mod.intl,
             info = this.moduleInfo,
+            ftests = Y.Features && Y.Features.tests.load,
             hash;
+
+        // console.log(name);
 
         // pattern match leaves module stub that needs to be filled out
         if (mod.temp && adddef) {
@@ -1114,26 +1216,35 @@ Y.Loader.prototype = {
             delete mod.expanded;
         }
 
+        // console.log('cache: ' + mod.langCache + ' == ' + this.lang);
+
         // if (mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
         if (mod.expanded && (!this.lang || mod.langCache === this.lang)) {
-            // Y.log('already expanded ' + name + ', ' + mod.expanded);
+            //Y.log('Already expanded ' + name + ', ' + mod.expanded);
             return mod.expanded;
         }
+        
 
         d = [];
         hash = {};
-
-        r = mod.requires;
+        
+        r = this.filterRequires(mod.requires);
+        if (mod.lang) {
+            //If a module has a lang attribute, auto add the intl requirement.
+            d.unshift('intl');
+            r.unshift('intl');
+            intl = true;
+        }
         o = mod.optional;
 
         // Y.log("getRequires: " + name + " (dirty:" + this.dirty +
         // ", expanded:" + mod.expanded + ")");
 
         mod._parsed = true;
-
+        mod.langCache = this.lang;
 
         for (i = 0; i < r.length; i++) {
-            // Y.log(name + ' requiring ' + r[i]);
+            //Y.log(name + ' requiring ' + r[i], 'info', 'loader');
             if (!hash[r[i]]) {
                 d.push(r[i]);
                 hash[r[i]] = true;
@@ -1154,7 +1265,6 @@ Y.Loader.prototype = {
         if (r) {
             for (i = 0; i < r.length; i++) {
                 if (!hash[r[i]]) {
-
                     // if this module has submodules, the requirements list is
                     // expanded to include the submodules.  This is so we can
                     // prevent dups when a submodule is already loaded and the
@@ -1199,25 +1309,37 @@ Y.Loader.prototype = {
         cond = this.conditions[name];
 
         if (cond) {
-            oeach(cond, function(def, condmod) {
+            if (testresults && ftests) {
+                oeach(testresults, function(result, id) {
+                    var condmod = ftests[id].name;
+                    if (!hash[condmod] && ftests[id].trigger == name) {
+                        if (result && ftests[id]) {
+                            hash[condmod] = true;
+                            d.push(condmod);
+                        }
+                    }
+                });
+            } else {
+                oeach(cond, function(def, condmod) {
 
-                if (!hash[condmod]) {
-                    go = def && ((def.ua && Y.UA[def.ua]) ||
-                                 (def.test && def.test(Y, r)));
-                    if (go) {
-                        hash[condmod] = true;
-                        d.push(condmod);
-                        m = this.getModule(condmod);
-                        // Y.log('conditional', m);
-                        if (m) {
-                            add = this.getRequires(m);
-                            for (j = 0; j < add.length; j++) {
-                                d.push(add[j]);
+                    if (!hash[condmod]) {
+                        go = def && ((def.ua && Y.UA[def.ua]) ||
+                                     (def.test && def.test(Y, r)));
+                        if (go) {
+                            hash[condmod] = true;
+                            d.push(condmod);
+                            m = this.getModule(condmod);
+                            // Y.log('conditional', m);
+                            if (m) {
+                                add = this.getRequires(m);
+                                for (j = 0; j < add.length; j++) {
+                                    d.push(add[j]);
+                                }
                             }
                         }
                     }
-                }
-            }, this);
+                }, this);
+            }
         }
 
         // Create skin modules
@@ -1240,15 +1362,12 @@ Y.Loader.prototype = {
 
             if (mod.lang && !mod.langPack && Y.Intl) {
                 lang = Y.Intl.lookupBestLang(this.lang || ROOT_LANG, mod.lang);
-// Y.log('Best lang: ' + lang + ', this.lang: ' +
-// this.lang + ', mod.lang: ' + mod.lang);
-                mod.langCache = this.lang;
+                //Y.log('Best lang: ' + lang + ', this.lang: ' + this.lang + ', mod.lang: ' + mod.lang);
                 packName = this.getLangPackName(lang, name);
                 if (packName) {
                     d.unshift(packName);
                 }
             }
-
             d.unshift(INTL);
         }
 
@@ -1292,28 +1411,6 @@ Y.Loader.prototype = {
         return m.provides;
     },
 
-    // checkConditions: function() {
-    //     var self = this,
-    //         conds = self.conditions;
-
-    //     Y.Object.each(self.required, function(mod, name) {
-
-    //         var cond = conds[name];
-
-    //         Y.Object.each(cond, function(def, condmod) {
-    //             if (def) {
-    //                 var go = def.result || ((def.ua && Y.UA[def.ua]) ||
-    //                              (def.test && def.test(Y)));
-    //                 def.result = go;
-    //                 if (go) {
-    //                     self.required[condmod] = true;
-    //                 }
-    //             }
-    //         });
-
-    //     });
-    // },
-
     /**
      * Calculates the dependency tree, the result is stored in the sorted
      * property.
@@ -1332,19 +1429,25 @@ Y.Loader.prototype = {
                 this._setup();
             }
 
-
             this._explode();
-
-            // this.checkConditions();
 
             if (this.allowRollup) {
                 this._rollup();
+            } else {
+                this._explodeRollups();
             }
             this._reduce();
             this._sort();
         }
     },
-
+    /**
+    * Creates a "psuedo" package for languages provided in the lang array
+    * @method _addLangPack
+    * @param {String} lang The language to create
+    * @param {Object} m The module definition to create the language pack around
+    * @param {String} packName The name of the package (e.g: lang/datatype-date-en-US)
+    * @return {Object} The module definition
+    */
     _addLangPack: function(lang, m, packName) {
         var name = m.name,
             packPath,
@@ -1359,7 +1462,7 @@ Y.Loader.prototype = {
                              langPack: true,
                              ext: m.ext,
                              group: m.group,
-                             supersedes: [] }, packName, true);
+                             supersedes: [] }, packName);
 
             if (lang) {
                 Y.Env.lang = Y.Env.lang || {};
@@ -1388,7 +1491,8 @@ Y.Loader.prototype = {
                 if (m) {
 
                     // remove dups
-                    m.requires = YObject.keys(YArray.hash(m.requires));
+                    //m.requires = YObject.keys(YArray.hash(m.requires));
+                    m.requires = YArray.dedupe(m.requires);
 
                     // Create lang pack modules
                     if (m.lang && m.lang.length) {
@@ -1447,7 +1551,6 @@ Y.Loader.prototype = {
     getLangPackName: function(lang, mname) {
         return ('lang/' + mname + ((lang) ? '_' + lang : ''));
     },
-
     /**
      * Inspects the required modules list looking for additional
      * dependencies.  Expands the required list to include all
@@ -1462,6 +1565,9 @@ Y.Loader.prototype = {
         // the setup phase is over, all modules have been created
         self.dirty = false;
 
+        self._explodeRollups();
+        r = self.required;
+        
         oeach(r, function(v, name) {
             if (!done[name]) {
                 done[name] = true;
@@ -1477,36 +1583,18 @@ Y.Loader.prototype = {
 
                     reqs = self.getRequires(m);
                     Y.mix(r, YArray.hash(reqs));
-
-                    // sups = m.supersedes;
-
-                    // if (sups) {
-                    //     YArray.each(sups, function(sup) {
-                    //         if (sup in self.loaded) {
-                    //             delete r[name];
-                    //         }
-                    //         // if (sup in self.conditions) {
-                    //         r[sup] = true;
-                    //         //}
-                    //     });
-                    // }
-
-                    // remove the definition for a rollup with
-                    // submodules -- getRequires() includes the
-                    // submodules.  Removing the parent makes
-                    // it possible to prevent submodule duplication
-                    // if the parent is requested after a submodule
-                    // has been loaded.
-                    // if (m.submodules) {
-                    //     delete r[name];
-                    // }
                 }
             }
         });
 
         // Y.log('After explode: ' + YObject.keys(r));
     },
-
+    /**
+    * Get's the loader meta data for the requested module
+    * @method getModule
+    * @param {String} mname The module name to get
+    * @return {Object} The module metadata
+    */
     getModule: function(mname) {
         //TODO: Remove name check - it's a quick hack to fix pattern WIP
         if (!mname) {
@@ -1566,7 +1654,9 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
         r = r || this.required;
 
-        var i, j, s, m, type = this.loadType;
+        var i, j, s, m, type = this.loadType,
+        ignore = this.ignore ? YArray.hash(this.ignore) : false;
+
         for (i in r) {
             if (r.hasOwnProperty(i)) {
                 m = this.getModule(i);
@@ -1574,6 +1664,9 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 if (((this.loaded[i] || ON_PAGE[i]) &&
                         !this.forceMap[i] && !this.ignoreRegistered) ||
                         (type && m && m.type != type)) {
+                    delete r[i];
+                }
+                if (ignore && ignore[i]) {
                     delete r[i];
                 }
                 // remove anything this module supersedes
@@ -1587,11 +1680,16 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 }
             }
         }
-        // Y.log('required now: ' + YObject.keys(r));
 
         return r;
     },
-
+    /**
+    * Handles the queue when a module has been loaded for all cases
+    * @method _finish
+    * @private
+    * @param {String} msg The message from Loader
+    * @param {Boolean} success A boolean denoting success or failure
+    */
     _finish: function(msg, success) {
         Y.log('loader finishing: ' + msg + ', ' + Y.id + ', ' +
             this.data, 'info', 'loader');
@@ -1608,35 +1706,50 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         }
         this._continue();
     },
-
+    /**
+    * The default Loader onSuccess handler, calls this.onSuccess with a payload
+    * @method _onSuccess
+    * @private
+    */
     _onSuccess: function() {
-        // Y.log('loader _onSuccess, skipping: ' +
-        // Y.Object.keys(this.skipped), "info", "loader");
-        var skipped = Y.merge(this.skipped), fn;
+        var self = this, skipped = Y.merge(self.skipped), fn,
+            failed = [], rreg = self.requireRegistration,
+            success, msg;
 
         oeach(skipped, function(k) {
-            delete this.inserted[k];
-        }, this);
+            delete self.inserted[k];
+        });
 
-        this.skipped = {};
+        self.skipped = {};
 
-        // Y.mix(this.loaded, this.inserted);
-        oeach(this.inserted, function(v, k) {
-            Y.mix(this.loaded, this.getProvides(k));
-        }, this);
+        oeach(self.inserted, function(v, k) {
+            var mod = self.getModule(k);
+            if (mod && rreg && mod.type == JS && !(k in YUI.Env.mods)) {
+                failed.push(k);
+            } else {
+                Y.mix(self.loaded, self.getProvides(k));
+            }
+        });
 
-        fn = this.onSuccess;
+        fn = self.onSuccess;
+        msg = (failed.length) ? 'notregistered' : 'success';
+        success = !(failed.length);
         if (fn) {
-            fn.call(this.context, {
-                msg: 'success',
-                data: this.data,
-                success: true,
+            fn.call(self.context, {
+                msg: msg,
+                data: self.data,
+                success: success,
+                failed: failed,
                 skipped: skipped
             });
         }
-        this._finish('success', true);
+        self._finish(msg, success);
     },
-
+    /**
+    * The default Loader onFailure handler, calls this.onFailure with a payload
+    * @method _onFailure
+    * @private
+    */
     _onFailure: function(o) {
         Y.log('load error: ' + o.msg + ', ' + Y.id, 'error', 'loader');
         var f = this.onFailure, msg = 'failure: ' + o.msg;
@@ -1650,6 +1763,11 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         this._finish(msg, false);
     },
 
+    /**
+    * The default Loader onTimeout handler, calls this.onTimeout with a payload
+    * @method _onTimeout
+    * @private
+    */
     _onTimeout: function() {
         Y.log('loader timeout: ' + Y.id, 'error', 'loader');
         var f = this.onTimeout;
@@ -1663,7 +1781,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         this._finish('timeout', false);
     },
 
-
     /**
      * Sorts the dependency tree.  The last step of calculate()
      * @method _sort
@@ -1671,13 +1788,11 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
      */
     _sort: function() {
 
-
         // create an indexed list
         var s = YObject.keys(this.required),
             // loaded = this.loaded,
             done = {},
             p = 0, l, a, b, j, k, moved, doneKey;
-
 
         // keep going until we make a pass without moving anything
         for (;;) {
@@ -1735,54 +1850,24 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         }
 
         this.sorted = s;
-
     },
-
-    // _get: function(js, css) {
-
-
-
-    // }
-
-    // _combo: function(js, css) {
-
-    // }
-
-    // _insert: function(source, o, type) {
-    //     if (source) {
-    //         this._config(source);
-    //     }
-
-    //     var js = [],
-    //         css = [],
-    //         mod,
-    //         sorted = this.sorted,
-    //         i = 0,
-    //         l = sorted.length,
-    //         combine = this.combine;
-
-    //     for (; i < l; i++) {
-    //         mod = this.getModule(sorted[i]);
-    //         if (mod.type = CSS && type != JS) {
-    //             css.push(mod);
-    //         } else if (type != CSS) {
-    //             js.push(mod);
-    //         }
-    //     }
-
-    //     if (this.combine) {
-    //         this._combo(js, css);
-    //     } else {
-    //         this._get(js, css);
-    //     }
-
-    // },
-
+    /**
+    * (Unimplemented)
+    * @method partial
+    * @unimplemented
+    */
     partial: function(partial, o, type) {
         this.sorted = partial;
         this.insert(o, type, true);
     },
-
+    /**
+    * Handles the actual insertion of script/link tags
+    * @method _insert
+    * @param {Object} source The YUI instance the request came from
+    * @param {Object} o The metadata to include
+    * @param {String} type JS or CSS
+    * @param {Boolean} [skipcalc=false] Do a Loader.calculate on the meta
+    */
     _insert: function(source, o, type, skipcalc) {
 
 // Y.log('private _insert() ' + (type || '') + ', ' + Y.id, "info", "loader");
@@ -1848,9 +1933,11 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         this.loadNext();
 
     },
-
-    // Once a loader operation is completely finished, process
-    // any additional queued items.
+    /**
+    * Once a loader operation is completely finished, process any additional queued items.
+    * @method _continue
+    * @private
+    */
     _continue: function() {
         if (!(_queue.running) && _queue.size() > 0) {
             _queue.running = true;
@@ -1890,7 +1977,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
      */
     loadNext: function(mname) {
         // It is possible that this function is executed due to something
-        // else one the page loading a YUI module.  Only react when we
+        // else on the page loading a YUI module.  Only react when we
         // are actively loading something
         if (!this._loading) {
             return;
@@ -1898,33 +1985,32 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
         var s, len, i, m, url, fn, msg, attr, group, groupName, j, frag,
             comboSource, comboSources, mods, combining, urls, comboBase,
-            // provided,
             self = this,
-            type = this.loadType,
+            type = self.loadType,
             handleSuccess = function(o) {
-                                self.loadNext(o.data);
-                            },
+                self.loadNext(o.data);
+            },
             handleCombo = function(o) {
-                                self._combineComplete[type] = true;
-                                var i, len = combining.length;
+                self._combineComplete[type] = true;
+                var i, len = combining.length;
 
-                                for (i = 0; i < len; i++) {
-                                    self.inserted[combining[i]] = true;
-                                }
+                for (i = 0; i < len; i++) {
+                    self.inserted[combining[i]] = true;
+                }
 
-                                handleSuccess(o);
-                            };
+                handleSuccess(o);
+            };
 
-        if (this.combine && (!this._combineComplete[type])) {
+        if (self.combine && (!self._combineComplete[type])) {
 
             combining = [];
 
-            this._combining = combining;
-            s = this.sorted;
+            self._combining = combining;
+            s = self.sorted;
             len = s.length;
 
             // the default combo base
-            comboBase = this.comboBase;
+            comboBase = self.comboBase;
 
             url = comboBase;
             urls = [];
@@ -1933,11 +2019,11 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
             for (i = 0; i < len; i++) {
                 comboSource = comboBase;
-                m = this.getModule(s[i]);
+                m = self.getModule(s[i]);
                 groupName = m && m.group;
                 if (groupName) {
 
-                    group = this.groups[groupName];
+                    group = self.groups[groupName];
 
                     if (!group.combine) {
                         m.combine = false;
@@ -1948,7 +2034,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                         comboSource = group.comboBase;
                     }
 
-                    if (group.root) {
+                    if ("root" in group && L.isValue(group.root)) {
                         m.root = group.root;
                     }
 
@@ -1965,24 +2051,24 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                     len = mods.length;
 
                     for (i = 0; i < len; i++) {
-                        // m = this.getModule(s[i]);
+                        // m = self.getModule(s[i]);
                         m = mods[i];
 
                         // Do not try to combine non-yui JS unless combo def
                         // is found
                         if (m && (m.type === type) && (m.combine || !m.ext)) {
 
-                            frag = (m.root || this.root) + m.path;
+                            frag = ((L.isValue(m.root)) ? m.root : self.root) + m.path;
 
                             if ((url !== j) && (i < (len - 1)) &&
-                            ((frag.length + url.length) > this.maxURLLength)) {
-                                urls.push(this._filter(url));
+                            ((frag.length + url.length) > self.maxURLLength)) {
+                                urls.push(self._filter(url));
                                 url = j;
                             }
 
                             url += frag;
                             if (i < (len - 1)) {
-                                url += '&';
+                                url += self.comboSep;
                             }
 
                             combining.push(m.name);
@@ -1991,7 +2077,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                     }
 
                     if (combining.length && (url != j)) {
-                        urls.push(this._filter(url));
+                        urls.push(self._filter(url));
                     }
                 }
             }
@@ -2003,29 +2089,29 @@ Y.log('Attempting to use combo: ' + combining, 'info', 'loader');
                 // if (m.type === CSS) {
                 if (type === CSS) {
                     fn = Y.Get.css;
-                    attr = this.cssAttributes;
+                    attr = self.cssAttributes;
                 } else {
                     fn = Y.Get.script;
-                    attr = this.jsAttributes;
+                    attr = self.jsAttributes;
                 }
 
                 fn(urls, {
-                    data: this._loading,
+                    data: self._loading,
                     onSuccess: handleCombo,
-                    onFailure: this._onFailure,
-                    onTimeout: this._onTimeout,
-                    insertBefore: this.insertBefore,
-                    charset: this.charset,
+                    onFailure: self._onFailure,
+                    onTimeout: self._onTimeout,
+                    insertBefore: self.insertBefore,
+                    charset: self.charset,
                     attributes: attr,
-                    timeout: this.timeout,
+                    timeout: self.timeout,
                     autopurge: false,
-                    context: this
+                    context: self
                 });
 
                 return;
 
             } else {
-                this._combineComplete[type] = true;
+                self._combineComplete[type] = true;
             }
         }
 
@@ -2033,7 +2119,7 @@ Y.log('Attempting to use combo: ' + combining, 'info', 'loader');
 
             // if the module that was just loaded isn't what we were expecting,
             // continue to wait
-            if (mname !== this._loading) {
+            if (mname !== self._loading) {
                 return;
             }
 
@@ -2044,28 +2130,28 @@ Y.log('Attempting to use combo: ' + combining, 'info', 'loader');
             // will pass that module name to this function.  Storing this
             // data to avoid loading the same module multiple times
             // centralize this in the callback
-            this.inserted[mname] = true;
-            // this.loaded[mname] = true;
+            self.inserted[mname] = true;
+            // self.loaded[mname] = true;
 
-            // provided = this.getProvides(mname);
-            // Y.mix(this.loaded, provided);
-            // Y.mix(this.inserted, provided);
+            // provided = self.getProvides(mname);
+            // Y.mix(self.loaded, provided);
+            // Y.mix(self.inserted, provided);
 
-            if (this.onProgress) {
-                this.onProgress.call(this.context, {
+            if (self.onProgress) {
+                self.onProgress.call(self.context, {
                         name: mname,
-                        data: this.data
+                        data: self.data
                     });
             }
         }
 
-        s = this.sorted;
+        s = self.sorted;
         len = s.length;
 
         for (i = 0; i < len; i = i + 1) {
             // this.inserted keeps track of what the loader has loaded.
             // move on if this item is done.
-            if (s[i] in this.inserted) {
+            if (s[i] in self.inserted) {
                 continue;
             }
 
@@ -2073,51 +2159,53 @@ Y.log('Attempting to use combo: ' + combining, 'info', 'loader');
             // from Y, loadNext may be called multiple times for
             // the same module when loading a rollup.  We can safely
             // skip the subsequent requests
-            if (s[i] === this._loading) {
+            if (s[i] === self._loading) {
                 Y.log('still loading ' + s[i] + ', waiting', 'info', 'loader');
                 return;
             }
 
             // log("inserting " + s[i]);
-            m = this.getModule(s[i]);
+            m = self.getModule(s[i]);
 
             if (!m) {
-                msg = 'Undefined module ' + s[i] + ' skipped';
-                Y.log(msg, 'warn', 'loader');
-                // this.inserted[s[i]] = true;
-                this.skipped[s[i]] = true;
+                if (!self.skipped[s[i]]) {
+                    msg = 'Undefined module ' + s[i] + ' skipped';
+                    Y.log(msg, 'warn', 'loader');
+                    // self.inserted[s[i]] = true;
+                    self.skipped[s[i]] = true;
+                }
                 continue;
 
             }
 
-            group = (m.group && this.groups[m.group]) || NOT_FOUND;
+            group = (m.group && self.groups[m.group]) || NOT_FOUND;
 
             // The load type is stored to offer the possibility to load
             // the css separately from the script.
             if (!type || type === m.type) {
-                this._loading = s[i];
-Y.log('attempting to load ' + s[i] + ', ' + this.base, 'info', 'loader');
+                self._loading = s[i];
+Y.log('attempting to load ' + s[i] + ', ' + self.base, 'info', 'loader');
 
                 if (m.type === CSS) {
                     fn = Y.Get.css;
-                    attr = this.cssAttributes;
+                    attr = self.cssAttributes;
                 } else {
                     fn = Y.Get.script;
-                    attr = this.jsAttributes;
+                    attr = self.jsAttributes;
                 }
 
-                url = (m.fullpath) ? this._filter(m.fullpath, s[i]) :
-                      this._url(m.path, s[i], group.base || m.base);
+                url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :
+                      self._url(m.path, s[i], group.base || m.base);
 
                 fn(url, {
                     data: s[i],
                     onSuccess: handleSuccess,
-                    insertBefore: this.insertBefore,
-                    charset: this.charset,
+                    insertBefore: self.insertBefore,
+                    charset: self.charset,
                     attributes: attr,
-                    onFailure: this._onFailure,
-                    onTimeout: this._onTimeout,
-                    timeout: this.timeout,
+                    onFailure: self._onFailure,
+                    onTimeout: self._onTimeout,
+                    timeout: self.timeout,
                     autopurge: false,
                     context: self
                 });
@@ -2127,18 +2215,18 @@ Y.log('attempting to load ' + s[i] + ', ' + this.base, 'info', 'loader');
         }
 
         // we are finished
-        this._loading = null;
+        self._loading = null;
 
-        fn = this._internalCallback;
+        fn = self._internalCallback;
 
         // internal callback for loading css first
         if (fn) {
             // Y.log('loader internal');
-            this._internalCallback = null;
-            fn.call(this);
+            self._internalCallback = null;
+            fn.call(self);
         } else {
             // Y.log('loader complete');
-            this._onSuccess();
+            self._onSuccess();
         }
     },
 
@@ -2174,11 +2262,58 @@ Y.log('attempting to load ' + s[i] + ', ' + this.base, 'info', 'loader');
      * Generates the full url for a module
      * method _url
      * @param {string} path the path fragment.
+     * @param {String} name The name of the module
+     * @pamra {String} [base=self.base] The base url to use
      * @return {string} the full url.
      * @private
      */
     _url: function(path, name, base) {
         return this._filter((base || this.base || '') + path, name);
+    },
+    /**
+    * Returns an Object hash of file arrays built from `loader.sorted` or from an arbitrary list of sorted modules.
+    * @method resolve
+    * @param {Boolean} [calc=false] Perform a loader.calculate() before anything else
+    * @param {Array} [s=loader.sorted] An override for the loader.sorted array
+    * @return {Object} Object hash (js and css) of two arrays of file lists
+    * @example This method can be used as an off-line dep calculator
+    *
+    *        var Y = YUI();
+    *        var loader = new Y.Loader({
+    *            filter: 'debug',
+    *            base: '../../',
+    *            root: 'build/',
+    *            combine: true,
+    *            require: ['node', 'dd', 'console']
+    *        });
+    *        var out = loader.resolve(true);
+    *
+    */
+    resolve: function(calc, s) {
+        var self = this, i, m, url, out = { js: [], css: [] };
+
+        if (calc) {
+            self.calculate();
+        }
+        s = s || self.sorted;
+
+        for (i = 0; i < s.length; i++) {
+            m = self.getModule(s[i]);
+            if (m) {
+                if (self.combine) {
+                    url = self._filter((self.root + m.path), m.name, self.root);
+                } else {
+                    url = self._filter(m.fullpath, m.name, '') || self._url(m.path, m.name);
+                }
+                out[m.type].push(url);
+            }
+        }
+        if (self.combine) {
+            out.js = [self.comboBase + out.js.join(self.comboSep)];
+            out.css = [self.comboBase + out.css.join(self.comboSep)];
+        }
+
+        return out;
     }
 };
 

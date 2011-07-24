@@ -1,0 +1,111 @@
+<style scoped>
+#custom-doc { width: 95%; min-width: 950px; }
+#pagetitle {background-image: url(../../assets/bg_hd.gif);}
+#mygraphiccontainer {
+    position: relative;
+    width: 700px;
+    height:400px;
+}
+</style>
+<div class="intro">
+<p>
+This example shows how to create gradient fills for a shape. By default, the `fill` attribute of a shape instance will generate a solid fill for the shape. Setting the `type` property on the `fill` attribute to `linear` or `radial` will create corresponding
+gradient fill. Each gradient type has its own set of properties for defining the fill. Both share the `stop` property. The `stop` property defines the colors and their opacity and position in a 
+gradient fill. It is an array of objects containing the following information.
+</p>
+   <dl>
+       <dt>color</dt><dd>The color of the stop.</dd>
+       <dt>opacity</dt><dd>Number between 0 and 1 that indicates the opacity of the stop. The default value is 1. Note: No effect for IE <= 8</dd>
+       <dt>offset</dt><dd>Number between 0 and 1 indicating where the color stop is positioned.</dd> 
+   </dl>
+
+<p>
+Linear gradients included a rotation property which defines the direction of the gradient. (by default, linear gradients go left to right)
+    <dl>
+        <dt>rotation</dt><dd>Linear gradients flow left to right by default. The rotation property allows you to change the flow by rotation. (e.g. A rotation of 180 would make the gradient pain from right to left.)</dd>
+    </dl>
+</p>
+<p>
+Radial gradients include the following additional properties:
+    <dl>
+       <dt>cx</dt><dd>The x-coordinate of the center of the gradient circle. Determines where the color stop begins. The default value 0.5.</dd>
+       <dt>cy</dt><dd>The y-coordinate of the center of the gradient circle. Determines where the color stop begins. The default value 0.5.</dd>
+       <dt>r</dt><dd>Radius of the gradient circle. Determines where the color stops end. The default value is 0.5.</dd>
+       <dt>fx</dt><dd>Focal point x-coordinate of the gradient.</dd>
+       <dt>fy</dt><dd>Focal point y-coordinate of the gradient.</dd>
+    </dl>
+</p>
+</div>
+<div class="example">
+{{>graphics-gradients-source}}
+</div>
+
+<h2>HTML</h2>
+```
+<div id="mygraphiccontainer"></div>
+```
+
+<h2>CSS</h2>
+```
+#mygraphiccontainer {
+    position: relative;
+    width: 700px;
+    height:400px;
+}
+```
+<h2>Javascript</h2>
+
+<p>Add a rectangle with a linear gradient.</p>
+```
+        var mygraphic = new Y.Graphic({render:"#mygraphiccontainer"});
+        var myrect = mygraphic.getShape({
+            type: "rect",
+            stroke: {
+                color:"#000",
+                weight: 1
+            },
+            fill: {
+                type: "linear",
+                rotation: 271,
+                stops: [
+                    {color: "#ff6666", opacity: 1, offset: 0},
+                    {color: "#00ffff", opacity: 1, offset: 0.5},
+                    {color: "#000000", opacity: 1, offset: 1}
+                ]
+            },
+            width:685,
+            height:400
+        });
+```
+
+<p>Add a circle with a radial gradient.</p>
+
+```
+        var mycircle = mygraphic.getShape({
+            type: "circle",
+            radius: 50,
+            x: 0,
+            y: 0,
+            fill: {
+                type: "radial",
+                stops: [
+                    {color: "#ff6666", offset: 0},
+                    {color: "#00ffff", offset: 0.4},
+                    {color: "#000000", offset: 0.7}
+                ],
+                cx: .5,
+                cy: .5,
+                fx: 0.1,
+                fy: 0.3,
+                r: 0.5
+            },
+            stroke: {
+                color: "#000"
+            }
+        });
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>graphics-gradients-source}}
+```

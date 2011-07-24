@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Performance tests of various datatables</title>
+	</head>
+	<body>
+		
+		<div id="node"></div>
+		
+		<script src="../../../build/yui/yui.js"></script>
+		
+		<script>
+			 var Y = YUI({
+                filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+              }).use('node', function(Y) {
+			  YNode = Y.Node;
+			  YSub = Y.Lang.sub;
+			
+				//createTableFromYNode();
+				// 			  	Y.one('#node table').remove();
+				//usingDOM();
+				// Y.one('#node table').remove();
+				superLongCrazyString();
+			 });
+
+
+				
+				//This table is generated through a series of node creations using Y.Node.create()
+				function createTableFromYNode() {
+					var TEMPLATE_TABLE = '<table></table>',
+				    TEMPLATE_COL = '<col></col>',
+				    TEMPLATE_THEAD = '<thead></thead>',
+				    TEMPLATE_TBODY = '<tbody></tbody>',
+				    TEMPLATE_TH = '<th id="{id}" rowspan="{rowspan}" colspan="{colspan}" class="{classnames}"><div>{value}</div></th>',
+				    TEMPLATE_TR = '<tr id="{id}"></tr>',
+				    TEMPLATE_TD = '<td headers="{headers}" class="{classnames}"><div>{value}</div></td>',
+				    TEMPLATE_VALUE = '{value}',
+				    TEMPLATE_MSG = '<tbody></tbody>',
+					
+					tblNode = YNode.create(TEMPLATE_TABLE),
+					tBodyNode = YNode.create(TEMPLATE_TBODY),
+					trNode = YNode.create(TEMPLATE_TR);
+					
+					for (var i = 0; i <= 10000; ++i) {
+						
+						if (i%10 === 0 && i !== 0) {
+							tBodyNode.append(trNode);
+							trNode = YNode.create(TEMPLATE_TR);
+						}
+						
+						var tdNode = YNode.create(YSub(TEMPLATE_TD, {value:i}));
+						trNode.append(tdNode);
+						
+					}
+					
+					tblNode.append(tBodyNode);
+					Y.one('#node').append(tblNode);
+				    
+				}
+				
+				function cloneTr() {
+					var TEMPLATE_TABLE = '<table></table>',
+				    TEMPLATE_COL = '<col></col>',
+				    TEMPLATE_THEAD = '<thead></thead>',
+				    TEMPLATE_TBODY = '<tbody></tbody>',
+				    TEMPLATE_TH = '<th id="{id}" rowspan="{rowspan}" colspan="{colspan}" class="{classnames}"><div>{value}</div></th>',
+				    TEMPLATE_TR = '<tr id="{id}"></tr>',
+				    TEMPLATE_TD = '<td headers="{headers}" class="{classnames}"><div>{value}</div></td>',
+				    TEMPLATE_VALUE = '{value}',
+				    TEMPLATE_MSG = '<tbody></tbody>',
+					
+					tblNode = YNode.create(TEMPLATE_TABLE),
+					tBodyNode = YNode.create(TEMPLATE_TBODY),
+					trNode = YNode.create(TEMPLATE_TR);
+				}
+				
+				//This table is created in a similar way to the Y.Node.create() table, except it bypasses
+				//node and uses direct DOM methods
+				function usingDOM() {
+					var TEMPLATE_TABLE = '<table></table>',
+				    TEMPLATE_COL = '<col></col>',
+				    TEMPLATE_THEAD = '<thead></thead>',
+				    TEMPLATE_TBODY = '<tbody></tbody>',
+				    TEMPLATE_TH = '<th id="{id}" rowspan="{rowspan}" colspan="{colspan}" class="{classnames}"><div>{value}</div></th>',
+				    TEMPLATE_TR = '<tr id="{id}"></tr>',
+				    TEMPLATE_TD = '<td headers="{headers}" class="{classnames}"><div>{value}</div></td>',
+				    TEMPLATE_VALUE = '{value}',
+				    TEMPLATE_MSG = '<tbody></tbody>',
+					
+					tbl = document.createElement("table"),
+					tbody = document.createElement("tbody"),
+					tr = document.createElement("tr");
+					
+					for (var i = 0; i <= 10000; ++i) {
+						
+						if (i%10 === 0 && i !== 0) {
+							tbody.appendChild(tr);
+							tr = document.createElement("tr");
+						}
+						
+						var td = document.createElement("td"),
+						liner = document.createElement('div');
+						liner.innerHTML = YSub(TEMPLATE_VALUE, {value:i});
+						td.appendChild(liner);
+						tr.appendChild(td);
+						
+					}
+					
+					tbl.appendChild(tbody);
+					document.getElementById('node').appendChild(tbl);
+				}
+				
+				//This method generates a super long string, and performs 1 Y.Node.create() operation
+				function superLongCrazyString() {
+					
+					var TEMPLATE = {
+						OPEN_TABLE: '<table>',
+						CLOSE_TABLE: '</table>',
+						
+						OPEN_TBODY: '<tbody>',
+						CLOSE_TBODY: '</tbody>',
+						
+						OPEN_TR: '<tr id="{id}">',
+						CLOSE_TR: '</tr>',
+						
+						TH: '<th id="{id}" rowspan="{rowspan}" colspan="{colspan}" class="{classnames}"><div>{value}</div></th>'
+					},
+					
+					str = TEMPLATE.OPEN_TABLE + TEMPLATE.OPEN_TBODY,
+					table;
+					
+
+					for (var i = 0; i < 10000; ++i) {
+
+						if (i%10 === 0) {
+							str += TEMPLATE.OPEN_TR;
+						}
+						
+						str += YSub(TEMPLATE.TH, {value:i});
+						
+						if (i%10 === 9) {
+							str += TEMPLATE.CLOSE_TR;
+						}
+
+					}
+					
+					table = YNode.create(str);	
+					Y.one('#node').append(table);					
+					
+				}
+			
+			
+		</script>
+	</body>
+</html>
+
+
+</script>

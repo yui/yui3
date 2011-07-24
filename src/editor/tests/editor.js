@@ -1,7 +1,9 @@
 YUI({
+    lazyEventFacade: true,
     base: '../../../build/',
     //filter: 'DEBUG',
     filter: 'RAW',
+    allowRollup: false,
     logExclude: {
         'YUI': true,
         Event: true,
@@ -10,7 +12,7 @@ YUI({
         augment: true,
         useConsole: true
     }
-}).use('console', 'test', 'editor', 'editor-para', 'editor-br', 'node-event-simulate', function(Y) {
+}).use('console', 'test', 'editor-base', 'editor-para', 'editor-br', 'editor-bidi', 'node-event-simulate', function(Y) {
 
     var myConsole = new Y.Console({
         height: Y.one(window).get('winHeight') + 'px',
@@ -138,6 +140,7 @@ YUI({
         },
         test_double_plug: function() {
             editor.plug(Y.Plugin.EditorPara);
+            //This should error
             editor.plug(Y.Plugin.EditorBR);
         },
         test_double_down: function() {
@@ -151,22 +154,57 @@ YUI({
                 content: 'Hello <b>World</b>!!',
                 extracss: 'b { color: red; }'
             });
-            Y.Assert.isInstanceOf(Y.EditorBase, editor, 'Forth EditorBase instance can not be created');
+            Y.Assert.isInstanceOf(Y.EditorBase, editor, 'Fifth EditorBase instance can not be created');
         },
         test_double_plug2: function() {
             editor.plug(Y.Plugin.EditorBR);
+            //This should error
             editor.plug(Y.Plugin.EditorPara);
         },
         test_double_down2: function() {
             Y.Assert.isInstanceOf(Y.Plugin.EditorBR, editor.editorBR, 'EditorBR was not plugged..');
             editor.render('#editor');
             editor.destroy();
-            Y.Assert.areEqual(Y.one('#editor frame'), null, 'Forth Frame was not destroyed');
+            Y.Assert.areEqual(Y.one('#editor frame'), null, 'Fifth Frame was not destroyed');
+        },
+        test_bidi_noplug: function() {
+            editor = new Y.EditorBase({
+                content: 'Hello <b>World</b>!!',
+                extracss: 'b { color: red; }'
+            });
+            editor.render('#editor');
+            this.wait(function() {
+                //This should error
+                editor.execCommand('bidi');
+            }, 1500);
+        },
+        test_bidi_plug: function() {
+            editor.plug(Y.Plugin.EditorPara);
+            editor.plug(Y.Plugin.EditorBidi);
+            Y.Assert.isInstanceOf(Y.Plugin.EditorBidi, editor.editorBidi, 'EditorBidi plugin failed to load');
+            editor.focus(function() {
+                var inst = editor.getInstance();
+                var sel = new inst.Selection();
+                var b = inst.one('b');
+                Y.Assert.areEqual(b.get('parentNode').get('dir'), '', 'Default direction');
+                sel.selectNode(b, true, true);
+                editor.execCommand('bidi');
+                Y.Assert.areEqual(b.get('parentNode').get('dir'), 'rtl', 'RTL not added to node');
+
+                sel.selectNode(b, true, true);
+                editor.execCommand('bidi');
+                Y.Assert.areEqual(b.get('parentNode').get('dir'), 'ltr', 'LTR not added to node');
+
+                sel.selectNode(b, true, true);
+                editor.execCommand('bidi');
+                Y.Assert.areEqual(b.get('parentNode').get('dir'), 'rtl', 'RTL not added BACK to node');
+            });
         },
         _should: {
-            error: {
+            error: { //These tests should error
                 test_double_plug: true,
-                test_double_plug2: true
+                test_double_plug2: true,
+                test_bidi_noplug: true
             }
         }
     };

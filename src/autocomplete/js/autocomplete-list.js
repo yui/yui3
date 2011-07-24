@@ -1,14 +1,17 @@
 /**
  * Traditional autocomplete dropdown list widget, just like Mom used to make.
  *
- * @module autocomplete
  * @submodule autocomplete-list
+ */
+
+/**
+ * Traditional autocomplete dropdown list widget, just like Mom used to make.
+ * 
  * @class AutoCompleteList
  * @extends Widget
  * @uses AutoCompleteBase
  * @uses WidgetPosition
  * @uses WidgetPositionAlign
- * @uses WidgetStack
  * @constructor
  * @param {Object} config Configuration object.
  */
@@ -16,6 +19,9 @@
 var Lang   = Y.Lang,
     Node   = Y.Node,
     YArray = Y.Array,
+
+    // Whether or not we need an iframe shim.
+    useShim = Y.UA.ie && Y.UA.ie < 7,
 
     // keyCode constants.
     KEY_TAB = 9,
@@ -44,8 +50,7 @@ var Lang   = Y.Lang,
 List = Y.Base.create('autocompleteList', Y.Widget, [
     Y.AutoCompleteBase,
     Y.WidgetPosition,
-    Y.WidgetPositionAlign,
-    Y.WidgetStack
+    Y.WidgetPositionAlign
 ], {
     // -- Prototype Properties -------------------------------------------------
     ARIA_TEMPLATE: '<div/>',
@@ -75,8 +80,8 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         this[_SELECTOR_ITEM]     = '.' + this[_CLASS_ITEM];
 
         /**
-         * Fires when an autocomplete suggestion is selected from the list by
-         * a keyboard action or mouse click.
+         * Fires when an autocomplete suggestion is selected from the list,
+         * typically via a keyboard action or mouse click.
          *
          * @event select
          * @param {EventFacade} e Event facade with the following additional
@@ -105,6 +110,10 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         while (this._listEvents.length) {
             this._listEvents.pop().detach();
         }
+
+        if (this._ariaNode) {
+            this._ariaNode.remove().destroy(true);
+        }
     },
 
     bindUI: function () {
@@ -113,16 +122,12 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     renderUI: function () {
-        var ariaNode   = this._createAriaNode(),
-            contentBox = this.get('contentBox'),
-            inputNode  = this._inputNode,
-            listNode   = this.get('listNode'),
-            parentNode = inputNode.get('parentNode');
-
-        if (!listNode) {
-            listNode = this._createListNode();
-            contentBox.append(listNode);
-        }
+        var ariaNode    = this._createAriaNode(),
+            boundingBox = this.get('boundingBox'),
+            contentBox  = this.get('contentBox'),
+            inputNode   = this._inputNode,
+            listNode    = this._createListNode(),
+            parentNode  = inputNode.get('parentNode');
 
         inputNode.addClass(this.getClassName('input')).setAttrs({
             'aria-autocomplete': LIST,
@@ -135,14 +140,27 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         // when the widget is hidden.
         parentNode.append(ariaNode);
 
+        // Add an iframe shim for IE6.
+        if (useShim) {
+            boundingBox.plug(Y.Plugin.Shim);
+        }
+
+        // Force position: absolute on the boundingBox. This works around a
+        // potential CSS loading race condition in Gecko that can cause the
+        // boundingBox to become relatively positioned, which is all kinds of
+        // no good.
+        boundingBox.setStyle('position', 'absolute');
+
         this._ariaNode    = ariaNode;
-        this._boundingBox = this.get('boundingBox');
+        this._boundingBox = boundingBox;
         this._contentBox  = contentBox;
         this._listNode    = listNode;
         this._parentNode  = parentNode;
     },
 
     syncUI: function () {
+        // No need to call _syncPosition() here; the other _sync methods will
+        // call it when necessary.
         this._syncResults();
         this._syncVisibility();
     },
@@ -167,9 +185,11 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      *
      * @method selectItem
      * @param {Node} itemNode (optional) Item node to select.
+     * @param {EventFacade} originEvent (optional) Event that triggered the
+     *     selection, if any.
      * @chainable
      */
-    selectItem: function (itemNode) {
+    selectItem: function (itemNode, originEvent) {
         if (itemNode) {
             if (!itemNode.hasClass(this[_CLASS_ITEM])) {
                 return this;
@@ -183,8 +203,9 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         }
 
         this.fire(EVT_SELECT, {
-            itemNode: itemNode,
-            result  : itemNode.getData(RESULT)
+            itemNode   : itemNode,
+            originEvent: originEvent || null,
+            result     : itemNode.getData(RESULT)
         });
 
         return this;
@@ -281,23 +302,33 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _bindInput: function () {
-        var inputNode  = this._inputNode,
-            tokenInput = this.get('tokenInput'),
-            alignNode  = (tokenInput && tokenInput.get('boundingBox')) ||
-                            inputNode;
+        var inputNode = this._inputNode,
+            alignNode, alignWidth, tokenInput;
 
-        // If this is a tokenInput, align with its bounding box. Otherwise,
-        // align with the inputNode.
-        if (!this.get('align.node')) {
-            this.set('align.node', alignNode);
-        }
+        // Null align means we can auto-align. Set align to false to prevent
+        // auto-alignment, or a valid alignment config to customize the
+        // alignment.
+        if (this.get('align') === null) {
+            // If this is a tokenInput, align with its bounding box.
+            // Otherwise, align with the inputNode. Bit of a cheat.
+            tokenInput = this.get('tokenInput');
+            alignNode  = (tokenInput && tokenInput.get('boundingBox')) || inputNode;
 
-        if (!this.get(WIDTH)) {
-            this.set(WIDTH, alignNode.get('offsetWidth'));
+            this.set('align', {
+                node  : alignNode,
+                points: ['tl', 'bl']
+            });
+
+            // If no width config is set, attempt to set the list's width to the
+            // width of the alignment node. If the alignment node's width is
+            // falsy, do nothing.
+            if (!this.get(WIDTH) && (alignWidth = alignNode.get('offsetWidth'))) {
+                this.set(WIDTH, alignWidth);
+            }
         }
 
         // Attach inputNode events.
-        this._listEvents.push(inputNode.on('blur', this._onInputBlur, this));
+        this._listEvents.push(inputNode.on('blur', this._onListInputBlur, this));
     },
 
     /**
@@ -308,16 +339,21 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      */
     _bindList: function () {
         this._listEvents.concat([
-            this.after('mouseover', this._afterMouseOver),
-            this.after('mouseout', this._afterMouseOut),
+            Y.on('windowresize', this._syncPosition, this),
 
-            this.after('activeItemChange', this._afterActiveItemChange),
-            this.after('alwaysShowListChange', this._afterAlwaysShowListChange),
-            this.after('hoveredItemChange', this._afterHoveredItemChange),
-            this.after('resultsChange', this._afterResultsChange),
-            this.after('visibleChange', this._afterVisibleChange),
+            this.after({
+              mouseover: this._afterMouseOver,
+              mouseout : this._afterMouseOut,
 
-            this._listNode.delegate('click', this._onItemClick, this[_SELECTOR_ITEM], this)
+              activeItemChange    : this._afterActiveItemChange,
+              alwaysShowListChange: this._afterAlwaysShowListChange,
+              hoveredItemChange   : this._afterHoveredItemChange,
+              resultsChange       : this._afterResultsChange,
+              visibleChange       : this._afterVisibleChange
+            }),
+
+            this._listNode.delegate('click', this._onItemClick,
+                    this[_SELECTOR_ITEM], this)
         ]);
     },
 
@@ -368,19 +404,25 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
-     * Creates and returns a list node.
+     * Creates and returns a list node. If the `listNode` attribute is already
+     * set to an existing node, that node will be used.
      *
      * @method _createListNode
      * @return {Node} List node.
      * @protected
      */
     _createListNode: function () {
-        var listNode = Node.create(this.LIST_TEMPLATE);
+        var listNode = this.get('listNode') || Node.create(this.LIST_TEMPLATE);
 
-        return listNode.addClass(this.getClassName(LIST)).setAttrs({
+        listNode.addClass(this.getClassName(LIST)).setAttrs({
             id  : Y.stamp(listNode),
             role: 'listbox'
         });
+
+        this._set('listNode', listNode);
+        this.get('contentBox').append(listNode);
+
+        return listNode;
     },
 
     /**
@@ -408,6 +450,20 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
+     * Synchronizes the result list's position and alignment.
+     *
+     * @method _syncPosition
+     * @protected
+     */
+    _syncPosition: function () {
+        // Force WidgetPositionAlign to refresh its alignment.
+        this._syncUIPosAlign();
+
+        // Resize the IE6 iframe shim to match the list's dimensions.
+        this._syncShim();
+    },
+
+    /**
      * Synchronizes the results displayed in the list with those in the
      * <i>results</i> argument, or with the <code>results</code> attribute if an
      * argument is not provided.
@@ -417,8 +473,6 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _syncResults: function (results) {
-        var items;
-
         if (!results) {
             results = this.get(RESULTS);
         }
@@ -426,14 +480,27 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         this._clear();
 
         if (results.length) {
-            items = this._add(results);
+            this._add(results);
             this._ariaSay('items_available');
         }
+
+        this._syncPosition();
 
         if (this.get('activateFirstItem') && !this.get(ACTIVE_ITEM)) {
             this.set(ACTIVE_ITEM, this._getFirstItemNode());
         }
     },
+
+    /**
+     * Synchronizes the size of the iframe shim used for IE6 and lower. In other
+     * browsers, this method is a noop.
+     *
+     * @method _syncShim
+     * @protected
+     */
+    _syncShim: useShim ? function () {
+        this._boundingBox.shim.sync();
+    } : function () {},
 
     /**
      * Synchronizes the visibility of the tray with the <i>visible</i> argument,
@@ -458,11 +525,15 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         this._boundingBox.set('aria-hidden', !visible);
 
         if (visible) {
-            // Force WidgetPositionAlign to refresh its alignment.
-            this._syncUIPosAlign();
+            this._syncPosition();
         } else {
             this.set(ACTIVE_ITEM, null);
             this._set(HOVERED_ITEM, null);
+
+            // Force a reflow to work around a glitch in IE6 and 7 where some of
+            // the contents of the list will sometimes remain visible after the
+            // container is hidden.
+            this._boundingBox.get('offsetWidth');
         }
     },
 
@@ -478,17 +549,30 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     _afterActiveItemChange: function (e) {
         var inputNode = this._inputNode,
             newVal    = e.newVal,
-            prevVal   = e.prevVal;
+            prevVal   = e.prevVal,
+            node;
 
-        if (prevVal) {
+        // The previous item may have disappeared by the time this handler runs,
+        // so we need to be careful.
+        if (prevVal && prevVal._node) {
             prevVal.removeClass(this[_CLASS_ITEM_ACTIVE]);
         }
 
         if (newVal) {
-            newVal.addClass(this[_CLASS_ITEM_ACTIVE]).scrollIntoView();
+            newVal.addClass(this[_CLASS_ITEM_ACTIVE]);
             inputNode.set('aria-activedescendant', newVal.get(ID));
         } else {
-            inputNode.scrollIntoView();
+            inputNode.removeAttribute('aria-activedescendant');
+        }
+
+        if (this.get('scrollIntoView')) {
+            node = newVal || inputNode;
+
+            if (!node.inRegion(Y.DOM.viewportRegion(), true)
+                    || !node.inRegion(this._contentBox, true)) {
+
+                node.scrollIntoView();
+            }
         }
     },
 
@@ -581,11 +665,11 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     /**
      * Handles <code>inputNode</code> <code>blur</code> events.
      *
-     * @method _onInputBlur
+     * @method _onListInputBlur
      * @param {EventTarget} e
      * @protected
      */
-    _onInputBlur: function (e) {
+    _onListInputBlur: function (e) {
         // Hide the list on inputNode blur events, unless the mouse is currently
         // over the list (which indicates that the user is probably interacting
         // with it). The _lastInputKey property comes from the
@@ -605,10 +689,8 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     _onItemClick: function (e) {
         var itemNode = e.currentTarget;
 
-        e.preventDefault();
-
         this.set(ACTIVE_ITEM, itemNode);
-        this.selectItem(itemNode);
+        this.selectItem(itemNode, e);
     },
 
     // -- Protected Default Event Handlers -------------------------------------
@@ -655,13 +737,6 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             value: null
         },
 
-        // The "align" attribute is documented in WidgetPositionAlign.
-        align: {
-            value: {
-                points: ['tl', 'bl']
-            }
-        },
-
         /**
          * If <code>true</code>, the list will remain visible even when there
          * are no results to display.
@@ -691,11 +766,35 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
          *
          * @attribute hoveredItem
          * @type Node|null
-         * @readonly
+         * @readOnly
          */
         hoveredItem: {
             readOnly: true,
             value: null
+        },
+
+        /**
+         * Node that will contain result items.
+         *
+         * @attribute listNode
+         * @type Node|null
+         * @initOnly
+         */
+        listNode: {
+            writeOnce: 'initOnly',
+            value: null
+        },
+
+        /**
+         * If <code>true</code>, the viewport will be scrolled to ensure that
+         * the active list item is visible when necessary.
+         *
+         * @attribute scrollIntoView
+         * @type Boolean
+         * @default false
+         */
+        scrollIntoView: {
+            value: false
         },
 
         /**
@@ -728,20 +827,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         }
     },
 
-    CSS_PREFIX: Y.ClassNameManager.getClassName('aclist'),
-
-    HTML_PARSER: {
-        /**
-         * Node that will contain result items.
-         *
-         * @attribute listNode
-         * @type Node|null
-         * @readonly
-         */
-        listNode: function () {
-            return this.getClassName(LIST);
-        }
-    }
+    CSS_PREFIX: Y.ClassNameManager.getClassName('aclist')
 });
 
 Y.AutoCompleteList = List;
