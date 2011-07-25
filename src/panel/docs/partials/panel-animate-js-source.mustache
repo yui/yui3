@@ -1,0 +1,56 @@
+YUI().use("transition", "panel", function(Y) {
+  var openBtn = Y.one('#openButton'),
+  panel = new Y.Panel({
+    srcNode: "#panelContent",
+    width:330,
+    centered:true,
+    modal:true,
+    visible:false,
+    buttons: [
+      {
+        value: "Close the panel",
+        action: function(e) {
+          e.preventDefault();
+          panel.hide();
+        },
+        section: "footer"
+      }
+    ],
+    render:true
+  }),
+
+  bb = panel.get('boundingBox');
+
+  bb.setStyles({
+    "-webkit-transform": "scale(0)",
+    "-moz-transform": "scale(0)",
+    "transform": "scale(0)"
+  });
+
+  panel.on('visibleChange', toggleAnimation);
+
+  openBtn.on('click', function(e) {
+    panel.show();
+  });
+
+  function toggleAnimation (e) {
+    if (e.newVal) {
+      bb.transition({
+        duration: 0.3,
+        "-webkit-transform": "scale(1)",
+        "-moz-transform": "scale(1)",
+        "transform": "scale(1)"
+      });
+    }
+    else {
+      bb.transition({
+        duration: 0.3,
+        "-webkit-transform": "scale(0)",
+        "-moz-transform": "scale(0)",
+        "transform": "scale(0)"
+      });
+    }
+  }
+  
+      
+});
