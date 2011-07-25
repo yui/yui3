@@ -102,6 +102,7 @@ Y._rls = function(what) {
             '2v': config.yui2,
             filt: config.filter,
             filts: config.filters,
+            ignore: config.ignore,
             tests: 1 // required in the template
         },
         // The rls base path
@@ -277,7 +278,7 @@ if (!YUI.$rls) {
             Y = rls_active.inst;
         if (Y) {
             Y.log('RLS request received, processing', 'info', 'rls');
-            if (req.css) {
+            if (req.css && Y.config.fetchCSS) {
                 Y.Get.css(rls_active.url + '&css=1');
             }
             if (rls_active.gallery.length) {
