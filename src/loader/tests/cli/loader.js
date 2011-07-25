@@ -807,9 +807,15 @@ suite.add(new YUITest.TestCase({
             });
             loader.calculate();
             //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("datatype-number")) > -1, "Module (datatype-number) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("datatype-date")) > -1, "Module (datatype-date) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("datatype-xml")) > -1, "Module (datatype-xml) not found in sorted array");
+            //Testing A rollup of a rollup module ( datatype )
+            Assert.isTrue((loader.sorted.indexOf("datatype-number-parse")) > -1, "Module (datatype-number-parse) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("datatype-number-format")) > -1, "Module (datatype-number-format) not found in sorted array");
+            //Testing A rollup of a rollup module ( datatype )
+            Assert.isTrue((loader.sorted.indexOf("datatype-date-parse")) > -1, "Module (datatype-date-parse) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("datatype-date-format")) > -1, "Module (datatype-date-format) not found in sorted array");
+            //Testing A rollup of a rollup module ( datatype )
+            Assert.isTrue((loader.sorted.indexOf("datatype-xml-parse")) > -1, "Module (datatype-xml-parse) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("datatype-xml-format")) > -1, "Module (datatype-xml-format) not found in sorted array");
         },
      "Testing datatype-date": function(data) {
             var loader = new Y.Loader({
