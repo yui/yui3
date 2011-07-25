@@ -92,8 +92,8 @@ class MetaJoin(object):
                     fnstr = fnstr.strip()
                     fnreplacers[token] = fnstr
 
-            if 'path' in mod:
-                del mod['path']
+            #if 'path' in mod:
+            #    del mod['path']
 
             if SUBMODULES in mod:
                 subs = mod[SUBMODULES]
@@ -101,8 +101,8 @@ class MetaJoin(object):
 # print simplejson.dumps(subs, ensure_ascii=False, sort_keys=True, indent=4)
 
                 for subk, sub in subs.iteritems():
-                    if 'path' in sub:
-                        del sub['path']
+                    #if 'path' in sub:
+                    #    del sub['path']
                     modules[subk] = sub
                     get_test_fn(sub, seed, subk)
 
@@ -111,8 +111,8 @@ class MetaJoin(object):
             if PLUGINS in mod:
                 plugs = mod[PLUGINS]
                 for plugk, plug in plugs.iteritems():
-                    if 'path' in plug:
-                        del plug['path']
+                    #if 'path' in plug:
+                    #    del plug['path']
                     modules[plugk] = plug
                     get_test_fn(plug, seed, plugk)
 

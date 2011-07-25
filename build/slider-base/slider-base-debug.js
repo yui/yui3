@@ -429,9 +429,9 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
      * <p>Defaults the thumbURL attribute according to the current skin, or
      * &quot;sam&quot; if none can be determined.  Horizontal Sliders will have
      * their <code>thumbUrl</code> attribute set to</p>
-     * <p><code>&quot;/<em>configured</em>/<em>yu</em>i/<em>builddi</em>r/slider/assets/skins/sam/thumb-x.png&quot;</code></p>
+     * <p><code>&quot;/<em>configured</em>/<em>yu</em>i/<em>builddi</em>r/slider-base/assets/skins/sam/thumb-x.png&quot;</code></p>
      * <p>And vertical thumbs will get</p>
-     * <p><code>&quot;/<em>configured</em>/<em>yui</em>/<em>builddir</em>/slider/assets/skins/sam/thumb-y.png&quot;</code></p>
+     * <p><code>&quot;/<em>configured</em>/<em>yui</em>/<em>builddir</em>/slider-base/assets/skins/sam/thumb-y.png&quot;</code></p>
      *
      * @method _initThumbUrl
      * @protected

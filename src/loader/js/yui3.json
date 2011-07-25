@@ -1550,48 +1550,6 @@
             "features"
         ]
     }, 
-    "scrollview": {
-        "requires": [
-            "scrollview-base", 
-            "scrollview-scrollbars"
-        ]
-    }, 
-    "scrollview-base": {
-        "requires": [
-            "widget", 
-            "event-gestures", 
-            "transition"
-        ], 
-        "skinnable": true
-    }, 
-    "scrollview-base-ie": {
-        "condition": {
-            "name": "scrollview-base-ie", 
-            "trigger": "scrollview-base", 
-            "ua": "ie"
-        }, 
-        "requires": [
-            "scrollview-base"
-        ]
-    }, 
-    "scrollview-list": {
-        "requires": [
-            "plugin"
-        ]
-    }, 
-    "scrollview-paginator": {
-        "requires": [
-            "plugin"
-        ]
-    }, 
-    "scrollview-scrollbars": {
-        "requires": [
-            "classnamemanager", 
-            "transition", 
-            "plugin"
-        ], 
-        "skinnable": true
-    }, 
     "selection": {
         "requires": [
             "node"

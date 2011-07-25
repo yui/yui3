@@ -462,7 +462,7 @@ suite.add( new Y.Test.Case({
     "thumbUrl should default to sam skin": function () {
         var slider = new Y.Slider().render("#testbed");
 
-        Y.Assert.areEqual( Y.config.base + 'slider/assets/skins/sam/thumb-x.png', slider.get('thumbUrl') );
+        Y.Assert.areEqual( Y.config.base + 'slider-base/assets/skins/sam/thumb-x.png', slider.get('thumbUrl') );
 
         slider.destroy();
     },
@@ -475,7 +475,7 @@ suite.add( new Y.Test.Case({
 
         slider.render( testbed );
 
-        Y.Assert.areEqual( Y.config.base + 'slider/assets/skins/foo/thumb-x.png', slider.get('thumbUrl') );
+        Y.Assert.areEqual( Y.config.base + 'slider-base/assets/skins/foo/thumb-x.png', slider.get('thumbUrl') );
 
         slider.destroy();
     },
