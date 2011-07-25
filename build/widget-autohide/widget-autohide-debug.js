@@ -57,11 +57,11 @@ WidgetAutohide.ATTRS = {
             //     eventName: FOCUS_OUTSIDE
             // },
 
-            // {
-            //     node: Y.one(DOCUMENT),
-            //     eventName: KEY,
-            //     keyCode: PRESS_ESCAPE
-            // }
+            {
+                node: Y.one(DOCUMENT),
+                eventName: KEY,
+                keyCode: PRESS_ESCAPE
+            }
         ],
         validator: Y.Lang.isArray
     }
@@ -70,7 +70,7 @@ WidgetAutohide.ATTRS = {
 WidgetAutohide.prototype = {
     // *** Instance Members *** //
 
-        _uiHandles : null,
+        _uiHandlesAutohide : null,
 
         // *** Lifecycle Methods *** //
 
@@ -105,8 +105,8 @@ WidgetAutohide.prototype = {
         _uiSetHostVisibleAutohide : function (visible) {
 
             if (visible) {
-                //this._attachUIHandlesAutohide();
-                Y.later(1, this, '_attachUIHandlesAutohide');
+                this._attachUIHandlesAutohide();
+                //Y.later(1, this, '_attachUIHandlesAutohide');
             } else {
                 this._detachUIHandlesAutohide();
             }
@@ -114,10 +114,10 @@ WidgetAutohide.prototype = {
 
         _attachUIHandlesAutohide : function () {
 
-            if (this._uiHandles) { return; }
+            if (this._uiHandlesAutohide) { return; }
 
             var bb = this.get(BOUNDING_BOX),
-                hide = this.hide,
+                hide = Y.bind(this.hide,this),
                 uiHandles = [],
                 self = this,
                 hideOn = this.get('hideOn'),
@@ -152,15 +152,15 @@ WidgetAutohide.prototype = {
                     
                 }
 
-            this._uiHandles = uiHandles;
+            this._uiHandlesAutohide = uiHandles;
         },
 
         _detachUIHandlesAutohide : function () {
 
-            Y.each(this._uiHandles, function(h){
+            Y.each(this._uiHandlesAutohide, function(h){
                 h.detach();
             });
-            this._uiHandles = null;
+            this._uiHandlesAutohide = null;
         },
 
         _afterHostVisibleChangeAutohide : function (e) {
@@ -173,4 +173,4 @@ WidgetAutohide.prototype = {
 Y.WidgetAutohide = WidgetAutohide;
 
 
-}, '@VERSION@' ,{requires:['base-build', 'widget', 'event-outside']});
+}, '@VERSION@' ,{requires:['base-build','widget','event-outside','event-key']});
