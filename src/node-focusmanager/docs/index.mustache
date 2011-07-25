@@ -86,6 +86,7 @@ move focus among each button using the left and right arrows keys.
 the <a href="../event/index.html#keylistener">Using the key Event</a> section of
 the Event documentation for more information on "key" event listeners.)
 </p>
+
 ```
 YUI().use("node-focusmanager", function(Y) {
 
@@ -110,12 +111,14 @@ toolbar.plug(Y.Plugin.NodeFocusManager, {
 
 });
 ```
+
 <p>
 Use the
 <a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_circular"><code>circular</code></a>
 configuration attribute to indicate that focus should be directed to the first
 or last descendant when the user has navigated to the first or last descendant.
 </p>
+
 ```
 YUI().use("node-focusmanager", function(Y) {
 
@@ -143,8 +146,8 @@ toolbar.plug(Y.Plugin.NodeFocusManager, {
 });
 ```
 
-
 <h3 id="activedescendant-attribute">The <code>activeDescendant</code> Attribute</h3>
+
 <p>
 The <a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_activeDescendant"><code>activeDescendant</code></a>
 attribute represents which of the Focus Manager's
@@ -167,6 +170,7 @@ the active descendant will be set to 0, or the index of the first
 enabled descendant. The following example shows how to make the second button
 in the toolbar the active descendant.
 </p>
+
 ```
 <div id="toolbar-1">
     <input type="button" name="btn-add" value="Add">
@@ -177,6 +181,7 @@ in the toolbar the active descendant.
     <input type="button" name="btn-save" value="Save">
 </div>
 ```
+
 <p>
 The
 <a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_activeDescendant"><code>activeDescendant</code></a>
@@ -185,6 +190,7 @@ attributes passed to the
 <a href="{{apiDocs}}/classes/Node.html#method_plug"><code>plug</code></a>
 method.
 </p>
+
 ```
 YUI().use("node-focusmanager", function(Y) {
 
@@ -212,12 +218,14 @@ toolbar.plug(Y.Plugin.NodeFocusManager, {
 
 });
 ```
-The
+
+<p>The
 <a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_activeDescendant"><code>activeDescendant</code></a>
 configuration attribute can also be set at runtime via the
 <a href="{{apiDocs}}/classes/Attribute.html#method_set"><code>set</code></a>
 method.
 </p>
+
 ```
 YUI().use("node-focusmanager", function(Y) {
 
@@ -246,8 +254,8 @@ toolbar.focusManager.set("activeDescendant", 1);
 });
 ```
 
-
 <h3 id="styling-focus">Styling Focus</h3>
+
 <p>
 One of the challenges to styling the focus state of HTML elements is that
 support for the CSS
@@ -268,6 +276,7 @@ each button in the toolbar, set the the
 <a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_focusClass"><code>focusClass</code></a>
 configuration attribute to a value of "focus":
 </p>
+
 ```
 YUI().use("node-focusmanager", function(Y) {
 
@@ -294,6 +303,7 @@ toolbar.plug(Y.Plugin.NodeFocusManager, {
 
 });
 ```
+
 <p>
 Often styling focusable elements such as <code>&#60;input&#62;</code>s
 requires wrapping them in decorator elements, since <code>&#60;input&#62;</code>
@@ -309,6 +319,7 @@ where decorated by a <code>&#60;span&#62;</code>, the "focus" class could be
 applied to the parent <code>&#60;span&#62;</code> of the focused
 <code>&#60;input&#62;</code> using the following code:
 </p>
+
 ```
 YUI().use("node-focusmanager", function(Y) {
 
@@ -341,6 +352,7 @@ toolbar.plug(Y.Plugin.NodeFocusManager, {
 
 });
 ```
+
 <p>
 As demonstrated in the example, the function passed as the value of the
 <code>fn</code> property is passed a reference to the currently focused
@@ -348,8 +360,8 @@ descendant.  That Node reference is then used to return the Node to which the
 class name is to be applied.
 </p>
 
-
 <h3 id="managing-focus">Managing Focus</h3>
+
 <p>
 The Focus Manager Node Plugin manages focus among its defined descendants as an
 atomic operation: the Focus Manager's
@@ -366,6 +378,7 @@ and
 <a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#method_blur"><code>blur</code></a>
 methods, as illustrated in the following example:
 </p>
+
 ```
 YUI().use("node-focusmanager", function(Y) {
 

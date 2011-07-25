@@ -8,5 +8,23 @@
         "utility", "node", "plugin", "focus", "keyboard", "navigation", "beta"
     ],
 
-    "use": ["node-focusmanager"]
+    "use": ["node-focusmanager"],
+
+    "examples": [
+        {
+            "name"       : "node-focusmanager-1",
+            "displayName": "Accessible Toolbar",
+            "description": "Creating an accessible toolbar using the Focus Manager Node Plugin and Node's support for the WAI-ARIA Roles and States.",
+            "modules"    : ["node-focusmanager", "node"],
+            "tags"       : ["node-focusmanager", "accessibility", "focus", "toolbar", "aria"]
+        },
+
+        {
+            "name"       : "node-focusmanager-3",
+            "displayName": "Accessible Menu Button",
+            "description": "Creating an accessible menu button using the Focus Manager Node Plugin, Event's delegation support and mouseenter event, along with the Overlay widget and Node's support for the WAI-ARIA Roles and States.",
+            "modules"    : ["node-focusmanager", "node", "event", "overlay"],
+            "tags"       : ["node-focusmanager", "accessibility", "focus", "menu", "button", "aria", "overlay"]
+        }
+    ]
 }
