@@ -16,6 +16,15 @@
             "tags"       : ["panel", "datatable"],
 
             "hideTableOfContents": true
+        },
+        {
+            "name"       : "panel-animate",
+            "displayName": "Creating an animated panel",
+            "description": "Shows how to create a panel that animates as it is shown and hidden",
+            "modules"    : ["panel", "transition"],
+            "tags"       : ["panel", "transition"],
+
+            "hideTableOfContents": true
         }
 	]
 }
