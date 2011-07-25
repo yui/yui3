@@ -57,58 +57,6 @@ Y.extend(SVGPath, Y.SVGShape, {
      * @private
      */
     _type: "path",
-   
-    /**
-     * Applies translate transformation.
-     *
-     * @method translate
-     * @param {Number} x The x-coordinate
-     * @param {Number} y The y-coordinate
-     */
-    translate: function(x, y)
-    {
-        x = parseInt(x, 10);
-        y = parseInt(y, 10);
-        this._translateX = x;
-        this._translateY = y;
-        this._translate(this._left + x, this._top + y);
-    },
-  
-	/**
-	 * Draws the shape.
-	 *
-	 * @method _draw
-	 * @private
-	 */
-    _draw: function()
-    {
-        this._fillChangeHandler();
-        this._strokeChangeHandler();
-    },
-
-    /**
-     * Returns the bounds for a shape.
-     *
-     * @method getBounds
-     * @return Object
-     */
-    getBounds: function()
-    {
-        var wt = 0,
-            bounds = {},
-            stroke = this.get("stroke"),
-            tx = this.get("translateX"),
-            ty = this.get("translateY");
-        if(stroke && stroke.weight)
-        {
-            wt = stroke.weight;
-        }
-        bounds.left = this._left - wt + tx;
-        bounds.top = this._top - wt + ty;
-        bounds.right = (this._right - this._left) + wt + tx;
-        bounds.bottom = (this._bottom - this._top) + wt + ty;
-        return bounds;
-    },
 
     /**
      *  @private
