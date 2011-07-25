@@ -48,7 +48,7 @@ var WIDGET         = 'widget',
 
     /**
      * Widget extension, which can be used to add modality support to the base Widget class, 
-     * through the <a href="Base.html#method_build">Base.build</a> method.
+     * through the Base.create method.
      *
      * @class WidgetModality
      * @param {Object} config User configuration object
@@ -112,10 +112,10 @@ var WIDGET         = 'widget',
              *
              * @description An array of objects corresponding to the nodes and events that will trigger a re-focus back on the widget.
              * The implementer can supply an array of objects, with each object having the following properties:
-             * eventName: (string, required): The eventName to listen to.
-             * node: (Y.Node, optional): The Y.Node that will fire the event (defaults to the boundingBox of the widget)
-             * By default, this attribute consists of two objects which will cause the widget to re-focus if anything 
-             * outside the widget is clicked on or focussed upon.
+             * <p>eventName: (string, required): The eventName to listen to.</p>
+             * <p>node: (Y.Node, optional): The Y.Node that will fire the event (defaults to the boundingBox of the widget)</p>
+             * <p>By default, this attribute consists of two objects which will cause the widget to re-focus if anything 
+             * outside the widget is clicked on or focussed upon.</p>
              */
             focusOn: {
                 value: [
