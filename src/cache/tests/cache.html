@@ -42,11 +42,6 @@
                 var cache = new Y.Cache();
                 cache.destroy();
                 ARRAYASSERT.isEmpty(cache.get("entries"), "Expected empty array.");
-            },
-            
-            testPlugin: function() {
-                ASSERT.areSame("cache", Y.Plugin.Cache.NS, "Expected namespace.");
-                ASSERT.areSame("cachePlugin", Y.Plugin.Cache.NAME, "Expected name.");
             }
         });
         

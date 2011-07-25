@@ -91,6 +91,7 @@
                 "requires": [
                     "autocomplete-base",
                     "event-resize",
+                    "node-screen",
                     "selector-css3",
                     "shim-plugin",
                     "widget",

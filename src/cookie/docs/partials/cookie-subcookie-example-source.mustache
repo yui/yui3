@@ -1,0 +1,24 @@
+<script>
+YUI().use('cookie', 'console', 'node', function (Y) {
+
+    //used just to show logging output
+    (new Y.Console({style: 'block'})).render('.example');
+    
+    //get subcookie values
+    var name = Y.Cookie.getSub("example", "name");
+    var today = Y.Cookie.getSub("example", "today", function (value) {
+        return new Date(value);
+    });
+    var count = Y.Cookie.getSub("example", "count", Number);
+
+    Y.log("The subcookie 'name' is '" + name + "' (" + (typeof name) + ")");
+    Y.log("The subcookie 'today' is '" + today + "' (" + (typeof today) + ")");
+    Y.log("The subcookie 'count' is '" + count + "' (" + (typeof count) + ")");
+       
+    //set subcookie values
+    Y.Cookie.setSub("example", "name", "Yahoo!");
+    Y.Cookie.setSub("example", "today", (new Date()).toString());
+    Y.Cookie.setSub("example", "count", Math.round(Math.random() * 30));
+
+});
+</script>

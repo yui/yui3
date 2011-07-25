@@ -1,0 +1,211 @@
+<style type="text/css" scoped>
+
+/* Overlay Look/Feel */
+.yui3-overlay-content {
+    text-align:center;
+    padding:2px;
+    border:1px solid #000;
+    background-color:#aaa;
+    font-size:93%;
+}
+
+.yui3-overlay-content .yui3-widget-hd {
+    font-weight:bold;
+    padding:5px;
+    border:2px solid #aa0000;
+    background-color:#fff;
+}
+
+.yui3-overlay-content .yui3-widget-ft {
+    padding:5px;
+    border:2px solid #000;
+    background-color:#ccc;
+}
+
+.yui3-overlay-content .yui3-widget-bd {
+    padding:5px;
+    border:2px solid #0000aa;
+    background-color:#fff;
+}
+
+/* Example Layout CSS */
+.overlay-example {
+    position:relative;
+    height:450px;
+    width:550px;
+}
+
+#constrain-box {
+    border:1px solid #000;
+    background-color:#004C6D;
+
+    position:relative;
+
+    top:80px;
+    left:80px;
+
+    width:350px;
+    height:300px;
+}
+
+.yui3-slider {
+    position:absolute;
+    background-color:transparent;
+}
+
+#x {
+    position:absolute;
+    top:10px;
+    left:30px;
+}
+
+#y {
+    position:absolute;
+    top:30px;
+    left:10px;
+}
+
+</style>
+
+<div class="intro">
+    <p>This example shows how you can use Overlay's constrained positioning support to constrain the XY position of the overlay so that it remains within another node on the page (or within the viewport).</p>
+</div>
+
+<div class="example">
+    {{>overlay-constrain-source}}
+</div>
+
+<h2>Overlay Constrained XY Positioning</h2>
+
+<h3>Setting Up The YUI Instance</h3>
+
+<p>As with the <a href="overlay-xy.html">"Basic XY Positioning"</a> example, to create an instance of an Overlay on your page, the only module you need to request is the `overlay` module. The `overlay` module will pull in the `widget`, `widget-stack`, `widget-position`, `widget-position-align`, `widget-position-constrain` and `widget-stdmod` extensions it uses.</p>
+
+```
+YUI({...}).use("overlay", function(Y) {
+    // We'll write example code here, where we have a Y.Overlay class 
+    // available, which is bundled with XY positioning, align and 
+    // constrain support.
+});
+```
+
+<p>Using the `overlay` module, will also pull down the default CSS required for overlay, on top of which we only need to add our required look/feel CSS for the example.</p>
+
+<h3>Instantiating The Overlay</h3>
+
+<p>For this example, we'll instantiate an Overlay from script, as we did for the <a href="overlay-align.html">"Alignment Support"</a> example, but use the `render` attribute to specify the node under which we want the Overlay to be rendered in the DOM, and to indicate that we want it rendered on construction. The `render` attribute is a sugar attribute for the `render()` method:</p>
+
+```
+    /* Create Overlay from script */
+    var overlay = new Y.Overlay({
+        id:"overlay",
+
+        width:"140px",
+        height:"120px",
+
+        headerContent: "Constrained",
+        bodyContent: "Use the sliders to move the overlay",
+        footerContent: '<label><input type="checkbox" id="constrain"> Constrain </label>',
+
+        align:{node:"#constrain-box", points:["cc", "cc"]},
+        constrain:"#constrain-box",
+
+        render: "#overlay-example"
+    });
+```
+
+<p>We align the overlay to the center of the `#constrain-box` node, which we're also using as the constraining node for the overlay. The `constrain` attribute accepts a node reference (either an actual Node instance, or a string selector reference), or it can simply be set to `true` to constrain the overlay to the Viewport.</p>
+
+<h3>Demonstrating Constrained Support</h3>
+
+<p>For this example, we set up a couple of Slider instances which can be used to set the overlay's `x` and `y` attribute values. 
+
+```
+
+    // Get the current XY position of the overlay 
+    // (after it's been center aligned) to set the 
+    // initial value for the sliders
+    var overlayXY = Y.one("#overlay").getXY();
+
+    // Get the region for the constraing box
+    var constrainRegion = Y.one("#constrain-box").get("region");
+
+    // X-Axis
+    var sx = new Y.Slider({
+        id:"x",
+        length: "450px",
+        min: constrainRegion.left - 50,
+        max: constrainRegion.right + 50,
+        value: overlayXY[0],
+        render:"#overlay-example"
+    });
+
+    // Y Axis
+    var sy = new Y.Slider({
+        id:"y",
+        axis: 'y',
+        length: "400px",
+        min: constrainRegion.top - 50, 
+        max:constrainRegion.bottom + 50,
+        value: overlayXY[1],
+        render: "#overlay-example"
+    });
+    
+```
+
+<p>We set the `min` and `max` values of the slider instances to allow the overlay to be moved beyond the edge of the constraining region, and set the initial `value` of the sliders to reflect the current centered position of the overlay.</p>   
+
+<p>Finally, we set up `valueChange` listeners for the sliders, when attempt to set the corresponding axis position of the overlay:</p>
+
+```
+    // Set the overlay's x attribute value
+    sx.after("valueChange", function(e) {
+        overlay.set("x", e.newVal);
+    });
+
+    // Set the overlay's y attribute value
+    sy.after("valueChange", function(e) {
+        overlay.set("y", e.newVal);
+    });
+```
+
+<h3>CSS: Overlay Look/Feel</h3>
+
+<p>As mentioned in the <a href="overlay-xy.html">"Basic XY Positioning"</a> example, the overlay.css Sam Skin file (build/overlay/assets/skins/sam/overlay.css) provides the default functional CSS for the overlay. Namely the CSS rules to hide the overlay, and position it absolutely. However there's no default out-of-the-box look/feel applied to the Overlay widget.</p>
+
+<p>The example provides it's own look and feel for the Overlay, by defining rules for the content box, header and body sections:</p>
+
+```
+/* Overlay Look/Feel */
+.yui3-overlay-content {
+    text-align:center;
+    padding:2px;
+    border:1px solid #000;
+    background-color:#aaa;
+    font-size:93%;
+}
+
+.yui3-overlay-content .yui3-widget-hd {
+    font-weight:bold;
+    padding:5px;
+    border:2px solid #aa0000;
+    background-color:#fff;
+}
+
+.yui3-overlay-content .yui3-widget-ft {
+    padding:5px;
+    border:2px solid #000;
+    background-color:#ccc;
+}
+
+.yui3-overlay-content .yui3-widget-bd {
+    padding:5px;
+    border:2px solid #0000aa;
+    background-color:#fff;
+}
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>overlay-constrain-source}}
+```

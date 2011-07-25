@@ -301,6 +301,21 @@ baseSuite.add(new Y.Test.Case({
         Assert.areSame('/ac?q=foo%20%26%20bar&a=aardvark', rt('foo & bar'));
     },
 
+    '`this` object in requestTemplate functions should be the AutoComplete instance': function () {
+        var ac    = this.ac,
+            calls = 0;
+
+        this.ac.set('requestTemplate', function () {
+            calls += 1;
+            Assert.areSame(ac, this);
+        });
+
+        this.ac.set('source', ['foo', 'bar']);
+        this.ac.sendRequest('foo');
+
+        Assert.areSame(1, calls);
+    },
+
     'resultFilters should accept a function, array of functions, string, array of strings, or null': function () {
         var filter = function () {};
 
@@ -326,6 +341,7 @@ baseSuite.add(new Y.Test.Case({
 
     'result filters should receive the query and an array of result objects as parameters': function () {
         var called = 0,
+            self   = this,
             filter = function (query, results) {
                 called += 1;
 
@@ -337,6 +353,8 @@ baseSuite.add(new Y.Test.Case({
                     raw    : 'foo&bar',
                     text   : 'foo&bar'
                 }, results[0]);
+
+                Assert.areSame(self.ac, this, '`this` object in filters should be the AutoComplete instance');
 
                 return results;
             };
@@ -359,6 +377,7 @@ baseSuite.add(new Y.Test.Case({
 
     'result formatters should receive the query and an array of result objects as parameters': function () {
         var called = 0,
+            self   = this,
             formatter = function (query, results) {
                 called += 1;
 
@@ -370,6 +389,8 @@ baseSuite.add(new Y.Test.Case({
                     raw    : 'foo&bar',
                     text   : 'foo&bar'
                 }, results[0]);
+
+                Assert.areSame(self.ac, this, '`this` object in formatters should be the AutoComplete instance');
 
                 return ['|foo|'];
             };
@@ -396,6 +417,7 @@ baseSuite.add(new Y.Test.Case({
 
     'result highlighters should receive the query and an array of result objects as parameters': function () {
         var called = 0,
+            self   = this,
             highlighter = function (query, results) {
                 called += 1;
 
@@ -407,6 +429,8 @@ baseSuite.add(new Y.Test.Case({
                     raw    : 'foo&bar',
                     text   : 'foo&bar'
                 }, results[0]);
+
+                Assert.areSame(self.ac, this, '`this` object in highlighters should be the AutoComplete instance');
 
                 return ['|foo|'];
             };
@@ -432,19 +456,35 @@ baseSuite.add(new Y.Test.Case({
     },
 
     'resultListLocator should locate results': function () {
+        var self = this;
+
         this.ac.set('resultListLocator', 'foo.bar');
         this.ac._parseResponse('foo', {results: {foo: {bar: ['foo']}}});
 
         Assert.areSame(1, this.ac.get('results').length, 'results array is empty');
         Assert.areSame('foo', this.ac.get('results')[0].text);
+
+        this.ac.set('resultListLocator', function () {
+            Assert.areSame(self.ac, this, '`this` object should be the AutoComplete instance');
+        });
+
+        this.ac._parseResponse('foo', {results: {foo: {bar: ['foo']}}});
     },
 
     'resultTextLocator should locate result text': function () {
+        var self = this;
+
         this.ac.set('resultTextLocator', 'foo.bar');
         this.ac._parseResponse('foo', {results: [{foo: {bar: 'foo'}}]});
 
         Assert.areSame(1, this.ac.get('results').length, 'results array is empty');
         Assert.areSame('foo', this.ac.get('results')[0].text);
+
+        this.ac.set('resultTextLocator', function () {
+            Assert.areSame(self.ac, this, '`this` object should be the AutoComplete instance');
+        });
+
+        this.ac._parseResponse('foo', {results: [{foo: {bar: 'foo'}}]});
     },
 
     '_parseResponse should preserve duplicates in text when using resultTextLocator': function () {
@@ -822,14 +862,18 @@ baseSuite.add(new Y.Test.Case({
     },
 
     'requestTemplate should be appended to XHR source URLs': function () {
-        var source = '/foo?q={query}';
+        var query  = 'monkey pants',
+            source = '/foo?q={query}';
 
         this.ac.set('source', source);
         this.ac.set('requestTemplate', '&bar=baz');
 
         Assert.areSame(
-            '/foo?q=monkey%20pants&bar=baz',
-            this.ac._getXHRUrl(source, 'monkey pants')
+            '/foo?q=' + encodeURIComponent(query) + '&bar=baz',
+            this.ac._getXHRUrl(source, {
+                query  : query,
+                request: this.ac.get('requestTemplate').call(this.ac, query)
+            })
         );
     }
 }));

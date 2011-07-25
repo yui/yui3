@@ -5,5 +5,71 @@
     "author"     : "sdesai",
 
     "tags": ["overlay", "widget"],
-    "use" : ["overlay"]
+    "use" : ["overlay"],
+    
+    "examples" : [
+        {
+            "name"       : "overlay-xy",
+            "displayName": "Basic XY Positioning",
+            "description": "Shows how to instantiate a basic Overlay instance, and use the Overlay's basic XY positioning support.",
+            "modules"    : ["overlay"],
+            "tags"       : ["overlay"],
+
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "overlay-align",
+            "displayName": "Alignment Support",
+            "description": "Shows how to use the Overlay's XY alignment support, to align the Overlay relative to another element, or to the viewport.",
+            "modules"    : ["overlay"],
+            "tags"       : ["overlay"],
+
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "overlay-stack",
+            "displayName": "Stack Support",
+            "description": "Shows how to use the Overlay's zindex and shim support when positioning Overlays above other elements on the page.",
+            "modules"    : ["overlay"],
+            "tags"       : ["overlay"],
+
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "overlay-stdmod",
+            "displayName": "Standard Module Support",
+            "description": "Shows how to modify content in the Overlay's header, body and footer sections.",
+            "modules"    : ["overlay"],
+            "tags"       : ["overlay"],
+
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "overlay-constrain",
+            "displayName": "Constrain Support",
+            "description": "Shows how to use Overlay's constrainment support, to limit the XY value which can be set for an Overlay.",
+            "modules"    : ["overlay", "slider"],
+            "tags"       : ["overlay", "slider"],
+
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "overlay-io-plugin",
+            "displayName": "IO Plugin",
+            "description": "Shows how to create a simple plugin to retrieve content for the Overlay using the io utility.",
+            "modules"    : ["overlay", "io", "plugin"],
+            "tags"       : ["overlay", "io", "plugin"],
+
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "overlay-anim-plugin",
+            "displayName": "Animation Plugin",
+            "description": "Shows how to create a simple plugin to animate the Overlay's movement and visibility.",
+            "modules"    : ["overlay", "anim", "plugin"],
+            "tags"       : ["overlay", "anim", "plugin"],
+
+            "hideTableOfContents": true
+        }
+    ]
 }

@@ -163,6 +163,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "autocomplete-base", 
             "event-resize", 
+            "node-screen", 
             "selector-css3", 
             "shim-plugin", 
             "widget", 
@@ -1349,6 +1350,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "array-invoke", 
             "arraylist", 
             "base-build", 
+            "escape", 
             "json-parse", 
             "model"
         ]
@@ -1462,6 +1464,20 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "widget-position-align", 
             "widget-stack", 
             "widget-position-constrain"
+        ], 
+        "skinnable": true
+    }, 
+    "panel": {
+        "requires": [
+            "widget", 
+            "widget-stdmod", 
+            "widget-position", 
+            "widget-position-align", 
+            "widget-stack", 
+            "widget-position-constrain", 
+            "widget-modality", 
+            "widget-autohide", 
+            "widget-buttons"
         ], 
         "skinnable": true
     }, 
@@ -1835,7 +1851,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }, 
     "widget": {
-        "skinnable": true, 
         "use": [
             "widget-base", 
             "widget-htmlparser", 
@@ -1853,9 +1868,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "widget-autohide": {
         "requires": [
             "widget", 
-            "plugin", 
             "event-outside", 
-            "base-build"
+            "base-build", 
+            "event-key"
         ], 
         "skinnable": false
     }, 
@@ -1868,7 +1883,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "node-base", 
             "node-style", 
             "classnamemanager"
-        ]
+        ], 
+        "skinnable": true
     }, 
     "widget-base-ie": {
         "condition": {
@@ -1879,6 +1895,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "widget-base"
         ]
+    }, 
+    "widget-buttons": {
+        "requires": [
+            "widget", 
+            "base-build"
+        ], 
+        "skinnable": false
     }, 
     "widget-child": {
         "requires": [
@@ -1899,7 +1922,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "widget-modality": {
         "requires": [
             "widget", 
-            "plugin", 
             "event-outside", 
             "base-build"
         ], 
@@ -2000,4 +2022,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '13e620660ee428a0b4d4597efbd9fefa';
+YUI.Env[Y.version].md5 = '296a4b9cf794fe8bf286741e5f08f65d';

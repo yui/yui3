@@ -1,0 +1,468 @@
+<style type="text/css" scoped>
+
+    #mylistbox em {
+        font-style:normal;
+    }
+
+    #selected {
+        border:1px solid #aaa;
+        padding:2px;
+        width:15em;
+    }
+
+    .yui3-listbox {
+        padding:0;       
+        margin: .25em;
+        border: solid 1px #000;
+        background-color:#fff;
+        white-space:nowrap;
+    }
+
+    .yui3-listbox .yui3-listbox {
+        margin-top: .25em;
+        margin-bottom: .25em;
+        border: none;
+    }
+
+    .yui3-listbox .yui3-option, 
+    .yui3-listbox .yui3-listbox-option {
+        margin:0;
+        padding:0;
+        cursor:default;
+        list-style-image:none;
+        list-style-position:outside;
+        list-style-type:none;
+    }
+
+    .yui3-option-content,
+    .yui3-listbox-label {
+        display: block;
+        padding: .25em .5em;
+    }
+
+    .yui3-listbox-content {
+        margin:0;
+        padding:0;
+        overflow:auto;
+    }
+
+    .yui3-listbox .yui3-listbox .yui3-option-content {
+        margin-left:.5em;
+    }
+
+    .yui3-listbox-label {
+        font-weight: bold;
+    }
+
+    .yui3-option-selected {
+        background-color: #cccccc;
+    }
+
+    .yui3-option-focused {
+        outline: none;
+        background-color: blue;
+        color: #fff;
+    }
+</style>
+
+<div class="intro">
+    <p>This is an advanced example, in which we create a ListBox widget with nested Option widgets, by extending the base `Widget` class, and adding `WidgetParent` and `WidgetChild` extensions, through `Base.build`.</p>
+    <p>The <a href="../tabview">TabView</a> component that is included in the YUI 3 library, is also built using the WidgetParent and WidgetChild extensions.</p>
+</div>
+
+<div class="example">
+    {{>widget-parentchild-listbox-source}}
+</div>
+
+<h3>The WidgetParent and WidgetChild Extensions</h3>
+
+<p><a href="{{apiDocs}}/WidgetParent.html">WidgetParent</a> is an extension, designed to be used with `Base.build` to create a class of Widget which is designed to contain child Widgets (for example a Tree widget, which contains TreeNode children). 
+WidgetParent itself augments <a href="{{apiDocs}}/ArrayList.html">ArrayList</a> providing a convenient set of array iteration and convenience methods, allowing users of your class to easily work with parent's list of children.</p>
+
+<p><a href="{{apiDocs}}/WidgetChild.html">WidgetChild</a> is also an extension, designed to be used with `Base.build` to create a class of Widget which is designed to nested inside parent Widgets (for example a TreeNode widget, which sits inside a Tree widget).</p>
+
+<p>A Widget can be built with both the WidgetParent and WidgetChild extensions (it can be both a Parent and a Child), in cases where we want to support multi-level hierarchies, such as the ListBox example below.</p>
+
+<p>In addition to providing the basic support to manage (add/remove/iterate/render) children the Widget Parent/Child implementations also provides support for both single and multiple selection models.</p>
+
+<h3>Using WidgetParent and WidgetChild to Create the ListBox Class</h3>
+
+<p>For ListBox, since we're creating a new class from scratch, we use the sugar version of `Base.build`, called `Base.create`, which allows us to easily create a new class and define it's prototype and static properties/methods, in a single call, as shown below:</p>
+
+```
+
+// Create a new class, ListBox, which extends Widget, and mixes in both the WidgetParent and WidgetChild 
+// extensions since we want to be able to nest one ListBox inside another, to create heirarchical listboxes
+
+Y.ListBox = Y.Base.create("listbox", Y.Widget, [Y.WidgetParent, Y.WidgetChild], {
+        // Prototype Properties for ListBox
+    }, {
+        // Static Properties for ListBox
+    });
+```
+
+<p>We can then go ahead and fill out the prototype and static properties we want to override in our ListBox implementation, while Widget, WidgetParent and WidgetChild provide the basic Widget rendering and parent-child relationship support. Comments inline below provide the background:</p>
+
+<h4>Prototype Method and Properties</h4>
+
+```
+Y.ListBox = Y.Base.create("listbox", Y.Widget, [Y.WidgetParent, Y.WidgetChild], {
+
+    // The default content box for ListBoxes will be a UL (Widget uses a DIV by default)
+    CONTENT_TEMPLATE : "<ul></ul>",
+
+    // Setup Custom Listeners
+    bindUI: function() {
+
+        if (this.isRoot()) {
+
+            // Setup custom focus handling, using the NodeFocusManager plugin
+            // This will help us easily crete next/previous item handling using the arrow keys
+        
+            this.get("boundingBox").plug(Y.Plugin.NodeFocusManager, {
+                descendants: ".yui3-option",
+                keys: {
+                    next: "down:40",    // Down arrow
+                    previous: "down:38" // Up arrow 
+                },
+                circular: true
+            });
+        }
+
+        this.get("boundingBox").on("contextmenu", function (event) {
+            event.preventDefault();
+        });
+
+        // Setup listener to control keyboard based single/multiple item selection
+        this.on("option:keydown", function (event) {
+
+            var item = event.target,
+                domEvent = event.domEvent,
+                keyCode = domEvent.keyCode,
+                direction = (keyCode == 40);
+
+            if (this.get("multiple")) {
+                if (keyCode == 40 || keyCode == 38) {
+                    if (domEvent.shiftKey) {
+                        this._selectNextSibling(item, direction);
+                    } else {
+                        this.deselectAll();
+                        this._selectNextSibling(item, direction);
+                    }
+                }
+            } else {
+                if (keyCode == 13 || keyCode == 32) {
+                    domEvent.preventDefault();
+                    item.set("selected", 1);
+                }
+            }
+        });
+
+        // Setup listener to control mouse based single/multiple item selection
+        this.on("option:mousedown", function (event) {
+
+            var item = event.target,
+                domEvent = event.domEvent,
+                selection;
+
+            if (this.get("multiple")) {
+                if (domEvent.metaKey) {
+                    item.set("selected", 1);
+                } else {
+                    this.deselectAll();
+                    item.set("selected", 1);
+                }
+            } else {
+                item.set("selected", 1);
+            }
+
+        });
+    },
+
+    // Helper Method, to find the correct next sibling, taking into account nested ListBoxes    
+    _selectNextSibling : function(item, direction) {
+
+        var parent = item.get("parent"),
+            method =  (direction) ? "next" : "previous",
+
+            // Only go circular for the root listbox
+            circular = (parent === this),
+            sibling = item[method](circular);
+
+        if (sibling) {
+            // If we found a sibling, it's either an Option or a ListBox
+            if (sibling instanceof Y.ListBox) {
+                // If it's a ListBox, select it's first child (in the direction we're headed)
+                sibling.selectChild((direction) ? 0 : sibling.size() - 1);
+            } else {
+                // If it's an Option, select it
+                sibling.set("selected", 1);
+            }
+        } else {
+            // If we didn't find a sibling, we're at the last leaf in a nested ListBox
+            parent[method](true).set("selected", 1);
+        }
+    },
+
+    // The markup template we use internally to render nested ListBox children    
+    NESTED_TEMPLATE : '<li class="{nestedOptionClassName}"><em class="{labelClassName}">{label}</em></li>',
+
+    renderUI: function () {
+
+        // Handling Nested Child Element Rendering
+        if (this.get("depth") > -1) {
+
+            var tokens = {
+                    labelClassName : this.getClassName("label"),
+                    nestedOptionClassName : this.getClassName("option"),
+                    label : this.get("label")
+                },
+                liHtml = Y.substitute(this.NESTED_TEMPLATE, tokens),
+                li = Y.Node.create(liHtml),
+
+                boundingBox = this.get("boundingBox"),
+                parent = boundingBox.get("parentNode");
+
+            li.appendChild(boundingBox);
+            parent.appendChild(li);
+        }
+    }
+
+} { /* static properties */ });
+
+```
+
+<h4>Static Properties</h4>
+
+<p>The only static property we're interested in defining for the ListBox class is the `ATTRS` property. Comments inline below provide the background:</p>
+
+```
+{ 
+    // Define any new attributes, or override existing ones
+    ATTRS : {
+
+        // We need to define the default child class to use,
+        // when we need to create children from the configuration 
+        // object passed to add or to the "children" attribute (which is provided by WidgetParent)
+
+        // In this case, when a configuration object (e.g. { label:"My Option" }),
+        // is passed into the add method,or as the value of the "children"
+        // attribute, we want to create instances of Y.Option
+        defaultChildType: {  
+            value: "Option"
+        },
+
+        // Setup Label Attribute
+        label : {
+            validator: Y.Lang.isString
+        }
+    }
+}
+```
+
+<h3>Using WidgetChild to Create the Option (leaf) Class</h3>
+
+<p>The Option class is pretty simple, and largely just needs the attribute and API provided by WidgetChild. We only need to over-ride the default templates and tabIndex handling:</p>
+
+```
+
+Y.Option = Y.Base.create("option", Y.Widget, [Y.WidgetChild], {
+
+    // Override the default DIVs used for rendering the bounding box and content box.
+    CONTENT_TEMPLATE : "<em></em>",
+    BOUNDING_TEMPLATE : "<li></li>",
+
+    // Handle rendering the label attribute
+    renderUI: function () {
+        this.get("contentBox").setContent(this.get("label"));
+    }
+
+}, {
+
+    ATTRS : {
+
+        // Setup Label Attribute
+        label : {
+            validator: Y.Lang.isString
+        },
+
+        // Override the default tabIndex for an Option,
+        // since we want FocusManager to control keboard
+        // based focus
+        tabIndex: {
+            value: -1
+        }
+    }
+
+});
+
+```
+
+<h3>Adding The Code As A "listbox" Custom Module</h3>
+
+<p>This example also shows how you can package code for re-use as a module, by registering it through the `YUI.add` method, specifying any requirements it has (the packaged code is available in ./assets/listbox.js).</p>
+
+```
+YUI.add('listbox', function(Y) {
+ 
+  Y.ListBox = ...
+
+  Y.Option = ...
+ 
+}, '3.1.0' ,{requires:['substitute', 'widget', 'widget-parent', 'widget-child', 'node-focusmanager']});
+```
+
+<h3>Using the Custom "listbox" Module</h3>
+
+<p>To create an instance of a ListBox, we ask for the "listbox" module we packaged in the previous step, through `YUI().use("listbox")`:</p>
+
+```
+    YUI({ 
+        modules: {
+            "listbox": {
+                fullpath: "listbox.js",
+                requires: ["substitute", "widget", "widget-parent", "widget-child", "node-focusmanager"]
+            }
+        }
+     }).use("listbox", function (Y) {
+
+        // Create the top level ListBox instance, and start it off with
+        // 2 children (the defaultChildType will be used to create instances of Y.Option with the 
+        // children configuration passed in below).
+
+        var listbox = new Y.ListBox({  
+            id:"mylistbox", 
+            width:"13em", 
+            height:"15em", 
+            children: [ 
+                { label: "Item One" },
+                { label: "Item Two" } 
+            ]
+        });
+
+        ...
+    });
+```
+
+<p>We can also use the `add` method provided by WidgetParent, to add children after contruction, and then render to the DOM:</p>
+
+```
+    // Then we add a nested ListBox which itself has 2 children, using 
+    // the add API provided by WidgetParent
+    
+    listbox.add({ 
+        type: "ListBox", 
+        label: "Item Three", 
+        children: [ 
+            { label: "Item Three - One" },
+            { label: "Item Three - Two" } 
+        ]
+    });
+
+    // One more Option child
+    
+    listbox.add({ label: "Item Four" });
+
+    // One more Option child, using providing an actual
+    // instance, as opposed to just the configuration
+    
+    listbox.add(
+        new Y.Option({ label: "Item Five" })
+    );
+
+    // And finally, a last nested ListBox, again with
+    // 2 children
+    
+    listbox.add({ 
+        type: "ListBox", 
+        label: "Item Six", 
+        children: [ 
+            { label: "Item Six - One" },
+            { label: "Item Six - Two" }
+        ]
+    });
+
+    // Render it, using Widget's render method,
+    // to the "#exampleContainer" element.
+    listbox.render("#exampleContainer");
+```
+
+<p>The ListBox fires selectionChange events, every time it's selection state changes (provided by WidgetParent), which we can listen and respond to:</p>
+
+```
+    listbox.after("selectionChange", function(e) {
+
+        var selection = this.get("selection");
+        if (selection instanceof Y.ListBox) {
+            selection = selection.get("selection");
+        }
+
+        if (selection) {
+            Y.one("#selection").setContent(selection.get("label"));
+        }
+
+    });
+```
+
+<h3>The CSS</h3>
+
+```
+    .yui3-listbox {
+        padding:0;       
+        margin: .25em;
+        border: solid 1px #000;
+        background-color:#fff;
+        white-space:nowrap;
+    }
+
+    .yui3-listbox .yui3-listbox {
+        margin-top: .25em;
+        margin-bottom: .25em;
+        border: none;
+    }
+
+    .yui3-listbox .yui3-option, 
+    .yui3-listbox .yui3-listbox-option {
+        margin:0;
+        padding:0;
+        cursor:default;
+        list-style-image:none;
+        list-style-position:outside;
+        list-style-type:none;
+    }
+
+    .yui3-option-content,
+    .yui3-listbox-label {
+        display: block;
+        padding: .25em .5em;
+    }
+
+    .yui3-listbox-content {
+        margin:0;
+        padding:0;
+        overflow:auto;
+    }
+
+    .yui3-listbox .yui3-listbox .yui3-option-content {
+        margin-left:.5em;
+    }
+
+    .yui3-listbox-label {
+        font-weight: bold;
+    }
+
+    .yui3-option-selected {
+        background-color: #cccccc;
+    }
+
+    .yui3-option-focused {
+        outline: none;
+        background-color: blue;
+        color: #fff;
+    }
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>widget-parentchild-listbox-source}}
+```

@@ -156,6 +156,7 @@
         "requires": [
             "autocomplete-base", 
             "event-resize", 
+            "node-screen", 
             "selector-css3", 
             "shim-plugin", 
             "widget", 
@@ -1272,6 +1273,7 @@
             "array-invoke", 
             "arraylist", 
             "base-build", 
+            "escape", 
             "json-parse", 
             "model"
         ]
@@ -1385,6 +1387,20 @@
             "widget-position-align", 
             "widget-stack", 
             "widget-position-constrain"
+        ], 
+        "skinnable": true
+    }, 
+    "panel": {
+        "requires": [
+            "widget", 
+            "widget-stdmod", 
+            "widget-position", 
+            "widget-position-align", 
+            "widget-stack", 
+            "widget-position-constrain", 
+            "widget-modality", 
+            "widget-autohide", 
+            "widget-buttons"
         ], 
         "skinnable": true
     }, 
@@ -1743,7 +1759,6 @@
         ]
     }, 
     "widget": {
-        "skinnable": true, 
         "use": [
             "widget-base", 
             "widget-htmlparser", 
@@ -1761,9 +1776,9 @@
     "widget-autohide": {
         "requires": [
             "widget", 
-            "plugin", 
             "event-outside", 
-            "base-build"
+            "base-build", 
+            "event-key"
         ], 
         "skinnable": false
     }, 
@@ -1776,7 +1791,8 @@
             "node-base", 
             "node-style", 
             "classnamemanager"
-        ]
+        ], 
+        "skinnable": true
     }, 
     "widget-base-ie": {
         "condition": {
@@ -1787,6 +1803,13 @@
         "requires": [
             "widget-base"
         ]
+    }, 
+    "widget-buttons": {
+        "requires": [
+            "widget", 
+            "base-build"
+        ], 
+        "skinnable": false
     }, 
     "widget-child": {
         "requires": [
@@ -1807,7 +1830,6 @@
     "widget-modality": {
         "requires": [
             "widget", 
-            "plugin", 
             "event-outside", 
             "base-build"
         ], 

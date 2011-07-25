@@ -2,7 +2,6 @@
     "widget-modality": {
         "requires": [
             "widget",
-            "plugin",
             "event-outside",
             "base-build"
         ], 

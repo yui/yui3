@@ -1,0 +1,334 @@
+<style type="text/css" scoped>
+    /* If js is enabled, hide overlay markup off screen while the overlay is being instantiated */
+    .yui3-js-enabled .yui3-overlay-loading {
+        top:-1000em;
+        left:-1000em;
+        position:absolute;
+    }
+
+    .yui3-overlay-content {
+        background-color:#ccc;
+        border:1px solid #000;
+        padding:5px;
+    }
+
+    .yui3-overlay .yui3-widget-hd, 
+    .yui3-overlay .yui3-widget-bd, 
+    .yui3-overlay .yui3-widget-ft {
+        background-color:#eee;
+        padding:2px;
+        border:1px solid #999;
+    }
+
+    .yui3-overlay .yui3-widget-bd {
+        background-color:#fff;
+    } 
+</style>
+
+<div class="intro">
+    <p>This example shows how you can use Widget's plugin infrastructure to customize the existing behavior of a widget.</p>
+    
+    <p>We create an Animation plugin class for Overlay called `AnimPlugin` which changes the way Overlay instances are shown/hidden, by fading them in and out. The Overlay is initially constructed with the `AnimPlugin` plugged in <em>(with the duration set to 2 seconds)</em>.
+    Clicking the "Unplug AnimPlugin" button, will restore the original non-Animated Overlay show/hide behavior. Clicking on the "Plug AnimPlugin" button will plug in the `AnimPlugin` again, but with a shorter duration.</p>
+    
+    <p>NOTE: This example serves as a tutorial for how to build your own plugins. A packaged animation plugin based on this example is available by using the `widget-anim` module, which sets up a <a href="{{apiDocs}}/WidgetAnim.js.html">`Y.Plugin.WidgetAnim`</a> class, similar to the one discussed in this example.</p>
+</div>
+
+<div class="example">
+    {{>overlay-anim-plugin-source}}
+</div>
+
+<h2>Creating an Animation Plugin For Overlay</h2>
+
+<h3>Setting Up The YUI Instance</h3>
+
+<p>For this example, we'll pull in the `overlay` module, along with the `anim` and `plugin` modules. The `anim` module provides the animation utility, and `plugin` will provide
+the `Plugin` base class which we'll extend to create our `AnimPlugin`. The code to set up our sandbox instance is shown below:</p>
+ 
+```
+YUI({...}).use("overlay", "anim", "plugin", function(Y) {
+    // We'll write our code here, after pulling in the default 
+    // Overlay widget, the Animation utility and the 
+    // Plugin base class
+});
+```
+
+<p>Using the `overlay` module will also pull down the default CSS required for overlay, on top of which we only need to add our required look/feel CSS for the example.</p>
+
+<h3>AnimPlugin Class Structure</h3>
+
+<p>The `AnimPlugin` class will extend the `Plugin` base class. Since `Plugin` derives from `Base`, we follow the same pattern we use for widgets and other utilities which extend Base to setup our new class.</p>
+
+<p>Namely:</p>
+
+<ul>
+    <li>Setting up the constructor to invoke the superclass constructor</li>
+    <li>Setting up a `NAME` property, to identify the class</li>
+    <li>Setting up the default attributes, using the `ATTRS` property</li>
+    <li>Providing prototype implementations for anything we want executed during initialization and destruction using the `initializer` and `destructor` lifecycle methods</li>
+</ul>
+    
+<p>Additionally, since this is a plugin, we provide a `NS` property for the class, which defines the property which will refer to the `AnimPlugin` instance on the host class (e.g. `overlay.fx` will be an instance of `AnimPlugin`)</p>.
+
+<p>This basic structure is shown below:</p>
+
+```
+/* Animation Plugin Constructor */
+function AnimPlugin(config) {
+    AnimPlugin.superclass.constructor.apply(this, arguments);
+}
+
+/* 
+ * The namespace for the plugin. This will be the property on the widget, which will 
+ * reference the plugin instance, when it's plugged in
+ */
+AnimPlugin.NS = "fx";
+
+/*
+ * The NAME of the AnimPlugin class. Used to prefix events generated
+ * by the plugin class.
+ */
+AnimPlugin.NAME = "animPlugin";
+
+/*
+ * The default set of attributes for the AnimPlugin class.
+ */
+AnimPlugin.ATTRS = {
+
+    /*
+     * Default duration. Used by the default animation implementations
+     */
+    duration : {
+        value: 0.2
+    },
+
+    /*
+     * Default animation instance used for showing the widget (opacity fade-in)
+     */
+    animVisible : {
+        valueFn : function() {
+            ...
+        }
+    },
+
+    /*
+     * Default animation instance used for hiding the widget (opacity fade-out)
+     */
+    animHidden : {
+        valueFn : function() {
+            ...
+        }
+    }
+}
+
+/*
+ * Extend the base plugin class
+ */
+Y.extend(AnimPlugin, Y.Plugin.Base, {
+
+    // Lifecycle methods
+    initializer : function(config) { ... },
+    destructor : function() { ... },
+
+    // Other plugin specific methods
+    _uiAnimSetVisible : function(val) { ... },
+    _uiSetVisible : function(val) { ... },
+    ...
+});
+```
+
+<h3>Attributes: animVisible, animHidden</h3>
+
+<p>The `animVisible` and `animHidden` attributes use Attribute's `valueFn` support to set up instance based default values for the attributes.</p>
+
+<p>The `animHidden` attribute is pretty straight forward and simply returns the Animation instance bound to the bounding box of the Overlay to provide a fade-out animation:</p>
+
+```
+animHidden : {
+    valueFn : function() {
+        return new Y.Anim({
+            node: this.get("host").get("boundingBox"),
+            to: { opacity: 0 },
+            duration: this.get("duration")
+        });
+    }
+}
+```
+
+<p>The `animVisible` attribute is a little more interesting:</p>
+
+```
+animVisible : {
+    valueFn : function() {
+
+        var host = this.get("host"),
+            boundingBox = host.get("boundingBox");
+
+        var anim = new Y.Anim({
+            node: boundingBox,
+            to: { opacity: 1 },
+            duration: this.get("duration")
+        });
+
+        // Set initial opacity, to avoid initial flicker
+        if (!host.get("visible")) {
+            boundingBox.setStyle("opacity", 0);
+        }
+
+        // Clean up, on destroy. Where supported, remove
+        // opacity set using style. Else make 100% opaque
+        anim.on("destroy", function() {
+            if (Y.UA.ie) {
+                this.get("node").setStyle("opacity", 1);
+            } else {
+                this.get("node").setStyle("opacity", "");
+            }
+        });
+
+        return anim;
+    }
+}
+```
+
+<p>It essentially does the same thing as `animHidden`; setting up an Animation instance to provide an opacity based fade-in. However it also sets up a listener which will attempt to cleanup the opacity state of the Overlay when the plugin is unplugged from the Overlay. When a plugin is unplugged, it is destroyed.</p>
+
+<h3>Lifecycle Methods: initializer, destructor</h3>
+
+<p>In the `initializer`, we set up listeners on the animation instances (using `_bindAnimVisible, _bindAnimHidden`), which invoke the original visibility handling to make the Overlay visible before starting the `animVisible` animation and hide it after the `animHidden` animation is complete.</p>
+
+```
+initializer : function(config) {
+    this._bindAnimVisible();
+    this._bindAnimHidden();
+
+    this.after("animVisibleChange", this._bindAnimVisible);
+    this.after("animHiddenChange", this._bindAnimHidden);
+
+    // Override default _uiSetVisible method, with custom animated method
+    this.doBefore("_uiSetVisible", this._uiAnimSetVisible);
+}
+
+...
+
+_bindAnimVisible : function() {
+    var animVisible = this.get("animVisible");
+
+    animVisible.on("start", Y.bind(function() {
+        // Setup original visibility handling (for show) before starting to animate
+        this._uiSetVisible(true);
+    }, this));
+},
+
+_bindAnimHidden : function() {
+    var animHidden = this.get("animHidden");
+
+    animHidden.after("end", Y.bind(function() {
+        // Setup original visibility handling (for hide) after completing animation
+        this._uiSetVisible(false);
+    }, this));
+}
+```
+
+<p>
+However the key part of the `initializer` method is the call to `this.doBefore("_uiSetVisible", this._uiAnimSetVisible)` <em>(line 9)</em>. `Plugin`'s `doBefore` and `doAfter` methods, will let you set up both before/after event listeners, as well as inject code to be executed before or after a given method on the host object (in this case the Overlay) is invoked.
+</p>
+<p>
+For the animation plugin, we want to change how the Overlay updates its UI in response to changes to the `visible` attribute. Instead of simply flipping visibility (through the application of the `yui-overlay-hidden` class), we want to fade the Overlay in and out. Therefore, we inject our custom animation method, `_uiSetAnimVisible`, before the Overlay's `_uiSetVisible`.
+</p>
+
+<p>Using `Plugin`'s `doBefore/doAfter` methods to setup any event listeners and method injection code on the host object (Overlay), ensures that the custom behavior is removed when the plugin is unplugged from the host, restoring it's original behavior.</p>
+
+<p>The `destructor` simply calls `destroy` on the animation instances used, and lets them perform their own cleanup (as defined in the discussion on attributes):</p>
+
+```
+destructor : function() {
+    this.get("animVisible").destroy();
+    this.get("animHidden").destroy();
+},
+```
+
+<h3>The Animated Visibility Method</h3>
+
+<p>The `_uiAnimSetVisible` method is the method we use to over-ride the default visibility handling for the Overlay. Instead of simply adding or removing the `yui-overlay-hidden` class, it starts the appropriate animation depending on whether or not visible is being set to true or false:</p>
+
+```
+_uiAnimSetVisible : function(val) {
+    if (this.get("host").get("rendered")) {
+        if (val) {
+            this.get("animHidden").stop();
+            this.get("animVisible").run();
+        } else {
+            this.get("animVisible").stop();
+            this.get("animHidden").run();
+        }
+        return new Y.Do.Halt();
+    }
+}
+```
+
+<p>Since this method is injected before the default method which handles visibility changes for Overlay (`_uiSetVisibility`), we invoke `Y.Do.Halt()` to prevent the original method from being invoked, since we'd like to invoke it in response to the animation starting or completing. 
+`Y.Do` is YUI's aop infrastructure and is used under the hood by Plugin's `doBefore` and `doAfter` methods when injecting code</p>.
+
+<h3>The Original Visibility Method</h3>
+
+<p>The original visiblity handling for Overlay is replicated in the `AnimPlugin`'s `_uiSetVisible` method and is invoked before starting the `animVisible` animation and after completing the `animHidden` animation as described above.</p>
+
+```
+_uiSetVisible : function(val) {
+    var host = this.get("host");
+    if (!val) {
+        host.get("boundingBox").addClass(host.getClassName("hidden"));
+    } else {
+        host.get("boundingBox").removeClass(host.getClassName("hidden"));
+    }
+}
+```
+
+<p><strong>NOTE:</strong> We're evaluating whether or not `Y.Do` may provide access to the original method for a future release, which would make this replicated code unnecessary.</p>
+
+<h3>Using The Plugin</h3>
+
+<p>All objects which derive from <a href="{{apiDocs}}/Base.html">Base</a> are <a href="{{apiDocs}}/Plugin.Host.html">Plugin Hosts</a>. They provide `plug` and `unplug` methods to allow users to add/remove plugins to/from existing instances. They also allow the user to specify the set of plugins to be applied to a new instance, along with their configurations, as part of the constructor arguments:</p>
+
+```
+var overlay = new Y.Overlay({
+    contentBox: "#overlay",
+    width:"10em",
+    height:"10em",
+    visible:false,
+    shim:false,
+    align: {
+        node: "#show", 
+        points: ["tl", "bl"]
+    },
+    plugins : [{fn:AnimPlugin, cfg:{duration:2}}]
+});
+overlay.render();
+```
+
+<p>We use the constructor support to setup the `AnimPlugin` for the instance with a custom value for its `duration` attribute as shown on line 11 above.</p>
+
+<p><strong>NOTE:</strong> In the interests of keeping the example focused on the plugin infrastructure, we turn off shimming for the overlay. If we needed to enable shimming, In IE6, we'd need to remove the alpha opacity filter set on the shim while animating, to have IE animate the contents of the Overlay correctly.</p>
+
+<p>The example also uses the `plug` and `unplug` methods, to add and remove the custom animation behavior after the instance is created:</p>
+
+```
+// Listener for the "Unplug AnimPlugin" button, 
+// removes the AnimPlugin from the overlay instance
+Y.on("click", function() {
+    overlay.unplug("fx");
+}, "#unplug");
+
+// Listener for the "Plug AnimPlugin" button, 
+// removes the AnimPlugin from the overlay instance, 
+// and re-adds it with a new, shorter duration value.
+Y.on("click", function() {
+    overlay.unplug("fx");
+    overlay.plug(AnimPlugin, {duration:0.5});
+}, "#plug");
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>overlay-anim-plugin-source}}
+```

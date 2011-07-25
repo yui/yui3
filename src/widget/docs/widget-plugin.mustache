@@ -1,0 +1,316 @@
+<style scoped>
+#demo {
+    width: 50em;
+}
+.yui3-widget-content {
+    border:1px solid #000;
+    padding:1em;
+}
+.yui3-tab-loading {
+    background: #fff url({{componentAssets}}/img/ajax-loader.gif) no-repeat center center;
+    height:40px;
+}
+</style>
+
+<div class="intro">
+    <p>This example shows how you can use Widget's plugin infrastructure to add additional features to an existing widget.</p>
+    <p>We create an IO plugin class for `Widget` called `WidgetIO`. The plugin adds IO capabilities to the Widget, which, by default, outputs to the `Widget`'s `contentBox`.</p>
+</div>
+
+<div class="example">
+    {{>widget-plugin-source}}
+</div>
+
+<h2>Creating an IO Plugin For Widget</h2>
+
+<h3>Setting Up The YUI Instance</h3>
+
+<p>For this example, we'll pull in `widget`; the `io`, and
+the `plugin` module. The `io` module provides the XHR
+support we need for the IO plugin. The `Plugin` base class is the class we'll
+extend to create our io plugin class for `Widget`. 
+The code to set up our sandbox instance is shown below:</p>
+
+```
+YUI({...}).use("widget", "io", "plugin", function(Y) {
+    // We'll write our code here, after pulling in the default Widget module, 
+    // the IO utility, and the Plugin base class.
+}
+```
+
+<p>Using the `widget` module will also pull down the default CSS required for widget, on top of which we only need to add our required look/feel CSS for the example.</p>
+
+<h3>WidgetIO Class Structure</h3>
+
+<p>The `WidgetIO` class will extend the `Plugin` base class. Since `Plugin` derives from `Base`, we follow the same pattern we use for widgets and other utilities which extend Base to setup our new class.</p>
+
+<p>Namely:</p>
+
+<ul>
+    <li>Setting up the constructor to invoke the superclass constructor</li>
+    <li>Setting up a `NAME` property, to identify the class</li>
+    <li>Setting up the default attributes, using the `ATTRS` property</li>
+    <li>Providing prototype implementations for anything we want executed during initialization and destruction using the `initializer` and `destructor` lifecycle methods</li>
+</ul>
+
+<p>Additionally, since this is a plugin, we provide a `NS` property for the class, which defines the property which will refer to the `WidgetIO` instance on the host class (e.g. `widget.io` will be an instance of `WidgetIO`)</p>.
+
+```
+/* Widget IO Plugin Constructor */
+function WidgetIO(config) {
+    WidgetIO.superclass.constructor.apply(this, arguments);
+}
+
+/* 
+ * The namespace for the plugin. This will be the property on the widget, 
+ * which will reference the plugin instance, when it's plugged in
+ */
+WidgetIO.NS = "io";
+
+/*
+ * The NAME of the WidgetIO class. Used to prefix events generated
+ * by the plugin class.
+ */
+WidgetIO.NAME = "ioPlugin";
+
+/*
+ * The default set of attributes for the WidgetIO class.
+ */
+WidgetIO.ATTRS = {
+    uri : {...},
+    cfg : {...},
+    formatter : {...},
+    loading: {...}
+};
+
+/* Extend the base plugin class */
+Y.extend(WidgetIO, Y.Plugin.Base, {
+
+    // Lifecycle methods.
+    initializer: function() {...},
+
+    // IO Plugin specific methods
+    refresh : function() {...},
+
+    // Default IO transaction handlers
+    _defSuccessHandler : function(id, o) {...},
+    _defFailureHandler : function(id, o) {...},
+    _defStartHandler : function(id, o) {...},
+    _defCompleteHandler : function(id, o) {...},
+    _defFormatter : function(val) {...}
+});
+```
+
+<h3>Plugin Attributes</h3>
+
+<p>The `WidgetIO` is a fairly simple plugin class. It provides incremental functionality. It does not need to modify the behavior of any methods on the host Widget instance, or monitor any Widget events (unlike the <a href="overlay-anim-plugin.html">AnimPlugin</a> example).</p>
+
+<p>It sets up the following attributes, which are used to control how the IO plugin's `refresh` method behaves:</p>
+
+<dl>
+    <dt>uri</dt>
+    <dd>The uri to use for the io request</dd>
+    <dt>cfg</dt>
+    <dd>The io configuration object, to pass to io when initiating a transaction</dd>
+    <dt>formatter</dt>
+    <dd>The formatter to use to formatting response data. The default implementation simply passes back the response data passed in, unchanged.</dd>
+    <dt>loading</dt>
+    <dd>The default content to display while an io transaction is in progress</dd>
+</dl>
+
+<p>In terms of code, the attributes for the plugin are set up using the standard `ATTRS` property:</p>
+
+```
+/* Setup local variable for Y.WidgetStdMod, since we use it 
+   multiple times to reference static properties */
+var WidgetIO = Y.WidgetIO;
+
+...
+
+/* Attribute definition */
+WidgetIO.ATTRS = {
+    /*
+     * The node that will contain the IO content 
+     */
+    contentNode: {
+        value: '.yui3-widget-content',
+        setter: '_defContentNodeSetter'
+    },
+
+    /*
+     * The uri to use for the io request
+     */
+    uri : {
+        value:null
+    },
+
+    /*
+     * The io configuration object, to pass to io when initiating 
+     * a transaction
+     */
+    cfg : {
+        value:null
+    },
+
+    /*
+     * The default formatter to use when formatting response data. The default
+     * implementation simply passes back the response data passed in. 
+     */
+    formatter : {
+        valueFn: function() {
+            return this._defFormatter;
+        }
+    },
+
+    /*
+     * The default loading indicator to use, when an io transaction is in progress.
+     */
+    loading: {
+        value: '<img class="yui3-loading" width="32px" \ 
+                    height="32px" src="{{componentAssets}}/img/ajax-loader.gif">'
+    }
+};
+```
+
+<p>The `formatter` attribute uses `valueFn` to define an instance based default value; pointing to the `_defFormatter` method on the `WidgetIO` instance.</p>
+
+<h3>Lifecycle Methods: initializer, destructor</h3>
+
+<p>Since no special initialization is required, there is no need to implement an `initializer` method.</p>
+
+<p>The `destructor` terminates any existing transaction, if active when the plugin is destroyed (unplugged).</p>
+
+```
+initializer: function() {}
+
+/*
+ * Destruction code. Terminates the activeIO transaction if it exists
+ */
+destructor : function() {
+    if (this._activeIO) {
+        Y.io.abort(this._activeIO);
+        this._activeIO = null;
+    }
+},
+```
+
+<h3>The refresh Method</h3>
+
+<p>The `refresh` method is the main public method which the plugin provides. It's responsible for dispatching the IO request, using the current state of the attributes defined of the plugin. Users will end up invoking the method from the plugin instance attached to the Widget (`widget.io.refresh()`).</p>
+
+```
+refresh : function() {
+    if (!this._activeIO) {
+        var uri = this.get("uri");
+
+        if (uri) {
+            cfg = this.get("cfg") || {};
+            cfg.on = cfg.on || {};
+
+            cfg.on.start = cfg.on.start || Y.bind(this._defStartHandler, this);
+            cfg.on.complete = cfg.on.complete || Y.bind(this._defCompleteHandler, this);
+
+            cfg.on.success = cfg.on.success || Y.bind(this._defSuccessHandler, this);
+            cfg.on.failure = cfg.on.failure || Y.bind(this._defFailureHandler, this);
+
+            cfg.method = cfg.method; // io defaults to "GET" if not defined
+
+            Y.io(uri, cfg);
+        }
+    }
+}
+```
+
+<p>The `refresh` method, as implemented for the scope of this example, sets up the io configuration object for the transaction it is about to dispatch, filling in the default handlers for io's `start`, `complete`, `success` and `failure` events, if the user does not provide custom implementations.</p>
+
+<h3>Node Content Helper Method</h3>
+
+<p>To simplify implementation and extension, a `setContent` method is used to
+wrap the content setter, which by default updates the `contentBox` of the widget.</p>
+
+```
+/*
+ * Helper method for setting host content 
+ */
+setContent: function(content) {
+    this.get('contentNode').setContent(content);
+}
+```
+<h3>The Default IO Event Handlers</h3>
+
+<p>The default success listener, pulls the response data from the response object, and uses it to update the content
+defined by the `contentNode` attribute, which, by default, is the `contentBox`. The response data is passed through the `formatter` configured for the plugin, converting it to the desired output format:</p>
+
+```
+_defSuccessHandler : function(id, o) {
+    var response = o.responseXML || o.responseText;
+    var formatter = this.get('formatter');
+
+    this.setContent(formatter(response));
+}
+```
+
+<p>The default failure listener, displays an error message in the currently configured `section`, when io communication fails:</p>
+
+```
+_defFailureHandler : function(id, o) {
+    this.setContent('Failed to retrieve content');
+}
+```
+
+<p>The default start event listener renders the `loading` content, which remains in place while the transaction is in process, and also stores a reference to the "inprogress" io transaction:</p>
+
+```
+_defStartHandler : function(id, o) {
+    this._activeIO = o;
+    this.setContent(this.get('loading'));
+},
+```
+
+<p>The default complete event listener clears out the "inprogress" io transaction object:</p>
+
+```
+_defCompleteHandler : function(id, o) {
+    this._activeIO = null;
+}
+```
+
+<h3>Using the Plugin</h3>
+
+<p>All objects derived from <a href="{{apiDocs}}/Base.html">Base</a> are <a href="{{apiDocs}}/Plugin.Host.html">Plugin Hosts</a>. They provide <a href="{{apiDocs}}/Plugin.Host.html#method_plug">`plug`</a> and <a href="{{apiDocs}}/Plugin.Host.html#method_unplug">`unplug`</a> methods to allow users to add/remove plugins to/from existing instances. 
+They also allow the user to specify the set of plugins to be applied to a new instance, along with their configurations, as part of the constructor arguments.</p>
+
+<p>In this example, we'll create a new instance of a Widget:</p>
+
+```
+/* Create a new Widget instance, with content generated from script */
+var widget = new Y.Widget();
+```
+
+<p>And then use the `plug` method to add the `WidgetIO`,
+providing it with a configuration to use when sending out io transactions
+(The <a href="overlay-anim-plugin.html">Animation Plugin</a> example shows how
+you could do the same thing during construction), render the widget, and refresh
+the plugin to fetch the content.</p>
+
+```
+/*
+ * Add the Plugin, and configure it to use a news feed uri 
+ */
+widget.plug(WidgetIO, {
+    uri : '{{componentAssets}}/news.php?query=web+browser',
+    loading: '<img class="yui3-loading" width="32px" height="32px" src="{{componentAssets}}/img/ajax-loader.gif">'    
+});
+
+widget.render('#demo');
+
+/* fetch the content */
+widget.io.refresh();
+```
+
+<p>The plugin class structure described above is captured in this <a href="{{componentAssets}}/../plugin/myplugin.js.txt">"MyPlugin" Template File</a>, which you can use as a starting point to create your own plugins derived from `Plugin.Base`.</p>
+
+<h2>Complete Example Source</h2>
+```
+{{>widget-plugin-source}}
+```

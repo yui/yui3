@@ -48,8 +48,7 @@ function fromGlobal(ref) {
      * @private
      */
 var _JSON  = fromGlobal('JSON'),
-    // Create an indirect reference to eval to allow for minification
-    _eval  = fromGlobal('eval'),
+
     Native = (Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON),
     useNative = !!Native,
 
@@ -181,7 +180,7 @@ var _JSON  = fromGlobal('JSON'),
 
             // Eval the text into a JavaScript data structure, apply any
             // reviver function, and return
-            return _revive( _eval('(' + s + ')'), reviver );
+            return _revive( EVAL_TOKEN('(' + s + ')'), reviver );
         }
 
         throw new SyntaxError('JSON.parse');

@@ -2,9 +2,9 @@
     "widget-autohide": {
         "requires": [
             "widget",
-            "plugin",
             "event-outside",
-            "base-build"
+            "base-build",
+            "event-key"
         ], 
         "skinnable": false
     }

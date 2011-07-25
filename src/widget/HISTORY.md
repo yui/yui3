@@ -14,6 +14,11 @@ Widget
   * Fixed UI_EVENTS invoking nested widget listeners more than once (also
     fixed regression to Parent-Child as a result of this change).
 
+  * Added destroy(true) support, to remove and destroy all Nodes contained
+    within a widget's boundingBox. This is useful for long-lived pages,
+    to limit the growth of Node cache. By default Widget only removes and
+    destroys the Nodes it references - the boundingBox and contentBox.
+
 3.3.0
 -----
 

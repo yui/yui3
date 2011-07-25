@@ -3027,7 +3027,7 @@ YUI.add('editor-base', function(Y) {
                             if (sel._selection.pasteHTML) {
                                 sel._selection.pasteHTML(EditorBase.TABKEY);
                             } else {
-                                console.log('IE9 is here.. SHould be default behaviour now');
+                                //console.log('IE9 is here.. SHould be default behaviour now');
                                 this.execCommand('inserthtml', EditorBase.TABKEY);
                             }
                         }
@@ -4678,5 +4678,5 @@ YUI.add('editor-br', function(Y) {
 }, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 
 
-YUI.add('editor', function(Y){}, '@VERSION@' ,{skinnable:false, use:['frame', 'selection', 'exec-command', 'editor-base', 'editor-para', 'editor-br', 'editor-bidi', 'editor-tab', 'createlink-base']});
+YUI.add('editor', function(Y){}, '@VERSION@' ,{use:['frame', 'selection', 'exec-command', 'editor-base', 'editor-para', 'editor-br', 'editor-bidi', 'editor-tab', 'createlink-base'], skinnable:false});
 

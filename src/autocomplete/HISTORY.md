@@ -16,15 +16,25 @@ AutoComplete Change History
     force a specific source type, overriding the automatic source type
     detection. [Ticket #2529974]
 
+  * The `scrollIntoView` config option is now much smarter. It will only scroll
+    if the selected result isn't fully visible. If the result is already
+    entirely within the visible area of the viewport, no scrolling will occur.
+
+  * A pre-existing `listNode` may now be specified at initialization time.
+
   * Added `subWordMatch` filters and highlighters. [Contributed by Tobias
     Schultze]
+
+  * The `this` object now refers to the current AutoComplete instance instead of
+    the window in list locators, text locators, filters, formatters,
+    highlighters, and requestTemplate functions.
 
   * Added an `originEvent` property to the event facade of `select` events. It
     contains an event facade of the DOM event that triggered the selection if
     the selection was triggered by a DOM event.
 
-  * Small performance improvement for filters and highlighters operating on
-    empty query strings. [Ticket #2529949]
+  * Small performance improvement for filters operating on empty query strings.
+    [Ticket #2529949]
 
   * Result list alignment is now updated both when results change and when
     the window is resized instead of only when the list becomes visible. This
@@ -43,6 +53,9 @@ AutoComplete Change History
     query instead of being appended to the source URL. This affected XHR and
     JSONP sources that used both a `{query}` placeholder in the source string
     and a custom `requestTemplate` value. [Ticket #2529895]
+
+  * Fixed a bug that caused the `requestTemplate` function to be called twice
+    for an XHR request instead of just once.
 
   * Fixed a bug in which JSONP, XHR, and YQL requests were cached solely based
     on the query rather than on the complete request. This could result in

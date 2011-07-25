@@ -1,0 +1,305 @@
+<style type="text/css" scoped>
+    #speeddate h1 {
+        font-size: 108%;
+        color:#000;
+        margin-bottom:2em;
+    }
+    
+    #john {
+        margin-bottom:10px;
+    }
+
+    .interests.disabled, .reconsider.disabled {
+        color:#888;
+    }
+    
+    #john .interest {
+        margin-left:5px;
+    }
+
+    .sd-nametag {
+        border:1px solid #000;
+        text-align:center;
+        width:25em;
+        margin:20px;
+        
+        background-color:#00f;
+
+        border-radius: 10px;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+                
+        box-shadow: 3px 3px 3px #888;
+        -moz-box-shadow: 3px 3px 3px #888;
+        -webkit-box-shadow: 3px 3px 3px #888;
+    }
+
+    .sd-nametag .sd-hd, 
+    .sd-nametag .sd-ft {
+        padding:5px;
+        text-align:center;
+        font-size:108%;
+        font-weight:900;
+        color:#fff;
+    }
+
+    .sd-nametag .sd-hd {    
+        border-top-right-radius: 10px;
+        border-top-left-radius: 10px;
+        -moz-border-radius-topright: 10px;
+        -moz-border-radius-topleft: 10px;
+        -webkit-border-top-right-radius: 10px;
+        -webkit-border-top-left-radius: 10px;
+    }
+
+    .sd-nametag .sd-ft {    
+        border-bottom-right-radius: 10px;
+        border-bottom-left-radius: 10px;
+        -moz-border-radius-bottomright: 10px;
+        -moz-border-radius-bottomleft: 10px;
+        -webkit-border-bottom-right-radius: 10px;
+        -webkit-border-bottom-left-radius: 10px;
+    }
+
+    .sd-nametag .sd-bd {
+        background-color:#fff;
+        padding:0.5em;
+    }
+
+    .sd-nametag .sd-bd .sd-name, 
+    .sd-nametag .sd-bd .sd-personality, 
+    .sd-nametag .sd-bd .sd-interests {
+        font-size:108%;
+        font-weight:900;
+        font-family:monospace;
+        text-decoration:underline;
+        color:#00a;
+    }
+</style>
+
+<div class="intro">
+    <p>Attribute change events are one of the key benefits of using attributes to maintain state for your objects, instead of regular object properties.</p>
+    <p>This example refactors the basic <a href="attribute-basic-speeddate.html">"Attribute Based Speed Dating" example</a> to shows how you can listen for attribute change events to tie together your object's internal logic (such as updating the visual presentation of the object), and also to communicate with other objects.</p> 
+</div>
+
+<div class="example">
+    {{>attribute-event-speeddate-source}}
+</div>
+
+<h2>Listening For Attribute Change Events</h2>
+
+<p>In this example, we'll look at how you can setup listeners for attribute change events, and work with the event payload which the listeners receive, 
+using the `SpeedDater` class, introduced in the <a href="attribute-basic-speeddate.html">"Attribute Based Speed Dating" example</a>.</p>
+ 
+<p>We'll create two SpeedDater instances, `jane` and `john`, and use the attribute events they generate both internally (within the class code), to wire up UI refreshes, 
+and externally, to have `jane` react to changes in the `john`'s state.</p>
+
+<h3>Setting Up The SpeedDater Class With Attribute</h3>
+
+<p>We start by setting up the same basic class we created for the <a href="attribute-basic-speeddate.html">"Attribute Based Speed Dating" example</a>, with an additional attribute, `interests`, using the code below:</p>
+
+```
+// Setup custom class which we want to add managed attribute support to
+function SpeedDater(cfg) {
+    // When constructed, setup the initial attributes for the instance, 
+    // by calling the addAttrs method.
+    var attrs = {
+        name : {
+            writeOnce:true
+        },
+ 
+        personality : {
+            value:50
+        },
+
+        available : {
+            value:true
+        }, 
+        
+        interests : {
+            value : []
+        }
+    };
+
+    this.addAttrs(attrs, cfg);
+}
+
+// Augment custom class with Attribute
+Y.augment(SpeedDater, Y.Attribute);
+```
+
+<p>We then create two instances of SpeedDaters, `jane` and `john`:</p>
+
+```
+// Create a john instance...
+john = new SpeedDater({
+    name: "John",
+    personality: 78
+});
+// ... and render to the page
+john.applyNameTag("#john .shirt");
+
+// Create a jane instance...
+jane = new SpeedDater({
+    name: "Jane",
+    personality: 82,
+    interests: ["Popcorn", "Saving Whales"]
+});
+jane.applyNameTag("#jane .shirt");
+```
+
+<h3>Registering Event Listeners</h3>
+
+<p>For this event based example, we no longer have an `updateNameTag()` method which the user is responsible for calling when they want to refresh the name tag rendered on the page, as we did in the basic example. 
+Instead the `SpeedDater` class sets up some internal attribute change event listeners in its `listenForChanges()` method, which will refresh the UI for a particular attribute, each time its value is modified:</p>
+
+```
+// Method used to attach attribute change event listeners, so that 
+// the SpeedDater instance will react to changes in attribute state, 
+// and update what's rendered on the page
+SpeedDater.prototype.listenForChanges = function() {
+
+    // Sync up the UI for "available", after the value of the "available" 
+    // attribute has changed:
+    this.after("availableChange", function(e) {
+        var taken = (e.newVal) ? "" : "Oh, is that the time?";
+        this.nameTag.one(".sd-availability").set("innerHTML", taken);
+    });
+
+    // Sync up the UI for "name", after the value of the "name" 
+    // attribute has changed:
+    this.after("nameChange", function(e) {
+        var name = e.newVal;
+        this.nameTag.one(".sd-name").set("innerHTML", name);
+    });
+
+    // Sync up the UI for "personality", after the value of the "personality" 
+    // attribute has changed:
+    this.after("personalityChange", function(e) {
+        var personality = e.newVal;
+
+        var personalityEl = this.nameTag.one(".sd-personality");
+        personalityEl.set("innerHTML", personality);
+
+        if (personality > 90) {
+            personalityEl.addClass("sd-max");
+        }
+    });
+
+    // Sync up the UI for "interests", after the value of the "interests" 
+    // attribute has changed:
+    this.after("interestsChange", function(e) {
+        var interests = (e.newVal.length == 0) ? 
+                    "absolutely nothing" : this.get("interests").join(", ");
+        this.nameTag.one(".sd-interests").set("innerHTML", interests);
+    });
+};
+```
+
+<p>
+As seen in the above code, the event type for attribute change events is created by concatenating the attribute name with `"Change"` (e.g. `"availableChange"`). Whenever an attribute value is changed through Attribute's `set()` method, both <em>"on"</em> and <em>"after"</em> subscribers are notified.
+</p>
+<p> 
+In the code snippet above, all the subscribers are listening for the <em>"after"</em> moment using the `after()` subscription method, since they're only interested in being notified after the value has actually changed. 
+However, as we'll see below, the example also shows you how to use an <em>"on"</em> listener, to prevent the attribute state change from occuring under certain conditions.
+</p>
+
+<h3>On vs. After</h3>
+
+<p>A single attribute change event has two moments which can be subscribed to, depending on what the subscriber wants to do when notified.</p> 
+
+<p><strong>on :</strong> Subscribers to the <em>"on"</em> moment, will be notified <em>before</em> any actual state change has occurred. This provides the opportunity to prevent the state change from occurring, 
+using the `preventDefault()` method of the event facade object passed to the subscriber. If you use `get()` to retrieve the value of the attribute in an <em>"on"</em> subscriber, you will receive the current, unchanged value. 
+However the event facade provides access to the value which the attribute is being set to, through it's `newVal` property.</p>
+
+<p><strong>after :</strong> Subscribers to the <em>"after"</em> moment, will be notified <em>after</em> the attribute's state has been updated. 
+This provides the opportunity to update state in other parts of your application, in response to a change in the attribute's state.</p>
+
+<p>Based on the definition above, `after` listeners are not invoked if state change is prevented; for example, due to one of the <em>"on"</em> listeners calling `preventDefault()` on the event object passed to the subscriber.</p>
+
+<h3>Having Jane React To John</h3>
+
+<p>Aside from the internal listeners set up by the class, in this example `jane` also sets up two more subscribers. The first is a subscriber, which allows `jane` to "reconsider" changing the state of her `available` attribute, 
+under certain conditions. Since she may want to prevent the `available` attribute from being modified in this case, we use Attribute's `on()` method to listen for the <em>"on"</em> moment, so that the default behavior can be prevented:</p>
+
+```
+// We can also listen before an attribute changes its value, and 
+// decide if we want to allow the state change to occur or not. 
+
+// Invoking e.preventDefault() stops the state from being updated. 
+
+// In this case, Jane can change her mind about making herself 
+// unavailable, if John likes saving whales, as long as he doesn't 
+// dig knitting too.
+
+jane.on("availableChange", function(e) {
+    var johnsInterests = john.get("interests");
+    var janeAvailable = e.newVal;
+
+    if (janeAvailable === false && Y.Array.indexOf(johnsInterests, "Saving Whales") !== -1 
+            && Y.Array.indexOf(johnsInterests, "Knitting") == -1 ) {
+        // Reconsider..
+        e.preventDefault();
+    };
+});
+```
+
+<p>We also set up an <em>"after"</em> listener on the `john` instance, which allows `jane` to update her interests, so she can admit to enjoying "Reading Specifications", if `john` admits it first:</p>
+
+```
+// Consider updating Jane's interests state, after John's interests 
+// state changes...
+john.after("interestsChange", function(e) {
+
+    var janesInterests = jane.get("interests"),
+
+        // Get john's new interests from the attribute change event...
+        johnsInterests = e.newVal,
+
+        readingSpecs = "Reading Specifications";
+
+    // If it turns out that John enjoys reading specs, then Jane can admit it too...
+    if (Y.Array.indexOf(johnsInterests, readingSpecs) !== -1) {
+        if(Y.Array.indexOf(janesInterests, readingSpecs) == -1) {
+            janesInterests.push(readingSpecs);
+        }
+    } else {
+        // Otherwise, we use Y.Array.reject, provided by the "collection" module, 
+        // to remove "Reading Specifications" from jane's interests..
+        janesInterests = Y.Array.reject(janesInterests, 
+                            function(item){return (item == readingSpecs);});
+    }
+
+    jane.set("interests", janesInterests);
+    jane.set("available", true);
+
+    ...
+});
+```
+
+<h3>Event Facade</h3>
+
+<p>The event object (an instance of <a href="{{apiDocs}}/EventFacade.html">EventFacade</a>) passed to attribute change event subscribers, has the following interesting properties and methods related to attribute management:</p>
+
+<dl>
+    <dt>newVal</dt>
+    <dd>The value which the attribute will be set to (in the case of <em>"on"</em> subscribers), or has been set to (in the case of <em>"after"</em> subscribers</dd>
+    <dt>prevVal</dt>
+    <dd>The value which the attribute is currently set to (in the case of <em>"on"</em> subscribers), or was previously set to (in the case of <em>"after"</em> subscribers</dd>
+    <dt>attrName</dt>
+    <dd>The name of the attribute which is being set</dd>
+    <dt>subAttrName</dt>
+    <dd>Attribute also allows you to set nested properties of attributes which have values which are objects through the 
+    `set` method (e.g. `o1.set("x.y.z")`). This property will contain the path to the property which was changed.</dd>
+    <dt>preventDefault()<dt>
+    <dd>This method can be called in an <em>"on"</em> subscriber to prevent the attribute's value from being updated (the default behavior). Calling this method in an <em>"after"</em> listener has no impact, since the default behavior has already been invoked.</dd>
+    <dt>stopImmediatePropagation()</dt>
+    <dd>This method can be called in <em>"on"</em> or <em>"after"</em> subscribers, and will prevent the rest of the subscriber stack from
+    being invoked, but will not prevent the attribute's value from being updated.</dd>
+</dl>
+
+<h2>Complete Example Source</h2>
+
+```
+{{>attribute-event-speeddate-source}}
+```

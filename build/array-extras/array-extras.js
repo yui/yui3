@@ -1,34 +1,30 @@
 YUI.add('array-extras', function(Y) {
 
 /**
- * Collection utilities beyond what is provided in the YUI core
- * @module collection
- * @submodule array-extras
- */
+Adds additional utility methods to the `Y.Array` class.
+
+@module collection
+@submodule array-extras
+**/
 
 var L = Y.Lang, Native = Array.prototype, A = Y.Array;
 
 /**
- * Adds the following array utilities to the YUI instance
- * (Y.Array).  This is in addition to the methods provided
- * in the core.
- * @class YUI~array~extras
- */
+Returns the index of the last item in the array that contains the specified
+value, or `-1` if the value isn't found.
 
-/**
- * Returns the index of the last item in the array that contains the specified
- * value, or -1 if the value isn't found.
- * @method Array.lastIndexOf
- * @static
- * @param {Array} a Array to search in.
- * @param {any} val Value to search for.
- * @param {Number} fromIndex (optional) Index at which to start searching
- *   backwards. Defaults to the array's length - 1. If negative, it will be
- *   taken as an offset from the end of the array. If the calculated index is
- *   less than 0, the array will not be searched and -1 will be returned.
- * @return {Number} Index of the item that contains the value, or -1 if not
- *   found.
- */
+@method lastIndexOf
+@param {Array} a Array to search in.
+@param {Any} val Value to search for.
+@param {Number} [fromIndex] Index at which to start searching backwards.
+  Defaults to the array's length - 1. If negative, it will be taken as an offset
+  from the end of the array. If the calculated index is less than 0, the array
+  will not be searched and `-1` will be returned.
+@return {Number} Index of the item that contains the value, or `-1` if not
+  found.
+@static
+@for Array
+**/
 A.lastIndexOf = Native.lastIndexOf ?
     function(a, val, fromIndex) {
         // An undefined fromIndex is still considered a value by some (all?)
@@ -57,12 +53,13 @@ A.lastIndexOf = Native.lastIndexOf ?
     };
 
 /**
- * Returns a copy of the specified array with duplicate items removed.
- * @method Array.unique
- * @param {Array} a Array to dedupe.
- * @return {Array} Copy of the array with duplicate items removed.
- * @static
- */
+Returns a copy of the specified array with duplicate items removed.
+
+@method unique
+@param {Array} a Array to dedupe.
+@return {Array} Copy of the array with duplicate items removed.
+@static
+**/
 A.unique = function(a, sort) {
     // Note: the sort param is deprecated and intentionally undocumented since
     // YUI 3.3.0. It never did what the API docs said it did (see the older
@@ -107,15 +104,16 @@ A.unique = function(a, sort) {
 };
 
 /**
-* Executes the supplied function on each item in the array. Returns a new array
-* containing the items for which the supplied function returned a truthy value.
-* @method Array.filter
-* @param {Array} a Array to filter.
-* @param {Function} f Function to execute on each item.
-* @param {Object} o Optional context object.
-* @static
-* @return {Array} Array of items for which the supplied function returned a
-*   truthy value (empty if it never returned a truthy value).
+Executes the supplied function on each item in the array. Returns a new array
+containing the items for which the supplied function returned a truthy value.
+
+@method filter
+@param {Array} a Array to filter.
+@param {Function} f Function to execute on each item.
+@param {Object} [o] Optional context object.
+@return {Array} Array of items for which the supplied function returned a
+  truthy value (empty if it never returned a truthy value).
+@static
 */
 A.filter = Native.filter ?
     function(a, f, o) {
@@ -141,16 +139,16 @@ A.filter = Native.filter ?
     };
 
 /**
-* The inverse of filter. Executes the supplied function on each item.
-* Returns a new array containing the items that the supplied
-* function returned *false* for.
-* @method Array.reject
-* @param {Array} a the array to iterate.
-* @param {Function} f the function to execute on each item.
-* @param {object} o Optional context object.
-* @static
-* @return {Array} The items on which the supplied function
-* returned false.
+The inverse of `Array.filter()`. Executes the supplied function on each item.
+Returns a new array containing the items for which the supplied function
+returned `false`.
+
+@method reject
+@param {Array} a the array to iterate.
+@param {Function} f the function to execute on each item.
+@param {object} [o] Optional context object.
+@return {Array} The items for which the supplied function returned `false`.
+@static
 */
 A.reject = function(a, f, o) {
     return A.filter(a, function(item, i, a) {
@@ -159,16 +157,16 @@ A.reject = function(a, f, o) {
 };
 
 /**
-* Executes the supplied function on each item in the array.
-* Iteration stops if the supplied function does not return
-* a truthy value.
-* @method Array.every
-* @param {Array} a the array to iterate.
-* @param {Function} f the function to execute on each item.
-* @param {object} o Optional context object.
-* @static
-* @return {boolean} true if every item in the array returns true
-* from the supplied function.
+Executes the supplied function on each item in the array. Iteration stops if the
+supplied function does not return a truthy value.
+
+@method every
+@param {Array} a the array to iterate.
+@param {Function} f the function to execute on each item.
+@param {Object} [o] Optional context object.
+@return {Boolean} `true` if every item in the array returns `true` from the
+  supplied function, `false` otherwise.
+@static
 */
 A.every = Native.every ?
     function(a, f, o) {
@@ -185,15 +183,24 @@ A.every = Native.every ?
     };
 
 /**
-* Executes the supplied function on each item in the array.
-* @method Array.map
-* @param {Array} a the array to iterate.
-* @param {Function} f the function to execute on each item.
-* @param {object} o Optional context object.
-* @static
-* @return {Array} A new array containing the return value
-* of the supplied function for each item in the original
-* array.
+Executes the supplied function on each item in the array and returns a new array
+containing all the values returned by the supplied function.
+
+@example
+
+    // Convert an array of numbers into an array of strings.
+    Y.Array.map([1, 2, 3, 4], function (item) {
+      return '' + item;
+    });
+    // => ['1', '2', '3', '4']
+
+@method map
+@param {Array} a the array to iterate.
+@param {Function} f the function to execute on each item.
+@param {object} [o] Optional context object.
+@return {Array} A new array containing the return value of the supplied function
+  for each item in the original array.
+@static
 */
 A.map = Native.map ?
     function(a, f, o) {
@@ -215,22 +222,24 @@ A.map = Native.map ?
 
 
 /**
-* Executes the supplied function on each item in the array.
-* Reduce "folds" the array into a single value.  The callback
-* function receives four arguments:
-* the value from the previous callback call (or the initial value),
-* the value of the current element, the current index, and
-* the array over which iteration is occurring.
-* @method Array.reduce
-* @param {Array} a the array to iterate.
-* @param {any} init The initial value to start from.
-* @param {Function} f the function to execute on each item. It
-* is responsible for returning the updated value of the
-* computation.
-* @param {object} o Optional context object.
-* @static
-* @return {any} A value that results from iteratively applying the
-* supplied function to each element in the array.
+Executes the supplied function on each item in the array, "folding" the array
+into a single value.
+
+@method reduce
+@param {Array} a Array to iterate.
+@param {Any} init Initial value to start with.
+@param {Function} f Function to execute on each item. This function should
+  update and return the value of the computation. It will receive the following
+  arguments:
+    @param {Any} f.previousValue Value returned from the previous iteration,
+      or the initial value if this is the first iteration.
+    @param {Any} f.currentValue Value of the current item being iterated.
+    @param {Number} f.index Index of the current item.
+    @param {Array} f.array Array being iterated.
+@param {Object} [o] Optional context object.
+@return {Any} Final result from iteratively applying the given function to each
+  element in the array.
+@static
 */
 A.reduce = Native.reduce ?
     function(a, init, f, o) {
@@ -254,20 +263,18 @@ A.reduce = Native.reduce ?
         return result;
     };
 
-
 /**
-* Executes the supplied function on each item in the array,
-* searching for the first item that matches the supplied
-* function.
-* @method Array.find
-* @param {Array} a the array to search.
-* @param {Function} f the function to execute on each item.
-* Iteration is stopped as soon as this function returns true
-* on an item.
-* @param {object} o Optional context object.
-* @static
-* @return {object} the first item that the supplied function
-* returns true for, or null if it never returns true.
+Executes the supplied function on each item in the array, searching for the
+first item that matches the supplied function.
+
+@method find
+@param {Array} a the array to search.
+@param {Function} f the function to execute on each item. Iteration is stopped
+  as soon as this function returns `true`.
+@param {Object} [o] Optional context object.
+@return {Object} the first item that the supplied function returns `true` for,
+  or `null` if it never returns `true`.
+@static
 */
 A.find = function(a, f, o) {
     for (var i = 0, l = a.length; i < l; i++) {
@@ -279,16 +286,15 @@ A.find = function(a, f, o) {
 };
 
 /**
-* Iterates over an array, returning a new array of all the elements
-* that match the supplied regular expression
-* @method Array.grep
-* @param {Array} a a collection to iterate over.
-* @param {RegExp} pattern The regular expression to test against
-* each item.
-* @static
-* @return {Array} All the items in the collection that
-* produce a match against the supplied regular expression.
-* If no items match, an empty array is returned.
+Iterates over an array, returning a new array of all the elements that match the
+supplied regular expression.
+
+@method grep
+@param {Array} a Array to iterate over.
+@param {RegExp} pattern Regular expression to test against each item.
+@return {Array} All the items in the array that produce a match against the
+  supplied regular expression. If no items match, an empty array is returned.
+@static
 */
 A.grep = function(a, pattern) {
     return A.filter(a, function(item, index) {
@@ -296,20 +302,23 @@ A.grep = function(a, pattern) {
     });
 };
 
-
 /**
-* Partitions an array into two new arrays, one with the items
-* that match the supplied function, and one with the items that
-* do not.
-* @method Array.partition
-* @param {Array} a a collection to iterate over.
-* @param {Function} f a function that will receive each item
-* in the collection and its index.
-* @param {object} o Optional execution context of f.
-* @static
-* @return {object} An object with two members, 'matches' and 'rejects',
-* that are arrays containing the items that were selected or
-* rejected by the test function (or an empty array).
+Partitions an array into two new arrays, one with the items for which the
+supplied function returns `true`, and one with the items for which the function
+returns `false`.
+
+@method partition
+@param {Array} a Array to iterate over.
+@param {Function} f Function to execute for each item in the array. It will
+  receive the following arguments:
+    @param {Any} f.item Current item.
+    @param {Number} f.index Index of the current item.
+    @param {Array} f.array The array being iterated.
+@param {Object} [o] Optional execution context.
+@return {Object} An object with two properties: `matches` and `rejects`. Each is
+  an array containing the items that were selected or rejected by the test
+  function (or an empty array if none).
+@static
 */
 A.partition = function(a, f, o) {
     var results = {
@@ -326,16 +335,16 @@ A.partition = function(a, f, o) {
 };
 
 /**
-* Creates an array of arrays by pairing the corresponding
-* elements of two arrays together into a new array.
-* @method Array.zip
-* @param {Array} a a collection to iterate over.
-* @param {Array} a2 another collection whose members will be
-* paired with members of the first parameter.
-* @static
-* @return {array} An array of arrays formed by pairing each element
-* of the first collection with an item in the second collection
-* having the corresponding index.
+Creates an array of arrays by pairing the corresponding elements of two arrays
+together into a new array.
+
+@method zip
+@param {Array} a Array to iterate over.
+@param {Array} a2 Another array whose values will be paired with values of the
+  first array.
+@return {Array} An array of arrays formed by pairing each element of the first
+  array with an item in the second array having the corresponding index.
+@static
 */
 A.zip = function(a, a2) {
     var results = [];

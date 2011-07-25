@@ -1,0 +1,182 @@
+<style type="text/css" scoped>
+/* Hide overlay markup while loading, if js is enabled */
+.yui3-js-enabled .yui3-overlay-loading {
+    top:-1000em;
+    left:-1000em;
+    position:absolute;
+}
+
+/* Overlay Look/Feel */
+.yui3-overlay-content {
+    padding:3px;
+    border:1px solid #000;
+    background-color:#aaa;
+}
+
+.yui3-overlay-content .yui3-widget-hd {
+    padding:5px;
+    border:2px solid #aa0000;
+    background-color:#fff;
+}
+
+.yui3-overlay-content .yui3-widget-bd {
+    padding:5px;
+    border:2px solid #0000aa;
+    background-color:#fff;
+}
+
+.yui3-overlay-content .yui3-widget-ft {
+    padding:5px;
+    border:2px solid #00aa00;
+    background-color:#fff;
+}
+
+/* Example Layout CSS */
+.overlay-example {
+    padding:5px;
+    margin:10px 0;
+    height:15em;
+}
+
+.overlay-example button, .overlay-example label, .overlay-example select, .overlay-example input {
+    margin-right:1px;
+}
+
+.overlay-example select.needs-shim {
+    width:100%;
+}
+
+.overlay-example .filler {
+    color:#999;
+}
+
+#show {
+    margin-left:15px;
+}
+
+#x, #y {
+    width:3em;
+}
+</style>
+
+<div class="intro">
+    <p>This example walks you through basics of creating and positioning an Overlay. It walks you through setting up the sandbox environment for the Overlay, including the required modules, and instantiating the Overlay based on markup already on the page.</p>
+    <p>It also provides a couple of input fields, allowing you to invoke the Overlay's `move()` method, to move the Overlay to a specific XY position on the page.</p>
+</div>
+
+<div class="example">
+    {{>overlay-xy-source}}
+</div>
+
+<h2>Basic XY Overlay Positioning</h2>
+
+<h3>Setting Up The YUI Instance</h3>
+
+<p>To create an instance of an Overlay on your page, the only module you need to request is the `overlay` module. The `overlay` module will pull in the `widget`, `widget-stack`, `widget-position`, `widget-position-align`, `widget-position-constrain` and `widget-stdmod` extensions it uses.</p>
+
+```
+YUI({...}).use("overlay", function(Y) {
+    // We'll write example code here, where we have a Y.Overlay class available.
+});
+```
+
+<p>Note, using the `overlay` module, will also pull down the default CSS required for overlay, on top of which we only need to add our required look/feel CSS for the example.</p>
+
+<h3>Creating The Overlay From Markup</h3>
+
+<p>For this example, we'll create the overlay instance from markup which already exists on the page, and is shown below. We mark the existing markup with the `yui3-overlay-loading` class, so that we can hide it while the rich control is being instantiated:</p>
+
+```
+<div id="overlay" class="yui3-overlay-loading">
+    <div class="yui3-widget-hd">Overlay Header</div>
+    <div class="yui3-widget-bd">Overlay Body</div>
+    <div class="yui3-widget-ft">Overlay Footer</div>
+</div>
+```
+
+<p>The container DIV with id="overlay" is specified as the contentBox for the Overlay instance, and during instantiation, the overlay will look for DIV's marked with the `yui3-widget-hd, yui3-widget-bd, yui3-widget-ft` classes to setup the Overlay's header, body and footer content attributes.</p>
+
+<h3>Instantiating The Overlay</h3>
+
+<p>To create an overlay instance, we use the overlay constructor `Y.Overlay`, and pass it the `contentBox` node reference for the existing markup on the page. We also set a height/width for the overlay and the initial position for the Overlay (which otherwise defaults to 0,0):</p>
+
+```
+// Create an overlay from markup, using an existing contentBox.
+var overlay = new Y.Overlay({
+    srcNode:"#overlay",
+    width:"10em",
+    height:"10em",
+    xy:[xy[0] + 10, xy[1] + 35]
+});
+overlay.render();
+```
+
+<p>After creating the overlay instance, we invoke `overlay.render()` to update the DOM to reflect the current state of the overlay. Before render is called, the state of the Overlay should not be reflected in the DOM (for example, we can change the height, without it being reflected in the DOM. When we finally render, the current height value will be applied to the DOM). We could also pass an optional node reference to the render method, to have the overlay rendered under a different parent node, from where the content box currently lies.</p>
+
+<h3>Moving the Overlay</h3>
+
+<p>Overlays have support for basic page based XY positioning. This example provides a couple of input controls which can be used to move the overlay to a specific XY page co-ordinate. Later examples will show how Overlay's extended positioning support to align/center the Overlay relative to other elements on the page.</p>
+
+```
+var xInput = Y.one("#x");
+var yInput = Y.one("#y");
+
+Y.on("click", function(e) {
+
+    var x = parseInt(xInput.get("value"));
+    var y = parseInt(yInput.get("value"));
+
+    overlay.move(x,y);
+}, "#move");
+```
+
+<p>Overlay can be moved by invoking the `move` method, with either seperate x and y arguments (`move(100,200)`), or as an array (`move([100,200])`). The `x, y and xy` attributes can also be used to move the overlay, and are equivalent to the move method (`overlay.set("x", 200);overlay.set("xy", [100,200])`)</p>
+
+<p>A select dropdown is added to the example page, along with additional content, to demonstrate the Overlay's ability to provide stacking and shimming support (to block select dropdown bleed through in IE6).</p>
+
+<h3>CSS: Overlay Look/Feel</h3>
+
+<p>The overlay.css Sam Skin file (build/overlay/assets/skins/sam/overlay.css) provides the default functional CSS for the overlay. Namely the CSS rules to hide the overlay, and position it absolutely. However there's no default out-of-the-box look/feel applied to the Overlay widget.</p>
+
+<p>The example provides it's own look and feel for the Overlay, by defining rules for the content box, header, body and footer sections, and also specifies how markup should be hidden while the overlay is loading.:</p>
+
+```
+/* Hide overlay markup while loading, if js is enabled */
+.yui3-js-enabled .yui3-overlay-loading {
+    top:-1000em;
+    left:-1000em;
+    position:absolute;
+}
+
+/* Overlay Look/Feel */
+.yui3-overlay-content {
+    padding:3px;
+    border:1px solid #000;
+    background-color:#aaa;
+}
+
+.yui3-overlay-content .yui3-widget-hd {
+    padding:5px;
+    border:2px solid #aa0000;
+    background-color:#fff;
+}
+
+.yui3-overlay-content .yui3-widget-bd {
+    padding:5px;
+    border:2px solid #0000aa;
+    background-color:#fff;
+}
+
+.yui3-overlay-content .yui3-widget-ft {
+    padding:5px;
+    border:2px solid #00aa00;
+    background-color:#fff;
+}
+```
+
+<p><strong>NOTE:</strong> As discussed on the Widget landing page, all widgets are enclosed in 2 containing elements - the boundingBox is the outer(most) element, and the contentBox is the inner element into which the widget's content is added. It is advised to apply any look/feel CSS for the widget to the content box and it's children. This leaves the bounding box without padding/borders, allowing for consistent positioning/sizing across box models.</p>
+
+<h2>Complete Example Source</h2>
+```
+{{>overlay-xy-source}}
+```

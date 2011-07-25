@@ -1,0 +1,100 @@
+<div class="intro">
+    <p>This example shows how to create a ScrollView widget which scrolls horizontally.</p>
+</div>
+
+<div class="example newwindow">
+    <a href="scrollview-horiz-example.html" target="_blank" class="button">
+        View Example in New Window
+    </a>
+</div>
+
+<h2>A Horizontal ScrollView</h2>
+
+<p>In this example, we'll create a ScrollView instance, which scrolls horizontally, as opposed to the vertically scrolling ScrollView we created in the <a href="scrollview.html">ScrollView With Scroll Indicator</a> example.</p>
+
+<p>The code for the example is pretty much the same as the code for the <a href="scrollview.html">ScrollView With Scroll Indicator</a> example. The only difference is that instead of having a ScrollView with a fixed height (and content which overflows that height), we set up a ScrollView with a fixed width (and content which overflows that width).</p>
+
+<h3>Modules Used</h3>
+
+<p>Since we want to use the base ScrollView, along with the ScrollViewScrollbars plugin, we use the `scrollview` module as we did for the vertical ScrollView example:</p>
+
+```
+YUI().use('scrollview', function(Y) {
+    ...
+});
+
+```
+
+<h3>Instantiating The ScrollView Widget</h3>
+
+<p>As with the vertical <a href="scrollview.html">ScrollView</a> example, we provide the markup for the ScrollView content on the page, as shown below:</p>
+
+```
+<!-- Content with a width which would require scrolling -->
+<div id="scrollview-content" class="yui3-scrollview-loading">
+    <ul>
+        <li><img src="..."></li>
+        <li><img src="..."></li>
+        <li><img src="..."></li>
+        <li><img src="..."></li>
+    </ul>
+</div>
+```
+
+<p>But this time, when we instantiate the ScrollView instance, we provide a fixed width, as opposed to a fixed height, for the widget.</p> 
+
+```
+// Constraining the width, instead of the height for horizontal scrolling
+var scrollView = new Y.ScrollView({
+    id: 'scrollview',
+    srcNode: '#scrollview-content',
+    width: 320,
+    flick: {
+        minDistance:10,
+        minVelocity:0.3,
+        axis: "x"
+    }
+});
+
+scrollView.render();
+```
+
+<p>This causes the list content (which has inline-block applied to each LI by the scrollview CSS) to be wider than the ScrollView, forcing horizontal scrolling. The height of the ScrollView in this case is driven by the height of it's content. As with the ScrollView Base example, we constrain flick handling to a specific axis, in this case the "x" axis.</p>
+
+<p>The important CSS for the example, which switches the LIs to layout horizontally, is shown below, along with some tweaks requires for IE 6 and 7 support:</p>
+
+```
+/* To layout horizontal LIs */
+#scrollview-content {
+    white-space:nowrap;
+}
+
+#scrollview-content li {
+    display:inline-block;
+    background-color:#fff;
+}
+
+/* For IE 6/7 - needs inline block hack (and the background color mentioned above) */
+#scrollview-content li {
+    *display:inline;
+    *zoom:1;
+}
+```
+
+<p><strong>NOTE:</strong> In the initial ScrollView release (3.2.0), the above CSS to layout LIs horizontally was bundled with the ScrollView CSS out-of-the-box. It has been removed as of the 3.3.0 release, since it makes it harder for developers to nest lists inside the ScrollView content, and in general, ScrollView is content agnostic.</p>
+
+<h3>Preventing Native Behavior For Content</h3>
+
+<p>In this example, since we have images which act as drag/flick targets, we need to stop the default image drag/drop behavior in certain browsers (for example gecko and IE), by preventing default on the underlying mousedown event. If we don't prevent default, the image will be natively draggable by default, and interfere with scrolling:</p>
+
+```
+// Prevent the image from being natively dragged
+content.delegate("mousedown", function(e) {
+    e.preventDefault();
+}, "img");
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>scrollview-horiz-source}}
+```

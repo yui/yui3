@@ -6,7 +6,7 @@
     "author": ["jenny","lsmith"],
 
     "use": ["recordset"],
-    "tags": ["recordset"],
+    "tags": ["utility", "recordset"],
 
     "examples": [
 

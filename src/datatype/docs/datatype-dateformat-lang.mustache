@@ -1,0 +1,99 @@
+<style scoped>
+/* custom styles for this example */
+
+#default_lang_output, #single_lang_output {
+    font-style:italic;
+}
+
+#event_output {
+    margin-left:1em;
+    color:#00aa00;
+    font-style:italic;
+}
+
+#demo .output {
+    margin-bottom:1em;
+    padding:10px;
+    border:1px solid #D9D9D9;
+}
+
+#demo_output.rtl {
+    text-align:right;
+}
+
+#switchlang   {
+    margin-top:3em;
+}
+</style>
+
+<div class="intro">
+    <p>The "date-format" module of the DataType Utility leverages the external language resource bundle support provided in 3.1.0, as the preferred way to define and deliver formatting patterns for various languages.</p>
+</div>
+
+<div class="example">
+    {{>datatype-dateformat-lang-source}}
+</div>
+
+<h4>Using Date Formatting Support</h4>
+
+<p>To use Date formatting language resource bundle support in your application, all you need to do is use the `datatype-date` module, and specify the (supported) language you need for the instance.</p>
+
+```
+// Default (no language specified)
+YUI().use("datatype-date", function (Y) {
+    Y.one("#default_lang_output").setContent(
+        Y.DataType.Date.format(new Date(), {format:"%x"})
+    );
+});
+
+// Format Date For fr-FR
+YUI({lang:"fr-FR"}).use("datatype-date", function (Y) {
+    Y.one("#single_lang_output").setContent(
+        Y.DataType.Date.format(new Date(), {format:"%x"})
+    );
+});
+```
+
+<h4>Switching Languages</h4>
+
+<p>You can also switch the language resource bundle currently in use for your YUI instance, by invoking `Y.use` to pull down another language resource bundle if required:</p>
+
+```
+    ...
+
+    var lang = Y.one("#demo_lang").get("value");
+
+    // Pull down a new language resource bundle for datatype-date.
+
+    // Since it's a potentially async operation, we write our application logic
+    // in a callback which is invoked once the new language resource bundle is pulled down
+
+    Y.use("lang/datatype-date-format_" + lang, function(Y) {
+
+        // You only need to set the language explicitly when switching languages,
+        // It is not required for the single language use case shown previously.
+        Y.Intl.setLang("datatype-date-format", lang);
+
+        formattedDate = Y.DataType.Date.format(new Date(), {format:"%c"});
+
+    });
+    ...
+```
+
+<p>The `Y.Intl` utility, which is automatically pulled down with a language resource bundle acts as a manager for language resource bundle handling, and is used to register new language resource bundles, set the language currently being used, and retrieve strings for the currently language.</p>
+
+<h4>Available Languages</h4>
+
+<p>The set of available languages for a given module, can be obtained from the <code>Intl</code> utility, and we use this support to generate the dropdown for this example:</p>
+
+```
+    // Insert the languages available for the datatype-date module
+    var availLangs = Y.Intl.getAvailableLangs("datatype-date-format"),
+        select = Y.one("#demo_lang"),
+        i;
+
+    for (i = 0; i < availLangs.length; i++) {
+        select.append('<option value="' + availLangs[i] + '">' + availLangs[i] + '</option>');
+    }
+```
+

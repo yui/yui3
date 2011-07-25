@@ -5,13 +5,13 @@
 
     "author": "lsmith",
 
-    "tags": ["stylesheet", "css"],
+    "tags": ["utility", "stylesheet", "css"],
     "use": ["stylesheet"],
 
     "examples": [
 
         {
-            "name": "stylesheet_theme",
+            "name": "stylesheet-theme",
 	        "displayName": "Adjusting a Page Theme on the Fly",
 	        "modules": ["stylesheet","overlay","slider","dd"],
 	        "description": "Use StyleSheet to adjust the CSS rules applying a page theme from user input",

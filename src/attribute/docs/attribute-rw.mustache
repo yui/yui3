@@ -1,0 +1,148 @@
+<style type="text/css" scoped>
+    .example-out .myclass-attrs {
+        font-family:courier;
+        margin-top:2px;
+    }
+
+    .example-out .myclass-title {
+        font-weight:bold;
+        font-family:arial;
+        color:#8dd5e7;
+        margin-top:5px;
+        margin-bottom:3px;
+    }
+
+    .example-out {
+        overflow:auto;
+        border:1px solid #000;
+        color:#ffffff;
+        background-color:#004C6D;
+        margin-top:5px;
+        margin-bottom:20px;
+        height:8em;
+        padding:2px 2px 2px 5px;
+    }
+    
+    #writeInitial label, #writeAgain label, #writeInternally label {
+        font-weight:900;
+    }
+
+    #writeInitial .fooVal, #writeAgain .fooVal, #writeInternally .fooVal {
+        width:9em;
+    }
+
+    #writeInitial .barVal, #writeAgain .barVal, #writeInternally .barVal {
+        width:9em;
+    }
+
+    #writeInitial p, #writeAgain p, #writeInternally p {
+        margin-top:0.2em;
+        margin-bottom:0.2em;
+        color:#004C6D;
+        font-size:108%;
+    }
+</style>
+
+<div class="intro">
+    <p>Attributes can be configured to be `readOnly`, stopping them from being modified by the end user, or `writeOnce` allowing them to be set by the end user, but only once. This example demonstrates how to setup attributes for your class as `readOnly` or `writeOnce` attributes, and shows how their behavior differs when the end user attempts to set their values.</p>
+</div>
+
+<div class="example">
+    {{>attribute-rw-source}}
+</div>
+
+<h2>ReadOnly And WriteOnce</h2>
+
+<p>Attribute supports the ability to configure attributes to be `readOnly` or `writeOnce`. `readOnly` attributes cannot be set by the end user, either through initial values passed to the constructor, or by invoking the `set` method. `writeOnce` attributes on the other hand, can be set by the user, but only once, either during initialization or through a call to `set`. Once a value is established for a `writeOnce` attribute, it cannot be reset to another value by the user.</p>
+
+<h2>Configuring ReadOnly And WriteOnce Attributes</h2>
+
+<p>This example sets up a custom class, `MyClass`, with two attributes, `foo` and `bar`. `foo` is configured to be a `readOnly` attribute, and `bar` is configured to be a `writeOnce` attribute:</p>
+
+```
+// Setup a custom class with attribute support
+function MyClass(cfg) {
+
+    // Attribute configuration
+    var attrs = {
+        "foo" : {
+            value: "Default Foo",
+            readOnly: true
+        },
+
+        "bar" : {
+            value: "Default Bar",
+            writeOnce: true
+        }
+    }
+
+    this.addAttrs(attrs, cfg);
+}
+```    
+
+<h2>Attempting To Set Values</h2>
+
+<p>We first attempt to set values for both attributes in the constructor (used to intialize the attributes) and see that only `bar`, the `writeOnce` attribute, gets set to the user provided value:</p>
+
+```
+var fooVal = Y.one("#writeInitial .fooVal").get("value");
+var barVal = Y.one("#writeInitial .barVal").get("value");
+
+o1 = new MyClass({
+    foo: fooVal,
+    bar: barVal
+});
+
+displayValues(o1, "Attempt to set initial values in constructor", 
+                "#writeInitial .example-out");
+```
+
+<p>We then attempt to set values for both attributes again, using `set`, and see that niether of the values are modified:</p>
+
+```
+var fooVal = Y.one("#writeAgain .fooVal").get("value");
+var barVal = Y.one("#writeAgain .barVal").get("value");
+
+// Attempt to reset values:
+o1.set("foo", fooVal);
+o1.set("bar", barVal);
+
+displayValues(o1, "Attempt to set values again, using set", 
+                "#writeAgain .example-out");
+```
+
+<h2>Setting The State Of ReadOnly Values Internally</h2>
+
+<p>Although the user cannot update the value of `readOnly` attributes, it maybe neccessary for the host object to update it's value internally. The example shows how this can be done, using the private `_set` property on the host:</p>
+
+```
+MyClass.prototype.doSomething = function(val) {
+    // ... Do something which requires
+    // MyClass to change the value
+    // of foo ...
+
+    // Host code can reset value of 
+    // readOnly attributes interally,
+    // by working with the private _set
+    // property
+
+    this._set("foo", val);
+};
+
+...
+
+var val = Y.one("#writeInternally .fooVal").get("value");
+
+// Call method, which sets foo internally...
+o1.doSomething(val);
+
+displayValues(o1, "Set value of foo (readOnly) interally", 
+                "#writeInternally .example-out");
+```
+
+
+<h2>Complete Example Source</h2>
+
+```
+{{>attribute-rw-source}}
+```

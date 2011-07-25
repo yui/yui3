@@ -189,6 +189,21 @@ controllerSuite.add(new Y.Test.Case({
         Assert.areSame(two, routes[1].callback);
     },
 
+    'hasRoute() should return `true` if one or more routes match the given path': function () {
+        var controller = this.controller = new Y.Controller(),
+            routes;
+
+        function noop () {}
+
+        controller.route('/:foo', noop);
+        controller.route(/foo/, noop);
+        controller.route('/bar', noop);
+
+        Assert.isTrue(controller.hasRoute('/foo'));
+        Assert.isTrue(controller.hasRoute('/bar'));
+        Assert.isFalse(controller.hasRoute('/baz/quux'));
+    },
+
     'dispatch() should dispatch to the first route that matches the current URL': function () {
         var test       = this,
             controller = this.controller = new Y.Controller();
@@ -224,6 +239,40 @@ controllerSuite.add(new Y.Test.Case({
 
         controller.dispatch();
         this.wait(500);
+    },
+
+    'removeRoot() should remove the root URL from a given path': function () {
+        var controller = this.controller = new Y.Controller();
+
+        controller.root = '/';
+        Assert.areSame('/bar', controller.removeRoot('/bar'));
+        Assert.areSame('/bar', controller.removeRoot('bar'));
+
+        controller.root = '/foo';
+        Assert.areSame('/bar', controller.removeRoot('/foo/bar'));
+
+        controller.root = '/foo/';
+        Assert.areSame('/bar', controller.removeRoot('/foo/bar'));
+
+        controller.root = '/moo';
+        Assert.areSame('/foo/bar', controller.removeRoot('/foo/bar'));
+    },
+
+    'removeRoot() should strip the "http://foo.com" portion of the URL, if any': function () {
+        var controller = this.controller = new Y.Controller();
+
+        Assert.areSame('/foo/bar', controller.removeRoot('http://example.com/foo/bar'));
+        Assert.areSame('/foo/bar', controller.removeRoot('https://example.com/foo/bar'));
+        Assert.areSame('/foo/bar', controller.removeRoot('http://user:pass@example.com/foo/bar'));
+        Assert.areSame('/foo/bar', controller.removeRoot('http://example.com:8080/foo/bar'));
+        Assert.areSame('/foo/bar', controller.removeRoot('http://user:pass@example.com:8080/foo/bar'));
+
+        controller.root = '/foo';
+        Assert.areSame('/bar', controller.removeRoot('http://example.com/foo/bar'));
+        Assert.areSame('/bar', controller.removeRoot('https://example.com/foo/bar'));
+        Assert.areSame('/bar', controller.removeRoot('http://user:pass@example.com/foo/bar'));
+        Assert.areSame('/bar', controller.removeRoot('http://example.com:8080/foo/bar'));
+        Assert.areSame('/bar', controller.removeRoot('http://user:pass@example.com:8080/foo/bar'));
     },
 
     'replace() should replace the current history entry': function () {
@@ -296,23 +345,6 @@ controllerSuite.add(new Y.Test.Case({
         controller.root = '/foo/';
         Assert.areSame('/foo/bar', controller._joinURL('bar'));
         Assert.areSame('/foo/bar', controller._joinURL('/bar'));
-    },
-
-    '_removeRoot() should remove the root URL from a given path': function () {
-        var controller = this.controller = new Y.Controller();
-
-        controller.root = '/';
-        Assert.areSame('/bar', controller._removeRoot('/bar'));
-        Assert.areSame('/bar', controller._removeRoot('bar'));
-
-        controller.root = '/foo';
-        Assert.areSame('/bar', controller._removeRoot('/foo/bar'));
-
-        controller.root = '/foo/';
-        Assert.areSame('/bar', controller._removeRoot('/foo/bar'));
-
-        controller.root = '/moo';
-        Assert.areSame('/foo/bar', controller._removeRoot('/foo/bar'));
     }
 }));
 
@@ -353,6 +385,7 @@ controllerSuite.add(new Y.Test.Case({
 
             Assert.isObject(req);
             Assert.isFunction(next);
+            Assert.areSame(next, req.next);
             Assert.isObject(req.params);
             Assert.isTrue(Y.Object.isEmpty(req.params));
             Assert.areSame('/foo', req.path);
@@ -499,6 +532,27 @@ modelSuite.add(new Y.Test.Case({
 
         model.destroy({'delete': true}, mock.callback);
         Y.Mock.verify(mock);
+    },
+
+    'destroy() should remove the model from all lists': function () {
+        var model     = new Y.Model(),
+            listOne   = new Y.ModelList(),
+            listTwo   = new Y.ModelList(),
+            listThree = new Y.ModelList();
+
+        listOne.add(model);
+        listTwo.add(model);
+        listThree.add(model);
+
+        Assert.areSame(1, listOne.size(), 'model should be added to list one');
+        Assert.areSame(1, listTwo.size(), 'model should be added to list two');
+        Assert.areSame(1, listThree.size(), 'model should be added to list three');
+
+        model.destroy();
+
+        Assert.areSame(0, listOne.size(), 'model should be removed from list one');
+        Assert.areSame(0, listTwo.size(), 'model should be removed from list two');
+        Assert.areSame(0, listThree.size(), 'model should be removed from list three');
     }
 }));
 
@@ -1229,6 +1283,15 @@ modelListSuite.add(new Y.Test.Case({
         ArrayAssert.itemsAreSame(['one', 'two'], list.get('foo'));
     },
 
+    'get() should return a list attribute if there is one': function () {
+        var list = this.createList();
+
+        list.addAttr('foo', {value: '<listfoo>'});
+        list.add([{foo: 'modelfoo-one'}, {foo: 'modelfoo-two'}]);
+
+        Assert.areSame('<listfoo>', list.get('foo'));
+    },
+
     'getAsHTML() should return an array of HTML-escaped attribute values': function () {
         var list = this.createList();
 
@@ -1236,11 +1299,29 @@ modelListSuite.add(new Y.Test.Case({
         ArrayAssert.itemsAreSame(['&lt;foo&gt;', '&lt;bar&gt;'], list.getAsHTML('foo'));
     },
 
+    'getAsHTML() should return a list attribute if there is one': function () {
+        var list = this.createList();
+
+        list.addAttr('foo', {value: '<listfoo>'});
+        list.add([{foo: 'modelfoo-one'}, {foo: 'modelfoo-two'}]);
+
+        Assert.areSame('&lt;listfoo&gt;', list.getAsHTML('foo'));
+    },
+
     'getAsURL() should return an array of URL-encoded attribute values': function () {
         var list = this.createList();
 
         list.add([{foo: 'a b'}, {foo: 'c d'}]);
         ArrayAssert.itemsAreSame(['a%20b', 'c%20d'], list.getAsURL('foo'));
+    },
+
+    'getAsURL() should return a list attribute if there is one': function () {
+        var list = this.createList();
+
+        list.addAttr('foo', {value: 'list foo'});
+        list.add([{foo: 'modelfoo-one'}, {foo: 'modelfoo-two'}]);
+
+        Assert.areSame('list%20foo', list.getAsURL('foo'));
     },
 
     'getByClientId() should look up a model by its clientId': function () {

@@ -1,0 +1,63 @@
+<p id="selected">Selected: <span id="selection">None</span></p>
+
+<div id="exampleContainer"></div>
+
+<script type="text/javascript">
+    YUI({ 
+        modules: {
+            "listbox": {
+                fullpath: "{{componentAssets}}/listbox.js",
+                requires: ["substitute", "widget", "widget-parent", "widget-child", "node-focusmanager"]
+            }
+        }
+     }).use("listbox", function (Y) {
+
+        var listbox = new Y.ListBox({  
+            id:"mylistbox", 
+            width:"13em", 
+            height:"15em", 
+            children: [ 
+                { label: "Item One" },
+                { label: "Item Two" } 
+            ]
+        });
+
+        listbox.add({ 
+            type: "ListBox", 
+            label: "Item Three", 
+            children: [ 
+                { label: "Item Three - One" },
+                { label: "Item Three - Two" } 
+            ]
+        });
+
+        listbox.add({ label: "Item Four" });
+
+        listbox.add(
+            new Y.Option({ label: "Item Five" })
+        );
+
+        listbox.add({ 
+            type: "ListBox", 
+            label: "Item Six", 
+            children: [ 
+                { label: "Item Six - One" },
+                { label: "Item Six - Two" }
+            ]
+        });
+
+        listbox.after("selectionChange", function(e) {
+
+            var selection = this.get("selection");
+            if (selection instanceof Y.ListBox) {
+                selection = selection.get("selection");
+            }
+
+            if (selection) {
+                Y.one("#selection").setContent(selection.get("label"));
+            }
+        });
+
+        listbox.render("#exampleContainer");
+    });
+</script>
