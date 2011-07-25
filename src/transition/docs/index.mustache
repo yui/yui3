@@ -1,0 +1,125 @@
+				<h2 id="using">Using Transitions</h2>
+				<h3 id="attributes">Transition Method</h3>
+                    <p>The Transition Utility adds the <code>transition</code> method to <code>Node</code> instances when the <code>transition</code> module is included.  The method accepts a configuration object, and an optional callback function.  The config may include one or more <code>CSS</code> properties to be transitioned, an optional <code>duration</code> (in seconds), <code>delay</code>, and  <code>easing</code> for fine-tuning transition behavior. Calling the <code>transition</code> method begins the transition.  The <code>callback</code> is run after the transition has completed.</p>
+
+```
+Y.one('#demo').transition({
+    easing: 'ease-out',
+    duration: 0.75 // seconds,
+    width: '10px',
+    height: '10px'
+}, function() {
+    this.remove();
+});
+```
+
+				<h3 id="easings">Supported Easings</h3>
+
+                <p>Transition supports the following easings:</p>
+                <table>
+                <thead>
+                    <tr>
+                        <th>Easing</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>cubic-bezier</code></td>
+                        <td>Specifies a cubic-bezier curve. The four values specify points P1 and P2 of the curve as (x1, y1, x2, y2). All values must be in the range [0, 1] or the definition is invalid.</td>
+                    </tr>
+                    <tr>
+                        <td><code>ease (default)</code></td>
+                        <td>equivalent to cubic-bezier(0.25, 0.1, 0.25, 1)</td>
+                    </tr>
+                    <tr>
+                        <td><code>linear</code></td>
+                        <td>equivalent to cubic-bezier(0, 0, 1, 1)</td>
+                    </tr>
+                    <tr>
+                        <td><code>ease-in</code></td>
+                        <td>equivalent to cubic-bezier(0.42, 0, 1, 1)</td>
+                    </tr>
+                    <tr>
+                        <td><code>ease-out</code></td>
+                        <td>equivalent to cubic-bezier(0, 0, 0.58, 1)</td>
+                    </tr>
+                    <tr>
+                        <td><code>ease-in-out</code></td>
+                        <td>equivalent to cubic-bezier(0.42, 0, 0.58, 1)</td>
+                    </tr>
+                </tbody>
+                </table>
+                <p>Transition easings are defined as part of the CSS3 Transition Module.  See the <a href="http://www.w3.org/TR/css3-transitions/#transition-timing-function_tag">full specification</a> for further details.
+
+				<h3 id="attr-specific">Property Specific Attributes</h3>
+
+                    <p>The Transition Utility also allows for property specific attributes.  Each attribute may optionally have its own <code>duration</code>, </code>easing</code>, and/or <code>delay</code>.  This provides much finer control over the transition timeline, enabling more complex effects.</p>
+
+```
+Y.one('#demo').transition({
+    duration: 0.75,
+    easing: 'ease-out',
+
+    height: 0,
+
+    width: {
+        delay: 0.75,
+        easing: 'ease-in',
+        value: 0
+    },
+
+    opacity: {
+        delay: 1.5,
+        duration: 1.25,
+        value: 0
+    }
+});
+```
+
+
+        <h3 id="transition-events">Listening for Events</h3>
+            <p>The Transition Utility provides optional notifications for reacting to the start and end of a transition.  These can be subscribed to via the <code>on</code> attribute of the transition config.</p>
+
+```
+var node = Y.one('#demo');
+
+Y.one('#demo').transition({
+    duration: 1,
+    height:0,
+
+    width: {
+        delay: 1,    
+        duration: 0.5,
+        value: 0
+    },
+
+    on: {
+        start: function() {
+            Y.log('start');
+        },
+
+        end: function() {
+            Y.log('end');
+        }
+    }
+});
+```
+
+        <p>For simplicity, an end handler can also be added as a function callback:
+
+```
+Y.one('#demo').transition({
+    duration: 1,
+    height:0,
+
+    width: {
+        delay: 1,    
+        duration: 0.5,
+        value: 0
+    }
+}, function() {
+    Y.log('end');
+});
+
+```
