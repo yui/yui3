@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+
+<head>
+<style>
+	body {
+		font-family:sans-serif;
+		line-height:120%;
+		font-size:90%;
+	}
+	#testNode {
+		width:100px;
+		height:100px;
+		background:red;
+	}
+</style>
+<script type="text/javascript" src="../../../../build/yui/yui-debug.js"></script> 
+</head>
+
+<body class="yui3-skin-sam">
+	<h1>Panel Manual Tests</h1>
+	<p>The unit tests found at src/panel/tests/unit-tests.html don't do a great job at testing the auto-focus and hide functionality in panel, so this manual test was created to test those.</p>
+	<p>
+		Create a basic modal panel which focuses when I click outside it, and closes when escape key is pressed</p>
+		<div id="defaultContainer">Test content for default panel.</div>
+		<input type="button" value="Default Panel" id="defaultBtn">
+	</p>
+	<p>
+		Create a modal panel that hides on click on the mask (test autohide)</p>
+		<div id="autohideContainer">Test content for autohide panel.</div>
+		<input type="button" value="Autohide on mask click" id="autohideBtn">
+	</p>
+	<p>
+		Create a non-modal panel that hides when an element on the page is clicked
+		<div id="testNode">Click me when the panel is up</div>
+		<div id="nodeAutohideContainer">Test content for node autohide panel.</div>
+		<input type="button" value="Autohide on Node Click" id="nodeAutohideBtn">
+	</p>
+
+
+	<script type="text/javascript">
+
+	YUI({filter:"raw"}).use('panel', function(Y) {
+		var defaultBtn = Y.one("#defaultBtn"),
+		autohideBtn = Y.one('#autohideBtn'),
+		nodeAutohideBtn = Y.one("#nodeAutohideBtn"),
+
+		launchDefault = function() {
+			var cfg = {
+				visible:true,
+				centered:true,
+				modal:true,
+				width:200,
+				height:200,
+				srcNode: '#defaultContainer'
+			},
+
+			panel = new Y.Panel(cfg);
+			panel.render();
+		},
+
+		launchAutohide = function() {
+
+			var arr = [
+				{
+					eventName: "clickoutside"
+				}
+			],
+			cfg = {
+				srcNode: "#autohideContainer",
+				visible:true,
+				centered:true,
+				width:200,
+				height:200,
+				modal:true,
+				hideOn: arr
+			},
+
+			panel = new Y.Panel(cfg);
+			panel.render();
+
+		},
+
+		launchNodeAutohide = function() {
+			var cfg = {
+				visible:true,
+				centered:true,
+				width:200,
+				height:200,
+				modal:false,
+				srcNode: '#nodeAutohideContainer',
+				hideOn: [
+					{
+						node: Y.one('#testNode'),
+						eventName: "click"
+					}
+				]
+			},
+
+			panel = new Y.Panel(cfg);
+			panel.render();
+		};
+
+
+		defaultBtn.on('click', launchDefault);
+		autohideBtn.on('click', launchAutohide);
+		nodeAutohideBtn.on('click', launchNodeAutohide);
+	});
+	</script>
+</body>

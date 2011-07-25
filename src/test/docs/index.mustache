@@ -1,0 +1,1280 @@
+<div class="intro">
+    <p>YUI Test is a testing framework for browser-based JavaScript solutions. Using YUI Test, you can easily add unit testing to your JavaScript solutions. While not a direct port from any specific xUnit framework, YUI Test does derive some characteristics from <a href="http://www.nunit.org/">nUnit</a> and <a href="http://www.junit.org/">JUnit</a>.</p>
+    <p>YUI Test features:</p>
+    <ul>
+        <li>Rapid creation of <strong>test cases</strong> through simple syntax.</li>
+        <li>Advanced <strong>failure detection</strong> for methods that throw errors.</li>
+        <li>Grouping of related test cases using <strong>test suites</strong>.</li>
+        <li><strong>Mock objects</strong> for writing tests without external dependencies.</li>
+        <li><strong>Asynchronous tests</strong> for testing events and Ajax communication.</li>
+        <li><strong>DOM Event simulation</strong> in all A-grade browsers (through <a href="../event/index.html">Event</a>).</li>
+    </ul>
+</div>
+
+{{>getting-started}}
+
+                <h2 id="testcases">Using Test Cases</h2>
+                <p>The basis of Test is the <code>Y.Test.Case</code> object. A <code>TestCase</code> object is created by using the
+                  <code>Y.Test.Case</code> constructor and passing in an object containing methods and other information with which
+                  to initialize the test case. Typically, the argument is an object literal, for example:</p>
+```
+var testCase = new Y.Test.Case({
+
+    name: "TestCase Name",
+
+    //traditional test names
+    testSomething : function () {
+        //...
+    },
+
+    testSomethingElse : function () {
+        //...
+    }
+});
+```
+                <p>In this example, a simple test case is created named &quot;TestCase Name&quot;. The <code>name</code> property is automatically  applied to the test case so that it can be distinguished from other test cases that may be run during the same cycle. The two methods in this example are tests methods ( <code>testSomething()</code> and <code>testSomethingElse())</code>, which means  that they are methods designed to test a specific piece of functional code. Test methods are indicatd by their name, either using the traditional manner of prepending the word <code>test</code> to the method name, or using a "friendly name," which is a sentence containing the word "should" that describes the test's purpose. For example:</p>
+```
+var testCase = new Y.Test.Case({
+
+    name: "TestCase Name",
+
+    //friendly test names
+    "Something should happen here" : function () {
+        //...
+    },
+
+    "Something else should happen here" : function () {
+        //...
+    }
+});
+```
+                <p>Regardless of the naming convention used for test names, each should contain one or more <a href="#assertions">assertions</a> that test data for validity.</p>
+
+                <h3 id="setup-and-teardown">setUp() and tearDown()</h3>
+                <p>As each test method is called, it may be necessary to setup information before it's run and then potentially clean up that information
+                  after the test is run. The <code>setUp()</code> method is run before each and every test in the test case and likewise the <code>tearDown()</code> method is run
+                  after each test is run. These methods should be used in conjunction to create objects before a test is run and free up memory after the
+                  test is run. For example:</p>
+```
+var testCase = new Y.Test.Case({
+
+    name: "TestCase Name",
+
+    //---------------------------------------------
+    // Setup and tear down
+    //---------------------------------------------
+
+    setUp : function () {
+        this.data = { name : "Nicholas", age : 28 };
+    },
+
+    tearDown : function () {
+        delete this.data;
+    },
+
+    //---------------------------------------------
+    // Tests
+    //---------------------------------------------
+
+    testName: function () {
+        Y.Assert.areEqual("Nicholas", this.data.name, "Name should be 'Nicholas'");
+    },
+
+    testAge: function () {
+        Y.Assert.areEqual(28, this.data.age, "Age should be 28");
+    }
+});
+```
+                <p>In this example, a <code>setUp()</code> method creates a data object with some basic information. Each property of the data object is checked with
+                  a different test, <code>testName()</code> tests the value of <code>data.name</code> while <code>testAge()</code> tests the value of <code>data.age</code>. Afterwards, the data object is deleted
+                  to free up the memory. Real-world implementations will have more complex tests, of course, but they should follow the basic pattern you see in the above code.</p>
+                <p><strong>Note: </strong>Both <code>setUp()</code> and <code>tearDown()</code> are optional methods and are only used when defined.</p>
+
+                <h3 id="ignoring">Ignoring Tests</h3>
+                <p>There may be times when you want to ignore a test (perhaps the test is invalid for your purposes or the functionality is being re-engineered and so it shouldn't be tested at this time). To specify tests to ignore,
+                  use the <code>_should.ignore</code> property and name each test to skip as a property whose value is set to <code>true</code>:</p>
+```
+var testCase = new Y.Test.Case({
+
+    name: "TestCase Name",
+
+    //---------------------------------------------
+    // Special instructions
+    //---------------------------------------------
+
+    _should: {
+        ignore: {
+            testName: true //ignore this test
+        }
+    },
+
+    //---------------------------------------------
+    // Setup and tear down
+    //---------------------------------------------
+
+    setUp : function () {
+        this.data = { name : "Nicholas", age : 28 };
+    },
+
+    tearDown : function () {
+        delete this.data;
+    },
+
+    //---------------------------------------------
+    // Tests
+    //---------------------------------------------
+
+    testName: function () {
+        Y.Assert.areEqual("Nicholas", this.data.name, "Name should be 'Nicholas'");
+    },
+
+    testAge: function () {
+        Y.Assert.areEqual(28, this.data.age, "Age should be 28");
+    }
+
+});
+```
+
+                <p>Here the <code>testName()</code> method will be ignored when the test case is run. This is accomplished by first defining the special <code>_should</code>
+                  property and within it, an <code>ignore</code> property. The ignore property is an object containing name-value pairs representing the names of the tests
+                  to ignore. By defining a property named &quot;testName&quot; and setting its value to <code>true</code>, it says that the method named &quot;testName&quot;
+                  should not be executed.</p>
+
+                <h3 id="intentional-errors">Intentional Errors</h3>
+                <p>There may be a time that a test throws an error that was expected. For instance, perhaps you're testing a function that should throw an error if invalid data
+                  is passed in. A thrown error in this case can signify that the test has passed. To indicate that
+                  a test should throw an error, use the <code>_should.error</code> property.  For example:</p>
+```
+function sortArray(array) {
+    if (array instanceof Array){
+        array.sort();
+    } else {
+        throw new TypeError("Expected an array");
+    }
+}
+
+var testCase = new Y.Test.Case({
+
+    name: "TestCase Name",
+
+    //---------------------------------------------
+    // Special instructions
+    //---------------------------------------------
+
+    _should: {
+        error: {
+            testSortArray: true //this test should throw an error
+        }
+    },
+
+    //---------------------------------------------
+    // Tests
+    //---------------------------------------------
+
+    testSortArray: function () {
+        sortArray(12);  //this should throw an error
+    }
+
+});
+```
+                <p>In this example, a test case is created to test the standalone <code>sortArray()</code> function, which simply accepts an array and calls its <code>sort()</code> method.
+                  But if the argument is not an array, an error is thrown. When <code>testSortArray()</code> is called, it throws an error because a number is passed into <code>sortArray()</code>.
+                  Since the <code>_should.error</code> object has a property called &quot;testSortArray&quot; set to <code>true</code>, this indicates that <code>testSortArray()</code> should
+                  pass only if an error is thrown.</p>
+                <p>It is possible to be more specific about the error that should be thrown. By setting a property in <code>_should.error</code> to a string, you can
+                  specify that only a specific error message can be construed as a passed test.  Here's an example:</p>
+
+
+```
+function sortArray(array) {
+    if (array instanceof Array){
+        array.sort();
+    } else {
+        throw new TypeError("Expected an array");
+    }
+}
+
+var testCase = new Y.Test.Case({
+
+    name: "TestCase Name",
+
+    //---------------------------------------------
+    // Special instructions
+    //---------------------------------------------
+
+    _should: {
+        error: {
+            testSortArray: "Expected an array"
+        }
+    },
+
+    //---------------------------------------------
+    // Tests
+    //---------------------------------------------
+
+    testSortArray: function () {
+        sortArray(12);  //this should throw an error
+    }
+
+});
+```
+                <p>In this example, the <code>testSortArray()</code> test will only pass if the error that is thrown has a message of &quot;Expected an array&quot;.
+                  If a different error occurs within the course of executing <code>testSortArray()</code>, then the test will fail due to an unexpected error.</p>
+                <p>If you're unsure of the message but know the type of error that will be thrown, you can specify the error constructor for the error
+                you're expecting to occur:</p>
+```
+function sortArray(array) {
+    if (array instanceof Array){
+        array.sort();
+    } else {
+        throw new TypeError("Expected an array");
+    }
+}
+
+var testCase = new Y.Test.Case({
+
+    name: "TestCase Name",
+
+    //---------------------------------------------
+    // Special instructions
+    //---------------------------------------------
+
+    _should: {
+        error: {
+            testSortArray: TypeError
+        }
+    },
+
+    //---------------------------------------------
+    // Tests
+    //---------------------------------------------
+
+    testSortArray: function () {
+        sortArray(12);  //this should throw an error
+    }
+
+});
+```
+
+                <p>In this example, the test will pass if a <code>TypeError</code> gets thrown; if any other type of error is thrown,
+                the test will fail. A word of caution: <code>TypeError</code> is the most frequently thrown error by browsers,
+                so specifying a <code>TypeError</code> as expected may give false passes.</p>
+                <p>To narrow the margin of error between checking for an error message and checking the error type, you can create a specific error
+                  object and set that in the <code>_should.error</code> property, such as:</p>
+```
+function sortArray(array) {
+    if (array instanceof Array){
+        array.sort();
+    } else {
+        throw new TypeError("Expected an array");
+    }
+}
+
+var testCase = new Y.Test.Case({
+
+    name: "TestCase Name",
+
+    //---------------------------------------------
+    // Special instructions
+    //---------------------------------------------
+
+    _should: {
+        error: {
+            testSortArray: new TypeError("Expected an array")
+        }
+    },
+
+    //---------------------------------------------
+    // Tests
+    //---------------------------------------------
+
+    testSortArray: function () {
+        sortArray(12);  //this should throw an error
+    }
+
+});
+```
+                <p>Using this code, the <code>testSortArray()</code> method will only pass if a <code>TypeError</code> object is thrown with a message of
+                  &quot;Expected an array&quot;; if any other type of error occurs, then the test fails due to an unexpected error.</p>
+                <p><strong>Note: </strong>If a test is marked as expecting an error, the test will fail unless that specific error is thrown. If the test completes without an error being thrown, then it fails.</p>
+
+                <h2 id="assertions">Assertions</h2>
+                <p>Test methods use assertions to check the validity of a particular action or function. An assertion method tests (asserts) that a condition is valid; if not, it throws an error that causes the test to fail. If all assertions pass within a test method, it is said that the test has passed. The simplest assertion is <code>Y.assert()</code>, which takes two arguments: a condition to test and a message. If the condition is <em>not</em> true, then an assertion error is thrown with the specified message. For example:</p>
+```
+var testCase = new Y.Test.Case({
+
+    name: "TestCase Name",
+
+    testUsingAsserts : function () {
+        Y.assert(value == 5, "The value should be five.");
+        Y.assert(flag, "Flag should be true.");
+    }
+});
+```
+                <p>In this example, <code>testUsingAsserts()</code> will fail if <code>value</code> is not equal to 5 of <code>flag</code> is not set to <code>true</code>. The <code>Y.assert()</code> method may be all that you need, but there are advanced options available. The <code>Y.Assert</code> object contains several assertion methods that can be used to validate data.</p>
+
+                <h3 id="equality">Equality Assertions</h3>
+                <p>The simplest assertions are <code>areEqual()</code> and <code>areNotEqual()</code>. Both methods accept three arguments: the expected value,
+                  the actual value, and an optional failure message (a default one is generated if this argument is omitted). For example:</p>
+```
+var testCase = new Y.Test.Case({
+
+    name: "TestCase Name",
+
+    testEqualityAsserts : function () {
+
+        Y.Assert.areEqual(5, 5);     //passes
+        Y.Assert.areEqual(5, "5");     //passes
+        Y.Assert.areNotEqual(5, 6);  //passes
+        Y.Assert.areEqual(5, 6, "Five was expected."); //fails
+    }
+});
+```
+                <p>These methods use the double equals (<code>==</code>) operator to determine if two values are equal, so type coercion may occur. This means
+                  that the string <code>"5"</code> and the number <code>5</code> are considered equal because the double equals sign converts the number to
+                  a string before doing the comparison. If you don't want values to be converted for comparison purposes, use the sameness assertions instead.</p>
+
+                <h3 id="sameness">Sameness Assertions</h3>
+                <p>The sameness assertions are <code>areSame()</code> and <code>areNotSame()</code>, and these accept the same three arguments as the equality
+                  assertions: the expected value, the actual value, and an optional failure message. Unlike the equality assertions, these methods use
+                  the triple equals operator (<code>===</code>) for comparisions, assuring that no type coercion will occur. For example:</p>
+```
+var testCase = new Y.Test.Case({
+
+    name: "TestCase Name",
+
+    testSamenessAsserts : function () {
+        Y.Assert.areSame(5, 5);      //passes
+        Y.Assert.areSame(5, "5");    //fails
+        Y.Assert.areNotSame(5, 6);   //passes
+        Y.Assert.areNotSame(5, "5"); //passes
+        Y.Assert.areSame(5, 6, "Five was expected."); //fails
+    }
+});
+```
+
+                <p><strong>Note: </strong>Even though this example shows multiple assertions failing, a test will stop as soon as one
+                  assertion fails, causing all others to be skipped.</p>
+
+                <h3 id="datatypes">Data Type Assertions</h3>
+                <p>There may be times when some data should be of a particular type. To aid in this case, there are several methods that test the data type
+                  of variables. Each of these methods acce<prepts two arguments: the data to test and an optional failure message. The data type assertions are as
+                  follows:</p>
+                <ul>
+                    <li><code>isArray()</code> - passes only if the value is an instance of <code>Array</code>.</li>
+                    <li><code>isBoolean()</code> - passes only if the value is a Boolean.</li>
+                    <li><code>isFunction()</code> - passes only if the value is a function.</li>
+                    <li><code>isNumber()</code> - passes only if the value is a number.</li>
+                    <li><code>isObject()</code> - passes only if the value is an object or a function.</li>
+                    <li><code>isString()</code> - passes only if the value is a string.</li>
+                </ul>
+                <p>These are used as in the following example: </p>
+```
+var testCase = new Y.Test.Case({
+
+    name: "TestCase Name",
+
+    testDataTypeAsserts : function () {
+        Y.Assert.isString("Hello world");     //passes
+        Y.Assert.isNumber(1);                 //passes
+        Y.Assert.isArray([]);                 //passes
+        Y.Assert.isObject([]);                //passes
+        Y.Assert.isFunction(function(){});    //passes
+        Y.Assert.isBoolean(true);             //passes
+        Y.Assert.isObject(function(){});      //passes
+
+        Y.Assert.isNumber("1", "Value should be a number.");  //fails
+        Y.Assert.isString(1, "Value should be a string.");    //fails
+    }
+});
+```
+                <p>In addition to these specific data type assertions, there are two generic data type assertions.</p>
+                <p>The <code>isTypeOf()</code> method tests the string returned when the <code>typeof</code> operator is applied to a value. This
+                  method accepts three arguments: the type that the value should be (&quot;string&quot;, &quot;number&quot;,
+                  &quot;boolean&quot;, &quot;undefined&quot;, &quot;object&quot;, or &quot;function&quot;), the value to test,  and an optional failure message.
+                  For example:</p>
+```
+var testCase = new Y.Test.Case({
+
+    name: "TestCase Name",
+
+    testTypeOf : function () {
+
+        Y.Assert.isTypeOf("string", "Hello world");   //passes
+        Y.Assert.isTypeOf("number", 1);               //passes
+        Y.Assert.isTypeOf("boolean", true);           //passes
+        Y.Assert.isTypeOf("number", 1.5);             //passes
+        Y.Assert.isTypeOf("function", function(){});  //passes
+        Y.Assert.isTypeOf("object", {});              //passes
+        Y.Assert.isTypeOf("undefined", this.blah);    //passes
+
+        Y.Assert.isTypeOf("number", "Hello world", "Value should be a number."); //fails
+
+    }
+});
+```
+
+                <p>If you need to test object types instead of simple data types, you can also use the <code>isInstanceOf()</code> assertion, which accepts three
+                  arguments: the constructor function to test for, the value to test, and an optional failure message. This assertion uses the <code>instanceof</code>
+                  operator to determine if it should pass or fail. Example:</p>
+```
+var testCase = new Y.Test.Case({
+
+    name: "TestCase Name",
+
+    testInstanceOf : function () {
+        Y.Assert.isInstanceOf(Object, {});    //passes
+        Y.Assert.isInstanceOf(Array, []);     //passes
+        Y.Assert.isInstanceOf(Object, []);     //passes
+        Y.Assert.isInstanceOf(Function, function(){});  //passes
+        Y.Assert.isInstanceOf(Object, function(){});  //passes
+
+        Y.Assert.isTypeOf(Array, {}, "Value should be an array."); //fails
+
+    }
+});
+```
+
+                <h3 id="specialvalues">Special Value Assertions</h3>
+                <p>There are numerous special values in JavaScript that may occur in code. These include <code>true</code>, <code>false</code>, <code>NaN</code>,
+                  <code>null</code>, and <code>undefined</code>. There are a number of assertions designed to test for these values specifically:</p>
+                <ul>
+                  <li><code>isFalse()</code> - passes if the value is <code>false</code>.</li>
+                  <li><code>isTrue()</code> - passes if the value is <code>true</code>.</li>
+                  <li><code>isNaN()</code> - passes if the value is <code>NaN</code>.</li>
+                  <li><code>isNotNaN()</code> - passes if the value is not <code>NaN</code>.</li>
+                  <li><code>isNull()</code> - passes if the value is <code>null</code>.</li>
+                  <li><code>isNotNull()</code> - passes if the value is not <code>null</code>.</li>
+                  <li><code>isUndefined()</code> - passes if the value is <code>undefined</code>.</li>
+                  <li><code>isNotUndefined()</code> - passes if the value is not <code>undefined</code>.</li>
+                </ul>
+                <p>Each of these methods accepts two arguments: the value to test and an optional failure message. All of the assertions expect the
+                  exact value (no type coercion occurs), so for example calling <code>isFalse(0)</code> will fail.</p>
+```
+var testCase = new Y.Test.Case({
+
+    name: "TestCase Name",
+
+    testSpecialValues : function () {
+        Y.Assert.isFalse(false);      //passes
+        Y.Assert.isTrue(true);        //passes
+        Y.Assert.isNaN(NaN);          //passes
+        Y.Assert.isNaN(5 / "5");      //passes
+        Y.Assert.isNotNaN(5);         //passes
+        Y.Assert.isNull(null);        //passes
+        Y.Assert.isNotNull(undefined);    //passes
+        Y.Assert.isUndefined(undefined);  //passes
+        Y.Assert.isNotUndefined(null);    //passes
+
+        Y.Assert.isUndefined({}, "Value should be undefined."); //fails
+
+    }
+});
+```
+
+                <h3 id="forcedfailures">Forced Failures</h3>
+                <p>While most tests fail as a result of an assertion, there may be times when
+                  you want to force a test to fail or create your own assertion method. To do this, use the
+                  <code>fail()</code> method to force a test method to fail immediately:</p>
+```
+var testCase = new Y.Test.Case({
+
+    name: "TestCase Name",
+
+    testForceFail : function () {
+        Y.Assert.fail();  //causes the test to fail
+    }
+});
+```
+                <p>In this case, the <code>testForceFail()</code> method does nothing but force
+                  the method to fail. Optionally, you can pass in a message to <code>fail()</code>
+                  which will be displayed as the failure message:</p>
+```
+var testCase = new Y.Test.Case({
+
+    name: "TestCase Name",
+
+    testForceFail : function () {
+        Y.Assert.fail("I decided this should fail.");
+    }
+});
+```
+                <p>When the failure of this method is reported, the message &quot;I decided this should fail.&quot; will be reported.</p>
+                <h2 id="mockobjects">Mock Objects</h2>
+                <p>Mock objects are used to eliminate test dependencies on other objects. In complex software systems, there's often multiple
+                object that have dependence on one another to do their job. Perhaps part of your code relies on the <code>XMLHttpRequest</code>
+                object to get more information; if you're running the test without a network connection, you can't really be sure if the test
+                is failing because of your error or because the network connection is down. In reality, you just want to be sure that the correct
+                data was passed to the <code>open()</code> and <code>send()</code> methods because you can assume that, after that point,
+                the <code>XMLHttpRequest</code> object works as expected. This is the perfect case for using a mock object.</p>
+                <p>To create a mock object, use the <code>Y.Mock()</code> method to create a new object and then use <code>Y.Mock.expect()</code>
+                to define expectations for that object. Expectations define which methods you're expecting to call, what the arguments should be,
+                and what the expected result is. When you believe all of the appropriate methods have been called, you call <code>Y.Mock.verify()</code>
+                on the mock object to check that everything happened as it should. For example:</p>
+```
+//code being tested
+function logToServer(message, xhr){
+    xhr.open("get", "/log.php?msg=" + encodeURIComponent(message), true);
+    xhr.send(null);
+}
+
+//test case for testing the above function
+var testCase = new Y.Test.Case({
+
+    name: "logToServer Tests",
+
+    testPassingDataToXhr : function () {
+        var mockXhr = Y.Mock();
+
+        //I expect the open() method to be called with the given arguments
+        Y.Mock.expect(mockXhr, {
+            method: "open",
+            args: ["get", "/log.php?msg=hi", true]
+        });
+
+        //I expect the send() method to be called with the given arguments
+        Y.Mock.expect(mockXhr, {
+            method: "send",
+            args: [null]
+        });
+
+        //now call the function
+        logToServer("hi", mockXhr);
+
+        //verify the expectations were met
+        Y.Mock.verify(mockXhr);
+    }
+});
+```
+                <p>In this code, a mock <code>XMLHttpRequest</code> object is created to aid in testing. The mock object defines two
+                expectations: that the <code>open()</code> method will be called with a given set of arguments and that the <code>send()</code>
+                method will be called with a given set of arguments. This is done by using <code>Y.Mock.expect()</code> and passing in the
+                mock object as well as some information about the expectation. The <code>method</code> property indicates the method name
+                that will be called and the <code>args</code> property is an array of arguments that should be passed into the method. Each
+                argument is compared against the actual arguments using the identically equal (<code>===</code>) operator, and if any of the
+                arguments doesn't match, an assertion failure is thrown when the method is called (it &quot;fails fast&quot; to allow easier debugging).</p>
+                <p>The call to <code>Y.Mock.verify()</code> is the final step in making sure that all expectations have been met. It's at this stage
+                that the mock object checks to see that all methods have been called. If <code>open()</code> was called but <code>send()</code>
+                was not, then an assertion failure is thrown and the test fails. It's very important to call <code>Y.Mock.verify()</code> to test
+                all expectations; failing to do so can lead to false passes when the test should actually fail.</p>
+                <p>In order to use mock objects, your code must be able to swap in and out objects that it uses. For example, a hardcoded
+                reference to <code>XMLHttpRequest</code> in your code would prevent you from using a mock object in its place. It's sometimes
+                necessary to refactor code in such a way that referenced objects are passed in rather than hardcoded so that mock objects
+                can be used.</p>
+                <p>Note that you can use assertions and mock objects together; either will correctly indicate a test failure.</p>
+                <h3>Special Argument Values</h3>
+                <p>There may be times when you don't necessarily care about a specific argument's value. Since you must always specify the correct
+                number of arguments being passed in, you still need to indicate that an argument is expected. There are several special values
+                you can use as placeholders for real values. These values do a minimum amount of data validation:</p>
+                <ul>
+                    <li><code>Y.Mock.Value.Any</code> - any value is valid regardless of type.</li>
+                    <li><code>Y.Mock.Value.String</code> - any string value is valid.</li>
+                    <li><code>Y.Mock.Value.Number</code> - any number value is valid.</li>
+                    <li><code>Y.Mock.Value.Boolean</code> - any Boolean value is valid.</li>
+                    <li><code>Y.Mock.Value.Object</code> - any non-<code>null</code> object value is valid.</li>
+                    <li><code>Y.Mock.Value.Function</code> - any function value is valid.</li>
+                </ul>
+                <p>Each of these special values can be used in the <code>args</code> property of an expectation, such as:</p>
+```
+Y.Mock.expect(mockXhr, {
+    method: "open",
+    args: [Y.Mock.Value.String, "/log.php?msg=hi", Y.Mock.Value.Boolean]
+});
+```
+                <p>The expecation here will allow any string value as the first argument and any Boolean value as the last argument.
+                These special values should be used with care as they can let invalid values through if they are too general. The
+                <code>Y.Mock.Value.Any</code> special value should be used only if you're absolutely sure that the argument doesn't
+                matter.</p>
+                <h3>Property Expectations</h3>
+                <p>Since it's not possible to create property getters and setters in all browsers, creating a true cross-browser property
+                expectation isn't feasible. YUI Test mock objects allow you to specify a property name and it's expected value when
+                <code>Y.Mock.verify()</code> is called. This isn't a true property expectation but rather an expectation that the property
+                will have a certain value at the end of the test. You can specify a property expectation like this:</p>
+```
+//expect that the status property will be set to 404
+Y.Mock.expect(mockXhr, {
+    property: "status",
+    value: 404
+});
+```
+                <p>This example indicates that the <code>status</code> property of the mock object should be set to 404 before
+                the test is completed. When <code>Y.Mock.verify()</code> is called on <code>mockXhr</code>, it will check
+                the property and throw an assertion failure if it has not been set appropriately.</p>
+                <h2 id="asynctests">Asynchronous Tests</h2>
+                <p>YUI Test allows you to pause a currently running test and resume either after a set amount of time or
+                  at another designated time. The <code>TestCase</code> object has a method called <code>wait()</code>. When <code>wait()</code>
+                  is called, the test immediately exits (meaning that any code after that point will be ignored) and waits for a signal to resume
+                  the test.</p>
+                <p>A test may be resumed after a certain amount of time by passing in two arguments to <code>wait()</code>: a function to execute
+                  and the number of milliseconds to wait before executing the function (similar to using <code>setTimeout()</code>). The function
+                  passed in as the first argument will be executed as part of the current test (in the same scope) after the specified amount of time.
+                  For example:</p>
+```
+var testCase = new Y.Test.Case({
+
+    name: "TestCase Name",
+
+    //---------------------------------------------
+    // Setup and tear down
+    //---------------------------------------------
+
+    setUp : function () {
+        this.data = { name : "Nicholas", age : 29 };
+    },
+
+    tearDown : function () {
+        delete this.data;
+    },
+
+    //---------------------------------------------
+    // Tests
+    //---------------------------------------------
+
+    testAsync: function () {
+        Y.Assert.areEqual("Nicholas", this.data.name, "Name should be 'Nicholas'");
+
+        //wait 1000 milliseconds and then run this function
+        this.wait(function(){
+            Y.Assert.areEqual(29, this.data.age, "Age should be 29");
+
+        }, 1000);
+    }
+});
+```
+
+                <p>In this code, the <code>testAsync()</code> function does one assertion, then waits 1000 milliseconds before performing
+                  another assertion. The function passed into <code>wait()</code> is still in the scope of the original test, so it has
+                  access to <code>this.data</code> just as the original part of the test does. Timed waits are helpful in situations when
+                  there are no events to indicate when the test should resume.</p>
+                <p>If you want a test to wait until a specific event occurs before resuming, the <code>wait()</code> method can be called
+                  with a timeout argument (the number of milliseconds to wait before considering the test a failure). At that point, testing will resume only when the <code>resume()</code> method is called. The
+                  <code>resume()</code> method accepts a single argument, which is a function to run when the test resumes. This function
+                  should specify additional assertions. If <code>resume()</code> isn't called before the timeout expires, then the test fails. The following tests to see if the <code>Anim</code> object has performed its
+                  animation completely:</p>
+```
+var testCase = new Y.Test.Case({
+
+    name: "TestCase Name",
+
+    //---------------------------------------------
+    // Tests
+    //---------------------------------------------
+
+    testAnimation : function (){
+
+        //animate width to 400px
+        var myAnim = new Y.Anim({
+            node: '#testDiv',
+            to: {
+                width: 400
+            },
+            duration: 3
+        });
+
+        var test = this;
+
+        //assign oncomplete handler
+        myAnim.on("end", function(){
+
+            //tell the TestRunner to resume
+            test.resume(function(){
+
+                Y.Assert.areEqual(myAnim.get("node").get("offsetWidth"), 400, "Width of the DIV should be 400.");
+
+            });
+
+        });
+
+        //start the animation
+        myAnim.run();
+
+        //wait until something happens
+        this.wait(3100);
+
+    }
+});
+```
+
+                <p>In this example, an <code>Anim</code> object is used to animate the width of an element to 400 pixels. When the animation
+                  is complete, the <code>end</code> event is fired, so that is where the <code>resume()</code> method is called. The
+                  function passed into <code>resume()</code> simply tests that the final width of the element is indeed 400 pixels. Once the event handler is set up, the animation begins.
+                  In order to allow enough time for the animation to complete, the <code>wait()</code> method is called
+                  with a timeout of 3.1 seconds (just longer than the 3 seconds needed to complete the animation). At that point, testing stops until the animation completes and <code>resume()</code> is called or until 3100 milliseconds have passed.</p>
+                <h2 id="testsuites">Test Suites</h2>
+                <p>For large web applications, you'll probably have many test cases that should be run during a testing phase. A test suite helps to handle multiple test cases
+                  by grouping them together into functional units that can be run together. To create new test suite, use the <code>Y.Test.Suite</code>
+                  constructor and pass in the name of the test suite. The name you pass in is for logging purposes and allows you to discern which <code>TestSuite</code> instance currently running. For example: </p>
+```
+//create the test suite
+var suite = new Y.Test.Suite("TestSuite Name");
+
+//add test cases
+suite.add(new Y.Test.Case({
+    //...
+}));
+suite.add(new Y.Test.Case({
+    //...
+}));
+suite.add(new Y.Test.Case({
+    //...
+}));
+```
+                <p>Here, a test suite is created and three test cases are added to it using the <code>add()</code> method. The test suite now contains all of the
+                  information to run a series of tests.</p>
+                <p>It's also possible to add other multiple <code>TestSuite</code> instances together under a parent <code>TestSuite</code> using the same <code>add()</code> method:</p>
+```
+//create a test suite
+var suite = new Y.Test.Suite("TestSuite Name");
+
+//add a test case
+suite.add(new Y.Test.Case({
+    //...
+});
+
+//create another suite
+var anotherSuite = new Y.Test.Suite("test_suite_name");
+
+//add a test case
+anotherSuite.add(new Y.Test.Case({
+    //...
+});
+
+//add the second suite to the first
+suite.add(anotherSuite);
+```
+                <p>By grouping test suites together under a parent test suite you can more effectively manage testing of particular aspects of an application.</p>
+                <p>Test suites may also have <code>setUp()</code> and <code>tearDown()</code> methods. A test suite's <code>setUp()</code> method is called before
+                  the first test in the first test case is executed (prior to the test case's <code>setUp()</code> method); a test suite's <code>tearDown()</code>
+                  method executes after all tests in all test cases/suites have been executed (after the last test case's <code>tearDown()</code> method). To specify
+                  these methods, pass an object literal into the <code>Y.Test.Suite</code> constructor:</p>
+```
+//create a test suite
+var suite = new Y.Test.Suite({
+    name : "TestSuite Name",
+
+    setUp : function () {
+        //test-suite-level setup
+    },
+
+    tearDown: function () {
+        //test-suite-level teardown
+    }
+});
+```
+                <p>Test suite <code>setUp()</code> and <code>tearDown()</code> may be helpful in setting up global objects that are necessary for a multitude of tests
+                  and test cases.</p>
+                <h2 id="running-tests">Running Tests</h2>
+                <p>In order to run test cases and test suites, use the <code>Y.Test.Runner</code> object. This object is a singleton that
+                  simply runs all of the tests in test cases and suites, reporting back on passes and failures. To determine which test cases/suites
+                  will be run, add them to the <code>Y.Test.Runner</code> using the <code>add()</code> method. Then, to run the tests, call the <code>run()</code>
+                  method:</p>
+```
+//add the test cases and suites
+Y.Test.Runner.add(testCase);
+Y.Test.Runner.add(oTestSuite);
+
+//run all tests
+Y.Test.Runner.run();
+```
+
+                <p>If at some point you decide not to run the tests that have already been added to the <code>TestRunner</code>, they can be removed by calling <code>clear()</code>:</p>
+```
+Y.Test.Runner.clear();
+```
+
+                <p>Making this call removes all test cases and test suites that were added using the <code>add()</code> method.</p>
+
+                <h3>TestRunner Events</h3>
+                <p>The <code>Y.Test.Runner</code> provides results and information about the process by publishing several events. These events can occur at four
+                  different points of interest: at the test level, at the test case level, at the test suite level, and at the <code>Y.Test.Runner</code> level.
+                  The data available for each event depends completely on the type of event and the level at which the event occurs.</p>
+
+                <h3>Test-Level Events</h3>
+                <p>Test-level events occur during the execution of specific test methods. There are three test-level events:</p>
+                <ul>
+                    <li><code>Y.Test.Runner.TEST_PASS_EVENT</code> - occurs when the test passes.</li>
+                    <li><code>Y.Test.Runner.TEST_FAIL_EVENT</code> - occurs when the test fails.</li>
+                    <li><code>Y.Test.Runner.TEST_IGNORE_EVENT</code> - occurs when a test is ignored.</li>
+                </ul>
+                <p>For each of these events, the event data object has three properties:</p>
+                <ul>
+                    <li><code>type</code> - indicates the type of event that occurred.</li>
+                    <li><code>testCase</code> - the test case that is currently being run.</li>
+                    <li><code>testName</code> - the name of the test that was just executed or ignored.</li>
+                </ul>
+                <p>For <code>Y.Test.Runner.TEST_FAIL_EVENT</code>, an <code>error</code> property containing the error object
+                  that caused the test to fail.</p>
+
+                <h3>TestCase-Level Events</h3>
+                <p>There are two events that occur at the test case level:</p>
+                <ul>
+                    <li><code>Y.Test.Runner.TEST_CASE_BEGIN_EVENT</code> - occurs when the test case is next to be executed but before the first test is run.</li>
+                    <li><code>Y.Test.Runner.TEST_CASE_COMPLETE_EVENT</code> - occurs when all tests in the test case have been executed or ignored.</li>
+                </ul>
+                <p>For these two events, the event data object has three properties:</p>
+                <ul>
+                    <li><code>type</code> - indicates the type of event that occurred.</li>
+                    <li><code>testCase</code> - the test case that is currently being run.</li>
+                </ul>
+                <p>For <code>TEST_CASE_COMPLETE_EVENT</code>, an additional property called <code>results</code> is included. The <code>results</code>
+                  property is an object containing the aggregated results for all tests in the test case (it does not include information about tests that
+                  were ignored). Each test that was run has an entry in the <code>result</code> object where the property name is the name of the test method
+                  and the value is an object with two properties: <code>result</code>, which is either "pass" or "fail", and <code>message</code>, which is a
+                  text description of the result (simply "Test passed" when a test passed or the error message when a test fails). Additionally, the
+                  <code>failed</code> property indicates the number of tests that failed in the test case, the <code>passed</code> property indicates the
+                  number of tests that passed, and the <code>total</code> property indicates the total number of tests executed. A typical <code>results</code>
+                  object looks like this:</p>
+```
+{
+    failed: 1,
+    passed: 1,
+    ignored: 0,
+    total: 2,
+    type: "testcase",
+    name: "Test Case 0",
+
+    test0: {
+        result: "pass",
+        message: "Test passed",
+        type: "test",
+        name: "test0"
+    },
+
+    test1: {
+        result: "fail",
+        message: "Assertion failed",
+        type: "test",
+        name: "test1"
+    }
+}
+```
+
+                <p>The <code>TEST_CASE_COMPLETE_EVENT</code> provides this information for transparency into the testing process.</p>
+
+                <h3>TestSuite-Level Events</h3>
+                <p>There are two events that occur at the test suite level:</p>
+                <ul>
+                    <li><code>Y.Test.Runner.TEST_SUITE_BEGIN_EVENT</code> - occurs when the test suite is next to be executed but before the first test is run.</li>
+                    <li><code>Y.Test.Runner.TEST_SUITE_COMPLETE_EVENT</code> - occurs when all tests in all test cases in the test suite have been executed or ignored.</li>
+                </ul>
+                <p>For these two events, the event data object has three properties:</p>
+                <ul>
+                    <li><code>type</code> - indicates the type of event that occurred.</li>
+                    <li><code>testSuite</code> - the test suite that is currently being run.</li>
+                </ul>
+                <p>The <code>TEST_SUITE_COMPLETE_EVENT</code> also has a <code>results</code> property, which contains aggregated results for all of the
+                  test cases (and other test suites) it contains. Each test case and test suite contained within the main suite has an entry in the
+                  <code>results</code> object, forming a hierarchical structure of data. A typical <code>results</code> object may look like this:</p>
+```
+{
+    failed: 2,
+    passed: 2,
+    ignored: 0,
+    total: 4,
+    type: "testsuite",
+    name: "Test Suite 0",
+
+    testCase0: {
+        failed: 1,
+        passed: 1,
+        ignored: 0,
+        total: 2,
+        type: "testcase",
+        name: "testCase0",
+
+        test0: {
+            result: "pass",
+            message: "Test passed."
+            type: "test",
+            name: "test0"
+        },
+        test1: {
+            result: "fail",
+            message: "Assertion failed.",
+            type: "test",
+            name: "test1"
+        }
+    },
+    testCase1: {
+        failed: 1,
+        passed: 1,
+        ignored: 0,
+        total: 2,
+        type: "testcase",
+        name: "testCase1",
+
+        test0: {
+            result: "pass",
+            message: "Test passed.",
+            type: "test",
+            name: "test0"
+        },
+        test1: {
+            result: "fail",
+            message: "Assertion failed.",
+            type: "test",
+            name: "test1"
+        }
+    }
+}
+```
+
+
+                <p>This example shows the results for a test suite with two test cases, but there may be test suites contained within test suites. In that case,
+                  the hierarchy is built out accordingly, for example:</p>
+```
+{
+    failed: 3,
+    passed: 3,
+    ignored: 0,
+    total: 6,
+    type: "testsuite",
+    name: "Test Suite 0",
+
+    testCase0: {
+        failed: 1,
+        passed: 1,
+        ignored: 0,
+        total: 2,
+        type: "testcase",
+        name: "testCase0",
+
+        test0: {
+            result: "pass",
+            message: "Test passed.",
+            type: "test",
+            name: "test0"
+        },
+        test1: {
+            result: "fail",
+            message: "Assertion failed.",
+            type: "test",
+            name: "test1"
+        }
+    },
+
+    testCase1: {
+        failed: 1,
+        passed: 1,
+        ignored: 0,
+        total: 2,
+        type: "testcase",
+        name: "testCase1",
+
+        test0: {
+            result: "pass",
+            message: "Test passed.",
+            type: "test",
+            name: "test0"
+        },
+        test1: {
+            result: "fail",
+            message: "Assertion failed.",
+            type: "test",
+            name: "test1"
+        }
+    },
+
+    testSuite0:{
+        failed: 1,
+        passed: 1,
+        ignored: 0,
+        total: 2,
+        type: "testsuite",
+        name: "testSuite0",
+
+        testCase2: {
+            failed: 1,
+            passed: 1,
+            ignored: 0,
+            total: 2,
+            type: "testcase",
+            name: "testCase2",
+
+            test0: {
+                result: "pass",
+                message: "Test passed.",
+                type: "test",
+                name: "test0"
+            },
+
+            test1: {
+                result: "fail",
+                message: "Assertion failed.",
+                type: "test",
+                name: "test1"
+            }
+        }
+    }
+}
+```
+
+                <p>In this code, the test suite contained another test suite named &quot;testSuite0&quot;, which is included in the results along
+                  with its test cases. At each level, the results are aggregated so that you can tell how many tests passed or failed within each
+                  test case or test suite.</p>
+
+                <h3>TestRunner-Level Events</h3>
+                <p>There are two events that occur at the <code>Y.Test.Runner</code> level:</p>
+                <ul>
+                    <li><code>Y.Test.Runner.BEGIN_EVENT</code> - occurs when testing is about to begin but before any tests are run.</li>
+                    <li><code>Y.Test.Runner.COMPLETE_EVENT</code> - occurs when all tests in all test cases and test suites have been executed or ignored.</li>
+                </ul>
+                <p>The data object for these events contain a <code>type</code> property, indicating the type of event that occurred. <code>COMPLETE_EVENT</code>
+                  also includes a <code>results</code> property that is formatted the same as the data returned from <code>TEST_SUITE_COMPLETE_EVENT</code> and
+                  contains rollup information for all test cases and tests suites that were added to the <code>TestRunner</code>.</p>
+
+                <h3>Subscribing to Events</h3>
+                <p>You can subscribe to particular events by calling the <code>subscribe()</code> method. Your event handler code
+                  should expect a single object to be passed in as an argument. This object provides information about the event that just occured. Minimally,
+                  the object has a <code>type</code> property that tells you which type of event occurred. Example:</p>
+```
+function handleTestFail(data){
+    alert("Test named '" + data.testName + "' failed with message: '" + data.error.message + "'.");
+}
+
+var TestRunner = Y.Test.Runner;
+TestRunner.subscribe(TestRunner.TEST_FAIL_EVENT, handleTestFail);
+TestRunner.run();
+```
+
+
+                <p>In this code, the <code>handleTestFail()</code> function is assigned as an event handler for <code>TEST_FAIL_EVENT</code>. You can also
+                  use a single event handler to subscribe to any number of events, using the event data object's <code>type</code> property to determine
+                  what to do:</p>
+```
+function handleTestResult(data){
+    var TestRunner = Y.Test.Runner;
+
+    switch(data.type) {
+        case TestRunner.TEST_FAIL_EVENT:
+            alert("Test named '" + data.testName + "' failed with message: '" + data.error.message + "'.");
+            break;
+        case TestRunner.TEST_PASS_EVENT:
+            alert("Test named '" + data.testName + "' passed.");
+            break;
+        case TestRunner.TEST_IGNORE_EVENT:
+            alert("Test named '" + data.testName + "' was ignored.");
+            break;
+    }
+
+}
+
+TestRunner.subscribe(TestRunner.TEST_FAIL_EVENT, handleTestResult);
+TestRunner.subscribe(TestRunner.TEST_IGNORE_EVENT, handleTestResult);
+TestRunner.subscribe(TestRunner.TEST_PASS_EVENT, handleTestResult);
+TestRunner.run();
+```
+
+
+                <h2 id="viewing-results">Viewing Results</h2>
+                <p>There are two ways to view test results. The first is to output test results to the Console
+                component. To do so, you need only create a new Console instance; the result results will be posted
+                to the logger automatically:</p>
+```
+YUI({ logInclude: { TestRunner: true } }).use("test", function(Y){
+
+    //tests go here
+
+    //initialize the console
+    var yconsole = new Y.Console({
+        newestOnTop: false
+    });
+    yconsole.render('#log');
+
+    //run the tests
+    Y.Test.Runner.run();
+});
+```
+
+                <p>If you are using a browser that supports the <code>console</code>
+                object (Firefox with Firebug installed, Safari 3+, Internet Explorer 8+, Chrome), then you can
+                direct the test results onto the console. To do so, make sure that you've specified your <code>YUI</code>
+                instance to use the console when logging:</p>
+```
+YUI({ useBrowserConsole: true }).use("test", function(Y){
+
+    //tests go here
+
+    Y.Test.Runner.run();
+
+});
+```
+                <p>You can also extract the test result data using the <code>Y.Test.Runner.getResults()</code> method. By default, this method
+                returns an object representing the results of the tests that were just run (the method returns <code>null</code> if called
+                while tests are still running). You can optionally specify a format in which the results should be returned. There are four
+                possible formats:</p>
+                <ul>
+                    <li><code>Y.Test.Format.XML</code> - YUI Test XML (default)</li>
+                    <li><code>Y.Test.Format.JSON</code> - JSON</li>
+                    <li><code>Y.Test.Format.JUnitXML</code> - JUnit XML</li>
+                    <li><code>Y.Test.Format.TAP</code> - <a href="http://testanything.org/">TAP</a></li>
+                </ul>
+                <p>You can pass any of these into <code>Y.Test.Runner.getResults()</code> to get a string with the test result information properly
+                formatted. For example:</p>
+```
+YUI({ useBrowserConsole: true }).use("test", function(Y){
+
+    //tests go here
+
+    //get object of results
+    var resultsObject = Y.Test.Runner.getResults();
+
+    //get XML results
+    var resultsXML = Y.Test.Runner.getResults(Y.Test.Format.XML);
+
+});
+```
+                <p>The XML format outputs results in the following
+                format:</p>
+```
+<?xml version="1.0" encoding="UTF-8" ?>
+<report name="YUI Test Results" passed="5" failed="3" ignored="1" total="5">
+  <testsuite name="yuisuite" passed="5" failed="0" ignored="0" total="5">
+    <testcase name="Y.Anim" passed="5" failed="0" ignored="0" total="5">
+      <test name="test_getEl" result="pass" message="Test passed" />
+      <test name="test_isAnimated" result="pass" message="Test passed" />
+      <test name="test_stop" result="pass" message="Test passed" />
+      <test name="test_onStart" result="pass" message="Test passed" />
+      <test name="test_endValue" result="pass" message="Test passed" />
+    </testcase>
+  </testsuite>
+</report>
+```
+                <p>The JSON format requires the <a href="../json/index.html">JSON utility</a> to be loaded on the page and outputs results in a format that follows the object/array hierarchy of the results object, such as:</p>
+```
+{
+    "passed": 5,
+    "failed": 0,
+    "ignored": 0,
+    "total": 0,
+    "type": "report",
+    "name": "YUI Test Results",
+
+    "yuisuite":{
+        "passed": 5,
+        "failed": 0,
+        "ignored": 0,
+        "total": 0,
+        "type": "testsuite",
+        "name": "yuisuite",
+
+        "Y.Anim":{
+            "passed": 5,
+            "failed": 0,
+            "ignored": 0,
+            "total": 0,
+            "type":"testcase",
+            "name":"Y.Anim",
+
+            "test_getEl":{
+                "result":"pass",
+                "message":"Test passed.",
+                "type":"test",
+                "name":"test_getEl"
+            },
+            "test_isAnimated":{
+                "result":"pass",
+                "message":"Test passed.",
+                "type":"test",
+                "name":"test_isAnimated"
+            },
+            "test_stop":{
+                "result":"pass",
+                "message":"Test passed.",
+                "type":"test",
+                "name":"test_stop"
+            },
+            "test_onStart":{
+                "result":"pass",
+                "message":"Test passed.",
+                "type":"test",
+                "name":"test_onStart"
+            },
+            "test_endValue":{
+                "result":"pass",
+                "message":"Test passed.",
+                "type":"test",
+                "name":"test_endValue"
+            }
+        }
+    }
+}
+```
+
+<p>The JUnit XML format outputs results in the following format:</p>
+
+```
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites>
+    <testsuite name="Y.Anim" failures="0" total="5" time="0.0060">
+        <testcase name="test_getEl" time="0.0"></testcase>
+        <testcase name="test_isAnimated" time="0.0010"></testcase>
+        <testcase name="test_stop" time="0.0010"></testcase>
+        <testcase name="test_onStart" time="0.0010"></testcase>
+        <testcase name="test_endValue" time="0.0010"></testcase>
+    </testsuite>
+</testsuites>
+```
+
+<p>Note that there isn't a direct mapping between YUI Test test suites and JUnit test suites, so some
+of the hierarchical information is lost.</p>
+
+<p>The TAP format outputs results in the following format:</p>
+
+```nohighlight
+1..5
+#Begin report YUI Test Results (0 failed of 5)
+#Begin testcase Y.Anim (0 failed of 5)
+ok 1 - testGetServiceFromUntrustedModule
+ok 2 - testGetServiceFromTrustedModule
+ok 3 - testGetServiceFromService
+ok 4 - testGetServiceMultipleTimesFromService
+ok 5 - testGetServiceMultipleTimesFromUntrustedModule
+#End testcase Y.Anim
+#End report YUI Test Results
+```
+
+                <p>The XML, JSON, and JUnit XML formats produce a string with no extra white space (white space and indentation shown here is for readability
+                purposes only).</p>
+
+                <h2 id="test-reporting">Test Reporting</h2>
+                <p>When all tests have been completed and the results object has been returned, you can post those results to a server
+                using a <code>Y.Test.Reporter</code> object. A <code>Y.Test.Reporter</code> object creates a form that is POSTed
+                to a specific URL with the following fields:</p>
+                <ul>
+                    <li><code>results</code> - the serialized results object.</li>
+                    <li><code>useragent</code> - the user-agent string of the browser.</li>
+                    <li><code>timestamp</code> - the date and time that the report was sent.</li>
+                </ul>
+                <p>You can create a new <code>Y.Test.Reporter</code> object by passing in the URL to report to. The results object can
+                then be passed into the <code>report()</code> method to submit the results:</p>
+```
+var reporter = new Y.Test.Reporter("http://www.yourserver.com/path/to/target");
+reporter.report(results);
+```
+                <p>The form submission happens behind-the-scenes and will not cause your page to navigate away. This operation is
+                one direction; the reporter does not get any content back from the server.</p>
+                <p>There are four predefined serialization formats for results objects: </p>
+                <ul>
+                    <li><code>Y.Test.Format.XML</code> (default)</li>
+                    <li><code>Y.Test.Format.JSON</code></li>
+                    <li><code>Y.Test.Format.JUnitXML</code></li>
+                    <li><code>Y.Test.Format.TAP</code></li>
+                </ul>
+
+                <p>The format in which to submit the results can be specified in the <code>Y.Test.Reporter</code> constructor by passing in the appropriate
+                <code>Y.Test.Format</code> value (when no argument is specified, <code>Y.Test.Format.XML</code> is used:</p>
+```
+var reporter = new Y.Test.Reporter("http://www.yourserver.com/path/to/target", Y.Test.Format.JSON);
+```
+
+                <h3>Custom Fields</h3>
+                <p>You can optionally specify additional fields to be sent with the results report by using the <code>addField()</code> method.
+                This method accepts two arguments: a name and a value. Any field added using <code>addField()</code> is POSTed along with
+                the default fields back to the server:</p>
+```
+reporter.addField("color", "blue");
+reporter.addField("message", "Hello world!");
+```
+                <p>Note that if you specify a field name that is the same as a default field, the custom field is ignored in favor of
+                the default field.</p>

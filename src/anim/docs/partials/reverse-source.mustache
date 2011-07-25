@@ -1,0 +1,47 @@
+<div id="demo" class="yui3-module">
+    <div class="yui3-hd">
+        <h3>Animation Demo</h3>
+    </div>
+    <div class="yui3-bd">
+        <p>This an example of what you can do with the YUI Animation Utility.</p>
+        <p><em>Follow the instructions above to see the animation in action.</em></p>
+    </div>
+</div>
+<p>This is placeholder text used to demonstrate how the above animation affects subsequent content.</p> 
+
+<script type="text/javascript">
+YUI().use('anim', function(Y) {
+    var module = Y.one('#demo');
+
+    // add fx plugin to module body
+    var content = module.one('.yui3-bd').plug(Y.Plugin.NodeFX, {
+        from: { height: 1 },
+        to: {
+            height: function(node) { // dynamic in case of change
+                return node.get('scrollHeight'); // get expanded height (offsetHeight may be zero)
+            }
+        },
+
+        easing: Y.Easing.easeOut,
+        duration: 0.5
+    });
+
+    var onClick = function(e) {
+        module.toggleClass('yui3-closed');
+        content.fx.set('reverse', !content.fx.get('reverse')); // toggle reverse 
+        content.fx.run();
+    };
+
+    // use dynamic control for dynamic behavior
+    var control = Y.Node.create(
+        '<a title="show/hide content" class="yui3-toggle">' +
+            '<em>toggle</em>' +
+        '</a>'
+    );
+
+    // append dynamic control to header section
+    module.one('.yui3-hd').appendChild(control);
+    control.on('click', onClick);
+
+});
+</script>

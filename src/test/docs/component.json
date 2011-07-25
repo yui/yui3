@@ -1,0 +1,46 @@
+{
+    "name"       : "test",
+    "displayName": "Test",
+    "description": "A JavaScript testing framework with a comprehensive assertion syntax. Suitable for testing YUI-based code, but designed to support test-driven development across any JavaScript project, regardless of whether YUI is involved.",
+    "author"     : ["nzakas"],
+
+    "tags": ["utility", "test", "testing", "unit", "tdd"],
+    "use" : ["test"],
+
+    "examples": [
+        {
+            "name"       : "test-simple-example",
+            "displayName": "Simple Testing Example",
+            "description": "Demonstrates basic usage of YUI Test for setting up and running tests.",
+            "modules"    : ["test"]
+        },
+
+        {
+            "name": "test-advanced-test-options",
+            "displayName": "Advanced Test Options",
+            "description": "Demonstrates how to use advanced testing features such as defining tests that should fail, tests that should be ignored, and tests that should throw an error.",
+            "modules": ["test"]
+        },
+
+        {
+            "name": "test-array-tests",
+            "displayName": "Array Processing",
+            "description": "Demonstrates how to use the ArrayAssert object to test array data.",
+            "modules": ["test"]
+        },
+
+        {
+            "name": "test-async-test",
+            "displayName": "Asynchronous Testing",
+            "description": "Demonstrates basic asynchronous tests.",
+            "modules": ["test"]
+        },
+
+        {
+            "name": "test-async-event-tests",
+            "displayName": "Asynchronous Event Testing",
+            "description": "Demonstrates using events with asynchronous tests.",
+            "modules": ["test"]
+        }
+    ]
+}

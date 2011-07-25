@@ -156,7 +156,7 @@ YUI.add('widget-stdmod', function(Y) {
          * in the header. If you want to append, or insert new content, use the <a href="#method_setStdModContent">setStdModContent</a> method.
          */
         headerContent: {
-            value:null
+            value:null,
         },
 
         /**
@@ -167,7 +167,7 @@ YUI.add('widget-stdmod', function(Y) {
          * in the footer. If you want to append, or insert new content, use the <a href="#method_setStdModContent">setStdModContent</a> method.
          */
         footerContent: {
-            value:null
+            value:null,
         },
         
         /**
@@ -178,7 +178,7 @@ YUI.add('widget-stdmod', function(Y) {
          * in the body. If you want to append, or insert new content, use the <a href="#method_setStdModContent">setStdModContent</a> method.
          */
         bodyContent: {
-            value:null
+            value:null,
         },
         
         /**
@@ -257,6 +257,38 @@ YUI.add('widget-stdmod', function(Y) {
     StdMod.prototype = {
 
         /**
+         * Returns a reference to the Y.Node corresponding to the header.
+         *
+         * @method head
+         * @public
+         * @return {Node} A reference to the header node
+         */
+        head : function() {
+            return this.getStdModNode(STD_HEADER) || this._renderStdMod(STD_HEADER);
+        },
+
+        /**
+         * Returns a reference to the Y.Node corresponding to the body.
+         *
+         * @method body
+         * @public
+         * @return {Node} A reference to the body node
+         */
+        body : function() {
+            return this.getStdModNode(STD_BODY) || this._renderStdMod(STD_BODY);
+        },
+
+        /**
+         * Returns a reference to the Y.Node corresponding to the footer.
+         *
+         * @method head
+         * @public
+         * @return {Node} A reference to the footer node
+         */
+        foot : function() {
+            return this.getStdModNode(STD_FOOTER) || this._renderStdMod(STD_FOOTER);
+        },
+        /**
          * Synchronizes the UI to match the Widgets standard module state.
          * <p>
          * This method is invoked after syncUI is invoked for the Widget class
@@ -295,12 +327,20 @@ YUI.add('widget-stdmod', function(Y) {
         _renderUIStdMod : function() {
             this._stdModNode.addClass(Widget.getClassName(STDMOD));
             this._renderStdModSections();
+
+            //This normally goes in bindUI but in order to allow setStdModContent() to work before renderUI
+            //stage, these listeners should be set up at the earliest possible time.
+            this.after(HeaderChange, this._afterHeaderChange);
+            this.after(BodyChange, this._afterBodyChange);
+            this.after(FooterChange, this._afterFooterChange);
         },
 
         _renderStdModSections : function() {
             if (L.isValue(this.get(HEADER_CONTENT))) { this._renderStdMod(STD_HEADER); }
             if (L.isValue(this.get(BODY_CONTENT))) { this._renderStdMod(STD_BODY); }
             if (L.isValue(this.get(FOOTER_CONTENT))) { this._renderStdMod(STD_FOOTER); }
+
+
         },
 
         /**
@@ -314,9 +354,9 @@ YUI.add('widget-stdmod', function(Y) {
          * @protected
          */
         _bindUIStdMod : function() {
-            this.after(HeaderChange, this._afterHeaderChange);
-            this.after(BodyChange, this._afterBodyChange);
-            this.after(FooterChange, this._afterFooterChange);
+            // this.after(HeaderChange, this._afterHeaderChange);
+            // this.after(BodyChange, this._afterBodyChange);
+            // this.after(FooterChange, this._afterFooterChange);
 
             this.after(FillHeightChange, this._afterFillHeightChange);
             this.after(HeightChange, this._fillHeight);            
@@ -674,7 +714,9 @@ YUI.add('widget-stdmod', function(Y) {
          * If not provided, the content will replace existing content in the section.
          */
         setStdModContent : function(section, content, where) {
+            //var node = this.getStdModNode(section) || this._renderStdMod(section);
             this.set(section + CONTENT_SUFFIX, content, {stdModPosition:where});
+            //this._addStdModContent(node, content, where);
         },
 
         /**

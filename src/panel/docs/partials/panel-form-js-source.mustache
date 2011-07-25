@@ -1,0 +1,138 @@
+YUI().use("datatable-base", "panel", "dd-plugin", function(Y) {
+
+
+    //Create the datatable with some gadget information
+    var cols = ["id","name","price"],
+    data = [
+        {id:"ga-3475", name:"gadget", price:"$6.99"},
+        {id:"sp-9980", name:"sprocket", price:"$3.75"},
+        {id:"wi-0650", name:"widget", price:"$4.25"}
+    ],
+    dt = new Y.DataTable.Base({
+        columnset: cols,
+        recordset: data,
+        summary: "Price sheet for inventory parts",
+        caption: "Price sheet for inventory parts"
+    }),
+
+    //Create the main modal form
+    panel = new Y.Panel({
+      srcNode: "#panelContent",
+      width: 250,
+      centered: true,
+      visible: false,
+      modal:true,
+      headerContent: "Add A New Product",
+      plugins: [Y.Plugin.Drag]
+    }),
+
+    addRowBtn = Y.one("#addRow"),
+    nestedPanel;
+
+
+    //Render The Datatable
+    dt.render("#dt");
+
+    //Add the footer buttons to the modal form
+    panel.addButton(
+      {
+          value: "Add Item",
+          action: function(e) { 
+            e.preventDefault(); 
+            addItem();
+          },
+          section: Y.WidgetStdMod.FOOTER
+      }
+    );
+    panel.addButton(
+      {
+          value: "Remove All Items",
+          action: function(e) { 
+            e.preventDefault(); 
+            removeAllItemsConfirm();
+          },
+          section: Y.WidgetStdMod.FOOTER
+      }
+    );
+    
+    //Render the modal form
+    panel.render();
+
+    //When the addRowBtn is pressed, show the modal form
+    addRowBtn.on('click', function(e) {
+      panel.show();
+    });
+
+    //Define the addItem function - this will be called 
+    //when "Add Item" is pressed on the modal form
+    var addItem = function() {
+      var o = {}, 
+      id = Y.one('#productId'),
+      name = Y.one('#name'),
+      price = Y.one('#price');
+
+      o.id = id.get("value");
+      o.name = name.get("value");
+      o.price = price.get("value");
+
+      id.set("value", "");
+      name.set("value", "");
+      price.set("value", "");
+
+
+      data.push(o);
+      dt.set('recordset', data).render();
+      dt.render();
+      panel.hide();
+    };
+
+    //Define the removeItems function - this will be called 
+    //when "Remove All Items" is pressed on the modal form
+    //and is confirmed "yes" by the nested panel.
+    var removeItems = function() {
+      data = [];
+      dt.set('recordset', data).render();
+      dt.render();
+      panel.hide();
+    };
+
+
+    //Instantiate the nested panel if it doesn't exist, otherwise just show it.
+    var removeAllItemsConfirm = function() {
+      if (!nestedPanel) {
+        nestedPanel = new Y.Panel({
+          bodyContent: "Are you sure you want to remove all items?",
+          zIndex: 5,
+          centered:true,
+          width:400,
+          modal:true,
+          buttons: [
+            
+            {
+                value: "Yes",
+                action  : function(e) { 
+                  e.preventDefault(); 
+                  nestedPanel.hide();
+                  panel.hide();
+                  removeItems();
+                },
+                section: Y.WidgetStdMod.FOOTER
+            },
+            {
+                value: "No",
+                action: function(e) { 
+                  e.preventDefault(); 
+                  nestedPanel.hide();
+                },
+                section: Y.WidgetStdMod.FOOTER
+            }
+          ]
+        }).render('#nestedPanel');
+      }
+
+      else {
+        nestedPanel.show();
+      }
+
+    }
+});

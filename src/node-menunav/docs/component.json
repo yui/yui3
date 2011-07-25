@@ -15,12 +15,96 @@
             "modules"    : ["node-menunav", "cssgrids"],
 
             "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "node-menunav-2",
+            "displayName": "Basic Top Nav",
+            "description": "Creating top navigation using the MenuNav Node Plugin",
+            "modules"    : ["node-menunav", "cssgrids"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "node-menunav-3",
+            "displayName": "Menu Button Top Nav",
+            "description": "Creating menu button navigation using the MenuNav Node Plugin",
+            "modules"    : ["node-menunav", "cssgrids"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "node-menunav-4",
+            "displayName": "Split Button Top Nav",
+            "description": "Creating split button navigation using the MenuNav Node Plugin",
+            "modules"    : ["node-menunav", "cssgrids"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "node-menunav-5",
+            "displayName": "Left Nav with Submenus with Shadows",
+            "description": "Adding shadows to submenus of a left nav using the MenuNav Node Plugin",
+            "modules"    : ["node-menunav", "cssgrids"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "node-menunav-6",
+            "displayName": "Left Nav With Submenus With Rounded Corners",
+            "description": "Adding rounded corners to submenus of a left nav using the MenuNav Node Plugin",
+            "modules"    : ["node-menunav", "cssgrids"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "node-menunav-7",
+            "displayName": "Skinning Menus Created Using the MenuNav Node Plugin",
+            "description": "Skining a menu built using the MenuNav Node Plugin to look like the menus on Flickr",
+            "modules"    : ["node-menunav", "cssgrids"],
+
+            "hideTableOfContents": true
         }
     ],
 
     "pages": {
         "menunav-leftnav-example": {
             "displayName": "MenuNav: Basic Left Nav Example",
+            "layout"     : "menunav-example"
+        },
+
+        "node-menunav-2-example": {
+            "displayName": "MenuNav: Basic Top Nav Example",
+            "layout"     : "menunav-example"
+        },
+
+        "node-menunav-3-example": {
+            "displayName": "MenuNav: Menu Button Top Nav Example",
+            "layout"     : "menunav-example"
+        },
+
+        "node-menunav-4-example": {
+            "displayName": "MenuNav: Split Button Top Nav Example",
+            "layout"     : "menunav-example"
+        },
+
+        "node-menunav-5-example": {
+            "displayName": "MenuNav: Left Nav with Submenus with Shadows Example",
+            "layout"     : "menunav-example"
+        },
+
+        "node-menunav-6-example": {
+            "displayName": "MenuNav: Left Nav With Submenus With Rounded Corners Example",
+            "layout"     : "menunav-example"
+        },
+
+        "node-menunav-7-example": {
+            "displayName": "MenuNav: Skinning Menus Created Using the MenuNav Node Plugin Example",
             "layout"     : "menunav-example"
         }
     }

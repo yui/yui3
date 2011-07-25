@@ -1,0 +1,56 @@
+<link href="{{componentAssets}}/anim.css" rel="stylesheet" type="text/css">
+<div class="intro">
+    <p>This demonstrates how to animate the <code>opacity</code> of an element.</p>
+    <p> Click the X in the header to fade the element out.</p>
+</div>
+
+<div class="example">
+{{>basic-source}}
+</div>
+
+<h2>Setting up the HTML</h2>
+<p>First we add some HTML to animate.</p>
+
+```
+<div id="demo" class="yui3-module">
+    <div class="yui3-hd">
+        <h3>Animation Demo</h3>
+        <a href="remove.php?id=demo" title="remove module" class="yui3-remove"><em>x</em></a>
+    </div>
+    <div class="yui3-bd">
+        <p>This an example of what you can do with the YUI Animation Utility.</p>
+        <p><em>Follow the instructions above to see the animation in action.</em></p>
+    </div>
+</div>
+```
+
+<h2>Creating the Anim Instance</h2>
+<p>Now we create an instance of <code>Y.Anim</code>, passing it a configuration object that includes the <code>node</code> we wish to animate and the <code>to</code> attribute containing the final properties and their values.</p>
+
+```
+var anim = new Y.Anim({
+    node: '#demo',
+    to: { opacity: 0 }
+});
+```
+
+<h2>Handling the Click Event</h2>
+<p>Clicking the toggle control should start the animation, so we'll need to handle that click, including preventing the default action of following the url.</p>
+
+```
+var onClick = function(e) {
+    e.preventDefault();
+    anim.run();
+};
+```
+
+<h2>Running the Animation</h2>
+<p>Finally we add an event listener to run the animation.</p>
+```
+Y.one('#demo .yui3-remove').on('click', onClick);
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>basic-source}}
+```

@@ -1,0 +1,170 @@
+				<h2 id="anatomy">Anatomy of a TabView</h2>
+
+                <h3>Minimum Markup Requirement</h3>
+
+                <p>A <code>TabView</code> consists of a list of links that target a content element.</p>
+                <p>The basic markup needed to create from HTML is the following:</p>
+
+```
+<div id="demo">
+    <ul>
+        <li><a href="#foo">foo</a></li>
+        <li><a href="#bar">bar</a></li>
+        <li><a href="#baz">baz</a></li>
+    </ul>
+    <div>
+        <div id="foo">foo content</div>
+        <div id="bar">bar content</div>
+        <div id="baz">baz content</div>
+    </div>
+</div>
+```
+
+                <h3 id="rendered-markup">Rendered Markup</h3>
+<p>After a <code>TabView</code> is rendered, the final markup becomes:
+
+```
+<div class="yui3-widget yui3-tabview">
+    <div id="demo" class="yui3-tabview-content">
+        <ul class="yui3-tabview-list">
+            <li class="yui3-tab yui3-widget yui3-tab-selected">
+                <a href="#foo" class="yui3-tab-label yui3-tab-content">foo</a>
+            </li>
+            <li class="yui3-tab yui3-widget">
+                <a href="#bar" class="yui3-tab-label yui3-tab-content">bar</a>
+            </li>
+            <li class="yui3-tab yui3-widget">
+                <a href="#baz" class="yui3-tab-label yui3-tab-content">baz</a>
+            </li>
+        </ul>
+        <div class="yui3-tabview-panel">
+            <div id="foo" class="yui3-tab-panel">foo content</div>
+            <div id="bar" class="yui3-tab-panel">bar content</div>
+            <div id="baz" class="yui3-tab-panel">baz content</div>
+        </div>
+    </div>
+</div>
+```
+
+                <h2 id="instantiating">Creating and Configuring a TabView</h2>
+                <p>A <code>TabView</code> instance can be created from existing markup on the page, or dynamically
+                using JavaScript.</p>
+
+                <h3 id="from-markup">From Existing Markup</h3>
+                <p>To create from existing markup, first conform to the basic markup pattern, then create a
+                new <code>TabView</code> instance, pointing to the existing <code>srcNode</code>, and render.</p>
+
+```
+<div id="demo">
+    <ul>
+        <li><a href="#foo">foo</a></li>
+        <li><a href="#bar">bar</a></li>
+        <li><a href="#baz">baz</a></li>
+    </ul>
+    <div>
+        <div id="foo">foo content</div>
+        <div id="bar">bar content</div>
+        <div id="baz">baz content</div>
+    </div>
+</div>
+
+<script>
+YUI().use('tabview', function(Y) {
+    var tabview = new Y.TabView({
+        srcNode: '#demo'
+    });
+
+    tabview.render();
+});
+</script>
+```
+
+                <h3 id="from-js">From JavaScript</h3>
+                <p>To create purely from JavaScript, all that is required is passing the <code>TabView</code>
+                constructor a list of <code>children</code> containing their respective <code>label</code>
+                and <content> attributes, and call render.  As with all YUI <code>Widget</code>s,
+                render takes an optional container to render into, or defaults to the <code>body</code> element.</p>
+
+```
+<div id="demo"></div>
+<script>
+YUI().use('tabview', function(Y) {
+    var tabview = new Y.TabView({
+        children: [{
+            label: 'foo',
+            content: '<p>foo content</p>'
+        }, {
+            label: 'bar',
+            content: '<p>bar content</p>'
+        }, {
+            label: 'baz',
+            content: '<p>baz content</p>'
+        }]
+    });
+
+    tabview.render('#demo');
+});
+</script>
+```
+
+            <h2 id="skinning">Skinning TabView</h2>
+            <p>The <code>TabView</code> comes with a basic skin by default.  This can be easily
+            customized using the rich set of <a href="#rendered-markup">classNames</a>.</p>
+            <p>For a more polished look and feel, we also ship with the "sam skin", which can 
+            be applied by adding the <code>yui3-skin-sam</code> className to some ancestor:</p>
+
+```
+<body class="yui3-skin-sam">
+...
+<div id="demo">
+    <ul>
+        <li><a href="#foo">foo</a></li>
+        <li><a href="#bar">bar</a></li>
+        <li><a href="#baz">baz</a></li>
+    </ul>
+    <div>
+        <div id="foo">foo content</div>
+        <div id="bar">bar content</div>
+        <div id="baz">baz content</div>
+    </div>
+</div>
+...
+</body>
+```
+
+            <h2 id="events">TabView Events</h2>
+            <p>TabViews fire the following events during operation:</p>
+            <table>
+            <thead>
+                <tr>
+                    <th>Event</th>
+                    <th>When</th>
+                    <th>Payload</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>addChild</code></td>
+                    <td>a Tab is added to the TabView</td>
+                    <td><code>child, index</code></td>
+                </tr>
+                <tr>
+                    <td><code>removeChild</code></td>
+                    <td>a Tab is removed from the TabView</td>
+                    <td><code>child, index</code></td>
+                </tr>
+                <tr>
+                    <td><code>selectionChange</code></td>
+                    <td>the selected tab changes</td>
+                    <td><code>prevVal, newVal</code></td>
+                </tr>
+                <tr>
+                    <td><code>render</code></td>
+                    <td>a Tabview is rendered</td>
+                    <td>Normal change event signature (<code>newVal</code>, <code>prevVal</code>, etc).  When dragging, extra event property <code>ddEvent : (drag:drag event)</code> is added</td>
+                </tr>
+            </tbody>
+            </table>
+
+            <p>This is not an exhaustive list.  See the <a href="{{apiDocs}}/module_tabview.html">API docs</a> for a complete listing.</p>
+

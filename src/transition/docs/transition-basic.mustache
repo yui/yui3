@@ -1,0 +1,49 @@
+<link href="{{componentAssets}}/transition.css" rel="stylesheet" type="text/css">
+<div class="intro">
+    <p>the <code>transition</code> method animates the value of each property from the current value to the given value.
+    Click the X to run the animation.</p>
+</div>
+
+<div class="example">
+{{>transition-basic-source}}
+</div>
+
+<h2>Using the Transition Method</h2>
+<p>Transition allows you to animate one or more properties from their current value to a given value with the specified duration and easing method.</p>
+
+```
+    Y.one('#demo').transition({
+        duration: 1, // seconds
+        easing: 'ease-out',
+        height: 0,
+        width: 0,
+        left: '150px',
+        top: '100px',
+        opacity: 0
+    });
+});
+```
+
+<h2>Transition with Callback</h2>
+<p>The <code>transition</code> method provides an optional callback argument, which is a function that runs once the transition is completed.  The callback runs only for this transition.</p>
+
+```
+    var node = Y.one('#demo');
+
+    node.transition({
+        duration: 1, // seconds
+        easing: 'ease-out',
+        height: 0,
+        width: 0,
+        left: '150px',
+        top: '100px',
+        opacity: 0
+    }, function() {
+        this.remove(); 
+    });
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>transition-basic-source}}
+```

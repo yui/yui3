@@ -48,14 +48,23 @@ var WIDGET         = 'widget',
 
     /**
      * Widget extension, which can be used to add modality support to the base Widget class, 
-     * through the <a href="Base.html#method_build">Base.build</a> method.
+     * through the Base.create method.
      *
      * @class WidgetModality
      * @param {Object} config User configuration object
      */
     function WidgetModal(config) {
-        this._initModality();
+        if (config.modal) {
+            Y.after(this._renderUIModal, this, RENDER_UI);
+            Y.after(this._syncUIModal, this, SYNC_UI);
+            Y.after(this._bindUIModal, this, BIND_UI);
 
+            if (this.get('rendered')) {
+                this._renderUIModal();
+                this._syncUIModal();
+                this._bindUIModal();
+            }
+        }
     }
 
     var MODAL           = 'modal',
@@ -97,6 +106,17 @@ var WIDGET         = 'widget',
                 validator: isBoolean
             },
 
+            /**
+             * @attribute focusOn
+             * @type array
+             *
+             * @description An array of objects corresponding to the nodes and events that will trigger a re-focus back on the widget.
+             * The implementer can supply an array of objects, with each object having the following properties:
+             * <p>eventName: (string, required): The eventName to listen to.</p>
+             * <p>node: (Y.Node, optional): The Y.Node that will fire the event (defaults to the boundingBox of the widget)</p>
+             * <p>By default, this attribute consists of two objects which will cause the widget to re-focus if anything 
+             * outside the widget is clicked on or focussed upon.</p>
+             */
             focusOn: {
                 value: [
                     {
@@ -166,31 +186,6 @@ var WIDGET         = 'widget',
         _maskNode   : WidgetModal._GET_MASK(),
         _uiHandlesModal  : null,
 
-        /**
-         * Synchronizes the UI and hooks up methods to the widget's lifecycle.
-         * <p>
-         * This method in invoked upon initialization of the widget.
-         * </p>
-         * @method _initModality
-         * @protected
-         */
-        _initModality : function() {
-          
-          if (this.get('modal')) {
-              Y.after(this._renderUIModal, this, RENDER_UI);
-              Y.after(this._syncUIModal, this, SYNC_UI);
-              Y.after(this._bindUIModal, this, BIND_UI);
-          }
-
-          if (this.get('rendered')) {
-              this._renderUIModal;
-              this._syncUIModal;
-              this._bindUIModal;
-          }
-            
-        },
-
-
 
         /**
          * Adds modal class to the bounding box of the widget
@@ -211,7 +206,7 @@ var WIDGET         = 'widget',
             //     position: ""
             // });
 
-            //this._repositionMask(this);
+            this._repositionMask(this);
             bb.addClass(MODAL_CLASSES.modal);
 
         },
@@ -228,8 +223,9 @@ var WIDGET         = 'widget',
          */
         _bindUIModal : function () {
 
-            this.after(VISIBLE+CHANGE, this._afterHostVisibleChange);
-            this.after(Z_INDEX+CHANGE, this._afterHostZIndexChange);
+            this.after(VISIBLE+CHANGE, this._afterHostVisibleChangeModal);
+            this.after(Z_INDEX+CHANGE, this._afterHostZIndexChangeModal);
+            this.after("focusOnChange", this._afterFocusOnChange);
         },
 
         /**
@@ -245,8 +241,8 @@ var WIDGET         = 'widget',
 
             //var host = this.get(HOST);
 
-            this._uiSetHostVisible(this.get(VISIBLE));
-            this._uiSetHostZIndex(this.get(Z_INDEX));
+            this._uiSetHostVisibleModal(this.get(VISIBLE));
+            this._uiSetHostZIndexModal(this.get(Z_INDEX));
 
         },
 
@@ -287,10 +283,10 @@ var WIDGET         = 'widget',
         /**
          * Performs events attaching/detaching, stack shifting and mask repositioning based on the visibility of the widget
          *
-         * @method _uiSetHostVisible
+         * @method _uiSetHostVisibleModal
          * @param {boolean} Whether the widget is visible or not
          */
-        _uiSetHostVisible : function (visible) {
+        _uiSetHostVisibleModal : function (visible) {
             var stack = WidgetModal.STACK,
                 topModal,
                 maskNode = this.get('maskNode'),
@@ -299,7 +295,7 @@ var WIDGET         = 'widget',
             if (visible) {
             
                 Y.Array.each(stack, function(modal){
-                    modal._detachUIHandles();
+                    modal._detachUIHandlesModal();
                     modal._blur();
                 });
                 
@@ -308,7 +304,7 @@ var WIDGET         = 'widget',
                 
                 //this._attachUIHandlesModal();
                 this._repositionMask(this);
-                this._uiSetHostZIndex(this.get(Z_INDEX));
+                this._uiSetHostZIndexModal(this.get(Z_INDEX));
                 WidgetModal._GET_MASK().show();
                 
                 if (isModal) {
@@ -321,14 +317,14 @@ var WIDGET         = 'widget',
             } else {
             
                 stack.splice(Y.Array.indexOf(stack, this), 1);
-                this._detachUIHandles();
+                this._detachUIHandlesModal();
                 this._blur();
                 
                 if (stack.length) {
                     topModal = stack[0];                    
                     this._repositionMask(topModal);
                     //topModal._attachUIHandlesModal();
-                    topModal._uiSetHostZIndex(topModal.get(Z_INDEX));
+                    topModal._uiSetHostZIndexModal(topModal.get(Z_INDEX));
 
                     if (topModal.get('modal')) {
                         //topModal._attachUIHandlesModal();
@@ -350,10 +346,10 @@ var WIDGET         = 'widget',
         /**
          * Sets the z-index of the mask node.
          *
-         * @method _uiSetHostZIndex
+         * @method _uiSetHostZIndexModal
          * @param {Number} Z-Index of the widget
          */
-        _uiSetHostZIndex : function (zIndex) {
+        _uiSetHostZIndexModal : function (zIndex) {
 
             if (this.get('modal')) {
                 this.get('maskNode').setStyle(Z_INDEX, zIndex || 0);
@@ -417,9 +413,9 @@ var WIDGET         = 'widget',
         /**
          * Detaches all UI Listeners that were set in _attachUIHandlesModal from the widget. 
          *
-         * @method _detachUIHandles
+         * @method _detachUIHandlesModal
          */
-        _detachUIHandles : function () {
+        _detachUIHandlesModal : function () {
             Y.each(this._uiHandlesModal, function(h){
                 h.detach();
             });
@@ -429,23 +425,23 @@ var WIDGET         = 'widget',
         /**
          * Default function that is called when visibility is changed on the widget. 
          *
-         * @method _afterHostVisibleChange
+         * @method _afterHostVisibleChangeModal
          * @param {EventFacade} e The event facade of the change
          */
-        _afterHostVisibleChange : function (e) {
+        _afterHostVisibleChangeModal : function (e) {
 
-            this._uiSetHostVisible(e.newVal);
+            this._uiSetHostVisibleModal(e.newVal);
         },
 
         /**
          * Default function that is called when z-index is changed on the widget. 
          *
-         * @method _afterHostZIndexChange
+         * @method _afterHostZIndexChangeModal
          * @param {EventFacade} e The event facade of the change
          */
-        _afterHostZIndexChange : function (e) {
+        _afterHostZIndexChangeModal : function (e) {
 
-            this._uiSetHostZIndex(e.newVal);
+            this._uiSetHostZIndexModal(e.newVal);
         },
 
         /**
@@ -494,6 +490,19 @@ var WIDGET         = 'widget',
                 this.fire(MaskShow);
             }
             
+        },
+
+        /**
+         * Default function called when focusOn Attribute is changed. Remove existing listeners and create new listeners.
+         *
+         * @method _afterFocusOnChange
+         */
+        _afterFocusOnChange : function(e) {
+            this._detachUIHandlesModal();
+
+            if (this.get(VISIBLE)) {
+                this._attachUIHandlesModal();
+            }
         }
     };
 

@@ -1,45 +1,15 @@
 {
     "projectName": "YUI 3",
 
-    "apiDocs": "api",
+    "apiDocs": "http://stage.yuilibrary.com/yui/docs/api",
+
+    "yuiBuildUrl": "build",
     "yuiVersion": "3.4.0pr2",
     "yuiSeedUrl": "build/yui/yui-min.js",
 
     "componentDefaults": {
-        "apiDocs": "../api",
+        "yuiBuildUrl": "../build",
         "yuiSeedUrl": "../build/yui/yui-min.js"
-    },
-
-    "pages": {
-        "core": {
-            "title": "Core",
-            "layout": "category",
-            "hideTableOfContents": true
-        },
-
-        "css": {
-            "title": "CSS",
-            "layout": "category",
-            "hideTableOfContents": true
-        },
-
-        "widget": {
-            "title": "Widgets",
-            "layout": "category",
-            "hideTableOfContents": true
-        },
-
-        "utility": {
-            "title": "Utilities",
-            "layout": "category",
-            "hideTableOfContents": true
-        },
-
-        "infrastructure": {
-            "title": "Infrastructure",
-            "layout": "category",
-            "hideTableOfContents": true
-        }
     },
 
     "server": {
