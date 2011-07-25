@@ -7,7 +7,7 @@
 </style>
 
 <div class="intro">
-<p>This example demonstrates how to create a simple todo app using the <a href="../model/index.html">Model</a>, <a href="../model-list/index.html">Model List</a>, and <a href="../view/index.html">View</a> components. The example also includes a custom sync layer that stores the todo items in `localStorage` (in browsers that support it).</p>
+<p>This example demonstrates how to create a todo list app using the <a href="../model/index.html">Model</a>, <a href="../model-list/index.html">Model List</a>, and <a href="../view/index.html">View</a> components. The example also includes a custom sync layer that stores the todo items in `localStorage` (in browsers that support it).</p>
 </div>
 
 <div class="example">
@@ -147,7 +147,7 @@
 
 <ol>
     <li><p>A `TodoModel` class, which extends `Y.Model`. Each instance of this class will represent the data for a single todo item.</p></li>
-    <li><p>A `TodoList` class, which extends `Y.ModelList`. There will be a single instance of this class to contain all the `TodoModel` instances in the todo list.</p></li> 
+    <li><p>A `TodoList` class, which extends `Y.ModelList`. There will be a single instance of this class to contain all the `TodoModel` instances in the todo list.</p></li>
     <li><p>A `TodoAppView` class that extends `Y.View` and acts as a view controller for the entire app.</p></li>
     <li><p>A `TodoView` class, which extends `Y.View`. Each instance of this class will represent the visual content and control the interactions for a single todo item.</p></li>
     <li><p>A `localStorage`-based sync layer that will be used by the `TodoModel` and `TodoList` classes to save and load todo items using `localStorage`.</p></li>

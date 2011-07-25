@@ -15,8 +15,8 @@
     "examples": [
         {
             "name"       : "app-todo",
-            "displayName": "Simple Todo List",
-            "description": "A simple todo list built with the Model, Model List, and View components.",
+            "displayName": "Todo List",
+            "description": "A basic todo list built with the Model, Model List, and View components.",
             "modules"    : ["app", "model", "model-list", "view"],
             "tags"       : [
                 "app", "todo", "model", "model-list", "view", "modellist",
