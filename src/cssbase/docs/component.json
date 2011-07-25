@@ -37,7 +37,7 @@
         },
 
         "cssbase-context-example": {
-            "displayName": "CSS Contextual Example",
+            "displayName": "CSS Base Contextual Example",
             "layout"     : "cssbase-context-example"
         }
     }
