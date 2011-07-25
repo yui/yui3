@@ -54,20 +54,18 @@ a reference of your class in the `type` attribute of your config to the `getShap
         {
             var w = this.get("width"),
                 h = this.get("height"),
-                x = this.get("x"),
-                y = this.get("y"),
                 ew = this.get("ellipseWidth"),
                 eh = this.get("ellipseHeight");
             this.clear();
-            this.moveTo(x, y + eh);
-            this.lineTo(x, y + h - eh);
-            this.quadraticCurveTo(x, y + h, x + ew, y + h);
-            this.lineTo(x + w - ew, y + h);
-            this.quadraticCurveTo(x + w, y + h, x + w, y + h - eh);
-            this.lineTo(x + w, y + eh);
-            this.quadraticCurveTo(x + w, y, x + w - ew, y);
-            this.lineTo(x + ew, y);
-            this.quadraticCurveTo(x, y, x, y + eh);
+            this.moveTo(0, eh);
+            this.lineTo(0, h - eh);
+            this.quadraticCurveTo(0, h, ew, h);
+            this.lineTo(w - ew, h);
+            this.quadraticCurveTo(w, h, w, h - eh);
+            this.lineTo(w, eh);
+            this.quadraticCurveTo(w, 0, w - ew, 0);
+            this.lineTo(ew, 0);
+            this.quadraticCurveTo(0, 0, 0, eh);
             this.end();
         }
     }, {
