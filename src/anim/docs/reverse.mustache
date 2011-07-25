@@ -1,0 +1,84 @@
+<link href="{{componentAssets}}/anim.css" rel="stylesheet" type="text/css">
+<div class="intro">
+    <p>This demonstrates how to use the <code>reverse</code> attribute to change the behavior of the animation.</p>
+    <p> Click the icon in the header to toggle the element's <code>height</code>.</p>
+</div>
+
+<div class="example">
+{{>reverse-source}}
+</div>
+
+<h2>Setting up the HTML</h2>
+<p>First we add some HTML to animate.</p>
+
+```
+<div id="demo" class="yui3-module">
+    <div class="yui3-hd">
+        <h3>Animation Demo</h3>
+        <a title="remove module" class="yui3-toggle"><em>-</em></a>
+    </div>
+    <div class="yui3-bd">
+        <p>This an example of what you can do with the YUI Animation Utility.</p>
+        <p><em>Follow the instructions above to see the animation in action.</em></p>
+    </div>
+</div>
+```
+
+<h2>Using the NodeFX Plugin</h2>
+<p>For this example, we will use <code>Node</code>'s <code>fx</code> plugin to animate the element.  The plugin adds the anim instance to the <code>Node</code> instance, pre-configuring it to use the Node instance as the <code>Anim</code>'s node.  The <code>plug</code> method accepts a class to construct and an optional config to pass to the constructor.</p>
+<p>Setting the <code>from</code> attribute to the expanded height of the element allows us to toggle the effect using the <code>reverse</code> attribute, which we will see below (<code>from</code> uses current value when omitted).</p>
+
+```
+var module = Y.one('#demo');
+
+// add fx plugin to module body
+var content = module.one('.yui3-bd').plug(Y.Plugin.NodeFX, {
+    from: { height: 0 },
+    to: {
+        height: function(node) { // dynamic in case of change
+            return node.get('scrollHeight'); // get expanded height (offsetHeight may be zero)
+        }
+    },
+
+    easing: Y.Easing.easeOut,
+    from: { height: 0 },
+    duration: 0.5
+});
+```
+
+<h2>Creating the Control Element</h2>
+<p>Because our behavior only works when JS is available, let's go ahead and add our control element using JS as well.</p>
+
+```
+// use dynamic control for dynamic behavior
+var control = Y.Node.create(
+    '<a title="show/hide content" class="yui3-toggle">' +
+        '<em>toggle</em>' +
+    '</a>'
+);
+
+// append dynamic control to header section
+module.one('.yui3-hd').appendChild(control);
+```
+
+<h2>Toggling Animation Behavior</h2>
+<p>Before calling <code>run</code> in our <code>click</code> handler, we will use the <code>reverse</code> attribute toggle the direction of the animation depending on whether its opening or closing.</p>
+
+```
+var onClick = function(e) {
+    module.toggleClass('yui-closed');
+    content.fx.set('reverse', !content.fx.get('reverse')); // toggle reverse
+};
+```
+
+<h2>Running the Animation</h2>
+<p>Finally we add an event handler to run the animation.</p>
+
+```
+module.one('.yui3-toggle').on('click', onClick);
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>reverse-source}}
+```

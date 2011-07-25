@@ -1,0 +1,82 @@
+<link href="{{componentAssets}}/anim.css" rel="stylesheet" type="text/css">
+<div class="intro">
+    <p>This demonstrates how to use the <code>iterations</code> attribute to run multiple iterations of the animation.</p>
+    <p>Mouse over the link to begin the animation.</p>
+</div>
+
+<div class="example">
+{{>alt-iterations-source}}
+</div>
+
+<h2>Setting up the HTML</h2>
+<p>First we add some HTML to animate.</p>
+
+```
+<a href="#" id="demo">hover me</a>
+```
+
+<h2>Creating the Anim Instance</h2>
+<p>Now we create an instance of <code>Y.Anim</code>, passing it a configuration object that includes the <code>node</code> we wish to animate and the <code>to</code> attribute containing the final properties and their values.</p>
+<p>Adding an <code>iterations</code> attribute of "infinite" means that the animation will run continuously.</p>
+<p>The <code>direction</code> attribute of "alternate" means that the animation reverses every other iteration.</p>
+
+```
+var node = Y.one('#demo');
+
+var anim = new Y.Anim({
+    node: node,
+    from: {
+        backgroundColor:node.getStyle('backgroundColor'),
+        color: node.getStyle('color'),
+        borderColor: node.getStyle('borderTopColor')
+    },
+
+    to: {
+        color: '#fff',
+        backgroundColor:'#ffa928',
+        borderColor: '#71241a'
+    },
+
+    duration: 0.5,
+    iterations: 'infinite',
+    direction: 'alternate'
+});
+```
+
+<h2>Changing Attributes</h2>
+<p>We don't want the animation running when the link is not hovered over, so we will change the animation attributes depending on whether or not we are over the link.</p>
+<p>We can use a single handler for both mouse the mouseOver and mouseOut events, and set the <code>reverse</code> attribute depending on which event fired.</p>
+
+```
+var hover = function(e) {
+    var reverse = false,
+        iterations = 'infinite';
+
+    if (anim.get('running')) {
+        anim.pause();
+    }
+    if (e.type === 'mouseout') {
+        reverse = true;
+        iterations = 1;
+    }
+    anim.setAttrs({
+        'reverse': reverse,
+        'iterations': iterations
+    });
+
+    anim.run();
+};
+```
+
+<h2>Running the Animation</h2>
+<p>Finally we add event handlers to run the animation.</p>
+
+```
+node.on('mouseover', hover);
+node.on('mouseout', hover);
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>alt-iterations-source}}
+```
