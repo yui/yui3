@@ -42,7 +42,14 @@ var writeTest = function(key, mod) {
     if (mod.use) {
         str += '            //Testing A rollup module\n';
         mod.use.forEach(function(s) {
-            str += '            Assert.isTrue((loader.sorted.indexOf("' + s + '")) > -1, "Module (' + s + ') not found in sorted array");\n';
+            if (mods[s] && mods[s].use) {
+                str += '            //Testing A rollup of a rollup module ( datatype )\n';
+                mods[s].use.forEach(function(s) {
+                    str += '            Assert.isTrue((loader.sorted.indexOf("' + s + '")) > -1, "Module (' + s + ') not found in sorted array");\n';
+                });
+            } else {
+                str += '            Assert.isTrue((loader.sorted.indexOf("' + s + '")) > -1, "Module (' + s + ') not found in sorted array");\n';
+            }
         });
     } else {
         str += '            //Testing A normal module\n';

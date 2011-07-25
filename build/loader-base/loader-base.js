@@ -1021,7 +1021,7 @@ Y.Loader.prototype = {
         o.requires = this.filterRequires(o.requires) || [];
 
         // Handle submodule logic
-        var subs = o.submodules, i, l, sup, s, smod, plugins, plug,
+        var subs = o.submodules, i, l, t, sup, s, smod, plugins, plug,
             j, langs, packName, supName, flatSup, flatLang, lang, ret,
             overrides, skinname, when,
             conditions = this.conditions, trigger;
@@ -1155,24 +1155,34 @@ Y.Loader.prototype = {
         }
 
         if (o.condition) {
-            trigger = o.condition.trigger;
-            when = o.condition.when;
-            conditions[trigger] = conditions[trigger] || {};
-            conditions[trigger][name] = o.condition;
-            // the 'when' attribute can be 'before', 'after', or 'instead'
-            // the default is after.
-            if (when && when != 'after') {
-                if (when == 'instead') { // replace the trigger
-                    o.supersedes = o.supersedes || [];
-                    o.supersedes.push(trigger);
-                } else { // before the trigger
-                    // the trigger requires the conditional mod,
-                    // so it should appear before the conditional
-                    // mod if we do not intersede.
+            t = o.condition.trigger;
+            if (YUI.Env.aliases[t]) {
+                t = YUI.Env.aliases[t];
+            }
+            if (!Y.Lang.isArray(t)) {
+                t = [t];
+            }
+
+            for (i = 0; i < t.length; i++) {
+                trigger = t[i];
+                when = o.condition.when;
+                conditions[trigger] = conditions[trigger] || {};
+                conditions[trigger][name] = o.condition;
+                // the 'when' attribute can be 'before', 'after', or 'instead'
+                // the default is after.
+                if (when && when != 'after') {
+                    if (when == 'instead') { // replace the trigger
+                        o.supersedes = o.supersedes || [];
+                        o.supersedes.push(trigger);
+                    } else { // before the trigger
+                        // the trigger requires the conditional mod,
+                        // so it should appear before the conditional
+                        // mod if we do not intersede.
+                    }
+                } else { // after the trigger
+                    o.after = o.after || [];
+                    o.after.push(trigger);
                 }
-            } else { // after the trigger
-                o.after = o.after || [];
-                o.after.push(trigger);
             }
         }
 
@@ -1251,12 +1261,19 @@ Y.Loader.prototype = {
                 r = [r];
             }
             r = Y.Array(r);
-            var c = [];
-            for (var i = 0; i < r.length; i++) {
-                var mod = this.getModule(r[i]);
+            var c = [], i, mod, o, m;
+
+            for (i = 0; i < r.length; i++) {
+                mod = this.getModule(r[i]);
                 if (mod && mod.use) {
-                    for (var o = 0; o < mod.use.length; o++) {
-                        c.push(mod.use[o]);
+                    for (o = 0; o < mod.use.length; o++) {
+                        //Must walk the other modules in case a module is a rollup of rollups (datatype)
+                        m = this.getModule(mod.use[o]);
+                        if (m && m.use) {
+                            c = Y.Array.dedupe([].concat(c, this.filterRequires(m.use)));
+                        } else {
+                            c.push(mod.use[o]);
+                        }
                     }
                 } else {
                     c.push(r[i]);
@@ -1402,7 +1419,6 @@ Y.Loader.prototype = {
                 });
             } else {
                 oeach(cond, function(def, condmod) {
-
                     if (!hash[condmod]) {
                         go = def && ((def.ua && Y.UA[def.ua]) ||
                                      (def.test && def.test(Y, r)));

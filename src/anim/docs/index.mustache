@@ -1,0 +1,105 @@
+<div class="intro">
+    <p>The Anim Utility provides the ability to animate changes to style properties. Advanced easing equations are provided for more interesting animated effects.</p>
+</div>
+{{>getting-started}}
+<div>
+    <h3 id="instantiating">Creating an Animation Object</h3>
+
+    <p>Your Animation implementation will consist of one or more instances of the <code>Anim</code>.</p>
+    <p>To create an <code>Anim</code> instance on your page, pass it a configuration object including the <code>node</code> or selector query for the node that you wish to animate and a <code>to</code> containing the properties you wish to animate.</p>
+
+```
+var myAnim = new Y.Anim({
+    node: '#demo',
+    to: {
+        width: 0,
+        height: 0
+    }
+});
+```
+
+    <p>To begin the actual animation, call the <code>run</code> method on your <code>Anim</code> instance.</p>
+
+```
+myAnim.run();
+```
+
+    <p>See <a href="../api/module_anim.html">the API documentation for the Anim object</a> for more information about its methods and properties.</p>
+
+    <h2 id="using">Using Animation</h2>
+			
+    <h3 id="attributes">Accessing Animation Attributes</h3>
+
+    <p>In addition to passing a configuration object to the <code>Anim</code> constructor, you can access the attributes of your <code>Anim</code> instance via the <code>set</code> and <code>get</code> methods.</p>
+
+```
+var myAnim = new Y.Anim({
+    node: '#demo',
+    to: {
+        width: 0,
+        height: 0
+    }
+});
+```
+
+    <h3 id="anim-to">Setting a To Value</h3>
+    <p>A <code>node</code> attribute and a <code>to</code> attribute containing one or more properties to animate are the minimum requirements for running an animation.</p>
+
+    <p>The value of a <code>to</code> can optionally be a function.  If a function is used, it receives the <code>node</code> as its only argument.  The return value of the function becomes the <code>to</code> value for that <code>run</code> of the animation.</p>
+
+```
+var myAnim = new Y.Anim({
+    node: '#demo',
+    to: {
+        width: function(node) {
+            return node.get('offsetWidth') / 2; 
+        },
+        height: 0
+    }
+});
+```
+
+    <h3 id="anim-from">Setting a From Value</h3>
+				
+    <p>Use the optional <code>from</code> attribute to start the animation from a specific value.  When <code>from</code> is omitted, the current value is used.</p>
+
+    <p>Like the <code>to</code> attribute, the value of a <code>from</code> property can optionally be a function.  If a function is used, it receives the <code>node</code> as its only argument.  The return value of the function becomes the <code>from</code> value for that <code>run</code> of the animation.</p>
+
+```
+var myAnim = new Y.Anim({
+    node: '#demo',
+    from: {
+        width: 0,
+        height: function(node) {
+            return node.get('winHeight');
+        } 
+    },
+
+    to: {
+        width: 0,
+        height: 0
+    }
+});
+```
+
+    <h3 id="anim-events">Listening for Events<a name="events"></a></h3>
+
+    <p>The Animation Utility defines events useful for hooking into the various stages of an animation.  The <code>on</code> method is used to attach event listeners.</p>
+```
+var myAnim = new Y.Anim({
+    node: '#demo',
+    to: {
+        width: 0,
+        height: 0
+    }
+});
+
+myAnim.on('end', function() {
+    myAnim.get('node').addClass('yui-hidden');
+});
+```
+</div>
+
+
+
+

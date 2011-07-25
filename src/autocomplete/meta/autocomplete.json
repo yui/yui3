@@ -8,7 +8,6 @@
             "autocomplete-base": {
                 "plugins": {
                     "autocomplete-filters": {
-                        "path": "autocomplete/autocomplete-filters-min.js",
 
                         "requires": [
                             "array-extras",
@@ -17,7 +16,6 @@
                     },
 
                     "autocomplete-filters-accentfold": {
-                        "path": "autocomplete/autocomplete-filters-accentfold-min.js",
 
                         "requires": [
                             "array-extras",
@@ -27,7 +25,6 @@
                     },
 
                     "autocomplete-highlighters": {
-                        "path": "autocomplete/autocomplete-highlighters-min.js",
 
                         "requires": [
                             "array-extras",
@@ -36,7 +33,6 @@
                     },
 
                     "autocomplete-highlighters-accentfold": {
-                        "path": "autocomplete/autocomplete-highlighters-accentfold-min.js",
 
                         "requires": [
                             "array-extras",
@@ -65,7 +61,6 @@
 
                 "plugins": {
                     "autocomplete-list-keys": {
-                        "path": "autocomplete/autocomplete-list-keys-min.js",
 
                         "condition": {
                             "trigger": "autocomplete-list",
@@ -79,7 +74,6 @@
                     },
 
                     "autocomplete-plugin": {
-                        "path": "autocomplete/autocomplete-plugin-min.js",
 
                         "requires": [
                             "autocomplete-list",

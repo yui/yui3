@@ -1,0 +1,102 @@
+{
+    "name"       : "anim",
+    "displayName": "Anim",
+    "description": "The Animation Utility allows properties to animate the transition between values.",
+    "author"     : "msweeney",
+
+    "tags": ["utility", "anim"],
+    "use" : ["anim"],
+
+    "examples": [
+        {
+            "name"       : "basic",
+            "displayName": "Basic Animation",
+            "description": "Creating and using a simple animation.",
+            "modules"    : ["anim"],
+            "tags"       : ["anim"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "easing",
+            "displayName": "Easing Effects",
+            "description": "The Animation Utility allows you to implement 'easing effects' &mdash; for example, when an animation gradually slows down as it nears completion, that's an easing effect known as 'ease-in'.  This example shows you how to use easing effects with your animations.",
+            "modules"    : ["anim"],
+            "tags"       : ["anim", "easing"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "colors",
+            "displayName": "Animating Colors",
+            "description": "Color animations can be effective indicators of state during the lifespan of a dynamic page.  This example shows you how to animate color attributes of an element.",
+            "modules"    : ["anim"],
+            "tags"       : ["anim", "color"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "alt-iterations",
+            "displayName": "Alternating Iterations",
+            "description": "The <code>direction</code> attribute can be used to reverse the animation on alternate iterations.",
+            "modules"    : ["anim"],
+            "tags"       : ["anim", "reverse", "iterations", "direction"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "anim-xy",
+            "displayName": "Animating XY Position",
+            "description": 	"This example shows you how to animate the xy coordinates of an element.",
+            "modules"    : ["anim"],
+            "tags"       : ["anim", "xy", "position"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "curve",
+            "displayName": "Animating Along a Curved Path",
+            "description": 	"This example demonstrates animating an element along a curved path using bezier control points.",
+            "modules"    : ["anim"],
+            "tags"       : ["anim", "xy", "position", "bezier"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "reverse",
+            "displayName": "Reversing an Animation",
+            "description": "The <code>reverse</code> attribute allows you to change the run direction of an animation.",
+            "modules"    : ["anim"],
+            "tags"       : ["anim", "reverse", "plugin"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "end-event",
+            "displayName": "Using the End Event",
+            "description": "This example demonstrates how to use the <code>end</code> event.",
+            "modules"    : ["anim"],
+            "tags"       : ["anim", "event", "end"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "anim-chaining",
+            "displayName": "Chaining Animations Using the end Event",
+            "description": "Animations can be set to run sequentially using Animation's <code>end</code> event.",
+            "modules"    : ["anim"],
+            "tags"       : ["anim", "event", "end", "chain"],
+
+            "hideTableOfContents": true
+        }
+
+    ]
+}

@@ -2,7 +2,7 @@
  * A widget-level extension that provides ability to hide widget when 
  * certain events occur.
  *
- * @module widget-modality
+ * @module widget-autohide
  * @author eferraiuolo, tilomitra
  * @since 3.4.0
  */
@@ -25,7 +25,8 @@ var WIDGET_AUTOHIDE    = 'widgetAutohide',
     getCN               = Y.ClassNameManager.getClassName;
 
 /**
- * Widget extension, which can be used to autohide the widget.
+ * The WidgetAutohide class provides the hideOn attribute which can
+ * be used to hide the widget when certain events occur.
  *
  * @class WidgetAutohide
  * @param {Object} config User configuration object
@@ -59,11 +60,11 @@ WidgetAutohide.ATTRS = {
      *
      * @description An array of objects corresponding to the nodes, events, and keycodes to hide the widget on.
      * The implementer can supply an array of objects, with each object having the following properties:
-     * eventName: (string, required): The eventName to listen to.
-     * node: (Y.Node, optional): The Y.Node that will fire the event (defaults to the boundingBox of the widget)
-     * keyCode: (string, optional): If listening for key events, specify the keyCode
-     * By default, this attribute consists of one object which will cause the widget to hide if the
-     * escape key is pressed.
+     * <p>eventName: (string, required): The eventName to listen to.</p>
+     * <p>node: (Y.Node, optional): The Y.Node that will fire the event (defaults to the boundingBox of the widget)</p>
+     * <p>keyCode: (string, optional): If listening for key events, specify the keyCode</p>
+     * <p>By default, this attribute consists of one object which will cause the widget to hide if the
+     * escape key is pressed.</p>
      */
     hideOn: {
         value: [

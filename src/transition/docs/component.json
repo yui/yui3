@@ -1,0 +1,41 @@
+{
+    "name"       : "transition",
+    "displayName": "Transition",
+    "description": "Transition adds the ability to animate Node style properties.  It is modeled after the CSS Transition specification, and leverages native CSS Transition implementations when possible.",
+    "author"     : "msweeney",
+
+    "tags": ["utility", "transition"],
+    "use" : ["transition"],
+
+    "examples": [
+        {
+            "name"       : "transition-basic",
+            "displayName": "Basic Node Transitions",
+            "description": "Demonstrates the basic usage of Transitions.",
+            "modules"    : ["transition"],
+            "tags"       : ["transition"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "transition-usage",
+            "displayName": "Using Transitions",
+            "description": "Demonstrates more advanced usage of Transitions.",
+            "modules"    : ["transition"],
+            "tags"       : ["transition"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "transition-view",
+            "displayName": "Showing and Hiding with Transitions",
+            "description": "Demonstrates how to animate Node's show and hide methods.",
+            "modules"    : ["transition", "node-event-delegate"],
+            "tags"       : ["transition"],
+
+            "hideTableOfContents": true
+        }
+    ]
+}

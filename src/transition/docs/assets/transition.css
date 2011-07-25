@@ -1,0 +1,32 @@
+#example-canvas { /* for YDN */
+    height: 250px;
+
+}
+#demo {
+    background: #ccc;
+    border: 4px solid #999;
+    height: 200px;
+    margin: 20px;
+    overflow: hidden;
+    position: relative;
+    width: 300px;
+    zoom: 1;
+}
+
+#demo a {
+    background: #999;
+    border: 2px solid #fff;
+    font-weight: bold;
+    color: #fff;
+    line-height: 12px;
+    height: 14px;
+    width: 15px;
+    overflow: hidden;
+    padding: 3px;
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    text-decoration: none;
+    text-align: center;
+}
+

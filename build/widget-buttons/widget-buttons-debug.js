@@ -55,13 +55,15 @@ WidgetButtons.ATTRS = {
                 type: "close"
             }
         ],
-     * @description An array of objects, with each object corresponding to a button that you want to be added to the widget. Each button can have upto 4 properties:
-     * type: {string} Use one of the default buttons provided by the WidgetButtons class. Set this to "close" if you want the 
-     * [x] at the top-right corner of the window. If this key has a value, then values for the remaining properties below don't need to be provided.
-     * value: {string} HTML string or text that should be shown on the button
-     * action: {function} The callback function that should be executed when the button is clicked.
-     * href: {string} (optional) The link to redirect to if the button is clicked> If not supplied, defaults to "#"
-     * section: {string || object} Whether the button should be placed in the header or footer. Represented as "header" or "footer"
+     * @description <p>An array of objects, with each object corresponding to a button that you want to be added to the widget. Each button can have upto 4 properties:</p>
+     *
+     * <p>type: {string} Use one of the default buttons provided by the WidgetButtons class. Set this to "close" if you want the 
+     * [x] at the top-right corner of the window. If this key has a value, then values for the remaining properties below don't need to be provided.</p>
+     *
+     * <p>value: {string} HTML string or text that should be shown on the button</p>
+     * <p>action: {function} The callback function that should be executed when the button is clicked.</p>
+     * <p>href: {string} (optional) The link to redirect to if the button is clicked> If not supplied, defaults to "#"</p>
+     * <p>section: {string || object} Whether the button should be placed in the header or footer. Represented as "header" or "footer"</p>
      */
     buttons: {
 
@@ -110,9 +112,9 @@ WidgetButtons.BUTTON_CLASS_NAMES = {
 
 
 /**
- * Object used to specify the HTML template for the buttons. Consists of the following properties 
- * defaultTemplate: Specifies the HTML markup for each button
- * wrapper: Specifies the HTML markup for the wrapper, which is a DOM Element that wraps around all the buttons
+ * <p>Object used to specify the HTML template for the buttons. Consists of the following properties</p>
+ * <p>defaultTemplate: Specifies the HTML markup for each button</p>
+ * <p>wrapper: Specifies the HTML markup for the wrapper, which is a DOM Element that wraps around all the buttons</p>
  * 
  * @property WidgetButtons.TEMPLATES
  * @static

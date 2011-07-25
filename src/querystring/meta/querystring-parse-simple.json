@@ -1,6 +1,5 @@
 {
     "querystring-parse-simple": {
-        "path": "querystring/querystring-parse-simple-min.js", 
         "requires": [
             "yui-base"
         ]

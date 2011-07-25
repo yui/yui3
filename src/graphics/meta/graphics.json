@@ -4,14 +4,12 @@
         "plugins": {
             "graphics-svg": {
                 "requires": ["graphics"],
-                "path": "graphics-svg/graphics-svg-min.js",
 				"condition": {
 				"trigger": "graphics",
                     "test": "graphics-svg.js"
                 }
             },
             "graphics-svg-default": {
-                "path": "graphics-svg-default/graphics-svg-default-min.js",
                 "condition": {
                     "trigger": "graphics",
                     "test": "graphics-svg.js"
@@ -19,14 +17,12 @@
             },
             "graphics-canvas": {
                 "requires": ["graphics"],
-                "path": "graphics-canvas/graphics-canvas-min.js",
                 "condition": {
                     "trigger": "graphics",
                     "test": "graphics-canvas.js"
                 }
             },
             "graphics-canvas-default": {
-                "path": "graphics-canvas-default/graphics-canvas-default-min.js",
                 "condition": {
                     "trigger": "graphics",
                     "test": "graphics-canvas.js"
@@ -34,14 +30,12 @@
             },
             "graphics-vml": {
                 "requires": ["graphics"],
-                "path": "graphics-vml/graphics-vml-min.js",
                 "condition": {
                     "trigger": "graphics",
                     "test": "graphics-vml.js"
                 }
             }, 
             "graphics-vml-default": {
-                "path": "graphics-vml-default/graphics-vml-default-min.js",
                 "condition": {
                     "trigger": "graphics",
                     "test": "graphics-vml.js"
