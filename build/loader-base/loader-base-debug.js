@@ -1265,12 +1265,19 @@ Y.Loader.prototype = {
                 r = [r];
             }
             r = Y.Array(r);
-            var c = [];
-            for (var i = 0; i < r.length; i++) {
-                var mod = this.getModule(r[i]);
+            var c = [], i, mod, o, m;
+
+            for (i = 0; i < r.length; i++) {
+                mod = this.getModule(r[i]);
                 if (mod && mod.use) {
-                    for (var o = 0; o < mod.use.length; o++) {
-                        c.push(mod.use[o]);
+                    for (o = 0; o < mod.use.length; o++) {
+                        //Must walk the other modules in case a module is a rollup of rollups (datatype)
+                        m = this.getModule(mod.use[o]);
+                        if (m && m.use) {
+                            c = Y.Array.dedupe([].concat(c, this.filterRequires(m.use)));
+                        } else {
+                            c.push(mod.use[o]);
+                        }
                     }
                 } else {
                     c.push(r[i]);
