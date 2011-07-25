@@ -3,7 +3,7 @@
 </div>
 
 
-
+{{>getting-started}}
 
 <h4 id="default">Creating a Panel</h4>
 <p>This simple example will create a Panel with default functionality. By default, a Panel is rendered with a "Close" button added to the header, with modality enabled, and will be hidden if the "esc" key or "Close" button is pressed. Clicking anywhere outside the panel will bring back focus to the panel.</p>
@@ -23,7 +23,7 @@ YUI().use('panel', function(Y) {
 ```
 
 <h4 id="modality">Modal Panel</h4>
-<p>A Panel is modal by default. This functionality can be changed through the "modal" attribute, either during instantiation or later through the set() method.</p>
+<p>A Panel is not modal by default. This functionality can be changed through the "modal" attribute, either during instantiation or later through the set() method.</p>
 
 ```
 YUI().use('panel', function(Y) {
@@ -31,14 +31,11 @@ YUI().use('panel', function(Y) {
     var panel = new Y.Panel({
         srcNode: "#myPanelContent",
         width: 400,
-        centered: true,
-
-        // Don't make the panel modal
-        modal: false
+        modal: true //make a modal panel
     });
 
     panel.render();
-    //optionally, we could have written panel.set('modal', false);
+    //optionally, we could have written panel.set('modal', true);
 
 });
 ```
@@ -163,7 +160,7 @@ YUI().use('panel', function(Y) {
             e.preventDefault(); 
             cancelActions(); 
         },
-        section: Y.WidgetStdMod.FOOTER 
+        section: Y.WidgetStdMod.FOOTER //we could also write "header", "footer" or Y.WidgetStdMod.HEADER here.
     };
 
     panel.addButton(cancelButton);

@@ -53,7 +53,7 @@
               width:200px;
             }
         </style>
-        <script type="text/javascript" src="http://localhost:8888/yui3/build/yui/yui-debug.js"></script> 
+        <script type="text/javascript" src="../../../../build/yui/yui-debug.js"></script> 
     </head>
 
     <body class='yui3-skin-sam'>
@@ -81,6 +81,9 @@
                 
         <script>
           YUI({filter:"raw"}).use("datatable-base", "panel", "dd-plugin", function(Y) {
+
+
+              //Create the datatable with some gadget information
               var cols = ["id","name","price"],
               data = [
                   {id:"ga-3475", name:"gadget", price:"$6.99"},
@@ -94,6 +97,7 @@
                   caption: "Price sheet for inventory parts"
               }),
 
+              //Create the main modal form
               panel = new Y.Panel({
                 srcNode: "#panelContent",
                 width: 250,
@@ -105,10 +109,13 @@
               }),
 
               addRowBtn = Y.one("#addRow"),
-
               nestedPanel;
 
+
+              //Render The Datatable
               dt.render("#dt");
+
+              //Add the footer buttons to the modal form
               panel.addButton(
                 {
                     value: "Add Item",
@@ -129,13 +136,17 @@
                     section: Y.WidgetStdMod.FOOTER
                 }
               );
+              
+              //Render the modal form
               panel.render();
 
-
+              //When the addRowBtn is pressed, show the modal form
               addRowBtn.on('click', function(e) {
                 panel.show();
               });
 
+              //Define the addItem function - this will be called 
+              //when "Add Item" is pressed on the modal form
               var addItem = function() {
                 var o = {}, 
                 id = Y.one('#productId'),
@@ -157,6 +168,9 @@
                 panel.hide();
               };
 
+              //Define the removeItems function - this will be called 
+              //when "Remove All Items" is pressed on the modal form
+              //and is confirmed "yes" by the nested panel.
               var removeItems = function() {
                 data = [];
                 dt.set('recordset', data).render();
@@ -165,10 +179,10 @@
               };
 
 
+              //Instantiate the nested panel if it doesn't exist, otherwise just show it.
               var removeAllItemsConfirm = function() {
                 if (!nestedPanel) {
                   nestedPanel = new Y.Panel({
-                    // headerContent: "Confirm",
                     bodyContent: "Are you sure you want to remove all items?",
                     zIndex: 5,
                     centered:true,
