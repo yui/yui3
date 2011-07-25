@@ -864,7 +864,7 @@ AutoCompleteBase.prototype = {
         if (query || query === '') {
             this._set(QUERY, query);
         } else {
-            query = this.get(QUERY);
+            query = this.get(QUERY) || '';
         }
 
         if (source) {
@@ -872,7 +872,8 @@ AutoCompleteBase.prototype = {
                 requestTemplate = this.get(REQUEST_TEMPLATE);
             }
 
-            request = requestTemplate ? requestTemplate(query) : query;
+            request = requestTemplate ?
+                requestTemplate.call(this, query) : query;
 
             Y.log('sendRequest: ' + request, 'info', 'autocomplete-base');
 
@@ -1158,7 +1159,8 @@ AutoCompleteBase.prototype = {
                 // an array of result objects), and these strings are then added
                 // to each result object.
                 if (highlighter) {
-                    highlighted = highlighter.call(this, query, results.concat());
+                    highlighted = highlighter.call(this, query,
+                            results.concat());
 
                     if (!highlighted) {
                         Y.log("Highlighter didn't return anything.", 'warn', 'autocomplete-base');
@@ -1577,8 +1579,8 @@ AutoCompleteBase.prototype = {
      */
     _onResponse: function (query, e) {
         // Ignore stale responses that aren't for the current query.
-        if (query === this.get(QUERY)) {
-            this._parseResponse(query, e.response, e.data);
+        if (query === (this.get(QUERY) || '')) {
+            this._parseResponse(query || '', e.response, e.data);
         }
     },
 

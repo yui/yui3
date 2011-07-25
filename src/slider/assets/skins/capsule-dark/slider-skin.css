@@ -1,7 +1,7 @@
 /* Horizontal Slider */
 
-/* Use thumbUrl /build/slider/assets/skins/capsule-dark/thumb-x.png */
-/* Alternate thumbUrl /build/slider/assets/skins/capsule-dark/thumb-x-line.png */
+/* Use thumbUrl /build/slider-base/assets/skins/capsule-dark/thumb-x.png */
+/* Alternate thumbUrl /build/slider-base/assets/skins/capsule-dark/thumb-x-line.png */
 
 .yui3-skin-capsule-dark .yui3-slider-x .yui3-slider-rail,
 .yui3-skin-capsule-dark .yui3-slider-x .yui3-slider-rail-cap-left,
@@ -46,8 +46,8 @@
 
 /* Vertical Slider */
 
-/* Use thumbUrl /build/slider/assets/skins/capsule-dark/thumb-y.png */
-/* Alternate thumbUrl /build/slider/assets/skins/capsule-dark/thumb-y-line.png */
+/* Use thumbUrl /build/slider-base/assets/skins/capsule-dark/thumb-y.png */
+/* Alternate thumbUrl /build/slider-base/assets/skins/capsule-dark/thumb-y-line.png */
 
 .yui3-skin-capsule-dark .yui3-slider-y .yui3-slider-rail,
 .yui3-skin-capsule-dark .yui3-slider-y .yui3-slider-rail-cap-top,

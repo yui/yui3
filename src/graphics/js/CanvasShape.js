@@ -7,6 +7,8 @@
  */
 CanvasShape = function(cfg)
 {
+    this._transforms = [];
+    this.matrix = new Y.Matrix();
     CanvasShape.superclass.constructor.apply(this, arguments);
 };
 
@@ -410,28 +412,53 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 * Applies translate transformation.
 	 *
 	 * @method translate
-	 * @param {Number} x The x-coordinate
-	 * @param {Number} y The y-coordinate
+	 * @param {Number} x The value to transate on the x-axis.
+	 * @param {Number} y The value to translate on the y-axis.
 	 */
 	translate: function(x, y)
 	{
-		this._translateX = x;
-		this._translateY = y;
-		this._translate.apply(this, arguments);
+		this._translateX += x;
+		this._translateY += y;
+		this._addTransform("translate", arguments);
 	},
 
 	/**
-	 * Applies translate transformation.
+	 * Performs a translate on the x-coordinate. When translating x and y coordinates,
+	 * use the `translate` method.
 	 *
-	 * @method translate
-	 * @param {Number} x The x-coordinate
-	 * @param {Number} y The y-coordinate
-	 * @protected
+	 * @method translateX
+	 * @param {Number} y The value to translate.
 	 */
-	_translate: function(x, y)
-	{
-		this._addTransform("translate", [x + "px", y + "px"]);
-	},
+	translateX: function(x)
+    {
+        this._translateX += x;
+        this._addTransform("translateX", arguments);
+    },
+
+	/**
+	 * Performs a translate on the y-coordinate. When translating x and y coordinates,
+	 * use the `translate` method.
+	 *
+	 * @method translateY
+	 * @param {Number} y The value to translate.
+	 */
+	translateY: function(y)
+    {
+        this._translateY += y;
+        this._addTransform("translateY", arguments);
+    },
+
+    /**
+     * Applies a skew transformation.
+     *
+     * @method skew
+     * @param {Number} x The value to skew on the x-axis.
+     * @param {Number} y The value to skew on the y-axis.
+     */
+    skew: function(x, y)
+    {
+        this._addTransform("skew", arguments);
+    },
 
 	/**
 	 * Applies a skew to the x-coordinate
@@ -441,6 +468,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 */
 	 skewX: function(x)
 	 {
+		this._addTransform("skewX", arguments);
 	 },
 
 	/**
@@ -451,29 +479,20 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 */
 	 skewY: function(y)
 	 {
+		this._addTransform("skewY", arguments);
 	 },
 
 	/**
-     * Storage for `rotation` atribute.
-     *
-     * @property _rotation
-     * @type Number
-	 * @private
-	 */
-	_rotation: 0,
-
-	/**
-	 * Applies a rotation.
+	 * Applies a rotate transform.
 	 *
 	 * @method rotate
 	 * @param {Number} deg The degree of the rotation.
 	 */
-	rotate: function(deg)
-	{
-		var rotate = "rotate(" + deg + "deg)";
+	 rotate: function(deg)
+	 {
 		this._rotation = deg;
-		this._addTransform("rotate", [deg + "deg"]);
-	},
+		this._addTransform("rotate", arguments);
+	 },
 
 	/**
 	 * Applies a scale transform
@@ -481,8 +500,9 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 * @method scale
 	 * @param {Number} val
 	 */
-	scale: function(val)
+	scale: function(x, y)
 	{
+		this._addTransform("scale", arguments);
 	},
 
 	/**
@@ -493,13 +513,23 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
      * @param {Number} b
      * @param {Number} c
      * @param {Number} d
-     * @param {Number} e
-     * @param {Number} f
+     * @param {Number} dx
+     * @param {Number} dy
 	 */
-	matrix: function(a, b, c, d, e, f)
+	matrix: function(a, b, c, d, dx, dy)
 	{
+		this._addTransform("matrix", arguments);
 	},
 	
+    /**
+     * Storage for `rotation` atribute.
+     *
+     * @property _rotation
+     * @type Number
+	 * @private
+	 */
+	_rotation: 0,
+
     /**
      * Adds a transform to the shape.
      *
@@ -510,11 +540,9 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 */
 	_addTransform: function(type, args)
 	{
-		if(!this._transformArgs)
-		{
-			this._transformArgs = {};
-		}
-		this._transformArgs[type] = Array.prototype.slice.call(args, 0);
+        args = Y.Array(args);
+        args.unshift(type);
+        this._transforms.push(args);
 		if(this.initialized)
         {
             this._updateTransform();
@@ -531,34 +559,25 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	{
 		var node = this.node,
 			key,
-			args,
-			val,
-			transform = node.style.MozTransform || node.style.webkitTransform || node.style.msTransform || node.style.OTransform,
-			test,
-			transformOrigin = this.get("transformOrigin");
-		for(key in this._transformArgs)
-		{
-            if(key && this._transformArgs.hasOwnProperty(key))
-			{
-				val = key + "(" + this._transformArgs[key].toString() + ")";
-				if(transform && transform.length > 0)
-				{
-					test = new RegExp(key + '(.*)');
-					if(transform.indexOf(key) > -1)
-					{
-						transform = transform.replace(test, val);
-					}
-					else
-					{
-						transform += " " + val;
-					}
-				}
-				else
-				{
-					transform = val;
-				}
-			}
-		}
+			transform,
+			transformOrigin = this.get("transformOrigin"),
+            matrix = this.matrix,
+            i = 0,
+            len = this._transforms.length;
+        
+        if(this._transforms && this._transforms.length > 0)
+        {
+            for(; i < len; ++i)
+            {
+                key = this._transforms[i].shift();
+                if(key)
+                {
+                    matrix[key].apply(matrix, this._transforms[i]); 
+                }
+            }
+            transform = matrix.toCSSText();
+        }
+        
         this._graphic.addToRedrawQueue(this);    
 		transformOrigin = (100 * transformOrigin[0]) + "% " + (100 * transformOrigin[1]) + "%";
 		node.style.MozTransformOrigin = transformOrigin; 
@@ -572,6 +591,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
             node.style.msTransform = transform;
             node.style.OTransform = transform;
 		}
+        this._transforms = [];
 	},
 
 	/**
@@ -932,48 +952,6 @@ CanvasShape.ATTRS =  {
 		getter: function()
 		{
 			return this._rotation;
-		}
-	},
-
-	/**
-	 * Performs a translate on the x-coordinate. When translating x and y coordinates,
-	 * use the `translate` method.
-	 *
-	 * @attribute translateX
-	 * @type Number
-	 */
-	translateX: {
-		getter: function()
-		{
-			return this._translateX;
-		},
-
-		setter: function(val)
-		{
-			this._translateX = val;
-			this._translate(val, this._translateY);
-			return val;
-		}
-	},
-	
-	/**
-	 * Performs a translate on the y-coordinate. When translating x and y coordinates,
-	 * use the `translate` method.
-	 *
-	 * @attribute translateX
-	 * @type Number
-	 */
-	translateY: {
-		getter: function()
-		{
-			return this._translateY;
-		},
-
-		setter: function(val)
-		{
-			this._translateY = val;
-			this._translate(this._translateX, val);
-			return val;
 		}
 	},
 

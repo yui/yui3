@@ -6,7 +6,7 @@
     "author": ["jenny","lsmith"],
 
     "use": ["datatype"],
-    "tags": ["datatype"],
+    "tags": ["utility", "datatype"],
 
     "examples": [
 

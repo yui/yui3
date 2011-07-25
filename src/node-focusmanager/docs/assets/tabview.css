@@ -1,0 +1,124 @@
+.yui3-tabview {
+	margin: 10px;
+}
+
+.yui3-tabview div {
+	border: solid 1px #000;
+}
+
+.yui3-tabview div div {
+	border: solid 1px #999;
+}
+
+.yui3-tabview ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	zoom: 1;	/* Clear the floated <LI> elements in IE */
+}
+
+.yui3-tabview ul:after {  /* Clear the floated <LI> elements in Webkit, Opera and Gecko */
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    height: 0;
+    line-height: 0;
+}
+
+.yui3-tabview .yui3-tab {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	float: left;
+	border: solid 1px #000;
+	margin: 0 -1px -1px 0;
+	background-color: #ccc;
+	*position: relative;	/* Necessary to get negative margins in IE */
+	*bottom: -1px;
+}
+
+.yui3-tabview .yui3-tab a {
+	display: block;
+	text-decoration: none;
+	color: #000;
+	border: solid 1px #ccc;
+	cursor: hand;	/* Needed for IE 8, which by default renders the text selection cursor. */
+}
+
+.yui3-tabview .yui3-tab a em {
+	font-style: normal;
+	display: block;
+	padding: 2px 10px;			
+}
+
+.yui3-tabview .yui3-tab-focus a {
+	border-color: #B3D4FF;
+}
+
+.yui3-tabview .yui3-tab-focus a:focus {  
+	outline: 0;	/* Suppress default browser focus */
+}
+
+.yui3-tabview .yui3-tab-selected a {	
+	background-color: #999;
+	border-color: #999;
+	border-bottom-width: 2px;
+	margin-bottom: -1px;
+	*position: relative;	/* Necessary to get negative margins in IE */
+}
+
+.yui3-tabview .yui3-tab-selected a em {			
+	background-color: #fff;
+	border-bottom: 3px solid #fff;
+	margin-bottom: -3px;
+	*position: relative;	/* Necessary to get negative margins in IE */
+}
+
+.yui3-tabview .yui3-tab-focus a em {
+	background-color: #B3D4FF;
+	border-color: #B3D4FF;
+	_display: inline-block;	/* Necessary fix the disappearing background color bug in IE 6 */
+}
+
+.yui3-tabview .yui3-tabpanel {
+	background-color: #fff;
+	display: none;
+}
+
+.yui3-tabview .yui3-tabpanel-selected {
+	display: block;
+	padding: 10px;
+}
+
+.yui3-tabview div div div.paging {
+	text-align: right;
+	height: 12px;
+	border: 0;
+}
+
+
+/*	Replace the text of each <BUTTON> with an icon by hiding the 
+	
+	Hide the text of each <BUTTON> offscreen so that it is still 
+	accessible to users of screen readers */
+
+.yui3-tabview .paging button {
+	display: inline-block;
+	height: 12px;
+	width: 12px;
+	overflow: hidden;
+	padding: 0;
+	margin: 0;
+	border: 0;
+	text-indent: -999em;
+	background: url(arrows.png) 0 0 no-repeat;
+}
+
+.yui3-tabview .paging button.yui3-tabview-prevbtn {
+	background-position: 0 0;	
+}
+
+.yui3-tabview .paging button.yui3-tabview-nextbtn {
+	background-position: 0 -12px;			
+}

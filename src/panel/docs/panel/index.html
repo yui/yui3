@@ -1,0 +1,161 @@
+<div class="intro">
+    <p>Panel is a widget that mimics the functionality of a regular OS window. It is similar to Overlay, with added functionality to support modality, event listeners on which to autohide and autofocus, header/footer button support and a custom stylesheet. Panel does not have any implementation code of it's own. It implements a set of extensions that provide certain sets of functionality. The <a href="../widget/widget-build.html">"Creating Custom Widget Classes"</a> example shows how you can use these extensions to build classes which mix and match some of the above features.</p>
+</div>
+
+
+
+
+<h4 id="default">Creating a Panel</h4>
+<p>This simple example will create a Panel with default functionality. By default, a Panel is rendered with a "Close" button added to the header, with modality enabled, and will be hidden if the "esc" key or "Close" button is pressed. Clicking anywhere outside the panel will bring back focus to the panel.</p>
+
+<pre class="code prettyprint">YUI().use(&#x27;panel&#x27;, function(Y) {
+
+    var panel = new Y.Panel({
+        srcNode: &quot;#myPanelContent&quot;,
+        width: 400,
+        centered: true
+    });
+
+    panel.render();
+
+});</pre>
+
+
+<h4 id="modality">Modal Panel</h4>
+<p>A Panel is modal by default. This functionality can be changed through the "modal" attribute, either during instantiation or later through the set() method.</p>
+
+<pre class="code prettyprint">YUI().use(&#x27;panel&#x27;, function(Y) {
+
+    var panel = new Y.Panel({
+        srcNode: &quot;#myPanelContent&quot;,
+        width: 400,
+        centered: true,
+
+        &#x2F;&#x2F; Don&#x27;t make the panel modal
+        modal: false
+    });
+
+    panel.render();
+    &#x2F;&#x2F;optionally, we could have written panel.set(&#x27;modal&#x27;, false);
+
+});</pre>
+
+
+<p>Panels can be nested in one another, and have different modal behavior. For instance, a modal panel may launch a non-modal panel on top of it. The <a href="/Widget.html"><code>WidgetModality</code></a> extension takes care of nesting behavior so no extra code is required for the implementer. Refer to the examples for more information.</p>
+
+<h4 id="events">Choosing when to focus and hide</h4>
+
+<p>By default, a Panel will return focus to itself if anything else on the page receives focus or is clicked. On the other hand, clicking the "close" button, or pressing the "esc" key will hide it. Both of these options can be configured as needed through the "hideOn" and "focusOn" attributes.</p>
+
+<p>The following code snippet shows how to change the default "hide" behavior. Instead of hiding when the "esc" key is pressed, the Panel hides whenever something outside it's bounding box is pressed, or when a certain element on the page (with an id of <code>anotherNode</code>) is clicked.</p>
+
+<pre class="code prettyprint">YUI().use(&#x27;panel&#x27;, function(Y) {
+
+    var panel = new Y.Panel({
+        srcNode: &quot;#myPanelContent&quot;,
+        width: 400,
+        centered: true,
+        modal:false,
+
+        &#x2F;&#x2F;The hideOn Attribute takes an array of objects, with a required property &quot;eventName&quot;
+        &#x2F;&#x2F;and two optional properties &quot;node&quot;, and &quot;keyCode&quot;
+        hideOn: [
+                    
+                    {
+                        &#x2F;&#x2F;When we don&#x27;t specify a node, it defaults to the boundingbox of this panel instance
+                        eventName: &quot;clickoutside&quot;
+                    },
+                    {
+                        &#x2F;&#x2F;This listens to click events on the node that was specified
+                        node: Y.one(&quot;#anotherNode&quot;),
+                        eventName:&quot;click&quot;
+                    }
+                ]
+    });
+
+    panel.render();
+
+});</pre>
+
+
+<p>Similarly, the "focusOn" attribute can be changed to configure the default focus behavior</p>
+
+    var panel = new Y.Panel({
+        srcNode: "#myPanelContent",
+        width: 400,
+        centered: true,
+        modal:false,
+
+        //The focusOn Attribute takes an array of objects, with a required property "eventName"
+        //and two optional properties "node", and "keyCode"
+        focusOn: [
+                    
+                    {
+                        //When we don't specify a node, it defaults to the boundingbox of this panel instance
+                        eventName: "clickoutside"
+                    },
+                    {
+                        //This listens to click events on the node that was specified
+                        node: Y.one("#anotherNode"),
+                        eventName:"click"
+                    }
+                ]
+    });
+
+    panel.render();
+
+});
+<pre class="code prettyprint">&lt;p&gt;To simply get rid of the default behavior, we could just set the &quot;focusOn&quot; and &quot;hideOn&quot; attributes to empty arrays.&lt;&#x2F;p&gt;
+
+&lt;h4 id=&quot;buttons&quot;&gt;Header&#x2F;Footer Button Support&lt;&#x2F;h4&gt;
+
+&lt;p&gt;Panel supports header&#x2F;footer buttons through the &lt;a href=&quot;&#x2F;WidgetButtons.html&quot;&gt;&#x60;WidgetButtons&#x60;&lt;&#x2F;a&gt; and &lt;a href=&quot;&#x2F;Widget-StdMod.html&quot;&gt;&#x60;Widget-StdMod&#x60;&lt;&#x2F;a&gt; extensions. By default, it comes with a &quot;close&quot; button represented by the &quot;x&quot; in the top-right corner of the header. As a developer, you can easily add&#x2F;remove buttons to the header or the footer, change the style of existing buttons, or change the markup that is used to render the buttons.&lt;&#x2F;p&gt;</pre>
+
+YUI().use('panel', function(Y) {
+    
+    var doSomethingElse = function() { ... };
+
+    var panel = new Y.Panel({
+        srcNode: "#myPanelContent",
+        width: 400,
+        centered: true,
+
+        //make changes to the buttons through the "buttons" attribute, which takes an array of objects
+        buttons: [
+                    
+
+                    {
+                        //each object has a "value" property, which can be text or an HTML string,
+                        value: "Okay",
+
+                        // "defaultFn" which takes the function that should be executed on a click event
+                        defaultFn: function(e) {
+                            e.preventDefault();
+                            panel.hide();
+                            doSomethingElse();
+                        },
+
+                        // "section" which tells where to render the button and should be Y.WidgetStdMod.HEADER, or Y.WidgetStdMod.FOOTER
+                        section: Y.WidgetStdMod.FOOTER
+
+                        //plus an optional "href" property if you are linking to an URL
+                    }
+                 ]
+    });
+
+    panel.render();
+
+});
+<pre class="code prettyprint">&lt;p&gt;If you want to append buttons to the ones that are already present within the panel, you can use the &lt;code&gt;addButton()&lt;&#x2F;code&gt; method.</pre>
+
+    var cancelButton = {
+        value: "Cancel",
+        defaultFn: function(e) { 
+            e.preventDefault(); 
+            cancelActions(); 
+        },
+        section: Y.WidgetStdMod.FOOTER 
+    };
+
+    panel.addButton(cancelButton);
+<code>&#x60;</code>

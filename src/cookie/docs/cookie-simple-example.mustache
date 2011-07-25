@@ -1,0 +1,33 @@
+<div class="intro">
+<p>This example shows basic usage of the YUI Cookie utility. The example checks the value of a cookie and then sets it to a new value.</p>
+</div>
+
+<div class="example yui3-skin-sam">
+  {{>cookie-simple-example-source}}
+</div>
+
+<h2>Description</h2>
+
+<p>This example begins by getting the value of a cookie named &quot;example&quot;. If this is the first time you've run
+the example, the value should be <code>null</code>:
+
+```
+var currentValue = Y.Cookie.get("example");
+```
+
+<p>This value is shown in the browser console. Next, the cookie is set to a random value:</p>
+
+```
+var newValue = "yui" + Math.round(Math.random() * Math.PI);
+Y.Cookie.set("example", newValue);
+```
+
+<p>When you reload the page, the value of the cookie should be the one that was just set.</p>
+
+<p>Note: this example uses session cookies, so the value will be lost when you close the browser.</p>
+
+<h2>Complete Example Source</h2>
+
+```
+{{>cookie-simple-example-source}}
+```

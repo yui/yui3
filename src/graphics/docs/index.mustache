@@ -338,17 +338,16 @@ have to interact directly with the underlying technologies or their correspondin
 <h4 id="drawingmethods">Drawing Methods</h4>
 
 <p>Unlike the other included shapes, the `Path` class is not pre-defined. Setting the size, fill and/or stroke of a pre-defined shape will render the shape. This is not true with the `Path`. To render
-a `Path` instance, its drawing methods need to be leveraged. Available drawing methods include:
+a `Path` instance, its drawing methods need to be leveraged. These drawing methods can also be leveraged when creating custom shapes. Available drawing methods include:
 <dl>
     <dt>moveTo</dt><dd>Moves to a coordinate point without drawing a line.</dd>
     <dt>lineTo</dt><dd>Draws a line segment from the current point to the specified point.</dd>
     <dt>curveTo</dt><dd>Draws a curve based on a start point, end point and two control points.</dd>
     <dt>quadraticCurveTo</dt><dd>Draws a quadratic curve based on a start point, end point and two control points.</dd>
-    <dt>end</dt><dd>Ends a drawing operation. The shape will draw after end is called.</dd>
-    <dt>clear</dt><dd>Clears all contents of the path element.</dd>
+    <dt>end</dt><dd>Ends a drawing operation. The path or custom shape will draw after end is called.</dd>
+    <dt>clear</dt><dd>Clears all contents of a path or custom shape.</dd>
 </dl>
 </p>
-<p>These drawing methods can also be leveraged when creating custom shapes.</p>
 
 <h4 id="strokesandfills">Strokes and Fills</h4>
 

@@ -19,14 +19,17 @@
 
 var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
         start: "touchstart",
-        end: "touchend"
+        end: "touchend",
+        move: "touchmove"
     } : {
         start: "mousedown",
-        end: "mouseup"
+        end: "mouseup",
+        move: "mousemove"
     },
 
     START = "start",
     END = "end",
+    MOVE = "move",
 
     OWNER_DOCUMENT = "ownerDocument",
     MIN_VELOCITY = "minVelocity",
@@ -36,6 +39,7 @@ var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
     _FLICK_START = "_fs",
     _FLICK_START_HANDLE = "_fsh",
     _FLICK_END_HANDLE = "_feh",
+    _FLICK_MOVE_HANDLE = "_fmh",
 
     NODE_TYPE = "nodeType";
 
@@ -122,6 +126,7 @@ Y.Event.define('flick', {
 
         var start = true, // always true for mouse
             endHandle,
+            moveHandle,
             doc,
             preventDefault = subscriber._extra.preventDefault,
             origE = e; 
@@ -148,12 +153,22 @@ Y.Event.define('flick', {
 
             endHandle = subscriber[_FLICK_END_HANDLE];
 
+            doc = (node.get(NODE_TYPE) === 9) ? node : node.get(OWNER_DOCUMENT);
             if (!endHandle) {
-                doc = (node.get(NODE_TYPE) === 9) ? node : node.get(OWNER_DOCUMENT);
-
                 endHandle = doc.on(EVENT[END], Y.bind(this._onEnd, this), null, node, subscriber, ce);
                 subscriber[_FLICK_END_HANDLE] = endHandle;
             }
+
+            subscriber[_FLICK_MOVE_HANDLE] = doc.once(EVENT[MOVE], Y.bind(this._onMove, this), null, node, subscriber, ce);
+        }
+    },
+
+    _onMove: function(e, node, subscriber, ce) {
+        var start = subscriber[_FLICK_START];
+
+        // Start timing from first move.
+        if (start && start.flick) {
+            start.flick.time = new Date().getTime();
         }
     },
 
@@ -170,7 +185,13 @@ Y.Event.define('flick', {
             xyDistance, 
             distance,
             velocity,
-            axis;
+            axis,
+            moveHandle = subscriber[_FLICK_MOVE_HANDLE];
+
+        if (moveHandle) {
+            moveHandle.detach();
+            delete subscriber[_FLICK_MOVE_HANDLE];
+        }
 
         if (valid) {
 
@@ -197,7 +218,6 @@ Y.Event.define('flick', {
                 startTime = start.flick.time;
                 endTime = new Date().getTime();
                 time = endTime - startTime;
-
 
                 xyDistance = [
                     endEvent.pageX - start.pageX,

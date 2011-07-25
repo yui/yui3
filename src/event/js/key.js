@@ -128,7 +128,7 @@ eventDef.detachDelegate = eventDef.detach;
  * 
  * <dl>
  *   <dt>spec</dt>
- *   <dd><code>[{type}:]{code}[,{code}]*</dd>
+ *   <dd><code>[{type}:]{code}[,{code}]*</code></dd>
  *   <dt>type</dt>
  *   <dd><code>"down", "up", or "press"</code></dd>
  *   <dt>code</dt>

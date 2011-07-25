@@ -1,7 +1,173 @@
 YUI.add('graphics-tests', function(Y) {
 
-var suite = new Y.Test.Suite("Y.Graphic");
+var suite = new Y.Test.Suite("Y.Graphic"),
+    ENGINE = "vml",
+    DOCUMENT = Y.config.doc,
+	canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+    svgTests,
+    canvasTests,
+    vmlTests;
+if(DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"))
+{
+    ENGINE = "svg";
+}
+else if(canvas && canvas.getContext && canvas.getContext("2d"))
+{
+    ENGINE = "canvas";
+}
 
+svgTests = new Y.Test.Case({
+    name: "GraphicsTests",
+
+    graphic: null,
+
+    mycircle: null,
+
+    myrect: null,
+
+    myellipse: null,
+
+    mypath: null,
+
+    initialFillColor: "#f00",
+
+    initialStrokeColor: "#00f",
+
+    updatedFillColor: "#9aa",
+
+    updatedStrokeColor: "#99a",
+
+    setUp: function () {
+        Y.one("body").append('<div id="testbed"></div>');
+    },
+
+    tearDown: function () {
+        Y.one("#testbed").remove(true);
+    },
+
+    "testGraphic()" : function()
+    {
+        Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="graphiccontainer"></div>');
+        var graphic = new Y.Graphic({render: "#graphiccontainer"});
+        graphic.on("init", function(e) {
+            Y.Assert.isInstanceOf(SVGElement, graphic._contentNode);
+        });
+        this.graphic = graphic;
+    },
+
+    "testRectNode()" : function()
+    {
+        var myrect = this.graphic.getShape({
+            type: "rect",
+            width: 300,
+            height: 200,
+            fill: {
+                color: this.initialFillColor
+            },
+            stroke: {
+                color: this.initialStrokeColor
+            }
+        });
+        this.myrect = myrect;
+        Y.Assert.isInstanceOf(SVGRectElement, myrect.get("node"));
+    },
+
+    "testRectNodeDimensions()" : function()
+    {
+        var node = this.myrect.get("node");
+        Y.assert(node.getAttribute("width") == "300");
+        Y.assert(node.getAttribute("height") == "200");
+    },
+
+    "testRectNodeFillColor()" : function() 
+    {
+        var node = this.myrect.get("node");
+        Y.assert(node.getAttribute("fill") == this.initialFillColor);
+    },
+
+    "testRectNodeFillOpacity()" : function()
+    {
+        var node = this.myrect.get("node");
+        Y.assert(node.getAttribute("fill-opacity") == "1");
+    },
+
+    "testRectNodeStrokeColor" : function()
+    {
+        var node = this.myrect.get("node");
+        Y.assert(node.getAttribute("stroke") == this.initialStrokeColor);
+    },
+
+    "testRectNodeStrokeWidth" : function()
+    {
+        var node = this.myrect.get("node");
+        Y.assert(node.getAttribute("stroke-width") == "1");
+    },
+
+    "testRectNodeStroke" : function()
+    {
+        var node = this.myrect.get("node");
+        Y.assert(node.getAttribute("stroke-opacity") == "1");
+    },
+
+    "testRectNodeStrokeDashArray" : function()
+    {
+        var node = this.myrect.get("node");
+        Y.assert(node.getAttribute("stroke-dasharray") == "none");
+    },
+
+    "testRectNodeStrokeLineCap" : function()
+    {
+        var node = this.myrect.get("node");
+        Y.assert(node.getAttribute("stroke-linecap") == "butt");
+    },
+
+    "testRectNodeStrokeLineJoin" : function()
+    {
+        var node = this.myrect.get("node");
+        Y.assert(node.getAttribute("stroke-linejoin") == "round");
+    },
+
+    "testRectNodeWidthAgainstShapeAttr" : function()
+    {
+        var node = this.myrect.get("node");
+        Y.assert(node.getAttribute("width") == this.myrect.get("width"));
+    },
+    
+    "testRectNodeHeightAgainstShapeAttr" : function()
+    {
+        var node = this.myrect.get("node");
+        Y.assert(node.getAttribute("height") == this.myrect.get("height"));
+    },
+
+    "testRectNodeFillAgainstShapeAttr" : function()
+    {
+        var node = this.myrect.get("node"),
+            fill = this.myrect.get("fill"),
+            opacity = parseFloat(fill.opacity);
+        opacity = isNaN(opacity) ? 1 : opacity;
+        Y.assert(fill.color == node.getAttribute("fill"));
+        Y.assert(opacity == node.getAttribute("fill-opacity"));
+    },
+
+    "testRectNodeStrokeAgainstShapeAttr" : function()
+    {
+        var node = this.myrect.get("node"),
+            stroke = this.myrect.get("stroke"),
+            opacity = stroke.opacity,
+            linejoin = stroke.linejoin == undefined ? "round" : stroke.linejoin;
+        opacity = isNaN(opacity) ? 1 : opacity;
+        Y.assert(stroke.color == node.getAttribute("stroke"));
+        Y.assert(linejoin == node.getAttribute("stroke-linejoin"));
+        Y.assert(opacity == node.getAttribute("stroke-opacity"));
+        Y.assert(stroke.linecap == node.getAttribute("stroke-linecap"));
+        Y.assert(stroke.dashstyle == node.getAttribute("stroke-dasharray"));
+    }
+});
+
+if(ENGINE == "svg")
+{
+    suite.add(svgTests);
+}
 suite.add( new Y.Test.Case({
     name: "GraphicsTests",
 
@@ -379,6 +545,26 @@ suite.add( new Y.Test.Case({
         graphic.removeShape(this.mypath);
         hasShape = (shapes.hasOwnProperty(id) && shapes[id] instanceof Y.Path);
         Y.Assert.isFalse(hasShape);
+    },
+
+    "test passRotation(rect)" : function()
+    {
+        var myrect = graphic.getShape({
+            type: "rect",
+            stroke: {
+                weight: 2,
+                color: this.initialStrokeColor
+            },
+            fill: {
+                color: this.initialFillColor
+            },
+            x: 5,
+            y: 5,
+            width:300,
+            height: 200,
+            rotation: 45
+        });
+        Y.assert(myrect instanceof Y.Rect);
     }
 }));
 

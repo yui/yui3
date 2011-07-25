@@ -4,16 +4,6 @@
     * @submodule io-base
     */
 
-   /**
-    * The io class is a utility that brokers HTTP requests through a simplified
-    * interface.  Specifically, it allows JavaScript to make HTTP requests to
-    * a resource without a page reload.  The underlying transport for making
-    * same-domain requests is the XMLHttpRequest object.  YUI.io can also use
-    * Flash, if specified as a transport, for cross-domain requests.
-    *
-    * @class io
-    */
-
 	// Window reference
 	var L = Y.Lang,
 		// List of events that comprise the IO event lifecycle.
@@ -28,17 +18,22 @@
 		_i = 0;
 
    /**
-	* @method IO
-	* @private
-	* @static
-	* @return object
+    * The io class is a utility that brokers HTTP requests through a simplified
+    * interface.  Specifically, it allows JavaScript to make HTTP requests to
+    * a resource without a page reload.  The underlying transport for making
+    * same-domain requests is the XMLHttpRequest object.  YUI.io can also use
+    * Flash, if specified as a transport, for cross-domain requests.
+    *
+	* @class IO
+	* @constructor
+    * @param {object} c - Object of EventTarget's publish method configurations
+    *                     used to configure IO's events.
 	*/
-	function IO () {
-
+	function IO (c) {
 		var io = this;
 
 		io._uid = 'io:' + _i++;
-		io._init(io);
+		io._init(c);
 		Y.io._map[io._uid] = io;
 	}
 
@@ -52,7 +47,6 @@
 		*
 		* @property _id
 		* @private
-		* @static
 		* @type int
 		*/
 		_id: 0,
@@ -62,7 +56,6 @@
 		*
 		* @property _headers
 		* @private
-		* @static
 		* @type object
 		*/
 		_headers: {
@@ -75,7 +68,6 @@
 		*
 		* @property _timeout
 		* @private
-		* @static
 		* @type object
 		*/
 		_timeout: {},
@@ -84,13 +76,20 @@
 		//  Methods
 		//--------------------------------------
 
-		_init: function() {
+		_init: function(c) {
 			var io = this, i;
-
+			
+			io.cfg = c || {};
+	
 			Y.augment(io, Y.EventTarget);
 			for (i = 0; i < 5; i++) {
-				io.publish('io:' + E[i], { broadcast: 1 });
-				io.publish('io-trn:' + E[i]);
+				// Publish IO global events with configurations, if any.
+				// IO global events are set to broadcast by default.
+				// These events use the "io:" namespace.
+				io.publish('io:' + E[i], Y.merge({ broadcast: 1 }, c));
+				// Publish IO transaction events with configurations, if
+				// any.  These events use the "io-trn:" namespace.
+				io.publish('io-trn:' + E[i], c);
 			}
 		},
 
@@ -100,7 +99,6 @@
 		*
 		* @method _create
 		* @private
-		* @static
 		* @param {number} c - configuration object subset to determine if
 		*                     the transaction is an XDR or file upload,
 		*                     requiring an alternate transport.
@@ -150,7 +148,6 @@
 		*
 		* @method _evt
 		* @private
-		* @static
 		* @param {string} e - event to be published.
 		* @param {object} o - transaction object.
 		* @param {object} c - configuration data subset for event subscription.
@@ -159,31 +156,33 @@
 		*/
 		_evt: function(e, o, c) {
 			var io = this,
-				f = c.on ? c.on[e] : null,
-				y = c.context || Y,
 				a = c['arguments'],
-				g, t;
+				eF = io.cfg.emitFacade,
+				// Use old-style parameters or use an Event Facade
+				p = eF ? [{ id: o.id, data: o.c, cfg: c, arguments: a }] : [o.id],
+				// IO Global events namespace.
+				gE = "io:" + e,
+				// IO Transaction events namespace.
+				tE = "io-trn:" + e;
 
-			o.c = o.e ? { status: 0, statusText: o.e } : o.c;
-			switch (e) {
-				case 'start':
-				case 'end':
-					g = a ? io.fire("io:" + e, o.id, a) : io.fire("io:" + e, o.id);
-					if (f) {
-						e = "io-trn:" + e;
-						t = a ? io.once(e, f, y, a) : io.once(e, f, y);
-						io.fire(e, o.id);
+				if (!eF) {
+					if (e === E[0] || e === E[2]) {
+						if (a) {
+							p.push(a);
+						}
 					}
-					break;
-				default:
-					g = a ? io.fire("io:" + e, o.id, o.c, a) : io.fire("io:" + e, o.id, o.c);
-					if (f) {
-						e = "io-trn:" + e;
-						t = a ? io.once(e, f, y, a) : io.once(e, f, y);
-						io.fire(e, o.id, o.c);
-						// t ? io.fire(e, o.id, o.c) : io.fire(e, o.id);
+					else {
+						a ? p.push(o.c, a) : p.push(o.c);
 					}
-			}
+				}
+				
+				p.unshift(gE);
+				io.fire.apply(io, p);
+				if (c.on) {
+					p[0] = tE;
+					io.once(tE, c.on[e], c.context || Y);
+					io.fire.apply(io, p);
+				}
 		},
 
 	   /**
@@ -193,7 +192,6 @@
 		*
 		* @method start
 		* @public
-		* @static
 		* @param {object} o - transaction object.
 		* @param {object} c - configuration object for the transaction.
 		*
@@ -210,7 +208,6 @@
 		*
 		* @method complete
 		* @public
-		* @static
 		* @param {object} o - transaction object.
 		* @param {object} c - configuration object for the transaction.
 		*
@@ -227,7 +224,6 @@
 		*
 		* @method end
 		* @public
-		* @static
 		* @param {object} o - transaction object.
 		* @param {object} c - configuration object for the transaction.
 		*
@@ -245,7 +241,6 @@
 		*
 		* @method success
 		* @public
-		* @static
 		* @param {object} o - transaction object.
 		* @param {object} c - configuration object for the transaction.
 		*
@@ -263,7 +258,6 @@
 		*
 		* @method failure
 		* @public
-		* @static
 		* @param {object} o - transaction object.
 		* @param {object} c - configuration object for the transaction.
 		*
@@ -280,7 +274,6 @@
 		*
 		* @method _retry
 		* @private
-		* @static
 
 		* @param {object} o - Transaction object generated by _create().
 		* @param {string} uri - qualified path to transaction resource.
@@ -299,7 +292,6 @@
 		*
 		* @method _concat
 		* @private
-		* @static
 		* @param {string} s - URI or root data.
 		* @param {string} d - data to be concatenated onto URI.
 		* @return int
@@ -315,7 +307,6 @@
 		*
 		* @method _setHeader
 		* @private
-		* @static
 		* @param {string} l - HTTP header
 		* @param {string} v - HTTP header value
 		* @return int
@@ -334,7 +325,6 @@
 		*
 		* @method _setHeaders
 		* @private
-		* @static
 		* @param {object} o - XHR instance for the specific transaction.
 		* @param {object} h - HTTP headers for the specific transaction, as defined
 		*                     in the configuration object passed to YUI.io().
@@ -355,7 +345,6 @@
 		*
 		* @method _startTimeout
 		* @private
-		* @static
 		* @param {object} o - Transaction object generated by _create().
 		* @param {object} t - Timeout in milliseconds.
 		* @return void
@@ -370,7 +359,6 @@
 		*
 		* @method _clearTimeout
 		* @private
-		* @static
 		* @param {number} id - Transaction id.
 		* @return void
 		*/
@@ -408,7 +396,6 @@
 		*
 		* @method _rS
 		* @private
-		* @static
 		* @param {object} o - Transaction object generated by _create().
 		* @param {object} c - Configuration object passed to YUI.io().
 		* @return void
@@ -432,7 +419,6 @@
 		*
 		* @method _abort
 		* @private
-		* @static
 		* @param {object} o - Transaction object generated by _create().
 		* @param {string} s - Identifies timed out or aborted transaction.
 		*
@@ -526,14 +512,14 @@
 		*
 		* @method send
 		* @private
-		* @static
+		* @
 		* @param {string} uri - qualified path to transaction resource.
 		* @param {object} c - configuration object for the transaction.
 		* @param {number} i - transaction id, if already set.
 		* @return object
 		*/
 		send: function(uri, c, i) {
-			var f, o, m, r, s, d, io = this,
+			var o, m, r, s, d, io = this,
 				u = uri;
 				c = c ? Y.Object(c) : {};
 				o = io._create(c, i);
@@ -666,9 +652,12 @@
     * @return object
     */
     Y.io = function(u, c) {
+		// Calling IO through the static interface will use and reuse
+		// an instance of IO.
 		var o = Y.io._map['io:0'] || new IO();
 		return o.send.apply(o, [u, c]);
 	};
 
 	Y.IO = IO;
+	// Map of all IO instances created.
 	Y.io._map = {};
