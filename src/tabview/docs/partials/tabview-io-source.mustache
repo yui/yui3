@@ -1,0 +1,58 @@
+<div id="demo"></div>
+<script type="text/javascript">
+YUI().use('tabview', 'gallery-widget-io', function(Y) {
+    var feeds = {
+        Chrome: '{{componentAssets}}/news.php?p=chrome+browser',
+        Firefox: '{{componentAssets}}/news.php?p=firefox+browser',
+        Safari: '{{componentAssets}}/news.php?p=safari+browser',
+        Explorer: '{{componentAssets}}/news.php?p=explorer+browser'
+    },
+
+    TabIO = function(config) {
+        TabIO.superclass.constructor.apply(this, arguments); 
+    };
+
+    Y.extend(TabIO, Y.Plugin.WidgetIO, {
+        initializer: function() {
+            var tab = this.get('host');
+            tab.on('selectedChange', this.afterSelectedChange);
+        },
+
+        afterSelectedChange: function(e) { // this === tab
+            if (e.newVal) { // tab has been selected
+                this.io.refresh();
+            }
+        },
+
+        setContent: function(content) {
+            var tab = this.get('host');
+            tab.set('content', content);
+        },
+
+        _toggleLoadingClass: function(add) {
+            this.get('host').get('panelNode')
+                .toggleClass(this.get('host').getClassName('loading'), add);
+        }
+
+    }, {
+        NAME: 'tabIO',
+        NS: 'io'
+    });
+
+    var tabview = new Y.TabView();
+
+    Y.each(feeds, function(src, label) {
+        tabview.add({
+            label: label,
+            plugins: [{
+                fn: TabIO, 
+                cfg: {
+                    uri: src
+                }
+            }]
+        });
+    });
+
+    tabview.render('#demo');
+});
+</script>

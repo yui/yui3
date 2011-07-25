@@ -1,0 +1,25 @@
+<div id="demo">
+    <ul>
+        <li><a href="#foo">foo</a></li>
+        <li><a href="#bar">bar</a></li>
+        <li><a href="#baz">baz</a></li>
+    </ul>
+    <div>
+        <div id="foo">
+            <p>foo content</p>
+        </div>
+        <div id="bar">
+            <p>bar content</p>
+        </div>
+        <div id="baz">
+            <p>baz content</p>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+YUI().use('tabview', function(Y) {
+    var tabview = new Y.TabView({srcNode:'#demo'});
+    tabview.render();
+});
+</script>

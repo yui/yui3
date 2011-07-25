@@ -1,0 +1,248 @@
+<style scoped>
+.yui3-tabview {
+    margin-bottom: 1em;
+}
+
+.yui3-skin-sam .yui3-tab {
+    position: relative;
+}
+
+.yui3-skin-sam .yui3-tabview-removeable .yui3-tab-label,
+.yui3-skin-sam .yui3-tabview-removeable .yui3-tab-selected .yui3-tab-label {
+    padding-right: 1.3em; /* make room for close link */
+}
+
+.yui3-skin-sam .yui3-tabview-removeable .yui3-tab-add {
+    padding-right: 0.75em; /* no close link for add tab link */
+}
+
+.yui3-skin-sam .yui3-tab-add {
+    color: #999;
+    font: bold 120%/1 verdana;
+    margin-left: 0.25em;
+}
+
+.yui3-tab-remove {
+    color: #999;
+    font:bold 80% verdana;
+    position: absolute;
+    right: 0.4em;
+    top: 0.4em;
+}
+
+.yui3-tab-remove:hover {
+    color: #666;
+}
+
+.yui3-skin-sam .yui3-tab-selected .yui3-tab-remove {
+    top: 0.52em;
+}
+
+.yui3-skin-sam .yui3-tab-selected .yui3-tab-remove:hover {
+    color: #fff;
+}
+
+#main #example-canvas .yui3-tabview .yui3-tab-selected a {
+	color:white;
+}
+
+</style>
+<div class="intro">
+    <p>This example shows how to give <code>TabView</code> buttons for adding and removing tabs.</p>
+</div>
+
+<div class="example yui3-skin-sam">
+{{>tabview-add-remove-source}}
+</div>
+
+<h2>Plugin Template</h2>
+
+<p>In order to make these addons reusable, we can build them as plugins.  This
+allows the option for multiple tabviews that mix and match functionality.
+To get started, we will first fill in a basic <code>Plugin</code> template.
+The <code>NAME</code> property is required to prefix events, classNames, et cetera.
+The <code>NS</code> is the namespace where the plugin will live on the
+<code>host</code>.  This is where its API can be accessed (e.g. "node.addable.destroy()").
+Adding the <code>this._host</code> alias provides a convenient way to get back to the TabView
+instance. Calling the superclass constructor kicks off the <code>Base</code> lifecycle,
+which will call the <code>initializer</code>.
+
+</p>
+
+```
+var Addable = function(config) {
+    this._host = config.host;
+    Addable.superclass.constructor.apply(this, arguments);
+};
+
+Addable.NAME = 'addableTabs';
+Addable.NS = 'addable';
+
+Y.extend(Addable, Y.Plugin.Base, {
+    initializer: function(config) {
+    }
+});
+```
+
+<h2>Addable Tab Plugin</h2>
+
+<p>To simplify adding new tabs, we are going to add a button that
+users can click and that will prompt them for some details regarding the new tab.
+The main task we are trying to accomplish is to add some HTML to the
+<code>TabView</code>, listen for clicks on the button, prompt the user for input,
+and update the tabs accordingly.</p>
+
+<h3>HTML Template</h3>
+<p>The first thing we need is a template for the markup to be generated.  Adding
+this to the prototype allows separate customization for each <code>TabView</code>
+instance. For this example, we want it to look and feel like another <code>Tab</code>
+without actually being one.</p> 
+
+```
+Y.extend(Addable, Y.Plugin.Base, {
+    ADD_TEMPLATE: '<li class="yui3-tab" title="add a tab">' +
+                '<a class="yui3-tab-label yui3-tab-add">+</a></li>',
+
+    initializer: function(config) {
+    }
+});
+```
+
+<h3>Adding the HTML</h3>
+<p>Now that we have a markup template, we will need to add it to the <code>TabView</code>
+somehow.  The <code>render</code> phase is the appropriate moment to do so.  Listening
+for the <code>render</code> event will give us access to that moment.  Listening
+for <code>after('render')</code> ensure that the rendering has actually happened. Then
+we just need to find the tab list and, using the template, add the new item.
+The <code>contentBox</code> provides a <code>Node</code> that can be used to manage
+the <code>TabView</code> HTML.</p> 
+
+```
+Y.extend(Addable, Y.Plugin.Base, {
+    ADD_TEMPLATE: '<li class="yui3-tab" title="add a tab">' +
+                '<a class="yui3-tab-label yui3-tab-add">+</a></li>',
+
+    initializer: function(config) {
+        var tabview = this.get('host');
+        tabview.after('render', this.afterRender, this);
+    },
+
+    afterRender: function(e) {
+        var tabview = this.get('host');
+        tabview.get('contentBox').one('> ul').append(this.ADD_TEMPLATE);
+    }
+});
+
+```
+
+<h3>Handling the Click</h3>
+<p>All that remains is to listen for clicks on the add button and prompt
+the user for the relevant <code>Tab</code> data.  Again we can leverage
+the <code>Node</code> API, this time to delegate clicks on the add button.
+Stopping event propagation in our handler ensures that the event does
+not bubble any further, preventing the <code>TabView</code> from trying
+to handle it. To keep the example simple, a basic <code>prompt</code> is
+used to get the user input.  This could be refined to use an
+<code>Overlay</code> or other custom control.  The data is then handed off
+to <code>TabView</code>'s <code>add</code> method.</p> 
+
+```
+Y.extend(Addable, Y.Plugin.Base, {
+    ADD_TEMPLATE: '<li class="yui3-tab" title="add a tab">' +
+                '<a class="yui3-tab-label yui3-tab-add">+</a></li>',
+
+    initializer: function(config) {
+        var tabview = this.get('host');
+        tabview.after('render', this.afterRender, this);
+
+        tabview.get('contentBox')
+            .delegate('click', this.onAddClick, '.yui3-tab-add', this);
+    },
+
+    afterRender: function(e) {
+        this.get('host').get('contentBox').one('> ul').append(this.ADD_TEMPLATE);
+    },
+
+    getTabInput: function() {
+        return {
+            label: window.prompt('label:', 'new tab'),
+            content: window.prompt('content:', '<p>new content</p>'),
+            index: Number(window.prompt('index:', this._host.size()))
+        }
+    },
+
+    onAddClick: function(e) {
+        e.stopPropagation();
+        var tabview = this.get('host');
+            input = this.getTabInput();
+        tabview.add(input, input.index);
+    }
+});
+```
+
+<h3>Using the Plugin</h3>
+<p>Now we can go ahead and plug in our functionality.  This can be during
+construction with the <code>plugins</code> attribute, or subsequently
+via the <code>plug</code> method.</p> 
+
+```
+var tabview = new Y.TabView({
+    children: [{
+        label: 'foo',
+        content: '<p>foo content</p>'
+    }, {
+        label: 'bar',
+        content: '<p>bar content</p>'
+    }, {
+        label: 'baz',
+        content: '<p>baz content</p>'
+    }],
+    plugins: [Addable]
+});
+
+// or
+// tabview.plug(Addable);
+```
+
+<h2>Removeable Tabs Plugin</h2>
+<p>The process for creating a removeable plugin for <code>TabView</code>
+is very similar.  The full source is provided below.</p>
+
+```
+var Removeable = function(config) {
+    Removeable.superclass.constructor.apply(this, arguments);
+};
+
+Removeable.NAME = 'removeableTabs';
+Removeable.NS = 'removeable';
+
+Y.extend(Removeable, Y.Plugin.Base, {
+    REMOVE_TEMPLATE: '<a class="yui3-tab-remove" title="remove tab">x</a>',
+
+    initializer: function(config) {
+        var tabview = this.get('host'),
+            cb = tabview.get('contentBox');
+
+        cb.addClass('yui3-tabview-removeable');
+        cb.delegate('click', this.onRemoveClick, '.yui3-tab-remove', this);
+
+        // Tab events bubble to TabView
+        tabview.after('tab:render', this.afterTabRender, this);
+    },
+
+    afterTabRender: function(e) {
+        // boundingBox is the Tab's LI
+        e.target.get('boundingBox').append(this.REMOVE_TEMPLATE);
+    },
+
+    onRemoveClick: function(e) {
+        e.stopPropagation();
+        var tab = Y.Widget.getByNode(e.target);
+        tab.remove();
+    }
+});
+```
+<h2>Complete Example Source</h2>
+```
+{{>tabview-add-remove-source}}
+```
