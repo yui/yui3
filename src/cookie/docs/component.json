@@ -1,0 +1,41 @@
+{
+    "name"       : "cookie",
+    "displayName": "Cookie Utility",
+    "description": "Provides a simple API for interacting with cookies, including the creation and manipulation of subcookies.",
+    "author"     : "nzakas",
+
+    "tags": ["utility", "cookie", "cookies"],
+    "use" : ["cookie"],
+
+    "examples": [
+        {
+            "name"       : "cookie-simple-example",
+            "displayName": "Simple Cookie Example",
+            "description": "Demonstrates basic usage of the Cookie utility for reading and writing cookies.",
+            "modules"    : ["cookie"],
+            "tags"       : ["cookie"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "cookie-advanced-example",
+            "displayName": "Advanced Cookie Example",
+            "description": "Demonstrates using the Cookie utility to get, set and remove cookies.",
+            "modules"    : ["cookie"],
+            "tags"       : ["cookie"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "cookie-subcookie-example",
+            "displayName": "Subcookie Example",
+            "description": "Demonstrates using the Cookie utility to get and set subcookies.",
+            "modules"    : ["cookie"],
+            "tags"       : ["cookie"],
+
+            "hideTableOfContents": true
+        }
+    ]
+}
