@@ -717,6 +717,8 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     _rotate: function(label, props)
     {
         var rot = props.rot,
+            x = props.x,
+            y = props.y,
             absRot,
             radCon,
             sinRadians,
@@ -730,13 +732,13 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         if(Y.config.doc.createElementNS)
         {
             label.style.MozTransformOrigin =  "0 0";
-            label.style.MozTransform = "rotate(" + rot + "deg)";
+            label.style.MozTransform = "translate(" + x + "px," + y + "px) rotate(" + rot + "deg)";
             label.style.webkitTransformOrigin = "0 0";
-            label.style.webkitTransform = "rotate(" + rot + "deg)";
+            label.style.webkitTransform = "translate(" + x + "px," + y + "px) rotate(" + rot + "deg)";
             label.style.msTransformOrigin =  "0 0";
-            label.style.msTransform = "rotate(" + rot + "deg)";
+            label.style.msTransform = "translate(" + x + "px," + y + "px) rotate(" + rot + "deg)";
             label.style.OTransformOrigin =  "0 0";
-            label.style.OTransform = "rotate(" + rot + "deg)";
+            label.style.OTransform = "translate(" + x + "px," + y + "px) rotate(" + rot + "deg)";
         }
         else
         {
