@@ -7,5 +7,15 @@
     "tags": ["widget", "beta", "panel", "extension"],
     "use" : ["panel"],
 
-    "examples": []
+    "examples" : [
+        {
+            "name"       : "panel-form",
+            "displayName": "Creating a modal form",
+            "description": "Shows how to instantiate multiple Panel instances, and use nested modality to interact with a Datatable.",
+            "modules"    : ["panel", "datatable"],
+            "tags"       : ["panel", "datatable"],
+
+            "hideTableOfContents": true
+        }
+	]
 }
