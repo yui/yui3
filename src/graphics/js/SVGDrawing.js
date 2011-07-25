@@ -363,8 +363,6 @@ SVGDrawing.prototype = {
             i,
             path = "",
             node = this.node,
-            tx = this.get("translateX"),
-            ty = this.get("translateY"),
             left = this._left,
             top = this._top,
             fill = this.get("fill");
@@ -409,9 +407,6 @@ SVGDrawing.prototype = {
             {
                 node.setAttribute("d", path);
             }
-            //Use transform to handle positioning.
-            this._transformArgs = this._transformArgs || {};
-            this._transformArgs.translate = [left + tx, top + ty];
             
             this._path = path;
             this._fillChangeHandler();
