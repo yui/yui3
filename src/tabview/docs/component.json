@@ -1,0 +1,51 @@
+{
+    "name"       : "tabview",
+    "displayName": "TabView",
+    "description": "The TabView widget is a UI control that enables the user to switch between content panels.", 
+    "author"     : "msweeney",
+
+    "tags": ["widget", "tabview"],
+    "use" : ["tabview"],
+
+    "examples": [
+        {
+            "name"       : "tabview-basic",
+            "displayName": "TabView from Existing Markup",
+            "description": "This example shows how to create a TabView wigdet from existing HTML.",
+            "modules"    : ["tabview"],
+            "tags"       : ["tabview"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "tabview-fromjs",
+            "displayName": "Dynamic TabView from JavaScript",
+            "description": "This example shows how to create a TabView wigdet from JavaScript.",
+            "modules"    : ["tabview"],
+            "tags"       : ["tabview"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "tabview-add-remove",
+            "displayName": "Adding and Removing Tabs",
+            "description": "This example shows how to add and remove Tabs.",
+            "modules"    : ["tabview"],
+            "tags"       : ["tabview"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "tabview-io",
+            "displayName": "Loading Tab Content",
+            "description": "This example shows how to load tab content remotely using an IO plugin.",
+            "modules"    : ["tabview"],
+            "tags"       : ["tabview"],
+
+            "hideTableOfContents": true
+        }
+    ]
+}

@@ -1,0 +1,55 @@
+<div class="intro">
+    This example shows how to create a <code>TabView</code> widget from existing HTML on the page.
+</div>
+
+<div class="example yui3-skin-sam">
+{{>tabview-basic-source}}
+</div>
+
+<h2>Creating A TabView From Existing Markup</h2>
+
+<p>A <code>TabView</code> can be created easily from existing markup, supporting a progressive enhancement approach to development.</p>
+
+<h3>The Markup</h3>
+
+<p>The only markup requirements are an unordered list of items and a corresponding group of divs.</p>
+
+```
+<div id="demo">
+    <ul>
+        <li><a href="#foo">foo</a></li>
+        <li><a href="#bar">bar</a></li>
+        <li><a href="#baz">baz</a></li>
+    </ul>
+    <div>
+        <div id="foo">
+            <p>foo content</p>
+        </div>
+        <div id="bar">
+            <p>bar content</p>
+        </div>
+        <div id="baz">
+            <p>baz content</p>
+        </div>
+    </div>
+</div>
+```
+
+<h3>The JavaScript</h3>
+
+<p><code>TabView</code> extends <code>Widget</code>, and the <code>srcNode</code>
+becomes the <code>contentBox</code>.  This is the
+minimal requirement to create a <code>Tabview</code> instance for the markup,
+and can be assigned using a selector.  Calling render enlivens the <code>TabView
+</code> making it usable.</p>
+
+```
+    var tabview = new Y.TabView({srcNode:'#demo'});
+    tabview.render();
+```
+
+
+<h2>Complete Example Source</h2>
+```
+{{>tabview-basic-source}}
+```
