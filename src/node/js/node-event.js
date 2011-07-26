@@ -1,9 +1,15 @@
+/**
+ * @module node
+ * @submodule node-base
+ */
+
 var Y_Node = Y.Node;
 var Y_NodeList = Y.NodeList;
 /**
  * List of events that route to DOM events
  * @static
  * @property DOM_EVENTS
+ * @for Node
  */
 
 Y_Node.DOM_EVENTS = {
@@ -104,6 +110,7 @@ Y.mix(Y.NodeList.prototype, {
      * when the event fires.
      * @return {Object} Returns an event handle that can later be use to detach().
      * @see Event.on
+     * @for NodeList
      */
     on: function(type, fn, context) {
         return Y.on.apply(Y, this._prepEvtArgs.apply(this, arguments));

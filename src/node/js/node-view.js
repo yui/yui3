@@ -1,3 +1,8 @@
+/**
+ * @module node
+ * @submodule node-base
+ */
+
 var Y_Node = Y.Node;
 
 Y.mix(Y_Node.prototype, {
@@ -7,9 +12,10 @@ Y.mix(Y_Node.prototype, {
      * animates the showing of the node using either the default
      * transition effect ('fadeIn'), or the given named effect.
      * @method show
-     * @param {String} name A named Transition effect to use as the show effect. 
-     * @param {Object} config Options to use with the transition. 
-     * @param {Function} callback An optional function to run after the transition completes. 
+     * @for Node
+     * @param {String} name A named Transition effect to use as the show effect.
+     * @param {Object} config Options to use with the transition.
+     * @param {Function} callback An optional function to run after the transition completes.
      * @chainable
      */
     show: function(callback) {
@@ -21,6 +27,7 @@ Y.mix(Y_Node.prototype, {
     /**
      * The implementation for showing nodes.
      * Default is to toggle the style.display property.
+     * @method _show
      * @protected
      * @chainable
      */
@@ -40,7 +47,7 @@ Y.mix(Y_Node.prototype, {
     _toggleView: function(on, callback) {
         callback = arguments[arguments.length - 1];
 
-        // base on current state if not forcing 
+        // base on current state if not forcing
         if (typeof on != 'boolean') {
             on = (this._isHidden()) ? 1 : 0;
         }
@@ -64,9 +71,9 @@ Y.mix(Y_Node.prototype, {
      * animates the hiding of the node using either the default
      * transition effect ('fadeOut'), or the given named effect.
      * @method hide
-     * @param {String} name A named Transition effect to use as the show effect. 
-     * @param {Object} config Options to use with the transition. 
-     * @param {Function} callback An optional function to run after the transition completes. 
+     * @param {String} name A named Transition effect to use as the show effect.
+     * @param {Object} config Options to use with the transition.
+     * @param {Function} callback An optional function to run after the transition completes.
      * @chainable
      */
     hide: function(callback) {
@@ -78,6 +85,7 @@ Y.mix(Y_Node.prototype, {
     /**
      * The implementation for hiding nodes.
      * Default is to toggle the style.display property.
+     * @method _hide
      * @protected
      * @chainable
      */
@@ -93,9 +101,10 @@ Y.NodeList.importMethod(Y.Node.prototype, [
      * animates the showing of the node using either the default
      * transition effect ('fadeIn'), or the given named effect.
      * @method show
-     * @param {String} name A named Transition effect to use as the show effect. 
-     * @param {Object} config Options to use with the transition. 
-     * @param {Function} callback An optional function to run after the transition completes. 
+     * @param {String} name A named Transition effect to use as the show effect.
+     * @param {Object} config Options to use with the transition.
+     * @param {Function} callback An optional function to run after the transition completes.
+     * @for NodeList
      * @chainable
      */
     'show',
@@ -106,9 +115,9 @@ Y.NodeList.importMethod(Y.Node.prototype, [
      * animates the hiding of the node using either the default
      * transition effect ('fadeOut'), or the given named effect.
      * @method hide
-     * @param {String} name A named Transition effect to use as the show effect. 
-     * @param {Object} config Options to use with the transition. 
-     * @param {Function} callback An optional function to run after the transition completes. 
+     * @param {String} name A named Transition effect to use as the show effect.
+     * @param {Object} config Options to use with the transition.
+     * @param {Function} callback An optional function to run after the transition completes.
      * @chainable
      */
     'hide',
