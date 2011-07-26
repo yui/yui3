@@ -149,6 +149,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     syncUI: function() {
         this._uiDimensionsChange();
+
         this.scrollTo(this.get(SCROLL_X), this.get(SCROLL_Y));
     },
 
@@ -506,6 +507,51 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     },
 
     /**
+    * Utility method to obtain scrollWidth, scrollHeight,
+    * accounting for the impact of translate on scrollWidth, scrollHeight
+    * @method _getScrollDims
+    * @returns {Array} The scrollWidth and scrollHeight as an array: [scrollWidth, scrollHeight]
+    * @private
+    */
+    _getScrollDims: function() {
+        var dims,
+
+            // Ideally using CSSMatrix - don't think we have it normalized yet though.
+            // origX = (new WebKitCSSMatrix(cb.getComputedStyle("transform"))).e;
+            // origY = (new WebKitCSSMatrix(cb.getComputedStyle("transform"))).f;
+            origX = this.get(SCROLL_X),
+            origY = this.get(SCROLL_Y),
+
+            TRANS = ScrollView._TRANSITION,
+            cb = this.get(CONTENT_BOX),
+            bb = this.get(BOUNDING_BOX);
+
+        if (NATIVE_TRANSITIONS) {
+            // TODO: Is this OK? Just in case it's called 'during' a transition.
+            cb.setStyle(TRANS.DURATION, ZERO);
+            cb.setStyle(TRANS.PROPERTY, EMPTY);
+
+            cb.setStyle('transform', this._transform(0, 0));
+        } else {
+            cb.setStyle(LEFT, 0 + PX);
+            cb.setStyle(TOP, 0 + PX);
+        }
+
+        // Use bb instead of cb. cb doesn't gives us the right results
+        // in FF (due to overflow:hidden)
+        dims = [bb.get('scrollWidth'), bb.get('scrollHeight')];
+
+        if (NATIVE_TRANSITIONS) {
+            cb.setStyle('transform', this._transform(origX, origY));
+        } else {
+            cb.setStyle(LEFT, origX + PX);
+            cb.setStyle(TOP, origY + PX);
+        }
+
+        return dims;
+    },
+
+    /**
      * This method gets invoked whenever the height or width attributes change,
      * allowing us to determine which scrolling axes need to be enabled.
      *
@@ -513,21 +559,20 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @protected
      */
     _uiDimensionsChange: function() {
-
         var sv = this,
             bb = sv._bb,
 
             CLASS_NAMES = ScrollView.CLASS_NAMES,
 
-            height = bb.get('offsetHeight'),
             width = bb.get('offsetWidth'),
+            height = bb.get('offsetHeight'),
 
-            // Use bb instead of cb. cb doesn't gives us the right results
-            // in FF (due to overflow:hidden)
-            scrollHeight = bb.get('scrollHeight'),
-            scrollWidth = bb.get('scrollWidth');
+            scrollDims = this._getScrollDims(),
 
-        if (height && scrollHeight > height) {          
+            scrollWidth = scrollDims[0],
+            scrollHeight = scrollDims[1];
+
+        if (height && scrollHeight > height) {
             sv._scrollsVertical = true;
             sv._maxScrollY = scrollHeight - height;
             sv._minScrollY = 0;
@@ -961,4 +1006,5 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 });
 
 
-}, '@VERSION@' ,{requires:['widget', 'event-gestures', 'transition'], skinnable:true});
+
+}, '@VERSION@' ,{skinnable:true, requires:['widget', 'event-gestures', 'transition']});
