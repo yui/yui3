@@ -1,0 +1,66 @@
+<div class="intro">
+    <p>This example shows how to create a <code>TabView</code> widget dynamically and insert it into the page.</p>
+</div>
+
+<div class="example yui3-skin-sam">
+{{>tabview-fromjs-source}}
+</div>
+
+<h2>Creating a TabView From JavaScript</h2>
+
+<p>A <code>TabView</code> can be created dynamically using a small amount of JavaScript.</p>
+
+<h3>The Markup</h3>
+
+<p>There are no markup requirements in this case, although you may want to have a placeholder to render the tabview into, which is what this example does.</p>
+
+```
+<div id="demo">
+</div>
+```
+
+<h3>The JavaScript</h3>
+
+<p>The minimal requirement for creating a <code>TabView</code> from scratch are the labels and content for each tab.
+These are added as the <code>children</code> attribute when creating the <code>TabView</code>.</p>
+
+```
+    var tabview = new Y.TabView({
+        children: [{
+            label: 'foo',
+            content: '<p>foo content</p>'
+        }, {
+            label: 'bar',
+            content: '<p>bar content</p>'
+        }, {
+            label: 'baz',
+            content: '<p>baz content</p>'
+        }]
+    });
+```
+
+<h3>Rendering</h3>
+
+<p>Calling render creates the <code>TabView</code>, inserting into the node
+passed to render.
+</p>
+
+```
+    tabview.render('#demo');
+```
+
+<h3>Changing the Selected Tab</h3>
+
+<p>By default, clicking a tab makes it selected and shows its content.  You can also do this programmatically
+by calling the <code>selectChild</code> method on the <code>TabView</code>, passing it the index of the
+tab to be selected.
+</p>
+
+```
+    tabview.selectChild(2);
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>tabview-fromjs-source}}
+```

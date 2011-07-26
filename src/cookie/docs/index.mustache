@@ -1,0 +1,268 @@
+<div class="intro">
+    <p>The YUI Cookie utility provides a simple API for interacting with cookies, including the creation and manipulation of subcookies.</p>
+
+    <p><strong>Note about HTTPOnly Cookies:</strong> HTTPOnly cookies are cookies that may be set either by JavaScript or by the server but cannot be read from JavaScript. The YUI Cookie utility does not provide support for setting HTTPOnly cookies because browser support is not well-established and there is no fallback mechanism. Setting an HTTPOnly cookie on a browser that doesn't support it is the same as setting any other cookie (no error is thrown). When all A-grade browsers support setting HTTPOnly cookies by JavaScript, we will revisit adding support for it in the Cookie utility.</p>
+</div>
+
+{{>getting-started}}
+
+<h2 id="using">Using the Cookie Utility</h2>
+
+<h3 id="create">Creating Cookies</h3>
+
+<p>The simplest way to create a cookie is to provide a name and a value to the <code>set()</code> method:</p>
+
+```
+// Create a YUI instance and use the cookie module.
+YUI().use('cookie', function(Y) {
+    Y.Cookie.set("name", "value");
+});
+```
+
+<p>This example creates a cookie called &quot;name&quot; that has a value of &quot;value&quot;. Since
+this cookie is created with all of the default settings, it becomes a session cookie.</p>
+
+<p>There is a third argument for <code>set()</code>, which is an object containing additional settings for the cookie. To create a persistent cookie, you can specify an expiration date by supplying a <code>Date</code> object:</p>
+
+```
+// Create a YUI instance and use the cookie module.
+YUI().use('cookie', function(Y) {
+    Y.Cookie.set("name", "value", { expires: new Date("January 12, 2025") });
+});
+```
+
+<p>By providing an &quot;expires&quot; option in the third argument, the cookie persists until the given date. In this example,
+the cookie will remain until January 12, 2025. The value for &quot;expires&quot; must be a <code>Date</code> object, otherwise
+it is ignored.</p>
+
+<p>It's possible to restrict access to a cookie by setting path and/or domain information. Setting a path on the cookie restricts access to pages that match that path; setting a domain restricts access to pages on a given domain (typically used to allow cookie access across subdomains). Both options can be easily set using the &quot;path&quot; and &quot;domain&quot; options:</p>
+
+```
+// Create a YUI instance and use the cookie module.
+YUI().use('cookie', function(Y) {
+    Y.Cookie.set("name", "value", {
+        path: "/",           //all pages
+        domain: "yahoo.com"   //any subdomain of yahoo.com, including www.yahoo.com
+    });
+});
+```
+
+<p>In this example, a cookie is created that can be accessed from all pages on a yahoo.com subdomain. This cookie would
+then be accessible from pages on <a href="http://sports.yahoo.com">sports.yahoo.com</a> as well as <a href="http://www.yahoo.com">www.yahoo.com</a>.
+The &quot;path&quot; and &quot;domain&quot; options need not be used together; they may be used independently as well.</p>
+
+<p>The last option is &quot;secure&quot;, which indicates that the cookie should only be accessible via SSL on a page
+using the HTTPS protocol. All other aspects of the cookie remain the same based on the other options provided. To set a
+secure cookie, use the &quot;secure&quot; option:</p>
+
+```
+// Create a YUI instance and use the cookie module.
+YUI().use('cookie', function(Y){
+    Y.Cookie.set("name", "value", { secure: true });
+});
+```
+
+<p>This code creates a secure cookie by setting the &quot;secure&quot; option to <code>true</code>. Note that this will only work if the page calling this code uses the HTTPS protocol, otherwise the cookie will be created with default options.</p>
+
+<p>There is one more option called &quot;raw&quot;. When this option is specified, the cookie will not be URL-encoded before being set. Setting a &quot;raw&quot; cookie typically means that you have specialized server-side logic to deal with cookies that aren't URL-encoded. This is considered an advanced option that should only be used when necessary. Example usage:</p>
+
+```
+// Create a YUI instance and use the cookie module.
+YUI().use('cookie', function(Y){
+    Y.Cookie.set("name", "value", { raw: true });
+});
+```
+
+<h3 id="read">Reading Cookies</h3>
+
+<p>The <code>get()</code> method retrieves cookies that are accessible by the current page. If a cookie doesn't exist, <code>get()</code> returns <code>null</code>.</p>
+
+```
+// Create a YUI instance and use the cookie module.
+YUI().use('cookie', function(Y){
+    var value = Y.Cookie.get("name");
+});
+```
+
+<p>This example retrieves the cookie called &quot;name&quot; and stores its value in the variable <code>value</code>. By default, values returned by <code>get()</code> are strings (if the cookie exists) or <code>null</code> (if the cookie doesn't exist). You can change the return value by providing a conversion function as the second argument. For example, to return a number, you can pass in the native <code>Number()</code> function:</p>
+
+```
+// Create a YUI instance and use the cookie module.
+YUI().use('cookie', function(Y){
+    var value = Y.Cookie.get("age", Number);
+});
+```
+
+<p>In this code, the returned cookie value will be a number if the cookie exists (it will still be <code>null</code> if the cookie doesn't exist). Other native functions that convert values are <code>Boolean()</code> and <code>Date</code>, or you can define your own conversion function:</p>
+
+```
+// Create a YUI instance and use the cookie module.
+YUI().use('cookie', function(Y){
+    var value = Y.Cookie.get("code", function(stringValue){
+        return parseInt(stringValue, 16);   // Create a number from a hexadecimal code
+    });
+});
+```
+
+<p>Conversion functions accept a single argument, the string value of the cookie, and must return a value. In this example, the conversion function expects a hexadecimal code to be returned and passes it into <code>parseInt()</code> to convert the value into a number. Note that the conversion function is never called if the cookie doesn't exist (<code>get()</code> always returns <code>null</code> when the cookie doesn't exist).</p>
+                    
+<p>The second argument can optionally be an object if you'd like to read a raw cookie. As with, writing cookies, it's possible to read a cookie without URL-decoding the value. To specify this, the second argument should be an object, such as:</p>
+
+```
+// Create a YUI instance and use the cookie module.
+YUI().use('cookie', function(Y){
+    var value = Y.Cookie.get("code", { raw: true });
+});
+```
+                    
+<p>If you'd like to use a converter on a raw cookie, you can specify this using the &quot;converter&quot; option:</p>
+
+```
+// Create a YUI instance and use the cookie module.
+YUI().use('cookie', function(Y){
+    var value = Y.Cookie.get("code", {
+        raw: true,
+        converter: function(stringValue){
+            return parseInt(stringValue, 16);   // Create a number from a hexadecimal code
+        }
+    });
+});
+```
+
+<h3 id="delete">Deleting Cookies</h3>
+
+<p>When a cookie is no longer need, it can be removed from the browser by calling the <code>remove()</code> method. This method takes two arguments: the name of the cookie to remove and an optional cookie options object. A cookie created with specific options can only be deleted by specifying the same options. For instance, a cookie created with a <code>domain</code> property of &quot;yahoo.com&quot; can only be deleted by also specifying the <code>domain</code> property as &quot;yahoo.com&quot;. Examples:</p>
+
+```
+// Create a YUI instance and use the cookie module.
+YUI().use('cookie', function(Y){
+    //delete the cookie named "code"
+    Y.Cookie.remove("code");
+
+    //delete the cookie named "info" on the "yahoo.com" domain
+    Y.Cookie.remove("info", { domain: "yahoo.com" });
+
+    //delete a secure cookie named "username"
+    Y.Cookie.remove("username", { secure: true });                    
+});
+```
+
+<h3 id="sub">Subcookies</h3>
+
+<p>Each browser has a limit to the number of cookies that can be set per domain. These limits can be problematic for domains with different sites under different subdomains. Since cookie name-value pairs are rarely large enough to reach the byte limit for an individual cookie, it represents an opportunity to store multiple name-value pairs in a single cookie; these are called subcookies.</p>
+
+<p>A subcookie string looks similar to a URL and takes the following form:</p>
+
+<p><code>cookiename=name1=value1&amp;name2=value2&amp;name3=value3</code></p>
+
+<p>The Cookie utility supports this style of subcookies to allow multiple values to be stored in a single cookie. To set a subcookie value, use the <code>setSub()</code> method. This method accepts four arguments: the cookie name, the subcookie name, the subcookie value, and an optional options object. Note that the options object works on the entire cookie, it is not specific to the subcookie.</p>
+
+```
+// Create a YUI instance and use the cookie module.
+YUI().use('cookie', function(Y){
+
+    //set a cookie named "name" with a subcookie named "subname" whose value is "value"
+    Y.Cookie.setSub("name", "subname", "value");
+
+    //set a second subcookie on "name", with a name of "subname2" and a value of "value2"
+    Y.Cookie.setSub("name", "subname2", "value2");
+
+    //set subcookie on the "yahoo.com" domain
+    Y.Cookie.setSub("info", "age", 22, { domain: "yahoo.com" });
+
+    //set subcookie to a secure cookie named "user"
+    Y.Cookie.setSub("user", "name", "ace123", { secure:true });                        
+});
+```
+
+<p>It's possible to set the entire contents of a subcookie by using the <code>setSubs()</code> method, which accepts three arguments:
+the name of the cookie, and object containing name-value pairs, and an optional cookie options object. For instance, this code
+sets three subcookies at once:</p>
+
+```
+// Create a YUI instance and use the cookie module.
+YUI().use('cookie', function(Y){
+
+    var data = {
+        name: "ace123",
+        age: 22,
+        track: true
+    };                    
+
+    //set a cookie named "user" with subcookies
+    Y.Cookie.setSubs("user", data);
+
+});
+```
+
+<p>Note that calls to <code>setSubs()</code> will always completely overwrite the cookie.</p>
+
+<p>To retrieve subcookie values, there are two methods. The first is <code>getSub()</code>, which retrieves a single subcookie value.
+This method accepts three arguments: the cookie name, the subcookie name, and an optional converter function. As with <code>get()</code>,
+the converter function changes the data or type of data retrieved from the cookie before it's returned (and isn't called at all
+if the cookie or subcookie doesn't exist):</p>
+
+```
+// Create a YUI instance and use the cookie module.
+YUI().use('cookie', function(Y){
+
+    //get subcookie
+    var stringValue = Y.Cookie.getSub("name", "subname");
+
+    //get subcookie and convert to number
+    var numberValue = Y.Cookie.getSub("user", "age", Number);
+
+    //get subcookie and convert from hex code to decimal number
+    var integerValue = Y.Cookie.getSub("settings", "bgcolor", function(stringValue){
+        return parseInt(stringValue, 16);   // Create a number from a hexadecimal code
+    });
+    
+});
+```
+
+<p>The second method to retrieve subcookies is <code>getSubs()</code>, which retrieves all subcookies and returns an object
+with name-value pairs for each subcookie. The <code>getSubs()</code> method takes a single argument, the name of the cookie
+containing subcookies to retrieve. The returned value is either an object or <code>null</code> if the cookie doesn't exist.</p>
+
+```
+// Create a YUI instance and use the cookie module.
+YUI().use('cookie', function(Y){
+
+    //get all subcookies
+    var data = Y.Cookie.getSubs("name");
+    var subValue = data.subname;
+
+    //get all subcookies
+    var user = Y.Cookie.getSubs("user");
+    var userName = user.name;
+    
+});
+```
+
+<p>Removing subcookies is accomplished using the <code>removeSub()</code> method. This method accepts three arguments: the cookie name, the subcookie name, and an optional cookie options object. The options object, if specified, must have the same options
+as when the cookie was originally created. Example:</p>
+
+```
+// Create a YUI instance and use the cookie module.
+YUI().use('cookie', function(Y){
+
+    //set subcookie on the "yahoo.com" domain
+    Y.Cookie.setSub("info", "age", 22, { domain: "yahoo.com" });
+
+    //remove the subcookie
+    Y.Cookie.removeSub("info", "age", { domain: "yahoo.com" });                        
+});
+```
+
+<p>Removing a subcookie keeps all other subcookies for that cookie intact. If you want to remove all subcookies, it's easiest to use <code>remove()</code> to remove the entire cookie.</p>
+
+<p>When the last subcookie is removed, the overall cookie still remains. If you'd like to remove the cookie when the last subcookie is removed, then specify the "removeIfEmpty" option:</p>
+
+```
+// Create a YUI instance and use the cookie module.
+YUI().use('cookie', function(Y){
+
+    //remove the subcookie
+    Y.Cookie.removeSub("info", "age", { removeIfEmpty: true });                        
+});
+```

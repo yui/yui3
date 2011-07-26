@@ -2,7 +2,7 @@
 <button type="button" id="hide">Hide Overlay</button>
 
 <script type="text/javascript">
-YUI().use("overlay", "substitute", "json", "gallery-widget-io", function(Y) {
+YUI().use("overlay", "substitute", "json", "gallery-widget-io", "escape", function(Y) {
 
     /* Setup local variable for Y.WidgetStdMod, since we use it multiple times */
     var StdMod = Y.WidgetStdMod,
@@ -17,11 +17,11 @@ YUI().use("overlay", "substitute", "json", "gallery-widget-io", function(Y) {
             Y.on('io:xdrReady', function() {
                 transportAvailable = true;
             });
-            
+
             Y.io.transport({
                 id:'flash',
                 yid: Y.id,
-                src:'../build/io/io.swf?stamp=' + (new Date()).getTime()
+                src:'../build/io-xdr/io.swf?stamp=' + (new Date()).getTime()
             });
         },
 
@@ -91,6 +91,8 @@ YUI().use("overlay", "substitute", "json", "gallery-widget-io", function(Y) {
     
                     Y.each(json.value.items, function(v, i) {
                         if (i < 10) {
+                            v.title = Y.Escape.html(v.title);
+                            v.link = Y.Escape.html(v.link);
                             html.push(Y.substitute(linkTemplate, v));
                         }
                     });

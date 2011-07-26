@@ -1,7 +1,7 @@
 /**
  * The NodeList module provides support for managing collections of Nodes.
  * @module node
- * @submodule nodelist
+ * @submodule node-core
  */
 
 /**
@@ -45,7 +45,7 @@ NodeList.NAME = 'NodeList';
 
 /**
  * Retrieves the DOM nodes bound to a NodeList instance
- * @method NodeList.getDOMNodes
+ * @method getDOMNodes
  * @static
  *
  * @param {Y.NodeList} nodelist The NodeList instance
@@ -384,7 +384,7 @@ Y.mix(NodeList.prototype, {
     },
 
     /**
-     * Returns the DOM node bound to the Node instance 
+     * Returns the DOM node bound to the Node instance
      * @method getDOMNodes
      * @return {Array}
      */
@@ -463,9 +463,9 @@ NodeList.importMethod(Y.Node.prototype, [
      * animates the showing of the node using either the default
      * transition effect ('fadeIn'), or the given named effect.
      * @method show
-     * @param {String} name A named Transition effect to use as the show effect. 
-     * @param {Object} config Options to use with the transition. 
-     * @param {Function} callback An optional function to run after the transition completes. 
+     * @param {String} name A named Transition effect to use as the show effect.
+     * @param {Object} config Options to use with the transition.
+     * @param {Function} callback An optional function to run after the transition completes.
      * @chainable
      */
     'show',
@@ -476,9 +476,9 @@ NodeList.importMethod(Y.Node.prototype, [
      * animates the hiding of the node using either the default
      * transition effect ('fadeOut'), or the given named effect.
      * @method hide
-     * @param {String} name A named Transition effect to use as the show effect. 
-     * @param {Object} config Options to use with the transition. 
-     * @param {Function} callback An optional function to run after the transition completes. 
+     * @param {String} name A named Transition effect to use as the show effect.
+     * @param {Object} config Options to use with the transition.
+     * @param {Function} callback An optional function to run after the transition completes.
      * @chainable
      */
     'hide',

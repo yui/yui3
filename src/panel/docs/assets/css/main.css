@@ -1,0 +1,300 @@
+/*
+Font sizes for all selectors other than the body are given in percentages,
+with 100% equal to 13px. To calculate a font size percentage, multiply the
+desired size in pixels by 7.6923076923.
+
+Here's a quick lookup table:
+
+10px - 76.923%
+11px - 84.615%
+12px - 92.308%
+13px - 100%
+14px - 107.692%
+15px - 115.385%
+16px - 123.077%
+17px - 130.769%
+18px - 138.462%
+19px - 146.154%
+20px - 153.846%
+*/
+
+html {
+    background: #fff;
+    color: #333;
+    overflow-y: scroll;
+}
+
+body {
+    font: 13px/1.4 'Lucida Grande', 'Lucida Sans Unicode', 'DejaVu Sans', 'Bitstream Vera Sans', 'Helvetica', 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* -- Links ----------------------------------------------------------------- */
+a {
+    color: #356de4;
+    text-decoration: none;
+}
+
+a:hover { text-decoration: underline; }
+
+/* "Jump to Table of Contents" link is shown to assistive tools, but hidden from
+   sight until it's focused. */
+.jump {
+    position: absolute;
+    padding: 3px 6px;
+    left: -99999px;
+    top: 0;
+}
+
+.jump:focus { left: 40%; }
+
+/* -- Paragraphs ------------------------------------------------------------ */
+p { margin: 1.3em 0; }
+dd p, td p { margin-bottom: 0; }
+dd p:first-child, td p:first-child { margin-top: 0; }
+
+/* -- Headings -------------------------------------------------------------- */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+    line-height: 1.1;
+    margin: 1.5em 0 1em;
+}
+
+h2, h3, h4, h5, h6 { color: #f80; }
+
+h1 {
+    font-family: Verdana, 'DejaVu Sans', 'Bitstream Vera Sans', Helvetica, sans-serif;
+    font-size: 261.538%; /* 34px */
+    margin: 25px 0 18px 25px;
+    -moz-text-shadow: 1px 1px 2px #999;
+    -webkit-text-shadow: 1px 1px 2px #999;
+    text-shadow: 1px 1px 2px #999;
+}
+
+h2 {
+    font-size: 153.846%;
+    margin-top: 1.2em;
+}
+
+h3 { font-size: 138.462%; }
+
+h4 {
+    border-bottom: 1px solid #d9d9d9;
+    color: #555;
+    font-size: 115.385%;
+    font-weight: normal;
+    text-transform: uppercase;
+}
+
+h5, h6 { font-size: 107.692%; }
+
+/* -- Code and examples ----------------------------------------------------- */
+code, kbd, pre, samp {
+    font-family: Menlo, 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Consolas', 'Monaco', fixed;
+    font-size: 92.308%;
+    line-height: 1.35;
+}
+
+p code, p kbd, p samp {
+    background: #f6f6f6;
+    border: 1px solid #ededed;
+    padding: 0 3px;
+}
+
+a code, a kbd, a samp,
+pre code, pre kbd, pre samp,
+table code, table kbd, table samp,
+.intro code, .intro kbd, .intro samp,
+.toc code, .toc kbd, .toc samp {
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+pre.code, pre.terminal {
+    overflow-x: auto;
+    *overflow-x: scroll;
+    padding: 0.3em 0.6em;
+}
+
+pre.code {
+    background: #f8f8f8;
+    border: 1px solid #ececec;
+    border-left: 5px solid #e2e2e2;
+}
+
+pre.terminal {
+    background: #F0EFFC;
+    border: 1px solid #D0CBFB;
+    border-left: 5px solid #D0CBFB;
+}
+
+/* Don't reduce the font size of <code>/<kbd>/<samp> elements inside <pre>
+   blocks. */
+pre code, pre kbd, pre samp { font-size: 100%; }
+
+/* Used to denote text that shouldn't be selectable, such as line numbers or
+   shell prompts. Guess which browser this doesn't work in. */
+.noselect {
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+/* -- Tables ---------------------------------------------------------------- */
+caption, th { text-align: left; }
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #fff;
+    padding: 5px 12px;
+    vertical-align: top;
+}
+
+td { background: #E5EDF1; }
+td dl { margin: 0; }
+td dl dl { margin: 1em 0; }
+td pre:first-child { margin-top: 0; }
+
+th {
+    background: #6C8EA1;
+    color: #fff;
+    font-weight: bold;
+    line-height: 1.3;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* -- Lists ----------------------------------------------------------------- */
+.spaced li { margin: 0.8em 0; }
+
+dd { margin: 0.2em 0 0.7em 1em; }
+dl { margin: 1em 0; }
+dt { font-weight: bold; }
+
+/* -- Layout and Content ---------------------------------------------------- */
+#doc {
+    margin: auto;
+    width: 1024px;
+}
+
+#main { width: 754px; }
+#sidebar { width: 270px; }
+
+.content { padding: 0 20px 0 25px; }
+
+/* -- Sidebar --------------------------------------------------------------- */
+.sidebox {
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    -moz-box-shadow: 0 0 3px #afafaf;
+    -webkit-box-shadow: 0 0 3px #afafaf;
+    box-shadow: 0 0 3px #afafaf;
+    font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', 'Helvetica', 'Arial', sans-serif;
+    margin: 0 20px 15px 5px;
+    padding: 2px;
+}
+
+.sidebox h2 {
+    background: #efefef;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    color: #333;
+    font-size: 107.692%;
+    margin: 0;
+    padding: 2px 6px 3px;
+}
+
+.sidebox .bd { font-size: 84.615%; }
+.sidebox li { list-style-type: square; }
+
+.sidebox ol, .sidebox ul {
+    margin-left: 0;
+    padding-left: 24px;
+}
+
+.sidebox ol ol, .sidebox ol ul,
+.sidebox ul ol, .sidebox ul ul {
+    margin: 0;
+    padding-left: 16px;
+}
+
+/* -- Table of Contents ----------------------------------------------------- */
+
+/* The #toc id refers to the single global table of contents, while the .toc
+   class refers to generic TOC lists that could be used throughout the page. */
+
+.toc code, .toc kbd, .toc samp { font-size: 100%; }
+.toc li { font-weight: bold; }
+.toc li li { font-weight: normal; }
+
+/* -- Intro and Example Boxes ----------------------------------------------- */
+.intro, .example { margin-bottom: 2em; }
+
+.example {
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    -moz-box-shadow: 0 0 5px #bfbfbf;
+    -webkit-box-shadow: 0 0 5px #bfbfbf;
+    box-shadow: 0 0 5px #bfbfbf;
+    padding: 1em;
+}
+
+.intro {
+    background: #E2EEFB;
+    border: 1px solid #BDD6F4;
+    padding: 0em 1em;
+}
+
+/* -- Other Styles ---------------------------------------------------------- */
+
+/* These are probably YUI-specific, and should be moved out of Selleck's default
+   theme. */
+
+.button {
+    border: 1px solid #dadada;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    color: #444;
+    display: inline-block;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 92.308%;
+    font-weight: bold;
+    padding: 4px 13px 3px;
+    -moz-text-shadow: 1px 1px 0 #fff;
+    -webkit-text-shadow: 1px 1px 0 #fff;
+    text-shadow: 1px 1px 0 #fff;
+    white-space: nowrap;
+
+    background: #EFEFEF; /* old browsers */
+    background: -moz-linear-gradient(top, #f5f5f5 0%, #efefef 50%, #e5e5e5 51%, #dfdfdf 100%); /* firefox */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f5f5f5), color-stop(50%,#efefef), color-stop(51%,#e5e5e5), color-stop(100%,#dfdfdf)); /* webkit */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f5f5f5', endColorstr='#dfdfdf',GradientType=0 ); /* ie */
+}
+
+.button:hover {
+    border-color: #466899;
+    color: #fff;
+    text-decoration: none;
+    -moz-text-shadow: 1px 1px 0 #222;
+    -webkit-text-shadow: 1px 1px 0 #222;
+    text-shadow: 1px 1px 0 #222;
+
+    background: #6396D8; /* old browsers */
+    background: -moz-linear-gradient(top, #6396D8 0%, #5A83BC 50%, #547AB7 51%, #466899 100%); /* firefox */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#6396D8), color-stop(50%,#5A83BC), color-stop(51%,#547AB7), color-stop(100%,#466899)); /* webkit */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#6396D8', endColorstr='#466899',GradientType=0 ); /* ie */
+}
+
+.newwindow { text-align: center; }

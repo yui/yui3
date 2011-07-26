@@ -1988,8 +1988,9 @@ L.now = Date.now || function () {
 };
 /**
  * The YUI module contains the components required for building the YUI seed
- * file.  This includes the script loading mechanism, a simple queue, and the
+ * file. This includes the script loading mechanism, a simple queue, and the
  * core utilities for the library.
+ *
  * @module yui
  * @submodule yui-base
  */
@@ -2000,36 +2001,33 @@ var Lang   = Y.Lang,
     hasOwn = Object.prototype.hasOwnProperty;
 
 /**
- * Adds utilities to the YUI instance for working with arrays. Additional array
- * helpers can be found in the `collection` module.
- *
- * @class Array
- */
+Provides utility methods for working with arrays. Additional array helpers can
+be found in the `collection` and `array-extras` modules.
 
-/**
- * `Y.Array(thing)` returns an array created from _thing_. Depending on
- * _thing_'s type, one of the following will happen:
- *
- *  * Arrays are returned unmodified unless a non-zero _startIndex_ is
- *     specified.
- *  * Array-like collections (see `Array.test()`) are converted to arrays.
- *  * For everything else, a new array is created with _thing_ as the sole
- *     item.
- *
- * Note: elements that are also collections, such as `<form>` and `<select>`
- * elements, are not automatically converted to arrays. To force a conversion,
- * pass `true` as the value of the _force_ parameter.
- *
- * @method ()
- * @param {mixed} thing The thing to arrayify.
- * @param {int} [startIndex=0] If non-zero and _thing_ is an array or array-like
- *   collection, a subset of items starting at the specified index will be
- *   returned.
- * @param {boolean} [force=false] If `true`, _thing_ will be treated as an
- *   array-like collection no matter what.
- * @return {Array}
- * @static
- */
+`Y.Array(thing)` returns a native array created from _thing_. Depending on
+_thing_'s type, one of the following will happen:
+
+  * Arrays are returned unmodified unless a non-zero _startIndex_ is
+    specified.
+  * Array-like collections (see `Array.test()`) are converted to arrays.
+  * For everything else, a new array is created with _thing_ as the sole
+    item.
+
+Note: elements that are also collections, such as `<form>` and `<select>`
+elements, are not automatically converted to arrays. To force a conversion,
+pass `true` as the value of the _force_ parameter.
+
+@class Array
+@constructor
+@param {Any} thing The thing to arrayify.
+@param {Number} [startIndex=0] If non-zero and _thing_ is an array or array-like
+  collection, a subset of items starting at the specified index will be
+  returned.
+@param {Boolean} [force=false] If `true`, _thing_ will be treated as an
+  array-like collection no matter what.
+@return {Array} A native array created from _thing_, according to the rules
+  described above.
+**/
 function YArray(thing, startIndex, force) {
     var len, result;
 
@@ -2056,22 +2054,23 @@ function YArray(thing, startIndex, force) {
 Y.Array = YArray;
 
 /**
- * Evaluates _obj_ to determine if it's an array, an array-like collection, or
- * something else. This is useful when working with the function `arguments`
- * collection and `HTMLElement` collections.
- *
- * Note: This implementation doesn't consider elements that are also
- * collections, such as `<form>` and `<select>`, to be array-like.
- *
- * @method test
- * @param {object} obj Object to test.
- * @return {int} A number indicating the results of the test:
- *
- *  * 0: Neither an array nor an array-like collection.
- *  * 1: Real array.
- *  * 2: Array-like collection.
- * @static
- */
+Evaluates _obj_ to determine if it's an array, an array-like collection, or
+something else. This is useful when working with the function `arguments`
+collection and `HTMLElement` collections.
+
+Note: This implementation doesn't consider elements that are also
+collections, such as `<form>` and `<select>`, to be array-like.
+
+@method test
+@param {Object} obj Object to test.
+@return {Number} A number indicating the results of the test:
+
+  * 0: Neither an array nor an array-like collection.
+  * 1: Real array.
+  * 2: Array-like collection.
+
+@static
+**/
 YArray.test = function (obj) {
     var result = 0;
 
@@ -2092,19 +2091,19 @@ YArray.test = function (obj) {
 };
 
 /**
- * Dedupes an array of strings, returning an array that's guaranteed to contain
- * only one copy of a given string.
- *
- * This method differs from `Y.Array.unique` in that it's optimized for use only
- * with strings, whereas `unique` may be used with other types (but is slower).
- * Using `dedupe` with non-string values may result in unexpected behavior.
- *
- * @method dedupe
- * @param {String[]} array Array of strings to dedupe.
- * @return {Array} Deduped copy of _array_.
- * @static
- * @since 3.4.0
- */
+Dedupes an array of strings, returning an array that's guaranteed to contain
+only one copy of a given string.
+
+This method differs from `Array.unique()` in that it's optimized for use only
+with strings, whereas `unique` may be used with other types (but is slower).
+Using `dedupe()` with non-string values may result in unexpected behavior.
+
+@method dedupe
+@param {String[]} array Array of strings to dedupe.
+@return {Array} Deduped copy of _array_.
+@static
+@since 3.4.0
+**/
 YArray.dedupe = function (array) {
     var hash    = {},
         results = [],
@@ -2123,20 +2122,20 @@ YArray.dedupe = function (array) {
 };
 
 /**
- * Executes the supplied function on each item in the array. This method wraps
- * the native ES5 `Array.forEach()` method if available.
- *
- * @method each
- * @param {Array} array Array to iterate.
- * @param {Function} fn Function to execute on each item in the array.
- *   @param {mixed} fn.item Current array item.
- *   @param {Number} fn.index Current array index.
- *   @param {Array} fn.array Array being iterated.
- * @param {Object} [thisObj] `this` object to use when calling _fn_.
- * @return {YUI} The YUI instance.
- * @chainable
- * @static
- */
+Executes the supplied function on each item in the array. This method wraps
+the native ES5 `Array.forEach()` method if available.
+
+@method each
+@param {Array} array Array to iterate.
+@param {Function} fn Function to execute on each item in the array. The function
+  will receive the following arguments:
+    @param {Any} fn.item Current array item.
+    @param {Number} fn.index Current array index.
+    @param {Array} fn.array Array being iterated.
+@param {Object} [thisObj] `this` object to use when calling _fn_.
+@return {YUI} The YUI instance.
+@static
+**/
 YArray.each = YArray.forEach = Native.forEach ? function (array, fn, thisObj) {
     Native.forEach.call(array || [], fn, thisObj || Y);
     return Y;
@@ -2151,29 +2150,29 @@ YArray.each = YArray.forEach = Native.forEach ? function (array, fn, thisObj) {
 };
 
 /**
- * Alias for `each`.
- *
- * @method forEach
- * @static
- */
+Alias for `each()`.
+
+@method forEach
+@static
+**/
 
 /**
- * Returns an object using the first array as keys and the second as values. If
- * the second array is not provided, or if it doesn't contain the same number of
- * values as the first array, then `true` will be used in place of the missing
- * values.
- *
- * @example
- *
- *     Y.Array.hash(['a', 'b', 'c'], ['foo', 'bar']);
- *     // => {a: 'foo', b: 'bar', c: true}
- *
- * @method hash
- * @param {Array} keys Array to use as keys.
- * @param {Array} [values] Array to use as values.
- * @return {Object}
- * @static
- */
+Returns an object using the first array as keys and the second as values. If
+the second array is not provided, or if it doesn't contain the same number of
+values as the first array, then `true` will be used in place of the missing
+values.
+
+@example
+
+    Y.Array.hash(['a', 'b', 'c'], ['foo', 'bar']);
+    // => {a: 'foo', b: 'bar', c: true}
+
+@method hash
+@param {String[]} keys Array of strings to use as keys.
+@param {Array} [values] Array to use as values.
+@return {Object} Hash using the first array as keys and the second as values.
+@static
+**/
 YArray.hash = function (keys, values) {
     var hash = {},
         vlen = (values && values.length) || 0,
@@ -2189,18 +2188,18 @@ YArray.hash = function (keys, values) {
 };
 
 /**
- * Returns the index of the first item in the array that's equal (using a strict
- * equality check) to the specified _value_, or `-1` if the value isn't found.
- *
- * This method wraps the native ES5 `Array.indexOf()` method if available.
- *
- * @method indexOf
- * @param {Array} array Array to search.
- * @param {any} value Value to search for.
- * @return {Number} Index of the item strictly equal to _value_, or `-1` if not
- *   found.
- * @static
- */
+Returns the index of the first item in the array that's equal (using a strict
+equality check) to the specified _value_, or `-1` if the value isn't found.
+
+This method wraps the native ES5 `Array.indexOf()` method if available.
+
+@method indexOf
+@param {Array} array Array to search.
+@param {Any} value Value to search for.
+@return {Number} Index of the item strictly equal to _value_, or `-1` if not
+  found.
+@static
+**/
 YArray.indexOf = Native.indexOf ? function (array, value) {
     // TODO: support fromIndex
     return Native.indexOf.call(array, value);
@@ -2215,43 +2214,44 @@ YArray.indexOf = Native.indexOf ? function (array, value) {
 };
 
 /**
- * Numeric sort convenience function.
- *
- * The native `Array.prototype.sort()` function converts values to strings and
- * sorts them in lexicographic order, which is unsuitable for sorting numeric
- * values. Provide `Y.Array.numericSort` as a custom sort function when you want
- * to sort values in numeric order.
- *
- * @example
- *
- *     [42, 23, 8, 16, 4, 15].sort(Y.Array.numericSort);
- *     // => [4, 8, 15, 16, 23, 42]
- *
- * @method numericSort
- * @param {Number} a First value to compare.
- * @param {Number} b Second value to compare.
- * @return {Number} Difference between _a_ and _b_.
- * @static
- */
+Numeric sort convenience function.
+
+The native `Array.prototype.sort()` function converts values to strings and
+sorts them in lexicographic order, which is unsuitable for sorting numeric
+values. Provide `Array.numericSort` as a custom sort function when you want
+to sort values in numeric order.
+
+@example
+
+    [42, 23, 8, 16, 4, 15].sort(Y.Array.numericSort);
+    // => [4, 8, 15, 16, 23, 42]
+
+@method numericSort
+@param {Number} a First value to compare.
+@param {Number} b Second value to compare.
+@return {Number} Difference between _a_ and _b_.
+@static
+**/
 YArray.numericSort = function (a, b) {
     return a - b;
 };
 
 /**
- * Executes the supplied function on each item in the array. Returning a truthy
- * value from the function will stop the processing of remaining items.
- *
- * @method some
- * @param {Array} array Array to iterate.
- * @param {Function} fn Function to execute on each item.
- *   @param {mixed} fn.value Current array item.
- *   @param {Number} fn.index Current array index.
- *   @param {Array} fn.array Array being iterated.
- * @param {Object} [thisObj] `this` object to use when calling _fn_.
- * @return {Boolean} `true` if the function returns a truthy value on any of the
- *   items in the array; `false` otherwise.
- * @static
- */
+Executes the supplied function on each item in the array. Returning a truthy
+value from the function will stop the processing of remaining items.
+
+@method some
+@param {Array} array Array to iterate over.
+@param {Function} fn Function to execute on each item. The function will receive
+  the following arguments:
+    @param {Any} fn.value Current array item.
+    @param {Number} fn.index Current array index.
+    @param {Array} fn.array Array being iterated over.
+@param {Object} [thisObj] `this` object to use when calling _fn_.
+@return {Boolean} `true` if the function returns a truthy value on any of the
+  items in the array; `false` otherwise.
+@static
+**/
 YArray.some = Native.some ? function (array, fn, thisObj) {
     return Native.some.call(array, fn, thisObj);
 } : function (array, fn, thisObj) {
@@ -3292,8 +3292,7 @@ YUI.Env.aliases = {
     "resize": ["resize-base","resize-proxy","resize-constrain"],
     "slider": ["slider-base","slider-value-range","clickable-rail","range-slider"],
     "text": ["text-accentfold","text-wordbreak"],
-    "widget": ["widget-base","widget-htmlparser","widget-uievents","widget-skin"],
-    "yui-rls": ["yui-base","get","features","intl-base","rls","yui-log","yui-later"]
+    "widget": ["widget-base","widget-htmlparser","widget-uievents","widget-skin"]
 };
 
 

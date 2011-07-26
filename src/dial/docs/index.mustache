@@ -17,7 +17,13 @@
 
 <h4>Dom Structure</h4>
 	<p>
-		The major parts of a Dial are a ring, a marker, a user-draggable handle, and a reset button.
+		The major parts of the Dial are:
+        <ul>
+            <li>Ring</li>
+            <li>Marker</li>
+            <li>User-draggable handle</li>
+            <li>Reset button</li>
+        </ul>
 		The ring is the background element and container of the other elements. 
 		The marker is always displayed at a fixed but configurable distance from the dial center. 
 		Its position around the dial indicates the current value as the user drags the handle or clicks 
@@ -48,7 +54,7 @@
 				<div class="yui3-dial-center-button">
 					<div class="yui3-dial-reset-str"></div>
 				</div>
-				<div class="yui3-dial-handle yui3-dd-draggable" title="Drag to set value" tabindex="0" role="slider" aria-valuenow="30" aria-valuemin="-220" aria-valuemax="220" aria-valuetext="30" aria-labelledby="[custom YUI gen id for screen reader]"</div>
+				<div class="yui3-dial-handle yui3-dd-draggable" title="Drag to set value" tabindex="0" role="slider" aria-valuenow="30" aria-valuemin="-220" aria-valuemax="220" aria-valuetext="30" aria-labelledby="[custom YUI gen id for screen reader]"></div>
 			</div>
 		</div>
 	</div>
@@ -119,7 +125,7 @@ dial.render("#demo");
 		</tr>
 		<tr>
 			<td>`markerDiameter`</td>
-			<td>The diameter of the marker that follows the angle of the handle as it is dragged. This value is a diameter of the radius of the Dial widget.</td>
+			<td>The diameter of the marker that follows the angle of the handle as it is dragged. This value is a percentage of the diameter of the Dial widget.</td>
 			<td>`0.1`</td>
 		</tr>
 		<tr>
@@ -144,12 +150,12 @@ dial.render("#demo");
 		</tr>
 		<tr>
 			<td>`stepsPerRevolution`</td>
-			<td>One revolution of the dial add/subtracts this many value units.</td>
+			<td>One revolution of the dial adds/subtracts this many value units.</td>
 			<td>`100`</td>
 		</tr>
 		<tr>
 			<td>`decimalPlaces`</td>
-			<td>Number of digits to the right of decimal point to keep in value.</td>
+			<td>Number of digits to the right of decimal point to retain in the value.</td>
 			<td>`0`</td>
 		</tr>
 		<tr>
@@ -161,7 +167,7 @@ dial.render("#demo");
 		</tr>
 		<tr>
 			<td>`handleDistance`</td>
-			<td>This the distance from the center of the dial to the center of the marker and handle when at rest. This value is a percentage of the radius of the Dial widget.</td>
+			<td>This is the distance from the center of the dial to the center of the marker and handle when at rest. This value is a percentage of the radius of the Dial widget.</td>
 			<td>`0.75`</td>
 		</tr>
 	</tbody>
@@ -256,7 +262,8 @@ v\:fill {
 	left:0;
 }
 .yui3-skin-sam .yui3-dial-hidden {
-	display:none;
+	opacity:0;
+	filter:alpha(opacity=0);
 }
 ```
 

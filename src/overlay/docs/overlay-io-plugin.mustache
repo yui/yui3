@@ -54,7 +54,7 @@ and the `plugin` module. The Widget IO plugin will pull in the dependencies it n
 The `json` and `substitute` modules provide the support we need to parse/transform JSON responses into HTML.The code to set up our sandbox instance is shown below:</p>
 
 ```
-YUI({...}).use("overlay", "substitute", "json", "gallery-io-plugin", function(Y) {
+YUI({...}).use("overlay", "substitute", "json", "gallery-io-plugin", "escape", function(Y) {
     // We'll write our code here, after pulling in the default Overlay widget, 
     // the IO utility, the Plugin.WidgetIO base class along with the 
     // Substitute and JSON utilities
@@ -151,7 +151,7 @@ initializer: function() {
     Y.io.transport({
         id:'flash',
         yid: Y.id,
-        src:'../build/io/io.swf?stamp=' + (new Date()).getTime()
+        src:'../build/io-xdr/io.swf?stamp=' + (new Date()).getTime()
     });
 }
 ```

@@ -1,0 +1,30 @@
+{
+    "name"       : "node-focusmanager",
+    "displayName": "Focus Manager",
+    "description": "Makes it easy to define a Node's focusable descendants, define which descendant should be in the default tab flow, and define the keys that move focus among each descendant.",
+    "author"     : ["kloots", "rgrove"],
+
+    "tags": [
+        "utility", "node", "plugin", "focus", "keyboard", "navigation", "beta"
+    ],
+
+    "use": ["node-focusmanager"],
+
+    "examples": [
+        {
+            "name"       : "node-focusmanager-1",
+            "displayName": "Accessible Toolbar",
+            "description": "Creating an accessible toolbar using the Focus Manager Node Plugin and Node's support for the WAI-ARIA Roles and States.",
+            "modules"    : ["node-focusmanager", "node"],
+            "tags"       : ["node-focusmanager", "accessibility", "focus", "toolbar", "aria"]
+        },
+
+        {
+            "name"       : "node-focusmanager-3",
+            "displayName": "Accessible Menu Button",
+            "description": "Creating an accessible menu button using the Focus Manager Node Plugin, Event's delegation support and mouseenter event, along with the Overlay widget and Node's support for the WAI-ARIA Roles and States.",
+            "modules"    : ["node-focusmanager", "node", "event", "overlay"],
+            "tags"       : ["node-focusmanager", "accessibility", "focus", "menu", "button", "aria", "overlay"]
+        }
+    ]
+}

@@ -1,0 +1,25 @@
+<div id="demo">
+    <a href="#">x</a>
+</div>
+
+<script type="text/javascript">
+YUI().use('transition', function(Y) {
+    var node = Y.one('#demo');
+
+    node.one('a').on('click', function(e) {
+        e.preventDefault();
+        
+        node.transition({
+            duration: 1, // seconds
+            easing: 'ease-out',
+            height: 0,
+            width: 0,
+            left: '150px',
+            top: '100px',
+            opacity: 0
+        }, function() {
+            this.remove(); 
+        });
+    });
+});
+</script>

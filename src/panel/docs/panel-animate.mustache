@@ -1,0 +1,137 @@
+<div class="intro">
+    <p>This example demonstrates how to instantiate a panel and use it in conjunction with the `"transition"` module to create an animated panel.</p>
+</div>
+
+<div class="example">
+    <style type="text/css">
+        {{>panel-animate-css-source}}
+    </style>
+
+
+    {{>panel-animate-html-source}}
+
+    <script type="text/javascript">
+        {{>panel-animate-js-source}}
+    </script>
+</div>
+
+<h3>Setting Up The YUI Instance</h3>
+
+<p>To create an instance of a Panel on your page, the only module you need to request is the `panel` module. The `panel` module will pull in the `widget`, `widget-stack`, `widget-position`, `widget-position-align`, `widget-position-constrain`, `widget-stdmod`, `widget-buttons`, `widget-modality` and `widget-autohide` extensions it uses.</p>
+
+<p>For this example, we also need to use the `transition` module. This module allows us to easily create animations using CSS3 transitions, with a JavaScript timer fallback.
+
+```
+YUI({...}).use("panel", "transition", function(Y) {
+    // We'll write example code here
+});
+```
+
+<p>Note, using the `panel` module, will also pull down the default CSS required for panel. The CSS that styles the Panel requires you to have the class `yui3-skin-sam` on a parent element, commonly the `<body>` tag.</p>
+
+<h3>Instantiating the Panel</h3>
+
+<p>For this example, we'll instantiate a modal panel, set its visibility to false, and set some CSS properties. The following HTML will be used as the markup for the panel.</p>
+
+```
+<div id="panelContent">
+  <div class="yui3-widget-hd">
+    Showing an animated panel
+  </div>
+  <div class="yui3-widget-bd">
+    <p>Making panels animate is easy with the "transition" module!</p>
+  </div>
+</div>
+```
+
+<p>The JavaScript to instantiate the panel is as follows:</p>
+
+```
+var panel = new Y.Panel({
+  srcNode: "#panelContent",
+  width:330,
+  centered:true,
+  modal:true,
+  visible:false,
+
+  //Add a footer button to close the panel
+  buttons: [
+    {
+      value:"Close Panel",
+      action: function(e) {
+        e.preventDefault();
+        panel.hide();
+      },
+      section: "footer"
+    }
+  ],
+  render:true
+});
+```
+
+<p>The following CSS properties are set on the panel's bounding-box after it's rendered.</p>
+```
+var bb = panel.get('boundingBox');
+
+bb.setStyles({
+  "-webkit-transform": "scale(0)",
+  "-moz-transform": "scale(0)",
+  "transform": "scale(0)"
+});
+```
+
+
+<h3>Adding Animation</h3>
+
+<p>To create the animations, we need to set up transition properties on the panel's `boundingBox`. These properties consist of key/value pairs of CSS properties that we want to alter.</p>
+
+<p>The `toggleAnimation()` function below defines the transitions to animate the panel.</p>
+
+
+```
+function toggleAnimation (e) {
+  if (e.newVal) {
+
+    //If the panel is shown, pop in with these properties
+    bb.transition({
+      duration: 0.3,
+      "-webkit-transform": "scale(1)",
+      "-moz-transform": "scale(1)",
+      "transform": "scale(1)"
+    });
+  }
+  else {
+
+    //If the panel is hidden, pop out with these properties
+    bb.transition({
+      duration: 0.3,
+      "-webkit-transform": "scale(0)",
+      "-moz-transform": "scale(0)",
+      "transform": "scale(0)"
+    });
+  }
+}
+```
+
+
+<h3>Adding Buttons to toggle visibility</h3>
+
+<p>The `toggleAnimation()` function above will need to be called whenever the visibility of the panel changes. To do this, we create two buttons, one to show the panel and one to hide it.</p>
+
+<p>The button to close the panel was specified in the instantiation of the panel. The button to open the panel can be defined as:</p>
+```
+//Add Panel Show Button
+openBtn.on('click', function(e) {
+  panel.show();
+});
+```
+<p>Finally, We set the `toggleAnimation()` method to be called whenever the visibility changes.</p>
+
+```
+panel.on('visibleChange', toggleAnimation);
+```
+
+<h2>Complete Example Source</h2>
+```
+  {{>panel-animate-source}}
+```

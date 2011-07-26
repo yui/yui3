@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+
+        <style>
+            body {
+                font-family: sans-serif;
+                line-height:18px;
+                margin: 50px 0px 0px 100px;
+                font-size:12px;
+            }
+            h1 {
+              color: #222;
+            }
+
+            #desc {
+              margin-bottom:20px;
+              border-bottom:1px dotted #333;
+            }
+            #desc span {
+              background:#a3350d;
+              padding:2px;
+              color:#f27243;
+            }
+
+            .yui3-panel {
+              outline:none;
+            }
+
+            .yui3-widget-hd {
+              font-weight:bold;
+            }
+
+            .yui3-panel-content .yui3-widget-bd {
+              padding:15px;
+            }
+            label {
+              margin-right:30px;
+            }
+            fieldset {
+              border:none;
+              padding:0;
+            }
+            input[type="text"] {
+              border:none;
+              border:1px solid #ccc;
+              padding: 3px 7px;
+              -webkit-border-radius:2px;
+              -moz-border-radius:2px;
+              border-radius:2px;
+              font-size:100%;
+              width:200px;
+            }
+        </style>
+        <script type="text/javascript" src="../../../../build/yui/yui-debug.js"></script> 
+    </head>
+
+    <body class='yui3-skin-sam'>
+
+        <h1>Panel Example.</h1>
+        <div id="dt"></div>
+        <p><input type="button" id="addRow" value="Add"></p>
+        <div id="panelContent">
+            <div class="yui3-widget-bd">
+            <form>
+              <fieldset>
+                <p><label for="id">ID</label><br/>
+                <input type="text" name="id" id="productId" placeholder=""></p>
+                <p><label for="name">Name</label><br/>
+                <input type="text" name="name" id="name" value="" placeholder=""></p>
+                <p><label for="password">Price</label><br/>
+                <input type="text" name="price" id="price" value="" placeholder="$"></p>
+              </fieldset>
+              </form>
+          </div>
+        </div>
+
+        <div id="nestedPanel"></div>
+
+                
+        <script>
+          YUI({filter:"raw"}).use("datatable-base", "panel", "dd-plugin", function(Y) {
+
+
+              //Create the datatable with some gadget information
+              var cols = ["id","name","price"],
+              data = [
+                  {id:"ga-3475", name:"gadget", price:"$6.99"},
+                  {id:"sp-9980", name:"sprocket", price:"$3.75"},
+                  {id:"wi-0650", name:"widget", price:"$4.25"}
+              ],
+              dt = new Y.DataTable.Base({
+                  columnset: cols,
+                  recordset: data,
+                  summary: "Price sheet for inventory parts",
+                  caption: "Price sheet for inventory parts"
+              }),
+
+              //Create the main modal form
+              panel = new Y.Panel({
+                srcNode: "#panelContent",
+                width: 250,
+                centered: true,
+                visible: false,
+                modal:true,
+                headerContent: "Add A New Product",
+                plugins: [Y.Plugin.Drag]
+              }),
+
+              addRowBtn = Y.one("#addRow"),
+              nestedPanel;
+
+
+              //Render The Datatable
+              dt.render("#dt");
+
+              //Add the footer buttons to the modal form
+              panel.addButton(
+                {
+                    value: "Add Item",
+                    action: function(e) { 
+                      e.preventDefault(); 
+                      addItem();
+                    },
+                    section: Y.WidgetStdMod.FOOTER
+                }
+              );
+              panel.addButton(
+                {
+                    value: "Remove All Items",
+                    action: function(e) { 
+                      e.preventDefault(); 
+                      removeAllItemsConfirm();
+                    },
+                    section: Y.WidgetStdMod.FOOTER
+                }
+              );
+              
+              //Render the modal form
+              panel.render();
+
+              //When the addRowBtn is pressed, show the modal form
+              addRowBtn.on('click', function(e) {
+                panel.show();
+              });
+
+              //Define the addItem function - this will be called 
+              //when "Add Item" is pressed on the modal form
+              var addItem = function() {
+                var o = {}, 
+                id = Y.one('#productId'),
+                name = Y.one('#name'),
+                price = Y.one('#price');
+
+                o.id = id.get("value");
+                o.name = name.get("value");
+                o.price = price.get("value");
+
+                id.set("value", "");
+                name.set("value", "");
+                price.set("value", "");
+
+
+                data.push(o);
+                dt.set('recordset', data).render();
+                dt.render();
+                panel.hide();
+              };
+
+              //Define the removeItems function - this will be called 
+              //when "Remove All Items" is pressed on the modal form
+              //and is confirmed "yes" by the nested panel.
+              var removeItems = function() {
+                data = [];
+                dt.set('recordset', data).render();
+                dt.render();
+                panel.hide();
+              };
+
+
+              //Instantiate the nested panel if it doesn't exist, otherwise just show it.
+              var removeAllItemsConfirm = function() {
+                if (!nestedPanel) {
+                  nestedPanel = new Y.Panel({
+                    bodyContent: "Are you sure you want to remove all items?",
+                    zIndex: 5,
+                    centered:true,
+                    width:400,
+                    modal:true,
+                    buttons: [
+                      
+                      {
+                          value: "Yes",
+                          action  : function(e) { 
+                            e.preventDefault(); 
+                            nestedPanel.hide();
+                            panel.hide();
+                            removeItems();
+                          },
+                          section: Y.WidgetStdMod.FOOTER
+                      },
+                      {
+                          value: "No",
+                          action: function(e) { 
+                            e.preventDefault(); 
+                            nestedPanel.hide();
+                          },
+                          section: Y.WidgetStdMod.FOOTER
+                      }
+                    ]
+                  }).render('#nestedPanel');
+                }
+
+                else {
+                  nestedPanel.show();
+                }
+
+              }
+          });
+        </script>
+    </body>
+
+</html>

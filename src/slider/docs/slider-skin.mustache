@@ -1,0 +1,155 @@
+<style scoped>
+    #demo .light {
+        padding: 1em;
+    }
+    #demo .dark {
+        background: #000;
+        padding: 1em;
+    }
+    #demo {
+        overflow: hidden;
+    }
+    /* needed for the chromeless version */
+    #demo h4 {
+        font-weight: normal;
+        color: #FF8800;
+    }
+    #demo h5 {
+        margin-top: 1em;
+        text-transform: uppercase;
+        color: #666;
+        border-bottom: 1px solid #D9D9D9;
+    }
+</style>
+
+<div class="intro">
+    <p>This example demonstrates the alternate skins available for Slider, and how to apply them.</p>
+</div>
+
+<div class="example">
+    {{>slider-skin-source}}
+</div>
+
+<h3>Specify the skin in the YUI config</h3>
+<p>To access alternate skins for a component, specify an override in the YUI configuration.  Then just `use( &quot;slider&quot; )` as you normally would.</p>
+
+```
+YUI({
+    skin: {
+        overrides: {
+            slider: [ "capsule" ]
+        }
+    }
+}).use( "slider", function (Y) {
+    ...
+});
+```
+
+<h3>Use the appropriate skin class in the markup</h3>
+<p>The default skin is the Sam skin.  Style YUI components with this skin by including the class `yui3-skin-sam` in the class list of an element that contains the component.  Typically, setting `&lt;body class="yui3-skin-sam"&gt;` is good enough.</p>
+
+<p>When overriding the default skin, use a different class on the containing element.</p>
+
+```
+<div class="yui3-skin-round-dark">
+    <h5>Round skin (dark)</h5>
+    <div id="round_dark"><!-- Slider rendered here --></div>
+</div>
+```
+
+<h3 id="full_code_listing">Full Code Listing</h3>
+<p>This is the full code listing for this example.</p>
+
+<h4>Markup</h4>
+```
+<div id="demo">
+    <div class="yui-g"><!-- Two column (50/50) layout -->
+        <div class="yui-u first">
+            <div class="light">
+                <h4>Light skins</h4>
+                <div class="yui3-skin-sam">
+                    <h5>Sam skin</h5>
+                    <div id="sam"></div>
+                </div>
+
+                <div class="yui3-skin-capsule">
+                    <h5>Capsule skin</h5>
+                    <div id="capsule"></div>
+                </div>
+
+                <div class="yui3-skin-round">
+                    <h5>Round skin</h5>
+                    <div id="round"></div>
+                </div>
+
+                <div class="yui3-skin-audio-light">
+                    <h5>Audio skin (light)</h5>
+                    <div id="audio_light"></div>
+                </div>
+            </div>
+        </div>
+        <div class="yui-u">
+            <div class="dark">
+                <h4>Dark skins</h4>
+                <div class="yui3-skin-sam-dark">
+                    <h5>Sam skin (dark)</h5>
+                    <div id="sam_dark"></div>
+                </div>
+
+                <div class="yui3-skin-capsule-dark">
+                    <h5>Capsule skin (dark)</h5>
+                    <div id="capsule_dark"></div>
+                </div>
+
+                <div class="yui3-skin-round-dark">
+                    <h5>Round skin (dark)</h5>
+                    <div id="round_dark"></div>
+                </div>
+
+                <div class="yui3-skin-audio">
+                    <h5>Audio skin</h5>
+                    <div id="audio"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+```
+
+<h4>JavaScript</h4>
+```
+YUI({
+    skin: {
+        overrides: {
+            slider: [
+                'sam',          // The default skin
+                'sam-dark',     // Suited for dark backgrounds
+
+                'capsule',      // You only need to include one skin
+                'capsule-dark', // in the overrides section unless you
+                                // are using multiple skins on the same page
+                'round',
+                'round-dark',
+
+                'audio-light',
+                'audio'
+            ]
+        }
+    }
+}).use('slider', function ( Y ) {
+
+    new Y.Slider().render( '#sam' );
+    new Y.Slider().render( '#sam_dark' );
+
+    new Y.Slider().render( '#capsule' );
+    new Y.Slider().render( '#capsule_dark' );
+
+    new Y.Slider().render( '#round' );
+    new Y.Slider().render( '#round_dark' );
+
+    new Y.Slider().render( '#audio_light' );
+    new Y.Slider().render( '#audio' );
+
+} );
+```
+

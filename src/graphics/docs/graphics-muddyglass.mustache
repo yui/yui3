@@ -50,7 +50,7 @@ In this advanced example, we'll create a glass of milk by layering transparent g
 
 ```
     var mygraphic = new Y.Graphic({render:"#mygraphiccontainer"});
-    var shadow = mygraphic.getShape({
+    var shadow = mygraphic.addShape({
         type: "ellipse",
         stroke: {
             color: "#ddd",
@@ -79,7 +79,7 @@ In this advanced example, we'll create a glass of milk by layering transparent g
 <p>Create a rectangle with a linear gradient for the chocolate milk.</p>
 
 ```
-    var milk = mygraphic.getShape({
+    var milk = mygraphic.addShape({
         x: 314,
         y: 180,
         type: "rect",
@@ -105,7 +105,7 @@ In this advanced example, we'll create a glass of milk by layering transparent g
 <p>Add another linear gradient rectangle for the glass.</p>
 
 ```
-    var myrect = mygraphic.getShape({
+    var myrect = mygraphic.addShape({
         x: 310,
         y: 110,
         type: "rect",
@@ -129,7 +129,7 @@ In this advanced example, we'll create a glass of milk by layering transparent g
 ```
 <p>Create the linear gradient for the reflection.</p>
 ```
-    var reflect = mygraphic.getShape({
+    var reflect = mygraphic.addShape({
         x: 310,
         y: 113,
         type: "rect",

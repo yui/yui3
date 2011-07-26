@@ -1,0 +1,33 @@
+<p>Click the buttons to interact with the cookie:</p>
+
+<p>
+<input type="button" value="Get Value" id="yui-cookie-btn1">
+<input type="button" value="Set Random Value" id="yui-cookie-btn2">
+<input type="button" value="Remove Value" id="yui-cookie-btn3">
+</p>
+
+<script>
+YUI().use('cookie', 'console', 'node', function (Y) {
+
+    //used just to show logging output
+    (new Y.Console({style: 'block'})).render('.example');
+
+    Y.one("#yui-cookie-btn1").on("click", function () {
+        var value = Y.Cookie.get("example");
+        alert(value);
+        Y.log("Cookie 'example' has a value of '" + value + "'");
+    });
+
+    Y.one("#yui-cookie-btn2").on("click", function () {
+        var newValue = "yui" + Math.round(Math.random() * Math.PI * 1000);
+        Y.Cookie.set("example", newValue);
+        Y.log("Set cookie 'example' to '" + newValue + "'");
+    });
+
+    Y.one("#yui-cookie-btn3").on("click", function () {
+        Y.Cookie.remove("example");
+        Y.log("Removed cookie 'example'.");
+    });
+
+});
+</script>

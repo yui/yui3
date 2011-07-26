@@ -190,7 +190,6 @@ YUI.add('base-base', function(Y) {
          * invoking initializers for the class hierarchy.
          *
          * @method init
-         * @final
          * @chainable
          * @param {Object} config Object with configuration property name/value pairs
          * @return {Base} A reference to this object
@@ -277,7 +276,6 @@ YUI.add('base-base', function(Y) {
          * </p>
          * @method destroy
          * @return {Base} A reference to this object
-         * @final
          * @chainable
          */
         destroy: function() {

@@ -8,7 +8,8 @@
             "widget-stack", 
             "widget-position-constrain",
             "widget-modality",
-            "widget-autohide"
+            "widget-autohide",
+            "widget-buttons"
         ], 
         "skinnable": true
     }

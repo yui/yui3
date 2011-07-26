@@ -46,11 +46,10 @@ Y.extend(CanvasPath, Y.CanvasShape, {
         node.setAttribute("pointer-events", "none");
         node.style.pointerEvents = "none";
         node.style.overflow = "visible";
-        node.setAttribute("class", "yui3-" + SHAPE);
-		node.setAttribute("class", "yui3-" + this.name);
 		node.setAttribute("id", id);
 		id = "#" + id;
 		this.node = node;
+		this.addClass("yui3-" + SHAPE + " yui3-" + this.name);
 	},
 
     /**

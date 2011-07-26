@@ -1681,6 +1681,62 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame(1, calls);
     },
 
+    '`error` event should fire when a duplicate model is added': function () {
+        var calls = 0,
+            list  = this.createList(),
+            model = this.createModel();
+
+        list.on('error', function (e) {
+            calls += 1;
+
+            Assert.areSame(model, e.model);
+            Assert.areSame('add', e.src);
+        });
+
+        list.add(model);
+        list.add(model, {src: 'test'});
+        list.add({});
+
+        Assert.areSame(1, calls);
+    },
+
+    "`error` event should fire when a model that isn't in the list is removed": function () {
+        var calls = 0,
+            list  = this.createList(),
+            model = this.createModel();
+
+        list.on('error', function (e) {
+            calls += 1;
+
+            Assert.areSame(model, e.model);
+            Assert.areSame('remove', e.src);
+        });
+
+        list.add(model);
+        list.remove(model);
+        list.remove(model, {src: 'test'});
+
+        Assert.areSame(1, calls);
+    },
+
+    "`error` event should fire when a sync layer response can't be parsed": function () {
+        var calls    = 0,
+            list     = this.createList(),
+            response = 'foo bar baz';
+
+        list.once('error', function (e) {
+            calls += 1;
+
+            Assert.areSame(response, e.response);
+            Assert.areSame('parse', e.src);
+        });
+
+        list.parse(response);
+        list.parse('{"foo": "bar"}');
+
+        Assert.areSame(1, calls);
+    },
+
     '`refresh` event should fire when the list is refreshed or sorted': function () {
         var calls  = 0,
             list   = this.createList(),

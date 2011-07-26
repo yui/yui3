@@ -1,22 +1,6 @@
 /**
- * "widget-autohide" is a widget-level plugin that allows widgets to be hidden
- * when certain events occur.
- *
- * By default, the widget will be hidden when the following events occur
- * <ul>
- *   <li>something is clicked outside the widget's bounding box</li>
- *   <li>something is focussed outside the widget's bounding box</li>
- *   <li>the escape key is pressed</li>
- * </ul>
- *
- * Events can be added or removed from this list through the "hideOn" attribute.
- * The following code demonstrates how to do this. Suppose I want to close the widget when
- * another node is resized.
- * <code>widget.plug(Y.Plugin.Autohide, {hideOn: [{node: resize, eventName: 'resize:end'}]});</code>.
- * The hideOn attribute must be an array of objects. For more details on this attribute, refer to the API docs for it.
- *
- * This module was originally part of the overlay-extras package by Eric Ferraiuolo but was promoted and abstracted
- * into the core library.
+ * A widget-level extension that provides ability to hide widget when 
+ * certain events occur.
  *
  * @module widget-autohide
  * @author eferraiuolo, tilomitra
@@ -40,26 +24,55 @@ var WIDGET_AUTOHIDE    = 'widgetAutohide',
 
     getCN               = Y.ClassNameManager.getClassName;
 
+/**
+ * The WidgetAutohide class provides the hideOn attribute which can
+ * be used to hide the widget when certain events occur.
+ *
+ * @class WidgetAutohide
+ * @param {Object} config User configuration object
+ */
 function WidgetAutohide(config) {
-    this._initAutohide();
+    Y.after(this._bindUIAutohide, this, BIND_UI);
+    Y.after(this._syncUIAutohide, this, SYNC_UI);
+
+
+    if (this.get(RENDERED)) {
+        this._bindUIAutohide();
+        this._syncUIAutohide();
+    }
 
 }
 
+/**
+* Static property used to define the default attribute 
+* configuration introduced by WidgetAutohide.
+*
+* @property WidgetAutohide.ATTRS
+* @static
+* @type Object
+*/
 WidgetAutohide.ATTRS = {
+
+
+    /**
+     * @attribute hideOn
+     * @type array
+     *
+     * @description An array of objects corresponding to the nodes, events, and keycodes to hide the widget on.
+     * The implementer can supply an array of objects, with each object having the following properties:
+     * <p>eventName: (string, required): The eventName to listen to.</p>
+     * <p>node: (Y.Node, optional): The Y.Node that will fire the event (defaults to the boundingBox of the widget)</p>
+     * <p>keyCode: (string, optional): If listening for key events, specify the keyCode</p>
+     * <p>By default, this attribute consists of one object which will cause the widget to hide if the
+     * escape key is pressed.</p>
+     */
     hideOn: {
         value: [
-            // {
-            //     eventName: CLICK_OUTSIDE
-            // },
-            // {
-            //     eventName: FOCUS_OUTSIDE
-            // },
-
-            // {
-            //     node: Y.one(DOCUMENT),
-            //     eventName: KEY,
-            //     keyCode: PRESS_ESCAPE
-            // }
+            {
+                node: Y.one(DOCUMENT),
+                eventName: KEY,
+                keyCode: PRESS_ESCAPE
+            }
         ],
         validator: Y.Lang.isArray
     }
@@ -68,31 +81,40 @@ WidgetAutohide.ATTRS = {
 WidgetAutohide.prototype = {
     // *** Instance Members *** //
 
-        _uiHandles : null,
+        _uiHandlesAutohide : null,
 
         // *** Lifecycle Methods *** //
-
-        _initAutohide : function (config) {
-            Y.after(this._bindUIAutohide, this, BIND_UI);
-            Y.after(this._syncUIAutohide, this, SYNC_UI);
-
-
-            if (this.get(RENDERED)) {
-                this._bindUIAutohide();
-                this._syncUIAutohide();
-            }
-        },
 
         destructor : function () {
 
             this._detachUIHandlesAutohide();
         },
 
+        /**
+         * Binds event listeners to the widget.
+         * <p>
+         * This method in invoked after bindUI is invoked for the Widget class
+         * using YUI's aop infrastructure.
+         * </p>
+         * @method _bindUIAutohide
+         * @protected
+         */
         _bindUIAutohide : function () {
 
             this.after(VISIBLE+CHANGE, this._afterHostVisibleChangeAutohide);
+            this.after("hideOnChange", this._afterHideOnChange);
         },
 
+        /**
+         * Syncs up the widget based on its current state. In particular, removes event listeners if
+         * widget is not visible, and attaches them otherwise.
+         * <p>
+         * This method in invoked after syncUI is invoked for the Widget class
+         * using YUI's aop infrastructure.
+         * </p>
+         * @method _syncUIAutohide
+         * @protected
+         */
         _syncUIAutohide : function () {
 
             this._uiSetHostVisibleAutohide(this.get(VISIBLE));
@@ -100,6 +122,12 @@ WidgetAutohide.prototype = {
 
         // *** Private Methods *** //
 
+        /**
+         * Removes event listeners if widget is not visible, and attaches them otherwise.
+         *
+         * @method _uiSetHostVisibleAutohide
+         * @protected
+         */
         _uiSetHostVisibleAutohide : function (visible) {
 
             if (visible) {
@@ -110,12 +138,18 @@ WidgetAutohide.prototype = {
             }
         },
 
+        /**
+         * Iterates through all objects in the hideOn attribute and creates event listeners.
+         *
+         * @method _attachUIHandlesAutohide
+         * @protected
+         */
         _attachUIHandlesAutohide : function () {
 
-            if (this._uiHandles) { return; }
+            if (this._uiHandlesAutohide) { return; }
 
             var bb = this.get(BOUNDING_BOX),
-                hide = this.hide,
+                hide = Y.bind(this.hide,this),
                 uiHandles = [],
                 self = this,
                 hideOn = this.get('hideOn'),
@@ -145,25 +179,51 @@ WidgetAutohide.prototype = {
                     }
                     
                     else {
-                        Y.Log('The event with name "'+o.ev+'" could not be attached.');
+                        Y.log('The event with name "'+o.ev+'" could not be attached.');
                     }
                     
                 }
 
-            this._uiHandles = uiHandles;
+            this._uiHandlesAutohide = uiHandles;
         },
 
+        /**
+         * Detaches all event listeners created by this extension
+         *
+         * @method _detachUIHandlesAutohide
+         * @protected
+         */
         _detachUIHandlesAutohide : function () {
 
-            Y.each(this._uiHandles, function(h){
+            Y.each(this._uiHandlesAutohide, function(h){
                 h.detach();
             });
-            this._uiHandles = null;
+            this._uiHandlesAutohide = null;
         },
 
+        /**
+         * Default function called when the visibility of the widget changes. Determines
+         * whether to attach or detach event listeners based on the visibility of the widget.
+         *
+         * @method _afterHostVisibleChangeAutohide
+         * @protected
+         */
         _afterHostVisibleChangeAutohide : function (e) {
 
             this._uiSetHostVisibleAutohide(e.newVal);
+        },
+
+        /**
+         * Default function called when hideOn Attribute is changed. Remove existing listeners and create new listeners.
+         *
+         * @method _afterHideOnChange
+         */
+        _afterHideOnChange : function(e) {
+            this._detachUIHandlesAutohide();
+
+            if (this.get(VISIBLE)) {
+                this._attachUIHandlesAutohide();
+            }
         }
 }
 

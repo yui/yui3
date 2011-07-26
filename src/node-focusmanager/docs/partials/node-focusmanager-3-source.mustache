@@ -1,0 +1,26 @@
+<div class="yui3-menubutton-loading">
+    <a id="button-1" href="#menu-1"><span><span>Move To</span></span></a>
+    <div id="menu-1">
+        <ul>
+            <li><input type="button" name="button-1" value="Inbox"></li>
+            <li><input type="button" name="button-2" value="Archive"></li>
+            <li><input type="button" name="button-3" value="Trash"></li>
+        </ul>
+    </div>
+</div>
+
+<script>
+YUI({
+    modules: {
+        "menubuttoncss": {
+            type: "css",
+            fullpath: "{{componentAssets}}/menubutton.css"
+        },
+        "menubuttonjs": {
+            type: "js",
+            fullpath: "{{componentAssets}}/menubutton.js",
+            requires: ["menubuttoncss", "node-focusmanager", "node-event-simulate", "overlay"]
+        }
+    }
+}).use("menubuttonjs");
+</script>

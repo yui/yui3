@@ -19,7 +19,7 @@ This example shows how to use the `Graphics` to create a custom shape. Currently
 </ul>
 <p>
 You can also create your own custom shapes. If you need to have reusable shapes, you can do this by extending the `Shape` class. Once you have created a custom class, you can instantiate it by passing 
-a reference of your class in the `type` attribute of your config to the `getShape` method. In this example, we will create shape called `RoundedRect`.
+a reference of your class in the `type` attribute of your config to the `addShape` method. In this example, we will create shape called `RoundedRect`.
 </p>
 </div>
 <div class="example">
@@ -54,20 +54,18 @@ a reference of your class in the `type` attribute of your config to the `getShap
         {
             var w = this.get("width"),
                 h = this.get("height"),
-                x = this.get("x"),
-                y = this.get("y"),
                 ew = this.get("ellipseWidth"),
                 eh = this.get("ellipseHeight");
             this.clear();
-            this.moveTo(x, y + eh);
-            this.lineTo(x, y + h - eh);
-            this.quadraticCurveTo(x, y + h, x + ew, y + h);
-            this.lineTo(x + w - ew, y + h);
-            this.quadraticCurveTo(x + w, y + h, x + w, y + h - eh);
-            this.lineTo(x + w, y + eh);
-            this.quadraticCurveTo(x + w, y, x + w - ew, y);
-            this.lineTo(x + ew, y);
-            this.quadraticCurveTo(x, y, x, y + eh);
+            this.moveTo(0, eh);
+            this.lineTo(0, h - eh);
+            this.quadraticCurveTo(0, h, ew, h);
+            this.lineTo(w - ew, h);
+            this.quadraticCurveTo(w, h, w, h - eh);
+            this.lineTo(w, eh);
+            this.quadraticCurveTo(w, 0, w - ew, 0);
+            this.lineTo(ew, 0);
+            this.quadraticCurveTo(0, 0, 0, eh);
             this.end();
         }
     }, {
@@ -88,10 +86,10 @@ a reference of your class in the `type` attribute of your config to the `getShap
     var mygraphic = new Y.Graphic({render: "#mygraphiccontainer"}),
 ```
 
-<p>Using the `getShape` method, add an instance of the custom class to the `Graphic` instance.</p>
+<p>Using the `addShape` method, add an instance of the custom class to the `Graphic` instance.</p>
 
 ```
-    myroundrect = mygraphic.getShape({
+    myroundrect = mygraphic.addShape({
         type: Y.RoundedRect,
         width: 300,
         height: 200,

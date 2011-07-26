@@ -1,0 +1,81 @@
+/*	Styles for the button	*/
+
+.yui3-menubutton {
+	margin: 10px;
+	display: inline-block;
+	text-decoration: none;
+	color: #000;
+    border-width: 1px 0;
+    border-style: solid;
+    border-color: #808080;
+	background-color: #fff;	
+}
+
+.yui3-menubutton:focus {
+    background-color: #B3D4FF;
+}
+
+.yui3-menubutton span {
+    border-width: 0 1px;
+    border-style: solid;
+    border-color: #808080;
+    margin: 0 -1px;
+	_margin: 0;	/*	Negative margins don't work correctly in IE 6, so 
+	 				don't use them. */
+	display: block;
+}
+
+.yui3-menubutton span span {
+	border: solid 1px #ccc;
+	margin: 0;
+	padding: 2px 20px 2px 4px;
+	background: url(menu-button-arrow.png) right center no-repeat;
+}
+
+
+/*	Styles for the menu	*/
+
+.yui3-buttonmenu-content {
+    font-size: 93%;  /* 12px */
+    line-height: 1.5;  /* 18px */
+    *line-height: 1.45; /* For IE */
+    border: solid 1px #808080;
+    background: #fff;
+    padding: 3px 0;
+}
+
+.yui3-buttonmenu-content ul { 
+    margin: 0;
+    padding: 0;
+}
+
+.yui3-buttonmenu-content li {
+    list-style-type: none;			
+    padding: 0 20px;
+}
+
+.yui3-buttonmenu-content input {
+	background-color: transparent;
+	border: 0;
+    color: #000;
+	*overflow: visible;	/*	Remove superfluous padding on <BUTTON>s in IE. */
+	padding: 0;
+}
+
+.yui3-menuitem-active {
+    background-color: #B3D4FF;
+}
+
+.yui3-menu-shadow {
+	position: absolute;
+	z-index: -1;		
+	top: 2px;
+	left: -3px;
+	background-color: #000;
+	opacity: .12;
+	filter: alpha(opacity=12);	/*	For IE since it doesn't implement the  
+									CSS3 "opacity" property. */
+	padding: 1px 3px 0 3px;
+	width: 100%;
+	height: 100%;
+}

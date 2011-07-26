@@ -1,0 +1,51 @@
+<a href="#" id="demo">hover me</a>
+
+<script type="text/javascript">
+YUI().use('anim', function(Y) {
+    var node = Y.one('#demo');
+
+    var anim = new Y.Anim({
+        node: node,
+        from: {
+            backgroundColor:node.getStyle('backgroundColor'),
+            color: node.getStyle('color'),
+            borderColor: node.getStyle('borderTopColor')
+        },
+
+        to: {
+            color: '#fff',
+            backgroundColor:'#ffa928',
+            borderColor: '#71241a'
+        },
+
+        duration: 0.5,
+        iterations: 'infinite',
+        direction: 'alternate'
+    });
+
+    var hover = function(e) {
+        var reverse = false,
+            iterations = 'infinite';
+
+        if (anim.get('running')) {
+            anim.stop();
+        }
+
+        if (e.type === 'mouseout') {
+            reverse = true;
+            iterations = 1;
+        }
+
+        anim.setAttrs({
+            'reverse': reverse,
+            'iterations': iterations
+        });
+
+        anim.run();
+    };
+
+    node.on('mouseover', hover);
+    node.on('mouseout', hover);
+});
+
+</script>

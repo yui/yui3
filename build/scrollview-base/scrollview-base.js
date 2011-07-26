@@ -149,11 +149,12 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     syncUI: function() {
         this._uiDimensionsChange();
+
         this.scrollTo(this.get(SCROLL_X), this.get(SCROLL_Y));
     },
 
     /**
-     * Scroll the element to a given y coordinate
+     * Scroll the element to a given xy coordinate
      *
      * @method scrollTo
      * @param x {Number} The x-position to scroll to
@@ -219,7 +220,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     },
 
     /**
-     * Utility method, to create the translate transform string with the 
+     * Utility method, to create the translate transform string with the
      * x, y translation amounts provided.
      *
      * @method _transform
@@ -230,6 +231,24 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     _transform : function(x, y) {
         // TODO: Would we be better off using a Matrix for this?
         return (this._forceHWTransforms) ? 'translate('+ x +'px,'+ y +'px) translateZ(0px)' : 'translate('+ x +'px,'+ y +'px)';
+    },
+
+    /**
+     * Utility method, to move the given element to the given xy position
+     *
+     * @method _moveTo
+     * @param node {Node} The node to move
+     * @param x {Number} The x-position to move to
+     * @param y {Number} The y-position to move to
+     * @private
+     */
+    _moveTo : function(node, x, y) {
+        if (NATIVE_TRANSITIONS) {
+            node.setStyle('transform', this._transform(x, y));
+        } else {
+            node.setStyle(LEFT, x + PX);
+            node.setStyle(TOP, y + PX);
+        }
     },
 
     /**
@@ -506,6 +525,43 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     },
 
     /**
+    * Utility method to obtain scrollWidth, scrollHeight,
+    * accounting for the impact of translate on scrollWidth, scrollHeight
+    * @method _getScrollDims
+    * @returns {Array} The scrollWidth and scrollHeight as an array: [scrollWidth, scrollHeight]
+    * @private
+    */
+    _getScrollDims: function() {
+        var dims,
+
+            // Ideally using CSSMatrix - don't think we have it normalized yet though.
+            // origX = (new WebKitCSSMatrix(cb.getComputedStyle("transform"))).e;
+            // origY = (new WebKitCSSMatrix(cb.getComputedStyle("transform"))).f;
+            origX = this.get(SCROLL_X),
+            origY = this.get(SCROLL_Y),
+
+            TRANS = ScrollView._TRANSITION,
+            cb = this.get(CONTENT_BOX),
+            bb = this.get(BOUNDING_BOX);
+
+        // TODO: Is this OK? Just in case it's called 'during' a transition.
+        if (NATIVE_TRANSITIONS) {
+            cb.setStyle(TRANS.DURATION, ZERO);
+            cb.setStyle(TRANS.PROPERTY, EMPTY);
+        }
+
+        this._moveTo(cb, 0, 0);
+
+        // Use bb instead of cb. cb doesn't gives us the right results
+        // in FF (due to overflow:hidden)
+        dims = [bb.get('scrollWidth'), bb.get('scrollHeight')];
+
+        this._moveTo(cb, -1*origX, -1*origY);
+
+        return dims;
+    },
+
+    /**
      * This method gets invoked whenever the height or width attributes change,
      * allowing us to determine which scrolling axes need to be enabled.
      *
@@ -513,21 +569,20 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @protected
      */
     _uiDimensionsChange: function() {
-
         var sv = this,
             bb = sv._bb,
 
             CLASS_NAMES = ScrollView.CLASS_NAMES,
 
-            height = bb.get('offsetHeight'),
             width = bb.get('offsetWidth'),
+            height = bb.get('offsetHeight'),
 
-            // Use bb instead of cb. cb doesn't gives us the right results
-            // in FF (due to overflow:hidden)
-            scrollHeight = bb.get('scrollHeight'),
-            scrollWidth = bb.get('scrollWidth');
+            scrollDims = this._getScrollDims(),
 
-        if (height && scrollHeight > height) {          
+            scrollWidth = scrollDims[0],
+            scrollHeight = scrollDims[1];
+
+        if (height && scrollHeight > height) {
             sv._scrollsVertical = true;
             sv._maxScrollY = scrollHeight - height;
             sv._minScrollY = 0;
@@ -961,4 +1016,5 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 });
 
 
-}, '@VERSION@' ,{requires:['widget', 'event-gestures', 'transition'], skinnable:true});
+
+}, '@VERSION@' ,{skinnable:true, requires:['widget', 'event-gestures', 'transition']});
