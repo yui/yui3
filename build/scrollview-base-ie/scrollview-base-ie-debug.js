@@ -52,5 +52,4 @@ Y.mix(Y.ScrollView.prototype, {
 }, true);
 
 
-
 }, '@VERSION@' ,{requires:['scrollview-base']});

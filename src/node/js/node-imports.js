@@ -1,17 +1,22 @@
+/**
+ * @module node
+ * @submodule node-core
+ */
+
 Y.Array.each([
     /**
      * Passes through to DOM method.
      * @for Node
      * @method removeChild
-     * @param {HTMLElement | Node} node Node to be removed 
-     * @return {Node} The removed node 
+     * @param {HTMLElement | Node} node Node to be removed
+     * @return {Node} The removed node
      */
     'removeChild',
 
     /**
      * Passes through to DOM method.
      * @method hasChildNodes
-     * @return {Boolean} Whether or not the node has any childNodes 
+     * @return {Boolean} Whether or not the node has any childNodes
      */
     'hasChildNodes',
 
@@ -20,22 +25,22 @@ Y.Array.each([
      * @method cloneNode
      * @param {Boolean} deep Whether or not to perform a deep clone, which includes
      * subtree and attributes
-     * @return {Node} The clone 
+     * @return {Node} The clone
      */
     'cloneNode',
 
     /**
      * Passes through to DOM method.
      * @method hasAttribute
-     * @param {String} attribute The attribute to test for 
-     * @return {Boolean} Whether or not the attribute is present 
+     * @param {String} attribute The attribute to test for
+     * @return {Boolean} Whether or not the attribute is present
      */
     'hasAttribute',
 
     /**
      * Passes through to DOM method.
      * @method removeAttribute
-     * @param {String} attribute The attribute to be removed 
+     * @param {String} attribute The attribute to be removed
      * @chainable
      */
     'removeAttribute',
@@ -50,7 +55,7 @@ Y.Array.each([
     /**
      * Passes through to DOM method.
      * @method getElementsByTagName
-     * @param {String} tagName The tagName to collect 
+     * @param {String} tagName The tagName to collect
      * @return {NodeList} A NodeList representing the HTMLCollection
      */
     'getElementsByTagName',
@@ -123,7 +128,7 @@ Y.Node.importMethod(Y.DOM, [
      * @for Node
      * @for NodeList
      * @chainable
-     * @param {string} name The attribute name 
+     * @param {string} name The attribute name
      * @param {string} value The value to set
      */
     'setAttribute',
@@ -133,21 +138,22 @@ Y.Node.importMethod(Y.DOM, [
      * @method getAttribute
      * @for Node
      * @for NodeList
-     * @param {string} name The attribute name 
-     * @return {string} The attribute value 
+     * @param {string} name The attribute name
+     * @return {string} The attribute value
      */
     'getAttribute',
 
     /**
      * Wraps the given HTML around the node.
      * @method wrap
-     * @param {String} html The markup to wrap around the node. 
+     * @param {String} html The markup to wrap around the node.
      * @chainable
+     * @for Node
      */
     'wrap',
 
     /**
-     * Removes the node's parent node. 
+     * Removes the node's parent node.
      * @method unwrap
      * @chainable
      */
@@ -168,8 +174,8 @@ Y.NodeList.importMethod(Y.Node.prototype, [
  * @method getAttribute
  * @see Node
  * @for NodeList
- * @param {string} name The attribute name 
- * @return {string} The attribute value 
+ * @param {string} name The attribute name
+ * @return {string} The attribute value
  */
 
     'getAttribute',
@@ -180,22 +186,22 @@ Y.NodeList.importMethod(Y.Node.prototype, [
  * @see Node
  * @for NodeList
  * @chainable
- * @param {string} name The attribute name 
+ * @param {string} name The attribute name
  * @param {string} value The value to set
  */
     'setAttribute',
- 
+
 /**
  * Allows for removing attributes on DOM nodes.
  * This passes through to the DOM node, allowing for custom attributes.
  * @method removeAttribute
  * @see Node
  * @for NodeList
- * @param {string} name The attribute to remove 
+ * @param {string} name The attribute to remove
  */
     'removeAttribute',
 /**
- * Removes the parent node from node in the list. 
+ * Removes the parent node from node in the list.
  * @method unwrap
  * @chainable
  */
@@ -203,7 +209,7 @@ Y.NodeList.importMethod(Y.Node.prototype, [
 /**
  * Wraps the given HTML around each node.
  * @method wrap
- * @param {String} html The markup to wrap around the node. 
+ * @param {String} html The markup to wrap around the node.
  * @chainable
  */
     'wrap',

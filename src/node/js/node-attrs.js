@@ -1,3 +1,8 @@
+/**
+ * @module node
+ * @submodule node-base
+ */
+
 var Y_Node = Y.Node,
     Y_DOM = Y.DOM;
 
@@ -94,7 +99,7 @@ Y.Node.importMethod(Y.DOM, [
      * @for Node
      * @for NodeList
      * @chainable
-     * @param {string} name The attribute name 
+     * @param {string} name The attribute name
      * @param {string} value The value to set
      */
     'setAttribute',
@@ -104,8 +109,8 @@ Y.Node.importMethod(Y.DOM, [
      * @method getAttribute
      * @for Node
      * @for NodeList
-     * @param {string} name The attribute name 
-     * @return {string} The attribute value 
+     * @param {string} name The attribute name
+     * @return {string} The attribute value
      */
     'getAttribute'
 

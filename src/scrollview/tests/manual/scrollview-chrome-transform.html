@@ -64,7 +64,8 @@
 
                 Y.one('#addcontent').on('click', function() {
                     Y.one('#scrollview-content ul').append('<li><img src="http://farm5.static.flickr.com/4136/4802088086_c621e0b501.jpg" alt="Above The City II"></li>');
-                    scrollView.syncUI();
+                    //scrollView.syncUI();
+                    scrollView._uiDimensionsChange();
                 });
             });
         </script>

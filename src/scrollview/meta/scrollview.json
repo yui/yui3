@@ -8,7 +8,8 @@
                     "event-gestures",
                     "transition"
                 ],
-                "skinnable" : true
+
+                "skinnable": true
             },
             "scrollview-base-ie": {
                 "requires": [
@@ -35,7 +36,9 @@
             "scrollview-list" : {
                 "requires" : [
                     "plugin"
-                ]
+                ],
+
+                "skinnable" : true
             }
 
         },

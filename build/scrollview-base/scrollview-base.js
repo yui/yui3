@@ -154,7 +154,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     },
 
     /**
-     * Scroll the element to a given y coordinate
+     * Scroll the element to a given xy coordinate
      *
      * @method scrollTo
      * @param x {Number} The x-position to scroll to
@@ -220,7 +220,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     },
 
     /**
-     * Utility method, to create the translate transform string with the 
+     * Utility method, to create the translate transform string with the
      * x, y translation amounts provided.
      *
      * @method _transform
@@ -231,6 +231,24 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     _transform : function(x, y) {
         // TODO: Would we be better off using a Matrix for this?
         return (this._forceHWTransforms) ? 'translate('+ x +'px,'+ y +'px) translateZ(0px)' : 'translate('+ x +'px,'+ y +'px)';
+    },
+
+    /**
+     * Utility method, to move the given element to the given xy position
+     *
+     * @method _moveTo
+     * @param node {Node} The node to move
+     * @param x {Number} The x-position to move to
+     * @param y {Number} The y-position to move to
+     * @private
+     */
+    _moveTo : function(node, x, y) {
+        if (NATIVE_TRANSITIONS) {
+            node.setStyle('transform', this._transform(x, y));
+        } else {
+            node.setStyle(LEFT, x + PX);
+            node.setStyle(TOP, y + PX);
+        }
     },
 
     /**
@@ -526,27 +544,19 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             cb = this.get(CONTENT_BOX),
             bb = this.get(BOUNDING_BOX);
 
+        // TODO: Is this OK? Just in case it's called 'during' a transition.
         if (NATIVE_TRANSITIONS) {
-            // TODO: Is this OK? Just in case it's called 'during' a transition.
             cb.setStyle(TRANS.DURATION, ZERO);
             cb.setStyle(TRANS.PROPERTY, EMPTY);
-
-            cb.setStyle('transform', this._transform(0, 0));
-        } else {
-            cb.setStyle(LEFT, 0 + PX);
-            cb.setStyle(TOP, 0 + PX);
         }
+
+        this._moveTo(cb, 0, 0);
 
         // Use bb instead of cb. cb doesn't gives us the right results
         // in FF (due to overflow:hidden)
         dims = [bb.get('scrollWidth'), bb.get('scrollHeight')];
 
-        if (NATIVE_TRANSITIONS) {
-            cb.setStyle('transform', this._transform(origX, origY));
-        } else {
-            cb.setStyle(LEFT, origX + PX);
-            cb.setStyle(TOP, origY + PX);
-        }
+        this._moveTo(cb, -1*origX, -1*origY);
 
         return dims;
     },
@@ -1004,7 +1014,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         PROPERTY : "WebkitTransitionProperty"
     }
 });
-
 
 
 }, '@VERSION@' ,{skinnable:true, requires:['widget', 'event-gestures', 'transition']});

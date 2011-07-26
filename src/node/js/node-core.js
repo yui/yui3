@@ -1,13 +1,13 @@
 /**
  * The Node Utility provides a DOM-like interface for interacting with DOM nodes.
  * @module node
- * @submodule node-base
+ * @submodule node-core
  */
 
 /**
  * The Node class provides a wrapper for manipulating DOM Nodes.
  * Node properties can be accessed via the set/get methods.
- * Use Y.one() to retrieve Node instances.
+ * Use `Y.one()` to retrieve Node instances.
  *
  * <strong>NOTE:</strong> Node properties are accessed using
  * the <code>set</code> and <code>get</code> methods.
@@ -15,7 +15,7 @@
  * @class Node
  * @constructor
  * @param {DOMNode} node the DOM node to be mapped to the Node instance.
- * @for Node
+ * @uses EventTarget
  */
 
 // "globals"
@@ -241,10 +241,23 @@ Y_Node.importMethod = function(host, name, altName) {
  * first element matching the given selector. Returns null if no match found.
  * <strong>Note:</strong> For chaining purposes you may want to
  * use <code>Y.all</code>, which returns a NodeList when no match is found.
- * @method Y.one
+ * @method one
  * @static
  * @param {String | HTMLElement} node a node or Selector
  * @return {Y.Node | null} a Node instance or null if no match found.
+ * @for YUI
+ */
+
+/**
+ * Returns a single Node instance bound to the node or the
+ * first element matching the given selector. Returns null if no match found.
+ * <strong>Note:</strong> For chaining purposes you may want to
+ * use <code>Y.all</code>, which returns a NodeList when no match is found.
+ * @method one
+ * @static
+ * @param {String | HTMLElement} node a node or Selector
+ * @return {Y.Node | null} a Node instance or null if no match found.
+ * @for Node
  */
 Y_Node.one = function(node) {
     var instance = null,
@@ -354,7 +367,7 @@ Y.mix(Y_Node.prototype, {
 
     /**
      * Returns an attribute value on the Node instance.
-     * Unless pre-configured (via Node.ATTRS), get hands
+     * Unless pre-configured (via `Node.ATTRS`), get hands
      * off to the underlying DOM node.  Only valid
      * attributes/properties for the node will be queried.
      * @method get
@@ -526,7 +539,7 @@ Y.mix(Y_Node.prototype, {
      * @param {String | Function} fn A selector string or boolean method for testing elements.
      * @param {Boolean} testSelf optional Whether or not to include the element in the scan
      * If a function is used, it receives the current node being tested as the only argument.
-     * @return {NodeList} A NodeList instance containing the matching elements 
+     * @return {NodeList} A NodeList instance containing the matching elements
      */
     ancestors: function(fn, testSelf) {
         return Y.all(Y_DOM.ancestors(this._node, _wrapFn(fn), testSelf));
@@ -649,8 +662,8 @@ Y.mix(Y_Node.prototype, {
     /**
      * @method replaceChild
      * @for Node
-     * @param {String | HTMLElement | Node} node Node to be inserted 
-     * @param {HTMLElement | Node} refNode Node to be replaced 
+     * @param {String | HTMLElement | Node} node Node to be inserted
+     * @param {HTMLElement | Node} refNode Node to be replaced
      * @return {Node} The replaced node
      */
     replaceChild: function(node, refNode) {
@@ -684,7 +697,7 @@ Y.mix(Y_Node.prototype, {
             Y.NodeList.each(this.all('*'), function(node) {
                 instance = Y_Node._instances[node[UID]];
                 if (instance) {
-                   instance.destroy(); 
+                   instance.destroy();
                 }
             });
         }
@@ -834,7 +847,7 @@ Y.mix(Y_Node.prototype, {
     },
 
     /**
-     * Returns the DOM node bound to the Node instance 
+     * Returns the DOM node bound to the Node instance
      * @method getDOMNode
      * @return {DOMNode}
      */
