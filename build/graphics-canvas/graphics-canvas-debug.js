@@ -1587,7 +1587,7 @@ CanvasShape.ATTRS =  {
 	 * An array of x, y values which indicates the transformOrigin in which to rotate the shape. Valid values range between 0 and 1 representing a 
 	 * fraction of the shape's corresponding bounding box dimension. The default value is [0.5, 0.5].
 	 *
-	 * @attribute transformOrigin
+	 * @config transformOrigin
 	 * @type Array
 	 */
 	transformOrigin: {
@@ -1600,7 +1600,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * The rotation (in degrees) of the shape.
 	 *
-	 * @attribute rotation
+	 * @config rotation
 	 * @type Number
 	 */
 	rotation: {
@@ -1618,7 +1618,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Dom node for the shape
 	 *
-	 * @attribute node
+	 * @config node
 	 * @type HTMLElement
 	 * @readOnly
 	 */
@@ -1634,7 +1634,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Unique id for class instance.
 	 *
-	 * @attribute id
+	 * @config id
 	 * @type String
 	 */
 	id: {
@@ -1657,7 +1657,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Indicates the width of the shape
 	 *
-	 * @attribute width
+	 * @config width
 	 * @type Number
 	 */
 	width: {
@@ -1667,7 +1667,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Indicates the height of the shape
 	 *
-	 * @attribute height
+	 * @config height
 	 * @type Number
 	 */
 	height: {
@@ -1677,7 +1677,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Indicates the x position of shape.
 	 *
-	 * @attribute x
+	 * @config x
 	 * @type Number
 	 */
 	x: {
@@ -1687,7 +1687,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Indicates the y position of shape.
 	 *
-	 * @attribute y
+	 * @config y
 	 * @type Number
 	 */
 	y: {
@@ -1697,7 +1697,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Indicates whether the shape is visible.
 	 *
-	 * @attribute visible
+	 * @config visible
 	 * @type Boolean
 	 */
 	visible: {
@@ -1739,7 +1739,7 @@ CanvasShape.ATTRS =  {
 	 *  </dl>
 	 *  </p>
 	 *
-	 * @attribute fill
+	 * @config fill
 	 * @type Object 
 	 */
 	fill: {
@@ -1772,7 +1772,7 @@ CanvasShape.ATTRS =  {
 	 *      length of the dash. The second index indicates the length of gap.
 	 *  </dl>
 	 *
-	 * @attribute stroke
+	 * @config stroke
 	 * @type Object
 	 */
 	stroke: {
@@ -1790,7 +1790,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Indicates whether or not the instance will size itself based on its contents.
 	 *
-	 * @attribute autoSize 
+	 * @config autoSize 
 	 * @type Boolean
 	 */
 	autoSize: {
@@ -1800,7 +1800,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Determines whether the instance will receive mouse events.
 	 * 
-	 * @attribute pointerEvents
+	 * @config pointerEvents
 	 * @type string
 	 */
 	pointerEvents: {
@@ -1810,7 +1810,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Reference to the container Graphic.
 	 *
-	 * @attribute graphic
+	 * @config graphic
 	 * @type Graphic
 	 */
 	graphic: {
@@ -1892,7 +1892,7 @@ CanvasPath.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	/**
 	 * Indicates the width of the shape
 	 *
-	 * @attribute width
+	 * @config width
 	 * @type Number
 	 */
 	width: {
@@ -1912,7 +1912,7 @@ CanvasPath.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	/**
 	 * Indicates the height of the shape
 	 *
-	 * @attribute height
+	 * @config height
 	 * @type Number
 	 */
 	height: {
@@ -1932,7 +1932,7 @@ CanvasPath.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	/**
 	 * Indicates the path used for the node.
 	 *
-	 * @attribute path
+	 * @config path
 	 * @type String
 	 */
 	path: {
@@ -2071,7 +2071,7 @@ CanvasCircle.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	/**
 	 * Indicates the width of the shape
 	 *
-	 * @attribute width
+	 * @config width
 	 * @type Number
 	 */
 	width: {
@@ -2090,7 +2090,7 @@ CanvasCircle.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	/**
 	 * Indicates the height of the shape
 	 *
-	 * @attribute height
+	 * @config height
 	 * @type Number
 	 */
 	height: {
@@ -2109,7 +2109,7 @@ CanvasCircle.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	/**
 	 * Radius of the circle
 	 *
-	 * @attribute radius
+	 * @config radius
      * @type Number
 	 */
 	radius: {
@@ -2172,7 +2172,7 @@ CanvasPieSlice.ATTRS = Y.mix({
     /**
      * Starting angle in relation to a circle in which to begin the pie slice drawing.
      *
-     * @attribute startAngle
+     * @config startAngle
      * @type Number
      */
     startAngle: {
@@ -2182,7 +2182,7 @@ CanvasPieSlice.ATTRS = Y.mix({
     /**
      * Arc of the slice.
      *
-     * @attribute arc
+     * @config arc
      * @type Number
      */
     arc: {
@@ -2192,7 +2192,7 @@ CanvasPieSlice.ATTRS = Y.mix({
     /**
      * Radius of the circle in which the pie slice is drawn
      *
-     * @attribute radius
+     * @config radius
      * @type Number
      */
     radius: {
@@ -2218,7 +2218,7 @@ CanvasGraphic.ATTRS = {
     /**
      * Whether or not to render the `Graphic` automatically after to a specified parent node after init. This can be a Node instance or a CSS selector string.
      * 
-     * @attribute render
+     * @config render
      * @type Node | String 
      */
     render: {},
@@ -2226,7 +2226,7 @@ CanvasGraphic.ATTRS = {
     /**
 	 * Unique id for class instance.
 	 *
-	 * @attribute id
+	 * @config id
 	 * @type String
 	 */
 	id: {
@@ -2249,7 +2249,7 @@ CanvasGraphic.ATTRS = {
     /**
      * Key value pairs in which a shape instance is associated with its id.
      *
-     *  @attribute shapes
+     *  @config shapes
      *  @type Object
      *  @readOnly
      */
@@ -2265,7 +2265,7 @@ CanvasGraphic.ATTRS = {
     /**
      *  Object containing size and coordinate data for the content of a Graphic in relation to the graphic instance's position.
      *
-     *  @attribute contentBounds 
+     *  @config contentBounds 
      *  @type Object
      *  @readOnly
      */
@@ -2281,7 +2281,7 @@ CanvasGraphic.ATTRS = {
     /**
      *  The outermost html element of the Graphic instance.
      *
-     *  @attribute node
+     *  @config node
      *  @type HTMLElement
      *  @readOnly
      */
@@ -2297,7 +2297,7 @@ CanvasGraphic.ATTRS = {
 	/**
 	 * Indicates the width of the `Graphic`. 
 	 *
-	 * @attribute width
+	 * @config width
 	 * @type Number
 	 */
     width: {
@@ -2314,7 +2314,7 @@ CanvasGraphic.ATTRS = {
 	/**
 	 * Indicates the height of the `Graphic`. 
 	 *
-	 * @attribute height 
+	 * @config height 
 	 * @type Number
 	 */
     height: {
@@ -2332,7 +2332,7 @@ CanvasGraphic.ATTRS = {
      *  Determines how the size of instance is calculated. If true, the width and height are determined by the size of the contents.
      *  If false, the width and height values are either explicitly set or determined by the size of the parent node's dimensions.
      *
-     *  @attribute autoSize
+     *  @config autoSize
      *  @type Boolean
      *  @default false
      */
@@ -2344,7 +2344,7 @@ CanvasGraphic.ATTRS = {
      * When overflow is set to true, by default, the contentBounds will resize to greater values but not smaller values. (for performance)
      * When resizing the contentBounds down is desirable, set the resizeDown value to true.
      *
-     * @attribute resizeDown 
+     * @config resizeDown 
      * @type Boolean
      */
     resizeDown: {
@@ -2364,7 +2364,7 @@ CanvasGraphic.ATTRS = {
 	/**
 	 * Indicates the x-coordinate for the instance.
 	 *
-	 * @attribute x
+	 * @config x
 	 * @type Number
 	 */
     x: {
@@ -2387,7 +2387,7 @@ CanvasGraphic.ATTRS = {
 	/**
 	 * Indicates the y-coordinate for the instance.
 	 *
-	 * @attribute y
+	 * @config y
 	 * @type Number
 	 */
     y: {
@@ -2411,7 +2411,7 @@ CanvasGraphic.ATTRS = {
      * Indicates whether or not the instance will automatically redraw after a change is made to a shape.
      * This property will get set to false when batching operations.
      *
-     * @attribute autoDraw
+     * @config autoDraw
      * @type Boolean
      * @default true
      * @private
@@ -2423,7 +2423,7 @@ CanvasGraphic.ATTRS = {
 	/**
 	 * Indicates whether the `Graphic` and its children are visible.
 	 *
-	 * @attribute visible
+	 * @config visible
 	 * @type Boolean
 	 */
     visible: {

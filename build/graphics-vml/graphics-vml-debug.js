@@ -573,7 +573,7 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 			len,
 			linecap,
 			linejoin;
-		if(stroke && stroke.weight && stroke.weight > 0)
+        if(stroke && stroke.weight && stroke.weight > 0)
 		{
 			props = {};
 			linecap = stroke.linecap || "flat";
@@ -1372,7 +1372,7 @@ VMLShape.ATTRS = {
 	 * An array of x, y values which indicates the transformOrigin in which to rotate the shape. Valid values range between 0 and 1 representing a 
 	 * fraction of the shape's corresponding bounding box dimension. The default value is [0.5, 0.5].
 	 *
-	 * @attribute transformOrigin
+	 * @config transformOrigin
 	 * @type Array
 	 */
 	transformOrigin: {
@@ -1385,7 +1385,7 @@ VMLShape.ATTRS = {
 	/**
 	 * Indicates the x position of shape.
 	 *
-	 * @attribute x
+	 * @config x
 	 * @type Number
 	 */
 	x: {
@@ -1395,7 +1395,7 @@ VMLShape.ATTRS = {
 	/**
 	 * Indicates the y position of shape.
 	 *
-	 * @attribute y
+	 * @config y
 	 * @type Number
 	 */
 	y: {
@@ -1405,7 +1405,7 @@ VMLShape.ATTRS = {
 	/**
 	 * Unique id for class instance.
 	 *
-	 * @attribute id
+	 * @config id
 	 * @type String
 	 */
 	id: {
@@ -1427,7 +1427,7 @@ VMLShape.ATTRS = {
 	
 	/**
 	 * 
-	 * @attribute width
+	 * @config width
 	 */
 	width: {
 		value: 0
@@ -1435,7 +1435,7 @@ VMLShape.ATTRS = {
 
 	/**
 	 * 
-	 * @attribute height
+	 * @config height
 	 */
 	height: {
 		value: 0
@@ -1444,7 +1444,7 @@ VMLShape.ATTRS = {
 	/**
 	 * Indicates whether the shape is visible.
 	 *
-	 * @attribute visible
+	 * @config visible
 	 * @type Boolean
 	 */
 	visible: {
@@ -1490,7 +1490,7 @@ VMLShape.ATTRS = {
 	 *  </dl>
 	 *  </p>
 	 *
-	 * @attribute fill
+	 * @config fill
 	 * @type Object 
 	 */
 	fill: {
@@ -1540,7 +1540,7 @@ VMLShape.ATTRS = {
 	 *      length of the dash. The second index indicates the length of gap.
 	 *  </dl>
 	 *
-	 * @attribute stroke
+	 * @config stroke
 	 * @type Object
 	 */
 	stroke: {
@@ -1570,7 +1570,7 @@ VMLShape.ATTRS = {
 	/**
 	 * Indicates whether or not the instance will size itself based on its contents.
 	 *
-	 * @attribute autoSize 
+	 * @config autoSize 
 	 * @type Boolean
 	 */
 	autoSize: {
@@ -1580,7 +1580,7 @@ VMLShape.ATTRS = {
 	/**
 	 * Determines whether the instance will receive mouse events.
 	 * 
-	 * @attribute pointerEvents
+	 * @config pointerEvents
 	 * @type string
 	 */
 	pointerEvents: {
@@ -1590,7 +1590,7 @@ VMLShape.ATTRS = {
 	/**
 	 * Dom node for the shape.
 	 *
-	 * @attribute node
+	 * @config node
 	 * @type HTMLElement
 	 * @readOnly
 	 */
@@ -1606,7 +1606,7 @@ VMLShape.ATTRS = {
 	/**
 	 * Reference to the container Graphic.
 	 *
-	 * @attribute graphic
+	 * @config graphic
 	 * @type Graphic
 	 */
 	graphic: {
@@ -1648,7 +1648,7 @@ VMLPath.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 	/**
 	 * Indicates the width of the shape
 	 * 
-	 * @attribute width 
+	 * @config width 
 	 * @type Number
 	 */
 	width: {
@@ -1667,7 +1667,7 @@ VMLPath.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 	/**
 	 * Indicates the height of the shape
 	 * 
-	 * @attribute height
+	 * @config height
 	 * @type Number
 	 */
 	height: {
@@ -1686,7 +1686,7 @@ VMLPath.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 	/**
 	 * Indicates the path used for the node.
 	 *
-	 * @attribute path
+	 * @config path
 	 * @type String
 	 */
 	path: {
@@ -1751,7 +1751,7 @@ VMLEllipse.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 	/**
 	 * Horizontal radius for the ellipse.
 	 *
-	 * @attribute xRadius
+	 * @config xRadius
 	 * @type Number
 	 */
 	xRadius: {
@@ -1775,7 +1775,7 @@ VMLEllipse.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 	/**
 	 * Vertical radius for the ellipse.
 	 *
-	 * @attribute yRadius
+	 * @config yRadius
 	 * @type Number
 	 */
 	yRadius: {
@@ -1826,7 +1826,7 @@ VMLCircle.ATTRS = Y.merge(VMLShape.ATTRS, {
 	/**
 	 * Radius for the circle.
 	 *
-	 * @attribute radius
+	 * @config radius
 	 * @type Number
 	 */
 	radius: {
@@ -1838,7 +1838,7 @@ VMLCircle.ATTRS = Y.merge(VMLShape.ATTRS, {
 	/**
 	 * Width of the circle
 	 *
-	 * @attribute width
+	 * @config width
 	 * @type Number
 	 */
 	width: {
@@ -1859,7 +1859,7 @@ VMLCircle.ATTRS = Y.merge(VMLShape.ATTRS, {
 	/**
 	 * Width of the circle
 	 *
-	 * @attribute width
+	 * @config width
 	 * @type Number
 	 */
 	height: {
@@ -1929,7 +1929,7 @@ VMLPieSlice.ATTRS = Y.mix({
     /**
      * Starting angle in relation to a circle in which to begin the pie slice drawing.
      *
-     * @attribute startAngle
+     * @config startAngle
      * @type Number
      */
     startAngle: {
@@ -1939,7 +1939,7 @@ VMLPieSlice.ATTRS = Y.mix({
     /**
      * Arc of the slice.
      *
-     * @attribute arc
+     * @config arc
      * @type Number
      */
     arc: {
@@ -1949,7 +1949,7 @@ VMLPieSlice.ATTRS = Y.mix({
     /**
      * Radius of the circle in which the pie slice is drawn
      *
-     * @attribute radius
+     * @config radius
      * @type Number
      */
     radius: {
@@ -1973,7 +1973,7 @@ VMLGraphic.ATTRS = {
     /**
      * Whether or not to render the `Graphic` automatically after to a specified parent node after init. This can be a Node instance or a CSS selector string.
      * 
-     * @attribute render
+     * @config render
      * @type Node | String 
      */
     render: {},
@@ -1981,7 +1981,7 @@ VMLGraphic.ATTRS = {
     /**
 	 * Unique id for class instance.
 	 *
-	 * @attribute id
+	 * @config id
 	 * @type String
 	 */
 	id: {
@@ -2004,7 +2004,7 @@ VMLGraphic.ATTRS = {
     /**
      * Key value pairs in which a shape instance is associated with its id.
      *
-     *  @attribute shapes
+     *  @config shapes
      *  @type Object
      *  @readOnly
      */
@@ -2020,7 +2020,7 @@ VMLGraphic.ATTRS = {
     /**
      *  Object containing size and coordinate data for the content of a Graphic in relation to the coordSpace node.
      *
-     *  @attribute contentBounds
+     *  @config contentBounds
      *  @type Object
      */
     contentBounds: {
@@ -2035,7 +2035,7 @@ VMLGraphic.ATTRS = {
     /**
      *  The html element that represents to coordinate system of the Graphic instance.
      *
-     *  @attribute node
+     *  @config node
      *  @type HTMLElement
      */
     node: {
@@ -2050,7 +2050,7 @@ VMLGraphic.ATTRS = {
 	/**
 	 * Indicates the width of the `Graphic`. 
 	 *
-	 * @attribute width
+	 * @config width
 	 * @type Number
 	 */
     width: {
@@ -2067,7 +2067,7 @@ VMLGraphic.ATTRS = {
 	/**
 	 * Indicates the height of the `Graphic`. 
 	 *
-	 * @attribute height 
+	 * @config height 
 	 * @type Number
 	 */
     height: {
@@ -2085,7 +2085,7 @@ VMLGraphic.ATTRS = {
      *  Determines how the size of instance is calculated. If true, the width and height are determined by the size of the contents.
      *  If false, the width and height values are either explicitly set or determined by the size of the parent node's dimensions.
      *
-     *  @attribute autoSize
+     *  @config autoSize
      *  @type Boolean
      *  @default false
      */
@@ -2097,7 +2097,7 @@ VMLGraphic.ATTRS = {
      * When overflow is set to true, by default, the contentBounds will resize to greater values but not values. (for performance)
      * When resizing the contentBounds down is desirable, set the resizeDown value to true.
      *
-     * @attribute resizeDown 
+     * @config resizeDown 
      * @type Boolean
      */
     resizeDown: {
@@ -2117,7 +2117,7 @@ VMLGraphic.ATTRS = {
 	/**
 	 * Indicates the x-coordinate for the instance.
 	 *
-	 * @attribute x
+	 * @config x
 	 * @type Number
 	 */
     x: {
@@ -2140,7 +2140,7 @@ VMLGraphic.ATTRS = {
 	/**
 	 * Indicates the y-coordinate for the instance.
 	 *
-	 * @attribute y
+	 * @config y
 	 * @type Number
 	 */
     y: {
@@ -2164,7 +2164,7 @@ VMLGraphic.ATTRS = {
      * Indicates whether or not the instance will automatically redraw after a change is made to a shape.
      * This property will get set to false when batching operations.
      *
-     * @attribute autoDraw
+     * @config autoDraw
      * @type Boolean
      * @default true
      * @private
