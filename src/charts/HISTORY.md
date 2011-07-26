@@ -4,6 +4,12 @@ Charts Change History
 3.4.0
 -----
 
+  * Charts only requires datatype-number and datatype-date instead of the datatype rollup. 
+  * #2530413 Position axis labels with transform instead of css styles.   
+  * #2530533 Fixed issue in which stacked bar/column displayed inaccurated data on mouseover when zero values appeared in the series.  
+  * #2530404 Fix issue in which markers were incorrectly omitted from graphs.   
+  * #2530395 SplineSeries extends LineSeries instead of CartesianSeries. 
+  * #2529841 Add axis title.  
   * #2530143 Refactor to use Graphics API
   * #2530223 Fixed bug in which negative value markers were not displayed in column/bar series.
   * #2529849 Fixed styles documentation bug
