@@ -309,5 +309,4 @@ PaginatorPlugin.SNAP_TO_CURRENT = {
 Y.namespace('Plugin').ScrollViewPaginator = PaginatorPlugin;
 
 
-
 }, '@VERSION@' ,{requires:['plugin']});

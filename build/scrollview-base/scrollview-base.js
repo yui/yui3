@@ -1016,5 +1016,4 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 });
 
 
-
 }, '@VERSION@' ,{skinnable:true, requires:['widget', 'event-gestures', 'transition']});
