@@ -1216,7 +1216,7 @@ Y.Loader.prototype = {
             adddef = ON_PAGE[name] && ON_PAGE[name].details,
             d, k, m1,
             r, old_mod,
-            o, skinmod, skindef,
+            o, skinmod, skindef, skinpar, skinname,
             intl = mod.lang || mod.intl,
             info = this.moduleInfo,
             ftests = Y.Features && Y.Features.tests.load,
@@ -1361,9 +1361,18 @@ Y.Loader.prototype = {
         // Create skin modules
         if (mod.skinnable) {
             skindef = this.skin.overrides;
-            if (skindef && skindef[name]) {
-                for (i = 0; i < skindef[name].length; i++) {
-                    skinmod = this._addSkin(skindef[name][i], name);
+            oeach(YUI.Env.aliases, function(o, n) {
+                if (Y.Array.indexOf(o, name) > -1) {
+                    skinpar = n;
+                }
+            });
+            if (skindef && (skindef[name] || (skinpar && skindef[skinpar]))) {
+                skinname = name;
+                if (skindef[skinpar]) {
+                    skinname = skinpar;
+                }
+                for (i = 0; i < skindef[skinname].length; i++) {
+                    skinmod = this._addSkin(skindef[skinname][i], name);
                     d.push(skinmod);
                 }
             } else {
