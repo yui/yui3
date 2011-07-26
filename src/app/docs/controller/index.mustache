@@ -4,7 +4,7 @@ Controller provides URL-based same-page routing using <a href="https://developer
 </p>
 
 <p>
-This makes it easy to wire up route handlers for different application states while providing full back/forward navigation support and bookmarkable, shareable URLs, all handled entirely on the client with no server-side route handling required.
+This makes it easy to wire up route handlers for different application states while providing full back/forward navigation support and bookmarkable, shareable URLs, all handled entirely on the client.
 </p>
 
 <p>
@@ -94,7 +94,7 @@ This is the simplest way of working with Controller, but you may also extend `Y.
 <h4>Config Properties</h4>
 
 <p>
-When instantiating Controller, you may optionally pass in a config object containing any of the following properties. For more details on these properties, see Controller's <a href="{{apiDocs}}/module_controller.html">API docs</a>.
+When instantiating Controller, you may optionally pass in a config object containing any of the following properties. For more details on these properties, see Controller's <a href="{{apiDocs}}/modules/module_controller.html">API docs</a>.
 </p>
 
 <table>
@@ -106,20 +106,6 @@ When instantiating Controller, you may optionally pass in a config object contai
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <td>`html5`</td>
-      <td style="white-space: nowrap;">see description</td>
-      <td>
-        <p>
-        Whether or not the user's browser is capable of using HTML5 history.
-        </p>
-
-        <p>
-        This property is for informational purposes only. It's not configurable, and changing it will have no effect.
-        </p>
-      </td>
-    </tr>
-
     <tr>
       <td>`root`</td>
       <td>`''`</td>
@@ -173,14 +159,43 @@ var controller = new Y.Controller({
 });
 ```
 
+<h4>Read-Only Properties</h4>
+
+<p>
+Controller instances currently expose a single informational property, `html5`, which is meant to be read-only.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>`html5`</td>
+      <td>
+        <p>
+        Whether or not the user's browser is capable of using HTML5 history.
+        </p>
+
+        <p>
+        This property is for informational purposes only. It's not configurable, and changing it will have no effect.
+        </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 <h4>Setting the Root Path</h4>
 
 <p>
-Let's say the URL for your website is `http://example.com/mysite/`. Since Controller matches routes based on the URL path, it would look for routes beginning with `/mysite/`. 
+Let's say the URL for your website is `http://example.com/mysite/`. Since Controller matches routes based on the URL path, it would look for routes beginning with `/mysite/`.
 </p>
 
 <p>
-You could deal with this by ensuring that all your routes start with `/mysite/`, but that's tedious, and it won't work well if you're writing a component that might be used on various sites where you can't anticipate the root path. 
+You could deal with this by ensuring that all your routes start with `/mysite/`, but that's tedious, and it won't work well if you're writing a component that might be used on various sites where you can't anticipate the root path.
 </p>
 
 <p>
@@ -264,7 +279,7 @@ Y.CustomController = Y.Base.create('customController', Y.Controller, [], {
   }
 });
 
-// Create a CustomController instance that inherits the defaults and adds to 
+// Create a CustomController instance that inherits the defaults and adds to
 // them.
 var controller = new Y.CustomController();
 
@@ -436,7 +451,7 @@ When a route is matched, the callback function associated with that route will b
       </dd>
     </dl>
   </dd>
-  
+
   <dt><strong>`next` (Function)</strong></dt>
   <dd>
     <p>
@@ -541,6 +556,45 @@ controller.save('/ice-cream?flavor=kitten');
 // => "Error! Error! Does not compute!"
 ```
 
+<h4>Capturing Link Clicks</h4>
+
+<p>
+An excellent way to provide progressive enhancement on a page with URLs that can be handled by both the server and the client is to use normal links, and then add a delegated event handler to capture clicks on those links and use client-side routing when JavaScript is available. You can also use this technique to selectively use client-side routing or server-side routing depending on which link is clicked.
+</p>
+
+```
+// This sample requires the `node-event-delegate` module.
+YUI().use('controller', 'node-event-delegate', function (Y) {
+  // ... create a controller instance as described in the sections above ...
+
+  // Attach a delegated click handler to listen for clicks on all links on the
+  // page.
+  Y.one('body').delegate('click', function (e) {
+    // Allow the native behavior on middle/right-click, or when Ctrl or Command
+    // are pressed.
+    if (e.button !== 1 || e.ctrlKey || e.metaKey) {
+      return;
+    }
+
+    // Remove the non-path portion of the URL, and any portion of the path that
+    // isn't relative to this controller's root path.
+    var path = controller.removeRoot(e.currentTarget.get('href'));
+
+    // If the controller has a route that matches this path, then use the
+    // controller to update the URL and handle the route. Otherwise, let the
+    // browser handle the click normally.
+    if (controller.hasRoute(path)) {
+      e.preventDefault();
+      controller.save(path);
+    }
+  }, 'a');
+});
+```
+
+<p>
+Now a click on any link, such as `<a href="http://example.com/foo">Click me!</a>`, will automatically be handled by the controller if there's a matching route. If there's no matching route, or if the user doesn't have JavaScript enabled, the link click will be handled normally by the browser.
+</p>
+
 <h3>To Dispatch or Not to Dispatch?</h3>
 
 <p>
@@ -554,6 +608,7 @@ A dispatch can be triggered in the following ways:
 <ul>
   <li>Automatically, whenever the URL changes after the initial pageview.</li>
   <li>Manually, by calling the `dispatch()` method.</li>
+  <li>Manually (but only in HTML5 browsers), by calling the `upgrade()` method when the URL contains a hash-based route that was copied from a legacy browser.</li>
 </ul>
 
 <p>
@@ -583,11 +638,11 @@ YUI().use('controller', 'node', function (Y) {
 ```
 
 <p>
-In an HTML5 browser, when the user clicks the button, Controller will change the URL to `http://example.com/pie` and then execute the `/pie` route. If the user bookmarks this URL and then loads it again later, the web server will handle the request. If it doesn't recognize the path `/pie`, it may return a 404 error, which would be no good.
+In an HTML5 browser, when the user clicks the button, Controller will change the URL to `http://example.com/pie` and then execute the `/pie` route, but the browser won't contact the server. If the user bookmarks this URL and then loads it again later, the web server will handle the request. If it doesn't recognize the path `/pie`, it may return a 404 error, which would be no good.
 </p>
 
 <p>
-In a legacy browser, clicking the button will cause the URL to change to `http://example.com/#/pie`, and the `/pie` route will be executed. The difference is that if the user bookmarks this URL and loads it later, the hash portion won't be sent to the server. The server will only see `http://example.com/`, so we'll have to handle the request on the client as well.
+In a legacy browser, clicking the button will cause the URL to change to `http://example.com/#/pie`, and the `/pie` route will be executed, also without contacting the server. The difference is that if the user bookmarks this URL and loads it later, the hash portion won't be sent to the server. The server will only see `http://example.com/`, so it will be necessary to handle the request on the client as well.
 </p>
 
 <p>
@@ -595,8 +650,12 @@ There are two ways to deal with this. One way would be to implement server-side 
 </p>
 
 ```
-// Dispatch to an initial route on legacy browsers.
-if (!controller.html5) {
+// Always dispatch to an initial route on legacy browsers. Only dispatch to an
+// initial route on HTML5 browsers if it's necessary in order to upgrade a
+// legacy hash URL to an HTML5 URL.
+if (controller.html5) {
+  controller.upgrade();
+} else {
   controller.dispatch();
 }
 ```
@@ -645,7 +704,11 @@ It's very important that any URL generated by Controller be usable in any browse
 </p>
 
 <p>
-When a hash-based URL is loaded in an HTML5 browser and `dispatch()` is called, Controller automatically upgrades it to an HTML5 URL. So a URL like `http://example.com/#/pie` will become `http://example.com/pie`, and the HTML5 browser will execute the appropriate route handler.
+When a hash-based URL is loaded in an HTML5 browser and `dispatch()` or `upgrade()` are called, Controller automatically upgrades the URL to an HTML5 URL. So a URL like `http://example.com/#/pie` will become `http://example.com/pie`, and the HTML5 browser will execute the appropriate route handler.
+</p>
+
+<p>
+The difference between the `dispatch()` and `upgrade()` methods is that `dispatch()` always dispatches to the first route that matches the current URL, whereas `upgrade()` will only dispatch if the browser is an HTML5 browser and the URL is a legacy hash-based URL that must be handled on the client in order to upgrade it to an HTML5 URL.
 </p>
 
 <p>
@@ -673,10 +736,6 @@ Being able to render the same application states both on the server and the clie
 
 <p>
 Controller's routing style and route specification format are intentionally very similar to those of the <a href="http://expressjs.com/">Express.js</a> server-side framework. With a little care, you may be able to use the same route handler code on both the server and the client.
-</p>
-
-<p>
-While this was out of the scope of the initial release of the Controller component, the YUI team plans to provide documentation and examples in future releases demonstrating how to share server-side and client-side code.
 </p>
 
 <h4>Supporting Google's Ajax Crawling Scheme</h4>
@@ -708,12 +767,12 @@ Don't skip the server-side changes! Without them, using the `#!` prefix won't do
 <h2>Known Limitations</h2>
 
 <ul>
-  <li><p><strong>HTML5 history is not currently supported by any version of Internet Explorer.</strong> This includes Internet Explorer 9. Please feel free to let Microsoft know</p></li>
+  <li><p><strong>HTML5 history is not currently supported by any version of Internet Explorer.</strong> This includes Internet Explorer 9 and developer preview releases of IE10 as of the time these docs were written. Please feel free to let Microsoft know how you feel about this.</p></li>
 
   <li><p><strong>Android 2.x is forced to use hash-based history due to <a href="http://code.google.com/p/android/issues/detail?id=17471">a bug</a> in Android's HTML5 history implementation.</strong> This bug does not affect Android 3.0 and higher.</p></li>
 
   <li><p><strong>Hash-based URLs are case-insensitive in Internet Explorer 8 and 9</strong>. Most browsers follow the HTML5 spec and treat URLs&mdash;including hash-based URLs&mdash;as case-sensitive. IE8 and IE9 ignore case in hash-based URLs, so changing a hash-based URL from `/foo` to `/Foo` won't trigger a dispatch.</p></li>
-  
+
   <li><p><strong>Internet Explorer 6 and 7 only retain the most recent hash-based URL from a previous pageview after navigating to another page and returning.</strong> However, history entries created within a single pageview will persist for the duration of that pageview, and bookmarked URLs will still work in all cases.</p></li>
 
   <li><p><strong>In Internet Explorer 6 and 7, the page titles displayed for history entries in the browser's history dropdown menu are not correct.</strong> Instead of showing the title of each page, it shows part of the URL of each page.</p></li>
