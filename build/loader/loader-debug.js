@@ -1306,7 +1306,7 @@ Y.Loader.prototype = {
             adddef = ON_PAGE[name] && ON_PAGE[name].details,
             d, k, m1,
             r, old_mod,
-            o, skinmod, skindef,
+            o, skinmod, skindef, skinpar, skinname,
             intl = mod.lang || mod.intl,
             info = this.moduleInfo,
             ftests = Y.Features && Y.Features.tests.load,
@@ -1451,9 +1451,18 @@ Y.Loader.prototype = {
         // Create skin modules
         if (mod.skinnable) {
             skindef = this.skin.overrides;
-            if (skindef && skindef[name]) {
-                for (i = 0; i < skindef[name].length; i++) {
-                    skinmod = this._addSkin(skindef[name][i], name);
+            oeach(YUI.Env.aliases, function(o, n) {
+                if (Y.Array.indexOf(o, name) > -1) {
+                    skinpar = n;
+                }
+            });
+            if (skindef && (skindef[name] || (skinpar && skindef[skinpar]))) {
+                skinname = name;
+                if (skindef[skinpar]) {
+                    skinname = skinpar;
+                }
+                for (i = 0; i < skindef[skinname].length; i++) {
+                    skinmod = this._addSkin(skindef[skinname][i], name);
                     d.push(skinmod);
                 }
             } else {
@@ -4161,6 +4170,48 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "features"
         ]
     }, 
+    "scrollview": {
+        "requires": [
+            "scrollview-base", 
+            "scrollview-scrollbars"
+        ]
+    }, 
+    "scrollview-base": {
+        "requires": [
+            "widget", 
+            "event-gestures", 
+            "transition"
+        ], 
+        "skinnable": true
+    }, 
+    "scrollview-base-ie": {
+        "condition": {
+            "name": "scrollview-base-ie", 
+            "trigger": "scrollview-base", 
+            "ua": "ie"
+        }, 
+        "requires": [
+            "scrollview-base"
+        ]
+    }, 
+    "scrollview-list": {
+        "requires": [
+            "plugin"
+        ]
+    }, 
+    "scrollview-paginator": {
+        "requires": [
+            "plugin"
+        ]
+    }, 
+    "scrollview-scrollbars": {
+        "requires": [
+            "classnamemanager", 
+            "transition", 
+            "plugin"
+        ], 
+        "skinnable": true
+    }, 
     "selection": {
         "requires": [
             "node"
@@ -4473,19 +4524,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "jsonp-url"
         ]
     }, 
-    "yui": {
-        "use": [
-            "yui-base", 
-            "get", 
-            "features", 
-            "intl-base", 
-            "yui-log", 
-            "yui-later", 
-            "loader-base", 
-            "loader-rollup", 
-            "loader-yui3"
-        ]
-    }, 
+    "yui": {}, 
     "yui-base": {}, 
     "yui-later": {
         "requires": [
@@ -4497,24 +4536,14 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "yui-base"
         ]
     }, 
-    "yui-rls": {
-        "use": [
-            "yui-base", 
-            "get", 
-            "features", 
-            "intl-base", 
-            "rls", 
-            "yui-log", 
-            "yui-later"
-        ]
-    }, 
+    "yui-rls": {}, 
     "yui-throttle": {
         "requires": [
             "yui-base"
         ]
     }
 };
-YUI.Env[Y.version].md5 = '62b9259ef7183287d0f354a9cd0d97d2';
+YUI.Env[Y.version].md5 = 'cf104485c0ff053ed4a54b527e11b353';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

@@ -8,7 +8,7 @@
                     "event-gestures",
                     "transition"
                 ],
-                "skinnable" : true,
+                "skinnable" : true
             },
             "scrollview-base-ie": {
                 "requires": [
@@ -21,21 +21,21 @@
             },
             "scrollview-scrollbars" : {
                 "requires" : [
-		    "classnamemanager",
+		            "classnamemanager",
                     "transition",
                     "plugin"
                 ],
-                "skinnable" : true,
+                "skinnable" : true
             },
             "scrollview-paginator" : {
                 "requires" : [
                     "plugin"
-                ],
+                ]
             },
             "scrollview-list" : {
                 "requires" : [
                     "plugin"
-                ],
+                ]
             }
 
         },
