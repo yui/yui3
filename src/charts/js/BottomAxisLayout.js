@@ -214,6 +214,10 @@ BottomAxisLayout.prototype = {
                     leftOffset -= (cosRadians * labelWidth)/2 + (sinRadians * labelHeight)/2;
                 }
             }
+            x += leftOffset;
+            y += topOffset;
+            props.x = Math.round(x);
+            props.y = Math.round(y);
         }
         else
         {
@@ -237,11 +241,11 @@ BottomAxisLayout.prototype = {
                 max = (sinRadians * labelWidth) + (cosRadians * labelHeight);
                 leftOffset -= ((cosRadians * labelWidth) + (sinRadians * labelHeight))/2;
             }
+            x += leftOffset;
+            y += topOffset;
+            label.style.left = Math.round(x) + "px";
+            label.style.top = Math.round(y) + "px";
         }
-        x += leftOffset;
-        y += topOffset;
-        label.style.left = x + "px";
-        label.style.top = y + "px";
         this._titleSize = max;
         this._rotate(label, props);
     },
@@ -336,8 +340,8 @@ BottomAxisLayout.prototype = {
         }
         topOffset += margin;
         topOffset += tickOffset;
-        label.style.left = Math.round(leftOffset) + "px";
-        label.style.top = Math.round(topOffset) + "px";
+        props.x = leftOffset;
+        props.y = topOffset;
         this._rotate(label, props);
     },
     

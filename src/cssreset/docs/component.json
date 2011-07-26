@@ -1,0 +1,44 @@
+{
+    "name"       : "cssreset",
+    "displayName": "CSS Reset",
+    "description": "CSS Reset removes the inconsistent styling of HTML elements provided by browsers.",
+    "author"     : "msweeney",
+
+    "tags": ["css"],
+    "use" : ["cssreset"],
+
+    "examples": [
+        {
+            "name"       : "cssreset-basic",
+            "displayName": "Global (Page-Level) Example",
+            "description": "When CSS Reset is included in a page, it removes the browser-provided styling for HTML elements.",
+            "modules"    : ["cssbase", "cssreset"],
+            "tags"       : ["cssbase"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "cssreset-context",
+            "displayName": "Contextual Example",
+            "description": "CSS Reset applied to a portion of a page based on the location of a class value.",
+            "modules"    : ["cssbase", "cssreset"],
+            "tags"       : ["cssbase"],
+
+            "hideTableOfContents": true
+        }
+
+    ],
+
+    "pages": {
+        "cssreset-basic-example": {
+            "displayName": "CSS Reset Page Example",
+            "layout"     : "cssbase-basic-example"
+        },
+
+        "cssreset-context-example": {
+            "displayName": "CSS Reset Contextual Example",
+            "layout"     : "cssreset-context-example"
+        }
+    }
+}
