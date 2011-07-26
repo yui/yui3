@@ -53,7 +53,7 @@ SVGEllipse.ATTRS = Y.merge(SVGShape.ATTRS, {
 	/**
 	 * Horizontal radius for the ellipse.
 	 *
-	 * @attribute xRadius
+	 * @config xRadius
 	 * @type Number
 	 * @readOnly
 	 */
@@ -77,7 +77,7 @@ SVGEllipse.ATTRS = Y.merge(SVGShape.ATTRS, {
 	/**
 	 * Vertical radius for the ellipse.
 	 *
-	 * @attribute yRadius
+	 * @config yRadius
 	 * @type Number
 	 * @readOnly
 	 */

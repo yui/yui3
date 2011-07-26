@@ -67,7 +67,7 @@ CanvasPath.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	/**
 	 * Indicates the width of the shape
 	 *
-	 * @attribute width
+	 * @config width
 	 * @type Number
 	 */
 	width: {
@@ -87,7 +87,7 @@ CanvasPath.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	/**
 	 * Indicates the height of the shape
 	 *
-	 * @attribute height
+	 * @config height
 	 * @type Number
 	 */
 	height: {
@@ -107,7 +107,7 @@ CanvasPath.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	/**
 	 * Indicates the path used for the node.
 	 *
-	 * @attribute path
+	 * @config path
 	 * @type String
 	 */
 	path: {

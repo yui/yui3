@@ -817,7 +817,7 @@ SVGShape.ATTRS = {
 	 * An array of x, y values which indicates the transformOrigin in which to rotate the shape. Valid values range between 0 and 1 representing a 
 	 * fraction of the shape's corresponding bounding box dimension. The default value is [0.5, 0.5].
 	 *
-	 * @attribute transformOrigin
+	 * @config transformOrigin
 	 * @type Array
 	 */
 	transformOrigin: {
@@ -830,7 +830,7 @@ SVGShape.ATTRS = {
 	/**
 	 * The rotation (in degrees) of the shape.
 	 *
-	 * @attribute rotation
+	 * @config rotation
 	 * @type Number
 	 */
 	rotation: {
@@ -848,7 +848,7 @@ SVGShape.ATTRS = {
 	/**
 	 * Unique id for class instance.
 	 *
-	 * @attribute id
+	 * @config id
 	 * @type String
 	 */
 	id: {
@@ -871,7 +871,7 @@ SVGShape.ATTRS = {
 	/**
 	 * Indicates the x position of shape.
 	 *
-	 * @attribute x
+	 * @config x
 	 * @type Number
 	 */
 	x: {
@@ -881,7 +881,7 @@ SVGShape.ATTRS = {
 	/**
 	 * Indicates the y position of shape.
 	 *
-	 * @attribute y
+	 * @config y
 	 * @type Number
 	 */
 	y: {
@@ -891,7 +891,7 @@ SVGShape.ATTRS = {
 	/**
 	 * Indicates the width of the shape
 	 *
-	 * @attribute width
+	 * @config width
 	 * @type Number
 	 */
 	width: {
@@ -901,7 +901,7 @@ SVGShape.ATTRS = {
 	/**
 	 * Indicates the height of the shape
 	 * 
-	 * @attribute height
+	 * @config height
 	 * @type Number
 	 */
 	height: {
@@ -911,7 +911,7 @@ SVGShape.ATTRS = {
 	/**
 	 * Indicates whether the shape is visible.
 	 *
-	 * @attribute visible
+	 * @config visible
 	 * @type Boolean
 	 */
 	visible: {
@@ -953,7 +953,7 @@ SVGShape.ATTRS = {
 	 *  </dl>
 	 *  </p>
 	 *
-	 * @attribute fill
+	 * @config fill
 	 * @type Object 
 	 */
 	fill: {
@@ -985,7 +985,7 @@ SVGShape.ATTRS = {
 	 *      length of the dash. The second index indicates the length of gap.
 	 *  </dl>
 	 *
-	 * @attribute stroke
+	 * @config stroke
 	 * @type Object
 	 */
 	stroke: {
@@ -1001,7 +1001,7 @@ SVGShape.ATTRS = {
 	/**
 	 * Indicates whether or not the instance will size itself based on its contents.
 	 *
-	 * @attribute autoSize 
+	 * @config autoSize 
 	 * @type Boolean
 	 */
 	autoSize: {
@@ -1011,7 +1011,7 @@ SVGShape.ATTRS = {
 	/**
 	 * Determines whether the instance will receive mouse events.
 	 * 
-	 * @attribute pointerEvents
+	 * @config pointerEvents
 	 * @type string
 	 */
 	pointerEvents: {
@@ -1040,7 +1040,7 @@ SVGShape.ATTRS = {
 	/**
 	 * The node used for gradient fills.
 	 *
-	 * @attribute gradientNode
+	 * @config gradientNode
 	 * @type HTMLElement
 	 */
 	gradientNode: {
@@ -1057,7 +1057,7 @@ SVGShape.ATTRS = {
 	/**
 	 * Indicates whether to automatically refresh.
 	 *  
-	 * @attribute autoDraw
+	 * @config autoDraw
 	 * @type Boolean
 	 * @readOnly
 	 */
@@ -1071,7 +1071,7 @@ SVGShape.ATTRS = {
 	/**
 	 * Dom node for the shape.
 	 *
-	 * @attribute node
+	 * @config node
 	 * @type HTMLElement
 	 * @readOnly
 	 */
@@ -1087,7 +1087,7 @@ SVGShape.ATTRS = {
 	/**
 	 * Reference to the parent graphic instance
 	 *
-	 * @attribute graphic
+	 * @config graphic
 	 * @type SVGGraphic
 	 * @readOnly
 	 */

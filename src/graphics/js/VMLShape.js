@@ -263,7 +263,7 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 			len,
 			linecap,
 			linejoin;
-		if(stroke && stroke.weight && stroke.weight > 0)
+        if(stroke && stroke.weight && stroke.weight > 0)
 		{
 			props = {};
 			linecap = stroke.linecap || "flat";
@@ -1062,7 +1062,7 @@ VMLShape.ATTRS = {
 	 * An array of x, y values which indicates the transformOrigin in which to rotate the shape. Valid values range between 0 and 1 representing a 
 	 * fraction of the shape's corresponding bounding box dimension. The default value is [0.5, 0.5].
 	 *
-	 * @attribute transformOrigin
+	 * @config transformOrigin
 	 * @type Array
 	 */
 	transformOrigin: {
@@ -1075,7 +1075,7 @@ VMLShape.ATTRS = {
 	/**
 	 * Indicates the x position of shape.
 	 *
-	 * @attribute x
+	 * @config x
 	 * @type Number
 	 */
 	x: {
@@ -1085,7 +1085,7 @@ VMLShape.ATTRS = {
 	/**
 	 * Indicates the y position of shape.
 	 *
-	 * @attribute y
+	 * @config y
 	 * @type Number
 	 */
 	y: {
@@ -1095,7 +1095,7 @@ VMLShape.ATTRS = {
 	/**
 	 * Unique id for class instance.
 	 *
-	 * @attribute id
+	 * @config id
 	 * @type String
 	 */
 	id: {
@@ -1117,7 +1117,7 @@ VMLShape.ATTRS = {
 	
 	/**
 	 * 
-	 * @attribute width
+	 * @config width
 	 */
 	width: {
 		value: 0
@@ -1125,7 +1125,7 @@ VMLShape.ATTRS = {
 
 	/**
 	 * 
-	 * @attribute height
+	 * @config height
 	 */
 	height: {
 		value: 0
@@ -1134,7 +1134,7 @@ VMLShape.ATTRS = {
 	/**
 	 * Indicates whether the shape is visible.
 	 *
-	 * @attribute visible
+	 * @config visible
 	 * @type Boolean
 	 */
 	visible: {
@@ -1180,7 +1180,7 @@ VMLShape.ATTRS = {
 	 *  </dl>
 	 *  </p>
 	 *
-	 * @attribute fill
+	 * @config fill
 	 * @type Object 
 	 */
 	fill: {
@@ -1230,7 +1230,7 @@ VMLShape.ATTRS = {
 	 *      length of the dash. The second index indicates the length of gap.
 	 *  </dl>
 	 *
-	 * @attribute stroke
+	 * @config stroke
 	 * @type Object
 	 */
 	stroke: {
@@ -1260,7 +1260,7 @@ VMLShape.ATTRS = {
 	/**
 	 * Indicates whether or not the instance will size itself based on its contents.
 	 *
-	 * @attribute autoSize 
+	 * @config autoSize 
 	 * @type Boolean
 	 */
 	autoSize: {
@@ -1270,7 +1270,7 @@ VMLShape.ATTRS = {
 	/**
 	 * Determines whether the instance will receive mouse events.
 	 * 
-	 * @attribute pointerEvents
+	 * @config pointerEvents
 	 * @type string
 	 */
 	pointerEvents: {
@@ -1280,7 +1280,7 @@ VMLShape.ATTRS = {
 	/**
 	 * Dom node for the shape.
 	 *
-	 * @attribute node
+	 * @config node
 	 * @type HTMLElement
 	 * @readOnly
 	 */
@@ -1296,7 +1296,7 @@ VMLShape.ATTRS = {
 	/**
 	 * Reference to the container Graphic.
 	 *
-	 * @attribute graphic
+	 * @config graphic
 	 * @type Graphic
 	 */
 	graphic: {

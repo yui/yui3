@@ -874,7 +874,7 @@ CanvasShape.ATTRS =  {
 	 * An array of x, y values which indicates the transformOrigin in which to rotate the shape. Valid values range between 0 and 1 representing a 
 	 * fraction of the shape's corresponding bounding box dimension. The default value is [0.5, 0.5].
 	 *
-	 * @attribute transformOrigin
+	 * @config transformOrigin
 	 * @type Array
 	 */
 	transformOrigin: {
@@ -887,7 +887,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * The rotation (in degrees) of the shape.
 	 *
-	 * @attribute rotation
+	 * @config rotation
 	 * @type Number
 	 */
 	rotation: {
@@ -905,7 +905,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Dom node for the shape
 	 *
-	 * @attribute node
+	 * @config node
 	 * @type HTMLElement
 	 * @readOnly
 	 */
@@ -921,7 +921,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Unique id for class instance.
 	 *
-	 * @attribute id
+	 * @config id
 	 * @type String
 	 */
 	id: {
@@ -944,7 +944,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Indicates the width of the shape
 	 *
-	 * @attribute width
+	 * @config width
 	 * @type Number
 	 */
 	width: {
@@ -954,7 +954,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Indicates the height of the shape
 	 *
-	 * @attribute height
+	 * @config height
 	 * @type Number
 	 */
 	height: {
@@ -964,7 +964,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Indicates the x position of shape.
 	 *
-	 * @attribute x
+	 * @config x
 	 * @type Number
 	 */
 	x: {
@@ -974,7 +974,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Indicates the y position of shape.
 	 *
-	 * @attribute y
+	 * @config y
 	 * @type Number
 	 */
 	y: {
@@ -984,7 +984,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Indicates whether the shape is visible.
 	 *
-	 * @attribute visible
+	 * @config visible
 	 * @type Boolean
 	 */
 	visible: {
@@ -1026,7 +1026,7 @@ CanvasShape.ATTRS =  {
 	 *  </dl>
 	 *  </p>
 	 *
-	 * @attribute fill
+	 * @config fill
 	 * @type Object 
 	 */
 	fill: {
@@ -1059,7 +1059,7 @@ CanvasShape.ATTRS =  {
 	 *      length of the dash. The second index indicates the length of gap.
 	 *  </dl>
 	 *
-	 * @attribute stroke
+	 * @config stroke
 	 * @type Object
 	 */
 	stroke: {
@@ -1077,7 +1077,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Indicates whether or not the instance will size itself based on its contents.
 	 *
-	 * @attribute autoSize 
+	 * @config autoSize 
 	 * @type Boolean
 	 */
 	autoSize: {
@@ -1087,7 +1087,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Determines whether the instance will receive mouse events.
 	 * 
-	 * @attribute pointerEvents
+	 * @config pointerEvents
 	 * @type string
 	 */
 	pointerEvents: {
@@ -1097,7 +1097,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Reference to the container Graphic.
 	 *
-	 * @attribute graphic
+	 * @config graphic
 	 * @type Graphic
 	 */
 	graphic: {

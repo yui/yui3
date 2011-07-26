@@ -26,7 +26,7 @@ VMLEllipse.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 	/**
 	 * Horizontal radius for the ellipse.
 	 *
-	 * @attribute xRadius
+	 * @config xRadius
 	 * @type Number
 	 */
 	xRadius: {
@@ -50,7 +50,7 @@ VMLEllipse.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 	/**
 	 * Vertical radius for the ellipse.
 	 *
-	 * @attribute yRadius
+	 * @config yRadius
 	 * @type Number
 	 */
 	yRadius: {

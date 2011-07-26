@@ -53,7 +53,7 @@ CanvasPieSlice.ATTRS = Y.mix({
     /**
      * Starting angle in relation to a circle in which to begin the pie slice drawing.
      *
-     * @attribute startAngle
+     * @config startAngle
      * @type Number
      */
     startAngle: {
@@ -63,7 +63,7 @@ CanvasPieSlice.ATTRS = Y.mix({
     /**
      * Arc of the slice.
      *
-     * @attribute arc
+     * @config arc
      * @type Number
      */
     arc: {
@@ -73,7 +73,7 @@ CanvasPieSlice.ATTRS = Y.mix({
     /**
      * Radius of the circle in which the pie slice is drawn
      *
-     * @attribute radius
+     * @config radius
      * @type Number
      */
     radius: {

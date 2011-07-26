@@ -44,7 +44,7 @@ CanvasCircle.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	/**
 	 * Indicates the width of the shape
 	 *
-	 * @attribute width
+	 * @config width
 	 * @type Number
 	 */
 	width: {
@@ -63,7 +63,7 @@ CanvasCircle.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	/**
 	 * Indicates the height of the shape
 	 *
-	 * @attribute height
+	 * @config height
 	 * @type Number
 	 */
 	height: {
@@ -82,7 +82,7 @@ CanvasCircle.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	/**
 	 * Radius of the circle
 	 *
-	 * @attribute radius
+	 * @config radius
      * @type Number
 	 */
 	radius: {
