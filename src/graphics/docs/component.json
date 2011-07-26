@@ -61,6 +61,14 @@
 			"modules" : ["graphics"],
 			"tags" : ["graphics"],
             		"hideTableOfContents": true
+		},
+		{
+			"name" : "graphics-violin",
+			"displayName" : "Complex Example: Violin",
+			"description" : "Shows to use the graphics api to draw a violin.",
+			"modules" : ["graphics"],
+			"tags" : ["graphics"],
+            		"hideTableOfContents": true
 		}
 	]	
 }

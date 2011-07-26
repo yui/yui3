@@ -12,6 +12,8 @@ var SHAPE = "canvasShape",
     CanvasPieSlice,
     Y_Color = Y.Color,
     PARSE_INT = parseInt,
+    PARSE_FLOAT = parseFloat,
+    IS_NUMBER = Y_LANG.isNumber,
     RE = RegExp,
     TORGB = Y_Color.toRGB,
     TOHEX = Y_Color.toHex;
@@ -967,8 +969,8 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	_setStrokeProps: function(stroke)
 	{
 		var color = stroke.color,
-			weight = stroke.weight,
-			opacity = stroke.opacity,
+			weight = PARSE_FLOAT(stroke.weight),
+			opacity = PARSE_FLOAT(stroke.opacity),
 			linejoin = stroke.linejoin || "round",
 			linecap = stroke.linecap || "butt",
 			dashstyle = stroke.dashstyle;
@@ -976,7 +978,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 		this._dashstyle = (dashstyle && Y.Lang.isArray(dashstyle) && dashstyle.length > 1) ? dashstyle : null;
 		this._strokeWeight = weight;
 
-		if (weight) 
+		if (IS_NUMBER(weight) && weight > 0) 
 		{
 			this._stroke = 1;
 		} 
@@ -984,7 +986,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 		{
 			this._stroke = 0;
 		}
-		if (opacity) {
+		if (IS_NUMBER(opacity)) {
 			this._strokeStyle = this._toRGBA(color, opacity);
 		}
 		else
@@ -999,7 +1001,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 		else
 		{
 			linejoin = parseInt(linejoin, 10);
-			if(Y.Lang.isNumber(linejoin))
+			if(IS_NUMBER(linejoin))
 			{
 				this._miterlimit =  Math.max(linejoin, 1);
 				this._linejoin = "miter";
@@ -1036,7 +1038,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 */
 	_setFillProps: function(fill)
 	{
-		var isNumber = Y.Lang.isNumber,
+		var isNumber = IS_NUMBER,
 			color = fill.color,
 			opacity,
 			type = fill.type;
@@ -1466,8 +1468,8 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	{
 		var rotation = this.get("rotation"),
 			radCon = Math.PI/180,
-			sinRadians = parseFloat(parseFloat(Math.sin(rotation * radCon)).toFixed(8)),
-			cosRadians = parseFloat(parseFloat(Math.cos(rotation * radCon)).toFixed(8)),
+			sinRadians = PARSE_FLOAT(PARSE_FLOAT(Math.sin(rotation * radCon)).toFixed(8)),
+			cosRadians = PARSE_FLOAT(PARSE_FLOAT(Math.cos(rotation * radCon)).toFixed(8)),
 			w = this.get("width"),
 			h = this.get("height"),
 			stroke = this.get("stroke"),

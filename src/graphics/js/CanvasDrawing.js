@@ -10,6 +10,8 @@ var SHAPE = "canvasShape",
     CanvasPieSlice,
     Y_Color = Y.Color,
     PARSE_INT = parseInt,
+    PARSE_FLOAT = parseFloat,
+    IS_NUMBER = Y_LANG.isNumber,
     RE = RegExp,
     TORGB = Y_Color.toRGB,
     TOHEX = Y_Color.toHex;
