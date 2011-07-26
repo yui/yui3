@@ -156,7 +156,7 @@ YUI.add('widget-stdmod', function(Y) {
          * in the header. If you want to append, or insert new content, use the <a href="#method_setStdModContent">setStdModContent</a> method.
          */
         headerContent: {
-            value:null,
+            value:null
         },
 
         /**
@@ -167,7 +167,7 @@ YUI.add('widget-stdmod', function(Y) {
          * in the footer. If you want to append, or insert new content, use the <a href="#method_setStdModContent">setStdModContent</a> method.
          */
         footerContent: {
-            value:null,
+            value:null
         },
         
         /**
@@ -178,7 +178,7 @@ YUI.add('widget-stdmod', function(Y) {
          * in the body. If you want to append, or insert new content, use the <a href="#method_setStdModContent">setStdModContent</a> method.
          */
         bodyContent: {
-            value:null,
+            value:null
         },
         
         /**
@@ -794,6 +794,7 @@ YUI.add('widget-stdmod', function(Y) {
     };
 
     Y.WidgetStdMod = StdMod;
+
 
 
 }, '@VERSION@' ,{requires:['base-build', 'widget']});
