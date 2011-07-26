@@ -2557,7 +2557,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                     var graphic = this.get("graphic");
                     if(graphic)
                     {
-                        this._path = graphic.getShape({type:"path"});
+                        this._path = graphic.addShape({type:"path"});
                     }
                 }
                 return this._path;
@@ -4775,7 +4775,7 @@ Lines.prototype = {
         var graphic = this.get("graphic") || this.get("graph").get("graphic");
         if(!this._lineGraphic)
         {
-            this._lineGraphic = graphic.getShape({type: "path"});
+            this._lineGraphic = graphic.addShape({type: "path"});
         }
         this._lineGraphic.clear();
         return this._lineGraphic;
@@ -5050,7 +5050,7 @@ Fills.prototype = {
         var path = this._path;
         if(!path)
         {
-            path = this.get("graph").get("graphic").getShape({type:"path"});
+            path = this.get("graph").get("graphic").addShape({type:"path"});
             this._path = path;
         }
         return path;
@@ -5572,7 +5572,7 @@ Plots.prototype = {
             cfg = Y.clone(styles);
         graphic.set("autoDraw", false);
         cfg.type = cfg.shape;
-        marker = graphic.getShape(cfg); 
+        marker = graphic.addShape(cfg); 
         marker.addClass("yui3-seriesmarker");
         return marker;
     },
@@ -8962,7 +8962,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             marker,
             cfg = Y.clone(styles);
         graphic.set("autoDraw", false);
-        marker = graphic.getShape(cfg); 
+        marker = graphic.addShape(cfg); 
         marker.addClass("yui3-seriesmarker");
         return marker;
     },
@@ -10080,7 +10080,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 {
                     this._backgroundGraphic = new Y.Graphic({render:this.get("contentBox")});
                     this._backgroundGraphic.get("node").style.zIndex = -2;
-                    this._background = this._backgroundGraphic.getShape({type: "rect"});
+                    this._background = this._backgroundGraphic.addShape({type: "rect"});
                 }
                 return this._background;
             }
@@ -10102,7 +10102,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 {
                     this._gridlinesGraphic = new Y.Graphic({render:this.get("contentBox")});
                     this._gridlinesGraphic.get("node").style.zIndex = -1;
-                    this._gridlines = this._gridlinesGraphic.getShape({type: "path"});
+                    this._gridlines = this._gridlinesGraphic.addShape({type: "path"});
                 }
                 return this._gridlines;
             }

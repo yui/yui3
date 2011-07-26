@@ -1976,6 +1976,12 @@ SVGGraphic = function(cfg) {
 SVGGraphic.NAME = "svgGraphic";
 
 SVGGraphic.ATTRS = {
+    /**
+     * Whether or not to render the `Graphic` automatically after to a specified parent node after init. This can be a Node instance or a CSS selector string.
+     * 
+     * @attribute render
+     * @type Node | String 
+     */
     render: {},
 	
     /**
@@ -2049,6 +2055,12 @@ SVGGraphic.ATTRS = {
         }
     },
     
+	/**
+	 * Indicates the width of the `Graphic`. 
+	 *
+	 * @attribute width
+	 * @type Number
+	 */
     width: {
         setter: function(val)
         {
@@ -2060,6 +2072,12 @@ SVGGraphic.ATTRS = {
         }
     },
 
+	/**
+	 * Indicates the height of the `Graphic`. 
+	 *
+	 * @attribute height 
+	 * @type Number
+	 */
     height: {
         setter: function(val)
         {
@@ -2285,27 +2303,28 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
     /**
      * Generates a shape instance by type.
      *
-     * @method getShape
+     * @method addShape
      * @param {String} type type of shape to generate.
      * @param {Object} cfg attributes for the shape
      * @return Shape
      */
-    getShape: function(cfg)
+    addShape: function(cfg)
     {
         cfg.graphic = this;
         var shapeClass = this._getShapeClass(cfg.type),
             shape = new shapeClass(cfg);
-        this.addShape(shape);
+        this._appendShape(shape);
         return shape;
     },
 
     /**
      * Adds a shape instance to the graphic instance.
      *
-     * @method addShape
+     * @method _appendShape
      * @param {Shape} shape The shape instance to be added to the graphic.
+     * @private
      */
-    addShape: function(shape)
+    _appendShape: function(shape)
     {
         var node = shape.node,
             parentNode = this._frag || this._contentNode;
@@ -2422,6 +2441,10 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
     },
 
     /**
+     * Returns a shape class. Used by `addShape`. 
+     *
+     * @param {Shape | String} val Indicates which shape class. 
+     * @return Function 
      * @private
      */
     _getShapeClass: function(val)
@@ -2435,6 +2458,10 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
     },
 
     /**
+     * Look up for shape classes. Used by `addShape` to retrieve a class for instantiation.
+     *
+     * @property _shapeClass
+     * @type Object
      * @private
      */
     _shapeClass: {
@@ -2473,6 +2500,13 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
         this.set("autoDraw", autoDraw);
     },
     
+    /**
+     * Returns a document fragment to for attaching shapes.
+     *
+     * @method _getDocFrag
+     * @return DocumentFragment
+     * @private
+     */
     _getDocFrag: function()
     {
         if(!this._frag)
@@ -2482,6 +2516,12 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
         return this._frag;
     },
 
+    /**
+     * Redraws all shapes.
+     *
+     * @method _redraw
+     * @private
+     */
     _redraw: function()
     {
         var box = this.get("resizeDown") ? this._getUpdatedContentBounds() : this._contentBounds;
@@ -2533,6 +2573,13 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
         }
     },
     
+    /**
+     * Recalculates and returns the `contentBounds` for the `Graphic` instance.
+     *
+     * @method _getUpdateContentBounds
+     * @return {Object} 
+     * @private
+     */
     _getUpdatedContentBounds: function()
     {
         var bounds,

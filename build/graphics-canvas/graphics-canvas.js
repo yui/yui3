@@ -2551,28 +2551,28 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
     /**
      * Generates a shape instance by type.
      *
-     * @method getShape
+     * @method addShape
      * @param {String} type type of shape to generate.
      * @param {Object} cfg attributes for the shape
      * @return Shape
      */
-    getShape: function(cfg)
+    addShape: function(cfg)
     {
         cfg.graphic = this;
         var shapeClass = this._getShapeClass(cfg.type),
             shape = new shapeClass(cfg);
-        this.addShape(shape);
+        this._appendShape(shape);
         return shape;
     },
 
     /**
      * Adds a shape instance to the graphic instance.
      *
-     * @method addShape
+     * @method _appendShape
      * @param {Shape} shape The shape instance to be added to the graphic.
      * @private
      */
-    addShape: function(shape)
+    _appendShape: function(shape)
     {
         var node = shape.node,
             parentNode = this._frag || this._node;
@@ -2679,7 +2679,7 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
     },
 
     /**
-     * Returns a shape class. Used by `getShape`. 
+     * Returns a shape class. Used by `addShape`. 
      *
      * @param {Shape | String} val Indicates which shape class. 
      * @return Function 
@@ -2696,7 +2696,7 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
     },
     
     /**
-     * Look up for shape classes. Used by `getShape` to retrieve a class for instantiation.
+     * Look up for shape classes. Used by `addShape` to retrieve a class for instantiation.
      *
      * @property _shapeClass
      * @type Object
