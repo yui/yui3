@@ -75,7 +75,7 @@
 
 		    	//panel is visible
 		    	Y.Assert.areEqual(this.panel.get('visible'), true);
-		    	Y.Assert.areEqual(bb.getStyle('display'), "block");
+		    	Y.Assert.areNotEqual(bb.getStyle('display'), "none");
 
 		    	//the button that is viewable is the close button
 		    	Y.Assert.areEqual(buttons[0].type, "close");
@@ -105,7 +105,7 @@
 
 		    	//panel is visible
 		    	Y.Assert.areEqual(this.panel.get('visible'), true);
-		    	Y.Assert.areEqual(bb.getStyle('display'), "block");
+		    	Y.Assert.areNotEqual(bb.getStyle('display'), "none");
 
 		    	//the button that is viewable is the close button
 		    	Y.Assert.areEqual(buttons[0].type, "close");
@@ -153,7 +153,7 @@
 
 		    	//panel is visible
 		    	Y.Assert.areEqual(this.panel.get('visible'), true);
-		    	Y.Assert.areEqual(bb.getStyle('display'), "block");
+		    	Y.Assert.areNotEqual(bb.getStyle('display'), "none");
 
 		    	//the correct buttons are viewable
 		    	Y.Assert.isUndefined(buttons[0].type);
@@ -205,7 +205,7 @@
 
 		    	//panel is visible
 		    	Y.Assert.areEqual(this.panel.get('visible'), true);
-		    	Y.Assert.areEqual(bb.getStyle('display'), "block");
+		    	Y.Assert.areNotEqual(bb.getStyle('display'), "none");
 
 		    	//the correct buttons are viewable
 		    	Y.Assert.isUndefined(buttons[0].type);
@@ -215,8 +215,10 @@
 		    	Y.Assert.isTrue(wrap.hasChildNodes());
 		    	Y.Assert.areEqual(btns.size(), 2);
 		    	Y.Assert.areEqual(btnspan.size(), 2);
-		    	Y.Assert.areEqual(btnspan.item(0).getContent(), "ft button 1");
-		    	Y.Assert.areEqual(btnspan.item(1).getContent(), "ft button 2");
+
+		    	//use innerText instead of getContent() to keep IE happy - it arbitrarily puts a </a> in sometimes
+		    	Y.Assert.areEqual(btnspan.item(0).get('innerText'), "ft button 1");
+		    	Y.Assert.areEqual(btnspan.item(1).get('innerText'), "ft button 2");
 
 
 		    	//mask is not visible
@@ -245,7 +247,7 @@
 
 		    	//panel is visible
 		    	Y.Assert.areEqual(this.panel.get('visible'), true);
-		    	Y.Assert.areEqual(bb.getStyle('display'), "block");
+		    	Y.Assert.areNotEqual(bb.getStyle('display'), "none");
 
 		    	//the correct buttons are viewable - only the close button in this case
 		    	Y.Assert.areEqual(buttons[0].type, "close");
@@ -271,7 +273,7 @@
 		    	Y.Assert.isTrue(ft.hasChildNodes());
 		    	Y.Assert.areEqual(btns.size(), 2);
 		    	Y.Assert.areEqual(btnspan.size(), 2);
-		    	Y.Assert.areEqual(btnspan.item(1).getContent(), "ft button 1");
+		    	Y.Assert.areEqual(btnspan.item(1).get('innerText'), "ft button 1");
 
 		    	//add the close button in to the header
 		    	this.panel.addButton({
@@ -287,7 +289,7 @@
 		    	Y.Assert.isTrue(ft.hasChildNodes());
 		    	Y.Assert.areEqual(btns.size(), 3);
 		    	Y.Assert.areEqual(btnspan.size(), 3);
-		    	Y.Assert.areEqual(btnspan.item(2).getContent(), "ft button 1"); //the last one should be the footer since the first 2 are the header [x] buttons
+		    	Y.Assert.areEqual(btnspan.item(2).get('innerText'), "ft button 1"); //the last one should be the footer since the first 2 are the header [x] buttons
 
 		    	//mask is visible
 		    	var mask = Y.one('.yui3-widget-mask');
