@@ -16,6 +16,9 @@
 
 <script src="../../build/yui/yui.js"></script>
 <script>
+/******
+ SEE /lazyfacade.js for a better conditional for !IE8
+******/
 YUI({ filter: 'raw' }).use('node', function (Y) {
 
 function resolve(el) {
@@ -48,7 +51,6 @@ var p = Y.config.doc.createElement('p'),
         63275: 35  // end
     },
     Facade,
-    properties,
     lazyProperties;
 
 Facade = function (e, currentTarget, wrapper) {
@@ -56,18 +58,20 @@ Facade = function (e, currentTarget, wrapper) {
 
     var overrides = wrapper.overrides,
         define    = Facade._define,
-        props     = properties,
-        i         = properties.length,
         prop;
 
     this._event = e;
     this._currentTarget = currentTarget;
     this._wrapper = wrapper;
 
-    while (i--) {
-        prop = properties[i];
-        this[prop] = e[prop]
-    }
+    this.altKey = e.altKey;
+    this.ctrlKey = e.ctrlKey;
+    this.metaKey = e.metaKey;
+    this.shiftKey = e.shiftKey;
+    this.clientX = e.clientX;
+    this.clientY = e.clientY;
+    this.pageX = e.pageX;
+    this.pageY = e.pageY;
 
     this.type = (overrides && overrides.type) || e.type;
 
@@ -110,8 +114,6 @@ Facade.prototype = {
     }
 };
 
-properties =
-    'altKey ctrlKey metaKey shiftKey clientX clientY pageX pageY'.split(' ');
 
 lazyProperties = {
     charCode: function () {
@@ -150,12 +152,10 @@ lazyProperties = {
     }
 };
 
-// Reference the private internally to allow the public pointer to be removed
-// for security.  Expose the public pointer for IE overrides and additional
-// properties.
-Facade._properties = properties;
 Facade._lazyProperties = lazyProperties;
 
+// This will error in IE9 in compat mode.  See lazyfacade.js
+// for a better conditional
 Facade._define = (Object.defineProperty) ? 
     function (o, prop, fn) {
         function val(v) {
