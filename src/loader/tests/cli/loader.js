@@ -2201,6 +2201,66 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("rls")) > -1, "Module (rls) not found in sorted array");
         },
+     "Testing scrollview": function(data) {
+            var loader = new Y.Loader({
+                require: ["scrollview"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("scrollview")) > -1, "Module (scrollview) not found in sorted array");
+        },
+     "Testing scrollview-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["scrollview-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("scrollview-base")) > -1, "Module (scrollview-base) not found in sorted array");
+        },
+     "Testing scrollview-base-ie": function(data) {
+            var loader = new Y.Loader({
+                require: ["scrollview-base-ie"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("scrollview-base-ie")) > -1, "Module (scrollview-base-ie) not found in sorted array");
+        },
+     "Testing scrollview-list": function(data) {
+            var loader = new Y.Loader({
+                require: ["scrollview-list"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("scrollview-list")) > -1, "Module (scrollview-list) not found in sorted array");
+        },
+     "Testing scrollview-paginator": function(data) {
+            var loader = new Y.Loader({
+                require: ["scrollview-paginator"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("scrollview-paginator")) > -1, "Module (scrollview-paginator) not found in sorted array");
+        },
+     "Testing scrollview-scrollbars": function(data) {
+            var loader = new Y.Loader({
+                require: ["scrollview-scrollbars"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("scrollview-scrollbars")) > -1, "Module (scrollview-scrollbars) not found in sorted array");
+        },
      "Testing selection": function(data) {
             var loader = new Y.Loader({
                 require: ["selection"],
