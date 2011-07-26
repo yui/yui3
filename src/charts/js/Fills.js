@@ -37,7 +37,7 @@ Fills.prototype = {
         var path = this._path;
         if(!path)
         {
-            path = this.get("graph").get("graphic").getShape({type:"path"});
+            path = this.get("graph").get("graphic").addShape({type:"path"});
             this._path = path;
         }
         return path;

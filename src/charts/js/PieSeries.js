@@ -424,7 +424,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             marker,
             cfg = Y.clone(styles);
         graphic.set("autoDraw", false);
-        marker = graphic.getShape(cfg); 
+        marker = graphic.addShape(cfg); 
         marker.addClass("yui3-seriesmarker");
         return marker;
     },
