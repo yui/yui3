@@ -4197,7 +4197,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "scrollview-list": {
         "requires": [
             "plugin"
-        ]
+        ], 
+        "skinnable": true
     }, 
     "scrollview-paginator": {
         "requires": [
@@ -4543,7 +4544,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'cf104485c0ff053ed4a54b527e11b353';
+YUI.Env[Y.version].md5 = 'b2d0341797ce70c4846e5486b1a373db';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
