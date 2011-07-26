@@ -37,7 +37,7 @@ This example shows how to draw shapes and line segments with the `Path` shape.
 <p>Create two path elements for end shapes. Give each a red fill and a black stroke.</p>
 
 ```
-var diamond1 = mygraphic.getShape({
+var diamond1 = mygraphic.addShape({
         type: "path",
         stroke: {
             weight: 1,
@@ -48,7 +48,7 @@ var diamond1 = mygraphic.getShape({
         }
     });
 
-var diamond2 = mygraphic.getShape({
+var diamond2 = mygraphic.addShape({
         type: "path",
         stroke: {
             weight: 1,
@@ -62,7 +62,7 @@ var diamond2 = mygraphic.getShape({
 <p>Create a path for the connecting segment. Give it a black dashed stroke and no fill. The `dashstyle` property of the stroke attribute allows for the creation of a dashed stroke. The first value is 
 the length of the dash and the second value is the gap space between dashes.</p>
 ```
-var connector = mygraphic.getShape({
+var connector = mygraphic.addShape({
         type: "path",
         stroke: {
             weight: 1,

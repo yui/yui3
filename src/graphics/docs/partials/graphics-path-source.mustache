@@ -3,7 +3,7 @@
     YUI().use('graphics', function (Y) 
     { 
         var mygraphic = new Y.Graphic({render: "#mygraphiccontainer"}),
-            connector = mygraphic.getShape({
+            connector = mygraphic.addShape({
 				type: "path",
 				stroke: {
 					weight: 1,
@@ -12,7 +12,7 @@
 					dashstyle: [3, 4]
 				}
             }),
-            diamond1 = mygraphic.getShape({
+            diamond1 = mygraphic.addShape({
                 type: "path",
                 stroke: {
                     weight: 1,
@@ -22,7 +22,7 @@
                     color: "#f00"
                 }
             }),
-            diamond2 = mygraphic.getShape({
+            diamond2 = mygraphic.addShape({
                 type: "path",
                 stroke: {
                     weight: 1,

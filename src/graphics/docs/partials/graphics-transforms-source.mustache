@@ -7,7 +7,7 @@
     YUI().use('graphics', function (Y) 
     { 
         var mygraphic = new Y.Graphic({render:"#mygraphiccontainer"});
-        var myrect = mygraphic.getShape({
+        var myrect = mygraphic.addShape({
             type: "rect",
             stroke: {
                 color:"#000",
@@ -20,7 +20,7 @@
             height:50
         });
             
-        var myellipse = mygraphic.getShape({
+        var myellipse = mygraphic.addShape({
             type: "ellipse",
             stroke: {
                 color: "#ddd",
@@ -36,7 +36,7 @@
             y:50
         });
             
-        var mycircle = mygraphic.getShape({
+        var mycircle = mygraphic.addShape({
             type: "circle",
             stroke: {
                 color:"#ff0",
@@ -51,14 +51,13 @@
         });
         function rotateShapes(e)
         {
-            myrect.set("rotation", 45);
-            myellipse.set("rotation", 45);
+            myrect.rotate(45);
+            myellipse.rotate(45);
         }
 
         function translateShapes(e)
         {
-            mycircle.set("translateX", 50);
-            mycircle.set("translateY", 60);
+            mycircle.translate(50, 60);
         }
         Y.on("click", rotateShapes, "#rotate");
         Y.on("click", translateShapes, "#translate");
