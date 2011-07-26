@@ -5864,6 +5864,7 @@ Histogram.prototype = {
         {
             if(isNaN(xcoords[i]) || isNaN(ycoords[i]))
             {
+                this._markers.push(null);
                 continue;
             }
             config = this._getMarkerDimensions(xcoords[i], ycoords[i], calculatedSize, offset);
@@ -5884,6 +5885,10 @@ Histogram.prototype = {
                     style.border.colors = borderColors[i % borderColors.length];
                 }
                 marker = this.getMarker(style, graphOrder, i);
+            }
+            else
+            {
+                this._markers.push(null);
             }
         }
         this._clearMarkerCache();
