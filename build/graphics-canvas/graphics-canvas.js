@@ -938,41 +938,6 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 		this.node = node;
 		this.addClass("yui3-" + SHAPE + " yui3-" + this.name);
 	},
-
-	/**
-     * Parses event to determine if it is a dom interaction event.
-     *
-     * @method isMouseEvent
-     * @param {String} type Type of event
-     * @return Boolean
-	 * @private
-	 */
-	isMouseEvent: function(type)
-	{
-		if(type.indexOf('mouse') > -1 || type.indexOf('click') > -1)
-		{
-			return true;
-		}
-		return false;
-	},
-	
-	/**
-     * Overrides default `before` method. Checks to see if its a dom interaction event. If so, 
-     * return an event attached to the `node` element. If not, return the normal functionality.
-     *
-     * @method before
-     * @param {String} type event type
-     * @param {Object} callback function
-	 * @private
-	 */
-	before: function(type, fn)
-	{
-		if(this.isMouseEvent(type))
-		{
-			return Y.before(type, fn, "#" +  this.get("id"));
-		}
-		return Y.on.apply(this, arguments);
-	},
 	
 	/**
      * Overrides default `on` method. Checks to see if its a dom interaction event. If so, 
@@ -985,27 +950,9 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 */
 	on: function(type, fn)
 	{
-		if(this.isMouseEvent(type))
+		if(Y.Node.DOM_EVENTS[type])
 		{
-			return Y.on(type, fn, "#" +  this.get("id"));
-		}
-		return Y.on.apply(this, arguments);
-	},
-	
-	/**
-     * Overrides default `after` method. Checks to see if its a dom interaction event. If so, 
-     * return an event attached to the `node` element. If not, return the normal functionality.
-     *
-     * @method after
-     * @param {String} type event type
-     * @param {Object} callback function
-	 * @private
-	 */
-	after: function(type, fn)
-	{
-		if(this.isMouseEvent(type))
-		{
-			return Y.after(type, fn, "#" +  this.get("id"));
+			return Y.one("#" +  this.get("id")).on(type, fn);
 		}
 		return Y.on.apply(this, arguments);
 	},
@@ -2604,28 +2551,28 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
     /**
      * Generates a shape instance by type.
      *
-     * @method getShape
+     * @method addShape
      * @param {String} type type of shape to generate.
      * @param {Object} cfg attributes for the shape
      * @return Shape
      */
-    getShape: function(cfg)
+    addShape: function(cfg)
     {
         cfg.graphic = this;
         var shapeClass = this._getShapeClass(cfg.type),
             shape = new shapeClass(cfg);
-        this.addShape(shape);
+        this._appendShape(shape);
         return shape;
     },
 
     /**
      * Adds a shape instance to the graphic instance.
      *
-     * @method addShape
+     * @method _appendShape
      * @param {Shape} shape The shape instance to be added to the graphic.
      * @private
      */
-    addShape: function(shape)
+    _appendShape: function(shape)
     {
         var node = shape.node,
             parentNode = this._frag || this._node;
@@ -2732,7 +2679,7 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
     },
 
     /**
-     * Returns a shape class. Used by `getShape`. 
+     * Returns a shape class. Used by `addShape`. 
      *
      * @param {Shape | String} val Indicates which shape class. 
      * @return Function 
@@ -2749,7 +2696,7 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
     },
     
     /**
-     * Look up for shape classes. Used by `getShape` to retrieve a class for instantiation.
+     * Look up for shape classes. Used by `addShape` to retrieve a class for instantiation.
      *
      * @property _shapeClass
      * @type Object

@@ -812,7 +812,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                     var graphic = this.get("graphic");
                     if(graphic)
                     {
-                        this._path = graphic.getShape({type:"path"});
+                        this._path = graphic.addShape({type:"path"});
                     }
                 }
                 return this._path;

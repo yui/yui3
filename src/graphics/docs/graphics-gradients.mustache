@@ -58,7 +58,7 @@ Radial gradients include the following additional properties:
 <p>Add a rectangle with a linear gradient.</p>
 ```
         var mygraphic = new Y.Graphic({render:"#mygraphiccontainer"});
-        var myrect = mygraphic.getShape({
+        var myrect = mygraphic.addShape({
             type: "rect",
             stroke: {
                 color:"#000",
@@ -81,7 +81,7 @@ Radial gradients include the following additional properties:
 <p>Add a circle with a radial gradient.</p>
 
 ```
-        var mycircle = mygraphic.getShape({
+        var mycircle = mygraphic.addShape({
             type: "circle",
             radius: 50,
             x: 0,

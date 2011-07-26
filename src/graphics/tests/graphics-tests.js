@@ -57,7 +57,7 @@ svgTests = new Y.Test.Case({
 
     "testRectNode()" : function()
     {
-        var myrect = this.graphic.getShape({
+        var myrect = this.graphic.addShape({
             type: "rect",
             width: 300,
             height: 200,
@@ -215,9 +215,9 @@ suite.add( new Y.Test.Case({
         });
     },
 
-    "test getShape(circle)": function()
+    "test addShape(circle)": function()
     {
-        var mycircle = graphic.getShape({
+        var mycircle = graphic.addShape({
             type: "circle",
             stroke: {
                 color: this.initialStrokeColor,
@@ -301,9 +301,9 @@ suite.add( new Y.Test.Case({
         Y.Assert.isFalse(hasShape);
     },
     
-    "test getShape(rect)": function() 
+    "test addShape(rect)": function() 
     {
-        var myrect = graphic.getShape({
+        var myrect = graphic.addShape({
             type: "rect",
             stroke: {
                 weight: 2,
@@ -383,9 +383,9 @@ suite.add( new Y.Test.Case({
         Y.Assert.isFalse(hasShape);
     },
 
-    "test getShape(ellipse)": function()
+    "test addShape(ellipse)": function()
     {
-        var myellipse = graphic.getShape({
+        var myellipse = graphic.addShape({
             type: "ellipse",
             stroke: {
                 color: this.initialStrokeColor,
@@ -465,9 +465,9 @@ suite.add( new Y.Test.Case({
         Y.Assert.isFalse(hasShape);
     },
 
-    "test getShape(path)": function()
+    "test addShape(path)": function()
     {
-        var mypath = graphic.getShape({
+        var mypath = graphic.addShape({
             type: "path",
             stroke: {
                 color: this.initialStrokeColor
@@ -549,7 +549,7 @@ suite.add( new Y.Test.Case({
 
     "test passRotation(rect)" : function()
     {
-        var myrect = graphic.getShape({
+        var myrect = graphic.addShape({
             type: "rect",
             stroke: {
                 weight: 2,

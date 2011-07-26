@@ -41,7 +41,7 @@ var mygraphic = new Y.Graphic({
 
 
 <h3>Creating shapes</h3>
-<p>Shapes are created using the `getShape` method. The `getShape` method takes a config parameter that defines the shape and its properties. When creating a shape, the shape is determined by the `type`
+<p>Shapes are created using the `addShape` method. The `addShape` method takes a config parameter that defines the shape and its properties. When creating a shape, the shape is determined by the `type`
 attribute. The `Graphics` module includes four pre-defined shapes. They can be created by passing a `String` reference.</p>
 <table>
     <tr>
@@ -72,7 +72,7 @@ attribute. The `Graphics` module includes four pre-defined shapes. They can be c
 
 ```
 var mygraphic = new Y.Graphic({render:"#mygraphiccontainer"}),
-    myrect = mygraphic.getShape({
+    myrect = mygraphic.addShape({
         type: "rect",
         width: 300,
         height: 200,
@@ -90,7 +90,7 @@ var mygraphic = new Y.Graphic({render:"#mygraphiccontainer"}),
 <p>This code would create an instance of a custom shape that you have created.</p>
 ```
 var mygraphic = new Y.Graphic({render:"#mygraphiccontainer"}),
-    myrect = mygraphic.getShape({
+    myrect = mygraphic.addShape({
         type: Y.MyCustomShape,
         width: 300,
         height: 200,
@@ -193,7 +193,7 @@ have to interact directly with the underlying technologies or their correspondin
             <td>Returns an array containing the current position of the graphic instance in page coordinates.</td>
         </tr>
         <tr>
-            <td>getShape</td>
+            <td>addShape</td>
             <td>Generates and returns a shape instance by type.</td>
         </tr>
         <tr>
@@ -280,24 +280,9 @@ have to interact directly with the underlying technologies or their correspondin
             </td>
         </tr>
         <tr>
-            <td>`rotation`</td>
-            <td>`Number` (0 - 360)</td>
-            <td>Rotates the shape.</td>
-        </tr>
-        <tr>
             <td>`transformOrigin`</td>
             <td>`Array`</td>
             <td>The x and y values for the transformOrigin of a transform.</td>
-        </tr>
-        <tr>
-            <td>`translateX`</td>
-            <td>`Number`</td>
-            <td>The x-coordinate for applying a translate transform.</td>
-        </tr>
-        <tr>
-            <td>`translateY`</td>
-            <td>`Number`</td>
-            <td>The x-coordinate for applying a translate transform.</td>
         </tr>
     </table>
 
@@ -332,6 +317,38 @@ have to interact directly with the underlying technologies or their correspondin
     <tr>
         <td>`set`</td>
         <td>Sets the value of an attribute.</td>
+    </tr>
+    <tr>
+        <td>`rotate`</td>
+        <td>Rotates the shape clockwise around it `transformOrigin`.</td>
+    </tr>
+    <tr>
+        <td>`translate`</td>
+        <td>Specifies a 2d translation.</td>
+    </tr>
+    <tr>
+        <td>`translateX`</td>
+        <td>Translates the shape along the x-axis.</td>
+    </tr>
+    <tr>
+        <td>`translateY`</td>
+        <td>Translates the shape along the y-axis.</td>
+    </tr>
+    <tr>
+        <td>`skew`</td>
+        <td>Skews the shape around the x-axis and y-axis.</td>
+    </tr>
+    <tr>
+        <td>`skewX`</td>
+        <td>Skews the shape around the x-axis.</td>
+    </tr>
+    <tr>
+        <td>`skewY`</td>
+        <td>Skews the shape around the y-axis.</td>
+    </tr>
+    <tr>
+        <td>`scale`</td>
+        <td>Specifies a 2d scaling operation.</td>
     </tr>
 </table>
 
@@ -415,15 +432,12 @@ a `Path` instance, its drawing methods need to be leveraged. These drawing metho
 <h2 id="issues">Known Issues</h2>
 <ul class="spaced">
     <li>
-        <p>Radial gradients need to be finalized. The current implementation can only be approximated to work in vml. Need to ensure normalizations are not adversely affecting other technologies.</p>
+        <p>Gradients need more need more normalization accross technologies.</p>
     </li>
     <li>
-        <p>Linear gradient rotations need some minor bug fixes.</p>
+        <p>Transforms can display inconsistencies between IE < 8 and other browsers.</p>
     </li>
     <li>
-        <p>The Canvas implementation of the path element lacks the ability to have interactivity.</p>
-    </li>
-    <li>
-        <p>`Graphic` should extend `Base`. It currently does not.</p>
+        <p>Path element currently lacks the ability to have interactivity in Android.</p>
     </li>
 </ul>
