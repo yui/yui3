@@ -120,7 +120,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             bb = sv._bb,
             scrollChangeHandler = sv._afterScrollChange,
             dimChangeHandler = sv._afterDimChange, 
-            flick = sv.get(FLICK); 
+            flick = sv.get(FLICK);
 
         bb.on('gesturemovestart', Y.bind(sv._onGestureMoveStart, sv));
 
@@ -139,6 +139,16 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             'heightChange'  : dimChangeHandler,
             'widthChange'   : dimChangeHandler
         });
+
+        // Helps avoid potential CSS race where in the styles from
+        // scrollview-list-skin.css are applied after syncUI() fires.
+        // Without a _uiDimensionChange() call, the scrollview only 
+        //scrolls partially due to the fact that styles added in the CSS
+        // altered the height/width of the bounding box.
+        this.after('renderedChange', function(e) {
+            this._uiDimensionsChange();
+
+        });
     },
 
     /**
@@ -149,7 +159,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     syncUI: function() {
         this._uiDimensionsChange();
-
         this.scrollTo(this.get(SCROLL_X), this.get(SCROLL_Y));
     },
 
