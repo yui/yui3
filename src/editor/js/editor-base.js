@@ -192,7 +192,7 @@
                     break;
             }
             if (Y.UA.webkit && e.commands && (e.commands.indent || e.commands.outdent)) {
-                /**
+                /*
                 * When executing execCommand 'indent or 'outdent' Webkit applies
                 * a class to the BLOCKQUOTE that adds left/right margin to it
                 * This strips that style so it is just a normal BLOCKQUOTE
