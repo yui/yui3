@@ -1,0 +1,89 @@
+<form id="demo">
+    <h4>JSON</h4>
+    <h6>Data</h6>
+    <pre>
+{
+    "query":{
+        "count":"10",
+        "created":"2011-06-15T04:36:13Z",
+        "lang":"en-US",
+        "results":{
+            "event":[
+                {
+                 "id": "6826736",
+                 "name": "PGA Fall Expo 2011",
+                 "start_date": "2011-08-01",
+                 "venue_name": "The Venetian Congress and Sands Expo Convention Center",
+                 ...
+                },
+                {
+                 "id": "7228592",
+                 "name": "NAHC 30th Annual Meeting & Exposition",
+                 "start_date": "2011-10-01",
+                 "venue_name": "Mandalay Bay Resort",
+                 ...
+                },
+                {
+                 "id": "7238009",
+                 "name": "Water and Society 2011-First International Conference on Water and Society",
+                 "start_date": "2011-12-05",
+                 "venue_name": "Richard Tam Alumni Center",
+                 ...
+                },
+                ...
+            ]
+        }
+    }
+}
+    </pre>
+
+    <h6>Schema</h6>
+    <pre>
+{
+    resultListLocator: "query.results.event",
+    resultFields: ["name"]
+}
+    </pre>
+
+    <h6>Normalized data</h6>
+    <input type="button" id="demo_json" value="Retrieve data">
+    <div id="demo_output_json" class="output"></div>
+</form>
+
+<script type="text/javascript">
+YUI().use("json-stringify", "node", "datasource-get", "datasource-jsonschema", function (Y) {
+    var myDataSource = new Y.DataSource.Get({
+            source: "http://query.yahooapis.com/v1/public/yql?format=json&"
+        });
+
+    myDataSource.plug(Y.Plugin.DataSourceJSONSchema, {
+        schema: {
+            resultListLocator: "query.results.event",
+            resultFields: ["name"]
+        }
+    });
+
+    Y.on("click", function(e){
+        // See what's happening in Las Vegas (woeid 2436704)
+        myDataSource.sendRequest({
+            request: "q=select%20*%20from%20upcoming.events.bestinplace%20where%20woeid=2436704",
+            callback: {
+                success: function(e){
+                    Y.one("#demo_output_json")
+                        .setContent("<pre>" +
+                            Y.JSON.stringify(e.response, null, 4)
+                                .replace(/&/g,"&amp;")
+                                .replace(/</g,"&lt;")
+                                .replace(/>/g,"&gt;") +
+                                "</pre>");
+                },
+                failure: function(e){
+                    Y.one("#demo_output_json")
+                        .setContent("Could not retrieve data: " + e.error.message);
+                }
+            }
+        });
+    }, "#demo_json");
+});
+</script>
+

@@ -1,0 +1,83 @@
+<style scoped>
+/* custom styles for this example */
+#demo .output {
+    margin-bottom:1em;
+    padding:10px;
+    border:1px solid #D9D9D9;
+}
+#demo .output pre {
+    font-size: 11px;
+}
+#demo .output strong {
+    padding: .25em .4em;
+    background: #333;
+    color: #fff;
+    text-shadow: -1px -1px 1px #000;
+    border-radius: 5px;
+}
+</style>
+
+<div class="intro">
+    <p>The DataSourceCache plugin enables caching on any DataSource to reduce high-latency calls to remote sources and to reduce server load. In this example, the Cache's `max` value has been set to `3`.
+
+</div>
+
+<div class="example">
+    {{>datasource-caching-source}}
+</div>
+
+<p>Use the <code>plug()</code> method to initialize the
+<code>DataSourceCache</code> plugin and pass in the configuration value
+<code>max</code> to set the maximum size.</p>
+
+```
+YUI().use("datasource", "dataschema", "cache", function (Y) {
+    var callback = {
+            success: function (e) { /* output to screen */ },
+            failure: function (e) { /* output to screen */ }
+        },
+
+        myDataSource = new Y.DataSource.Get({
+            source: "https://api.github.com/users/",
+
+            // this is only needed because the query appends the url
+            // rather than the url's query params
+            generateRequestCallback: function (guid) {
+                return '/repos?callback=YUI.Env.DataSource.callbacks.' + guid;
+            }
+        }),
+
+    myDataSource.plug(Y.Plugin.DataSourceJSONSchema, {
+        schema: {
+            resultListLocator: "data",
+            resultFields: ["name"]
+        }
+    });
+
+    myDataSource.plug(Y.Plugin.DataSourceCache, { max: 3 });
+
+    // Adds to cache
+    myDataSource.sendRequest({
+        request : "lsmith",
+        callback: callback
+    });
+
+    // Adds to cache
+    myDataSource.sendRequest({
+        request : "davglass",
+        callback: callback
+    });
+
+    // Retrieves from cache
+    myDataSource.sendRequest({
+        request : "lsmith",
+        callback: callback
+    });
+});
+```
+
+<h3 id="fullsource">Full Example Source Listing</h3>
+
+```
+    {{>datasource-caching-source}}
+```

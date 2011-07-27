@@ -9,7 +9,7 @@
 
     "examples": [
         {
-            "name": "datasource_local",
+            "name": "datasource-local",
             "displayName": "DataSource.Local",
             "modules": ["datasource", "dataschema"],
             "description": "The Local DataSource manages retrieval of in-page data, from JavaScript arrays and objects to DOM elements.",
@@ -19,7 +19,7 @@
         },
 
         {
-            "name": "datasource_get",
+            "name": "datasource-get",
             "displayName": "DataSource.Get",
             "modules": ["datasource", "dataschema"],
             "description": "The Get DataSource, which manages retrieval of data from remote sources via the Get Utility, can be useful for accessing data from cross-domain servers without the need for a proxy.",
@@ -29,7 +29,7 @@
         },
 
         {
-            "name": "datasource_io",
+            "name": "datasource-io",
             "displayName": "DataSource.IO",
             "modules": ["datasource", "dataschema"],
             "description": "The IO DataSource manages retrieval of data from remote sources, via the IO Utility.",
@@ -39,7 +39,7 @@
         },
 
         {
-            "name": "datasource_function",
+            "name": "datasource-function",
             "displayName": "DataSource.Function",
             "modules": ["datasource", "dataschema"],
             "description": "The Function DataSource, which manages retrieval of data from a JavaScript function, provides a highly customizeable mechanism for implementer-defined data retrieval algorithms",
@@ -49,7 +49,7 @@
         },
 
         {
-            "name": "datasource_caching",
+            "name": "datasource-caching",
             "displayName": "DataSource with Caching",
             "modules": ["datasource", "dataschema", "cache"],
             "description": "Use the DataSourceCache plugin to enable caching and reduce server calls to remote sources.",
@@ -59,7 +59,7 @@
         },
 
         {
-            "name": "datasource_offlinecache",
+            "name": "datasource-offlinecache",
             "displayName": "DataSource with Offline Cache",
             "modules": ["datasource", "dataschema", "cache"],
             "description": "The DataSourceCache plugin supports offline caching so that cached data persists across browser sessions.",
@@ -69,7 +69,7 @@
         },
 
         {
-            "name": "datasource_polling",
+            "name": "datasource-polling",
             "displayName": "DataSource with Polling",
             "modules": ["datasource"],
             "description": "Use the Pollable extension to enable polling in your DataSource.",
