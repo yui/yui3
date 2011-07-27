@@ -1,0 +1,89 @@
+<style>
+.yui3-skin-sam .redtext {
+  color:#ff0000;
+}
+</style>
+<div id="demo" class="yui3-skin-sam">
+  <div id="mycalendar"></div>
+</div>
+<script type="text/javascript">
+YUI({
+    filter: 'RAW',
+    debug: true,
+    log: true
+}).use('calendar', 'datatype-date', 'datatype-date-math', function(Y) {
+
+ // Switch the calendar main template to the included two pane template
+ Y.CalendarBase.CONTENT_TEMPLATE = Y.CalendarBase.TWO_PANE_TEMPLATE;
+
+ // Create a new instance of calendar, setting the showing of previous
+ // and next month's dates to true, and the selection mode to multiple
+ // selected dates. Additionally, set the disabledDatesRule to a name of
+ // the rule which, when matched, will force the date to be excluded
+ // from being selected. Also configure the initial date on the calendar
+ // to be July of 2011.
+ var calendar = new Y.Calendar({
+   contentBox: "#mycalendar",
+   showPrevMonth: true,
+   showNextMonth: true,
+   selectionMode: 'multiple',
+   disabledDatesRule: "tuesdays_and_fridays",
+   date: new Date(2011, 6, 1)
+ }).render();
+
+// Create a set of rules to match specific dates. In this case,
+// the "tuesdays_and_fridays" rule will match any Tuesday or Friday,
+// whereas the "all_weekends" rule will match any Saturday or Sunday.
+ var rules = {
+   "all": {
+     "all": {
+       "all": {
+         "2,5": "tuesdays_and_fridays",
+         "0,6": "all_weekends"
+       }
+     }
+   }
+ };
+
+// Set the calendar customRenderer, provides the rules defined above,
+// as well as a filter function. The filter function receives a reference
+// to the node corresponding to the DOM element of the date that matched
+// one or more rule, along with the list of rules. Check if one of the
+// rules is "all_weekends", and if so, apply a custom CSS class to the
+// node.
+ calendar.set("customRenderer", {
+   rules: rules,
+   filterFunction: function (date, node, rules) {
+     if (rules.indexOf('all_weekends') >= 0) {
+       node.addClass("redtext");
+     }
+   }
+ });
+
+// Set a custom header renderer with a callback function,
+// which receives the current date and outputs a string.
+// use the Y.Datatype.Date format to format the date, and
+// the Datatype.Date math to add one month to the current
+// date, so both months can appear in the header (since 
+// this is a two-pane calendar).
+ calendar.set("headerRenderer", function (curDate) {
+   var ydate = Y.DataType.Date,
+       output = ydate.format(curDate, {
+       format: "%B %Y"
+     }) + " &mdash; " + ydate.format(ydate.addMonths(curDate, 1), {
+       format: "%B %Y"
+     });
+   return output;
+ }); 
+
+// When selection changes, output the fired event to the
+// console. the newSelection attribute in the event facade
+// will contain the list of currently selected dates (or be
+// empty if all dates have been deselected).
+ calendar.on("selectionChange", function (ev) {
+   Y.log(ev);
+ });
+ 
+ });
+
+</script>
