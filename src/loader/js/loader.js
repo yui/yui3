@@ -2257,7 +2257,7 @@ Y.log('attempting to load ' + s[i] + ', ' + self.base, 'info', 'loader');
 
     /**
      * Apply filter defined for this instance to a url/path
-     * method _filter
+     * @method _filter
      * @param {string} u the string to filter.
      * @param {string} name the name of the module, if we are processing
      * a single module as opposed to a combined url.
@@ -2285,7 +2285,7 @@ Y.log('attempting to load ' + s[i] + ', ' + self.base, 'info', 'loader');
 
     /**
      * Generates the full url for a module
-     * method _url
+     * @method _url
      * @param {string} path the path fragment.
      * @param {String} name The name of the module
      * @pamra {String} [base=self.base] The base url to use
