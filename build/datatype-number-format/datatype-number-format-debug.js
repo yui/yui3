@@ -102,5 +102,4 @@ Y.mix(Y.namespace("DataType.Number"), {
 });
 
 
-
 }, '@VERSION@' );
