@@ -4,7 +4,8 @@
                 	"widget",
                     "substitute",
                     "datatype-date",
-                    "datatype-date-math"
+                    "datatype-date-math",
+                    "cssgrids"
             	],
                 "lang" : [
                     "en", 
