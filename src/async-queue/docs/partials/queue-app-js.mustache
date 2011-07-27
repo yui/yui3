@@ -1,0 +1,108 @@
+
+<script type="text/javascript">
+YUI().use("node", "transition","async-queue", function (Y) {
+
+var MyApp = {
+    NAME : 'Asynchronous Queue Demo',
+
+    q : new Y.AsyncQueue(),
+
+    nodes : {
+        root    : null,
+        status  : null,
+        nav     : null,
+        content : null,
+        foot    : null
+    },
+
+    render : function (container) {
+        if (MyApp.nodes.root) {
+            MyApp.q.stop();
+        }
+
+        // artificial delays have been inserted to simulate _renderNav or
+        // _renderContent being process intensive and taking a while to complete
+        MyApp.q.add(
+            // pass the container param to the callback using Y.bind
+            Y.bind(MyApp._renderFramework, MyApp, container),
+            {fn: function () {}, timeout: 700}, // artificial delay
+            MyApp._renderNav,
+            {fn: function () {}, timeout: 700}, // artificial delay
+            MyApp._renderContent).run();
+    },
+
+    setStatus : function (message,working) {
+        MyApp.nodes.status.setContent(message);
+
+        MyApp.nodes.foot[working?'addClass':'removeClass']('working');
+    },
+
+    _renderFramework : function (container) {
+        var root = MyApp.nodes.root = Y.one(container);
+
+        root.setContent(
+        '<div class="yui3-module">'+
+            '<div class="yui3-hd">'+
+                '<h4>'+MyApp.NAME+'</h4>'+
+            '</div>'+
+            '<div class="yui3-bd">'+
+                '<div class="yui3-nav"></div>'+
+                '<div class="yui3-content"></div>'+
+            '</div>'+
+            '<div class="yui3-ft">'+
+                '<p class="yui3-status"></p>'+
+            '</div>'+
+        '</div>');
+
+        MyApp.nodes.status  = root.one('p.yui3-status');
+        MyApp.nodes.nav     = root.one('.yui3-nav');
+        MyApp.nodes.content = root.one('.yui3-content');
+        MyApp.nodes.foot    = root.one('.yui3-ft');
+
+        MyApp.nodes.nav.setStyle('top','-30px');
+        MyApp.nodes.content.setStyle('opacity',0);
+
+        MyApp.setStatus('Loading...',true);
+    },
+
+    _renderNav : function () {
+        var nav = MyApp.nodes.nav;
+        nav.append(
+            '<ul>'+
+                '<li><a href="#">Nav Lorem</a></li>'+
+                '<li><a href="#">Nav Ipsum</a></li>'+
+                '<li><a href="#">Nav Dolor</a></li>'+
+                '<li><a href="#">Nav Sit</a></li>'+
+            '</ul>');
+
+        nav.transition({
+            top: 0,
+            duration: .3
+        });
+    },
+
+    _renderContent : function () {
+        var content = MyApp.nodes.content;
+
+        content.append('<p>[ App content here ]</p>')
+               .transition({
+                   opacity: 1,
+                   duration: .8
+               });
+
+        MyApp.setStatus('App initialized',false);
+    }
+};
+
+Y.on('click',function (e) {
+    e.preventDefault();
+    this.set('text','Re-initialize Application');
+
+    MyApp.render('#demo');
+},'#init');
+
+// expose the example structure
+YUI.example = { MyApp : MyApp };
+
+});
+</script>
