@@ -1954,6 +1954,31 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             Assert.isTrue(Y.one('body').compareTo(Y.Node('body')));
         }
     })); 
+
+    suite.add( new Y.Test.Case({
+        name: 'NodeList API',
+
+        'should have the create API': function() {
+            Assert.isTrue(typeof Y.all('body').append == 'function');
+            Assert.isTrue(typeof Y.all('body').prepend == 'function');
+            Assert.isTrue(typeof Y.all('body').insert == 'function');
+            Assert.isTrue(typeof Y.all('body').setContent == 'function');
+            Assert.isTrue(typeof Y.all('body').appendChild == 'function');
+        },
+
+        'should have the view API': function() {
+            Assert.isTrue(typeof Y.all('body').hide == 'function');
+            Assert.isTrue(typeof Y.all('body').show == 'function');
+            Assert.isTrue(typeof Y.all('body').toggleView == 'function');
+        },
+
+        'should have the event API': function() {
+            Assert.isTrue(typeof Y.all('body').on == 'function');
+            Assert.isTrue(typeof Y.all('body').after == 'function');
+            Assert.isTrue(typeof Y.all('body').detach == 'function');
+            Assert.isTrue(typeof Y.all('body').detachAll == 'function');
+        }
+    })); 
     Y.Test.Runner.add(suite);
 
     Y.on('load', function() {
