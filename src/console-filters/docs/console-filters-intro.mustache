@@ -1,0 +1,87 @@
+{{>console-filters-intro-css}}
+
+<div class="intro">
+    <p>This example illustrates how to use and configure the ConsoleFilters plugin for Console.  The debug versions of YUI module files are used, so standard YUI debugging messages are broadcast to the Console.</p>
+
+    <p>Use the checkboxes in the Console footer to control which messages are displayed or hidden.  Click the &quot;Log a message&quot; button to call `Y.log` using a custom category and source.</p>
+
+    <p>Note how new filter checkboxes are added when a new category or source are received by the Console, for example when clicking on the &quot;Log a message&quot; button.</p>
+</div>
+
+<div class="example">
+    {{>console-filters-intro-markup}}
+    {{>console-filters-intro-js}}
+</div>
+
+<h3 class="first">Configure the YUI instance for debug mode</h3>
+<p>Only the `<em>module</em>-debug.js` versions of module files include log statements, so we'll set up our YUI instance's `filter` property to &quot;debug&quot;.  We'll also reduce the noise somewhat by specifying a `logInclude` list.</p>
+
+```
+YUI({filter: 'debug',
+    logInclude: {
+        event: true,
+        attribute: true,
+        base: true,
+        widget: true,
+        node: true,
+        MyApp: true  // This must be included for the custom source message
+    },
+    timeout: 10000
+}).use("console-filters", function (Y) { ... });
+```
+
+<h3>Create the Console and plug in ConsoleFilters</h3>
+<p>All that's left to do now is plugin in the ConsoleFilters plugin.  This can be done in one of a few ways.</p>
+```
+// create the console instance
+var yconsole = new Y.Console({
+    boundingBox: '#console',
+    height: '400px',
+    width: '450px',
+    newestOnTop: false,
+    plugins: [ Y.Plugin.ConsoleFilters ]
+}).render();
+
+// unknown categories and sources are allowed.
+yconsole.filter.hideCategory('error');
+
+// hide and show methods support N arguments.
+yconsole.filter.hideSource('attribute','widget');
+```
+
+<p>Alternatively, you can attach the ConsoleFilters plugin after instantiation.  This version also shows how to apply initial category and source filter states.</p>
+```
+var yconsole = new Y.Console({
+    boundingBox: '#console',
+    height: '400px',
+    width: '450px',
+    newestOnTop: false
+}).plug(Y.Plugin.ConsoleFilters, {
+    category: {
+        error: false
+    },
+    source: {
+        attribute: false,
+        widget: false
+    }
+}).render();
+</script>
+```
+
+<h3>Full Code Listing</h3>
+
+<h4>Markup</h4>
+```
+{{>console-filters-intro-markup}}
+```
+
+<h4>JavaScript</h4>
+```
+{{>console-filters-intro-js}}
+```
+
+<h4>CSS</h4>
+```
+{{>console-filters-intro-css}}
+```
+
