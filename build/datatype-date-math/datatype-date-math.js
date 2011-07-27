@@ -19,13 +19,25 @@ Y.mix(Y.namespace("DataType.Date"), {
 	 * @return {Boolean} True if the date argument contains a valid value.
 	 */
 	 isValidDate : function (oDate) {
-		if(LANG.isDate(oDate) && (isFinite(oDate)) && (oDate != "Invalid Date") && !isNaN(oDate)) {
+		if(LANG.isDate(oDate) && (isFinite(oDate)) && (oDate != "Invalid Date") && !isNaN(oDate) && (oDate != null)) {
             return true;
         }
         else {
             return false;
         }
-	},  
+	},
+	
+	areEqual : function (aDate, bDate) {
+		return (this.isValidDate(aDate) && this.isValidDate(bDate) && (aDate.getTime() == bDate.getTime()));	
+	},
+
+    isGreater : function (aDate, bDate) {
+    	return (this.isValidDate(aDate) && this.isValidDate(bDate) && (aDate.getTime() > bDate.getTime()));
+    },
+
+    isGreaterOrEqual : function (aDate, bDate) {
+    	return (this.isValidDate(aDate) && this.isValidDate(bDate) && (aDate.getTime() >= bDate.getTime()));
+    },
 
 	addMonths : function (oDate, numMonths) {
 		var newYear = oDate.getFullYear();
@@ -48,6 +60,23 @@ Y.mix(Y.namespace("DataType.Date"), {
 		newDate.setYear(newYear);
 		return newDate;
 	},
+
+    listOfDatesInMonth : function (oDate) {
+       if (!this.isValidDate(oDate)) {
+       	 return [];
+       }
+
+       var daysInMonth = this.daysInMonth(oDate),
+           year        = oDate.getFullYear(),
+           month       = oDate.getMonth(),
+           output      = [];
+
+       for (var day = 1; day <= daysInMonth; day++) {
+       	   output.push(new Date(year, month, day, 12, 0, 0));
+       }
+
+       return output;
+    },
 
 	/**
 	 * Takes a native JavaScript Date and returns the number of days in the month that the given date belongs to.
@@ -88,4 +117,4 @@ Y.mix(Y.namespace("DataType.Date"), {
 });
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['yui-base']});

@@ -7482,7 +7482,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "ru"
         ], 
         "requires": [
-            "calendar-base"
+            "calendar-base", 
+            "calendarnavigator"
         ], 
         "skinnable": true
     }, 
@@ -7495,7 +7496,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "widget", 
             "substitute", 
             "datatype-date", 
-            "datatype-date-math"
+            "datatype-date-math", 
+            "cssgrids"
+        ], 
+        "skinnable": true
+    }, 
+    "calendarnavigator": {
+        "requires": [
+            "plugin", 
+            "classnamemanager"
         ], 
         "skinnable": true
     }, 
@@ -9214,7 +9223,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'b2d0341797ce70c4846e5486b1a373db';
+YUI.Env[Y.version].md5 = '0e50bdf93eaef44f0eff78d1bf482d05';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

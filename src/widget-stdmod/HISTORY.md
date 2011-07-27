@@ -4,7 +4,6 @@ Widget Std Mod
 3.4.0
 -----
 
-  * Add convenience methods head(), body(), foot()
   * Move attribute event listeners to _renderUIStdMod() method so that 
     setStdModContent() can be called on renderUI()
 
