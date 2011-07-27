@@ -769,15 +769,11 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 			h = this.get("height"),
 			rotation = fill.rotation,
 			radCon = Math.PI/180,
-			sinRadians = parseFloat(parseFloat(Math.sin(rotation * radCon)).toFixed(8)),
-			cosRadians = parseFloat(parseFloat(Math.cos(rotation * radCon)).toFixed(8)),
             tanRadians = parseFloat(parseFloat(Math.tan(rotation * radCon)).toFixed(8)),
             i,
 			len,
 			def,
 			stop,
-            x = this.get("x"),
-            y = this.get("y"),
 			x1 = "0%", 
 			x2 = "100%", 
 			y1 = "0%", 
@@ -983,22 +979,6 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 		this._addTransform("scale", arguments);
 	},
 
-	/**
-	 * Applies a matrix transformation
-	 *
-	 * @method matrix
-     * @param {Number} a
-     * @param {Number} b
-     * @param {Number} c
-     * @param {Number} d
-     * @param {Number} dx
-     * @param {Number} dy
-	 */
-	matrix: function(a, b, c, d, dx, dy)
-	{
-		this._addTransform("matrix", arguments);
-	},
-
     /**
      * Adds a transform to the shape.
      *
@@ -1010,6 +990,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	_addTransform: function(type, args)
 	{
         args = Y.Array(args);
+        this._transform = Y_LANG.trim(this._transform + " " + type + "(" + args.join(", ") + ")");
         args.unshift(type);
         this._transforms.push(args);
         if(this.initialized)
@@ -1029,10 +1010,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 		var isPath = this._type == "path",
 		    node = this.node,
 			key,
-			args,
-			val,
 			transform,
-			test,
 			transformOrigin,
 			x,
 			y,
@@ -1145,6 +1123,15 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 * @private
 	 */
 	_translateY: 0,
+    
+    /**
+     * Storage for the transform attribute.
+     *
+     * @property _transform
+     * @type String
+     * @private
+     */
+    _transform: "",
 
 	/**
 	 * Returns the bounds for a shape.
@@ -1172,7 +1159,6 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
             d = matrix.d,
             dx = matrix.dx,
             dy = matrix.dy,
-            transformOrigin = this.get("transformOrigin"),
             w = this.get("width"),
             h = this.get("height"),
             //The svg path element does not have x and y coordinates. Shapes based on path use translate to "fake" x and y. As a
@@ -1274,23 +1260,32 @@ SVGShape.ATTRS = {
 			return [0.5, 0.5];
 		}
 	},
-
-	/**
-	 * The rotation (in degrees) of the shape.
+	
+    /**
+	 * A css transform string.
 	 *
-	 * @config rotation
-	 * @type Number
+	 * @config transform
+     * @type String  
+     * 
+     * @writeOnly
 	 */
-	rotation: {
+	transform: {
 		setter: function(val)
 		{
-			this.rotate(val);
+            this.matrix.init();	
+		    this._transforms = this.matrix.getTransformArray(val);
+            this._transform = val;
+            if(this.initialized)
+            {
+                this._updateTransform();
+            }
+            return val;
 		},
 
-		getter: function()
-		{
-			return this._rotation;
-		}
+        getter: function()
+        {
+            return this._transform;
+        }
 	},
 
 	/**
