@@ -1,0 +1,57 @@
+<style>
+/* For supporting browsers, the overlay is rendered semi-transparent with
+ * fancy rounded corners */
+.yui3-overlay {
+    background: rgba(128,128,128,0.3);
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    padding: 7px;
+    cursor: move;
+}
+.yui3-overlay-content {
+    background: rgba(205,205,205,0.3);
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    padding: 1px;
+} 
+.yui3-overlay form {
+    background: #f2fbff url(gradient-promo.png) repeat-x scroll 0 0;
+    border: 2px solid #fff;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    margin: 0;
+    padding: 0;
+    font-size: 13px;
+}
+.yui3-overlay fieldset {
+    border: 1px solid #cde;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    margin: 0;
+    padding: 20px;
+}
+.yui3-overlay h3 {
+    border-bottom: 2px solid #fff;
+    color: #479;
+    background: transparent;
+    margin: 0;
+    font-size: 175%;
+}
+.yui3-overlay label {
+    display: block;
+    margin: 1.3em 0 0.5ex;
+    font-weight: bold;
+    color: #003;
+}
+.yui3-overlay p {
+    margin: 2em 0 0;
+}
+/* override the move cursor for the Slider */
+.yui3-overlay .yui3-slider:hover {
+    cursor: default;
+}
+</style>

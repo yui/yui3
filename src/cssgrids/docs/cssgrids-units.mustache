@@ -1,0 +1,117 @@
+<div class="intro">
+    <p>Creating a layout using grids requires a <code>yui3-g</code> container and any number of <code>yui3-u-*</code> units.  To create a layout that splits the units 50/50, use <code>yui3-u-1-2</code> units.</p>
+
+</div>
+
+<div class="example newwindow">
+    <a href="cssgrids-units-example.html" target="_blank" class="button">
+        View Example in New Window
+    </a>
+</div>
+
+<h4>Note</h4>
+<p>The only child elements (e.g. direct descendants) of a <code>yui3-g</code> should be <code>yui-3-u-*</code> elements. Any elements within a <code>yui3-g</code> need to be wrapped in a <code>yui3-u-*</code> of some kind, otherwise you may experience side-effects due to the layout system being used.</p>
+<h3>Basic Markup Structure</h3>
+
+```
+<div class="yui3-g">
+    <div class="yui3-u-1-2"></div>
+    <div class="yui3-u-1-2"></div>
+</div>
+```
+
+<h3>Provide a Content Container</h3>
+<p>Styling should be applied to a container within the unit, rather than the unit itself.  This allows you to set borders, padding, margins (gutters), etc. without worrying about breaking the layout.  For this demo we will give the content a class of <code>content</code>, but can be called whatever you like.</p>
+
+```
+<div class="yui3-g">
+    <div class="yui3-u-1-2">
+        <div class="content">
+
+        </div>
+    </div>
+    <div class="yui3-u-1-2">
+        <div class="content">
+
+        </div>
+    </div>
+</div>
+```
+
+<h3>Adding a Gutter</h3>
+<p>All units align edge to edge, with zero space in between.  You can add space ("gutter"), by simply adding a margin to your content.  This is where additional content styling, such as borders, padding, colors, etc. can be applied as well.</p>
+
+```
+<style>
+.yui3-g .content {
+    border: 2px solid #000;
+    margin-right:10px; /* "column" gutters */
+    padding: 1em;
+}
+</style>
+```
+
+<h3>Available Units</h3>
+
+<table class="auto">
+	<thead>
+		<tr class="odd">
+			<th>Class</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>.yui3-u</code></td>
+			<td>shrinks to fit content (unless given an explicit size)</td>
+		</tr>
+		<tr class="odd">
+			<td><code>.yui3-u-1</code></td>
+			<td>fills entire width of container</td>
+		</tr>
+		<tr>
+			<td><code>.yui3-u-1-2</code></td>
+			<td>fills 1/2 the container</td>
+		</tr>
+		<tr class="odd">
+			<td><code>.yui3-u-1-3</code></td>
+			<td>fills 1/3 the container</td>
+		</tr>
+		<tr>
+			<td><code>.yui3-u-2-3</code></td>
+			<td>fills 2/3 the container</td>
+		</tr>
+		<tr class="odd">
+			<td><code>.yui3-u-1-4</code></td>
+			<td>fills 1/4 the container</td>
+		</tr>
+		<tr>
+			<td><code>.yui3-u-3-4</code></td>
+			<td>fills 3/4 the container</td>
+		</tr>
+		<tr class="odd">
+			<td><code>.yui3-u-1-5</code></td>
+			<td>fills 1/5 the container</td>
+		</tr>
+		<tr>
+			<td><code>.yui3-u-2-5</code></td>
+			<td>fills 2/5 the container</td>
+		</tr>
+		<tr class="odd">
+			<td><code>.yui3-u-3-5</code></td>
+			<td>fills 3/5 the container</td>
+		</tr>
+		<tr>
+			<td><code>.yui3-u-4-5</code></td>
+			<td>fills 4/5 the container</td>
+		</tr>
+		<tr class="odd">
+			<td><code>.yui3-u-1-6</code></td>
+			<td>fills 1/6 the container</td>
+		</tr>
+		<tr>
+			<td><code>.yui3-u-5-6</code></td>
+			<td>fills 5/6 the container</td>
+		</tr>
+	</tbody>
+</table>
