@@ -1,0 +1,49 @@
+<div class="intro">
+    <p>The `event-focus` module supplies a behavior patch for the native
+    `focus` and `blur` events to allow them to bubble for event delegation.</p>
+</div>
+
+<h2>Bubble time</h2>
+
+<p>Most DOM events bubble.  If, for example, you click on a button in a form,
+the click event will be dispatched to event subscribers on the button, on the
+fieldset, on the form, on the div containing the form, and so on up to the
+`document`.  You can subscribe to the click event at any level and your
+callback will be executed.  But `focus` and `blur` aren't like that.  They are
+only dispatched to subscribers on the element that received or lost focus.</p>
+
+<p>But <a href="delegation.html">we like event delegation</a> so we determined
+a way to synthesize bubbling for `focus` and `blur` using <a
+href="http://www.w3.org/TR/DOM-Level-3-Events/#event-flow">capture phase</a>
+subscriptions in non-IE browsers, and proprietary focus-related events in IE
+that do bubble.  The result should be transparent for individual element
+`focus` and `blur` subscriptions, but make `focus` and `blur` work as you would
+expect when subscribing higher in the document tree.</p>
+
+```
+<ul id="items">
+    <li><input value="form elements are focusable by default"></li>
+    <li><a href="yahoo.com">Links are focusable by default</a></li>
+    <li tabindex="2">Things with `tabindex` 0 or higher are made user focusable</li>
+    <li tabindex="-1">Things with `tabindex` -1 can be focused programatically</li>
+    <li>But by default none of those `focus` events will report to #items</li>
+</ul>
+<script>
+YUI().use('node-base', function (Y) {
+    var items = Y.one('#items');
+
+    items.on('focus', function (e) {
+        Y.log("The list does not have a tabindex, so this will never execute");
+    });
+
+    Y.use('event-focus', function () {
+        items.on('focus', function (e) {
+            Y.log("But now that event-focus is in place, future " +
+                  "subscriptions like this one will.");
+
+            // e.target received focus
+        });
+    });
+});
+</script>
+```
