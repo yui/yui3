@@ -1920,6 +1920,11 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             var nodes = document.getElementsByTagName('input');
 
             ArrayAssert.itemsAreEqual(nodes, Y.all(nodes).getDOMNodes());
+        },
+
+        'should not cache document fragment': function() {
+            var node = Y.Node.create('<div>foo</div><div>bar</div>');
+            Assert.isUndefined(Y.Node._instances[node._yuid]);
         }
     })); 
 
