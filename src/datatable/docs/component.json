@@ -11,7 +11,7 @@
     "examples": [
 
         {
-            "name": "datatable_basic",
+            "name": "datatable-basic",
             "displayName": "Basic DataTable",
             "modules": ["datatable"],
             "description": "This example illustrates simple DataTable use cases.",
@@ -21,7 +21,7 @@
         },
 
         {
-            "name": "datatable_dsget",
+            "name": "datatable-dsget",
             "displayName": "DataTable + DataSource.Get + JSON Data",
             "modules": ["datatable"],
             "description": "DataTable loaded with JSON data from a remote webservice via DataSource.Get",
@@ -31,7 +31,7 @@
         },
 
         {
-            "name": "datatable_dsio",
+            "name": "datatable-dsio",
             "displayName": "DataTable + DataSource.IO + XML Data",
             "modules": ["datatable"],
             "description": "DataTable loaded with XML data from a remote webservice via DataSource.IO.",
@@ -41,7 +41,7 @@
         },
 
         {
-            "name": "datatable_formatting",
+            "name": "datatable-formatting",
             "displayName": "Formatting Row Data for Display",
             "modules": ["datatable"],
             "description": "Custom format data for display.",
@@ -51,7 +51,7 @@
         },
 
         {
-            "name": "datatable_nestedcols",
+            "name": "datatable-nestedcols",
             "displayName": "Nested Column Headers",
             "modules": ["datatable"],
             "description": "DataTable with nested column headers.",
@@ -61,7 +61,7 @@
         },
 
         {
-            "name": "datatable_sort",
+            "name": "datatable-sort",
             "displayName": "Column Sorting",
             "modules": ["datatable"],
             "description": "DataTable with column sorting.",
@@ -71,7 +71,7 @@
         },
 
         {
-            "name": "datatable_scroll",
+            "name": "datatable-scroll",
             "displayName": "Scrolling DataTable",
             "modules": ["datatable"],
             "description": "DataTable with vertical and/or horizontal scrolling rows.",
