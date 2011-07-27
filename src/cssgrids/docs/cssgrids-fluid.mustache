@@ -1,0 +1,56 @@
+<div class="intro">
+    <p>Creating a fluid layout with YUI Grids requires some custom sizing to achieve the fluid effect.</p>
+</div>
+
+<div class="example newwindow">
+    <a href="cssgrids-fluid-example.html" target="_blank" class="button">
+        View Example in New Window
+    </a>
+</div>
+
+<p>A fluid grid starts with the basic markup structure of a <code>yui3-g</code> grid and some <code>yui3-u</code> units.
+<h3>Basic Markup Structure</h3>
+
+```
+<div class="yui3-g">
+    <div class="yui3-u"></div>
+    <div class="yui3-u"></div>
+    <div class="yui3-u"></div>
+</div>
+```
+
+<p>Creating a fluid layout requires manually fixing the sizes and using a combination of <code>padding</code> and negative margins, so we can stick with the basic <code>yui3-u</code> unit.  Rather than extending the <code>yui3-u</code> unit directly, we will add some unique <code>ID</code>s to our "columns" to deliver the sizing.  The actual <code>ID</code>s are entirely up to you, but by convention should describe your content rather than its presentation or layout.  We will apply an ID to the <code>yui3-g</code> container as well, as this is where the padding will be added to create space for the side columns.</p>
+
+```
+<div class="yui3-g" id="layout">
+    <div class="yui3-u" id="nav"></div>
+    <div class="yui3-u" id="main"></div>
+    <div class="yui3-u" id="extra"></div>
+</div>
+```
+
+<p>We also need to add our custom CSS for the fluid layout.  The container for the units is padded to match the widths of each side column, each side column gets a fixed width and a negative margin that matches the fixed width.  The center column is set to 100% width, filling the container minus its padding.</p>
+
+```
+<style>
+#layout {
+    padding-left:300px; /* "left col" width */ 
+    padding-right:150px; /* "right col" width */
+}
+
+#nav {
+    margin-left:-300px; /* "left col" width */
+    width:300px;
+}
+
+#extra {
+    width:150px;
+    margin-right:-150px; /* "right col" width */
+}
+
+#main {
+    width:100%;
+}
+
+</style>
+```

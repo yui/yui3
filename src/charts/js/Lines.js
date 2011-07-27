@@ -26,7 +26,7 @@ Lines.prototype = {
         var graphic = this.get("graphic") || this.get("graph").get("graphic");
         if(!this._lineGraphic)
         {
-            this._lineGraphic = graphic.getShape({type: "path"});
+            this._lineGraphic = graphic.addShape({type: "path"});
         }
         this._lineGraphic.clear();
         return this._lineGraphic;

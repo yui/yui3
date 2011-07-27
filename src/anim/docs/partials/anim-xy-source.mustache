@@ -1,0 +1,20 @@
+<span id="demo"></span>
+
+<script type="text/javascript">
+YUI().use('anim', function(Y) {
+    var anim = new Y.Anim({
+        node: '#demo',
+        duration: 0.5,
+        easing: Y.Easing.elasticOut
+    });
+
+    var onClick = function(e) {
+        anim.set('to', { xy: [e.pageX, e.pageY] });
+        anim.run();
+    };
+    
+    Y.one('document').on('click', onClick);
+
+});
+
+</script>

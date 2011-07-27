@@ -1,0 +1,97 @@
+<style scoped>
+#demo .output {
+    margin-bottom:1em;
+    padding:10px;
+    border:1px solid #D9D9D9;
+}
+#demo .output pre {
+    font-size: 11px;
+}
+#demo .output strong {
+    padding: .25em .4em;
+    background: #333;
+    color: #fff;
+    text-shadow: -1px -1px 1px #000;
+    border-radius: 5px;
+}
+</style>
+
+<div class="intro">
+    <p>The DataSourceCache plugin enables caching on any DataSource to reduce high-latency calls to remote sources and to reduce server load. The plugin can point to `Y.OfflineCache` to allow cached data to persist across browser sessions in browsers that support <a href="http://dev.w3.org/html5/webstorage/" title="Web Storage">HTML5 localStorage</a>.</p>
+
+</div>
+
+<div class="example">
+    {{>datasource-offlinecache-source}}
+</div>
+
+<p>Use the `plug()` method to initialize the DataSourceCache plugin
+and point the configuration value `cache` to Y.CacheOffline to enable
+offline caching. The configuration value `expires` can be set to
+change how soon the data expires.</p>
+
+```
+YUI().use("datasource", "dataschema", "cache", function(Y) {
+    var callback = {
+            success: function (e) { /* output to screen */ },
+            failure: function (e) { /* output to screen */ }
+        },
+
+        myDataSource = new Y.DataSource.Get({
+            source: "https://api.github.com/users/",
+
+            // this is only needed because the query appends the url
+            // rather than the url's query params
+            generateRequestCallback: function (guid) {
+                return '/repos?callback=YUI.Env.DataSource.callbacks.' + guid;
+            }
+        }),
+
+    myDataSource.plug(Y.Plugin.DataSourceJSONSchema, {
+        schema: {
+            resultListLocator: "data",
+            resultFields: ["name"]
+        }
+    });
+
+    // Enable offline data caching by pointing to Y.CacheOffline.
+    // For demonstration purposes, data is set to expire after 10 seconds
+    myDataSource.plug(Y.Plugin.DataSourceCache, {
+        cache: Y.CacheOffline,
+        expires: 10000,
+        max: 5
+    });
+
+    // Retrieves from server. Adds to cache
+    myDataSource.sendRequest({
+        request : "lsmith",
+        callback: callback
+    });
+
+    // Retrieves from server. Adds to cache
+    myDataSource.sendRequest({
+        request : "davglass",
+        callback: callback
+    });
+
+    // Retrieves from cache if requested within 5 seconds
+    myDataSource.sendRequest({
+        request : "lsmith",
+        callback: callback
+    });
+
+    // ... wait 10 seconds ...
+
+    // Cached data has expired. Retrieves from server. Adds to cache.
+    myDataSource.sendRequest({
+        request : "davglass",
+        callback: callback
+    });
+});
+```
+
+<h3 id="fullsource">Full Example Source Listing</h3>
+
+```
+    {{>datasource-offlinecache-source}}
+```

@@ -1,0 +1,68 @@
+<style scoped>
+#custom-doc { width: 95%; min-width: 950px; }
+#pagetitle {background-image: url(../../assets/bg_hd.gif);}
+#outerframe {
+    display: inline-block;
+    height: 446px;
+    width: 714px;
+}
+
+#mygraphiccontainer {
+    display: inline-block;
+    top: 100px;
+    width: 614px;
+    top: 15px;
+    left: 34px;
+    position: relative;
+}
+.woodgrain{
+    opacity:0.2;
+    filter:alpha(opacity=20);
+}
+</style>
+<div class="intro">
+<p>
+This example shows how to use the `Graphics` to draw the head of a violin.
+</p>
+<p>
+The comparable uncompressed .jpg photo image of the violin head was 161KB, .png(24-bit) was 359KB.
+The Graphics code to render this example is 18KB.
+</p>
+</div>
+<div class="example">
+{{>graphics-violin-source}}
+</div>
+
+<h2>HTML</h2>
+```
+<div id="#outerframe">
+    <div id="mygraphiccontainer"></div>
+</div>
+```
+
+<h2>CSS</h2>
+```
+#outerframe {
+    display: inline-block;
+    height: 446px;
+    width: 714px;
+}
+
+#mygraphiccontainer {
+    display: inline-block;
+    top: 100px;
+    width: 614px;
+    top: 15px;
+    left: 34px;
+    position: relative;
+}
+.woodgrain{
+    opacity:0.2;
+    filter:alpha(opacity=20);
+}
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>graphics-violin-source}}
+```

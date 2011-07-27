@@ -3,13 +3,13 @@ YUI.add('node-core', function(Y) {
 /**
  * The Node Utility provides a DOM-like interface for interacting with DOM nodes.
  * @module node
- * @submodule node-base
+ * @submodule node-core
  */
 
 /**
  * The Node class provides a wrapper for manipulating DOM Nodes.
  * Node properties can be accessed via the set/get methods.
- * Use Y.one() to retrieve Node instances.
+ * Use `Y.one()` to retrieve Node instances.
  *
  * <strong>NOTE:</strong> Node properties are accessed using
  * the <code>set</code> and <code>get</code> methods.
@@ -17,7 +17,7 @@ YUI.add('node-core', function(Y) {
  * @class Node
  * @constructor
  * @param {DOMNode} node the DOM node to be mapped to the Node instance.
- * @for Node
+ * @uses EventTarget
  */
 
 // "globals"
@@ -243,10 +243,23 @@ Y_Node.importMethod = function(host, name, altName) {
  * first element matching the given selector. Returns null if no match found.
  * <strong>Note:</strong> For chaining purposes you may want to
  * use <code>Y.all</code>, which returns a NodeList when no match is found.
- * @method Y.one
+ * @method one
  * @static
  * @param {String | HTMLElement} node a node or Selector
  * @return {Y.Node | null} a Node instance or null if no match found.
+ * @for YUI
+ */
+
+/**
+ * Returns a single Node instance bound to the node or the
+ * first element matching the given selector. Returns null if no match found.
+ * <strong>Note:</strong> For chaining purposes you may want to
+ * use <code>Y.all</code>, which returns a NodeList when no match is found.
+ * @method one
+ * @static
+ * @param {String | HTMLElement} node a node or Selector
+ * @return {Y.Node | null} a Node instance or null if no match found.
+ * @for Node
  */
 Y_Node.one = function(node) {
     var instance = null,
@@ -269,7 +282,9 @@ Y_Node.one = function(node) {
             cachedNode = instance ? instance._node : null;
             if (!instance || (cachedNode && node !== cachedNode)) { // new Node when nodes don't match
                 instance = new Y_Node(node);
-                Y_Node._instances[instance[UID]] = instance; // cache node
+                if (node.nodeType != 11) { // dont cache document fragment
+                    Y_Node._instances[instance[UID]] = instance; // cache node
+                }
             }
         }
     }
@@ -356,7 +371,7 @@ Y.mix(Y_Node.prototype, {
 
     /**
      * Returns an attribute value on the Node instance.
-     * Unless pre-configured (via Node.ATTRS), get hands
+     * Unless pre-configured (via `Node.ATTRS`), get hands
      * off to the underlying DOM node.  Only valid
      * attributes/properties for the node will be queried.
      * @method get
@@ -528,7 +543,7 @@ Y.mix(Y_Node.prototype, {
      * @param {String | Function} fn A selector string or boolean method for testing elements.
      * @param {Boolean} testSelf optional Whether or not to include the element in the scan
      * If a function is used, it receives the current node being tested as the only argument.
-     * @return {NodeList} A NodeList instance containing the matching elements 
+     * @return {NodeList} A NodeList instance containing the matching elements
      */
     ancestors: function(fn, testSelf) {
         return Y.all(Y_DOM.ancestors(this._node, _wrapFn(fn), testSelf));
@@ -651,8 +666,8 @@ Y.mix(Y_Node.prototype, {
     /**
      * @method replaceChild
      * @for Node
-     * @param {String | HTMLElement | Node} node Node to be inserted 
-     * @param {HTMLElement | Node} refNode Node to be replaced 
+     * @param {String | HTMLElement | Node} node Node to be inserted
+     * @param {HTMLElement | Node} refNode Node to be replaced
      * @return {Node} The replaced node
      */
     replaceChild: function(node, refNode) {
@@ -686,7 +701,7 @@ Y.mix(Y_Node.prototype, {
             Y.NodeList.each(this.all('*'), function(node) {
                 instance = Y_Node._instances[node[UID]];
                 if (instance) {
-                   instance.destroy(); 
+                   instance.destroy();
                 }
             });
         }
@@ -836,7 +851,7 @@ Y.mix(Y_Node.prototype, {
     },
 
     /**
-     * Returns the DOM node bound to the Node instance 
+     * Returns the DOM node bound to the Node instance
      * @method getDOMNode
      * @return {DOMNode}
      */
@@ -850,7 +865,7 @@ Y.one = Y_Node.one;
 /**
  * The NodeList module provides support for managing collections of Nodes.
  * @module node
- * @submodule nodelist
+ * @submodule node-core
  */
 
 /**
@@ -894,7 +909,7 @@ NodeList.NAME = 'NodeList';
 
 /**
  * Retrieves the DOM nodes bound to a NodeList instance
- * @method NodeList.getDOMNodes
+ * @method getDOMNodes
  * @static
  *
  * @param {Y.NodeList} nodelist The NodeList instance
@@ -1233,7 +1248,7 @@ Y.mix(NodeList.prototype, {
     },
 
     /**
-     * Returns the DOM node bound to the Node instance 
+     * Returns the DOM node bound to the Node instance
      * @method getDOMNodes
      * @return {Array}
      */
@@ -1243,50 +1258,17 @@ Y.mix(NodeList.prototype, {
 }, true);
 
 NodeList.importMethod(Y.Node.prototype, [
-    /**
-     * Called on each Node instance
-     * @for NodeList
-     * @method append
-     * @see Node.append
-     */
-    'append',
-
     /** Called on each Node instance
       * @method destroy
       * @see Node.destroy
       */
     'destroy',
 
-    /**
-      * Called on each Node instance
-      * @method detach
-      * @see Node.detach
-      */
-    'detach',
-
-    /** Called on each Node instance
-      * @method detachAll
-      * @see Node.detachAll
-      */
-    'detachAll',
-
     /** Called on each Node instance
       * @method empty
       * @see Node.empty
       */
     'empty',
-
-    /** Called on each Node instance
-      * @method insert
-      * @see Node.insert
-      */
-    'insert',
-
-    /** Called on each Node instance
-      * @method prepend
-      * @see Node.prepend
-      */
-    'prepend',
 
     /** Called on each Node instance
       * @method remove
@@ -1298,41 +1280,7 @@ NodeList.importMethod(Y.Node.prototype, [
       * @method set
       * @see Node.set
       */
-    'set',
-
-    /** Called on each Node instance
-      * @method setContent
-      * @see Node.setContent
-      */
-    'setContent',
-
-    /**
-     * Makes each node visible.
-     * If the "transition" module is loaded, show optionally
-     * animates the showing of the node using either the default
-     * transition effect ('fadeIn'), or the given named effect.
-     * @method show
-     * @param {String} name A named Transition effect to use as the show effect. 
-     * @param {Object} config Options to use with the transition. 
-     * @param {Function} callback An optional function to run after the transition completes. 
-     * @chainable
-     */
-    'show',
-
-    /**
-     * Hides each node.
-     * If the "transition" module is loaded, hide optionally
-     * animates the hiding of the node using either the default
-     * transition effect ('fadeOut'), or the given named effect.
-     * @method hide
-     * @param {String} name A named Transition effect to use as the show effect. 
-     * @param {Object} config Options to use with the transition. 
-     * @param {Function} callback An optional function to run after the transition completes. 
-     * @chainable
-     */
-    'hide',
-
-    'toggleView'
+    'set'
 ]);
 
 // one-off implementation to convert array of Nodes to NodeList
@@ -1383,10 +1331,15 @@ Y.all = function(nodes) {
 };
 
 Y.Node.all = Y.all;
+/**
+ * @module node
+ * @submodule node-core
+ */
+
 var Y_NodeList = Y.NodeList,
     ArrayProto = Array.prototype,
     ArrayMethods = {
-        /** Returns a new NodeList combining the given NodeList(s) 
+        /** Returns a new NodeList combining the given NodeList(s)
           * @for NodeList
           * @method concat
           * @param {NodeList | Array} valueN Arrays/NodeLists and/or values to
@@ -1400,10 +1353,10 @@ var Y_NodeList = Y.NodeList,
           * @return {Node} The last item in the NodeList.
           */
         'pop': 0,
-        /** Adds the given Node(s) to the end of the NodeList. 
+        /** Adds the given Node(s) to the end of the NodeList.
           * @for NodeList
           * @method push
-          * @param {Node | DOMNode} nodes One or more nodes to add to the end of the NodeList. 
+          * @param {Node | DOMNode} nodes One or more nodes to add to the end of the NodeList.
           */
         'push': 0,
         /** Removes the first item from the NodeList and returns it.
@@ -1412,7 +1365,7 @@ var Y_NodeList = Y.NodeList,
           * @return {Node} The first item in the NodeList.
           */
         'shift': 0,
-        /** Returns a new NodeList comprising the Nodes in the given range. 
+        /** Returns a new NodeList comprising the Nodes in the given range.
           * @for NodeList
           * @method slice
           * @param {Number} begin Zero-based index at which to begin extraction.
@@ -1429,15 +1382,15 @@ var Y_NodeList = Y.NodeList,
           * @method splice
           * @param {Number} index Index at which to start changing the array. If negative, will begin that many elements from the end.
           * @param {Number} howMany An integer indicating the number of old array elements to remove. If howMany is 0, no elements are removed. In this case, you should specify at least one new element. If no howMany parameter is specified (second syntax above, which is a SpiderMonkey extension), all elements after index are removed.
-          * {Node | DOMNode| element1, ..., elementN 
+          * {Node | DOMNode| element1, ..., elementN
           The elements to add to the array. If you don't specify any elements, splice simply removes elements from the array.
           * @return {NodeList} The element(s) removed.
           */
         'splice': 1,
-        /** Adds the given Node(s) to the beginning of the NodeList. 
+        /** Adds the given Node(s) to the beginning of the NodeList.
           * @for NodeList
           * @method push
-          * @param {Node | DOMNode} nodes One or more nodes to add to the NodeList. 
+          * @param {Node | DOMNode} nodes One or more nodes to add to the NodeList.
           */
         'unshift': 0
     };
@@ -1450,7 +1403,7 @@ Y.Object.each(ArrayMethods, function(returnNodeList, name) {
             arg,
             ret;
 
-        while (typeof (arg = arguments[i++]) != 'undefined') { // use DOM nodes/nodeLists 
+        while (typeof (arg = arguments[i++]) != 'undefined') { // use DOM nodes/nodeLists
             args.push(arg._node || arg._nodes || arg);
         }
 
@@ -1465,20 +1418,25 @@ Y.Object.each(ArrayMethods, function(returnNodeList, name) {
         return ret;
     };
 });
+/**
+ * @module node
+ * @submodule node-core
+ */
+
 Y.Array.each([
     /**
      * Passes through to DOM method.
      * @for Node
      * @method removeChild
-     * @param {HTMLElement | Node} node Node to be removed 
-     * @return {Node} The removed node 
+     * @param {HTMLElement | Node} node Node to be removed
+     * @return {Node} The removed node
      */
     'removeChild',
 
     /**
      * Passes through to DOM method.
      * @method hasChildNodes
-     * @return {Boolean} Whether or not the node has any childNodes 
+     * @return {Boolean} Whether or not the node has any childNodes
      */
     'hasChildNodes',
 
@@ -1487,22 +1445,22 @@ Y.Array.each([
      * @method cloneNode
      * @param {Boolean} deep Whether or not to perform a deep clone, which includes
      * subtree and attributes
-     * @return {Node} The clone 
+     * @return {Node} The clone
      */
     'cloneNode',
 
     /**
      * Passes through to DOM method.
      * @method hasAttribute
-     * @param {String} attribute The attribute to test for 
-     * @return {Boolean} Whether or not the attribute is present 
+     * @param {String} attribute The attribute to test for
+     * @return {Boolean} Whether or not the attribute is present
      */
     'hasAttribute',
 
     /**
      * Passes through to DOM method.
      * @method removeAttribute
-     * @param {String} attribute The attribute to be removed 
+     * @param {String} attribute The attribute to be removed
      * @chainable
      */
     'removeAttribute',
@@ -1517,7 +1475,7 @@ Y.Array.each([
     /**
      * Passes through to DOM method.
      * @method getElementsByTagName
-     * @param {String} tagName The tagName to collect 
+     * @param {String} tagName The tagName to collect
      * @return {NodeList} A NodeList representing the HTMLCollection
      */
     'getElementsByTagName',
@@ -1590,7 +1548,7 @@ Y.Node.importMethod(Y.DOM, [
      * @for Node
      * @for NodeList
      * @chainable
-     * @param {string} name The attribute name 
+     * @param {string} name The attribute name
      * @param {string} value The value to set
      */
     'setAttribute',
@@ -1600,21 +1558,22 @@ Y.Node.importMethod(Y.DOM, [
      * @method getAttribute
      * @for Node
      * @for NodeList
-     * @param {string} name The attribute name 
-     * @return {string} The attribute value 
+     * @param {string} name The attribute name
+     * @return {string} The attribute value
      */
     'getAttribute',
 
     /**
      * Wraps the given HTML around the node.
      * @method wrap
-     * @param {String} html The markup to wrap around the node. 
+     * @param {String} html The markup to wrap around the node.
      * @chainable
+     * @for Node
      */
     'wrap',
 
     /**
-     * Removes the node's parent node. 
+     * Removes the node's parent node.
      * @method unwrap
      * @chainable
      */
@@ -1635,8 +1594,8 @@ Y.NodeList.importMethod(Y.Node.prototype, [
  * @method getAttribute
  * @see Node
  * @for NodeList
- * @param {string} name The attribute name 
- * @return {string} The attribute value 
+ * @param {string} name The attribute name
+ * @return {string} The attribute value
  */
 
     'getAttribute',
@@ -1647,22 +1606,22 @@ Y.NodeList.importMethod(Y.Node.prototype, [
  * @see Node
  * @for NodeList
  * @chainable
- * @param {string} name The attribute name 
+ * @param {string} name The attribute name
  * @param {string} value The value to set
  */
     'setAttribute',
- 
+
 /**
  * Allows for removing attributes on DOM nodes.
  * This passes through to the DOM node, allowing for custom attributes.
  * @method removeAttribute
  * @see Node
  * @for NodeList
- * @param {string} name The attribute to remove 
+ * @param {string} name The attribute to remove
  */
     'removeAttribute',
 /**
- * Removes the parent node from node in the list. 
+ * Removes the parent node from node in the list.
  * @method unwrap
  * @chainable
  */
@@ -1670,7 +1629,7 @@ Y.NodeList.importMethod(Y.Node.prototype, [
 /**
  * Wraps the given HTML around each node.
  * @method wrap
- * @param {String} html The markup to wrap around the node. 
+ * @param {String} html The markup to wrap around the node.
  * @chainable
  */
     'wrap',

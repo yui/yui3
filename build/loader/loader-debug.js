@@ -1265,12 +1265,19 @@ Y.Loader.prototype = {
                 r = [r];
             }
             r = Y.Array(r);
-            var c = [];
-            for (var i = 0; i < r.length; i++) {
-                var mod = this.getModule(r[i]);
+            var c = [], i, mod, o, m;
+
+            for (i = 0; i < r.length; i++) {
+                mod = this.getModule(r[i]);
                 if (mod && mod.use) {
-                    for (var o = 0; o < mod.use.length; o++) {
-                        c.push(mod.use[o]);
+                    for (o = 0; o < mod.use.length; o++) {
+                        //Must walk the other modules in case a module is a rollup of rollups (datatype)
+                        m = this.getModule(mod.use[o]);
+                        if (m && m.use) {
+                            c = Y.Array.dedupe([].concat(c, this.filterRequires(m.use)));
+                        } else {
+                            c.push(mod.use[o]);
+                        }
                     }
                 } else {
                     c.push(r[i]);
@@ -1299,7 +1306,7 @@ Y.Loader.prototype = {
             adddef = ON_PAGE[name] && ON_PAGE[name].details,
             d, k, m1,
             r, old_mod,
-            o, skinmod, skindef,
+            o, skinmod, skindef, skinpar, skinname,
             intl = mod.lang || mod.intl,
             info = this.moduleInfo,
             ftests = Y.Features && Y.Features.tests.load,
@@ -1444,9 +1451,18 @@ Y.Loader.prototype = {
         // Create skin modules
         if (mod.skinnable) {
             skindef = this.skin.overrides;
-            if (skindef && skindef[name]) {
-                for (i = 0; i < skindef[name].length; i++) {
-                    skinmod = this._addSkin(skindef[name][i], name);
+            oeach(YUI.Env.aliases, function(o, n) {
+                if (Y.Array.indexOf(o, name) > -1) {
+                    skinpar = n;
+                }
+            });
+            if (skindef && (skindef[name] || (skinpar && skindef[skinpar]))) {
+                skinname = name;
+                if (skindef[skinpar]) {
+                    skinname = skinpar;
+                }
+                for (i = 0; i < skindef[skinname].length; i++) {
+                    skinmod = this._addSkin(skindef[skinname][i], name);
                     d.push(skinmod);
                 }
             } else {
@@ -4181,7 +4197,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "scrollview-list": {
         "requires": [
             "plugin"
-        ]
+        ], 
+        "skinnable": true
     }, 
     "scrollview-paginator": {
         "requires": [
@@ -4508,19 +4525,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "jsonp-url"
         ]
     }, 
-    "yui": {
-        "use": [
-            "yui-base", 
-            "get", 
-            "features", 
-            "intl-base", 
-            "yui-log", 
-            "yui-later", 
-            "loader-base", 
-            "loader-rollup", 
-            "loader-yui3"
-        ]
-    }, 
+    "yui": {}, 
     "yui-base": {}, 
     "yui-later": {
         "requires": [
@@ -4532,24 +4537,14 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "yui-base"
         ]
     }, 
-    "yui-rls": {
-        "use": [
-            "yui-base", 
-            "get", 
-            "features", 
-            "intl-base", 
-            "rls", 
-            "yui-log", 
-            "yui-later"
-        ]
-    }, 
+    "yui-rls": {}, 
     "yui-throttle": {
         "requires": [
             "yui-base"
         ]
     }
 };
-YUI.Env[Y.version].md5 = '50f5dfa081b914a43d252f068fc462d0';
+YUI.Env[Y.version].md5 = 'b2d0341797ce70c4846e5486b1a373db';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

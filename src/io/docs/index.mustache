@@ -1,0 +1,764 @@
+<div id="intro" class="component">
+</div>
+
+{{>getting-started}}
+
+
+<h4>A Simple Transaction</h4>
+<p>
+The <code>io()</code> method on the YUI instance is the static method for making an HTTP request.  This method accepts two arguments: the uri and the configuration object.
+</p>
+<ul>
+	<li><strong>uri:</strong> This parameter specifies the URI for the transaction</li>
+	<li><strong>configuration:</strong> This parameter is an object of keys and values of configurations specific to the transaction.  Please see: [[#The Configuration Object]|The Configuration Object] for more information on all available configuration properties.</li>
+</ul>
+<p>
+<code>io()</code> returns an object with the following members:
+</p>
+<ul>
+	<li><strong>id:</strong> This is the unique identifier of the transaction.</li>
+	<li><strong>abort():</strong> Aborts the specific transaction.</li>
+	<li><strong>isInProgress():</strong> Returns a boolean value indicating whether the transaction has completed.</li>
+</ul>
+<p>
+This is an example GET transaction, handling the response at the earliest opportunity.
+</p>
+
+```
+// Create a YUI instance using io-base module.
+YUI().use("io-base", function(Y) {
+    var uri = "get.php?foo=bar";
+
+    // Define a function to handle the response data.
+    function complete(id, o, args) {
+        var id = id; // Transaction ID.
+        var data = o.responseText; // Response data.
+        var args = args[1]; // 'ipsum'.
+    };
+
+    // Subscribe to event "io:complete", and pass an array
+    // as an argument to the event handler "complete", since
+    // "complete" is global.   At this point in the transaction
+    // lifecycle, success or failure is not yet known.
+    Y.on('io:complete', complete, Y, ['lorem', 'ipsum']);
+
+    // Make an HTTP request to 'get.php'.
+    // NOTE: This transaction does not use a configuration object.
+    var request = Y.io(uri);
+});
+
+```
+
+
+<h4>Using IO</h4>
+
+<h5>The IO modules</h5>
+<p>IO's core and supplementary features are split into several modules, to allow greater flexibility in selecting the desired features.</p>
+ <table>
+	<thead>
+		<tr><th>Module</th><th>Description</th></tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>io-base</code></td>
+			<td>This is the base module, containing the basic functionality needed for making HTTP requests.</td>
+		</tr>
+		<tr>
+			<td><code>io-xdr</code></td>
+			<td>This module extends io-base, to add cross-domain request capabilities using alternate HTTP transports.</td>
+		</tr>
+		<tr>
+
+			<td><code>io-form</code></td>
+			<td>This module extends io-base, to add the ability to serialize HTML form data for POST transactions.</td>
+		</tr>
+		<tr>
+			<td><code>io-upload-iframe</code></td>
+			<td>This module extends io-base, to allow file uploads with an HTML form, using an iframe as the transaction transport.</td>
+		</tr>
+
+		<tr>
+			<td><code>io-queue</code></td>
+			<td>This module extends io-base, to provide a basic queue interface for io.</td>
+		</tr>
+	</tbody>
+</table>
+
+
+<h5>The Configuration Object</h5>
+
+<p>This object is the second argument of <code>io()</code>.  Its properties define transaction parameters and transaction response handling.  The configuration object and all configuration properties are optional.  The following table describes all configuration properties used by IO.</p>
+
+<table>
+	<thead>
+		<tr>
+			<th>Property</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>method (string)</td>
+			<td>Defines the HTTP method for the transaction.  If this property is undefined or omitted, the default value is GET.</td>
+		</tr>
+		<tr>
+			<td>data (string)</td>
+			<td>Data to be sent with the transaction, defined as a string of key-value pairs(e.g., <code>"foo=bar&baz=boo"</code>.)  Data can also be defined as a single-level object(e.g., { 'foo':'bar', 'baz':'boo' }), which is then serialized into a key-value string.  To use this capability, the sub-module <code>querystring-stringify-simple</code>, an optional dependency for io-base, must be declared in <code>Y.use()</code>.</td>
+		</tr>
+		<tr>
+			<td>headers (object)</td>
+			<td>Specific HTTP headers and values to be sent with the transaction (e.g., <code>{ 'Content-Type': 'application/xml; charset=utf-8' } </code>).</td>
+		</tr>
+		<tr>
+			<td>on (object)</td>
+			<td>This object can be used to register transaction event handlers for the set of supported io events, listed below. These events fire in addition to the global io events.  All events handlers are optional.
+				<ul class="topspace">
+					<li><strong>start:</strong> <em>event handler</em></li>
+					<li><strong>complete:</strong> <em>event handler</em></li>
+					<li><strong>success:</strong> <em>event handler</em></li>
+					<li><strong>failure:</strong> <em>event handler</em></li>
+					<li><strong>end:</strong> <em>event handler</em></li>
+				</ul>
+			NOTE: These events are accessible only to the transaction's subscribers, whereas global IO events are accessible by all subscribers.
+			</td>
+		</tr>
+		<tr>
+			<td>context (object)</td>
+			<td>Defines the execution context of the event handler functions for the transaction. If undefined, a default value of <code>Y(the YUI instance)</code> is used.</td>
+		</tr>
+		<tr>
+			<td>form (object)</td>
+			<td>This object instructs io to use the labels and values of the specified HTML form as data.
+				<ul class="topspace">
+					<li><strong>id:</strong> This property can be defined as the id(String) of an HTML form or an object reference of the HTML form.</li>
+					<li><strong>useDisabled:</strong> When set to <strong>true</strong>, disabled field values are included as part of the data.  The default value is false.</li>
+				</ul>
+			</td>
+		</tr>
+		<tr>
+			<td>xdr (object)</td>
+			<td>Defines the transport to be used for cross-domain requests (e.g., <code>{ use:'flash' }</code> ).  The transaction will use the specified transport instead of the default transport, when specified in the transaction's configuration object.
+				<ul class="topspace">
+					<li><strong>use:</strong> This property specifies the type of transport to be used; the io-xdr module provides 'native' and 'flash' transports.</li>
+					<li><strong>dataType:</strong> When set to <strong>'xml'</strong>, io will return the response data as an XML document, if necessary.</li>
+				</ul>
+			</td>
+		</tr>
+		<tr>
+			<td>sync (boolean)</td>
+			<td>When set to <code>true</code>, the transaction will be processed synchronous, and will halt all code execution until the transaction is complete.</td>
+		</tr>
+		<tr>
+			<td>arguments (object)</td>
+			<td><p>Object, array, string, or number passed to all registered, transaction event handlers.  This value is available as the second argument in the "start" and "end" event handlers; and, it is the third argument in the "complete", "success", and "failure" event handlers.</p></td>
+		</tr>
+		<tr>
+			<td>timeout</td>
+			<td>This value, defined as milliseconds, is a time threshold for the transaction (e.g., <code>{ timeout: 2000 }</code> ). When this limit is reached, and the transaction's Complete event has not yet fired, the transaction will be aborted.</td>
+		</tr>
+	</tbody>
+</table>
+
+<p>This is an example of a configuration object, with a set of properties defined.</p>
+
+```
+/*
+ * This is an example configuration object with all properties defined.
+ *
+ * method: This transaction will use HTTP POST.
+ * data: "user=yahoo" is the POST data.
+ * headers: Object of HTTP request headers for this transaction.  The
+ *          first header defines "Content-Type" and the second is a
+ *          custom header.
+ * on: Object of defined event handlers for "start", "complete",
+ *     and "end".  These handlers are methods of an object
+ *     named "Dispatch".
+ * context: Event handlers will execute in the proper object context,
+ *          so usage 'this' will reference Dispatch.
+ * form: Object specifying the HTML form to be serialized into a key-value
+ *       string and sent as data; and, informing io to include disabled
+ *       HTML form fields as part of the data.  If input type of "file"
+ *       is present, setting the upload property to "true" will create an
+ *       alternate transport, to submit the HTML form with the
+ *       selected files.
+ * xdr: Instructs io to use the defined transport, in this case Flash,
+ *      to make a cross-domain request for this transaction.
+ * arguments: Object of data, passed as an argument to the event
+ *            handlers.
+ */
+var cfg = {
+	method: 'POST',
+	data: 'user=yahoo',
+	headers: {
+		'Content-Type': 'application/json',
+	},
+	on: {
+		start: Dispatch.start,
+		complete: Dispatch.complete,
+		end: Dispatch.end
+	},
+	context: Dispatch,
+	form: {
+		id: formObject,
+		useDisabled: true,
+		upload: true
+	},
+	xdr: {
+		use: 'flash',
+		dataType: 'xml'
+	},
+	arguments: {
+		start: 'foo',
+		complete: 'bar',
+		end: 'baz'
+	}
+};
+
+```
+
+<h5>The Response Object</h5>
+<p>
+When a transaction, using the XHR object as a transport, is complete, the response data are passed as an object to the event handler.
+</p>
+<table>
+	<thead>
+		<tr><th>Field</th><th>Description</th></tr>
+	</thead>
+	<tbody>
+	<tr>
+	  <td><strong>status</strong></td>
+
+	  <td>The HTTP status code of the transaction.</td>
+	</tr>
+	<tr>
+	  <td><strong>statusText</strong></td>
+	  <td>The HTTP status message.</td>
+	</tr>
+	<tr>
+
+	  <td><strong>getResponseHeader(<em>headername</em>)</strong></td>
+	  <td>Returns the string value of the specified header label.</td>
+	</tr>
+	<tr>
+	  <td><strong>getAllResponseHeaders()</strong></td>
+	  <td>All response HTTP headers are available as a string.  Each key-value pair is delimited by "\n".</td>
+
+	</tr>
+	<tr>
+	  <td><strong>responseText</strong></td>
+	  <td>The response data as a decoded string.</td>
+	</tr>
+	<tr>
+	  <td><strong>responseXML</strong></td>
+	  <td>The response data as an XML document.</td>
+	</tr>
+	</tbody>
+  </table>
+
+<p>
+NOTE: Transactions involving file upload or cross-domain requests, using alternate transports, will only populate the <code>responseText</code> or <code>responseXML</code> field.  The HTTP status and response headers are either inaccessible or unavailable to these alternate transports.
+</p>
+
+<h5 events">Events</h5>
+<p>
+IO events provide access to state and data during a transaction's lifecycle.  There are two aspects to io events: global and transaction.  Global events are always fired by io for all transactions, and these events are accessible to all event subscribers.  Transaction events are created and fired if they have handlers defined in the configuration object.  Global events are identified by the <code>io:eventname</code> pattern.
+</p>
+<p>
+The following table describes the available io events and provides examples of how to subscribe to them globally:
+</p>
+<table>
+	<thead>
+		<tr><th>Event</th><th>Description</th></tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><strong>io:start</strong></td>
+			<td>
+			<p>Fires when a request is made to a resource.  The event handler's arguments signature is:</p>
+
+```
+function onStart(transactionid, arguments) {
+  // transactionid : The transaction's ID.
+  // arguments: Array ['foo','bar'].
+}
+
+// Subscribe to "io.start".
+Y.on('io:start', onStart, Y, { start: ['foo','bar']; );
+
+```
+			</td>
+		</tr>
+		<tr>
+			<td><strong>io:complete</strong></td>
+			<td>
+			<p>Fires after "io:start", when the transaction is complete and response data are available.  This is the earliest opportunity to access any response data.  The event handler's arguments signature is:</p>
+```
+function onComplete(transactionid, response, arguments) {
+  // transactionid : The transaction's ID.
+  // response: The response object.
+  // arguments: Object containing an
+                array { complete: ['foo', 'bar'] }.
+}
+
+// Subscribe to "io.complete".
+Y.on('io:complete', onComplete, Y, { complete: ['foo', 'bar'] } );
+
+```
+			</td>
+		</tr>
+		<tr>
+			<td><strong>io:success</strong></td>
+			<td>
+			<p>Fires after the "complete" event, when the response HTTP status resolves to 2xx.  The event handler's arguments signature is:</p>
+```
+function onSuccess(transactionid, response, arguments) {
+  // transactionid : The transaction's ID.
+  // response: The response object.
+  // arguments: Boolean value "true".
+}
+
+// Subscribe to "io.success".
+Y.on('io:success', onSuccess, Y, true);
+
+```
+			</td>
+		</tr>
+		<tr>
+			<td><strong>io:failure</strong></td>
+			<td>
+			<p>Fires after the "complete" event, when the response HTTP status resolves to 4xx. 5xx, undefined, or a non-standard HTTP status.  This event also includes 'abort' and 'timeout' conditions.  The event handler's arguments signature is:</p>
+```
+function onFailure(transactionid, response, arguments) {
+  // transactionid : The transaction's ID.
+  // response: The response object.  Only status and
+  //           statusText are populated when the
+  //           transaction is terminated due to abort
+  //           or timeout.  The status will read
+  //           0, and statusText will return "timeout"
+  //           or "abort" depending on the mode of
+  //           termination.
+  // arguments: String "Transaction Failed".
+}
+// Subscribe to "io.failure".
+Y.on('io:failure', onFailure, Y, 'Transaction Failed');
+
+```
+			</td>
+		</tr>
+		<tr>
+			<td><strong>io:end</strong></td>
+			<td>
+			<p>Fires at the conclusion of a transaction, after "success" or "failure" has been determined..  The event handler's arguments signature is:</p>
+```
+function onEnd(transactionid, arguments) {
+  // transactionid : The transaction's ID.
+  // arguments: Number 0.
+}
+
+// Subscribe to "io.end".
+Y.on('io:end', onEnd, Y, 0);
+
+```
+			</td>
+		</tr>
+		<tr>
+			<td><strong>io:xdrReady</strong></td>
+			<td>
+			Fires when the flash XDR transport is ready for use.  This event only fires once, when the transport initialization is complete.
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<p>The following example demonstrates an IO transaction with an event handler subscribed to "io:complete".</p>
+```
+// Create a YUI instance using io module.
+YUI().use("io-base", function(Y) {
+	/*
+	 * Create a function as the event handler for the event "io:complete".
+	 *
+	 * The function will receive the following arguments:
+	 * - The ID of the transaction
+	 * - Object containing the response data.
+	 * - Argument one defined when subscribing to the event(e.g., "foo").
+	 * - Argument two defined when subscribing to the event(e.g., "bar").
+	 */
+	function onComplete(transactionId, responseObject, arg1, arg2) {
+		/*
+		 * The argument 'responseObject' is the response object.  Its
+		 * properties are:
+		 * - status
+		 * - statusText
+		 * - getResponseHeader(headerName)
+		 * - getAllResponseHeaders
+		 * - responseText
+		 * - responseXML
+		 *
+		 * NOTE: In an XDR transaction, only the responseText or the responseXML property is defined.
+		 */
+	};
+
+	/*
+	 * Subscribe to the event "io:complete", using Y.on.
+	 *
+	 * - 'io:complete' : Subscribe to this io event.
+	 * - onComplete : The event handler to be subscribed to 'io:complete'.
+	 * - Y : The execution context of the event handler, in this case, the YUI sandbox.
+	 *       since the doComplete is defined as a global function.
+	 * - 'foo' : The first argument received by the event handler.
+	 * - 'bar' : The second argument received by the event handler.
+	 *           Additional arguments can be defined, as desired.
+	 */
+	Y.on('io:complete', onComplete, Y, "foo", "bar");
+
+	// Starts the transaction.
+	var request = Y.io(uri);
+});
+
+```
+
+<h5>Synchronous Transactions</h5>
+	<p>For same-domain requests, YUI io can be instructed to send a synchronous request, which will halt all script execution until the transaction is complete.  When the transaction is complete, the response data are directly accessible through the object returned by Y.io(), and the data are also accessible through all io events.  When making synchronous requests, abort() and isInProgress() are not available.</p>
+
+```
+// Create a YUI instance using the io-base module.
+YUI().use("io-base", function(Y) {
+	var cfg,
+		request;
+	// Create a configuration object for the synchronous transaction.
+	cfg = {
+		sync: true,
+		arguments: { 'foo' : 'bar' }
+	};
+
+	/*
+	 * var request will contain the following fields, when the
+	 * transaction is complete:
+	 * - id
+	 * - status
+	 * - statusText
+	 * - getResponseHeader()
+	 * - getAllResponseHeaders()
+	 * - responseText
+	 * - responseXML
+	 * - arguments
+	 */
+	request = Y.io(uri, cfg);
+});
+```
+
+<h5>Cross-Domain Transactions</h5>
+<p>By default, <code>io</code> uses the XMLHttpRequest object as the transport for HTTP transactions.  It can also be configured to use an alternate transport to make cross-domain, HTTP transactions.  Currently, io can make use of Flash as an alternate transport.  To prepare io for Flash-based, cross-domain transactions, the transport <code>io.swf</code> must be deployed and accessible to YUI io. (The file "io.swf" can be found in YUI io's build directory in the YUI3 download at: http://yuilibrary.com/downloads/.)  For each transaction, the configuration object's <code>xdr</code> object must be defined as <code>{ use: 'flash' }</code> so io will use the designated transport instead of using the default XMLHttpRequest transport.</p>
+<p>
+As <code>io.swf</code> is written in ActionScript 3, Flash Player 9 or better is required (version <strong>9.0.124</strong> or better is recommended).  Additionally, a cross-domain policy file must be deployed at the resource to grant the client access to the remote domain.  A cross-domain request will not be successful without this policy file hosted at the resource.  The following example file grants permissive access to the host from all requests, but the host will only accept custom HTTP headers originating from <code>yahoo.com</code>.
+</p>
+
+```
+<?xml version="1.0"?>
+<!DOCTYPE cross-domain-policy SYSTEM
+"http://www.adobe.com/xml/dtds/cross-domain-policy.dtd">
+<cross-domain-policy>
+	<allow-access-from domain="*"/>
+	<allow-http-request-headers-from domain="*.yahoo.com" headers="*"/>
+</cross-domain-policy>
+
+```
+<p>
+For more information on cross-domain policy file specifications, see the following articles at Adobe Developer Connection.
+</p>
+<ul>
+	<li><a href="http://www.adobe.com/devnet/articles/crossdomain_policy_file_spec.html">Cross-Domain Policy File Specifications</a>.</li>
+	<li><a href="http://kb.adobe.com/selfservice/viewContent.do?externalId=kb403030">HTTP Headers Blacklist</a>.</li>
+</ul>
+<p>
+The following example demonstrates a cross-domain transaction, starting with the initialization of the XDR transport and subscribing to three global io events.
+</p>
+
+```
+// Create a YUI instance using the io cross-domain submodule
+YUI().use("io-xdr", function(Y) {
+	// Create a configuration object with the src property defined,
+	// src: The path to "io.swf" relative to the HTML file.
+	var xdrCfg = {
+		src:'io.swf'
+	};
+
+	// Initialize the cross-domain transport
+	Y.io.transport(xdrCfg);
+
+	// Define the configurations to be used for each transaciton..
+	var cfg = {
+	  xdr: { use: 'flash'}, // Instruct io to use the flash XDR transport.
+	  data: 'foo=bar&baz=boo', // Key-value string of data.
+	  timeout: 3000, // Abort the transaction, if it is still pending, after 3000ms.
+	  // An object passed, as an argument, to the event handlers.
+	  arguments: {
+		start: 'foo',
+		complete: 'bar',
+		end: 'baz'
+	  }
+	};
+
+	/*
+	 * GlobalEventHandler is an example object that encapsulates
+	 * event handlers for "io:start", "io:complete", and "io:end".
+	 *
+	 * start( ) // Event handler for "io:start"
+	 * success( ) // Event handler for "io:complete".
+	 * end( ) // Event handler for "io:end".
+	 */
+	var GlobalEventHandler = {
+	  start: function(id, args) {
+		var args = args.start // 'foo'
+	  },
+	  success: function(id, o, args) {
+		var args = args.complete; // 'bar'
+		var data = o.responseText;
+		var xml = o.responseXML;
+	  },
+	  end: function(id, args) {
+		var args = args.end // args = 'baz'
+	  }
+	};
+
+	function callIo() {
+		//example URI.
+		var uri = "http://pipes.yahooapis.com/",
+			// Start the transaction
+			request = Y.io(uri, cfg);
+	}
+
+	// Subscribe GlobalEventHandler.start to event "io:start".
+	Y.on('io:start', GlobalEventHandler.start, Y);
+	// Subscribe GlobalEventHandler.complete to event "io:complete".
+	Y.on('io:success', GlobalEventHandler.complete, Y);
+	// Subscribe GlobalEventHandler to event "io:end".
+	Y.on('io:end', GlobalEventHandler.end, Y);
+
+	// Once the Flash transport is initialized and ready for use,
+	// it will fire the "io:xdrReady" event.  Subscribe to it,
+	// to automatically call function "callIo" when the transport
+	// is ready..
+	Y.on('io:xdrReady', callIo, Y);
+
+});
+```
+<p>
+Note: Cross-domain transactions do not fire the global <code>io:complete</code> event and the transaction-specific <code>complete</code> event, when using the IE XDomainRequest or the Flash transport.  All other events in the transaction lifecycle are fired.
+</p>
+<p>
+A subset of A-grade browsers are capable of making cross-domain requests, using XMLHttpRequest, requiring specific access control headers be served from the resource.  To use this feature, the xdr object must be defined with: <code>{ use: 'native' }</code>.  IO will try to resolve the request using the native transport, and it will fall back to the Flash transport if the initial attempt throws an exception due to the browser lacking native support.
+</p>
+<p>
+<strong>NOTE:</strong> For native cross-domain requests to work, the resource <strong>must</strong> respond with the "Access-Control-Allow-Origin" header with a value permitting the client to make the request.  In the absence of this HTTP response header, the transaction will always fail.  Please see the following articles for more information on this topic.
+</p>
+<ul>
+	<li>Mozilla Developer Center: <a href="https://developer.mozilla.org/En/HTTP_Access_Control">HTTP Access Control article</a>.</li>
+	<li>MSDN: <a href="http://msdn.microsoft.com/en-us/library/cc709423(VS.85).aspx">Cross-Domain Security article</a>.</li>
+	<li>W3C: <a href="http://dev.w3.org/2006/waf/access-control/">Access Control Working Draft</a>,</li>
+</ul>
+
+<h5>Serializing HTML Form as Data</h5>
+<p>
+YUI io can serialize HTML form fields into a string of UTF-8 encoded, name-value pairs.  If the transaction is HTTP GET, the data are appended to the URI as a querystring.  If the transaction if HTTP POST, the data will be the POST message.
+</p>
+
+```
+// Create a YUI instance using the io-form sub-module.
+YUI().use("io-form", function(Y) {
+	// Create a configuration object for the file upload transaction.
+	// The form configuration should include two defined properties:
+	// id: This can be the ID or an object reference to the HTML form.
+	// useDisabled: Set this property to "true" to include disabled
+	//              HTML form fields, as part of the data.  By
+	//              default, disabled fields are excluded from the
+	//              serialization.
+	// The HTML form data are sent as a UTF-8 encoded key-value string.
+	var cfg = {
+		method: 'POST',
+		form: {
+			id: formObject,
+			useDisabled: true
+		}
+	};
+
+	// Define a function to handle the response data.
+	function complete(id, o, args) {
+	  var id = id; // Transaction ID.
+	  var data = o.responseText; // Response data.
+	  var args = args[1]; // 'ipsum'.
+	};
+
+	// Subscribe to event "io:complete", and pass an array
+	// as an argument to the event handler "complete".
+	Y.on('io:complete', complete, Y, { 'foo':'bar' });
+
+	// Start the transaction.
+	var request = Y.io(uri, cfg);
+});
+
+```
+
+
+
+<h5>Uploading Files in an HTML Form</h5>
+<p>
+The default XHR transport, used in IO, cannot upload HTML form data that include elements of type="file".  In this situation, IO will use an alternate transport -- an iframe -- to facilitate the transaction. The response data must be one of the following content types: "text/html", "text/plain", "text/xml". The following example shows how to configure a transaction involving file upload:
+</p>
+
+```
+/*
+ * This example demonstrates how to configure io to upload files
+ * from an HTML form.  This example uses the global events:
+ * "io:start" and "io:complete" to handle the transaction and
+ * response.  Transaction events can be defined and fired, as well,
+ * in the configuration object; but, they are not used in this
+ * example.
+ */
+// Create a YUI instance using the io-upload-iframe sub-module.
+YUI().use("io-upload-iframe", function(Y) {
+	// Create a configuration object for the file upload transaction.
+	// The form configuration should include two defined properties:
+	// id: This can be the ID or an object reference to the HTML form
+	//     containing the input type="file" elements.
+	// upload: Set this property to "true" to indicate this is a file
+	//         upload transaction.
+	var cfg = {
+		method: 'POST',
+		form: {
+			id: formObject,
+			upload: true
+		}
+	};
+
+	// Define a function to handle the start of a transaction
+	function start(id, args) {
+	  var id = id; // Transaction ID.
+	  var args = args.foo; // 'bar'
+	}
+
+	// Define a function to handle the response data.
+	function complete(id, o, args) {
+	  var id = id; // Transaction ID.
+	  var data = o.responseText; // Response data.
+	  var args = args[1]; // 'ipsum'.
+	};
+
+	// Subscribe to event "io:start", and pass an object
+	// as an argument to the event handler "start".
+	Y.on('io:start', start, Y, { 'foo':'bar' });
+
+	// Subscribe to event "io:complete", and pass an array
+	// as an argument to the event handler "complete".
+	Y.on('io:complete', complete, Y, ['lorem', 'ipsum']);
+
+	// Start the transaction.
+	var request = Y.io(uri, cfg);
+});
+
+```
+
+<p>
+When performing a file upload, a subset of global and transaction events will be fired.  Specifically, these are:
+</p>
+<ul>
+	<li>Start</li>
+	<li>Complete</li>
+	<li>End</li>
+</ul>
+<p>Success and Failure events are not processed and fired because the iframe transport does not provide access to the HTTP status and response headers, to reliably determine those conditions.</p>
+
+<h5>Setting HTTP Headers</h5>
+<p>
+IO can be configure to send default, user-defined HTTP Headers for all transactions, in addition to any headers defined in the configuration object.  Headers can be set or removed as needed.  The following example shows how to set and how to delete default headers in IO:
+</p>
+
+```
+YUI().use("io-base", function(Y) {
+
+	// Set a new default HTTP header.
+	Y.io.header('Content-Type', 'application/json');
+
+	// To remove an existing header, use the same method, but omit the value.
+	Y.io.header('Content-Type');
+});
+
+```
+
+<p>Custom HTTP headers may or may not be sent in cross-domain requests.  This is may be due to limitations of the transport, or specific "Access-Control" headers requirement.</p>
+
+<h5>Queue</h5>
+<p>
+IO's queue module provides FIFO transaction response while keeping each transaction asynchronous and non-blocking.  Specifically, transactions are handled -- by global or transaction event handlers  -- in the order they are sent, regardless of actual server response order.  Transactions can be promoted to the front of the queue, or they can be purged from the queue, as well.
+</p>
+<table>
+	<thead>
+		<tr><th>Field</th><th>Description</th></tr>
+	</thead>
+	<tbody>
+	<tr>
+	  <td><strong>queue(uri, configuration)</strong></td>
+	  <td>Method signature is identical to io, but returns the id of the transaction.</td>
+	</tr>
+	<tr>
+	  <td><strong>queue.start()</strong></td>
+	  <td>Activates the queue, and begins processing transactions in the queue.  This is the default state of the queue.</td>
+	</tr>
+	<tr>
+
+	  <td><strong>queue.stop()</strong></td>
+	  <td>Deactivates the queue.  Transactions sent to queue() will be stored until the queue is re-started.</td>
+	</tr>
+	  <td><strong>queue.promote(id)</strong></td>
+	  <td>Moves the specified transaction stored in the queue to the head of the queue.</td>
+	</tr>
+	<tr>
+	  <td><strong>queue.remove(id)</strong></td>
+	  <td>Deletes the specified transaction stored in the queue.</td>
+	</tr>
+	</tbody>
+</table>
+
+```
+// Create a YUI instance using the io queue sub-module.
+YUI().use("io-queue", function(Y) {
+
+	// Stop the queue so transactions can be stored.
+	Y.io.queue.stop();
+
+	// Send four transactions into the queue. Each response will arrive
+    // in synchronous order.
+	var task0 = Y.io.queue(uri);
+	var task1 = Y.io.queue(uri);
+	var task2 = Y.io.queue(uri);
+	var task3 = Y.io.queue(uri);
+
+	// Promote task2 to the top of the queue.
+	Y.io.queue.promote(task2);
+
+	// Remove task3 from the queue.
+	Y.io.queue.remove(task3);
+
+	// Re-start the queue.
+	// Transactions are sent in the following order: task2, task0, task 1.
+	// Transaction callbacks, if provided, will be processed in the same
+	// sequence: task2, task0, task1, regardless of actual response order.
+	Y.io.queue.start();
+});
+
+```
+<h4>Security Bulletin</h4>
+<p>A security vulnerability exists in the XDR transport <code>io.swf</code> when using the <code>io-xdr</code> sub-module to make cross-domain requests.  This vulnerability allows third-party sites to load <code>io.swf</code> from a remote domain and issue HTTP requests with the SWF's domain credentials.  Please examine the following use cases, and, if applicable to you, please follow the recommended actions to close this exploit.
+</p>
+<ul>
+	<li> You currently host <code>io.swf</code> from YUI 3.1.0, 3.1.1, or 3.2.0pr1, and your application uses the io-xdr sub-module to make cross-domain requests.  Solution: replace the version of <code>io.swf</code> with <code>io.swf</code> from YUI 3.1.2.</li>
+	<li> Your application uses the <code>io-xdr</code> sub-module from version YUI 3.1.0, 3.1.1, and you explicitly load <code>io.swf</code> from <code>http://yui.yahooapis.com/version/build/io.swf</code> (where <code>version</code> matches the affected YUI versions).  Solution: modify your application's <code>crossdomain.xml</code> so that <code>allow-access-from domain=</code> does <strong>not</strong> allow access from yui.yahooapis.com.  Download YUI 3.1.2 and deploy <code>io.swf</code> on your application's domain instead of loading it from yui.yahooapis.com.
+	<li> Your application uses the <code>io-xdr</code> sub-module from version YUI 3.1.0, 3.1.1, and you explicitly load <code>io.swf</code> from a disparate domain, and you have a crossdomain policy file allowing access from the SWF's domain.  Solution: modify your application's crossdomain.xml so that <code>allow-access-from domain=</code> does <strong>not</strong> allow access from the domain serving <code>io.swf</code>.  Download YUI 3.1.2 and deploy <code>io.swf</code> on your application's domain instead of loading it from a remote domain.
+	<li> If you use <code>io.swf</code> from YUI 3.0.0 you are not affected by this vulnerability.</li>
+</ul>
+<p>Beginning with YUI 3.1.2, <code>io.swf</code> will no longer be accessible from yui.yahooapis.com.  You will be required to host and serve <code>io.swf></code>, if you wish to employ it as an XDR transport.</p>
+
+<h4>Known Issues</h4>
+<ul>
+	<li>Multiple HTML Submit buttons, in an HTML form, are not supported at this time.</li>
+</ul>

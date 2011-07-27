@@ -1,0 +1,24 @@
+<div class="intro">
+    <p>This example shows a page of HTML elements with CSS Reset and contextual CSS Fonts applied.</p>
+</div>
+
+    <h2>Contextual Usage</h2>
+    <p>When CSS Fonts is included in a page it applies rules to all HTML elements via type selectors like this: <code>body {font-size:13px;}</code>. An alternate version, <code>cssfonts-context.css</code>, uses only descendent selectors like this: <code>.yui3-cssfonts-context {font-size:13px;}</code>. This means you can put that class value on a node in your document to choose which region(s) of your page CSS Fonts will be applied to.</p>
+
+```
+<div class="yui3-cssfonts">
+    <p>Everything within this container will have CSS Fonts applied.</p>
+</div>
+```
+
+<p>In this example, only the middle block is within the context of CSS Fonts. The other two blocks are unaffected by CSS Fonts since their context is not one matched by the descendent selector of the contextual version of CSS Fonts.</p>
+<div class="example newwindow">
+    <a href="cssfonts-context-example.html" target="_blank" class="button">
+        View Example in New Window
+    </a>
+</div>
+
+<h3>Note:</h3>
+<p>Because CSS examples are susceptible to other CSS on the page, this example is only available in a new window at the above link.</p>
+
+

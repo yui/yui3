@@ -3292,8 +3292,7 @@ YUI.Env.aliases = {
     "resize": ["resize-base","resize-proxy","resize-constrain"],
     "slider": ["slider-base","slider-value-range","clickable-rail","range-slider"],
     "text": ["text-accentfold","text-wordbreak"],
-    "widget": ["widget-base","widget-htmlparser","widget-uievents","widget-skin"],
-    "yui-rls": ["yui-base","get","features","intl-base","rls","yui-log","yui-later"]
+    "widget": ["widget-base","widget-htmlparser","widget-uievents","widget-skin"]
 };
 
 

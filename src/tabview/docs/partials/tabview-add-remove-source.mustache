@@ -1,0 +1,138 @@
+<div id="demo">
+    <ul>
+        <li><a href="#foo">foo</a></li>
+        <li><a href="#bar">bar</a></li>
+        <li><a href="#baz">baz</a></li>
+    </ul>
+    <div>
+        <div id="foo">
+            <p>foo content</p>
+        </div>
+        <div id="bar">
+            <p>bar content</p>
+        </div>
+        <div id="baz">
+            <p>baz content</p>
+        </div>
+    </div>
+</div>
+
+<div id="demo2">
+</div>
+
+<div id="demo3">
+</div>
+
+<script type="text/javascript">
+YUI().use('tabview', 'escape', 'plugin', function(Y) {
+    var Addable = function(config) {
+        Addable.superclass.constructor.apply(this, arguments);
+    };
+
+    Addable.NAME = 'addableTabs';
+    Addable.NS = 'addable';
+
+    Y.extend(Addable, Y.Plugin.Base, {
+        ADD_TEMPLATE: '<li class="yui3-tab" title="add a tab">' +
+                    '<a class="yui3-tab-label yui3-tab-add">+</a></li>',
+
+        initializer: function(config) {
+            var tabview = this.get('host');
+            tabview.after('render', this.afterRender, this);
+            tabview.get('contentBox')
+                .delegate('click', this.onAddClick, '.yui3-tab-add', this);
+        },
+
+        getTabInput: function() {
+            var tabview = this.get('host');
+            return {
+                label: Y.Escape.html(window.prompt('label:', 'new tab')),
+                content: '<p>' + Y.Escape.html(window.prompt('content:', 'new content')) + '</p>',
+                index: Number(window.prompt('index:', tabview.size()))
+            }
+        },
+
+        afterRender: function(e) {
+            var tabview = this.get('host');
+            tabview.get('contentBox').one('> ul').append(this.ADD_TEMPLATE);
+        },
+
+        onAddClick: function(e) {
+            e.stopPropagation();
+            var tabview = this.get('host'),
+                input = this.getTabInput();
+            tabview.add(input, input.index);
+        }
+    });
+
+    var Removeable = function(config) {
+        Removeable.superclass.constructor.apply(this, arguments);
+    };
+
+    Removeable.NAME = 'removeableTabs';
+    Removeable.NS = 'removeable';
+
+    Y.extend(Removeable, Y.Plugin.Base, {
+        REMOVE_TEMPLATE: '<a class="yui3-tab-remove" title="remove tab">x</a>',
+
+        initializer: function(config) {
+            var tabview = this.get('host'),
+                cb = tabview.get('contentBox');
+
+            cb.addClass('yui3-tabview-removeable');
+            cb.delegate('click', this.onRemoveClick, '.yui3-tab-remove', this);
+
+            // Tab events bubble to TabView
+            tabview.after('tab:render', this.afterTabRender, this);
+        },
+
+        afterTabRender: function(e) {
+            // boundingBox is the Tab's LI
+            e.target.get('boundingBox').append(this.REMOVE_TEMPLATE);
+        },
+
+        onRemoveClick: function(e) {
+            e.stopPropagation();
+            var tab = Y.Widget.getByNode(e.target);
+            tab.remove();
+        }
+    });
+
+    var tabview = new Y.TabView({
+        srcNode: '#demo',
+        plugins: [Addable]
+    });
+
+    var tabview2 = new Y.TabView({
+        children: [{
+            label: 'foo',
+            content: '<p>foo content</p>'
+        }, {
+            label: 'bar',
+            content: '<p>bar content</p>'
+        }, {
+            label: 'baz',
+            content: '<p>baz content</p>'
+        }],
+        plugins: [Removeable]
+    });
+
+    var tabview3 = new Y.TabView({
+        children: [{
+            label: 'foo',
+            content: '<p>foo content</p>'
+        }, {
+            label: 'bar',
+            content: '<p>bar content</p>'
+        }, {
+            label: 'baz',
+            content: '<p>bar content</p>'
+        }],
+        plugins: [Addable, Removeable]
+    });
+
+    tabview.render();
+    tabview2.render('#demo2');
+    tabview3.render('#demo3');
+});
+</script>

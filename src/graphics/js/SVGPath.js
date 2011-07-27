@@ -68,7 +68,7 @@ SVGPath.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
 	/**
 	 * Path string of the shape
 	 *
-	 * @attribute path
+	 * @config path
 	 * @type String
 	 */	
 	path: {
@@ -83,7 +83,7 @@ SVGPath.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
 	/**
 	 * Indicates the height of the shape
 	 * 
-	 * @attribute height
+	 * @config height
 	 * @type Number
 	 */
 	width: {
@@ -97,7 +97,7 @@ SVGPath.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
 	/**
 	 * Indicates the height of the shape
 	 * 
-	 * @attribute height
+	 * @config height
 	 * @type Number
 	 */
 	height: {

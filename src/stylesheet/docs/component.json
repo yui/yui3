@@ -20,5 +20,12 @@
                 "hideTableOfContents": true
         }
 
-    ]
+    ],
+
+    "pages": {
+        "stylesheet-theme-example": {
+            "displayName": "Adjusting a Page Theme on the Fly",
+            "layout"     : "stylesheet-example"
+        }
+    }
 }

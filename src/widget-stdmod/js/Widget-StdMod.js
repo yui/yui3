@@ -154,7 +154,7 @@
          * in the header. If you want to append, or insert new content, use the <a href="#method_setStdModContent">setStdModContent</a> method.
          */
         headerContent: {
-            value:null,
+            value:null
         },
 
         /**
@@ -165,7 +165,7 @@
          * in the footer. If you want to append, or insert new content, use the <a href="#method_setStdModContent">setStdModContent</a> method.
          */
         footerContent: {
-            value:null,
+            value:null
         },
         
         /**
@@ -176,7 +176,7 @@
          * in the body. If you want to append, or insert new content, use the <a href="#method_setStdModContent">setStdModContent</a> method.
          */
         bodyContent: {
-            value:null,
+            value:null
         },
         
         /**
@@ -254,38 +254,6 @@
 
     StdMod.prototype = {
 
-        /**
-         * Returns a reference to the Y.Node corresponding to the header.
-         *
-         * @method head
-         * @public
-         * @return {Node} A reference to the header node
-         */
-        head : function() {
-            return this.getStdModNode(STD_HEADER) || this._renderStdMod(STD_HEADER);
-        },
-
-        /**
-         * Returns a reference to the Y.Node corresponding to the body.
-         *
-         * @method body
-         * @public
-         * @return {Node} A reference to the body node
-         */
-        body : function() {
-            return this.getStdModNode(STD_BODY) || this._renderStdMod(STD_BODY);
-        },
-
-        /**
-         * Returns a reference to the Y.Node corresponding to the footer.
-         *
-         * @method head
-         * @public
-         * @return {Node} A reference to the footer node
-         */
-        foot : function() {
-            return this.getStdModNode(STD_FOOTER) || this._renderStdMod(STD_FOOTER);
-        },
         /**
          * Synchronizes the UI to match the Widgets standard module state.
          * <p>

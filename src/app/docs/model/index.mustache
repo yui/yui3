@@ -22,7 +22,7 @@ For example, in a photo gallery, you might use a model to represent each photo. 
 </p>
 
 <p>
-A Model instance is often associated with a <a href="../view/index.html">View</a> instance, which is responsible for rendering the visual representation of the data contained in the model and updating that representation when the model changes.
+While Model may be used as a standalone component, it's common to associate a Model instance with a <a href="../view/index.html">View</a> instance, which is responsible for rendering the visual representation of the data contained in the model and updating that representation when the model changes.
 </p>
 
 <h2>Using Model</h2>
@@ -64,7 +64,7 @@ Y.PieModel = Y.Base.create('pieModel', Y.Model, [], {
 }, {
   ATTRS: {
     // Add custom model attributes here. These attributes will contain your
-    // model's data. See the docs for Y.Attribute to learn more about defining 
+    // model's data. See the docs for Y.Attribute to learn more about defining
     // attributes.
 
     slices: {
@@ -110,7 +110,7 @@ pecanPie.eatSlice(); // => "Oh snap! There isn't any pie left."
 <h3>Model Attributes</h3>
 
 <p>
-A Model's data is represented by <a href="../attribute/index.html">attributes</a>. The Model class itself provides two built-in attributes, `clientId` and `id`. The rest are up to you to define when you extend `Y.Model`.
+A Model's data is represented by <a href="../attribute/index.html">attributes</a>. The Model class provides two built-in attributes, `clientId` and `id`. The rest are up to you to define when you extend `Y.Model`.
 </p>
 
 <h4>Built-in Attributes</h4>
@@ -129,7 +129,7 @@ A Model's data is represented by <a href="../attribute/index.html">attributes</a
       <td><em>generated id</em></td>
       <td>
         <p>
-        An automatically generated client-side only unique identifier that's used to identify model instances that don't yet have an `id`. The client id is guaranteed to be unique among all models on the current page, but is not unique across pageviews. Client ids are never included in `toJSON()` output.
+        An automatically generated client-side only unique ID for identifying model instances that don't yet have an `id`. The client id is guaranteed to be unique among all models on the current page, but is not unique across pageviews. Client ids are never included in `toJSON()` output.
         </p>
       </td>
     </tr>
@@ -153,7 +153,7 @@ A Model's data is represented by <a href="../attribute/index.html">attributes</a
 <h4>Custom Attributes</h4>
 
 <p>
-Custom attributes are where all your model's data should live. They're defined when you extend the `Y.Model` class to create a custom model class, and may be set either by passing a config object into the constructor when you instantiate a model or by calling the model's `set()` or `setAttrs()` methods.
+Custom attributes are where all your model's data should live. You define these attributes when you first extend `Y.Model`. You can set their values by passing a config object into the model's constructor, or by calling the model's `set()` or `setAttrs()` methods..
 </p>
 
 <p>
@@ -222,6 +222,10 @@ The following properties are available on Model instances. The `idAttribute` pro
           <dd>
             <p>
             The source of the change, or `null` if no source was specified when the change was made.
+            </p>
+
+            <p>
+            This can be set to any string you want by passing an options object like `{src: 'foo'}` to the `set()` or `setAttrs()` methods when changing attribute values. Its purpose is to allow you to identify the source of the change later by inspecting the `src` property associated with an event, so choose a string that has meaning for your particular use case.
             </p>
           </dd>
         </dl>
@@ -294,6 +298,10 @@ Model instances provide the following events:
                 <p>
                 The source of the change, or `null` if no source was specified when the change was made.
                 </p>
+
+                <p>
+                This can be set to any string you want by passing an options object like `{src: 'foo'}` to the `set()` or `setAttrs()` methods when changing attribute values. Its purpose is to allow you to identify the source of the change later by inspecting the `src` property associated with an event, so choose a string that has meaning for your particular use case.
+                </p>
               </dd>
             </dl>
           </dd>
@@ -346,7 +354,7 @@ Model instances provide the following events:
 </table>
 
 <p>
-When a model is in one or more <a href="../model-list/index.html">model lists</a>, the model's events bubble up to all the lists it's in. This makes it easy to subscribe to events at the list level to be notified whenever any model in the list changes or experiences an error. See the <a href="../model-list/index.html">Model List User Guide</a> for more details.
+A model's events bubble up to any <a href="../model-list/index.html">model lists</a> that the model belongs to. This enables you to use the model list as a central point for handling model value changes and errors.
 </p>
 
 <h4>Change Events</h4>
@@ -449,7 +457,7 @@ pie.getAsURL('type');  // => "strawberries%20%26%20cream"
 ```
 
 <p>
-The `getAttrs()` and `setAttrs()` methods may be used to get and set multiple attributes at once. `getAttrs()` returns a hash of all attribute values, while `setAttrs()` accepts a hash of attribute values. When you set multiple attributes at once using `setAttrs()`, only a single `change` event is fired, and it contains all the attributes that changed.
+The `getAttrs()` and `setAttrs()` methods may be used to get and set multiple attributes at once. `getAttrs()` returns a hash of all attribute values, while `setAttrs()` accepts a hash of attribute values. When you set multiple attributes with `setAttrs()`, it fires only a single change event that contains all the affected attributes..
 </p>
 
 ```
@@ -474,7 +482,7 @@ The `destroyed` and `initialized` attributes you see in the sample output above 
 </p>
 
 <p>
-To get a slightly more useful representation of model data, you may want to use the `toJSON()` method. The `toJSON()` method excludes the `clientId`, `destroyed`, and `initialized` attributes, making the resulting object more suitable for serialization and for storing in a persistence layer.
+To get a slightly more useful representation of model data, use the `toJSON()` method. The `toJSON()` method excludes the `clientId`, `destroyed`, and `initialized` attributes, making the resulting object more suitable for serialization and for storing in a persistence layer.
 </p>
 
 ```
@@ -609,7 +617,7 @@ The default `sync()` method does nothing, but by overriding it and providing you
 </p>
 
 <p>
-The `load()` and `save()` methods each accept two optional parameters: an options object and a callback function. If provided, the options object will be passed to the sync layer, and the callback will be called after the load or save operation is finished. You may provide neither parameter, or just an options object, or just a callback.
+The `load()` and `save()` methods each accept two optional parameters: an options object and a callback function. If provided, the options object will be passed to the sync layer, and the callback will be called after the load or save operation is finished. You may provide neither parameter, or just an options object, or just a callback, although if you provide both an options object and a callback, they need to be in that order.
 </p>
 
 <p>
@@ -617,7 +625,7 @@ The callback function will receive two parameters: an error (this parameter will
 </p>
 
 <p>
-The `load()` method automatically updates the model with the response data before calling the callback.
+The `load()` method calls `sync()` with the `read` action, and automatically updates the model with the response data (by passing it to `parse()` and then updating attributes based on the hash that `parse()` returns) before calling the callback.
 </p>
 
 ```
@@ -651,6 +659,10 @@ pie.save(function (err, response) {
 });
 ```
 
+<p>
+Always use the `load()` or `save()` methods rather than calling `sync()` directly, since this ensures that the sync layer's response is passed through the `parse()` method and that the model's data is updated if necessary.
+</p>
+
 <h2>The Model Lifecycle</h2>
 
 <p>
@@ -667,6 +679,10 @@ If a model is new or if any of its attributes have changed since the model was l
 
 <p>
 Finally, a model's `destroy()` method can be used to destroy the model instance. Calling `destroy()` with no arguments will destroy only the local model instance, while calling `destroy({'delete': true})` will both destroy the local model instance and call the sync layer with the "delete" action to delete the model from a persistence layer or server.
+</p>
+
+<p>
+It's not necessary for a model to support all possible sync actions. A model that's used to represent read-only data might use a sync layer that only implements the `read` action, for instance. In this case, the other actions should simply be no-ops that either call the sync callback immediately, or pass an error to the sync callback indicating that the action isn't supported (depending on your personal preference).
 </p>
 
 <h2>Implementing a Model Sync Layer</h2>
@@ -773,7 +789,7 @@ Y.PieModel = Y.Base.create('pieModel', Y.Model, [], {
         // Use the current timestamp as an id just to simplify the example. In a
         // real sync layer, you'd want to generate an id that's more likely to
         // be globally unique.
-        data.id = Y.Lang.now(); 
+        data.id = Y.Lang.now();
 
         // Store the new record in localStorage, then call the callback.
         localStorage.setItem(data.id, Y.JSON.stringify(data));
@@ -817,7 +833,7 @@ Y.PieModel = Y.Base.create('pieModel', Y.Model, [], {
 <h3>The `parse()` Method</h3>
 
 <p>
-Depending on the kind of response your sync layer returns, you may need to override the `parse()` method as well. The default `parse()` implementation knows how to parse JavaScript objects and JSON strings that can be parsed into JavaScript objects representing a hash of attributes. If your response data is in another format, override the `parse()` method to provide a custom parser implementation.
+Depending on the kind of response your sync layer returns, you may need to override the `parse()` method as well. The default `parse()` implementation knows how to parse JavaScript objects and JSON strings that can be parsed into JavaScript objects representing a hash of attributes. If your response data is in another format, such as a nested JSON response or XML, override the `parse()` method to provide a custom parser implementation.
 </p>
 
 <p>

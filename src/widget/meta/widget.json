@@ -91,7 +91,6 @@
     "widget-locale" : {
     	"requires" : [
     	    "widget-base"
-    	],
-    	"path": "widget/widget-locale-min.js"
+    	]
     }
 }

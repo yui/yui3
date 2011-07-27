@@ -120,7 +120,8 @@ WidgetButtons.BUTTON_CLASS_NAMES = {
  */
 WidgetButtons.TEMPLATES = {
     defaultTemplate: "<a href={href} class='"+WidgetButtons.BUTTON_CLASS_NAMES.button+"'><span class='"+WidgetButtons.BUTTON_CLASS_NAMES.content+"'>{value}</a>",
-    wrapper: "<span class='"+WidgetButtons.BUTTON_CLASS_NAMES.wrapper+"'></span>"
+    wrapper: "<span class='"+WidgetButtons.BUTTON_CLASS_NAMES.wrapper+"'></span>",
+    clearfix: "<div style='clear:both;'></div>"
 };
 
 WidgetButtons.prototype = {
@@ -184,10 +185,15 @@ WidgetButtons.prototype = {
 
             if (this._hdBtnNode.hasChildNodes()) {
                 this.setStdModContent(Y.WidgetStdMod.HEADER, this._hdBtnNode, Y.WidgetStdMod.AFTER);
+                this._appendClearFix();
             }
             if (this._ftBtnNode.hasChildNodes()) {
                 this.setStdModContent(Y.WidgetStdMod.FOOTER, this._ftBtnNode, Y.WidgetStdMod.AFTER);
             }
+
+            
+
+
 
         },
 
@@ -251,6 +257,12 @@ WidgetButtons.prototype = {
             });
 
             return true;
+        },
+
+        _appendClearFix: function () {
+            //if (!this.get("headerContent")) {
+                this.setStdModContent(Y.WidgetStdMod.HEADER, CREATE(WidgetButtons.TEMPLATES.clearfix), Y.WidgetStdMod.AFTER);
+            //}
         },
 
         /**

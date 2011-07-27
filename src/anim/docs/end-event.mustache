@@ -1,0 +1,63 @@
+<link href="{{componentAssets}}/anim.css" rel="stylesheet" type="text/css">
+<div class="intro">
+    <p>This demonstrates how to use the <code>end</code> event.</p>
+    <p> Click the X in the header to fade the element out and remove it from the document once the fade completes.</p>
+</div>
+
+<div class="example">
+{{>end-event-source}}
+</div>
+
+<h2>Setting up the HTML</h2>
+<p>First we add some HTML to animate.</p>
+
+```
+<div id="demo" class="yui3-module">
+    <div class="yui3-hd">
+        <h3>Animation Demo</h3>
+        <a title="remove module" class="yui3-remove"><em>x</em></a>
+    </div>
+    <div class="yui3-bd">
+        <p>This an example of what you can do with the YUI Animation Utility.</p>
+        <p><em>Follow the instructions above to see the animation in action.</em></p>
+    </div>
+</div>
+```
+
+<h2>Creating the Anim Instance</h2>
+<p>Now we create an instance of <code>Y.Anim</code>, passing it a configuration object that includes the <code>node</code> we wish to animate and the <code>to</code> attribute containing the properties to be transitioned and final values.</p>
+
+```
+var anim = new Y.Anim({
+    node: '#demo',
+    to: { opacity: 0 }
+});
+```
+
+<h2>Handling the End Event</h2>
+<p>We will need a function to run when the <code>end</code> event fires.  Note that the context of our handler defaults to <code>anim</code>, so <code>this</code> refers to our Anim instance inside the handler.</p>
+
+```
+var onEnd = function() {
+    var node = this.get('node'); // this === anim
+    node.get('parentNode').removeChild(node); // node is an instance of Node
+};
+```
+
+<h2>Listening for the End Event</h2>
+<p>Now we will use the <code>on</code> method to subscribe to the <code>end</code> event, passing it our handler.</p>
+
+```
+anim.on('end', onEnd);
+```
+
+<h2>Running the Animation</h2>
+<p>Finally we add an event handler to run the animation.</p>
+```
+Y.one('#demo .yui3-remove').on('click', anim.run, anim);
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>end-event-source}}
+```

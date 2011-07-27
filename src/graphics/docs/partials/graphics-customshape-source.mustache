@@ -40,7 +40,7 @@ YUI({filter:"raw"}).use('graphics', function (Y)
     Y.RoundedRect = RoundedRect;
     
     var mygraphic = new Y.Graphic({render: "#mygraphiccontainer"}),
-        myroundrect = mygraphic.getShape({
+        myroundrect = mygraphic.addShape({
             type: Y.RoundedRect,
             width: 300,
             height: 200,

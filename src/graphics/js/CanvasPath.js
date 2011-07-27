@@ -46,11 +46,10 @@ Y.extend(CanvasPath, Y.CanvasShape, {
         node.setAttribute("pointer-events", "none");
         node.style.pointerEvents = "none";
         node.style.overflow = "visible";
-        node.setAttribute("class", "yui3-" + SHAPE);
-		node.setAttribute("class", "yui3-" + this.name);
 		node.setAttribute("id", id);
 		id = "#" + id;
 		this.node = node;
+		this.addClass("yui3-" + SHAPE + " yui3-" + this.name);
 	},
 
     /**
@@ -68,7 +67,7 @@ CanvasPath.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	/**
 	 * Indicates the width of the shape
 	 *
-	 * @attribute width
+	 * @config width
 	 * @type Number
 	 */
 	width: {
@@ -88,7 +87,7 @@ CanvasPath.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	/**
 	 * Indicates the height of the shape
 	 *
-	 * @attribute height
+	 * @config height
 	 * @type Number
 	 */
 	height: {
@@ -108,7 +107,7 @@ CanvasPath.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	/**
 	 * Indicates the path used for the node.
 	 *
-	 * @attribute path
+	 * @config path
 	 * @type String
 	 */
 	path: {

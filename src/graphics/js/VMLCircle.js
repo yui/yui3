@@ -27,7 +27,7 @@ VMLCircle.ATTRS = Y.merge(VMLShape.ATTRS, {
 	/**
 	 * Radius for the circle.
 	 *
-	 * @attribute radius
+	 * @config radius
 	 * @type Number
 	 */
 	radius: {
@@ -39,7 +39,7 @@ VMLCircle.ATTRS = Y.merge(VMLShape.ATTRS, {
 	/**
 	 * Width of the circle
 	 *
-	 * @attribute width
+	 * @config width
 	 * @type Number
 	 */
 	width: {
@@ -60,7 +60,7 @@ VMLCircle.ATTRS = Y.merge(VMLShape.ATTRS, {
 	/**
 	 * Width of the circle
 	 *
-	 * @attribute width
+	 * @config width
 	 * @type Number
 	 */
 	height: {

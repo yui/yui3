@@ -16,7 +16,7 @@ CanvasGraphic.ATTRS = {
     /**
      * Whether or not to render the `Graphic` automatically after to a specified parent node after init. This can be a Node instance or a CSS selector string.
      * 
-     * @attribute render
+     * @config render
      * @type Node | String 
      */
     render: {},
@@ -24,7 +24,7 @@ CanvasGraphic.ATTRS = {
     /**
 	 * Unique id for class instance.
 	 *
-	 * @attribute id
+	 * @config id
 	 * @type String
 	 */
 	id: {
@@ -47,7 +47,7 @@ CanvasGraphic.ATTRS = {
     /**
      * Key value pairs in which a shape instance is associated with its id.
      *
-     *  @attribute shapes
+     *  @config shapes
      *  @type Object
      *  @readOnly
      */
@@ -63,7 +63,7 @@ CanvasGraphic.ATTRS = {
     /**
      *  Object containing size and coordinate data for the content of a Graphic in relation to the graphic instance's position.
      *
-     *  @attribute contentBounds 
+     *  @config contentBounds 
      *  @type Object
      *  @readOnly
      */
@@ -79,7 +79,7 @@ CanvasGraphic.ATTRS = {
     /**
      *  The outermost html element of the Graphic instance.
      *
-     *  @attribute node
+     *  @config node
      *  @type HTMLElement
      *  @readOnly
      */
@@ -95,7 +95,7 @@ CanvasGraphic.ATTRS = {
 	/**
 	 * Indicates the width of the `Graphic`. 
 	 *
-	 * @attribute width
+	 * @config width
 	 * @type Number
 	 */
     width: {
@@ -112,7 +112,7 @@ CanvasGraphic.ATTRS = {
 	/**
 	 * Indicates the height of the `Graphic`. 
 	 *
-	 * @attribute height 
+	 * @config height 
 	 * @type Number
 	 */
     height: {
@@ -130,7 +130,7 @@ CanvasGraphic.ATTRS = {
      *  Determines how the size of instance is calculated. If true, the width and height are determined by the size of the contents.
      *  If false, the width and height values are either explicitly set or determined by the size of the parent node's dimensions.
      *
-     *  @attribute autoSize
+     *  @config autoSize
      *  @type Boolean
      *  @default false
      */
@@ -142,7 +142,7 @@ CanvasGraphic.ATTRS = {
      * When overflow is set to true, by default, the contentBounds will resize to greater values but not smaller values. (for performance)
      * When resizing the contentBounds down is desirable, set the resizeDown value to true.
      *
-     * @attribute resizeDown 
+     * @config resizeDown 
      * @type Boolean
      */
     resizeDown: {
@@ -162,7 +162,7 @@ CanvasGraphic.ATTRS = {
 	/**
 	 * Indicates the x-coordinate for the instance.
 	 *
-	 * @attribute x
+	 * @config x
 	 * @type Number
 	 */
     x: {
@@ -185,7 +185,7 @@ CanvasGraphic.ATTRS = {
 	/**
 	 * Indicates the y-coordinate for the instance.
 	 *
-	 * @attribute y
+	 * @config y
 	 * @type Number
 	 */
     y: {
@@ -209,7 +209,7 @@ CanvasGraphic.ATTRS = {
      * Indicates whether or not the instance will automatically redraw after a change is made to a shape.
      * This property will get set to false when batching operations.
      *
-     * @attribute autoDraw
+     * @config autoDraw
      * @type Boolean
      * @default true
      * @private
@@ -221,7 +221,7 @@ CanvasGraphic.ATTRS = {
 	/**
 	 * Indicates whether the `Graphic` and its children are visible.
 	 *
-	 * @attribute visible
+	 * @config visible
 	 * @type Boolean
 	 */
     visible: {
@@ -350,28 +350,28 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
     /**
      * Generates a shape instance by type.
      *
-     * @method getShape
+     * @method addShape
      * @param {String} type type of shape to generate.
      * @param {Object} cfg attributes for the shape
      * @return Shape
      */
-    getShape: function(cfg)
+    addShape: function(cfg)
     {
         cfg.graphic = this;
         var shapeClass = this._getShapeClass(cfg.type),
             shape = new shapeClass(cfg);
-        this.addShape(shape);
+        this._appendShape(shape);
         return shape;
     },
 
     /**
      * Adds a shape instance to the graphic instance.
      *
-     * @method addShape
+     * @method _appendShape
      * @param {Shape} shape The shape instance to be added to the graphic.
      * @private
      */
-    addShape: function(shape)
+    _appendShape: function(shape)
     {
         var node = shape.node,
             parentNode = this._frag || this._node;
@@ -478,7 +478,7 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
     },
 
     /**
-     * Returns a shape class. Used by `getShape`. 
+     * Returns a shape class. Used by `addShape`. 
      *
      * @param {Shape | String} val Indicates which shape class. 
      * @return Function 
@@ -495,7 +495,7 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
     },
     
     /**
-     * Look up for shape classes. Used by `getShape` to retrieve a class for instantiation.
+     * Look up for shape classes. Used by `addShape` to retrieve a class for instantiation.
      *
      * @property _shapeClass
      * @type Object

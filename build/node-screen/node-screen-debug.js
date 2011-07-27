@@ -161,6 +161,11 @@ Y.Node.importMethod(Y.DOM, [
 ]);
 
 /**
+ * @module node
+ * @submodule node-screen
+ */
+
+/**
  * Returns a region object for the node
  * @config region
  * @for Node

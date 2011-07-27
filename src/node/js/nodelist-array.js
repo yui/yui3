@@ -1,7 +1,12 @@
+/**
+ * @module node
+ * @submodule node-core
+ */
+
 var Y_NodeList = Y.NodeList,
     ArrayProto = Array.prototype,
     ArrayMethods = {
-        /** Returns a new NodeList combining the given NodeList(s) 
+        /** Returns a new NodeList combining the given NodeList(s)
           * @for NodeList
           * @method concat
           * @param {NodeList | Array} valueN Arrays/NodeLists and/or values to
@@ -15,10 +20,10 @@ var Y_NodeList = Y.NodeList,
           * @return {Node} The last item in the NodeList.
           */
         'pop': 0,
-        /** Adds the given Node(s) to the end of the NodeList. 
+        /** Adds the given Node(s) to the end of the NodeList.
           * @for NodeList
           * @method push
-          * @param {Node | DOMNode} nodes One or more nodes to add to the end of the NodeList. 
+          * @param {Node | DOMNode} nodes One or more nodes to add to the end of the NodeList.
           */
         'push': 0,
         /** Removes the first item from the NodeList and returns it.
@@ -27,7 +32,7 @@ var Y_NodeList = Y.NodeList,
           * @return {Node} The first item in the NodeList.
           */
         'shift': 0,
-        /** Returns a new NodeList comprising the Nodes in the given range. 
+        /** Returns a new NodeList comprising the Nodes in the given range.
           * @for NodeList
           * @method slice
           * @param {Number} begin Zero-based index at which to begin extraction.
@@ -44,15 +49,15 @@ var Y_NodeList = Y.NodeList,
           * @method splice
           * @param {Number} index Index at which to start changing the array. If negative, will begin that many elements from the end.
           * @param {Number} howMany An integer indicating the number of old array elements to remove. If howMany is 0, no elements are removed. In this case, you should specify at least one new element. If no howMany parameter is specified (second syntax above, which is a SpiderMonkey extension), all elements after index are removed.
-          * {Node | DOMNode| element1, ..., elementN 
+          * {Node | DOMNode| element1, ..., elementN
           The elements to add to the array. If you don't specify any elements, splice simply removes elements from the array.
           * @return {NodeList} The element(s) removed.
           */
         'splice': 1,
-        /** Adds the given Node(s) to the beginning of the NodeList. 
+        /** Adds the given Node(s) to the beginning of the NodeList.
           * @for NodeList
           * @method push
-          * @param {Node | DOMNode} nodes One or more nodes to add to the NodeList. 
+          * @param {Node | DOMNode} nodes One or more nodes to add to the NodeList.
           */
         'unshift': 0
     };
@@ -65,7 +70,7 @@ Y.Object.each(ArrayMethods, function(returnNodeList, name) {
             arg,
             ret;
 
-        while (typeof (arg = arguments[i++]) != 'undefined') { // use DOM nodes/nodeLists 
+        while (typeof (arg = arguments[i++]) != 'undefined') { // use DOM nodes/nodeLists
             args.push(arg._node || arg._nodes || arg);
         }
 

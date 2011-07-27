@@ -1,0 +1,39 @@
+<style scoped>
+div.demo {
+    background: #ccc;
+    border: 1px solid #999;
+    margin: 1em 0;
+}
+
+div.demo p {
+    padding: 1em;
+    zoom:1;
+}
+
+</style>
+<div class="intro">
+    <p>This example shows how to show and hide Node instances.</p>
+</div>
+
+<div class="example">
+{{>transition-view-source}}
+</div>
+
+<h2>Showing a Node</h2>
+<p>The view of a Node instance can be transitioned by passing <code>true</code> to the <code>show</code> and <code>hide</code> methods.</p>
+
+```
+    Y.one('.demo').show(true);
+```
+
+<h2>Hiding a Node</h2>
+<p>The opposite of <code>show</code>, the <code>hide</code> method sets the node's CSS <code>display</code> property to <code>none</code>.</p>
+
+```
+    Y.one('.demo').hide(true);
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>transition-view-source}}
+```

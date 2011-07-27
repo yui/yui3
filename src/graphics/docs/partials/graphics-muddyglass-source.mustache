@@ -3,7 +3,7 @@
     YUI({filter:"raw"}).use('graphics', function (Y) 
     { 
         var mygraphic = new Y.Graphic({render:"#mygraphiccontainer"});
-        var shadow = mygraphic.getShape({
+        var shadow = mygraphic.addShape({
             type: "ellipse",
             stroke: {
                 color: "#ddd",
@@ -28,7 +28,7 @@
             y:420
         });
 
-        var milk = mygraphic.getShape({
+        var milk = mygraphic.addShape({
             x: 314,
             y: 180,
             type: "rect",
@@ -50,7 +50,7 @@
             height:230
         });
 			
-        var myrect = mygraphic.getShape({
+        var myrect = mygraphic.addShape({
             x: 310,
             y: 110,
             type: "rect",
@@ -72,7 +72,7 @@
             height:325
         });
 
-        var reflect = mygraphic.getShape({
+        var reflect = mygraphic.addShape({
             x: 310,
             y: 113,
             type: "rect",

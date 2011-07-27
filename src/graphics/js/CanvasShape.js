@@ -227,41 +227,6 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 		this.node = node;
 		this.addClass("yui3-" + SHAPE + " yui3-" + this.name);
 	},
-
-	/**
-     * Parses event to determine if it is a dom interaction event.
-     *
-     * @method isMouseEvent
-     * @param {String} type Type of event
-     * @return Boolean
-	 * @private
-	 */
-	isMouseEvent: function(type)
-	{
-		if(type.indexOf('mouse') > -1 || type.indexOf('click') > -1)
-		{
-			return true;
-		}
-		return false;
-	},
-	
-	/**
-     * Overrides default `before` method. Checks to see if its a dom interaction event. If so, 
-     * return an event attached to the `node` element. If not, return the normal functionality.
-     *
-     * @method before
-     * @param {String} type event type
-     * @param {Object} callback function
-	 * @private
-	 */
-	before: function(type, fn)
-	{
-		if(this.isMouseEvent(type))
-		{
-			return Y.before(type, fn, "#" +  this.get("id"));
-		}
-		return Y.on.apply(this, arguments);
-	},
 	
 	/**
      * Overrides default `on` method. Checks to see if its a dom interaction event. If so, 
@@ -274,27 +239,9 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 */
 	on: function(type, fn)
 	{
-		if(this.isMouseEvent(type))
+		if(Y.Node.DOM_EVENTS[type])
 		{
-			return Y.on(type, fn, "#" +  this.get("id"));
-		}
-		return Y.on.apply(this, arguments);
-	},
-	
-	/**
-     * Overrides default `after` method. Checks to see if its a dom interaction event. If so, 
-     * return an event attached to the `node` element. If not, return the normal functionality.
-     *
-     * @method after
-     * @param {String} type event type
-     * @param {Object} callback function
-	 * @private
-	 */
-	after: function(type, fn)
-	{
-		if(this.isMouseEvent(type))
-		{
-			return Y.after(type, fn, "#" +  this.get("id"));
+			return Y.one("#" +  this.get("id")).on(type, fn);
 		}
 		return Y.on.apply(this, arguments);
 	},
@@ -309,8 +256,8 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	_setStrokeProps: function(stroke)
 	{
 		var color = stroke.color,
-			weight = stroke.weight,
-			opacity = stroke.opacity,
+			weight = PARSE_FLOAT(stroke.weight),
+			opacity = PARSE_FLOAT(stroke.opacity),
 			linejoin = stroke.linejoin || "round",
 			linecap = stroke.linecap || "butt",
 			dashstyle = stroke.dashstyle;
@@ -318,7 +265,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 		this._dashstyle = (dashstyle && Y.Lang.isArray(dashstyle) && dashstyle.length > 1) ? dashstyle : null;
 		this._strokeWeight = weight;
 
-		if (weight) 
+		if (IS_NUMBER(weight) && weight > 0) 
 		{
 			this._stroke = 1;
 		} 
@@ -326,7 +273,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 		{
 			this._stroke = 0;
 		}
-		if (opacity) {
+		if (IS_NUMBER(opacity)) {
 			this._strokeStyle = this._toRGBA(color, opacity);
 		}
 		else
@@ -341,7 +288,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 		else
 		{
 			linejoin = parseInt(linejoin, 10);
-			if(Y.Lang.isNumber(linejoin))
+			if(IS_NUMBER(linejoin))
 			{
 				this._miterlimit =  Math.max(linejoin, 1);
 				this._linejoin = "miter";
@@ -378,7 +325,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 */
 	_setFillProps: function(fill)
 	{
-		var isNumber = Y.Lang.isNumber,
+		var isNumber = IS_NUMBER,
 			color = fill.color,
 			opacity,
 			type = fill.type;
@@ -808,8 +755,8 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	{
 		var rotation = this.get("rotation"),
 			radCon = Math.PI/180,
-			sinRadians = parseFloat(parseFloat(Math.sin(rotation * radCon)).toFixed(8)),
-			cosRadians = parseFloat(parseFloat(Math.cos(rotation * radCon)).toFixed(8)),
+			sinRadians = PARSE_FLOAT(PARSE_FLOAT(Math.sin(rotation * radCon)).toFixed(8)),
+			cosRadians = PARSE_FLOAT(PARSE_FLOAT(Math.cos(rotation * radCon)).toFixed(8)),
 			w = this.get("width"),
 			h = this.get("height"),
 			stroke = this.get("stroke"),
@@ -927,7 +874,7 @@ CanvasShape.ATTRS =  {
 	 * An array of x, y values which indicates the transformOrigin in which to rotate the shape. Valid values range between 0 and 1 representing a 
 	 * fraction of the shape's corresponding bounding box dimension. The default value is [0.5, 0.5].
 	 *
-	 * @attribute transformOrigin
+	 * @config transformOrigin
 	 * @type Array
 	 */
 	transformOrigin: {
@@ -940,7 +887,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * The rotation (in degrees) of the shape.
 	 *
-	 * @attribute rotation
+	 * @config rotation
 	 * @type Number
 	 */
 	rotation: {
@@ -958,7 +905,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Dom node for the shape
 	 *
-	 * @attribute node
+	 * @config node
 	 * @type HTMLElement
 	 * @readOnly
 	 */
@@ -974,7 +921,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Unique id for class instance.
 	 *
-	 * @attribute id
+	 * @config id
 	 * @type String
 	 */
 	id: {
@@ -997,7 +944,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Indicates the width of the shape
 	 *
-	 * @attribute width
+	 * @config width
 	 * @type Number
 	 */
 	width: {
@@ -1007,7 +954,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Indicates the height of the shape
 	 *
-	 * @attribute height
+	 * @config height
 	 * @type Number
 	 */
 	height: {
@@ -1017,7 +964,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Indicates the x position of shape.
 	 *
-	 * @attribute x
+	 * @config x
 	 * @type Number
 	 */
 	x: {
@@ -1027,7 +974,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Indicates the y position of shape.
 	 *
-	 * @attribute y
+	 * @config y
 	 * @type Number
 	 */
 	y: {
@@ -1037,7 +984,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Indicates whether the shape is visible.
 	 *
-	 * @attribute visible
+	 * @config visible
 	 * @type Boolean
 	 */
 	visible: {
@@ -1079,7 +1026,7 @@ CanvasShape.ATTRS =  {
 	 *  </dl>
 	 *  </p>
 	 *
-	 * @attribute fill
+	 * @config fill
 	 * @type Object 
 	 */
 	fill: {
@@ -1112,7 +1059,7 @@ CanvasShape.ATTRS =  {
 	 *      length of the dash. The second index indicates the length of gap.
 	 *  </dl>
 	 *
-	 * @attribute stroke
+	 * @config stroke
 	 * @type Object
 	 */
 	stroke: {
@@ -1130,7 +1077,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Indicates whether or not the instance will size itself based on its contents.
 	 *
-	 * @attribute autoSize 
+	 * @config autoSize 
 	 * @type Boolean
 	 */
 	autoSize: {
@@ -1140,7 +1087,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Determines whether the instance will receive mouse events.
 	 * 
-	 * @attribute pointerEvents
+	 * @config pointerEvents
 	 * @type string
 	 */
 	pointerEvents: {
@@ -1150,7 +1097,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Reference to the container Graphic.
 	 *
-	 * @attribute graphic
+	 * @config graphic
 	 * @type Graphic
 	 */
 	graphic: {
