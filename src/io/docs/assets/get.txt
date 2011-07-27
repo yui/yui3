@@ -1,0 +1,1 @@
+"This is the response from a simple text file.  Thank you for trying the YUI HTTP GET example."
