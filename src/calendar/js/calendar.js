@@ -95,7 +95,7 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
           case("single"):
                if (clickedCellIsDay) {
                   if (!clickedCellIsSelected) {
-                    this.clearSelection();  
+                    this._clearSelection(true);  
                     this._addDateToSelection(this._nodeToDate(clickedCell));
                   }
              }

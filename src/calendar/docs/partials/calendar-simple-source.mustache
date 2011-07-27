@@ -1,29 +1,64 @@
-<div id="demo" class="yui3-skin-sam">
-<div id="mycalendar"></div>
-<br>
-<a href="#" id="togglePrevMonth">Toggle Show Previous Month</a><br>
-<a href="#" id="toggleNextMonth">Toggle Show Next Month</a><br>
+<div id="demo" class="yui3-skin-sam yui3-g">
+  <div id="leftcolumn" class="yui3-u-1-2">
+     <div id="mycalendar"></div>
+  </div>
+  <div id="rightcolumn" class="yui3-u-1-2">
+   <div id="links" style="padding-left:15px;">
+      <a href="#" id="togglePrevMonth">Toggle Show Previous Month</a><br>
+      <a href="#" id="toggleNextMonth">Toggle Show Next Month</a><br>
+      Selected date: <span id="selecteddate"></span>
+   </div>
+  </div>
 </div>
 <script type="text/javascript">
 YUI({
     filter: 'RAW',
     debug: true
-}).use('calendar',  function(Y) {
-               
+}).use('calendar', 'datatype-date',  function(Y) {
+    
+    // Create a new instance of calendar, placing it in 
+    // #mycalendar container, setting its width to 340px,
+    // the flags for showing previous and next month's 
+    // dates in available empty cells to true, and setting 
+    // the date to August 2011.           
     var calendar = new Y.Calendar({
       contentBox: "#mycalendar",
-      height:'200px',
-      width:'600px',
+      width:'340px',
       showPrevMonth: true,
       showNextMonth: true,
       date: new Date(2011, 07, 01)}).render();
+    
+    // Get a reference to Y.DataType.Date
+    var dtdate = Y.DataType.Date;
 
-    Y.log(calendar.get("date"));
+    // Listen to calendar's selectionChange event.
+    calendar.on("selectionChange", function (ev) {
 
-    Y.one("#togglePrevMonth").on('click', function () {
+      // Get the date from the list of selected
+      // dates returned with the event (since only
+      // single selection is enabled by default,
+      // we expect there to be only one date)
+      var newDate = ev.newSelection[0];
+
+      // Format the date and output it to a DOM
+      // element.
+      Y.one("#selecteddate").setContent(dtdate.format(newDate));
+    });
+
+
+    // When the 'Show Previous Month' link is clicked,
+    // modify the showPrevMonth property to show or hide
+    // previous month's dates
+    Y.one("#togglePrevMonth").on('click', function (ev) {
+      ev.preventDefault();
       calendar.set('showPrevMonth', !(calendar.get("showPrevMonth")));      
     });
-    Y.one("#toggleNextMonth").on('click', function () {
+
+    // When the 'Show Next Month' link is clicked,
+    // modify the showNextMonth property to show or hide
+    // next month's dates
+    Y.one("#toggleNextMonth").on('click', function (ev) {
+      ev.preventDefault();
       calendar.set('showNextMonth', !(calendar.get("showNextMonth")));      
     });
 });
