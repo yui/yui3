@@ -1,0 +1,85 @@
+<form id="demo" action="http://search.yahoo.com/search">
+    <h6>Look up github repositories by username (e.g., davglass, lsmith or rgrove):</h6>
+    <input type="input" id="demo_input_query" name="p">
+    <input type="submit" id="demo_query_retrieve" value="Retrieve data">
+    <input type="button" id="demo_cache_clear" value="Clear cache">
+    <div id="demo_output_response" class="output"></div>
+</form>
+
+<script type="text/javascript">
+YUI().use("json-stringify","node", "datasource-get", "datasource-jsonschema", "datasource-cache", "datatype-date", function (Y) {
+    var output = Y.one("#demo_output_response"),
+        source = "remote source",
+
+        myDataSource = new Y.DataSource.Get({
+            source:"https://api.github.com/users/",
+            generateRequestCallback: function (guid) {
+                return '/repos?callback=YUI.Env.DataSource.callbacks.' + guid;
+            }
+        }),
+
+        callback = {
+            success: function(e){
+                var when = Y.DataType.Date.format(new Date(), {format:"%F %r"}),
+                    data = Y.JSON.stringify(e.response, null, 2);
+
+                output.setContent(
+                    "<p>[" + when + "] Retrieved from " +
+                    "<strong>" + source + "</strong></p>" +
+                    "<pre>" +
+                        data.replace(/&/g,"&amp;")
+                            .replace(/</g,"&lt;")
+                            .replace(/>/g,"&gt;") +
+                    "</pre>");
+            },
+            failure: function(e){
+                var when = Y.DataType.Date.format(new Date(), {format:"%F %r"}),
+                    message = /fields retrieval/.test(e.error.message) ?
+                        "User not found" : e.error.message;
+
+                output.setContent(
+                    "<p>[" + when + "] Could not retrieve data: " +
+                        "<em>" + message + "</em>" +
+                    "</p>");
+            }
+        };
+
+    myDataSource.plug(Y.Plugin.DataSourceJSONSchema, {
+        schema: {
+            resultListLocator: "data",
+            resultFields: ["name"]
+        }
+    });
+
+    myDataSource.plug(Y.Plugin.DataSourceCache, { max: 3 });
+    myDataSource.cache.on("retrieve", function(){
+        source = "cache";
+    });
+
+    Y.one("#demo_cache_clear").on("click", function(){
+        var when = Y.DataType.Date.format(new Date(), {format:"%F %r"});
+
+        myDataSource.cache.flush();
+        output.setContent("<p>[" + when + "] Cache cleared.</p>");
+    });
+
+    Y.on("submit", function(e){
+        e.halt();
+        var query = encodeURIComponent(
+                        Y.one("#demo_input_query")
+                            .get("value")
+                            .replace(/"/g,'\\"')
+                            .replace(/\W/g, ''));
+
+        if(query) {
+            source = "remote source";
+            myDataSource.sendRequest({
+                request:query,
+                callback:callback
+            });
+        } else {
+            output.setContent("<p>Please enter a query.</p>");
+        }
+    }, "#demo");
+});
+</script>

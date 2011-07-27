@@ -1,0 +1,118 @@
+<div class="intro">
+    <p>Use DataSource.Local to manage retrieval of local data, from JavaScript arrays and objects to DOM elements. A <a href="../dataschema/">DataSchema</a> plugin is used to normalize incoming data into a known format for consistency of usage by other components.</p>
+</div>
+
+<div class="example">
+    {{>datasource-local-source}}
+</div>
+
+<p>If you are working with local array data, use the DataSourceArraySchema plugin to normalize and filter the data into a consistent format:</p>
+
+```
+YUI().use("datasource-local", "datasource-arrayschema", function(Y) {
+    var myData = [
+            {name:"abc",id:123,extra:"foo"},
+            {name:"def",id:456,extra:"bar"},
+            {name:"ghi",id:789,extra:"baz"}
+        ],
+        myDataSource = new Y.DataSource.Local({source:myData}),
+        myCallback = {
+            success: function(e){
+                alert(e.response);
+            },
+            failure: function(e){
+                alert("Could not retrieve data: " + e.error.message);
+            }
+        };
+
+    myDataSource.plug(Y.Plugin.DataSourceArraySchema, {
+        schema: {
+            resultFields: ["name","id"]
+        }
+    });
+
+    myDataSource.sendRequest({callback:myCallback});
+});
+```
+
+<p>Use the DataSourceJSONSchema plugin to normalize JSON data:</p>
+
+```
+YUI().use("datasource-local", "datasource-jsonschema", function(Y) {
+    var myData = {
+        "profile":{
+            "current":160,
+            "target":150
+        },
+        "reference": [
+            {
+                ...
+            },
+            {
+                "category":"nutrition",
+                "type":"intake",
+                "fruit":[
+                    {"name":"apple", "calories":70},
+                    {"name":"banana", "calories":70},
+                    {"name":"orange", "calories":90},
+                ],
+                "vegetables":[
+                    {"name":"baked potato", "calories":150},
+                    {"name":"broccoli", "calories":50},
+                    {"name":"green beans", "calories":30}
+                ]
+            }
+        ],
+        "program": [
+            ...
+        ]
+    },
+    myDataSource = new Y.DataSource.Local({source:myData}),
+    myCallback = {
+        success: function(e){
+            alert(e.response);
+        },
+        failure: function(e){
+            alert("Could not retrieve data: " + e.error.message);
+        }
+    };
+
+    myDataSource.plug(Y.Plugin.DataSourceJSONSchema, {
+        schema: {
+            resultListLocator: "reference[1].fruit",
+            resultFields: ["name","calories"]
+        }
+    });
+
+    myDataSource.sendRequest({callback:myCallback});
+});
+```
+
+<p>You can use the DataSourceXMLSchema plugin to work with DOM elements:</p>
+
+```
+YUI().use("datasource-local", "datasource-xmlschema", function(Y) {
+    var myTable = Y.Node.getDOMNode(Y.one("#myTable")),
+        myDataSource = new Y.DataSource.Local({source:myTable}),
+        myCallback = {
+            success: function(e){
+                alert(e.response);
+            },
+            failure: function(e){
+                alert("Could not retrieve data: " + e.error.message);
+            }
+        };
+
+    myDataSource.plug(Y.Plugin.DataSourceXMLSchema, {
+        schema: {
+            resultListLocator: "tr",
+            resultFields: [
+                {key:"beverage", locator:"td[1]"},
+                {key:"price", locator:"td[2]"}
+            ]
+        }
+    });
+
+    myDataSource.sendRequest({callback:myCallback});
+});
+```
