@@ -255,38 +255,6 @@
     StdMod.prototype = {
 
         /**
-         * Returns a reference to the Y.Node corresponding to the header.
-         *
-         * @method head
-         * @public
-         * @return {Node} A reference to the header node
-         */
-        head : function() {
-            return this.getStdModNode(STD_HEADER) || this._renderStdMod(STD_HEADER);
-        },
-
-        /**
-         * Returns a reference to the Y.Node corresponding to the body.
-         *
-         * @method body
-         * @public
-         * @return {Node} A reference to the body node
-         */
-        body : function() {
-            return this.getStdModNode(STD_BODY) || this._renderStdMod(STD_BODY);
-        },
-
-        /**
-         * Returns a reference to the Y.Node corresponding to the footer.
-         *
-         * @method head
-         * @public
-         * @return {Node} A reference to the footer node
-         */
-        foot : function() {
-            return this.getStdModNode(STD_FOOTER) || this._renderStdMod(STD_FOOTER);
-        },
-        /**
          * Synchronizes the UI to match the Widgets standard module state.
          * <p>
          * This method is invoked after syncUI is invoked for the Widget class
