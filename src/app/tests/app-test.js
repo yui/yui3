@@ -1446,11 +1446,11 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame(object, list.parse(object));
     },
 
-    'refresh() should replace all models in the list': function () {
+    'reset() should replace all models in the list': function () {
         var list   = this.createList(),
             models = list.add([{foo: 'zero'}, {foo: 'one'}]);
 
-        Assert.areSame(list, list.refresh([{foo: 'two'}, {foo: 'three'}]));
+        Assert.areSame(list, list.reset([{foo: 'two'}, {foo: 'three'}]));
         ArrayAssert.itemsAreSame(['two', 'three'], list.get('foo'));
 
         // Removed models should be cleanly detached.
@@ -1458,18 +1458,18 @@ modelListSuite.add(new Y.Test.Case({
         Assert.isUndefined(models[1].list);
 
         // And we should be able to re-add them.
-        list.refresh(models);
+        list.reset(models);
         ArrayAssert.itemsAreSame(['zero', 'one'], list.get('foo'));
     },
 
-    'refresh() should sort the new models in the list': function () {
+    'reset() should sort the new models in the list': function () {
         var list = this.createList();
 
         list.comparator = function (model) {
             return model.get('bar');
         };
 
-        list.refresh([
+        list.reset([
             {foo: 'item 1', bar: 1},
             {foo: 'item 4', bar: 4},
             {foo: 'item 3', bar: 3},
@@ -1478,6 +1478,15 @@ modelListSuite.add(new Y.Test.Case({
         ]);
 
         ArrayAssert.itemsAreSame([1, 2, 3, 4, 5], list.get('bar'));
+    },
+
+    'reset() with no args should clear the list': function () {
+        var list   = this.createList(),
+            models = list.add([{foo: 'zero'}, {foo: 'one'}]);
+
+        Assert.areSame(2, list.size());
+        list.reset();
+        Assert.areSame(0, list.size());
     },
 
     'remove() should remove a single model from the list': function () {
@@ -1737,22 +1746,22 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame(1, calls);
     },
 
-    '`refresh` event should fire when the list is refreshed or sorted': function () {
+    '`reset` event should fire when the list is reset or sorted': function () {
         var calls  = 0,
             list   = this.createList(),
             models = [this.createModel(), this.createModel()];
 
-        list.once('refresh', function (e) {
+        list.once('reset', function (e) {
             calls += 1;
 
             ArrayAssert.itemsAreSame(models, e.models);
-            Assert.areSame('refresh', e.src);
+            Assert.areSame('reset', e.src);
             Assert.areSame('test', e.test);
         });
 
-        list.refresh(models, {test: 'test'});
+        list.reset(models, {test: 'test'});
 
-        list.after('refresh', function (e) {
+        list.after('reset', function (e) {
             calls += 1;
 
             Assert.areSame('sort', e.src);
@@ -1768,7 +1777,7 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame(2, calls);
     },
 
-    '`refresh` event facade should contain sorted models': function () {
+    '`reset` event facade should contain sorted models': function () {
         var calls = 0,
             list  = this.createList();
 
@@ -1776,7 +1785,7 @@ modelListSuite.add(new Y.Test.Case({
             return model.get('bar');
         };
 
-        list.once('refresh', function (e) {
+        list.once('reset', function (e) {
             var values = [];
 
             calls += 1;
@@ -1788,7 +1797,7 @@ modelListSuite.add(new Y.Test.Case({
             ArrayAssert.itemsAreSame([1, 2, 3, 4, 5], values);
         });
 
-        list.refresh([
+        list.reset([
             {foo: 'item 1', bar: 1},
             {foo: 'item 4', bar: 4},
             {foo: 'item 3', bar: 3},
@@ -1799,33 +1808,33 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame(1, calls);
     },
 
-    '`refresh` event should be preventable': function () {
+    '`reset` event should be preventable': function () {
         var calls = 0,
             list  = this.createList();
 
-        list.on('refresh', function (e) {
+        list.on('reset', function (e) {
             calls += 1;
             e.preventDefault();
         });
 
-        list.after('refresh', function () {
-            Assert.fail('refresh event should be prevented');
+        list.after('reset', function () {
+            Assert.fail('reset event should be prevented');
         });
 
-        list.refresh([{}]);
+        list.reset([{}]);
 
         Assert.areSame(1, calls);
         Assert.areSame(0, list.size());
     },
 
-    '`refresh` event should not fire when the list is refreshed silently': function () {
+    '`reset` event should not fire when the list is reset silently': function () {
         var list = this.createList();
 
-        list.on('refresh', function () {
-            Assert.fail('refresh event should not fire');
+        list.on('reset', function () {
+            Assert.fail('reset event should not fire');
         });
 
-        list.refresh([{}], {silent: true});
+        list.reset([{}], {silent: true});
 
         Assert.areSame(1, list.size());
     },
