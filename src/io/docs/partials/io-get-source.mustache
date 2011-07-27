@@ -1,0 +1,145 @@
+<div id="container">
+	<ul>
+    	<li>IO GET response data will appear here.</li>
+    </ul>
+</div>
+<form>
+	<input id="get1" type="button" value="GET with Global Listeners. " />
+	<input id="get2" type="button" value="GET with Global and Transaction Listeners" />
+</form>
+
+<script>
+YUI().use("io-base", "node",
+
+	function(Y) {
+
+		//Get a reference to the DIV that we are using
+		//to report results.
+		var d = Y.one('#container'),
+			gStr = '',
+			tStr = '',
+			state;
+
+		/* global listener object */
+		var gH = {
+			write: function(s, args) {
+					 gStr += "ID: " + s;
+					 if (args) {
+					 	gStr += " " + "The globally-defined arguments are: " + args;
+					 }
+					 gStr += "<br>";
+			},
+			start: function(id) {
+					 // When transaction listeners are handled, its user-defined arguments
+					 // are accessible in the arguments collection.  The following detection
+					 // logic determines whether the output should account for transaction
+					 // arguments.
+					 args = state === 'global' ? arguments[1] : arguments[2];
+					 this.write(id + ": Global Event Start.", args);
+			},
+			complete: function(id, o) {
+					 args = state === 'global' ? arguments[2] : arguments[3];
+					 this.write(id + ": Global Event Complete.  The status code is: " + o.status + ".", args);
+			},
+			success: function(id, o) {
+					  args = state === 'global' ? arguments[2] : arguments[3];
+					  this.write(id + ": Global Event Success.  The response is: " + o.responseText + ".", args);
+			},
+			failure: function(id, o) {
+					  args = state === 'global' ? arguments[2] : arguments[3];
+					  this.write(o + ": Global Event Failure.  The status text is: " + o.statusText + ".", args);
+			},
+			end: function(id) {
+					 args = state === 'global' ? arguments[1] : arguments[2];
+					 this.write(id + ": Global Event End.", args);
+					 if (state === 'global') {
+						 flush(gStr);
+					 }
+			}
+		};
+		/* end global listener object */
+
+		/* transaction event object */
+		var tH = {
+			write: function(s, args) {
+					 tStr += "ID: " + s;
+					 if (args) {
+					 	tStr += " " + "The arguments are: " + args;
+					 }
+					 tStr += "<br>";
+				   },
+			start: function(id, args) {
+					 this.write(id + ": Transaction Event Start.", args.start);
+				   },
+			complete: function(id, o, args) {
+						this.write(id + ": Transaction Event Complete.  The status code is: " + o.status + ".", args.complete);
+				   },
+			success: function(id, o, args) {
+					   this.write(id + ": Transaction Event Success.  The response is: " + o.responseText + ".", args.success);
+					 },
+			failure: function(id, o, args) {
+					   this.write(id + ": Transaction Event Failure.  The status text is: " + o.statusText + ".", args.failure);
+					 },
+			end: function(id, args) {
+					 this.write(id + ": Transaction Event End.", args.end);
+					 flush(gStr + tStr);
+			}
+		};
+		/* end transaction event object */
+
+		/* Output the results to the DIV container */
+		function flush(s) {
+			d.set("innerHTML", s);
+			if (state === 'global') {
+				gStr = '';
+			}
+			else {
+				gStr = '';
+				tStr = '';
+			}
+		}
+
+		/* attach global listeners */
+		Y.on('io:start', gH.start, gH, 'global foo');
+		Y.on('io:complete', gH.complete, gH, 'global bar');
+		Y.on('io:success', gH.success, gH, 'global baz');
+		Y.on('io:failure', gH.failure, gH);
+		Y.on('io:end', gH.end, gH, 'global boo');
+		/* end global listener binding */
+
+		/* configuration object for transactions */
+		var cfg = {
+			on: {
+				start: tH.start,
+				complete: tH.complete,
+				success: tH.success,
+				failure: tH.failure,
+				end: tH.end
+			},
+			context: tH,
+			headers: { 'X-Transaction': 'GET Example'},
+			arguments: {
+					   start: 'foo',
+					   complete: 'bar',
+					   success: 'baz',
+					   failure: 'Oh no!',
+					   end: 'boo'
+					   }
+		};
+		/* end configuration object */
+
+		function call(e, b) {
+			if (b) {
+				state = 'all';
+			}
+			else {
+				state = 'global';
+			}
+
+			Y.io('assets/get.txt', cfg);
+		}
+
+		Y.on('click', call, "#get1", Y, false);
+		Y.on('click', call, "#get2", Y, true);
+	});
+</script>

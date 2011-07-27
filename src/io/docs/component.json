@@ -1,0 +1,39 @@
+{
+    "name"       : "io",
+    "displayName": "IO Utility",
+    "description": "HTTP utility for same-origin and cross-domain requests",
+    "author"     : "tsha",
+
+    "tags": ["utility"],
+    "use" : ["io"],
+
+    "examples" : [
+        {
+            "name"       : "get",
+            "displayName": "HTTP GET to request data.",
+            "description": "Use IO to request data over HTTP.",
+            "modules"    : ["io-base", "event"],
+            "tags"       : ["utility", "http"],
+
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "weather",
+            "displayName": "Request XML data from Yahoo! Weather",
+            "description": "Use IO to request XML data from a remote web service.",
+            "modules"    : ["io-xdr", "node"],
+            "tags"       : ["utility", "xml", "http", "xdr"],
+
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "pipes",
+            "displayName": "Request aggregated data using Yahoo! Pipes",
+            "description": "Use IO to make an HTTP request to Pipes, returning aggregate data from disparate data sources.",
+            "modules"    : ["io-xdr", "node"],
+            "tags"       : ["utility", "pipes", "http", "xdr"],
+
+            "hideTableOfContents": true
+        }
+    ]
+}
