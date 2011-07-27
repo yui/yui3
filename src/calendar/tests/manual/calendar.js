@@ -3,8 +3,7 @@ YUI({
     lang: "en"
 }).use('calendar',  function(Y) {
 
-         //  Y.CalendarBase.CONTENT_TEMPLATE = Y.CalendarBase.TWO_PANE_TEMPLATE;
-
+         Y.CalendarBase.CONTENT_TEMPLATE = Y.CalendarBase.TWO_PANE_TEMPLATE;
          var calendar = new Y.Calendar({
 	        contentBox: "#mycalendar",
 			width:'300px',

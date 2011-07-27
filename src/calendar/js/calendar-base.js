@@ -990,7 +990,6 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      */ 
   _afterDateChange : function () {
     
-    console.log("Firing afterDateChange");
     var contentBox = this.get('contentBox'),
         headerCell = contentBox.one("." + CAL_HD).one("h4"),
         calendarPanes = contentBox.all("." + CAL_GRID),
