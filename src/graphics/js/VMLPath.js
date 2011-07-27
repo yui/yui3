@@ -27,7 +27,7 @@ VMLPath.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 	/**
 	 * Indicates the width of the shape
 	 * 
-	 * @attribute width 
+	 * @config width 
 	 * @type Number
 	 */
 	width: {
@@ -46,7 +46,7 @@ VMLPath.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 	/**
 	 * Indicates the height of the shape
 	 * 
-	 * @attribute height
+	 * @config height
 	 * @type Number
 	 */
 	height: {
@@ -65,7 +65,7 @@ VMLPath.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 	/**
 	 * Indicates the path used for the node.
 	 *
-	 * @attribute path
+	 * @config path
 	 * @type String
 	 */
 	path: {

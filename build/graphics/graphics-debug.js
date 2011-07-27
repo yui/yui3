@@ -74,8 +74,6 @@ var SETTER = "setter",
          */
         applyCSSText: function(val) {
             var re = /\s*([a-z]*)\(([\w,\s]*)\)/gi,
-                transforms = [],
-                i = 0,
                 args,
                 m;
 
@@ -88,6 +86,29 @@ var SETTER = "setter",
             }
         },
         
+        /**
+         * Parses a string and returns an array of transform arrays.
+         *
+         * @method applyCSSText
+         * @param {String} val A css transform string
+         * @return Array
+         */
+        getTransformArray: function(val) {
+            var re = /\s*([a-z]*)\(([\w,\s]*)\)/gi,
+                transforms = [],
+                args,
+                m;
+
+            while ((m = re.exec(val))) {
+                if (typeof this[m[1]] === 'function') {
+                    args = m[2].split(',');
+                    args.unshift(m[1]);
+                    transforms.push(args);
+                }
+            }
+            return transforms;
+        },
+
         /**
          * Default values for the matrix
          *
@@ -125,10 +146,13 @@ var SETTER = "setter",
             var defaults = this._defaults,
                 prop;
 
-            config || (config = {});
+            config = config || {};
 
             for (prop in defaults) {
-                this[prop] = (prop in config) ? config[prop] : defaults[prop];
+                if(defaults.hasOwnProperty(prop))
+                {
+                    this[prop] = (prop in config) ? config[prop] : defaults[prop];
+                }
             }
 
             this._config = config;
@@ -156,12 +180,12 @@ var SETTER = "setter",
             x = x || 0;
             y = y || 0;
 
-            if (x != undefined) { // null or undef
+            if (x !== undefined) { // null or undef
                 x = this._round(Math.tan(this.angle2rad(x)));
 
             }
 
-            if (y != undefined) { // null or undef
+            if (y !== undefined) { // null or undef
                 y = this._round(Math.tan(this.angle2rad(y)));
             }
 
@@ -233,8 +257,6 @@ var SETTER = "setter",
          */
         toFilterText: function() {
             var matrix = this,
-                dx = matrix.dx,
-                dy = matrix.dy,
                 text = 'progid:DXImageTransform.Microsoft.Matrix(';
             text +=     'M11=' + matrix.a + ',' + 
                         'M21=' + matrix.b + ',' + 

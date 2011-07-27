@@ -10,8 +10,17 @@
     "examples": [
         {
             "name"       : "calendar-simple",
-            "displayName": "Simple Single Pane Selectable Calendar Example",
+            "displayName": "Simple Calendar with Selection",
             "description": "How to create a single-pane calendar with selectable dates",
+            "modules"    : ["calendar", "datatype-date"],
+            "tags"       : ["calendar"],
+
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "calendar-multipane",
+            "displayName": "Two-Pane Calendar with Custom Rendering and Multiple Selection",
+            "description": "How to create a multi-pane calendar with custom-rendered cells and multiple date selection.",
             "modules"    : ["calendar"],
             "tags"       : ["calendar"],
 

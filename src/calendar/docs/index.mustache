@@ -1,6 +1,6 @@
 <div class="intro">
 <p>
-<img src="{{componentAssets}}/img/calendar-screenshot.png" alt="Screenshot of the Calendar widget" style="border: 1px solid #bfbfbf; float:right; height:161px; margin: 0 0 8px 8px; width:272px;">
+<img src="{{componentAssets}}/calendar.png" alt="Screenshot of the Calendar widget" style="border: 1px solid #bfbfbf; float:right; height:161px; margin: 0 0 8px 8px; width:272px;">
 The Calendar widget is a visual representation of a range of dates in blocks of one or more months, which allows the user to select dates and navigate the date range.</p>
 
 <p>
@@ -112,7 +112,7 @@ These attributes are provided by `CalendarBase`, which is the core foundation fo
     </tr>
     <tr>
       <td>`headerFormat`</td>
-      <td>`"%B, %Y"`</td>
+      <td>`"%B %Y"`</td>
       <td>
         The formatting for the header of the Calendar. This attribute can be either a String with the formatting tokens used by the `strftime` specification, or a callback function that will receive a `Date` object as an argument and output a `String`.
       </td>
@@ -139,7 +139,7 @@ These attributes are provided by `Calendar`, which is the complete implementatio
       <td>`selectionMode`</td>
       <td>`single`</td>
       <td>
-        The configuration for the type of date selection allowed by the calendar. The `selectionMode` can be either `"single"` or `"multiple"`.
+        The configuration for the type of date selection allowed by the calendar. The `selectionMode` can be either `"single"`, `"multiple"` or `"multiple-sticky"`.
       </td>
     </tr>
     <tr>
@@ -176,11 +176,159 @@ These attributes are provided by `Calendar`, which is the complete implementatio
 <h3>Custom Rendering</h3>
 
 <p>
-Custom rendering description goes here.
+Calendar allows the developer to customize the rendering of individual cells based on a set of rules that match
+specific dates. To create a set of custom rules and a custom renderer function that is triggered when a rule is matched, set the `customRenderer` property to an `Object` with two keys: `rules` and `filterFunction`:
 </p>
+```
+calendar.set("customRenderer", {rules: myRules, 
+                                filterFunction: myFilterFunction});
+```
+<h4>Rendering Rules</h4>
+<p>The `rules` parameter looks as follows:</p>
+```
+var rules = {
+"2011,2013,2015-2019,2017": {
+  "0,1,5-7": {
+    "5,6,8": {
+      "all": "rule_name"
+      }
+    }
+  }  
+};
+```
+<p>
+At the top level, the rules object specifies years that dates should match; the next level is months (indexed 
+starting at 0), the next is days of the month (indexed starting at 1), and the last is days of the week (indexed
+from Sunday, starting at 0). The actual value is the name of the rule that is matched by a date. In the example
+above, the rule "rule_name" is matched by the 5th, 6th and 8th days of January, February, June, July and August of
+2011, 2013, 2015 through 2019, and 2017.</p>
+<p>
+Note that the keyword `'all'` can appear at any level of the `rule` object and will match all parameters (e.g. all years, or all months) at that level. Furthermore, the rule name value can also appear at any level, for instance:
+</p>
+```
+var rules = {
+"2011": {
+  "5-7": "summer-2011"
+  }  
+};
+```
+<p>
+The rule 'summer-2011' corresponds to June through August of 2011. More than one rule can be specified in the same
+rules object:
+</p>
+```
+var rules = {
+"2011": {
+  "5-7": "summer-2011"
+  },
+"2012":
+  {
+   "all": {
+      "all": {
+        "0,6": "all-weekends-in-2012"
+      } 
+   }
+  }  
+};
+```
+<h4>Custom Rendering Function</h4>
+<p>In order to match these rules, the customRenderer allows the developer to provide a `filterFunction` that will get called every time one or more rules is matched. The `filterFunction` has the following signature:</p>
+```
+filterFunction = function (date /*Date*/, node /*Node*/, rules /*Array*/) {
+  if (rules.indexOf("rule_name") >= 0) {
+  
+  }
+};
+```
+<p>The first parameter, `date`, is a single date that matched one or more rules. The second parameter, `node`, is the `Node` wrapping the DOM element corresponding to the given date. Finally, the third parameter, `rules`, is an
+`Array` of `String`s, each containing a rule name that the given date matched.</p>
+<p>As an example, here is a custom renderer that assigns a custom CSS class to all summer weekends:</p>
+```
+var rules = {
+  "all": {
+    "5-7": {
+      "all": {
+        "0,6": "all-summer-weekends"
+      }
+    }
+  }
+};
 
-<h2>Calendar Navigation Plugins</h2>
+var filterFunction = function (date, node, rules) {
+  if (rules.indexOf("all-summer-weekends" >= 0)) {
+    node.addClass("customCSSClass");
+  }
+}
 
+calendar.set("customRenderer", {rules: rules, filterFunction: filterFunction});
+```
+<h4> Enabling and Disabling Dates</h4>
+<p> In addition to custom rendering, the rules can also be used to specify sets of dates that should be enabled or disabled for selection. To do that, specify a rule set as described above, and then specify which rule should be used to match either the disabled dates, or the enabled dates (but not both: only one of the two parameters will be honored):</p>
+```
+calendar.set("disabledDatesRule", "someRuleName");
+// OR
+calendar.set("enabledDatesRule", "someRuleName");
+```
+<p>
+Note, by the way, that the same rule name can be listed multiple times, giving the developer a lot of flexibility in defining what set of dates can be matched. For example, the following rule set matches all weekends and the 10th of every month:
+</p>
+```
+var rules = {
+  "all": {
+    "all": {
+      "all": {
+        "0,6": "all-summer-weekends"
+      },
+      "10": "10th-of-every-month"
+    }
+  }
+};
+```
+
+<h3>Calendar Templates</h3>
+<p>By default, the calendar is rendered using a set of templates, specified as static properties of the `CalendarBase` class. These templates can be completely modified to reconfigure the markup of the calendar, as long as the tokens they use as placeholders for CSS classes, ids and content are preserved.</p>
+<p>Using the template logic, the developer can easily switch from a single pane calendar, to a calendar with
+an arbitrary number of panes. Consider the main `CONTENT_TEMPLATE` in `CalendarBase`:
+```
+  CONTENT_TEMPLATE:  '<div class="yui3-g {calendar_pane_class}" id="{calendar_id}">' +  
+                              '{header_template}' +
+                            '<div class="yui3-u-1">' +
+                              '{calendar_grid_template}' +
+                            '</div>' +
+                 '</div>'
+```
+<p>In this template, the `{calendar_grid_template}` is a so-called iterative token -- that means it can be used
+multiple times, and the calendar will automatically adjust to generate multiple sequential month grids for the
+calendar</p>
+<p>For convenience, we provide a two-pane and a three-pane calendar templates. Here is the two-pane template:</p>
+```
+  TWO_PANE_TEMPLATE: 
+      '<div class="yui3-g {calendar_pane_class}" id="{calendar_id}">' +  
+                   '{header_template}' +
+                 '<div class="yui3-u-1-2">'+
+                         '<div class = "{calendar_left_grid_class}">' +
+                      '{calendar_grid_template}' +
+                         '</div>' +
+                 '</div>' +
+                 '<div class="yui3-u-1-2">' +
+                         '<div class = "{calendar_right_grid_class}">' +
+                      '{calendar_grid_template}' +
+                         '</div>' +
+                 '</div>' +                   
+      '</div>'
+```
+<p>Switching to the two-pane template is as simple as assigning the value of `CalendarBase.CONTENT_TEMPLATE`:</p>
+```
+CalendarBase.CONTENT_TEMPLATE = CalendarBase.TWO_PANE_TEMPLATE;
+```
+Custom templates may also be constructed, with as many `{calendar_grid_template}` tokens as necessary.
+
+<h2>Calendar Plugins</h2>
+<p>The Calendar ships with a default `CalendarNavigator` plugin, which adds the
+simple navigation controls to the top of the widget. The plugin is located on the `navigator` namespace (that is, to access it and its properties, you would reference `mycalendar.navigator`). For future releases, more complex calendar navigation plugins
+are planned.</p>
+<p>In addition, in future releases, Calendar will also have a Popup plugin that will 
+allow it to be easily hidden, shown, and associated with other UI elements.</p>
 <h2>Known Issues</h2>
 
 <ul class="spaced">

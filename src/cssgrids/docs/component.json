@@ -1,0 +1,73 @@
+{
+    "name"       : "cssgrids",
+    "displayName": "CSS Grids",
+    "description": "CSS Grids provides support for any size page layouts.",
+    "author"     : "msweeney",
+
+    "tags": ["css", "grids"],
+    "use" : ["cssgrids"],
+
+    "examples": [
+        {
+            "name"       : "cssgrids-units",
+            "displayName": "Using Grid Units",
+            "description": "Each unit has a className that provides its percentage width.",
+            "modules"    : ["cssgrids"],
+            "tags"       : ["cssgrids"],
+
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "cssgrids-fixed",
+            "displayName": "Fixed Page Template",
+            "description": 	"This is a template for creating fixed-width layouts.",
+            "modules"    : ["cssgrids"],
+            "tags"       : ["cssgrids"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "cssgrids-fluid",
+            "displayName": "Fluid Page Template",
+            "description": 	"This is a template for creating fluid layouts.",
+            "modules"    : ["cssgrids"],
+            "tags"       : ["cssgrids"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "cssgrids-align",
+            "displayName": "Aligning Grid Units",
+            "description": "Basic CSS properties are leveraged to horizontally and vertically align units.",
+            "modules"    : ["cssgrids"],
+            "tags"       : ["cssgrids"],
+
+            "hideTableOfContents": true
+        }
+
+    ],
+
+    "pages": {
+        "cssgrids-units-example": {
+            "displayName": "CSS Grids Units Example",
+            "layout"     : "cssgrids-units-example"
+        },
+
+        "cssgrids-fixed-example": {
+            "displayName": "Fixed Width Page Layout",
+            "layout"     : "cssgrids-fixed-example"
+        },
+
+        "cssgrids-fluid-example": {
+            "displayName": "Fluid Width Page Layout",
+            "layout"     : "cssgrids-fluid-example"
+        },
+
+        "cssgrids-align-example": {
+            "displayName": "CSS Grids Alignment Example",
+            "layout"     : "cssgrids-align-example"
+        }
+    }
+}

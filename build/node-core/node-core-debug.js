@@ -282,7 +282,9 @@ Y_Node.one = function(node) {
             cachedNode = instance ? instance._node : null;
             if (!instance || (cachedNode && node !== cachedNode)) { // new Node when nodes don't match
                 instance = new Y_Node(node);
-                Y_Node._instances[instance[UID]] = instance; // cache node
+                if (node.nodeType != 11) { // dont cache document fragment
+                    Y_Node._instances[instance[UID]] = instance; // cache node
+                }
             }
         }
     }
@@ -1256,50 +1258,17 @@ Y.mix(NodeList.prototype, {
 }, true);
 
 NodeList.importMethod(Y.Node.prototype, [
-    /**
-     * Called on each Node instance
-     * @for NodeList
-     * @method append
-     * @see Node.append
-     */
-    'append',
-
     /** Called on each Node instance
       * @method destroy
       * @see Node.destroy
       */
     'destroy',
 
-    /**
-      * Called on each Node instance
-      * @method detach
-      * @see Node.detach
-      */
-    'detach',
-
-    /** Called on each Node instance
-      * @method detachAll
-      * @see Node.detachAll
-      */
-    'detachAll',
-
     /** Called on each Node instance
       * @method empty
       * @see Node.empty
       */
     'empty',
-
-    /** Called on each Node instance
-      * @method insert
-      * @see Node.insert
-      */
-    'insert',
-
-    /** Called on each Node instance
-      * @method prepend
-      * @see Node.prepend
-      */
-    'prepend',
 
     /** Called on each Node instance
       * @method remove
@@ -1311,41 +1280,7 @@ NodeList.importMethod(Y.Node.prototype, [
       * @method set
       * @see Node.set
       */
-    'set',
-
-    /** Called on each Node instance
-      * @method setContent
-      * @see Node.setContent
-      */
-    'setContent',
-
-    /**
-     * Makes each node visible.
-     * If the "transition" module is loaded, show optionally
-     * animates the showing of the node using either the default
-     * transition effect ('fadeIn'), or the given named effect.
-     * @method show
-     * @param {String} name A named Transition effect to use as the show effect.
-     * @param {Object} config Options to use with the transition.
-     * @param {Function} callback An optional function to run after the transition completes.
-     * @chainable
-     */
-    'show',
-
-    /**
-     * Hides each node.
-     * If the "transition" module is loaded, hide optionally
-     * animates the hiding of the node using either the default
-     * transition effect ('fadeOut'), or the given named effect.
-     * @method hide
-     * @param {String} name A named Transition effect to use as the show effect.
-     * @param {Object} config Options to use with the transition.
-     * @param {Function} callback An optional function to run after the transition completes.
-     * @chainable
-     */
-    'hide',
-
-    'toggleView'
+    'set'
 ]);
 
 // one-off implementation to convert array of Nodes to NodeList

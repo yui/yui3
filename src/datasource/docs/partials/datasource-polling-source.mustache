@@ -1,0 +1,40 @@
+<form id="demo">
+    <h6>Poll every second for current time:</h6>
+    <input type="button" id="demo_enable" value="Start polling">
+    <input type="button" id="demo_disable" value="End polling">
+    <div id="demo_output_polling" class="output"></div>
+</form>
+
+<script type="text/javascript">
+YUI().use("dump", "node", "datasource-function", "datasource-polling", function (Y) {
+    var id,
+        myFunction = function() {
+            return new Date();
+        },
+        myDataSource = new Y.DataSource.Function({source:myFunction}),
+        request = {
+            callback: {
+                success: function(e){
+                    Y.one("#demo_output_polling")
+                     .setContent("At the tone the time will be: " +
+                                Y.dump(e.response.results[0].toString()));
+                },
+                failure: function(e){
+                    Y.one("#demo_output_polling")
+                     .setContent("Could not retrieve data: " + e.error.message);
+                }
+            }
+        };
+
+    Y.on("click", function(e){
+        if(id) {
+            myDataSource.clearInterval(id);
+        }
+        id = myDataSource.setInterval(1000, request);
+    }, "#demo_enable");
+
+    Y.on("click", function(e){
+        myDataSource.clearInterval(id);
+    }, "#demo_disable");
+});
+</script>

@@ -1,0 +1,99 @@
+<style scoped>
+/* custom styles for this example */
+#demo .output {margin-bottom:1em; padding:10px; border:1px solid #D9D9D9;}
+</style>
+
+<div class="intro">
+    <p>DataSource.Function allows the implementer to define a JavaScript function that returns data values, for maximum customizeability. A <a href="../dataschema/">DataSchema</a> plugin is used to normalize incoming data into a known format for consistency of usage by other components.</p>
+</div>
+
+<div class="example">
+    {{>datasource-function-source}}
+</div>
+
+<p>Your custom function can return arbitrary data, so use the appropriate schema plugin to normalize the data into a consistent format. Array data would use a DataSourceArraySchema plugin:</p>
+
+```
+YUI().use("datasource-function", "datasource-arrayschema", function(Y) {
+    var myFunction = function(request) {
+        return [
+            {name:"abc",id:123},
+            {name:"def",id:456},
+            {name:"ghi",id:789}
+        ];
+    },
+    myDataSource = new Y.DataSource.Function({source:myFunction}),
+    myCallback = {
+        success: function(e){
+            alert(e.response);
+        },
+        failure: function(e){
+            alert("Could not retrieve data: " + e.error.message);
+        }
+    };
+
+    myDataSource.plug(Y.Plugin.DataSourceArraySchema, {
+        schema: {
+            resultFields: ["name","id"]
+        }
+    });
+
+    myDataSource.sendRequest({callback:myCallback});
+});
+```
+
+<p>Whereas JSON data would use a DataSourceJSONSchema plugin:</p>
+
+```
+YUI().use("datasource-function", "datasource-jsonschema", function(Y) {
+    var myFunction = function(request) {
+        return {
+            "profile":{
+                "current":160,
+                "target":150
+            },
+            "reference": [
+                {
+                    ...
+                },
+                {
+                    "category":"nutrition",
+                    "type":"intake",
+                    "fruit":[
+                        {"name":"apple", "calories":70},
+                        {"name":"banana", "calories":70},
+                        {"name":"orange", "calories":90},
+                    ],
+                    "vegetables":[
+                        {"name":"baked potato", "calories":150},
+                        {"name":"broccoli", "calories":50},
+                        {"name":"green beans", "calories":30}
+                    ]
+                }
+            ],
+            "program": [
+                ...
+            ]
+        };
+    },
+    myDataSource = new Y.DataSource.Function({source:myFunction}),
+    myCallback = {
+        success: function(e){
+            alert(e.response);
+        },
+        failure: function(e){
+            alert("Could not retrieve data: " + e.error.message);
+        }
+    };
+
+    myDataSource.plug(Y.Plugin.DataSourceJSONSchema, {
+        schema: {
+            resultListLocator: "reference[1].fruit",
+            resultFields: ["name","calories"]
+        }
+    });
+
+    myDataSource.sendRequest({callback:myCallback});
+});
+```
+

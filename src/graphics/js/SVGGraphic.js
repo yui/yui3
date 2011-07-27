@@ -15,7 +15,7 @@ SVGGraphic.ATTRS = {
     /**
      * Whether or not to render the `Graphic` automatically after to a specified parent node after init. This can be a Node instance or a CSS selector string.
      * 
-     * @attribute render
+     * @config render
      * @type Node | String 
      */
     render: {},
@@ -23,7 +23,7 @@ SVGGraphic.ATTRS = {
     /**
 	 * Unique id for class instance.
 	 *
-	 * @attribute id
+	 * @config id
 	 * @type String
 	 */
 	id: {
@@ -46,7 +46,7 @@ SVGGraphic.ATTRS = {
     /**
      * Key value pairs in which a shape instance is associated with its id.
      *
-     *  @attribute shapes
+     *  @config shapes
      *  @type Object
      *  @readOnly
      */
@@ -62,7 +62,7 @@ SVGGraphic.ATTRS = {
     /**
      *  Object containing size and coordinate data for the content of a Graphic in relation to the coordSpace node.
      *
-     *  @attribute contentBounds
+     *  @config contentBounds
      *  @type Object 
      *  @readOnly
      */
@@ -78,7 +78,7 @@ SVGGraphic.ATTRS = {
     /**
      *  The html element that represents to coordinate system of the Graphic instance.
      *
-     *  @attribute node
+     *  @config node
      *  @type HTMLElement
      *  @readOnly
      */
@@ -94,7 +94,7 @@ SVGGraphic.ATTRS = {
 	/**
 	 * Indicates the width of the `Graphic`. 
 	 *
-	 * @attribute width
+	 * @config width
 	 * @type Number
 	 */
     width: {
@@ -111,7 +111,7 @@ SVGGraphic.ATTRS = {
 	/**
 	 * Indicates the height of the `Graphic`. 
 	 *
-	 * @attribute height 
+	 * @config height 
 	 * @type Number
 	 */
     height: {
@@ -129,7 +129,7 @@ SVGGraphic.ATTRS = {
      *  Determines how the size of instance is calculated. If true, the width and height are determined by the size of the contents.
      *  If false, the width and height values are either explicitly set or determined by the size of the parent node's dimensions.
      *
-     *  @attribute autoSize
+     *  @config autoSize
      *  @type Boolean
      *  @default false
      */
@@ -141,7 +141,7 @@ SVGGraphic.ATTRS = {
      * When overflow is set to true, by default, the contentBounds will resize to greater values but not to smaller values. (for performance)
      * When resizing the contentBounds down is desirable, set the resizeDown value to true.
      *
-     * @attribute resizeDown 
+     * @config resizeDown 
      * @type Boolean
      */
     resizeDown: {
@@ -161,7 +161,7 @@ SVGGraphic.ATTRS = {
 	/**
 	 * Indicates the x-coordinate for the instance.
 	 *
-	 * @attribute x
+	 * @config x
 	 * @type Number
 	 */
     x: {
@@ -184,7 +184,7 @@ SVGGraphic.ATTRS = {
 	/**
 	 * Indicates the y-coordinate for the instance.
 	 *
-	 * @attribute y
+	 * @config y
 	 * @type Number
 	 */
     y: {
@@ -208,7 +208,7 @@ SVGGraphic.ATTRS = {
      * Indicates whether or not the instance will automatically redraw after a change is made to a shape.
      * This property will get set to false when batching operations.
      *
-     * @attribute autoDraw
+     * @config autoDraw
      * @type Boolean
      * @default true
      * @private
@@ -230,7 +230,7 @@ SVGGraphic.ATTRS = {
     /**
      *  Indicates the pointer-events setting for the svg:svg element.
      *
-     *  @attribute pointerEvents
+     *  @config pointerEvents
      *  @type String
      */
     pointerEvents: {

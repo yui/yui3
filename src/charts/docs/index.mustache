@@ -262,10 +262,47 @@ var myDataValues = [
 	<tr><th>Property</th><th>Type</th><th>Description</th></tr>
 	<tr><td>`hideEvent`</td><td>`String`/`Array`</td><td>Event that hides the tooltip. This allows you to specify which mouse event(s) hides the tooltip. You can also pass this an array of events and each event in the array will hide the tooltip. The default value is `mouseout`.</td></tr>
 	<tr><td>`markerEventHandler`</td><td>`Function`</td><td>Displays and hides a tooltip based on marker events.</td></tr>
-	<tr><td>`markerLabelFunction`</td><td>`Function`</td><td>Reference to the function used to format a marker event triggered tooltip's text.</td></tr>
+	<tr><td>`markerLabelFunction`</td><td>`Function`</td><td>Reference to the function used to format a marker event triggered tooltip's text. The markerLabelFunction has the following arguments:
+        <dl>
+            <dt>categoryItem</dt><dd>An object containing the following:
+                <dl>
+                    <dt>axis</dt><dd>The axis that the category is bound to</dd>
+                    <dt>displayName</dt><dd>The display name set to the category (defaults to key if not provided)</dd>
+                    <dt>key</dt><dd>The key of the category</dd>
+                    <dt>value</dt><dd>The value of the category</dd>
+                </dl>
+            </dd>
+            <dt>valueItem</dt><dd>An object containing the following:
+                <dl>
+                    <dt>axis</dt><dd>The axis that the item's series is bound to</dd>
+                    <dt>displayName</dt><dd>The display name of the series (defaults to key if not provided)</dd>
+                    <dt>key</dt><dd>The key for the series</dd>
+                    <dt>value</dt><dd>The value for the series item<dd>
+                </dl>
+            </dd>
+            <dt>itemIndex</dt><dd>The index of the item within its series.</dd>
+            <dt>series</dt><dd>The series that the item belongs to</dd>
+            <dt>seriesIndex</dt><dd>The index of the series in the seriesCollection</dd>
+        </dl>
+    </td></tr>
 	<tr><td>`node`</td><td>`HTMLElement`</td><td>Reference (read-only) to the actual dom node of the tooltip.</td></tr>
 	<tr><td>`planarEventHandler`</td><td>`Function`</td><td>Displays and hides a tooltip based on planar events.</td></tr>
-	<tr><td>`planarLabelFunction`</td><td>`Function`</td><td>Reference to the function used to format a planar event triggered tooltip's text</td></tr>
+	<tr><td>`planarLabelFunction`</td><td>`Function`</td><td>Reference to the function used to format a planar event triggered tooltip's text. The `planarLabelFunction` has the following arguments:
+        <dl>
+            <dt>categoryAxis</dt><dd>Reference to the categoryAxis of the chart.</dd>
+            <dt>valueItems</dt><dd>Array of objects for each series that has a data point in the coordinate plane of the event. Each object contains the following data:
+                <dl>
+                    <dt>axis</dt><dd>The value axis of the series.</dd>
+                    <dt>key</dt><dd>The key for the series.</dd>
+                    <dt>value</dt><dd>The value for the series item.</dd>
+                    <dt>displayName</dt><dd>The display name of the series. (defaults to key if not provided)</dd>
+                </dl>
+            </dd>
+            <dt><dt>index</dt><dd>The index of the item within its series.</dd>
+            <dt>seriesArray</dt><dd>Array of series instances for each value item.</dd>
+            <dt>seriesIndex</dt><dd>The index of the series in the `seriesCollection`.</dd>
+        </dl>
+    </td></tr>
 	<tr><td>`show`</td><td>`Boolean`</td><td>Indicates whether to show a tooltip.</td></tr>
 	<tr><td>`showEvent`</td><td>`String`</td><td>Event that triggers the tooltip. This allows you to specify which mouse event will cause the tooltip to display. The default value is `mouseover`</td></tr>
 	<tr><td>`styles`</td><td>`Object`</td><td>Hash of CSS styles that are applied to the tooltip's node.</td></tr>

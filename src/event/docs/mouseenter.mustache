@@ -1,0 +1,91 @@
+<div class="intro">
+    <p>The `event-mouseenter` module adds support for "mouseenter" and
+    "mouseleave" events that are often preferable alternatives to "mouseover"
+    and "mouseout".</p>
+    
+    <p>The `event-hover` module adds support for a "hover" event that combines
+    subscriptions to each of these two events, taking two callback
+    functions, one for when the mouse enters the subscribed node, and another
+    for when it leaves the node.</p>
+</div>
+
+<h2>`mouseover` and `mouseout` are noisy</h2>
+
+<p>The `mouseover` and `mouseout` events bubble.  That means with the following DOM structure...</p>
+
+```
+<div id="hover-me">
+    <div class="header">
+        <button class="close">Close</button>
+    </div>
+    <div class="body">
+        ... more markup
+    </div>
+</div>
+```
+
+<p>...a `mouseover` subscription on `#hover-me` would be called three times when a user moved the mouse over the close button because</p>
+
+<ol>
+    <li>The user moused over #hover-me</li>
+    <li>The user moused over the &lt;div&gt; in #hover-me, and that `mouseover` event bubbled to #hover-me</li>
+    <li>The user moused over the close button, and that `mouseover` event bubbled to #hover-me</li>
+</ol>
+
+<p>Chances are, you don't care about any of these except the first.  That's where `mouseenter` and `mouseleave` come in.  They only fire when the `e.target` of the event is the node subscribed to.  That means no noise.</p>
+
+```
+YUI().use('event-mouseenter', function (Y) {
+    var hoverMe = Y.one('#hover-me');
+
+    hoverMe.on('mouseenter', function () {
+        this.one('.header').transition('fadeIn');
+    });
+
+    hoverMe.on('mouseleave', function () {
+        this.one('.header').transition('fadeOut');
+    });
+});
+```
+
+<p>Though these events work by essentially <em>not</em> bubbling, you can still delegate `mouseenter` and `mouseleave` using `node.delegate(...)`.</p>
+
+```
+// The overHandler callback will be executed when any .hoverable
+// element is moused over.
+container.delegate('mouseenter', overHandler, '.hoverable');
+```
+
+<h2 id="hover">`mouseenter` + `mouseleave` == `hover`</h2>
+
+<p>It's common to pair `mouseenter` and `mouseleave` subscriptions (or
+`mouseover` and `mouseout` for the uninitiated) to create an effect that only
+lasts as long as the mouse is over an element.  To make that easier, the
+`event-hover` module adds a `hover` event.  It accepts a second callback and
+attaches the first to `mouseenter` and the second to `mouseleave`.</p>
+
+```
+YUI().use('event-mouseenter', function (Y) {
+    function over() {
+        this.one('.header').transition('fadeIn');
+    }
+    function out() {
+        this.one('.header').transition('fadeOut');
+    }
+
+    // Two callbacks, `mouseenter` and `mouseleave`
+    Y.one('#hover-me').on('hover', over, out);
+});
+```
+
+<p>If you need to override the default `this` object assignment or bind arguments to a `hover` subscription, just add those arguments after the second callback.</p>
+
+<p>Similarly, if you want to delegate the `hover` event, pass a CSS filter after the second callback.</p>
+
+```
+// Default `this` to racerX
+mach5.on('hover', racerX.oilSlick, racerX.tireSpikes, racerX);
+
+// The delegate filter comes before the `this` override
+ruralTown.delegate('hover', ufo.scan, ufo.memoryWipe, '.person', ufo);
+```

@@ -6,26 +6,17 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 
         <link rel="stylesheet" href="../../../../build/cssreset/reset-min.css" type="text/css" media="screen" title="no title" charset="utf-8">
-        <link rel="stylesheet" href="assets/tests.css" type="text/css" media="screen" title="no title" charset="utf-8">
 
         <script src="../../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script>
     </head>
     
-    <body class="yui3-skin-sam">
+    <body class="yui3-skin-night">
         <div class="header">
         	<h1>Y.ScrollView</h1>
         </div>
         <div id="scrollable" class="yui3-scrollview-loading">
             <ul>
-    			<li>
-    				<div>I am a div with some LI content inside me!
-                        <ul>
-                            <li>LI content 1</li>
-                            <li>LI Content 2</li>
-                            <li>LI Content 3</li>
-                        </ul>
-                    </div>
-    			</li>
+
     			<li>
     				<div>Purchased</div>
     			</li>
@@ -59,15 +50,7 @@
     			<li>
     				<div>Dido</div>
     			</li>
-                <li>
-                    <div>I am a div with some LI content inside me!
-                        <ul>
-                            <li>LI content 1</li>
-                            <li>LI Content 2</li>
-                            <li>LI Content 3</li>
-                        </ul>
-                    </div>
-                </li>
+
     			<li>
     				<div>Lily Allen</div>
     			</li>
@@ -89,15 +72,7 @@
     			<li>
     				<div>Ben Harper</div>
     			</li>
-                <li>
-                    <div>I am a div with some LI content inside me!
-                        <ul>
-                            <li>LI content 1</li>
-                            <li>LI Content 2</li>
-                            <li>LI Content 3</li>
-                        </ul>
-                    </div>
-                </li>
+
     			<li>
     				<div>Bob Dylan</div>
     			</li>
@@ -125,11 +100,11 @@
 
         <script type="text/javascript" charset="utf-8">
 
-            YUI({filter:"raw"}).use('scrollview-base','scrollview-list', function(Y) {
+            YUI({filter:"raw"}, {skin: {defaultSkin:'night'}}).use('scrollview-base',"scrollview-list", function(Y) {
 
                 var scrollView = new Y.ScrollView({
                     contentBox: '#scrollable',
-                    height: 372,
+                    height: 300,
                     flick : {
                         minDistance:0,
                         minVelocity:0
@@ -138,6 +113,8 @@
                 });
 
                 scrollView.render();
+                //scrollView.syncUI(); 
+
             });
 
         </script>

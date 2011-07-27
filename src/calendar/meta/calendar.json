@@ -1,7 +1,8 @@
 {
  "calendar": {
             	"requires": [
-                	"calendar-base"
+                	"calendar-base",
+                	"calendarnavigator"
             	],
                 "lang" : [
                     "en", 

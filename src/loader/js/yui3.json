@@ -249,7 +249,8 @@
             "ru"
         ], 
         "requires": [
-            "calendar-base"
+            "calendar-base", 
+            "calendarnavigator"
         ], 
         "skinnable": true
     }, 
@@ -262,7 +263,15 @@
             "widget", 
             "substitute", 
             "datatype-date", 
-            "datatype-date-math"
+            "datatype-date-math", 
+            "cssgrids"
+        ], 
+        "skinnable": true
+    }, 
+    "calendarnavigator": {
+        "requires": [
+            "plugin", 
+            "classnamemanager"
         ], 
         "skinnable": true
     }, 
@@ -1577,7 +1586,8 @@
     "scrollview-list": {
         "requires": [
             "plugin"
-        ]
+        ], 
+        "skinnable": true
     }, 
     "scrollview-paginator": {
         "requires": [

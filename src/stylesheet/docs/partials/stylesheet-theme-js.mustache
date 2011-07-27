@@ -1,0 +1,99 @@
+<script src="{{yuiSeedUrl}}"></script>
+<script>
+// Create a new YUI instance, requiring stylesheet, overlay, slider, and the
+// dd-plugin to make the overlay draggable
+YUI({filter:"debug"}).use("stylesheet","overlay","slider","dd-plugin", function (Y) {
+
+    var myStyleSheet = new Y.StyleSheet(),
+        overlayContent = Y.one('#form_container'),
+        overlay,
+        slider,
+        slider_container,
+        fontSizeInput,
+
+    // Create the Overlay, using the form container as the contentBox.
+    // The form is assigned a class yui-widget-bd that will be automatically
+    // discovered by Overlay to populate the Overlay's body section.
+    // The overlay is positioned in the top right corner, but made draggable
+    // using Y.Plugin.Drag, provided by the dd-plugin module.
+    overlay = new Y.Overlay({
+        srcNode: overlayContent,
+        width: '225px',
+        align: { points: [ Y.WidgetPositionAlign.TR, Y.WidgetPositionAlign.TR ] },
+        plugins: [ Y.Plugin.Drag ]
+    }).render();
+
+    // Slider needs a parent element to have the sam skin class for UI skinning
+    overlayContent.addClass('yui3-skin-sam');
+
+    // Progressively enhance the font-size input with a Slider
+    fontSizeInput = Y.one('#font_size');
+    fontSizeInput.set('type','hidden');
+    fontSizeInput.get('parentNode').insertBefore(
+        Y.Node.create('6 <span></span> 36'),
+        fontSizeInput);
+
+    slider_container = fontSizeInput.previous( "span" );
+
+    // Create a Slider to contain font size between 6px and 36px, using the
+    // page's current font size as the initial value.
+    // Set up an event subscriber during construction to update the replaced
+    // input field's value and apply the change to the StyleSheet
+    slider = new Y.Slider({
+        length: '100px',
+        min: 6,
+        max: 36,
+        value: parseInt(Y.one('body').getStyle('fontSize')) || 13,
+        after: {
+            valueChange: function (e) {
+                var size = e.newVal + 'px';
+
+                this.thumb.set('title', size);
+                fontSizeInput.set('value', size);
+
+                myStyleSheet.set('body', { fontSize: size });
+            }
+        }
+    }).render( slider_container );
+
+    // The color inputs are assigned keyup listeners that will update the
+    // StyleSheet if the current input value is a valid CSS color value
+
+    // The heading input affects all h1s, h2, and h3s
+    Y.on('keyup', function (e) {
+        var color = this.get('value');
+
+        if (isValidColor(color)) {
+            myStyleSheet.set('h1, h2, h3', { color: color });
+        }
+    }, '#heading_color');
+
+    // The link hover affects the background color of links when they are
+    // hovered.  There is no way other than via stylesheet modification to
+    // change pseudo-class styles.
+    Y.on('keyup', function (e) {
+        var color = this.get('value');
+
+        if (isValidColor(color)) {
+            myStyleSheet.set('a:hover', { backgroundColor: color });
+        }
+    }, '#link_hover');
+
+    // Progressive form enhancement complete, now prevent the form from
+    // submitting normally.
+    Y.one('#theme_form input[type=submit]').remove();
+
+    Y.on('submit', function (e) {
+        e.halt();
+    }, '#theme_form');
+
+	// A rudimentary validator to make sure we're not trying to set
+	// invalid color values in StyleSheet.
+	function isValidColor(v) {
+        return /^#[0-9a-f]{3}(?:[0-9a-f]{3})?$/i.test(v) ||
+               /^rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/.test(v) ||
+               /^[a-z]{3,}$/i.test(v);
+	}
+
+});
+</script>

@@ -88,7 +88,7 @@ Y.namespace("Plugin").ScrollViewList = Y.extend(ListPlugin, Y.Plugin.Base, {
     initializer: function() {
         this._host = this.get(HOST);
 
-        this.afterHostMethod(RENDER_UI, this._addClassesToList);
+        this.afterHostMethod("renderUI", this._addClassesToList);
 
         if (this._host.get(RENDERED)) {
             this._addClassesToList();
@@ -138,5 +138,4 @@ Y.namespace("Plugin").ScrollViewList = Y.extend(ListPlugin, Y.Plugin.Base, {
 
 
 
-
-}, '@VERSION@' ,{skinnable:true});
+}, '@VERSION@' ,{skinnable:true, requires:['plugin']});

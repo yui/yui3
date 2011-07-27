@@ -1,0 +1,204 @@
+<style scoped>
+/* custom styles for this example */
+#demo .output {margin-bottom:1em; padding:10px; border:1px solid #D9D9D9;}
+</style>
+
+<form id="demo">
+    <h4>Array</h4>
+    <h6>Data</h6>
+    <pre>
+[
+    {name:"abc",id:123,extra:"foo"},
+    {name:"def",id:456,extra:"bar"},
+    {name:"ghi",id:789,extra:"baz"}
+]
+    </pre>
+
+    <h6>Schema</h6>
+    <pre>
+{
+    resultFields: ["name","id"]
+}
+    </pre>
+
+    <h6>Normalized data</h6>
+    <input type="button" id="demo_array" value="Retrieve data">
+    <div id="demo_output_array" class="output"></div>
+
+    <h4>JSON</h4>
+    <h6>Data</h6>
+    <pre>
+{
+    "profile":{
+        "current":160,
+        "target":150
+    },
+    "reference": [
+        {
+            "category":"exercise",
+            "type":"expenditure",
+            "activities":[
+                {"name":"biking", "calories":550},
+                {"name":"golf", "calories":1000},
+                {"name":"running", "calories":650},
+                {"name":"swimming", "calories":650},
+                {"name":"walking", "calories":225}
+            ]
+        },
+        {
+            "category":"nutrition",
+            "type":"intake",
+            "fruit":[
+                {"name":"apple", "calories":70},
+                {"name":"banana", "calories":70},
+                {"name":"orange", "calories":90},
+            ],
+            "vegetables":[
+                {"name":"baked potato", "calories":150},
+                {"name":"broccoli", "calories":50},
+                {"name":"green beans", "calories":30}
+            ]
+        }
+    ],
+    "program": [
+        {
+            "category":"exercise",
+            "schedule":[
+                {"day":"sunday", "activity":"swimming"},
+                {"day":"monday", "activity":"running"},
+                {"day":"tuesday", "activity":"biking"},
+                {"day":"wednesday", "activity":"running"},
+                {"day":"thursday", "activity":"swimming"},
+                {"day":"friday", "activity":"running"},
+                {"day":"saturday", "activity":"golf"}
+            ]
+        },
+        {
+            "category":"diet",
+            "schedule":[
+            ]
+        }
+    ]
+}
+    </pre>
+
+    <h6>Schema</h6>
+    <pre>
+{
+    resultListLocator: "reference[1].fruit",
+    resultFields: ["name","calories"]
+}
+    </pre>
+
+    <h6>Normalized data</h6>
+    <input type="button" id="demo_json" value="Retrieve data">
+    <div id="demo_output_json" class="output"></div>
+
+    <h4>HTML Table (XML)</h4>
+    <h6>Data</h6>
+    <table id="myTable">
+    <tr>
+        <td>coffee</td>
+        <td>1.25</td>
+    </tr>
+    <tr>
+        <td>juice</td>
+        <td>2.00</td>
+    </tr>
+    <tr>
+        <td>tea</td>
+        <td>1.25</td>
+    </tr>
+    <tr>
+        <td>soda</td>
+        <td>1.00</td>
+    </tr>
+    </table>
+
+    <h6>Schema</h6>
+    <pre>
+{
+    resultListLocator: "tr",
+    resultFields: [{key:"beverage", locator:"td[1]"}, {key:"price", locator:"td[2]"}]
+}
+    </pre>
+
+    <h6>Normalized data</h6>
+    <input type="button" id="demo_table" value="Retrieve data">
+    <div id="demo_output_table" class="output"></div>
+</form>
+
+<script type="text/javascript">
+YUI().use("dump", "node", "datasource-local", "datasource-arrayschema", "datasource-jsonschema", "datasource-xmlschema", function (Y) {
+    var myDataArray = [
+            {name:"abc",id:123,extra:"foo"},
+            {name:"def",id:456,extra:"bar"},
+            {name:"ghi",id:789,extra:"baz"}
+        ],
+        myDataSourceArray = new Y.DataSource.Local({source:myDataArray}),
+        myCallbackArray = {
+            success: function(e){
+                Y.one("#demo_output_array").setContent(Y.dump(e.response));
+            },
+            failure: function(e){
+                Y.one("#demo_output_array").setContent("Could not retrieve data: " + e.error.message);
+            }
+        };
+
+    myDataSourceArray.plug(Y.Plugin.DataSourceArraySchema, {
+        schema: {
+            resultFields: ["name","id"]
+        }
+    });
+
+    Y.on("click", function(e){
+        myDataSourceArray.sendRequest({callback:myCallbackArray});
+    }, "#demo_array");
+
+    var myDataJSON = {"profile":{"current":160,"target":150},"reference": [{"category":"exercise","type":"expenditure","activities":[{"name":"biking", "calories":550},{"name":"golf", "calories":1000},{"name":"running", "calories":650},{"name":"swimming", "calories":650},{"name":"walking", "calories":225}]},{"category":"nutrition","type":"intake","fruit":[{"name":"apple", "calories":70},{"name":"banana", "calories":70},{"name":"orange", "calories":90},],"vegetables":[{"name":"baked potato", "calories":150},{"name":"broccoli", "calories":50},{"name":"green beans", "calories":30}]}],"program": [{"category":"exercise","schedule":[{"day":"sunday", "activity":"swimming"},{"day":"monday", "activity":"running"},{"day":"tuesday", "activity":"biking"},{"day":"wednesday", "activity":"running"},{"day":"thursday", "activity":"swimming"},{"day":"friday", "activity":"running"},{"day":"saturday", "activity":"golf"}]},{"category":"diet","schedule":[]}]},
+        myDataSourceJSON = new Y.DataSource.Local({source:myDataJSON}),
+        myCallbackJSON = {
+            success: function(e){
+                Y.one("#demo_output_json").setContent(Y.dump(e.response));
+            },
+            failure: function(e){
+                Y.one("#demo_output_json").setContent("Could not retrieve data: " + e.error.message);
+            }
+        };
+
+    myDataSourceJSON.plug(Y.Plugin.DataSourceJSONSchema, {
+        schema: {
+            resultListLocator: "reference[1].fruit",
+            resultFields: ["name","calories"]
+        }
+    });
+
+    Y.on("click", function(e){
+        myDataSourceJSON.sendRequest({callback:myCallbackJSON});
+    }, "#demo_json");
+
+
+    var myTable = Y.Node.getDOMNode(Y.one("#myTable")),
+        myDataSourceTable = new Y.DataSource.Local({source:myTable}),
+        myCallbackTable = {
+            success: function(e){
+                Y.one("#demo_output_table").setContent(Y.dump(e.response));
+            },
+            failure: function(e){
+                Y.one("#demo_output_table").setContent("Could not retrieve data: " + e.error.message);
+            }
+        };
+
+    myDataSourceTable.plug(Y.Plugin.DataSourceXMLSchema, {
+        schema: {
+            resultListLocator: "tr",
+            resultFields: [{key:"beverage", locator:"td[1]"}, {key:"price", locator:"td[2]"}]
+        }
+    });
+
+    Y.on("click", function(e){
+        myDataSourceTable.sendRequest({callback:myCallbackTable});
+    }, "#demo_table");
+});
+
+</script>

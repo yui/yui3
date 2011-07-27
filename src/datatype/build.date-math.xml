@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Datatype.Date Math" default="local">
+    <property environment="env" />
+
+    <property file="build.date-math.properties" />
+
+    <import file="${builddir}/3.x/bootstrap.xml"
+            description="Default Build Properties and Targets" />
+</project>
