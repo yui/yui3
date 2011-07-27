@@ -1,0 +1,866 @@
+<head>
+    <meta charset="utf-8">
+    <title>{{title}}</title>
+    <link rel="stylesheet" type="text/css" href="{{componentAssets}}/w3.css">
+{{>stylesheet-theme-css}}
+</head>
+<body>
+    <div class="navbar" align="center">
+    &nbsp;<a href="http://www.w3.org/TR/html401/struct/objects.html">
+    previous</a> &nbsp; <a href="http://www.w3.org/TR/html401/present/graphics.html">next</a> &nbsp; <a href="http://www.w3.org/TR/html401/cover.html#minitoc">contents</a> &nbsp; <a href="http://www.w3.org/TR/html401/index/elements.html">
+    elements</a> &nbsp; <a href="http://www.w3.org/TR/html401/index/attributes.html">attributes</a> &nbsp; <a href="http://www.w3.org/TR/html401/index/list.html">index</a>
+
+    <hr></div>
+
+    <h1 align="center"><a name="h-14">14</a> <a name="stylesheets">Style
+    Sheets</a></h1>
+
+    <div class="subtoc">
+    <p><strong>Contents</strong></p>
+
+    <ol>
+    <li><a class="tocxref" href="#h-14.1">Introduction to style sheets</a></li>
+
+    <li><a class="tocxref" href="#h-14.2">Adding style to HTML</a>
+
+    <ol>
+    <li><a class="tocxref" href="#h-14.2.1">Setting the default style sheet
+    language</a></li>
+
+    <li><a class="tocxref" href="#h-14.2.2">Inline style information</a></li>
+
+    <li><a class="tocxref" href="#h-14.2.3">Header style information: the <samp class="einst2">STYLE</samp> element</a></li>
+
+    <li><a class="tocxref" href="#h-14.2.4">Media types</a></li>
+    </ol>
+    </li>
+
+    <li><a class="tocxref" href="#h-14.3">External style sheets</a>
+
+    <ol>
+    <li><a class="tocxref" href="#h-14.3.1">Preferred and alternate style
+    sheets</a></li>
+
+    <li><a class="tocxref" href="#h-14.3.2">Specifying external style
+    sheets</a></li>
+    </ol>
+    </li>
+
+    <li><a class="tocxref" href="#h-14.4">Cascading style sheets</a>
+
+    <ol>
+    <li><a class="tocxref" href="#h-14.4.1">Media-dependent cascades</a></li>
+
+    <li><a class="tocxref" href="#h-14.4.2">Inheritance and cascading</a></li>
+    </ol>
+    </li>
+
+    <li><a class="tocxref" href="#h-14.5">Hiding style data from user
+    agents</a></li>
+
+    <li><a class="tocxref" href="#h-14.6">Linking to style sheets with HTTP
+    headers</a></li>
+    </ol>
+    </div>
+
+    <h2><a name="h-14.1">14.1</a> <span class="index-inst" title="style
+    sheet::introduction to"><a name="idx-style_sheet-3">Introduction to style
+    sheets</a></span></h2>
+
+    <p>Style sheets represent a major breakthrough for Web page designers,
+    expanding their ability to improve the appearance of their pages. In the
+    scientific environments in which the Web was conceived, people are more
+    concerned with the content of their documents than the presentation. As people
+    from wider walks of life discovered the Web, the limitations of HTML became a
+    source of continuing frustration and authors were forced to sidestep HTML's
+    stylistic limitations. While the intentions have been good -- to improve the
+    presentation of Web pages -- the techniques for doing so have had unfortunate
+    side effects. These techniques work for some of the people, some of the time,
+    but not for all of the people, all of the time. They include:</p>
+
+    <ul>
+    <li>Using proprietary HTML extensions</li>
+
+    <li>Converting text into images</li>
+
+    <li>Using images for white space control</li>
+
+    <li>Use of tables for page layout</li>
+
+    <li>Writing a program instead of using HTML</li>
+    </ul>
+
+    <p>These techniques considerably increase the complexity of Web pages, offer
+    limited flexibility, suffer from interoperability problems, and create
+    hardships for people with disabilities.</p>
+
+    <p>Style sheets solve these problems at the same time they supersede the
+    limited range of presentation mechanisms in HTML. Style sheets make it easy to
+    specify the amount of white space between text lines, the amount lines are
+    indented, the colors used for the text and the backgrounds, the font size and
+    style, and a host of other details.</p>
+
+    <div class="example">
+    <p>For example, the following short CSS style sheet (stored in the file
+    "special.css"), sets the text color of a paragraph to green and surrounds it
+    with a solid red border:</p>
+
+    <pre>P.special {
+    color : green;
+    border: solid red;
+    }
+    </pre>
+
+    <p>Authors may link this style sheet to their source HTML document with the <a href="http://www.w3.org/TR/html401/struct/links.html#edef-LINK" class="noxref"><samp class="einst">
+    LINK</samp></a> element:</p>
+
+    <pre>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+       "http://www.w3.org/TR/html4/strict.dtd"&gt;
+    &lt;HTML&gt;
+      &lt;HEAD&gt;
+        &lt;LINK href="special.css" rel="stylesheet" type="text/css"&gt;
+      &lt;/HEAD&gt;
+      &lt;BODY&gt;
+        &lt;P class="special"&gt;This paragraph should have special green text.
+      &lt;/BODY&gt;
+    &lt;/HTML&gt;
+    </pre>
+    </div>
+
+    <p>HTML 4 provides support for the following style sheet features:</p>
+
+    <dl>
+    <dt><b>Flexible placement of style information</b></dt>
+
+    <dd>Placing style sheets in separate files makes them easy to reuse. Sometimes
+    it's useful to include rendering instructions within the document to which they
+    apply, either grouped at the start of the document, or in attributes of the
+    elements throughout the body of the document. To make it easier to manage style
+    on a site basis, this specification describes how to use HTTP headers to set
+    the style sheets to be applied to a document.</dd>
+
+    <dt><b>Independence from specific style sheet languages</b></dt>
+
+    <dd>This specification doesn't tie HTML to any particular style sheet language.
+    This allows for a range of such languages to be used, for instance simple ones
+    for the majority of users and much more complex ones for the minority of users
+    with highly specialized needs. The examples included below all use the CSS
+    (Cascading Style Sheets) language <a rel="biblioentry" href="http://www.w3.org/TR/html401/references.html#ref-CSS1" class="informref">[CSS1]</a>, but other style
+    sheet languages would be possible.</dd>
+
+    <dt><b>Cascading</b></dt>
+
+    <dd>This is the capability provided by some style sheet languages such as CSS
+    to allow style information from several sources to be blended together. These
+    could be, for instance, corporate style guidelines, styles common to a group of
+    documents, and styles specific to a single document. By storing these
+    separately, style sheets can be reused, simplifying authoring and making more
+    effective use of network caching. The cascade defines an ordered sequence of
+    style sheets where rules in later sheets have greater precedence than earlier
+    ones. Not all style sheet languages support cascading.</dd>
+
+    <dt><span class="index-inst" title="accessibility::and style sheets"><a name="idx-accessibility"><b>Media dependencies</b></a></span></dt>
+
+    <dd>HTML allows authors to specify documents in a media-independent way. This
+    allows users to access Web pages using a wide variety of devices and media,
+    e.g., graphical displays for computers running Windows, Macintosh OS, and X11,
+    devices for television sets, specially adapted phones and PDA-based portable
+    devices, speech-based browsers, and braille-based tactile devices.
+
+    <p>Style sheets, by contrast, apply to specific media or media groups. A style
+    sheet intended for screen use may be applicable when printing, but is of little
+    use for speech-based browsers. This specification allows you to define the
+    broad categories of media a given style sheet is applicable to. This allows
+    user agents to avoid retrieving inappropriate style sheets. Style sheet
+    languages may include features for describing media dependencies within the
+    same style sheet.</p>
+    </dd>
+
+    <dt><b>Alternate styles</b></dt>
+
+    <dd>Authors may wish to offer readers several ways to view a document. For
+    instance, a style sheet for rendering compact documents with small fonts, or
+    one that specifies larger fonts for increased legibility. This specification
+    allows authors to specify a preferred style sheet as well as alternates that
+    target specific users or media. User agents should give users the opportunity
+    to select from among alternate style sheets or to switch off style sheets
+    altogether.</dd>
+
+    <dt><b>Performance concerns</b></dt>
+
+    <dd>Some people have voiced concerns over performance issues for style sheets.
+    For instance, retrieving an external style sheet may delay the full
+    presentation for the user. A similar situation arises if the document head
+    includes a lengthy set of style rules.
+
+    <p>The current proposal addresses these issues by allowing authors to include
+    rendering instructions within each HTML element. The rendering information is
+    then always available by the time the user agent wants to render each
+    element.</p>
+
+    <p>In many cases, authors will take advantage of a common style sheet for a
+    group of documents. In this case, distributing style rules throughout the
+    document will actually lead to worse performance than using a linked style
+    sheet, since for most documents, the style sheet will already be present in the
+    local cache. The public availability of good style sheets will encourage this
+    effect.</p>
+    </dd>
+    </dl>
+
+    <h2><a name="h-14.2">14.2</a> Adding style to HTML</h2>
+
+    <div class="note">
+    <p><em><strong>Note.</strong> The sample default style sheet for HTML 4 that is
+    included in <a rel="biblioentry" href="http://www.w3.org/TR/html401/references.html#ref-CSS2" class="informref">[CSS2]</a> expresses generally accepted default style information
+    for each element. Authors and implementors alike might find this a useful
+    resource.</em></p>
+    </div>
+
+    <p>HTML documents may contain style sheet rules directly in them or they may
+    import style sheets.</p>
+
+    <p>Any style sheet language may be used with HTML. A simple style sheet
+    language may suffice for the needs of most users, but other languages may be
+    more suited to highly specialized needs. This specification uses the style
+    language "Cascading Style Sheets" (<a rel="biblioentry" href="http://www.w3.org/TR/html401/references.html#ref-CSS1" class="informref">[CSS1]</a>), abbreviated CSS,
+    for examples.</p>
+
+    <p>The <a href="http://www.w3.org/TR/html401/types.html#type-style">syntax of style data</a> depends on
+    the style sheet language.</p>
+
+    <h3><a name="h-14.2.1">14.2.1</a> <span class="index-inst" title="default::style sheet language|style sheet
+    language::default|HTTP::Content-Style-Type header|Content-Style-Type header"><a name="default-style">Setting the default style sheet language</a></span></h3>
+
+    <p>Authors must specify the style sheet language of style information
+    associated with an HTML document.</p>
+
+    <p>Authors should use the <a href="http://www.w3.org/TR/html401/struct/global.html#edef-META" class="noxref"><samp class="einst">META</samp></a> element to set the default style
+    sheet language for a document. For example, to set the default to CSS, authors
+    should put the following declaration in the <a href="http://www.w3.org/TR/html401/struct/global.html#edef-HEAD" class="noxref"><samp class="einst">
+    HEAD</samp></a> of their documents:</p>
+
+    <pre>&lt;META http-equiv="Content-Style-Type" content="text/css"&gt;
+    </pre>
+
+    <p>The default style sheet language may also be set with HTTP headers. The
+    above <a href="http://www.w3.org/TR/html401/struct/global.html#edef-META" class="noxref"><samp class="einst">META</samp></a> declaration is equivalent to the HTTP header:</p>
+
+    <pre>Content-Style-Type: text/css
+    </pre>
+
+    <p>User agents should determine the default style sheet language for a document
+    according to the following steps (highest to lowest priority):</p>
+
+    <ol>
+    <li>If any <a href="http://www.w3.org/TR/html401/struct/global.html#edef-META" class="noxref"><samp class="einst">META</samp></a> declarations specify the "Content-Style-Type",
+    the last one in the character stream determines the default style sheet
+    language.</li>
+
+    <li>Otherwise, if any HTTP headers specify the "Content-Style-Type", the last
+    one in the character stream determines the default style sheet language.</li>
+
+    <li>Otherwise, the default style sheet language is "text/css".</li>
+    </ol>
+
+    <p>Documents that include elements that set the <a href="http://www.w3.org/TR/html401/present/styles.html#adef-style" class="noxref"><samp class="ainst">style</samp></a>
+    attribute but which don't define a default style sheet language are incorrect.
+    <span class="index-inst" title="authoring tool::and default style sheet
+    language"><a name="idx-authoring_tool">Authoring tools</a></span> should
+    generate default style sheet language information (typically a <a href="http://www.w3.org/TR/html401/struct/global.html#edef-META" class="noxref"><samp class="einst">
+    META</samp></a> declaration) so that user agents do not have to rely on a
+    default of "text/css".</p>
+
+    <h3><a name="h-14.2.2">14.2.2</a> <a name="style-element">Inline style
+    information</a></h3>
+
+    <div class="adef-list">
+    <p><em>Attribute definitions</em></p>
+
+    <dl>
+    <dt><a name="adef-style"><samp class="adef">style</samp></a> = <a href="http://www.w3.org/TR/html401/types.html#type-style"><em>style</em></a> <a href="http://www.w3.org/TR/html401/types.html#case-neutral">[CN]</a></dt>
+
+    <dd>This attribute specifies style information for the current element.</dd>
+    </dl>
+    </div>
+
+    <p><span class="index-inst" title="style sheet::inline rules"><a name="idx-style_sheet-4">The</a></span> <a href="http://www.w3.org/TR/html401/types.html#type-style">
+    syntax</a> of the value of the <a href="http://www.w3.org/TR/html401/present/styles.html#adef-style" class="noxref">
+    <samp class="ainst">style</samp></a> attribute is determined by the <a href="#default-style">default style sheet language</a>. For example, for [[CSS2]]
+    inline style, use the declaration block syntax described in section 4.1.8
+    (without curly brace delimiters).</p>
+
+    <div class="example">
+    <p>This CSS example sets color and font size information for the text in a
+    specific paragraph.</p>
+
+    <pre>&lt;P style="font-size: 12pt; color: fuchsia"&gt;Aren't style sheets wonderful?
+    </pre>
+
+    <p>In CSS, property declarations have the form "name : value" and are separated
+    by a semi-colon.</p>
+    </div>
+
+    <p>To specify style information for more than one element, authors should use
+    the <samp class="edef">STYLE</samp> element. For optimal flexibility, authors
+    should define styles in external style sheets.</p>
+
+    <h3><a name="h-14.2.3">14.2.3</a> <a name="style-group">Header style
+    information</a>: the <a name="edef-STYLE"><samp class="edef">STYLE</samp></a>
+    element</h3>
+
+    <div class="dtd-fragment">
+    <pre class="dtd-fragment">&lt;!ELEMENT <a href="http://www.w3.org/TR/html401/present/styles.html#edef-STYLE" class="noxref"><samp class="einst">STYLE</samp></a> - - <a href="http://www.w3.org/TR/html401/sgml/dtd.html#StyleSheet">%StyleSheet</a>        -- style info --&gt;
+    &lt;!ATTLIST STYLE
+      <a href="http://www.w3.org/TR/html401/sgml/dtd.html#i18n">%i18n;</a>                               -- <a href="http://www.w3.org/TR/html401/struct/dirlang.html#adef-lang">lang</a>, <a href="http://www.w3.org/TR/html401/struct/dirlang.html#adef-dir">dir</a>, for use with title --
+      <a href="http://www.w3.org/TR/html401/present/styles.html#adef-type-STYLE" class="noxref"><samp class="ainst-STYLE">type</samp></a>        <a href="http://www.w3.org/TR/html401/sgml/dtd.html#ContentType">%ContentType;</a>  #REQUIRED -- content type of style language --
+      <a href="http://www.w3.org/TR/html401/present/styles.html#adef-media" class="noxref"><samp class="ainst-STYLE">media</samp></a>       <a href="http://www.w3.org/TR/html401/sgml/dtd.html#MediaDesc">%MediaDesc;</a>    #IMPLIED  -- designed for use with these media --
+      <a href="http://www.w3.org/TR/html401/struct/global.html#adef-title" class="noxref"><samp class="ainst-STYLE">title</samp></a>       <a href="http://www.w3.org/TR/html401/sgml/dtd.html#Text">%Text;</a>         #IMPLIED  -- advisory title --
+      &gt;
+    </pre>
+    </div>
+
+    <p><em>Start tag: <strong>required</strong>, End tag: <strong>
+    required</strong></em></p>
+
+    <div class="adef-list">
+    <p><em>Attribute definitions</em></p>
+
+    <dl>
+    <dt><a name="adef-type-STYLE"><samp class="adef">type</samp></a> = <a href="http://www.w3.org/TR/html401/types.html#type-content-type"><em>content-type</em></a> <a href="http://www.w3.org/TR/html401/types.html#case-insensitive">[CI]</a></dt>
+
+    <dd>This attribute specifies the style sheet language of the element's contents
+    and overrides the default style sheet language. The style sheet language is
+    specified as a content type (e.g., "text/css"). Authors must supply a value for
+    this attribute; there is no default value for this attribute.</dd>
+
+    <dt><a name="adef-media"><samp class="adef">media</samp></a> = <a href="http://www.w3.org/TR/html401/types.html#type-media-descriptors"><em>media-descriptors</em></a> <a href="http://www.w3.org/TR/html401/types.html#case-insensitive">[CI]</a></dt>
+
+    <dd>This attribute specifies the intended destination medium for style
+    information. It may be a single media descriptor or a comma-separated list. The
+    default value for this attribute is "screen".</dd>
+    </dl>
+    </div>
+
+    <div class="aref-list">
+    <p><em>Attributes defined elsewhere</em></p>
+
+    <ul>
+    <li><a href="http://www.w3.org/TR/html401/struct/dirlang.html#adef-lang" class="noxref"><samp class="ainst">lang</samp></a> (<a href="http://www.w3.org/TR/html401/struct/dirlang.html#language-info">language information</a>), <a href="http://www.w3.org/TR/html401/struct/dirlang.html#adef-dir" class="noxref"><samp class="ainst">
+    dir</samp></a> (<a href="http://www.w3.org/TR/html401/struct/dirlang.html#bidirection">text
+    direction</a>)</li>
+
+    <li><a href="http://www.w3.org/TR/html401/struct/global.html#adef-title" class="noxref"><samp class="ainst">title</samp></a> (<a href="http://www.w3.org/TR/html401/struct/global.html#title">element
+    title</a>)</li>
+    </ul>
+    </div>
+
+    <p>The <a href="http://www.w3.org/TR/html401/present/styles.html#edef-STYLE" class="noxref"><samp class="einst">
+    STYLE</samp></a> element allows authors to put style sheet rules in the <span class="index-inst" title="style sheet::rules in HEAD"><a name="idx-style_sheet-5">head</a></span> of the document. HTML permits any number of
+    <a href="http://www.w3.org/TR/html401/present/styles.html#edef-STYLE" class="noxref"><samp class="einst">
+    STYLE</samp></a> elements in the <a href="http://www.w3.org/TR/html401/struct/global.html#edef-HEAD" class="noxref"><samp class="einst">HEAD</samp></a> section of a document.</p>
+
+    <p>User agents that don't support style sheets, or don't support the specific
+    style sheet language used by a <a href="http://www.w3.org/TR/html401/present/styles.html#edef-STYLE" class="noxref">
+    <samp class="einst">STYLE</samp></a> element, must hide the contents of the <a href="http://www.w3.org/TR/html401/present/styles.html#edef-STYLE" class="noxref"><samp class="einst">
+    STYLE</samp></a> element. <span class="index-inst" title="error::rendering
+    style rules in STYLE"><a name="idx-error">It is an error</a></span> to render
+    the content as part of the document's text. Some style sheet languages support
+    syntax for <a href="#hiding">hiding the content</a> from non-conforming user
+    agents.</p>
+
+    <p>The <a href="http://www.w3.org/TR/html401/types.html#type-style">syntax of style data</a> depends on
+    the style sheet language.</p>
+
+    <p>Some style sheet implementations may allow a wider variety of rules in the
+    <a href="http://www.w3.org/TR/html401/present/styles.html#edef-STYLE" class="noxref"><samp class="einst">
+    STYLE</samp></a> element than in the <a href="http://www.w3.org/TR/html401/present/styles.html#adef-style" class="noxref"><samp class="ainst">style</samp></a> attribute. For example, with CSS,
+    rules may be declared within a <a href="http://www.w3.org/TR/html401/present/styles.html#edef-STYLE" class="noxref">
+    <samp class="einst">STYLE</samp></a> element for:</p>
+
+    <ul>
+    <li>All instances of a specific HTML element (e.g., all <a href="http://www.w3.org/TR/html401/struct/text.html#edef-P" class="noxref"><samp class="einst">P</samp></a>
+    elements, all <a href="http://www.w3.org/TR/html401/struct/global.html#edef-H1" class="noxref"><samp class="einst">H1</samp></a> elements, etc.)</li>
+
+    <li>All instances of an HTML element belonging to a specific class (i.e., whose
+    <a href="http://www.w3.org/TR/html401/struct/global.html#adef-class" class="noxref"><samp class="ainst">
+    class</samp></a> attribute is set to some value).</li>
+
+    <li>Single instances of an HTML element (i.e., whose <a href="http://www.w3.org/TR/html401/struct/global.html#adef-id" class="noxref"><samp class="ainst">
+    id</samp></a> attribute is set to some value).</li>
+    </ul>
+
+    <p>Rules for style rule precedences and inheritance depend on the style sheet
+    language.</p>
+
+    <div class="example">
+    <p>The following CSS <a href="http://www.w3.org/TR/html401/present/styles.html#edef-STYLE" class="noxref"><samp class="einst">STYLE</samp></a> declaration puts a border around every <a href="http://www.w3.org/TR/html401/struct/global.html#edef-H1" class="noxref"><samp class="einst">
+    H1</samp></a> element in the document and centers it on the page.</p>
+
+    <pre>&lt;HEAD&gt;
+     &lt;STYLE type="text/css"&gt;
+       H1 {border-width: 1; border: solid; text-align: center}
+     &lt;/STYLE&gt;
+    &lt;/HEAD&gt;
+    </pre>
+
+    <p>To specify that this style information should only apply to <a href="http://www.w3.org/TR/html401/struct/global.html#edef-H1" class="noxref"><samp class="einst">
+    H1</samp></a> elements of a specific class, we modify it as follows:</p>
+
+    <pre>&lt;HEAD&gt;
+     &lt;STYLE type="text/css"&gt;
+       H1.myclass {border-width: 1; border: solid; text-align: center}
+     &lt;/STYLE&gt;
+    &lt;/HEAD&gt;
+    &lt;BODY&gt;
+     &lt;H1 class="myclass"&gt; This H1 is affected by our style &lt;/H1&gt;
+     &lt;H1&gt; This one is not affected by our style &lt;/H1&gt;
+    &lt;/BODY&gt;
+    </pre>
+
+    <p>Finally, to limit the scope of the style information to a single instance of
+    <a href="http://www.w3.org/TR/html401/struct/global.html#edef-H1" class="noxref"><samp class="einst">
+    H1</samp></a>, set the <a href="http://www.w3.org/TR/html401/struct/global.html#adef-id" class="noxref">
+    <samp class="ainst">id</samp></a> attribute:</p>
+
+    <pre>&lt;HEAD&gt;
+     &lt;STYLE type="text/css"&gt;
+       #myid {border-width: 1; border: solid; text-align: center}
+     &lt;/STYLE&gt;
+    &lt;/HEAD&gt;
+    &lt;BODY&gt;
+     &lt;H1 class="myclass"&gt; This H1 is not affected &lt;/H1&gt;
+     &lt;H1 id="myid"&gt; This H1 is affected by style &lt;/H1&gt;
+     &lt;H1&gt; This H1 is not affected &lt;/H1&gt;
+    &lt;/BODY&gt;
+    </pre>
+    </div>
+
+    <p><span class="index-inst" title="style sheet::used with DIV and SPAN"><a name="idx-style_sheet-6">Although style information</a></span> may be set for
+    almost every HTML element, two elements, <a href="http://www.w3.org/TR/html401/struct/global.html#edef-DIV" class="noxref"><samp class="einst">
+    DIV</samp></a> and <a href="http://www.w3.org/TR/html401/struct/global.html#edef-SPAN" class="noxref">
+    <samp class="einst">SPAN</samp></a>, are particularly useful in that they do
+    not impose any presentation semantics (besides <a href="http://www.w3.org/TR/html401/struct/global.html#block-inline">block-level vs. inline</a>). When combined
+    with style sheets, these elements allow users to extend HTML indefinitely,
+    particularly when used with the <a href="http://www.w3.org/TR/html401/struct/global.html#adef-class" class="noxref"><samp class="ainst">class</samp></a> and <a href="http://www.w3.org/TR/html401/struct/global.html#adef-id" class="noxref"><samp class="ainst">
+    id</samp></a> attributes.</p>
+
+    <div class="example">
+    <p>In the following example, we use the <a href="http://www.w3.org/TR/html401/struct/global.html#edef-SPAN" class="noxref"><samp class="einst">
+    SPAN</samp></a> element to set the font style of the first few words of a
+    paragraph to small caps.</p>
+
+    <pre>&lt;HEAD&gt;
+     &lt;STYLE type="text/css"&gt;
+      SPAN.sc-ex { font-variant: small-caps }
+     &lt;/STYLE&gt;
+    &lt;/HEAD&gt;
+    &lt;BODY&gt;
+      &lt;P&gt;&lt;SPAN class="sc-ex"&gt;The first&lt;/SPAN&gt; few words of
+      this paragraph are in small-caps.
+    &lt;/BODY&gt;
+    </pre>
+    </div>
+
+    <div class="example">
+    <p>In the following example, we use <a href="http://www.w3.org/TR/html401/struct/global.html#edef-DIV" class="noxref"><samp class="einst">DIV</samp></a> and the <a href="http://www.w3.org/TR/html401/struct/global.html#adef-class" class="noxref"><samp class="ainst">
+    class</samp></a> attribute to set the text justification for a series of
+    paragraphs that make up the abstract section of a scientific article. This
+    style information could be reused for other abstract sections by setting the <a href="http://www.w3.org/TR/html401/struct/global.html#adef-class" class="noxref"><samp class="ainst">
+    class</samp></a> attribute elsewhere in the document.</p>
+
+    <pre>&lt;HEAD&gt;
+     &lt;STYLE type="text/css"&gt;
+       DIV.Abstract { text-align: justify }
+     &lt;/STYLE&gt;
+    &lt;/HEAD&gt;
+    &lt;BODY&gt;
+     &lt;DIV class="Abstract"&gt;
+       &lt;P&gt;The Chieftain product range is our market winner for
+         the coming year. This report sets out how to position
+         Chieftain against competing products.
+
+       &lt;P&gt;Chieftain replaces the Commander range, which will
+         remain on the price list until further notice.
+     &lt;/DIV&gt;
+    &lt;/BODY&gt;
+    </pre>
+    </div>
+
+    <h3><a name="h-14.2.4">14.2.4</a> <span class="index-inst" title="media::used
+    with style sheets|style sheet::target media for"><a name="media-types">Media
+    types</a></span></h3>
+
+    <p>HTML allows authors to design documents that take advantage of the
+    characteristics of the media where the document is to be rendered (e.g.,
+    graphical displays, television screens, handheld devices, speech-based
+    browsers, braille-based tactile devices, etc.). By specifying the <a href="http://www.w3.org/TR/html401/present/styles.html#adef-media" class="noxref"><samp class="ainst">media</samp></a>
+    attribute, authors allow user agents to load and apply style sheets
+    selectively. Please consult the list of recognized <a href="http://www.w3.org/TR/html401/types.html#type-media-descriptors">media descriptors</a>.</p>
+
+    <div class="example">
+    <p>The following sample declarations apply to <a href="http://www.w3.org/TR/html401/struct/global.html#edef-H1" class="noxref"><samp class="einst">
+    H1</samp></a> elements. When projected in a business meeting, all instances
+    will be blue. When printed, all instances will be centered.</p>
+
+    <pre>&lt;HEAD&gt;
+     &lt;STYLE type="text/css" media="projection"&gt;
+        H1 { color: blue}
+     &lt;/STYLE&gt;
+
+     &lt;STYLE type="text/css" media="print"&gt;
+       H1 { text-align: center }
+     &lt;/STYLE&gt;
+    </pre>
+
+    <p>This example adds sound effects to anchors for use in speech output:</p>
+
+    <pre> &lt;STYLE type="text/css" media="aural"&gt;
+       A { cue-before: uri(bell.aiff); cue-after: uri(dong.wav)}
+     &lt;/STYLE&gt;
+    &lt;/HEAD&gt;
+    </pre>
+    </div>
+
+    <p>Media control is particularly interesting when applied to external style
+    sheets since user agents can save time by retrieving from the network only
+    those style sheets that apply to the current device. For instance, speech-based
+    browsers can avoid downloading style sheets designed for visual rendering. See
+    the section on <a href="#media-cascades">media-dependent cascades</a> for more
+    information.</p>
+
+    <h2><a name="h-14.3">14.3</a> <span class="index-inst" title="style
+    sheet::external"><a name="style-external">External style sheets</a></span></h2>
+
+    <p>Authors may separate style sheets from HTML documents. This offers several
+    benefits:</p>
+
+    <ul>
+    <li>Authors and Web site managers may share style sheets across a number of
+    documents (and sites).</li>
+
+    <li>Authors may change the style sheet without requiring modifications to the
+    document.</li>
+
+    <li>User agents may load style sheets selectively (based on media
+    descriptions).</li>
+    </ul>
+
+    <h3><a name="h-14.3.1">14.3.1</a> Preferred and alternate style sheets</h3>
+
+    <p>HTML allows authors to associate any number of external style sheets with a
+    document. The style sheet language defines how multiple external style sheets
+    interact (for example, the CSS "cascade" rules).</p>
+
+    <p><span class="index-def" title="style sheet::alternate|alternate style
+    sheets"><a name="didx-style_sheet">Authors may specify a number of mutually
+    exclusive style sheets called <dfn>alternate</dfn> style sheets.</a></span>
+    Users may select their favorite among these depending on their preferences. For
+    instance, an author may specify one style sheet designed for small screens and
+    another for users with weak vision (e.g., large fonts). User agents should
+    allow users to select from alternate style sheets.</p>
+
+    <p><span class="index-def" title="style sheet::preferred|preferred style
+    sheets"><a name="didx-style_sheet-1">The author may specify that one of the
+    alternates is a <dfn>preferred</dfn> style sheet.</a></span> User agents should
+    apply the author's preferred style sheet unless the user has selected a
+    different alternate.</p>
+
+    <p>Authors may group several alternate style sheets (including the author's
+    preferred style sheets) under a single <dfn>style name</dfn>. When a user
+    selects a named style, the user agent must apply all style sheets with that
+    name. User agents must not apply alternate style sheets with a different style
+    name. The section on <a href="#specifying-external">specifying external style
+    sheets</a> explains how to name a group of style sheets.</p>
+
+    <p><span class="index-def" title="style sheet::persistent|persistent style
+    sheets"><a name="didx-style_sheet-2">Authors may also specify <dfn>
+    persistent</dfn> style sheets that user agents must apply in addition to any
+    alternate style sheet.</a></span></p>
+
+    <p>User agents must respect <a href="http://www.w3.org/TR/html401/types.html#type-media-descriptors">
+    media descriptors</a> when applying any style sheet.</p>
+
+    <p>User agents should also allow users to disable the author's style sheets
+    entirely, in which case the user agent must not apply any persistent or
+    alternate style sheets.</p>
+
+    <h3><a name="h-14.3.2">14.3.2</a> <span class="index-inst" title="style
+    sheet::specification of external|link::and external style sheets"><a name="specifying-external">Specifying external style sheets</a></span></h3>
+
+    <p>Authors specify external style sheets with the following attributes of the
+    <a href="http://www.w3.org/TR/html401/struct/links.html#edef-LINK" class="noxref"><samp class="einst">
+    LINK</samp></a> element:</p>
+
+    <ul>
+    <li>Set the value of <a href="http://www.w3.org/TR/html401/struct/links.html#adef-href" class="noxref">
+    <samp class="ainst">href</samp></a> to the location of the style sheet file.
+    The value of <a href="http://www.w3.org/TR/html401/struct/links.html#adef-href" class="noxref"><samp class="ainst">href</samp></a> is a <a href="http://www.w3.org/TR/html401/types.html#type-uri">
+    URI</a>.</li>
+
+    <li>Set the value of the <a href="http://www.w3.org/TR/html401/struct/links.html#adef-type-A" class="noxref"><samp class="ainst-A">type</samp></a> attribute to indicate the
+    language of the linked (style sheet) resource. This allows the user agent to
+    avoid downloading a style sheet for an unsupported style sheet language.</li>
+
+    <li>Specify that the style sheet is persistent, preferred, or alternate:
+
+    <ul>
+    <li>To make a style sheet persistent, set the <a href="http://www.w3.org/TR/html401/struct/links.html#adef-rel" class="noxref"><samp class="ainst">
+    rel</samp></a> attribute to "stylesheet" and don't set the <a href="http://www.w3.org/TR/html401/struct/global.html#adef-title" class="noxref"><samp class="ainst">
+    title</samp></a> attribute.</li>
+
+    <li>To make a style sheet preferred, set the <a href="http://www.w3.org/TR/html401/struct/links.html#adef-rel" class="noxref"><samp class="ainst">
+    rel</samp></a> attribute to "stylesheet" and name the style sheet with the <a href="http://www.w3.org/TR/html401/struct/global.html#adef-title" class="noxref"><samp class="ainst">
+    title</samp></a> attribute.</li>
+
+    <li>To specify an alternate style sheet, set the <a href="http://www.w3.org/TR/html401/struct/links.html#adef-rel" class="noxref"><samp class="ainst">
+    rel</samp></a> attribute to "alternate stylesheet" and name the style sheet
+    with the <a href="http://www.w3.org/TR/html401/struct/global.html#adef-title" class="noxref"><samp class="ainst">title</samp></a> attribute.</li>
+    </ul>
+    </li>
+    </ul>
+
+    <p>User agents should provide a means for users to view and pick from the list
+    of alternate styles. The value of the <a href="http://www.w3.org/TR/html401/struct/global.html#adef-title" class="noxref"><samp class="ainst">
+    title</samp></a> attribute is recommended as the name of each choice.</p>
+
+    <div class="example">
+    <p>In this example, we first specify a persistent style sheet located in the
+    file <tt>mystyle.css</tt>:</p>
+
+    <pre>&lt;LINK href="mystyle.css" rel="stylesheet" type="text/css"&gt;
+    </pre>
+
+    <p>Setting the <a href="http://www.w3.org/TR/html401/struct/global.html#adef-title" class="noxref"><samp class="ainst">title</samp></a> attribute makes this the author's preferred
+    style sheet:</p>
+
+    <pre> &lt;LINK href="mystyle.css" title="compact" rel="stylesheet" type="text/css"&gt;
+    </pre>
+
+    <p>Adding the keyword "alternate" to the <a href="http://www.w3.org/TR/html401/struct/links.html#adef-rel" class="noxref"><samp class="ainst">
+    rel</samp></a> attribute makes it an alternate style sheet:</p>
+
+    <pre>&lt;LINK href="mystyle.css" title="Medium" rel="alternate stylesheet" type="text/css"&gt;
+    </pre>
+    </div>
+
+    <p>For more information on external style sheets, please consult the section on
+    <a href="http://www.w3.org/TR/html401/struct/links.html#linksandss">links and external style
+    sheets.</a></p>
+
+    <p><span class="index-inst" title="HTTP::Default-Style header|style
+    sheet::specification of preferred">Authors may also use the <a name="idx-HTTP-1" href="http://www.w3.org/TR/html401/struct/global.html#edef-META" class="noxref"><samp class="einst">META</samp></a> element to set the document's preferred style
+    sheet.</span> For example, to set the preferred style sheet to "compact" (see
+    the preceding example), authors may include the following line in the <a href="http://www.w3.org/TR/html401/struct/global.html#edef-HEAD" class="noxref"><samp class="einst">
+    HEAD</samp></a>:</p>
+
+    <div class="example">
+    <pre>&lt;META http-equiv="Default-Style" content="compact"&gt;
+    </pre>
+    </div>
+
+    <p>The preferred style sheet may also be specified with HTTP headers. The above
+    <a href="http://www.w3.org/TR/html401/struct/global.html#edef-META" class="noxref"><samp class="einst">
+    META</samp></a> declaration is equivalent to the HTTP header:</p>
+
+    <div class="example">
+    <pre>Default-Style: "compact"
+    </pre>
+    </div>
+
+    <p>If two or more <a href="http://www.w3.org/TR/html401/struct/global.html#edef-META" class="noxref">
+    <samp class="einst">META</samp></a> declarations or HTTP headers specify the
+    preferred style sheet, the last one takes precedence. HTTP headers are
+    considered to occur earlier than the document <a href="http://www.w3.org/TR/html401/struct/global.html#edef-HEAD" class="noxref"><samp class="einst">
+    HEAD</samp></a> for this purpose.</p>
+
+    <p>If two or more <a href="http://www.w3.org/TR/html401/struct/links.html#edef-LINK" class="noxref"><samp class="einst">LINK</samp></a> elements specify a preferred style sheet, the
+    first one takes precedence.</p>
+
+    <p>Preferred style sheets specified with <a href="http://www.w3.org/TR/html401/struct/global.html#edef-META" class="noxref"><samp class="einst">
+    META</samp></a> or HTTP headers have precedence over those specified with the
+    <a href="http://www.w3.org/TR/html401/struct/links.html#edef-LINK" class="noxref"><samp class="einst">
+    LINK</samp></a> element.</p>
+
+    <h2><a name="h-14.4">14.4</a> <span class="index-inst" title="style
+    sheet::cascading|cascading style sheets"><a name="idx-style_sheet-11">Cascading
+    style sheets</a></span></h2>
+
+    <p><dfn>Cascading</dfn> style sheet languages such as CSS allow style
+    information from several sources to be blended together. However, not all style
+    sheet languages support cascading. To define a cascade, authors specify a
+    sequence of <a href="http://www.w3.org/TR/html401/struct/links.html#edef-LINK" class="noxref"><samp class="einst">LINK</samp></a> and/or <a href="http://www.w3.org/TR/html401/present/styles.html#edef-STYLE" class="noxref"><samp class="einst">STYLE</samp></a> elements. The style information
+    is cascaded in the order the elements appear in the <a href="http://www.w3.org/TR/html401/struct/global.html#edef-HEAD" class="noxref"><samp class="einst">
+    HEAD</samp></a>.</p>
+
+    <div class="note">
+    <p><em><strong>Note.</strong> This specification does not specify how style
+    sheets from different style languages cascade. Authors should avoid mixing
+    style sheet languages.</em></p>
+    </div>
+
+    <div class="example">
+    <p>In the following example, we specify two alternate style sheets named
+    "compact". If the user selects the "compact" style, the user agent must apply
+    both external style sheets, as well as the persistent "common.css" style sheet.
+    If the user selects the "big print" style, only the alternate style sheet
+    "bigprint.css" and the persistent "common.css" will be applied.</p>
+
+    <pre>&lt;LINK rel="alternate stylesheet" title="compact" href="small-base.css" type="text/css"&gt;
+    &lt;LINK rel="alternate stylesheet" title="compact" href="small-extras.css" type="text/css"&gt;
+    &lt;LINK rel="alternate stylesheet" title="big print" href="bigprint.css" type="text/css"&gt;
+    &lt;LINK rel="stylesheet" href="common.css" type="text/css"&gt;
+    </pre>
+    </div>
+
+    <div class="example">
+    <p>Here is a cascade example that involves both the <a href="http://www.w3.org/TR/html401/struct/links.html#edef-LINK" class="noxref"><samp class="einst">
+    LINK</samp></a> and <a href="http://www.w3.org/TR/html401/present/styles.html#edef-STYLE" class="noxref"><samp class="einst">STYLE</samp></a> elements.</p>
+
+    <pre>&lt;LINK rel="stylesheet" href="corporate.css" type="text/css"&gt;
+    &lt;LINK rel="stylesheet" href="techreport.css" type="text/css"&gt;
+    &lt;STYLE type="text/css"&gt;
+        p.special { color: rgb(230, 100, 180) }
+    &lt;/STYLE&gt;
+    </pre>
+    </div>
+
+    <h3><a name="h-14.4.1">14.4.1</a> <span class="index-inst" title="media::and
+    external style sheets|link::and media-dependent style sheets"><a name="media-cascades">Media-dependent cascades</a></span></h3>
+
+    <p>A cascade may include style sheets applicable to different media. Both <a href="http://www.w3.org/TR/html401/struct/links.html#edef-LINK" class="noxref"><samp class="einst">
+    LINK</samp></a> and <a href="http://www.w3.org/TR/html401/present/styles.html#edef-STYLE" class="noxref"><samp class="einst">STYLE</samp></a> may be used with the <a href="http://www.w3.org/TR/html401/present/styles.html#adef-media" class="noxref"><samp class="ainst">media</samp></a>
+    attribute. The user agent is then responsible for filtering out those style
+    sheets that do not apply to the current medium.</p>
+
+    <div class="example">
+    <p>In the following example, we define a cascade where the "corporate" style
+    sheet is provided in several versions: one suited to printing, one for screen
+    use and one for speech-based browsers (useful, say, when reading email in the
+    car). The "techreport" stylesheet applies to all media. The color rule defined
+    by the <a href="http://www.w3.org/TR/html401/present/styles.html#edef-STYLE" class="noxref"><samp class="einst">
+    STYLE</samp></a> element is used for print and screen but not for aural
+    rendering.</p>
+
+    <pre>&lt;LINK rel="stylesheet" media="aural" href="corporate-aural.css" type="text/css"&gt;
+    &lt;LINK rel="stylesheet" media="screen" href="corporate-screen.css" type="text/css"&gt;
+    &lt;LINK rel="stylesheet" media="print" href="corporate-print.css" type="text/css"&gt;
+    &lt;LINK rel="stylesheet" href="techreport.css" type="text/css"&gt;
+    &lt;STYLE media="screen, print" type="text/css"&gt;
+        p.special { color: rgb(230, 100, 180) }
+    &lt;/STYLE&gt;
+    </pre>
+    </div>
+
+    <h3><a name="h-14.4.2">14.4.2</a> Inheritance and cascading</h3>
+
+    <p>When the user agent wants to render a document, it needs to find values for
+    style properties, e.g. the font family, font style, size, line height, text
+    color and so on. The exact mechanism depends on the style sheet language, but
+    the following description is generally applicable:</p>
+
+    <p>The cascading mechanism is used when a number of style rules all apply
+    directly to an element. The mechanism allows the user agent to sort the rules
+    by specificity, to determine which rule to apply. If no rule can be found, the
+    next step depends on whether the style property can be inherited or not. Not
+    all properties can be inherited. For these properties the style sheet language
+    provides default values for use when there are no explicit rules for a
+    particular element.</p>
+
+    <p>If the property can be inherited, the user agent examines the immediately
+    enclosing element to see if a rule applies to that. This process continues
+    until an applicable rule is found. This mechanism allows style sheets to be
+    specified compactly. For instance, authors may specify the font family for all
+    elements within the <a href="http://www.w3.org/TR/html401/struct/global.html#edef-BODY" class="noxref">
+    <samp class="einst">BODY</samp></a> by a single rule that applies to the <a href="http://www.w3.org/TR/html401/struct/global.html#edef-BODY" class="noxref"><samp class="einst">
+    BODY</samp></a> element.</p>
+
+    <h2><a name="h-14.5">14.5</a> <span class="index-inst" title="user agent::and
+    style data|style sheet::comments to hide|comments::used to hide style sheet
+    data"><a name="hiding">Hiding style data from user agents</a></span></h2>
+
+    <p>Some style sheet languages support syntax intended to allow authors to hide
+    the content of <a href="http://www.w3.org/TR/html401/present/styles.html#edef-STYLE" class="noxref"><samp class="einst">STYLE</samp></a> elements from non-conforming user agents.</p>
+
+    <div class="example">
+    <p>This example illustrates for CSS how to comment out the content of <a href="http://www.w3.org/TR/html401/present/styles.html#edef-STYLE" class="noxref"><samp class="einst">STYLE</samp></a>
+    elements to ensure that older, non-conforming user agents will not render them
+    as text.</p>
+
+    <pre>&lt;STYLE type="text/css"&gt;
+    &lt;!--
+       H1 { color: red }
+       P  { color: blue}
+       --&gt;
+    &lt;/STYLE&gt;
+    </pre>
+    </div>
+
+    <h2><a name="h-14.6">14.6</a> <span class="index-inst" title="HTTP::used to
+    link external style sheets"><a name="idx-HTTP-2">Linking to style sheets with
+    HTTP headers</a></span></h2>
+
+    <p><em>This section only applies to user agents conforming to versions of HTTP
+    that define a Link header field. Note that HTTP 1.1 as defined by <a rel="biblioentry" href="http://www.w3.org/TR/html401/references.html#ref-RFC2616" class="informref">
+    [RFC2616]</a> does not include a Link header field (refer to section
+    19.6.3).</em></p>
+
+    <p>Web server managers may find it convenient to configure a server so that a
+    style sheet will be applied to a group of pages. The HTTP <tt>Link</tt> header
+    has the same effect as a <a href="http://www.w3.org/TR/html401/struct/links.html#edef-LINK" class="noxref"><samp class="einst">LINK</samp></a> element with the same attributes
+    and values. Multiple <tt>Link</tt> headers correspond to multiple <a href="http://www.w3.org/TR/html401/struct/links.html#edef-LINK" class="noxref"><samp class="einst">
+    LINK</samp></a> elements occurring in the same order. For instance,</p>
+
+    <pre>Link: &lt;http://www.acme.com/corporate.css&gt;; REL=stylesheet
+    </pre>
+
+    <p>corresponds to:</p>
+
+    <pre>&lt;LINK rel="stylesheet" href="http://www.acme.com/corporate.css"&gt;
+    </pre>
+
+    <p>It is possible to specify several alternate styles using multiple <tt>
+    Link</tt> headers, and then use the <a href="http://www.w3.org/TR/html401/struct/links.html#adef-rel" class="noxref"><samp class="ainst">rel</samp></a> attribute to determine the
+    default style.</p>
+
+    <div>
+    <p>In the following example, "compact" is applied by default since it omits the
+    "alternate" keyword for the <a href="http://www.w3.org/TR/html401/struct/links.html#adef-rel" class="noxref"><samp class="ainst">rel</samp></a> attribute.</p>
+
+    <pre>Link: &lt;compact.css&gt;; rel="stylesheet"; title="compact"
+    Link: &lt;bigprint.css&gt;; rel="alternate stylesheet"; title="big print"
+    </pre>
+    </div>
+
+    <p>This should also work when HTML documents are sent by email. Some email
+    agents can alter the ordering of <a rel="biblioentry" href="http://www.w3.org/TR/html401/references.html#ref-RFC822" class="informref">[RFC822]</a> headers. To
+    protect against this affecting the cascading order for style sheets specified
+    by <tt>Link</tt> headers, authors can use header concatenation to merge several
+    instances of the same header field. The quote marks are only needed when the
+    attribute values include whitespace. Use SGML entities to reference characters
+    that are otherwise not permitted within HTTP or email headers, or that are
+    likely to be affected by transit through gateways.</p>
+
+    <p><a href="http://www.w3.org/TR/html401/struct/links.html#edef-LINK" class="noxref"><samp class="einst">
+    LINK</samp></a> and <a href="http://www.w3.org/TR/html401/struct/global.html#edef-META" class="noxref">
+    <samp class="einst">META</samp></a> elements implied by HTTP headers are
+    defined as occurring before any explicit <a href="http://www.w3.org/TR/html401/struct/links.html#edef-LINK" class="noxref"><samp class="einst">
+    LINK</samp></a> and <a href="http://www.w3.org/TR/html401/struct/global.html#edef-META" class="noxref">
+    <samp class="einst">META</samp></a> elements in the document's <a href="http://www.w3.org/TR/html401/struct/global.html#edef-HEAD" class="noxref"><samp class="einst">
+    HEAD</samp></a>.</p>
+
+    <div class="navbar" align="center">
+    <hr><a href="http://www.w3.org/TR/html401/struct/objects.html">previous</a> &nbsp; <a href="http://www.w3.org/TR/html401/present/graphics.html">next</a> &nbsp; <a href="http://www.w3.org/TR/html401/cover.html#minitoc">contents</a>
+    &nbsp; <a href="http://www.w3.org/TR/html401/index/elements.html">elements</a> &nbsp; <a href="http://www.w3.org/TR/html401/index/attributes.html">attributes</a> &nbsp; <a href="http://www.w3.org/TR/html401/index/list.html">
+    index</a></div>
+
+{{>stylesheet-theme-markup}}
+
+{{>stylesheet-theme-js}}
+
+</body>
+
+
+
+
+
+
