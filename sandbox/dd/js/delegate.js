@@ -2,12 +2,15 @@ YUI.add('dd-delegate', function(Y) {
 
     /**
      * Provides the ability to drag multiple nodes under a container element using only one Y.DD.Drag instance as a delegate.
+     * @module dd
+     * @submodule dd-delegate
+     */     
+    /**
+     * Provides the ability to drag multiple nodes under a container element using only one Y.DD.Drag instance as a delegate.
      * @class Delegate
      * @extends Base
      * @constructor
      * @namespace DD
-     * @module dd
-     * @submodule dd-delegate
      */
 
 
@@ -113,7 +116,8 @@ YUI.add('dd-delegate', function(Y) {
         initializer: function(cfg) {
             this._handles = [];
             //Create a tmp DD instance under the hood.
-            var conf = Y.clone(this.get('dragConfig') || {}),
+            //var conf = Y.clone(this.get('dragConfig') || {}),
+            var conf = this.get('dragConfig') || {},
                 cont = this.get(CONT);
 
             conf.node = _tmpNode.cloneNode(true);
@@ -307,7 +311,7 @@ YUI.add('dd-delegate', function(Y) {
         * @for DDM
         * @method getDelegate
         * @description Get a delegate instance from a container node
-        * @returns Y.DD.Delegate
+        * @return Y.DD.Delegate
         */
         getDelegate: function(node) {
             var del = null;
@@ -323,5 +327,6 @@ YUI.add('dd-delegate', function(Y) {
 
     Y.namespace('DD');    
     Y.DD.Delegate = Delegate;
+
 
 }, '@VERSION@' ,{requires:['dd-drag', 'event-mouseenter'], skinnable:false});

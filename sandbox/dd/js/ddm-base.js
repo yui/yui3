@@ -1,13 +1,16 @@
 YUI.add('dd-ddm-base', function(Y) {
 
+    /**
+     * Provides the base Drag Drop Manger required for making a Node draggable.
+     * @module dd
+     * @submodule dd-ddm-base
+     */     
      /**
      * Provides the base Drag Drop Manger required for making a Node draggable.
      * @class DDM
      * @extends Base
      * @constructor
      * @namespace DD
-     * @module dd
-     * @submodule dd-ddm-base
      */
     
     var DDMBase = function() {
@@ -217,7 +220,7 @@ YUI.add('dd-ddm-base', function(Y) {
         * @private
         * @method _move
         * @description Internal listener for the mousemove DOM event to pass to the Drag's move method.
-        * @param {EventFacade} ev The Dom mousemove Event
+        * @param {Event.Facade} ev The Dom mousemove Event
         */
         _move: function(ev) {
             if (this.activeDrag) {
