@@ -168,6 +168,18 @@ YUI.  So you probably already have the DOM event API and didn't know it!</p>
             Fixes `focus` and `blur` events to bubble (for delegation).
         </td>
     </tr>
+        <td>`event-gesture`</td>
+        <td>
+            <p>A rollup of the following modules:</p>
+
+            <ul>
+                <li>"event-touch"</li>
+                <li>"event-move"</li>
+                <li>"event-flick"</li>
+            </ul>
+
+            <p>In the future, may contain more gesture abstraction modules.</p>
+        </td>
     <tr>
         <td><a href="mouseenter.html">`event-hover`</a></td>
         <td>
@@ -329,7 +341,9 @@ Y.one('#dialog').on('clickoutside', function (e) {
 </ul>
 
 <p>The available synthetic events are listed in <a href="#modules">the table of
-modules above</a>.</p>
+modules above</a>.  Most are linked to pages further detailing the specific eevnts.</p>
+
+<h4>Creating DOM events</h4>
 
 <p>Create your own synthetic events with `Y.Event.define(type, config)`.</p>
 
