@@ -23,7 +23,7 @@ YUI({ filter:'raw' }).use("io-xdr", "node",
 		//Configure the cross-domain transport:
 		var xdrConfig = {
 			id:'flash', //We'll reference this id in the xdr configuration of our transaction.
-			src:'../../build/io/io.swf' //Relative path to the .swf file from the current page.
+			src:'../../build/io-xdr/io.swf' //Relative path to the .swf file from the current page.
 		};
 		Y.io.transport(xdrConfig);
 
@@ -82,8 +82,8 @@ YUI({ filter:'raw' }).use("io-xdr", "node",
 			);
 		}
 
-		//add the clickHandler as soon as the xdr Flash module has
-		//loaded:
+		//Add the click handler to the Get Weather RSS button as soon
+		//as the Flash transport has loaded:
 		Y.on('io:xdrReady', function() {
 			var btn = Y.one("#getWeather");
 			btn.set("disabled", false);
