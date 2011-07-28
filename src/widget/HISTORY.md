@@ -17,12 +17,14 @@ Widget
   * Added support for destroy(true) to Widget, which will remove and
     destroy all child nodes (not just the boundingBox and contentBox)
     contained within the Widget's boundingBox in order to help control
-    Node cache size over long-running applications.  destroy() will maintain
-	its current behavior due to the potentially high run-time cost of destroying
-	all child nodes.  Widget developers still need to continue with the best 
-	practice of destroying explicit node references they create, in their
-    destructors to support the destroy() case.
-    	
+    Node cache size over long-running applications.
+
+    destroy() will maintain its current behavior due to the potentially 
+    high run-time cost of destroying all child nodes.
+
+    Widget developers still need to continue with the best practice of 
+    destroying explicit node references they create, in their destructors 
+    to support the destroy() case.
 	
 3.3.0
 -----
