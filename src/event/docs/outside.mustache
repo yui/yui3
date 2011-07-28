@@ -1,0 +1,135 @@
+<div class="intro">
+    <p>The `event-outside` module adds a <a href="predefined">suite of
+    events</a> based on activity occuring <em>outside</em> the subscribed
+    elements.  For example, the "clickoutside" event will fire only if a click
+    occurred on an element <em>other than</em> the Node subscribed or one of
+    its descendants.</p>
+
+    <p>The module also adds a `Y.Event.defineOutside(...)` method to <a
+    href="#defineoutside">create additional outside events</a>.</p>
+
+    <p>This module was contributed by <a
+    href="https://github.com/brettstimmerman">Brett Stimmerman</a>, inspired
+    by <a href="http://benalman.com/projects/jquery-outside-events-plugin/">Ben
+    Alman's Outside Events jQuery plugin</a>.</p>
+</div>
+
+<h2>Not me. Those other elements</h2>
+
+<p>It's a common UX pattern to close popups or trigger save or cancel actions when users do something in another area of a web page.  This family of events makes setting up that behavior easy.</p>
+
+```
+node.on('clickoutside', function () {
+    this.hide('fadeOut');
+});
+
+survey.on('keyupoutside', heyYoureNotDoneYet);
+
+// hide the overlay if the page focus moves somewhere outside the overlay's
+// content area.
+overlay.get('boundingBox').on('focusoutside', overlay.hide, overlay);
+```
+
+<h2>How they work</h2>
+
+<p>When an outside event subscription is made on an element, the actual
+subscription created is a `document` level subscription for the corresponding
+DOM event.  When a triggering event occurs on the page and bubbles up to the
+`document`, its `e.target` is compared to the outside event subscriber. If the
+event originated from an element outside the subscriber, the outside event
+subscribers are executed.</p>
+
+<p>An originating target is considered outside the subscriber if it is not the subscriber itself or any of the subscriber's descendants.</p>
+
+<h2 id="predefined">`*outside`</h2>
+
+<p>The naming convention for outside events is <code><em>&lt;event&gt;</em>outside</code>.</p>
+
+<p>The module creates the following events by default:</p>
+
+<style>
+#eventlist {
+    list-style: none;
+    margin: 0 0 0 1em;
+    padding: 0;
+}
+#eventlist ul {
+    list-style: none;
+    margin-left: 0;
+    margin-right: 2em;
+    padding: 0;
+}
+</style>
+<ul class="yui3-g" id="eventlist">
+    <li class="yui3-u">
+        <ul>
+            <li><code><em>mousedown</em>outside</code></li>
+            <li><code><em>mouseup</em>outside</code></li>
+            <li><code><em>mouseover</em>outside</code></li>
+            <li><code><em>mouseout</em>outside</code></li>
+            <li><code><em>mousemove</em>outside</code></li>
+        </ul>
+    </li>
+    <li class="yui3-u">
+        <ul>
+            <li><code><em>click</em>outside</code></li>
+            <li><code><em>dblclick</em>outside</code></li>
+            <li><code><em>keydown</em>outside</code></li>
+            <li><code><em>keyup</em>outside</code></li>
+            <li><code><em>keypress</em>outside</code></li>
+        </ul>
+    </li>
+    <li class="yui3-u">
+        <ul>
+            <li><code><em>focus</em>outside</code></li>
+            <li><code><em>blur</em>outside</code></li>
+            <li><code><em>change</em>outside</code></li>
+            <li><code><em>select</em>outside</code></li>
+            <li><code><em>submit</em>outside</code></li>
+        </ul>
+    </li>
+</ul>
+
+<h2 id="defineoutside">Create more outside events</h2>
+
+<p>Use the module's `Y.Event.defineOutside( triggeringEvent, [alternateName] )` method to create more outside
+events.</p>
+
+```
+// Create a `touchstartoutside` event
+Y.Event.defineOutside('touchstart');
+
+// Create an outside event for another synthetic event and give it
+// a different name.
+Y.Event.defineOutside('tripleclick', 'omgletmeout');
+
+// would have been tripleclickoutside
+gooeymess.on('omgletmeout', okYouCanGo);
+```
+
+<h2>Caveats</h2>
+
+<p>Outside events require DOM events to bubble to the `document` so the following caveats apply to their use:</p>
+
+<ol>
+    <li>
+        Separate subscriptions for the triggering event added to any element
+        below the `document` will execute before the outside event.
+    </li>
+    <li>
+        If a subcriber from #1 calls `e.stopPropagation()`, the outside event
+        won't fire.
+    </li>
+    <li>
+        "outside" is determined by DOM hierarchy, not visual placement of an
+        element, so if a child element of the outside subscriber is placed
+        elsewhere on the page, clicking on that child will not trigger the
+        outside event.
+    </li>
+    <li>
+        Some DOM events do not bubble, and some (e.g. `submit` and `reset`)
+        bubble only in certain browsers.  Unless a workaround synthetic event
+        such as <a href="focus.html">`event-focus`</a> is in place,
+        outside versions of these events won't fire.
+    </li>
+</ol>

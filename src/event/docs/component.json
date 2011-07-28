@@ -5,7 +5,7 @@
 	"author": ["lsmith", "amoore", "sdesai", "rgrove"],
 
     "use": ["event"],
-    "tags": ["utility", "event", "dom"],
+    "tags": ["core", "event", "dom"],
 
     "examples": [
     ],
@@ -30,7 +30,7 @@
             "displayName": "The mousewheel event"
         },
         "outside": {
-            "displayName": "The *outside events"
+            "displayName": "The outside events"
         },
         "windowresize": {
             "displayName": "The windowresize event"
@@ -39,7 +39,7 @@
             "displayName": "Touch events and abstractions"
         },
         "valuechange": {
-            "displayName": "The valuechange event"
+            "displayName": "The valueChange event"
         }
     }
 }

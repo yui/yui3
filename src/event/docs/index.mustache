@@ -110,9 +110,9 @@ YUI.  So you probably already have the DOM event API and didn't know it!</p>
     <tr>
         <td>`event-base`</td>
         <td>
-            The Core DOM event subscription system as well as the <a
-            href="domready.html">DOM lifecycle events</a> `domready`,
-            `available`, and `contentready`.  Notably, it does NOT include
+            The Core DOM event subscription system as well as the DOM lifecycle
+            events <a href="domready.html">`domready`, `contentready`, and
+            `available`</a>.  Notably, it does NOT include
             <ul>
                 <li>event delegation</li>
                 <li>event simulation</li>
@@ -190,11 +190,15 @@ YUI.  So you probably already have the DOM event API and didn't know it!</p>
         </td>
     </tr>
     <tr>
-        <td><a href="mousewheel.html">`event-mousewheel`</a></td>
+        <td>`event-mousewheel`</td>
         <td>
-            Adds a "mousewheel" event for monitoring window scrolling.
-            Currently, this event can only be subscribed with
-            `Y.on("mousewheel", callback)`;
+            <p>Adds a "mousewheel" event for monitoring users scrolling the
+            window with the mousewheel.  Event facades passed to the callback
+            will have an `e.wheelDelta` property corresponding to the amount of
+            scrolling.</p>
+
+            <p>Currently, this event can only be subscribed with
+            `Y.on("mousewheel", callback)`;</p>
         </td>
     </tr>
     <tr>
@@ -213,10 +217,14 @@ YUI.  So you probably already have the DOM event API and didn't know it!</p>
         </td>
     </tr>
     <tr>
-        <td><a href="windowresize.html">`event-resize`</a></td>
+        <td>`event-resize`</td>
         <td>
-            Adds a "windowresize" event to normalize reporting of the
-            `window`'s resize event.
+            <p>Adds a "windowresize" event that only fires after a user has
+            stopped dragging a window's resize handle.  This normalizes the
+            `window.onresize` event across browsers.</p>
+
+            <p>This event can only be subscribed with
+            `Y.on("windowresize", callback)`;</p>
         </td>
     </tr>
     <tr>
@@ -228,7 +236,7 @@ YUI.  So you probably already have the DOM event API and didn't know it!</p>
     <tr>
         <td><a href="valuechange.html">`event-valuechange`</a></td>
         <td>
-            Adds a "valuechange" event that fires when input element text
+            Adds a "valueChange" event that fires when input element text
             changes (this is harder than you think).
         </td>
     </tr>
@@ -305,11 +313,11 @@ Y.one('#dialog').on('clickoutside', function (e) {
     </li>
     <li>
         create events with different subscription signatures (e.g. `hover` or
-        `key`)
+        `gesturemovestart`)
     </li>
     <li>
         create configurable events that only execute subscribers when criteria
-        passed during subscription are met (e.g. `flick` or `valuechange`)
+        passed during subscription are met (e.g. `flick` or `key`)
     </li>
     <li>
         create events that encapsulate common UX patterns (e.g. `clickoutside`)
