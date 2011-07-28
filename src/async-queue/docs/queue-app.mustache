@@ -1,0 +1,138 @@
+{{>queue-app-css}}
+
+<div class="intro">
+    <p>This example illustrates how to break up the initial rendering of an application UI into queued code chunks, yielding back to the browser regularly to draw portions of the UI as they become ready.</p>
+    
+<p><em>Note</em>: This method should be reserved for apps constructing complex DOM structures.  While the DOM structure contained in this example is not complex, some artificial delays are injected to simulate process-intensive operations that would normally cause such delays.</p>
+</div>
+
+<div class="example">
+{{>queue-app-markup}}
+{{>queue-app-js}}
+</div>
+
+<h3>The Markup</h3>
+<p>The markup will start with just a placeholder element for our application.</p>
+
+```
+{{>queue-app-markup}}
+```
+
+<p>The markup will eventually evolve to the following as the script runs (indented for readability):</p>
+
+```
+<div id="demo">
+    <div class="yui3-module">
+        <div class="yui3-hd">
+            <h4>AsyncQueue Demo</h4>
+        </div>
+        <div class="yui3-bd">
+            <div class="yui3-nav">
+                <ul>
+                    <li><a href="#">Nav Lorem</a></li>
+                    <li><a href="#">Nav Ipsum</a></li>
+                    <li><a href="#">Nav Dolor</a></li>
+                    <li><a href="#">Nav Sit</a></li>
+                </ul>
+            </div>
+            <div class="yui3-content">
+                <p>[ App content here ]</p>
+            </div>
+        </div>
+        <div class="yui3-ft">
+            <p class="yui3-status">(status message here)</p>
+        </div>
+    </div>
+</div>
+
+<button id="init">Re-initialize Application</button>
+```
+
+<h3>The CSS</h3>
+<p>Some CSS is added to make it look like an application.</p>
+
+```
+{{>queue-app-css}}
+```
+
+<h3>Example application structure</h3>
+<p>For this example, we'll create a simple application that we'll contain under the `MyApp` namespace.  The basic structure of the namespace will be as follows:</p>
+
+```
+YUI().use("node", "transition", "async-queue", function (Y) {
+
+var MyApp = {
+    // the name of the application
+    NAME : "AsyncQueue Demo",
+
+    // rendering AsyncQueue
+    q : new Y.AsyncQueue(),
+
+    // cache of frequently used nodes in the DOM structure
+    nodes : {
+        root    : null,
+        status  : null,
+        nav     : null,
+        content : null,
+        foot    : null
+    },
+
+    /*** Public API methods ***/
+    // draws the UI in the specified container
+    render : function (container) { ... },
+
+    // update the status bar at the bottom of the app
+    setStatus : function (message,working) { ... },
+
+
+    /*** private methods ***/
+    // adds the basic app skeleton to the page
+    _renderFramework : function () { ... },
+
+    // populates the navigation section
+    _renderNav : function () { ... },
+
+    // populates the content section
+    _renderContent : function () { ... }
+};
+
+});
+```
+
+<p>The `MyApp.render` function will add the rendering methods to the `MyApp.q` AsyncQueue and set it in motion.  Each of the methods will be executed in turn, yielding back to the browser between steps.  So as each piece of the UI is assembled, the browser is given the opportunity to draw it.</p>
+
+```
+    ...
+    render : function (container) {
+        // If the application is currently rendered somewhere, destroy it first
+        // by clearing the queue and adding the destroy method to run before
+        // the default rendering operations.
+        if (MyApp.nodes.root) {
+            MyApp.q.stop();
+
+            MyApp.q.add(
+                MyApp.destroy
+            );
+        }
+
+        // Add the rendering operations to the ops.render queue and call run()
+        MyApp.q.add(
+            // pass the container param to the callback using Y.bind
+            Y.bind(MyApp._renderFramework, MyApp, container),
+            MyApp._renderNav,
+            MyApp._renderContent).run();
+    },
+    ...
+```
+
+<p>If there are any process-intensive operations in the rendering steps, the UI generated in all <em>previous</em> steps will have been drawn by the browser before the heavy lifting begins.  This way, the user will be shown a part of the UI and can begin to develop an understanding of its structure and operation while the rest of it is being constructed.</p>
+
+<h3>A note on artificial delays and animation</h3>
+<p>In this example, rather than include code that would spike your CPU, delays were simulated by inserting AsyncQueue callbacks with a timeout and a function that does nothing.  There is a distinct difference between a delay caused by code execution and a delay caused by `setTimeout`.  In the former case, the browser is busy and likely won't respond to user events (such as clicks) until the executing code has completed.  In the latter, any number of JavaScript event threads may execute to completion in the intervening time.</p>
+
+<h3>Full Script Source</h3>
+<p>The complete code for this example includes the artificial delays added to `MyApp.q` in the `render` method.</p>
+
+```
+{{>queue-app-js}}
+```

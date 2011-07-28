@@ -1,17 +1,8 @@
 /**
-Supplies object inheritance and manipulation utilities.
-
-This adds additional functionaity to what is provided in `yui-base`, and the
-methods are applied directly to the YUI instance. This module is required for
-most YUI components.
+Adds object inheritance and manipulation utilities to the YUI instance. This
+module is required by most YUI components.
 
 @module oop
-**/
-
-/**
-These methods are added to the YUI instance by the `oop` module.
-
-@class YUI~oop
 **/
 
 var L            = Y.Lang,
@@ -71,6 +62,7 @@ hit of calling the _supplier_'s constructor.
 @param {Array|any} [args] Argument or array of arguments to pass to the
   supplier's constructor when initializing.
 @return {Function} Augmented object.
+@for YUI
 **/
 Y.augment = function (receiver, supplier, overwrite, whitelist, args) {
     var rProto    = receiver.prototype,
@@ -204,7 +196,7 @@ Y.extend = function(r, s, px, sx) {
 /**
  * Executes the supplied function for each item in
  * a collection.  Supports arrays, objects, and
- * Y.NodeLists
+ * NodeLists
  * @method each
  * @param {object} o the object to iterate.
  * @param {function} f the function to execute.  This function
@@ -222,7 +214,7 @@ Y.each = function(o, f, c, proto) {
  * Executes the supplied function for each item in
  * a collection.  The operation stops if the function
  * returns true. Supports arrays, objects, and
- * Y.NodeLists.
+ * NodeLists.
  * @method some
  * @param {object} o the object to iterate.
  * @param {function} f the function to execute.  This function
@@ -238,7 +230,7 @@ Y.some = function(o, f, c, proto) {
 };
 
 /**
- * Deep obj/array copy.  Function clones are actually
+ * Deep object/array copy.  Function clones are actually
  * wrappers around the original function.
  * Array-like objects are treated as arrays.
  * Primitives are returned untouched.  Optionally, a

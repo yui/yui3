@@ -1,0 +1,72 @@
+{{>jsonp-github-css}}
+
+<div class="intro">
+    <p>This example illustrates basic use of the `Y.jsonp( url, callback )` method, provided by the `jsonp` module.</p>
+
+    <p>For this example, we will use <a href="http://develop.github.com/">GitHub's webservice API</a>, fetching user information about some members of the YUI team.</p>
+</div>
+
+<div class="example">
+{{>jsonp-github-markup}}
+{{>jsonp-github-js}}
+</div>
+
+<h3>The data</h3>
+<p>The structure of the JavaScript object returned from GitHub's JSONP API for user info will look like this:</p>
+
+```
+{
+    user: {
+        gravatar_id: "fc2cca...",
+        login: "username"
+        name: "User's Name",
+        ...,
+
+        public_repo_count: 10,
+        public_gist_count: 20,
+        following_count: 30,
+        followers_count: 40
+    }
+}
+```
+
+<p>We'll use these objects to populate HTML templates with data <em>{placeholder}</em>s using `Y.Lang.sub( template, object )`.  The resulting HTML can then simply be passed to any of YUI 3's DOM creation methods, such as `node.setContent( html )` or `node.append( html )`.  We'll do this in the function that will receive the JSONP response (seen below).</p>
+
+<h3>Format the JSONP url</h3>
+<p>Typical JSONP urls are formatted like</p>
+<p>&quot;http://example.com/service?format=json&<em>callback=handleJSONP</em>&quot;.</p>
+<p>To use YUI 3's JSONP utility, replace the name of the callback function in the url with placeholder text &quot;{callback}&quot;.</p>
+
+```
+// BEFORE
+var url = "http://github.com/api/v2/json/user/show/yui?callback=handleJSONP";
+
+//AFTER
+var url = "http://github.com/api/v2/json/user/show/yui?callback={callback}";
+```
+
+<p>Then simply pass the url and the function that should handle the JSONP response object to `Y.jsonp(<em>url</em>, <em>handleJSONP</em>)`.</p>
+
+```
+function handleJSONP(response) {
+    Y.one("#out").setContent(Y.Lang.sub(template, response.user));
+}
+
+Y.one("#demo_btn").on("click", function (e) {
+    // e.g. http://github.com/api/v2/json/user/show/yui?callback={callback}
+    var url = githubAPI + user.get("value") + "?callback={callback}";
+
+    Y.jsonp(url, handleJSONP);
+});
+```
+
+<h3 id="fullcode">Full Code Listing</h3>
+<h4>HTML</h4>
+```
+{{>jsonp-github-markup}}
+```
+
+<h4>JavaScript</h4>
+```
+{{>jsonp-github-js}}
+```

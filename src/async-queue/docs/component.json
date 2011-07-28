@@ -9,7 +9,7 @@
 
     "examples": [
         {
-            "name"       : "queue_app",
+            "name"       : "queue-app",
             "displayName": "Building a UI with AsyncQueue",
             "description": "This example employs AsyncQueue to incrementally construct an application interface; this illustrates the approach you'd take to allow chunked rendering of the UI in a process-intensive application.",
             "modules"    : ["async-queue", "transition"],

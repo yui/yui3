@@ -1,0 +1,79 @@
+{{>console-global-css}}
+
+<div class="intro">
+    <p>In this example, three YUI instances are created, each binding a button to call `Y.log(...)`.  Then an additional, separate YUI instance is created that requests only the `console` module and creates a Console that listens for log events from all three.</p>
+</div>
+
+<div class="example">
+    {{>console-global-markup}}
+    {{>console-global-js}}
+</div>
+
+<h3 class="first">Multiple YUI instances</h3>
+<p>Each YUI instance is its own sandbox.  You can create as many YUI instances on a page as you want or need (though typically one is enough).  The variables, module configurations and instances are kept inside that instance unless you expressly expose them via a global variable.</p>
+
+```
+// Create the first YUI instance
+YUI($yuiConfig).use($requiredModules, function (Y) {
+
+    Y.one( "#yui1" ).on( "click", function () {
+        Y.log( "Message from YUI instance #1" );
+    });
+
+});
+
+// Create the second YUI instance
+YUI($yuiConfig).use($requiredModules, function (Y) {
+
+    Y.one( "#yui2" ).on( "click", function () {
+        Y.log( "I'm the second YUI instance" );
+    });
+
+});
+
+// Create a third YUI instance
+YUI($yuiConfig).use($requiredModules, function (Y) {
+
+    Y.one( "#yui3" ).on( "click", function () {
+        Y.log( "And this is #3 YUI" );
+    });
+
+});
+```
+
+<h3>Listening to `Y.Global`</h3>
+<p>To address debugging such an environment, Console can be configured to listen for log messages across all YUI instances by setting the Console instance's `logSource` configuration to `Y.Global`.</p>
+
+<p>We'll insert the universal Console into another YUI instance.</p>
+
+```
+// Create a separate YUI instance to listen to all instances' logging
+YUI($yuiConfig).use("console", function (Y) {
+
+    // Configure the Console's logSource to Y.Global to make it universal
+    new Y.Console({
+        logSource: Y.Global,
+        style: 'block',
+        newestOnTop: false,
+        width: "250px"
+    }).render( "#yconsole" );
+
+});
+```
+
+<h3>Full Code Listing</h3>
+
+<h4>Markup</h4>
+```
+{{>console-global-markup}}
+```
+
+<h4>JavaScript</h4>
+```
+{{>console-global-js}}
+```
+
+<h4>CSS</h4>
+```
+{{>console-global-css}}
+```

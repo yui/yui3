@@ -1,0 +1,63 @@
+<div class="intro">
+    <p>The `event-valuechange` module adds a "valueChange" event that fires
+    when the `value` property of a text input element or textarea changes as
+    the result of a keystroke, mouse operation, or input method editor (IME)
+    input event.</p>
+</div>
+
+<h2>What's the problem?</h2>
+
+<p>The input related events provided by browsers don't cleanly address the
+variety of ways users can modify an &lt;input&gt; or &lt;textarea&gt;'s
+`value`.  For example, users might change an input value by</p>
+
+<ol>
+    <li>typing a simple character</li>
+    <li>typing a multi-stroke character</li>
+    <li>
+        using an <a href="http://en.wikipedia.org/wiki/Input_method">Input
+        Method Editor</a>
+    </li>
+    <li>pasting a new value with `ctrl+V` or `cmd+V`</li>
+    <li>
+        pasting a new value using the paste option from a right-click context
+        menu.
+    </li>
+</ol>
+
+<p>The ideal change event would fire when the value becomes <em>something it
+wasn't a moment ago</em>.</p>
+
+<p>The `valueChange` event provides more reliable input notifications than
+native events like `oninput` and `textInput`, particularly with changes that
+result from multiple-keystroke IME input.</p>
+
+```
+commentTextarea.on('valueChange', updateLivePreview);
+```
+
+<h2>How it works</h2>
+
+<p>`valueChange` subscriptions monitor the input's value using a variety of
+mechanisms including subscriptions to `blur` and various keyboard events, and a
+poll to catch the stragglers.  It seems like a lot of work, but it's the only
+way to be sure.</p>
+
+<p>The polling is only active when the input is focused, so the performance of your app should not be impacted.</p>
+
+<h2>Caveats</h2>
+
+<ol>
+    <li>`valueChange` does not (yet) support delegation</li>
+    <li>
+        `valueChange` only supports subscription on text &lt;input&gt;s and
+        &lt;textarea&gt;s, though no steps are taken to ensure the subscribed
+        node is one of these.  If you subscribe to a different type of node,
+        and stuff breaks, you were warned.
+    </li>
+    <li>
+        `valueChange` does not capture `value` updates done in JavaScript
+        <em>unless the input is currently focused</em>.
+        `node.set('value', 'will probably not trigger valueChange');`
+    </li>
+</ol>

@@ -249,7 +249,7 @@ YUI.add('editor-para', function(Y) {
                         }
                     }
                     if (Y.UA.gecko) {
-                        /**
+                        /*
                         * This forced FF to redraw the content on backspace.
                         * On some occasions FF will leave a cursor residue after content has been deleted.
                         * Dropping in the empty textnode and then removing it causes FF to redraw and
