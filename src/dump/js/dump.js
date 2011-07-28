@@ -16,23 +16,15 @@
         ARROW = ' => ',
 
     /**
-     * The following methods are added to the YUI instance
-     * @class YUI~dump
-     */
-
-    /**
      * Returns a simple string representation of the object or array.
      * Other types of objects will be returned unprocessed.  Arrays
-     * are expected to be indexed.  Use object notation for
-     * associative arrays.
-     *
-     * This method is in the 'dump' module, which is not bundled with
-     * the core YUI object
+     * are expected to be indexed.
      *
      * @method dump
-     * @param {object} o The object to dump.
-     * @param {int} d How deep to recurse child objects, default 3.
-     * @return {string} the dump result.
+     * @param {Object} o The object to dump.
+     * @param {Number} d How deep to recurse child objects, default 3.
+     * @return {String} the dump result.
+     * @for YUI
      */
     dump = function(o, d) {
         var i, len, s = [], type = L.type(o);
