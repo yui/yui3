@@ -1,0 +1,148 @@
+<div class="intro">
+    <p>The `event-base` module includes three special events that can be used to execute code as soon as the DOM, or certain elements in the DOM tree, are ready to be scripted.</p>
+
+    <p>Because all of these events are designed to target elements that aren't present or parsed yet, <strong>you must use `Y.on(...)` to subscribe to them</strong>.  `Y.one('#notHereYet')` will return `null`, and you can't do much with `null`.</p>
+
+    <p>Be sure to read <a href="#caveat">the final note on this page</a> about performance.</p>
+</div>
+
+<h2 id="domready">`domready`</h2>
+
+```
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>domready</title>
+    <script src="...yui-min.js"></script>
+    <script>
+    YUI().use('event-base', function (Y) {
+        var notHereYet = Y.one('#readygo'); // null
+
+        Y.on('domready', function () {
+            Y.one('#readygo').on('click', function () {
+                Y.log('This works fine, before the images are loaded');
+            });
+        });
+    });
+    </script>
+</head>
+<body>
+    ... lots of markup including images and stuff
+    <button id="readygo">Go!</button>
+</body>
+</html>
+```
+
+<p>Modern browsers support an event that signals when the markup has been
+completely parsed and the DOM tree is built.  This event happens before the
+window's `load` event, which fires when all images and other resources have
+been fetched.  For setting up event subscriptions and core page interactivity,
+it's usually enough that all DOM elements are available, regardless of their
+loading state.</p>
+
+<p>The `domready` event abstracts over the patchwork necessary for browsers without a native "domready" event.</p>
+
+<p>Note the subscription signature does not include a target, only the event name and callback.</p>
+
+<h2 id="contentready">`contentready`</h2>
+
+```
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>contentready</title>
+    <script src="...yui-min.js"></script>
+    <script>
+    YUI().use('event-base', function (Y) {
+        var notHereYet = Y.one('#list'); // null
+
+        function addItem() {
+            // children of #todo are in the DOM tree
+            this.one('ul').append('<li>This will be four</li>');
+        }
+
+        Y.on('contentready', addItem, '#todo');
+    });
+    </script>
+</head>
+<body>
+    ... lots of markup including images and stuff
+    <div id="todos">
+        <ul>
+            <li>one</li>
+            <li>two</li>
+            <li>three</li>
+        </ul>
+    </div>
+    ... more markup
+</body>
+</html>
+```
+
+<p>You may want to script some nodes that are in the middle of the page markup inside a specific containing element.  You just need to know that the container and its children have been parsed from markup and added to the DOM tree.  But you don't want to wait for the entire DOM tree to finish.  That's what the `contentready` event is for.</p>
+
+<p>YUI will check the DOM periodically, looking for an element matching the selector passed as the the third argument.  When it finds one and can verify that that element's children are also in the DOM tree, it will execute the callback.</p>
+
+<p>Callbacks will be executed with `this` assigned to the Node matching the selector.</p>
+
+<h2 id="available">`available`</h2>
+
+```
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>available</title>
+    <script src="...yui-min.js"></script>
+    <script>
+    YUI().use('event-hover', function (Y) {
+        var notHereYet = Y.one('#highlight-me'); // null
+
+        function over() {
+            this.addClass("over");
+        }
+        function out() {
+            this.removeClass("over");
+        }
+
+        function addSubscribers() {
+            this.on('hover', over, out);
+        }
+
+        Y.on('available', addSubscribers, '#highlight-me');
+    });
+    </script>
+</head>
+<body>
+    ... lots of markup including images and stuff
+    <div id="highlight-me">
+        ... stuff that doesn't need to be ready
+    </div>
+    ... more markup
+</body>
+</html>
+```
+
+<p>The `available` event is almost identical to <a href="#contentready">`contentready`</a> except it does not wait for children of the matching element to be ready.  If your code only needs to reference the targeted Node, not any of its children, use `available` instead of `contentready`.</p>
+
+<h2 id="caveat">Just put your &lt;script&gt; tags at the bottom</h2>
+
+<p>You might not need to use any of these events, and maybe you shouldn't.</p>
+
+<p>It is always safe to script nodes defined in the markup above the JavaScript that references it.  In practice, if you have the option, it is preferable to move &lt;script&gt; tags below the markup that it needs in place, and often it is best to simply <a href="http://developer.yahoo.com/blogs/ydn/posts/2007/07/high_performanc_5/">move scripts to the bottom of the page</a>.</p>
+
+```
+<div id="stuff-i-need">
+    ...
+</div>
+<script>
+// Scripts below markup can access the DOM elements above
+YUI().use('node', function (Y) {
+    Y.one('#stuff-i-need', function () {
+        Y.log('This will always work');
+    });
+});
+</script>
+```

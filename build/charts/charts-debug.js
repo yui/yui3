@@ -8095,7 +8095,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
                     negativeBaseValues[i] = this._bottomOrigin;
                     positiveBaseValues[i] = this._bottomOrigin;
                 }
-                
+                this._markers.push(null); 
                 continue;
             }
             if(useOrigin)
@@ -8134,12 +8134,19 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
                     positiveBaseValues[i] = top;
                 }
             }
-            left -= w/2;
-            style.width = w;
-            style.height = h;
-            style.x = left;
-            style.y = top;
-            marker = this.getMarker(style, graphOrder, i);
+            if(!isNaN(h) && h > 0)
+            {
+                left -= w/2;
+                style.width = w;
+                style.height = h;
+                style.x = left;
+                style.y = top;
+                marker = this.getMarker(style, graphOrder, i);
+            }
+            else
+            {
+                this._markers.push(null);
+            }
         }
         this._clearMarkerCache();
     },
@@ -8168,6 +8175,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
             markerStyles.height = marker.get("height");
             markerStyles.x = (xcoords[i] - offset);
             markerStyles.y = marker.get("y");
+            markerStyles.id = marker.get("id");
             marker.set(markerStyles);
         }
     },
@@ -8351,6 +8359,7 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
                     positiveBaseValues[i] = this._leftOrigin;
                     negativeBaseValues[i] = this._leftOrigin;
                 }
+                this._markers.push(null);
                 continue;
             }
             if(useOrigin)
@@ -8389,12 +8398,19 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
                     left -= w;
                 }
             }
-            top -= h/2;        
-            style.width = w;
-            style.height = h;
-            style.x = left;
-            style.y = top;
-            marker = this.getMarker(style, graphOrder, i);
+            if(!isNaN(w) && w > 0)
+            {
+                top -= h/2;        
+                style.width = w;
+                style.height = h;
+                style.x = left;
+                style.y = top;
+                marker = this.getMarker(style, graphOrder, i);
+            }
+            else
+            {
+                this._markers.push(null);
+            }
         }
         this._clearMarkerCache();
     },
@@ -8421,6 +8437,7 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
             markerStyles.y = (ycoords[i] - h/2);
             markerStyles.x = marker.get("x");
             markerStyles.width = marker.get("width");
+            markerStyles.id = marker.get("id");
             marker.set(markerStyles);
         }
     },

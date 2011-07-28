@@ -1,0 +1,9 @@
+{
+ "calendarnavigator": {
+            	"requires": [
+                	"plugin",
+                	"classnamemanager"
+            	],
+                "skinnable": true
+			}
+}

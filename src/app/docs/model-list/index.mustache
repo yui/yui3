@@ -88,7 +88,7 @@ var pies = new Y.PieList();
 <h4>Adding Models</h4>
 
 <p>
-Use the <a href="{{apiDocs}}/classes/ModelList.html#method_add">`add()`</a>, <a href="{{apiDocs}}/classes/ModelList.html#method_create">`create()`</a>, and <a href="{{apiDocs}}/classes/ModelList.html#method_refresh">`refresh()`</a> methods to put models into a list.
+Use the <a href="{{apiDocs}}/classes/ModelList.html#method_add">`add()`</a>, <a href="{{apiDocs}}/classes/ModelList.html#method_create">`create()`</a>, and <a href="{{apiDocs}}/classes/ModelList.html#method_reset">`reset()`</a> methods to put models into a list.
 </p>
 
 <p>
@@ -140,15 +140,24 @@ pies.create({type: 'watermelon chiffon'}, function (err) {
 ```
 
 <p>
-The `refresh()` method removes any models that are already in the list and then adds the models you specify. Instead of generating many `add` and `remove` events, the `refresh()` method only generates a single `refresh` event. Use `refresh()` when you need to repopulate the entire list efficiently.
+The `reset()` method removes any models that are already in the list and then adds the models you specify. Instead of generating many `add` and `remove` events, the `reset()` method only generates a single `reset` event. Use `reset()` when you need to repopulate the entire list efficiently.
 </p>
 
 ```
 // Remove all existing models from the list and add new ones.
-pies.refresh([
+pies.reset([
   {type: 'lemon meringue'},
   {type: 'banana cream'}
 ]);
+```
+
+<p>
+You can also call `reset()` with no arguments to quickly empty the list.
+</p>
+
+```
+// Empty the list.
+pies.reset();
 ```
 
 <p>
@@ -289,24 +298,6 @@ Model List instances provide the following events:
     </tr>
 
     <tr>
-      <td>`refresh`</td>
-      <td>The list is completely refreshed or sorted.</td>
-      <td>
-        <dl>
-          <dt>`models` (<em>Array</em>)</dt>
-          <dd>
-            Array of the list's new models after the refresh.
-          </dd>
-
-          <dt>`src` (<em>String</em>)</dt>
-          <dd>
-            Source of the event. May be either "refresh" or "sort".
-          </dd>
-        </dl>
-      </td>
-    </tr>
-
-    <tr>
       <td>`remove`</td>
       <td>A model is removed from the list.</td>
       <td>
@@ -319,6 +310,24 @@ Model List instances provide the following events:
           <dt>`index` (<em>Number</em>)</dt>
           <dd>
             The index of the model being removed.
+          </dd>
+        </dl>
+      </td>
+    </tr>
+
+    <tr>
+      <td>`reset`</td>
+      <td>The list is completely reset or sorted.</td>
+      <td>
+        <dl>
+          <dt>`models` (<em>Array</em>)</dt>
+          <dd>
+            Array of the list's new models after the reset.
+          </dd>
+
+          <dt>`src` (<em>String</em>)</dt>
+          <dd>
+            Source of the event. May be either "reset" or "sort".
           </dd>
         </dl>
       </td>

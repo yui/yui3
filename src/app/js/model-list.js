@@ -8,7 +8,7 @@ Provides an API for managing an ordered list of Model instances.
 /**
 Provides an API for managing an ordered list of Model instances.
 
-In addition to providing convenient `add`, `create`, `refresh`, and `remove`
+In addition to providing convenient `add`, `create`, `reset`, and `remove`
 methods for managing the models in the list, ModelLists are also bubble targets
 for events on the model instances they contain. This means, for example, that
 you can add several models to a list, and then subscribe to the `*:change` event
@@ -69,23 +69,23 @@ var AttrProto = Y.Attribute.prototype,
     EVT_ERROR = 'error';
 
     /**
-    Fired when the list is completely refreshed via the `refresh()` method or
-    sorted via the `sort()` method.
+    Fired when the list is completely reset via the `reset()` method or sorted
+    via the `sort()` method.
 
     Listen to the `on` phase of this event to be notified before the list is
-    refreshed. Calling `e.preventDefault()` during the `on` phase will prevent
-    the list from being refreshed.
+    reset. Calling `e.preventDefault()` during the `on` phase will prevent
+    the list from being reset.
 
     Listen to the `after` phase of this event to be notified after the list has
-    been refreshed.
+    been reset.
 
-    @event refresh
-    @param {Model[]} models Array of the list's new models after the refresh.
-    @param {String} src Source of the event. May be either `'refresh'` or
+    @event reset
+    @param {Model[]} models Array of the list's new models after the reset.
+    @param {String} src Source of the event. May be either `'reset'` or
       `'sort'`.
-    @preventable _defRefreshFn
+    @preventable _defResetFn
     **/
-    EVT_REFRESH = 'refresh',
+    EVT_RESET = 'reset',
 
     /**
     Fired when a model is removed from the list.
@@ -117,7 +117,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     This property is `null` by default, and is intended to be overridden in a
     subclass or specified as a config property at instantiation time. It will be
     used to create model instances automatically based on attribute hashes
-    passed to the `add()`, `create()`, and `refresh()` methods.
+    passed to the `add()`, `create()`, and `reset()` methods.
 
     @property model
     @type Model
@@ -131,9 +131,9 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
         var model = this.model = config.model || this.model;
 
-        this.publish(EVT_ADD,     {defaultFn: this._defAddFn});
-        this.publish(EVT_REFRESH, {defaultFn: this._defRefreshFn});
-        this.publish(EVT_REMOVE,  {defaultFn: this._defRemoveFn});
+        this.publish(EVT_ADD,    {defaultFn: this._defAddFn});
+        this.publish(EVT_RESET,  {defaultFn: this._defResetFn});
+        this.publish(EVT_REMOVE, {defaultFn: this._defRemoveFn});
 
         if (model) {
             this.after('*:idChange', this._afterIdChange);
@@ -372,11 +372,11 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     operation, which is an asynchronous action. Specify a _callback_ function to
     be notified of success or failure.
 
-    If the load operation succeeds, a `refresh` event will be fired.
+    If the load operation succeeds, a `reset` event will be fired.
 
     @method load
     @param {Object} [options] Options to be passed to `sync()` and to
-      `refresh()` when adding the loaded models. It's up to the custom sync
+      `reset()` when adding the loaded models. It's up to the custom sync
       implementation to determine what options it supports or requires, if any.
     @param {callback} [callback] Called when the sync operation finishes.
       @param {Error} callback.err If an error occurred, this parameter will
@@ -398,7 +398,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
         this.sync('read', options, function (err, response) {
             if (!err) {
-                self.refresh(self.parse(response), options);
+                self.reset(self.parse(response), options);
             }
 
             callback && callback.apply(null, arguments);
@@ -460,45 +460,6 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     },
 
     /**
-    Completely replaces all models in the list with those specified, and fires a
-    single `refresh` event.
-
-    Use `refresh` when you want to add or remove a large number of items at once
-    without firing `add` or `remove` events for each one.
-
-    @method refresh
-    @param {Model[]|Object[]} models Models to add. May be existing model
-      instances or hashes of model attributes, in which case new model instances
-      will be created from the hashes.
-    @param {Object} [options] Data to be mixed into the event facade of the
-        `refresh` event.
-      @param {Boolean} [options.silent=false] If `true`, no `refresh` event will
-          be fired.
-    @chainable
-    **/
-    refresh: function (models, options) {
-        options || (options = {});
-
-        var facade = Y.merge(options, {
-                src   : 'refresh',
-                models: YArray.map(models, function (model) {
-                    return model instanceof Y.Model ? model :
-                            new this.model(model);
-                }, this)
-            });
-
-        // Sort the models in the facade before firing the refresh event.
-        if (this.comparator) {
-            facade.models.sort(Y.bind(this._sort, this));
-        }
-
-        options.silent ? this._defRefreshFn(facade) :
-                this.fire(EVT_REFRESH, facade);
-
-        return this;
-    },
-
-    /**
     Removes the specified model or array of models from this list.
 
     @method remove
@@ -520,6 +481,47 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     },
 
     /**
+    Completely replaces all models in the list with those specified, and fires a
+    single `reset` event.
+
+    Use `reset` when you want to add or remove a large number of items at once
+    without firing `add` or `remove` events for each one.
+
+    @method reset
+    @param {Model[]|Object[]} [models] Models to add. May be existing model
+      instances or hashes of model attributes, in which case new model instances
+      will be created from the hashes. Calling `reset()` without passing in any
+      models will clear the list.
+    @param {Object} [options] Data to be mixed into the event facade of the
+        `reset` event.
+      @param {Boolean} [options.silent=false] If `true`, no `reset` event will
+          be fired.
+    @chainable
+    **/
+    reset: function (models, options) {
+        models  || (models  = []);
+        options || (options = {});
+
+        var facade = Y.merge(options, {
+                src   : 'reset',
+                models: YArray.map(models, function (model) {
+                    return model instanceof Y.Model ? model :
+                            new this.model(model);
+                }, this)
+            });
+
+        // Sort the models in the facade before firing the reset event.
+        if (this.comparator) {
+            facade.models.sort(Y.bind(this._sort, this));
+        }
+
+        options.silent ? this._defResetFn(facade) :
+            this.fire(EVT_RESET, facade);
+
+        return this;
+    },
+
+    /**
     Forcibly re-sorts the list.
 
     Usually it shouldn't be necessary to call this method since the list
@@ -529,8 +531,8 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
     @method sort
     @param {Object} [options] Data to be mixed into the event facade of the
-        `refresh` event.
-      @param {Boolean} [options.silent=false] If `true`, no `refresh` event will
+        `reset` event.
+      @param {Boolean} [options.silent=false] If `true`, no `reset` event will
           be fired.
     @chainable
     **/
@@ -551,8 +553,8 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
             src   : 'sort'
         });
 
-        options.silent ? this._defRefreshFn(facade) :
-                this.fire(EVT_REFRESH, facade);
+        options.silent ? this._defResetFn(facade) :
+                this.fire(EVT_RESET, facade);
 
         return this;
     },
@@ -836,28 +838,6 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     },
 
     /**
-    Default event handler for `refresh` events.
-
-    @method _defRefreshFn
-    @param {EventFacade} e
-    @protected
-    **/
-    _defRefreshFn: function (e) {
-        // When fired from the `sort` method, we don't need to clear the list or
-        // add any models, since the existing models are sorted in place.
-        if (e.src === 'sort') {
-            this._items = e.models.concat();
-            return;
-        }
-
-        this._clear();
-
-        if (e.models.length) {
-            this.add(e.models, {silent: true});
-        }
-    },
-
-    /**
     Default event handler for `remove` events.
 
     @method _defRemoveFn
@@ -876,6 +856,28 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         }
 
         this._items.splice(e.index, 1);
+    },
+
+    /**
+    Default event handler for `reset` events.
+
+    @method _defResetFn
+    @param {EventFacade} e
+    @protected
+    **/
+    _defResetFn: function (e) {
+        // When fired from the `sort` method, we don't need to clear the list or
+        // add any models, since the existing models are sorted in place.
+        if (e.src === 'sort') {
+            this._items = e.models.concat();
+            return;
+        }
+
+        this._clear();
+
+        if (e.models.length) {
+            this.add(e.models, {silent: true});
+        }
     }
 }, {
     NAME: 'modelList'

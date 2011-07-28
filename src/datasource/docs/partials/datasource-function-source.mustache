@@ -1,0 +1,147 @@
+<form id="demo">
+    <h4>Array</h4>
+    <h6>Data</h6>
+    <pre>
+[
+    {name:"abc",id:123},
+    {name:"def",id:456},
+    {name:"ghi",id:789}
+]
+    </pre>
+
+    <h6>Schema</h6>
+    <pre>
+{
+    resultFields: ["name","id"]
+}
+    </pre>
+
+    <h6>Normalized data</h6>
+    <input type="button" id="demo_array" value="Retrieve data">
+    <div id="demo_output_array" class="output"></div>
+
+    <h4>JSON</h4>
+    <h6>Data</h6>
+    <pre>
+{
+    "profile":{
+        "current":160,
+        "target":150
+    },
+    "reference": [
+        {
+            "category":"exercise",
+            "type":"expenditure",
+            "activities":[
+                {"name":"biking", "calories":550},
+                {"name":"golf", "calories":1000},
+                {"name":"running", "calories":650},
+                {"name":"swimming", "calories":650},
+                {"name":"walking", "calories":225}
+            ]
+        },
+        {
+            "category":"nutrition",
+            "type":"intake",
+            "fruit":[
+                {"name":"apple", "calories":70},
+                {"name":"banana", "calories":70},
+                {"name":"orange", "calories":90},
+            ],
+            "vegetables":[
+                {"name":"baked potato", "calories":150},
+                {"name":"broccoli", "calories":50},
+                {"name":"green beans", "calories":30}
+            ]
+        }
+    ],
+    "program": [
+        {
+            "category":"exercise",
+            "schedule":[
+                {"day":"sunday", "activity":"swimming"},
+                {"day":"monday", "activity":"running"},
+                {"day":"tuesday", "activity":"biking"},
+                {"day":"wednesday", "activity":"running"},
+                {"day":"thursday", "activity":"swimming"},
+                {"day":"friday", "activity":"running"},
+                {"day":"saturday", "activity":"golf"}
+            ]
+        },
+        {
+            "category":"diet",
+            "schedule":[
+            ]
+        }
+    ]
+}
+    </pre>
+
+    <h6>Schema</h6>
+    <pre>
+{
+    resultListLocator: "reference[1].fruit",
+    resultFields: ["name","calories"]
+}
+    </pre>
+
+    <h6>Normalized data</h6>
+    <input type="button" id="demo_json" value="Retrieve data">
+    <div id="demo_output_json" class="output"></div>
+</form>
+
+<script type="text/javascript">
+YUI().use("dump", "node", "datasource-function", "datasource-arrayschema", "datasource-jsonschema", function (Y) {
+    var myFunctionArray = function(request) {
+        return [
+            {name:"abc",id:123},
+            {name:"def",id:456},
+            {name:"ghi",id:789}
+        ];
+    },
+    myDataSourceArray = new Y.DataSource.Function({source:myFunctionArray}),
+    myCallbackArray = {
+        success: function(e){
+            Y.one("#demo_output_array").setContent(Y.dump(e.response));
+        },
+        failure: function(e){
+            Y.one("#demo_output_array").setContent("Could not retrieve data: " + e.error.message);
+        }
+    };
+
+    myDataSourceArray.plug(Y.Plugin.DataSourceArraySchema, {
+        schema: {
+            resultFields: ["name","id"]
+        }
+    });
+
+    Y.on("click", function(e){
+        myDataSourceArray.sendRequest({callback: myCallbackArray});
+    }, "#demo_array");
+
+    var myFunctionJSON = function(request) {
+            return {"profile":{"current":160,"target":150},"reference": [{"category":"exercise","type":"expenditure","activities":[{"name":"biking", "calories":550},{"name":"golf", "calories":1000},{"name":"running", "calories":650},{"name":"swimming", "calories":650},{"name":"walking", "calories":225}]},{"category":"nutrition","type":"intake","fruit":[{"name":"apple", "calories":70},{"name":"banana", "calories":70},{"name":"orange", "calories":90},],"vegetables":[{"name":"baked potato", "calories":150},{"name":"broccoli", "calories":50},{"name":"green beans", "calories":30}]}],"program": [{"category":"exercise","schedule":[{"day":"sunday", "activity":"swimming"},{"day":"monday", "activity":"running"},{"day":"tuesday", "activity":"biking"},{"day":"wednesday", "activity":"running"},{"day":"thursday", "activity":"swimming"},{"day":"friday", "activity":"running"},{"day":"saturday", "activity":"golf"}]},{"category":"diet","schedule":[]}]};
+        },
+        myDataSourceJSON = new Y.DataSource.Function({source:myFunctionJSON}),
+        myCallbackJSON = {
+            success: function(e){
+                Y.one("#demo_output_json").setContent(Y.dump(e.response));
+            },
+            failure: function(e){
+                Y.one("#demo_output_json").setContent("Could not retrieve data: " + e.error.message);
+            }
+        };
+
+    myDataSourceJSON.plug(Y.Plugin.DataSourceJSONSchema, {
+        schema: {
+            resultListLocator: "reference[1].fruit",
+            resultFields: ["name","calories"]
+        }
+    });
+
+    Y.on("click", function(e){
+        myDataSourceJSON.sendRequest({callback:myCallbackJSON});
+    }, "#demo_json");
+});
+
+</script>

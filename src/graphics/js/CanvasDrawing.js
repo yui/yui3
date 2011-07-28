@@ -128,15 +128,6 @@ CanvasDrawing.prototype = {
         node.style.left = (x + this._left) + "px";
         node.style.top = (y + this._top) + "px";
     },
-
-    /**
-     * Holds queue of properties for the target canvas.
-     *
-     * @property _properties
-     * @type Object
-     * @private
-     */
-    _properties: null,
     
     /**
      * Queues up a method to be executed when a shape redraws.

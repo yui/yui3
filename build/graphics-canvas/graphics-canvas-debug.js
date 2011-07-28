@@ -130,15 +130,6 @@ CanvasDrawing.prototype = {
         node.style.left = (x + this._left) + "px";
         node.style.top = (y + this._top) + "px";
     },
-
-    /**
-     * Holds queue of properties for the target canvas.
-     *
-     * @property _properties
-     * @type Object
-     * @private
-     */
-    _properties: null,
     
     /**
      * Queues up a method to be executed when a shape redraws.
@@ -1164,22 +1155,6 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	{
 		this._addTransform("scale", arguments);
 	},
-
-	/**
-	 * Applies a matrix transformation
-	 *
-	 * @method matrix
-     * @param {Number} a
-     * @param {Number} b
-     * @param {Number} c
-     * @param {Number} d
-     * @param {Number} dx
-     * @param {Number} dy
-	 */
-	matrix: function(a, b, c, d, dx, dy)
-	{
-		this._addTransform("matrix", arguments);
-	},
 	
     /**
      * Storage for `rotation` atribute.
@@ -1189,6 +1164,15 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 * @private
 	 */
 	_rotation: 0,
+    
+    /**
+     * Storage for the transform attribute.
+     *
+     * @property _transform
+     * @type String
+     * @private
+     */
+    _transform: "",
 
     /**
      * Adds a transform to the shape.
@@ -1201,9 +1185,10 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	_addTransform: function(type, args)
 	{
         args = Y.Array(args);
+        this._transform = Y_LANG.trim(this._transform + " " + type + "(" + args.join(", ") + ")");
         args.unshift(type);
         this._transforms.push(args);
-		if(this.initialized)
+        if(this.initialized)
         {
             this._updateTransform();
         }
@@ -1596,23 +1581,32 @@ CanvasShape.ATTRS =  {
 			return [0.5, 0.5];
 		}
 	},
-
-	/**
-	 * The rotation (in degrees) of the shape.
+	
+    /**
+	 * A css transform string.
 	 *
-	 * @config rotation
-	 * @type Number
+	 * @config transform
+     * @type String  
+     * 
+     * @writeOnly
 	 */
-	rotation: {
+	transform: {
 		setter: function(val)
 		{
-			this.rotate(val);
+            this.matrix.init();	
+		    this._transforms = this.matrix.getTransformArray(val);
+            this._transform = val;
+            if(this.initialized)
+            {
+                this._updateTransform();
+            }
+            return val;
 		},
 
-		getter: function()
-		{
-			return this._rotation;
-		}
+        getter: function()
+        {
+            return this._transform;
+        }
 	},
 
 	/**

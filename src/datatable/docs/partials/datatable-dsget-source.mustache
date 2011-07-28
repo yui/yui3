@@ -1,0 +1,18 @@
+<div id="pizza" class="yui3-skin-sam dt-example"></div>
+
+<script type="text/javascript">
+YUI().use("datasource-get", "datasource-jsonschema","datatable-base","datatable-datasource", function (Y) {
+    var cols = ["Title", "Phone", {key:"Rating.AverageRating", label:"Rating"}];
+    ds = new Y.DataSource.Get({
+        source:"http://query.yahooapis.com/v1/public/yql?format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys"})
+        .plug(Y.Plugin.DataSourceJSONSchema, {
+        schema: {
+            resultListLocator: "query.results.Result",
+            resultFields: ["Title", "Phone", "Rating.AverageRating"]
+        }
+    }),
+    dt = new Y.DataTable.Base({columnset:cols, summary:"Pizza places near 98089", caption:"Table with JSON data from YQL"}).plug(Y.Plugin.DataTableDataSource, {datasource:ds});
+    dt.render("#pizza");
+    dt.datasource.load({request:"&q=select%20*%20from%20local.search%20where%20zip%3D%2794089%27%20and%20query%3D%27pizza%27"});
+});
+</script>

@@ -1,0 +1,39 @@
+<style scoped>
+/* custom styles for this example */
+#demo .output {margin-bottom:1em; padding:10px; border:1px solid #D9D9D9;}
+</style>
+
+<div class="intro">
+    <p>DataSource.Get uses the Get Utility to retrieve data, even cross-domain resources, via a dynamically created script node. A <a href="../dataschema/">DataSchema</a> plugin is used to normalize incoming data into a known format for consistency of usage by other components. Please note that your data resource must support a callback mechanism, which is a function wrapper around the returned data. The name of the callback function is passed to the resource via a query string parameter defined by the DataSource.Get attribute `scriptCallbackParam`.</p>
+</div>
+
+<div class="example">
+    {{>datasource-get-source}}
+</div>
+
+<p>Use a DataSourceJSONSchema plugin to parse the data against a schema that you provide:</p>
+
+```
+YUI().use("datasource-get", "datasource-jsonschema", function(Y) {
+    var myDataSource = new Y.DataSource.Get({
+            source: "http://query.yahooapis.com/v1/public/yql?format=json&"
+        });
+
+    myDataSource.plug(Y.Plugin.DataSourceJSONSchema, {
+        schema: {
+            resultListLocator: "query.results.result",
+            resultFields: ["title"]
+        }
+    });
+
+    myDataSource.sendRequest({
+        request: "q=select%20*%20from%20upcoming.events.bestinplace...",
+        callback: {
+            success: function (e) { /* output to screen */ },
+            failure: function (e) { /* output to screen */ }
+        }
+    });
+
+});
+```
+

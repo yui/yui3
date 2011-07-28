@@ -321,7 +321,6 @@ VMLShape = function()
     this._transforms = [];
     this.matrix = new Y.Matrix();
     this.rotationMatrix = new Y.Matrix();
-    this.scaleMatrix = new Y.Matrix();
     VMLShape.superclass.constructor.apply(this, arguments);
 };
 
@@ -937,9 +936,10 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 	_addTransform: function(type, args)
 	{
         args = Y.Array(args);
+        this._transform = Y_LANG.trim(this._transform + " " + type + "(" + args.join(", ") + ")");
         args.unshift(type);
         this._transforms.push(args);
-		if(this.initialized)
+        if(this.initialized)
         {
             this._updateTransform();
         }
@@ -951,10 +951,7 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 	_updateTransform: function()
 	{
 		var node = this.node,
-			coordSize,
             key,
-			args,
-			val,
 			transform,
 			transformOrigin,
             x = this.get("x"),
@@ -976,7 +973,6 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
             keys = [],
             matrix = this.matrix,
             rotationMatrix = this.rotationMatrix,
-            scaleMatrix = this.scaleMatrix,
             i = 0,
             len = this._transforms.length;
 
@@ -1031,6 +1027,7 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
         dx = matrix.dx;
         dy = matrix.dy;
         this._graphic.addToRedrawQueue(this);    
+        //only apply the filter if necessary as it degrades image quality
         if(Y.Array.indexOf(keys, "skew") > -1 || Y.Array.indexOf(keys, "scale") > -1)
 		{
             node.style.filter = transform;
@@ -1061,7 +1058,17 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 	 * @private
 	 */
 	_translateY: 0,
-	/**
+    
+    /**
+     * Storage for the transform attribute.
+     *
+     * @property _transform
+     * @type String
+     * @private
+     */
+    _transform: "",
+	
+    /**
 	 * Applies translate transformation.
 	 *
 	 * @method translate
@@ -1166,22 +1173,6 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 	scale: function(x, y)
 	{
 		this._addTransform("scale", arguments);
-	},
-
-	/**
-	 * Applies a matrix transformation
-	 *
-	 * @method matrix
-     * @param {Number} a
-     * @param {Number} b
-     * @param {Number} c
-     * @param {Number} d
-     * @param {Number} dx
-     * @param {Number} dy
-	 */
-	matrix: function(a, b, c, d, dx, dy)
-	{
-		this._addTransform("matrix", arguments);
 	},
 
 	/**
@@ -1292,8 +1283,7 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 	 */
 	getBounds: function(cfg)
 	{
-	    var type = this._type,
-            wt,
+	    var wt,
             bounds = {},
             matrix = cfg || this.matrix,
             a = matrix.a,
@@ -1302,7 +1292,6 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
             d = matrix.d,
             dx = matrix.dx,
             dy = matrix.dy,
-            transformOrigin = this.get("transformOrigin"),
             w = this.get("width"),
             h = this.get("height"),
             left = this.get("x"), 
@@ -1380,6 +1369,33 @@ VMLShape.ATTRS = {
 		{
 			return [0.5, 0.5];
 		}
+	},
+	
+    /**
+	 * A css transform string.
+	 *
+	 * @config transform
+     * @type String  
+     * 
+     * @writeOnly
+	 */
+	transform: {
+		setter: function(val)
+		{
+            this.matrix.init();	
+		    this._transforms = this.matrix.getTransformArray(val);
+            this._transform = val;
+            if(this.initialized)
+            {
+                this._updateTransform();
+            }
+            return val;
+		},
+
+        getter: function()
+        {
+            return this._transform;
+        }
 	},
 
 	/**
