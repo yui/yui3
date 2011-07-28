@@ -10,7 +10,7 @@
     "examples": [
 
         {
-            "name": "console-filters_intro",
+            "name": "console-filters-intro",
 	        "displayName": "Using the ConsoleFilters Plugin",
 	        "description": "Adding the ConsoleFilters plugin to a Console instance for more granular run time log message filtering",
 	        "modules": ["console-filters","console"],

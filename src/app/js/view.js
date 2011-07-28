@@ -53,7 +53,7 @@ Y.View = Y.extend(View, Y.Base, {
 
     @property container
     @type HTMLElement|Node|String
-    @default `"<div/>"`
+    @default "<div/>"
     **/
     container: '<div/>',
 
@@ -94,7 +94,7 @@ Y.View = Y.extend(View, Y.Base, {
 
     @property events
     @type Object
-    @default `{}`
+    @default {}
     **/
     events: {},
 
@@ -137,7 +137,7 @@ Y.View = Y.extend(View, Y.Base, {
 
     @property template
     @type any
-    @default `''`
+    @default ''
     **/
     template: '',
 

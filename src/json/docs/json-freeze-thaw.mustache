@@ -1,0 +1,156 @@
+{{>json-freeze-thaw-css}}
+
+<div class="intro">
+    <p>This example illustrates one method of serializing and recreating class instances by using the `replacer` and `reviver` parameters to `JSON.stringify` and `JSON.parse` respectively.</p>
+</div>
+
+<div class="example">
+{{>json-freeze-thaw-markup}}
+{{>json-freeze-thaw-js}}
+</div>
+
+<h3>The CaveMan class</h3>
+<p>For this example, we'll use a class CaveMan, with a property `discovered` that holds a `Date` instance, and a method `getName`.</p>
+
+```
+YUI().use("node", "json", function(Y) {
+
+function CaveMan(name,discovered) {
+    this.name       = name;
+    this.discovered = discovered;
+};
+CaveMan.prototype.getName = function () {
+    return this.name + ", the cave man";
+}
+
+...
+```
+
+<h3>Add `freeze` and `thaw` static methods</h3>
+<p>We'll add the methods responsible for serializing and reconstituting instances to the CaveMan class as static methods.</p>
+
+```
+// Static method to convert to a basic structure with a class identifier
+CaveMan.freeze = function (cm) {
+    return {
+        _class : 'CaveMan',
+        n : cm.name,
+        d : cm.discovered // remains a Date for standard JSON serialization
+    };
+};
+
+// Static method to reconstitute a CaveMan from the basic structure
+CaveMan.thaw = function (o) {
+    return new CaveMan(o.n, o.d);
+};
+```
+
+<h3>Reference the methods in replacer and reviver functions</h3>
+<p>We'll create an `example` namespace to hold our moving parts.  In it, we'll add a method to pass to `JSON.stringify` that calls our custom serializer, and another method to pass to `JSON.parse` that detects the serialized structure and calls our thawing method.</p>
+
+```
+var example = {
+    cryo : function (k,o) {
+        return (o instanceof CaveMan) ? CaveMan.freeze(o) : o;
+    },
+
+    revive : function (k,v) {
+        // Check for cavemen by the _class key
+        if (v instanceof Object && v._class == 'CaveMan') {
+            return CaveMan.thaw(v);
+        }
+        // default to returning the value unaltered
+        return v;
+    }
+};
+```
+
+<h3>The data to be serialized</h3>
+<p>We'll create a CaveMan instance and nest it in another object structure to illustrate how the thawing process still operates normally for all other data.</p>
+```
+example.data = {
+    count : 1,
+    type  : 'Hominid',
+    specimen : [
+        new CaveMan('Ed',new Date(1946,6,6))
+    ]
+};
+```
+
+<h3>Thawing from the inside out and the `Date` instance</h3>
+<p>The reviver function passed to `JSON.parse` is applied to all key:value pairs in the raw parsed object from the deepest keys to the highest level.  In our case, this means that the `name` and `discovered` properties will be passed through the reviver, and <em>then</em> the object containing those keys will be passed through.</p>
+<p>We'll take advantage of this by watching for UTC formatted date strings (the default JSON serialization for Dates) and reviving them into proper `Date` instances before the containing object gets its turn in the reviver.</p>
+
+```
+var example = {
+    dateRE : /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d+)?Z$/,
+
+    cryo : function (k,o) {
+        return (o instanceof CaveMan) ? CaveMan.freeze(o) : o;
+    },
+    revive : function (k,v) {
+        // Turn anything that looks like a UTC date string into a Date instance
+        var match = Y.Lang.isString(v) ? v.match(example.dateRE) : null,
+            d;
+
+        if (match) {
+            d = new Date();
+            d.setUTCFullYear(match[1], (match[2] - 1), match[3]);
+            d.setUTCHours(match[4], match[5], match[6]);
+            return d;
+        }
+        // Check for cavemen by the _class key
+        if (v instanceof Object && v._class == 'CaveMan') {
+            return CaveMan.thaw(v);
+        }
+        // default to returning the value unaltered
+        return v;
+    }
+};
+```
+
+<p>Now when the reviver function is evaluating the object it determines to be a CaveMan, the `discovered` property is correctly containing a `Date` instance.</p>
+
+<h3>Choose your serialization</h3>
+<p>You'll note there are two freeze and thaw operations going on in this example.  One for our CaveMan class and one for `Date` instances.  Their respective serialization and recreation techniques are very different.  You are free to decide the serialized format of your objects.  Choose whatever makes sense for your application.</p>
+<p><em>Note</em>: There is no explicit `Date` serialization method listed inline because `JSON` natively supports `Date` serialization.   However, it is outside the scope of the parser's duty to create Date instances, so it's up to you to recreate them in the `parse` phase.  Feel free to use the method included here.</p>
+
+<h3>Show and Tell</h3>
+<p>Now we add the event handlers to the example buttons to call `JSON.stringify` and `parse` with our `example.cryo` and `example.revive` methods, respectively.</p>
+
+```
+Y.one('#demo_freeze').on('click',function (e) {
+    example.jsonString = Y.JSON.stringify(example.data, example.cryo);
+
+    Y.one('#demo_frozen').set('innerHTML', example.jsonString);
+    Y.one('#demo_thaw').set('disabled',false);
+});
+
+Y.one('#demo_thaw').on('click',function (e) {
+    var x  = Y.JSON.parse(example.jsonString, example.revive);
+        cm = x.specimen[0];
+
+    Y.one('#demo_thawed').set('innerHTML',
+        "<p>Specimen count: " + x.count + "</p>"+
+        "<p>Specimen type: " + x.type + "</p>"+
+        "<p>Instanceof CaveMan: " + (cm instanceof CaveMan) + "</p>"+
+        "<p>Name: " + cm.getName() + "</p>"+
+        "<p>Discovered: " + cm.discovered + "</p>");
+});
+
+}); // end of YUI(..).use(.., function (Y) {
+```
+
+<h3>Full Code Listing</h3>
+
+```
+{{>json-freeze-thaw-css}}
+```
+
+```
+{{>json-freeze-thaw-markup}}
+```
+
+```
+{{>json-freeze-thaw-js}}
+```

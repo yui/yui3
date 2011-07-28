@@ -1980,7 +1980,8 @@ L.sub = function(s, o) {
  * Returns the current time in milliseconds.
  *
  * @method now
- * @return {int} Current time in milliseconds.
+ * @return {Number} Current time in milliseconds.
+ * @static
  * @since 3.3.0
  */
 L.now = Date.now || function () {
