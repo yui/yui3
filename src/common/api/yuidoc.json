@@ -8,7 +8,7 @@
         "attributesEmit": "true",
         "selleck": "true",
         "ignorePaths": [ "simpleyui" ],
-        "paths": "./*/js",
+        "paths": "*/js",
         "outdir": "../api-js"
     }
 }
