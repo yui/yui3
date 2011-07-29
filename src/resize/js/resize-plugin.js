@@ -2,8 +2,23 @@
  * The Resize Plugin allows you to make a Node or a Widget resizable. It supports all the functionality of
  * the standalone Resize utility. Additionally, resizing a widget updates the widget's height,width and x,y
  * attributes, if they exist.
+
+
+        var overlay = new Y.Overlay({
+           width: "200px",
+           srcNode: "#overlay",
+           visible: false,
+           align: {node:".example", points:["tc", "bc"]}
+        });
+        overlay.plug(Y.Plugin.Resize);
+    
+
  *
- * @module resize-plugin
+ * @module resize
+ * @submodule resize-plugin
+ * @extends Resize
+ * @class Plugin.Resize
+ * @constructor
  */
 var ResizePlugin = function(config) {
 

@@ -40,6 +40,17 @@ var Lang = Y.Lang,
 	VIEW = 'view',
 	VIEWPORT_REGION = 'viewportRegion';
 
+/**
+A Resize plugin that will attempt to constrain the resize node to the boundaries.
+@module resize
+@submodule resize-contrain
+@class ResizeConstrained
+@param config {Object} Object literal specifying widget configuration properties.
+@constructor
+@extends Plugin.Base
+@namespace Plugin
+*/
+
 function ResizeConstrained() {
 	ResizeConstrained.superclass.constructor.apply(this, arguments);
 }
@@ -57,7 +68,7 @@ Y.mix(ResizeConstrained, {
         * '{Region Object}': An Object Literal containing a valid region (top, right, bottom, left) of page positions
         *
         * @attribute constrain
-        * @type {String/Object/Node}
+        * @type {String|Object|Node}
         */
 		constrain: {
 			setter: function(v) {
