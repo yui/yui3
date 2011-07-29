@@ -1,0 +1,221 @@
+				<div class="intro">
+                	
+					<p>The foundational CSS Grids provides a simple system for layout out content.  The basic components are "grids" and "units".  A "grid" (<code>yui3-g</code>) contains one or more "units" (<code>yui3-u</code>).  The type of "unit" chosen describes how it should be sized (e.g. "yui3-u-1-2" takes up half the grid, "yui3-u-1-3" takes up one-third, et cetera). The only constrains for YUI3 Grids are that all "units" are children of a "grid". All you need to do is define a grid, one or more units inside it, and specify widths for them. Then stack and nest as required.</p>
+                </div>
+
+					<h2 id="start">Getting Started</h2>
+
+					<p>We use and recommend the 4.01 Strict !DOCTYPE to trigger Standards Mode in browsers that have multiple rendering modes:</p>
+
+```
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+```
+
+					<h3 id="dependencies">Include Dependencies</h3>
+
+					<p>To use CSS Grids, include the following source file in your web page with the link element.</p>
+
+```
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/{{yuiVersion}}/build/cssgrids/grids-min.css">
+```
+
+						<h2 id="using">Using YUI CSS Grids</h2>
+
+                        <h3>Unit Sizes</h3>
+                        <p>All of the sizing for YUI Grids is done using "units".  Units can be subdivided up to 1/24 of the available width.  The following table gives the various unit classes that can be applied.</p>
+                        <table class="auto">
+                            <thead>
+                                <tr>
+                                    <th>Class</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>.yui3-u</code></td>
+                                    <td>Shrinks to fit unless a width is applied.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>.yui3-u-1</code></td>
+                                    <td>Fills 100% of the available width.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>.yui3-u-1-2</code></td>
+                                    <td>Fills 1/2 of available width.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>.yui3-u-1-3</code></td>
+                                    <td>Fills 1/3 of available width.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>.yui3-u-2-3</code></td>
+                                    <td>Fills 2/3 of available width.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>.yui3-u-1-4</code></td>
+                                    <td>Fills 1/4 of available width.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>.yui3-u-3-4</code></td>
+                                    <td>Fills 3/4 of available width.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>.yui3-u-1-5</code></td>
+                                    <td>Fills 1/5 of available width.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>.yui3-u-2-5</code></td>
+                                    <td>Fills 2/5 of available width.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>.yui3-u-3-5</code></td>
+                                    <td>Fills 3/5 of available width.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>.yui3-u-4-5</code></td>
+                                    <td>Fills 4/5 of available width.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>.yui3-u-1-6</code></td>
+                                    <td>Fills 1/6 of available width.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>.yui3-u-5-6</code></td>
+                                    <td>Fills 5/6 of available width.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>.yui3-u-1-8</code></td>
+                                    <td>Fills 1/8 of available width.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>.yui3-u-3-8</code></td>
+                                    <td>Fills 3/8 of available width.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>.yui3-u-5-8</code></td>
+                                    <td>Fills 5/8 of available width.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>.yui3-u-7-8</code></td>
+                                    <td>Fills 7/8 of available width.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>.yui3-u-1-12</code></td>
+                                    <td>Fills 1/12 of available width.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>.yui3-u-5-12</code></td>
+                                    <td>Fills 5/12 of available width.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>.yui3-u-7-12</code></td>
+                                    <td>Fills 7/12 of available width.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>.yui3-u-11-12</code></td>
+                                    <td>Fills 11/12 of available width.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>.yui3-u-1-24</code></td>
+                                    <td>Fills 1/24 of available width.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>.yui3-u-5-24</code></td>
+                                    <td>Fills 5/24 of available width.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>.yui3-u-7-24</code></td>
+                                    <td>Fills 7/24 of available width.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>.yui3-u-11-24</code></td>
+                                    <td>Fills 11/24 of available width.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>.yui3-u-13-24</code></td>
+                                    <td>Fills 13/24 of available width.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>.yui3-u-17-24</code></td>
+                                    <td>Fills 17/24 of available width.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>.yui3-u-19-24</code></td>
+                                    <td>Fills 19/24 of available width.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>.yui3-u-23-24</code></td>
+                                    <td>Fills 23/24 of available width.</td>
+                                </tr>
+                            </tbody>
+                        </table>	
+                        
+                <h3 id="page_width">Building a Page Template</h3>
+                    
+                <p>The sizing of "units" is done using percentages, so in order to build a "page" template, a width on the outermost container is required.  The simplest approach to fixing your page size is to apply a width directly to the body element.  Optionally, the page can be centered in the viewport by  setting the <code>margin</code> to <code>auto</code>.  The following creates a 960px, centered layout.</p>
+
+```
+body {
+    margin: auto; /* center in viewport */
+    width: 960px;
+}
+```
+
+            <p>The next step is to decide on the size of each "column" and choose the appropriate "unit".  Remember, units sizes are percentage-based, so a bit of math may be required when designing with pixels rather than proportions.  To create a 200 pixel wide sidebar, assuming a 960px layout, we would use a 5/24 unit ("yui3-u-5-24") for the narrow column, and a 19/24 ("yui3-19-24") for the main column.</p>
+
+```
+<head>
+    <style>
+    body {
+        margin: auto; /* center in viewport */
+        width: 960px;
+    }
+
+    </style>
+</head>
+
+<body>
+    <div class="yui3-g">
+        <div class="yui3-u-5-24">
+
+        </div>
+        <div class="yui3-u-19-24">
+
+        </div>
+    </div>
+</body>
+```
+        <h3 id="pixels">Pixel Units</h3>
+        <p>Some layouts have precise sizing requirements that may not always be fulfilled by percentage-based units.  Custom unit sizes may be applied using the generic unit ("yui3-u").  Rather than overriding the YUI units, custom sizing should be done using your own semantic markup.  To recreate the previous example with custom units, we will add IDs to the column containers.  This examples uses "nav" and "main", but these should be tailored to your content.</p>
+
+```
+<head>
+    <style>
+    body {
+        margin: auto; /* center in viewport */
+        width: 960px;
+    }
+
+    #nav {
+        width: 200px;
+    }
+
+    #main {
+        width: 760px;
+    }
+
+    </style>
+</head>
+
+<body>
+    <div class="yui3-g">
+        <div class="yui3-u" id="nav">
+
+        </div>
+        <div class="yui3-u" id="main">
+
+        </div>
+    </div>
+</body>
+```

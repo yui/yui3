@@ -1,0 +1,87 @@
+<script type="text/javascript">
+YUI().use("node", "json", function(Y) {
+
+var example = {
+    data       : null,
+    jsonString : null,
+
+    dateRE : /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d+)?Z$/,
+
+    cryo : function (k,o) {
+        return (o instanceof CaveMan) ? CaveMan.freeze(o) : o;
+    },
+    revive : function (k,v) {
+        // Turn anything that looks like a UTC date string into a Date instance
+        var match = Y.Lang.isString(v) ? v.match(example.dateRE) : null,
+            d;
+
+        if (match) {
+            d = new Date();
+            d.setUTCFullYear(match[1], (match[2] - 1), match[3]);
+            d.setUTCHours(match[4], match[5], match[6]);
+            return d;
+        }
+        // Check for cavemen by the _class key
+        if (v instanceof Object && v._class == 'CaveMan') {
+            return CaveMan.thaw(v);
+        }
+        // default to returning the value unaltered
+        return v;
+    }
+};
+
+function CaveMan(name,discovered) {
+    this.name       = name;
+    this.discovered = discovered;
+};
+CaveMan.prototype.getName = function () {
+    return this.name + ", the cave man";
+}
+
+// Static methods to convert to and from a basic object structure
+CaveMan.thaw = function (o) {
+    return new CaveMan(o.n, o.d);
+};
+// Convert to a basic object structure including a class identifier
+CaveMan.freeze = function (cm) {
+    return {
+        _class : 'CaveMan',
+        n : cm.name,
+        d : cm.discovered // remains a Date for standard JSON serialization
+    };
+};
+
+example.data    = {
+    count : 1,
+    type  : 'Hominid',
+    specimen : [
+        new CaveMan('Ed',new Date(1946,6,6))
+    ]
+};
+
+Y.one('#demo_freeze').on('click',function (e) {
+    // Format the string with 4 space indentation
+    example.jsonString = Y.JSON.stringify(example.data, example.cryo, 4);
+
+    Y.one('#demo_frozen').set('text', example.jsonString);
+    Y.one('#demo_thaw').set('disabled',false);
+});
+
+Y.one('#demo_thaw').on('click',function (e) {
+    var parsedData = Y.JSON.parse(example.jsonString, example.revive);
+        cm = parsedData.specimen[0];
+
+    Y.one('#demo_thawed').set('innerHTML',
+        "<p>Specimen count: " + parsedData.count + "</p>"+
+        "<p>Specimen type: " + parsedData.type + "</p>"+
+        "<p>Instanceof CaveMan: " + (cm instanceof CaveMan) + "</p>"+
+        "<p>Name: " + cm.getName() + "</p>"+
+        "<p>Discovered: " + cm.discovered + "</p>");
+});
+
+// Expose the example objects for inspection
+example.CaveMan = CaveMan;
+YUI.example = example;
+
+});
+</script>

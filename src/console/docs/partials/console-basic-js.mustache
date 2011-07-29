@@ -1,0 +1,62 @@
+<script type="text/javascript">
+// Create a YUI instance and request the console module and its dependencies
+YUI().use("console", "console-filters", "dd-plugin", function (Y) {
+
+// Create and render the three Console instances
+var basic, newOnBottom, customStrings;
+
+basic = new Y.Console({
+    style: 'block' // keeps the Console in the page flow as a block element
+}).render( '#basic' );
+
+newOnBottom = new Y.Console({
+    style: 'inline', // keeps the Console in the page flow as an inline element
+    newestOnTop: false,
+    visible: false
+}).render( "#add_to_bottom" );
+
+customStrings = new Y.Console({
+    strings: {
+        title : 'Draggable Console with filters!',
+        pause : 'Wait',
+        clear : 'Flush',
+        collapse : 'Shrink',
+        expand : 'Grow'
+    },
+    visible: false
+}).plug(Y.Plugin.ConsoleFilters)
+  .plug(Y.Plugin.Drag, { handles: ['.yui3-console-hd'] })
+  .render('#demo');
+
+// Set up the button listeners
+function toggle(e,cnsl) {
+    if (cnsl.get('visible')) {
+        cnsl.hide();
+        this.set('innerHTML','show console');
+    } else {
+        cnsl.show();
+        cnsl.syncUI(); // to handle any UI changes queued while hidden.
+        this.set('innerHTML','hide console');
+    }
+}
+
+function report(e,type) {
+    Y.log(this.get('value'),type);
+}
+
+// Display a message in the Console for reference
+Y.log("Click the buttons below to log messages");
+
+// Pass the corresponding Console instance to the handler as a second arg
+Y.on('click', toggle, '#toggle_basic',    null, basic);
+Y.on('click', toggle, '#toggle_atb',      null, newOnBottom);
+Y.on('click', toggle, '#toggle_cstrings', null, customStrings);
+
+// Set the context of the event handler to the input text node
+// for convenience and pass the message type as a second arg
+Y.on('click', report, '#info',  Y.one('#info_text'),  'info');
+Y.on('click', report, '#warn',  Y.one('#warn_text'),  'warn');
+Y.on('click', report, '#error', Y.one('#error_text'), 'error');
+
+});
+</script>

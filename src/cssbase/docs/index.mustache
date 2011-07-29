@@ -1,0 +1,51 @@
+				<div class="intro" class="component">
+                					
+				  <p>CSS Base is an optional CSS file that complements YUI's core CSS foundation (<a href="../cssreset/">CSS Reset</a> and <a href="../cssfonts/">CSS Fonts</a>). CSS Base applies a style foundation for HTML elements that is consistent for <a href="http://developer.yahoo.com/yui/articles/gbs">baseline browsers</a>.</p>
+					<p>CSS Base may also be useful as a template for your own base file, or a snippets library for styling HTML elements.</p>
+							
+				</div><!-- /promo -->
+				
+				<h2 id="start">Getting Started</h2>
+
+				<h3 id="dependencies">Include Dependencies</h3>
+				
+				<p>To use CSS Base, include the following source file in your web page:</p>
+
+```
+<!-- Source File -->
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/{{yuiVersion}}/build/cssbase/base-min.css">
+```
+				<h3 id="context">Global vs. Contextual</h3>
+				
+				<p>YUI's CSS resources apply rules to HTML elements directly (using <a href="http://www.w3.org/TR/CSS21/selector.html#type-selectors">type selectors</a>). An alternate version of the resource is available that target elements by context only. This contextual <code>-context.css</code> version selects HTML elements only when they descend from the <code>.yui3-cssbase</code> classname.</p>
+				
+				<p>Here is how to include the contextual version of CSS Base:</p> 
+				
+```
+<!-- Source File -->
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/{{yuiVersion}}/build/cssbase/base-context-min.css">
+```
+				<h2 id="using">Using CSS Base</h2>
+
+				<p>CSS Base is easy to use. Simply including the file provides consistent styling of HTML elements. <a href="../examples/cssbase/cssbase-basic.html">Here's an example of HTML elements with CSS Base applied</a>.</p>
+				
+				<h3 id="start-in-context">Using CSS Base In Specific Contexts</h3>				
+		
+				<p>If you're using the contextual version, CSS Base's rules are only applied to elements that descend from a node with a class value of <code>.yui3-cssbase</code>. The classname can go as high in the DOM tree as desired, including on the <code>&lt;HTML&ht;</code> element directly.</p>
+			
+				<p>The following code snippet show how you might apply CSS Base to one of two columns:</p>
+										
+```
+<div>
+	<div id="left-column" class="yui3-cssbase"><h1>Lorem Ipsum</h1></div>
+	<div id="right-column"><h1>Lorem Ipsum</h1></div>
+</div>
+```
+
+				<p>Here is another example showing how to <a href="cssbase-context.html">apply CSS Base to a subset of a page</a>.</p>
+				
+
+
+
+
+

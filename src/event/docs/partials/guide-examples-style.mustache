@@ -1,0 +1,46 @@
+<style>
+#todo-example {
+    margin-top: 2em;
+    max-width: 300px;
+    *width: 300px;
+    border: 2px solid #aaa;
+    padding: 10px;
+}
+#todo-example legend {
+    color: #888;
+    position: relative;
+    bottom: .4em;
+    font-size: 1.3em;
+    *position: auto;
+}
+#todo-example ol {
+    list-style: decimal;
+    padding-left: 0;
+    margin: 0 0 1em;
+}
+#todo-example li {
+    clear: right;
+    margin-left: 25px;
+    margin-right: 30px;
+    *margin-left: 0;
+    padding: 0;
+}
+#todo-example .delete-todo {
+    float: right;
+    position: relative;
+    right: -30px;
+    background: url({{componentAssets}}/remove.png) no-repeat right;
+    border: 0 none;
+    width: 30px;
+    overflow: hidden;
+    text-indent: 30px;
+    opacity: 0.5;
+    *filter: alpha(opacity=50);
+}
+#todo-example input {
+    width: 220px;
+    border: 1px solid #aaa;
+    xbackground: url({{componentAssets}}/add.png) no-repeat right;
+    padding: 5px 0 5px 5px;
+}
+</style>

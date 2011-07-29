@@ -1,8 +1,24 @@
 YUI.add('graphics-tests', function(Y) {
 
-var suite = new Y.Test.Suite("Y.Graphic");
+var suite = new Y.Test.Suite("Y.Graphic"),
+    ENGINE = "vml",
+    DOCUMENT = Y.config.doc,
+	canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+    graphicTests,
+    svgTests,
+    canvasTests,
+    vmlTests;
 
-suite.add( new Y.Test.Case({
+if(DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"))
+{
+    ENGINE = "svg";
+}
+else if(canvas && canvas.getContext && canvas.getContext("2d"))
+{
+    ENGINE = "canvas";
+}
+
+graphicTests = new Y.Test.Case({
     name: "GraphicsTests",
 
     graphic: null,
@@ -49,9 +65,9 @@ suite.add( new Y.Test.Case({
         });
     },
 
-    "test getShape(circle)": function()
+    "test addShape(circle)": function()
     {
-        var mycircle = graphic.getShape({
+        var mycircle = graphic.addShape({
             type: "circle",
             stroke: {
                 color: this.initialStrokeColor,
@@ -95,7 +111,7 @@ suite.add( new Y.Test.Case({
         Y.assert(fill.color === this.initialFillColor);
     },
 
-    "text mycircle.get(x)" : function()
+    "test mycircle.get(x)" : function()
     {
         Y.assert(this.mycircle.get("x") === -5);
     },
@@ -135,9 +151,9 @@ suite.add( new Y.Test.Case({
         Y.Assert.isFalse(hasShape);
     },
     
-    "test getShape(rect)": function() 
+    "test addShape(rect)": function() 
     {
-        var myrect = graphic.getShape({
+        var myrect = graphic.addShape({
             type: "rect",
             stroke: {
                 weight: 2,
@@ -217,9 +233,9 @@ suite.add( new Y.Test.Case({
         Y.Assert.isFalse(hasShape);
     },
 
-    "test getShape(ellipse)": function()
+    "test addShape(ellipse)": function()
     {
-        var myellipse = graphic.getShape({
+        var myellipse = graphic.addShape({
             type: "ellipse",
             stroke: {
                 color: this.initialStrokeColor,
@@ -299,9 +315,9 @@ suite.add( new Y.Test.Case({
         Y.Assert.isFalse(hasShape);
     },
 
-    "test getShape(path)": function()
+    "test addShape(path)": function()
     {
-        var mypath = graphic.getShape({
+        var mypath = graphic.addShape({
             type: "path",
             stroke: {
                 color: this.initialStrokeColor
@@ -379,11 +395,735 @@ suite.add( new Y.Test.Case({
         graphic.removeShape(this.mypath);
         hasShape = (shapes.hasOwnProperty(id) && shapes[id] instanceof Y.Path);
         Y.Assert.isFalse(hasShape);
-    }
-}));
+    },
 
+    "test passRotation(rect)" : function()
+    {
+        var myrect = graphic.addShape({
+            type: "rect",
+            stroke: {
+                weight: 2,
+                color: this.initialStrokeColor
+            },
+            fill: {
+                color: this.initialFillColor
+            },
+            x: 5,
+            y: 5,
+            width:300,
+            height: 200,
+            rotation: 45
+        });
+        Y.assert(myrect instanceof Y.Rect);
+    }
+});
+
+//suite of svg specific tests
+svgTests = new Y.Test.Case({
+    name: "SVGGraphicsTests",
+
+    graphic: null,
+
+    mycircle: null,
+
+    myrect: null,
+
+    myellipse: null,
+
+    mypath: null,
+
+    initialFillColor: "#f00",
+
+    initialStrokeColor: "#00f",
+
+    updatedFillColor: "#9aa",
+
+    updatedStrokeColor: "#99a",
+
+    setUp: function () {
+        Y.one("body").append('<div id="testbed"></div>');
+    },
+
+    tearDown: function () {
+        Y.one("#testbed").remove(true);
+    },
+
+    "testSVGGraphic()" : function()
+    {
+        Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="graphiccontainer"></div>');
+        var graphic = new Y.Graphic({render: "#graphiccontainer"});
+        graphic.on("init", function(e) {
+            Y.Assert.isInstanceOf(SVGElement, graphic._contentNode);
+        });
+        this.graphic = graphic;
+    },
+
+    "testSVGRectNode()" : function()
+    {
+        var myrect = this.graphic.addShape({
+            type: "rect",
+            width: 300,
+            height: 200,
+            fill: {
+                color: this.initialFillColor
+            },
+            stroke: {
+                color: this.initialStrokeColor
+            }
+        });
+        this.myrect = myrect;
+        Y.Assert.isInstanceOf(SVGRectElement, myrect.get("node"));
+    },
+
+    "testSVGRectNodeDimensions()" : function()
+    {
+        var node = this.myrect.get("node");
+        Y.assert(node.getAttribute("width") == "300");
+        Y.assert(node.getAttribute("height") == "200");
+    },
+
+    "testSVGRectNodeFillColor()" : function() 
+    {
+        var node = this.myrect.get("node");
+        Y.assert(node.getAttribute("fill") == this.initialFillColor);
+    },
+
+    "testSVGRectNodeFillOpacity()" : function()
+    {
+        var node = this.myrect.get("node");
+        Y.assert(node.getAttribute("fill-opacity") == "1");
+    },
+
+    "testSVGRectNodeStrokeColor" : function()
+    {
+        var node = this.myrect.get("node");
+        Y.assert(node.getAttribute("stroke") == this.initialStrokeColor);
+    },
+
+    "testSVGRectNodeStrokeWidth" : function()
+    {
+        var node = this.myrect.get("node");
+        Y.assert(node.getAttribute("stroke-width") == "1");
+    },
+
+    "testSVGRectNodeStroke" : function()
+    {
+        var node = this.myrect.get("node");
+        Y.assert(node.getAttribute("stroke-opacity") == "1");
+    },
+
+    "testSVGRectNodeStrokeDashArray" : function()
+    {
+        var node = this.myrect.get("node");
+        Y.assert(node.getAttribute("stroke-dasharray") == "none");
+    },
+
+    "testSVGRectNodeStrokeLineCap" : function()
+    {
+        var node = this.myrect.get("node");
+        Y.assert(node.getAttribute("stroke-linecap") == "butt");
+    },
+
+    "testSVGRectNodeStrokeLineJoin" : function()
+    {
+        var node = this.myrect.get("node");
+        Y.assert(node.getAttribute("stroke-linejoin") == "round");
+    },
+
+    "testSVGRectNodeWidthAgainstShapeAttr" : function()
+    {
+        var node = this.myrect.get("node");
+        Y.assert(node.getAttribute("width") == this.myrect.get("width"));
+    },
+    
+    "testSVGRectNodeHeightAgainstShapeAttr" : function()
+    {
+        var node = this.myrect.get("node");
+        Y.assert(node.getAttribute("height") == this.myrect.get("height"));
+    },
+
+    "testSVGRectNodeFillAgainstShapeAttr" : function()
+    {
+        var node = this.myrect.get("node"),
+            fill = this.myrect.get("fill"),
+            opacity = parseFloat(fill.opacity);
+        opacity = isNaN(opacity) ? 1 : opacity;
+        Y.assert(fill.color == node.getAttribute("fill"));
+        Y.assert(opacity == node.getAttribute("fill-opacity"));
+    },
+
+    "testSVGRectNodeStrokeAgainstShapeAttr" : function()
+    {
+        var node = this.myrect.get("node"),
+            stroke = this.myrect.get("stroke"),
+            opacity = stroke.opacity,
+            linejoin = stroke.linejoin == undefined ? "round" : stroke.linejoin;
+        opacity = isNaN(opacity) ? 1 : opacity;
+        Y.assert(stroke.color == node.getAttribute("stroke"));
+        Y.assert(linejoin == node.getAttribute("stroke-linejoin"));
+        Y.assert(opacity == node.getAttribute("stroke-opacity"));
+        Y.assert(stroke.linecap == node.getAttribute("stroke-linecap"));
+        Y.assert(stroke.dashstyle == node.getAttribute("stroke-dasharray"));
+    }
+});
+
+//suite of vml specific tests
+vmlTests = new Y.Test.Case({
+    name: "VMLGraphicsTests",
+
+    graphic: null,
+
+    mycircle: null,
+
+    myrect: null,
+
+    myellipse: null,
+
+    mypath: null,
+
+    initialFillColor: "#f00",
+
+    initialStrokeColor: "#00f",
+
+    updatedFillColor: "#9aa",
+
+    updatedStrokeColor: "#99a",
+
+    dashstyle: "4 2",
+
+    linejoin: "round",
+
+    linecap: "butt", 
+
+    setUp: function () {
+        Y.one("body").append('<div id="testbed"></div>');
+    },
+
+    tearDown: function () {
+        Y.one("#testbed").remove(true);
+    },
+
+    "testVMLGraphic()" : function()
+    {
+        Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="graphiccontainer"></div>');
+        var graphic = new Y.Graphic({render: "#graphiccontainer"});
+        graphic.on("init", function(e) {
+            Y.assert(graphic.get("node").nodeName == "group");
+        });
+        this.graphic = graphic;
+    },
+
+    "testVMLRectNode()" : function()
+    {
+        var myrect = this.graphic.addShape({
+            type: "rect",
+            width: 300,
+            height: 200,
+            fill: {
+                color: this.initialFillColor
+            },
+            stroke: {
+                color: this.initialStrokeColor,
+                opacity: 1,
+                dashstyle: this.dashstyle.split(' '),
+                linejoin: this.linejoin,
+                linecap: this.linecap
+            }
+        });
+        this.myrect = myrect;
+        Y.assert(myrect.get("node").nodeName == "rect");
+    },
+
+    "testVMLRectNodeDimensions()" : function()
+    {
+        var node = this.myrect.get("node");
+        Y.assert(Y.one(node).getComputedStyle("width") == "300px");
+        Y.assert(Y.one(node).getComputedStyle("height") == "200px");
+    },
+
+    "testVMLRectNodeFillColor()" : function() 
+    {
+        var node = this.myrect.get("node"),
+            toHex = Y.Color.toHex,
+            fillMatches = false,
+            childNodes = node.childNodes,
+            i = 0,
+            len = childNodes ? childNodes.length : 0;
+        for(; i < len; ++i)
+        {
+            if(childNodes[i] && childNodes[i].nodeName == "fill" && childNodes[i].color == this.initialFillColor)
+            {
+                fillMatches = true;
+            }
+        }
+        if(!fillMatches)
+        {
+            fillMatches = toHex(node.fillcolor) == toHex(this.initialFillColor) || toHex(node.fillcolor.value) == toHex(this.initialFillColor); 
+    
+        }
+        Y.assert(fillMatches);
+    },
+    
+    "testVMLRectNodeStrokeColor" : function()
+    {
+        var node = this.myrect.get("node"),
+            toHex = Y.Color.toHex,
+            strokeMatches = false,
+            childNodes = node.childNodes,
+            i = 0,
+            len = childNodes ? childNodes.length : 0;
+        for(; i < len; ++i)
+        {
+            if(childNodes[i] && childNodes[i].nodeName == "stroke" && ( toHex(childNodes[i].color) == toHex(this.initialStrokeColor) || toHex(childNodes[i].color.value) == toHex(this.initialStrokeColor)))
+            {
+                strokeMatches = true;
+            }
+        }
+        if(!strokeMatches)
+        {
+            strokeMatches = toHex(node.strokecolor) == toHex(this.initialStrokeColor) || toHex(node.strokecolor.value) == toHex(this.initialStrokeColor); 
+        }
+        Y.assert(strokeMatches);
+    },
+
+    "testVMLRectNodeStrokeWidth" : function()
+    {
+        var node = this.myrect.get("node"),
+            toHex = Y.Color.toHex,
+            strokeMatches = false,
+            childNodes = node.childNodes,
+            i = 0,
+            len = childNodes ? childNodes.length : 0;
+        for(; i < len; ++i)
+        {
+            if(childNodes[i] && childNodes[i].nodeName == "stroke" && childNodes[i].weight == "1")
+            {
+                strokeMatches = true;
+            }
+        }
+        if(!strokeMatches)
+        {
+            strokeMatches = node.strokeWeight;
+        }
+        Y.assert(strokeMatches);
+    },
+
+    "testVMLRectNodeStrokeOpacity" : function()
+    {
+        var node = this.myrect.get("node"),
+            strokeMatches = false,
+            childNodes = node.childNodes,
+            i = 0,
+            len = childNodes ? childNodes.length : 0;
+        for(; i < len; ++i)
+        {
+            if(childNodes[i] && childNodes[i].nodeName == "stroke" && childNodes[i].opacity == "1")
+            {
+                strokeMatches = true;
+            }
+        }
+        if(!strokeMatches)
+        {
+            strokeMatches = node.strokeOpacity;
+        }
+        Y.assert(strokeMatches);
+    },
+
+    "testVMLRectNodeStrokeDashArray" : function()
+    {
+        var node = this.myrect.get("node"),
+            strokeMatches = false,
+            childNodes = node.childNodes,
+            i = 0,
+            len = childNodes ? childNodes.length : 0;
+        for(; i < len; ++i)
+        {
+            if(childNodes[i] && childNodes[i].nodeName == "stroke" && childNodes[i].dashstyle && childNodes[i].dashstyle == this.dashstyle)
+            {
+                strokeMatches = true;
+            }
+        }
+        Y.assert(strokeMatches);
+    },
+
+    "testVMLRectNodeStrokeLineCap" : function()
+    {
+        var node = this.myrect.get("node"),
+            strokeMatches = false,
+            childNodes = node.childNodes,
+            i = 0,
+            len = childNodes ? childNodes.length : 0;
+        for(; i < len; ++i)
+        {
+            if(childNodes[i] && childNodes[i].nodeName == "stroke" && childNodes[i].endcap && childNodes[i].endcap == "flat")
+            {
+                strokeMatches = true;
+            }
+        }
+        Y.assert(strokeMatches);
+    },
+
+    "testVMLRectNodeStrokeLineJoin" : function()
+    {
+        var node = this.myrect.get("node"),
+            strokeMatches = false,
+            childNodes = node.childNodes,
+            i = 0,
+            len = childNodes ? childNodes.length : 0;
+        for(; i < len; ++i)
+        {
+            if(childNodes[i] && childNodes[i].nodeName == "stroke" && childNodes[i].joinstyle && childNodes[i].joinstyle == this.linejoin)
+            {
+                strokeMatches = true;
+            }
+        }
+        Y.assert(strokeMatches);
+    },
+
+    "testVMLRectNodeWidthAgainstShapeAttr" : function()
+    {
+        var node = this.myrect.get("node");
+        Y.assert(Y.one(node).getComputedStyle("width") == this.myrect.get("width") + "px");
+    },
+    
+    "testVMLRectNodeHeightAgainstShapeAttr" : function()
+    {
+        var node = this.myrect.get("node");
+        Y.assert(Y.one(node).getComputedStyle("height") == this.myrect.get("height") + "px");
+    },
+
+    "testVMLRectNodeFillAgainstShapeAttr" : function()
+    {
+        var node = this.myrect.get("node"),
+            fill = this.myrect.get("fill"),
+            toHex = Y.Color.toHex;
+        Y.assert(toHex(fill.color) == toHex(node.fillcolor));
+    }
+});
+
+//suite of canvas specific tests
+canvasTests = new Y.Test.Case({
+    name: "CanvasGraphicsTests",
+
+    graphic: null,
+
+    mycircle: null,
+
+    myrect: null,
+
+    myellipse: null,
+
+    mypath: null,
+
+    initialFillColor: "#f00",
+
+    initialFillOpacity: 0.5,
+
+    initialStrokeColor: "#00f",
+
+    initialStrokeWeight: 2,
+
+    updatedFillColor: "#9aa",
+
+    updatedStrokeColor: "#99a",
+
+    width: 300,
+
+    height: 200,
+
+    context: null,
+    
+    linecap: "butt", 
+    
+    TORGB: Y.Color.toRGB,
+    
+    TOHEX: Y.Color.toHex,
+
+    toRGBA: function(val, alpha) {
+        alpha = (alpha !== undefined) ? alpha : 1;
+        if (!Y.Color.re_RGB.test(val)) {
+            val = this.TOHEX(val);
+        }
+
+        if(Y.Color.re_hex.exec(val)) {
+            val = 'rgba(' + [
+                parseInt(RegExp.$1, 16),
+                parseInt(RegExp.$2, 16),
+                parseInt(RegExp.$3, 16)
+            ].join(',') + ',' + alpha + ')';
+        }
+        return val;
+    },
+
+    setUp: function () {
+        Y.one("body").append('<div id="testbed"></div>');
+    },
+
+    tearDown: function () {
+        Y.one("#testbed").remove(true);
+    },
+
+    "testCanvasGraphic()" : function()
+    {
+        Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="graphiccontainer"></div>');
+        var graphic = new Y.Graphic({render: "#graphiccontainer"});
+        graphic.on("init", function(e) {
+            Y.Assert.isInstanceOf(HTMLElement, graphic.get("node"));
+        });
+        this.graphic = graphic;
+    },
+
+    "testCanvasRectNode()" : function()
+    {
+        var node,
+            myrect = this.graphic.addShape({
+            type: "rect",
+            width: this.width,
+            height: this.height,
+            fill: {
+                color: this.initialFillColor,
+                opacity: this.initialFillOpacity
+            },
+            stroke: {
+                color: this.initialStrokeColor,
+                weight: this.initialStrokeWeight
+            }
+        });
+        node = myrect.get("node");
+        this.myrect = myrect;
+        this.context = node.getContext("2d");
+        Y.Assert.isInstanceOf(HTMLCanvasElement, node);
+    },
+
+    "testCanvasRectNodeDimensions()" : function()
+    {
+        var node = this.myrect.get("node"),
+            stroke = this.myrect.get("stroke"),
+            weight = stroke.weight;
+        weight *= 2;
+        Y.assert(node.getAttribute("width") == this.width + weight);
+        Y.assert(node.getAttribute("height") == this.height + weight);
+    },
+
+    "testCanvasRectNodeFillColor()" : function() 
+    {
+        var node = this.myrect.get("node"),
+            opacity = parseFloat(this.initialFillOpacity),
+            fillColor = this.initialFillColor,
+            shapeFillColor = this.context.fillStyle;
+        opacity = Y.Lang.isNumber(opacity) && opacity < 1 ? opacity : 1;
+        if(shapeFillColor.indexOf("RGBA") > -1 || shapeFillColor.indexOf("rgba") > -1)
+        {
+            shapeFillColor = shapeFillColor.toLowerCase();
+            shapeFillColor = shapeFillColor.replace(/, /g, ",");
+            fillColor = this.toRGBA(this.TOHEX(fillColor), opacity)
+        }
+        else
+        {
+            shapeFillColor = this.TOHEX(shapeFillColor);
+            fillColor = this.TOHEX(fillColor);
+        }
+        Y.assert(shapeFillColor == fillColor);
+    },
+
+    "testCanvasRectNodeFillColorAgainstAttr()" : function() 
+    {
+        var node = this.myrect.get("node"),
+            fill = this.myrect.get("fill"),
+            opacity = parseFloat(fill.opacity),
+            fillColor = fill.color,
+            shapeFillColor = this.context.fillStyle;
+        opacity = Y.Lang.isNumber(opacity) && opacity < 1 ? opacity : 1;
+        if(shapeFillColor.indexOf("RGBA") > -1 || shapeFillColor.indexOf("rgba") > -1)
+        {
+            shapeFillColor = shapeFillColor.toLowerCase();
+            shapeFillColor = shapeFillColor.replace(/, /g, ",");
+            fillColor = this.toRGBA(this.TOHEX(fillColor), opacity)
+        }
+        else
+        {
+            shapeFillColor = this.TOHEX(shapeFillColor);
+            fillColor = this.TOHEX(fillColor);
+        }
+        Y.assert(shapeFillColor == fillColor);
+    },
+
+    "testCanvasRectNodeStrokeColor" : function()
+    {
+        var node = this.myrect.get("node"),
+            opacity = parseFloat(this.initialStrokeOpacity),
+            strokeColor = this.TOHEX(this.initialStrokeColor),
+            shapeStrokeColor = this.context.strokeStyle;
+        opacity = Y.Lang.isNumber(opacity) && opacity < 1 ? opacity : 1
+        if(shapeStrokeColor.indexOf("RGBA") > -1 || shapeStrokeColor.indexOf("rgba") > -1)
+        {
+            shapeStrokeColor = shapeStrokeColor.toLowerCase();
+            shapeStrokeColor = shapeStrokeColor.replace(/, /g, ",");
+            strokeColor = this.toRGBA(this.TOHEX(strokeColor), opacity)
+        }
+        else
+        {
+            shapeStrokeColor = this.TOHEX(shapeStrokeColor);
+            strokeColor = this.TOHEX(strokeColor);
+        }
+        Y.assert(shapeStrokeColor == strokeColor);
+    },
+
+    "testCanvasRectNodeStrokeColorAgainstAttr()" : function() 
+    {
+        var node = this.myrect.get("node"),
+            stroke = this.myrect.get("stroke"),
+            opacity = parseFloat(stroke.opacity),
+            strokeColor = this.TOHEX(stroke.color),
+            shapeStrokeColor = this.context.strokeStyle;
+        opacity = Y.Lang.isNumber(opacity) && opacity < 1 ? opacity : 1;
+        if(shapeStrokeColor.indexOf("RGBA") > -1 || shapeStrokeColor.indexOf("rgba") > -1)
+        {
+            shapeStrokeColor = shapeStrokeColor.toLowerCase();
+            shapeStrokeColor = shapeStrokeColor.replace(/, /g, ",");
+            strokeColor = this.toRGBA(this.TOHEX(strokeColor), opacity)
+        }
+        else
+        {
+            shapeStrokeColor = this.TOHEX(shapeStrokeColor);
+            strokeColor = this.TOHEX(strokeColor);
+        }
+        Y.assert(shapeStrokeColor == strokeColor);
+    },
+
+    "testCanvasRectNodeStrokeWidth" : function()
+    {
+        var weight = this.initialStrokeWeight,
+            shapeWeight = this.context.lineWidth;
+        Y.assert(weight == shapeWeight);
+    },
+
+    "testCanvasRectNodeStrokeWidthAgainstAttr()" : function()
+    {
+        var stroke = this.myrect.get("stroke"),
+            weight = stroke.weight;
+        Y.assert(weight == this.context.lineWidth);
+    },
+
+    "testCanvasRectNodeStrokeLineCap" : function()
+    {
+        Y.assert(this.context.lineCap == this.linecap);
+    },
+
+    "testCanvasRectNodeStrokeLineJoin" : function()
+    {
+        Y.assert(this.context.lineJoin == "round");
+    },
+
+    "testCanvasRectNodeWidthAgainstShapeAttr" : function()
+    {
+        var node = this.myrect.get("node"),
+            stroke = this.myrect.get("stroke"),
+            weight = stroke.weight || 0,
+            width = this.myrect.get("width");
+        width += weight * 2;
+        Y.assert(node.getAttribute("width") == width);
+    },
+    
+    "testCanvasRectNodeHeightAgainstShapeAttr" : function()
+    {
+        var node = this.myrect.get("node"),
+            stroke = this.myrect.get("stroke"),
+            weight = stroke.weight || 0,
+            height = this.myrect.get("height");
+        height += weight * 2;
+        Y.assert(node.getAttribute("height") == height);
+    }
+});
+
+transformTests = new Y.Test.Case({
+    name: "GraphicsTransformTests",
+
+    graphic: null,
+
+    myrect: null,
+
+    initialFillColor: "#f00",
+
+    initialStrokeColor: "#00f",
+
+    defaultTransformString: "rotate(40) translate(45, 55) skew(30, 30)",
+
+    width: 300,
+
+    height: 200,
+
+    setUp: function () {
+        Y.one("body").append('<div id="testbed"></div>');
+    },
+
+    tearDown: function () {
+        Y.one("#testbed").remove(true);
+    },
+
+    "testGraphicInstantiation()" : function()
+    {
+        Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="graphiccontainer"></div>');
+        var graphic = new Y.Graphic({render: "#graphiccontainer"});
+        graphic.on("init", function(e) {
+            Y.Assert.isInstanceOf(Y.Graphic, graphic);
+        });
+        this.graphic = graphic;
+    },
+
+    "testTransformAttributeIntantiation()" : function()
+    {
+        var rect = this.graphic.addShape({
+            type: "rect",
+            width: this.width,
+            height: this.height,
+            stroke: {
+                color: this.initialStrokeColor
+            },
+            fill: {
+                color: this.initialFillColor
+            },
+            transform: this.defaultTransformString
+        });
+        this.rect = rect;
+        Y.assert(this.rect.get("transform") == this.defaultTransformString);
+    },
+
+    "testAddTransformStringAppend()" : function()
+    {
+        var scaleString = this.defaultTransformString + " scale(2, 2)";
+        this.rect.scale(2, 2);
+        Y.assert(scaleString == this.rect.get("transform"));
+    },
+
+    "testAddTransformsAndCompareToString()": function()
+    {
+        this.rect.set("transform", "");
+        Y.assert(this.rect.get("transform") == "");
+        this.rect.translate(30, 10);
+        this.rect.rotate(90);
+        this.rect.skewX(10);
+        Y.assert(this.rect.get("transform") == "translate(30, 10) rotate(90) skewX(10)");
+    }
+});
+
+suite.add(graphicTests);
+
+if(ENGINE == "svg")
+{
+    suite.add(svgTests);
+}
+if(ENGINE == "vml")
+{
+    suite.add(vmlTests);
+}
+if(ENGINE == "canvas")
+{
+    suite.add(canvasTests);
+}
+
+suite.add(transformTests);
 
 Y.Test.Runner.add( suite );
-
 
 }, '@VERSION@' ,{requires:['graphics', 'test']});

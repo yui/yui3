@@ -1,0 +1,213 @@
+<div class="intro">
+    <p>The Recordset Utility provides a standard way for dealing with a collection of similar objects known as records. The `recordset-base` sub-module provides the base Recordset implementation.<p>
+
+    <p>This example demonstrates some standard ways to interact with the recordset. Click on the buttons below to play around with a recordset created with state information.</p>
+</div>
+
+<div class="example">
+{{>recordset-basic-source}}
+</div>
+
+<p>A recordset in its simplest form is a collection of records, where records can be considered to be object literals. Recordset allows the user to handle this collection of records with a consistent API.</p>
+
+<p>Recordset-base provides an API for adding, removing and updating record(s). It also creates a hash table of all the records by their IDs, to allow for fast retrieval.</p>
+
+<h6>Records vs. Object Literals</h6>
+<p>You can interact with a recordset instance by simply passing in object literals. Recordset will convert them into record instances under the hood. If you want the object literal back from the recordset, simply use the `getValue` method on a record instance. Optionally, a string can be passed into the `getValue` method if you only want a specific property back. Not passing in an argument returns the entire object bag that the record is holding on to.
+	
+<h3>Working with a Recordset</h3>
+
+This section describes how to use the Recordset Utility in further detail. It contains the following subsections:
+<ul class="topspace">
+	<li><a href="#instantiation">Initializing a Recordset</a></li>
+	<li><a href="#adding">Adding Records</a></li>
+	<li><a href="#removing">Removing Records</a></li>
+	<li><a href="#updating">Updating Records</a></li>
+	<li><a href="#emptying">Emptying a Recordset</a></li>
+	<li><a href="#hash">Using the Hash Table</a></li>
+</ul>
+
+<h4 id="instantiation">Initializing a Recordset</h4>
+```
+YUI().use("recordset-base", function(Y) {
+    var data = [
+		{a:3, b:2, c:1},
+		{a:9, b:8, c:7},
+		{a:1, b:2, c:3}
+	],
+	
+	//Recordset is created with the objects from the data array
+	myRecordset = new Y.Recordset({records: data}),
+	
+	//Empty recordsets can also be created
+	anEmptyRecordset = new Y.Recordset(); 
+
+});
+```
+
+<h4 id="adding">Adding Records</h4>
+<p>Once initialized, the recordset can be modified by CRUD methods provided by the API. Add single or multiple objects/records to the recordset by calling the `add` method.</p>
+
+```
+YUI().use("recordst-base", function(Y) {
+    var data = [
+        {key:"a", label:"Column A"},
+        {key:"b", label:"Column B"},
+        {key:"c", label:"Column C"}
+    ],
+	
+	myRecordset = new Y.Recordset({records:data});
+	
+	//Adding a single record to the end of a recordset
+	myRecordset.add({key:"d", label:"Column D"});
+	
+	//Adding multiple records at the 2nd index of the recordset
+	myRecordset.add([
+		{key:"e", label:"Column E"},
+		{key:"f", label:"Column F"}
+	], 2);
+});
+```
+
+<h4 id="removing">Removing Records</h4>
+<p>Similarly, items can also be removed from the recordset using the `remove` method.</p>
+```
+YUI().use("recordset-base", function(Y) {
+    var data = [
+        {key:"a", label:"Column A"},
+        {key:"b", label:"Column B"},
+        {key:"c", label:"Column C"}
+    ],
+	
+	myRecordset = new Y.Recordset({records:data});
+	
+	//removes the record stored at index 2 (in this case {key:"c", label:"Column C"} is removed)
+	myRecordset.remove(2);
+	
+	//Removes 2 records starting at index zero
+	myRecordset.remove(0,2);
+});
+```
+
+<h4 id="updating">Updating Records</h4>
+<p>You can overwrite existing records in the recordset through the `update` method. This method takes 2 arguments, the first being an object/record or array of objects/records, and the second being the index at which to start the update process. When updating a recordset, any records found within the index/indices that are to be updated will be overwritten. However, you can get an object bag with these overwritten records back if you hook onto the 'update' event. </p>
+```
+YUI().use("recordset-base", function(Y) {
+    var data = [
+        {key:"a", label:"Column A"},
+        {key:"b", label:"Column B"},
+        {key:"c", label:"Column C"}
+    ],
+	
+	myRecordset = new Y.Recordset({records:data});
+	
+	//overwite the record at index 2 with the following record
+	myRecordset.update({key:"d", label:"Column D"}, 2);
+	
+	//You can also update multiple records at a time.
+	//Here we are updating indices 0 and 1 of the recordset with the corresponding two objects.
+	myRecordset.update([
+		{key:"e", label:"Column E"},
+		{key: "f", label: "Column F"}
+	], 0);
+});
+```
+
+<h4 id="emptying">Emptying a Recordset</h4>
+<p>Emptying the recordset is easily done with the `empty` method. </p>
+```
+YUI().use("recordset-base", function(Y) {
+    var data = [
+        {key:"a", label:"Column A"},
+        {key:"b", label:"Column B"},
+        {key:"c", label:"Column C"}
+    ],
+	
+	myRecordset = new Y.Recordset({records:data});
+	myRecordset.empty();
+});
+```
+
+
+<h4 id="hash">Using the Hash Table</h4>
+<p>The recordset-base submodule has a built-in hash table that hashes records by their IDs. IDs are set during initialization of each individual record and are stored as ATTRS. You should not modify the ID of a record, but you can access it by calling `myRecord.get('id')`.</p>
+
+<p>Under the hood, the hash table is kept in sync with the recordset by hooking onto the events that recordset fires (namely 'add', 'remove', 'update', and 'empty'). The ID hash table is an easy way to retrieve records that will be needed often.</p>
+
+<p>If you need hash tables that store records by keys other than IDs, refer to the <strong>RecordsetIndexer</strong> plugin.</p>
+```
+YUI().use("recordset-base", function(Y) {
+    var data = [
+        {key:"a", label:"Column A"},
+        {key:"b", label:"Column B"},
+        {key:"c", label:"Column C"}
+    ],
+	
+	myRecordset = new Y.Recordset({records:data});
+	
+	//Store some IDs that I will need access to later
+	var record2_ID = myRecordset.getRecord(1).get('id'),
+	record3_ID = myRecordset.getRecord(2).get('id');
+	
+	//Get Access to the Hash Table
+	var hashTable = myRecordset.get('table');
+	
+	//Get Records back using IDs
+	var record2 = hashTable[record2_ID];
+	var record3 = hashTable[record3_ID];
+	
+	
+	//Remove Record from index 1 (record2)
+	myRecordset.remove(1);
+	
+	hashTable[record2_ID]; //this will now be undefined as that record was removed.
+	hashTable[record3_ID]; //this still points to the correct record (record3)
+});
+```
+
+<h3>Events</h3>
+<p>The Recordset Utility fires 5 custom events in addition attribute change events: <strong>'add'</strong>, <strong>'remove'</strong>, <strong>'update'</strong>, <strong>'empty'</strong> and <strong>'change'</strong>. <strong>'change'</strong> in particular, is a high-level event that is fired after any modifications to the recordset are made (ie: after 'add', 'remove', 'update', 'empty'). Details on these events are shown below.</p>
+
+<table>
+	<thead>
+		<tr>
+			<th>Event</th>
+			<th>Payload</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>`add`</td>
+			<td><strong>added:</strong> an array of new records that were added (can contain a single record)<br/>
+		        <strong>index:</strong> index that the addition started at
+			</td>
+		</tr>
+		<tr>
+			<td>`remove`</td>
+			<td><strong>removed:</strong> an array of records that were removed (can contain a single record)<br/>
+		        <strong>index:</strong> index that the removals started at<br/>
+				<strong>range:</strong> range of records that were removed
+			</td>
+		</tr>
+		<tr>
+			<td>`update` </td>
+			<td><strong>updated:</strong> an array of records that updated (added to the recordset)<br/>
+		        <strong>index:</strong> index that the updates started at<br/>
+				<strong>range:</strong> range of records that were updated
+			</td>
+		</tr>
+		<tr>
+			<td>`empty`</td>
+			<td>Empty object bag</td>
+		</tr>
+		<tr>
+			<td>`change`</td>
+			<td><strong>type:</strong> The event that caused the change (ie: "recordset:add", "recordset:update")<br/>
+			<strong>details:</strong>The payload of the event that caused the change. This object will have different keys, based on what `type` is. (ie: If `type` is "recordset:add", then `details` will contain the `added` and `index` keys.)<br/>
+			</td>
+
+		</tr>
+	</tbody>
+</table>
+
+<p>Refer to the API documentation to get a full list of events inherited by Recordset.</p>

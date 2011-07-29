@@ -50,7 +50,7 @@ SVGCircle.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
 	/**
 	 * Indicates the width of the shape
 	 *
-	 * @attribute width
+	 * @config width
 	 * @type Number
 	 */
     width: {
@@ -69,7 +69,7 @@ SVGCircle.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
 	/**
 	 * Indicates the height of the shape
 	 *
-	 * @attribute height
+	 * @config height
 	 * @type Number
 	 */
     height: {
@@ -88,7 +88,7 @@ SVGCircle.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
     /**
      * Radius of the circle
      *
-     * @attribute radius
+     * @config radius
      * @type Number
      */
     radius: {

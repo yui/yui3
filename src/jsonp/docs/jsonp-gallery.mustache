@@ -1,0 +1,151 @@
+{{>jsonp-gallery-css}}
+
+<div class="intro">
+    <p>This example shows how to create a reusable JSONPRequest for polling as well as how to configure success and failure callbacks.  See the API docs and user guide for a full listing of available configurations.</p>
+
+    <p>For this example, we will use a JSONP service hosted on <a href="http://yuilibrary.com">YUILibrary</a> to fetch information about a random Gallery module and render some of the information on the page.</p>
+</p>
+
+<div class="example">
+{{>jsonp-gallery-markup}}
+{{>jsonp-gallery-js}}
+</div>
+
+<h3>The data</h3>
+<p>The structure of the JavaScript object returned from YUILibrary's JSONP service will look like this:</p>
+
+```
+{
+    modules: [
+        {
+            url: (the url to the module),
+            title: (the title of the module),
+            summary: (short description of the module),
+            ...,
+            owner: {
+                icon: (url to the author's thumb image),
+                fullname: (the author's full name),
+                rank: (YUI Team member?, Contributor? etc),
+                ...
+            }
+        }
+    ],
+    ...
+}
+
+```
+
+<p>We'll use these objects to populate an HTML template with data <em>{placeholder}</em>s using `Y.Lang.sub( template, object )`.</p>
+
+
+<h3>Start simple</h3>
+<p>To make a single call to the YUILibrary Gallery API, we can just use</p>
+
+```
+Y.jsonp("http://yuilibrary.com/gallery/api/random?callback={callback}", handleJSONP);
+
+```
+
+<p>But since each call to `Y.jsonp()` creates a new instance of `Y.JSONPRequest`, we may as well store the instance and reuse it.</p>
+
+```
+var gallery = new Y.JSONPRequest("http://yuilibrary.com/gallery/api/random?callback={callback}", handleJSONP);
+
+gallery.send();
+
+```
+
+<h3>Add polling</h3>
+<p>JSONPRequest doesn't have any built-in polling mechanism, but `Y.later()` can handle this for us.</p>
+
+```
+var url = "http://yuilibrary.com/gallery/api/random?callback={callback}";
+
+function handleJSONP(response) {
+    // populate template from the response object and add to the output div
+    ...
+
+    Y.one("#out").setContent( Y.Lang.sub(template, module) );
+
+    // After 7 seconds, call the API for a new module
+    Y.later(7000, this, this.send);
+};
+
+var gallery = new Y.JSONPRequest(url, handleJSONP);
+gallery.send();
+
+```
+
+<h3>Add failure protection</h3>
+<p>In case the Gallery API is busy or some other problem arises, we'll also want to handle this case and display an error.  We can do this by passing a configuration object as the second parameter rather than a simple success callback.</p>
+
+```
+var gallery = new Y.JSONPRequest(url, {
+        on: {
+            success: function (response) {
+                // populate output div from the template and response object
+                ...
+
+                Y.one("#out").setContent( Y.Lang.sub(template, module) );
+
+                // After 7 seconds, call the API for a new module
+                Y.later(7000, this, this.send);
+            },
+
+            failure: function () {
+                Y.one("#out").setContent( failureTemplate );
+            }
+        }
+    });
+
+gallery.send();
+
+```
+
+<h3>Add flare</h3>
+<p>Now we'll add a bit of flourish, by adding a visual indicator of how long until the next module is requested.  We'll replace the call to `Y.later()` with a call to `node.transition()` using a shrinking border to show the remaining time.  Then when the transition is complete, we call `send()` again.
+
+```
+var gallery = new Y.JSONPRequest(url, {
+        on: {
+            success: function (response) {
+                // populate output div from the template and response object
+                ...
+
+                Y.one("#out").setContent( Y.Lang.sub(template, module) );
+
+                // Add some flare to the poll interval by showing a "time left"
+                // indicator via the header's border
+                Y.one("#out h4")
+                    .setStyle("borderRightWidth", "100px")
+                    .transition({
+                        borderRightWidth: 0,
+                        duration: 7
+                    }, function () {
+                        gallery.send();
+                    });
+            },
+
+            failure: function () {
+                Y.one("#out").setContent( failureTemplate );
+            }
+        }
+    });
+
+gallery.send();
+
+```
+
+<h3>Stop the poll</h3>
+<p>The final step is to add the ability to start and stop the polling.  We'll manage this by adding a property to the `gallery` JSONPRequest instance named `gallery.polling`.  See the full code listing below for the implementation.
+
+<h3 id="fullcode">Full Code Listing</h3>
+<h4>HTML</h4>
+```
+{{>jsonp-gallery-markup}}
+```
+
+<h4>JavaScript</h4>
+```
+{{>jsonp-gallery-js}}
+```

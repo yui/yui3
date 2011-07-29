@@ -1,0 +1,206 @@
+{{>guide-examples-style}}
+
+<h2>Understanding the problem</h2>
+
+<p>Consider the following Todo List widget:</p>
+
+<fieldset id="todo-example">
+<legend>Todo List</legend>
+<ol>
+    <li><button class="delete-todo" title="remove">remove</button>Read YUI documentation</li>
+    <li><button class="delete-todo" title="remove">remove</button>Build awesome web app</li>
+    <li><button class="delete-todo" title="remove">remove</button>Profit!</li>
+</ol>
+<input id="todo"> <button id="add-todo" type="button">add</button>
+</fieldset>
+<script>
+YUI().use('node-event-delegate', 'event-key', function (Y) {
+    var todoList = Y.one('#todo-example ol'),
+        newTask = Y.one('#todo');
+    
+    todoList.delegate('click', function () {
+        this.ancestor('li').remove();
+    }, 'button');
+
+    function addTodo() {
+        todoList.append(
+            '<li><button class="delete-todo">remove</button>' +
+                newTask.get('value') +
+            '</li>');
+
+        newTask.set('value', '');
+    }
+
+    Y.one('#add-todo').on('click', addTodo);
+    newTask.on('key', addTodo, 'enter');
+});
+</script>
+
+<p>All tasks are given a "remove" button.  When new tasks are added, they
+should get a remove button that removes that task.  Here's the markup for
+this:</p>
+
+```
+<fieldset id="todo-example">
+<legend>Todo List</legend>
+<ol>
+    <li><button class="delete-todo">remove</button>Read YUI documentation</li>
+    <li><button class="delete-todo">remove</button>Build awesome web app</li>
+    <li><button class="delete-todo">remove</button>Profit!</li>
+</ol>
+<input id="todo"> <button id="add-todo" type="button">add</button>
+</fieldset>
+```
+
+<p>In the old days, you would have four click subscriptions:</p>
+
+<ol>
+    <li>The remove button for #1</li>
+    <li>The remove button for #2</li>
+    <li>The remove button for #3</li>
+    <li>The add button for creating new tasks</li>
+</ol>
+
+<p>When a user types in a new task and clicks the <em>add</em> button, a new
+&lt;li&gt; and corresponding &lt;button&gt; are created, and a fifth click
+subscription is added, one for the new button.  The callback for the remove
+buttons could be unique for each button, or a generic function that determined
+which item to remove based on some other info from the event or button.</p>
+
+<p>When a user clicks on one of the remove buttons, the item is removed.  The
+associated click event subscription is left in the system, taking up memory.
+So to solve this, maybe the event subscription is detached before the item is
+removed.  Now there are four initial subscriptions and additional logic to
+properly detach subscriptions before items are removed.</p>
+
+<p>Over time, the number of items on the todo list grows, and so the number of
+subscriptions in the system, and thus memory consumed, grows with it.
+Additionally, if at some point, the entire list needs to be cleared, that's a
+lot of subscriptions to detach before it's ok to flush the list's
+`innerHTML`.</p>
+
+<h2>What is event delegation?</h2>
+
+<p>Event delegation is a way to reduce the number of subscriptions used to
+support this system.  In the example case, only two click subscriptions are
+needed: one for the add button, and one for every remove button click.  The
+second one is the <em>delegated subscription</em>.  Here's how to think about
+it:</p>
+
+<p>The key to event delegation is understanding that a click on a remove button
+is also a click on</p>
+<ul>
+    <li>the list item that the button is in</li>
+    <li>the list itself</li>
+    <li>the &lt;fieldset&gt; that the list is in</li>
+    <li>etc up to the &lt;body&gt; and finally the `document`<a
+    href="#footnote1">[1]</a></li>
+</ul>
+
+<p>Instead of subscribing to the button's "click" event, <em>you can subscribe
+to the list's "click" event</em><a href="#footnote2">[2]</a>.</p>
+
+<h2>You clicked somewhere, but <em>where</em>?</h2>
+
+<p>When you click anywhere on the document, the browser dispatches a click
+event that is assigned an `e.target` property corresponding to <em>the element
+that triggered the event</em>.  For example, if you click on "Profit!", the
+event originated from the &lt;li&gt; with "Profit!" in it, so `e.target` will
+be that &lt;li&gt; element<a href="#footnote2">[3]</a>.</p>
+
+<p>With these two bits of information, we can create a single click
+subscription to respond to every button click in the Todo list.</p>
+
+```
+function handleClick(e) {
+    // look at e.target
+}
+
+Y.one('#todo-example ol').on('click', handleClick);
+```
+
+<p>Now since there are no subscriptions tied directly to the individual
+buttons, we can add new items to the list without needing to add more
+subscriptions.  Similarly, we can remove items or even clear the list's
+`innerHTML` without needing to detach subscriptions because there aren't any
+subscriptions inside the list to clear.</p>
+
+<h2>More work in the event subscriber</h2>
+
+<p>Since any click inside the list is now triggering the event subscriber, it
+will be executed for button clicks, but also for clicks on the task item's text
+(e.g. "Profit!"). To make sure this click happened on a button, we need to
+inspect `e.target` to make sure it is a button.</p>
+
+```
+function handleClick(e) {
+    if (e.target.get('tagName').toLowerCase() === 'button') {
+        // remove the item
+    }
+}
+```
+
+<p>This can start to get tricky when you're triggering on an element that can
+contain children.  For example, if there were no buttons, but instead you
+wanted to remove items just by clicking on the &lt;li&gt;, you'd need to check
+if `e.target` was an &lt;li&gt;. But if it's not, you have to look at
+`e.target`'s `parentNode` and potentially that node's `parentNode` and so on,
+because `e.target` will always refer to the most specific element that received
+the click.  This can amount to a lot of filtering code wrapping the item
+removal logic, which hinders the readability of your app.</p>
+
+<h2>Let `node.delegate(...)` do the work for you</h2>
+
+<p>This is where <a href="../event/#event-delegation">`node.delegate(...)`</a>
+comes in. `node.delegate(...)` boils down the filtering logic to a css
+selector, passed as the third argument.  The subscribed callback will only
+execute if the event originated from an element that matches (or is contained
+in an element that matches) this css selector.  This allows the code to power
+our Todo widget to look like this:</p>
+
+```
+YUI().use('node-event-delegate', 'event-key', function (Y) {
+    var todoList = Y.one('#todo-example ol'),
+        newTask = Y.one('#todo');
+    
+    // clicks inside the todo list on a <button> element will cause the
+    // button's containing <li> to be removed
+    todoList.delegate('click', function () {
+        this.ancestor('li').remove();
+    }, 'button');
+
+    // Adding a new task is only appending a list item
+    function addTodo() {
+        todoList.append(
+            '<li><button class="delete-todo">remove</button>' +
+                newTask.get('value') +
+            '</li>');
+
+        newTask.set('value', '');
+    }
+
+    Y.one('#add-todo').on('click', addTodo);
+    newTask.on('key', addTodo, 'enter'); // enter also adds todo (see event-key)
+});
+```
+
+<hr>
+
+<h3>Footnotes</h3>
+
+<ol id="footnotes">
+    <li id="footnote1">If there are click subscriptions at multiple points in
+    the DOM heirarchy, they will be executed in order from most specific (the
+    button) to least specific (document) unless `e.stopPropagation()` is
+    called along the line. This will prevent subscriptions from elements higher
+    up the parent axis from executing.</li>
+
+    <li id="footnote2">We're using the "click" event here, but this all applies
+    to other events as well.</li>
+
+    <li id="footnote3">Actually the event originated from the text node inside
+    the &lt;li&gt;, but IE reports the origin (the `srcElement` in IE) as the
+    &lt;li&gt;, which is probably what developers want, anyway.  YUI fixes
+    `e.target` to bet the element for browsers that report it as the text
+    node.</li>
+</ol>

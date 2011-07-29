@@ -10,5 +10,18 @@
         "view"
     ],
 
-    "use": ["app"]
+    "use": ["app"],
+
+    "examples": [
+        {
+            "name"       : "app-todo",
+            "displayName": "Todo List",
+            "description": "A basic todo list built with the Model, Model List, and View components.",
+            "modules"    : ["app", "model", "model-list", "view"],
+            "tags"       : [
+                "app", "todo", "model", "model-list", "view", "modellist",
+                "list"
+            ]
+        }
+    ]
 }

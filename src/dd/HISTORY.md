@@ -1,6 +1,15 @@
 Drag and Drop Change History
 ============================
 
+### 3.4.0
+
+* #2529889 Example for Delegate Drag and Drop has wrong parameters
+* #2529905 Using DDNodeScroll with DDDelegate causes JS error in Safari
+* #2530050 Incorrect documentation
+* #2530451 DragDrop enhancement - ability to use dd with non-node objects.
+* #2530576 change notest needed in history file
+
+
 ### 3.3.0
 
 * #2529382 DD Delegate breaks when a draggable is nested and uses a handle

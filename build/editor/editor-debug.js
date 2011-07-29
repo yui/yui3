@@ -1007,7 +1007,7 @@ YUI.add('frame', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['base', 'node', 'selector-css3', 'substitute', 'yui-throttle']});
+}, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute', 'yui-throttle'], skinnable:false});
 YUI.add('selection', function(Y) {
 
     /**
@@ -1339,7 +1339,7 @@ YUI.add('selection', function(Y) {
                 }
             });*/
 
-            /** Removed this, as it was causing Pasting to be funky in Safari
+            /* Removed this, as it was causing Pasting to be funky in Safari
             spans = Y.all('.Apple-style-span, .apple-style-span');
             Y.log('Apple Spans found: ' + spans.size(), 'info', 'selection');
             spans.each(function(s) {
@@ -1728,7 +1728,7 @@ YUI.add('selection', function(Y) {
             
             if (range.pasteHTML) {
                 if (offset === 0 && node && !node.previous() && node.get('nodeType') === 3) {
-                    /**
+                    /*
                     * For some strange reason, range.pasteHTML fails if the node is a textNode and
                     * the offset is 0. (The cursor is at the beginning of the line)
                     * It will always insert the new content at position 1 instead of 
@@ -2023,7 +2023,7 @@ YUI.add('selection', function(Y) {
     };
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['node']});
+}, '@VERSION@' ,{requires:['node'], skinnable:false});
 YUI.add('exec-command', function(Y) {
 
 
@@ -2684,7 +2684,7 @@ YUI.add('exec-command', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['frame']});
+}, '@VERSION@' ,{requires:['frame'], skinnable:false});
 YUI.add('editor-tab', function(Y) {
 
 
@@ -2753,7 +2753,7 @@ YUI.add('editor-tab', function(Y) {
     Y.Plugin.EditorTab = EditorTab;
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
+}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
 YUI.add('createlink-base', function(Y) {
 
 
@@ -2838,7 +2838,7 @@ YUI.add('createlink-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
+}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
 YUI.add('editor-base', function(Y) {
 
 
@@ -3027,7 +3027,6 @@ YUI.add('editor-base', function(Y) {
                             if (sel._selection.pasteHTML) {
                                 sel._selection.pasteHTML(EditorBase.TABKEY);
                             } else {
-                                //console.log('IE9 is here.. SHould be default behaviour now');
                                 this.execCommand('inserthtml', EditorBase.TABKEY);
                             }
                         }
@@ -3035,7 +3034,7 @@ YUI.add('editor-base', function(Y) {
                     break;
             }
             if (Y.UA.webkit && e.commands && (e.commands.indent || e.commands.outdent)) {
-                /**
+                /*
                 * When executing execCommand 'indent or 'outdent' Webkit applies
                 * a class to the BLOCKQUOTE that adds left/right margin to it
                 * This strips that style so it is just a normal BLOCKQUOTE
@@ -3731,7 +3730,7 @@ YUI.add('editor-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['base', 'frame', 'node', 'exec-command', 'selection']});
+}, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command', 'selection'], skinnable:false});
 YUI.add('editor-lists', function(Y) {
 
 
@@ -3856,7 +3855,7 @@ YUI.add('editor-lists', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
+}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
 YUI.add('editor-bidi', function(Y) {
 
 
@@ -4188,7 +4187,7 @@ YUI.add('editor-bidi', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
+}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
 YUI.add('editor-para', function(Y) {
 
 
@@ -4441,7 +4440,7 @@ YUI.add('editor-para', function(Y) {
                         }
                     }
                     if (Y.UA.gecko) {
-                        /**
+                        /*
                         * This forced FF to redraw the content on backspace.
                         * On some occasions FF will leave a cursor residue after content has been deleted.
                         * Dropping in the empty textnode and then removing it causes FF to redraw and
@@ -4543,7 +4542,7 @@ YUI.add('editor-para', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
+}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
 YUI.add('editor-br', function(Y) {
 
 
@@ -4624,7 +4623,7 @@ YUI.add('editor-br', function(Y) {
                 case 'backspace-up':
                 case 'backspace-down':
                 case 'delete-up':
-                    /**
+                    /*
                     * This forced FF to redraw the content on backspace.
                     * On some occasions FF will leave a cursor residue after content has been deleted.
                     * Dropping in the empty textnode and then removing it causes FF to redraw and
@@ -4675,8 +4674,8 @@ YUI.add('editor-br', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
+}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
 
 
-YUI.add('editor', function(Y){}, '@VERSION@' ,{use:['frame', 'selection', 'exec-command', 'editor-base', 'editor-para', 'editor-br', 'editor-bidi', 'editor-tab', 'createlink-base'], skinnable:false});
+YUI.add('editor', function(Y){}, '@VERSION@' ,{skinnable:false, use:['frame', 'selection', 'exec-command', 'editor-base', 'editor-para', 'editor-br', 'editor-bidi', 'editor-tab', 'createlink-base']});
 

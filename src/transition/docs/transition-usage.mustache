@@ -1,0 +1,49 @@
+<link href="{{componentAssets}}/transition.css" rel="stylesheet" type="text/css">
+<div class="intro">
+    <p>CSS properties can be transitioned with a delay, allowing for the creation of more advanced effects.
+Click the X to run the animation.</p>
+</div>
+
+<div class="example" style="height:240px;">
+{{>transition-usage-source}}
+</div>
+
+<h2>Separate Transition Properties</h2>
+<p>Each transition property can optionally have its own duration, delay, and/or easing.</p>
+<p>An optional callback can be passed as the second argument to <code>transition()</code>.  The callback is run after all property transitions have completed.  In this case, we will use it to remove the node from the document.</p>
+
+```
+Y.one('#demo').transition({
+    duration: 1, // seconds
+    easing: 'ease-out', // CSS syntax
+    height: 0,
+    top: '100px',
+
+    width: {
+        delay: 1,
+        duration: 0.5,
+        easing: 'ease-in',
+        value: 0
+    },
+
+    left: {
+        delay: 1,
+        duration: 0.5,
+        easing: 'ease-in',
+        value: '150px'
+    },
+
+    opacity: {
+        delay: 1.5,
+        duration: 0.25,
+        value: 0
+    }
+}, function() {
+    this.remove();
+});
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>transition-usage-source}}
+```

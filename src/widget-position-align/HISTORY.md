@@ -1,8 +1,16 @@
 Widget Position Align
 =====================
 
-3.4.0
------
+3.4.0PR3
+--------
+
+  * Added "alignOn" attribute which allows the implementer to specify when
+  	the widget should be re-aligned. By default, it re-aligns on window resize
+  	and scroll.
+
+
+3.4.0PR2
+--------
 
   * Widgets are kept in alignment when window is resized or scrolled.
 

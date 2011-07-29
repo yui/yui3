@@ -1,0 +1,12 @@
+{
+    "name"       : "get",
+    "displayName": "Get",
+    "description": "Asynchronous JavaScript and CSS file loader.",
+    "author"     : ["adam", "rgrove"],
+
+    "tags": [
+        "utility", "get", "script", "loader"
+    ],
+
+    "use": ["get"]
+}

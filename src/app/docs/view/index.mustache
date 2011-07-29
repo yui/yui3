@@ -27,7 +27,35 @@ The first step in creating a custom View class is to extend `Y.View`. This allow
 </p>
 
 <p>
-If you want, you can also establish a relationship between your view and a <a href="../model/index.html">Model</a> or <a href="../model-list/index.html">Model List</a> instance by providing a custom `initializer()` method. The initializer is also typically where you would subscribe to model change events to be notified when you need to re-render your view.
+If you want, you can also establish a relationship between your view and a <a href="../model/index.html">Model</a> or <a href="../model-list/index.html">Model List</a> instance by attaching event handlers to them in a custom `initializer()` method. The initializer is also typically where you would subscribe to model change events to be notified when you need to re-render your view.
+</p>
+
+<p>
+The [[#View Properties]] section below describes the properties available on the View class in more detail, but there are a couple of important properties worth mentioning up front:
+</p>
+
+<dl>
+  <dt>`container`</dt>
+  <dd>
+    <p>
+    A DOM element, `Y.Node` instance, or HTML string representing an element that will contain the view's rendered content. This element may already exist on the page, or it may be added to the page later; that's up to you.
+    </p>
+
+    <p>
+    When rendering or re-rendering a view, the contents of this element will change, but the element itself won't be removed until you call the view's `remove()` method.
+    </p>
+  </dd>
+
+  <dt>`events`</dt>
+  <dd>
+    <p>
+    A map of CSS selectors to DOM events that should be handled by your view.
+    </p>
+  </dd>
+</dl>
+
+<p>
+Views provide [[#View Properties|several other properties]] as well, but these two are the most important, since they form the core of the view's functionality.
 </p>
 
 <p>
@@ -61,7 +89,7 @@ Y.PieView = Y.Base.create('pieView', Y.View, [], {
   initializer: function () {
     var model = this.model;
 
-    // Re-render this view when the model changes, and destroy this view when 
+    // Re-render this view when the model changes, and destroy this view when
     // the model is destroyed.
     model.after('change', this.render, this);
     model.after('destroy', this.destroy, this);
@@ -71,7 +99,7 @@ Y.PieView = Y.Base.create('pieView', Y.View, [], {
   // will be called whenever the model changes.
   render: function () {
     // Render this view's HTML into the container element.
-    this.container.setContent(Y.Lang.sub(this.template, 
+    this.container.setContent(Y.Lang.sub(this.template,
         this.model.getAttrs(['slices', 'type'])));
 
     // Append the container element to the DOM if it's not on the page already.
@@ -144,7 +172,7 @@ View classes and subclasses contain the following properties.
       <td>`'<div/>'`</td>
       <td>
         <p>
-        A DOM element, `Y.Node` instance, or HTML string representing an element that will contain the view's rendered content. The view's DOM events will be attached to this container so that they don't have to be re-attaced if the view is re-rendered.
+        A DOM element, `Y.Node` instance, or HTML string representing an element that will contain the view's rendered content. The view's DOM events will be attached to this container so that they don't have to be re-attached if the view is re-rendered.
         </p>
 
         <p>
@@ -158,7 +186,7 @@ View classes and subclasses contain the following properties.
       <td>`{}`</td>
       <td>
         <p>
-          The `events` property allows you to map CSS selectors to DOM events that should be handled by your view. Under the hood, event delegation is used so that the actual events are attached to the view's `container` element. This means you can freely re-render the contents of the container without having to worry about detaching and re-attaching events.
+          A map of CSS selectors to DOM events that should be handled by your view. Under the hood, event delegation is used so that the actual events are attached to the view's `container` element. This means you can freely re-render the contents of the container without having to worry about detaching and re-attaching events.
         </p>
 
         <p>
@@ -172,7 +200,7 @@ View classes and subclasses contain the following properties.
       <td>`undefined`</td>
       <td>
         <p>
-        Optional reference to a <a href="../model/index.html">Model</a> instance that you wish to associate with the view instance. This is meant to be set as a config property when a view is instantiated.
+        A <a href="../model/index.html">Model</a> instance that you want to associate with the view instance. This is meant to be set as a config property when a view is instantiated.
         </p>
 
         <p>
@@ -180,7 +208,7 @@ View classes and subclasses contain the following properties.
         </p>
 
         <p>
-        See [[#Associating a View with a Model or Model List]] for more details.
+        For more information, see [[#Associating a View with a Model or Model List]].
         </p>
       </td>
     </tr>
@@ -190,11 +218,11 @@ View classes and subclasses contain the following properties.
       <td>`undefined`</td>
       <td>
         <p>
-        Optional reference to a <a href="../model-list/index.html">Model List</a> instance that you wish to associate with the view instance. This is meant to be set as a config property when a view is instantiated.
+        A <a href="../model-list/index.html">Model List</a> instance that you want to associate with the view instance. This is meant to be set as a config property when a view is instantiated.
         </p>
 
         <p>
-        Like the `model` property, the `modelList` property is entirely optional, and is provided for convenience only. See [[#Associating a View with a Model or Model List]] for more details.
+        Like the `model` property, the `modelList` property is entirely optional, and is provided for convenience only. For more information, see [[#Associating a View with a Model or Model List]].
         </p>
       </td>
     </tr>
@@ -204,7 +232,7 @@ View classes and subclasses contain the following properties.
       <td>`''`</td>
       <td>
         <p>
-        Optional reference to a template for this view.
+        Reference to a template for this view.
         </p>
 
         <p>
@@ -270,7 +298,7 @@ The `this` object in view event handlers will always refer to the current view i
 </p>
 
 <p>
-When you provide an `events` config property at instantiation time, any event selectors defined therein are merged into the `events` property on the View's prototype. This allows you to override or add individual event handlers on a per-instance basis if necessary.
+At instantiation time, you can provide an `events` config property to add or override event handlers for individual view instances.
 </p>
 
 ```
@@ -333,11 +361,11 @@ This property is entirely optional. There's no requirement that views be associa
 </p>
 
 <p>
-Instead of specifying a model association, you could also choose to associate your view with a <a href="../model-list/index.html">Model List</a>, or even with nothing at all. It's entirely up to you.
+If you do set the `model` property, there's no special magic under the hood that will link the model to your view; you'll still need to manually subscribe to any model events you want to handle in your view's `initializer()` function (see the example in [[#Extending `Y.View`]]).
 </p>
 
 <p>
-If you do set the `model` property, there's no special magic under the hood that will link the model to your view; you'll still need to manually subscribe to any model events you want to handle in your view's `initializer()` function (see the example in [[#Extending `Y.View`]]).
+Instead of specifying a model association, you could also choose to associate your view with a <a href="../model-list/index.html">Model List</a>, or even with nothing at all. It's entirely up to you.
 </p>
 
 <p>
@@ -347,7 +375,7 @@ To associate a view with a <a href="../model-list/index.html">Model List</a> ins
 ```
 // Create a custom View subclass that can be associated with a Model List.
 var Y.PieListView = Y.Base.create('pieListView', Y.View, [], {
-  // ... other prototype properties and methods ... 
+  // ... other prototype properties and methods ...
 
   initializer: function (config) {
     if (config && config.modelList) {
@@ -391,5 +419,5 @@ Views are well suited for rendering portions of web pages, whether large or smal
 </p>
 
 <p>
-Widgets are well suited for representing self-contained interactive controls or objects that behave like first-class HTML elements. A widget might actually use one or more views internally to provide its visual representation and even handle some DOM events, but the widget itself provides the reusable public API and only uses views for internal plumbing.
+Widgets are well suited for representing self-contained interactive controls or objects that behave like first-class HTML elements. A widget might actually use views to provide a visual representation and even handle some DOM events &mdash; but only as internal plumbing. The widget itself is responsible for providing a reusable public API.
 </p>

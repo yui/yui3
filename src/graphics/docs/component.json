@@ -3,7 +3,7 @@
 	"displayName" : "Graphics",
 	"description" : "The Graphics module provides a JavaScript API for creating shapes in a variety of formats across all A-grade browsers.",
 	"author" : "tripp",
-	"tags" : ["graphics"],
+	"tags" : ["utility", "graphics"],
 	"use" : ["graphics"],
 	"examples" : [
 		{
@@ -58,6 +58,14 @@
 			"name" : "graphics-muddyglass",
 			"displayName" : "Transparent Glass with Shadow Example",
 			"description" : "Shows to use the graphics api to draw a realistic glass.",
+			"modules" : ["graphics"],
+			"tags" : ["graphics"],
+            		"hideTableOfContents": true
+		},
+		{
+			"name" : "graphics-violin",
+			"displayName" : "Complex Example: Violin",
+			"description" : "Shows to use the graphics api to draw a violin.",
 			"modules" : ["graphics"],
 			"tags" : ["graphics"],
             		"hideTableOfContents": true

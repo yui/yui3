@@ -349,6 +349,10 @@ LeftAxisLayout.prototype = {
                     topOffset += (sinRadians * labelWidth)/2 - (cosRadians * labelHeight)/2;
                 }
             }
+            y += topOffset;
+            x += leftOffset;
+            props.x = Math.round(x);
+            props.y = Math.round(y);
         }
         else
         {
@@ -372,11 +376,11 @@ LeftAxisLayout.prototype = {
                 max = (cosRadians * labelWidth) + (sinRadians * labelHeight);
                 topOffset -= ((sinRadians * labelWidth) + (cosRadians * labelHeight))/2;
             }
+            y += topOffset;
+            x += leftOffset;
+            label.style.left = Math.round(x) + "px";
+            label.style.top = Math.round(y) + "px";
         }
-        y += topOffset;
-        x += leftOffset;
-        label.style.left = x + "px";
-        label.style.top = y + "px";
         this._titleSize = max;
         this._rotate(label, props);
     },
@@ -436,8 +440,8 @@ LeftAxisLayout.prototype = {
                 topOffset -= cosRadians * (labelHeight * 0.5);
             }
             leftOffset += tickOffset;
-            label.style.left = ((pt.x + this._titleSize + maxLabelSize) - leftOffset) + "px";
-            label.style.top = topOffset + "px";
+            label.style.left = Math.round((pt.x + this._titleSize + maxLabelSize) - leftOffset) + "px";
+            label.style.top = Math.round(topOffset) + "px";
             this._rotate(label, this._labelRotationProps);
             return;
         }
@@ -471,8 +475,8 @@ LeftAxisLayout.prototype = {
                 topOffset -= (sinRadians * labelWidth) + (cosRadians * (labelHeight * 0.6));
             }
         }
-        label.style.left = (host.get("maxLabelSize") + leftOffset) + "px";
-        label.style.top = topOffset + "px";
+        props.x = Math.round(host.get("maxLabelSize") + leftOffset);
+        props.y = Math.round(topOffset);
         this._rotate(label, this._labelRotationProps);
     },
 
@@ -756,6 +760,10 @@ RightAxisLayout.prototype = {
                     topOffset += (sinRadians * labelWidth)/2 - (cosRadians * labelHeight)/2;
                 }
             }
+            y += topOffset;
+            x += leftOffset;
+            props.x = Math.round(x);
+            props.y = Math.round(y);
         }
         else
         {
@@ -779,11 +787,11 @@ RightAxisLayout.prototype = {
                 max = (cosRadians * labelWidth) + (sinRadians * labelHeight);
                 topOffset -= ((sinRadians * labelWidth) + (cosRadians * labelHeight))/2;
             }
+            y += topOffset;
+            x += leftOffset;
+            label.style.left = Math.round(x) + "px";
+            label.style.top = Math.round(y) + "px";
         }
-        y += topOffset;
-        x += leftOffset;
-        label.style.left = x + "px";
-        label.style.top = y + "px";
         this._titleSize = max;
         this._rotate(label, props);
     },
@@ -837,8 +845,8 @@ RightAxisLayout.prototype = {
             }
             leftOffset += margin;
             leftOffset += tickOffset;
-            label.style.left = leftOffset + "px";
-            label.style.top = topOffset + "px";
+            label.style.left = Math.round(leftOffset) + "px";
+            label.style.top = Math.round(topOffset) + "px";
             this._rotate(label, props);
             return;
         }
@@ -869,8 +877,8 @@ RightAxisLayout.prototype = {
         }
         leftOffset += margin;
         leftOffset += tickOffset;
-        label.style.left = leftOffset + "px";
-        label.style.top = topOffset + "px";
+        props.x = Math.round(leftOffset);
+        props.y = Math.round(topOffset);
         this._rotate(label, props);
     },
 
@@ -1143,6 +1151,10 @@ BottomAxisLayout.prototype = {
                     leftOffset -= (cosRadians * labelWidth)/2 + (sinRadians * labelHeight)/2;
                 }
             }
+            x += leftOffset;
+            y += topOffset;
+            props.x = Math.round(x);
+            props.y = Math.round(y);
         }
         else
         {
@@ -1166,11 +1178,11 @@ BottomAxisLayout.prototype = {
                 max = (sinRadians * labelWidth) + (cosRadians * labelHeight);
                 leftOffset -= ((cosRadians * labelWidth) + (sinRadians * labelHeight))/2;
             }
+            x += leftOffset;
+            y += topOffset;
+            label.style.left = Math.round(x) + "px";
+            label.style.top = Math.round(y) + "px";
         }
-        x += leftOffset;
-        y += topOffset;
-        label.style.left = x + "px";
-        label.style.top = y + "px";
         this._titleSize = max;
         this._rotate(label, props);
     },
@@ -1265,8 +1277,8 @@ BottomAxisLayout.prototype = {
         }
         topOffset += margin;
         topOffset += tickOffset;
-        label.style.left = Math.round(leftOffset) + "px";
-        label.style.top = Math.round(topOffset) + "px";
+        props.x = leftOffset;
+        props.y = topOffset;
         this._rotate(label, props);
     },
     
@@ -1540,6 +1552,10 @@ TopAxisLayout.prototype = {
                     leftOffset -= (cosRadians * labelWidth)/2 + (sinRadians * labelHeight)/2;
                 }
             }
+            x += leftOffset;
+            y += topOffset;
+            props.x = Math.round(x);
+            props.y = Math.round(y);
         }
         else
         {
@@ -1563,11 +1579,11 @@ TopAxisLayout.prototype = {
                 max = (sinRadians * labelWidth) + (cosRadians * labelHeight);
                 leftOffset -= ((cosRadians * labelWidth) + (sinRadians * labelHeight))/2;
             }
+            x += leftOffset;
+            y += topOffset;
+            label.style.left = Math.round(x) + "px";
+            label.style.top = Math.round(y) + "px";
         }
-        x += leftOffset;
-        y += topOffset;
-        label.style.left = x + "px";
-        label.style.top = y + "px";
         this._titleSize = max;
         this._rotate(label, props);
     },
@@ -1629,8 +1645,8 @@ TopAxisLayout.prototype = {
                 topOffset += maxLabelSize;
             }
             topOffset -= tickOffset;
-            label.style.left = leftOffset;
-            label.style.top = topOffset;
+            label.style.left = Math.round(leftOffset);
+            label.style.top = Math.round(topOffset);
             this._rotate(label, props);
             return;
         }
@@ -1663,8 +1679,8 @@ TopAxisLayout.prototype = {
             topOffset -= (sinRadians * labelWidth) + (cosRadians * labelHeight);
         }
         topOffset -= tickOffset;
-        label.style.left = leftOffset + "px";
-        label.style.top = (host.get("maxLabelSize") + topOffset) + "px";
+        props.x = Math.round(leftOffset);
+        props.y = Math.round(host.get("maxLabelSize") + topOffset);
         this._rotate(label, props);
     },
 
@@ -2446,6 +2462,8 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     _rotate: function(label, props)
     {
         var rot = props.rot,
+            x = props.x,
+            y = props.y,
             absRot,
             radCon,
             sinRadians,
@@ -2459,13 +2477,13 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         if(Y.config.doc.createElementNS)
         {
             label.style.MozTransformOrigin =  "0 0";
-            label.style.MozTransform = "rotate(" + rot + "deg)";
+            label.style.MozTransform = "translate(" + x + "px," + y + "px) rotate(" + rot + "deg)";
             label.style.webkitTransformOrigin = "0 0";
-            label.style.webkitTransform = "rotate(" + rot + "deg)";
+            label.style.webkitTransform = "translate(" + x + "px," + y + "px) rotate(" + rot + "deg)";
             label.style.msTransformOrigin =  "0 0";
-            label.style.msTransform = "rotate(" + rot + "deg)";
+            label.style.msTransform = "translate(" + x + "px," + y + "px) rotate(" + rot + "deg)";
             label.style.OTransformOrigin =  "0 0";
-            label.style.OTransform = "rotate(" + rot + "deg)";
+            label.style.OTransform = "translate(" + x + "px," + y + "px) rotate(" + rot + "deg)";
         }
         else
         {
@@ -2539,7 +2557,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                     var graphic = this.get("graphic");
                     if(graphic)
                     {
-                        this._path = graphic.getShape({type:"path"});
+                        this._path = graphic.addShape({type:"path"});
                     }
                 }
                 return this._path;
@@ -4757,7 +4775,7 @@ Lines.prototype = {
         var graphic = this.get("graphic") || this.get("graph").get("graphic");
         if(!this._lineGraphic)
         {
-            this._lineGraphic = graphic.getShape({type: "path"});
+            this._lineGraphic = graphic.addShape({type: "path"});
         }
         this._lineGraphic.clear();
         return this._lineGraphic;
@@ -5032,7 +5050,7 @@ Fills.prototype = {
         var path = this._path;
         if(!path)
         {
-            path = this.get("graph").get("graphic").getShape({type:"path"});
+            path = this.get("graph").get("graphic").addShape({type:"path"});
             this._path = path;
         }
         return path;
@@ -5554,7 +5572,7 @@ Plots.prototype = {
             cfg = Y.clone(styles);
         graphic.set("autoDraw", false);
         cfg.type = cfg.shape;
-        marker = graphic.getShape(cfg); 
+        marker = graphic.addShape(cfg); 
         marker.addClass("yui3-seriesmarker");
         return marker;
     },
@@ -5846,6 +5864,7 @@ Histogram.prototype = {
         {
             if(isNaN(xcoords[i]) || isNaN(ycoords[i]))
             {
+                this._markers.push(null);
                 continue;
             }
             config = this._getMarkerDimensions(xcoords[i], ycoords[i], calculatedSize, offset);
@@ -5866,6 +5885,10 @@ Histogram.prototype = {
                     style.border.colors = borderColors[i % borderColors.length];
                 }
                 marker = this.getMarker(style, graphOrder, i);
+            }
+            else
+            {
+                this._markers.push(null);
             }
         }
         this._clearMarkerCache();
@@ -8072,7 +8095,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
                     negativeBaseValues[i] = this._bottomOrigin;
                     positiveBaseValues[i] = this._bottomOrigin;
                 }
-                
+                this._markers.push(null); 
                 continue;
             }
             if(useOrigin)
@@ -8111,12 +8134,19 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
                     positiveBaseValues[i] = top;
                 }
             }
-            left -= w/2;
-            style.width = w;
-            style.height = h;
-            style.x = left;
-            style.y = top;
-            marker = this.getMarker(style, graphOrder, i);
+            if(!isNaN(h) && h > 0)
+            {
+                left -= w/2;
+                style.width = w;
+                style.height = h;
+                style.x = left;
+                style.y = top;
+                marker = this.getMarker(style, graphOrder, i);
+            }
+            else
+            {
+                this._markers.push(null);
+            }
         }
         this._clearMarkerCache();
     },
@@ -8145,6 +8175,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
             markerStyles.height = marker.get("height");
             markerStyles.x = (xcoords[i] - offset);
             markerStyles.y = marker.get("y");
+            markerStyles.id = marker.get("id");
             marker.set(markerStyles);
         }
     },
@@ -8328,6 +8359,7 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
                     positiveBaseValues[i] = this._leftOrigin;
                     negativeBaseValues[i] = this._leftOrigin;
                 }
+                this._markers.push(null);
                 continue;
             }
             if(useOrigin)
@@ -8366,12 +8398,19 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
                     left -= w;
                 }
             }
-            top -= h/2;        
-            style.width = w;
-            style.height = h;
-            style.x = left;
-            style.y = top;
-            marker = this.getMarker(style, graphOrder, i);
+            if(!isNaN(w) && w > 0)
+            {
+                top -= h/2;        
+                style.width = w;
+                style.height = h;
+                style.x = left;
+                style.y = top;
+                marker = this.getMarker(style, graphOrder, i);
+            }
+            else
+            {
+                this._markers.push(null);
+            }
         }
         this._clearMarkerCache();
     },
@@ -8398,6 +8437,7 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
             markerStyles.y = (ycoords[i] - h/2);
             markerStyles.x = marker.get("x");
             markerStyles.width = marker.get("width");
+            markerStyles.id = marker.get("id");
             marker.set(markerStyles);
         }
     },
@@ -8944,7 +8984,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             marker,
             cfg = Y.clone(styles);
         graphic.set("autoDraw", false);
-        marker = graphic.getShape(cfg); 
+        marker = graphic.addShape(cfg); 
         marker.addClass("yui3-seriesmarker");
         return marker;
     },
@@ -10062,7 +10102,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 {
                     this._backgroundGraphic = new Y.Graphic({render:this.get("contentBox")});
                     this._backgroundGraphic.get("node").style.zIndex = -2;
-                    this._background = this._backgroundGraphic.getShape({type: "rect"});
+                    this._background = this._backgroundGraphic.addShape({type: "rect"});
                 }
                 return this._background;
             }
@@ -10084,7 +10124,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 {
                     this._gridlinesGraphic = new Y.Graphic({render:this.get("contentBox")});
                     this._gridlinesGraphic.get("node").style.zIndex = -1;
-                    this._gridlines = this._gridlinesGraphic.getShape({type: "path"});
+                    this._gridlines = this._gridlinesGraphic.addShape({type: "path"});
                 }
                 return this._gridlines;
             }

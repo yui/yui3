@@ -1,0 +1,54 @@
+				<div class="intro">
+					
+					<p>The foundational CSS Reset removes the inconsistent styling of HTML elements provided by browsers. This creates a dependably flat foundation to built upon. With CSS Reset loaded, write explicit CSS your project needs.</p>
+					
+					<p><strong>Note:</strong> <a href="../cssbase/">CSS Base</a> can complement <a href="../cssreset/">CSS Reset</a> by applying a style foundation for common HTML elements that is consistent for <a href="http://developer.yahoo.com/yui/articles/gbs">A-grade browsers</a>.</p>						
+							
+				</div>
+				
+				<h2 id="start">Getting Started</h2>
+
+				<h3 id="dependencies">Include Dependencies</h3>
+				
+				<p>To use CSS Reset, include the following source file in your web page:</p>
+
+```
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/{{yuiVersion}}/build/cssreset/reset-min.css">
+```
+
+				<h3 id="context">Global vs. Contextual</h3>
+				
+				<p>YUI's CSS resources apply rules to HTML elements directly (using <a href="http://www.w3.org/TR/CSS21/selector.html#type-selectors">type selectors</a>). An alternate version of the resource is available that target elements by context only. This contextual <code>-context.css</code> version selects HTML elements only when they descend from the <code>.yui3-cssreset</code> classname.</p>
+				
+				<p>Here is how to include the contextual version of CSS Reset:</p> 
+				
+```
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/{{yuiVersion}}/build/cssreset/reset-context-min.css">
+```
+
+								
+				<h2 id="using">Using CSS Reset</h2>
+				
+				<h3 id="start-globally">Using CSS Reset Globally</h3>
+				
+				<p>CSS Reset is easy to use. When CSS Reset is loaded it removes the inconsistent styling of HTML elements provided by browsers. Now, just begin writing the CSS rules your project needs without being burdened by what the browser <em>thinks</em> you need.</p>
+				
+				<p>Here is an <a href="cssreset-basic.html">example page showing HTML elements</a> once CSS Reset has been included in the page globally.</p>
+				
+				<h3 id="start-contextually">Using CSS Reset Contextually</h3>				
+		
+				<p>If you're using the contextual version, CSS Reset's rules are only applied to nodes that descend from a node with a class value of <code>.yui3-cssreset</code>. In this example, CSS Reset applies to the <code>h1</code> in the left column, but does not impact the <code>h1</code> in the right column:</p>
+					
+```
+<div>
+	<div id="left-column" class="yui3-cssreset"><h1>Lorem Ipsum</h1></div>
+	<div id="right-column"><h1>Lorem Ipsum</h1></div>
+</div>
+```
+		
+					<p>Here is an <a href="cssreset-context.html">example page where only a portion of the page is impacted</a> because it is being used contextually.</p>
+					
+
+
+
+

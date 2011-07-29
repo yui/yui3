@@ -237,6 +237,7 @@ NodeFocusManager.ATTRS = {
 	*
 	* @attribute circular
 	* @type Boolean
+	* @default true
 	*/
 	circular: {
 		value: true

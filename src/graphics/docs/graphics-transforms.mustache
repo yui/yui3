@@ -40,7 +40,7 @@ This example shows how to apply transforms to shapes.
 ```
 <p>Create an ellipse, recangle and circle.</p>
 ```
-    var myrect = mygraphic.getShape({
+    var myrect = mygraphic.addShape({
         type: "rect",
         stroke: {
             color:"#000",
@@ -53,7 +53,7 @@ This example shows how to apply transforms to shapes.
         height:50
     });
         
-    var myellipse = mygraphic.getShape({
+    var myellipse = mygraphic.addShape({
         type: "ellipse",
         stroke: {
             color: "#ddd",
@@ -69,7 +69,7 @@ This example shows how to apply transforms to shapes.
         y:50
     });
         
-    var mycircle = mygraphic.getShape({
+    var mycircle = mygraphic.addShape({
         type: "circle",
         stroke: {
             color:"#ff0",
@@ -89,8 +89,8 @@ This example shows how to apply transforms to shapes.
 ```
     function rotateShapes(e)
     {
-        myrect.set("rotation", 45);
-        myellipse.set("rotation", 45);
+        myrect.rotate(45);
+        myellipse.rotate(45);
     }
 ```
 
@@ -98,8 +98,7 @@ This example shows how to apply transforms to shapes.
 ```
     function translateShapes(e)
     {
-        mycircle.set("translateX", 50);
-        mycircle.set("translateY", 60);
+        mycircle.translate(50, 60);
     }
 ```
 

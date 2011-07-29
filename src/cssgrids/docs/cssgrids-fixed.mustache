@@ -1,0 +1,69 @@
+<div class="intro">
+    <p>This example demonstrates how to create a fixed width page using YUI Grids.</p>
+</div>
+
+<div class="example newwindow">
+    <a href="cssgrids-fixed-example.html" target="_blank" class="button">
+        View Example in New Window
+    </a>
+</div>
+
+<p>A fixed grid starts with the basic markup structure of a <code>yui3-g</code> grid and some <code>yui3-u</code> units.  For this example, we will create a 970px page and use <code>yui-u-1-5</code> to make the left column 194px, and <code>yui-2-5</code> to split the other 2 into 388px columns each.</p>
+<h3>Basic Markup Structure</h3>
+
+```
+<div class="yui3-g">
+    <div class="yui3-u-1-5"></div>
+    <div class="yui3-u-2-5"></div>
+    <div class="yui3-u-2-5"></div>
+</div>
+```
+
+<h3>Adding Content</h3>
+<p>As with all <code>yui3-u-*</code> units, to avoid layout complications, all column styling should be applied to a container within the unit rather than on the unit itself.
+For this demo we will add a container with the class <code>content</code> to contain our content, but you can feel free to call this whatever you like.</p>
+
+```
+<div class="yui3-g">
+    <div class="yui3-u-1-5">
+        <div class="content">
+
+        </div>
+    </div>
+    <div class="yui3-u-2-5">
+        <div class="content">
+
+        </div>
+    </div>
+    <div class="yui3-u-2-5">
+        <div class="content">
+
+        </div>
+    </div>
+</div>
+```
+
+<h3>Fixing the Page Width</h3>
+<p>To fix the size of the page, simply apply a width to the outermost page container.  For this example, we will apply the <code>ID</code> <code>doc</code> to the <code>body</code> element and apply the width there.  To center the layout, set the margin to <code>auto</code>.</p>
+
+```
+<style>
+#doc {
+    margin:auto; /* center in viewport */
+    width: 970px; /* fix page width */
+}
+</style>
+```
+
+<h3>Adding Gutters and other Column Styling</h3>
+<p>The <code>content</code> container is where margins between columns ("gutters"), padding, borders, and other content styling can be applied.</p>
+
+```
+<style>
+.yui3-g .content {
+    border: 2px solid #000;
+    margin-right:10px; /* "column" gutters */
+    padding: 1em;
+}
+</style>
+```

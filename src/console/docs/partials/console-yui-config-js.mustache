@@ -1,0 +1,112 @@
+<script type="text/javascript">
+YUI().use("console", "selector-css3", "json-stringify", function (Y) {
+
+// Add the default filtering of sourceC messages
+Y.config.logExclude = {
+    sourceC : true
+};
+
+// Create and render the Console
+var yconsole = new Y.Console({
+    boundingBox: "#console",
+    style: "block"
+}).render();
+
+
+// Set up event listeners
+// Source include or exclude select
+Y.on("change", function () {
+    if (this.get("value") === "logInclude") {
+        Y.config.logInclude = Y.config.logExclude;
+        delete Y.config.logExclude;
+    } else {
+        Y.config.logExclude = Y.config.logInclude;
+        delete Y.config.logInclude;
+    }
+    updatePreview();
+}, "#incexc");
+
+// delegate all checkbox and radio group clicks via a single event subscriber
+// routing to the appropriate function based on the input name
+var clickHandlers = {
+    src_filter : updateSourceFilters,
+    log_level  : updateLogLevel,
+    msg_src    : updatePreview,
+    msg_cat    : updatePreview
+};
+
+Y.delegate("click", function (e) {
+    var input   = e.currentTarget,
+        handler = clickHandlers[ input.get("name") ];
+
+    if (handler) {
+        handler(input.get("value"), input.get("checked"));
+    }
+
+}, "#demo", "input[name]");
+
+// Log message input and radio groups
+Y.on("keyup", updatePreview, "#msg");
+
+// Log message button
+Y.on("click", function (e) {
+    var msg = Y.one("#msg").get("value"),
+        cat = Y.one("#demo input[name=msg_cat]:checked").get("value"),
+        src = Y.one("#demo input[name=msg_src]:checked").get("value");
+
+    Y.log(msg,cat,src);
+}, "#log");
+
+// Support functions
+function updateSourceFilters(source, checked) {
+    var disposition = Y.one("#incexc").get("value"),
+        cfg = Y.config[disposition]; // Y.config.logInclude or logExclude
+
+    if (checked) {
+        if (!cfg) {
+            cfg = Y.config[disposition] = {};
+        }
+        cfg[source] = true;
+    } else {
+        delete cfg[source];
+        if (!Y.Object.size(cfg)) {
+            delete Y.config[disposition];
+        }
+    }
+
+    updatePreview();
+}
+
+function updateLogLevel(level, checked) {
+    if (checked) {
+        Y.config.logLevel = level;
+        yconsole.set("logLevel", level);
+        updatePreview();
+    }
+}
+
+function updatePreview() {
+    var filters   = Y.all("#demo input[name=src_filter]:checked"),
+        cfg = {
+            logLevel: Y.one("#demo input[name=log_level]:checked").get("value")
+        };
+
+    if (filters.size()) {
+        cfg[Y.one("#incexc").get("value")] = Y.Array.hash(filters.get("value"));
+    }
+
+    Y.one("#preview").set("text",Y.substitute(
+        "// YUI instance configuration\n" +
+        "var Y = YUI({cfg});\n\n" +
+        "// Log statement\n" +
+        'Y.log("{msg}", "{lvl}", "{src}");',
+        {
+            cfg: Y.JSON.stringify(cfg, null, 4),
+            msg: Y.one("#msg").get("value"),
+            lvl: Y.one("#demo input[name=msg_cat]:checked").get("value"),
+            src: Y.one("#demo input[name=msg_src]:checked").get("value")
+        }));
+}
+
+});
+</script>

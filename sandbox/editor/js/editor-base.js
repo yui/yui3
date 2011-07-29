@@ -185,7 +185,6 @@ YUI.add('editor-base', function(Y) {
                             if (sel._selection.pasteHTML) {
                                 sel._selection.pasteHTML(EditorBase.TABKEY);
                             } else {
-                                console.log('IE9 is here.. SHould be default behaviour now');
                                 this.execCommand('inserthtml', EditorBase.TABKEY);
                             }
                         }
@@ -193,7 +192,7 @@ YUI.add('editor-base', function(Y) {
                     break;
             }
             if (Y.UA.webkit && e.commands && (e.commands.indent || e.commands.outdent)) {
-                /**
+                /*
                 * When executing execCommand 'indent or 'outdent' Webkit applies
                 * a class to the BLOCKQUOTE that adds left/right margin to it
                 * This strips that style so it is just a normal BLOCKQUOTE

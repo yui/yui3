@@ -3,7 +3,7 @@
     YUI().use('graphics', 'dd-drag', function (Y) 
     { 
         var mygraphic = new Y.Graphic({render: "#mygraphiccontainer"}); 
-        var myrect = mygraphic.getShape({
+        var myrect = mygraphic.addShape({
             type: "rect",
             stroke: {
                 color:"#000",

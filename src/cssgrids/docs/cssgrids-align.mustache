@@ -1,0 +1,96 @@
+<div class="intro">
+    <p>YUI Grids makes it easy to align units in various ways, using basic CSS properties.</p>
+</div>
+
+<div class="example newwindow">
+    <a href="cssgrids-align-example.html" target="_blank" class="button">
+        View Example in New Window
+    </a>
+</div>
+
+<h3>Horizontal Alignment</h3>
+<p>Sometimes is it desirable for  units to be horizontally centered when taking up less than 100% of the width of the containing grid.  Rather than setting the alignment for all grids, we will add an <code>ID</code> to target the specific content being aligned.  For this example, the <code>ID</code> "demo" is used, but this should be tailored to your specific content.</p>
+
+```
+<div class="yui3-g" id="demo">
+    <div class="yui3-u-1-3"><p>I take up 1/3 of my container.</p></div>
+    <div class="yui3-u-1-3"><p>I take up 1/3 of my container.</p></div>
+</div>
+```
+
+<p>Using the CSS <code>text-align</code> property on the containing grid tells the units inside of a grid how to align.  We will also reset the centering so that subsequent content is left-aligned.</p>
+
+```
+<style>
+#demo {
+    text-align: center;
+}
+
+#demo .yui3-u-1-3 {
+    text-align: left;
+}
+</style>
+```
+
+<h3>Vertical Alignment</h3>
+<p>Vertical alignment tells mixed height units how they should align relative to one another, so at least 2 units are required.</p>
+
+```
+<div class="yui3-g thumb-captions">
+    <div class="yui3-u-1-3">
+        <a href="#"><img width="80" height="60" src="museum.jpg">
+            Lorem ispum
+        </a>
+    </div>
+    <div class="yui3-u-1-3">
+        <a href="#"><img height="80" width="60" src="museum.jpg">
+            Lorem ispum
+        </a>
+    </div>
+    <div class="yui3-u-1-3">
+        <a href="#"><img height="80" width="60" src="museum.jpg">
+            Lorem ispum
+        </a>
+    </div>
+</div>
+```
+
+<p>Each unit needs to be told how it should align using the CSS <code>vertical-align</code> property.  In this case, we want them all to be bottom aligned.</p>
+
+```
+<style>
+.thumb-captions .yui3-u-1-3 {
+    vertical-align: bottom;
+}
+</style>
+```
+
+<h3>Vertically Center a Single Unit</h3>
+<p>Its possible to vertically center a single unit, although a second stub unit is required for it to align with.</p>
+
+```
+<div class="yui3-g" id="demo">
+    <div class="yui3-u align-stub"></div>
+    <div class="yui3-u-1-3">
+        <p>Cras porta venenatis egestas. Vestibulum pretium massa id turpis varius iaculis.</p>
+    </div>
+</div>
+```
+
+<p>Setting the height of the stub to the desired height of the container allows the content to align with the middle of the stub, vertically centered in the container.  Setting the <code>vertical-align</code> CSS property for both units tells them how to behave with repsect to the other units.</p>
+
+```
+<style>
+#demo .align-stub {
+    height: 200px;
+}
+
+#demo .align-stub,
+#demo .yui-u-1-3 {
+    vertical-align: middle;
+}
+</style>
+```
+
+<h5>Note:</h5>
+<p>Because CSS examples are susceptible to other CSS on the page, this example is only available in a new window at the above link.</p>

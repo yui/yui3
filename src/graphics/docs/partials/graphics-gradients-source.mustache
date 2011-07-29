@@ -3,7 +3,7 @@
     YUI().use('graphics', function (Y) 
     { 
             var mygraphic = new Y.Graphic({render:"#mygraphiccontainer"});
-            var myrect = mygraphic.getShape({
+            var myrect = mygraphic.addShape({
 				type: "rect",
 				stroke: {
                     color:"#000",
@@ -21,7 +21,7 @@
                 width:685,
                 height:400
             });
-            var mycircle = mygraphic.getShape({
+            var mycircle = mygraphic.addShape({
 				type: "circle",
                 radius: 50,
                 x: 0,

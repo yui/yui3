@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>YUI 3.x: CSS Grids Units Example</title>
+    <link rel="stylesheet" href="{{yuiBuildUrl}}/cssreset/reset.css" type="text/css">
+    <link rel="stylesheet" href="{{yuiBuildUrl}}/cssfonts/fonts.css" type="text/css">
+    <link rel="stylesheet" href="{{yuiBuildUrl}}/cssgrids/grids.css" type="text/css">
+
+<style>
+/* everything below is custom styling to demonstrate how to create a page layout using yui grid units */
+#doc {
+    margin:auto; /* center in viewport */
+    width: 970px; /* fix page width */
+}
+
+/* arbitrary content styling */
+#hd, .yui3-g .content, #ft {
+    border: 5px solid #ccc;
+    height: 400px; 
+    margin-right: 10px; /* gutter between columns */
+}
+
+#hd, #ft {
+    height: 40px;
+}
+</style>
+
+</head>
+<body id="doc">
+    <div id="hd">
+        <h1>Fixed Layout Template</h1>
+    </div>
+
+    <div class="yui3-g">
+        <div class="yui3-u-1-5">
+            <div class="content"></div>
+        </div>
+
+        <div class="yui3-u-2-5">
+            <div class="content"></div>
+        </div>
+
+        <div class="yui3-u-2-5">
+            <div class="content"></div>
+        </div>
+    </div>
+
+    <div id="ft"></div>
+</body>
+</html>

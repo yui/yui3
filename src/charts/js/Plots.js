@@ -197,7 +197,7 @@ Plots.prototype = {
             cfg = Y.clone(styles);
         graphic.set("autoDraw", false);
         cfg.type = cfg.shape;
-        marker = graphic.getShape(cfg); 
+        marker = graphic.addShape(cfg); 
         marker.addClass("yui3-seriesmarker");
         return marker;
     },

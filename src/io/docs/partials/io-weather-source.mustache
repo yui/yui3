@@ -1,0 +1,98 @@
+<form id="wForm">
+<fieldset>
+	<label>Zip Code or Location ID</label> <input type="text" id="zip" value="94089">
+	<p>Please enter a U.S. Zip Code or a Location ID to get the current temperature.  The default is Zip Code 94089 for Sunnyvale, California; its location ID is: USCA1116.</p>
+</fieldset>
+<div id="weatherModule">
+	<li>Weather RSS data will appear here.</li>
+</div>
+<input type="button" value="Get Weather RSS" id="getWeather" disabled="disabled">
+</form>
+
+
+<script language="javascript">
+
+YUI({ filter:'raw' }).use("io-xdr", "node",
+
+	function(Y) {
+
+		//Get a Node reference to the div we'll use for displaying
+		//results:
+		var div = Y.one('#weatherModule');
+
+		//Configure the cross-domain transport:
+		var xdrConfig = {
+			id:'flash', //We'll reference this id in the xdr configuration of our transaction.
+			src:'../../build/io-xdr/io.swf' //Relative path to the .swf file from the current page.
+		};
+		Y.io.transport(xdrConfig);
+
+		//Define a function to handle a successful response from
+		//Yahoo! Weather.  The success handler will find the response
+		//object in its second argument:
+		function successHandler(id, o){
+			Y.log("Success handler called; handler will parse the retrieved XML and insert into DOM.", "info", "example");
+			var root = o.responseXML.documentElement;
+			var oTitle = root.getElementsByTagName('description')[0].firstChild.nodeValue;
+			var oDateTime = root.getElementsByTagName('lastBuildDate')[0].firstChild.nodeValue;
+			var descriptionNode = root.getElementsByTagName('description')[1].firstChild.nodeValue;
+
+			div.set("innerHTML", "<p>" + oTitle + "</p>" + "<p>" + oDateTime + "</p>" + descriptionNode);
+
+			Y.log("Success handler is complete.", "info", "example");
+		}
+
+		//Provide a function that can help debug failed
+		//requests:
+		function failureHandler(id, o){
+			Y.log("Failure handler called; http status: " + o.status, "info", "example");
+			div.set("innerHTML", o.status + " " + o.statusText);
+		}
+
+		//When the Get RSS button is clicked, this function will fire
+		//and compose/dispatch the IO request:
+		function getModule(){
+			//Get the input value:
+			var iZip = Y.one('#zip').get("value");
+
+			//Create a querystring from the input value:
+			var queryString = encodeURI('?p=' + iZip);
+
+			//The Yahoo! Weather feed.
+			var entryPoint = 'http://weather.yahooapis.com/forecastrss';
+
+			//Compile the full URI for the request:
+			var sUrl = entryPoint + queryString;
+
+			Y.log("Submitting request; zip code: " + iZip, "info", "example");
+
+			//Make the request:
+			var request = Y.io(sUrl, {
+				method:"GET",
+				xdr: {
+					use:'flash', //This is the xdrConfig id we referenced above.
+					dataType:'xml' //Indicate the data are XML, not string.
+				},				
+				on:
+					{
+						success:successHandler,
+						failure:failureHandler
+					}
+				}
+			);
+		}
+
+		//Add the click handler to the Get Weather RSS button as soon
+		//as the Flash transport has loaded:
+		Y.on('io:xdrReady', function() {
+			var btn = Y.one("#getWeather");
+			btn.set("disabled", false);
+			//Use the Event Utility to wire the Get RSS button
+			//to the getModule function.
+			Y.on("click", getModule, "#getWeather");
+		});
+
+		Y.log("When you retrieve weather RSS data, relevant steps in the process will be reported here in the logger/console.", "info", "example");
+	}
+);
+</script>

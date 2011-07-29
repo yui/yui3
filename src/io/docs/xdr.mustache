@@ -1,0 +1,93 @@
+<style type="text/css" scoped>
+#output li {margin-left:2em;}
+#output { background-color:#FFFFFF; border:1px dotted #666666; padding:1em; margin-top:1em;}
+</style>
+<div class="intro">
+<p>In the example below, IO is employed to make a cross-domain request to <a href="http://pipes.yahoo.com">Yahoo! Pipes</a>.  The output of the Pipe is an RSS-style feed formatted as JSON.  We pass that output to the JSON Utility's `parse` method for sanitization and then display the contents of the Pipe in a list.</p>
+<p>The cross-domain approach obviates the need for a server-side proxy. And the use of IO in place of a script node allows us to retrieve the JSON data as a string and execute <code>JSON.parse</code> against it, making it safer to use; a script node would evaluate immediately in the global scope as soon as it was loaded.</p>
+</div>
+<div class="example">
+{{>io-xdr-source}}
+</div>
+
+<h3 class="first">Implementing a Simple Cross-Domain Request for JSON Data</h3>
+
+<p>In this example, we begin with a YUI instance that loads the <code>io-xdr</code>, <code>json-parse</code>, <code>substitute</code> and <code>node</code> modules. The <code>io-xdr</code> module is the key module. The other modules are used to process and output the results:</p>
+
+```
+//Create a YUI instance including support for IO and JSON modules:
+YUI().use("io-xdr", "substitute", "json-parse", "node", function(Y) {
+	// Y is the YUI instance.
+	// The rest of the following code is encapsulated in this
+	// anonymous function.
+});
+```
+
+<p>We'll also get a Node reference to the container we'll be using to output the data we retrieve:</p>
+
+```
+//element #output:
+var output = Y.one("#output ul");
+```
+
+<p>Next, we configure IO's cross-domain interface for this YUI instance.  Flash is the underlying mechansim used here.  Be sure to configure the <code>src</code> property to point to your <code>IO.swf</code> file.</p>
+
+```
+//Configure the cross-domain protocol:
+var xdrConfig = {
+    id:'flash', //We'll reference this id in the xdr configuration of our transaction.
+    src:'../../build/io-xdr/io.swf //Relative path to the .swf file from the current page.
+};
+Y.io.transport(xdrConfig);
+```
+
+<p>The configuration for our specific IO transaction contains a reference to the <code>xdr</code> configuration we created above and specifies that there will not be a need to process the response as XML (we're getting JSON instead):</p>
+
+```
+var cfg = {
+    method: "GET",
+    xdr: {
+        use:'flash', //This is the xdrConfig id we referenced above.
+    },
+    on: {
+        //Our event handlers previously defined:
+        start: handleStart,
+        success: handleSuccess,
+        failure: handleFailure
+    }
+};
+```
+
+<p>Create a function that will use IO to call Yahoo! Pipes:</p>
+
+```
+//Wire the buttton to a click handler to fire our request each
+//time the button is clicked:
+var handleClick = function(o) {
+	Y.log("Click detected; beginning io request to Yahoo! Pipes.", "info", "example");
+	var obj = Y.io(
+		//this is a specific Pipes feed, populated with cycling news:
+		"http://pipes.yahooapis.com/pipes/pipe.run?_id=giWz8Vc33BG6rQEQo_NLYQ&_render=json",
+		cfg
+	);
+}
+```
+
+<p>Add a listener for the "io:xdrReady" event that lets us know when the Flash transport is ready for use.</p>
+```
+//add the click event handler as soon as the xdr Flash module has
+//loaded:
+Y.on('io:xdrReady', function() {
+	var fetch = Y.one("#fetch");
+	fetch.set("disabled", false);
+	Y.on("click", handleClick, fetch);
+});
+```
+
+<h4>Full Script</h4>
+
+<p>The full script source for this example is as follows:</p>
+
+```
+{{>io-xdr-source}}
+```

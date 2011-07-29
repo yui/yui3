@@ -644,7 +644,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 {
                     this._backgroundGraphic = new Y.Graphic({render:this.get("contentBox")});
                     this._backgroundGraphic.get("node").style.zIndex = -2;
-                    this._background = this._backgroundGraphic.getShape({type: "rect"});
+                    this._background = this._backgroundGraphic.addShape({type: "rect"});
                 }
                 return this._background;
             }
@@ -666,7 +666,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 {
                     this._gridlinesGraphic = new Y.Graphic({render:this.get("contentBox")});
                     this._gridlinesGraphic.get("node").style.zIndex = -1;
-                    this._gridlines = this._gridlinesGraphic.getShape({type: "path"});
+                    this._gridlines = this._gridlinesGraphic.addShape({type: "path"});
                 }
                 return this._gridlines;
             }

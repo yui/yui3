@@ -1,0 +1,645 @@
+<div id="outerframe">
+<div id="mygraphiccontainer"></div>
+</div>
+<script>
+    YUI().use('graphics', function (Y) 
+    { 
+        //create a graphic instance
+        var mygraphic = new Y.Graphic();
+        mygraphic.render("#mygraphiccontainer");
+        
+        //draw a background
+        var background = mygraphic.addShape({
+            type: "rect",
+            stroke: {
+               weight: 0,
+               color: "#f00",
+               opacity: 0
+            },
+            fill: {
+               type: "radial",
+               stops: [
+               {color: "#001000", opacity: 1, offset: 0},
+               {color: "#000", opacity: 1, offset: 1}
+               ]
+            },
+            width: 614,
+            height: 397,
+            x: 0,
+            y: 0
+        });
+        
+        //create a path element to use for the strings
+        var strings = mygraphic.addShape({
+           type: "path",
+           stroke: {
+               weight: 2,
+               color: "#bbb" 
+           }
+        });
+
+        //draw strings
+        strings.moveTo(614,199);
+        strings.lineTo(536,181);
+        strings.curveTo(532,178,519,181,515,183);
+        strings.lineTo(465,197);
+        strings.lineTo(487,203);
+        strings.lineTo(515,187);
+        strings.curveTo(519,184,529,182,536,184);
+        strings.lineTo(613,202);
+        strings.end();
+
+        //create a path element to use for the fingerboard
+        var finger_board = mygraphic.addShape({
+           type: "path",
+           stroke: {
+               weight: 1,
+               color: "#f00",
+               opacity: 0 
+           },
+           fill: {
+               type: "linear",
+               rotation: 140,
+               stops: [
+                   {color: "#000", opacity: 1, offset: 0},
+                   {color: "#000", opacity: 1, offset: 0.2},
+                   {color: "#302420", opacity: 1, offset: 0.8}
+               ]
+           }
+        });
+        
+        //draw the fingerboard
+        finger_board.moveTo(613,231);
+        finger_board.lineTo(507,204);
+        finger_board.curveTo(506,186,527,183,533,186);
+        finger_board.lineTo(613,205);
+        finger_board.end();
+
+        //Highlight for the fingerboard
+        var fingerboard_high = mygraphic.addShape({
+           type: "path",
+           stroke: {
+               weight: 1,
+               color: "#555",  //, dashstyle: [3, 4]
+               opacity: 0.5
+           }
+        });
+        
+        fingerboard_high.moveTo(512,199);
+        fingerboard_high.curveTo(517,193,527,190,534,191);
+        fingerboard_high.end();
+
+        //Create a path to use for the headstock
+        var head = mygraphic.addShape({
+           type: "path",
+           stroke: {
+               weight: 0,
+               color: "#f00",
+               opacity: 1 //,
+               //dashstyle: [3, 4]
+           },
+           fill: {
+               type: "linear",
+               rotation: 60,
+               stops: [
+               {color: "#9B4D17", opacity: 1, offset: 0},
+               {color: "#3B1E09", opacity: 1, offset: 0.8}
+               ]
+           }
+        });
+        
+        //Draw the headstock
+        head.moveTo(614,278);
+        head.lineTo(553,263);
+        head.curveTo(516,255,503,283,500,300);
+        head.lineTo(496,318);
+        head.curveTo(496,323,488,323,486,318);
+        head.curveTo(405,233,310,332,218,321);
+        head.curveTo(149,320,101,270,99,217);
+        head.curveTo(96,182,120,143,141,132);
+        head.curveTo(162,116,199,116,223,131);
+        head.curveTo(242,140,260,170,253,202);
+        head.curveTo(249,228,230,242,213,246);
+        head.curveTo(214,249,218,257,235,246);
+        head.curveTo(254,233,299,209,324,199);
+        head.curveTo(369,182,428,185,470,195);
+        head.lineTo(505,204);
+        head.lineTo(506,203);
+        head.lineTo(614,231);
+        head.end();
+        
+        //Outer portion of the spiral on top of the head
+        var outerTopScroll = mygraphic.addShape({     //outter top scroll
+           type: "path",
+           stroke: {
+               weight: 0,
+               color: "#00dd00", // , dashstyle: [3, 4]  
+               opacity: 1
+           },
+           fill: {
+               type: "linear", // 
+               rotation: 90,
+               stops: [
+               {color: "#562A0D", opacity: 1, offset: 0},
+               {color: "#68340F", opacity: 1, offset: 1}
+               ]
+           }
+        });
+        outerTopScroll.moveTo(106,229);
+        outerTopScroll.curveTo(104,190,116,154,144,137);
+        outerTopScroll.curveTo(169,121,214,121,237,150);
+        outerTopScroll.curveTo(251,173,258,209,229,230);
+        outerTopScroll.lineTo(219,227);
+        outerTopScroll.curveTo(219,212,237,170,210,157);
+        outerTopScroll.curveTo(175,134,132,167,146,216);
+        outerTopScroll.curveTo(147,220,152,232,156,234);
+        outerTopScroll.lineTo(105,229);
+        outerTopScroll.end();
+
+        //Inner portion of the spiral on top of the head
+        var innerTopScroll = mygraphic.addShape({  // inner top scroll
+           type: "path",
+           stroke: {
+               weight: 0,
+               color: "#00dd00", // , dashstyle: [3, 4]  
+               opacity: 1
+           },
+           fill: {
+               type: "linear", // 
+               rotation: 90,
+               stops: [
+               {color: "#562A0D", opacity: 1, offset: 0},
+               {color: "#68340F", opacity: 1, offset: 1}
+               ]
+           }
+        });
+        innerTopScroll.moveTo(200,200);
+        innerTopScroll.moveTo(160,227);
+        innerTopScroll.curveTo(143,206,142,156,190,156);
+        innerTopScroll.curveTo(236,164,226,215,198,219);
+        innerTopScroll.curveTo(185,220,165,211,178,190);
+        innerTopScroll.curveTo(182,216,210,205,204,188);
+
+        //Highlight line along the top of the head
+        var base_high = mygraphic.addShape({
+           type: "path",
+           stroke: {
+               weight: 2,
+               color: "#fff", 
+               opacity: 0.1//, dashstyle: [3, 4]
+           }
+        });
+        base_high.moveTo(503,207);
+        base_high.curveTo(428,188,354,182,292,221);
+        base_high.curveTo(270,233,242,252,217,258);
+        base_high.lineTo(209,254);
+        base_high.end();
+
+        //Highlight along the spiral and lower edge of the violin head and neck
+        var headLine = mygraphic.addShape({
+           type: "path",
+           stroke: {
+               weight: 4,
+               color: "#fff",
+               opacity: 0.1
+           }
+        });
+        headLine.moveTo(614,278);
+        headLine.lineTo(553,263);
+        headLine.curveTo(516,255,503,283,500,300);
+        headLine.lineTo(496,318);
+        headLine.curveTo(496,323,488,323,486,318);
+        headLine.curveTo(405,233,310,332,218,321);
+        headLine.curveTo(149,320,101,270,99,217);
+        headLine.curveTo(96,182,120,143,141,132);
+        headLine.curveTo(162,116,199,116,223,131);
+        headLine.curveTo(242,140,260,170,253,202);
+        headLine.curveTo(249,228,230,240,213,244);
+        headLine.moveTo(216,244);
+        headLine.curveTo(180,248,154,236,148,204);
+        headLine.curveTo(143,185,153,157,184,154);
+        headLine.curveTo(209,152,227,171,222,197);
+        headLine.curveTo(219,224,180,229,172,205);
+        headLine.curveTo(167,201,174,186,181,187);
+        headLine.end();
+         
+        //create an ellipse for the fiddle head dot
+        var fiddleHeadDot = mygraphic.addShape({   
+            type: "ellipse",
+            fill: {
+                color: "#fff",
+                opacity: 0.1
+            },
+            stroke: {
+                weight: 0,
+                color: "#000"
+            },
+            width: 25,
+            height: 25,
+            x: 178,
+            y: 178
+        });
+
+        //shared properties for the shadows
+        var shadowConfig = {
+           type: "path",
+           stroke: {
+               weight: 0,
+               color: "#000",
+               opacity: 1
+           },
+           fill: {
+               type: "linear",
+               rotation: 60,
+               stops: [
+                   {color: "#000", opacity: 1, offset: 0},
+                   {color: "#241105", opacity: 1, offset: 0.8}
+               ]
+           }
+        }
+
+        //Shadow for inner spiral on the top of the head
+        var innerSpiralFiddleHeadShadow = mygraphic.addShape(shadowConfig); // at center of fiddle head 
+        innerSpiralFiddleHeadShadow.moveTo(204,188);
+        innerSpiralFiddleHeadShadow.curveTo(207,211,179,206,178,194);
+        innerSpiralFiddleHeadShadow.curveTo(166,215,219,229,204,190);
+        innerSpiralFiddleHeadShadow.end();
+
+        //Shadow for middle spiral on the top of the head
+        var middleSpiralFiddleHeadShadow = mygraphic.addShape(shadowConfig);
+        middleSpiralFiddleHeadShadow.moveTo(223,172);
+        middleSpiralFiddleHeadShadow.curveTo(239,224,186,233,173,213);
+        middleSpiralFiddleHeadShadow.curveTo(174,266,257,223,222,171);
+        middleSpiralFiddleHeadShadow.end();
+        
+        //Shadow for outer spiral on the top of the head
+        var outerSpiralFiddleHeadShadow = mygraphic.addShape(shadowConfig);
+        outerSpiralFiddleHeadShadow.moveTo(148,214);
+        outerSpiralFiddleHeadShadow.curveTo(158,242,186,250,218,246);
+        outerSpiralFiddleHeadShadow.lineTo(221,253);
+        outerSpiralFiddleHeadShadow.curveTo(178,258,154,241,147,214);
+        outerSpiralFiddleHeadShadow.end();
+        
+        //Shadow beneath the left tuning key
+        var leftTuningKeyShadow = mygraphic.addShape(shadowConfig);
+        leftTuningKeyShadow.moveTo(293,286);
+        leftTuningKeyShadow.lineTo(323,277);
+        leftTuningKeyShadow.lineTo(337,289);
+        leftTuningKeyShadow.lineTo(336,293);
+        leftTuningKeyShadow.lineTo(292,307);
+        leftTuningKeyShadow.lineTo(288,294);
+        leftTuningKeyShadow.lineTo(292,285);
+        leftTuningKeyShadow.end();
+        
+        //Shadow beneath the right tuning key
+        var rightTuningKeyShadow = mygraphic.addShape(shadowConfig);
+        rightTuningKeyShadow.moveTo(441,260);
+        rightTuningKeyShadow.lineTo(440,276);
+        rightTuningKeyShadow.lineTo(436,283);
+        rightTuningKeyShadow.curveTo(453,286,474,299,492,319);
+        rightTuningKeyShadow.curveTo(497,308,497,299,498,297);
+        rightTuningKeyShadow.lineTo(492,278);
+        rightTuningKeyShadow.lineTo(483,267);
+        rightTuningKeyShadow.lineTo(468,254);
+        rightTuningKeyShadow.lineTo(440,260);
+        rightTuningKeyShadow.end();
+        
+        //Shadow beneath the left dowel
+        var leftDowelShadow = mygraphic.addShape(shadowConfig);
+        leftDowelShadow.moveTo(230,284);
+        leftDowelShadow.lineTo(251,280);
+        leftDowelShadow.curveTo(257,308,230,301,229,283);
+        leftDowelShadow.end();
+        
+        //Shadow beneath the right dowel
+        var rightDowelShadow = mygraphic.addShape(shadowConfig);
+        rightDowelShadow.moveTo(377,246);
+        rightDowelShadow.lineTo(399,242);
+        rightDowelShadow.curveTo(402,261,383,263,376,246);
+        rightDowelShadow.end();
+
+        //Add transparent gradients for the woodgrain if the browser supports gradient transparency
+        var DOCUMENT = Y.config.doc,
+            canvas = DOCUMENT && DOCUMENT.createElement("canvas");
+        
+        if(DOCUMENT && (DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") || (canvas && canvas.getContext && canvas.getContext("2d"))))
+        {
+            var headWoodgrain = mygraphic.addShape({
+               type: "path",
+               stroke: {
+                   weight: 0,
+                   color: "#f00",
+                   opacity: 1 
+               },
+               fill: {
+                        type: "linear",
+                        rotation: 5,
+                        stops: [
+                           {color: "#3B1E09", opacity: 1, offset: 0.03},
+                           {color: "#9B4D17", opacity: 1, offset: 0.06},
+                           {color: "#3B1E09", opacity: 1, offset: 0.09},
+                           {color: "#9B4D17", opacity: 1, offset: 0.12},
+                           {color: "#3B1E09", opacity: 1, offset: 0.18},
+                           {color: "#9B4D17", opacity: 1, offset: 0.20},
+                           {color: "#3B1E09", opacity: 1, offset: 0.23},
+                           {color: "#9B4D17", opacity: 1, offset: 0.29},
+                           {color: "#3B1E09", opacity: 1, offset: 0.34},
+                           {color: "#9B4D17", opacity: 1, offset: 0.36},
+                           {color: "#3B1E09", opacity: 1, offset: 0.38},
+                           {color: "#9B4D17", opacity: 1, offset: 0.40},
+                           {color: "#3B1E09", opacity: 1, offset: 0.45},
+                           {color: "#9B4D17", opacity: 1, offset: 0.48},
+                           {color: "#3B1E09", opacity: 1, offset: 0.50},
+                           {color: "#9B4D17", opacity: 1, offset: 0.52},
+                           {color: "#3B1E09", opacity: 1, offset: 0.55},
+                           {color: "#9B4D17", opacity: 1, offset: 0.62},
+                           {color: "#3B1E09", opacity: 1, offset: 0.68},
+                           {color: "#9B4D17", opacity: 1, offset: 0.73},
+                           {color: "#3B1E09", opacity: 1, offset: 0.76},
+                           {color: "#9B4D17", opacity: 1, offset: 0.78},
+                           {color: "#3B1E09", opacity: 1, offset: 0.82},
+                           {color: "#9B4D17", opacity: 1, offset: 0.86},
+                           {color: "#3B1E09", opacity: 1, offset: 0.90},
+                           {color: "#9B4D17", opacity: 1, offset: 0.94},
+                           {color: "#3B1E09", opacity: 1, offset: 0.96},
+                           {color: "#9B4D17", opacity: 1, offset: 1}
+                       ]
+                    }
+                });
+
+            //Draw the woodgrain
+            headWoodgrain.moveTo(614,278);
+            headWoodgrain.lineTo(553,263);
+            headWoodgrain.curveTo(516,255,503,283,500,300);
+            headWoodgrain.lineTo(496,318);
+            headWoodgrain.curveTo(496,323,488,323,486,318);
+            headWoodgrain.curveTo(405,233,310,332,218,321);
+            headWoodgrain.curveTo(149,320,101,270,99,217);
+            headWoodgrain.curveTo(96,182,120,143,141,132);
+            headWoodgrain.curveTo(162,116,199,116,223,131);
+            headWoodgrain.curveTo(242,140,260,170,253,202);
+            headWoodgrain.curveTo(249,228,230,242,213,246);
+            headWoodgrain.curveTo(214,249,218,257,235,246);
+            headWoodgrain.curveTo(254,233,299,209,324,199);
+            headWoodgrain.curveTo(369,182,428,185,470,195);
+            headWoodgrain.lineTo(505,204);
+            headWoodgrain.lineTo(506,203);
+            headWoodgrain.lineTo(614,231);
+            headWoodgrain.end();
+            
+            //handle for adding opacity to the whole object.
+            headWoodgrain.addClass('woodgrain');  
+        }
+        
+        //The bushing for the left tuning key
+        var nob_bushing_left = mygraphic.addShape({
+            type: "ellipse",
+            stroke: {
+               weight: 0,
+               color: "#00dd00",
+               opacity: 1 
+            },
+            fill: {
+               type: "radial",
+               stops: [
+                   {color: "#000", opacity: 1, offset: 0},
+                   {color: "#000", opacity: 1, offset: 0.7},
+                   {color: "#282622", opacity: 1, offset: 0.8},
+                   {color: "#000", opacity: 1, offset: 0.9}
+               ],
+                cx: 0.45,
+                cy: 0.45,
+                fx: 0.9,
+                fy: 0.9,
+                r: 0.6
+            },
+            width: 52,
+            height: 52,
+            x: 277,
+            y: 240
+        });
+
+        //The bushing for the right tuning key
+        var nob_bushing_right = mygraphic.addShape({
+            type: "ellipse",
+            stroke: {
+               weight: 0,
+               color: "#00dd00",
+               opacity: 1 
+            },
+            fill: {
+               type: "radial",
+               stops: [
+                   {color: "#000", opacity: 1, offset: 0},
+                   {color: "#000", opacity: 1, offset: 0.7},
+                   {color: "#282622", opacity: 1, offset: 0.8},
+                   {color: "#000", opacity: 1, offset: 0.9}
+               ],
+                cx: 0.45,
+                cy: 0.45,
+                fx: 0.9,
+                fy: 0.9,
+                r: 0.6
+            },
+            width: 52,
+            height: 52,
+            x: 429,
+            y: 217
+        });
+
+        var leftTuningKeySides = mygraphic.addShape({
+           type: "path",
+           stroke: {
+               weight: 0,
+               color: "#00dd00",
+               opacity: 1
+           },
+           fill: {
+               type: "radial",
+               stops: [
+               {color: "#73371F", opacity: 1, offset: 0},
+               {color: "#35211B", opacity: 1, offset: 1}
+               ]
+           }
+        });
+        leftTuningKeySides.moveTo(318,231);
+        leftTuningKeySides.curveTo(333,227,344,237,336,252);
+        leftTuningKeySides.lineTo(335,253);
+        leftTuningKeySides.curveTo(326,267,297,294,286,300);
+        leftTuningKeySides.curveTo(281,305,262,295,266,283);
+        leftTuningKeySides.curveTo(278,266,306,245,313,234);
+        leftTuningKeySides.end();
+
+        var rightTuningKeySides = mygraphic.addShape({
+           type: "path",
+           stroke: {
+               weight: 0,
+               color: "#00dd00",
+               opacity: 1
+           },
+           fill: {
+               type: "radial",
+               stops: [
+               {color: "#73371F", opacity: 1, offset: 0},
+               {color: "#35211B", opacity: 1, offset: 1}
+               ]
+           }
+        });
+        
+        rightTuningKeySides.moveTo(476,214);
+        rightTuningKeySides.curveTo(492,206,504,229,494,238);
+        rightTuningKeySides.curveTo(482,247,455,265,432,271);
+        rightTuningKeySides.curveTo(422,275,403,262,420,244);
+        rightTuningKeySides.curveTo(430,235,463,224,476,214);
+        rightTuningKeySides.end();
+
+        //Shared attributes for tuning key edges
+        var tuningKeyBevelStyle = {   
+           type: "path",
+           stroke: {
+               weight: 0,
+               color: "#00dd00",
+               opacity: 1 
+           },
+           fill: {
+               type: "radial",
+                   stops: [
+                   {color: "#DB8C64", opacity: 1, offset: 0},
+                   {color: "#593123", opacity: 1, offset: 0.5},
+                   {color: "#231610", opacity: 1, offset: 1}
+               ],
+                cx: 0.5,
+                cy: 0.5,
+                fx: 0.3,
+                fy: 0.2,
+                r: 0.5
+           }
+        };
+
+        //bevel for the right side tuning key
+        var leftTuningKeyBevel = mygraphic.addShape(tuningKeyBevelStyle);      
+        leftTuningKeyBevel.moveTo(318,236);
+        leftTuningKeyBevel.curveTo(324,219,345,249,336,249);
+        leftTuningKeyBevel.curveTo(316,263,292,286,282,301);
+        leftTuningKeyBevel.curveTo(282,304,264,295,266,285);
+        leftTuningKeyBevel.curveTo(273,279,313,247,317,237);
+        leftTuningKeyBevel.end();
+
+        //bevel for the right side tuning key
+        var rightTuningKeyBevel = mygraphic.addShape(tuningKeyBevelStyle);
+        rightTuningKeyBevel.moveTo(477,215);
+        rightTuningKeyBevel.curveTo(495,205,506,240,494,238);
+        rightTuningKeyBevel.curveTo(481,246,443,268,428,272);
+        rightTuningKeyBevel.curveTo(421,274,407,256,417,248);
+        rightTuningKeyBevel.curveTo(413,253,466,234,477,215);
+        rightTuningKeyBevel.end();
+
+        //Add an ellipse for the dowel of the left (opposite side) tuning key
+        var nobdowel_left = mygraphic.addShape({
+            type: "ellipse",
+            stroke: {
+               weight: 0,
+               color: "#00dd00",
+               opacity: 1 
+            },
+            fill: {
+               type: "radial",
+               stops: [
+                   {color: "#8E5B40", opacity: 1, offset: 0},
+                   {color: "#593123", opacity: 1, offset: 0.3},
+                   {color: "#231610", opacity: 1, offset: 1}
+               ],
+                cx: 0.5,
+                cy: 0.5,
+                fx: 0.3,
+                fy: 0.2,
+                r: 0.5
+            },
+            width: 24,
+            height: 24,
+            x: 228,
+            y: 268
+        });
+       
+        //Add an ellipse for the dowel of the right (opposite side) tuning key
+        var nobdowel_right = mygraphic.addShape({
+            type: "ellipse",
+            stroke: {
+               weight: 0,
+               color: "#00dd00",
+               opacity: 1 
+            },
+            fill: {
+               type: "radial",
+               stops: [
+                   {color: "#8E5B40", opacity: 1, offset: 0},
+                   {color: "#593123", opacity: 1, offset: 0.3},
+                   {color: "#231610", opacity: 1, offset: 1}
+               ],
+                cx: 0.5,
+                cy: 0.5,
+                fx: 0.3,
+                fy: 0.2,
+                r: 0.5
+            },
+            width: 24,
+            height: 24,
+            x: 374,
+            y: 227
+        });
+        
+        //Add an ellipse for the black tip of the left tuning key
+        var nob_tip_left = mygraphic.addShape({
+            type: "ellipse",
+            stroke: {
+               weight: 2,
+               color: "#332017",
+               opacity: 0.8
+            },
+            fill: {
+               type: "radial",
+               stops: [
+               {color: "#808080", opacity: 1, offset: 0},
+               {color: "#000", opacity: 1, offset: 0.3},
+               {color: "#000", opacity: 1, offset: 1}
+               ],
+                cx: 0.5,
+                cy: 0.5,
+                fx: 0.3,
+                fy: 0.2,
+                r: 0.5
+            },
+            width: 12,
+            height: 12,
+            x: 297,
+            y: 261
+        });
+      
+        //Add an ellipse for the black tip of the right tuning key
+       var nob_tip_right = mygraphic.addShape({
+            type: "ellipse",
+            stroke: {
+               weight: 2,
+               color: "#332017",
+               opacity: 0.8
+            },
+            fill: {
+                type: "radial",
+                stops: [
+                {color: "#808080", opacity: 1, offset: 0},
+                {color: "#000", opacity: 1, offset: 0.5},
+                {color: "#000", opacity: 1, offset: 1}
+                ],
+                cx: 0.5,
+                cy: 0.5,
+                fx: 0.3,
+                fy: 0.2,
+                r: 0.5
+            },
+            width: 12,
+            height: 12,
+            x: 450,
+            y: 238
+        });
+    });
+</script>

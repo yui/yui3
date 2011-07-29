@@ -1,0 +1,182 @@
+<style type="text/css" scoped>
+#container li {margin-left:2em;}
+#container { background-color:#FFFFFF; border:1px dotted #666666; padding:1em; margin-bottom:1em;}
+</style>
+<div class="intro">
+<p>This example demonstrates how to send HTTP GET requests using <a href="http://developer.yahoo.com/yui/3/io/" title="YUI 3: IO">YUI 3's IO module</a>.  One transaction uses global event listeners to handle the transaction's lifecycle and response.  The other transaction uses both global and transaction-level events.</p>
+</div>
+<div class="example">
+{{>io-get-source}}
+</div>
+
+<h2 class="first">Using IO for HTTP GET Requests, and Handling the Response via Event Listeners.</h2>
+<h3>Create a YUI Instance</h3>
+<p>We create a YUI instance and use <code>io-base</code> for this example, since we only need to basic IO functionality:</p>
+
+```
+//Create a YUI instance including support for IO:
+YUI({ filter:'raw' }).use("io-base", "node", function(Y) {
+	// Y is the YUI instance.
+	// The rest of the following code is encapsulated in this
+	// anonymous function.
+} );
+```
+
+<h3>Create Handlers for Global and Transaction Events.</h3>
+
+<p>
+We will create one object to handle the Global Events, and one object to handle Transaction Events.  Each object defines methods to handle the events in a transction's lifecycles.
+The results are logged to `&lt;div id="container"&gt;`.
+</p>
+
+```
+//Get a reference to the DIV that we are using
+//to report results.
+var d = Y.one('#container'),
+	gStr = '',
+	tStr = '',
+	state;
+
+/* global listener object */
+var gH = {
+	write: function(s, args) {
+			 gStr += "ID: " + s;
+			 if (args) {
+				gStr += " " + "The arguments are: " + args;
+			 }
+			 gStr += "<br>";
+		   },
+	start: function(id, args) {
+			 this.write(id + ": Global Event Start.", args);
+		   },
+	complete: function(id, o, args) {
+				this.write(id + ": Global Event Complete.  The status code is: " + o.status + ".", args);
+		   },
+	success: function(id, o, args) {
+			   this.write(id + ": Global Event Success.  The response is: " + o.responseText + ".", args);
+			 },
+	failure: function(id, o, args) {
+			   this.write(o + ": Global Event Failure.  The status text is: " + o.statusText + ".", args);
+			 },
+	end: function(id, args) {
+			 this.write(id + ": Global Event End.", args);
+			 if (state === 'global') {
+				 flush(gStr);
+			 }
+	}
+};
+/* end global listener object */
+
+/* transaction event object */
+var tH = {
+	write: function(s, args) {
+			 tStr += "ID: " + s;
+			 if (args) {
+				tStr += " " + "The arguments are: " + args;
+			 }
+			 tStr += "<br>";
+		   },
+	start: function(id, args) {
+			 this.write(id + ": Transaction Event Start.", args.start);
+		   },
+	complete: function(id, o, args) {
+				this.write(id + ": Transaction Event Complete.  The status code is: " + o.status + ".", args.complete);
+		   },
+	success: function(id, o, args) {
+			   this.write(id + ": Transaction Event Success.  The response is: " + o.responseText + ".", args.success);
+			 },
+	failure: function(id, o, args) {
+			   this.write(id + ": Transaction Event Failure.  The status text is: " + o.statusText + ".", args.failure);
+			 },
+	end: function(id, args) {
+			 this.write(id + ": Transaction Event End.", args.end);
+			 flush(gStr + tStr);
+	}
+};
+/* end transaction event object */
+
+/* Output the results to the DIV container */
+function flush(s) {
+	d.set("innerHTML", s);
+
+	if (state === 'global') {
+		gStr = '';
+	}
+	else {
+		gStr = '';
+		tStr = '';
+	}
+}
+```
+
+<h3>Subscribe to the Global events</h3>
+<p>With the handler object <code>gH</code defined, we can now subscribe to the Global events.</p>
+
+```
+// Notice the object context of "gH" is provided as the
+// third argument of <code>Y.on()</code>, to preserve the proper
+// context of 'this' as used in <code>gH's</code> methods.
+
+/* Subscribe to the global events */
+Y.on('io:start', gH.start, gH, 'global foo');
+Y.on('io:complete', gH.complete, gH, 'global bar');
+Y.on('io:success', gH.success, gH, 'global baz');
+Y.on('io:failure', gH.failure, gH);
+Y.on('io:end', gH.end, gH, 'global boo');
+/* End event subscription */
+```
+
+<h3>Assemble a Configuration Object to set Transaction Event Listeners</h3>
+<p>Use a configuration object to define which Transaction Events you wish to handle, for the specific transaction.</p>
+
+```
+/* Configuration object for setting Transaction Events */
+var cfg = {
+	on: {
+		start: tH.start,
+		complete: tH.complete,
+		success: tH.success,
+		failure: tH.failure,
+		end: tH.end
+	},
+	context: tH,
+	headers: { 'X-Transaction': 'GET Example'},
+	arguments: {
+			   start: 'foo',
+			   complete: 'bar',
+			   success: 'baz',
+			   failure: 'Oh no!',
+			   end: 'boo'
+			   }
+};
+```
+
+<h3>Initiate the Transaction</h3>
+<p>
+Finally, we set up two buttons -- one for each type of transaction -- and add a "click" listener to each of them.  The handler -- function <code>call()</code> -- make an
+IO request, based on which button was clicked.
+</p>
+
+```
+function call(e, b) {
+	if (b) {
+		state = 'all';
+	}
+	else {
+		state = 'global';
+	}
+
+	Y.io('assets/get.txt', cfg);
+}
+
+Y.on('click', call, "#get1", this, false);
+Y.on('click', call, "#get2", this, true);
+```
+
+<h4>Full Code</h4>
+
+<p>The full JavaScript code for this example follows:</p>
+
+```
+{{>io-get-source}}
+```

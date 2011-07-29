@@ -1,0 +1,96 @@
+				<div class="intro">
+                					
+					<p>The foundational CSS Fonts provides cross-browser typographical normalization and control while still allowing users to choose and adjust their font size. Both Standards and Quirks modes are supported in A-grade browsers.</p>
+										
+					<p><strong>Note:</strong> <a href="../cssbase/">CSS Base</a> can complement <a href="../cssreset/">CSS Reset</a> by applying a style foundation for common HTML elements that is consistent for <a href="http://developer.yahoo.com/yui/3/articles/gbs">A-grade browsers</a>.</p>						
+                </div>
+							
+				<h2 id="start">Getting Started</h2>
+
+				<h3 id="dependencies">Include Dependencies</h3>
+				
+				<p>To use CSS Fonts, include the following source file in your web page with the link element:</p>
+
+```
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/{{yuiVersion}}/build/cssfonts/fonts-min.css">
+```
+				
+				<h3 id="context">Global vs. Contextual</h3>
+				
+				<p>YUI's CSS resources apply rules to HTML elements directly (using <a href="http://www.w3.org/TR/CSS21/selector.html#type-selectors">type selectors</a>). An alternate version of the resource is available that target elements by context only. This contextual <code>-context.css</code> version selects HTML elements only when they descend from the <code>.yui3-cssfonts</code> classname.</p>
+				
+				<p>Here is how to include the contextual version of CSS Fonts:</p> 
+
+```
+<!-- Source File -->
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/{{yuiVersion}}/build/cssfonts/fonts-context-min.css">
+```
+				<h2 id="using">Using CSS Fonts</h2>
+
+				<h3 id="default">Default Text</h3>
+
+				<p>With the CSS linked into the page, all text renders in the Arial font, at 13 pixel size, with 16 pixel line-height. The <code>pre</code> and <code>code</code> elements use the "monospace" font-family. <a href="cssfonts-basic.html">Here's an example of HTML elements after Fonts has been applied</a>.</p>
+
+				<h3 id="fontsize">Font-size Adjustment</h3>
+
+				<p>To change the size of a font, use a percentage value from the <a href="#chart">chart</a> below. Always use percentages as the units because they render more consistently than ems, and because they allow user-initiated resizing (unlike pixels). <a href="cssfonts-size.html">See the example</a>.</p>
+
+```
+#demo1 {font-size:85%;}  /*renders 11px */
+#demo2 {font-size:100%;} /*renders 13px */ 
+#demo3 {font-size:108%;} /*renders 14px */
+#demo4 {font-size:123.1%;} /*renders 16px */
+#demo5 {font-size:138.5%;} /*renders 18px */
+```
+
+				<div id="fontsize-chart">
+					<table border="1" cellpadding="3" cellspacing="3" class="auto">
+						<tr>
+							<th class="first-col">For pixels (px)</th>
+							<th>Declare this percent (%)</th>
+						</tr>
+						<tr class="odd"><td class="first-col"> 10 </td><td> 77</td></tr>
+						<tr class="even"><td class="first-col"> 11 </td><td> 85 </td></tr>
+						<tr class="odd"><td class="first-col"> 12 </td><td> 93 </td></tr>
+						<tr class="even"><td class="first-col"> 13 </td><td> 100 </td></tr>
+						<tr class="odd"><td class="first-col"> 14 </td><td> 108 </td></tr>
+						<tr class="even"><td class="first-col"> 15 </td><td> 116 </td></tr>
+						<tr class="odd"><td class="first-col"> 16 </td><td> 123.1 </td></tr>
+						<tr class="even"><td class="first-col"> 17 </td><td> 131 </td></tr>
+						<tr class="odd"><td class="first-col"> 18 </td><td> 138.5 </td></tr>
+						<tr class="even"><td class="first-col"> 19 </td><td> 146.5 </td></tr>
+						<tr class="odd"><td class="first-col"> 20 </td><td> 153.9 </td></tr>
+						<tr class="even"><td class="first-col"> 21 </td><td> 161.6 </td></tr>
+						<tr class="odd"><td class="first-col"> 22 </td><td> 167 </td></tr>
+						<tr class="even"><td class="first-col"> 23 </td><td> 174 </td></tr>
+						<tr class="odd"><td class="first-col"> 24 </td><td> 182 </td></tr>
+						<tr class="even"><td class="first-col"> 25 </td><td> 189 </td></tr>
+						<tr class="odd"><td class="first-col"> 26 </td><td> 197 </td></tr>
+					</table>
+				</div>
+
+				<h2 id="family">Font-family Adjustment</h2>
+				<p>Arial is the default font-family for all text (except <code>pre</code> and <code>code</code>) when you use Fonts CSS. Specify a new font-family when you want something other than Arial. <a href="cssfonts-family.html">See the example</a>.</p>
+
+```
+#demo1 {}
+#demo2 {font-family:monospace;}
+#demo3 {font-family:georgia;}
+#demo4 {font-family:verdana;}
+#demo5 {font-family:times;}
+```
+				
+				<h3 id="start-contextually">Using CSS Fonts In Specific Contexts</h3>				
+		
+				<p>If you're using the contextual version, CSS Fonts's rules are only applied to elements that descend from a node with a class value of <code>.yui3-cssfonts</code>. The classname can go as high in the DOM tree as desired, including on the <code>&lt;HTML&ht;</code> element directly.</p>
+				
+				<p>The following code snippet show how you might apply CSS Fonts to one of two columns:</p>
+					
+```
+<div>
+	<div class="yui3-cssfonts"><h1>Lorem Ipsum</h1></div>
+	<div><h1>Lorem Ipsum</h1></div>
+</div>
+```
+
+	<p>Here is an example showing how to <a href="cssfonts-context.html">apply CSS Fonts to a subset of a page</a>.</p>

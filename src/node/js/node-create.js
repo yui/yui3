@@ -1,3 +1,8 @@
+/**
+ * @module node
+ * @submodule node-base
+ */
+
 var Y_Node = Y.Node,
     Y_DOM = Y.DOM;
 
@@ -8,6 +13,7 @@ var Y_Node = Y.Node,
  * @param {String} html The markup used to create the element
  * @param {HTMLDocument} doc An optional document context
  * @return {Node} A Node instance bound to a DOM node or fragment
+ * @for Node
  */
 Y_Node.create = function(html, doc) {
     if (doc && doc._node) {
@@ -95,8 +101,8 @@ Y.mix(Y_Node.prototype, {
 
     /**
      * @method appendChild
-     * @param {String | HTMLElement | Node} node Node to be appended 
-     * @return {Node} The appended node 
+     * @param {String | HTMLElement | Node} node Node to be appended
+     * @return {Node} The appended node
      */
     appendChild: function(node) {
         return Y_Node.scrubVal(this._insert(node));
@@ -104,16 +110,16 @@ Y.mix(Y_Node.prototype, {
 
     /**
      * @method insertBefore
-     * @param {String | HTMLElement | Node} newNode Node to be appended 
-     * @param {HTMLElement | Node} refNode Node to be inserted before 
-     * @return {Node} The inserted node 
+     * @param {String | HTMLElement | Node} newNode Node to be appended
+     * @param {HTMLElement | Node} refNode Node to be inserted before
+     * @return {Node} The inserted node
      */
     insertBefore: function(newNode, refNode) {
         return Y.Node.scrubVal(this._insert(newNode, refNode));
     },
 
     /**
-     * Appends the node to the given node. 
+     * Appends the node to the given node.
      * @method appendTo
      * @param {Y.Node | HTMLElement} node The node to append to
      * @chainable
@@ -135,7 +141,7 @@ Y.mix(Y_Node.prototype, {
     },
 
     /**
-     * Returns the node's current content (e.g. innerHTML) 
+     * Returns the node's current content (e.g. innerHTML)
      * @method getContent
      * @return {String} The current content
      */

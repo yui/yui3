@@ -1,0 +1,160 @@
+{{>console-yui-config-css}}
+
+<div class="intro">
+    <p>This example illustrates how to configure your YUI instance to ignore certain log messages to aid in reducing the signal-to-noise ratio when debugging.</p>
+
+    <p>Log messages filtered out from the YUI config are permanently ignored.  If you want to be able to temporarily hide and reshow messages, use the <a href="../console-filters/">ConsoleFilters plugin</a>.  It is not uncommon to set up `logInclude` or `logExclude` in the YUI configuration and use the ConsoleFilters plugin.</p>
+
+    <p>Log messages can be ignored based on the source (e.g. `event` or `attribute`) or based on their log level (info, warn, error).</p>
+
+</div>
+
+<div class="example">
+{{>console-yui-config-markup}}
+{{>console-yui-config-js}}
+</div>
+
+<h3>Setting up filters in the YUI configuration</h3>
+<p>The configuration object passed to the YUI constructor supports a few settings that can help manage Console output while debugging.  These configuration options are `logExclude`, `logInclude`, `logLevel`, `filter`, and `filters`.</p>
+
+<p>This example will show the use of the `logInclude`, `logExclude`, and `logLevel` configurations.</p>
+
+<p>An example configuration might look like this:</p>
+
+```
+YUI({
+    filter : 'debug', // request -debug versions of modules for log statements
+    logExclude : {
+        event : true,     // Don't broadcast log messages from the event module
+        attribute : true, // or the attribute module
+        widget : true     // or the widget module
+    },
+    logLevel : 'error',       // Show only errors in the Console
+    useBrowserConsole : false // Don't use the browser's native console
+}).use('overlay','anim','console', function (Y) {
+
+/* Console instances will default to logLevel = "info" */
+
+});
+```
+
+<p>`logExclude` and `logInclude` prevent the logging subsystem from broadcasting filtered log messages.  `logLevel`, on the other hand is used by Console instances to filter messages received from the subsystem.</p>
+
+<p>Updating `Y.config.logExclude` or `Y.config.logInclude` at runtime will immediately change the subsystem filtering, but will not recover messages previously sent from that source.</p>
+
+```
+YUI({
+    logExclude : {
+        event : true
+    }
+}).use('console', function (Y) {
+
+/* In here, Y.config refers to the config object passed to the constructor */
+
+// Stop broadcasting log messages from the attribute module
+Y.config.logExclude.attribute = true;
+
+// Start broadcasting log messages from the event module again
+delete Y.config.logExclude.event;
+
+});
+```
+
+<p>When a Console is instantiated, barring explicit `logLevel` attribute configuration, the `logLevel` will be adopted from the YUI instance's configured `logLevel`, or `Y.Console.LOG_LEVEL_INFO` (&quot;info&quot;) as a fallback.  Unlike `logExclude`, changing the value in the YUI configuration will only affect instantiated Consoles from that point on.  Additionally, you can manually override the `logLevel` a Console instance will display by updating its `logLevel` attribute.</p>
+
+```
+YUI({ logLevel : "warn" }).use('console', function (Y) {
+
+var yconsole_1 = new Y.Console(); // logLevel == "warn"
+
+var yconsole_2 = new Y.Console({
+    logLevel : "info" // override at construction
+});
+
+// This will not affect yconsole_1 or yconsole_2
+Y.config.logLevel = "error";
+
+var yconsole_3 = new Y.Console(); // logLevel == "error"
+
+yconsole_1.set("logLevel", "info"); // update this instance
+
+});
+```
+
+<p>The interactive portion of this example illustrates the effect of various filter settings against logged messages.  In a real application, it is most likely that the logging configuration won't be changed at runtime but set once in the YUI configuration at construction.</p>
+
+<p>The most relevant portion of the <a href="#full_code_listing">code for the demo above</a> is the updating of the YUI config and Console attribute.</p>
+
+```
+// Create and render the Console
+var yconsole = new Y.Console({
+    boundingBox: '#console', // anchored to the page for the demo
+    style: "block"
+}).render();
+
+...
+
+// Source include or exclude select
+Y.on("change", function () {
+    if (this.get("value") === "logInclude") {
+        Y.config.logInclude = Y.config.logExclude;
+        delete Y.config.logExclude;
+    } else {
+        Y.config.logExclude = Y.config.logInclude;
+        delete Y.config.logInclude;
+    }
+    updatePreview();
+}, "#incexc");
+
+// These functions are called from a delegated event handler.
+// See the Full Code Listing for how they are called.
+function updateSourceFilters(source, checked) {
+    var disposition = Y.one("#incexc").get("value"),
+        cfg = Y.config[disposition]; // Y.config.logInclude or logExclude
+
+    if (checked) {
+        if (!cfg) {
+            cfg = Y.config[disposition] = {};
+        }
+        cfg[source] = true; // e.g. Y.config.logInclude.sourceA = true;
+    } else {
+        delete cfg[source];
+
+        if (!Y.Object.size(cfg)) {
+            delete Y.config[disposition];
+        }
+    }
+
+    updatePreview();
+}
+
+function updateLogLevel(level, checked) {
+    if (checked) {
+        Y.config.logLevel = level;
+        yconsole.set("logLevel", level);
+        updatePreview();
+    }
+}
+```
+
+<h3 id="full_code_listing">Full Code Listing</h3>
+
+<h4>Markup</h4>
+
+```
+{{>console-yui-config-markup}}
+```
+
+<h4>JavaScript</h4>
+
+```
+{{>console-yui-config-js}}
+```
+
+<h4>CSS</h4>
+
+```
+{{>console-yui-config-css}}
+```
+
+

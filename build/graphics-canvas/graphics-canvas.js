@@ -12,6 +12,8 @@ var SHAPE = "canvasShape",
     CanvasPieSlice,
     Y_Color = Y.Color,
     PARSE_INT = parseInt,
+    PARSE_FLOAT = parseFloat,
+    IS_NUMBER = Y_LANG.isNumber,
     RE = RegExp,
     TORGB = Y_Color.toRGB,
     TOHEX = Y_Color.toHex;
@@ -128,15 +130,6 @@ CanvasDrawing.prototype = {
         node.style.left = (x + this._left) + "px";
         node.style.top = (y + this._top) + "px";
     },
-
-    /**
-     * Holds queue of properties for the target canvas.
-     *
-     * @property _properties
-     * @type Object
-     * @private
-     */
-    _properties: null,
     
     /**
      * Queues up a method to be executed when a shape redraws.
@@ -718,6 +711,8 @@ Y.CanvasDrawing = CanvasDrawing;
  */
 CanvasShape = function(cfg)
 {
+    this._transforms = [];
+    this.matrix = new Y.Matrix();
     CanvasShape.superclass.constructor.apply(this, arguments);
 };
 
@@ -936,41 +931,6 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 		this.node = node;
 		this.addClass("yui3-" + SHAPE + " yui3-" + this.name);
 	},
-
-	/**
-     * Parses event to determine if it is a dom interaction event.
-     *
-     * @method isMouseEvent
-     * @param {String} type Type of event
-     * @return Boolean
-	 * @private
-	 */
-	isMouseEvent: function(type)
-	{
-		if(type.indexOf('mouse') > -1 || type.indexOf('click') > -1)
-		{
-			return true;
-		}
-		return false;
-	},
-	
-	/**
-     * Overrides default `before` method. Checks to see if its a dom interaction event. If so, 
-     * return an event attached to the `node` element. If not, return the normal functionality.
-     *
-     * @method before
-     * @param {String} type event type
-     * @param {Object} callback function
-	 * @private
-	 */
-	before: function(type, fn)
-	{
-		if(this.isMouseEvent(type))
-		{
-			return Y.before(type, fn, "#" +  this.get("id"));
-		}
-		return Y.on.apply(this, arguments);
-	},
 	
 	/**
      * Overrides default `on` method. Checks to see if its a dom interaction event. If so, 
@@ -983,27 +943,9 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 */
 	on: function(type, fn)
 	{
-		if(this.isMouseEvent(type))
+		if(Y.Node.DOM_EVENTS[type])
 		{
-			return Y.on(type, fn, "#" +  this.get("id"));
-		}
-		return Y.on.apply(this, arguments);
-	},
-	
-	/**
-     * Overrides default `after` method. Checks to see if its a dom interaction event. If so, 
-     * return an event attached to the `node` element. If not, return the normal functionality.
-     *
-     * @method after
-     * @param {String} type event type
-     * @param {Object} callback function
-	 * @private
-	 */
-	after: function(type, fn)
-	{
-		if(this.isMouseEvent(type))
-		{
-			return Y.after(type, fn, "#" +  this.get("id"));
+			return Y.one("#" +  this.get("id")).on(type, fn);
 		}
 		return Y.on.apply(this, arguments);
 	},
@@ -1018,8 +960,8 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	_setStrokeProps: function(stroke)
 	{
 		var color = stroke.color,
-			weight = stroke.weight,
-			opacity = stroke.opacity,
+			weight = PARSE_FLOAT(stroke.weight),
+			opacity = PARSE_FLOAT(stroke.opacity),
 			linejoin = stroke.linejoin || "round",
 			linecap = stroke.linecap || "butt",
 			dashstyle = stroke.dashstyle;
@@ -1027,7 +969,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 		this._dashstyle = (dashstyle && Y.Lang.isArray(dashstyle) && dashstyle.length > 1) ? dashstyle : null;
 		this._strokeWeight = weight;
 
-		if (weight) 
+		if (IS_NUMBER(weight) && weight > 0) 
 		{
 			this._stroke = 1;
 		} 
@@ -1035,7 +977,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 		{
 			this._stroke = 0;
 		}
-		if (opacity) {
+		if (IS_NUMBER(opacity)) {
 			this._strokeStyle = this._toRGBA(color, opacity);
 		}
 		else
@@ -1050,7 +992,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 		else
 		{
 			linejoin = parseInt(linejoin, 10);
-			if(Y.Lang.isNumber(linejoin))
+			if(IS_NUMBER(linejoin))
 			{
 				this._miterlimit =  Math.max(linejoin, 1);
 				this._linejoin = "miter";
@@ -1087,7 +1029,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 */
 	_setFillProps: function(fill)
 	{
-		var isNumber = Y.Lang.isNumber,
+		var isNumber = IS_NUMBER,
 			color = fill.color,
 			opacity,
 			type = fill.type;
@@ -1121,28 +1063,53 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 * Applies translate transformation.
 	 *
 	 * @method translate
-	 * @param {Number} x The x-coordinate
-	 * @param {Number} y The y-coordinate
+	 * @param {Number} x The value to transate on the x-axis.
+	 * @param {Number} y The value to translate on the y-axis.
 	 */
 	translate: function(x, y)
 	{
-		this._translateX = x;
-		this._translateY = y;
-		this._translate.apply(this, arguments);
+		this._translateX += x;
+		this._translateY += y;
+		this._addTransform("translate", arguments);
 	},
 
 	/**
-	 * Applies translate transformation.
+	 * Performs a translate on the x-coordinate. When translating x and y coordinates,
+	 * use the `translate` method.
 	 *
-	 * @method translate
-	 * @param {Number} x The x-coordinate
-	 * @param {Number} y The y-coordinate
-	 * @protected
+	 * @method translateX
+	 * @param {Number} y The value to translate.
 	 */
-	_translate: function(x, y)
-	{
-		this._addTransform("translate", [x + "px", y + "px"]);
-	},
+	translateX: function(x)
+    {
+        this._translateX += x;
+        this._addTransform("translateX", arguments);
+    },
+
+	/**
+	 * Performs a translate on the y-coordinate. When translating x and y coordinates,
+	 * use the `translate` method.
+	 *
+	 * @method translateY
+	 * @param {Number} y The value to translate.
+	 */
+	translateY: function(y)
+    {
+        this._translateY += y;
+        this._addTransform("translateY", arguments);
+    },
+
+    /**
+     * Applies a skew transformation.
+     *
+     * @method skew
+     * @param {Number} x The value to skew on the x-axis.
+     * @param {Number} y The value to skew on the y-axis.
+     */
+    skew: function(x, y)
+    {
+        this._addTransform("skew", arguments);
+    },
 
 	/**
 	 * Applies a skew to the x-coordinate
@@ -1152,6 +1119,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 */
 	 skewX: function(x)
 	 {
+		this._addTransform("skewX", arguments);
 	 },
 
 	/**
@@ -1162,29 +1130,20 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 */
 	 skewY: function(y)
 	 {
+		this._addTransform("skewY", arguments);
 	 },
 
 	/**
-     * Storage for `rotation` atribute.
-     *
-     * @property _rotation
-     * @type Number
-	 * @private
-	 */
-	_rotation: 0,
-
-	/**
-	 * Applies a rotation.
+	 * Applies a rotate transform.
 	 *
 	 * @method rotate
 	 * @param {Number} deg The degree of the rotation.
 	 */
-	rotate: function(deg)
-	{
-		var rotate = "rotate(" + deg + "deg)";
+	 rotate: function(deg)
+	 {
 		this._rotation = deg;
-		this._addTransform("rotate", [deg + "deg"]);
-	},
+		this._addTransform("rotate", arguments);
+	 },
 
 	/**
 	 * Applies a scale transform
@@ -1192,25 +1151,29 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 * @method scale
 	 * @param {Number} val
 	 */
-	scale: function(val)
+	scale: function(x, y)
 	{
-	},
-
-	/**
-	 * Applies a matrix transformation
-	 *
-	 * @method matrix
-     * @param {Number} a
-     * @param {Number} b
-     * @param {Number} c
-     * @param {Number} d
-     * @param {Number} e
-     * @param {Number} f
-	 */
-	matrix: function(a, b, c, d, e, f)
-	{
+		this._addTransform("scale", arguments);
 	},
 	
+    /**
+     * Storage for `rotation` atribute.
+     *
+     * @property _rotation
+     * @type Number
+	 * @private
+	 */
+	_rotation: 0,
+    
+    /**
+     * Storage for the transform attribute.
+     *
+     * @property _transform
+     * @type String
+     * @private
+     */
+    _transform: "",
+
     /**
      * Adds a transform to the shape.
      *
@@ -1221,12 +1184,11 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 */
 	_addTransform: function(type, args)
 	{
-		if(!this._transformArgs)
-		{
-			this._transformArgs = {};
-		}
-		this._transformArgs[type] = Array.prototype.slice.call(args, 0);
-		if(this.initialized)
+        args = Y.Array(args);
+        this._transform = Y_LANG.trim(this._transform + " " + type + "(" + args.join(", ") + ")");
+        args.unshift(type);
+        this._transforms.push(args);
+        if(this.initialized)
         {
             this._updateTransform();
         }
@@ -1242,34 +1204,25 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	{
 		var node = this.node,
 			key,
-			args,
-			val,
-			transform = node.style.MozTransform || node.style.webkitTransform || node.style.msTransform || node.style.OTransform,
-			test,
-			transformOrigin = this.get("transformOrigin");
-		for(key in this._transformArgs)
-		{
-            if(key && this._transformArgs.hasOwnProperty(key))
-			{
-				val = key + "(" + this._transformArgs[key].toString() + ")";
-				if(transform && transform.length > 0)
-				{
-					test = new RegExp(key + '(.*)');
-					if(transform.indexOf(key) > -1)
-					{
-						transform = transform.replace(test, val);
-					}
-					else
-					{
-						transform += " " + val;
-					}
-				}
-				else
-				{
-					transform = val;
-				}
-			}
-		}
+			transform,
+			transformOrigin = this.get("transformOrigin"),
+            matrix = this.matrix,
+            i = 0,
+            len = this._transforms.length;
+        
+        if(this._transforms && this._transforms.length > 0)
+        {
+            for(; i < len; ++i)
+            {
+                key = this._transforms[i].shift();
+                if(key)
+                {
+                    matrix[key].apply(matrix, this._transforms[i]); 
+                }
+            }
+            transform = matrix.toCSSText();
+        }
+        
         this._graphic.addToRedrawQueue(this);    
 		transformOrigin = (100 * transformOrigin[0]) + "% " + (100 * transformOrigin[1]) + "%";
 		node.style.MozTransformOrigin = transformOrigin; 
@@ -1283,6 +1236,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
             node.style.msTransform = transform;
             node.style.OTransform = transform;
 		}
+        this._transforms = [];
 	},
 
 	/**
@@ -1499,8 +1453,8 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	{
 		var rotation = this.get("rotation"),
 			radCon = Math.PI/180,
-			sinRadians = parseFloat(parseFloat(Math.sin(rotation * radCon)).toFixed(8)),
-			cosRadians = parseFloat(parseFloat(Math.cos(rotation * radCon)).toFixed(8)),
+			sinRadians = PARSE_FLOAT(PARSE_FLOAT(Math.sin(rotation * radCon)).toFixed(8)),
+			cosRadians = PARSE_FLOAT(PARSE_FLOAT(Math.cos(rotation * radCon)).toFixed(8)),
 			w = this.get("width"),
 			h = this.get("height"),
 			stroke = this.get("stroke"),
@@ -1618,7 +1572,7 @@ CanvasShape.ATTRS =  {
 	 * An array of x, y values which indicates the transformOrigin in which to rotate the shape. Valid values range between 0 and 1 representing a 
 	 * fraction of the shape's corresponding bounding box dimension. The default value is [0.5, 0.5].
 	 *
-	 * @attribute transformOrigin
+	 * @config transformOrigin
 	 * @type Array
 	 */
 	transformOrigin: {
@@ -1627,71 +1581,38 @@ CanvasShape.ATTRS =  {
 			return [0.5, 0.5];
 		}
 	},
-
-	/**
-	 * The rotation (in degrees) of the shape.
-	 *
-	 * @attribute rotation
-	 * @type Number
-	 */
-	rotation: {
-		setter: function(val)
-		{
-			this.rotate(val);
-		},
-
-		getter: function()
-		{
-			return this._rotation;
-		}
-	},
-
-	/**
-	 * Performs a translate on the x-coordinate. When translating x and y coordinates,
-	 * use the `translate` method.
-	 *
-	 * @attribute translateX
-	 * @type Number
-	 */
-	translateX: {
-		getter: function()
-		{
-			return this._translateX;
-		},
-
-		setter: function(val)
-		{
-			this._translateX = val;
-			this._translate(val, this._translateY);
-			return val;
-		}
-	},
 	
-	/**
-	 * Performs a translate on the y-coordinate. When translating x and y coordinates,
-	 * use the `translate` method.
+    /**
+	 * A css transform string.
 	 *
-	 * @attribute translateX
-	 * @type Number
+	 * @config transform
+     * @type String  
+     * 
+     * @writeOnly
 	 */
-	translateY: {
-		getter: function()
-		{
-			return this._translateY;
-		},
-
+	transform: {
 		setter: function(val)
 		{
-			this._translateY = val;
-			this._translate(this._translateX, val);
-			return val;
-		}
+            this.matrix.init();	
+		    this._transforms = this.matrix.getTransformArray(val);
+            this._transform = val;
+            if(this.initialized)
+            {
+                this._updateTransform();
+            }
+            return val;
+		},
+
+        getter: function()
+        {
+            return this._transform;
+        }
 	},
 
 	/**
 	 * Dom node for the shape
 	 *
-	 * @attribute node
+	 * @config node
 	 * @type HTMLElement
 	 * @readOnly
 	 */
@@ -1707,7 +1628,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Unique id for class instance.
 	 *
-	 * @attribute id
+	 * @config id
 	 * @type String
 	 */
 	id: {
@@ -1730,7 +1651,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Indicates the width of the shape
 	 *
-	 * @attribute width
+	 * @config width
 	 * @type Number
 	 */
 	width: {
@@ -1740,7 +1661,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Indicates the height of the shape
 	 *
-	 * @attribute height
+	 * @config height
 	 * @type Number
 	 */
 	height: {
@@ -1750,7 +1671,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Indicates the x position of shape.
 	 *
-	 * @attribute x
+	 * @config x
 	 * @type Number
 	 */
 	x: {
@@ -1760,7 +1681,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Indicates the y position of shape.
 	 *
-	 * @attribute y
+	 * @config y
 	 * @type Number
 	 */
 	y: {
@@ -1770,7 +1691,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Indicates whether the shape is visible.
 	 *
-	 * @attribute visible
+	 * @config visible
 	 * @type Boolean
 	 */
 	visible: {
@@ -1812,7 +1733,7 @@ CanvasShape.ATTRS =  {
 	 *  </dl>
 	 *  </p>
 	 *
-	 * @attribute fill
+	 * @config fill
 	 * @type Object 
 	 */
 	fill: {
@@ -1845,7 +1766,7 @@ CanvasShape.ATTRS =  {
 	 *      length of the dash. The second index indicates the length of gap.
 	 *  </dl>
 	 *
-	 * @attribute stroke
+	 * @config stroke
 	 * @type Object
 	 */
 	stroke: {
@@ -1863,7 +1784,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Indicates whether or not the instance will size itself based on its contents.
 	 *
-	 * @attribute autoSize 
+	 * @config autoSize 
 	 * @type Boolean
 	 */
 	autoSize: {
@@ -1873,7 +1794,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Determines whether the instance will receive mouse events.
 	 * 
-	 * @attribute pointerEvents
+	 * @config pointerEvents
 	 * @type string
 	 */
 	pointerEvents: {
@@ -1883,7 +1804,7 @@ CanvasShape.ATTRS =  {
 	/**
 	 * Reference to the container Graphic.
 	 *
-	 * @attribute graphic
+	 * @config graphic
 	 * @type Graphic
 	 */
 	graphic: {
@@ -1944,11 +1865,10 @@ Y.extend(CanvasPath, Y.CanvasShape, {
         node.setAttribute("pointer-events", "none");
         node.style.pointerEvents = "none";
         node.style.overflow = "visible";
-        node.setAttribute("class", "yui3-" + SHAPE);
-		node.setAttribute("class", "yui3-" + this.name);
 		node.setAttribute("id", id);
 		id = "#" + id;
 		this.node = node;
+		this.addClass("yui3-" + SHAPE + " yui3-" + this.name);
 	},
 
     /**
@@ -1966,7 +1886,7 @@ CanvasPath.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	/**
 	 * Indicates the width of the shape
 	 *
-	 * @attribute width
+	 * @config width
 	 * @type Number
 	 */
 	width: {
@@ -1986,7 +1906,7 @@ CanvasPath.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	/**
 	 * Indicates the height of the shape
 	 *
-	 * @attribute height
+	 * @config height
 	 * @type Number
 	 */
 	height: {
@@ -2006,7 +1926,7 @@ CanvasPath.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	/**
 	 * Indicates the path used for the node.
 	 *
-	 * @attribute path
+	 * @config path
 	 * @type String
 	 */
 	path: {
@@ -2145,7 +2065,7 @@ CanvasCircle.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	/**
 	 * Indicates the width of the shape
 	 *
-	 * @attribute width
+	 * @config width
 	 * @type Number
 	 */
 	width: {
@@ -2164,7 +2084,7 @@ CanvasCircle.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	/**
 	 * Indicates the height of the shape
 	 *
-	 * @attribute height
+	 * @config height
 	 * @type Number
 	 */
 	height: {
@@ -2183,7 +2103,7 @@ CanvasCircle.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	/**
 	 * Radius of the circle
 	 *
-	 * @attribute radius
+	 * @config radius
      * @type Number
 	 */
 	radius: {
@@ -2246,7 +2166,7 @@ CanvasPieSlice.ATTRS = Y.mix({
     /**
      * Starting angle in relation to a circle in which to begin the pie slice drawing.
      *
-     * @attribute startAngle
+     * @config startAngle
      * @type Number
      */
     startAngle: {
@@ -2256,7 +2176,7 @@ CanvasPieSlice.ATTRS = Y.mix({
     /**
      * Arc of the slice.
      *
-     * @attribute arc
+     * @config arc
      * @type Number
      */
     arc: {
@@ -2266,7 +2186,7 @@ CanvasPieSlice.ATTRS = Y.mix({
     /**
      * Radius of the circle in which the pie slice is drawn
      *
-     * @attribute radius
+     * @config radius
      * @type Number
      */
     radius: {
@@ -2292,7 +2212,7 @@ CanvasGraphic.ATTRS = {
     /**
      * Whether or not to render the `Graphic` automatically after to a specified parent node after init. This can be a Node instance or a CSS selector string.
      * 
-     * @attribute render
+     * @config render
      * @type Node | String 
      */
     render: {},
@@ -2300,7 +2220,7 @@ CanvasGraphic.ATTRS = {
     /**
 	 * Unique id for class instance.
 	 *
-	 * @attribute id
+	 * @config id
 	 * @type String
 	 */
 	id: {
@@ -2323,7 +2243,7 @@ CanvasGraphic.ATTRS = {
     /**
      * Key value pairs in which a shape instance is associated with its id.
      *
-     *  @attribute shapes
+     *  @config shapes
      *  @type Object
      *  @readOnly
      */
@@ -2339,7 +2259,7 @@ CanvasGraphic.ATTRS = {
     /**
      *  Object containing size and coordinate data for the content of a Graphic in relation to the graphic instance's position.
      *
-     *  @attribute contentBounds 
+     *  @config contentBounds 
      *  @type Object
      *  @readOnly
      */
@@ -2355,7 +2275,7 @@ CanvasGraphic.ATTRS = {
     /**
      *  The outermost html element of the Graphic instance.
      *
-     *  @attribute node
+     *  @config node
      *  @type HTMLElement
      *  @readOnly
      */
@@ -2371,7 +2291,7 @@ CanvasGraphic.ATTRS = {
 	/**
 	 * Indicates the width of the `Graphic`. 
 	 *
-	 * @attribute width
+	 * @config width
 	 * @type Number
 	 */
     width: {
@@ -2388,7 +2308,7 @@ CanvasGraphic.ATTRS = {
 	/**
 	 * Indicates the height of the `Graphic`. 
 	 *
-	 * @attribute height 
+	 * @config height 
 	 * @type Number
 	 */
     height: {
@@ -2406,7 +2326,7 @@ CanvasGraphic.ATTRS = {
      *  Determines how the size of instance is calculated. If true, the width and height are determined by the size of the contents.
      *  If false, the width and height values are either explicitly set or determined by the size of the parent node's dimensions.
      *
-     *  @attribute autoSize
+     *  @config autoSize
      *  @type Boolean
      *  @default false
      */
@@ -2418,7 +2338,7 @@ CanvasGraphic.ATTRS = {
      * When overflow is set to true, by default, the contentBounds will resize to greater values but not smaller values. (for performance)
      * When resizing the contentBounds down is desirable, set the resizeDown value to true.
      *
-     * @attribute resizeDown 
+     * @config resizeDown 
      * @type Boolean
      */
     resizeDown: {
@@ -2438,7 +2358,7 @@ CanvasGraphic.ATTRS = {
 	/**
 	 * Indicates the x-coordinate for the instance.
 	 *
-	 * @attribute x
+	 * @config x
 	 * @type Number
 	 */
     x: {
@@ -2461,7 +2381,7 @@ CanvasGraphic.ATTRS = {
 	/**
 	 * Indicates the y-coordinate for the instance.
 	 *
-	 * @attribute y
+	 * @config y
 	 * @type Number
 	 */
     y: {
@@ -2485,7 +2405,7 @@ CanvasGraphic.ATTRS = {
      * Indicates whether or not the instance will automatically redraw after a change is made to a shape.
      * This property will get set to false when batching operations.
      *
-     * @attribute autoDraw
+     * @config autoDraw
      * @type Boolean
      * @default true
      * @private
@@ -2497,7 +2417,7 @@ CanvasGraphic.ATTRS = {
 	/**
 	 * Indicates whether the `Graphic` and its children are visible.
 	 *
-	 * @attribute visible
+	 * @config visible
 	 * @type Boolean
 	 */
     visible: {
@@ -2626,28 +2546,28 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
     /**
      * Generates a shape instance by type.
      *
-     * @method getShape
+     * @method addShape
      * @param {String} type type of shape to generate.
      * @param {Object} cfg attributes for the shape
      * @return Shape
      */
-    getShape: function(cfg)
+    addShape: function(cfg)
     {
         cfg.graphic = this;
         var shapeClass = this._getShapeClass(cfg.type),
             shape = new shapeClass(cfg);
-        this.addShape(shape);
+        this._appendShape(shape);
         return shape;
     },
 
     /**
      * Adds a shape instance to the graphic instance.
      *
-     * @method addShape
+     * @method _appendShape
      * @param {Shape} shape The shape instance to be added to the graphic.
      * @private
      */
-    addShape: function(shape)
+    _appendShape: function(shape)
     {
         var node = shape.node,
             parentNode = this._frag || this._node;
@@ -2754,7 +2674,7 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
     },
 
     /**
-     * Returns a shape class. Used by `getShape`. 
+     * Returns a shape class. Used by `addShape`. 
      *
      * @param {Shape | String} val Indicates which shape class. 
      * @return Function 
@@ -2771,7 +2691,7 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
     },
     
     /**
-     * Look up for shape classes. Used by `getShape` to retrieve a class for instantiation.
+     * Look up for shape classes. Used by `addShape` to retrieve a class for instantiation.
      *
      * @property _shapeClass
      * @type Object

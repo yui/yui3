@@ -1,10 +1,13 @@
 YUI.add('dd-constrain', function(Y) {
 
-    /**
-	 * Plugin for the dd-drag module to add the constraining methods to it. It supports constraining to a node or viewport. It supports tick based moves and XY axis constraints.
-	 * @class DDConstrained
+	/**
+	 * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
 	 * @module dd
 	 * @submodule dd-constrain
+	 */
+	/**
+	 * Plugin for the dd-drag module to add the constraining methods to it. It supports constraining to a node or viewport. It supports tick based moves and XY axis constraints.
+	 * @class DDConstrained
 	 * @extends Base
 	 * @constructor
 	 * @namespace Plugin
@@ -27,7 +30,7 @@ YUI.add('dd-constrain', function(Y) {
 		/**
 	    * @event drag:tickAlignX
 	    * @description Fires when this node is aligned with the tickX value.
-	    * @param {EventFacade} event An EventFacade object
+	    * @param {EventFacade} event An Event Facade object
 	    * @type {CustomEvent}
 	    */
 	    EV_TICK_ALIGN_X = 'drag:tickAlignX',
@@ -35,7 +38,7 @@ YUI.add('dd-constrain', function(Y) {
 		/**
 	    * @event drag:tickAlignY
 	    * @description Fires when this node is aligned with the tickY value.
-	    * @param {EventFacade} event An EventFacade object
+	    * @param {EventFacade} event An Event Facade object
 	    * @type {CustomEvent}
 	    */
 	    EV_TICK_ALIGN_Y = 'drag:tickAlignY',

@@ -1,10 +1,15 @@
 /**
- * Registers plugins to be instantiated at the class level (plugins 
+ * @module node
+ * @submodule node-pluginhost
+ */
+
+/**
+ * Registers plugins to be instantiated at the class level (plugins
  * which should be plugged into every instance of Node by default).
  *
- * @method Node.plug
+ * @method plug
  * @static
- *
+ * @for Node
  * @param {Function | Array} plugin Either the plugin class, an array of plugin classes or an array of objects (with fn and cfg properties defined)
  * @param {Object} config (Optional) If plugin is the plugin class, the configuration for the plugin
  */
@@ -18,7 +23,7 @@ Y.Node.plug = function() {
 /**
  * Unregisters any class level plugins which have been registered by the Node
  *
- * @method Node.unplug
+ * @method unplug
  * @static
  *
  * @param {Function | Array} plugin The plugin class, or an array of plugin classes

@@ -1,18 +1,25 @@
 YUI.add('node-deprecated', function(Y) {
 
+/**
+ * @module node
+ * @submodule node-deprecated
+ * @deprecated
+ */
+
 var Y_Node = Y.Node;
 
 /*
- * Flat data store for off-DOM usage 
+ * Flat data store for off-DOM usage
  * @config data
  * @type any
  * @deprecated Use getData/setData
+ * @for Node
  */
 Y_Node.ATTRS.data = {
-    getter: function() { 
-        return this._dataVal; 
+    getter: function() {
+        return this._dataVal;
     },
-    setter: function(val) { 
+    setter: function(val) {
         this._dataVal = val;
         return val;
     },
@@ -22,11 +29,23 @@ Y_Node.ATTRS.data = {
 /**
  * Returns a single Node instance bound to the node or the
  * first element matching the given selector.
- * @method Y.get
+ * @method get
+ * @for YUI
  * @deprecated Use Y.one
  * @static
- * @param {String | HTMLElement} node a node or Selector 
- * @param {Y.Node || HTMLElement} doc an optional document to scan. Defaults to Y.config.doc. 
+ * @param {String | HTMLElement} node a node or Selector
+ * @param {Y.Node || HTMLElement} doc an optional document to scan. Defaults to Y.config.doc.
+ */
+
+/**
+ * Returns a single Node instance bound to the node or the
+ * first element matching the given selector.
+ * @method get
+ * @for Node
+ * @deprecated Use Y.one
+ * @static
+ * @param {String | HTMLElement} node a node or Selector
+ * @param {Y.Node || HTMLElement} doc an optional document to scan. Defaults to Y.config.doc.
  */
 Y.get = Y_Node.get = function() {
     return Y_Node.one.apply(Y_Node, arguments);
@@ -35,7 +54,7 @@ Y.get = Y_Node.get = function() {
 
 Y.mix(Y_Node.prototype, {
     /**
-     * Retrieves a Node instance of nodes based on the given CSS selector. 
+     * Retrieves a Node instance of nodes based on the given CSS selector.
      * @method query
      * @deprecated Use one()
      * @param {string} selector The CSS selector to test against.
@@ -46,7 +65,7 @@ Y.mix(Y_Node.prototype, {
     },
 
     /**
-     * Retrieves a nodeList based on the given CSS selector. 
+     * Retrieves a nodeList based on the given CSS selector.
      * @method queryAll
      * @deprecated Use all()
      * @param {string} selector The CSS selector to test against.
@@ -60,7 +79,7 @@ Y.mix(Y_Node.prototype, {
      * Applies the given function to each Node in the NodeList.
      * @method each
      * @deprecated Use NodeList
-     * @param {Function} fn The function to apply 
+     * @param {Function} fn The function to apply
      * @param {Object} context optional An optional context to apply the function with
      * Default context is the NodeList instance
      * @chainable
@@ -71,7 +90,7 @@ Y.mix(Y_Node.prototype, {
     },
 
     /**
-     * Retrieves the Node instance at the given index. 
+     * Retrieves the Node instance at the given index.
      * @method item
      * @deprecated Use NodeList
      *
@@ -86,7 +105,7 @@ Y.mix(Y_Node.prototype, {
      * Returns the current number of items in the Node.
      * @method size
      * @deprecated Use NodeList
-     * @return {Int} The number of items in the Node. 
+     * @return {Int} The number of items in the Node.
      */
     size: function() {
         return this._node ? 1 : 0;

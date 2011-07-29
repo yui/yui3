@@ -293,12 +293,20 @@
         _renderUIStdMod : function() {
             this._stdModNode.addClass(Widget.getClassName(STDMOD));
             this._renderStdModSections();
+
+            //This normally goes in bindUI but in order to allow setStdModContent() to work before renderUI
+            //stage, these listeners should be set up at the earliest possible time.
+            this.after(HeaderChange, this._afterHeaderChange);
+            this.after(BodyChange, this._afterBodyChange);
+            this.after(FooterChange, this._afterFooterChange);
         },
 
         _renderStdModSections : function() {
             if (L.isValue(this.get(HEADER_CONTENT))) { this._renderStdMod(STD_HEADER); }
             if (L.isValue(this.get(BODY_CONTENT))) { this._renderStdMod(STD_BODY); }
             if (L.isValue(this.get(FOOTER_CONTENT))) { this._renderStdMod(STD_FOOTER); }
+
+
         },
 
         /**
@@ -312,9 +320,9 @@
          * @protected
          */
         _bindUIStdMod : function() {
-            this.after(HeaderChange, this._afterHeaderChange);
-            this.after(BodyChange, this._afterBodyChange);
-            this.after(FooterChange, this._afterFooterChange);
+            // this.after(HeaderChange, this._afterHeaderChange);
+            // this.after(BodyChange, this._afterBodyChange);
+            // this.after(FooterChange, this._afterFooterChange);
 
             this.after(FillHeightChange, this._afterFillHeightChange);
             this.after(HeightChange, this._fillHeight);            
@@ -672,7 +680,9 @@
          * If not provided, the content will replace existing content in the section.
          */
         setStdModContent : function(section, content, where) {
+            //var node = this.getStdModNode(section) || this._renderStdMod(section);
             this.set(section + CONTENT_SUFFIX, content, {stdModPosition:where});
+            //this._addStdModContent(node, content, where);
         },
 
         /**

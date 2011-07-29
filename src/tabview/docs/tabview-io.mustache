@@ -1,0 +1,120 @@
+<div class="intro">
+    <p>This example shows how to plug <code>IO</code> functionality into <code>TabView</code> so
+    that data can be loaded remotely.<p>
+</div>
+
+<div class="example yui3-skin-sam">
+{{>tabview-io-source}}
+</div>
+
+<h2>Creating an IO Plugin for TabView</h2>
+
+<h3>Setting Up the YUI Instance</h3>
+
+<p>For this example, we'll start from the <code>widget-io</code> plugin created
+in the <a href="widget-plugin.html">widget plugin example</a>, pull in
+<code>tabview</code> and  the <code>gallery-widget-io</code> module
+which provides the base class that we'll extend to create our io
+ plugin class for <code>TabView</code>.  The code to set up our sandbox instance is shown below:</p>
+
+```
+YUI({...}).use("tabview", "gallery-io-plugin", function(Y) {
+    // We'll write our code here, after pulling in the default TabView widget
+    // and the widget-io gallery module.
+}
+```
+
+<h3>TabIO Class Structure</h3>
+
+<p>The <code>TabIO</code> class will extend the <code>Plugin.WidgetIO</code> base class.
+Since <code>WidgetIO</code> derives from <code>Base</code>, we follow the same
+pattern we use for widgets and other utilities which extend Base to setup our new class.</p>
+
+```
+TabIO = function(config) {
+    TabIO.superclass.constructor.apply(this, arguments); 
+};
+
+Y.extend(TabIO, Y.Plugin.WidgetIO, {
+    initializer: function() {...}
+}, {
+    NAME: 'tabIO', // component name
+    NS: 'io' // plugin namespace 
+});
+```
+
+<h3>Lifecycle Methods: initializer, destructor</h3>
+<p>The base <code>WidgetIO</code> plugin implements the <code>initializer</code>
+and <code>destructor</code> lifecycle methods.  For the purposes of this example,
+we will extend the <code>TabIO</code> plugin's <code>initializer</code> so that it
+loads or refreshes the content whenever the tab is selected.</p>
+
+```
+initializer: function() {
+    var tab = this.get('host');
+    tab.on('selectedChange', this.afterSelectedChange);
+},
+
+afterSelectedChange: function(e) { // this === tab
+    if (e.newVal) { // tab has been selected
+        this.io.refresh();
+    }
+}
+```
+
+<h3>Extending the Plugin</h3>
+
+<p>The <code>setContent</code> method is where we can extend the TabIO subclass
+to update the Tab's content.
+</p>
+
+```
+setContent: function(content) {
+    var tab = this.get('host');
+    tab.set('content', content);
+}
+```
+
+<h3>Using the Plugin</h3>
+
+<p>All objects derived from <a href="../../api/Base.html">Base</a> are <a href="../../api/Plugin.Host.html">Plugin Hosts</a>. They provide <a href="../../api/Plugin.Host.html#method_plug"><code>plug</code></a> and <a href="../../api/Plugin.Host.html#method_unplug"><code>unplug</code></a> methods to allow users to add/remove plugins to/from existing instances. 
+Plugins can also be configured during instantiation of the host instance, which is how this example works.</p>
+
+<p>First thing we'll do is create a new instance of a TabView:</p>
+
+```
+/* Create a new TabView instance, with content generated from script */
+var tabview = new Y.TabView();
+```
+
+<p>And then use the <code>add</code> method to add the <code>Tab</code> instances,
+to add a tab for each of the feeds, then render the tabview.</p>
+
+
+```
+var feeds = {
+    Chrome: '{{componentAssets}}/news.php?p=chrome+browser',
+    Firefox: '{{componentAssets}}/news.php?p=firefox+browser',
+    Safari: '{{componentAssets}}/news.php?p=safari+browser',
+    Explorer: '{{componentAssets}}/news.php?p=explorer+browser'
+};
+
+Y.each(feeds, function(src, label) {
+    tabview.add({
+        label: label,
+        plugins: [{
+            fn: TabIO, 
+            cfg: {
+                uri: src
+            }
+        }]
+    });
+});
+
+tabview.render();
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>tabview-io-source}}
+```

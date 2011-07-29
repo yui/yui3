@@ -37,14 +37,14 @@ Y.each([
     'docHeight',
 
     /**
-     * Amount page has been scroll vertically 
+     * Pixel distance the page has been scrolled horizontally 
      * @config docScrollX
      * @type {Int}
      */
     'docScrollX',
 
     /**
-     * Amount page has been scroll horizontally 
+     * Pixel distance the page has been scrolled vertically 
      * @config docScrollY
      * @type {Int}
      */

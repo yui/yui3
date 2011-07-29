@@ -1,0 +1,45 @@
+{
+    "name": "event",
+	"displayName": "Event Utility",
+	"description": "The Event Utility provides APIs for subscribing to and working with DOM events",
+	"author": ["lsmith", "amoore", "sdesai", "rgrove"],
+
+    "use": ["event"],
+    "tags": ["core", "event", "dom"],
+
+    "examples": [
+    ],
+
+    "pages": {
+        "delegation": {
+            "displayName": "Intro to Event Delegation"
+        },
+        "domready": {
+            "displayName": "DOM lifecycle events"
+        },
+        "focus": {
+            "displayName": "The focus and blur event fix"
+        },
+        "key": {
+            "displayName": "The key event"
+        },
+        "mouseenter": {
+            "displayName": "The mouseenter, mouseleave, and hover events"
+        },
+        "mousewheel": {
+            "displayName": "The mousewheel event"
+        },
+        "outside": {
+            "displayName": "The outside events"
+        },
+        "windowresize": {
+            "displayName": "The windowresize event"
+        },
+        "touch": {
+            "displayName": "Touch events and abstractions"
+        },
+        "valuechange": {
+            "displayName": "The valueChange event"
+        }
+    }
+}
