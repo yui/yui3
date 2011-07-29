@@ -13,6 +13,26 @@ var ACTIVE_HANDLE_NODE = 'activeHandleNode',
 
 	CSS_RESIZE_PROXY = getCN(RESIZE, PROXY);
 
+
+/**
+Adds a `proxyNode` attribute and resizes it instead of the actual node. __very similar to DDProxy__
+
+    var resize = new Y.Resize({
+        //Selector of the node to resize
+        node: '#demo'
+    });
+    resize.plug(Y.Plugin.ResizeProxy);
+    
+
+@class ResizeProxy
+@module resize
+@submodule resize-proxy
+@constructor
+@extends Plugin.Base
+@namespace Plugin
+*/
+
+
 function ResizeProxy() {
 	ResizeProxy.superclass.constructor.apply(this, arguments);
 }
@@ -28,7 +48,7 @@ Y.mix(ResizeProxy, {
          *
          * @attribute proxyNode
          * @default Generated using an internal HTML markup
-         * @type String | Node
+         * @type String|Node
          */
 		proxyNode: {
 			setter: Y.one,
