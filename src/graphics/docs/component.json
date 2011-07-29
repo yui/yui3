@@ -3,7 +3,7 @@
 	"displayName" : "Graphics",
 	"description" : "The Graphics module provides a JavaScript API for creating shapes in a variety of formats across all A-grade browsers.",
 	"author" : "tripp",
-	"tags" : ["utility", "graphics"],
+	"tags" : ["utility", "graphics", "beta"],
 	"use" : ["graphics"],
 	"examples" : [
 		{

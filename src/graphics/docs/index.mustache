@@ -156,7 +156,7 @@ have to interact directly with the underlying technologies or their correspondin
 	<tr>
 	    <td>`resizeDown`</td>
 	    <td>`boolean`</td>
-        <td>When overflow is set to true, by default, `the contentBounds` will resize to greater values but not to smaller values. (for performance) When resizing the `contentBounds` down is desirable, set the resizeDown value to true. The default value is false.</td>
+        <td>The `contentBounds` will resize to greater values but not to smaller values. (for performance) When resizing the `contentBounds` down is desirable, set the resizeDown value to true. The default value is false.</td>
 	</tr>
 	<tr>
 	    <td>`x`</td>
@@ -283,6 +283,36 @@ have to interact directly with the underlying technologies or their correspondin
             <td>`transformOrigin`</td>
             <td>`Array`</td>
             <td>The x and y values for the transformOrigin of a transform.</td>
+        </tr>
+        <tr>
+            <td>`transform`</td>
+            <td>`String`</td>
+            <td>A string containing, in order, transform operations applied to the shape instance. The `transform` string can contain the following values:
+                <dl>
+                    <dt>rotate</dt><dd>Rotates the shape clockwise around it transformOrigin.</dd>
+                    <dt>translate</dt><dd>Specifies a 2d translation.</dd>
+                    <dt>skew</dt><dd>Skews the shape around the x-axis and y-axis.</dd>
+                    <dt>scale</dt><dd>Specifies a 2d scaling operation.</dd>
+                    <dt>translateX</dt><dd>Translates the shape along the x-axis.</dd>
+                    <dt>translateY</dt><dd>Translates the shape along the y-axis.</dd>
+                    <dt>skewX</dt><dd>Skews the shape around the x-axis.</dd>
+                    <dt>skewY</dt><dd>Skews the shape around the y-axis.</dd>
+                </dl>
+                Applying transforms through the transform attribute will reset the transform matrix and apply a new transform. The shape class also contains corresponding methods for each transform 
+                that will apply the transform to the current matrix. The below code illustrates how you might use the `transform` attribute to instantiate a recangle with a rotation of 45 degrees.
+                ``` 
+                    var myRect = new Y.Rect({
+                        type:"rect",
+                        width: 50,
+                        height: 40,
+                        transform: "rotate(45)"
+                    };
+                ```
+                The code below would apply `translate` and `rotate` to an existing shape.</p>
+                ```
+                    myRect.set("transform", "translate(40, 50) rotate(45)");
+                ```
+            </td>
         </tr>
     </table>
 
