@@ -1,0 +1,178 @@
+<div id="demo">
+	<table>
+		<thead>
+			<tr>
+				<th>State</th>
+				<th>Population</th>
+				<th>Land Area</th>
+			</tr>
+		<tbody>
+		</tbody>
+	</table>
+</div>
+
+<div id="buttonControl">
+<input type="button" id="sortButton" href="sort.php" value="Sort Records by State">
+<input type="button" id="shuffleButton" href="shuffle.php" value="Shuffle Everything up">
+<br/>
+<input type="button" id="resortButton" class="secondary" href="resort.php" value="Resort" disabled=true>
+<input type="button" id="customButton" href="custom.php" value="Custom Sort by the sum of Population & Land Area">
+<br/>
+<input type="button" id="flipButton" class="secondary" href="flip.php" value="Flip Records" disabled=true>
+<input type="button" id="reverseButton"  href="reverse.php" value="Reverse Records">
+</div>
+<script>
+YUI().use("node", "dump", "recordset-base", "recordset-sort", function (Y) {
+	
+	var state_census_data = [
+        {ANSI: "01000", STATE: "ALABAMA", TOTAL_POP: 4708708, LAND_AREA: 50744, POP_PER_SQ_MILE: 87.6},
+        {ANSI: "02000", STATE: "ALASKA", TOTAL_POP: 698473, LAND_AREA: 571951.26, POP_PER_SQ_MILE: 1.1},
+        {ANSI: "04000", STATE: "ARIZONA", TOTAL_POP: 6595778, LAND_AREA: 113634.57, POP_PER_SQ_MILE: 45.2},
+        {ANSI: "05000", STATE: "ARKANSAS", TOTAL_POP: 2889450, LAND_AREA: 52068.17, POP_PER_SQ_MILE: 51.3},
+        {ANSI: "06000", STATE: "CALIFORNIA", TOTAL_POP: 36961664, LAND_AREA: 155959.34, POP_PER_SQ_MILE: 217.2},
+        {ANSI: "08000", STATE: "COLORADO", TOTAL_POP: 5024748, LAND_AREA: 103717.53, POP_PER_SQ_MILE: 41.5},
+        {ANSI: "09000", STATE: "CONNECTICUT", TOTAL_POP: 3518288, LAND_AREA: 4844.8, POP_PER_SQ_MILE: 702.9},
+        {ANSI: "10000", STATE: "DELAWARE", TOTAL_POP: 885122, LAND_AREA: 1953.56, POP_PER_SQ_MILE: 401},
+        {ANSI: "12000", STATE: "FLORIDA", TOTAL_POP: 18537969, LAND_AREA: 53926.82, POP_PER_SQ_MILE: 296.4},
+        {ANSI: "13000", STATE: "GEORGIA", TOTAL_POP: 9829211, LAND_AREA: 57906.14, POP_PER_SQ_MILE: 141.4},
+        {ANSI: "15000", STATE: "HAWAII", TOTAL_POP: 1295178, LAND_AREA: 6422.62, POP_PER_SQ_MILE: 188.6},
+        {ANSI: "16000", STATE: "IDAHO", TOTAL_POP: 1545801, LAND_AREA: 82747.21, POP_PER_SQ_MILE: 15.6},
+        {ANSI: "17000", STATE: "ILLINOIS", TOTAL_POP: 12910409, LAND_AREA: 55583.58, POP_PER_SQ_MILE: 223.4},
+        {ANSI: "18000", STATE: "INDIANA", TOTAL_POP: 6423113, LAND_AREA: 35866.9, POP_PER_SQ_MILE: 169.5},
+        {ANSI: "19000", STATE: "IOWA", TOTAL_POP: 3007856, LAND_AREA: 55869.36, POP_PER_SQ_MILE: 52.4},
+        {ANSI: "20000", STATE: "KANSAS", TOTAL_POP: 2818747, LAND_AREA: 81814.88, POP_PER_SQ_MILE: 32.9},
+        {ANSI: "21000", STATE: "KENTUCKY", TOTAL_POP: 4314113, LAND_AREA: 39728.18, POP_PER_SQ_MILE: 101.7},
+        {ANSI: "22000", STATE: "LOUISIANA", TOTAL_POP: 4492076, LAND_AREA: 43561.85, POP_PER_SQ_MILE: 102.6},
+        {ANSI: "23000", STATE: "MAINE", TOTAL_POP: 1318301, LAND_AREA: 30861.55, POP_PER_SQ_MILE: 41.3},
+        {ANSI: "24000", STATE: "MARYLAND", TOTAL_POP: 5699478, LAND_AREA: 9773.82, POP_PER_SQ_MILE: 541.9},
+        {ANSI: "25000", STATE: "MASSACHUSETTS", TOTAL_POP: 6593587, LAND_AREA: 7840.02, POP_PER_SQ_MILE: 809.8},
+        {ANSI: "26000", STATE: "MICHIGAN", TOTAL_POP: 9969727, LAND_AREA: 56803.82, POP_PER_SQ_MILE: 175},
+        {ANSI: "27000", STATE: "MINNESOTA", TOTAL_POP: 5266214, LAND_AREA: 79610.08, POP_PER_SQ_MILE: 61.8},
+        {ANSI: "28000", STATE: "MISSISSIPPI", TOTAL_POP: 2951996, LAND_AREA: 46906.96, POP_PER_SQ_MILE: 60.6},
+        {ANSI: "29000", STATE: "MISSOURI", TOTAL_POP: 5987580, LAND_AREA: 68885.93, POP_PER_SQ_MILE: 81.2},
+        {ANSI: "30000", STATE: "MONTANA", TOTAL_POP: 974989, LAND_AREA: 145552.43, POP_PER_SQ_MILE: 6.2},
+        {ANSI: "31000", STATE: "NEBRASKA", TOTAL_POP: 1796619, LAND_AREA: 76872.41, POP_PER_SQ_MILE: 22.3},
+        {ANSI: "32000", STATE: "NEVADA", TOTAL_POP: 2643085, LAND_AREA: 109825.99, POP_PER_SQ_MILE: 18.2},
+        {ANSI: "33000", STATE: "NEW HAMPSHIRE", TOTAL_POP: 1324575, LAND_AREA: 8968.1, POP_PER_SQ_MILE: 137.8},
+        {ANSI: "34000", STATE: "NEW JERSEY", TOTAL_POP: 8707739, LAND_AREA: 7417.34, POP_PER_SQ_MILE: 1134.5},
+        {ANSI: "35000", STATE: "NEW MEXICO", TOTAL_POP: 2009671, LAND_AREA: 121355.53, POP_PER_SQ_MILE: 15},
+        {ANSI: "36000", STATE: "NEW YORK", TOTAL_POP: 19541453, LAND_AREA: 47213.79, POP_PER_SQ_MILE: 401.9},
+        {ANSI: "37000", STATE: "NORTH CAROLINA", TOTAL_POP: 9380884, LAND_AREA: 48710.88, POP_PER_SQ_MILE: 165.2},
+        {ANSI: "38000", STATE: "NORTH DAKOTA", TOTAL_POP: 646844, LAND_AREA: 68975.93, POP_PER_SQ_MILE: 9.3},
+        {ANSI: "39000", STATE: "OHIO", TOTAL_POP: 11542645, LAND_AREA: 40948.38, POP_PER_SQ_MILE: 277.3},
+        {ANSI: "40000", STATE: "OKLAHOMA", TOTAL_POP: 3687050, LAND_AREA: 68667.06, POP_PER_SQ_MILE: 50.3},
+        {ANSI: "41000", STATE: "OREGON", TOTAL_POP: 3825657, LAND_AREA: 95996.79, POP_PER_SQ_MILE: 35.6},
+        {ANSI: "42000", STATE: "PENNSYLVANIA", TOTAL_POP: 12604767, LAND_AREA: 44816.61, POP_PER_SQ_MILE: 274},
+        {ANSI: "44000", STATE: "RHODE ISLAND", TOTAL_POP: 1053209, LAND_AREA: 1044.93, POP_PER_SQ_MILE: 1003.2},
+        {ANSI: "45000", STATE: "SOUTH CAROLINA", TOTAL_POP: 4561242, LAND_AREA: 30109.47, POP_PER_SQ_MILE: 133.2},
+        {ANSI: "46000", STATE: "SOUTH DAKOTA", TOTAL_POP: 812383, LAND_AREA: 75884.64, POP_PER_SQ_MILE: 9.9},
+        {ANSI: "47000", STATE: "TENNESSEE", TOTAL_POP: 6296254, LAND_AREA: 41217.12, POP_PER_SQ_MILE: 138},
+        {ANSI: "48000", STATE: "TEXAS", TOTAL_POP: 24782302, LAND_AREA: 261797.12, POP_PER_SQ_MILE: 79.6},
+        {ANSI: "49000", STATE: "UTAH", TOTAL_POP: 2784572, LAND_AREA: 82143.65, POP_PER_SQ_MILE: 27.2},
+        {ANSI: "50000", STATE: "VERMONT", TOTAL_POP: 621760, LAND_AREA: 9249.56, POP_PER_SQ_MILE: 65.8},
+        {ANSI: "51000", STATE: "VIRGINIA", TOTAL_POP: 7882590, LAND_AREA: 39594.07, POP_PER_SQ_MILE: 178.8},
+        {ANSI: "53000", STATE: "WASHINGTON", TOTAL_POP: 6664195, LAND_AREA: 66544.06, POP_PER_SQ_MILE: 88.6},
+        {ANSI: "54000", STATE: "WEST VIRGINIA", TOTAL_POP: 1819777, LAND_AREA: 24077.73, POP_PER_SQ_MILE: 75.1},
+        {ANSI: "55000", STATE: "WISCONSIN", TOTAL_POP: 5654774, LAND_AREA: 54310.1, POP_PER_SQ_MILE: 98.8},
+        {ANSI: "56000", STATE: "WYOMING", TOTAL_POP: 544270, LAND_AREA: 97100.4, POP_PER_SQ_MILE: 5.1	}
+    ],
+	TEMPLATE_TR = '<tr id="row_{ANSI}"><td>{STATE}</td><td>{TOTAL_POP}</td><td>{LAND_AREA}</td></tr>';
+	
+  	// Create a Recordset instance.
+  	var recordset = new Y.Recordset({records:state_census_data.slice(0,10)});
+	recordset.plug(Y.Plugin.RecordsetSort);
+	
+	
+	renderRows(recordset);
+	setUpEvents(recordset);
+	setUpButtons(recordset);
+	
+	function setUpEvents(rs) {
+		/*Edits the table based on recordset events that are fired*/
+		rs.sort.after('sort', function(e) {
+			renderRows(recordset);
+		});
+	}
+
+	function setUpButtons(rs) {
+
+		function getRandomInt(min, max)
+		{
+		  return Math.floor(Math.random() * (max - min + 1)) + min;
+		}
+		
+		Y.one('#sortButton').on('click', function(e) {
+			//prevent default behavior (stop link)
+			e.preventDefault();
+			rs.sort.sort('STATE',false);
+			Y.all('.secondary').set('disabled', false);
+		});
+		
+		Y.one('#resortButton').on('click', function(e) {
+			e.preventDefault();
+			rs.sort.resort();
+		});
+		
+		Y.one('#flipButton').on('click', function(e) {
+			e.preventDefault();
+			rs.sort.flip();
+		});
+		
+		Y.one('#shuffleButton').on('click', function(e) {
+			e.preventDefault;
+			
+			function arrayShuffle(theArray) {
+			 	var len = theArray.length;
+				var i = len;
+				 while (i--) {
+				 	var p = parseInt(Math.random()*len);
+					var t = theArray[i];
+			  		theArray[i] = theArray[p];
+				  	theArray[p] = t;
+			 	}
+			};
+			
+			arrayShuffle(recordset._items);
+			renderRows(recordset);
+		});
+		
+		Y.one('#reverseButton').on('click', function(e) {
+			e.preventDefault();
+			rs.sort.reverse();
+			renderRows(recordset);
+		});
+		
+		Y.one('#customButton').on('click',function(e) {
+			e.preventDefault();
+			 var customsort = function(recA, recB, field, desc) {
+		            var first_sorted = Y.ArraySort.compare(recA.getValue('TOTAL_POP') + recA.getValue('LAND_AREA'), recB.getValue('TOTAL_POP') + recB.getValue('LAND_AREA'), desc);
+					if (first_sorted === 0) {
+						return compare(recA.getValue("id"), recB.get("id"), desc);
+					}
+					else {
+						return first_sorted;
+					}
+		    };
+		
+			recordset.sort.sort('',true,customsort);
+			renderRows(recordset);
+		});
+	}
+	
+	function renderRows(rs) {
+		var tbody = Y.one('#demo tbody'),
+		i=0,
+		len = rs.getLength(),
+		html = '';
+		
+		if (tbody.hasChildNodes()) {
+			tbody.get('children').remove();
+		}
+		
+		for (; i < len; i++) {
+			html += Y.Lang.sub(TEMPLATE_TR, rs.getRecord(i).getValue());
+		}
+		tbody.append(html);
+	}
+});
+</script>
