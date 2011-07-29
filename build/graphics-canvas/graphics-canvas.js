@@ -2335,7 +2335,7 @@ CanvasGraphic.ATTRS = {
     },
 
     /**
-     * When overflow is set to true, by default, the contentBounds will resize to greater values but not smaller values. (for performance)
+     * The contentBounds will resize to greater values but not smaller values. (for performance)
      * When resizing the contentBounds down is desirable, set the resizeDown value to true.
      *
      * @config resizeDown 
