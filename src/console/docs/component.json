@@ -4,7 +4,7 @@
     "description": "Message logging UI. Typically used as a development tool.",
     "author"     : "lsmith",
 
-    "tags": ["widget", "console", "development"],
+    "tags": ["devtool", "widget", "console", "development"],
     "use" : ["console"],
 
     "examples": [
