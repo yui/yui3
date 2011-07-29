@@ -874,7 +874,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	},
 
 	/**
-	 * Applies translate transformation.
+	 * Specifies a 2d translation.
 	 *
 	 * @method translate
 	 * @param {Number} x The value to transate on the x-axis.
@@ -888,7 +888,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	},
 
 	/**
-	 * Performs a translate on the x-coordinate. When translating x and y coordinates,
+	 * Translates the shape along the x-axis. When translating x and y coordinates,
 	 * use the `translate` method.
 	 *
 	 * @method translateX
@@ -901,7 +901,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
     },
 
 	/**
-	 * Performs a translate on the y-coordinate. When translating x and y coordinates,
+	 * Translates the shape along the y-axis. When translating x and y coordinates,
 	 * use the `translate` method.
 	 *
 	 * @method translateY
@@ -914,7 +914,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
     },
 
     /**
-     * Applies a skew transformation.
+     * Skews the shape around the x-axis and y-axis.
      *
      * @method skew
      * @param {Number} x The value to skew on the x-axis.
@@ -926,7 +926,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
     },
 
 	/**
-	 * Applies a skew to the x-coordinate
+	 * Skews the shape around the x-axis.
 	 *
 	 * @method skewX
 	 * @param {Number} x x-coordinate
@@ -937,7 +937,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 },
 
 	/**
-	 * Applies a skew to the y-coordinate
+	 * Skews the shape around the y-axis.
 	 *
 	 * @method skewY
 	 * @param {Number} y y-coordinate
@@ -957,7 +957,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 _rotation: 0,
 
 	/**
-	 * Applies a rotate transform.
+	 * Rotates the shape clockwise around it transformOrigin.
 	 *
 	 * @method rotate
 	 * @param {Number} deg The degree of the rotation.
@@ -969,7 +969,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 },
 
 	/**
-	 * Applies a scale transform
+	 * Specifies a 2d scaling operation.
 	 *
 	 * @method scale
 	 * @param {Number} val
@@ -1137,11 +1137,6 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 * Returns the bounds for a shape.
 	 *
      * Calculates the a new bounding box from the original corner coordinates (base on size and position) and the transform matrix.
-     *
-     *                  | a    c   dx | 
-     *  [x, y, 1]   *   | b    d   dy |     =   [a * x + c * y + dx, b * x + d * y + dy, 1]
-     *                  | 0    0   1  |
-     *
      * The calculated bounding box is used by the graphic instance to calculate its viewBox. 
      *
 	 * @method getBounds
@@ -1262,12 +1257,32 @@ SVGShape.ATTRS = {
 	},
 	
     /**
-	 * A css transform string.
-	 *
+     * <p>A string containing, in order, transform operations applied to the shape instance. The `transform` string can contain the following values:
+     *     
+     *    <dl>
+     *        <dt>rotate</dt><dd>Rotates the shape clockwise around it transformOrigin.</dd>
+     *        <dt>translate</dt><dd>Specifies a 2d translation.</dd>
+     *        <dt>skew</dt><dd>Skews the shape around the x-axis and y-axis.</dd>
+     *        <dt>scale</dt><dd>Specifies a 2d scaling operation.</dd>
+     *        <dt>translateX</dt><dd>Translates the shape along the x-axis.</dd>
+     *        <dt>translateY</dt><dd>Translates the shape along the y-axis.</dd>
+     *        <dt>skewX</dt><dd>Skews the shape around the x-axis.</dd>
+     *        <dt>skewY</dt><dd>Skews the shape around the y-axis.</dd>
+     *    </dl>
+     * </p>
+     * <p>Applying transforms through the transform attribute will reset the transform matrix and apply a new transform. The shape class also contains corresponding methods for each transform
+     * that will apply the transform to the current matrix. The below code illustrates how you might use the `transform` attribute to instantiate a recangle with a rotation of 45 degrees.</p>
+            var myRect = new Y.Rect({
+                type:"rect",
+                width: 50,
+                height: 40,
+                transform: "rotate(45)"
+            };
+     * <p>The code below would apply `translate` and `rotate` to an existing shape.</p>
+    
+        myRect.set("transform", "translate(40, 50) rotate(45)");
 	 * @config transform
      * @type String  
-     * 
-     * @writeOnly
 	 */
 	transform: {
 		setter: function(val)
