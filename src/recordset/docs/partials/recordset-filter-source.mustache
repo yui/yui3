@@ -1,0 +1,120 @@
+<div id="demo">
+	<table>
+		<thead>
+			<tr>
+				<th>State</th>
+				<th>Population</th>
+				<th>Land Area</th>
+			</tr>
+		<tbody>
+		</tbody>
+	</table>
+</div>
+
+<div id="buttonControl">
+<input type="button" id="keyValButton" href="filter-key.php" value="Filter out California">
+<input type="button" id="functionButton" href="filter-func.php" value="Custom Filter Function (all M-P states)">
+<input type="button" id="resetButton" href="reset.php" value="Show Original Recordset">
+</div>
+<script>
+YUI().use("recordset-base", "recordset-filter","node", function (Y) {
+	
+	var state_census_data = [
+        {ANSI: "01000", STATE: "ALABAMA", TOTAL_POP: 4708708, LAND_AREA: 50744, POP_PER_SQ_MILE: 87.6},
+
+        {ANSI: "06000", STATE: "CALIFORNIA", TOTAL_POP: 36961664, LAND_AREA: 155959.34, POP_PER_SQ_MILE: 217.2},
+
+        {ANSI: "10000", STATE: "DELAWARE", TOTAL_POP: 885122, LAND_AREA: 1953.56, POP_PER_SQ_MILE: 401},
+        {ANSI: "12000", STATE: "FLORIDA", TOTAL_POP: 18537969, LAND_AREA: 53926.82, POP_PER_SQ_MILE: 296.4},
+        {ANSI: "13000", STATE: "GEORGIA", TOTAL_POP: 9829211, LAND_AREA: 57906.14, POP_PER_SQ_MILE: 141.4},
+        {ANSI: "15000", STATE: "HAWAII", TOTAL_POP: 1295178, LAND_AREA: 6422.62, POP_PER_SQ_MILE: 188.6},
+        {ANSI: "16000", STATE: "IDAHO", TOTAL_POP: 1545801, LAND_AREA: 82747.21, POP_PER_SQ_MILE: 15.6},
+
+        {ANSI: "20000", STATE: "KANSAS", TOTAL_POP: 2818747, LAND_AREA: 81814.88, POP_PER_SQ_MILE: 32.9},
+        {ANSI: "21000", STATE: "KENTUCKY", TOTAL_POP: 4314113, LAND_AREA: 39728.18, POP_PER_SQ_MILE: 101.7},
+        {ANSI: "22000", STATE: "LOUISIANA", TOTAL_POP: 4492076, LAND_AREA: 43561.85, POP_PER_SQ_MILE: 102.6},
+
+        {ANSI: "26000", STATE: "MICHIGAN", TOTAL_POP: 9969727, LAND_AREA: 56803.82, POP_PER_SQ_MILE: 175},
+
+        {ANSI: "29000", STATE: "MISSOURI", TOTAL_POP: 5987580, LAND_AREA: 68885.93, POP_PER_SQ_MILE: 81.2},
+        {ANSI: "30000", STATE: "MONTANA", TOTAL_POP: 974989, LAND_AREA: 145552.43, POP_PER_SQ_MILE: 6.2},
+        {ANSI: "31000", STATE: "NEBRASKA", TOTAL_POP: 1796619, LAND_AREA: 76872.41, POP_PER_SQ_MILE: 22.3},
+
+        {ANSI: "34000", STATE: "NEW JERSEY", TOTAL_POP: 8707739, LAND_AREA: 7417.34, POP_PER_SQ_MILE: 1134.5},
+
+        {ANSI: "38000", STATE: "NORTH DAKOTA", TOTAL_POP: 646844, LAND_AREA: 68975.93, POP_PER_SQ_MILE: 9.3},
+
+        {ANSI: "41000", STATE: "OREGON", TOTAL_POP: 3825657, LAND_AREA: 95996.79, POP_PER_SQ_MILE: 35.6},
+
+        {ANSI: "45000", STATE: "SOUTH CAROLINA", TOTAL_POP: 4561242, LAND_AREA: 30109.47, POP_PER_SQ_MILE: 133.2},
+        {ANSI: "46000", STATE: "SOUTH DAKOTA", TOTAL_POP: 812383, LAND_AREA: 75884.64, POP_PER_SQ_MILE: 9.9},
+        {ANSI: "47000", STATE: "TENNESSEE", TOTAL_POP: 6296254, LAND_AREA: 41217.12, POP_PER_SQ_MILE: 138},
+        {ANSI: "48000", STATE: "TEXAS", TOTAL_POP: 24782302, LAND_AREA: 261797.12, POP_PER_SQ_MILE: 79.6},
+
+        {ANSI: "56000", STATE: "WYOMING", TOTAL_POP: 544270, LAND_AREA: 97100.4, POP_PER_SQ_MILE: 5.1	}
+    ],
+	TEMPLATE_TR = '<tr id="row_{ANSI}"><td>{STATE}</td><td>{TOTAL_POP}</td><td>{LAND_AREA}</td></tr>';
+	
+  	// Create a Recordset instance.
+  	var recordset = new Y.Recordset({records:state_census_data});
+	recordset.plug(Y.Plugin.RecordsetFilter);
+	
+	
+	renderRows(recordset);
+	setUpButtons(recordset);
+
+	function setUpButtons(rs) {
+
+		function getRandomInt(min, max)
+		{
+		  return Math.floor(Math.random() * (max - min + 1)) + min;
+		}
+		
+		Y.one('#keyValButton').on('click', function(e) {
+			//prevent default behavior (stop link)
+			e.preventDefault();
+			var sub_recordset = rs.filter.filter('STATE',"CALIFORNIA");
+			renderRows(sub_recordset);
+		});
+		
+		Y.one('#functionButton').on('click', function(e) {
+			e.preventDefault();
+			
+			var customFunc = function(item) {
+				var letter = item.getValue('STATE').charAt(0);
+				if (letter === 'M' || letter === 'N' || letter === 'O' || letter === 'P') {
+					return true;
+				}
+				else {
+					return false;
+				}
+			},
+			
+			sub_recordset = rs.filter.filter(customFunc);
+			renderRows(sub_recordset);
+		});
+		
+		Y.one('#resetButton').on('click', function(e) {
+			e.preventDefault();
+			renderRows(recordset);
+		});
+
+	}
+	
+	function renderRows(rs) {
+		var tbody = Y.one('#demo tbody'),
+		i=0,
+		len = rs.getLength(),
+		html = '';
+		
+		if (tbody.hasChildNodes()) {
+			tbody.get('children').remove();
+		}
+		
+		for (; i < len; i++) {
+			html += Y.Lang.sub(TEMPLATE_TR, rs.getRecord(i).getValue());
+		}
+		tbody.append(html);
+	}
+});
+</script>
