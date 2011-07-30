@@ -1,0 +1,270 @@
+<div class="intro">
+    <p>Synthetic events are usually named abstractions that bind to existing
+    DOM events to monitor user actions for specific patterns.  However, at 
+    heart they are no more than a set of callbacks executed in response to
+    various triggering methods in the DOM event system.</p>
+    
+    <p>You can do all sorts of things with synthetic events, including:</p>
+
+    <ul>
+        <li>
+            redefine native DOM events that behave inconsistently across
+            browsers (e.g. <a href="focus.html">`focus` and `blur`</a>)
+        </li>
+        <li>
+            provide abstract events that attach to different DOM events based on
+            the environment (e.g. <a href="touch.html#move">`gesturemovestart`
+            and family</a>)
+        </li>
+        <li>
+            create events with different subscription signatures (e.g.
+            <a href="hover.html">`hover`</a> or
+            <a href="touch.html#move">`gesturemovestart`</a>)
+        </li>
+        <li>
+            create configurable events that only execute subscribers when
+            criteria passed during subscription are met (e.g.
+            <a href="touch.html#flick">`flick`</a> or
+            <a href="key.html">`key`</a>)
+        </li>
+        <li>
+            create events that encapsulate common UX patterns (e.g.
+            <a href="outside.html">`clickoutside`</a>)
+        </li>
+        <li>
+            create fun little easter eggs (e.g. <a
+            href="http://yuilibrary.com/gallery/show/event-konami">`konami`</a>)
+        </li>
+        <li>and more...</li>
+    </ul>
+</div>
+
+<h2>The hooks</h2>
+
+<p>Synthetic events hook into the subscription binding and unbinding methods.  Specifically:</p>
+
+<ol>
+    <li>`node.on("eventName", ...)`, `Y.on("eventName", ...)`, <a href="index.html#one-time-subscriptions">and family</a></li>
+    <li>`node.delegate("eventName", ...)` or `Y.delegate("eventName", ...)`</li>
+    <li>`node.detach(...)` or `subscription.detach()`</li>
+</ol>
+
+<p>With the exception of a separate `detachDelegate()` method, the names used when defining synthetic events are the same as these basic methods.</p>
+
+```
+Y.Event.define("tripleclick", {
+    on: function (node, subscription, notifier) {
+        // called in response to individual subscriptions
+    },
+
+    delegate: function (node, subscription, notifier, filter) {
+        // called in response to delegate subscriptions
+    },
+
+    detach: function (node, subscription, notifier) {
+        // called when individual subscriptions are detached in any way
+    },
+
+    detachDelegate: function (node, subscription, notifier) {
+        // called when delegate subscriptions are detached in any way
+    }
+});
+```
+
+<h2>Subscriptions and Notifiers</h2>
+
+<p>In addition to the subscribing Node, each method receives a
+<em>subscription</em> and a <em>notifier</em>.  Use the <em>subscription</em>
+to store event handles or other data that may be needed by another method.  Use
+the <em>notifier</em> to signal that subscribed callbacks should be
+executed.</p>
+
+```
+Y.Event.define("tripleclick", {
+    on: function (node, subscription, notifier) {
+        var count = 0;
+
+        subscription._handle = node.on("click", function (e) {
+            if (++count === 3) {
+                // Call notifier.fire(e) to execute subscribers.
+                // Pass the triggering event facade to fire()
+                notifier.fire(e);
+            } else {
+                ...
+            }
+        });
+    },
+
+    detach: function (node, subscription, notifier) {
+        subscription._handle.detach();
+    },
+
+    delegate: function (node, subscription, notifier, filter) { ... },
+    detachDelegate: function (node, subscription, notifier) { ... }
+});
+```
+
+<p>Subscribers to the synthetic event should receive a `DOMEventFacade`.  The
+easiest way to provide one is to pass the triggering DOM event's facade to
+`notifier.fire(e)`.  The facade's `e.type` will be updated to the name of the
+synth.  You will also have the opportunity to add extra data to the event
+before dispatching to the subscription callbacks.</p>
+
+```
+Y.Event.define('multiclick', {
+    on: function (node, sub, notifier) {
+        var count = 0,
+            timer;
+
+        sub._handle = node.on('click', function (e) {
+            count++;
+
+            if (timer) {
+                timer.cancel();
+            }
+
+            timer = Y.later(200, null, function () {
+                e.clicks = count;
+                count = 0;
+                
+                notifier.fire(e); // subscribers will get e with e.clicks
+            });
+        });
+    },
+    ...
+});
+```
+
+<h2>Delegation support</h2>
+
+<p>The `delegate` function implementation takes an extra argument, the `filter` that was passed <code>node.delegate(type, callback, <em>HERE</em>)</code>.  It's your responsibility to make sense of this filter for your event.</p>
+
+<p>Typically, it is just passed along to a `node.delegate(...)` call against another event, deferring the filtration to the core `delegate()` method.</p>
+
+```
+Y.Event.define("tripleclick", {
+    on: function (node, subscription, notifier) { ...  },
+    detach: function (node, subscription, notifier) { ...  },
+
+    delegate: function (node, subscription, notifier, filter) {
+        var activeNode = null,
+            count = 0,
+            timer;
+
+        subscription._handle = node.delegate("click", function (e) {
+            if (timer) {
+                timer.cancel();
+            }
+
+            if (this !== activeNode) {
+                activeNode = this;
+                count = 0;
+            }
+
+            if (++count === 3) {
+                // Call notifier.fire(e) just as with `on`
+                notifier.fire(e);
+            } else {
+                timer = Y.later(300, null, function () {
+                    count = 0;
+                });
+            }
+        }, filter);
+    },
+
+    detachDelegate: function (node, subscription, notifier) {
+        subscription._handle.detach();
+    }
+});
+```
+
+<h2>Extra arguments</h2>
+
+<p>Supply a `processArgs` method in the event definition to accept additional
+arguments.  If this method is supplied, it</p>
+<ul>
+    <li>
+        <strong>MUST</strong> remove the extra arguments from the arg array
+        that is passed in, and
+    </li>
+    <li>
+        <strong>SHOULD</strong> return the extra data relevant to the
+        subscription.
+    </li>
+</ul>
+
+<p>The same `processArgs` method is used by both `on` and `delegate`.  A second
+argument to `processArgs` indicates that the subscription is being made through
+`delegate`. Because `node.on(...)` and `node.delegate(...)` signatures differ,
+it is easiest to expect custom arguments starting from at index 3 of the
+subscription arguments array.</p>
+
+```
+Y.Event.define('multiclick', {
+    processArgs: function (args, isDelegate) {
+        // The args list will look like this coming in:
+        // [ type, callback, node, (extras...), [filter], thisObj, arg0...argN ]
+        var extras = args[3];
+
+        // The args array going out MUST look like this:
+        // [ type, callback, node, [filter], thisObj, arg0...argN ]
+        args.splice(3,1);
+
+        // this will be assigned to subscription._extras;
+        return extras;
+    },
+
+    on: function (node, sub, notifier) {
+        var clicks = 0,
+            // data returned from processArgs is available at sub._extras
+            min = sub._extras.minClicks,
+            max = sub._extras.maxClicks,
+            timer;
+
+        sub._handle = node.on('click', function (e) {
+            if (timer) {
+                timer.cancel();
+            }
+
+            if (++clicks === max) {
+                e.clicks = clicks;
+                notifier.fire(e);
+            } else {
+                timer = Y.later(200, null, function () {
+                    if (clicks > min) {
+                        e.clicks = count;
+                        
+                        notifier.fire(e);
+                    }
+                    count = 0;
+                });
+            }
+        });
+    },
+    ...
+});
+
+// Usage would look like this (extra config object as third arg)
+node.on('multiclick', obj.method, {
+    minClicks: 5,
+    maxClicks: 8
+}, obj);
+
+// extra args are supplied before the delegate filter
+container.delegate('multiclick', doSomething, {
+    minClicks: 3,
+    maxClicks: 55
+}, '.clickable');
+```
+
+<h2>Tips and Tricks</h2>
+
+<h4>Alias `delegate` to `on` and `detachDelegate` to `detach`</h4>
+
+<h4>Don't store state in `node.setData(...)` for `delegate`</h4>
+
+<p>It might be tempting</p>
+
+<h4>Use raw events for performance</h4>
+
+<h4>
