@@ -25,7 +25,7 @@ Server-side web frameworks use URLs to maintain state by routing them to differe
 </p>
 
 <p>
-Controller allows you to define routes that map to callback functions. Whenever the user navigates to a URL that matches a route you've defined, that route's callback function is executed and can update the UI, make Ajax requests, or perform any other necessary actions. See [[#Adding Routes]] for more details on how this works.
+Controller allows you to define routes that map to callback functions. Whenever the user navigates to a URL that matches a route you've defined, that route's callback function is executed and can update the UI, make Ajax requests, or perform any other necessary actions. See [[#Routing]] for more details on how this works.
 </p>
 
 <p>
@@ -131,12 +131,12 @@ When instantiating Controller, you may optionally pass in a config object contai
         <dl style="margin-top:1em">
           <dt>`path`</dt>
           <dd>
-            String or regex representing the path to match. See [[#Adding Routes]] for more details.
+            String or regex representing the path to match. See [[#Routing]] for more details.
           </dd>
 
           <dt>`callback`</dt>
           <dd>
-            A function or a string representing the name of a function on the Controller instance that should be called when the route is triggered. See [[#Adding Routes]] for more details.
+            A function or a string representing the name of a function on the Controller instance that should be called when the route is triggered. See [[#Routing]] for more details.
           </dd>
         </dl>
       </td>

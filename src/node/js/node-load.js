@@ -1,5 +1,5 @@
 /**
- * Extended Node interface with an basic IO api.
+ * Extended Node interface with a basic IO API.
  * @module node
  * @submodule node-load
  */
@@ -9,9 +9,9 @@
  * @method _ioComplete
  * @protected
  * @for Node
- * @param {String} code The response code. 
- * @param {Object} response The response object. 
- * @param {Array} args An array containing the callback and selector   
+ * @param {String} code The response code.
+ * @param {Object} response The response object.
+ * @param {Array} args An array containing the callback and selector
  */
 
 Y.Node.prototype._ioComplete = function(code, response, args) {
@@ -35,11 +35,11 @@ Y.Node.prototype._ioComplete = function(code, response, args) {
 
 /**
  * Loads content from the given url and replaces the Node's
- * existing content with it. 
+ * existing content with it.
  * @method load
- * @param {String} html The markup to wrap around the node. 
- * @param {String} selector An optional selector representing subset
- * @param {Function} callback An optional function to run after the content has been loaded. 
+ * @param {String} url The URL to load via XMLHttpRequest.
+ * @param {String} selector An optional selector representing a subset of an HTML document to load.
+ * @param {Function} callback An optional function to run after the content has been loaded.
  * of the content.
  * @chainable
  */

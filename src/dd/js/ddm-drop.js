@@ -399,8 +399,5 @@
             return drop;
         }
     }, true);
-    
-
-
 
 

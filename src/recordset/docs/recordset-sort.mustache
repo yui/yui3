@@ -1,0 +1,280 @@
+<style scoped>
+/* custom styles for this example */
+
+#buttonControl input {
+	margin: 3px 5px;
+}
+</style>
+
+<div class="intro">
+    <p>The RecordsetSort plugin provides methods to allow for default and custom sorting on a recordset instance.</p>
+</div>
+
+<div class="example">
+{{>recordset-sort-source}}
+</div>
+
+<p>The Sort plugin for recordset allows a recordset to have default and custom sorting functionality.</p>
+
+<h3>Using the Plugin</h3>
+<p>The RecordsetSort plugin can be "plugged in" to any recordset instance using the `plug` method. Methods that exist on the plugin can be called using the <em>sort</em> namespace</p>
+
+```
+YUI().use("recordset-base", "recordset-sort", function(Y) {
+    
+	//Add "recordset-sort" in the use statement.
+
+	var data = [
+		{a:3, b:2, c:1},
+		{a:9, b:8, c:7},
+		{a:1, b:2, c:3}
+	],
+	
+	//Recordset is created with the objects from the data array
+	myRecordset = new Y.Recordset({records: data});
+	
+	//Plugging in Sorting functionality
+	myRecordset.plug(Y.Plugin.RecordsetSort);
+	
+	//You can now call sort methods on the myRecordset instance using the "sort" namespace.
+	
+	myRecordset.sort.sort();
+
+});
+```
+	
+<h3>Using the RecordsetSort Plugin</h3>
+
+<ul class="topspace">
+	<li><a href="#default">Default Sorting</a></li>
+	<li><a href="#resort">Resorting</a></li>
+	<li><a href="#reverse">Reversing the Recordset</a></li>
+	<li><a href="#flip">Flipping the Sort Order</a></li>
+	<li><a href="#custom">Custom Sort Functions</a></li>
+	<li><a href="attrs">Helper Attributes and Events</a></li>
+</ul>
+
+<h4 id="default">Default Sorting</h4>
+<p>If a custom sort function is not defined, RecordsetSort sorts using the default sorter as found in the Arraysort module's `compare` method. In the default sorter, two records are compared based on the key specified. If the values are equal, the IDs of the records are compared.</p>
+
+<p>You can sort a recordset using the default sort method by calling the `sort` method. Two arguments must be passed in: a string of the key to sort by, and a boolean representing if the sort order is descending or not.</p>
+
+```
+YUI().use("recordset-base","recordset-sort", function(Y) {
+    var data = [
+		{a:3, b:2, c:1},
+		{a:9, b:8, c:7},
+		{a:1, b:2, c:3}
+	],
+	
+	//Recordset is created with the objects from the data array
+	myRecordset = new Y.Recordset({records: data});
+	myRecordset.plug(Y.Plugin.RecordsetSort);
+	
+	//sorts the recordset in ascending order using the value at 'a'
+	myRecordset.sort.sort('a', false);
+	
+	//sorts the recordset in descending order using the value at 'b'
+	myRecordset.sort.sort('b', true);
+
+});
+```
+
+<h4 id="resort">Resorting</h4>
+<p>If the recordset has been sorted at some point in time, the `resort` method can be called, which will sort the recordset using the last-used options.</p>
+
+<p>Optionally, the last used options to sort the recordset can be retrieved through the `lastSortProperties` attribute.</p>
+
+```
+YUI().use("recordst-base", "recordset-sort", function(Y) {
+    var data = [
+		{a:3, b:2, c:1},
+		{a:9, b:8, c:7},
+		{a:1, b:2, c:3}
+	],
+	
+	//Recordset is created with the objects from the data array
+	myRecordset = new Y.Recordset({records: data});
+	myRecordset.plug(Y.Plugin.RecordsetSort);
+	
+	//sorts the recordset in ascending order using the value at 'a'
+	myRecordset.sort.sort('a', false);
+	
+	//Add a record so that the recordset is no longer sorted
+	myRecordset.add({a:10, b:60, c:0});
+	
+	//Resort the recordset in ascending order using the value at 'a'
+	myRecordset.sort.resort();
+});
+```
+
+<h4 id="reverse">Reversing the Recordset</h4>
+<p>The order of the recordset can be reversed by calling the `reverse` method. This method does not sort the recordset. </p>
+
+```
+YUI().use("recordset-base", "recordset-sort", function(Y) {
+    var data = [
+        {key:"a", label:"Column A"},
+        {key:"b", label:"Column B"},
+        {key:"c", label:"Column C"}
+    ],
+	
+	myRecordset = new Y.Recordset({records:data});
+	
+	myRecordset.sort.reverse(); //now the first record in the recordset will be {key:"c", label:"Column C"}
+});
+```
+
+<h4 id="flip">Flipping the Sort Order</h4>
+<p>As opposed to `reverse`, the `flip` method looks at the last-used sort options, and reapplies the sort in the opposite order (ie: descending if the recordset was initially in ascending order). The recordset does not have to be in a sorted state. This method does perform a sort.</p>
+
+```
+YUI().use("recordset-base", "recordset-sort", function(Y) {
+    var data = [
+		{a:3, b:2, c:1},
+		{a:9, b:8, c:7},
+		{a:1, b:2, c:3}
+	],
+	
+	//Recordset is created with the objects from the data array
+	myRecordset = new Y.Recordset({records: data});
+	myRecordset.plug(Y.Plugin.RecordsetSort);
+	
+	//sorts the recordset in ascending order using the value at 'a'
+	myRecordset.sort.sort('a', false);
+	
+	myRecordset.add({a:10, b:6, c:0});
+	
+	//sorts the recordset in descending order using the value at 'a'
+	myRecordset.sort.flip();
+});
+```
+
+<h4 id="custom">Providing a Custom Sort Function</h4>
+<p>A custom sort function can be provided to the sort plugin very easily. The `sort` method accepts a custom sort function as a third argument, and if it receives one, it will use it rather than the default sorter. The custom sort function should be written such that it compares two records, and returns one or the other, based on comparator operations.</p>
+
+```
+YUI().use("recordset-base", "recordset-sort", function(Y) {
+    var data = [
+        {key:"a", label:"Column A"},
+        {key:"b", label:"Column B"},
+        {key:"c", label:"Column C"}
+    ],
+	
+	myRecordset = new Y.Recordset({records:data});
+	
+	
+	//Define a custom sort function, which first compares values in the specified key, and if its a tie,
+	//compares value in key 'b'. If that's also a tie, it looks at the IDs.
+	 customsort = function(recA, recB, field, desc) {
+        var first_sorted = compare(recA.getValue(field), recB.getValue(field), desc);
+        if(first_sorted === 0) {
+            var second_sorted = compare(recA.getValue('b'), recB.getValue('b'), desc);
+			if (second_sorted === 0) {
+				return compare(recA.getValue("id"), recB.get("id"), desc);
+			}
+			else {
+				return second_sorted;
+			}
+        }
+        else {
+            return first_sorted;
+        }
+    };
+
+	//Sort the recordset using the custom sort function.
+	myRecordset.sort.sort('a',false, customsort);
+});
+```
+
+<h4 id="attrs">Helper Attributes and Events</h4>
+<p>Sorting is usually an expensive operation, so the RecordsetSort plug-in has some attributes to allow you to decide whether you need to sort or not.</p>
+
+<h6>Is the recordset already sorted?</h6>
+<p>The `isSorted` attribute is a boolean that designates if the recordset is in a sorted state. Under the hood, `isSorted` will change to false if records have been added (or updated), but will not change if records have been removed.</p>
+
+```
+YUI().use("recordset-base", "recordset-sort", function(Y) {
+    var data = [
+        {key:"a", label:"Column A"},
+        {key:"b", label:"Column B"},
+        {key:"c", label:"Column C"}
+    ],
+	
+	myRecordset = new Y.Recordset({records:data});
+	myRecordset.plug(Y.Plugin.RecordsetSort);
+	
+	myRecordset.sort.get('isSorted'); //returns false
+	
+	myRecordset.sort.sort('a', true);
+	myRecordset.sort.get('isSorted'); //returns true
+	
+	myRecordset.remove(1);
+	myRecordset.sort.get('isSorted'); //returns true
+	
+	myRecordset.add({a:10, b:50, c:60});
+	myRecordset.sort.get('isSorted'); //returns false
+	
+	
+});
+```
+
+<p> By setting up hooks on the `isSorted` attribute change events, you can better determine whether or not to perform a sort operation.</p>
+
+<h6 id='lastSortProperties'>Find last-used sort properties</h6>
+
+<p>The `lastSortProperties` attribute stores an object literal of the last properties used to sort the recordset.</p>
+
+```
+YUI().use("recordset-base", "recordset-sort", function(Y) {
+    var data = [
+        {key:"a", label:"Column A"},
+        {key:"b", label:"Column B"},
+        {key:"c", label:"Column C"}
+    ],
+	
+	myRecordset = new Y.Recordset({records:data});
+	myRecordset.plug(Y.Plugin.RecordsetSort);
+	
+	myRecordset.sort.sort('a', true);
+	var sortProperties = myRecordset.sort.get('lastSortProperties'); 
+	
+	/* 
+	
+	sortProperties is an object literal containing: 
+	{
+		field: 'a',
+		desc: 'true',
+		sorter: defaultSorter
+	}
+	
+	*/
+	
+});
+```
+
+<h6>'sort' Event</h6>
+
+<p>The RecordsetSort plugin fires the 'sort' event whenever it sorts a recordset. Hooking onto this event using the `on` method triggers code to be run before the sort occurs. On the other hand, using the 'after' method triggers your code to be run after the sort.</p>
+
+<p>The object returned with the event has the same fields as the <a href="#lastSortProperties">lastSortProperties</a> object.</p>
+
+```
+YUI().use("recordset-base", "recordset-sort", function(Y) {
+    var data = [
+        {key:"a", label:"Column A"},
+        {key:"b", label:"Column B"},
+        {key:"c", label:"Column C"}
+    ],
+	
+	myRecordset = new Y.Recordset({records:data});
+	myRecordset.plug(Y.Plugin.RecordsetSort);
+	
+	myRecordset.sort.on('sort', function(e) {
+		Y.log('this recordset is about to be sorted');
+	});
+	
+	myRecordset.sort.sort('a', true);
+	
+});
+```

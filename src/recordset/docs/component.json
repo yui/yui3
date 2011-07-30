@@ -3,7 +3,7 @@
     "displayName": "Recordset",
     "description": "The recordset utility allows the storage and retrieval of objects (known as records). It extends the capabilities of the Arraylist module, to allow for filtering, sorting and indexing by hash tables.",
 
-    "author": ["jenny","lsmith"],
+    "author": ["tilo"],
 
     "use": ["recordset"],
     "tags": ["utility", "recordset"],
@@ -11,7 +11,7 @@
     "examples": [
 
         {
-            "name": "recordset_basic",
+            "name": "recordset-basic",
             "displayName": "Basic Recordset",
             "modules": ["recordset"],
             "description": "Shows how to instantiate and interact with a standard Recordset by adding, removing and updating records/objects. Explains the events that are fired, and shows how to access the built-in hash table that stores records by their YUIDs.",
@@ -21,7 +21,7 @@
         },
 
         {
-            "name": "recordset_sort",
+            "name": "recordset-sort",
             "displayName": "Recordset Sort Plugin",
             "modules": ["recordset"],
             "description": "Shows how to sort a Recordset using the default sorter, or a custom sort function. Additionally, demonstrates how convenience attributes help in determining when Recordset is in a sorted state, and what the last sort parameters were.",
@@ -31,7 +31,7 @@
         },
 
         {
-            "name": "recordset_filter",
+            "name": "recordset-filter",
             "displayName": "Recordset Filter Plugin",
             "modules": ["recordset"],
             "description": "Shows how to use filtering methods to Recordset. Key-value filtering, and filtering by providing a custom function are covered.",
@@ -41,7 +41,7 @@
         },
 
         {
-            "name": "recordset_indexer",
+            "name": "recordset-indexer",
             "displayName": "Recordset Indexer Plugin",
             "modules": ["recordset"],
             "description": "Shows how to create and access hash tables on Recordset. Tables are kept in sync through events fired by Recordset.",

@@ -1,6 +1,28 @@
 IO
 ==
 
+3.4.0
+-----
+
+* Implemented enhancement 2528240.
+
+* Implemented enhancement 2529314.
+
+* Implemented enhancement 2529317.
+
+* Implemented enhancement 2529447.
+
+* Fixed ticket 2429553.
+
+* Implemented enhancement 2530023.
+
+* Fixed ticket 2530033.
+
+* Fixed ticket 2530091.
+
+* Fixed ticket 2530494.
+
+
 3.3.0
 -----
 

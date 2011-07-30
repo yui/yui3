@@ -10,3 +10,5 @@ CVS/
 *~
 src/build.log
 .com.apple.timemachine.supported
+src/out
+api-js/

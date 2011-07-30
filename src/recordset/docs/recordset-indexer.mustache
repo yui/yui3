@@ -1,0 +1,113 @@
+<style scoped>
+/* custom styles for this example */
+#htContainer {
+	font-size:90%;
+}
+</style>
+
+<div class="intro">
+    <p>The RecordsetIndexer plugin provides the ability to define custom hash tables to a recordset instance.</p>
+</div>
+
+<div class="example">
+{{>recordset-indexer-source}}
+</div>
+
+<p>The Indexer plugin allows a user to create custom hash tables for a recordset instance.</p>
+
+<h3>Using the Plugin</h3>
+<p>The RecordsetIndexer plugin can be "plugged in" to any recordset instance using the `plug` method. Methods that exist on the plugin can be called using the <em>indexer</em> namespace</p>
+
+```
+YUI().use("recordset-base", "recordset-indexer", function(Y) {
+    
+	//Add "recordset-indexer" sub-module in the use statement.
+
+	var data = [
+		{a:3, b:2, c:1},
+		{a:9, b:8, c:7},
+		{a:1, b:2, c:3}
+	],
+	
+	//Recordset is created with the objects from the data array
+	myRecordset = new Y.Recordset({records: data});
+	
+	//Plugging in Sorting functionality
+	myRecordset.plug(Y.Plugin.RecordsetIndexer);
+	
+	//You can now call methods to allow for custom hash tables on the myRecordset instance using the "indexer" namespace.
+	
+	myRecordset.indexer.createTable('a');
+
+});
+```
+	
+<h3>Using the RecordsetIndexer Plugin</h3>
+
+<ul class="topspace">
+	<li><a href="#create">Creating a Hash Table</a></li>
+	<li><a href="#access">Accessing Hash Tables</a></li>
+	<li><a href="#crud">Performing Standard Operations</a></li>
+	<li><a href="#collisions">Collision Handling</a></li>
+</ul>
+
+<h4 id="create">Creating a Hash Table</h4>
+<p>The RecordsetIndexer plugin currently supports creating and accessing stored tables. Creating a new hash table is straightforward and is done through the `createTable` method. The only argument to be passed in is a string representing the key that should be used.</p>
+
+```
+YUI().use("recordset-base","recordset-indexer", function(Y) {
+    var data = [
+		{a:3, b:2, c:1},
+		{a:9, b:8, c:7},
+		{a:1, b:2, c:3}
+	],
+	
+	//Recordset is created with the objects from the data array
+	myRecordset = new Y.Recordset({records: data});
+	myRecordset.plug(Y.Plugin.RecordsetIndexer);
+	
+	//creates and returns a new hash table which indexes by the key 'a'
+	var tableA = myRecordset.indexer.createTable('a');
+	
+	//calling tableA[9] would return a record instance of {a:9, b:8, c:7}
+	//calling tableA[3].getValue() would return {a:3, b:2, c:1}
+	//calling tableA[10] would return undefined
+
+});
+```
+
+<h4 id="access">Accessing Tables</h4>
+<p>All hash tables are stored under the `hashTables` attribute in RecordsetIndexer. This attribute is an object literal of all hash tables that are created. You can access the object through `myRecordset.indexer.get('hashTables')`. Specific hash tables can be accessed by appending their key names to the end (`myRecordset.indexer.get('hashTables').city`).</p>
+
+```
+YUI().use("recordset-base", "recordset-indexer", function(Y) {
+    var data = [
+		{a:3, b:2, c:1},
+		{a:9, b:8, c:7},
+		{a:1, b:2, c:3}
+	],
+	
+	//Recordset is created with the objects from the data array
+	myRecordset = new Y.Recordset({records: data});
+	myRecordset.plug(Y.Plugin.RecordsetIndexer);
+	
+	//create two hash tables
+	var hashA = myRecordset.indexer.createTable('a'),
+	myRecordset.indexer.createTable('c'),
+	
+	//get access to the hashtable object
+	hashTables = myRecordset.indexer.get('hashTables');
+	
+	//we can access the 2nd hash table we created through the object
+	hashC = hashTables.c;
+});
+```
+
+<h4 id="crud">Performing Standard Operations</h4>
+<p>Once hash tables have been created, they are kept in sync with the recordset through the custom events that are fired: "add", "remove", "update" and "empty".</p>
+
+<p>As a result, standard operations can be performed in the same way without worrying about the state of various hash tables. If a record is removed from the recordset, the corresponding key in the hash table is deleted from the array entirely.</p>
+
+<h4 id="crud">Collision Handling</h4>
+<p>The RecordsetIndexer plugin does not have collision handling built in to it currently. As a result, if your hash table relates keys to records using a key that is non-unique, the last record encountered with the non-unique key will overwrite previous records. </p>
+<p>Since all records are guaranteed to have a unique YUID, it is suggested to use the YUID as a key when using hash tables. Doing this does not require the RecordsetIndexer plugin at all since the base recordset module already provides a hash table that stores records by their YUIDs.</p>

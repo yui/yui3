@@ -6,6 +6,9 @@
     "options": {
         "linkNatives": "true",        
         "attributesEmit": "true",
-        "ignorePaths": [ "simpleyui" ]
+        "selleck": "true",
+        "ignorePaths": [ "simpleyui" ],
+        "paths": "*/js",
+        "outdir": "../api-js"
     }
 }
