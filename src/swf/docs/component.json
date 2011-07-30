@@ -4,6 +4,5 @@
     "description": "Provides a standardized method for embedding Adobe Flash player in web pages",
     "author"     : "allenrabinovich",
     "tags": ["utility", "swf"],
-    "use" : ["swf"],
-    "examples" : []
+    "use" : ["swf"]
 }
