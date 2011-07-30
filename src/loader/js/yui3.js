@@ -266,6 +266,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "calendar": {
         "lang": [
             "en", 
+            "ja",
             "ru"
         ], 
         "requires": [
@@ -277,6 +278,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "calendar-base": {
         "lang": [
             "en", 
+            "ja",
             "ru"
         ], 
         "requires": [
