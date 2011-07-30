@@ -1,0 +1,149 @@
+<div class="intro">
+<p>In this example, the Uploader is used to send multiple files to the server and monitor
+   their upload progress with individual progress bars. The example also demonstrates the 
+   use of the transparent overlay "Browse" button for the Uploader.</p>
+   
+<p><strong>Please note:</strong> This example will not work when run from a local filesystem because Flash only allows ExternalInterface communication with pages loaded from the network. If you’d like to run this example locally, set up a local web server and launch it from there. </p>
+</div>
+
+<div class="example yui3-skin-sam">
+    {{>uploader-multiple-source}}
+</div>
+
+<h2>Setting up Uploader UI</h2>
+<p>In this example, the UI for the Uploader consists of two links, as well as containers for displaying various information about the upload process. Since the Uploader uses Flash, which requires direct user input to show the "Browse" dialog, the "Select Files" link cannot be directly used to invoke that dialog. Instead, create a container that overlays this link (`uploaderOverlay`): the instance of Flash player will be placed in that container and made full transparent, thus accepting user input but providing the visual information from the link below it. In addition, create a table for holding the list of selected files (`filenames`):</p>
+
+```
+<div id="uploaderContainer"> 
+	<div id="uploaderOverlay" style="position:absolute; z-index:2"></div> 
+	<div id="selectFilesLink" style="z-index:1">
+	   <a id="selectLink" href="#">Select Files</a>
+	</div> 
+</div> 
+<div id="uploadFilesLink">
+   <a id="uploadLink" href="#">Upload Files</a>
+</div>
+
+<div id="files">
+  <table id="filenames" style="border-width:1px; border-style:solid; padding:5px;">
+	<tr><td>Filename</td><td>File size</td><td>Percent uploaded</td></tr>
+  </table>	
+</div>
+```
+
+<h2>Creating a YUI Instance</h2>
+<p>Now that the UI containers and controls are in place, create a YUI instance. Since this example uses the <a href="http://yuilibrary.com/gallery/show/progress-bar">Progress-bar</a> module from <a href="http://www.yuilibrary.com/gallery">YUI Gallery</a> (built by <a href="http://github.com/apipkin/">Anthony Pipkin</a>), we also include the gallery config option among the YUI() arguments, as well as `gallery-progressbar` in the `use` statement: </p>
+
+```
+YUI({
+  gallery: 'gallery-2011.02.09-21-32'
+   }).use("uploader", 
+          "gallery-progress-bar", 
+          function(Y) {
+				// Y is the YUI instance.
+				// The rest of the code in this tutorial is encapsulated 
+				// in this anonymous function.
+		  });
+```
+
+<h2>Instantiate the Uploader</h2>
+<p>Next, create an instance of the Uploader. Since the Uploader is being placed in a relatively-sized container, subscribe to the `domready` event and instantiate the uploader in its handler. After instantiating it, add handlers to the uploader events:</p>
+	
+```
+var uploader;
+Y.on("domready", init);
+
+function init () {
+	
+var overlayRegion = Y.one("#selectLink").get('region');
+Y.log(overlayRegion);
+Y.one("#uploaderOverlay").set("offsetWidth", overlayRegion.width);
+Y.one("#uploaderOverlay").set("offsetHeight", overlayRegion.height);
+
+uploader = new Y.Uploader({boundingBox:"#uploaderOverlay"});	
+
+uploader.on("uploaderReady", setupUploader);
+uploader.on("fileselect", fileSelect);
+uploader.on("uploadprogress", updateProgress);
+uploader.on("uploadcomplete", uploadComplete);
+
+Y.one("#uploadFilesLink").on("click", uploadFile);
+}
+```
+
+
+<h2>Configure the Uploader</h2>
+<p>Once the uploader is ready, the `setupUploader` function is called, and Uploader configuration can be set. For this example, set the `multiFiles` property to `true`, allowing the user to select multiple files. Also set the `simLimit` property to 3, indicating that three files can be uploaded simultaneously. We also set the `log` property (which allows to see debug output from Flash, only available if running the Flash Debug player), and the `fileFilters` property, which filters the user's "Browse" dialog to only include files with certain extensions: </p>
+	
+```
+function setupUploader (event) {
+	uploader.set("multiFiles", true);
+	uploader.set("simLimit", 3);
+	uploader.set("log", true);
+	
+	var fileFilters = new Array({description:"Images", extensions:"*.jpg;*.png;*.gif"},
+	                   {description:"Videos", extensions:"*.avi;*.mov;*.mpg"}); 
+	
+    uploader.set("fileFilters", fileFilters); 
+}
+```
+
+<h2>`fileselect` Event Handler</h2>
+<p>When the user selects files to be uploaded, display the list of selected files in a table. Populate the table with data from the event payload, and reserve a column to display a progress bar for each individual file. Set the initial value of the progress bars to 0, and provide them with custom `id`s, so they can be easily updated when upload progress information becomes available.</p>
+
+```
+function fileSelect(event) {
+	Y.log("File was selected, parsing...");
+	var fileData = event.fileList;	
+
+	for (var key in fileData) {
+		var output = "<tr><td>" + fileData[key].name + 
+		             "</td><td>" + fileData[key].size + 
+		             "</td><td><div id='div_" + 
+		             fileData[key].id + 
+		             "'></div></td></tr>\\n";
+
+		Y.one("#filenames").append(output);
+		
+		var progressBar = new Y.ProgressBar({
+		                        id:"pb_" + fileData[key].id, 
+		                        layout : '<div class="{labelClass}"></div>' +
+		                                  '<div class="{sliderClass}"></div>'
+		                      });
+		progressBar.render("#div_" + fileData[key].id);
+		progressBar.set("progress", 0);
+	}
+}
+```
+
+<h3>`uploadprogress` Event Handler</h3>
+<p>When `uploadprogress` events arrive, update relevant progress bars with the current progress information (note that the event payload contains the id of the file for which the upload progress information is being made available):</p>
+
+```
+function updateProgress (event) {
+	var pb = Y.Widget.getByNode("#pb_" + event.id);
+	pb.set("progress", 
+	       Math.round(100 * event.bytesLoaded / event.bytesTotal));
+}
+```
+
+<h2>Other Event Handlers</h2>
+<p>Once the upload completes, make sure that the specific progress bar has reached 100 percent. Also include the handler for the `click` event on the upload button, which kicks off the upload process (since the `uploadAll()` method is being used, the queue will be managed automatically):</p>
+	
+```
+function uploadComplete (event) {
+	var pb = Y.Widget.getByNode("#pb_" + event.id);
+	pb.set("progress", 100);
+}
+
+function uploadFile (event) {
+	uploader.uploadAll("http://www.yswfblog.com/upload/upload_simple.php");
+}
+```
+
+<h2>Full Source Code For this Example</h2>
+
+```
+{{>uploader-multiple-source}}
+```
+
