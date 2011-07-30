@@ -10,8 +10,8 @@
 		<li> Faster file upload on broadband connections (due to the modified SEND buffer size).</li>
 	</ol>
 	
-	<p><strong>Important usage notes:</strong></p><ul>
-
+	<p><strong>Important usage notes:</strong></p>
+	<ul>
 	<li>Because of security requirements of the Flash Player, the Uploader has to receive a direct user input in order to initiate file browsing.</li>
 	<li>Because of limitations of the Flash Player, the Uploader does not transmit session data in the header of the POST requests it sends to the server. In order to transmit the session data, the developer will need to programmatically extract it from the DOM and send as part of the body of the POST request.</li>
   	<li>The Uploader SWF should always be served from an HTTP server due to Flash Player's restricted local security model.</li>
@@ -27,7 +27,7 @@
 			
 				<h2>Using the Uploader</h2>
 			
-				<p>This section describes how to use the Uploader in further detail.  It contains these subsections:</p>
+				<p>In this section, we'll describe how to use the uploader in detail. First, let's look at the structure of the uploader module under the hood.</p>
 				
 
 				<h3>Anatomy of the Uploader</h3>
@@ -150,7 +150,10 @@ var setupUploader = function (event) {
 	uploader.on(uploadprogress, reportProgress);
 	
 	function reportProgress (event) {
-		Y.log("Percent of " + event.id + " uploaded: " + Math.round((100 * event.bytesLoaded / event.bytesTotal)) + "%");
+		Y.log("Percent of " + event.id + 
+              " uploaded: " + 
+              Math.round((100 * event.bytesLoaded / event.bytesTotal)) 
+              + "%");
 	}
 ```
                 <h3>Uploader events</h3>
@@ -199,5 +202,3 @@ var setupUploader = function (event) {
                 </table>
 
                 <p>This is not an exhaustive list.  See the <a href="{{apiDocs}}/module_{{name}}.html">API docs</a> for a complete listing.</p>
-
-		</div>
