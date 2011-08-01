@@ -181,12 +181,7 @@ YUI.add('editor-base', function(Y) {
                         } else if (Y.UA.gecko) {
                             this.frame.exec._command('inserthtml', EditorBase.TABKEY);
                         } else if (Y.UA.ie) {
-                            sel = new inst.Selection();
-                            if (sel._selection.pasteHTML) {
-                                sel._selection.pasteHTML(EditorBase.TABKEY);
-                            } else {
-                                this.execCommand('inserthtml', EditorBase.TABKEY);
-                            }
+                            this.execCommand('inserthtml', EditorBase.TABKEY);
                         }
                     }
                     break;
