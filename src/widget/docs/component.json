@@ -31,7 +31,7 @@
             "displayName": "Creating a Widget Plugin",
             "description": "Shows how to create an IO plugin for Widget.",
             "modules"    : ["widget", "plugin"],
-            "tags"       : ["widget", "infrastructure", "plugins"],
+            "tags"       : ["widget", "infrastructure", "plugin"],
 
             "hideTableOfContents": true
         },
