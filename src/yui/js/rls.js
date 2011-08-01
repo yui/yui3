@@ -171,7 +171,7 @@ Y._rls = function(what) {
 
     if (mods) {
         for (i in mods) {
-            if (asked[i] && mods[i].requires) {
+            if (asked[i] && mods[i].requires && !mods[i].noop) {
                 len = mods[i].requires.length;
                 for (o = 0; o < len; o++) {
                     mod = mods[i].requires[o];
@@ -181,12 +181,14 @@ Y._rls = function(what) {
                         d = YUI.Env.mods[mod] || mods[mod];
                         if (d) {
                             d = d.details || d;
-                            if (d.requires) {
-                                YArray.each(d.requires, function(o) {
-                                    if (Y.rls_needs(o)) {
-                                        m.push(o);
-                                    }
-                                });
+                            if (!d.noop) {
+                                if (d.requires) {
+                                    YArray.each(d.requires, function(o) {
+                                        if (Y.rls_needs(o)) {
+                                            m.push(o);
+                                        }
+                                    });
+                                }
                             }
                         }
                     }
@@ -198,11 +200,13 @@ Y._rls = function(what) {
     YObject.each(YUI.Env.mods, function(i) {
         if (asked[i.name]) {
             if (i.details && i.details.requires) {
-                YArray.each(i.details.requires, function(o) {
-                    if (Y.rls_needs(o)) {
-                        m.push(o);
-                    }
-                });
+                if (!i.noop) {
+                    YArray.each(i.details.requires, function(o) {
+                        if (Y.rls_needs(o)) {
+                            m.push(o);
+                        }
+                    });
+                }
             }
         }
     });
