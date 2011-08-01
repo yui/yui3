@@ -39,6 +39,8 @@ YUI().use('sortable', function(Y) {
 });
 ```
 
+<p><strong>Note:</strong> `Sortable` does not auto find your drop target items, if you change the `nodes` under the hood (add or remove) you need to call `sortable.sync()` to manage them.</p>
+
 <h4 id="events">Events</h4>
 
 <p>Sortable uses `DD.Delegate` under the hood to handle the Drag and Drop operations. It sets itself as the `bubbleTarget` of the `Delegate` instance, so all `DD`-related events are bubbled to it.</p>

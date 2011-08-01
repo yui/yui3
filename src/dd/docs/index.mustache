@@ -243,6 +243,9 @@ YUI().use('dd-delegate', function(Y) {
 });
 ```
 
+<p><strong>Note:</strong> `DD.Delegate` does not auto find your drop target items, if you change the `nodes` under the hood (add or remove) you need to call `delegate.syncTargets();` to manage them.</p>
+
+
 <h4 id="cssclasses">CSS Class Names</h4>
 
 <p>The Drag and Drop Utility adds CSS class names for important moments in the drag and drop operation. Below you will find the list of these class names.</p>
