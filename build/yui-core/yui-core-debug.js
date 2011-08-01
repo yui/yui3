@@ -382,8 +382,13 @@ proto = {
             bootstrap: true,
             cacheUse: true,
             fetchCSS: true,
-            use_rls: false
+            use_rls: false,
+            rls_timeout: 2000
         };
+
+        if (YUI.Env.rls_disabled) {
+            Y.config.use_rls = false;
+        }
 
         Y.config.lang = Y.config.lang || 'en-US';
 
@@ -925,7 +930,7 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
             loader.insert(null, (fetchCSS) ? null : 'js');
             // loader.partial(missing, (fetchCSS) ? null : 'js');
 
-        } else if (len && Y.config.use_rls) {
+        } else if (len && Y.config.use_rls && !YUI.Env.rls_enabled) {
 
             G_ENV._rls_queue = G_ENV._rls_queue || new Y.Queue();
 
@@ -934,10 +939,7 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
 
                 var rls_end = function(o) {
                     handleLoader(o);
-                    G_ENV._rls_in_progress = false;
-                    if (G_ENV._rls_queue.size()) {
-                        G_ENV._rls_queue.next()();
-                    }
+                    instance.rls_advance();
                 },
                 rls_url = instance._rls(argz);
 
@@ -947,7 +949,10 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
                         rls_end(o);
                     });
                     instance.Get.script(rls_url, {
-                        data: argz
+                        data: argz,
+                        timeout: instance.config.rls_timeout,
+                        onFailure: instance.rls_handleFailure,
+                        onTimeout: instance.rls_handleTimeout
                     });
                 } else {
                     rls_end({
@@ -958,7 +963,8 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
 
             G_ENV._rls_queue.add(function() {
                 Y.log('executing queued rls request', 'info', 'rls');
-                G_ENV._rls_in_progress = true;                
+                G_ENV._rls_in_progress = true;
+                Y.rls_callback = callback;
                 Y.rls_locals(Y, args, handleRLS);
             });
 
@@ -974,6 +980,7 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
                 Y._loading = false;
                 queue.running = false;
                 Env.bootstrapped = true;
+                G_ENV._bootstrapping = false;
                 if (Y._attach(['loader'])) {
                     Y._use(args, callback);
                 }

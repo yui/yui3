@@ -382,8 +382,13 @@ proto = {
             bootstrap: true,
             cacheUse: true,
             fetchCSS: true,
-            use_rls: false
+            use_rls: false,
+            rls_timeout: 2000
         };
+
+        if (YUI.Env.rls_disabled) {
+            Y.config.use_rls = false;
+        }
 
         Y.config.lang = Y.config.lang || 'en-US';
 
@@ -925,7 +930,7 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
             loader.insert(null, (fetchCSS) ? null : 'js');
             // loader.partial(missing, (fetchCSS) ? null : 'js');
 
-        } else if (len && Y.config.use_rls) {
+        } else if (len && Y.config.use_rls && !YUI.Env.rls_enabled) {
 
             G_ENV._rls_queue = G_ENV._rls_queue || new Y.Queue();
 
@@ -934,10 +939,7 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
 
                 var rls_end = function(o) {
                     handleLoader(o);
-                    G_ENV._rls_in_progress = false;
-                    if (G_ENV._rls_queue.size()) {
-                        G_ENV._rls_queue.next()();
-                    }
+                    instance.rls_advance();
                 },
                 rls_url = instance._rls(argz);
 
@@ -947,7 +949,10 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
                         rls_end(o);
                     });
                     instance.Get.script(rls_url, {
-                        data: argz
+                        data: argz,
+                        timeout: instance.config.rls_timeout,
+                        onFailure: instance.rls_handleFailure,
+                        onTimeout: instance.rls_handleTimeout
                     });
                 } else {
                     rls_end({
@@ -958,7 +963,8 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
 
             G_ENV._rls_queue.add(function() {
                 Y.log('executing queued rls request', 'info', 'rls');
-                G_ENV._rls_in_progress = true;                
+                G_ENV._rls_in_progress = true;
+                Y.rls_callback = callback;
                 Y.rls_locals(Y, args, handleRLS);
             });
 
@@ -974,6 +980,7 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
                 Y._loading = false;
                 queue.running = false;
                 Env.bootstrapped = true;
+                G_ENV._bootstrapping = false;
                 if (Y._attach(['loader'])) {
                     Y._use(args, callback);
                 }
@@ -3681,7 +3688,11 @@ var ua = Y.UA,
     _loaded = function(id, url) {
 
         var q = queues[id],
-            sync = !q.async;
+            sync = (q && !q.async);
+
+        if (!q) {
+            return;
+        }
 
         if (sync) {
             _clearTimeout(q);
@@ -7018,7 +7029,7 @@ Y.log('attempting to load ' + s[i] + ', ' + self.base, 'info', 'loader');
 
     /**
      * Apply filter defined for this instance to a url/path
-     * method _filter
+     * @method _filter
      * @param {string} u the string to filter.
      * @param {string} name the name of the module, if we are processing
      * a single module as opposed to a combined url.
@@ -7046,7 +7057,7 @@ Y.log('attempting to load ' + s[i] + ', ' + self.base, 'info', 'loader');
 
     /**
      * Generates the full url for a module
-     * method _url
+     * @method _url
      * @param {string} path the path fragment.
      * @param {String} name The name of the module
      * @pamra {String} [base=self.base] The base url to use
@@ -7097,6 +7108,44 @@ Y.log('attempting to load ' + s[i] + ', ' + self.base, 'info', 'loader');
         if (self.combine) {
             out.js = [self.comboBase + out.js.join(self.comboSep)];
             out.css = [self.comboBase + out.css.join(self.comboSep)];
+        }
+
+        return out;
+    },
+    /**
+    * Returns an Object hash of hashes built from `loader.sorted` or from an arbitrary list of sorted modules.
+    * @method hash
+    * @private
+    * @param {Boolean} [calc=false] Perform a loader.calculate() before anything else
+    * @param {Array} [s=loader.sorted] An override for the loader.sorted array
+    * @return {Object} Object hash (js and css) of two object hashes of file lists, with the module name as the key
+    * @example This method can be used as an off-line dep calculator
+    *
+    *        var Y = YUI();
+    *        var loader = new Y.Loader({
+    *            filter: 'debug',
+    *            base: '../../',
+    *            root: 'build/',
+    *            combine: true,
+    *            require: ['node', 'dd', 'console']
+    *        });
+    *        var out = loader.hash(true);
+    *
+    */
+    hash: function(calc, s) {
+        var self = this, i, m, url, out = { js: {}, css: {} };
+
+        if (calc) {
+            self.calculate();
+        }
+        s = s || self.sorted;
+
+        for (i = 0; i < s.length; i++) {
+            m = self.getModule(s[i]);
+            if (m) {
+                url = self._filter(m.fullpath, m.name, '') || self._url(m.path, m.name);
+                out[m.type][m.name] = url;
+            }
         }
 
         return out;
