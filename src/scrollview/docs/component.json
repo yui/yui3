@@ -4,7 +4,7 @@
     "description": "ScrollView provides a scrollable content widget with flick velocity based inertia for both touch and mouse.",
     "author"     : "sdesai",
 
-    "tags": ["scrollview", "widget"],
+    "tags": ["scrollview", "widget", "beta"],
     "use" : ["scrollview"],
 
     "examples": [
