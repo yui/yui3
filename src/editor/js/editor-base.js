@@ -205,6 +205,8 @@
                 cmds = e.commands;
             }
             
+            var normal = false;
+
             Y.each(changed, function(el) {
                 var tag = el.tagName.toLowerCase(),
                     cmd = EditorBase.TAG2CMD[tag];
@@ -215,6 +217,10 @@
 
                 //Bold and Italic styles
                 var s = el.currentStyle || el.style;
+                
+                if ((''+s.fontWeight) == 'normal') {
+                    normal = true;
+                }
                 if ((''+s.fontWeight) == 'bold') { //Cast this to a string
                     cmds.bold = 1;
                 }
@@ -226,6 +232,7 @@
                 if (s.fontStyle == 'italic') {
                     cmds.italic = 1;
                 }
+
                 if (s.textDecoration == 'underline') {
                     cmds.underline = 1;
                 }
@@ -265,6 +272,11 @@
                 
             });
             
+            if (normal) {
+                delete cmds.bold;
+                delete cmds.italic;
+            }
+
             e.dompath = inst.all(changed);
             e.classNames = classes;
             e.commands = cmds;
