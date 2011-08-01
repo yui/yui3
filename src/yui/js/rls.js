@@ -5,6 +5,33 @@
 * @class rls
 */
 
+
+Y.rls_handleTimeout = function(o) {
+    Y.Get.abort(o.tId);
+    o.purge();
+    o.message = 'RLS request timed out, fetching loader';
+    Y.rls_failure(o);
+};
+
+Y.rls_handleFailure = function(o) {
+    o.message = 'RLS request failed, fetching loader';
+    Y.rls_failure(o);
+};
+
+Y.rls_failure = function(o) {
+    Y.log(o.message, 'warn', 'rls');
+    YUI.Env.rls_disabled = true;
+    Y.config.use_rls = false;
+    if (o.data) {
+        o.data.unshift('loader');
+        Y._use(o.data, function(Y, response) {
+            Y._notify(Y.rls_callback, response, o.data);
+            //Call the RLS done method, so it can progress the queue
+            Y.rls_advance();
+        });
+    }
+};
+
 /**
 * Checks the environment for local modules and deals with them before firing off an RLS request.
 * This needs to make sure that all dependencies are calculated before it can make an RLS request in
@@ -18,6 +45,14 @@
 * @param {Array} cb.argz The modified list or modules needed to require
 */
 Y.rls_locals = function(instance, argz, cb) {
+    if (YUI.Env.rls_disabled) {
+        var data = {
+            message: 'RLS is disabled, moving to loader',
+            data: argz
+        };
+        Y.rls_failure(data);
+        return;
+    }
     if (instance.config.modules) {
         var files = [], asked = Y.Array.hash(argz),
             PATH = 'fullpath', f,
@@ -120,7 +155,7 @@ Y._rls = function(what) {
             return s.join('&');
         }(),
         m = [], asked = {}, o, d, mod,
-        w = [], gallery = [],
+        w = [], 
         i, len = what.length,
         url;
     
@@ -174,27 +209,12 @@ Y._rls = function(what) {
 
     m = YArray.dedupe(m);
     
-    YArray.each(m, function(mod) {
-        if (mod.indexOf('gallery-') === 0 || mod.indexOf('yui2-') === 0) {
-            gallery.push(mod);
-            if (!Y.Loader) {
-                //Fetch Loader..
-                w.push('loader-base');
-                what.push('loader-base');
-            }
-        } else {
-            w.push(mod);
-        }
-    });
-    m = w;
-
     if (rls.filt === 'debug') {
         m.unshift('dump', 'yui-log');
     }
 
     //Strip Duplicates
     m = YArray.dedupe(m);
-    gallery = YArray.dedupe(gallery);
     what = YArray.dedupe(what);
 
     if (!m.length) {
@@ -215,7 +235,6 @@ Y._rls = function(what) {
     YUI._rls_active = {
         asked: what,
         attach: m,
-        gallery: gallery,
         inst: Y,
         url: url
     };
@@ -229,6 +248,15 @@ Y._rls = function(what) {
 */
 Y.rls_oncomplete = function(cb) {
     YUI._rls_active.cb = cb;
+};
+
+Y.rls_advance = function() {
+    var G_ENV = YUI.Env;
+
+    G_ENV._rls_in_progress = false;
+    if (G_ENV._rls_queue.size()) {
+        G_ENV._rls_queue.next()();
+    }
 };
 
 /**
@@ -278,12 +306,18 @@ if (!YUI.$rls) {
             Y = rls_active.inst;
         if (Y) {
             Y.log('RLS request received, processing', 'info', 'rls');
+            if (req.error) {
+                Y.rls_failure({
+                    message: req.error,
+                    data: req.modules
+                });
+            }
+            if (YUI.Env && YUI.Env.rls_disabled) {
+                Y.log('RLS processing on this instance is disabled.', 'warn', 'rls');
+                return;
+            }
             if (req.css && Y.config.fetchCSS) {
                 Y.Get.css(rls_active.url + '&css=1');
-            }
-            if (rls_active.gallery.length) {
-                req.modules = req.modules || [];
-                req.modules = [].concat(req.modules, rls_active.gallery);
             }
             if (req.modules && !req.css) {
                 if (req.modules.length) {
@@ -302,18 +336,20 @@ if (!YUI.$rls) {
                         YUI._rls_skins.push(v);
                     }
                 });
-                Y._attach([].concat(req.modules, rls_active.attach));
-                if (rls_active.gallery.length && Y.Loader) {
-                    Y.log('Making extra gallery request', 'info', 'rls');
+
+                Y._attach(req.modules);
+
+                if (req.missing && Y.Loader) {
+                    Y.log('Making extra Loader request', 'info', 'rls');
                     var loader = new Y.Loader(rls_active.inst.config);
                     loader.onEnd = Y.rls_done;
                     loader.context = Y;
-                    loader.data = rls_active.gallery;
+                    loader.data = req.missing;
                     loader.ignoreRegistered = false;
-                    loader.require(rls_active.gallery);
+                    loader.require(req.missing);
                     loader.insert(null, (Y.config.fetchCSS) ? null : 'js');
                 } else {
-                    Y.rls_done({ data: rls_active.asked });
+                    Y.rls_done({ data: req.modules });
                 }
             }
         }
