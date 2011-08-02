@@ -1384,32 +1384,41 @@ SVGShape.ATTRS = {
 
 	/**
 	 * Contains information about the fill of the shape. 
-	 *  <dl>
-	 *      <dt>color</dt><dd>The color of the fill.</dd>
-	 *      <dt>opacity</dt><dd>Number between 0 and 1 that indicates the opacity of the fill. The default value is 1.</dd>
-	 *      <dt>type</dt><dd>Type of fill.
-	 *          <dl>
-	 *              <dt>solid</dt><dd>Solid single color fill. (default)</dd>
-	 *              <dt>linear</dt><dd>Linear gradient fill.</dd>
-	 *              <dt>radial</dt><dd>Radial gradient fill.</dd>
-	 *          </dl>
-	 *      </dd>
-	 *  </dl>
-	 *
-	 *  <p>If a gradient (linear or radial) is specified as the fill type. The following properties are used:
-	 *  <dl>
-	 *      <dt>stops</dt><dd>An array of objects containing the following properties:
-	 *          <dl>
-	 *              <dt>color</dt><dd>The color of the stop.</dd>
-	 *              <dt>opacity</dt><dd>Number between 0 and 1 that indicates the opacity of the stop. The default value is 1. Note: No effect for IE <= 8</dd>
-	 *              <dt>offset</dt><dd>Number between 0 and 1 indicating where the color stop is positioned.</dd> 
-	 *          </dl>
-	 *      </dd>
-	 *      <dt></dt><dd></dd>
-	 *      <dt></dt><dd></dd>
-	 *      <dt></dt><dd></dd>
-	 *  </dl>
-	 *  </p>
+     *  <dl>
+     *      <dt>color</dt><dd>The color of the fill.</dd>
+     *      <dt>opacity</dt><dd>Number between 0 and 1 that indicates the opacity of the fill. The default value is 1.</dd>
+     *      <dt>type</dt><dd>Type of fill.
+     *          <dl>
+     *              <dt>solid</dt><dd>Solid single color fill. (default)</dd>
+     *              <dt>linear</dt><dd>Linear gradient fill.</dd>
+     *              <dt>radial</dt><dd>Radial gradient fill.</dd>
+     *          </dl>
+     *      </dd>
+     *  </dl>
+     *  <p>If a `linear` or `radial` is specified as the fill type. The following additional property is used:
+     *  <dl>
+     *      <dt>stops</dt><dd>An array of objects containing the following properties:
+     *          <dl>
+     *              <dt>color</dt><dd>The color of the stop.</dd>
+     *              <dt>opacity</dt><dd>Number between 0 and 1 that indicates the opacity of the stop. The default value is 1. Note: No effect for IE 6 - 8</dd>
+     *              <dt>offset</dt><dd>Number between 0 and 1 indicating where the color stop is positioned.</dd> 
+     *          </dl>
+     *      </dd>
+     *      <p>Linear gradients also have the following property:</p>
+     *      <dt>rotation</dt><dd>Linear gradients flow left to right by default. The rotation property allows you to change the flow by rotation. (e.g. A rotation of 180 would make the gradient pain from right to left.)</dd>
+     *      <p>Radial gradients have the following additional properties:</p>
+     *      <dt>r</dt><dd>Radius of the gradient circle.</dd>
+     *      <dt>fx</dt><dd>Focal point x-coordinate of the gradient.</dd>
+     *      <dt>fy</dt><dd>Focal point y-coordinate of the gradient.</dd>
+     *      <dt>cx</dt><dd>
+     *          <p>The x-coordinate of the center of the gradient circle. Determines where the color stop begins. The default value 0.5.</p>
+     *          <p><strong>Note: </strong>Currently, this property is not implemented for corresponding `CanvasShape` and `VMLShape` classes which are used on Android or IE 6 - 8.</p>
+     *      </dd>
+     *      <dt>cy</dt><dd>
+     *          <p>The y-coordinate of the center of the gradient circle. Determines where the color stop begins. The default value 0.5.</p>
+     *          <p><strong>Note: </strong>Currently, this property is not implemented for corresponding `CanvasShape` and `VMLShape` classes which are used on Android or IE 6 - 8.</p>
+     *      </dd>
+     *  </dl>
 	 *
 	 * @config fill
 	 * @type Object 
@@ -1435,13 +1444,28 @@ SVGShape.ATTRS = {
 
 	/**
 	 * Contains information about the stroke of the shape.
-	 *  <dl>
-	 *      <dt>color</dt><dd>The color of the stroke.</dd>
-	 *      <dt>weight</dt><dd>Number that indicates the width of the stroke.</dd>
-	 *      <dt>opacity</dt><dd>Number between 0 and 1 that indicates the opacity of the stroke. The default value is 1.</dd>
-	 *      <dt>dashstyle</dt>Indicates whether to draw a dashed stroke. When set to "none", a solid stroke is drawn. When set to an array, the first index indicates the
-	 *      length of the dash. The second index indicates the length of gap.
-	 *  </dl>
+     *  <dl>
+     *      <dt>color</dt><dd>The color of the stroke.</dd>
+     *      <dt>weight</dt><dd>Number that indicates the width of the stroke.</dd>
+     *      <dt>opacity</dt><dd>Number between 0 and 1 that indicates the opacity of the stroke. The default value is 1.</dd>
+     *      <dt>dashstyle</dt>Indicates whether to draw a dashed stroke. When set to "none", a solid stroke is drawn. When set to an array, the first index indicates the
+     *  length of the dash. The second index indicates the length of gap.
+     *      <dt>linecap</dt><dd>Specifies the linecap for the stroke. The following values can be specified:
+     *          <dl>
+     *              <dt>butt (default)</dt><dd>Specifies a butt linecap.</dd>
+     *              <dt>square</dt><dd>Specifies a sqare linecap.</dd>
+     *              <dt>round</dt><dd>Specifies a round linecap.</dd>
+     *          </dl>
+     *      </dd>
+     *      <dt>linejoin</dt><dd>Specifies a linejoin for the stroke. The following values can be specified:
+     *          <dl>
+     *              <dt>round (default)</dt><dd>Specifies that the linejoin will be round.</dd>
+     *              <dt>bevel</dt><dd>Specifies a bevel for the linejoin.</dd>
+     *              <dt>miter limit</dt><dd>An integer specifying the miter limit of a miter linejoin. If you want to specify a linejoin of miter, you simply specify the limit as opposed to having
+     *  separate miter and miter limit values.</dd>
+     *          </dl>
+     *      </dd>
+     *  </dl>
 	 *
 	 * @config stroke
 	 * @type Object
@@ -2586,7 +2610,7 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
     /**
      * Recalculates and returns the `contentBounds` for the `Graphic` instance.
      *
-     * @method _getUpdateContentBounds
+     * @method _getUpdatedContentBounds
      * @return {Object} 
      * @private
      */
