@@ -25,6 +25,9 @@ ScrollView
   * Fixed incorrect scroll width/height calculations on Chrome 9+, FF
     when syncUI() [ or _uiDimensionsChange() ] was called when the ScrollView
     was scrolled over.
+ 
+  * Protected state flags are now reset if _uiDimensionsChange results in
+    flipped orientation.
   
 3.3.0
 -----
