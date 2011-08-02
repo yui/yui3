@@ -606,7 +606,7 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
     /**
      * Recalculates and returns the `contentBounds` for the `Graphic` instance.
      *
-     * @method _getUpdateContentBounds
+     * @method _getUpdatedContentBounds
      * @return {Object} 
      * @private
      */
