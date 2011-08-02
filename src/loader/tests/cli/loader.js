@@ -459,6 +459,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("calendar-base")) > -1, "Module (calendar-base) not found in sorted array");
         },
+     "Testing calendarnavigator": function(data) {
+            var loader = new Y.Loader({
+                require: ["calendarnavigator"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("calendarnavigator")) > -1, "Module (calendarnavigator) not found in sorted array");
+        },
      "Testing charts": function(data) {
             var loader = new Y.Loader({
                 require: ["charts"],
