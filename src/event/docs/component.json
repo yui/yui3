@@ -1,7 +1,7 @@
 {
     "name": "event",
-	"displayName": "Event Utility",
-	"description": "The Event Utility provides APIs for subscribing to and working with DOM events",
+	"displayName": "Event",
+	"description": "The Event system provides APIs for subscribing to and working with DOM events",
 	"author": ["lsmith", "amoore", "sdesai", "rgrove"],
 
     "use": ["event"],
@@ -15,31 +15,34 @@
             "displayName": "Intro to Event Delegation"
         },
         "domready": {
-            "displayName": "DOM lifecycle events"
+            "displayName": "DOM Lifecycle Events"
         },
         "focus": {
-            "displayName": "The focus and blur event fix"
+            "displayName": "The focus and blur Event Fix"
         },
         "key": {
-            "displayName": "The key event"
+            "displayName": "The key Event"
         },
         "mouseenter": {
-            "displayName": "The mouseenter, mouseleave, and hover events"
+            "displayName": "The mouseenter, mouseleave, and hover Events"
         },
         "mousewheel": {
-            "displayName": "The mousewheel event"
+            "displayName": "The mousewheel Event"
         },
         "outside": {
-            "displayName": "The outside events"
+            "displayName": "The outside Events"
         },
         "windowresize": {
-            "displayName": "The windowresize event"
+            "displayName": "The windowresize Event"
         },
         "touch": {
-            "displayName": "Touch events and abstractions"
+            "displayName": "Touch Events and Abstractions"
         },
         "valuechange": {
-            "displayName": "The valueChange event"
+            "displayName": "The valueChange Event"
+        },
+        "synths": {
+            "displayName": "Creating Synthetic Events"
         }
     }
 }

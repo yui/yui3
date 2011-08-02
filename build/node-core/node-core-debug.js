@@ -239,12 +239,20 @@ Y_Node.importMethod = function(host, name, altName) {
 };
 
 /**
+ * Retrieves a NodeList based on the given CSS selector.
+ * @method all
+ *
+ * @param {string} selector The CSS selector to test against.
+ * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
+ * @for YUI
+ */
+
+/**
  * Returns a single Node instance bound to the node or the
  * first element matching the given selector. Returns null if no match found.
  * <strong>Note:</strong> For chaining purposes you may want to
  * use <code>Y.all</code>, which returns a NodeList when no match is found.
  * @method one
- * @static
  * @param {String | HTMLElement} node a node or Selector
  * @return {Y.Node | null} a Node instance or null if no match found.
  * @for YUI
@@ -597,7 +605,7 @@ Y.mix(Y_Node.prototype, {
     },
 
     /**
-     * Retrieves a nodeList based on the given CSS selector.
+     * Retrieves a NodeList based on the given CSS selector.
      * @method all
      *
      * @param {string} selector The CSS selector to test against.

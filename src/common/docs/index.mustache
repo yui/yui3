@@ -1,5 +1,50 @@
-<h2>Welcome to YUI 3</h2>
+<h2>Welcome to YUI {{yuiVersion}}!</h2>
 
 <p>
-Nothing to see here (yet).
+YUI is a set of utilities, infrastructure components, and widgets written in JavaScript and CSS for building richly interactive web applications. It is available under a <a href="http://yuilibrary.com/license/">BSD license</a> and is free for all uses.
 </p>
+
+<p>
+This is the static documentation for YUI {{yuiVersion}}. For the most up-to-date, searchable docs, please visit the <a href="http://yuilibrary.com/">YUI website</a>.
+</p>
+
+<h2>Links</h2>
+
+<ul>
+    <li><a href="http://yuilibrary.com/yui/quick-start/">Quick Start</a> (for developers new to YUI)</li>
+    <li><a href="http://yuilibrary.com/yui/docs/">Latest Online Documentation</a></li>
+    <li><a href="http://yuilibrary.com/download/yui3/">Latest Production Release</a></li>
+    <li><a href="http://yuilibrary.com/forum/">Forums</a></li>
+    <li><a href="http://yuilibrary.com/license/">License</a></li>
+    <li><a href="http://yuilibrary.com/contribute/">How to Contribute</a></li>
+</ul>
+
+<h2>Directory Contents</h2>
+
+<p>
+This package contains the following directories:
+</p>
+
+<ul>
+  <li><p><code>api</code>: Generated API docs for the entire library in HTML format.</p></li>
+
+  <li><p><code>build</code>: Built YUI source files. This is what you should load on your web pages. The built files are generated at development time from the contents of the <code>src</code> directory. The build step generates debug files (unminified and with full comments and logging), raw files (unminified, but without debug logging), and minified files (suitable for production deployment and use).</p></li>
+
+  <li><p><code>docs</code>: User guides and examples for YUI components.</p></li>
+
+  <li><p><code>src</code> Raw unbuilt source code (JavaScript, CSS, image assets, ActionScript files, etc.) for the library.</p></li>
+</ul>
+
+<p>
+The individual component directories under the <code>src</code> directory contain Ant build files (<code>build.xml</code> and others) which can be used to build individual modules using the YUI Builder. The YUI Builder is part of the "builder" project, available on GitHub at <a href="https://github.com/yui/builder">https://github.com/yui/builder</a>
+</p>
+
+<h2>Component User Guides</h2>
+
+<ul>
+  {{#components}}
+    {{#meta}}
+        <li><a href="{{name}}/index.html">{{displayName}}</a></li>
+    {{/meta}}
+  {{/components}}
+</ul>

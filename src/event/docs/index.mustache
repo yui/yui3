@@ -108,7 +108,7 @@ YUI.  So you probably already have the DOM event API and didn't know it!</p>
 </thead>
 <tbody>
     <tr>
-        <td>`event-base`</td>
+        <td><a href="{{apiDocs}}/module_event-base.html">`event-base`</a></td>
         <td>
             The Core DOM event subscription system as well as the DOM lifecycle
             events <a href="domready.html">`domready`, `contentready`, and
@@ -121,7 +121,7 @@ YUI.  So you probably already have the DOM event API and didn't know it!</p>
         </td>
     </tr>
     <tr>
-        <td>`event`</td>
+        <td><a href="{{apiDocs}}/module_event.html">`event`</a></td>
         <td>
             A rollup of all modules below except
             <ul>
@@ -132,16 +132,16 @@ YUI.  So you probably already have the DOM event API and didn't know it!</p>
         </td>
     </tr>
     <tr>
-        <td>`event-delegate` &amp;
+        <td><a href="{{apiDocs}}/module_event-delegate.html">`event-delegate`</a> &amp;
             <br>
-            <spen style="white-space: nowrap;"`node-event-delegate`</span></td>
+            <a style="white-space: nowrap;" href="{{apiDocs}}/module_node-event-delegate.html">`node-event-delegate`</a></td>
         <td>
             Adds the `Y.delegate(...)` and `node.delegate(...)` methods,
             respectively, for [[#Event Delegation|event delegation]] convenience.
         </td>
     </tr>
     <tr>
-        <td>`event-simulate`</td>
+        <td><a href="{{apiDocs}}/module_event-simulate.html">`event-simulate`</a></td>
         <td>
             <p>Adds APIs for triggering native DOM events for unit testing.</p>
             <p><strong>Note: <a href="#faking">Faking DOM events should not be
@@ -149,7 +149,7 @@ YUI.  So you probably already have the DOM event API and didn't know it!</p>
         </td>
     </tr>
     <tr>
-        <td>`event-synthetic`</td>
+        <td><a href="{{apiDocs}}/module_event-synthetic.html">`event-synthetic`</a></td>
         <td>
             Supplies the infrastructure for "fixing" DOM events with
             undesirable or inconsistent behavior.  Also for creating new DOM
@@ -157,18 +157,20 @@ YUI.  So you probably already have the DOM event API and didn't know it!</p>
         </td>
     </tr>
     <tr>
-        <td><a href="touch.html#flick">`event-flick`</a></td>
+        <td><a href="{{apiDocs}}/module_event-flick.html">`event-flick`</a></td>
         <td>
-            Adds a "flick" event for touch or mouse interaction.
+            Adds a <a href="touch.html#flick">"flick" event</a> for touch or
+            mouse interaction.
         </td>
     </tr>
     <tr>
-        <td><a href="focus.html">`event-focus`</a></td>
+        <td><a href="{{apiDocs}}/module_event-focus.html">`event-focus`</a></td>
         <td>
-            Fixes `focus` and `blur` events to bubble (for delegation).
+            <a href="focus.html">Fixes `focus` and `blur` events</a> to bubble
+            (for delegation).
         </td>
     </tr>
-        <td>`event-gesture`</td>
+        <td><a href="{{apiDocs}}/module_event-gestures.html">`event-gestures`</a></td>
         <td>
             <p>A rollup of the following modules:</p>
 
@@ -181,28 +183,30 @@ YUI.  So you probably already have the DOM event API and didn't know it!</p>
             <p>In the future, may contain more gesture abstraction modules.</p>
         </td>
     <tr>
-        <td><a href="mouseenter.html">`event-hover`</a></td>
+        <td><a href="{{apiDocs}}/module_event-hover.html">`event-hover`</a></td>
         <td>
-            Adds a "hover" event which binds to two callbacks, one for the
-            start, and one for the end of a mouse hover.
+            Adds a <a href="mouseenter.html">"hover" event</a> which binds to
+            two callbacks, one for the start, and one for the end of a mouse
+            hover.
         </td>
     </tr>
     <tr>
-        <td><a href="key.html">`event-key`</a></td>
+        <td><a href="{{apiDocs}}/module_event-key.html">`event-key`</a></td>
         <td>
-            Adds a "key" event which listens for specific, implementer defined,
-            keys being pressed by the user.
+            Adds a <a href="key.html">"key" event</a> which listens for
+            specific, implementer defined, keys being pressed by the user.
         </td>
     </tr>
     <tr>
-        <td><a href="mouseenter.html">`event-mouseenter`</a></td>
+        <td><a href="{{apiDocs}}/module_event-mouseenter.html">`event-mouseenter`</a></td>
         <td>
-            Adds "mouseenter" and "mouseleave" events.  You probably want to
-            use these instead of "mouseover" and "mouseout".
+            Adds <a href="mouseenter.html">"mouseenter" and "mouseleave"
+            events</a>.  You probably want to use these instead of "mouseover"
+            and "mouseout".
         </td>
     </tr>
     <tr>
-        <td>`event-mousewheel`</td>
+        <td><a href="{{apiDocs}}/module_event-mousewheel.html">`event-mousewheel`</a></td>
         <td>
             <p>Adds a "mousewheel" event for monitoring users scrolling the
             window with the mousewheel.  Event facades passed to the callback
@@ -214,22 +218,24 @@ YUI.  So you probably already have the DOM event API and didn't know it!</p>
         </td>
     </tr>
     <tr>
-        <td><a href="touch.html#move">`event-move`</a></td>
+        <td><a href="{{apiDocs}}/module_event-move.html">`event-move`</a></td>
         <td>
-            Adds "gesturemovestart", "gesturemove", and "gesturemoveend" events
-            that serve as abstractions over mouse and touch events, forking
-            internally based on the client device.
+            Adds <a href="touch.html#move">"gesturemovestart", "gesturemove",
+            and "gesturemoveend" events</a> that serve as abstractions over
+            mouse and touch events, forking internally based on the client
+            device.
         </td>
     </tr>
     <tr>
-        <td><a href="outside.html">`event-outside`</a></td>
+        <td><a href="{{apiDocs}}/module_event-outside.html">`event-outside`</a></td>
         <td>
-            Adds a "clickoutside" and several other ___outside events to trigger
-            behavior based on actions taken outside a specific element.
+            Adds a <a href="outside.html">"clickoutside" and several other
+            ___outside events</a> to trigger behavior based on actions taken
+            outside a specific element.
         </td>
     </tr>
     <tr>
-        <td>`event-resize`</td>
+        <td><a href="{{apiDocs}}/module_event-resize.html">`event-resize`</a></td>
         <td>
             <p>Adds a "windowresize" event that only fires after a user has
             stopped dragging a window's resize handle.  This normalizes the
@@ -240,15 +246,16 @@ YUI.  So you probably already have the DOM event API and didn't know it!</p>
         </td>
     </tr>
     <tr>
-        <td><a href="touch.html">`event-touch`</a></td>
+        <td><a href="{{apiDocs}}/module_event-touch.html">`event-touch`</a></td>
         <td>
-            Adds support for subscribing to native touch and gesture events.
+            Adds support for <a href="touch.html">subscribing to native touch
+            and gesture events</a>.
         </td>
     </tr>
     <tr>
-        <td><a href="valuechange.html">`event-valuechange`</a></td>
+        <td><a href="{{apiDocs}}/module_event-valuechange.html">`event-valuechange`</a></td>
         <td>
-            Adds a "valueChange" event that fires when input element text
+            Adds a <a href="valuechange.html">"valueChange" event</a> that fires when input element text
             changes (this is harder than you think).
         </td>
     </tr>
@@ -310,35 +317,9 @@ synthetic events, and you can subscribe to them like any other DOM event with
 Y.one('#dialog').on('clickoutside', function (e) {
     this.transition('fadeOut');
 });
+
+Y.one('#editable-table').delegate('key', saveAndAdvance, 'tab', 'input');
 ```
-
-<p>You can do all sorts of things with synthetic events, including:</p>
-
-<ul>
-    <li>
-        redefine native DOM events that behave inconsistently across browsers
-        (e.g. `focus` and `blur`)
-    </li>
-    <li>
-        provide abstract events that attach to different DOM events based on
-        the environment (e.g. `gesturemovestart` and family)
-    </li>
-    <li>
-        create events with different subscription signatures (e.g. `hover` or
-        `gesturemovestart`)
-    </li>
-    <li>
-        create configurable events that only execute subscribers when criteria
-        passed during subscription are met (e.g. `flick` or `key`)
-    </li>
-    <li>
-        create events that encapsulate common UX patterns (e.g. `clickoutside`)
-    </li>
-    <li>
-        create fun little easter eggs (e.g. <a
-        href="http://yuilibrary.com/gallery/show/event-konami">`konami`</a>)
-    </li>
-</ul>
 
 <p>The available synthetic events are listed in <a href="#modules">the table of
 modules above</a>.  Most are linked to pages further detailing the specific eevnts.</p>
@@ -352,6 +333,7 @@ Y.Event.define("tripleclick", {
 
     // The setup logic executed when node.on('tripleclick', callback) is called
     on: function (node, subscription, notifier) {
+        // supporting methods can be referenced from `this`
         this._clear(subscription);
 
         // To make detaching easy, a common pattern is to add the subscription
@@ -377,18 +359,16 @@ Y.Event.define("tripleclick", {
 
     // The logic executed when the 'tripleclick' subscription is `detach()`ed
     detach: function (node, subscription, notifier) {
-        // Clean up supporting DOM subscriptions when the synthetic event
-        // subscription is detached.
+        // Clean up supporting DOM subscriptions and other external hooks
+        // when the synthetic event subscription is detached.
         subscription._handle.detach();
+
+        if (subscription._timer) {
+            subscription._timer.cancel();
+        }
     },
 
-    // The setup logic executed for `node.delegate('tripleclick', ...)`
-    delegate: function (node, subscription, notifier, filter) { ... },
-
-    // Detach logic for delegate subscriptions
-    detachDelegate: function (node, subscription, notifier, filter) { ... },
-
-    // supporting methods can be referenced from `this`
+    // Additional methods can be added to support the lifecycle methods
     _clear: function (subscription) {
         subscription._counter = 0;
         subscription._timer = null;
@@ -396,15 +376,16 @@ Y.Event.define("tripleclick", {
 });
 ```
 
-<p>The delegation logic was omitted for brevity, but `delegate()` support and
-custom subscription signatures are <a href="synths.html">detailed here</a>.</p>
-
 <p>After the synthetic event is defined, it is available for every Node and
 NodeList to subscribe to.</p>
 
 ```
 Y.one('#hellokitty').on('tripleclick', omgYayCantClickEnough);
 ```
+
+<p>There is additional configuration to <a href="synths.html">add support for
+`delegate()` or extra subscription arguments</a>, but often very little extra
+code is needed.</p>
 
 <h2>Advanced Options</h2>
 
