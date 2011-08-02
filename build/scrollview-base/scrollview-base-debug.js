@@ -566,7 +566,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         // Use bb instead of cb. cb doesn't gives us the right results
         // in FF (due to overflow:hidden)
-        dims = [bb.get('scrollWidth'), bb.get('scrollHeight')];
+        dims = [Math.max(bb.get('scrollWidth'), cb.get('scrollWidth')), Math.max(bb.get('scrollHeight'), cb.get('scrollHeight'))];
 
         this._moveTo(cb, -1*origX, -1*origY);
 
@@ -1040,4 +1040,4 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 });
 
 
-}, '@VERSION@' ,{skinnable:true, requires:['widget', 'event-gestures', 'transition']});
+}, '@VERSION@' ,{requires:['widget', 'event-gestures', 'transition'], skinnable:true});

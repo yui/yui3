@@ -28,6 +28,11 @@ ScrollView
  
   * Protected state flags are now reset if _uiDimensionsChange results in
     flipped orientation.
+
+  * Use the larger of bb.scrollWidth/Height or cb.scrollWidth/Height, to calculate
+    scroll dimensions to account for FF (which clips cb.scrollWidth) and 
+    Chrome/MacOS (which clips bb.scrollWidth when translated even after 
+    incorrect scroll calcs above).
   
 3.3.0
 -----
