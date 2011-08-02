@@ -32,6 +32,10 @@
 Y.all('#demo li').on('click', onClick);
 ```
 
+<h2>Prefer `node.delegate()` over `nodelist.on()`</h2>
+
+<p>Sometimes you need to create individual subscriptions for each Node in a NodeList (as is done in this example), but usually it's preferable to <a href="../event/index.html#event-delegation">use event delegation</a>.</p>
+
 <h2>Complete Example Source</h2>
 ```
 {{>event-node-source}}
