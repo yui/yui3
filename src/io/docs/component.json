@@ -27,7 +27,7 @@
             "hideTableOfContents": true
         },
         {
-            "name"       : "pipes",
+            "name"       : "xdr",
             "displayName": "Request aggregated data using Yahoo! Pipes",
             "description": "Use IO to make an HTTP request to Pipes, returning aggregate data from disparate data sources.",
             "modules"    : ["io-xdr", "node"],
