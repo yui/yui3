@@ -1,0 +1,64 @@
+<div class="intro">
+    <p>Accessing data from a server is easy with DataSource.IO, which uses the IO Utility to retrieve data over HTTP. A <a href="../dataschema/">DataSchema</a> plugin is used to normalize incoming data into a known format for consistency of usage by other components.</p>
+</div>
+
+<div class="example">
+{{>datasource-io-source}}
+</div>
+
+<p>If your server returns JSON data, use a DataSourceJSONSchema plugin to parse the data against a schema that you provide:</p>
+
+```
+YUI().use("datasource-io", "datasource-jsonschema", function(Y) {
+    var myDataSource = new Y.DataSource.IO({source:"ysearch_json_madonna.php"}),
+        myCallback = {
+            success: function(e){
+                alert(e.response);
+            },
+            failure: function(e){
+                alert("Could not retrieve data: " + e.error.message);
+            }
+        };
+
+    myDataSource.plug(Y.Plugin.DataSourceJSONSchema, {
+        schema: {
+            resultListLocator: "ResultSet.Result",
+            resultFields: ["Title"]
+        }
+    });
+    
+    // This request string will get appended to the URI
+    myDataSource.sendRequest({
+        request:"?output=json",
+        callback:myCallback
+    });
+});
+```
+
+<p>On the other hand, a DataSourceXMLSchema plugin can be used to parse XML data coming from your server:</p>
+
+```
+YUI().use("datasource-io", "datasource-xmlschema", function(Y) {
+    var myDataSource = new Y.DataSource.IO({source:"ysearch_xml_madonna.php"}),
+        myCallback = {
+            success: function(e){
+                alert(e.response);
+            },
+            failure: function(e){
+                alert("Could not retrieve data: " + e.error.message);
+            }
+        };
+
+    myDataSource.plug(Y.Plugin.DataSourceXMLSchema, {
+        schema: {
+            resultListLocator: "result",
+            resultFields: [{key:"title", locator:"*[local-name() ='title']"}]
+        }
+    });
+
+    myDataSource.sendRequest({
+        request:"?output=xml",
+        callback:myCallback
+    });
+});
+```
