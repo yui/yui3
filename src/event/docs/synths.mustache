@@ -18,8 +18,7 @@
         </li>
         <li>
             create events with different subscription signatures (e.g.
-            <a href="hover.html">`hover`</a> or
-            <a href="touch.html#move">`gesturemovestart`</a>)
+            <a href="hover.html">`hover`</a>)
         </li>
         <li>
             create configurable events that only execute subscribers when
@@ -76,8 +75,8 @@ Y.Event.define("tripleclick", {
 <p>In addition to the subscribing Node, each method receives a
 <em>subscription</em> and a <em>notifier</em>.  Use the <em>subscription</em>
 to store event handles or other data that may be needed by another method.  Use
-the <em>notifier</em> to signal that subscribed callbacks should be
-executed.</p>
+<em>`notifier.fire(e)`</em> to dispatch the event to the callbacks that were
+bound to it.</p>
 
 ```
 Y.Event.define("tripleclick", {
@@ -127,7 +126,9 @@ Y.Event.define('multiclick', {
                 e.clicks = count;
                 count = 0;
                 
-                notifier.fire(e); // subscribers will get e with e.clicks
+                // subscribers will get e with e.type == 'multiclick'
+                // and extra property e.clicks
+                notifier.fire(e);
             });
         });
     },
@@ -169,7 +170,7 @@ Y.Event.define("tripleclick", {
                     count = 0;
                 });
             }
-        }, filter);
+        }, filter); // filter is passed on to the underlying `delegate()` call
     },
 
     detachDelegate: function (node, subscription, notifier) {
@@ -178,10 +179,20 @@ Y.Event.define("tripleclick", {
 });
 ```
 
-<h2>Extra arguments</h2>
+<h2>Extra Arguments</h2>
 
-<p>Supply a `processArgs` method in the event definition to accept additional
-arguments.  If this method is supplied, it</p>
+<p>Supply a `processArgs` method in the event definition to support a custom
+subscription signature.  The method receives two arguments:</p>
+
+<ol>
+    <li>an array of the subscription arguments for analysis</li>
+    <li>
+        a boolean `true` if the subscription is being made through
+        `delegate(...)`
+    </li>
+</ol>
+
+<p>If this method is supplied, it</p>
 <ul>
     <li>
         <strong>MUST</strong> remove the extra arguments from the arg array
@@ -193,32 +204,69 @@ arguments.  If this method is supplied, it</p>
     </li>
 </ul>
 
-<p>The same `processArgs` method is used by both `on` and `delegate`.  A second
-argument to `processArgs` indicates that the subscription is being made through
-`delegate`. Because `node.on(...)` and `node.delegate(...)` signatures differ,
-it is easiest to expect custom arguments starting from at index 3 of the
-subscription arguments array.</p>
+
+<p>The same `processArgs` method is used by both `on` and `delegate`, but there
+are various signatures to account for.  The easiest way to accept extra
+arguments is to require them from index 3 in the argument list.  It's also best
+to limit the number of extra arguments to one and require an object literal to
+allow for future changes.</p>
+
+```
+// for an event that takes one extra param
+processArgs: function (args, isDelegate) {
+    var extra = args[3];
+    
+    // remove the extra arguments from the array
+    args.splice(3,1);
+
+    return extra;
+}
+
+// for an event that takes three extra args
+processArgs: function (args, isDelegate) {
+    return args.splice(3,3);
+}
+```
+
+<p>Requiring extra params start at index 3 of the `args` array results in the
+following subscription signatures:</p>
+```
+var extraConfig = { ... };
+
+// Third argument for node.on() and node.delegate
+node.on('extraArgEvent', callback, extraConfig, thisOverride, arg...);
+node.delegate('extraArgEvent', callback, extraConfig, filter, thisOverride, arg...);
+
+// Fourth argument for Y.on() and Y.delegate
+Y.on('extraArgEvent', callback, targetSelector, extraConfig, thisOverride, arg...);
+Y.delegate('extraArgEvent', callback, parentSelector, extraConfig, filter, thisOverride, arg...);
+```
+
+<p>For some custom signatures, the placement of the extra argument for
+implementers using `Y.on()` or `Y.delegate()` may look awkward.  Sometimes you
+can support extras at other indexes if you can reliably tell that the argument
+is not part of
+<a href="index.html#binding-this-and-additional-callback-arguments">the extended
+signature for `on(...)` or `delegate(...)`</a>. See the <a
+href="{{apiDocs}}/files/event_js_hover.js.html">source for the "hover"
+event</a> for an example of supporting multiple signatures.</p>
+
+<p>The return value of `processArgs` is assigned to `subscription._extras` for the `on` and `delegate` definition methods.</p>
 
 ```
 Y.Event.define('multiclick', {
     processArgs: function (args, isDelegate) {
         // The args list will look like this coming in:
-        // [ type, callback, node, (extras...), [filter], thisObj, arg0...argN ]
-        var extras = args[3];
-
-        // The args array going out MUST look like this:
-        // [ type, callback, node, [filter], thisObj, arg0...argN ]
-        args.splice(3,1);
-
-        // this will be assigned to subscription._extras;
-        return extras;
+        // [ type, callback, node, (extras...), [filter,] thisObj, arg0...argN ]
+        return args.splice(3,1)[1] || {};
     },
 
+    // Custom subscription signatures don't change the params of on/delegate
     on: function (node, sub, notifier) {
         var clicks = 0,
             // data returned from processArgs is available at sub._extras
-            min = sub._extras.minClicks,
-            max = sub._extras.maxClicks,
+            min = sub._extras.minClicks || 3,
+            max = sub._extras.maxClicks || 10,
             timer;
 
         sub._handle = node.on('click', function (e) {
@@ -233,7 +281,6 @@ Y.Event.define('multiclick', {
                 timer = Y.later(200, null, function () {
                     if (clicks > min) {
                         e.clicks = count;
-                        
                         notifier.fire(e);
                     }
                     count = 0;
@@ -243,8 +290,12 @@ Y.Event.define('multiclick', {
     },
     ...
 });
+```
 
-// Usage would look like this (extra config object as third arg)
+<p>Usage of this synthetic event then expects a third argument as a
+configuration object with `minClicks` and `maxClicks` properties.</p>
+
+```
 node.on('multiclick', obj.method, {
     minClicks: 5,
     maxClicks: 8
@@ -257,14 +308,8 @@ container.delegate('multiclick', doSomething, {
 }, '.clickable');
 ```
 
-<h2>Tips and Tricks</h2>
+<h2>A Tip to Make Your Synth Definition Smaller</h2>
 
-<h4>Alias `delegate` to `on` and `detachDelegate` to `detach`</h4>
-
-<h4>Don't store state in `node.setData(...)` for `delegate`</h4>
-
-<p>It might be tempting</p>
-
-<h4>Use raw events for performance</h4>
-
-<h4>
+<p>If the only difference between your `on` and `delegate` definitions is which method is used to bind to the supporting events, then you can propably get away with defining `delegate` and aliasing it to `on` (and so with `detach` and `detachDelegate`).  See the
+<a href="{{apiDocs}}/files/event_js_hover.js.html">source for the "hover"
+event</a> for an example of this approach.</p>

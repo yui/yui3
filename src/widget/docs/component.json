@@ -4,7 +4,7 @@
     "description": "Widget is the foundation class from which all YUI 3 widgets are derived.",
     "author"     : "sdesai",
 
-    "tags": ["widget", "infrastructure"],
+    "tags": ["infrastructure"],
     "use" : ["widget"],
 
     "examples" : [
