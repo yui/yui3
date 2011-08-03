@@ -12,7 +12,7 @@
         {
             "name": "jsonp-github",
 	        "displayName": "Getting Cross Domain JSON Data Using Y.jsonp()",
-	        "description": "Get basic <a href='http://github.com'>GitHub</a> user info using a <code>Y.jsonp(url, callback)</code>.",
+	        "description": "Get basic GitHub user info using a Y.jsonp(url, callback).",
 	        "modules": ["jsonp"],
 	        "useModules": ["jsonp", "node"],
 
