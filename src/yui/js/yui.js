@@ -83,12 +83,12 @@ properties.
             }
             
             /**
-                YUI_Config is a page-level config.  It is applied to all
+                YUI_config is a page-level config.  It is applied to all
                 instances created on the page.  This is applied after
                 YUI.GlobalConfig, and before the instance level configuration
                 objects.
                 @global
-                @property YUI_Config
+                @property YUI_config
                 @type {Object}
                 @example
 
