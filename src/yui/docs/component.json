@@ -83,13 +83,6 @@
             "description": "Natively use YUI Gallery Modules",
             "modules"    : ["yui"],
             "tags"       : ["yui", "core", "gallery"]
-        },
-        {
-            "name"       : "yui-gallery2",
-            "displayName": "YUI 2 in 3 &amp; Gallery Modules",
-            "description": "YUI 2 in 3 &amp; Gallery Modules",
-            "modules"    : ["yui"],
-            "tags"       : ["yui", "core", "gallery", "yui2", "2in3"]
         }
     ]
 }
