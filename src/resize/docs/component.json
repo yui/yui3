@@ -18,7 +18,7 @@
         {
             "name"       : "constrain-resize",
             "displayName": "Constrain a Resize",
-            "description": "A simple resize implementation that utilizes the <code>ResizeConstrained</code> plugin to set min/max dimensions and to lock in the resized element's aspect ratio.",
+            "description": "A simple resize implementation that utilizes the ResizeConstrained plugin to set min/max dimensions and to lock in the resized element's aspect ratio.",
             "modules"    : ["resize"],
             "tags"       : ["resize", "node", "simple", "constrained"]
         },
@@ -39,7 +39,7 @@
         {
             "name"       : "constrain-resize-plugin",
             "displayName": "Widget with Resize Plugin under constraints",
-            "description": "Plugs a widget with resize functionality, and implements <code>ResizeConstrained</code>",
+            "description": "Plugs a widget with resize functionality, and implements ResizeConstrained",
             "modules"    : ["resize-plugin"],
             "tags"       : ["resize", "widget", "constrained"]
         }
