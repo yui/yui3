@@ -4,17 +4,14 @@
   </div>
   <div id="rightcolumn" class="yui3-u-1-2">
    <div id="links" style="padding-left:15px;">
-      <a href="#" id="togglePrevMonth">Toggle Show Previous Month</a><br>
-      <a href="#" id="toggleNextMonth">Toggle Show Next Month</a><br>
+      <a href="#" id="togglePrevMonth">Toggle showing the previous month</a><br>
+      <a href="#" id="toggleNextMonth">Toggle showing the next month</a><br>
       Selected date: <span id="selecteddate"></span>
    </div>
   </div>
 </div>
 <script type="text/javascript">
-YUI({
-    filter: 'RAW',
-    debug: true
-}).use('calendar', 'datatype-date',  function(Y) {
+YUI().use('calendar', 'datatype-date',  function(Y) {
     
     // Create a new instance of calendar, placing it in 
     // #mycalendar container, setting its width to 340px,
