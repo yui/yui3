@@ -1,5 +1,5 @@
-Custom Event Change History
-===========================
+Custom Event Infrastructure Change History
+==========================================
 
 3.4.0
 -----

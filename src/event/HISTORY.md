@@ -1,5 +1,5 @@
-Event Change History
-====================
+Event Infrastructure Change History
+===================================
 
 3.4.0
 -----
