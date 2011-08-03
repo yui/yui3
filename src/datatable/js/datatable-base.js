@@ -489,8 +489,8 @@ Y.extend(DTBase, Y.Widget, {
      */
     _uiSetCaption: function(val) {
         var caption = this._captionNode,
-            parent  = caption.get('parentNode'),
-            method  = val ? (!parent && 'prepend') : (parent && 'removeChild');
+            inDoc   = caption.inDoc(),
+            method  = val ? (!inDoc && 'prepend') : (inDoc && 'removeChild');
 
         caption.setContent(val || '');
 
