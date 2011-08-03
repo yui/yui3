@@ -1,26 +1,8 @@
-YUI dump
-    Stringifies objects
+Dump
+====
 
-3.3.0
-  * No change
+Returns a simple string representation of the object or array. Other types of
+objects will be returned unprocessed. Arrays are expected to be indexed. Use
+object notation for associative arrays.
 
-3.2.0
-  * No change
-
-3.1.1
-  * No change
-
-3.1.0
-  * No change
-
-3.0.0
-  * Better handling of HTML elements.
-
-3.0.0beta1
-  * Added /regexp/ formatting
-
-3.0.0pr2
-  * No change
-
-3.0.0pr1
-  * Initial release
+If included, the `dump()` method is added to the YUI instance.
