@@ -11,30 +11,30 @@ if (typeof YUI != 'undefined') {
 }
 
 /**
- * The YUI global namespace object.  If YUI is already defined, the
- * existing YUI object will not be overwritten so that defined
- * namespaces are preserved.  It is the constructor for the object
- * the end user interacts with.  As indicated below, each instance
- * has full custom event support, but only if the event system
- * is available.  This is a self-instantiable factory function.  You
- * can invoke it directly like this:
- *
- *      YUI().use('*', function(Y) {
- *          // ready
- *      });
- *
- * But it also works like this:
- *
- *      var Y = YUI();
- *
- * @class YUI
- * @constructor
- * @global
- * @uses EventTarget
- * @param o* {object} 0..n optional configuration objects.  these values
- * are store in Y.config.  See <a href="config.html">Config</a> for the list of supported
- * properties.
- */
+The YUI global namespace object.  If YUI is already defined, the
+existing YUI object will not be overwritten so that defined
+namespaces are preserved.  It is the constructor for the object
+the end user interacts with.  As indicated below, each instance
+has full custom event support, but only if the event system
+is available.  This is a self-instantiable factory function.  You
+can invoke it directly like this:
+
+     YUI().use('*', function(Y) {
+         // ready
+     });
+
+But it also works like this:
+
+     var Y = YUI();
+
+@class YUI
+@constructor
+@global
+@uses EventTarget
+@param o* {object} 0..n optional configuration objects.  these values
+are store in Y.config.  See <a href="config.html">Config</a> for the list of supported
+properties.
+*/
     /*global YUI*/
     /*global YUI_config*/
     var YUI = function() {
@@ -53,17 +53,61 @@ if (typeof YUI != 'undefined') {
             // set up the core environment
             Y._init();
 
-            // YUI.GlobalConfig is a master configuration that might span
-            // multiple contexts in a non-browser environment.  It is applied
-            // first to all instances in all contexts.
+            /**
+                YUI.GlobalConfig is a master configuration that might span
+                multiple contexts in a non-browser environment.  It is applied
+                first to all instances in all contexts.
+                @property YUI.GlobalConfig
+                @type {Object}
+                @global
+                @example
+
+                    
+                    YUI.GlobalConfig = {
+                        filter: 'debug'
+                    };
+
+                    YUI().use('node', function(Y) {
+                        //debug files used here
+                    });
+
+                    YUI({
+                        filter: 'min'
+                    }).use('node', function(Y) {
+                        //min files used here
+                    });
+
+            */
             if (YUI.GlobalConfig) {
                 Y.applyConfig(YUI.GlobalConfig);
             }
+            
+            /**
+                YUI_config is a page-level config.  It is applied to all
+                instances created on the page.  This is applied after
+                YUI.GlobalConfig, and before the instance level configuration
+                objects.
+                @global
+                @property YUI_config
+                @type {Object}
+                @example
 
-            // YUI_Config is a page-level config.  It is applied to all
-            // instances created on the page.  This is applied after
-            // YUI.GlobalConfig, and before the instance level configuration
-            // objects.
+                    
+                    //Single global var to include before YUI seed file
+                    YUI_config = {
+                        filter: 'debug'
+                    };
+                    
+                    YUI().use('node', function(Y) {
+                        //debug files used here
+                    });
+
+                    YUI({
+                        filter: 'min'
+                    }).use('node', function(Y) {
+                        //min files used here
+                    });
+            */
             if (gconf) {
                 Y.applyConfig(gconf);
             }
@@ -4672,7 +4716,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2011.07.20-20-59',
+            GALLERY_VERSION = 'gallery-2011.08.03-21-18',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
