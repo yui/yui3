@@ -754,7 +754,7 @@ Y.extend(DTBase, Y.Widget, {
         var columns = o.columns,
             i, len, columnInfo;
 
-        o.tr = Ycreate(fromTemplate(o.rowTemplate, { id: o.data.id }));
+        o.tr = Ycreate(fromTemplate(o.rowTemplate, { id: o.record.get('id') }));
         
         for (i = 0, len = columns.length; i < len; ++i) {
             columnInfo = columns[i];

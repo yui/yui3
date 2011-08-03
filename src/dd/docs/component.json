@@ -112,6 +112,14 @@
             "description": "Example Photo Browser application.",
 	        "modules"    : ["dd", "animation", "event", "slider", "node", "stylesheet", "yql"],
             "tags"       : ["dd", "delegation", "animation", "target", "application", "photos", "yql"]
+        },
+        {
+            "name"       : "portal-drag",
+            "hideTableOfContents": true,
+            "displayName": "Portal Style Example",
+            "description": "Portal style example using Drag & Drop Event Bubbling and Animation.",
+	        "modules"    : ["dd", "animation", "event", "node", "yql", "json"],
+            "tags"       : ["dd", "bubbling", "animation", "target", "application", "portal", "yql"]
         }
     ],
     "pages": {
@@ -122,6 +130,10 @@
         "photo-browser-example": {
             "displayName": "Photo Browser",
             "layout"     : "photo-browser-example"
+        },
+        "portal-example": {
+            "displayName": "Portal Example",
+            "layout"     : "portal-example"
         }
     }
 }

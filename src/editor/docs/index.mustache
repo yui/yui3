@@ -191,16 +191,20 @@ Almost every part of the Editor infrastructure is a plugin or extension. Below y
             <td>Plugs into frame to extend `document.execCommand` support.</td>
         </tr>
         <tr>
-            <td nowrap="nowrap">`editor-lists`</td>
-            <td>Adds support for list manipulation, including keyboard modification.</td>
-        </tr>
-        <tr>
             <td nowrap="nowrap">`editor-tab`</td>
             <td>Overrides the default tab key handler and indents/outdents the current block level element.</td>
         </tr>
         <tr>
+            <td nowrap="nowrap">`editor-para`</td>
+            <td>Paragraph support (opposite of `editor-br`)</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`editor-br`</td>
+            <td>Line break support (opposite of `editor-para`) </td>
+        </tr>
+        <tr>
             <td nowrap="nowrap">`editor-bidi`</td>
-            <td>Paragraph/Bi-Directional support (recommended to be used at all times.)</td>
+            <td>Paragraph/Bi-Directional support</td>
         </tr>
         <tr>
             <td nowrap="nowrap">`createlink-base`</td>
@@ -216,3 +220,5 @@ Almost every part of the Editor infrastructure is a plugin or extension. Below y
         </tr>
     </tbody>
 </table>
+
+<p><strong>Note:</strong> Either `editor-br` or `editor-para` should be plugged. One, but not both, is required for proper functionality.</p>

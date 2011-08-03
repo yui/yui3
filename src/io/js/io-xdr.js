@@ -114,7 +114,7 @@
 			o.c.responseText = decodeURI(o.c.responseText);
 		}
 		if (d === 'xml') {
-			o.c.responseXML = Y.DataType.XML.parse(o.c.responseXML);
+			o.c.responseXML = Y.DataType.XML.parse(o.c.responseText);
 		}
 			
 		return o;

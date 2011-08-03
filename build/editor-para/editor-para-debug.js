@@ -186,8 +186,10 @@ YUI.add('editor-para', function(Y) {
                     break;
                 case 'keyup':
                     if (Y.UA.gecko) {
-                        if (inst.config.doc && inst.config.doc.body && inst.config.doc.body.innerHTML.length < 2) {
-                            this._fixFirstPara();
+                        if (inst.config.doc && inst.config.doc.body && inst.config.doc.body.innerHTML.length < 20) {
+                            if (!inst.one(FIRST_P)) {
+                                this._fixFirstPara();
+                            }
                         }
                     }
                     break;
