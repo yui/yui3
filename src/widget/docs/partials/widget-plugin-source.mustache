@@ -51,7 +51,7 @@ YUI().use("widget", "gallery-widget-io", "json-parse", "substitute", "escape", f
     Y.io.transport({
         id:'flash',
         yid: Y.id,
-        src:'../build/io-xdr/io.swf?stamp=' + (new Date()).getTime()
+        src:'{{yuiLocalBuildUrl}}/io-xdr/io.swf?stamp=' + (new Date()).getTime()
     });
     
 });
