@@ -1,11 +1,7 @@
-<html>
-<head>
-</head>
-<body>
 <div id="mychart"></div>
 <script type="text/javascript">
 (function() {
-    YUI().use('charts', function (Y) 
+    YUI({filter:"raw"}).use('charts', function (Y) 
     { 
         //dataProvider source
         var myDataValues = [ 
@@ -132,5 +128,3 @@
     });
 })();
 </script>
-</body>
-</html>
