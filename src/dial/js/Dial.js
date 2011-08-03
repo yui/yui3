@@ -384,7 +384,7 @@
         },
 
 		/**
-		 * Sets -webkit-border-radius to 50% of width/height of the ring, handle-user, marker-user, and center-button.
+		 * Sets -webkit-border-radius to 50% of width/height of the ring, handle, marker, and center-button.
 		 * This is needed for iOS 3.x.
 		 * The objects render square if the radius is > 50% of the width/height
 		 * @method _setBorderRadius
