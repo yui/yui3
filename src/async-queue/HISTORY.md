@@ -30,8 +30,10 @@ AsyncQueue Change History
 -----
 
   * [!] `queue-base` is now part of `yui`.
+  
   * [!] `queue-run` was renamed `async-queue` and both `async-queue` and
     `queue-promote` are now independent modules.
+    
   * `AsyncQueue` defaults to asynchronous callback execution (again).
 
 3.0.0beta1
