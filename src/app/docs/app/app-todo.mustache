@@ -507,12 +507,14 @@ TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
 <div class="scrollable">
 ```
 function LocalStorageSync(key) {
+    var localStorage;
+
     if (!key) {
         Y.error('No storage key specified.');
     }
 
-    if (!Y.config.win.localStorage) {
-        Y.error("localStorage isn't supported.");
+    if (Y.config.win.localStorage) {
+        localStorage = Y.config.win.localStorage;
     }
 
     // Try to retrieve existing data from localStorage, if there is any.

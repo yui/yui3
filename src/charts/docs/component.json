@@ -89,7 +89,7 @@
 		{
 			"name" : "charts-pie",
 			"displayName" : "Pie Chart",
-			"description" : "Shows how ot use charts to create a pie chart.",
+			"description" : "Shows how to use charts to create a pie chart.",
 			"modules" : ["charts"],
 			"tags" : ["charts"],
             		"hideTableOfContents": true
