@@ -66,7 +66,7 @@ var AttrProto = Y.Attribute.prototype,
         list and can't be removed). The model in question will be provided as
         the `model` property on the event facade.
     **/
-    EVT_ERROR = 'error';
+    EVT_ERROR = 'error',
 
     /**
     Fired when the list is completely reset via the `reset()` method or sorted
@@ -332,7 +332,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     `getByClientId()`.
 
     @method getById
-    @param {String} id Model id.
+    @param {String|Number} id Model id.
     @return {Model} Model, or `null` if not found.
     **/
     getById: function (id) {
@@ -358,7 +358,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     Returns the model at the specified _index_.
 
     @method item
-    @param {int} index Index of the model to fetch.
+    @param {Number} index Index of the model to fetch.
     @return {Model} The model at the specified index, or `undefined` if there
       isn't a model there.
     **/
@@ -378,11 +378,11 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @param {Object} [options] Options to be passed to `sync()` and to
       `reset()` when adding the loaded models. It's up to the custom sync
       implementation to determine what options it supports or requires, if any.
-    @param {callback} [callback] Called when the sync operation finishes.
+    @param {Function} [callback] Called when the sync operation finishes.
       @param {Error} callback.err If an error occurred, this parameter will
         contain the error. If the sync operation succeeded, _err_ will be
         falsy.
-      @param {mixed} callback.response The server's response. This value will
+      @param {Any} callback.response The server's response. This value will
         be passed to the `parse()` method, which is expected to parse it and
         return an array of model attribute hashes.
     @chainable
@@ -414,7 +414,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @method map
     @param {Function} fn Function to execute on each model.
       @param {Model} fn.model Current model being iterated.
-      @param {int} fn.index Index of the current model in the list.
+      @param {Number} fn.index Index of the current model in the list.
       @param {Model[]} fn.models Array of models being iterated.
     @param {Object} [thisObj] `this` object to use when calling _fn_.
     @return {Array} Array of return values from _fn_.
@@ -438,7 +438,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     You may override this method to implement custom parsing logic if necessary.
 
     @method parse
-    @param {mixed} response Server response.
+    @param {Any} response Server response.
     @return {Object[]} Array of model attribute hashes.
     **/
     parse: function (response) {
@@ -579,11 +579,11 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
     @param {Object} [options] Sync options. It's up to the custom sync
       implementation to determine what options it supports or requires, if any.
-    @param {callback} [callback] Called when the sync operation finishes.
+    @param {Function} [callback] Called when the sync operation finishes.
       @param {Error} callback.err If an error occurred, this parameter will
         contain the error. If the sync operation succeeded, _err_ will be
         falsy.
-      @param {mixed} [callback.response] The server's response. This value will
+      @param {Any} [callback.response] The server's response. This value will
         be passed to the `parse()` method, which is expected to parse it and
         return an array of model attribute hashes.
     **/
@@ -715,7 +715,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
     @method _findIndex
     @param {Model} model The model being inserted.
-    @return {int} Index at which the model should be inserted.
+    @return {Number} Index at which the model should be inserted.
     @protected
     **/
     _findIndex: function (model) {
@@ -810,8 +810,8 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @protected
     **/
     _afterIdChange: function (e) {
-        e.prevVal && delete this._idMap[e.prevVal];
-        e.newVal && (this._idMap[e.newVal] = e.target);
+        Lang.isValue(e.prevVal) && delete this._idMap[e.prevVal];
+        Lang.isValue(e.newVal) && (this._idMap[e.newVal] = e.target);
     },
 
     // -- Default Event Handlers -----------------------------------------------
@@ -829,7 +829,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
         this._clientIdMap[model.get('clientId')] = model;
 
-        if (id) {
+        if (Lang.isValue(id)) {
             this._idMap[id] = model;
         }
 
@@ -851,7 +851,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         this._detachList(model);
         delete this._clientIdMap[model.get('clientId')];
 
-        if (id) {
+        if (Lang.isValue(id)) {
             delete this._idMap[id];
         }
 
