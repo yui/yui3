@@ -103,7 +103,17 @@ Y.rls_locals = function(instance, argz, cb) {
 */
 Y.rls_needs = function(mod, instance) {
     var self = instance || this,
-        config = self.config;
+        config = self.config, i,
+        m = YUI.Env.aliases[mod];
+
+    if (m) {
+        for (i = 0; i < m.length; i++) {
+            if (Y.rls_needs(m[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     if (!YUI.Env.mods[mod] && !(config.modules && config.modules[mod])) {
         return true;
@@ -120,7 +130,7 @@ Y.rls_needs = function(mod, instance) {
  * @return {string} the url for the remote loader service call, returns false if no modules are required to be fetched (they are in the ENV already).
  */
 Y._rls = function(what) {
-    what.push('intl');
+    //what.push('intl');
     var config = Y.config,
         mods = config.modules,
         YArray = Y.Array,
@@ -151,13 +161,28 @@ Y._rls = function(what) {
                     s.push(param + '={' + param + '}');
                 }
             }
-            // console.log('rls_tmpl: ' + s);
             return s.join('&');
         }(),
-        m = [], asked = {}, o, d, mod,
+        m = [], asked = {}, o, d, mod, a, j,
         w = [], 
         i, len = what.length,
         url;
+    
+    //Explode our aliases..
+    for (i = 0; i < len; i++) {
+        a = YUI.Env.aliases[what[i]];
+        if (a) {
+            for (j = 0; j < a.length; j++) {
+                w.push(a[j]);
+            }
+        } else {
+            w.push(what[i]);
+        }
+
+    }
+    what = w;
+    len = what.length;
+
     
     for (i = 0; i < len; i++) {
         asked[what[i]] = 1;
@@ -209,11 +234,16 @@ Y._rls = function(what) {
         }
     });
 
-    m = YArray.dedupe(m);
-    
+    //Add in the debug modules
     if (rls.filt === 'debug') {
         m.unshift('dump', 'yui-log');
     }
+    //If they have a groups config, add the loader-base module
+    if (Y.config.groups) {
+        m.unshift('loader-base');
+    }
+
+    m = YArray.dedupe(m);
 
     //Strip Duplicates
     m = YArray.dedupe(m);
@@ -266,6 +296,7 @@ Y.rls_advance = function() {
 * @param {Array} data The modules loaded
 */
 Y.rls_done = function(data) {
+    data.success = true;
     YUI._rls_active.cb(data);
 };
 
@@ -334,15 +365,24 @@ if (!YUI.$rls) {
                     }
                 });
 
-                Y._attach(req.modules);
+                Y._attach([].concat(req.modules, rls_active.asked));
+                
+                var additional = req.missing;
 
-                if (req.missing && Y.Loader) {
+                if (Y.config.groups) {
+                    if (!additional) {
+                        additional = [];
+                    }
+                    additional = [].concat(additional, rls_active.what);
+                }
+
+                if (additional && Y.Loader) {
                     var loader = new Y.Loader(rls_active.inst.config);
                     loader.onEnd = Y.rls_done;
                     loader.context = Y;
-                    loader.data = req.missing;
+                    loader.data = additional;
                     loader.ignoreRegistered = false;
-                    loader.require(req.missing);
+                    loader.require(additional);
                     loader.insert(null, (Y.config.fetchCSS) ? null : 'js');
                 } else {
                     Y.rls_done({ data: req.modules });
