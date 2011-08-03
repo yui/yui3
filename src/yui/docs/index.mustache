@@ -6,7 +6,7 @@
 
 <p>The YUI Global object is provided by one of our seed files:</p>
 
-<h3 id="loader-seed">The Loader Seed</h3>
+<h2 id="loader-seed">The Loader Seed</h2>
 ```
 <script src="http://yui.yahooapis.com/{{{yuiVersion}}}/build/yui/yui-min.js"></script>
 ```
@@ -14,14 +14,14 @@
 <p>This seed file contains everything you need to fetch/use YUI core modules. It includes our dynamic script loader as well as all of the meta-data required to load additional YUI modules.</p>
 
 
-<h3 id="base-seed">The Base Seed</h3>
+<h2 id="base-seed">The Base Seed</h2>
 ```
 <script src="http://yui.yahooapis.com/{{{yuiVersion}}}/build/yui-base/yui-base-min.js"></script>
 ```
 
 <p>This seed file contains the core items you need to use YUI core modules. It also includes the capability to fetch our dynamic script loader. <em>This seed was our old `yui.js`</em></p>
 
-<h3 id="why">Why the namespace change?</h3>
+<h2 id="why">Why the namespace change?</h2>
 <ol>
     <li><strong>Backward Compatibility</strong>: With the change from <code>YAHOO</code> to <code>YUI</code> we are guaranteed not to break backward compatibility. This allows you to use both YUI 2.x and YUI 3.x on
     the same page without fear of breaking existing code.</li>
@@ -38,7 +38,7 @@
 </ol>
 
 
-<h3 id="core">YUI Core</h3>
+<h2 id="core">YUI Core</h2>
 <p>The YUI Global Object is an instantiatable object that allows you to create as many YUI instances as you need. Each completely configurable and loaded with only the modules that you need.</p>
 
 ```
@@ -90,7 +90,7 @@ YUI().use('node', function(Y) {
     </tbody>
 </table>
 
-<h3 id="use">Use method</h3>
+<h2 id="use">Use method</h2>
 <p>The `use` method allows you to choose the modules that you want loaded into your YUI instance. You can pick and choose what you need, you don't have to load everything that was included on the page.</p>
 
 ```
@@ -105,7 +105,7 @@ YUI().use('anim', function(Y) {
 });
 ```
 
-<h3>Use callback</h3>
+<h2>Use callback</h2>
 <p>You can pass a function in as the last argument to <code>use</code>. This function will execute after the YUI instance loads all the modules.
 This is required if you do not have all dependencies on the page.</p>
 <p>The callback method has one argument passed, the YUI instance that we are dealing with. In this function you know that all the modules have been loaded and it's ok to use them.</p>
@@ -116,7 +116,7 @@ YUI().use('animation', function(Y) {
 });
 ```
 
-<h3>Use shorthand</h3>
+<h2>Use shorthand</h2>
 <p>The <code>use</code> method contains a shorthand reference for all modules on the page. It uses the <code>*</code> as the module name.</p>
 <p>This will load every module that is included on the page.</p>
 
@@ -127,7 +127,7 @@ YUI().use('*', function(Y) {
 ```
 
 
-<h3>Static inclusion vs. dynamic loading</h3>
+<h2>Static inclusion vs. dynamic loading</h2>
 <p>YUI automatically tries to complete itself when missing dependencies are detected.
    When dynamically loading the dependencies, the callback passed to <code>use</code>
    will be executed <em>asynchronously</em>.  If you statically include all of the
@@ -140,7 +140,7 @@ YUI().use('*', function(Y) {
    YUI config <code>bootstrap</code> to false.</p>
 
 
-<h3 id="modulelist">Module List</h3>
+<h2 id="modulelist">Module List</h2>
 <p>Here is a partial list of the modules and their descriptions.</p>
 <table>
     <thead>
@@ -190,7 +190,7 @@ YUI().use('*', function(Y) {
 </table>
 
 
-<h3 id="yuiadd">Creating Custom Modules with YUI.add</h3>
+<h2 id="yuiadd">Creating Custom Modules with YUI.add</h2>
 <p><code>YUI.add</code> is a static global method that is
 the single entry point for first class YUI modules.  This method
 registers the module so that it can attached to a YUI instance
@@ -232,7 +232,7 @@ YUI.add('mymodules-mod1', function(Y) {
 });
 ```
 
-<h3 id="loader">Loader</h3>
+<h2 id="loader">Loader</h2>
 <p>Loader's functionality is now built into the YUI Global Object
    (as long as it's on the page) and puts its power behind the
    <code>YUI().use</code> method.</p>
@@ -355,7 +355,7 @@ YUI({
     configs listed above.  These values are used for all of the modules listed in the group</li>
 </ul>
 
-<h3 id="Lang">Lang</h3>
+<h2 id="Lang">Lang</h2>
 <p><code>Lang</code> contains JavaScript language utilities and extensions that are used in the YUI library.
 
 ```
