@@ -18,9 +18,24 @@ YUI().use("datasource-io", "datasource-xmlschema","datatable-base","datatable-da
         .plug(Y.Plugin.DataSourceXMLSchema, {
             schema: {
                 resultListLocator: "Result",
-                resultFields: [{key:"Title", locator:"*[local-name() ='Title']"},
-                    {key:"Phone", locator:"*[local-name() ='Phone']"},
-                    {key:"Rating", locator:"*[local-name()='Rating']/*[local-name()='AverageRating']"}]
+                resultFields: [
+                    {
+                        key:"Title",
+                        locator:"*[local-name() ='Title']"
+                    },
+                    {
+                        key:"Phone",
+                        locator:"*[local-name() ='Phone']"
+                    },
+                    {
+                        key:"Rating",
+                        locator:"*[local-name()='Rating']/*[local-name()='AverageRating']",
+                        // The data contains "NaN" for unrated restaurants
+                        parser: function (val) {
+                            return isNaN(val) ? '(none)' : val;
+                        }
+                    }
+                ]
             }
         }),
     dt = new Y.DataTable.Base({columnset:cols, summary:"Chinese restaurants near 98089", caption:"Table with XML data from same-domain script"})
