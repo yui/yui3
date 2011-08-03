@@ -1,19 +1,12 @@
-<style>
-#results img {
-    margin: .5em;
-    border: 1px solid black;
-}
-
-#results {
-    border: 1px solid black;
-    margin: 1em;
-    padding: 1em;
-}
-</style>
-
-<div id="results">Loading photos from YQL, please wait...</div>
-
+<p><strong>Long URL:</strong> <input type="text" id="shorten" value="https://www.github.com/yui/yui3" size="35"> <input type="button" id="do_shorten" value="Shorten" class="button"></p>
+<p><strong>Short URL:</strong> <input type="text" id="expand" value="http://bit.ly/paj1De" size="35"> <input type="button" id="do_expand" value="Expand" class="button"></p>
 
 <script>
+(function() {
+var username = 'davglass',
+    key = 'R_d2405255a50490af4394745edeb957f7';
+
 {{>yui-gallery-js}}
+
+})();
 </script>
