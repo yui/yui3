@@ -10,7 +10,7 @@
     "examples" : [
         {
             "name"       : "get",
-            "displayName": "HTTP GET to request data.",
+            "displayName": "HTTP GET to request data",
             "description": "Use IO to request data over HTTP.",
             "modules"    : ["io-base", "event"],
             "tags"       : ["utility", "http"],

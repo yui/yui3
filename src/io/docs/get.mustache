@@ -22,11 +22,11 @@ YUI({ filter:'raw' }).use("io-base", "node", function(Y) {
 } );
 ```
 
-<h3>Create Handlers for Global and Transaction Events.</h3>
+<h3>Create Handlers for Global and Transaction Events</h3>
 
 <p>
 We will create one object to handle the Global Events, and one object to handle Transaction Events.  Each object defines methods to handle the events in a transction's lifecycles.
-The results are logged to `&lt;div id="container"&gt;`.
+The results are logged to <div id="container">.
 </p>
 
 ```
@@ -140,7 +140,6 @@ var cfg = {
 		end: tH.end
 	},
 	context: tH,
-	headers: { 'X-Transaction': 'GET Example'},
 	arguments: {
 			   start: 'foo',
 			   complete: 'bar',
@@ -166,7 +165,7 @@ function call(e, b) {
 		state = 'global';
 	}
 
-	Y.io('assets/get.txt', cfg);
+	Y.io('{{componentAssets}}/get.txt', cfg);
 }
 
 Y.on('click', call, "#get1", this, false);
