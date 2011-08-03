@@ -952,6 +952,7 @@ with any configuration info required for the module.
                     });
                 } else {
                     rls_end({
+                        success: true,
                         data: argz
                     });
                 }

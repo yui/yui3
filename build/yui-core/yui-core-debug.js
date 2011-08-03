@@ -964,6 +964,7 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
                     });
                 } else {
                     rls_end({
+                        success: true,
                         data: argz
                     });
                 }

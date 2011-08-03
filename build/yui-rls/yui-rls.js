@@ -952,6 +952,7 @@ with any configuration info required for the module.
                     });
                 } else {
                     rls_end({
+                        success: true,
                         data: argz
                     });
                 }
@@ -4576,7 +4577,17 @@ Y.rls_locals = function(instance, argz, cb) {
 */
 Y.rls_needs = function(mod, instance) {
     var self = instance || this,
-        config = self.config;
+        config = self.config, i,
+        m = YUI.Env.aliases[mod];
+
+    if (m) {
+        for (i = 0; i < m.length; i++) {
+            if (Y.rls_needs(m[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     if (!YUI.Env.mods[mod] && !(config.modules && config.modules[mod])) {
         return true;
@@ -4593,7 +4604,7 @@ Y.rls_needs = function(mod, instance) {
  * @return {string} the url for the remote loader service call, returns false if no modules are required to be fetched (they are in the ENV already).
  */
 Y._rls = function(what) {
-    what.push('intl');
+    //what.push('intl');
     var config = Y.config,
         mods = config.modules,
         YArray = Y.Array,
@@ -4624,15 +4635,14 @@ Y._rls = function(what) {
                     s.push(param + '={' + param + '}');
                 }
             }
-            // console.log('rls_tmpl: ' + s);
             return s.join('&');
         }(),
         m = [], asked = {}, o, d, mod, a, j,
         w = [], 
         i, len = what.length,
         url;
-
-    console.log(what);
+    
+    //Explode our aliases..
     for (i = 0; i < len; i++) {
         a = YUI.Env.aliases[what[i]];
         if (a) {
@@ -4646,8 +4656,6 @@ Y._rls = function(what) {
     }
     what = w;
     len = what.length;
-    console.log(what);
-
 
     
     for (i = 0; i < len; i++) {
@@ -4762,6 +4770,7 @@ Y.rls_advance = function() {
 * @param {Array} data The modules loaded
 */
 Y.rls_done = function(data) {
+    data.success = true;
     YUI._rls_active.cb(data);
 };
 
@@ -4830,7 +4839,7 @@ if (!YUI.$rls) {
                     }
                 });
 
-                Y._attach(req.modules);
+                Y._attach([].concat(req.modules, rls_active.asked));
                 
                 var additional = req.missing;
 

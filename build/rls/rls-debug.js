@@ -104,11 +104,26 @@ Y.rls_locals = function(instance, argz, cb) {
 */
 Y.rls_needs = function(mod, instance) {
     var self = instance || this,
-        config = self.config;
+        config = self.config, i,
+        m = YUI.Env.aliases[mod];
+
+    if (m) {
+        Y.log('We have an alias (' + mod + '), are all the deps available?', 'info', 'rls');
+        for (i = 0; i < m.length; i++) {
+            if (Y.rls_needs(m[i])) {
+                Y.log('Needs (' + mod + ')', 'info', 'rls');
+                return true;
+            }
+        }
+        Y.log('Does not need (' + mod + ')', 'info', 'rls');
+        return false;
+    }
 
     if (!YUI.Env.mods[mod] && !(config.modules && config.modules[mod])) {
+        Y.log('Needs (' + mod + ')', 'info', 'rls');
         return true;
     }
+    Y.log('Does not need (' + mod + ')', 'info', 'rls');
     return false;
 };
 
@@ -121,7 +136,7 @@ Y.rls_needs = function(mod, instance) {
  * @return {string} the url for the remote loader service call, returns false if no modules are required to be fetched (they are in the ENV already).
  */
 Y._rls = function(what) {
-    what.push('intl');
+    //what.push('intl');
     Y.log('Issuing a new RLS Request', 'info', 'rls');
     var config = Y.config,
         mods = config.modules,
@@ -153,15 +168,14 @@ Y._rls = function(what) {
                     s.push(param + '={' + param + '}');
                 }
             }
-            // console.log('rls_tmpl: ' + s);
             return s.join('&');
         }(),
         m = [], asked = {}, o, d, mod, a, j,
         w = [], 
         i, len = what.length,
         url;
-
-    console.log(what);
+    
+    //Explode our aliases..
     for (i = 0; i < len; i++) {
         a = YUI.Env.aliases[what[i]];
         if (a) {
@@ -175,8 +189,6 @@ Y._rls = function(what) {
     }
     what = w;
     len = what.length;
-    console.log(what);
-
 
     
     for (i = 0; i < len; i++) {
@@ -295,6 +307,7 @@ Y.rls_advance = function() {
 */
 Y.rls_done = function(data) {
     Y.log('RLS Request complete', 'info', 'rls');
+    data.success = true;
     YUI._rls_active.cb(data);
 };
 
@@ -366,7 +379,7 @@ if (!YUI.$rls) {
                     }
                 });
 
-                Y._attach(req.modules);
+                Y._attach([].concat(req.modules, rls_active.asked));
                 
                 var additional = req.missing;
 
