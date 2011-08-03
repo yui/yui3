@@ -6,17 +6,17 @@
 </style>
 
 <div class="intro">
-    <p>The RecordsetIndexer plugin provides the ability to define custom hash tables to a recordset instance.</p>
+    <p>The RecordsetIndexer plugin provides the ability to define custom hash tables to a Recordset instance.</p>
 </div>
 
 <div class="example">
 {{>recordset-indexer-source}}
 </div>
 
-<p>The Indexer plugin allows a user to create custom hash tables for a recordset instance.</p>
+<p>The Indexer plugin allows a user to create custom hash tables for a Recordset instance.</p>
 
 <h3>Using the Plugin</h3>
-<p>The RecordsetIndexer plugin can be "plugged in" to any recordset instance using the `plug` method. Methods that exist on the plugin can be called using the <em>indexer</em> namespace</p>
+<p>The RecordsetIndexer plugin can be "plugged in" to any Recordset instance using the `plug` method. Methods that exist on the plugin can be called using the <em>indexer</em> namespace</p>
 
 ```
 YUI().use("recordset-base", "recordset-indexer", function(Y) {
@@ -104,10 +104,10 @@ YUI().use("recordset-base", "recordset-indexer", function(Y) {
 ```
 
 <h4 id="crud">Performing Standard Operations</h4>
-<p>Once hash tables have been created, they are kept in sync with the recordset through the custom events that are fired: "add", "remove", "update" and "empty".</p>
+<p>Once hash tables have been created, they are kept in sync with the Recordset through the custom events that are fired: "add", "remove", "update" and "empty".</p>
 
-<p>As a result, standard operations can be performed in the same way without worrying about the state of various hash tables. If a record is removed from the recordset, the corresponding key in the hash table is deleted from the array entirely.</p>
+<p>As a result, standard operations can be performed in the same way without worrying about the state of various hash tables. If a record is removed from the Recordset, the corresponding key in the hash table is deleted from the array entirely.</p>
 
 <h4 id="crud">Collision Handling</h4>
 <p>The RecordsetIndexer plugin does not have collision handling built in to it currently. As a result, if your hash table relates keys to records using a key that is non-unique, the last record encountered with the non-unique key will overwrite previous records. </p>
-<p>Since all records are guaranteed to have a unique YUID, it is suggested to use the YUID as a key when using hash tables. Doing this does not require the RecordsetIndexer plugin at all since the base recordset module already provides a hash table that stores records by their YUIDs.</p>
+<p>Since all records are guaranteed to have a unique YUID, it is suggested to use the YUID as a key when using hash tables. Doing this does not require the RecordsetIndexer plugin at all since the base Recordset module already provides a hash table that stores records by their YUIDs.</p>

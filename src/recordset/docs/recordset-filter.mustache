@@ -1,12 +1,12 @@
 <div class="intro">
-    <p>The RecordsetFilter plugin provides the ability to filter records within a specific recordset instance.</p>
+    <p>The RecordsetFilter plugin provides the ability to filter records within a specific Recordset instance.</p>
 </div>
 
 <div class="example">
 {{>recordset-filter-source}}
 </div>
 
-<p>The filter plugin allows operations to filter a recordset instance. All the methods generate new recordsets that are subsets of the original recordset.</p>
+<p>The filter plugin allows operations to filter a Recordset instance. All the methods generate new Recordsets that are subsets of the original Recordset.</p>
 
 <h3>Using the Plugin</h3>
 <ul class="topspace">
@@ -15,7 +15,7 @@
 	<li><a href="#other">Other ways to filter</a></li>
 </ul>
 
-<p>The RecordsetFilter plugin supports filtering a recordset instance using a custom filter function, or key/value pairs.</p>
+<p>The RecordsetFilter plugin supports filtering a Recordset instance using a custom filter function, or key/value pairs.</p>
 
 <?php
 $str = <<<END
@@ -41,7 +41,7 @@ echo(syntaxHighlight($str));
 
 
 <h3 id="keyvalue">Filtering by Key/Value</h3>
-<p>The filter() method can take a key as its first argument, and a value as its second. Doing so will return a subset of the original recordset, with records that match the specific key/value pair.</p>
+<p>The filter() method can take a key as its first argument, and a value as its second. Doing so will return a subset of the original Recordset, with records that match the specific key/value pair.</p>
 
 <?php
 $str = <<<END
@@ -53,7 +53,7 @@ echo(syntaxHighlight($str));
 
 
 <h3 id="customFunction">Filtering by Custom Function</h3>
-<p>Additionally, a custom function can be passed in to the filter method. In this scenario, all records will be evaluated against this function, and if a truthy value is returned, it will be pushed onto the returning sub-recordset.</p>
+<p>Additionally, a custom function can be passed in to the filter method. In this scenario, all records will be evaluated against this function, and if a truthy value is returned, it will be pushed onto the returning sub-Recordset.</p>
 
 <?php
 $str = <<<END
@@ -67,7 +67,7 @@ var myCustomFilterFunction = function(item) {
 	}
 };
 
-//All records which have a STATE property starting with "M", "N", "O", or "P" will be pushed onto the new recordset.
+//All records which have a STATE property starting with "M", "N", "O", or "P" will be pushed onto the new Recordset.
 var subset = recordset.filter.filter(myCustomFilterFunction);
 END;
 echo(syntaxHighlight($str));
