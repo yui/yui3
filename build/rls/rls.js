@@ -154,10 +154,28 @@ Y._rls = function(what) {
             // console.log('rls_tmpl: ' + s);
             return s.join('&');
         }(),
-        m = [], asked = {}, o, d, mod,
+        m = [], asked = {}, o, d, mod, a, j,
         w = [], 
         i, len = what.length,
         url;
+
+    console.log(what);
+    for (i = 0; i < len; i++) {
+        a = YUI.Env.aliases[what[i]];
+        if (a) {
+            for (j = 0; j < a.length; j++) {
+                w.push(a[j]);
+            }
+        } else {
+            w.push(what[i]);
+        }
+
+    }
+    what = w;
+    len = what.length;
+    console.log(what);
+
+
     
     for (i = 0; i < len; i++) {
         asked[what[i]] = 1;
@@ -209,11 +227,16 @@ Y._rls = function(what) {
         }
     });
 
-    m = YArray.dedupe(m);
-    
+    //Add in the debug modules
     if (rls.filt === 'debug') {
         m.unshift('dump', 'yui-log');
     }
+    //If they have a groups config, add the loader-base module
+    if (Y.config.groups) {
+        m.unshift('loader-base');
+    }
+
+    m = YArray.dedupe(m);
 
     //Strip Duplicates
     m = YArray.dedupe(m);
@@ -335,14 +358,23 @@ if (!YUI.$rls) {
                 });
 
                 Y._attach(req.modules);
+                
+                var additional = req.missing;
 
-                if (req.missing && Y.Loader) {
+                if (Y.config.groups) {
+                    if (!additional) {
+                        additional = [];
+                    }
+                    additional = [].concat(additional, rls_active.what);
+                }
+
+                if (additional && Y.Loader) {
                     var loader = new Y.Loader(rls_active.inst.config);
                     loader.onEnd = Y.rls_done;
                     loader.context = Y;
-                    loader.data = req.missing;
+                    loader.data = additional;
                     loader.ignoreRegistered = false;
-                    loader.require(req.missing);
+                    loader.require(additional);
                     loader.insert(null, (Y.config.fetchCSS) ? null : 'js');
                 } else {
                     Y.rls_done({ data: req.modules });

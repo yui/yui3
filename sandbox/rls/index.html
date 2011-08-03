@@ -34,10 +34,13 @@ var has = function(str, Y, mod) {
     }
 };
 
+var rls_base = 'http://localhost:3000/load/?';
+
+/*
 YUI({
     use_rls: true,
-    rls_base: 'http://localhost:5000/?'//,
-    //rls_timeout: 500
+    rls_base: 'http://localhost:3000/load/?',
+    rls_timeout: 50
 }).use('node', 'yql', function(Y) {
     has('#001', Y, ['node-base', 'yql']);
 });
@@ -49,34 +52,35 @@ YUI({
 }).use('dd', function(Y) {
     has('#002', Y, ['dd-drag']);
 });
+*/
 
 YUI({
     use_rls: true,
-    rls_base: 'http://l.yimg.com/py/load?httpcache=davglass&gzip=1&'
+    rls_base: rls_base
 }).use('node', 'yql', function(Y) {
     has('#1', Y, ['node-base', 'yql']);
 });
 YUI({
     use_rls: true,
-    rls_base: 'http://l.yimg.com/py/load?httpcache=davglass&gzip=1&'
+    rls_base: rls_base
 }).use('dd', function(Y) {
     has('#2', Y, 'dd-drag');
 });
 YUI({
     use_rls: true,
-    rls_base: 'http://l.yimg.com/py/load?httpcache=davglass&gzip=1&'
+    rls_base: rls_base
 }).use('yql', 'node', function(Y) {
     has('#3', Y, ['yql', 'node-base']);
 });
 YUI({
     use_rls: true,
-    rls_base: 'http://l.yimg.com/py/load?httpcache=davglass&gzip=1&'
+    rls_base: rls_base
 }).use('node', function(Y) {
     has('#4', Y, ['node-base']);
 });
 YUI({
     use_rls: true,
-    rls_base: 'http://l.yimg.com/py/load?httpcache=davglass&gzip=1&',
+    rls_base: rls_base,
     modules: {
         foo: {
             fullpath: 'foo.js',
@@ -93,7 +97,7 @@ YUI({
 
 YUI({
     use_rls: true,
-    rls_base: 'http://l.yimg.com/py/load?httpcache=davglass&gzip=1&',
+    rls_base: rls_base,
     modules: {
         foo: {
             fullpath: 'foo.js',
