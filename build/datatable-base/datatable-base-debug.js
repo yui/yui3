@@ -178,7 +178,7 @@ Y.extend(Column, Y.Widget, {
     /**
     * @method _defaultId
     * @description Return ID for instance.
-    * @returns String
+    * @return String
     * @private
     */
     _defaultId: function() {
@@ -189,7 +189,7 @@ Y.extend(Column, Y.Widget, {
     * @method _defaultKey
     * @description Return key for instance. Defaults to ID if one was not
     * provided.
-    * @returns String
+    * @return String
     * @private
     */
     _defaultKey: function(key) {
@@ -200,7 +200,7 @@ Y.extend(Column, Y.Widget, {
     * @method _defaultField
     * @description Return field for instance. Defaults to key if one was not
     * provided.
-    * @returns String
+    * @return String
     * @private
     */
     _defaultField: function(field) {
@@ -211,7 +211,7 @@ Y.extend(Column, Y.Widget, {
     * @method _defaultLabel
     * @description Return label for instance. Defaults to key if one was not
     * provided.
-    * @returns String
+    * @return String
     * @private
     */
     _defaultLabel: function(label) {
@@ -473,7 +473,7 @@ Y.extend(Columnset, Y.Base, {
     * @method _setDefinitions
     * @description Clones definitions before setting.
     * @param definitions {Array} Array of column definitions.
-    * @returns Array
+    * @return Array
     * @private
     */
     _setDefinitions: function(definitions) {
@@ -1007,7 +1007,7 @@ Y.extend(DTBase, Y.Widget, {
     * @method _setColumnset
     * @description Converts Array to Y.Columnset.
     * @param columns {Array | Y.Columnset}
-    * @returns Y.Columnset
+    * @return Y.Columnset
     * @private
     */
     _setColumnset: function(columns) {
@@ -1029,7 +1029,7 @@ Y.extend(DTBase, Y.Widget, {
     * @method _setRecordset
     * @description Converts Array to Y.Recordset.
     * @param records {Array | Y.Recordset}
-    * @returns Y.Recordset
+    * @return Y.Recordset
     * @private
     */
     _setRecordset: function(rs) {
@@ -1139,7 +1139,7 @@ Y.extend(DTBase, Y.Widget, {
     * @method _addTableNode
     * @param containerNode {Y.Node} Parent node.
     * @protected
-    * @returns Y.Node
+    * @return Y.Node
     */
     _addTableNode: function(containerNode) {
         if (!this._tableNode) {
@@ -1154,7 +1154,7 @@ Y.extend(DTBase, Y.Widget, {
     * @method _addColgroupNode
     * @param tableNode {Y.Node} Parent node.
     * @protected
-    * @returns Y.Node
+    * @return Y.Node
     */
     _addColgroupNode: function(tableNode) {
         // Add COLs to DOCUMENT FRAGMENT
@@ -1180,7 +1180,7 @@ Y.extend(DTBase, Y.Widget, {
     * @method _addTheadNode
     * @param tableNode {Y.Node} Parent node.
     * @protected
-    * @returns Y.Node
+    * @return Y.Node
     */
     _addTheadNode: function(tableNode) {
         if(tableNode) {
@@ -1195,7 +1195,7 @@ Y.extend(DTBase, Y.Widget, {
     * @method _addTbodyNode
     * @param tableNode {Y.Node} Parent node.
     * @protected
-    * @returns Y.Node
+    * @return Y.Node
     */
     _addTbodyNode: function(tableNode) {
         this._tbodyNode = tableNode.appendChild(Ycreate(TEMPLATE_TBODY));
@@ -1208,7 +1208,7 @@ Y.extend(DTBase, Y.Widget, {
     * @method _addMessageNode
     * @param tableNode {Y.Node} Parent node.
     * @protected
-    * @returns Y.Node
+    * @return Y.Node
     */
     _addMessageNode: function(tableNode) {
         this._msgNode = tableNode.insertBefore(Ycreate(TEMPLATE_MSG), this._tbodyNode);
@@ -1221,7 +1221,7 @@ Y.extend(DTBase, Y.Widget, {
     * @method _addCaptionNode
     * @param tableNode {Y.Node} Parent node.
     * @protected
-    * @returns Y.Node
+    * @return Y.Node
     */
     _addCaptionNode: function(tableNode) {
         this._captionNode = Y.Node.create('<caption></caption>');
@@ -1378,7 +1378,7 @@ Y.extend(DTBase, Y.Widget, {
     * @param isFirst {Boolean} Is first row.
     * @param isLast {Boolean} Is last row.
     * @protected
-    * @returns Y.Node
+    * @return Y.Node
     */
     _createTheadTrNode: function(o, isFirst, isLast) {
         //TODO: custom classnames
@@ -1435,7 +1435,7 @@ Y.extend(DTBase, Y.Widget, {
     * @method _createTheadThNode
     * @param o {Object} {value, column, tr}.
     * @protected
-    * @returns Y.Node
+    * @return Y.Node
     */
     _createTheadThNode: function(o) {
         var column = o.column;
@@ -1563,7 +1563,7 @@ Y.extend(DTBase, Y.Widget, {
     * @method _createTbodyTrNode
     * @param o {Object} {tbody, record}
     * @protected
-    * @returns Y.Node
+    * @return Y.Node
     */
     _createTbodyTrNode: function(o) {
         var columns = o.columns,
@@ -1625,7 +1625,7 @@ Y.extend(DTBase, Y.Widget, {
     * @method _createTbodyTdNode
     * @param o {Object} {record, column, tr}.
     * @protected
-    * @returns Y.Node
+    * @return Y.Node
     */
     _createTbodyTdNode: function(o) {
         o.headers = o.column.headers;

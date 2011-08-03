@@ -136,7 +136,7 @@ Y.extend(Column, Y.Widget, {
     /**
     * @method _defaultId
     * @description Return ID for instance.
-    * @returns String
+    * @return String
     * @private
     */
     _defaultId: function() {
@@ -147,7 +147,7 @@ Y.extend(Column, Y.Widget, {
     * @method _defaultKey
     * @description Return key for instance. Defaults to ID if one was not
     * provided.
-    * @returns String
+    * @return String
     * @private
     */
     _defaultKey: function(key) {
@@ -158,7 +158,7 @@ Y.extend(Column, Y.Widget, {
     * @method _defaultField
     * @description Return field for instance. Defaults to key if one was not
     * provided.
-    * @returns String
+    * @return String
     * @private
     */
     _defaultField: function(field) {
@@ -169,7 +169,7 @@ Y.extend(Column, Y.Widget, {
     * @method _defaultLabel
     * @description Return label for instance. Defaults to key if one was not
     * provided.
-    * @returns String
+    * @return String
     * @private
     */
     _defaultLabel: function(label) {

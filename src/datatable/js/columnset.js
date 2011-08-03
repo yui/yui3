@@ -59,7 +59,7 @@ Y.extend(Columnset, Y.Base, {
     * @method _setDefinitions
     * @description Clones definitions before setting.
     * @param definitions {Array} Array of column definitions.
-    * @returns Array
+    * @return Array
     * @private
     */
     _setDefinitions: function(definitions) {
