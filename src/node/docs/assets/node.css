@@ -2,13 +2,14 @@ dl, ul, li {
     margin: 0;
     padding: 0;
 }
-div#demo, form#demo,
 ul#demo li {
-    background:#abceff;
     border:1px solid #7a97bb;
 }
 
-ul#demo {
+div#demo,
+ul#demo,
+form#demo {
+    background:#abceff;
     border:1px solid #7a97bb;
 }
 
@@ -71,6 +72,10 @@ span#demo {
     display:block;
     height:10px;
     width:10px;
+}
+
+.highlight {
+    background: orange;
 }
 
 .yui3-data-win, .yui3-data-doc {
