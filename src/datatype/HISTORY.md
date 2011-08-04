@@ -1,28 +1,41 @@
 DataType Change History
 =======================
 
-### 3.4.0
-   * Languages are no longer fetchable for the datatype-date module, only for
-     the datatype-date-format module:
+3.4.0
+-----
+
+  * Languages are no longer fetch-able for the `datatype-date` module, only for
+    the `datatype-date-format` module:
+
         var availLangs = Y.Intl.getAvailableLangs("datatype-date-format");
-   * A new datatype-date-math submodule provides methods for date arithmetic 
-     and date validation.
+    
+3.3.0
+-----
 
-### 3.3.0
-   * No changes.
+  * No changes.
 
-### 3.2.0
-   * No changes.
+3.2.0
+-----
 
-### 3.1.1
-    * No changes.
+  * No changes.
 
-### 3.1.0
-    * Changed to use YUI language resource bundles rather than proprietary
-      infrastructure. 
+3.1.1
+-----
 
-### 3.0.0
-    * No changes.
+  * No changes.
 
-### 3.0.0 beta 1
-    * Initial release.
+3.1.0
+-----
+    
+  * Changed to use YUI language resource bundles rather than proprietary
+    infrastructure.
+
+3.0.0
+-----
+
+  * No changes.
+
+3.0.0beta1
+----------
+
+  * Initial release.
