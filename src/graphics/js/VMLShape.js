@@ -248,6 +248,11 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 	},
 
 	/**
+     * Calculates and returns properties for setting an initial stroke.
+     *
+     * @method _getStrokeProps
+     * @return Object
+     *
 	 * @private
 	 */
 	 _getStrokeProps: function()
@@ -392,6 +397,11 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 	},
 
 	/**
+     * Calculates and returns properties for setting an initial fill.
+     *
+     * @method _getFillProps
+     * @return Object
+     *
 	 * @private
 	 */
 	_getFillProps: function()
@@ -528,10 +538,8 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
         this._fillFlag = false;
 	},
 
-	/**
-	 * @private
-	 */
-	_updateFillNode: function(node)
+	//not used. remove next release.
+    _updateFillNode: function(node)
 	{
 		if(!this._fillNode)
 		{
@@ -540,6 +548,13 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 		}
 	},
 
+    /**
+     * Calculates and returns an object containing gradient properties for a fill node. 
+     *
+     * @method _getGradientFill
+     * @param {Object} fill Object containing fill properties.
+     * @return Object
+     */
 	_getGradientFill: function(fill)
 	{
 		var gradientProps = {},
@@ -620,7 +635,12 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 		return gradientProps;
 	},
 
-	/**
+    /**
+     * Adds a transform to the shape.
+     *
+     * @method _addTransform
+     * @param {String} type The transform being applied.
+     * @param {Array} args The arguments for the transform.
 	 * @private
 	 */
 	_addTransform: function(type, args)
@@ -635,7 +655,10 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
         }
 	},
 	
-    /**
+	/**
+     * Applies all transforms.
+     *
+     * @method _updateTransform
 	 * @private
 	 */
 	_updateTransform: function()
@@ -735,9 +758,11 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 		node.style.top = y + "px";
     },
 	
-    /**
+	/**
 	 * Storage for translateX
 	 *
+     * @property _translateX
+     * @type Number
 	 * @private
 	 */
 	_translateX: 0,
@@ -745,6 +770,8 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 	/**
 	 * Storage for translateY
 	 *
+     * @property _translateY
+     * @type Number
 	 * @private
 	 */
 	_translateY: 0,
@@ -866,6 +893,12 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 	},
 
 	/**
+     * Overrides default `on` method. Checks to see if its a dom interaction event. If so, 
+     * return an event attached to the `node` element. If not, return the normal functionality.
+     *
+     * @method on
+     * @param {String} type event type
+     * @param {Object} callback function
 	 * @private
 	 */
 	on: function(type, fn)
@@ -888,6 +921,9 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 	},
 
 	/**
+     * Updates `Shape` based on attribute changes.
+     *
+     * @method _updateHandler
 	 * @private
 	 */
 	_updateHandler: function(e)
@@ -972,6 +1008,7 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
      * The calculated bounding box is used by the graphic instance to calculate its viewBox. 
      *
 	 * @method getBounds
+     * @param {Matrix} [optional] cfg Reference to matrix instance
 	 * @return Object
 	 */
 	getBounds: function(cfg)
