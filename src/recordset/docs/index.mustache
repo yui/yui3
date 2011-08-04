@@ -4,11 +4,11 @@
         similar properties.
     </p>
 </div>
-				
+
 {{>getting-started}}
-				
+
 <h2 id="using">Using Recordsets</h2>
-				
+
 <h3 id="basics">Recordset basics</h3>
 
 <p>
@@ -24,7 +24,7 @@
     a <code>Y.Recordset</code> instance to enable sorting, filtering and
     indexing by specific keys.
 </p>
-				
+
 <p>
     Initializing a Recordset is straight-forward:
 </p>
@@ -41,12 +41,12 @@ YUI().use("recordset-base", function(Y) {
 	myRecordset = new Y.Recordset({records: data}),
 
 	//Empty Recordsets can also be created
-	anEmptyRecordset = new Y.Recordset(); 
+	anEmptyRecordset = new Y.Recordset();
 
 });
 ```
 
-                
+
 <h3 id="crud">Adding, Removing, Updating and Emptying</h3>
 
 <p>
@@ -58,10 +58,10 @@ YUI().use("recordset-base", function(Y) {
 
 <p>
     More information on performing operations on Recordset can be seen the the
-    documentation for the <a href="../examples/recordset/recordset_basic.html">
-    <code>recordset-base</code> sub-module. </a>
+    documentation for the <a href="recordset-basic.html">
+    <code>recordset-base</code> sub-module</a>.
 </p>
-				
+
 <h4 id="add">Adding Records</h4>
 
 ```
@@ -135,7 +135,7 @@ myRecordset.empty();
 ```
 
 <h3 id="events">Events</h3>
-				
+
 <p>
     The Recordset Utility fires custom events in addition attribute change
     events. Details on these events are shown below. The sub-module responsible
@@ -194,7 +194,7 @@ myRecordset.empty();
     The <code>RecordsetSort</code> plugin allows a Recordset to have default
     and custom sorting functionality. Various helper methods and attributes are
     provided. A brief listing is shown below. Refer to the documentation for
-    the <a href="../examples/recordset/recordset_sort.html">
+    the <a href="recordset-sort.html">
     <code>RecordsetSort</code> plugin</a> to see code snippets.
 </p>
 
@@ -230,7 +230,7 @@ myRecordset.empty();
     The <code>RecordsetFilter</code> plugin allows a Recordset to be filtered,
     and returns subsets of that Recordset (as a separate Recordset instance).
     Refer to the documentation for the <a
-    href="../examples/recordset/recordset_filter.html">
+    href="recordset-filter.html">
     <code>RecordsetFilter</code> plugin to see code snippets.</a>
 </p>
 
@@ -267,7 +267,7 @@ myRecordset.empty();
 <p>
     To allow for customization when indexing, there is the
     <code>RecordsetIndexer</code> plugin. Refer to the <a
-    href="../examples/recordset/recordset_indexer.html"><code>RecordsetIndexer</code>
+    href="recordset-indexer.html"><code>RecordsetIndexer</code>
     documentation</a> for full details.
 </p>
 
