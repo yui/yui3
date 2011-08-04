@@ -1,4 +1,4 @@
-YQL Change History Change History
+YQL Change History
 =================================
 
 ### 3.4.0

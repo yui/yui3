@@ -86,7 +86,7 @@ Y.extend(DataTableDataSource, Y.Plugin.Base, {
     * @method _setDataSource
     * @description Creates new DataSource instance if one is not provided.
     * @param ds {Object | Y.DataSource}
-    * @returns Y.DataSource
+    * @return Y.DataSource
     * @private
     */
     _setDataSource: function(ds) {
