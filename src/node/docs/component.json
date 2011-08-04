@@ -9,8 +9,8 @@
 
     "examples": [
         {
-            "name"       : "basic-node",
-            "displayName": "Node Basics",
+            "name"       : "properties",
+            "displayName": "Set and Get Properties",
             "description": "Using selectors and property accessors with Node.",
             "modules"    : ["node"],
             "tags"       : ["dom", "node"],
