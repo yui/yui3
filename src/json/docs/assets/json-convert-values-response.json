@@ -1,0 +1,16 @@
+[
+    {"SKU":"23-23874", "Price":23.99,  "Item":"Helmet"},
+    {"SKU":"48-38835", "Price":14.97,  "Item":"Football"},
+    {"SKU":"84-84848", "Price":3.49,   "Item":"Goggles"},
+    {"SKU":"84-84843", "Price":183,    "Item":"Badminton Set"},
+    {"SKU":"84-39321", "Price":6.79,   "Item":"Tennis Balls"},
+    {"SKU":"39-48949", "Price":618,    "Item":"Snowboard"},
+    {"SKU":"99-28128", "Price":78.99,  "Item":"Cleats"},
+    {"SKU":"83-48281", "Price":4.69,   "Item":"Volleyball"},
+    {"SKU":"89-32811", "Price":0.59,   "Item":"Sweatband"},
+    {"SKU":"28-22847", "Price":779.98, "Item":"Golf Set"},
+    {"SKU":"38-38281", "Price":8.25,   "Item":"Basketball Shorts"},
+    {"SKU":"82-38333", "Price":1.39,   "Item":"Lip balm"},
+    {"SKU":"21-38485", "Price":0.07,   "Item":"Ping Pong ball"},
+    {"SKU":"83-38285", "Price":3.99,   "Item":"Hockey Puck"}
+]
