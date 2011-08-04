@@ -1,56 +1,64 @@
+<style>
+.example h3 {
+    color: #666;
+    margin: 0.5em 0;
+}
+</style>
+<h3>Today's Browser News</h3>
 <div id="demo"></div>
 <script type="text/javascript">
-YUI().use('tabview', 'gallery-widget-io', function(Y) {
+YUI().use('tabview', 'yql', 'substitute', function(Y) {
     var feeds = {
-        Chrome: '{{componentAssets}}/news.php?p=chrome+browser',
-        Firefox: '{{componentAssets}}/news.php?p=firefox+browser',
-        Safari: '{{componentAssets}}/news.php?p=safari+browser',
-        Explorer: '{{componentAssets}}/news.php?p=explorer+browser'
+        Chrome: 'chrome+browser',
+        Firefox: 'firefox+browser',
+        Safari: 'safari+browser',
+        Explorer: 'explorer+browser',
+        Opera: 'opera+browser'
     },
 
-    TabIO = function(config) {
-        TabIO.superclass.constructor.apply(this, arguments); 
+        yqlTemplate = 'select title, link from rss where ' +
+            'url="http://search.news.yahoo.com/rss?p={p}"',
+
+        resultTemplate = '<li><a href="{link}">{title}</a>',
+
+        errorMsg = 'Headlines are currently not available',
+
+        tabview = new Y.TabView();
+
+    function getContent(tab) {
+        var src = feeds[tab.get('label')],
+            query = yqlTemplate.replace('{p}', src);
+
+        Y.YQL(query, function(r) {
+            var results = (r.query) ? r.query.results.item : null;
+            addContent(tab, results); 
+        });
     };
 
-    Y.extend(TabIO, Y.Plugin.WidgetIO, {
-        initializer: function() {
-            var tab = this.get('host');
-            tab.on('selectedChange', this.afterSelectedChange);
-        },
+    function addContent(tab, results) {
+            content = errorMsg;
 
-        afterSelectedChange: function(e) { // this === tab
-            if (e.newVal) { // tab has been selected
-                this.io.refresh();
-            }
-        },
+        if (results) {
+            content = '<ul>';
 
-        setContent: function(content) {
-            var tab = this.get('host');
-            tab.set('content', content);
-        },
+            Y.each(results, function(fields, item) {
+                content += Y.substitute(resultTemplate, fields);
+            });
 
-        _toggleLoadingClass: function(add) {
-            this.get('host').get('panelNode')
-                .toggleClass(this.get('host').getClassName('loading'), add);
+            content += '</ul>';
         }
 
-    }, {
-        NAME: 'tabIO',
-        NS: 'io'
-    });
+        tab.set('content', content);
+    };
 
-    var tabview = new Y.TabView();
-
-    Y.each(feeds, function(src, label) {
+    Y.each(feeds, function(feed, label) {
         tabview.add({
-            label: label,
-            plugins: [{
-                fn: TabIO, 
-                cfg: {
-                    uri: src
-                }
-            }]
+            label: label
         });
+
+        var tab = tabview.item(tabview.size() - 1);
+
+        getContent(tab);
     });
 
     tabview.render('#demo');
