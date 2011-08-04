@@ -13,6 +13,9 @@ VMLPath = function()
 VMLPath.NAME = "vmlPath";
 Y.extend(VMLPath, Y.VMLShape, {
 	/**
+     * Updates `Shape` based on attribute changes.
+     *
+     * @method _updateHandler
 	 * @private
 	 */
     _updateHandler: function()

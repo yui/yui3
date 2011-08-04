@@ -25,11 +25,19 @@ function VMLDrawing() {}
  */
 VMLDrawing.prototype = {
     /**
+     * Current x position of the drqwing.
+     *
+     * @property _currentX
+     * @type Number
      * @private
      */
     _currentX: 0,
 
     /**
+     * Current y position of the drqwing.
+     *
+     * @property _currentY
+     * @type Number
      * @private
      */
     _currentY: 0,
@@ -128,13 +136,15 @@ VMLDrawing.prototype = {
 
     /**
      * Draws a wedge.
-     * 
-     * @param {Number} x			x-coordinate of the wedge's center point
-     * @param {Number} y			y-coordinate of the wedge's center point
-     * @param {Number} startAngle	starting angle in degrees
-     * @param {Number} arc			sweep of the wedge. Negative values draw clockwise.
-     * @param {Number} radius		radius of wedge. If [optional] yRadius is defined, then radius is the x radius.
-     * @param {Number} yRadius		[optional] y radius for wedge.
+     *
+     * @method drawWedge
+     * @param {Number} x x-coordinate of the wedge's center point
+     * @param {Number} y y-coordinate of the wedge's center point
+     * @param {Number} startAngle starting angle in degrees
+     * @param {Number} arc sweep of the wedge. Negative values draw clockwise.
+     * @param {Number} radius radius of wedge. If [optional] yRadius is defined, then radius is the x radius.
+     * @param {Number} yRadius [optional] y radius for wedge.
+     * @private
      */
     drawWedge: function(x, y, startAngle, arc, radius, yRadius)
     {

@@ -513,16 +513,6 @@ suite.add(new YUITest.TestCase({
             Assert.isTrue((loader.sorted.indexOf("arraylist-filter")) > -1, "Module (arraylist-filter) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("array-invoke")) > -1, "Module (array-invoke) not found in sorted array");
         },
-     "Testing compat": function(data) {
-            var loader = new Y.Loader({
-                require: ["compat"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("compat")) > -1, "Module (compat) not found in sorted array");
-        },
      "Testing console": function(data) {
             var loader = new Y.Loader({
                 require: ["console"],

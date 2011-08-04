@@ -174,7 +174,7 @@ TodoList = Y.TodoList = Y.Base.create('todoList', Y.ModelList, [], {
 //
 // This class also takes care of initializing a TodoList instance and creating
 // and rendering a TodoView instance for each todo item when the list is
-// initially loaded or refreshed.
+// initially loaded or reset.
 
 TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
     // The container node is the wrapper for this view.  All the view's events
@@ -217,13 +217,13 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
         var list = this.todoList = new TodoList();
 
         // Update the display when a new item is added to the list, or when the
-        // entire list is refreshed.
+        // entire list is reset.
         list.after('add', this.add, this);
-        list.after('refresh', this.refresh, this);
+        list.after('reset', this.reset, this);
 
         // Re-render the stats in the footer whenever an item is added, removed
-        // or changed, or when the entire list is refreshed.
-        list.after(['add', 'refresh', 'remove', 'todoModel:doneChange'],
+        // or changed, or when the entire list is reset.
+        list.after(['add', 'reset', 'remove', 'todoModel:doneChange'],
                 this.render, this);
 
         // Load saved items from localStorage, if available.
@@ -325,8 +325,8 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
     },
 
     // Creates and renders views for every todo item in the list when the entire
-    // list is refreshed.
-    refresh: function (e) {
+    // list is reset.
+    reset: function (e) {
         var fragment = Y.one(Y.config.doc.createDocumentFragment());
 
         Y.Array.each(e.models, function (model) {

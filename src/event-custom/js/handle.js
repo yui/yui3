@@ -9,12 +9,16 @@ Y.EventHandle = function(evt, sub) {
 
     /**
      * The custom event
+     *
+     * @property evt
      * @type CustomEvent
      */
     this.evt = evt;
 
     /**
      * The subscriber object
+     *
+     * @property sub
      * @type Subscriber
      */
     this.sub = sub;

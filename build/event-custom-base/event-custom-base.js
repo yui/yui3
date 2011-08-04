@@ -1216,12 +1216,16 @@ Y.EventHandle = function(evt, sub) {
 
     /**
      * The custom event
+     *
+     * @property evt
      * @type CustomEvent
      */
     this.evt = evt;
 
     /**
      * The subscriber object
+     *
+     * @property sub
      * @type Subscriber
      */
     this.sub = sub;
@@ -1458,7 +1462,18 @@ ET.prototype = {
     },
 
     /**
-     * Subscribe to a custom event hosted by this object
+     * For Nodes and NodeLists, subscribe to a DOM event or custom event.
+     * For other subclasses, this subscribes only to custom events.
+     *
+     * DOM event subscribers or subscribers to custom events that are published
+     * to emit an EventFacade can call `e.preventDefault()` to prevent any
+     * default behavior associated with that event. `e.stopPropagation()` will
+     * stop such events from bubbling, and `e.halt()` will do both.
+     *
+     * Subscribers may alternatively return `false` instead of calling
+     * `e.halt()`.  It is recommended to use the event methods rather than
+     * returning `false`.
+     *
      * @method on
      * @param type    {string}   The type of the event
      * @param fn {Function} The callback

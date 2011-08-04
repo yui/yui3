@@ -20,7 +20,7 @@ Y.mix(JSONPRequest.prototype, {
      * name into the JSONP url.  Looks for a query param callback=.  If a value
      * is assigned, it will be clobbered.
      *
-     * @member _pattern
+     * @property _pattern
      * @type RegExp
      * @default /\bcallback=.*?(?=&|$)/i
      * @protected
@@ -31,7 +31,7 @@ Y.mix(JSONPRequest.prototype, {
      * Template used by the default URL formatter to add the callback function
      * name to the url.
      *
-     * @member _template
+     * @property _template
      * @type String
      * @default "callback={callback}"
      * @protected
