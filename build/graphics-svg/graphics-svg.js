@@ -158,13 +158,15 @@ SVGDrawing.prototype = {
 
     /**
      * Draws a wedge.
-     * 
-     * @param {Number} x			x-coordinate of the wedge's center point
-     * @param {Number} y			y-coordinate of the wedge's center point
-     * @param {Number} startAngle	starting angle in degrees
-     * @param {Number} arc			sweep of the wedge. Negative values draw clockwise.
-     * @param {Number} radius		radius of wedge. If [optional] yRadius is defined, then radius is the x radius.
-     * @param {Number} yRadius		[optional] y radius for wedge.
+     *
+     * @method drawWedge
+     * @param {Number} x x-coordinate of the wedge's center point
+     * @param {Number} y y-coordinate of the wedge's center point
+     * @param {Number} startAngle starting angle in degrees
+     * @param {Number} arc sweep of the wedge. Negative values draw clockwise.
+     * @param {Number} radius radius of wedge. If [optional] yRadius is defined, then radius is the x radius.
+     * @param {Number} yRadius [optional] y radius for wedge.
+     * @private
      */
     drawWedge: function(x, y, startAngle, arc, radius, yRadius)
     {
@@ -1645,7 +1647,11 @@ Y.extend(SVGPath, Y.SVGShape, {
     _type: "path",
 
     /**
-     *  @private
+     * Storage for path
+     *
+     * @property _path
+     * @type String
+     * @private
      */
 	_path: ""
 });
@@ -2238,11 +2244,19 @@ SVGGraphic.ATTRS = {
 
 Y.extend(SVGGraphic, Y.BaseGraphic, {
     /**
+     * Storage for `x` attribute.
+     *
+     * @property _x
+     * @type Number
      * @private
      */
     _x: 0,
 
     /**
+     * Storage for `y` attribute.
+     *
+     * @property _y
+     * @type Number
      * @private
      */
     _y: 0,
@@ -2477,6 +2491,7 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
     /**
      * Returns a shape class. Used by `addShape`. 
      *
+     * @method _getShapeClass
      * @param {Shape | String} val Indicates which shape class. 
      * @return Function 
      * @private
