@@ -1,0 +1,23 @@
+<div id="demo">
+    <p><em>lorem</em> <code>ipsum</code> <strong>dolor</strong> <span>sit</span></p>
+    <div id="event-result">Click anywhere in the box for some event data.</div>
+</div>
+
+<script type="text/javascript">
+YUI().use('node', function(Y) {
+    var onClick = function(e) {
+        var type = e.type,
+            currentTarget = e.currentTarget, // #demo
+            target = e.target; // #demo or a descendant
+            
+        Y.one('#event-result').setContent('<dl>' +
+            '<dt>type</dt><dd>' + e.type + '</dd>' +
+            '<dt>target</dt><dd>' + target.get('tagName') + '</dd>' +
+            '<dt>currentTarget</dt><dd>' + currentTarget.get('tagName') +
+                '#' + currentTarget.get('id') + '</dd></dl>');
+    };
+
+    Y.one('#demo').on('click', onClick);
+});
+</script>
+

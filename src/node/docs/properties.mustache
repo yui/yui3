@@ -1,0 +1,67 @@
+<link href="{{componentAssets}}/node.css" rel="stylesheet" type="text/css">
+<div class="intro">
+    <p>This example demonstrates how to retrieve and use a <code>Node</code> instance and access DOM properties.</p>
+    <p>Press the button to get or set the <code>FORM</code>'s <code>offsetWidth</code>.</p>
+</div>
+
+<div class="example">
+{{>properties-source}}
+</div>
+
+<h2>Setting up the HTML</h2>
+
+```
+<form id="demo" action="#">
+    <label>How wide is this form?</label>
+    <input name="width" size="2">
+    <input type="submit" value="Show Me">
+</form>
+```
+
+<h2>Getting a Node Instance</h2>
+<p>The <code>Y.one</code> method accepts a Selector or HTML element and returns a Node instance.  Let's go ahead and set up some variables for the node's representing our HTML.</p>
+
+```
+var form = Y.one('#demo'),
+    input = Y.one('#demo input[name=width]'),
+    button = Y.one('#demo input[type=submit]');
+```
+
+<h2>Accessing Node Properties</h2>
+<p>The properties of a node can be accessed via its <code>set</code> and <code>get</code> methods.</p>
+<p>In most cases, simple type of properties (strings, numbers, booleans) pass directly to/from the underlying DOM node, however properties representing other DOM nodes return <code>Node</code> or <code>NodeList</code> instances.</p>
+
+<h3>The Get Method</h3>
+<p>We can use the <code>get</code> method to read the <code>FORM</code> element's offsetWidth, which includes the style width, padding, and border.</p>
+
+```
+width = form.get('offsetWidth');
+```
+
+<h3>The Set Method</h3>
+<p>The <code>set</code> method allows us to update the value of the <code>INPUT</code> element with the value of the <code>FORM</code>'s <code>offsetWidth</code> property.</p>
+
+```
+input.set('value', width);
+```
+
+<h3>Setting the Offset Width</h3>
+<p>The <code>offsetWidth</code> property of an HTML element is read only, however YUI makes this writeable as well.  This assures that the final <code>offsetWidth</code> matches the value that is set, regardless of borders, padding, or box model.</p>
+
+```
+form.set('offsetWidth', value);
+```
+
+<h2>Listening for Node Events</h2>
+<p>We will update the value of the <code>INPUT</code> when the <code>BUTTON</code> is pressed. The <code>FORM</code>'s default action can be suppressed using the incoming Event object's <code>preventDefault()</code> method.</p>
+
+```
+button.on('click', function(e) {
+    e.preventDefault();
+};
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>properties-source}}
+```
