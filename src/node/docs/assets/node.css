@@ -8,13 +8,21 @@ ul#demo li {
     border:1px solid #7a97bb;
 }
 
+ul#demo {
+    border:1px solid #7a97bb;
+}
+
+ul#demo2 {
+    border:1px solid #999;
+}
+
 form#demo {
     padding: 1em;
 }
 
 ul#demo2 li {
     background: #dadada;
-    border: 1px solid #71241a;
+    border: 1px solid #999;
 }
 
 div#demo p,
@@ -28,6 +36,9 @@ ul#demo2 li {
 ul#demo,
 ul#demo2 {
     width: 10em;
+    display: inline-block;
+    zoom: 1;
+    *display: block;
 }
 
 .yui3-fail {

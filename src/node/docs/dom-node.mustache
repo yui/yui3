@@ -1,44 +1,36 @@
 <link href="{{componentAssets}}/node.css" rel="stylesheet" type="text/css">
 
 <div class="intro">
-    <p>This example demonstrates how to use the DOM methods of a Node instance.</p>
-    <p>Click any of the boxes to move them to the other list.</p>
+    <p>Click any of the blue boxes to clone and add to the other stack.</p>
+    <p>Click a box in the other stack to remove it completely.</p>
 </div>
 
 <div class="example">
 {{>dom-node-source}}
 </div>
 
-<h2>Setting up the Node</h2>
+<h2>Setting up the HTML</h2>
 <p>First we need some HTML to work with.</p>
 ```
 <ul id="demo">
     <li>lorem</li>
-    <li>ispum</li>
+    <li>ipsum</li>
     <li>dolor</li>
     <li>sit</li>
+</ul>
+
+<ul id="demo2">
+    <li>foo</li>
+    <li>bar</li>
 </ul>
 ```
 <h2>Using DOM Methods</h2>
 <p>Most common DOM methods are available via Node instances. These can be used to add, remove, and retrieve other nodes.</p>
-<p>Now we need a handler to move a node to a new list when the <code>click</code> event fires.</p>
-<p>Note that <code>appendChild</code> returns a Node instance representing the node that was appended.</p>
 ```
-var onClick = function(e) {
-    var node = Y.one('#demo2').appendChild(e.currentTarget);
-    node.addClass('yui-pass');
-};
+    clone = item.cloneNode(true);
+    list2.append(clone);
+    item.remove(); // sugar for item.get('parentNode').removeChild(item);
 ```
-
-<h2>Listening for Node Events</h2>
-<p>We can assign our handler to all of the items by using the <code>all</code> method to get a <code>NodeList</code> instance and using the <code>on</code> method to subscribe to the event.</p>
-```
-Y.all('#demo li').on('click', onClick);
-```
-
-<h2>Prefer `node.delegate()` over `nodelist.on()`</h2>
-
-<p>Sometimes you need to create individual subscriptions for each Node in a NodeList (as is done in this example), but usually it's preferable to <a href="node-evt-delegation.html">use event delegation</a>.</p>
 
 <h2>Complete Example Source</h2>
 ```
