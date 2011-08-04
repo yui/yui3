@@ -65,7 +65,7 @@ YUI().use("datatable-sort", function(Y) {
         caption: "This table loads with presorted data"
     }).plug(Y.Plugin.DataTableSort, {
             lastSortedBy: {
-                field: "Company",
+                key: "Company",
                 dir: "asc"
             }
         })
