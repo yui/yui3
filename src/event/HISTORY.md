@@ -3,6 +3,7 @@ Event Infrastructure Change History
 
 3.4.0
 -----
+  * `event-outside` added for "outside" events.
 
   * `Y.Event.define(name)` adds name to `DOM_EVENTS` whitelist. Accepts event
     name string or array of string names.
