@@ -59,16 +59,6 @@
         },
 
         {
-            "name"       : "node-screen",
-            "displayName": "Measuring the Window and Document",
-            "description": "This example demonstrates how to measure the size of the window and document.",
-            "modules"    : ["node"],
-            "tags"       : ["dom", "node", "node-screen"],
-
-            "hideTableOfContents": true
-        },
-
-        {
             "name"       : "node-xy",
             "displayName": "Node Positioning",
             "description": "This example demonstrates how to position an element in page coordinates.",
