@@ -1,4 +1,4 @@
-ul, li {
+dl, ul, li {
     margin: 0;
     padding: 0;
 }
@@ -45,6 +45,10 @@ ul#demo2 {
 
 #demo dt::after {
     content':';
+}
+
+#demo dl {
+    padding:1em;
 }
 
 #demo dd {

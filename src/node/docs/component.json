@@ -29,11 +29,11 @@
         },
 
         {
-            "name"       : "event-node",
-            "displayName": "NodeList Events",
-            "description": "Using events with NodeList instances.",
+            "name"       : "events",
+            "displayName": "Handling DOM Events",
+            "description": "Listening for DOM events with Node instances.",
             "modules"    : ["node"],
-            "tags"       : ["dom", "node", "nodelist", "event"],
+            "tags"       : ["dom", "node", "event"],
 
             "hideTableOfContents": true
         },
