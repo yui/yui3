@@ -1,10 +1,12 @@
-<div id="intro" class="component">
+<div class="intro">
+<p>
+    The IO family of modules provide a simple API for requesting resources over HTTP and HTTPS.
+</p>
 </div>
 
 {{>getting-started}}
 
-
-<h4>A Simple Transaction</h4>
+<h2>A Simple Transaction</h2>
 <p>
 The <code>io()</code> method on the YUI instance is the static method for making an HTTP request.  This method accepts two arguments: the uri and the configuration object.
 </p>
@@ -50,9 +52,9 @@ YUI().use("io-base", function(Y) {
 ```
 
 
-<h4>Using IO</h4>
+<h2>Using IO</h2>
 
-<h5>The IO modules</h5>
+<h3>The IO modules</h3>
 <p>IO's core and supplementary features are split into several modules, to allow greater flexibility in selecting the desired features.</p>
  <table>
     <thead>
@@ -85,7 +87,7 @@ YUI().use("io-base", function(Y) {
 </table>
 
 
-<h5>The Configuration Object</h5>
+<h3>The Configuration Object</h3>
 
 <p>This object is the second argument of <code>io()</code>.  Its properties define transaction parameters and transaction response handling.  The configuration object and all configuration properties are optional.  The following table describes all configuration properties used by IO.</p>
 
@@ -216,7 +218,7 @@ var cfg = {
 
 ```
 
-<h5>The Response Object</h5>
+<h3>The Response Object</h3>
 <p>
 When a transaction, using the XHR object as a transport, is complete, the response data are passed as an object to the event handler.
 </p>
@@ -259,7 +261,7 @@ When a transaction, using the XHR object as a transport, is complete, the respon
 NOTE: Transactions involving file upload or cross-domain requests, using alternate transports, will only populate the <code>responseText</code> or <code>responseXML</code> field.  The HTTP status and response headers are either inaccessible or unavailable to these alternate transports.
 </p>
 
-<h5 events">Events</h5>
+<h3>Events</h3>
 <p>
 IO events provide access to state and data during a transaction's lifecycle.  There are two aspects to io events: global and transaction.  Global events are always fired by io for all transactions, and these events are accessible to all event subscribers.  Transaction events are created and fired if they have handlers defined in the configuration object.  Global events are identified by the <code>io:eventname</code> pattern.
 </p>
@@ -417,7 +419,7 @@ YUI().use("io-base", function(Y) {
 
 ```
 
-<h5>Synchronous Transactions</h5>
+<h3>Synchronous Transactions</h3>
     <p>For same-domain requests, YUI io can be instructed to send a synchronous request, which will halt all script execution until the transaction is complete.  When the transaction is complete, the response data are directly accessible through the object returned by Y.io(), and the data are also accessible through all io events.  When making synchronous requests, abort() and isInProgress() are not available.</p>
 
 ```
@@ -447,7 +449,7 @@ YUI().use("io-base", function(Y) {
 });
 ```
 
-<h5>Cross-Domain Transactions</h5>
+<h3>Cross-Domain Transactions</h3>
 <p>By default, <code>io</code> uses the XMLHttpRequest object as the transport for HTTP transactions.  It can also be configured to use an alternate transport to make cross-domain, HTTP transactions.  Currently, io can make use of Flash as an alternate transport.  To prepare io for Flash-based, cross-domain transactions, the transport <code>io.swf</code> must be deployed and accessible to YUI io. (The file "io.swf" can be found in YUI io's build directory in the YUI3 download at: http://yuilibrary.com/downloads/.)  For each transaction, the configuration object's <code>xdr</code> object must be defined as <code>{ use: 'flash' }</code> so io will use the designated transport instead of using the default XMLHttpRequest transport.</p>
 <p>
 As <code>io.swf</code> is written in ActionScript 3, Flash Player 9 or better is required (version <strong>9.0.124</strong> or better is recommended).  Additionally, a cross-domain policy file must be deployed at the resource to grant the client access to the remote domain.  A cross-domain request will not be successful without this policy file hosted at the resource.  The following example file grants permissive access to the host from all requests, but the host will only accept custom HTTP headers originating from <code>yahoo.com</code>.
@@ -558,7 +560,7 @@ A subset of A-grade browsers are capable of making cross-domain requests, using 
     <li>W3C: <a href="http://dev.w3.org/2006/waf/access-control/">Access Control Working Draft</a>,</li>
 </ul>
 
-<h5>Serializing HTML Form as Data</h5>
+<h3>Serializing HTML Form as Data</h3>
 <p>
 YUI io can serialize HTML form fields into a string of UTF-8 encoded, name-value pairs.  If the transaction is HTTP GET, the data are appended to the URI as a querystring.  If the transaction if HTTP POST, the data will be the POST message.
 </p>
@@ -601,7 +603,7 @@ YUI().use("io-form", function(Y) {
 
 
 
-<h5>Uploading Files in an HTML Form</h5>
+<h3>Uploading Files in an HTML Form</h3>
 <p>
 The default XHR transport, used in IO, cannot upload HTML form data that include elements of type="file".  In this situation, IO will use an alternate transport -- an iframe -- to facilitate the transaction. The response data must be one of the following content types: "text/html", "text/plain", "text/xml". The following example shows how to configure a transaction involving file upload:
 </p>
@@ -668,7 +670,7 @@ When performing a file upload, a subset of global and transaction events will be
 </ul>
 <p>Success and Failure events are not processed and fired because the iframe transport does not provide access to the HTTP status and response headers, to reliably determine those conditions.</p>
 
-<h5>Setting HTTP Headers</h5>
+<h3>Setting HTTP Headers</h3>
 <p>
 IO can be configure to send default, user-defined HTTP Headers for all transactions, in addition to any headers defined in the configuration object.  Headers can be set or removed as needed.  The following example shows how to set and how to delete default headers in IO:
 </p>
@@ -687,7 +689,7 @@ YUI().use("io-base", function(Y) {
 
 <p>Custom HTTP headers may or may not be sent in cross-domain requests.  This is may be due to limitations of the transport, or specific "Access-Control" headers requirement.</p>
 
-<h5>Queue</h5>
+<h3>Queue</h3>
 <p>
 IO's queue module provides FIFO transaction response while keeping each transaction asynchronous and non-blocking.  Specifically, transactions are handled -- by global or transaction event handlers  -- in the order they are sent, regardless of actual server response order.  Transactions can be promoted to the front of the queue, or they can be purged from the queue, as well.
 </p>
@@ -747,7 +749,7 @@ YUI().use("io-queue", function(Y) {
 });
 
 ```
-<h4>Security Bulletin</h4>
+<h2>Security Bulletin</h2>
 <p>A security vulnerability exists in the XDR transport <code>io.swf</code> when using the <code>io-xdr</code> sub-module to make cross-domain requests.  This vulnerability allows third-party sites to load <code>io.swf</code> from a remote domain and issue HTTP requests with the SWF's domain credentials.  Please examine the following use cases, and, if applicable to you, please follow the recommended actions to close this exploit.
 </p>
 <ul>
@@ -758,7 +760,7 @@ YUI().use("io-queue", function(Y) {
 </ul>
 <p>Beginning with YUI 3.1.2, <code>io.swf</code> will no longer be accessible from yui.yahooapis.com.  You will be required to host and serve <code>io.swf></code>, if you wish to employ it as an XDR transport.</p>
 
-<h4>Known Issues</h4>
+<h2>Known Issues</h2>
 <ul>
     <li>Multiple HTML Submit buttons, in an HTML form, are not supported at this time.</li>
 </ul>
