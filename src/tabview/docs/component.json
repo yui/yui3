@@ -44,6 +44,7 @@
             "description": "This example shows how to load tab content remotely using an IO plugin.",
             "modules"    : ["tabview"],
             "tags"       : ["tabview"],
+            "use"        : ["tabview", "yql"],
 
             "hideTableOfContents": true
         }

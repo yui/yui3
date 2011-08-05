@@ -1,0 +1,44 @@
+<link href="{{componentAssets}}/node.css" rel="stylesheet" type="text/css">
+<div class="intro">
+    <p>This example demonstrates how to respond to DOM events from a Node instance.</p>
+    <p>Clicking the box will report some event details.</p>
+</div>
+
+<div class="example">
+{{>events-source}}
+</div>
+
+<h2>Setting up the HTML</h2>
+<p>First we need some HTML to work with.</p>
+```
+<div id="demo">
+    <p><em>lorem</em> <code>ipsum</code> <strong>dolor</strong> <span>sit</span></p>
+    <div id="event-result"></div>
+</div>
+```
+<h2>Creating the Event Handler</h2>
+<p>Next we will create a handler to run when the event is fired. In our handler we will update the node with some of the properties of the event.</p>
+```
+    var onClick = function(e) {
+        var type = e.type,
+            currentTarget = e.currentTarget, // #demo
+            target = e.target; // #demo or a descendant
+
+        Y.one('#event-result').setContent('<dl>' +
+            '<dt>type</dt><dd>' + e.type + '</dd>' +
+            '<dt>target</dt><dd>' + target.get('tagName') + '</dd>' +
+            '<dt>currentTarget</dt><dd>' + currentTarget.get('tagName') +
+                '#' + currentTarget.get('id') + '</dd></dl>');
+    };
+```
+
+<h2>Listening for Events</h2>
+<p>We can assign our handler to all of the items by using the <code>all</code> method to get a <code>NodeList</code> instance and using the <code>on</code> method to subscribe to the event.</p>
+```
+Y.one('#demo').on('click', onClick);
+```
+
+<h2>Complete Example Source</h2>
+```
+{{>events-source}}
+```

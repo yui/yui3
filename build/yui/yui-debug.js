@@ -1713,9 +1713,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
  */
 
 /**
- * The parameter defaults for the remote loader service.
- * Requires the rls submodule.  The properties that are
- * supported:
+ * The parameter defaults for the remote loader service. **Requires the rls seed file.** The properties that are supported:
  * 
  *  * `m`: comma separated list of module requirements.  This
  *    must be the param name even for custom implemetations.
@@ -1735,23 +1733,26 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
  *
  * @since 3.2.0
  * @property rls
+ * @type {Object}
  */
 
 /**
- * The base path to the remote loader service
+ * The base path to the remote loader service. **Requires the rls seed file.**
  *
  * @since 3.2.0
  * @property rls_base
+ * @type {String}
  */
 
 /**
  * The template to use for building the querystring portion
  * of the remote loader service url.  The default is determined
  * by the rls config -- each property that has a value will be
- * represented.
+ * represented. **Requires the rls seed file.**
  * 
  * @since 3.2.0
  * @property rls_tmpl
+ * @type {String}
  * @example
  *      m={m}&v={v}&env={env}&lang={lang}&filt={filt}&tests={tests}
  *
@@ -1759,10 +1760,11 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
 
 /**
  * Configure the instance to use a remote loader service instead of
- * the client loader.
+ * the client loader. **Requires the rls seed file.**
  *
  * @since 3.2.0
  * @property use_rls
+ * @type {Boolean}
  */
 YUI.add('yui-base', function(Y) {
 
@@ -4839,7 +4841,7 @@ if (!YUI.Env[Y.version]) {
 
 var NOT_FOUND = {},
     NO_REQUIREMENTS = [],
-    MAX_URL_LENGTH = (Y.UA.ie) ? 2048 : 8192,
+    MAX_URL_LENGTH = 2048,
     GLOBAL_ENV = YUI.Env,
     GLOBAL_LOADED = GLOBAL_ENV._loaded,
     CSS = 'css',
@@ -5115,21 +5117,12 @@ Y.Loader = function(o) {
     */
     self.comboSep = '&';
     /**
-     * Max url length for combo urls.  The default is 2048 for
-     * internet explorer, and 8192 otherwise.  This is the URL
+     * Max url length for combo urls.  The default is 2048. This is the URL
      * limit for the Yahoo! hosted combo servers.  If consuming
      * a different combo service that has a different URL limit
      * it is possible to override this default by supplying
      * the maxURLLength config option.  The config option will
      * only take effect if lower than the default.
-     *
-     * Browsers:
-     *    IE: 2048
-     *    Other A-Grade Browsers: Higher that what is typically supported
-     *    'capable' mobile browsers:
-     *
-     * Servers:
-     *    Apache: 8192
      *
      * @property maxURLLength
      * @type int
@@ -6910,8 +6903,12 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
                             frag = ((L.isValue(m.root)) ? m.root : self.root) + m.path;
 
-                            if ((url !== j) && (i < (len - 1)) &&
+                            if ((url !== j) && (i <= (len - 1)) &&
                             ((frag.length + url.length) > self.maxURLLength)) {
+                                //Hack until this is rewritten to use an array and not string concat:
+                                if (url.substr(url.length - 1, 1) === self.comboSep) {
+                                    url = url.substr(0, (url.length - 1));
+                                }
                                 urls.push(self._filter(url));
                                 url = j;
                             }
@@ -6927,6 +6924,10 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                     }
 
                     if (combining.length && (url != j)) {
+                        //Hack until this is rewritten to use an array and not string concat:
+                        if (url.substr(url.length - 1, 1) === self.comboSep) {
+                            url = url.substr(0, (url.length - 1));
+                        }
                         urls.push(self._filter(url));
                     }
                 }

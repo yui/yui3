@@ -91,7 +91,7 @@
          * zIndex will be converted to 0
          */
         zIndex: {
-            value:0,
+            value:1,
             setter: function(val) {
                 return this._setZIndex(val);
             }

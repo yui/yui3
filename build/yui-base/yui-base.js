@@ -1697,9 +1697,7 @@ with any configuration info required for the module.
  */
 
 /**
- * The parameter defaults for the remote loader service.
- * Requires the rls submodule.  The properties that are
- * supported:
+ * The parameter defaults for the remote loader service. **Requires the rls seed file.** The properties that are supported:
  * 
  *  * `m`: comma separated list of module requirements.  This
  *    must be the param name even for custom implemetations.
@@ -1719,23 +1717,26 @@ with any configuration info required for the module.
  *
  * @since 3.2.0
  * @property rls
+ * @type {Object}
  */
 
 /**
- * The base path to the remote loader service
+ * The base path to the remote loader service. **Requires the rls seed file.**
  *
  * @since 3.2.0
  * @property rls_base
+ * @type {String}
  */
 
 /**
  * The template to use for building the querystring portion
  * of the remote loader service url.  The default is determined
  * by the rls config -- each property that has a value will be
- * represented.
+ * represented. **Requires the rls seed file.**
  * 
  * @since 3.2.0
  * @property rls_tmpl
+ * @type {String}
  * @example
  *      m={m}&v={v}&env={env}&lang={lang}&filt={filt}&tests={tests}
  *
@@ -1743,10 +1744,11 @@ with any configuration info required for the module.
 
 /**
  * Configure the instance to use a remote loader service instead of
- * the client loader.
+ * the client loader. **Requires the rls seed file.**
  *
  * @since 3.2.0
  * @property use_rls
+ * @type {Boolean}
  */
 YUI.add('yui-base', function(Y) {
 

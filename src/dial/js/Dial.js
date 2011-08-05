@@ -228,7 +228,7 @@
 	/**
 	 * returns a properly formed yui class name
 	 *
-	 * @function
+	 * @method
 	 * @param {String} string to be appended at the end of class name
 	 * @return
 	 * @private
