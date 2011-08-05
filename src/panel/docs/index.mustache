@@ -5,7 +5,7 @@
 
 {{>getting-started}}
 
-<h4 id="default">Creating a Panel</h4>
+<h2 id="default">Creating a Panel</h2>
 <p>This simple example will create a Panel with default functionality. By default, a Panel is rendered with a "Close" button added to the header, with modality enabled, and will be hidden if the "esc" key or "Close" button is pressed. Clicking anywhere outside the panel will bring back focus to the panel.</p>
 
 ```
@@ -22,7 +22,7 @@ YUI().use('panel', function(Y) {
 });
 ```
 
-<h4 id="modality">Modal Panel</h4>
+<h2 id="modality">Modal Panel</h2>
 <p>A Panel is not modal by default. This functionality can be changed through the "modal" attribute, either during instantiation or later through the set() method.</p>
 
 ```
@@ -42,7 +42,7 @@ YUI().use('panel', function(Y) {
 
 <p>Panels can be nested in one another, and have different modal behavior. For instance, a modal panel may launch a non-modal panel on top of it. The <a href="{{apiDocs}}/Widget.html">`WidgetModality`</a> extension takes care of nesting behavior so no extra code is required for the implementer. Refer to the examples for more information.</p>
 
-<h4 id="events">Choosing when to focus and hide</h4>
+<h2 id="events">Choosing when to focus and hide</h2>
 
 <p>By default, a Panel will return focus to itself if anything else on the page receives focus or is clicked. On the other hand, clicking the "close" button, or pressing the "esc" key will hide it. Both of these options can be configured as needed through the "hideOn" and "focusOn" attributes.</p>
 
@@ -109,7 +109,7 @@ YUI().use('panel', function(Y) {
 
 <p>To simply get rid of the default behavior, we could just set the "focusOn" and "hideOn" attributes to empty arrays.</p>
 
-<h4 id="buttons">Header/Footer Button Support</h4>
+<h2 id="buttons">Header/Footer Button Support</h2>
 
 <p>Panel supports header/footer buttons through the <a href="{{apiDocs}}/WidgetButtons.html">`WidgetButtons`</a> and <a href="{{apiDocs}}/Widget-StdMod.html">`Widget-StdMod`</a> extensions. By default, it comes with a "close" button represented by the "x" in the top-right corner of the header. As a developer, you can easily add/remove buttons to the header or the footer, change the style of existing buttons, or change the markup that is used to render the buttons.</p>
 
