@@ -161,7 +161,7 @@ Parent.ATTRS = {
 
     /**
      * @attribute selection
-     * @type {Y.ArrayList|Widget}
+     * @type {ArrayList|Widget}
      * @readOnly  
      *
      * @description Returns the currently selected child Widget.  If the 
@@ -603,7 +603,7 @@ Parent.prototype = {
     * @description Adds a Widget as a child.  If the specified Widget already
     * has a parent it will be removed from its current parent before
     * being added as a child.
-    * @return {Y.ArrayList} Y.ArrayList containing the successfully added 
+    * @return {ArrayList} Y.ArrayList containing the successfully added 
     * Widget instance(s).  If no children where added, will return an empty 
     * Y.ArrayList instance.
     */
@@ -643,7 +643,7 @@ Parent.prototype = {
     /**
     * @method removeAll
     * @description Removes all of the children from the Widget.
-    * @return {Y.ArrayList} Y.ArrayList instance containing Widgets that were 
+    * @return {ArrayList} Y.ArrayList instance containing Widgets that were 
     * successfully removed.  If no children where removed, will return an empty 
     * Y.ArrayList instance.
     */
