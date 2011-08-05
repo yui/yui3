@@ -8,21 +8,34 @@
 <div id="demo"></div>
 <script type="text/javascript">
 YUI().use('tabview', 'yql', function(Y) {
-    Y.Plugin.TabYQL = function(config) {
-        Y.Plugin.TabYQL.superclass.constructor.apply(this, arguments); 
+    // YQL plugin for Y.Tab instances
+    var TabYQL = function(config) {
+        this.init(config);
     };
 
-    /* Extend the base plugin class */
-    Y.extend(Y.Plugin.TabYQL, Y.Plugin.Base, {
-        initializer: function() {
-            var tab = this.get('host');
-            tab.after('selectedChange', Y.bind(this.afterSelectedChange, this));
+    TabYQL.NS = 'yql'; // plugin namespace (e.g. "tab.yql.load(myQuery)");
+
+    TabYQL.prototype = {
+        init: function(config) {
+            if (config) {
+                this.tab = config.host;
+                this.query = config.query || this.query;
+                this.errorMsg = config.errorMsg || this.errorMsg;
+            }
+
+            if (this.tab) {
+                this.tab.after('selectedChange', Y.bind(this.afterSelectedChange, this));
+            }
         },
 
-        afterLoad: function(r) {
-            var results = (r.query) ? r.query.results.item : null,
-                content = '',
-                tab = this.get('host');
+        loaded: false,
+        query: '',
+        errorMsg: 'There was a problem loading the content',
+        tab: null,
+
+        afterLoad: function(response) {
+            var results = (response.query) ? response.query.results.item : null,
+                content = '';
 
             if (results) {
                 Y.each(results, function(fields) {
@@ -30,39 +43,26 @@ YUI().use('tabview', 'yql', function(Y) {
                         fields.title + '</a></li>';
                 });
 
-                this.set('loaded', true);
+                this.loaded = true;
                 content = '<ul>' + content + '</ul>'
             } else {
-                content = this.get('errorMsg');
+                content = this.errorMsg;
             }
 
-            tab.set('content', content);
+            this.tab.set('content', content);
         },
 
         afterSelectedChange: function(e) {
             // only load if not already loaded
-            if (!this.get('loaded')) {
-                this.load(this.get('query'), this.afterLoad);
+            if (!this.loaded) {
+                this.load(this.query, this.afterLoad);
             }
         },
 
         load: function(query, afterLoad) {
             Y.YQL(query, Y.bind(afterLoad, this));
         }
-    }, {
-        ATTRS: {
-            query: {
-                value: null 
-            },
-
-            errorMsg: {
-                value: 'There was a problem loading the content' 
-            }
-        },
-
-        NS: 'yql',
-        NAME: 'tabYQL'
-    });
+    };
 
     var tabview = new Y.TabView(),
         feeds = {
@@ -79,7 +79,7 @@ YUI().use('tabview', 'yql', function(Y) {
             content: 'loading...',
         });
 
-        tab.plug(Y.Plugin.TabYQL, {
+        tab.plug(TabYQL, {
             query: 'select title, link from rss where ' +
                 'url="http://search.news.yahoo.com/rss?p=' +
                 feed + '"'
