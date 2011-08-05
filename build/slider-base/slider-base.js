@@ -575,5 +575,4 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
 });
 
 
-
 }, '@VERSION@' ,{requires:['widget', 'substitute', 'dd-constrain']});

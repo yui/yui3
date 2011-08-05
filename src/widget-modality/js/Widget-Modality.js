@@ -273,7 +273,7 @@ var WIDGET         = 'widget',
          * Returns the Y.Node instance of the maskNode
          *
          * @method _getMaskNode
-         * @return {Y.Node} The Y.Node instance of the mask, as returned from WidgetModal._GET_MASK
+         * @return {Node} The Y.Node instance of the mask, as returned from WidgetModal._GET_MASK
          */
         _getMaskNode : function () {
 
@@ -461,7 +461,7 @@ var WIDGET         = 'widget',
          * Repositions the mask in the DOM for nested modality cases.
          *
          * @method _repositionMask
-         * @param {Y.Widget} nextElem The Y.Widget instance that will be visible in the stack once the current widget is closed.
+         * @param {Widget} nextElem The Y.Widget instance that will be visible in the stack once the current widget is closed.
          */
         _repositionMask: function(nextElem) {
 

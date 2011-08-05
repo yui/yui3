@@ -35,8 +35,8 @@ Y.mix(Y_Node.prototype, {
     /**
      * Inserts the content before the reference node.
      * @method insert
-     * @param {String | Y.Node | HTMLElement | Y.NodeList | HTMLCollection} content The content to insert
-     * @param {Int | Y.Node | HTMLElement | String} where The position to insert at.
+     * @param {String | Node | HTMLElement | NodeList | HTMLCollection} content The content to insert
+     * @param {Int | Node | HTMLElement | String} where The position to insert at.
      * Possible "where" arguments
      * <dl>
      * <dt>Y.Node</dt>
@@ -82,7 +82,7 @@ Y.mix(Y_Node.prototype, {
     /**
      * Inserts the content as the firstChild of the node.
      * @method prepend
-     * @param {String | Y.Node | HTMLElement} content The content to insert
+     * @param {String | Node | HTMLElement} content The content to insert
      * @chainable
      */
     prepend: function(content) {
@@ -92,7 +92,7 @@ Y.mix(Y_Node.prototype, {
     /**
      * Inserts the content as the lastChild of the node.
      * @method append
-     * @param {String | Y.Node | HTMLElement} content The content to insert
+     * @param {String | Node | HTMLElement} content The content to insert
      * @chainable
      */
     append: function(content) {
@@ -121,7 +121,7 @@ Y.mix(Y_Node.prototype, {
     /**
      * Appends the node to the given node.
      * @method appendTo
-     * @param {Y.Node | HTMLElement} node The node to append to
+     * @param {Node | HTMLElement} node The node to append to
      * @chainable
      */
     appendTo: function(node) {
@@ -132,7 +132,7 @@ Y.mix(Y_Node.prototype, {
     /**
      * Replaces the node's current content with the content.
      * @method setContent
-     * @param {String | Y.Node | HTMLElement | Y.NodeList | HTMLCollection} content The content to insert
+     * @param {String | Node | HTMLElement | NodeList | HTMLCollection} content The content to insert
      * @chainable
      */
     setContent: function(content) {
