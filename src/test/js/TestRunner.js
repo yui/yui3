@@ -381,7 +381,7 @@
             /**
              * Adds a test case to the test tree as a child of the specified node.
              * @param {TestNode} parentNode The node to add the test case to as a child.
-             * @param {Y.Test.Case} testCase The test case to add.
+             * @param {Test.Case} testCase The test case to add.
              * @return {Void}
              * @static
              * @private
@@ -406,7 +406,7 @@
             /**
              * Adds a test suite to the test tree as a child of the specified node.
              * @param {TestNode} parentNode The node to add the test suite to as a child.
-             * @param {Y.Test.Suite} testSuite The test suite to add.
+             * @param {Test.Suite} testSuite The test suite to add.
              * @return {Void}
              * @static
              * @private
@@ -532,7 +532,7 @@
             
             /**
              * Runs a test case or test suite, returning the results.
-             * @param {Y.Test.Case|Y.Test.Suite} testObject The test case or test suite to run.
+             * @param {Test.Case|Test.Suite} testObject The test case or test suite to run.
              * @return {Object} Results of the execution with properties passed, failed, and total.
              * @private
              * @method _run
