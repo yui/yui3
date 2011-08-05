@@ -240,11 +240,19 @@ SVGGraphic.ATTRS = {
 
 Y.extend(SVGGraphic, Y.BaseGraphic, {
     /**
+     * Storage for `x` attribute.
+     *
+     * @property _x
+     * @type Number
      * @private
      */
     _x: 0,
 
     /**
+     * Storage for `y` attribute.
+     *
+     * @property _y
+     * @type Number
      * @private
      */
     _y: 0,
@@ -479,6 +487,7 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
     /**
      * Returns a shape class. Used by `addShape`. 
      *
+     * @method _getShapeClass
      * @param {Shape | String} val Indicates which shape class. 
      * @return Function 
      * @private

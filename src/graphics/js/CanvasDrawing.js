@@ -371,15 +371,16 @@ CanvasDrawing.prototype = {
     },
     
     /**
-     * @private
      * Draws a wedge.
-     * 
-     * @param x				x component of the wedge's center point
-     * @param y				y component of the wedge's center point
-     * @param startAngle	starting angle in degrees
-     * @param arc			sweep of the wedge. Negative values draw clockwise.
-     * @param radius		radius of wedge. If [optional] yRadius is defined, then radius is the x radius.
-     * @param yRadius		[optional] y radius for wedge.
+     *
+     * @method drawWedge
+     * @param {Number} x x-coordinate of the wedge's center point
+     * @param {Number} y y-coordinate of the wedge's center point
+     * @param {Number} startAngle starting angle in degrees
+     * @param {Number} arc sweep of the wedge. Negative values draw clockwise.
+     * @param {Number} radius radius of wedge. If [optional] yRadius is defined, then radius is the x radius.
+     * @param {Number} yRadius [optional] y radius for wedge.
+     * @private
      */
     drawWedge: function(x, y, startAngle, arc, radius, yRadius)
     {

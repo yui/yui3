@@ -59,7 +59,11 @@ Y.extend(SVGPath, Y.SVGShape, {
     _type: "path",
 
     /**
-     *  @private
+     * Storage for path
+     *
+     * @property _path
+     * @type String
+     * @private
      */
 	_path: ""
 });

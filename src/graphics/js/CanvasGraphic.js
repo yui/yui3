@@ -480,6 +480,7 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
     /**
      * Returns a shape class. Used by `addShape`. 
      *
+     * @method _getShapeClass
      * @param {Shape | String} val Indicates which shape class. 
      * @return Function 
      * @private
