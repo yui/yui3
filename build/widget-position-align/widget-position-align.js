@@ -460,6 +460,7 @@ YUI.add('widget-position-align', function(Y) {
              * Default function called when alignOn Attribute is changed. Remove existing listeners and create new listeners.
              *
              * @method _afterAlignOnChange
+             * @private
              */
             _afterAlignOnChange : function(e) {
                 this._detachUIHandles();
