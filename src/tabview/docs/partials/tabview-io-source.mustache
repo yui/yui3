@@ -7,58 +7,85 @@
 <h3>Today's Browser News</h3>
 <div id="demo"></div>
 <script type="text/javascript">
-YUI().use('tabview', 'yql', 'substitute', function(Y) {
-    var feeds = {
-        Chrome: 'chrome+browser',
-        Firefox: 'firefox+browser',
-        Safari: 'safari+browser',
-        Explorer: 'explorer+browser',
-        Opera: 'opera+browser'
-    },
-
-        yqlTemplate = 'select title, link from rss where ' +
-            'url="http://search.news.yahoo.com/rss?p={p}"',
-
-        resultTemplate = '<li><a href="{link}">{title}</a>',
-
-        errorMsg = 'Headlines are currently not available',
-
-        tabview = new Y.TabView();
-
-    function getContent(tab) {
-        var src = feeds[tab.get('label')],
-            query = yqlTemplate.replace('{p}', src);
-
-        Y.YQL(query, function(r) {
-            var results = (r.query) ? r.query.results.item : null;
-            addContent(tab, results); 
-        });
+YUI().use('tabview', 'yql', function(Y) {
+    Y.Plugin.TabYQL = function(config) {
+        Y.Plugin.TabYQL.superclass.constructor.apply(this, arguments); 
     };
 
-    function addContent(tab, results) {
-            content = errorMsg;
+    /* Extend the base plugin class */
+    Y.extend(Y.Plugin.TabYQL, Y.Plugin.Base, {
+        initializer: function() {
+            var tab = this.get('host');
+            tab.after('selectedChange', Y.bind(this.afterSelectedChange, this));
+        },
 
-        if (results) {
-            content = '<ul>';
+        afterLoad: function(r) {
+            var results = (r.query) ? r.query.results.item : null,
+                content = '',
+                tab = this.get('host');
 
-            Y.each(results, function(fields, item) {
-                content += Y.substitute(resultTemplate, fields);
-            });
+            if (results) {
+                Y.each(results, function(fields) {
+                    content += '<li><a href="' + fields.link + '">' +
+                        fields.title + '</a></li>';
+                });
 
-            content += '</ul>';
+                this.set('loaded', true);
+                content = '<ul>' + content + '</ul>'
+            } else {
+                content = this.get('errorMsg');
+            }
+
+            tab.set('content', content);
+        },
+
+        afterSelectedChange: function(e) {
+            // only load if not already loaded
+            if (!this.get('loaded')) {
+                this.load(this.get('query'), this.afterLoad);
+            }
+        },
+
+        load: function(query, afterLoad) {
+            Y.YQL(query, Y.bind(afterLoad, this));
         }
+    }, {
+        ATTRS: {
+            query: {
+                value: null 
+            },
 
-        tab.set('content', content);
-    };
+            errorMsg: {
+                value: 'There was a problem loading the content' 
+            }
+        },
+
+        NS: 'yql',
+        NAME: 'tabYQL'
+    });
+
+    var tabview = new Y.TabView(),
+        feeds = {
+            Chrome: 'chrome+browser',
+            Firefox: 'firefox+browser',
+            Safari: 'safari+browser',
+            Explorer: 'explorer+browser',
+            Opera: 'opera+browser'
+        };
 
     Y.each(feeds, function(feed, label) {
-        tabview.add({
-            label: label
+        var tab = new Y.Tab({
+            label: label,
+            content: 'loading...',
         });
 
-        var tab = tabview.item(tabview.size() - 1);
+        tab.plug(Y.Plugin.TabYQL, {
+            query: 'select title, link from rss where ' +
+                'url="http://search.news.yahoo.com/rss?p=' +
+                feed + '"'
+        });
 
-        getContent(tab);
+        tabview.add(tab);
     });
 
     tabview.render('#demo');
