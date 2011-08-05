@@ -16,9 +16,9 @@
 ```
 //Create a YUI instance including support for IO:
 YUI({ filter:'raw' }).use("io-base", "node", function(Y) {
-	// Y is the YUI instance.
-	// The rest of the following code is encapsulated in this
-	// anonymous function.
+    // Y is the YUI instance.
+    // The rest of the following code is encapsulated in this
+    // anonymous function.
 } );
 ```
 
@@ -33,79 +33,79 @@ The results are logged to `<div id="container">`.
 //Get a reference to the DIV that we are using
 //to report results.
 var d = Y.one('#container'),
-	gStr = '',
-	tStr = '',
-	state;
+    gStr = '',
+    tStr = '',
+    state;
 
 /* global listener object */
 var gH = {
-	write: function(s, args) {
-			 gStr += "ID: " + s;
-			 if (args) {
-				gStr += " " + "The arguments are: " + args;
-			 }
-			 gStr += "<br>";
-		   },
-	start: function(id, args) {
-			 this.write(id + ": Global Event Start.", args);
-		   },
-	complete: function(id, o, args) {
-				this.write(id + ": Global Event Complete.  The status code is: " + o.status + ".", args);
-		   },
-	success: function(id, o, args) {
-			   this.write(id + ": Global Event Success.  The response is: " + o.responseText + ".", args);
-			 },
-	failure: function(id, o, args) {
-			   this.write(o + ": Global Event Failure.  The status text is: " + o.statusText + ".", args);
-			 },
-	end: function(id, args) {
-			 this.write(id + ": Global Event End.", args);
-			 if (state === 'global') {
-				 flush(gStr);
-			 }
-	}
+    write: function(s, args) {
+             gStr += "ID: " + s;
+             if (args) {
+                gStr += " " + "The arguments are: " + args;
+             }
+             gStr += "<br>";
+           },
+    start: function(id, args) {
+             this.write(id + ": Global Event Start.", args);
+           },
+    complete: function(id, o, args) {
+                this.write(id + ": Global Event Complete.  The status code is: " + o.status + ".", args);
+           },
+    success: function(id, o, args) {
+               this.write(id + ": Global Event Success.  The response is: " + o.responseText + ".", args);
+             },
+    failure: function(id, o, args) {
+               this.write(o + ": Global Event Failure.  The status text is: " + o.statusText + ".", args);
+             },
+    end: function(id, args) {
+             this.write(id + ": Global Event End.", args);
+             if (state === 'global') {
+                 flush(gStr);
+             }
+    }
 };
 /* end global listener object */
 
 /* transaction event object */
 var tH = {
-	write: function(s, args) {
-			 tStr += "ID: " + s;
-			 if (args) {
-				tStr += " " + "The arguments are: " + args;
-			 }
-			 tStr += "<br>";
-		   },
-	start: function(id, args) {
-			 this.write(id + ": Transaction Event Start.", args.start);
-		   },
-	complete: function(id, o, args) {
-				this.write(id + ": Transaction Event Complete.  The status code is: " + o.status + ".", args.complete);
-		   },
-	success: function(id, o, args) {
-			   this.write(id + ": Transaction Event Success.  The response is: " + o.responseText + ".", args.success);
-			 },
-	failure: function(id, o, args) {
-			   this.write(id + ": Transaction Event Failure.  The status text is: " + o.statusText + ".", args.failure);
-			 },
-	end: function(id, args) {
-			 this.write(id + ": Transaction Event End.", args.end);
-			 flush(gStr + tStr);
-	}
+    write: function(s, args) {
+             tStr += "ID: " + s;
+             if (args) {
+                tStr += " " + "The arguments are: " + args;
+             }
+             tStr += "<br>";
+           },
+    start: function(id, args) {
+             this.write(id + ": Transaction Event Start.", args.start);
+           },
+    complete: function(id, o, args) {
+                this.write(id + ": Transaction Event Complete.  The status code is: " + o.status + ".", args.complete);
+           },
+    success: function(id, o, args) {
+               this.write(id + ": Transaction Event Success.  The response is: " + o.responseText + ".", args.success);
+             },
+    failure: function(id, o, args) {
+               this.write(id + ": Transaction Event Failure.  The status text is: " + o.statusText + ".", args.failure);
+             },
+    end: function(id, args) {
+             this.write(id + ": Transaction Event End.", args.end);
+             flush(gStr + tStr);
+    }
 };
 /* end transaction event object */
 
 /* Output the results to the DIV container */
 function flush(s) {
-	d.set("innerHTML", s);
+    d.set("innerHTML", s);
 
-	if (state === 'global') {
-		gStr = '';
-	}
-	else {
-		gStr = '';
-		tStr = '';
-	}
+    if (state === 'global') {
+        gStr = '';
+    }
+    else {
+        gStr = '';
+        tStr = '';
+    }
 }
 ```
 
@@ -132,21 +132,21 @@ Y.on('io:end', gH.end, gH, 'global boo');
 ```
 /* Configuration object for setting Transaction Events */
 var cfg = {
-	on: {
-		start: tH.start,
-		complete: tH.complete,
-		success: tH.success,
-		failure: tH.failure,
-		end: tH.end
-	},
-	context: tH,
-	arguments: {
-			   start: 'foo',
-			   complete: 'bar',
-			   success: 'baz',
-			   failure: 'Oh no!',
-			   end: 'boo'
-			   }
+    on: {
+        start: tH.start,
+        complete: tH.complete,
+        success: tH.success,
+        failure: tH.failure,
+        end: tH.end
+    },
+    context: tH,
+    arguments: {
+               start: 'foo',
+               complete: 'bar',
+               success: 'baz',
+               failure: 'Oh no!',
+               end: 'boo'
+               }
 };
 ```
 
@@ -158,14 +158,14 @@ IO request, based on which button was clicked.
 
 ```
 function call(e, b) {
-	if (b) {
-		state = 'all';
-	}
-	else {
-		state = 'global';
-	}
+    if (b) {
+        state = 'all';
+    }
+    else {
+        state = 'global';
+    }
 
-	Y.io('{{componentAssets}}/get.txt', cfg);
+    Y.io('{{componentAssets}}/get.txt', cfg);
 }
 
 Y.on('click', call, "#get1", this, false);
