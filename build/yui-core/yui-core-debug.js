@@ -31,7 +31,7 @@ But it also works like this:
 @constructor
 @global
 @uses EventTarget
-@param o* {object} 0..n optional configuration objects.  these values
+@param o* {Object} 0..n optional configuration objects.  these values
 are store in Y.config.  See <a href="config.html">Config</a> for the list of supported
 properties.
 */
@@ -226,7 +226,7 @@ proto = {
      * update the loader cache if necessary.  Updating Y.config directly
      * will not update the cache.
      * @method applyConfig
-     * @param {object} o the configuration object.
+     * @param {Object} o the configuration object.
      * @since 3.2.0
      */
     applyConfig: function(o) {
@@ -1063,26 +1063,36 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
 
 
     /**
-     * Returns the namespace specified and creates it if it doesn't exist
-     * 
-     *      YUI.namespace("property.package");
-     *      YUI.namespace("YAHOO.property.package");
-     * 
-     * Either of the above would create `YUI.property`, then
-     * `YUI.property.package` (`YAHOO` is scrubbed out, this is
-     * to remain compatible with YUI2)
-     *
-     * Be careful when naming packages. Reserved words may work in some browsers
-     * and not others. For instance, the following will fail in Safari:
-     * 
-     *      YUI.namespace("really.long.nested.namespace");
-     * 
-     * This fails because "long" is a future reserved word in ECMAScript
-     *
-     * @method namespace
-     * @param  {string*} arguments 1-n namespaces to create.
-     * @return {object}  A reference to the last namespace object created.
-     */
+    Adds a namespace object onto the YUI global if called statically:
+
+        // creates YUI.your.namespace.here as nested objects
+        YUI.namespace("your.namespace.here");
+
+    If called as an instance method on the YUI instance, it creates the
+    namespace on the instance:
+
+         // creates Y.property.package
+         Y.namespace("property.package");
+    
+    Dots in the input string cause `namespace` to create nested objects for
+    each token. If any part of the requested namespace already exists, the
+    current object will be left in place.  This allows multiple calls to
+    `namespace` to preserve existing namespaced properties.
+    
+    If the first token in the namespace string is "YAHOO", the token is
+    discarded.
+
+    Be careful when naming packages. Reserved words may work in some browsers
+    and not others. For instance, the following will fail in some browsers:
+    
+         Y.namespace("really.long.nested.namespace");
+    
+    This fails because `long` is a future reserved word in ECMAScript
+    
+    @method namespace
+    @param  {String[]} namespace* 1-n namespaces to create.
+    @return {Object}  A reference to the last namespace object created.
+    **/
     namespace: function() {
         var a = arguments, o = this, i = 0, j, d, arg;
         for (; i < a.length; i++) {
