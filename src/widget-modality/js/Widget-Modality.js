@@ -116,16 +116,18 @@ var WIDGET         = 'widget',
              * outside the widget is clicked on or focussed upon.</p>
              */
             focusOn: {
-                value: [
-                    {
-                        // node: this.get(BOUNDING_BOX),
-                        eventName: ClickOutside
-                    },
-                    {
-                        //node: this.get(BOUNDING_BOX),
-                        eventName: FocusOutside
-                    }
-                ],
+                valueFn: function() {
+                    return [
+                        {
+                            // node: this.get(BOUNDING_BOX),
+                            eventName: ClickOutside
+                        },
+                        {
+                            //node: this.get(BOUNDING_BOX),
+                            eventName: FocusOutside
+                        }
+                    ];
+                },
 
                 validator: Y.Lang.isArray
             }
