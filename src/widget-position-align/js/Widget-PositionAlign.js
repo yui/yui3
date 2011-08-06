@@ -108,14 +108,14 @@
             alignOn: {
                 valueFn: function() {
                     return [
-                        {
-                            node: Y.one(WINDOW),
-                            eventName: RESIZE
-                        },
-                        {
-                            node: Y,
-                            eventName: SCROLL
-                        }
+                        // {
+                        //     node: Y.one(WINDOW),
+                        //     eventName: RESIZE
+                        // },
+                        // {
+                        //     node: Y,
+                        //     eventName: SCROLL
+                        // }
                     ]; 
                 },
                 validator: Y.Lang.isArray
