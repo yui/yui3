@@ -17,9 +17,9 @@
 ```
 //Create a YUI instance including support for IO and JSON modules:
 YUI().use("io-xdr", "substitute", "json-parse", "node", function(Y) {
-	// Y is the YUI instance.
-	// The rest of the following code is encapsulated in this
-	// anonymous function.
+    // Y is the YUI instance.
+    // The rest of the following code is encapsulated in this
+    // anonymous function.
 });
 ```
 
@@ -36,7 +36,7 @@ var output = Y.one("#output ul");
 //Configure the cross-domain protocol:
 var xdrConfig = {
     id:'flash', //We'll reference this id in the xdr configuration of our transaction.
-    src:'../../build/io-xdr/io.swf //Relative path to the .swf file from the current page.
+    src:'../../build/io-xdr/io.swf' //Relative path to the .swf file from the current page.
 };
 Y.io.transport(xdrConfig);
 ```
@@ -64,12 +64,12 @@ var cfg = {
 //Wire the buttton to a click handler to fire our request each
 //time the button is clicked:
 var handleClick = function(o) {
-	Y.log("Click detected; beginning io request to Yahoo! Pipes.", "info", "example");
-	var obj = Y.io(
-		//this is a specific Pipes feed, populated with cycling news:
-		"http://pipes.yahooapis.com/pipes/pipe.run?_id=giWz8Vc33BG6rQEQo_NLYQ&_render=json",
-		cfg
-	);
+    Y.log("Click detected; beginning io request to Yahoo! Pipes.", "info", "example");
+    var obj = Y.io(
+        //this is a specific Pipes feed, populated with cycling news:
+        "http://pipes.yahooapis.com/pipes/pipe.run?_id=giWz8Vc33BG6rQEQo_NLYQ&_render=json",
+        cfg
+    );
 }
 ```
 
@@ -78,9 +78,9 @@ var handleClick = function(o) {
 //add the click event handler as soon as the xdr Flash module has
 //loaded:
 Y.on('io:xdrReady', function() {
-	var fetch = Y.one("#fetch");
-	fetch.set("disabled", false);
-	Y.on("click", handleClick, fetch);
+    var fetch = Y.one("#fetch");
+    fetch.set("disabled", false);
+    Y.on("click", handleClick, fetch);
 });
 ```
 
