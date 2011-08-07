@@ -8,6 +8,34 @@
     "tags": ["core", "event", "dom"],
 
     "examples": [
+        {
+            "name": "basic-example",
+	        "displayName": "Simple DOM Events",
+	        "description": "Use the Event Utility to attach simple DOM event handlers.",
+            "modules": ["event", "node"],
+
+            "hideTableOfContents": true
+	    },
+
+        {
+            "name": "synth-example",
+	        "displayName": "Creating an Arrow Event for DOM Subscription",
+	        "description": "Using the synthetic event API to create a DOM event that fires in response to arrow keys being pressed.",
+            "useModules": ["event-synthetic","node","transition"],
+            "modules": ["event"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "swipe-example",
+            "displayName": "Supporting A Swipe Left Gesture",
+            "description": "Supporting cross-device swipe gestures, using the event-move gesture events",
+            "useModules": ["node-base", "node-event-delegate", "transition", "event-move"],
+            "modules": ["event"],
+
+            "hideTableOfContents": true
+        }
     ],
 
     "pages": {
@@ -43,6 +71,11 @@
         },
         "synths": {
             "displayName": "Creating Synthetic Events"
+        },
+
+        "swipe-example-content": {
+            "displayName": "Supporting a Swipe Left Gesture",
+            "layout": "empty-layout"
         }
     }
 }

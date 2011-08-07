@@ -1,0 +1,53 @@
+<!-- include event dependencies -->
+<script src="../build/oop/oop-min.js"></script>
+<script src="../build/event-custom-base/event-custom-base-min.js"></script>
+<script src="../build/event-custom-complex/event-custom-complex-min.js"></script>
+<script src="../build/intl/intl-min.js"></script>
+<script src="../build/dom-core/dom-core-min.js"></script>
+<script src="../build/dom-base/dom-base-min.js"></script>
+<script src="../build/selector-native/oop-min.js"></script>
+<script src="../build/node-core/node-core-min.js"></script>
+<script src="../build/node-base/node-base-min.js"></script>
+<script src="../build/event-base/event-base-min.js"></script>
+<div id="contentContainer">
+<div id="demo"></div>
+
+    <!--a ul with an arbitrarily large number of children:-->
+    <ul>
+        {{#each readyItems}}
+            <li id='li-{{this}}'>child node #{{this}}</li>
+        {{/each}}
+    </ul>
+
+    <img src="{{componentAssets}}/uluru.jpg" width="500" alt="Uluru" id="image" />
+
+</div>
+
+<script>
+YUI().use('*', function (Y) {
+    var results = Y.one('#demo');
+
+    //assign page load handler:
+    Y.on("load", function () {
+        results.append("<p>The window load event fired.  The page and all of its image data, including the large image of Uluru, has completed loading.</p>");
+    }, Y.config.win);
+
+    //assign domready handler:
+    Y.on("domready", function () {
+        results.append("<p>The 'domready' event fired.  The DOM is now safe to modify via script.</p>");
+    });
+    
+    //assign 'contentready' handler:
+    Y.on("contentready", function () {
+        results.append("<p>The 'contentready' event fired for the element 'contentContainer'.  That element and all of its children are present in the DOM.</p>");
+    }, "#contentContainer");
+
+    //assign 'available' handler:
+    Y.on("available", function () {
+        results.append("<p>The 'available' event fired on the element 'contentContainer'.  That element is present in the DOM.</p>");
+    }, "#contentContainer");
+    
+    results.append("<p>As the page loads, you'll see the 'available', 'contentready', 'domready', and window load events logged here as they fire in sequence.</p>");
+
+});
+</script>

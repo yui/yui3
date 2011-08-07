@@ -1,0 +1,35 @@
+<div id="demo">
+    <div id="container">
+        <p>Click for Hello World alert.</p>
+    </div>
+    <p><a href="http://yuilibrary.com" id="firstA">The YUI Library. (Link navigates away from page.)</a></p>
+
+    <p><a href="http://yuilibrary.com" id="secondA">The YUI Library. (Link's default behavior is suppressed.)</a></p>
+</div>
+
+<script>
+YUI().use('node', function (Y) {
+    // A function that pops up a "Hello World" alert:
+    var helloWorld = function(e) {
+        alert("Hello World!");
+    }
+
+    // subscribe the helloWorld function as an event handler for the click
+    // event on the container div:
+    var node = Y.one("#container");
+
+    node.on("click", helloWorld);
+
+    // A function that pops up an alert and prevents the default behavior of
+    // the event for which it is a handler:
+    var interceptLink = function(e) {
+        e.preventDefault();
+        alert("You clicked on the second YUI link.  Because *preventDefault* was called, this link will not navigate away from the page.");
+    }
+
+    // subscribe our interceptLink function as a click handler for the second
+    // anchor element:
+    Y.one('#secondA').on("click", interceptLink);
+});
+</script>
+
