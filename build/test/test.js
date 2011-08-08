@@ -135,7 +135,7 @@ YUI.add('test', function(Y) {
     
     /**
      * A test suite that can contain a collection of TestCase and TestSuite objects.
-     * @param {String||Object} data The name of the test suite or an object containing
+     * @param {String|Object} data The name of the test suite or an object containing
      *      a name property as well as setUp and tearDown methods.
      * @namespace Test
      * @class Suite
@@ -176,7 +176,7 @@ YUI.add('test', function(Y) {
         
         /**
          * Adds a test suite or test case to the test suite.
-         * @param {Y.Test.Suite||Y.Test.Case} testObject The test suite or test case to add.
+         * @param {Test.Suite|Test.Case} testObject The test suite or test case to add.
          * @return {Void}
          * @method add
          */
@@ -591,7 +591,7 @@ YUI.add('test', function(Y) {
             /**
              * Adds a test case to the test tree as a child of the specified node.
              * @param {TestNode} parentNode The node to add the test case to as a child.
-             * @param {Y.Test.Case} testCase The test case to add.
+             * @param {Test.Case} testCase The test case to add.
              * @return {Void}
              * @static
              * @private
@@ -616,7 +616,7 @@ YUI.add('test', function(Y) {
             /**
              * Adds a test suite to the test tree as a child of the specified node.
              * @param {TestNode} parentNode The node to add the test suite to as a child.
-             * @param {Y.Test.Suite} testSuite The test suite to add.
+             * @param {Test.Suite} testSuite The test suite to add.
              * @return {Void}
              * @static
              * @private
@@ -742,7 +742,7 @@ YUI.add('test', function(Y) {
             
             /**
              * Runs a test case or test suite, returning the results.
-             * @param {Y.Test.Case|Y.Test.Suite} testObject The test case or test suite to run.
+             * @param {Test.Case|Test.Suite} testObject The test case or test suite to run.
              * @return {Object} Results of the execution with properties passed, failed, and total.
              * @private
              * @method _run

@@ -152,7 +152,7 @@ Y.ClickableRail = Y.mix(ClickableRail, {
          *
          * @method _resolveThumb
          * @param e {DOMEvent} the mousedown event object
-         * @return {Y.DD.Drag} the Drag instance that should be moved
+         * @return {DD.Drag} the Drag instance that should be moved
          * @protected
          */
         _resolveThumb: function (e) {

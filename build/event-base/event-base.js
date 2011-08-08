@@ -1131,7 +1131,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
          * @param el {HTMLElement|string} the element or element id to inspect
          * @param type {string} optional type of listener to return. If
          * left out, all listeners will be returned
-         * @return {Y.Custom.Event} the custom event wrapper for the DOM event(s)
+         * @return {CustomEvent} the custom event wrapper for the DOM event(s)
          * @static
          */
         getListeners: function(el, type) {
