@@ -1,7 +1,7 @@
 <div id="mychart"></div>
 <script type="text/javascript">
 (function() {
-    YUI({filter:"raw"}).use('charts', function (Y) 
+    YUI().use('charts', function (Y) 
     { 
         //dataProvider source
         var myDataValues = [ 
@@ -76,7 +76,7 @@
                             color: "#e0ddd0" 
                         },
                         border: {
-                            weight:"1",
+                            weight: 1,
                             color: "#cbc8ba"
                         },
                         over: {
