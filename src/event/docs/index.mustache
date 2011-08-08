@@ -1,3 +1,9 @@
+<style>
+    h4 code {
+        text-transform: none;
+    }
+</style>
+
 <div class="intro component">
     <p>The YUI Event Utility provides APIs for working with the browser's DOM
     event system.  It simplifies tasks like subscribing to button `click`s or
@@ -19,60 +25,93 @@
 
 <h2>The Basics</h2>
 
-<p>The primary workhorse for the event system is the `on()` method.  It is
-available on every <a href="../node/">`Node`</a> and <a href="../node/#nodelist">`NodeList`</a>.</p>
-
+<h4>Listening for events</h4>
 ```
 // Step 1. Capture a button node
 var button = Y.one("#readygo");
 
-function handleClick(e) {
-    // Step 3. do stuff
-}
+// Step 2. Subscribe to its click event with a callback function
+button.on("click", function (e) {
 
-// Step 2. subscribe to its click event to execute `handleClick`
-button.on("click", handleClick)
+    // Step 3. do stuff when the button is clicked
+
+});
 ```
 
-<p>Replace "click" with any other event name to subscribe to that event.</p>
+<p><code>on(<em>type</em>, <em>callback</em>)</code> is the main 
+subscription method, and is available on every <a href="../node/">`Node`</a>
+and <a href="../node/#nodelist">`NodeList`</a>.</p>
 
-<p>The callback will always receive a first argument `e`, which is a normalized
-event object called an "event facade".  Meanwhile, the `this` in the callback
-will refer to the Node or NodeList that you subscribed from.</p>
+<p>Replace "click" with <a href="#event-whitelist">any other event name</a> to subscribe to that event.</p>
+
+<h4>The Callback and the Event Object</h4>
 
 ```
-function handleClick(e) {
+button.on('click', function (e) {
     // `this` is the button Node, NOT the DOM element
-    Y.log(this.get('id')); // 'readygo' (from <button id="readygo">...</button>)
+    this.get('id'); // ==> 'readygo' (from <button id="readygo">...</button>)
 
     // Event properties that point to the DOM are also Node instances
-    Y.log(e.target.get('id')); // 'readygo'
+    e.target.get('id'); // => 'readygo'
     
     // Stop the event's default behavior
     e.preventDefault();
 
     // Stop the event from bubbling up the DOM tree
     e.stopPropagation();
+});
+```
+
+<p>Subscribed callbacks are passed a <a href="#facade-properties">a normalized
+event object</a> as their first argument.</p>
+
+<p>The keyword "`this`" in the callback will refer to the Node or NodeList
+that you subscribed from.</p>
+
+<h4>`e.preventDefault()` and `e.stopPropagation()`</h4>
+
+<p>Many events have a default behavior, such as the `submit` event serializing
+form data and making a new page request.  Disable this behavior with
+`e.preventDefault()`.</p>
+
+```
+function setFilter(e) {
+    // Stop the link from loading the href page
+    e.preventDefault();
+
+    // Now do my own thing instead
+    var url = this.get('href').replace(/page/, 'partial');
+
+    Y.one('#contentArea').load(url);
+
+    // `return false` is supported, but not preferred. use e.preventDefault()
+    return false;
 }
+
+Y.one('#table-filter-link').on('click', setFilter);
 ```
 
-<p>Look at <a href="appendix-b">Appendix B</a> (or the API docs) for a full list
-of event facade properties and methods.</p>
+<p>Most events can be listened for on the specific element that originates them
+<em>or from any of their parent elements</em>, all the way up to the
+`document`.  Prevent dispatching the event to subscriptions bound to elements
+further up the DOM tree with `e.stopPropagation()`.  In practice, this is
+rarely useful.</p>
 
-<p>An alternate syntax for DOM subscriptions is using `Y.on()`.  Read more about <a href="#yon">using `Y.on()` instead of `node.on()`</a>.</p>
+<p>Returning `false` from a callback will also stop the propagation of the
+event, which may cause unintended side effects.</p>
 
-```
-// Y.on() takes a third argument which is the Node, DOM element,
-// or CSS selector of the element(s) to bind
-Y.on("click", handleClick, "#readygo");
-```
+<p>`e.stopPropagation()` won't prevent the execution of other subscribers
+listening to the same element, only elements further up the DOM tree.  If you
+need to stop all execution, use `e.stopImmediatePropagation()` or
+`e.halt(true)`. The latter will also call `e.preventDefault()`.</p>
 
 <h4>Detaching subscriptions</h4>
 
-<p>`node.on()` and all [[#One time subscriptions|other subscription methods]]
-return a subscription object that can be used to unbind that subscription.
-Node also supports a `detach()` method and
-[[#More ways to cleanup subscriptions|other ways to cleaup subscriptions]].</p>
+<p>`node.on()` and all
+<a href="#more-options">other subscription methods</a> return a
+subscription object that can be used to unbind that subscription.  Node also
+supports a `detach()` method and <a href="#detach-methods">other ways to cleaup
+subscriptions</a>.</p>
 
 ```
 // on() returns a subscription handle...
@@ -86,7 +125,7 @@ button.detach("click", handleClick);
 ```
 
 <p>Just this should take care of most of the simple event bindings you'll need.
-There's [[#Advanced Options|a lot more you can do]], though, so read on!</p>
+There's [[#More Options|a lot more you can do]], though, so read on!</p>
 
 <h2 id="modules">What to `use()`</h2>
 
@@ -108,11 +147,11 @@ YUI.  So you probably already have the DOM event API and didn't know it!</p>
 </thead>
 <tbody>
     <tr>
-        <td>`event-base`</td>
+        <td><a href="{{apiDocs}}/module_event-base.html">`event-base`</a></td>
         <td>
-            The Core DOM event subscription system as well as the <a
-            href="domready.html">DOM lifecycle events</a> `domready`,
-            `available`, and `contentready`.  Notably, it does NOT include
+            The Core DOM event subscription system as well as the DOM lifecycle
+            events <a href="domready.html">`domready`, `contentready`, and
+            `available`</a>.  Notably, it does NOT include
             <ul>
                 <li>event delegation</li>
                 <li>event simulation</li>
@@ -121,7 +160,7 @@ YUI.  So you probably already have the DOM event API and didn't know it!</p>
         </td>
     </tr>
     <tr>
-        <td>`event`</td>
+        <td><a href="{{apiDocs}}/module_event.html">`event`</a></td>
         <td>
             A rollup of all modules below except
             <ul>
@@ -132,16 +171,16 @@ YUI.  So you probably already have the DOM event API and didn't know it!</p>
         </td>
     </tr>
     <tr>
-        <td>`event-delegate` &amp;
+        <td><a href="{{apiDocs}}/module_event-delegate.html">`event-delegate`</a> &amp;
             <br>
-            <spen style="white-space: nowrap;"`node-event-delegate`</span></td>
+            <a style="white-space: nowrap;" href="{{apiDocs}}/module_node-event-delegate.html">`node-event-delegate`</a></td>
         <td>
             Adds the `Y.delegate(...)` and `node.delegate(...)` methods,
             respectively, for [[#Event Delegation|event delegation]] convenience.
         </td>
     </tr>
     <tr>
-        <td>`event-simulate`</td>
+        <td><a href="{{apiDocs}}/module_event-simulate.html">`event-simulate`</a></td>
         <td>
             <p>Adds APIs for triggering native DOM events for unit testing.</p>
             <p><strong>Note: <a href="#faking">Faking DOM events should not be
@@ -149,86 +188,115 @@ YUI.  So you probably already have the DOM event API and didn't know it!</p>
         </td>
     </tr>
     <tr>
-        <td>`event-synthetic`</td>
+        <td><a href="{{apiDocs}}/module_event-synthetic.html">`event-synthetic`</a></td>
         <td>
-            Supplies the infrastructure for "fixing" DOM events with
-            undesirable or inconsistent behavior.  Also for creating new DOM
-            events.  Most of the modules below are synthetics.
+            <p>Supplies the infrastructure for creating new DOM events, "fixing"
+            existing events with undesirable or inconsistent behavior, and
+            <a href="synths.html">all sorts of other things</a>.</p>
+            
+            <p>All of the modules below are synthetics.</p>
         </td>
     </tr>
     <tr>
-        <td><a href="touch.html#flick">`event-flick`</a></td>
+        <td><a href="{{apiDocs}}/module_event-flick.html">`event-flick`</a></td>
         <td>
-            Adds a "flick" event for touch or mouse interaction.
+            Adds a <a href="touch.html#flick">"flick" event</a> for touch or
+            mouse interaction.
         </td>
     </tr>
     <tr>
-        <td><a href="focus.html">`event-focus`</a></td>
+        <td><a href="{{apiDocs}}/module_event-focus.html">`event-focus`</a></td>
         <td>
-            Fixes `focus` and `blur` events to bubble (for delegation).
+            <a href="focus.html">Fixes `focus` and `blur` events</a> to bubble
+            (for delegation).
+        </td>
+    </tr>
+        <td><a href="{{apiDocs}}/module_event-gestures.html">`event-gestures`</a></td>
+        <td>
+            <p>A rollup of the following modules:</p>
+
+            <ul>
+                <li>"event-touch"</li>
+                <li>"event-move"</li>
+                <li>"event-flick"</li>
+            </ul>
+
+            <p>In the future, may contain more gesture abstraction modules.</p>
+        </td>
+    <tr>
+        <td><a href="{{apiDocs}}/module_event-hover.html">`event-hover`</a></td>
+        <td>
+            Adds a <a href="mouseenter.html">"hover" event</a> which binds to
+            two callbacks, one for the start, and one for the end of a mouse
+            hover.
         </td>
     </tr>
     <tr>
-        <td><a href="mouseenter.html">`event-hover`</a></td>
+        <td><a href="{{apiDocs}}/module_event-key.html">`event-key`</a></td>
         <td>
-            Adds a "hover" event which binds to two callbacks, one for the
-            start, and one for the end of a mouse hover.
+            Adds a <a href="key.html">"key" event</a> which listens for
+            specific, implementer defined, keys being pressed by the user.
         </td>
     </tr>
     <tr>
-        <td><a href="key.html">`event-key`</a></td>
+        <td><a href="{{apiDocs}}/module_event-mouseenter.html">`event-mouseenter`</a></td>
         <td>
-            Adds a "key" event which listens for specific, implementer defined,
-            keys being pressed by the user.
+            Adds <a href="mouseenter.html">"mouseenter" and "mouseleave"
+            events</a>.  You probably want to use these instead of "mouseover"
+            and "mouseout".
         </td>
     </tr>
     <tr>
-        <td><a href="mouseenter.html">`event-mouseenter`</a></td>
+        <td><a href="{{apiDocs}}/module_event-mousewheel.html">`event-mousewheel`</a></td>
         <td>
-            Adds "mouseenter" and "mouseleave" events.  You probably want to
-            use these instead of "mouseover" and "mouseout".
+            <p>Adds a "mousewheel" event for monitoring users scrolling the
+            window with the mousewheel.  Event facades passed to the callback
+            will have an `e.wheelDelta` property corresponding to the amount of
+            scrolling.</p>
+
+            <p>Currently, this event can only be subscribed with
+            `Y.on("mousewheel", callback)`;</p>
         </td>
     </tr>
     <tr>
-        <td><a href="mousewheel.html">`event-mousewheel`</a></td>
+        <td><a href="{{apiDocs}}/module_event-move.html">`event-move`</a></td>
         <td>
-            Adds a "mousewheel" event for monitoring window scrolling.
-            Currently, this event can only be subscribed with
-            `Y.on("mousewheel", callback)`;
+            Adds <a href="touch.html#move">"gesturemovestart", "gesturemove",
+            and "gesturemoveend" events</a> that serve as abstractions over
+            mouse and touch events, forking internally based on the client
+            device.
         </td>
     </tr>
     <tr>
-        <td><a href="touch.html#move">`event-move`</a></td>
+        <td><a href="{{apiDocs}}/module_event-outside.html">`event-outside`</a></td>
         <td>
-            Adds "gesturemovestart", "gesturemove", and "gesturemoveend" events
-            that serve as abstractions over mouse and touch events, forking
-            internally based on the client device.
+            Adds a <a href="outside.html">"clickoutside" and several other
+            ___outside events</a> to trigger behavior based on actions taken
+            outside a specific element.
         </td>
     </tr>
     <tr>
-        <td><a href="outside.html">`event-outside`</a></td>
+        <td><a href="{{apiDocs}}/module_event-resize.html">`event-resize`</a></td>
         <td>
-            Adds a "clickoutside" and several other ___outside events to trigger
-            behavior based on actions taken outside a specific element.
+            <p>Adds a "windowresize" event that only fires after a user has
+            stopped dragging a window's resize handle.  This normalizes the
+            `window.onresize` event across browsers.</p>
+
+            <p>This event can only be subscribed with
+            `Y.on("windowresize", callback)`;</p>
         </td>
     </tr>
     <tr>
-        <td><a href="windowresize.html">`event-resize`</a></td>
+        <td><a href="{{apiDocs}}/module_event-touch.html">`event-touch`</a></td>
         <td>
-            Adds a "windowresize" event to normalize reporting of the
-            `window`'s resize event.
+            Adds support for <a href="touch.html">subscribing to native touch
+            and gesture events</a>.
         </td>
     </tr>
     <tr>
-        <td><a href="touch.html">`event-touch`</a></td>
+        <td><a href="{{apiDocs}}/module_event-valuechange.html">`event-valuechange`</a></td>
         <td>
-            Adds support for subscribing to native touch and gesture events.
-        </td>
-    </tr>
-    <tr>
-        <td><a href="valuechange.html">`event-valuechange`</a></td>
-        <td>
-            Adds a "valuechange" event that fires when input element text
+            Adds a <a href="valuechange.html">"valueChange" event</a> that fires when input element text
             changes (this is harder than you think).
         </td>
     </tr>
@@ -274,10 +342,127 @@ function handleClick (e) {
 Y.one('#items').delegate('click', handleClick, 'button.remove');
 ```
 
-<p>For more complex target filtering, a function can be passed instead of a css selector.  See the <a href="{{apiDocs}}/module_event-delegate.html#method_delegate">API docs</a> for more details.</p>
+<p>For more complex target filtering, a function can be passed instead of a css
+selector.  See the
+<a href="{{apiDocs}}/module_event-delegate.html#method_delegate">API docs</a>
+for more details.</p>
 
-<p>As noted <a href="modules">above</a>, the `event-delegate` module is included in the `event` rollup, but `node-event-delegate` isn't.  We recommend using delegation from the Node API, so you should `use()` either `node-event-delegate` or the `node` rollup.</p>
+<p>As noted <a href="modules">above</a>, the `event-delegate` module is
+included in the `event` rollup, but `node-event-delegate` isn't.  We recommend
+using delegation from the Node API, so you should `use()` either
+`node-event-delegate` or the `node` rollup.</p>
 
+
+<h2>More Options</h2>
+
+<h4>Subscribe from `Y`</h4>
+
+```
+// Y.on() takes a third argument which is the Node, DOM element,
+// or CSS selector of the element(s) to bind
+Y.on("click", handleClick, "#readygo");
+
+// Y.delegate() similarly takes the containing element or selector
+// as the third argument
+Y.delegate("click", handleClick, "#container", "button, input[type=button]");
+```
+
+<p>An alternate syntax for DOM subscriptions is using `Y.on()` or
+`Y.delegate()`.  When identifying the target by a CSS selector, these methods
+can be used regardless if the element is currently available for scripting.  If
+it's not yet on the page, a poll will regularly look for it (for a few seconds)
+and the subscription will be automatically attached when the element is
+found.  Relying on this behavior can introduce race conditions, though, so use
+it wisely.  Otherwise, use of `node.on()` or `Y.on()` is a stylistic
+preference.</p>
+
+
+<h4 id="once">One time subscriptions</h4>
+
+```
+tabLabel.once('mouseover', loadTabContent);
+```
+
+<p>If you only want to execute a callback on the first occurrence of an event, use `node.once()` or `Y.once()`.  The subscription will be automatically detached after the event fires.</p>
+
+<p>The signature for `once()` is the same as that for `on()`.</p>
+
+<h4>Grouping subscriptions</h4>
+
+<p>Pass an object to subscribe to multiple events, each with their own
+callback</p>
+
+```
+var groupSub = inputNode.on({
+    blur: validate,
+    keypress: validate,
+    focus: clearPlaceholder
+});
+
+// Detach the blur, keypress, and focus subscriptions in one call
+groupSub.detach();
+```
+
+<p>Pass an array to subscribe to multiple events with the same callback</p>
+```
+groupSub = inputNode.on(['focus', 'mouseover'], activate);
+
+// Detach the focus and mouseover subscriptions
+groupSub.detach();
+```
+
+<p>Prefix the event name with a category to allow detaching multiple
+subscriptions by that category.</p>
+
+```
+inputNode.on('my-category|focus', activate);
+inputNode.on('my-category|mouseover', activate);
+
+// You can detach specific subscriptions by 'my-category|focus' or all with |*
+inputNode.detach('my-category|*');
+```
+
+<p>The `once()` and `delegate()` methods also support these alternate
+signatures.</p>
+
+<h4 id="extended-signature">Binding `this` and additional callback arguments</h4>
+
+<p>By default, the "`this`" object in subscription callbacks will be the Node
+or NodeList that subscribed to them.  Override this default by passing your own
+`this` object as the third argument to `node.on()` or the fourth to
+`node.delegate()`.  Note that the argument index is shifted when using `Y.on()`
+and `Y.delegate()` or synthetic events with custom signatures.</p>
+
+```
+// equivalent to node.on('click', function (e) { overlay.hide(e); });
+node.on('click', overlay.show, overlay);
+
+node.once('mouseover', door.unlock, door);
+
+// `this` override comes after the filter; also shifted for the 'key' event's
+// custome signature.
+container.delegate('key', validator.isValid, 'enter,tab', 'input', validator);
+
+// Corresponding alternatives from Y
+Y.on('click', overlay.show, '#show', overlay);
+
+Y.once('mouseover', door.unlock, '#gate13', door);
+
+Y.delegate('click', validator.isValid, '#myForm', 'enter,tab', 'input', validator);
+```
+
+<p>Additional arguments passed to the subscription methods will be sent along
+to the callback after the event facade. If you want to bind extra arguments,
+but don't want to override the "`this'" object, pass `null` for the `this`
+argument.</p>
+
+```
+
+```
+
+<h4>More ways to clean up subscriptions</h4>
+
+<h2>Event Simulation</h2>
 
 <h2>Synthetic Events</h2>
 
@@ -290,38 +475,14 @@ synthetic events, and you can subscribe to them like any other DOM event with
 Y.one('#dialog').on('clickoutside', function (e) {
     this.transition('fadeOut');
 });
+
+Y.one('#editable-table').delegate('key', saveAndAdvance, 'tab', 'input');
 ```
 
-<p>You can do all sorts of things with synthetic events, including:</p>
-
-<ul>
-    <li>
-        redefine native DOM events that behave inconsistently across browsers
-        (e.g. `focus` and `blur`)
-    </li>
-    <li>
-        provide abstract events that attach to different DOM events based on
-        the environment (e.g. `gesturemovestart` and family)
-    </li>
-    <li>
-        create events with different subscription signatures (e.g. `hover` or
-        `key`)
-    </li>
-    <li>
-        create configurable events that only execute subscribers when criteria
-        passed during subscription are met (e.g. `flick` or `valuechange`)
-    </li>
-    <li>
-        create events that encapsulate common UX patterns (e.g. `clickoutside`)
-    </li>
-    <li>
-        create fun little easter eggs (e.g. <a
-        href="http://yuilibrary.com/gallery/show/event-konami">`konami`</a>)
-    </li>
-</ul>
-
 <p>The available synthetic events are listed in <a href="#modules">the table of
-modules above</a>.</p>
+modules above</a>.  Most are linked to pages further detailing the specific eevnts.</p>
+
+<h4>Creating DOM events</h4>
 
 <p>Create your own synthetic events with `Y.Event.define(type, config)`.</p>
 
@@ -330,6 +491,7 @@ Y.Event.define("tripleclick", {
 
     // The setup logic executed when node.on('tripleclick', callback) is called
     on: function (node, subscription, notifier) {
+        // supporting methods can be referenced from `this`
         this._clear(subscription);
 
         // To make detaching easy, a common pattern is to add the subscription
@@ -355,27 +517,24 @@ Y.Event.define("tripleclick", {
 
     // The logic executed when the 'tripleclick' subscription is `detach()`ed
     detach: function (node, subscription, notifier) {
-        // Clean up supporting DOM subscriptions when the synthetic event
-        // subscription is detached.
+        // Clean up supporting DOM subscriptions and other external hooks
+        // when the synthetic event subscription is detached.
         subscription._handle.detach();
+
+        if (subscription._timer) {
+            subscription._timer.cancel();
+        }
     },
 
-    // The setup logic executed for `node.delegate('tripleclick', ...)`
-    delegate: function (node, subscription, notifier, filter) { ... },
-
-    // Detach logic for delegate subscriptions
-    detachDelegate: function (node, subscription, notifier, filter) { ... },
-
-    // supporting methods can be referenced from `this`
+    // Additional methods can be added to support the lifecycle methods
     _clear: function (subscription) {
         subscription._counter = 0;
         subscription._timer = null;
-    }
+    },
+    
+    ...
 });
 ```
-
-<p>The delegation logic was omitted for brevity, but `delegate()` support and
-custom subscription signatures are <a href="synths.html">detailed here</a>.</p>
 
 <p>After the synthetic event is defined, it is available for every Node and
 NodeList to subscribe to.</p>
@@ -384,24 +543,9 @@ NodeList to subscribe to.</p>
 Y.one('#hellokitty').on('tripleclick', omgYayCantClickEnough);
 ```
 
-<h2>Advanced Options</h2>
-
-<h3>Binding `this` and additional callback arguments</h3>
-
-<h3>One time subscriptions</h3>
-
-<h3>Grouping subscriptions</h3>
-Three ways, on({}), on([]), on('cat:type')
-
-<h3>More ways to clean up subscriptions</h3>
-
-<h3>Adding to the DOM event whitelist</h3>
-
-<h3>Capture phase subscriptions</h3>
-
-<h3>Facade-less subscriptions</h3>
-
-<h3>Event Simulation</h3>
+<p>There is additional configuration to <a href="synths.html">add support for
+`delegate()` or extra subscription arguments</a>, but often very little extra
+code is needed.</p>
 
 <h2>FAQ</h2>
 
@@ -418,11 +562,419 @@ Three ways, on({}), on([]), on('cat:type')
     <li><a href="#faking">Why shouldn't I fake DOM events in user facing code?</a></li>
 </ul>
 
-<h2>Appendix A: Whitelisted DOM events</h2>
+<h2 id="event-whitelist">Appendix A: Whitelisted DOM events</h2>
 
-<p>Also see the list of <a href="#synthetics">synthetic DOM events</a>.</p>
+<div id="events">
+<table>
+<thead>
+    <tr>
+        <th>Event</th>
+        <th>Added by</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>abort</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>beforeunload</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>blur</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>change</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>click</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>close</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>command</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>contextmenu</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>dblclick</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>DOMMouseScroll</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>drag</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>dragstart</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>dragenter</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>dragover</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>dragleave</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>dragend</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>drop</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>error</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>focus</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>key</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>keydown</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>keypress</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>keyup</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>load</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>message</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>mousedown</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>mouseenter</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>mouseleave</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>mousemove</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>mousemultiwheel</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>mouseout</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>mouseover</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>mouseup</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>mousewheel</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>orientationchange</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>reset</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>resize</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>select</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>selectstart</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>submit</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>scroll</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>textInput</td>
+        <td>node-base</td>
+    </tr>
+    <tr>
+        <td>unload</td>
+        <td>node-base</td>
+    </tr>
 
-<h2 id="appendix-b">Appendix B: EventFacade properties and methods</h2>
+    <tr>
+        <td>DOMActivate</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>DOMContentLoaded</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>afterprint</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>beforeprint</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>canplay</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>canplaythrough</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>durationchange</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>emptied</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>ended</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>formchange</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>forminput</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>hashchange</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>input</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>invalid</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>loadedmetadata</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>loadeddata</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>loadstart</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>offline</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>online</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>pagehide</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>pageshow</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>pause</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>play</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>playing</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>popstate</td>
+        <td>node-event-html5 or history</td>
+    </tr>
+    <tr>
+        <td>progress</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>ratechange</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>readystatechange</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>redo</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>seeking</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>seeked</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>show</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>stalled</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>suspend</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>timeupdate</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>undo</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>volumechange</td>
+        <td>node-event-html5</td>
+    </tr>
+    <tr>
+        <td>waiting</td>
+        <td>node-event-html5</td>
+    </tr>
+
+    <tr>
+        <td>touchstart</td>
+        <td>event-touch</td>
+    </tr>
+    <tr>
+        <td>touchmove</td>
+        <td>event-touch</td>
+    </tr>
+    <tr>
+        <td>touchend</td>
+        <td>event-touch</td>
+    </tr>
+    <tr>
+        <td>touchcancel</td>
+        <td>event-touch</td>
+    </tr>
+    <tr>
+        <td>gesturestart</td>
+        <td>event-touch</td>
+    </tr>
+    <tr>
+        <td>gesturechange</td>
+        <td>event-touch</td>
+    </tr>
+    <tr>
+        <td>gestureend</td>
+        <td>event-touch</td>
+    </tr>
+
+    <tr>
+        <td>transitionend or webkitTransitionEnd</td>
+        <td>transition-native</td>
+    </tr>
+</tbody>
+</table>
+</div>
+<script>
+YUI({ filter: 'raw' }).use('selector-css3', 'datatable-sort', function (Y) {
+    var data = [],
+        node = Y.one('#events');
+
+    node.all('td:nth-of-type(1)').each(function (node, i) {
+        data.push({
+            Event: node.get('text'),
+            "Added By": node.next().get('text')
+        });
+    });
+
+    node.empty().addClass('yui3-skin-sam');
+    new Y.DataTable.Base({
+        columnset: [
+            { key: 'Event', sortable: true },
+            { key: 'Added By', sortable: true }
+        ],
+        recordset: data
+    }).plug(Y.Plugin.DataTableSort).render(node);
+
+});
+</script>
+
+<h4>Adding to the DOM event whitelist</h4>
+
+<p>If you need to use an event that isn't included in this list, and not
+supplied by a synthetic event, you can expand the whitelist by adding the event
+names to the `Y.Node.DOM_EVENTS` object.</p>
+
+```
+// Allow for subscription to some mostly cross-browser mutation events
+Y.mix(Y.Node.DOM_EVENTS, {
+    DOMNodeInserted: true,
+    DOMNodeRemoved: true,
+    DOMCharacterDataModified: true
+});
+```
+
+<h2 id="facade-properties">Appendix B: EventFacade properties and methods</h2>
 
 <h4>Methods</h4>
 <dl>

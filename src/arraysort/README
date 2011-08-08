@@ -1,6 +1,0 @@
-ArraySort is a Beta Component. It provides a case-insensitive
-Array sort comparator. Future versions may add additional
-comparator implementations.
-
-3.3.0
-    * Initial release.

@@ -1092,6 +1092,13 @@ The following filters are available in the `autocomplete-filters` module:
     </tr>
 
     <tr>
+      <td>`subWordMatch`</td>
+      <td>
+        Returns results in which all the words of the query match either whole words or parts of words in the result. Non-word characters like whitespace and certain punctuation are ignored.
+      </td>
+    </tr>
+
+    <tr>
       <td>`wordMatch`</td>
       <td>
         Returns results that contain all the individual words in the query, in any order (not necessarily consecutive).
@@ -1175,6 +1182,13 @@ The following highlighters are available in the `autocomplete-highlighters` modu
       <td>`startsWith`</td>
       <td>
         Highlights the complete query as a phrase at the start of the result.
+      </td>
+    </tr>
+
+    <tr>
+      <td>`subWordMatch`</td>
+      <td>
+        Highlights results in which all the words of the query match either whole words or parts of words in the result. Non-word characters like whitespace and certain punctuation are ignored.
       </td>
     </tr>
 

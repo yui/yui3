@@ -4,7 +4,7 @@
     "description": "A JavaScript testing framework with a comprehensive assertion syntax. Suitable for testing YUI-based code, but designed to support test-driven development across any JavaScript project, regardless of whether YUI is involved.",
     "author"     : ["nzakas"],
 
-    "tags": ["utility", "test", "testing", "unit", "tdd"],
+    "tags": ["devtool", "test", "testing", "unit", "tdd"],
     "use" : ["test"],
 
     "examples": [

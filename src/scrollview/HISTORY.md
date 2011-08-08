@@ -19,8 +19,20 @@ ScrollView
     (H/W acceleration related glitches or changing the set of browsers for 
     which we attempt to force it).
 
-  * Created Scrollview-List plugin to add CSS Classnames to immediate <li> 
-    elements on scrollview.
+  * Created Scrollview-List plugin to provide out-of-the-box handling of
+    List (LI) content inside horizontal and vertical ScrollViews. 
+
+  * Fixed incorrect scroll width/height calculations on Chrome 9+, FF
+    when syncUI() [ or _uiDimensionsChange() ] was called when the ScrollView
+    was scrolled over.
+ 
+  * Protected state flags are now reset if _uiDimensionsChange results in
+    flipped orientation.
+
+  * Use the larger of bb.scrollWidth/Height or cb.scrollWidth/Height, to calculate
+    scroll dimensions to account for FF (which clips cb.scrollWidth) and 
+    Chrome/MacOS (which clips bb.scrollWidth when translated even after 
+    incorrect scroll calcs above).
   
 3.3.0
 -----

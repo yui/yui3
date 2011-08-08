@@ -20,7 +20,7 @@
 }
 </style>
 <div class="intro">
-This example shows how to access a `Chart` instance's `seriesCollection` after the `Chart` has rendered.
+<p>This example shows how to access a `Chart` instance's `seriesCollection` after the `Chart` has rendered.</p>
 </div>
 <div class="example">
 {{>charts-seriesupdate-source}}
@@ -46,10 +46,10 @@ YUI().use('charts', function (Y)
     
     //Click handler
     Y.on("click", function(e) {
-        var seriesName = document.getElementById("seriesSelector").value,
-            fillColor = Y.Escape.html(document.getElementById("fillColor").value),
-            borderColor = Y.Escape.html(document.getElementById("borderColor").value),
-            borderWeight = parseFloat(document.getElementById("borderWeight").value),
+        var seriesName = Y.one("#seriesSelector").get("value"),
+            fillColor = Y.Escape.html(Y.one("#fillColor").get("value")),
+            borderColor = Y.Escape.html(Y.one("#borderColor").get("value")),
+            borderWeight = parseFloat(Y.one("#borderWeight").get("value")),
             series,
             marker = {fill:{}, border:{}};
         if(seriesName)

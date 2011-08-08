@@ -21,23 +21,48 @@
 
 <h3>Defining your Custom Module</h3>
 
-<p>We use Loader's groups support to add a custom module called "translator" under the group "myapp". We set this configuration using YUI_config, so it's applied to all our YUI instances. The "lang" property in the module's metadata specifies
-which set of languages it supports.</p>
+<p>We use Loader's groups support to add a custom module called "translator" under the group "myapp". The "lang" property in the module's metadata specifies which set of languages it supports.</p>
 
 ```
-YUI_config = {
-    filter:"raw",
+var appMetaData = {
+    myapp: {
+        base: '{{componentAssets}}',
+        modules : {
+            "translator" : {
+                path: 'translator/tranlator.js'
+                lang: ["en", "fr", "es"]
+            }
+        }
+    }
+};
+
+YUI({
+    lang:'fr',
+    groups: appMetaData
+}).use(...);
+
+```
+<p>NOTE: Since this example is hosted on a page with other YUI instances, we don't want to pollute their configuration, so we just pass our `groups: appMetaData` configuration property to each YUI instance we create as shown above.</p>
+<p>If you own all YUI instances on the page, you can use the global `YUI_Config` variable to define a global configuration for all YUI instances on the page, to avoid passing the same meta-data to all your instances as shown below:</p>
+```
+var YUI_Config = {
     groups: {
         myapp: {
             base: '{{componentAssets}}',
             modules : {
                 "translator" : {
+                    path: 'translator/tranlator.js'
                     lang: ["en", "fr", "es"]
                 }
             }
         }
     }
 };
+
+YUI({
+    lang:'fr'
+}).use(...);
+
 ```
 
 <h3>What Language Resource Bundles Look Like</h3>
@@ -122,7 +147,8 @@ Translator.prototype = {
 
 ```
 YUI({
-    lang:"en"
+    lang:"en",
+    ...
 }).use("node-base", "translator", function(Y) {
     var translator = new Y.Translator(),
         out = Y.one("#out");
@@ -137,7 +163,8 @@ YUI({
 
 ```
 YUI({
-    lang:"fr"
+    lang:"fr",
+    ...
 }).use("node-base", "translator", function(Y) {
     ...
 });
@@ -147,7 +174,8 @@ YUI({
 
 ```
 YUI({
-    lang:"es"
+    lang:"es",
+    ...
 }).use("node-base", "translator", function(Y) {
     ...
 });

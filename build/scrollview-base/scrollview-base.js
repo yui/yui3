@@ -145,10 +145,11 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         // Without a _uiDimensionChange() call, the scrollview only 
         //scrolls partially due to the fact that styles added in the CSS
         // altered the height/width of the bounding box.
-        this.after('renderedChange', function(e) {
-            this._uiDimensionsChange();
-
-        });
+        if (!IE) {
+            this.after('renderedChange', function(e) {
+                this._uiDimensionsChange();
+            });
+        }
     },
 
     /**
@@ -563,7 +564,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         // Use bb instead of cb. cb doesn't gives us the right results
         // in FF (due to overflow:hidden)
-        dims = [bb.get('scrollWidth'), bb.get('scrollHeight')];
+        dims = [Math.max(bb.get('scrollWidth'), cb.get('scrollWidth')), Math.max(bb.get('scrollHeight'), cb.get('scrollHeight'))];
 
         this._moveTo(cb, -1*origX, -1*origY);
 
@@ -597,6 +598,12 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             sv._minScrollY = 0;
             sv._scrollHeight = scrollHeight;
             bb.addClass(CLASS_NAMES.vertical);
+        } else {
+            sv._scrollsVertical = false;
+            delete sv._maxScrollY;
+            delete sv._minScrollY;
+            delete sv._scrollHeight;
+            bb.removeClass(CLASS_NAMES.vertical);
         }
 
         if (width && scrollWidth > width) {
@@ -605,6 +612,12 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             sv._minScrollX = 0;
             sv._scrollWidth = scrollWidth;
             bb.addClass(CLASS_NAMES.horizontal);
+        } else {
+            sv._scrollsHorizontal = false;
+            delete sv._maxScrollX;
+            delete sv._minScrollX;
+            delete sv._scrollWidth;
+            bb.removeClass(CLASS_NAMES.horizontal);
         }
 
         /**
@@ -1025,4 +1038,4 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 });
 
 
-}, '@VERSION@' ,{skinnable:true, requires:['widget', 'event-gestures', 'transition']});
+}, '@VERSION@' ,{requires:['widget', 'event-gestures', 'transition'], skinnable:true});

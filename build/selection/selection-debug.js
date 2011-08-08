@@ -329,7 +329,7 @@ YUI.add('selection', function(Y) {
                 }
             });*/
 
-            /** Removed this, as it was causing Pasting to be funky in Safari
+            /* Removed this, as it was causing Pasting to be funky in Safari
             spans = Y.all('.Apple-style-span, .apple-style-span');
             Y.log('Apple Spans found: ' + spans.size(), 'info', 'selection');
             spans.each(function(s) {
@@ -718,7 +718,7 @@ YUI.add('selection', function(Y) {
             
             if (range.pasteHTML) {
                 if (offset === 0 && node && !node.previous() && node.get('nodeType') === 3) {
-                    /**
+                    /*
                     * For some strange reason, range.pasteHTML fails if the node is a textNode and
                     * the offset is 0. (The cursor is at the beginning of the line)
                     * It will always insert the new content at position 1 instead of 
@@ -889,7 +889,7 @@ YUI.add('selection', function(Y) {
         * Destroy the range.
         * @method remove
         * @chainable
-        * @return {Y.Selection}
+        * @return {Selection}
         */
         remove: function() {
             this._selection.removeAllRanges();
@@ -913,7 +913,7 @@ YUI.add('selection', function(Y) {
         * @param {Node} node The node to select
         * @param {Boolean} collapse Should the range be collapsed after insertion. default: false
         * @chainable
-        * @return {Y.Selection}
+        * @return {Selection}
         */
         selectNode: function(node, collapse, end) {
             if (!node) {
@@ -1013,4 +1013,4 @@ YUI.add('selection', function(Y) {
     };
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['node']});
+}, '@VERSION@' ,{requires:['node'], skinnable:false});

@@ -21,7 +21,7 @@ need to learn how to call different APIs.</p>
 
 {{>getting-started}}
 
-<h4 id="query">Making a Query</h4>
+<h2 id="query">Making a Query</h2>
 <p>After you find the query you want to run in the Developer Console, just plug it in:</p>
 <p>The <a href="http://developer.yahoo.com/yql/console/">YQL Developer Console</a> is a nice place to start playing with YQL queries. You can test and inspect queries before you actually use them.</p>
 
@@ -39,7 +39,7 @@ YUI().use('yql', function(Y) {
 ```
 
 
-<h4 id="query-reuse">Re-Using A Query</h4>
+<h2 id="query-reuse">Re-Using A Query</h2>
 <p>Modifying the example above to make it reusable is simple, just save the result of the query and call `send` on it to query for the results again.</p>
 
 ```
@@ -57,7 +57,7 @@ YUI().use('yql', function(Y) {
 ```
 
 
-<h4>Changing A Re-Used Query</h4>
+<h2>Changing A Re-Used Query</h2>
 <p>Changing a query without creating a new instance can be beneficial for queries that involve the same request but different parameters (like an AutoComplete query).</p>
 <p>To do this, we need to modify the private param `q` on the YQL instance.</p>
 
@@ -75,11 +75,11 @@ YUI().use('yql', function(Y) {
 });
 ```
 
-<h4 id="tables">Open Data Tables</h4>
+<h2 id="tables">Open Data Tables</h2>
 <p>Open Data Tables enable developers to add tables for any data on the Web to YQL's stable of API-specific tables. Using Open Data Tables, anyone can make their data YQL-accessible. If you would like to create an Open Data Table, visit the community page at <a href="http://datatables.org">http://datatables.org</a>.</p>
 <p>By default, the `YQL` module will include the environment file needed to use all of the publicly available Open Data Tables.</p>
 
-<h4 id="advoptions">Advanced Options</h4>
+<h2 id="advoptions">Advanced Options</h2>
 <p>The default configuration for the `YQL` module is designed for the most basic use cases. However, the `YQLRequest` class is designed to give the developer more control over the query, parameters and options used to make the YQL Request.</p>
 
 ```

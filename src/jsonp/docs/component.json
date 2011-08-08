@@ -10,9 +10,9 @@
     "examples": [
 
         {
-            "name": "jsonp_github",
+            "name": "jsonp-github",
 	        "displayName": "Getting Cross Domain JSON Data Using Y.jsonp()",
-	        "description": "Get basic <a href='http://github.com'>GitHub</a> user info using a <code>Y.jsonp(url, callback)</code>.",
+	        "description": "Get basic GitHub user info using a Y.jsonp(url, callback).",
 	        "modules": ["jsonp"],
 	        "useModules": ["jsonp", "node"],
 
@@ -20,21 +20,11 @@
         },
 
         {
-            "name": "jsonp_gallery",
+            "name": "jsonp-gallery",
 	        "displayName": "Reusing a JSONPRequest Instance to Poll a Remote Server",
 	        "description": "Create a reusable JSONPRequest object to poll the YUILibrary.com Gallery web service, fetching info on a random Gallery module.",
 	        "modules": ["jsonp", "transition"],
 	        "useModules": ["jsonp", "transition"],
-
-            "hideTableOfContents": true
-        },
-
-        {
-            "name": "jsonp_fail",
-	        "displayName": "Advanced Configuration of JSONP Requests",
-	        "description": "Handle timeout or connection failures, override the 'this' object of the callback, and provide additional arguments to the callback",
-	        "modules": ["jsonp"],
-	        "useModules": ["jsonp-base", "node"],
 
             "hideTableOfContents": true
         }

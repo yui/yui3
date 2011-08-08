@@ -14,7 +14,7 @@ YUI().use('node', function(Y) {
         this.setContent('thanks from all of us!');
 
         // e.currentTarget === #demo li
-        e.currentTarget.setStyle('backgroundColor', 'green');
+        e.currentTarget.addClass('highlight');
     };
 
     nodes.on('click', onClick);

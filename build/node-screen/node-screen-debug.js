@@ -39,14 +39,14 @@ Y.each([
     'docHeight',
 
     /**
-     * Amount page has been scroll vertically 
+     * Pixel distance the page has been scrolled horizontally 
      * @config docScrollX
      * @type {Int}
      */
     'docScrollX',
 
     /**
-     * Amount page has been scroll horizontally 
+     * Pixel distance the page has been scrolled vertically 
      * @config docScrollY
      * @type {Int}
      */
@@ -154,7 +154,7 @@ Y.Node.importMethod(Y.DOM, [
 /**
  * Swaps the XY position of this node with another node. 
  * @method swapXY
- * @param {Y.Node || HTMLElement} otherNode The node to swap with.
+ * @param {Node | HTMLElement} otherNode The node to swap with.
  * @chainable
  */
     'swapXY'

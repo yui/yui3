@@ -4,7 +4,7 @@
     
     /**
      * A test suite that can contain a collection of TestCase and TestSuite objects.
-     * @param {String||Object} data The name of the test suite or an object containing
+     * @param {String|Object} data The name of the test suite or an object containing
      *      a name property as well as setUp and tearDown methods.
      * @namespace Test
      * @class Suite
@@ -45,7 +45,7 @@
         
         /**
          * Adds a test suite or test case to the test suite.
-         * @param {Y.Test.Suite||Y.Test.Case} testObject The test suite or test case to add.
+         * @param {Test.Suite|Test.Case} testObject The test suite or test case to add.
          * @return {Void}
          * @method add
          */

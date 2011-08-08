@@ -2,7 +2,7 @@
 <script>
 // Create a new YUI instance, requiring stylesheet, overlay, slider, and the
 // dd-plugin to make the overlay draggable
-YUI({filter:"debug"}).use("stylesheet","overlay","slider","dd-plugin", function (Y) {
+YUI().use("stylesheet","overlay","slider","dd-plugin", function (Y) {
 
     var myStyleSheet = new Y.StyleSheet(),
         overlayContent = Y.one('#form_container'),

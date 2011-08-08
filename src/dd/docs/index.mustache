@@ -7,7 +7,7 @@
 
 <h2>Using Drag and Drop</h2>
 
-<h4>Basic Drag</h4>
+<h3>Basic Drag</h3>
 <p>You create a simple Drag instance by including the `dd-drag` module and using the following code:</p>
 
 ```
@@ -18,7 +18,7 @@ YUI().use('dd-drag', function(Y) {
 });
 ```
 
-<h4>Basic Proxy Drag</h4>
+<h3>Basic Proxy Drag</h3>
 <p>You create a simple Proxy Drag instance by including the `dd-drag` and `dd-proxy` modules and using the following code:</p>
 
 ```
@@ -29,7 +29,7 @@ YUI().use('dd-drag', 'dd-proxy', function(Y) {
 });
 ```
 
-<h4>Basic Drop Target</h4>
+<h3>Basic Drop Target</h3>
 <p>You create a simple Drop Target instance by including the `dd-drop` module and using the following code:</p>
 
 ```
@@ -40,7 +40,7 @@ YUI().use('dd-drop', function(Y) {
 });
 ```
 
-<h4 id="events">Events</h4>
+<h2 id="events">Events</h2>
 
 <p>Drag and Drop for YUI 3 has been been packed with useful events to allow the implementer to control the end user experience.</p>
 <p><em>* All Drag and Drop events bubble, by default, to the Drag and Drop Manager.</em></p>
@@ -199,7 +199,7 @@ YUI().use('dd-drop', function(Y) {
     </tbody>
 </table>
 				
-<h4 id="bubbling">Event Bubbling</h4>
+<h3 id="bubbling">Event Bubbling</h3>
 
 <p>To allow for a truly Event driven application, all Drag and Drop related events are bubbled to the `DragDropMgr`.</p>
 <p>This allows you to listen for all Drag and Drop events from a central location, per YUI instance.</p>
@@ -230,7 +230,7 @@ var doSomething = function() {
 Y.DD.DDM.on('drag:drag', doSomething);
 ```
 
-<h4 id="delegate">Delegate Dragging</h4>
+<h2 id="delegate">Delegate Dragging</h2>
 <p>Delegate dragging allows you to create a "list/group" of draggable items that are under a common "container". Using this approach, you can have hundreds of draggable items, yet only have one object created under the hood.</p>
 <p>This approach is also handy for situations where you are dynamically adding and removing items from the "list" and need to make them draggable. Using `Delegate` you wouldn't have to create a new `drag` instance when adding or removing it.</p>
 
@@ -243,7 +243,10 @@ YUI().use('dd-delegate', function(Y) {
 });
 ```
 
-<h4 id="cssclasses">CSS Class Names</h4>
+<p><strong>Note:</strong> `DD.Delegate` does not auto find your drop target items, if you change the `nodes` under the hood (add or remove) you need to call `delegate.syncTargets();` to manage them.</p>
+
+
+<h2 id="cssclasses">CSS Class Names</h2>
 
 <p>The Drag and Drop Utility adds CSS class names for important moments in the drag and drop operation. Below you will find the list of these class names.</p>
 <p>The Drag and Drop Utility doesn't ship with a default skin, so no style rules are attached to these class names. That is completely left up to the implementer.</p>
@@ -305,14 +308,14 @@ YUI().use('dd-delegate', function(Y) {
     </tbody>
 </table>
 
-<h4 id="gestures">Touch/Gesture Support</h4>
+<h2 id="gestures">Touch/Gesture Support</h2>
 
 <p>Native gesture support was added to DD in 3.2.0. This support is transparent and the implementor should not have to do anything to use this functionality. When `dd` is used, loader will check the device to see if it contains support for Gesture Events, if the device supports these events the `dd-gestures` module will automatically be loaded as well as it's dependencies. At this point, DD will operate as usual but it will utilize the native gesture events instead of mouse based events.</p>
 
 
 
 
-<h3 id="modules">Module Descriptions</h3>
+<h2 id="modules">Module Descriptions</h2>
 
 <p>Drag and Drop for YUI 3 has been broken up into several modules to allow you, as the implementer, to pick how you want it to work and what code you need on your page.</p>
 <table>
@@ -369,7 +372,7 @@ YUI().use('dd-delegate', function(Y) {
     </tbody>
 </table>
 
-<h3 id="plugins">DD Plugins</h3>
+<h2 id="plugins">DD Plugins</h2>
 
 <p><strong>In 3.2.0, some modules have been removed from the rollup and were converted to DD Plugins.</strong> Below are the list of plugins that are no longer in the `dd` rollup.</p>
 <table>

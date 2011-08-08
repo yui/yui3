@@ -1,6 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="YUI" default="local">
-    <description>Rollup build file for io</description>
-    <property file="build.properties" />
-    <import file="${builddir}/3.x/bootstrap.xml" description="Default Build Properties and Targets" />
+    <description>IO - Build All Modules</description>
+    <macrodef name="build-widget">
+        <attribute name="target"/>
+        <sequential>
+            <ant antfile="io-base.xml" target="@{target}"/>
+            <ant antfile="io-xdr.xml" target="@{target}"/>
+            <ant antfile="io-form.xml" target="@{target}"/>
+            <ant antfile="io-upload-iframe.xml" target="@{target}"/>
+            <ant antfile="io-queue.xml" target="@{target}"/>
+        </sequential>
+    </macrodef>
+    <target name="local">
+        <build-widget target="local"/>
+    </target>
+    <target name="deploy">
+        <build-widget target="deploy"/>
+    </target>
+    <target name="all">
+        <build-widget target="all"/>
+    </target>
+    <target name="clean">
+        <build-widget target="clean"/>
+    </target>
 </project>

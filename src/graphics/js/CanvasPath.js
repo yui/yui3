@@ -34,8 +34,9 @@ Y.extend(CanvasPath, Y.CanvasShape, {
 	/**
 	 * Creates the dom node for the shape.
 	 *
-	 * @private
+     * @method createNode
 	 * @return HTMLElement
+	 * @private
 	 */
 	createNode: function()
 	{

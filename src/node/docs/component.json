@@ -9,8 +9,8 @@
 
     "examples": [
         {
-            "name"       : "basic-node",
-            "displayName": "Node Basics",
+            "name"       : "properties",
+            "displayName": "Set and Get Properties",
             "description": "Using selectors and property accessors with Node.",
             "modules"    : ["node"],
             "tags"       : ["dom", "node"],
@@ -29,11 +29,11 @@
         },
 
         {
-            "name"       : "event-node",
-            "displayName": "NodeList Events",
-            "description": "Using events with NodeList instances.",
+            "name"       : "events",
+            "displayName": "Handling DOM Events",
+            "description": "Listening for DOM events with Node instances.",
             "modules"    : ["node"],
-            "tags"       : ["dom", "node", "nodelist", "event"],
+            "tags"       : ["dom", "node", "event"],
 
             "hideTableOfContents": true
         },
@@ -54,16 +54,6 @@
             "description": "Using a single event listener to handle events on multiple nodes.",
             "modules"    : ["node"],
             "tags"       : ["dom", "node", "event", "delegate"],
-
-            "hideTableOfContents": true
-        },
-
-        {
-            "name"       : "node-screen",
-            "displayName": "Measuring the Window and Document",
-            "description": "This example demonstrates how to measure the size of the window and document.",
-            "modules"    : ["node"],
-            "tags"       : ["dom", "node", "node-screen"],
 
             "hideTableOfContents": true
         },

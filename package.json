@@ -1,6 +1,6 @@
 {
     "name": "yui3-core",
-    "version": "3.4.0pr2",
+    "version": "@VERSION@",
     "description": "YUI 3 Source",
     "author": "Dav Glass <davglass@gmail.com>",
     "bugs": { "web" : "http://yuilibrary.com/projects/yui3/" },

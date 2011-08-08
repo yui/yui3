@@ -136,7 +136,7 @@ YUI().use("io-base", "node",
 				state = 'global';
 			}
 
-			Y.io('assets/get.txt', cfg);
+			Y.io('{{componentAssets}}/get.txt', cfg);
 		}
 
 		Y.on('click', call, "#get1", Y, false);

@@ -1,21 +1,38 @@
 <ul id="demo">
     <li>lorem</li>
-    <li>ispum</li>
+    <li>ipsum</li>
     <li>dolor</li>
     <li>sit</li>
 </ul>
 
 <ul id="demo2">
     <li>foo</li>
+    <li>bar</li>
 </ul>
 
 <script type="text/javascript">
 YUI().use('node', function(Y) {
     var onClick = function(e) {
-        var node = Y.one('#demo2').appendChild(e.currentTarget);
-        node.addClass('yui3-pass');
+        var item = e.currentTarget,
+            list2 = Y.one('#demo2');
+
+        if (item.get('parentNode') === list2) { // remove if list2
+            item.remove(); // sugar for item.get('parentNode').removeChild(item);
+
+            if (list2.all('li').size() < 1) { // hide the list if its empty
+                list2.hide();
+            }
+        } else {
+            if (list2.getStyle('display') === 'none') {
+                list2.show();
+            }
+
+            list2.append(item.cloneNode(true));
+        }
+        
     };
 
-    Y.all('#demo li').on('click', onClick);
+    Y.one('#demo').delegate('click', onClick, 'li');
+    Y.one('#demo2').delegate('click', onClick, 'li');
 });
 </script>

@@ -186,8 +186,10 @@ YUI.add('editor-para', function(Y) {
                     break;
                 case 'keyup':
                     if (Y.UA.gecko) {
-                        if (inst.config.doc && inst.config.doc.body && inst.config.doc.body.innerHTML.length < 2) {
-                            this._fixFirstPara();
+                        if (inst.config.doc && inst.config.doc.body && inst.config.doc.body.innerHTML.length < 20) {
+                            if (!inst.one(FIRST_P)) {
+                                this._fixFirstPara();
+                            }
                         }
                     }
                     break;
@@ -250,7 +252,7 @@ YUI.add('editor-para', function(Y) {
                         }
                     }
                     if (Y.UA.gecko) {
-                        /**
+                        /*
                         * This forced FF to redraw the content on backspace.
                         * On some occasions FF will leave a cursor residue after content has been deleted.
                         * Dropping in the empty textnode and then removing it causes FF to redraw and
@@ -352,4 +354,4 @@ YUI.add('editor-para', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
+}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});

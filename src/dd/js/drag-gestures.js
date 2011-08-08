@@ -1,4 +1,5 @@
-    /**
+
+    /*
     * This module is the conditional loaded DD file to support gesture events.
     * In the event that DD is loaded onto a device that support touch based events
     * This module is loaded and over rides 2 key methods on DD.Drag and DD.DDM to

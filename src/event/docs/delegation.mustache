@@ -149,6 +149,8 @@ because `e.target` will always refer to the most specific element that received
 the click.  This can amount to a lot of filtering code wrapping the item
 removal logic, which hinders the readability of your app.</p>
 
+<h2>Let `node.delegate(...)` do the work for you</h2>
+
 <p>This is where <a href="../event/#event-delegation">`node.delegate(...)`</a>
 comes in. `node.delegate(...)` boils down the filtering logic to a css
 selector, passed as the third argument.  The subscribed callback will only

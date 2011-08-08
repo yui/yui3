@@ -1,0 +1,54 @@
+<script type="text/javascript">
+// Create a YUI instance and request the console module and its dependencies
+YUI({ filter: 'debug' }).use("console-filters", function (Y) {
+
+// create the console instance
+var yconsole = new Y.Console({
+    boundingBox: '#yconsole',
+    height: '400px',
+    width: '450px',
+    newestOnTop: false,
+    style: 'block',
+    plugins: [ Y.Plugin.ConsoleFilters ]
+}).render();
+
+// unknown categories and sources are allowed.
+yconsole.filter.hideCategory('error');
+
+// hide and show methods support N arguments.
+yconsole.filter.hideSource('attribute','widget');
+
+/* Alternately
+var yconsole = new Y.Console({
+    boundingBox: '#console',
+    height: '400px',
+    width: '450px',
+    style: 'block',
+    newestOnTop: false
+}).plug(Y.Plugin.ConsoleFilters, {
+    category: {
+        error: false
+    },
+    source: {
+        attribute: false,
+        widget: false
+    }
+}).render();
+*/
+
+// Broadcast a log message from a button that uses a custom category and source
+Y.on('click', function () {
+    Y.log('Logging a message to the Console','my_stuff','MyApp');
+},'#log');
+
+// It is also possible to set the filter's subattributes directly
+Y.on('click', function () {
+    var current = yconsole.filter.get('category.info');
+
+    yconsole.filter.set('category.info', !current);
+
+    this.set('text', (current ? 'Show' : 'Hide') + ' info messages');
+},'#toggle_info');
+
+});
+</script>

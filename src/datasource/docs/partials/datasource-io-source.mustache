@@ -1,0 +1,162 @@
+<style scoped>
+/* custom styles for this example */
+#demo .output {margin-bottom:1em; padding:10px; border:1px solid #D9D9D9;}
+</style>
+
+<form id="demo">
+    <h4>JSON</h4>
+    <h6>Data</h6>
+    <pre>
+{
+    "ResultSet": {
+        "type":"web",
+        "totalResultsAvailable":391000000,
+        "totalResultsReturned":10,
+        "firstResultPosition":1,
+        ...
+        "Result":[
+            {"Title":"Madonna","Summary":"Official site of pop diva
+                Madonna, with news, music, media, and fan club.",
+                "Url":"http:\/\/www.madonna.com\/", ...,
+                "Size":"145030"}},
+            {"Title":"Madonna - MySpace","Summary":"Madonna MySpace
+                page features news, blog, music downloads, desktops,
+                wallpapers, and more.",
+                "Url":"http:\/\/www.myspace.com\/madonna",
+                ..., "Size":"110365"}},
+            {"Title":"YouTube - madonna's Channel",
+                "Summary":"The Official Madonna YouTube Channel.
+                Want to Subscribe? ... http:\/\/www.youtube.com\/Madonna.
+                Sharing Options There are 3 ways to share this channel.",
+                "Url":"http:\/\/youtube.com\/madonna", ...,
+                "Size":"49955"}},
+            ...
+        ]
+    }
+}
+    </pre>
+
+    <h6>Schema</h6>
+    <pre>
+{
+    resultListLocator: "ResultSet.Result",
+    resultFields: ["Title"]
+}
+    </pre>
+
+    <h6>Normalized data</h6>
+    <input type="button" id="demo_json" value="Retrieve data">
+    <div id="demo_output_json" class="output"></div>
+
+    <h4>XML</h4>
+    <h6>Data</h6>
+    <pre>
+&lt;query xmlns:yahoo="http://www.yahooapis.com/v1/base.rng"
+    yahoo:count="10" ...&gt;
+    &lt;diagnostics&gt;
+        ...
+    &lt;/diagnostics&gt;
+    &lt;results&gt;
+        &lt;result xmlns="http://www.inktomi.com/"&gt;
+            ...
+            &lt;dispurl&gt
+                &lt;![CDATA[www.&lt;b&gt;madonna.com&lt;/b&gt;]]&gt;
+            &lt;/dispurl&gt;
+            &lt;size&gt;144947&lt;/size&gt;
+            &lt;title&gt;
+                &lt;![CDATA[&lt;b&gt;madonna&lt;/b&gt;.com home]]&gt;
+            &lt;/title&gt;
+            &lt;url&gt;http://www.madonna.com/&lt;/url&gt;
+        &lt;/result&gt;
+        &lt;result xmlns="http://www.inktomi.com/"&gt;
+            ...
+            &lt;dispurl&gt;
+                &lt;![CDATA[&lt;b&gt;en.wikipedia.org&lt;/b&gt;/wiki/&lt;wbr&gt;
+                &lt;b&gt;Madonna&lt;/b&gt;_(entertainer)]]&gt;
+            &lt;/dispurl&gt;
+            &lt;size&gt;450316&lt;/size&gt;
+            &lt;title&gt;
+                &lt;![CDATA[&lt;b&gt;Madonna&lt;/b&gt; (Entertainer) - Wikipedia]]&gt;
+            &lt;/title&gt;
+            &lt;url&gt;http://en.wikipedia.org/wiki/Madonna_(entertainer)&lt;/url&gt;
+        &lt;/result&gt;
+        &lt;result xmlns="http://www.inktomi.com/"&gt;
+            ...
+            &lt;dispurl&gt;
+                &lt;![CDATA[www.&lt;b&gt;myspace.com&lt;/b&gt;/&lt;b&gt;madonna&lt;/b&gt;]]&gt;
+            &lt;/dispurl&gt;
+            &lt;size&gt;110851&lt;/size&gt;
+            &lt;title&gt;
+                &lt;![CDATA[&lt;b&gt;Madonna&lt;/b&gt; - MySpace]]&gt;
+            &lt;/title&gt;
+            &lt;url&gt;http://www.myspace.com/madonna&lt;/url&gt;
+        &lt;/result&gt;
+        ...
+    &lt;/results&gt;
+&lt;/query&gt;
+</pre>
+
+    <h6>Schema</h6>
+    <pre>
+{
+    resultListLocator: "result",
+    resultFields: [{key:"title", locator:"*[local-name() ='title']"}]
+}
+    </pre>
+
+    <h6>Normalized data</h6>
+    <input type="button" id="demo_xml" value="Retrieve data">
+    <div id="demo_output_xml" class="output"></div>
+</form>
+
+<script type="text/javascript">
+YUI().use("dump", "node", "datasource-io", "datasource-jsonschema", "datasource-xmlschema", function (Y) {
+    var myDataSourceJSON = new Y.DataSource.IO({source:"../assets/datasource/ysearch.json"}),
+        myCallbackJSON = {
+            success: function(e){
+                Y.one("#demo_output_json").setContent(Y.dump(e.response));
+            },
+            failure: function(e){
+                Y.one("#demo_output_json").setContent("Could not retrieve data: " + e.error.message);
+            }
+        };
+
+    myDataSourceJSON.plug(Y.Plugin.DataSourceJSONSchema, {
+        schema: {
+            resultListLocator: "ResultSet.Result",
+            resultFields: ["Title"]
+        }
+    });
+
+    Y.on("click", function(e){
+        myDataSourceJSON.sendRequest({
+            request:"?output=json",
+            callback:myCallbackJSON
+        });
+    }, "#demo_json");
+
+    var myDataSourceXML = new Y.DataSource.IO({source:"../assets/datasource/ysearch.xml"}),
+        myCallbackXML = {
+            success: function(e){
+                Y.one("#demo_output_xml").setContent(Y.dump(e.response).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"));
+            },
+            failure: function(e){
+                Y.one("#demo_output_xml").setContent("Could not retrieve data: " + e.error.message);
+            }
+        };
+
+    myDataSourceXML.plug(Y.Plugin.DataSourceXMLSchema, {
+        schema: {
+            resultListLocator: "result",
+            resultFields: [{key:"title", locator:"*[local-name() ='title']"}]
+        }
+    });
+
+    Y.on("click", function(e){
+        myDataSourceXML.sendRequest({
+            request:"?output=xml",
+            callback:myCallbackXML
+        });
+    }, "#demo_xml");
+});
+</script>

@@ -208,19 +208,19 @@ Y.DOMEventFacade = DOMEventFacade;
 
     /**
      * Node reference for the targeted element
-     * @propery target
+     * @property target
      * @type Node
      */
 
     /**
      * Node reference for the element that the listener was attached to.
-     * @propery currentTarget
+     * @property currentTarget
      * @type Node
      */
 
     /**
      * Node reference to the relatedTarget
-     * @propery relatedTarget
+     * @property relatedTarget
      * @type Node
      */
 

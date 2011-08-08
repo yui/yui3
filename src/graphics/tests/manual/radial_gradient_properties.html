@@ -1,0 +1,391 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Radial Gradient Properties</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+<link rel="stylesheet" type="text/css" href="../../../../build/cssreset/reset-min.css">
+<link type="text/css" rel="stylesheet" href="../../../../build/cssfonts/fonts-min.css">
+
+<script src="../../../../build/yui/yui.js"></script>
+
+
+
+</head>
+		
+<style>
+html {
+    background-color:#000;
+}
+body{
+    font-family:verdana;
+    font-size:78%;
+    color: #ccc;
+    
+}
+#example{
+    position: relative;
+    margin: 40px 40px;
+    background-color:#000;
+}
+.button .button-contents {
+	position:relative;
+    display: inline-block;
+	cursor: pointer;
+    font-family: HelveticaNeue,arial,helvetica,clean,sans-serif;
+	font-size:13.6px;
+    text-shadow: 0 -1px 0 rgba(0,0,0,0.7);
+	text-align:center;
+	color: #fff;
+    padding: 0 1.0em;
+	height:2.05em;
+	line-height:2.05em;
+    text-decoration: none;
+    
+	border:solid 1px #0c0c0c;
+	-moz-border-radius: 0.435em;
+	-webkit-border-radius: 0.435em;
+	border-radius: 0.435em;
+
+	-moz-box-shadow: 0 1px #222222; 
+	-webkit-box-shadow: 0 1px #222222;
+	box-shadow: 0 1px #222222; 
+
+	background-color:#555658;
+	background: -moz-linear-gradient(
+		0% 100% 90deg, 
+		#343536 0%, 
+		#555658 96%,
+		#3E3F41 100%
+	);
+    background: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        from(#343536),        bad colors!!!!
+        color-stop(0.96, #555658),
+        to(#3E3F41)     
+    );
+    
+}
+#mycanvas {
+    position:absolute;
+    top:0;
+    left:0;
+    width:250px;
+    height:200px;
+    background-color:#333;
+    /*border: 3px solid #ff0000;*/
+}
+.code-div{
+    position:absolute;
+    top:50px;
+    left:305px;
+    text-align:left;
+}
+.code{
+    height:200px;
+    width:240px;
+}
+.code-div label{
+    display: inline-block;
+    color:#ccc;
+    width:15px;
+    text-align: right;
+}
+
+/*gradient controls*/
+.grad-c{
+    position:absolute;
+    top:50px;
+    left:50px;
+    width:1px;
+    height:1px;
+    cursor: move;
+}
+.grad-f{
+    position:absolute;
+    top:40px;
+    left:40px;
+    width:20px;
+    height:20px;
+    background-color:#f00;
+    -moz-border-radius:10px;
+    -webkit-border-radius:10px;
+    cursor: move;
+}
+.grad-r{ /* is contained within .grad-c */
+    position:absolute;
+    top:-50px;
+    left:-50px;
+    width:100px;
+    height:100px;
+    background-color:#2D2D66;
+    -moz-border-radius:50px;
+    -webkit-border-radius:50px;
+    opacity:0.8;
+    filter:alpha(opacity=80);
+}
+#grad-control{
+    position:relative;
+    width:100px;
+    height:100px;
+    border:solid 1px #555;
+
+}
+#grad-control label{
+    position:absolute;
+    width:100px;
+    top: 100%;
+    padding-top: 0.3em;
+    text-align:center;
+    color: #555;
+}
+#output-grad {
+    position:absolute;
+    left:200px;
+    top:0;
+    width:200px;
+}
+#output-grad li{
+    padding:0.3em;
+} 
+#output-grad li span {
+    display: inline-block;
+    width: 30px;
+    color: #fff;
+    margin-left: 0.5em;
+} 
+#output-grad textarea {
+    margin-top: 0.3em;
+    width:323px;
+    height:343px;
+    visibility: hidden;
+} 
+#output-grad ul {
+    margin-bottom: 1.3em;
+} 
+
+</style>
+
+<body class="yui3-skin-sam">
+    <div id="example">
+        <div id="mycanvas">
+        </div>
+        <div class="code-div">
+            <div id="grad-control" title="Represents the boundary of the object">
+                <label>Interactive Control</label>
+                <div class="grad-c">
+                    <div id="resize-r" class="grad-r" title="Drag to set 'cx,cy' properties. Resize to set 'r' property."></div>
+                </div>
+                <div class="grad-f" title="Drag to set 'fx,fy' properties."></div>
+            </div>
+            <div id="output-grad">
+                <ul>
+                    <li><label>cx:</label> <span id='out-cx'>0.5</span></li>
+                    <li><label>cy:</label> <span id='out-cy'>0.5</span></li>
+                    <li><label>fx:</label> <span id='out-fx'>0.5</span></li>
+                    <li><label>fy:</label> <span id='out-fy'>0.5</span></li>
+                    <li><label>r:</label> <span id='out-r'>0.5</span></li>
+                </ul>
+                <div id="btn-get-code" class="button"><a class="button-contents">Get Code Snippet</a></div>
+                <textarea></textarea>
+            </div>
+        </div>
+    </div>
+<script type="text/javascript">   
+YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','dd-constrain','resize','json', function (Y){
+    
+    
+///////////////////// gradient UI controls //////////////////////
+    var resizeNode = Y.one('#resize-r'),
+    gradControlNode = Y.one('#grad-control'),
+    outCX = Y.one('#out-cx'), 
+    outCY = Y.one('#out-cy'), 
+    outFX = Y.one('#out-fx'), 
+    outFY = Y.one('#out-fy'), 
+    outR = Y.one('#out-r'),
+    myellipse,
+    bounds = Y.one('#grad-control'),  
+    origX = bounds.getX(),
+    origY = bounds.getY(),
+    maxX = bounds.get('offsetWidth'),
+    maxY = bounds.get('offsetHeight'),
+    cW = Y.one('.grad-c').get('offsetWidth'),
+    fW = Y.one('.grad-f').get('offsetWidth'),
+    theCX = 0.5,
+    theCY = 0.5,
+    theFX = 0.5,
+    theFY = 0.5,
+    theR = 0.5,
+    stopsArr = [
+                    {color: "#f00", opacity:1, offset:0},
+                    {color: "#005", opacity:1, offset:1}
+                ];
+    // Updates the radial fill properties in myellipse
+    var updateGraphic = function(){
+        myellipse.set('fill', {
+                type: "radial",
+                stops: stopsArr,
+                cx: theCX,
+                cy: theCY,
+                fx: theFX,
+                fy: theFY,
+                r: theR                
+            }
+        );
+    }
+    
+    // This recenters the outter edge of the gradient control, as it is sized
+    var recenterGradientR = function(e){
+        var radius = resizeNode.get('offsetWidth')/2 + 'px';
+        resizeNode.setStyles({
+            'left': '-' + radius, 
+            'top': '-' + radius,
+            'borderRadius': radius
+            }  );
+        theR =  (resizeNode.get('offsetWidth') / 2)  / gradControlNode.get('offsetWidth');
+        theR = Math.round(theR * 100) / 100;
+        outR.setContent(theR);
+        updateGraphic();        
+    }
+    
+    // Instatiate a resize object on the outter gradient control ring
+    var resize = new Y.Resize({
+        //Selector of the node to resize
+        node: '#resize-r',
+        handles: ['bl', 'br', 'tl', 'tr']
+    });   
+	resize.plug(Y.Plugin.ResizeConstrained, {
+		minWidth: 20,
+		minHeight: 20,
+		maxWidth: 300,
+		maxHeight: 300,
+		preserveRatio: true
+	});
+    resize.after('resize:end', function(){
+        recenterGradientR();
+    });
+    resize.after('resize:resize', function(){    // seem to need both resize:resize and resize:end
+        recenterGradientR();
+    });
+
+
+    // Instantiate a drag on the container of the outter gradient control ring
+    var ddC = new Y.DD.Drag({
+        node: '.grad-c'
+    }).plug(Y.Plugin.DDConstrained, {
+        constrain2node: '#grad-control'
+    }),
+    
+    // Instantiate a drag on the container of the inner gradient control ring
+    ddF = new Y.DD.Drag({
+        node: '.grad-f'
+    }).plug(Y.Plugin.DDConstrained, {
+        constrain2node: '#grad-control'
+    });
+
+    // Handle drag of the container of the outter control ring
+    ddC.on('drag:drag', function(e){
+        
+        theCX = (this.lastXY[0] - origX) / (maxX - cW);
+        theCY = (this.lastXY[1] - origY) / (maxY - cW);
+        theCX = Math.round(theCX * 100) / 100;
+        theCY = Math.round(theCY * 100) / 100;
+        
+        outCX.setContent(theCX);
+        outCY.setContent(theCY);
+        updateGraphic();                
+
+    });
+    
+    
+    // Handle drag of the container of the inner control ring
+    ddF.on('drag:drag', function(e){
+        
+        theFX = (this.lastXY[0] - origX) / (maxX - fW);
+        theFY = (this.lastXY[1] - origY) / (maxY - fW);
+        theFX = Math.round(theFX * 100) / 100;
+        theFY = Math.round(theFY * 100) / 100;
+        outFX.setContent(theFX);
+        outFY.setContent(theFY);
+        updateGraphic();        
+
+    });
+    
+    // Handle a click on the 'get code snippet' button
+    Y.one('#btn-get-code').on('click', function(){
+        Y.log('get code');
+        var html = ''+
+        'myellipse = mygraphic.addShape({\n'+
+        '    type: "ellipse",\n'+
+        '    fill: {\n'+
+        '        type: "radial",\n'+
+        '        stops: [\n'+
+        '           ' + Y.JSON.stringify(stopsArr[0]) + ',\n'+
+        '           ' + Y.JSON.stringify(stopsArr[1]) + '\n'+
+        '        ],\n'+
+        '        cx: ' + theCX + ',\n'+
+        '        cy: ' + theCY + ',\n'+
+        '        fx: ' + theFX + ',\n'+
+        '        fy: ' + theFY + ',\n'+
+        '        r: ' + theR + '\n'+                
+        '    },\n'+
+        '    stroke: {\n'+
+        '        weight: 0,\n'+
+        '        color: "#000" \n'+
+        '    },\n'+
+        '    width: 150,\n'+
+        '    height: 100,\n'+
+        '    x: 35,\n'+
+        '    y: 35\n'+
+        '});\n'+
+        ''+
+        '';
+        var textArea = Y.one('#output-grad textarea')
+        textArea.setStyle('visibility', 'visible');
+        textArea.setContent(html);
+        textArea.focus();
+        textArea.select();
+        
+    });
+///////////////////// END gradient UI controls //////////////////////
+
+    // Instantiate a new graphic to contain objects
+    var mygraphic = new Y.Graphic();
+    mygraphic.render("#mycanvas");
+
+    // add shapes to the graphics object
+    var loadGraphics = function (e)
+    {
+        //create an ellipse with addShape
+        myellipse = mygraphic.addShape({
+            type: "ellipse",
+            fill: {
+                type: "radial",
+                stops: stopsArr,
+                cx: 0.5,
+                cy: 0.5,
+                fx: 0.5,
+                fy: 0.5,
+                r: 0.5                
+            },
+            stroke: {
+                weight: 0,
+                color: "#000"
+            },
+            width: 150,
+            height: 100,
+            x: 35,
+            y: 35
+        });
+
+
+    }
+
+    loadGraphics();
+});
+</script>
+</body>
+</html>
+

@@ -1,0 +1,26 @@
+<form id="demo" action="#">
+    <label>Width:</label>
+    <input name="width" size="2">
+    <input type="submit" value="Run">
+</form>
+
+<script type="text/javascript">
+YUI().use('node', function(Y) {
+    var form = Y.one('#demo'),
+        input = Y.one('#demo input[name=width]'),
+        button = Y.one('#demo input[type=submit]');
+
+    button.on('click', function(e) {
+       e.preventDefault(); // keep the form from submitting
+
+       var value = input.get('value'),
+            width = form.get('offsetWidth');
+
+       if (value == '') {
+           input.set('value', width);
+       } else {
+            form.set('offsetWidth', value);
+       }
+    });
+});
+</script>

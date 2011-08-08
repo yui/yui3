@@ -7,11 +7,7 @@
   <div id="mycalendar"></div>
 </div>
 <script type="text/javascript">
-YUI({
-    filter: 'RAW',
-    debug: true,
-    log: true
-}).use('calendar', 'datatype-date', 'datatype-date-math', function(Y) {
+YUI().use('calendar', 'datatype-date', 'datatype-date-math', function(Y) {
 
  // Switch the calendar main template to the included two pane template
  Y.CalendarBase.CONTENT_TEMPLATE = Y.CalendarBase.TWO_PANE_TEMPLATE;

@@ -7,22 +7,21 @@
         node.append('<p class="' + cls + '">' + msg + '</p>');
     };
 
-    YUI_config = {
-        filter:"raw",
-        groups: {
-            myapp: {
-                base: '{{componentAssets}}/',
-                modules : {
-                    "translator" : {
-                        lang: ["en", "fr", "es"]
-                    }
+    var appMetaData = {
+        myapp: {
+            base: '{{componentAssets}}/',
+            modules : {
+                "translator" : {
+                    path: 'translator/translator.js',
+                    lang: ["en", "fr", "es"]
                 }
             }
         }
     };
 
     YUI({
-        lang:"en"
+        lang:"en",
+        groups: appMetaData
     }).use("node-base", "translator", function(Y) {
         var translator = new Y.Translator(),
             out = Y.one("#out");
@@ -33,7 +32,8 @@
     });
 
     YUI({
-        lang:"fr"
+        lang:"fr",
+        groups: appMetaData
     }).use("node-base", "translator", function(Y) {
         var translator = new Y.Translator(),
             out = Y.one("#out");
@@ -44,7 +44,8 @@
     });
 
     YUI({
-        lang:"es"
+        lang:"es",
+        groups: appMetaData
     }).use("node-base", "translator", function(Y) {
         var translator = new Y.Translator(),
             out = Y.one("#out");

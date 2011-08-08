@@ -14,7 +14,7 @@
         {{>panel-animate-js-source}}
     </script>
 </div>
-
+<h2>Creating an animated panel</h2>
 <h3>Setting Up The YUI Instance</h3>
 
 <p>To create an instance of a Panel on your page, the only module you need to request is the `panel` module. The `panel` module will pull in the `widget`, `widget-stack`, `widget-position`, `widget-position-align`, `widget-position-constrain`, `widget-stdmod`, `widget-buttons`, `widget-modality` and `widget-autohide` extensions it uses.</p>
@@ -53,6 +53,7 @@ var panel = new Y.Panel({
   centered:true,
   modal:true,
   visible:false,
+  zIndex: 5,
 
   //Add a footer button to close the panel
   buttons: [
@@ -74,9 +75,7 @@ var panel = new Y.Panel({
 var bb = panel.get('boundingBox');
 
 bb.setStyles({
-  "-webkit-transform": "scale(0)",
-  "-moz-transform": "scale(0)",
-  "transform": "scale(0)"
+  "opacity": 0
 });
 ```
 
@@ -91,23 +90,15 @@ bb.setStyles({
 ```
 function toggleAnimation (e) {
   if (e.newVal) {
-
-    //If the panel is shown, pop in with these properties
     bb.transition({
-      duration: 0.3,
-      "-webkit-transform": "scale(1)",
-      "-moz-transform": "scale(1)",
-      "transform": "scale(1)"
+      duration: 1,
+      opacity: 1
     });
   }
   else {
-
-    //If the panel is hidden, pop out with these properties
     bb.transition({
-      duration: 0.3,
-      "-webkit-transform": "scale(0)",
-      "-moz-transform": "scale(0)",
-      "transform": "scale(0)"
+      duration: 1,
+      opacity: 0
     });
   }
 }
@@ -131,7 +122,7 @@ openBtn.on('click', function(e) {
 panel.on('visibleChange', toggleAnimation);
 ```
 
-<h2>Complete Example Source</h2>
+<h3>Complete Example Source</h3>
 ```
   {{>panel-animate-source}}
 ```

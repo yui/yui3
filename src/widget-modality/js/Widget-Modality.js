@@ -116,16 +116,18 @@ var WIDGET         = 'widget',
              * outside the widget is clicked on or focussed upon.</p>
              */
             focusOn: {
-                value: [
-                    {
-                        // node: this.get(BOUNDING_BOX),
-                        eventName: ClickOutside
-                    },
-                    {
-                        //node: this.get(BOUNDING_BOX),
-                        eventName: FocusOutside
-                    }
-                ],
+                valueFn: function() {
+                    return [
+                        {
+                            // node: this.get(BOUNDING_BOX),
+                            eventName: ClickOutside
+                        },
+                        {
+                            //node: this.get(BOUNDING_BOX),
+                            eventName: FocusOutside
+                        }
+                    ];
+                },
 
                 validator: Y.Lang.isArray
             }
@@ -147,7 +149,8 @@ var WIDGET         = 'widget',
      */
     WidgetModal._GET_MASK = function() {
 
-        var mask = Y.one(".yui3-widget-mask") || null;
+        var mask = Y.one(".yui3-widget-mask") || null,
+        win = Y.one('window');
 
         if (mask) {
             return mask;
@@ -156,14 +159,28 @@ var WIDGET         = 'widget',
             
             mask = Y.Node.create('<div></div>');
             mask.addClass(MODAL_CLASSES.mask);
-            mask.setStyles({
-                position    : supportsPosFixed ? 'fixed' : 'absolute',
-                width       : '100%',
-                height      : '100%',
-                top         : '0',
-                left        : '0',
-                display     : 'block'
-            });
+            if (supportsPosFixed) {
+                mask.setStyles({
+                    position    : 'fixed',
+                    width       : '100%',
+                    height      : '100%', 
+                    top         : '0',
+                    left        : '0',
+                    display     : 'block'
+                });
+            }
+            else {
+                mask.setStyles({
+                    position    : 'absolute',
+                    width       : win.get('winWidth') +'px',
+                    height      : win.get('winHeight') + 'px',
+                    top         : '0',
+                    left        : '0',
+                    display     : 'block'
+                });
+            }
+
+
 
             return mask;
         }
@@ -224,6 +241,14 @@ var WIDGET         = 'widget',
             this.after(VISIBLE+CHANGE, this._afterHostVisibleChangeModal);
             this.after(Z_INDEX+CHANGE, this._afterHostZIndexChangeModal);
             this.after("focusOnChange", this._afterFocusOnChange);
+            
+            //realign the mask in the viewport if positionfixed is not supported.
+            //ios and android don't support it and the current feature test doesnt
+            //account for this, so we are doing UA sniffing here. This should be replaced
+            //with an updated featuretest later.
+            if (!supportsPosFixed || Y.UA.ios || Y.UA.android) {
+                Y.on('scroll', this._resyncMask);
+            }
         },
 
         /**
@@ -271,7 +296,7 @@ var WIDGET         = 'widget',
          * Returns the Y.Node instance of the maskNode
          *
          * @method _getMaskNode
-         * @return {Y.Node} The Y.Node instance of the mask, as returned from WidgetModal._GET_MASK
+         * @return {Node} The Y.Node instance of the mask, as returned from WidgetModal._GET_MASK
          */
         _getMaskNode : function () {
 
@@ -459,7 +484,7 @@ var WIDGET         = 'widget',
          * Repositions the mask in the DOM for nested modality cases.
          *
          * @method _repositionMask
-         * @param {Y.Widget} nextElem The Y.Widget instance that will be visible in the stack once the current widget is closed.
+         * @param {Widget} nextElem The Y.Widget instance that will be visible in the stack once the current widget is closed.
          */
         _repositionMask: function(nextElem) {
 
@@ -488,6 +513,29 @@ var WIDGET         = 'widget',
                 this.fire(MaskShow);
             }
             
+        },
+
+        /**
+         * Resyncs the mask in the viewport for browsers that don't support fixed positioning
+         *
+         * @method _resyncMask
+         * @param {Y.Widget} nextElem The Y.Widget instance that will be visible in the stack once the current widget is closed.
+         * @private
+         */
+        _resyncMask: function (e) {
+            var o = e.currentTarget,
+            offsetX = o.get('docScrollX'),
+            offsetY = o.get('docScrollY'),
+            w = o.get('innerWidth') || o.get('winWidth'),
+            h = o.get('innerHeight') || o.get('winHeight'),
+            mask = WidgetModal._GET_MASK();
+
+            mask.setStyles({
+                "top": offsetY + "px",
+                "left": offsetX + "px",
+                "width": w + 'px',
+                "height": h + 'px'
+            });
         },
 
         /**

@@ -1,7 +1,3 @@
-<html>
-<head>
-</head>
-<body>
 <div id="mychart"></div>
 <div class="fields">
     <p>
@@ -78,9 +74,9 @@
         
         //Click handler
         Y.on("click", function(e) {
-            var axisName = document.getElementById("axisSelector").value,
-                rotation = parseFloat(document.getElementById("rotation").value),
-                color = Y.Escape.html(document.getElementById("color").value),
+            var axisName = Y.one("#axisSelector").get("value"),
+                rotation = parseFloat(Y.one("#rotation").get("value")),
+                color = Y.Escape.html(Y.one("#color").get("value")),
                 label = null,
                 axis;
             if(axisName)
@@ -107,5 +103,3 @@
     });
 })();
 </script>
-</body>
-</html>

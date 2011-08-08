@@ -3,14 +3,154 @@
     events triggered by users entering specific keys.  The subscription
     signature includes a filter configuration that can be used to limit event
     triggering based on key codes, shift, ctrl, alt, or meta keys pressed, as
-    well as which keyboard event (`keydown`, `keyup`, or `keypress`).</p>
+    well as specifying the keyboard event (`keydown`, `keyup`, or
+    `keypress`).</p>
 </div>
 
 <h2>The filtering spec</h2>
 
-<p>An example subscription might look like this:</p>
+<p>Example subscriptions might look like this:</p>
 
 ```
+// certain keys can be referenced by name
+input.on('key', saveAndClose, 'enter');
+
+// require modifier keys with +(modifier)
+Y.one('doc').on('key', composeMail, 'n+ctrl');
+
+// specify the event and key codes
+datatable.get('contentBox')
+    .delegate('key', moveAround, 'down:37,38,39,40', '.yui3-datatable-liner');
 ```
 
-<h2>Common keys by name</h2>
+<p>The third argument is the filtering spec.  Similar to using the
+`node.delegate()` method, the callback is only executed if the key event
+matches the filter.  The supported filter syntax is a string defined like
+this:</p>
+
+{{>key-railroad-style}}
+
+<ol>
+    <li>(0..1) <span class="token">type</span> followed by a colon</li>
+    <li>(0..n) comma separated <span class="token">code</span>s</li>
+    <li>(0..n) <span class="token">modifier</span>s, each preceded by "+"</li>
+</ol>
+
+<h4>Choo choo!</h4>
+<p>If you're into railroad diagrams, the filter spec looks like this:</p>
+
+<ul class="railroad yui3-g">
+    <li class="yui3-u">
+        <p>"</p>
+    </li>
+    <li class="yui3-u">
+        <div class="branch">
+            <p><span class="token">type</span> :</p>
+        </div>
+    </li>
+    <li class="yui3-u" id="code-branch">
+        <div class="branch">
+            <p><span class="token">code</span></p>
+        </div>
+        <div class="loop">
+            <p>,</p>
+        </div>
+    </li>
+    <li class="yui3-u" id="mod-branch">
+        <div class="branch">
+            <p>+<span class="token">modifier</span></p>
+        </div>
+        <div class="loop"></div>
+    </li>
+    <li class="yui3-u">
+        <p>"</p>
+    </li>
+</ul>
+
+<h4>Filter tokens</h4>
+
+<dl>
+    <dt><span class="token">type</span></dt>
+        <dd>"down", "up", or "press" for `keydown`, `keyup`, and `keypress`.
+        The default is `keypress`.</dd>
+
+    <dt><span class="token">code</span><dt>
+        <dd>Any numeric `keyCode`, unicode character, or <a
+        href="#common">common key name</a>.</dd>
+
+    <dt><span class="token">modifier</span></dt>
+        <dd>"shift", "alt", "ctrl", or "meta". "meta" is the Windows key on
+        Windows-friendly keyboards or the Command key on Apple keyboards.
+        Remember each must be prefixed with "+".</dd>
+</dl>
+
+<h2 id="common">Common keys by name</h2>
+
+<p>Certain keys are common enough that referring to them by name is just easier
+and makes the code more readable.  The supported key names are:</p>
+
+<table>
+<thead>
+    <tr>
+        <th>Name</th>
+        <th>`e.keyCode`</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>enter</td>
+        <td>13</td>
+    </tr>
+    <tr>
+        <td>esc</td>
+        <td>27</td>
+    </tr>
+    <tr>
+        <td>backspace</td>
+        <td>8</td>
+    </tr>
+    <tr>
+        <td>tab</td>
+        <td>9</td>
+    </tr>
+    <tr>
+        <td>pageup</td>
+        <td>33</td>
+    </tr>
+    <tr>
+        <td>pagedown</td>
+        <td>34</td>
+    </tr>
+</tbody>
+</table>
+
+<p>If any of these are found in the spec, the default <span
+class="token">type</span> becomes `keydown`.</p>
+
+<p>If you have a mind to extend this map, it's stored in
+`Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP`.  For example, to add support for
+`node.on('key', callback, 'arrowup')`, you'd do:</p>
+
+```
+Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.arrowup = 38;
+```
+
+<h2>Caveats</h2>
+
+<ol>
+    <li>
+        You can't yet indicate that <span class="token">modifier</span>s must
+        <em>not</em> be in effect or key combinations must <em>only</em>
+        include those <span class="token">modifier</span>s.
+    </li>
+    <li>
+        You can't yet specify <span class="token">type</span>s or <span
+        class="token">modifier</span>s on a per-<span class="token">code</span>
+        basis.
+    </li>
+    <li>
+        Though you can specify keys by their common name, the event is not yet
+        decorated in any way with that common name, so you still have to refer
+        to the `keyCode` in callback code.
+    </li>
+</ol>

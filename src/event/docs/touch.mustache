@@ -1,0 +1,221 @@
+<div class="intro">
+    <p>The `event-touch` module extends the <a
+    href="index.html#appendixA">whitelist of DOM events</a> to include the
+    native touch and gesture events and adds  relevant information to event
+    facades.</p>
+
+    <p>The `event-move` module adds a set of abstract events that adapt to
+    the client environment to handle either touch or mouse input.</p>
+
+    <p>The `event-flick` module adds a "flick" event on top of the gesture
+    abstraction layer to capture a user flicking an element with mouse or
+    finger.</p>
+
+    <p>The `event-gestures` module is a rollup of these three, but will
+    potentially roll in more gesture based events in the future.</p>
+</div>
+
+<h2>Using Touch Events</h2>
+
+<p>YUI DOM event support also extends to touch events. To use touch events in your application, you will need to include the <code>event-touch</code> module in your use statement.</p>
+
+<p>The set of common low-level touch events, which exist on most touch-enabled OSes are supported:</p>
+
+<ul>
+    <li><code>touchstart</code></li>
+    <li><code>touchmove</code></li>
+    <li><code>touchend</code></li>
+    <li><code>touchcancel</code></li>
+</ul>
+
+<p>Additionally, the iOS specific touch events, <code>gesturestart</code>,
+<code>gesturechange</code> and <code>gestureend</code>, are also supported.
+YUI doesn't replicate support for these events on other touch OSes currently,
+due to their lack of DOM level multi-touch support. At the point at which they
+do expose multi-touch information in the lower level touch events, we can build
+in cross-platform support for multi-touch gestures.</p>
+
+```
+node.on('touchstart`, function () {
+    this.addClass('detached');
+});
+```
+
+<h4>The Touch Event Facade</h4>
+
+<p>The event facade passed to touch events has the common set of touch specific
+array properties available:</p>
+
+<ul>
+    <li><code>touches</code></li>
+    <li><code>changedTouches</code></li>
+    <li><code>touchTargets</code></li>
+</ul>
+
+<p>These event objects in these arrays are also normalized, just the same as
+the event object pass to any other DOM listener.</p>
+
+<p>The event object for the iOS gesture events have <code>scale</code> and
+<code>rotation</code> properties, the same as the native event object.</p>
+
+<h2 id="move">Cross-Device Gesture Support</h2>
+
+<p>The <code>event-move</code> module provides the following events that
+<em>roughly</em> relate to the associated touch or mouse event, depending on the client
+device:</p>
+
+<table>
+<thead>
+    <tr>
+        <th>Abstract event</th>
+        <th>Mouse event</th>
+        <th>Touch event</th>
+    </th>
+</thead>
+<tbody>
+    <tr>
+        <td><strong>`gesturemovestart`</strong></td>
+        <td>`mousedown`</td>
+        <td>`touchstart`</td>
+    </tr>
+    <tr>
+        <td><strong>`gesturemove`</strong></td>
+        <td>`mousemove`</td>
+        <td>`touchmove`</td>
+    </tr>
+    <tr>
+        <td><strong>`gesturemoveend`</strong></td>
+        <td>`mouseup`</td>
+        <td>`touchend`</td>
+    </tr>
+</tbody>
+</table>
+
+<p>I say "roughly" because the gesture events aim to encapsulate common
+interactions rather than just serving as a relay to other events.  Where this
+comes out is in the additional configuration that can be included in the
+subscription as a third argument.</p>
+
+```
+// Notify me when the user puts a finger down, or mouses down on
+// the car node
+car.on("gesturemovestart", alignForMove, {
+
+    // fire the event only after 300ms of continuous contact...
+    minTime: 300,
+
+    // ...or if the finger/mouse moves more than 3px
+    minDistance: 3
+});
+
+// Move the car node when the user moves the finger or mouse.
+// Note the `this` override parameter is shifted to account for
+// the configuration param
+car.on("gesturemove", car.move, null, car);
+
+
+// Notify me when the user lifts their finger, or lets go of
+// the mouse button (only if a gesturemovestart was received
+// on the node).
+car.on("gesturemoveend", screechingHalt);
+```
+
+<p>The complete set of configuration parameters for the gesture events is <a href="{{apiDocs}}/module_event-move.html#event_gesturemove">in the API docs</a>.</p>
+
+<h4>Related Events</h4>
+
+<p>The three gesture events are related to each other.  They are notifications
+for the start, progress, and end of the same gesture. `gesturemove` and
+`gesturemoveend` subscriptions won't execute unless a `gesturemovestart`
+happens.</p>
+
+<p>If you need them to fire separately, such as when attaching and detaching
+subscribers dynamically, the `gesturemove` and `gesturemoveend` events can be
+subscribed to individually by configuring `standAlone: true`</p>
+
+```
+// Doesn't require an associated `gesturemovestart` subscription
+Y.one("doc").on("gesturemove", function(e) {...}, {
+    standAlone:true
+});
+```
+
+<p>Under the hood, the DOM listeners which monitor mousemove/touchmove and
+mouseup/touchend are bound to the `document` by default. The node only provides
+the shared context to relate the three events.</p>
+
+
+<h2 id="flick">Flick Gesture Event</h2>
+
+<p>The flick gesture event is fired whenever the user initiates a flick gesture (with a finger or the mouse) on the node where the listener is attached.</p>
+
+```
+myNode.on("flick", function(e) {
+
+  // Some of the flick specific data on the event facade
+
+  var flick = e.flick,
+      velocity = flick.velocity,
+      distance = flick.distance,
+      axis = flick.axis,
+      startX = flick.start.pageX,
+      startY = flick.start.pageY,
+
+  // The event object itself is the event object for
+  // the event which concludes the flick (the mouseup or touchend)
+
+      endX = e.pageX,
+      endY = e.pageY,
+      endTarget = e.target;
+
+});
+```
+
+<p>Like with the supporting gesture events, when subscribing to
+<code>flick</code>, you can also pass additional configuration to control
+when and how the flick subscriber is notified.</p>
+
+```
+// Custom config, with no context or extra args
+myNode.on("flick", flickHandler, {
+
+    // only notify me if the flick covered
+    // more than 20px and was faster than 0.8 px/ms
+    minDistance: 20,
+    minVelocity: 0.8,
+
+    // prevent the default behavior for the
+    // underlying mouse/touch events
+    preventDefault: true
+});
+
+// Another option to avoid confusion when specifying the `this`
+// override or bound arguments for events with custom signatures
+// is to use Y.bind
+myNode.on("flick", Y.bind(o.flickHandler, o, arg1), {
+    minDistance: 20,
+    minVelocity: 0.8,
+    preventDefault: true
+});
+
+// Alternately, make sure to account for the additional subscription
+// parameter by passing null if there is no configuration.
+myNode.on("flick", o.flickHandler, null, o, arg1);
+```
+
+<p>The complete set of configuration parameters for the `flick` event is <a href="{{apiDocs}}/module_event-flick.html#event_flick">in the API docs</a>.</p>
+
+<h2>Caveats</h2>
+
+<ol>
+    <li>The `flick` event doesn't (yet) support delegation.</li>
+    <li>
+        The `delegate()` signature for the gesture events is
+        <code>node.delegate('gesturemove', callback, <em>filter</em>,
+        <em>gestureConfig</em>)</code>, reversing the order of the delegation
+        filter and extra params from the <a href="hover.html">`hover`</a> and
+        <a href="key.html">`key`</a> events.  This may be changed in a future
+        release.
+    </li>
+</ol>
+

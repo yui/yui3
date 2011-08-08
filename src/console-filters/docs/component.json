@@ -4,17 +4,17 @@
 	"description": "The Console Filters plugin adds log message filtering controls to the Console UI",
     "author": "lsmith",
 
-    "tags": ["plugin", "console", "console-filters", "filter", "log"],
+    "tags": ["devtool", "plugin", "console", "console-filters", "filter", "log"],
     "use": ["console-filters"],
 
     "examples": [
 
         {
-            "name": "console-filters_intro",
+            "name": "console-filters-intro",
 	        "displayName": "Using the ConsoleFilters Plugin",
 	        "description": "Adding the ConsoleFilters plugin to a Console instance for more granular run time log message filtering",
 	        "modules": ["console-filters","console"],
-	        
+
             "hideTableOfContents": true
         }
     ]

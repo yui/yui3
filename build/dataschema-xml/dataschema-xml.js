@@ -166,8 +166,10 @@ SchemaXML = {
     },
 
     /**
-     * Fetches the XPath-specified result for a given location in an XML node or document.
-     *
+     * Fetches the XPath-specified result for a given location in an XML node
+     * or document.
+     * 
+     * @method _getXPathResult
      * @param locator {String} The XPath location.
      * @param context {Object} XML node or document to search within.
      * @param xmldoc {Object} XML document to resolve namespace.

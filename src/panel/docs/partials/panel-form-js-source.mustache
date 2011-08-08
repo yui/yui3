@@ -22,6 +22,7 @@ YUI().use("datatable-base", "panel", "dd-plugin", function(Y) {
       centered: true,
       visible: false,
       modal:true,
+      zIndex:5,
       headerContent: "Add A New Product",
       plugins: [Y.Plugin.Drag]
     }),
@@ -102,7 +103,7 @@ YUI().use("datatable-base", "panel", "dd-plugin", function(Y) {
       if (!nestedPanel) {
         nestedPanel = new Y.Panel({
           bodyContent: "Are you sure you want to remove all items?",
-          zIndex: 5,
+          zIndex: 6,
           centered:true,
           width:400,
           modal:true,

@@ -23,7 +23,7 @@
             "name": "slider-from-markup",
 	        "displayName": "Creating a Slider from Existing Markup",
 	        "modules": ["slider"],
-	        "description": "Creating a horizontal Slider from existing markup",
+	        "description": "Creating a vertical Slider from existing markup",
 	        "useModules": ["slider"],
 
             "hideTableOfContents": true
