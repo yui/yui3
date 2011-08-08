@@ -23,7 +23,7 @@
 
 </h3>Plugin Prototype</h3>
 <p>Next we will add the YQL functionality to the prototype. The init method
-    wires the YQL functionality to the Tab instance.</p>
+    wires the YQL functionality up using the load method.</p>
 
 ```
     TabYQL.prototype = {
@@ -31,6 +31,17 @@
             if (this.tab) {
                 this.tab.after('selectedChange', Y.bind(this.afterSelectedChange, this));
             }
+        },
+
+        afterSelectedChange: function(e) {
+            // only load if not already loaded
+            if (!this.loaded) {
+                this.load(this.query, this.afterLoad);
+            }
+        },
+
+        load: function(query, afterLoad) {
+            Y.YQL(query, Y.bind(afterLoad, this));
         }
 ```
 
