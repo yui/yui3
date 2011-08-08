@@ -86,17 +86,6 @@
             "tags"       : ["anim", "event", "end"],
 
             "hideTableOfContents": true
-        },
-
-        {
-            "name"       : "anim-chaining",
-            "displayName": "Chaining Animations Using the end Event",
-            "description": "Animations can be set to run sequentially using Animation's end event.",
-            "modules"    : ["anim"],
-            "tags"       : ["anim", "event", "end", "chain"],
-
-            "hideTableOfContents": true
         }
-
     ]
 }
