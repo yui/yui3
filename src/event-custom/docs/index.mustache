@@ -1,0 +1,173 @@
+<div class="intro">
+    <p>
+        The YUI Custom Event System enables you to define and use events beyond
+        those available in the DOM &mdash; events that are specific to and of
+        interest in your own application. Custom Events are designed to work
+        much like DOM events.  They can bubble, pass event facades, have their
+        propagation and default behaviors suppressed, etc.
+    </p>
+
+    <p>
+        The APIs for working with custom events are provided by the
+        `EventTarget` class.  All other infrastructure classes extend
+        `EventTarget`, but if you just need the custom event APIs, you can
+        `extend` or `augment` your classes with `EventTarget` directly.
+    </p>
+
+    <p>
+        Bundled with `EventTarget` are <a
+        href="http://en.wikipedia.org/wiki/Aspect_oriented_programming">Aspect
+        Oriented Programming</a> methods that allow you subscribe to the
+        execution of object methods in many ways as though they were events of
+        their own.
+    </p>
+</div>
+
+<h2>Dear Testers: The content below is unedited, copy/paste</h2>
+<p>No need to read on.  The content will be changing.</p>
+
+<h3 id="simplece">Simple Custom Events Using Y.on</h3>
+<p>You can send out notification of an interesting moment anywhere
+from your code simply by calling your yui instance's <code>fire</code> method.</p>
+
+
+```
+//Create a YUI instance:
+YUI().use('event-custom', function(Y) {
+    Y.fire('customapp:started', 1, 2, 3);
+});
+```
+
+<p>
+    This will send out notifications to any function that previously subscribed
+    to that event:
+</p>
+
+```
+Y.on('customapp:started', function(arg1, arg2, arg3) {
+    Y.log('Custom App Started, now I can do a few things');
+    // the arguments 1, 2, and 3 were provided by fire()
+});
+```
+
+<h3>Defining a Custom Event on an Event Target</h3>
+
+<p>
+    A common way to create a Custom Event is to <code>augment</code> an object
+    with <code>EventTarget</code>, making it able to host Custom Events and be
+    a target for Custom Events that are bubbling from other hosts:
+</p>
+
+```
+YUI().use('event-custom', function(Y) {
+
+    // define a constructor:
+    function Publisher() {
+        // create a custom event.  it is not necessary to explicitly publish an event
+        // unless you need to override the default configuration
+        this.publish("publisher:testEvent", {
+            // configuration options for this event
+        });
+    }
+    // augment the Publisher with EventTarget:
+    Y.augment(Publisher, Y.EventTarget, null, null, {
+        // this argument is provided to EventTarget's constructor, and
+        // lets you set up default configuration values for every event
+        // published on this event target.
+    });
+
+    // if you accept the default configuration, augmenting EventTarget looks like this:
+    // Y.augment(Publisher, Y.EventTarget);
+});
+```
+
+<p>
+    The <code>publish</code> constructor creates a new Custom Event.  It takes
+    one required parameter and one optional parameter:
+</p>
+
+<ul>
+    <li>
+        <strong>type</strong> &mdash; The type of event. This string is
+        returned to listeners that receive this event so that they know what
+        event occurred.
+    </li>
+    <li>
+        <strong>options</strong> &mdash; The specific configuration options you
+        want to define for this Custom Event.  Most properties of the Custom
+        Event class can be set at this time.
+    </li>
+</ul>
+
+<h3>Subscribing (Listening) to a Custom Event</h3>
+
+<p>
+    To subscribe to a custom event, use its <code>on</code> method.  Following
+    the code above, you would subscribe to the <code>publisher:testEvent</code>
+    as follows:
+</p>
+
+```
+var publisher = new Publisher();
+publisher.on("publisher:testEvent", function(e) {
+    //event handler code
+});
+```
+
+<h3 id="customfire">Firing the Event</h3>
+
+<p>
+    To trigger or <code>fire</code> a custom event, simply call its
+    <code>fire</code> method:
+</p>
+
+```
+publisher.fire("publisher:testEvent");
+```
+
+<h3>Broadcasting events/Sharing info across YUI instances</h3>
+
+<p>
+    When publishing an event, you can specify a broadcast configuration -- this
+    makes it so any code can observe the event.  You limit the notification to
+    code within the YUI instance, or you can broadcast globally so any code on
+    the page can consume the event.  This is the primary way of sharing data
+    across different YUI sandboxes.
+</p>
+
+```
+var publisher = new Y.EventTarget();
+publisher.name = 'broadcast publisher';
+
+publisher.publish('instance_notification:foo', {
+    broadcast:  1,   // instance level notification
+    emitFacade: true // emit a facade so we get the event target
+});
+
+// this event is available by using the YUI instance to subscribe to it
+Y.on('instance_notification:foo', function(e) {
+    Y.log(e.target.name); // broadcast publisher
+});
+
+var publisher2 = new Y.EventTarget();
+publisher2.name = 'global publisher';
+
+publisher.publish('global_notification:foo', {
+    broadcast:  2,   // global notification
+    emitFacade: true // emit a facade so we get the event target
+});
+
+// external code, this new sandbox has access to the global event
+YUI().use('event-custom', function(Y2) {
+    // the global event can be listened to on a special event
+    // target referenced on your YUI instance called 'Global'
+    Y2.Global.on('global_notification:foo', function() {
+        Y.log(e.target.name); // global publisher
+    });
+
+    Y2.on('instance_notification:foo', function(e) {
+        // will NOT receive notification
+    });
+};
+```
+
