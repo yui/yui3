@@ -1132,8 +1132,21 @@ VMLShape.ATTRS = {
 	transform: {
 		setter: function(val)
 		{
+            var i = 0,
+                len,
+                transform;
+            this._rotation = 0;
             this.matrix.init();	
 		    this._transforms = this.matrix.getTransformArray(val);
+            len = this._transforms.length;
+            for(;i < len; ++i)
+            {
+                transform = this._transforms[i];
+                if(transform[0] == "rotate")  
+                {
+                    this._rotation += transform[1];
+                }
+            }
             this._transform = val;
             if(this.initialized)
             {
@@ -1342,9 +1355,18 @@ VMLShape.ATTRS = {
 		{
 			var i,
 				stroke,
+                wt,
 				tmpl = this.get("stroke") || this._getDefaultStroke();
 			if(val)
 			{
+                if(val.hasOwnProperty("weight"))
+                {
+                    wt = parseInt(val.weight, 10);
+                    if(!isNaN(wt))
+                    {
+                        val.weight = wt;
+                    }
+                }
 				for(i in val)
 				{
 					if(val.hasOwnProperty(i))
