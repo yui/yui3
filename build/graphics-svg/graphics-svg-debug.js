@@ -1477,8 +1477,17 @@ SVGShape.ATTRS = {
 
 		setter: function(val)
 		{
-			var tmpl = this.get("stroke") || this._getDefaultStroke();
-			return (val) ? Y.merge(tmpl, val) : null;
+			var tmpl = this.get("stroke") || this._getDefaultStroke(),
+                wt;
+            if(val && val.hasOwnProperty("weight"))
+            {
+                wt = parseInt(val.weight, 10);
+                if(!isNaN(wt))
+                {
+                    val.weight = wt;
+                }
+            }
+            return (val) ? Y.merge(tmpl, val) : null;
 		}
 	},
 	
