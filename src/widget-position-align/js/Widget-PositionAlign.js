@@ -108,14 +108,14 @@
             alignOn: {
                 valueFn: function() {
                     return [
-                        {
-                            node: Y.one(WINDOW),
-                            eventName: RESIZE
-                        },
-                        {
-                            node: Y,
-                            eventName: SCROLL
-                        }
+                        // {
+                        //     node: Y.one(WINDOW),
+                        //     eventName: RESIZE
+                        // },
+                        // {
+                        //     node: Y,
+                        //     eventName: SCROLL
+                        // }
                     ]; 
                 },
                 validator: Y.Lang.isArray
@@ -461,6 +461,7 @@
              * Default function called when alignOn Attribute is changed. Remove existing listeners and create new listeners.
              *
              * @method _afterAlignOnChange
+             * @private
              */
             _afterAlignOnChange : function(e) {
                 this._detachUIHandles();

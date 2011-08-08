@@ -48,7 +48,7 @@ NodeList.NAME = 'NodeList';
  * @method getDOMNodes
  * @static
  *
- * @param {Y.NodeList} nodelist The NodeList instance
+ * @param {NodeList} nodelist The NodeList instance
  * @return {Array} The array of DOM nodes bound to the NodeList
  */
 NodeList.getDOMNodes = function(nodelist) {
@@ -182,7 +182,7 @@ Y.mix(NodeList.prototype, {
     /**
      * Creates a documenFragment from the nodes bound to the NodeList instance
      * @method toFrag
-     * @return Node a Node instance bound to the documentFragment
+     * @return {Node} a Node instance bound to the documentFragment
      */
     toFrag: function() {
         return Y.one(Y.DOM._nl2frag(this._nodes));
@@ -192,7 +192,7 @@ Y.mix(NodeList.prototype, {
      * Returns the index of the node in the NodeList instance
      * or -1 if the node isn't found.
      * @method indexOf
-     * @param {Y.Node || DOMNode} node the node to search for
+     * @param {Node | DOMNode} node the node to search for
      * @return {Int} the index of the node value or -1 if not found
      */
     indexOf: function(node) {
