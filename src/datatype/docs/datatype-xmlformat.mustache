@@ -7,6 +7,32 @@
     <p>The XML module of the DataType Utility allows you to take an XML document and convert it to a string.</p>
 </div>
 
-<div class="example">
+<div class="example yui3-skin-sam">
     {{>datatype-xmlformat-source}}
 </div>
+
+<p>To output an XML document as a string, simply call the <code>format()</code> function of the DataType.XML class:</p>
+
+```
+YUI().use("datatype-xml", function(Y) {
+    var xmlString =
+        '<myroot>' +
+            '<item type="foo">' +
+                '<name>Abc</name>' +
+                '<rank>1</rank>' +
+            '</item>' +
+            '<item type="bar">' +
+                '<name>Def</name>' +
+                '<rank>2</rank>' +
+            '</item>' +
+            '<item type="bat">' +
+                '<name>Ghhi</name>' +
+                '<rank>3</rank>' +
+            '</item>' +
+        '</myroot>';
+
+    var myXMLDoc = Y.DataType.XML.parse(xmlString);
+
+    alert(Y.DataType.XML.format(myXMLDoc));
+});
+```

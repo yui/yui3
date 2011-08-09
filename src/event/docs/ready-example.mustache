@@ -1,0 +1,103 @@
+<style>
+	#contentContainer {padding:1em; background:#999966;}
+	#contentContainer ul {height:0px; overflow:hidden;}
+</style>
+<div class="intro">
+    <p>As web pages get richer, they tend to get slower.  One way to make your
+    pages as responsive as possible is to carefully storyboard the page-load
+    and page-paint processes so that the interactions most central to the
+    page's purpose are enabled as early as possible.  The window object's
+    <code>load</code> event won't happen until the full DOM and all image data
+    have loaded.  Putting off script execution until after the page loads can
+    be optimal for some scripts, but sometimes you won't want to wait that long
+    to begin interacting with the page via script.</p>
+
+    <p>The Event Utility gives you three additional interesting moments that
+    occur during a page's load process: <a href="domready.html">`available`,
+    `contentready`, and `domready`</a>.</p>
+
+    <p>In the example box below, all three events are all in use.  A
+    `<div>` (with a green background) loads; it has 100 children;
+    one of those children is an arbitrarily large image that will take awhile to
+    load.</p>
+
+    <p>
+        <strong>Note:</strong> The order of the events isn't guaranteed because
+        `available` and `contentready` are fired from a polling mechanism, and
+        not all browsers support a native event to signal `domready`, so that
+        will fall back to a timer as well.  Using these events, you can trust
+        the state of the DOM per subscription, but don't expect strict ordering
+        between events.
+    </p>
+
+    <p><strong>Internet Explorer note:</strong> It isn't always safe to modify
+    content during the available/contentready until after the `domready`
+    moment.</p>
+</div>
+
+<div class="example yui3-skin-sam">
+    {{>ready-example-source}}
+</div>
+
+<h2 class="first">Source Code for This Example:</h2>
+
+<h3>Markup:</h3>
+
+<p>The markup used to create the DOM is very simple, consisting of a <code>&lt;div&gt;</code> that holds a <code>&lt;ul&gt;</code> with 100 child <code>&lt;li&gt;</code>s and a single ~3MB image. The <code>&lt;ul&gt;</code> will take a little time to load, and the image (loading over the internet) will take a few seconds to load even on a fast connection. That should allow us to see in the browser console some time deltas between when the <code>&lt;div&gt;</code> whose ID is <code>contentContainer</code> becomes available, when its children (those 100 <code>&lt;li&gt;</code>s) are ready, when the DOM is ready (including all the navigation elements on the page), and lastly when the page loads (ie, when that ~3MB image is fully loaded). </p>
+
+```
+<div id="contentContainer">
+
+    <!--a ul with an arbitrarily large number of children:-->
+    <ul>
+        <li>...</li>
+        <!--...100 more of these-->
+    </ul>
+
+    <img src="http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/large/uluru.jpg" width="500" alt="Uluru" id="image" />
+
+</div>
+```
+
+<h3>CSS:</h3>
+
+<p>The CSS colors the contentContainer element and hides the big list to keep the example more compact.</p>
+
+```
+<style type="text/css">
+    #contentContainer {padding:1em; background:#999966;}
+    #contentContainer ul {height:0px; overflow:hidden;}
+</style>
+```
+
+<h3>JavaScript:</h3>
+<p>In the script, we subscribe to the four events in which we're interested and, in each case, log a message to the console to express the timing of the events as they fire.</p>
+
+```
+YUI().use('*', function(Y) {
+    var results = Y.one('#demo');
+
+    //assign page load handler:
+    Y.on("load", function () {
+        results.append("<p>The window load event fired.  The page and all of its image data, including the large image of Uluru, has completed loading.</p>");
+    }, Y.config.win);
+
+    //assign domready handler:
+    Y.on("domready", function () {
+        results.append("<p>The DOMContentLoaded event fired.  The DOM is now safe to modify via script.</p>");
+    });
+    
+    //assign 'contentready' handler:
+    Y.on("contentready", function () {
+        results.append("<p>The 'contentready' event fired for the element 'contentContainer'.  That element and all of its children are present in the DOM.</p>");
+    }, "#contentContainer");
+
+    //assign 'available' handler:
+    Y.on("available", function () {
+        results.append("<p>The 'available' event fired on the element 'contentContainer'.  That element is present in the DOM.</p>");
+    }, "#contentContainer");
+    
+    results.append("<p>As the page loads, you'll see the 'available', 'contentready', 'domready', and window load events logged here as they fire in sequence.</p>");
+
+});
+```

@@ -49,6 +49,11 @@
         "cssfonts-context-example": {
             "displayName": "CSS Fonts Contextual Example",
             "layout"     : "cssfonts-context-example"
+        },
+
+        "cssfonts-size-example": {
+            "displayName": "CSS Fonts Sizing Example",
+            "layout"     : "cssfonts-size-example"
         }
     }
 }

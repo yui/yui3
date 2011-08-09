@@ -1,0 +1,257 @@
+<style scoped>
+    #homebase {
+        margin-left: 100px;
+        position: relative;
+        height: 125px;
+        width: 200px;
+    }
+    .robot {
+        height: 100px;
+        width: 74px;
+        background: url({{componentAssets}}/red_robot.png) no-repeat top left;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    #B {
+        background-image: url({{componentAssets}}/blue_robot.png);
+        left: 125px;
+    }
+    #demo input {
+        margin-left: 4em;
+    }
+    #demo label {
+        font-size: 87%;
+        color: #555;
+    }
+</style>
+
+<div class="intro">
+    <p>
+        This example will illustrate how to use the synthetic event creation
+        API.  We'll create an `arrow` event that fires in response
+        to the user pressing the arrow keys (up, down, left, right) and adds a
+        `direction` property to the generated event.
+    </p>
+
+    <p>Subscribing to this new event will look like this:</p>
+    ```
+    node.on("arrow", onArrowHandler);
+    ```
+
+    <p>
+        Support will also be added for delegation, allowing a single subscriber
+        from a node higher up the DOM tree, to listen for the new event
+        emanating from its descendant elements.
+    </p>
+
+    ```
+    containerNode.delegate("arrow", onArrowHandler, ".robot");
+    ```
+</div>
+
+<div class="example yui3-skin-sam">
+    {{>synth-example-source}}
+</div>
+
+<h2>`on`, `fire`, and `detach`</h2>
+
+<p>
+    The three interesting moments in the lifecycle of a DOM event subscription
+    are
+</p>
+
+<ol>
+    <li>The event is subscribed to</li>
+    <li>The event is fired</li>
+    <li>The event is unsubscribed from</li>
+</ol>
+
+<p>
+    Create a new synthetic DOM event with `Y.Event.define( <em>name</em>,
+    <em>config</em> )`.  Define the implementation logic for the
+    `on` and `detach` moments in the configuration.
+    Typically the condition triggering the event firing is set up in the
+    `on` phase.
+</p>
+
+```
+Y.Event.define("arrow", {
+    on: function (node, sub, notifier) {
+        // what happens when a subscription is made
+
+        // if (condition) {
+            notifier.fire(); // subscribers executed
+        // }
+    },
+
+    detach: function (node, sub, notifier) {
+        // what happens when a subscription is removed
+    }
+});
+```
+
+<p>
+    In the case of arrow handling, the trigger is simply a key event with a
+    `keyCode` between 37 and 40.  There are a few browser quirks with arrow
+    handling that warrant listening to `keydown` for some browsers and
+    `keypress` for others, so we'll take care of that transparently for `arrow`
+    subscribers.
+</p> 
+
+```
+Y.Event.define("hover", {
+    on: function (node, sub, notifier) {
+        var directions = {
+            37: 'left',
+            38: 'up',
+            39: 'right',
+            40: 'down'
+        };
+
+        // Webkit and IE repeat keydown when you hold down arrow keys.
+        // Opera links keypress to page scroll; others keydown.
+        // Firefox prevents page scroll via preventDefault() on either
+        // keydown or keypress.
+        // Bummer to sniff, but can't test the repeating behavior, and a
+        // feature test for the scrolling would more than double the code size.
+        var eventName = (Y.UA.webkit || Y.UA.ie) ? 'keydown' : 'keypress';
+
+        // To make detaching the associated DOM event easy, store the detach
+        // handle from the DOM subscription on the synthethic subscription
+        // object.
+        sub._detacher = node.on(eventName, function (e) {
+            // Only notify subscribers if one of the arrow keys was pressed
+            if (directions[e.keyCode]) {
+                // Add the extra property
+                e.direction = directions[e.keyCode];
+
+                // Firing the notifier event executes the arrow subscribers
+                // Pass along the key event, which will be renamed "arrow"
+                notifier.fire(e);
+            }
+        });
+    },
+
+    detach: function (node, sub, notifier) {
+        // Detach the key event subscription using the stored detach handle
+        sub._detacher.detach();
+    }
+} );
+```
+
+<h2>Add Delegation Support</h2>
+<p>
+    Since the `arrow` event is simply a filtered `keydown` or `keypress` event,
+    no special handling needs to be done for delegate subscriptions.  We will
+    extract the key event handler and use it for both `on("arrow", ...)` and
+    `delegate("arrow", ...)` subscriptions.
+</p>
+
+```
+Y.Event.define("arrow", {
+    // Webkit and IE repeat keydown when you hold down arrow keys.
+    // Opera links keypress to page scroll; others keydown.
+    // Firefox prevents page scroll via preventDefault() on either
+    // keydown or keypress.
+    _event: (Y.UA.webkit || Y.UA.ie) ? 'keydown' : 'keypress',
+
+    _keys: {
+        '37': 'left',
+        '38': 'up',
+        '39': 'right',
+        '40': 'down'
+    },
+
+    _keyHandler: function (e, notifier) {
+        if (this._keys[e.keyCode]) {
+            e.direction = this._keys[e.keyCode];
+            notifier.fire(e);
+        }
+    },
+
+    on: function (node, sub, notifier) {
+        // Use the extended subscription signature to set the 'this' object
+        // in the callback and pass the notifier as a second parameter to
+        // _keyHandler
+        sub._detacher = node.on(this._event, this._keyHandler,
+                                this, notifier);
+    },
+
+    detach: function (node, sub, notifier) {
+        sub._detacher.detach();
+    },
+
+    // Note the delegate handler receives a fourth parameter, the filter
+    // passed (e.g.) container.delegate('click', callback, '.HERE');
+    // The filter could be either a string or a function.
+    delegate: function (node, sub, notifier, filter) {
+        sub._delegateDetacher = node.delegate(this._event, this._keyHandler,
+                                              filter, this, notifier);
+    },
+
+    // Delegate uses a separate detach function to facilitate undoing more
+    // complex wiring created in the delegate logic above.  Not needed here.
+    detachDelegate: function (node, sub, notifier) {
+        sub._delegateDetacher.detach();
+    }
+});
+```
+
+<h2>Use it</h2>
+<p>
+    Subscribe to the new event or detach the event as you would any other DOM
+    event.
+</p>
+
+```
+function move(e) {
+    // to prevent page scrolling
+    e.preventDefault();
+
+    // See full code listing to show the data set up
+    var xy = this.getData();
+
+    switch (e.direction) {
+        case 'up':    xy.y -= 10; break;
+        case 'down':  xy.y += 10; break;
+        case 'left':  xy.x -= 10; break;
+        case 'right': xy.x += 10; break;
+    }
+
+    this.transition({
+        top : (xy.y + 'px'),
+        left: (xy.x + 'px'),
+        duration: .2
+    });
+}
+
+// Subscribe using node.on("arrow", ...);
+Y.one("#A").on("arrow", move),
+Y.one("#B").on("arrow", move)
+
+// OR using container.delegate("arrow", ...);
+subs = Y.one('#demo').delegate('arrow', move, '.robot');
+```
+
+<h2>Bonus Step: to the Gallery!</h2>
+<p>
+    Synthetic events are perfect candidates for Gallery modules.  There are a
+    number already hosted there, and there are plenty of UI interaction
+    patterns that would benefit from being encapsulated in synthetic
+    events.
+</p>
+
+<p>
+    The `arrow` event in this example is also
+    <a href="http://yuilibrary.com/gallery/show/event-arrow">in the gallery</a>,
+    but with additional functionality.  Check out
+    <a href="https://github.com/lsmith/yui3-gallery/blob/master/build/gallery-event-arrow/gallery-event-arrow-debug.js">its source</a>
+    to see what you can do with synthetic events.
+</p>
+
+<h2>Full Code Listing</h2>
+```
+{{>synth-example-source}}
+```
+

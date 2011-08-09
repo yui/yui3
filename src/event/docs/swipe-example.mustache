@@ -1,0 +1,210 @@
+<div class="intro">
+    <p>
+        This example shows how you can support a "swipeleft" gesture, built on
+        top of the synthetic "gesturemove" events, which work not only on touch
+        devices, but also on mouse based input devices.
+    </p>
+</div>
+
+<div class="example newwindow">
+    <a href="swipe-example-content.html" target="_blank" class="button">
+        View Example in New Window
+    </a>
+</div>
+
+<h2>Modules Used</h2>
+
+<p>For the example, the two core modules we'll use are:</p>
+
+<dl>
+    <dt>The `event-move` module</dt> 
+    <dd>
+        Provides the `gesturemovestart`, `gesturemove` and `gesturemoveend`
+        low-level gesture events. These events are fired whenever the user
+        performs a move gesture (mouse button/finger down, mouse/finger move,
+        mouse button/finger up) with the mouse or their finger.
+    </dd>
+    <dt>The `transitions` module</dt>
+    <dd>
+        Provides transitions support, leveraging CSS transitions under the hood
+        where supported.
+    </dd>
+</dl>
+
+<p>The YUI use statement for the example is shown below:</p>
+
+```
+YUI().use("node-base", "node-event-delegate", "transition", "event-move", function(Y) {
+    ...
+});
+```
+
+<h2>Delegating Gesture Move Events</h2>
+
+<p>
+    The basic idea for the example is to listen for a `gesturemovestart` on a
+    list item, and when we get one, store its position, and then listen for a
+    gesturemoveend. If the gesturemoveend occurs more than X pixels to the left
+    of the start, then we've identified a "swipeleft" gesture. Future versions
+    of the library will package such logic into a higher level gesture event
+    (ala event-flick).
+</p>
+
+<p>
+    For this example, since we're dealing with a list of items, rather than
+    attach individual listeners to each &#60;li&#62; in the list, we use
+    `delegate` on the parent &#60;ul&#62; element, which leads to better
+    performance and avoids having to add/remove listeners each time the
+    contents of the list change.  The `gesturemovestart`, `gesturemove` and
+    `gesturemoveend` are synthetic events, and can all be used with `delegate`,
+    just like any DOM event. 
+</p>
+
+<p>
+    We set up a delegate listener on the &#60;ul&#62; which listens for the
+    `gesturemovestart` event (`gesturemovestart` abstracts
+    `mousedown`/`touchstart` events under the hood). The delegate listener is
+    set up to be notified when the target of the `gesturemovestart` is an
+    `<li>`
+</p>
+
+```
+Y.Node.one("#swipe").delegate("gesturemovestart", function(e) {
+
+    ...
+
+}, "li", {  // filter for "li"
+    preventDefault:true
+});
+```
+
+<p>
+    The `gesturemovestart` event supports a configuration object passed as an
+    additional subscription argument, which can be used to set minimum distance
+    and minimum time thresholds at which to fire the start event. The
+    configuration also supports the ability to prevent the default behavior
+    before the minimum time or distance thresholds kick in, which is what we do
+    above by passing `preventDefault:true`.
+</p>
+
+<p>
+    The advantage of the gesture synthetic events is that the developer can use
+    the same API without having to worry about whether or not the browser
+    platform is touch based or mouse based.
+</p>
+
+<h2>Gesture Move End</h2>
+
+<p>
+    As mentioned above, the `gesturemovestart` listener is notified whenever a
+    `mousedown` or `touchstart` is received on a list item. The listener has
+    access to:
+</p>
+
+<dl>
+    <dt>`e.currentTarget`</dt>
+        <dd>The list item targeted.</dd>
+    <dt>`e.target`</dt>
+        <dd>
+            The element clicked on (it may be an element inside the targeted
+            list item, the span for example).
+        </dd>
+    <dt>`e.container`</dt>
+        <dd>
+            The element to which the delegate listener is attached (the ul in
+            this case).
+        </dd>
+</dl>
+
+<p>
+    The event facade also has the page coordinates for the `mousedown` or
+    `touchstart` event. We use the list item's `setData` method, to store the
+    `pageX` position for the start event, so we can compare it when we get the
+    `gesturemoveend` event. This way it's stored on the node instance, and we
+    don't need to pass it along separately to the `gesturemoveend` event, or
+    store it globally.
+</p> 
+
+<p>
+    `getData`, `setData` and `clearData` are useful methods to store ad-hoc
+    node centric data.
+</p>
+
+```
+Y.Node.one("#swipe").delegate("gesturemovestart", function(e) {
+
+    var item = e.currentTarget,
+        target = e.target,
+        container = e.container,
+
+    ...
+
+    item.setData("swipeStart", e.pageX);
+
+    item.once("gesturemoveend", function(e) {
+
+        var swipeStart = item.getData("swipeStart"),
+            swipeEnd = e.pageX,
+            isSwipeLeft = (swipeStart - swipeEnd) > MIN_SWIPE;
+
+        if (isSwipeLeft) {
+            item.one(".myapp-delete").removeClass("myapp-hidden");
+        }
+
+    });
+
+    ...
+
+});
+```
+
+<p>
+    When we get the `gesturemovestart` event, we set up a listener for the
+    `gesturemoveend` event, so we can determine the end of the gesture, and
+    figure out if the user swiped left. Since we don't want to set up a new
+    listener every time we get a `gesturemovestart` we use `once` to set up the
+    `gesturemoveend` listener. `once` will detach the listener after it's been
+    invoked. Again, since `gesturemoveend` is a synthetic event, it works with
+    `once` just like any other DOM event.
+</p>
+
+<p>
+    In the `gesturemoveend` listener we check the page position of the event,
+    and if it's far enough to the left of the start position, we display the
+    "Delete" button by removing the hidden class which it contains.
+</p>
+
+<h2>Transitions</h2>
+
+<p>
+    To hide and remove the item when the delete button is pressed, we use the
+    `transition` method, to animate its opacity and height down to 0. Under the
+    hood transition will use CSS transition support where available (WebKit)
+    and set up timer based animation where not (IE). As with the gesture event
+    support, the developer gets to use the same API without having to worry
+    about the browser environment.
+</p>
+
+```
+item = target.get("parentNode");
+
+item.transition({
+    duration:0.3,
+    opacity:0,
+    height:0
+}, function() {
+    this.remove();
+});
+```
+
+<p>
+    The second argument to transition above is a callback function, which is
+    invoked when the transition is complete. We use this support to remove the
+    item from the DOM.
+</p>
+
+<h2>Full Code Listing</h2>
+
+```
+{{>swipe-example-js}}
+```
