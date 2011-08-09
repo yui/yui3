@@ -20,6 +20,7 @@ YUI().use('calendar', 'datatype-date', 'datatype-date-math', function(Y) {
  // to be July of 2011.
  var calendar = new Y.Calendar({
    contentBox: "#mycalendar",
+   width: "650px",
    showPrevMonth: true,
    showNextMonth: true,
    selectionMode: 'multiple',
@@ -50,7 +51,7 @@ YUI().use('calendar', 'datatype-date', 'datatype-date-math', function(Y) {
  calendar.set("customRenderer", {
    rules: rules,
    filterFunction: function (date, node, rules) {
-     if (rules.indexOf('all_weekends') >= 0) {
+     if (Y.Array.indexOf(rules, 'all_weekends') >= 0) {
        node.addClass("redtext");
      }
    }
