@@ -1,5 +1,3 @@
-<h2>Basic Trigger examples</h2>
-
 <div class="intro">
   <p>
     Displayed here are some basic triggers of the ImageLoader Utility. 
@@ -30,7 +28,7 @@
     <h5>JavaScript</h5>
     ```
   	var delayGroup = new Y.ImgLoadGroup({ timeLimit: 2 });
-  	delayGroup.registerImage({ domId: 'delay', bgUrl: 'http://stage.yuilibrary.com/img/yui-logo.png', isPng: true });
+  	delayGroup.registerImage({ domId: 'delay', bgUrl: '{{componentAssets}}/yui-logo.png', isPng: true });
     ```
   </div>
 
@@ -49,7 +47,7 @@
     <h5>JavaScript</h5>
     ```
     var scrollGroup = new Y.ImgLoadGroup();
-    scrollGroup.registerImage({ domId: 'scroll', srcUrl: 'http://stage.yuilibrary.com/img/yui-logo.png', isPng: true, setVisible: true });
+    scrollGroup.registerImage({ domId: 'scroll', srcUrl: '{{componentAssets}}/yui-logo.png', isPng: true, setVisible: true });
     scrollGroup.addTrigger(window, 'scroll');
     ```
   </div>
@@ -67,7 +65,7 @@
     <h5>JavaScript</h5>
     ```
   	var mouseoverGroup = new Y.ImgLoadGroup();
-  	mouseoverGroup.registerImage({ domId: 'scroll', srcUrl: 'http://stage.yuilibrary.com/img/yui-logo.png', isPng: true, setVisible: true });
+  	mouseoverGroup.registerImage({ domId: 'scroll', srcUrl: '{{componentAssets}}/yui-logo.png', isPng: true, setVisible: true });
   	mouseoverGroup.addTrigger(window, 'scroll');
     ```
   </div>
@@ -87,8 +85,8 @@
     <h5>JavaScript</h5>
     ```
   	var clickGroup = new Y.ImgLoadGroup();
-  	clickGroup.registerImage({ domId: 'duo1', bgUrl: 'http://stage.yuilibrary.com/img/yui-logo.png', isPng: true });
-  	clickGroup.registerImage({ domId: 'duo2', bgUrl: 'http://stage.yuilibrary.com/img/yui-logo.png', isPng: true });
+  	clickGroup.registerImage({ domId: 'duo1', bgUrl: '{{componentAssets}}/yui-logo.png', isPng: true });
+  	clickGroup.registerImage({ domId: 'duo2', bgUrl: '{{componentAssets}}/yui-logo.png', isPng: true });
   	clickGroup.addTrigger('#duo2', 'click').addTrigger('#duo1', 'click');
     ```
   </div>
@@ -101,20 +99,20 @@
   YUI().use("imageloader", function(Y) {
   
   	var delayGroup = new Y.ImgLoadGroup({ timeLimit: 2 });
-  	delayGroup.registerImage({ domId: 'delay', bgUrl: 'http://stage.yuilibrary.com/img/yui-logo.png', isPng: true });
+  	delayGroup.registerImage({ domId: 'delay', bgUrl: '{{componentAssets}}/yui-logo.png', isPng: true });
 
   	var scrollGroup = new Y.ImgLoadGroup();
   	scrollGroup.addTrigger(window, 'scroll');
-  	scrollGroup.registerImage({ domId: 'scroll', srcUrl: 'http://stage.yuilibrary.com/img/yui-logo.png', isPng: true, setVisible: true });
+  	scrollGroup.registerImage({ domId: 'scroll', srcUrl: '{{componentAssets}}/yui-logo.png', isPng: true, setVisible: true });
 
   	var mouseoverGroup = new Y.ImgLoadGroup();
   	mouseoverGroup.addTrigger('#mouseover', 'mouseover');
-  	mouseoverGroup.registerImage({ domId: 'mouseover', bgUrl: 'http://stage.yuilibrary.com/img/yui-logo.png', isPng: true });
+  	mouseoverGroup.registerImage({ domId: 'mouseover', bgUrl: '{{componentAssets}}/yui-logo.png', isPng: true });
 
   	var clickGroup = new Y.ImgLoadGroup();
   	clickGroup.addTrigger('#duo2', 'click').addTrigger('#duo1', 'click');
-  	clickGroup.registerImage({ domId: 'duo1', bgUrl: 'http://stage.yuilibrary.com/img/yui-logo.png', isPng: true });
-  	clickGroup.registerImage({ domId: 'duo2', bgUrl: 'http://stage.yuilibrary.com/img/yui-logo.png', isPng: true });
+  	clickGroup.registerImage({ domId: 'duo1', bgUrl: '{{componentAssets}}/yui-logo.png', isPng: true });
+  	clickGroup.registerImage({ domId: 'duo2', bgUrl: '{{componentAssets}}/yui-logo.png', isPng: true });
 
   });
 
