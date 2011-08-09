@@ -1,0 +1,51 @@
+<div id="checkboxes" class="yui3-checkboxes-loading">
+	<div>
+		<label for="field-1">Field 1: </label>
+		<span>
+			<span>
+				<input type="checkbox" id="field-1" name="field-1" value="1">
+			</span>
+		</span>
+	</div>
+	<div>
+		<label for="field-2">Field 2: </label>
+		<span>
+			<span>
+				<input type="checkbox" id="field-2" name="field-2" value="2">
+			</span>
+		</span>
+	</div>
+	<div>
+		<label for="field-3">Field 3: </label>
+		<span>
+			<span>
+				<input type="checkbox" id="field-3" name="field-3" value="3">
+			</span>
+		</span>
+	</div>			
+</div>
+
+<script>
+	YUI({
+		//	Load the stylesheet for the skinned checkboxes via JavaScript, 
+		//	since without JavaScript skinning of the checkboxes wouldn't 
+		//	be possible.
+		
+		modules: {
+
+			"checkboxcss": {
+				type: "css",
+				fullpath: "{{componentAssets}}/checkbox.css"
+			},
+
+			"checkboxjs": {
+				type: "js",
+				fullpath: "{{componentAssets}}/checkbox.js",
+				requires: ["classnamemanager", "event-focus", "node-event-delegate", "checkboxcss"]
+			}			    
+
+		}
+
+	}).use("checkboxjs");
+
+</script>

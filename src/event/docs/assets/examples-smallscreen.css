@@ -1,0 +1,29 @@
+html, body {
+    padding:0;
+    margin:0;
+    overflow:hidden;
+}
+
+#groceryheader {
+    width:100%;
+    margin:0;
+    border:0;
+    border-bottom: 1px solid #2d3033;
+}
+
+#swipe {
+    padding:0;
+    margin:0;
+    width:100%;
+}
+
+#swipe li {
+    margin:0px;
+    height:3em;
+    line-height:3em;
+}
+
+#swipe .myapp-delete {
+    height:2em;
+    line-height:2em;
+}

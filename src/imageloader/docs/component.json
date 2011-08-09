@@ -1,0 +1,36 @@
+{
+    "name"       : "imageloader",
+    "displayName": "ImageLoader",
+    "description": "The ImageLoader Utility provides a mechanism to delay the loading of specfic images on a page. This allows you to, for example, defer the loading of images which are out of the browser viewport until the user begins to scroll, or to defer the loading of images in a carousel until the user mouses over the carousel's navigation controls.",
+    "author"     : "",
+
+    "tags": ["utility", "image", "loader", "performance"],
+    "use" : ["imageloader"],
+
+    "examples": [
+        {
+            "name"       : "basic-features",
+            "displayName": "Basic Features of the ImageLoader Utility",
+            "description": "Demonstrates the basic features and operation of the ImageLoader Utility, deferring the loading of images until specific events happen or specific time limits expire.",
+            "modules"    : ["imageloader"],
+            "tags"       : ["imageloader"],
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "below-fold",
+            "displayName": "Loading Images Below the Fold",
+            "description": "Loading images above the fold immediately while deferring the loading of images below the fold.",
+            "modules"    : ["imageloader"],
+            "tags"       : ["imageloader"],
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "imageloader-class-names",
+            "displayName": "Using ImageLoader with CSS Class Names",
+            "description": "Using CSS class names to target specific images for deferred loading.",
+            "modules"    : ["imageloader"],
+            "tags"       : ["imageloader"],
+            "hideTableOfContents": true
+        }
+    ]
+}

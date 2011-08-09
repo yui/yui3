@@ -37,16 +37,16 @@ This example also shows how to modify the visible UI strings before the `Dial` r
 ```
 YUI().use('dial', function(Y) {
 
-	var dial = new Y.Dial({
-		min: -90,
-		max: 90,
-		stepsPerRevolution: 200,
-		value: 0,
-		diameter: 100
-	});
-	//Setting visible HTML strings before Dial renders.
-	dial.set('strings',{'label':'Climate:', 'resetStr':'Off', 'tooltipHandle':'Drag for cool or heat.'});
-	dial.render("#demo");
+    var dial = new Y.Dial({
+        min: -90,
+        max: 90,
+        stepsPerRevolution: 200,
+        value: 0,
+        diameter: 100
+    });
+    //Setting visible HTML strings before Dial renders.
+    dial.set('strings',{'label':'Climate:', 'resetStr':'Off', 'tooltipHandle':'Drag for cool or heat.'});
+    dial.render("#demo");
 
 });
 ```
@@ -57,10 +57,10 @@ YUI().use('dial', function(Y) {
 ```
 //Create an image node.
 var im = Y.Node.create('<img src="{{{dialPathAssets}}}/images/cold_hot.png"/>');
-	
+    
 //Position it absolutely to the correct spot depending on it's size.
 im.setStyles({'position':'absolute', 'top':'-3px', 'left':'-9px'});
-	
+    
 //Insert it in the DOM.
 //The north-mark is the first object inside the ring.
 //depending on the image, you may need to insert it before the yui3-dial-label 

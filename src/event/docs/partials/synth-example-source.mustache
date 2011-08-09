@@ -1,0 +1,111 @@
+<div id="demo">
+    <p>Step 1. <button type="button" id="attach" tabindex="1">subscribe</button> to the <code>arrow</code> event.<br>
+    <input type="checkbox" id="delegate" value="1" tabindex="1">
+        <label for="delegate">Use a delegated subscription</label></p>
+    <p>Step 2. Click on a robot and move it around with the arrow keys.</p>
+
+    <div id="homebase">
+        <div id="A" class="robot" tabindex="2"></div>
+        <div id="B" class="robot" tabindex="3"></div>
+    </div>
+
+    <button type="button" id="detach" tabindex="4">Detach subscriptions</button>
+</div>
+
+<script>
+YUI().use('node', 'event-synthetic', 'transition', function (Y) {
+
+    Y.Event.define("arrow", {
+        // Webkit and IE repeat keydown when you hold down arrow keys.
+        // Opera links keypress to page scroll; others keydown.
+        // Firefox prevents page scroll via preventDefault() on either
+        // keydown or keypress.
+        _event: (Y.UA.webkit || Y.UA.ie) ? 'keydown' : 'keypress',
+
+        _keys: {
+            '37': 'left',
+            '38': 'up',
+            '39': 'right',
+            '40': 'down'
+        },
+
+        _keyHandler: function (e, notifier) {
+            if (this._keys[e.keyCode]) {
+                e.direction = this._keys[e.keyCode];
+                notifier.fire(e);
+            }
+        },
+
+        on: function (node, sub, notifier) {
+            sub._detacher = node.on(this._event, this._keyHandler,
+                                    this, notifier);
+        },
+
+        detach: function (node, sub, notifier) {
+            sub._detacher.detach();
+        },
+
+        delegate: function (node, sub, notifier, filter) {
+            sub._delegateDetacher = node.delegate(this._event, this._keyHandler,
+                                                  filter, this, notifier);
+        },
+
+        detachDelegate: function (node, sub, notifier) {
+            sub._delegateDetacher.detach();
+        }
+    });
+
+
+    var robotA = Y.one('#A'),
+        robotB = Y.one('#B'),
+        subs;
+
+    robotA.setData('x', parseInt(robotA.getStyle('left'), 10));
+    robotA.setData('y', parseInt(robotA.getStyle('top'), 10));
+    robotB.setData('x', parseInt(robotB.getStyle('left'), 10));
+    robotB.setData('y', parseInt(robotB.getStyle('top'), 10));
+
+    function move(e) {
+        // to prevent page scrolling
+        e.preventDefault();
+
+        var xy = this.getData();
+
+        switch (e.direction) {
+            case 'up':    xy.y -= 10; break;
+            case 'down':  xy.y += 10; break;
+            case 'left':  xy.x -= 10; break;
+            case 'right': xy.x += 10; break;
+        }
+
+        this.transition({
+            top : (xy.y + 'px'),
+            left: (xy.x + 'px'),
+            duration: .2
+        });
+    }
+
+    function detachSubs() {
+        if (subs) {
+            subs.detach();
+            subs = null;
+        }
+    }
+
+    Y.one("#attach").on("click", function (e) {
+        detachSubs();
+
+        if (Y.one("#delegate").get('checked')) {
+            subs = Y.one('#demo').delegate('arrow', move, '.robot');
+        } else {
+            subs = new Y.EventHandle([
+                robotA.on("arrow", move),
+                robotB.on("arrow", move)
+            ]);
+        }
+    });
+
+    Y.one("#detach").on("click", detachSubs);
+
+});
+</script>

@@ -1,0 +1,130 @@
+<div class="intro">
+
+  <p>
+    The <a href="http://developer.yahoo.com/yui/imageloader/">ImageLoader Utility</a> allows you an alternate method of 
+    using CSS class names to load images.
+  </p>
+
+  <p>
+    Hover over each image to show its triggers and limit. Try tripping the triggers to see the load reactions. 
+    Refresh the page to reset the images.
+  </p>
+
+</div>
+
+<div class="example">
+  <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+
+  <style>
+
+  .everything { position:relative; height:420px; }
+  .everything div { border:1px solid #888; }
+  .topmain { position:absolute; top:10px; left:120px; height:75px; width:100px; }
+  .duo1 { position:absolute; top:130px; left:20px; height:67px; width:100px; }
+  .duo2 { position:absolute; top:130px; left:220px; height:53px; width:100px; }
+  .scroll { position:absolute; top:320px; left:120px; height:72px; width:100px; }
+
+  .yui3-imgload-maingroup,
+  .yui3-imgload-duogroup,
+  .yui3-imgload-scrollgroup { background:none !important; }
+
+  </style>
+
+
+  <div class='everything' id='everything'>
+    <div class='topmain yui3-imgload-maingroup' id='topmain' style='background-image:url("http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/museum.jpg");' title='group 1; mouseover image; 2 sec limit'></div>
+    <div class='duo1 yui3-imgload-duogroup' id='duo1' style='background-image:url("http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/uluru.jpg");' title='group 2; mouseover left image, or click on right image; 4 sec limit'></div>
+    <div class='duo2 yui3-imgload-duogroup' id='duo2' style='background-image:url("http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/katatjuta.jpg");' title='group 2; mouseover left image, or click on right image; 4 sec limit'></div>
+    <div class='scroll' title='group 3; scroll; no time limit'>
+      <img id='scrollImg' class='yui3-imgload-scrollgroup' style='background-image:url("http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/morraine.jpg");' src='http://l.yimg.com/a/i/us/tr/b/1px_trans.gif' width='100' height='72' />
+    </div>
+  </div>
+
+  <script>
+
+    YUI({filter:"debug", logInclude: {"imageloader":true, "example":true}}).use("imageloader", function(Y) {
+
+    	var mainGroup = new Y.ImgLoadGroup({ name: 'group 1', timeLimit: 2, className: 'yui3-imgload-maingroup' });
+    	mainGroup.addTrigger('#topmain', 'mouseover');
+
+    	var duoGroup = new Y.ImgLoadGroup({ name: 'group 2', timeLimit: 4, className: 'yui3-imgload-duogroup' });
+    	duoGroup.addTrigger('#duo1', 'mouseover').addTrigger('#duo2', 'click');
+
+    	var scrollGroup = new Y.ImgLoadGroup({ name: 'group 3', className: 'yui3-imgload-scrollgroup' });
+    	scrollGroup.addTrigger(window, 'scroll');
+
+    });
+
+  </script>
+
+  <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+</div>
+
+<h2>Using CSS Class Names to Load Images</h2>
+
+<p>
+  Instead of registering specific image ids/URLs with a group, you can simply tag the group with a CSS class. 
+  The group will later use this class name to identify which DOM elements belong to the group. 
+  Each group should have one corresponding class. Each class must have a <code>background:none</code> CSS definition 
+  at the top of the page, as in this example:
+  <h5>CSS</h5>
+  ```
+  .yui3-imgload-maingroup,
+  .yui3-imgload-duogroup,
+  .yui3-imgload-scrollgroup{ 
+    background:none !important; 
+  }
+  ```
+  <h5>HTML</h5>
+  ```
+  <div class='topmain yui-imgload-maingroup' id='topmain' style='background-image:url("http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/museum.jpg");'></div>
+  <div class='duo1 yui-imgload-duogroup' id='duo1' style='background-image:url("http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/uluru.jpg");'></div>
+  <div class='duo2 yui-imgload-duogroup' id='duo2' style='background-image:url("http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/katatjuta.jpg");'></div>
+  <div class='scroll'>
+    <img id='scrollImg' class='yui-imgload-scrollgroup' style='background-image:url("http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/morraine.jpg");' src='http://l.yimg.com/a/i/us/tr/b/1px_trans.gif' width='100' height='72' />
+  </div>
+	```
+</p>
+
+<p>
+  A few things to note. First, the images have class names matching those in the style definitions above.
+</p>
+
+<p>
+  Second, the image URL is set in the <code>background-image</code> of the elements. The <code>background:none</code> 
+  defined earlier in the CSS will be removed by the ImageLoader Utility JavaScript when the images are eventually loaded.
+</p>
+
+<p>
+  Third, since the <code>&lt;img&gt;</code> element displays its images through the <code>background-image</code>, 
+  its size won't change when the image is loaded. Therefore the <code>width</code>/<code>height</code> needs to be set in the HTML. 
+  And since that gives the image a substantial size, the browsers would show a missing-image icon if the <code>src</code> 
+  attribute were not specified. Therefore we need to set one; a transparent one so that the background image will show through.
+</p>
+
+<p>
+  This brings up an important limitation with this approach: you cannot alter the natural size of the image. 
+  Because the image is displayed as a background image, the browser will not resize the image according to the 
+  <code>width</code>/<code>height</code> of the <code>&lt;img&gt;</code> element.
+</p>
+
+<p>
+  Now let's turn to the JavaScript. Since the image URLs are already specified in the HTML, we don't need them in the JS. 
+  All each group needs to know is the CSS class name that will identify the images.
+</p>
+
+```
+var mainGroup = new Y.ImgLoadGroup({ name: 'group 1', timeLimit: 2, className: 'yui-imgload-maingroup' });
+mainGroup.addTrigger('#topmain', 'mouseover');
+ 
+var duoGroup = new Y.ImgLoadGroup({ name: 'group 2', timeLimit: 4, className: 'yui-imgload-duogroup' });
+duoGroup.addTrigger('#duo1', 'mouseover').addTrigger('#duo2', 'click');
+ 
+var scrollGroup = new Y.ImgLoadGroup({ name: 'group 3', className: 'yui-imgload-scrollgroup' });
+scrollGroup.addTrigger(window, 'scroll');
+```
+
+<p>
+  Note that you are free to combine this class-name approach with the other. 
+  The same group can have some images identified by class name and others by registering ids/URLs.
+</p>

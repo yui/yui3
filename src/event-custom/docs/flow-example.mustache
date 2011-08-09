@@ -1,0 +1,60 @@
+<style type="text/css">
+	#fire {
+        margin: 1em;
+    }
+	#log {
+		border: 1px dotted #999;
+        background-color: #FFF;
+	}
+	#log li {
+        padding: 5px;
+    }
+	#log li highlight {
+        color: #930;
+    }
+</style>
+
+<div class="intro">
+    <p>
+        The Custom Event framework is one of the principle communication
+        mechanisms in YUI.  An object can be augmented with
+        <code>EventTarget</code>, enabling it to be both a host and a target
+        for custom events.  Custom events fire from their host and optionally
+        bubble up to one or more targets.  This allows you to make the
+        interesting moments of your applications broadly available within a
+        module, within a set of modules, or throughout a complex interface
+        populated with rich elements.
+    </p>
+
+    <p>
+        In this example, a simple custom event is illustrated:
+        <code>testEvent</code>.  This custom event is hosted on a Publisher
+        object and bubbles up to a BubbleTarget object.
+    </p>
+
+    <img src="{{componentAssets}}/ce-example.gif"
+        alt="An illustration of the relationship between the custom event, its host, and its Bubble Target.">
+
+    <p>
+        Like DOM events, custom event bubbling can be stopped with
+        `e.stopPropagation()` and default behavior can be suppressed with
+        `e.preventDefault()`.
+    </p>
+</div>
+
+<div class="example yui3-skin-sam">
+    {{>flow-example-source}}
+</div>
+
+<h2>Source Code</h2>
+
+<p>
+    The full source code for this example follows.  Read through the comments
+    and code to get an understanding of how you can make use of custom events
+    in your own application development.
+</p>
+
+```
+{{>flow-example-js}}
+```
+

@@ -1,0 +1,107 @@
+// Like most modules in YUI, 'node' requires EventTarget, so it will be
+// included automatically as a dependency.
+YUI().use('node', function (Y) {
+
+    var logger          = Y.one("#log");
+        stopCheckbox    = Y.one("#stopPropagation"),
+        preventCheckbox = Y.one("#preventDefault");
+
+    // We'll create two classes, one to fire the event, and another to be a
+    // bubble target for the other.  All events from the Publisher class can
+    // then be subscribed from either the Publisher instance or the BubbleTarget
+    // instance that it's related to.
+    function BubbleTarget() {
+        Y.log("BubbleTarget constructor executed.");
+    }
+
+    function Publisher(bubbleTo) {
+        Y.log("Publisher constructor executed.");
+
+        this.init(bubbleTo); // see class prototype below
+    }
+
+    // Publishers need to add the provided target to their bubble chain with
+    // `addTarget`. We'll do this, and publish an event, in an `init` method
+    Publisher.prototype = {
+        init: function (bubbleTo) {
+
+            // `addTarget` is the EventTarget method to register new bubble
+            // targets for this instance
+            this.addTarget(bubbleTo);
+
+            // It's only necessary to publish events with special configuration,
+            // such as default, stop, or prevent behaviors.  You can always
+            // fire any event name you wish, published or unpublished.
+            this.publish("testEvent", {
+                // Pass an event facade to subscribers so they can call
+                // e.preventDefault() and other methods.
+                emitFacade: true,
+
+                // An event's default behavior is defined in defaultFn.  This
+                // will execute unless a subscriber calls `e.preventDefault()`
+                defaultFn: function () {
+                    Y.log("defaultFn: testEvent's defaultFn executed.");
+                },
+
+                // You can react to subscribers preventing default behavior as
+                // well, by defining a preventedFn.
+                preventedFn: function () {
+                    Y.log("preventedFn: A subscriber to testEvent called preventDefault().");
+                },
+
+                // If a subscriber calls `e.stopPropagation()`, the event won't
+                // bubble any further, and the stoppedFn will be called if one
+                // is defined.
+                stoppedFn: function () {
+                    Y.log("stoppedFn: A subscriber to testEvent called stopPropagation().");
+                }
+            });
+        }
+    };
+
+
+    // To fire events or be a bubble target, augment a class with EventTarget
+    Y.augment(Publisher, Y.EventTarget);
+    Y.augment(BubbleTarget, Y.EventTarget);
+
+
+    // SEE IT IN ACTION
+
+    var bubbleTarget = new BubbleTarget();
+
+    // You can subscribe to the "testEvent" from the BubbleTarget, even before
+    // a Publisher is created
+    bubbleTarget.subscribe("testEvent", function (e) {
+        Y.log("testEvent fired on the BubbleTarget object.");
+    });
+
+    // Create a Publisher instance, and link it to our BubbleTarget
+    var publisher = new Publisher(bubbleTarget);
+
+    // We can also subscribe to the testEvent on the Publisher instance.
+    publisher.on("testEvent", function (e) {
+        Y.log("testEvent subscriber fired on the publisher object.");
+
+        if (stopCheckbox.get("checked")) {
+            e.stopPropagation();
+        }
+        
+        if (preventCheckbox.get("checked")) {
+            e.preventDefault();
+        }
+    });
+
+
+    // Wire up the example button to fire the event from our publisher
+    Y.one("#fire").on("click", function (e) {
+        logger.empty(); // clear out the logger:
+
+        publisher.fire("testEvent");
+    });
+
+    // A little supporting magic to output Y.log() statements to the screen
+    Y.on("yui:log", function (e) {
+        logger.append("<li>" + e.msg + "</li>");
+    });
+
+});
