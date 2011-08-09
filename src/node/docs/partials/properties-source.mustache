@@ -10,7 +10,7 @@ YUI().use('node', function(Y) {
         input = Y.one('#demo input[name=width]'),
         button = Y.one('#demo input[type=submit]');
 
-    button.on('click', function(e) {
+    form.on('submit', function(e) {
        e.preventDefault(); // keep the form from submitting
 
        var value = input.get('value'),
