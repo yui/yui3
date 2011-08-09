@@ -1,11 +1,11 @@
 YUI().use('dial', function(Y) {
     
     var dial = new Y.Dial({
-    	min: -90,
-    	max: 90,
-    	stepsPerRevolution: 200,
-    	value: 0,
-    	diameter: 100
+        min: -90,
+        max: 90,
+        stepsPerRevolution: 200,
+        value: 0,
+        diameter: 100
     });
     dial.set('strings',{'label':'Climate:', 'resetStr':'Off', 'tooltipHandle':'Drag for cool or heat.'});
     dial.render('#demo');
