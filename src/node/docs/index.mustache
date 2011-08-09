@@ -155,7 +155,10 @@
 					one line of code:
 				</p>
 ```
-	Y.one('#rootmenu').set('role', 'menubar').all('.menu').setAttrs({ role: 'menu', 'aria-hidden': true });
+var node = Y.one('#rootmenu').set('role', 'menubar'),
+    nodes = node.all('.menu');
+    
+nodes.setAttrs({ role: 'menu', 'aria-hidden': true });
 ```
 
             <h2 id="node-migration">Migration Table</h2>
