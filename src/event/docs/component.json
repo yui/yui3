@@ -58,7 +58,7 @@
             "displayName": "The mousewheel Event"
         },
         "outside": {
-            "displayName": "The outside Events"
+            "displayName": "Outside Events"
         },
         "windowresize": {
             "displayName": "The windowresize Event"
