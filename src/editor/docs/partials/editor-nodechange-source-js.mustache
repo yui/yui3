@@ -5,8 +5,12 @@ YUI().use('editor', 'console', function(Y) {
     Y.log('Interact with the Editor.');
 
     var logFn = function(e) {
-        var tag = e.changedNode.get('tagName').toLowerCase();
-        Y.log('nodeChange Event: ' + e.changedType + ' on (' + tag + ')');
+        var node = e.changedNode, tag;
+        
+        if (node) {
+            tag = node.get('tagName').toLowerCase();
+            Y.log('nodeChange Event: ' + e.changedType + ' on (' + tag + ')');
+        }
     };
 
     //Create the Base Editor

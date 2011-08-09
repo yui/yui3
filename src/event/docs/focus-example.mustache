@@ -1,0 +1,525 @@
+<style scoped>
+    .yui3-js-enabled .yui3-checkboxes-loading { display: none;	}
+</style>
+
+<div class="intro">
+    <p>
+        Using Progressive Enhancement to skin checkboxes with the help of the 
+        <a href="../../api/Loader.html">Loader</a>,
+        <a href="../../api/module_classnamemanager.html">ClassNameManager
+        Utility</a>, and the Event Utility's <code>focus</code> and
+        <code>blur</code> events and the <code>delegate</code> method.
+    </p>
+</div>
+
+<div class="example yui3-skin-sam">
+    {{>focus-example-source}}
+</div>
+
+<h2>Challenges</h2>
+
+<p>
+There are a few challenges when trying to skin an HTML checkbox using CSS.  To start, most of the 
+<a href="http://developer.yahoo.com/yui/articles/gbs/#a-grade">A-grade browsers</a> don't provide
+support for CSS properties like <code>border</code> and <code>background</code> on the 
+<code>&#60;input type="checkbox"&#62;</code> element.  Additionally, IE 6 and IE 7 (Quirks Mode) 
+lack support for attribute selectors &#151; necessary to style the <code>checked</code> and 
+<code>disabled</code> states.  Additionally, IE 6 and 7 only support the <code>:focus</code> and 
+<code>:active</code> pseudo classes on <code>&#60;a&#62;</code> elements, both of which are needed 
+to style a checkbox when it is focused or depressed.
+</p>
+
+<h2>Approach</h2>
+<p>
+Despite the shortcomings in CSS support, with a little extra markup and through the use of 
+JavaScript it is possible to skin an <code>&#60;input type="checkbox"&#62;</code> element 
+consistently well in all of the
+<a href="http://developer.yahoo.com/yui/articles/gbs/#a-grade">A-grade browsers</a>.
+</p>
+
+
+<h4>Markup</h4>
+<p>
+Since CSS support for the <code>&#60;input type="checkbox"&#62;</code> element is lacking, wrap 
+<code>&#60;input type="checkbox"&#62;</code> elements in one or more inline elements to provide the 
+necessary hooks for styling.  In this example, each <code>&#60;input type="checkbox"&#62;</code> 
+element is wrapped by two <code>&#60;span&#62;</code>s.
+</p>
+
+```
+<span>
+  <span>
+    <input type="checkbox">
+  </span>
+</span>
+```
+
+<h4>CSS</h4>
+<p>
+To style each checkbox, a class name of <code>yui3-checkbox</code> will be applied to the 
+outtermost <code>&#60;span&#62;</code> wrapping each <code>&#60;input type="checkbox"&#62;</code> 
+element.  An additional class will be used to represent the various states of each checkbox.  The 
+class name for each state will follow a consistent pattern: <code>yui3-checkbox-[state]</code>.  
+For this example, the following state-based class names will be used:
+</p>
+<dl>
+    <dt><code>yui3-checkbox-focus</code></dt>
+    <dd>The checkbox has focus</dd>
+    <dt><code>yui3-checkbox-active</code></dt>
+    <dd>The checkbox is active (pressed)</dd>
+    <dt><code>yui3-checkbox-checked</code></dt>
+    <dd>The checkbox is checked</dd>    
+</dl>
+<p>
+The styles for each checkbox comes together as follows:
+</p>
+
+```
+.yui3-checkbox {
+    display: -moz-inline-stack; /* Gecko < 1.9, since it doesn't support "inline-block" */
+    display: inline-block; /* IE, Opera and Webkit, and Gecko 1.9 */
+    width: 10px;
+    height: 10px;
+    border: inset 2px #999;
+    background-color: #fff; /*  Need to set a background color or IE won't get mouse events */  
+
+    /*
+        Necessary for IE 6 (Quirks and Standards Mode) and IE 7 (Quirks Mode), since 
+        they don't support use of negative margins without relative positioning.  
+    */
+    _position: relative;
+}
+
+.yui3-checkbox span {
+    display: block;
+    height: 14px;
+    width: 12px;
+    overflow: hidden;
+
+    /* Position the checkmark for Gecko, Opera and Webkit and IE 7 (Strict Mode). */
+    margin: -5px 0 0 1px;
+
+    /* Position the checkmark for IE 6 (Strict and Quirks Mode) and IE 7 (Quirks Mode).*/
+    _margin: 0;
+    _position: absolute;
+    _top: -5px;
+    _left: 1px;
+    
+}
+
+/* For Gecko < 1.9: Positions the checkbox on the same line as its corresponding label. */
+.yui3-checkbox span:after {
+    content: ".";
+    visibility: hidden;
+    line-height: 2;
+}
+
+/*
+    Hide the actual checkbox offscreen so that it is out of view, but still accessible via 
+    the keyboard. 
+*/
+.yui3-checkbox input {
+    position: absolute;
+    left: -10000px;
+}
+
+.yui3-checkbox-focus {
+    border-color: #39f;
+    background-color: #9cf;
+}
+
+.yui3-checkbox-active {
+    background-color: #ccc;
+}
+
+.yui3-checkbox-checked span {
+    /* Draw a custom checkmark for the checked state using a background image. */
+    background: url(checkmark.png) no-repeat;
+}
+```
+
+<h4>JavaScript</h4>
+
+<p>
+Application and removal of the state-based class names will be facilitated by JavaScript event 
+handlers.  Each event handler will track the state of the 
+<code>&#60;input type="checkbox"&#62;</code> element, and apply and remove corresponding 
+state-based class names from its outtermost <code>&#60;span&#62;</code> &#151; 
+making it easy to style each state.  And since each JavaScript is required for state management, 
+the stylesheet for the skinned checkboxes will only be added to the page when JavaScript is
+enabled.  This will ensure that each checkbox works correctly with and without JavaScript enabled.
+</p>
+
+<p>
+Since there could easily be many instances of a skinned checkbox on the page, all event 
+listeners will be attached to the containing element for all checkboxes.  Each listener will 
+listen for events as they bubble up from each checkbox.  Relying on event bubbling will improve the 
+overall performance of the page by reducing the number of event handlers.
+</p>
+
+<p>
+Since the DOM <code>focus</code> and <code>blur</code> events do not bubble, use the Event Utility's 
+<a href="../../api/YUI.html#event_focus"><code>focus</code></a> and 
+<a href="../../api/YUI.html#event_focus"><code>blur</code></a> custom events, as an alternative to 
+attaching discrete focus and blur event handlers to the <code>&#60;input type="checkbox"&#62;</code>
+element of each skinned checkbox.  The 
+<a href="../../api/YUI.html#event_focus"><code>focus</code></a> and 
+<a href="../../api/YUI.html#event_focus"><code>blur</code></a> custom events leverage 
+capture-phase DOM event listeners, making it possible to attach a single focus and blur event 
+listener on the containing element of each checkbox &#151; thereby increasing the performance 
+of the page.  The complete script for the example comes together as follows:
+</p>
+
+```
+YUI().use("*", function(Y) {
+
+    var UA = Y.UA,
+        getClassName = Y.ClassNameManager.getClassName,
+        sCheckboxFocusClass = getClassName("checkbox", "focus"),    // Create yui3-checkbox-focus
+        sCheckboxCheckedClass = getClassName("checkbox", "checked"),    // Create yui3-checkbox-checked
+        sCheckboxActiveClass = getClassName("checkbox", "active"),  // Create yui3-checkbox-active
+        bKeyListenersInitialized = false,
+        bMouseListenersInitialized = false,
+        forAttr = (UA.ie && UA.ie < 8) ? "htmlFor" : "for",
+        bBlockDocumentMouseUp = false,
+        bBlockClearActive = false,
+        bBlockBlur = false,     
+        oActiveCheckbox;            
+
+
+    var initKeyListeners = function () {
+
+        this.delegate("keydown", onCheckboxKeyDown, ".yui3-checkbox");
+        this.delegate("click", onCheckboxClick, ".yui3-checkbox");
+        this.delegate("blur", onCheckboxBlur, "input[type=checkbox]");
+
+        bKeyListenersInitialized = true;
+
+    };
+
+
+    var initMouseListeners = function () {
+
+        this.delegate("mouseover", onCheckboxMouseOver, ".yui3-checkbox");
+        this.delegate("mouseout", onCheckboxMouseOut, ".yui3-checkbox-active");
+        this.get("ownerDocument").on("mouseup", onDocumentMouseUp);
+
+        bMouseListenersInitialized = true;
+
+    };
+
+
+    var getCheckbox = function (node) {
+
+        return (node.hasClass("yui3-checkbox") ? node : node.ancestor(".yui3-checkbox"));
+
+    };
+
+
+    var getCheckboxForLabel = function (label) {
+
+        var sID = label.getAttribute(forAttr),
+            oInput,
+            oCheckbox;
+
+        if (sID) {
+
+            oInput = Y.one("#" + sID);
+
+            if (oInput) {
+                oCheckbox = getCheckbox(oInput);
+            }
+
+        }
+
+        return oCheckbox;
+
+    };
+
+
+    var updateCheckedState = function (input) {
+
+        var oCheckbox = getCheckbox(input);
+
+        if (input.get("checked")) {
+            oCheckbox.addClass(sCheckboxCheckedClass);
+        }
+        else {
+            oCheckbox.removeClass(sCheckboxCheckedClass);
+        }
+
+    };
+
+
+    var setActiveCheckbox = function (checkbox) {
+
+        checkbox.addClass(sCheckboxActiveClass);
+        oActiveCheckbox = checkbox;
+
+    };
+
+
+    var clearActiveCheckbox = function () {
+
+        if (oActiveCheckbox) {
+            oActiveCheckbox.removeClass(sCheckboxActiveClass);
+            oActiveCheckbox = null;
+        }
+
+    };
+
+
+    var onCheckboxMouseOver = function (event, matchedEl) {
+
+        if (oActiveCheckbox && oActiveCheckbox.compareTo(this)) {
+            oActiveCheckbox.addClass(sCheckboxActiveClass);
+        }
+
+    };
+
+
+    var onCheckboxMouseOut = function (event) {
+
+        this.removeClass(sCheckboxActiveClass);
+
+    };              
+
+
+    var onDocumentMouseUp = function (event) {
+
+        var oCheckbox;
+
+        if (!bBlockDocumentMouseUp) {
+
+            oCheckbox = getCheckbox(event.target);
+
+            if ((oCheckbox && !oCheckbox.compareTo(oActiveCheckbox)) || !oCheckbox) {
+                clearActiveCheckbox();
+            }
+
+        }
+
+        bBlockDocumentMouseUp = false;
+
+    };
+
+
+    var onCheckboxFocus = function (event) {
+
+        //  Remove the focus style from any checkbox that might still have it
+
+        var oCheckbox = Y.one("#checkboxes").one(".yui3-checkbox-focus");
+
+        if (oCheckbox) {
+            oCheckbox.removeClass(sCheckboxFocusClass);
+        }
+
+        //  Defer adding key-related and click event listeners until 
+        //  one of the checkboxes is initially focused.
+
+        if (!bKeyListenersInitialized) {
+            initKeyListeners.call(event.container);
+        }
+
+        var oCheckbox = getCheckbox(this);
+
+        oCheckbox.addClass(sCheckboxFocusClass);
+
+    };
+
+
+    var onCheckboxBlur = function (event) {
+
+        if (bBlockBlur) {
+            bBlockBlur = false;
+            return;
+        }
+
+        var oCheckbox = getCheckbox(this);
+
+        oCheckbox.removeClass(sCheckboxFocusClass);
+
+        if (!bBlockClearActive && oCheckbox.compareTo(oActiveCheckbox)) {
+            clearActiveCheckbox();
+        }
+
+        bBlockClearActive = false;
+
+    };
+
+
+    var onCheckboxMouseDown = function (event) {
+
+        //  Defer adding mouse-related and click event listeners until 
+        //  the user mouses down on one of the checkboxes.
+
+        if (!bMouseListenersInitialized) {
+            initMouseListeners.call(event.container);
+        }
+
+        var oCheckbox,
+            oInput;
+
+
+        if (this.get("nodeName").toLowerCase() === "label") {
+
+            //  If the target of the event was the checkbox's label element, the
+            //  label will dispatch a click event to the checkbox, meaning the 
+            //  "onCheckboxClick" handler will be called twice.  For that reason
+            //  it is necessary to block the "onDocumentMouseUp" handler from
+            //  clearing the active state, so that a reference to the active  
+            //  checkbox still exists the second time the "onCheckboxClick"
+            //  handler is called.
+
+            bBlockDocumentMouseUp = true;
+
+            //  When the user clicks the label instead of the checkbox itself, 
+            //  the checkbox will be blurred if it has focus.  Since the 
+            //  "onCheckboxBlur" handler clears the active state it is 
+            //  necessary to block the clearing of the active state when the 
+            //  label is clicked instead of the checkbox itself.
+
+            bBlockClearActive = true;
+
+            oCheckbox = getCheckboxForLabel(this);
+
+        }
+        else {
+
+            oCheckbox = this;
+
+        }
+
+        //  Need to focus the input manually for two reasons:
+        //  1)  Mousing down on a label in Webkit doesn't focus its  
+        //      associated checkbox
+        //  2)  By default checkboxes are focused when the user mouses 
+        //      down on them.  However, since the actually checkbox is 
+        //      obscurred by the two span elements that are used to 
+        //      style it, the checkbox wont' receive focus as it was 
+        //      never the actual target of the mousedown event.
+
+        oInput = oCheckbox.one("input");
+
+
+        //  Calling Event.preventDefault won't block the blurring of the 
+        //  currently focused element in IE, so we'll use the "bBlockBlur"
+        //  variable to stop the code in the blur event handler  
+        //  from executing.
+
+        bBlockBlur = (UA.ie && oInput.get("checked"));
+
+
+        oInput.focus();
+
+        setActiveCheckbox(oCheckbox);
+
+        //  Need to call preventDefault because by default mousing down on
+        //  an element will blur the element in the document that currently 
+        //  has focus--in this case, the input element that was 
+        //  just focused.
+
+        event.preventDefault();
+
+    };
+
+
+    var onCheckboxClick = function (event) {
+
+        var oInput;
+
+        if (this.compareTo(oActiveCheckbox)) {
+
+            oInput = this.one("input");
+
+            if (!event.target.compareTo(oInput)) {
+
+                //  If the click event was fired via the mouse the checked
+                //  state will have to be manually updated since the input 
+                //  is hidden offscreen and therefore couldn't be the 
+                //  target of the click.
+
+                oInput.set("checked", (!oInput.get("checked")));
+
+            }
+
+            updateCheckedState(oInput);
+            clearActiveCheckbox();
+
+        }
+
+    };
+
+
+    var onCheckboxKeyDown = function (event) {
+
+        //  Style the checkbox as being active when the user presses the 
+        //  space bar
+
+        if (event.keyCode === 32) {
+            setActiveCheckbox(this);
+        }
+
+    };
+
+    Y.all("#checkboxes>div>span").addClass("yui3-checkbox");
+
+    //  Remove the "yui3-checkboxes-loading" class used to hide the 
+    //  checkboxes now that the checkboxes have been skinned.
+
+    Y.one("#checkboxes").removeClass("yui3-checkboxes-loading");
+
+    //  Add the minimum number of event listeners needed to start, bind the 
+    //  rest when needed
+
+    Y.delegate("mousedown", onCheckboxMouseDown, "#checkboxes", ".yui3-checkbox,label");
+    Y.delegate("focus", onCheckboxFocus, "#checkboxes", "input[type=checkbox]");
+
+});
+```
+
+<h4>Progressive Enhancement</h4>
+<p>
+To account for the scenario where the user has CSS enabled in their browser but JavaScript 
+is disabled, the CSS used to style the checkboxes will be loaded via JavaScript 
+using the YUI instance's <a href="http://developer.yahoo.com/yui/3/yui#loader">built-in Loader</a>.
+</p>
+```
+YUI({
+
+    base: "${buildDirectory}",
+
+    //  Load the stylesheet for the skinned checkboxes via JavaScript, 
+    //  since without JavaScript skinning of the checkboxes wouldn't 
+    //  be possible.
+    
+    modules: {
+
+        "checkboxcss": {
+            type: "css",
+            fullpath: "${assetsDirectory}checkbox.css"
+        },
+        "checkboxjs": {
+            type: "js",
+            fullpath: "${assetsDirectory}checkbox.js",
+            requires: ["classnamemanager", "event-focus", "node-event-delegate", "checkboxcss"]
+        }               
+
+    }
+
+}).use("checkboxjs");
+```
+
+<p>
+To prevent the user from seeing a flash unstyled content when JavaScript is enabled, 
+a style rule is created using YUI's <code>yui3-js-enabled</code> class name that will temporarily 
+hide the markup while the JavaScript and CSS are in the process of loading.  For more on using the 
+<code>yui3-js-enabled</code> class name, see the 
+<a href="../../widget/#progressive">HIDING PROGRESSIVELY ENHANCED MARKUP</a> section of the 
+<a href="../../widget/">YUI Widget landing page</a>.
+</p>
+```
+.yui3-js-enabled .yui3-checkboxes-loading {
+    display: none;	
+}
+```

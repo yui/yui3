@@ -1,0 +1,35 @@
+<script>
+YUI({
+    skin: {
+        overrides: {
+            slider: [
+                'sam',          // The default skin
+                'sam-dark',     // Suited for dark backgrounds
+
+                'capsule',      // You only need to include one skin
+                'capsule-dark', // in the overrides section unless you
+                                // are using multiple skins on the same page
+                'round',
+                'round-dark',
+
+                'audio-light',
+                'audio'
+            ]
+        }
+    }
+}).use('slider', function ( Y ) {
+
+    new Y.Slider().render( '#sam' );
+    new Y.Slider().render( '#sam_dark' );
+
+    new Y.Slider().render( '#capsule' );
+    new Y.Slider().render( '#capsule_dark' );
+
+    new Y.Slider().render( '#round' );
+    new Y.Slider().render( '#round_dark' );
+
+    new Y.Slider().render( '#audio_light' );
+    new Y.Slider().render( '#audio' );
+
+} );
+</script>

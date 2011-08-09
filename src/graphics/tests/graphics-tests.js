@@ -212,6 +212,13 @@ graphicTests = new Y.Test.Case({
 
         Y.assert(this.updatedStrokeColor === myrect.get("stroke").color);
     },
+
+    "testRectStrokeWeightType" : function()
+    {
+        var strokeWeight = 2,
+            stroke = this.myrect.get("stroke");
+        Y.assert(stroke.weight === strokeWeight);
+    },
     
     "test myrect.set(fill)" : function()
     {
@@ -564,6 +571,7 @@ svgTests = new Y.Test.Case({
         Y.assert(opacity == node.getAttribute("stroke-opacity"));
         Y.assert(stroke.linecap == node.getAttribute("stroke-linecap"));
         Y.assert(stroke.dashstyle == node.getAttribute("stroke-dasharray"));
+        Y.assert(stroke.weight == node.getAttribute("stroke-width"));
     }
 });
 
