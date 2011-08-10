@@ -4,7 +4,7 @@
     "description": "Transition adds the ability to animate Node style properties.  It is modeled after the CSS Transition specification, and leverages native CSS Transition implementations when possible.",
     "author"     : "msweeney",
 
-    "tags": ["utility", "transition"],
+    "tags": ["utility", "transition", "beta"],
     "use" : ["transition"],
 
     "examples": [
