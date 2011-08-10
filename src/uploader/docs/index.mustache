@@ -17,7 +17,7 @@
   	<li>The Uploader SWF should always be served from an HTTP server due to Flash Player's restricted local security model.</li>
     <li>The Uploader SWF should not be placed in a container with `visibility` set to `hidden`, or `display` set to `none`, whether at initialization of the page, or at any subsequent time. Because of how Flash Player is instantiated, setting these properties to these values will result in the loss of communication between the Flash player and the DOM. If it's necessary to hide the instance of the Uploader on the page, its size should be set to 0x0</li>
   	<li>The Uploader requires Flash Player 9.0.45 or higher, with Flash Player 10.1 preferred. The latest version of Flash Player is available at the <a href="http://www.adobe.com/go/getflashplayer">Adobe Flash Player Download Center</a>.</li>
-    <li>Because of a bug in IE7 and IE8, the Uploader SWF does not function properly when loaded from local cache. For that reason, in IE7 and IE8, it is best to prevent cache loading of the SWF. See the examples for one possible workaround of this issue.
+    <li>Because of a bug in IE6, IE7 and IE8, the Uploader SWF does not function properly when loaded from local cache. For that reason, in IE6, IE7 and IE8, it is best to prevent cache loading of the SWF. See the examples for one possible workaround of this issue.
   </ul>
 
 </p>

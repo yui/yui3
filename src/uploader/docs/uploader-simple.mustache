@@ -65,13 +65,13 @@ YUI().use("uploader", function(Y) {
 ```
 
 <h2>Working around the IE Caching Bug</h2>
-<p>Due to a bug in IE7 and IE8, when a SWF is loaded from local cache (after a page has been reloaded, for example), it's unable to properly communicate with the JavaScript VM. For that reason, specifically for IE,
+<p>Due to a bug in IE6 through IE8, when a SWF is loaded from local cache (after a page has been reloaded, for example), it's unable to properly communicate with the JavaScript VM. For that reason, specifically for IE,
 we can prevent loading the SWF from cache by appending a random get variable to the SWF URL:</p>
 
 ```
 var swfURL = Y.Env.cdn + "uploader/assets/uploader.swf";
 
-if (Y.UA.ie >= 7) {
+if (Y.UA.ie >= 6) {
     swfURL += "?t=" + Y.guid();
 }
 ```

@@ -3,7 +3,7 @@ YUI().use("transition", "panel", function(Y) {
   panel = new Y.Panel({
     srcNode: "#panelContent",
     width:330,
-    centered:true,
+    xy: [300, -300],
     modal:true,
     visible:false,
     zIndex: 5,
@@ -12,7 +12,7 @@ YUI().use("transition", "panel", function(Y) {
         value: "Close the panel",
         action: function(e) {
           e.preventDefault();
-          panel.hide();
+          hidePanel();
         },
         section: "footer"
       }
@@ -22,29 +22,25 @@ YUI().use("transition", "panel", function(Y) {
 
   bb = panel.get('boundingBox');
 
-  bb.setStyles({
-    "opacity": 0
-  });
-
-  panel.on('visibleChange', toggleAnimation);
-
   openBtn.on('click', function(e) {
-    panel.show();
+    showPanel();
   });
 
-  function toggleAnimation (e) {
-    if (e.newVal) {
-      bb.transition({
-        duration: 1,
-        opacity: 1
-      });
-    }
-    else {
-      bb.transition({
-        duration: 1,
-        opacity: 0
-      });
-    }
+  function showPanel () {
+    panel.show();
+    bb.transition({
+      duration: 0.5,
+      top:"80px"
+    });
+  }
+
+  function hidePanel () {
+    bb.transition({
+      duration: 0.5,
+      top:"-300px"
+    }, function() {
+      panel.hide();
+    });
   }
   
       
