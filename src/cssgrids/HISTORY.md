@@ -1,13 +1,44 @@
-Note: this is the new version of Grids.
+History Change History
+======================
 
-For the deprecated version of grids use cssgrids-deprecated
+3.4.0
+-----
 
-*** version 3.3.0 ***	
-no change
+  * No change.
 
-*** version 3.2.0 ***	
-    * Initial release of updated Grids modules
+  
+3.3.0
+-----
 
+  * No change.
+
+
+3.2.0
+-----
+
+  * [!] The pre-3.2.0 CSS Grids Utility has been deprecated, and its
+    module has been renamed to `cssgrids-deprecated`. It will be removed
+    completely in a future release.
+
+  * Initial release of the new CSS Grids Utility.
+
+
+3.1.1
+-----
+
+  * No change.
+
+
+3.1.0
+-----
+
+  * No change.
+
+
+3.0.0
+-----
+
+  * Initial release.
 
 **** version 3.0.0 ***	
   * deprecated for YUI 3
