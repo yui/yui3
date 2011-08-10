@@ -3,7 +3,8 @@
    their upload progress with individual progress bars. The example also demonstrates the 
    use of the transparent overlay "Browse" button for the Uploader.</p>
    
-<p><strong>Please note:</strong> This example will not work when run from a local filesystem because Flash only allows ExternalInterface communication with pages loaded from the network. If you’d like to run this example locally, set up a local web server and launch it from there. </p>
+<p><strong>Please note:</strong> This example will not work when run from a local filesystem because Flash only allows ExternalInterface communication with pages loaded from the network. If you’d like to run this example locally, set up a local web server and launch it from there.</p>
+<p><strong>Also note:</strong> The uploader is not supported on iOS devices (iPhone and iPad), because Flash player is not available on that system. This example will not function on such devices.</p>
 </div>
 
 <div class="example yui3-skin-sam">
@@ -46,8 +47,20 @@ YUI({
 		  });
 ```
 
+<h2>Working around the IE Caching Bug</h2>
+<p>Due to a bug in IE7 and IE8, when a SWF is loaded from local cache (after a page has been reloaded, for example), it's unable to properly communicate with the JavaScript VM. For that reason, specifically for IE,
+we can prevent loading the SWF from cache by appending a random get variable to the SWF URL:</p>
+
+```
+var swfURL = Y.Env.cdn + "uploader/assets/uploader.swf";
+
+if (Y.UA.ie >= 7) {
+    swfURL += "?t=" + Y.guid();
+}
+```
+
 <h2>Instantiate the Uploader</h2>
-<p>Next, create an instance of the Uploader. Since the Uploader is being placed in a relatively-sized container, subscribe to the `domready` event and instantiate the uploader in its handler. After instantiating it, add handlers to the uploader events:</p>
+<p>Next, create an instance of the Uploader. Make sure to include the custom swfURL we constructed as part of the workaround above. Since the Uploader is being placed in a relatively-sized container, subscribe to the `domready` event and instantiate the uploader in its handler. After instantiating it, add handlers to the uploader events:</p>
 	
 ```
 var uploader;
@@ -60,7 +73,7 @@ Y.log(overlayRegion);
 Y.one("#uploaderOverlay").set("offsetWidth", overlayRegion.width);
 Y.one("#uploaderOverlay").set("offsetHeight", overlayRegion.height);
 
-uploader = new Y.Uploader({boundingBox:"#uploaderOverlay"});	
+uploader = new Y.Uploader({boundingBox:"#uploaderOverlay", swfURL: swfURL});	
 
 uploader.on("uploaderReady", setupUploader);
 uploader.on("fileselect", fileSelect);
