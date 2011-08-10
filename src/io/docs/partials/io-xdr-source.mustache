@@ -1,4 +1,4 @@
-<button id="fetch" disabled="disabled">Load JSON RSS news feed from Yahoo! Pipes.</button>
+<button id="pipes">Load RSS news feed from Yahoo! Pipes.</button>
 <div id="output">
     <ul>
         <li>Content from Yahoo! Pipes feed will display here.</li>
@@ -6,21 +6,12 @@
 </div>
 
 <script language="javascript">
-
-YUI().use("io-xdr", "substitute", "json-parse", "node",
-
+YUI({ filter:'raw' }).use("io-xdr", "substitute", "json-parse", "node",
     function(Y) {
 
         //Data fetched will be displayed in a UL in the
         //element #output:
         var output = Y.one("#output ul");
-
-        //Configure the cross-domain transport:
-        var xdrConfig = {
-            id:'flash', //We'll reference this id in the xdr configuration of our transaction.
-            src:'../../build/io-xdr/io.swf' //Relative path to the .swf file from the current page.
-        };
-        Y.io.transport(xdrConfig);
 
         //Event handler called when the transaction begins:
         var handleStart = function(id, a) {
@@ -32,8 +23,8 @@ YUI().use("io-xdr", "substitute", "json-parse", "node",
         //RSS items to the page.
         var handleSuccess = function(id, o, a) {
 
-            //We use JSON.parse to sanitize the JSON (as opposed to simply eval'ing
-            //it into the page):
+            //We use JSON.parse to sanitize the JSON (as opposed to simply performing an
+            //JavaScript eval of the data):
             var oRSS = Y.JSON.parse(o.responseText);
 
             //From here, we simply access the JSON data from where it's provided
@@ -59,18 +50,19 @@ YUI().use("io-xdr", "substitute", "json-parse", "node",
             }
         }
 
-        //In the event that the HTTP status returned is > 399, a
-        //failure is reported and this function is called:
+        //In the event that the HTTP status returned does not resolve to,
+        //HTTP 2xx, a failure is reported and this function is called:
         var handleFailure = function(id, o, a) {
             Y.log("ERROR " + id + " " + a, "info", "example");
         }
 
-        //With all the aparatus in place, we can now configure our
-        //io call.
+        //With all the apparatus in place, we can now configure our
+        //IO call.  The method property is defined, but if omitted,
+        //IO will default to HTTP GET.
         var cfg = {
             method: "GET",
             xdr: {
-                use:'flash' //This is the xdrConfig id we referenced above.
+                use:'native'
             },
             on: {
                 //Our event handlers previously defined:
@@ -84,6 +76,10 @@ YUI().use("io-xdr", "substitute", "json-parse", "node",
         //time the button is clicked:
         var handleClick = function(o) {
             Y.log("Click detected; beginning io request to Yahoo! Pipes.", "info", "example");
+	    // Remove the default "X-Requested-With" header as this will
+	    // prevent the request from succeeding; the Pipes 
+	    // resource will not accept user-defined HTTP headers.
+	    Y.io.header('X-Requested-With');
             var obj = Y.io(
                 //this is a specific Pipes feed, populated with cycling news:
                 "http://pipes.yahooapis.com/pipes/pipe.run?_id=giWz8Vc33BG6rQEQo_NLYQ&_render=json",
@@ -91,14 +87,8 @@ YUI().use("io-xdr", "substitute", "json-parse", "node",
             );
         }
 
-        //add the clickHandler as soon as the xdr Flash module has
-        //loaded:
-        Y.on('io:xdrReady', function() {
-            var fetch = Y.one("#fetch");
-            fetch.set("disabled", false);
-            Y.on("click", handleClick, fetch);
-        });
-
+        //add the click handler to the Load button.
+        Y.on("click", handleClick, "#pipes");
     }
 );
 </script>

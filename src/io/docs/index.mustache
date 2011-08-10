@@ -758,7 +758,7 @@ YUI().use("io-queue", function(Y) {
     <li> Your application uses the <code>io-xdr</code> sub-module from version YUI 3.1.0, 3.1.1, and you explicitly load <code>io.swf</code> from a disparate domain, and you have a crossdomain policy file allowing access from the SWF's domain.  Solution: modify your application's crossdomain.xml so that <code>allow-access-from domain=</code> does <strong>not</strong> allow access from the domain serving <code>io.swf</code>.  Download YUI 3.1.2 and deploy <code>io.swf</code> on your application's domain instead of loading it from a remote domain.
     <li> If you use <code>io.swf</code> from YUI 3.0.0 you are not affected by this vulnerability.</li>
 </ul>
-<p>Beginning with YUI 3.1.2, <code>io.swf</code> will no longer be accessible from yui.yahooapis.com.  You will be required to host and serve <code>io.swf></code>, if you wish to employ it as an XDR transport.</p>
+<p>Beginning with YUI 3.1.2, <code>io.swf</code> will no longer be accessible from yui.yahooapis.com.  You will be required to host and serve <code>io.swf</code>, if you wish to employ it as an XDR transport.</p>
 
 <h2>Known Issues</h2>
 <ul>
