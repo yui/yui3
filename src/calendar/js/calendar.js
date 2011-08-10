@@ -199,7 +199,7 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
   addYear : function (e) {
     this.set("date", ydate.addYears(this.get("date"), 1));
     e.halt();
-  },  
+  }
 },
 
 {

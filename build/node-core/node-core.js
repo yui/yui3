@@ -1352,7 +1352,7 @@ var Y_NodeList = Y.NodeList,
           * @return {NodeList} A new NodeList comprised of this NodeList joined with the input.
           */
         'concat': 1,
-        /** Removes the first last from the NodeList and returns it.
+        /** Removes the last from the NodeList and returns it.
           * @for NodeList
           * @method pop
           * @return {Node} The last item in the NodeList.
@@ -1394,7 +1394,7 @@ var Y_NodeList = Y.NodeList,
         'splice': 1,
         /** Adds the given Node(s) to the beginning of the NodeList.
           * @for NodeList
-          * @method push
+          * @method unshift
           * @param {Node | DOMNode} nodes One or more nodes to add to the NodeList.
           */
         'unshift': 0
