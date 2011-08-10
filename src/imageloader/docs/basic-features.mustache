@@ -6,44 +6,41 @@
 </div>
 
 <style>
-
-  #group1, #group2, #group3, #group4 { border-bottom: dotted 1px #ccc;}
   .yuiLogo { width:117px; height: 52px; border:1px solid #888; margin:5px;}
-
 </style>
 
-
-<div class="example">
-
-  <div id="group1">
-    <h2>Group 1: Two second delay</h2>
+<div id="group1">
+  <h2>Group 1: Two second delay</h2>
+  <div class='example'>
     <p>This will appear two seconds after page-load.</p>
     <div class='yuiLogo' id='delay' title='Group 1: 2 sec limit'></div>
-    
+
     <h5>HTML</h5>
     ```
     <div id='delay' title='Group 1: 2 sec limit'></div>
     ```
-    
+
     <h5>JavaScript</h5>
     ```
   	var delayGroup = new Y.ImgLoadGroup({ timeLimit: 2 });
   	delayGroup.registerImage({ domId: 'delay', bgUrl: '{{componentAssets}}/yui-logo.png', isPng: true });
     ```
   </div>
+</div>
 
-  <div id="group2">
-    <h2>Group 2: Window scroll event</h2>
+<div id="group2">
+  <h2>Group 2: Window scroll event</h2>
+  <div class='example'>
     <p>This will appear when the scroll event is fired.</p>
   	<div class='yuiLogo' title='Group 2: scroll'>
   		<img id='scroll' style='visibility:hidden;' />
   	</div>
-  	
+	
     <h5>HTML</h5>
     ```
     <img id='scroll' style='visibility:hidden;' />
     ```
-    
+  
     <h5>JavaScript</h5>
     ```
     var scrollGroup = new Y.ImgLoadGroup();
@@ -51,17 +48,19 @@
     scrollGroup.addTrigger(window, 'scroll');
     ```
   </div>
+</div>
 
-  <div id="group3">
-    <h2>Group 3: Mouse over</h2>
+<div id="group3">
+  <h2>Group 3: Mouse over</h2>
+  <div class="example">
     <p>This will appear when you mouse over it.</p>
     <div class='yuiLogo' id='mouseover' title='Group 3: mouseover'></div>
-    
+  
     <h5>HTML</h5>
     ```
     <div id='mouseover' title='Group 3: mouseover'></div>
     ```
-    
+  
     <h5>JavaScript</h5>
     ```
   	var mouseoverGroup = new Y.ImgLoadGroup();
@@ -69,19 +68,21 @@
   	mouseoverGroup.addTrigger(window, 'scroll');
     ```
   </div>
+</div>
 
-  <div id="group4">
-    <h2>Group 4: Onclick</h2>
+<div id="group4">
+  <h2>Group 4: Onclick</h2>
+  <div class="example">
     <p>These will appear when either one is clicked.</p>
 	  <div class='yuiLogo' id='duo1' title='Group 4: onclick'></div>  
     <div class='yuiLogo' id='duo2' title='Group 4: onclick'></div>
-    
+  
     <h5>HTML</h5>
     ```
     <div id='duo1' title='Group 4: onclick'></div>  
     <div id='duo2' title='Group 4: onclick'></div>
     ```
-    
+  
     <h5>JavaScript</h5>
     ```
   	var clickGroup = new Y.ImgLoadGroup();
@@ -90,9 +91,7 @@
   	clickGroup.addTrigger('#duo2', 'click').addTrigger('#duo1', 'click');
     ```
   </div>
-  
 </div>
-
 
 <script>
 
