@@ -39,7 +39,7 @@ ul#demo2 {
     width: 10em;
     display: inline-block;
     zoom: 1;
-    *display: block;
+    *display: inline;
 }
 
 .yui3-fail {
