@@ -1,4 +1,4 @@
-                                                                                                            YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate', function (Y){
+YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate', function (Y){
     var myline,
     mycurve;
         
@@ -15,8 +15,8 @@
     ctrlIsDown = false,
     altIsDown = false,
     curveInProgress = false,
-    prevX = pencil.getX() - Y.one('#mycanvas').getX(),
-    prevY = pencil.getY() - Y.one('#mycanvas').getY(),
+    prevX = pencil.getX() - Y.one('#mygraphiccontainer').getX(),
+    prevY = pencil.getY() - Y.one('#mygraphiccontainer').getY(),
     myX,
     myY,
     cp1X,
@@ -49,8 +49,8 @@
     });
 
     dd.on('drag:start', function(e){
-        myX = pencil.getX() - Y.one('#mycanvas').getX();
-        myY = pencil.getY() - Y.one('#mycanvas').getY();
+        myX = pencil.getX() - Y.one('#mygraphiccontainer').getX();
+        myY = pencil.getY() - Y.one('#mygraphiccontainer').getY();
         if((isNewObj)&&(!ctrlIsDown)){
             myline.moveTo(myX,myY); //fixes issue of graphics needs a moveTo to start a new object or it won't draw.
             isNewObj = false;
@@ -58,8 +58,8 @@
     });
 
     dd.on('drag:drag', function(e){
-        var myX = pencil.getX() - Y.one('#mycanvas').getX(),
-        myY = pencil.getY() - Y.one('#mycanvas').getY();
+        var myX = pencil.getX() - Y.one('#mygraphiccontainer').getX(),
+        myY = pencil.getY() - Y.one('#mygraphiccontainer').getY();
         pencilXYTextInput.setContent(myX + ',' + myY );
     });
 
@@ -67,8 +67,8 @@
         var newObjStr = "",
         toMethod,
         methodStr;
-        myX = pencil.getX() - Y.one('#mycanvas').getX();
-        myY = pencil.getY() - Y.one('#mycanvas').getY();
+        myX = pencil.getX() - Y.one('#mygraphiccontainer').getX();
+        myY = pencil.getY() - Y.one('#mygraphiccontainer').getY();
         if(ctrlIsDown){
             toMethod = 'moveTo'; 
             myline.moveTo(myX, myY); //Notice we're using myLine that is defined to do the real drawing
@@ -104,8 +104,8 @@
     var insertCode = function(methodStr){
         jsStr = code.getContent();
         code.remove(); // If the user types into the textarea, the contents would not update anymore, So removed then created a new one
-        code = Y.Node.create('<textarea class="code" rows="8" cols="5000">copy generated code from here</textarea>');
-        Y.one('.code-div .code-p').append(code);
+        code = Y.Node.create('<textarea class="code" rows="8" cols="5">copy generated code from here</textarea>');
+        Y.one('.code-div').append(code);
         jsStr = jsStr.replace(/(.end\(\); \/\/ lastEndMarker)/g, methodStr);
         code.setContent(jsStr);
         code.select();
@@ -149,8 +149,8 @@
     // when user changes the object name in the input box "Graphic Object Name"
     Y.on('change', function(){
         if(inpObjName.get('value') !== objName){
-            myX = pencil.getX() - Y.one('#mycanvas').getX();
-            myY = pencil.getY() - Y.one('#mycanvas').getY();
+            myX = pencil.getX() - Y.one('#mygraphiccontainer').getX();
+            myY = pencil.getY() - Y.one('#mygraphiccontainer').getY();
             jsStr = jsStr.replace(/(\/\/ lastEndMarker)/g, '\r\n\r\n');
             jsStr += makeStrForNewObject();
             //jsStr += objName + '.end(); // lastEndMarker\r\n';
@@ -188,9 +188,7 @@
 //////////////////////////////////////  end pencil code /////////////////////
 
     var mygraphic = new Y.Graphic();
-    mygraphic.render("#mycanvas");
-    //var cp3 = Y.Node.create('<div class="control-point cp3">cp3</div>');
-    //Y.one('#mycanvas').append(cp3);
+    mygraphic.render("#mygraphiccontainer");
 
     function loadGraphics(e)
     {

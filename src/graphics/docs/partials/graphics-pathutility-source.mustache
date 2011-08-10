@@ -6,14 +6,13 @@ body{
     font-family:verdana;
     font-size:78%;
 }
-#mycanvas {
+#mygraphiccontainer {
     position:absolute;
     top:100px;
     left:100px;
     width:1000px;
     height:480px;
     background-color:#333;
-    /*border: 3px solid #ff0000;*/
 }
 #pencil {
     position:absolute;
@@ -95,7 +94,7 @@ body{
     <li>curveTo - Alt + Drag</li>
     <li>New Path Object - Change Graphic Object Name, click New button</li>
 </ul>
-<div id="mycanvas">
+<div id="mygraphiccontainer">
     <div id="pencil">
         <div class="pencil-img-container"></div>
     </div>
@@ -107,14 +106,12 @@ body{
        <label>Graphic Object Name</label> <input class="obj-name" type="text" value="bob"/>
        <input type="button" value="New"/>
     </p>
-    <p class="code-p">
-        <p>
-        <label>Copy code from here</label>
-        </p>
-        <textarea class="code" rows="8" cols="5000"></textarea>
-        <p>
-            <label>Pencil X,Y: </label> <span class="pencil-xy">200,200</span>
-        </p>
+    <p>
+    <label>Copy code from here</label>
+    </p>
+    <textarea class="code" rows="8" cols="5000"></textarea>
+    <p>
+        <label>Pencil X,Y: </label> <span class="pencil-xy">200,200</span>
     </p>
 </div>
 

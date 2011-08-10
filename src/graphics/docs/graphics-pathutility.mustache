@@ -1,6 +1,9 @@
-<div class="intro">
-    <p>This simple utility helps you by generating code while you interactively
-    draw graphic paths.</p>
+<div class="intro" style="min-height: 184px;">
+    <p>
+        <img src="{{componentAssets}}/img/pathutility-capture.png" alt="Screen capture of Graphics path utility"  style="border: 1px solid #bfbfbf; float:right; height:149px; margin: 0 0 8px 8px; width:395px;"/>
+        This simple utility helps you by generating code while you interactively
+        draw graphic paths. This was used to draw the <a href="graphics-violin.html">violin example</a>.
+    </p>
 </div>
 
 <div class="example newwindow">
@@ -80,4 +83,18 @@ Clicking the pencil icon, or starting another line, finalizes the `curveTo`.</p>
 <p>Crate a new path object with a new name by changing the name in the 
 'Graphic Object Name' text input, then clicking the 'New' button.</p>
 
+<h2>Trace an Image</h2>
+<p>You can modify the CSS of #mygraphiccontainer to include an image background.
+This will allow you to trace the contours of an image.</p>
+
+```
+#mygraphiccontainer {
+    background: url(assets/images/my-dog.jpg);
+}
+```
+
+<img src="{{componentAssets}}/img/my-dog.jpg" alt="Tracing a picture of my dog
+with a Graphics path" width="652" height="268"/>
+
+zooming the browser can be helpful in accuracy.
 
