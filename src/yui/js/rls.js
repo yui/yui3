@@ -241,13 +241,19 @@ Y._rls = function(what) {
         }
     });
 
+    function addIfNeeded(module) {
+        if (Y.rls_needs(module)) {
+            m.unshift(module);
+        }
+    }
+
     //Add in the debug modules
     if (rls.filt === 'debug') {
-        m.unshift('dump', 'yui-log');
+        YArray.each(['dump', 'yui-log'], addIfNeeded);
     }
     //If they have a groups config, add the loader-base module
     if (Y.config.groups) {
-        m.unshift('loader-base');
+        addIfNeeded('loader-base');
     }
 
     m = YArray.dedupe(m);

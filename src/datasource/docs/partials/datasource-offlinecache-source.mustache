@@ -55,7 +55,7 @@ YUI().use("json-stringify","node", "datasource-get", "datasource-jsonschema", "c
 
     myDataSource.plug(Y.Plugin.DataSourceCache, {
         cache: Y.CacheOffline,
-        expires: 10000,
+        expires: 60000, // 1 min.
         max:5
     });
     myDataSource.cache.on("retrieve", function(){
