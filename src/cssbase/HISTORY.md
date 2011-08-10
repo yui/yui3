@@ -1,4 +1,4 @@
-CSSBase Change History
+CSS Base Change History
 ======================
 
 3.4.0
