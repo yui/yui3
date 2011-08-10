@@ -81,3 +81,8 @@ span#demo {
 .yui3-data-win, .yui3-data-doc {
 	cursor:pointer;
 }
+
+#demo-stage {
+    background: #eee;
+    height: 400px;
+}
