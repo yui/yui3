@@ -39,7 +39,7 @@ ul#demo2 {
     width: 10em;
     display: inline-block;
     zoom: 1;
-    *display: block;
+    *display: inline;
 }
 
 .yui3-fail {
@@ -80,4 +80,9 @@ span#demo {
 
 .yui3-data-win, .yui3-data-doc {
 	cursor:pointer;
+}
+
+#demo-stage {
+    background: #eee;
+    height: 400px;
 }

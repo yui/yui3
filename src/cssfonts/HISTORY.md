@@ -1,25 +1,33 @@
-**** version 3.3.0 ***	
-  * No changes.
+CSS Fonts Change History
+======================
 
-**** version 3.2.0 ***	
-  * No changes.
+3.4.0
+-----
+  * No change.
 
-**** version 3.1.1 ***	
-  * No changes.
 
-**** version 3.1.0 ***	
-  * No changes.
+3.3.0
+-----
+  * No change.
 
-**** version 3.0.0 ***	
-  * No changes.
+
+3.2.0
+-----
+  * No change.
+
+
+3.1.1
+-----
+  * No change.
+
+
+3.1.0
+-----
+  * No change.
   
-**** version 3.0.0 beta 1 ***	
-  * No changes.
-  
-**** version 3.0.0 PR2 ***	
-
-  * No changes.
-
+3.0.0
+-----
+  * Initial release.
 3.0.0PR1 - Initial release
 
 Module Name: "cssfonts"

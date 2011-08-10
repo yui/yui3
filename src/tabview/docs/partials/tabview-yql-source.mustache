@@ -76,7 +76,7 @@ YUI().use('tabview', 'yql', function(Y) {
     Y.each(feeds, function(feed, label) {
         var tab = new Y.Tab({
             label: label,
-            content: 'loading...',
+            content: 'loading...'
         });
 
         tab.plug(TabYQL, {
