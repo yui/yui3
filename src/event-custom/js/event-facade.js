@@ -42,8 +42,9 @@ Y.EventFacade = function(e, currentTarget) {
 
     /**
      * The real event type
-     * @property type
+     * @property _type
      * @type string
+     * @private
      */
     this._type = e.type;
 
