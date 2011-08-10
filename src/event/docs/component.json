@@ -60,8 +60,11 @@
         "outside": {
             "displayName": "Outside Events"
         },
-        "windowresize": {
-            "displayName": "The windowresize Event"
+        "simulate": {
+            "displayName": "Simulating DOM Events"
+        },
+        "synths": {
+            "displayName": "Creating Synthetic Events"
         },
         "touch": {
             "displayName": "Touch Events and Abstractions"
@@ -69,8 +72,8 @@
         "valuechange": {
             "displayName": "The valueChange Event"
         },
-        "synths": {
-            "displayName": "Creating Synthetic Events"
+        "windowresize": {
+            "displayName": "The windowresize Event"
         },
 
         "swipe-example-content": {
