@@ -4,13 +4,14 @@
 </style>
 <div class="intro">
 <p>In the example below, IO is employed to make a cross-domain request to <a href="http://pipes.yahoo.com">Yahoo! Pipes</a>.  The output of the Pipe is an RSS-style feed formatted as JSON.  We pass that output to the JSON Utility's `parse` method for sanitization and then display the contents of the Pipe in a list.</p>
-<p>The cross-domain approach obviates the need for a server-side proxy. And the use of IO in place of a script node allows us to retrieve the JSON data as a string and execute <code>JSON.parse</code> against it, making it safer to use; a script node would evaluate immediately in the global scope as soon as it was loaded.</p>
+<p>This example demonstrates how IO can use the Cross-Origin Resource Sharing (http://www.w3.org/TR/cors/) mechanism for making cross-domain requests.</p>
+<p><strong>Please note: </strong> All the browsers listed in the Browser Test Baseline (http://developer.yahoo.com/yui/articles/gbs/) support CORS with the exception of IE 6.0 and IE 7.0, and Webkit on iOS 3.  In addition to browser capability, the requested resource must respond with the proper Access-Control headers for the request to succeed.</p>
 </div>
 <div class="example">
 {{>io-xdr-source}}
 </div>
 
-<h3 class="first">Implementing a Simple Cross-Domain Request for JSON Data</h3>
+<h3 class="first">Implementing a Cross-Domain Request for JSON Data</h3>
 
 <p>In this example, we begin with a YUI instance that loads the <code>io-xdr</code>, <code>json-parse</code>, <code>substitute</code> and <code>node</code> modules. The <code>io-xdr</code> module is the key module. The other modules are used to process and output the results:</p>
 
@@ -30,24 +31,37 @@ YUI().use("io-xdr", "substitute", "json-parse", "node", function(Y) {
 var output = Y.one("#output ul");
 ```
 
-<p>Next, we configure IO's cross-domain interface for this YUI instance.  Flash is the underlying mechansim used here.  Be sure to configure the <code>src</code> property to point to your <code>IO.swf</code> file.</p>
-
+<p>handleSuccess is the function responsible for handling the response data.  The first thing we do is sanitize the data to ensure we have valid JSON.</p>
 ```
-//Configure the cross-domain protocol:
-var xdrConfig = {
-    id:'flash', //We'll reference this id in the xdr configuration of our transaction.
-    src:'../../build/io-xdr/io.swf' //Relative path to the .swf file from the current page.
-};
-Y.io.transport(xdrConfig);
+var oRSS = Y.JSON.parse(o.responseText);
+```
+<p>Next, we create a simple markup template and use Y.Lang.substitute to fill in the data, as we iterate through the JSON and output the results.</p>
+```
+//From here, we simply access the JSON data from where it's provided
+//in the Yahoo! Pipes output:
+if (oRSS && oRSS.count) {
+    var s = "<!--begin news stories fetched via Yahoo! Pipes-->",
+        //t in this case is our simple template; this is fed to
+        //Y.Lang.substitute as we loop through RSS items:
+        t = "<li><a href='{link}'>{title}</a>, {pubDate}</li>";
+
+    for (var i=0; i<oRSS.count; i++) {
+        s += Y.Lang.substitute(t, oRSS.value.items[i]);
+    }
+
+    //Output the string to the page:
+    output.set("innerHTML", s);
+    output.addClass("yui-null");
+}
 ```
 
-<p>The configuration for our specific IO transaction contains a reference to the <code>xdr</code> configuration we created above and specifies that there will not be a need to process the response as XML (we're getting JSON instead):</p>
+<p>Create the configuration object for the cross-domain request, setting up the  event handlers and instructing IO to use the browser's native cross-domain transport.</p>
 
 ```
 var cfg = {
-    method: "GET",
+    method: "GET", //If omitted, the default is HTTP GET.
     xdr: {
-        use:'flash', //This is the xdrConfig id we referenced above.
+        use:'native'//For browsers that support CORS.
     },
     on: {
         //Our event handlers previously defined:
@@ -58,30 +72,26 @@ var cfg = {
 };
 ```
 
-<p>Create a function that will use IO to call Yahoo! Pipes:</p>
+<p>Create an event handler that will make the IO call to Yahoo! Pipes when the Load button is clicked:</p>
 
 ```
-//Wire the buttton to a click handler to fire our request each
+//Wire the button to a click handler to fire our request each
 //time the button is clicked:
 var handleClick = function(o) {
     Y.log("Click detected; beginning io request to Yahoo! Pipes.", "info", "example");
+    // Remove the default "X-Requested-With" header as this will
+    // prevent the request from succeeding; the Pipes 
+    // resource will not accept user-defined HTTP headers.
+    Y.io.header('X-Requested-With');
     var obj = Y.io(
-        //this is a specific Pipes feed, populated with cycling news:
-        "http://pipes.yahooapis.com/pipes/pipe.run?_id=giWz8Vc33BG6rQEQo_NLYQ&_render=json",
-        cfg
+	//this is a specific Pipes feed, populated with cycling news:
+	"http://pipes.yahooapis.com/pipes/pipe.run?_id=giWz8Vc33BG6rQEQo_NLYQ&_render=json",
+	cfg
     );
 }
-```
 
-<p>Add a listener for the "io:xdrReady" event that lets us know when the Flash transport is ready for use.</p>
-```
-//add the click event handler as soon as the xdr Flash module has
-//loaded:
-Y.on('io:xdrReady', function() {
-    var fetch = Y.one("#fetch");
-    fetch.set("disabled", false);
-    Y.on("click", handleClick, fetch);
-});
+//add the click handler to the Load button.
+Y.on("click", handleClick, "#pipes");
 ```
 
 <h4>Full Script</h4>
