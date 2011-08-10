@@ -9016,7 +9016,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "event-custom", 
             "node", 
-            "swfdetect"
+            "swfdetect", 
+            "escape"
         ]
     }, 
     "swfdetect": {}, 
@@ -9261,7 +9262,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'fbf2d694a982e8290f58fd1694becad2';
+YUI.Env[Y.version].md5 = '72f386f711fa397bc8c3d75f6a0ff6b8';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

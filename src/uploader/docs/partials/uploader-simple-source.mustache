@@ -35,11 +35,20 @@ Percent uploaded:
 
 <script>
 
-YUI().use('uploader', function(Y) {
+YUI({filter:"raw"}).use('uploader', function(Y) {
+
+var swfURL = Y.Env.cdn + "uploader/assets/uploader.swf";
+
+if (Y.UA.ie >= 6) {
+	swfURL += "?t=" + Y.guid();
+}
+
+
 
 var uploader = new Y.Uploader({boundingBox:"#selectButton", 
 							   buttonSkin:"{{componentAssets}}/selectFileButton.png",
-							   transparent: false
+							   transparent: false,
+							   swfURL: swfURL
 							   });
 
 uploader.on("uploaderReady", setupUploader);

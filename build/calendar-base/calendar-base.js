@@ -34,6 +34,7 @@ var getCN                 = Y.ClassNameManager.getClassName,
     substitute  = Y.substitute,
     each        = Y.each,
     hasVal      = Y.Array.hasValue,
+    iOf         = Y.Array.indexOf,
     hasKey      = Y.Object.hasKey,
     setVal      = Y.Object.setValue,
     owns        = Y.Object.owns,
@@ -379,7 +380,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      *
      */
     _matchesRule : function (oDate, rule) {
-        return (this._getRulesForDate(oDate).indexOf(rule) >= 0);
+        return (iOf(this._getRulesForDate(oDate), rule) >= 0);
     },
 
     /**
@@ -625,8 +626,8 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
                 var matchingRules = this._getRulesForDate(date);
                 if (matchingRules.length > 0) {
                     var dateNode = this._dateToNode(date);
-                    if ((enRule && !(matchingRules.indexOf(enRule) >= 0)) ||
-                        (disRule && (matchingRules.indexOf(disRule) >= 0))) {
+                    if ((enRule && !(iOf(matchingRules, enRule) >= 0)) ||
+                        (disRule && (iOf(matchingRules, disRule) >= 0))) {
                             dateNode.addClass(SELECTION_DISABLED);
                         }
                         
