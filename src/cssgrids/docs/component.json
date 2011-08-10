@@ -4,7 +4,7 @@
     "description": "CSS Grids provides support for any size page layouts.",
     "author"     : "msweeney",
 
-    "tags": ["css", "grids"],
+    "tags": ["css", "grids", "beta"],
     "use" : ["cssgrids"],
 
     "examples": [
