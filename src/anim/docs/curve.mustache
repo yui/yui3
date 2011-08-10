@@ -1,7 +1,7 @@
 <link href="{{componentAssets}}/anim.css" rel="stylesheet" type="text/css">
 <div class="intro">
     <p>This demonstrates how to animate the position of an element along a <code>curve</code>.</p>
-    <p> Click anywhere to move the element to your click position.</p>
+    <p>Click anywhere on the gray box below and the little orange box will move to the click position.</p>
 </div>
 
 <div class="example">
@@ -11,7 +11,9 @@
 <h2>Setting up the HTML</h2>
 <p>First we add some HTML to animate.</p>
 ```
-<span id="demo"></span>
+<div id="demo-stage">
+    <span id="demo"></span>
+</div>
 ```
 
 <h2>Creating the Anim Instance</h2>
@@ -43,7 +45,7 @@ var onClick = function(e) {
 <p>Finally we add an event handler to run the animation.</p>
 
 ```
-Y.one('document').on('click', onClick);
+Y.one('#demo-stage').on('click', onClick);
 ```
 
 <h2>Complete Example Source</h2>

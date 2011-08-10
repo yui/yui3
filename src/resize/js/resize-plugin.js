@@ -66,7 +66,7 @@ var ResizePlugin = function(config) {
                * @public
                */
                 node: {
-                        value: undefined,
+                        value: undefined
                 },
 
                 /**
@@ -167,9 +167,6 @@ var ResizePlugin = function(config) {
 
                        //If the widget uses Y.WidgetPosition, it will also have x,y position support. 
                        if (widget.hasImpl && widget.hasImpl(Y.WidgetPosition)) {
-
-                           //console.log('new values: ' + x.current + ', ' + x.old);
-                           // console.log('old values: ' + x.old + ', ' + y.old);
                            
                            if (this._isDifferent(widget.get('x'), x.cur)) {
                                widget.set('x', x.cur);

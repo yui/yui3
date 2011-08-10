@@ -4,8 +4,23 @@ YUI.add('resize-plugin', function(Y) {
  * The Resize Plugin allows you to make a Node or a Widget resizable. It supports all the functionality of
  * the standalone Resize utility. Additionally, resizing a widget updates the widget's height,width and x,y
  * attributes, if they exist.
+
+
+        var overlay = new Y.Overlay({
+           width: "200px",
+           srcNode: "#overlay",
+           visible: false,
+           align: {node:".example", points:["tc", "bc"]}
+        });
+        overlay.plug(Y.Plugin.Resize);
+    
+
  *
- * @module resize-plugin
+ * @module resize
+ * @submodule resize-plugin
+ * @extends Resize
+ * @class Plugin.Resize
+ * @constructor
  */
 var ResizePlugin = function(config) {
 
@@ -53,7 +68,7 @@ var ResizePlugin = function(config) {
                * @public
                */
                 node: {
-                        value: undefined,
+                        value: undefined
                 },
 
                 /**
@@ -154,9 +169,6 @@ var ResizePlugin = function(config) {
 
                        //If the widget uses Y.WidgetPosition, it will also have x,y position support. 
                        if (widget.hasImpl && widget.hasImpl(Y.WidgetPosition)) {
-
-                           //console.log('new values: ' + x.current + ', ' + x.old);
-                           // console.log('old values: ' + x.old + ', ' + y.old);
                            
                            if (this._isDifferent(widget.get('x'), x.cur)) {
                                widget.set('x', x.cur);
@@ -193,4 +205,4 @@ var ResizePlugin = function(config) {
         Y.Plugin.Resize = ResizePlugin;
 
 
-}, '@VERSION@' ,{skinnable:false, optional:['resize-constrain'], requires:['resize-base', 'plugin']});
+}, '@VERSION@' ,{optional:['resize-constrain'], requires:['resize-base', 'plugin'], skinnable:false});

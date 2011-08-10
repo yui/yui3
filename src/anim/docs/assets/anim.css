@@ -140,3 +140,8 @@ div#demo a.yui3-remove {
 #demo.yui3-closed a.yui3-toggle {
     background-position:0 -350px; /* open (plus) icon */
 }
+
+#demo-stage {
+    background: #eee;
+    height: 400px;
+}
