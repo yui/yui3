@@ -1,0 +1,120 @@
+<style>
+html {
+    background-color:#000;
+}
+body{
+    font-family:verdana;
+    font-size:78%;
+}
+#mycanvas {
+    position:absolute;
+    top:100px;
+    left:100px;
+    width:1000px;
+    height:480px;
+    background-color:#333;
+    /*border: 3px solid #ff0000;*/
+}
+#pencil {
+    position:absolute;
+    top:200px;
+    left:200px;
+    z-index:10;
+    cursor:pointer;
+}
+.control-point{
+    border:solid 1px #fff;
+    position:absolute;
+    top:0;
+    left:0;
+    z-index:11;
+    color:#fff;
+    visibility:hidden;
+    cursor:pointer;
+}
+.control-point:hover{
+    border:solid 1px #f00;
+}
+.control-point .drag-disc{
+    position:absolute;
+    top:-10px;
+    left:-10px;
+    width:20px;
+    height:20px;
+    background-color:#fff;
+    -moz-border-radius:10px;
+    -webkit-border-radius:10px;
+    border-radius:10px;
+    filter:alpha(opacity=10);
+    opacity:0.1;
+}
+#pencil .pencil-img-container{
+    position:absolute;
+    top:-47px;
+    left:0px;
+    height:47px;
+    width:46px;
+    background-image:url({{{componentAssets}}}/img/icon_pencil.png);
+    opacity:0.8;
+    filter:alpha(opacity=40);
+}
+#pencil .pencil-img-container-moving{
+    background-position:-46px, 0;
+}
+.pencil-xy{
+    margin: 0.3em;
+    width: 5em;
+    color: #ccc;
+}
+.obj-name{
+    width:100px;
+    margin-bottom:1em;
+}
+.code-div{
+    position:absolute;
+    top:0;
+    right:5px;
+    text-align:left;
+}
+.code{
+    height:200px;
+    width:240px;
+}
+.code-div label{
+    color:#ccc;
+}
+.tips{
+    margin:1em;
+    color:#777;
+}
+</style>
+
+<ul class="tips">
+    <li>lineTo - Drag Pencil</li>
+    <li>moveTo - Shift + Drag</li>
+    <li>curveTo - Alt + Drag</li>
+    <li>New Path Object - Change Graphic Object Name, click New button</li>
+</ul>
+<div id="mycanvas">
+    <div id="pencil">
+        <div class="pencil-img-container"></div>
+    </div>
+    <div class="control-point cp1"><div class="drag-disc"></div></div>
+    <div class="control-point cp2"><div class="drag-disc"></div></div>
+</div>
+<div class="code-div">
+    <p> 
+       <label>Graphic Object Name</label> <input class="obj-name" type="text" value="bob"/>
+       <input type="button" value="New"/>
+    </p>
+    <p class="code-p">
+        <p>
+        <label>Copy code from here</label>
+        </p>
+        <textarea class="code" rows="8" cols="5000"></textarea>
+        <p>
+            <label>Pencil X,Y: </label> <span class="pencil-xy">200,200</span>
+        </p>
+    </p>
+</div>
+
