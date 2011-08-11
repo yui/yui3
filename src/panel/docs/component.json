@@ -26,5 +26,18 @@
 
             "hideTableOfContents": true
         }
-	]
+	],
+
+    "pages": {
+        "panel-form-example": {
+            "displayName": "Using a panel to show a modal form",
+            "layout": "panel-example"
+            
+        },
+        "panel-animate-example": {
+            "displayName": "Creating an animated panel using transitions",
+            "layout": "panel-example"
+            
+        }
+    }
 }
