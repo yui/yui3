@@ -60,10 +60,11 @@ if (Y.UA.ie >= 6) {
 ```
 
 <h2>Instantiate the Uploader</h2>
-<p>Next, create an instance of the Uploader. Make sure to include the custom swfURL we constructed as part of the workaround above. Since the Uploader is being placed in a relatively-sized container, subscribe to the `domready` event and instantiate the uploader in its handler. After instantiating it, add handlers to the uploader events:</p>
+<p>Next, create an instance of the Uploader. Make sure to include the custom swfURL we constructed as part of the workaround above. Since the Uploader is being placed in a relatively-sized container, subscribe to the `domready` event and instantiate the uploader in its handler. After instantiating it, add handlers to the uploader events. In addition, create a variable to store selected files, to be used later, in the `fileSelect` handler:</p>
 	
 ```
-var uploader;
+var uploader,
+    selectedFiles = {};
 Y.on("domready", init);
 
 function init () {
@@ -102,30 +103,29 @@ function setupUploader (event) {
 ```
 
 <h2>`fileselect` Event Handler</h2>
-<p>When the user selects files to be uploaded, display the list of selected files in a table. Populate the table with data from the event payload, and reserve a column to display a progress bar for each individual file. Set the initial value of the progress bars to 0, and provide them with custom `id`s, so they can be easily updated when upload progress information becomes available.</p>
+<p>When the user selects files to be uploaded, display the list of selected files in a table. Populate the table with data from the event payload, and reserve a column to display a progress bar for each individual file. Set the initial value of the progress bars to 0, and provide them with custom `id`s, so they can be easily updated when upload progress information becomes available. Since the event payload always carries the total list of selected files, keep track of which files have already been selected, so that they don't get displayed in the table twice:</p>
 
 ```
-function fileSelect(event) {
-	Y.log("File was selected, parsing...");
+function fileSelect (event) {
 	var fileData = event.fileList;	
-
+    
 	for (var key in fileData) {
-		var output = "<tr><td>" + fileData[key].name + 
-		             "</td><td>" + fileData[key].size + 
-		             "</td><td><div id='div_" + 
-		             fileData[key].id + 
-		             "'></div></td></tr>\\n";
-
-		Y.one("#filenames").append(output);
-		
-		var progressBar = new Y.ProgressBar({
-		                        id:"pb_" + fileData[key].id, 
-		                        layout : '<div class="{labelClass}"></div>' +
-		                                  '<div class="{sliderClass}"></div>'
-		                      });
-		progressBar.render("#div_" + fileData[key].id);
-		progressBar.set("progress", 0);
+	        if (!selectedFiles[fileData[key].id]) {
+			   var output = "<tr><td>" + fileData[key].name + "</td><td>" + 
+			                fileData[key].size + "</td><td><div id='div_" + 
+			                fileData[key].id + "' class='progressbars'></div></td></tr>";
+			   Y.one("#filenames tbody").append(output);
+			  
+			   var progressBar = new Y.ProgressBar({id:"pb_" + fileData[key].id, 
+			                                        layout : '<div class="{labelClass}"></div>' + 
+			                                                 '<div class="{sliderClass}"></div>'});
+			       progressBar.render("#div_" + fileData[key].id);
+			       progressBar.set("progress", 0);
+               
+               selectedFiles[fileData[key].id] = true;
+			}
 	}
+
 }
 ```
 
