@@ -7739,11 +7739,11 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
          * Style properties for the series. Contains a key indexed hash of the following:
          *  <dl>
          *      <dt>marker</dt><dd>Style properties for the markers in the series. Specific style attributes are listed
-         *      <a href="#config_marker">here</a>.</dd>
+         *      <a href="#attrs_marker">here</a>.</dd>
          *      <dt>line</dt><dd>Style properties for the lines in the series. Specific
-         *      style attributes are listed <a href="#config_line">here</a>.</dd>
+         *      style attributes are listed <a href="#attrs_line">here</a>.</dd>
          *      <dt>area</dt><dd>Style properties for the area fills in the series. Specific style attributes are listed
-         *      <a href="#config_area">here</a>.</dd>
+         *      <a href="#attrs_area">here</a>.</dd>
          *  </dl>
          *
          * @attribute styles
@@ -12231,19 +12231,19 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
          *      <dt>series</dt><dd>A key indexed hash containing references to the `styles` attribute for each series in the chart.
          *      Specific style attributes vary depending on the series:
          *      <ul>
-         *          <li><a href="AreaSeries.html#config_styles">AreaSeries</a></li>
-         *          <li><a href="BarSeries.html#config_styles">BarSeries</a></li>
-         *          <li><a href="ColumnSeries.html#config_styles">ColumnSeries</a></li>
-         *          <li><a href="ComboSeries.html#config_styles">ComboSeries</a></li>
-         *          <li><a href="LineSeries.html#config_styles">LineSeries</a></li>
-         *          <li><a href="MarkerSeries.html#config_styles">MarkerSeries</a></li>
-         *          <li><a href="SplineSeries.html#config_styles">SplineSeries</a></li>
+         *          <li><a href="AreaSeries.html#attrs_styles">AreaSeries</a></li>
+         *          <li><a href="BarSeries.html#attrs_styles">BarSeries</a></li>
+         *          <li><a href="ColumnSeries.html#attrs_styles">ColumnSeries</a></li>
+         *          <li><a href="ComboSeries.html#attrs_styles">ComboSeries</a></li>
+         *          <li><a href="LineSeries.html#attrs_styles">LineSeries</a></li>
+         *          <li><a href="MarkerSeries.html#attrs_styles">MarkerSeries</a></li>
+         *          <li><a href="SplineSeries.html#attrs_styles">SplineSeries</a></li>
          *      </ul>
          *      </dd>
          *      <dt>axes</dt><dd>A key indexed hash containing references to the `styles` attribute for each axes in the chart. Specific
-         *      style attributes can be found in the <a href="Axis.html#config_styles">Axis</a> class.</dd>
+         *      style attributes can be found in the <a href="Axis.html#attrs_styles">Axis</a> class.</dd>
          *      <dt>graph</dt><dd>A reference to the `styles` attribute in the chart. Specific style attributes can be found in the
-         *      <a href="Graph.html#config_styles">Graph</a> class.</dd>
+         *      <a href="Graph.html#attrs_styles">Graph</a> class.</dd>
          *  </dl>
          *
          * @attribute styles
