@@ -1,7 +1,9 @@
 /**
- * The SVGPath class creates a shape through the use of drawing methods.
+ * <a href="http://www.w3.org/TR/SVG/">SVG</a> implementation of the <a href="Path.html">`Path`</a> class. 
+ * `SVGPath` is not intended to be used directly. Instead, use the <a href="Path.html">`Path`</a> class. 
+ * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Path.html">`Path`</a> 
+ * class will point to the `SVGPath` class.
  *
- * @module graphics
  * @class SVGPath
  * @extends SVGShape
  * @constructor
@@ -70,11 +72,12 @@ Y.extend(SVGPath, Y.SVGShape, {
 
 SVGPath.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
 	/**
-	 * Path string of the shape
+	 * Indicates the path used for the node.
 	 *
 	 * @config path
 	 * @type String
-	 */	
+     * @readOnly
+	 */
 	path: {
 		readOnly: true,
 

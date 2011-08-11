@@ -15,9 +15,11 @@ var SHAPE = "svgShape",
 function SVGDrawing(){}
 
 /**
- * Set of drawing methods for SVG based classes.
+ * <a href="http://www.w3.org/TR/SVG/">SVG</a> implementation of the <a href="Drawing.html">`Drawing`</a> class. 
+ * `SVGDrawing` is not intended to be used directly. Instead, use the <a href="Drawing.html">`Drawing`</a> class. 
+ * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Drawing.html">`Drawing`</a> 
+ * class will point to the `SVGDrawing` class.
  *
- * @module graphics
  * @class SVGDrawing
  * @constructor
  */
@@ -449,9 +451,11 @@ SVGDrawing.prototype = {
 };
 Y.SVGDrawing = SVGDrawing;
 /**
- * Base class for creating shapes.
+ * <a href="http://www.w3.org/TR/SVG/">SVG</a> implementation of the <a href="Shape.html">`Shape`</a> class. 
+ * `SVGShape` is not intended to be used directly. Instead, use the <a href="Shape.html">`Shape`</a> class. 
+ * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Shape.html">`Shape`</a> 
+ * class will point to the `SVGShape` class.
  *
- * @module graphics
  * @class SVGShape
  * @constructor
  * @param {Object} cfg (optional) Attribute configs
@@ -482,7 +486,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 * Initializes the shape
 	 *
 	 * @private
-	 * @method _initialize
+	 * @method initializer
 	 */
 	initializer: function(cfg)
 	{
@@ -894,7 +898,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 * use the `translate` method.
 	 *
 	 * @method translateX
-	 * @param {Number} y The value to translate.
+	 * @param {Number} x The value to translate.
 	 */
 	translateX: function(x)
     {
@@ -1535,6 +1539,7 @@ SVGShape.ATTRS = {
 	 *
 	 * @config gradientNode
 	 * @type HTMLElement
+     * @private
 	 */
 	gradientNode: {
 		setter: function(val)
@@ -1596,9 +1601,11 @@ SVGShape.ATTRS = {
 Y.SVGShape = SVGShape;
 
 /**
- * The SVGPath class creates a shape through the use of drawing methods.
+ * <a href="http://www.w3.org/TR/SVG/">SVG</a> implementation of the <a href="Path.html">`Path`</a> class. 
+ * `SVGPath` is not intended to be used directly. Instead, use the <a href="Path.html">`Path`</a> class. 
+ * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Path.html">`Path`</a> 
+ * class will point to the `SVGPath` class.
  *
- * @module graphics
  * @class SVGPath
  * @extends SVGShape
  * @constructor
@@ -1667,11 +1674,12 @@ Y.extend(SVGPath, Y.SVGShape, {
 
 SVGPath.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
 	/**
-	 * Path string of the shape
+	 * Indicates the path used for the node.
 	 *
 	 * @config path
 	 * @type String
-	 */	
+     * @readOnly
+	 */
 	path: {
 		readOnly: true,
 
@@ -1710,9 +1718,11 @@ SVGPath.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
 });
 Y.SVGPath = SVGPath;
 /**
- * Draws rectangles
+ * <a href="http://www.w3.org/TR/SVG/">SVG</a> implementation of the <a href="Rect.html">`Rect`</a> class. 
+ * `SVGRect` is not intended to be used directly. Instead, use the <a href="Rect.html">`Rect`</a> class. 
+ * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Rect.html">`Rect`</a> 
+ * class will point to the `SVGRect` class.
  *
- * @module graphics
  * @class SVGRect
  * @constructor
  */
@@ -1734,9 +1744,11 @@ Y.extend(SVGRect, Y.SVGShape, {
 SVGRect.ATTRS = Y.SVGShape.ATTRS;
 Y.SVGRect = SVGRect;
 /**
- * Draws an ellipse
+ * <a href="http://www.w3.org/TR/SVG/">SVG</a> implementation of the <a href="Ellipse.html">`Ellipse`</a> class. 
+ * `SVGEllipse` is not intended to be used directly. Instead, use the <a href="Ellipse.html">`Ellipse`</a> class. 
+ * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Ellipse.html">`Ellipse`</a> 
+ * class will point to the `SVGEllipse` class.
  *
- * @module graphics
  * @class SVGEllipse
  * @constructor
  */
@@ -1835,9 +1847,11 @@ SVGEllipse.ATTRS = Y.merge(SVGShape.ATTRS, {
 });
 Y.SVGEllipse = SVGEllipse;
 /**
- * Draws an circle
+ * <a href="http://www.w3.org/TR/SVG/">SVG</a> implementation of the <a href="Circle.html">`Circle`</a> class. 
+ * `SVGCircle` is not intended to be used directly. Instead, use the <a href="Circle.html">`Circle`</a> class. 
+ * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Circle.html">`Circle`</a> 
+ * class will point to the `SVGCircle` class.
  *
- * @module graphics
  * @class SVGCircle
  * @constructor
  */
@@ -1935,7 +1949,6 @@ Y.SVGCircle = SVGCircle;
 /**
  * Draws pie slices
  *
- * @module graphics
  * @class SVGPieSlice
  * @constructor
  */
@@ -2012,9 +2025,11 @@ SVGPieSlice.ATTRS = Y.mix({
 }, Y.SVGShape.ATTRS);
 Y.SVGPieSlice = SVGPieSlice;
 /**
- * Graphic is a simple drawing api that allows for basic drawing operations.
+ * <a href="http://www.w3.org/TR/SVG/">SVG</a> implementation of the <a href="Graphic.html">`Graphic`</a> class. 
+ * `SVGGraphic` is not intended to be used directly. Instead, use the <a href="Graphic.html">`Graphic`</a> class. 
+ * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Graphic.html">`Graphic`</a> 
+ * class will point to the `SVGGraphic` class.
  *
- * @module graphics
  * @class SVGGraphic
  * @constructor
  */
@@ -2603,10 +2618,12 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
     },
 
     /**
-     * Adds a shape to the redraw queue and calculates the contentBounds. 
+     * Adds a shape to the redraw queue and calculates the contentBounds. Used internally 
+     * by `Shape` instances.
      *
      * @method addToRedrawQueue
      * @param shape {SVGShape}
+     * @protected
      */
     addToRedrawQueue: function(shape)
     {
@@ -2713,6 +2730,7 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
      * @param {String} key id that references the gradient definition
      * @param {String} type description of the gradient type
      * @return HTMLElement
+     * @protected
      */
     getGradientNode: function(key, type)
     {

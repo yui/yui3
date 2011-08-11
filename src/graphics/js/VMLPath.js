@@ -1,6 +1,8 @@
 /**
- * The VMLPath class creates a graphic object with editable 
- * properties.
+ * <a href="http://www.w3.org/TR/NOTE-VML">VML</a> implementation of the <a href="Path.html">`Path`</a> class. 
+ * `VMLPath` is not intended to be used directly. Instead, use the <a href="Path.html">`Path`</a> class. 
+ * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> and <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> 
+ * capabilities, the <a href="Path.html">`Path`</a> class will point to the `VMLPath` class.
  *
  * @class VMLPath
  * @extends VMLShape
@@ -70,6 +72,7 @@ VMLPath.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 	 *
 	 * @config path
 	 * @type String
+     * @readOnly
 	 */
 	path: {
 		readOnly: true,
