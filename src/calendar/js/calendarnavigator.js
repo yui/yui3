@@ -93,7 +93,7 @@ CalendarNavigator.CALENDARNAV_STRINGS = {
     * @static
     */ 
 CalendarNavigator.PREV_MONTH_CONTROL_TEMPLATE = '<div class="yui3-u {prev_month_class}" style="width:15px;">' + 
-                                                   "&#9664;" +
+                                                   "&#9668;" +
                                                 '</div>';
    /**
     * The template for the calendar navigator next month control.
@@ -104,7 +104,7 @@ CalendarNavigator.PREV_MONTH_CONTROL_TEMPLATE = '<div class="yui3-u {prev_month_
     * @static
     */ 
 CalendarNavigator.NEXT_MONTH_CONTROL_TEMPLATE = '<div class="yui3-u {next_month_class}" style="width:15px;">' + 
-                                                   "&#9654;" +
+                                                   "&#9658;" +
                                                 '</div>';
 
 

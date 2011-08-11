@@ -34,14 +34,16 @@
             "displayName": "Widget with simple Resize Plugin",
             "description": "Plugs a widget with resize functionality.",
             "modules"    : ["resize-plugin"],
-            "tags"       : ["resize", "widget", "simple"]
+            "tags"       : ["resize", "widget", "simple"],
+            "hideTableOfContents": true
         },
         {
             "name"       : "constrain-resize-plugin",
             "displayName": "Widget with Resize Plugin under constraints",
             "description": "Plugs a widget with resize functionality, and implements ResizeConstrained",
             "modules"    : ["resize-plugin"],
-            "tags"       : ["resize", "widget", "constrained"]
+            "tags"       : ["resize", "widget", "constrained"],
+            "hideTableOfContents": true
         }
     ]
 }

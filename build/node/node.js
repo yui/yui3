@@ -840,6 +840,8 @@ var methods = [
 
     /**
      * Returns the computed value for the given style property.
+     * Use CSS case (e.g. 'background-color') for multi-word properties.
+
      * @method getComputedStyle
      * @param {String} attr The style attribute to retrieve. 
      * @return {String} The computed value of the style property for the element.
@@ -847,7 +849,8 @@ var methods = [
     'getComputedStyle',
 
     /**
-     * Sets a style property of the node.
+     * Sets a style property of the node. Use CSS case (e.g. 'background-color')
+     * for multi-word properties.
      * @method setStyle
      * @param {String} attr The style attribute to set. 
      * @param {String|Number} val The value. 
@@ -1255,5 +1258,5 @@ Y.Node.prototype.delegate = function(type) {
 }, '@VERSION@' ,{requires:['node-base', 'event-delegate']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate'], skinnable:false});
+YUI.add('node', function(Y){}, '@VERSION@' ,{skinnable:false, use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate']});
 

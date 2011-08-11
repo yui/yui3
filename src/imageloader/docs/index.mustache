@@ -1,5 +1,3 @@
-<h2>YUI 3: ImageLoader</h2>
-
 <div class="intro">
   <p>
     The ImageLoader Utility allows you as an implementer to delay the loading of images on your web page until 
@@ -18,7 +16,7 @@
 
 {{>getting-started}}
 
-<h4>Creating an Image Group</h4>
+<h3>Creating an Image Group</h3>
 <p>
   Images are organized into groups. Each group has one or more triggers. A trigger is simply any DOM event, 
   such as the <code>mouseover</code> of a specific <code>&lt;div&gt;</code>, a button click, or a window scroll. 
@@ -41,7 +39,7 @@
   if our trigger hasn't been tripped.
 </p>
   
-<h4>Adding Images to the Group</h4>
+<h3>Adding Images to the Group</h3>
 <p>
   Register one or more images with the group using the HTML ID of the image element and the URL for the image:
 
@@ -59,7 +57,7 @@
 </p>
 
 
-<h3 id="using">Using the ImageLoader Utility</h3>
+<h2 id="using">Using the ImageLoader Utility</h2>
 <p>
   This section describes how to use the ImageLoader Utility in further detail.  It contains these subsections:
 </p>
@@ -75,7 +73,7 @@
 </ul>
 
 
-<h4 id="performance">Performance Considerations</h4>
+<h3 id="performance">Performance Considerations</h3>
 <p>
   The images on your page require possible DNS lookups, new HTTP transactions, and ultimately the transmission 
   of image data in packets over the wire.  While all this is happening, the user is often left waiting for the 
@@ -91,7 +89,7 @@
   just before the user needs them so that there's no degradation of user experience.
 </p>
 
-<h4 id="approach">Approach</h4>
+<h3 id="approach">Approach</h3>
 <p>
   How can you anticipate when the user will be able to see images? Well, you as a developer know your page, 
   and you know what actions are available to the user. You can utilize your knowledge to identify user events 
@@ -107,7 +105,7 @@
   step ahead of the user and decide when to load images. The ImageLoader Utility lets you do exactly this.
 </p>
 
-<h4 id="triggers">Triggers</h4>
+<h3 id="triggers">Triggers</h3>
 <p>
   Images are grouped together in terms of which user action(s) should trigger their loading. 
   A trigger is simply any DOM event. Your first step is to create an ImageLoader group object and define its trigger:
@@ -137,7 +135,7 @@
   The trigger conditionals are disjunctive; the first one to fire initiates the image fetching.
 </p>
 
-<h4 id="customtriggers">Custom Event Triggers</h4>
+<h3 id="customtriggers">Custom Event Triggers</h3>
 <p>
   You can also specify custom events as triggers. If the event belongs to the <code>Y</code> instance, 
   call <code>addCustomTrigger</code> with the event name:
@@ -158,7 +156,7 @@
   And this group's images will be fetched upon <code>myCustomEvent.fire('mycustomevent:imgloadevent2');</code>.
 </p>
 
-<h4 id="addimages">Adding Images</h4>
+<h3 id="addimages">Adding Images</h3>
 <p>Once a group is created, you can add as many images as you'd like to it. There are three types of images:</p>
 <ol>
 	<li>
@@ -200,7 +198,7 @@
   the <code>&lt;div&gt;</code> with the ID <code>idOfDivWaitingForImage</code> and likewise with the two other image elements.
 </p>
 
-<h4 id="fold">Loading Images Below the Fold</h4>
+<h3 id="fold">Loading Images Below the Fold</h3>
 <p>
   A group can check its images at the DOM ready state and immediately begin loading those that are above the fold 
   (i.e., inside the current viewport) while delaying the load of those that aren't. Just set a value for 
@@ -219,7 +217,7 @@
   ```
 </p>
 
-<h4 id="visibility">Image Visibility</h4>
+<h3 id="visibility">Image Visibility</h3>
 <p>
   You can set your <code>&lt;img&gt;</code> tags to have the CSS property <code>visibility:hidden</code>. 
   This will allow your page to keep its structure until the image is actually loaded. Since these images are probably 
@@ -229,7 +227,7 @@
   property to <code>visible</code> when the image is fetched.
 </p>
 
-<h4 id="classnames">Using Class Names</h4>
+<h3 id="classnames">Using Class Names</h3>
 <p>
   As an alternative to registering each image with a group, you can use CSS class names to group images together. 
   When using this approach, images that are part of the same group should all share a common class name. 
@@ -259,14 +257,14 @@
 </p>
 
 
-<h3 id="caveats">Important Usage Requirements</h3>
+<h2 id="caveats">Important Usage Requirements</h2>
 
 <p>
   There are some important things to keep in mind while using the ImageLoader Utility. 
   Otherwise it may not work the way you expect, or it may have some undesired side effects.
 </p>
 
-<h4>"src" Attribute of Source Images</h4>
+<h3>"src" Attribute of Source Images</h3>
 <p>
   When using ImageLoader with <code>&lt;img&gt;</code> elements (via the <code>srcUrl</code> attribute), 
   leave the <code>src</code> attribute out of the HTML element altogether. Do not set an empty string for 
@@ -282,7 +280,7 @@
   </code>
 </p>
 
-<h4>Resizing Images</h4>
+<h3>Resizing Images</h3>
 <p>
   When resizing <code>&lt;img&gt;</code> elements (via <code>height</code> and <code>width</code> attributes) on the fly, 
   the height and width of the image must be specified in the JavaScript. Do this by setting <code>width</code>/<code>height</code> 

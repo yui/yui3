@@ -1,7 +1,7 @@
 <link href="{{componentAssets}}/node.css" rel="stylesheet" type="text/css">
 <div class="intro">
     <p>This example shows how to position an element based on the document XY coordinate system.</p>
-    <p>Click anywhere on the page, and the little orange box will move to the click position.</p>
+    <p>Click anywhere on the gray box below and the little orange box will move to the click position.</p>
 </div>
 
 <div class="example">
@@ -11,7 +11,9 @@
 <h2>Setting up the HTML</h2>
 <p>First we need some HTML to work with.</p>
 ```
-<span id="demo"></span>
+<div id="demo-stage">
+    <span id="demo"></span>
+</div>
 ```
 
 <h2>Getting the Dimensions</h2>
@@ -24,7 +26,7 @@ var onClick = function(e) {
 
 <p>The last step is to assign the click handler to the <code>document</code> to capture all <code>click</code> events.</p>
 ```
-Y.one('document').on('click', onClick);
+Y.one('#demo-stage').on('click', onClick);
 ```
 
 <h2>Complete Example Source</h2>

@@ -18,6 +18,7 @@ YUI().use("stylesheet","overlay","slider","dd-plugin", function (Y) {
     // using Y.Plugin.Drag, provided by the dd-plugin module.
     overlay = new Y.Overlay({
         srcNode: overlayContent,
+        alignOn: [],
         width: '225px',
         align: { points: [ Y.WidgetPositionAlign.TR, Y.WidgetPositionAlign.TR ] },
         plugins: [ Y.Plugin.Drag ]

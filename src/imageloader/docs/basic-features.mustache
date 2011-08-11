@@ -1,5 +1,3 @@
-<h2>Basic Trigger examples</h2>
-
 <div class="intro">
   <p>
     Displayed here are some basic triggers of the ImageLoader Utility. 
@@ -7,57 +5,59 @@
   </p>
 </div>
 
-<style>
-
-  #group1, #group2, #group3, #group4 { border-bottom: dotted 1px #ccc;}
+<style>  
+  #group1, #group2, #group3, #group4 { border-bottom: dotted 2px #ccc;}
   .yuiLogo { width:117px; height: 52px; border:1px solid #888; margin:5px;}
-
 </style>
 
 
-<div class="example">
-
-  <div id="group1">
-    <h3>Group 1: Two second delay</h3>
-    <p>This will appear two seconds after page-load.</p>
+<div id="group1">
+  <h2>Group 1: Two second delay</h2>
+  <p>This will appear two seconds after page-load.</p>
+  <div class='example'>
     <div class='yuiLogo' id='delay' title='Group 1: 2 sec limit'></div>
-    
-    <h5>HTML</h5>
-    ```
-    <div id='delay' title='Group 1: 2 sec limit'></div>
-    ```
-    
-    <h5>JavaScript</h5>
-    ```
-  	var delayGroup = new Y.ImgLoadGroup({ timeLimit: 2 });
-  	delayGroup.registerImage({ domId: 'delay', bgUrl: 'http://stage.yuilibrary.com/img/yui-logo.png', isPng: true });
-    ```
   </div>
+  
+  <h5>HTML</h5>
+  ```
+  <div id='delay' title='Group 1: 2 sec limit'></div>
+  ```
+  
+  <h5>JavaScript</h5>
+  ```
+	var delayGroup = new Y.ImgLoadGroup({ timeLimit: 2 });
+	delayGroup.registerImage({ domId: 'delay', bgUrl: '{{componentAssets}}/yui-logo.png', isPng: true });
+  ```
+</div>
 
-  <div id="group2">
-    <h3>Group 2: Window scroll event</h3>
-    <p>This will appear when the scroll event is fired.</p>
+<div id="group2">
+  <h2>Group 2: Window scroll event</h2>
+  <p>This will appear when the scroll event is fired.</p>
+  <div class='example'>
   	<div class='yuiLogo' title='Group 2: scroll'>
   		<img id='scroll' style='visibility:hidden;' />
   	</div>
-  	
-    <h5>HTML</h5>
-    ```
-    <img id='scroll' style='visibility:hidden;' />
-    ```
-    
-    <h5>JavaScript</h5>
-    ```
-    var scrollGroup = new Y.ImgLoadGroup();
-    scrollGroup.registerImage({ domId: 'scroll', srcUrl: 'http://stage.yuilibrary.com/img/yui-logo.png', isPng: true, setVisible: true });
-    scrollGroup.addTrigger(window, 'scroll');
-    ```
-  </div>
+	</div>
+	
+  <h5>HTML</h5>
+  ```
+  <img id='scroll' style='visibility:hidden;' />
+  ```
+  
+  <h5>JavaScript</h5>
+  ```
+  var scrollGroup = new Y.ImgLoadGroup();
+  scrollGroup.registerImage({ domId: 'scroll', srcUrl: '{{componentAssets}}/yui-logo.png', isPng: true, setVisible: true });
+  scrollGroup.addTrigger(window, 'scroll');
+  ```
+</div>
 
   <div id="group3">
-    <h3>Group 3: Mouse over</h3>
+    <h2>Group 3: Mouse over</h2>
     <p>This will appear when you mouse over it.</p>
-    <div class='yuiLogo' id='mouseover' title='Group 3: mouseover'></div>
+    <div class="example">
+      <div class='yuiLogo' id='mouseover' title='Group 3: mouseover'></div>
+    </div>
     
     <h5>HTML</h5>
     ```
@@ -67,16 +67,18 @@
     <h5>JavaScript</h5>
     ```
   	var mouseoverGroup = new Y.ImgLoadGroup();
-  	mouseoverGroup.registerImage({ domId: 'scroll', srcUrl: 'http://stage.yuilibrary.com/img/yui-logo.png', isPng: true, setVisible: true });
+  	mouseoverGroup.registerImage({ domId: 'scroll', srcUrl: '{{componentAssets}}/yui-logo.png', isPng: true, setVisible: true });
   	mouseoverGroup.addTrigger(window, 'scroll');
     ```
   </div>
 
   <div id="group4">
-    <h3>Group 4: Onclick</h3>
+    <h2>Group 4: Onclick</h2>
     <p>These will appear when either one is clicked.</p>
-	  <div class='yuiLogo' id='duo1' title='Group 4: onclick'></div>  
-    <div class='yuiLogo' id='duo2' title='Group 4: onclick'></div>
+    <div class="example">
+  	  <div class='yuiLogo' id='duo1' title='Group 4: onclick'></div>  
+      <div class='yuiLogo' id='duo2' title='Group 4: onclick'></div>
+    </div>
     
     <h5>HTML</h5>
     ```
@@ -87,13 +89,12 @@
     <h5>JavaScript</h5>
     ```
   	var clickGroup = new Y.ImgLoadGroup();
-  	clickGroup.registerImage({ domId: 'duo1', bgUrl: 'http://stage.yuilibrary.com/img/yui-logo.png', isPng: true });
-  	clickGroup.registerImage({ domId: 'duo2', bgUrl: 'http://stage.yuilibrary.com/img/yui-logo.png', isPng: true });
+  	clickGroup.registerImage({ domId: 'duo1', bgUrl: '{{componentAssets}}/yui-logo.png', isPng: true });
+  	clickGroup.registerImage({ domId: 'duo2', bgUrl: '{{componentAssets}}/yui-logo.png', isPng: true });
   	clickGroup.addTrigger('#duo2', 'click').addTrigger('#duo1', 'click');
     ```
   </div>
   
-</div>
 
 
 <script>
@@ -101,20 +102,20 @@
   YUI().use("imageloader", function(Y) {
   
   	var delayGroup = new Y.ImgLoadGroup({ timeLimit: 2 });
-  	delayGroup.registerImage({ domId: 'delay', bgUrl: 'http://stage.yuilibrary.com/img/yui-logo.png', isPng: true });
+  	delayGroup.registerImage({ domId: 'delay', bgUrl: '{{componentAssets}}/yui-logo.png', isPng: true });
 
   	var scrollGroup = new Y.ImgLoadGroup();
   	scrollGroup.addTrigger(window, 'scroll');
-  	scrollGroup.registerImage({ domId: 'scroll', srcUrl: 'http://stage.yuilibrary.com/img/yui-logo.png', isPng: true, setVisible: true });
+  	scrollGroup.registerImage({ domId: 'scroll', srcUrl: '{{componentAssets}}/yui-logo.png', isPng: true, setVisible: true });
 
   	var mouseoverGroup = new Y.ImgLoadGroup();
   	mouseoverGroup.addTrigger('#mouseover', 'mouseover');
-  	mouseoverGroup.registerImage({ domId: 'mouseover', bgUrl: 'http://stage.yuilibrary.com/img/yui-logo.png', isPng: true });
+  	mouseoverGroup.registerImage({ domId: 'mouseover', bgUrl: '{{componentAssets}}/yui-logo.png', isPng: true });
 
   	var clickGroup = new Y.ImgLoadGroup();
   	clickGroup.addTrigger('#duo2', 'click').addTrigger('#duo1', 'click');
-  	clickGroup.registerImage({ domId: 'duo1', bgUrl: 'http://stage.yuilibrary.com/img/yui-logo.png', isPng: true });
-  	clickGroup.registerImage({ domId: 'duo2', bgUrl: 'http://stage.yuilibrary.com/img/yui-logo.png', isPng: true });
+  	clickGroup.registerImage({ domId: 'duo1', bgUrl: '{{componentAssets}}/yui-logo.png', isPng: true });
+  	clickGroup.registerImage({ domId: 'duo2', bgUrl: '{{componentAssets}}/yui-logo.png', isPng: true });
 
   });
 
