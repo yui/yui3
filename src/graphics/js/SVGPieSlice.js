@@ -1,7 +1,6 @@
 /**
  * Draws pie slices
  *
- * @module graphics
  * @class SVGPieSlice
  * @constructor
  */

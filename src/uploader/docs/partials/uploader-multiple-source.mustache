@@ -45,24 +45,34 @@
 
 <div id="files">
   <table id="filenames" style="border-width:1px; border-style:solid; padding:5px;">
-	<tr><td>Filename</td><td>File size</td><td>Percent uploaded</td></tr>
+    <thead>
+	   <tr><th>Filename</th><th>File size</th><th>Percent uploaded</th></tr>
+	</thead>
+	<tbody>
+	</tbody>
   </table>	
 </div>
 
 <script>
 
-YUI({gallery: 'gallery-2011.02.09-21-32'}).use("uploader", 'gallery-progress-bar', function(Y) {
+YUI({filter:"raw", gallery: 'gallery-2011.02.09-21-32'}).use("uploader", 'gallery-progress-bar', function(Y) {
 	
-var uploader;
+var uploader,
+    selectedFiles = {};
 
 function init () {
-	
 var overlayRegion = Y.one("#selectLink").get('region');
-Y.log(overlayRegion);
 Y.one("#uploaderOverlay").set("offsetWidth", overlayRegion.width);
 Y.one("#uploaderOverlay").set("offsetHeight", overlayRegion.height);
 
-uploader = new Y.Uploader({boundingBox:"#uploaderOverlay"});	
+var swfURL = Y.Env.cdn + "uploader/assets/uploader.swf";
+
+if (Y.UA.ie >= 6) {
+	swfURL += "?t=" + Y.guid();
+}
+
+uploader = new Y.Uploader({boundingBox:"#uploaderOverlay", 
+                           swfURL: swfURL});	
 
 uploader.on("uploaderReady", setupUploader);
 uploader.on("fileselect", fileSelect);
@@ -73,7 +83,7 @@ uploader.on("uploadcomplete", uploadComplete);
 Y.on("domready", init);
 
 
-var setupUploader = function (event) {
+function setupUploader (event) {
 	uploader.set("multiFiles", true);
 	uploader.set("simLimit", 3);
 	uploader.set("log", true);
@@ -84,37 +94,41 @@ var setupUploader = function (event) {
     uploader.set("fileFilters", fileFilters); 
 }
 
-var fileSelect = function (event) {
-	Y.log("File was selected, parsing...");
+function fileSelect (event) {
 	var fileData = event.fileList;	
-
+    
 	for (var key in fileData) {
-		var output = "<tr><td>" + fileData[key].name + "</td><td>" + fileData[key].size + "</td><td><div id='div_" + fileData[key].id + "' class='progressbars'></div></td></tr>\n";
-		Y.one("#filenames").append(output);
-		
-		var progressBar = new Y.ProgressBar({id:"pb_" + fileData[key].id, layout : '<div class="{labelClass}"></div><div class="{sliderClass}"></div>'});
-		progressBar.render("#div_" + fileData[key].id);
-		progressBar.set("progress", 0);
+	        if (!selectedFiles[fileData[key].id]) {
+			   var output = "<tr><td>" + fileData[key].name + "</td><td>" + 
+			                fileData[key].size + "</td><td><div id='div_" + 
+			                fileData[key].id + "' class='progressbars'></div></td></tr>";
+			   Y.one("#filenames tbody").append(output);
+			  
+			   var progressBar = new Y.ProgressBar({id:"pb_" + fileData[key].id, layout : '<div class="{labelClass}"></div><div class="{sliderClass}"></div>'});
+			       progressBar.render("#div_" + fileData[key].id);
+			       progressBar.set("progress", 0);
+               
+               selectedFiles[fileData[key].id] = true;
+			}
 	}
+
 }
 
-var updateProgress = function (event) {
+function updateProgress (event) {
 	var pb = Y.Widget.getByNode("#pb_" + event.id);
 	pb.set("progress", Math.round(100 * event.bytesLoaded / event.bytesTotal));
 }
 
-var uploadComplete = function (event) {
+function uploadComplete (event) {
 	var pb = Y.Widget.getByNode("#pb_" + event.id);
 	pb.set("progress", 100);
 }
 
-var uploadFile = function (event) {
+function uploadFiles (event) {
 	uploader.uploadAll("http://www.yswfblog.com/upload/upload_simple.php");
 }
 
-Y.one("#uploadFilesLink").on("click", uploadFile);
-
-
+Y.one("#uploadFilesLink").on("click", uploadFiles);
 
 });
 

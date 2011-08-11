@@ -13,9 +13,11 @@ var SHAPE = "svgShape",
 function SVGDrawing(){}
 
 /**
- * Set of drawing methods for SVG based classes.
+ * <a href="http://www.w3.org/TR/SVG/">SVG</a> implementation of the <a href="Drawing.html">`Drawing`</a> class. 
+ * `SVGDrawing` is not intended to be used directly. Instead, use the <a href="Drawing.html">`Drawing`</a> class. 
+ * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Drawing.html">`Drawing`</a> 
+ * class will point to the `SVGDrawing` class.
  *
- * @module graphics
  * @class SVGDrawing
  * @constructor
  */

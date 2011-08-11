@@ -48,7 +48,7 @@
 
 <h3>Setting Up The YUI Instance</h3>
 
-<p>For this example, we'll start from the Widget IO plugin (gallery-io-plugin) created in the <a href="widget-plugin.html">widget plugin example</a>, pull in `overlay`; `json` and `substitute` utility modules 
+<p>For this example, we'll start from the Widget IO plugin (gallery-io-plugin) created in the <a href="../widget/widget-plugin.html">widget plugin example</a>, pull in `overlay`; `json` and `substitute` utility modules 
 and the `plugin` module. The Widget IO plugin will pull in the dependencies it needs, the main one being `io` to provide the XHR support. 
 
 The `json` and `substitute` modules provide the support we need to parse/transform JSON responses into HTML.The code to set up our sandbox instance is shown below:</p>
@@ -131,7 +131,7 @@ methods on the host Overlay instance, or monitor any Overlay events
 <p>The base `WidgetIO` plugin implements the `initializer`
 and `destructor` lifecycle methods.  For the purposes of this example,
 we will extend the `StdModIO` plugin's `initializer` so that it
-activates the Flash based <a href="../io/#xdr">XDR</a> transport so that the
+activates the Flash based <a href="../io/index.html#cross-domain-transactions">XDR</a> transport so that the
 plugin is able to dispatch both in-domain and cross-domain requests
 (the transport used for any particular uri is controlled through the plugin's
 `cfg` attribute).</p>

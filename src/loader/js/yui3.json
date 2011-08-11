@@ -1675,7 +1675,8 @@
         "requires": [
             "event-custom", 
             "node", 
-            "swfdetect"
+            "swfdetect", 
+            "escape"
         ]
     }, 
     "swfdetect": {}, 

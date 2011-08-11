@@ -1535,28 +1535,57 @@ Y.mix(Y.Node.DOM_EVENTS, {
         </dd>
 </dl>
 
-<h4>Touch/Mobile related properties</h4>
+<h4>Touch event properties</h4>
 <dl>
     <dt>[`e.touches`]</dt>
         <dd>
+            <p>
+                An array of `Touch` objects, where each `Touch` object represents a finger 
+                currently touching the surface (regardless of the target of the current event). 
+                For example, if you have two fingers on the surface, this array would have two 
+                `Touch` objects, one for each finger.
+            </p>
+            
+            <p>
+                The common set of properties currently on a `Touch` object, which can be 
+                relied up across environments, are `target`, `clientX`, `clientY`, `pageX`, 
+                `pageY`, `screenX`, `screenY` and `identifier`.
+            </p>    
         </dd>
     <dt>[`e.targetTouches`]</dt>
         <dd>
+            <p>
+                An array of `Touch` objects for every point of contact that is touching the 
+                surface, and started on the element that is the target of the current event.
+            </p>
         </dd>
     <dt>[`e.changedTouches`]</dt>
         <dd>
+            <p>
+                An array of `Touch` objects representing all touches that changed in this event.
+            </p>
+                
+            <p>
+               This property is most useful in `touchEnd` events, to identify the set of touches 
+               which were removed from the surface, which resulted in the firing of the event. 
+            </p>
         </dd>
+</dl>
 
+<h4>Gesture event properties (currently iOS specific)</h4>
+<p>These properties are unique to Webkit on iOS currently, and are provided on the event facade when listening for the iOS `gesturestart`, `gesturechange` and `gestureend` multi-touch events.</p>
+<dl>
     <dt>[`e.scale`]</dt>
         <dd>
+            See Apple's documentation for <a href="http://developer.apple.com/library/safari/documentation/UserExperience/Reference/GestureEventClassReference/GestureEvent/GestureEvent.html#//apple_ref/javascript/instp/GestureEvent/scale">scale</a>. 
         </dd>
     <dt>[`e.rotation`]</dt>
         <dd>
-        </dd>
-    <dt>[`e.identifier`]</dt>
-        <dd>
+            See Apple's documentation for <a href="http://developer.apple.com/library/safari/documentation/UserExperience/Reference/GestureEventClassReference/GestureEvent/GestureEvent.html#//apple_ref/javascript/instp/GestureEvent/rotation">rotation</a>.
         </dd>
 </dl>
+
+<p>See the <a href="http://www.w3.org/TR/touch-events/">W3C Touch Events Specification</a>, derived from the Webkit model, for more details.</p>
 
 <p>Synthetic events may add or modify event facade properties.  These should be included in the documentation for the specific synthetic event.</p>
 

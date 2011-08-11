@@ -1209,19 +1209,19 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
          *      <dt>series</dt><dd>A key indexed hash containing references to the `styles` attribute for each series in the chart.
          *      Specific style attributes vary depending on the series:
          *      <ul>
-         *          <li><a href="AreaSeries.html#config_styles">AreaSeries</a></li>
-         *          <li><a href="BarSeries.html#config_styles">BarSeries</a></li>
-         *          <li><a href="ColumnSeries.html#config_styles">ColumnSeries</a></li>
-         *          <li><a href="ComboSeries.html#config_styles">ComboSeries</a></li>
-         *          <li><a href="LineSeries.html#config_styles">LineSeries</a></li>
-         *          <li><a href="MarkerSeries.html#config_styles">MarkerSeries</a></li>
-         *          <li><a href="SplineSeries.html#config_styles">SplineSeries</a></li>
+         *          <li><a href="AreaSeries.html#attrs_styles">AreaSeries</a></li>
+         *          <li><a href="BarSeries.html#attrs_styles">BarSeries</a></li>
+         *          <li><a href="ColumnSeries.html#attrs_styles">ColumnSeries</a></li>
+         *          <li><a href="ComboSeries.html#attrs_styles">ComboSeries</a></li>
+         *          <li><a href="LineSeries.html#attrs_styles">LineSeries</a></li>
+         *          <li><a href="MarkerSeries.html#attrs_styles">MarkerSeries</a></li>
+         *          <li><a href="SplineSeries.html#attrs_styles">SplineSeries</a></li>
          *      </ul>
          *      </dd>
          *      <dt>axes</dt><dd>A key indexed hash containing references to the `styles` attribute for each axes in the chart. Specific
-         *      style attributes can be found in the <a href="Axis.html#config_styles">Axis</a> class.</dd>
+         *      style attributes can be found in the <a href="Axis.html#attrs_styles">Axis</a> class.</dd>
          *      <dt>graph</dt><dd>A reference to the `styles` attribute in the chart. Specific style attributes can be found in the
-         *      <a href="Graph.html#config_styles">Graph</a> class.</dd>
+         *      <a href="Graph.html#attrs_styles">Graph</a> class.</dd>
          *  </dl>
          *
          * @attribute styles

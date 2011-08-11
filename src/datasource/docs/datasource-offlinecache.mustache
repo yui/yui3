@@ -58,7 +58,7 @@ YUI().use("datasource", "dataschema", "cache", function(Y) {
     // For demonstration purposes, data is set to expire after 10 seconds
     myDataSource.plug(Y.Plugin.DataSourceCache, {
         cache: Y.CacheOffline,
-        expires: 10000,
+        expires: 60000, // 1 min.
         max: 5
     });
 
@@ -80,7 +80,7 @@ YUI().use("datasource", "dataschema", "cache", function(Y) {
         callback: callback
     });
 
-    // ... wait 10 seconds ...
+    // ... wait 60 seconds ...
 
     // Cached data has expired. Retrieves from server. Adds to cache.
     myDataSource.sendRequest({
