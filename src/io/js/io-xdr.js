@@ -1,8 +1,9 @@
    /**
-    * Extends the IO base class to provide an alternate, Flash transport, for making
+    * Extends IO to provide an alternate, Flash transport, for making
     * cross-domain requests.
-    * @module io
+    * @module io-base
     * @submodule io-xdr
+	* @for IO
     */
 
    /**

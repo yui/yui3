@@ -549,7 +549,7 @@ YUI().use("io-xdr", function(Y) {
 Note: Cross-domain transactions do not fire the global <code>io:complete</code> event and the transaction-specific <code>complete</code> event, when using the IE XDomainRequest or the Flash transport.  All other events in the transaction lifecycle are fired.
 </p>
 <p>
-A subset of A-grade browsers are capable of making cross-domain requests, using XMLHttpRequest, requiring specific access control headers be served from the resource.  To use this feature, the xdr object must be defined with: <code>{ use: 'native' }</code>.  IO will try to resolve the request using the native transport, and it will fall back to the Flash transport if the initial attempt throws an exception due to the browser lacking native support.
+A subset of A-grade browsers are capable of making cross-domain requests, using XMLHttpRequest, requiring specific access control headers be served from the resource.  To use this feature, the xdr configuration must be defined with: <code>{ use: 'native' }</code>.  IO will try to resolve the request using the native transport, and it will fall back to the Flash transport if the initial attempt throws an exception due to the browser lacking native support.
 </p>
 <p>
 <strong>NOTE:</strong> For native cross-domain requests to work, the resource <strong>must</strong> respond with the "Access-Control-Allow-Origin" header with a value permitting the client to make the request.  In the absence of this HTTP response header, the transaction will always fail.  Please see the following articles for more information on this topic.
@@ -562,7 +562,7 @@ A subset of A-grade browsers are capable of making cross-domain requests, using 
 
 <h3>Serializing HTML Form as Data</h3>
 <p>
-YUI io can serialize HTML form fields into a string of UTF-8 encoded, name-value pairs.  If the transaction is HTTP GET, the data are appended to the URI as a querystring.  If the transaction if HTTP POST, the data will be the POST message.
+IO can serialize HTML form fields into a string of UTF-8 encoded, name-value pairs.  If the transaction is HTTP GET, the data are appended to the URI as a querystring.  If the transaction if HTTP POST, the data will be the POST message.
 </p>
 
 ```
@@ -749,6 +749,73 @@ YUI().use("io-queue", function(Y) {
 });
 
 ```
+
+<h3>Instantiating IO</h3>
+<p>
+As of 3.4.0, IO is instantiatiable.  An IO instance avails its public and private fields, allowing for customizations as needed.
+</p>
+
+```
+// Create a new instance of IO.
+var io = new IO();
+
+// Send a request using the new IO instance.
+// This is analogous to the static method
+// Y.io()
+io.send(uri, configuration);
+```
+
+<p>
+In addition to being instantiable, IO is now an EventTarget, and IO's global events can be configured at instantiation time.
+</p>
+
+```
+// This simple example creates a new instance of IO and passes
+// Custom Event configurations that instructs IO to emit
+// Event Facades for all its events, and allow the events to 
+// bubble to other registered event targets, if any.
+var io = new IO({
+    emitFacade: true, // Event handlers will receive an Event Facade.
+    bubbles: true, // Events will bubble to registered event targets.
+});
+```
+
+<p>
+If IO is configured to emit Event Facades, each event handler will receive the Event Facade as the argument.</p>
+</p>
+
+```
+// This is the event handler using Event Facades.
+var configuration = {
+    on: {
+        complete: function(o) {
+            /*
+             * o is the event facade, and contains the following fields:
+             * - o.id is the transaction id.
+             * - o.data is the XMLHttpRequest (or other transport) object.
+             * - o.arguments is the user-defined arguments, if any.
+             * - o.cfg is the configuration object used for this transaction.
+             *
+             * These fields are in addition to the Event Facade's fields.
+             */
+        }
+    }
+};
+
+// For comparison, this is the regular event handler, when 
+// not emitting Event Facades as described in the previous
+// sections on "The Response Object" and "Events."
+var configuration = {
+    on: {
+        complete: function(id, xhr, arguments) {
+            // id is the transaction id.
+            // xhr is the XMLHttpRequest object.
+            // arguments is the user-defined arguments, if any.
+        }
+    }
+};
+```
+
 <h2>Security Bulletin</h2>
 <p>A security vulnerability exists in the XDR transport <code>io.swf</code> when using the <code>io-xdr</code> sub-module to make cross-domain requests.  This vulnerability allows third-party sites to load <code>io.swf</code> from a remote domain and issue HTTP requests with the SWF's domain credentials.  Please examine the following use cases, and, if applicable to you, please follow the recommended actions to close this exploit.
 </p>

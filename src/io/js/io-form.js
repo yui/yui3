@@ -1,8 +1,9 @@
    /**
-    * Extends the IO base class to enable HTML form data serialization, when specified
+    * Extends IO to enable HTML form data serialization, when specified
     * in the transaction's configuration object.
-    * @module io
+    * @module io-base
     * @submodule io-form
+	* @for IO
     */
 
     var eUC = encodeURIComponent;
@@ -16,7 +17,7 @@
         * @private
         * @static
         * @param {object} c - YUI form node or HTML form id.
-        * @param {string} s - Transaction data defined in the configuration.
+        * @param {string} s - Key-value data defined in the configuration object.
         * @return string
         */
         _serialize: function(c, s) {
