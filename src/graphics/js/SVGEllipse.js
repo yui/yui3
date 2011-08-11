@@ -1,7 +1,9 @@
 /**
- * Draws an ellipse
+ * <a href="http://www.w3.org/TR/SVG/">SVG</a> implementation of the <a href="Ellipse.html">`Ellipse`</a> class. 
+ * `SVGEllipse` is not intended to be used directly. Instead, use the <a href="Ellipse.html">`Ellipse`</a> class. 
+ * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Ellipse.html">`Ellipse`</a> 
+ * class will point to the `SVGEllipse` class.
  *
- * @module graphics
  * @class SVGEllipse
  * @constructor
  */
