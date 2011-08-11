@@ -1,7 +1,10 @@
 /**
- * CanvasGraphic is a simple drawing api that allows for basic drawing operations.
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> implementation of the `Graphic` class. 
+ * `CanvasGraphic` is not intended to be used directly. Instead, use the <a href="Graphic.html">`Graphic`</a> class. 
+ * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities but has 
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Graphic.html">`Graphic`</a> 
+ * class will point to the `CanvasGraphic` class.
  *
- * @module graphics
  * @class CanvasGraphic
  * @constructor
  */
@@ -576,10 +579,12 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
     },
 
     /**
-     * Adds a shape to the redraw queue. 
+     * Adds a shape to the redraw queue and calculates the contentBounds. Used internally 
+     * by `Shape` instances.
      *
      * @method addToRedrawQueue
      * @param Shape shape The shape instance to add to the queue
+     * @protected
      */
     addToRedrawQueue: function(shape)
     {

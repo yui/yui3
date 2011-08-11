@@ -1,7 +1,9 @@
 /**
- * Draws a circle
+ * <a href="http://www.w3.org/TR/NOTE-VML">VML</a> implementation of the <a href="Circle.html">`Circle`</a> class. 
+ * `VMLCircle` is not intended to be used directly. Instead, use the <a href="Circle.html">`Circle`</a> class. 
+ * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> and <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> 
+ * capabilities, the <a href="Circle.html">`Circle`</a> class will point to the `VMLCircle` class.
  *
- * @module graphics
  * @class VMLCircle
  * @constructor
  */
@@ -37,7 +39,7 @@ VMLCircle.ATTRS = Y.merge(VMLShape.ATTRS, {
 	},
 
 	/**
-	 * Width of the circle
+	 * Indicates the width of the shape
 	 *
 	 * @config width
 	 * @type Number
@@ -58,9 +60,9 @@ VMLCircle.ATTRS = Y.merge(VMLShape.ATTRS, {
 	},
 
 	/**
-	 * Width of the circle
+	 * Indicates the height of the shape
 	 *
-	 * @config width
+	 * @config height
 	 * @type Number
 	 */
 	height: {
