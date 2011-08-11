@@ -83,14 +83,17 @@ class MetaJoin(object):
                     seed += 1
 
                 # conditions[token] = condition
-                conditions[token] = simplejson.dumps(mod[CONDITION],
+                conditions[name] = simplejson.dumps(mod[CONDITION],
                 ensure_ascii=False, sort_keys=True, indent=4)
 
                 if TEST in condition:
                     testfile = condition[TEST]
                     fnstr = readFile(metadir, testfile)
                     fnstr = fnstr.strip()
-                    fnreplacers[token] = fnstr
+                    fnreplacers[name] = {}
+                    fnreplacers[name]['fn'] = fnstr
+                    fnreplacers[name]['key'] = token
+                    fnreplacers[name]['name'] = name
 
             #if 'path' in mod:
             #    del mod['path']
@@ -138,7 +141,7 @@ class MetaJoin(object):
                             if data:
                                 for k, v in data.iteritems():
                                     modules[k] = v
-                                    print 'module: ' + k
+                                    # print 'module: ' + k
                                     get_test_fn(v, 0, k)
 
         jsonstr = simplejson.dumps(modules,
@@ -159,8 +162,8 @@ class MetaJoin(object):
         count = 0
         testlines = []
 
-        print simplejson.dumps(fnreplacers,
-        ensure_ascii=False, sort_keys=True, indent=4)
+        # print simplejson.dumps(fnreplacers,
+        # ensure_ascii=False, sort_keys=True, indent=4)
 
         for k, v in conditions.iteritems():
 # generate a unique id for the test.  Update the metadata to point to the
@@ -172,16 +175,18 @@ class MetaJoin(object):
             addstr = "add('load', '%s', %s);" % (id, v)
 
             if k in fnreplacers:
+                key = fnreplacers[k]['key']
+                fn = fnreplacers[k]['fn']
                 # jsstr = jsstr.replace(k, id)
-                jsstr = jsstr.replace('"' + k + '"', fnreplacers[k])
-                addstr = addstr.replace('"' + k + '"', fnreplacers[k])
+                jsstr = jsstr.replace('"' + key + '"', fn)
+                addstr = addstr.replace('"' + key + '"', fn)
 
             testlines.append("// %s" % (k))
             testlines.append(addstr)
 
         capsfile += '\n'.join(testlines)
 
-        print capsfile
+        # print capsfile
 
         # write the raw module json
         out = codecs.open(os.path.join(dest_path, DEST_JSON), 'w', 'utf-8')
