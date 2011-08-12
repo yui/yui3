@@ -3,6 +3,7 @@
  * series type has a corresponding boolean attribute indicating if it is rendered. By default, lines and plots 
  * are rendered and area is not. 
  *
+ * @module charts
  * @class ComboSeries
  * @extends CartesianSeries 
  * @uses Fills
@@ -246,11 +247,11 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
          * Style properties for the series. Contains a key indexed hash of the following:
          *  <dl>
          *      <dt>marker</dt><dd>Style properties for the markers in the series. Specific style attributes are listed
-         *      <a href="#attrs_marker">here</a>.</dd>
+         *      <a href="#attr_marker">here</a>.</dd>
          *      <dt>line</dt><dd>Style properties for the lines in the series. Specific
-         *      style attributes are listed <a href="#attrs_line">here</a>.</dd>
+         *      style attributes are listed <a href="#attr_line">here</a>.</dd>
          *      <dt>area</dt><dd>Style properties for the area fills in the series. Specific style attributes are listed
-         *      <a href="#attrs_area">here</a>.</dd>
+         *      <a href="#attr_area">here</a>.</dd>
          *  </dl>
          *
          * @attribute styles

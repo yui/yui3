@@ -1,6 +1,7 @@
 /**
  * The PieChart class creates a pie chart
  *
+ * @module charts
  * @class PieChart
  * @extends ChartBase
  * @constructor

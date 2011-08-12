@@ -1,9 +1,10 @@
 /**
  * StackedAreaSeries area fills to display data showing its contribution to a whole.
  *
- * @param {Object} config (optional) Configuration parameters for the Chart.
+ * @module charts
  * @class StackedAreaSeries
  * @constructor
+ * @param {Object} config (optional) Configuration parameters for the Chart.
  * @extends AreaSeries
  * @uses StackingUtil
  */

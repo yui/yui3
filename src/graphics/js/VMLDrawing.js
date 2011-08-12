@@ -22,6 +22,7 @@ function VMLDrawing() {}
  * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> and <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> 
  * capabilities, the <a href="Drawing.html">`Drawing`</a> class will point to the `VMLDrawing` class.
  *
+ * @module graphics
  * @class VMLDrawing
  * @constructor
  */

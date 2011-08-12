@@ -5,6 +5,7 @@
  * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Rect.html">`Rect`</a> 
  * class will point to the `CanvasRect` class.
  *
+ * @module graphics
  * @class CanvasRect
  * @constructor
  */

@@ -1,6 +1,7 @@
 /**
  * Contains algorithms for rendering a bottom axis.
  *
+ * @module charts
  * @class BottomAxisLayout
  * @Constructor
  */

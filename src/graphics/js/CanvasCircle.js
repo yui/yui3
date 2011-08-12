@@ -5,6 +5,7 @@
  * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Circle.html">`Circle`</a> 
  * class will point to the `CanvasCircle` class.
  *
+ * @module graphics
  * @class CanvasCircle
  * @constructor
  */

@@ -1,7 +1,7 @@
 /**
  * AxisType is an abstract class that manages the data for an axis.
  *
- * @param {Object} config (optional) Configuration parameters for the Chart.
+ * @module charts
  * @class AxisType
  * @constructor
  * @extends Axis

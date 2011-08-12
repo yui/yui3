@@ -4,6 +4,7 @@
  * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Rect.html">`Rect`</a> 
  * class will point to the `SVGRect` class.
  *
+ * @module graphics
  * @class SVGRect
  * @constructor
  */

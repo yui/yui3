@@ -1,9 +1,10 @@
 /**
  * StackedAxis manages stacked numeric data on an axis.
  *
- * @param {Object} config (optional) Configuration parameters for the Chart.
+ * @module charts
  * @class StackedAxis
  * @constructor
+ * @param {Object} config (optional) Configuration parameters for the Chart.
  * @extends NumericAxis
  */
 function StackedAxis(config)

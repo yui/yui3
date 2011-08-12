@@ -1,6 +1,7 @@
 /**
  * Draws pie slices
  *
+ * @module graphics
  * @class VMLPieSlice
  * @constructor
  */

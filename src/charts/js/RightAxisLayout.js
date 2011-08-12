@@ -1,8 +1,9 @@
 /**
  * RightAxisLayout contains algorithms for rendering a right axis.
  *
- * @constructor
+ * @module charts
  * @class RightAxisLayout
+ * @constructor
  */
 RightAxisLayout = function(){};
 

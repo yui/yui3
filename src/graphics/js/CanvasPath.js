@@ -5,6 +5,7 @@
  * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Path.html">`Path`</a> 
  * class will point to the `CanvasPath` class.
  *
+ * @module graphics
  * @class CanvasPath
  * @extends CanvasShape
  */

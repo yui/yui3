@@ -4,6 +4,7 @@
  * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Path.html">`Path`</a> 
  * class will point to the `SVGPath` class.
  *
+ * @module graphics
  * @class SVGPath
  * @extends SVGShape
  * @constructor
