@@ -15,8 +15,8 @@ Y.extend(VMLPieSlice, Y.VMLShape, Y.mix({
      * Indicates the type of shape
      *
      * @property _type
-     * @readOnly
      * @type String
+     * @private
      */
     _type: "shape",
 

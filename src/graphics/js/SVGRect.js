@@ -18,8 +18,8 @@ Y.extend(SVGRect, Y.SVGShape, {
      * Indicates the type of shape
      *
      * @property _type
-     * @readOnly
      * @type String
+     * @private
      */
     _type: "rect"
  });
