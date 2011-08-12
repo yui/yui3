@@ -2,6 +2,7 @@
  * The AreaSeries class renders quantitative data on a graph by creating a fill between 0
  * and the relevant data points.
  *
+ * @module charts
  * @class AreaSeries
  * @extends CartesianSeries
  * @uses Fills

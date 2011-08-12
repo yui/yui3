@@ -364,7 +364,7 @@ YUI.add('imageloader', function(Y) {
          * class name is removed and also the src attribute is set to the 
          * image URL as well as clearing the style background image.
          * @method _updateNodeClassName
-         * @param node {Y.Node} The node to act on.
+         * @param node {Node} The node to act on.
          * @private
          */
         _updateNodeClassName: function(node){

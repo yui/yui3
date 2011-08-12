@@ -6,10 +6,8 @@
 require.paths.push('/usr/local/lib/node_modules');
 
 var path = require('path'),
-    Y = require('yui3').configure({
-        debug: false,
-        yuiPath: path.join(__dirname + '../../../../../')
-    }).useSync('loader'),
+    YUI = require(path.join(__dirname, '../../../../', 'build/yui/yui.js')).YUI;
+    Y = YUI(),
     YUITest = require("yuitest").YUITest,
     Assert = YUITest.Assert,
     ArrayAssert = YUITest.ArrayAssert,
@@ -459,6 +457,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("calendar-base")) > -1, "Module (calendar-base) not found in sorted array");
         },
+     "Testing calendarnavigator": function(data) {
+            var loader = new Y.Loader({
+                require: ["calendarnavigator"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("calendarnavigator")) > -1, "Module (calendarnavigator) not found in sorted array");
+        },
      "Testing charts": function(data) {
             var loader = new Y.Loader({
                 require: ["charts"],
@@ -502,16 +510,6 @@ suite.add(new YUITest.TestCase({
             Assert.isTrue((loader.sorted.indexOf("arraylist-add")) > -1, "Module (arraylist-add) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("arraylist-filter")) > -1, "Module (arraylist-filter) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("array-invoke")) > -1, "Module (array-invoke) not found in sorted array");
-        },
-     "Testing compat": function(data) {
-            var loader = new Y.Loader({
-                require: ["compat"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("compat")) > -1, "Module (compat) not found in sorted array");
         },
      "Testing console": function(data) {
             var loader = new Y.Loader({

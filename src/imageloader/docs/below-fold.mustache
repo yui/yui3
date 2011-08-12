@@ -1,0 +1,116 @@
+<div class="intro">
+
+  <p>
+    Often pages will have a number of images below the fold, hidden from the user's view. 
+    These are prime candidates to load with the <a href="http://developer.yahoo.com/yui/imageloader/">ImageLoader Utility</a>.
+  </p>
+
+  <p>
+    All the images in this example belong to the same group, and each loads immediately only when it appears above, 
+    or within the specified distance (25px) of, the page fold.
+  </p>
+
+</div>
+
+<div class="example">
+  <!--BEGIN SOURCE CODE FOR EXAMPLE ===============================-->
+
+  <style>
+  .everything .cont { border:1px solid #888; width:100px; margin:75px 50px; }
+  .everything .rightCol { margin-left:300px; }
+  #img1Cont { height:75px; margin-top:25px; }
+  #img2Cont { height:67px; }
+  #img3Cont { height:53px; }
+  #img4Cont { height:72px; }
+  #img5Cont { height:75px; margin-bottom:25px; }
+  </style>
+
+
+  <div class='everything' id='everything'>
+  	<div class='cont' id='img1Cont'>
+  		<img id='img1' />
+  	</div>
+  	<div class='cont rightCol' id='img2Cont'>
+  		<img id='img2' />
+  	</div>
+  	<div class='cont' id='img3Cont'>
+  		<img id='img3' />
+
+  	</div>
+  	<div class='cont rightCol' id='img4Cont'>
+  		<img id='img4' />
+  	</div>
+  	<div class='cont' id='img5Cont'>
+  		<img id='img5' />
+  	</div>
+  </div>
+
+
+  <script>
+
+  YUI({filter:"debug", logInclude: {"imageloader":true, "example":true}}).use("imageloader", function(Y) {
+
+  	var foldGroup = new Y.ImgLoadGroup({ name: 'fold group', foldDistance: 25 });
+  	foldGroup.registerImage({ domId: 'img1', srcUrl: 'http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/museum.jpg' });
+  	foldGroup.registerImage({ domId: 'img2', srcUrl: 'http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/uluru.jpg' });
+  	foldGroup.registerImage({ domId: 'img3', srcUrl: 'http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/katatjuta.jpg' });
+  	foldGroup.registerImage({ domId: 'img4', srcUrl: 'http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/morraine.jpg' });
+  	foldGroup.registerImage({ domId: 'img5', srcUrl: 'http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/japan.jpg' });
+
+  /*
+  var foldGroup = new YAHOO.util.ImageLoader.group(window, 'scroll');
+  foldGroup.foldConditional = true;
+  //foldGroup.addTrigger(window, 'resize');
+  foldGroup.name = 'fold_group';
+  */
+
+  /*
+   * This uncustomary wait before adding the resize trigger is done specifically to cater to IE for this example.
+   * In IE and with the Logger enabled, IE fires an immediate resize event while rendering the Logger module, consequently loading all the images in the example.
+   * This 200 ms delay allows IE to render the Logger without interference.
+   * In your code, you would add the resize trigger in a straightforward fashion, as is documented in the example.
+   */
+  //YAHOO.util.Event.addListener(window, 'load', function() { setTimeout("foldGroup.addTrigger(window, 'resize')", 200); });
+
+  });
+
+  </script>
+
+  <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+
+</div>
+
+<h2>Loading Images Below the Fold</h2>
+
+<p>
+  You can easily have images load immediately if they are above the fold while delaying the load of images below the fold. 
+  This saves you from loading any images that the user can't see because they are beyond her browser's viewable area.
+</p>
+
+<p>
+  All we need is one group, and we specify its <code>foldDistance</code> attribute to <code>25</code> (25px). 
+  Any group with this attribute set will, at the DOM ready state, examine the page coordinates of all images registered 
+  to that group. Any images located above the fold, or no farther than the specified distance below the fold, will load immediately. 
+  The rest will be checked again at any <code>scroll</code> or <code>resize</code> event and be loaded only when they're near enough 
+  to the fold.
+</p>
+
+```
+var foldGroup = new Y.ImgLoadGroup({ name: 'fold group', foldDistance: 25 });
+foldGroup.registerImage({ domId: 'img1', srcUrl: 'http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/museum.jpg' });
+foldGroup.registerImage({ domId: 'img2', srcUrl: 'http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/uluru.jpg' });
+foldGroup.registerImage({ domId: 'img3', srcUrl: 'http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/katatjuta.jpg' });
+foldGroup.registerImage({ domId: 'img4', srcUrl: 'http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/morraine.jpg' });
+foldGroup.registerImage({ domId: 'img5', srcUrl: 'http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/japan.jpg' });
+```
+
+<p>
+  When you specify a <code>foldDistance</code> value, <code>scroll</code> and <code>resize</code> triggers are added to the 
+  group automatically. Thus you will typically not need to set any triggers for the group explicitly.
+</p>
+
+<p>
+  How do you know that the images below the fold are, in fact, not loaded immediately? There are several tools available to 
+  monitor the HTTP requests of your browser, including Firebug for Firefox and HTTPWatch for IE. With these tools you can 
+  monitor precisely when each image on a page is loaded.
+</p>

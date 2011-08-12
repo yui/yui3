@@ -41,7 +41,7 @@
         {
             "name"       : "alt-iterations",
             "displayName": "Alternating Iterations",
-            "description": "The <code>direction</code> attribute can be used to reverse the animation on alternate iterations.",
+            "description": "The direction attribute can be used to reverse the animation on alternate iterations.",
             "modules"    : ["anim"],
             "tags"       : ["anim", "reverse", "iterations", "direction"],
 
@@ -71,7 +71,7 @@
         {
             "name"       : "reverse",
             "displayName": "Reversing an Animation",
-            "description": "The <code>reverse</code> attribute allows you to change the run direction of an animation.",
+            "description": "The reverse attribute allows you to change the run direction of an animation.",
             "modules"    : ["anim"],
             "tags"       : ["anim", "reverse", "plugin"],
 
@@ -81,22 +81,11 @@
         {
             "name"       : "end-event",
             "displayName": "Using the End Event",
-            "description": "This example demonstrates how to use the <code>end</code> event.",
+            "description": "This example demonstrates how to use the end event.",
             "modules"    : ["anim"],
             "tags"       : ["anim", "event", "end"],
 
             "hideTableOfContents": true
-        },
-
-        {
-            "name"       : "anim-chaining",
-            "displayName": "Chaining Animations Using the end Event",
-            "description": "Animations can be set to run sequentially using Animation's <code>end</code> event.",
-            "modules"    : ["anim"],
-            "tags"       : ["anim", "event", "end", "chain"],
-
-            "hideTableOfContents": true
         }
-
     ]
 }

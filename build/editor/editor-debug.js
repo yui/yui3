@@ -573,7 +573,7 @@ YUI.add('frame', function(Y) {
         * @method render
         * @description Render the iframe into the container config option or open the window.
         * @param {String/HTMLElement/Node} node The node to render to
-        * @return {Y.Frame}
+        * @return {Frame}
         * @chainable
         */
         render: function(node) {
@@ -1899,7 +1899,7 @@ YUI.add('selection', function(Y) {
         * Destroy the range.
         * @method remove
         * @chainable
-        * @return {Y.Selection}
+        * @return {Selection}
         */
         remove: function() {
             this._selection.removeAllRanges();
@@ -1923,7 +1923,7 @@ YUI.add('selection', function(Y) {
         * @param {Node} node The node to select
         * @param {Boolean} collapse Should the range be collapsed after insertion. default: false
         * @chainable
-        * @return {Y.Selection}
+        * @return {Selection}
         */
         selectNode: function(node, collapse, end) {
             if (!node) {
@@ -3023,12 +3023,7 @@ YUI.add('editor-base', function(Y) {
                         } else if (Y.UA.gecko) {
                             this.frame.exec._command('inserthtml', EditorBase.TABKEY);
                         } else if (Y.UA.ie) {
-                            sel = new inst.Selection();
-                            if (sel._selection.pasteHTML) {
-                                sel._selection.pasteHTML(EditorBase.TABKEY);
-                            } else {
-                                this.execCommand('inserthtml', EditorBase.TABKEY);
-                            }
+                            this.execCommand('inserthtml', EditorBase.TABKEY);
                         }
                     }
                     break;
@@ -3053,6 +3048,8 @@ YUI.add('editor-base', function(Y) {
                 cmds = e.commands;
             }
             
+            var normal = false;
+
             Y.each(changed, function(el) {
                 var tag = el.tagName.toLowerCase(),
                     cmd = EditorBase.TAG2CMD[tag];
@@ -3063,6 +3060,10 @@ YUI.add('editor-base', function(Y) {
 
                 //Bold and Italic styles
                 var s = el.currentStyle || el.style;
+                
+                if ((''+s.fontWeight) == 'normal') {
+                    normal = true;
+                }
                 if ((''+s.fontWeight) == 'bold') { //Cast this to a string
                     cmds.bold = 1;
                 }
@@ -3074,6 +3075,7 @@ YUI.add('editor-base', function(Y) {
                 if (s.fontStyle == 'italic') {
                     cmds.italic = 1;
                 }
+
                 if (s.textDecoration == 'underline') {
                     cmds.underline = 1;
                 }
@@ -3113,6 +3115,11 @@ YUI.add('editor-base', function(Y) {
                 
             });
             
+            if (normal) {
+                delete cmds.bold;
+                delete cmds.italic;
+            }
+
             e.dompath = inst.all(changed);
             e.classNames = classes;
             e.commands = cmds;
@@ -4376,8 +4383,10 @@ YUI.add('editor-para', function(Y) {
                     break;
                 case 'keyup':
                     if (Y.UA.gecko) {
-                        if (inst.config.doc && inst.config.doc.body && inst.config.doc.body.innerHTML.length < 2) {
-                            this._fixFirstPara();
+                        if (inst.config.doc && inst.config.doc.body && inst.config.doc.body.innerHTML.length < 20) {
+                            if (!inst.one(FIRST_P)) {
+                                this._fixFirstPara();
+                            }
                         }
                     }
                     break;

@@ -1,17 +1,42 @@
-YUI().use('node', 'gallery-yql', function(Y) {
-    new Y.yql('select * from flickr.photos.search where tags = "yuiconf2009"', function(r) {
-        if (r.query) {
-            if (r.query.results) {
-                var res = Y.one('#results'),
-                    content = '';
-
-                Y.each(r.query.results.photo, function(v) {
-                    var img = '<img src="http:/'+'/static.flickr.com/' + v.server + '/' + v.id + '_' + v.secret + '_s.jpg">';
-                    content += '<a href="http://flickr.com/photos/' + v.owner + '/' + v.id + '" title="' + v.title + '">' + img + '</a>';
-                });
-
-                res.setContent(content);
-            }
+YUI().use('node', 'gallery-bitly', function(Y) {
+    /*
+        To use the bit.ly module, you must have a bit.ly username and apiKey.
+        If you do not have an apiKey, sign up for a bitly account and go to 
+        your Account page to get your apiKey.
+    */
+    var bitly = new Y.bitly({
+        username: username,
+        key: key
+    }),
+    createElm = function(par, url) {
+        var item = '';
+        if (par.one('em')) {
+            item = par.one('em');
+        } else {
+            item = Y.Node.create('<em></em>');
+            par.append(item);
         }
-    });
+        item.set('innerHTML', '<a href="' + url + '">' + url + '</a>');
+        return item;
+    };
+    
+
+    Y.on('click', function(e) {
+        bitly.shorten(Y.one('#shorten').get('value'), function(r) {
+            var par = e.target.get('parentNode'),
+                item = createElm(par, r.shortUrl);
+
+            Y.one('#expand').set('value', r.shortUrl);
+        });
+    }, '#do_shorten');
+
+    Y.on('click', function(e) {
+        bitly.expandByURL(Y.one('#expand').get('value'), function(r) {
+            var par = e.target.get('parentNode'),
+                item = createElm(par, r.longUrl);
+
+            Y.one('#shorten').set('value', r.longUrl);
+        });
+    }, '#do_expand');
+
 });

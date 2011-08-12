@@ -1,9 +1,10 @@
 /**
  * CategoryAxis manages category data on an axis.
  *
- * @param {Object} config (optional) Configuration parameters for the Chart.
+ * @module charts
  * @class CategoryAxis
  * @constructor
+ * @param {Object} config (optional) Configuration parameters for the Chart.
  * @extends AxisType
  */
 function CategoryAxis(config)

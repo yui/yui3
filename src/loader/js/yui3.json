@@ -307,14 +307,6 @@
             "array-invoke"
         ]
     }, 
-    "compat": {
-        "requires": [
-            "event-base", 
-            "dom", 
-            "dump", 
-            "substitute"
-        ]
-    }, 
     "console": {
         "lang": [
             "en", 
@@ -385,24 +377,6 @@
     "cssgrids": {
         "optional": [
             "cssreset", 
-            "cssfonts"
-        ], 
-        "type": "css"
-    }, 
-    "cssgrids-context-deprecated": {
-        "optional": [
-            "cssreset-context"
-        ], 
-        "requires": [
-            "cssfonts-context"
-        ], 
-        "type": "css"
-    }, 
-    "cssgrids-deprecated": {
-        "optional": [
-            "cssreset"
-        ], 
-        "requires": [
             "cssfonts"
         ], 
         "type": "css"
@@ -1683,7 +1657,8 @@
         "requires": [
             "event-custom", 
             "node", 
-            "swfdetect"
+            "swfdetect", 
+            "escape"
         ]
     }, 
     "swfdetect": {}, 

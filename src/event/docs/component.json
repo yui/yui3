@@ -1,13 +1,41 @@
 {
     "name": "event",
-	"displayName": "Event Utility",
-	"description": "The Event Utility provides APIs for subscribing to and working with DOM events",
+	"displayName": "Event",
+	"description": "The Event system provides APIs for subscribing to and working with DOM events",
 	"author": ["lsmith", "amoore", "sdesai", "rgrove"],
 
     "use": ["event"],
     "tags": ["core", "event", "dom"],
 
     "examples": [
+        {
+            "name": "basic-example",
+	        "displayName": "Simple DOM Events",
+	        "description": "Use the Event Utility to attach simple DOM event handlers.",
+            "modules": ["event", "node"],
+
+            "hideTableOfContents": true
+	    },
+
+        {
+            "name": "synth-example",
+	        "displayName": "Creating an Arrow Event for DOM Subscription",
+	        "description": "Using the synthetic event API to create a DOM event that fires in response to arrow keys being pressed.",
+            "useModules": ["event-synthetic","node","transition"],
+            "modules": ["event"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "swipe-example",
+            "displayName": "Supporting A Swipe Left Gesture",
+            "description": "Supporting cross-device swipe gestures, using the event-move gesture events",
+            "useModules": ["node-base", "node-event-delegate", "transition", "event-move"],
+            "modules": ["event"],
+
+            "hideTableOfContents": true
+        }
     ],
 
     "pages": {
@@ -15,31 +43,42 @@
             "displayName": "Intro to Event Delegation"
         },
         "domready": {
-            "displayName": "DOM lifecycle events"
+            "displayName": "DOM Lifecycle Events"
         },
         "focus": {
-            "displayName": "The focus and blur event fix"
+            "displayName": "The focus and blur Event Fix"
         },
         "key": {
-            "displayName": "The key event"
+            "displayName": "The key Event"
         },
         "mouseenter": {
-            "displayName": "The mouseenter, mouseleave, and hover events"
+            "displayName": "The mouseenter, mouseleave, and hover Events"
         },
         "mousewheel": {
-            "displayName": "The mousewheel event"
+            "displayName": "The mousewheel Event"
         },
         "outside": {
-            "displayName": "The outside events"
+            "displayName": "Outside Events"
         },
-        "windowresize": {
-            "displayName": "The windowresize event"
+        "simulate": {
+            "displayName": "Simulating DOM Events"
+        },
+        "synths": {
+            "displayName": "Creating Synthetic Events"
         },
         "touch": {
-            "displayName": "Touch events and abstractions"
+            "displayName": "Touch Events and Abstractions"
         },
         "valuechange": {
-            "displayName": "The valueChange event"
+            "displayName": "The valueChange Event"
+        },
+        "windowresize": {
+            "displayName": "The windowresize Event"
+        },
+
+        "swipe-example-content": {
+            "displayName": "Supporting a Swipe Left Gesture",
+            "layout": "empty-layout"
         }
     }
 }

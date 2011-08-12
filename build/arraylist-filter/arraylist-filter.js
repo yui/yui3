@@ -8,7 +8,6 @@ YUI.add('arraylist-filter', function(Y) {
 
 /**
  * Adds filter method to ArrayList prototype
- * @class ArrayList~filter
  */
 Y.mix(Y.ArrayList.prototype, {
 
@@ -22,6 +21,7 @@ Y.mix(Y.ArrayList.prototype, {
      * @method filter
      * @param { Function } validator Boolean function to determine in or out.
      * @return { ArrayList } New instance based on who passed the validator.
+     * @for ArrayList
      */
     filter: function(validator) {
         var items = [];

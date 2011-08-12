@@ -1,0 +1,53 @@
+YUI().use('node-base','node-event-delegate', 'transition', 'event-move', function (Y) {
+
+    var MIN_SWIPE = 10;
+
+    Y.all(".myexample-hidden").removeClass("myexample-hidden");
+
+    Y.one("#swipe").delegate("gesturemovestart", function(e) {
+
+        var item = e.currentTarget,
+            target = e.target,
+            container = e.container,
+            isDeleteButton = target.hasClass("myapp-delete");
+
+        // Prevent Text Selection in IE
+        item.once("selectstart", function(e) {
+            e.preventDefault();
+        });
+
+        if (!isDeleteButton) {
+
+            container.all(".myapp-delete").addClass("myapp-hidden");
+
+            item.setData("swipeStart", e.pageX);
+
+            item.once("gesturemoveend", function(e) {
+
+                var swipeStart = item.getData("swipeStart"),
+                    swipeEnd = e.pageX,
+                    isSwipeLeft = (swipeStart - swipeEnd) > MIN_SWIPE;
+
+                if (isSwipeLeft) {
+                    item.one(".myapp-delete").removeClass("myapp-hidden");    
+                }
+
+            });
+        } else {
+            item = target.get("parentNode");
+
+            if (item.get("id") != "kitkat" || confirm("Seriously? The KitKats?")) {
+                item.transition({
+                    duration:0.3,
+                    opacity:0,
+                    height:0
+                }, function() {
+                    this.remove();
+                });
+            }
+        }
+
+    }, "li", {
+        preventDefault:true
+    });
+});

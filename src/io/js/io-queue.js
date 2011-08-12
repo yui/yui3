@@ -1,8 +1,9 @@
    /**
-    * Extends the IO base class to implement Queue for synchronous
+    * Extends IO to implement Queue for synchronous
     * transaction processing.
-    * @module io
+    * @module io-base
     * @submodule io-queue
+	* @for IO
     */
 	var io = Y.io._map['io:0'] || new Y.IO();
 

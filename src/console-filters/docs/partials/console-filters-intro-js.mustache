@@ -1,6 +1,6 @@
 <script type="text/javascript">
 // Create a YUI instance and request the console module and its dependencies
-YUI().use("console-filters", function (Y) {
+YUI({ filter: 'debug' }).use("console-filters", function (Y) {
 
 // create the console instance
 var yconsole = new Y.Console({

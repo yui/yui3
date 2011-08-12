@@ -1,24 +1,24 @@
 <div class="intro">
-    <p>The RecordsetFilter plugin provides the ability to filter records within a specific recordset instance.</p>
+    <p>The RecordsetFilter plugin provides the ability to filter records within a specific Recordset instance.</p>
 </div>
 
-<div class="example">
+<div class="example yui3-skin-sam">
 {{>recordset-filter-source}}
 </div>
 
-<p>The filter plugin allows operations to filter a recordset instance. All the methods generate new recordsets that are subsets of the original recordset.</p>
+<p>The filter plugin allows operations to filter a Recordset instance. All the methods generate new Recordsets that are subsets of the original Recordset.</p>
 
 <h3>Using the Plugin</h3>
+
 <ul class="topspace">
 	<li><a href="#keyvalue">Filter by key/value</a></li>
 	<li><a href="#customFunction">Using custom filter functions</a></li>
 	<li><a href="#other">Other ways to filter</a></li>
 </ul>
 
-<p>The RecordsetFilter plugin supports filtering a recordset instance using a custom filter function, or key/value pairs.</p>
+<p>The RecordsetFilter plugin supports filtering a Recordset instance using a custom filter function, or key/value pairs.</p>
 
-<?php
-$str = <<<END
+```
 YUI().use("recordset-base", "recordset-filter", function(Y) {
     var state_census_data = [
         {ANSI: "01000", STATE: "ALABAMA", TOTAL_POP: 4708708, LAND_AREA: 50744, POP_PER_SQ_MILE: 87.6},
@@ -35,28 +35,24 @@ YUI().use("recordset-base", "recordset-filter", function(Y) {
 	//call filter methods with the 'filter' namespace
 	var subset = recordset.filter.filter("STATE", "CALIFORNIA");
 });
-END;
-echo(syntaxHighlight($str));
-?>
+```
 
 
 <h3 id="keyvalue">Filtering by Key/Value</h3>
-<p>The filter() method can take a key as its first argument, and a value as its second. Doing so will return a subset of the original recordset, with records that match the specific key/value pair.</p>
 
-<?php
-$str = <<<END
+<p>The filter() method can take a key as its first argument, and a value as its second. Doing so will return a subset of the original Recordset, with records that match the specific key/value pair.</p>
+
+```
 //call filter methods with the 'filter' namespace
 var subset = recordset.filter.filter("STATE", "CALIFORNIA");
-END;
-echo(syntaxHighlight($str));
-?>
+```
 
 
 <h3 id="customFunction">Filtering by Custom Function</h3>
-<p>Additionally, a custom function can be passed in to the filter method. In this scenario, all records will be evaluated against this function, and if a truthy value is returned, it will be pushed onto the returning sub-recordset.</p>
 
-<?php
-$str = <<<END
+<p>Additionally, a custom function can be passed in to the filter method. In this scenario, all records will be evaluated against this function, and if a truthy value is returned, it will be pushed onto the returning sub-Recordset.</p>
+
+```
 var myCustomFilterFunction = function(item) {
 	var letter = item.getValue('STATE').charAt(0);
 	if (letter === 'M' || letter === 'N' || letter === 'O' || letter === 'P') {
@@ -67,17 +63,15 @@ var myCustomFilterFunction = function(item) {
 	}
 };
 
-//All records which have a STATE property starting with "M", "N", "O", or "P" will be pushed onto the new recordset.
+//All records which have a STATE property starting with "M", "N", "O", or "P" will be pushed onto the new Recordset.
 var subset = recordset.filter.filter(myCustomFilterFunction);
-END;
-echo(syntaxHighlight($str));
-?>
+```
 
 <h3 id="other">Other Ways to Filter</h3>
-As Recordset augments <code>Y.Arraylist</code>, methods from the <code>array-extras</code> sub-module can be used. Currently, the <code>RecordsetFilter</code> plugin supports <code>reject()</code> and <code>grep()</code>. However, using other methods from the <code>array-extras</code> utility is straight-forward:
-<?php
-$str = <<<END
 
+<p>As Recordset augments <code>Y.Arraylist</code>, methods from the <code>array-extras</code> sub-module can be used. Currently, the <code>RecordsetFilter</code> plugin supports <code>reject()</code> and <code>grep()</code>. However, using other methods from the <code>array-extras</code> utility is straight-forward:</p>
+
+```
 //use the 'array-extras' submodule
 YUI().use("recordset-base", "recordset-filter", "array-extras", function(Y) {
 	
@@ -99,8 +93,5 @@ YUI().use("recordset-base", "recordset-filter", "array-extras", function(Y) {
 	       records: Y.Array.find(recordset.get('records'), customFindFunction)
 	});
 });
-
-END;
-echo(syntaxHighlight($str));
-?>
+```
 

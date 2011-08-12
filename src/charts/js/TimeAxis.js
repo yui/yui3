@@ -1,9 +1,10 @@
 /**
  * TimeAxis manages time data on an axis.
  *
- * @param {Object} config (optional) Configuration parameters for the Chart.
+ * @module charts
  * @class TimeAxis
  * @constructor
+ * @param {Object} config (optional) Configuration parameters for the Chart.
  * @extends AxisType
  */
 function TimeAxis(config)

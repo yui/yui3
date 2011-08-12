@@ -1,0 +1,111 @@
+<div class="intro">
+<p>
+    This example shows how to use the `reviver` parameter in `JSON.parse()` to add new object members and format existing members during the parsing phase.
+</p>
+</div>
+
+<div class="example yui3-skin-sam">
+    {{>json-convert-values-source}}
+</div>
+
+<h2>The Data</h2>
+<p>
+    The data returned from the server will be a JSON string containing this object structure:
+</p>
+
+```json
+[
+    {"SKU":"23-23874", "Price":23.99,  "Item":"Helmet"},
+    {"SKU":"48-38835", "Price":14.97,  "Item":"Football"},
+    {"SKU":"84-84848", "Price":3.49,   "Item":"Goggles"},
+    {"SKU":"84-84843", "Price":183,    "Item":"Badminton Set"},
+    {"SKU":"84-39321", "Price":6.79,   "Item":"Tennis Balls"},
+    {"SKU":"39-48949", "Price":618,    "Item":"Snowboard"},
+    {"SKU":"99-28128", "Price":78.99,  "Item":"Cleats"},
+    {"SKU":"83-48281", "Price":4.69,   "Item":"Volleyball"},
+    {"SKU":"89-32811", "Price":0.59,   "Item":"Sweatband"},
+    {"SKU":"28-22847", "Price":779.98, "Item":"Golf Set"},
+    {"SKU":"38-38281", "Price":8.25,   "Item":"Basketball Shorts"},
+    {"SKU":"82-38333", "Price":1.39,   "Item":"Lip balm"},
+    {"SKU":"21-38485", "Price":0.07,   "Item":"Ping Pong ball"},
+    {"SKU":"83-38285", "Price":3.99,   "Item":"Hockey Puck"}
+]
+```
+
+<h2>Create a `reviver` function</h2>
+<p>
+    We'll contain all the moving parts in an `example` namespace. In it, we'll include the currency exchange rates and a function to reference the rates to add a new member to the JSON response as it is being parsed.
+</p>
+
+```
+YUI().use("node", "io", "json-parse",function (Y) {
+
+var example = {
+    rates : {"USD":1,"EUR":0.6661,...,"COP":2000 ,"ARS":3.1289},
+
+    currency : 'USD', // updated by the select element
+
+    convert : function (k,v) {
+        // 'this' will refer to the object containing the key:value pair,
+        // so this step will add a new object member while leaving the original
+        // intact (but formatted to two decimal places).  If the original
+        // is not needed, just return the converted value.
+        if (k === 'Price') {
+            var x = Math.round(v * example.rates[example.currency] * 100) / 100;
+            this.convertedPrice = x.toFixed(2); // added to item
+            return v.toFixed(2); // assigned to item.Price
+        }
+        return v;
+    },
+    …
+};
+…
+```
+
+<h2>Sending the request and parsing the JSON response</h2>
+<p>
+    When the <em>Get Data</em> button is clicked, we send an io request for the JSON data, and in our `success` handler, pass our conversion function to `JSON.parse()` with the response text. The resulting inventory records will have an additional member, `convertedPrice`. This data is then passed to a UI method to update the inventory table.
+</p>
+
+```
+Y.one('#demo_go').on('click', function (e) {
+    // Disable the button temporarily
+    this.set('disabled',true);
+
+    // Store the requested currency
+    var sel = Y.one("#demo select");
+    example.currency = sel.get("options").item(sel.get("selectedIndex")).get("value");
+
+    // Send the request for the JSON data
+    Y.io('{{componentAssets}}/json-convert-values-response.json',{
+        timeout : 3000,
+        on : {
+            success : function (xid, res) {
+                var inventory;
+                try {
+                    inventory = Y.JSON.parse(res.responseText,example.convert);
+
+                    example.updateTable(inventory);
+                }
+                catch(e) {
+                    alert("Error getting inventory data");
+                }
+                finally {
+                    Y.one('#demo_go').set('disabled',false);
+                }
+            },
+            failure : function () {
+                alert("Error getting inventory data");
+            }
+        }
+    });
+});
+
+}); // End YUI(..).use(..,function (Y) {
+```
+
+<h2>Complete Example Source</h2>
+
+```
+{{>json-convert-values-source}}
+```

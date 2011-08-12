@@ -143,7 +143,7 @@
 
     <span id="volume_slider">
         <span class="yui3-slider-rail">
-            <span class="yui3-slider-thumb"><img src="assets/images/sprite.png" height="384" width="31"></span>
+            <span class="yui3-slider-thumb"><img src="{{componentAssets}}/images/sprite.png" height="384" width="31"></span>
         </span>
     </span>
 
@@ -232,7 +232,7 @@ mute.on('click', muteVolume);
 ```
 
 <h3>Skinning and CSS</h3>
-<img id="demo_sprite" src="assets/images/sprite.png" height="384" width="31" alt="Sprite of all custom image resources for this example">
+<img id="demo_sprite" src="{{componentAssets}}/images/sprite.png" height="384" width="31" alt="Sprite of all custom image resources for this example">
 <p>We'll be using the image sprite to the left to create a custom skin.  In this design, to keep things simple, the Slider's container and end caps are all rendered together at the bottom of the sprite.</p>
 
 <p>Slider's thumb range is constrained by the rail element, so it wouldn't be appropriate to use this image as the rail's background&#8212;the thumb would slide off the ends.  Instead, the rail image is assigned as the background to the Slider's containing element `#volume_slider`.  Then the default skin background image is removed on the rail.</p>
@@ -282,7 +282,7 @@ mute.on('click', muteVolume);
         <button type="button" id="volume_icon" class="level_2" title="Open volume slider"><p>Open</p></button>
         <span id="volume_slider">
             <span class="yui3-slider-rail">
-                <span class="yui3-slider-thumb"><img src="assets/images/sprite.png" height="384" width="31"></span>
+                <span class="yui3-slider-thumb"><img src="{{componentAssets}}/images/sprite.png" height="384" width="31"></span>
             </span>
         </span>
         <label for="mute"><input type="checkbox" id="mute"> mute</label>

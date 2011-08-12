@@ -1,0 +1,185 @@
+#hd {
+    background: #f5f5f5; /* old browsers */
+    background: -moz-linear-gradient(top, #dcdbd9 0%, #F6F5F3 100%); /* firefox was...(top, #ddd 0%, #f8f8f8 100%)*/
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#dcdbd9), color-stop(100%,#F6F5F3)); /* webkit */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcdbd9', endColorstr='#F6F5F3',GradientType=0 ); /* ie */
+
+    border-bottom: 1px solid #dfdfdf;
+    *zoom: 1;
+    padding: 1em;
+}
+#hd h1 {
+    font-size: 116%;
+    font-weight: bold;
+    color: #000;
+}
+#ft {
+    font-size: 85%;
+    font-style: italic;
+}
+#play {
+    margin-top: .75em;
+    zoom: 1;
+}
+#play:after { display: block; clear: both; visibility: hidden; content: '.'; height: 0;}
+
+#feeds {
+    margin-top: .75em;
+    min-height: 500px;
+    *height: 500px;
+    padding: .5em;
+    position: relative;
+
+    background: #F9F9FC;/*E6E9F5*/
+    border: 1px solid #D4D8EB;
+
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    -moz-box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
+    -webkit-box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
+    font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', 'Helvetica', 'Arial', sans-serif;
+    margin: 15px 0;
+    padding-bottom: 1px;
+
+}
+
+#feeds ul li {
+    background-image: url(http://l.yimg.com/a/i/tb/iconsgif/rss_1.gif);
+    background-repeat: no-repeat;
+    padding-left: 25px;
+    margin: 3px;
+    cursor: move;
+    zoom: 1;
+}
+#feeds ul li.disabled {
+    opacity: .5;
+    filter: alpha(opacity=50);
+    cursor: default;
+}
+
+ul.list {
+    border: 1px dashed #ccc;
+    margin: .5em;
+    width: 325px;
+    float: left;
+    min-height: 500px;
+    *height: 500px;
+    zoom: 1;
+
+}
+
+.yui3-dd-proxy {
+    text-align: left;
+    padding-left: 20px;
+    padding: 5px;
+    margin: 2px;
+}
+
+.yui3-dd-proxy li, #play li {
+    padding-left: 20px;
+    padding: 5px;
+    margin: 2px;
+}
+
+#play li.moving {
+    background: #F9F9FC;/*E6E9F5*/
+    border: 1px solid #D4D8EB;
+}
+
+div.mod {
+    position: relative;
+    zoom: 1;
+
+    background: #F9F9FC;/*E6E9F5*/
+    border: 1px solid #D4D8EB;
+
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    -moz-box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
+    -webkit-box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
+    font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', 'Helvetica', 'Arial', sans-serif;
+    margin: 15px 0;
+    padding-bottom: 1px;
+
+
+
+}
+div.mod div.inner {
+    overflow: hidden;
+    zoom: 1;
+}
+div.mod div.inner div.loading {
+    background-image: url(progress.gif);
+    background-repeat: no-repeat;
+    background-position: 5px 5px;
+    padding: 5px 5px 5px 25px;
+
+}
+#play div.mod div.inner ul li {
+    padding-left: 20px;
+    font-size: 80%;
+}
+div.mod div.inner ul li a {
+    color: #000;
+}
+div.mod h2 {
+    position: relative;
+    zoom: 1;
+    cursor: move;
+    zoom: 1;
+
+    background: #E5E6F1;
+    -moz-border-radius: 4px 4px 0 0;
+    -webkit-border-radius: 4px 4px 0 0;
+    border-radius: 4px 4px 0 0;
+    color: #5E6BA4;
+    font-weight: bold;
+    font-size: 107.692%;
+    margin: 0;
+    padding: 4px 7px 5px;
+
+
+}
+
+div.mod h2 strong {
+    font-weight: bold;
+    background-image: url(http://l.yimg.com/a/i/tb/iconsgif/rss_1.gif);
+    background-repeat: no-repeat;
+    padding-left: 25px;
+}
+
+div.minned h2 {
+    border-bottom: 1px solid #ccc;
+}
+
+div.mod h2 a.close, div.mod h2 a.min {
+    background-color: #F9F9FC;
+    border:1px solid #E5E6F1;
+    color: #5E6BA4;
+    text-align: center;
+    display: block;
+    height: 13px;
+    width: 17px;
+    text-decoration: none;
+    font-weight: bold;
+    right: 4px;
+    top: 1px;
+    position: absolute;
+    font-size: 80%;
+    margin: 2px;
+    padding: 0;
+}
+div.mod h2 a.min {
+    right: 25px;
+}
+div.minned h2 a.min {
+    right: 25px;
+}
+div.mod h2 a:hover.close, div.mod h2 a:hover.min {
+    border-color: #D4D8EB;
+}
+

@@ -224,8 +224,8 @@ AutoComplete will also add markup for the list widget. By default, the list mark
 ```
 <!-- AutoCompleteList widget markup with sample results -->
 <div id="yui_3_3_0_1_129140941365147"
-    class="yui3-widget yui3-aclist yui3-widget-positioned yui3-widget-stacked yui3-aclist-hidden"
-    style="z-index: 0; width: 254px; left: 13px; top: 32px; "
+    class="yui3-widget yui3-aclist yui3-widget-positioned yui3-aclist-hidden"
+    style="position: absolute; width: 254px; left: 13px; top: 32px;"
     aria-hidden="true">
 
   <div id="yui_3_3_0_1_129140941365150" class="yui3-aclist-content">
@@ -1092,6 +1092,13 @@ The following filters are available in the `autocomplete-filters` module:
     </tr>
 
     <tr>
+      <td>`subWordMatch`</td>
+      <td>
+        Returns results in which all the words of the query match either whole words or parts of words in the result. Non-word characters like whitespace and certain punctuation are ignored.
+      </td>
+    </tr>
+
+    <tr>
       <td>`wordMatch`</td>
       <td>
         Returns results that contain all the individual words in the query, in any order (not necessarily consecutive).
@@ -1175,6 +1182,13 @@ The following highlighters are available in the `autocomplete-highlighters` modu
       <td>`startsWith`</td>
       <td>
         Highlights the complete query as a phrase at the start of the result.
+      </td>
+    </tr>
+
+    <tr>
+      <td>`subWordMatch`</td>
+      <td>
+        Highlights results in which all the words of the query match either whole words or parts of words in the result. Non-word characters like whitespace and certain punctuation are ignored.
       </td>
     </tr>
 

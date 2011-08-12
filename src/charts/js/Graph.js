@@ -2,6 +2,7 @@
  * Graph manages and contains series instances for a `CartesianChart`
  * instance.
  *
+ * @module charts
  * @class Graph
  * @constructor
  * @extends Widget

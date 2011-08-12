@@ -764,6 +764,9 @@ modelSuite.add(new Y.Test.Case({
 
         model = new this.TestModel({id: 'foo'});
         Assert.isFalse(model.isNew());
+
+        model = new this.TestModel({id: 0});
+        Assert.isFalse(model.isNew());
     },
 
     'load() should delegate to sync()': function () {
@@ -1334,11 +1337,17 @@ modelListSuite.add(new Y.Test.Case({
 
     'getById() should look up a model by its id': function () {
         var list  = this.createList(),
-            model = list.add({id: 'foo'}),
-            CustomModel;
+            model = list.add({id: 'foo'});
 
         Assert.areSame(model, list.getById(model.get('id')));
         Assert.isNull(list.getById('bogus'));
+    },
+
+    'getById() should work with numeric ids': function () {
+        var list  = this.createList(),
+            model = list.add({id: 0});
+
+        Assert.areSame(model, list.getById(0));
     },
 
     'getById() should work with custom ids': function () {

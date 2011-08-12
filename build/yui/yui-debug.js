@@ -11,30 +11,30 @@ if (typeof YUI != 'undefined') {
 }
 
 /**
- * The YUI global namespace object.  If YUI is already defined, the
- * existing YUI object will not be overwritten so that defined
- * namespaces are preserved.  It is the constructor for the object
- * the end user interacts with.  As indicated below, each instance
- * has full custom event support, but only if the event system
- * is available.  This is a self-instantiable factory function.  You
- * can invoke it directly like this:
- *
- *      YUI().use('*', function(Y) {
- *          // ready
- *      });
- *
- * But it also works like this:
- *
- *      var Y = YUI();
- *
- * @class YUI
- * @constructor
- * @global
- * @uses EventTarget
- * @param o* {object} 0..n optional configuration objects.  these values
- * are store in Y.config.  See <a href="config.html">Config</a> for the list of supported
- * properties.
- */
+The YUI global namespace object.  If YUI is already defined, the
+existing YUI object will not be overwritten so that defined
+namespaces are preserved.  It is the constructor for the object
+the end user interacts with.  As indicated below, each instance
+has full custom event support, but only if the event system
+is available.  This is a self-instantiable factory function.  You
+can invoke it directly like this:
+
+     YUI().use('*', function(Y) {
+         // ready
+     });
+
+But it also works like this:
+
+     var Y = YUI();
+
+@class YUI
+@constructor
+@global
+@uses EventTarget
+@param o* {Object} 0..n optional configuration objects.  these values
+are store in Y.config.  See <a href="config.html">Config</a> for the list of supported
+properties.
+*/
     /*global YUI*/
     /*global YUI_config*/
     var YUI = function() {
@@ -53,17 +53,61 @@ if (typeof YUI != 'undefined') {
             // set up the core environment
             Y._init();
 
-            // YUI.GlobalConfig is a master configuration that might span
-            // multiple contexts in a non-browser environment.  It is applied
-            // first to all instances in all contexts.
+            /**
+                YUI.GlobalConfig is a master configuration that might span
+                multiple contexts in a non-browser environment.  It is applied
+                first to all instances in all contexts.
+                @property YUI.GlobalConfig
+                @type {Object}
+                @global
+                @example
+
+                    
+                    YUI.GlobalConfig = {
+                        filter: 'debug'
+                    };
+
+                    YUI().use('node', function(Y) {
+                        //debug files used here
+                    });
+
+                    YUI({
+                        filter: 'min'
+                    }).use('node', function(Y) {
+                        //min files used here
+                    });
+
+            */
             if (YUI.GlobalConfig) {
                 Y.applyConfig(YUI.GlobalConfig);
             }
+            
+            /**
+                YUI_config is a page-level config.  It is applied to all
+                instances created on the page.  This is applied after
+                YUI.GlobalConfig, and before the instance level configuration
+                objects.
+                @global
+                @property YUI_config
+                @type {Object}
+                @example
 
-            // YUI_Config is a page-level config.  It is applied to all
-            // instances created on the page.  This is applied after
-            // YUI.GlobalConfig, and before the instance level configuration
-            // objects.
+                    
+                    //Single global var to include before YUI seed file
+                    YUI_config = {
+                        filter: 'debug'
+                    };
+                    
+                    YUI().use('node', function(Y) {
+                        //debug files used here
+                    });
+
+                    YUI({
+                        filter: 'min'
+                    }).use('node', function(Y) {
+                        //min files used here
+                    });
+            */
             if (gconf) {
                 Y.applyConfig(gconf);
             }
@@ -182,7 +226,7 @@ proto = {
      * update the loader cache if necessary.  Updating Y.config directly
      * will not update the cache.
      * @method applyConfig
-     * @param {object} the configuration object.
+     * @param {Object} o the configuration object.
      * @since 3.2.0
      */
     applyConfig: function(o) {
@@ -382,8 +426,13 @@ proto = {
             bootstrap: true,
             cacheUse: true,
             fetchCSS: true,
-            use_rls: false
+            use_rls: false,
+            rls_timeout: 2000
         };
+
+        if (YUI.Env.rls_disabled) {
+            Y.config.use_rls = false;
+        }
 
         Y.config.lang = Y.config.lang || 'en-US';
 
@@ -453,33 +502,41 @@ proto = {
         return null;
     },
 
-    /**
-     * Registers a module with the YUI global.  The easiest way to create a
-     * first-class YUI module is to use the YUI component build tool.
-     *
-     * http://yuilibrary.com/projects/builder
-     *
-     * The build system will produce the `YUI.add` wrapper for you module, along
-     * with any configuration info required for the module.
-     * @method add
-     * @param name {String} module name.
-     * @param fn {Function} entry point into the module that
-     * is used to bind module to the YUI instance.
-     * @param version {String} version string.
-     * @param details {Object} optional config data:
-     * @param details.requires {Array} features that must be present before this module can be attached.
-     * @param details.optional {Array} optional features that should be present if loadOptional
-     * is defined.  Note: modules are not often loaded this way in YUI 3,
-     * but this field is still useful to inform the user that certain
-     * features in the component will require additional dependencies.
-     * @param details.use {Array} features that are included within this module which need to
-     * be attached automatically when this module is attached.  This
-     * supports the YUI 3 rollup system -- a module with submodules
-     * defined will need to have the submodules listed in the 'use'
-     * config.  The YUI component build tool does this for you.
-     * @return {YUI} the YUI instance.
-     *
-     */
+/**
+Registers a module with the YUI global.  The easiest way to create a
+first-class YUI module is to use the YUI component build tool.
+
+http://yuilibrary.com/projects/builder
+
+The build system will produce the `YUI.add` wrapper for you module, along
+with any configuration info required for the module.
+@method add
+@param name {String} module name.
+@param fn {Function} entry point into the module that is used to bind module to the YUI instance.
+@param {YUI} fn.Y The YUI instance this module is executed in.
+@param {String} fn.name The name of the module
+@param version {String} version string.
+@param details {Object} optional config data:
+@param details.requires {Array} features that must be present before this module can be attached.
+@param details.optional {Array} optional features that should be present if loadOptional
+ is defined.  Note: modules are not often loaded this way in YUI 3,
+ but this field is still useful to inform the user that certain
+ features in the component will require additional dependencies.
+@param details.use {Array} features that are included within this module which need to
+ be attached automatically when this module is attached.  This
+ supports the YUI 3 rollup system -- a module with submodules
+ defined will need to have the submodules listed in the 'use'
+ config.  The YUI component build tool does this for you.
+@return {YUI} the YUI instance.
+@example
+
+    YUI.add('davglass', function(Y, name) {
+        Y.davglass = function() {
+            alert('Dav was here!');
+        };
+    }, '3.4.0', { requires: ['yui-base', 'harley-davidson', 'mt-dew'] });
+
+*/
     add: function(name, fn, version, details) {
         details = details || {};
         var env = YUI.Env,
@@ -925,7 +982,7 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
             loader.insert(null, (fetchCSS) ? null : 'js');
             // loader.partial(missing, (fetchCSS) ? null : 'js');
 
-        } else if (len && Y.config.use_rls) {
+        } else if (len && Y.config.use_rls && !YUI.Env.rls_enabled) {
 
             G_ENV._rls_queue = G_ENV._rls_queue || new Y.Queue();
 
@@ -934,10 +991,7 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
 
                 var rls_end = function(o) {
                     handleLoader(o);
-                    G_ENV._rls_in_progress = false;
-                    if (G_ENV._rls_queue.size()) {
-                        G_ENV._rls_queue.next()();
-                    }
+                    instance.rls_advance();
                 },
                 rls_url = instance._rls(argz);
 
@@ -947,10 +1001,14 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
                         rls_end(o);
                     });
                     instance.Get.script(rls_url, {
-                        data: argz
+                        data: argz,
+                        timeout: instance.config.rls_timeout,
+                        onFailure: instance.rls_handleFailure,
+                        onTimeout: instance.rls_handleTimeout
                     });
                 } else {
                     rls_end({
+                        success: true,
                         data: argz
                     });
                 }
@@ -958,7 +1016,8 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
 
             G_ENV._rls_queue.add(function() {
                 Y.log('executing queued rls request', 'info', 'rls');
-                G_ENV._rls_in_progress = true;                
+                G_ENV._rls_in_progress = true;
+                Y.rls_callback = callback;
                 Y.rls_locals(Y, args, handleRLS);
             });
 
@@ -974,6 +1033,7 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
                 Y._loading = false;
                 queue.running = false;
                 Env.bootstrapped = true;
+                G_ENV._bootstrapping = false;
                 if (Y._attach(['loader'])) {
                     Y._use(args, callback);
                 }
@@ -1003,26 +1063,36 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
 
 
     /**
-     * Returns the namespace specified and creates it if it doesn't exist
-     * 
-     *      YUI.namespace("property.package");
-     *      YUI.namespace("YAHOO.property.package");
-     * 
-     * Either of the above would create `YUI.property`, then
-     * `YUI.property.package` (`YAHOO` is scrubbed out, this is
-     * to remain compatible with YUI2)
-     *
-     * Be careful when naming packages. Reserved words may work in some browsers
-     * and not others. For instance, the following will fail in Safari:
-     * 
-     *      YUI.namespace("really.long.nested.namespace");
-     * 
-     * This fails because "long" is a future reserved word in ECMAScript
-     *
-     * @method namespace
-     * @param  {string*} arguments 1-n namespaces to create.
-     * @return {object}  A reference to the last namespace object created.
-     */
+    Adds a namespace object onto the YUI global if called statically:
+
+        // creates YUI.your.namespace.here as nested objects
+        YUI.namespace("your.namespace.here");
+
+    If called as an instance method on the YUI instance, it creates the
+    namespace on the instance:
+
+         // creates Y.property.package
+         Y.namespace("property.package");
+    
+    Dots in the input string cause `namespace` to create nested objects for
+    each token. If any part of the requested namespace already exists, the
+    current object will be left in place.  This allows multiple calls to
+    `namespace` to preserve existing namespaced properties.
+    
+    If the first token in the namespace string is "YAHOO", the token is
+    discarded.
+
+    Be careful when naming packages. Reserved words may work in some browsers
+    and not others. For instance, the following will fail in some browsers:
+    
+         Y.namespace("really.long.nested.namespace");
+    
+    This fails because `long` is a future reserved word in ECMAScript
+    
+    @method namespace
+    @param  {String[]} namespace* 1-n namespaces to create.
+    @return {Object}  A reference to the last namespace object created.
+    **/
     namespace: function() {
         var a = arguments, o = this, i = 0, j, d, arg;
         for (; i < a.length; i++) {
@@ -1653,9 +1723,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
  */
 
 /**
- * The parameter defaults for the remote loader service.
- * Requires the rls submodule.  The properties that are
- * supported:
+ * The parameter defaults for the remote loader service. **Requires the rls seed file.** The properties that are supported:
  * 
  *  * `m`: comma separated list of module requirements.  This
  *    must be the param name even for custom implemetations.
@@ -1675,23 +1743,26 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
  *
  * @since 3.2.0
  * @property rls
+ * @type {Object}
  */
 
 /**
- * The base path to the remote loader service
+ * The base path to the remote loader service. **Requires the rls seed file.**
  *
  * @since 3.2.0
  * @property rls_base
+ * @type {String}
  */
 
 /**
  * The template to use for building the querystring portion
  * of the remote loader service url.  The default is determined
  * by the rls config -- each property that has a value will be
- * represented.
+ * represented. **Requires the rls seed file.**
  * 
  * @since 3.2.0
  * @property rls_tmpl
+ * @type {String}
  * @example
  *      m={m}&v={v}&env={env}&lang={lang}&filt={filt}&tests={tests}
  *
@@ -1699,10 +1770,11 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
 
 /**
  * Configure the instance to use a remote loader service instead of
- * the client loader.
+ * the client loader. **Requires the rls seed file.**
  *
  * @since 3.2.0
  * @property use_rls
+ * @type {Boolean}
  */
 YUI.add('yui-base', function(Y) {
 
@@ -3681,7 +3753,11 @@ var ua = Y.UA,
     _loaded = function(id, url) {
 
         var q = queues[id],
-            sync = !q.async;
+            sync = (q && !q.async);
+
+        if (!q) {
+            return;
+        }
 
         if (sync) {
             _clearTimeout(q);
@@ -4253,8 +4329,37 @@ Y.mix(Y.namespace('Features'), {
 
 /* This file is auto-generated by src/loader/scripts/meta_join.py */
 var add = Y.Features.add;
-// graphics-svg.js
+// graphics-canvas-default
 add('load', '0', {
+    "name": "graphics-canvas-default", 
+    "test": function(Y) {
+    var DOCUMENT = Y.config.doc,
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
+	return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (canvas && canvas.getContext && canvas.getContext("2d")));
+}, 
+    "trigger": "graphics"
+});
+// autocomplete-list-keys
+add('load', '1', {
+    "name": "autocomplete-list-keys", 
+    "test": function (Y) {
+    // Only add keyboard support to autocomplete-list if this doesn't appear to
+    // be an iOS or Android-based mobile device.
+    //
+    // There's currently no feasible way to actually detect whether a device has
+    // a hardware keyboard, so this sniff will have to do. It can easily be
+    // overridden by manually loading the autocomplete-list-keys module.
+    //
+    // Worth noting: even though iOS supports bluetooth keyboards, Mobile Safari
+    // doesn't fire the keyboard events used by AutoCompleteList, so there's
+    // no point loading the -keys module even when a bluetooth keyboard may be
+    // available.
+    return !(Y.UA.ios || Y.UA.android);
+}, 
+    "trigger": "autocomplete-list"
+});
+// graphics-svg
+add('load', '2', {
     "name": "graphics-svg", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc;
@@ -4262,18 +4367,20 @@ add('load', '0', {
 }, 
     "trigger": "graphics"
 });
-// ie-base-test.js
-add('load', '1', {
-    "name": "event-base-ie", 
-    "test": function(Y) {
-    var imp = Y.config.doc && Y.config.doc.implementation;
-    return (imp && (!imp.hasFeature('Events', '2.0')));
+// history-hash-ie
+add('load', '3', {
+    "name": "history-hash-ie", 
+    "test": function (Y) {
+    var docMode = Y.config.doc && Y.config.doc.documentMode;
+
+    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
+            !docMode || docMode < 8);
 }, 
-    "trigger": "node-base"
+    "trigger": "history-hash"
 });
-// graphics-vml.js
-add('load', '2', {
-    "name": "graphics-vml", 
+// graphics-vml-default
+add('load', '4', {
+    "name": "graphics-vml-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
@@ -4281,8 +4388,39 @@ add('load', '2', {
 }, 
     "trigger": "graphics"
 });
-// ie-style-test.js
-add('load', '3', {
+// graphics-svg-default
+add('load', '5', {
+    "name": "graphics-svg-default", 
+    "test": function(Y) {
+    var DOCUMENT = Y.config.doc;
+	return (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+}, 
+    "trigger": "graphics"
+});
+// widget-base-ie
+add('load', '6', {
+    "name": "widget-base-ie", 
+    "trigger": "widget-base", 
+    "ua": "ie"
+});
+// transition-timer
+add('load', '7', {
+    "name": "transition-timer", 
+    "test": function (Y) {
+    var DOCUMENT = Y.config.doc,
+        node = (DOCUMENT) ? DOCUMENT.documentElement: null,
+        ret = true;
+
+    if (node && node.style) {
+        ret = !('MozTransition' in node.style || 'WebkitTransition' in node.style);
+    } 
+
+    return ret;
+}, 
+    "trigger": "transition"
+});
+// dom-style-ie
+add('load', '8', {
     "name": "dom-style-ie", 
     "test": function (Y) {
 
@@ -4312,66 +4450,7 @@ add('load', '3', {
 }, 
     "trigger": "dom-style"
 });
-// transition-test.js
-add('load', '4', {
-    "name": "transition-timer", 
-    "test": function (Y) {
-    var DOCUMENT = Y.config.doc,
-        node = (DOCUMENT) ? DOCUMENT.documentElement: null,
-        ret = true;
-
-    if (node && node.style) {
-        ret = !('MozTransition' in node.style || 'WebkitTransition' in node.style);
-    } 
-
-    return ret;
-}, 
-    "trigger": "transition"
-});
-// 0
-add('load', '5', {
-    "name": "widget-base-ie", 
-    "trigger": "widget-base", 
-    "ua": "ie"
-});
-// autocomplete-list-keys-sniff.js
-add('load', '6', {
-    "name": "autocomplete-list-keys", 
-    "test": function (Y) {
-    // Only add keyboard support to autocomplete-list if this doesn't appear to
-    // be an iOS or Android-based mobile device.
-    //
-    // There's currently no feasible way to actually detect whether a device has
-    // a hardware keyboard, so this sniff will have to do. It can easily be
-    // overridden by manually loading the autocomplete-list-keys module.
-    //
-    // Worth noting: even though iOS supports bluetooth keyboards, Mobile Safari
-    // doesn't fire the keyboard events used by AutoCompleteList, so there's
-    // no point loading the -keys module even when a bluetooth keyboard may be
-    // available.
-    return !(Y.UA.ios || Y.UA.android);
-}, 
-    "trigger": "autocomplete-list"
-});
-// graphics-canvas.js
-add('load', '7', {
-    "name": "graphics-canvas-default", 
-    "test": function(Y) {
-    var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
-	return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (canvas && canvas.getContext && canvas.getContext("2d")));
-}, 
-    "trigger": "graphics"
-});
-// dd-gestures-test.js
-add('load', '8', {
-    "name": "dd-gestures", 
-    "test": function(Y) {
-    return (Y.config.win && ('ontouchstart' in Y.config.win && !Y.UA.chrome));
-}, 
-    "trigger": "dd-drag"
-});
-// selector-test.js
+// selector-css2
 add('load', '9', {
     "name": "selector-css2", 
     "test": function (Y) {
@@ -4382,16 +4461,48 @@ add('load', '9', {
 }, 
     "trigger": "selector"
 });
-// history-hash-ie-test.js
+// event-base-ie
 add('load', '10', {
-    "name": "history-hash-ie", 
-    "test": function (Y) {
-    var docMode = Y.config.doc && Y.config.doc.documentMode;
-
-    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
-            !docMode || docMode < 8);
+    "name": "event-base-ie", 
+    "test": function(Y) {
+    var imp = Y.config.doc && Y.config.doc.implementation;
+    return (imp && (!imp.hasFeature('Events', '2.0')));
 }, 
-    "trigger": "history-hash"
+    "trigger": "node-base"
+});
+// dd-gestures
+add('load', '11', {
+    "name": "dd-gestures", 
+    "test": function(Y) {
+    return (Y.config.win && ('ontouchstart' in Y.config.win && !Y.UA.chrome));
+}, 
+    "trigger": "dd-drag"
+});
+// scrollview-base-ie
+add('load', '12', {
+    "name": "scrollview-base-ie", 
+    "trigger": "scrollview-base", 
+    "ua": "ie"
+});
+// graphics-canvas
+add('load', '13', {
+    "name": "graphics-canvas", 
+    "test": function(Y) {
+    var DOCUMENT = Y.config.doc,
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
+	return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (canvas && canvas.getContext && canvas.getContext("2d")));
+}, 
+    "trigger": "graphics"
+});
+// graphics-vml
+add('load', '14', {
+    "name": "graphics-vml", 
+    "test": function(Y) {
+    var DOCUMENT = Y.config.doc,
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
+    return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
+}, 
+    "trigger": "graphics"
 });
 
 
@@ -4684,7 +4795,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2011.07.20-20-59',
+            GALLERY_VERSION = 'gallery-2011.08.04-15-16',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -4775,7 +4886,7 @@ if (!YUI.Env[Y.version]) {
 
 var NOT_FOUND = {},
     NO_REQUIREMENTS = [],
-    MAX_URL_LENGTH = (Y.UA.ie) ? 2048 : 8192,
+    MAX_URL_LENGTH = 2048,
     GLOBAL_ENV = YUI.Env,
     GLOBAL_LOADED = GLOBAL_ENV._loaded,
     CSS = 'css',
@@ -5051,21 +5162,12 @@ Y.Loader = function(o) {
     */
     self.comboSep = '&';
     /**
-     * Max url length for combo urls.  The default is 2048 for
-     * internet explorer, and 8192 otherwise.  This is the URL
+     * Max url length for combo urls.  The default is 2048. This is the URL
      * limit for the Yahoo! hosted combo servers.  If consuming
      * a different combo service that has a different URL limit
      * it is possible to override this default by supplying
      * the maxURLLength config option.  The config option will
      * only take effect if lower than the default.
-     *
-     * Browsers:
-     *    IE: 2048
-     *    Other A-Grade Browsers: Higher that what is typically supported
-     *    'capable' mobile browsers:
-     *
-     * Servers:
-     *    Apache: 8192
      *
      * @property maxURLLength
      * @type int
@@ -6846,8 +6948,12 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
                             frag = ((L.isValue(m.root)) ? m.root : self.root) + m.path;
 
-                            if ((url !== j) && (i < (len - 1)) &&
+                            if ((url !== j) && (i <= (len - 1)) &&
                             ((frag.length + url.length) > self.maxURLLength)) {
+                                //Hack until this is rewritten to use an array and not string concat:
+                                if (url.substr(url.length - 1, 1) === self.comboSep) {
+                                    url = url.substr(0, (url.length - 1));
+                                }
                                 urls.push(self._filter(url));
                                 url = j;
                             }
@@ -6863,6 +6969,10 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                     }
 
                     if (combining.length && (url != j)) {
+                        //Hack until this is rewritten to use an array and not string concat:
+                        if (url.substr(url.length - 1, 1) === self.comboSep) {
+                            url = url.substr(0, (url.length - 1));
+                        }
                         urls.push(self._filter(url));
                     }
                 }
@@ -7018,7 +7128,7 @@ Y.log('attempting to load ' + s[i] + ', ' + self.base, 'info', 'loader');
 
     /**
      * Apply filter defined for this instance to a url/path
-     * method _filter
+     * @method _filter
      * @param {string} u the string to filter.
      * @param {string} name the name of the module, if we are processing
      * a single module as opposed to a combined url.
@@ -7046,7 +7156,7 @@ Y.log('attempting to load ' + s[i] + ', ' + self.base, 'info', 'loader');
 
     /**
      * Generates the full url for a module
-     * method _url
+     * @method _url
      * @param {string} path the path fragment.
      * @param {String} name The name of the module
      * @pamra {String} [base=self.base] The base url to use
@@ -7097,6 +7207,44 @@ Y.log('attempting to load ' + s[i] + ', ' + self.base, 'info', 'loader');
         if (self.combine) {
             out.js = [self.comboBase + out.js.join(self.comboSep)];
             out.css = [self.comboBase + out.css.join(self.comboSep)];
+        }
+
+        return out;
+    },
+    /**
+    * Returns an Object hash of hashes built from `loader.sorted` or from an arbitrary list of sorted modules.
+    * @method hash
+    * @private
+    * @param {Boolean} [calc=false] Perform a loader.calculate() before anything else
+    * @param {Array} [s=loader.sorted] An override for the loader.sorted array
+    * @return {Object} Object hash (js and css) of two object hashes of file lists, with the module name as the key
+    * @example This method can be used as an off-line dep calculator
+    *
+    *        var Y = YUI();
+    *        var loader = new Y.Loader({
+    *            filter: 'debug',
+    *            base: '../../',
+    *            root: 'build/',
+    *            combine: true,
+    *            require: ['node', 'dd', 'console']
+    *        });
+    *        var out = loader.hash(true);
+    *
+    */
+    hash: function(calc, s) {
+        var self = this, i, m, url, out = { js: {}, css: {} };
+
+        if (calc) {
+            self.calculate();
+        }
+        s = s || self.sorted;
+
+        for (i = 0; i < s.length; i++) {
+            m = self.getModule(s[i]);
+            if (m) {
+                url = self._filter(m.fullpath, m.name, '') || self._url(m.path, m.name);
+                out[m.type][m.name] = url;
+            }
         }
 
         return out;
@@ -7541,14 +7689,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "array-invoke"
         ]
     }, 
-    "compat": {
-        "requires": [
-            "event-base", 
-            "dom", 
-            "dump", 
-            "substitute"
-        ]
-    }, 
     "console": {
         "lang": [
             "en", 
@@ -7619,24 +7759,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "cssgrids": {
         "optional": [
             "cssreset", 
-            "cssfonts"
-        ], 
-        "type": "css"
-    }, 
-    "cssgrids-context-deprecated": {
-        "optional": [
-            "cssreset-context"
-        ], 
-        "requires": [
-            "cssfonts-context"
-        ], 
-        "type": "css"
-    }, 
-    "cssgrids-deprecated": {
-        "optional": [
-            "cssreset"
-        ], 
-        "requires": [
             "cssfonts"
         ], 
         "type": "css"
@@ -8979,7 +9101,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "event-custom", 
             "node", 
-            "swfdetect"
+            "swfdetect", 
+            "escape"
         ]
     }, 
     "swfdetect": {}, 
@@ -9224,7 +9347,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '0e50bdf93eaef44f0eff78d1bf482d05';
+YUI.Env[Y.version].md5 = '516f2598fb0cef4337e32df3a89e5124';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

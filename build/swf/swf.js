@@ -11,6 +11,7 @@ YUI.add('swf', function(Y) {
         Lang = Y.Lang,
         uA = Y.UA,
         Node = Y.Node,
+        Escape = Y.Escape,
 
 		// private
 		FLASH_CID = "clsid:d27cdb6e-ae6d-11cf-96b8-444553540000",
@@ -73,7 +74,7 @@ function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Objec
 					objstring += 'classid="' + FLASH_CID + '" ';
 				}
 				else {
-					objstring += 'type="' + FLASH_TYPE + '" data="' + flashURL + '" ';
+					objstring += 'type="' + FLASH_TYPE + '" data="' + Escape.html(flashURL) + '" ';
 				}
 				
                 w = "100%";
@@ -82,19 +83,19 @@ function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Objec
 				objstring += 'width="' + w + '" height="' + h + '">';
 				
 				if (uA.ie) {
-					objstring += '<param name="movie" value="' + flashURL + '"/>';
+					objstring += '<param name="movie" value="' + Escape.html(flashURL) + '"/>';
 				}
 				
 				for (var attribute in p_oAttributes.fixedAttributes) {
 					if (possibleAttributes.hasOwnProperty(attribute)) {
-						objstring += '<param name="' + attribute + '" value="' + p_oAttributes.fixedAttributes[attribute] + '"/>';
+						objstring += '<param name="' + Escape.html(attribute) + '" value="' + Escape.html(p_oAttributes.fixedAttributes[attribute]) + '"/>';
 					}
 				}
 
 				for (var flashvar in p_oAttributes.flashVars) {
 					var fvar = p_oAttributes.flashVars[flashvar];
 					if (Lang.isString(fvar)) {
-						flashvarstring += "&" + flashvar + "=" + encodeURIComponent(fvar);
+						flashvarstring += "&" + Escape.html(flashvar) + "=" + Escape.html(encodeURIComponent(fvar));
 					}
 				}
 				
@@ -203,4 +204,4 @@ Y.augment(SWF, Y.EventTarget);
 Y.SWF = SWF;
 
 
-}, '@VERSION@' ,{requires:['event-custom','node','swfdetect']});
+}, '@VERSION@' ,{requires:['event-custom','node','swfdetect','escape']});

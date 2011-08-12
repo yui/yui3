@@ -220,67 +220,118 @@ Y.DOMEventFacade = DOMEventFacade;
     /**
      * The native event
      * @property _event
+     * @type {Native DOM Event}
+     * @private
      */
+
+    /**
+    The name of the event (e.g. "click")
+
+    @property type
+    @type {String}
+    **/
+
+    /**
+    `true` if the "alt" or "option" key is pressed.
+
+    @property altKey
+    @type {Boolean}
+    **/
+
+    /**
+    `true` if the shift key is pressed.
+
+    @property shiftKey
+    @type {Boolean}
+    **/
+
+    /**
+    `true` if the "Windows" key on a Windows keyboard, "command" key on an
+    Apple keyboard, or "meta" key on other keyboards is pressed.
+
+    @property metaKey
+    @type {Boolean}
+    **/
+
+    /**
+    `true` if the "Ctrl" or "control" key is pressed.
+
+    @property ctrlKey
+    @type {Boolean}
+    **/
 
     /**
      * The X location of the event on the page (including scroll)
      * @property pageX
-     * @type int
+     * @type {Number}
      */
 
     /**
      * The Y location of the event on the page (including scroll)
      * @property pageY
-     * @type int
+     * @type {Number}
+     */
+
+    /**
+     * The X location of the event in the viewport
+     * @property clientX
+     * @type {Number}
+     */
+
+    /**
+     * The Y location of the event in the viewport
+     * @property clientY
+     * @type {Number}
      */
 
     /**
      * The keyCode for key events.  Uses charCode if keyCode is not available
      * @property keyCode
-     * @type int
+     * @type {Number}
      */
 
     /**
      * The charCode for key events.  Same as keyCode
      * @property charCode
-     * @type int
+     * @type {Number}
      */
 
     /**
-     * The button that was pushed.
+     * The button that was pushed. 1 for left click, 2 for middle click, 3 for
+     * right click.  This is only reliably populated on `mouseup` events.
      * @property button
-     * @type int
+     * @type {Number}
      */
 
     /**
      * The button that was pushed.  Same as button.
      * @property which
-     * @type int
+     * @type {Number}
      */
 
     /**
      * Node reference for the targeted element
-     * @propery target
-     * @type Node
+     * @property target
+     * @type {Node}
      */
 
     /**
      * Node reference for the element that the listener was attached to.
-     * @propery currentTarget
-     * @type Node
+     * @property currentTarget
+     * @type {Node}
      */
 
     /**
      * Node reference to the relatedTarget
-     * @propery relatedTarget
-     * @type Node
+     * @property relatedTarget
+     * @type {Node}
      */
 
     /**
      * Number representing the direction and velocity of the movement of the mousewheel.
      * Negative is down, the higher the number, the faster.  Applies to the mousewheel event.
      * @property wheelDelta
-     * @type int
+     * @type {Number}
      */
 
     /**
@@ -1141,7 +1192,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          * @param el {HTMLElement|string} the element or element id to inspect
          * @param type {string} optional type of listener to return. If
          * left out, all listeners will be returned
-         * @return {Y.Custom.Event} the custom event wrapper for the DOM event(s)
+         * @return {CustomEvent} the custom event wrapper for the DOM event(s)
          * @static
          */
         getListeners: function(el, type) {

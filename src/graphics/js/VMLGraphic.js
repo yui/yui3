@@ -1,6 +1,10 @@
 /**
- * VMLGraphic is a simple drawing api that allows for basic drawing operations.
+ * <a href="http://www.w3.org/TR/NOTE-VML">VML</a> implementation of the <a href="Graphic.html">`Graphic`</a> class. 
+ * `VMLGraphic` is not intended to be used directly. Instead, use the <a href="Graphic.html">`Graphic`</a> class. 
+ * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> and <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> 
+ * capabilities, the <a href="Graphic.html">`Graphic`</a> class will point to the `VMLGraphic` class.
  *
+ * @module graphics
  * @class VMLGraphic
  * @constructor
  */
@@ -135,7 +139,7 @@ VMLGraphic.ATTRS = {
     },
 
     /**
-     * When overflow is set to true, by default, the contentBounds will resize to greater values but not values. (for performance)
+     * The contentBounds will resize to greater values but not values. (for performance)
      * When resizing the contentBounds down is desirable, set the resizeDown value to true.
      *
      * @config resizeDown 
@@ -227,11 +231,19 @@ VMLGraphic.ATTRS = {
 
 Y.extend(VMLGraphic, Y.BaseGraphic, {
     /**
+     * Storage for `x` attribute.
+     *
+     * @property _x
+     * @type Number
      * @private
      */
     _x: 0,
 
     /**
+     * Storage for `y` attribute.
+     *
+     * @property _y
+     * @type Number
      * @private
      */
     _y: 0,
@@ -317,7 +329,6 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
      * Generates a shape instance by type.
      *
      * @method addShape
-     * @param {String} type type of shape to generate.
      * @param {Object} cfg attributes for the shape
      * @return Shape
      */
@@ -525,6 +536,7 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
     /**
      * Returns a shape class. Used by `addShape`. 
      *
+     * @method _getShapeClass
      * @param {Shape | String} val Indicates which shape class. 
      * @return Function 
      * @private
@@ -589,7 +601,8 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
      * Adds a shape to the redraw queue and calculates the contentBounds. 
      *
      * @method addToRedrawQueue
-     * @param shape {SVGShape}
+     * @param shape {VMLShape}
+     * @protected
      */
     addToRedrawQueue: function(shape)
     {
@@ -637,7 +650,7 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
     /**
      * Recalculates and returns the `contentBounds` for the `Graphic` instance.
      *
-     * @method _getUpdateContentBounds
+     * @method _getUpdatedContentBounds
      * @return {Object} 
      * @private
      */

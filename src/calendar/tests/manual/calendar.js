@@ -1,18 +1,18 @@
 YUI({
     base: '../../../../build/',
-    lang: "en"
+    lang: "en",
+    filter: "raw"
 }).use('calendar',  function(Y) {
 
          Y.CalendarBase.CONTENT_TEMPLATE = Y.CalendarBase.TWO_PANE_TEMPLATE;
          var calendar = new Y.Calendar({
 	        contentBox: "#mycalendar",
-			width:'300px',
+			width:'600px',
 			showPrevMonth: false,
 			showNextMonth: false,
 			selectionMode: 'multiple',
 			date: new Date(2011, 6)}).render();
 
-         console.log(Y.Calendar.prototype.UI_EVENTS);
 		 var rules = {
 		 	"all": {
 		 		"all": {
@@ -26,7 +26,7 @@ YUI({
 
 		 calendar.set("customRenderer", {rules: rules, 
 			                             filterFunction: function (date, node, rules) {
-			                             	               if (rules.indexOf('all_weekends') >= 0) {
+			                             	               if (Y.Array.indexOf(rules, 'all_weekends') >= 0) {
 			                             	               	node.addClass("redtext");
 			                             	               }
 			                                             }
@@ -40,7 +40,7 @@ YUI({
 	     	    output = ydate.format(curDate, {format: "%B %Y"}) +
 	     	             " &mdash; " +
 	     	             ydate.format(ydate.addMonths(curDate, calendar._paneNumber-1), {format: "%B %Y"});
-	     	console.log("Output: " + output);
+
 	     	return output;
 	     });
  
@@ -60,10 +60,10 @@ YUI({
 		});
 
 		Y.one("#getSelectedDates").on('click', function () {
-		  console.log(calendar.get('selectedDates'));
+		  Y.log(calendar.get('selectedDates'));
 		});
 
-		calendar.on("selectionChange", function (ev) {console.log(ev);});
+		calendar.on("selectionChange", function (ev) {Y.log(ev);});
 
 });
 

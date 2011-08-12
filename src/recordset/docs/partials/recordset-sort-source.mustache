@@ -88,7 +88,7 @@ YUI().use("node", "dump", "recordset-base", "recordset-sort", function (Y) {
 	setUpButtons(recordset);
 	
 	function setUpEvents(rs) {
-		/*Edits the table based on recordset events that are fired*/
+		/*Edits the table based on Recordset events that are fired*/
 		rs.sort.after('sort', function(e) {
 			renderRows(recordset);
 		});

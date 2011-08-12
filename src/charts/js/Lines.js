@@ -1,6 +1,7 @@
 /**
  * Utility class used for drawing lines.
  *
+ * @module charts
  * @class Lines
  * @constructor
  */

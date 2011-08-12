@@ -16,7 +16,7 @@
             OFFSET_HEIGHT = "offsetHeight",
             VIEWPORT_REGION = "viewportRegion",
             REGION = "region",
-            WINDOW = 'window',
+            WINDOW = "window",
             RESIZE = 'resize',
             SCROLL = 'scroll',
             VISIBLE = "visible",
@@ -106,17 +106,18 @@
              * (1) Scrolling the window, and (2) resizing the window.
              */
             alignOn: {
-                value: [
-                    {
-                        node: Y.one(WINDOW),
-                        eventName: RESIZE
-                    },
-                    {
-                        node: Y,
-                        eventName: SCROLL
-                    }
-                ],
-
+                valueFn: function() {
+                    return [
+                        // {
+                        //     node: Y.one(WINDOW),
+                        //     eventName: RESIZE
+                        // },
+                        // {
+                        //     node: Y,
+                        //     eventName: SCROLL
+                        // }
+                    ]; 
+                },
                 validator: Y.Lang.isArray
             }
         };
@@ -254,6 +255,7 @@
                     o.node = alignOn[i].node;
                     o.ev = alignOn[i].eventName;
 
+                    //if node has not been defined, but an event has been defined, attach the event to the boundingbox
                     if (!o.node && o.ev) {
                         uiHandles.push(bb.on(o.ev, syncAlign));
                     }
@@ -459,6 +461,7 @@
              * Default function called when alignOn Attribute is changed. Remove existing listeners and create new listeners.
              *
              * @method _afterAlignOnChange
+             * @private
              */
             _afterAlignOnChange : function(e) {
                 this._detachUIHandles();

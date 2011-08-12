@@ -135,3 +135,22 @@ class="token">type</span> becomes `keydown`.</p>
 Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.arrowup = 38;
 ```
 
+<h2>Caveats</h2>
+
+<ol>
+    <li>
+        You can't yet indicate that <span class="token">modifier</span>s must
+        <em>not</em> be in effect or key combinations must <em>only</em>
+        include those <span class="token">modifier</span>s.
+    </li>
+    <li>
+        You can't yet specify <span class="token">type</span>s or <span
+        class="token">modifier</span>s on a per-<span class="token">code</span>
+        basis.
+    </li>
+    <li>
+        Though you can specify keys by their common name, the event is not yet
+        decorated in any way with that common name, so you still have to refer
+        to the `keyCode` in callback code.
+    </li>
+</ol>

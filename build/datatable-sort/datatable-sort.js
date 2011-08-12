@@ -160,7 +160,7 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
     * @method _setLastSortedBy
     * @description Normalizes lastSortedBy
     * @param val {String | Object} {key, dir} or "key"
-    * @returns {key, dir, notdir}
+    * @return {key, dir, notdir}
     * @private
     */
     _setLastSortedBy: function(val) {

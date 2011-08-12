@@ -1,5 +1,8 @@
 /**
- * Graphic is a simple drawing api that allows for basic drawing operations.
+ * <a href="http://www.w3.org/TR/SVG/">SVG</a> implementation of the <a href="Graphic.html">`Graphic`</a> class. 
+ * `SVGGraphic` is not intended to be used directly. Instead, use the <a href="Graphic.html">`Graphic`</a> class. 
+ * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Graphic.html">`Graphic`</a> 
+ * class will point to the `SVGGraphic` class.
  *
  * @module graphics
  * @class SVGGraphic
@@ -138,7 +141,7 @@ SVGGraphic.ATTRS = {
     },
 
     /**
-     * When overflow is set to true, by default, the contentBounds will resize to greater values but not to smaller values. (for performance)
+     * The contentBounds will resize to greater values but not to smaller values. (for performance)
      * When resizing the contentBounds down is desirable, set the resizeDown value to true.
      *
      * @config resizeDown 
@@ -227,12 +230,12 @@ SVGGraphic.ATTRS = {
         }
     },
 
-    /**
-     *  Indicates the pointer-events setting for the svg:svg element.
-     *
-     *  @config pointerEvents
-     *  @type String
-     */
+    //
+    //  Indicates the pointer-events setting for the svg:svg element.
+    //
+    //  @config pointerEvents
+    //  @type String
+    //
     pointerEvents: {
         value: "none"
     }
@@ -240,11 +243,19 @@ SVGGraphic.ATTRS = {
 
 Y.extend(SVGGraphic, Y.BaseGraphic, {
     /**
+     * Storage for `x` attribute.
+     *
+     * @property _x
+     * @type Number
      * @private
      */
     _x: 0,
 
     /**
+     * Storage for `y` attribute.
+     *
+     * @property _y
+     * @type Number
      * @private
      */
     _y: 0,
@@ -340,7 +351,6 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
      * Generates a shape instance by type.
      *
      * @method addShape
-     * @param {String} type type of shape to generate.
      * @param {Object} cfg attributes for the shape
      * @return Shape
      */
@@ -479,6 +489,7 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
     /**
      * Returns a shape class. Used by `addShape`. 
      *
+     * @method _getShapeClass
      * @param {Shape | String} val Indicates which shape class. 
      * @return Function 
      * @private
@@ -581,10 +592,12 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
     },
 
     /**
-     * Adds a shape to the redraw queue and calculates the contentBounds. 
+     * Adds a shape to the redraw queue and calculates the contentBounds. Used internally 
+     * by `Shape` instances.
      *
      * @method addToRedrawQueue
      * @param shape {SVGShape}
+     * @protected
      */
     addToRedrawQueue: function(shape)
     {
@@ -612,7 +625,7 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
     /**
      * Recalculates and returns the `contentBounds` for the `Graphic` instance.
      *
-     * @method _getUpdateContentBounds
+     * @method _getUpdatedContentBounds
      * @return {Object} 
      * @private
      */
@@ -691,6 +704,7 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
      * @param {String} key id that references the gradient definition
      * @param {String} type description of the gradient type
      * @return HTMLElement
+     * @protected
      */
     getGradientNode: function(key, type)
     {

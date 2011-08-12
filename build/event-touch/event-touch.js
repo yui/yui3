@@ -27,6 +27,13 @@ Y.DOMEventFacade.prototype._touch = function(e, currentTarget, wrapper) {
 
     if (e.touches) {
 
+        /**
+         * Array of individual touch events for touch points that are still in
+         * contact with the touch surface.
+         *
+         * @property touches
+         * @type {DOMEventFacade[]}
+         */
         this.touches = [];
         touchCache = {};
 
@@ -38,6 +45,14 @@ Y.DOMEventFacade.prototype._touch = function(e, currentTarget, wrapper) {
 
     if (e.targetTouches) {
 
+        /**
+         * Array of individual touch events still in contact with the touch
+         * surface and whose `touchstart` event occurred inside the same taregt
+         * element as the current target element.
+         *
+         * @property targetTouches
+         * @type {DOMEventFacade[]}
+         */
         this.targetTouches = [];
 
         for (i = 0, l = e.targetTouches.length; i < l; ++i) {
@@ -51,6 +66,21 @@ Y.DOMEventFacade.prototype._touch = function(e, currentTarget, wrapper) {
 
     if (e.changedTouches) {
 
+        /**
+        An array of event-specific touch events.
+
+        For `touchstart`, the touch points that became active with the current
+        event.
+
+        For `touchmove`, the touch points that have changed since the last
+        event.
+        
+        For `touchend`, the touch points that have been removed from the touch
+        surface.
+
+        @property changedTouches
+        @type {DOMEventFacade[]}
+        **/
         this.changedTouches = [];
 
         for (i = 0, l = e.changedTouches.length; i < l; ++i) {

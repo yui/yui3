@@ -39,9 +39,9 @@
         },
 
         {
-            "name"       : "tabview-io",
+            "name"       : "tabview-yql",
             "displayName": "Loading Tab Content",
-            "description": "This example shows how to load tab content remotely using an IO plugin.",
+            "description": "This example shows how to load tab content remotely using a YQL plugin.",
             "modules"    : ["tabview"],
             "tags"       : ["tabview"],
 

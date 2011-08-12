@@ -1,6 +1,7 @@
 /**
  * SplineSeries renders a graph with data points connected by a curve.
  *
+ * @module charts
  * @class SplineSeries
  * @constructor
  * @extends CartesianSeries

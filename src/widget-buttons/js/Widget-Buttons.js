@@ -86,7 +86,7 @@ WidgetButtons.ATTRS = {
  */
 WidgetButtons.DEFAULT_BUTTONS = {
     "close": {
-        value:'<div style="background:url(../../assets/skins/sam/sprite_icons.gif) no-repeat; width:13px; height:13px; background-position: 0 2px;"></div>',
+        value:'<div style="background:url(http://yui.yahooapis.com/3.4.0pr3/build/panel/assets/skins/sam/sprite_icons.gif) no-repeat; width:13px; height:13px; background-position: 0 2px;"></div>',
         action: function(e) {
                     e.preventDefault();
                     this.hide();

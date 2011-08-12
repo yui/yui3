@@ -14,6 +14,7 @@ var DOCUMENT = Y.config.doc,
  * The Renderer class is a base class for chart components that use the `styles`
  * attribute.
  *
+ * @module charts
  * @class Renderer
  * @constructor
  */

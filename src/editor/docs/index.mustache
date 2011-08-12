@@ -5,7 +5,7 @@
 
 {{>getting-started}}
 
-<h4 id="query">Creating an Editor</h4>
+<h2 id="query">Creating an Editor</h2>
 <p>This simple example will create an Editable area inside of another Node. It will not contain a GUI, only the iframe. You can use various Editor events to wire up your own toolbar.</p>
 
 ```
@@ -29,7 +29,7 @@ YUI().use('editor-base', function(Y) {
 });
 ```
 
-<h4 id="instance">Frame Instance</h4>
+<h2 id="instance">Frame Instance</h2>
 <p>When the Editor is created, it creates a YUI instance inside itself and attaches that instance to the editable iframe. 
 This means that you now have the full power of YUI 3 inside the Editor iframe. You can use Event, Stylesheet, Node and even DD
 inside the iframe, without having to load all the JavaScript inside the document.</p>
@@ -67,7 +67,7 @@ YUI().use('editor-base', function(Y) {
 });
 ```
 
-<h4 id="events">Events</h4>
+<h2 id="events">Events</h2>
 
 <p>By default, the frame instance under the hood of Editor attaches a listener for all known DOM events. The example
 below shows how you can listen and interact with them.</p>
@@ -107,12 +107,12 @@ YUI().use('editor-base', function(Y) {
 });
 ```
 
-<h4 id="nodechange">Node Change Event</h4>
+<h2 id="nodechange">Node Change Event</h2>
 
 <p>The `nodeChange` event is a special event that Editor emits so that you can react to certain important moments that occured.</p>
 <p>The most common use for the `nodeChange` event is to update the state of a Toolbar.</p>
 
-<h5>nodeChange event properties</h5>
+<h3>nodeChange event properties</h3>
 <p>This list contains the properties that are added to the Event object when the `nodeChange` event is fired.</p>
 <table>
     <thead>
@@ -166,7 +166,7 @@ YUI().use('editor-base', function(Y) {
 </table>
 
 
-<h4 id="modules">Module Descriptions</h4>
+<h2 id="modules">Module Descriptions</h2>
 
 <p>Using YUI 3's plugin architecture, this version of the Rich Text Editor is even more modular and extensible than the previous version.
 Almost every part of the Editor infrastructure is a plugin or extension. Below you will find the current list of plugins shipped with Editor.</p>
@@ -191,16 +191,20 @@ Almost every part of the Editor infrastructure is a plugin or extension. Below y
             <td>Plugs into frame to extend `document.execCommand` support.</td>
         </tr>
         <tr>
-            <td nowrap="nowrap">`editor-lists`</td>
-            <td>Adds support for list manipulation, including keyboard modification.</td>
-        </tr>
-        <tr>
             <td nowrap="nowrap">`editor-tab`</td>
             <td>Overrides the default tab key handler and indents/outdents the current block level element.</td>
         </tr>
         <tr>
+            <td nowrap="nowrap">`editor-para`</td>
+            <td>Paragraph support (opposite of `editor-br`)</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`editor-br`</td>
+            <td>Line break support (opposite of `editor-para`) </td>
+        </tr>
+        <tr>
             <td nowrap="nowrap">`editor-bidi`</td>
-            <td>Paragraph/Bi-Directional support (recommended to be used at all times.)</td>
+            <td>Paragraph/Bi-Directional support</td>
         </tr>
         <tr>
             <td nowrap="nowrap">`createlink-base`</td>
@@ -216,3 +220,5 @@ Almost every part of the Editor infrastructure is a plugin or extension. Below y
         </tr>
     </tbody>
 </table>
+
+<p><strong>Note:</strong> Either `editor-br` or `editor-para` should be plugged. One, but not both, is required for proper functionality.</p>
