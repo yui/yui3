@@ -1,10 +1,11 @@
 /**
  * Collection utilities beyond what is provided in the YUI core
  * @module collection
+ * @main collection
  * @submodule arraylist-add
  */
 
-/**
+/*
  * Adds methods add and remove to Y.ArrayList
  */
 Y.mix(Y.ArrayList.prototype, {

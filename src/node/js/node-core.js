@@ -1,6 +1,7 @@
 /**
  * The Node Utility provides a DOM-like interface for interacting with DOM nodes.
  * @module node
+ * @main node
  * @submodule node-core
  */
 

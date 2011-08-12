@@ -2,6 +2,7 @@
  * The Chart class is the basic application used to create a chart.
  *
  * @module charts
+ * @main charts
  * @class Chart
  * @constructor
  */

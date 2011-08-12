@@ -24,8 +24,8 @@
  *         <li><a href="../classes/Path.html">`Path`</a>
  *     </ul>
  * You can also extend the `Shape` class to create your own custom shape classes.</p>
- *
  * @module graphics
+ * @main graphics
  */
 var SETTER = "setter",
 	PluginHost = Y.Plugin.Host,

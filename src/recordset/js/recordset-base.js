@@ -2,6 +2,7 @@
 The Recordset utility provides a standard way for dealing with
 a collection of similar objects.
 @module recordset
+@main recordset
 @submodule recordset-base
 **/
 

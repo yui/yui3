@@ -4,7 +4,7 @@
  * @submodule arraylist-filter
  */
 
-/**
+/*
  * Adds filter method to ArrayList prototype
  */
 Y.mix(Y.ArrayList.prototype, {
