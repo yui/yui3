@@ -990,9 +990,15 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 		};
 	},
 
-	/**
-	 * @private
-	 */
+    /**
+     * Sets the value of an attribute.
+     *
+     * @method set
+     * @param {String|Object} name The name of the attribute. Alternatively, an object of key value pairs can 
+     * be passed in to set multiple attributes at once.
+     * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as 
+     * the name param.
+     */
 	set: function() 
 	{
 		var host = this;
