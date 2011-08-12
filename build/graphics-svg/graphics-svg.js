@@ -457,6 +457,7 @@ Y.SVGDrawing = SVGDrawing;
  * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Shape.html">`Shape`</a> 
  * class will point to the `SVGShape` class.
  *
+ * @module graphics
  * @class SVGShape
  * @constructor
  * @param {Object} cfg (optional) Attribute configs
