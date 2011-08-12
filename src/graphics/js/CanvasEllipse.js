@@ -5,6 +5,7 @@
  * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Ellipse.html">`Ellipse`</a> 
  * class will point to the `CanvasEllipse` class.
  *
+ * @module graphics
  * @class CanvasEllipse
  * @constructor
  */

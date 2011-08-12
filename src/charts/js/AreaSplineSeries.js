@@ -1,6 +1,7 @@
 /**
  * AreaSplineSeries renders an area graph with data points connected by a curve.
  *
+ * @module charts
  * @class AreaSplineSeries
  * @constructor
  * @extends CartesianSeries

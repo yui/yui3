@@ -4,6 +4,7 @@
  * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> and <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> 
  * capabilities, the <a href="Path.html">`Path`</a> class will point to the `VMLPath` class.
  *
+ * @module graphics
  * @class VMLPath
  * @extends VMLShape
  */

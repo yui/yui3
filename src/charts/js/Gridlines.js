@@ -1,6 +1,7 @@
 /**
  * Gridlines draws gridlines on a Graph.
  *
+ * @module charts
  * @class Gridlines
  * @constructor
  * @extends Base

@@ -4,6 +4,7 @@
  * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Circle.html">`Circle`</a> 
  * class will point to the `SVGCircle` class.
  *
+ * @module graphics
  * @class SVGCircle
  * @constructor
  */

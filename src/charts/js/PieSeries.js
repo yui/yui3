@@ -2,6 +2,7 @@
  * PieSeries visualizes data as a circular chart divided into wedges which represent data as a 
  * percentage of a whole.
  *
+ * @module charts
  * @class PieSeries
  * @constructor
  * @extends MarkerSeries

@@ -2,6 +2,7 @@
  * The StackedColumnSeries renders column chart in which series are stacked vertically to show
  * their contribution to the cumulative total.
  *
+ * @module charts
  * @class StackedColumnSeries
  * @extends ColumnSeries
  * @uses StackingUtil

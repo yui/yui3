@@ -23,6 +23,7 @@ var SHAPE = "canvasShape",
  * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Drawing.html">`Drawing`</a> 
  * class will point to the `CanvasDrawing` class.
  *
+ * @module graphics
  * @class CanvasDrawing
  * @constructor
  */

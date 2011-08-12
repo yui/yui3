@@ -25,6 +25,7 @@ var SHAPE = "canvasShape",
  * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Drawing.html">`Drawing`</a> 
  * class will point to the `CanvasDrawing` class.
  *
+ * @module graphics
  * @class CanvasDrawing
  * @constructor
  */
@@ -722,6 +723,7 @@ Y.CanvasDrawing = CanvasDrawing;
  * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Shape.html">`Shape`</a> 
  * class will point to the `CanvasShape` class.
  *
+ * @module graphics
  * @class CanvasShape
  * @constructor
  */
@@ -1852,22 +1854,17 @@ CanvasShape.ATTRS =  {
 		}
 	},
 	
-	/**
-	 * Indicates whether or not the instance will size itself based on its contents.
-	 *
-	 * @config autoSize 
-	 * @type Boolean
-	 */
+	//Not used. Remove in future.
 	autoSize: {
 		value: false
 	},
 
-	/**
-	 * Determines whether the instance will receive mouse events.
-	 * 
-	 * @config pointerEvents
-	 * @type string
-	 */
+	// Only implemented in SVG
+	// Determines whether the instance will receive mouse events.
+	// 
+	// @config pointerEvents
+	// @type string
+	//
 	pointerEvents: {
 		value: "visiblePainted"
 	},
@@ -1895,6 +1892,7 @@ Y.CanvasShape = CanvasShape;
  * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Path.html">`Path`</a> 
  * class will point to the `CanvasPath` class.
  *
+ * @module graphics
  * @class CanvasPath
  * @extends CanvasShape
  */
@@ -2022,6 +2020,7 @@ Y.CanvasPath = CanvasPath;
  * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Rect.html">`Rect`</a> 
  * class will point to the `CanvasRect` class.
  *
+ * @module graphics
  * @class CanvasRect
  * @constructor
  */
@@ -2064,6 +2063,7 @@ Y.CanvasRect = CanvasRect;
  * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Ellipse.html">`Ellipse`</a> 
  * class will point to the `CanvasEllipse` class.
  *
+ * @module graphics
  * @class CanvasEllipse
  * @constructor
  */
@@ -2108,6 +2108,7 @@ Y.CanvasEllipse = CanvasEllipse;
  * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Circle.html">`Circle`</a> 
  * class will point to the `CanvasCircle` class.
  *
+ * @module graphics
  * @class CanvasCircle
  * @constructor
  */
@@ -2199,6 +2200,7 @@ Y.CanvasCircle = CanvasCircle;
 /**
  * Draws pie slices
  *
+ * @module graphics
  * @class CanvasPieSlice
  * @constructor
  */
@@ -2285,6 +2287,7 @@ Y.CanvasPieSlice = CanvasPieSlice;
  * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Graphic.html">`Graphic`</a> 
  * class will point to the `CanvasGraphic` class.
  *
+ * @module graphics
  * @class CanvasGraphic
  * @constructor
  */
@@ -2634,7 +2637,6 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
      * Generates a shape instance by type.
      *
      * @method addShape
-     * @param {String} type type of shape to generate.
      * @param {Object} cfg attributes for the shape
      * @return Shape
      */

@@ -2,6 +2,7 @@
  * StackedSplineSeries creates spline graphs in which the different series are stacked along a value axis
  * to indicate their contribution to a cumulative total.
  *
+ * @module charts
  * @class StackedSplineSeries
  * @constructor
  * @extends SplineSeries
