@@ -347,8 +347,8 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 	 * Indicates the type of shape
 	 *
 	 * @property _type
-	 * @readOnly
 	 * @type String
+     * @private
 	 */
 	_type: "shape",
     
@@ -880,6 +880,7 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
      * @method _getGradientFill
      * @param {Object} fill Object containing fill properties.
      * @return Object
+     * @private
      */
 	_getGradientFill: function(fill)
 	{
@@ -1866,8 +1867,8 @@ Y.extend(VMLRect, Y.VMLShape, {
 	 * Indicates the type of shape
 	 *
 	 * @property _type
-	 * @readOnly
 	 * @type String
+     * @private
 	 */
 	_type: "rect"
 });
@@ -1895,8 +1896,8 @@ Y.extend(VMLEllipse, Y.VMLShape, {
 	 * Indicates the type of shape
 	 *
 	 * @property _type
-	 * @readOnly
 	 * @type String
+     * @private
 	 */
 	_type: "oval"
 });
@@ -1976,8 +1977,8 @@ Y.extend(VMLCircle, VMLShape, {
 	 * Indicates the type of shape
 	 *
 	 * @property _type
-	 * @readOnly
 	 * @type String
+     * @private
 	 */
 	_type: "oval"
 });
@@ -2055,8 +2056,8 @@ Y.extend(VMLPieSlice, Y.VMLShape, Y.mix({
      * Indicates the type of shape
      *
      * @property _type
-     * @readOnly
      * @type String
+     * @private
      */
     _type: "shape",
 

@@ -1682,9 +1682,9 @@ SVGPath.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
 	},
 
 	/**
-	 * Indicates the height of the shape
+	 * Indicates the width of the shape
 	 * 
-	 * @config height
+	 * @config width
 	 * @type Number
 	 */
 	width: {
@@ -1729,8 +1729,8 @@ Y.extend(SVGRect, Y.SVGShape, {
      * Indicates the type of shape
      *
      * @property _type
-     * @readOnly
      * @type String
+     * @private
      */
     _type: "rect"
  });
@@ -1758,8 +1758,8 @@ Y.extend(SVGEllipse, SVGShape, {
 	 * Indicates the type of shape
 	 *
 	 * @property _type
-	 * @readOnly
 	 * @type String
+     * @private
 	 */
 	_type: "ellipse",
 
@@ -1865,8 +1865,8 @@ Y.SVGEllipse = SVGEllipse;
      * Indicates the type of shape
      *
      * @property _type
-     * @readOnly
      * @type String
+     * @private
      */
     _type: "circle",
 
@@ -1960,8 +1960,8 @@ Y.extend(SVGPieSlice, Y.SVGShape, Y.mix({
      * Indicates the type of shape
      *
      * @property _type
-     * @readOnly
      * @type String
+     * @private
      */
     _type: "path",
 
