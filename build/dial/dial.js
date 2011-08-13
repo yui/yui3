@@ -230,7 +230,7 @@ YUI.add('dial', function(Y) {
 	/**
 	 * returns a properly formed yui class name
 	 *
-	 * @function
+	 * @method
 	 * @param {String} string to be appended at the end of class name
 	 * @return
 	 * @private
@@ -373,6 +373,8 @@ YUI.add('dial', function(Y) {
 //			this._dd1 = null; // expose a global for the dd of the handle so we can delegate to DD's natural behavior the mousedown on the ring
 			this._minValue = this.get('min'); // saves doing a .get many times, but we need to remember to update this if/when we allow changing min or max after instantiation
 			this._maxValue = this.get('max');
+            this._minTimesWrapped = (Math.floor(this._minValue / this.get('stepsPerRevolution') - 1));
+            this._maxTimesWrapped = (Math.floor(this._maxValue / this.get('stepsPerRevolution') + 1));
 
 			// variables
 			this._timesWrapped = 0;
@@ -386,7 +388,7 @@ YUI.add('dial', function(Y) {
         },
 
 		/**
-		 * Sets -webkit-border-radius to 50% of width/height of the ring, handle-user, marker-user, and center-button.
+		 * Sets -webkit-border-radius to 50% of width/height of the ring, handle, marker, and center-button.
 		 * This is needed for iOS 3.x.
 		 * The objects render square if the radius is > 50% of the width/height
 		 * @method _setBorderRadius
@@ -439,7 +441,8 @@ YUI.add('dial', function(Y) {
 			Y.on('gesturemovestart', Y.bind(this._resetDial, this), this._centerButtonNode);  //[#2530441]    
 			Y.on('gesturemoveend', Y.bind(function(){this._handleNode.focus();}, this), this._centerButtonNode); 
 			Y.on('gesturemovestart', Y.bind(function(){this._handleNode.focus();}, this), this._handleNode);
-			Y.on('gesturemovestart', Y.bind(this._handleDrag, this), this._ringNode); // [#2530206] // need to send this to the _handleDrag
+//			Y.on('gesturemovestart', Y.bind(this._handleDrag, this), this._ringNode); // [#2530206] // need to send this to the _handleDrag
+			Y.on('gesturemovestart', Y.bind(this._getNewValueFromMousedown, this), this._ringNode); // [#2530206] // need to send this to the _handleDrag
 			Y.on('gesturemoveend', Y.bind(function(){this._handleNode.focus();}, this), this._ringNode); // [#2530206] // need to re-focus on the handle so keyboard is accessible
 
 			this._dd1 = new Y.DD.Drag({ //// [#2530206] changed global this._dd1 from just var dd1 = new Y.DD.drag so 
@@ -469,7 +472,21 @@ YUI.add('dial', function(Y) {
 			}
 		},
 		
-		/**
+        /**
+		 * handles the 
+		 *
+		 * @method _getAngleFromHandleCenter
+         * @param handleCenterX {number} 
+         * @param handleCenterY {number}
+		 * @protected
+		 */
+		_getAngleFromHandleCenter : function(handleCenterX, handleCenterY){
+			var ang = Math.atan( (this._centerYOnPage - handleCenterY)  /  (this._centerXOnPage - handleCenterX)  ) * (180 / Math.PI); 
+			ang = ((this._centerXOnPage - handleCenterX) < 0) ? ang + 90 : ang + 90 + 180; // Compensate for neg angles from Math.atan
+			return ang;
+        },
+		
+        /**
 		 * handles the user dragging the handle around the Dial, calculates the angle, 
 		 * checks for wrapping around top center 
 		 *
@@ -484,30 +501,31 @@ YUI.add('dial', function(Y) {
 			newValue;
 
 			// [#2530206] The center of the handle is different relative to the XY of the mousedown event, compared to the drag:drag event. 
-			if(e.currentTarget === this._ringNode){ // the event was emitted from mousedown on ring, so center should be the XY of mousedown.
-				handleCenterX = e.pageX;
-				handleCenterY = e.pageY;
-			}else{ // the event was emitted from drag:drag of handle. The center of the handle is X + radius, Y + radius
-				handleCenterX = e.pageX + this._handleNodeRadius;
-				handleCenterY = e.pageY + this._handleNodeRadius;
-			}
-			ang = Math.atan( (this._centerYOnPage - handleCenterY)  /  (this._centerXOnPage - handleCenterX)  ) * (180 / Math.PI); 
-			// [#2530206] moved down after handleCenterX and Y are defined
-
-			ang = ((this._centerXOnPage - handleCenterX) < 0) ? ang + 90 : ang + 90 + 180; // Compensate for neg angles from Math.atan
+            // the event was emitted from drag:drag of handle. The center of the handle is X + radius, Y + radius
+			handleCenterX = e.pageX + this._handleNodeRadius;
+			handleCenterY = e.pageY + this._handleNodeRadius;
+            ang = this._getAngleFromHandleCenter(handleCenterX, handleCenterY);
 
 			if(e.type === 'drag:drag'){	// [#2530206] Make conditional. only check/change timesWrapped if dragging, NOT on mousedown.
 				// check for need to set timesWrapped
+				
+//				var fooMaxWrap =  (this._setTimesWrappedFromValue(this._maxValue) + 1);
+//				var fooMinWrap =  (this._setTimesWrappedFromValue(this._minValue) - 1);
 				if((this._prevAng > 270) && (ang < 90)){ // If wrapping, clockwise
-					this._timesWrapped = (this._timesWrapped + 1);
+				    if(this._timesWrapped < this._maxTimesWrapped){
+    					this._timesWrapped = (this._timesWrapped + 1);
+                    }
 				}else if((this._prevAng < 90) && (ang > 270)){ // if un-wrapping, counter-clockwise
-					this._timesWrapped = (this._timesWrapped - 1);
+				    if(this._timesWrapped > this._minTimesWrapped){
+					   this._timesWrapped = (this._timesWrapped - 1);
+					}
 				}
 				newValue = this._getValueFromAngle(ang); // This function needs the current _timesWrapped value.
-			}else{ // event was a gesturemovestart (mousedown) 
-				newValue = this._getNewValueFromMousedown(ang);// this was added for #2530306.  Handles lots of cases of min and max wrapped and not, neg and pos
 			}
-			this._prevAng = ang;
+//            else{ // event was a gesturemovestart (mousedown) 
+//				newValue = this._getNewValueFromMousedown(ang);// this was added for #2530306.  Handles lots of cases of min and max wrapped and not, neg and pos
+//			}
+			this._prevAng = ang;  
 
 			this._handleValuesBeyondMinMax(e, newValue);
 		},
@@ -520,11 +538,18 @@ YUI.add('dial', function(Y) {
 		 * @return newValue {number} the new value for the dial
 		 * @protected
 		 */
-		_getNewValueFromMousedown : function(ang){ // #2530306
+		_getNewValueFromMousedown : function(e){ // #2530306
 			var minAng = this._getAngleFromValue(this._minValue),
 			maxAng = this._getAngleFromValue(this._maxValue),
-			newValue, oppositeMidRangeAngle;
+			newValue, oppositeMidRangeAngle,
+            ang;
 			
+			// the event was emitted from mousedown on ring, so center should be the XY of mousedown.
+			handleCenterX = e.pageX;
+			handleCenterY = e.pageY;
+            ang = this._getAngleFromHandleCenter(handleCenterX, handleCenterY);
+		
+
 			
 			if(this.get('max') - this.get('min') > this.get('stepsPerRevolution')){ 
 			// range min-to-max is greater than stepsPerRevolution (one revolution)
@@ -574,11 +599,13 @@ YUI.add('dial', function(Y) {
 						newValue = ((minAng > ang) && (ang > oppositeMidRangeAngle)) ? this.get('min') : this.get('max');
 					}
 					this._prevAng = this._getAngleFromValue(newValue);
-					return newValue;
+//					return newValue;
 				}
 			}
 			newValue = this._getValueFromAngle(ang); // This function needs the correct, current _timesWrapped value.
-			return newValue;
+			this._prevAng = ang;  
+
+			this._handleValuesBeyondMinMax(e, newValue);
 		},
 
 		/**
@@ -590,24 +617,28 @@ YUI.add('dial', function(Y) {
 		 * @protected
 		 */
 		_handleValuesBeyondMinMax : function(e, newValue){ // #2530306
-				// If _getValueFromAngle() is passed 0, it increments the _timesWrapped value.
-				// handle hitting max and min and going beyond, stops at max or min 
-				if((newValue >= this._minValue) && (newValue <= this._maxValue)) {
-					this.set('value', newValue);
-					// [#2530206] transfer the mousedown event from the _ringNode to the _handleNode drag, so we can mousedown, then continue dragging
-					if(e.currentTarget === this._ringNode){
-						// Delegate to DD's natural behavior
-						this._dd1._handleMouseDownEvent(e);
-					}			
-				}else if(newValue > this._maxValue){
-					this.set('value', this._maxValue);
-					this._setTimesWrappedFromValue(this._maxValue);
-					this._prevAng = this._getAngleFromValue(this._maxValue);
-				}else if(newValue < this._minValue){
-					this.set('value', this._minValue);
-					this._setTimesWrappedFromValue(this._minValue);
-					this._prevAng = this._getAngleFromValue(this._minValue);
-				}
+            // If _getValueFromAngle() is passed 0, it increments the _timesWrapped value.
+            // handle hitting max and min and going beyond, stops at max or min 
+            if((newValue >= this._minValue) && (newValue <= this._maxValue)) {
+            	this.set('value', newValue);
+            	// [#2530206] transfer the mousedown event from the _ringNode to the _handleNode drag, so we can mousedown, then continue dragging
+            	if(e.currentTarget === this._ringNode){
+            		// Delegate to DD's natural behavior
+            		this._dd1._handleMouseDownEvent(e);
+            	}			
+            }else if(newValue > this._maxValue){
+            	this.set('value', this._maxValue);
+    //        	this._setTimesWrappedFromValue(this._maxValue);
+            	if(e.type === 'gesturemovestart'){
+                    this._prevAng = this._getAngleFromValue(this._maxValue);  // #2530766 need for mdRing; bad for drag
+                } 
+            }else if(newValue < this._minValue){
+            	this.set('value', this._minValue);
+    //        	this._setTimesWrappedFromValue(this._minValue);
+            	if(e.type === 'gesturemovestart'){
+            	   this._prevAng = this._getAngleFromValue(this._minValue);
+                }  
+            }
 		},
 
 		/**
