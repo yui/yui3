@@ -960,6 +960,86 @@ suite.add( new Y.Test.Case({
 			Y.Assert.areEqual( 80, dial.get('value'));
 
 			dial.destroy();
+		},
+
+		"test drag handle past max, around one revolution, then back to less than max": function() { //string must start with "test
+            
+			Y.one('#testbed').append('<div id="dial"></div><div id="ref"></div>');
+			var testbed = Y.one("#dial"),
+				ref     = Y.one("#ref"),
+				dial,
+                ring,
+                newValue;
+			dial = new Y.Dial({handleDistance: 1, value: 80, min: 0, max: 100 }).render( testbed );
+			ring = Y.one('.yui3-dial-ring');
+            var scrollT = Y.one('document').get('scrollTop'),
+            scrollL = Y.one('document').get('scrollLeft'),
+            mouseDownXYMarker; 
+			
+/*
+            // visual inspection of where the event *will* occur in the next line of code.
+            // When uncommented, this can help see what's going on. 
+            // Inspect at 100% with no scrolling
+            function visualInspection(x,y){
+                if(!Y.one('.mDMarker')){
+                    mouseDownXYMarker = Y.Node.create('<div class="mDMarker" style="position:absolute; width:3px; height:3px; background-color:#f00;"></div>')
+                    ring.append(mouseDownXYMarker);
+                }
+                mouseDownXYMarker.setXY([(dial._centerXOnPage + x - scrollL), (dial._centerYOnPage + y - scrollT)]);
+	        }
+*/
+            // Simulating a drag is not possible with Y.event.simulate
+            // So I have to use an event supported by simulate.
+            // One that doesn't interfere with the other events of dial as mousedown does
+            // I chose mouseover on the ring as the event
+            // and send it to the dial._handleDrag method,
+            // which is what drag is attached to in the Dial.js code.
+ 			Y.on('mouseover', Y.bind(dial._handleDrag, dial), dial._ringNode); 
+
+            eventX = -25; //Set the X for event simulation. This is offset from dial._centerXOnPage
+            eventY = -30; //Set the Y for event simulation. This is offset from dial._centerYOnPage
+//            visualInspection(eventX,eventY);
+            ring.simulate("mouseover", { clientX: (dial._centerXOnPage + eventX - scrollL), clientY: (dial._centerYOnPage + eventY - scrollT)});	
+			Y.Assert.areEqual( 90, dial.get('value'), 'Less than max at 11 oclock');
+
+            eventX =  25;
+            eventY = -30;
+//            visualInspection(eventX,eventY);
+            ring.simulate("mouseover", { clientX: (dial._centerXOnPage + eventX - scrollL), clientY: (dial._centerYOnPage + eventY - scrollT)});	
+			Y.Assert.areEqual( 100, dial.get('value'), '> max at 1 oclock');
+
+            eventX =  25; 
+            eventY = 30; 
+//            visualInspection(eventX,eventY);
+            ring.simulate("mouseover", { clientX: (dial._centerXOnPage + eventX - scrollL), clientY: (dial._centerYOnPage + eventY - scrollT)});	
+			Y.Assert.areEqual( 100, dial.get('value'), '> max at 4 oclock');
+
+            eventX =  -25; 
+            eventY = 30; 
+//            visualInspection(eventX,eventY);
+            ring.simulate("mouseover", { clientX: (dial._centerXOnPage + eventX - scrollL), clientY: (dial._centerYOnPage + eventY - scrollT)});	
+			Y.Assert.areEqual( 100, dial.get('value'), '> max at 7 oclock');
+
+            eventX =  -25; 
+            eventY = -30; 
+//            visualInspection(eventX,eventY);
+            ring.simulate("mouseover", { clientX: (dial._centerXOnPage + eventX - scrollL), clientY: (dial._centerYOnPage + eventY - scrollT)});	
+			Y.Assert.areEqual( 100, dial.get('value'), '> max at 11oclock');
+ 
+            eventX =  25; 
+            eventY = -30; 
+//            visualInspection(eventX,eventY);
+            ring.simulate("mouseover", { clientX: (dial._centerXOnPage + eventX - scrollL), clientY: (dial._centerYOnPage + eventY - scrollT)});	
+			Y.Assert.areEqual( 100, dial.get('value'), 'passed max the second time');
+
+            eventX =  -25; 
+            eventY = -30; 
+//            visualInspection(eventX,eventY);
+            ring.simulate("mouseover", { clientX: (dial._centerXOnPage + eventX - scrollL), clientY: (dial._centerYOnPage + eventY - scrollT)});	
+			Y.Assert.areEqual( 90, dial.get('value'), 'was > max, now back to < max');
+
+
+			dial.destroy();
 		} //,
 }));
 
