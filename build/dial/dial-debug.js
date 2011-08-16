@@ -373,8 +373,9 @@ YUI.add('dial', function(Y) {
 //			this._dd1 = null; // expose a global for the dd of the handle so we can delegate to DD's natural behavior the mousedown on the ring
 			this._minValue = this.get('min'); // saves doing a .get many times, but we need to remember to update this if/when we allow changing min or max after instantiation
 			this._maxValue = this.get('max');
-            this._minTimesWrapped = (Math.floor(this._minValue / this.get('stepsPerRevolution') - 1));
-            this._maxTimesWrapped = (Math.floor(this._maxValue / this.get('stepsPerRevolution') + 1));
+			this._stepsPerRevolution = this.get('stepsPerRevolution');
+            this._minTimesWrapped = (Math.floor(this._minValue / this._stepsPerRevolution - 1));
+            this._maxTimesWrapped = (Math.floor(this._maxValue / this._stepsPerRevolution + 1));
 
 			// variables
 			this._timesWrapped = 0;
@@ -441,8 +442,7 @@ YUI.add('dial', function(Y) {
 			Y.on('gesturemovestart', Y.bind(this._resetDial, this), this._centerButtonNode);  //[#2530441]    
 			Y.on('gesturemoveend', Y.bind(function(){this._handleNode.focus();}, this), this._centerButtonNode); 
 			Y.on('gesturemovestart', Y.bind(function(){this._handleNode.focus();}, this), this._handleNode);
-//			Y.on('gesturemovestart', Y.bind(this._handleDrag, this), this._ringNode); // [#2530206] // need to send this to the _handleDrag
-			Y.on('gesturemovestart', Y.bind(this._getNewValueFromMousedown, this), this._ringNode); // [#2530206] // need to send this to the _handleDrag
+			Y.on('gesturemovestart', Y.bind(this._getNewValueFromMousedown, this), this._ringNode); // [#2530766] // send this directly to mousedown method
 			Y.on('gesturemoveend', Y.bind(function(){this._handleNode.focus();}, this), this._ringNode); // [#2530206] // need to re-focus on the handle so keyboard is accessible
 
 			this._dd1 = new Y.DD.Drag({ //// [#2530206] changed global this._dd1 from just var dd1 = new Y.DD.drag so 
@@ -465,19 +465,20 @@ YUI.add('dial', function(Y) {
 		 * @private
 		 */
 		_setTimesWrappedFromValue : function(val){
-			if(val % this.get('stepsPerRevolution') === 0){
-				this._timesWrapped = (val / this.get('stepsPerRevolution'));
+			if(val % this._stepsPerRevolution === 0){
+				this._timesWrapped = (val / this._stepsPerRevolution);
 			}else{
-				this._timesWrapped = Math.floor(val / this.get('stepsPerRevolution'));
+				this._timesWrapped = Math.floor(val / this._stepsPerRevolution);
 			}
 		},
 		
         /**
-		 * handles the 
+		 * gets the angle of the line from the center of the Dial to the center of the handle 
 		 *
 		 * @method _getAngleFromHandleCenter
          * @param handleCenterX {number} 
          * @param handleCenterY {number}
+		 * @return ang {number} the angle
 		 * @protected
 		 */
 		_getAngleFromHandleCenter : function(handleCenterX, handleCenterY){
@@ -487,8 +488,9 @@ YUI.add('dial', function(Y) {
         },
 		
         /**
-		 * handles the user dragging the handle around the Dial, calculates the angle, 
-		 * checks for wrapping around top center 
+		 * handles the user dragging the handle around the Dial, gets the angle, 
+		 * checks for wrapping around top center.
+		 * Sets the new value of the Dial          
 		 *
 		 * @method _handleDrag
          * @param e {DOMEvent} the drag event object
@@ -501,31 +503,35 @@ YUI.add('dial', function(Y) {
 			newValue;
 
 			// [#2530206] The center of the handle is different relative to the XY of the mousedown event, compared to the drag:drag event. 
-            // the event was emitted from drag:drag of handle. The center of the handle is X + radius, Y + radius
+            // the event was emitted from drag:drag of handle. The center of the handle is e.pageX + radius, e.pageY + radius
 			handleCenterX = e.pageX + this._handleNodeRadius;
 			handleCenterY = e.pageY + this._handleNodeRadius;
             ang = this._getAngleFromHandleCenter(handleCenterX, handleCenterY);
 
-			if(e.type === 'drag:drag'){	// [#2530206] Make conditional. only check/change timesWrapped if dragging, NOT on mousedown.
-				// check for need to set timesWrapped
-				
-//				var fooMaxWrap =  (this._setTimesWrappedFromValue(this._maxValue) + 1);
-//				var fooMinWrap =  (this._setTimesWrappedFromValue(this._minValue) - 1);
-				if((this._prevAng > 270) && (ang < 90)){ // If wrapping, clockwise
-				    if(this._timesWrapped < this._maxTimesWrapped){
-    					this._timesWrapped = (this._timesWrapped + 1);
-                    }
-				}else if((this._prevAng < 90) && (ang > 270)){ // if un-wrapping, counter-clockwise
-				    if(this._timesWrapped > this._minTimesWrapped){
-					   this._timesWrapped = (this._timesWrapped - 1);
-					}
+			// check for need to set timesWrapped				
+			if((this._prevAng > 270) && (ang < 90)){ // If wrapping, clockwise
+			    if(this._timesWrapped < this._maxTimesWrapped){
+					this._timesWrapped = (this._timesWrapped + 1);
+                }
+			}else if((this._prevAng < 90) && (ang > 270)){ // if un-wrapping, counter-clockwise
+			    if(this._timesWrapped > this._minTimesWrapped){
+				   this._timesWrapped = (this._timesWrapped - 1);
 				}
-				newValue = this._getValueFromAngle(ang); // This function needs the current _timesWrapped value.
 			}
-//            else{ // event was a gesturemovestart (mousedown) 
-//				newValue = this._getNewValueFromMousedown(ang);// this was added for #2530306.  Handles lots of cases of min and max wrapped and not, neg and pos
-//			}
-			this._prevAng = ang;  
+			newValue = this._getValueFromAngle(ang); // This function needs the current _timesWrapped value. That's why it comes after the _timesWrapped code above
+			
+			// If you've gone past max more than one full revolution, we decrement the _timesWrapped value
+			// This gives the effect of a ratchet mechanism.
+			// It feels like you are never more than one revolution past max
+			// The effect is the same for min, only in reverse.
+			// We can't reset the _timesWrapped to the max or min here.
+			// If we did, the next (continuous) drag would reset the value incorrectly.
+			if(newValue > (this._maxValue + this._stepsPerRevolution) ){
+                this._timesWrapped --;
+            }else if(newValue < (this._minValue - this._stepsPerRevolution) ){
+                this._timesWrapped ++;
+            }
+			this._prevAng = ang; // need to keep the previous angle in order to check for wrapping on the next drag, click, or keypress 
 
 			this._handleValuesBeyondMinMax(e, newValue);
 		},
@@ -548,10 +554,8 @@ YUI.add('dial', function(Y) {
 			handleCenterX = e.pageX;
 			handleCenterY = e.pageY;
             ang = this._getAngleFromHandleCenter(handleCenterX, handleCenterY);
-		
-
 			
-			if(this.get('max') - this.get('min') > this.get('stepsPerRevolution')){ 
+			if(this.get('max') - this.get('min') > this._stepsPerRevolution){ 
 			// range min-to-max is greater than stepsPerRevolution (one revolution)
 				if(Math.abs(ang - this._prevAng) > 180){ // This crosses a wrapping boundary
 					// This makes the behavior of "the mousedown is equal to drag and release the shortest way around the dial."
@@ -599,7 +603,9 @@ YUI.add('dial', function(Y) {
 						newValue = ((minAng > ang) && (ang > oppositeMidRangeAngle)) ? this.get('min') : this.get('max');
 					}
 					this._prevAng = this._getAngleFromValue(newValue);
-//					return newValue;
+					this.set('value', newValue);
+					this._setTimesWrappedFromValue(newValue);
+					return;
 				}
 			}
 			newValue = this._getValueFromAngle(ang); // This function needs the correct, current _timesWrapped value.
@@ -628,13 +634,11 @@ YUI.add('dial', function(Y) {
             	}			
             }else if(newValue > this._maxValue){
             	this.set('value', this._maxValue);
-    //        	this._setTimesWrappedFromValue(this._maxValue);
             	if(e.type === 'gesturemovestart'){
-                    this._prevAng = this._getAngleFromValue(this._maxValue);  // #2530766 need for mdRing; bad for drag
+                    this._prevAng = this._getAngleFromValue(this._maxValue);  // #2530766 need for mousedown on the ring; causes prob for drag
                 } 
             }else if(newValue < this._minValue){
             	this.set('value', this._minValue);
-    //        	this._setTimesWrappedFromValue(this._minValue);
             	if(e.type === 'gesturemovestart'){
             	   this._prevAng = this._getAngleFromValue(this._minValue);
                 }  
@@ -676,7 +680,10 @@ YUI.add('dial', function(Y) {
 						// more persistant user visibility of when the dial is at max or min
 						if((value > this._minValue) && (value < this._maxValue)){
 							this._markerNode.addClass(Dial.CSS_CLASSES.hidden);
-						}
+						}else{
+                            this._setTimesWrappedFromValue(value);  //#2530766 secondary bug when drag past max + cross wrapping boundry
+                            this._prevAng = this._getAngleFromValue(value); //#2530766 secondary bug when drag past max + cross wrapping boundry
+                        }
 					}, this)
 				);
 		},
@@ -719,8 +726,6 @@ YUI.add('dial', function(Y) {
 			// Make the marker and the resetString display so their placement and borderRadius can be calculated, then hide them again.
 			// We would have used visibility:hidden in the css of this class, 
 			// but IE8 VML never returns to visible after applying visibility:hidden then removing it.
-//			this._markerNode.removeClass(Dial.CSS_CLASSES.hidden); // found durring [#2530206] unnecessary. see 5 lines below it is added
-//			this._resetString.removeClass(Dial.CSS_CLASSES.hidden); // found durring [#2530206] unnecessary. see 5 lines below it is added
 			this._setSizes();
 			this._setBorderRadius();
             this._uiSetValue(this.get("value"));
@@ -1049,9 +1054,9 @@ YUI.add('dial', function(Y) {
 		 * @protected
 		 */
 		_getAngleFromValue : function(newVal){
-			var nonWrappedPartOfValue = newVal % this.get('stepsPerRevolution'),
-			angleFromValue = nonWrappedPartOfValue / this.get('stepsPerRevolution') * 360;
-			return (angleFromValue < 0) ? (angleFromValue + 360) : angleFromValue; 
+			var nonWrappedPartOfValue = newVal % this._stepsPerRevolution,
+			angleFromValue = nonWrappedPartOfValue / this._stepsPerRevolution * 360;
+			return (angleFromValue < 0) ? (angleFromValue + 360) : angleFromValue;
 		},
 
 		/**
@@ -1068,8 +1073,8 @@ YUI.add('dial', function(Y) {
 			}else if(angle === 0){
 				angle = 360;
 			}
-			var value = (angle / 360) * this.get('stepsPerRevolution');
-			value = (value + (this._timesWrapped * this.get('stepsPerRevolution')));
+			var value = (angle / 360) * this._stepsPerRevolution;
+			value = (value + (this._timesWrapped * this._stepsPerRevolution));
 			//return Math.round(value * 100) / 100;
 			return value.toFixed(this.get('decimalPlaces')) - 0;
 		},
