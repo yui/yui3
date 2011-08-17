@@ -1,6 +1,7 @@
 /**
  * Draws pie slices
  *
+ * @module graphics
  * @class CanvasPieSlice
  * @constructor
  */
@@ -14,8 +15,8 @@ Y.extend(CanvasPieSlice, Y.CanvasShape, {
      * Indicates the type of shape
      *
      * @property _type
-     * @readOnly
      * @type String
+     * @private
      */
     _type: "path",
 

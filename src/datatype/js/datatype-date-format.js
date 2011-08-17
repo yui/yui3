@@ -3,6 +3,7 @@
  * convenience methods for various JavaScript object types.
  *
  * @module datatype
+ * @main datatype
  */
 
 /**

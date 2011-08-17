@@ -5,6 +5,7 @@
  * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Path.html">`Path`</a> 
  * class will point to the `CanvasPath` class.
  *
+ * @module graphics
  * @class CanvasPath
  * @extends CanvasShape
  */
@@ -18,8 +19,8 @@ Y.extend(CanvasPath, Y.CanvasShape, {
      * Indicates the type of shape
      *
      * @property _type
-     * @readOnly
      * @type String
+     * @private
      */
     _type: "path",
 

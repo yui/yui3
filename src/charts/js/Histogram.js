@@ -1,6 +1,7 @@
 /**
  * Histogram is the base class for Column and Bar series.
  *
+ * @module charts
  * @class Histogram
  * @constructor
  */

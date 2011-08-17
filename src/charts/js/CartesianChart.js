@@ -1,6 +1,7 @@
 /**
  * The CartesianChart class creates a chart with horizontal and vertical axes.
  *
+ * @module charts
  * @class CartesianChart
  * @extends ChartBase
  * @constructor
@@ -1209,19 +1210,19 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
          *      <dt>series</dt><dd>A key indexed hash containing references to the `styles` attribute for each series in the chart.
          *      Specific style attributes vary depending on the series:
          *      <ul>
-         *          <li><a href="AreaSeries.html#attrs_styles">AreaSeries</a></li>
-         *          <li><a href="BarSeries.html#attrs_styles">BarSeries</a></li>
-         *          <li><a href="ColumnSeries.html#attrs_styles">ColumnSeries</a></li>
-         *          <li><a href="ComboSeries.html#attrs_styles">ComboSeries</a></li>
-         *          <li><a href="LineSeries.html#attrs_styles">LineSeries</a></li>
-         *          <li><a href="MarkerSeries.html#attrs_styles">MarkerSeries</a></li>
-         *          <li><a href="SplineSeries.html#attrs_styles">SplineSeries</a></li>
+         *          <li><a href="AreaSeries.html#attr_styles">AreaSeries</a></li>
+         *          <li><a href="BarSeries.html#attr_styles">BarSeries</a></li>
+         *          <li><a href="ColumnSeries.html#attr_styles">ColumnSeries</a></li>
+         *          <li><a href="ComboSeries.html#attr_styles">ComboSeries</a></li>
+         *          <li><a href="LineSeries.html#attr_styles">LineSeries</a></li>
+         *          <li><a href="MarkerSeries.html#attr_styles">MarkerSeries</a></li>
+         *          <li><a href="SplineSeries.html#attr_styles">SplineSeries</a></li>
          *      </ul>
          *      </dd>
          *      <dt>axes</dt><dd>A key indexed hash containing references to the `styles` attribute for each axes in the chart. Specific
-         *      style attributes can be found in the <a href="Axis.html#attrs_styles">Axis</a> class.</dd>
+         *      style attributes can be found in the <a href="Axis.html#attr_styles">Axis</a> class.</dd>
          *      <dt>graph</dt><dd>A reference to the `styles` attribute in the chart. Specific style attributes can be found in the
-         *      <a href="Graph.html#attrs_styles">Graph</a> class.</dd>
+         *      <a href="Graph.html#attr_styles">Graph</a> class.</dd>
          *  </dl>
          *
          * @attribute styles

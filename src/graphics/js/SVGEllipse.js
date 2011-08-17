@@ -4,6 +4,7 @@
  * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Ellipse.html">`Ellipse`</a> 
  * class will point to the `SVGEllipse` class.
  *
+ * @module graphics
  * @class SVGEllipse
  * @constructor
  */
@@ -19,8 +20,8 @@ Y.extend(SVGEllipse, SVGShape, {
 	 * Indicates the type of shape
 	 *
 	 * @property _type
-	 * @readOnly
 	 * @type String
+     * @private
 	 */
 	_type: "ellipse",
 
@@ -52,13 +53,14 @@ Y.extend(SVGEllipse, SVGShape, {
 });
 
 SVGEllipse.ATTRS = Y.merge(SVGShape.ATTRS, {
-	/**
-	 * Horizontal radius for the ellipse.
-	 *
-	 * @config xRadius
-	 * @type Number
-	 * @readOnly
-	 */
+	//
+	// Horizontal radius for the ellipse. This attribute is not implemented in Canvas.
+    // Will add in 3.4.1.
+	//
+	// @config xRadius
+	// @type Number
+	// @readOnly
+	//
 	xRadius: {
 		setter: function(val)
 		{
@@ -76,13 +78,14 @@ SVGEllipse.ATTRS = Y.merge(SVGShape.ATTRS, {
 		}
 	},
 
-	/**
-	 * Vertical radius for the ellipse.
-	 *
-	 * @config yRadius
-	 * @type Number
-	 * @readOnly
-	 */
+	//
+	// Vertical radius for the ellipse. This attribute is not implemented in Canvas. 
+    // Will add in 3.4.1.
+	//
+	// @config yRadius
+	// @type Number
+	// @readOnly
+	//
 	yRadius: {
 		setter: function(val)
 		{

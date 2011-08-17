@@ -3,6 +3,7 @@
  * background rail element.
  * 
  * @module slider
+ * @main slider
  * @submodule range-slider
  */
 

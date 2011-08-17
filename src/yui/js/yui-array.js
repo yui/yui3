@@ -4,6 +4,7 @@
  * core utilities for the library.
  *
  * @module yui
+ * @main yui
  * @submodule yui-base
  */
 

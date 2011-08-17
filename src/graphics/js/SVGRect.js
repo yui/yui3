@@ -4,6 +4,7 @@
  * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Rect.html">`Rect`</a> 
  * class will point to the `SVGRect` class.
  *
+ * @module graphics
  * @class SVGRect
  * @constructor
  */
@@ -17,8 +18,8 @@ Y.extend(SVGRect, Y.SVGShape, {
      * Indicates the type of shape
      *
      * @property _type
-     * @readOnly
      * @type String
+     * @private
      */
     _type: "rect"
  });

@@ -24,8 +24,8 @@
  *         <li><a href="../classes/Path.html">`Path`</a>
  *     </ul>
  * You can also extend the `Shape` class to create your own custom shape classes.</p>
- *
  * @module graphics
+ * @main graphics
  */
 var SETTER = "setter",
 	PluginHost = Y.Plugin.Host,
@@ -672,14 +672,7 @@ Y.BaseGraphic = BaseGraphic;
      * @method clear
      */
 /**
- * Base class for creating shapes. `Shape` has the following implementations based on
- * browser capability.
- *  <ul>
- *      <li><a href="SVGShape.html">`SVGShape`</a></li>
- *      <li><a href="VMLShape.html">`VMLShape`</a></li>
- *      <li><a href="CanvasShape.html">`CanvasShape`</a></li>
- *  </ul>
- *
+ *  <p>Base class for creating shapes.</p>
  *  <p>`Shape` is an abstract class and is not meant to be used directly. The following classes extend
  *  `Shape`.
  *
@@ -690,7 +683,16 @@ Y.BaseGraphic = BaseGraphic;
  *      <li><a href="Path.html">`Path`</a></li>
  *  </ul>
  *
- *  `Shape` can also be extended to create custom shape classes.</p>
+ * `Shape` can also be extended to create custom shape classes.</p>
+ *
+ * `Shape` has the following implementations based on browser capability.
+ *  <ul>
+ *      <li><a href="SVGShape.html">`SVGShape`</a></li>
+ *      <li><a href="VMLShape.html">`VMLShape`</a></li>
+ *      <li><a href="CanvasShape.html">`CanvasShape`</a></li>
+ *  </ul>
+ *
+ * It is not necessary to interact with these classes directly. `Shape` will point to the appropriate implemention.</p>
  *
  * @class Shape
  * @constructor
@@ -970,25 +972,6 @@ Y.BaseGraphic = BaseGraphic;
 	 * @type Object
 	 */
 	/**
-	 * Indicates whether or not the instance will size itself based on its contents.
-	 *
-	 * @config autoSize 
-	 * @type Boolean
-	 */
-	/**
-	 * Determines whether the instance will receive mouse events.
-	 * 
-	 * @config pointerEvents
-	 * @type string
-	 */
-	/**
-	 * Indicates whether to automatically refresh.
-	 *  
-	 * @config autoDraw
-	 * @type Boolean
-	 * @readOnly
-	 */
-	/**
 	 * Dom node for the shape.
 	 *
 	 * @config node
@@ -1004,30 +987,62 @@ Y.BaseGraphic = BaseGraphic;
 	 */
 
 /**
- * Creates circle shape with editable attributes. `Circle` has the following implementations based on
- * browser capability.
+ * <p>Creates circle shape with editable attributes.</p> 
+ * <p>`Circle` instances can be created using the <a href="Graphic.html#method_addShape">`addShape`</a> method of the <a href="Graphic.html">`Graphic`</a> class. 
+ * The method's `cfg` argument contains a `type` attribute. Assigning "circle" or `Y.Circle` to this attribute will create a `Circle` instance. Required attributes
+ * for instantiating a `Circle` are `type` and `radius`. Optional attributes include:
+ *  <ul>
+ *      <li><a href="#attr_fill">fill</a></li>
+ *      <li><a href="#attr_id">id</a></li>
+ *      <li><a href="#attr_stroke">stroke</a></li>
+ *      <li><a href="#attr_transform">transform</a></li>
+ *      <li><a href="#attr_transformOrigin">transformOrigin</a></li>
+ *      <li><a href="#attr_visible">visible</a></li>
+ *      <li><a href="#attr_x">x</a></li>
+ *      <li><a href="#attr_y">y</a></li>
+ *  </ul>
+ * 
+ * The below code creates a circle by defining the `type` attribute as "circle":</p>
+
+        var myCircle = myGraphic.addShape({
+            type: "circle",
+            radius: 10,
+            fill: {
+                color: "#9aa"
+            },
+            stroke: {
+                weight: 1,
+                color: "#000"
+            }
+        });
+
+ * Below, this same circle is created by defining the `type` attribute with a class reference:
+ *
+        var myCircle = myGraphic.addShape({
+            type: Y.Circle,
+            radius: 10,
+            fill: {
+                color: "#9aa"
+            },
+            stroke: {
+                weight: 1,
+                color: "#000"
+            }
+        });
+ * 
+ * <p>`Circle` has the following implementations based on browser capability.
  *  <ul>
  *      <li><a href="SVGCircle.html">`SVGCircle`</a></li>
  *      <li><a href="VMLCircle.html">`VMLCircle`</a></li>
  *      <li><a href="CanvasCircle.html">`CanvasCircle`</a></li>
  *  </ul>
  *
+ * It is not necessary to interact with these classes directly. `Circle` will point to the appropriate implemention.</p>
+ *
  * @class Circle
  * @extends Shape
  * @constructor
  */
-	/**
-	 * Indicates the width of the shape
-	 *
-	 * @config width
-	 * @type Number
-	 */
-	/**
-	 * Indicates the height of the shape
-	 *
-	 * @config height
-	 * @type Number
-	 */
     /**
      * Radius of the circle
      *
@@ -1035,65 +1050,182 @@ Y.BaseGraphic = BaseGraphic;
      * @type Number
      */
 /**
- * Creates an ellipse shape with editable attributes. `Ellipse` has the following implementations based on
- * browser capability.
+ * <p>Creates an ellipse shape with editable attributes.</p>
+ * <p>`Ellipse` instances can be created using the <a href="Graphic.html#method_addShape">`addShape`</a> method of the <a href="Graphic.html">`Graphic`</a> class. 
+ * The method's `cfg` argument contains a `type` attribute. Assigning "ellipse" or `Y.Ellipse` to this attribute will create a `Ellipse` instance. Required attributes
+ * for instantiating a `Ellipse` are `type`, `width` and `height`. Optional attributes include:
+ *  <ul>
+ *      <li><a href="#attr_fill">fill</a></li>
+ *      <li><a href="#attr_id">id</a></li>
+ *      <li><a href="#attr_stroke">stroke</a></li>
+ *      <li><a href="#attr_transform">transform</a></li>
+ *      <li><a href="#attr_transformOrigin">transformOrigin</a></li>
+ *      <li><a href="#attr_visible">visible</a></li>
+ *      <li><a href="#attr_x">x</a></li>
+ *      <li><a href="#attr_y">y</a></li>
+ *  </ul>
+ * 
+ * The below code creates an ellipse by defining the `type` attribute as "ellipse":</p>
+
+        var myEllipse = myGraphic.addShape({
+            type: "ellipse",
+            width: 20,
+            height: 10,
+            fill: {
+                color: "#9aa"
+            },
+            stroke: {
+                weight: 1,
+                color: "#000"
+            }
+        });
+
+ * Below, the same ellipse is created by defining the `type` attribute with a class reference:
+ *
+        var myEllipse = myGraphic.addShape({
+            type: Y.Ellipse,
+            width: 20,
+            height: 10,
+            fill: {
+                color: "#9aa"
+            },
+            stroke: {
+                weight: 1,
+                color: "#000"
+            }
+        });
+ * 
+ * <p>`Ellipse` has the following implementations based on browser capability.
  *  <ul>
  *      <li><a href="SVGEllipse.html">`SVGEllipse`</a></li>
  *      <li><a href="VMLEllipse.html">`VMLEllipse`</a></li>
  *      <li><a href="CanvasEllipse.html">`CanvasEllipse`</a></li>
  *  </ul>
  *
+ * It is not necessary to interact with these classes directly. `Ellipse` will point to the appropriate implemention.</p>
+ *
  * @class Ellipse
  * @extends Shape
  * @constructor
  */
-	/**
-	 * Horizontal radius for the ellipse.
-	 *
-	 * @config xRadius
-	 * @type Number
-	 * @readOnly
-	 */
-	/**
-	 * Vertical radius for the ellipse.
-	 *
-	 * @config yRadius
-	 * @type Number
-	 * @readOnly
-	 */
 /**
- * Creates an rectangle shape with editable attributes. `Rect` has the following implementations based on
- * browser capability.
+ * <p>Creates an rectangle shape with editable attributes.</p>
+ * <p>`Rect` instances can be created using the <a href="Graphic.html#method_addShape">`addShape`</a> method of the <a href="Graphic.html">`Graphic`</a> 
+ * class. The method's `cfg` argument contains a `type` attribute. Assigning "rect" or `Y.Rect` to this attribute will create a `Rect` instance. 
+ * Required attributes for instantiating a `Rect` are `type`, `width` and `height`. Optional attributes include:
+ *  <ul>
+ *      <li><a href="#attr_fill">fill</a></li>
+ *      <li><a href="#attr_id">id</a></li>
+ *      <li><a href="#attr_stroke">stroke</a></li>
+ *      <li><a href="#attr_transform">transform</a></li>
+ *      <li><a href="#attr_transformOrigin">transformOrigin</a></li>
+ *      <li><a href="#attr_visible">visible</a></li>
+ *      <li><a href="#attr_x">x</a></li>
+ *      <li><a href="#attr_y">y</a></li>
+ *  </ul>
+ *
+ * The below code creates a rectangle by defining the `type` attribute as "rect":</p>
+
+        var myRect = myGraphic.addShape({
+            type: "rect",
+            width: 20,
+            height: 10,
+            fill: {
+                color: "#9aa"
+            },
+            stroke: {
+                weight: 1,
+                color: "#000"
+            }
+        });
+
+ * Below, the same rectangle is created by defining the `type` attribute with a class reference:
+ *
+        var myRect = myGraphic.addShape({
+            type: Y.Rect,
+            width: 20,
+            height: 10,
+            fill: {
+                color: "#9aa"
+            },
+            stroke: {
+                weight: 1,
+                color: "#000"
+            }
+        });
+ *
+ * <p>`Rect` has the following implementations based on browser capability.
  *  <ul>
  *      <li><a href="SVGRect.html">`SVGRect`</a></li>
  *      <li><a href="VMLRect.html">`VMLRect`</a></li>
  *      <li><a href="CanvasRect.html">`CanvasRect`</a></li>
  *  </ul>
  *
+ * It is not necessary to interact with these classes directly. `Rect` will point to the appropriate implemention.</p>
+ *
  * @class Rect
  * @extends Shape
  * @constructor
  */
 /**
- * <p>The `Path` class creates a shape through the use of drawing methods. `Path` has the following implementations based on
- * browser capability.</p>
+ * <p>The `Path` class creates a shape through the use of drawing methods. The `Path` class has the following drawing methods available:</p>
+ *  <ul>
+ *      <li><a href="#method_clear">`clear`</a></li>
+ *      <li><a href="#method_curveTo">`curveTo`</a></li>
+ *      <li><a href="#method_drawRect">`drawRect`</a></li>
+ *      <li><a href="#method_drawRoundRect">`drawRoundRect`</a></li>
+ *      <li><a href="#method_end">`end`</a></li>
+ *      <li><a href="#method_lineTo">`lineTo`</a></li>
+ *      <li><a href="#method_moveTo">`moveTo`</a></li>
+ *      <li><a href="#method_quadraticCurveTo">`quadraticCurveTo`</a></li>
+ *  </ul>
+ *
+ *  <p>Like other shapes, `Path` elements are created using the <a href="Graphic.html#method_addShape">`addShape`</a> method of the <a href="Graphic.html">`Graphic`</a> 
+ *  class. The method's `cfg` argument contains a `type` attribute. Assigning "path" or `Y.Path` to this attribute will create a `Path` instance.
+ *  After instantiation, a series of drawing operations must be performed in order to render a shape. The below code instantiates a path element by defining the `type` 
+ *  attribute as "path":</p>
+
+        var myPath = myGraphic.addShape({
+            type: "path",
+            fill: {
+                color: "#9aa"
+            },
+            stroke: {
+                weight: 1,
+                color: "#000"
+            }
+        });
+
+ * Below a `Path` element with the same properties is instantiated by defining the `type` attribute with a class reference:
+ *
+        var myPath = myGraphic.addShape({
+            type: Y.Path,
+            fill: {
+                color: "#9aa"
+            },
+            stroke: {
+                weight: 1,
+                color: "#000"
+            }
+        });
+
+ * After instantiation, a shape or segment needs to be drawn for an element to render. After all draw operations are performed, the <a href="#method_end">`end`</a>
+ * method will render the shape. The code below will draw a triangle:
+ 
+        myPath.moveTo(35, 5);
+        myPath.lineTo(65, 65);
+        myPath.lineTo(5, 65);
+        myPath.lineTo(35, 5);
+        myPath.end();
+ *
+ * <p>`Path` has the following implementations based on browser capability.
  *  <ul>
  *      <li><a href="SVGPath.html">`SVGPath`</a></li>
  *      <li><a href="VMLPath.html">`VMLPath`</a></li>
  *      <li><a href="CanvasPath.html">`CanvasPath`</a></li>
  *  </ul> 
+ * It is not necessary to interact with these classes directly. `Path` will point to the appropriate implemention.</p>
  *
- * <p>The `Path` class has the following drawing methods available:</p>
- *  <ul>
- *      <li><a href="Drawing.html#methods_lineTo">`lineTo`</a></li>
- *      <li><a href="Drawing.html#methods_moveTo">`moveTo`</a></li>
- *      <li><a href="Drawing.html#methods_curveTo">`curveTo`</a></li>
- *      <li><a href="Drawing.html#methods_quadraticCurveTo">`quadraticCurveTo`</a></li>
- *      <li><a href="Drawing.html#methods_drawRect">`drawRect`</a></li>
- *      <li><a href="Drawing.html#methods_drawRoundRect">`drawRoundRect`</a></li>
- *      <li><a href="Drawing.html#methods_end">`end`</a></li>
- *      <li><a href="Drawing.html#methods_clear">`clear`</a></li>
- *  </ul>
  * @class Path
  * @extends Shape
  * @uses Drawing
@@ -1108,12 +1240,22 @@ Y.BaseGraphic = BaseGraphic;
 	 */
 /**
  * `Graphic` acts a factory and container for shapes. You need at least one `Graphic` instance to create shapes for your application. 
+ * <p>The code block below creates a `Graphic` instance and appends it to an HTMLElement with the id 'mygraphiccontainer'.</p>
+    
+        var myGraphic = new Y.Graphic({render:"#mygraphiccontainer"});
+
+ * <p>Alternatively, you can add a `Graphic` instance to the DOM using the <a href="#method_render">`render`</a> method.</p>
+        var myGraphic = new Y.Graphic();
+        myGraphic.render("#mygraphiccontainer");
+
  * `Graphic` has the following implementations based on browser capability.
  *  <ul>
  *      <li><a href="SVGGraphic.html">`SVGGraphic`</a></li>
  *      <li><a href="VMLGraphic.html">`VMLGraphic`</a></li>
  *      <li><a href="CanvasGraphic.html">`CanvasGraphic`</a></li>
  *  </ul>
+ *
+ * It is not necessary to interact with these classes directly. `Graphic` will point to the appropriate implemention.</p>
  *
  * @class Graphic
  * @constructor
@@ -1215,7 +1357,7 @@ Y.BaseGraphic = BaseGraphic;
      * Adds the graphics node to the dom.
      * 
      * @method render
-     * @param {HTMLElement} parentNode node in which to render the graphics node into.
+     * @param {Node|String} parentNode node in which to render the graphics node into.
      */
     /**
      * Removes all nodes.
@@ -1223,11 +1365,51 @@ Y.BaseGraphic = BaseGraphic;
      * @method destroy
      */
     /**
-     * Generates a shape instance by type.
+     * <p>Generates a shape instance by type. The method accepts an object that contain's the shape's
+     * type and attributes to be customized. For example, the code below would create a rectangle:</p>
+     *
+            var myRect = myGraphic.addShape({
+                type: "rect",
+                width: 40,
+                height: 30,
+                fill: {
+                    color: "#9aa"
+                },
+                stroke: {
+                    weight: 1,
+                    color: "#000"
+                }
+            });
+     *
+     * <p>The `Graphics` module includes a few basic shapes. More information on their creation 
+     * can be found in each shape's documentation:
+     *
+     *  <ul>
+     *      <li><a href="Circle.html">`Circle`</a></li>
+     *      <li><a href="Ellipse.html">`Ellipse`</a></li>
+     *      <li><a href="Rect.html">`Rect`</a></li>
+     *      <li><a href="Path.html">`Path`</a></li>
+     *  </ul>
+     *
+     *  The `Graphics` module also allows for the creation of custom shapes. If a custom shape
+     *  has been created, it can be instantiated with the `addShape` method as well. The attributes,
+     *  required and optional, would need to be defined in the custom shape.
+     *
+            var myCustomShape = myGraphic.addShape({
+                type: Y.MyCustomShape,
+                width: 50,
+                height: 50,
+                fill: {
+                    color: "#9aa"
+                },
+                stroke: {
+                    weight: 1,
+                    color: "#000"
+                }
+            });
      *
      * @method addShape
-     * @param {String} type type of shape to generate.
-     * @param {Object} cfg attributes for the shape
+     * @param {Object} cfg Object containing the shape's type and attributes. 
      * @return Shape
      */
     /**

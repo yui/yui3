@@ -5,6 +5,7 @@
  * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Graphic.html">`Graphic`</a> 
  * class will point to the `CanvasGraphic` class.
  *
+ * @module graphics
  * @class CanvasGraphic
  * @constructor
  */
@@ -354,7 +355,6 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
      * Generates a shape instance by type.
      *
      * @method addShape
-     * @param {String} type type of shape to generate.
      * @param {Object} cfg attributes for the shape
      * @return Shape
      */

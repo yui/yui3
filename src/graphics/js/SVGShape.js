@@ -4,6 +4,7 @@
  * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Shape.html">`Shape`</a> 
  * class will point to the `SVGShape` class.
  *
+ * @module graphics
  * @class SVGShape
  * @constructor
  * @param {Object} cfg (optional) Attribute configs
@@ -1043,22 +1044,17 @@ SVGShape.ATTRS = {
 		}
 	},
 	
-	/**
-	 * Indicates whether or not the instance will size itself based on its contents.
-	 *
-	 * @config autoSize 
-	 * @type Boolean
-	 */
-	autoSize: {
+	//Not used. Remove in future.
+    autoSize: {
 		value: false
 	},
 
-	/**
-	 * Determines whether the instance will receive mouse events.
-	 * 
-	 * @config pointerEvents
-	 * @type string
-	 */
+	// Only implemented in SVG
+	// Determines whether the instance will receive mouse events.
+	// 
+	// @config pointerEvents
+	// @type string
+	//
 	pointerEvents: {
 		valueFn: function() 
 		{
@@ -1100,14 +1096,8 @@ SVGShape.ATTRS = {
 		}
 	},
 
-	/**
-	 * Indicates whether to automatically refresh.
-	 *  
-	 * @config autoDraw
-	 * @type Boolean
-	 * @readOnly
-	 */
-	autoDraw: {
+	//Not used. Remove in future.
+    autoDraw: {
 		getter: function()
 		{
 			return this._graphic.autoDraw;

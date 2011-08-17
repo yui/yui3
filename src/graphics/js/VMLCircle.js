@@ -4,6 +4,7 @@
  * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> and <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> 
  * capabilities, the <a href="Circle.html">`Circle`</a> class will point to the `VMLCircle` class.
  *
+ * @module graphics
  * @class VMLCircle
  * @constructor
  */
@@ -19,8 +20,8 @@ Y.extend(VMLCircle, VMLShape, {
 	 * Indicates the type of shape
 	 *
 	 * @property _type
-	 * @readOnly
 	 * @type String
+     * @private
 	 */
 	_type: "oval"
 });

@@ -24,6 +24,7 @@ function VMLDrawing() {}
  * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> and <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> 
  * capabilities, the <a href="Drawing.html">`Drawing`</a> class will point to the `VMLDrawing` class.
  *
+ * @module graphics
  * @class VMLDrawing
  * @constructor
  */
@@ -326,6 +327,7 @@ Y.VMLDrawing = VMLDrawing;
  * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> and <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> 
  * capabilities, the <a href="Shape.html">`Shape`</a> class will point to the `VMLShape` class.
  *
+ * @module graphics
  * @class VMLShape
  * @constructor
  * @param {Object} cfg (optional) Attribute configs
@@ -345,8 +347,8 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 	 * Indicates the type of shape
 	 *
 	 * @property _type
-	 * @readOnly
 	 * @type String
+     * @private
 	 */
 	_type: "shape",
     
@@ -878,6 +880,7 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
      * @method _getGradientFill
      * @param {Object} fill Object containing fill properties.
      * @return Object
+     * @private
      */
 	_getGradientFill: function(fill)
 	{
@@ -1267,7 +1270,6 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 	 *
 	 * @method _createGraphicNode
 	 * @param {String} type node type to create
-	 * @param {String} specified pointer-events value
 	 * @return HTMLElement
 	 * @private
 	 */
@@ -1312,9 +1314,15 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 		};
 	},
 
-	/**
-	 * @private
-	 */
+    /**
+     * Sets the value of an attribute.
+     *
+     * @method set
+     * @param {String|Object} name The name of the attribute. Alternatively, an object of key value pairs can 
+     * be passed in to set multiple attributes at once.
+     * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as 
+     * the name param.
+     */
 	set: function() 
 	{
 		var host = this;
@@ -1705,22 +1713,17 @@ VMLShape.ATTRS = {
 		}
 	},
 	
-	/**
-	 * Indicates whether or not the instance will size itself based on its contents.
-	 *
-	 * @config autoSize 
-	 * @type Boolean
-	 */
-	autoSize: {
+	//Not used. Remove in future.
+    autoSize: {
 		value: false
 	},
 
-	/**
-	 * Determines whether the instance will receive mouse events.
-	 * 
-	 * @config pointerEvents
-	 * @type string
-	 */
+	// Only implemented in SVG
+	// Determines whether the instance will receive mouse events.
+	// 
+	// @config pointerEvents
+	// @type string
+	//
 	pointerEvents: {
 		value: "visiblePainted"
 	},
@@ -1763,6 +1766,7 @@ Y.VMLShape = VMLShape;
  * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> and <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> 
  * capabilities, the <a href="Path.html">`Path`</a> class will point to the `VMLPath` class.
  *
+ * @module graphics
  * @class VMLPath
  * @extends VMLShape
  */
@@ -1849,6 +1853,7 @@ Y.VMLPath = VMLPath;
  * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> and <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> 
  * capabilities, the <a href="Rect.html">`Rect`</a> class will point to the `VMLRect` class.
  *
+ * @module graphics
  * @class VMLRect
  * @constructor
  */
@@ -1862,8 +1867,8 @@ Y.extend(VMLRect, Y.VMLShape, {
 	 * Indicates the type of shape
 	 *
 	 * @property _type
-	 * @readOnly
 	 * @type String
+     * @private
 	 */
 	_type: "rect"
 });
@@ -1875,6 +1880,7 @@ Y.VMLRect = VMLRect;
  * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> and <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> 
  * capabilities, the <a href="Ellipse.html">`Ellipse`</a> class will point to the `VMLEllipse` class.
  *
+ * @module graphics
  * @class VMLEllipse
  * @constructor
  */
@@ -1890,18 +1896,20 @@ Y.extend(VMLEllipse, Y.VMLShape, {
 	 * Indicates the type of shape
 	 *
 	 * @property _type
-	 * @readOnly
 	 * @type String
+     * @private
 	 */
 	_type: "oval"
 });
 VMLEllipse.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
-	/**
-	 * Horizontal radius for the ellipse.
-	 *
-	 * @config xRadius
-	 * @type Number
-	 */
+	//
+	// Horizontal radius for the ellipse. This attribute is not implemented in Canvas.
+    // Will add in 3.4.1.
+	//
+	// @config xRadius
+	// @type Number
+	// @readOnly
+	//
 	xRadius: {
 		lazyAdd: false,
 
@@ -1920,12 +1928,14 @@ VMLEllipse.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 		}
 	},
 
-	/**
-	 * Vertical radius for the ellipse.
-	 *
-	 * @config yRadius
-	 * @type Number
-	 */
+	//
+	// Vertical radius for the ellipse. This attribute is not implemented in Canvas. 
+    // Will add in 3.4.1.
+	//
+	// @config yRadius
+	// @type Number
+	// @readOnly
+	//
 	yRadius: {
 		lazyAdd: false,
 		
@@ -1951,6 +1961,7 @@ Y.VMLEllipse = VMLEllipse;
  * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> and <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> 
  * capabilities, the <a href="Circle.html">`Circle`</a> class will point to the `VMLCircle` class.
  *
+ * @module graphics
  * @class VMLCircle
  * @constructor
  */
@@ -1966,8 +1977,8 @@ Y.extend(VMLCircle, VMLShape, {
 	 * Indicates the type of shape
 	 *
 	 * @property _type
-	 * @readOnly
 	 * @type String
+     * @private
 	 */
 	_type: "oval"
 });
@@ -2031,6 +2042,7 @@ Y.VMLCircle = VMLCircle;
 /**
  * Draws pie slices
  *
+ * @module graphics
  * @class VMLPieSlice
  * @constructor
  */
@@ -2044,8 +2056,8 @@ Y.extend(VMLPieSlice, Y.VMLShape, Y.mix({
      * Indicates the type of shape
      *
      * @property _type
-     * @readOnly
      * @type String
+     * @private
      */
     _type: "shape",
 
@@ -2112,6 +2124,7 @@ Y.VMLPieSlice = VMLPieSlice;
  * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> and <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> 
  * capabilities, the <a href="Graphic.html">`Graphic`</a> class will point to the `VMLGraphic` class.
  *
+ * @module graphics
  * @class VMLGraphic
  * @constructor
  */
@@ -2436,7 +2449,6 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
      * Generates a shape instance by type.
      *
      * @method addShape
-     * @param {String} type type of shape to generate.
      * @param {Object} cfg attributes for the shape
      * @return Shape
      */

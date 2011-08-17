@@ -5,6 +5,7 @@
  * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Rect.html">`Rect`</a> 
  * class will point to the `CanvasRect` class.
  *
+ * @module graphics
  * @class CanvasRect
  * @constructor
  */
@@ -18,8 +19,8 @@ Y.extend(CanvasRect, Y.CanvasShape, {
 	 * Indicates the type of shape
 	 *
 	 * @property _type
-	 * @readOnly
 	 * @type String
+     * @private
 	 */
 	_type: "rect",
 

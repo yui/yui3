@@ -1,6 +1,7 @@
 /**
  * Utility class used for drawing area fills.
  *
+ * @module charts
  * @class Fills
  * @constructor
  */

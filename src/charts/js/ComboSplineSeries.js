@@ -3,6 +3,7 @@
  * series type has a corresponding boolean attribute indicating if it is rendered. By default, splines and plots 
  * are rendered and areaspline is not. 
  *
+ * @module charts
  * @class ComboSplineSeries
  * @extends ComboSeries
  * @extends CurveUtil

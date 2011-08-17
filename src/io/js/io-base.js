@@ -1,6 +1,7 @@
    /**
     * Base IO functionality. Provides basic XHR transport support.
     * @module io-base
+    * @main io-base
 	* @for IO
     */
 
