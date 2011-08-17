@@ -27,14 +27,14 @@
 <script>
     YUI({filter:'raw'}).use("dial", function(Y) {          //, filter:'raw'  this make it really hard to clear cache on iPad
         var dial = new Y.Dial({
-			min:-2,
-			max:110,
-			stepsPerRevolution:100,
-			value: 5,
+			min: -40,
+			max: 40,
+			stepsPerRevolution: 100,
+			value: 0,
 			diameter: 200,
 			decimalPlaces:0
         });
         dial.render(".dial-container");
-        Y.on('mousedown',function(e){alert('clicked ring' + e.pageX);}, dial._ringNode);
+        //Y.on('mousedown',function(e){alert('clicked ring' + e.pageX);}, dial._ringNode);
     });
 </script>
