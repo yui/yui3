@@ -555,13 +555,42 @@ YUI.add('dial', function(Y) {
 			handleCenterY = e.pageY;
             ang = this._getAngleFromHandleCenter(handleCenterX, handleCenterY);
 			
+			
+			
+			////////////////////////////////////////////// 
+            /*
+			 in the next sections of logic,
+			 set _timesWrapped in the different cases 
+			 then set value at the end of this method
+			*////////////////////////////////////////////////
+			
+			
+			
 			if(this.get('max') - this.get('min') > this._stepsPerRevolution){ 
 			// range min-to-max is greater than stepsPerRevolution (one revolution)
-				if(Math.abs(ang - this._prevAng) > 180){ // This crosses a wrapping boundary
-					// This makes the behavior of "the mousedown is equal to drag and release the shortest way around the dial."
-					this._timesWrapped = ((ang - this._prevAng) > 0) ? (this._timesWrapped - 1) : (this._timesWrapped + 1);
-				}// else it didn't cross a wrapping boundary	
 
+///				if(this._prevAng > 180){ // This crosses a wrapping boundary
+  
+                // This checks the shortest way around the dial between the prevAng and this ang.
+                if(Math.abs(this._prevAng - ang) > 180){ // this crossed a wrapping
+                
+                    // Only change the _timesWrapped if it's between minTimesWrapped and maxTimesWrapped 
+                    if((this._timesWrapped > this._minTimesWrapped) && 
+                       (this._timesWrapped < this._maxTimesWrapped)
+                    ){ 
+    					// this checks which direction, clock wise or CCW and incr or decr _timesWrapped
+    					this._timesWrapped = ((this._prevAng - ang) > 0) ? (this._timesWrapped + 1) : (this._timesWrapped - 1);
+                    }
+                // special case of getting un-stuck from a min value case 
+                // where timesWrapped is minTimesWrapped but new ang won't trigger a cross wrap boundry
+                // because prevAng is set to 0 or > 0
+				}else if(
+                        (this._timesWrapped === this._minTimesWrapped) && 
+                        (ang - this._prevAng < 180)
+                ){ 
+                    this._timesWrapped ++;
+                } //it didn't cross a wrapping boundary	
+//Y.one('.hd').setContent('w: ' + this._timesWrapped + ' this._prevAng:' + Math.round(this._prevAng) + ' ang: ' + Math.round(ang));
 
 			}else if((maxAng === 0) && (this.get('value') === this._maxValue)){
 			// this happens when max is set at (North), an increment of stepsPerRevolution
@@ -570,27 +599,60 @@ YUI.add('dial', function(Y) {
 					this._timesWrapped --;
 				}
 				
-			}else if(minAng >= maxAng){ 
+			}else if(minAng > maxAng){ 
 			// this range includes the wrap point (north)
 			// because of "else if", range is <= stepsPerRevolution
 				if( 
 				   (this._prevAng >= minAng) && // if prev angle was greater than angle of min and...
-				   (ang <= (minAng + maxAng) / 2) // the angle of this click is less than the max angle, incr timesWrapped
+				   (ang <= (minAng + maxAng) / 2) // the angle of this click is less than 
+                                                  // the angle opposite the mid-range angle, then...
 				){
-					this._timesWrapped ++;
+					this._timesWrapped ++; 
 				}else if( 
 					(this._prevAng <= maxAng) && 
 					// if prev angle is < max angle and...
 					
-					(ang > (minAng + maxAng) / 2) && 
-					// the angle of this click is > min angle, decr timesWrapped
+					(ang > (minAng + maxAng) / 2)   //!!!!!!@@@###!!!!!   &&
+					// the angle of this click is greater than,
+                    // the angle opposite the mid-range angle and...
 					
-					(this.get('value') !== 0)
+					//(this.get('value') > this._minValue) 
+					//(this._prevAng !== 0) //#2530597 fix md wrong way from 0
 					// not zero. We don't want a previously min value of zero to have its _timesWrapped decremented
 				){  
 					this._timesWrapped --;
+					var foo = 3;
 				}
-			}else{ 
+			}else if(minAng === maxAng){
+                this._timesWrapped = 0;
+                if(ang < minAng){
+                    this._timesWrapped = 1;
+                }			 
+            // This is min and max are same angle 0 or other
+			// because of "else if", the range is <= stepsPerRevolution
+//                 if(Math.abs(this._prevAng - ang) > 180){ // this crossed a wrapping
+//                 
+//                     // Only change the _timesWrapped if it's between minTimesWrapped and maxTimesWrapped 
+//                     if((this._timesWrapped > this._minTimesWrapped + 1) && 
+//                        (this._timesWrapped < this._maxTimesWrapped - 1)
+//                     ){ 
+//     					// this checks which direction, clock wise or CCW and incr or decr _timesWrapped
+//     					this._timesWrapped = ((this._prevAng - ang) > 0) ? (this._timesWrapped + 1) : (this._timesWrapped - 1);
+//                     }
+//                 // special case of getting un-stuck from a min value case 
+//                 // where timesWrapped is minTimesWrapped but new ang won't trigger a cross wrap boundry
+//                 // because prevAng is set to 0 or > 0
+// 				}
+//                 else if(
+//                         (this._timesWrapped === this._minTimesWrapped) && 
+//                         (ang - this._prevAng < 180)
+//                 ){ 
+//                     this._timesWrapped ++;
+//                 } //it didn't cross a wrapping boundary	
+//Y.one('.hd').setContent('w: ' + this._timesWrapped + ' this._prevAng: ' + Math.round(this._prevAng) + ' ang: ' + Math.round(ang));
+            
+            
+            }else{ 
 			// min - max range doesn't include the wrap point
 			// range is still <= stepsPerRevolution
 				if ((ang < minAng) || (ang > maxAng)){ // angle is out of range
