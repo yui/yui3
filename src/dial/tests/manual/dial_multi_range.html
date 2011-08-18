@@ -59,7 +59,7 @@ body{
 	margin: 1.5em;
 }
 .width-container{
-	width:1100px;
+	width:1300px;
 	/*border:solid 1px #f00;*/
 }
 .pics li{
@@ -100,6 +100,7 @@ em {font-weight:bold;}
         <span id="dial_container3"></span>
         <span id="dial_container4"></span>
         <span id="dial_container5"></span>
+        <span id="dial_container6"></span>
         <ul class="pics">
             <li><img src="assets/images/clock.png" width="200" height="200"/><div>Range is one revolution</div><div class="num">1</div></li>
             <li><img src="assets/images/wrapper.png" width="200" height="200"/><div>Range wraps around the dial one or more times</div><div class="num">2</div></li>
@@ -205,16 +206,16 @@ var dial_04 = new Y.Dial({
 	dial_04.render("#dial_container5");
 	drawMinMaxLines(dial_04);
 //////////////////////////////////////////////////////////////////
-//var dial_05 = new Y.Dial({
-//		min:-25,
-//		max:75,
-//		stepsPerRevolution:100,
-//		value: 6,
-//		diameter: 200,
-//		decimalPlaces:0
-//	});
-//	dial_05.render("#dial_container5");
-//	drawMinMaxLines(dial_05);
+var dial_05 = new Y.Dial({
+		min:40,
+		max:100,
+		stepsPerRevolution:100,
+		value: 100,
+		diameter: 200,
+		decimalPlaces:0
+	});
+	dial_05.render("#dial_container6");
+	drawMinMaxLines(dial_05);
 /*
 var dial_05 = new Y.Dial({
 		min:170,
