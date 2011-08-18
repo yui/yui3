@@ -263,133 +263,133 @@ Y.one('#root').set('role', 'menubar').all('.menu').setAttrs({ role: 'menu', 'ari
     <tr>
         <td>
             ```
-            var el = Dom.get('elementId');
+            Dom.get('elementId');
             ```
         </td>
         <td>
             ```
-            var node = Y.one('#elementId');
-            ```
-        </td>
-    </tr>
-    <tr>
-        <td>
-            ```
-            var els = Dom.getElementsBy(someFilterFunction);
-            ```
-        </td>
-        <td>
-            ```
-            var nodelist = myNode.all('selectorString');
+            Y.one('#elementId');
             ```
         </td>
     </tr>
     <tr>
         <td>
             ```
-            var els = Dom.getElementsByClassName('highlight');
+            Dom.getElementsBy(someFilterFunction);
             ```
         </td>
         <td>
             ```
-            var nodelist = myNode.all('.highlight');
-            ```
-        </td>
-    </tr>
-    <tr>
-        <td>
-            ```
-            var elementArray = Dom.getChildren(el);
-            ```
-        </td>
-        <td>
-            ```
-            var nodelist = myNode.get('children');
+            myNode.all('selectorString');
             ```
         </td>
     </tr>
     <tr>
         <td>
             ```
-            var els1 = Dom.getChildrenBy(someFilterFunction);
+            Dom.getElementsByClassName('highlight');
             ```
         </td>
         <td>
             ```
-            var nodelist = myNode.all('selectorString');
-            ```
-        </td>
-    </tr>
-    <tr>
-        <td>
-            ```
-            var el = Dom.getFirstChild(parentEl);
-            ```
-        </td>
-        <td>
-            ```
-            var node = myNode.one('*');
+            myNode.all('.highlight');
             ```
         </td>
     </tr>
     <tr>
         <td>
             ```
-            var el = Dom.getFirstChildBy(someFilterFunction);
+            Dom.getChildren(el);
             ```
         </td>
         <td>
             ```
-            var node = myNode.one('> selectorString');
+            myNode.get('children');
             ```
         </td>
     </tr>
     <tr>
         <td>
             ```
-            var el1 = Dom.getLastChild(el);
-            var el2 = Dom.getLastChildBy(someFilterFunction);
+            Dom.getChildrenBy(someFilterFunction);
             ```
         </td>
         <td>
             ```
-            var node1 = myNode.get('children').slice(-1).item(0);
+            myNode.all('selectorString');
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            Dom.getFirstChild(parentEl);
+            ```
+        </td>
+        <td>
+            ```
+            myNode.one('*');
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            Dom.getFirstChildBy(someFilterFunction);
+            ```
+        </td>
+        <td>
+            ```
+            myNode.one('> selectorString');
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            Dom.getLastChild(el);
+            Dom.getLastChildBy(someFilterFunction);
+            ```
+        </td>
+        <td>
+            ```
+            myNode.get('children').slice(-1).item(0);
             // OR target the node with a selector
-            var node2 = myNode.one('> selector:last-of-type');
+            myNode.one('> selector:last-of-type');
             ```
         </td>
     </tr>
     <tr>
         <td>
             ```
-            var el1 = Dom.getNextSibling(el);
-            var el2 = Dom.getNextSiblingBy(someFilterFunction);
-            var el3 = Dom.getPreviousSibling(el);
-            var el4 = Dom.getPreviousSiblingBy(someFilterFunction);
+            Dom.getNextSibling(el);
+            Dom.getNextSiblingBy(someFilterFunction);
+            Dom.getPreviousSibling(el);
+            Dom.getPreviousSiblingBy(someFilterFunction);
             ```
         </td>
         <td>
             ```
-            var node1 = myNode.next();
-            var node2 = myNode.next('selectorString');
-            var node3 = myNode.previous();
-            var node4 = myNode.previous('selectorString');
+            myNode.next();
+            myNode.next('selectorString');
+            myNode.previous();
+            myNode.previous('selectorString');
             ```
         </td>
     </tr>
     <tr>
         <td>
             ```
-            var el1 = Dom.getAncestorBy(someFilterFunction);
-            var el2 = Dom.getAncestorByClassName('highlight');
-            var el3 = Dom.getAncestorByTagName('pre');
+            Dom.getAncestorBy(someFilterFunction);
+            Dom.getAncestorByClassName('highlight');
+            Dom.getAncestorByTagName('pre');
             ```
         </td>
         <td>
             ```
-            var node1 = myNode.ancestor(someFilterFunction);
-            var node2 = myNode.ancestor('.highlight');
-            var node3 = myNode.ancestor('pre');
+            myNode.ancestor(someFilterFunction);
+            myNode.ancestor('.highlight');
+            myNode.ancestor('pre');
             ```
         </td>
     </tr>
@@ -446,12 +446,12 @@ Y.one('#root').set('role', 'menubar').all('.menu').setAttrs({ role: 'menu', 'ari
     <tr>
         <td>
             ```
-            Dom.replaceClass(el, 'highlight', 'selected');
+            Dom.replaceClass(el, 'high', 'low');
             ```
         </td>
         <td>
             ```
-            myNode.replaceClass('highlight', 'selected');
+            myNode.replaceClass('high', 'low');
             ```
         </td>
     </tr>
@@ -470,40 +470,40 @@ Y.one('#root').set('role', 'menubar').all('.menu').setAttrs({ role: 'menu', 'ari
     <tr>
         <td>
             ```
-            var val = Dom.getStyle(el, 'backgroundColor');
+            Dom.getStyle(el, 'backgroundColor');
             ```
         </td>
         <td>
             ```
-            var val = myNode.getStyle('backgroundColor');
-            ```
-        </td>
-    </tr>
-    <tr>
-        <td>
-            ```
-            Dom.setStyle(el, 'backgroundColor', '#C0FFEE');
-            ```
-        </td>
-        <td>
-            ```
-            myNode.setStyle('backgroundColor', '#C0FFEE');
+            myNode.getStyle('backgroundColor');
             ```
         </td>
     </tr>
     <tr>
         <td>
             ```
-            var xy = Dom.getXY(el);
-            var x  = Dom.getX(el);
-            var y  = Dom.getY(el);
+            Dom.setStyle(el, 'borderColor', '#C0FFEE');
             ```
         </td>
         <td>
             ```
-            var xy = myNode.getXY();
-            var x  = myNode.getX();
-            var y  = myNode.getY();
+            myNode.setStyle('borderColor', '#C0FFEE');
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            Dom.getXY(el);
+            Dom.getX(el);
+            Dom.getY(el);
+            ```
+        </td>
+        <td>
+            ```
+            myNode.getXY();
+            myNode.getX();
+            myNode.getY();
             ```
         </td>
     </tr>
@@ -538,7 +538,8 @@ Y.one('#root').set('role', 'menubar').all('.menu').setAttrs({ role: 'menu', 'ari
     <tr>
         <td>
             ```
-            Dom.batch(elementArray, Dom.addClass, 'highlight');
+            Dom.batch(elementArray,
+                Dom.addClass, 'highlight');
             ```
         </td>
         <td>
@@ -570,70 +571,68 @@ Y.one('#root').set('role', 'menubar').all('.menu').setAttrs({ role: 'menu', 'ari
     <tr>
         <td>
             ```
-            var height = Dom.getViewportHeight();
-            var width  = Dom.getViewportWidth();
+            Dom.getViewportHeight();
+            Dom.getViewportWidth();
             ```
         </td>
         <td>
             ```
-            var height = myNode.get('winHeight');
-            var width  = myNode.get('winWidth');
-            ```
-        </td>
-    </tr>
-    <tr>
-        <td>
-            ```
-            var height = Dom.getDocumentHeight();
-            var width  = Dom.getDocumentWidth();
-            ```
-        </td>
-        <td>
-            ```
-            var height = myNode.get('docHeight');
-            var width  = myNode.get('docWidth');
+            myNode.get('winHeight');
+            myNode.get('winWidth');
             ```
         </td>
     </tr>
     <tr>
         <td>
             ```
-            var region = Dom.getClientRegion();
+            Dom.getDocumentHeight();
+            Dom.getDocumentWidth();
             ```
         </td>
         <td>
             ```
-            var region = myNode.get('viewportRegion');
-            ```
-        </td>
-    </tr>
-    <tr>
-        <td>
-            ```
-            var region = Dom.getRegion(el);
-            ```
-        </td>
-        <td>
-            ```
-            var region = myNode.get('region');
+            myNode.get('docHeight');
+            myNode.get('docWidth');
             ```
         </td>
     </tr>
     <tr>
         <td>
             ```
-            var left = Dom.getDocumentScrollLeft(),
-                top  = Dom.getDocumentScrollTop();
+            Dom.getClientRegion();
             ```
         </td>
         <td>
             ```
-            var left = myNode.get('docScrollX'),
-                top  = myNode.get('docScrollY');
+            myNode.get('viewportRegion');
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            Dom.getRegion(el);
+            ```
+        </td>
+        <td>
+            ```
+            myNode.get('region');
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            Dom.getDocumentScrollLeft();
+            Dom.getDocumentScrollTop();
+            ```
+        </td>
+        <td>
+            ```
+            myNode.get('docScrollX');
+            myNode.get('docScrollY');
             ```
         </td>
     </tr>
 </tbody>
 </table>
-
-</div>
