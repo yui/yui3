@@ -6,6 +6,7 @@
  * application that doesn't perform full-page refreshes.
  *
  * @module history
+ * @main history
  * @since 3.2.0
  */
 

@@ -457,6 +457,7 @@ Y.SVGDrawing = SVGDrawing;
  * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Shape.html">`Shape`</a> 
  * class will point to the `SVGShape` class.
  *
+ * @module graphics
  * @class SVGShape
  * @constructor
  * @param {Object} cfg (optional) Attribute configs
@@ -1681,9 +1682,9 @@ SVGPath.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
 	},
 
 	/**
-	 * Indicates the height of the shape
+	 * Indicates the width of the shape
 	 * 
-	 * @config height
+	 * @config width
 	 * @type Number
 	 */
 	width: {
@@ -1728,8 +1729,8 @@ Y.extend(SVGRect, Y.SVGShape, {
      * Indicates the type of shape
      *
      * @property _type
-     * @readOnly
      * @type String
+     * @private
      */
     _type: "rect"
  });
@@ -1757,8 +1758,8 @@ Y.extend(SVGEllipse, SVGShape, {
 	 * Indicates the type of shape
 	 *
 	 * @property _type
-	 * @readOnly
 	 * @type String
+     * @private
 	 */
 	_type: "ellipse",
 
@@ -1864,8 +1865,8 @@ Y.SVGEllipse = SVGEllipse;
      * Indicates the type of shape
      *
      * @property _type
-     * @readOnly
      * @type String
+     * @private
      */
     _type: "circle",
 
@@ -1959,8 +1960,8 @@ Y.extend(SVGPieSlice, Y.SVGShape, Y.mix({
      * Indicates the type of shape
      *
      * @property _type
-     * @readOnly
      * @type String
+     * @private
      */
     _type: "path",
 

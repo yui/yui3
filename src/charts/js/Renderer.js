@@ -3,6 +3,7 @@
  * graphically.
  *
  * @module charts
+ * @main charts
  */
 var DOCUMENT = Y.config.doc,
     LeftAxisLayout,

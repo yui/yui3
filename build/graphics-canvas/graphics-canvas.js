@@ -1906,8 +1906,8 @@ Y.extend(CanvasPath, Y.CanvasShape, {
      * Indicates the type of shape
      *
      * @property _type
-     * @readOnly
      * @type String
+     * @private
      */
     _type: "path",
 
@@ -2034,8 +2034,8 @@ Y.extend(CanvasRect, Y.CanvasShape, {
 	 * Indicates the type of shape
 	 *
 	 * @property _type
-	 * @readOnly
 	 * @type String
+     * @private
 	 */
 	_type: "rect",
 
@@ -2079,8 +2079,8 @@ Y.extend(CanvasEllipse, CanvasShape, {
 	 * Indicates the type of shape
 	 *
 	 * @property _type
-	 * @readOnly
 	 * @type String
+     * @private
 	 */
 	_type: "ellipse",
 
@@ -2214,8 +2214,8 @@ Y.extend(CanvasPieSlice, Y.CanvasShape, {
      * Indicates the type of shape
      *
      * @property _type
-     * @readOnly
      * @type String
+     * @private
      */
     _type: "path",
 

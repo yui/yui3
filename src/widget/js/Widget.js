@@ -2,6 +2,7 @@
  * Provides the base Widget class, with HTML Parser support
  *
  * @module widget
+ * @main widget
  */
 
 /**

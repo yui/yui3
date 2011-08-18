@@ -3,6 +3,7 @@
  * access a variety of data, from JavaScript arrays to online database servers.
  *
  * @module datasource
+ * @main datasource
  */
     
 /**

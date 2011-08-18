@@ -16,6 +16,7 @@ var NODE_TYPE = 'nodeType',
  * normalizing DOM tasks, and adds extra helper functionality
  * for other common tasks. 
  * @module dom
+ * @main dom
  * @submodule dom-base
  * @for DOM
  *
