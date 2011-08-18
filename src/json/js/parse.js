@@ -19,6 +19,7 @@
  * complementary functionality, or include the rollup for both.</p>
  *
  * @module json
+ * @main json
  * @class JSON
  * @static
  */

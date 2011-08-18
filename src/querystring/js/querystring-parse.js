@@ -15,6 +15,7 @@
  * complementary functionality, or include the rollup for both.</p>
  *
  * @module querystring
+ * @main querystring
  * @class QueryString
  * @static
  */

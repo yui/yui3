@@ -24,8 +24,8 @@
  *         <li><a href="../classes/Path.html">`Path`</a>
  *     </ul>
  * You can also extend the `Shape` class to create your own custom shape classes.</p>
- *
  * @module graphics
+ * @main graphics
  */
 var SETTER = "setter",
 	PluginHost = Y.Plugin.Host,
@@ -1170,14 +1170,14 @@ Y.BaseGraphic = BaseGraphic;
 /**
  * <p>The `Path` class creates a shape through the use of drawing methods. The `Path` class has the following drawing methods available:</p>
  *  <ul>
- *      <li><a href="Drawing.html#method_clear">`clear`</a></li>
- *      <li><a href="Drawing.html#method_curveTo">`curveTo`</a></li>
- *      <li><a href="Drawing.html#method_drawRect">`drawRect`</a></li>
- *      <li><a href="Drawing.html#method_drawRoundRect">`drawRoundRect`</a></li>
- *      <li><a href="Drawing.html#method_end">`end`</a></li>
- *      <li><a href="Drawing.html#method_lineTo">`lineTo`</a></li>
- *      <li><a href="Drawing.html#method_moveTo">`moveTo`</a></li>
- *      <li><a href="Drawing.html#method_quadraticCurveTo">`quadraticCurveTo`</a></li>
+ *      <li><a href="#method_clear">`clear`</a></li>
+ *      <li><a href="#method_curveTo">`curveTo`</a></li>
+ *      <li><a href="#method_drawRect">`drawRect`</a></li>
+ *      <li><a href="#method_drawRoundRect">`drawRoundRect`</a></li>
+ *      <li><a href="#method_end">`end`</a></li>
+ *      <li><a href="#method_lineTo">`lineTo`</a></li>
+ *      <li><a href="#method_moveTo">`moveTo`</a></li>
+ *      <li><a href="#method_quadraticCurveTo">`quadraticCurveTo`</a></li>
  *  </ul>
  *
  *  <p>Like other shapes, `Path` elements are created using the <a href="Graphic.html#method_addShape">`addShape`</a> method of the <a href="Graphic.html">`Graphic`</a> 

@@ -3,6 +3,7 @@
  * textareas.
  *
  * @module autocomplete
+ * @main autocomplete
  * @since 3.3.0
  */
 

@@ -1,11 +1,7 @@
 /**
  * The Resize Utility allows you to make an HTML element resizable.
- * @main resize
- */
-
-/**
- * The Resize Utility allows you to make an HTML element resizable.
  * @module resize
+ * @main resize
  */
 
 var Lang = Y.Lang,

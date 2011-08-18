@@ -9,6 +9,7 @@
  * YUI files.
  *
  * @module loader
+ * @main loader
  * @submodule loader-base
  */
 

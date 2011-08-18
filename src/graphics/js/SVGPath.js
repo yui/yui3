@@ -89,9 +89,9 @@ SVGPath.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
 	},
 
 	/**
-	 * Indicates the height of the shape
+	 * Indicates the width of the shape
 	 * 
-	 * @config height
+	 * @config width
 	 * @type Number
 	 */
 	width: {
