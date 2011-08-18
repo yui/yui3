@@ -1,552 +1,639 @@
-      <div class="intro">
-                                  <p>The Node Utility provides an expressive way to collect, create,  and manipulate DOM nodes.  Each `Node` instance represents an underlying DOM node, and each `NodeList` represents a collection of DOM nodes. With `Node`, you can manage classNames (`myNode.addClass('foo')`) and styles (`myNode.setStyle('opacity', 0.5)`), create elements (`Y.Node.create('<div id="foo" class="foo"><p>foo</p></div>')`), and much more.</p>
-                                  <p><strong>Note: </strong><em>The method `Y.get` has been deprecated in favor of `Y.one`.  The methods `Node::query` and `Node::queryAll` have been deprecated in favor of `Node::one` and `Node::all`  To continue using the deprecated methods, you will need to `use('node-deprecated')`. </em></p>
+<div class="intro">
+    <p>
+        The Node Utility provides an expressive way to collect, create,  and
+        manipulate DOM nodes.  Each `Node` instance represents an underlying
+        DOM node, and each `NodeList` represents a collection of DOM nodes.
+        With `Node`, you can manage classNames
+    </p>
+
+    ```
+    myNode.addClass('highlight');
+    ```
+
+    <p>styles</p>
+
+    ```
+    myNode.setStyle('opacity', 0.5);
+    ```
+    
+    <p>create elements</p>
+
+    ```
+    Y.Node.create('<li id="item3" class="highlight"><em>Profit</em></li>');
+    ```
+
+    <p>and much more.</p>
+
+    <p>
+        <strong>Note:</strong> The <em>`Y.get()`, `node.query()`, and
+        `node.queryAll()` methods have been removed.  Use `Y.one()`,
+        `node.one()`, and `node.all()` or include the
+        "<a href="{{apiDocs}}/modules/node-deprecated.html">node-deprecated</a>"
+        module in your `use()` statement to restore them</em>.
+    </p>
 
 </div>
+
 {{>getting-started}}
-<div>
-				<h2 id="node-using">Using Node</h2>
 
-				<h3 id="using-node">Getting a Node</h3>
-				<p>
-					 `Node` is the interface for DOM operations in YUI 3.
-					The Node API is based on the standard DOM API, and provides additional sugar
-					properties and methods that make common operations easier, and implementation 
-					code more concise.  Developers familiar with the standard DOM API will find Node 
-					instances to be very familiar.								
-				</p>
-				<p>
-					The simplest way to get a `Node` instance is using your YUI instance's `one` method.
-                    `Y.one` accepts either an existing DOM element or a selector query.  If a selector query is used, 
-					the first matching element is used.
-				</p>
-				<p><strong>Note:</strong> CSS3 selector support is not included by default with Node, you will need to include the "selector-css3" module for CSS3 support.</p> 
-				<p>
-                                This example demonstrates two ways to get a node instance.
-				</p>
-```
-    var node1 = Y.one('#main');
-    var node2 = Y.one(document.body);
-```
+<h2 id="node-using">Using Node</h2>
 
-				<h3 id="node-properties">Accessing Node Properties</h3>
+<h3 id="using-node">Getting a Node</h3>
 
-                                <p>Properties of the underlying DOM node are accessed via the `Y.Node` instance's `set` and `get` methods.  For simple property types (strings, numbers, booleans), these pass directly to/from the underlying node, but properties that normally return DOM nodes return `Y.Node` instances instead.</p>
+<p>
+     `Node` is the interface for DOM operations in YUI 3.  The Node API is
+     based on the standard DOM API, and provides additional sugar properties
+     and methods that make common operations easier, and implementation code
+     more concise.  Developers familiar with the standard DOM API will find
+     Node instances to be very familiar.                                
+</p>
 
-				<p>
-                                This is an example of getting and setting various properties.
-				</p>
-```
-    var node = Y.one('#foo');
-    var parent = node.get('parentNode'); // Node instance
+<p>
+    The simplest way to get a `Node` instance is using your YUI instance's
+    `one` method.  `Y.one` accepts either an existing DOM element or a selector
+    query.  If a selector query is used, the first matching element is used.
+</p>
 
-    var html = 'I am "' + node.get('id') + '".';
-    html += 'My parent is "' + parent.get('id') + '"';
+<p>
+    <strong>Note:</strong> CSS3 selector support is not included by default
+    with Node, you will need to include the "selector-css3" module for CSS3
+    support.
+</p> 
 
-    node.set('innerHTML', html);
-```
-				<h3 id="node-events">DOM Events</h3>
-
-					<p>Use the `on` method to add an event listener to a `Node` instance.  
-					The event object passed as the first argument to each listener is an event facade 
-					that, like the Node API, normalizes browser differences and provides a standard API for 
-					working with DOM events based on the W3C standard.  All properties of the event object 
-					that would normally return DOM elements return `Y.Node` instances.
-					</p>
+<p>This example demonstrates two ways to get a node instance.</p>
 
 ```
-    Y.one('#demo').on('click', function(e) {
-        e.preventDefault();
-        alert('event: ' + e.type + ' target: ' + e.target.get('tagName')); 
-    });
+var node1 = Y.one('#main');
+var node2 = Y.one(document.body);
 ```
 
+<h3 id="node-properties">Accessing Node Properties</h3>
 
-				<h3 id="node-methods">DOM Methods</h3>
-                                <p>The `Y.Node` API provides all of the DOM methods you would expect, plus a few extras to help with common tasks.
-                                As with properties and events, any methods that would normally return DOM nodes instead return `Y.Node` instances.</p>
-```
-    var node = Y.one('#demo');
-    var node2 = node.appendChild(Y.one('#foo p'));
-    node2.addClass('bar');
-```
+<p>
+    Properties of the underlying DOM node are accessed via the `Y.Node`
+    instance's `set` and `get` methods.  For simple property types (strings,
+    numbers, booleans), these pass directly to/from the underlying node, but
+    properties that normally return DOM nodes return `Y.Node` instances
+    instead.
+</p>
 
-				<h3 id="nodelist">Using NodeList</h3>
-                                <p>The `Y.NodeList` provides a node-like interface for manipulating multiple nodes through a single interface. The `NodeList` API is a pared-down version of the `Node` API, allowing for batching of common tasks.</p>
-                                <p>The `Y.all` method is the simplest way to get a `NodeList`.</p>
-```
-    Y.all('#demo li').addClass('bar');
-```
-                                <p>The `Y.Node` api returns `NodeList` instances when the DOM would normally return a collection of elements.</p>
-```
-    Y.one('#demo').get('children').addClass('bar');
-```
+<p>This is an example of getting and setting various properties.</p>
 
-				<h3 id="node-query">Node Queries</h3>
-                                <p>Selector queries are a powerful way to test and manipulate nodes.  All `Y.Node` instances support `one`, `all`, and `test`.</p>
 ```
-    var node = Y.one('#demo');
+var node = Y.one('#foo');
+var parent = node.get('parentNode'); // Node instance
 
-    var node2 = node.one('p');
-    if (node2) { // might be null
-        node2.addClass('bar'); // adds "bar" to the first paragraph descendant of #demo
-    }
+var html = 'I am "' + node.get('id') + '".';
+html += 'My parent is "' + parent.get('id') + '"';
 
-    node.all('p').addClass('bar'); // adds "bar" to all paragraph descendants of #demo
-
-    if (node.test('.foo.bar')) { // "if node has both foo and bar classNames"
-        node.removeClass('bar');
-    }
+node.set('innerHTML', html);
 ```
 
-				<p>For more information on selector queries, see the following W3C specifications:</p> 
-				<ul>
-					<li><a href="http://www.w3.org/TR/css3-selectors/">CSS Level 3 Selectors</a></li>
-					<li><a href="http://www.w3.org/TR/selectors-API/">Selectors API</a></li>
-				</ul>
-				<p><strong>Note:</strong> CSS3 selector support is not included by default with Node, you will need to include the "selector-css3" module for CSS3 support.</p> 
+<h3 id="node-events">DOM Events</h3>
 
+<p>
+    Use the `on` method to add an event listener to a `Node` instance.  The
+    event object passed as the first argument to each listener is an event
+    facade that, like the Node API, normalizes browser differences and provides
+    a standard API for working with DOM events based on the W3C standard.  All
+    properties of the event object that would normally return DOM elements
+    return `Y.Node` instances.
+</p>
 
-				<h2 id="node-aria">ARIA Support</h2>
-
-				<p>
-					The Node interface has support for 
-					<a href="http://www.w3.org/TR/wai-aria/">ARIA</a>. 
-					When used with Node's built-in support for CSS selector 
-					queries, it is easy to both apply and manage a Node's 
-					<a href="http://www.w3.org/TR/wai-aria/#roles">roles</a>, 
-					<a href="http://www.w3.org/TR/wai-aria/#supportedState">states and properties</a>.
-				<p>
-				<p>
-					The ARIA Roles, States and Properties enhance 
-					the semantics of HTML, allowing developers to more 
-					accurately describe the intended purpose of a region of a 
-					page, or a DHTML widget, thereby improving the user 
-					experience for users of assistive technology, such as 
-					screen readers.
-				</p>
-				<p>
-					Apply any of the ARIA Roles, States and Properties via 
-					the `set` method.  For example, to apply the 
-					role of 
-					<a href="http://www.w3.org/TR/wai-aria/#toolbar">`toolbar`</a>
-					to a `<div>` with an id of "toolbar":
-				</p>
 ```
-    var node = Y.one('#toolbar').set('role', 'toolbar');
+Y.one('#demo').on('click', function(e) {
+    e.preventDefault();
+    alert('event: ' + e.type + ' target: ' + e.target.get('tagName')); 
+});
 ```
-				<p>
-					Node's built-in support for CSS selector queries, 
-					method chaining, and ability to set multiple attributes 
-					on a single Node instance makes it especially easy to apply 
-					the ARIA Roles, States, and Properties when building 
-					DHTML widgets with a large subtree.  For example, when 
-					building a menubar widget it is necessary to apply a role 
-					of 
-					<a href="http://www.w3.org/TR/wai-aria/#menubar">`menubar`</a> 
-					to the root DOM element representing the menubar, and the 
-					role of 
-					<a href="http://www.w3.org/TR/wai-aria/#menu">`menu`</a> 
-					to the root DOM element representing each submenu.  
-					Additionally, as each submenu is hidden by 
-					default, the <a href="http://www.w3.org/TR/wai-aria/#aria-">`aria-hidden`</a> 
-					state will need to be applied to each submenu as well.  
-					The Node interface makes it possible to do all of this in 
-					one line of code:
-				</p>
+
+<p>
+    For more details, check out <a href="../event/index.html">the Event user
+    guide</a>.
+</p>
+
+<h3 id="node-methods">DOM Methods</h3>
+
+<p>
+    The `Y.Node` API provides all of the DOM methods you would expect, plus a
+    few extras to help with common tasks.  As with properties and events, any
+    methods that would normally return DOM nodes instead return `Y.Node`
+    instances.
+</p>
+
+```
+var node = Y.one('#demo');
+var node2 = node.appendChild(Y.one('#foo p'));
+
+node2.addClass('bar');
+```
+
+<h3 id="nodelist">Using NodeList</h3>
+
+<p>
+    The `Y.NodeList` provides a node-like interface for manipulating multiple
+    nodes through a single interface. The `NodeList` API is a pared-down
+    version of the `Node` API, allowing for batching of common tasks.
+</p>
+
+<p>The `Y.all` method is the simplest way to get a `NodeList`.</p>
+
+```
+Y.all('#demo li').addClass('bar');
+```
+
+<p>
+    The `Y.Node` api returns `NodeList` instances when the DOM would normally
+    return a collection of elements.
+</p>
+
+```
+Y.one('#demo').get('children').addClass('bar');
+```
+
+<h3 id="node-query">Node Queries</h3>
+
+<p>
+    Selector queries are a powerful way to test and manipulate nodes.  All
+    `Y.Node` instances support `one`, `all`, and `test`.
+</p>
+
+```
+var node = Y.one('#demo');
+
+var node2 = node.one('p');
+if (node2) { // might be null
+    node2.addClass('bar'); // adds "bar" to the first paragraph descendant of #demo
+}
+
+node.all('p').addClass('bar'); // adds "bar" to all paragraph descendants of #demo
+
+if (node.test('.foo.bar')) { // "if node has both foo and bar classNames"
+    node.removeClass('bar');
+}
+```
+
+<p>
+    For more information on selector queries, see the following W3C
+    specifications:
+</p> 
+
+<ul>
+    <li><a href="http://www.w3.org/TR/css3-selectors/">CSS Level 3 Selectors</a></li>
+    <li><a href="http://www.w3.org/TR/selectors-API/">Selectors API</a></li>
+</ul>
+
+<p>
+    <strong>Note:</strong> CSS3 selector support is not included by default
+    with Node, you will need to include the "selector-css3" module for CSS3
+    support.
+</p> 
+
+
+<h2 id="node-aria">ARIA Support</h2>
+
+<p>
+    The Node interface has support for <a
+    href="http://www.w3.org/TR/wai-aria/">ARIA</a>.  When used with Node's
+    built-in support for CSS selector queries, it is easy to both apply and
+    manage a Node's <a href="http://www.w3.org/TR/wai-aria/#roles">roles</a>,
+    <a href="http://www.w3.org/TR/wai-aria/#supportedState">states and
+    properties</a>.
+<p>
+
+<p>
+    The ARIA Roles, States and Properties enhance the semantics of HTML,
+    allowing developers to more accurately describe the intended purpose of a
+    region of a page, or a DHTML widget, thereby improving the user experience
+    for users of assistive technology, such as screen readers.
+</p>
+
+<p>
+    Apply any of the ARIA Roles, States and Properties via the `set` method.
+    For example, to apply the role of <a
+    href="http://www.w3.org/TR/wai-aria/#toolbar">`toolbar`</a> to a `<div>`
+    with an id of "toolbar":
+</p>
+
+```
+var node = Y.one('#toolbar').set('role', 'toolbar');
+```
+
+<p>
+    Node's built-in support for CSS selector queries, method chaining, and
+    ability to set multiple attributes on a single Node instance makes it
+    especially easy to apply the ARIA Roles, States, and Properties when
+    building DHTML widgets with a large subtree.  For example, when building a
+    menubar widget it is necessary to apply a role of
+    <a href="http://www.w3.org/TR/wai-aria/#menubar">`menubar`</a> to the root
+    DOM element representing the menubar, and the role of
+    <a href="http://www.w3.org/TR/wai-aria/#menu">`menu`</a> to the root DOM
+    element representing each submenu.  Additionally, as each submenu is hidden
+    by default, the
+    <a href="http://www.w3.org/TR/wai-aria/#aria-">`aria-hidden`</a> state will
+    need to be applied to each submenu as well.  The Node interface makes it
+    possible to do all of this in one line of code:
+</p>
+
 ```
 Y.one('#root').set('role', 'menubar').all('.menu').setAttrs({ role: 'menu', 'aria-hidden': true });
 ```
 
-            <h2 id="node-migration">Migration Table</h2>
-            <p>The following table is included to help users migrating from YUI 2.  Most of the functionality from `YAHOO.util.Dom` is available via `Node`.</p>
-            <p><strong>Note</strong> In the snippets below, `myNode` is an instance of `Node`.  Methods that normally would return DOM nodes now return Node instances.</p>
-            <table class="yui-table">
-                <thead>
-                    <tr>
-                        <th>2.x `YAHOO.util.???`</th>
-                        <th>3.0</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            ```
-                            var el = Dom.get('elementId');
-                            ```
-                        </td>
-                        <td>
-                            ```
-                            var node = Y.one('#elementId');
-                            ```
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            ```
-                            var els = Dom.getElementsBy(someFilterFunction);
-                            ```
-                        </td>
-                        <td>
-                            ```
-                            var nodelist = myNode.all('selectorString');
-                            ```
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            ```
-                            var els = Dom.getElementsByClassName('highlight');
-                            ```
-                        </td>
-                        <td>
-                            ```
-                            var nodelist = myNode.all('.highlight');
-                            ```
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            ```
-                            var elementArray = Dom.getChildren(el);
-                            ```
-                        </td>
-                        <td>
-                            ```
-                            var nodelist = myNode.get('children');
-                            ```
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            ```
-                            var els1 = Dom.getChildrenBy(someFilterFunction);
-                            ```
-                        </td>
-                        <td>
-                            ```
-                            var nodelist = myNode.all('selectorString');
-                            ```
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            ```
-                            var el = Dom.getFirstChild(parentEl);
-                            ```
-                        </td>
-                        <td>
-                            ```
-                            var node = myNode.one('*');
-                            ```
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            ```
-                            var el = Dom.getFirstChildBy(someFilterFunction);
-                            ```
-                        </td>
-                        <td>
-                            ```
-                            var node = myNode.one('> selectorString');
-                            ```
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            ```
-                            var el1 = Dom.getLastChild(el);
-                            var el2 = Dom.getLastChildBy(someFilterFunction);
-                            ```
-                        </td>
-                        <td>
-                            ```
-                            var node1 = myNode.get('children').slice(-1).item(0);
-                            // OR target the node with a selector
-                            var node2 = myNode.one('> selector:last-of-type');
-                            ```
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            ```
-                            var el1 = Dom.getNextSibling(el);
-                            var el2 = Dom.getNextSiblingBy(someFilterFunction);
-                            var el3 = Dom.getPreviousSibling(el);
-                            var el4 = Dom.getPreviousSiblingBy(someFilterFunction);
-                            ```
-                        </td>
-                        <td>
-                            ```
-                            var node1 = myNode.next();
-                            var node2 = myNode.next('selectorString');
-                            var node3 = myNode.previous();
-                            var node4 = myNode.previous('selectorString');
-                            ```
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            ```
-                            var el1 = Dom.getAncestorBy(someFilterFunction);
-                            var el2 = Dom.getAncestorByClassName('highlight');
-                            var el3 = Dom.getAncestorByTagName('pre');
-                            ```
-                        </td>
-                        <td>
-                            ```
-                            var node1 = myNode.ancestor(someFilterFunction);
-                            var node2 = myNode.ancestor('.highlight');
-                            var node3 = myNode.ancestor('pre');
-                            ```
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            ```
-                            Dom.isAncestor(ancestorEl, el);
-                            ```
-                        </td>
-                        <td>
-                            ```
-                            ancestorNode.contains(myNode);
-                            ```
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            ```
-                            Dom.insertAfter(el, afterEl);
-                            Dom.insertBefore(el, beforeNode);
-                            ```
-                        </td>
-                        <td>
-                            ```
-                            afterNode.insert(myNode, 'after');
-                            beforeNode.insert(myNode, 'before');
-                            ```
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            ```
-                            Dom.addClass('highlight');
-                            ```
-                        </td>
-                        <td>
-                            ```
-                            myNode.addClass('highlight');
-                            ```
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            ```
-                            Dom.removeClass(el, 'highlight');
-                            ```
-                        </td>
-                        <td>
-                            ```
-                            myNode.removeClass('highlight');
-                            ```
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            ```
-                            Dom.replaceClass(el, 'highlight', 'selected');
-                            ```
-                        </td>
-                        <td>
-                            ```
-                            myNode.replaceClass('highlight', 'selected');
-                            ```
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            ```
-                            Dom.hasClass(el, 'highlight');
-                            ```
-                        </td>
-                        <td>
-                            ```
-                            myNode.hasClass('highlight');
-                            ```
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            ```
-                            var val = Dom.getStyle(el, 'backgroundColor');
-                            ```
-                        </td>
-                        <td>
-                            ```
-                            var val = myNode.getStyle('backgroundColor');
-                            ```
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            ```
-                            Dom.setStyle(el, 'backgroundColor', '#C0FFEE');
-                            ```
-                        </td>
-                        <td>
-                            ```
-                            myNode.setStyle('backgroundColor', '#C0FFEE');
-                            ```
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            ```
-                            var xy = Dom.getXY(el);
-                            var x  = Dom.getX(el);
-                            var y  = Dom.getY(el);
-                            ```
-                        </td>
-                        <td>
-                            ```
-                            var xy = myNode.getXY();
-                            var x  = myNode.getX();
-                            var y  = myNode.getY();
-                            ```
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            ```
-                            Dom.setXY(el, [ 500, 300 ]);
-                            Dom.setX(el, 500);
-                            Dom.setY(el, 300);
-                            ```
-                        </td>
-                        <td>
-                            ```
-                            myNode.setXY([ 500, 300 ]);
-                            myNode.setX(500);
-                            myNode.setY(300);
-                            ```
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            ```
-                            Dom.inDocument(el);
-                            ```
-                        </td>
-                        <td>
-                            ```
-                            myNode.inDoc();
-                            ```
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            ```
-                            Dom.batch(elementArray, Dom.addClass, 'highlight');
-                            ```
-                        </td>
-                        <td>
-                            ```
-                            myNodelist.addClass('highlight');
-                            // OR
-                            myNodelist.each(function (node) {
-                                node.addClass('highlight')
-                            });
-                            // OR
-                            Y.Array.each(myNodelist, function (node) {
-                                node.addClass('highlight');
-                            });
-                            ```
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            ```
-                            Dom.generateId();
-                            ```
-                        </td>
-                        <td>
-                            ```
-                            Y.guid();
-                            ```
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            ```
-                            var height = Dom.getViewportHeight();
-                            var width  = Dom.getViewportWidth();
-                            ```
-                        </td>
-                        <td>
-                            ```
-                            var height = myNode.get('winHeight');
-                            var width  = myNode.get('winWidth');
-                            ```
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            ```
-                            var height = Dom.getDocumentHeight();
-                            var width  = Dom.getDocumentWidth();
-                            ```
-                        </td>
-                        <td>
-                            ```
-                            var height = myNode.get('docHeight');
-                            var width  = myNode.get('docWidth');
-                            ```
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            ```
-                            var region = Dom.getClientRegion();
-                            ```
-                        </td>
-                        <td>
-                            ```
-                            var region = myNode.get('viewportRegion');
-                            ```
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            ```
-                            var region = Dom.getRegion(el);
-                            ```
-                        </td>
-                        <td>
-                            ```
-                            var region = myNode.get('region');
-                            ```
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            ```
-                            var left = Dom.getDocumentScrollLeft(),
-                                top  = Dom.getDocumentScrollTop();
-                            ```
-                        </td>
-                        <td>
-                            ```
-                            var left = myNode.get('docScrollX'),
-                                top  = myNode.get('docScrollY');
-                            ```
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+<h2 id="node-migration">Migration Table</h2>
 
-		</div>
+<p>
+    The following table is included to help users migrating from YUI 2.  Most
+    of the functionality from `YAHOO.util.Dom` is available via `Node`.
+</p>
 
+<p>
+    <strong>Note</strong> In the snippets below, `myNode` is an instance of
+    `Node`.  Methods that normally would return DOM nodes now return Node
+    instances.
+</p>
 
+<table class="yui-table">
+<thead>
+    <tr>
+        <th>2.x `YAHOO.util.???`</th>
+        <th>3.0</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>
+            ```
+            var el = Dom.get('elementId');
+            ```
+        </td>
+        <td>
+            ```
+            var node = Y.one('#elementId');
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            var els = Dom.getElementsBy(someFilterFunction);
+            ```
+        </td>
+        <td>
+            ```
+            var nodelist = myNode.all('selectorString');
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            var els = Dom.getElementsByClassName('highlight');
+            ```
+        </td>
+        <td>
+            ```
+            var nodelist = myNode.all('.highlight');
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            var elementArray = Dom.getChildren(el);
+            ```
+        </td>
+        <td>
+            ```
+            var nodelist = myNode.get('children');
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            var els1 = Dom.getChildrenBy(someFilterFunction);
+            ```
+        </td>
+        <td>
+            ```
+            var nodelist = myNode.all('selectorString');
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            var el = Dom.getFirstChild(parentEl);
+            ```
+        </td>
+        <td>
+            ```
+            var node = myNode.one('*');
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            var el = Dom.getFirstChildBy(someFilterFunction);
+            ```
+        </td>
+        <td>
+            ```
+            var node = myNode.one('> selectorString');
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            var el1 = Dom.getLastChild(el);
+            var el2 = Dom.getLastChildBy(someFilterFunction);
+            ```
+        </td>
+        <td>
+            ```
+            var node1 = myNode.get('children').slice(-1).item(0);
+            // OR target the node with a selector
+            var node2 = myNode.one('> selector:last-of-type');
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            var el1 = Dom.getNextSibling(el);
+            var el2 = Dom.getNextSiblingBy(someFilterFunction);
+            var el3 = Dom.getPreviousSibling(el);
+            var el4 = Dom.getPreviousSiblingBy(someFilterFunction);
+            ```
+        </td>
+        <td>
+            ```
+            var node1 = myNode.next();
+            var node2 = myNode.next('selectorString');
+            var node3 = myNode.previous();
+            var node4 = myNode.previous('selectorString');
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            var el1 = Dom.getAncestorBy(someFilterFunction);
+            var el2 = Dom.getAncestorByClassName('highlight');
+            var el3 = Dom.getAncestorByTagName('pre');
+            ```
+        </td>
+        <td>
+            ```
+            var node1 = myNode.ancestor(someFilterFunction);
+            var node2 = myNode.ancestor('.highlight');
+            var node3 = myNode.ancestor('pre');
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            Dom.isAncestor(ancestorEl, el);
+            ```
+        </td>
+        <td>
+            ```
+            ancestorNode.contains(myNode);
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            Dom.insertAfter(el, afterEl);
+            Dom.insertBefore(el, beforeNode);
+            ```
+        </td>
+        <td>
+            ```
+            afterNode.insert(myNode, 'after');
+            beforeNode.insert(myNode, 'before');
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            Dom.addClass('highlight');
+            ```
+        </td>
+        <td>
+            ```
+            myNode.addClass('highlight');
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            Dom.removeClass(el, 'highlight');
+            ```
+        </td>
+        <td>
+            ```
+            myNode.removeClass('highlight');
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            Dom.replaceClass(el, 'highlight', 'selected');
+            ```
+        </td>
+        <td>
+            ```
+            myNode.replaceClass('highlight', 'selected');
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            Dom.hasClass(el, 'highlight');
+            ```
+        </td>
+        <td>
+            ```
+            myNode.hasClass('highlight');
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            var val = Dom.getStyle(el, 'backgroundColor');
+            ```
+        </td>
+        <td>
+            ```
+            var val = myNode.getStyle('backgroundColor');
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            Dom.setStyle(el, 'backgroundColor', '#C0FFEE');
+            ```
+        </td>
+        <td>
+            ```
+            myNode.setStyle('backgroundColor', '#C0FFEE');
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            var xy = Dom.getXY(el);
+            var x  = Dom.getX(el);
+            var y  = Dom.getY(el);
+            ```
+        </td>
+        <td>
+            ```
+            var xy = myNode.getXY();
+            var x  = myNode.getX();
+            var y  = myNode.getY();
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            Dom.setXY(el, [ 500, 300 ]);
+            Dom.setX(el, 500);
+            Dom.setY(el, 300);
+            ```
+        </td>
+        <td>
+            ```
+            myNode.setXY([ 500, 300 ]);
+            myNode.setX(500);
+            myNode.setY(300);
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            Dom.inDocument(el);
+            ```
+        </td>
+        <td>
+            ```
+            myNode.inDoc();
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            Dom.batch(elementArray, Dom.addClass, 'highlight');
+            ```
+        </td>
+        <td>
+            ```
+            myNodelist.addClass('highlight');
+            // OR
+            myNodelist.each(function (node) {
+                node.addClass('highlight')
+            });
+            // OR
+            Y.Array.each(myNodelist, function (node) {
+                node.addClass('highlight');
+            });
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            Dom.generateId();
+            ```
+        </td>
+        <td>
+            ```
+            Y.guid();
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            var height = Dom.getViewportHeight();
+            var width  = Dom.getViewportWidth();
+            ```
+        </td>
+        <td>
+            ```
+            var height = myNode.get('winHeight');
+            var width  = myNode.get('winWidth');
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            var height = Dom.getDocumentHeight();
+            var width  = Dom.getDocumentWidth();
+            ```
+        </td>
+        <td>
+            ```
+            var height = myNode.get('docHeight');
+            var width  = myNode.get('docWidth');
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            var region = Dom.getClientRegion();
+            ```
+        </td>
+        <td>
+            ```
+            var region = myNode.get('viewportRegion');
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            var region = Dom.getRegion(el);
+            ```
+        </td>
+        <td>
+            ```
+            var region = myNode.get('region');
+            ```
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ```
+            var left = Dom.getDocumentScrollLeft(),
+                top  = Dom.getDocumentScrollTop();
+            ```
+        </td>
+        <td>
+            ```
+            var left = myNode.get('docScrollX'),
+                top  = myNode.get('docScrollY');
+            ```
+        </td>
+    </tr>
+</tbody>
+</table>
 
-
+</div>
