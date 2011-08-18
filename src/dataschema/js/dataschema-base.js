@@ -3,6 +3,7 @@
  * apply a given schema to a variety of data.
  *
  * @module dataschema
+ * @main dataschema
  */
 
 /**

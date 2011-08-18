@@ -1,7 +1,11 @@
 /**
- * The CanvasPath class creates a graphic object with editable 
- * properties.
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> implementation of the <a href="Path.html">`Path`</a> class. 
+ * `CanvasPath` is not intended to be used directly. Instead, use the <a href="Path.html">`Path`</a> class. 
+ * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities but has 
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Path.html">`Path`</a> 
+ * class will point to the `CanvasPath` class.
  *
+ * @module graphics
  * @class CanvasPath
  * @extends CanvasShape
  */
@@ -15,8 +19,8 @@ Y.extend(CanvasPath, Y.CanvasShape, {
      * Indicates the type of shape
      *
      * @property _type
-     * @readOnly
      * @type String
+     * @private
      */
     _type: "path",
 
@@ -110,6 +114,7 @@ CanvasPath.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	 *
 	 * @config path
 	 * @type String
+     * @readOnly
 	 */
 	path: {
         readOnly: true,

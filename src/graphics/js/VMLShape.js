@@ -1,5 +1,8 @@
 /**
- * Base class for creating shapes.
+ * <a href="http://www.w3.org/TR/NOTE-VML">VML</a> implementation of the <a href="Shape.html">`Shape`</a> class. 
+ * `VMLShape` is not intended to be used directly. Instead, use the <a href="Shape.html">`Shape`</a> class. 
+ * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> and <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> 
+ * capabilities, the <a href="Shape.html">`Shape`</a> class will point to the `VMLShape` class.
  *
  * @module graphics
  * @class VMLShape
@@ -21,8 +24,8 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 	 * Indicates the type of shape
 	 *
 	 * @property _type
-	 * @readOnly
 	 * @type String
+     * @private
 	 */
 	_type: "shape",
     
@@ -554,6 +557,7 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
      * @method _getGradientFill
      * @param {Object} fill Object containing fill properties.
      * @return Object
+     * @private
      */
 	_getGradientFill: function(fill)
 	{
@@ -804,7 +808,7 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 	 * use the `translate` method.
 	 *
 	 * @method translateX
-	 * @param {Number} y The value to translate.
+	 * @param {Number} x The value to translate.
 	 */
 	translateX: function(x)
     {
@@ -943,7 +947,6 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 	 *
 	 * @method _createGraphicNode
 	 * @param {String} type node type to create
-	 * @param {String} specified pointer-events value
 	 * @return HTMLElement
 	 * @private
 	 */
@@ -988,9 +991,15 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 		};
 	},
 
-	/**
-	 * @private
-	 */
+    /**
+     * Sets the value of an attribute.
+     *
+     * @method set
+     * @param {String|Object} name The name of the attribute. Alternatively, an object of key value pairs can 
+     * be passed in to set multiple attributes at once.
+     * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as 
+     * the name param.
+     */
 	set: function() 
 	{
 		var host = this;
@@ -1381,22 +1390,17 @@ VMLShape.ATTRS = {
 		}
 	},
 	
-	/**
-	 * Indicates whether or not the instance will size itself based on its contents.
-	 *
-	 * @config autoSize 
-	 * @type Boolean
-	 */
-	autoSize: {
+	//Not used. Remove in future.
+    autoSize: {
 		value: false
 	},
 
-	/**
-	 * Determines whether the instance will receive mouse events.
-	 * 
-	 * @config pointerEvents
-	 * @type string
-	 */
+	// Only implemented in SVG
+	// Determines whether the instance will receive mouse events.
+	// 
+	// @config pointerEvents
+	// @type string
+	//
 	pointerEvents: {
 		value: "visiblePainted"
 	},

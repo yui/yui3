@@ -1,6 +1,7 @@
 /**
  * Contains algorithms for rendering a top axis.
  *
+ * @module charts
  * @class TopAxisLayout
  * @constructor
  */

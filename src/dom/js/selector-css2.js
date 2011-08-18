@@ -5,7 +5,7 @@
  * @for Selector
  */
 
-/**
+/*
  * Provides helper methods for collecting and filtering DOM elements.
  */
 
@@ -332,7 +332,7 @@ var PARENT_NODE = 'parentNode',
             };
         },
 
-        /**
+        /*
             Break selector into token units per simple selector.
             Combinator is attached to the previous token.
          */

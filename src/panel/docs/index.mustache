@@ -165,3 +165,9 @@ YUI().use('panel', function(Y) {
 
     panel.addButton(cancelButton);
 ```
+
+<h2 id="notes">Note regarding older browsers</h2>
+
+<p>Panel is tested across the A-grade browser set according to the <a href="http://developer.yahoo.com/yui/articles/gbs/" alt="Graded Browser Support">GBS Browser Test Baseline</a> as of July 2011.</p>
+
+<p>However, developers implementing Panel and other components which rely on z-index support in IE6 and IE7 should be aware of the concept of <a href="https://developer.mozilla.org/en/Understanding_CSS_z-index/Stacking_context_example_2" alt="Stacking Context in IE">stacking context</a>. Essentially, when setting the z-index of the widget, you should ensure that the widget's parent does not have a lower z-index.</p>

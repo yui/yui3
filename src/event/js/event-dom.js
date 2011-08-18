@@ -1,7 +1,10 @@
 (function() {
 /**
- * DOM event listener abstraction layer
+ * The event utility provides functions to add and remove event listeners,
+ * event cleansing.  It also tries to automatically remove listeners it
+ * registers during the unload event.
  * @module event
+ * @main event
  * @submodule event-base
  */
 

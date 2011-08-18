@@ -1,6 +1,7 @@
 /**
  * Utility class used for drawing markers.
  *
+ * @module charts
  * @class Plots
  * @constructor
  */

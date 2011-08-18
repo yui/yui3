@@ -1,5 +1,8 @@
 /**
- * Graphic is a simple drawing api that allows for basic drawing operations.
+ * <a href="http://www.w3.org/TR/SVG/">SVG</a> implementation of the <a href="Graphic.html">`Graphic`</a> class. 
+ * `SVGGraphic` is not intended to be used directly. Instead, use the <a href="Graphic.html">`Graphic`</a> class. 
+ * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Graphic.html">`Graphic`</a> 
+ * class will point to the `SVGGraphic` class.
  *
  * @module graphics
  * @class SVGGraphic
@@ -227,12 +230,12 @@ SVGGraphic.ATTRS = {
         }
     },
 
-    /**
-     *  Indicates the pointer-events setting for the svg:svg element.
-     *
-     *  @config pointerEvents
-     *  @type String
-     */
+    //
+    //  Indicates the pointer-events setting for the svg:svg element.
+    //
+    //  @config pointerEvents
+    //  @type String
+    //
     pointerEvents: {
         value: "none"
     }
@@ -348,7 +351,6 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
      * Generates a shape instance by type.
      *
      * @method addShape
-     * @param {String} type type of shape to generate.
      * @param {Object} cfg attributes for the shape
      * @return Shape
      */
@@ -590,10 +592,12 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
     },
 
     /**
-     * Adds a shape to the redraw queue and calculates the contentBounds. 
+     * Adds a shape to the redraw queue and calculates the contentBounds. Used internally 
+     * by `Shape` instances.
      *
      * @method addToRedrawQueue
      * @param shape {SVGShape}
+     * @protected
      */
     addToRedrawQueue: function(shape)
     {
@@ -700,6 +704,7 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
      * @param {String} key id that references the gradient definition
      * @param {String} type description of the gradient type
      * @return HTMLElement
+     * @protected
      */
     getGradientNode: function(key, type)
     {

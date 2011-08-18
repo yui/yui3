@@ -2,6 +2,7 @@
  * StackedLineSeries creates line graphs in which the different series are stacked along a value axis
  * to indicate their contribution to a cumulative total.
  *
+ * @module charts
  * @class StackedLineSeries
  * @constructor
  * @extends  LineSeries

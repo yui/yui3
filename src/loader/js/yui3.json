@@ -381,24 +381,6 @@
         ], 
         "type": "css"
     }, 
-    "cssgrids-context-deprecated": {
-        "optional": [
-            "cssreset-context"
-        ], 
-        "requires": [
-            "cssfonts-context"
-        ], 
-        "type": "css"
-    }, 
-    "cssgrids-deprecated": {
-        "optional": [
-            "cssreset"
-        ], 
-        "requires": [
-            "cssfonts"
-        ], 
-        "type": "css"
-    }, 
     "cssreset": {
         "type": "css"
     }, 

@@ -19,7 +19,11 @@ var SHAPE = "canvasShape",
     TOHEX = Y_Color.toHex;
 
 /**
- * Set of drawing methods for canvas based classes.
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> implementation of the <a href="Drawing.html">`Drawing`</a> class. 
+ * `CanvasDrawing` is not intended to be used directly. Instead, use the <a href="Drawing.html">`Drawing`</a> class. 
+ * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities but has 
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Drawing.html">`Drawing`</a> 
+ * class will point to the `CanvasDrawing` class.
  *
  * @module graphics
  * @class CanvasDrawing
@@ -71,6 +75,7 @@ CanvasDrawing.prototype = {
      * @method setSize
      * @param w {Number} width to set for the instance.
      * @param h {Number} height to set for the instance.
+     * @private
      */
 	setSize: function(w, h) {
         if(this.get("autoSize"))
@@ -259,12 +264,13 @@ CanvasDrawing.prototype = {
     },
 
     /**
-     * Draws a circle.
+     * Draws a circle. Used internally by `CanvasCircle` class.
      *
      * @method drawCircle
      * @param {Number} x y-coordinate
      * @param {Number} y x-coordinate
      * @param {Number} r radius
+     * @protected
      */
 	drawCircle: function(x, y, radius) {
         var startAngle = 0,
@@ -281,13 +287,14 @@ CanvasDrawing.prototype = {
     },
 
     /**
-     * Draws an ellipse.
+     * Draws an ellipse. Used internally by `CanvasEllipse` class.
      *
      * @method drawEllipse
      * @param {Number} x x-coordinate
      * @param {Number} y y-coordinate
      * @param {Number} w width
      * @param {Number} h height
+     * @protected
      */
 	drawEllipse: function(x, y, w, h) {
         var l = 8,
@@ -462,6 +469,12 @@ CanvasDrawing.prototype = {
         return this;
     },
 
+	/**
+	 * Clears the graphics object.
+	 *
+	 * @method clear
+	 */
+    
     /**
      * Returns a linear gradient fill
      *
@@ -704,7 +717,11 @@ CanvasDrawing.prototype = {
 };
 Y.CanvasDrawing = CanvasDrawing;
 /**
- * Base class for creating shapes.
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> implementation of the <a href="Shape.html">`Shape`</a> class. 
+ * `CanvasShape` is not intended to be used directly. Instead, use the <a href="Shape.html">`Shape`</a> class. 
+ * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities but has 
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Shape.html">`Shape`</a> 
+ * class will point to the `CanvasShape` class.
  *
  * @module graphics
  * @class CanvasShape
@@ -1079,7 +1096,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 * use the `translate` method.
 	 *
 	 * @method translateX
-	 * @param {Number} y The value to translate.
+	 * @param {Number} x The value to translate.
 	 */
 	translateX: function(x)
     {
@@ -1430,12 +1447,9 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 		context.moveTo(xEnd, yEnd);
 	},
 
-	/**
-	 * Clears the graphics object.
-	 *
-	 * @method clear
-	 */
-	clear: function() {
+	//This should move to CanvasDrawing class. 
+    //Currently docmented in CanvasDrawing class.
+    clear: function() {
 		this._initProps();
         if(this.node) 
         {
@@ -1840,22 +1854,17 @@ CanvasShape.ATTRS =  {
 		}
 	},
 	
-	/**
-	 * Indicates whether or not the instance will size itself based on its contents.
-	 *
-	 * @config autoSize 
-	 * @type Boolean
-	 */
+	//Not used. Remove in future.
 	autoSize: {
 		value: false
 	},
 
-	/**
-	 * Determines whether the instance will receive mouse events.
-	 * 
-	 * @config pointerEvents
-	 * @type string
-	 */
+	// Only implemented in SVG
+	// Determines whether the instance will receive mouse events.
+	// 
+	// @config pointerEvents
+	// @type string
+	//
 	pointerEvents: {
 		value: "visiblePainted"
 	},
@@ -1877,9 +1886,13 @@ CanvasShape.ATTRS =  {
 };
 Y.CanvasShape = CanvasShape;
 /**
- * The CanvasPath class creates a graphic object with editable 
- * properties.
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> implementation of the <a href="Path.html">`Path`</a> class. 
+ * `CanvasPath` is not intended to be used directly. Instead, use the <a href="Path.html">`Path`</a> class. 
+ * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities but has 
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Path.html">`Path`</a> 
+ * class will point to the `CanvasPath` class.
  *
+ * @module graphics
  * @class CanvasPath
  * @extends CanvasShape
  */
@@ -1893,8 +1906,8 @@ Y.extend(CanvasPath, Y.CanvasShape, {
      * Indicates the type of shape
      *
      * @property _type
-     * @readOnly
      * @type String
+     * @private
      */
     _type: "path",
 
@@ -1988,6 +2001,7 @@ CanvasPath.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	 *
 	 * @config path
 	 * @type String
+     * @readOnly
 	 */
 	path: {
         readOnly: true,
@@ -2000,7 +2014,11 @@ CanvasPath.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 });
 Y.CanvasPath = CanvasPath;
 /**
- * Draws rectangles
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> implementation of the <a href="Rect.html">`Rect`</a> class. 
+ * `CanvasRect` is not intended to be used directly. Instead, use the <a href="Rect.html">`Rect`</a> class. 
+ * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities but has 
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Rect.html">`Rect`</a> 
+ * class will point to the `CanvasRect` class.
  *
  * @module graphics
  * @class CanvasRect
@@ -2016,8 +2034,8 @@ Y.extend(CanvasRect, Y.CanvasShape, {
 	 * Indicates the type of shape
 	 *
 	 * @property _type
-	 * @readOnly
 	 * @type String
+     * @private
 	 */
 	_type: "rect",
 
@@ -2039,7 +2057,11 @@ Y.extend(CanvasRect, Y.CanvasShape, {
 CanvasRect.ATTRS = Y.CanvasShape.ATTRS;
 Y.CanvasRect = CanvasRect;
 /**
- * Draws an ellipse
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> implementation of the <a href="Ellipse.html">`Ellipse`</a> class. 
+ * `CanvasEllipse` is not intended to be used directly. Instead, use the <a href="Ellipse.html">`Ellipse`</a> class. 
+ * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities but has 
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Ellipse.html">`Ellipse`</a> 
+ * class will point to the `CanvasEllipse` class.
  *
  * @module graphics
  * @class CanvasEllipse
@@ -2057,8 +2079,8 @@ Y.extend(CanvasEllipse, CanvasShape, {
 	 * Indicates the type of shape
 	 *
 	 * @property _type
-	 * @readOnly
 	 * @type String
+     * @private
 	 */
 	_type: "ellipse",
 
@@ -2080,7 +2102,11 @@ Y.extend(CanvasEllipse, CanvasShape, {
 CanvasEllipse.ATTRS = CanvasShape.ATTRS;
 Y.CanvasEllipse = CanvasEllipse;
 /**
- * Draws an circle
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> implementation of the <a href="Circle.html">`Circle`</a> class. 
+ * `CanvasCircle` is not intended to be used directly. Instead, use the <a href="Circle.html">`Circle`</a> class. 
+ * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities but has 
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Circle.html">`Circle`</a> 
+ * class will point to the `CanvasCircle` class.
  *
  * @module graphics
  * @class CanvasCircle
@@ -2188,8 +2214,8 @@ Y.extend(CanvasPieSlice, Y.CanvasShape, {
      * Indicates the type of shape
      *
      * @property _type
-     * @readOnly
      * @type String
+     * @private
      */
     _type: "path",
 
@@ -2255,7 +2281,11 @@ CanvasPieSlice.ATTRS = Y.mix({
 }, Y.CanvasShape.ATTRS);
 Y.CanvasPieSlice = CanvasPieSlice;
 /**
- * CanvasGraphic is a simple drawing api that allows for basic drawing operations.
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> implementation of the `Graphic` class. 
+ * `CanvasGraphic` is not intended to be used directly. Instead, use the <a href="Graphic.html">`Graphic`</a> class. 
+ * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities but has 
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Graphic.html">`Graphic`</a> 
+ * class will point to the `CanvasGraphic` class.
  *
  * @module graphics
  * @class CanvasGraphic
@@ -2607,7 +2637,6 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
      * Generates a shape instance by type.
      *
      * @method addShape
-     * @param {String} type type of shape to generate.
      * @param {Object} cfg attributes for the shape
      * @return Shape
      */
@@ -2832,10 +2861,12 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
     },
 
     /**
-     * Adds a shape to the redraw queue. 
+     * Adds a shape to the redraw queue and calculates the contentBounds. Used internally 
+     * by `Shape` instances.
      *
      * @method addToRedrawQueue
      * @param Shape shape The shape instance to add to the queue
+     * @protected
      */
     addToRedrawQueue: function(shape)
     {

@@ -2,6 +2,7 @@
  * The StackedBarSeries renders bar chart in which series are stacked horizontally to show
  * their contribution to the cumulative total.
  *
+ * @module charts
  * @class StackedBarSeries
  * @extends BarSeries
  * @uses StackingUtil

@@ -1,6 +1,10 @@
 /**
- * VMLGraphic is a simple drawing api that allows for basic drawing operations.
+ * <a href="http://www.w3.org/TR/NOTE-VML">VML</a> implementation of the <a href="Graphic.html">`Graphic`</a> class. 
+ * `VMLGraphic` is not intended to be used directly. Instead, use the <a href="Graphic.html">`Graphic`</a> class. 
+ * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> and <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> 
+ * capabilities, the <a href="Graphic.html">`Graphic`</a> class will point to the `VMLGraphic` class.
  *
+ * @module graphics
  * @class VMLGraphic
  * @constructor
  */
@@ -325,7 +329,6 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
      * Generates a shape instance by type.
      *
      * @method addShape
-     * @param {String} type type of shape to generate.
      * @param {Object} cfg attributes for the shape
      * @return Shape
      */
@@ -598,7 +601,8 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
      * Adds a shape to the redraw queue and calculates the contentBounds. 
      *
      * @method addToRedrawQueue
-     * @param shape {SVGShape}
+     * @param shape {VMLShape}
+     * @protected
      */
     addToRedrawQueue: function(shape)
     {

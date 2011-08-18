@@ -1,6 +1,7 @@
 /**
  * The ChartBase class is an abstract class used to create charts.
  *
+ * @module charts
  * @class ChartBase
  * @constructor
  */

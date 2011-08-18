@@ -1,5 +1,8 @@
 /**
- * Base class for creating shapes.
+ * <a href="http://www.w3.org/TR/SVG/">SVG</a> implementation of the <a href="Shape.html">`Shape`</a> class. 
+ * `SVGShape` is not intended to be used directly. Instead, use the <a href="Shape.html">`Shape`</a> class. 
+ * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Shape.html">`Shape`</a> 
+ * class will point to the `SVGShape` class.
  *
  * @module graphics
  * @class SVGShape
@@ -32,7 +35,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 * Initializes the shape
 	 *
 	 * @private
-	 * @method _initialize
+	 * @method initializer
 	 */
 	initializer: function(cfg)
 	{
@@ -444,7 +447,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 * use the `translate` method.
 	 *
 	 * @method translateX
-	 * @param {Number} y The value to translate.
+	 * @param {Number} x The value to translate.
 	 */
 	translateX: function(x)
     {
@@ -1041,22 +1044,17 @@ SVGShape.ATTRS = {
 		}
 	},
 	
-	/**
-	 * Indicates whether or not the instance will size itself based on its contents.
-	 *
-	 * @config autoSize 
-	 * @type Boolean
-	 */
-	autoSize: {
+	//Not used. Remove in future.
+    autoSize: {
 		value: false
 	},
 
-	/**
-	 * Determines whether the instance will receive mouse events.
-	 * 
-	 * @config pointerEvents
-	 * @type string
-	 */
+	// Only implemented in SVG
+	// Determines whether the instance will receive mouse events.
+	// 
+	// @config pointerEvents
+	// @type string
+	//
 	pointerEvents: {
 		valueFn: function() 
 		{
@@ -1085,6 +1083,7 @@ SVGShape.ATTRS = {
 	 *
 	 * @config gradientNode
 	 * @type HTMLElement
+     * @private
 	 */
 	gradientNode: {
 		setter: function(val)
@@ -1097,14 +1096,8 @@ SVGShape.ATTRS = {
 		}
 	},
 
-	/**
-	 * Indicates whether to automatically refresh.
-	 *  
-	 * @config autoDraw
-	 * @type Boolean
-	 * @readOnly
-	 */
-	autoDraw: {
+	//Not used. Remove in future.
+    autoDraw: {
 		getter: function()
 		{
 			return this._graphic.autoDraw;

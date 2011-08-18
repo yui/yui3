@@ -14,160 +14,959 @@
         `extend` or `augment` your classes with `EventTarget` directly.
     </p>
 
-    <p>
+    <!--p>
         Bundled with `EventTarget` are <a
         href="http://en.wikipedia.org/wiki/Aspect_oriented_programming">Aspect
-        Oriented Programming</a> methods that allow you subscribe to the
-        execution of object methods in many ways as though they were events of
+        Oriented Programming</a> methods that allow you to subscribe to the
+        execution of object methods, and 
         their own.
-    </p>
+    </p-->
 </div>
 
-<h2>Dear Testers: The content below is unedited, copy/paste</h2>
-<p>No need to read on.  The content will be changing.</p>
+<!-- insert Events Evolved video here -->
 
-<h3 id="simplece">Simple Custom Events Using Y.on</h3>
-<p>You can send out notification of an interesting moment anywhere
-from your code simply by calling your yui instance's <code>fire</code> method.</p>
+{{>getting-started}}
 
+<h2>The Basics</h2>
+
+<p>
+    You can get started using custom events and the `EventTarget` API without
+    creating your own class.  The YUI instance (typically `Y`) is an
+    `EventTarget`, as is pretty much every other class in YUI.  We'll go over
+    the basics using `Y`, then move into creating your own `EventTarget`s.
+</p>
+
+<p>
+    If you've looked over the <a href="../event/index.html#the-basics">DOM
+    Event system docs</a>, this should look very familiar. That's because
+    `Node`s are also `EventTarget`s.
+</p>
+
+<h3>Subscribing to Events</h3>
 
 ```
-//Create a YUI instance:
-YUI().use('event-custom', function(Y) {
-    Y.fire('customapp:started', 1, 2, 3);
+// Custom events can have any name you want
+Y.on('anyOldNameYouWant', function () {
+    alert("Looky there!");
+});
+
+// Group subscriptions by passing an object or array to on()
+Y.on({
+    somethingImportant: updateCalendar,
+    birthday          : eatCake,
+    weekendEnd        : backToTheGrindstone
+});
+
+// Some events have prefixes
+Y.once("fuji:available", climb);
+
+// Custom events have distinct "after" moments
+Y.after("spa-category|pedicure", gelatoTime);
+```
+
+<p>
+    All `EventTarget`s host methods
+    <a href="{{apiDocs}}/classes/EventTarget.html#method_on">`on`</a>, 
+    <a href="{{apiDocs}}/classes/EventTarget.html#method_once">`once`</a>, 
+    <a href="{{apiDocs}}/classes/EventTarget.html#method_after">`after`</a>, and
+    <a href="{{apiDocs}}/classes/EventTarget.html#method_onceAfter">`onceAfter`</a>. 
+    Both `once` and `onceAfter` will automatically detach the subscription
+    after the callback is executed the first time.  All subscription methods
+    return a subscription object called an
+    <a href="{{apiDocs}}/classes/EventHandle.html">EventHandle</a>. The
+    distinction between `on` and `after` is discussed in the
+    <a href="#after">"after" phase</a> section below.
+</p>
+
+<h3 id="fire">Firing Events</h3>
+
+```
+// All subscribers to the myapp:ready event will be executed
+Y.fire('myapp:ready');
+
+// Pass along relevant data to the callbacks as arguments
+Y.fire('birthday', {
+    name: 'Walt Disney',
+    birthdate: new Date(1901, 11, 5)
+});
+```
+
+<p id="event-data-object">
+    Notify event subscribers by calling `fire( eventName )`, passing any
+    extra data about the event as additional arguments.  Though `fire`
+    accepts any number of arguments, it is preferable to send all event data
+    in an object passed as the second argument.  Doing so avoids locking your
+    code into a specific `fire` and callback signature.
+</p>
+
+```
+// Subscription callbacks receive fire() arguments
+Y.on('birthday', function (name, birthdate) {
+    var age = new Date().getFullYear() - birthdate.getFullYear();
+    alert('Happy ' + age + ', ' + name + '!');
+});
+
+// Possible, but not recommended
+Y.fire('birthday', 'A. A. Milne', new Date(1882, 0, 18));
+
+// Instead, try to always pass only one object with all data
+Y.on('birthday', function (e) {
+    var age = new Date().getFullYear() - e.birthdate.getFullYear();
+    alert('Happy ' + age + ', ' + e.name + '!');
+});
+
+Y.fire('birthday', {
+    name: '"Uncle" Walt Whitman',
+    birthdate: new Date(1819, 4, 31)
 });
 ```
 
 <p>
-    This will send out notifications to any function that previously subscribed
-    to that event:
+    In the world of DOM events, the `fire` step is something the browser is
+    responsible for.  A typical model involves the browser receiving keyboard
+    input from the user and firing `keydown`, `keyup`, and `keypress` events.
+    Custom events put your code in the position of dispatching events in
+    response to criteria that are relavant to your objects or application.
 </p>
 
+<h3>Callback arguments and event facades</h3>
+
 ```
-Y.on('customapp:started', function(arg1, arg2, arg3) {
-    Y.log('Custom App Started, now I can do a few things');
-    // the arguments 1, 2, and 3 were provided by fire()
+// Simple notification events don't send event objects, only fire() data
+Y.on('talkie', function (data) {
+    alert('(' + data.time + ') Walkie ' + data.message);
+    // data.preventDefault is not defined. data is just a plain object
 });
-```
 
-<h3>Defining a Custom Event on an Event Target</h3>
+Y.fire('talkie', {
+    message: 'roger, over.',
+    time: new Date()
+});
 
-<p>
-    A common way to create a Custom Event is to <code>augment</code> an object
-    with <code>EventTarget</code>, making it able to host Custom Events and be
-    a target for Custom Events that are bubbling from other hosts:
-</p>
+// Events configured to emitFacade will send an event object, merged with
+// fire() data
+Y.publish('bill:due', {
+    emitFacade: true,
+    defaultFn : payUp
+});
 
-```
-YUI().use('event-custom', function(Y) {
-
-    // define a constructor:
-    function Publisher() {
-        // create a custom event.  it is not necessary to explicitly publish an event
-        // unless you need to override the default configuration
-        this.publish("publisher:testEvent", {
-            // configuration options for this event
-        });
+Y.on('bill:due', function (e) {
+    // Event facades have standard properties and methods as well as properties
+    // from payload data passed to fire()
+    if (e.payee === 'Rich Uncle Sal') {
+        e.preventDefault(); // the `payUp` method won't be called (Sal can wait)
     }
-    // augment the Publisher with EventTarget:
-    Y.augment(Publisher, Y.EventTarget, null, null, {
-        // this argument is provided to EventTarget's constructor, and
-        // lets you set up default configuration values for every event
-        // published on this event target.
+});
+
+// Objects passed as the second argument to fire() for facade events will have
+// their properties merged onto the facade received by the callback.
+Y.fire('bill:due', {
+    payee: 'Great Aunt Myra',
+    amount: 20
+});
+```
+
+<p>
+    Custom event callbacks are <em>usually, but not always</em> passed an
+    <a href="{{apiDocs}}/classes/EventFacade.html">EventFacade</a> as their
+    first argument.  Custom events can be configured to send event facades or
+    only the data they were fired with.  <a href="#event-data-object">Always
+    passing event data in an object</a> as the second argument to `fire` allows
+    you to write all your callbacks to expect event data as a single first
+    argument, whether it's an `EventFacade` or just a plain object.  The
+    `emitFacade` and `defaultFn` configurations are detailed below, in
+    <a href="#publishing-events">Publishing Events</a>.
+</p>
+
+<h3>Detaching Event Subscriptions</h3>
+
+```
+// Subscription methods return a subscription handle...
+var subscription = Y.on('myapp:ready', initComponents);
+
+// ...with a detach method
+subscription.detach();
+
+// Or detach by signature
+Y.detach('myapp:ready', initComponents);
+
+// Or by subscription category
+Y.on('spa-category|pedicure', gelatoTime);
+
+// Detach subscriptions to all events in the spa-category subscription group
+Y.detach('spa-category|*');
+```
+
+<p>
+    The preferred method of detaching subscriptions is to use the
+    <a href="{{apiDocs}}/classes/EventHandle.html">EventHandle</a> that is
+    returned from the subscription methods.  Alternately you can use the
+    <a href="{{apiDocs}}/classes/EventTarget.html#method_detach">`detach` or
+    `detachAll` methods</a> which work as described in the
+    <a href="../event/index.html#detach-methods">Event user guide</a>.
+</p>
+
+<h3 id="extend-event-target">Extending EventTarget</h3>
+
+<p>Add the `EventTarget` APIs onto any class using `Y.augment()`.</p>
+
+```
+function MyClass() {
+    /* insert constructor logic here */
+}
+
+MyClass.prototype = {
+    add: function (item) {
+        // You can assume the APIs are available from your class instances
+        this.fire("addItem", { item: item });
+    },
+    ...
+};
+
+// Make MyClass an EventTarget
+Y.augment(MyClass, Y.EventTarget);
+
+var instance = new MyClass();
+instance.on('addItem', function (e) {
+    alert("Yay, I'm adding " + e.item);
+});
+
+instance.add('a new item'); // ==> "Yay, I'm adding a new item"
+```
+
+<p>
+    `Y.augment` works like a lazy `extend` or a mixin.  It adds the APIs to the
+    host class, but on the first call to any of the methods, it calls the
+    `EventTarget` constructor on the instance to make sure the necessary
+    internal objects are ready for use.  If your class extends another,
+    augmenting it won't interfere with that inheritance hierarchy.
+</p>
+
+<p>
+    `EventTarget`s can be set up with a number of default configurations for
+    the events they `fire`.  Pass the defaults as the fourth argument to
+    `Y.augment`.
+</p>
+
+```
+// Make all events fired from MyClass instances send an event facade
+Y.augment(MyClass, Y.EventTarget, true, null, {
+    emitFacade: true
+});
+```
+
+<h2>Publishing Events</h2>
+
+<p>
+    Some custom event <a href="#configs">configurations can be defaulted</a>
+    from class configuration, but others need to be specified on a per-event
+    basis.  Use the `publish` method to do this.
+</p>
+
+```
+// publish takes an event name and a configuration object
+Y.publish('somethingSpecial', {
+    emitFacade: true,
+    broadcast: 2,
+    defaultFn: clapClapHallelujah,
+    fireOnce: true
+});
+```
+
+<h3 id="facade">Event Facades</h3>
+
+<p>
+    The most common configuration for custom events is `emitFacade`.  This is
+    because with the event facades comes a lot of additional functionality,
+    such as <a href="#defaultFn">preventable default behaviors</a> and <a
+    href="#bubbling">bubbling</a>.
+</p>
+
+```
+function Recipe() {
+    // publishing events is typically done at instantiation
+    this.publish('add', {
+        emitFacade: true,
+        defaultFn: this._defAddFn
+    });
+}
+```
+
+<p>
+    Event facades mirror the event objects
+    <a href="../event/index.html#facade-properties">you're familiar with from
+    the DOM</a>.  They have properties like `e.type` and `e.target` and
+    the same methods, allowing you to call `e.preventDefault()` to disable
+    default behavior you've configured for the event or `e.stopPropagation()`
+    to stop the event from bubbling.
+</p>
+
+```
+var gruel = new Recipe();
+
+gruel.on('add', function (e) {
+    if (e.item === "brussel sprouts") {
+        // call e.preventDefault() just as you would for DOM events
+        e.preventDefault(); // brussel sprouts? eww!
+    }
+});
+```
+
+<p>
+    `emitFacade` is typically passed as a default configuration to `Y.augment`.
+    All other YUI infrastructure classes extend `EventTarget` and set 
+    `emitFacade` to `true` for you.
+</p>
+
+```
+Y.extend(MyClass, Y.Base, {
+    add: function (item) {
+        // This will fire with an event facade because Y.Base sets emitFacade to true
+        this.fire('addItem', { item: item });
+    },
+    ...
+});
+```
+
+<h3 id="once">`fireOnce` Events</h3>
+
+<p>
+    Important, typically system-level or lifecycle related events can be
+    configured as `fireOnce`.  These events mimic things like `window.onload`
+    or the `domready` event.
+</p>
+
+```
+Widget.prototype.render = function (where) {
+    ...
+
+    // Widget rendering only happens once
+    this.publish('render', {
+        defaultFn: this._defRenderFn,
+        fireOnce: true,
+        ...
     });
 
-    // if you accept the default configuration, augmenting EventTarget looks like this:
-    // Y.augment(Publisher, Y.EventTarget);
-});
-```
-
-<p>
-    The <code>publish</code> constructor creates a new Custom Event.  It takes
-    one required parameter and one optional parameter:
-</p>
-
-<ul>
-    <li>
-        <strong>type</strong> &mdash; The type of event. This string is
-        returned to listeners that receive this event so that they know what
-        event occurred.
-    </li>
-    <li>
-        <strong>options</strong> &mdash; The specific configuration options you
-        want to define for this Custom Event.  Most properties of the Custom
-        Event class can be set at this time.
-    </li>
-</ul>
-
-<h3>Subscribing (Listening) to a Custom Event</h3>
-
-<p>
-    To subscribe to a custom event, use its <code>on</code> method.  Following
-    the code above, you would subscribe to the <code>publisher:testEvent</code>
-    as follows:
-</p>
-
-```
-var publisher = new Publisher();
-publisher.on("publisher:testEvent", function(e) {
-    //event handler code
-});
-```
-
-<h3 id="customfire">Firing the Event</h3>
-
-<p>
-    To trigger or <code>fire</code> a custom event, simply call its
-    <code>fire</code> method:
-</p>
-
-```
-publisher.fire("publisher:testEvent");
-```
-
-<h3>Broadcasting events/Sharing info across YUI instances</h3>
-
-<p>
-    When publishing an event, you can specify a broadcast configuration -- this
-    makes it so any code can observe the event.  You limit the notification to
-    code within the YUI instance, or you can broadcast globally so any code on
-    the page can consume the event.  This is the primary way of sharing data
-    across different YUI sandboxes.
-</p>
-
-```
-var publisher = new Y.EventTarget();
-publisher.name = 'broadcast publisher';
-
-publisher.publish('instance_notification:foo', {
-    broadcast:  1,   // instance level notification
-    emitFacade: true // emit a facade so we get the event target
-});
-
-// this event is available by using the YUI instance to subscribe to it
-Y.on('instance_notification:foo', function(e) {
-    Y.log(e.target.name); // broadcast publisher
-});
-
-var publisher2 = new Y.EventTarget();
-publisher2.name = 'global publisher';
-
-publisher.publish('global_notification:foo', {
-    broadcast:  2,   // global notification
-    emitFacade: true // emit a facade so we get the event target
-});
-
-// external code, this new sandbox has access to the global event
-YUI().use('event-custom', function(Y2) {
-    // the global event can be listened to on a special event
-    // target referenced on your YUI instance called 'Global'
-    Y2.Global.on('global_notification:foo', function() {
-        Y.log(e.target.name); // global publisher
-    });
-
-    Y2.on('instance_notification:foo', function(e) {
-        // will NOT receive notification
-    });
+    this.fire('render', ...);
 };
 ```
 
+<p>
+    After `fireOnce` events have been `fire()`d, any subsequent (late)
+    subscriptions are immediately executed.  This can introduce race
+    conditions, however, since subscribers might expect to be called at a later
+    time, after the code that follows the subscription has also executed.  In
+    this case, you can configure `fireOnce` events with the `async` flag
+    and post-`fire` subscriptions will be executed in a `setTimeout`,
+    allowing all subsequent code to run before the late subscriber is notified.
+</p>
+
+```
+// BEFORE
+Y.publish('myapp:ready', {
+    fireOnce: true
+});
+
+// ... elsewhere in the code
+// If myapp:ready has been fired, setStuffUp executes right now, but might
+// expect MyApp.Stuff to be created already.  So, boom.
+Y.on('myapp:ready', setStuffUp);
+
+MyApp.Stuff = {};
+
+// AFTER
+Y.publish('myapp:ready', {
+    fireOnce: true,
+    async   : true
+});
+
+// ... elsewhere in the code
+// Even if myapp:ready has been fired, setStuffUp will execute later. So, no boom
+Y.on('myapp:ready', setStuffUp);
+
+MyApp.Stuff = {};
+```
+
+<h3 id="bubbling">Bubbling Events</h3>
+
+<p>
+    Events that are configured with `emitFacade` support bubbling to other
+    `EventTarget`s, allowing you to subscribe to them from other objects, much
+    like DOM event bubbling.  Add other `EventTarget`s to an instance's bubble
+    path with `addTarget`.
+</p>
+
+```
+
+function LeafNode() { ... }
+
+LeafNode.prototype.rename = function (newName) {
+    var oldName = this.name;
+    this.name   = newName;
+
+    this.fire("update", {
+        prevVal: oldName,
+        newVal : newName
+    });
+};
+
+function TreeNode() { ... }
+
+TreeNode.prototype.add = function (node) {
+    this._items.push(node);
+
+    // The new child node's events will bubble to this TreeNode
+    node.addTarget(this);
+};
+
+Y.augment(LeafNode, Y.EventTarget, true, null, { emitFacade: true });
+Y.augment(TreeNode, Y.EventTarget, true, null, { emitFacade: true });
+
+var rootNode = new TreeNode("ROOT"),
+    branchA  = new TreeNode("branchA"),
+    leaf1    = new LeafNode("leaf1");
+
+rootNode.add(branchA);                 //            ROOT
+rootNode.add( new LeafNode("leaf2") ); //           /    \
+                                       //      branchA   leaf2
+branchA.add(leaf1);                    //     /       \
+branchA.add( new LeafNode("leaf3") );  //  leaf1     leaf3
+
+// Subscribe to 'update' events from any leaf or tree node under root
+rootNode.on('update', function (e) {
+    alert(e.prevVal + " has been renamed " + e.newVal);
+});
+
+leaf1.rename("Flower!"); // ==> "leaf1 has been renamed Flower!"
+```
+
+
+<h3 id="prefix">Event Prefixes</h3>
+
+<p>
+    Individual events or all events fired by an `EventTarget` can be configured
+    to include a prefix to help filter subscriptions to common event names by
+    their origin. Prefixed event names look like `'prefix:eventName'`.
+</p>
+
+<p>
+    Taking the <a href="#bubbling">code snippet above</a>, configuring a default
+    `prefix` while augmenting the classes will allow for subscription to
+    only `LeafNode` updates.
+</p>
+```
+// All events fired by LeafNode instances will be prefixed with "leaf:"
+Y.augment(LeafNode, Y.EventTarget, true, null, {
+    emitFacade: true,
+    prefix: 'leaf'
+});
+// ...and for TreeNodes, "tree:"
+Y.augment(TreeNode, Y.EventTarget, true, null, {
+    emitFacade: true,
+    prefix: 'tree'
+});
+
+...
+
+// Listen specifically for changes from LeafNodes
+rootNode.on('leaf:update', function (e) {
+    alert(e.prevVal + " has been renamed " + e.newVal);
+});
+
+leaf1.rename("Flower!"); // ==> "leaf1 has been renamed Flower!"
+branchA.rename("Chewbacca!"); // (nothing)
+```
+
+<p>
+    Subscribing with prefixes is similar to
+    <a href="../event/delegation.html">using DOM event delegation</a>, though it
+    is done using `on()` rather than `delegate()`.
+</p>
+
+<p>
+    Optionally, you can omit the prefix when subscribing on the object that
+    fires the event.
+</p>
+
+```
+// prefix is optional when subscribing on the firing object...
+leaf1.on('leaf:update', worksJustLike);
+leaf1.on('update', function (e) {
+    e.type; // 'leaf:update' -- the event type will remain prefixed
+    ...
+});
+
+// ...but prefixes are required from other objects
+rootNode.on('update', function (e) {
+    // will not capture leaf:update events
+});
+```
+
+<p>
+    Subscribe to all events of a specific type, regardless of prefix, using the
+    wildcard prefix `*:eventName`.
+</p>
+
+```
+// Execute the callback if either the group object or one of its items fires an
+// `update` event
+rootNode.on('*:update', function (e) {
+    switch (e.type) {
+        case "leaf:update": ...
+        case "tree:update": ...
+    }
+});
+```
+
+<h3 id="defaultFn">Adding Default Behavior</h3>
+
+<p>
+    Custom events can be bound to behaviors just like DOM events (e.g. clicking
+    on a link causes navigation to a new page).  This is especially useful when
+    doing
+    <a href="http://en.wikipedia.org/wiki/Create,_read,_update_and_delete">CRUD</a>
+    operations that you want to expose to other objects in your system to
+    prevent, alter, or enhance.
+</p>
+
+<p>
+    Add a default behavior to an event by configuring the event's `defaultFn`.
+    By convention, default functions are named `_def(the name of the event)Fn`.
+</p>
+
+```
+function TreeNode(name) {
+    this.name   = name;
+    this._items = [];
+
+    // Event publishing is typically done during instantiation
+    this.publish('add', {
+        defaultFn: this._defAddFn
+    });
+}
+
+// Adding a child node is an interesting mutation operation. Move the mutation
+// logic from the method to a mutation event's default behavior
+TreeNode.prototype.add = function (node) {
+    this.fire('add', { newNode: node });
+};
+
+// Default functions receive the event facade like other subscribers
+TreeNode.prototype._defAddFn = function (e) {
+    this._items.push(e.newNode);
+
+    e.newNode.addTarget(this);
+};
+
+...
+
+branchA.add(leaf1); // without 'add' subscriptions, the behavior is the same
+```
+
+<p>
+    Unless configured with `preventable: false`, default behaviors can be
+    disabled with `e.preventDefault()` just like the DOM.  Unlike their DOM
+    counterparts, though, event subscribers <em>can change facade
+    properties</em> to alter the default behavior by way of effectively changing
+    its input.
+</p>
+
+```
+TreeNode.prototype.add = function (node) {
+    this.fire('add', {
+        newNode: node,
+        bubbleEvents: true
+    });
+};
+
+// Default functions receive the event facade like other subscribers
+TreeNode.prototype._defAddFn = function (e) {
+    this._items.push(e.newNode);
+
+    if (e.bubbleEvents) {
+        e.newNode.addTarget(this);
+    }
+};
+
+...
+
+// You can prevent default behavior from anywhere along the bubble path
+rootNode.on('tree:add', function (e) {
+    if (e.newNode.name === "Leafy") {
+        e.preventDefault();
+    } else if (e.newNode.name === "James Bond") {
+        e.bubbleEvents = false; // Shhhh
+    }
+});
+
+rootNode.add( new LeafNode("Leafy") ); // Node NOT added
+rootNode.add( new LeafNode("James Bond") ); // Node added without event bubbling
+```
+
+<h3>Broadcasting Events to Y or Between YUI instances</h3>
+
+<p>
+    Event broadcasting is very similar to bubbling, but with some important
+    distinctions:
+</p>
+
+<ol>
+    <li>
+        Broadcasting is specific to the YUI instance and the `Y.Global` shared
+        `EventTarget`
+    </li>
+    <li>Events don't need to be configured with `emitFacade` to broadcast</li>
+    <li>Broadcasting happens after the default behavior, which also means...</li>
+    <li>Event behavior can't be prevented from broadcast subscribers</li>
+    <li>Broadcast can be defaulted for all events for an `EventTarget`</li>
+</ol>
+
+<p>
+    Broadcasting is essentially a "fast track" bubbling configuration allowing
+    you to specify that events can be subscribed to from the YUI instance (with
+    `broadcast: 1`) or from `Y.Global` (with `broadcast: 2`).
+</p>
+
+```
+// All events from instances of MyClass can be subscribed from Y.on()
+Y.augment(MyClass, Y.EventTarget, true, null, {
+    emitFacade: true,
+    prefix: 'awesome',
+    broadcast: 1
+});
+
+// Respond to a 'thing' event from any instance of MyClass in the YUI sandbox
+Y.on('awesome:song', partyOn);
+
+var instance = new MyClass()
+
+instance.fire("song", { which: "Bohemian Rhapsody", whom: "Wayne" });
+```
+
+<p>
+    `Y.Global` is an `EventTarget` that is shared between all YUI instances,
+    allowing cross-sandbox communication.  To avoid feedback loops, it's best
+    to add an instance identity to outgoing events and only respond to
+    incoming events from other identities.
+</p>
+
+```
+YUI().use('node', 'event-custom', function (Y) {
+    var id = "Alpha Beta Base"; // probably Y.guid() would be safer
+
+    // Stamp outgoing messages with this instance's id
+    Y.on('*:message', function (e) {
+        e.originInstance = id;
+    });
+
+    Y.Global.on('*:message', function (e) {
+        if (e.origin !== id) {
+            alert("message received from " + e.origin + ": " + e.message);
+        }
+    });
+
+    function Character() {
+        this.publish('message', { broadcast: 2 });
+        ...
+    }
+
+    Y.augment(Character, Y.EventTarget, true, null, {
+        emitFacade: true,
+        prefix: ''
+    });
+    
+    var murdock = new Character();
+
+    Y.one('#status').on('click', function () {
+        murdock.fire("message", {
+            message: "You're coming in too fast!"
+        });
+    });
+});
+
+YUI().use('event-custom', function (OtherY) {
+    var id = "Lunar Shuttle";
+
+    // ...(the same setup as above)...
+
+    var striker = new Character()
+
+    Y.one('#status').on('click', function () {
+        striker.fire("message", {
+            message: "She's beginning to crack up"
+        });
+    });
+});
+```
+
+<!--h3>Monitoring Events</h3>
+
+<p>TODO</p-->
+
+
+<h3 id="configs">Available Event Configurations and Defaults</h3>
+
+<p>
+    Events can be configured with the following properties. Properties marked
+    as "Class Configurable" can be passed to the `EventTarget` constructor
+    configuration to default for all events.
+</p>
+
+<table>
+<thead>
+    <tr>
+        <th>Configuration</th>
+        <th>Description</th>
+        <th>Default</th>
+        <th>Class Configurable?</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>`prefix`</td>
+        <td>
+            `e.type` will always include the configured prefix.
+            <a href="#prefix">Details above</a>.
+        </td>
+        <td>(empty)</td>
+        <td>YES</td>
+    </tr>
+    <tr>
+        <td>`context`</td>
+        <td>
+            The default `this` object to execute callbacks with. Rarely set.
+        </td>
+        <td>The instance</td>
+        <td>YES</td>
+    </tr>
+    <tr>
+        <td>`emitFacade`</td>
+        <td>
+            If `true`, sends event facades to callbacks, allows bubbling and
+            default functions, etc.  This is commonly set to true for a class.
+            <a href="#facade">Details above</a>.
+        </td>
+        <td>`false`</td>
+        <td>YES</td>
+    </tr>
+    <tr>
+        <td>`fireOnce`</td>
+        <td>
+            If `true`, events will only fire once. Subscriptions made after
+            firing will be immediately executed.
+            <a href="#once">Details above</a>.
+        </td>
+        <td>`false`</td>
+        <td>YES</td>
+    </tr>
+    <!--tr>
+        <td>`monitored`</td>
+        <td>
+            Allows you to subscribe to the event lifecycle moments (publish,
+            fire, and subscribe) as separate events.
+            <a href="#monitor">Details above</a>.
+        </td>
+        <td>`false`</td>
+        <td>YES</td>
+    </tr-->
+    <tr>
+        <td>`broadcast`</td>
+        <td>
+            Notify the YUI instance (`broadcast: 1`) or the YUI instance
+            <em>and</em> `Y.Global` with the event.
+            <a href="#broadcast">Details above</a>.
+        </td>
+        <td>0 (instance only)</td>
+        <td>YES</td>
+    </tr>
+    <tr>
+        <td>`bubbles`</td>
+        <td>
+            For events configured to `emitFacade` allow bubbling events to
+            other `EventTarget`s.
+        </td>
+        <td>`true`</td>
+        <td>YES</td>
+    </tr>
+    <tr>
+        <td>`defaultFn`</td>
+        <td>
+            Behavior associated with the event. Usually this is preventable
+            (see `preventable` below).  <a href="#defaultFn">Details above</a>.
+        </td>
+        <td>(none)</td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>`preventable`</td>
+        <td>
+            If set to `false`, `e.preventDefault()` will not disable execution
+            of the event's `defaultFn`.
+        </td>
+        <td>`true`</td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>`preventedFn`</td>
+        <td>
+            <p>
+                Behavior associated with the event when `e.preventDefault()` is
+                called from a subscriber.  Use this function to reset partially
+                applied transactional state.
+            </p>
+            <p>Incompatible with `preventable: false`.</p>
+        </td>
+        <td>(none)</td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>`stoppedFn`</td>
+        <td>
+            Behavior associated with the event when `e.stopPropagation()` is
+            called from a subscriber.  Seldom used.
+        </td>
+        <td>(none)</td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>`async`</td>
+        <td>
+            Only applicable to events also configured with `fireOnce: true`.
+            If `true`, new subscriptions to this event after it has already 
+            been fired will be queued to execute in a `setTimeout` instead of
+            immediately (synchronously).
+        </td>
+        <td>false</td>
+        <td>&nbsp;</td>
+    </tr>
+</tbody>
+</table>
+
+<h3 id="after">The "after" phase</h3>
+
+<p>
+    Unlike DOM events, custom events also expose an "after" phase that
+    corresponds to the time immediately after an event's <a
+    href="#defaultFn">default behavior</a> executes.  Subscribe to an event's
+    "after" phase with the `after(...)` method. The signature is the same as
+    `on(...)`.
+</p>
+
+```
+rootNode.after('tree:add', calc.updateTotals, calc);
+```
+
+<p>
+    The primary benefit of using `after()` subscriptions over `on()`
+    subscriptions is that if any `on()` subscribers call `e.preventDefault()`,
+    neither the event's configured `defaultFn` <em>nor the `after()`
+    subscribers</em> will be executed.  If an `after()` subscription is
+    executed, you know that the `defaultFn` did as well.
+</p>
+
+<p>
+    <strong>Use `after()` to subscribe to events with a default behavior when
+    you want to react to the event with a side effect.</strong>
+</p>
+
+<p>
+    <strong>Use `on()` to subscribe to events if you need to prevent or alter
+    the default behavior or if they don't have default behavior.</strong>
+</p>
+
+<h2>Event Lifecycle</h2>
+
+<p>The order of operations when firing an event is as follows:</p>
+
+<h3 id="simple-event-lifecycle">Simple Events (no facade)</h3>
+
+<ol>
+    <li>`on()` subscribers are executed</li>
+    <li>`after()` subscribers are executed</li>
+    <li>`Y.on()` broadcast subscribers are executed.</li>
+    <li>`Y.after()` broadcast subscribers are executed.</li>
+    <li>`Y.Global.on()` broadcast subscribers are executed.</li>
+    <li>`Y.Global.after()` broadcast subscribers are executed.</li>
+</ol>
+
+<p>
+    If an `on()` or `after()` subscriber returns `false`, no more subscribers
+    will be notified.
+</p>
+
+<h3 id="complex-event-lifecycle">Complex Events (with facade)</h3>
+
+<ol>
+    <li>`on()` subscribers are executed</li>
+    <li>
+        `on()` subscribers for each bubble target and their respective targets
+        are executed until all targets' bubble paths are walked or a subscriber
+        stops the propagation of the event.
+    </li>
+    <li>
+        If the event was prevented, any configured `preventedFn` will execute.
+    </li>
+    <li>If not prevented, any configured `defaultFn` will execute.</li>
+    <li>If bubbling was stopped, any configured `stoppedFn` will execute.</li>
+    <li>`Y.on()` broadcast subscribers are executed.</li>
+    <li>`Y.after()` broadcast subscribers are executed.</li>
+    <li>`Y.Global.on()` broadcast subscribers are executed.</li>
+    <li>`Y.Global.after()` broadcast subscribers are executed.</li>
+    <li>`after()` subscribers are executed.</li>
+    <li>
+        `after()` subscribers for each bubble target and their respective
+        targets are executed.
+    </li>
+</ol>
+
+<p>
+    The flow can ben interrupted by `on()` subscribers doing any of these
+    things:
+</p>
+
+<dl>
+    <dt>`e.preventDefault()`</dt>
+        <dd>
+            <ol>
+                <li>The `defaultFn` will not be executed</li>
+                <li>The `preventedFn` will execute</li>
+                <li>No `after()` subscriptions will be executed</li>
+            </ol>
+        </dd>
+    <dt>`e.stopPropagation()`</dt>
+        <dd>
+            <ol>
+                <li>The remainder of subscribers at this `EventTarget` <strong>WILL</strong> execute</li>
+                <li>No bubble targets of this `EventTarget` will be notified</li>
+                <li>The `stoppedFn` will execute</li>
+                <li>The `defaultFn` and `after()` subscribers will execute</li>
+            </ol>
+        </dd>
+    <dt>`e.stopImmediatePropagation()`</dt>
+        <dd>
+            Same as `e.stopPropagation()` except no more subscribers at this
+            `EventTarget` will execute.
+        </dd>
+    <dt>`e.halt()`</dt>
+        <dd>
+            Same as `e.preventDefault()` plus `e.stopPropagation()`.
+        </dd>
+    <dt>`e.halt(true)`</dt>
+        <dd>
+            Same as `e.preventDefault()` plus `e.stopImmediatePropagation()`.
+        </dd>
+    <dt>`return false`</dt>
+        <dd>Same as `e.halt(true)`.  Not recommended.  Use the API methods.</dd>
+</dl>
+
+<!--h2>Subscribing to Object Methods with `Y.Do.*`</h2>
+
+<h3>Before and After</h3>
+
+<h3>Altering the Wrapped Method Behavior</h3>
+
+<h3>`EventTarget` API methods</h3>
+
+<p>
+    TODO
+</p-->

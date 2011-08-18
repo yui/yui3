@@ -1,6 +1,7 @@
 /**
  * Algorithmic strategy for rendering a left axis.
  *
+ * @module charts
  * @class LeftAxisLayout
  * @constructor
  */

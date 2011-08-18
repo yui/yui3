@@ -1,10 +1,11 @@
 YUI.add('io-upload-iframe', function(Y) {
 
    /**
-    * Extends the IO base class to enable file uploads, with HTML forms,
+    * Extends the IO  to enable file uploads, with HTML forms 
     * using an iframe as the transport medium.
-    * @module io
+    * @module io-base
     * @submodule io-upload-iframe
+	* @for IO
     */
 
     var w = Y.config.win,
