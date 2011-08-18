@@ -130,7 +130,7 @@
 					the `set` method.  For example, to apply the 
 					role of 
 					<a href="http://www.w3.org/TR/wai-aria/#toolbar">`toolbar`</a>
-					to a `&#60;div&#62;` with an id of "toolbar":
+					to a `<div>` with an id of "toolbar":
 				</p>
 ```
     var node = Y.one('#toolbar').set('role', 'toolbar');
@@ -155,10 +155,7 @@
 					one line of code:
 				</p>
 ```
-var node = Y.one('#rootmenu').set('role', 'menubar'),
-    nodes = node.all('.menu');
-    
-nodes.setAttrs({ role: 'menu', 'aria-hidden': true });
+Y.one('#root').set('role', 'menubar').all('.menu').setAttrs({ role: 'menu', 'aria-hidden': true });
 ```
 
             <h2 id="node-migration">Migration Table</h2>
@@ -167,178 +164,383 @@ nodes.setAttrs({ role: 'menu', 'aria-hidden': true });
             <table class="yui-table">
                 <thead>
                     <tr>
-                        <th>2.x `(via YAHOO.util.Dom)`</th>
+                        <th>2.x `YAHOO.util.???`</th>
                         <th>3.0</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>addClass</td>
-                        <td>myNode.addClass</td>
+                        <td>
+                            ```
+                            var el = Dom.get('elementId');
+                            ```
+                        </td>
+                        <td>
+                            ```
+                            var node = Y.one('#elementId');
+                            ```
+                        </td>
                     </tr>
                     <tr>
-                        <td>batch</td>
-                        <td>NodeList[methodName], NodeList.each, or Y.each</td>
+                        <td>
+                            ```
+                            var els = Dom.getElementsBy(someFilterFunction);
+                            ```
+                        </td>
+                        <td>
+                            ```
+                            var nodelist = myNode.all('selectorString');
+                            ```
+                        </td>
                     </tr>
                     <tr>
-                        <td>generateId</td>
-                        <td>Y.guid</td>
+                        <td>
+                            ```
+                            var els = Dom.getElementsByClassName('highlight');
+                            ```
+                        </td>
+                        <td>
+                            ```
+                            var nodelist = myNode.all('.highlight');
+                            ```
+                        </td>
                     </tr>
                     <tr>
-                        <td>get</td>
-                        <td>Y.one <strong>Note</strong> strings are now treated as selectors (e.g. "Y.one('#foo')" vs. "YAHOO.util.Dom.get('foo')")</td>
+                        <td>
+                            ```
+                            var elementArray = Dom.getChildren(el);
+                            ```
+                        </td>
+                        <td>
+                            ```
+                            var nodelist = myNode.get('children');
+                            ```
+                        </td>
                     </tr>
                     <tr>
-                        <td>getAncestorBy</td>
-                        <td>myNode.ancestor</td>
+                        <td>
+                            ```
+                            var els1 = Dom.getChildrenBy(someFilterFunction);
+                            ```
+                        </td>
+                        <td>
+                            ```
+                            var nodelist = myNode.all('selectorString');
+                            ```
+                        </td>
                     </tr>
                     <tr>
-                        <td>getAncestorByClassName</td>
-                        <td>myNode.ancestor</td>
+                        <td>
+                            ```
+                            var el = Dom.getFirstChild(parentEl);
+                            ```
+                        </td>
+                        <td>
+                            ```
+                            var node = myNode.one('*');
+                            ```
+                        </td>
                     </tr>
                     <tr>
-                        <td>getAncestorByTagName</td>
-                        <td>myNode.ancestor</td>
+                        <td>
+                            ```
+                            var el = Dom.getFirstChildBy(someFilterFunction);
+                            ```
+                        </td>
+                        <td>
+                            ```
+                            var node = myNode.one('> selectorString');
+                            ```
+                        </td>
                     </tr>
                     <tr>
-                        <td>getChildren</td>
-                        <td>myNode.get('children')</td>
+                        <td>
+                            ```
+                            var el1 = Dom.getLastChild(el);
+                            var el2 = Dom.getLastChildBy(someFilterFunction);
+                            ```
+                        </td>
+                        <td>
+                            ```
+                            var node1 = myNode.get('children').slice(-1).item(0);
+                            // OR target the node with a selector
+                            var node2 = myNode.one('> selector:last-of-type');
+                            ```
+                        </td>
                     </tr>
                     <tr>
-                        <td>getChildrenBy</td>
-                        <td>myNode.all</td>
+                        <td>
+                            ```
+                            var el1 = Dom.getNextSibling(el);
+                            var el2 = Dom.getNextSiblingBy(someFilterFunction);
+                            var el3 = Dom.getPreviousSibling(el);
+                            var el4 = Dom.getPreviousSiblingBy(someFilterFunction);
+                            ```
+                        </td>
+                        <td>
+                            ```
+                            var node1 = myNode.next();
+                            var node2 = myNode.next('selectorString');
+                            var node3 = myNode.previous();
+                            var node4 = myNode.previous('selectorString');
+                            ```
+                        </td>
                     </tr>
                     <tr>
-                        <td>getClientRegion</td>
-                        <td>myNode.get('viewportRegion')</td>
+                        <td>
+                            ```
+                            var el1 = Dom.getAncestorBy(someFilterFunction);
+                            var el2 = Dom.getAncestorByClassName('highlight');
+                            var el3 = Dom.getAncestorByTagName('pre');
+                            ```
+                        </td>
+                        <td>
+                            ```
+                            var node1 = myNode.ancestor(someFilterFunction);
+                            var node2 = myNode.ancestor('.highlight');
+                            var node3 = myNode.ancestor('pre');
+                            ```
+                        </td>
                     </tr>
                     <tr>
-                        <td>getDocumentHeight</td>
-                        <td>myNode.get('docHeight')</td>
+                        <td>
+                            ```
+                            Dom.isAncestor(ancestorEl, el);
+                            ```
+                        </td>
+                        <td>
+                            ```
+                            ancestorNode.contains(myNode);
+                            ```
+                        </td>
                     </tr>
                     <tr>
-                        <td>getDocumentScrollLeft</td>
-                        <td>myNode.get('docScrollX')</td>
+                        <td>
+                            ```
+                            Dom.insertAfter(el, afterEl);
+                            Dom.insertBefore(el, beforeNode);
+                            ```
+                        </td>
+                        <td>
+                            ```
+                            afterNode.insert(myNode, 'after');
+                            beforeNode.insert(myNode, 'before');
+                            ```
+                        </td>
                     </tr>
                     <tr>
-                        <td>getDocumentScrollTop</td>
-                        <td>myNode.get('docScrollY')</td>
+                        <td>
+                            ```
+                            Dom.addClass('highlight');
+                            ```
+                        </td>
+                        <td>
+                            ```
+                            myNode.addClass('highlight');
+                            ```
+                        </td>
                     </tr>
                     <tr>
-                        <td>getDocumentWidth</td>
-                        <td>myNode.get('docWidth')</td>
+                        <td>
+                            ```
+                            Dom.removeClass(el, 'highlight');
+                            ```
+                        </td>
+                        <td>
+                            ```
+                            myNode.removeClass('highlight');
+                            ```
+                        </td>
                     </tr>
                     <tr>
-                        <td>getElementsBy</td>
-                        <td>myNode.all</td>
+                        <td>
+                            ```
+                            Dom.replaceClass(el, 'highlight', 'selected');
+                            ```
+                        </td>
+                        <td>
+                            ```
+                            myNode.replaceClass('highlight', 'selected');
+                            ```
+                        </td>
                     </tr>
                     <tr>
-                        <td>getElementsByClassName</td>
-                        <td>myNode.all</td>
+                        <td>
+                            ```
+                            Dom.hasClass(el, 'highlight');
+                            ```
+                        </td>
+                        <td>
+                            ```
+                            myNode.hasClass('highlight');
+                            ```
+                        </td>
                     </tr>
                     <tr>
-                        <td>getFirstChild</td>
-                        <td>myNode.one</td>
+                        <td>
+                            ```
+                            var val = Dom.getStyle(el, 'backgroundColor');
+                            ```
+                        </td>
+                        <td>
+                            ```
+                            var val = myNode.getStyle('backgroundColor');
+                            ```
+                        </td>
                     </tr>
                     <tr>
-                        <td>getFirstChildBy</td>
-                        <td>myNode.one</td>
+                        <td>
+                            ```
+                            Dom.setStyle(el, 'backgroundColor', '#C0FFEE');
+                            ```
+                        </td>
+                        <td>
+                            ```
+                            myNode.setStyle('backgroundColor', '#C0FFEE');
+                            ```
+                        </td>
                     </tr>
                     <tr>
-                        <td>getLastChild</td>
-                        <td>myNode.one</td>
+                        <td>
+                            ```
+                            var xy = Dom.getXY(el);
+                            var x  = Dom.getX(el);
+                            var y  = Dom.getY(el);
+                            ```
+                        </td>
+                        <td>
+                            ```
+                            var xy = myNode.getXY();
+                            var x  = myNode.getX();
+                            var y  = myNode.getY();
+                            ```
+                        </td>
                     </tr>
                     <tr>
-                        <td>getLastChildBy</td>
-                        <td>myNode.one</td>
+                        <td>
+                            ```
+                            Dom.setXY(el, [ 500, 300 ]);
+                            Dom.setX(el, 500);
+                            Dom.setY(el, 300);
+                            ```
+                        </td>
+                        <td>
+                            ```
+                            myNode.setXY([ 500, 300 ]);
+                            myNode.setX(500);
+                            myNode.setY(300);
+                            ```
+                        </td>
                     </tr>
                     <tr>
-                        <td>getNextSibling</td>
-                        <td>myNode.next</td>
+                        <td>
+                            ```
+                            Dom.inDocument(el);
+                            ```
+                        </td>
+                        <td>
+                            ```
+                            myNode.inDoc();
+                            ```
+                        </td>
                     </tr>
                     <tr>
-                        <td>getNextSiblingBy</td>
-                        <td>myNode.next</td>
+                        <td>
+                            ```
+                            Dom.batch(elementArray, Dom.addClass, 'highlight');
+                            ```
+                        </td>
+                        <td>
+                            ```
+                            myNodelist.addClass('highlight');
+                            // OR
+                            myNodelist.each(function (node) {
+                                node.addClass('highlight')
+                            });
+                            // OR
+                            Y.Array.each(myNodelist, function (node) {
+                                node.addClass('highlight');
+                            });
+                            ```
+                        </td>
                     </tr>
                     <tr>
-                        <td>getPreviousSibling</td>
-                        <td>myNode.previous</td>
+                        <td>
+                            ```
+                            Dom.generateId();
+                            ```
+                        </td>
+                        <td>
+                            ```
+                            Y.guid();
+                            ```
+                        </td>
                     </tr>
                     <tr>
-                        <td>getPreviousSiblingBy</td>
-                        <td>myNode.previous</td>
+                        <td>
+                            ```
+                            var height = Dom.getViewportHeight();
+                            var width  = Dom.getViewportWidth();
+                            ```
+                        </td>
+                        <td>
+                            ```
+                            var height = myNode.get('winHeight');
+                            var width  = myNode.get('winWidth');
+                            ```
+                        </td>
                     </tr>
                     <tr>
-                        <td>getRegion</td>
-                        <td>myNode.get('region')</td>
+                        <td>
+                            ```
+                            var height = Dom.getDocumentHeight();
+                            var width  = Dom.getDocumentWidth();
+                            ```
+                        </td>
+                        <td>
+                            ```
+                            var height = myNode.get('docHeight');
+                            var width  = myNode.get('docWidth');
+                            ```
+                        </td>
                     </tr>
                     <tr>
-                        <td>getStyle</td>
-                        <td>myNode.getStyle</td>
+                        <td>
+                            ```
+                            var region = Dom.getClientRegion();
+                            ```
+                        </td>
+                        <td>
+                            ```
+                            var region = myNode.get('viewportRegion');
+                            ```
+                        </td>
                     </tr>
                     <tr>
-                        <td>getViewportHeight</td>
-                        <td>myNode.get('winHeight')</td>
+                        <td>
+                            ```
+                            var region = Dom.getRegion(el);
+                            ```
+                        </td>
+                        <td>
+                            ```
+                            var region = myNode.get('region');
+                            ```
+                        </td>
                     </tr>
                     <tr>
-                        <td>getViewportWidth</td>
-                        <td>myNode.get('winWidth')</td>
-                    </tr>
-                    <tr>
-                        <td>getX</td>
-                        <td>myNode.getXY</td>
-                    </tr>
-                    <tr>
-                        <td>getY</td>
-                        <td>myNode.getXY</td>
-                    </tr>
-                    <tr>
-                        <td>getXY</td>
-                        <td>myNode.getXY</td>
-                    </tr>
-                    <tr>
-                        <td>hasClass</td>
-                        <td>myNode.hasClass</td>
-                    </tr>
-                    <tr>
-                        <td>inDocument</td>
-                        <td>myNode.inDoc</td>
-                    </tr>
-                    <tr>
-                        <td>insertAfter</td>
-                        <td>myNode.insert</td>
-                    </tr>
-                    <tr>
-                        <td>insertBefore</td>
-                        <td>myNode.insert</td>
-                    </tr>
-                    <tr>
-                        <td>isAncestor</td>
-                        <td>myNode.contains (<strong>Note</strong> myNode.contains(myNode) === true)</td>
-                    </tr>
-                    <tr>
-                        <td>removeClass</td>
-                        <td>myNode.removeClass</td>
-                    </tr>
-                    <tr>
-                        <td>replaceClass</td>
-                        <td>myNode.replaceClass</td>
-                    </tr>
-                    <tr>
-                        <td>setStyle</td>
-                        <td>myNode.setStyle</td>
-                    </tr>
-                    <tr>
-                        <td>setX</td>
-                        <td>myNode.setXY</td>
-                    </tr>
-                    <tr>
-                        <td>setY</td>
-                        <td>myNode.setXY</td>
-                    </tr>
-                    <tr>
-                        <td>setXY</td>
-                        <td>myNode.setXY</td>
+                        <td>
+                            ```
+                            var left = Dom.getDocumentScrollLeft(),
+                                top  = Dom.getDocumentScrollTop();
+                            ```
+                        </td>
+                        <td>
+                            ```
+                            var left = myNode.get('docScrollX'),
+                                top  = myNode.get('docScrollY');
+                            ```
+                        </td>
                     </tr>
                 </tbody>
             </table>
