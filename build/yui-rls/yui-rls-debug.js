@@ -57,9 +57,10 @@ properties.
                 YUI.GlobalConfig is a master configuration that might span
                 multiple contexts in a non-browser environment.  It is applied
                 first to all instances in all contexts.
-                @property YUI.GlobalConfig
+                @property GlobalConfig
                 @type {Object}
                 @global
+                @static
                 @example
 
                     
@@ -2081,6 +2082,7 @@ L.now = Date.now || function () {
  * core utilities for the library.
  *
  * @module yui
+ * @main yui
  * @submodule yui-base
  */
 
@@ -3037,11 +3039,14 @@ O.isEmpty = function (obj) {
  * @class UA
  * @static
  */
+
 /**
-* Static method for parsing the UA string. Defaults to assigning it's value to Y.UA
+* Static method on `YUI.Env` for parsing a UA string.  Called at instantiation
+* to populate `Y.UA`.
+*
 * @static
-* @method Env.parseUA
-* @param {String} subUA Parse this UA string instead of navigator.userAgent
+* @method parseUA
+* @param {String} [subUA=navigator.userAgent] UA string to parse
 * @returns {Object} The Y.UA object
 */
 YUI.Env.parseUA = function(subUA) {

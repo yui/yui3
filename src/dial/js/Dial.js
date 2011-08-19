@@ -35,7 +35,7 @@
     /**
      * The identity of the widget.
      *
-     * @property Dial.NAME
+     * @property NAME
      * @type String
      * @default 'dial'
      * @readOnly
@@ -48,7 +48,7 @@
      * Static property used to define the default attribute configuration of
      * the Widget.
      *
-     * @property Dial.ATTRS
+     * @property ATTRS
      * @type {Object}
      * @protected
      * @static
@@ -240,7 +240,7 @@
     /**
 	 * array of static constants used to identify the classname applied to the Dial DOM objects 
 	 *
-     * @property Dial.CSS_CLASSES
+     * @property CSS_CLASSES
      * @type {Array}
 	 * @private
      * @static
@@ -271,7 +271,7 @@
     /**
      * template that will contain the Dial's label.
      *
-     * @property Dial.LABEL_TEMPLATE
+     * @property LABEL_TEMPLATE
      * @type {HTML}
      * @default &lt;div id="' + labelId + '" class="[...-label]">&lt;span class="[...-label-string]">{label}&lt;/span>&lt;span class="[...-value-string]">&lt;/span>&lt;/div>
 	 * @protected
@@ -282,7 +282,7 @@
 		/**
 		 * template that will contain the Dial's background ring.
 		 *
-		 * @property Dial.RING_TEMPLATE
+		 * @property RING_TEMPLATE
 		 * @type {HTML}
 		 * @default &lt;div class="[...-ring]">&lt;div class="[...-northMark]">&lt;/div>&lt;/div>
 		 * @protected
@@ -292,7 +292,7 @@
 		/**
 		 * template that will contain the Dial's current angle marker.
 		 *
-		 * @property Dial.MARKER_TEMPLATE
+		 * @property MARKER_TEMPLATE
 		 * @type {HTML}
 		 * @default &lt;div class="[...-marker] [...-marker-hidden]">&lt;div class="[...-markerUser]">&lt;/div>&lt;/div>
 		 * @protected
@@ -302,7 +302,7 @@
 		/**
 		 * template that will contain the Dial's center button.
 		 *
-		 * @property Dial.CENTER_BUTTON_TEMPLATE
+		 * @property CENTER_BUTTON_TEMPLATE
 		 * @type {HTML}
 		 * @default &lt;div class="[...-centerButton]">&lt;div class="[...-resetString]">' + Y.substitute('{resetStr}', Dial.ATTRS.strings.value) + '&lt;/div>&lt;/div>
 		 * @protected
@@ -312,7 +312,7 @@
 		/**
 		 * template that will contain the Dial's handle.
 		 *
-		 * @property Dial.HANDLE_TEMPLATE
+		 * @property HANDLE_TEMPLATE
 		 * @type {HTML}
 		 * @default &lt;div class="[...-handle]">&lt;div class="[...-handleUser]" aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0">&lt;/div>&lt;/div>';// title="{tooltipHandle}"
 		 * @protected

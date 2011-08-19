@@ -57,9 +57,10 @@ properties.
                 YUI.GlobalConfig is a master configuration that might span
                 multiple contexts in a non-browser environment.  It is applied
                 first to all instances in all contexts.
-                @property YUI.GlobalConfig
+                @property GlobalConfig
                 @type {Object}
                 @global
+                @static
                 @example
 
                     

@@ -78,7 +78,7 @@ var WIDGET         = 'widget',
     * Static property used to define the default attribute 
     * configuration introduced by WidgetModality.
     *
-    * @property WidgetModality.ATTRS
+    * @property ATTRS
     * @static
     * @type Object
     */

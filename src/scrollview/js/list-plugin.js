@@ -28,7 +28,7 @@ function ListPlugin() {
 /**
  * The identity of the plugin
  *
- * @property ListPlugin.NAME
+ * @property NAME
  * @type String
  * @default 'pluginList'
  * @static
@@ -38,7 +38,7 @@ ListPlugin.NAME = 'pluginList';
 /**
  * The namespace on which the plugin will reside.
  *
- * @property ListPlugin.NS
+ * @property NS
  * @type String
  * @default 'list'
  * @static
@@ -46,9 +46,9 @@ ListPlugin.NAME = 'pluginList';
 ListPlugin.NS = 'list';
 
 /**
- * HTML template for the scrollbar
+ * HTML template for the scrollbar.
  *
- * @property ScrollViewScrollbars.SCROLLBAR_TEMPLATE
+ * @property SCROLLBAR_TEMPLATE
  * @type Object
  * @static
  */
@@ -57,7 +57,7 @@ ListPlugin.NS = 'list';
 /**
  * The default attribute configuration for the plugin
  *
- * @property ScrollViewScrollbars.ATTRS
+ * @property ATTRS
  * @type Object
  * @static
  */
@@ -66,7 +66,7 @@ ListPlugin.ATTRS = {
     /**
      * Specifies whether the list elements (the immediate <ul>'s and the immediate <li>'s inside those <ul>'s) have class names attached to them or not
      *
-     * @property ScrollView.list.isAttached
+     * @property isAttached
      * @type boolean
      * @static
      */

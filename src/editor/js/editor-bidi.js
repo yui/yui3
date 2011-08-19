@@ -256,8 +256,11 @@
 
     /**
      * bidi execCommand override for setting the text direction of a node.
+     * This property is added to the `Y.Plugin.ExecCommands.COMMANDS`
+     * collection.
+     *
      * @for Plugin.ExecCommand
-     * @property COMMANDS.bidi
+     * @property bidi
      */
     //TODO -- This should not add this command unless the plugin is added to the instance..
     Y.Plugin.ExecCommand.COMMANDS.bidi = function(cmd, direction) {
