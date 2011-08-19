@@ -370,7 +370,6 @@ YUI.add('dial', function(Y) {
 
             // constants
             this._originalValue = this.get('value');
-//            this._dd1 = null; // expose a global for the dd of the handle so we can delegate to DD's natural behavior the mousedown on the ring
             this._minValue = this.get('min'); // saves doing a .get many times, but we need to remember to update this if/when we allow changing min or max after instantiation
             this._maxValue = this.get('max');
             this._stepsPerRevolution = this.get('stepsPerRevolution');
@@ -550,7 +549,7 @@ YUI.add('dial', function(Y) {
             ang;
             
             // the event was emitted from mousedown on ring, so center should be the XY of mousedown.
-            handleCenterX = e.pageX;
+            var handleCenterX = e.pageX,
             handleCenterY = e.pageY;
             ang = this._getAngleFromHandleCenter(handleCenterX, handleCenterY);
              
