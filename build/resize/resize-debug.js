@@ -2,8 +2,8 @@ YUI.add('resize-base', function(Y) {
 
 /**
  * The Resize Utility allows you to make an HTML element resizable.
- *
  * @module resize
+ * @main resize
  */
 
 var Lang = Y.Lang,
@@ -129,40 +129,39 @@ var Lang = Y.Lang,
 	CSS_RESIZE_WRAPPER = getCN(RESIZE, WRAPPER);
 
 /**
- * A base class for Resize, providing:
- * <ul>
- *    <li>Basic Lifecycle (initializer, renderUI, bindUI, syncUI, destructor)</li>
- *    <li>Applies drag handles to an element to make it resizable</li>
- *    <li>Here is the list of valid resize handles:
- *        <code>[ 't', 'tr', 'r', 'br', 'b', 'bl', 'l', 'tl' ]</code>. You can
- *        read this list as top, top-right, right, bottom-right, bottom,
- *        bottom-left, left, top-left.</li>
- *    <li>The drag handles are inserted into the element and positioned
- *        absolute. Some elements, such as a textarea or image, don't support
- *        children. To overcome that, set wrap:true in your config and the
- *        element willbe wrapped for you automatically.</li>
- * </ul>
- *
- * Quick Example:
- *
- * <pre><code>var instance = new Y.Resize({
- *  node: '#resize1',
- *  preserveRatio: true,
- *  wrap: true,
- *  maxHeight: 170,
- *  maxWidth: 400,
- *  handles: 't, tr, r, br, b, bl, l, tl'
- * });
- * </code></pre>
- *
- * Check the list of <a href="Resize.html#configattributes">Configuration Attributes</a> available for
- * Resize.
- *
- * @class Resize
- * @param config {Object} Object literal specifying widget configuration properties.
- * @constructor
- * @extends Base
- */
+A base class for Resize, providing:
+
+   * Basic Lifecycle (initializer, renderUI, bindUI, syncUI, destructor)
+   * Applies drag handles to an element to make it resizable
+   * Here is the list of valid resize handles:
+       `[ 't', 'tr', 'r', 'br', 'b', 'bl', 'l', 'tl' ]`. You can
+       read this list as top, top-right, right, bottom-right, bottom,
+       bottom-left, left, top-left.
+   * The drag handles are inserted into the element and positioned
+       absolute. Some elements, such as a textarea or image, don't support
+       children. To overcome that, set wrap:true in your config and the
+       element willbe wrapped for you automatically.
+
+Quick Example:
+
+    var instance = new Y.Resize({
+        node: '#resize1',
+        preserveRatio: true,
+        wrap: true,
+        maxHeight: 170,
+        maxWidth: 400,
+        handles: 't, tr, r, br, b, bl, l, tl'
+    });
+
+Check the list of <a href="Resize.html#configattributes">Configuration Attributes</a> available for
+Resize.
+
+@class Resize
+@param config {Object} Object literal specifying widget configuration properties.
+@constructor
+@extends Base
+*/
+
 function Resize() {
     Resize.superclass.constructor.apply(this, arguments);
 }
@@ -171,7 +170,7 @@ Y.mix(Resize, {
 	/**
 	 * Static property provides a string to identify the class.
 	 *
-	 * @property Resize.NAME
+	 * @property NAME
 	 * @type String
 	 * @static
 	 */
@@ -181,7 +180,7 @@ Y.mix(Resize, {
 	 * Static property used to define the default attribute
 	 * configuration for the Resize.
 	 *
-	 * @property Resize.ATTRS
+	 * @property ATTRS
 	 * @type Object
 	 * @static
 	 */
@@ -1650,6 +1649,26 @@ var ACTIVE_HANDLE_NODE = 'activeHandleNode',
 
 	CSS_RESIZE_PROXY = getCN(RESIZE, PROXY);
 
+
+/**
+Adds a `proxyNode` attribute and resizes it instead of the actual node. __very similar to DDProxy__
+
+    var resize = new Y.Resize({
+        //Selector of the node to resize
+        node: '#demo'
+    });
+    resize.plug(Y.Plugin.ResizeProxy);
+    
+
+@class ResizeProxy
+@module resize
+@submodule resize-proxy
+@constructor
+@extends Plugin.Base
+@namespace Plugin
+*/
+
+
 function ResizeProxy() {
 	ResizeProxy.superclass.constructor.apply(this, arguments);
 }
@@ -1665,7 +1684,7 @@ Y.mix(ResizeProxy, {
          *
          * @attribute proxyNode
          * @default Generated using an internal HTML markup
-         * @type String | Node
+         * @type String|Node
          */
 		proxyNode: {
 			setter: Y.one,
@@ -1823,6 +1842,17 @@ var Lang = Y.Lang,
 	VIEW = 'view',
 	VIEWPORT_REGION = 'viewportRegion';
 
+/**
+A Resize plugin that will attempt to constrain the resize node to the boundaries.
+@module resize
+@submodule resize-contrain
+@class ResizeConstrained
+@param config {Object} Object literal specifying widget configuration properties.
+@constructor
+@extends Plugin.Base
+@namespace Plugin
+*/
+
 function ResizeConstrained() {
 	ResizeConstrained.superclass.constructor.apply(this, arguments);
 }
@@ -1840,7 +1870,7 @@ Y.mix(ResizeConstrained, {
         * '{Region Object}': An Object Literal containing a valid region (top, right, bottom, left) of page positions
         *
         * @attribute constrain
-        * @type {String/Object/Node}
+        * @type {String|Object|Node}
         */
 		constrain: {
 			setter: function(v) {

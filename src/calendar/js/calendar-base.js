@@ -1293,7 +1293,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
   
    /**
     * The CSS classnames for the calendar templates.
-    * @property CalendarBase.CALENDAR_STRINGS
+    * @property CALENDAR_STRINGS
     * @type Object
     * @readOnly
     * @protected
@@ -1316,7 +1316,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
 
    /**
     * The main content template for calendar.
-    * @property CalendarBase.CONTENT_TEMPLATE
+    * @property CONTENT_TEMPLATE
     * @type String
     * @protected
     * @static
@@ -1330,7 +1330,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
 
    /**
     * A single pane template for calendar (same as default CONTENT_TEMPLATE)
-    * @property CalendarBase.ONE_PANE_TEMPLATE
+    * @property ONE_PANE_TEMPLATE
     * @type String
     * @protected
     * @readOnly
@@ -1345,7 +1345,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
 
    /**
     * A two pane template for calendar.
-    * @property CalendarBase.TWO_PANE_TEMPLATE
+    * @property TWO_PANE_TEMPLATE
     * @type String
     * @protected
     * @readOnly
@@ -1366,7 +1366,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
                  '</div>',
    /**
     * A three pane template for calendar.
-    * @property CalendarBase.THREE_PANE_TEMPLATE
+    * @property THREE_PANE_TEMPLATE
     * @type String
     * @protected
     * @readOnly
@@ -1390,7 +1390,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
                  '</div>',
    /**
     * A template for the calendar grid.
-    * @property CalendarBase.CALENDAR_GRID_TEMPLATE
+    * @property CALENDAR_GRID_TEMPLATE
     * @type String
     * @protected
     * @static
@@ -1406,7 +1406,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
 
    /**
     * A template for the calendar header.
-    * @property CalendarBase.HEADER_TEMPLATE
+    * @property HEADER_TEMPLATE
     * @type String
     * @protected
     * @static
@@ -1421,7 +1421,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
 
    /**
     * A template for the row of weekday names.
-    * @property CalendarBase.WEEKDAY_ROW_TEMPLATE
+    * @property WEEKDAY_ROW_TEMPLATE
     * @type String
     * @protected
     * @static
@@ -1432,7 +1432,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
 
    /**
     * A template for a single row of calendar days.
-    * @property CalendarBase.CALDAY_ROW_TEMPLATE
+    * @property CALDAY_ROW_TEMPLATE
     * @type String
     * @protected
     * @static
@@ -1443,7 +1443,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
 
    /**
     * A template for a single cell with a weekday name.
-    * @property CalendarBase.CALDAY_ROW_TEMPLATE
+    * @property CALDAY_ROW_TEMPLATE
     * @type String
     * @protected
     * @static
@@ -1452,7 +1452,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
 
    /**
     * A template for a single cell with a calendar day.
-    * @property CalendarBase.CALDAY_TEMPLATE
+    * @property CALDAY_TEMPLATE
     * @type String
     * @protected
     * @static
@@ -1464,7 +1464,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
    /**
     * The identity of the widget.
     *
-    * @property CalendarBase.NAME
+    * @property NAME
     * @type String
     * @default 'calendarBase'
     * @readOnly
@@ -1477,7 +1477,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
     * Static property used to define the default attribute configuration of
     * the Widget.
     *
-    * @property CalendarBase.ATTRS
+    * @property ATTRS
     * @type {Object}
     * @protected
     * @static

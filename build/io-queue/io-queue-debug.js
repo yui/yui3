@@ -163,5 +163,4 @@ YUI.add('io-queue', function(Y) {
 	Y.io.queue = _queue;
 
 
-
 }, '@VERSION@' ,{requires:['io-base','queue-promote']});

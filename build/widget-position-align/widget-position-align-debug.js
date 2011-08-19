@@ -47,7 +47,7 @@ YUI.add('widget-position-align', function(Y) {
          * Static property used to define the default attribute 
          * configuration introduced by WidgetPositionAlign.
          * 
-         * @property WidgetPositionAlign.ATTRS
+         * @property ATTRS
          * @type Object
          * @static
          */
@@ -127,7 +127,7 @@ YUI.add('widget-position-align', function(Y) {
         /**
          * Constant used to specify the top-left corner for alignment
          * 
-         * @property WidgetPositionAlign.TL
+         * @property TL
          * @type String
          * @static
          * @value "tl"
@@ -136,7 +136,7 @@ YUI.add('widget-position-align', function(Y) {
         /**
          * Constant used to specify the top-right corner for alignment
          * 
-         * @property WidgetPositionAlign.TR
+         * @property TR
          * @type String
          * @static
          * @value "tr"
@@ -145,7 +145,7 @@ YUI.add('widget-position-align', function(Y) {
         /**
          * Constant used to specify the bottom-left corner for alignment
          * 
-         * @property WidgetPositionAlign.BL
+         * @property BL
          * @type String
          * @static
          * @value "bl"
@@ -154,7 +154,7 @@ YUI.add('widget-position-align', function(Y) {
         /**
          * Constant used to specify the bottom-right corner for alignment
          * 
-         * @property WidgetPositionAlign.BR
+         * @property BR
          * @type String
          * @static
          * @value "br"
@@ -163,7 +163,7 @@ YUI.add('widget-position-align', function(Y) {
         /**
          * Constant used to specify the top edge-center point for alignment
          * 
-         * @property WidgetPositionAlign.TC
+         * @property TC
          * @type String
          * @static
          * @value "tc"
@@ -172,7 +172,7 @@ YUI.add('widget-position-align', function(Y) {
         /**
          * Constant used to specify the right edge, center point for alignment
          * 
-         * @property WidgetPositionAlign.RC
+         * @property RC
          * @type String
          * @static
          * @value "rc"
@@ -181,7 +181,7 @@ YUI.add('widget-position-align', function(Y) {
         /**
          * Constant used to specify the bottom edge, center point for alignment
          * 
-         * @property WidgetPositionAlign.BC
+         * @property BC
          * @type String
          * @static
          * @value "bc"
@@ -190,7 +190,7 @@ YUI.add('widget-position-align', function(Y) {
         /**
          * Constant used to specify the left edge, center point for alignment
          * 
-         * @property WidgetPositionAlign.LC
+         * @property LC
          * @type String
          * @static
          * @value "lc"
@@ -199,7 +199,7 @@ YUI.add('widget-position-align', function(Y) {
         /**
          * Constant used to specify the center of widget/node/viewport for alignment
          * 
-         * @property WidgetPositionAlign.CC
+         * @property CC
          * @type String
          * @static
          * @value "cc"

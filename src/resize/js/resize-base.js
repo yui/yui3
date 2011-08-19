@@ -168,7 +168,7 @@ Y.mix(Resize, {
 	/**
 	 * Static property provides a string to identify the class.
 	 *
-	 * @property Resize.NAME
+	 * @property NAME
 	 * @type String
 	 * @static
 	 */
@@ -178,7 +178,7 @@ Y.mix(Resize, {
 	 * Static property used to define the default attribute
 	 * configuration for the Resize.
 	 *
-	 * @property Resize.ATTRS
+	 * @property ATTRS
 	 * @type Object
 	 * @static
 	 */
