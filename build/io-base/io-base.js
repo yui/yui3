@@ -439,7 +439,7 @@ YUI.add('io-base', function(Y) {
         * <dl>
 		*   <dt>method</dt>
         *     <dd>HTTP method verb (e.g., GET or POST). If this property is not
-		*         not defined, the default value will be GET.</dd
+		*         not defined, the default value will be GET.</dd>
 		*
 		*   <dt>data</dt>
         *     <dd>This is the name-value string that will be sent as the
@@ -524,8 +524,8 @@ YUI.add('io-base', function(Y) {
         *     "end" event handlers. It is the third argument in the "complete",
         *     "success", and "failure" event handlers. <strong>Be sure to quote
         *     this property name in the transaction configuration as
-        *     "arguments" is a reserved word in JavaScript (e.g. `Y.io({ ...,
-        *     "arguments": stuff })`).</dd>
+        *     "arguments" is a reserved word in JavaScript</strong> (e.g.
+        *     `Y.io({ ..., "arguments": stuff })`).</dd>
         * </dl>
 		*
 		* @method send
@@ -665,7 +665,7 @@ YUI.add('io-base', function(Y) {
     * <dl>
     *   <dt>method</dt>
     *     <dd>HTTP method verb (e.g., GET or POST). If this property is not
-    *         not defined, the default value will be GET.</dd
+    *         not defined, the default value will be GET.</dd>
     *
     *   <dt>data</dt>
     *     <dd>This is the name-value string that will be sent as the
@@ -750,8 +750,8 @@ YUI.add('io-base', function(Y) {
     *     "end" event handlers. It is the third argument in the "complete",
     *     "success", and "failure" event handlers. <strong>Be sure to quote
     *     this property name in the transaction configuration as
-    *     "arguments" is a reserved word in JavaScript (e.g. `Y.io({ ...,
-    *     "arguments": stuff })`).</dd>
+    *     "arguments" is a reserved word in JavaScript</strong> (e.g.
+    *     `Y.io({ ..., "arguments": stuff })`).</dd>
     * </dl>
     *
     * @method io
