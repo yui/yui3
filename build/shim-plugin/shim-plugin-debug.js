@@ -19,7 +19,7 @@ YUI.add('shim-plugin', function(Y) {
     /**
      * Default class used to mark the shim element
      *
-     * @property Shim.CLASS_NAME
+     * @property CLASS_NAME
      * @type String
      * @static
      * @default "yui-node-shim"
@@ -30,7 +30,7 @@ YUI.add('shim-plugin', function(Y) {
     /**
      * Default markup template used to generate the shim element.
      * 
-     * @property Shim.TEMPLATE
+     * @property TEMPLATE
      * @type String
      * @static
      */

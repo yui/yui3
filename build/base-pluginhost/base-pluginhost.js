@@ -18,7 +18,7 @@ YUI.add('base-pluginhost', function(Y) {
      * Alias for <a href="Plugin.Host.html#method_Plugin.Host.plug">Plugin.Host.plug</a>. See aliased 
      * method for argument and return value details.
      *
-     * @method Base.plug
+     * @method plug
      * @static
      */
     Base.plug = PluginHost.plug;
@@ -27,7 +27,7 @@ YUI.add('base-pluginhost', function(Y) {
      * Alias for <a href="Plugin.Host.html#method_Plugin.Host.unplug">Plugin.Host.unplug</a>. See the 
      * aliased method for argument and return value details.
      *
-     * @method Base.unplug
+     * @method unplug
      * @static
      */
     Base.unplug = PluginHost.unplug;
