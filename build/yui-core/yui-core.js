@@ -3223,7 +3223,14 @@ YUI.Env.parseUA = function(subUA) {
 
     m;
 
+    /**
+    * The User Agent string that was parsed
+    * @property userAgent
+    * @type String
+    * @static
+    */
     o.userAgent = ua;
+
 
     o.secure = href && (href.toLowerCase().indexOf('https') === 0);
 
