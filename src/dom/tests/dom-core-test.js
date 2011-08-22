@@ -356,6 +356,50 @@ YUI.add('dom-core-test', function(Y) {
 
         'should return null when input is undefined': function() {
             Assert.isNull(Y.DOM.elementByAxis());
+        },
+
+        'should stop when the stop function returns true': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0],
+                fn = function(node) {
+                    return node.tagName === 'BODY';
+                },
+
+                stopFn = function(node) {
+                    return node.id === 'test-ancestor-stop';
+            };
+
+            Assert.isNull(Y.DOM.elementByAxis(node, 'parentNode', fn, null, stopFn));
+        },
+
+        'should find ancestor before stop': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0],
+                fn = function(node) {
+                    return node.id === 'test-ancestor-stop';
+                },
+
+                stopFn = function(node) {
+                    return node.tagName === 'BODY';
+            };
+
+            Assert.areEqual('test-ancestor-stop',
+                    Y.DOM.elementByAxis(node, 'parentNode', fn, null, stopFn).id);
+        },
+
+        'should find ancestor when both test and stop return true': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0],
+                fn = function(node) {
+                    return node.id === 'test-ancestor-stop';
+                },
+
+                stopFn = function(node) {
+                    return node.id === 'test-ancestor-stop';
+            };
+
+            Assert.areEqual('test-ancestor-stop',
+                    Y.DOM.elementByAxis(node, 'parentNode', fn, null, stopFn).id);
         }
     }));
 
@@ -400,6 +444,50 @@ YUI.add('dom-core-test', function(Y) {
                 };
 
             Assert.areEqual(document.body, Y.DOM.ancestor(node, fn, true));
+        },
+
+        'should stop when the stop function returns true': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0],
+                fn = function(node) {
+                    return node.tagName === 'BODY';
+                },
+
+                stopFn = function(node) {
+                    return node.id === 'test-ancestor-stop';
+            };
+
+            Assert.isNull(Y.DOM.ancestor(node, fn, null, stopFn));
+        },
+
+        'should find ancestor before stop': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0],
+                fn = function(node) {
+                    return node.id === 'test-ancestor-stop';
+                },
+
+                stopFn = function(node) {
+                    return node.tagName === 'BODY';
+            };
+
+            Assert.areEqual('test-ancestor-stop',
+                    Y.DOM.ancestor(node, fn, null, stopFn).id);
+        },
+
+        'should find ancestor when both test and stop return true': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0],
+                fn = function(node) {
+                    return node.id === 'test-ancestor-stop';
+                },
+
+                stopFn = function(node) {
+                    return node.id === 'test-ancestor-stop';
+            };
+
+            Assert.areEqual('test-ancestor-stop',
+                    Y.DOM.ancestor(node, fn, null, stopFn).id);
         }
     }));
 

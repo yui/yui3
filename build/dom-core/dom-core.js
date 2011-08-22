@@ -18,6 +18,7 @@ var NODE_TYPE = 'nodeType',
  * normalizing DOM tasks, and adds extra helper functionality
  * for other common tasks. 
  * @module dom
+ * @main dom
  * @submodule dom-base
  * @for DOM
  *
@@ -52,7 +53,7 @@ Y_DOM = {
      * @param {Boolean} testSelf optional Whether or not to include the element in the scan 
      * @return {HTMLElement | null} The matching DOM node or null if none found. 
      */
-    ancestor: function(element, fn, testSelf) {
+    ancestor: function(element, fn, testSelf, stopAt) {
         var ret = null;
         if (testSelf) {
             ret = (!fn || fn(element)) ? element : null;
@@ -95,10 +96,14 @@ Y_DOM = {
      * If no function is given, the first element is returned.
      * @return {HTMLElement | null} The matching element or null if none found.
      */
-    elementByAxis: function(element, axis, fn, all) {
+    elementByAxis: function(element, axis, fn, all, stopAt) {
         while (element && (element = element[axis])) { // NOTE: assignment
                 if ( (all || element[TAG_NAME]) && (!fn || fn(element)) ) {
                     return element;
+                }
+
+                if (stopAt && stopAt(element)) {
+                    return null;
                 }
         }
         return null;
