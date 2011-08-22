@@ -606,8 +606,9 @@ with any configuration info required for the module.
                     //if (!loader || !loader.moduleInfo[name]) {
                     //if ((!loader || !loader.moduleInfo[name]) && !moot) {
                     if (!moot) {
-                        if (name.indexOf('skin-') === -1) {
+                        if ((name.indexOf('skin-') === -1) && (name.indexOf('css') === -1)) {
                             Y.Env._missed.push(name);
+                            Y.Env._missed = Y.Array.dedupe(Y.Env._missed);
                             Y.message('NOT loaded: ' + name, 'warn', 'yui');
                         }
                     }

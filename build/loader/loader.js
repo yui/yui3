@@ -2614,9 +2614,21 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "view"
         ]
     }, 
-    "array-extras": {}, 
-    "array-invoke": {}, 
-    "arraylist": {}, 
+    "array-extras": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
+    "array-invoke": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
+    "arraylist": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "arraylist-add": {
         "requires": [
             "arraylist"
@@ -3410,7 +3422,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "dom-style"
         ]
     }, 
-    "dump": {}, 
+    "dump": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "editor": {
         "use": [
             "frame", 
@@ -3458,7 +3474,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "editor-base"
         ]
     }, 
-    "escape": {}, 
+    "escape": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "event": {
         "after": [
             "node-base"
@@ -3833,8 +3853,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "json-stringify"
         ]
     }, 
-    "json-parse": {}, 
-    "json-stringify": {}, 
+    "json-parse": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
+    "json-stringify": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "jsonp": {
         "requires": [
             "get", 
@@ -4278,10 +4306,17 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "sortable"
         ]
     }, 
-    "stylesheet": {}, 
+    "stylesheet": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "substitute": {
         "optional": [
             "dump"
+        ], 
+        "requires": [
+            "yui-base"
         ]
     }, 
     "swf": {
@@ -4292,7 +4327,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "escape"
         ]
     }, 
-    "swfdetect": {}, 
+    "swfdetect": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "tabview": {
         "requires": [
             "widget", 
@@ -4337,8 +4376,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "text-data-accentfold"
         ]
     }, 
-    "text-data-accentfold": {}, 
-    "text-data-wordbreak": {}, 
+    "text-data-accentfold": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
+    "text-data-wordbreak": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "text-wordbreak": {
         "requires": [
             "array-extras", 
@@ -4535,7 +4582,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '71057a1681c06f1ba268f8b031de820b';
+YUI.Env[Y.version].md5 = '5fb91631858874059b43f663739456d0';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

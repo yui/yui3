@@ -25,4 +25,4 @@ Y.namespace('Text.Data').WordBreak = {
 };
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['yui-base']});

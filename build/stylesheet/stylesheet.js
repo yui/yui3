@@ -635,4 +635,4 @@ NOTES
 
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['yui-base']});

@@ -43,4 +43,4 @@ Y.namespace('Text.Data').AccentFold = {
 };
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['yui-base']});

@@ -62,9 +62,21 @@
             "view"
         ]
     }, 
-    "array-extras": {}, 
-    "array-invoke": {}, 
-    "arraylist": {}, 
+    "array-extras": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
+    "array-invoke": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
+    "arraylist": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "arraylist-add": {
         "requires": [
             "arraylist"
@@ -818,7 +830,11 @@
             "dom-style"
         ]
     }, 
-    "dump": {}, 
+    "dump": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "editor": {
         "use": [
             "frame", 
@@ -866,7 +882,11 @@
             "editor-base"
         ]
     }, 
-    "escape": {}, 
+    "escape": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "event": {
         "after": [
             "node-base"
@@ -1211,8 +1231,16 @@
             "json-stringify"
         ]
     }, 
-    "json-parse": {}, 
-    "json-stringify": {}, 
+    "json-parse": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
+    "json-stringify": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "jsonp": {
         "requires": [
             "get", 
@@ -1651,10 +1679,17 @@
             "sortable"
         ]
     }, 
-    "stylesheet": {}, 
+    "stylesheet": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "substitute": {
         "optional": [
             "dump"
+        ], 
+        "requires": [
+            "yui-base"
         ]
     }, 
     "swf": {
@@ -1665,7 +1700,11 @@
             "escape"
         ]
     }, 
-    "swfdetect": {}, 
+    "swfdetect": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "tabview": {
         "requires": [
             "widget", 
@@ -1710,8 +1749,16 @@
             "text-data-accentfold"
         ]
     }, 
-    "text-data-accentfold": {}, 
-    "text-data-wordbreak": {}, 
+    "text-data-accentfold": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
+    "text-data-wordbreak": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "text-wordbreak": {
         "requires": [
             "array-extras", 
