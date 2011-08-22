@@ -276,7 +276,7 @@
         }
 
         inst.Selection.filterBlocks();
-        if (sel.anchorNode.test(BODY)) {
+        if (!Y.UA.gecko && sel.anchorNode.test(BODY)) {
             return;
         }
         if (sel.isCollapsed) { // No selection
