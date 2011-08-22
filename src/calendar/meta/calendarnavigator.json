@@ -2,7 +2,10 @@
  "calendarnavigator": {
             	"requires": [
                 	"plugin",
-                	"classnamemanager"
+                	"classnamemanager",
+                    "datatype-date",
+                    "node",
+                    "substitute"
             	],
                 "skinnable": true
 			}

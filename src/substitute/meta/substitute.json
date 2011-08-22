@@ -1,5 +1,8 @@
 {
     "substitute": {
+        "requires": [
+            "yui-base"
+        ],
         "optional": [
             "dump"
         ]

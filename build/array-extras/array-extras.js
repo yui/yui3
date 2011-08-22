@@ -355,4 +355,4 @@ A.zip = function(a, a2) {
 };
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['yui-base']});

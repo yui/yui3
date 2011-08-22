@@ -133,4 +133,4 @@ YUI.add('substitute', function(Y) {
 
 
 
-}, '@VERSION@' ,{optional:['dump']});
+}, '@VERSION@' ,{requires:['yui-base'], optional:['dump']});

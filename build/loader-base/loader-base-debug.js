@@ -1334,7 +1334,7 @@ Y.Loader.prototype = {
             r.unshift('intl');
             intl = true;
         }
-        o = mod.optional;
+        o = this.filterRequires(mod.optional);
 
         // Y.log("getRequires: " + name + " (dirty:" + this.dirty +
         // ", expanded:" + mod.expanded + ")");
@@ -1360,7 +1360,7 @@ Y.Loader.prototype = {
         }
 
         // get the requirements from superseded modules, if any
-        r = mod.supersedes;
+        r = this.filterRequires(mod.supersedes);
         if (r) {
             for (i = 0; i < r.length; i++) {
                 if (!hash[r[i]]) {

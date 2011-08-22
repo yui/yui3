@@ -86,4 +86,4 @@ Escape.regexp = Escape.regex;
 Y.Escape = Escape;
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['yui-base']});
