@@ -870,6 +870,7 @@ Y.mix(Y_Node.prototype, {
 
 Y.Node = Y_Node;
 Y.one = Y_Node.one;
+
 /**
  * The NodeList module provides support for managing collections of Nodes.
  * @module node
@@ -1337,6 +1338,7 @@ Y.all = function(nodes) {
 };
 
 Y.Node.all = Y.all;
+
 /**
  * @module node
  * @submodule node-core
@@ -1424,6 +1426,7 @@ Y.Object.each(ArrayMethods, function(returnNodeList, name) {
         return ret;
     };
 });
+
 /**
  * @module node
  * @submodule node-core
@@ -1625,6 +1628,43 @@ Y.NodeList.importMethod(Y.Node.prototype, [
  * @param {string} name The attribute to remove
  */
     'removeAttribute',
+
+/**
+ * Retrieves arbitrary data stored on a Node instance.
+ * This is not stored with the DOM node.
+ * @method getData
+ * @see Node
+ * @for NodeList
+ * @param {string} name Optional name of the data field to retrieve.
+ * If no name is given, all data is returned.
+ * @chainable
+ */
+    'getData',
+
+/**
+ * Stores arbitrary data on a Node instance.
+ * This is not stored with the DOM node.
+ * @method setData
+ * @see Node
+ * @for NodeList
+ * @param {string} name The name of the field to set. If no name
+ * is given, name is treated as the data and overrides any existing data.
+ * @param {any} val The value to be assigned to the field.
+ * @chainable
+ */
+    'setData',
+
+/**
+ * Clears stored data.
+ * @method clearData
+ * @see Node
+ * @for NodeList
+ * @param {string} name The name of the field to clear. If no name
+ * is given, all data is cleared.
+ * @chainable
+ */
+    'clearData',
+
 /**
  * Removes the parent node from node in the list.
  * @method unwrap
@@ -1646,6 +1686,7 @@ Y.NodeList.importMethod(Y.Node.prototype, [
  */
     'generateID'
 ]);
+
 
 
 }, '@VERSION@' ,{requires:['dom-core', 'selector']});
