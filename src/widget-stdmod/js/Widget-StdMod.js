@@ -69,7 +69,7 @@
     /**
      * Constant used to refer the the standard module header, in methods which expect a section specifier
      * 
-     * @property WidgetStdMod.HEADER
+     * @property HEADER
      * @static
      * @type String
      */
@@ -78,7 +78,7 @@
     /**
      * Constant used to refer the the standard module body, in methods which expect a section specifier
      * 
-     * @property WidgetStdMod.BODY
+     * @property BODY
      * @static
      * @type String
      */
@@ -87,7 +87,7 @@
     /**
      * Constant used to refer the the standard module footer, in methods which expect a section specifier
      * 
-     * @property WidgetStdMod.FOOTER
+     * @property FOOTER
      * @static
      * @type String
      */
@@ -99,7 +99,7 @@
      * <p>
      * Inserts new content <em>before</em> the sections existing content.
      * </p>
-     * @property WidgetStdMod.AFTER
+     * @property AFTER
      * @static
      * @type String
      */
@@ -111,7 +111,7 @@
      * <p>
      * Inserts new content <em>before</em> the sections existing content.
      * </p>
-     * @property WidgetStdMod.BEFORE
+     * @property BEFORE
      * @static
      * @type String
      */
@@ -122,7 +122,7 @@
      * <p>
      * <em>Replaces</em> the sections existing content, with new content.
      * </p>
-     * @property WidgetStdMod.REPLACE
+     * @property REPLACE
      * @static
      * @type String
      */
@@ -140,7 +140,7 @@
      * Static property used to define the default attribute 
      * configuration introduced by WidgetStdMod.
      * 
-     * @property WidgetStdMod.ATTRS
+     * @property ATTRS
      * @type Object
      * @static
      */
@@ -198,7 +198,7 @@
     /**
      * The HTML parsing rules for the WidgetStdMod class.
      * 
-     * @property WidgetStdMod.HTML_PARSER
+     * @property HTML_PARSER
      * @static
      * @type Object
      */
@@ -221,7 +221,7 @@
      * body and footer sections of the standard module, keyed by
      * the section identifier (WidgetStdMod.STD_HEADER, WidgetStdMod.STD_BODY, WidgetStdMod.STD_FOOTER)
      *
-     * @property WidgetStdMod.SECTION_CLASS_NAMES
+     * @property SECTION_CLASS_NAMES
      * @static
      * @type Object
      */
@@ -242,7 +242,7 @@
      *       footer : '&lt;div class="yui-widget-ft"&gt;&lt;/div&gt;'
      *    }
      * </pre>
-     * @property WidgetStdMod.TEMPLATES
+     * @property TEMPLATES
      * @type Object
      * @static
      */

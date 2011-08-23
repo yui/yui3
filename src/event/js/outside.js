@@ -53,10 +53,11 @@ var nativeEvents = [
  * a different name for the created Event, pass it as a second argument like so:
  * <code>Y.Event.defineOutside(eventType, "yonderclick")</code>.
  *
- * @method Y.Event.defineOutside
+ * @method defineOutside
  * @param {String} event DOM event
  * @param {String} name (optional) custom outside event name
  * @static
+ * @for Event
  */
 Y.Event.defineOutside = function (event, name) {
     name = name || (event + 'outside');

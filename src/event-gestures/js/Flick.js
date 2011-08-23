@@ -211,7 +211,7 @@ Y.Event.define('flick', {
                 if (preventDefault) {
                     // preventDefault is a boolean or function
                     if (!preventDefault.call || preventDefault(e)) {
-                        endEvent.preventDefault();
+                        e.preventDefault();
                     }
                 }
 

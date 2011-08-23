@@ -113,7 +113,7 @@
      * The list of properties which can be configured for 
      * each attribute (e.g. setter, getter, writeOnce, readOnly etc.)
      *
-     * @property Base._ATTR_CFG
+     * @property _ATTR_CFG
      * @type Array
      * @static
      * @private
@@ -131,7 +131,7 @@
      * static NAME property, which should be camelCase by
      * convention (e.g. MyClass.NAME = "myClass";).
      * </p>
-     * @property Base.NAME
+     * @property NAME
      * @type String
      * @static
      */
@@ -147,7 +147,7 @@
      * By default if the value is an object literal or an array it will be "shallow" cloned, to 
      * protect the default value.
      *
-     * @property Base.ATTRS
+     * @property ATTRS
      * @type Object
      * @static
      */

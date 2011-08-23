@@ -49,7 +49,7 @@ function PositionConstrain(config) {
  * Static property used to define the default attribute 
  * configuration introduced by WidgetPositionConstrain.
  *
- * @property WidgetPositionConstrain.ATTRS
+ * @property ATTRS
  * @type Object
  * @static
  */
@@ -81,7 +81,7 @@ PositionConstrain.ATTRS = {
 };
 
 /**
- * @property WidgetPositionConstrain._PREVENT_OVERLAP
+ * @property _PREVENT_OVERLAP
  * @static
  * @protected
  * @type Object
