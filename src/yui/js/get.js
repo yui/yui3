@@ -435,6 +435,11 @@ var ua = Y.UA,
                 n.addEventListener('load', function() {
                     _loaded(id, url);
                 }, false);
+                
+                // Adding onerror handler Safari, to handle 5+
+                n.addEventListener('error', function(e) {
+                    _fail(id, e + ': ' + url);
+                });
             }
 
         } else {
