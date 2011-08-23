@@ -324,10 +324,10 @@ WidgetButtons.prototype = {
 
             this._uiHandlesButtons = [];
         }
-}
+};
 
 
 Y.WidgetButtons = WidgetButtons;
 
 
-}, '@VERSION@' ,{requires:['base-build', 'widget']});
+}, '@VERSION@' ,{requires:['base-build', 'widget', 'widget-stdmod']});

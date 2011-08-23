@@ -323,7 +323,7 @@ WidgetButtons.prototype = {
 
             this._uiHandlesButtons = [];
         }
-}
+};
 
 
 Y.WidgetButtons = WidgetButtons;

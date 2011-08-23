@@ -345,4 +345,4 @@ Y.mix(Y.namespace('JSON'),{
 });
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['yui-base']});

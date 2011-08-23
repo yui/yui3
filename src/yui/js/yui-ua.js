@@ -221,6 +221,15 @@ YUI.Env.parseUA = function(subUA) {
 
     m;
 
+    /**
+    * The User Agent string that was parsed
+    * @property userAgent
+    * @type String
+    * @static
+    */
+    o.userAgent = ua;
+
+
     o.secure = href && (href.toLowerCase().indexOf('https') === 0);
 
     if (ua) {
@@ -328,7 +337,10 @@ YUI.Env.parseUA = function(subUA) {
         }
     }
 
-    YUI.Env.UA = o;
+    //It was a parsed UA, do not assign the global value.
+    if (!subUA) {
+        YUI.Env.UA = o;
+    }
 
     return o;
 };

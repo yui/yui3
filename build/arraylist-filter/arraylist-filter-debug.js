@@ -6,7 +6,7 @@ YUI.add('arraylist-filter', function(Y) {
  * @submodule arraylist-filter
  */
 
-/**
+/*
  * Adds filter method to ArrayList prototype
  */
 Y.mix(Y.ArrayList.prototype, {
