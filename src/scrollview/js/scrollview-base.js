@@ -151,10 +151,11 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     },
 
     /**
-     * syncUI implementation
+     * syncUI implementation.
      *
-     * Update the scroll position, based on the current value of scrollY
-     * @method bindUI
+     * Update the scroll position, based on the current value of scrollX/scrollY.
+     *
+     * @method syncUI
      */
     syncUI: function() {
         this._uiDimensionsChange();
