@@ -282,6 +282,81 @@ YUI({
             }
 
         }));
+        
+        //-------------------------------------------------------------------------
+        // Test Case for itemsAreEqual()
+        //-------------------------------------------------------------------------
+
+        suite.add(new Y.Test.Case({
+
+            name : "itemsAreEqual() Tests",
+
+            _should: {
+                fail: {
+                    "itemsAreEqual() should fail for objects with differing keys" : 
+                        "Values at key msg are not equal.",
+                    "itemsAreEqual() should fail for objects with differing values" : 
+                        "Values at key msg are not equal.",
+                    "itemsAreEqual() should fail for objects with differing numbers of keys": 
+                        "Object should have 1 keys but has 2"
+                }
+            },
+
+            /*
+             * Tests that itemsAreEqual() passes when the objects own equivalent properties.
+             */
+            "itemsAreEqual() should pass for objects with equivalent properties": function(){
+                var a = { msg: "hi" },
+                    b = { msg: "hi" };
+                
+                ObjectAssert.itemsAreEqual(a, b);
+            },
+            
+            /*
+             * Tests that itemsAreEqual() passes when the objects own no properties.
+             */
+            "itemsAreEqual() should pass for object with no keys": function(){
+                var a = {},
+                    b = {};
+                
+                ObjectAssert.itemsAreEqual(a, b);
+            },
+            
+            /*
+             * Tests that itemsAreEqual() fails when the objects have different keys
+             */
+             
+            "itemsAreEqual() should fail for objects with differing keys": function(){
+                var a = { msg: "hi" },
+                    b = { gsm: "bye"};
+                    
+                ObjectAssert.itemsAreEqual(a, b);
+            },
+            
+            /*
+             * Tests that itemsAreEqual() fails when the objects have different values
+             */
+             
+            "itemsAreEqual() should fail for objects with differing values": function(){
+                var a = { msg: "hi" },
+                    b = { msg: "bye"};
+                    
+                ObjectAssert.itemsAreEqual(a, b);
+            },
+            
+            /*
+             * Tests that itemsAreEqual() fails when the objects have different numbers of keys.
+             */
+            "itemsAreEqual() should fail for objects with differing numbers of keys": function(){
+                var a = { msg: "hi", yui: true },
+                    b = { msg: "hi" };
+                    
+                ObjectAssert.itemsAreEqual(a, b);
+            },
+
+            
+
+        }));
 
         //return it
         return suite;

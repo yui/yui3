@@ -21,6 +21,39 @@
         },
         
         /**
+         * Asserts that the values in an object are equal to values in another object. 
+         * This uses the double equals sign so type cohersion may occur. Note that the objects 
+         * themselves need not be the same for this test to pass.
+         * @param {Object} expected An object of the expected values.
+         * @param {Object} actual Any object of the actual values.
+         * @param {String} message (Optional) The message to display if the assertion fails.
+         * @method itemsAreEqual
+         * @static
+         */
+        itemsAreEqual : function (expected, actual, message) {
+            Y.Assert._increment();
+            
+            var expectedKeys = Y.Object.keys(expected),
+                actualKeys = Y.Object.keys(actual);
+            
+            //first check keys array length
+            if (expectedKeys.length != actualKeys.length){
+                Y.Assert.fail(Y.Assert._formatMessage(message, "Object should have " + expectedKeys.length + " keys but has " + actualKeys.length));
+            }
+           
+            //begin checking values
+            for (var i=0; i < expectedKeys.length; i++){
+                if (expected[expectedKeys[i]] != actual[expectedKeys[i]]){
+                    throw new Y.Assert.ComparisonFailure(
+                        Y.Assert._formatMessage(message, "Values at key " + expectedKeys[i] + " are not equal."), 
+                        expected[expectedKeys[i]], 
+                        actual[expectedKeys[i]]
+                    );
+                }
+            }
+        },
+        
+        /**
          * Asserts that an object has a property with the given name. The property may exist either
          * on the object instance or in its prototype chain. The same as testing 
          * "property" in object.
