@@ -49,7 +49,7 @@ function WidgetAutohide(config) {
 * Static property used to define the default attribute 
 * configuration introduced by WidgetAutohide.
 *
-* @property WidgetAutohide.ATTRS
+* @property ATTRS
 * @static
 * @type Object
 */

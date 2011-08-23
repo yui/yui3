@@ -99,6 +99,7 @@ if (!YUI.Env[Y.version]) {
  * YUI files.
  *
  * @module loader
+ * @main loader
  * @submodule loader-base
  */
 
@@ -135,7 +136,7 @@ var NOT_FOUND = {},
 /**
  * The component metadata is stored in Y.Env.meta.
  * Part of the loader module.
- * @property Env.meta
+ * @property meta
  * @for YUI
  */
 Y.Env.meta = META;

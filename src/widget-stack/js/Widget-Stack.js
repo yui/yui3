@@ -66,7 +66,7 @@
      * Static property used to define the default attribute 
      * configuration introduced by WidgetStack.
      * 
-     * @property WidgetStack.ATTRS
+     * @property ATTRS
      * @type Object
      * @static
      */
@@ -101,7 +101,7 @@
     /**
      * The HTML parsing rules for the WidgetStack class.
      * 
-     * @property WidgetStack.HTML_PARSER
+     * @property HTML_PARSER
      * @static
      * @type Object
      */
@@ -114,7 +114,7 @@
     /**
      * Default class used to mark the shim element
      *
-     * @property WidgetStack.SHIM_CLASS_NAME
+     * @property SHIM_CLASS_NAME
      * @type String
      * @static
      * @default "yui-widget-shim"
@@ -124,7 +124,7 @@
     /**
      * Default class used to mark the boundingBox of a stacked widget.
      * 
-     * @property WidgetStack.STACKED_CLASS_NAME
+     * @property STACKED_CLASS_NAME
      * @type String
      * @static
      * @default "yui-widget-stacked"
@@ -134,7 +134,7 @@
     /**
      * Default markup template used to generate the shim element.
      * 
-     * @property WidgetStack.SHIM_TEMPLATE
+     * @property SHIM_TEMPLATE
      * @type String
      * @static
      */

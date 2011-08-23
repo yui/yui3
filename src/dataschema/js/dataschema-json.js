@@ -34,7 +34,7 @@ SchemaJSON = {
     /**
      * Utility function converts JSON locator strings into walkable paths
      *
-     * @method DataSchema.JSON.getPath
+     * @method getPath
      * @param locator {String} JSON value locator.
      * @return {String[]} Walkable path to data value.
      * @static
@@ -78,7 +78,7 @@ SchemaJSON = {
     /**
      * Utility function to walk a path and return the value located there.
      *
-     * @method DataSchema.JSON.getLocationValue
+     * @method getLocationValue
      * @param path {String[]} Locator path.
      * @param data {String} Data to traverse.
      * @return {Object} Data value at location.

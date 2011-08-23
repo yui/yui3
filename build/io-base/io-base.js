@@ -3,6 +3,7 @@ YUI.add('io-base', function(Y) {
    /**
     * Base IO functionality. Provides basic XHR transport support.
     * @module io-base
+    * @main io-base
 	* @for IO
     */
 
@@ -28,7 +29,7 @@ YUI.add('io-base', function(Y) {
     *
 	* @class IO
 	* @constructor
-    * @param {object} c - Object of EventTarget's publish method configurations
+    * @param {Object} c - Object of EventTarget's publish method configurations
     *                     used to configure IO's events.
 	*/
 	function IO (c) {
@@ -45,32 +46,32 @@ YUI.add('io-base', function(Y) {
 		//--------------------------------------
 
 	   /**
-		* @description A counter that increments for each transaction.
+		* A counter that increments for each transaction.
 		*
 		* @property _id
 		* @private
-		* @type int
+		* @type {Number}
 		*/
 		_id: 0,
 
 	   /**
-		* @description Object of IO HTTP headers sent with each transaction.
+		* Object of IO HTTP headers sent with each transaction.
 		*
 		* @property _headers
 		* @private
-		* @type object
+		* @type {Object}
 		*/
 		_headers: {
 			'X-Requested-With' : 'XMLHttpRequest'
 		},
 
 	   /**
-		* @description Object that stores timeout values for any transaction with
-		* a defined "timeout" configuration property.
+        * Object that stores timeout values for any transaction with a defined
+        * "timeout" configuration property.
 		*
 		* @property _timeout
 		* @private
-		* @type object
+		* @type {Object}
 		*/
 		_timeout: {},
 
@@ -96,15 +97,14 @@ YUI.add('io-base', function(Y) {
 		},
 
 	   /**
-		* @description Method that creates a unique transaction object for each
-		* request.
+		* Method that creates a unique transaction object for each request.
 		*
 		* @method _create
 		* @private
-		* @param {number} c - configuration object subset to determine if
+		* @param {Number} c - configuration object subset to determine if
 		*                     the transaction is an XDR or file upload,
 		*                     requiring an alternate transport.
-		* @param {number} i - transaction id
+		* @param {Number} i - transaction id
 		* @return object
 		*/
 		_create: function(c, i) {
@@ -146,15 +146,13 @@ YUI.add('io-base', function(Y) {
 		},
 
 	   /**
-		* @description Method for creating and firing events.
+		* Method for creating and firing events.
 		*
 		* @method _evt
 		* @private
-		* @param {string} e - event to be published.
-		* @param {object} o - transaction object.
-		* @param {object} c - configuration data subset for event subscription.
-		*
-		* @return void
+		* @param {String} e - event to be published.
+		* @param {Object} o - transaction object.
+		* @param {Object} c - configuration data subset for event subscription.
 		*/
 		_evt: function(e, o, c) {
 			var io = this, p, s,
@@ -194,128 +192,102 @@ YUI.add('io-base', function(Y) {
 		},
 
 	   /**
-		* @description Fires event "io:start" and creates, fires a
-		* transaction-specific start event, if config.on.start is
-		* defined.
+        * Fires event "io:start" and creates, fires a transaction-specific
+        * start event, if `config.on.start` is defined.
 		*
 		* @method start
-		* @public
-		* @param {object} o - transaction object.
-		* @param {object} c - configuration object for the transaction.
-		*
-		* @return void
+		* @param {Object} o - transaction object.
+		* @param {Object} c - configuration object for the transaction.
 		*/
 		start: function(o, c) {
 		   /**
+			* Signals the start of an IO request.
 			* @event io:start
-			* @description This event is fired by IO at the start of an IO request.
-			* @type Event Custom
 			*/
 			this._evt(E[0], o, c);
 		},
 
 	   /**
-		* @description Fires event "io:complete" and creates, fires a
+		* Fires event "io:complete" and creates, fires a
 		* transaction-specific "complete" event, if config.on.complete is
 		* defined.
 		*
 		* @method complete
-		* @public
-		* @param {object} o - transaction object.
-		* @param {object} c - configuration object for the transaction.
-		*
-		* @return void
+		* @param {Object} o - transaction object.
+		* @param {Object} c - configuration object for the transaction.
 		*/
 		complete: function(o, c) {
 		   /**
+            * Signals the completion of the request-response phase of a
+            * transaction. Response status and data are accessible, if
+            * available, in this event.
 			* @event io:complete
-			* @description This event is fired by IO when the request-response 
-			* phase of a transaction is complete. Response status and data are
-			* accessible, if available, in this event.
-			* @type Event Custom
 			*/
 			this._evt(E[1], o, c);
 		},
 
 	   /**
-		* @description Fires event "io:end" and creates, fires a
-		* transaction-specific "end" event, if config.on.end is
-		* defined.
+        * Fires event "io:end" and creates, fires a transaction-specific "end"
+        * event, if config.on.end is defined.
 		*
 		* @method end
-		* @public
-		* @param {object} o - transaction object.
-		* @param {object} c - configuration object for the transaction.
-		*
-		* @return void
+		* @param {Object} o - transaction object.
+		* @param {Object} c - configuration object for the transaction.
 		*/
 		end: function(o, c) {
 		   /**
+			* Signals the end of the transaction lifecycle.
             * @event io:end
-			* @description This event signifies the end of the transaction lifecycle.
-			* @type Event Custom
 			*/
 			this._evt(E[2], o, c);
 			this._destroy(o);
 		},
 
 	   /**
-		* @description Fires event "io:success" and creates, fires a
-		* transaction-specific "success" event, if config.on.success is
-		* defined.
+        * Fires event "io:success" and creates, fires a transaction-specific
+        * "success" event, if config.on.success is defined.
 		*
 		* @method success
-		* @public
-		* @param {object} o - transaction object.
-		* @param {object} c - configuration object for the transaction.
-		*
-		* @return void
+		* @param {Object} o - transaction object.
+		* @param {Object} c - configuration object for the transaction.
 		*/
 		success: function(o, c) {
 		   /**
+            * Signals an HTTP response with status in the 2xx range.
+            * Fires after io:complete.
 			* @event io:success
-			* @description This event is fired by IO, after io:complete, when
-			* the response HTTP status resolves to HTTP2xx.
-			* @type Event Custom
 			*/
 			this._evt(E[3], o, c);
 			this.end(o, c);
 		},
 
 	   /**
-		* @description Fires event "io:failure" and creates, fires a
-		* transaction-specific "failure" event, if config.on.failure is
-		* defined.
+        * Fires event "io:failure" and creates, fires a transaction-specific
+        * "failure" event, if config.on.failure is defined.
 		*
 		* @method failure
-		* @public
-		* @param {object} o - transaction object.
-		* @param {object} c - configuration object for the transaction.
-		*
-		* @return void
+		* @param {Object} o - transaction object.
+		* @param {Object} c - configuration object for the transaction.
 		*/
 		failure: function(o, c) {
 		   /**
+			* Signals an HTTP response with status outside of the 2xx range.
+            * Fires after io:complete.
 			* @event io:failure
-			* @description This event is fired by IO, after io:complete, when
-			* the response HTTP status resolves to value that is not HTTP 2xx.
-			* @type Event Custom
 			*/
 			this._evt(E[4], o, c);
 			this.end(o, c);
 		},
 
 	   /**
-		* @description Retry an XDR transaction, using the Flash tranport,
-		* if the native transport fails.
+        * Retry an XDR transaction, using the Flash tranport, if the native
+        * transport fails.
 		*
 		* @method _retry
 		* @private
-		* @param {object} o - Transaction object generated by _create().
-		* @param {string} uri - qualified path to transaction resource.
-		* @param {object} c - configuration object for the transaction.
-		*
-		* @return void
+		* @param {Object} o - Transaction object generated by _create().
+		* @param {String} uri - qualified path to transaction resource.
+		* @param {Object} c - configuration object for the transaction.
 		*/
 		_retry: function(o, uri, c) {
 			this._destroy(o);
@@ -324,13 +296,13 @@ YUI.add('io-base', function(Y) {
 		},
 
 	   /**
-		* @description Method that concatenates string data for HTTP GET transactions.
+		* Method that concatenates string data for HTTP GET transactions.
 		*
 		* @method _concat
 		* @private
-		* @param {string} s - URI or root data.
-		* @param {string} d - data to be concatenated onto URI.
-		* @return int
+		* @param {String} s - URI or root data.
+		* @param {String} d - data to be concatenated onto URI.
+		* @return {Number}
 		*/
 		_concat: function(s, d) {
 			s += (s.indexOf('?') === -1 ? '?' : '&') + d;
@@ -338,14 +310,12 @@ YUI.add('io-base', function(Y) {
 		},
 
 	   /**
-		* @description Method that stores default client headers for all transactions.
-		* If a label is passed with no value argument, the header will be deleted.
+        * Stores default client headers for all transactions. If a label is
+        * passed with no value argument, the header will be deleted.
 		*
 		* @method setHeader
-		* @public
-		* @param {string} l - HTTP header
-		* @param {string} v - HTTP header value
-		* @return void
+		* @param {String} l - HTTP header
+		* @param {String} v - HTTP header value
 		*/
 		setHeader: function(l, v) {
 			if (v) {
@@ -357,14 +327,13 @@ YUI.add('io-base', function(Y) {
 		},
 
 	   /**
-		* @description Method that sets all HTTP headers to be sent in a transaction.
+		* Method that sets all HTTP headers to be sent in a transaction.
 		*
 		* @method _setHeaders
 		* @private
-		* @param {object} o - XHR instance for the specific transaction.
-		* @param {object} h - HTTP headers for the specific transaction, as defined
+		* @param {Object} o - XHR instance for the specific transaction.
+		* @param {Object} h - HTTP headers for the specific transaction, as defined
 		*                     in the configuration object passed to YUI.io().
-		* @return void
 		*/
 		_setHeaders: function(o, h) {
 			h = Y.merge(this._headers, h);
@@ -376,14 +345,13 @@ YUI.add('io-base', function(Y) {
 		},
 
 	   /**
-		* @description Starts timeout count if the configuration object
-		* has a defined timeout property.
+        * Starts timeout count if the configuration object has a defined
+        * timeout property.
 		*
 		* @method _startTimeout
 		* @private
-		* @param {object} o - Transaction object generated by _create().
-		* @param {object} t - Timeout in milliseconds.
-		* @return void
+		* @param {Object} o - Transaction object generated by _create().
+		* @param {Object} t - Timeout in milliseconds.
 		*/
 		_startTimeout: function(o, t) {
 			var io = this;
@@ -391,12 +359,11 @@ YUI.add('io-base', function(Y) {
 		},
 
 	   /**
-		* @description Clears the timeout interval started by _startTimeout().
+		* Clears the timeout interval started by _startTimeout().
 		*
 		* @method _clearTimeout
 		* @private
-		* @param {number} id - Transaction id.
-		* @return void
+		* @param {Number} id - Transaction id.
 		*/
 		_clearTimeout: function(id) {
 			w.clearTimeout(this._timeout[id]);
@@ -404,16 +371,15 @@ YUI.add('io-base', function(Y) {
 		},
 
 	   /**
-		* @description Method that determines if a transaction response qualifies
-		* as success or failure, based on the response HTTP status code, and
-		* fires the appropriate success or failure events.
+        * Method that determines if a transaction response qualifies as success
+        * or failure, based on the response HTTP status code, and fires the
+        * appropriate success or failure events.
 		*
 		* @method _result
 		* @private
 		* @static
-		* @param {object} o - Transaction object generated by _create().
-		* @param {object} c - Configuration object passed to io().
-		* @return void
+		* @param {Object} o - Transaction object generated by _create().
+		* @param {Object} c - Configuration object passed to io().
 		*/
 		_result: function(o, c) {
 			var s;
@@ -431,13 +397,12 @@ YUI.add('io-base', function(Y) {
 		},
 
 	   /**
-		* @description Event handler bound to onreadystatechange.
+		* Event handler bound to onreadystatechange.
 		*
 		* @method _rS
 		* @private
-		* @param {object} o - Transaction object generated by _create().
-		* @param {object} c - Configuration object passed to YUI.io().
-		* @return void
+		* @param {Object} o - Transaction object generated by _create().
+		* @param {Object} c - Configuration object passed to YUI.io().
 		*/
 		_rS: function(o, c) {
 			var io = this;
@@ -453,15 +418,12 @@ YUI.add('io-base', function(Y) {
 		},
 
 	   /**
-		* @description Terminates a transaction due to an explicit abort or
-		* timeout.
+		* Terminates a transaction due to an explicit abort or timeout.
 		*
 		* @method _abort
 		* @private
-		* @param {object} o - Transaction object generated by _create().
-		* @param {string} s - Identifies timed out or aborted transaction.
-		*
-		* @return void
+		* @param {Object} o - Transaction object generated by _create().
+		* @param {String} s - Identifies timed out or aborted transaction.
 		*/
 		_abort: function(o, s) {
 			if (o && o.c) {
@@ -471,91 +433,107 @@ YUI.add('io-base', function(Y) {
 		},
 
 	   /**
-		* @description Method for requesting a transaction. send() is implemented as
-		* yui.io().  Each transaction may include a configuration object.  Its
-		* properties are:
+        * Requests a transaction. `send()` is implemented as `Y.io()`.  Each
+        * transaction may include a configuration object.  Its properties are:
 		*
-		* method: HTTP method verb (e.g., GET or POST). If this property is not
-		*         not defined, the default value will be GET.
+        * <dl>
+		*   <dt>method</dt>
+        *     <dd>HTTP method verb (e.g., GET or POST). If this property is not
+		*         not defined, the default value will be GET.</dd>
 		*
-		* data: This is the name-value string that will be sent as the transaction
-		*       data.  If the request is HTTP GET, the data become part of
-		*       querystring. If HTTP POST, the data are sent in the message body.
+		*   <dt>data</dt>
+        *     <dd>This is the name-value string that will be sent as the
+        *     transaction data. If the request is HTTP GET, the data become
+        *     part of querystring. If HTTP POST, the data are sent in the
+        *     message body.</dd>
 		*
-		* xdr: Defines the transport to be used for cross-domain requests.  By
-		*      setting this property, the transaction will use the specified
-		*      transport instead of XMLHttpRequest.
-		*      The properties are:
-		*      {
-		*        use: Specify the transport to be used: 'flash' and 'native'
-		*        dataType: Set the value to 'XML' if that is the expected
-		*                  response content type.
-		*      }
+		*   <dt>xdr</dt>
+        *     <dd>Defines the transport to be used for cross-domain requests.
+        *     By setting this property, the transaction will use the specified
+        *     transport instead of XMLHttpRequest. The properties of the
+        *     transport object are:
+        *     <dl>
+        *       <dt>use</dt>
+		*         <dd>The transport to be used: 'flash' or 'native'</dd>
+		*       <dt>dataType</dt>
+        *         <dd>Set the value to 'XML' if that is the expected response
+        *         content type.</dd>
+        *     </dl></dd>
 		*
+		*   <dt>form</dt>
+        *     <dd>Form serialization configuration object.  Its properties are:
+		*     <dl>
+		*       <dt>id</dt>
+        *         <dd>Node object or id of HTML form</dd>
+		*       <dt>useDisabled</dt>
+        *         <dd>`true` to also serialize disabled form field values
+        *         (defaults to `false`)</dd>
+		*     </dl></dd>
 		*
-		* form: This is a defined object used to process HTML form as data.  The
-		*       properties are:
-		*       {
-		*         id: Node object or id of HTML form.
-		*         useDisabled: Boolean value to allow disabled HTML form field
-		*                      values to be sent as part of the data.
-		*       }
+		*   <dt>on</dt>
+        *     <dd>Assigns transaction event subscriptions. Available events are:
+		*     <dl>
+		*       <dt>start</dt>
+        *         <dd>Fires when a request is sent to a resource.</dd>
+		*       <dt>complete</dt>
+        *         <dd>Fires when the transaction is complete.</dd>
+		*       <dt>success</dt>
+        *         <dd>Fires when the HTTP response status is within the 2xx
+        *         range.</dd>
+		*       <dt>failure</dt>
+        *         <dd>Fires when the HTTP response status is outside the 2xx
+        *         range, if an exception occurs, if the transation is aborted,
+        *         or if the transaction exceeds a configured `timeout`.</dd>
+		*       <dt>end</dt>
+        *         <dd>Fires at the conclusion of the transaction
+		*            lifecycle, after `success` or `failure`.</dd>
+		*     </dl>
+        *
+        *     <p>Callback functions for `start` and `end` receive the id of the
+        *     transaction as a first argument. For `complete`, `success`, and
+        *     `failure`, callbacks receive the id and the response object
+        *     (usually the XMLHttpRequest instance).  If the `arguments`
+        *     property was included in the configuration object passed to
+        *     `Y.io()`, the configured data will be passed to all callbacks as
+        *     the last argument.</p>
+        *     </dd>
 		*
-		* on: This is a defined object used to create and handle specific
-		*     events during a transaction lifecycle.  These events will fire in
-		*     addition to the global io events. The events are:
-		*     start - This event is fired when a request is sent to a resource.
-		*     complete - This event fires when the transaction is complete.
-		*     success - This event fires when the response status resolves to
-		*               HTTP 2xx.
-		*     failure - This event fires when the response status resolves to
-		*               HTTP 4xx, 5xx; and, for all transaction exceptions,
-		*               including aborted transactions and transaction timeouts.
-		*     end -  This even is fired at the conclusion of the transaction
-		*            lifecycle, after a success or failure resolution.
+		*   <dt>sync</dt>
+        *     <dd>Pass `true` to make a same-domain transaction synchronous.
+        *     <strong>CAVEAT</strong>: This will negatively impact the user
+        *     experience. Have a <em>very</em> good reason if you intend to use
+        *     this.</dd>
 		*
-		*     The properties are:
-		*     {
-		*       start: function(id, arguments){},
-		*       complete: function(id, responseobject, arguments){},
-		*       success: function(id, responseobject, arguments){},
-		*       failure: function(id, responseobject, arguments){},
-		*       end: function(id, arguments){}
-		*     }
-		*     Each property can reference a function or be written as an
-		*     inline function.
+		*   <dt>context</dt>
+        *     <dd>The "`this'" object for all configured event handlers. If a
+        *     specific context is needed for individual callbacks, bind the
+        *     callback to a context using `Y.bind()`.</dd>
 		*
-		* sync: To enable synchronous transactions, set the configuration property
-		*       "sync" to true. Synchronous requests are limited to same-domain
-		*       requests only.
+		*   <dt>headers</dt>
+        *     <dd>Object map of transaction headers to send to the server. The
+        *     object keys are the header names and the values are the header
+        *     values.</dd>
 		*
-		* context: Object reference for all defined transaction event handlers
-		*          when it is implemented as a method of a base object. Defining
-		*          "context" will set the reference of "this," used in the
-		*          event handlers, to the context value.  In the case where
-		*          different event handlers all have different contexts,
-		*          use Y.bind() to set the execution context, instead.
+		*   <dt>timeout</dt>
+        *     <dd>Millisecond threshold for the transaction before being
+        *     automatically aborted.</dd>
 		*
-		* headers: This is a defined object of client headers, as many as
-		*          desired for this specific transaction.  The object pattern is:
-		*          { 'header': 'value' }.
-		*
-		* timeout: This value, defined as milliseconds, is a time threshold for the
-		*          transaction. When this threshold is reached, and the transaction's
-		*          Complete event has not yet fired, the transaction will be aborted.
-		*
-		* arguments: User-defined data passed to all registered event handlers.
-		*            This value is available as the second argument in the "start"
-		*            and "end" event handlers. It is the third argument in the
-		*            "complete", "success", and "failure" event handlers.
+		*   <dt>arguments</dt>
+        *     <dd>User-defined data passed to all registered event handlers.
+        *     This value is available as the second argument in the "start" and
+        *     "end" event handlers. It is the third argument in the "complete",
+        *     "success", and "failure" event handlers. <strong>Be sure to quote
+        *     this property name in the transaction configuration as
+        *     "arguments" is a reserved word in JavaScript</strong> (e.g.
+        *     `Y.io({ ..., "arguments": stuff })`).</dd>
+        * </dl>
 		*
 		* @method send
 		* @private
-		* @
-		* @param {string} uri - qualified path to transaction resource.
-		* @param {object} c - configuration object for the transaction.
-		* @param {number} i - transaction id, if already set.
-		* @return object
+		* @param {String} uri - qualified path to transaction resource.
+		* @param {Object} c - configuration object for the transaction.
+		* @param {Number} i - transaction id, if already set.
+		* @return {Object}
 		*/
 		send: function(uri, c, i) {
 			var o, m, r, s, d, io = this,
@@ -679,14 +657,109 @@ YUI.add('io-base', function(Y) {
 	};
 
    /**
-    * @description Method for requesting a transaction.
+    * Method for initiating an ajax call.  The first argument is the url end
+    * point for the call.  The second argument is an object to configure the
+    * transaction and attach event subscriptions.  The configuration object
+    * supports the following properties:
+    * 
+    * <dl>
+    *   <dt>method</dt>
+    *     <dd>HTTP method verb (e.g., GET or POST). If this property is not
+    *         not defined, the default value will be GET.</dd>
     *
-    * @method Y.io
-    * @public
+    *   <dt>data</dt>
+    *     <dd>This is the name-value string that will be sent as the
+    *     transaction data. If the request is HTTP GET, the data become
+    *     part of querystring. If HTTP POST, the data are sent in the
+    *     message body.</dd>
+    *
+    *   <dt>xdr</dt>
+    *     <dd>Defines the transport to be used for cross-domain requests.
+    *     By setting this property, the transaction will use the specified
+    *     transport instead of XMLHttpRequest. The properties of the
+    *     transport object are:
+    *     <dl>
+    *       <dt>use</dt>
+    *         <dd>The transport to be used: 'flash' or 'native'</dd>
+    *       <dt>dataType</dt>
+    *         <dd>Set the value to 'XML' if that is the expected response
+    *         content type.</dd>
+    *     </dl></dd>
+    *
+    *   <dt>form</dt>
+    *     <dd>Form serialization configuration object.  Its properties are:
+    *     <dl>
+    *       <dt>id</dt>
+    *         <dd>Node object or id of HTML form</dd>
+    *       <dt>useDisabled</dt>
+    *         <dd>`true` to also serialize disabled form field values
+    *         (defaults to `false`)</dd>
+    *     </dl></dd>
+    *
+    *   <dt>on</dt>
+    *     <dd>Assigns transaction event subscriptions. Available events are:
+    *     <dl>
+    *       <dt>start</dt>
+    *         <dd>Fires when a request is sent to a resource.</dd>
+    *       <dt>complete</dt>
+    *         <dd>Fires when the transaction is complete.</dd>
+    *       <dt>success</dt>
+    *         <dd>Fires when the HTTP response status is within the 2xx
+    *         range.</dd>
+    *       <dt>failure</dt>
+    *         <dd>Fires when the HTTP response status is outside the 2xx
+    *         range, if an exception occurs, if the transation is aborted,
+    *         or if the transaction exceeds a configured `timeout`.</dd>
+    *       <dt>end</dt>
+    *         <dd>Fires at the conclusion of the transaction
+    *            lifecycle, after `success` or `failure`.</dd>
+    *     </dl>
+    *
+    *     <p>Callback functions for `start` and `end` receive the id of the
+    *     transaction as a first argument. For `complete`, `success`, and
+    *     `failure`, callbacks receive the id and the response object
+    *     (usually the XMLHttpRequest instance).  If the `arguments`
+    *     property was included in the configuration object passed to
+    *     `Y.io()`, the configured data will be passed to all callbacks as
+    *     the last argument.</p>
+    *     </dd>
+    *
+    *   <dt>sync</dt>
+    *     <dd>Pass `true` to make a same-domain transaction synchronous.
+    *     <strong>CAVEAT</strong>: This will negatively impact the user
+    *     experience. Have a <em>very</em> good reason if you intend to use
+    *     this.</dd>
+    *
+    *   <dt>context</dt>
+    *     <dd>The "`this'" object for all configured event handlers. If a
+    *     specific context is needed for individual callbacks, bind the
+    *     callback to a context using `Y.bind()`.</dd>
+    *
+    *   <dt>headers</dt>
+    *     <dd>Object map of transaction headers to send to the server. The
+    *     object keys are the header names and the values are the header
+    *     values.</dd>
+    *
+    *   <dt>timeout</dt>
+    *     <dd>Millisecond threshold for the transaction before being
+    *     automatically aborted.</dd>
+    *
+    *   <dt>arguments</dt>
+    *     <dd>User-defined data passed to all registered event handlers.
+    *     This value is available as the second argument in the "start" and
+    *     "end" event handlers. It is the third argument in the "complete",
+    *     "success", and "failure" event handlers. <strong>Be sure to quote
+    *     this property name in the transaction configuration as
+    *     "arguments" is a reserved word in JavaScript</strong> (e.g.
+    *     `Y.io({ ..., "arguments": stuff })`).</dd>
+    * </dl>
+    *
+    * @method io
     * @static
-    * @param {string} u - qualified path to transaction resource.
-    * @param {object} c - configuration object for the transaction.
+    * @param {String} url - qualified path to transaction resource.
+    * @param {Object} config - configuration object for the transaction.
     * @return object
+    * @for YUI
     */
     Y.io = function(u, c) {
 		// Calling IO through the static interface will use and reuse
@@ -695,17 +768,17 @@ YUI.add('io-base', function(Y) {
 		return o.send.apply(o, [u, c]);
 	};
 
-   /**
-	* @description Method for setting and deleting IO
-	* HTTP headers to be sent with every request.
-	*
-	* @method Y.io.header
-	* @public
-	* @static
-	* @param {string} l - HTTP header
-	* @param {string} v - HTTP header value
-	* @return void
-	*/
+    /**
+    Method for setting and deleting IO HTTP headers to be sent with every
+    request.
+
+    Hosted as a property on the `io` function (e.g. `Y.io.header`).
+    
+    @method header
+    @param {String} l - HTTP header
+    @param {String} v - HTTP header value
+    @static
+    **/
 	Y.io.header = function(l, v) {
 		// Calling IO through the static interface will use and reuse
 		// an instance of IO.
@@ -716,7 +789,6 @@ YUI.add('io-base', function(Y) {
 	Y.IO = IO;
 	// Map of all IO instances created.
 	Y.io._map = {};
-
 
 
 }, '@VERSION@' ,{requires:['event-custom-base', 'querystring-stringify-simple']});

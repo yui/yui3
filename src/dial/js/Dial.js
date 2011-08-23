@@ -35,7 +35,7 @@
     /**
      * The identity of the widget.
      *
-     * @property Dial.NAME
+     * @property NAME
      * @type String
      * @default 'dial'
      * @readOnly
@@ -48,7 +48,7 @@
      * Static property used to define the default attribute configuration of
      * the Widget.
      *
-     * @property Dial.ATTRS
+     * @property ATTRS
      * @type {Object}
      * @protected
      * @static
@@ -237,10 +237,9 @@
         return Y.ClassNameManager.getClassName(Dial.NAME, str);
     }
     
-    /**
-     * array of static constants used to identify the classname applied to the Dial DOM objects 
-     *
-     * @property Dial.CSS_CLASSES
+	 /** array of static constants used to identify the classname applied to the Dial DOM objects 
+	 *
+     * @property CSS_CLASSES
      * @type {Array}
      * @private
      * @static
@@ -271,81 +270,82 @@
     /**
      * template that will contain the Dial's label.
      *
-     * @property Dial.LABEL_TEMPLATE
+     * @property LABEL_TEMPLATE
      * @type {HTML}
      * @default &lt;div id="' + labelId + '" class="[...-label]">&lt;span class="[...-label-string]">{label}&lt;/span>&lt;span class="[...-value-string]">&lt;/span>&lt;/div>
      * @protected
      */
-    Dial.LABEL_TEMPLATE = '<div id="' + labelId + '" class="' + Dial.CSS_CLASSES.label + '"><span class="' + Dial.CSS_CLASSES.labelString + '">{label}</span><span class="' + Dial.CSS_CLASSES.valueString + '"></span></div>';
 
-    if(supportsVML === false){
-        /**
-         * template that will contain the Dial's background ring.
-         *
-         * @property Dial.RING_TEMPLATE
-         * @type {HTML}
-         * @default &lt;div class="[...-ring]">&lt;div class="[...-northMark]">&lt;/div>&lt;/div>
-         * @protected
-         */
-        Dial.RING_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.ring + '"><div class="' + Dial.CSS_CLASSES.northMark + '"></div></div>';
+	Dial.LABEL_TEMPLATE = '<div id="' + labelId + '" class="' + Dial.CSS_CLASSES.label + '"><span class="' + Dial.CSS_CLASSES.labelString + '">{label}</span><span class="' + Dial.CSS_CLASSES.valueString + '"></span></div>';
 
-        /**
-         * template that will contain the Dial's current angle marker.
-         *
-         * @property Dial.MARKER_TEMPLATE
-         * @type {HTML}
-         * @default &lt;div class="[...-marker] [...-marker-hidden]">&lt;div class="[...-markerUser]">&lt;/div>&lt;/div>
-         * @protected
-         */
-        Dial.MARKER_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.marker + ' ' + Dial.CSS_CLASSES.hidden + '"></div>';
+	if(supportsVML === false){
+		/**
+		 * template that will contain the Dial's background ring.
+		 *
+		 * @property RING_TEMPLATE
+		 * @type {HTML}
+		 * @default &lt;div class="[...-ring]">&lt;div class="[...-northMark]">&lt;/div>&lt;/div>
+		 * @protected
+		 */
+		Dial.RING_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.ring + '"><div class="' + Dial.CSS_CLASSES.northMark + '"></div></div>';
 
-        /**
-         * template that will contain the Dial's center button.
-         *
-         * @property Dial.CENTER_BUTTON_TEMPLATE
-         * @type {HTML}
-         * @default &lt;div class="[...-centerButton]">&lt;div class="[...-resetString]">' + Y.substitute('{resetStr}', Dial.ATTRS.strings.value) + '&lt;/div>&lt;/div>
-         * @protected
-         */
-        Dial.CENTER_BUTTON_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.centerButton + '"><div class="' + Dial.CSS_CLASSES.resetString + ' ' + Dial.CSS_CLASSES.hidden + '">{resetStr}</div></div>';
+		/**
+		 * template that will contain the Dial's current angle marker.
+		 *
+		 * @property MARKER_TEMPLATE
+		 * @type {HTML}
+		 * @default &lt;div class="[...-marker] [...-marker-hidden]">&lt;div class="[...-markerUser]">&lt;/div>&lt;/div>
+		 * @protected
+		 */
+		Dial.MARKER_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.marker + ' ' + Dial.CSS_CLASSES.hidden + '"></div>';
 
-        /**
-         * template that will contain the Dial's handle.
-         *
-         * @property Dial.HANDLE_TEMPLATE
-         * @type {HTML}
-         * @default &lt;div class="[...-handle]">&lt;div class="[...-handleUser]" aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0">&lt;/div>&lt;/div>';// title="{tooltipHandle}"
-         * @protected
-         */
-        Dial.HANDLE_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.handle + '" aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0" title="{tooltipHandle}">';
-    
-    }else{ // VML case
-        Dial.RING_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.ring +  ' ' + Dial.CSS_CLASSES.ringVml + '">'+
-                                '<div class="' + Dial.CSS_CLASSES.northMark + '"></div>'+
-                                    '<v:oval strokecolor="#ceccc0" strokeweight="1px"><v:fill type=gradient color="#8B8A7F" color2="#EDEDEB" angle="45"/></v:oval>'+
-                                '</div>'+
-                                '';
-        Dial.MARKER_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.markerVml + ' ' + Dial.CSS_CLASSES.hidden + '">'+
-                                        '<v:oval stroked="false">'+
-                                            '<v:fill opacity="20%" color="#000"/>'+
-                                        '</v:oval>'+
-                                '</div>'+
-                                '';
-        Dial.CENTER_BUTTON_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.centerButton + ' ' + Dial.CSS_CLASSES.centerButtonVml + '">'+
-                                            '<v:oval strokecolor="#ceccc0" strokeweight="1px">'+
-                                                '<v:fill type=gradient color="#C7C5B9" color2="#fefcf6" colors="35% #d9d7cb, 65% #fefcf6" angle="45"/>'+
-                                                '<v:shadow on="True" color="#000" opacity="10%" offset="2px, 2px"/>'+
-                                            '</v:oval>'+
-                                            '<div class="' + Dial.CSS_CLASSES.resetString + ' ' + Dial.CSS_CLASSES.hidden + '">{resetStr}</div>'+
-                                    '</div>'+
-                                    '';
-        Dial.HANDLE_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.handleVml + '" aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0" title="{tooltipHandle}">'+
-                                        '<v:oval stroked="false">'+
-                                            '<v:fill opacity="20%" color="#6C3A3A"/>'+
-                                        '</v:oval>'+
-                                '</div>'+
-                                '';
-    }
+		/**
+		 * template that will contain the Dial's center button.
+		 *
+		 * @property CENTER_BUTTON_TEMPLATE
+		 * @type {HTML}
+		 * @default &lt;div class="[...-centerButton]">&lt;div class="[...-resetString]">' + Y.substitute('{resetStr}', Dial.ATTRS.strings.value) + '&lt;/div>&lt;/div>
+		 * @protected
+		 */
+		Dial.CENTER_BUTTON_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.centerButton + '"><div class="' + Dial.CSS_CLASSES.resetString + ' ' + Dial.CSS_CLASSES.hidden + '">{resetStr}</div></div>';
+
+		/**
+		 * template that will contain the Dial's handle.
+		 *
+		 * @property HANDLE_TEMPLATE
+		 * @type {HTML}
+		 * @default &lt;div class="[...-handle]">&lt;div class="[...-handleUser]" aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0">&lt;/div>&lt;/div>';// title="{tooltipHandle}"
+		 * @protected
+		 */
+		Dial.HANDLE_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.handle + '" aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0" title="{tooltipHandle}">';
+	
+	}else{ // VML case
+		Dial.RING_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.ring +  ' ' + Dial.CSS_CLASSES.ringVml + '">'+
+								'<div class="' + Dial.CSS_CLASSES.northMark + '"></div>'+
+									'<v:oval strokecolor="#ceccc0" strokeweight="1px"><v:fill type=gradient color="#8B8A7F" color2="#EDEDEB" angle="45"/></v:oval>'+
+								'</div>'+
+								'';
+		Dial.MARKER_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.markerVml + ' ' + Dial.CSS_CLASSES.hidden + '">'+
+										'<v:oval stroked="false">'+
+											'<v:fill opacity="20%" color="#000"/>'+
+										'</v:oval>'+
+								'</div>'+
+								'';
+		Dial.CENTER_BUTTON_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.centerButton + ' ' + Dial.CSS_CLASSES.centerButtonVml + '">'+
+											'<v:oval strokecolor="#ceccc0" strokeweight="1px">'+
+												'<v:fill type=gradient color="#C7C5B9" color2="#fefcf6" colors="35% #d9d7cb, 65% #fefcf6" angle="45"/>'+
+												'<v:shadow on="True" color="#000" opacity="10%" offset="2px, 2px"/>'+
+											'</v:oval>'+
+											'<div class="' + Dial.CSS_CLASSES.resetString + ' ' + Dial.CSS_CLASSES.hidden + '">{resetStr}</div>'+
+									'</div>'+
+									'';
+		Dial.HANDLE_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.handleVml + '" aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0" title="{tooltipHandle}">'+
+										'<v:oval stroked="false">'+
+											'<v:fill opacity="20%" color="#6C3A3A"/>'+
+										'</v:oval>'+
+								'</div>'+
+								'';
+	}
 
     /* Dial extends the base Widget class */
     Y.extend(Dial, Widget, {

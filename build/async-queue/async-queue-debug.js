@@ -63,7 +63,7 @@ var Queue   = Y.AsyncQueue,
  *  <li><code>until</code>: (function to run until iterations &lt;= 0)</li>
  * </ul>
  *
- * @property AsyncQueue.defaults
+ * @property defaults
  * @type {Object}
  * @static
  */

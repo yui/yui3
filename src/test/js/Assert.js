@@ -407,9 +407,10 @@
     /**
      * Asserts that a given condition is true. If not, then a Y.Assert.Error object is thrown
      * and the test fails.
-     * @method Y.assert
+     * @method assert
      * @param {Boolean} condition The condition to test.
      * @param {String} message The message to display if the assertion fails.
+     * @for YUI
      * @static
      */
     Y.assert = function(condition, message){
@@ -421,8 +422,9 @@
 
     /**
      * Forces an assertion error to occur. Shortcut for Y.Assert.fail().
-     * @method Y.fail
+     * @method fail
      * @param {String} message (Optional) The message to display with the failure.
+     * @for YUI
      * @static
      */
     Y.fail = Y.Assert.fail;   
