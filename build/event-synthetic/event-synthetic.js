@@ -445,7 +445,9 @@ Y.mix(SyntheticEvent, {
                 nodes, handle;
 
             // Can't just use Y.all because it doesn't support window (yet?)
-            nodes = (isString(selector)) ? query(selector) : toArray(selector);
+            nodes = (isString(selector)) ?
+                query(selector) :
+                toArray(selector || Y.one(Y.config.win));
 
             if (!nodes.length && isString(selector)) {
                 handle = Y.on('available', function () {
