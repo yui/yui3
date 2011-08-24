@@ -1415,18 +1415,10 @@ listSuite.add(new Y.Test.Case({
         Assert.areSame('list', this.inputNode.get('aria-autocomplete'));
         Assert.areSame('false', this.inputNode.get('aria-expanded'));
         Assert.areSame(this.ac.get('listNode').get('id'), this.inputNode.get('aria-owns'));
-        Assert.areSame('combobox', this.inputNode.get('role'));
 
         // Verify ARIA markup on the bounding box and list node.
         Assert.areSame('true', this.ac.get('boundingBox').get('aria-hidden'));
         Assert.areSame('listbox', this.ac.get('listNode').get('role'));
-
-        // Verify that a live region node exists.
-        var liveRegion = Y.one('#testbed > div.yui3-aclist-aria');
-
-        Assert.isNotNull(liveRegion);
-        Assert.areSame('polite', liveRegion.get('aria-live'));
-        Assert.areSame('status', liveRegion.get('role'));
     },
 
     'test: verify result item markup': function () {
