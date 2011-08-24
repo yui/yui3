@@ -229,7 +229,7 @@ YUI.add('attribute-base', function(Y) {
      * functionality into a single setter function, which either returns the massaged value to be stored or 
      * Attribute.INVALID_VALUE to prevent invalid values from being stored.</p>
      *
-     * @property Attribute.INVALID_VALUE
+     * @property INVALID_VALUE
      * @type Object
      * @static
      * @final
@@ -244,7 +244,7 @@ YUI.add('attribute-base', function(Y) {
      * This property is used internally as a whitelist for faster
      * Y.mix operations.
      *
-     * @property Attribute._ATTR_CFG
+     * @property _ATTR_CFG
      * @type Array
      * @static
      * @protected

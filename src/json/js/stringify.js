@@ -251,7 +251,7 @@ Y.mix(Y.namespace('JSON'),{
      * section in the JSON user guide for caveats.  The default value is true
      * for browsers with native JSON support.
      *
-     * @property JSON.useNativeStringify
+     * @property useNativeStringify
      * @type Boolean
      * @default true
      * @static
@@ -334,7 +334,7 @@ Y.mix(Y.namespace('JSON'),{
      *
      * <p>Special characters \ " \b \t \n \f \r are already cached.</p>
      *
-     * @property JSON.charCacheThreshold
+     * @property charCacheThreshold
      * @static
      * @default 100
      * @type {Number}

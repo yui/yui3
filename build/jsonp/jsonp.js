@@ -224,7 +224,7 @@ Y.JSONPRequest = JSONPRequest;
 
 /**
  *
- * @method Y.jsonp
+ * @method jsonp
  * @param url {String} the url of the JSONP service with the {callback}
  *          placeholder where the callback function name typically goes.
  * @param c {Function|Object} Callback function accepting the JSON payload
@@ -232,6 +232,7 @@ Y.JSONPRequest = JSONPRequest;
  * @param args* {any} additional arguments to pass to send()
  * @return {JSONPRequest}
  * @static
+ * @for YUI
  */
 Y.jsonp = function (url,c) {
     var req = new Y.JSONPRequest(url,c);
