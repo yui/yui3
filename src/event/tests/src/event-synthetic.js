@@ -674,7 +674,7 @@ suite.add(new Y.Test.Case({
         }, '#p4');
 
         test.wait();
-    },
+    }/*,
 
     "test Y.on('synth', fn) defaults to window": function (){
         var target = Y.one(Y.config.win),
@@ -694,6 +694,7 @@ suite.add(new Y.Test.Case({
 
         handle.detach();
     }
+    */
 
 }));
 
