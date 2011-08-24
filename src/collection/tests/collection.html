@@ -68,6 +68,15 @@
                 Assert.areSame(-1, A.lastIndexOf([], 'a', -10));
             },
 
+            'lastIndexOf() should handle sparse arrays correctly': function () {
+                var array = ['a'];
+
+                array[1] = undefined;
+                array[3] = 'd';
+
+                Y.Assert.areSame(1, A.lastIndexOf(array, undefined));
+            },
+
             testMap: function () {
                 var data = this.data;
                 var results = A.map(data, function (item, i, array) {

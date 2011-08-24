@@ -176,7 +176,7 @@ YArray.indexOf = Native.indexOf ? function (array, value) {
     return Native.indexOf.call(array, value);
 } : function (array, value) {
     for (var i = 0, len = array.length; i < len; ++i) {
-        if (array[i] === value) {
+        if (i in array && array[i] === value) {
             return i;
         }
     }
