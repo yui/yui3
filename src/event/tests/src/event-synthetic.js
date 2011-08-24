@@ -674,7 +674,27 @@ suite.add(new Y.Test.Case({
         }, '#p4');
 
         test.wait();
+    },
+
+    "test Y.on('synth', fn) defaults to window": function (){
+        var target = Y.one(Y.config.win),
+            type, currentTarget, thisObj, handle;
+
+        handle = Y.on('synth', function (e) {
+            type = e.type;
+            currentTarget = e.currentTarget;
+            thisObj = this;
+        });
+
+        Y.one('#button1').click();
+
+        areSame('synth', type);
+        areSame(target, currentTarget);
+        areSame(target, thisObj);
+
+        handle.detach();
     }
+
 }));
 
 suite.add(new Y.Test.Case({
