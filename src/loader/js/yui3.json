@@ -162,9 +162,6 @@
         "after": [
             "autocomplete-sources"
         ], 
-        "lang": [
-            "en"
-        ], 
         "requires": [
             "autocomplete-base", 
             "event-resize", 
