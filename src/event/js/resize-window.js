@@ -4,53 +4,56 @@
  * @module event
  * @submodule event-resize
  */
+(function() {
+
+var detachHandle,
+
+    timerHandle,
+
+    CE_NAME = 'window:resize',
+
+    handler = function(e) {
+
+        if (Y.UA.gecko) {
+
+            Y.fire(CE_NAME, e);
+
+        } else {
+
+            if (timerHandle) {
+                timerHandle.cancel();
+            }
+
+            timerHandle = Y.later(Y.config.windowResizeDelay || 40, Y, function() {
+                Y.fire(CE_NAME, e);
+            });
+        }
+        
+    };
 
 
 /**
- * Old firefox fires the window resize event once when the resize action
+ * Firefox fires the window resize event once when the resize action
  * finishes, other browsers fire the event periodically during the
  * resize.  This code uses timeout logic to simulate the Firefox 
  * behavior in other browsers.
  * @event windowresize
  * @for YUI
  */
+Y.Env.evt.plugins.windowresize = {
 
-var domEventProxies = Y.Env.evt.dom_wrappers,
-    win = Y.config.win,
-    key = 'event:' + Y.stamp(win) + 'resize',
-    config;
-    
+    on: function(type, fn) {
 
-Y.Event.define('windowresize', {
-
-    on: (Y.UA.gecko && Y.UA.gecko < 1.91) ?
-        function (node, sub, notifier) {
-            Y.Event._attach('resize', function (e) {
-                notifier.fire(e);
-            });
-        } :
-        function (node, sub, notifier) {
-            // interval bumped from 40 to 100ms as of 3.4.1
-            var delay = Y.config.windowResizeDelay || 100;
-
-            sub._handle = Y.Event._attach(['resize', function (e) {
-                if (sub._timer) {
-                    sub._timer.cancel();
-                }
-
-                sub._timer = Y.later(delay, Y, function () {
-                    notifier.fire(
-                        new Y.DOMEventFacade(e, win, domEventProxies[key]));
-                });
-            }], { facade: false });
-        },
-
-    detach: function (node, sub) {
-        if (sub._timer) {
-            sub._timer.cancel();
+        // check for single window listener and add if needed
+        if (!detachHandle) {
+            detachHandle = Y.Event._attach(['resize', handler]);
         }
-        sub._handle.detach();
+
+        var a = Y.Array(arguments, 0, true);
+        a[0] = CE_NAME;
+
+        return Y.on.apply(Y, a);
     }
-    // delegate methods not defined because this only works for window
-    // subscriptions, so...yeah.
-});
+};
+
+})();
