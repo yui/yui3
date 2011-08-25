@@ -760,23 +760,6 @@ with any configuration info required for the module.
             }
         }
 
-        if (Y.config.cacheUse) {
-            while ((name = args[i++])) {
-                if (!Env._attached[name]) {
-                    provisioned = false;
-                    break;
-                }
-            }
-
-            if (provisioned) {
-                if (args.length) {
-                    Y.log('already provisioned: ' + args, 'info', 'yui');
-                }
-                Y._notify(callback, ALREADY_DONE, args);
-                return Y;
-            }
-        }
-
         if (Y._loading) {
             Y._useQueue = Y._useQueue || new Y.Queue();
             Y._useQueue.add([args, callback]);
