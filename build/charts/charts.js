@@ -11,7 +11,9 @@ var DOCUMENT = Y.config.doc,
     LeftAxisLayout,
     RightAxisLayout,
     BottomAxisLayout,
-    TopAxisLayout;
+    TopAxisLayout,
+    _getClassName = Y.ClassNameManager.getClassName,
+    SERIES_MARKER = _getClassName("seriesmarker");
 
 /**
  * The Renderer class is a base class for chart components that use the `styles`
@@ -3301,7 +3303,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
                 {
                     max = 10;
                 }
-                if(this.get("setMax")) 
+                if(Y.Lang.isNumber(this._setMaximum))
                 {
                     max = this._setMaximum;
                 }
@@ -3342,7 +3344,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
             getter: function ()
             {
                 var min = this.get("dataMinimum");
-                if(this.get("setMin"))
+                if(Y.Lang.isNumber(this._setMinimum))
                 {
                     min = this._setMinimum;
                 }
@@ -3606,8 +3608,8 @@ Y.extend(NumericAxis, Y.AxisType,
             num,
             i,
             key,
-            setMax = this.get("setMax"),
-            setMin = this.get("setMin");
+            setMax = this._setMaximum,
+            setMin = this._setMinimum;
         if(!setMax && !setMin)
         {
             if(data && data.length && data.length > 0)
@@ -3866,9 +3868,18 @@ Y.extend(NumericAxis, Y.AxisType,
             increm = (max - min)/(l-1),
             label;
             l -= 1;
-        label = min + (i * increm);
-        if(i > 0)
+        //respect the min and max. calculate all other labels.
+        if(i === 0)
         {
+            label = min;
+        }
+        else if(i === l)
+        {
+            label = max;
+        }
+        else
+        {
+            label = min + (i * increm);
             label = this._roundToNearest(label, increm);
         }
         return label;
@@ -5589,7 +5600,7 @@ Plots.prototype = {
         graphic.set("autoDraw", false);
         cfg.type = cfg.shape;
         marker = graphic.addShape(cfg); 
-        marker.addClass("yui3-seriesmarker");
+        marker.addClass(SERIES_MARKER);
         return marker;
     },
     
@@ -8972,7 +8983,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         pts += ", " + bx + ", " + by;
         pts += ", " + x + ", " + y;
         this._map.appendChild(areaNode);
-        areaNode.setAttribute("class", "yui3-seriesmarker");
+        areaNode.setAttribute("class", "SERIES_MARKER");
         areaNode.setAttribute("id", "hotSpot_" + seriesIndex + "_" + index);
         areaNode.setAttribute("shape", "polygon");
         areaNode.setAttribute("coords", pts);
@@ -9022,7 +9033,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             cfg = Y.clone(styles);
         graphic.set("autoDraw", false);
         marker = graphic.addShape(cfg); 
-        marker.addClass("yui3-seriesmarker");
+        marker.addClass("SERIES_MARKER");
         return marker;
     },
     
@@ -10563,17 +10574,18 @@ ChartBase.prototype = {
             cb = this.get("contentBox"),
             interactionType = this.get("interactionType"),
             i = 0,
-            len;
+            len,
+            markerClassName = "." + SERIES_MARKER;
         if(interactionType == "marker")
         {
             hideEvent = tt.hideEvent;
             showEvent = tt.showEvent;
-            Y.delegate("mouseenter", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("mousedown", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("mouseup", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("mouseleave", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("click", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("mousemove", Y.bind(this._positionTooltip, this), cb, ".yui3-seriesmarker");
+            Y.delegate("mouseenter", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("mousedown", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("mouseup", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("mouseleave", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("click", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("mousemove", Y.bind(this._positionTooltip, this), cb, markerClassName);
         }
         else if(interactionType == "planar")
         {
@@ -11075,7 +11087,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
     renderUI: function()
     {
         var tt = this.get("tooltip"),
-            overlay;
+            overlay,
+            overlayClass = _getClassName("overlay");
         //move the position = absolute logic to a class file
         this.get("boundingBox").setStyle("position", "absolute");
         this.get("contentBox").setStyle("position", "absolute");
@@ -11096,7 +11109,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             this._overlay.setStyle("position", "absolute");
             this._overlay.setStyle("background", "#fff");
             this._overlay.setStyle("opacity", 0);
-            this._overlay.addClass("yui3-overlay");
+            this._overlay.addClass(overlayClass);
             this._overlay.setStyle("zIndex", 4);
         }
         this._redraw();
