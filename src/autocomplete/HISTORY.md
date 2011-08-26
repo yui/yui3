@@ -1,6 +1,22 @@
 AutoComplete Change History
 ===========================
 
+3.4.1
+-----
+
+  * The "combobox" ARIA role is no longer automatically added to an
+    AutoCompleteList input node. After consulting with the Y! Accessibility
+    team, we felt that the combobox role doesn't accurately represent the
+    out-of-the-box interactions that AutoCompleteList provides. Implementers can
+    still apply this role (or any other ARIA role) to the input node manually if
+    desired.
+
+  * Removed the ARIA live region that announced when suggestions were available.
+    The `aria-autocomplete` attribute and other attributes in use on the
+    AutoCompleteList widget already convey this information, so the live region
+    was essentially redundant.
+
+
 3.4.0
 -----
 

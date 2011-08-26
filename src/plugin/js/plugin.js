@@ -22,7 +22,7 @@
     /**
      * Object defining the set of attributes supported by the Plugin.Base class
      * 
-     * @property Plugin.Base.ATTRS
+     * @property ATTRS
      * @type Object
      * @static
      */
@@ -44,7 +44,7 @@
      * The string identifying the Plugin.Base class. Plugins extending
      * Plugin.Base should set their own NAME value.
      *
-     * @property Plugin.Base.NAME
+     * @property NAME
      * @type String
      * @static
      */
@@ -55,7 +55,7 @@
      * when plugged into a Plugin Host. Plugins extending Plugin.Base,
      * should set their own NS value.
      *
-     * @property Plugin.NS
+     * @property NS
      * @type String
      * @static
      */

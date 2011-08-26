@@ -43,7 +43,7 @@ A.lastIndexOf = Native.lastIndexOf ?
 
         if (i > -1 && len > 0) {
             for (; i > -1; --i) {
-                if (a[i] === val) {
+                if (i in a && a[i] === val) {
                     return i;
                 }
             }
@@ -356,4 +356,4 @@ A.zip = function(a, a2) {
 };
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['yui-base']});

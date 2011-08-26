@@ -5,12 +5,6 @@
 
 .yui3-aclist-hidden { visibility: hidden; }
 
-.yui3-aclist-aria {
-    /* Hide from sighted users, show to screen readers. */
-    left: -9999px;
-    position: absolute;
-}
-
 .yui3-aclist-list {
     list-style: none;
     margin: 0;

@@ -1,0 +1,251 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Dial: Show Range Cases</title>
+
+<!-- Source File and Seed for YUI3-->
+<link rel="stylesheet" type="text/css" href="../../../../build/cssreset/reset-min.css">
+<link type="text/css" rel="stylesheet" href="../../../../build/cssfonts/fonts-min.css">
+
+<script src="../../../../build/yui/yui.js"></script>
+
+<style>
+body{
+    margin-top:30px;
+}
+.yui3-dial,
+.pics li {
+	margin-left:10px;
+}
+.steps{
+	margin:20px;
+}
+.angle-lines {
+	position:absolute;
+	left:100px;
+	top:100px;
+	border:solid 1px #abc;
+}
+.angle-lines li{
+	position:absolute;
+	bottom:0px;
+	left:-2px;
+	width:4px;
+	height: 0px;
+	border-top:solid 50px #0f0;
+}
+.angle-lines li.max{
+	border-top-color:#f00;
+}
+.angle-lines li.range{
+    border-top-color: #458042;
+    border-top-width: 8px;
+    height: 90px;
+    left: -11px;
+    top: -50px;
+    width: 20px;
+	opacity:0.5;
+}
+.min-max-label{
+	position:absolute;
+	top:-16px;
+	left:0px;
+}
+.pics img{
+		
+}
+.hd{
+	font-size:150%;
+	margin: 1.5em;
+}
+.width-container{
+	width:1300px;
+	/*border:solid 1px #f00;*/
+}
+.pics li{
+	position:relative;
+	display:inline-block;
+	width:200px;
+	height:200px;
+	/*border:solid 1px #f00;*/
+	margin-top:20px;
+}
+.pics li div{
+	position:absolute;
+	bottom:-74px;
+	height:30px;	
+}
+.pics .num {
+	position:absolute;
+	bottom:-24px;
+	height:30px;	
+	font-size:373%;
+	width:100%;
+	text-align:center;
+}
+em {font-weight:bold;}
+</style>
+</head>
+	
+<body class="yui3-skin-sam"> 
+<div class="hd">Test on Dials with different value ranges</div>
+
+
+
+    
+    
+    	<div class="width-container">
+        <span id="dial_container1"></span>
+        <span id="dial_container2"></span>
+        <span id="dial_container3"></span>
+        <span id="dial_container4"></span>
+        <span id="dial_container5"></span>
+        <span id="dial_container6"></span>
+        <ul class="pics">
+            <li><img src="assets/images/clock.png" width="200" height="200"/><div>Range is one revolution</div><div class="num">1</div></li>
+            <li><img src="assets/images/wrapper.png" width="200" height="200"/><div>Range wraps around the dial one or more times</div><div class="num">2</div></li>
+            <li><img src="assets/images/needle.png" width="200" height="200"/><div>Range is < one revolution. The wrap point is in the range</div><div class="num">3</div></li>
+            <li><img src="assets/images/gas.png" width="200" height="200"/><div>Range is < one revolution. No wrap point in either the range nor out of range section</div><div class="num">4</div></li> 
+            <li><img src="assets/images/ship.png" width="200" height="200"/><div>Range is < one revolution. wrap point found in out of range section</div><div class="num">5</div></li>
+        </ul>
+	</div>
+</body>
+</html>
+<script>
+YUI({lang:'en', filter:'raw'}).use("dial",  function(Y) {
+
+
+
+	function drawMinMaxLines(dialObj){
+	//	return;
+		var min = dialObj.get('min'),
+		max = dialObj.get('max'),
+		range = max - min,
+		rangeDashNum = range / 5,
+		angMax, angMin, thisVal = min, angThis, newUl, newLi, label;
+		
+		newUl = Y.Node.create('<ul class="angle-lines"></ul>')
+		dialObj._ringNode.append(newUl);
+		
+		for(var i = 1; i < rangeDashNum; i++){
+			thisVal = min + ((range / rangeDashNum) * i);
+			angThis = dialObj._getAngleFromValue(thisVal);
+			newLi = Y.Node.create('<li class="range" style="-moz-transform: rotate(' + angThis + 'deg); -moz-transform-origin: center center;"></li>');
+			newUl.append(newLi);
+			
+		}
+		angMin = dialObj._getAngleFromValue(dialObj.get('min'));
+		newLi = Y.Node.create('<li class="min" style="-moz-transform: rotate(' + angMin + 'deg); -moz-transform-origin: bottom center;"></li>');
+		newUl.append(newLi);
+
+		angMax = dialObj._getAngleFromValue(dialObj.get('max'));
+		newLi = Y.Node.create('<li class="max" style="-moz-transform: rotate(' + angMax + 'deg); -moz-transform-origin: bottom center;"></li>');
+		newUl.append(newLi);
+
+		
+		label = Y.Node.create('<div class="min-max-label">min: ' + dialObj.get('min') + '<br>max: ' + dialObj.get('max') + '</div>');
+		dialObj._ringNode.append(label);
+	}
+
+var dial_00 = new Y.Dial({
+		min:0,
+		max:100,
+		stepsPerRevolution:100,
+		value: 0,
+		diameter: 200,
+		decimalPlaces:0
+	});
+	dial_00.render("#dial_container1");
+	drawMinMaxLines(dial_00);
+
+var dial_01 = new Y.Dial({
+		min:0,
+		max:200,
+		stepsPerRevolution:100,
+		value: 93,
+		diameter: 200,
+		decimalPlaces:0
+	});
+	dial_01.render("#dial_container2");
+	drawMinMaxLines(dial_01);
+
+var dial_02 = new Y.Dial({
+		min:-40,
+		max:40,
+//		min:60,
+//		max:140,
+		stepsPerRevolution:100,
+		value: 10,
+//		value: 100,
+		diameter: 200,
+		decimalPlaces:0
+	});
+	dial_02.render("#dial_container3");
+	drawMinMaxLines(dial_02);
+	
+var dial_03 = new Y.Dial({
+		min:0,
+		max:20,
+		stepsPerRevolution:100,
+		value: 10,
+		diameter: 200,
+		decimalPlaces:0
+	});
+	dial_03.render("#dial_container4");
+	drawMinMaxLines(dial_03);
+
+//////////////////////////////////////////////////////////////////
+var dial_04 = new Y.Dial({
+		min:5,
+		max:80,
+		stepsPerRevolution:100,
+		value: 60,
+		diameter: 200,
+		decimalPlaces:0
+	});
+	dial_04.render("#dial_container5");
+	drawMinMaxLines(dial_04);
+//////////////////////////////////////////////////////////////////
+var dial_05 = new Y.Dial({
+		min:40,
+		max:100,
+		stepsPerRevolution:100,
+		value: 100,
+		diameter: 200,
+		decimalPlaces:0
+	});
+	dial_05.render("#dial_container6");
+	drawMinMaxLines(dial_05);
+/*
+var dial_05 = new Y.Dial({
+		min:170,
+		max:200,
+		stepsPerRevolution:100,
+		value: 180,
+		diameter: 200,
+		decimalPlaces:0
+	});
+	dial_05.render("#dial_container");
+	drawMinMaxLines(dial_05);
+
+var dial_06 = new Y.Dial({
+		min:0,
+		max:70,
+		stepsPerRevolution:100,
+		value: 20,
+		diameter: 200,
+		decimalPlaces:0
+	});
+	dial_06.render("#dial_container");
+	drawMinMaxLines(dial_06);
+///////////////////////////////////////////////////////
+*/
+
+
+
+
+
+	
+	
+}); 
+</script>
