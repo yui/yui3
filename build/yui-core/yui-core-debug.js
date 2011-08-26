@@ -192,6 +192,7 @@ properties.
                 loader = new Y.Loader(Y.config);
                 Y.Env._loader = loader;
             }
+            YUI.Env.core = Y.Array.dedupe([].concat(YUI.Env.core, [ 'loader-base', 'loader-rollup', 'loader-yui3' ]));
 
             return loader;
         },
@@ -298,6 +299,7 @@ proto = {
 
         if (!Env) {
             Y.Env = {
+                core: ['get','intl-base'],
                 mods: {}, // flat module map
                 versions: {}, // version module map
                 base: BASE,
@@ -457,7 +459,8 @@ proto = {
         var i, Y = this,
             core = [],
             mods = YUI.Env.mods,
-            extras = Y.config.core || ['get','intl-base'];
+            //extras = Y.config.core || ['get','intl-base'];
+            extras = Y.config.core || [].concat(YUI.Env.core); //Clone it..
 
         for (i = 0; i < extras.length; i++) {
             if (mods[extras[i]]) {
@@ -467,6 +470,10 @@ proto = {
 
         Y._attach(['yui-base']);
         Y._attach(core);
+
+        if (Y.Loader) {
+            getLoader(Y);
+        }
 
         // Y.log(Y.id + ' initialized', 'info', 'yui');
     },
@@ -571,6 +578,8 @@ with any configuration info required for the module.
     /**
      * Executes the function associated with each required
      * module, binding the module to the YUI instance.
+     * @param {Array} r The array of modules to attach
+     * @param {Boolean} [moot=false] Don't throw a warning if the module is not attached
      * @method _attach
      * @private
      */
@@ -579,26 +588,42 @@ with any configuration info required for the module.
             mods = YUI.Env.mods,
             aliases = YUI.Env.aliases,
             Y = this, j,
+            loader = Y.Env._loader,
             done = Y.Env._attached,
-            len = r.length, loader;
+            len = r.length, loader,
+            c = [];
 
-        //console.info('attaching: ' + r, 'info', 'yui');
+        //Check for conditional modules (in a second+ instance) and add their requirements
+        //TODO I hate this entire method, it needs to be fixed ASAP (3.5.0) ^davglass
+        for (i = 0; i < len; i++) {
+            name = r[i];
+            mod = mods[name];
+            c.push(name);
+            if (loader && loader.conditions[name]) {
+                Y.Object.each(loader.conditions[name], function(def) {
+                    var go = def && ((def.ua && Y.UA[def.ua]) || (def.test && def.test(Y)));
+                    if (go) {
+                        c.push(def.name);
+                    }
+                });
+            }
+        }
+        r = c;
+        len = r.length;
 
         for (i = 0; i < len; i++) {
             if (!done[r[i]]) {
                 name = r[i];
                 mod = mods[name];
+
                 if (aliases && aliases[name]) {
                     Y._attach(aliases[name]);
                     continue;
                 }
                 if (!mod) {
-                    loader = Y.Env._loader;
                     if (loader && loader.moduleInfo[name]) {
                         mod = loader.moduleInfo[name];
-                        if (mod.use) {
-                            moot = true;
-                        }
+                        moot = true;
                     }
 
                     // Y.log('no js def for: ' + name, 'info', 'yui');
@@ -615,7 +640,7 @@ with any configuration info required for the module.
                 } else {
                     done[name] = true;
                     //Don't like this, but in case a mod was asked for once, then we fetch it
-                    //We need to remove it from the missed list
+                    //We need to remove it from the missed list ^davglass
                     for (j = 0; j < Y.Env._missed.length; j++) {
                         if (Y.Env._missed[j] === name) {
                             Y.message('Found: ' + name + ' (was reported as missing earlier)', 'warn', 'yui');
@@ -952,6 +977,7 @@ with any configuration info required for the module.
             len = missing.length;
 Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
         }
+
 
         // dynamic load
         if (boot && len && Y.Loader) {
