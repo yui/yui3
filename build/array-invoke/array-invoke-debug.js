@@ -37,4 +37,4 @@ Y.Array.invoke = function(items, name) {
 };
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['yui-base']});

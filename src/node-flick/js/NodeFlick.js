@@ -152,7 +152,7 @@
      * The NAME of the Flick class. Used to prefix events generated
      * by the plugin.
      *
-     * @property Flick.NAME
+     * @property NAME
      * @static
      * @type String
      * @default "pluginFlick"
@@ -163,7 +163,7 @@
      * The namespace for the plugin. This will be the property on the node, which will 
      * reference the plugin instance, when it's plugged in.
      *
-     * @property Flick.NS
+     * @property NS
      * @static
      * @type String
      * @default "flick"
@@ -466,7 +466,7 @@
          * The threshold used to determine when the decelerated velocity of the node
          * is practically 0.
          *
-         * @property Flick.VELOCITY_THRESHOLD
+         * @property VELOCITY_THRESHOLD
          * @static
          * @type Number
          * @default 0.015
@@ -476,7 +476,7 @@
         /**
          * The duration to use for the bounce snap-back transition
          *
-         * @property Flick.SNAP_DURATION
+         * @property SNAP_DURATION
          * @static
          * @type Number
          * @default 400
@@ -486,7 +486,7 @@
         /**
          * The default easing to use for the main flick movement transition
          *
-         * @property Flick.EASING
+         * @property EASING
          * @static
          * @type String
          * @default 'cubic-bezier(0, 0.1, 0, 1.0)'
@@ -496,7 +496,7 @@
         /**
          * The default easing to use for the bounce snap-back transition
          *
-         * @property Flick.SNAP_EASING
+         * @property SNAP_EASING
          * @static
          * @type String
          * @default 'ease-out'
@@ -506,7 +506,7 @@
         /**
          * The default CSS class names used by the plugin
          *
-         * @property Flick.CLASS_NAMES
+         * @property CLASS_NAMES
          * @static
          * @type Object
          */

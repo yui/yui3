@@ -17,7 +17,7 @@
     /**
      * Default class used to mark the shim element
      *
-     * @property Shim.CLASS_NAME
+     * @property CLASS_NAME
      * @type String
      * @static
      * @default "yui-node-shim"
@@ -28,7 +28,7 @@
     /**
      * Default markup template used to generate the shim element.
      * 
-     * @property Shim.TEMPLATE
+     * @property TEMPLATE
      * @type String
      * @static
      */

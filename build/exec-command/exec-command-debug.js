@@ -517,15 +517,32 @@ YUI.add('exec-command', function(Y) {
                         if (par && par.hasAttribute(DIR)) {
                             dir = par.getAttribute(DIR);
                         }
-                        this._command(cmd, null);
+                        if (par && par.test(tag)) {
+                            html = inst.Node.create('<div/>');
+                            elm = par.all('li');
+                            elm.each(function(h) {
+                                html.append(h.get('innerHTML') + '<br>');
+                            });
+                            if (dir) {
+                                html.setAttribute(DIR, dir);
+                            }
+                            par.replace(html);
+                            sel.selectNode(html.get('firstChild'));
+                        } else {
+                            this._command(cmd, null);
+                        }
                         list = inst.all(tag);
                         if (dir) {
-                            list.each(function(n) {
-                                if (!n.hasClass(cls)) {
-                                    n.setAttribute(DIR, dir);
-                                }
-                            });
+                            if (list.size()) {
+                                //Changed to a List
+                                list.each(function(n) {
+                                    if (!n.hasClass(cls)) {
+                                        n.setAttribute(DIR, dir);
+                                    }
+                                });
+                            }
                         }
+
                         list.removeClass(cls);
                     }
                 },

@@ -44,18 +44,18 @@ p{margin:40px;}
 </body>
 </html>
 <script>
-    YUI({lang:'es'}).use("dial", function(Y) {          //, filter:'raw'  this make it really hard to clear cache on iPad
+    YUI({lang:'es', filter:'raw'}).use("dial", function(Y) {          //, filter:'raw'  this make it really hard to clear cache on iPad
 
         var dial = new Y.Dial({
-			min:-220,
-			max:220,
+			min:-2,
+			max:110,
 			stepsPerRevolution:100,
 			value: 5,
-			diameter: 300,
+			diameter: 200,
 			decimalPlaces:0
         });
         dial.render("#dial_container");
-
+        
 
 
 

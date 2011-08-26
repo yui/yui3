@@ -232,7 +232,7 @@
      *    </dd>
      * </dl>
      *
-     * @method Base.build
+     * @method build
      * @deprecated Use the more convenient Base.create and Base.mix methods instead
      * @static
      * @param {Function} name The name of the new class. Used to defined the NAME property for the new class.
@@ -254,7 +254,7 @@
      * <p>
      * 
      * </p>
-     * @method Base.create
+     * @method create
      * @static
      * @param {Function} name The name of the newly created class. Used to defined the NAME property for the new class.
      * @param {Function} main The base class which the new class should extend. This class needs to be Base or a class derived from base (e.g. Widget).
@@ -269,7 +269,7 @@
 
     /**
      * <p>Mixes in a list of extensions to an existing class.</p>
-     * @method Base.mix
+     * @method mix
      * @static
      * @param {Function} main The existing class into which the extensions should be mixed.  The class needs to be Base or a class derived from Base (e.g. Widget)
      * @param {Function[]} extensions The set of extension classes which will mixed into the existing main class.
@@ -286,7 +286,7 @@
      * when the Base class is used as the main class passed to
      * the <a href="#method_Base.build">Base.build</a> method.
      *
-     * @property Base._buildCfg
+     * @property _buildCfg
      * @type Object
      * @static
      * @final

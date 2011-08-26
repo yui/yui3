@@ -61,12 +61,13 @@
      * Registers plugins to be instantiated at the class level (plugins 
      * which should be plugged into every instance of the class by default).
      *
-     * @method Plugin.Host.plug
+     * @method plug
      * @static
      *
      * @param {Function} hostClass The host class on which to register the plugins
      * @param {Function | Array} plugin Either the plugin class, an array of plugin classes or an array of objects (with fn and cfg properties defined)
      * @param {Object} config (Optional) If plugin is the plugin class, the configuration for the plugin
+     * @for Plugin.Host
      */
     PluginHost.plug = function(hostClass, plugin, config) {
         // Cannot plug into Base, since Plugins derive from Base [ will cause infinite recurrsion ]
@@ -94,11 +95,12 @@
      * Unregisters any class level plugins which have been registered by the host class, or any
      * other class in the hierarchy.
      *
-     * @method Plugin.Host.unplug
+     * @method unplug
      * @static
      *
      * @param {Function} hostClass The host class from which to unregister the plugins
      * @param {Function | Array} plugin The plugin class, or an array of plugin classes
+     * @for Plugin.Host
      */
     PluginHost.unplug = function(hostClass, plugin) {
         var p, i, l, name;

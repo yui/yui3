@@ -1,37 +1,44 @@
 YUI 3: The Yahoo! User Interface Library
 ========================================
 
-Welcome to YUI 3!
+YUI is a free, open source JavaScript and CSS framework for building richly
+interactive web applications. YUI is provided under a BSD license and is
+available on GitHub for forking and contribution.
 
-  * [Documentation](http://developer.yahoo.com/yui/3/)
-  * [Latest Production Release](http://yuilibrary.com/downloads/#yui3)
+Links
+-----
+
+  * [Home Page](http://yuilibrary.com/)
+  * [Documentation](http://yuilibrary.com/yui/docs/)
+  * [Latest Production Release](http://yuilibrary.com/download/yui3/)
   * [Forums](http://yuilibrary.com/forum/)
-  * [License](http://developer.yahoo.com/yui/license.html)
-  * [Contributor Info](http://developer.yahoo.com/yui/community/contribute.html)
+  * [License](http://yuilibrary.com/license/)
+  * [Contributor Info](http://yuilibrary.com/contribute/)
+  * [Report a Bug](http://yuilibrary.com/yui/docs/tutorials/report-bugs/)
 
-The YUI Library is a set of utilities, infrastructure components, and widgets
-written in JavaScript and CSS for building richly interactive web applications.
-It is available under a BSD license and is free for all uses.
+
+Source Info
+-----------
 
 This is the active working source tree for YUI 3. It contains work in progress
-toward the next YUI 3 release, and may be unstable or change without notice. We
-encourage you to use the latest source for evaluation purposes, testing new
+toward the next YUI 3 release and may be unstable.
+
+We encourage you to use the latest source for evaluation purposes, testing new
 features and bug fixes, and to provide feedback on new functionality. Please
 refer to the "Latest Production Release" link above if you're looking for the
 latest stable release of YUI recommended for production use.
 
 The YUI source tree includes the following directories:
 
-  * `api`: Generated API docs for the entire library in HTML format. This
-    documentation is built and committed automatically from the contents of the
-    `src` directory.
   * `build`: Built YUI source files. The built files are generated at
     development time from the contents of the `src` directory. The build step
     generates debug files (unminified and with full comments and logging),
     raw files (unminified, but without debug logging), and minified files
     (suitable for production deployment and use).
+
   * `sandbox`: Experiments and works in progress, including unreleased future
      components. Here there be dragons.
+
   * `src` Raw unbuilt source code (JavaScript, CSS, image assets, ActionScript
      files, etc.) for the library. Beginning with YUI 3.4.0, the `src` directory
      also contains all module-specific documentation, tests and examples. All

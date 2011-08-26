@@ -57,9 +57,10 @@ properties.
                 YUI.GlobalConfig is a master configuration that might span
                 multiple contexts in a non-browser environment.  It is applied
                 first to all instances in all contexts.
-                @property YUI.GlobalConfig
+                @property GlobalConfig
                 @type {Object}
                 @global
+                @static
                 @example
 
                     
@@ -603,8 +604,9 @@ with any configuration info required for the module.
                     //if (!loader || !loader.moduleInfo[name]) {
                     //if ((!loader || !loader.moduleInfo[name]) && !moot) {
                     if (!moot) {
-                        if (name.indexOf('skin-') === -1) {
+                        if ((name.indexOf('skin-') === -1) && (name.indexOf('css') === -1)) {
                             Y.Env._missed.push(name);
+                            Y.Env._missed = Y.Array.dedupe(Y.Env._missed);
                             Y.message('NOT loaded: ' + name, 'warn', 'yui');
                         }
                     }
@@ -737,22 +739,6 @@ with any configuration info required for the module.
         }
         if (Y.Lang.isArray(args[0])) {
             args = args[0];
-        }
-
-        if (Y.config.cacheUse) {
-            while ((name = args[i++])) {
-                if (!Env._attached[name]) {
-                    provisioned = false;
-                    break;
-                }
-            }
-
-            if (provisioned) {
-                if (args.length) {
-                }
-                Y._notify(callback, ALREADY_DONE, args);
-                return Y;
-            }
         }
 
         if (Y.config.cacheUse) {
@@ -2060,13 +2046,9 @@ L.now = Date.now || function () {
     return new Date().getTime();
 };
 /**
- * The YUI module contains the components required for building the YUI seed
- * file. This includes the script loading mechanism, a simple queue, and the
- * core utilities for the library.
- *
- * @module yui
- * @submodule yui-base
- */
+@module yui
+@submodule yui-base
+*/
 
 var Lang   = Y.Lang,
     Native = Array.prototype,
@@ -2125,43 +2107,6 @@ function YArray(thing, startIndex, force) {
 }
 
 Y.Array = YArray;
-
-/**
-Evaluates _obj_ to determine if it's an array, an array-like collection, or
-something else. This is useful when working with the function `arguments`
-collection and `HTMLElement` collections.
-
-Note: This implementation doesn't consider elements that are also
-collections, such as `<form>` and `<select>`, to be array-like.
-
-@method test
-@param {Object} obj Object to test.
-@return {Number} A number indicating the results of the test:
-
-  * 0: Neither an array nor an array-like collection.
-  * 1: Real array.
-  * 2: Array-like collection.
-
-@static
-**/
-YArray.test = function (obj) {
-    var result = 0;
-
-    if (Lang.isArray(obj)) {
-        result = 1;
-    } else if (Lang.isObject(obj)) {
-        try {
-            // indexed, but no tagName (element) or alert (window),
-            // or functions without apply/call (Safari
-            // HTMLElementCollection bug).
-            if ('length' in obj && !obj.tagName && !obj.alert && !obj.apply) {
-                result = 2;
-            }
-        } catch (ex) {}
-    }
-
-    return result;
-};
 
 /**
 Dedupes an array of strings, returning an array that's guaranteed to contain
@@ -2278,7 +2223,7 @@ YArray.indexOf = Native.indexOf ? function (array, value) {
     return Native.indexOf.call(array, value);
 } : function (array, value) {
     for (var i = 0, len = array.length; i < len; ++i) {
-        if (array[i] === value) {
+        if (i in array && array[i] === value) {
             return i;
         }
     }
@@ -2335,6 +2280,43 @@ YArray.some = Native.some ? function (array, fn, thisObj) {
     }
 
     return false;
+};
+
+/**
+Evaluates _obj_ to determine if it's an array, an array-like collection, or
+something else. This is useful when working with the function `arguments`
+collection and `HTMLElement` collections.
+
+Note: This implementation doesn't consider elements that are also
+collections, such as `<form>` and `<select>`, to be array-like.
+
+@method test
+@param {Object} obj Object to test.
+@return {Number} A number indicating the results of the test:
+
+  * 0: Neither an array nor an array-like collection.
+  * 1: Real array.
+  * 2: Array-like collection.
+
+@static
+**/
+YArray.test = function (obj) {
+    var result = 0;
+
+    if (Lang.isArray(obj)) {
+        result = 1;
+    } else if (Lang.isObject(obj)) {
+        try {
+            // indexed, but no tagName (element) or alert (window),
+            // or functions without apply/call (Safari
+            // HTMLElementCollection bug).
+            if ('length' in obj && !obj.tagName && !obj.alert && !obj.apply) {
+                result = 2;
+            }
+        } catch (ex) {}
+    }
+
+    return result;
 };
 /**
  * The YUI module contains the components required for building the YUI
@@ -2467,7 +2449,7 @@ Y.cached = function (source, cache, refetch) {
     return function (arg) {
         var key = arguments.length > 1 ?
                 Array.prototype.join.call(arguments, CACHED_DELIMITER) :
-                arg.toString();
+                String(arg);
 
         if (!(key in cache) || (refetch && cache[key] == refetch)) {
             cache[key] = source.apply(source, arguments);
@@ -3021,11 +3003,14 @@ O.isEmpty = function (obj) {
  * @class UA
  * @static
  */
+
 /**
-* Static method for parsing the UA string. Defaults to assigning it's value to Y.UA
+* Static method on `YUI.Env` for parsing a UA string.  Called at instantiation
+* to populate `Y.UA`.
+*
 * @static
-* @method Env.parseUA
-* @param {String} subUA Parse this UA string instead of navigator.userAgent
+* @method parseUA
+* @param {String} [subUA=navigator.userAgent] UA string to parse
 * @returns {Object} The Y.UA object
 */
 YUI.Env.parseUA = function(subUA) {
@@ -3218,6 +3203,15 @@ YUI.Env.parseUA = function(subUA) {
 
     m;
 
+    /**
+    * The User Agent string that was parsed
+    * @property userAgent
+    * @type String
+    * @static
+    */
+    o.userAgent = ua;
+
+
     o.secure = href && (href.toLowerCase().indexOf('https') === 0);
 
     if (ua) {
@@ -3325,7 +3319,10 @@ YUI.Env.parseUA = function(subUA) {
         }
     }
 
-    YUI.Env.UA = o;
+    //It was a parsed UA, do not assign the global value.
+    if (!subUA) {
+        YUI.Env.UA = o;
+    }
 
     return o;
 };

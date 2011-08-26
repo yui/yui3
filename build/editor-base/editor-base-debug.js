@@ -131,7 +131,10 @@ YUI.add('editor-base', function(Y) {
                         n = lc;
                     }
                 }
-                
+            }
+            if (!n) {
+                //Fallback to make sure a node is attached to the event
+                n = inst.one(BODY);
             }
             return n;
         },
@@ -779,16 +782,13 @@ YUI.add('editor-base', function(Y) {
         */
         NAME: 'editorBase',
         /**
-        * Editor Strings
+        * Editor Strings.  By default contains only the `title` property for the
+        * Title of frame document (default "Rich Text Editor").
+        *
         * @static
         * @property STRINGS
         */
         STRINGS: {
-            /**
-            * Title of frame document: Rich Text Editor
-            * @static
-            * @property STRINGS.title
-            */
             title: 'Rich Text Editor'
         },
         ATTRS: {
