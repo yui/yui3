@@ -121,7 +121,7 @@ WidgetButtons.BUTTON_CLASS_NAMES = {
  * @type object
  */
 WidgetButtons.TEMPLATES = {
-    defaultTemplate: "<a href={href} class='"+WidgetButtons.BUTTON_CLASS_NAMES.button+"'><span class='"+WidgetButtons.BUTTON_CLASS_NAMES.content+"'>{value}</a>",
+    defaultTemplate: "<a href={href} class='"+WidgetButtons.BUTTON_CLASS_NAMES.button+"'><span class='"+WidgetButtons.BUTTON_CLASS_NAMES.content+"'>{value}</span></a>",
     wrapper: "<span class='"+WidgetButtons.BUTTON_CLASS_NAMES.wrapper+"'></span>",
     clearfix: "<div style='clear:both;'></div>"
 };
