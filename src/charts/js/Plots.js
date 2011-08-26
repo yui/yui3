@@ -199,7 +199,7 @@ Plots.prototype = {
         graphic.set("autoDraw", false);
         cfg.type = cfg.shape;
         marker = graphic.addShape(cfg); 
-        marker.addClass("yui3-seriesmarker");
+        marker.addClass(SERIES_MARKER);
         return marker;
     },
     

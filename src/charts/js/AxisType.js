@@ -524,7 +524,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
                 {
                     max = 10;
                 }
-                if(this.get("setMax")) 
+                if(Y.Lang.isNumber(this._setMaximum))
                 {
                     max = this._setMaximum;
                 }
@@ -565,7 +565,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
             getter: function ()
             {
                 var min = this.get("dataMinimum");
-                if(this.get("setMin"))
+                if(Y.Lang.isNumber(this._setMinimum))
                 {
                     min = this._setMinimum;
                 }

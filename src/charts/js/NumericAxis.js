@@ -157,8 +157,8 @@ Y.extend(NumericAxis, Y.AxisType,
             num,
             i,
             key,
-            setMax = this.get("setMax"),
-            setMin = this.get("setMin");
+            setMax = this._setMaximum,
+            setMin = this._setMinimum;
         if(!setMax && !setMin)
         {
             if(data && data.length && data.length > 0)
@@ -417,9 +417,18 @@ Y.extend(NumericAxis, Y.AxisType,
             increm = (max - min)/(l-1),
             label;
             l -= 1;
-        label = min + (i * increm);
-        if(i > 0)
+        //respect the min and max. calculate all other labels.
+        if(i === 0)
         {
+            label = min;
+        }
+        else if(i === l)
+        {
+            label = max;
+        }
+        else
+        {
+            label = min + (i * increm);
             label = this._roundToNearest(label, increm);
         }
         return label;

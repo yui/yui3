@@ -344,17 +344,18 @@ ChartBase.prototype = {
             cb = this.get("contentBox"),
             interactionType = this.get("interactionType"),
             i = 0,
-            len;
+            len,
+            markerClassName = "." + SERIES_MARKER;
         if(interactionType == "marker")
         {
             hideEvent = tt.hideEvent;
             showEvent = tt.showEvent;
-            Y.delegate("mouseenter", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("mousedown", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("mouseup", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("mouseleave", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("click", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("mousemove", Y.bind(this._positionTooltip, this), cb, ".yui3-seriesmarker");
+            Y.delegate("mouseenter", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("mousedown", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("mouseup", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("mouseleave", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("click", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("mousemove", Y.bind(this._positionTooltip, this), cb, markerClassName);
         }
         else if(interactionType == "planar")
         {

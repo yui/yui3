@@ -14,7 +14,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
     renderUI: function()
     {
         var tt = this.get("tooltip"),
-            overlay;
+            overlay,
+            overlayClass = _getClassName("overlay");
         //move the position = absolute logic to a class file
         this.get("boundingBox").setStyle("position", "absolute");
         this.get("contentBox").setStyle("position", "absolute");
@@ -35,7 +36,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             this._overlay.setStyle("position", "absolute");
             this._overlay.setStyle("background", "#fff");
             this._overlay.setStyle("opacity", 0);
-            this._overlay.addClass("yui3-overlay");
+            this._overlay.addClass(overlayClass);
             this._overlay.setStyle("zIndex", 4);
         }
         this._redraw();

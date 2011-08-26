@@ -215,9 +215,71 @@ YUI({
             }, this));
 
             yAxis.addKey("expenses");
+        },
+
+        //Tests a NumericAxis minimum and maximum by applying the labelFunction of the axis to the set minimum and maximum values and
+        //then comparing the innerHTML of the first and last labels
+        testMinAndMax: function()
+        {
+            var yAxis = this.chart.getAxisByKey("values"),
+                majorUnit = yAxis.get("styles").majorUnit,
+                count = majorUnit.count - 1,
+                setMax = 1492,
+                setMin = 7,
+                eventListener,
+                labels;
+            yAxis.set("maximum", setMax);
+            eventListener = yAxis.on("axisRendered", function(e) {
+                labels = yAxis.get("labels");
+                Y.assert(labels[0].innerHTML == yAxis.get("labelFunction").apply(yAxis, [setMin, yAxis.get("labelFormat")]));
+                Y.assert(labels[count].innerHTML == yAxis.get("labelFunction").apply(yAxis, [setMax, yAxis.get("labelFormat")])); 
+            });
+            yAxis.set("minimum", setMin);
+            eventListener.detach();
+        },
+       
+        //change min to negative value and test.
+        //change max to negative value and test.
+        //tests negative min/positive max and negative min/negative max
+        testNegativeMinAndMax: function()
+        {
+            var yAxis = this.chart.getAxisByKey("values"),
+                majorUnit = yAxis.get("styles").majorUnit,
+                count = majorUnit.count- 1,
+                setMin = -1721,
+                setMax = -15,
+                eventListener,
+                labels;
+            yAxis.set("maximum", setMax);
+            eventListener = yAxis.on("axisRendered", function(e) {
+                labels = yAxis.get("labels");
+                Y.assert(labels[0].innerHTML == yAxis.get("labelFunction").apply(yAxis, [setMin, yAxis.get("labelFormat")]));
+                Y.assert(labels[count].innerHTML == yAxis.get("labelFunction").apply(yAxis, [setMax, yAxis.get("labelFormat")])); 
+            });
+            yAxis.set("minimum", setMin);
+            eventListener.detach();
+        },
+        
+        //Tests min and max with decimals
+        testMinAndMaxWithDecimals: function()
+        {
+            var yAxis = this.chart.getAxisByKey("values"),
+                majorUnit = yAxis.get("styles").majorUnit,
+                count = majorUnit.count- 1,
+                setMin = 14.66,
+                setMax = 1821.33,
+                eventListener,
+                labels;
+            yAxis.set("maximum", setMax);
+            eventListener = yAxis.on("axisRendered", function(e) {
+                labels = yAxis.get("labels");
+                Y.assert(labels[0].innerHTML == yAxis.get("labelFunction").apply(yAxis, [setMin, yAxis.get("labelFormat")]));
+                Y.assert(labels[count].innerHTML == yAxis.get("labelFunction").apply(yAxis, [setMax, yAxis.get("labelFormat")])); 
+            });
+            yAxis.set("minimum", setMin);
+            eventListener.detach();
         }
     }));
-
 
     //create the console
     var r = new Y.Console({

@@ -9,7 +9,9 @@ var DOCUMENT = Y.config.doc,
     LeftAxisLayout,
     RightAxisLayout,
     BottomAxisLayout,
-    TopAxisLayout;
+    TopAxisLayout,
+    _getClassName = Y.ClassNameManager.getClassName,
+    SERIES_MARKER = _getClassName("seriesmarker");
 
 /**
  * The Renderer class is a base class for chart components that use the `styles`
