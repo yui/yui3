@@ -133,8 +133,8 @@ YUI({
 
           Assert.areEqual(btns.size(), 2);
           Assert.areEqual(btnContent.size(), 2);
-          Assert.areEqual(btnContent.item(0).getContent(), 'button1');
-          Assert.areEqual(btnContent.item(1).getContent(), 'button2');
+          Assert.areEqual(btns.item(0).get('innerText'), 'button1');
+          Assert.areEqual(btns.item(1).get('innerText'), 'button2');
 
         },
 
@@ -169,8 +169,8 @@ YUI({
 
           Assert.areEqual(btns.size(), 2);
           Assert.areEqual(btnContent.size(), 2);
-          Assert.areEqual(btnContent.item(0).getContent(), 'button1');
-          Assert.areEqual(btnContent.item(1).getContent(), 'button2');
+          Assert.areEqual(btnContent.item(0).get('innerText'), 'button1');
+          Assert.areEqual(btnContent.item(1).get('innerText'), 'button2');
         },
 
         testAddButtonToDefault: function () {
@@ -195,7 +195,7 @@ YUI({
           Assert.areEqual(btns.size(), 2);
           Assert.areEqual(btnContent.size(), 2);
 
-          Assert.areEqual(btnContent.item(1).getContent(), 'added header button');
+          Assert.areEqual(btnContent.item(1).get('innerText'), 'added header button');
 
 
           this.panel.addButton({
@@ -216,7 +216,7 @@ YUI({
           Assert.areEqual(ftBtns.size(), 1);
           Assert.areEqual(ftBtnContent.size(), 1);
 
-          Assert.areEqual(ftBtnContent.item(0).getContent(), 'added footer button');
+          Assert.areEqual(ftBtnContent.item(0).get('innerText'), 'added footer button');
 
         }
     });

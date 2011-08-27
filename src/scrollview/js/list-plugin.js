@@ -1,7 +1,7 @@
 /**
  * Provides a plugin, which adds support for a scroll indicator to ScrollView instances
  *
- * @module scrollview-scrollbars
+ * @module scrollview-list
  */
 var getCN = Y.ClassNameManager.getClassName,
 SCROLLVIEW = 'scrollview',
@@ -13,9 +13,10 @@ RENDER_UI = 'renderUI',
 HOST = "host";
 
 /**
- * ScrollView plugin that adds scroll indicators to ScrollView instances
+ * ScrollView plugin that adds class names to immediate descendant "<li>" to 
+ * allow for easier styling through CSS
  *
- * @class ScrollViewScrollbars
+ * @class ScrollViewList
  * @namespace Plugin
  * @extends Plugin.Base
  * @constructor
@@ -44,14 +45,6 @@ ListPlugin.NAME = 'pluginList';
  * @static
  */
 ListPlugin.NS = 'list';
-
-/**
- * HTML template for the scrollbar.
- *
- * @property SCROLLBAR_TEMPLATE
- * @type Object
- * @static
- */
 
 
 /**
