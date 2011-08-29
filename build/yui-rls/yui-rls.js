@@ -4931,9 +4931,12 @@ if (!YUI.$rls) {
             Y = rls_active.inst;
         if (Y) {
             if (req.error) {
+                if (!req.missing) {
+                    req.missing = [];
+                }
                 Y.rls_failure({
                     message: req.error,
-                    data: req.modules
+                    data: [].concat(req.modules, req.missing)
                 });
             }
             if (YUI.Env && YUI.Env.rls_disabled) {
