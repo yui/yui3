@@ -120,11 +120,11 @@ YUI.add('editor-para', function(Y) {
                         if (html === '') {
                             par = e.changedNode.ancestor('ol,ul');
                             var dir = par.getAttribute('dir');
-                            if (dir === '') {
-                                dir = 'rtl';
+                            if (dir !== '') {
+                                dir = ' dir = "' + dir + '"';
                             }
                             par = e.changedNode.ancestor(inst.Selection.BLOCKS);
-                            d = inst.Node.create('<p dir="' + dir + '">' + inst.Selection.CURSOR + '</p>');
+                            d = inst.Node.create('<p' + dir + '>' + inst.Selection.CURSOR + '</p>');
                             par.insert(d, 'after');
                             e.changedNode.remove();
                             e.changedEvent.halt();
@@ -370,4 +370,4 @@ YUI.add('editor-para', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
+}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
