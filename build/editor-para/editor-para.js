@@ -115,6 +115,24 @@ YUI.add('editor-para', function(Y) {
                             e.changedEvent.preventDefault();
                         }
                     }
+                    if (e.changedNode.test('li') && !Y.UA.ie) {
+                        html = inst.Selection.getText(e.changedNode);
+                        if (html === '') {
+                            par = e.changedNode.ancestor('ol,ul');
+                            var dir = par.getAttribute('dir');
+                            if (dir === '') {
+                                dir = 'rtl';
+                            }
+                            par = e.changedNode.ancestor(inst.Selection.BLOCKS);
+                            d = inst.Node.create('<p dir="' + dir + '">' + inst.Selection.CURSOR + '</p>');
+                            par.insert(d, 'after');
+                            e.changedNode.remove();
+                            e.changedEvent.halt();
+
+                            sel = new inst.Selection();
+                            sel.selectNode(d, true, false);
+                        }
+                    }
                     //TODO Move this to a GECKO MODULE - Can't for the moment, requires no change to metadata (YMAIL)
                     if (Y.UA.gecko && host.get('defaultblock') !== 'p') {
                         par = e.changedNode;
