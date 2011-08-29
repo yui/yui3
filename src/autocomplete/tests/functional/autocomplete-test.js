@@ -1419,6 +1419,13 @@ listSuite.add(new Y.Test.Case({
         // Verify ARIA markup on the bounding box and list node.
         Assert.areSame('true', this.ac.get('boundingBox').get('aria-hidden'));
         Assert.areSame('listbox', this.ac.get('listNode').get('role'));
+
+        // Verify that a live region node exists.
+        var liveRegion = Y.one('#testbed > div.yui3-aclist-aria');
+
+        Assert.isNotNull(liveRegion);
+        Assert.areSame('polite', liveRegion.get('aria-live'));
+        Assert.areSame('status', liveRegion.get('role'));
     },
 
     'test: verify result item markup': function () {

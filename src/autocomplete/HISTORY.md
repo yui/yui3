@@ -11,11 +11,6 @@ AutoComplete Change History
     still apply this role (or any other ARIA role) to the input node manually if
     desired.
 
-  * Removed the ARIA live region that announced when suggestions were available.
-    The `aria-autocomplete` attribute and other attributes in use on the
-    AutoCompleteList widget already convey this information, so the live region
-    was essentially redundant.
-
 
 3.4.0
 -----
