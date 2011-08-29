@@ -11,6 +11,10 @@ AutoComplete Change History
     still apply this role (or any other ARIA role) to the input node manually if
     desired.
 
+  * Fixed a bug that prevented the autocomplete list from being hidden after
+    right-clicking on the list and then clicking elsewhere in the document.
+    [Ticket #2531009]
+
 
 3.4.0
 -----
