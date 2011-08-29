@@ -187,17 +187,25 @@ ET.prototype = {
     },
 
     /**
-     * For Nodes and NodeLists, subscribe to a DOM event or custom event.
-     * For other subclasses, this subscribes only to custom events.
+     * Subscribe a callback function to a custom event fired by this object or
+     * from an object that bubbles its events to this object.
      *
-     * DOM event subscribers or subscribers to custom events that are published
-     * to emit an EventFacade can call `e.preventDefault()` to prevent any
-     * default behavior associated with that event. `e.stopPropagation()` will
-     * stop such events from bubbling, and `e.halt()` will do both.
+     * Callback functions for events published with `emitFacade = true` will
+     * receive an `EventFacade` as the first argument (typically named "e").
+     * These callbacks can then call `e.preventDefault()` to disable the
+     * behavior published to that event's `defaultFn`.  See the `EventFacade`
+     * API for all available properties and methods. Subscribers to
+     * non-`emitFacade` events will receive the arguments passed to `fire()`
+     * after the event name.
      *
-     * Subscribers may alternatively return `false` instead of calling
-     * `e.halt()`.  It is recommended to use the event methods rather than
-     * returning `false`.
+     * To subscribe to multiple events at once, pass an object as the first
+     * argument, where the key:value pairs correspond to the eventName:callback,
+     * or pass an array of event names as the first argument to subscribe to
+     * all listed events with the same callback.
+     *
+     * Returning `false` from a callback is supported as an alternative to
+     * calling `e.preventDefault(); e.stopPropagation();`.  However, it is
+     * recommended to use the event methods whenever possible.
      *
      * @method on
      * @param {String} type The name of the event
@@ -799,20 +807,43 @@ Y.Global = YUI.Env.globalEvents;
 
 <ul>
     <li>Subscribe to custom events `publish`ed and `fire`d from Y</li>
-    <li>Subscribe to custom events `publish`ed with `broadcast` 1 or 2 and `fire`d from any object in the YUI instance sandbox</li>
+    <li>Subscribe to custom events `publish`ed with `broadcast` 1 or 2 and
+        `fire`d from any object in the YUI instance sandbox</li>
     <li>Subscribe to DOM events</li>
-    <li>Subscribe to the execution of a method on any object, effectively treating that method as an event</li>
+    <li>Subscribe to the execution of a method on any object, effectively
+    treating that method as an event</li>
 </ul>
 
-If a function is passed as the first parameter, the call is relayed to `Y.Do.before(...)`.  Otherwise, if the event name passed as the first parameter is a DOM event, and the third parameter is a Node, NodeList, HTMLElement, CSS selector string, or is omitted altogether, the subscription request will be passed to the DOM event system.  A missing third argument is defaulted to the `window` for DOM events.
+For custom event subscriptions, pass the custom event name as the first argument and callback as the second. The `this` object in the callback will be `Y` unless an override is passed as the third argument.
 
-In all other cases, a custom event subscription is made.
+    Y.on('io:complete', function () {
+        Y.MyApp.updateStatus('Transaction complete');
+    });
 
-`on` subscribers for DOM events or custom events `publish`ed with a `defaultFn`
-can prevent the default behavior with `e.preventDefault()` from the event
-object passed as the first parameter to the subscription callback.
+To subscribe to DOM events, pass the name of a DOM event as the first argument
+and a CSS selector string as the third argument after the callback function.
+Alternately, the third argument can be a `Node`, `NodeList`, `HTMLElement`,
+array, or simply omitted (the default is the `window` object).
 
-NOTE: The subscription signature shown is for events, not for function
+    Y.on('click', function (e) {
+        e.preventDefault();
+
+        // proceed with ajax form submission
+        var url = this.get('action');
+        ...
+    }, '#my-form');
+
+The `this` object in DOM event callbacks will be the `Node` targeted by the CSS
+selector or other identifier.
+
+`on()` subscribers for DOM events or custom events `publish`ed with a
+`defaultFn` can prevent the default behavior with `e.preventDefault()` from the
+event object passed as the first parameter to the subscription callback.
+
+To subscribe to the execution of an object method, pass arguments corresponding to the call signature for 
+<a href="../classes/Do.html#methods_before">`Y.Do.before(...)`</a>.
+
+NOTE: The formal parameter list below is for events, not for function
 injection.  See `Y.Do.before` for that signature.
 
 @method on
@@ -827,8 +858,11 @@ injection.  See `Y.Do.before` for that signature.
 **/
 
 /**
-Listen for an event one time.  Equivalent to `on`, except that
+Listen for an event one time.  Equivalent to `on()`, except that
 the listener is immediately detached when executed.
+
+See the <a href="#methods_on">`on()` method</a> for additional subscription
+options.
 
 @see on
 @method once
@@ -842,13 +876,16 @@ the listener is immediately detached when executed.
 **/
 
 /**
-Listen for an event one time.  Equivalent to `once`, except, like `after`,
-the subscription callback executes after all `on` subscribers and the event's
-`defaultFn` (if configured) have executed.  Like `after` if any `on` phase
-subscriber calls `e.preventDefault()`, neither the `defaultFn` nor the `after`
+Listen for an event one time.  Equivalent to `once()`, except, like `after()`,
+the subscription callback executes after all `on()` subscribers and the event's
+`defaultFn` (if configured) have executed.  Like `after()` if any `on()` phase
+subscriber calls `e.preventDefault()`, neither the `defaultFn` nor the `after()`
 subscribers will execute.
 
 The listener is immediately detached when executed.
+
+See the <a href="#methods_on">`on()` method</a> for additional subscription
+options.
 
 @see once
 @method onceAfter
@@ -862,10 +899,18 @@ The listener is immediately detached when executed.
 **/
 
 /**
-Like `on`, this method creates a subscription to a custom event or to the execution of a method on an object.  However, for events, `after` subscribers are queued to execute after the event's `defaultFn`, if configured.  If any `on` subscriber calls `e.preventDefault()`, the `defaultFn` will not execute, and neither will the `after` subscribers.
+Like `on()`, this method creates a subscription to a custom event or to the
+execution of a method on an object.
+
+For events, `after()` subscribers are executed after the event's
+`defaultFn` unless `e.preventDefault()` was called from an `on()` subscriber.
+
+See the <a href="#methods_on">`on()` method</a> for additional subscription
+options.
 
 NOTE: The subscription signature shown is for events, not for function
-injection.  See `Y.Do.after` for that signature.
+injection.  See <a href="../classes/Do.html#methods_after">`Y.Do.after`</a>
+for that signature.
 
 @see on
 @see Do.after
@@ -873,7 +918,7 @@ injection.  See `Y.Do.after` for that signature.
 @param {String} type The custom event name
 @param {Function} fn The callback to execute in response to the event
 @param {Object} [context] Override `this` object in callback
-@param {Any} [arg*] 0..n additional arguments to supply to the subscriber
+@param {Any} [args*] 0..n additional arguments to supply to the subscriber
 @return {EventHandle} A subscription handle capable of detaching the
                       subscription
 @for YUI
