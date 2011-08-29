@@ -1,4 +1,11 @@
 /**
+ * Provides support to use Cache as a Plugin to a Base-based class.
+ *
+ * @module cache
+ * @submodule cache-plugin
+ */
+
+/**
  * Plugin.Cache adds pluginizability to Cache.
  * @class Plugin.Cache
  * @extends Cache
