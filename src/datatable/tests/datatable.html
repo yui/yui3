@@ -3,10 +3,8 @@
 <head>
 <meta charset="utf-8">
 <title>Datatable Tests</title>
-<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.3.0/build/cssreset/reset-min.css">
-<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.3.0/build/cssbase/base-min.css">
-<script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
-<!--script type="text/javascript" src="http://yui.yahooapis.com/3.4.0pr2/build/yui/yui-debug.js"></script-->
+<link rel="stylesheet" type="text/css" href="../../../build/cssbase/base-min.css">
+<script src="../../../build/yui/yui-debug.js"></script>
 
 <style>
     html {
@@ -485,6 +483,26 @@ _should: {
                 recordset = table.get("recordset");
                 Y.Assert.isObject(recordset);
                 Y.Assert.isObject(recordset.sort);
+            },
+
+            "header rows should not have {placeholders}": function () {
+                // Ticket #2530026
+                var data = [ {a:1,b:1,c:1}, {a:2,b:2,c:2}, {a:3,b:3,c:3} ],
+                    container = Y.one('#base'),
+                    recordset,
+                    source, table, html;
+
+                container.empty(true);
+
+                table = new Y.DataTable.Base({
+                    recordset: data,
+                    columnset: [ 'a', 'b', 'c' ]
+                }); 
+
+                table.render(container);
+
+                html = table._theadNode.getContent();
+                Y.Assert.isNull(html.match(/\{\s*\w+\s*\}/));
             }
         });
 
