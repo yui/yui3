@@ -818,6 +818,7 @@ Y.Columnset = Columnset;
  * displaying tabular data across A-grade browsers.
  *
  * @module datatable
+ * @main datatable
  */
 
 /**
