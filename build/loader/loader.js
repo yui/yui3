@@ -4483,7 +4483,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "base-build", 
             "widget-stdmod"
         ], 
-        "skinnable": false
+        "skinnable": true
     }, 
     "widget-child": {
         "requires": [
@@ -4582,7 +4582,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '5fb91631858874059b43f663739456d0';
+YUI.Env[Y.version].md5 = 'f071381b53684f64aab4ca50bbfb0f7f';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
