@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+</head>
+<body>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+var Y = YUI({}).use('test', 'io-base', function (Y) {
+    var smoketest = new Y.Test.Case({
+
+        name: "IO Smoke Test",
+
+        smoketest : function () {
+            var io = new Y.IO();
+            Y.Assert.areNotSame(io, null);
+        }
+    });
+    Y.Test.Runner.add(smoketest);
+    Y.Test.Runner.run();
+});
+</script>
+
+</body>
+</html>
