@@ -150,7 +150,7 @@ ChartBase.prototype = {
             graph = this.get("graph");
         if(graph)
         {
-            if(Y.Lang.isNumber(val))
+            if(Y_Lang.isNumber(val))
             {
                 series = graph.getSeriesByIndex(val);
             }
@@ -230,7 +230,7 @@ ChartBase.prototype = {
      */
     _setDataValues: function(val)
     {
-        if(Y.Lang.isArray(val[0]))
+        if(Y_Lang.isArray(val[0]))
         {
             var hash, 
                 dp = [], 
@@ -376,7 +376,7 @@ ChartBase.prototype = {
                 }
                 if(hideEvent)
                 {
-                    if(Y.Lang.isArray(hideEvent))
+                    if(Y_Lang.isArray(hideEvent))
                     {
                         len = hideEvent.length;
                         for(; i < len; ++i)
@@ -663,7 +663,7 @@ ChartBase.prototype = {
                 planarEventHandler:"planarEventHandler",
                 show:"show"
             };
-        if(Y.Lang.isObject(val))
+        if(Y_Lang.isObject(val))
         {
             styles = val.styles;
             node = Y.one(val.node) || tt.node;
