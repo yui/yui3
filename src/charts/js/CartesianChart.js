@@ -14,7 +14,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
     renderUI: function()
     {
         var tt = this.get("tooltip"),
-            overlay;
+            overlay,
+            overlayClass = _getClassName("overlay");
         //move the position = absolute logic to a class file
         this.get("boundingBox").setStyle("position", "absolute");
         this.get("contentBox").setStyle("position", "absolute");
@@ -35,7 +36,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             this._overlay.setStyle("position", "absolute");
             this._overlay.setStyle("background", "#fff");
             this._overlay.setStyle("opacity", 0);
-            this._overlay.addClass("yui3-overlay");
+            this._overlay.addClass(overlayClass);
             this._overlay.setStyle("zIndex", 4);
         }
         this._redraw();
@@ -296,7 +297,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             yAxis = series.get("yAxis"),
             YAxis = Y.Axis,
             axis;
-        if(xAxis && !(xAxis instanceof YAxis) && Y.Lang.isString(xAxis) && axes.hasOwnProperty(xAxis))
+        if(xAxis && !(xAxis instanceof YAxis) && Y_Lang.isString(xAxis) && axes.hasOwnProperty(xAxis))
         {
             axis = axes[xAxis];
             if(axis instanceof YAxis)
@@ -304,7 +305,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 series.set("xAxis", axis);
             }
         }
-        if(yAxis && !(yAxis instanceof YAxis) && Y.Lang.isString(yAxis) && axes.hasOwnProperty(yAxis))
+        if(yAxis && !(yAxis instanceof YAxis) && Y_Lang.isString(yAxis) && axes.hasOwnProperty(yAxis))
         {   
             axis = axes[yAxis];
             if(axis instanceof YAxis)
@@ -703,7 +704,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                     {
                         categoryAxisName = i;
                         this.set("categoryAxisName", i);
-                        if(Y.Lang.isArray(keys) && keys.length > 0)
+                        if(Y_Lang.isArray(keys) && keys.length > 0)
                         {
                             catKey = keys[0];
                             this.set("categoryKey", catKey);
@@ -717,7 +718,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                     else 
                     {
                         newAxes[i] = axis;
-                        if(i != valueAxisName && keys && Y.Lang.isArray(keys))
+                        if(i != valueAxisName && keys && Y_Lang.isArray(keys))
                         {
                             ll = keys.length;
                             for(ii = 0; ii < ll; ++ii)
@@ -1153,7 +1154,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                     l,
                     s;
     
-                if(Y.Lang.isArray(val))
+                if(Y_Lang.isArray(val))
                 {
                     s = this.get("seriesCollection");
                     i = 0;
@@ -1440,7 +1441,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             setter: function(val)
             {
                 var graph = this.get("graph");
-                if(val && !Y.Lang.isObject(val))
+                if(val && !Y_Lang.isObject(val))
                 {
                     val = {};
                 }
@@ -1474,7 +1475,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             setter: function(val)
             {
                 var graph = this.get("graph");
-                if(val && !Y.Lang.isObject(val))
+                if(val && !Y_Lang.isObject(val))
                 {
                     val = {};
                 }
