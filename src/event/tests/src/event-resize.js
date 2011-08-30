@@ -87,7 +87,6 @@ suite.add(new Y.Test.Case({
             var delay = 10,
                 handle, timer, start;
 
-            console.log("#3 tested - " + threshold);
             Y.config.windowResizeDelay = threshold;
 
             handle = Y.on('windowresize', function (e) {
@@ -112,7 +111,6 @@ suite.add(new Y.Test.Case({
             // recursive async function that fires resize on an incrementing
             // delay, starting at 10ms, then 20ms, 30ms, and so on.
             function scheduleResize() {
-                console.log("delay " + delay);
                 start = new Date();
 
                 timer = Y.later(delay, Y, function () {
