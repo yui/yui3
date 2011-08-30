@@ -17,7 +17,7 @@
 
 var domEventProxies = Y.Env.evt.dom_wrappers,
     win = Y.config.win,
-    key = 'event:' + Y.stamp(win) + 'resize',
+    key = 'event:' + Y.stamp(win) + 'resizenative',
     config;
     
 
