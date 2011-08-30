@@ -169,9 +169,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "after": [
             "autocomplete-sources"
         ], 
-        "lang": [
-            "en"
-        ], 
         "requires": [
             "autocomplete-base", 
             "event-resize", 
@@ -1938,7 +1935,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "base-build", 
             "widget-stdmod"
         ], 
-        "skinnable": true
+        "skinnable": false
     }, 
     "widget-child": {
         "requires": [
@@ -2037,4 +2034,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'f071381b53684f64aab4ca50bbfb0f7f';
+YUI.Env[Y.version].md5 = 'a2997b6bebdc15bdcfd8e3e4456dc508';

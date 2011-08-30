@@ -1074,13 +1074,13 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
 
 
     /**
-    Adds a namespace object onto the YUI global if called statically.
+    Adds a namespace object onto the YUI global if called statically:
 
         // creates YUI.your.namespace.here as nested objects
         YUI.namespace("your.namespace.here");
 
-    If called as a method on a YUI <em>instance</em>, it creates the
-    namespace on the instance.
+    If called as an instance method on the YUI instance, it creates the
+    namespace on the instance:
 
          // creates Y.property.package
          Y.namespace("property.package");
@@ -1093,14 +1093,15 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
     If the first token in the namespace string is "YAHOO", the token is
     discarded.
 
-    Be careful with namespace tokens. Reserved words may work in some browsers
-    and not others. For instance, the following will fail in some browsers
-    because the supported version of JavaScript reserves the word "long":
+    Be careful when naming packages. Reserved words may work in some browsers
+    and not others. For instance, the following will fail in some browsers:
     
          Y.namespace("really.long.nested.namespace");
     
+    This fails because `long` is a future reserved word in ECMAScript
+    
     @method namespace
-    @param  {String} namespace* namespaces to create.
+    @param  {String[]} namespace* 1-n namespaces to create.
     @return {Object}  A reference to the last namespace object created.
     **/
     namespace: function() {
@@ -7553,9 +7554,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "after": [
             "autocomplete-sources"
         ], 
-        "lang": [
-            "en"
-        ], 
         "requires": [
             "autocomplete-base", 
             "event-resize", 
@@ -9322,7 +9320,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "base-build", 
             "widget-stdmod"
         ], 
-        "skinnable": true
+        "skinnable": false
     }, 
     "widget-child": {
         "requires": [
@@ -9421,7 +9419,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'f071381b53684f64aab4ca50bbfb0f7f';
+YUI.Env[Y.version].md5 = 'a2997b6bebdc15bdcfd8e3e4456dc508';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
