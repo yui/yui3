@@ -86,7 +86,7 @@ suite.add(new Y.Test.Case({
             fudge = 10;
 
         function runTest(threshold) {
-            var delay    = 10,
+            var delay = 10,
                 handle, timer, start;
 
             console.log("#3 tested - " + threshold);
@@ -99,7 +99,9 @@ suite.add(new Y.Test.Case({
                 handle.detach();
 
                 test.resume(function () {
-                    Y.assert(isOldGecko || (end - start + fudge >= threshold), "old Gecko? " + isOldGecko + ", delta? " + (end - start));
+                    Y.assert(isOldGecko || (end - start + fudge >= threshold),
+                        "Fired before threshold (" + threshold + ") - delta: " +
+                        (end - start));
 
                     if (testThresholds.length) {
                         runTest(testThresholds.shift());
