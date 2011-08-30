@@ -5,6 +5,6 @@
             "base-build",
             "widget-stdmod"
         ], 
-        "skinnable": false
+        "skinnable": true
     }
 }
