@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!-- These tests are ready for automated test coverage.
+
+     If you'd like your test to be included here:
+
+     1. Only use build/yui/yui.js in your tests.
+        Don't use yui-debug.js or yui-min.js.
+
+     2. Make sure your test respects the filter
+        query string parameter by using something
+        like this in your test's YUI config:
+
+            var Y = YUI({
+                filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+            });
+
+     Then make sure ?filter=raw only includes raw JS.
+     Coverage tests are not allowed to use debug or min filters.
+
+     Feel free to add your test if it respects ?filter=raw.
+-->
+<yuitest>
+    <tests base="@TEST_ARTIFACTS_BASE@" timeout="120000">
+        <url>app/tests/app.html</url>
+    </tests>
+</yuitest>
