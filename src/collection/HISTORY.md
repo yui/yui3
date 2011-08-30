@@ -1,6 +1,13 @@
 Collection Change History
 =========================
 
+3.4.1
+-----
+
+  * Sparse arrays are now handled correctly in the non-native fallback
+    implementation of `Y.Array.lastIndexOf()`. [Ticket #2530966]
+
+
 3.4.0
 -----
 

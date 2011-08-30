@@ -213,8 +213,7 @@ When the AutoComplete widget is rendered, it will add the CSS class `yui3-aclist
 <!-- After AutoComplete is rendered -->
 <input id="ac-input" type="text" class="yui3-aclist-input"
     aria-autocomplete="list" aria-expanded="false"
-    aria-owns="yui_3_3_0_1_129140941365181" role="combobox"
-    autocomplete="off">
+    aria-owns="yui_3_3_0_1_129140941365181" autocomplete="off">
 ```
 
 <p>
@@ -1604,11 +1603,6 @@ When the AutoComplete widget is rendered, it adds the following ARIA attributes 
     Not all assistive tools support the `aria-owns` attribute. For this reason, it's strongly recommended that you allow the AutoComplete widget to render its list markup inside the same container element as the input node, and immediately after the input node (this is the default behavior) rather than specifying a different parent node.
     </p>
   </dd>
-
-  <dt>`role="combobox"`</dt>
-  <dd>
-    Indicates that the `inputNode` represents the combination of an editable text field with a popup list.
-  </dd>
 </dl>
 
 <p>
@@ -1634,7 +1628,7 @@ The list markup, which is rendered dynamically, uses the following ARIA attribut
 
 <h2>Known Issues</h2>
 
-<ul class="spaced">
+<ul>
   <li>
     <p>
     The accent folding and word breaking implementations require the use of UTF-8 character data. If YUI is used on a page that doesn't specify a UTF-8 charset either via the `Content-Type` HTTP response header or a `<meta charset="utf-8">` tag, an "Invalid range in character set" error may occur in Internet Explorer when the page is loaded from the cache. Specify a charset to avoid triggering this IE bug (you should always specify a charset in any case, since all kinds of bad things can happen if you don't).

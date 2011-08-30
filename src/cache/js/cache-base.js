@@ -3,6 +3,13 @@
  * cache and retrieve data from a local JavaScript struct.
  *
  * @module cache
+ * @main
+ */
+
+/**
+ * Provides the base class for the YUI Cache utility.
+ * 
+ * @submodule cache-base
  */
 var LANG = Y.Lang,
     isDate = Y.Lang.isDate,

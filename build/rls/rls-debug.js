@@ -355,9 +355,12 @@ if (!YUI.$rls) {
         if (Y) {
             Y.log('RLS request received, processing', 'info', 'rls');
             if (req.error) {
+                if (!req.missing) {
+                    req.missing = [];
+                }
                 Y.rls_failure({
                     message: req.error,
-                    data: req.modules
+                    data: [].concat(req.modules, req.missing)
                 });
             }
             if (YUI.Env && YUI.Env.rls_disabled) {
