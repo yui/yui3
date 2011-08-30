@@ -529,7 +529,11 @@ Y.extend(DTBase, Y.Widget, {
 
         // Iterate tree of columns to add THEAD rows
         for(; i<len; ++i) {
-            this._addTheadTrNode({thead:thead, columns:tree[i]}, (i === 0), (i === len-1));
+            this._addTheadTrNode({
+                thead:   thead,
+                columns: tree[i],
+                id     : '' // to avoid {id} leftovers from the trTemplate
+            }, (i === 0), (i === len - 1));
         }
 
         // Column helpers needs _theadNode to exist
