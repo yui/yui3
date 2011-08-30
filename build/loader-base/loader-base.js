@@ -133,6 +133,10 @@ var NOT_FOUND = {},
                         return path;
                     };
 
+if (YUI.Env.aliases) {
+    YUI.Env.aliases = {}; //Don't need aliases if Loader is present
+}
+
 /**
  * The component metadata is stored in Y.Env.meta.
  * Part of the loader module.
@@ -984,8 +988,12 @@ Y.Loader.prototype = {
      */
     addModule: function(o, name) {
         name = name || o.name;
-
-        if (this.moduleInfo[name]) {
+        
+        //Only merge this data if the temp flag is set
+        //from an earlier pass from a pattern or else
+        //an override module (YUI_config) can not be used to
+        //replace a default module.
+        if (this.moduleInfo[name] && this.moduleInfo[name].temp) {
             //This catches temp modules loaded via a pattern
             // The module will be added twice, once from the pattern and
             // Once from the actual add call, this ensures that properties
