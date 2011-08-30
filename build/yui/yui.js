@@ -1059,13 +1059,13 @@ with any configuration info required for the module.
 
 
     /**
-    Adds a namespace object onto the YUI global if called statically:
+    Adds a namespace object onto the YUI global if called statically.
 
         // creates YUI.your.namespace.here as nested objects
         YUI.namespace("your.namespace.here");
 
-    If called as an instance method on the YUI instance, it creates the
-    namespace on the instance:
+    If called as a method on a YUI <em>instance</em>, it creates the
+    namespace on the instance.
 
          // creates Y.property.package
          Y.namespace("property.package");
@@ -1078,15 +1078,14 @@ with any configuration info required for the module.
     If the first token in the namespace string is "YAHOO", the token is
     discarded.
 
-    Be careful when naming packages. Reserved words may work in some browsers
-    and not others. For instance, the following will fail in some browsers:
+    Be careful with namespace tokens. Reserved words may work in some browsers
+    and not others. For instance, the following will fail in some browsers
+    because the supported version of JavaScript reserves the word "long":
     
          Y.namespace("really.long.nested.namespace");
     
-    This fails because `long` is a future reserved word in ECMAScript
-    
     @method namespace
-    @param  {String[]} namespace* 1-n namespaces to create.
+    @param  {String} namespace* namespaces to create.
     @return {Object}  A reference to the last namespace object created.
     **/
     namespace: function() {
@@ -7487,6 +7486,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "after": [
             "autocomplete-sources"
         ], 
+        "lang": [
+            "en"
+        ], 
         "requires": [
             "autocomplete-base", 
             "event-resize", 
@@ -9352,7 +9354,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'a2997b6bebdc15bdcfd8e3e4456dc508';
+YUI.Env[Y.version].md5 = '5fb91631858874059b43f663739456d0';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

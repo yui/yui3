@@ -53,6 +53,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     Y.WidgetPositionAlign
 ], {
     // -- Prototype Properties -------------------------------------------------
+    ARIA_TEMPLATE: '<div/>',
     ITEM_TEMPLATE: '<li/>',
     LIST_TEMPLATE: '<ul/>',
 
@@ -109,6 +110,10 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         while (this._listEvents.length) {
             this._listEvents.pop().detach();
         }
+
+        if (this._ariaNode) {
+            this._ariaNode.remove().destroy(true);
+        }
     },
 
     bindUI: function () {
@@ -117,7 +122,8 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     renderUI: function () {
-        var boundingBox = this.get('boundingBox'),
+        var ariaNode    = this._createAriaNode(),
+            boundingBox = this.get('boundingBox'),
             contentBox  = this.get('contentBox'),
             inputNode   = this._inputNode,
             listNode    = this._createListNode(),
@@ -128,6 +134,10 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             'aria-expanded'    : false,
             'aria-owns'        : listNode.get('id')
         });
+
+        // ARIA node must be outside the widget or announcements won't be made
+        // when the widget is hidden.
+        parentNode.append(ariaNode);
 
         // Add an iframe shim for IE6.
         if (useShim) {
@@ -140,6 +150,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         // no good.
         boundingBox.setStyle('position', 'absolute');
 
+        this._ariaNode    = ariaNode;
         this._boundingBox = boundingBox;
         this._contentBox  = contentBox;
         this._listNode    = listNode;
@@ -269,6 +280,21 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
+     * Updates the ARIA live region with the specified message.
+     *
+     * @method _ariaSay
+     * @param {String} stringId String id (from the <code>strings</code>
+     *   attribute) of the message to speak.
+     * @param {Object} subs (optional) Substitutions for placeholders in the
+     *   string.
+     * @protected
+     */
+    _ariaSay: function (stringId, subs) {
+        var message = this.get('strings.' + stringId);
+        this._ariaNode.setContent(subs ? Lang.sub(message, subs) : message);
+    },
+
+    /**
      * Binds <code>inputNode</code> events and behavior.
      *
      * @method _bindInput
@@ -301,7 +327,10 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         }
 
         // Attach inputNode events.
-        this._listEvents.push(inputNode.on('blur', this._onListInputBlur, this));
+        this._listEvents.concat([
+            inputNode.after('blur',  this._afterListInputBlur, this),
+            inputNode.after('focus', this._afterListInputFocus, this)
+        ]);
     },
 
     /**
@@ -315,14 +344,16 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             Y.on('windowresize', this._syncPosition, this),
 
             this.after({
-              mouseover: this._afterMouseOver,
-              mouseout : this._afterMouseOut,
+                blur     : this._afterListBlur,
+                focus    : this._afterListFocus,
+                mouseover: this._afterMouseOver,
+                mouseout : this._afterMouseOut,
 
-              activeItemChange    : this._afterActiveItemChange,
-              alwaysShowListChange: this._afterAlwaysShowListChange,
-              hoveredItemChange   : this._afterHoveredItemChange,
-              resultsChange       : this._afterResultsChange,
-              visibleChange       : this._afterVisibleChange
+                activeItemChange    : this._afterActiveItemChange,
+                alwaysShowListChange: this._afterAlwaysShowListChange,
+                hoveredItemChange   : this._afterHoveredItemChange,
+                resultsChange       : this._afterResultsChange,
+                visibleChange       : this._afterVisibleChange
             }),
 
             this._listNode.delegate('click', this._onItemClick,
@@ -341,6 +372,22 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         this._set(HOVERED_ITEM, null);
 
         this._listNode.get('children').remove(true);
+    },
+
+    /**
+     * Creates and returns an ARIA live region node.
+     *
+     * @method _createAriaNode
+     * @return {Node} ARIA node.
+     * @protected
+     */
+    _createAriaNode: function () {
+        var ariaNode = Node.create(this.ARIA_TEMPLATE);
+
+        return ariaNode.addClass(this.getClassName('aria')).setAttrs({
+            'aria-live': 'polite',
+            role       : 'status'
+        });
     },
 
     /**
@@ -438,6 +485,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
 
         if (results.length) {
             this._add(results);
+            this._ariaSay('items_available');
         }
 
         this._syncPosition();
@@ -564,6 +612,61 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
+     * Handles list blur events.
+     *
+     * @method _afterListBlur
+     * @protected
+     */
+    _afterListBlur: function () {
+        this._listFocused = false;
+
+        // Hide the list unless focus switched to the input node.
+        if (!this._listInputFocused) {
+            this.hide();
+        }
+    },
+
+    /**
+     * Handles list focus events.
+     *
+     * @method _afterListFocus
+     * @protected
+     */
+    _afterListFocus: function () {
+        this._listFocused = true;
+    },
+
+    /**
+     * Handles `inputNode` blur events.
+     *
+     * @method _afterListInputBlur
+     * @protected
+     */
+    _afterListInputBlur: function () {
+        this._listInputFocused = false;
+
+        // Hide the list on inputNode blur events, unless the mouse is currently
+        // over the list (which indicates that the user is probably interacting
+        // with it). The _lastInputKey property comes from the
+        // autocomplete-list-keys module.
+        if ((!this._mouseOverList && !this._listFocused)
+                || this._lastInputKey === KEY_TAB) {
+
+            this.hide();
+        }
+    },
+
+    /**
+     * Handles `inputNode` focus events.
+     *
+     * @method _afterListInputFocus
+     * @protected
+     */
+    _afterListInputFocus: function () {
+        this._listInputFocused = true;
+    },
+
+    /**
      * Handles <code>mouseover</code> events.
      *
      * @method _afterMouseOver
@@ -590,6 +693,12 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     _afterMouseOut: function () {
         this._mouseOverList = false;
         this._set(HOVERED_ITEM, null);
+
+        // This takes care of the edge case where the user right-clicks on a
+        // list item, then clicks elsewhere in the document.
+        if (!this._listFocused && !this._listInputFocused) {
+            this.hide();
+        }
     },
 
     /**
@@ -616,23 +725,6 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      */
     _afterVisibleChange: function (e) {
         this._syncVisibility(!!e.newVal);
-    },
-
-    /**
-     * Handles <code>inputNode</code> <code>blur</code> events.
-     *
-     * @method _onListInputBlur
-     * @param {EventTarget} e
-     * @protected
-     */
-    _onListInputBlur: function (e) {
-        // Hide the list on inputNode blur events, unless the mouse is currently
-        // over the list (which indicates that the user is probably interacting
-        // with it). The _lastInputKey property comes from the
-        // autocomplete-list-keys module.
-        if (!this._mouseOverList || this._lastInputKey === KEY_TAB) {
-            this.hide();
-        }
     },
 
     /**
@@ -664,6 +756,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         // TODO: support typeahead completion, etc.
         this._inputNode.focus();
         this._updateValue(text);
+        this._ariaSay('item_selected', {item: text});
         this.hide();
     }
 }, {
@@ -750,6 +843,18 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
          */
         scrollIntoView: {
             value: false
+        },
+
+        /**
+         * Translatable strings used by the AutoCompleteList widget.
+         *
+         * @attribute strings
+         * @type Object
+         */
+        strings: {
+            valueFn: function () {
+                return Y.Intl.get('autocomplete-list');
+            }
         },
 
         /**

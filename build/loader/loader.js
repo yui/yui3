@@ -2714,6 +2714,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "after": [
             "autocomplete-sources"
         ], 
+        "lang": [
+            "en"
+        ], 
         "requires": [
             "autocomplete-base", 
             "event-resize", 
@@ -4579,7 +4582,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'a2997b6bebdc15bdcfd8e3e4456dc508';
+YUI.Env[Y.version].md5 = '5fb91631858874059b43f663739456d0';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
