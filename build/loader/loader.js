@@ -3593,7 +3593,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "event-resize": {
         "requires": [
-            "node-base"
+            "node-base", 
+            "event-synthetic"
         ]
     }, 
     "event-simulate": {
@@ -4582,7 +4583,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '5fb91631858874059b43f663739456d0';
+YUI.Env[Y.version].md5 = 'a8d2c809a1f7f9ebf3a8da11d134363c';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
