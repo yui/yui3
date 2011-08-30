@@ -511,6 +511,10 @@ YUI.add('exec-command', function(Y) {
                         } else {
                             par = sel.anchorNode.ancestor(inst.Selection.BLOCKS);
                         }
+                        if (!par) { //No parent, find the first block under the anchorNode
+                            par = sel.anchorNode.one(inst.Selection.BLOCKS);
+                        }
+
                         if (par && par.hasAttribute(DIR)) {
                             dir = par.getAttribute(DIR);
                         }
@@ -518,7 +522,7 @@ YUI.add('exec-command', function(Y) {
                             html = inst.Node.create('<div/>');
                             elm = par.all('li');
                             elm.each(function(h) {
-                                html.append(h.get('innerHTML') + '<br>');
+                                html.append('<p>' + h.get('innerHTML') + '</p>');
                             });
                             if (dir) {
                                 html.setAttribute(DIR, dir);

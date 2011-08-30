@@ -18,7 +18,7 @@ var WIDGET         = 'widget',
     MaskShow        = "maskShow",
     MaskHide        = "maskHide",
     ClickOutside    = "clickoutside",
-    FocusOutside    = "focusoutside";
+    FocusOutside    = "focusoutside",
 
     supportsPosFixed = (function(){
 
@@ -310,10 +310,10 @@ var WIDGET         = 'widget',
          * @param {boolean} Whether the widget is visible or not
          */
         _uiSetHostVisibleModal : function (visible) {
-            var stack = WidgetModal.STACK,
-                topModal,
-                maskNode = this.get('maskNode'),
-                isModal = this.get('modal');
+            var stack       = WidgetModal.STACK,
+                maskNode    = this.get('maskNode'),
+                isModal     = this.get('modal'),
+                topModal, index;
             
             if (visible) {
             
@@ -339,7 +339,12 @@ var WIDGET         = 'widget',
                 
             } else {
             
-                stack.splice(Y.Array.indexOf(stack, this), 1);
+                index = Y.Array.indexOf(stack, this);
+                if (index >= 0) {
+                    // Remove modal widget from global stack.
+                    stack.splice(index, 1);
+                }
+
                 this._detachUIHandlesModal();
                 this._blur();
                 
@@ -387,18 +392,22 @@ var WIDGET         = 'widget',
          */
         _attachUIHandlesModal : function () {
 
-            if (this._uiHandlesModal) { return; }
+            if (this._uiHandlesModal || WidgetModal.STACK[0] !== this) {
+                // Quit early if we have ui handles, or if we not at the top
+                // of the global stack.
+                return;
+            }
 
-            var bb = this.get(BOUNDING_BOX),
-            maskNode = this.get('maskNode'),
-            focusOn = this.get('focusOn'),
-            focus = Y.bind(this._focus, this),
-            uiHandles = [],
-            i = 0,
-            o = {node: undefined, ev: undefined, keyCode: undefined};
+            var bb          = this.get(BOUNDING_BOX),
+                maskNode    = this.get('maskNode'),
+                focusOn     = this.get('focusOn'),
+                focus       = Y.bind(this._focus, this),
+                uiHandles   = [],
+                i, len, o;
 
-            for (; i < focusOn.length; i++) {
+            for (i = 0, len = focusOn.length; i < len; i++) {
                 
+                o = {};
                 o.node = focusOn[i].node;
                 o.ev = focusOn[i].eventName;
                 o.keyCode = focusOn[i].keyCode;
@@ -488,11 +497,10 @@ var WIDGET         = 'widget',
          */
         _repositionMask: function(nextElem) {
 
-            var currentModal = this.get('modal'),
-            nextModal = nextElem.get('modal'),
-            maskNode = this.get('maskNode'),
-            bb;
-
+            var currentModal    = this.get('modal'),
+                nextModal       = nextElem.get('modal'),
+                maskNode        = this.get('maskNode'),
+                bb, bbParent;
 
             //if this is modal and host is not modal
             if (currentModal && !nextModal) {
@@ -507,7 +515,7 @@ var WIDGET         = 'widget',
                 //then remove the mask off DOM, reposition it, and reinsert it into the DOM
                 maskNode.remove();
                 this.fire(MaskHide);
-                bb = nextElem.get(BOUNDING_BOX),
+                bb = nextElem.get(BOUNDING_BOX);
                 bbParent = bb.get('parentNode') || Y.one('body');
                 bbParent.insert(maskNode, bbParent.get('firstChild'));
                 this.fire(MaskShow);

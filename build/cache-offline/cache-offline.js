@@ -1,6 +1,13 @@
 YUI.add('cache-offline', function(Y) {
 
 /**
+ * Provides a Cache subclass which uses HTML5 `localStorage` for persistence.
+ * 
+ * @module cache
+ * @submodule cache-offline
+ */
+
+/**
  * Extends Cache utility with offline functionality.
  * @class CacheOffline
  * @extends Cache

@@ -2488,6 +2488,10 @@ YUI.add('exec-command', function(Y) {
                         } else {
                             par = sel.anchorNode.ancestor(inst.Selection.BLOCKS);
                         }
+                        if (!par) { //No parent, find the first block under the anchorNode
+                            par = sel.anchorNode.one(inst.Selection.BLOCKS);
+                        }
+
                         if (par && par.hasAttribute(DIR)) {
                             dir = par.getAttribute(DIR);
                         }
@@ -2495,7 +2499,7 @@ YUI.add('exec-command', function(Y) {
                             html = inst.Node.create('<div/>');
                             elm = par.all('li');
                             elm.each(function(h) {
-                                html.append(h.get('innerHTML') + '<br>');
+                                html.append('<p>' + h.get('innerHTML') + '</p>');
                             });
                             if (dir) {
                                 html.setAttribute(DIR, dir);
@@ -2813,14 +2817,10 @@ YUI.add('editor-base', function(Y) {
      *      });
      *      editor.render('#demo');
      *
-     * @main editor
-     */     
-    /**
-     * Base class for Editor. Handles the business logic of Editor, no GUI involved only utility methods and events.
      * @class EditorBase
-     * @for EditorBase
      * @extends Base
      * @module editor
+     * @main editor
      * @submodule editor-base
      * @constructor
      */
@@ -4100,6 +4100,9 @@ YUI.add('editor-bidi', function(Y) {
 
         if (sel.isCollapsed) { // No selection
             block = EditorBidi.blockParent(sel.anchorNode);
+            if (!block) {
+                block = inst.one('body').one(inst.Selection.BLOCKS);
+            }
             //Remove text-align attribute if it exists
             block = EditorBidi.removeTextAlign(block);
             if (!direction) {
@@ -4265,6 +4268,24 @@ YUI.add('editor-para', function(Y) {
                         if (e.changedEvent.shiftKey) {
                             host.execCommand('insertbr');
                             e.changedEvent.preventDefault();
+                        }
+                    }
+                    if (e.changedNode.test('li') && !Y.UA.ie) {
+                        html = inst.Selection.getText(e.changedNode);
+                        if (html === '') {
+                            par = e.changedNode.ancestor('ol,ul');
+                            var dir = par.getAttribute('dir');
+                            if (dir !== '') {
+                                dir = ' dir = "' + dir + '"';
+                            }
+                            par = e.changedNode.ancestor(inst.Selection.BLOCKS);
+                            d = inst.Node.create('<p' + dir + '>' + inst.Selection.CURSOR + '</p>');
+                            par.insert(d, 'after');
+                            e.changedNode.remove();
+                            e.changedEvent.halt();
+
+                            sel = new inst.Selection();
+                            sel.selectNode(d, true, false);
                         }
                     }
                     //TODO Move this to a GECKO MODULE - Can't for the moment, requires no change to metadata (YMAIL)
