@@ -88,7 +88,7 @@ Y.extend(NumericAxis, Y.AxisType,
     {
         var value = NaN,
             keys = this.get("keys");
-        if(keys[key] && Y.Lang.isNumber(parseFloat(keys[key][index])))
+        if(keys[key] && Y_Lang.isNumber(parseFloat(keys[key][index])))
         {
             value = keys[key][index];
         }
@@ -172,7 +172,7 @@ Y.extend(NumericAxis, Y.AxisType,
                         num = data[i];
                         if(isNaN(num))
                         {
-                            if(Y.Lang.isObject(num))
+                            if(Y_Lang.isObject(num))
                             {
                                 min = max = 0;
                                 //hloc values
