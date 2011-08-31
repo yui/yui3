@@ -16,7 +16,7 @@ YUI({
     var myConsole = new Y.Console().render(),
         smoketest = new Y.Test.Case({
             name: "IO Smoke Test",
-            smoketest : function () {
+            "Y.IO should not be null": function () {
                 var io = new Y.IO();
                 Y.Assert.areNotSame(io, null);
             }
