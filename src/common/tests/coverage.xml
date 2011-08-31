@@ -29,5 +29,26 @@
         <url>base/tests/base.html</url>
         <url>cache/tests/cache.html</url>
         <url>cache/tests/cache-plugin.html</url>
+        <url>console/tests/console.html</url>
+        <url>console-filters/tests/console-filters.html</url>
+        <url>dataschema/tests/dataschema.html</url>
+        <url>datasource/tests/datasource-arrayschema.html</url>
+        <url>datasource/tests/datasource-cache.html</url>
+        <url>datasource/tests/datasource-function.html</url>
+        <url>datasource/tests/datasource-get.html</url>
+        <url>datasource/tests/datasource-io.html</url>
+        <url>datasource/tests/datasource-jsonschema.html</url>
+        <url>datasource/tests/datasource-local.html</url>
+        <url>datasource/tests/datasource-polling.html</url>
+        <url>datasource/tests/datasource-textschema.html</url>
+        <url>datasource/tests/datasource-xmlschema.html</url>
+        <url>dial/tests/dial.html</url>
+        <url>escape/tests/functional/escape.html</url>
+        <url>event-valuechange/tests/functional/event-valuechange.html</url>
+        <url>graphics/tests/graphics.html</url>
+        <url>highlight/tests/functional/highlight.html</url>
+        <url>history/tests/functional/history-base.html</url>
+        <url>history/tests/functional/history-html5.html</url>
+        <url>json/tests/json.html</url>
     </tests>
 </yuitest>

@@ -58,4 +58,4 @@ Y.Event.define('windowresize', {
 });
 
 
-}, '@VERSION@' ,{requires:['node-base']});
+}, '@VERSION@' ,{requires:['event-synthetic']});

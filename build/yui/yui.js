@@ -4905,6 +4905,10 @@ var NOT_FOUND = {},
                         return path;
                     };
 
+if (YUI.Env.aliases) {
+    YUI.Env.aliases = {}; //Don't need aliases if Loader is present
+}
+
 /**
  * The component metadata is stored in Y.Env.meta.
  * Part of the loader module.
@@ -5756,8 +5760,12 @@ Y.Loader.prototype = {
      */
     addModule: function(o, name) {
         name = name || o.name;
-
-        if (this.moduleInfo[name]) {
+        
+        //Only merge this data if the temp flag is set
+        //from an earlier pass from a pattern or else
+        //an override module (YUI_config) can not be used to
+        //replace a default module.
+        if (this.moduleInfo[name] && this.moduleInfo[name].temp) {
             //This catches temp modules loaded via a pattern
             // The module will be added twice, once from the pattern and
             // Once from the actual add call, this ensures that properties
@@ -8365,7 +8373,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "event-resize": {
         "requires": [
-            "node-base"
+            "node-base", 
+            "event-synthetic"
         ]
     }, 
     "event-simulate": {
@@ -9255,7 +9264,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "base-build", 
             "widget-stdmod"
         ], 
-        "skinnable": false
+        "skinnable": true
     }, 
     "widget-child": {
         "requires": [
@@ -9354,7 +9363,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '5fb91631858874059b43f663739456d0';
+YUI.Env[Y.version].md5 = '785b95bfdfb4b6f25166879443875977';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

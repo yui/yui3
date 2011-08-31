@@ -243,7 +243,7 @@
             _attachUIHandles: function() {
                 if (this._uiHandles) { return; }
 
-                var syncAlign = Y.bind(this._syncAlign, this),
+                var syncAlign = Y.bind(this._syncUIPosAlign, this),
                 alignOn = this.get('alignOn'),
                 bb = this.get(BOUNDING_BOX),
                 uiHandles = [],
@@ -279,10 +279,6 @@
                 }
             },
 
-            _syncAlign: function() {
-                this._syncUIPosAlign();
-            },
-
             /**
              * Default setter for center attribute changes. Sets up the appropriate value, and passes 
              * it through the to the align attribute.
@@ -312,22 +308,20 @@
              */
             _afterAlignChange : function(e) {
                 if (e.newVal) {
-                    this._uiSetAlign(e.newVal.node, e.newVal.points);
-                                        
+                    this._uiSetAlign(e.newVal.node, e.newVal.points);               
                 }
             },
 
             _uiSetHostVisible: function(visible) {
                 if (visible) {
                     this._attachUIHandles();
-                }
-                else {
+                } else {
                     this._detachUIHandles();
                 }
             },
 
             _afterVisibleChange: function(e) {
-                this._uiSetHostVisible(e.newVal);
+                this._syncUIPosAlign();
             },
 
             /**
