@@ -697,9 +697,9 @@ Y.extend(DTBase, Y.Widget, {
         for (i = columns.length - 1; i >= 0; --i) {
             column = columns[i];
             o.columns[i] = {
-                column : column,
-                fields : column.get('field'),
-                classes: column.get('classnames')
+                column    : column,
+                fields    : column.get('field'),
+                classnames: column.get('classnames')
             }
 
             formatter = column.get('formatter');
@@ -765,7 +765,7 @@ Y.extend(DTBase, Y.Widget, {
             columnInfo = columns[i];
             o.column = columnInfo.column;
             o.field  = columnInfo.fields;
-            o.classnames = columnInfo.classes;
+            o.classnames = columnInfo.classnames;
             o.formatter = columnInfo.formatter;
 
             this._addTbodyTdNode(o);
