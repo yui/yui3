@@ -49,6 +49,8 @@
         <url>highlight/tests/functional/highlight.html</url>
         <url>history/tests/functional/history-base.html</url>
         <url>history/tests/functional/history-html5.html</url>
-        <url>json/tests/json.html</url>
+        <!-- This test hangs on the CI system.
+             <url>json/tests/json.html</url>
+        -->
     </tests>
 </yuitest>
