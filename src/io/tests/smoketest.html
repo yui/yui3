@@ -4,21 +4,26 @@
     <meta charset="utf-8">
     <title>Test Page</title>
 </head>
-<body>
+<body class="yui3-skin-sam">
 
-<script src="../../../../build/yui/yui.js"></script>
+<script src="../../../build/yui/yui.js"></script>
 <script>
-var Y = YUI({}).use('test', 'io-base', function (Y) {
-    var smoketest = new Y.Test.Case({
-
-        name: "IO Smoke Test",
-
-        smoketest : function () {
-            var io = new Y.IO();
-            Y.Assert.areNotSame(io, null);
-        }
-    });
-    Y.Test.Runner.add(smoketest);
+YUI({
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+    allowRollup: false,
+    useBrowserConsole: false
+}).use('console', 'test', 'io-base', function (Y) {
+    var myConsole = new Y.Console().render(),
+        smoketest = new Y.Test.Case({
+            name: "IO Smoke Test",
+            smoketest : function () {
+                var io = new Y.IO();
+                Y.Assert.areNotSame(io, null);
+            }
+        }),
+        suite = new Y.Test.Suite({name:"IO Smoke Test Suite"});
+    suite.add(smoketest);
+    Y.Test.Runner.add(suite);
     Y.Test.Runner.run();
 });
 </script>
