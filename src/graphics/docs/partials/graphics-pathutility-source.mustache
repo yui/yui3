@@ -67,17 +67,17 @@ body{
 }
 .obj-name{
     width:100px;
-    margin-bottom:1em;
+    
 }
 .code-div{
     position:absolute;
-    top:0;
-    right:5px;
+    top: 10px;
+    right: 5px;
     text-align:left;
 }
-.code{
+#txt-code{
     height:200px;
-    width:240px;
+    width:279px;
 }
 .code-div label{
     color:#ccc;
@@ -86,13 +86,17 @@ body{
     margin:1em;
     color:#777;
 }
+.tips li,
+.code-div li {
+    margin-bottom: 0.3em;
+}
 </style>
 
 <ul class="tips">
     <li>lineTo - Drag Pencil</li>
     <li>moveTo - Shift + Drag</li>
     <li>curveTo - Alt + Drag</li>
-    <li>New Path Object - Change Graphic Object Name, click New button</li>
+    <li>New Path Object - Change 'Graphic Object Name', then click New button</li>
 </ul>
 <div id="mygraphiccontainer">
     <div id="pencil">
@@ -102,16 +106,21 @@ body{
     <div class="control-point cp2"><div class="drag-disc"></div></div>
 </div>
 <div class="code-div">
-    <p> 
-       <label>Graphic Object Name</label> <input class="obj-name" type="text" value="bob"/>
-       <input type="button" value="New"/>
-    </p>
-    <p>
-    <label>Copy code from here</label>
-    </p>
-    <textarea class="code" rows="8" cols="5000"></textarea>
-    <p>
-        <label>Pencil X,Y: </label> <span class="pencil-xy">200,200</span>
-    </p>
+    <ul>
+        <li> 
+           <label>Graphic Object Name</label>
+           <input class="obj-name" type="text" value="bob"/>
+           <input type="button" value="New"/>
+        </li>
+        <li>
+            <label>Copy code from here</label>
+        </li>
+        <li>
+            <textarea  id="txt-code" rows="8" cols="5000"></textarea>
+        </li>
+        <li>
+            <label>Pencil X,Y: </label> <span class="pencil-xy">200,200</span>
+        </li>
+    </ul>
 </div>
 

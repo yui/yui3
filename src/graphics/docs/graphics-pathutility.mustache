@@ -22,8 +22,9 @@ the paths you created with the pencil.
 
 <h2>Initial State</h2>
 <p>When the utility window is loaded, its generated code is placed
-in the text area control. The initial code assumes you already have a page 
-containing code for a graphics container such as this,</p>
+in the text area control. The generated code assumes you will have a separate
+page to paste it into. This separate page must contain the following code: 
+A graphics container such as this,</p>
 ```
 <div id="mygraphiccontainer"></div>
 ```
@@ -35,7 +36,7 @@ containing code for a graphics container such as this,</p>
     height:400px;
 }
 ```
-and a YUI instance containing a `Graphics` object such as this
+and a YUI instance containing a `Graphics` object such as this.
 ```
 YUI().use('graphics', function (Y) {
 
@@ -45,12 +46,13 @@ YUI().use('graphics', function (Y) {
 });
 ```
 <p>The utility generates pastable code for an `addShape` method that will
-create and render a path. It generates some fill and stroke placeholder code
-you can change after it's pasted into your code.</p>
+create and render a path. It generates some fill and stroke placeholder code.
+You can change this to change the attributes of the fill and stroke
+after it's pasted into your code.</p>
 <p><Strong>Note:</strong>
 As you draw paths with the pencil, they won't have these attributes, you'll 
-only see thin, red lines for precision. The attibutes below will only show after
-you paste the code in your page.</p>
+only see thin, red lines for precision. The placeholder attibutes below will 
+only show after you paste the code in your page.</p>
 ```
 {
    type: "path",
