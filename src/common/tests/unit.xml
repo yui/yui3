@@ -35,7 +35,7 @@
         <url>datatype/tests/date.html</url>
         <url>datatype/tests/number.html</url>
         <url>datatype/tests/xml.html</url>
-        <url>datatype-date-math/tests/datatype-date-math.html</url>
+        <url>datatype/tests/datatype-date-math.html</url>
         <url>dd/tests/index.html</url>
         <url>dial/tests/dial.html</url>
         <url>dom/tests/dom.html</url>
