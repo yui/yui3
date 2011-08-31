@@ -11,29 +11,29 @@ WidgetPositionAlign Change History
 -----
 
   * Added `alignOn` attribute which allows the implementer to specify when the
-    widget should be re-aligned.
+    Widget should be re-aligned.
 
 3.3.0
 -----
 
-  * No changes
+  * No changes.
 
 3.2.0
 -----
 
-  * No changes
+  * No changes.
 
 3.1.1
 -----
 
-  * No changes
+  * No changes.
 
 3.1.0
 -----
 
-  * Renamed module from widget-position-ext to widget-position-align
+  * Renamed module from widget-position-ext to widget-position-align.
 
 3.0.0
 -----
 
-  * Initial release
+  * Initial release.
