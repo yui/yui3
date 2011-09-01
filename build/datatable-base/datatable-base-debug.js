@@ -61,7 +61,7 @@ Y.mix(Column, {
      * Class name.
      *
      * @property NAME
-     * @type String
+     * @type {String}
      * @static
      * @final
      * @value "column"
@@ -75,60 +75,68 @@ Y.mix(Column, {
 /////////////////////////////////////////////////////////////////////////////
     ATTRS: {
         /**
-        * @attribute id
-        * @description Unique internal identifier, used to stamp ID on TH element.
-        * @type String
-        * @readOnly
-        */
+        Unique internal identifier, used to stamp ID on TH element.
+        
+        @attribute id
+        @type {String}
+        @readOnly
+        **/
         id: {
             valueFn: "_defaultId",
             readOnly: true
         },
         
         /**
-        * @attribute key
-        * @description User-supplied identifier. Defaults to id.
-        * @type String
-        */
+        User-supplied identifier. Defaults to id.
+        @attribute key
+        @type {String}
+        **/
         key: {
             valueFn: "_defaultKey"
         },
 
         /**
-        * @attribute field
-        * @description Points to underlying data field (for sorting or formatting,
-        * for example). Useful when column doesn't hold any data itself, but is
-        * just a visual representation of data from another column or record field.
-        * Defaults to key.
-        * @type String
-        */
+        Points to underlying data field (for sorting or formatting, for
+        example). Useful when column doesn't hold any data itself, but is just
+        a visual representation of data from another column or record field.
+        Defaults to key.
+
+        @attribute field
+        @type {String}
+        @default (column key)
+        **/
         field: {
             valueFn: "_defaultField"
         },
 
         /**
-        * @attribute label
-        * @description Display label for column header. Defaults to key.
-        * @type String
-        */
+        Display label for column header. Defaults to key.
+
+        @attribute label
+        @type {String}
+        **/
         label: {
             valueFn: "_defaultLabel"
         },
         
         /**
-        * @attribute children
-        * @description Array of child column definitions (for nested headers).
-        * @type String
-        */
+        Array of child column definitions (for nested headers).
+
+        @attribute children
+        @type {String}
+        @default null
+        **/
         children: {
             value: null
         },
         
         /**
-        * @attribute abbr
-        * @description TH abbr attribute.
-        * @type String
-        */
+        TH abbr attribute.
+
+        @attribute abbr
+        @type {String}
+        @default ""
+        **/
         abbr: {
             value: ""
         },
@@ -140,8 +148,44 @@ Y.mix(Column, {
             getter: "_getClassnames"
         },
         
-        // Column formatter
+        /**
+        Formating template string or function for cells in this column.
+
+        Function formatters receive a single object (described below) and are
+        expected to output the `innerHTML` of the cell.
+
+        String templates can include markup and {placeholder} tokens to be
+        filled in from the object passed to function formatters.
+
+        @attribute formatter
+        @type {String|Function}
+        @param {Object} data Data relevant to the rendering of this cell
+            @param {String} data.classnames CSS classes to add to the cell
+            @param {Column} data.column This Column instance
+            @param {Object} data.data The raw object data from the Record
+            @param {String} data.field This Column's "field" attribute value
+            @param {String} data.headers TH ids to reference in the cell's
+                            "headers" attribute
+            @param {Record} data.record The Record instance for this row
+            @param {Number} data.rowindex The index for this row
+            @param {Node}   data.tbody The TBODY Node that will house the cell
+            @param {Node}   data.tr The row TR Node that will house the cell
+            @param {Any}    data.value The raw Record data for this cell
+        **/
         formatter: {},
+
+        /**
+        The default markup to display in cells that have no corresponding record
+        data or content from formatters.
+
+        @attribute emptyCellValue
+        @type {String}
+        @default ''
+        **/
+        emptyCellValue: {
+            value: '',
+            validator: Y.Lang.isString
+        },
 
         //requires datatable-sort
         sortable: {
@@ -176,9 +220,10 @@ Y.extend(Column, Y.Widget, {
     //
     /////////////////////////////////////////////////////////////////////////////
     /**
+    * Return ID for instance.
+    *
     * @method _defaultId
-    * @description Return ID for instance.
-    * @return String
+    * @return {String}
     * @private
     */
     _defaultId: function() {
@@ -186,10 +231,10 @@ Y.extend(Column, Y.Widget, {
     },
 
     /**
+    * Return key for instance. Defaults to ID if one was not provided.
+    *
     * @method _defaultKey
-    * @description Return key for instance. Defaults to ID if one was not
-    * provided.
-    * @return String
+    * @return {String}
     * @private
     */
     _defaultKey: function(key) {
@@ -197,10 +242,10 @@ Y.extend(Column, Y.Widget, {
     },
 
     /**
+    * Return field for instance. Defaults to key if one was not provided.
+    *
     * @method _defaultField
-    * @description Return field for instance. Defaults to key if one was not
-    * provided.
-    * @return String
+    * @return {String}
     * @private
     */
     _defaultField: function(field) {
@@ -208,10 +253,10 @@ Y.extend(Column, Y.Widget, {
     },
 
     /**
+    * Return label for instance. Defaults to key if one was not provided.
+    *
     * @method _defaultLabel
-    * @description Return label for instance. Defaults to key if one was not
-    * provided.
-    * @return String
+    * @return {String}
     * @private
     */
     _defaultLabel: function(label) {
@@ -240,15 +285,16 @@ Y.extend(Column, Y.Widget, {
      * level child Columns. Value is set by Columnset code.
      *
      * @property keyIndex
-     * @type Number
+     * @type {Number}
      */
     keyIndex: null,
     
     /**
+    * Array of TH IDs associated with this column, for TD "headers" attribute.
+    * Value is set by Columnset code
+    *
     * @property headers
-    * @description Array of TH IDs associated with this column, for TD "headers"
-    * attribute. Value is set by Columnset code
-    * @type String[]
+    * @type {String[]}
     */
     headers: null,
 
@@ -256,7 +302,7 @@ Y.extend(Column, Y.Widget, {
      * Number of cells the header spans. Value is set by Columnset code.
      *
      * @property colSpan
-     * @type Number
+     * @type {Number}
      * @default 1
      */
     colSpan: 1,
@@ -265,7 +311,7 @@ Y.extend(Column, Y.Widget, {
      * Number of rows the header spans. Value is set by Columnset code.
      *
      * @property rowSpan
-     * @type Number
+     * @type {Number}
      * @default 1
      */
     rowSpan: 1,
@@ -275,7 +321,7 @@ Y.extend(Column, Y.Widget, {
      * code.
      *
      * @property parent
-     * @type Y.Column
+     * @type {Column}
      */
     parent: null,
 
@@ -283,7 +329,7 @@ Y.extend(Column, Y.Widget, {
      * The Node reference to the associated TH element.
      *
      * @property thNode
-     * @type Y.Node
+     * @type {Node}
      */
      
     thNode: null,
@@ -292,7 +338,7 @@ Y.extend(Column, Y.Widget, {
      * The Node reference to the associated liner element.
      *
      * @property thLinerNode
-     * @type Y.Node
+     * @type {Node}
      
     thLinerNode: null,*/
     
@@ -1344,7 +1390,11 @@ Y.extend(DTBase, Y.Widget, {
 
         // Iterate tree of columns to add THEAD rows
         for(; i<len; ++i) {
-            this._addTheadTrNode({thead:thead, columns:tree[i]}, (i === 0), (i === len-1));
+            this._addTheadTrNode({
+                thead:   thead,
+                columns: tree[i],
+                id     : '' // to avoid {id} leftovers from the trTemplate
+            }, (i === 0), (i === len - 1));
         }
 
         // Column helpers needs _theadNode to exist
@@ -1483,7 +1533,8 @@ Y.extend(DTBase, Y.Widget, {
      * @protected
      */
     _uiSetRecordset: function(rs) {
-        var oldTbody = this._tbodyNode,
+        var self = this,
+            oldTbody = this._tbodyNode,
             parent = oldTbody.get("parentNode"),
             nextSibling = oldTbody.next(),
             columns = this.get('columnset').keys,
@@ -1508,21 +1559,25 @@ Y.extend(DTBase, Y.Widget, {
         for (i = columns.length - 1; i >= 0; --i) {
             column = columns[i];
             o.columns[i] = {
-                column : column,
-                fields : column.get('field'),
-                classes: column.get('classnames')
+                column        : column,
+                fields        : column.get('field'),
+                classnames    : column.get('classnames'),
+                emptyCellValue: column.get('emptyCellValue')
             }
 
             formatter = column.get('formatter');
-            if (!YLang.isFunction(formatter)) {
-                // Convert non-function formatters into functions
-                // String formatters are treated as alternate value templates
-                // Any other value for formatter is ignored, falling back to
-                // to the configured tdValueTemplate attribute value.
+
+            if (YLang.isFunction(formatter)) {
+                // function formatters need to run before checking if the value
+                // needs defaulting from column.defaultValue
+                formatter = Y.bind(this._functionFormatter, this, formatter);
+            } else {
                 if (!YLang.isString(formatter)) {
                     formatter = cellValueTemplate;
                 }
-                formatter = Y.bind(fromTemplate, this, formatter);
+
+                // string formatters need the value defaulted before processing
+                formatter = Y.bind(this._templateFormatter, this, formatter);
             }
 
             o.columns[i].formatter = formatter;
@@ -1541,6 +1596,20 @@ Y.extend(DTBase, Y.Widget, {
         
         // TBODY to DOM
         parent.insert(this._tbodyNode, nextSibling);
+    },
+
+    _functionFormatter: function (formatter, o) {
+        var value = formatter.call(this, o);
+
+        return (value !== undefined) ? value : o.emptyCellValue;
+    },
+
+    _templateFormatter: function (template, o) {
+        if (o.value === undefined) {
+            o.value = o.emptyCellValue;
+        }
+
+        return fromTemplate(template, o);
     },
 
     /**
@@ -1573,11 +1642,12 @@ Y.extend(DTBase, Y.Widget, {
         o.tr = Ycreate(fromTemplate(o.rowTemplate, { id: o.record.get('id') }));
         
         for (i = 0, len = columns.length; i < len; ++i) {
-            columnInfo = columns[i];
-            o.column = columnInfo.column;
-            o.field  = columnInfo.fields;
-            o.classnames = columnInfo.classes;
-            o.formatter = columnInfo.formatter;
+            columnInfo      = columns[i];
+            o.column        = columnInfo.column;
+            o.field         = columnInfo.fields;
+            o.classnames    = columnInfo.classnames;
+            o.formatter     = columnInfo.formatter;
+            o.emptyCellValue= columnInfo.emptyCellValue;
 
             this._addTbodyTdNode(o);
         }
@@ -1652,7 +1722,7 @@ Y.extend(DTBase, Y.Widget, {
      * @method formatDataCell
      * @param @param o {Object} {record, column, tr, headers, classnames}.
      */
-    formatDataCell: function(o) {
+    formatDataCell: function (o) {
         o.value = o.data[o.field];
 
         return o.formatter.call(this, o);
