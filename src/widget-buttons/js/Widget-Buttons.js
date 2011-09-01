@@ -12,8 +12,6 @@ var BOUNDING_BOX        = "boundingBox",
     BIND_UI             = "bindUI",
     SYNC_UI             = "syncUI",
     BTN                 = "button",
-    BTN_CONTENT         = "button-content",
-    BTN_WRAPPER         = "button-wrapper",
     BUTTON_CHANGE       = "buttonsChange",
     getCN               = Y.ClassNameManager.getClassName,
     CREATE              = Y.Node.create;
@@ -30,9 +28,24 @@ function WidgetButtons(config) {
     Y.after(this._renderUIButtons, this, RENDER_UI);
     Y.after(this._bindUIButtons, this, BIND_UI);
     Y.after(this._syncUIButtons, this, SYNC_UI);
-
-
 }
+
+/**
+ * Static hash of default class names used for the inner <span> ("content"),
+ * the <a> ("button"), and the outer span ("wrapper").
+ *
+ * @property BUTTON_CLASS_NAMES
+ * @static
+ * @type object
+ */
+WidgetButtons.BUTTON_CLASS_NAMES = {
+    buttons  : Y.Widget.getClassName('buttons'),
+    wrapper  : Y.Widget.getClassName(BTN, 'wrapper'),
+    button   : getCN(BTN),
+    content  : getCN(BTN, 'content'),
+    icon     : getCN(BTN, 'icon'),
+    iconClose: getCN(BTN, 'icon', 'close')
+};
 
 /**
  * Static property used to define the default attribute
@@ -86,28 +99,16 @@ WidgetButtons.ATTRS = {
  */
 WidgetButtons.DEFAULT_BUTTONS = {
     "close": {
-        value:'<div style="background:url(http://yui.yahooapis.com/3.4.0pr3/build/panel/assets/skins/sam/sprite_icons.gif) no-repeat; width:13px; height:13px; background-position: 0 2px;"></div>',
-        action: function(e) {
-                    e.preventDefault();
-                    this.hide();
-                },
+        value  : '<span class="' +
+                    WidgetButtons.BUTTON_CLASS_NAMES.icon + ' ' + 
+                    WidgetButtons.BUTTON_CLASS_NAMES.iconClose + '" />',
+        action : function(e) {
+            e.preventDefault();
+            this.hide();
+        },
         section: Y.WidgetStdMod.HEADER
     }
 };
-
-/**
- * Static hash of default class names used for the inner <span> ("content"), the <a> ("button"), and the outer span ("wrapper")
- *
- * @property BUTTON_CLASS_NAMES
- * @static
- * @type object
- */
-WidgetButtons.BUTTON_CLASS_NAMES = {
-    button: getCN(BTN),
-    content: getCN(BTN_CONTENT),
-    wrapper: Y.Widget.getClassName(BTN_WRAPPER)
-};
-
 
 /**
  * <p>Object used to specify the HTML template for the buttons. Consists of the following properties</p>
@@ -119,9 +120,10 @@ WidgetButtons.BUTTON_CLASS_NAMES = {
  * @type object
  */
 WidgetButtons.TEMPLATES = {
-    defaultTemplate: "<a href={href} class='"+WidgetButtons.BUTTON_CLASS_NAMES.button+"'><span class='"+WidgetButtons.BUTTON_CLASS_NAMES.content+"'>{value}</span></a>",
-    wrapper: "<span class='"+WidgetButtons.BUTTON_CLASS_NAMES.wrapper+"'></span>",
-    clearfix: "<div style='clear:both;'></div>"
+    defaultTemplate: '<a href="{href}" class="' + WidgetButtons.BUTTON_CLASS_NAMES.button + '">' +
+                        '<span class="' + WidgetButtons.BUTTON_CLASS_NAMES.content + '">{value}</span></a>',
+    wrapper        : '<span class="' + WidgetButtons.BUTTON_CLASS_NAMES.wrapper + '"></span>',
+    clearfix       : '<div style="clear:both;"></div>'
 };
 
 WidgetButtons.prototype = {
@@ -142,6 +144,7 @@ WidgetButtons.prototype = {
          * @protected
          */
         _renderUIButtons : function () {
+            this.get(BOUNDING_BOX).addClass(WidgetButtons.BUTTON_CLASS_NAMES.buttons);
 
             this._buttonsArray = [];
 
@@ -149,9 +152,6 @@ WidgetButtons.prototype = {
             this._hdBtnNode = CREATE(WidgetButtons.TEMPLATES.wrapper);
             this._ftBtnNode = CREATE(WidgetButtons.TEMPLATES.wrapper);
             this._createButtons();
-
-
-
         },
 
         /**

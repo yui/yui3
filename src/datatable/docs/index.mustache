@@ -76,6 +76,21 @@ var cols = [
 ```
 
 <p>
+    Use the `emptyCellValue` attribute to provide custom cell content when
+    there is no data for that cell in the `Recordset` or a `formatter` returns
+    `undefined`.  The default `emptyCellValue` is the empty string `""`.
+</p>
+
+```
+// The label is the text that will be rendered in the table head
+var cols = [
+    { key: "id", label: "ID" },
+    { key: "name", label: "Name" },
+    { key: "price", label: "Price", emptyCellValue: "<em>FREE!!!</em>" }
+];
+```
+
+<p>
     Use the <code>abbr</code> attribute to set the screen-reader friendly
     "abbr" on each TH element:
 </p>
