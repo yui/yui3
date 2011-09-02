@@ -83,6 +83,7 @@
         <url>scrollview/tests/scrollview-list-unit-test.html</url>
         <url>panel/tests/unit-tests.html</url>
         <url>widget-buttons/tests/unit-tests.html</url>
+        <url>widget-position-align/tests/widget-position-align.html</url>
 
         <!--
         <url>test/tests/testformat.html</url>
