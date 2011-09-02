@@ -120,7 +120,7 @@ IO.prototype = {
                 o.t =  ie ? true : false;
                 break;
             default:
-                o.c = t && t[u] ? t[u] : {};
+                o.c = t ? t[u] : {};
                 o.t = true;
         }
 
@@ -128,11 +128,11 @@ IO.prototype = {
     },
 
     _destroy: function(o) {
-        if (w && !o.t) {
-            if (xhr) {
+        if (w) {
+            if (xhr && o.t === true) {
                 o.c.onreadystatechange = null;
             }
-            else if (Y.UA.ie && !o.e) {
+            else if (Y.UA.ie) {
                 // IE, when using XMLHttpRequest as an ActiveX Object, will throw
                 // a "Type Mismatch" error if the event handler is set to "null".
                 o.c.abort();
@@ -545,7 +545,7 @@ IO.prototype = {
         // Serialize an object into a key-value string using
         // querystring-stringify-simple.
         if (L.isObject(d)) {
-            d = c.data = Y.QueryString.stringify(d);
+            d = Y.QueryString.stringify(d);
         }
 
         if (c.form) {
