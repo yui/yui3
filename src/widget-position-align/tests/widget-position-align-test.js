@@ -35,7 +35,7 @@ suite.add(new Y.Test.Case({
     'align() should set the `align` Attribute': function () {
         var widget = new this.TestWidget(),
             align  = {
-                node  : '#body',
+                node  : 'body',
                 points: [Y.WidgetPositionAlign.CC, Y.WidgetPositionAlign.CC]
             };
 
@@ -81,6 +81,35 @@ suite.add(new Y.Test.Case({
         widget.align(null, []);
         widget.align(null);
     },
+
+    'align() should return `undefined`': function () {
+        var widget = new this.TestWidget();
+        Assert.isUndefined(widget.align());
+    },
+
+    'centered() should set the `align` Attribute with center `points`': function () {
+        var widget = new this.TestWidget(),
+            points;
+
+        widget.centered();
+        Assert.isUndefined(widget.get('align').node);
+
+        points = widget.get('align').points;
+        Assert.areSame(Y.WidgetPositionAlign.CC, points[0]);
+        Assert.areSame(Y.WidgetPositionAlign.CC, points[1]);
+    },
+
+    'centered() should accept a `node` argument and set that as the `align` Node': function () {
+        var widget = new this.TestWidget();
+
+        widget.centered('body');
+        Assert.areSame('body', widget.get('align').node);
+    },
+
+    'centered() should return `undefined`': function () {
+        var widget = new this.TestWidget();
+        Assert.isUndefined(widget.centered());
+    }
 }));
 
 Y.Test.Runner.add(suite);
