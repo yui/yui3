@@ -306,10 +306,8 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
         // stuff until I have time to rebuild it properly
         this._bodyContainerNode.on('scroll', Y.bind("_onScroll", this));
 
-        this.get('host').after([
-            "recordsetChange",
-            "recordset:recordsChange"
-        ], this.syncUI, this);
+        this.afterHostEvent("recordsetChange", this.syncUI);
+        this.afterHostEvent("recordset:recordsChange", this.syncUI);
     },
 
     /**
@@ -367,8 +365,8 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
             // nodelist of all the THs
             headers     = headerTable.all('thead .' + CLASS_LINER),
             // nodelist of the TDs in the first row
-            cells       = bodyTable
-                .all('.' + CLASS_DATA + ' tr:first-of-type .' + CLASS_LINER),
+            firstRow    = bodyTable.one('.' + CLASS_DATA + ' tr'),
+            cells       = firstRow && firstRow.all('.' + CLASS_LINER),
             // FIXME: Code smell
             widthProperty = (YUA.ie) ? 'offsetWidth' : 'clientWidth';
 
@@ -378,7 +376,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
         // If there are data rows, iterate each header and the cells of the
         // first row comparing cell widths.  Assign the larger width to the
         // narrower node (header or cell).
-        if (cells.size()) {
+        if (cells && cells.size()) {
             headers.each(function (header, i) {
                 var cell        = cells.item(i),
                     headerWidth = header.get(widthProperty),
