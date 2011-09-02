@@ -6,6 +6,7 @@
  */
 
     var L = Y.Lang, DUMP = 'dump', SPACE = ' ', LBRACE = '{', RBRACE = '}',
+		savedRegExp =  /(~-(\d+)-~)/g,
 
     /**
      * The following methods are added to the YUI instance
@@ -47,7 +48,7 @@
         var i, j, k, key, v, meta, saved = [], token, dump,
             lidx = s.length;
 
-       		o = Y.merge({LBRACE:'{',RBRACE:'}'},o);
+            o = Y.merge({LBRACE:LBRACE,RBRACE:RBRACE},o);
 			for (;;) {
             i = s.lastIndexOf(LBRACE, lidx);
             if (i < 0) {
@@ -104,7 +105,7 @@
 				} else if (L.isUndefined(v)) {
                 // This {block} has no replace string. Save it for later.
                 v = '~-' + saved.length + '-~';
-                saved[saved.length] = token;
+                saved.push(token);
 
                 // break;
             }
@@ -118,8 +119,8 @@
         }
 
         // restore saved {block}s
-		s = s.replace(/(~-(\d+)-~)/g, function () {
-			return saved[parseInt(arguments[2],10)];
+		s = s.replace(savedRegExp, function (str, p1, p2) {
+			return LBRACE + saved[parseInt(p2,10)] + RBRACE;
 		});
 
         return s;

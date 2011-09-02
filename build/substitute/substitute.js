@@ -8,6 +8,7 @@ YUI.add('substitute', function(Y) {
  */
 
     var L = Y.Lang, DUMP = 'dump', SPACE = ' ', LBRACE = '{', RBRACE = '}',
+		savedRegExp =  /(~-(\d+)-~)/g,
 
     /**
      * The following methods are added to the YUI instance
@@ -49,7 +50,8 @@ YUI.add('substitute', function(Y) {
         var i, j, k, key, v, meta, saved = [], token, dump,
             lidx = s.length;
 
-        for (;;) {
+            o = Y.merge({LBRACE:LBRACE,RBRACE:RBRACE},o);
+			for (;;) {
             i = s.lastIndexOf(LBRACE, lidx);
             if (i < 0) {
                 break;
@@ -102,10 +104,10 @@ YUI.add('substitute', function(Y) {
                         }
                     }
                 }
-            } else if (!L.isString(v) && !L.isNumber(v)) {
+				} else if (L.isUndefined(v)) {
                 // This {block} has no replace string. Save it for later.
                 v = '~-' + saved.length + '-~';
-                saved[saved.length] = token;
+                saved.push(token);
 
                 // break;
             }
@@ -119,10 +121,9 @@ YUI.add('substitute', function(Y) {
         }
 
         // restore saved {block}s
-        for (i = saved.length - 1; i >= 0; i = i - 1) {
-            s = s.replace(new RegExp('~-' + i + '-~'), LBRACE +
-                saved[i] + RBRACE, 'g');
-        }
+		s = s.replace(savedRegExp, function (str, p1, p2) {
+			return LBRACE + saved[parseInt(p2,10)] + RBRACE;
+		});
 
         return s;
 
@@ -133,4 +134,5 @@ YUI.add('substitute', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['yui-base'], optional:['dump']});
+
+}, '@VERSION@' ,{optional:['dump'], requires:['yui-base']});
