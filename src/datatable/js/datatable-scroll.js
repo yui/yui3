@@ -17,7 +17,15 @@ var YNode = Y.Node,
     CLASS_SCROLLABLE = YgetClassName(DATATABLE, "scrollable"),
     CONTAINER_HEADER = '<div class="'+CLASS_HEADER+'"></div>',
     CONTAINER_BODY = '<div class="'+CLASS_BODY+'"></div>',
-    TEMPLATE_TABLE = '<table></table>';
+    TEMPLATE_TABLE = '<table></table>',
+    scrollbarWidth = Y.cached(function () {
+        var testNode = Y.one('body').appendChild('<div style="position:absolute;visibility:hidden;overflow:scroll;width:20px;"><p style="height:1px"/></div>'),
+            width = testNode.get('offsetWidth') - testNode.get('clientWidth');
+
+        testNode.remove(true);
+
+        return width;
+    });
     
 /**
  * Adds scrolling to DataTable.
@@ -627,7 +635,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
                 // Snap outer container width to content
                 w = (tBodyContainer.get('scrollHeight') > tBodyContainer.get('clientHeight')) ?
                 // but account for y-scrollbar since it is visible
-                    (tBody.get('parentNode').get('clientWidth') + 19) + "px" :
+                    (tBody.get('parentNode').get('clientWidth') + scrollbarWidth()) + "px" :
                     // no y-scrollbar, just borders
                     (tBody.get('parentNode').get('clientWidth') + 2) + "px";
                 this._parentContainer.setStyle('width', w);
@@ -651,7 +659,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
         
         if (!this.get('height') && (YUA.ie)) {
             w = (tBodyContainer.get('scrollWidth') > tBodyContainer.get('offsetWidth')) ?
-                (tBody.get('parentNode').get('offsetHeight') + 18) + "px" : 
+                (tBody.get('parentNode').get('offsetHeight') + scrollbarWidth()) + "px" : 
                 tBody.get('parentNode').get('offsetHeight') + "px";
             
             tBodyContainer.setStyle('height', w);
