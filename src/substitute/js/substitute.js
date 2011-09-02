@@ -47,7 +47,8 @@
         var i, j, k, key, v, meta, saved = [], token, dump,
             lidx = s.length;
 
-        for (;;) {
+       		o = Y.merge({LBRACE:'{',RBRACE:'}'},o);
+			for (;;) {
             i = s.lastIndexOf(LBRACE, lidx);
             if (i < 0) {
                 break;
@@ -100,7 +101,7 @@
                         }
                     }
                 }
-            } else if (!L.isString(v) && !L.isNumber(v)) {
+				} else if (L.isUndefined(v)) {
                 // This {block} has no replace string. Save it for later.
                 v = '~-' + saved.length + '-~';
                 saved[saved.length] = token;
@@ -117,10 +118,9 @@
         }
 
         // restore saved {block}s
-        for (i = saved.length - 1; i >= 0; i = i - 1) {
-            s = s.replace(new RegExp('~-' + i + '-~'), LBRACE +
-                saved[i] + RBRACE, 'g');
-        }
+		s = s.replace(/(~-(\d+)-~)/g, function () {
+			return saved[parseInt(arguments[2],10)];
+		});
 
         return s;
 
