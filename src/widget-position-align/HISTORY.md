@@ -4,8 +4,11 @@ WidgetPositionAlign Change History
 3.4.1
 -----
 
-  * The Widget's alignment is now re-synced to the DOM everytime the Widget's
-    `visible` Attribute is set to `true`. [Ticket #2530779]
+  * The widget's alignment is now re-synced to the DOM every time the widget's
+    `visible` Attribute is changed to `true`. [Ticket #2530779]
+
+  * Syncing the current alignment to the DOM is now supported in the public API
+    by calling `align()` with no arguments. [Ticket #2529911]
 
 3.4.0
 -----
