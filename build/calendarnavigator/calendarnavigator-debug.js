@@ -33,7 +33,7 @@ function CalendarNavigator(config) {
  * The namespace for the plugin. This will be the property on the widget, which will 
  * reference the plugin instance, when it's plugged in.
  *
- * @property CalendarNavigator.NS
+ * @property NS
  * @static
  * @type String
  * @default "navigator"
@@ -44,7 +44,7 @@ CalendarNavigator.NS = "navigator";
  * The NAME of the CalendarNavigator class. Used to prefix events generated
  * by the plugin class.
  *
- * @property CalendarNavigator.NAME
+ * @property NAME
  * @static
  * @type String
  * @default "pluginCalendarNavigator"
@@ -56,7 +56,7 @@ CalendarNavigator.NAME = "pluginCalendarNavigator";
  * Static property used to define the default attribute 
  * configuration for the plugin.
  *
- * @property CalendarNavigator.ATTRS
+ * @property ATTRS
  * @type Object
  * @static
  */
@@ -76,7 +76,7 @@ CalendarNavigator.ATTRS = {
 
    /**
     * The CSS classnames for the calendar navigator controls.
-    * @property CalendarBase.CALENDARNAV_STRINGS
+    * @property CALENDARNAV_STRINGS
     * @type Object
     * @readOnly
     * @protected
@@ -89,7 +89,7 @@ CalendarNavigator.CALENDARNAV_STRINGS = {
 
    /**
     * The template for the calendar navigator previous month control.
-    * @property CalendarBase.PREV_MONTH_CONTROL_TEMPLATE
+    * @property PREV_MONTH_CONTROL_TEMPLATE
     * @type String
     * @protected
     * @static
@@ -99,7 +99,7 @@ CalendarNavigator.PREV_MONTH_CONTROL_TEMPLATE = '<div class="yui3-u {prev_month_
                                                 '</div>';
    /**
     * The template for the calendar navigator next month control.
-    * @property CalendarBase.NEXT_MONTH_CONTROL_TEMPLATE
+    * @property NEXT_MONTH_CONTROL_TEMPLATE
     * @type String
     * @readOnly
     * @protected
@@ -211,4 +211,4 @@ Y.extend(CalendarNavigator, Y.Plugin.Base, {
 Y.namespace("Plugin").CalendarNavigator = CalendarNavigator;
 
 
-}, '@VERSION@' ,{requires:['plugin', 'classnamemanager']});
+}, '@VERSION@' ,{requires:['plugin', 'classnamemanager', 'datatype-date', 'node', 'substitute']});

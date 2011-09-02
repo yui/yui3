@@ -236,7 +236,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
      */
     setAreaData: function()
     {
-        var isNumber = Y.Lang.isNumber,
+        var isNumber = Y_Lang.isNumber,
             nextX, nextY,
             graph = this.get("graph"),
             w = graph.get("width"),

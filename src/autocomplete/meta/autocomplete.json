@@ -4,11 +4,11 @@
             "autocomplete-base", "autocomplete-sources", "autocomplete-list",
             "autocomplete-plugin"
         ],
+
         "submodules": {
             "autocomplete-base": {
                 "plugins": {
                     "autocomplete-filters": {
-
                         "requires": [
                             "array-extras",
                             "text-wordbreak"
@@ -16,7 +16,6 @@
                     },
 
                     "autocomplete-filters-accentfold": {
-
                         "requires": [
                             "array-extras",
                             "text-accentfold",
@@ -25,7 +24,6 @@
                     },
 
                     "autocomplete-highlighters": {
-
                         "requires": [
                             "array-extras",
                             "highlight-base"
@@ -33,7 +31,6 @@
                     },
 
                     "autocomplete-highlighters-accentfold": {
-
                         "requires": [
                             "array-extras",
                             "highlight-accentfold"
@@ -61,7 +58,6 @@
 
                 "plugins": {
                     "autocomplete-list-keys": {
-
                         "condition": {
                             "trigger": "autocomplete-list",
                             "test": "autocomplete-list-keys-sniff.js"
@@ -74,7 +70,6 @@
                     },
 
                     "autocomplete-plugin": {
-
                         "requires": [
                             "autocomplete-list",
                             "node-pluginhost"

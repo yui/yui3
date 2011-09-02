@@ -376,7 +376,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         pts += ", " + bx + ", " + by;
         pts += ", " + x + ", " + y;
         this._map.appendChild(areaNode);
-        areaNode.setAttribute("class", "yui3-seriesmarker");
+        areaNode.setAttribute("class", SERIES_MARKER);
         areaNode.setAttribute("id", "hotSpot_" + seriesIndex + "_" + index);
         areaNode.setAttribute("shape", "polygon");
         areaNode.setAttribute("coords", pts);
@@ -426,7 +426,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             cfg = Y.clone(styles);
         graphic.set("autoDraw", false);
         marker = graphic.addShape(cfg); 
-        marker.addClass("yui3-seriesmarker");
+        marker.addClass(SERIES_MARKER);
         return marker;
     },
     

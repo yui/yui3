@@ -5,6 +5,7 @@ YUI.add('datasource-local', function(Y) {
  * access a variety of data, from JavaScript arrays to online database servers.
  *
  * @module datasource
+ * @main datasource
  */
     
 /**
@@ -66,7 +67,7 @@ Y.mix(DSLocal, {
     /**
      * Global transaction counter.
      *
-     * @property DataSource._tId
+     * @property _tId
      * @type Number
      * @static
      * @private
@@ -77,7 +78,7 @@ Y.mix(DSLocal, {
     /**
      * Global in-progress transaction objects.
      *
-     * @property DataSource.transactions
+     * @property transactions
      * @type Object
      * @static
      */
@@ -86,7 +87,7 @@ Y.mix(DSLocal, {
     /**
      * Returns data to callback.
      *
-     * @method DataSource.issueCallback
+     * @method issueCallback
      * @param e {EventFacade} Event Facade.
      * @param caller {DataSource} Calling DataSource instance.
      * @static

@@ -33,7 +33,7 @@ var Widget = Y.Widget,
  *   }
  * </pre>
  * 
- * @property Widget.HTML_PARSER
+ * @property HTML_PARSER
  * @type Object
  * @static
  */

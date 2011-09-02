@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!-- These tests are ready for automated test coverage.
+
+     If you'd like your test to be included here:
+
+     1. Only use build/yui/yui.js in your tests.
+        Don't use yui-debug.js or yui-min.js.
+
+     2. Make sure your test respects the filter
+        query string parameter by using something
+        like this in your test's YUI config:
+
+            var Y = YUI({
+                filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+            });
+
+     Then make sure ?filter=raw only includes raw JS.
+     Coverage tests are not allowed to use debug or min filters.
+
+     Feel free to add your test if it respects ?filter=raw.
+-->
+<yuitest>
+    <tests base="@TEST_ARTIFACTS_BASE@" timeout="120000">
+        <url>app/tests/app.html</url>
+        <!-- Autocomplete uses selector-css3, which doesn't
+             instrument due to a bug in YUI Test Coverage.
+        <url>autocomplete/tests/functional/autocomplete.html</url>
+        -->
+        <url>base/tests/base.html</url>
+        <url>cache/tests/cache.html</url>
+        <url>cache/tests/cache-plugin.html</url>
+        <url>console/tests/console.html</url>
+        <url>console-filters/tests/console-filters.html</url>
+        <url>dataschema/tests/dataschema.html</url>
+        <url>datasource/tests/datasource-arrayschema.html</url>
+        <url>datasource/tests/datasource-cache.html</url>
+        <url>datasource/tests/datasource-function.html</url>
+        <url>datasource/tests/datasource-get.html</url>
+        <url>datasource/tests/datasource-io.html</url>
+        <url>datasource/tests/datasource-jsonschema.html</url>
+        <url>datasource/tests/datasource-local.html</url>
+        <url>datasource/tests/datasource-polling.html</url>
+        <url>datasource/tests/datasource-textschema.html</url>
+        <url>datasource/tests/datasource-xmlschema.html</url>
+        <url>dial/tests/dial.html</url>
+        <url>dump/tests/dump.html</url>
+        <url>escape/tests/functional/escape.html</url>
+        <url>event-custom/tests/customevent.html</url>
+        <url>event-valuechange/tests/functional/event-valuechange.html</url>
+        <url>event/tests/dom.html</url>
+        <url>event/tests/delegate.html</url>
+        <url>event/tests/event-resize.html</url>
+        <url>event/tests/event-key.html</url>
+        <url>event/tests/event-synthetic.html</url>
+        <url>event/tests/focusblur.html</url>
+        <url>graphics/tests/graphics.html</url>
+        <url>highlight/tests/functional/highlight.html</url>
+        <url>history/tests/functional/history-base.html</url>
+        <url>history/tests/functional/history-html5.html</url>
+        <!-- This test hangs on the CI system.
+             <url>json/tests/json.html</url>
+        -->
+    </tests>
+</yuitest>

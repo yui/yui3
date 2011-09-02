@@ -1,4 +1,4 @@
-.yui3-skin-night{    
+.yui3-skin-night{
 	background-color:#000;
     font-family: HelveticaNeue,arial,helvetica,clean,sans-serif;
 	color:#fff;
@@ -21,6 +21,7 @@
     -moz-border-radius: 13px;
     -webkit-border-radius: 13px;
     border-radius: 13px;
+    -moz-box-shadow: inset 1px 1px 4px rgba(0,0,0,0.9);
     -webkit-box-shadow: inset 1px 1px 4px rgba(0,0,0,0.9);
     box-shadow: 1px 1px 4px rgba(0,0,0,0.6) inset;
 
@@ -31,8 +32,8 @@
 .yui3-skin-night .yui3-aclist-item-active,
 .yui3-skin-night .yui3-aclist-item-hover {
     background: -moz-linear-gradient(
-		0% 100% 90deg,	
-		#252626 0%, 
+		0% 100% 90deg,
+		#252626 0%,
 		#333434 100%
 	);
     background: -webkit-gradient(
@@ -40,16 +41,10 @@
         left top,
         left bottom,
         from(#333434),
-        to(#252626)     
-    );	
+        to(#252626)
+    );
 }
 
-.yui3-skin-night .yui3-aclist-item {
-    padding: 0.4em 1em 0.6em;
-}
-
+.yui3-skin-night .yui3-aclist-item { padding: 0.4em 1em 0.6em; }
 .yui3-skin-night .yui3-aclist-item-active { outline: none; }
-
-.yui3-skin-night .yui3-highlight {
-	color:#EFEFEF;	
-}
+.yui3-skin-night .yui3-highlight { color:#EFEFEF; }

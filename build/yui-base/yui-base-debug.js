@@ -57,9 +57,10 @@ properties.
                 YUI.GlobalConfig is a master configuration that might span
                 multiple contexts in a non-browser environment.  It is applied
                 first to all instances in all contexts.
-                @property YUI.GlobalConfig
+                @property GlobalConfig
                 @type {Object}
                 @global
+                @static
                 @example
 
                     
@@ -191,6 +192,7 @@ properties.
                 loader = new Y.Loader(Y.config);
                 Y.Env._loader = loader;
             }
+            YUI.Env.core = Y.Array.dedupe([].concat(YUI.Env.core, [ 'loader-base', 'loader-rollup', 'loader-yui3' ]));
 
             return loader;
         },
@@ -297,6 +299,7 @@ proto = {
 
         if (!Env) {
             Y.Env = {
+                core: ['get','features','intl-base','yui-log','yui-later'],
                 mods: {}, // flat module map
                 versions: {}, // version module map
                 base: BASE,
@@ -456,7 +459,8 @@ proto = {
         var i, Y = this,
             core = [],
             mods = YUI.Env.mods,
-            extras = Y.config.core || ['get','features','intl-base','yui-log','yui-later'];
+            //extras = Y.config.core || ['get','features','intl-base','yui-log','yui-later'];
+            extras = Y.config.core || [].concat(YUI.Env.core); //Clone it..
 
         for (i = 0; i < extras.length; i++) {
             if (mods[extras[i]]) {
@@ -466,6 +470,10 @@ proto = {
 
         Y._attach(['yui-base']);
         Y._attach(core);
+
+        if (Y.Loader) {
+            getLoader(Y);
+        }
 
         // Y.log(Y.id + ' initialized', 'info', 'yui');
     },
@@ -570,6 +578,8 @@ with any configuration info required for the module.
     /**
      * Executes the function associated with each required
      * module, binding the module to the YUI instance.
+     * @param {Array} r The array of modules to attach
+     * @param {Boolean} [moot=false] Don't throw a warning if the module is not attached
      * @method _attach
      * @private
      */
@@ -578,26 +588,42 @@ with any configuration info required for the module.
             mods = YUI.Env.mods,
             aliases = YUI.Env.aliases,
             Y = this, j,
+            loader = Y.Env._loader,
             done = Y.Env._attached,
-            len = r.length, loader;
+            len = r.length, loader,
+            c = [];
 
-        //console.info('attaching: ' + r, 'info', 'yui');
+        //Check for conditional modules (in a second+ instance) and add their requirements
+        //TODO I hate this entire method, it needs to be fixed ASAP (3.5.0) ^davglass
+        for (i = 0; i < len; i++) {
+            name = r[i];
+            mod = mods[name];
+            c.push(name);
+            if (loader && loader.conditions[name]) {
+                Y.Object.each(loader.conditions[name], function(def) {
+                    var go = def && ((def.ua && Y.UA[def.ua]) || (def.test && def.test(Y)));
+                    if (go) {
+                        c.push(def.name);
+                    }
+                });
+            }
+        }
+        r = c;
+        len = r.length;
 
         for (i = 0; i < len; i++) {
             if (!done[r[i]]) {
                 name = r[i];
                 mod = mods[name];
+
                 if (aliases && aliases[name]) {
                     Y._attach(aliases[name]);
                     continue;
                 }
                 if (!mod) {
-                    loader = Y.Env._loader;
                     if (loader && loader.moduleInfo[name]) {
                         mod = loader.moduleInfo[name];
-                        if (mod.use) {
-                            moot = true;
-                        }
+                        moot = true;
                     }
 
                     // Y.log('no js def for: ' + name, 'info', 'yui');
@@ -605,15 +631,16 @@ with any configuration info required for the module.
                     //if (!loader || !loader.moduleInfo[name]) {
                     //if ((!loader || !loader.moduleInfo[name]) && !moot) {
                     if (!moot) {
-                        if (name.indexOf('skin-') === -1) {
+                        if ((name.indexOf('skin-') === -1) && (name.indexOf('css') === -1)) {
                             Y.Env._missed.push(name);
+                            Y.Env._missed = Y.Array.dedupe(Y.Env._missed);
                             Y.message('NOT loaded: ' + name, 'warn', 'yui');
                         }
                     }
                 } else {
                     done[name] = true;
                     //Don't like this, but in case a mod was asked for once, then we fetch it
-                    //We need to remove it from the missed list
+                    //We need to remove it from the missed list ^davglass
                     for (j = 0; j < Y.Env._missed.length; j++) {
                         if (Y.Env._missed[j] === name) {
                             Y.message('Found: ' + name + ' (was reported as missing earlier)', 'warn', 'yui');
@@ -739,23 +766,6 @@ with any configuration info required for the module.
         }
         if (Y.Lang.isArray(args[0])) {
             args = args[0];
-        }
-
-        if (Y.config.cacheUse) {
-            while ((name = args[i++])) {
-                if (!Env._attached[name]) {
-                    provisioned = false;
-                    break;
-                }
-            }
-
-            if (provisioned) {
-                if (args.length) {
-                    Y.log('already provisioned: ' + args, 'info', 'yui');
-                }
-                Y._notify(callback, ALREADY_DONE, args);
-                return Y;
-            }
         }
 
         if (Y.config.cacheUse) {
@@ -968,6 +978,7 @@ with any configuration info required for the module.
 Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
         }
 
+
         // dynamic load
         if (boot && len && Y.Loader) {
 // Y.log('Using loader to fetch missing deps: ' + missing, 'info', 'yui');
@@ -1063,13 +1074,13 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
 
 
     /**
-    Adds a namespace object onto the YUI global if called statically:
+    Adds a namespace object onto the YUI global if called statically.
 
         // creates YUI.your.namespace.here as nested objects
         YUI.namespace("your.namespace.here");
 
-    If called as an instance method on the YUI instance, it creates the
-    namespace on the instance:
+    If called as a method on a YUI <em>instance</em>, it creates the
+    namespace on the instance.
 
          // creates Y.property.package
          Y.namespace("property.package");
@@ -1082,15 +1093,14 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
     If the first token in the namespace string is "YAHOO", the token is
     discarded.
 
-    Be careful when naming packages. Reserved words may work in some browsers
-    and not others. For instance, the following will fail in some browsers:
+    Be careful with namespace tokens. Reserved words may work in some browsers
+    and not others. For instance, the following will fail in some browsers
+    because the supported version of JavaScript reserves the word "long":
     
          Y.namespace("really.long.nested.namespace");
     
-    This fails because `long` is a future reserved word in ECMAScript
-    
     @method namespace
-    @param  {String[]} namespace* 1-n namespaces to create.
+    @param  {String} namespace* namespaces to create.
     @return {Object}  A reference to the last namespace object created.
     **/
     namespace: function() {
@@ -2076,13 +2086,9 @@ L.now = Date.now || function () {
     return new Date().getTime();
 };
 /**
- * The YUI module contains the components required for building the YUI seed
- * file. This includes the script loading mechanism, a simple queue, and the
- * core utilities for the library.
- *
- * @module yui
- * @submodule yui-base
- */
+@module yui
+@submodule yui-base
+*/
 
 var Lang   = Y.Lang,
     Native = Array.prototype,
@@ -2141,43 +2147,6 @@ function YArray(thing, startIndex, force) {
 }
 
 Y.Array = YArray;
-
-/**
-Evaluates _obj_ to determine if it's an array, an array-like collection, or
-something else. This is useful when working with the function `arguments`
-collection and `HTMLElement` collections.
-
-Note: This implementation doesn't consider elements that are also
-collections, such as `<form>` and `<select>`, to be array-like.
-
-@method test
-@param {Object} obj Object to test.
-@return {Number} A number indicating the results of the test:
-
-  * 0: Neither an array nor an array-like collection.
-  * 1: Real array.
-  * 2: Array-like collection.
-
-@static
-**/
-YArray.test = function (obj) {
-    var result = 0;
-
-    if (Lang.isArray(obj)) {
-        result = 1;
-    } else if (Lang.isObject(obj)) {
-        try {
-            // indexed, but no tagName (element) or alert (window),
-            // or functions without apply/call (Safari
-            // HTMLElementCollection bug).
-            if ('length' in obj && !obj.tagName && !obj.alert && !obj.apply) {
-                result = 2;
-            }
-        } catch (ex) {}
-    }
-
-    return result;
-};
 
 /**
 Dedupes an array of strings, returning an array that's guaranteed to contain
@@ -2294,7 +2263,7 @@ YArray.indexOf = Native.indexOf ? function (array, value) {
     return Native.indexOf.call(array, value);
 } : function (array, value) {
     for (var i = 0, len = array.length; i < len; ++i) {
-        if (array[i] === value) {
+        if (i in array && array[i] === value) {
             return i;
         }
     }
@@ -2351,6 +2320,43 @@ YArray.some = Native.some ? function (array, fn, thisObj) {
     }
 
     return false;
+};
+
+/**
+Evaluates _obj_ to determine if it's an array, an array-like collection, or
+something else. This is useful when working with the function `arguments`
+collection and `HTMLElement` collections.
+
+Note: This implementation doesn't consider elements that are also
+collections, such as `<form>` and `<select>`, to be array-like.
+
+@method test
+@param {Object} obj Object to test.
+@return {Number} A number indicating the results of the test:
+
+  * 0: Neither an array nor an array-like collection.
+  * 1: Real array.
+  * 2: Array-like collection.
+
+@static
+**/
+YArray.test = function (obj) {
+    var result = 0;
+
+    if (Lang.isArray(obj)) {
+        result = 1;
+    } else if (Lang.isObject(obj)) {
+        try {
+            // indexed, but no tagName (element) or alert (window),
+            // or functions without apply/call (Safari
+            // HTMLElementCollection bug).
+            if ('length' in obj && !obj.tagName && !obj.alert && !obj.apply) {
+                result = 2;
+            }
+        } catch (ex) {}
+    }
+
+    return result;
 };
 /**
  * The YUI module contains the components required for building the YUI
@@ -2483,7 +2489,7 @@ Y.cached = function (source, cache, refetch) {
     return function (arg) {
         var key = arguments.length > 1 ?
                 Array.prototype.join.call(arguments, CACHED_DELIMITER) :
-                arg.toString();
+                String(arg);
 
         if (!(key in cache) || (refetch && cache[key] == refetch)) {
             cache[key] = source.apply(source, arguments);
@@ -3037,11 +3043,14 @@ O.isEmpty = function (obj) {
  * @class UA
  * @static
  */
+
 /**
-* Static method for parsing the UA string. Defaults to assigning it's value to Y.UA
+* Static method on `YUI.Env` for parsing a UA string.  Called at instantiation
+* to populate `Y.UA`.
+*
 * @static
-* @method Env.parseUA
-* @param {String} subUA Parse this UA string instead of navigator.userAgent
+* @method parseUA
+* @param {String} [subUA=navigator.userAgent] UA string to parse
 * @returns {Object} The Y.UA object
 */
 YUI.Env.parseUA = function(subUA) {
@@ -3234,6 +3243,15 @@ YUI.Env.parseUA = function(subUA) {
 
     m;
 
+    /**
+    * The User Agent string that was parsed
+    * @property userAgent
+    * @type String
+    * @static
+    */
+    o.userAgent = ua;
+
+
     o.secure = href && (href.toLowerCase().indexOf('https') === 0);
 
     if (ua) {
@@ -3341,7 +3359,10 @@ YUI.Env.parseUA = function(subUA) {
         }
     }
 
-    YUI.Env.UA = o;
+    //It was a parsed UA, do not assign the global value.
+    if (!subUA) {
+        YUI.Env.UA = o;
+    }
 
     return o;
 };

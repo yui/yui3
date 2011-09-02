@@ -48,11 +48,11 @@ YUI.add('align-plugin', function(Y) {
          *      <dd>center center</dd>
          * </dl>
          * @method to 
-         * @parm region {String || Node || HTMLElement || Object} The node or
+         * @param region {String || Node || HTMLElement || Object} The node or
          * region to align with. Defaults to the viewport region.
-         * @parm regionPoint {String} The point of the region to align with.
-         * @parm point {String} The point of the node aligned to the region. 
-         * @parm resize {Boolean} Whether or not the node should re-align when
+         * @param regionPoint {String} The point of the region to align with.
+         * @param point {String} The point of the node aligned to the region. 
+         * @param resize {Boolean} Whether or not the node should re-align when
          * the window is resized. Defaults to false.
          */
         to: function(region, regionPoint, point, syncOnResize) {
@@ -125,7 +125,7 @@ YUI.add('align-plugin', function(Y) {
         /**
          * Aligns the center of a node to the center of another node or region.
          * @method center 
-         * @parm region {Node || HTMLElement || Object} optional The node or
+         * @param region {Node || HTMLElement || Object} optional The node or
          * region to align with. Defaults to the viewport region.
          * the window is resized. If centering to viewport, this defaults
          * to true, otherwise default is false.

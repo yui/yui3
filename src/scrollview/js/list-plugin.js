@@ -1,7 +1,7 @@
 /**
  * Provides a plugin, which adds support for a scroll indicator to ScrollView instances
  *
- * @module scrollview-scrollbars
+ * @module scrollview-list
  */
 var getCN = Y.ClassNameManager.getClassName,
 SCROLLVIEW = 'scrollview',
@@ -13,9 +13,10 @@ RENDER_UI = 'renderUI',
 HOST = "host";
 
 /**
- * ScrollView plugin that adds scroll indicators to ScrollView instances
+ * ScrollView plugin that adds class names to immediate descendant "<li>" to 
+ * allow for easier styling through CSS
  *
- * @class ScrollViewScrollbars
+ * @class ScrollViewList
  * @namespace Plugin
  * @extends Plugin.Base
  * @constructor
@@ -28,7 +29,7 @@ function ListPlugin() {
 /**
  * The identity of the plugin
  *
- * @property ListPlugin.NAME
+ * @property NAME
  * @type String
  * @default 'pluginList'
  * @static
@@ -38,26 +39,18 @@ ListPlugin.NAME = 'pluginList';
 /**
  * The namespace on which the plugin will reside.
  *
- * @property ListPlugin.NS
+ * @property NS
  * @type String
  * @default 'list'
  * @static
  */
 ListPlugin.NS = 'list';
 
-/**
- * HTML template for the scrollbar
- *
- * @property ScrollViewScrollbars.SCROLLBAR_TEMPLATE
- * @type Object
- * @static
- */
-
 
 /**
  * The default attribute configuration for the plugin
  *
- * @property ScrollViewScrollbars.ATTRS
+ * @property ATTRS
  * @type Object
  * @static
  */
@@ -66,7 +59,7 @@ ListPlugin.ATTRS = {
     /**
      * Specifies whether the list elements (the immediate <ul>'s and the immediate <li>'s inside those <ul>'s) have class names attached to them or not
      *
-     * @property ScrollView.list.isAttached
+     * @property isAttached
      * @type boolean
      * @static
      */

@@ -43,7 +43,7 @@ YUI.add('widget-position', function(Y) {
      * Static property used to define the default attribute 
      * configuration introduced by WidgetPosition.
      *
-     * @property WidgetPosition.ATTRS
+     * @property ATTRS
      * @static
      * @type Object
      */
@@ -103,7 +103,7 @@ YUI.add('widget-position', function(Y) {
     /**
      * Default class used to mark the boundingBox of a positioned widget.
      *
-     * @property WidgetPosition.POSITIONED_CLASS_NAME
+     * @property POSITIONED_CLASS_NAME
      * @type String
      * @default "yui-widget-positioned"
      * @static

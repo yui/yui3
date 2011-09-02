@@ -13,7 +13,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2011.08.04-15-16',
+            GALLERY_VERSION = 'gallery-2011.08.31-20-57',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -99,6 +99,7 @@ if (!YUI.Env[Y.version]) {
  * YUI files.
  *
  * @module loader
+ * @main loader
  * @submodule loader-base
  */
 
@@ -132,10 +133,14 @@ var NOT_FOUND = {},
                         return path;
                     };
 
+if (YUI.Env.aliases) {
+    YUI.Env.aliases = {}; //Don't need aliases if Loader is present
+}
+
 /**
  * The component metadata is stored in Y.Env.meta.
  * Part of the loader module.
- * @property Env.meta
+ * @property meta
  * @for YUI
  */
 Y.Env.meta = META;
@@ -985,8 +990,12 @@ Y.Loader.prototype = {
      */
     addModule: function(o, name) {
         name = name || o.name;
-
-        if (this.moduleInfo[name]) {
+        
+        //Only merge this data if the temp flag is set
+        //from an earlier pass from a pattern or else
+        //an override module (YUI_config) can not be used to
+        //replace a default module.
+        if (this.moduleInfo[name] && this.moduleInfo[name].temp) {
             //This catches temp modules loaded via a pattern
             // The module will be added twice, once from the pattern and
             // Once from the actual add call, this ensures that properties
@@ -1333,7 +1342,7 @@ Y.Loader.prototype = {
             r.unshift('intl');
             intl = true;
         }
-        o = mod.optional;
+        o = this.filterRequires(mod.optional);
 
         // Y.log("getRequires: " + name + " (dirty:" + this.dirty +
         // ", expanded:" + mod.expanded + ")");
@@ -1359,7 +1368,7 @@ Y.Loader.prototype = {
         }
 
         // get the requirements from superseded modules, if any
-        r = mod.supersedes;
+        r = this.filterRequires(mod.supersedes);
         if (r) {
             for (i = 0; i < r.length; i++) {
                 if (!hash[r[i]]) {
@@ -2165,7 +2174,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                         if (m && (m.type === type) && (m.combine || !m.ext)) {
 
                             frag = ((L.isValue(m.root)) ? m.root : self.root) + m.path;
-
+                            frag = self._filter(frag, m.name);
                             if ((url !== j) && (i <= (len - 1)) &&
                             ((frag.length + url.length) > self.maxURLLength)) {
                                 //Hack until this is rewritten to use an array and not string concat:
@@ -2649,9 +2658,21 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "view"
         ]
     }, 
-    "array-extras": {}, 
-    "array-invoke": {}, 
-    "arraylist": {}, 
+    "array-extras": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
+    "array-invoke": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
+    "arraylist": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "arraylist-add": {
         "requires": [
             "arraylist"
@@ -2871,7 +2892,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "calendarnavigator": {
         "requires": [
             "plugin", 
-            "classnamemanager"
+            "classnamemanager", 
+            "datatype-date", 
+            "node", 
+            "substitute"
         ], 
         "skinnable": true
     }, 
@@ -3442,7 +3466,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "dom-style"
         ]
     }, 
-    "dump": {}, 
+    "dump": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "editor": {
         "use": [
             "frame", 
@@ -3490,7 +3518,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "editor-base"
         ]
     }, 
-    "escape": {}, 
+    "escape": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "event": {
         "after": [
             "node-base"
@@ -3605,7 +3637,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "event-resize": {
         "requires": [
-            "node-base"
+            "node-base", 
+            "event-synthetic"
         ]
     }, 
     "event-simulate": {
@@ -3865,8 +3898,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "json-stringify"
         ]
     }, 
-    "json-parse": {}, 
-    "json-stringify": {}, 
+    "json-parse": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
+    "json-stringify": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "jsonp": {
         "requires": [
             "get", 
@@ -4216,7 +4257,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "scrollview-list": {
         "requires": [
-            "plugin"
+            "plugin", 
+            "classnamemanager"
         ], 
         "skinnable": true
     }, 
@@ -4309,10 +4351,17 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "sortable"
         ]
     }, 
-    "stylesheet": {}, 
+    "stylesheet": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "substitute": {
         "optional": [
             "dump"
+        ], 
+        "requires": [
+            "yui-base"
         ]
     }, 
     "swf": {
@@ -4323,7 +4372,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "escape"
         ]
     }, 
-    "swfdetect": {}, 
+    "swfdetect": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "tabview": {
         "requires": [
             "widget", 
@@ -4368,8 +4421,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "text-data-accentfold"
         ]
     }, 
-    "text-data-accentfold": {}, 
-    "text-data-wordbreak": {}, 
+    "text-data-accentfold": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
+    "text-data-wordbreak": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "text-wordbreak": {
         "requires": [
             "array-extras", 
@@ -4464,9 +4525,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "widget-buttons": {
         "requires": [
             "widget", 
-            "base-build"
+            "base-build", 
+            "widget-stdmod"
         ], 
-        "skinnable": false
+        "skinnable": true
     }, 
     "widget-child": {
         "requires": [
@@ -4565,7 +4627,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '516f2598fb0cef4337e32df3a89e5124';
+YUI.Env[Y.version].md5 = '785b95bfdfb4b6f25166879443875977';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

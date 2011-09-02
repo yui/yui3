@@ -73,6 +73,8 @@ suite.add(new Y.Test.Case({
     "test node.on('hover', over, out)": function () {
         var overCount = 0,
             outCount = 0,
+            overArgCount = 0,
+            outArgCount = 0,
             target = Y.one('#em1'),
             overType, outType, overPhase, outPhase, overEType, outEType,
             overTarget, outTarget, overCurrentTarget, outCurrentTarget,
@@ -81,6 +83,7 @@ suite.add(new Y.Test.Case({
 
         function over(e) {
             overCount++;
+            overArgCount = arguments.length;
             overType = e.type;
             overPhase = e.phase;
             overEType = e._event.type;
@@ -91,6 +94,7 @@ suite.add(new Y.Test.Case({
 
         function out(e) {
             outCount++;
+            outArgCount = arguments.length;
             outType = e.type;
             outPhase = e.phase;
             outEType = e._event.type;
@@ -104,6 +108,7 @@ suite.add(new Y.Test.Case({
         mouse('#em1');
 
         Y.Assert.areSame(1, overCount);
+        Y.Assert.areSame(1, overArgCount);
         Y.Assert.areSame('hover', overType);
         Y.Assert.areSame('over', overPhase);
         Y.Assert.areSame('mouseover', overEType);
@@ -112,6 +117,7 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(target, overCurrentTarget);
 
         Y.Assert.areSame(0, outCount);
+        Y.Assert.areSame(0, outArgCount);
         Y.Assert.isUndefined(outType);
         Y.Assert.isUndefined(outPhase);
         Y.Assert.isUndefined(outEType);
@@ -122,6 +128,7 @@ suite.add(new Y.Test.Case({
         mouse("#em1", true);
 
         Y.Assert.areSame(1, overCount);
+        Y.Assert.areSame(1, overArgCount);
         Y.Assert.areSame('hover', overType);
         Y.Assert.areSame('over', overPhase);
         Y.Assert.areSame('mouseover', overEType);
@@ -130,6 +137,7 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(target, overCurrentTarget);
 
         Y.Assert.areSame(1, outCount);
+        Y.Assert.areSame(1, outArgCount);
         Y.Assert.areSame('hover', outType);
         Y.Assert.areSame('out', outPhase);
         Y.Assert.areSame('mouseout', outEType);
@@ -141,6 +149,8 @@ suite.add(new Y.Test.Case({
     "test container.on('hover', over, out)": function () {
         var overCount = 0,
             outCount = 0,
+            overArgCount = 0,
+            outArgCount = 0,
             target = Y.one('#item1'),
             overType, outType, overPhase, outPhase, overEType, outEType,
             overTarget, outTarget, overCurrentTarget, outCurrentTarget,
@@ -149,6 +159,7 @@ suite.add(new Y.Test.Case({
 
         function over(e) {
             overCount++;
+            overArgCount = arguments.length;
             overType = e.type;
             overPhase = e.phase;
             overEType = e._event.type;
@@ -159,6 +170,7 @@ suite.add(new Y.Test.Case({
 
         function out(e) {
             outCount++;
+            outArgCount = arguments.length;
             outType = e.type;
             outPhase = e.phase;
             outEType = e._event.type;
@@ -172,6 +184,7 @@ suite.add(new Y.Test.Case({
         mouse('#em1');
 
         Y.Assert.areSame(1, overCount);
+        Y.Assert.areSame(1, overArgCount);
         Y.Assert.areSame('hover', overType);
         Y.Assert.areSame('over', overPhase);
         Y.Assert.areSame('mouseover', overEType);
@@ -180,6 +193,7 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(target, overCurrentTarget);
 
         Y.Assert.areSame(0, outCount);
+        Y.Assert.areSame(0, outArgCount);
         Y.Assert.isUndefined(outType);
         Y.Assert.isUndefined(outPhase);
         Y.Assert.isUndefined(outEType);
@@ -190,6 +204,7 @@ suite.add(new Y.Test.Case({
         mouse("#em1", true);
 
         Y.Assert.areSame(1, overCount);
+        Y.Assert.areSame(1, overArgCount);
         Y.Assert.areSame('hover', overType);
         Y.Assert.areSame('over', overPhase);
         Y.Assert.areSame('mouseover', overEType);
@@ -198,6 +213,7 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(target, overCurrentTarget);
 
         Y.Assert.areSame(1, outCount);
+        Y.Assert.areSame(1, outArgCount);
         Y.Assert.areSame('hover', outType);
         Y.Assert.areSame('out', outPhase);
         Y.Assert.areSame('mouseout', outEType);
@@ -209,6 +225,8 @@ suite.add(new Y.Test.Case({
     "test Y.on('hover', over, out, '#foo')": function () {
         var overCount = 0,
             outCount = 0,
+            overArgCount = 0,
+            outArgCount = 0,
             target = Y.one('#item1'),
             overType, outType, overPhase, outPhase, overEType, outEType,
             overTarget, outTarget, overCurrentTarget, outCurrentTarget,
@@ -217,6 +235,7 @@ suite.add(new Y.Test.Case({
 
         function over(e) {
             overCount++;
+            overArgCount = arguments.length;
             overType = e.type;
             overPhase = e.phase;
             overEType = e._event.type;
@@ -227,6 +246,7 @@ suite.add(new Y.Test.Case({
 
         function out(e) {
             outCount++;
+            outArgCount = arguments.length;
             outType = e.type;
             outPhase = e.phase;
             outEType = e._event.type;
@@ -240,6 +260,7 @@ suite.add(new Y.Test.Case({
         mouse('#em1');
 
         Y.Assert.areSame(1, overCount);
+        Y.Assert.areSame(1, overArgCount);
         Y.Assert.areSame('hover', overType);
         Y.Assert.areSame('over', overPhase);
         Y.Assert.areSame('mouseover', overEType);
@@ -248,6 +269,7 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(target, overCurrentTarget);
 
         Y.Assert.areSame(0, outCount);
+        Y.Assert.areSame(0, outArgCount);
         Y.Assert.isUndefined(outType);
         Y.Assert.isUndefined(outPhase);
         Y.Assert.isUndefined(outEType);
@@ -258,6 +280,7 @@ suite.add(new Y.Test.Case({
         mouse("#em1", true);
 
         Y.Assert.areSame(1, overCount);
+        Y.Assert.areSame(1, overArgCount);
         Y.Assert.areSame('hover', overType);
         Y.Assert.areSame('over', overPhase);
         Y.Assert.areSame('mouseover', overEType);
@@ -266,6 +289,7 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(target, overCurrentTarget);
 
         Y.Assert.areSame(1, outCount);
+        Y.Assert.areSame(1, outArgCount);
         Y.Assert.areSame('hover', outType);
         Y.Assert.areSame('out', outPhase);
         Y.Assert.areSame('mouseout', outEType);
@@ -277,6 +301,8 @@ suite.add(new Y.Test.Case({
     "test nodelist.on('hover', over, out)": function () {
         var overCount = 0,
             outCount = 0,
+            overArgCount = 0,
+            outArgCount = 0,
             item1 = Y.one('#item1'),
             item2 = Y.one('#item2'),
             item3 = Y.one('#item3'),
@@ -297,6 +323,7 @@ suite.add(new Y.Test.Case({
 
         function over(e) {
             overCount++;
+            overArgCount = arguments.length;
             overType.push(e.type);
             overPhase.push(e.phase);
             overEType.push(e._event.type);
@@ -307,6 +334,7 @@ suite.add(new Y.Test.Case({
 
         function out(e) {
             outCount++;
+            outArgCount = arguments.length;
             outType.push(e.type);
             outPhase.push(e.phase);
             outEType.push(e._event.type);
@@ -320,6 +348,7 @@ suite.add(new Y.Test.Case({
         mouse('#em1'); mouse("#em1", true);
 
         Y.Assert.areSame(1, overCount);
+        Y.Assert.areSame(1, overArgCount);
         Y.ArrayAssert.itemsAreSame(['hover'], overType);
         Y.ArrayAssert.itemsAreSame(['over'], overPhase);
         Y.ArrayAssert.itemsAreSame(['mouseover'], overEType);
@@ -328,6 +357,7 @@ suite.add(new Y.Test.Case({
         Y.ArrayAssert.itemsAreSame([item1], overCurrentTarget);
 
         Y.Assert.areSame(1, outCount);
+        Y.Assert.areSame(1, outArgCount);
         Y.ArrayAssert.itemsAreSame(['hover'], outType);
         Y.ArrayAssert.itemsAreSame(['out'], outPhase);
         Y.ArrayAssert.itemsAreSame(['mouseout'], outEType);
@@ -339,6 +369,7 @@ suite.add(new Y.Test.Case({
         mouse("#em3"); mouse("#em3", true);
 
         Y.Assert.areSame(3, overCount);
+        Y.Assert.areSame(1, overArgCount);
         Y.ArrayAssert.itemsAreSame(['hover','hover','hover'], overType);
         Y.ArrayAssert.itemsAreSame(['over','over','over'], overPhase);
         Y.ArrayAssert.itemsAreSame(['mouseover','mouseover','mouseover'], overEType);
@@ -347,6 +378,7 @@ suite.add(new Y.Test.Case({
         Y.ArrayAssert.itemsAreSame([item1, item2, item3], overCurrentTarget);
 
         Y.Assert.areSame(3, outCount);
+        Y.Assert.areSame(1, outArgCount);
         Y.ArrayAssert.itemsAreSame(['hover','hover','hover'], outType);
         Y.ArrayAssert.itemsAreSame(['out','out','out'], outPhase);
         Y.ArrayAssert.itemsAreSame(['mouseout','mouseout','mouseout'], outEType);
@@ -358,6 +390,8 @@ suite.add(new Y.Test.Case({
     "test node.delegate('hover', over, out, filter)": function () {
         var overCount = 0,
             outCount = 0,
+            overArgCount = 0,
+            outArgCount = 0,
             items = Y.one('#items'),
             item1 = Y.one('#item1'),
             item2 = Y.one('#item2'),
@@ -382,6 +416,7 @@ suite.add(new Y.Test.Case({
 
         function over(e) {
             overCount++;
+            overArgCount = arguments.length;
             overType.push(e.type);
             overPhase.push(e.phase);
             overEType.push(e._event.type);
@@ -393,6 +428,7 @@ suite.add(new Y.Test.Case({
 
         function out(e) {
             outCount++;
+            outArgCount = arguments.length;
             outType.push(e.type);
             outPhase.push(e.phase);
             outEType.push(e._event.type);
@@ -407,6 +443,7 @@ suite.add(new Y.Test.Case({
         mouse('#em1'); mouse("#em1", true);
 
         Y.Assert.areSame(1, overCount);
+        Y.Assert.areSame(1, overArgCount);
         Y.ArrayAssert.itemsAreSame(['hover'], overType);
         Y.ArrayAssert.itemsAreSame(['over'], overPhase);
         Y.ArrayAssert.itemsAreSame(['mouseover'], overEType);
@@ -416,6 +453,7 @@ suite.add(new Y.Test.Case({
         Y.ArrayAssert.itemsAreSame([items], overContainer);
 
         Y.Assert.areSame(1, outCount);
+        Y.Assert.areSame(1, outArgCount);
         Y.ArrayAssert.itemsAreSame(['hover'], outType);
         Y.ArrayAssert.itemsAreSame(['out'], outPhase);
         Y.ArrayAssert.itemsAreSame(['mouseout'], outEType);
@@ -428,6 +466,7 @@ suite.add(new Y.Test.Case({
         mouse("#em3"); mouse("#em3", true);
 
         Y.Assert.areSame(3, overCount);
+        Y.Assert.areSame(1, overArgCount);
         Y.ArrayAssert.itemsAreSame(['hover','hover','hover'], overType);
         Y.ArrayAssert.itemsAreSame(['over','over','over'], overPhase);
         Y.ArrayAssert.itemsAreSame(['mouseover','mouseover','mouseover'], overEType);
@@ -437,6 +476,7 @@ suite.add(new Y.Test.Case({
         Y.ArrayAssert.itemsAreSame([items, items, items], overContainer);
 
         Y.Assert.areSame(3, outCount);
+        Y.Assert.areSame(1, outArgCount);
         Y.ArrayAssert.itemsAreSame(['hover','hover','hover'], outType);
         Y.ArrayAssert.itemsAreSame(['out','out','out'], outPhase);
         Y.ArrayAssert.itemsAreSame(['mouseout','mouseout','mouseout'], outEType);
@@ -449,6 +489,8 @@ suite.add(new Y.Test.Case({
     "test node.on('hover', over, out, thisObj)": function () {
         var overCount = 0,
             outCount = 0,
+            overArgCount = 0,
+            outArgCount = 0,
             target = Y.one('#item1'),
             obj = { foo: 'foo' },
             overType, outType, overPhase, outPhase, overEType, outEType,
@@ -458,6 +500,7 @@ suite.add(new Y.Test.Case({
 
         function over(e) {
             overCount++;
+            overArgCount = arguments.length;
             overType = e.type;
             overPhase = e.phase;
             overEType = e._event.type;
@@ -469,6 +512,7 @@ suite.add(new Y.Test.Case({
 
         function out(e) {
             outCount++;
+            outArgCount = arguments.length;
             outType = e.type;
             outPhase = e.phase;
             outEType = e._event.type;
@@ -483,6 +527,7 @@ suite.add(new Y.Test.Case({
         mouse('#em1'); mouse("#em1", true);
 
         Y.Assert.areSame(1, overCount);
+        Y.Assert.areSame(1, overArgCount);
         Y.Assert.areSame('hover', overType);
         Y.Assert.areSame('over', overPhase);
         Y.Assert.areSame('mouseover', overEType);
@@ -492,6 +537,7 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame('foo', overFoo);
 
         Y.Assert.areSame(1, outCount);
+        Y.Assert.areSame(1, outArgCount);
         Y.Assert.areSame('hover', outType);
         Y.Assert.areSame('out', outPhase);
         Y.Assert.areSame('mouseout', outEType);
@@ -504,6 +550,8 @@ suite.add(new Y.Test.Case({
     "test Y.on('hover', over, out, '#foo', thisObj)": function () {
         var overCount = 0,
             outCount = 0,
+            overArgCount = 0,
+            outArgCount = 0,
             target = Y.one('#item1'),
             obj = { foo: 'foo' },
             overType, outType, overPhase, outPhase, overEType, outEType,
@@ -513,6 +561,7 @@ suite.add(new Y.Test.Case({
 
         function over(e) {
             overCount++;
+            overArgCount = arguments.length;
             overType = e.type;
             overPhase = e.phase;
             overEType = e._event.type;
@@ -524,6 +573,7 @@ suite.add(new Y.Test.Case({
 
         function out(e) {
             outCount++;
+            outArgCount = arguments.length;
             outType = e.type;
             outPhase = e.phase;
             outEType = e._event.type;
@@ -538,6 +588,7 @@ suite.add(new Y.Test.Case({
         mouse('#em1'); mouse("#em1", true);
 
         Y.Assert.areSame(1, overCount);
+        Y.Assert.areSame(1, overArgCount);
         Y.Assert.areSame('hover', overType);
         Y.Assert.areSame('over', overPhase);
         Y.Assert.areSame('mouseover', overEType);
@@ -547,6 +598,7 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame('foo', overFoo);
 
         Y.Assert.areSame(1, outCount);
+        Y.Assert.areSame(1, outArgCount);
         Y.Assert.areSame('hover', outType);
         Y.Assert.areSame('out', outPhase);
         Y.Assert.areSame('mouseout', outEType);
@@ -559,6 +611,8 @@ suite.add(new Y.Test.Case({
     "test nodelist.on('hover', over, out, thisObj)": function () {
         var overCount = 0,
             outCount = 0,
+            overArgCount = 0,
+            outArgCount = 0,
             item1 = Y.one('#item1'),
             item2 = Y.one('#item2'),
             item3 = Y.one('#item3'),
@@ -582,6 +636,7 @@ suite.add(new Y.Test.Case({
 
         function over(e) {
             overCount++;
+            overArgCount = arguments.length;
             overType.push(e.type);
             overPhase.push(e.phase);
             overEType.push(e._event.type);
@@ -593,6 +648,7 @@ suite.add(new Y.Test.Case({
 
         function out(e) {
             outCount++;
+            outArgCount = arguments.length;
             outType.push(e.type);
             outPhase.push(e.phase);
             outEType.push(e._event.type);
@@ -607,6 +663,7 @@ suite.add(new Y.Test.Case({
         mouse('#em1'); mouse("#em1", true);
 
         Y.Assert.areSame(1, overCount);
+        Y.Assert.areSame(1, overArgCount);
         Y.ArrayAssert.itemsAreSame(['hover'], overType);
         Y.ArrayAssert.itemsAreSame(['over'], overPhase);
         Y.ArrayAssert.itemsAreSame(['mouseover'], overEType);
@@ -615,6 +672,7 @@ suite.add(new Y.Test.Case({
         Y.ArrayAssert.itemsAreSame([item1], overCurrentTarget);
 
         Y.Assert.areSame(1, outCount);
+        Y.Assert.areSame(1, outArgCount);
         Y.ArrayAssert.itemsAreSame(['hover'], outType);
         Y.ArrayAssert.itemsAreSame(['out'], outPhase);
         Y.ArrayAssert.itemsAreSame(['mouseout'], outEType);
@@ -626,6 +684,7 @@ suite.add(new Y.Test.Case({
         mouse("#em3"); mouse("#em3", true);
 
         Y.Assert.areSame(3, overCount);
+        Y.Assert.areSame(1, overArgCount);
         Y.ArrayAssert.itemsAreSame(['hover','hover','hover'], overType);
         Y.ArrayAssert.itemsAreSame(['over','over','over'], overPhase);
         Y.ArrayAssert.itemsAreSame(['mouseover','mouseover','mouseover'], overEType);
@@ -634,6 +693,7 @@ suite.add(new Y.Test.Case({
         Y.ArrayAssert.itemsAreSame([item1, item2, item3], overCurrentTarget);
 
         Y.Assert.areSame(3, outCount);
+        Y.Assert.areSame(1, outArgCount);
         Y.ArrayAssert.itemsAreSame(['hover','hover','hover'], outType);
         Y.ArrayAssert.itemsAreSame(['out','out','out'], outPhase);
         Y.ArrayAssert.itemsAreSame(['mouseout','mouseout','mouseout'], outEType);
@@ -645,6 +705,8 @@ suite.add(new Y.Test.Case({
     "test node.on('hover', over, out, thisObj, arg)": function () {
         var overCount = 0,
             outCount = 0,
+            overArgCount = 0,
+            outArgCount = 0,
             target = Y.one('#item1'),
             obj = { foo: 'foo' },
             overType, outType, overPhase, outPhase, overEType, outEType,
@@ -654,6 +716,7 @@ suite.add(new Y.Test.Case({
 
         function over(e, x) {
             overCount++;
+            overArgCount = arguments.length;
             overType = e.type;
             overPhase = e.phase;
             overEType = e._event.type;
@@ -666,6 +729,7 @@ suite.add(new Y.Test.Case({
 
         function out(e, x) {
             outCount++;
+            outArgCount = arguments.length;
             outType = e.type;
             outPhase = e.phase;
             outEType = e._event.type;
@@ -681,6 +745,7 @@ suite.add(new Y.Test.Case({
         mouse('#em1'); mouse("#em1", true);
 
         Y.Assert.areSame(1, overCount);
+        Y.Assert.areSame(2, overArgCount);
         Y.Assert.areSame('hover', overType);
         Y.Assert.areSame('over', overPhase);
         Y.Assert.areSame('mouseover', overEType);
@@ -691,6 +756,7 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame('arg!', overArg);
 
         Y.Assert.areSame(1, outCount);
+        Y.Assert.areSame(2, outArgCount);
         Y.Assert.areSame('hover', outType);
         Y.Assert.areSame('out', outPhase);
         Y.Assert.areSame('mouseout', outEType);
@@ -704,6 +770,8 @@ suite.add(new Y.Test.Case({
     "test Y.on('hover', over, out, '#foo', thisObj, arg)": function () {
         var overCount = 0,
             outCount = 0,
+            overArgCount = 0,
+            outArgCount = 0,
             target = Y.one('#item1'),
             obj = { foo: 'foo' },
             overType, outType, overPhase, outPhase, overEType, outEType,
@@ -713,6 +781,7 @@ suite.add(new Y.Test.Case({
 
         function over(e, x) {
             overCount++;
+            overArgCount = arguments.length;
             overType = e.type;
             overPhase = e.phase;
             overEType = e._event.type;
@@ -725,6 +794,7 @@ suite.add(new Y.Test.Case({
 
         function out(e, x) {
             outCount++;
+            outArgCount = arguments.length;
             outType = e.type;
             outPhase = e.phase;
             outEType = e._event.type;
@@ -740,6 +810,7 @@ suite.add(new Y.Test.Case({
         mouse('#em1'); mouse("#em1", true);
 
         Y.Assert.areSame(1, overCount);
+        Y.Assert.areSame(2, overArgCount);
         Y.Assert.areSame('hover', overType);
         Y.Assert.areSame('over', overPhase);
         Y.Assert.areSame('mouseover', overEType);
@@ -750,6 +821,7 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame('arg!', overArg);
 
         Y.Assert.areSame(1, outCount);
+        Y.Assert.areSame(2, outArgCount);
         Y.Assert.areSame('hover', outType);
         Y.Assert.areSame('out', outPhase);
         Y.Assert.areSame('mouseout', outEType);
@@ -763,6 +835,8 @@ suite.add(new Y.Test.Case({
     "test nodelist.on('hover', over, out, thisObj, arg)": function () {
         var overCount = 0,
             outCount = 0,
+            overArgCount = 0,
+            outArgCount = 0,
             item1 = Y.one('#item1'),
             item2 = Y.one('#item2'),
             item3 = Y.one('#item3'),
@@ -788,6 +862,7 @@ suite.add(new Y.Test.Case({
 
         function over(e, x) {
             overCount++;
+            overArgCount = arguments.length;
             overType.push(e.type);
             overPhase.push(e.phase);
             overEType.push(e._event.type);
@@ -800,6 +875,7 @@ suite.add(new Y.Test.Case({
 
         function out(e, x) {
             outCount++;
+            outArgCount = arguments.length;
             outType.push(e.type);
             outPhase.push(e.phase);
             outEType.push(e._event.type);
@@ -815,6 +891,7 @@ suite.add(new Y.Test.Case({
         mouse('#em1'); mouse("#em1", true);
 
         Y.Assert.areSame(1, overCount);
+        Y.Assert.areSame(2, overArgCount);
         Y.ArrayAssert.itemsAreSame(['hover'], overType);
         Y.ArrayAssert.itemsAreSame(['over'], overPhase);
         Y.ArrayAssert.itemsAreSame(['mouseover'], overEType);
@@ -825,6 +902,7 @@ suite.add(new Y.Test.Case({
         Y.ArrayAssert.itemsAreSame(['arg!'], overArg);
 
         Y.Assert.areSame(1, outCount);
+        Y.Assert.areSame(2, outArgCount);
         Y.ArrayAssert.itemsAreSame(['hover'], outType);
         Y.ArrayAssert.itemsAreSame(['out'], outPhase);
         Y.ArrayAssert.itemsAreSame(['mouseout'], outEType);
@@ -838,6 +916,7 @@ suite.add(new Y.Test.Case({
         mouse("#em3"); mouse("#em3", true);
 
         Y.Assert.areSame(3, overCount);
+        Y.Assert.areSame(2, overArgCount);
         Y.ArrayAssert.itemsAreSame(['hover','hover','hover'], overType);
         Y.ArrayAssert.itemsAreSame(['over','over','over'], overPhase);
         Y.ArrayAssert.itemsAreSame(['mouseover','mouseover','mouseover'], overEType);
@@ -847,6 +926,7 @@ suite.add(new Y.Test.Case({
         Y.ArrayAssert.itemsAreSame(['arg!', 'arg!', 'arg!'], overArg);
 
         Y.Assert.areSame(3, outCount);
+        Y.Assert.areSame(2, outArgCount);
         Y.ArrayAssert.itemsAreSame(['hover','hover','hover'], outType);
         Y.ArrayAssert.itemsAreSame(['out','out','out'], outPhase);
         Y.ArrayAssert.itemsAreSame(['mouseout','mouseout','mouseout'], outEType);
@@ -859,6 +939,8 @@ suite.add(new Y.Test.Case({
     "test node.on('hover', over, out, null, arg)": function () {
         var overCount = 0,
             outCount = 0,
+            overArgCount = 0,
+            outArgCount = 0,
             target = Y.one('#item1'),
             overType, outType, overPhase, outPhase, overEType, outEType,
             overTarget, outTarget, overCurrentTarget, outCurrentTarget,
@@ -867,6 +949,7 @@ suite.add(new Y.Test.Case({
 
         function over(e, x) {
             overCount++;
+            overArgCount = arguments.length;
             overType = e.type;
             overPhase = e.phase;
             overEType = e._event.type;
@@ -878,6 +961,7 @@ suite.add(new Y.Test.Case({
 
         function out(e, x) {
             outCount++;
+            outArgCount = arguments.length;
             outType = e.type;
             outPhase = e.phase;
             outEType = e._event.type;
@@ -892,6 +976,7 @@ suite.add(new Y.Test.Case({
         mouse('#em1'); mouse("#em1", true);
 
         Y.Assert.areSame(1, overCount);
+        Y.Assert.areSame(2, overArgCount);
         Y.Assert.areSame('hover', overType);
         Y.Assert.areSame('over', overPhase);
         Y.Assert.areSame('mouseover', overEType);
@@ -901,6 +986,7 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame('arg!', overArg);
 
         Y.Assert.areSame(1, outCount);
+        Y.Assert.areSame(2, outArgCount);
         Y.Assert.areSame('hover', outType);
         Y.Assert.areSame('out', outPhase);
         Y.Assert.areSame('mouseout', outEType);
@@ -913,6 +999,8 @@ suite.add(new Y.Test.Case({
     "test Y.on('hover', over, out, '#foo', null, arg)": function () {
         var overCount = 0,
             outCount = 0,
+            overArgCount = 0,
+            outArgCount = 0,
             target = Y.one('#item1'),
             overType, outType, overPhase, outPhase, overEType, outEType,
             overTarget, outTarget, overCurrentTarget, outCurrentTarget,
@@ -921,6 +1009,7 @@ suite.add(new Y.Test.Case({
 
         function over(e, x) {
             overCount++;
+            overArgCount = arguments.length;
             overType = e.type;
             overPhase = e.phase;
             overEType = e._event.type;
@@ -932,6 +1021,7 @@ suite.add(new Y.Test.Case({
 
         function out(e, x) {
             outCount++;
+            outArgCount = arguments.length;
             outType = e.type;
             outPhase = e.phase;
             outEType = e._event.type;
@@ -946,6 +1036,7 @@ suite.add(new Y.Test.Case({
         mouse('#em1'); mouse("#em1", true);
 
         Y.Assert.areSame(1, overCount);
+        Y.Assert.areSame(2, overArgCount);
         Y.Assert.areSame('hover', overType);
         Y.Assert.areSame('over', overPhase);
         Y.Assert.areSame('mouseover', overEType);
@@ -955,6 +1046,7 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame('arg!', overArg);
 
         Y.Assert.areSame(1, outCount);
+        Y.Assert.areSame(2, outArgCount);
         Y.Assert.areSame('hover', outType);
         Y.Assert.areSame('out', outPhase);
         Y.Assert.areSame('mouseout', outEType);
@@ -967,6 +1059,8 @@ suite.add(new Y.Test.Case({
     "test nodelist.on('hover', over, out, null, arg": function () {
         var overCount = 0,
             outCount = 0,
+            overArgCount = 0,
+            outArgCount = 0,
             item1 = Y.one('#item1'),
             item2 = Y.one('#item2'),
             item3 = Y.one('#item3'),
@@ -989,6 +1083,7 @@ suite.add(new Y.Test.Case({
 
         function over(e, x) {
             overCount++;
+            overArgCount = arguments.length;
             overType.push(e.type);
             overPhase.push(e.phase);
             overEType.push(e._event.type);
@@ -1000,6 +1095,7 @@ suite.add(new Y.Test.Case({
 
         function out(e, x) {
             outCount++;
+            outArgCount = arguments.length;
             outType.push(e.type);
             outPhase.push(e.phase);
             outEType.push(e._event.type);
@@ -1014,6 +1110,7 @@ suite.add(new Y.Test.Case({
         mouse('#em1'); mouse("#em1", true);
 
         Y.Assert.areSame(1, overCount);
+        Y.Assert.areSame(2, overArgCount);
         Y.ArrayAssert.itemsAreSame(['hover'], overType);
         Y.ArrayAssert.itemsAreSame(['over'], overPhase);
         Y.ArrayAssert.itemsAreSame(['mouseover'], overEType);
@@ -1023,6 +1120,7 @@ suite.add(new Y.Test.Case({
         Y.ArrayAssert.itemsAreSame(['arg!'], overArg);
 
         Y.Assert.areSame(1, outCount);
+        Y.Assert.areSame(2, outArgCount);
         Y.ArrayAssert.itemsAreSame(['hover'], outType);
         Y.ArrayAssert.itemsAreSame(['out'], outPhase);
         Y.ArrayAssert.itemsAreSame(['mouseout'], outEType);
@@ -1035,6 +1133,7 @@ suite.add(new Y.Test.Case({
         mouse("#em3"); mouse("#em3", true);
 
         Y.Assert.areSame(3, overCount);
+        Y.Assert.areSame(2, overArgCount);
         Y.ArrayAssert.itemsAreSame(['hover','hover','hover'], overType);
         Y.ArrayAssert.itemsAreSame(['over','over','over'], overPhase);
         Y.ArrayAssert.itemsAreSame(['mouseover','mouseover','mouseover'], overEType);
@@ -1044,6 +1143,7 @@ suite.add(new Y.Test.Case({
         Y.ArrayAssert.itemsAreSame(['arg!', 'arg!', 'arg!'], overArg);
 
         Y.Assert.areSame(3, outCount);
+        Y.Assert.areSame(2, outArgCount);
         Y.ArrayAssert.itemsAreSame(['hover','hover','hover'], outType);
         Y.ArrayAssert.itemsAreSame(['out','out','out'], outPhase);
         Y.ArrayAssert.itemsAreSame(['mouseout','mouseout','mouseout'], outEType);
@@ -1053,6 +1153,8 @@ suite.add(new Y.Test.Case({
         Y.ArrayAssert.itemsAreSame(['arg!', 'arg!', 'arg!'], outArg);
     }
 
+    // node.delegate + thisObj + args
+    // Y.delegate + thisObj + args
 }));
 
 suite.add(new Y.Test.Case({

@@ -19,7 +19,11 @@ YUI().use("datatype-date", "datatable-base", function (Y) {
         var record = o.record;
         return "$"+(record.getValue("price")-record.getValue("cost"));
     },
-    colsFunction = ["id", "name", {key:"profit", formatter:calculate}],
+    colsFunction = [
+        "id",
+        "name",
+        { key: "profit", formatter: calculate }
+    ],
     dataFunction = [
         {id:"ga-3475", name:"gadget", price:6.99, cost:4.99},
         {id:"sp-9980", name:"sprocket", price:3.75, cost:2.75},
@@ -29,15 +33,23 @@ YUI().use("datatype-date", "datatable-base", function (Y) {
         caption:"Data formatting with custom function"}).render("#function"),
     // o = {tbody, tr, td, classnames, rowindex, record, column, data, value}
     formatDates = function(o){
-        return Y.DataType.Date.format(o.value, {format:"%m/%d/%Y"});
+        return o.value &&
+            Y.DataType.Date.format(o.value, {format:"%m/%d/%Y"});
     },
-    colsDates = ["id", "name", {key:"date", formatter:formatDates}],
+    colsDates = [
+        "id",
+        "name",
+        { key: "date", formatter: formatDates, emptyCellValue: "(unknown)" }
+    ],
     dataDates = [
         {id:"ga-3475", name:"gadget", date:new Date(2006, 5, 1)},
         {id:"sp-9980", name:"sprocket", date:new Date(2004, 8, 16)},
-        {id:"wi-0650", name:"widget", date:new Date(2005, 4, 23)}
+        {id:"wi-0650", name:"widget"} // no date for this record
     ],
-    dtDates = new Y.DataTable.Base({columnset:colsDates, recordset:dataDates,
-        caption:"Data formatting with DataType.Date"}).render("#dates");
+    dtDates = new Y.DataTable.Base({
+        columnset: colsDates,
+        recordset: dataDates,
+        caption: "Data formatting with DataType.Date"
+    }).render("#dates");
 });
 </script>

@@ -1,6 +1,21 @@
 AutoComplete Change History
 ===========================
 
+3.4.1
+-----
+
+  * The "combobox" ARIA role is no longer automatically added to an
+    AutoCompleteList input node. After consulting with the Y! Accessibility
+    team, we felt that the combobox role doesn't accurately represent the
+    out-of-the-box interactions that AutoCompleteList provides. Implementers can
+    still apply this role (or any other ARIA role) to the input node manually if
+    desired.
+
+  * Fixed a bug that prevented the autocomplete list from being hidden after
+    right-clicking on the list and then clicking elsewhere in the document.
+    [Ticket #2531009]
+
+
 3.4.0
 -----
 

@@ -46,11 +46,11 @@ Histogram.prototype = {
             config,
             fillColors = null,
             borderColors = null;
-        if(Y.Lang.isArray(style.fill.color))
+        if(Y_Lang.isArray(style.fill.color))
         {
             fillColors = style.fill.color.concat(); 
         }
-        if(Y.Lang.isArray(style.border.color))
+        if(Y_Lang.isArray(style.border.color))
         {
             borderColors = style.border.colors.concat();
         }

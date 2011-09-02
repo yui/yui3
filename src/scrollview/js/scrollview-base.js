@@ -151,10 +151,11 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     },
 
     /**
-     * syncUI implementation
+     * syncUI implementation.
      *
-     * Update the scroll position, based on the current value of scrollY
-     * @method bindUI
+     * Update the scroll position, based on the current value of scrollX/scrollY.
+     *
+     * @method syncUI
      */
     syncUI: function() {
         this._uiDimensionsChange();
@@ -883,7 +884,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
    /**
     * The identity of the widget.
     *
-    * @property ScrollView.NAME
+    * @property NAME
     * @type String
     * @default 'scrollview'
     * @readOnly
@@ -896,7 +897,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     * Static property used to define the default attribute configuration of
     * the Widget.
     *
-    * @property ScrollView.ATTRS
+    * @property ATTRS
     * @type {Object}
     * @protected
     * @static
@@ -969,7 +970,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     /**
      * List of class names used in the scrollview's DOM
      *
-     * @property ScrollView.CLASS_NAMES
+     * @property CLASS_NAMES
      * @type Object
      * @static
      */
@@ -978,7 +979,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     /**
      * Flag used to source property changes initiated from the DOM
      *
-     * @property ScrollView.UI_SRC
+     * @property UI_SRC
      * @type String
      * @static
      * @default "ui"
@@ -988,7 +989,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     /**
      * The default bounce distance in pixels
      *
-     * @property ScrollView.BOUNCE_RANGE
+     * @property BOUNCE_RANGE
      * @type Number
      * @static
      * @default 150
@@ -998,7 +999,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     /**
      * The interval used when animating the flick
      *
-     * @property ScrollView.FRAME_STEP
+     * @property FRAME_STEP
      * @type Number
      * @static
      * @default 30
@@ -1008,7 +1009,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     /**
      * The default easing used when animating the flick
      *
-     * @property ScrollView.EASING
+     * @property EASING
      * @type String
      * @static
      * @default 'cubic-bezier(0, 0.1, 0, 1.0)'
@@ -1018,7 +1019,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     /**
      * The default easing to use when animating the bounce snap back.
      *
-     * @property ScrollView.SNAP_EASING
+     * @property SNAP_EASING
      * @type String
      * @static
      * @default 'ease-out'
@@ -1026,9 +1027,12 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     SNAP_EASING : 'ease-out',
 
     /**
-     * Style property name to use to set transition property. Currently, Webkit specific (WebkitTransitionProperty)
+     * Object map of style property names used to set transition properties.
+     * Currently, Webkit specific names are defaulted.  The configured property
+     * names are `_TRANSITION.DURATION` ("WebkitTransitionDuration") and
+     * `_TRANSITION.PROPERTY ("WebkitTransitionProperty").
      *
-     * @property ScrollView._TRANSITION.PROPERTY
+     * @property _TRANSITION
      * @private
      */
     _TRANSITION : {

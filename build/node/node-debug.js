@@ -512,19 +512,49 @@ Y.mix(Y.NodeList.prototype, {
     },
 
     /**
-     * Applies an event listener to each Node bound to the NodeList.
-     * @method on
-     * @param {String} type The event being listened for
-     * @param {Function} fn The handler to call when the event fires
-     * @param {Object} context The context to call the handler with.
-     * Default is the NodeList instance.
-     * @param {Object} context The context to call the handler with.
-     * param {mixed} arg* 0..n additional arguments to supply to the subscriber
-     * when the event fires.
-     * @return {Object} Returns an event handle that can later be use to detach().
-     * @see Event.on
-     * @for NodeList
-     */
+    Subscribe a callback function for each `Node` in the collection to execute
+    in response to a DOM event.
+
+    NOTE: Generally, the `on()` method should be avoided on `NodeLists`, in
+    favor of using event delegation from a parent Node.  See the Event user
+    guide for details.
+
+    Most DOM events are associated with a preventable default behavior, such as
+    link clicks navigating to a new page.  Callbacks are passed a
+    `DOMEventFacade` object as their first argument (usually called `e`) that
+    can be used to prevent this default behavior with `e.preventDefault()`. See
+    the `DOMEventFacade` API for all available properties and methods on the
+    object.
+
+    By default, the `this` object will be the `NodeList` that the subscription
+    came from, <em>not the `Node` that received the event</em>.  Use
+    `e.currentTarget` to refer to the `Node`.
+
+    Returning `false` from a callback is supported as an alternative to calling
+    `e.preventDefault(); e.stopPropagation();`.  However, it is recommended to
+    use the event methods.
+
+    @example
+
+        Y.all(".sku").on("keydown", function (e) {
+            if (e.keyCode === 13) {
+                e.preventDefault();
+
+                // Use e.currentTarget to refer to the individual Node
+                var item = Y.MyApp.searchInventory( e.currentTarget.get('value') );
+                // etc ...
+            }
+        });
+
+    @method on
+    @param {String} type The name of the event
+    @param {Function} fn The callback to execute in response to the event
+    @param {Object} [context] Override `this` object in callback
+    @param {Any} [arg*] 0..n additional arguments to supply to the subscriber
+    @return {EventHandle} A subscription handle capable of detaching that
+                          subscription
+    @for NodeList
+    **/
     on: function(type, fn, context) {
         return Y.on.apply(Y, this._prepEvtArgs.apply(this, arguments));
     },
@@ -536,8 +566,9 @@ Y.mix(Y.NodeList.prototype, {
      * @param {Function} fn The handler to call when the event fires
      * @param {Object} context The context to call the handler with.
      * Default is the NodeList instance.
-     * @return {Object} Returns an event handle that can later be use to detach().
-     * @see Event.on
+     * @return {EventHandle} A subscription handle capable of detaching that
+     *                    subscription
+     * @for NodeList
      */
     once: function(type, fn, context) {
         return Y.once.apply(Y, this._prepEvtArgs.apply(this, arguments));
@@ -552,8 +583,9 @@ Y.mix(Y.NodeList.prototype, {
      * @param {Function} fn The handler to call when the event fires
      * @param {Object} context The context to call the handler with.
      * Default is the NodeList instance.
-     * @return {Object} Returns an event handle that can later be use to detach().
-     * @see Event.on
+     * @return {EventHandle} A subscription handle capable of detaching that
+     *                    subscription
+     * @for NodeList
      */
     after: function(type, fn, context) {
         return Y.after.apply(Y, this._prepEvtArgs.apply(this, arguments));
@@ -569,8 +601,9 @@ Y.mix(Y.NodeList.prototype, {
      * @param {Function} fn The handler to call when the event fires
      * @param {Object} context The context to call the handler with.
      * Default is the NodeList instance.
-     * @return {Object} Returns an event handle that can later be use to detach().
-     * @see Event.on
+     * @return {EventHandle} A subscription handle capable of detaching that
+     *                    subscription
+     * @for NodeList
      */
     onceAfter: function(type, fn, context) {
         return Y.onceAfter.apply(Y, this._prepEvtArgs.apply(this, arguments));
@@ -582,15 +615,58 @@ Y_NodeList.importMethod(Y.Node.prototype, [
       * Called on each Node instance
       * @method detach
       * @see Node.detach
+      * @for NodeList
       */
     'detach',
 
     /** Called on each Node instance
       * @method detachAll
       * @see Node.detachAll
+      * @for NodeList
       */
     'detachAll'
 ]);
+
+/**
+Subscribe a callback function to execute in response to a DOM event or custom
+event.
+
+Most DOM events are associated with a preventable default behavior such as
+link clicks navigating to a new page.  Callbacks are passed a `DOMEventFacade`
+object as their first argument (usually called `e`) that can be used to
+prevent this default behavior with `e.preventDefault()`. See the
+`DOMEventFacade` API for all available properties and methods on the object.
+
+If the event name passed as the first parameter is not a whitelisted DOM event,
+it will be treated as a custom event subscriptions, allowing
+`node.fire('customEventName')` later in the code.  Refer to the Event user guide
+for the full DOM event whitelist.
+
+By default, the `this` object in the callback will refer to the subscribed
+`Node`.
+
+Returning `false` from a callback is supported as an alternative to calling
+`e.preventDefault(); e.stopPropagation();`.  However, it is recommended to use
+the event methods.
+
+@example
+
+    Y.one("#my-form").on("submit", function (e) {
+        e.preventDefault();
+
+        // proceed with ajax form submission instead...
+    });
+
+@method on
+@param {String} type The name of the event
+@param {Function} fn The callback to execute in response to the event
+@param {Object} [context] Override `this` object in callback
+@param {Any} [arg*] 0..n additional arguments to supply to the subscriber
+@return {EventHandle} A subscription handle capable of detaching that
+                      subscription
+@for Node
+**/
+
 Y.mix(Y.Node.ATTRS, {
     offsetHeight: {
         setter: function(h) {
@@ -1262,5 +1338,5 @@ Y.Node.prototype.delegate = function(type) {
 }, '@VERSION@' ,{requires:['node-base', 'event-delegate']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{skinnable:false, use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate']});
+YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate'], skinnable:false});
 

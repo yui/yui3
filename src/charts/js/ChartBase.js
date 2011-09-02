@@ -150,7 +150,7 @@ ChartBase.prototype = {
             graph = this.get("graph");
         if(graph)
         {
-            if(Y.Lang.isNumber(val))
+            if(Y_Lang.isNumber(val))
             {
                 series = graph.getSeriesByIndex(val);
             }
@@ -230,7 +230,7 @@ ChartBase.prototype = {
      */
     _setDataValues: function(val)
     {
-        if(Y.Lang.isArray(val[0]))
+        if(Y_Lang.isArray(val[0]))
         {
             var hash, 
                 dp = [], 
@@ -344,17 +344,18 @@ ChartBase.prototype = {
             cb = this.get("contentBox"),
             interactionType = this.get("interactionType"),
             i = 0,
-            len;
+            len,
+            markerClassName = "." + SERIES_MARKER;
         if(interactionType == "marker")
         {
             hideEvent = tt.hideEvent;
             showEvent = tt.showEvent;
-            Y.delegate("mouseenter", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("mousedown", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("mouseup", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("mouseleave", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("click", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("mousemove", Y.bind(this._positionTooltip, this), cb, ".yui3-seriesmarker");
+            Y.delegate("mouseenter", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("mousedown", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("mouseup", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("mouseleave", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("click", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("mousemove", Y.bind(this._positionTooltip, this), cb, markerClassName);
         }
         else if(interactionType == "planar")
         {
@@ -375,7 +376,7 @@ ChartBase.prototype = {
                 }
                 if(hideEvent)
                 {
-                    if(Y.Lang.isArray(hideEvent))
+                    if(Y_Lang.isArray(hideEvent))
                     {
                         len = hideEvent.length;
                         for(; i < len; ++i)
@@ -662,7 +663,7 @@ ChartBase.prototype = {
                 planarEventHandler:"planarEventHandler",
                 show:"show"
             };
-        if(Y.Lang.isObject(val))
+        if(Y_Lang.isObject(val))
         {
             styles = val.styles;
             node = Y.one(val.node) || tt.node;

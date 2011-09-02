@@ -1,9 +1,13 @@
 <style scoped>
-#todo-app { margin: 1em; }
+#todo-app {
+    margin: 1em;
+    text-align: center;
+}
 
 #todo-list,
 #todo-stats {
     margin: 1em auto;
+    text-align: left;
     width: 450px;
 }
 
@@ -32,7 +36,7 @@
     font-family: Helvetica, sans-serif;
     font-size: 20px;
     line-height: normal;
-    margin: 0 auto;
+    margin: 5px auto 0;
     padding: 6px;
     width: 420px;
 }
@@ -44,55 +48,74 @@
     position: relative;
 }
 
+.todo-label {
+    color: #444;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
 .todo-remaining {
     color: #333;
     font-weight: bold;
 }
 
 .todo-remove {
+    position: absolute;
+    right: 0;
+    top: 12px;
+}
+
+.todo-remove-icon {
     /*
     Delete icon courtesy of The Noun Project:
     http://thenounproject.com/noun/delete/
     */
     background: url({{componentAssets}}/remove.png) no-repeat;
+    display: block;
     height: 16px;
     opacity: 0.6;
-    position: absolute;
-    right: 0;
-    top: 12px;
     visibility: hidden;
     width: 23px;
 }
 
-.todo-remove:hover { opacity: 1.0; }
-.todo-hover .todo-remove { visibility: visible; }
+.todo-remove:hover .todo-remove-icon { opacity: 1.0; }
+
+.todo-hover .todo-remove-icon,
+.todo-remove:focus .todo-remove-icon { visibility: visible; }
+
+.editing .todo-remove-icon { visibility: hidden; }
 </style>
 
 <!-- This is the main container and "shell" for the todo app. -->
 <div id="todo-app">
+    <label class="todo-label" for="new-todo">What do you want to do today?</label>
     <input type="text" id="new-todo" class="todo-input"
-            placeholder="What do you want to do today?">
+        placeholder="buy milk">
 
     <ul id="todo-list"></ul>
     <div id="todo-stats"></div>
 </div>
 
 <!-- This template HTML will be used to render each todo item. -->
-<script type="text/template" id="todo-item-template">
+<script type="text/x-template" id="todo-item-template">
     <div class="todo-view">
         <input type="checkbox" class="todo-checkbox" {checked}>
-        <span class="todo-content">{text}</span>
-        <a href="#" class="todo-remove" title="Remove this task"></a>
+        <span class="todo-content" tabindex="0">{text}</span>
     </div>
 
     <div class="todo-edit">
         <input type="text" class="todo-input" value="{text}">
     </div>
+
+    <a href="#" class="todo-remove" title="Remove this task">
+        <span class="todo-remove-icon"></span>
+    </a>
 </script>
 
 <!-- This template HTML will be used to render the statistics at the bottom
      of the todo list. -->
-<script type="text/template" id="todo-stats-template">
+<script type="text/x-template" id="todo-stats-template">
     <span class="todo-count">
         <span class="todo-remaining">{numRemaining}</span>
         <span class="todo-remaining-label">{remainingLabel}</span> left.
@@ -360,9 +383,12 @@ TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
         // clicked.
         '.todo-checkbox': {click: 'toggleDone'},
 
-        // When the text of this todo item is clicked, switch to edit mode to
-        // allow editing.
-        '.todo-content': {click: 'edit'},
+        // When the text of this todo item is clicked or focused, switch to edit
+        // mode to allow editing.
+        '.todo-content': {
+            click: 'edit',
+            focus: 'edit'
+        },
 
         // On the edit field, when enter is pressed or the field loses focus,
         // save the current value and switch out of edit mode.

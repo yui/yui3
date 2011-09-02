@@ -401,9 +401,6 @@ YUI.add('dd-ddm-drop', function(Y) {
             return drop;
         }
     }, true);
-    
-
-
 
 
 

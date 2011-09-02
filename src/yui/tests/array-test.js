@@ -121,6 +121,13 @@ suite.add(new Y.Test.Case({
         // TODO: support fromIndex
     },
 
+    'indexOf() should handle sparse arrays correctly': function () {
+        var array = ['a', 'b'];
+        array[3] = undefined;
+
+        Y.Assert.areSame(3, Y.Array.indexOf(array, undefined));
+    },
+
     testNumericSort: function () {
         // the stock sort behavior should fail to produce desired result
         Y.ArrayAssert.itemsAreEqual([1, 100, 2, 3], [3, 100, 1, 2].sort());

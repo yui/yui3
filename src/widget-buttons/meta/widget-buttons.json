@@ -2,8 +2,9 @@
     "widget-buttons": {
         "requires": [
             "widget",
-            "base-build"
+            "base-build",
+            "widget-stdmod"
         ], 
-        "skinnable": false
+        "skinnable": true
     }
 }

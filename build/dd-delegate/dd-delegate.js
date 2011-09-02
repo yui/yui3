@@ -312,7 +312,7 @@ YUI.add('dd-delegate', function(Y) {
         * @for DDM
         * @method getDelegate
         * @description Get a delegate instance from a container node
-        * @returns Y.DD.Delegate
+        * @return Y.DD.Delegate
         */
         getDelegate: function(node) {
             var del = null;
@@ -328,6 +328,7 @@ YUI.add('dd-delegate', function(Y) {
 
     Y.namespace('DD');    
     Y.DD.Delegate = Delegate;
+
 
 
 

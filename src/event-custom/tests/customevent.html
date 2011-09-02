@@ -31,7 +31,8 @@
 
     //YUI.add("selector-native", function(){});
     YUI({
-        filter: "debug",
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+        allowRollup: false,
         onCSS: function(Y) {
             Y.log('CSS is done loading', 'info', 'testcase');
         },

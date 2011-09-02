@@ -1,6 +1,11 @@
 Gestures
 ========
 
+3.4.1
+-----
+
+ * Fixed preventDefault:true for flick
+
 3.4.0
 -----
 

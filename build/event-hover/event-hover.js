@@ -35,6 +35,10 @@ var isFunction = Y.Lang.isFunction,
         },
 
         on: function (node, sub, notifier, filter) {
+            var args = (sub.args) ? sub.args.slice() : [];
+
+            args.unshift(null);
+
             sub._detach = node[(filter) ? "delegate" : "on"]({
                 mouseenter: function (e) {
                     e.phase = 'over';
@@ -43,9 +47,11 @@ var isFunction = Y.Lang.isFunction,
                 mouseleave: function (e) {
                     var thisObj = sub.context || this;
 
+                    args[0] = e;
+
                     e.type = 'hover';
                     e.phase = 'out';
-                    sub._extra.apply(thisObj, [e].concat(sub.args));
+                    sub._extra.apply(thisObj, args);
                 }
             }, filter);
         },

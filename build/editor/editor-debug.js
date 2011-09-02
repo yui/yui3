@@ -2540,18 +2540,39 @@ YUI.add('exec-command', function(Y) {
                         } else {
                             par = sel.anchorNode.ancestor(inst.Selection.BLOCKS);
                         }
+                        if (!par) { //No parent, find the first block under the anchorNode
+                            par = sel.anchorNode.one(inst.Selection.BLOCKS);
+                        }
+
                         if (par && par.hasAttribute(DIR)) {
                             dir = par.getAttribute(DIR);
                         }
-                        this._command(cmd, null);
+                        if (par && par.test(tag)) {
+                            html = inst.Node.create('<div/>');
+                            elm = par.all('li');
+                            elm.each(function(h) {
+                                html.append('<p>' + h.get('innerHTML') + '</p>');
+                            });
+                            if (dir) {
+                                html.setAttribute(DIR, dir);
+                            }
+                            par.replace(html);
+                            sel.selectNode(html.get('firstChild'));
+                        } else {
+                            this._command(cmd, null);
+                        }
                         list = inst.all(tag);
                         if (dir) {
-                            list.each(function(n) {
-                                if (!n.hasClass(cls)) {
-                                    n.setAttribute(DIR, dir);
-                                }
-                            });
+                            if (list.size()) {
+                                //Changed to a List
+                                list.each(function(n) {
+                                    if (!n.hasClass(cls)) {
+                                        n.setAttribute(DIR, dir);
+                                    }
+                                });
+                            }
                         }
+
                         list.removeClass(cls);
                     }
                 },
@@ -2850,14 +2871,10 @@ YUI.add('editor-base', function(Y) {
      *      });
      *      editor.render('#demo');
      *
-     * @main editor
-     */     
-    /**
-     * Base class for Editor. Handles the business logic of Editor, no GUI involved only utility methods and events.
      * @class EditorBase
-     * @for EditorBase
      * @extends Base
      * @module editor
+     * @main editor
      * @submodule editor-base
      * @constructor
      */
@@ -2972,7 +2989,10 @@ YUI.add('editor-base', function(Y) {
                         n = lc;
                     }
                 }
-                
+            }
+            if (!n) {
+                //Fallback to make sure a node is attached to the event
+                n = inst.one(BODY);
             }
             return n;
         },
@@ -3620,16 +3640,13 @@ YUI.add('editor-base', function(Y) {
         */
         NAME: 'editorBase',
         /**
-        * Editor Strings
+        * Editor Strings.  By default contains only the `title` property for the
+        * Title of frame document (default "Rich Text Editor").
+        *
         * @static
         * @property STRINGS
         */
         STRINGS: {
-            /**
-            * Title of frame document: Rich Text Editor
-            * @static
-            * @property STRINGS.title
-            */
             title: 'Rich Text Editor'
         },
         ATTRS: {
@@ -4123,8 +4140,11 @@ YUI.add('editor-bidi', function(Y) {
 
     /**
      * bidi execCommand override for setting the text direction of a node.
+     * This property is added to the `Y.Plugin.ExecCommands.COMMANDS`
+     * collection.
+     *
      * @for Plugin.ExecCommand
-     * @property COMMANDS.bidi
+     * @property bidi
      */
     //TODO -- This should not add this command unless the plugin is added to the instance..
     Y.Plugin.ExecCommand.COMMANDS.bidi = function(cmd, direction) {
@@ -4140,11 +4160,12 @@ YUI.add('editor-bidi', function(Y) {
         }
 
         inst.Selection.filterBlocks();
-        if (sel.anchorNode.test(BODY)) {
-            return;
-        }
+
         if (sel.isCollapsed) { // No selection
             block = EditorBidi.blockParent(sel.anchorNode);
+            if (!block) {
+                block = inst.one('body').one(inst.Selection.BLOCKS);
+            }
             //Remove text-align attribute if it exists
             block = EditorBidi.removeTextAlign(block);
             if (!direction) {
@@ -4311,6 +4332,24 @@ YUI.add('editor-para', function(Y) {
                         if (e.changedEvent.shiftKey) {
                             host.execCommand('insertbr');
                             e.changedEvent.preventDefault();
+                        }
+                    }
+                    if (e.changedNode.test('li') && !Y.UA.ie) {
+                        html = inst.Selection.getText(e.changedNode);
+                        if (html === '') {
+                            par = e.changedNode.ancestor('ol,ul');
+                            var dir = par.getAttribute('dir');
+                            if (dir !== '') {
+                                dir = ' dir = "' + dir + '"';
+                            }
+                            par = e.changedNode.ancestor(inst.Selection.BLOCKS);
+                            d = inst.Node.create('<p' + dir + '>' + inst.Selection.CURSOR + '</p>');
+                            par.insert(d, 'after');
+                            e.changedNode.remove();
+                            e.changedEvent.halt();
+
+                            sel = new inst.Selection();
+                            sel.selectNode(d, true, false);
                         }
                     }
                     //TODO Move this to a GECKO MODULE - Can't for the moment, requires no change to metadata (YMAIL)
