@@ -1,0 +1,84 @@
+/* several */
+
+.yui-progressbar-content,
+.yui-progressbar-bar,
+.yui-progressbar-mask {
+	width:100%;
+	height:100%;
+}	
+
+.yui-progressbar-hidden {
+	display:none;
+}
+
+/* contentBox */
+.yui-progressbar {
+	position:relative;
+	top:0;
+	left:0;
+
+	width:200px;
+	height:20px;
+
+	padding:0;
+	border:none;
+	margin:0;
+
+	text-align:left;
+}
+
+/* mask */
+
+.yui-progressbar-mask {
+	position:absolute;
+	top:0;
+	left:0;
+
+	z-index:2;
+}
+
+.yui-progressbar-mask div {
+	width:50%;
+	height:50%;
+	background-repeat:no-repeat;
+	padding:0;
+	position: absolute;
+}
+
+.yui-progressbar-tl {
+	background-position: top left;
+}
+.yui-progressbar-tr {
+	background-position: top right;
+	left:50%;
+}
+.yui-progressbar-bl {
+	background-position: bottom left;
+	top:50%;
+}
+.yui-progressbar-br {
+	background-position: bottom right;
+	left:50%;
+	top:50%;
+}
+
+/* bar */
+.yui-progressbar-bar {
+	margin:0;
+	position:absolute;
+	left:0;
+	top:0;
+	z-index:1;
+}
+
+.yui-progressbar-ltr .yui-progressbar-bar {
+	_position:static
+}
+
+.yui-progressbar-rtl .yui-progressbar-bar {
+	background-position:right;
+}
+
+.yui-progressbar-btt .yui-progressbar-bar {
+	background-position:left bottom;
+}

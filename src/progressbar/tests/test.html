@@ -1,0 +1,956 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Progress Bar Tests</title>
+<!-- css -->
+<!-- CSS -->
+<link rel="stylesheet" type="text/css" href="../../../build/cssfonts/fonts-min.css">
+<link rel="stylesheet" type="text/css" href="../../../build/cssreset/reset-min.css">
+<link rel="stylesheet" type="text/css" href="../../../build/cssgrids/grids-min.css">
+<link rel="stylesheet" type="text/css" href="../../../build/cssbase/base-min.css">
+<link rel="stylesheet" type="text/css" href="../../../build/widget/assets/skins/sam/widget.css" />
+
+<!-- js -->
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+
+<!-- Until they get included in the yui-loader.js tables, I have to add it manually
+I could use the Loader.addModule method, but this file is already built and has the code 
+to add itself to the module list along with its requirements -->
+<link rel="stylesheet" type="text/css" href="../../../build/progressbar/assets/skins/sam/progressbar.css">
+<script type="text/javascript" src="../../../build/progressbar/progressbar.js"></script>
+
+<style type="text/css">
+
+#plain .yui-progressbar {
+	height:25px;
+	width:250px;
+}
+#plain .yui-progressbar-mask td {
+	background-image: url(mask.gif);
+}
+
+#plain .yui-progressbar-bar {
+	background-image:url(bar.gif);
+}
+#plain .yui-progressbar .yui-progressbar-anim {
+	background-image:url(animbar.gif);
+}
+#test {
+	border: thin solid black;
+}
+
+#margins .yui-progressbar-bar {
+	margin: 5px 10px 15px 20px;
+}
+
+</style>
+</head>
+<body class="yui-skin-sam">
+<div id="testLogger"></div>
+<div id="test"></div>
+<div id="plain"></div>
+<div id="margins"></div>
+
+<script  type="text/javascript">
+ YUI({
+	base:"../../../build/",
+	filter:"raw"
+}).use('widget','anim','console','progressbar','test', function(Y) {
+
+	var pb, t,
+		PB = Y.ProgressBar,
+		A = Y.Assert,
+		TEST = '#test';
+	
+	var getEls = function(which) {
+		which = which || '#test';
+		return {
+			pb: Y.one(which).one('.yui-progressbar'),
+			m : Y.one(which).one('.yui-progressbar-mask'),
+			b : Y.one(which).one('.yui-progressbar-bar')
+		};
+	};
+	
+	var getStyle = function(el,style) {
+		var st = el.getStyle(style);
+		while (st == '100%' && el) {
+			el = el.get('parentNode');
+			st = el.getStyle(style);
+		}
+		return st;
+	};
+		
+	
+    var oSuite = new Y.Test.Suite("ProgressBar");
+    
+    //add a test case
+    oSuite.add(new Y.Test.Case({
+    
+        name: "Initialization",
+		setUp : function () {
+
+        },
+    
+        tearDown : function () {
+			pb.destroy();
+        },
+       
+        testDefault : function () {
+            pb = new PB();
+			pb.render(TEST);
+			t = getEls();
+			A.areEqual(0,pb.get('value'),'reported value');
+			A.areEqual(0,pb.get('minValue'),'reported minValue');
+			A.areEqual(100,pb.get('maxValue'),'reported maxValue');
+			A.isNull(pb.get('anim'),'reported anim');
+			A.areEqual('{value}',pb.get('ariaTextTemplate'),'reported ariaTextTemplate');
+			A.areEqual('ltr',pb.get('direction'),'reported direction');
+			
+			A.areEqual('200px',getStyle(t.pb,'width'),'widget width');
+			A.areEqual('20px',getStyle(t.pb,'height'),'widget height');
+			A.areEqual('200px',pb.get('width'),'reported width');
+			A.areEqual('20px',pb.get('height'),'reported height');
+			A.areEqual('200px',getStyle(t.m,'width'),'mask width');
+			A.areEqual('20px',getStyle(t.m,'height'),'mask height');
+			A.areEqual('0px',getStyle(t.b,'width'),'bar width');
+			A.areEqual('20px',getStyle(t.b,'height'),'bar height');
+        },
+
+        testSetupByCode : function () {
+            pb = new PB({height:'30px', width: 300});
+			pb.render(TEST);
+			t = getEls();
+			A.areEqual(0,pb.get('value'),'reported value');
+			A.areEqual(0,pb.get('minValue'),'reported minValue');
+			A.areEqual(100,pb.get('maxValue'),'reported maxValue');
+			A.isNull(pb.get('anim'),'reported anim');
+			A.areEqual('{value}',pb.get('ariaTextTemplate'),'reported ariaTextTemplate');
+			A.areEqual('ltr',pb.get('direction'),'reported direction');
+			A.areEqual('300px',getStyle(t.pb,'width'),'widget width');
+			A.areEqual('30px',getStyle(t.pb,'height'),'widget height');
+			A.areEqual(300,pb.get('width'),'reported width');
+			A.areEqual('30px',pb.get('height'),'reported height');
+			A.areEqual('300px',getStyle(t.m,'width'),'mask width');
+			A.areEqual('30px',getStyle(t.m,'height'),'mask height');
+			A.areEqual('0px',getStyle(t.b,'width'),'bar width');
+			A.areEqual('30px',getStyle(t.b,'height'),'bar height');
+        },
+		
+		testSetupByStyle: function () {
+			pb = new PB();
+			pb.render('#plain');		
+			t = getEls('#plain');
+			A.areEqual(0,pb.get('value'),'reported value');
+			A.areEqual(0,pb.get('minValue'),'reported minValue');
+			A.areEqual(100,pb.get('maxValue'),'reported maxValue');
+			A.isNull(pb.get('anim'),'reported anim');
+			A.areEqual('{value}',pb.get('ariaTextTemplate'),'reported ariaTextTemplate');
+			A.areEqual('ltr',pb.get('direction'),'reported direction');
+			A.areEqual('250px',pb.get('width'),'reported width');
+			A.areEqual('25px',pb.get('height'),'reported height');
+			A.areEqual('250px',getStyle(t.pb,'width'),'widget width');
+			A.areEqual('25px',getStyle(t.pb,'height'),'widget height');
+			A.areEqual('250px',getStyle(t.m,'width'),'mask width');
+			A.areEqual('25px',getStyle(t.m,'height'),'mask height');
+			A.areEqual('0px',getStyle(t.b,'width'),'bar width');
+			A.areEqual('25px',getStyle(t.b,'height'),'bar height');
+		}
+    }));
+
+	oSuite.add(new Y.Test.Case({
+    
+        name: "value",
+		setUp : function () {
+        },
+    
+        tearDown : function () {
+			pb.destroy();
+        },
+       
+        test30onInit : function () {
+			pb = new PB({value:30});
+			pb.render(TEST);
+			t = getEls();
+			A.areEqual(30,pb.get('value'),'reported value');
+			A.areEqual('60px',t.b.getStyle('width'),'bar width');
+		},
+        test30beforeRender : function () {
+			pb = new PB();
+			pb.set('value',30);
+			pb.render(TEST);
+			t = getEls();
+			A.areEqual(30,pb.get('value'),'reported value');
+			A.areEqual('60px',getStyle(t.b,'width'),'bar width');
+		},
+        test30afterRender : function () {
+			pb = new PB();
+			pb.render(TEST);
+			pb.set('value',30);
+			t = getEls();
+			A.areEqual(30,pb.get('value'),'reported value');
+			A.areEqual('60px',getStyle(t.b,'width'),'bar width');
+		},
+        test70onInit : function () {
+			pb = new PB({value:70});
+			pb.render(TEST);
+			t = getEls();
+			A.areEqual(70,pb.get('value'),'reported value');
+			A.areEqual('140px',getStyle(t.b,'width'),'bar width');
+		},
+        test70beforeRender : function () {
+			pb = new PB();
+			pb.set('value',70);
+			pb.render(TEST);
+			t = getEls();
+			A.areEqual(70,pb.get('value'),'reported value');
+			A.areEqual('140px',getStyle(t.b,'width'),'bar width');
+		},
+        test70afterRender : function () {
+			pb = new PB();
+			pb.render(TEST);
+			pb.set('value',70);
+			t = getEls();
+			A.areEqual(70,pb.get('value'),'reported value');
+			A.areEqual('140px',getStyle(t.b,'width'),'bar width');
+		},
+        test30_50_80_onInit : function () {
+			pb = new PB({value:50,minValue:30,maxValue:80});
+			pb.render(TEST);
+			t = getEls();
+			A.areEqual(50,pb.get('value'),'reported value');
+			A.areEqual('80px',getStyle(t.b,'width'),'bar width');
+		},
+        test30_50_80_beforeRender : function () {
+			pb = new PB();
+			pb.set('value',50);
+			pb.set('minValue',30);
+			pb.set('maxValue',80);
+			pb.render(TEST);
+			t = getEls();
+			A.areEqual(50,pb.get('value'),'reported value');
+			A.areEqual('80px',getStyle(t.b,'width'),'bar width');
+		},
+        test30_50_80_afterRender : function () {
+			pb = new PB();
+			pb.render(TEST);
+			t = getEls();
+
+			pb.set('value',50);
+			A.areEqual('100px',getStyle(t.b,'width'),'bar width - initial');
+
+			pb.set('minValue',30);
+			A.areEqual('57px',getStyle(t.b,'width'),'bar width - after minValue');
+
+			pb.set('maxValue',80);
+			A.areEqual('80px',getStyle(t.b,'width'),'bar width - after maxValue');
+			A.areEqual(50,pb.get('value'),'reported value');
+		}
+    }));
+	
+	oSuite.add(new Y.Test.Case({
+    
+        name: "Direction",
+		setUp : function () {
+
+        },
+    
+        tearDown : function () {
+			pb.destroy();
+        },
+       
+        testRtl : function () {
+			pb = new PB({direction:'rtl', value:30});
+			pb.render(TEST);
+			t = getEls();
+			A.areEqual(30,pb.get('value'),'reported value');
+			A.areEqual('60px',getStyle(t.b,'width'),'bar width');
+			A.areEqual('140px',t.b.getStyle('left'),'bar left');
+			A.areEqual('20px',getStyle(t.b,'height'),'bar height');
+			A.areEqual('0px',t.b.getStyle('top'),'bar top');
+		},
+       
+        testTtb : function () {
+			pb = new PB({direction:'ttb', value:30,width:'40px',height:'100px'});
+			pb.render(TEST);
+			t = getEls();
+			A.areEqual(30,pb.get('value'),'reported value');
+			A.areEqual('40px',getStyle(t.b,'width'),'bar width');
+			A.areEqual('0px',t.b.getStyle('left'),'bar left');
+			A.areEqual('30px',getStyle(t.b,'height'),'bar height');
+			A.areEqual('0px',t.b.getStyle('top'),'bar top');
+		},
+       
+        testBtt : function () {
+			pb = new PB({direction:'btt', value:30,width:'40px',height:'100px'});
+			pb.render(TEST);
+			t = getEls();
+			A.areEqual(30,pb.get('value'),'reported value');
+			A.areEqual('40px',getStyle(t.b,'width'),'bar width');
+			A.areEqual('0px',t.b.getStyle('left'),'bar left');
+			A.areEqual('30px',getStyle(t.b,'height'),'bar height');
+			A.areEqual('70px',t.b.getStyle('top'),'bar top');
+		}
+    }));
+
+	
+	oSuite.add(new Y.Test.Case({
+    
+        name: "ARIA",
+		setUp : function () {
+			pb = new PB();
+			pb.render(TEST);
+
+        },
+    
+        tearDown : function () {
+			pb.destroy();
+        },
+       
+        testAria : function () {
+			t = getEls();
+			A.areEqual('progressbar',t.pb.getAttribute('role'),'ARIA role');
+			A.areEqual('0',t.pb.getAttribute('aria-valuemin'),'ARIA minValue');
+			A.areEqual('100',t.pb.getAttribute('aria-valuemax'),'ARIA maxValue');
+			A.areEqual('0',t.pb.getAttribute('aria-valuenow'),'ARIA value');
+			A.areEqual('0',t.pb.getAttribute('aria-valuetext'),'ARIA text');
+
+			pb.set('value',30);
+			A.areEqual('0',t.pb.getAttribute('aria-valuemin'),'ARIA minValue');
+			A.areEqual('100',t.pb.getAttribute('aria-valuemax'),'ARIA maxValue');
+			A.areEqual('30',t.pb.getAttribute('aria-valuenow'),'ARIA value 30');
+			A.areEqual('30',t.pb.getAttribute('aria-valuetext'),'ARIA text 30');
+			
+			// changing the ariaTextTemplate doesn't have an immediate effect 
+			// until the next syncUI or value change
+			pb.set('ariaTextTemplate','|{minValue}=>{value}<={maxValue}|');
+			pb.syncUI();
+			A.areEqual('|0=>30<=100|',t.pb.getAttribute('aria-valuetext'),'ARIA text 0-30-100');
+			pb.set('value',50);
+			pb.set('minValue',30);
+			pb.set('maxValue',80);
+			A.areEqual('|30=>50<=80|',t.pb.getAttribute('aria-valuetext'),'ARIA text 30-50-80');
+		}
+			
+
+    }));
+
+	oSuite.add(new Y.Test.Case({
+    
+        name: "Bar with margins",
+		setUp : function () {
+        },
+    
+        tearDown : function () {
+			pb.destroy();
+        },
+       
+        testLtr30 : function () {
+			pb = new PB({direction:'ltr', value:30,width:'200px',height:'100px'});
+			pb.render('#margins');
+			t = getEls('#margins');
+
+			A.areEqual('51px',getStyle(t.b,'width'),'bar width');
+			A.areEqual('0px',t.b.getStyle('left'),'bar left');
+			A.areEqual('100px',getStyle(t.b,'height'),'bar height');
+			A.areEqual('0px',t.b.getStyle('top'),'bar top');
+		},
+
+        testLtr70 : function () {
+			pb = new PB({direction:'ltr', value:70,width:'200px',height:'100px'});
+			pb.render('#margins');
+			t = getEls('#margins');
+
+			A.areEqual('119px',getStyle(t.b,'width'),'bar width');
+			A.areEqual('0px',t.b.getStyle('left'),'bar left');
+			A.areEqual('100px',getStyle(t.b,'height'),'bar height');
+			A.areEqual('0px',t.b.getStyle('top'),'bar top');
+		},
+
+        testRtl30 : function () {
+			pb = new PB({direction:'rtl', value:30,width:'200px',height:'100px'});
+			pb.render('#margins');
+			t = getEls('#margins');
+
+			A.areEqual('51px',getStyle(t.b,'width'),'bar width');
+			A.areEqual('119px',t.b.getStyle('left'),'bar left');
+			A.areEqual('100px',getStyle(t.b,'height'),'bar height');
+			A.areEqual('0px',t.b.getStyle('top'),'bar top');
+		},
+
+        testRtl70 : function () {
+			pb = new PB({direction:'rtl', value:70,width:'200px',height:'100px'});
+			pb.render('#margins');
+			t = getEls('#margins');
+
+			A.areEqual('119px',getStyle(t.b,'width'),'bar width');
+			A.areEqual('51px',t.b.getStyle('left'),'bar left');
+			A.areEqual('100px',getStyle(t.b,'height'),'bar height');
+			A.areEqual('0px',t.b.getStyle('top'),'bar top');
+		},
+		
+        testBtt30 : function () {
+			pb = new PB({direction:'btt', value:30,width:'200px',height:'100px'});
+			pb.render('#margins');
+			t = getEls('#margins');
+
+			A.areEqual('200px',getStyle(t.b,'width'),'bar width');
+			A.areEqual('0px',t.b.getStyle('left'),'bar left');
+			A.areEqual('24px',getStyle(t.b,'height'),'bar height');
+			A.areEqual('56px',t.b.getStyle('top'),'bar top');
+		},
+
+        testBtt70 : function () {
+			pb = new PB({direction:'btt', value:70,width:'200px',height:'100px'});
+			pb.render('#margins');
+			t = getEls('#margins');
+
+			A.areEqual('200px',getStyle(t.b,'width'),'bar width');
+			A.areEqual('0px',t.b.getStyle('left'),'bar left');
+			A.areEqual('56px',getStyle(t.b,'height'),'bar height');
+			A.areEqual('24px',t.b.getStyle('top'),'bar top');
+		},
+        testTtb30 : function () {
+			pb = new PB({direction:'ttb', value:30,width:'200px',height:'100px'});
+			pb.render('#margins');
+			t = getEls('#margins');
+
+			A.areEqual('200px',getStyle(t.b,'width'),'bar width');
+			A.areEqual('0px',t.b.getStyle('left'),'bar left');
+			A.areEqual('24px',getStyle(t.b,'height'),'bar height');
+			A.areEqual('0px',t.b.getStyle('top'),'bar top');
+		},
+
+        testTtb70 : function () {
+			pb = new PB({direction:'ttb', value:70,width:'200px',height:'100px'});
+			pb.render('#margins');
+			t = getEls('#margins');
+
+			A.areEqual('200px',getStyle(t.b,'width'),'bar width');
+			A.areEqual('0px',t.b.getStyle('left'),'bar left');
+			A.areEqual('56px',getStyle(t.b,'height'),'bar height');
+			A.areEqual('0px',t.b.getStyle('top'),'bar top');
+		}
+    }));
+	
+	oSuite.add(new Y.Test.Case({
+    
+        name: "Miscellaneous",
+		setUp : function () {
+
+        },
+    
+        tearDown : function () {
+			pb.destroy();
+			Y.get('#test').set('innerHTML','');
+        },
+       
+        testRenderTwice : function () {
+			pb = new PB({direction:'rtl', value:30});
+			A.isFalse(Y.get('#test').hasChildNodes(),'before render nothing');
+			pb.render(TEST);
+			A.isTrue(Y.get('#test').hasChildNodes(),'after first render');
+			pb.render(TEST);
+			A.areEqual(1,Y.get('#test').get('childNodes').size(),'second render ignored');
+		},
+		
+		testDirection: function() {
+			pb = new PB({direction:'rtl', value:30});
+			pb.set('direction','btt');
+			A.areEqual('btt',pb.get('direction'),'before rendering changing direction is fine');
+			A.areSame(pb,pb.render(TEST),'render should return PB instance');
+			pb.set('direction','ttb');
+			A.areEqual('btt',pb.get('direction'),'direction can be set until render is done');
+		
+		}/* ,
+		 no longer applicable
+		testRenderBefore: function () {
+			var testEl = Y.get('#test');
+			testEl.set('innerHTML','<p id="pepe">something</p>');
+			pb = new PB().render(TEST);
+			A.areEqual('pepe',testEl.get('firstChild').get('id'),'first child must be pepe');
+			A.areSame(testEl.get('firstChild').get('nextSibling'),pb.get('boundingBox'),'second element must be bar');
+			var pb1 = new PB().render('test','pepe');
+			A.areSame(testEl.get('firstChild'),pb1.get('boundingBox'),'first element must be bar');
+			A.areEqual('pepe',testEl.get('firstChild').get('nextSibling').get('id'),'second child must be pepe');
+			A.areSame(testEl.get('firstChild').get('nextSibling').get('nextSibling'),pb.get('boundingBox'),'third element must be bar');
+			pb1.destroy();
+		}
+		*/
+		/*  Attribute override test
+		,
+		testAttributeOverride: function () {
+			pb = new PB();
+			var config = pb.getAttributeConfig('direction');
+			YAHOO.log(config.validator.toString(),'qq','qq');
+			pb.setAttributeConfig('direction',{
+				validator:function(value) {
+					if (this._rendered) { return false; }
+					switch (value) {
+						case 'qqq':
+						case 'ltr':
+							return true;
+						default:
+							return false;
+					}
+				}
+			});
+			A.areEqual(true,pb.set('direction','qqq'),'direction override qqq');
+			A.areEqual(false,pb.set('direction','rtl'),'direction override rtl');
+			A.areEqual(true,pb.set('direction','ltr'),'direction override ltr');
+			pb.render(TEST);
+		}*/
+	}));
+	oSuite.add(new Y.Test.Case({
+    
+        name: "Change width or height of rendered widget",
+		setUp : function () {
+
+        },
+    
+        tearDown : function () {
+			pb.destroy();
+        },
+		testWidthChangeLtr: function() {
+            pb = new PB({value:30});
+			pb.render(TEST);
+			t = getEls();
+
+			A.areEqual('200px',getStyle(t.pb,'width'),'widget width');
+			A.areEqual('60px',getStyle(t.b,'width'),'bar width before');
+			A.areEqual('20px',getStyle(t.b,'height'),'bar height');
+			
+			pb.set('width','300px');
+			A.areEqual('300px',getStyle(t.pb,'width'),'widget width');
+			A.areEqual('20px',getStyle(t.pb,'height'),'widget height');
+			A.areEqual('300px',pb.get('width'),'reported width');
+			A.areEqual('20px',pb.get('height'),'reported height');
+			A.areEqual('300px',getStyle(t.m,'width'),'mask width');
+			A.areEqual('20px',getStyle(t.m,'height'),'mask height');
+			A.areEqual('90px',getStyle(t.b,'width'),'bar width after');
+			A.areEqual('20px',getStyle(t.b,'height'),'bar height');
+		},
+		testHeightChangeLtr: function() {
+            pb = new PB({value:30});
+			pb.render(TEST);
+			t = getEls();
+
+			A.areEqual('60px',getStyle(t.b,'width'),'bar width');
+			A.areEqual('20px',getStyle(t.b,'height'),'bar height');
+			
+			pb.set('height','50px');
+			A.areEqual('200px',getStyle(t.pb,'width'),'widget width');
+			A.areEqual('50px',getStyle(t.pb,'height'),'widget height');
+			A.areEqual('200px',pb.get('width'),'reported width');
+			A.areEqual('50px',pb.get('height'),'reported height');
+			A.areEqual('200px',getStyle(t.m,'width'),'mask width');
+			A.areEqual('50px',getStyle(t.m,'height'),'mask height');
+			A.areEqual('60px',getStyle(t.b,'width'),'bar width');
+			A.areEqual('50px',getStyle(t.b,'height'),'bar height');
+		},
+		testWidthChangeTtb: function() {
+            pb = new PB({value:30,direction:'ttb',height:100});
+			pb.render(TEST);
+			t = getEls();
+
+			A.areEqual('200px',getStyle(t.b,'width'),'bar width');
+			A.areEqual('30px',getStyle(t.b,'height'),'bar height');
+			
+			pb.set('width','300px');
+			A.areEqual('300px',getStyle(t.pb,'width'),'widget width');
+			A.areEqual('100px',getStyle(t.pb,'height'),'widget height');
+			A.areEqual('300px',pb.get('width'),'reported width');
+			A.areEqual(100,pb.get('height'),'reported height');
+			A.areEqual('300px',getStyle(t.m,'width'),'mask width');
+			A.areEqual('100px',getStyle(t.m,'height'),'mask height');
+			A.areEqual('300px',getStyle(t.b,'width'),'bar width');
+			A.areEqual('30px',getStyle(t.b,'height'),'bar height');
+		},
+		testHeightChangeTtb: function() {
+            pb = new PB({value:30,direction:'ttb',height:100});
+			pb.render(TEST);
+			t = getEls();
+
+			A.areEqual('200px',getStyle(t.b,'width'),'bar width');
+			A.areEqual('30px',getStyle(t.b,'height'),'bar height');
+			
+			pb.set('height','150px');
+			A.areEqual('200px',getStyle(t.pb,'width'),'widget width');
+			A.areEqual('150px',getStyle(t.pb,'height'),'widget height');
+			A.areEqual('200px',pb.get('width'),'reported width');
+			A.areEqual('150px',pb.get('height'),'reported height');
+			A.areEqual('200px',getStyle(t.m,'width'),'mask width');
+			A.areEqual('150px',getStyle(t.m,'height'),'mask height');
+			A.areEqual('200px',getStyle(t.b,'width'),'bar width');
+			A.areEqual('45px',getStyle(t.b,'height'),'bar height');
+		}
+	}));
+
+	oSuite.add(new Y.Test.Case({
+    
+        name: "Change of end values on a rendered widget",
+		setUp : function () {
+
+        },
+    
+        tearDown : function () {
+			pb.destroy();
+        },
+		testMaxValue: function() {
+            pb = new PB({value:30});
+			pb.render(TEST);
+			t = getEls();
+
+			A.areEqual('60px',getStyle(t.b,'width'),'bar width before');
+			
+			pb.set('maxValue',50);
+			A.areEqual('120px',getStyle(t.b,'width'),'bar width maxValue 50');
+			pb.set('maxValue',30);
+			A.areEqual('200px',getStyle(t.b,'width'),'bar width maxValue 30');
+			pb.set('maxValue',20);
+			A.areEqual('200px',getStyle(t.b,'width'),'bar width maxValue 20');
+			A.areEqual(20,pb.get('value'),'value should be cropped to maxValue');
+		},
+		testMinValue: function() {
+            pb = new PB({value:50});
+			pb.render(TEST);
+			t = getEls();
+
+			A.areEqual('100px',getStyle(t.b,'width'),'bar width before');
+			
+			pb.set('minValue',20);
+			A.areEqual('75px',getStyle(t.b,'width'),'bar width minValue 20');
+			pb.set('minValue',50);
+			A.areEqual('0px',getStyle(t.b,'width'),'bar width minValue 50');
+			pb.set('minValue',80);
+			A.areEqual('0px',getStyle(t.b,'width'),'bar width minValue 80');
+			A.areEqual(80,pb.get('value'),'value should be cropped to minValue');
+		}
+	}));
+
+	oSuite.add(new Y.Test.Case({
+    
+        name: "Animation",
+		setUp : function () {
+        },
+    
+        tearDown : function () {
+			pb.destroy();
+        },
+       
+        testLtr : function () {
+			pb = new PB({direction:'ltr',anim:true});
+			pb.render(TEST);
+			t = getEls();
+			A.areEqual(0,pb.get('value'),'reported value before');
+			A.areEqual('0px',getStyle(t.b,'width'),'bar width before');
+			A.areEqual('0px',t.b.getStyle('left'),'bar left before');
+			A.areEqual('20px',getStyle(t.b,'height'),'bar height before');
+			A.areEqual('0px',t.b.getStyle('top'),'bar top before');
+			pb.set('value',30);
+			this.wait(function() {
+				A.areEqual(30,pb.get('value'),'reported value 30');
+				A.areEqual('60px',getStyle(t.b,'width'),'bar width 30');
+				A.areEqual('0px',t.b.getStyle('left'),'bar left 30');
+				A.areEqual('20px',getStyle(t.b,'height'),'bar height 30');
+				A.areEqual('0px',t.b.getStyle('top'),'bar top 30');
+				pb.set('value',60);
+				this.wait(function() {
+					A.areEqual(60,pb.get('value'),'reported value 60');
+					A.areEqual('120px',getStyle(t.b,'width'),'bar width 60');
+					A.areEqual('0px',t.b.getStyle('left'),'bar left 60');
+					A.areEqual('20px',getStyle(t.b,'height'),'bar height 60');
+					A.areEqual('0px',t.b.getStyle('top'),'bar top 60');
+					pb.set('value',100);
+					this.wait(function() {
+						A.areEqual(100,pb.get('value'),'reported value 100');
+						A.areEqual('200px',getStyle(t.b,'width'),'bar width 100');
+						A.areEqual('0px',t.b.getStyle('left'),'bar left 100');
+						A.areEqual('20px',getStyle(t.b,'height'),'bar height 100');
+						A.areEqual('0px',t.b.getStyle('top'),'bar top 100');
+						pb.set('value',0);
+						this.wait(function() {
+							A.areEqual(0,pb.get('value'),'reported value 0');
+							A.areEqual('0px',getStyle(t.b,'width'),'bar width 0');
+							A.areEqual('0px',t.b.getStyle('left'),'bar left 0');
+							A.areEqual('20px',getStyle(t.b,'height'),'bar height 0');
+							A.areEqual('0px',t.b.getStyle('top'),'bar top 0');
+						},1200);
+					},1200);
+				},1200);
+			},1200);
+		},
+        testRtl : function () {
+			pb = new PB({direction:'rtl',anim:true});
+			pb.render(TEST);
+			t = getEls();
+			A.areEqual(0,pb.get('value'),'reported value before');
+			A.areEqual('0px',getStyle(t.b,'width'),'bar width before');
+			A.areEqual('200px',t.b.getStyle('left'),'bar left before');
+			A.areEqual('20px',getStyle(t.b,'height'),'bar height before');
+			A.areEqual('0px',t.b.getStyle('top'),'bar top before');
+			pb.set('value',30);
+			this.wait(function() {
+				A.areEqual(30,pb.get('value'),'reported value 30');
+				A.areEqual('60px',getStyle(t.b,'width'),'bar width 30');
+				A.areEqual('140px',t.b.getStyle('left'),'bar left 30');
+				A.areEqual('20px',getStyle(t.b,'height'),'bar height 30');
+				A.areEqual('0px',t.b.getStyle('top'),'bar top 30');
+				pb.set('value',60);
+				this.wait(function() {
+					A.areEqual(60,pb.get('value'),'reported value 60');
+					A.areEqual('120px',getStyle(t.b,'width'),'bar width 60');
+					A.areEqual('80px',t.b.getStyle('left'),'bar left 60');
+					A.areEqual('20px',getStyle(t.b,'height'),'bar height 60');
+					A.areEqual('0px',t.b.getStyle('top'),'bar top 60');
+					pb.set('value',100);
+					this.wait(function() {
+						A.areEqual(100,pb.get('value'),'reported value 100');
+						A.areEqual('200px',getStyle(t.b,'width'),'bar width 100');
+						A.areEqual('0px',t.b.getStyle('left'),'bar left 100');
+						A.areEqual('20px',getStyle(t.b,'height'),'bar height 100');
+						A.areEqual('0px',t.b.getStyle('top'),'bar top 100');
+						pb.set('value',0);
+						this.wait(function() {
+							A.areEqual(0,pb.get('value'),'reported value 0');
+							A.areEqual('0px',getStyle(t.b,'width'),'bar width 0');
+							A.areEqual('200px',t.b.getStyle('left'),'bar left 0');
+							A.areEqual('20px',getStyle(t.b,'height'),'bar height 0');
+							A.areEqual('0px',t.b.getStyle('top'),'bar top 0');
+						},1200);
+					},1200);
+				},1200);
+			},1200);
+		},
+		testTtb : function () {
+			pb = new PB({direction:'ttb',anim:true,width:20,height:200});
+			pb.render(TEST);
+			t = getEls();
+			A.areEqual(0,pb.get('value'),'reported value before');
+			A.areEqual('20px',getStyle(t.b,'width'),'bar width before');
+			A.areEqual('0px',t.b.getStyle('left'),'bar left before');
+			A.areEqual('0px',getStyle(t.b,'height'),'bar height before');
+			A.areEqual('0px',t.b.getStyle('top'),'bar top before');
+			pb.set('value',30);
+			this.wait(function() {
+				A.areEqual(30,pb.get('value'),'reported value 30');
+				A.areEqual('20px',getStyle(t.b,'width'),'bar width 30');
+				A.areEqual('0px',t.b.getStyle('left'),'bar left 30');
+				A.areEqual('60px',getStyle(t.b,'height'),'bar height 30');
+				A.areEqual('0px',t.b.getStyle('top'),'bar top 30');
+				pb.set('value',60);
+				this.wait(function() {
+					A.areEqual(60,pb.get('value'),'reported value 60');
+					A.areEqual('20px',getStyle(t.b,'width'),'bar width 60');
+					A.areEqual('0px',t.b.getStyle('left'),'bar left 60');
+					A.areEqual('120px',getStyle(t.b,'height'),'bar height 60');
+					A.areEqual('0px',t.b.getStyle('top'),'bar top 60');
+					pb.set('value',100);
+					this.wait(function() {
+						A.areEqual(100,pb.get('value'),'reported value 100');
+						A.areEqual('20px',getStyle(t.b,'width'),'bar width 100');
+						A.areEqual('0px',t.b.getStyle('left'),'bar left 100');
+						A.areEqual('200px',getStyle(t.b,'height'),'bar height 100');
+						A.areEqual('0px',t.b.getStyle('top'),'bar top 100');
+						pb.set('value',0);
+						this.wait(function() {
+							A.areEqual(0,pb.get('value'),'reported value 0');
+							A.areEqual('20px',getStyle(t.b,'width'),'bar width 0');
+							A.areEqual('0px',t.b.getStyle('left'),'bar left 0');
+							A.areEqual('0px',getStyle(t.b,'height'),'bar height 0');
+							A.areEqual('0px',t.b.getStyle('top'),'bar top 0');
+						},1200);
+					},1200);
+				},1200);
+			},1200);
+		},
+        testBtt : function () {
+			pb = new PB({direction:'btt',anim:true,width:20,height:200});
+			pb.render(TEST);
+			t = getEls();
+			A.areEqual(0,pb.get('value'),'reported value before');
+			A.areEqual('20px',getStyle(t.b,'width'),'bar width before');
+			A.areEqual('0px',t.b.getStyle('left'),'bar left before');
+			A.areEqual('0px',getStyle(t.b,'height'),'bar height before');
+			A.areEqual('200px',t.b.getStyle('top'),'bar top before');
+			pb.set('value',30);
+			this.wait(function() {
+				A.areEqual(30,pb.get('value'),'reported value 30');
+				A.areEqual('20px',getStyle(t.b,'width'),'bar width 30');
+				A.areEqual('0px',t.b.getStyle('left'),'bar left 30');
+				A.areEqual('60px',getStyle(t.b,'height'),'bar height 30');
+				A.areEqual('140px',t.b.getStyle('top'),'bar top 30');
+				pb.set('value',60);
+				this.wait(function() {
+					A.areEqual(60,pb.get('value'),'reported value 60');
+					A.areEqual('20px',getStyle(t.b,'width'),'bar width 60');
+					A.areEqual('0px',t.b.getStyle('left'),'bar left 60');
+					A.areEqual('120px',getStyle(t.b,'height'),'bar height 60');
+					A.areEqual('80px',t.b.getStyle('top'),'bar top 60');
+					pb.set('value',100);
+					this.wait(function() {
+						A.areEqual(100,pb.get('value'),'reported value 100');
+						A.areEqual('20px',getStyle(t.b,'width'),'bar width 100');
+						A.areEqual('0px',t.b.getStyle('left'),'bar left 100');
+						A.areEqual('200px',getStyle(t.b,'height'),'bar height 100');
+						A.areEqual('0px',t.b.getStyle('top'),'bar top 100');
+						pb.set('value',0);
+						this.wait(function() {
+							A.areEqual(0,pb.get('value'),'reported value 0');
+							A.areEqual('20px',getStyle(t.b,'width'),'bar width 0');
+							A.areEqual('0px',t.b.getStyle('left'),'bar left 0');
+							A.areEqual('0px',getStyle(t.b,'height'),'bar height 0');
+							A.areEqual('200px',t.b.getStyle('top'),'bar top 0');
+						},1200);
+					},1200);
+				},1200);
+			},1200);
+		},
+		testCancel : function () {
+			pb = new PB({anim:true});
+			pb.get('anim').set('duration', 2);
+			pb.render(TEST);
+			t = getEls();
+			A.areEqual(0,pb.get('value'),'reported value before');
+			A.areEqual('0px',getStyle(t.b,'width'),'bar width before');
+			A.areEqual('0px',t.b.getStyle('left'),'bar left before');
+			A.areEqual('20px',getStyle(t.b,'height'),'bar height before');
+			A.areEqual('0px',t.b.getStyle('top'),'bar top before');
+			pb.set('value',80);
+			this.wait(function() {
+				pb.set('value',25);
+				this.wait(function() {
+					A.areEqual(25,pb.get('value'),'reported value after');
+					A.areEqual('50px',getStyle(t.b,'width'),'bar width after');
+					A.areEqual('0px',t.b.getStyle('left'),'bar left after');
+					A.areEqual('20px',getStyle(t.b,'height'),'bar height after');
+					A.areEqual('0px',t.b.getStyle('top'),'bar top after');
+				
+				},2100);
+			},1000);
+		},
+		testOnOff: function () {
+			pb = new PB();
+			pb.render(TEST);
+			pb.set('value',30);
+			t = getEls();
+			A.areEqual(30,pb.get('value'),'reported value');
+			A.areEqual('60px',getStyle(t.b,'width'),'bar width');
+			pb.set('anim',true);
+			pb.set('value',60);
+			this.wait(function() {
+				A.isTrue(parseInt(getStyle(t.b,'width'),10) < 120,'bar still going');
+				A.isTrue(parseInt(getStyle(t.b,'width'),10) > 0,'bar not departed');
+				this.wait(function () {
+					A.areEqual('120px',getStyle(t.b,'width'),'bar reached end');
+				},700);
+			},500);
+		}
+			
+
+
+    }));
+	oSuite.add(new Y.Test.Case({
+    
+        name: "Events",
+		setUp : function () {
+        },
+    
+        tearDown : function () {
+			pb.destroy();
+        },
+       
+        testEvent : function () {
+			pb = new PB({anim:true});
+			pb.get('anim').set('duration', 2);
+			pb.render(TEST);
+			var startValue = null,
+				firstProg = null,
+				halfProg = null,
+				lastProg = null,
+				endValue = null;
+			pb.on('start',function(ev) {
+				startValue = ev.value;
+			});
+			pb.on('progress',function(ev) {
+				if (firstProg === null) { firstProg = ev.value; }
+				lastProg = ev.value;
+			});
+			pb.on('end',function (ev) {
+				endValue = ev.value;
+			});
+			pb.set('value',50);
+
+			this.wait(function () {
+				halfProg = lastProg;
+				this.wait(function () {
+					A.isNotNull(startValue,'start value still null');
+					A.isNotNull(firstProg,'firstProg value still null');
+					A.isNotNull(halfProg,'halfProg value still null');
+					A.isNotNull(lastProg,'lastProg value still null');
+					A.isNotNull(endValue,'end value still null');
+					A.areEqual(0,startValue,'start value not zero');
+					A.isTrue(firstProg <=1,'firstProg not close to zero: ' + firstProg);
+					A.isTrue(halfProg > 0 && halfProg < 50,'halfProg value not half way (a): ' + halfProg);
+					A.isTrue(50 - lastProg <= 1,'lastProg value not close to 50: ' + lastProg);
+					A.areEqual(50,endValue,'endValue value not 50');
+
+					startValue = firstProg = halfProg = lastProg = 	endValue = null;
+					pb.set('value',30);
+
+					this.wait(function () {
+						halfProg = lastProg;
+						this.wait(function () {
+							A.isNotNull(startValue,'start value still null 1');
+							A.isNotNull(firstProg,'firstProg value still null 1');
+							A.isNotNull(halfProg,'halfProg value still null 1');
+							A.isNotNull(lastProg,'lastProg value still null 1');
+							A.isNotNull(endValue,'end value still null 1');
+							A.areEqual(50,startValue,'start value not 50');
+							A.isTrue(50 - firstProg <=1,'firstProg not close to 50: ' + firstProg);
+							A.isTrue(halfProg > 30 && halfProg < 50,'halfProg value not half way (b): ' + halfProg);
+							A.isTrue(lastProg - 30 <= 1,'lastProg value not close to 30: ' + lastProg);
+							A.areEqual(30,endValue,'endValue value not 30');
+						
+						},1200);
+					},1000);
+
+					
+				},1200);
+			},1000);
+			
+			
+		}
+
+
+    }));
+
+    Y.Test.Runner.add(oSuite);
+	
+	Y.on('domready',function (){
+   
+        var logger = new Y.Console({
+			verbose : true,
+			//consoleLimit : 10,
+			newestOnTop : false
+		});
+		logger.render('#testLogger');
+		//logger.hideCategory('info');
+		if (1) {
+			Y.Test.Runner.run();
+		} else {
+			// This section is for running individual tests.  Set previous if to false.
+			pb = new PB();
+			pb.render(TEST);
+			pb.set('value',30);
+			debugger;
+			pb.set('visible',false);
+			pb.set('visible',true);
+			
+		}
+	});
+});
+    
+
+</script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+.yui-progressbar-bar {
+	background-color:blue;
+}
+
+.yui-progressbar {
+	border: thin solid #808080
+}
+
+.yui-skin-sam .yui-progressbar {
+	background-color: transparent;
+	border: solid #808080;
+	border-width:1px 0;
+}
+
+.yui-skin-sam .yui-progressbar-rtl,.yui-skin-sam .yui-progressbar-ltr {
+	background-image: url(back-h.png);
+	background-repeat:repeat-x;
+}
+
+.yui-skin-sam .yui-progressbar-ttb,.yui-skin-sam .yui-progressbar-btt {
+	background-image: url(back-v.png);
+	background-repeat:repeat-y;
+}
+.yui-skin-sam  .yui-progressbar-bar{
+	background-color:transparent;
+}
+
+.yui-skin-sam .yui-progressbar-ltr .yui-progressbar-bar,.yui-skin-sam .yui-progressbar-rtl .yui-progressbar-bar {
+	background-image:url(bar-h.png);
+	background-repeat:repeat-x;
+}
+.yui-skin-sam .yui-progressbar-ttb .yui-progressbar-bar,.yui-skin-sam .yui-progressbar-btt .yui-progressbar-bar {
+	background-image:url(bar-v.png);
+	background-repeat:repeat-y;
+}
+
+.yui-skin-sam .yui-progressbar-mask {
+	border: solid #808080;
+	border-width:0 1px;
+	margin: 0 -1px;
+}
+
+.yui-skin-sam .yui-progressbar-caption {
+	color:#000;
+	text-align:center;
+	margin:0 auto;
+}
+.yui-skin-sam .yui-progressbar-range {
+	color:#a6a6a6;
+}

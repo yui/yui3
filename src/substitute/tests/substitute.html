@@ -28,6 +28,7 @@
         }, button);
 
         var myConsole = new Y.Console().render();
+		
 
         var testSubstitute= new Y.Test.Case({
             name: "Substitute tests",
@@ -78,8 +79,7 @@
                 level1_4: 1.4
             };
 
-
-            Assert.areEqual(
+            Assert.areEqual(				
                 Y.substitute("{testobj 0}", { testobj: obj }, null, true),
                 "{level1_1 => 1.1, level1_2 => 1.2, level1_3 => {...}, level1_4 => 1.4}",
                 "failed one level object dump"
@@ -192,15 +192,32 @@
 
             // testing {} in the replacement text
             Assert.areEqual("My last name is Zappa. {I am a replacement string }{}", Y.substitute(template, obj));
+			
+			Assert.areEqual(
+				'-{-}-',
+				Y.substitute('-{LBRACE}-{RBRACE}-'),
+				'replacement of literals {LBRACE} and/or {RBRACE} failed'
+			);
+			
+			Assert.areEqual(
+				'done',
+				Y.substitute('{{{three}}}', {
+					three:'two',
+					two: 'one',
+					one: 'done'
+				},null,true),
+				'recurse failed'
+			);
 
         }
 
         });
 
 
-	Y.Test.Runner.setName("Substitute");
+		Y.Test.Runner.setName("Substitute");
         Y.Test.Runner.add(testSubstitute);
         Y.Test.Runner.run();
+		Y.log('All errors, if any, show "Expected" and "Actual" values reversed','warn');
     });
 })();
 </script>

@@ -1,0 +1,352 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+
+<title>Progress Bar examples - Basic Features</title>
+<!-- CSS -->
+<link rel="stylesheet" type="text/css" href="../../build/cssfonts/fonts-min.css">
+<link rel="stylesheet" type="text/css" href="../../build/cssreset/reset-min.css">
+<link rel="stylesheet" type="text/css" href="../../build/cssgrids/grids-min.css">
+<link rel="stylesheet" type="text/css" href="../../build/cssbase/base-min.css">
+<link rel="stylesheet" type="text/css" href="../../build/widget/assets/skins/sam/widget.css" />
+
+<link rel="stylesheet" type="text/css" href="http://developer.yahoo.com/yui/assets/dpSyntaxHighlighter.css">
+
+<!-- js -->
+<script type="text/javascript" src="../../build/yui/yui.js"></script>
+
+<!-- Until they get included in the yui-loader.js tables, I have to add it manually
+I could use the Loader.addModule method, but this file is already built and has the code 
+to add itself to the module list along with its requirements -->
+<link rel="stylesheet" type="text/css" href="../../build/progressbar/assets/skins/sam/progressbar.css">
+<script type="text/javascript" src="../../build/progressbar/progressbar.js"></script>
+
+<style type="text/css">
+
+#valueSet,#rangeSet,#sizeSet {
+	float:left;
+	clear:left;
+	width:50%;
+}
+
+#animSet{
+	float:right;
+	width:50%;
+}
+
+#basic .yui-progressbar{
+	margin:0 auto;
+}
+
+fieldset {
+	border: thin solid silver;
+	background-color:#F0F0F0;
+	padding:1em;
+	margin:1em;
+
+	*position: relative;
+	*margin: 0 0 1em 0;
+    *padding-top:.75em;
+}
+
+fieldset p {
+	margin:0 1em;
+}
+
+legend {
+	font-weight:bold;
+	margin:0 0.5em;
+	padding:0 0.2em;
+
+	*position:absolute;
+    *top: -.5em;
+    *left: .5em;
+}
+
+.disabled {
+	color:silver;
+}
+
+code {
+	background-color:#e0e0e0;
+	border:thin solid #c0c0c0;
+	white-space:pre;
+	font-size:10px;
+}
+
+.dp-highlighter th, .dp-highlighter td {
+	border:0;
+	padding:0;
+}
+.dp-highlighter .line1, .dp-highlighter  .line2 {
+	padding-left:10px;
+	white-space:nowrap;
+}
+
+</style>
+</head>
+<body class="yui-skin-sam">
+
+	<div class="yui-d1">
+		<div id="hd">
+			<h1>Progress Bar examples - Basic Features</h1>
+			<p>This example shows the simplest ProgressBar with the default skin, 
+			with a control box that allows you to change various settings.</p>
+		</div>
+		<div id="bd">
+			<div id="basic" ></div>
+			<fieldset id="control">
+				<legend>Control</legend>
+				<fieldset id="valueSet">
+					<legend>Value</legend>
+					<div id="sliderValue" title="Value slider"></div>
+					<p>
+						<label>Set: <span id="value">50</span> </label> &nbsp;
+						<label> Actual <span id="actualValue">50</span></label>
+					</p>
+				</fieldset>
+
+				<fieldset id="rangeSet">
+					<legend>Range</legend>
+					<div id="sliderMinValue" title="minValue slider"></div>
+					<p>
+						<label>Min: <span id="minValue">0</span> </label>  &nbsp;
+					</p>
+					<div id="sliderMaxValue" title="maxValue slider"></div>
+					<p>
+						<label> Max: <span id="maxValue">100</span></label>
+					</p>
+				</fieldset>
+
+				<fieldset id="sizeSet">
+					<legend>Size</legend>
+
+					Width <div id="sliderWidth" title="Width slider"></div>
+					Height <div id="sliderHeight" title="Height slider"></div>
+					<p> 
+						<label>Width: <span id="width">200</span>px </label>  &nbsp;
+						<label> Height: <span id="height">20</span>px</label>
+					</p>
+				</fieldset>
+				<fieldset id="animationSet" class="disabled">
+					<legend>Animation</legend>
+					<p style="color:black;"><input type="checkbox" id="anim" /> Enable animation</p>
+					Duration <div id="sliderDuration" title="Duration slider"></div>
+					<p> 
+						<label>Duration <span id="duration">1</span> second(s)</label>
+					</p>
+					<fieldset id="easing">
+						<legend>Easing</legend>
+						<input type="radio" name="easing" value="easeNone" id="easeNone"/> easeNone<br/>
+						<input type="radio" name="easing" value="backBoth" /> backBoth<br/>
+						<input type="radio" name="easing" value="backIn" /> backIn<br/>
+						<input type="radio" name="easing" value="backOut" /> backOut<br/>
+						<input type="radio" name="easing" value="bounceBoth" /> bounceBoth<br/>
+						<input type="radio" name="easing" value="bounceIn" /> bounceIn<br/>
+						<input type="radio" name="easing" value="bounceOut" /> bounceOut<br/>
+						<input type="radio" name="easing" value="easeBoth" /> easeBoth<br/>
+						<input type="radio" name="easing" value="easeBothStrong" /> easeBothStrong<br/>
+						<input type="radio" name="easing" value="easeIn" /> easeIn<br/>
+						<input type="radio" name="easing" value="easeInStrong" /> easeInStrong<br/>
+						<input type="radio" name="easing" value="easeOut" /> easeOut<br/>
+						<input type="radio" name="easing" value="easeOutStrong" /> easeOutStrong<br/>
+						<input type="radio" name="easing" value="elasticBoth" /> elasticBoth<br/>
+						<input type="radio" name="easing" value="elasticIn" /> elasticIn<br/>
+						<input type="radio" name="easing" value="elasticOut" /> elasticOut<br/>
+					</fieldset>
+				</fieldset>
+
+			</fieldset>
+		</div>
+		<div id="ft">
+			<p>The ProgressBar itself is created with this code:</p>
+			<textarea name="code" class="JScript" cols="60" rows="1">
+				var pb = new Y.ProgressBar({value:50}).render('#basic');
+			</textarea>
+			
+			<p>Most of the code in this example deals with handling the interface, the sliders and other input controls.
+			When a value is changed, it is simply applied to the corresponding property of the ProgressBar. 
+			The ProgressBar responds when the slider is released, not while it is moving.
+			Leaving aside all the interface details, these are the statements that deal with those settings:</p>
+			<textarea name="code" class="JScript" cols="60" rows="1">
+				pb.set('value',valueSlider.getValue());
+				pb.set('minValue',minValueSlider.getValue());
+				pb.set('maxValue',maxValueSlider.getValue());
+				pb.set('width',widthSlider.getValue());
+				pb.set('height',heightSlider.getValue());
+				
+				pb.set('anim',checkBoxEl.get('checked'));
+				
+				var anim = pb.get('anim');
+				if (anim) { 
+					anim.set('duration', durationSlider.getValue()); 
+				}
+				
+				var anim = pb.get('anim');
+				if (anim) { 
+					anim.set('easing',Y.Easing[inputEl.get('value')]); 
+				}
+			</textarea>
+			<p>Most values are set directly, upon receiving the <code>slideEnd</code> event 
+			while those related to animation are set depending on the existence of an Anim object.  The <code>anim</code>
+			attribute, while it receives a boolean, it returns the current instance of Anim.   The <code>value</code> attribute of the radio buttons
+			for selecting the easing method, have been set to the actual names of the methods 
+			so it is easy to locate them in the <code>Y.Easing</code> object.  The ProgressBar rejects values outside of the range
+			given by <code>minValue</code> and <code>maxValue</code> so the slider goes back to whichever the actual value was read from the ProgressBar itself.</p>
+		</div>
+	</div>
+	
+<script  type="text/javascript">
+
+YUI({base:"../../build/",filter:"raw"}).use('widget','anim','progressbar','slider',function(Y) {
+	
+	var pb = new Y.ProgressBar({value:50}).render('#basic');
+
+	var valueSlider = new Y.Slider({
+		railSize: '200px',
+		thumbImage: '../../build/slider/assets/skins/sam/thumb-classic-x.png',
+		value:50,
+		min:-50,
+		max:150
+	}).render('#sliderValue');
+	valueSlider.after('valueChange',function (e) {
+		Y.get('#value').set('innerHTML',e.newVal);
+	});
+	valueSlider.after('slideEnd',function(e) {
+		var value = this.getValue();
+		pb.set('value',value);
+		var actual = pb.get('value');
+		Y.get('#actualValue').set('innerHTML',actual);
+		if (actual != value) {
+			window.setTimeout(function() {
+				valueSlider.setValue(actual); 
+			},1);
+		}
+	});
+	var minValueSlider = new Y.Slider({
+		railSize: '200px',
+		thumbImage: '../../build/slider/assets/skins/sam/thumb-classic-x.png',
+		value:0,
+		min:-50,
+		max:150
+	}).render("#sliderMinValue");
+	minValueSlider.on('valueChange', function(e) {
+		var value = Math.round(e.newVal);
+		if (value > maxValueSlider.getValue()) { 
+			return;
+		}
+		Y.get('#minValue').set('innerHTML', value);
+	}); 
+	minValueSlider.on('slideEnd', function() {
+		var value = Math.round(this.getValue());
+		if (value > maxValueSlider.getValue()) {
+			window.setTimeout(function() {
+				minValueSlider.setValue(maxValueSlider.getValue() -1)
+			},1);
+			return;
+		}
+		pb.set('minValue',value);
+	}); 
+	
+	var maxValueSlider = new Y.Slider({
+		railSize: '200px',
+		thumbImage: '../../build/slider/assets/skins/sam/thumb-classic-x.png',
+		value:100,
+		min:-50,
+		max:150
+	}).render("#sliderMaxValue");
+	maxValueSlider.on('valueChange', function(e) {
+		var value = Math.round(e.newVal);
+		if (value < minValueSlider.getValue()) {
+			return;
+		}
+		Y.get('#maxValue').set('innerHTML', value);
+	}); 
+	maxValueSlider.on('slideEnd', function() {
+		var value = Math.round(this.getValue());
+		if (value < minValueSlider.getValue()) {
+			window.setTimeout(function() {
+				maxValueSlider.setValue(minValueSlider.getValue() +1)
+			},1);
+			return;
+		}
+		pb.set('maxValue',value);
+	}); 
+
+
+	var widthSlider = new Y.Slider({
+		railSize: '200px',
+		thumbImage: '../../build/slider/assets/skins/sam/thumb-classic-x.png',
+		value:100,
+		min:0,
+		max:300
+	}).render("#sliderWidth");
+	widthSlider.on('valueChange', function(e) {
+		var value = Math.round(e.newVal);
+		Y.get('#width').set('innerHTML', value);
+	}); 
+	widthSlider.on('slideEnd', function() {
+		var value = Math.round(this.getValue());
+		pb.set('width',value);
+	}); 
+
+
+	var heightSlider = new Y.Slider({
+		railSize: '200px',
+		thumbImage: '../../build/slider/assets/skins/sam/thumb-classic-x.png',
+		value:20,
+		min:0,
+		max:80
+	}).render("#sliderHeight");
+	heightSlider.on('valueChange', function(e) {
+		var value = Math.round(e.newVal);
+		Y.get('#height').set('innerHTML', value);
+	}); 
+	heightSlider.on('slideEnd', function() {
+		var value = Math.round(this.getValue());
+		pb.set('height',value);
+	}); 
+
+	Y.get('#anim').set('checked', false);
+	Y.get('#anim').after('click',function(ev) {
+		var checked = ev.target.get('checked');
+		pb.set('anim',checked);
+		if (checked) {
+			Y.get('#animationSet').removeClass('disabled');
+		} else {
+			Y.get('#animationSet').addClass('disabled');
+		}
+	});
+		
+	var durationSlider = new Y.Slider({
+		railSize: '200px',
+		thumbImage: '../../build/slider/assets/skins/sam/thumb-classic-x.png',
+		value:1,
+		min:0,
+		max:10
+	}).render("#sliderDuration");
+	durationSlider.on('valueChange', function(e) {
+		var value = Math.round(e.newVal);
+		Y.get('#duration').set('innerHTML', value);
+	}); 
+	durationSlider.on('slideEnd', function() {
+		var value = Math.round(this.getValue());
+		var anim = pb.get('anim');
+		if (anim) { anim.set('duration', value); }
+	}); 
+
+	Y.get('#easeNone').set('checked', true);
+	Y.on('click',function(ev) {
+		var anim = pb.get('anim');
+		if (!anim) { return; }
+		var input = ev.target;
+		if (input.get('tagName').toUpperCase() != 'INPUT') { return; }
+		anim.set('easing', Y.Easing[input.get('value')]);
+	},'#easing');
+});
+</script>
+<script type="text/javascript" src="http://developer.yahoo.com/yui/assets/dpSyntaxHighlighter.js"></script>
+<script type="text/javascript" language="javascript">dp.SyntaxHighlighter.HighlightAll('code');</script>
+</body>
+</html>
+	
