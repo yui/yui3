@@ -579,39 +579,27 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 		{
             x = this.get("x");
             y = this.get("y");
-            
+            transformOrigin = this.get("transformOrigin");
+            tx = x + (transformOrigin[0] * this.get("width"));
+            ty = y + (transformOrigin[1] * this.get("height")); 
             if(isPath)
             {
-                x += this._left;
-                y += this._top;
-                matrix.init({dx: x, dy: y});
-                x = 0;
-                y = 0;
+                matrix.init({dx: x + this._left, dy: y + this._top});
             }
+            matrix.translate(tx, ty);
             for(; i < len; ++i)
             {
                 key = this._transforms[i].shift();
                 if(key)
                 {
-                    if(key == "rotate" || key == "scale")
-                    {
-				        transformOrigin = this.get("transformOrigin");
-                        tx = x + (transformOrigin[0] * this.get("width"));
-                        ty = y + (transformOrigin[1] * this.get("height")); 
-                        matrix.translate(tx, ty);
-                        matrix[key].apply(matrix, this._transforms[i]); 
-                        matrix.translate(0 - tx, 0 - ty);
-                    }
-                    else
-                    {
-                        matrix[key].apply(matrix, this._transforms[i]); 
-                    }
+                    matrix[key].apply(matrix, this._transforms[i]); 
                 }
                 if(isPath)
                 {
                     this._transforms[i].unshift(key);
                 }
 			}
+            matrix.translate(-tx, -ty);
             transform = "matrix(" + matrix.a + "," + 
                             matrix.b + "," + 
                             matrix.c + "," + 
@@ -823,6 +811,7 @@ SVGShape.ATTRS = {
      *        <dt>translateY</dt><dd>Translates the shape along the y-axis.</dd>
      *        <dt>skewX</dt><dd>Skews the shape around the x-axis.</dd>
      *        <dt>skewY</dt><dd>Skews the shape around the y-axis.</dd>
+     *        <dt>matrix</dt><dd>Specifies a 2D transformation matrix comprised of the specified six values.</dd>      
      *    </dl>
      * </p>
      * <p>Applying transforms through the transform attribute will reset the transform matrix and apply a new transform. The shape class also contains corresponding methods for each transform
@@ -841,7 +830,7 @@ SVGShape.ATTRS = {
 	 */
 	transform: {
 		setter: function(val)
-		{
+        {
             this.matrix.init();	
 		    this._transforms = this.matrix.getTransformArray(val);
             this._transform = val;

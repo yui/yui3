@@ -675,19 +675,8 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
             y = this.get("y"),
             w = this.get("width"),
             h = this.get("height"),
-            cx,
-            cy,
-            dx,
-            dy,
-            originX,
-            originY,
-            translatedCenterX,
-            translatedCenterY,
-            oldBounds,
-            newBounds,
             tx,
             ty,
-            keys = [],
             matrix = this.matrix,
             rotationMatrix = this.rotationMatrix,
             i = 0,
@@ -696,70 +685,48 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
         if(this._transforms && this._transforms.length > 0)
 		{
             transformOrigin = this.get("transformOrigin");
+            
+            //vml skew matrix transformOrigin ranges from -0.5 to 0.5.
+            //subtract 0.5 from values
+            tx = transformOrigin[0] - 0.5;
+            ty = transformOrigin[1] - 0.5;
+            
+            //ensure the values are within the appropriate range to avoid errors
+            tx = Math.max(-0.5, Math.min(0.5, tx));
+            ty = Math.max(-0.5, Math.min(0.5, ty));
+
             for(; i < len; ++i)
             {
                 key = this._transforms[i].shift();
                 if(key)
                 {
-                    if(key == "rotate")
-                    {
-                        tx = transformOrigin[0];
-                        ty =  transformOrigin[1];
-                        oldBounds = this.getBounds(matrix);
-                        matrix[key].apply(matrix, this._transforms[i]);
-                        rotationMatrix[key].apply(rotationMatrix, this._transforms[i]);
-                        newBounds = this.getBounds(matrix);
-                        cx = w * 0.5;
-                        cy = h * 0.5;
-                        originX = w * (tx);
-                        originY = h * (ty);
-                        translatedCenterX = cx - originX;
-                        translatedCenterY = cy - originY;
-                        translatedCenterX = (matrix.a * translatedCenterX + matrix.b * translatedCenterY);
-                        translatedCenterY = (matrix.d * translatedCenterX + matrix.d * translatedCenterY);
-                        translatedCenterX += originX;
-                        translatedCenterY += originY;
-                        matrix.dx = rotationMatrix.dx + translatedCenterX - (newBounds.right - newBounds.left)/2;
-                        matrix.dy = rotationMatrix.dy + translatedCenterY - (newBounds.bottom - newBounds.top)/2;
-                    }
-                    else if(key == "scale")
-                    {
-				        transformOrigin = this.get("transformOrigin");
-                        tx = x + (transformOrigin[0] * this.get("width"));
-                        ty = y + (transformOrigin[1] * this.get("height")); 
-                        matrix.translate(tx, ty);
-                        matrix[key].apply(matrix, this._transforms[i]); 
-                        matrix.translate(0 - tx, 0 - ty);
-                    }
-                    else
-                    {
-                        matrix[key].apply(matrix, this._transforms[i]); 
-                        rotationMatrix[key].apply(rotationMatrix, this._transforms[i]); 
-                    }
-                    keys.push(key);
+                    matrix[key].apply(matrix, this._transforms[i]); 
                 }
 			}
-            transform = matrix.toFilterText();
+            transform = matrix.a + "," + 
+                        matrix.c + "," + 
+                        matrix.b + "," + 
+                        matrix.d + "," + 
+                        0 + "," +
+                        0;
 		}
-        dx = matrix.dx;
-        dy = matrix.dy;
         this._graphic.addToRedrawQueue(this);    
-        //only apply the filter if necessary as it degrades image quality
-        if(Y.Array.indexOf(keys, "skew") > -1 || Y.Array.indexOf(keys, "scale") > -1)
-		{
-            node.style.filter = transform;
-        }
-        else if(Y.Array.indexOf(keys,"rotate") > -1)
+        if(transform)
         {
-            node.style.rotation = this._rotation;
-            dx = rotationMatrix.dx;
-            dy = rotationMatrix.dy;
+            if(!this._skew)
+            {
+                this._skew = DOCUMENT.createElement( '<skew class="vmlskew" xmlns="urn:schemas-microsft.com:vml" on="false" style="behavior:url(#default#VML);display:inline-block;" />');
+                this.node.appendChild(this._skew); 
+            }
+            this._skew.matrix = transform;
+            this._skew.on = true;
+            //use offset for translate
+            this._skew.offset = matrix.dx + "px, " + matrix.dy + "px";
+            this._skew.origin = tx + ", " + ty;
         }
         this._transforms = [];
-        x += dx;
-        y += dy;
         node.style.left = x + "px";
-		node.style.top = y + "px";
+		node.style.top =  y + "px";
     },
 	
 	/**
@@ -1122,6 +1089,7 @@ VMLShape.ATTRS = {
      *        <dt>translateY</dt><dd>Translates the shape along the y-axis.</dd>
      *        <dt>skewX</dt><dd>Skews the shape around the x-axis.</dd>
      *        <dt>skewY</dt><dd>Skews the shape around the y-axis.</dd>
+     *        <dt>matrix</dt><dd>Specifies a 2D transformation matrix comprised of the specified six values.</dd>      
      *    </dl>
      * </p>
      * <p>Applying transforms through the transform attribute will reset the transform matrix and apply a new transform. The shape class also contains corresponding methods for each transform

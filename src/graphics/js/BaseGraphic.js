@@ -116,11 +116,12 @@ var SETTER = "setter",
          * @return Array
          */
         getTransformArray: function(val) {
-            var re = /\s*([a-z]*)\(([\w,\s]*)\)/gi,
+            var re = /\s*([a-z]*)\(([\w,\.,\-,\s]*)\)/gi,
                 transforms = [],
                 args,
                 m;
-
+            
+            val = val.replace(/matrix/g, "multiply");
             while ((m = re.exec(val))) {
                 if (typeof this[m[1]] === 'function') {
                     args = m[2].split(',');
