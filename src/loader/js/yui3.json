@@ -162,6 +162,9 @@
         "after": [
             "autocomplete-sources"
         ], 
+        "lang": [
+            "en"
+        ], 
         "requires": [
             "autocomplete-base", 
             "event-resize", 
@@ -537,8 +540,7 @@
     "datatable-scroll": {
         "requires": [
             "datatable-base", 
-            "plugin", 
-            "stylesheet"
+            "plugin"
         ]
     }, 
     "datatable-sort": {
@@ -995,7 +997,8 @@
     }, 
     "event-resize": {
         "requires": [
-            "node-base"
+            "node-base", 
+            "event-synthetic"
         ]
     }, 
     "event-simulate": {
@@ -1843,7 +1846,7 @@
             "base-build", 
             "widget-stdmod"
         ], 
-        "skinnable": false
+        "skinnable": true
     }, 
     "widget-child": {
         "requires": [

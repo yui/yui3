@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!-- Don't specify a version on yuitest.
+     We want to use the "YUITest" global
+     instead of a "Y" global that
+     version="3" looks for. -->
+<yuitest>
+    <tests base="@TEST_ARTIFACTS_BASE@" timeout="120000">
+        <url>io/tests/smoketest.html</url>
+    </tests>
+</yuitest>

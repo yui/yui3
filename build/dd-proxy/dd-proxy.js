@@ -245,4 +245,5 @@ YUI.add('dd-proxy', function(Y) {
 
 
 
+
 }, '@VERSION@' ,{skinnable:false, requires:['dd-drag']});

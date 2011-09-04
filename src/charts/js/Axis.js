@@ -751,7 +751,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             m12 = props.m12;
             m21 = props.m21;
             m22 = props.m22;
-            if(Y.Lang.isNumber(textAlpha) && textAlpha < 1 && textAlpha > -1 && !isNaN(textAlpha))
+            if(Y_Lang.isNumber(textAlpha) && textAlpha < 1 && textAlpha > -1 && !isNaN(textAlpha))
             {
                 filterString = "progid:DXImageTransform.Microsoft.Alpha(Opacity=" + Math.round(textAlpha * 100) + ")";
             }
@@ -935,7 +935,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
 
             validator: function(val)
             {
-                return Y.Lang.isBoolean(val);
+                return Y_Lang.isBoolean(val);
             }
         },
 

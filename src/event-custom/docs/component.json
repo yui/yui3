@@ -2,7 +2,7 @@
     "name": "event-custom",
 	"displayName": "EventTarget",
 	"description": "EventTarget is a core extension class that provides APIs for publishing, firing, and subscribing to custom events",
-	"author": ["lsmith", "amoore"],
+	"author": ["lsmith", "sdesai"],
 
     "use": ["event-custom"],
     "tags": ["infrastructure", "custom event", "event target"],

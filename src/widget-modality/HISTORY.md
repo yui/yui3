@@ -1,10 +1,13 @@
-WidgetModality
-==============
+WidgetModality Change History
+=============================
 
-3.4.0PR3
---------
+3.4.1
+-----
 
-  * Changed from a widget plugin to an extension
+  * Fixed focus-contention issues which caused infinite recursion when multiple
+    modal Panels were visible on the page at the same time. [Ticket #2530953] 
 
-3.4.0PR2 - Initial release
---------------------------
+3.4.0
+-----
+
+  * Initial release.

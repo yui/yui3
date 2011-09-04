@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+
+<head>
+ 
+<!-- <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/3.3.0/build/cssfonts/fonts-min.css" />  -->
+<script type="text/javascript" src="../../../../build/yui/yui-debug.js"></script> 
+ 
+ 
+<!--begin custom header content for this example--> 
+<style type="text/css"> 
+/* Overlay Look/Feel */
+.yui3-overlay-content {
+    padding:2px;
+    border:1px solid #000;
+    background-color:#aaa;
+    font-size:93%;
+}
+ 
+.yui3-overlay-content .yui3-widget-hd {
+    font-weight:bold;
+    text-align:center;
+    padding:2px;
+    border:2px solid #aa0000;
+    background-color:#fff;
+}
+ 
+.yui3-overlay-content .yui3-widget-bd {
+    text-align:left;
+    padding:2px;
+    border:2px solid #0000aa;
+    background-color:#fff;
+}
+ 
+/* Example Layout CSS */
+.overlay-example {
+    position:relative;
+    border:1px solid #000;
+    background-color:#eee;
+    padding:5px;
+    height:25em;
+}
+ 
+.overlay-example button {
+    margin-left:1px;
+}
+ 
+.overlay-example .filler {
+    color:#999;
+}
+ 
+.align-box {
+    height:12em;
+    width:12em;
+    border:1px solid #000;
+    margin:0px;
+    text-align:center;
+}
+ 
+.align-box .title {
+    font-weight:bold;
+    color:#fff;
+    padding:2px;
+}
+ 
+#align1 {
+    position:static;
+    background-color:#0000cc;
+}
+ 
+#align2 {
+    position:relative;
+    top:-130px;
+    left:250px;
+    background-color:#00cc00;
+}
+ 
+#align3 {
+    position:absolute;
+    bottom:130px;
+    right:20px;
+    background-color:#cc0000;
+}
+ 
+#alignment {
+    padding:5px;
+    display:inline;
+    background-color:#fff;
+    border:1px solid black;
+}
+ 
+#step {
+    font-size:85%;
+    margin-left:5px;
+}
+</style> 
+<!--end custom header content for this example--> 
+ 
+</head> 
+ 
+<body class="yui3-skin-sam  yui-skin-sam"> 
+ 
+<h1>Alignment Support</h1> 
+ 
+<div class="exampleIntro"> 
+	This example shows how you can use Overlay's extended positioning support to align or center the overlay either in the viewport or relative to another node on the page. You can specify any one of 9 points (top-left, top-right, bottom-left, bottom-right, top-center, bottom-center, left-center, right-center, center) to align on both the Overlay and the node/viewport it is being aligned to.
+			
+</div> 
+ 
+<!--BEGIN SOURCE CODE FOR EXAMPLE =============================== --> 
+ 
+<div class="overlay-example" id="overlay-align"> 
+    <p><pre id="alignment"></pre><span id="step"></span></p> 
+    <p>
+    <button type="button" id="align">Next Alignment</button>
+    <button type="button" id="show">Show Overlay</button>
+    <button type="button" id="hide">Hide Overlay</button>
+    <button type="button" id="destroy">Destroy Overlay</button>
+    <button type="button" id="create">Create Overlay</button>
+    </p> 
+    <p class="filler">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc pretium quam eu mi varius pulvinar. Duis orci arcu, ullamcorper sit amet, luctus ut, interdum ac, quam. Pellentesque euismod. Nam tincidunt, purus in ultrices congue, urna neque posuere arcu, aliquam tristique purus sapien id nulla. Etiam rhoncus nulla at leo. Cras scelerisque nisl in nibh. Sed eget odio. Morbi elit elit, porta a, convallis sit amet, rhoncus non, felis. Mauris nulla pede, pretium eleifend, porttitor at, rutrum id, orci. Quisque non urna. Nulla aliquam rhoncus est.</p> 
+    <div id="align1" class="align-box"><span class="title">id = #align1</span></div> 
+    <div id="align2" class="align-box"><span class="title">id = #align2</span></div> 
+    <div id="align3" class="align-box"><span class="title">id = #align3</span></div> 
+</div> 
+ 
+<script type="text/javascript"> 
+YUI({ filter: 'raw' }).use("overlay", function(Y) {
+ 
+    var overlay;
+
+    /* Create Overlay from script, this time. No footer */
+    function initOverlay() {
+        if (!overlay) {
+            overlay = new Y.Overlay({
+                width:"10em",
+                height:"10em",
+                headerContent: "Aligned Overlay",
+                bodyContent: "Click the 'Align Next' button",
+                zIndex:2,
+
+                //change the alignment settings
+                alignOn: [
+                    {
+                        node     : Y,
+                        eventName: 'scroll'
+                    },
+                    {
+                        node     : Y.one('#overlay-align'),
+                        eventName: 'click'
+                    },
+                    {
+                        node     : Y.one('win'),
+                        eventName: 'resize'
+                    }
+                ]
+            });
+        }
+
+        /* Render it to #overlay-align element */
+        overlay.render("#overlay-align");
+    }
+ 
+    initOverlay();
+ 
+    var alignment = Y.one("#alignment");
+    var stepNumber = Y.one("#step");
+ 
+    /* Setup local variable for Y.WidgetPositionAlign, since we use it multiple times */
+    var WidgetPositionAlign = Y.WidgetPositionAlign;
+ 
+    var steps = [
+        function() {
+            /* Center in #overlay-align */
+            overlay.set("align", {node:"#overlay-align", points:[WidgetPositionAlign.CC, WidgetPositionAlign.CC]});
+            alignment.set("innerHTML", 'align: {node:"#overlay-align", points:["cc", "cc"]}');
+        },
+        function() {
+            /* Align top-left corner of overlay, with top-right corner of #align1 */ 
+            overlay.set("align", {node:"#align1", points:[WidgetPositionAlign.TL, WidgetPositionAlign.TR]});
+            alignment.set("innerHTML", 'align: {node:"#align1", points:["tl", "tr"]}');
+        },
+        function() {
+            /* Center overlay in #align2 */
+            overlay.set("centered", "#align2");
+            alignment.set("innerHTML", 'centered: "#align2"');
+        },
+        function() {
+            /* Align right-center edge of overlay with right-center edge of viewport */
+            overlay.set("align", {points:[WidgetPositionAlign.RC, WidgetPositionAlign.RC]});
+            alignment.set("innerHTML", 'align: {points:["rc", "rc"]} (viewport)');
+        },
+        function() {
+            /* Center overlay in viewport */
+            overlay.set("centered", true);
+            alignment.set("innerHTML", "centered: true (viewport)");
+        },
+        function() {
+            /* Align top-center edge of overlay with bottom-center edge of #align3 */
+            overlay.set("align", {node:"#align3", points:[WidgetPositionAlign.TC, WidgetPositionAlign.BC]});
+            alignment.set("innerHTML", 'align: {node:"#align3", points:["tc", "bc"]}');
+        }
+    ];
+ 
+    var step = 0;
+    var totalSteps = steps.length;
+ 
+    function alignNext() {
+        if (overlay) {
+            stepNumber.set("innerHTML", "Alignment " + (step+1) + " of " + totalSteps);
+            steps[step]();
+            step = (++step)%(totalSteps);
+        }
+    }
+ 
+    alignNext();
+ 
+    Y.on("click", alignNext, "#align");
+
+    Y.one('#show').on('click', function(e) {
+        overlay && overlay.show(); 
+    });
+
+    Y.one('#hide').on('click', function(e) {
+       overlay && overlay.hide(); 
+    });
+
+    Y.one('#destroy').on('click', function(e) {
+       overlay && overlay.destroy(); 
+       overlay = null;
+    });
+
+    Y.one("#create").on('click', initOverlay);
+
+});
+</script> 
+
+</body>
+</html>
+ 

@@ -192,6 +192,7 @@ properties.
                 loader = new Y.Loader(Y.config);
                 Y.Env._loader = loader;
             }
+            YUI.Env.core = Y.Array.dedupe([].concat(YUI.Env.core, [ 'loader-base', 'loader-rollup', 'loader-yui3' ]));
 
             return loader;
         },
@@ -298,6 +299,7 @@ proto = {
 
         if (!Env) {
             Y.Env = {
+                core: ['get','features','intl-base','rls','yui-log','yui-later'],
                 mods: {}, // flat module map
                 versions: {}, // version module map
                 base: BASE,
@@ -457,7 +459,8 @@ proto = {
         var i, Y = this,
             core = [],
             mods = YUI.Env.mods,
-            extras = Y.config.core || ['get','features','intl-base','rls','yui-log','yui-later'];
+            //extras = Y.config.core || ['get','features','intl-base','rls','yui-log','yui-later'];
+            extras = Y.config.core || [].concat(YUI.Env.core); //Clone it..
 
         for (i = 0; i < extras.length; i++) {
             if (mods[extras[i]]) {
@@ -467,6 +470,10 @@ proto = {
 
         Y._attach(['yui-base']);
         Y._attach(core);
+
+        if (Y.Loader) {
+            getLoader(Y);
+        }
 
     },
 
@@ -570,6 +577,8 @@ with any configuration info required for the module.
     /**
      * Executes the function associated with each required
      * module, binding the module to the YUI instance.
+     * @param {Array} r The array of modules to attach
+     * @param {Boolean} [moot=false] Don't throw a warning if the module is not attached
      * @method _attach
      * @private
      */
@@ -578,26 +587,42 @@ with any configuration info required for the module.
             mods = YUI.Env.mods,
             aliases = YUI.Env.aliases,
             Y = this, j,
+            loader = Y.Env._loader,
             done = Y.Env._attached,
-            len = r.length, loader;
+            len = r.length, loader,
+            c = [];
 
-        //console.info('attaching: ' + r, 'info', 'yui');
+        //Check for conditional modules (in a second+ instance) and add their requirements
+        //TODO I hate this entire method, it needs to be fixed ASAP (3.5.0) ^davglass
+        for (i = 0; i < len; i++) {
+            name = r[i];
+            mod = mods[name];
+            c.push(name);
+            if (loader && loader.conditions[name]) {
+                Y.Object.each(loader.conditions[name], function(def) {
+                    var go = def && ((def.ua && Y.UA[def.ua]) || (def.test && def.test(Y)));
+                    if (go) {
+                        c.push(def.name);
+                    }
+                });
+            }
+        }
+        r = c;
+        len = r.length;
 
         for (i = 0; i < len; i++) {
             if (!done[r[i]]) {
                 name = r[i];
                 mod = mods[name];
+
                 if (aliases && aliases[name]) {
                     Y._attach(aliases[name]);
                     continue;
                 }
                 if (!mod) {
-                    loader = Y.Env._loader;
                     if (loader && loader.moduleInfo[name]) {
                         mod = loader.moduleInfo[name];
-                        if (mod.use) {
-                            moot = true;
-                        }
+                        moot = true;
                     }
 
 
@@ -613,7 +638,7 @@ with any configuration info required for the module.
                 } else {
                     done[name] = true;
                     //Don't like this, but in case a mod was asked for once, then we fetch it
-                    //We need to remove it from the missed list
+                    //We need to remove it from the missed list ^davglass
                     for (j = 0; j < Y.Env._missed.length; j++) {
                         if (Y.Env._missed[j] === name) {
                             Y.message('Found: ' + name + ' (was reported as missing earlier)', 'warn', 'yui');
@@ -945,6 +970,7 @@ with any configuration info required for the module.
             len = missing.length;
         }
 
+
         // dynamic load
         if (boot && len && Y.Loader) {
             Y._loading = true;
@@ -1033,13 +1059,13 @@ with any configuration info required for the module.
 
 
     /**
-    Adds a namespace object onto the YUI global if called statically:
+    Adds a namespace object onto the YUI global if called statically.
 
         // creates YUI.your.namespace.here as nested objects
         YUI.namespace("your.namespace.here");
 
-    If called as an instance method on the YUI instance, it creates the
-    namespace on the instance:
+    If called as a method on a YUI <em>instance</em>, it creates the
+    namespace on the instance.
 
          // creates Y.property.package
          Y.namespace("property.package");
@@ -1052,15 +1078,14 @@ with any configuration info required for the module.
     If the first token in the namespace string is "YAHOO", the token is
     discarded.
 
-    Be careful when naming packages. Reserved words may work in some browsers
-    and not others. For instance, the following will fail in some browsers:
+    Be careful with namespace tokens. Reserved words may work in some browsers
+    and not others. For instance, the following will fail in some browsers
+    because the supported version of JavaScript reserves the word "long":
     
          Y.namespace("really.long.nested.namespace");
     
-    This fails because `long` is a future reserved word in ECMAScript
-    
     @method namespace
-    @param  {String[]} namespace* 1-n namespaces to create.
+    @param  {String} namespace* namespaces to create.
     @return {Object}  A reference to the last namespace object created.
     **/
     namespace: function() {
@@ -4905,9 +4930,12 @@ if (!YUI.$rls) {
             Y = rls_active.inst;
         if (Y) {
             if (req.error) {
+                if (!req.missing) {
+                    req.missing = [];
+                }
                 Y.rls_failure({
                     message: req.error,
-                    data: req.modules
+                    data: [].concat(req.modules, req.missing)
                 });
             }
             if (YUI.Env && YUI.Env.rls_disabled) {
