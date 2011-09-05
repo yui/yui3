@@ -3,7 +3,7 @@
     "displayName": "DataSource",
     "description": "The DataSource Utility provides a common configurable interface for other components to fetch tabular data from a variety of local or remote sources.",
 
-    "author": ["jenny","lsmith"],
+    "author": ["lsmith", "ericf"],
     "use": ["datasource"],
     "tags": ["utility", "datasource"],
 

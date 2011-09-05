@@ -3,7 +3,7 @@
 <head>
  
 <!-- <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/3.3.0/build/cssfonts/fonts-min.css" />  -->
-<script type="text/javascript" src="../../../build/yui/yui-debug.js"></script> 
+<script type="text/javascript" src="../../../../build/yui/yui-debug.js"></script> 
  
  
 <!--begin custom header content for this example--> 
@@ -141,8 +141,16 @@ YUI({ filter: 'raw' }).use("overlay", function(Y) {
                 //change the alignment settings
                 alignOn: [
                     {
-                        node: Y,
-                        eventName: "scroll"
+                        node     : Y,
+                        eventName: 'scroll'
+                    },
+                    {
+                        node     : Y.one('#overlay-align'),
+                        eventName: 'click'
+                    },
+                    {
+                        node     : Y.one('win'),
+                        eventName: 'resize'
                     }
                 ]
             });

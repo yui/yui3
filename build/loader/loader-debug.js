@@ -3149,8 +3149,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "datatable-scroll": {
         "requires": [
             "datatable-base", 
-            "plugin", 
-            "stylesheet"
+            "plugin"
         ]
     }, 
     "datatable-sort": {
@@ -4627,7 +4626,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '785b95bfdfb4b6f25166879443875977';
+YUI.Env[Y.version].md5 = 'ae7c21f9334a951f6f7fccf02d14a25f';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
