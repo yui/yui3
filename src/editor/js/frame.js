@@ -146,6 +146,12 @@
                 if (e.type.substring(0, 3) !== 'key') {
                     node = this._instance.one('win');
                     xy = this._iframe.getXY();
+                    // Sometimes in IE8, this._iframe._node becomes null
+                    // after hiding some elements, thus causing a javascript
+                    // error
+                    if (xy === null) {
+                       return;
+                    }
                     e.frameX = xy[0] + e.pageX - node.get('scrollLeft');
                     e.frameY = xy[1] + e.pageY - node.get('scrollTop');
                 }
