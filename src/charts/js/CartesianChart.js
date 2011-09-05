@@ -55,12 +55,12 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         var graph = this.get("graph"),
             bb = this.get("boundingBox"),
             cb = graph.get("contentBox"),
-            x = e.pageX,
-            offsetX = x - cb.getX(),
-            posX = x - bb.getX(),
-            y = e.pageY,
-            offsetY = y - cb.getY(),
-            posY = y - bb.getY(),
+            pageX = e.pageX,
+            offsetX = pageX - cb.getX(),
+            posX = pageX - bb.getX(),
+            pageY = e.pageY,
+            offsetY = pageY - cb.getY(),
+            posY = pageY - bb.getY(),
             sc = graph.get("seriesCollection"),
             series,
             i = 0,
@@ -134,7 +134,17 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
          */
         if(index > -1)
         {
-            this.fire("planarEvent:mouseover", {categoryItem:categoryItems, valueItem:valueItems, x:posX, y:posY, items:items, index:index});
+            this.fire("planarEvent:mouseover", {
+                categoryItem:categoryItems, 
+                valueItem:valueItems, 
+                x:posX, 
+                y:posY, 
+                pageX:pageX,
+                pageY:pageY,
+                items:items, 
+                index:index,
+                originEvent:e
+            });
         }
         else
         {
