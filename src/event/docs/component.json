@@ -2,7 +2,7 @@
     "name": "event",
 	"displayName": "Event",
 	"description": "The Event system provides APIs for subscribing to and working with DOM events",
-	"author": ["lsmith", "amoore", "sdesai", "rgrove"],
+	"author": ["lsmith", "sdesai"],
 
     "use": ["event"],
     "tags": ["core", "event", "dom"],
