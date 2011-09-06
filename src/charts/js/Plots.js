@@ -154,7 +154,7 @@ Plots.prototype = {
     {
         var marker,
             border = styles.border;
-        styles.id = "series_" + order + "_" + index;
+        styles.id = this.get("chart").get("id") + "_" + order + "_" + index;
         //fix name differences between graphic layer
         border.opacity = border.alpha;
         styles.stroke = border;

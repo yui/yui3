@@ -5556,7 +5556,7 @@ Plots.prototype = {
     {
         var marker,
             border = styles.border;
-        styles.id = "series_" + order + "_" + index;
+        styles.id = this.get("chart").get("id") + "_" + order + "_" + index;
         //fix name differences between graphic layer
         border.opacity = border.alpha;
         styles.stroke = border;
@@ -6543,6 +6543,22 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          * @type Array
          */
         ycoords: {},
+
+        /**
+         * Reference to the `Chart` application.
+         *
+         * @attribute chart
+         * @type ChartBase
+         * @readOnly
+         */
+        chart: {
+            readOnly: true,
+
+            getter: function()
+            {
+                return this.get("graph").get("chart");
+            }
+        },
         
         /**
          * Reference to the `Graph` in which the series is drawn into.
@@ -10028,6 +10044,15 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
 }, {
     ATTRS: {
         /**
+         * Reference to the chart instance using the graph.
+         *
+         * @attribute chart
+         * @type ChartBase
+         * @readOnly
+         */
+        chart: {},
+
+        /**
          * Collection of series. When setting the `seriesCollection` the array can contain a combination of either
          * `CartesianSeries` instances or object literals with properties that will define a series.
          *
@@ -10358,7 +10383,7 @@ ChartBase.prototype = {
      */
     _getGraph: function()
     {
-        var graph = new Y.Graph();
+        var graph = new Y.Graph({chart:this});
         graph.after("chartRendered", Y.bind(function(e) {
             this.fire("chartRendered");
         }, this));
@@ -10631,12 +10656,14 @@ ChartBase.prototype = {
             cb = this.get("contentBox"),
             markerNode = e.currentTarget,
             strArr = markerNode.getAttribute("id").split("_"),
-            seriesIndex = strArr[1],
+            index = strArr.pop(),
+            seriesIndex = strArr.pop(),
             series = this.getSeries(parseInt(seriesIndex, 10)),
-            index = strArr[2],
             items = this.getSeriesItems(series, index),
-            x = e.pageX - cb.getX(),
-            y = e.pageY - cb.getY();
+            pageX = e.pageX,
+            pageY = e.pageY,
+            x = pageX - cb.getX(),
+            y = pageY - cb.getY();
         if(type == "mouseenter")
         {
             type = "mouseover";
@@ -10738,7 +10765,19 @@ ChartBase.prototype = {
          *      <dt>seriesIndex</dt><dd>The `order` of the marker's series.</dd>
          *  </dl>
          */
-        this.fire("markerEvent:" + type, {categoryItem:items.category, valueItem:items.value, node:markerNode, x:x, y:y, series:series, index:index, seriesIndex:seriesIndex});
+        this.fire("markerEvent:" + type, {
+            originEvent: e,
+            pageX:pageX, 
+            pageY:pageY, 
+            categoryItem:items.category, 
+            valueItem:items.value, 
+            node:markerNode, 
+            x:x, 
+            y:y, 
+            series:series, 
+            index:index, 
+            seriesIndex:seriesIndex
+        });
     },
 
     /**
@@ -11126,12 +11165,12 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         var graph = this.get("graph"),
             bb = this.get("boundingBox"),
             cb = graph.get("contentBox"),
-            x = e.pageX,
-            offsetX = x - cb.getX(),
-            posX = x - bb.getX(),
-            y = e.pageY,
-            offsetY = y - cb.getY(),
-            posY = y - bb.getY(),
+            pageX = e.pageX,
+            offsetX = pageX - cb.getX(),
+            posX = pageX - bb.getX(),
+            pageY = e.pageY,
+            offsetY = pageY - cb.getY(),
+            posY = pageY - bb.getY(),
             sc = graph.get("seriesCollection"),
             series,
             i = 0,
@@ -11205,7 +11244,17 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
          */
         if(index > -1)
         {
-            this.fire("planarEvent:mouseover", {categoryItem:categoryItems, valueItem:valueItems, x:posX, y:posY, items:items, index:index});
+            this.fire("planarEvent:mouseover", {
+                categoryItem:categoryItems, 
+                valueItem:valueItems, 
+                x:posX, 
+                y:posY, 
+                pageX:pageX,
+                pageY:pageY,
+                items:items, 
+                index:index,
+                originEvent:e
+            });
         }
         else
         {
