@@ -1,6 +1,24 @@
-YUI.add('dial-test', function(Y) {
+YUI.add('dial-test',  function(Y) {         //'event-key-tests',
 
+// copied this from event-key-test.js to add tests for changing value by keyboard
+Y.Node.prototype.key = function (code, mods, type) {
+    var simulate = Y.Event.simulate,
+        el       = this._node,
+        config   = Y.merge(mods || {}, { keyCode: code, charCode: code });
 
+    if (typeof code === "string") {
+        code = code.charCodeAt(0);
+    }
+
+    if (type) {
+        simulate(el, type, config);
+    } else {
+        simulate(el, 'keydown', config);
+        simulate(el, 'keyup', config);
+        simulate(el, 'keypress', config);
+    }
+};
+// END   copied this from event-key-test.js to add tests for changing value by keyboard
 
 
 var suite = new Y.Test.Suite("Y.Dial");
@@ -580,7 +598,7 @@ suite.add( new Y.Test.Case({
 	    // In order to see it, you need to put a breakpoint on the ring.simulate line just after this is called
 	    // Turn the global enableVis to false before check in
         visualInspection: function (x,y,dialObj){
-            var enableVis = false; // Global enable. You'll need to put breakpoints in code to see it.
+            var enableVis = true; // Global enable. You'll need to put breakpoints in code to see it.
             if(enableVis){
                 var eventXYMarker,
                 scrollT = Y.one('document').get('scrollTop'),
@@ -1228,23 +1246,95 @@ suite.add( new Y.Test.Case({
 
 
 
-            eventX =  -10; 
+            eventX =  -22; 
             eventY = -30; 
             this.visualInspection(eventX,eventY,dial);
             ring.simulate("mouseover", getXYProps());	
 			Y.Assert.areEqual( 0, dial.get('value'), '< min at 11oclock passed min 2nd time');
  
-            eventX =  12; 
-            eventY = -40; 
+            eventX =  22; 
+            eventY = -30; 
             this.visualInspection(eventX,eventY,dial);
             ring.simulate("mouseover", getXYProps());	
-			Y.Assert.areEqual( 10, dial.get('value'), 'now drag back to > min');
+			Y.Assert.areEqual( 16, dial.get('value'), 'now drag back to > min');
 
 
 			dial.destroy();
 		} //,
 }));
 
+
+
+
+
+suite.add( new Y.Test.Case({
+    name: "Keyboard value changes",
+
+	setUp: function () {
+		Y.one('body').append('<span id="testbed"></span>');
+	},
+
+	tearDown: function () {
+		Y.one('#testbed').remove(true);
+	},
+
+    "test going to be key test": function () {
+        Y.one('#testbed').append('<div id="dial"></div><div id="ref"></div>');
+        var testbed = Y.one("#dial"),
+            ref     = Y.one("#ref"),
+            dial, calcSize, bb;
+        dial = new Y.Dial({handleDiameter: 0.53 }).render( testbed );
+        bb = testbed.get('firstChild');
+        calcSize = dial.get('diameter') * dial.get('handleDiameter');
+        Y.Assert.areEqual( calcSize, dial._handleNode.get('offsetWidth') );
+        dial.destroy();
+    },
+    
+    "test changing dial value by keyboard": function () {
+        Y.one('#testbed').append('<div id="dial"></div><div id="ref"></div>');
+        var testbed = Y.one("#dial"),
+            ref     = Y.one("#ref"),
+            dial;
+        dial = new Y.Dial({value: 12, max: 97, min: -52 }).render( testbed );
+        var input = dial._ringNode;
+        input.key(33); // pageUp
+        Y.Assert.areEqual(22, dial.get('value'));
+        input.key(38); // up
+        Y.Assert.areEqual(23, dial.get('value'));
+        input.key(39); // right
+        Y.Assert.areEqual(24, dial.get('value'));
+        input.key(33); // pageUp
+        Y.Assert.areEqual(34, dial.get('value'));
+        input.key(40); // down
+        Y.Assert.areEqual(33, dial.get('value'));
+        input.key(34); // pageDown
+        Y.Assert.areEqual(23, dial.get('value'));
+        input.key(37); // left
+        input.key(37); // left
+        Y.Assert.areEqual(21, dial.get('value'));
+        input.key(36); // home 
+        Y.Assert.areEqual(12, dial.get('value'));
+        input.key(35); // end 
+        Y.Assert.areEqual(97, dial.get('value'));
+        // beyond max
+        input.key(33); // pageUp
+        Y.Assert.areEqual(97, dial.get('value'));
+        input.key(38); // up
+        Y.Assert.areEqual(97, dial.get('value'));
+        input.key(39); // right
+        Y.Assert.areEqual(97, dial.get('value'));
+
+        // min and beyond
+        dial.set('value', -50);
+        input.key(34); // pageDown
+        Y.Assert.areEqual(-52, dial.get('value'));
+        input.key(40); // down
+        Y.Assert.areEqual(-52, dial.get('value'));
+        input.key(37); // left
+        Y.Assert.areEqual(-52, dial.get('value'));
+    }
+
+}));
 
 
 
@@ -1266,4 +1356,4 @@ suite.add( new Y.Test.Case({
 Y.Test.Runner.add( suite );
 
 
-}, '@VERSION@' ,{requires:['test', 'dial']});
+}, '@VERSION@' ,{requires:['test', 'dial']});     //, 'event-key'
