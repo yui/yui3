@@ -453,7 +453,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         for(; i < len; ++i)
         {
             sc[i].draw();
-            if(!sc[i].get("xcoords") || !sc[i].get("ycoords"))
+            if((!sc[i].get("xcoords") || !sc[i].get("ycoords")) && !sc[i] instanceof Y.PieSeries)
             {
                 this._callLater = true;
                 break;
