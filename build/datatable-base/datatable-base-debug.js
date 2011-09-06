@@ -1569,7 +1569,7 @@ Y.extend(DTBase, Y.Widget, {
 
             if (YLang.isFunction(formatter)) {
                 // function formatters need to run before checking if the value
-                // needs defaulting from column.defaultValue
+                // needs defaulting from column.emptyCellValue
                 formatter = Y.bind(this._functionFormatter, this, formatter);
             } else {
                 if (!YLang.isString(formatter)) {
