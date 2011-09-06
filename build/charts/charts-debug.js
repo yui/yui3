@@ -8820,8 +8820,23 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         if(isFinite(w) && isFinite(h) && w > 0 && h > 0)
         {   
             this._rendered = true;
-            this.drawSeries();
-            this.fire("drawingComplete");
+                if(this._drawing)
+                {
+                    this._callLater = true;
+                    return;
+                }
+                this._drawing = true;
+                this._callLater = false;
+                this.drawSeries();
+                this._drawing = false;
+                if(this._callLater)
+                {
+                    this.draw();
+                }
+                else
+                {
+                    this.fire("drawingComplete");
+                }
         }
     },
 
@@ -8850,8 +8865,9 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             tfa,
             padding = styles.padding,
             graph = this.get("graph"),
-            w = graph.get("width") - (padding.left + padding.right),
-            h = graph.get("height") - (padding.top + padding.bottom),
+            minDimension = Math.min(graph.get("width"), graph.get("height")),
+            w = minDimension - (padding.left + padding.right),
+            h = minDimension - (padding.top + padding.bottom),
             startAngle = -90,
             halfWidth = w / 2,
             halfHeight = h / 2,
@@ -8866,7 +8882,6 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             marker,
             graphOrder = this.get("graphOrder"),
             isCanvas = Y.Graphic.NAME == "canvasGraphic";
-
         for(; i < itemCount; ++i)
         {
             value = values[i];
@@ -9977,7 +9992,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         for(; i < len; ++i)
         {
             sc[i].draw();
-            if(!sc[i].get("xcoords") || !sc[i].get("ycoords"))
+            if((!sc[i].get("xcoords") || !sc[i].get("ycoords")) && !sc[i] instanceof Y.PieSeries)
             {
                 this._callLater = true;
                 break;
@@ -12938,7 +12953,11 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
      */
     _sizeChanged: function(e)
     {
-        this._redraw();
+        var graph = this.get("graph");
+        if(graph)
+        {
+            graph.set(e.attrName, e.newVal);
+        }
     },
 
     /**
