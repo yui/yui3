@@ -1,4 +1,4 @@
-YUI.add('dial-test',  function(Y) {         //'event-key-tests',
+YUI.add('dial-test',  function(Y) {
 
 // copied this from event-key-test.js to add tests for changing value by keyboard
 Y.Node.prototype.key = function (code, mods, type) {
@@ -1263,10 +1263,6 @@ suite.add( new Y.Test.Case({
 		} //,
 }));
 
-
-
-
-
 suite.add( new Y.Test.Case({
     name: "Keyboard value changes",
 
@@ -1278,18 +1274,6 @@ suite.add( new Y.Test.Case({
 		Y.one('#testbed').remove(true);
 	},
 
-    "test going to be key test": function () {
-        Y.one('#testbed').append('<div id="dial"></div><div id="ref"></div>');
-        var testbed = Y.one("#dial"),
-            ref     = Y.one("#ref"),
-            dial, calcSize, bb;
-        dial = new Y.Dial({handleDiameter: 0.53 }).render( testbed );
-        bb = testbed.get('firstChild');
-        calcSize = dial.get('diameter') * dial.get('handleDiameter');
-        Y.Assert.areEqual( calcSize, dial._handleNode.get('offsetWidth') );
-        dial.destroy();
-    },
-    
     "test changing dial value by keyboard": function () {
         Y.one('#testbed').append('<div id="dial"></div><div id="ref"></div>');
         var testbed = Y.one("#dial"),
@@ -1356,4 +1340,4 @@ suite.add( new Y.Test.Case({
 Y.Test.Runner.add( suite );
 
 
-}, '@VERSION@' ,{requires:['test', 'dial']});     //, 'event-key'
+}, '@VERSION@' ,{requires:['test', 'dial']});
