@@ -1316,6 +1316,8 @@ suite.add( new Y.Test.Case({
         Y.Assert.areEqual(-52, dial.get('value'));
         input.key(37); // left
         Y.Assert.areEqual(-52, dial.get('value'));
+        
+		dial.destroy();
     }
 
 }));
