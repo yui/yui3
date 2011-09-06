@@ -520,6 +520,15 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
 }, {
     ATTRS: {
         /**
+         * Reference to the chart instance using the graph.
+         *
+         * @attribute chart
+         * @type ChartBase
+         * @readOnly
+         */
+        chart: {},
+
+        /**
          * Collection of series. When setting the `seriesCollection` the array can contain a combination of either
          * `CartesianSeries` instances or object literals with properties that will define a series.
          *
