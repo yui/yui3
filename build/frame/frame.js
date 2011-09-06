@@ -133,6 +133,11 @@ YUI.add('frame', function(Y) {
         */
         _onDomEvent: function(e) {
             var xy, node;
+            
+            if (!Y.Node.getDOMNode(this._iframe)) {
+                //The iframe is null for some reason, bail on sending events.
+                return;
+            }
 
             e.frameX = e.frameY = 0;
 
@@ -979,4 +984,4 @@ YUI.add('frame', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute', 'yui-throttle'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['base', 'node', 'selector-css3', 'substitute', 'yui-throttle']});
