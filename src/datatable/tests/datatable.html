@@ -548,6 +548,35 @@ _should: {
                 Y.Assert.areSame('(NO D)', table._tbodyNode.all('tr').item(3)
                     .all('.yui3-datatable-liner').item(3).getContent());
 
+            },
+
+            "setting the recordset should update the UI": function () {
+                // Ticket #2529920 (comment 18)
+                // http://yuilibrary.com/projects/yui3/ticket/2529920#comment:18
+                var data = [ {a:1,b:1,c:1}, {a:2,b:2,c:2}, {a:3,b:3,c:3} ],
+                    container = Y.one('#base'),
+                    table, cell;
+
+                container.empty(true);
+
+                table = new Y.DataTable.Base({
+                    recordset: data,
+                    columnset: [ 'a', 'b', 'c' ]
+                }); 
+
+                table.render(container);
+
+                cell = table._tbodyNode.one('.yui3-datatable-liner');
+                Y.Assert.areSame('1', cell.get('text'));
+
+                table.set('recordset', [
+                    { a: 10,b: 10,c: 10 },
+                    { a: 20,b: 20,c: 20 },
+                    { a: 30,b: 30,c: 30 }
+                ]);
+
+                cell = table._tbodyNode.one('.yui3-datatable-liner');
+                Y.Assert.areSame('10', cell.get('text'));
             }
         });
 
