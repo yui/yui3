@@ -156,7 +156,7 @@ Y.extend(DTBase, Y.Widget, {
     * @property tdTemplate
     * @description Tokenized markup template for TD node creation.
     * @type String
-    * @default '<td headers="{headers}"><div class="'+CLASS_LINER+'">{value}</div></td>'
+    * @default '<td headers="{headers}" class="{classnames}"><div class="yui3-datatable-liner">{value}</div></td>'
     */
     tdTemplate: TEMPLATE_TD,
     
@@ -827,21 +827,39 @@ Y.extend(DTBase, Y.Widget, {
     _addTbodyTdNode: function(o) {
         o.td = this._createTbodyTdNode(o);
         this._attachTbodyTdNode(o);
+        delete o.td;
     },
     
+    /**
+    Creates a TD Node from the tdTemplate property using the input object as
+    template {placeholder} values.  The created Node is also assigned to the
+    `td` property on the input object.
+
+    If the input object already has a `td` property, it is returned an no new
+    Node is created.
+
+    @method createCell
+    @param {Object} data Template values
+    @return {Node}
+    **/
+    createCell: function (data) {
+        return data && (data.td ||
+            (data.td = Ycreate(fromTemplate(this.tdTemplate, data))));
+    },
+
     /**
     * Creates data cell element.
     *
     * @method _createTbodyTdNode
     * @param o {Object} {record, column, tr}.
     * @protected
-    * @return Y.Node
+    * @return {Node}
     */
     _createTbodyTdNode: function(o) {
         o.headers = o.column.headers;
         o.value   = this.formatDataCell(o);
 
-        return Ycreate(fromTemplate(this.tdTemplate, o));
+        return o.td || this.createCell(o);
     },
     
     /**
