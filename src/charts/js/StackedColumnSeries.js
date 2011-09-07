@@ -53,8 +53,8 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
         if(!useOrigin)
         {
             lastCollection = seriesCollection[order - 1];
-            negativeBaseValues = lastCollection.get("negativeBaseValues");
-            positiveBaseValues = lastCollection.get("positiveBaseValues");
+            negativeBaseValues = lastCollection.get("negativeBaseValues") || [];
+            positiveBaseValues = lastCollection.get("positiveBaseValues") || [];
         }
         else
         {
