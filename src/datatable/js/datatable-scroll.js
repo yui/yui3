@@ -123,7 +123,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     *
     * @property _parentTableNode
     * @private
-    * @type Y.Node
+    * @type {Node}
     */
     _parentTableNode: null,
     
@@ -133,7 +133,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     *
     * @property _parentTheadNode
     * @private
-    * @type Y.Node
+    * @type {Node}
     */
     _parentTheadNode: null,
     
@@ -143,7 +143,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     *
     * @property _parentTbodyNode
     * @private
-    * @type Y.Node
+    * @type {Node}
     */
     _parentTbodyNode: null,
     
@@ -153,7 +153,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     *
     * @property _parentMsgNode
     * @private
-    * @type Y.Node
+    * @type {Node}
     */
     _parentMsgNode: null,
     
@@ -163,7 +163,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     *
     * @property _parentContainer
     * @private
-    * @type Y.Node
+    * @type {Node}
     */
     _parentContainer: null,
     
@@ -173,7 +173,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     *
     * @property _bodyContainerNode
     * @private
-    * @type Y.Node
+    * @type {Node}
     */
     _bodyContainerNode: null,
     
@@ -183,7 +183,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     *
     * @property _headerContainerNode
     * @private
-    * @type Y.Node
+    * @type {Node}
     */
     _headerContainerNode: null,
     
