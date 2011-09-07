@@ -35,7 +35,10 @@
 </head>
 <body class="yui3-skin-sam">
 <script type="text/javascript">
-	YUI({useBrowserConsole:false}).use("test", "classnamemanager", "console", function(Y) {
+	YUI({
+        useBrowserConsole:false,
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+    }).use("test", "classnamemanager", "console", function(Y) {
 
 	    var testClassNameManager = new Y.Test.Case({
 

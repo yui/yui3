@@ -37,7 +37,10 @@
 
     <script type="text/javascript">
 
-        YUI({filter: "raw"}).use("node-event-simulate", "widget", "widget-parent", "widget-child", "test", "console", function (Y) {
+        YUI({
+            useBrowserConsole:false,
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+        }).use("node-event-simulate", "widget", "widget-parent", "widget-child", "test", "console", function (Y) {
 
             var RootWidget = function () {
                 RootWidget.superclass.constructor.apply(this, arguments);
