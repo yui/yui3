@@ -53,13 +53,13 @@ Y_DOM = {
      * @param {Boolean} testSelf optional Whether or not to include the element in the scan 
      * @return {HTMLElement | null} The matching DOM node or null if none found. 
      */
-    ancestor: function(element, fn, testSelf, stopAt) {
+    ancestor: function(element, fn, testSelf, stopFn) {
         var ret = null;
         if (testSelf) {
             ret = (!fn || fn(element)) ? element : null;
 
         }
-        return ret || Y_DOM.elementByAxis(element, PARENT_NODE, fn, null);
+        return ret || Y_DOM.elementByAxis(element, PARENT_NODE, fn, null, stopFn);
     },
 
     /*
@@ -72,13 +72,18 @@ Y_DOM = {
      * @param {Boolean} testSelf optional Whether or not to include the element in the scan 
      * @return {Array} An array containing all matching DOM nodes.
      */
-    ancestors: function(element, fn, testSelf) {
-        var ancestor = Y_DOM.ancestor.apply(Y_DOM, arguments),
-            ret = (ancestor) ? [ancestor] : [];
+    ancestors: function(element, fn, testSelf, stopFn) {
+        var ancestor = element,
+            ret = [];
 
-        while ((ancestor = Y_DOM.ancestor(ancestor, fn))) {
+        while ((ancestor = Y_DOM.ancestor(ancestor, fn, testSelf, stopFn))) {
+            testSelf = false;
             if (ancestor) {
                 ret.unshift(ancestor);
+
+                if (stopFn && stopFn(ancestor)) {
+                    return ret;
+                }
             }
         }
 

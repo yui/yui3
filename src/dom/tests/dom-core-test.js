@@ -546,6 +546,54 @@ YUI.add('dom-core-test', function(Y) {
                 };
 
             ArrayAssert.itemsAreEqual([document.body], Y.DOM.ancestors(node, fn, true));
+        },
+
+        'should stop when the stop function returns true': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0],
+                fn = function(node) {
+                    return node.tagName === 'BODY';
+                },
+
+                stopFn = function(node) {
+                    return node.id === 'test-ancestor-stop';
+            };
+
+            ArrayAssert.itemsAreEqual([], Y.DOM.ancestors(node, fn, null, stopFn));
+        },
+
+        'should find ancestor before stop': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0],
+                fn = function(node) {
+                    return node.tagName === 'DIV';
+                },
+
+                stopFn = function(node) {
+                    return node.tagName === 'BODY';
+            };
+
+            ArrayAssert.itemsAreEqual([
+                    node.parentNode.parentNode.parentNode,
+                    node.parentNode.parentNode,
+                    node.parentNode
+                ],
+                Y.DOM.ancestors(node, fn, null, stopFn));
+        },
+
+        'should find ancestor when both test and stop return true': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0],
+                fn = function(node) {
+                    return node.tagName === 'DIV';
+                },
+
+                stopFn = function(node) {
+                    return node.tagName === 'DIV';
+            };
+
+            Assert.areEqual(1,
+                    Y.DOM.ancestors(node, fn, null, stopFn).length);
         }
     }));
 

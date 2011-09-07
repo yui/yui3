@@ -71,12 +71,17 @@ Y_DOM = {
      * @return {Array} An array containing all matching DOM nodes.
      */
     ancestors: function(element, fn, testSelf, stopFn) {
-        var ancestor = Y_DOM.ancestor.apply(Y_DOM, arguments),
-            ret = (ancestor) ? [ancestor] : [];
+        var ancestor = element,
+            ret = [];
 
-        while ((ancestor = Y_DOM.ancestor(ancestor, fn, stopFn))) {
+        while ((ancestor = Y_DOM.ancestor(ancestor, fn, testSelf, stopFn))) {
+            testSelf = false;
             if (ancestor) {
                 ret.unshift(ancestor);
+
+                if (stopFn && stopFn(ancestor)) {
+                    return ret;
+                }
             }
         }
 
