@@ -493,8 +493,7 @@ YUI.add('dd-drag', function(Y) {
         * @private
         * @method _handleTarget
         * @description Attribute handler for the target config attribute.
-        * @param {Boolean/Object}
-        * @return {Boolean/Object}
+        * @param {Boolean/Object} config The Config
         */
         _handleTarget: function(config) {
             if (Y.DD.Drop) {
@@ -704,7 +703,7 @@ YUI.add('dd-drag', function(Y) {
         * @private
         * @method _handleMouseUp
         * @description Handler for the mouseup DOM event
-        * @param {EventFacade}
+        * @param {EventFacade} ev The Event
         */
         _handleMouseUp: function(ev) {
             this.fire('drag:mouseup');
@@ -717,6 +716,7 @@ YUI.add('dd-drag', function(Y) {
         * @private
         * @method _fixDragStart
         * @description The function we use as the ondragstart handler when we start a drag in Internet Explorer. This keeps IE from blowing up on images as drag handles.
+        * @param {Event} e The Event
         */
         _fixDragStart: function(e) {
             e.preventDefault();
@@ -760,7 +760,7 @@ YUI.add('dd-drag', function(Y) {
         * @private
         * @method _handleMouseDownEvent
         * @description Handler for the mousedown DOM event
-        * @param {EventFacade}
+        * @param {EventFacade} ev  The Event
         */
         _handleMouseDownEvent: function(ev) {
             this.fire(EV_MOUSE_DOWN, { ev: ev });
@@ -769,7 +769,7 @@ YUI.add('dd-drag', function(Y) {
         * @private
         * @method _defMouseDownFn
         * @description Handler for the mousedown DOM event
-        * @param {EventFacade}
+        * @param {EventFacade} e  The Event
         */
         _defMouseDownFn: function(e) {
             var ev = e.ev;
@@ -799,7 +799,7 @@ YUI.add('dd-drag', function(Y) {
         /**
         * @method validClick
         * @description Method first checks to see if we have handles, if so it validates the click against the handle. Then if it finds a valid handle, it checks it against the invalid handles list. Returns true if a good handle was used, false otherwise.
-        * @param {EventFacade}
+        * @param {EventFacade} ev  The Event
         * @return {Boolean}
         */
         validClick: function(ev) {
@@ -1244,7 +1244,6 @@ YUI.add('dd-drag', function(Y) {
     });
     Y.namespace('DD');    
     Y.DD.Drag = Drag;
-
 
 
 

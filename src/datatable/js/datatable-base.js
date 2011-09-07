@@ -529,7 +529,11 @@ Y.extend(DTBase, Y.Widget, {
 
         // Iterate tree of columns to add THEAD rows
         for(; i<len; ++i) {
-            this._addTheadTrNode({thead:thead, columns:tree[i]}, (i === 0), (i === len-1));
+            this._addTheadTrNode({
+                thead:   thead,
+                columns: tree[i],
+                id     : '' // to avoid {id} leftovers from the trTemplate
+            }, (i === 0), (i === len - 1));
         }
 
         // Column helpers needs _theadNode to exist
@@ -668,7 +672,8 @@ Y.extend(DTBase, Y.Widget, {
      * @protected
      */
     _uiSetRecordset: function(rs) {
-        var oldTbody = this._tbodyNode,
+        var self = this,
+            oldTbody = this._tbodyNode,
             parent = oldTbody.get("parentNode"),
             nextSibling = oldTbody.next(),
             columns = this.get('columnset').keys,
@@ -693,21 +698,25 @@ Y.extend(DTBase, Y.Widget, {
         for (i = columns.length - 1; i >= 0; --i) {
             column = columns[i];
             o.columns[i] = {
-                column : column,
-                fields : column.get('field'),
-                classes: column.get('classnames')
+                column        : column,
+                fields        : column.get('field'),
+                classnames    : column.get('classnames'),
+                emptyCellValue: column.get('emptyCellValue')
             }
 
             formatter = column.get('formatter');
-            if (!YLang.isFunction(formatter)) {
-                // Convert non-function formatters into functions
-                // String formatters are treated as alternate value templates
-                // Any other value for formatter is ignored, falling back to
-                // to the configured tdValueTemplate attribute value.
+
+            if (YLang.isFunction(formatter)) {
+                // function formatters need to run before checking if the value
+                // needs defaulting from column.emptyCellValue
+                formatter = Y.bind(this._functionFormatter, this, formatter);
+            } else {
                 if (!YLang.isString(formatter)) {
                     formatter = cellValueTemplate;
                 }
-                formatter = Y.bind(fromTemplate, this, formatter);
+
+                // string formatters need the value defaulted before processing
+                formatter = Y.bind(this._templateFormatter, this, formatter);
             }
 
             o.columns[i].formatter = formatter;
@@ -726,6 +735,20 @@ Y.extend(DTBase, Y.Widget, {
         
         // TBODY to DOM
         parent.insert(this._tbodyNode, nextSibling);
+    },
+
+    _functionFormatter: function (formatter, o) {
+        var value = formatter.call(this, o);
+
+        return (value !== undefined) ? value : o.emptyCellValue;
+    },
+
+    _templateFormatter: function (template, o) {
+        if (o.value === undefined) {
+            o.value = o.emptyCellValue;
+        }
+
+        return fromTemplate(template, o);
     },
 
     /**
@@ -758,11 +781,12 @@ Y.extend(DTBase, Y.Widget, {
         o.tr = Ycreate(fromTemplate(o.rowTemplate, { id: o.record.get('id') }));
         
         for (i = 0, len = columns.length; i < len; ++i) {
-            columnInfo = columns[i];
-            o.column = columnInfo.column;
-            o.field  = columnInfo.fields;
-            o.classnames = columnInfo.classes;
-            o.formatter = columnInfo.formatter;
+            columnInfo      = columns[i];
+            o.column        = columnInfo.column;
+            o.field         = columnInfo.fields;
+            o.classnames    = columnInfo.classnames;
+            o.formatter     = columnInfo.formatter;
+            o.emptyCellValue= columnInfo.emptyCellValue;
 
             this._addTbodyTdNode(o);
         }
@@ -837,7 +861,7 @@ Y.extend(DTBase, Y.Widget, {
      * @method formatDataCell
      * @param @param o {Object} {record, column, tr, headers, classnames}.
      */
-    formatDataCell: function(o) {
+    formatDataCell: function (o) {
         o.value = o.data[o.field];
 
         return o.formatter.call(this, o);

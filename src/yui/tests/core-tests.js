@@ -104,6 +104,22 @@ YUI.add('core-tests', function(Y) {
 
         },
 
+        test_cached_undefined_null: function() {
+            
+            var f1 = function(a) {
+                return a;
+            };
+            var c1 = Y.cached(f1);
+
+            var a = c1(null);
+            Y.Assert.areEqual(a, null);
+            a = c1(undefined);
+            Y.Assert.areEqual(a, undefined);
+            a = c1('foo');
+            Y.Assert.areEqual(a, 'foo');
+            
+        },
+
         test_ie_enum_bug: function() {
             var o = {
                 valueOf: function() {

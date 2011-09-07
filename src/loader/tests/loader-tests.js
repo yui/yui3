@@ -95,6 +95,19 @@ YUI.add('loader-tests', function(Y) {
             Assert.isTrue((out.css.length === 1), 'NO CSS files returned');
             Assert.isTrue((out.js[0].indexOf('&') === -1), 'comboSep did not work');
             Assert.isTrue((out.js[0].indexOf('==!!==') > 0), 'comboSep did not work');
+        },
+        test_resolve_filters: function() {
+            var loader = new testY.Loader({
+                filters: { 'node-base': 'debug' },
+                combine: true,
+                ignoreRegistered: true,
+                require: ['node', 'dd', 'console']
+            });
+            var out = loader.resolve(true);
+            Assert.isTrue((out.js.length === 1), 'NO JS files returned');
+            Assert.isTrue((out.css.length === 1), 'NO CSS files returned');
+            Assert.isTrue((out.js[0].indexOf('node-base-debug.js') > 0), 'node-base-debug was not found');
+            Assert.isTrue((out.js[0].indexOf('node-core-debug.js') === -1), 'node-core-debug was found');
         }
     });
 

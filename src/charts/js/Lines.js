@@ -60,7 +60,7 @@ Lines.prototype = {
         {
             return;
         }
-        var isNumber = Y.Lang.isNumber,
+        var isNumber = Y_Lang.isNumber,
             xcoords = this.get("xcoords").concat(),
             ycoords = this.get("ycoords").concat(),
             direction = this.get("direction"),

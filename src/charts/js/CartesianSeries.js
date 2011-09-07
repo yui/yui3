@@ -236,7 +236,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
      */
     setAreaData: function()
     {
-        var isNumber = Y.Lang.isNumber,
+        var isNumber = Y_Lang.isNumber,
             nextX, nextY,
             graph = this.get("graph"),
             w = graph.get("width"),
@@ -570,6 +570,22 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          * @type Array
          */
         ycoords: {},
+
+        /**
+         * Reference to the `Chart` application.
+         *
+         * @attribute chart
+         * @type ChartBase
+         * @readOnly
+         */
+        chart: {
+            readOnly: true,
+
+            getter: function()
+            {
+                return this.get("graph").get("chart");
+            }
+        },
         
         /**
          * Reference to the `Graph` in which the series is drawn into.
