@@ -20,7 +20,7 @@ YUI().use("dataschema-xml", function(Y) {
                 {key:"price", locator:"td[2]"}
             ]
         },
-        data_out = Y.DataSchema.XML.apply(schema, tableEl));
+        data_out = Y.DataSchema.XML.apply(schema, tableEl);
 
     alert(data_out);
 });
@@ -66,7 +66,7 @@ YUI().use("dataschema-xml", function(Y) {
         tbodyContainer.appendChild(Y.Node.getDOMNode(trNode).cloneNode(true));
     })
 
-    var data_out = Y.DataSchema.XML.apply(schema, tbodyContainer));
+    var data_out = Y.DataSchema.XML.apply(schema, tbodyContainer);
 
     alert(data_out);
 });
