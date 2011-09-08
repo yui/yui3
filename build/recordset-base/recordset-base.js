@@ -61,6 +61,7 @@ Y.Record = Record;
 The Recordset utility provides a standard way for dealing with
 a collection of similar objects.
 @module recordset
+@main recordset
 @submodule recordset-base
 **/
 
@@ -91,17 +92,9 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
      * @protected
      */
     initializer: function() {
-
-        /*
-        If this._items does not exist, then create it and set it to an empty array.
-        The reason the conditional is needed is because of two scenarios:
-        Instantiating new Y.Recordset() will not go into the setter of "records", and so
-        it is necessary to create this._items in the initializer.
-
-        Instantiating new Y.Recordset({records: [{...}]}) will call the setter of "records" and create
-        this._items. In this case, we don't want that to be overwritten by [].
-        */
-
+        // The reason the conditional is needed is because of two scenarios:
+        // 1. Instantiating new Y.Recordset() will not go into the setter of "records", and so it is necessary to create this._items in the initializer.
+        // 2. Instantiating new Y.Recordset({records: [{...}]}) will call the setter of "records" and create this._items. In this case, we don't want that to be overwritten by [].
         if (!this._items) {
             this._items = [];
         }
@@ -178,251 +171,16 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
             update: { defaultFn: this._defUpdateFn }
         });
 
-        this._recordsetChanged();
-        //Fires recordset changed event when any updates are made to the recordset
-        this._syncHashTable();
-        //Fires appropriate hashTable methods on "add", "remove", "update" and "empty" events
+        this._buildHashTable(this.get('key'));
+
+        this.after([
+            'recordsChange',
+            'add',
+            'remove',
+            'update',
+            'empty'], this._updateHash);
     },
 
-    destructor: function() {
-        },
-
-    /**
-     * Helper method called upon by add() - it is used to create a new
-     * record(s) in the recordset
-     *
-     * @method _defAddFn
-     * @return {Record} A Record instance.
-     * @private
-     */
-    _defAddFn: function(e) {
-        var len = this._items.length,
-        recs = e.added,
-        index = e.index,
-        i = 0;
-        //index = (Lang.isNumber(index) && (index > -1)) ? index : len;
-        for (; i < recs.length; i++) {
-            //if records are to be added one at a time, push them in one at a time
-            if (index === len) {
-                this._items.push(recs[i]);
-            }
-            else {
-                this._items.splice(index, 0, recs[i]);
-                index++;
-            }
-        }
-
-
-    },
-
-    /**
-     * Helper method called upon by remove() - it is used to remove record(s) from the recordset
-     *
-     * @method _defRemoveFn
-     * @private
-     */
-    _defRemoveFn: function(e) {
-        
-        //remove from beginning
-        if (e.index === 0) {
-            this._items.shift();
-        }
-        
-        //remove from end
-        else if (e.index === this._items.length - 1) {
-            this._items.pop();
-        }
-        
-        //remove from middle
-        else {
-            this._items.splice(e.index, e.range);
-        }
-    },
-
-    /**
-     * Helper method called upon by empty() - it is used to empty the recordset
-     *
-     * @method _defEmptyFn
-     * @private
-     */
-    _defEmptyFn: function(e) {
-        this._items = [];
-    },
-
-    /**
-     * Helper method called upon by update() - it is used to update the recordset
-     *
-     * @method _defUpdateFn
-     * @private
-     */
-    _defUpdateFn: function(e) {
-
-        for (var i = 0; i < e.updated.length; i++) {
-            this._items[e.index + i] = this._changeToRecord(e.updated[i]);
-        }
-    },
-
-
-    //---------------------------------------------
-    // Hash Table Methods
-    //---------------------------------------------
-
-    /**
-     * Method called whenever "recordset:add" event is fired. It adds the new record(s) to the hashtable.
-     *
-     * @method _defAddHash
-     * @private
-     */
-    _defAddHash: function(e) {
-        var obj = this.get('table'),
-        key = this.get('key'),
-        i = 0;
-        for (; i < e.added.length; i++) {
-            obj[e.added[i].get(key)] = e.added[i];
-        }
-        this.set('table', obj);
-    },
-
-    /**
-     * Method called whenever "recordset:remove" event is fired. It removes the record(s) from the recordset.
-     *
-     * @method _defRemoveHash
-     * @private
-     */
-    _defRemoveHash: function(e) {
-        var obj = this.get('table'),
-        key = this.get('key'),
-        i = 0;
-        for (; i < e.removed.length; i++) {
-            delete obj[e.removed[i].get(key)];
-        }
-        this.set('table', obj);
-    },
-
-
-    /**
-     * Method called whenever "recordset:update" event is fired. It updates the record(s) by adding the new ones and removing the overwritten ones.
-     *
-     * @method _defUpdateHash
-     * @private
-     */
-    _defUpdateHash: function(e) {
-        var obj = this.get('table'),
-        key = this.get('key'),
-        i = 0;
-
-        //deletes the object key that held on to an overwritten record and
-        //creates an object key to hold on to the updated record
-        for (; i < e.updated.length; i++) {
-            if (e.overwritten[i]) {
-                delete obj[e.overwritten[i].get(key)];
-            }
-            obj[e.updated[i].get(key)] = e.updated[i];
-        }
-        this.set('table', obj);
-    },
-
-    /**
-     * Method called whenever "recordset:empty" event is fired. It empties the hash table.
-     *
-     * @method _defEmptyHash
-     * @private
-     */
-    _defEmptyHash: function() {
-        this.set('table', {});
-    },
-
-    /**
-     * Sets up the hashtable with all the records currently in the recordset
-     *
-     * @method _setHashTable
-     * @private
-     */
-    _setHashTable: function() {
-        var obj = {},
-        key = this.get('key'),
-        i, len;
-
-        //If it is not an empty recordset - go through and set up the hash table.
-        if (this._items && this._items.length > 0) {
-            for (i = 0, len = this._items.length; i < len; i++) {
-                obj[this._items[i].get(key)] = this._items[i];
-            }
-        }
-        return obj;
-    },
-
-
-    /**
-     * Helper method - it takes an object bag and converts it to a Y.Record
-     *
-     * @method _changeToRecord
-     * @param obj {Object|Record} Any objet literal or Y.Record instance
-     * @return {Record} A Record instance.
-     * @private
-     */
-    _changeToRecord: function(obj) {
-        var oRec;
-        if (obj instanceof Y.Record) {
-            oRec = obj;
-        }
-        else {
-            oRec = new Y.Record({
-                data: obj
-            });
-        }
-
-        return oRec;
-    },
-
-    //---------------------------------------------
-    // Events
-    //---------------------------------------------
-    /**
-     * Event that is fired whenever the recordset is changed. Note that multiple simultaneous changes still fires this event once. (ie: Adding multiple records via an array will only fire this event once at the completion of all the additions)
-     *
-     * @method _recordSetUpdated
-     * @private
-     */
-    _recordsetChanged: function() {
-
-        this.on(['update', 'add', 'remove', 'empty'],
-        function() {
-            this.fire('change', {});
-        });
-    },
-
-
-    /**
-     * Syncs up the private hash methods with their appropriate triggering events.
-     *
-     * @method _syncHashTable
-     * @private
-     */
-    _syncHashTable: function() {
-
-        this.after('add',
-        function(e) {
-            this._defAddHash(e);
-        });
-        this.after('remove',
-        function(e) {
-            this._defRemoveHash(e);
-        });
-        this.after('update',
-        function(e) {
-            this._defUpdateHash(e);
-        });
-        this.after('empty',
-        function(e) {
-            this._defEmptyHash();
-        });
-
-    },
-
-    //---------------------------------------------
-    // Public Methods
-    //---------------------------------------------
     /**
      * Returns the record with particular ID or index
      *
@@ -520,16 +278,12 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
 
         idx = (Lang.isNumber(index) && (index > -1)) ? index: this._items.length;
 
-
-
         //Passing in array of object literals for oData
         if (Lang.isArray(oData)) {
             for (; i < oData.length; i++) {
                 newRecords[i] = this._changeToRecord(oData[i]);
             }
-
-        }
-        else if (Lang.isObject(oData)) {
+        } else if (Lang.isObject(oData)) {
             newRecords[0] = this._changeToRecord(oData);
         }
 
@@ -591,10 +345,11 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     **/
     update: function(data, index) {
         var rec,
-        arr,
-        i = 0;
+            arr,
+            i = 0;
 
-        //Whatever is passed in, we are changing it to an array so that it can be easily iterated in the _defUpdateFn method
+        // Whatever is passed in, we are changing it to an array so that it can
+        // be easily iterated in the _defUpdateFn method
         arr = (!(Lang.isArray(data))) ? [data] : data;
         rec = this._items.slice(index, index + arr.length);
 
@@ -609,56 +364,258 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
         });
 
         return this;
+    },
+
+    /**
+     * Default behavior for the "add" event. Adds Record instances starting from
+     * the index specified in `e.index`.
+     *
+     * @method _defAddFn
+     * @param {EventFacade} e The add event
+     * @private
+     */
+    _defAddFn: function(e) {
+        this._items.splice.apply(this._items, [e.index, 0].concat(e.added));
+    },
+
+    /**
+     * Default behavior for the "remove" event. Removes Records from the
+     * internal array starting from `e.index`.  By default, it will remove one
+     * Record. But if `e.range` is set, it will remove that many Records.
+     *
+     * @method _defRemoveFn
+     * @param {EventFacade} e The remove event
+     * @private
+     */
+    _defRemoveFn: function(e) {
+        this._items.splice(e.index, e.range || 1);
+    },
+
+    /**
+     * Default behavior for the "update" event. Sets Record instances for each
+     * item in `e.updated` at indexes starting from `e.index`.
+     *
+     * @method _defUpdateFn
+     * @param {EventFacade} e The update event
+     * @private
+     */
+    _defUpdateFn: function(e) {
+        for (var i = 0; i < e.updated.length; i++) {
+            this._items[e.index + i] = this._changeToRecord(e.updated[i]);
+        }
+    },
+
+    /**
+     * Default behavior for the "empty" event. Clears the internal array of
+     * Records.
+     *
+     * @method _defEmptyFn
+     * @param {EventFacade} e The empty event
+     * @private
+     */
+    _defEmptyFn: function(e) {
+        this._items = [];
+    },
+
+    /**
+    Updates the internal hash table.
+
+    @method _defUpdateHash
+    @param {EventFacade} e Event triggering the hash table update
+    @private
+    **/
+    _updateHash: function (e) {
+        var handler = "_hash",
+            type = e.type.replace(/.*:/,''),
+            newHash;
+
+        // _hashAdd, _hashRemove, _hashEmpty, etc
+        // Not a switch or else if setup to allow for external expansion.
+        handler += type.charAt(0).toUpperCase() + type.slice(1);
+
+        newHash = this[handler] &&
+                    this[handler](this.get('table'), this.get('key'), e);
+
+        if (newHash) {
+            this.set('table', newHash);
+        }
+    },
+
+    /**
+    Regenerates the hash table from the current internal array of Records.
+
+    @method _hashRecordsChange
+    @param {Object} hash The hash map before replacement
+    @param {String} key The key by which to add items to the hash
+    @param {Object} e The event or object containing the items to be added.
+                      Items are expected to be stored in an array assigned to
+                      the `added` property.
+    @return {Object} The updated hash map
+    @private
+    **/
+    _hashRecordsChange: function (hash, key, e) {
+        return this._buildHashTable(key);
+    },
+
+    /**
+    Builds a hash table from the current internal array of Records.
+
+    @method _buildHashTable
+    @param {String} key The Record key to hash the items by
+    @return {Object} A new hash map of Records keyed by each Records' key
+    @private
+    **/
+    _buildHashTable: function (key) {
+        return this._hashAdd({}, key, { added: this._items });
+    },
+
+    /**
+    Adds items to the hash table.  Items are the values, and the keys are the
+    values of the item's attribute named in the `key` parameter.
+
+    @method _hashAdd
+    @param {Object} hash The hash map before adding items
+    @param {String} key The key by which to add the items to the hash
+    @param {Object} e The event or object containing the items to be added.
+                      Items are expected to be stored in an array assigned to
+                      the `added` property.
+    @return {Object} The updated hash map
+    @private
+    **/
+    _hashAdd: function(hash, key, e) {
+        var items = e.added,
+            i, len;
+
+        for (i = 0, len = e.added.length; i < len; ++i) {
+            hash[items[i].get(key)] = items[i];
+        }
+
+        return hash;
+    },
+
+    /**
+    Removes items from the hash table.
+
+    @method _hashRemove
+    @param {Object} hash The hash map before removing items
+    @param {String} key The key by which to remove the items from the hash
+    @param {Object} e The event or object containing the items to be removed.
+                      Items are expected to be stored in an array assigned to
+                      the `removed` property.
+    @return {Object} The updated hash map
+    @private
+    **/
+    _hashRemove: function(hash, key, e) {
+        for (var i = e.removed.length - 1; i >= 0; --i) {
+            delete hash[e.removed[i].get(key)];
+        }
+
+        return hash;
+    },
+
+    /**
+    Updates items in the hash table.
+
+    @method _hashUpdate
+    @param {Object} hash The hash map before updating items
+    @param {String} key The key by which to update the items to the hash
+    @param {Object} e The event or object containing the items to be updated.
+                      Items are expected to be stored in an array assigned to
+                      the `updated` property. Optionally, items can be
+                      identified for being overwritten by including them in an
+                      array assigned to the `overwritten` property.
+    @return {Object} The updated hash map
+    @private
+    **/
+    _hashUpdate: function (hash, key, e) {
+        if (e.overwritten && e.overwritten.length) {
+            hash = this._hashRemove(hash, key, { removed: e.overwritten });
+        }
+
+        return this._hashAdd(hash, key, { added: e.updated });
+    },
+
+    /**
+    Clears the hash table.
+
+    @method _hashEmpty
+    @param {Object} hash The hash map before adding items
+    @param {String} key The key by which to remove the items from the hash
+    @param {Object} e The event or object containing the items to be removed.
+                      Items are expected to be stored in an array assigned to
+                      the `removed` property.
+    @return {Object} An empty hash
+    @private
+    **/
+    _hashEmpty: function() {
+        return {};
+    },
+
+    /**
+     * Sets up the hashtable with all the records currently in the recordset
+     *
+     * @method _initHashTable
+     * @private
+     */
+    _initHashTable: function() {
+        return this._hashAdd({}, this.get('key'), { added: this._items || [] });
+    },
+
+    /**
+     * Helper method - it takes an object bag and converts it to a Y.Record
+     *
+     * @method _changeToRecord
+     * @param obj {Object|Record} Any objet literal or Y.Record instance
+     * @return {Record} A Record instance.
+     * @private
+     */
+    _changeToRecord: function(obj) {
+        return (obj instanceof Y.Record) ? obj : new Y.Record({ data: obj });
+    },
+
+    /**
+    Ensures the value being set is an array of Record instances. If array items
+    are raw object data, they are turned into Records.
+
+    @method _setRecords
+    @param {Record[]|Object[]} items The Records or data Objects to store as
+                                     Records.
+    @return {Record[]}
+    **/
+    _setRecords: function (items) {
+        if (!Y.Lang.isArray(items)) {
+            return Y.Attribute.INVALID_VALUE;
+        }
+
+        var records = [],
+            i, len;
+
+        // FIXME: This should use the flyweight pattern if possible
+        for (i = 0, len = items.length; i < len; ++i) {
+            records[i] = this._changeToRecord(items[i]);
+        }
+
+        return (this._items = records);
     }
-
-
 }, {
     ATTRS: {
 
         /**
-        * An array of records that the recordset is storing
+        * An array of Records that the Recordset is storing.  Passing an array
+        * of raw record data is also accepted.  The data for each item will be
+        * wrapped in a Record instance.
         *
         * @attribute records
-        * @type array
+        * @type {Record[]}
         */
         records: {
-            validator: Lang.isArray,
+            // TODO: necessary? valueFn?
+            lazyAdd: false,
             getter: function() {
                 // give them a copy, not the internal object
-                return new Y.Array(this._items);
+                return Y.Array(this._items);
             },
-            setter: function(allData) {
-                //For allData passed in here, see if each instance is a Record.
-                //If its not, change it to a record.
-                //Then push it into the array.
-                var records = [];
-                function initRecord(oneData) {
-                    var o;
-
-                    if (oneData instanceof Y.Record) {
-                        records.push(oneData);
-                    }
-                    else {
-                        o = new Y.Record({
-                            data: oneData
-                        });
-                        records.push(o);
-                    }
-                }
-
-                //This conditional statement handles creating empty recordsets
-                if (allData) {
-                    Y.Array.each(allData, initRecord);
-                    this._items = Y.Array(records);
-                }
-            },
-
-            //value: [],
-            //initialization of the attribute must be done before the first call to get('records') is made.
-            //if lazyAdd were set to true, then instantiating using new Y.Recordset({records:[..]}) would
-            //not call the setter.
-            //see http://developer.yahoo.com/yui/3/api/Attribute.html#method_addAttr for details on this
-            lazyAdd: false
+            setter: "_setRecords"
         },
 
         /**
@@ -669,7 +626,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
         @type object
         **/
         table: {
-            valueFn: '_setHashTable'
+            valueFn: '_initHashTable'
         },
 
         /**
