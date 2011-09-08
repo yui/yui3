@@ -1289,10 +1289,10 @@ Y.extend(DTBase, Y.Widget, {
     bindUI: function() {
         this.after({
             columnsetChange: this._afterColumnsetChange,
-            recordsetChange: this._afterRecordsetChange,
             summaryChange  : this._afterSummaryChange,
             captionChange  : this._afterCaptionChange,
-            "recordset:recordsChange": this._afterRecordsChange
+            recordsetChange: this._afterRecordsChange,
+            "recordset:tableChange": this._afterRecordsChange
         });
     },
     
