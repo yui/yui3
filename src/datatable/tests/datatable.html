@@ -541,9 +541,10 @@ _should: {
                 Y.Assert.areSame('(NO B)', table._tbodyNode.all('tr').item(1)
                     .all('.yui3-datatable-liner').item(1).getContent());
 
-                Y.Assert.areSame('<em>C: (NO C)</em>',
+                Y.Assert.areSame('<EM>C: (NO C)</EM>',
                     table._tbodyNode.all('tr').item(2)
-                    .all('.yui3-datatable-liner').item(2).getContent());
+                    .all('.yui3-datatable-liner').item(2).getContent()
+                        .toUpperCase()); // <-- account for IE UC tags
 
                 Y.Assert.areSame('(NO D)', table._tbodyNode.all('tr').item(3)
                     .all('.yui3-datatable-liner').item(3).getContent());
@@ -577,6 +578,69 @@ _should: {
 
                 cell = table._tbodyNode.one('.yui3-datatable-liner');
                 Y.Assert.areSame('10', cell.get('text'));
+            },
+
+            "formatters should not have access to o.td by default": function () {
+                var table, cells;
+                
+                table = new Y.DataTable.Base({
+                    columnset: [
+                        {
+                            key: 'a',
+                            formatter: function (o) {
+                                Y.Assert.isUndefined(o.td);
+                                return o.value.toUpperCase();
+                            }
+                        },
+                        'b',
+                        { key: 'c', formatter: "({value})" }
+                    ],
+                    recordset: [
+                        { a: "a1", b: 53,  c: "c1" },
+                        { a: "a2", b: 35,  c: "c2" },
+                        { a: "a3", b: 42,  c: "c3" }
+                    ]
+                });
+
+                Y.one('#base').empty();
+
+                table.render('#base');
+
+                cells = table._tbodyNode.one('tr').all('td');
+                Y.ArrayAssert.itemsAreSame(
+                    ['A1', '53', '(c1)'],
+                    cells.get('text'));
+            },
+
+            "createCell should populate o.td in formatters": function () {
+                var table, cells, i = 0;
+                
+                table = new Y.DataTable.Base({
+                    columnset: [
+                        {
+                            key: 'a',
+                            formatter: function (o) {
+                                Y.Assert.isUndefined(o.td);
+                                this.createCell(o)
+                                    .setContent(
+                                        "<strong>???" + (++i) + "</strong>");
+
+                                Y.Assert.isObject(o.td);
+                            }
+                        }
+                    ],
+                    recordset: [{ a: "a1" }, { a: "a2" }, { a: "a3" }]
+                });
+
+                Y.one('#base').empty();
+
+                table.render('#base');
+
+                cells = table._tbodyNode.all('td');
+
+                Y.ArrayAssert.itemsAreSame(
+                    ['???1', '???2', '???3'],
+                    cells.get('text'));
             }
         });
 

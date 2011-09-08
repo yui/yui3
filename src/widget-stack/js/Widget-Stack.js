@@ -252,6 +252,11 @@
                 } else {
                     this._renderShimDeferred();
                 }
+
+                // Eagerly attach resize handlers
+                if (UA.ie == 6) {
+                    this._addShimResizeHandlers();
+                }
             } else {
                 this._destroyShim();
             }
@@ -295,8 +300,6 @@
             var sizeShim = this.sizeShim,
                 handles = this._stackHandles[SHIM_RESIZE];
 
-            this.sizeShim();
-
             handles.push(this.after(VisibleChange, sizeShim));
             handles.push(this.after(WidthChange, sizeShim));
             handles.push(this.after(HeightChange, sizeShim));
@@ -335,9 +338,6 @@
                 shimEl = this._shimNode = this._getShimTemplate();
                 stackEl.insertBefore(shimEl, stackEl.get(FIRST_CHILD));
 
-                if (UA.ie == 6) {
-                    this._addShimResizeHandlers();
-                }
                 this._detachStackHandles(SHIM_DEFERRED);
             }
         },
