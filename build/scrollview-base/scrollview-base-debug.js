@@ -550,12 +550,16 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             // Ideally using CSSMatrix - don't think we have it normalized yet though.
             // origX = (new WebKitCSSMatrix(cb.getComputedStyle("transform"))).e;
             // origY = (new WebKitCSSMatrix(cb.getComputedStyle("transform"))).f;
+
             origX = this.get(SCROLL_X),
             origY = this.get(SCROLL_Y),
 
-            TRANS = ScrollView._TRANSITION,
             cb = this.get(CONTENT_BOX),
-            bb = this.get(BOUNDING_BOX);
+            bb = this.get(BOUNDING_BOX),
+
+            HWTransform,
+
+            TRANS = ScrollView._TRANSITION;
 
         // TODO: Is this OK? Just in case it's called 'during' a transition.
         if (NATIVE_TRANSITIONS) {
@@ -563,13 +567,16 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             cb.setStyle(TRANS.PROPERTY, EMPTY);
         }
 
+        HWTransform = this._forceHWTransforms;
+        this._forceHWTransforms = false;  // the z translation was causing issues with picking up accurate scrollWidths in Chrome/Mac.
+
         this._moveTo(cb, 0, 0);
 
-        // Use bb instead of cb. cb doesn't gives us the right results
-        // in FF (due to overflow:hidden)
-        dims = [Math.max(bb.get('scrollWidth'), cb.get('scrollWidth')), Math.max(bb.get('scrollHeight'), cb.get('scrollHeight'))];
+        dims = [bb.get('scrollWidth'), bb.get('scrollHeight')];
 
         this._moveTo(cb, -1*origX, -1*origY);
+
+        this._forceHWTransforms = HWTransform;
 
         return dims;
     },
