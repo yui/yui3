@@ -587,6 +587,62 @@
 
                     tree.destroy();
                 },
+
+                testChildDestroy: function () {
+
+                    var expected = ["leaf-1", "leaf-2", "subtree-leaf-1", "subtree-leaf-2", "subtree", "tree"];
+                    var destroyed = [];
+
+                    var tree = new Y.ParentWidget({
+                       id: "tree",
+                       children: [
+                           { type: Y.ChildWidget, id: "leaf-1", label: "Leaf One" },
+                           { type: Y.ChildWidget, id: "leaf-2", label: "Leaf Two" },
+                           { type: Y.ParentWidget, id: "subtree", label: "Subtree", children: [
+                              { type: Y.ChildWidget, id: "subtree-leaf-1", label: "Subtree - Leaf One" },
+                              { type: Y.ChildWidget, id: "subtree-leaf-2", label: "Subtree - Leaf Two" }
+                           ]}
+                       ]
+                    });
+
+                    tree.render();
+
+                    // We're only doing this the long way, because the event bubbling doesn't
+                    // seem to be working (subtree is missing). Otherwise we would use tree.on("*:destroy");
+
+                    tree.each(function(child) {
+                        
+                        var id = child.get("id");
+                        
+                        child.after("destroy", function(e) {
+                            destroyed.push(id);
+                            Y.Assert.isNull(Y.Node.one("#" + id), "Child bounding box still in DOM");
+                        });
+
+                        if (child.hasImpl(Y.WidgetParent)) {
+                            child.each(function(subtreechild) {
+                        
+                                var id = subtreechild.get("id");        
+
+                                subtreechild.after("destroy", function(e) {
+                                    destroyed.push(id);
+                                    Y.Assert.isNull(Y.Node.one("#" + id), "Subtree child Bounding box still in DOM");
+                                });
+                            });
+                        }
+                    });
+                    
+                    var rootId = tree.get("id");
+                    
+                    tree.after("destroy", function(e) {
+                        destroyed.push(rootId);
+                        Y.Assert.isNull(Y.Node.one("#" + rootId), "Root Bounding box still in DOM");
+                    });
+
+                    tree.destroy();
+                    
+                    Y.ArrayAssert.itemsAreEqual(expected, destroyed, "Unexpected destroy events");
+                },
                 
                 testUIEvents : function() {
 
