@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script>
+            if (window.yjsProfiler) {
+                window.yjsProfiler.start();
+            }
+        </script>
+
+        <script src="before/build/yui/yui.js"></script>
+        <script src="before/oop/oop.js"></script>
+        <script src="before/event-custom/event-custom-base.js"></script>
+        <script src="before/dom/dom-base.js"></script>
+        <script src="before/dom/selector-native.js"></script>
+        <script src="before/dom/selector-css2.js"></script>
+        <script src="before/event/event-base.js"></script>
+        <script src="before/node/node-base.js"></script>
+        <script src="before/event/event-base-ie.js"></script>
+
+        <script>
+            var YUI_config = {
+                bootstrap: false,
+                combine:false,
+                filter:"raw",
+                allowRollup:false,
+                base:"/before/"/*, 
+                core:[
+                    "yui-base",
+                    "features",
+                    "yui-log",
+                    "yui-later",
+                    "get",
+                    "oop",
+                    "dom-base",
+                    "selector-native", 
+                    "selector-css2", 
+                    "event-custom-base",
+                    "event-base",
+                    "node-base", 
+                    "dom-style",
+                    "node-style",
+                    "event-delegate",
+                    "node-event-delegate",
+                    "dom-screen",
+                    "node-screen"
+                ],
+                loaderPath:"loader/loader.js"
+                */
+            };
+
+            YUI().use("event-custom-base", "node-base", function(Y) {
+                    
+                    for (var i = 1000; i > 0; --i) {
+                        new Y.EventTarget();
+                    }
+
+                    if (window.yjsProfiler && window.yjsProfiler.isStarted()) {
+                        setTimeout(function() {
+                            window.yjsProfiler.stop();
+                            window.yjsProfiler.dump();
+                        }, 0);
+                    }
+
+            });
+        </script>
+    <body>
+        Create EventTargets (before)
+    </body>
+ </html>
