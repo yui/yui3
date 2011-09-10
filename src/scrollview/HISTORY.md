@@ -6,13 +6,16 @@ ScrollView
 
   * Fixed incorrect scroll width/height calculations to account for
     translate (for real this time) on Chrome, and now Safari. 
-    
+
     translateZ applied for h/w acceleration was resulting in the incorrect 
     scroll values.
 
   * Removed fallback to cb.scrollWidth/Height, when determining scroll dimensions.
     This was masking the real problem with translate impacting boundingBox scroll 
     width/height calcs mentioned above.
+
+  * Fixed scrollbar racing ahead of scroll position on FF 5+ with native transition
+    support enabled.
 
 3.4.0
 -----
