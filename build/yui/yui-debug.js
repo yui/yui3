@@ -2861,7 +2861,11 @@ O.values = function (obj) {
  * @static
  */
 O.size = function (obj) {
-    return O.keys(obj).length;
+    try {
+        return O.keys(obj).length;
+    } catch (ex) {
+        return 0; // Legacy behavior for non-objects.
+    }
 };
 
 /**
