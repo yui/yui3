@@ -38,8 +38,10 @@ var getClassName = Y.ClassNameManager.getClassName,
     ZERO = "0s",
 
     IE = Y.UA.ie,
+    
+    Transition = Y.Transition,
 
-    NATIVE_TRANSITIONS = Y.Transition.useNative,
+    NATIVE_TRANSITIONS = Transition.useNative,
 
     _constrain = function (val, min, max) { 
         return Math.min(Math.max(val, min), max);
@@ -1035,16 +1037,16 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
     /**
      * Object map of style property names used to set transition properties.
-     * Currently, Webkit specific names are defaulted.  The configured property
-     * names are `_TRANSITION.DURATION` ("WebkitTransitionDuration") and
-     * `_TRANSITION.PROPERTY ("WebkitTransitionProperty").
+     * Defaults to the vendor prefix established by the Transition module.  
+     * The configured property names are `_TRANSITION.DURATION` (e.g. "WebkitTransitionDuration") and
+     * `_TRANSITION.PROPERTY (e.g. "WebkitTransitionProperty").
      *
      * @property _TRANSITION
      * @private
      */
     _TRANSITION : {
-        DURATION : "WebkitTransitionDuration",
-        PROPERTY : "WebkitTransitionProperty"
+        DURATION : Transition._VENDOR_PREFIX + "TransitionDuration",
+        PROPERTY : Transition._VENDOR_PREFIX + "TransitionProperty"
     }
 });
 
