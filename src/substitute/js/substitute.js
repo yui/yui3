@@ -111,9 +111,11 @@
 
             s = s.substring(0, i) + v + s.substring(j + 1);
 
-			lidx = recurse?s.length:i - 1;
-        }
-		// restore saved {block}s and replace escaped braces
+			if (!recurse) {
+				lidx = i - 1;
+			} 
+		}
+		// restore saved {block}s and escaped braces
 
 		return s
 			.replace(savedRegExp, function (str, p1, p2) {
@@ -122,7 +124,6 @@
 			.replace(lBraceRegExp, LBRACE)
 			.replace(rBraceRegExp, RBRACE)
 		;
-
 	};
 
     Y.substitute = substitute;

@@ -80,20 +80,20 @@
 
 
             Assert.areEqual(
-                Y.substitute("{testobj 0}", { testobj: obj }, null, false),
+                Y.substitute("{testobj 0}", { testobj: obj }, null, true),
                 "{level1_1 => 1.1, level1_2 => 1.2, level1_3 => {...}, level1_4 => 1.4}",
                 "failed one level object dump"
             );
 
             Assert.areEqual(
-                Y.substitute("{testobj 1}", { testobj: obj }, null, false),
+                Y.substitute("{testobj 1}", { testobj: obj }, null, true),
                 "{level1_1 => 1.1, level1_2 => 1.2, level1_3 => {level2_1 => 2.1, level2_2 => 2.2, level2_3 => {...}, level2_4 => 2.4}, level1_4 => 1.4}",
                 "failed two level object dump"
             );
 
             Assert.areEqual(
                 Y.substitute(
-                    "{testobj 10}", { testobj: obj }, null, false),
+                    "{testobj 10}", { testobj: obj }, null, true),
                 "{level1_1 => 1.1, level1_2 => 1.2, level1_3 => {level2_1 => 2.1, level2_2 => 2.2, level2_3 => {level3_1 => 3.1, level3_2 => 3.2, level3_3 => 3.3, level3_4 => 3.4}, level2_4 => 2.4}, level1_4 => 1.4}",
                 "failed deep object dump"
             );
@@ -193,6 +193,21 @@
             // testing {} in the replacement text
             Assert.areEqual("My last name is Zappa. {I am a replacement string }{}", Y.substitute(template, obj));
 
+			Assert.areEqual(
+				'-{test}-',
+				Y.substitute('-{LBRACE}test{RBRACE}-', {test:'test'}, null, true),
+				'replacement of literals {LBRACE} and/or {RBRACE} failed'
+			);
+			
+			Assert.areEqual(
+				'done',
+				Y.substitute('{{{three}}}', {
+					three:'two',
+					two: 'one',
+					one: 'done'
+				},null,true),
+				'recurse failed'
+			);
         }
 
         });
