@@ -407,7 +407,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
                     i, 
                     len,
                     data = this.get("dataProvider");
-                if(Y.Lang.isArray(val))
+                if(Y_Lang.isArray(val))
                 {
                     len = val.length;
                     for(i = 0; i < len; ++i)
@@ -416,7 +416,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
                     }
                     
                 }
-                else if(Y.Lang.isString(val))
+                else if(Y_Lang.isString(val))
                 {
                     keys = this.get("keys");
                     keys[val] = this._getKeyArray(val, data);
@@ -524,7 +524,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
                 {
                     max = 10;
                 }
-                if(this.get("setMax")) 
+                if(Y_Lang.isNumber(this._setMaximum))
                 {
                     max = this._setMaximum;
                 }
@@ -565,7 +565,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
             getter: function ()
             {
                 var min = this.get("dataMinimum");
-                if(this.get("setMin"))
+                if(Y_Lang.isNumber(this._setMinimum))
                 {
                     min = this._setMinimum;
                 }
@@ -590,7 +590,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
 
             getter: function()
             {
-                return Y.Lang.isNumber(this._setMaximum);
+                return Y_Lang.isNumber(this._setMaximum);
             }
         },
 
@@ -606,7 +606,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
 
             getter: function()
             {
-                return Y.Lang.isNumber(this._setMinimum);
+                return Y_Lang.isNumber(this._setMinimum);
             }
         },
 

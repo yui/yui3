@@ -1019,7 +1019,7 @@ Y.Console = Y.extend(Console, Y.Widget,
     /**
      * The identity of the widget.
      *
-     * @property Console.NAME
+     * @property NAME
      * @type String
      * @static
      */
@@ -1029,7 +1029,7 @@ Y.Console = Y.extend(Console, Y.Widget,
      * Static identifier for logLevel configuration setting to allow all
      * incoming messages to generate Console entries.
      *
-     * @property Console.LOG_LEVEL_INFO
+     * @property LOG_LEVEL_INFO
      * @type String
      * @static
      */
@@ -1040,7 +1040,7 @@ Y.Console = Y.extend(Console, Y.Widget,
      * incoming messages of logLevel &quot;warn&quot; or &quot;error&quot;
      * to generate Console entries.
      *
-     * @property Console.LOG_LEVEL_WARN
+     * @property LOG_LEVEL_WARN
      * @type String
      * @static
      */
@@ -1051,7 +1051,7 @@ Y.Console = Y.extend(Console, Y.Widget,
      * incoming messages of logLevel &quot;error&quot; to generate
      * Console entries.
      *
-     * @property Console.LOG_LEVEL_ERROR
+     * @property LOG_LEVEL_ERROR
      * @type String
      * @static
      */
@@ -1071,7 +1071,7 @@ Y.Console = Y.extend(Console, Y.Widget,
      *    <li>entry_content_class</li>
      * </ul>
      *
-     * @property Console.ENTRY_CLASSES
+     * @property ENTRY_CLASSES
      * @type Object
      * @static
      */
@@ -1104,7 +1104,7 @@ Y.Console = Y.extend(Console, Y.Widget,
      *   <li>console_title_class</li>
      * </ul>
      *
-     * @property Console.CHROME_CLASSES
+     * @property CHROME_CLASSES
      * @type Object
      * @static
      */
@@ -1136,7 +1136,7 @@ Y.Console = Y.extend(Console, Y.Widget,
      *   <li>str_title - pulled from attribute strings.title</li>
      * </ul>
      *
-     * @property Console.HEADER_TEMPLATE
+     * @property HEADER_TEMPLATE
      * @type String
      * @static
      */
@@ -1154,7 +1154,7 @@ Y.Console = Y.extend(Console, Y.Widget,
      * includes only the {placeholder} &quot;console_bd_class&quot;, which is
      * constributed by Console.CHROME_CLASSES.
      *
-     * @property Console.BODY_TEMPLATE
+     * @property BODY_TEMPLATE
      * @type String
      * @static
      */
@@ -1171,7 +1171,7 @@ Y.Console = Y.extend(Console, Y.Widget,
      *   <li>str_clear - pulled from attribute strings.clear</li>
      * </ul>
      *
-     * @property Console.FOOTER_TEMPLATE
+     * @property FOOTER_TEMPLATE
      * @type String
      * @static
      */
@@ -1205,7 +1205,7 @@ Y.Console = Y.extend(Console, Y.Widget,
      *   <li>message</li>
      * </ul>
      *
-     * @property Console.ENTRY_TEMPLATE
+     * @property ENTRY_TEMPLATE
      * @type String
      * @static
      */
@@ -1215,7 +1215,7 @@ Y.Console = Y.extend(Console, Y.Widget,
      * Static property used to define the default attribute configuration of
      * the Widget.
      *
-     * @property Console.ATTRS
+     * @property ATTRS
      * @Type Object
      * @static
      */

@@ -91,7 +91,6 @@ function Parent(config) {
     //  Widget method overlap
     Y.after(this._renderChildren, this, "renderUI");
     Y.after(this._bindUIParent, this, "bindUI");
-    Y.before(this._destroyChildren, this, "destructor");
 
     this.after("selectionChange", this._afterSelectionChange);
     this.after("selectedChange", this._afterParentSelectedChange);
@@ -208,10 +207,18 @@ Parent.ATTRS = {
 Parent.prototype = {
 
     /**
+     * The destructor implementation for Parent widgets. Destroys all children.
+     * @method destructor
+     */
+    destructor: function() {
+        this._destroyChildren();
+    },
+
+    /**
      * Destroy event listener for each child Widget, responsible for removing 
      * the destroyed child Widget from the parent's internal array of children
      * (_items property).
-     * 
+     *
      * @method _afterDestroyChild
      * @protected
      * @param {EventFacade} event The event facade for the attribute change.
@@ -223,7 +230,6 @@ Parent.prototype = {
             child.remove();
         }        
     },
-
 
     /**
      * Attribute change listener for the <code>selection</code> 

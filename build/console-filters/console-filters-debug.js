@@ -573,7 +573,7 @@ Y.namespace('Plugin').ConsoleFilters = Y.extend(ConsoleFilters, Y.Plugin.Base,
     /**
      * Plugin name.
      *
-     * @property ConsoleFilters.NAME
+     * @property NAME
      * @type String
      * @static
      * @default 'consoleFilters'
@@ -583,7 +583,7 @@ Y.namespace('Plugin').ConsoleFilters = Y.extend(ConsoleFilters, Y.Plugin.Base,
     /**
      * The namespace hung off the host object that this plugin will inhabit.
      *
-     * @property ConsoleFilters.NS
+     * @property NS
      * @type String
      * @static
      * @default 'filter'
@@ -593,7 +593,7 @@ Y.namespace('Plugin').ConsoleFilters = Y.extend(ConsoleFilters, Y.Plugin.Base,
     /**
      * Markup template used to create the container for the category filters.
      *
-     * @property ConsoleFilters.CATEGORIES_TEMPLATE
+     * @property CATEGORIES_TEMPLATE
      * @type String
      * @static
      */
@@ -603,7 +603,7 @@ Y.namespace('Plugin').ConsoleFilters = Y.extend(ConsoleFilters, Y.Plugin.Base,
     /**
      * Markup template used to create the container for the source filters.
      *
-     * @property ConsoleFilters.SOURCES_TEMPLATE
+     * @property SOURCES_TEMPLATE
      * @type String
      * @static
      */
@@ -613,7 +613,7 @@ Y.namespace('Plugin').ConsoleFilters = Y.extend(ConsoleFilters, Y.Plugin.Base,
     /**
      * Markup template used to create the category and source filter checkboxes.
      *
-     * @property ConsoleFilters.FILTER_TEMPLATE
+     * @property FILTER_TEMPLATE
      * @type String
      * @static
      */
@@ -630,7 +630,7 @@ Y.namespace('Plugin').ConsoleFilters = Y.extend(ConsoleFilters, Y.Plugin.Base,
     /** 
      * Classnames used by the templates when creating nodes.
      *
-     * @property ConsoleFilters.CHROME_CLASSES
+     * @property CHROME_CLASSES
      * @type Object
      * @static
      * @protected

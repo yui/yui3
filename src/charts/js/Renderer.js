@@ -6,10 +6,13 @@
  * @main charts
  */
 var DOCUMENT = Y.config.doc,
+    Y_Lang = Y.Lang,
     LeftAxisLayout,
     RightAxisLayout,
     BottomAxisLayout,
-    TopAxisLayout;
+    TopAxisLayout,
+    _getClassName = Y.ClassNameManager.getClassName,
+    SERIES_MARKER = _getClassName("seriesmarker");
 
 /**
  * The Renderer class is a base class for chart components that use the `styles`
@@ -95,7 +98,7 @@ Renderer.prototype = {
         var newstyles = Y.merge(b, {});
         Y.Object.each(a, function(value, key, a)
         {
-            if(b.hasOwnProperty(key) && Y.Lang.isObject(value) && !Y.Lang.isArray(value))
+            if(b.hasOwnProperty(key) && Y_Lang.isObject(value) && !Y_Lang.isArray(value))
             {
                 newstyles[key] = this._mergeStyles(value, b[key]);
             }

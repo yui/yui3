@@ -12,4 +12,12 @@ src/build.log
 .com.apple.timemachine.supported
 src/out
 api-js/
+build/autocomplete-base/assets/autocomplete-list-core.css
+build/autocomplete-filters-accentfold/assets/autocomplete-list-core.css
+build/autocomplete-filters/assets/autocomplete-list-core.css
+build/autocomplete-highlighters-accentfold/assets/autocomplete-list-core.css
+build/autocomplete-highlighters/assets/autocomplete-list-core.css
+build/autocomplete-list-keys/assets/autocomplete-list-core.css
+build/autocomplete-plugin/assets/autocomplete-list-core.css
+build/autocomplete-sources/assets/autocomplete-list-core.css
 .project

@@ -93,6 +93,23 @@ Y.mix(DataTableSort, {
         */
         template: {
             value: TEMPLATE
+        },
+
+        /**
+         * Strings used in the UI elements.
+         *
+         * The strings used are defaulted from the datatable-sort language pack
+         * for the language identified in the YUI "lang" configuration (which
+         * defaults to "en").
+         *
+         * Configurable strings are "sortBy" and "reverseSortBy", which are
+         * assigned to the sort link's title attribute.
+         *
+         * @attribute strings
+         * @type {Object}
+         */
+        strings: {
+            valueFn: function () { return Y.Intl.get('datatable-sort'); }
         }
     }
 });
@@ -162,18 +179,15 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
     * @private
     */
     _setLastSortedBy: function(val) {
-        if(Y.Lang.isString(val)) {
-            return {key:val, dir:"asc", notdir:"desc"};
+        if (Y.Lang.isString(val)) {
+            val = { key: val, dir: "desc" };
         }
-        else if (val && val.key) {
-            if(val.dir === "desc") {
-                return {key:val.key, dir:"desc", notdir:"asc"};
-            }
-            else {
-                return {key:val.key, dir:"asc", notdir:"desc"};
-            }
-        }
-        else {
+
+        if (val) {
+            return (val.dir === "desc") ?
+                { key: val.key, dir: "desc", notdir: "asc" } :
+                { key: val.key, dir: "asc",  notdir:"desc" };
+        } else {
             return null;
         }
     },
@@ -187,28 +201,45 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
      * @protected
      */
     _uiSetLastSortedBy: function(prevVal, newVal, dt) {
-        var prevKey = prevVal && prevVal.key,
-            prevDir = prevVal && prevVal.dir,
-            newKey = newVal && newVal.key,
-            newDir = newVal && newVal.dir,
-            cs = dt.get("columnset"),
-            prevColumn = cs.keyHash[prevKey],
-            newColumn = cs.keyHash[newKey],
-            tbodyNode = dt._tbodyNode,
-            prevRowList, newRowList;
+        var strings    = this.get('strings'),
+            columnset  = dt.get("columnset"),
+            prevKey    = prevVal && prevVal.key,
+            newKey     = newVal && newVal.key,
+            prevClass  = prevVal && dt.getClassName(prevVal.dir),
+            newClass   = newVal && dt.getClassName(newVal.dir),
+            prevColumn = columnset.keyHash[prevKey],
+            newColumn  = columnset.keyHash[newKey],
+            tbodyNode  = dt._tbodyNode,
+            fromTemplate = Y.Lang.sub,
+            th, sortLabel;
 
         // Clear previous UI
-        if(prevColumn) {
-            prevColumn.thNode.removeClass(YgetClassName(DATATABLE, prevDir));
-            prevRowList = tbodyNode.all("."+YgetClassName(COLUMN, prevColumn.get("id")));
-            prevRowList.removeClass(YgetClassName(DATATABLE, prevDir));
+        if (prevColumn && prevClass) {
+            th = prevColumn.thNode;
+
+            th.one('a').set('title', fromTemplate(strings.sortBy, {
+                column: prevColumn.get('label')
+            }));
+
+            th.removeClass(prevClass);
+            tbodyNode.all("." + YgetClassName(COLUMN, prevColumn.get("id")))
+                .removeClass(prevClass);
         }
 
         // Add new sort UI
-        if(newColumn) {
-            newColumn.thNode.addClass(YgetClassName(DATATABLE, newDir));
-            newRowList = tbodyNode.all("."+YgetClassName(COLUMN, newColumn.get("id")));
-            newRowList.addClass(YgetClassName(DATATABLE, newDir));
+        if (newColumn && newClass) {
+            th = newColumn.thNode;
+
+            sortLabel = (newVal.dir === ASC) ? "reverseSortBy" : "sortBy";
+
+            th.one('a').set('title', fromTemplate(strings[sortLabel], {
+                column: newColumn.get('label')
+            }));
+
+            th.addClass(newClass);
+
+            tbodyNode.all("." + YgetClassName(COLUMN, newColumn.get("id")))
+                .addClass(newClass);
         }
     },
 
@@ -220,10 +251,20 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
     * @protected
     */
     _beforeCreateTheadThNode: function(o) {
-        if(o.column.get("sortable")) {
+        var sortedBy, sortLabel;
+
+        if (o.column.get("sortable")) {
+            sortedBy = this.get('lastSortedBy');
+
+            sortLabel = (sortedBy && sortedBy.dir === ASC &&
+                         sortedBy.key === o.column.get('key')) ?
+                            "reverseSortBy" : "sortBy";
+
             o.value = Y.Lang.sub(this.get("template"), {
                 link_class: o.link_class || "",
-                link_title: "title",
+                link_title: Y.Lang.sub(this.get('strings.' + sortLabel), {
+                                column: o.column.get('label')
+                            }),
                 link_href: "#",
                 value: o.value
             });
@@ -256,7 +297,7 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
     /**
     * Before header cell element is attached, sets applicable class names.
     *
-    * @method _before_beforeAttachTbodyTdNode
+    * @method _beforeAttachTbodyTdNode
     * @param o {Object} {record, column, tr, headers, classnames, value}.
     * @protected
     */
@@ -286,18 +327,23 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
     _onEventSortColumn: function(e) {
         e.halt();
         //TODO: normalize e.currentTarget to TH
-        var dt = this.get("host"),
-            column = dt.get("columnset").idHash[e.currentTarget.get("id")],
-            key = column.get("key"),
-            field = column.get("field"),
-            lastSortedBy = this.get("lastSortedBy"),
-            dir = (lastSortedBy &&
-                lastSortedBy.key === key &&
-                lastSortedBy.dir === ASC) ? DESC : ASC,
-            sorter = column.get("sortFn");
-        if(column.get("sortable")) {
-            dt.get("recordset").sort.sort(field, dir === DESC, sorter);
-            this.set("lastSortedBy", {key: key, dir: dir});
+        var table  = this.get("host"),
+            column = table.get("columnset").idHash[e.currentTarget.get("id")],
+            key, field, lastSort, desc, sorter;
+
+        if (column.get("sortable")) {
+            key       = column.get("key");
+            field     = column.get("field");
+            lastSort  = this.get("lastSortedBy") || {};
+            desc      = (lastSort.key === key && lastSort.dir === ASC);
+            sorter    = column.get("sortFn");
+
+            table.get("recordset").sort.sort(field, desc, sorter);
+
+            this.set("lastSortedBy", {
+                key: key,
+                dir: (desc) ? DESC : ASC
+            });
         }
     }
 });

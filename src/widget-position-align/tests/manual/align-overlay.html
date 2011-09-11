@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<head>
+
+<style>
+
+#btn {
+        background:red;
+}
+</style>
+ 
+<!-- <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/3.3.0/build/cssfonts/fonts-min.css" />  -->
+<script type="text/javascript" src="../../../../build/yui/yui-debug.js"></script> 
+ 
+</head> 
+ 
+<body class="yui3-skin-sam  yui-skin-sam"> 
+ 
+<h1>Alignment Support</h1> 
+
+<div id="con">
+<a href="#" id="btn">Click Me</a>
+</div>
+
+<script>
+
+YUI({filter:"raw"}).use('overlay','node','dd-drag', function (Y) {
+    var overlay = new Y.Overlay({
+        headerContent: "Session expired",
+        bodyContent:
+        '<input type="submit" id="resume_button" class="submit" value="Resume" />' +
+        '<input type="submit" id="cancel_button" class="submit" value="Log out" />',
+        visible: true,
+        width: 300,
+        height: 100,
+        zIndex: 200,
+        centered: true
+    }).render();
+
+    var btn = Y.one('#btn');
+
+    var dd = new Y.DD.Drag({
+        node: "#btn"
+});
+
+btn.on('click', function(e) {
+        e.preventDefault();
+        alert("ello");
+})
+
+});
+
+
+</script>
+</body>
+</html>
+ 

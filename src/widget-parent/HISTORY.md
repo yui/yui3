@@ -1,6 +1,12 @@
 Widget Parent
 =============
 
+3.4.1
+-----
+
+  * Fixed issue with children not being destroyed, when
+    parent.destroy() is called.
+
 3.4.0
 -----
 

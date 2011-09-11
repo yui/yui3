@@ -8,10 +8,13 @@ YUI.add('charts', function(Y) {
  * @main charts
  */
 var DOCUMENT = Y.config.doc,
+    Y_Lang = Y.Lang,
     LeftAxisLayout,
     RightAxisLayout,
     BottomAxisLayout,
-    TopAxisLayout;
+    TopAxisLayout,
+    _getClassName = Y.ClassNameManager.getClassName,
+    SERIES_MARKER = _getClassName("seriesmarker");
 
 /**
  * The Renderer class is a base class for chart components that use the `styles`
@@ -97,7 +100,7 @@ Renderer.prototype = {
         var newstyles = Y.merge(b, {});
         Y.Object.each(a, function(value, key, a)
         {
-            if(b.hasOwnProperty(key) && Y.Lang.isObject(value) && !Y.Lang.isArray(value))
+            if(b.hasOwnProperty(key) && Y_Lang.isObject(value) && !Y_Lang.isArray(value))
             {
                 newstyles[key] = this._mergeStyles(value, b[key]);
             }
@@ -2502,7 +2505,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             m12 = props.m12;
             m21 = props.m21;
             m22 = props.m22;
-            if(Y.Lang.isNumber(textAlpha) && textAlpha < 1 && textAlpha > -1 && !isNaN(textAlpha))
+            if(Y_Lang.isNumber(textAlpha) && textAlpha < 1 && textAlpha > -1 && !isNaN(textAlpha))
             {
                 filterString = "progid:DXImageTransform.Microsoft.Alpha(Opacity=" + Math.round(textAlpha * 100) + ")";
             }
@@ -2686,7 +2689,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
 
             validator: function(val)
             {
-                return Y.Lang.isBoolean(val);
+                return Y_Lang.isBoolean(val);
             }
         },
 
@@ -3184,7 +3187,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
                     i, 
                     len,
                     data = this.get("dataProvider");
-                if(Y.Lang.isArray(val))
+                if(Y_Lang.isArray(val))
                 {
                     len = val.length;
                     for(i = 0; i < len; ++i)
@@ -3193,7 +3196,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
                     }
                     
                 }
-                else if(Y.Lang.isString(val))
+                else if(Y_Lang.isString(val))
                 {
                     keys = this.get("keys");
                     keys[val] = this._getKeyArray(val, data);
@@ -3301,7 +3304,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
                 {
                     max = 10;
                 }
-                if(this.get("setMax")) 
+                if(Y_Lang.isNumber(this._setMaximum))
                 {
                     max = this._setMaximum;
                 }
@@ -3342,7 +3345,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
             getter: function ()
             {
                 var min = this.get("dataMinimum");
-                if(this.get("setMin"))
+                if(Y_Lang.isNumber(this._setMinimum))
                 {
                     min = this._setMinimum;
                 }
@@ -3367,7 +3370,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
 
             getter: function()
             {
-                return Y.Lang.isNumber(this._setMaximum);
+                return Y_Lang.isNumber(this._setMaximum);
             }
         },
 
@@ -3383,7 +3386,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
 
             getter: function()
             {
-                return Y.Lang.isNumber(this._setMinimum);
+                return Y_Lang.isNumber(this._setMinimum);
             }
         },
 
@@ -3537,7 +3540,7 @@ Y.extend(NumericAxis, Y.AxisType,
     {
         var value = NaN,
             keys = this.get("keys");
-        if(keys[key] && Y.Lang.isNumber(parseFloat(keys[key][index])))
+        if(keys[key] && Y_Lang.isNumber(parseFloat(keys[key][index])))
         {
             value = keys[key][index];
         }
@@ -3606,8 +3609,8 @@ Y.extend(NumericAxis, Y.AxisType,
             num,
             i,
             key,
-            setMax = this.get("setMax"),
-            setMin = this.get("setMin");
+            setMax = this._setMaximum,
+            setMin = this._setMinimum;
         if(!setMax && !setMin)
         {
             if(data && data.length && data.length > 0)
@@ -3621,7 +3624,7 @@ Y.extend(NumericAxis, Y.AxisType,
                         num = data[i];
                         if(isNaN(num))
                         {
-                            if(Y.Lang.isObject(num))
+                            if(Y_Lang.isObject(num))
                             {
                                 min = max = 0;
                                 //hloc values
@@ -3866,9 +3869,18 @@ Y.extend(NumericAxis, Y.AxisType,
             increm = (max - min)/(l-1),
             label;
             l -= 1;
-        label = min + (i * increm);
-        if(i > 0)
+        //respect the min and max. calculate all other labels.
+        if(i === 0)
         {
+            label = min;
+        }
+        else if(i === l)
+        {
+            label = max;
+        }
+        else
+        {
+            label = min + (i * increm);
             label = this._roundToNearest(label, increm);
         }
         return label;
@@ -4077,7 +4089,7 @@ TimeAxis.ATTRS =
         getter: function()
         {
             var max = this._getNumber(this._setMaximum);
-            return (Y.Lang.isNumber(max));
+            return (Y_Lang.isNumber(max));
         }
     },
 
@@ -4095,7 +4107,7 @@ TimeAxis.ATTRS =
         getter: function()
         {
             var min = this._getNumber(this._setMinimum);
-            return (Y.Lang.isNumber(min));
+            return (Y_Lang.isNumber(min));
         }
     },
 
@@ -4109,7 +4121,7 @@ TimeAxis.ATTRS =
         getter: function ()
         {
             var max = this._getNumber(this._setMaximum);
-            if(!Y.Lang.isNumber(max))
+            if(!Y_Lang.isNumber(max))
             {
                 max = this._getNumber(this.get("dataMaximum"));
             }
@@ -4132,7 +4144,7 @@ TimeAxis.ATTRS =
         getter: function ()
         {
             var min = this._getNumber(this._setMinimum);
-            if(!Y.Lang.isNumber(min)) 
+            if(!Y_Lang.isNumber(min)) 
             {
                 min = this._getNumber(this.get("dataMinimum"));
             }
@@ -4246,20 +4258,20 @@ Y.extend(TimeAxis, Y.AxisType, {
         for(; i < len; ++i)
         {
             obj = data[i][key];
-            if(Y.Lang.isDate(obj))
+            if(Y_Lang.isDate(obj))
             {   
                 val = obj.valueOf();
             }
             else
             {
                 val = new Date(obj);
-                if(Y.Lang.isDate(val))
+                if(Y_Lang.isDate(val))
                 {
                     val = val.valueOf();
                 }
-                else if(!Y.Lang.isNumber(obj))
+                else if(!Y_Lang.isNumber(obj))
                 {
-                    if(Y.Lang.isNumber(parseFloat(obj)))
+                    if(Y_Lang.isNumber(parseFloat(obj)))
                     {
                         val = parseFloat(obj);
                     }
@@ -4301,20 +4313,20 @@ Y.extend(TimeAxis, Y.AxisType, {
         for(i = 0; i < len; ++i)
         {
             obj = dv[i][key];
-            if(Y.Lang.isDate(obj))
+            if(Y_Lang.isDate(obj))
             {   
                 val = obj.valueOf();
             }
             else
             {
                 val = new Date(obj);
-                if(Y.Lang.isDate(val))
+                if(Y_Lang.isDate(val))
                 {
                     val = val.valueOf();
                 }
-                else if(!Y.Lang.isNumber(obj))
+                else if(!Y_Lang.isNumber(obj))
                 {
-                    if(Y.Lang.isNumber(parseFloat(obj)))
+                    if(Y_Lang.isNumber(parseFloat(obj)))
                     {
                         val = parseFloat(obj);
                     }
@@ -4348,11 +4360,11 @@ Y.extend(TimeAxis, Y.AxisType, {
      */
     _getNumber: function(val)
     {
-        if(Y.Lang.isDate(val))
+        if(Y_Lang.isDate(val))
         {
             val = val.valueOf();
         }
-        else if(!Y.Lang.isNumber(val) && val)
+        else if(!Y_Lang.isNumber(val) && val)
         {
             val = new Date(val).valueOf();
         }
@@ -4822,7 +4834,7 @@ Lines.prototype = {
         {
             return;
         }
-        var isNumber = Y.Lang.isNumber,
+        var isNumber = Y_Lang.isNumber,
             xcoords = this.get("xcoords").concat(),
             ycoords = this.get("ycoords").concat(),
             direction = this.get("direction"),
@@ -5430,7 +5442,7 @@ Plots.prototype = {
 		{
 			return;
 		}
-        var isNumber = Y.Lang.isNumber,
+        var isNumber = Y_Lang.isNumber,
             style = Y.clone(this.get("styles").marker),
             w = style.width,
             h = style.height,
@@ -5446,11 +5458,11 @@ Plots.prototype = {
             fillColors = null,
             borderColors = null,
             graphOrder = this.get("graphOrder");
-        if(Y.Lang.isArray(style.fill.color))
+        if(Y_Lang.isArray(style.fill.color))
         {
             fillColors = style.fill.color.concat(); 
         }
-        if(Y.Lang.isArray(style.border.color))
+        if(Y_Lang.isArray(style.border.color))
         {
             borderColors = style.border.colors.concat();
         }
@@ -5544,7 +5556,7 @@ Plots.prototype = {
     {
         var marker,
             border = styles.border;
-        styles.id = "series_" + order + "_" + index;
+        styles.id = this.get("chart").get("id") + "_" + order + "_" + index;
         //fix name differences between graphic layer
         border.opacity = border.alpha;
         styles.stroke = border;
@@ -5589,7 +5601,7 @@ Plots.prototype = {
         graphic.set("autoDraw", false);
         cfg.type = cfg.shape;
         marker = graphic.addShape(cfg); 
-        marker.addClass("yui3-seriesmarker");
+        marker.addClass(SERIES_MARKER);
         return marker;
     },
     
@@ -5703,7 +5715,7 @@ Plots.prototype = {
      */
     _getItemColor: function(val, i)
     {
-        if(Y.Lang.isArray(val))
+        if(Y_Lang.isArray(val))
         {
             return val[i % val.length];
         }
@@ -5837,11 +5849,11 @@ Histogram.prototype = {
             config,
             fillColors = null,
             borderColors = null;
-        if(Y.Lang.isArray(style.fill.color))
+        if(Y_Lang.isArray(style.fill.color))
         {
             fillColors = style.fill.color.concat(); 
         }
-        if(Y.Lang.isArray(style.border.color))
+        if(Y_Lang.isArray(style.border.color))
         {
             borderColors = style.border.colors.concat();
         }
@@ -6197,7 +6209,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
      */
     setAreaData: function()
     {
-        var isNumber = Y.Lang.isNumber,
+        var isNumber = Y_Lang.isNumber,
             nextX, nextY,
             graph = this.get("graph"),
             w = graph.get("width"),
@@ -6531,6 +6543,22 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          * @type Array
          */
         ycoords: {},
+
+        /**
+         * Reference to the `Chart` application.
+         *
+         * @attribute chart
+         * @type ChartBase
+         * @readOnly
+         */
+        chart: {
+            readOnly: true,
+
+            getter: function()
+            {
+                return this.get("graph").get("chart");
+            }
+        },
         
         /**
          * Reference to the `Graph` in which the series is drawn into.
@@ -8076,7 +8104,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
 		{
 			return;
 		}
-        var isNumber = Y.Lang.isNumber,
+        var isNumber = Y_Lang.isNumber,
             style = this.get("styles").marker, 
             w = style.width,
             h = style.height,
@@ -8342,7 +8370,7 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
 			return;
 		}
 
-        var isNumber = Y.Lang.isNumber,
+        var isNumber = Y_Lang.isNumber,
             style = this.get("styles").marker,
             w = style.width,
             h = style.height,
@@ -8972,7 +9000,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         pts += ", " + bx + ", " + by;
         pts += ", " + x + ", " + y;
         this._map.appendChild(areaNode);
-        areaNode.setAttribute("class", "yui3-seriesmarker");
+        areaNode.setAttribute("class", SERIES_MARKER);
         areaNode.setAttribute("id", "hotSpot_" + seriesIndex + "_" + index);
         areaNode.setAttribute("shape", "polygon");
         areaNode.setAttribute("coords", pts);
@@ -9022,7 +9050,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             cfg = Y.clone(styles);
         graphic.set("autoDraw", false);
         marker = graphic.addShape(cfg); 
-        marker.addClass("yui3-seriesmarker");
+        marker.addClass(SERIES_MARKER);
         return marker;
     },
     
@@ -9725,7 +9753,8 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     },
 
     /**
-     * Creates a `CartesianSeries` instance from an object containing attribute key value pairs.
+     * Creates a `CartesianSeries` instance from an object containing attribute key value pairs. The key value pairs include attributes for the specific series and a type value which defines the type of
+     * series to be used. 
      *
      * @method createSeries
      * @param {Object} seriesData Series attribute key value pairs.
@@ -9755,86 +9784,82 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         typeSeriesCollection.push(series);
         seriesCollection.push(series);
     },
+    
+    /**
+     * String reference for pre-defined `Series` classes.
+     *
+     * @property _seriesMap
+     * @type Object
+     * @private
+     */
+    _seriesMap: {
+        line : Y.LineSeries,
+        column : Y.ColumnSeries,
+        bar : Y.BarSeries,
+        area :  Y.AreaSeries,
+        candlestick : Y.CandlestickSeries,
+        ohlc : Y.OHLCSeries,
+        stackedarea : Y.StackedAreaSeries,
+        stackedline : Y.StackedLineSeries,
+        stackedcolumn : Y.StackedColumnSeries,
+        stackedbar : Y.StackedBarSeries,
+        markerseries : Y.MarkerSeries,
+        spline : Y.SplineSeries,
+        areaspline : Y.AreaSplineSeries,
+        stackedspline : Y.StackedSplineSeries,
+        stackedareaspline : Y.StackedAreaSplineSeries,
+        stackedmarkerseries : Y.StackedMarkerSeries,
+        pie : Y.PieSeries,
+        combo : Y.ComboSeries,
+        stackedcombo : Y.StackedComboSeries,
+        combospline : Y.ComboSplineSeries,
+        stackedcombospline : Y.StackedComboSplineSeries
+    },
 
     /**
-     * Returns a specific `CartesianSeries` class based on key value.
+     * Returns a specific `CartesianSeries` class based on key value from a look up table of a direct reference to a class. When specifying a key value, the following options
+     * are available:
+     *
+     *  <table>
+     *      <tr><th>Key Value</th><th>Class</th></tr>
+     *      <tr><td>line</td><td>Y.LineSeries</td></tr>    
+     *      <tr><td>column</td><td>Y.ColumnSeries</td></tr>    
+     *      <tr><td>bar</td><td>Y.BarSeries</td></tr>    
+     *      <tr><td>area</td><td>Y.AreaSeries</td></tr>    
+     *      <tr><td>stackedarea</td><td>Y.StackedAreaSeries</td></tr>    
+     *      <tr><td>stackedline</td><td>Y.StackedLineSeries</td></tr>    
+     *      <tr><td>stackedcolumn</td><td>Y.StackedColumnSeries</td></tr>    
+     *      <tr><td>stackedbar</td><td>Y.StackedBarSeries</td></tr>    
+     *      <tr><td>markerseries</td><td>Y.MarkerSeries</td></tr>    
+     *      <tr><td>spline</td><td>Y.SplineSeries</td></tr>    
+     *      <tr><td>areaspline</td><td>Y.AreaSplineSeries</td></tr>    
+     *      <tr><td>stackedspline</td><td>Y.StackedSplineSeries</td></tr>
+     *      <tr><td>stackedareaspline</td><td>Y.StackedAreaSplineSeries</td></tr>
+     *      <tr><td>stackedmarkerseries</td><td>Y.StackedMarkerSeries</td></tr>
+     *      <tr><td>pie</td><td>Y.PieSeries</td></tr>
+     *      <tr><td>combo</td><td>Y.ComboSeries</td></tr>
+     *      <tr><td>stackedcombo</td><td>Y.StackedComboSeries</td></tr>
+     *      <tr><td>combospline</td><td>Y.ComboSplineSeries</td></tr>
+     *      <tr><td>stackedcombospline</td><td>Y.StackedComboSplineSeries</td></tr>
+     *  </table>
+     * 
+     * When referencing a class directly, you can specify any of the above classes or any custom class that extends `CartesianSeries` or `PieSeries`.
      *
      * @method _getSeries
-     * @param {String} type Key value for the series class.
+     * @param {String | Object} type Series type.
      * @return CartesianSeries
      * @private
      */
     _getSeries: function(type)
     {
         var seriesClass;
-        switch(type)
+        if(Y_Lang.isString(type))
         {
-            case "line" :
-                seriesClass = Y.LineSeries;
-            break;
-            case "column" :
-                seriesClass = Y.ColumnSeries;
-            break;
-            case "bar" :
-                seriesClass = Y.BarSeries;
-            break;
-            case "area" : 
-                seriesClass = Y.AreaSeries;
-            break;
-            case "candlestick" :
-                seriesClass = Y.CandlestickSeries;
-            break;
-            case "ohlc" :
-                seriesClass = Y.OHLCSeries;
-            break;
-            case "stackedarea" :
-                seriesClass = Y.StackedAreaSeries;
-            break;
-            case "stackedline" :
-                seriesClass = Y.StackedLineSeries;
-            break;
-            case "stackedcolumn" :
-                seriesClass = Y.StackedColumnSeries;
-            break;
-            case "stackedbar" :
-                seriesClass = Y.StackedBarSeries;
-            break;
-            case "markerseries" :
-                seriesClass = Y.MarkerSeries;
-            break;
-            case "spline" :
-                seriesClass = Y.SplineSeries;
-            break;
-            case "areaspline" :
-                seriesClass = Y.AreaSplineSeries;
-            break;
-            case "stackedspline" :
-                seriesClass = Y.StackedSplineSeries;
-            break;
-            case "stackedareaspline" :
-                seriesClass = Y.StackedAreaSplineSeries;
-            break;
-            case "stackedmarkerseries" :
-                seriesClass = Y.StackedMarkerSeries;
-            break;
-            case "pie" :
-                seriesClass = Y.PieSeries;
-            break;
-            case "combo" :
-                seriesClass = Y.ComboSeries;
-            break;
-            case "stackedcombo" :
-                seriesClass = Y.StackedComboSeries;
-            break;
-            case "combospline" :
-                seriesClass = Y.ComboSplineSeries;
-            break;
-            case "stackedcombospline" :
-                seriesClass = Y.StackedComboSplineSeries;
-            break;
-            default:
-                seriesClass = Y.CartesianSeries;
-            break;
+            seriesClass = this._seriesMap[type];
+        }
+        else 
+        {
+            seriesClass = type;
         }
         return seriesClass;
     },
@@ -10018,6 +10043,15 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     }
 }, {
     ATTRS: {
+        /**
+         * Reference to the chart instance using the graph.
+         *
+         * @attribute chart
+         * @type ChartBase
+         * @readOnly
+         */
+        chart: {},
+
         /**
          * Collection of series. When setting the `seriesCollection` the array can contain a combination of either
          * `CartesianSeries` instances or object literals with properties that will define a series.
@@ -10349,7 +10383,7 @@ ChartBase.prototype = {
      */
     _getGraph: function()
     {
-        var graph = new Y.Graph();
+        var graph = new Y.Graph({chart:this});
         graph.after("chartRendered", Y.bind(function(e) {
             this.fire("chartRendered");
         }, this));
@@ -10369,7 +10403,7 @@ ChartBase.prototype = {
             graph = this.get("graph");
         if(graph)
         {
-            if(Y.Lang.isNumber(val))
+            if(Y_Lang.isNumber(val))
             {
                 series = graph.getSeriesByIndex(val);
             }
@@ -10449,7 +10483,7 @@ ChartBase.prototype = {
      */
     _setDataValues: function(val)
     {
-        if(Y.Lang.isArray(val[0]))
+        if(Y_Lang.isArray(val[0]))
         {
             var hash, 
                 dp = [], 
@@ -10563,17 +10597,18 @@ ChartBase.prototype = {
             cb = this.get("contentBox"),
             interactionType = this.get("interactionType"),
             i = 0,
-            len;
+            len,
+            markerClassName = "." + SERIES_MARKER;
         if(interactionType == "marker")
         {
             hideEvent = tt.hideEvent;
             showEvent = tt.showEvent;
-            Y.delegate("mouseenter", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("mousedown", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("mouseup", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("mouseleave", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("click", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("mousemove", Y.bind(this._positionTooltip, this), cb, ".yui3-seriesmarker");
+            Y.delegate("mouseenter", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("mousedown", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("mouseup", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("mouseleave", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("click", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("mousemove", Y.bind(this._positionTooltip, this), cb, markerClassName);
         }
         else if(interactionType == "planar")
         {
@@ -10594,7 +10629,7 @@ ChartBase.prototype = {
                 }
                 if(hideEvent)
                 {
-                    if(Y.Lang.isArray(hideEvent))
+                    if(Y_Lang.isArray(hideEvent))
                     {
                         len = hideEvent.length;
                         for(; i < len; ++i)
@@ -10621,12 +10656,14 @@ ChartBase.prototype = {
             cb = this.get("contentBox"),
             markerNode = e.currentTarget,
             strArr = markerNode.getAttribute("id").split("_"),
-            seriesIndex = strArr[1],
+            index = strArr.pop(),
+            seriesIndex = strArr.pop(),
             series = this.getSeries(parseInt(seriesIndex, 10)),
-            index = strArr[2],
             items = this.getSeriesItems(series, index),
-            x = e.pageX - cb.getX(),
-            y = e.pageY - cb.getY();
+            pageX = e.pageX,
+            pageY = e.pageY,
+            x = pageX - cb.getX(),
+            y = pageY - cb.getY();
         if(type == "mouseenter")
         {
             type = "mouseover";
@@ -10728,7 +10765,19 @@ ChartBase.prototype = {
          *      <dt>seriesIndex</dt><dd>The `order` of the marker's series.</dd>
          *  </dl>
          */
-        this.fire("markerEvent:" + type, {categoryItem:items.category, valueItem:items.value, node:markerNode, x:x, y:y, series:series, index:index, seriesIndex:seriesIndex});
+        this.fire("markerEvent:" + type, {
+            originEvent: e,
+            pageX:pageX, 
+            pageY:pageY, 
+            categoryItem:items.category, 
+            valueItem:items.value, 
+            node:markerNode, 
+            x:x, 
+            y:y, 
+            series:series, 
+            index:index, 
+            seriesIndex:seriesIndex
+        });
     },
 
     /**
@@ -10881,7 +10930,7 @@ ChartBase.prototype = {
                 planarEventHandler:"planarEventHandler",
                 show:"show"
             };
-        if(Y.Lang.isObject(val))
+        if(Y_Lang.isObject(val))
         {
             styles = val.styles;
             node = Y.one(val.node) || tt.node;
@@ -11075,7 +11124,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
     renderUI: function()
     {
         var tt = this.get("tooltip"),
-            overlay;
+            overlay,
+            overlayClass = _getClassName("overlay");
         //move the position = absolute logic to a class file
         this.get("boundingBox").setStyle("position", "absolute");
         this.get("contentBox").setStyle("position", "absolute");
@@ -11096,7 +11146,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             this._overlay.setStyle("position", "absolute");
             this._overlay.setStyle("background", "#fff");
             this._overlay.setStyle("opacity", 0);
-            this._overlay.addClass("yui3-overlay");
+            this._overlay.addClass(overlayClass);
             this._overlay.setStyle("zIndex", 4);
         }
         this._redraw();
@@ -11115,12 +11165,12 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         var graph = this.get("graph"),
             bb = this.get("boundingBox"),
             cb = graph.get("contentBox"),
-            x = e.pageX,
-            offsetX = x - cb.getX(),
-            posX = x - bb.getX(),
-            y = e.pageY,
-            offsetY = y - cb.getY(),
-            posY = y - bb.getY(),
+            pageX = e.pageX,
+            offsetX = pageX - cb.getX(),
+            posX = pageX - bb.getX(),
+            pageY = e.pageY,
+            offsetY = pageY - cb.getY(),
+            posY = pageY - bb.getY(),
             sc = graph.get("seriesCollection"),
             series,
             i = 0,
@@ -11194,7 +11244,17 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
          */
         if(index > -1)
         {
-            this.fire("planarEvent:mouseover", {categoryItem:categoryItems, valueItem:valueItems, x:posX, y:posY, items:items, index:index});
+            this.fire("planarEvent:mouseover", {
+                categoryItem:categoryItems, 
+                valueItem:valueItems, 
+                x:posX, 
+                y:posY, 
+                pageX:pageX,
+                pageY:pageY,
+                items:items, 
+                index:index,
+                originEvent:e
+            });
         }
         else
         {
@@ -11357,7 +11417,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             yAxis = series.get("yAxis"),
             YAxis = Y.Axis,
             axis;
-        if(xAxis && !(xAxis instanceof YAxis) && Y.Lang.isString(xAxis) && axes.hasOwnProperty(xAxis))
+        if(xAxis && !(xAxis instanceof YAxis) && Y_Lang.isString(xAxis) && axes.hasOwnProperty(xAxis))
         {
             axis = axes[xAxis];
             if(axis instanceof YAxis)
@@ -11365,7 +11425,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 series.set("xAxis", axis);
             }
         }
-        if(yAxis && !(yAxis instanceof YAxis) && Y.Lang.isString(yAxis) && axes.hasOwnProperty(yAxis))
+        if(yAxis && !(yAxis instanceof YAxis) && Y_Lang.isString(yAxis) && axes.hasOwnProperty(yAxis))
         {   
             axis = axes[yAxis];
             if(axis instanceof YAxis)
@@ -11764,7 +11824,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                     {
                         categoryAxisName = i;
                         this.set("categoryAxisName", i);
-                        if(Y.Lang.isArray(keys) && keys.length > 0)
+                        if(Y_Lang.isArray(keys) && keys.length > 0)
                         {
                             catKey = keys[0];
                             this.set("categoryKey", catKey);
@@ -11778,7 +11838,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                     else 
                     {
                         newAxes[i] = axis;
-                        if(i != valueAxisName && keys && Y.Lang.isArray(keys))
+                        if(i != valueAxisName && keys && Y_Lang.isArray(keys))
                         {
                             ll = keys.length;
                             for(ii = 0; ii < ll; ++ii)
@@ -12214,7 +12274,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                     l,
                     s;
     
-                if(Y.Lang.isArray(val))
+                if(Y_Lang.isArray(val))
                 {
                     s = this.get("seriesCollection");
                     i = 0;
@@ -12501,7 +12561,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             setter: function(val)
             {
                 var graph = this.get("graph");
-                if(val && !Y.Lang.isObject(val))
+                if(val && !Y_Lang.isObject(val))
                 {
                     val = {};
                 }
@@ -12535,7 +12595,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             setter: function(val)
             {
                 var graph = this.get("graph");
-                if(val && !Y.Lang.isObject(val))
+                if(val && !Y_Lang.isObject(val))
                 {
                     val = {};
                 }

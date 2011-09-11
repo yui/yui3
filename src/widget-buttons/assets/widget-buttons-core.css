@@ -1,0 +1,11 @@
+.yui3-widget-buttons .yui3-button-icon {
+    display: inline-block;
+    *display: inline;
+    zoom: 1;
+    width: 13px;
+    height: 13px;
+    background-repeat: no-repeat;
+}
+.yui3-widget-buttons .yui3-button-icon-close {
+    background-position: 0 2px;
+}

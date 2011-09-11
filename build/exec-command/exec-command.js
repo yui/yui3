@@ -511,18 +511,39 @@ YUI.add('exec-command', function(Y) {
                         } else {
                             par = sel.anchorNode.ancestor(inst.Selection.BLOCKS);
                         }
+                        if (!par) { //No parent, find the first block under the anchorNode
+                            par = sel.anchorNode.one(inst.Selection.BLOCKS);
+                        }
+
                         if (par && par.hasAttribute(DIR)) {
                             dir = par.getAttribute(DIR);
                         }
-                        this._command(cmd, null);
+                        if (par && par.test(tag)) {
+                            html = inst.Node.create('<div/>');
+                            elm = par.all('li');
+                            elm.each(function(h) {
+                                html.append('<p>' + h.get('innerHTML') + '</p>');
+                            });
+                            if (dir) {
+                                html.setAttribute(DIR, dir);
+                            }
+                            par.replace(html);
+                            sel.selectNode(html.get('firstChild'));
+                        } else {
+                            this._command(cmd, null);
+                        }
                         list = inst.all(tag);
                         if (dir) {
-                            list.each(function(n) {
-                                if (!n.hasClass(cls)) {
-                                    n.setAttribute(DIR, dir);
-                                }
-                            });
+                            if (list.size()) {
+                                //Changed to a List
+                                list.each(function(n) {
+                                    if (!n.hasClass(cls)) {
+                                        n.setAttribute(DIR, dir);
+                                    }
+                                });
+                            }
                         }
+
                         list.removeClass(cls);
                     }
                 },
@@ -655,4 +676,4 @@ YUI.add('exec-command', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['frame'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['frame']});

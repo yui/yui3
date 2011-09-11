@@ -44,8 +44,8 @@
         STACKED = "stacked";
 
     /**
-     * Widget extension, which can be used to add stackable (z-index) support to the 
-     * base Widget class along with a shimming solution, through the 
+     * Widget extension, which can be used to add stackable (z-index) support to the
+     * base Widget class along with a shimming solution, through the
      * <a href="Base.html#method_build">Base.build</a> method.
      *
      * @class WidgetStack
@@ -63,10 +63,10 @@
 
     // Static Properties
     /**
-     * Static property used to define the default attribute 
+     * Static property used to define the default attribute
      * configuration introduced by WidgetStack.
-     * 
-     * @property WidgetStack.ATTRS
+     *
+     * @property ATTRS
      * @type Object
      * @static
      */
@@ -75,7 +75,7 @@
          * @attribute shim
          * @type boolean
          * @default false, for all browsers other than IE6, for which a shim is enabled by default.
-         * 
+         *
          * @description Boolean flag to indicate whether or not a shim should be added to the Widgets
          * boundingBox, to protect it from select box bleedthrough.
          */
@@ -87,7 +87,7 @@
          * @attribute zIndex
          * @type number
          * @default 0
-         * @description The z-index to apply to the Widgets boundingBox. Non-numerical values for 
+         * @description The z-index to apply to the Widgets boundingBox. Non-numerical values for
          * zIndex will be converted to 0
          */
         zIndex: {
@@ -100,8 +100,8 @@
 
     /**
      * The HTML parsing rules for the WidgetStack class.
-     * 
-     * @property WidgetStack.HTML_PARSER
+     *
+     * @property HTML_PARSER
      * @static
      * @type Object
      */
@@ -114,27 +114,27 @@
     /**
      * Default class used to mark the shim element
      *
-     * @property WidgetStack.SHIM_CLASS_NAME
+     * @property SHIM_CLASS_NAME
      * @type String
      * @static
-     * @default "yui-widget-shim"
+     * @default "yui3-widget-shim"
      */
     Stack.SHIM_CLASS_NAME = Widget.getClassName(SHIM);
 
     /**
      * Default class used to mark the boundingBox of a stacked widget.
-     * 
-     * @property WidgetStack.STACKED_CLASS_NAME
+     *
+     * @property STACKED_CLASS_NAME
      * @type String
      * @static
-     * @default "yui-widget-stacked"
+     * @default "yui3-widget-stacked"
      */
     Stack.STACKED_CLASS_NAME = Widget.getClassName(STACKED);
 
     /**
      * Default markup template used to generate the shim element.
-     * 
-     * @property WidgetStack.SHIM_TEMPLATE
+     *
+     * @property SHIM_TEMPLATE
      * @type String
      * @static
      */
@@ -143,7 +143,7 @@
     Stack.prototype = {
 
         /**
-         * Synchronizes the UI to match the Widgets stack state. This method in 
+         * Synchronizes the UI to match the Widgets stack state. This method in
          * invoked after syncUI is invoked for the Widget class using YUI's aop infrastructure.
          *
          * @method _syncUIStack
@@ -155,7 +155,7 @@
         },
 
         /**
-         * Binds event listeners responsible for updating the UI state in response to 
+         * Binds event listeners responsible for updating the UI state in response to
          * Widget stack related state changes.
          * <p>
          * This method is invoked after bindUI is invoked for the Widget class
@@ -183,7 +183,7 @@
         },
 
         /**
-         * Default setter for zIndex attribute changes. Normalizes zIndex values to 
+         * Default setter for zIndex attribute changes. Normalizes zIndex values to
          * numbers, converting non-numerical values to 0.
          *
          * @method _setZIndex
@@ -216,7 +216,7 @@
         /**
          * Default attribute change listener for the zIndex attribute, responsible
          * for updating the UI, in response to attribute changes.
-         * 
+         *
          * @method _afterZIndexChange
          * @protected
          * @param {EventFacade} e The event facade for the attribute change
@@ -252,15 +252,23 @@
                 } else {
                     this._renderShimDeferred();
                 }
+
+                // Eagerly attach resize handlers
+                //
+                // Required because of Event stack behavior, commit ref: cd8dddc
+                // Should be revisted after Ticket #2531067 is resolved.
+                if (UA.ie == 6) {
+                    this._addShimResizeHandlers();
+                }
             } else {
                 this._destroyShim();
             }
         },
 
         /**
-         * Sets up change handlers for the visible attribute, to defer shim creation/rendering 
+         * Sets up change handlers for the visible attribute, to defer shim creation/rendering
          * until the Widget is made visible.
-         * 
+         *
          * @method _renderShimDeferred
          * @private
          */
@@ -276,13 +284,18 @@
                 };
 
             handles.push(this.on(VisibleChange, createBeforeVisible));
+            // Depending how how Ticket #2531067 is resolved, a reversal of
+            // commit ref: cd8dddc could lead to a more elagent solution, with
+            // the addition of this line here:
+            //
+            // handles.push(this.after(VisibleChange, this.sizeShim));
         },
 
         /**
          * Sets up event listeners to resize the shim when the size of the Widget changes.
          * <p>
          * NOTE: This method is only used for IE6 currently, since IE6 doesn't support a way to
-         * resize the shim purely through CSS, when the Widget does not have an explicit width/height 
+         * resize the shim purely through CSS, when the Widget does not have an explicit width/height
          * set.
          * </p>
          * @method _addShimResizeHandlers
@@ -294,8 +307,6 @@
 
             var sizeShim = this.sizeShim,
                 handles = this._stackHandles[SHIM_RESIZE];
-
-            this.sizeShim();
 
             handles.push(this.after(VisibleChange, sizeShim));
             handles.push(this.after(WidthChange, sizeShim));
@@ -335,9 +346,6 @@
                 shimEl = this._shimNode = this._getShimTemplate();
                 stackEl.insertBefore(shimEl, stackEl.get(FIRST_CHILD));
 
-                if (UA.ie == 6) {
-                    this._addShimResizeHandlers();
-                }
                 this._detachStackHandles(SHIM_DEFERRED);
             }
         },
@@ -360,7 +368,7 @@
         },
 
         /**
-         * For IE6, synchronizes the size and position of iframe shim to that of 
+         * For IE6, synchronizes the size and position of iframe shim to that of
          * Widget bounding box which it is protecting. For all other browsers,
          * this method does not do anything.
          *

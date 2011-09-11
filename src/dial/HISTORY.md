@@ -1,6 +1,11 @@
 Dial Change History
 ===================
 
+3.4.1
+-----
+
+  * Changed method name from _getNewValueFromMousedown to _handleMousedown
+
 3.4.0
 -----
 

@@ -139,6 +139,11 @@ YUI.add('frame', function(Y) {
         */
         _onDomEvent: function(e) {
             var xy, node;
+            
+            if (!Y.Node.getDOMNode(this._iframe)) {
+                //The iframe is null for some reason, bail on sending events.
+                return;
+            }
 
             //Y.log('onDOMEvent: ' + e.type, 'info', 'frame');
             e.frameX = e.frameY = 0;
@@ -572,7 +577,7 @@ YUI.add('frame', function(Y) {
         * @method render
         * @description Render the iframe into the container config option or open the window.
         * @param {String/HTMLElement/Node} node The node to render to
-        * @return {Y.Frame}
+        * @return {Frame}
         * @chainable
         */
         render: function(node) {

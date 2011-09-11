@@ -105,4 +105,4 @@ Y.SWFDetect = {
 };
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['yui-base']});

@@ -37,7 +37,7 @@ YUI().use("datatable-base", function(Y) {
     }).render("#template");
 ```
 
-<p>When a calculation is needed, define a custom function that generates markup for the data cell. The custom formatter function receives an object with the following properties: `{tbody, tr, td, classnames, headers, rowindex, record, column, data, value}`.</p>
+<p>When a calculation is needed, define a custom function that generates markup for the data cell. The custom formatter function receives an object with the following properties: `{tbody, tr, classnames, headers, rowindex, record, column, data, value}`.</p>
 
 ```
 // The custom formatter function recieves an object with the properties:
@@ -46,7 +46,11 @@ var calculate = function (o){
     var record = o.record;
     return "$"+(record.getValue("price") - record.getValue("cost"));
 },
-cols = ["id", "name", {key:"profit", formatter:calculate}],
+cols = [
+    "id",
+    "name",
+    { key: "profit", formatter: calculate }
+],
 data = [
     {id:"ga-3475", name:"gadget", price:6.99, cost:4.99},
     {id:"sp-9980", name:"sprocket", price:3.75, cost:2.75},
@@ -59,20 +63,27 @@ dt = new Y.DataTable.Base({
 }).render("#function");
 ```
 
-<p>The DataType utility can be used to help format date objects.</p>
+<p>The DataType utility can be used to help format date objects.  This example
+also uses the `emptyCellValue` column configuration to supply a custom cell
+value in the case of missing data.</p>
 
 ```
 YUI().use("datatype-date", "datatable-base", function (Y) {
     // The custom formatter function recieves an object with the properties:
-    // {tbody, tr, td, classnames, headers, rowindex, record, column, data, value}
+    // {tbody, tr, classnames, headers, rowindex, record, column, data, value}
     var formatDates = function (o){
-        return Y.DataType.Date.format(o.value, { format: "%m/%d/%Y" });
+        return o.value &&
+            Y.DataType.Date.format(o.value, { format: "%m/%d/%Y" });
     },
-    cols = ["id", "name", { key: "date", formatter: formatDates }],
+    cols = [
+        "id",
+        "name",
+        { key: "date", formatter: formatDates, emptyCellValue: "(unknown)" }
+    ],
     data = [
         {id:"ga-3475", name:"gadget", date:new Date(2006, 5, 1)},
         {id:"sp-9980", name:"sprocket", date:new Date(2004, 8, 16)},
-        {id:"wi-0650", name:"widget", date:new Date(2005, 4, 23)}
+        {id:"wi-0650", name:"widget"} // no date for this record
     ],
     dt = new Y.DataTable.Base({
         columnset: cols,

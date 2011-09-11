@@ -1,6 +1,11 @@
 Cache Change History
 ====================
 
+3.4.0
+-----
+
+  * Added support to flush a specific request from the cache (hat tip to Tivac)
+
 3.3.0
 -----
 

@@ -62,9 +62,21 @@
             "view"
         ]
     }, 
-    "array-extras": {}, 
-    "array-invoke": {}, 
-    "arraylist": {}, 
+    "array-extras": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
+    "array-invoke": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
+    "arraylist": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "arraylist-add": {
         "requires": [
             "arraylist"
@@ -271,7 +283,10 @@
     "calendarnavigator": {
         "requires": [
             "plugin", 
-            "classnamemanager"
+            "classnamemanager", 
+            "datatype-date", 
+            "node", 
+            "substitute"
         ], 
         "skinnable": true
     }, 
@@ -525,8 +540,7 @@
     "datatable-scroll": {
         "requires": [
             "datatable-base", 
-            "plugin", 
-            "stylesheet"
+            "plugin"
         ]
     }, 
     "datatable-sort": {
@@ -815,7 +829,11 @@
             "dom-style"
         ]
     }, 
-    "dump": {}, 
+    "dump": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "editor": {
         "use": [
             "frame", 
@@ -863,7 +881,11 @@
             "editor-base"
         ]
     }, 
-    "escape": {}, 
+    "escape": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "event": {
         "after": [
             "node-base"
@@ -975,7 +997,8 @@
     }, 
     "event-resize": {
         "requires": [
-            "node-base"
+            "node-base", 
+            "event-synthetic"
         ]
     }, 
     "event-simulate": {
@@ -1208,8 +1231,16 @@
             "json-stringify"
         ]
     }, 
-    "json-parse": {}, 
-    "json-stringify": {}, 
+    "json-parse": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
+    "json-stringify": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "jsonp": {
         "requires": [
             "get", 
@@ -1559,7 +1590,8 @@
     }, 
     "scrollview-list": {
         "requires": [
-            "plugin"
+            "plugin", 
+            "classnamemanager"
         ], 
         "skinnable": true
     }, 
@@ -1647,10 +1679,17 @@
             "sortable"
         ]
     }, 
-    "stylesheet": {}, 
+    "stylesheet": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "substitute": {
         "optional": [
             "dump"
+        ], 
+        "requires": [
+            "yui-base"
         ]
     }, 
     "swf": {
@@ -1661,7 +1700,11 @@
             "escape"
         ]
     }, 
-    "swfdetect": {}, 
+    "swfdetect": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "tabview": {
         "requires": [
             "widget", 
@@ -1706,8 +1749,16 @@
             "text-data-accentfold"
         ]
     }, 
-    "text-data-accentfold": {}, 
-    "text-data-wordbreak": {}, 
+    "text-data-accentfold": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
+    "text-data-wordbreak": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "text-wordbreak": {
         "requires": [
             "array-extras", 
@@ -1792,9 +1843,10 @@
     "widget-buttons": {
         "requires": [
             "widget", 
-            "base-build"
+            "base-build", 
+            "widget-stdmod"
         ], 
-        "skinnable": false
+        "skinnable": true
     }, 
     "widget-child": {
         "requires": [

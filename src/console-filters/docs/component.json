@@ -2,7 +2,7 @@
     "name": "console-filters",
 	"displayName": "ConsoleFilters Plugin",
 	"description": "The Console Filters plugin adds log message filtering controls to the Console UI",
-    "author": "lsmith",
+    "author": ["dgathright"],
 
     "tags": ["beta", "devtool", "plugin", "console", "console-filters", "filter", "log"],
     "use": ["console-filters"],

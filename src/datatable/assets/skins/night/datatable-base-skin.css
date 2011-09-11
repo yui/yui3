@@ -188,9 +188,9 @@ tbody .yui3-datatable-editable {
 }
 
 /* striping */
-.yui3-skin-night td { background-color:transparent; } /* none */
-.yui3-skin-night tr.yui3-datatable-even { background-color:#0E0E0E; } /* darkest bkg even*/
-.yui3-skin-night tr.yui3-datatable-odd { background-color:#1D1E1E; } /* lighter odd */
+.yui3-skin-night .yui3-datatable td { background-color:transparent; } /* none */
+.yui3-skin-night tr.yui3-datatable-even td { background-color:#0E0E0E; } /* darkest bkg even*/
+.yui3-skin-night tr.yui3-datatable-odd td { background-color:#1D1E1E; } /* lighter odd */
 .yui3-skin-night tr.yui3-datatable-even td.yui3-datatable-asc,
 .yui3-skin-night tr.yui3-datatable-even td.yui3-datatable-desc { background-color:#191a1A; } /* dark sorted */
 .yui3-skin-night tr.yui3-datatable-odd td.yui3-datatable-asc,

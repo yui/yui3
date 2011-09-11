@@ -37,7 +37,10 @@
 
     <script type="text/javascript">
 
-        YUI({filter: "raw"}).use("node-event-simulate", "widget", "widget-parent", "widget-child", "test", "console", function (Y) {
+        YUI({
+            useBrowserConsole:false,
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+        }).use("node-event-simulate", "widget", "widget-parent", "widget-child", "test", "console", function (Y) {
 
             var RootWidget = function () {
                 RootWidget.superclass.constructor.apply(this, arguments);
@@ -48,7 +51,6 @@
             Y.extend(RootWidget, Y.Widget);
 
             Y.RootWidget = Y.Base.build("rootwidget", RootWidget, [Y.WidgetParent], { dynamic: false });
-
 
             var ParentWidget = function () {
                 ParentWidget.superclass.constructor.apply(this, arguments);
@@ -584,7 +586,100 @@
 
                     tree.destroy();
                 },
-                
+
+                testFullDestroy: function () {
+
+                    var expected = ["leaf-1", "leaf-2", "subtree-leaf-1", "subtree-leaf-2", "subtree", "tree"];
+                    var destroyed = [];
+
+                    var tree = new Y.ParentWidget({
+                       id: "tree",
+                       children: [
+                           { type: Y.ChildWidget, id: "leaf-1", label: "Leaf One" },
+                           { type: Y.ChildWidget, id: "leaf-2", label: "Leaf Two" },
+                           { type: Y.ParentWidget, id: "subtree", label: "Subtree", children: [
+                              { type: Y.ChildWidget, id: "subtree-leaf-1", label: "Subtree - Leaf One" },
+                              { type: Y.ChildWidget, id: "subtree-leaf-2", label: "Subtree - Leaf Two" }
+                           ]}
+                       ]
+                    });
+
+                    tree.render();
+
+                    // We're only doing this the long way, because the event bubbling doesn't
+                    // seem to be working (subtree is missing). Otherwise we would use tree.on("*:destroy");
+
+                    tree.each(function(child) {
+                        
+                        var id = child.get("id");
+                        
+                        child.after("destroy", function(e) {
+                            destroyed.push(id);
+                            Y.Assert.isNull(Y.Node.one("#" + id), "Child bounding box still in DOM");
+                        });
+
+                        if (child.hasImpl(Y.WidgetParent)) {
+                            child.each(function(subtreechild) {
+                        
+                                var id = subtreechild.get("id");        
+
+                                subtreechild.after("destroy", function(e) {
+                                    destroyed.push(id);
+                                    Y.Assert.isNull(Y.Node.one("#" + id), "Subtree child Bounding box still in DOM");
+                                });
+                            });
+                        }
+                    });
+                    
+                    var rootId = tree.get("id");
+                    
+                    tree.after("destroy", function(e) {
+                        destroyed.push(rootId);
+                        Y.Assert.isNull(Y.Node.one("#" + rootId), "Root Bounding box still in DOM");
+                    });
+
+                    tree.destroy();
+                    
+                    Y.ArrayAssert.itemsAreEqual(expected, destroyed, "Unexpected destroy events");
+                },
+
+                testRemoveChildOnDestroy: function () {
+
+                    var tree = new Y.ParentWidget({
+                       id: "tree",
+                       children: [
+                           { type: Y.ChildWidget, id: "leaf-1", label: "Leaf One" },
+                           { type: Y.ChildWidget, id: "leaf-2", label: "Leaf Two" },
+                           { type: Y.ParentWidget, id: "subtree", label: "Subtree", children: [
+                              { type: Y.ChildWidget, id: "subtree-leaf-1", label: "Subtree - Leaf One" },
+                              { type: Y.ChildWidget, id: "subtree-leaf-2", label: "Subtree - Leaf Two" }
+                           ]}
+                       ]
+                    });
+
+                    tree.render();
+
+                    var subtree = tree.item(2);
+
+                    Y.Assert.areEqual(3, tree.size(), "Initial tree size is incorrect");
+                    Y.Assert.areEqual(2, subtree.size(), "Initial tree size is incorrect");
+
+                    tree.item(1).destroy();
+
+                    Y.Assert.areEqual(2, tree.size(), "Item 1 doesn't seem to have been removed. Tree size is the same");
+                    Y.Assert.areEqual("subtree", tree.item(1).get("id"), "Item 1 doesn't seem to have been removed");  
+
+                    subree = tree.item(1); 
+
+                    subtree.item(0).destroy();
+
+                    Y.Assert.areEqual(1, subtree.size(), "Subtree item 0 doesn't seem to have been removed. subtree size is the same");
+                    Y.Assert.areEqual("subtree-leaf-2", subtree.item(0).get("id"), "Subtree item 0 doesn't seem to have been removed");
+                    Y.Assert.areEqual(subtree.item(1), null, "Subtree item 1 should have moved up to item 0");  
+
+                    tree.destroy();
+                },
+
                 testUIEvents : function() {
 
                     var expectedEvents = [

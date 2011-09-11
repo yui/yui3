@@ -38,8 +38,10 @@ var getClassName = Y.ClassNameManager.getClassName,
     ZERO = "0s",
 
     IE = Y.UA.ie,
+    
+    Transition = Y.Transition,
 
-    NATIVE_TRANSITIONS = Y.Transition.useNative,
+    NATIVE_TRANSITIONS = Transition.useNative,
 
     _constrain = function (val, min, max) { 
         return Math.min(Math.max(val, min), max);
@@ -153,10 +155,11 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     },
 
     /**
-     * syncUI implementation
+     * syncUI implementation.
      *
-     * Update the scroll position, based on the current value of scrollY
-     * @method bindUI
+     * Update the scroll position, based on the current value of scrollX/scrollY.
+     *
+     * @method syncUI
      */
     syncUI: function() {
         this._uiDimensionsChange();
@@ -549,12 +552,16 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             // Ideally using CSSMatrix - don't think we have it normalized yet though.
             // origX = (new WebKitCSSMatrix(cb.getComputedStyle("transform"))).e;
             // origY = (new WebKitCSSMatrix(cb.getComputedStyle("transform"))).f;
+
             origX = this.get(SCROLL_X),
             origY = this.get(SCROLL_Y),
 
-            TRANS = ScrollView._TRANSITION,
             cb = this.get(CONTENT_BOX),
-            bb = this.get(BOUNDING_BOX);
+            bb = this.get(BOUNDING_BOX),
+
+            HWTransform,
+
+            TRANS = ScrollView._TRANSITION;
 
         // TODO: Is this OK? Just in case it's called 'during' a transition.
         if (NATIVE_TRANSITIONS) {
@@ -562,13 +569,16 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             cb.setStyle(TRANS.PROPERTY, EMPTY);
         }
 
+        HWTransform = this._forceHWTransforms;
+        this._forceHWTransforms = false;  // the z translation was causing issues with picking up accurate scrollWidths in Chrome/Mac.
+
         this._moveTo(cb, 0, 0);
 
-        // Use bb instead of cb. cb doesn't gives us the right results
-        // in FF (due to overflow:hidden)
-        dims = [Math.max(bb.get('scrollWidth'), cb.get('scrollWidth')), Math.max(bb.get('scrollHeight'), cb.get('scrollHeight'))];
+        dims = [bb.get('scrollWidth'), bb.get('scrollHeight')];
 
         this._moveTo(cb, -1*origX, -1*origY);
+
+        this._forceHWTransforms = HWTransform;
 
         return dims;
     },
@@ -885,7 +895,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
    /**
     * The identity of the widget.
     *
-    * @property ScrollView.NAME
+    * @property NAME
     * @type String
     * @default 'scrollview'
     * @readOnly
@@ -898,7 +908,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     * Static property used to define the default attribute configuration of
     * the Widget.
     *
-    * @property ScrollView.ATTRS
+    * @property ATTRS
     * @type {Object}
     * @protected
     * @static
@@ -971,7 +981,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     /**
      * List of class names used in the scrollview's DOM
      *
-     * @property ScrollView.CLASS_NAMES
+     * @property CLASS_NAMES
      * @type Object
      * @static
      */
@@ -980,7 +990,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     /**
      * Flag used to source property changes initiated from the DOM
      *
-     * @property ScrollView.UI_SRC
+     * @property UI_SRC
      * @type String
      * @static
      * @default "ui"
@@ -990,7 +1000,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     /**
      * The default bounce distance in pixels
      *
-     * @property ScrollView.BOUNCE_RANGE
+     * @property BOUNCE_RANGE
      * @type Number
      * @static
      * @default 150
@@ -1000,7 +1010,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     /**
      * The interval used when animating the flick
      *
-     * @property ScrollView.FRAME_STEP
+     * @property FRAME_STEP
      * @type Number
      * @static
      * @default 30
@@ -1010,7 +1020,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     /**
      * The default easing used when animating the flick
      *
-     * @property ScrollView.EASING
+     * @property EASING
      * @type String
      * @static
      * @default 'cubic-bezier(0, 0.1, 0, 1.0)'
@@ -1020,7 +1030,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     /**
      * The default easing to use when animating the bounce snap back.
      *
-     * @property ScrollView.SNAP_EASING
+     * @property SNAP_EASING
      * @type String
      * @static
      * @default 'ease-out'
@@ -1028,14 +1038,17 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     SNAP_EASING : 'ease-out',
 
     /**
-     * Style property name to use to set transition property. Currently, Webkit specific (WebkitTransitionProperty)
+     * Object map of style property names used to set transition properties.
+     * Defaults to the vendor prefix established by the Transition module.  
+     * The configured property names are `_TRANSITION.DURATION` (e.g. "WebkitTransitionDuration") and
+     * `_TRANSITION.PROPERTY (e.g. "WebkitTransitionProperty").
      *
-     * @property ScrollView._TRANSITION.PROPERTY
+     * @property _TRANSITION
      * @private
      */
     _TRANSITION : {
-        DURATION : "WebkitTransitionDuration",
-        PROPERTY : "WebkitTransitionProperty"
+        DURATION : Transition._VENDOR_PREFIX + "TransitionDuration",
+        PROPERTY : Transition._VENDOR_PREFIX + "TransitionProperty"
     }
 });
 

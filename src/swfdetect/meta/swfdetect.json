@@ -1,5 +1,3 @@
 {
-	"swfdetect":
-	{
-	}
+	"swfdetect": { "requires": [ "yui-base" ] }
 }

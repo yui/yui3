@@ -40,7 +40,7 @@ Plots.prototype = {
 		{
 			return;
 		}
-        var isNumber = Y.Lang.isNumber,
+        var isNumber = Y_Lang.isNumber,
             style = Y.clone(this.get("styles").marker),
             w = style.width,
             h = style.height,
@@ -56,11 +56,11 @@ Plots.prototype = {
             fillColors = null,
             borderColors = null,
             graphOrder = this.get("graphOrder");
-        if(Y.Lang.isArray(style.fill.color))
+        if(Y_Lang.isArray(style.fill.color))
         {
             fillColors = style.fill.color.concat(); 
         }
-        if(Y.Lang.isArray(style.border.color))
+        if(Y_Lang.isArray(style.border.color))
         {
             borderColors = style.border.colors.concat();
         }
@@ -154,7 +154,7 @@ Plots.prototype = {
     {
         var marker,
             border = styles.border;
-        styles.id = "series_" + order + "_" + index;
+        styles.id = this.get("chart").get("id") + "_" + order + "_" + index;
         //fix name differences between graphic layer
         border.opacity = border.alpha;
         styles.stroke = border;
@@ -199,7 +199,7 @@ Plots.prototype = {
         graphic.set("autoDraw", false);
         cfg.type = cfg.shape;
         marker = graphic.addShape(cfg); 
-        marker.addClass("yui3-seriesmarker");
+        marker.addClass(SERIES_MARKER);
         return marker;
     },
     
@@ -313,7 +313,7 @@ Plots.prototype = {
      */
     _getItemColor: function(val, i)
     {
-        if(Y.Lang.isArray(val))
+        if(Y_Lang.isArray(val))
         {
             return val[i % val.length];
         }
