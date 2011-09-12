@@ -109,7 +109,7 @@ Highlight = {
     @static
     @final
     **/
-    _TEMPLATE: '<b class="yui3-highlight">{s}</b>',
+    _TEMPLATE: '<b class="' + Y.ClassNameManager.getClassName('highlight') + '">{s}</b>',
 
     // -- Public Static Methods ------------------------------------------------
 
@@ -309,4 +309,4 @@ Highlight = {
 Y.Highlight = Highlight;
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'escape', 'text-wordbreak']});
+}, '@VERSION@' ,{requires:['array-extras', 'classnamemanager', 'escape', 'text-wordbreak']});
