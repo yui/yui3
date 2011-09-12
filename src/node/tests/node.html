@@ -1226,7 +1226,8 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
         },
 
         test_data: function() {
-            var node = Y.one('body');
+            var node = Y.one('body'),
+                nodelist = Y.all("#test-nodes li");
 
             // deprecated usage
             node.set('data', 'foo');
@@ -1262,6 +1263,14 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             node.clearData();
             Assert.areEqual(undefined, node.getData('baz'),
                 "node.clearData() after cleared");
+            
+            nodelist.setData('foo', 'foo');
+            ArrayAssert.itemsAreEqual([ 'foo', 'foo', 'foo', 'foo', 'foo', 'foo' ], nodelist.getData('foo'),
+                "nodelist.setData('foo', 'foo')");
+            
+            nodelist.clearData();
+            Assert.areEqual(nodelist, nodelist.getData('foo'),
+                "nodelist.clearData()");
         },
 
         test_appendStyle: function() {
