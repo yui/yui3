@@ -107,7 +107,7 @@ Highlight = {
     @static
     @final
     **/
-    _TEMPLATE: '<b class="yui3-highlight">{s}</b>',
+    _TEMPLATE: '<b class="' + Y.ClassNameManager.getClassName('highlight') + '">{s}</b>',
 
     // -- Public Static Methods ------------------------------------------------
 
