@@ -196,23 +196,23 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         if(isFinite(w) && isFinite(h) && w > 0 && h > 0)
         {   
             this._rendered = true;
-                if(this._drawing)
-                {
-                    this._callLater = true;
-                    return;
-                }
-                this._drawing = true;
-                this._callLater = false;
-                this.drawSeries();
-                this._drawing = false;
-                if(this._callLater)
-                {
-                    this.draw();
-                }
-                else
-                {
-                    this.fire("drawingComplete");
-                }
+            if(this._drawing)
+            {
+                this._callLater = true;
+                return;
+            }
+            this._drawing = true;
+            this._callLater = false;
+            this.drawSeries();
+            this._drawing = false;
+            if(this._callLater)
+            {
+                this.draw();
+            }
+            else
+            {
+                this.fire("drawingComplete");
+            }
         }
     },
 
