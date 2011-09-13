@@ -21,12 +21,13 @@
      * to an optional function to be used to programatically determine the
      * value (the extra information might be used for this decision). If
      * the value for the key in the object, or what is returned from the
-     * function has a string value, number value, or object value, it is
-     * substituted for the bracket expression and it repeats.  If this
+     * function is not undefined (i.e.: it exists) it is
+     * substituted for the bracket expression and it continues.  If this
      * value is an object, it uses the Object's toString() if this has
      * been overridden, otherwise it does a shallow dump of the key/value
      * pairs if Y.dump is available (if dump isn't available, toString()
      * is used).
+	 * To insert braces in the resulting string, use {LBRACE} and {RBRACE}.
      *
      * This method is included in the 'substitute' module.  It is not included
      * in the YUI module.
@@ -36,10 +37,11 @@
      * @param {object} o An object containing the replacement values.
      * @param {function} f An optional function that can be used to
      *                     process each match.  It receives the key,
-     *                     value, and any extra metadata included with
+     *                     the value read from the object, 
+	 *                     and any extra metadata included with
      *                     the key inside of the braces.
      * @param {boolean} recurse if true, the replacement will be recursive,
-     * letting you have replacement tokens in replacement text.  The
+     * letting you have replacement tokens nested within tokens.  The
      * default is false.
      * @return {string} the substituted string.
      */
