@@ -8,6 +8,7 @@ YUI.add('substitute', function(Y) {
  */
 
     var L = Y.Lang, DUMP = 'dump', SPACE = ' ', LBRACE = '{', RBRACE = '}',
+		savedRegExp =  /(~-(\d+)-~)/g, lBraceRegExp = /\{LBRACE\}/g, rBraceRegExp = /\{RBRACE\}/g,
 
     /**
      * The following methods are added to the YUI instance
@@ -102,35 +103,35 @@ YUI.add('substitute', function(Y) {
                         }
                     }
                 }
-            } else if (!L.isString(v) && !L.isNumber(v)) {
+			} else if (L.isUndefined(v)) {
                 // This {block} has no replace string. Save it for later.
                 v = '~-' + saved.length + '-~';
-                saved[saved.length] = token;
+					saved.push(token);
 
                 // break;
             }
 
             s = s.substring(0, i) + v + s.substring(j + 1);
 
-            if (!recurse) {
-                lidx = i - 1;
-            }
+			if (!recurse) {
+				lidx = i - 1;
+			} 
+		}
+		// restore saved {block}s and escaped braces
 
-        }
-
-        // restore saved {block}s
-        for (i = saved.length - 1; i >= 0; i = i - 1) {
-            s = s.replace(new RegExp('~-' + i + '-~'), LBRACE +
-                saved[i] + RBRACE, 'g');
-        }
-
-        return s;
-
-    };
+		return s
+			.replace(savedRegExp, function (str, p1, p2) {
+				return LBRACE + saved[parseInt(p2,10)] + RBRACE;
+			})
+			.replace(lBraceRegExp, LBRACE)
+			.replace(rBraceRegExp, RBRACE)
+		;
+	};
 
     Y.substitute = substitute;
     L.substitute = substitute;
 
 
 
-}, '@VERSION@' ,{requires:['yui-base'], optional:['dump']});
+
+}, '@VERSION@' ,{optional:['dump'], requires:['yui-base']});
