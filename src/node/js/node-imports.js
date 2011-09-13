@@ -39,14 +39,6 @@ Y.Array.each([
 
     /**
      * Passes through to DOM method.
-     * @method removeAttribute
-     * @param {String} attribute The attribute to be removed
-     * @chainable
-     */
-    'removeAttribute',
-
-    /**
-     * Passes through to DOM method.
      * @method scrollIntoView
      * @chainable
      */
@@ -112,6 +104,22 @@ Y.Array.each([
         return ret;
     };
 });
+
+/**
+ * Passes through to DOM method.
+ * @method removeAttribute
+ * @param {String} attribute The attribute to be removed
+ * @chainable
+ */
+ // one-off implementation due to IE returning boolean, breaking chaining
+Y.Node.prototype.removeAttribute = function(attr) {
+    var node = this._node;
+    if (node) {
+        node.removeAttribute(attr);
+    }
+
+    return this;
+};
 
 Y.Node.importMethod(Y.DOM, [
     /**

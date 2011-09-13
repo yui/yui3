@@ -1665,6 +1665,13 @@ YUI.add('dom-core-test', function(Y) {
             Y.DOM.addHTML(node2, nodelist, node2.firstChild);
 
             Assert.areEqual('EM', node2.childNodes[0].nodeName);
+        },
+
+        'should append the given number': function() {
+            var node = document.createElement('div');
+            Y.DOM.addHTML(node, 0);
+
+            Assert.areEqual('0', node.innerHTML);
         }
     }));
 
