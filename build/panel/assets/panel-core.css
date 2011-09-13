@@ -1,29 +1,22 @@
 .yui3-panel {
-    position:absolute;
+    position: absolute;
 }
-
 .yui3-panel-hidden {
-    visibility:hidden;
+    visibility: hidden;
 }
-
 .yui3-widget-tmp-forcesize .yui3-panel-content {
-    overflow:hidden !important;
+    overflow: hidden !important;
 }
-
+.yui3-panel .yui3-widget-hd {
+    position: relative;
+}
 .yui3-panel .yui3-widget-hd .yui3-widget-button-wrapper {
-/*	display: inline-block;
-	position: absolute;
-	right: 0.3em;
-	top: 0.3em;*/
-	float:right;
-
-}
-.yui3-panel .yui3-widget-ft {
-	min-height:25px;
+    position: absolute;
+    top: 0;
+    right: 0;
 }
 .yui3-panel .yui3-widget-ft .yui3-widget-button-wrapper {
-	position:absolute;
-	display:inline-block;
-	right: 0.6em;
-	bottom: 0.5em;
+    display: inline-block;
+    *display: inline;
+    zoom: 1;
 }
