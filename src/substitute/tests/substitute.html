@@ -193,6 +193,21 @@
             // testing {} in the replacement text
             Assert.areEqual("My last name is Zappa. {I am a replacement string }{}", Y.substitute(template, obj));
 
+			Assert.areEqual(
+				'-{test}-',
+				Y.substitute('-{LBRACE}test{RBRACE}-', {test:'test'}, null, true),
+				'replacement of literals {LBRACE} and/or {RBRACE} failed'
+			);
+			
+			Assert.areEqual(
+				'done',
+				Y.substitute('{{{three}}}', {
+					three:'two',
+					two: 'one',
+					one: 'done'
+				},null,true),
+				'recurse failed'
+			);
         }
 
         });

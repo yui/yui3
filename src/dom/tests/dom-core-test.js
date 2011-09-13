@@ -356,6 +356,50 @@ YUI.add('dom-core-test', function(Y) {
 
         'should return null when input is undefined': function() {
             Assert.isNull(Y.DOM.elementByAxis());
+        },
+
+        'should stop when the stop function returns true': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0],
+                fn = function(node) {
+                    return node.tagName === 'BODY';
+                },
+
+                stopFn = function(node) {
+                    return node.id === 'test-ancestor-stop';
+            };
+
+            Assert.isNull(Y.DOM.elementByAxis(node, 'parentNode', fn, null, stopFn));
+        },
+
+        'should find ancestor before stop': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0],
+                fn = function(node) {
+                    return node.id === 'test-ancestor-stop';
+                },
+
+                stopFn = function(node) {
+                    return node.tagName === 'BODY';
+            };
+
+            Assert.areEqual('test-ancestor-stop',
+                    Y.DOM.elementByAxis(node, 'parentNode', fn, null, stopFn).id);
+        },
+
+        'should find ancestor when both test and stop return true': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0],
+                fn = function(node) {
+                    return node.id === 'test-ancestor-stop';
+                },
+
+                stopFn = function(node) {
+                    return node.id === 'test-ancestor-stop';
+            };
+
+            Assert.areEqual('test-ancestor-stop',
+                    Y.DOM.elementByAxis(node, 'parentNode', fn, null, stopFn).id);
         }
     }));
 
@@ -400,6 +444,50 @@ YUI.add('dom-core-test', function(Y) {
                 };
 
             Assert.areEqual(document.body, Y.DOM.ancestor(node, fn, true));
+        },
+
+        'should stop when the stop function returns true': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0],
+                fn = function(node) {
+                    return node.tagName === 'BODY';
+                },
+
+                stopFn = function(node) {
+                    return node.id === 'test-ancestor-stop';
+            };
+
+            Assert.isNull(Y.DOM.ancestor(node, fn, null, stopFn));
+        },
+
+        'should find ancestor before stop': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0],
+                fn = function(node) {
+                    return node.id === 'test-ancestor-stop';
+                },
+
+                stopFn = function(node) {
+                    return node.tagName === 'BODY';
+            };
+
+            Assert.areEqual('test-ancestor-stop',
+                    Y.DOM.ancestor(node, fn, null, stopFn).id);
+        },
+
+        'should find ancestor when both test and stop return true': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0],
+                fn = function(node) {
+                    return node.id === 'test-ancestor-stop';
+                },
+
+                stopFn = function(node) {
+                    return node.id === 'test-ancestor-stop';
+            };
+
+            Assert.areEqual('test-ancestor-stop',
+                    Y.DOM.ancestor(node, fn, null, stopFn).id);
         }
     }));
 
@@ -458,6 +546,54 @@ YUI.add('dom-core-test', function(Y) {
                 };
 
             ArrayAssert.itemsAreEqual([document.body], Y.DOM.ancestors(node, fn, true));
+        },
+
+        'should stop when the stop function returns true': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0],
+                fn = function(node) {
+                    return node.tagName === 'BODY';
+                },
+
+                stopFn = function(node) {
+                    return node.id === 'test-ancestor-stop';
+            };
+
+            ArrayAssert.itemsAreEqual([], Y.DOM.ancestors(node, fn, null, stopFn));
+        },
+
+        'should find ancestor before stop': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0],
+                fn = function(node) {
+                    return node.tagName === 'DIV';
+                },
+
+                stopFn = function(node) {
+                    return node.tagName === 'BODY';
+            };
+
+            ArrayAssert.itemsAreEqual([
+                    node.parentNode.parentNode.parentNode,
+                    node.parentNode.parentNode,
+                    node.parentNode
+                ],
+                Y.DOM.ancestors(node, fn, null, stopFn));
+        },
+
+        'should find ancestor when both test and stop return true': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0],
+                fn = function(node) {
+                    return node.tagName === 'DIV';
+                },
+
+                stopFn = function(node) {
+                    return node.tagName === 'DIV';
+            };
+
+            Assert.areEqual(1,
+                    Y.DOM.ancestors(node, fn, null, stopFn).length);
         }
     }));
 
@@ -1529,6 +1665,13 @@ YUI.add('dom-core-test', function(Y) {
             Y.DOM.addHTML(node2, nodelist, node2.firstChild);
 
             Assert.areEqual('EM', node2.childNodes[0].nodeName);
+        },
+
+        'should append the given number': function() {
+            var node = document.createElement('div');
+            Y.DOM.addHTML(node, 0);
+
+            Assert.areEqual('0', node.innerHTML);
         }
     }));
 

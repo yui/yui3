@@ -1,6 +1,15 @@
 Substitute Utility Change History
 =================================
 
+3.4.1
+-----
+
+  * Now replaces everything if not undefined instead of only objects,
+    strings and numbers (@satyam)
+  * Added `{LBRACE}` and `{RBRACE}` as possible replacement strings so that
+    braces can be included in the resulting string (@satyam)
+  * Improved the restoration of undefined replacements (@satyam)
+
 3.4.0
 -----
 

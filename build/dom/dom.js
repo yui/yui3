@@ -442,7 +442,7 @@ Y.mix(Y.DOM, {
         }
 
         if (where) {
-            if (where.nodeType) { // insert regardless of relationship to node
+            if (newNode && where.parentNode) { // insert regardless of relationship to node
                 where.parentNode.insertBefore(newNode, where);
             } else {
                 switch (where) {
@@ -455,17 +455,23 @@ Y.mix(Y.DOM, {
                         }
                         break;
                     case 'before':
-                        nodeParent.insertBefore(newNode, node);
+                        if (newNode) {
+                            nodeParent.insertBefore(newNode, node);
+                        }
                         break;
                     case 'after':
-                        if (node.nextSibling) { // IE errors if refNode is null
-                            nodeParent.insertBefore(newNode, node.nextSibling);
-                        } else {
-                            nodeParent.appendChild(newNode);
+                        if (newNode) {
+                            if (node.nextSibling) { // IE errors if refNode is null
+                                nodeParent.insertBefore(newNode, node.nextSibling);
+                            } else {
+                                nodeParent.appendChild(newNode);
+                            }
                         }
                         break;
                     default:
-                        node.appendChild(newNode);
+                        if (newNode) {
+                            node.appendChild(newNode);
+                        }
                 }
             }
         } else if (newNode) {
