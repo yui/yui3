@@ -729,7 +729,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             }
 
             Assert.areEqual(parseInt(bt), parseInt(node.getComputedStyle('borderTopWidth')), "borderTopWidth: medium");
-            Assert.areEqual(parseInt(h), parseInt(node.getComputedStyle('height')), "height: auto (offset minus padding and border)");
+            Assert.areEqual(parseInt(h), Math.round(parseFloat(node.getComputedStyle('height'))), "height: auto (offset minus padding and border)");
             domNode.style.padding = '1em';
             Assert.areEqual('13px', node.getComputedStyle('paddingTop'), "padding 13px");
             Assert.areEqual('visible', node.getComputedStyle('visibility'), "visibility");
@@ -740,7 +740,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             domNode.style.margin = 'auto';
             Assert.areEqual('0px', node.getComputedStyle('marginTop'), "margin auto");
 
-            Assert.areEqual(parseInt(w), parseInt(node.getComputedStyle('width')), "percent width (from CSS)");
+            Assert.areEqual(parseInt(w), Math.round(parseFloat(node.getComputedStyle('width'))), "percent width (from CSS)");
         },
 
         test_setStyles: function() {
@@ -2342,6 +2342,56 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
 
             Assert.areEqual(0, Y.one(node).ancestors(fn, stopFn).size());
         }
+    }));
+
+    Y.Test.Runner.add(new Y.Test.Case({
+        name: 'Y.Node.insert',
+
+        'insert should fail silently given null input': function() {
+            Assert.areEqual(document.body, Y.one('body').insert(null)._node);
+        },
+
+        'insert should work with 0 (falsy number input)': function() {
+            var node = document.createElement('div');
+            Assert.isTrue(Y.one(node).insert(0)._node.innerHTML === '0');
+        },
+
+        'insert should replace content when given null input and replace where string': function() {
+            var node = document.createElement('div');
+            node.innerHTML = '<strong>foo</strong><em>bar</em>';
+
+            Assert.areEqual('', Y.one(node).insert(null, 'replace')._node.innerHTML);
+        },
+
+        'prepend should fail silently given null input': function() {
+            Assert.areEqual(document.body, Y.one('body').prepend(null)._node);
+        }
+    }));
+
+    Y.Test.Runner.add(new Y.Test.Case({
+        name: 'Y.Node.removeAttribute',
+
+        'should remove the given attribute': function() {
+            var node = document.createElement('div');
+
+            node.innerHTML = '<div id="foo">foo</div>';
+            node = node.getElementsByTagName('div')[0];
+
+            Y.one(node).removeAttribute('id');
+            Assert.areEqual('', Y.one(node).get('id'));
+
+        },
+
+        'should be chainable': function() {
+            var node = document.createElement('div');
+
+            node.innerHTML = '<div id="foo">foo</div>';
+            node = Y.one(node.getElementsByTagName('div')[0]);
+
+            Assert.areEqual(node, node.removeAttribute('id'));
+
+        }
+
     }));
 
     Y.Test.Runner.add(suite);
