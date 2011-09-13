@@ -2344,6 +2344,30 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
         }
     }));
 
+    Y.Test.Runner.add(new Y.Test.Case({
+        name: 'Y.Node.insert',
+
+        'insert should fail silently given null input': function() {
+            Assert.areEqual(document.body, Y.one('body').insert(null)._node);
+        },
+
+        'insert should work with 0 (falsy number input)': function() {
+            var node = document.createElement('div');
+            Assert.isTrue(Y.one(node).insert(0)._node.innerHTML === '0');
+        },
+
+        'insert should replace content when given null input and replace where string': function() {
+            var node = document.createElement('div');
+            node.innerHTML = '<strong>foo</strong><em>bar</em>';
+
+            Assert.areEqual('', Y.one(node).insert(null, 'replace')._node.innerHTML);
+        },
+
+        'prepend should fail silently given null input': function() {
+            Assert.areEqual(document.body, Y.one('body').prepend(null)._node);
+        }
+    }));
+
     Y.Test.Runner.add(suite);
 
     Y.on('load', function() {
