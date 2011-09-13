@@ -361,7 +361,7 @@ suite.add(new Y.Test.Case({
         delete Object.prototype.zoo;
     },
 
-    'test: missing receiver or supplier': function () {
+    'test [mode 0]: missing receiver or supplier': function () {
         var receiver = {a: 'a'},
             supplier = {z: 'z'};
 
@@ -370,14 +370,14 @@ suite.add(new Y.Test.Case({
         Assert.areSame(Y, Y.mix(), 'returns Y when neither receiver nor supplier is passed');
     },
 
-    'test: returns receiver': function () {
+    'test [mode 0]: returns receiver': function () {
         var receiver = {a: 'a'},
             supplier = {z: 'z'};
 
         Assert.areSame(receiver, Y.mix(receiver, supplier));
     },
 
-    'test: no overwrite, no whitelist, no merge': function () {
+    'test [mode 0]: no overwrite, no whitelist, no merge': function () {
         var receiver = {a: 'a'},
             supplier = {a: 'z', foo: 'foo', bar: 'bar', toString: function () {}};
 
@@ -394,7 +394,7 @@ suite.add(new Y.Test.Case({
         Assert.areSame(0, Y.Object.size(receiver), 'prototype properties should not get mixed');
     },
 
-    'test: overwrite, no whitelist, no merge': function () {
+    'test [mode 0]: overwrite, no whitelist, no merge': function () {
         var receiver = {a: 'a', obj: {a: 'a', b: 'b'}},
             supplier = {a: 'z', foo: 'foo', bar: 'bar', obj: {a: 'z'}};
 
@@ -406,7 +406,7 @@ suite.add(new Y.Test.Case({
         Assert.areSame(receiver.obj, supplier.obj, 'objects should be overwritten, not merged');
     },
 
-    'test: overwrite, whitelist, no merge': function () {
+    'test [mode 0]: overwrite, whitelist, no merge': function () {
         var receiver = {a: 'a', bar: 'a', obj: {a: 'a', b: 'b'}},
             supplier = {a: 'z', foo: 'foo', bar: 'bar', obj: {a: 'z'}};
 
@@ -419,7 +419,7 @@ suite.add(new Y.Test.Case({
         Assert.areSame(receiver.obj, supplier.obj, 'objects should be overwritten, not merged');
     },
 
-    'test: no overwrite, whitelist, no merge': function () {
+    'test [mode 0]: no overwrite, whitelist, no merge': function () {
         var receiver = {a: 'a', bar: 'a', obj: {a: 'a', b: 'b'}},
             supplier = {a: 'z', foo: 'foo', moo: 'cow', bar: 'bar', obj: {a: 'z'}};
 
@@ -433,7 +433,7 @@ suite.add(new Y.Test.Case({
         Assert.areSame('a', receiver.obj.a, '"obj" should not be merged');
     },
 
-    'test: no overwrite, no whitelist, merge': function () {
+    'test [mode 0]: no overwrite, no whitelist, merge': function () {
         var receiver = {a: 'a', fakeout: {a: 'a'}, obj: {a: 'a', b: 'b', deep: {foo: 'foo', deeper: {bar: 'bar'}}}},
             supplier = {a: 'z', foo: 'foo', bar: 'bar', fakeout: 'moo', obj: {a: 'z', deep: {deeper: {bar: 'z', baz: 'baz'}}}};
 
@@ -465,7 +465,7 @@ suite.add(new Y.Test.Case({
         Assert.areSame(99, receiver.a[0].y, 'objects in arrays should be merged');
     },
 
-    'test: overwrite, no whitelist, merge': function () {
+    'test [mode 0]: overwrite, no whitelist, merge': function () {
         var receiver = {a: 'a', obj: {a: 'a', b: 'b', deep: {foo: 'foo', deeper: {bar: 'bar'}}}},
             supplier = {a: 'z', foo: 'foo', bar: 'bar', obj: {a: 'z', deep: {deeper: {bar: 'z'}}}};
 
@@ -495,7 +495,7 @@ suite.add(new Y.Test.Case({
         Assert.areSame(99, receiver.a[0].y, 'objects in arrays should be merged');
     },
 
-    'test: overwrite, whitelist, merge': function () {
+    'test [mode 0]: overwrite, whitelist, merge': function () {
         var receiver = {a: 'a', obj: {a: 'a', b: 'b', deep: {foo: 'foo', deeper: {bar: 'bar'}}}},
             supplier = {a: 'z', foo: 'foo', bar: 'bar', obj: {a: 'z', deep: {deeper: {bar: 'z'}}}};
 
@@ -516,7 +516,7 @@ suite.add(new Y.Test.Case({
         Assert.areSame('bar', receiver.obj.deep.deeper.bar, 'non-whitelisted deeper objects should be merged');
     },
 
-    'test: overwrite, whitelist, toplevel merge': function() {
+    'test [mode 0]: overwrite, whitelist, toplevel merge': function() {
         var receiver = {bar: true, foo:{a:1, b:2}},
             supplier = {bar: false, foo:{c:3}};
 
@@ -541,7 +541,7 @@ suite.add(new Y.Test.Case({
         delete this.supplier;
     },
 
-    'test: no overwrite, no whitelist, no merge': function () {
+    'test [mode 1]: no overwrite, no whitelist, no merge': function () {
         var receiver = function () {};
         receiver.a = 'a';
 
@@ -553,7 +553,7 @@ suite.add(new Y.Test.Case({
         Assert.areSame('z', receiver.prototype.a, '"a" should exist on prototype');
     },
 
-    'test: overwrite, no whitelist, no merge': function () {
+    'test [mode 1]: overwrite, no whitelist, no merge': function () {
         var receiver = function () {};
 
         receiver.a = 'a';
@@ -568,7 +568,7 @@ suite.add(new Y.Test.Case({
         Assert.areSame(this.supplier.prototype.obj, receiver.prototype.obj);
     },
 
-    'test: overwrite, whitelist, no merge': function () {
+    'test [mode 1]: overwrite, whitelist, no merge': function () {
         var receiver = function () {};
 
         receiver.prototype.a = 'a';
@@ -581,7 +581,7 @@ suite.add(new Y.Test.Case({
         Assert.areSame('foo', receiver.prototype.foo);
     },
 
-    'test: no overwrite, whitelist, no merge': function () {
+    'test [mode 1]: no overwrite, whitelist, no merge': function () {
         var receiver = function () {};
 
         receiver.prototype.a = 'a';
@@ -594,7 +594,7 @@ suite.add(new Y.Test.Case({
         Assert.areSame('foo', receiver.prototype.foo);
     },
 
-    'test: no overwrite, no whitelist, merge': function () {
+    'test [mode 1]: no overwrite, no whitelist, merge': function () {
         var receiver = function () {};
 
         receiver.prototype.obj = {a: 'a', foo: 'foo', deep: {deeper: {a: 'a'}}};
@@ -608,7 +608,7 @@ suite.add(new Y.Test.Case({
         Assert.areSame('z', receiver.prototype.obj.deep.deeper.bar);
     },
 
-    'test: overwrite, no whitelist, merge': function () {
+    'test [mode 1]: overwrite, no whitelist, merge': function () {
         var receiver = function () {};
 
         receiver.prototype.obj = {a: 'a', foo: 'foo', deep: {deeper: {bar: 'a'}}};
@@ -621,7 +621,7 @@ suite.add(new Y.Test.Case({
         Assert.areSame('z', receiver.prototype.obj.deep.deeper.bar);
     },
 
-    'test: overwrite, whitelist, merge': function () {
+    'test [mode 1]: overwrite, whitelist, merge': function () {
         var receiver = function () {};
 
         receiver.prototype.obj = {a: 'a', foo: 'foo', deep: {deeper: {bar: 'a'}}};
@@ -651,7 +651,7 @@ suite.add(new Y.Test.Case({
         delete this.supplier;
     },
 
-    'test: basic sanity check': function () {
+    'test [mode 2]: basic sanity check': function () {
         var receiver = function () {};
 
         Y.mix(receiver, this.supplier, false, null, 2);
@@ -674,7 +674,7 @@ suite.add(new Y.Test.Case({
         delete this.supplier;
     },
 
-    'test: basic sanity check': function () {
+    'test [mode 3]: basic sanity check': function () {
         var receiver = function () {};
 
         Y.mix(receiver, this.supplier, false, null, 3);
@@ -698,7 +698,7 @@ suite.add(new Y.Test.Case({
         delete this.supplier;
     },
 
-    'test: basic sanity check': function () {
+    'test [mode 4]: basic sanity check': function () {
         var receiver = function () {};
 
         Y.mix(receiver, this.supplier, false, null, 4);
