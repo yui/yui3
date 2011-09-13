@@ -1120,6 +1120,7 @@
     "highlight-base": {
         "requires": [
             "array-extras", 
+            "classnamemanager", 
             "escape", 
             "text-wordbreak"
         ]

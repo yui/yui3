@@ -9,7 +9,8 @@ YUI.add('scrollview-scrollbars', function(Y) {
 var getClassName = Y.ClassNameManager.getClassName,
     _classNames,
 
-    NATIVE_TRANSITIONS = Y.Transition.useNative,    
+    Transition = Y.Transition
+    NATIVE_TRANSITIONS = Transition.useNative,    
     SCROLLBAR = 'scrollbar',
     SCROLLVIEW = 'scrollview',
 
@@ -28,7 +29,7 @@ var getClassName = Y.ClassNameManager.getClassName,
     HORIZ_CACHE = "_sbh",
     VERT_CACHE = "_sbv",
 
-    TRANSITION_PROPERTY = "transitionProperty",
+    TRANSITION_PROPERTY = Transition._VENDOR_PREFIX + "TransitionProperty",
     TRANSFORM = "transform",
 
     TRANSLATE_X = "translateX(",

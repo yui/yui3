@@ -37,7 +37,7 @@ YUI().use("datatable-base", function(Y) {
     }).render("#template");
 ```
 
-<p>When a calculation is needed, define a custom function that generates markup for the data cell. The custom formatter function receives an object with the following properties: `{tbody, tr, td, classnames, headers, rowindex, record, column, data, value}`.</p>
+<p>When a calculation is needed, define a custom function that generates markup for the data cell. The custom formatter function receives an object with the following properties: `{tbody, tr, classnames, headers, rowindex, record, column, data, value}`.</p>
 
 ```
 // The custom formatter function recieves an object with the properties:
@@ -70,7 +70,7 @@ value in the case of missing data.</p>
 ```
 YUI().use("datatype-date", "datatable-base", function (Y) {
     // The custom formatter function recieves an object with the properties:
-    // {tbody, tr, td, classnames, headers, rowindex, record, column, data, value}
+    // {tbody, tr, classnames, headers, rowindex, record, column, data, value}
     var formatDates = function (o){
         return o.value &&
             Y.DataType.Date.format(o.value, { format: "%m/%d/%Y" });

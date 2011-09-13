@@ -252,6 +252,14 @@
                 } else {
                     this._renderShimDeferred();
                 }
+
+                // Eagerly attach resize handlers
+                //
+                // Required because of Event stack behavior, commit ref: cd8dddc
+                // Should be revisted after Ticket #2531067 is resolved.
+                if (UA.ie == 6) {
+                    this._addShimResizeHandlers();
+                }
             } else {
                 this._destroyShim();
             }
@@ -276,6 +284,11 @@
                 };
 
             handles.push(this.on(VisibleChange, createBeforeVisible));
+            // Depending how how Ticket #2531067 is resolved, a reversal of
+            // commit ref: cd8dddc could lead to a more elagent solution, with
+            // the addition of this line here:
+            //
+            // handles.push(this.after(VisibleChange, this.sizeShim));
         },
 
         /**
@@ -294,8 +307,6 @@
 
             var sizeShim = this.sizeShim,
                 handles = this._stackHandles[SHIM_RESIZE];
-
-            this.sizeShim();
 
             handles.push(this.after(VisibleChange, sizeShim));
             handles.push(this.after(WidthChange, sizeShim));
@@ -335,9 +346,6 @@
                 shimEl = this._shimNode = this._getShimTemplate();
                 stackEl.insertBefore(shimEl, stackEl.get(FIRST_CHILD));
 
-                if (UA.ie == 6) {
-                    this._addShimResizeHandlers();
-                }
                 this._detachStackHandles(SHIM_DEFERRED);
             }
         },
