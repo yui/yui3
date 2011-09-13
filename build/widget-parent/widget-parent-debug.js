@@ -6,7 +6,9 @@ YUI.add('widget-parent', function(Y) {
  * @module widget-parent
  */
 
-var Lang = Y.Lang;
+var Lang = Y.Lang,
+    RENDERED = "rendered",
+    BOUNDING_BOX = "boundingBox";
 
 /**
  * Widget extension providing functionality enabling a Widget to be a 
@@ -727,17 +729,19 @@ Parent.prototype = {
         // state (which should be accurate), means we don't have 
         // to worry about decorator elements which may be added 
         // to the _childContainer node.
-
-        if (nextSibling) {
-            siblingBB = nextSibling.get("boundingBox");
+    
+        if (nextSibling && nextSibling.get(RENDERED)) {
+            siblingBB = nextSibling.get(BOUNDING_BOX);
             siblingBB.insert(childBB, "before");
         } else {
             prevSibling = child.previous(false);
-            if (prevSibling) {
-                siblingBB = prevSibling.get("boundingBox");
+    
+            if (prevSibling && prevSibling.get(RENDERED)) {
+                siblingBB = prevSibling.get(BOUNDING_BOX);
                 siblingBB.insert(childBB, "after");
             }
-        }
+        }        
+
     },
 
     /**
