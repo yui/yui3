@@ -130,7 +130,7 @@ ChartBase.prototype = {
      */
     _getGraph: function()
     {
-        var graph = new Y.Graph();
+        var graph = new Y.Graph({chart:this});
         graph.after("chartRendered", Y.bind(function(e) {
             this.fire("chartRendered");
         }, this));
@@ -403,12 +403,14 @@ ChartBase.prototype = {
             cb = this.get("contentBox"),
             markerNode = e.currentTarget,
             strArr = markerNode.getAttribute("id").split("_"),
-            seriesIndex = strArr[1],
+            index = strArr.pop(),
+            seriesIndex = strArr.pop(),
             series = this.getSeries(parseInt(seriesIndex, 10)),
-            index = strArr[2],
             items = this.getSeriesItems(series, index),
-            x = e.pageX - cb.getX(),
-            y = e.pageY - cb.getY();
+            pageX = e.pageX,
+            pageY = e.pageY,
+            x = pageX - cb.getX(),
+            y = pageY - cb.getY();
         if(type == "mouseenter")
         {
             type = "mouseover";
@@ -505,12 +507,27 @@ ChartBase.prototype = {
          *      <dt>node</dt><dd>The dom node of the marker.</dd>
          *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>
          *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>
+         *      <dt>pageX</dt><dd>The x location of the event on the page (including scroll)</dd>
+         *      <dt>pageY</dt><dd>The y location of the event on the page (including scroll)</dd>
          *      <dt>series</dt><dd>Reference to the series of the marker.</dd>
          *      <dt>index</dt><dd>Index of the marker in the series.</dd>
          *      <dt>seriesIndex</dt><dd>The `order` of the marker's series.</dd>
+         *      <dt>originEvent</dt><dd>Underlying dom event.</dd>
          *  </dl>
          */
-        this.fire("markerEvent:" + type, {categoryItem:items.category, valueItem:items.value, node:markerNode, x:x, y:y, series:series, index:index, seriesIndex:seriesIndex});
+        this.fire("markerEvent:" + type, {
+            originEvent: e,
+            pageX:pageX, 
+            pageY:pageY, 
+            categoryItem:items.category, 
+            valueItem:items.value, 
+            node:markerNode, 
+            x:x, 
+            y:y, 
+            series:series, 
+            index:index, 
+            seriesIndex:seriesIndex
+        });
     },
 
     /**

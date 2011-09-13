@@ -297,7 +297,7 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
     /**
     * Before header cell element is attached, sets applicable class names.
     *
-    * @method _before_beforeAttachTbodyTdNode
+    * @method _beforeAttachTbodyTdNode
     * @param o {Object} {record, column, tr, headers, classnames, value}.
     * @protected
     */

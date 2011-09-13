@@ -14,7 +14,7 @@ YUI().use("datatype-date", "datatable-base", function (Y) {
     ],
     dtTemplate = new Y.DataTable.Base({columnset:colsTemplate, recordset:dataTemplate,
         caption:"Data formatting with string template"}).render("#template"),
-    // o = {tbody, tr, td, classnames, rowindex, record, column, data, value}
+    // o = {tbody, tr, classnames, rowindex, record, column, data, value}
     calculate = function(o){
         var record = o.record;
         return "$"+(record.getValue("price")-record.getValue("cost"));
@@ -31,7 +31,7 @@ YUI().use("datatype-date", "datatable-base", function (Y) {
     ],
     dtFunction = new Y.DataTable.Base({columnset:colsFunction, recordset:dataFunction,
         caption:"Data formatting with custom function"}).render("#function"),
-    // o = {tbody, tr, td, classnames, rowindex, record, column, data, value}
+    // o = {tbody, tr, classnames, rowindex, record, column, data, value}
     formatDates = function(o){
         return o.value &&
             Y.DataType.Date.format(o.value, {format:"%m/%d/%Y"});

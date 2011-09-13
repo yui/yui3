@@ -40,7 +40,8 @@
 <script type="text/javascript">
 
 YUI({
-    useBrowserConsole:false
+    useBrowserConsole:false,
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
 }).use("console", "test", "intl", function(Y) {
 
     // Set up the page

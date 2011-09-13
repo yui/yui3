@@ -1,5 +1,6 @@
 /**
- * Provides a throttle/limiter for function calls
+ * Throttles a call to a method based on the time between calls. This method is attached
+ * to the `Y` object and is <a href="../classes/YUI.html#method_throttle">documented there</a>.
  * @module yui
  * @submodule yui-throttle
  */
