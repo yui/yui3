@@ -2368,6 +2368,32 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
         }
     }));
 
+    Y.Test.Runner.add(new Y.Test.Case({
+        name: 'Y.Node.removeAttribute',
+
+        'should remove the given attribute': function() {
+            var node = document.createElement('div');
+
+            node.innerHTML = '<div id="foo">foo</div>';
+            node = node.getElementsByTagName('div')[0];
+
+            Y.one(node).removeAttribute('id');
+            Assert.areEqual('', Y.one(node).get('id'));
+
+        },
+
+        'should be chainable': function() {
+            var node = document.createElement('div');
+
+            node.innerHTML = '<div id="foo">foo</div>';
+            node = Y.one(node.getElementsByTagName('div')[0]);
+
+            Assert.areEqual(node, node.removeAttribute('id'));
+
+        }
+
+    }));
+
     Y.Test.Runner.add(suite);
 
     Y.on('load', function() {
