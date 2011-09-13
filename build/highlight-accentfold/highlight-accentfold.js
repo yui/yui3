@@ -1,16 +1,16 @@
 YUI.add('highlight-accentfold', function(Y) {
 
 /**
- * Adds accent-folding highlighters to <code>Y.Highlight</code>.
- *
- * @module highlight
- * @submodule highlight-accentfold
- */
+Adds accent-folding highlighters to `Y.Highlight`.
+
+@module highlight
+@submodule highlight-accentfold
+**/
 
 /**
- * @class Highlight
- * @static
- */
+@class Highlight
+@static
+**/
 
 var AccentFold = Y.Text.AccentFold,
     Escape     = Y.Escape,
@@ -21,27 +21,18 @@ Highlight = Y.mix(Y.Highlight, {
     // -- Public Static Methods ------------------------------------------------
 
     /**
-     * Accent-folding version of <code>all()</code>.
-     *
-     * @method allFold
-     * @param {String} haystack String to apply highlighting to.
-     * @param {String|Array} needles String or array of strings that should be
-     *   highlighted.
-     * @param {Object} options (optional) Options object, which may contain
-     *   zero or more of the following properties:
-     *
-     * <dl>
-     *   <dt>startsWith (Boolean)<dt>
-     *   <dd>
-     *     By default, needles are highlighted wherever they appear in the
-     *     haystack. If <code>startsWith</code> is <code>true</code>, matches
-     *     must be anchored to the beginning of the string.
-     *   </dd>
-     * </dl>
-     *
-     * @return {String} Escaped and highlighted copy of <em>haystack</em>.
-     * @static
-     */
+    Accent-folding version of `all()`.
+
+    @method allFold
+    @param {String} haystack String to apply highlighting to.
+    @param {String|String[]} needles String or array of strings that should be
+      highlighted.
+    @param {Object} [options] Options object.
+    @param {Boolean} [options.startsWith=false] If `true`, matches must be
+        anchored to the beginning of the string.
+    @return {String} Escaped and highlighted copy of _haystack_.
+    @static
+    **/
     allFold: function (haystack, needles, options) {
         var template = Highlight._TEMPLATE,
             results  = [],
@@ -109,31 +100,31 @@ Highlight = Y.mix(Y.Highlight, {
     },
 
     /**
-     * Accent-folding version of <code>start()</code>.
-     *
-     * @method startFold
-     * @param {String} haystack String to apply highlighting to.
-     * @param {String|Array} needles String or array of strings that should be
-     *   highlighted.
-     * @return {String} Escaped and highlighted copy of <em>haystack</em>.
-     * @static
-     */
+    Accent-folding version of `start()`.
+
+    @method startFold
+    @param {String} haystack String to apply highlighting to.
+    @param {String|String[]} needles String or array of strings that should be
+      highlighted.
+    @return {String} Escaped and highlighted copy of _haystack_.
+    @static
+    **/
     startFold: function (haystack, needles) {
         return Highlight.allFold(haystack, needles, {startsWith: true});
     },
 
     /**
-     * Accent-folding version of <code>words()</code>.
-     *
-     * @method wordsFold
-     * @param {String} haystack String to apply highlighting to.
-     * @param {String|Array} needles String or array of strings containing words
-     *   that should be highlighted. If a string is passed, it will be split
-     *   into words; if an array is passed, it is assumed to have already been
-     *   split.
-     * @return {String} Escaped and highlighted copy of <em>haystack</em>.
-     * @static
-     */
+    Accent-folding version of `words()`.
+
+    @method wordsFold
+    @param {String} haystack String to apply highlighting to.
+    @param {String|String[]} needles String or array of strings containing words
+      that should be highlighted. If a string is passed, it will be split
+      into words; if an array is passed, it is assumed to have already been
+      split.
+    @return {String} Escaped and highlighted copy of _haystack_.
+    @static
+    **/
     wordsFold: function (haystack, needles) {
         var template = Highlight._TEMPLATE;
 

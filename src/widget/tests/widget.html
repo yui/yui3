@@ -36,7 +36,10 @@
 <body class="yui3-skin-sam">
 <div id="testbed" class="yui3-skin-foo"></div>
 <script>
-YUI({useBrowserConsole:false}).use('test', 'widget', 'node-event-simulate', 'console', function (Y) {
+YUI({
+    useBrowserConsole:false,
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+}).use('test', 'widget', 'node-event-simulate', 'console', function (Y) {
 
     var suite = new Y.Test.Suite("Widget Tests");
 

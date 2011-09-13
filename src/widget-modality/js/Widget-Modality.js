@@ -52,7 +52,7 @@ var WIDGET         = 'widget',
      * @param {Object} config User configuration object
      */
     function WidgetModal(config) {
-        if (config.modal) {
+        if (config && config.modal) {
             Y.after(this._renderUIModal, this, RENDER_UI);
             Y.after(this._syncUIModal, this, SYNC_UI);
             Y.after(this._bindUIModal, this, BIND_UI);

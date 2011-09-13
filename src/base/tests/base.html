@@ -36,7 +36,10 @@
 <body class="yui3-skin-sam">
 <div id="testbed" class="yui3-skin-foo"></div>
 <script>
-YUI({useBrowserConsole:false, filter:"raw"}).use('test', 'base', 'console', function (Y) {
+YUI({
+    useBrowserConsole:false,
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+}).use('test', 'base', 'console', function (Y) {
 
     // NOTE: Attribute's unit tests cover a large section of Base's functionality when it comes to dealing with attributes.
 

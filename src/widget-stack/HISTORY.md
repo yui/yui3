@@ -1,5 +1,12 @@
-Widget Stack
-============
+WidgetStack Change History
+==========================
+
+3.4.1
+-----
+
+  * The shim element is now sizing correctly the first time a widget is shown
+    after it was instantiated with the `visible` Attribute set to `false`. Note:
+    The shim element is only used with IE 6 by default. [Ticket #2529127]
 
 3.4.0
 -----
@@ -29,14 +36,8 @@ Widget Stack
 3.0.0
 -----
 
+  * Initial release
+
   * Recreate iframe shim from TEMPLATE for each instance, instead of
     cloning a class level cached Node instance, so that ownerDocument
     can be set to match the bounding box.
-
-3.0.0 beta 1
-------------
-
-  * No Changes
-
-3.0.0PR2 - Initial release
---------------------------

@@ -6,7 +6,9 @@ YUI.add('widget-parent', function(Y) {
  * @module widget-parent
  */
 
-var Lang = Y.Lang;
+var Lang = Y.Lang,
+    RENDERED = "rendered",
+    BOUNDING_BOX = "boundingBox";
 
 /**
  * Widget extension providing functionality enabling a Widget to be a 
@@ -91,7 +93,6 @@ function Parent(config) {
     //  Widget method overlap
     Y.after(this._renderChildren, this, "renderUI");
     Y.after(this._bindUIParent, this, "bindUI");
-    Y.before(this._destroyChildren, this, "destructor");
 
     this.after("selectionChange", this._afterSelectionChange);
     this.after("selectedChange", this._afterParentSelectedChange);
@@ -207,10 +208,18 @@ Parent.ATTRS = {
 Parent.prototype = {
 
     /**
+     * The destructor implementation for Parent widgets. Destroys all children.
+     * @method destructor
+     */
+    destructor: function() {
+        this._destroyChildren();
+    },
+
+    /**
      * Destroy event listener for each child Widget, responsible for removing 
      * the destroyed child Widget from the parent's internal array of children
      * (_items property).
-     * 
+     *
      * @method _afterDestroyChild
      * @protected
      * @param {EventFacade} event The event facade for the attribute change.
@@ -222,7 +231,6 @@ Parent.prototype = {
             child.remove();
         }        
     },
-
 
     /**
      * Attribute change listener for the <code>selection</code> 
@@ -720,17 +728,19 @@ Parent.prototype = {
         // state (which should be accurate), means we don't have 
         // to worry about decorator elements which may be added 
         // to the _childContainer node.
-
-        if (nextSibling) {
-            siblingBB = nextSibling.get("boundingBox");
+    
+        if (nextSibling && nextSibling.get(RENDERED)) {
+            siblingBB = nextSibling.get(BOUNDING_BOX);
             siblingBB.insert(childBB, "before");
         } else {
             prevSibling = child.previous(false);
-            if (prevSibling) {
-                siblingBB = prevSibling.get("boundingBox");
+    
+            if (prevSibling && prevSibling.get(RENDERED)) {
+                siblingBB = prevSibling.get(BOUNDING_BOX);
                 siblingBB.insert(childBB, "after");
             }
-        }
+        }        
+
     },
 
     /**
