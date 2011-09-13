@@ -161,7 +161,11 @@ form {
     foo<span>bar</span>baz
 </div>
 
-<div id="test-element-by-axis">foo<div></div>bar<span></span>baz<em></em>
+<div id="test-ancestor-stop">
+    <div>
+        <div id="test-element-by-axis">foo<div></div>bar<span></span>baz<em></em>
+    </div>
+</div>
 
 <div id="test-siblings">
     <em>foo</em>

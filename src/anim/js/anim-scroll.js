@@ -15,19 +15,18 @@ Y.Anim.behaviors.scroll = {
             val = ([
             fn(elapsed, NUM(from[0]), NUM(to[0]) - NUM(from[0]), duration),
             fn(elapsed, NUM(from[1]), NUM(to[1]) - NUM(from[1]), duration)
+            fn(elapsed, NUM(from[3]), NUM(to[3]) - NUM(from[3]), duration),
+            fn(elapsed, NUM(from[4]), NUM(to[4]) - NUM(from[4]), duration)
         ]);
 
-        if (val[0]) {
-            node.set('scrollLeft', val[0]);
-        }
-
-        if (val[1]) {
-            node.set('scrollTop', val[1]);
-        }
+        node.set('transform', 'matrix(' + val.join(' ') + ')');
     },
     get: function(anim) {
-        var node = anim._node;
-        return [node.get('scrollLeft'), node.get('scrollTop')];
+        var node = anim._node,
+            transform = node.get('transform'),
+            matrix = transform.match(/[\d.]+/g);
+
+        return matrix;
     }
 };
 
