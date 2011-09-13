@@ -342,6 +342,15 @@ suite.add(new Y.Test.Case({
         new receiver().foo();
 
         Assert.areSame(2, calls);
+    },
+
+    // http://yuilibrary.com/projects/yui3/ticket/2530501
+    'augmenting a Y.Node instance should not overwrite existing properties by default': function () {
+        var node = Y.one('#test');
+
+        Assert.isInstanceOf(Y.Node, node.get('parentNode'), 'parentNode attribute should be a Node instance before augment');
+        Y.augment(node, Y.Attribute);
+        Assert.isInstanceOf(Y.Node, node.get('parentNode'), 'parentNode attribute should be a Node instance after augment');
     }
 }));
 
@@ -383,10 +392,9 @@ suite.add(new Y.Test.Case({
 
         Y.mix(receiver, supplier);
 
-        Assert.areSame(4, Y.Object.size(receiver), 'should own four keys');
-        ObjectAssert.ownsKeys(['a', 'foo', 'bar', 'toString'], receiver, 'should own new keys');
+        Assert.areSame(2, Y.Object.size(receiver), 'should own two keys');
+        ObjectAssert.ownsKeys(['a', 'bar'], receiver, 'should own new keys');
         Assert.areSame('a', receiver.a, '"a" should not be overwritten');
-        Assert.areSame(supplier.toString, receiver.toString, '"toString" should be the same');
 
         receiver = {};
         Y.mix(receiver, Y.Object(supplier));
@@ -396,14 +404,15 @@ suite.add(new Y.Test.Case({
 
     'test [mode 0]: overwrite, no whitelist, no merge': function () {
         var receiver = {a: 'a', obj: {a: 'a', b: 'b'}},
-            supplier = {a: 'z', foo: 'foo', bar: 'bar', obj: {a: 'z'}};
+            supplier = {a: 'z', foo: 'foo', bar: 'bar', obj: {a: 'z'}, toString: function () {}};
 
         Y.mix(receiver, supplier, true);
 
-        Assert.areSame(4, Y.Object.size(receiver), 'should own four keys');
-        ObjectAssert.ownsKeys(['a', 'foo', 'bar', 'obj'], receiver, 'should own new keys');
+        Assert.areSame(5, Y.Object.size(receiver), 'should own five keys');
+        ObjectAssert.ownsKeys(['a', 'foo', 'bar', 'obj', 'toString'], receiver, 'should own new keys');
         Assert.areSame('z', receiver.a, '"a" should be overwritten');
         Assert.areSame(receiver.obj, supplier.obj, 'objects should be overwritten, not merged');
+        Assert.areSame(supplier.toString, receiver.toString, '"toString" should be the same');
     },
 
     'test [mode 0]: overwrite, whitelist, no merge': function () {
@@ -425,10 +434,9 @@ suite.add(new Y.Test.Case({
 
         Y.mix(receiver, supplier, false, ['a', 'obj', 'foo']);
 
-        Assert.areSame(4, Y.Object.size(receiver), 'should own four keys');
-        ObjectAssert.ownsKeys(['a', 'foo', 'bar', 'obj'], receiver, 'should own whitelisted keys');
+        Assert.areSame(3, Y.Object.size(receiver), 'should own three keys');
+        ObjectAssert.ownsKeys(['a', 'bar', 'obj'], receiver, 'should own whitelisted keys');
         Assert.areSame('a', receiver.a, '"a" should not be overwritten');
-        Assert.areSame('foo', receiver.foo, '"foo" should be received');
         Assert.areNotSame(receiver.obj, supplier.obj, '"obj" should not be overwritten');
         Assert.areSame('a', receiver.obj.a, '"obj" should not be merged');
     },
@@ -439,10 +447,9 @@ suite.add(new Y.Test.Case({
 
         Y.mix(receiver, supplier, false, null, 0, true);
 
-        Assert.areSame(5, Y.Object.size(receiver), 'should own five keys');
-        ObjectAssert.ownsKeys(['a', 'foo', 'bar', 'fakeout', 'obj'], receiver, 'should own new keys');
+        Assert.areSame(4, Y.Object.size(receiver), 'should own four keys');
+        ObjectAssert.ownsKeys(['a', 'bar', 'fakeout', 'obj'], receiver, 'should own new keys');
         Assert.areSame('a', receiver.a, '"a" should not be overwritten');
-        Assert.areSame('foo', receiver.foo, '"foo" should be received');
         Assert.areSame(1, Y.Object.size(receiver.fakeout), 'non-objects should not be merged into objects');
 
         Assert.areNotSame(receiver.obj, supplier.obj, 'objects should be merged, not overwritten');
@@ -710,4 +717,4 @@ suite.add(new Y.Test.Case({
 
 Y.Test.Runner.add(suite);
 
-}, '@VERSION@', {requires: ['test']});
+}, '@VERSION@', {requires: ['attribute', 'test']});
