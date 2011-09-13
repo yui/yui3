@@ -529,15 +529,16 @@ IO.prototype = {
     * </dl>
     *
     * @method send
-    * @private
+    * @public
     * @param {String} uri - qualified path to transaction resource.
     * @param {Object} c - configuration object for the transaction.
     * @param {Number} i - transaction id, if already set.
     * @return {Object}
     */
     send: function(uri, c, i) {
-        var o, m, r, s, d, io = this,
-            u = uri;
+        var o, m, n, s, d, io = this,
+            u = uri,
+			r = {};
             c = c ? Y.Object(c) : {};
             o = io._create(c, i);
             m = c.method ? c.method.toUpperCase() : 'GET';
@@ -612,7 +613,10 @@ IO.prototype = {
                 // Create a response object for synchronous transactions,
                 // mixing id and arguments properties with the xhr
                 // properties whitelist.
-                r = Y.mix({ id: o.id, 'arguments': c['arguments'] }, o.c, false, P);
+				for (n = 0; n < P.length; n++) {
+					r[P[n]] = o.c[P[n]];
+				}
+
                 r[aH] = function() { return o.c[aH](); };
                 r[oH] = function(h) { return o.c[oH](h); };
                 io.complete(o, c);

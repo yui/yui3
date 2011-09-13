@@ -1,6 +1,15 @@
 Event Infrastructure Change History
 ===================================
 
+3.4.1
+-----
+  * Calling Y.on('syntheticEvent', callback) without a context/selector argument
+    now defaults to `window` (or the global object) [Ticket #2530081]
+
+  * event-resize, a.k.a. Y.on('windowresize', ...) migrated to synthetic event
+    infrastructure. Now detachable, etc. Also properly throttles the resize
+    event on newer Gecko engines. That browser sniff was old! [Ticket #2530805]
+
 3.4.0
 -----
   * `event-outside` added for "outside" events.
