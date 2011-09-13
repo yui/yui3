@@ -2019,70 +2019,189 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
                 node = root.getElementsByTagName('EM')[0];
 
             Assert.areEqual(document.body, Y.one(node).ancestor('body')._node);
-        }/*,
+        },
 
         'should return the matching ancestor (test self match)': function() {
             var root = document.getElementById('test-element-by-axis'),
                 node = root.getElementsByTagName('EM')[0],
                 fn = function(node) {
-                    return node.tagName === 'EM';
+                    return node.get('tagName') === 'EM';
                 };
 
-            Assert.areEqual(node, Y.DOM.ancestor(node, fn, true));
+            Assert.areEqual(node, Y.one(node).ancestor(fn, true)._node);
+        },
+
+        'should return the matching ancestor (test self match) via selector': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0];
+
+            Assert.areEqual(node, Y.one(node).ancestor('em', true)._node);
         },
 
         'should return the matching ancestor (test self not matched)': function() {
             var root = document.getElementById('test-element-by-axis'),
                 node = root.getElementsByTagName('EM')[0],
                 fn = function(node) {
-                    return node.tagName === 'BODY';
+                    return node.get('tagName') === 'BODY';
                 };
 
-            Assert.areEqual(document.body, Y.DOM.ancestor(node, fn, true));
+            Assert.areEqual(document.body, Y.one(node).ancestor(fn, true)._node);
+        },
+
+        'should return the matching ancestor (test self not matched) via selector': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0];
+
+            Assert.areEqual(document.body, Y.one(node).ancestor('body', true)._node);
         },
 
         'should stop when the stop function returns true': function() {
             var root = document.getElementById('test-element-by-axis'),
                 node = root.getElementsByTagName('EM')[0],
                 fn = function(node) {
+                    node = node._node;
                     return node.tagName === 'BODY';
                 },
 
                 stopFn = function(node) {
+                    node = node._node;
                     return node.id === 'test-ancestor-stop';
             };
 
-            Assert.isNull(Y.DOM.ancestor(node, fn, null, stopFn));
+            Assert.isNull(Y.one(node).ancestor(fn, null, stopFn));
+        },
+
+        'should stop when the stop function returns true as 2nd arg': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0],
+                fn = function(node) {
+                    node = node._node;
+                    return node.tagName === 'BODY';
+                },
+
+                stopFn = function(node) {
+                    node = node._node;
+                    return node.id === 'test-ancestor-stop';
+            };
+
+            Assert.isNull(Y.one(node).ancestor(fn, stopFn));
+        },
+
+        'should stop when the stop function returns true via selector': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0];
+
+            Assert.isNull(Y.one(node).ancestor('body', null, '#test-ancestor-stop'));
+        },
+
+        'should stop when the stop function returns true via selector as 2nd arg': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0];
+
+            Assert.isNull(Y.one(node).ancestor('body', '#test-ancestor-stop'));
         },
 
         'should find ancestor before stop': function() {
             var root = document.getElementById('test-element-by-axis'),
                 node = root.getElementsByTagName('EM')[0],
                 fn = function(node) {
+                    node = node._node;
                     return node.id === 'test-ancestor-stop';
                 },
 
                 stopFn = function(node) {
+                    node = node._node;
                     return node.tagName === 'BODY';
             };
 
             Assert.areEqual('test-ancestor-stop',
-                    Y.DOM.ancestor(node, fn, null, stopFn).id);
+                    Y.one(node).ancestor(fn, null, stopFn)._node.id);
+        },
+
+        'should find ancestor before stop fn as 2nd arg': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0],
+                fn = function(node) {
+                    node = node._node;
+                    return node.id === 'test-ancestor-stop';
+                },
+
+                stopFn = function(node) {
+                    node = node._node;
+                    return node.tagName === 'BODY';
+            };
+
+            Assert.areEqual('test-ancestor-stop',
+                    Y.one(node).ancestor(fn, stopFn)._node.id);
+        },
+
+        'should find ancestor before stop via selector': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0],
+                fn = function(node) {
+                    node = node._node;
+                    return node.id === 'test-ancestor-stop';
+                };
+
+            Assert.areEqual('test-ancestor-stop',
+                    Y.one(node).ancestor(fn, null, 'body')._node.id);
+        },
+
+        'should find ancestor before stop via selector as 2nd arg': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0],
+                fn = function(node) {
+                    node = node._node;
+                    return node.id === 'test-ancestor-stop';
+                };
+
+            Assert.areEqual('test-ancestor-stop',
+                    Y.one(node).ancestor(fn, 'body')._node.id);
+        },
+
+        'should find ancestor via selector before stop via selector': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0];
+
+            Assert.areEqual('test-ancestor-stop',
+                    Y.one(node).ancestor('#test-ancestor-stop', null, 'body')._node.id);
         },
 
         'should find ancestor when both test and stop return true': function() {
             var root = document.getElementById('test-element-by-axis'),
                 node = root.getElementsByTagName('EM')[0],
                 fn = function(node) {
+                    node = node._node;
                     return node.id === 'test-ancestor-stop';
                 },
 
                 stopFn = function(node) {
+                    node = node._node;
                     return node.id === 'test-ancestor-stop';
             };
 
             Assert.areEqual('test-ancestor-stop',
-                    Y.DOM.ancestor(node, fn, null, stopFn).id);
+                    Y.one(node).ancestor(fn, null, stopFn)._node.id);
+        },
+
+        'should find ancestor when testFn and stop via selector both pass': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0],
+                fn = function(node) {
+                    node = node._node;
+                    return node.id === 'test-ancestor-stop';
+                };
+
+            Assert.areEqual('test-ancestor-stop',
+                    Y.one(node).ancestor(fn, null, '#test-ancestor-stop')._node.id);
+        },
+
+        'should find ancestor when test and stop via selector both pass': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0];
+
+            Assert.areEqual('test-ancestor-stop',
+                    Y.one(node).ancestor('#test-ancestor-stop', null, '#test-ancestor-stop')._node.id);
         }
     }));
 
@@ -2091,14 +2210,14 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
 
         'should return an array of one (documentElement)': function() {
             ArrayAssert.itemsAreEqual([document.documentElement],
-                    Y.DOM.ancestors(document.body));
+                    Y.one(document.body).ancestors()._nodes);
         },
 
         'should include the starting node': function() {
             var node = document.createElement('div');
             document.body.appendChild(node);
             ArrayAssert.itemsAreEqual([document.documentElement, document.body, node],
-                    Y.DOM.ancestors(node, null, true));
+                    Y.one(node).ancestors(null, true)._nodes);
 
             document.body.removeChild(node);
         },
@@ -2107,7 +2226,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             var node = document.createElement('div');
             document.body.appendChild(node);
             ArrayAssert.itemsAreEqual([document.documentElement, document.body],
-                    Y.DOM.ancestors(node));
+                    Y.one(node).ancestors()._nodes);
 
             document.body.removeChild(node);
         },
@@ -2115,11 +2234,20 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
         'should return the matching ancestors': function() {
             var node = document.createElement('div'),
                 fn = function(node) {
+                    node = node._node;
                     return node.tagName !== 'HTML';
                 };
 
             document.body.appendChild(node);
-            ArrayAssert.itemsAreEqual([document.body], Y.DOM.ancestors(node, fn));
+            ArrayAssert.itemsAreEqual([document.body], Y.one(node).ancestors(fn)._nodes);
+            document.body.removeChild(node);
+        },
+
+        'should return the matching ancestors via selector': function() {
+            var node = document.createElement('div');
+
+            document.body.appendChild(node);
+            ArrayAssert.itemsAreEqual([document.body], Y.one(node).ancestors(':not(html)')._nodes);
             document.body.removeChild(node);
         },
 
@@ -2127,44 +2255,50 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             var root = document.getElementById('test-element-by-axis'),
                 node = root.getElementsByTagName('EM')[0],
                 fn = function(node) {
+                    node = node._node;
                     return node.tagName === 'EM';
                 };
 
-            ArrayAssert.itemsAreEqual([node], Y.DOM.ancestors(node, fn, true));
+            ArrayAssert.itemsAreEqual([node], Y.one(node).ancestors(fn, true)._nodes);
         },
 
         'should return the matching ancestors (test self not matched)': function() {
             var root = document.getElementById('test-element-by-axis'),
                 node = root.getElementsByTagName('EM')[0],
                 fn = function(node) {
+                    node = node._node;
                     return node.tagName === 'BODY';
                 };
 
-            ArrayAssert.itemsAreEqual([document.body], Y.DOM.ancestors(node, fn, true));
+            ArrayAssert.itemsAreEqual([document.body], Y.one(node).ancestors(fn, true)._nodes);
         },
 
         'should stop when the stop function returns true': function() {
             var root = document.getElementById('test-element-by-axis'),
                 node = root.getElementsByTagName('EM')[0],
                 fn = function(node) {
+                    node = node._node;
                     return node.tagName === 'BODY';
                 },
 
                 stopFn = function(node) {
+                    node = node._node;
                     return node.id === 'test-ancestor-stop';
             };
 
-            ArrayAssert.itemsAreEqual([], Y.DOM.ancestors(node, fn, null, stopFn));
+            ArrayAssert.itemsAreEqual([], Y.one(node).ancestors(fn, null, stopFn)._nodes);
         },
 
         'should find ancestor before stop': function() {
             var root = document.getElementById('test-element-by-axis'),
                 node = root.getElementsByTagName('EM')[0],
                 fn = function(node) {
+                    node = node._node;
                     return node.tagName === 'DIV';
                 },
 
                 stopFn = function(node) {
+                    node = node._node;
                     return node.tagName === 'BODY';
             };
 
@@ -2173,24 +2307,41 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
                     node.parentNode.parentNode,
                     node.parentNode
                 ],
-                Y.DOM.ancestors(node, fn, null, stopFn));
+                Y.one(node).ancestors(fn, null, stopFn)._nodes);
         },
 
         'should find ancestor when both test and stop return true': function() {
             var root = document.getElementById('test-element-by-axis'),
                 node = root.getElementsByTagName('EM')[0],
                 fn = function(node) {
+                    node = node._node;
                     return node.tagName === 'DIV';
                 },
 
                 stopFn = function(node) {
+                    node = node._node;
                     return node.tagName === 'DIV';
             };
 
             Assert.areEqual(1,
-                    Y.DOM.ancestors(node, fn, null, stopFn).length);
+                    Y.one(node).ancestors(fn, null, stopFn).size());
+        },
+
+        'should stop when the stop function returns true as 2nd arg': function() {
+            var root = document.getElementById('test-element-by-axis'),
+                node = root.getElementsByTagName('EM')[0],
+                fn = function(node) {
+                    node = node._node;
+                    return node.tagName === 'BODY';
+                },
+
+                stopFn = function(node) {
+                    node = node._node;
+                    return node.id === 'test-ancestor-stop';
+            };
+
+            Assert.areEqual(0, Y.one(node).ancestors(fn, stopFn).size());
         }
-        */
     }));
 
     Y.Test.Runner.add(suite);
