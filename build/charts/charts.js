@@ -5659,9 +5659,7 @@ Plots.prototype = {
      */
     _clearMarkerCache: function()
     {
-        var len = this._markerCache.length,
-            i = 0,
-            marker;
+        var marker;
         while(this._markerCache.length > 0)
         {
             marker = this._markerCache.shift();
@@ -6185,6 +6183,10 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         if((this.get("xData") && this.get("yData")) || this._updateAxisData())
         {
             this.draw();
+        }
+        else
+        {
+            this.fire("drawingComplete");
         }
     },
 
@@ -8136,8 +8138,14 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
         if(!useOrigin)
         {
             lastCollection = seriesCollection[order - 1];
-            negativeBaseValues = lastCollection.get("negativeBaseValues") || [];
-            positiveBaseValues = lastCollection.get("positiveBaseValues") || [];
+            negativeBaseValues = lastCollection.get("negativeBaseValues");
+            positiveBaseValues = lastCollection.get("positiveBaseValues");
+            if(!negativeBaseValues || !positiveBaseValues)
+            {
+                useOrigin = true;
+                positiveBaseValues = [];
+                negativeBaseValues = [];
+            }
         }
         else
         {
@@ -8404,6 +8412,12 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
             lastCollection = seriesCollection[order - 1];
             negativeBaseValues = lastCollection.get("negativeBaseValues");
             positiveBaseValues = lastCollection.get("positiveBaseValues");
+            if(!negativeBaseValues || !positiveBaseValues)
+            {
+                useOrigin = true;
+                positiveBaseValues = [];
+                negativeBaseValues = [];
+            }
         }
         else
         {
@@ -8820,23 +8834,23 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         if(isFinite(w) && isFinite(h) && w > 0 && h > 0)
         {   
             this._rendered = true;
-                if(this._drawing)
-                {
-                    this._callLater = true;
-                    return;
-                }
-                this._drawing = true;
-                this._callLater = false;
-                this.drawSeries();
-                this._drawing = false;
-                if(this._callLater)
-                {
-                    this.draw();
-                }
-                else
-                {
-                    this.fire("drawingComplete");
-                }
+            if(this._drawing)
+            {
+                this._callLater = true;
+                return;
+            }
+            this._drawing = true;
+            this._callLater = false;
+            this.drawSeries();
+            this._drawing = false;
+            if(this._callLater)
+            {
+                this.draw();
+            }
+            else
+            {
+                this.fire("drawingComplete");
+            }
         }
     },
 
