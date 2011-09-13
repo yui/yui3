@@ -741,6 +741,13 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             Assert.areEqual('0px', node.getComputedStyle('marginTop'), "margin auto");
 
             Assert.areEqual(parseInt(w), Math.round(parseFloat(node.getComputedStyle('width'))), "percent width (from CSS)");
+
+            node = document.createElement('div');
+            node.style.height = '100px';
+            document.body.appendChild(node);
+            Assert.areEqual('100px', Y.one(node).getComputedStyle('height'), "node.getComputedStyle('height'), style set off-dom");
+            document.body.removeChild(node);
+
         },
 
         test_setStyles: function() {
