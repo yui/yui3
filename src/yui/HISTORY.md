@@ -7,6 +7,8 @@ YUI Core Change History
 * Sparse arrays are now handled correctly in the non-native fallback
   implementation of `Y.Array.indexOf()`. [Ticket #2530966]
 
+* `Y.Object.size()` now returns `0` for non-objects. This was the pre-3.4.0
+  behavior, but regressed in 3.4.0. [Ticket #2531069]
 
 3.4.0
 -----

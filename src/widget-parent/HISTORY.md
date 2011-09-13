@@ -1,6 +1,19 @@
 Widget Parent
 =============
 
+3.4.1
+-----
+
+  * Fixed issue with children not being destroyed, when
+    parent.destroy() is called.
+
+  * Added if (sibling.get("rendered")) check before trying to insert 
+    children after/before siblings. This is not required for the out of
+    the box Parent/Child implementation, but is useful for custom 
+    implementations which customize children to render asynchronously.
+
+    See #2529863
+
 3.4.0
 -----
 

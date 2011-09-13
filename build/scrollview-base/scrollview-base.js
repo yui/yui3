@@ -38,8 +38,10 @@ var getClassName = Y.ClassNameManager.getClassName,
     ZERO = "0s",
 
     IE = Y.UA.ie,
+    
+    Transition = Y.Transition,
 
-    NATIVE_TRANSITIONS = Y.Transition.useNative,
+    NATIVE_TRANSITIONS = Transition.useNative,
 
     _constrain = function (val, min, max) { 
         return Math.min(Math.max(val, min), max);
@@ -548,12 +550,16 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             // Ideally using CSSMatrix - don't think we have it normalized yet though.
             // origX = (new WebKitCSSMatrix(cb.getComputedStyle("transform"))).e;
             // origY = (new WebKitCSSMatrix(cb.getComputedStyle("transform"))).f;
+
             origX = this.get(SCROLL_X),
             origY = this.get(SCROLL_Y),
 
-            TRANS = ScrollView._TRANSITION,
             cb = this.get(CONTENT_BOX),
-            bb = this.get(BOUNDING_BOX);
+            bb = this.get(BOUNDING_BOX),
+
+            HWTransform,
+
+            TRANS = ScrollView._TRANSITION;
 
         // TODO: Is this OK? Just in case it's called 'during' a transition.
         if (NATIVE_TRANSITIONS) {
@@ -561,13 +567,16 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             cb.setStyle(TRANS.PROPERTY, EMPTY);
         }
 
+        HWTransform = this._forceHWTransforms;
+        this._forceHWTransforms = false;  // the z translation was causing issues with picking up accurate scrollWidths in Chrome/Mac.
+
         this._moveTo(cb, 0, 0);
 
-        // Use bb instead of cb. cb doesn't gives us the right results
-        // in FF (due to overflow:hidden)
-        dims = [Math.max(bb.get('scrollWidth'), cb.get('scrollWidth')), Math.max(bb.get('scrollHeight'), cb.get('scrollHeight'))];
+        dims = [bb.get('scrollWidth'), bb.get('scrollHeight')];
 
         this._moveTo(cb, -1*origX, -1*origY);
+
+        this._forceHWTransforms = HWTransform;
 
         return dims;
     },
@@ -1028,16 +1037,16 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
     /**
      * Object map of style property names used to set transition properties.
-     * Currently, Webkit specific names are defaulted.  The configured property
-     * names are `_TRANSITION.DURATION` ("WebkitTransitionDuration") and
-     * `_TRANSITION.PROPERTY ("WebkitTransitionProperty").
+     * Defaults to the vendor prefix established by the Transition module.  
+     * The configured property names are `_TRANSITION.DURATION` (e.g. "WebkitTransitionDuration") and
+     * `_TRANSITION.PROPERTY (e.g. "WebkitTransitionProperty").
      *
      * @property _TRANSITION
      * @private
      */
     _TRANSITION : {
-        DURATION : "WebkitTransitionDuration",
-        PROPERTY : "WebkitTransitionProperty"
+        DURATION : Transition._VENDOR_PREFIX + "TransitionDuration",
+        PROPERTY : Transition._VENDOR_PREFIX + "TransitionProperty"
     }
 });
 
