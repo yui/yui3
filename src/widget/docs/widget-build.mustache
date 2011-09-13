@@ -62,13 +62,12 @@
     border:1px solid #000000;
     background-color:#004C6D;
     color:#fff;
-    padding:2px;
+    padding:1px;
 }
 
 .yui3-alignable-hidden {
     visibility:hidden;
 }
-
 
 /* Example Layout CSS */
 .widget-build-example {
@@ -111,6 +110,8 @@
 }
 
 #alignment p {
+    margin:0;
+    padding:2px;
     color:#dddd00;
 }
 </style>
@@ -295,7 +296,7 @@ var Alignable = Y.Base.create("alignable", Y.Widget,
                     [Y.WidgetPosition, Y.WidgetPositionAlign, Y.WidgetStack]);
 
 var alignable = new Alignable({
-    width:"13em",
+    width:"14em",
     align : {
         node: "#widget3-example",
         points: ["cc", "cc"]
