@@ -173,6 +173,14 @@ YUI.Env.parseUA = function(subUA) {
          */
         ios: null,
         /**
+         * Detects iOS device with the retina display
+         * @property ios
+         * @type boolean
+         * @default false
+         * @static
+         */
+        retina: false,
+        /**
          * Detects Googles Android OS version
          * @property android
          * @type float
@@ -266,6 +274,7 @@ YUI.Env.parseUA = function(subUA) {
                 m = ua.match(/iPad|iPod|iPhone/);
                 if (m && m[0]) {
                     o[m[0].toLowerCase()] = o.ios;
+                    o.retina = (win.devicePixelRatio || 1) >= 2;
                 }
             } else {
                 m = ua.match(/NokiaN[^\/]*|webOS\/\d\.\d/);
