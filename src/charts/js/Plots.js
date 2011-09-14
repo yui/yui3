@@ -257,9 +257,7 @@ Plots.prototype = {
      */
     _clearMarkerCache: function()
     {
-        var len = this._markerCache.length,
-            i = 0,
-            marker;
+        var marker;
         while(this._markerCache.length > 0)
         {
             marker = this._markerCache.shift();

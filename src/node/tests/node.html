@@ -1988,6 +1988,22 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             Assert.isTrue(typeof Y.all('body').after == 'function');
             Assert.isTrue(typeof Y.all('body').detach == 'function');
             Assert.isTrue(typeof Y.all('body').detachAll == 'function');
+        },
+
+        'should create empty NodeList from empty arguments': function() {
+            ArrayAssert.itemsAreEqual([], new Y.NodeList()._nodes);
+        },
+
+        'should create empty NodeList from empty string': function() {
+            ArrayAssert.itemsAreEqual([], new Y.NodeList('')._nodes);
+        },
+
+        'should create empty NodeList from empty arguments via Y.all': function() {
+            ArrayAssert.itemsAreEqual([], Y.all()._nodes);
+        },
+
+        'should create empty NodeList from empty string via Y.all': function() {
+            ArrayAssert.itemsAreEqual([], Y.all('')._nodes);
         }
     })); 
 
