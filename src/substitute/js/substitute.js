@@ -6,6 +6,7 @@
  */
 
     var L = Y.Lang, DUMP = 'dump', SPACE = ' ', LBRACE = '{', RBRACE = '}',
+		savedRegExp =  /(~-(\d+)-~)/g, lBraceRegExp = /\{LBRACE\}/g, rBraceRegExp = /\{RBRACE\}/g,
 
     /**
      * The following methods are added to the YUI instance
@@ -13,35 +14,60 @@
      */
 
     /**
-     * Does variable substitution on a string. It scans through the string
-     * looking for expressions enclosed in { } braces. If an expression
-     * is found, it is used a key on the object.  If there is a space in
-     * the key, the first word is used for the key and the rest is provided
-     * to an optional function to be used to programatically determine the
-     * value (the extra information might be used for this decision). If
-     * the value for the key in the object, or what is returned from the
-     * function has a string value, number value, or object value, it is
-     * substituted for the bracket expression and it repeats.  If this
-     * value is an object, it uses the Object's toString() if this has
-     * been overridden, otherwise it does a shallow dump of the key/value
-     * pairs if Y.dump is available (if dump isn't available, toString()
-     * is used).
-     *
-     * This method is included in the 'substitute' module.  It is not included
-     * in the YUI module.
-     *
-     * @method substitute
-     * @param {string} s The string that will be modified.
-     * @param {object} o An object containing the replacement values.
-     * @param {function} f An optional function that can be used to
-     *                     process each match.  It receives the key,
-     *                     value, and any extra metadata included with
-     *                     the key inside of the braces.
-     * @param {boolean} recurse if true, the replacement will be recursive,
-     * letting you have replacement tokens in replacement text.  The
-     * default is false.
-     * @return {string} the substituted string.
-     */
+    Does {placeholder} substitution on a string.  The object passed as the
+    second parameter provides values to replace the {placeholder}s.
+    {placeholder} token names must match property names of the object.  For
+    example
+
+    `var greeting = Y.substitute("Hello, {who}!", { who: "World" });`
+
+    {placeholder} tokens that are undefined on the object map will be left in
+    tact (leaving unsightly "{placeholder}"s in the output string).  If your
+    replacement strings *should* include curly braces, use `{LBRACE}` and
+    `{RBRACE}` in your object map string value.
+
+    If a function is passed as a third argument, it will be called for each
+    {placeholder} found.  The {placeholder} name is passed as the first value
+    and the value from the object map is passed as the second.  If the
+    {placeholder} contains a space, the first token will be used to identify
+    the object map property and the remainder will be passed as a third
+    argument to the function.  See below for an example.
+    
+    If the value in the object map for a given {placeholder} is an object and
+    the `dump` module is loaded, the replacement value will be the string
+    result of calling `Y.dump(...)` with the object as input.  Include a
+    numeric second token in the {placeholder} to configure the depth of the call
+    to `Y.dump(...)`, e.g. "{someObject 2}".  See the
+    <a href="../classes/YUI.html#method_dump">`dump`</a> method for details.
+
+    @method substitute
+    @param {string} s The string that will be modified.
+    @param {object} o An object containing the replacement values.
+    @param {function} f An optional function that can be used to
+                        process each match.  It receives the key,
+                        value, and any extra metadata included with
+                        the key inside of the braces.
+    @param {boolean} recurse if true, the replacement will be recursive,
+                        letting you have replacement tokens in replacement text.
+                        The default is false.
+    @return {string} the substituted string.
+
+    @example
+
+        function getAttrVal(key, value, name) {
+            // Return a string describing the named attribute and its value if
+            // the first token is @. Otherwise, return the value from the
+            // replacement object.
+            if (key === "@") {
+                value += name + " Value: " + myObject.get(name);
+            }
+            return value;
+        }
+
+        // Assuming myObject.set('foo', 'flowers'),
+        // => "Attr: foo Value: flowers"
+        var attrVal = Y.substitute("{@ foo}", { "@": "Attr: " }, getAttrVal);
+    **/
 
     substitute = function(s, o, f, recurse) {
         var i, j, k, key, v, meta, saved = [], token, dump,
@@ -100,31 +126,30 @@
                         }
                     }
                 }
-            } else if (!L.isString(v) && !L.isNumber(v)) {
+			} else if (L.isUndefined(v)) {
                 // This {block} has no replace string. Save it for later.
                 v = '~-' + saved.length + '-~';
-                saved[saved.length] = token;
+					saved.push(token);
 
                 // break;
             }
 
             s = s.substring(0, i) + v + s.substring(j + 1);
 
-            if (!recurse) {
-                lidx = i - 1;
-            }
+			if (!recurse) {
+				lidx = i - 1;
+			} 
+		}
+		// restore saved {block}s and escaped braces
 
-        }
-
-        // restore saved {block}s
-        for (i = saved.length - 1; i >= 0; i = i - 1) {
-            s = s.replace(new RegExp('~-' + i + '-~'), LBRACE +
-                saved[i] + RBRACE, 'g');
-        }
-
-        return s;
-
-    };
+		return s
+			.replace(savedRegExp, function (str, p1, p2) {
+				return LBRACE + saved[parseInt(p2,10)] + RBRACE;
+			})
+			.replace(lBraceRegExp, LBRACE)
+			.replace(rBraceRegExp, RBRACE)
+		;
+	};
 
     Y.substitute = substitute;
     L.substitute = substitute;

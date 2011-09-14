@@ -57,6 +57,12 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
             lastCollection = seriesCollection[order - 1];
             negativeBaseValues = lastCollection.get("negativeBaseValues");
             positiveBaseValues = lastCollection.get("positiveBaseValues");
+            if(!negativeBaseValues || !positiveBaseValues)
+            {
+                useOrigin = true;
+                positiveBaseValues = [];
+                negativeBaseValues = [];
+            }
         }
         else
         {

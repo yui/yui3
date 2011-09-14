@@ -608,6 +608,7 @@ YUI.add('frame', function(Y) {
                         Y.log('New Modules Loaded into main instance', 'info', 'frame');
                         config = this._resolveWinDoc(config);
                         inst = YUI(config);
+                        inst.host = this.get('host'); //Cross reference to Editor
                         inst.log = Y.log; //Dump the instance logs to the parent instance.
 
                         Y.log('Creating new internal instance with node-base only', 'info', 'frame');
@@ -2069,6 +2070,7 @@ YUI.add('exec-command', function(Y) {
                 
                 Y.log('execCommand(' + action + '): "' + value + '"', 'info', 'exec-command');
                 if (fn) {
+                    Y.log('OVERIDE execCommand(' + action + '): "' + value + '"', 'info', 'exec-command');
                     return fn.call(this, action, value);
                 } else {
                     return this._command(action, value);
@@ -2092,7 +2094,7 @@ YUI.add('exec-command', function(Y) {
                         } catch (e2) {
                         }
                     }
-                    Y.log('Internal execCommand(' + action + '): "' + value + '"', 'info', 'exec-command');
+                    Y.log('Using default browser execCommand(' + action + '): "' + value + '"', 'info', 'exec-command');
                     inst.config.doc.execCommand(action, null, value);
                 } catch (e) {
                     Y.log(e.message, 'error', 'exec-command');
@@ -2435,6 +2437,7 @@ YUI.add('exec-command', function(Y) {
                     var inst = this.getInstance(), html,
                         DIR = 'dir', cls = 'yui3-touched',
                         dir, range, div, elm, n, str, s, par, list, lis,
+                        useP = (inst.host.editorPara ? true : false),
                         sel = new inst.Selection();
 
                     cmd = 'insert' + ((tag === 'ul') ? 'un' : '') + 'orderedlist';
@@ -2454,7 +2457,11 @@ YUI.add('exec-command', function(Y) {
 
                             str = '<div>';
                             lis.each(function(l) {
-                                str += l.get('innerHTML') + '<br>';
+                                if (useP) {
+                                    str += '<p>' + l.get('innerHTML') + '</p>';
+                                } else {
+                                    str += l.get('innerHTML') + '<br>';
+                                }
                             });
                             str += '</div>';
                             s = inst.Node.create(str);
@@ -2462,9 +2469,17 @@ YUI.add('exec-command', function(Y) {
                                 n = n.get('parentNode');
                             }
                             if (n && n.hasAttribute(DIR)) {
-                                s.setAttribute(DIR, n.getAttribute(DIR));
+                                if (useP) {
+                                    s.all('p').setAttribute(DIR, n.getAttribute(DIR));
+                                } else {
+                                    s.setAttribute(DIR, n.getAttribute(DIR));
+                                }
                             }
-                            n.replace(s);
+                            if (useP) {
+                                n.replace(s.get('innerHTML'));
+                            } else {
+                                n.replace(s);
+                            }
                             if (range.moveToElementText) {
                                 range.moveToElementText(s._node);
                             }
@@ -2556,12 +2571,24 @@ YUI.add('exec-command', function(Y) {
                             html = inst.Node.create('<div/>');
                             elm = par.all('li');
                             elm.each(function(h) {
-                                html.append('<p>' + h.get('innerHTML') + '</p>');
+                                if (useP) {
+                                    html.append('<p>' + h.get('innerHTML') + '</p>');
+                                } else {
+                                    html.append(h.get('innerHTML') + '<br>');
+                                }
                             });
                             if (dir) {
-                                html.setAttribute(DIR, dir);
+                                if (useP) {
+                                    html.all('p').setAttribute(DIR, dir);
+                                } else {
+                                    html.setAttribute(DIR, dir);
+                                }
                             }
-                            par.replace(html);
+                            if (useP) {
+                                par.replace(html.get('innerHTML'));
+                            } else {
+                                par.replace(html);
+                            }
                             sel.selectNode(html.get('firstChild'));
                         } else {
                             this._command(cmd, null);
@@ -3051,6 +3078,12 @@ YUI.add('editor-base', function(Y) {
                             this.execCommand('inserthtml', EditorBase.TABKEY);
                         }
                     }
+                    break;
+                case 'backspace-up':
+                    // Fixes #2531090 - Joins text node strings so they become one for bidi
+                    if (Y.UA.webkit && e.changedNode) {
+			            e.changedNode.set('innerHTML', e.changedNode.get('innerHTML'));
+		            }
                     break;
             }
             if (Y.UA.webkit && e.commands && (e.commands.indent || e.commands.outdent)) {
