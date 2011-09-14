@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style type="text/css">
+            
+        body {
+            font-family:Arial, Helvetica, sans-serif;
+        }                    
+
+        .container {
+            margin:20px;
+            padding:0;
+            border:1px solid #000;
+            width:200px;
+            position:relative;
+        }
+
+        .container .hd {
+            padding:10px;
+            text-align:center;
+            background-color:#ccc;
+        }
+
+        #sv-horiz-content ul {
+            margin:0;
+            padding:0;
+            list-style:none;
+            white-space:nowrap;
+        }
+
+        #sv-vert-content ul {
+            margin:0;
+            padding:0;
+            list-style:none;
+        }
+        
+        #sv-vert-content ul li {
+            width:198px;
+            height:198px;
+            line-height:198px;
+            margin:0;
+        }
+
+        #sv-horiz-content ul li {
+            width:198px;
+            height:198px;
+            line-height:198px;
+            margin:0;
+            display:inline-block;
+            *display:inline;
+            *zoom:1;
+        }
+
+        .yui3-skin-sam #sv-horiz-content li, 
+        .yui3-skin-sam #sv-vert-content li {
+            padding:0;
+            border:1px solid #00ff00;
+            background:#eee;
+            font-size:150px;
+            text-align:center;
+            vertical-align:middle;
+        }
+
+        #state div {
+            display:inline-block;
+            margin:10px 3px;
+            border:1px solid #000;
+            background-color:#ccc;
+            color:#aaa;
+            padding:2px 5px;
+        }
+
+        #state div.true {
+            background-color:#a00;
+            color:#000;
+        }
+
+        </style>
+        <script src="/YuiWip/yui3/build/yui/yui.js"></script>
+    </head>
+    <body class="yui3-skin-sam">
+
+        <div class="container">
+            <div class="hd">Horizonal</div>
+            
+            <!-- SV starts here -->
+            <div id="sv-horiz-content">
+                <ul><li>1</li><li>2</li><li>3</li><li>4</li></ul>
+            </div>
+        </div>                    
+
+        <div class="container">
+            <div class="hd">Vertical</div>
+            
+            <!-- SV starts here -->        
+            <div id="sv-vert-content">
+                <ul><li>1</li><li>2</li><li>3</li><li>4</li></ul>
+            </div>
+        </div>
+
+        <div id="state">
+            <div id="disabled">Disabled</div>
+            <div id="flickDisabled">Flick Disabled</div>
+            <div id="dragDisabled">Drag Disabled</div>
+        </div>
+
+        <div id="toolbar">
+            <button id="add">Add</button>
+            <button id="remove">Remove</button>
+            <span>(scrollTo 250 first, to test translate fix)</span>
+            <p>
+                <button id="disable">Disable</button>
+                <button id="enable">Enable</button>
+                <button id="disableFlick">Disable Flick</button>
+                <button id="enableFlick">Enable Flick</button>
+                <button id="disableDrag">Disable Drag</button>
+                <button id="enableDrag">Enable Drag</button>
+            </p>
+        </div>
+
+        <script type="text/javascript">
+            YUI().use("scrollview", function(Y) {
+
+                var sHoriz = new Y.ScrollView({
+                    id:"svHoriz",
+                    srcNode:"#sv-horiz-content",
+                    height:200,
+                    width:200,
+                    render:true
+                });
+
+                var sVert = new Y.ScrollView({
+                    id:"svVert",
+                    srcNode:"#sv-vert-content",
+                    height:200,
+                    width:200,
+                    render:true
+                });
+
+                var origFlick = sHoriz.get("flick");
+                var state = Y.one("#state");
+
+                var clickMap = {
+
+                    add: function(sv) {
+                        var list = sv.get("contentBox").one("ul");
+                        var children = list.get("children");
+
+                        sv.once("scrollEnd", function() {
+                            list.append("<li>" + (children.size() + 1) + "</li>");
+                            sv.syncUI();
+                        });
+
+                        if (sv._scrollsHorizontal) {
+                            sv.scrollTo(250, 0, 500);
+                        } else {
+                            sv.scrollTo(0, 250, 500);
+                        }
+                    },
+                    remove: function(sv) {
+                        var list = sv.get("contentBox").one("ul");                        
+                        var children = list.get("children");
+                        var lastItem;
+
+                        if (children.size() > 3) {
+
+                            sv.once("scrollEnd", function() {
+                                children.pop().remove(true);
+                                sv.syncUI();
+                            });
+
+                            if (sv._scrollsHorizontal) {
+                                sv.scrollTo(250, 0, 500);
+                            } else {
+                                sv.scrollTo(0, 250, 500);
+                            }
+                        }
+                    },
+                    disable: function(sv) {
+                        sv.disable();
+                        state.one("#disabled").addClass("true");
+                    },
+                    enable: function(sv) {
+                        sv.enable();
+                        state.one("#disabled").removeClass("true");
+                    },
+                    disableFlick: function(sv) {
+                        sv.set("flick", false);
+                        state.one("#flickDisabled").addClass("true");
+                    },
+                    enableFlick: function(sv) {
+                        sv.set("flick", origFlick);
+                        state.one("#flickDisabled").removeClass("true");
+                    },
+                    disableDrag: function(sv) {
+                        sv.set("drag", false);
+                        state.one("#dragDisabled").addClass("true");
+                    },
+                    enableDrag: function(sv) {
+                        sv.set("drag", true);
+                        state.one("#dragDisabled").removeClass("true");
+                    }
+                };
+
+                Y.one("#toolbar").delegate("click", function(e) {
+                    var handler = clickMap[e.currentTarget.get("id")];
+
+                    handler(sVert);
+                    handler(sHoriz);
+
+                }, "button");
+
+            });
+        </script>
+    </body>
+</html>
