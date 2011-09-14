@@ -161,7 +161,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     },
 
     /**
+     * Bind (or unbind) gesture move listeners required for drag support
+     * 
      * @method _bindDrag
+     * @param drag {boolean} If true, the method binds listener to enable drag (gesturemovestart). If false, the method unbinds gesturemove listeners for drag support.
      * @private 
      */
     _bindDrag : function(drag) {
@@ -175,7 +178,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     },
 
     /**
+     * Bind (or unbind) flick listeners.
+     * 
      * @method _bindFlick
+     * @param flick {Object|boolean} If truthy, the method binds listeners for flick support. If false, the method unbinds flick listeners.  
      * @private
      */
     _bindFlick : function(flick) {
