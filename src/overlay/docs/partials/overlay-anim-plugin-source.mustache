@@ -47,8 +47,8 @@ YUI().use("overlay", "anim", "plugin", function(Y) {
         animVisible : {
             valueFn : function() {
 
-		var host = this.get("host");
-                var boundingBox = host.get("boundingBox");
+                var host = this.get("host"),
+                    boundingBox = host.get("boundingBox");
 
                 var anim = new Y.Anim({
                     node: boundingBox,
@@ -115,8 +115,8 @@ YUI().use("overlay", "anim", "plugin", function(Y) {
          * and lets them take care of cleaning up any state.
          */
         destructor : function() {
-            this.get("animVisible").destroy();
-            this.get("animHidden").destroy();
+            this.get("animVisible").stop().destroy();
+            this.get("animHidden").stop().destroy();
         },
 
         /*
