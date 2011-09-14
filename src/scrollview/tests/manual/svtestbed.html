@@ -5,20 +5,50 @@
             
         body {
             font-family:Arial, Helvetica, sans-serif;
-        }                    
-
-        .container {
+        }
+        
+        .container-vert {
             margin:20px;
             padding:0;
             border:1px solid #000;
             width:200px;
-            position:relative;
+            display:inline-block;
+            *display:inline;
+            *zoom:1;
+            vertical-align:top;
         }
 
-        .container .hd {
+        .container-horiz {
+            margin:20px;
+            padding:0;
+            border:1px solid #000;
+            width:300px;
+            display:inline-block;
+            *display:inline;
+            *zoom:1;
+            vertical-align:top;
+        }
+
+        .container-horiz .hd, .container-vert .hd {
             padding:10px;
             text-align:center;
-            background-color:#ccc;
+            color:#fff;
+            background-color:#6d83a1;
+            background: -webkit-gradient(
+                linear,
+                left top,
+                left bottom,
+                from(#d8dee6),
+                color-stop(0.01, #b0bccc),
+                color-stop(0.49, #889bb3),
+                color-stop(0.50, #8094ae),
+                to(#6d83a1)     
+            );
+
+        }
+        
+        #sVert, #sHoriz {
+            background:#fff;
         }
 
         #sv-horiz-content ul {
@@ -32,17 +62,18 @@
             margin:0;
             padding:0;
             list-style:none;
+            background:#fff;
         }
         
         #sv-vert-content ul li {
             width:198px;
-            height:198px;
-            line-height:198px;
+            height:298px;
+            line-height:298px;
             margin:0;
         }
 
         #sv-horiz-content ul li {
-            width:198px;
+            width:298px;
             height:198px;
             line-height:198px;
             margin:0;
@@ -77,21 +108,22 @@
 
         </style>
         <script src="../../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script>
+        <!--script src="http://yui.yahooapis.com/3.3.0/build/yui/yui.js" type="text/javascript" charset="utf-8"></script-->
     </head>
     <body class="yui3-skin-sam">
 
-        <div class="container">
+        <div class="container-horiz">
             <div class="hd">Horizonal</div>
-            
+
             <!-- SV starts here -->
             <div id="sv-horiz-content">
                 <ul><li>1</li><li>2</li><li>3</li><li>4</li></ul>
             </div>
         </div>                    
 
-        <div class="container">
+        <div class="container-vert">
             <div class="hd">Vertical</div>
-            
+
             <!-- SV starts here -->        
             <div id="sv-vert-content">
                 <ul><li>1</li><li>2</li><li>3</li><li>4</li></ul>
@@ -102,12 +134,15 @@
             <div id="disabled">Disabled</div>
             <div id="flickDisabled">Flick Disabled</div>
             <div id="dragDisabled">Drag Disabled</div>
+            <div id="paginated">Paginated</div>
         </div>
 
         <div id="toolbar">
-            <button id="add">Add</button>
-            <button id="remove">Remove</button>
-            <span>(scrollTo 250 first, to test translate fix)</span>
+            <p>
+                <button id="add">Add</button>
+                <button id="remove">Remove</button>
+                <span>(scrollTo 250 first, to test translate fix)</span>
+            </p>
             <p>
                 <button id="disable">Disable</button>
                 <button id="enable">Enable</button>
@@ -116,28 +151,44 @@
                 <button id="disableDrag">Disable Drag</button>
                 <button id="enableDrag">Enable Drag</button>
             </p>
+            <p>
+                <button id="paginate">Paginate</button>
+                <button id="unpaginate">UnPaginate</button>
+            </p>
         </div>
 
         <script type="text/javascript">
-            YUI().use("scrollview", function(Y) {
+
+            YUI({filter:"raw"}).use("scrollview", "scrollview-paginator", function(Y) {
 
                 var sHoriz = new Y.ScrollView({
-                    id:"svHoriz",
+                    id:"sHoriz",
                     srcNode:"#sv-horiz-content",
                     height:200,
-                    width:200,
+                    width:300,
+                    flick: {
+                        minDistance: 10,
+                        minVelocity:0.3,
+                        axis:"x"
+                    },
                     render:true
                 });
 
                 var sVert = new Y.ScrollView({
-                    id:"svVert",
+                    id:"sVert",
                     srcNode:"#sv-vert-content",
-                    height:200,
+                    height:300,
                     width:200,
+                    flick: {
+                        minDistance: 10,
+                        minVelocity:0.3,
+                        axis:"y"
+                    },                    
                     render:true
                 });
 
-                var origFlick = sHoriz.get("flick");
+                sHoriz._origFlick = sHoriz.get("flick");
+                sVert._origFlick = sVert.get("flick");
                 var state = Y.one("#state");
 
                 var clickMap = {
@@ -189,7 +240,7 @@
                         state.one("#flickDisabled").addClass("true");
                     },
                     enableFlick: function(sv) {
-                        sv.set("flick", origFlick);
+                        sv.set("flick", sv._origFlick);
                         state.one("#flickDisabled").removeClass("true");
                     },
                     disableDrag: function(sv) {
@@ -199,6 +250,17 @@
                     enableDrag: function(sv) {
                         sv.set("drag", true);
                         state.one("#dragDisabled").removeClass("true");
+                    },
+                    paginate: function(sv) {
+                        sv.plug(Y.Plugin.ScrollViewPaginator, {
+                            selector: "> ul > li"
+                        });
+                        sv.syncUI();
+                        state.one("#paginated").addClass("true");
+                    },
+                    unpaginate: function(sv) {
+                        sv.unplug(Y.Plugin.ScrollViewPaginator);
+                        state.one("#paginated").removeClass("true");
                     }
                 };
 
