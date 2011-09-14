@@ -626,7 +626,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     * Utility method to obtain scrollWidth, scrollHeight,
     * accounting for the impact of translate on scrollWidth, scrollHeight
     * @method _getScrollDims
-    * @returns {Array} The scrollWidth and scrollHeight as an array: [scrollWidth, scrollHeight]
+    * @returns {Array} The offsetWidth, offsetHeight, scrollWidth and scrollHeight as an array: [offsetWidth, offsetHeight, scrollWidth, scrollHeight]
     * @private
     */
     _getScrollDims: function() {
@@ -656,9 +656,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         this._forceHWTransforms = false;  // the z translation was causing issues with picking up accurate scrollWidths in Chrome/Mac.
 
         this._moveTo(cb, 0, 0);
-
-        dims = [bb.get('scrollWidth'), bb.get('scrollHeight')];
-
+        dims = [bb.get("offsetWidth"), bb.get("offsetHeight"), bb.get('scrollWidth'), bb.get('scrollHeight')];
         this._moveTo(cb, -1*origX, -1*origY);
 
         this._forceHWTransforms = HWTransform;
@@ -676,16 +674,14 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     _uiDimensionsChange: function() {
         var sv = this,
             bb = sv._bb,
-
             CLASS_NAMES = ScrollView.CLASS_NAMES,
-
-            width = bb.get('offsetWidth'),
-            height = bb.get('offsetHeight'),
 
             scrollDims = this._getScrollDims(),
 
-            scrollWidth = scrollDims[0],
-            scrollHeight = scrollDims[1];
+            width = scrollDims[0],
+            height = scrollDims[1],
+            scrollWidth = scrollDims[2],
+            scrollHeight = scrollDims[3];
 
         if (height && scrollHeight > height) {
             sv._scrollsVertical = true;
