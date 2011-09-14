@@ -588,6 +588,7 @@ YUI.add('frame', function(Y) {
                     fn = Y.bind(function() {
                         config = this._resolveWinDoc(config);
                         inst = YUI(config);
+                        inst.host = this.get('host'); //Cross reference to Editor
 
                         try {
                             inst.use('node-base', cb);
