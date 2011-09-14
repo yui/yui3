@@ -37,6 +37,7 @@ YUI.add('exec-command', function(Y) {
                 
                 Y.log('execCommand(' + action + '): "' + value + '"', 'info', 'exec-command');
                 if (fn) {
+                    Y.log('OVERIDE execCommand(' + action + '): "' + value + '"', 'info', 'exec-command');
                     return fn.call(this, action, value);
                 } else {
                     return this._command(action, value);
@@ -60,7 +61,7 @@ YUI.add('exec-command', function(Y) {
                         } catch (e2) {
                         }
                     }
-                    Y.log('Internal execCommand(' + action + '): "' + value + '"', 'info', 'exec-command');
+                    Y.log('Using default browser execCommand(' + action + '): "' + value + '"', 'info', 'exec-command');
                     inst.config.doc.execCommand(action, null, value);
                 } catch (e) {
                     Y.log(e.message, 'error', 'exec-command');
