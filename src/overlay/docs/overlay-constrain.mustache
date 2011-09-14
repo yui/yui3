@@ -104,8 +104,8 @@ For this example, we'll instantiate an Overlay from script, as we did for the <a
 </p>
 
 ```javascript
-/* Create Overlay from script */
-var overlay = new Y.Overlay({
+// Create Overlay from script.
+overlay = new Y.Overlay({
     id: "overlay",
 
     width : "140px",
@@ -132,36 +132,33 @@ We align the overlay to the center of the `#constrain-box` node, which we're als
 <h3>Demonstrating Constrained Support</h3>
 
 <p>
-For this example, we set up a couple of Slider instances which can be used to set the overlay's `x` and `y` attribute values. 
+For this example, we set up a couple of Slider instances which can be used to set the Overlay's `x` and `y` attribute values. 
 </p>
 
 ```javascript
-// Get the current XY position of the overlay 
-// (after it's been center aligned) to set the 
-// initial value for the sliders
-var overlayXY = Y.one("#overlay").getXY();
-
-// Get the region for the constraing box
+// Get the region for the constraining box.
 var constrainRegion = Y.one("#constrain-box").get("region");
 
-// X-Axis
-var sx = new Y.Slider({
+// Use the Overlay's current `x` and `y` to set the initial Slider values.
+
+// Create horizontal Slider.
+sx = new Y.Slider({
     id    : "x",
     length: "450px",
     min   : constrainRegion.left - 50,
     max   : constrainRegion.right + 50,
-    value : overlayXY[0],
+    value : overlay.get("x"),
     render: "#overlay-example"
 });
 
-// Y Axis
-var sy = new Y.Slider({
+// Create vertical Slider.
+sy = new Y.Slider({
     id    : "y",
     axis  : 'y',
     length: "400px",
     min   : constrainRegion.top - 50, 
     max   : constrainRegion.bottom + 50,
-    value : overlayXY[1],
+    value : overlay.get("y"),
     render: "#overlay-example"
 });
 ```
@@ -175,12 +172,12 @@ Finally, we set up `valueChange` listeners for the sliders, when attempt to set 
 </p>
 
 ```javascript
-// Set the overlay's x attribute value
+// Set the Overlay's `x` attribute value.
 sx.after("valueChange", function (e) {
     overlay.set("x", e.newVal);
 });
 
-// Set the overlay's y attribute value
+// Set the Overlay's `y` attribute value.
 sy.after("valueChange", function (e) {
     overlay.set("y", e.newVal);
 });
