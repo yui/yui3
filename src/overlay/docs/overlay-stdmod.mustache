@@ -39,7 +39,17 @@
 
 .overlay-example .fields {
     float:left;
-    width:20em;
+    width:23em;
+}
+
+.overlay-example .contenttype {
+    margin-bottom:0px;
+    padding-bottom:0px;
+}
+
+.overlay-example .note {
+    margin:0px;
+    padding:0px;
 }
 
 .overlay-example label {
@@ -50,7 +60,7 @@
 
 .overlay-example select {
     width:19em;
-} 
+}
 
 .overlay-example textarea {
     width:19em;
@@ -58,7 +68,7 @@
 }
 
 .overlay-example .filler {
-    margin-left:21em;
+    margin-left:24em;
     margin-top:1em;
     color:#999;
 }
@@ -124,7 +134,7 @@ overlay.render();
 
 <p>We also set it's width and align it to the filler paragraph in the example box ("#overlay-stdmod > .filler"). We don't pass any node references to the `render` method, so the Overlay is rendered in the location of the contentBox provided.</p>
 
-<h3>Setting Content</h3>
+<h3 id="setting-content">Setting Content</h3>
 
 <p>
 The example provides a set of input fields, allowing the user to set content in either of the 3 standard module sections which Overlay supports using Overlay's `setStdModContent` method. 
@@ -147,9 +157,9 @@ Y.on("click", function() {
     // however Overlay accepts HTML strings as content (you should ensure it's coming from a trusted source).
     var newContent = Y.Escape.html(content.get("value"));
 
-    // If the "Set content as string" checkbox is checked, we pass new content into the 
+    // If the "Set content as HTML string" checkbox is checked, we pass new content into the 
     // setStdModContent method as string (innerHTML will be used to set the new content).
-    
+
     // If it's not checked, we create a node reference from the string,
     // and pass the new content into the setStdModContent as a node reference.
 
