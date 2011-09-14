@@ -537,12 +537,22 @@ Y.mix(Y_Node.prototype, {
      * Returns the nearest ancestor that passes the test applied by supplied boolean method.
      * @method ancestor
      * @param {String | Function} fn A selector string or boolean method for testing elements.
+     * If a function is used, it receives the current node being tested as the only argument.
      * @param {Boolean} testSelf optional Whether or not to include the element in the scan
+     * @param {String | Function} stopFn optional A selector string or boolean
+     * method to indicate when the search should stop. The search bails when the function
+     * returns true or the selector matches.
      * If a function is used, it receives the current node being tested as the only argument.
      * @return {Node} The matching Node instance or null if not found
      */
-    ancestor: function(fn, testSelf) {
-        return Y.one(Y_DOM.ancestor(this._node, _wrapFn(fn), testSelf));
+    ancestor: function(fn, testSelf, stopFn) {
+        // testSelf is optional, check for stopFn as 2nd arg
+        if (arguments.length === 2 &&
+                (typeof testSelf == 'string' || typeof testSelf == 'function')) {
+            stopFn = testSelf;
+        }
+
+        return Y.one(Y_DOM.ancestor(this._node, _wrapFn(fn), testSelf, _wrapFn(stopFn)));
     },
 
    /**
@@ -553,8 +563,12 @@ Y.mix(Y_Node.prototype, {
      * If a function is used, it receives the current node being tested as the only argument.
      * @return {NodeList} A NodeList instance containing the matching elements
      */
-    ancestors: function(fn, testSelf) {
-        return Y.all(Y_DOM.ancestors(this._node, _wrapFn(fn), testSelf));
+    ancestors: function(fn, testSelf, stopFn) {
+        if (arguments.length === 2 &&
+                (typeof testSelf == 'string' || typeof testSelf == 'function')) {
+            stopFn = testSelf;
+        }
+        return Y.all(Y_DOM.ancestors(this._node, _wrapFn(fn), testSelf, _wrapFn(stopFn)));
     },
 
     /**
@@ -887,22 +901,25 @@ Y.one = Y_Node.one;
 
 var NodeList = function(nodes) {
     var tmp = [];
-    if (typeof nodes === 'string') { // selector query
-        this._query = nodes;
-        nodes = Y.Selector.query(nodes);
-    } else if (nodes.nodeType || Y_DOM.isWindow(nodes)) { // domNode || window
-        nodes = [nodes];
-    } else if (Y.instanceOf(nodes, Y.Node)) {
-        nodes = [nodes._node];
-    } else if (Y.instanceOf(nodes[0], Y.Node)) { // allow array of Y.Nodes
-        Y.Array.each(nodes, function(node) {
-            if (node._node) {
-                tmp.push(node._node);
-            }
-        });
-        nodes = tmp;
-    } else { // array of domNodes or domNodeList (no mixed array of Y.Node/domNodes)
-        nodes = Y.Array(nodes, 0, true);
+
+    if (nodes) {
+        if (typeof nodes === 'string') { // selector query
+            this._query = nodes;
+            nodes = Y.Selector.query(nodes);
+        } else if (nodes.nodeType || Y_DOM.isWindow(nodes)) { // domNode || window
+            nodes = [nodes];
+        } else if (nodes._node) { // Y.Node
+            nodes = [nodes._node];
+        } else if (nodes[0] && nodes[0]._node) { // allow array of Y.Nodes
+            Y.Array.each(nodes, function(node) {
+                if (node._node) {
+                    tmp.push(node._node);
+                }
+            });
+            nodes = tmp;
+        } else { // array of domNodes or domNodeList (no mixed array of Y.Node/domNodes)
+            nodes = Y.Array(nodes, 0, true);
+        }
     }
 
     /**
@@ -910,7 +927,7 @@ var NodeList = function(nodes) {
      * @property _nodes
      * @private
      */
-    this._nodes = nodes;
+    this._nodes = nodes || [];
 };
 
 NodeList.NAME = 'NodeList';
@@ -1465,14 +1482,6 @@ Y.Array.each([
 
     /**
      * Passes through to DOM method.
-     * @method removeAttribute
-     * @param {String} attribute The attribute to be removed
-     * @chainable
-     */
-    'removeAttribute',
-
-    /**
-     * Passes through to DOM method.
      * @method scrollIntoView
      * @chainable
      */
@@ -1537,6 +1546,22 @@ Y.Array.each([
         return ret;
     };
 });
+
+/**
+ * Passes through to DOM method.
+ * @method removeAttribute
+ * @param {String} attribute The attribute to be removed
+ * @chainable
+ */
+ // one-off implementation due to IE returning boolean, breaking chaining
+Y.Node.prototype.removeAttribute = function(attr) {
+    var node = this._node;
+    if (node) {
+        node.removeAttribute(attr);
+    }
+
+    return this;
+};
 
 Y.Node.importMethod(Y.DOM, [
     /**

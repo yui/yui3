@@ -149,6 +149,16 @@ suite.add(new Y.Test.Case({
         Assert.areSame(3, Y.Object.size(this.o), 'should return the number of keys owned by an object');
     },
 
+    'size() should return 0 for non-objects [legacy behavior]': function () {
+        Assert.areSame(0, Y.Object.size('foo'));
+        Assert.areSame(0, Y.Object.size(42));
+        Assert.areSame(0, Y.Object.size(false));
+        Assert.areSame(0, Y.Object.size(true));
+        Assert.areSame(0, Y.Object.size(null));
+        Assert.areSame(0, Y.Object.size(undefined));
+        Assert.areSame(0, Y.Object.size(NaN));
+    },
+
     test_some: function () {
         var calls   = 0,
             data    = Y.Object(this.o),

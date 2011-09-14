@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!doctype html>
 <html>
 <head>
 <title>YUI substitute Tests</title>
@@ -13,9 +13,10 @@
 
 (function() {
     YUI({
-        filter: "debug",
-        logExclude: {Dom:true,
-        Selector:true, Node:true, attribute:true, event:true, base:true, widget:true} }).use("dump", "test", "console", "event-custom", function(Y) {
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+        allowRollup: false,
+        useBrowserConsole: false
+    }).use("dump", "test", "console", "event-custom", function(Y) {
 
         var button = Y.one('#btnRun'),
             Assert = Y.Assert,
@@ -193,6 +194,21 @@
             // testing {} in the replacement text
             Assert.areEqual("My last name is Zappa. {I am a replacement string }{}", Y.substitute(template, obj));
 
+			Assert.areEqual(
+				'-{test}-',
+				Y.substitute('-{LBRACE}test{RBRACE}-', {test:'test'}, null, true),
+				'replacement of literals {LBRACE} and/or {RBRACE} failed'
+			);
+			
+			Assert.areEqual(
+				'done',
+				Y.substitute('{{{three}}}', {
+					three:'two',
+					two: 'one',
+					one: 'done'
+				},null,true),
+				'recurse failed'
+			);
         }
 
         });

@@ -45,7 +45,7 @@
 
 <dd>
     <div class="widget-build-example" id="widget3-example">
-        <button type="button" id="run">Run Through Alignment</button>
+        <button type="button" id="run">Step Through Alignments (every 2.5s)</button>
         <p class="filler">
             <select>
                 <option>Prevent IE6 Bleedthrough</option>
@@ -133,7 +133,7 @@ YUI().use("widget", "widget-position", "widget-stack", "widget-position-align", 
     var Alignable = Y.Base.create("alignable", Y.Widget, [Y.WidgetPosition, Y.WidgetPositionAlign, Y.WidgetStack]);
 
     var alignable = new Alignable({
-        width:"13em",
+        width:"14em",
         align : {
             node: "#widget3-example",
             points: ["cc", "cc"]
@@ -143,46 +143,60 @@ YUI().use("widget", "widget-position", "widget-stack", "widget-position-align", 
     alignable.get("contentBox").set("innerHTML", '<strong>Alignable Widget</strong><div id="alignment"><p>#widget3-example</p><p>[center, center]</p></div>');
     alignable.render("#widget3-example");
 
-    Y.on('click', function() {
-        var stepDelay = 2500;
-        var currAlignment = Y.one("#alignment");
-        var steps = [
-            function() {
-                alignable.set("align", {node:"#widget3-example", points:["lc", "rc"]});
-                currAlignment.set("innerHTML", "<p>#widget3-example</p><p>[left-center, right-center]</p>");
-            },
-            function() {
-                alignable.set("align", {node:"#widget3-example", points:["tr", "br"]});
-                currAlignment.set("innerHTML", "<p>#widget3-example</p><p>[top-right, bottom-right]</p>");
-            },
-            function() {
-                alignable.set("centered", "#widget3-example");
-                currAlignment.set("innerHTML", "<p>#widget3-example</p><p>centered</p>");
-            },
-            function() {
-                alignable.set("align", {points:["rc", "rc"]});
-                currAlignment.set("innerHTML", "<p>viewport</p><p>[right-center, right-center]</p>");
-            },
-            function() {
-                alignable.set("centered", true);
-                currAlignment.set("innerHTML", "<p>viewport</p><p>centered</p>");
-            },
-            function() {
-                alignable.set("align", {node:"#widget3-example", points:["cc", "cc"]});
-                currAlignment.set("innerHTML", "<p>#widget3-example</p><p>[center, center]</p>");
-            }
-        ];
-    
-        var q = new Y.AsyncQueue();
-        for (var i = 0; i < steps.length; i++){
-            q.add({
-                timeout: (i === 0) ? 0 : stepDelay,
-                fn:steps[i]
-            });
+    // Example Alignments Queue
+    var stepDelay = 2500;
+    var currAlignment = Y.one("#alignment");
+    var steps = [
+        function() {
+            alignable.set("align", {node:"#widget3-example", points:["lc", "rc"]});
+            currAlignment.set("innerHTML", "<p>#widget3-example</p><p>[left-center, right-center]</p>");
+        },
+        function() {
+            alignable.set("align", {node:"#widget3-example", points:["tr", "br"]});
+            currAlignment.set("innerHTML", "<p>#widget3-example</p><p>[top-right, bottom-right]</p>");
+        },
+        function() {
+            alignable.set("centered", "#widget3-example");
+            currAlignment.set("innerHTML", "<p>#widget3-example</p><p>centered</p>");
+        },
+        function() {
+            alignable.set("align", {points:["rc", "rc"]});
+            currAlignment.set("innerHTML", "<p>viewport</p><p>[right-center, right-center]</p>");
+        },
+        function() {
+            alignable.set("centered", true);
+            currAlignment.set("innerHTML", "<p>viewport</p><p>centered</p>");
+        },
+        function() {
+            alignable.set("align", {node:"#widget3-example", points:["cc", "cc"]});
+            currAlignment.set("innerHTML", "<p>#widget3-example</p><p>[center, center]</p>");
         }
-        q.run();
+    ];
 
-    }, "#run");
+    var runBtn = Y.one("#run"); 
+    var label = runBtn.get("text");
+
+    var q = new Y.AsyncQueue();
+    q.after("complete", function() {
+        runBtn.set("text", label);
+    });
+
+    runBtn.on('click', function() {
+        if (q.isRunning()) {
+            q.stop();
+            this.set("text", label);
+        } else {
+            for (var i = 0; i < steps.length; i++){
+                q.add({
+                    timeout: (i === 0) ? 0 : stepDelay,
+                    fn:steps[i]
+                });
+            }
+    
+            q.run();
+            this.set("text", "Stop");
+        }
+    });
 
 });
 </script>

@@ -37,12 +37,11 @@ Y.Node.prototype._ioComplete = function(code, response, args) {
 
 /**
  * Loads content from the given url and replaces the Node's
- * existing content with it.
+ * existing content with the remote content.
  * @method load
  * @param {String} url The URL to load via XMLHttpRequest.
  * @param {String} selector An optional selector representing a subset of an HTML document to load.
  * @param {Function} callback An optional function to run after the content has been loaded.
- * of the content.
  * @chainable
  */
 Y.Node.prototype.load = function(url, selector, callback) {
