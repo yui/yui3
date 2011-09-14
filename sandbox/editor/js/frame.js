@@ -607,6 +607,7 @@ YUI.add('frame', function(Y) {
                         Y.log('New Modules Loaded into main instance', 'info', 'frame');
                         config = this._resolveWinDoc(config);
                         inst = YUI(config);
+                        inst.host = this.get('host'); //Cross reference to Editor
                         inst.log = Y.log; //Dump the instance logs to the parent instance.
 
                         Y.log('Creating new internal instance with node-base only', 'info', 'frame');
