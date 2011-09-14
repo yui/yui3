@@ -731,14 +731,20 @@ Parent.prototype = {
         if (nextSibling && nextSibling.get(RENDERED)) {
             siblingBB = nextSibling.get(BOUNDING_BOX);
             siblingBB.insert(childBB, "before");
-        } else {
-            prevSibling = child.previous(false);
-    
-            if (prevSibling && prevSibling.get(RENDERED)) {
-                siblingBB = prevSibling.get(BOUNDING_BOX);
-                siblingBB.insert(childBB, "after");
-            }
-        }        
+			return;
+        }
+		
+		prevSibling = child.previous(false);
+		if (prevSibling && prevSibling.get(RENDERED)) {
+			siblingBB = prevSibling.get(BOUNDING_BOX);
+			siblingBB.insert(childBB, "after");
+			return;
+		}
+		
+		// In all other cases, make sure childBB is contained
+		// by the childrenContainer since it might have been
+		// previously rendered elsewhere
+		parentNode.append(childBB);
 
     },
 

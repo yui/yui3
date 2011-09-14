@@ -239,6 +239,31 @@
                     widget.destroy();
                 },
 
+                testAddWidgetToEmptyParent : function() {
+                    var widget = new Y.ParentWidget({
+                        id:"widget-1"
+                    });
+                    
+                    widget.render();
+
+					var child = new Y.ChildWidget({
+						id:"child-1"
+					});
+					
+					child.render();
+					
+                    widget.add(child);
+                    
+                    Y.Assert.areEqual(widget.size(1), 1, "expected one child");
+
+                    var renderedChildren = widget.get("contentBox").get("children");
+
+                    Y.Assert.areEqual(renderedChildren.size(), 1, "expected one child node");
+
+                    widget.destroy();
+					child.destroy();
+                },
+				
                 testRemove: function () {
 
                     var widget = new Y.ParentWidget({
