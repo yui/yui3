@@ -184,6 +184,12 @@ YUI.add('editor-base', function(Y) {
                         }
                     }
                     break;
+                case 'backspace-up':
+                    // Fixes #2531090 - Joins text node strings so they become one for bidi
+                    if (Y.UA.webkit && e.changedNode) {
+			            e.changedNode.set('innerHTML', e.changedNode.get('innerHTML'));
+		            }
+                    break;
             }
             if (Y.UA.webkit && e.commands && (e.commands.indent || e.commands.outdent)) {
                 /*

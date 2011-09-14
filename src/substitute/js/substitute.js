@@ -22,7 +22,9 @@
     `var greeting = Y.substitute("Hello, {who}!", { who: "World" });`
 
     {placeholder} tokens that are undefined on the object map will be left in
-    tact (leaving unsightly "{placeholder}"s in the output string).
+    tact (leaving unsightly "{placeholder}"s in the output string).  If your
+    replacement strings *should* include curly braces, use `{LBRACE}` and
+    `{RBRACE}` in your object map string value.
 
     If a function is passed as a third argument, it will be called for each
     {placeholder} found.  The {placeholder} name is passed as the first value
