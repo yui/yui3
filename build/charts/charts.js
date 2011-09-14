@@ -5659,9 +5659,7 @@ Plots.prototype = {
      */
     _clearMarkerCache: function()
     {
-        var len = this._markerCache.length,
-            i = 0,
-            marker;
+        var marker;
         while(this._markerCache.length > 0)
         {
             marker = this._markerCache.shift();
@@ -6185,6 +6183,10 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         if((this.get("xData") && this.get("yData")) || this._updateAxisData())
         {
             this.draw();
+        }
+        else
+        {
+            this.fire("drawingComplete");
         }
     },
 
@@ -8138,6 +8140,12 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
             lastCollection = seriesCollection[order - 1];
             negativeBaseValues = lastCollection.get("negativeBaseValues");
             positiveBaseValues = lastCollection.get("positiveBaseValues");
+            if(!negativeBaseValues || !positiveBaseValues)
+            {
+                useOrigin = true;
+                positiveBaseValues = [];
+                negativeBaseValues = [];
+            }
         }
         else
         {
@@ -8404,6 +8412,12 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
             lastCollection = seriesCollection[order - 1];
             negativeBaseValues = lastCollection.get("negativeBaseValues");
             positiveBaseValues = lastCollection.get("positiveBaseValues");
+            if(!negativeBaseValues || !positiveBaseValues)
+            {
+                useOrigin = true;
+                positiveBaseValues = [];
+                negativeBaseValues = [];
+            }
         }
         else
         {
@@ -8820,8 +8834,23 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         if(isFinite(w) && isFinite(h) && w > 0 && h > 0)
         {   
             this._rendered = true;
+            if(this._drawing)
+            {
+                this._callLater = true;
+                return;
+            }
+            this._drawing = true;
+            this._callLater = false;
             this.drawSeries();
-            this.fire("drawingComplete");
+            this._drawing = false;
+            if(this._callLater)
+            {
+                this.draw();
+            }
+            else
+            {
+                this.fire("drawingComplete");
+            }
         }
     },
 
@@ -8850,8 +8879,9 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             tfa,
             padding = styles.padding,
             graph = this.get("graph"),
-            w = graph.get("width") - (padding.left + padding.right),
-            h = graph.get("height") - (padding.top + padding.bottom),
+            minDimension = Math.min(graph.get("width"), graph.get("height")),
+            w = minDimension - (padding.left + padding.right),
+            h = minDimension - (padding.top + padding.bottom),
             startAngle = -90,
             halfWidth = w / 2,
             halfHeight = h / 2,
@@ -8866,7 +8896,6 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             marker,
             graphOrder = this.get("graphOrder"),
             isCanvas = Y.Graphic.NAME == "canvasGraphic";
-
         for(; i < itemCount; ++i)
         {
             value = values[i];
@@ -9977,7 +10006,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         for(; i < len; ++i)
         {
             sc[i].draw();
-            if(!sc[i].get("xcoords") || !sc[i].get("ycoords"))
+            if((!sc[i].get("xcoords") || !sc[i].get("ycoords")) && !sc[i] instanceof Y.PieSeries)
             {
                 this._callLater = true;
                 break;
@@ -10174,7 +10203,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 if(!this._background)
                 {
                     this._backgroundGraphic = new Y.Graphic({render:this.get("contentBox")});
-                    this._backgroundGraphic.get("node").style.zIndex = -2;
+                    Y.one(this._backgroundGraphic.get("node")).setStyle("zIndex", 0); 
                     this._background = this._backgroundGraphic.addShape({type: "rect"});
                 }
                 return this._background;
@@ -10196,7 +10225,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 if(!this._gridlines)
                 {
                     this._gridlinesGraphic = new Y.Graphic({render:this.get("contentBox")});
-                    this._gridlinesGraphic.get("node").style.zIndex = -1;
+                    Y.one(this._gridlinesGraphic.get("node")).setStyle("zIndex", 1); 
                     this._gridlines = this._gridlinesGraphic.addShape({type: "path"});
                 }
                 return this._gridlines;
@@ -10218,6 +10247,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 if(!this._graphic)
                 {
                     this._graphic = new Y.Graphic({render:this.get("contentBox")});
+                    Y.one(this._graphic.get("node")).setStyle("zIndex", 2); 
                     this._graphic.set("autoDraw", false);
                 }
                 return this._graphic;
@@ -10760,9 +10790,12 @@ ChartBase.prototype = {
          *      <dt>node</dt><dd>The dom node of the marker.</dd>
          *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>
          *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>
+         *      <dt>pageX</dt><dd>The x location of the event on the page (including scroll)</dd>
+         *      <dt>pageY</dt><dd>The y location of the event on the page (including scroll)</dd>
          *      <dt>series</dt><dd>Reference to the series of the marker.</dd>
          *      <dt>index</dt><dd>Index of the marker in the series.</dd>
          *      <dt>seriesIndex</dt><dd>The `order` of the marker's series.</dd>
+         *      <dt>originEvent</dt><dd>Underlying dom event.</dd>
          *  </dl>
          */
         this.fire("markerEvent:" + type, {
@@ -11166,11 +11199,13 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             bb = this.get("boundingBox"),
             cb = graph.get("contentBox"),
             pageX = e.pageX,
-            offsetX = pageX - cb.getX(),
-            posX = pageX - bb.getX(),
             pageY = e.pageY,
-            offsetY = pageY - cb.getY(),
+            posX = pageX - bb.getX(),
             posY = pageY - bb.getY(),
+            offset = {
+                x: pageX - cb.getX(),
+                y: pageY - cb.getY()
+            },
             sc = graph.get("seriesCollection"),
             series,
             i = 0,
@@ -11182,83 +11217,117 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             valueItems = [],
             direction = this.get("direction"),
             hasMarkers,
-            coord = direction == "horizontal" ? offsetX : offsetY,
+            catAxis,
+            valAxis,
+            coord,
             //data columns and area data could be created on a graph level
-            markerPlane = direction == "horizontal" ? sc[0].get("xMarkerPlane") : sc[0].get("yMarkerPlane"),
-            len = markerPlane.length;
-       for(; i < len; ++i)
-       {
-            if(coord <= markerPlane[i].end && coord >= markerPlane[i].start)
-            {
-                index = i;
-                break;
-            }
-       }
-       len = sc.length;
-       for(i = 0; i < len; ++i)
-       {
-            series = sc[i];
-            hasMarkers = series.get("markers");
-            if(hasMarkers && !isNaN(oldIndex) && oldIndex > -1)
-            {
-                series.updateMarkerState("mouseout", oldIndex);
-            }
-            if(series.get("ycoords")[index] > -1)
-            {
-                if(hasMarkers && !isNaN(index) && index > -1)
-                {
-                    series.updateMarkerState("mouseover", index);
-                }
-                item = this.getSeriesItems(series, index);
-                categoryItems.push(item.category);
-                valueItems.push(item.value);
-                items.push(series);
-            }
-                
-        }
-        this._selectedIndex = index;
-        
-        /**
-         * Broadcasts when `interactionType` is set to `planar` and a series' marker plane has received a mouseover event.
-         * 
-         *
-         * @event planarEvent:mouseover
-         * @preventable false
-         * @param {EventFacade} e Event facade with the following additional
-         *   properties:
-         *  <dl>
-         *      <dt>categoryItem</dt><dd>An array of hashes, each containing information about the category `Axis` of each marker whose plane has been intersected.</dd>
-         *      <dt>valueItem</dt><dd>An array of hashes, each containing information about the value `Axis` of each marker whose plane has been intersected.</dd>
-         *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>
-         *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>
-         *      <dt>items</dt><dd>An array including all the series which contain a marker whose plane has been intersected.</dd>
-         *      <dt>index</dt><dd>Index of the markers in their respective series.</dd>
-         *  </dl>
-         */
-        /**
-         * Broadcasts when `interactionType` is set to `planar` and a series' marker plane has received a mouseout event.
-         *
-         * @event planarEvent:mouseout
-         * @preventable false
-         * @param {EventFacade} e 
-         */
-        if(index > -1)
+            markerPlane,
+            len,
+            coords;
+        if(direction == "horizontal")
         {
-            this.fire("planarEvent:mouseover", {
-                categoryItem:categoryItems, 
-                valueItem:valueItems, 
-                x:posX, 
-                y:posY, 
-                pageX:pageX,
-                pageY:pageY,
-                items:items, 
-                index:index,
-                originEvent:e
-            });
+            catAxis = "x";
+            valAxis = "y";
         }
         else
         {
-            this.fire("planarEvent:mouseout");
+            valAxis = "x";
+            catAxis = "y";
+        }
+        coord = offset[catAxis];
+        if(sc)
+        {
+            len = sc.length;
+            while(i < len && !markerPlane)
+            {
+                if(sc[i])
+                {
+                    markerPlane = sc[i].get(catAxis + "MarkerPlane");
+                }
+                i++;
+            }
+        }
+        if(markerPlane)
+        {
+            len = markerPlane.length;
+            for(i = 0; i < len; ++i)
+            {
+                if(coord <= markerPlane[i].end && coord >= markerPlane[i].start)
+                {
+                    index = i;
+                    break;
+                }
+            }
+            len = sc.length;
+            for(i = 0; i < len; ++i)
+            {
+                series = sc[i];
+                coords = series.get(valAxis + "coords");
+                hasMarkers = series.get("markers");
+                if(hasMarkers && !isNaN(oldIndex) && oldIndex > -1)
+                {
+                    series.updateMarkerState("mouseout", oldIndex);
+                }
+                if(coords && coords[index] > -1)
+                {
+                    if(hasMarkers && !isNaN(index) && index > -1)
+                    {
+                        series.updateMarkerState("mouseover", index);
+                    }
+                    item = this.getSeriesItems(series, index);
+                    categoryItems.push(item.category);
+                    valueItems.push(item.value);
+                    items.push(series);
+                }
+                    
+            }
+            this._selectedIndex = index;
+
+            /**
+             * Broadcasts when `interactionType` is set to `planar` and a series' marker plane has received a mouseover event.
+             * 
+             *
+             * @event planarEvent:mouseover
+             * @preventable false
+             * @param {EventFacade} e Event facade with the following additional
+             *   properties:
+             *  <dl>
+             *      <dt>categoryItem</dt><dd>An array of hashes, each containing information about the category `Axis` of each marker whose plane has been intersected.</dd>
+             *      <dt>valueItem</dt><dd>An array of hashes, each containing information about the value `Axis` of each marker whose plane has been intersected.</dd>
+             *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>
+             *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>
+             *      <dt>pageX</dt><dd>The x location of the event on the page (including scroll)</dd>
+             *      <dt>pageY</dt><dd>The y location of the event on the page (including scroll)</dd>
+             *      <dt>items</dt><dd>An array including all the series which contain a marker whose plane has been intersected.</dd>
+             *      <dt>index</dt><dd>Index of the markers in their respective series.</dd>
+             *      <dt>originEvent</dt><dd>Underlying dom event.</dd>
+             *  </dl>
+             */
+            /**
+             * Broadcasts when `interactionType` is set to `planar` and a series' marker plane has received a mouseout event.
+             *
+             * @event planarEvent:mouseout
+             * @preventable false
+             * @param {EventFacade} e 
+             */
+            if(index > -1)
+            {
+                this.fire("planarEvent:mouseover", {
+                    categoryItem:categoryItems, 
+                    valueItem:valueItems, 
+                    x:posX, 
+                    y:posY, 
+                    pageX:pageX,
+                    pageY:pageY,
+                    items:items, 
+                    index:index,
+                    originEvent:e
+                });
+            }
+            else
+            {
+                this.fire("planarEvent:mouseout");
+            }
         }
     },
 
@@ -12938,7 +13007,11 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
      */
     _sizeChanged: function(e)
     {
-        this._redraw();
+        var graph = this.get("graph");
+        if(graph)
+        {
+            graph.set(e.attrName, e.newVal);
+        }
     },
 
     /**

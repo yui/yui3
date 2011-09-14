@@ -507,9 +507,12 @@ ChartBase.prototype = {
          *      <dt>node</dt><dd>The dom node of the marker.</dd>
          *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>
          *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>
+         *      <dt>pageX</dt><dd>The x location of the event on the page (including scroll)</dd>
+         *      <dt>pageY</dt><dd>The y location of the event on the page (including scroll)</dd>
          *      <dt>series</dt><dd>Reference to the series of the marker.</dd>
          *      <dt>index</dt><dd>Index of the marker in the series.</dd>
          *      <dt>seriesIndex</dt><dd>The `order` of the marker's series.</dd>
+         *      <dt>originEvent</dt><dd>Underlying dom event.</dd>
          *  </dl>
          */
         this.fire("markerEvent:" + type, {

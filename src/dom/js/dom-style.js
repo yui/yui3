@@ -129,7 +129,8 @@ Y.mix(Y_DOM, {
      */
     getComputedStyle: function(node, att) {
         var val = '',
-            doc = node[OWNER_DOCUMENT];
+            doc = node[OWNER_DOCUMENT],
+            style;
 
         if (node[STYLE] && doc[DEFAULT_VIEW] && doc[DEFAULT_VIEW][GET_COMPUTED_STYLE]) {
             val = doc[DEFAULT_VIEW][GET_COMPUTED_STYLE](node, null)[att];
