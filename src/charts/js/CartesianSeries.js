@@ -213,6 +213,10 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         {
             this.draw();
         }
+        else
+        {
+            this.fire("drawingComplete");
+        }
     },
 
     /**
