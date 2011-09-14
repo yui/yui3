@@ -17,6 +17,17 @@ ScrollView
   * Fixed scrollbar racing ahead of scroll position on FF 5+ with native transition
     support enabled.
 
+  * Added ability to disable scrollview completely, disable flick or disable drag
+   
+    // Stops SV from moving through flick/drag or the API.
+    sv.set("disabled", true); 
+
+    // Stops SV from reacting to flick. Can still drag/scroll through API
+    sv.set("flick", false);
+ 
+    // Stops SV from reacting to drag. Can still flick, scroll through API
+    sv.set("drag", false);   
+
 3.4.0
 -----
 
