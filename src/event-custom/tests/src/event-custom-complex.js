@@ -1,16 +1,66 @@
-var suite = new Y.Test.Suite("Complex Custom Event tests");
+var complexSuite = new Y.Test.Suite("Complex Custom Event tests");
 
-suite.add(new Y.Test.Case({
+complexSuite.add(new Y.Test.Case({
     name: "EventTarget configured with emitFacade: true",
+
+    "test event prefix": function() {
+        var target1 = new Y.EventTarget()
+            target2 = new Y.EventTaret({ prefix: 'test' });
+
+        //target1.on(
+        var fired1 = false,
+            fired2 = false;
+
+        var O = function(id) {
+            this.id = id;
+            Y.log('O constructor executed ' + id);
+        };
+
+        O.prototype = {
+            oOo: function(ok) {
+                Y.log('oOo');
+            }
+        };
+
+        // pass configuration info into EventTarget with the following
+        // construct
+        Y.augment(O, Y.EventTarget, null, null, {
+            emitFacade: true,
+            prefix: 'prefix'
+        });
+
+        var o = new O();
+        o.on('testPrefix', function(e, arg1, arg2) {
+            Y.Assert.isTrue(this instanceof O);
+            fired1 = true;
+        });
+
+        o.on('prefix:testPrefix', function(e, arg1, arg2) {
+            Y.Assert.isTrue(this instanceof O);
+            fired2 = true;
+        });
+
+        o.fire('testPrefix', { foo: 'afoo' }, 1, 2);
+
+        Y.Assert.isTrue(fired1);
+        // Y.Assert.isTrue(fired2);
+
+        fired1 = false;
+        fired2 = false;
+
+        o.fire('prefix:testPrefix', { foo: 'afoo' }, 1, 2);
+        Y.Assert.isTrue(fired1);
+        Y.Assert.isTrue(fired2);
+    }
 
 }));
 
-suite.add(new Y.Test.Case({
+complexSuite.add(new Y.Test.Case({
     name: "publish"
 
 }));
 
-suite.add(new Y.Test.Case({
+complexSuite.add(new Y.Test.Case({
     name: "bubbling",
 
     test_bubble_config: function() {
@@ -482,4 +532,4 @@ suite.add(new Y.Test.Case({
 
 }));
 
-Y.Test.Runner.add(suite);
+Y.Test.Runner.add(complexSuite);
