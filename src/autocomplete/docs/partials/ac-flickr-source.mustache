@@ -82,7 +82,7 @@ YUI().use('autocomplete', 'autocomplete-highlighters', function (Y) {
     maxResults: 5,
     resultHighlighter: 'wordMatch',
     resultTextLocator: 'title',
-    source: 'select * from flickr.photos.search where text="{query}" limit {maxResults}',
+    source: 'select * from flickr.photos.search where text="{query}" and api_key="1895311ec0d2e23431a6407f3e8dffcc" limit {maxResults}',
 
     // Custom result formatter for Flickr results.
     resultFormatter: function (query, results) {
