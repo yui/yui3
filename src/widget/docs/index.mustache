@@ -55,7 +55,7 @@ the same `Attribute`, `Event.Provider` and `Plugin.Host` support as `<a href="..
 <table>
     <tr><th>Attribute</th><th>Description</th></tr>
     <tr><td>`boundingBox`</td><td>The widget's outermost node, used for sizing and positioning; this element can also serve as a containing node for any decorator elements used for skinning.</td></tr>
-    <tr><td>`contentBox`</td><td>A node that is a direct descendent of a widget's bounding box and houses its content. This will generally be the node that establishes the look and feel for the widget.</td></tr>
+    <tr><td>`contentBox`</td><td>A node that is a direct descendant of a widget's bounding box and houses its content. This will generally be the node that establishes the look and feel for the widget.</td></tr>
     <tr><td>`srcNode`</td><td>An existing node in the document provided by application developers when progressively enhancing existing markup to create the widget. By default, this resolves to the `contentBox`.</td></tr>
     <tr><td>`tabIndex`</td><td>The tabIndex, applied to the bounding box.</td></tr>
     <tr><td>`focused`</td><td>Flag, indicating if the widget currently has focus. `Widget` marks the bounding box with a "focused" class, but other than that the focus implementation is left to the specific widget class.</td></tr>
@@ -594,6 +594,18 @@ These code reuse mechanisms are known as <a href="../base/#plugins"><em>Plugins<
         <td>widget-child</td>
         <td>Adds support to allow the widget to be contained within a widget parent.</td>
     </tr>
+    <tr>
+        <td>widget-buttons</td>
+        <td>Adds header/footer buttons support to a widget that implements the `WidgetStdMod` extension.</td>
+    </tr>
+    <tr>
+        <td>widget-autohide</td>
+        <td>Adds support to hide the widget when certain DOM events occur.</td>
+    </tr>
+    <tr>
+        <td>widget-modality</td>
+        <td>Adds support for modality to widgets.</td>
+    </tr>
 </table>
 
 <p>The functionality provided by the `widget-parent` and `widget-child` extensions, allowing widget developers to build nested widgets, is worth discussing in a little more detail:</p>
@@ -612,7 +624,7 @@ These code reuse mechanisms are known as <a href="../base/#plugins"><em>Plugins<
                     ```
 
                 </li>
-                <li><p>These can be single level relationships (e.g. Tabs in a TabList, or Buttons in a Toolbar) or nested heirarchical relationships (e.g. Menus and MenuItems, or Trees and TreeNodes).</p></li>
+                <li><p>These can be single level relationships (e.g. Tabs in a TabList, or Buttons in a Toolbar) or nested hierarchical relationships (e.g. Menus and MenuItems, or Trees and TreeNodes).</p></li>
                 <li><p>Parents are automatically set up as event targets for their children's events, allowing you to leverage custom event bubbling to listen for events higher up in the hierarchy.</p></li>
                 <li><p>Parents automatically render their children when rendered.</p></li> 
                 <li>
@@ -648,7 +660,7 @@ These code reuse mechanisms are known as <a href="../base/#plugins"><em>Plugins<
         <dt>widget-child</dt>
         <dd>
             <p>Adds support to allow the widget to be contained within a widget parent.</p>
-            <p>Used together with widget-parent, allows you to support heirarchical parent/child structures. As with Widget Parent, it provides a consistent API for child widgets to 
+            <p>Used together with widget-parent, allows you to support hierarchical parent/child structures. As with Widget Parent, it provides a consistent API for child widgets to 
             interact with their siblings and parents, e.g., `child.next()`, `child.previous()` and `child.ancestor()`.
             </p>
         </dd>
@@ -659,7 +671,7 @@ These code reuse mechanisms are known as <a href="../base/#plugins"><em>Plugins<
 <ul>
     <li>Using Extensions: <a href="widget-build.html">Building Custom Widget Classes</a></li>
     <li>Widget-Position, Widget-Stack: <a href="widget-tooltip.html">A Simple Tooltip Widget</a></li>
-    <li>Widget-Parent, Widget-Child: <a href="widget-parentchild-listbox.html">A Heirarchical ListBox Widget</a></li>
+    <li>Widget-Parent, Widget-Child: <a href="widget-parentchild-listbox.html">A Hierarchical ListBox Widget</a></li>
 </ul>
 
 <p>You can also look at some of the bundled widgets which are built using extensions:</p>
