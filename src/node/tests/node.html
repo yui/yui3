@@ -180,6 +180,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
         ArrayAssert = Y.ArrayAssert,
         suite = new Y.Test.Suite("yuisuite");
 
+    Y.Test.Runner.setName('Node Tests');
     new Y.Console({node: '#yui-log', height: '1000px' }).render('#yui-log');
 
     var byId = function(id) {

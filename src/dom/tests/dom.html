@@ -13,6 +13,7 @@
 
         window.Y = Y; // export Y global for Selenium
         new Y.Console({ height: '50em' }).render();
+        Y.Test.Runner.setName('DOM Tests');
 
         var doc = document.getElementById('doc'),
             hd = document.getElementById('hd'),
