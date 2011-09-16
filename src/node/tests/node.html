@@ -178,7 +178,7 @@ button {
 YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-deprecated', 'anim', 'console', 'test', 'node-event-simulate', 'node-load', function(Y) {
     var Assert = Y.Assert,
         ArrayAssert = Y.ArrayAssert,
-        suite = new Y.Test.Suite("yuisuite");
+        suite = new Y.Test.Suite("Node Tests");
 
     Y.Test.Runner.setName('Node Tests');
     new Y.Console({node: '#yui-log', height: '1000px' }).render('#yui-log');
