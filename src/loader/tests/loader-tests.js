@@ -123,7 +123,7 @@ YUI.add('loader-tests', function(Y) {
                         base: './assets/',
                         modules: {
                             foo: {
-                                requires: [ 'node', 'widget' ],
+                                requires: [ 'node', 'widget' ]
                             }
                         }
                     }
