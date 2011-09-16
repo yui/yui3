@@ -189,6 +189,31 @@
 
                 },
 
+                testPreRenderedChildWithEmptyParent : function() {
+
+                    // Based on pull request from andreas-karlsson
+                    // https://github.com/yui/yui3/pull/25#issuecomment-2103536
+
+                    var widget = new Y.ParentWidget({
+                        id:"widget-1"
+                    });
+                    widget.render();
+
+                    var child = new Y.ChildWidget({
+                        id:"child-1"
+                    });
+                    child.render();
+
+                    widget.add(child);
+
+                    Y.Assert.areEqual(1, widget.size(1), "expected one child");
+
+                    var renderedChildren = widget.get("contentBox").get("children");
+                    Y.Assert.areEqual(1, renderedChildren.size(), "expected one child node");
+
+                    widget.destroy();
+                },
+
                 testAddOutOfOrderPreRender : function() {
                     var widget = new Y.ParentWidget({
                         id:"widget-1"
