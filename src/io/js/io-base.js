@@ -5,7 +5,6 @@ Base IO functionality. Provides basic XHR transport support.
 @for IO
 **/
 
-// Window reference
 var isNumber = Y.Lang.isNumber,
     isObject = Y.Lang.isObject,
 
@@ -29,14 +28,14 @@ Flash, if specified as a transport, for cross-domain requests.
 
 @class IO
 @constructor
-@param {Object} c - Object of EventTarget's publish method configurations
+@param {Object} config Object of EventTarget's publish method configurations
                     used to configure IO's events.
 **/
-function IO (c) {
+function IO (config) {
     var io = this;
 
     io._uid = 'io:' + uid++;
-    io._init(c);
+    io._init(config);
     Y.io._map[io._uid] = io;
 }
 
@@ -101,16 +100,16 @@ IO.prototype = {
     *
     * @method _create
     * @private
-    * @param {Number} config Configuration object subset to determine if
+    * @param {Object} config Configuration object subset to determine if
     *                 the transaction is an XDR or file upload,
     *                 requiring an alternate transport.
-    * @param {Number} trxId Transaction id
+    * @param {Number} id Transaction id
     * @return {Object} The transaction object
     */
-    _create: function(config, trxId) {
+    _create: function(config, id) {
         var io = this,
             transaction = {
-                id : isNumber(trxId) ? trxId : io._id++,
+                id : isNumber(id) ? id : io._id++,
                 uid: io._uid
             },
             xdrConfig = config.xdr,
@@ -168,7 +167,7 @@ IO.prototype = {
             args        = config['arguments'],
             emitFacade  = io.cfg.emitFacade,
             globalEvent = "io:" + eventName,
-            trxEvent    = "io-trn:" + eventName;
+            trnEvent    = "io-trn:" + eventName;
 
         if (transaction.e) { 
             transaction.c = { status: 0, statusText: transaction.e };
@@ -192,7 +191,9 @@ IO.prototype = {
                 }
             } else {
                 params.push(transaction.c);
-                args && params.push(args);
+                if (args) {
+                    params.push(args);
+                }
             }
         }
         
@@ -201,8 +202,8 @@ IO.prototype = {
         io.fire.apply(io, params);
         // Fire transaction events, if receivers are defined.
         if (config.on) {
-            params[0] = trxEvent;
-            io.once(trxEvent, config.on[eventName], config.context || Y);
+            params[0] = trnEvent;
+            io.once(trnEvent, config.on[eventName], config.context || Y);
             io.fire.apply(io, params);
         }
     },
@@ -354,7 +355,6 @@ IO.prototype = {
         headers = Y.merge(this._headers, headers);
         Y.Object.each(headers, function(value, name) {
             if (value !== 'disable') {
-                // TODO s/headers[name]/value/ ?
                 transaction.setRequestHeader(name, headers[name]);
             }
         });
@@ -411,7 +411,7 @@ IO.prototype = {
         }
 
         // IE reports HTTP 204 as HTTP 1223.
-        if (status >= 200 && status < 300 || status === 1223) {
+        if (status >= 200 && status < 300 || status === 304 || status === 1223) {
             this.success(transaction, config);
         } else {
             this.failure(transaction, config);
@@ -575,7 +575,7 @@ IO.prototype = {
         // Serialize an object into a key-value string using
         // querystring-stringify-simple.
         if (isObject(data)) {
-            data = config.data = Y.QueryString.stringify(data);
+            data = Y.QueryString.stringify(data);
         }
 
         if (config.form) {
@@ -624,7 +624,7 @@ IO.prototype = {
         try {
             // Determine if request is to be set as
             // synchronous or asynchronous.
-            transaction.c.open(method, u, !!sync, (config.username || null), config.password || null);
+            transaction.c.open(method, u, !sync, config.username || null, config.password || null);
             io._setHeaders(transaction.c, config.headers || {});
             io.start(transaction, config);
 
