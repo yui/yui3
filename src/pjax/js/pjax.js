@@ -1,0 +1,191 @@
+YUI.add('pjax', function (Y) {
+
+var Selector = Y.Selector,
+
+    CLASS_PJAX = Y.ClassNameManager.getClassName('pjax'),
+
+    EVT_ERROR    = 'error',
+    EVT_LOAD     = 'load',
+    EVT_NAVIGATE = 'navigate';
+
+function PjaxPlugin() {
+    PjaxPlugin.superclass.constructor.apply(this, arguments);
+}
+
+Y.extend(PjaxPlugin, Y.Plugin.Base, {
+    // -- Lifecycle Methods ----------------------------------------------------
+    initializer: function (config) {
+        this._host = this.get('host');
+
+        this.publish(EVT_ERROR, {defaultFn: this._defCompleteFn});
+        this.publish(EVT_LOAD, {defaultFn: this._defCompleteFn});
+        this.publish(EVT_NAVIGATE, {defaultFn: this._defNavigateFn});
+
+        this._bindUI();
+    },
+
+    destructor: function () {
+        var controller = this.get('controller');
+
+        this._events && this._events.detach();
+
+        // Destroy the controller, but only if we own it.
+        if (controller && controller._pjaxOwner === this) {
+            controller.destroy();
+        }
+    },
+
+    // -- Public Prototype Methods ---------------------------------------------
+    load: function (url, callback) {
+        var controller = this.get('controller');
+
+        Y.io(url, {
+            context: this,
+            headers: {'X-PJAX': 'true'},
+
+            on: {
+                failure: this._onIOFailure,
+                success: this._onIOSuccess
+            },
+
+            arguments: [callback]
+        });
+
+        controller.save(controller.removeRoot(url));
+
+        if (this.get('scrollToTop')) {
+            // Scroll to the top of the page. The timeout ensures that the
+            // scroll happens after navigation begins, so that the current
+            // scroll position will be restored if the user clicks the back
+            // button.
+            setTimeout(function () {
+                Y.config.win.scroll(0, 0);
+            }, 1);
+        }
+    },
+
+    // -- Protected Prototype Methods ------------------------------------------
+    _bindUI: function () {
+        if (this.get('controller').html5) {
+            this._events = this._host.delegate('click', _onLinkClick,
+                this.get('linkSelector'));
+        }
+    },
+
+    _getContent: function (responseText) {
+        var content         = {},
+            contentSelector = this.get('contentSelector'),
+            frag            = Y.DOM.create(responseText || ''),
+            titleSelector   = this.get('titleSelector'),
+            titleEl;
+
+        content.node = Y.one(contentSelector ?
+            Y.all(Selector.query(contentSelector, frag)).toFrag() : frag);
+
+        if (titleSelector) {
+            titleEl = Selector.query(titleSelector, frag, true);
+
+            if (titleEl) {
+                content.title = Y.one(titleEl).get('text');
+            }
+        }
+
+        return content;
+    },
+
+    // -- Protected Event Handlers ---------------------------------------------
+
+    // Shared by both the 'error' and 'load' events.
+    _defCompleteFn: function (e) {
+        this._host.setContent(e.content.node);
+
+        if (e.content.title) {
+            Y.config.doc.title = e.content.title;
+        }
+    },
+
+    _defNavigateFn: function (e) {
+        this.load(e.url);
+    },
+
+    _onIOFailure: function (id, res, args) {
+        var callback = args[0],
+            content  = this._getContent(res.responseText);
+
+        this.fire(EVT_ERROR, {
+            content     : content,
+            responseText: res.responseText,
+            status      : res.status
+        });
+
+        callback && callback.call(this, res, content, res);
+    },
+
+    _onIOSuccess: function (id, res, args) {
+        var callback = args[0],
+            content  = this._getContent(res.responseText);
+
+        this.fire(EVT_LOAD, {
+            content     : content,
+            responseText: res.responseText,
+            status      : res.status
+        });
+
+        callback && callback.call(this, null, content, res);
+    },
+
+    _onLinkClick: function (e) {
+        // Allow the native behavior on middle/right-click, or when Ctrl or
+        // Command are pressed.
+        if (e.button !== 1 || e.ctrlKey || e.metaKey) { return; }
+
+        e.preventDefault();
+
+        this.fire(EVT_NAVIGATE, {
+            originEvent: e,
+            url        : e.currentTarget.get('href')
+        });
+    }
+}, {
+    NAME: 'pjax',
+    NS  : 'pjax',
+
+    ATTRS: {
+        contentSelector: {
+            value: 'body'
+        },
+
+        controller: {
+            valueFn: function () {
+                var controller = new Y.Controller();
+
+                // Put our mark on the controller so we know we own it and can
+                // destroy it if the plugin is destroyed.
+                controller._pjaxOwner = this;
+
+                return controller;
+            }
+        },
+
+        linkSelector: {
+            value: 'a.' + CLASS_PJAX
+        },
+
+        scrollToTop: {
+            value: true
+        },
+
+        titleSelector: {
+            value: 'title'
+        }
+    }
+});
+
+Y.Plugin.Pjax = PjaxPlugin;
+
+}, '3.5.0', {
+    requires: [
+        'classnamemanager', 'controller', 'io-base', 'node-base',
+        'node-pluginhost', 'node-event-delegate', 'plugin'
+    ]
+});

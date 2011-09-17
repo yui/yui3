@@ -1,0 +1,13 @@
+{
+    "pjax": {
+        "requires": [
+            "classnamemanager",
+            "controller",
+            "io-base",
+            "node-base",
+            "node-pluginhost",
+            "node-event-delegate",
+            "plugin"
+        ]
+    }
+}
