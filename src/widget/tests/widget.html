@@ -579,11 +579,33 @@
                 o.destroy(true);
             },
 
-            "todoTestStrings" : function() {
+            "testStrings" : function() {
+                var w = new Y.Widget();
+                
+                Y.ObjectAssert.ownsNoKeys(w.get("strings"), "No strings should be available by default");
+
+                w.set("strings", {
+                    stringOne: "one",
+                    stringTwo: "two"
+                });
+
+                // Strings get merged, not overwritten
+                w.set("strings", {
+                    stringThree: "three",
+                    stringFour: "four"
+                });
+
+                Y.Assert.areEqual("one", w.get("strings").stringOne);
+                Y.Assert.areEqual("two", w.get("strings").stringTwo);
+                Y.Assert.areEqual("three", w.get("strings").stringThree);
+                Y.Assert.areEqual("four", w.get("strings").stringFour); 
+
+                w.destroy();
             },
 
-            "todoTestLoading" : function() {
+            "testLoading" : function() {
                 var n = Y.Node.create('<div id="srcNode" class="yui3-widget-loading">Src Node Content</div>');
+                Y.one("body").append(n);
 
                 var w = new Y.Widget({
                     srcNode:"#srcNode"
@@ -592,6 +614,8 @@
 
                 Y.Assert.areSame(n, w.get("contentBox"), "srcNode not used as content box");
                 Y.Assert.isFalse(n.hasClass("yui3-widget-loading"), "yui3-widget-loading should have removed");
+                
+                w.destroy();
             }
 
         }));
