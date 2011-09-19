@@ -345,7 +345,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "console": {
         "lang": [
             "en", 
-            "es"
+            "es",
+            "ja"
         ], 
         "requires": [
             "yui-log", 
