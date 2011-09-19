@@ -4,4 +4,12 @@ YUI().use('sortable', function(Y) {
         nodes: 'em',
         opacity: '.1'
     });
+    
+    // Incrementally change the color of items. This is purely visual for the example. 
+    // It has no effect on the sort.
+    var color = 0;
+    Y.all('#demo em').each(function (v, k){
+        v.setStyle('backgroundColor', 'rgb(' + 100 + ',' + 20 + ',' + (color += 25) + ')' );
+    });
+
 });
