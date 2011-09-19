@@ -2,23 +2,23 @@
 <html>
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <link rel="stylesheet" href="{{yuiBuildUrl}}/cssreset/cssreset.css" type="text/css">
-    <link rel="stylesheet" href="{{yuiBuildUrl}}/cssbase/cssbase.css" type="text/css">
-    <link rel="stylesheet" href="{{yuiBuildUrl}}/cssgrids/grids.css" type="text/css">
-    <title>YUI 3.x: Widget Skins</title>
-    <script src="{{yuiBuildUrl}}/yui/yui-min.js"></script>
-    <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/combo?3.4.0/build/cssreset/cssreset.css&3.4.0/build/cssbase/cssbase-min.css&3.4.0/build/cssfonts/cssfonts-min.css&3.4.0/build/cssgrids/cssgrids-min.css&3.4.0/build/widget-base/assets/skins/sam/widget-base.css&3.4.0/build/tabview/assets/skins/sam/tabview.css&3.4.0/build/datatable-base/assets/skins/sam/datatable-base.css&3.4.0/build/panel/assets/skins/sam/panel.css&3.4.0/build/calendar-base/assets/skins/sam/calendar-base.css&3.4.0/build/calendar/assets/skins/sam/calendar.css&3.4.0/build/calendarnavigator/assets/skins/sam/calendarnavigator.css&gallery-2011.08.04-15-16/build/gallerycss-cssbutton/gallerycss-cssbutton.css" charset="utf-8">
-    <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/combo?3.4.0/build/cssreset/cssreset.css&3.4.0/build/cssbase/cssbase-min.css&3.4.0/build/cssfonts/cssfonts-min.css&3.4.0/build/cssgrids/cssgrids-min.css&3.4.0/build/widget-base/assets/skins/sam/widget-base.css&3.4.0/build/slider-base/assets/skins/night/slider-base.css&3.4.0/build/tabview/assets/skins/night/tabview.css&3.4.0/build/datatable-base/assets/skins/night/datatable-base.css&3.4.0/build/calendar-base/assets/skins/sam/calendar-base.css&3.4.0/build/calendar/assets/skins/sam/calendar.css&3.4.0/build/scrollview-list/assets/skins/night/scrollview-list.css&&3.4.0/build/calendarnavigator/assets/skins/sam/calendarnavigator.css&gallery-2011.08.04-15-16/build/gallerycss-cssbutton/gallerycss-cssbutton.css" charset="utf-8">
-    <link type="text/css" rel="stylesheet" href="../../../build/panel/assets/skins/night/panel.css" charset="utf-8">
+    <title>Widget Skins Test Page</title>
+    <script src="../../../../build/yui/yui-min.js"></script>
+    <link type="text/css" rel="stylesheet" href="../../../../build/cssreset/cssreset.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/cssfonts/cssfonts.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/cssgrids/cssgrids.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/slider-base/assets/skins/night/slider-base.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/tabview/assets/skins/night/tabview.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/datatable-base/assets/skins/night/datatable-base.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/dial/assets/skins/night/dial.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/scrollview-list/assets/skins/night/scrollview-list.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/panel/assets/skins/night/panel.css" charset="utf-8">
+
+    <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/gallery-2011.08.04-15-16/build/gallerycss-cssbutton/gallerycss-cssbutton.css" charset="utf-8">
     <style>
         .yui3-js-enabled .yui3-widget-loading {
             display: none;
         }
-
-        .yui3-tab-label,
-        .yui3-panel-content {
-            border-radius: 4px 4px 0 0;
-        }       
 
         .yui3-panel form li {
             list-style: none;
@@ -46,7 +46,11 @@
             text-align: center;
         }
 
-        /* workaround site CSS (TODO: bugs) */
+        .yui3-panel {
+            position: static !important;
+        }
+
+        /* workaround site CSS */
         .yui3-datatable th,
         .yui3-calendar th,
         .yui3-calendar h4 {
@@ -56,44 +60,6 @@
             font-size: inherit;
         }
 
-        /* workaround per widget CSS (TODO: bugs) */
-
-        .yui3-panel { /* TODO: bugs */
-            float: none !important;
-            position: static !important;
-        }
-
-
-        .yui3-datatable td {
-            text-align: inherit !important;
-        }
-
-        [dir=rtl] .yui3-tab {
-            margin: 0 0 0 0.2em !important;
-        }
-
-/*
-        .yui3-calendarnav-prevmonth,
-        .yui3-calendarnav-nextmonth {
-            border-width: 4px 8px 4px 8px;
-            border-style: solid;
-            height: 0px !important;
-            width: 0px !important;
-            overflow: hidden;
-            Xtext-indent: -1000em;
-            margin-left: -16px !important;
-        }
-
-        .yui3-calendarnav-prevmonth,
-        [dir=rtl] .yui3-calendarnav-nextmonth {
-            border-color: transparent inherit transparent transparent;
-        }
-
-        .yui3-calendarnav-nextmonth,
-        [dir=rtl] .yui3-calendarnav-prevmonth {
-            border-color: transparent transparent transparent inherit;
-        }
-*/
     </style> 
 
     <body class="yui3-skin-sam">
@@ -112,7 +78,7 @@
         <div class="yui3-g">
             <div class="yui3-u">
                 <div class="yui3-widget-loading" id="demo-tabview"> 
-                    <ul id="tabview-header"> 
+                    <ul> 
                         <li> 
                             <a href="#pork">Pork</a> 
                         </li> 
