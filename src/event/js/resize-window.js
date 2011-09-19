@@ -25,9 +25,10 @@ Y.Event.define('windowresize', {
 
     on: (Y.UA.gecko && Y.UA.gecko < 1.91) ?
         function (node, sub, notifier) {
-            Y.Event._attach('resize', function (e) {
-                notifier.fire(e);
-            });
+            sub._handle = Y.Event._attach(['resize', function (e) {
+                notifier.fire(
+                    new Y.DOMEventFacade(e, win, domEventProxies[key]));
+            }], { facade: false });
         } :
         function (node, sub, notifier) {
             // interval bumped from 40 to 100ms as of 3.4.1
