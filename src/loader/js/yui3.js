@@ -345,7 +345,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "console": {
         "lang": [
             "en", 
-            "es"
+            "es", 
+            "ja"
         ], 
         "requires": [
             "yui-log", 
@@ -2038,4 +2039,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'a9b74d9e4fbe0a748353a453e1bbcb20';
+YUI.Env[Y.version].md5 = '5e3ef132d7955fa10a02dc6ac0541d64';
