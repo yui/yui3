@@ -7,13 +7,9 @@
     <link type="text/css" rel="stylesheet" href="../../../../build/cssreset/cssreset.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/cssfonts/cssfonts.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/cssgrids/cssgrids.css">
-    <link type="text/css" rel="stylesheet" href="../../../../build/widget-base/assets/skins/night/widget-base.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/slider-base/assets/skins/night/slider-base.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/tabview/assets/skins/night/tabview.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/datatable-base/assets/skins/night/datatable-base.css">
-    <link type="text/css" rel="stylesheet" href="../../../../build/calendar-base/assets/skins/night/calendar-base.css">
-    <link type="text/css" rel="stylesheet" href="../../../../build/calendar/assets/skins/night/calendar.css">
-    <link type="text/css" rel="stylesheet" href="../../../../build/calendarnavigator/assets/skins/night/calendarnavigator.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/dial/assets/skins/night/dial.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/scrollview-list/assets/skins/night/scrollview-list.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/panel/assets/skins/night/panel.css" charset="utf-8">
@@ -23,11 +19,6 @@
         .yui3-js-enabled .yui3-widget-loading {
             display: none;
         }
-
-        .yui3-tab-label,
-        .yui3-panel-content {
-            border-radius: 4px 4px 0 0;
-        }       
 
         .yui3-panel form li {
             list-style: none;
@@ -55,7 +46,11 @@
             text-align: center;
         }
 
-        /* workaround site CSS (TODO: bugs) */
+        .yui3-panel {
+            position: static !important;
+        }
+
+        /* workaround site CSS */
         .yui3-datatable th,
         .yui3-calendar th,
         .yui3-calendar h4 {
@@ -65,44 +60,6 @@
             font-size: inherit;
         }
 
-        /* workaround per widget CSS (TODO: bugs) */
-
-        .yui3-panel { /* TODO: bugs */
-            float: none !important;
-            position: static !important;
-        }
-
-
-        .yui3-datatable td {
-            text-align: inherit !important;
-        }
-
-        [dir=rtl] .yui3-tab {
-            margin: 0 0 0 0.2em !important;
-        }
-
-/*
-        .yui3-calendarnav-prevmonth,
-        .yui3-calendarnav-nextmonth {
-            border-width: 4px 8px 4px 8px;
-            border-style: solid;
-            height: 0px !important;
-            width: 0px !important;
-            overflow: hidden;
-            Xtext-indent: -1000em;
-            margin-left: -16px !important;
-        }
-
-        .yui3-calendarnav-prevmonth,
-        [dir=rtl] .yui3-calendarnav-nextmonth {
-            border-color: transparent inherit transparent transparent;
-        }
-
-        .yui3-calendarnav-nextmonth,
-        [dir=rtl] .yui3-calendarnav-prevmonth {
-            border-color: transparent transparent transparent inherit;
-        }
-*/
     </style> 
 
     <body class="yui3-skin-sam">
