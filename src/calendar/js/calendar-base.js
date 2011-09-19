@@ -86,7 +86,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
    * @type String
    * @private
    */
-  _calendarId : Y.guid(CALENDAR),
+  _calendarId : null,
 
   /**
    * The hash map of selected dates, populated with
@@ -132,10 +132,17 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
 
   /**
    * Designated initializer
+   * Initializes instance-level properties of
+   * calendar.
    *
    * @method initializer
    */  
   initializer : function () {
+    this._paneProperties = {};
+    this._calendarId = Y.guid('calendar');
+    this._selectedDates = {};
+    this._rules = {};
+    this.storedDateCells = {};
   },
 
   /**
