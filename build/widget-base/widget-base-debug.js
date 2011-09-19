@@ -1156,9 +1156,9 @@ Y.extend(Widget, Y.Base, {
      * Helper method to get the complete set of strings for the widget
      *
      * @deprecated  Used by deprecated WidgetLocale implementations.
-     * @method getString
+     * @method getStrings
      * @param {String} key
-     * @return {String} The string
+     * @return {String} The strings
      */
     getStrings : function() {
         return this.get(STRINGS);

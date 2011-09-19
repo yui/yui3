@@ -36,11 +36,11 @@
 	/*bringing lists on to the page with breathing room */
 	margin-left:2em;
 }
-.yui3-cssbase ol li {
+.yui3-cssbase ol {
 	/*giving OL's LIs generated numbers*/
 	list-style: decimal outside;	
 }
-.yui3-cssbase ul li {
+.yui3-cssbase ul {
 	/*giving UL's LIs generated disc markers*/
 	list-style: disc outside;
 }
