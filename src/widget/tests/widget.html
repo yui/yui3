@@ -31,6 +31,10 @@
         html, body {
             height:100%;
         }
+
+        .yui3-mywidget-hidden {
+            display:none;
+        }
     </style>
 </head>
 <body class="yui3-skin-sam">
@@ -42,19 +46,33 @@
         useBrowserConsole:false,
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
     }).use('test', 'widget', 'node-event-simulate', 'console', function (Y) {
-    
+
+
+        function MyWidget() {
+            MyWidget.superclass.constructor.apply(this, arguments);
+        }
+        Y.extend(MyWidget, Y.Widget);
+        MyWidget.NAME = "myWidget";
+ 
         var suite = new Y.Test.Suite("Widget Tests");
-    
-        suite.add(new Y.Test.Case({
+        
+        var coreTests = {
     
             name : "Core",
-    
+            
+            createWidget: function(cfg) {
+                return new Y.Widget(cfg);
+            },
+
             "testInstantiation" : function() {
-                var w = new Y.Widget();
+                var w = this.createWidget();
                 Y.Assert.isTrue(w instanceof Y.Widget);
     
                 // Basic API
                 Y.Assert.isFunction(w.render);
+                Y.Assert.isFunction(w.renderUI);
+                Y.Assert.isFunction(w.bindUI);
+                Y.Assert.isFunction(w.syncUI);               
                 Y.Assert.isFunction(w.init);
                 Y.Assert.isFunction(w.destroy);
                 Y.Assert.isFunction(w.get);
@@ -65,12 +83,12 @@
                 Y.Assert.isFunction(w.enable);
                 Y.Assert.isFunction(w.focus);
                 Y.Assert.isFunction(w.blur);
-    
+
                 w.destroy();
             },
-    
+
             "testInitState" : function() {
-                var w = new Y.Widget();
+                var w = this.createWidget();
     
                 Y.Assert.areEqual("div", w.get("boundingBox").get("tagName").toLowerCase());
                 Y.Assert.areEqual("div", w.get("contentBox").get("tagName").toLowerCase());
@@ -90,7 +108,7 @@
             },
     
             "testNonRenderedStateUpdate" : function() {
-                var w = new Y.Widget({
+                var w = this.createWidget({
                     // WRITE ONCE
                     id: "foobar",
                     boundingBox: Y.Node.create("<span id='bb'></span>"),
@@ -121,7 +139,7 @@
     
             "testValidationReadonlyWriteonce" : function() {
                 
-                var w = new Y.Widget();
+                var w = this.createWidget();
     
                 // READONLY
                 w.set("focused", true);
@@ -155,7 +173,7 @@
     
             "testRender" : function() {
     
-                var w = new Y.Widget({
+                var w = this.createWidget({
                     id: "widgetRender"
                 });
                 w.render();
@@ -172,7 +190,7 @@
     
             "testRenderTo" : function() {
     
-                var w = new Y.Widget({
+                var w = this.createWidget({
                     id: "widgetRenderTo"
                 });
                 w.render("#widgetRenderToContainer");
@@ -189,7 +207,7 @@
     
             "testBaseClassNames" : function() {
     
-                var w = new Y.Widget();
+                var w = this.createWidget();
                 w.render();
                 
                 var bb = w.get("boundingBox");
@@ -201,32 +219,9 @@
                 w.destroy();
             },
     
-            "testExtendedClassNames" : function() {
-                function MyWidget() {
-                    MyWidget.superclass.constructor.apply(this, arguments);
-                }
-    
-                MyWidget.NAME = "myWidget";
-    
-                Y.extend(MyWidget, Y.Widget);
-    
-                var myWidget = new MyWidget();
-                myWidget.render();
-    
-                var bb = myWidget.get("boundingBox");
-                var cb = myWidget.get("contentBox");
-    
-                Y.Assert.isTrue(bb.hasClass("yui3-widget"), "bb missing generic yui3-widget marker");
-                Y.Assert.isTrue(bb.hasClass("yui3-mywidget"), "bb missing yui3-mywidget marker");
-                Y.Assert.isTrue(cb.hasClass("yui3-mywidget-content"), "cb missing yui3-mywidget-content marker");
-                Y.Assert.isFalse(cb.hasClass("yui3-widget-content"), "cb shouldn't have yui3-widget-content marker");
-    
-                myWidget.destroy();
-            },
-    
             "testHeight" : function() {
     
-                var w = new Y.Widget({
+                var w = this.createWidget({
                     height:100,
                     render:"#widgetRenderToContainer"
                 });
@@ -252,7 +247,7 @@
             },
 
             "testWidth" : function() {
-                var w = new Y.Widget({
+                var w = this.createWidget({
                     width:100,
                     render:"#widgetRenderToContainer"
                 });
@@ -278,41 +273,45 @@
             },
 
             "testDisabled" : function() {
-                var w = new Y.Widget({render:true});
+                var w = this.createWidget({render:true});
                 var bb = w.get("boundingBox");
 
+                var className = w._cssPrefix + "-disabled";
+
                 Y.Assert.isFalse(w.get("disabled"), "disabled should be false by default");
-                Y.Assert.isFalse(bb.hasClass("yui3-widget-disabled"), "bb should not have a disabled marker class");
+                Y.Assert.isFalse(bb.hasClass(className), "bb should not have a disabled marker class");
 
                 w.set("disabled", true);
 
                 Y.Assert.isTrue(w.get("disabled"), "disabled should be true");
-                Y.Assert.isTrue(bb.hasClass("yui3-widget-disabled"), "bb should have a disabled marker");
+                Y.Assert.isTrue(bb.hasClass(className), "bb should have a disabled marker");
                 
                 w.set("disabled", false);
                 
                 Y.Assert.isFalse(w.get("disabled"), "disabled should be false");
-                Y.Assert.isFalse(bb.hasClass("yui3-widget-disabled"), "bb should not have a disabled marker class");
+                Y.Assert.isFalse(bb.hasClass(className), "bb should not have a disabled marker class");
                 
                 w.destroy();
             },
 
             "testDisableEnable" : function() {
-                var w = new Y.Widget({render:true});
+                var w = this.createWidget({render:true});
                 var bb = w.get("boundingBox");
 
+                var className = w._cssPrefix + "-disabled";
+
                 Y.Assert.isFalse(w.get("disabled"), "disabled should be false by default");
-                Y.Assert.isFalse(bb.hasClass("yui3-widget-disabled"), "bb should not have a disabled marker class");
+                Y.Assert.isFalse(bb.hasClass(className), "bb should not have a disabled marker class");
 
                 w.disable();
 
                 Y.Assert.isTrue(w.get("disabled"), "disabled should be true");
-                Y.Assert.isTrue(bb.hasClass("yui3-widget-disabled"), "bb should have a disabled marker");
+                Y.Assert.isTrue(bb.hasClass(className), "bb should have a disabled marker");
                 
                 w.enable();
                 
                 Y.Assert.isFalse(w.get("disabled"), "disabled should be false");
-                Y.Assert.isFalse(bb.hasClass("yui3-widget-disabled"), "bb should not have a disabled marker class");
+                Y.Assert.isFalse(bb.hasClass(className), "bb should not have a disabled marker class");
                 
                 w.destroy();
             },
@@ -321,28 +320,30 @@
                 
                 // The focused attribute is read-only, so we test through the public api
                 
-                var w = new Y.Widget({render:true});
+                var w = this.createWidget({render:true});
                 var bb = w.get("boundingBox");
+                
+                var className = w._cssPrefix + "-focused";
 
                 // TODO ENH REQUEST: This doesn't seem right. We should focus on render.
                 Y.Assert.isFalse(w.get("focused"), "focused should be false by default");
-                Y.Assert.isFalse(bb.hasClass("yui3-widget-focused"), "bb should not have a disabled marker class");
+                Y.Assert.isFalse(bb.hasClass(className), "bb should not have a disabled marker class");
 
                 w.focus();
 
                 Y.Assert.isTrue(w.get("focused"), "focused should be true");
-                Y.Assert.isTrue(bb.hasClass("yui3-widget-focused"), "bb should have a focused marker");
+                Y.Assert.isTrue(bb.hasClass(className), "bb should have a focused marker");
 
                 w.blur();
 
                 Y.Assert.isFalse(w.get("focused"), "focused should be false");
-                Y.Assert.isFalse(bb.hasClass("yui3-widget-focused"), "bb should not have a focused marker class");
+                Y.Assert.isFalse(bb.hasClass(className), "bb should not have a focused marker class");
                 
                 w.destroy();
             },
 
             "testTabIndex" : function() {
-                var w = new Y.Widget({render:true});
+                var w = this.createWidget({render:true});
                 var bb = w.get("boundingBox");
 
                 Y.Assert.isNull(w.get("tabIndex"), "tabIndex should be null by default");
@@ -359,7 +360,7 @@
             },
     
             "testId" : function() {
-                var w = new Y.Widget({
+                var w = this.createWidget({
                     id: "testId",
                     render:true
                 });
@@ -375,36 +376,63 @@
             },
 
             "testVisible" : function() {
-                var w = new Y.Widget({render:true});
+                var w = this.createWidget({render:true});
                 var bb = w.get("boundingBox");
+                
+                var className = w._cssPrefix + "-hidden";
 
                 Y.Assert.isTrue(w.get("visible"), "visible should be true by default");
-                Y.Assert.isFalse(bb.hasClass("yui3-widget-hidden"), "bb should not have a hidden marker class");
+                Y.Assert.isFalse(bb.hasClass(className), "bb should not have a hidden marker class");
                 Y.Assert.areNotEqual("none", bb.getStyle("display"), "widget should not be display:none");
 
                 w.set("visible", false);
 
                 Y.Assert.isFalse(w.get("visible"), "visible should be false");
-                Y.Assert.isTrue(bb.hasClass("yui3-widget-hidden"), "bb should have an hidden marker");
+                Y.Assert.isTrue(bb.hasClass(className), "bb should have an hidden marker");
                 Y.Assert.areEqual("none", bb.getStyle("display"), "Default CSS should hide widget using display:none");
 
                 w.set("visible", true);
                 
                 Y.Assert.isTrue(w.get("visible"), "visible should be true by default");
-                Y.Assert.isFalse(bb.hasClass("yui3-widget-hidden"), "bb should not have a hidden marker class");
+                Y.Assert.isFalse(bb.hasClass(className), "bb should not have a hidden marker class");
                 Y.Assert.areNotEqual("none", bb.getStyle("display"), "widget should not be display:none");
 
                 w.destroy();
             },
             
-            "testBoundingBox" : function() {
+            "testShowHide" : function() {
+                var w = this.createWidget({render:true});
+                var bb = w.get("boundingBox");
                 
+                var className = w._cssPrefix + "-hidden";
+
+                Y.Assert.isTrue(w.get("visible"), "visible should be true by default");
+                Y.Assert.isFalse(bb.hasClass(className), "bb should not have a hidden marker class");
+                Y.Assert.areNotEqual("none", bb.getStyle("display"), "widget should not be display:none");
+
+                w.hide();
+
+                Y.Assert.isFalse(w.get("visible"), "visible should be false");
+                Y.Assert.isTrue(bb.hasClass(className), "bb should have an hidden marker");
+                Y.Assert.areEqual("none", bb.getStyle("display"), "Default CSS should hide widget using display:none");
+
+                w.show();
+
+                Y.Assert.isTrue(w.get("visible"), "visible should be true by default");
+                Y.Assert.isFalse(bb.hasClass(className), "bb should not have a hidden marker class");
+                Y.Assert.areNotEqual("none", bb.getStyle("display"), "widget should not be display:none");
+
+                w.destroy();
+            },
+
+            "testBoundingBox" : function() {
+
                 var container = Y.one("#widgetRenderToContainer");
                 container.append("<div id='bbTest'></div>");
 
                 var bb = Y.one("#bbTest");
 
-                var w = new Y.Widget({
+                var w = this.createWidget({
                     boundingBox: "#bbTest",
                     render:true
                 });
@@ -423,7 +451,7 @@
 
                 var cb = Y.one("#cbTest");
 
-                var w = new Y.Widget({
+                var w = this.createWidget({
                     contentBox: "#cbTest",
                     render:true
                 });
@@ -444,7 +472,7 @@
                 bb.append("<div id='cbTest'></div>");
                 var cb = Y.one("#cbTest"); 
 
-                var w = new Y.Widget({
+                var w = this.createWidget({
                     boundingBox: "#bbTest",
                     contentBox: "#cbTest",
                     render:true
@@ -468,7 +496,7 @@
 
                 var bb = Y.one("#bbTest");
 
-                var w = new Y.Widget({
+                var w = this.createWidget({
                     boundingBox: "#bbTest",
                     render:container
                 });
@@ -487,7 +515,7 @@
 
                 var cb = Y.one("#cbTest");
 
-                var w = new Y.Widget({
+                var w = this.createWidget({
                     contentBox: "#cbTest",
                     render:container
                 });
@@ -508,7 +536,7 @@
                 bb.append("<div id='cbTest'></div>");
                 var cb = Y.one("#cbTest"); 
 
-                var w = new Y.Widget({
+                var w = this.createWidget({
                     boundingBox: "#bbTest",
                     contentBox: "#cbTest",
                     render:container
@@ -530,7 +558,7 @@
 
                 var sn = Y.one("#srcNode");
 
-                var w = new Y.Widget({
+                var w = this.createWidget({
                     srcNode: "#srcNode",
                     render:true
                 });
@@ -547,7 +575,7 @@
 
             "testGetByNode" : function() {
 
-                var o = new Y.Widget({
+                var o = this.createWidget({
                     id:"outer"
                 });
                 o.render();
@@ -555,7 +583,7 @@
                 var ocb = o.get("contentBox");
                 ocb.append("<div><div id='outerContent'>Outer</div></div>");
 
-                var i = new Y.Widget({
+                var i = this.createWidget({
                     id:"inner"
                 });
                 i.render();
@@ -580,7 +608,7 @@
             },
 
             "testStrings" : function() {
-                var w = new Y.Widget();
+                var w = this.createWidget();
                 
                 Y.ObjectAssert.ownsNoKeys(w.get("strings"), "No strings should be available by default");
 
@@ -603,13 +631,15 @@
                 w.destroy();
             },
 
-            "testLoading" : function() {
+            "testLoadingMarker" : function() {
                 var n = Y.Node.create('<div id="srcNode" class="yui3-widget-loading">Src Node Content</div>');
                 Y.one("body").append(n);
 
-                var w = new Y.Widget({
+                var w = this.createWidget({
                     srcNode:"#srcNode"
                 });
+                
+                Y.Assert.isTrue(n.hasClass("yui3-widget-loading"), "yui3-widget-loading should not have been removed");
                 w.render();
 
                 Y.Assert.areSame(n, w.get("contentBox"), "srcNode not used as content box");
@@ -617,7 +647,63 @@
                 
                 w.destroy();
             }
+        };
 
+        var extendedCoreTests = Y.Object(coreTests);
+        Y.mix(extendedCoreTests, {
+
+            name: "Extended Core",
+
+            createWidget : function(cfg) {
+                return (new MyWidget(cfg));
+            },
+
+            testLoadingMarker : function() {
+                var n = Y.Node.create('<div id="srcNode" class="yui3-mywidget-loading">Src Node Content</div>');
+                Y.one("body").append(n);
+
+                var w = this.createWidget({
+                    srcNode:"#srcNode"
+                });
+                
+                Y.Assert.isTrue(n.hasClass("yui3-mywidget-loading"), "yui3-mywidget-loading should not have been removed");
+                w.render();
+
+                Y.Assert.areSame(n, w.get("contentBox"), "srcNode not used as content box");
+                Y.Assert.isFalse(n.hasClass("yui3-mywidget-loading"), "yui3-mywidget-loading should have removed");
+                
+                w.destroy();
+            },
+
+            testBaseClassNames : function() {
+                var myWidget = this.createWidget();
+                myWidget.render();
+    
+                var bb = myWidget.get("boundingBox");
+                var cb = myWidget.get("contentBox");
+    
+                Y.Assert.isTrue(bb.hasClass("yui3-widget"), "bb missing generic yui3-widget marker");
+                Y.Assert.isTrue(bb.hasClass("yui3-mywidget"), "bb missing yui3-mywidget marker");
+                Y.Assert.isTrue(cb.hasClass("yui3-mywidget-content"), "cb missing yui3-mywidget-content marker");
+                Y.Assert.isFalse(cb.hasClass("yui3-widget-content"), "cb shouldn't have yui3-widget-content marker");
+
+                myWidget.destroy();
+            }
+        }, true);
+
+        suite.add(new Y.Test.Case(coreTests));
+        suite.add(new Y.Test.Case(extendedCoreTests));
+
+        suite.add(new Y.Test.Case({
+            name : "mywidget",
+            "testDefaultParentNode" : function() {
+            }
+            
+            
+        }));        
+
+        suite.add(new Y.Test.Case({
+            name : "events"
         }));
     
         suite.add(new Y.Test.Case({
@@ -1028,7 +1114,7 @@
         Y.Test.Runner.setName("Widget Tests");
         Y.Test.Runner.add(suite);
         Y.Test.Runner.disableLogging();
-        Y.Test.Runner.run();
+        //Y.Test.Runner.run();
     
         var console;
     
