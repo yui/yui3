@@ -278,7 +278,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "calendar": {
         "lang": [
             "en", 
-            "ja",
+            "ja", 
             "ru"
         ], 
         "requires": [
@@ -290,7 +290,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "calendar-base": {
         "lang": [
             "en", 
-            "ja",
+            "ja", 
             "ru"
         ], 
         "requires": [
@@ -2040,4 +2040,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'a9b74d9e4fbe0a748353a453e1bbcb20';
+YUI.Env[Y.version].md5 = '5305a36087e5a56f15e020f70622ee26';

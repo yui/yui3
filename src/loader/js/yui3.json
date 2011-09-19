@@ -258,7 +258,7 @@
     "calendar": {
         "lang": [
             "en", 
-            "ja",
+            "ja", 
             "ru"
         ], 
         "requires": [
@@ -270,7 +270,7 @@
     "calendar-base": {
         "lang": [
             "en", 
-            "ja",
+            "ja", 
             "ru"
         ], 
         "requires": [
