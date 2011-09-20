@@ -23,9 +23,10 @@ YUI({
 }).use('charts', 'test', 'console', function (Y) 
 { 
     Y.namespace("example.test");
+    
     var suite = new Y.Test.Suite("Y.Charts");
-
-    suite.add(new Y.Test.Case({
+    
+    var ChartTests = new Y.Test.Case({
         name: "Chart Tests",
 
         setUp: function() {
@@ -150,9 +151,9 @@ YUI({
             }
 
         }
-    }));
-
-    suite.add(new Y.Test.Case({
+    });
+    
+    var GraphTests = new Y.Test.Case({
         name: "Graph Tests",
         
         setUp: function() {
@@ -222,7 +223,7 @@ YUI({
         },
         
         "test:graph._getSeries(stackedline)": function()
-        {r
+        {
             var graph = this.chart.get("graph"),
                 series = graph._getSeries("stackedline");
             Y.Assert.areEqual(series, Y.StackedLineSeries, "The series type should be Y.StackedLineSeries");
@@ -322,9 +323,9 @@ YUI({
             series = graph._getSeries(Y.CustomLineSeries);
             Y.Assert.areEqual(series, Y.CustomLineSeries, "The series type should be Y.CustomLineSeries");
         }
-    }));
+    }),
     
-    suite.add(new Y.Test.Case({
+    AxesTests = new Y.Test.Case({
         name: "Axes Tests",
         
         setUp: function() {
@@ -353,17 +354,19 @@ YUI({
                 keys,
                 l,
                 i;
-            xAxis.on("axisUpdate", Y.bind(function(e) {
+            this.xHandle = xAxis.on("dataUpdate", Y.bind(function(e) {
                 l = xAxis.get("keyCollection").length || 0;
                 assert.areEqual(0, 0, "The value should be zero");
             }, this));
-            yAxis.on("axisUpdate", Y.bind(function(e) {
+            this.yHandle = yAxis.on("dataUpdate", Y.bind(function(e) {
                 keys = yAxis.get("keyCollection");
                 assert.areEqual(1, keys.length, "The length should be 1");
                 assert.areEqual(Y.Array.indexOf(keys, "revenue"), -1, "The key revenue should be removed");
             }));
             xAxis.removeKey("category");
             yAxis.removeKey("revenue");
+            this.xHandle.detach();
+            this.yHandle.detach();
         },
         
         testAddKey: function()
@@ -375,7 +378,7 @@ YUI({
                 testarray,
                 i = 0;
                 l = 4;
-            yAxis.on("axisUpdate", Y.bind(function(e) {
+            this.yHandle = yAxis.on("dataUpdate", Y.bind(function(e) {
                 keys = yAxis.get("keyCollection");
                 testarray = yAxis.getDataByKey("expenses");
                 assert.areEqual(3, keys.length);
@@ -385,73 +388,176 @@ YUI({
                     assert.areEqual(pattern[i], testarray[i]);
                 }
             }, this));
-
             yAxis.addKey("expenses");
+            this.yHandle.detach();
+        }
+        
+    }),
+    
+    AxisMinAndMaxTest = new Y.Test.Case({
+        name: "Axes Min and Max Tests",
+        
+        setUp: function() {
+            var myDataValues = [ 
+                {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
+                {category:"5/2/2010", values:50, expenses:9100, revenue:100}, 
+                {category:"5/3/2010", values:400, expenses:1100, revenue:1500}, 
+                {category:"5/4/2010", values:200, expenses:1900, revenue:2800}, 
+                {category:"5/5/2010", values:5000, expenses:5000, revenue:2650}
+            ];
+            var mychart = new Y.Chart({width:400, height:300, dataProvider:myDataValues});
+            mychart.render("#mychart");
+            this.minandmaxchart = mychart;
+        },
+
+        tearDown: function() {
+            this.minandmaxchart.destroy();
         },
 
         //Tests a NumericAxis minimum and maximum by applying the labelFunction of the axis to the set minimum and maximum values and
         //then comparing the innerHTML of the first and last labels
         testMinAndMax: function()
         {
-            var yAxis = this.chart.getAxisByKey("values"),
+            var yAxis = this.minandmaxchart.getAxisByKey("values"),
                 majorUnit = yAxis.get("styles").majorUnit,
                 count = majorUnit.count - 1,
                 setMax = 1492,
                 setMin = 7,
                 eventListener,
                 labels;
-            yAxis.set("maximum", setMax);
+            yAxis.set("minimum", setMin);
             eventListener = yAxis.on("axisRendered", function(e) {
                 labels = yAxis.get("labels");
                 Y.assert(labels[0].innerHTML == yAxis.get("labelFunction").apply(yAxis, [setMin, yAxis.get("labelFormat")]));
                 Y.assert(labels[count].innerHTML == yAxis.get("labelFunction").apply(yAxis, [setMax, yAxis.get("labelFormat")])); 
             });
-            yAxis.set("minimum", setMin);
+            yAxis.set("maximum", setMax);
             eventListener.detach();
         },
-       
+        
         //change min to negative value and test.
         //change max to negative value and test.
         //tests negative min/positive max and negative min/negative max
         testNegativeMinAndMax: function()
         {
-            var yAxis = this.chart.getAxisByKey("values"),
+            var yAxis = this.minandmaxchart.getAxisByKey("values"),
                 majorUnit = yAxis.get("styles").majorUnit,
                 count = majorUnit.count- 1,
                 setMin = -1721,
                 setMax = -15,
                 eventListener,
                 labels;
-            yAxis.set("maximum", setMax);
+            yAxis.set("minimum", setMin);
             eventListener = yAxis.on("axisRendered", function(e) {
                 labels = yAxis.get("labels");
                 Y.assert(labels[0].innerHTML == yAxis.get("labelFunction").apply(yAxis, [setMin, yAxis.get("labelFormat")]));
                 Y.assert(labels[count].innerHTML == yAxis.get("labelFunction").apply(yAxis, [setMax, yAxis.get("labelFormat")])); 
             });
-            yAxis.set("minimum", setMin);
+            yAxis.set("maximum", setMax);
             eventListener.detach();
         },
         
         //Tests min and max with decimals
         testMinAndMaxWithDecimals: function()
         {
-            var yAxis = this.chart.getAxisByKey("values"),
+            var yAxis = this.minandmaxchart.getAxisByKey("values"),
                 majorUnit = yAxis.get("styles").majorUnit,
                 count = majorUnit.count- 1,
                 setMin = 14.66,
                 setMax = 1821.33,
                 eventListener,
                 labels;
-            yAxis.set("maximum", setMax);
+            yAxis.set("minimum", setMin);
             eventListener = yAxis.on("axisRendered", function(e) {
                 labels = yAxis.get("labels");
                 Y.assert(labels[0].innerHTML == yAxis.get("labelFunction").apply(yAxis, [setMin, yAxis.get("labelFormat")]));
                 Y.assert(labels[count].innerHTML == yAxis.get("labelFunction").apply(yAxis, [setMax, yAxis.get("labelFormat")])); 
             });
-            yAxis.set("minimum", setMin);
+            yAxis.set("maximum", setMax);
             eventListener.detach();
         }
-    }));
+
+    }),
+    
+    //test to ensure that pie charts are drawn from center
+    //pie charts need to have the same width/height
+    PieCenterTest = new Y.Test.Case({
+        name: "PieChartCenterTest",
+        setUp: function() {
+            var myDataValues = [ 
+                {day:"Monday", taxes:2000}, 
+                {day:"Tuesday", taxes:50}, 
+                {day:"Wednesday", taxes:4000}, 
+                {day:"Thursday", taxes:200}, 
+                {day:"Friday", taxes:2000}
+            ];
+            var mychart = new Y.Chart({type: "pie", width:400, height:400, dataProvider:myDataValues});
+            mychart.render("#mychart");
+            this.chart = mychart;
+        },
+
+        tearDown: function() {
+            this.chart.destroy();
+        },
+
+        testWidthAndHeightEqual: function()
+        {
+            var graphic = this.chart.get("graph").get("graphic"),
+                shapes = graphic.get("shapes"),
+                i,
+                shape;
+            for(i in shapes)
+            {
+                if(shapes.hasOwnProperty(i))
+                {
+                    shape = shapes[i];
+                    Y.assert(shape.get("width") === shape.get("height"));
+                }
+            }
+        },
+
+        testWidthGreaterThanHeight: function()
+        {
+            var graphic = this.chart.get("graph").get("graphic"),
+                shapes,
+                i,
+                shape;
+            this.chart.set("width", 500);
+            shapes = graphic.get("shapes");
+            for(i in shapes)
+            {
+                if(shapes.hasOwnProperty(i))
+                {
+                    shape = shapes[i];
+                    Y.assert(shape.get("width") === shape.get("height"));
+                }
+            }
+        },
+
+        testHeightGreaterThanWidth: function()
+        {
+            var graphic = this.chart.get("graph").get("graphic"),
+                shapes,
+                i,
+                shape;
+            this.chart.set("height", 600);
+            shapes = graphic.get("shapes");
+            for(i in shapes)
+            {
+                if(shapes.hasOwnProperty(i))
+                {
+                    shape = shapes[i];
+                    Y.assert(shape.get("width") === shape.get("height"));
+                }
+            }
+        }
+    });
+
+    suite.add(ChartTests);
+    suite.add(GraphTests);
+    suite.add(AxesTests);
+    suite.add(AxisMinAndMaxTest);
+    suite.add(PieCenterTest);
 
     //create the console
     var r = new Y.Console({

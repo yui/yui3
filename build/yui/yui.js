@@ -2510,9 +2510,11 @@ Y.merge = function () {
 };
 
 /**
-Mixes _supplier_'s properties into _receiver_. Properties will not be
-overwritten or merged unless the _overwrite_ or _merge_ parameters are `true`,
-respectively.
+Mixes _supplier_'s properties into _receiver_.
+
+Properties on _receiver_ or _receiver_'s prototype will not be overwritten or
+shadowed unless the _overwrite_ parameter is `true`, and will not be merged
+unless the _merge_ parameter is `true`.
 
 In the default mode (0), only properties the supplier owns are copied (prototype
 properties are not copied). The following copying modes are available:
@@ -2533,7 +2535,7 @@ properties are not copied). The following copying modes are available:
 @param {String[]} [whitelist] An array of property names to copy. If
   specified, only the whitelisted properties will be copied, and all others
   will be ignored.
-@param {Int} [mode=0] Mix mode to use. See above for available modes.
+@param {Number} [mode=0] Mix mode to use. See above for available modes.
 @param {Boolean} [merge=false] If `true`, objects and arrays that already
   exist on the receiver will have the corresponding object/array from the
   supplier merged into them, rather than being skipped or overwritten. When
@@ -2576,8 +2578,8 @@ Y.mix = function(receiver, supplier, overwrite, whitelist, mode, merge) {
         to   = receiver;
     }
 
-    // If `overwrite` is truthy and `merge` is falsy, then we can skip a call
-    // to `hasOwnProperty` on each iteration and save some time.
+    // If `overwrite` is truthy and `merge` is falsy, then we can skip a
+    // property existence check on each iteration and save some time.
     alwaysOverwrite = overwrite && !merge;
 
     if (whitelist) {
@@ -2593,7 +2595,10 @@ Y.mix = function(receiver, supplier, overwrite, whitelist, mode, merge) {
                 continue;
             }
 
-            exists = alwaysOverwrite ? false : hasOwn.call(to, key);
+            // The `key in to` check here is (sadly) intentional for backwards
+            // compatibility reasons. It prevents undesired shadowing of
+            // prototype members on `to`.
+            exists = alwaysOverwrite ? false : key in to;
 
             if (merge && exists && isObject(to[key], true)
                     && isObject(from[key], true)) {
@@ -2624,7 +2629,10 @@ Y.mix = function(receiver, supplier, overwrite, whitelist, mode, merge) {
                 continue;
             }
 
-            exists = alwaysOverwrite ? false : hasOwn.call(to, key);
+            // The `key in to` check here is (sadly) intentional for backwards
+            // compatibility reasons. It prevents undesired shadowing of
+            // prototype members on `to`.
+            exists = alwaysOverwrite ? false : key in to;
 
             if (merge && exists && isObject(to[key], true)
                     && isObject(from[key], true)) {
@@ -4789,7 +4797,8 @@ var NO_ARGS = [];
  */
 Y.later = function(when, o, fn, data, periodic) {
     when = when || 0;
-    data = (!Y.Lang.isUndefined(data)) ? Y.Array(data) : data;
+    data = (!Y.Lang.isUndefined(data)) ? Y.Array(data) : NO_ARGS;
+    o = o || Y.config.win || Y;
 
     var cancelled = false,
         method = (o && Y.Lang.isString(fn)) ? o[fn] : fn,
@@ -4842,7 +4851,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2011.09.07-20-35',
+            GALLERY_VERSION = 'gallery-2011.09.14-20-40',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -7665,6 +7674,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "calendar": {
         "lang": [
             "en", 
+            "ja", 
             "ru"
         ], 
         "requires": [
@@ -7676,6 +7686,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "calendar-base": {
         "lang": [
             "en", 
+            "ja", 
             "ru"
         ], 
         "requires": [
@@ -7732,7 +7743,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "console": {
         "lang": [
             "en", 
-            "es"
+            "es", 
+            "ja"
         ], 
         "requires": [
             "yui-log", 
@@ -9425,7 +9437,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'a9b74d9e4fbe0a748353a453e1bbcb20';
+YUI.Env[Y.version].md5 = '94b4cd94d5b5f12f01ec8758dc2d9a6e';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

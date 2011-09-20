@@ -1,149 +1,176 @@
 <div class="intro">
-    <p>Panel is a widget that mimics the functionality of a regular OS window. It is similar to Overlay, with added functionality to support modality, event listeners on which to autohide and autofocus, header/footer button support and a custom stylesheet. Panel does not have any implementation code of it's own. It implements a set of extensions that provide certain sets of functionality. The <a href="../widget/widget-build.html">"Creating Custom Widget Classes"</a> example shows how you can use these extensions to build classes which mix and match some of the above features.</p>
+    <p>
+    Panel is a Widget that mimics the functionality of a regular OS window. It is similar to Overlay, with added functionality to support modality, event listeners on which to auto-hide and auto-focus, header/footer button support and skins. Panel does not have any implementation code of it's own. It implements a set of extensions that provide certain sets of functionality. The <a href="../widget/widget-build.html">"Creating Custom Widget Classes"</a> example shows how you can use these extensions to build classes which mix and match some of the above features.
+    </p>
 </div>
-
 
 {{>getting-started}}
 
-<h2 id="default">Creating a Panel</h2>
-<p>This simple example will create a Panel with default functionality. By default, a Panel is rendered with a "Close" button added to the header, with modality enabled, and will be hidden if the "esc" key or "Close" button is pressed. Clicking anywhere outside the panel will bring back focus to the panel.</p>
+<h2>Creating a Panel</h2>
 
-```
+<p>
+This simple example will create a Panel with default functionality. By default, a Panel is rendered with a "close" button added to the header, with modality disabled, and will be hidden if the `esc` key or "close" button is pressed.
+</p>
+
+```javascript
 YUI().use('panel', function(Y) {
 
     var panel = new Y.Panel({
-        srcNode: "#myPanelContent",
-        width: 400,
-        centered: true
-    });
-
-    panel.render();
-
-});
-```
-
-<h2 id="modality">Modal Panel</h2>
-<p>A Panel is not modal by default. This functionality can be changed through the "modal" attribute, either during instantiation or later through the set() method.</p>
-
-```
-YUI().use('panel', function(Y) {
-
-    var panel = new Y.Panel({
-        srcNode: "#myPanelContent",
-        width: 400,
-        modal: true //make a modal panel
-    });
-
-    panel.render();
-    //optionally, we could have written panel.set('modal', true);
-
-});
-```
-
-<p>Panels can be nested in one another, and have different modal behavior. For instance, a modal panel may launch a non-modal panel on top of it. The <a href="{{apiDocs}}/classes/WidgetModality.html">`WidgetModality`</a> extension takes care of nesting behavior so no extra code is required for the implementer. Refer to the examples for more information.</p>
-
-<h2 id="events">Choosing when to focus and hide</h2>
-
-<p>By default, a Panel will return focus to itself if anything else on the page receives focus or is clicked. On the other hand, clicking the "close" button, or pressing the "esc" key will hide it. Both of these options can be configured as needed through the "hideOn" and "focusOn" attributes.</p>
-
-<p>The following code snippet shows how to change the default "hide" behavior. Instead of hiding when the "esc" key is pressed, the Panel hides whenever something outside it's bounding box is pressed, or when a certain element on the page (with an id of <code>anotherNode</code>) is clicked.</p>
-
-```
-YUI().use('panel', function(Y) {
-
-    var panel = new Y.Panel({
-        srcNode: "#myPanelContent",
-        width: 400,
+        srcNode : '#myPanelContent',
+        width   : 400,
         centered: true,
-        modal:false,
+        render  : true
+    });
 
-        //The hideOn Attribute takes an array of objects, with a required property "eventName"
-        //and two optional properties "node", and "keyCode"
+});
+```
+
+<h2>Modal Panel</h2>
+
+<p>
+A Panel is not modal by default. This functionality can be changed through the `modal` attribute, either during instantiation or later through the `set()` method.
+</p>
+
+```javascript
+YUI().use('panel', function(Y) {
+
+    var panel = new Y.Panel({
+        srcNode: '#myPanelContent',
+        width  : 400,
+        modal  : true // Make the Panel modal
+    });
+
+    panel.render();
+    // Optionally, we could have written:
+    // panel.set('modal', true);
+
+});
+```
+
+<p>
+Panels can be nested in one another, and have different modal behavior. For instance, a modal Panel may launch a non-modal Panel on top of it. The <a href="{{apiDocs}}/classes/WidgetModality.html">`WidgetModality`</a> extension takes care of nesting behavior so no extra code is required for the implementer. Refer to the examples for more information.
+</p>
+
+<h2>Choosing When to Focus and Hide</h2>
+
+<p>
+By default, a modal Panel will return focus to itself if anything else on the page receives focus or is clicked. On the other hand, clicking the "close" button, or pressing the `esc` key will hide it. Both of these options can be configured as needed through the `hideOn` and `focusOn` attributes.
+</p>
+
+<p>
+The following code snippet shows how to change the default "hide" behavior. Instead of hiding when the `esc` key is pressed, the Panel hides whenever something outside its `boundingBox` is pressed, or when a certain element on the page (with an id of `anotherNode`) is clicked.
+</p>
+
+```javascript
+YUI().use('panel', function(Y) {
+
+    var panel = new Y.Panel({
+        srcNode : '#myPanelContent',
+        width   : 400,
+        centered: true,
+        modal   : false,
+        render  : true,
+
+        // The `hideOn` Attribute takes an array of objects with a required
+        // `eventName` property, and two optional properties:
+        // `node` and `keyCode`.
         hideOn: [
-                    
-                    {
-                        //When we don't specify a node, it defaults to the boundingbox of this panel instance
-                        eventName: "clickoutside"
-                    },
-                    {
-                        //This listens to click events on the node that was specified
-                        node: Y.one("#anotherNode"),
-                        eventName:"click"
-                    }
-                ]
+            {
+                // When we don't specify a `node`,
+                // it defaults to the `boundingBox` of this Panel instance.
+                eventName: 'clickoutside'
+            },
+            {
+                // Listen to click events on the `node` that was specified.
+                node     : Y.one('#anotherNode'),
+                eventName: 'click'
+            }
+        ]
     });
-
-    panel.render();
 
 });
 ```
 
-<p>Similarly, the "focusOn" attribute can be changed to configure the default focus behavior</p>
-```
-    var panel = new Y.Panel({
-        srcNode: "#myPanelContent",
-        width: 400,
-        centered: true,
-        modal:false,
+<p>
+Similarly, the `focusOn` attribute can be changed to configure the default focus behavior.
+</p>
 
-        //The focusOn Attribute takes an array of objects, with a required property "eventName"
-        //and two optional properties "node", and "keyCode"
+```javascript
+    var panel = new Y.Panel({
+        srcNode : '#myPanelContent',
+        width   : 400,
+        centered: true,
+        modal   : false,
+        render  : true,
+
+        // The `hideOn` Attribute takes an array of objects with a required
+        // `eventName` property, and two optional properties:
+        // `node` and `keyCode`.
         focusOn: [
-                    
-                    {
-                        //When we don't specify a node, it defaults to the boundingbox of this panel instance
-                        eventName: "clickoutside"
-                    },
-                    {
-                        //This listens to click events on the node that was specified
-                        node: Y.one("#anotherNode"),
-                        eventName:"click"
-                    }
-                ]
+            {
+                // When we don't specify a `node`,
+                // it defaults to the `boundingBox` of this Panel instance.
+                eventName: 'clickoutside'
+            },
+            {
+                // Listen to click events on the `node` that was specified.
+                node     : Y.one('#anotherNode'),
+                eventName: 'click'
+            }
+        ]
     });
-
-    panel.render();
 
 });
 ```
 
-<p>To simply get rid of the default behavior, we could just set the "focusOn" and "hideOn" attributes to empty arrays.</p>
+<p>
+To simply get rid of the default behavior, we could just set the `focusOn` and `hideOn` attributes to empty Arrays.
+</p>
 
-<h2 id="buttons">Header/Footer Button Support</h2>
+<h2>Header/Footer Button Support</h2>
 
-<p>Panel supports header/footer buttons through the <a href="{{apiDocs}}/classes/WidgetButtons.html">`WidgetButtons`</a> and <a href="{{apiDocs}}/classes/WidgetStdMod.html">`WidgetStdMod`</a> extensions. By default, it comes with a "close" button represented by the "x" in the top-right corner of the header. As a developer, you can easily add/remove buttons to the header or the footer, change the style of existing buttons, or change the markup that is used to render the buttons.</p>
+<p>
+Panel supports header/footer buttons through the <a href="{{apiDocs}}/classes/WidgetButtons.html">`WidgetButtons`</a> and <a href="{{apiDocs}}/classes/WidgetStdMod.html">`WidgetStdMod`</a> extensions. By default, it comes with a "close" button represented by the "x" in the top-right corner of the header. As a developer, you can easily add/remove buttons to the header or the footer, change the style of existing buttons, or change the markup that is used to render the buttons.
+</p>
 
-```
+```javascript
 YUI().use('panel', function(Y) {
-    
-    var doSomethingElse = function() { ... };
+
+    function doSomethingElse () {
+        // ...
+    }
 
     var panel = new Y.Panel({
-        srcNode: "#myPanelContent",
-        width: 400,
+        srcNode : '#myPanelContent',
+        width   : 400,
         centered: true,
 
-        //make changes to the buttons through the "buttons" attribute, which takes an array of objects
+        // Make changes to the buttons through the `buttons` attribute,
+        // which takes an Array of Objects.
         buttons: [
-                    
+            {
+                // Each object has a `value` property,
+                // which can be text or an HTML string.
+                value: "Okay",
 
-                    {
-                        //each object has a "value" property, which can be text or an HTML string,
-                        value: "Okay",
+                // The `action` property takes the Function that should be
+                // executed on a click event.
+                action: function (e) {
+                    e.preventDefault();
+                    panel.hide();
+                    doSomethingElse();
+                },
 
-                        // "defaultFn" which takes the function that should be executed on a click event
-                        defaultFn: function(e) {
-                            e.preventDefault();
-                            panel.hide();
-                            doSomethingElse();
-                        },
+                // The `section` property tells where to render the button and
+                // should be `Y.WidgetStdMod.HEADER` or `Y.WidgetStdMod.FOOTER`.
+                section: Y.WidgetStdMod.FOOTER
 
-                        // "section" which tells where to render the button and should be Y.WidgetStdMod.HEADER, or Y.WidgetStdMod.FOOTER
-                        section: Y.WidgetStdMod.FOOTER
+                // Optional `classNames` property to add CSS classes to the 
+                // button Node.
 
-                        //plus an optional "href" property if you are linking to an URL
-                    }
-                 ]
+                // optional `href` property if you are linking to an URL.
+            }
+        ]
     });
 
     panel.render();
@@ -151,23 +178,31 @@ YUI().use('panel', function(Y) {
 });
 ```
 
-<p>If you want to append buttons to the ones that are already present within the panel, you can use the <code>addButton()</code> method.
+<p>
+If you want to append buttons to the ones that are already present within the Panel, you can use the `addButton()` method.
+</p>
 
-```
+```javascript
     var cancelButton = {
-        value: "Cancel",
-        defaultFn: function(e) { 
-            e.preventDefault(); 
-            cancelActions(); 
+        value : 'Cancel',
+        action: function (e) {
+            e.preventDefault();
+            // ...
         },
-        section: Y.WidgetStdMod.FOOTER //we could also write "header", "footer" or Y.WidgetStdMod.HEADER here.
+
+        // 'header', 'footer' or Y.WidgetStdMod.HEADER also work here.
+        section: Y.WidgetStdMod.FOOTER
     };
 
     panel.addButton(cancelButton);
 ```
 
-<h2 id="notes">Note regarding older browsers</h2>
+<h2>Notes Regarding Older Browsers</h2>
 
-<p>Panel is tested across the A-grade browser set according to the <a href="http://developer.yahoo.com/yui/articles/gbs/" alt="Graded Browser Support">GBS Browser Test Baseline</a> as of July 2011.</p>
+<p>
+Panel is tested across the A-grade browser set according to the <a href="http://yuilibrary.com/yui/docs/tutorials/gbs/" alt="Graded Browser Support">GBS Browser Test Baseline</a> as of July 2011.
+</p>
 
-<p>However, developers implementing Panel and other components which rely on z-index support in IE6 and IE7 should be aware of the concept of <a href="https://developer.mozilla.org/en/Understanding_CSS_z-index/Stacking_context_example_2" alt="Stacking Context in IE">stacking context</a>. Essentially, when setting the z-index of the widget, you should ensure that the widget's parent does not have a lower z-index.</p>
+<p>
+However, developers implementing Panel and other components which rely on `z-index` support in IE6 and IE7 should be aware of the concept of <a href="https://developer.mozilla.org/en/Understanding_CSS_z-index/Stacking_context_example_2" alt="Stacking Context in IE">stacking context</a>. Essentially, when setting the `z-index` of the widget, you should ensure that the Widget's parent does not have a lower `z-index`.
+</p>

@@ -286,7 +286,11 @@ controllerSuite.add(new Y.Test.Case({
             });
         });
 
-        controller.replace('/replace');
+        // Wrapped in a setTimeout to make the async test work on iOS<5, which
+        // performs this action synchronously.
+        setTimeout(function () {
+            controller.replace('/replace');
+        }, 1);
 
         this.wait(1000);
     },
@@ -302,7 +306,11 @@ controllerSuite.add(new Y.Test.Case({
             });
         });
 
-        controller.save('/save');
+        // Wrapped in a setTimeout to make the async test work on iOS<5, which
+        // performs this action synchronously.
+        setTimeout(function () {
+            controller.save('/save');
+        }, 1);
 
         this.wait(1000);
     },
@@ -328,9 +336,13 @@ controllerSuite.add(new Y.Test.Case({
             });
         });
 
-        controller.save('/one');
-        controller.save('/two');
-        controller.save('/three');
+        // Wrapped in a setTimeout to make the async test work on iOS<5, which
+        // performs this action synchronously.
+        setTimeout(function () {
+            controller.save('/one');
+            controller.save('/two');
+            controller.save('/three');
+        }, 1);
 
         this.wait(2000);
     },

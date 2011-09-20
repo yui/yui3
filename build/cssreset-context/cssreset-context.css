@@ -64,10 +64,9 @@
 	font-style:normal;
 	font-weight:normal;
 }
-/*
-	TODO Figure out where this list-style rule is best set. Hedger has a request to investigate.
-*/
-.yui3-cssreset li {
+
+.yui3-cssreset ol,
+.yui3-cssreset ul {
 	list-style:none;
 }
 

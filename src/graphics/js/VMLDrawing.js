@@ -152,7 +152,11 @@ VMLDrawing.prototype = {
     drawWedge: function(x, y, startAngle, arc, radius, yRadius)
     {
         var diameter = radius * 2;
+        x = Math.round(x);
+        y = Math.round(y);
         yRadius = yRadius || radius;
+        radius = Math.round(radius);
+        yRadius = Math.round(yRadius);
         if(Math.abs(arc) > 360)
         {
             arc = 360;
@@ -228,7 +232,6 @@ VMLDrawing.prototype = {
             h = this.get("height"),
             path = this._path,
             pathEnd = "";
-        node.style.visible = "hidden";
         this._fillChangeHandler();
         this._strokeChangeHandler();
         if(path)
@@ -254,7 +257,6 @@ VMLDrawing.prototype = {
             node.style.height = h + "px";
         }
         this._path = path;
-        node.style.visible = "visible";
         this._updateTransform();
     },
 
