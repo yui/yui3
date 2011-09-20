@@ -14,7 +14,7 @@ function PjaxPlugin() {
 
 Y.extend(PjaxPlugin, Y.Plugin.Base, {
     // -- Lifecycle Methods ----------------------------------------------------
-    initializer: function (config) {
+    initializer: function () {
         this._host = this.get('host');
 
         this.publish(EVT_ERROR, {defaultFn: this._defCompleteFn});
@@ -67,26 +67,29 @@ Y.extend(PjaxPlugin, Y.Plugin.Base, {
     // -- Protected Prototype Methods ------------------------------------------
     _bindUI: function () {
         if (this.get('controller').html5) {
-            this._events = this._host.delegate('click', _onLinkClick,
-                this.get('linkSelector'));
+            this._events = Y.one('body').delegate('click', this._onLinkClick,
+                this.get('linkSelector'), this);
         }
     },
 
     _getContent: function (responseText) {
         var content         = {},
             contentSelector = this.get('contentSelector'),
-            frag            = Y.DOM.create(responseText || ''),
+            frag            = Y.Node.create(responseText || ''),
             titleSelector   = this.get('titleSelector'),
-            titleEl;
+            titleNode;
 
-        content.node = Y.one(contentSelector ?
-            Y.all(Selector.query(contentSelector, frag)).toFrag() : frag);
+        if (contentSelector) {
+            content.node = Y.one(frag.all(contentSelector).toFrag());
+        } else {
+            content.node = frag;
+        }
 
         if (titleSelector) {
-            titleEl = Selector.query(titleSelector, frag, true);
+            titleNode = frag.one(titleSelector);
 
-            if (titleEl) {
-                content.title = Y.one(titleEl).get('text');
+            if (titleNode) {
+                content.title = titleNode.get('text');
             }
         }
 
@@ -152,7 +155,7 @@ Y.extend(PjaxPlugin, Y.Plugin.Base, {
 
     ATTRS: {
         contentSelector: {
-            value: 'body'
+            value: null
         },
 
         controller: {
