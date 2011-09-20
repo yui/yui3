@@ -713,6 +713,26 @@
                 Y.Assert.isFalse(n.hasClass("yui3-widget-loading"), "yui3-widget-loading should have removed");
                 
                 w.destroy();
+            },
+
+            "testFocusOnChildFocus" : function() {
+
+                var w = this.createWidget({
+                    tabIndex:3,
+                    height:100,
+                    width:100
+                });
+                w.render();
+                w.blur();
+
+                Y.Assert.isFalse(w.get("focused"), "Widget should not be focused here");
+
+                var n = w.get("contentBox").appendChild('<a href="#" id="clickme">Click Me</a>');
+                n.focus();
+
+                Y.Assert.isTrue(w.get("focused"), "Widget should be focused here");
+
+                w.destroy();
             }
         };
 
@@ -837,7 +857,7 @@
 
                 w.render();
 
-                // Include after this is fixed: http://yuilibrary.com/projects/yui3/ticket/2530076, 2530311.
+                // FIXME: Include after this is fixed: http://yuilibrary.com/projects/yui3/ticket/2530076, 2530311.
                 // Y.Assert.areSame(n, w.get("contentBox"), "srcNode not used as content box");
                 Y.Assert.isFalse(w.get("boundingBox").hasClass("yui3-mysingleboxwidget-loading"), "yui3-mysingleboxwidget-loading should have removed");
 
@@ -924,7 +944,7 @@
                 w.destroy();
             },
     
-            // Include after this is fixed: http://yuilibrary.com/projects/yui3/ticket/2530076, 2530311. 
+            // FIXME: Include after this is fixed: http://yuilibrary.com/projects/yui3/ticket/2530076, 2530311. 
             "testContentBox" : null, 
 
             /*
@@ -968,7 +988,7 @@
                 w.destroy();
             },
 
-            // Include after this is fixed: http://yuilibrary.com/projects/yui3/ticket/2530076, 2530311.
+            // FIXME: Include after this is fixed: http://yuilibrary.com/projects/yui3/ticket/2530076, 2530311.
             "testContentBoxRenderTo" : null,
              
             /*
@@ -992,7 +1012,7 @@
             },
             */
 
-            // Include after this is fixed: http://yuilibrary.com/projects/yui3/ticket/2530076, 2530311.
+            // FIXME: Include after this is fixed: http://yuilibrary.com/projects/yui3/ticket/2530076, 2530311.
             "testSrcNode" : null,
             
             /*
@@ -1230,6 +1250,7 @@
 
                 w.destroy();
             }
+            
         };
         
         var extendedEventTests = Y.Object(coreEventTests);
