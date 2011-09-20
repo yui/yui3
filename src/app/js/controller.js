@@ -772,7 +772,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
                 if (Y.UA.ios && Y.UA.ios < 5) {
                     // iOS <5 has buggy HTML5 history support, and needs to be
                     // synchronous.
-                    self._save.spply(self, args);
+                    self._save.apply(self, args);
                 } else {
                     // Wrapped in a timeout to ensure that _save() calls are
                     // always processed asynchronously. This ensures consistency

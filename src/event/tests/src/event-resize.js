@@ -6,11 +6,13 @@ var suite = new Y.Test.Suite("event-resize"),
 function simulateResize() {
     // IE doesn't allow simulation of window.onresize, so I can't use
     //Y.Event.simulate(Y.config.win, 'resize');
-    Y.Env.evt.dom_wrappers[eventKey].fire({
-        type: 'resize',
-        srcElement: Y.config.win,
-        target: Y.config.win
-    });
+    setTimeout(function () {
+        Y.Env.evt.dom_wrappers[eventKey].fire({
+            type: 'resize',
+            srcElement: Y.config.win,
+            target: Y.config.win
+        });
+    }, 10);
 }
 
 suite.add(new Y.Test.Case({
@@ -35,10 +37,10 @@ suite.add(new Y.Test.Case({
             handle.detach();
 
             test.resume(function () {
-                Y.Assert.areSame(win, thisObj);
-                Y.Assert.areSame(win, e.target);
-                Y.Assert.areSame(1, argCount);
                 Y.Assert.areSame('windowresize', e.type);
+                Y.Assert.areSame(1, argCount);
+                Y.Assert.areSame(win, thisObj, "this should be window");
+                Y.Assert.areSame(win, e.target, "e.target should be window");
             });
         }
 
@@ -62,8 +64,8 @@ suite.add(new Y.Test.Case({
 
             test.resume(function () {
                 // TODO: is this a bug?
-                Y.Assert.areSame(win, thisObj);
-                Y.Assert.areSame(win, e.target);
+                Y.Assert.areSame(win, thisObj, "this should be window");
+                Y.Assert.areSame(win, e.target, "e.target should be window");
                 Y.Assert.areSame(1, argCount);
                 Y.Assert.areSame('windowresize', e.type);
             });

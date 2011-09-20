@@ -14,6 +14,12 @@ Widget Parent
 
     See #2529863
 
+  * Fixed issue where previously rendered children, added to an empty parent,
+    would not get rendered into the parent's child container node.
+
+    Based on the pull request from andreas-karlsson, with the root fix *and* unit
+    test (nicely done): https://github.com/yui/yui3/pull/25
+
 3.4.0
 -----
 

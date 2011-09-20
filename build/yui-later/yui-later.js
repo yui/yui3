@@ -36,7 +36,8 @@ var NO_ARGS = [];
  */
 Y.later = function(when, o, fn, data, periodic) {
     when = when || 0;
-    data = (!Y.Lang.isUndefined(data)) ? Y.Array(data) : data;
+    data = (!Y.Lang.isUndefined(data)) ? Y.Array(data) : NO_ARGS;
+    o = o || Y.config.win || Y;
 
     var cancelled = false,
         method = (o && Y.Lang.isString(fn)) ? o[fn] : fn,
