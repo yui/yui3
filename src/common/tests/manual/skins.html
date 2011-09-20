@@ -286,8 +286,15 @@ YUI({filter: 'raw'}).use('tabview', 'datatable-sort', 'calendar', 'panel', 'dial
 
     new Y.ScrollView({
         height: 150,
+        width: 300,
         srcNode: '#demo-scrollview',
-        plugins: [Y.Plugin.ScrollViewList],
+        plugins:[Y.Plugin.ScrollViewList],
+        after: {
+            render: function() {
+                // Workaround. The SVList Plugin should be doing this.
+                this.syncUI();
+            }
+        },
         render:true
     });
 
