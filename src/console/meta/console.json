@@ -15,6 +15,6 @@
             "substitute"
         ], 
         "skinnable": true,
-	"lang" : ["en", "es"]
+        "lang": ["en", "es", "ja"]
     }
 }

@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <title>Style Sheets in HTML documents</title>
-    <link rel="stylesheet" type="text/css" href="<?php echo($assetsDirectory); ?>w3.css">
-    <link rel="stylesheet" type="text/css" href="<?php echo($assetsDirectory); ?>theme.css">
+    <link rel="stylesheet" type="text/css" href="{{componentAssets}}/w3.css">
+    <link rel="stylesheet" type="text/css" href="{{componentAssets}}/theme.css">
 </head>
 <body>
 
@@ -871,9 +871,9 @@ index</a></div>
         <input type="submit">
     </form>
 </div>
-<script src="<?php echo($buildDirectory); ?>yui/yui-min.js"></script>
+<script src="{{yuiSeedUrl}}"></script>
 <script>
-YUI(<?php echo($yuiConfig); ?>).use(<?php echo($requiredModules); ?>, function (Y) {
+YUI().use('stylesheet', 'overlay', 'dd-plugin', 'slider', function (Y) {
 
     var myStyleSheet = new Y.StyleSheet(),
         overlayContent = Y.one('#form_container'),
@@ -968,4 +968,5 @@ YUI(<?php echo($yuiConfig); ?>).use(<?php echo($requiredModules); ?>, function (
 
 });
 </script>
-</body></html>
+</body>
+</html>

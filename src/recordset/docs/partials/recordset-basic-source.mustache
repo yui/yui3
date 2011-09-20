@@ -80,7 +80,7 @@ YUI().use("recordset-base", "node", function (Y) {
 	setUpButtons(recordset);
 	
 	function setUpEvents(rs) {
-		/*Edits the table based on recordset events that are fired*/
+		/*Edits the table based on Recordset events that are fired*/
 		rs.after('add', function(e) {
 			Y.one('#demo tbody').append(Y.Lang.sub(TEMPLATE_TR, e.added[0].getValue()));
 		});
@@ -113,7 +113,7 @@ YUI().use("recordset-base", "node", function (Y) {
 			//prevent default behavior (stop link)
 			e.preventDefault();
 			
-			//get a random state and add it to the recordset
+			//get a random state and add it to the Recordset
 			var rand = getRandomInt(0, state_census_data.length-1);
 			rs.add(state_census_data[rand]);
 			

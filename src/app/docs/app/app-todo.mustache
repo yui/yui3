@@ -20,8 +20,9 @@
 
 ```
 <div id="todo-app">
+    <label class="todo-label" for="new-todo">What do you want to do today?</label>
     <input type="text" id="new-todo" class="todo-input"
-            placeholder="What do you want to do today?">
+        placeholder="buy milk">
 
     <ul id="todo-list"></ul>
     <div id="todo-stats"></div>
@@ -30,27 +31,30 @@
 
 <p>We'll also add some invisible HTML templates to the page, which will be used to render our views later.</p>
 
-<p>By putting this template HTML inside a `<script>` element with `type="text/template"`, we ensure that the browser will ignore it because it doesn't recognize the `text/template` type. We can then retrieve the contents of the element to get a convenient template string.</p>
+<p>By putting this template HTML inside a `<script>` element with `type="text/x-template"`, we ensure that the browser will ignore it because it doesn't recognize the `text/x-template` type. We can then retrieve the contents of the element to get a convenient template string.</p>
 
 <p>This is generally a more maintainable way of embedding templates than storing them in JavaScript strings, but there's no requirement that you use this technique.</p>
 
 ```
 <!-- This template HTML will be used to render each todo item. -->
-<script type="text/template" id="todo-item-template">
+<script type="text/x-template" id="todo-item-template">
     <div class="todo-view">
         <input type="checkbox" class="todo-checkbox" {checked}>
-        <span class="todo-content">{text}</span>
-        <a href="#" class="todo-remove" title="Remove this task"></a>
+        <span class="todo-content" tabindex="0">{text}</span>
     </div>
 
     <div class="todo-edit">
         <input type="text" class="todo-input" value="{text}">
     </div>
+
+    <a href="#" class="todo-remove" title="Remove this task">
+        <span class="todo-remove-icon"></span>
+    </a>
 </script>
 
 <!-- This template HTML will be used to render the statistics at the bottom
      of the todo list. -->
-<script type="text/template" id="todo-stats-template">
+<script type="text/x-template" id="todo-stats-template">
     <span class="todo-count">
         <span class="todo-remaining">{numRemaining}</span>
         <span class="todo-remaining-label">{remainingLabel}</span> left.
@@ -70,11 +74,15 @@
 <div class="scrollable">
 ```
 <style scoped>
-#todo-app { margin: 1em; }
+#todo-app {
+    margin: 1em;
+    text-align: center;
+}
 
 #todo-list,
 #todo-stats {
     margin: 1em auto;
+    text-align: left;
     width: 450px;
 }
 
@@ -103,7 +111,7 @@
     font-family: Helvetica, sans-serif;
     font-size: 20px;
     line-height: normal;
-    margin: 0 auto;
+    margin: 5px auto 0;
     padding: 6px;
     width: 420px;
 }
@@ -115,28 +123,43 @@
     position: relative;
 }
 
+.todo-label {
+    color: #444;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
 .todo-remaining {
     color: #333;
     font-weight: bold;
 }
 
 .todo-remove {
+    position: absolute;
+    right: 0;
+    top: 12px;
+}
+
+.todo-remove-icon {
     /*
     Delete icon courtesy of The Noun Project:
     http://thenounproject.com/noun/delete/
     */
     background: url({{componentAssets}}/remove.png) no-repeat;
+    display: block;
     height: 16px;
     opacity: 0.6;
-    position: absolute;
-    right: 0;
-    top: 12px;
     visibility: hidden;
     width: 23px;
 }
 
-.todo-remove:hover { opacity: 1.0; }
-.todo-hover .todo-remove { visibility: visible; }
+.todo-remove:hover .todo-remove-icon { opacity: 1.0; }
+
+.todo-hover .todo-remove-icon,
+.todo-remove:focus .todo-remove-icon { visibility: visible; }
+
+.editing .todo-remove-icon { visibility: hidden; }
 </style>
 ```
 </div>
@@ -229,7 +252,7 @@ TodoList = Y.TodoList = Y.Base.create('todoList', Y.ModelList, [], {
 
 <p>The `TodoAppView` class extends `Y.View` and customizes it to represent the main shell of the application, including the new item input field and the list of todo items.</p>
 
-<p>This class also takes care of initializing a `TodoList` instance and creating and rendering a `TodoView` instance for each todo item when the list is initially loaded or refreshed.</p>
+<p>This class also takes care of initializing a `TodoList` instance and creating and rendering a `TodoView` instance for each todo item when the list is initially loaded or reset.</p>
 
 <div class="scrollable">
 ```
@@ -274,13 +297,13 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
         var list = this.todoList = new TodoList();
 
         // Update the display when a new item is added to the list, or when the
-        // entire list is refreshed.
+        // entire list is reset.
         list.after('add', this.add, this);
-        list.after('refresh', this.refresh, this);
+        list.after('reset', this.reset, this);
 
         // Re-render the stats in the footer whenever an item is added, removed
-        // or changed, or when the entire list is refreshed.
-        list.after(['add', 'refresh', 'remove', 'todoModel:doneChange'],
+        // or changed, or when the entire list is reset.
+        list.after(['add', 'reset', 'remove', 'todoModel:doneChange'],
                 this.render, this);
 
         // Load saved items from localStorage, if available.
@@ -382,8 +405,8 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
     },
 
     // Creates and renders views for every todo item in the list when the entire
-    // list is refreshed.
-    refresh: function (e) {
+    // list is reset.
+    reset: function (e) {
         var fragment = Y.one(Y.config.doc.createDocumentFragment());
 
         Y.Array.each(e.models, function (model) {
@@ -419,9 +442,12 @@ TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
         // clicked.
         '.todo-checkbox': {click: 'toggleDone'},
 
-        // When the text of this todo item is clicked, switch to edit mode to
-        // allow editing.
-        '.todo-content': {click: 'edit'},
+        // When the text of this todo item is clicked or focused, switch to edit
+        // mode to allow editing.
+        '.todo-content': {
+            click: 'edit',
+            focus: 'edit'
+        },
 
         // On the edit field, when enter is pressed or the field loses focus,
         // save the current value and switch out of edit mode.
@@ -507,12 +533,14 @@ TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
 <div class="scrollable">
 ```
 function LocalStorageSync(key) {
+    var localStorage;
+
     if (!key) {
         Y.error('No storage key specified.');
     }
 
-    if (!Y.config.win.localStorage) {
-        Y.error("localStorage isn't supported.");
+    if (Y.config.win.localStorage) {
+        localStorage = Y.config.win.localStorage;
     }
 
     // Try to retrieve existing data from localStorage, if there is any.

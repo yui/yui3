@@ -2,7 +2,7 @@
     "name"       : "dataschema",
     "displayName": "DataSchema",
     "description": "Applies a given schema against data of arbitrary formats, normalizing input such as JSON, XML, or delimited text into a JavaScript object with known properties. The value of the DataSchema Utility is in its ability to translate data from a variety of sources into a consistent format for consumption by components in a predictable manner.",
-    "author"     : ["lsmith", "jenny"],
+    "author"     : ["lsmith", "ericf"],
 
     "tags": ["utility", "dataschema"],
     "use" : ["dataschema"],

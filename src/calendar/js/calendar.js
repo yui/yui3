@@ -199,14 +199,14 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
   addYear : function (e) {
     this.set("date", ydate.addYears(this.get("date"), 1));
     e.halt();
-  },  
+  }
 },
 
 {
    /**
     * The identity of the widget.
     *
-    * @property Calendar.NAME
+    * @property NAME
     * @type String
     * @default 'Calendar'
     * @readOnly
@@ -219,7 +219,7 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
     * Static property used to define the default attribute configuration of
     * the Widget.
     *
-    * @property Calendar.ATTRS
+    * @property ATTRS
     * @type {Object}
     * @protected
     * @static

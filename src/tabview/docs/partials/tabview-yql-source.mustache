@@ -1,0 +1,93 @@
+<style>
+.example h3 {
+    color: #666;
+    margin: 0.5em 0;
+}
+</style>
+<h3>Today's Browser News</h3>
+<div id="demo"></div>
+<script type="text/javascript">
+YUI().use('tabview', 'yql', function(Y) {
+    // YQL plugin for Y.Tab instances
+    var TabYQL = function(config) {
+        this.init(config);
+    };
+
+    TabYQL.NS = 'yql'; // plugin namespace (e.g. "tab.yql.load(myQuery)");
+
+    TabYQL.prototype = {
+        init: function(config) {
+            if (config) {
+                this.tab = config.host;
+                this.query = config.query || this.query;
+                this.errorMsg = config.errorMsg || this.errorMsg;
+            }
+
+            if (this.tab) {
+                this.tab.after('selectedChange', Y.bind(this.afterSelectedChange, this));
+            }
+        },
+
+        loaded: false,
+        query: '',
+        errorMsg: 'There was a problem loading the content',
+        tab: null,
+
+        afterLoad: function(response) {
+            var results = (response.query) ? response.query.results.item : null,
+                content = '';
+
+            if (results) {
+                Y.each(results, function(fields) {
+                    content += '<li><a href="' + fields.link + '">' +
+                        fields.title + '</a></li>';
+                });
+
+                this.loaded = true;
+                content = '<ul>' + content + '</ul>'
+            } else {
+                content = this.errorMsg;
+            }
+
+            this.tab.set('content', content);
+        },
+
+        afterSelectedChange: function(e) {
+            // only load if not already loaded
+            if (!this.loaded) {
+                this.load(this.query, this.afterLoad);
+            }
+        },
+
+        load: function(query, afterLoad) {
+            Y.YQL(query, Y.bind(afterLoad, this));
+        }
+    };
+
+    var tabview = new Y.TabView(),
+        feeds = {
+            Chrome: 'chrome+browser',
+            Firefox: 'firefox+browser',
+            Safari: 'safari+browser',
+            Explorer: 'explorer+browser',
+            Opera: 'opera+browser'
+        };
+
+    Y.each(feeds, function(feed, label) {
+        var tab = new Y.Tab({
+            label: label,
+            content: 'loading...'
+        });
+
+        tab.plug(TabYQL, {
+            query: 'select title, link from rss where ' +
+                'url="http://search.news.yahoo.com/rss?p=' +
+                feed + '"'
+        });
+
+        tabview.add(tab);
+    });
+
+    tabview.render('#demo');
+});
+</script>

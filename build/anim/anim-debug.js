@@ -200,30 +200,36 @@ YUI.add('anim-base', function(Y) {
         },
 
         /**
-         * The starting values for the animated properties. 
+         * The starting values for the animated properties.
+         *
          * Fields may be strings, numbers, or functions.
          * If a function is used, the return value becomes the from value.
-         * If no from value is specified, the DEFAULT_GETTER will be used. 
+         * If no from value is specified, the DEFAULT_GETTER will be used.
+         * Supports any unit, provided it matches the "to" (or default)
+         * unit (e.g. `{width: '10em', color: 'rgb(0, 0 0)', borderColor: '#ccc'}`).
+         *
+         * If using the default ('px' for length-based units), the unit may be omitted
+         * (e.g. `{width: 100}, borderColor: 'ccc'}`, which defaults to pixels
+         * and hex, respectively).
+         *
          * @attribute from
          * @type Object
-         * supports any unit, provided it matches the "to" (or default)
-         * unit (e.g. "{width: 10em', color: 'rgb(0, 0 0)', borderColor: '#ccc'}".
-         * If using the default ('px' for length-based units), the unit may be omitted  (
-         * (e.g. "{width: 100}, borderColor: 'ccc'}", which defaults to pixels 
-         * and hex, respectively).
          */
         from: {},
 
         /**
-         * The ending values for the animated properties. 
+         * The ending values for the animated properties.
+         *
          * Fields may be strings, numbers, or functions.
+         * Supports any unit, provided it matches the "from" (or default)
+         * unit (e.g. `{width: '50%', color: 'red', borderColor: '#ccc'}`).
+         *
+         * If using the default ('px' for length-based units), the unit may be omitted
+         * (e.g. `{width: 100, borderColor: 'ccc'}`, which defaults to pixels
+         * and hex, respectively).
+         *
          * @attribute to
          * @type Object
-         * supports any unit, provided it matches the "from" (or default)
-         * unit (e.g. "{width: '50%', color: 'red', borderColor: '#ccc'}".
-         * If using the default ('px' for length-based units), the unit may be omitted (
-         * (e.g. "{width: 100}, borderColor: 'ccc'}", which defaults to pixels 
-         * and hex, respectively).
          */
         to: {},
 
@@ -1209,5 +1215,5 @@ Y.Anim.behaviors.xy = {
 }, '@VERSION@' ,{requires:['anim-base', 'node-screen']});
 
 
-YUI.add('anim', function(Y){}, '@VERSION@' ,{use:['anim-base', 'anim-color', 'anim-curve', 'anim-easing', 'anim-node-plugin', 'anim-scroll', 'anim-xy'], skinnable:false});
+YUI.add('anim', function(Y){}, '@VERSION@' ,{skinnable:false, use:['anim-base', 'anim-color', 'anim-curve', 'anim-easing', 'anim-node-plugin', 'anim-scroll', 'anim-xy']});
 

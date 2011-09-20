@@ -1,9 +1,10 @@
 /**
  * TimeAxis manages time data on an axis.
  *
- * @param {Object} config (optional) Configuration parameters for the Chart.
+ * @module charts
  * @class TimeAxis
  * @constructor
+ * @param {Object} config (optional) Configuration parameters for the Chart.
  * @extends AxisType
  */
 function TimeAxis(config)
@@ -29,7 +30,7 @@ TimeAxis.ATTRS =
         getter: function()
         {
             var max = this._getNumber(this._setMaximum);
-            return (Y.Lang.isNumber(max));
+            return (Y_Lang.isNumber(max));
         }
     },
 
@@ -47,7 +48,7 @@ TimeAxis.ATTRS =
         getter: function()
         {
             var min = this._getNumber(this._setMinimum);
-            return (Y.Lang.isNumber(min));
+            return (Y_Lang.isNumber(min));
         }
     },
 
@@ -61,7 +62,7 @@ TimeAxis.ATTRS =
         getter: function ()
         {
             var max = this._getNumber(this._setMaximum);
-            if(!Y.Lang.isNumber(max))
+            if(!Y_Lang.isNumber(max))
             {
                 max = this._getNumber(this.get("dataMaximum"));
             }
@@ -84,7 +85,7 @@ TimeAxis.ATTRS =
         getter: function ()
         {
             var min = this._getNumber(this._setMinimum);
-            if(!Y.Lang.isNumber(min)) 
+            if(!Y_Lang.isNumber(min)) 
             {
                 min = this._getNumber(this.get("dataMinimum"));
             }
@@ -198,20 +199,20 @@ Y.extend(TimeAxis, Y.AxisType, {
         for(; i < len; ++i)
         {
             obj = data[i][key];
-            if(Y.Lang.isDate(obj))
+            if(Y_Lang.isDate(obj))
             {   
                 val = obj.valueOf();
             }
             else
             {
                 val = new Date(obj);
-                if(Y.Lang.isDate(val))
+                if(Y_Lang.isDate(val))
                 {
                     val = val.valueOf();
                 }
-                else if(!Y.Lang.isNumber(obj))
+                else if(!Y_Lang.isNumber(obj))
                 {
-                    if(Y.Lang.isNumber(parseFloat(obj)))
+                    if(Y_Lang.isNumber(parseFloat(obj)))
                     {
                         val = parseFloat(obj);
                     }
@@ -253,20 +254,20 @@ Y.extend(TimeAxis, Y.AxisType, {
         for(i = 0; i < len; ++i)
         {
             obj = dv[i][key];
-            if(Y.Lang.isDate(obj))
+            if(Y_Lang.isDate(obj))
             {   
                 val = obj.valueOf();
             }
             else
             {
                 val = new Date(obj);
-                if(Y.Lang.isDate(val))
+                if(Y_Lang.isDate(val))
                 {
                     val = val.valueOf();
                 }
-                else if(!Y.Lang.isNumber(obj))
+                else if(!Y_Lang.isNumber(obj))
                 {
-                    if(Y.Lang.isNumber(parseFloat(obj)))
+                    if(Y_Lang.isNumber(parseFloat(obj)))
                     {
                         val = parseFloat(obj);
                     }
@@ -300,11 +301,11 @@ Y.extend(TimeAxis, Y.AxisType, {
      */
     _getNumber: function(val)
     {
-        if(Y.Lang.isDate(val))
+        if(Y_Lang.isDate(val))
         {
             val = val.valueOf();
         }
-        else if(!Y.Lang.isNumber(val) && val)
+        else if(!Y_Lang.isNumber(val) && val)
         {
             val = new Date(val).valueOf();
         }

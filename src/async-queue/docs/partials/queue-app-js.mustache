@@ -68,38 +68,44 @@ var MyApp = {
     _renderNav : function () {
         var nav = MyApp.nodes.nav;
         nav.append(
-            '<ul>'+
-                '<li><a href="#">Nav Lorem</a></li>'+
-                '<li><a href="#">Nav Ipsum</a></li>'+
-                '<li><a href="#">Nav Dolor</a></li>'+
-                '<li><a href="#">Nav Sit</a></li>'+
+            '<ul class="yui3-g">'+
+                '<li class="yui3-u-1-4"><a href="#">Nav Lorem</a></li>'+
+                '<li class="yui3-u-1-4"><a href="#">Nav Ipsum</a></li>'+
+                '<li class="yui3-u-1-4"><a href="#">Nav Dolor</a></li>'+
+                '<li class="yui3-u-1-4"><a href="#">Nav Sit</a></li>'+
             '</ul>');
 
         nav.transition({
             top: 0,
             duration: .3
         });
+
+        // Stub some navigation behavior for the example
+        nav.delegate('click', function (e) {
+            e.preventDefault();
+            MyApp.nodes.content
+                .setContent('<p>Clicked on ' + this.get('text') + '</p>');
+        }, 'a');
     },
 
     _renderContent : function () {
-        var content = MyApp.nodes.content;
-
-        content.append('<p>[ App content here ]</p>')
-               .transition({
-                   opacity: 1,
-                   duration: .8
-               });
+        MyApp.nodes.content
+            .setContent('<p>[ App content here ]</p>')
+            .transition({
+                opacity: 1,
+                duration: .8
+            });
 
         MyApp.setStatus('App initialized',false);
     }
 };
 
-Y.on('click',function (e) {
+Y.one('#init').on('click',function (e) {
     e.preventDefault();
     this.set('text','Re-initialize Application');
 
     MyApp.render('#demo');
-},'#init');
+});
 
 // expose the example structure
 YUI.example = { MyApp : MyApp };

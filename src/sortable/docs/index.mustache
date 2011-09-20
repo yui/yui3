@@ -5,7 +5,7 @@
 {{>getting-started}}
 
 
-<h4 id="basic">A Basic Sortable List</h4>
+<h2 id="basic">A Basic Sortable List</h2>
 <p>The most common use case of a sortable list is an Unordered List.</p>
 <p>Below is the sample markup used to create a `container` and a list.</p>
 
@@ -39,13 +39,15 @@ YUI().use('sortable', function(Y) {
 });
 ```
 
-<h4 id="events">Events</h4>
+<p><strong>Note:</strong> `Sortable` does not auto find your drop target items, if you change the `nodes` under the hood (add or remove) you need to call `sortable.sync()` to manage them.</p>
+
+<h2 id="events">Events</h2>
 
 <p>Sortable uses `DD.Delegate` under the hood to handle the Drag and Drop operations. It sets itself as the `bubbleTarget` of the `Delegate` instance, so all `DD`-related events are bubbled to it.</p>
 <p>For more information on `DD` related events, see the <a href="../dd/#events">events section on the Drag and Drop page</a>.</p>
 
 
-<h4 id="joining">Joining Lists</h4>
+<h2 id="joining">Joining Lists</h2>
 
 <p>By default, a `Sortable` list can only interact with itself; you can't drag from one `Sortable` list to another. But a `Sortable` instance can be configured to be joined with another `Sortable` instance.</p>
 <p>There are four ways a `Sortable` list can be joined: `inner`, `outer`, `full` and `none` (`none` is the default).</p>
@@ -125,7 +127,7 @@ YUI().use('sortable', function(Y) {
 });
 ```
 
-<h4 id="plugins">Using DD Plugins</h4>
+<h2 id="plugins">Using DD Plugins</h2>
 <p>The `DD.Delegate` object bound to a `Sortable` instance is exposed to allow you to easily attach plugins to a `Sortable` instance.</p>
 <p>The `Sortable` instance has a `delegate` namespace, which is a reference to the internal `DD.Delegate` instance.</p>
 

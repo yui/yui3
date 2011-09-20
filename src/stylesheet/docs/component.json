@@ -5,7 +5,7 @@
 
     "author": "lsmith",
 
-    "tags": ["utility", "stylesheet", "css"],
+    "tags": ["utility", "stylesheet"],
     "use": ["stylesheet"],
 
     "examples": [

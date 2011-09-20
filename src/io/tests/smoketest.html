@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+</head>
+<body class="yui3-skin-sam">
+
+<script src="../../../build/yui/yui.js"></script>
+<script>
+YUI({
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+    allowRollup: false,
+    useBrowserConsole: false
+}).use('console', 'test', 'io-base', function (Y) {
+    var myConsole = new Y.Console().render(),
+        smoketest = new Y.Test.Case({
+            name: "IO Smoke Test",
+            "Y.IO should not be null": function () {
+                var io = new Y.IO();
+                Y.Assert.areNotSame(io, null);
+            }
+        }),
+        suite = new Y.Test.Suite({name:"IO Smoke Test Suite"});
+    suite.add(smoketest);
+    Y.Test.Runner.add(suite);
+    Y.Test.Runner.run();
+});
+</script>
+
+</body>
+</html>

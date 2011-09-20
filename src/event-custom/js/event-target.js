@@ -20,9 +20,7 @@
  * @param opts a configuration object
  * @config emitFacade {boolean} if true, all events will emit event
  * facade payloads by default (default false)
- * @config prefix {string} the prefix to apply to non-prefixed event names
- * @config chain {boolean} if true, on/after/detach return the host to allow
- * chaining, otherwise they return an EventHandle (default false)
+ * @config prefix {String} the prefix to apply to non-prefixed event names
  */
 
 var L = Y.Lang,
@@ -132,11 +130,12 @@ ET.prototype = {
      * This is the equivalent to <code>on</code> except the
      * listener is immediatelly detached when it is executed.
      * @method once
-     * @param type    {string}   The type of the event
-     * @param fn {Function} The callback
-     * @param context {object} optional execution context.
-     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber
-     * @return the event target or a detach handle per 'chain' config
+     * @param {String} type The name of the event
+     * @param {Function} fn The callback to execute in response to the event
+     * @param {Object} [context] Override `this` object in callback
+     * @param {Any} [arg*] 0..n additional arguments to supply to the subscriber
+     * @return {EventHandle} A subscription handle capable of detaching the
+     *                       subscription
      */
     once: function() {
         var handle = this.on.apply(this, arguments);
@@ -153,11 +152,12 @@ ET.prototype = {
      * This is the equivalent to <code>after</code> except the
      * listener is immediatelly detached when it is executed.
      * @method onceAfter
-     * @param type    {string}   The type of the event
-     * @param fn {Function} The callback
-     * @param context {object} optional execution context.
-     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber
-     * @return the event target or a detach handle per 'chain' config
+     * @param {String} type The name of the event
+     * @param {Function} fn The callback to execute in response to the event
+     * @param {Object} [context] Override `this` object in callback
+     * @param {Any} [arg*] 0..n additional arguments to supply to the subscriber
+     * @return {EventHandle} A subscription handle capable of detaching that
+     *                       subscription
      */
     onceAfter: function() {
         var args = YArray(arguments, 0, true);
@@ -173,8 +173,8 @@ ET.prototype = {
      * to include the prefix one is supplied or the event target
      * is configured with a default prefix.
      * @method parseType
-     * @param {string} type the type
-     * @param {string} [pre=this._yuievt.config.prefix] the prefix
+     * @param {String} type the type
+     * @param {String} [pre=this._yuievt.config.prefix] the prefix
      * @since 3.3.0
      * @return {Array} an array containing:
      *  * the detach category, if supplied,
@@ -187,13 +187,33 @@ ET.prototype = {
     },
 
     /**
-     * Subscribe to a custom event hosted by this object
+     * Subscribe a callback function to a custom event fired by this object or
+     * from an object that bubbles its events to this object.
+     *
+     * Callback functions for events published with `emitFacade = true` will
+     * receive an `EventFacade` as the first argument (typically named "e").
+     * These callbacks can then call `e.preventDefault()` to disable the
+     * behavior published to that event's `defaultFn`.  See the `EventFacade`
+     * API for all available properties and methods. Subscribers to
+     * non-`emitFacade` events will receive the arguments passed to `fire()`
+     * after the event name.
+     *
+     * To subscribe to multiple events at once, pass an object as the first
+     * argument, where the key:value pairs correspond to the eventName:callback,
+     * or pass an array of event names as the first argument to subscribe to
+     * all listed events with the same callback.
+     *
+     * Returning `false` from a callback is supported as an alternative to
+     * calling `e.preventDefault(); e.stopPropagation();`.  However, it is
+     * recommended to use the event methods whenever possible.
+     *
      * @method on
-     * @param type    {string}   The type of the event
-     * @param fn {Function} The callback
-     * @param context {object} optional execution context.
-     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber
-     * @return the event target or a detach handle per 'chain' config
+     * @param {String} type The name of the event
+     * @param {Function} fn The callback to execute in response to the event
+     * @param {Object} [context] Override `this` object in callback
+     * @param {Any} [arg*] 0..n additional arguments to supply to the subscriber
+     * @return {EventHandle} A subscription handle capable of detaching that
+     *                       subscription
      */
     on: function(type, fn, context) {
 
@@ -444,7 +464,7 @@ Y.log('EventTarget unsubscribe() is deprecated, use detach()', 'warn', 'deprecat
      * is not specified, all listeners from all hosted custom events will
      * be removed.
      * @method detachAll
-     * @param type {string}   The type, or name of the event
+     * @param type {String}   The type, or name of the event
      */
     detachAll: function(type) {
         return this.detach(type);
@@ -455,7 +475,7 @@ Y.log('EventTarget unsubscribe() is deprecated, use detach()', 'warn', 'deprecat
      * is not specified, all listeners from all hosted custom events will
      * be removed.
      * @method unsubscribeAll
-     * @param type {string}   The type, or name of the event
+     * @param type {String}   The type, or name of the event
      * @deprecated use detachAll
      */
     unsubscribeAll: function() {
@@ -470,7 +490,7 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      *
      * @method publish
      *
-     * @param type {string} the type, or name of the event
+     * @param type {String} the type, or name of the event
      * @param opts {object} optional config params.  Valid properties are:
      *
      *  <ul>
@@ -690,8 +710,8 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      * Returns the custom event of the provided type has been created, a
      * falsy value otherwise
      * @method getEvent
-     * @param type {string} the type, or name of the event
-     * @param prefixed {string} if true, the type is prefixed already
+     * @param type {String} the type, or name of the event
+     * @param prefixed {String} if true, the type is prefixed already
      * @return {CustomEvent} the custom event or null
      */
     getEvent: function(type, prefixed) {
@@ -709,12 +729,14 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      * supplied callback will execute after any listeners add
      * via the subscribe method, and after the default function,
      * if configured for the event, has executed.
+     *
      * @method after
-     * @param type    {string}   The type of the event
-     * @param fn {Function} The callback
-     * @param context {object} optional execution context.
-     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber
-     * @return the event target or a detach handle per 'chain' config
+     * @param {String} type The name of the event
+     * @param {Function} fn The callback to execute in response to the event
+     * @param {Object} [context] Override `this` object in callback
+     * @param {Any} [arg*] 0..n additional arguments to supply to the subscriber
+     * @return {EventHandle} A subscription handle capable of detaching the
+     *                       subscription
      */
     after: function(type, fn) {
 
@@ -781,98 +803,123 @@ Y.Global = YUI.Env.globalEvents;
 // @TODO implement a global namespace function on Y.Global?
 
 /**
- * <code>YUI</code>'s <code>on</code> method is a unified interface for subscribing to
- * most events exposed by YUI.  This includes custom events, DOM events, and
- * function events.  <code>detach</code> is also provided to remove listeners
- * serviced by this function.
- *
- * The signature that <code>on</code> accepts varies depending on the type
- * of event being consumed.  Refer to the specific methods that will
- * service a specific request for additional information about subscribing
- * to that type of event.
- *
- * <ul>
- * <li>Custom events.  These events are defined by various
- * modules in the library.  This type of event is delegated to
- * <code>EventTarget</code>'s <code>on</code> method.
- *   <ul>
- *     <li>The type of the event</li>
- *     <li>The callback to execute</li>
- *     <li>An optional context object</li>
- *     <li>0..n additional arguments to supply the callback.</li>
- *   </ul>
- *   Example:
- *   <code>Y.on('drag:drophit', function() { // start work });</code>
- * </li>
- * <li>DOM events.  These are moments reported by the browser related
- * to browser functionality and user interaction.
- * This type of event is delegated to <code>Event</code>'s
- * <code>attach</code> method.
- *   <ul>
- *     <li>The type of the event</li>
- *     <li>The callback to execute</li>
- *     <li>The specification for the Node(s) to attach the listener
- *     to.  This can be a selector, collections, or Node/Element
- *     refereces.</li>
- *     <li>An optional context object</li>
- *     <li>0..n additional arguments to supply the callback.</li>
- *   </ul>
- *   Example:
- *   <code>Y.on('click', function(e) { // something was clicked }, '#someelement');</code>
- * </li>
- * <li>Function events.  These events can be used to react before or after a
- * function is executed.  This type of event is delegated to <code>Event.Do</code>'s
- * <code>before</code> method.
- *   <ul>
- *     <li>The callback to execute</li>
- *     <li>The object that has the function that will be listened for.</li>
- *     <li>The name of the function to listen for.</li>
- *     <li>An optional context object</li>
- *     <li>0..n additional arguments to supply the callback.</li>
- *   </ul>
- *   Example <code>Y.on(function(arg1, arg2, etc) { // obj.methodname was executed }, obj 'methodname');</code>
- * </li>
- * </ul>
- *
- * <code>on</code> corresponds to the moment before any default behavior of
- * the event.  <code>after</code> works the same way, but these listeners
- * execute after the event's default behavior.  <code>before</code> is an
- * alias for <code>on</code>.
- *
- * @method on
- * @param type event type (this parameter does not apply for function events)
- * @param fn the callback
- * @param context optionally change the value of 'this' in the callback
- * @param args* 0..n additional arguments to pass to the callback.
- * @return the event target or a detach handle per 'chain' config
- * @for YUI
- */
+`Y.on()` can do many things:
 
- /**
-  * Listen for an event one time.  Equivalent to <code>on</code>, except that
-  * the listener is immediately detached when executed.
-  * @see on
-  * @method once
-  * @param type event type (this parameter does not apply for function events)
-  * @param fn the callback
-  * @param context optionally change the value of 'this' in the callback
-  * @param args* 0..n additional arguments to pass to the callback.
-  * @return the event target or a detach handle per 'chain' config
-  * @for YUI
-  */
+<ul>
+    <li>Subscribe to custom events `publish`ed and `fire`d from Y</li>
+    <li>Subscribe to custom events `publish`ed with `broadcast` 1 or 2 and
+        `fire`d from any object in the YUI instance sandbox</li>
+    <li>Subscribe to DOM events</li>
+    <li>Subscribe to the execution of a method on any object, effectively
+    treating that method as an event</li>
+</ul>
+
+For custom event subscriptions, pass the custom event name as the first argument and callback as the second. The `this` object in the callback will be `Y` unless an override is passed as the third argument.
+
+    Y.on('io:complete', function () {
+        Y.MyApp.updateStatus('Transaction complete');
+    });
+
+To subscribe to DOM events, pass the name of a DOM event as the first argument
+and a CSS selector string as the third argument after the callback function.
+Alternately, the third argument can be a `Node`, `NodeList`, `HTMLElement`,
+array, or simply omitted (the default is the `window` object).
+
+    Y.on('click', function (e) {
+        e.preventDefault();
+
+        // proceed with ajax form submission
+        var url = this.get('action');
+        ...
+    }, '#my-form');
+
+The `this` object in DOM event callbacks will be the `Node` targeted by the CSS
+selector or other identifier.
+
+`on()` subscribers for DOM events or custom events `publish`ed with a
+`defaultFn` can prevent the default behavior with `e.preventDefault()` from the
+event object passed as the first parameter to the subscription callback.
+
+To subscribe to the execution of an object method, pass arguments corresponding to the call signature for 
+<a href="../classes/Do.html#methods_before">`Y.Do.before(...)`</a>.
+
+NOTE: The formal parameter list below is for events, not for function
+injection.  See `Y.Do.before` for that signature.
+
+@method on
+@param {String} type DOM or custom event name
+@param {Function} fn The callback to execute in response to the event
+@param {Object} [context] Override `this` object in callback
+@param {Any} [arg*] 0..n additional arguments to supply to the subscriber
+@return {EventHandle} A subscription handle capable of detaching the
+                      subscription
+@see Do.before
+@for YUI
+**/
 
 /**
- * after() is a unified interface for subscribing to
- * most events exposed by YUI.  This includes custom events,
- * DOM events, and AOP events.  This works the same way as
- * the on() function, only it operates after any default
- * behavior for the event has executed. @see <code>on</code> for more
- * information.
- * @method after
- * @param type event type (this parameter does not apply for function events)
- * @param fn the callback
- * @param context optionally change the value of 'this' in the callback
- * @param args* 0..n additional arguments to pass to the callback.
- * @return the event target or a detach handle per 'chain' config
- * @for YUI
- */
+Listen for an event one time.  Equivalent to `on()`, except that
+the listener is immediately detached when executed.
+
+See the <a href="#methods_on">`on()` method</a> for additional subscription
+options.
+
+@see on
+@method once
+@param {String} type DOM or custom event name
+@param {Function} fn The callback to execute in response to the event
+@param {Object} [context] Override `this` object in callback
+@param {Any} [arg*] 0..n additional arguments to supply to the subscriber
+@return {EventHandle} A subscription handle capable of detaching the
+                      subscription
+@for YUI
+**/
+
+/**
+Listen for an event one time.  Equivalent to `once()`, except, like `after()`,
+the subscription callback executes after all `on()` subscribers and the event's
+`defaultFn` (if configured) have executed.  Like `after()` if any `on()` phase
+subscriber calls `e.preventDefault()`, neither the `defaultFn` nor the `after()`
+subscribers will execute.
+
+The listener is immediately detached when executed.
+
+See the <a href="#methods_on">`on()` method</a> for additional subscription
+options.
+
+@see once
+@method onceAfter
+@param {String} type The custom event name
+@param {Function} fn The callback to execute in response to the event
+@param {Object} [context] Override `this` object in callback
+@param {Any} [arg*] 0..n additional arguments to supply to the subscriber
+@return {EventHandle} A subscription handle capable of detaching the
+                      subscription
+@for YUI
+**/
+
+/**
+Like `on()`, this method creates a subscription to a custom event or to the
+execution of a method on an object.
+
+For events, `after()` subscribers are executed after the event's
+`defaultFn` unless `e.preventDefault()` was called from an `on()` subscriber.
+
+See the <a href="#methods_on">`on()` method</a> for additional subscription
+options.
+
+NOTE: The subscription signature shown is for events, not for function
+injection.  See <a href="../classes/Do.html#methods_after">`Y.Do.after`</a>
+for that signature.
+
+@see on
+@see Do.after
+@method after
+@param {String} type The custom event name
+@param {Function} fn The callback to execute in response to the event
+@param {Object} [context] Override `this` object in callback
+@param {Any} [args*] 0..n additional arguments to supply to the subscriber
+@return {EventHandle} A subscription handle capable of detaching the
+                      subscription
+@for YUI
+**/

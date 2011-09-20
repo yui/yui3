@@ -1,0 +1,141 @@
+<div class="intro">
+  <p>
+    Displayed here are some basic triggers of the ImageLoader Utility. 
+    Each image group has an assigned action that will make the group of image(s) appear.
+  </p>
+</div>
+
+<style>  
+  #group1, #group2, #group3, #group4 { border-bottom: dotted 2px #ccc;}
+  .yuiLogo { width:117px; height: 52px; border:1px solid #888; margin:5px;}
+</style>
+
+
+<div id="group1">
+  <h2>Group 1: Two second delay</h2>
+  <p>This will appear two seconds after page-load.</p>
+  <div class='example'>
+    <div class='yuiLogo' id='delay' title='Group 1: 2 sec limit'></div>
+  </div>
+  
+  <h5>HTML</h5>
+  ```
+  <div id='delay' title='Group 1: 2 sec limit'></div>
+  ```
+  
+  <h5>JavaScript</h5>
+  ```
+	var delayGroup = new Y.ImgLoadGroup({ timeLimit: 2 });
+	delayGroup.registerImage({ domId: 'delay', bgUrl: '{{componentAssets}}/yui-logo.png', isPng: true });
+  ```
+</div>
+
+<div id="group2">
+  <h2>Group 2: Window scroll event</h2>
+  <p>This will appear when the scroll event is fired.</p>
+  <div class='example'>
+  	<div class='yuiLogo' title='Group 2: scroll'>
+  		<img id='scroll' style='visibility:hidden;' />
+  	</div>
+	</div>
+	
+  <h5>HTML</h5>
+  ```
+  <img id='scroll' style='visibility:hidden;' />
+  ```
+  
+  <h5>JavaScript</h5>
+  ```
+  var scrollGroup = new Y.ImgLoadGroup();
+  scrollGroup.registerImage({ domId: 'scroll', srcUrl: '{{componentAssets}}/yui-logo.png', isPng: true, setVisible: true });
+  scrollGroup.addTrigger(window, 'scroll');
+  ```
+</div>
+
+  <div id="group3">
+    <h2>Group 3: Mouse over</h2>
+    <p>This will appear when you mouse over it.</p>
+    <div class="example">
+      <div class='yuiLogo' id='mouseover' title='Group 3: mouseover'></div>
+    </div>
+    
+    <h5>HTML</h5>
+    ```
+    <div id='mouseover' title='Group 3: mouseover'></div>
+    ```
+    
+    <h5>JavaScript</h5>
+    ```
+  	var mouseoverGroup = new Y.ImgLoadGroup();
+  	mouseoverGroup.registerImage({ domId: 'scroll', srcUrl: '{{componentAssets}}/yui-logo.png', isPng: true, setVisible: true });
+  	mouseoverGroup.addTrigger(window, 'scroll');
+    ```
+  </div>
+
+  <div id="group4">
+    <h2>Group 4: Onclick</h2>
+    <p>These will appear when either one is clicked.</p>
+    <div class="example">
+  	  <div class='yuiLogo' id='duo1' title='Group 4: onclick'></div>  
+      <div class='yuiLogo' id='duo2' title='Group 4: onclick'></div>
+    </div>
+    
+    <h5>HTML</h5>
+    ```
+    <div id='duo1' title='Group 4: onclick'></div>  
+    <div id='duo2' title='Group 4: onclick'></div>
+    ```
+    
+    <h5>JavaScript</h5>
+    ```
+  	var clickGroup = new Y.ImgLoadGroup();
+  	clickGroup.registerImage({ domId: 'duo1', bgUrl: '{{componentAssets}}/yui-logo.png', isPng: true });
+  	clickGroup.registerImage({ domId: 'duo2', bgUrl: '{{componentAssets}}/yui-logo.png', isPng: true });
+  	clickGroup.addTrigger('#duo2', 'click').addTrigger('#duo1', 'click');
+    ```
+  </div>
+  
+
+
+<script>
+
+  YUI().use("imageloader", function(Y) {
+  
+  	var delayGroup = new Y.ImgLoadGroup({ timeLimit: 2 });
+  	delayGroup.registerImage({ domId: 'delay', bgUrl: '{{componentAssets}}/yui-logo.png', isPng: true });
+
+  	var scrollGroup = new Y.ImgLoadGroup();
+  	scrollGroup.addTrigger(window, 'scroll');
+  	scrollGroup.registerImage({ domId: 'scroll', srcUrl: '{{componentAssets}}/yui-logo.png', isPng: true, setVisible: true });
+
+  	var mouseoverGroup = new Y.ImgLoadGroup();
+  	mouseoverGroup.addTrigger('#mouseover', 'mouseover');
+  	mouseoverGroup.registerImage({ domId: 'mouseover', bgUrl: '{{componentAssets}}/yui-logo.png', isPng: true });
+
+  	var clickGroup = new Y.ImgLoadGroup();
+  	clickGroup.addTrigger('#duo2', 'click').addTrigger('#duo1', 'click');
+  	clickGroup.registerImage({ domId: 'duo1', bgUrl: '{{componentAssets}}/yui-logo.png', isPng: true });
+  	clickGroup.registerImage({ domId: 'duo2', bgUrl: '{{componentAssets}}/yui-logo.png', isPng: true });
+
+  });
+
+</script>
+
+<!-- 
+<h2>Basic Features of the ImageLoader Utility</h2>
+
+<p>
+  The ImageLoader Utility allows you to define the conditions under which images are loaded into the page. 
+  This example demonstrates attaching some simple triggers to images to establish this load control.
+</p>
+
+<p>
+  The HTML used for the image needs little to no modification. 
+  Simply make sure the <code>&lt;img&gt;</code> elements have <code>id</code> attributes, eliminate the <code>src</code> attribute 
+  from <code>&lt;img&gt;</code> elements, and optionally set their <code>visibility</code> style to "hidden" .
+  
+  ```
+  <img id='image' style='visibility:hidden;' />
+  ```
+</p>
+-->

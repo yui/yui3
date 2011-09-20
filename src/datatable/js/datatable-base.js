@@ -3,6 +3,7 @@
  * displaying tabular data across A-grade browsers.
  *
  * @module datatable
+ * @main datatable
  */
 
 /**
@@ -155,14 +156,14 @@ Y.extend(DTBase, Y.Widget, {
     * @property tdTemplate
     * @description Tokenized markup template for TD node creation.
     * @type String
-    * @default '<td headers="{headers}"><div class="'+CLASS_LINER+'">{value}</div></td>'
+    * @default '<td headers="{headers}" class="{classnames}"><div class="yui3-datatable-liner">{value}</div></td>'
     */
     tdTemplate: TEMPLATE_TD,
     
     /**
     * @property _theadNode
     * @description Pointer to THEAD node.
-    * @type Y.Node
+    * @type {Node}
     * @private
     */
     _theadNode: null,
@@ -170,7 +171,7 @@ Y.extend(DTBase, Y.Widget, {
     /**
     * @property _tbodyNode
     * @description Pointer to TBODY node.
-    * @type Y.Node
+    * @type {Node}
     * @private
     */
     _tbodyNode: null,
@@ -178,7 +179,7 @@ Y.extend(DTBase, Y.Widget, {
     /**
     * @property _msgNode
     * @description Pointer to message display node.
-    * @type Y.Node
+    * @type {Node}
     * @private
     */
     _msgNode: null,
@@ -192,7 +193,7 @@ Y.extend(DTBase, Y.Widget, {
     * @method _setColumnset
     * @description Converts Array to Y.Columnset.
     * @param columns {Array | Y.Columnset}
-    * @returns Y.Columnset
+    * @return {Columnset}
     * @private
     */
     _setColumnset: function(columns) {
@@ -213,8 +214,8 @@ Y.extend(DTBase, Y.Widget, {
     /**
     * @method _setRecordset
     * @description Converts Array to Y.Recordset.
-    * @param records {Array | Y.Recordset}
-    * @returns Y.Recordset
+    * @param records {Array | Recordset}
+    * @return {Recordset}
     * @private
     */
     _setRecordset: function(rs) {
@@ -322,9 +323,9 @@ Y.extend(DTBase, Y.Widget, {
     * Creates and attaches TABLE element to given container.
     *
     * @method _addTableNode
-    * @param containerNode {Y.Node} Parent node.
+    * @param containerNode {Node} Parent node.
     * @protected
-    * @returns Y.Node
+    * @return {Node}
     */
     _addTableNode: function(containerNode) {
         if (!this._tableNode) {
@@ -337,9 +338,9 @@ Y.extend(DTBase, Y.Widget, {
     * Creates and attaches COLGROUP element to given TABLE.
     *
     * @method _addColgroupNode
-    * @param tableNode {Y.Node} Parent node.
+    * @param tableNode {Node} Parent node.
     * @protected
-    * @returns Y.Node
+    * @return {Node}
     */
     _addColgroupNode: function(tableNode) {
         // Add COLs to DOCUMENT FRAGMENT
@@ -363,9 +364,9 @@ Y.extend(DTBase, Y.Widget, {
     * Creates and attaches THEAD element to given container.
     *
     * @method _addTheadNode
-    * @param tableNode {Y.Node} Parent node.
+    * @param tableNode {Node} Parent node.
     * @protected
-    * @returns Y.Node
+    * @return {Node}
     */
     _addTheadNode: function(tableNode) {
         if(tableNode) {
@@ -378,9 +379,9 @@ Y.extend(DTBase, Y.Widget, {
     * Creates and attaches TBODY element to given container.
     *
     * @method _addTbodyNode
-    * @param tableNode {Y.Node} Parent node.
+    * @param tableNode {Node} Parent node.
     * @protected
-    * @returns Y.Node
+    * @return {Node}
     */
     _addTbodyNode: function(tableNode) {
         this._tbodyNode = tableNode.appendChild(Ycreate(TEMPLATE_TBODY));
@@ -391,9 +392,9 @@ Y.extend(DTBase, Y.Widget, {
     * Creates and attaches message display element to given container.
     *
     * @method _addMessageNode
-    * @param tableNode {Y.Node} Parent node.
+    * @param tableNode {Node} Parent node.
     * @protected
-    * @returns Y.Node
+    * @return {Node}
     */
     _addMessageNode: function(tableNode) {
         this._msgNode = tableNode.insertBefore(Ycreate(TEMPLATE_MSG), this._tbodyNode);
@@ -404,9 +405,9 @@ Y.extend(DTBase, Y.Widget, {
     * Creates and attaches CAPTION element to given container.
     *
     * @method _addCaptionNode
-    * @param tableNode {Y.Node} Parent node.
+    * @param tableNode {Node} Parent node.
     * @protected
-    * @returns Y.Node
+    * @return {Node}
     */
     _addCaptionNode: function(tableNode) {
         this._captionNode = Y.Node.create('<caption></caption>');
@@ -427,10 +428,10 @@ Y.extend(DTBase, Y.Widget, {
     bindUI: function() {
         this.after({
             columnsetChange: this._afterColumnsetChange,
-            recordsetChange: this._afterRecordsetChange,
             summaryChange  : this._afterSummaryChange,
             captionChange  : this._afterCaptionChange,
-            "recordset:recordsChange": this._afterRecordsChange
+            recordsetChange: this._afterRecordsChange,
+            "recordset:tableChange": this._afterRecordsChange
         });
     },
     
@@ -489,8 +490,8 @@ Y.extend(DTBase, Y.Widget, {
      */
     _uiSetCaption: function(val) {
         var caption = this._captionNode,
-            parent  = caption.get('parentNode'),
-            method  = val ? (!parent && 'prepend') : (parent && 'removeChild');
+            inDoc   = caption.inDoc(),
+            method  = val ? (!inDoc && 'prepend') : (inDoc && 'removeChild');
 
         caption.setContent(val || '');
 
@@ -510,7 +511,7 @@ Y.extend(DTBase, Y.Widget, {
      * Updates THEAD.
      *
      * @method _uiSetColumnset
-     * @param cs {Y.Columnset} New Columnset.
+     * @param cs {Columnset} New Columnset.
      * @protected
      */
     _uiSetColumnset: function(cs) {
@@ -528,7 +529,11 @@ Y.extend(DTBase, Y.Widget, {
 
         // Iterate tree of columns to add THEAD rows
         for(; i<len; ++i) {
-            this._addTheadTrNode({thead:thead, columns:tree[i]}, (i === 0), (i === len-1));
+            this._addTheadTrNode({
+                thead:   thead,
+                columns: tree[i],
+                id     : '' // to avoid {id} leftovers from the trTemplate
+            }, (i === 0), (i === len - 1));
         }
 
         // Column helpers needs _theadNode to exist
@@ -563,7 +568,7 @@ Y.extend(DTBase, Y.Widget, {
     * @param isFirst {Boolean} Is first row.
     * @param isLast {Boolean} Is last row.
     * @protected
-    * @returns Y.Node
+    * @return {Node}
     */
     _createTheadTrNode: function(o, isFirst, isLast) {
         //TODO: custom classnames
@@ -620,7 +625,7 @@ Y.extend(DTBase, Y.Widget, {
     * @method _createTheadThNode
     * @param o {Object} {value, column, tr}.
     * @protected
-    * @returns Y.Node
+    * @return {Node}
     */
     _createTheadThNode: function(o) {
         var column = o.column;
@@ -663,11 +668,12 @@ Y.extend(DTBase, Y.Widget, {
      * Updates TBODY.
      *
      * @method _uiSetRecordset
-     * @param rs {Y.Recordset} New Recordset.
+     * @param rs {Recordset} New Recordset.
      * @protected
      */
     _uiSetRecordset: function(rs) {
-        var oldTbody = this._tbodyNode,
+        var self = this,
+            oldTbody = this._tbodyNode,
             parent = oldTbody.get("parentNode"),
             nextSibling = oldTbody.next(),
             columns = this.get('columnset').keys,
@@ -692,21 +698,25 @@ Y.extend(DTBase, Y.Widget, {
         for (i = columns.length - 1; i >= 0; --i) {
             column = columns[i];
             o.columns[i] = {
-                column : column,
-                fields : column.get('field'),
-                classes: column.get('classnames')
+                column        : column,
+                fields        : column.get('field'),
+                classnames    : column.get('classnames'),
+                emptyCellValue: column.get('emptyCellValue')
             }
 
             formatter = column.get('formatter');
-            if (!YLang.isFunction(formatter)) {
-                // Convert non-function formatters into functions
-                // String formatters are treated as alternate value templates
-                // Any other value for formatter is ignored, falling back to
-                // to the configured tdValueTemplate attribute value.
+
+            if (YLang.isFunction(formatter)) {
+                // function formatters need to run before checking if the value
+                // needs defaulting from column.emptyCellValue
+                formatter = Y.bind(this._functionFormatter, this, formatter);
+            } else {
                 if (!YLang.isString(formatter)) {
                     formatter = cellValueTemplate;
                 }
-                formatter = Y.bind(fromTemplate, this, formatter);
+
+                // string formatters need the value defaulted before processing
+                formatter = Y.bind(this._templateFormatter, this, formatter);
             }
 
             o.columns[i].formatter = formatter;
@@ -725,6 +735,20 @@ Y.extend(DTBase, Y.Widget, {
         
         // TBODY to DOM
         parent.insert(this._tbodyNode, nextSibling);
+    },
+
+    _functionFormatter: function (formatter, o) {
+        var value = formatter.call(this, o);
+
+        return (value !== undefined) ? value : o.emptyCellValue;
+    },
+
+    _templateFormatter: function (template, o) {
+        if (o.value === undefined) {
+            o.value = o.emptyCellValue;
+        }
+
+        return fromTemplate(template, o);
     },
 
     /**
@@ -748,20 +772,21 @@ Y.extend(DTBase, Y.Widget, {
     * @method _createTbodyTrNode
     * @param o {Object} {tbody, record}
     * @protected
-    * @returns Y.Node
+    * @return {Node}
     */
     _createTbodyTrNode: function(o) {
         var columns = o.columns,
             i, len, columnInfo;
 
-        o.tr = Ycreate(fromTemplate(o.rowTemplate, { id: o.data.id }));
+        o.tr = Ycreate(fromTemplate(o.rowTemplate, { id: o.record.get('id') }));
         
         for (i = 0, len = columns.length; i < len; ++i) {
-            columnInfo = columns[i];
-            o.column = columnInfo.column;
-            o.field  = columnInfo.fields;
-            o.classnames = columnInfo.classes;
-            o.formatter = columnInfo.formatter;
+            columnInfo      = columns[i];
+            o.column        = columnInfo.column;
+            o.field         = columnInfo.fields;
+            o.classnames    = columnInfo.classnames;
+            o.formatter     = columnInfo.formatter;
+            o.emptyCellValue= columnInfo.emptyCellValue;
 
             this._addTbodyTdNode(o);
         }
@@ -802,21 +827,39 @@ Y.extend(DTBase, Y.Widget, {
     _addTbodyTdNode: function(o) {
         o.td = this._createTbodyTdNode(o);
         this._attachTbodyTdNode(o);
+        delete o.td;
     },
     
+    /**
+    Creates a TD Node from the tdTemplate property using the input object as
+    template {placeholder} values.  The created Node is also assigned to the
+    `td` property on the input object.
+
+    If the input object already has a `td` property, it is returned an no new
+    Node is created.
+
+    @method createCell
+    @param {Object} data Template values
+    @return {Node}
+    **/
+    createCell: function (data) {
+        return data && (data.td ||
+            (data.td = Ycreate(fromTemplate(this.tdTemplate, data))));
+    },
+
     /**
     * Creates data cell element.
     *
     * @method _createTbodyTdNode
     * @param o {Object} {record, column, tr}.
     * @protected
-    * @returns Y.Node
+    * @return {Node}
     */
     _createTbodyTdNode: function(o) {
         o.headers = o.column.headers;
         o.value   = this.formatDataCell(o);
 
-        return Ycreate(fromTemplate(this.tdTemplate, o));
+        return o.td || this.createCell(o);
     },
     
     /**
@@ -836,7 +879,7 @@ Y.extend(DTBase, Y.Widget, {
      * @method formatDataCell
      * @param @param o {Object} {record, column, tr, headers, classnames}.
      */
-    formatDataCell: function(o) {
+    formatDataCell: function (o) {
         o.value = o.data[o.field];
 
         return o.formatter.call(this, o);

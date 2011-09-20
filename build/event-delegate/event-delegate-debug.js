@@ -128,19 +128,22 @@ function delegate(type, fn, el, filter) {
 }
 
 /**
- * Overrides the <code>_notify</code> method on the normal DOM subscription to
- * inject the filtering logic and only proceed in the case of a match.
- * 
- * @method delegate.notifySub
- * @param thisObj {Object} default 'this' object for the callback
- * @param args {Array} arguments passed to the event's <code>fire()</code>
- * @param ce {CustomEvent} the custom event managing the DOM subscriptions for
- *              the subscribed event on the subscribing node.
- * @return {Boolean} false if the event was stopped
- * @private
- * @static
- * @since 3.2.0
- */
+Overrides the <code>_notify</code> method on the normal DOM subscription to
+inject the filtering logic and only proceed in the case of a match.
+
+This method is hosted as a private property of the `delegate` method
+(e.g. `Y.delegate.notifySub`)
+
+@method notifySub
+@param thisObj {Object} default 'this' object for the callback
+@param args {Array} arguments passed to the event's <code>fire()</code>
+@param ce {CustomEvent} the custom event managing the DOM subscriptions for
+             the subscribed event on the subscribing node.
+@return {Boolean} false if the event was stopped
+@private
+@static
+@since 3.2.0
+**/
 delegate.notifySub = function (thisObj, args, ce) {
     // Preserve args for other subscribers
     args = args.slice();
@@ -179,22 +182,24 @@ delegate.notifySub = function (thisObj, args, ce) {
 };
 
 /**
- * <p>Compiles a selector string into a filter function to identify whether
- * Nodes along the parent axis of an event's target should trigger event
- * notification.</p>
- *
- * <p>This function is memoized, so previously compiled filter functions are
- * returned if the same selector string is provided.</p>
- *
- * <p>This function may be useful when defining synthetic events for delegate
- * handling.</p>
- *
- * @method delegate.compileFilter
- * @param selector {String} the selector string to base the filtration on
- * @return {Function}
- * @since 3.2.0
- * @static
- */
+Compiles a selector string into a filter function to identify whether
+Nodes along the parent axis of an event's target should trigger event
+notification.
+
+This function is memoized, so previously compiled filter functions are
+returned if the same selector string is provided.
+
+This function may be useful when defining synthetic events for delegate
+handling.
+
+Hosted as a property of the `delegate` method (e.g. `Y.delegate.compileFilter`).
+
+@method compileFilter
+@param selector {String} the selector string to base the filtration on
+@return {Function}
+@since 3.2.0
+@static
+**/
 delegate.compileFilter = Y.cached(function (selector) {
     return function (target, e) {
         return selectorTest(target._node, selector, e.currentTarget._node);
@@ -202,18 +207,21 @@ delegate.compileFilter = Y.cached(function (selector) {
 });
 
 /**
- * Walks up the parent axis of an event's target, and tests each element
- * against a supplied filter function.  If any Nodes, including the container,
- * satisfy the filter, the delegated callback will be triggered for each.
- *
- * @method delegate._applyFilter
- * @param filter {Function} boolean function to test for inclusion in event
- *                  notification
- * @param args {Array} the arguments that would be passed to subscribers
- * @param ce   {CustomEvent} the DOM event wrapper
- * @return {Node|Node[]|undefined} The Node or Nodes that satisfy the filter
- * @protected
- */
+Walks up the parent axis of an event's target, and tests each element
+against a supplied filter function.  If any Nodes, including the container,
+satisfy the filter, the delegated callback will be triggered for each.
+
+Hosted as a protected property of the `delegate` method (e.g.
+`Y.delegate._applyFilter`).
+
+@method _applyFilter
+@param filter {Function} boolean function to test for inclusion in event
+                 notification
+@param args {Array} the arguments that would be passed to subscribers
+@param ce   {CustomEvent} the DOM event wrapper
+@return {Node|Node[]|undefined} The Node or Nodes that satisfy the filter
+@protected
+**/
 delegate._applyFilter = function (filter, args, ce) {
     var e         = args[0],
         container = ce.el, // facadeless events in IE, have no e.currentTarget

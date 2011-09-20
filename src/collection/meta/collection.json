@@ -8,9 +8,9 @@
             "array-invoke"
         ],
         "submodules": {
-            "array-extras": {}, 
-            "array-invoke": {}, 
-            "arraylist": {}, 
+            "array-extras": { "requires": [ "yui-base" ] }, 
+            "array-invoke": { "requires": [ "yui-base" ] }, 
+            "arraylist": { "requires": [ "yui-base" ] }, 
             "arraylist-add": {
                 "requires": [
                     "arraylist"

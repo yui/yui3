@@ -1,0 +1,86 @@
+<div class="intro">
+    <p>This example shows how to create a plugin to load YQL data into a TabView for dynamic content.</p>
+</div>
+
+<div class="example yui3-skin-sam">
+{{>tabview-yql-source}}
+</div>
+
+<h2>Creating the YQL Plugin</h2>
+<h3>Plugin Constructor</h3>
+<p>To create a plugin, we need to create a constructor with a static
+    <code>NS</code> property. This is the namespace used by the plugin on each
+    instance.</p>
+
+```
+    // YQL plugin for Y.Tab instances
+    var TabYQL = function(config) {
+        this.init(config);
+    };
+
+    TabYQL.NS = 'yql'; // plugin namespace (e.g. "tab.yql.load(myQuery)");
+```
+
+</h3>Plugin Prototype</h3>
+<p>Next we will add the YQL functionality to the prototype. The init method
+    wires the YQL functionality up using the load method.</p>
+
+```
+    TabYQL.prototype = {
+        init: function(config) {
+            if (this.tab) {
+                this.tab.after('selectedChange', Y.bind(this.afterSelectedChange, this));
+            }
+        },
+
+        afterSelectedChange: function(e) {
+            // only load if not already loaded
+            if (!this.loaded) {
+                this.load(this.query, this.afterLoad);
+            }
+        },
+
+        load: function(query, afterLoad) {
+            Y.YQL(query, Y.bind(afterLoad, this));
+        }
+```
+
+<h2>Creating the TabView</h2>
+<p>Next we will create a new instance of a TabView:</p>
+
+```
+/* Create a new TabView instance, with content generated from script */
+var tabview = new Y.TabView();
+```
+
+<p>And then use the <code>add</code> method to add the <code>Tab</code> instances,
+to add a tab for each of the feeds, then render the tabview into the placeholder
+element.</p>
+
+
+```
+    var feeds = {
+        Chrome: 'chrome+browser',
+        Firefox: 'firefox+browser',
+        Safari: 'safari+browser',
+        Explorer: 'explorer+browser',
+        Opera: 'opera+browser'
+    };
+
+    Y.each(feeds, function(feed, label) {
+        var tab = new Y.Tab({
+            label: label,
+            content: 'loading...',
+        });
+
+        tab.plug(TabYQL, {
+            query: 'select title, link from rss where ' +
+                'url="http://search.news.yahoo.com/rss?p=' +
+                feed + '"'
+        });
+
+        tabview.add(tab);
+    });
+
+    tabview.render('#demo');
+```

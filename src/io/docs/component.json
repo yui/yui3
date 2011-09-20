@@ -1,7 +1,7 @@
 {
     "name"       : "io",
     "displayName": "IO Utility",
-    "description": "HTTP utility for same-origin and cross-domain requests",
+    "description": "HTTP utility for making same-origin and cross-domain requests",
     "author"     : "tsha",
 
     "tags": ["utility"],
@@ -10,7 +10,7 @@
     "examples" : [
         {
             "name"       : "get",
-            "displayName": "HTTP GET to request data.",
+            "displayName": "HTTP GET to request data",
             "description": "Use IO to request data over HTTP.",
             "modules"    : ["io-base", "event"],
             "tags"       : ["utility", "http"],
@@ -27,10 +27,10 @@
             "hideTableOfContents": true
         },
         {
-            "name"       : "pipes",
-            "displayName": "Request aggregated data using Yahoo! Pipes",
-            "description": "Use IO to make an HTTP request to Pipes, returning aggregate data from disparate data sources.",
-            "modules"    : ["io-xdr", "node"],
+            "name"       : "xdr",
+            "displayName": "Request JSON using Yahoo! Pipes",
+            "description": "Use IO to make a cross-domain request to Yahoo! Pipes, returning data from disparate sources.",
+            "modules"    : ["io-xdr", "json-parse", "substitute", "node"],
             "tags"       : ["utility", "pipes", "http", "xdr"],
 
             "hideTableOfContents": true

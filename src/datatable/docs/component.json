@@ -6,7 +6,7 @@
     "author": ["jenny","lsmith"],
 
     "use": ["datatable"],
-    "tags": ["widget", "datatable"],
+    "tags": ["beta", "widget", "datatable"],
 
     "examples": [
 

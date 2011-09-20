@@ -1,0 +1,137 @@
+<div class="intro">
+    <p>This example shows how to populate a DataTable with data from the Yahoo! Local webservice retrieved via a same-domain script. First we create a DataSource.IO instance pointing to data, then using the DataTableDataSource plugin we can load data for Chinese restaurants near our office.</p>
+
+    <p>In this example, we set the `initialRequest` value in the DataTableDataSource plugin constructor so that the initial data is loaded first and then the DataTable is rendered in a separate call.</p>
+
+    <p><strong>Note:</strong> XML parsing currently has known issues on the Android WebKit browser.
+</div>
+
+<div class="example yui3-skin-sam">
+{{>datatable-dsio-source}}
+</div>
+
+<h2>Populating Your DataTable with Remote Data using DataSource.IO</h2>
+
+<p>Your table can be easily populated with XML data from your back-end by creating a DataSource instance and using the DataTableDataSource plugin to load the data into a DataTable.</p>
+
+<p>Start with the `use()` statement:</p>
+
+```
+YUI().use("datasource-io", "datasource-xmlschema", "datatable-datasource", function(Y) {
+});
+```
+
+<p>Next create a DataSource.IO instance pointing to your data. (Note that in order to point the Yahoo! Local webservice, you would need to bypass cross-domain browser restrictions on XHR by creating a locally served proxy. You do not need to implement such a proxy when your data is accessed from the same domain.) Define the correct schema for the DataSourceJSONSchema plugin. This is a good time to call `sendRequest` to make sure the data returns as expected.</p>
+
+```
+var dataSource = new Y.DataSource.IO({
+    source:"ylocal_proxy.php?zip=94089&query=chinese"
+});
+
+dataSource.plug(Y.Plugin.DataSourceXMLSchema, {
+    schema: {
+        resultListLocator: "Result",
+        resultFields: [
+            {key:"Title", locator:"*[local-name() ='Title']"},
+            {key:"Phone", locator:"*[local-name() ='Phone']"},
+            {key:"Rating", locator:"*[local-name()='Rating']/*[local-name()='AverageRating']"}
+        ]
+    }
+});
+
+dataSource.sendRequest({    
+    callback: {
+        success: function (e) {
+            Y.log(e);
+        }
+    }
+});
+
+```
+
+<p>Now that the DataSource is created properly, define the columns that you want your table to show. These columns map directly to the parameter names returned in the data.</p>
+
+```
+var cols = ["Title", "Phone", "Rating"];
+
+```
+
+<p>Now you are ready to create a DataTable using the columns you have defined. When you plug the instance with the DataTableDataSource plugin, point to your DataSource instance, and set an `initialRequest` value so that the initial data loads right way. Then call `render()` after the data response has been processed.</p>
+
+```
+var cols = ["Title", "Phone", "Rating"];
+
+var dataSource = new Y.DataSource.IO({
+    source:"ylocal_proxy.php?zip=94089&query=chinese"
+});
+
+dataSource.plug(Y.Plugin.DataSourceXMLSchema, {
+    schema: {
+        resultListLocator: "Result",
+        resultFields: [
+            {key:"Title", locator:"*[local-name() ='Title']"},
+            {key:"Phone", locator:"*[local-name() ='Phone']"},
+            {key:"Rating", locator:"*[local-name()='Rating']/*[local-name()='AverageRating']"}
+        ]
+    }
+});
+
+var table = new Y.DataTable.Base({
+    columnset: cols,
+    summary: "Chinese restaurants near 98089",
+    caption: "Table with XML data from same-domain script"
+});
+table.plug(Y.Plugin.DataTableDataSource, {
+    datasource: dataSource,
+    initialRequest: ""
+});
+
+dataSource.after("response", function() {
+    table.render("#pizza")}
+);
+
+```
+
+<p>One final change you can make is to split the URL between the DataSource `source` value and the `request` value sent to the DataTableDataSource plugin. Splitting the URL this way facilitates making future requests to the same DataSource.
+
+<p>Here's the code to run the whole example:</p>
+
+```
+YUI().use("datasource-get", "datasource-jsonschema", "datatable-datasource", function(Y) {
+    var cols = ["Title", "Phone", "Rating"];
+
+    var dataSource = new Y.DataSource.IO({
+        source: "ylocal_proxy.php?"
+    });
+
+    dataSource.plug(Y.Plugin.DataSourceXMLSchema, {
+        schema: {
+            resultListLocator: "Result",
+            resultFields: [
+                {key:"Title", locator:"*[local-name() ='Title']"},
+                {key:"Phone", locator:"*[local-name() ='Phone']"},
+                {key:"Rating", locator:"*[local-name()='Rating']/*[local-name()='AverageRating']"}
+            ]
+        }
+    });
+
+    var table = new Y.DataTable.Base({
+        columnset: cols,
+        summary: "Chinese restaurants near 98089",
+        caption: "Table with XML data from same-domain script"
+    });
+    
+    table.plug(Y.Plugin.DataTableDataSource, {
+        datasource: dataSource,
+        initialRequest: "zip=94089&query=chinese"
+    });
+
+    dataSource.after("response", function() {
+        table.render("#pizza")}
+    );
+
+    // Make another request later
+    //table.datasource.load({request:"zip=94089&query=pizza"});
+});
+
+```

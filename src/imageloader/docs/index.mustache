@@ -1,0 +1,297 @@
+<div class="intro">
+  <p>
+    The ImageLoader Utility allows you as an implementer to delay the loading of images on your web page until 
+    such a time as your user is likely to see them. This can improve your overall pageload performance by deferring 
+    the loading of some images that are not immediately visible at the time the page first renders. 
+    Because images are often the heaviest components of a given page, deferring the loading of some images can 
+    yield a marked improvement in the way the page "feels" to your user.
+  </p>
+
+  <p>
+    The ImageLoader Utility lets you determine triggers and time limits to initiate image loading. 
+    This allows you to ensure that the images are loaded before your user is likely to see them. 
+    This technique, obviously, is appropriate only for images that are not immediately visible to your user at initial page load.
+  </p>
+</div>
+
+{{>getting-started}}
+
+<h3>Creating an Image Group</h3>
+<p>
+  Images are organized into groups. Each group has one or more triggers. A trigger is simply any DOM event, 
+  such as the <code>mouseover</code> of a specific <code>&lt;div&gt;</code>, a button click, or a window scroll. 
+  The images in a group won't load into the page until this trigger fires. Groups also have an optional time limit; 
+  if none of the group's triggers are activated before the time limit expires, the images are fetched anyway.
+</p>
+<p>
+  A group is defined as an instance of <code>Y.ImgLoadGroup</code>.  It comprises a collection of images that will 
+  show up on the page based on the same triggers and time limit.
+
+  ```
+  var myFirstGroup = new Y.ImgLoadGroup({ timeLimit: 2 });
+  myFirstGroup.addTrigger('#someDivId', 'mouseover');
+  ```
+</p>
+<p>
+  This defines a group triggered by a <code>mouseover</code> of the <code>&lt;div&gt;</code> with the HTML ID 
+  of <code>someDivId</code>; with the <code>timeLimit</code> attribute we are specifying that all images 
+  in <code>myFirstGroup</code> should load two seconds after the window's <code>load</code> event fires even 
+  if our trigger hasn't been tripped.
+</p>
+  
+<h3>Adding Images to the Group</h3>
+<p>
+  Register one or more images with the group using the HTML ID of the image element and the URL for the image:
+
+  ```
+  myFirstGroup.registerImage({
+      domId: 'idOfDivWaitingForImage',
+      bgUrl: 'http://www.example.com/image/url'
+  });
+  ```
+</p>
+<p>
+  This will set the image at <code>http://www.example.com/image/url</code> as the background image of 
+  the <code>&lt;div&gt;</code> with the ID <code>idOfDivWaitingForImage</code>.  There are three kinds of images you 
+  can register with an ImageLoader group instance; see <a href="#addimages">Adding Images</a> below for more details on this process.
+</p>
+
+
+<h2 id="using">Using the ImageLoader Utility</h2>
+<p>
+  This section describes how to use the ImageLoader Utility in further detail.  It contains these subsections:
+</p>
+<ul>
+  <li><a href="#performance">Performance Considerations</a></li>
+  <li><a href="#approach">Approach</a></li>
+  <li><a href="#triggers">Triggers</a></li>
+  <li><a href="#customtriggers">Custom Event Triggers</a></li>
+  <li><a href="#addimages">Adding Images</a></li>
+  <li><a href="#fold">Loading Images Below the Fold</a></li>
+  <li><a href="#visibility">Image Visibility</a></li>
+  <li><a href="#classnames">Using Class Names</a></li>
+</ul>
+
+
+<h3 id="performance">Performance Considerations</h3>
+<p>
+  The images on your page require possible DNS lookups, new HTTP transactions, and ultimately the transmission 
+  of image data in packets over the wire.  While all this is happening, the user is often left waiting for the 
+  page to become fully functional. All of your <code>onload</code> JavaScript, for example, is deferred until 
+  after all the page's images have finished loading.
+</p>
+<p>
+  Should the user have to wait for all of these images? If the images are front and center on the page, then yes, 
+  suffering the load time is necessary. But what about images that the user doesn't see right away &mdash; the images 
+  below the fold; the images hidden towards the end of a carousel; the images that won't appear until a non-default 
+  tab of some module is clicked? ImageLoader allows you to delay the load of these images until after page load so 
+  that the page is fully functional more quickly. And, by using triggers, you can ensure that the images are loaded 
+  just before the user needs them so that there's no degradation of user experience.
+</p>
+
+<h3 id="approach">Approach</h3>
+<p>
+  How can you anticipate when the user will be able to see images? Well, you as a developer know your page, 
+  and you know what actions are available to the user. You can utilize your knowledge to identify user events 
+  that indicate what the user is about to see.
+</p>
+<p>
+  For example, you know that any image lying below the fold won't be visible until the user either scrolls 
+  the page or resizes the browser window. In a tabbed module, you know that the user can't click one of the 
+  tabs until she mouses over that tab.
+</p>
+<p>
+  Consequently, you can use scroll events, mouseover events, or other indicators of user intent to stay one 
+  step ahead of the user and decide when to load images. The ImageLoader Utility lets you do exactly this.
+</p>
+
+<h3 id="triggers">Triggers</h3>
+<p>
+  Images are grouped together in terms of which user action(s) should trigger their loading. 
+  A trigger is simply any DOM event. Your first step is to create an ImageLoader group object and define its trigger:
+
+  ```
+  var myFirstGroup = new Y.ImgLoadGroup({
+      timeLimit: 2 
+  });
+  myFirstGroup.addTrigger('#someDivId', 'mouseover');
+  ```
+</p>
+<p>
+  The <code>timeLimit</code> attribute is a time limit for the group. 
+  If the user has not performed the trigger event within the specified time limit, the images are fetched anyway. 
+  You can elect to not specify either the time limit or the trigger (indicating the user must perform the trigger event, 
+  or there should only be a simple time delay, respectively.)
+</p>
+<p>
+  You can have as many triggers as you wish for a group. 
+  Just add them with the <code>group</code> class's <code>addTrigger</code> method:
+
+  ```
+  myFirstGroup.addTrigger('#someOtherDivId', 'click');
+  ```
+</p>
+<p>
+  The trigger conditionals are disjunctive; the first one to fire initiates the image fetching.
+</p>
+
+<h3 id="customtriggers">Custom Event Triggers</h3>
+<p>
+  You can also specify custom events as triggers. If the event belongs to the <code>Y</code> instance, 
+  call <code>addCustomTrigger</code> with the event name:
+
+  ```
+  myFirstGroup.addCustomTrigger('mycustomevent:imgloadevent');
+  ```
+</p>
+<p>
+  Alternatively, if you have a custom event attached to a local object, you can specify this in the 
+  <code>addCustomTrigger</code> call:
+
+  ```
+  myFirstGroup.addCustomTrigger('mycustomevent:imgloadevent2', myCustomEvent);
+  ```
+</p>
+<p>
+  And this group's images will be fetched upon <code>myCustomEvent.fire('mycustomevent:imgloadevent2');</code>.
+</p>
+
+<h3 id="addimages">Adding Images</h3>
+<p>Once a group is created, you can add as many images as you'd like to it. There are three types of images:</p>
+<ol>
+	<li>
+	  <strong>background image</strong> (a <code>&lt;div&gt;</code> with a background image; URL set in <code>style.backgroundImage</code>).  
+	  Use the <code>bgUrl</code> attribute to register this kind of image.
+	</li>
+	<li>
+	  <strong>source image</strong> (an <code>&lt;img&gt;</code> tag; URL set in a <code>url</code> attribute).  
+	  Use the <code>srcUrl</code> attribute to register this kind of image.
+	</li>
+	<li>
+	  <strong>png background image</strong> (a <code>&lt;div&gt;</code> with a png background image; for IE6, 
+	  sets an alpha filter <code>src</code>; for other browsers sets a background image).  
+	  Use the <code>isPng</code> and <code>bgUrl</code> attributes to register this kind of image.
+	</li>
+</ol>
+<p>
+  To add an image to a group, register the DOM ID of the image element and the image URL with the 
+  <code>registerImage</code> method:
+
+  ```
+  myFirstGroup.registerImage({
+      domId: 'idOfDivWaitingForImage', 
+      bgUrl: 'http://www.example.com/image/url'
+  });
+  myFirstGroup.registerImage({ 
+      domId: 'idOfImgWaitingForImage', 
+      srcUrl: 'http://www.example.com/other/image/url' 
+  });
+  myFirstGroup.registerImage({ 
+      domId: 'idOfDivWaitingForPngImage', 
+      bgUrl: 'http://www.example.com/png/image/url',
+      isPng: true
+  });
+  ```
+</p>
+<p>
+  This will set the image at <code>http://www.example.com/image/url</code> as the background-image of 
+  the <code>&lt;div&gt;</code> with the ID <code>idOfDivWaitingForImage</code> and likewise with the two other image elements.
+</p>
+
+<h3 id="fold">Loading Images Below the Fold</h3>
+<p>
+  A group can check its images at the DOM ready state and immediately begin loading those that are above the fold 
+  (i.e., inside the current viewport) while delaying the load of those that aren't. Just set a value for 
+  the <code>foldDistance</code> property of the group. Images are checked and loaded in a cascading fashion. 
+  That is, each image will be loaded only when it comes within <code>foldDistance</code> pixels of the bottom of the viewport. 
+  The effect is that images are loaded as needed as the user scrolls down the page. When you set a <code>foldDistance</code>, 
+  the group automatically gets window <code>scroll</code> and window <code>resize</code> triggers.
+  ```
+  var foldGroup = new Y.ImgLoadGroup({
+      foldDistance: 30
+  });
+  foldGroup.registerImage({
+      domId: 'partwayDownPageImage', 
+      bgUrl: 'http://www.example.com/image/url'
+  });
+  ```
+</p>
+
+<h3 id="visibility">Image Visibility</h3>
+<p>
+  You can set your <code>&lt;img&gt;</code> tags to have the CSS property <code>visibility:hidden</code>. 
+  This will allow your page to keep its structure until the image is actually loaded. Since these images are probably 
+  out of the viewport anyway, this may not make a perceptible difference, but it will help some browsers avoid reflowing 
+  the page when deferred images are loaded. To accomplish this using ImageLoader, set the <code>setVisible</code> 
+  attribute of the image to <code>true</code> when you register the image; ImageLoader will then set the <code>visibility</code> 
+  property to <code>visible</code> when the image is fetched.
+</p>
+
+<h3 id="classnames">Using Class Names</h3>
+<p>
+  As an alternative to registering each image with a group, you can use CSS class names to group images together. 
+  When using this approach, images that are part of the same group should all share a common class name. 
+  Each should also have its image set as the element's background image via CSS in the element's <code>style</code> attribute. 
+  To prevent the image from loading immediately when the element renders, create a CSS style definition for that 
+  class overriding the background image to <code>none</code>. Lastly, set the <code>className</code> attribute of the 
+  ImageLoader group.
+</p>
+<p>
+  The following combination of CSS, HTML, and JavaScript illustrates this approach:
+  ```
+  <div 
+    class='yui-imgload-somegroup' 
+    style='background-image:url("http://www.example.com/image/url");'>
+  </div>
+
+  <style>
+    .yui-imgload-somegroup { 
+      background:none !important; 
+    }
+  </style>
+
+  <script>
+    someGroup.set('className', 'yui-imgload-somegroup');
+  </script>
+  ```
+</p>
+
+
+<h2 id="caveats">Important Usage Requirements</h2>
+
+<p>
+  There are some important things to keep in mind while using the ImageLoader Utility. 
+  Otherwise it may not work the way you expect, or it may have some undesired side effects.
+</p>
+
+<h3>"src" Attribute of Source Images</h3>
+<p>
+  When using ImageLoader with <code>&lt;img&gt;</code> elements (via the <code>srcUrl</code> attribute), 
+  leave the <code>src</code> attribute out of the HTML element altogether. Do not set an empty string for 
+  the value of <code>src</code>. Some browsers react to this by assuming the empty string means "/", and 
+  consequently the browser re-requests the current HTML page and tries to stuff it into the <code>&lt;img&gt;</code> element. 
+  This is bad news for performance.
+</p>
+<p>
+  <code>
+    &lt;img id="anImgEl" /&gt;
+    <br />
+    <strike>&lt;img id="anImgEl" src="" /&gt;</strike>
+  </code>
+</p>
+
+<h3>Resizing Images</h3>
+<p>
+  When resizing <code>&lt;img&gt;</code> elements (via <code>height</code> and <code>width</code> attributes) on the fly, 
+  the height and width of the image must be specified in the JavaScript. Do this by setting <code>width</code>/<code>height</code> 
+  attributes in the <code>registerImage</code> call. Failure to do this will result in no resizing. Browsers ignore width/height 
+  set in the HTML when there is no <code>src</code> attribute. And when the <code>src</code> is finally set, the width/height end 
+  up being the image's natural size.
+</p>
+<p>
+  <code>
+    someGroup.registerImage({ domId: "someImgDiv", srcUrl: "http://www.example.com/image/url", width: W, height: H });
+    <br />
+    <strike>someGroup.registerImage({ domId: "someImgDiv", srcUrl: "http://www.example.com/image/url" });</strike>
+  </code>
+</p>

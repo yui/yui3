@@ -1,6 +1,7 @@
 /**
  * The PieChart class creates a pie chart
  *
+ * @module charts
  * @class PieChart
  * @extends ChartBase
  * @constructor
@@ -279,7 +280,11 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
      */
     _sizeChanged: function(e)
     {
-        this._redraw();
+        var graph = this.get("graph");
+        if(graph)
+        {
+            graph.set(e.attrName, e.newVal);
+        }
     },
 
     /**

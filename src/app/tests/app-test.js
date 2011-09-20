@@ -286,7 +286,11 @@ controllerSuite.add(new Y.Test.Case({
             });
         });
 
-        controller.replace('/replace');
+        // Wrapped in a setTimeout to make the async test work on iOS<5, which
+        // performs this action synchronously.
+        setTimeout(function () {
+            controller.replace('/replace');
+        }, 1);
 
         this.wait(1000);
     },
@@ -302,7 +306,11 @@ controllerSuite.add(new Y.Test.Case({
             });
         });
 
-        controller.save('/save');
+        // Wrapped in a setTimeout to make the async test work on iOS<5, which
+        // performs this action synchronously.
+        setTimeout(function () {
+            controller.save('/save');
+        }, 1);
 
         this.wait(1000);
     },
@@ -328,9 +336,13 @@ controllerSuite.add(new Y.Test.Case({
             });
         });
 
-        controller.save('/one');
-        controller.save('/two');
-        controller.save('/three');
+        // Wrapped in a setTimeout to make the async test work on iOS<5, which
+        // performs this action synchronously.
+        setTimeout(function () {
+            controller.save('/one');
+            controller.save('/two');
+            controller.save('/three');
+        }, 1);
 
         this.wait(2000);
     },
@@ -763,6 +775,9 @@ modelSuite.add(new Y.Test.Case({
         Assert.isTrue(model.isNew());
 
         model = new this.TestModel({id: 'foo'});
+        Assert.isFalse(model.isNew());
+
+        model = new this.TestModel({id: 0});
         Assert.isFalse(model.isNew());
     },
 
@@ -1334,11 +1349,17 @@ modelListSuite.add(new Y.Test.Case({
 
     'getById() should look up a model by its id': function () {
         var list  = this.createList(),
-            model = list.add({id: 'foo'}),
-            CustomModel;
+            model = list.add({id: 'foo'});
 
         Assert.areSame(model, list.getById(model.get('id')));
         Assert.isNull(list.getById('bogus'));
+    },
+
+    'getById() should work with numeric ids': function () {
+        var list  = this.createList(),
+            model = list.add({id: 0});
+
+        Assert.areSame(model, list.getById(0));
     },
 
     'getById() should work with custom ids': function () {

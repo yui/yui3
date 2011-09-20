@@ -14,7 +14,7 @@ var WIDGET_AUTOHIDE    = 'widgetAutohide',
     AUTOHIDE            = 'autohide',
     CLICK_OUTSIDE     = 'clickoutside',
     FOCUS_OUTSIDE     = 'focusoutside',
-    DOCUMENT            = 'doc',
+    DOCUMENT            = 'document',
     KEY                 = 'key',
     PRESS_ESCAPE         = 'esc',
     BIND_UI             = 'bindUI',
@@ -49,7 +49,7 @@ function WidgetAutohide(config) {
 * Static property used to define the default attribute 
 * configuration introduced by WidgetAutohide.
 *
-* @property WidgetAutohide.ATTRS
+* @property ATTRS
 * @static
 * @type Object
 */
@@ -69,13 +69,15 @@ WidgetAutohide.ATTRS = {
      * escape key is pressed.</p>
      */
     hideOn: {
-        value: [
-            {
-                node: Y.one(DOCUMENT),
-                eventName: KEY,
-                keyCode: PRESS_ESCAPE
-            }
-        ],
+        valueFn: function() {
+            return [
+                {
+                    node: Y.one(DOCUMENT),
+                    eventName: KEY,
+                    keyCode: PRESS_ESCAPE
+                }
+            ];
+        },
         validator: Y.Lang.isArray
     }
 };

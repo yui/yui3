@@ -1,0 +1,57 @@
+<div class="intro">
+<p>
+    A natural fit for the JSON module is to work with IO to parse JSON messages received via XMLHttpRequest (XHR). In this example, we'll request JSON data from the server using the <a href="{{apiDocs}}/classes/IO.html#method_io">`Y.io()`</a> method and parse the resulting JSON string data.
+</p>
+</div>
+
+<div class="example yui3-skin-sam">
+    {{>json-connect-source}}
+</div>
+
+<h2>Use `Y.JSON.parse` in the `success` handler</h2>
+
+<p>
+    Pass the XHR `responseText` to `Y.JSON.parse()` and capture the return value. Note that the `parse()` method can throw a `SyntaxError` exception, so be sure to wrap the call in a `try/catch` block.
+</p>
+
+```javascript
+Y.io('{{componentAssets}}/json-connect-response.json', {
+    on : {
+        success : function (tx, r) {
+            var parsedResponse;
+
+            // protected against malformed JSON response
+            try {
+               parsedResponse = Y.JSON.parse(r.responseText);
+            }
+            catch (e) {
+                alert("JSON Parse failed!");
+                return;
+            }
+        }
+    }
+});
+```
+
+<p>
+    The `parse()` method returns the native JavaScript object representation of the string data returned from the <a href="{{apiDocs}}/classes/IO.html#method_io">`Y.io()`</a> call. In this case, the data is an array of object literals in this form:
+</p>
+
+```json
+[
+    { "animal" : "Cat",  "message" : "Meow"  },
+    { "animal" : "Dog",  "message" : "Woof"  },
+    { "animal" : "Cow",  "message" : "Moo"   },
+    { "animal" : "Duck", "message" : "Quack" },
+    { "animal" : "Lion", "message" : "Roar"  }
+]
+```
+
+<p>
+    In the `success` handler we'll simply loop through this array and outputting its contents to the DOM.
+</p>
+
+<h2>Complete Example Source</h2>
+```
+{{>json-connect-source}}
+```

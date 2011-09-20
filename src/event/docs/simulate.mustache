@@ -1,0 +1,290 @@
+<div class="intro">
+    <p>
+        When creating automated tests for your application or modules, you need
+        to be able to mock user events.  The DOM supports creating native events
+        that behave essentially the same as user generated events, though
+        without the associated browser default behaviors (e.g. following a link
+        on click).
+    </p>
+    <p>
+        The `event-simulate` module adds the `Y.Event.simulate` method for
+        working with raw DOM nodes, but for most cases, the
+        `node-event-simulate` module is the right choice, since it allows you
+        to call the `simulate` method directly from the `Node`.
+    </p>
+</div>
+
+<h2>Simulating Mouse Events</h2>
+
+<p>
+    There are seven mouse events that can be simulated:
+</p>
+
+<ul>
+  <li>`click`</li>
+  <li>`dblclick`</li>
+  <li>`mousedown`</li>
+  <li>`mouseup`</li>
+  <li>`mouseover`</li>
+  <li>`mouseout`</li>
+  <li>`mousemove`</li>
+</ul>
+
+<p>
+    Each event is fired by calling <code>simulate()</code> and passing in two
+    arguments: the type of event to fire and an optional object specifying
+    additional information for the event. To simulate a click on the document's
+    body element, for example, the following code can be used:
+</p>
+
+```
+YUI().use('node-event-simulate', function(Y) {
+
+    Y.one("body").simulate("click");
+});
+```
+
+<p>
+    This code simulates a click with all of the default properties on the
+    <code>event</code> object. To specify additional information, such as the
+    Shift key being down, the second argument must be used and the exact DOM
+    name for the event property specified (there is browser-normalizing logic
+    that translates these into browser-specific properties when necessary):
+</p>
+
+```
+Y.one("body").simulate("click", { shiftKey: true });
+```
+
+<p>
+    In this updated example, a click event is fired on the document's body
+    while simulating that the Shift key is down.
+</p>
+
+<p>
+    The extra properties to specify vary depending on the event being simulated
+    and are limited to this list:
+</p>
+
+<dl>
+    <dt>`detail`</dt>
+        <dd>
+            Indicates the number of times a button was clicked (DOM-compliant
+            browsers only).
+        </dd>
+
+    <dt>`screenX`, `screenY`</dt>
+        <dd>
+            Coordinates of the mouse event in relation to the entire screen
+            (DOM-compliant browsers only).
+        </dd>
+
+    <dt>`clientX`, `clientY`</dt>
+        <dd>
+            Coordinates of the mouse event in relation to the browser client
+            area.
+        </dd>
+
+    <dt>`ctrlKey`, `altKey`, `shiftKey`, `metaKey`</dt>
+        <dd>
+            The state of the Ctrl, Alt, Shift, and Meta keys, respectively
+            (true for down, false for up).
+        </dd>
+
+    <dt>`button`</dt>
+        <dd>
+            The button being used for the event, 0 for left (default), 1 for
+            right, 2 for center.
+        </dd>
+
+    <dt>`relatedTarget`</dt>
+        <dd>
+            the element the mouse moved from (during a `mouseover` event) or to
+            (during a `mouseout` event). 
+        </dd>
+</dl>
+
+```
+YUI().use('node-event-simulate', function(Y) {
+
+    var node = Y.one("#myDiv");
+
+    //simulate a click Alt key down
+    node.simulate("click", { altKey: true});
+
+    //simulate a double click with Ctrl key down
+    node.simulate("dblclick", { ctrlKey: true });
+
+    //simulate a mouse over
+    node.simulate("mouseover", { relatedTarget: document.body });
+
+    //simulate a mouse out
+    node.simulate("mouseout", { relatedTarget: document.body });
+
+    //simulate a mouse down at point (100,100) in the client area
+    node.simulate("mousedown", { clientX: 100, clientY: 100 });
+
+    //simulate a mouse up at point (100,100) in the client area
+    node.simulate("mouseup", { clientX: 100, clientY: 100 });
+
+    //simulate a mouse move at point (200, 200) in the client area
+    node.simulate("mousemove", { clientX: 200, clientY: 200 });
+});
+```
+
+<h2>Simulating Key Events</h2>
+
+<p>There are three key event simulations available:</p>
+
+<ul>
+    <li>`keyup`</li>
+    <li>`keydown`</li>
+    <li>`keypress`</li>
+</ul>
+
+<p>
+    As with the mouse events, key events are simulated using
+    <code>simulate()</code>. For <code>keyup</code> and <code>keydown</code>,
+    the <code>keyCode</code> property must be specified; for
+    <code>keypress</code>, the <code>charCode</code> property must be included.
+    In many cases, <code>keyCode</code> and <code>charCode</code> may be the
+    same value to represent the same key (97, for instance, represents the
+    &quot;A&quot; key as well as being the ASCII code for the letter
+    &quot;a&quot;). For example:
+</p>
+
+```
+YUI().use('node-event-simulate', function(Y) {
+
+    var node = Y.one("#myDiv");
+
+    //simulate a keydown on the A key
+    node.simulate("keydown", { keyCode: 97 });
+
+    //simulate a keyup on the A key
+    node.simulate("keyup", { keyCode: 97 });
+
+    //simulate typing "a"
+    node.simulate("keypress", { charCode: 97 });
+});
+```
+
+<p>
+    Key events also support the <code>ctrlKey</code>, <code>altKey</code>,
+    <code>shiftKey</code>, and <code>metaKey</code> event properties.
+</p>
+<p>
+    <strong>Note:</strong> Due to differences in browser implementations, key
+    events may not be simulated in the same manner across all browsers. For
+    instance, when simulating a keypress event on a textbox, only Firefox will
+    update the textbox with the new character of the key that was simulated to
+    be pressed. For other browsers, the events are still registered and all
+    event handlers are called, however, the textbox display and
+    <code>value</code> property are not updated. These differences should go
+    away as browser support for simulated events improves in the future.
+</p>
+
+<h2>Simulating UI Events</h2>
+
+<p>There are several UI event simulations available:</p>
+
+<ul>
+    <li>`blur`</li>
+    <li>`change`</li>
+    <li>`focus`</li>
+    <li>`resize`</li>
+    <li>`scroll`</li>
+    <li>`select`</li>
+</ul>
+
+<p>
+    As with the other events, UI events are simulated using
+    <code>simulate()</code>. There are no properties that are required to
+    simulate UI events as these events don't carry extra information. Some
+    examples:
+</p>
+
+```
+YUI().use('node-event-simulate', function(Y) {
+
+    var node = Y.one("#myInput");
+
+    //simulate a change event
+    node.simulate("change");
+
+    //simulate a select event
+    node.simulate("select");
+});
+```
+
+<h2>Caveats and Coming Soons</h2>
+
+<h3 id="faking">Don't use simulation in user facing code</h3>
+
+<p>
+    Event simulation is for automated testing.  Your application should respond
+    to real user events.  For reasons
+    <a href="#only-what-you-ask-for">mentioned below</a>, it can be easy to get
+    your application into a confused runtime state when some callbacks have
+    been executed but not others.
+</p>
+
+<p>
+    Typically, event simulation is sought to trigger certain callbacks.  If a
+    function needs to respond to user action or be called programmatically, it
+    should be written accordingly and called directly in the latter case.
+    Often a better solution is to extract the core logic from the event handler
+    into a separate function and call that method from the event handler and
+    from the other part of the application that was going to use simulation.
+</p>
+
+<p>
+    In some cases, simulation is wanted because there may be any number of
+    subscriptions on a node, and all applicable callbacks should be triggered.
+    If this is the case, investigate using <a
+    href="../event-custom/index.html">custom events</a>, instead.
+</p>
+
+<p>
+    The bottom line is, reliance on event simulation in production code is a
+    warning sign that the architecture is not scaling.  The affected code
+    should be refactored before it becomes a larger problem.
+</p>
+
+<h3>Only what you ask for</h3>
+
+<p>
+    In many cases, events happen in groups (`mousedown`, `mouseup`, `click`, or
+    `keydown`, `keyup`, `keypress`).  If you simulate an event that is
+    typically part of a group or is often followed by other events, <em>the
+    other events will NOT be generated</em> for free.
+</p>
+
+<p>
+    For example, if you simulate a `click` event on a submit button, you only
+    simulate the `click` event.  The preceding `mousedown` and `mouseup`, as
+    well as the subsequently expected 'submit' are neither simulated or fired
+    natively.
+</p>
+
+<h3>No touch events yet</h3>
+
+<p>
+    Currently, there's no support for simulating touch events or other events
+    not noted explicitly above.
+</p>
+
+<h3>No synthetic event simulation yet</h3>
+
+<p>
+    The <a href="synths.html">Synthetic event system</a> doesn't yet support
+    defining simulation. In most cases, though, synthetic events are triggered
+    by other DOM events that can be simulated, so it's often possible to
+    trigger them by simulating the underlying events.  But that ignores the
+    point that synthetic events are supposed to mask that abstraction for your
+    benefit.
+</p>
+
+<p>
+    Support for synthetic event simulation is on the roadmap.
+</p>

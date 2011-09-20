@@ -1,7 +1,7 @@
 <link href="{{componentAssets}}/anim.css" rel="stylesheet" type="text/css">
 <div class="intro">
     <p>This demonstrates how to animate the <code>xy</code> position of an element.</p>
-    <p> Click anywhere to move the element to your click position.</p>
+    <p>Click anywhere on the gray box below and the little orange box will move to the click position.</p>
 </div>
 
 <div class="example">
@@ -12,15 +12,8 @@
 <p>First we add some HTML to animate.</p>
 
 ```
-<div id="demo" class="yui3-module">
-    <div class="yui3-hd">
-        <h4>Animation Demo</h4>
-        <a title="remove module" class="yui3-remove"><em>x</em></a>
-    </div>
-    <div class="yui3-bd">
-        <p>This an example of what you can do with the YUI Animation Utility.</p>
-        <p><em>Follow the instructions above to see the animation in action.</em></p>
-    </div>
+<div id="demo-stage">
+    <span id="demo"></span>
 </div>
 ```
 

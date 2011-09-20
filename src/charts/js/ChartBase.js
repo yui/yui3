@@ -1,6 +1,7 @@
 /**
  * The ChartBase class is an abstract class used to create charts.
  *
+ * @module charts
  * @class ChartBase
  * @constructor
  */
@@ -129,7 +130,7 @@ ChartBase.prototype = {
      */
     _getGraph: function()
     {
-        var graph = new Y.Graph();
+        var graph = new Y.Graph({chart:this});
         graph.after("chartRendered", Y.bind(function(e) {
             this.fire("chartRendered");
         }, this));
@@ -149,7 +150,7 @@ ChartBase.prototype = {
             graph = this.get("graph");
         if(graph)
         {
-            if(Y.Lang.isNumber(val))
+            if(Y_Lang.isNumber(val))
             {
                 series = graph.getSeriesByIndex(val);
             }
@@ -229,7 +230,7 @@ ChartBase.prototype = {
      */
     _setDataValues: function(val)
     {
-        if(Y.Lang.isArray(val[0]))
+        if(Y_Lang.isArray(val[0]))
         {
             var hash, 
                 dp = [], 
@@ -343,17 +344,18 @@ ChartBase.prototype = {
             cb = this.get("contentBox"),
             interactionType = this.get("interactionType"),
             i = 0,
-            len;
+            len,
+            markerClassName = "." + SERIES_MARKER;
         if(interactionType == "marker")
         {
             hideEvent = tt.hideEvent;
             showEvent = tt.showEvent;
-            Y.delegate("mouseenter", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("mousedown", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("mouseup", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("mouseleave", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("click", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("mousemove", Y.bind(this._positionTooltip, this), cb, ".yui3-seriesmarker");
+            Y.delegate("mouseenter", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("mousedown", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("mouseup", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("mouseleave", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("click", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("mousemove", Y.bind(this._positionTooltip, this), cb, markerClassName);
         }
         else if(interactionType == "planar")
         {
@@ -374,7 +376,7 @@ ChartBase.prototype = {
                 }
                 if(hideEvent)
                 {
-                    if(Y.Lang.isArray(hideEvent))
+                    if(Y_Lang.isArray(hideEvent))
                     {
                         len = hideEvent.length;
                         for(; i < len; ++i)
@@ -401,12 +403,14 @@ ChartBase.prototype = {
             cb = this.get("contentBox"),
             markerNode = e.currentTarget,
             strArr = markerNode.getAttribute("id").split("_"),
-            seriesIndex = strArr[1],
+            index = strArr.pop(),
+            seriesIndex = strArr.pop(),
             series = this.getSeries(parseInt(seriesIndex, 10)),
-            index = strArr[2],
             items = this.getSeriesItems(series, index),
-            x = e.pageX - cb.getX(),
-            y = e.pageY - cb.getY();
+            pageX = e.pageX,
+            pageY = e.pageY,
+            x = pageX - cb.getX(),
+            y = pageY - cb.getY();
         if(type == "mouseenter")
         {
             type = "mouseover";
@@ -503,12 +507,27 @@ ChartBase.prototype = {
          *      <dt>node</dt><dd>The dom node of the marker.</dd>
          *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>
          *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>
+         *      <dt>pageX</dt><dd>The x location of the event on the page (including scroll)</dd>
+         *      <dt>pageY</dt><dd>The y location of the event on the page (including scroll)</dd>
          *      <dt>series</dt><dd>Reference to the series of the marker.</dd>
          *      <dt>index</dt><dd>Index of the marker in the series.</dd>
          *      <dt>seriesIndex</dt><dd>The `order` of the marker's series.</dd>
+         *      <dt>originEvent</dt><dd>Underlying dom event.</dd>
          *  </dl>
          */
-        this.fire("markerEvent:" + type, {categoryItem:items.category, valueItem:items.value, node:markerNode, x:x, y:y, series:series, index:index, seriesIndex:seriesIndex});
+        this.fire("markerEvent:" + type, {
+            originEvent: e,
+            pageX:pageX, 
+            pageY:pageY, 
+            categoryItem:items.category, 
+            valueItem:items.value, 
+            node:markerNode, 
+            x:x, 
+            y:y, 
+            series:series, 
+            index:index, 
+            seriesIndex:seriesIndex
+        });
     },
 
     /**
@@ -661,7 +680,7 @@ ChartBase.prototype = {
                 planarEventHandler:"planarEventHandler",
                 show:"show"
             };
-        if(Y.Lang.isObject(val))
+        if(Y_Lang.isObject(val))
         {
             styles = val.styles;
             node = Y.one(val.node) || tt.node;

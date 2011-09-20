@@ -140,6 +140,11 @@ YUI.add('frame', function(Y) {
         */
         _onDomEvent: function(e) {
             var xy, node;
+            
+            if (!Y.Node.getDOMNode(this._iframe)) {
+                //The iframe is null for some reason, bail on sending events.
+                return;
+            }
 
             //Y.log('onDOMEvent: ' + e.type, 'info', 'frame');
             e.frameX = e.frameY = 0;
@@ -573,7 +578,7 @@ YUI.add('frame', function(Y) {
         * @method render
         * @description Render the iframe into the container config option or open the window.
         * @param {String/HTMLElement/Node} node The node to render to
-        * @return {Y.Frame}
+        * @return {Frame}
         * @chainable
         */
         render: function(node) {
@@ -603,6 +608,7 @@ YUI.add('frame', function(Y) {
                         Y.log('New Modules Loaded into main instance', 'info', 'frame');
                         config = this._resolveWinDoc(config);
                         inst = YUI(config);
+                        inst.host = this.get('host'); //Cross reference to Editor
                         inst.log = Y.log; //Dump the instance logs to the parent instance.
 
                         Y.log('Creating new internal instance with node-base only', 'info', 'frame');
@@ -1007,7 +1013,7 @@ YUI.add('frame', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute', 'yui-throttle'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['base', 'node', 'selector-css3', 'substitute', 'yui-throttle']});
 YUI.add('selection', function(Y) {
 
     /**
@@ -1899,7 +1905,7 @@ YUI.add('selection', function(Y) {
         * Destroy the range.
         * @method remove
         * @chainable
-        * @return {Y.Selection}
+        * @return {Selection}
         */
         remove: function() {
             this._selection.removeAllRanges();
@@ -1923,7 +1929,7 @@ YUI.add('selection', function(Y) {
         * @param {Node} node The node to select
         * @param {Boolean} collapse Should the range be collapsed after insertion. default: false
         * @chainable
-        * @return {Y.Selection}
+        * @return {Selection}
         */
         selectNode: function(node, collapse, end) {
             if (!node) {
@@ -2023,7 +2029,7 @@ YUI.add('selection', function(Y) {
     };
 
 
-}, '@VERSION@' ,{requires:['node'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['node']});
 YUI.add('exec-command', function(Y) {
 
 
@@ -2064,6 +2070,7 @@ YUI.add('exec-command', function(Y) {
                 
                 Y.log('execCommand(' + action + '): "' + value + '"', 'info', 'exec-command');
                 if (fn) {
+                    Y.log('OVERIDE execCommand(' + action + '): "' + value + '"', 'info', 'exec-command');
                     return fn.call(this, action, value);
                 } else {
                     return this._command(action, value);
@@ -2087,7 +2094,7 @@ YUI.add('exec-command', function(Y) {
                         } catch (e2) {
                         }
                     }
-                    Y.log('Internal execCommand(' + action + '): "' + value + '"', 'info', 'exec-command');
+                    Y.log('Using default browser execCommand(' + action + '): "' + value + '"', 'info', 'exec-command');
                     inst.config.doc.execCommand(action, null, value);
                 } catch (e) {
                     Y.log(e.message, 'error', 'exec-command');
@@ -2430,6 +2437,7 @@ YUI.add('exec-command', function(Y) {
                     var inst = this.getInstance(), html,
                         DIR = 'dir', cls = 'yui3-touched',
                         dir, range, div, elm, n, str, s, par, list, lis,
+                        useP = (inst.host.editorPara ? true : false),
                         sel = new inst.Selection();
 
                     cmd = 'insert' + ((tag === 'ul') ? 'un' : '') + 'orderedlist';
@@ -2449,7 +2457,11 @@ YUI.add('exec-command', function(Y) {
 
                             str = '<div>';
                             lis.each(function(l) {
-                                str += l.get('innerHTML') + '<br>';
+                                if (useP) {
+                                    str += '<p>' + l.get('innerHTML') + '</p>';
+                                } else {
+                                    str += l.get('innerHTML') + '<br>';
+                                }
                             });
                             str += '</div>';
                             s = inst.Node.create(str);
@@ -2457,9 +2469,17 @@ YUI.add('exec-command', function(Y) {
                                 n = n.get('parentNode');
                             }
                             if (n && n.hasAttribute(DIR)) {
-                                s.setAttribute(DIR, n.getAttribute(DIR));
+                                if (useP) {
+                                    s.all('p').setAttribute(DIR, n.getAttribute(DIR));
+                                } else {
+                                    s.setAttribute(DIR, n.getAttribute(DIR));
+                                }
                             }
-                            n.replace(s);
+                            if (useP) {
+                                n.replace(s.get('innerHTML'));
+                            } else {
+                                n.replace(s);
+                            }
                             if (range.moveToElementText) {
                                 range.moveToElementText(s._node);
                             }
@@ -2540,18 +2560,51 @@ YUI.add('exec-command', function(Y) {
                         } else {
                             par = sel.anchorNode.ancestor(inst.Selection.BLOCKS);
                         }
+                        if (!par) { //No parent, find the first block under the anchorNode
+                            par = sel.anchorNode.one(inst.Selection.BLOCKS);
+                        }
+
                         if (par && par.hasAttribute(DIR)) {
                             dir = par.getAttribute(DIR);
                         }
-                        this._command(cmd, null);
-                        list = inst.all(tag);
-                        if (dir) {
-                            list.each(function(n) {
-                                if (!n.hasClass(cls)) {
-                                    n.setAttribute(DIR, dir);
+                        if (par && par.test(tag)) {
+                            html = inst.Node.create('<div/>');
+                            elm = par.all('li');
+                            elm.each(function(h) {
+                                if (useP) {
+                                    html.append('<p>' + h.get('innerHTML') + '</p>');
+                                } else {
+                                    html.append(h.get('innerHTML') + '<br>');
                                 }
                             });
+                            if (dir) {
+                                if (useP) {
+                                    html.all('p').setAttribute(DIR, dir);
+                                } else {
+                                    html.setAttribute(DIR, dir);
+                                }
+                            }
+                            if (useP) {
+                                par.replace(html.get('innerHTML'));
+                            } else {
+                                par.replace(html);
+                            }
+                            sel.selectNode(html.get('firstChild'));
+                        } else {
+                            this._command(cmd, null);
                         }
+                        list = inst.all(tag);
+                        if (dir) {
+                            if (list.size()) {
+                                //Changed to a List
+                                list.each(function(n) {
+                                    if (!n.hasClass(cls)) {
+                                        n.setAttribute(DIR, dir);
+                                    }
+                                });
+                            }
+                        }
+
                         list.removeClass(cls);
                     }
                 },
@@ -2684,7 +2737,7 @@ YUI.add('exec-command', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['frame'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['frame']});
 YUI.add('editor-tab', function(Y) {
 
 
@@ -2753,7 +2806,7 @@ YUI.add('editor-tab', function(Y) {
     Y.Plugin.EditorTab = EditorTab;
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 YUI.add('createlink-base', function(Y) {
 
 
@@ -2838,7 +2891,7 @@ YUI.add('createlink-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 YUI.add('editor-base', function(Y) {
 
 
@@ -2850,14 +2903,10 @@ YUI.add('editor-base', function(Y) {
      *      });
      *      editor.render('#demo');
      *
-     * @main editor
-     */     
-    /**
-     * Base class for Editor. Handles the business logic of Editor, no GUI involved only utility methods and events.
      * @class EditorBase
-     * @for EditorBase
      * @extends Base
      * @module editor
+     * @main editor
      * @submodule editor-base
      * @constructor
      */
@@ -2972,7 +3021,10 @@ YUI.add('editor-base', function(Y) {
                         n = lc;
                     }
                 }
-                
+            }
+            if (!n) {
+                //Fallback to make sure a node is attached to the event
+                n = inst.one(BODY);
             }
             return n;
         },
@@ -3023,14 +3075,15 @@ YUI.add('editor-base', function(Y) {
                         } else if (Y.UA.gecko) {
                             this.frame.exec._command('inserthtml', EditorBase.TABKEY);
                         } else if (Y.UA.ie) {
-                            sel = new inst.Selection();
-                            if (sel._selection.pasteHTML) {
-                                sel._selection.pasteHTML(EditorBase.TABKEY);
-                            } else {
-                                this.execCommand('inserthtml', EditorBase.TABKEY);
-                            }
+                            this.execCommand('inserthtml', EditorBase.TABKEY);
                         }
                     }
+                    break;
+                case 'backspace-up':
+                    // Fixes #2531090 - Joins text node strings so they become one for bidi
+                    if (Y.UA.webkit && e.changedNode) {
+			            e.changedNode.set('innerHTML', e.changedNode.get('innerHTML'));
+		            }
                     break;
             }
             if (Y.UA.webkit && e.commands && (e.commands.indent || e.commands.outdent)) {
@@ -3053,6 +3106,8 @@ YUI.add('editor-base', function(Y) {
                 cmds = e.commands;
             }
             
+            var normal = false;
+
             Y.each(changed, function(el) {
                 var tag = el.tagName.toLowerCase(),
                     cmd = EditorBase.TAG2CMD[tag];
@@ -3063,6 +3118,10 @@ YUI.add('editor-base', function(Y) {
 
                 //Bold and Italic styles
                 var s = el.currentStyle || el.style;
+                
+                if ((''+s.fontWeight) == 'normal') {
+                    normal = true;
+                }
                 if ((''+s.fontWeight) == 'bold') { //Cast this to a string
                     cmds.bold = 1;
                 }
@@ -3074,6 +3133,7 @@ YUI.add('editor-base', function(Y) {
                 if (s.fontStyle == 'italic') {
                     cmds.italic = 1;
                 }
+
                 if (s.textDecoration == 'underline') {
                     cmds.underline = 1;
                 }
@@ -3113,6 +3173,11 @@ YUI.add('editor-base', function(Y) {
                 
             });
             
+            if (normal) {
+                delete cmds.bold;
+                delete cmds.italic;
+            }
+
             e.dompath = inst.all(changed);
             e.classNames = classes;
             e.commands = cmds;
@@ -3613,16 +3678,13 @@ YUI.add('editor-base', function(Y) {
         */
         NAME: 'editorBase',
         /**
-        * Editor Strings
+        * Editor Strings.  By default contains only the `title` property for the
+        * Title of frame document (default "Rich Text Editor").
+        *
         * @static
         * @property STRINGS
         */
         STRINGS: {
-            /**
-            * Title of frame document: Rich Text Editor
-            * @static
-            * @property STRINGS.title
-            */
             title: 'Rich Text Editor'
         },
         ATTRS: {
@@ -3730,7 +3792,7 @@ YUI.add('editor-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command', 'selection'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['base', 'frame', 'node', 'exec-command', 'selection']});
 YUI.add('editor-lists', function(Y) {
 
 
@@ -3855,7 +3917,7 @@ YUI.add('editor-lists', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 YUI.add('editor-bidi', function(Y) {
 
 
@@ -4116,8 +4178,11 @@ YUI.add('editor-bidi', function(Y) {
 
     /**
      * bidi execCommand override for setting the text direction of a node.
+     * This property is added to the `Y.Plugin.ExecCommands.COMMANDS`
+     * collection.
+     *
      * @for Plugin.ExecCommand
-     * @property COMMANDS.bidi
+     * @property bidi
      */
     //TODO -- This should not add this command unless the plugin is added to the instance..
     Y.Plugin.ExecCommand.COMMANDS.bidi = function(cmd, direction) {
@@ -4133,11 +4198,12 @@ YUI.add('editor-bidi', function(Y) {
         }
 
         inst.Selection.filterBlocks();
-        if (sel.anchorNode.test(BODY)) {
-            return;
-        }
+
         if (sel.isCollapsed) { // No selection
             block = EditorBidi.blockParent(sel.anchorNode);
+            if (!block) {
+                block = inst.one('body').one(inst.Selection.BLOCKS);
+            }
             //Remove text-align attribute if it exists
             block = EditorBidi.removeTextAlign(block);
             if (!direction) {
@@ -4187,7 +4253,7 @@ YUI.add('editor-bidi', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 YUI.add('editor-para', function(Y) {
 
 
@@ -4306,6 +4372,24 @@ YUI.add('editor-para', function(Y) {
                             e.changedEvent.preventDefault();
                         }
                     }
+                    if (e.changedNode.test('li') && !Y.UA.ie) {
+                        html = inst.Selection.getText(e.changedNode);
+                        if (html === '') {
+                            par = e.changedNode.ancestor('ol,ul');
+                            var dir = par.getAttribute('dir');
+                            if (dir !== '') {
+                                dir = ' dir = "' + dir + '"';
+                            }
+                            par = e.changedNode.ancestor(inst.Selection.BLOCKS);
+                            d = inst.Node.create('<p' + dir + '>' + inst.Selection.CURSOR + '</p>');
+                            par.insert(d, 'after');
+                            e.changedNode.remove();
+                            e.changedEvent.halt();
+
+                            sel = new inst.Selection();
+                            sel.selectNode(d, true, false);
+                        }
+                    }
                     //TODO Move this to a GECKO MODULE - Can't for the moment, requires no change to metadata (YMAIL)
                     if (Y.UA.gecko && host.get('defaultblock') !== 'p') {
                         par = e.changedNode;
@@ -4376,8 +4460,10 @@ YUI.add('editor-para', function(Y) {
                     break;
                 case 'keyup':
                     if (Y.UA.gecko) {
-                        if (inst.config.doc && inst.config.doc.body && inst.config.doc.body.innerHTML.length < 2) {
-                            this._fixFirstPara();
+                        if (inst.config.doc && inst.config.doc.body && inst.config.doc.body.innerHTML.length < 20) {
+                            if (!inst.one(FIRST_P)) {
+                                this._fixFirstPara();
+                            }
                         }
                     }
                     break;
@@ -4542,7 +4628,7 @@ YUI.add('editor-para', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 YUI.add('editor-br', function(Y) {
 
 
@@ -4674,7 +4760,7 @@ YUI.add('editor-br', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 
 
 YUI.add('editor', function(Y){}, '@VERSION@' ,{skinnable:false, use:['frame', 'selection', 'exec-command', 'editor-base', 'editor-para', 'editor-br', 'editor-bidi', 'editor-tab', 'createlink-base']});

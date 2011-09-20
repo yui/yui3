@@ -769,12 +769,18 @@ Y.Controller = Y.extend(Controller, Y.Base, {
 
         saveQueue.push(function () {
             if (html5) {
-                // Wrapped in a timeout to ensure that _save() calls are always
-                // processed asynchronously. This ensures consistency between
-                // HTML5- and hash-based history.
-                setTimeout(function () {
+                if (Y.UA.ios && Y.UA.ios < 5) {
+                    // iOS <5 has buggy HTML5 history support, and needs to be
+                    // synchronous.
                     self._save.apply(self, args);
-                }, 1);
+                } else {
+                    // Wrapped in a timeout to ensure that _save() calls are
+                    // always processed asynchronously. This ensures consistency
+                    // between HTML5- and hash-based history.
+                    setTimeout(function () {
+                        self._save.apply(self, args);
+                    }, 1);
+                }
             } else {
                 self._dispatching = true; // otherwise we'll dequeue too quickly
                 self._save.apply(self, args);

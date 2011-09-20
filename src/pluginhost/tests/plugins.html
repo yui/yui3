@@ -37,7 +37,10 @@
     </style>
 
     <script type="text/javascript">
-        YUI({useBrowserConsole:false, filter:"raw"}).use("basebase", "base-pluginhost", "console", "plugin", "test", function(Y) {
+        YUI({
+            useBrowserConsole:false,
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+        }).use("basebase", "base-pluginhost", "console", "plugin", "test", function(Y) {
 
             function PluginOne() {
                 PluginOne.superclass.constructor.apply(this, arguments);

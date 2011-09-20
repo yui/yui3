@@ -13,7 +13,10 @@ var SHAPE = "svgShape",
 function SVGDrawing(){}
 
 /**
- * Set of drawing methods for SVG based classes.
+ * <a href="http://www.w3.org/TR/SVG/">SVG</a> implementation of the <a href="Drawing.html">`Drawing`</a> class. 
+ * `SVGDrawing` is not intended to be used directly. Instead, use the <a href="Drawing.html">`Drawing`</a> class. 
+ * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Drawing.html">`Drawing`</a> 
+ * class will point to the `SVGDrawing` class.
  *
  * @module graphics
  * @class SVGDrawing
@@ -156,13 +159,15 @@ SVGDrawing.prototype = {
 
     /**
      * Draws a wedge.
-     * 
-     * @param {Number} x			x-coordinate of the wedge's center point
-     * @param {Number} y			y-coordinate of the wedge's center point
-     * @param {Number} startAngle	starting angle in degrees
-     * @param {Number} arc			sweep of the wedge. Negative values draw clockwise.
-     * @param {Number} radius		radius of wedge. If [optional] yRadius is defined, then radius is the x radius.
-     * @param {Number} yRadius		[optional] y radius for wedge.
+     *
+     * @method drawWedge
+     * @param {Number} x x-coordinate of the wedge's center point
+     * @param {Number} y y-coordinate of the wedge's center point
+     * @param {Number} startAngle starting angle in degrees
+     * @param {Number} arc sweep of the wedge. Negative values draw clockwise.
+     * @param {Number} radius radius of wedge. If [optional] yRadius is defined, then radius is the x radius.
+     * @param {Number} yRadius [optional] y radius for wedge.
+     * @private
      */
     drawWedge: function(x, y, startAngle, arc, radius, yRadius)
     {

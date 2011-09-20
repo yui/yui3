@@ -1,0 +1,32 @@
+<style type="text/css">
+    #demo pre {
+        font-size: .9em;
+        padding: 1em;
+        background-color: #fff;
+        margin: 1ex;
+    }
+    #demo #demo_result {
+        padding: 1em;
+    }
+
+    #demo h3 {
+        margin: 1em 0 0 1ex;
+    }
+</style>
+
+<div id="demo">
+<pre>set1 = { foo : "foo" };</pre>
+<pre>set2 = { foo : "BAR", bar : "bar"  };</pre>
+<pre>set3 = { foo : "FOO", baz : "BAZ" };</pre>
+
+<input type="button" name="demo_btn1" id="demo_btn1" value="Merge"/>
+<input type="button" name="demo_btn2" id="demo_btn2" value="Copy"/>
+<h3>Result</h3>
+<div id="demo_result" class="intro">click Merge or Copy</div>
+<script type="text/javascript">
+
+{{>yui-merge-js}}
+
+</script>
+</div>
+

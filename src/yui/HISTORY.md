@@ -1,6 +1,21 @@
 YUI Core Change History
 =======================
 
+3.4.1
+-----
+
+* Sparse arrays are now handled correctly in the non-native fallback
+  implementation of `Y.Array.indexOf()`. [Ticket #2530966]
+
+* `Y.mix()` will no longer shadow prototype properties on the receiver unless
+  the `overwrite` parameter is true. This was the pre-3.4.0 behavior, but was
+  changed in 3.4.0. We're changing it back to preserve backwards compatibility.
+  [Ticket #2530501]
+
+* `Y.Object.size()` now returns `0` for non-objects. This was the pre-3.4.0
+  behavior, but regressed in 3.4.0. [Ticket #2531069]
+
+
 3.4.0
 -----
 
@@ -19,7 +34,7 @@ YUI Core Change History
   NOTE: Order of execution is not guaranteed (it's not required for the YUI
   Module use case, for which this feature was introduced - to improve performance).
   onSuccess is called once, after all files are loaded.
-* Added onProgress callback support to Get, which is useful when dispatching 
+* Added onProgress callback support to Get, which is useful when dispatching
   multiple scripts using the [] syntax. onProgress is called when each script
   is done loading.
 

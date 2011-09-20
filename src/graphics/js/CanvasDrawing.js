@@ -17,7 +17,11 @@ var SHAPE = "canvasShape",
     TOHEX = Y_Color.toHex;
 
 /**
- * Set of drawing methods for canvas based classes.
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> implementation of the <a href="Drawing.html">`Drawing`</a> class. 
+ * `CanvasDrawing` is not intended to be used directly. Instead, use the <a href="Drawing.html">`Drawing`</a> class. 
+ * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities but has 
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Drawing.html">`Drawing`</a> 
+ * class will point to the `CanvasDrawing` class.
  *
  * @module graphics
  * @class CanvasDrawing
@@ -69,6 +73,7 @@ CanvasDrawing.prototype = {
      * @method setSize
      * @param w {Number} width to set for the instance.
      * @param h {Number} height to set for the instance.
+     * @private
      */
 	setSize: function(w, h) {
         if(this.get("autoSize"))
@@ -257,12 +262,13 @@ CanvasDrawing.prototype = {
     },
 
     /**
-     * Draws a circle.
+     * Draws a circle. Used internally by `CanvasCircle` class.
      *
      * @method drawCircle
      * @param {Number} x y-coordinate
      * @param {Number} y x-coordinate
      * @param {Number} r radius
+     * @protected
      */
 	drawCircle: function(x, y, radius) {
         var startAngle = 0,
@@ -279,13 +285,14 @@ CanvasDrawing.prototype = {
     },
 
     /**
-     * Draws an ellipse.
+     * Draws an ellipse. Used internally by `CanvasEllipse` class.
      *
      * @method drawEllipse
      * @param {Number} x x-coordinate
      * @param {Number} y y-coordinate
      * @param {Number} w width
      * @param {Number} h height
+     * @protected
      */
 	drawEllipse: function(x, y, w, h) {
         var l = 8,
@@ -371,15 +378,16 @@ CanvasDrawing.prototype = {
     },
     
     /**
-     * @private
      * Draws a wedge.
-     * 
-     * @param x				x component of the wedge's center point
-     * @param y				y component of the wedge's center point
-     * @param startAngle	starting angle in degrees
-     * @param arc			sweep of the wedge. Negative values draw clockwise.
-     * @param radius		radius of wedge. If [optional] yRadius is defined, then radius is the x radius.
-     * @param yRadius		[optional] y radius for wedge.
+     *
+     * @method drawWedge
+     * @param {Number} x x-coordinate of the wedge's center point
+     * @param {Number} y y-coordinate of the wedge's center point
+     * @param {Number} startAngle starting angle in degrees
+     * @param {Number} arc sweep of the wedge. Negative values draw clockwise.
+     * @param {Number} radius radius of wedge. If [optional] yRadius is defined, then radius is the x radius.
+     * @param {Number} yRadius [optional] y radius for wedge.
+     * @private
      */
     drawWedge: function(x, y, startAngle, arc, radius, yRadius)
     {
@@ -459,6 +467,12 @@ CanvasDrawing.prototype = {
         return this;
     },
 
+	/**
+	 * Clears the graphics object.
+	 *
+	 * @method clear
+	 */
+    
     /**
      * Returns a linear gradient fill
      *

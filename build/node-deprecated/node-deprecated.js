@@ -34,7 +34,7 @@ Y_Node.ATTRS.data = {
  * @deprecated Use Y.one
  * @static
  * @param {String | HTMLElement} node a node or Selector
- * @param {Y.Node || HTMLElement} doc an optional document to scan. Defaults to Y.config.doc.
+ * @param {Node | HTMLElement} doc an optional document to scan. Defaults to Y.config.doc.
  */
 
 /**
@@ -45,7 +45,7 @@ Y_Node.ATTRS.data = {
  * @deprecated Use Y.one
  * @static
  * @param {String | HTMLElement} node a node or Selector
- * @param {Y.Node || HTMLElement} doc an optional document to scan. Defaults to Y.config.doc.
+ * @param {Node | HTMLElement} doc an optional document to scan. Defaults to Y.config.doc.
  */
 Y.get = Y_Node.get = function() {
     return Y_Node.one.apply(Y_Node, arguments);

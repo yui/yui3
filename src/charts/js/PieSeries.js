@@ -2,6 +2,7 @@
  * PieSeries visualizes data as a circular chart divided into wedges which represent data as a 
  * percentage of a whole.
  *
+ * @module charts
  * @class PieSeries
  * @constructor
  * @extends MarkerSeries
@@ -195,8 +196,23 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         if(isFinite(w) && isFinite(h) && w > 0 && h > 0)
         {   
             this._rendered = true;
+            if(this._drawing)
+            {
+                this._callLater = true;
+                return;
+            }
+            this._drawing = true;
+            this._callLater = false;
             this.drawSeries();
-            this.fire("drawingComplete");
+            this._drawing = false;
+            if(this._callLater)
+            {
+                this.draw();
+            }
+            else
+            {
+                this.fire("drawingComplete");
+            }
         }
     },
 
@@ -225,8 +241,9 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             tfa,
             padding = styles.padding,
             graph = this.get("graph"),
-            w = graph.get("width") - (padding.left + padding.right),
-            h = graph.get("height") - (padding.top + padding.bottom),
+            minDimension = Math.min(graph.get("width"), graph.get("height")),
+            w = minDimension - (padding.left + padding.right),
+            h = minDimension - (padding.top + padding.bottom),
             startAngle = -90,
             halfWidth = w / 2,
             halfHeight = h / 2,
@@ -241,7 +258,6 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             marker,
             graphOrder = this.get("graphOrder"),
             isCanvas = Y.Graphic.NAME == "canvasGraphic";
-
         for(; i < itemCount; ++i)
         {
             value = values[i];
@@ -375,7 +391,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         pts += ", " + bx + ", " + by;
         pts += ", " + x + ", " + y;
         this._map.appendChild(areaNode);
-        areaNode.setAttribute("class", "yui3-seriesmarker");
+        areaNode.setAttribute("class", SERIES_MARKER);
         areaNode.setAttribute("id", "hotSpot_" + seriesIndex + "_" + index);
         areaNode.setAttribute("shape", "polygon");
         areaNode.setAttribute("coords", pts);
@@ -425,7 +441,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             cfg = Y.clone(styles);
         graphic.set("autoDraw", false);
         marker = graphic.addShape(cfg); 
-        marker.addClass("yui3-seriesmarker");
+        marker.addClass(SERIES_MARKER);
         return marker;
     },
     

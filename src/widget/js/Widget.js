@@ -2,6 +2,7 @@
  * Provides the base Widget class, with HTML Parser support
  *
  * @module widget
+ * @main widget
  */
 
 /**
@@ -113,7 +114,7 @@ function Widget(config) {
  * and to classify events fired by the widget.
  * </p>
  *
- * @property Widget.NAME
+ * @property NAME
  * @type String
  * @static
  */
@@ -123,7 +124,7 @@ Widget.NAME = "widget";
  * Constant used to identify state changes originating from
  * the DOM (as opposed to the JavaScript model).
  *
- * @property Widget.UI_SRC
+ * @property UI_SRC
  * @type String
  * @static
  * @final
@@ -134,7 +135,7 @@ UI = Widget.UI_SRC = "ui";
  * Static property used to define the default attribute 
  * configuration for the Widget.
  * 
- * @property Widget.ATTRS
+ * @property ATTRS
  * @type Object
  * @static
  */
@@ -294,7 +295,7 @@ ATTRS[RENDER] = {
 /**
  * The css prefix which the static Widget.getClassName method should use when constructing class names
  *
- * @property Widget.CSS_PREFIX
+ * @property CSS_PREFIX
  * @type String
  * @default Widget.NAME.toLowerCase()
  * @private
@@ -328,7 +329,7 @@ _getWidgetClassName = Widget.getClassName;
  * In the case of nested widgets, the nearest bounding box ancestor is used to
  * return the widget instance.
  * </p>
- * @method Widget.getByNode
+ * @method getByNode
  * @static
  * @param node {Node | String} The node for which to return a Widget instance. If a selector
  * string is passed in, which selects more than one node, the first node found is used.
@@ -1153,9 +1154,9 @@ Y.extend(Widget, Y.Base, {
      * Helper method to get the complete set of strings for the widget
      *
      * @deprecated  Used by deprecated WidgetLocale implementations.
-     * @method getString
+     * @method getStrings
      * @param {String} key
-     * @return {String} The string
+     * @return {String} The strings
      */
     getStrings : function() {
         return this.get(STRINGS);

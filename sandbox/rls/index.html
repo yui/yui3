@@ -4,8 +4,17 @@
     <title>RLS Testing</title>
 </head>
 <body>
-
-<script src="../../build/yui/yui-debug.js"></script>
+<script>
+YUI_config = {
+    loadErrorFn: function() {
+        console.warn('Load Error Fn');
+    },
+    errorFn: function () {
+        console.warn('Error Fn');
+    }
+};
+</script>
+<script src="../../build/yui-rls/yui-rls-debug.js"></script>
 <script src="baz.js"></script>
 <script>
 
@@ -34,33 +43,53 @@ var has = function(str, Y, mod) {
     }
 };
 
+var rls_base = 'http://localhost:3000/load/?';
+
+/*
 YUI({
     use_rls: true,
-    rls_base: 'http://l.yimg.com/py/load?httpcache=davglass&gzip=1&'
+    rls_base: 'http://localhost:3000/load/?',
+    rls_timeout: 50
 }).use('node', 'yql', function(Y) {
-    has('#1', Y, ['node', 'yql']);
+    has('#001', Y, ['node-base', 'yql']);
 });
+
 YUI({
     use_rls: true,
-    rls_base: 'http://l.yimg.com/py/load?httpcache=davglass&gzip=1&'
+    rls_base: 'http://localhost:5001/?',
+    rls_timeout: 500
 }).use('dd', function(Y) {
-    has('#2', Y, 'dd');
+    has('#002', Y, ['dd-drag']);
+});
+*/
+
+YUI({
+    use_rls: true,
+    rls_base: rls_base
+}).use('node', 'yql', function(Y) {
+    has('#1', Y, ['node-base', 'yql']);
 });
 YUI({
     use_rls: true,
-    rls_base: 'http://l.yimg.com/py/load?httpcache=davglass&gzip=1&'
+    rls_base: rls_base
+}).use('dd', function(Y) {
+    has('#2', Y, 'dd-drag');
+});
+YUI({
+    use_rls: true,
+    rls_base: rls_base
 }).use('yql', 'node', function(Y) {
-    has('#3', Y, ['yql', 'node']);
+    has('#3', Y, ['yql', 'node-base']);
 });
 YUI({
     use_rls: true,
-    rls_base: 'http://l.yimg.com/py/load?httpcache=davglass&gzip=1&'
+    rls_base: rls_base
 }).use('node', function(Y) {
-    has('#4', Y, ['node']);
+    has('#4', Y, ['node-base']);
 });
 YUI({
     use_rls: true,
-    rls_base: 'http://l.yimg.com/py/load?httpcache=davglass&gzip=1&',
+    rls_base: rls_base,
     modules: {
         foo: {
             fullpath: 'foo.js',
@@ -77,7 +106,7 @@ YUI({
 
 YUI({
     use_rls: true,
-    rls_base: 'http://l.yimg.com/py/load?httpcache=davglass&gzip=1&',
+    rls_base: rls_base,
     modules: {
         foo: {
             fullpath: 'foo.js',
@@ -91,24 +120,6 @@ YUI({
 }).use('bar2', function(Y) {
     
     has('#6', Y, ['bar2', 'yql', 'foo', 'io-base']);
-});
-
-YUI({
-    use_rls: true,
-    rls_base: 'http://l.yimg.com/py/load?httpcache=davglass&gzip=1&',
-    modules: {
-        foo: {
-            fullpath: 'foo.js',
-            requires: ['io-base']
-        },
-        bar: {
-            fullpath: 'bar.js',
-            requires: ['yql', 'foo']
-        }
-    }
-}).use('baz', function(Y) {
-    console.log('#7 keys:', Y.Object.keys(Y.Env._attached).sort());
-    has('#7', Y, ['baz', 'console']);
 });
 
 </script>

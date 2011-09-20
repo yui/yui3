@@ -28,8 +28,12 @@ Linear gradients included a rotation property which defines the direction of the
 <p>
 Radial gradients include the following additional properties:
     <dl>
-       <dt>cx</dt><dd>The x-coordinate of the center of the gradient circle. Determines where the color stop begins. The default value 0.5.</dd>
-       <dt>cy</dt><dd>The y-coordinate of the center of the gradient circle. Determines where the color stop begins. The default value 0.5.</dd>
+       <dt>cx</dt><dd>The x-coordinate of the center of the gradient circle. Determines where the color stop begins. The default value 0.5.
+           <p><strong>Note: </strong>This property currently has no effect on Android or IE 6 - 8.</p>
+       </dd>
+       <dt>cy</dt><dd>The y-coordinate of the center of the gradient circle. Determines where the color stop begins. The default value 0.5.
+           <p><strong>Note: </strong>This property currently has no effect on Android or IE 6 - 8.</p>
+       </dd>
        <dt>r</dt><dd>Radius of the gradient circle. Determines where the color stops end. The default value is 0.5.</dd>
        <dt>fx</dt><dd>Focal point x-coordinate of the gradient.</dd>
        <dt>fy</dt><dd>Focal point y-coordinate of the gradient.</dd>
@@ -93,8 +97,6 @@ Radial gradients include the following additional properties:
                     {color: "#00ffff", offset: 0.4},
                     {color: "#000000", offset: 0.7}
                 ],
-                cx: .5,
-                cy: .5,
                 fx: 0.1,
                 fy: 0.3,
                 r: 0.5

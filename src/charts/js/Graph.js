@@ -2,6 +2,7 @@
  * Graph manages and contains series instances for a `CartesianChart`
  * instance.
  *
+ * @module charts
  * @class Graph
  * @constructor
  * @extends Widget
@@ -228,7 +229,8 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     },
 
     /**
-     * Creates a `CartesianSeries` instance from an object containing attribute key value pairs.
+     * Creates a `CartesianSeries` instance from an object containing attribute key value pairs. The key value pairs include attributes for the specific series and a type value which defines the type of
+     * series to be used. 
      *
      * @method createSeries
      * @param {Object} seriesData Series attribute key value pairs.
@@ -258,86 +260,82 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         typeSeriesCollection.push(series);
         seriesCollection.push(series);
     },
+    
+    /**
+     * String reference for pre-defined `Series` classes.
+     *
+     * @property _seriesMap
+     * @type Object
+     * @private
+     */
+    _seriesMap: {
+        line : Y.LineSeries,
+        column : Y.ColumnSeries,
+        bar : Y.BarSeries,
+        area :  Y.AreaSeries,
+        candlestick : Y.CandlestickSeries,
+        ohlc : Y.OHLCSeries,
+        stackedarea : Y.StackedAreaSeries,
+        stackedline : Y.StackedLineSeries,
+        stackedcolumn : Y.StackedColumnSeries,
+        stackedbar : Y.StackedBarSeries,
+        markerseries : Y.MarkerSeries,
+        spline : Y.SplineSeries,
+        areaspline : Y.AreaSplineSeries,
+        stackedspline : Y.StackedSplineSeries,
+        stackedareaspline : Y.StackedAreaSplineSeries,
+        stackedmarkerseries : Y.StackedMarkerSeries,
+        pie : Y.PieSeries,
+        combo : Y.ComboSeries,
+        stackedcombo : Y.StackedComboSeries,
+        combospline : Y.ComboSplineSeries,
+        stackedcombospline : Y.StackedComboSplineSeries
+    },
 
     /**
-     * Returns a specific `CartesianSeries` class based on key value.
+     * Returns a specific `CartesianSeries` class based on key value from a look up table of a direct reference to a class. When specifying a key value, the following options
+     * are available:
+     *
+     *  <table>
+     *      <tr><th>Key Value</th><th>Class</th></tr>
+     *      <tr><td>line</td><td>Y.LineSeries</td></tr>    
+     *      <tr><td>column</td><td>Y.ColumnSeries</td></tr>    
+     *      <tr><td>bar</td><td>Y.BarSeries</td></tr>    
+     *      <tr><td>area</td><td>Y.AreaSeries</td></tr>    
+     *      <tr><td>stackedarea</td><td>Y.StackedAreaSeries</td></tr>    
+     *      <tr><td>stackedline</td><td>Y.StackedLineSeries</td></tr>    
+     *      <tr><td>stackedcolumn</td><td>Y.StackedColumnSeries</td></tr>    
+     *      <tr><td>stackedbar</td><td>Y.StackedBarSeries</td></tr>    
+     *      <tr><td>markerseries</td><td>Y.MarkerSeries</td></tr>    
+     *      <tr><td>spline</td><td>Y.SplineSeries</td></tr>    
+     *      <tr><td>areaspline</td><td>Y.AreaSplineSeries</td></tr>    
+     *      <tr><td>stackedspline</td><td>Y.StackedSplineSeries</td></tr>
+     *      <tr><td>stackedareaspline</td><td>Y.StackedAreaSplineSeries</td></tr>
+     *      <tr><td>stackedmarkerseries</td><td>Y.StackedMarkerSeries</td></tr>
+     *      <tr><td>pie</td><td>Y.PieSeries</td></tr>
+     *      <tr><td>combo</td><td>Y.ComboSeries</td></tr>
+     *      <tr><td>stackedcombo</td><td>Y.StackedComboSeries</td></tr>
+     *      <tr><td>combospline</td><td>Y.ComboSplineSeries</td></tr>
+     *      <tr><td>stackedcombospline</td><td>Y.StackedComboSplineSeries</td></tr>
+     *  </table>
+     * 
+     * When referencing a class directly, you can specify any of the above classes or any custom class that extends `CartesianSeries` or `PieSeries`.
      *
      * @method _getSeries
-     * @param {String} type Key value for the series class.
+     * @param {String | Object} type Series type.
      * @return CartesianSeries
      * @private
      */
     _getSeries: function(type)
     {
         var seriesClass;
-        switch(type)
+        if(Y_Lang.isString(type))
         {
-            case "line" :
-                seriesClass = Y.LineSeries;
-            break;
-            case "column" :
-                seriesClass = Y.ColumnSeries;
-            break;
-            case "bar" :
-                seriesClass = Y.BarSeries;
-            break;
-            case "area" : 
-                seriesClass = Y.AreaSeries;
-            break;
-            case "candlestick" :
-                seriesClass = Y.CandlestickSeries;
-            break;
-            case "ohlc" :
-                seriesClass = Y.OHLCSeries;
-            break;
-            case "stackedarea" :
-                seriesClass = Y.StackedAreaSeries;
-            break;
-            case "stackedline" :
-                seriesClass = Y.StackedLineSeries;
-            break;
-            case "stackedcolumn" :
-                seriesClass = Y.StackedColumnSeries;
-            break;
-            case "stackedbar" :
-                seriesClass = Y.StackedBarSeries;
-            break;
-            case "markerseries" :
-                seriesClass = Y.MarkerSeries;
-            break;
-            case "spline" :
-                seriesClass = Y.SplineSeries;
-            break;
-            case "areaspline" :
-                seriesClass = Y.AreaSplineSeries;
-            break;
-            case "stackedspline" :
-                seriesClass = Y.StackedSplineSeries;
-            break;
-            case "stackedareaspline" :
-                seriesClass = Y.StackedAreaSplineSeries;
-            break;
-            case "stackedmarkerseries" :
-                seriesClass = Y.StackedMarkerSeries;
-            break;
-            case "pie" :
-                seriesClass = Y.PieSeries;
-            break;
-            case "combo" :
-                seriesClass = Y.ComboSeries;
-            break;
-            case "stackedcombo" :
-                seriesClass = Y.StackedComboSeries;
-            break;
-            case "combospline" :
-                seriesClass = Y.ComboSplineSeries;
-            break;
-            case "stackedcombospline" :
-                seriesClass = Y.StackedComboSplineSeries;
-            break;
-            default:
-                seriesClass = Y.CartesianSeries;
-            break;
+            seriesClass = this._seriesMap[type];
+        }
+        else 
+        {
+            seriesClass = type;
         }
         return seriesClass;
     },
@@ -455,7 +453,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         for(; i < len; ++i)
         {
             sc[i].draw();
-            if(!sc[i].get("xcoords") || !sc[i].get("ycoords"))
+            if((!sc[i].get("xcoords") || !sc[i].get("ycoords")) && !sc[i] instanceof Y.PieSeries)
             {
                 this._callLater = true;
                 break;
@@ -521,6 +519,15 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     }
 }, {
     ATTRS: {
+        /**
+         * Reference to the chart instance using the graph.
+         *
+         * @attribute chart
+         * @type ChartBase
+         * @readOnly
+         */
+        chart: {},
+
         /**
          * Collection of series. When setting the `seriesCollection` the array can contain a combination of either
          * `CartesianSeries` instances or object literals with properties that will define a series.
@@ -643,7 +650,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 if(!this._background)
                 {
                     this._backgroundGraphic = new Y.Graphic({render:this.get("contentBox")});
-                    this._backgroundGraphic.get("node").style.zIndex = -2;
+                    Y.one(this._backgroundGraphic.get("node")).setStyle("zIndex", 0); 
                     this._background = this._backgroundGraphic.addShape({type: "rect"});
                 }
                 return this._background;
@@ -665,7 +672,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 if(!this._gridlines)
                 {
                     this._gridlinesGraphic = new Y.Graphic({render:this.get("contentBox")});
-                    this._gridlinesGraphic.get("node").style.zIndex = -1;
+                    Y.one(this._gridlinesGraphic.get("node")).setStyle("zIndex", 1); 
                     this._gridlines = this._gridlinesGraphic.addShape({type: "path"});
                 }
                 return this._gridlines;
@@ -687,6 +694,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 if(!this._graphic)
                 {
                     this._graphic = new Y.Graphic({render:this.get("contentBox")});
+                    Y.one(this._graphic.get("node")).setStyle("zIndex", 2); 
                     this._graphic.set("autoDraw", false);
                 }
                 return this._graphic;

@@ -2,6 +2,7 @@
  * StackedMarkerSeries plots markers with different series stacked along the value axis to indicate each
  * series' contribution to a cumulative total.
  *
+ * @module charts
  * @class StackedMarkerSeries
  * @constructor
  * @extends MarkerSeries

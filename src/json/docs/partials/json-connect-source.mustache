@@ -1,0 +1,62 @@
+<div id="demo" class="yui3-skin-sam">
+    <p>Click the <em>Get Messages</em> button to send the request to the server; the response will be displayed below the button.</p>
+    <p><button>Get Messages</button></p>
+    <div id="demo-messages"></div>
+</div>
+
+<script>
+// Create business logic in a YUI sandbox using the 'io' and 'json' modules
+YUI().use("node", "io", "dump", "json-parse", function (Y) {
+
+    // capture the node that we'll display the messages in
+    var target = Y.one('#demo-messages');
+
+    // Create the io callback/configuration
+    var callback = {
+
+        timeout : 3000,
+
+        on : {
+            success : function (x,o) {
+                Y.log("RAW JSON DATA: " + o.responseText);
+
+                var messages = [],
+                    html = '', i, l;
+
+                // Process the JSON data returned from the server
+                try {
+                    messages = Y.JSON.parse(o.responseText);
+                }
+                catch (e) {
+                    alert("JSON Parse failed!");
+                    return;
+                }
+
+                Y.log("PARSED DATA: " + Y.Lang.dump(messages));
+
+                // The returned data was parsed into an array of objects.
+                // Add a P element for each received message
+                for (i=0, l=messages.length; i < l; ++i) {
+                    html += '<p>' + messages[i].animal + ' says "' +
+                                    messages[i].message + '"</p>';
+                }
+
+                // Use the Node API to apply the new innerHTML to the target
+                target.setContent(html);
+            },
+
+            failure : function (x,o) {
+                alert("Async call failed!");
+            }
+
+        }
+    };
+
+    // Attach a click event listener to the button #demo_btn to send the request
+    Y.one('#demo button').on('click',function (e) {
+        // Make the call to the server for JSON data
+        Y.io("{{componentAssets}}/json-connect-response.json", callback);
+    });
+
+});
+</script>

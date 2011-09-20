@@ -869,7 +869,7 @@ YUI.add('selection', function(Y) {
         * Destroy the range.
         * @method remove
         * @chainable
-        * @return {Y.Selection}
+        * @return {Selection}
         */
         remove: function() {
             this._selection.removeAllRanges();
@@ -893,7 +893,7 @@ YUI.add('selection', function(Y) {
         * @param {Node} node The node to select
         * @param {Boolean} collapse Should the range be collapsed after insertion. default: false
         * @chainable
-        * @return {Y.Selection}
+        * @return {Selection}
         */
         selectNode: function(node, collapse, end) {
             if (!node) {
@@ -992,4 +992,4 @@ YUI.add('selection', function(Y) {
     };
 
 
-}, '@VERSION@' ,{requires:['node'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['node']});

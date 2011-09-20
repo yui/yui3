@@ -5,17 +5,22 @@ YUI.add('charts', function(Y) {
  * graphically.
  *
  * @module charts
+ * @main charts
  */
 var DOCUMENT = Y.config.doc,
+    Y_Lang = Y.Lang,
     LeftAxisLayout,
     RightAxisLayout,
     BottomAxisLayout,
-    TopAxisLayout;
+    TopAxisLayout,
+    _getClassName = Y.ClassNameManager.getClassName,
+    SERIES_MARKER = _getClassName("seriesmarker");
 
 /**
  * The Renderer class is a base class for chart components that use the `styles`
  * attribute.
  *
+ * @module charts
  * @class Renderer
  * @constructor
  */
@@ -95,7 +100,7 @@ Renderer.prototype = {
         var newstyles = Y.merge(b, {});
         Y.Object.each(a, function(value, key, a)
         {
-            if(b.hasOwnProperty(key) && Y.Lang.isObject(value) && !Y.Lang.isArray(value))
+            if(b.hasOwnProperty(key) && Y_Lang.isObject(value) && !Y_Lang.isArray(value))
             {
                 newstyles[key] = this._mergeStyles(value, b[key]);
             }
@@ -131,6 +136,7 @@ Y.Renderer = Renderer;
 /**
  * Algorithmic strategy for rendering a left axis.
  *
+ * @module charts
  * @class LeftAxisLayout
  * @constructor
  */
@@ -540,8 +546,9 @@ Y.LeftAxisLayout = LeftAxisLayout;
 /**
  * RightAxisLayout contains algorithms for rendering a right axis.
  *
- * @constructor
+ * @module charts
  * @class RightAxisLayout
+ * @constructor
  */
 RightAxisLayout = function(){};
 
@@ -938,6 +945,7 @@ Y.RightAxisLayout = RightAxisLayout;
 /**
  * Contains algorithms for rendering a bottom axis.
  *
+ * @module charts
  * @class BottomAxisLayout
  * @Constructor
  */
@@ -1335,6 +1343,7 @@ Y.BottomAxisLayout = BottomAxisLayout;
 /**
  * Contains algorithms for rendering a top axis.
  *
+ * @module charts
  * @class TopAxisLayout
  * @constructor
  */
@@ -2496,7 +2505,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             m12 = props.m12;
             m21 = props.m21;
             m22 = props.m22;
-            if(Y.Lang.isNumber(textAlpha) && textAlpha < 1 && textAlpha > -1 && !isNaN(textAlpha))
+            if(Y_Lang.isNumber(textAlpha) && textAlpha < 1 && textAlpha > -1 && !isNaN(textAlpha))
             {
                 filterString = "progid:DXImageTransform.Microsoft.Alpha(Opacity=" + Math.round(textAlpha * 100) + ")";
             }
@@ -2680,7 +2689,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
 
             validator: function(val)
             {
-                return Y.Lang.isBoolean(val);
+                return Y_Lang.isBoolean(val);
             }
         },
 
@@ -2772,7 +2781,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
 /**
  * AxisType is an abstract class that manages the data for an axis.
  *
- * @param {Object} config (optional) Configuration parameters for the Chart.
+ * @module charts
  * @class AxisType
  * @constructor
  * @extends Axis
@@ -3178,7 +3187,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
                     i, 
                     len,
                     data = this.get("dataProvider");
-                if(Y.Lang.isArray(val))
+                if(Y_Lang.isArray(val))
                 {
                     len = val.length;
                     for(i = 0; i < len; ++i)
@@ -3187,7 +3196,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
                     }
                     
                 }
-                else if(Y.Lang.isString(val))
+                else if(Y_Lang.isString(val))
                 {
                     keys = this.get("keys");
                     keys[val] = this._getKeyArray(val, data);
@@ -3295,7 +3304,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
                 {
                     max = 10;
                 }
-                if(this.get("setMax")) 
+                if(Y_Lang.isNumber(this._setMaximum))
                 {
                     max = this._setMaximum;
                 }
@@ -3336,7 +3345,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
             getter: function ()
             {
                 var min = this.get("dataMinimum");
-                if(this.get("setMin"))
+                if(Y_Lang.isNumber(this._setMinimum))
                 {
                     min = this._setMinimum;
                 }
@@ -3361,7 +3370,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
 
             getter: function()
             {
-                return Y.Lang.isNumber(this._setMaximum);
+                return Y_Lang.isNumber(this._setMaximum);
             }
         },
 
@@ -3377,7 +3386,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
 
             getter: function()
             {
-                return Y.Lang.isNumber(this._setMinimum);
+                return Y_Lang.isNumber(this._setMinimum);
             }
         },
 
@@ -3444,9 +3453,10 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
 /**
  * NumericAxis manages numeric data on an axis.
  *
- * @param {Object} config (optional) Configuration parameters for the Chart.
+ * @module charts
  * @class NumericAxis
  * @constructor
+ * @param {Object} config (optional) Configuration parameters for the Chart.
  * @extends AxisType
  */
 function NumericAxis(config)
@@ -3530,7 +3540,7 @@ Y.extend(NumericAxis, Y.AxisType,
     {
         var value = NaN,
             keys = this.get("keys");
-        if(keys[key] && Y.Lang.isNumber(parseFloat(keys[key][index])))
+        if(keys[key] && Y_Lang.isNumber(parseFloat(keys[key][index])))
         {
             value = keys[key][index];
         }
@@ -3599,8 +3609,8 @@ Y.extend(NumericAxis, Y.AxisType,
             num,
             i,
             key,
-            setMax = this.get("setMax"),
-            setMin = this.get("setMin");
+            setMax = this._setMaximum,
+            setMin = this._setMinimum;
         if(!setMax && !setMin)
         {
             if(data && data.length && data.length > 0)
@@ -3614,7 +3624,7 @@ Y.extend(NumericAxis, Y.AxisType,
                         num = data[i];
                         if(isNaN(num))
                         {
-                            if(Y.Lang.isObject(num))
+                            if(Y_Lang.isObject(num))
                             {
                                 min = max = 0;
                                 //hloc values
@@ -3859,9 +3869,18 @@ Y.extend(NumericAxis, Y.AxisType,
             increm = (max - min)/(l-1),
             label;
             l -= 1;
-        label = min + (i * increm);
-        if(i > 0)
+        //respect the min and max. calculate all other labels.
+        if(i === 0)
         {
+            label = min;
+        }
+        else if(i === l)
+        {
+            label = max;
+        }
+        else
+        {
+            label = min + (i * increm);
             label = this._roundToNearest(label, increm);
         }
         return label;
@@ -3951,9 +3970,10 @@ Y.NumericAxis = NumericAxis;
 /**
  * StackedAxis manages stacked numeric data on an axis.
  *
- * @param {Object} config (optional) Configuration parameters for the Chart.
+ * @module charts
  * @class StackedAxis
  * @constructor
+ * @param {Object} config (optional) Configuration parameters for the Chart.
  * @extends NumericAxis
  */
 function StackedAxis(config)
@@ -4040,9 +4060,10 @@ Y.StackedAxis = StackedAxis;
 /**
  * TimeAxis manages time data on an axis.
  *
- * @param {Object} config (optional) Configuration parameters for the Chart.
+ * @module charts
  * @class TimeAxis
  * @constructor
+ * @param {Object} config (optional) Configuration parameters for the Chart.
  * @extends AxisType
  */
 function TimeAxis(config)
@@ -4068,7 +4089,7 @@ TimeAxis.ATTRS =
         getter: function()
         {
             var max = this._getNumber(this._setMaximum);
-            return (Y.Lang.isNumber(max));
+            return (Y_Lang.isNumber(max));
         }
     },
 
@@ -4086,7 +4107,7 @@ TimeAxis.ATTRS =
         getter: function()
         {
             var min = this._getNumber(this._setMinimum);
-            return (Y.Lang.isNumber(min));
+            return (Y_Lang.isNumber(min));
         }
     },
 
@@ -4100,7 +4121,7 @@ TimeAxis.ATTRS =
         getter: function ()
         {
             var max = this._getNumber(this._setMaximum);
-            if(!Y.Lang.isNumber(max))
+            if(!Y_Lang.isNumber(max))
             {
                 max = this._getNumber(this.get("dataMaximum"));
             }
@@ -4123,7 +4144,7 @@ TimeAxis.ATTRS =
         getter: function ()
         {
             var min = this._getNumber(this._setMinimum);
-            if(!Y.Lang.isNumber(min)) 
+            if(!Y_Lang.isNumber(min)) 
             {
                 min = this._getNumber(this.get("dataMinimum"));
             }
@@ -4237,20 +4258,20 @@ Y.extend(TimeAxis, Y.AxisType, {
         for(; i < len; ++i)
         {
             obj = data[i][key];
-            if(Y.Lang.isDate(obj))
+            if(Y_Lang.isDate(obj))
             {   
                 val = obj.valueOf();
             }
             else
             {
                 val = new Date(obj);
-                if(Y.Lang.isDate(val))
+                if(Y_Lang.isDate(val))
                 {
                     val = val.valueOf();
                 }
-                else if(!Y.Lang.isNumber(obj))
+                else if(!Y_Lang.isNumber(obj))
                 {
-                    if(Y.Lang.isNumber(parseFloat(obj)))
+                    if(Y_Lang.isNumber(parseFloat(obj)))
                     {
                         val = parseFloat(obj);
                     }
@@ -4292,20 +4313,20 @@ Y.extend(TimeAxis, Y.AxisType, {
         for(i = 0; i < len; ++i)
         {
             obj = dv[i][key];
-            if(Y.Lang.isDate(obj))
+            if(Y_Lang.isDate(obj))
             {   
                 val = obj.valueOf();
             }
             else
             {
                 val = new Date(obj);
-                if(Y.Lang.isDate(val))
+                if(Y_Lang.isDate(val))
                 {
                     val = val.valueOf();
                 }
-                else if(!Y.Lang.isNumber(obj))
+                else if(!Y_Lang.isNumber(obj))
                 {
-                    if(Y.Lang.isNumber(parseFloat(obj)))
+                    if(Y_Lang.isNumber(parseFloat(obj)))
                     {
                         val = parseFloat(obj);
                     }
@@ -4339,11 +4360,11 @@ Y.extend(TimeAxis, Y.AxisType, {
      */
     _getNumber: function(val)
     {
-        if(Y.Lang.isDate(val))
+        if(Y_Lang.isDate(val))
         {
             val = val.valueOf();
         }
-        else if(!Y.Lang.isNumber(val) && val)
+        else if(!Y_Lang.isNumber(val) && val)
         {
             val = new Date(val).valueOf();
         }
@@ -4357,9 +4378,10 @@ Y.TimeAxis = TimeAxis;
 /**
  * CategoryAxis manages category data on an axis.
  *
- * @param {Object} config (optional) Configuration parameters for the Chart.
+ * @module charts
  * @class CategoryAxis
  * @constructor
+ * @param {Object} config (optional) Configuration parameters for the Chart.
  * @extends AxisType
  */
 function CategoryAxis(config)
@@ -4572,6 +4594,7 @@ Y.CategoryAxis = CategoryAxis;
 /**
  * Utility class used for calculating curve points.
  *
+ * @module charts
  * @class CurveUtil
  * @constructor
  */
@@ -4583,6 +4606,7 @@ CurveUtil.prototype = {
     /**
      * Creates an array of start, end and control points for splines.
      *
+     * @method getCurveControlPoints
      * @param {Array} xcoords Collection of x-coordinates used for calculate the curves
      * @param {Array} ycoords Collection of y-coordinates used for calculate the curves
      * @return Object
@@ -4689,6 +4713,7 @@ Y.CurveUtil = CurveUtil;
 /**
  * Utility class used for creating stacked series.
  *
+ * @module charts
  * @class StackingUtil
  * @constructor
  */
@@ -4750,6 +4775,7 @@ Y.StackingUtil = StackingUtil;
 /**
  * Utility class used for drawing lines.
  *
+ * @module charts
  * @class Lines
  * @constructor
  */
@@ -4808,7 +4834,7 @@ Lines.prototype = {
         {
             return;
         }
-        var isNumber = Y.Lang.isNumber,
+        var isNumber = Y_Lang.isNumber,
             xcoords = this.get("xcoords").concat(),
             ycoords = this.get("ycoords").concat(),
             direction = this.get("direction"),
@@ -5014,6 +5040,7 @@ Y.Lines = Lines;
 /**
  * Utility class used for drawing area fills.
  *
+ * @module charts
  * @class Fills
  * @constructor
  */
@@ -5376,6 +5403,7 @@ Y.Fills = Fills;
 /**
  * Utility class used for drawing markers.
  *
+ * @module charts
  * @class Plots
  * @constructor
  */
@@ -5414,7 +5442,7 @@ Plots.prototype = {
 		{
 			return;
 		}
-        var isNumber = Y.Lang.isNumber,
+        var isNumber = Y_Lang.isNumber,
             style = Y.clone(this.get("styles").marker),
             w = style.width,
             h = style.height,
@@ -5430,11 +5458,11 @@ Plots.prototype = {
             fillColors = null,
             borderColors = null,
             graphOrder = this.get("graphOrder");
-        if(Y.Lang.isArray(style.fill.color))
+        if(Y_Lang.isArray(style.fill.color))
         {
             fillColors = style.fill.color.concat(); 
         }
-        if(Y.Lang.isArray(style.border.color))
+        if(Y_Lang.isArray(style.border.color))
         {
             borderColors = style.border.colors.concat();
         }
@@ -5528,7 +5556,7 @@ Plots.prototype = {
     {
         var marker,
             border = styles.border;
-        styles.id = "series_" + order + "_" + index;
+        styles.id = this.get("chart").get("id") + "_" + order + "_" + index;
         //fix name differences between graphic layer
         border.opacity = border.alpha;
         styles.stroke = border;
@@ -5573,7 +5601,7 @@ Plots.prototype = {
         graphic.set("autoDraw", false);
         cfg.type = cfg.shape;
         marker = graphic.addShape(cfg); 
-        marker.addClass("yui3-seriesmarker");
+        marker.addClass(SERIES_MARKER);
         return marker;
     },
     
@@ -5631,9 +5659,7 @@ Plots.prototype = {
      */
     _clearMarkerCache: function()
     {
-        var len = this._markerCache.length,
-            i = 0,
-            marker;
+        var marker;
         while(this._markerCache.length > 0)
         {
             marker = this._markerCache.shift();
@@ -5687,7 +5713,7 @@ Plots.prototype = {
      */
     _getItemColor: function(val, i)
     {
-        if(Y.Lang.isArray(val))
+        if(Y_Lang.isArray(val))
         {
             return val[i % val.length];
         }
@@ -5776,6 +5802,7 @@ Y.Plots = Plots;
 /**
  * Histogram is the base class for Column and Bar series.
  *
+ * @module charts
  * @class Histogram
  * @constructor
  */
@@ -5820,11 +5847,11 @@ Histogram.prototype = {
             config,
             fillColors = null,
             borderColors = null;
-        if(Y.Lang.isArray(style.fill.color))
+        if(Y_Lang.isArray(style.fill.color))
         {
             fillColors = style.fill.color.concat(); 
         }
-        if(Y.Lang.isArray(style.border.color))
+        if(Y_Lang.isArray(style.border.color))
         {
             borderColors = style.border.colors.concat();
         }
@@ -5945,6 +5972,7 @@ Y.Histogram = Histogram;
 /**
  * The CartesianSeries class creates a chart with horizontal and vertical axes.
  *
+ * @module charts
  * @class CartesianSeries
  * @extends Base
  * @uses Renderer
@@ -6156,6 +6184,10 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         {
             this.draw();
         }
+        else
+        {
+            this.fire("drawingComplete");
+        }
     },
 
     /**
@@ -6179,7 +6211,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
      */
     setAreaData: function()
     {
-        var isNumber = Y.Lang.isNumber,
+        var isNumber = Y_Lang.isNumber,
             nextX, nextY,
             graph = this.get("graph"),
             w = graph.get("width"),
@@ -6513,6 +6545,22 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          * @type Array
          */
         ycoords: {},
+
+        /**
+         * Reference to the `Chart` application.
+         *
+         * @attribute chart
+         * @type ChartBase
+         * @readOnly
+         */
+        chart: {
+            readOnly: true,
+
+            getter: function()
+            {
+                return this.get("graph").get("chart");
+            }
+        },
         
         /**
          * Reference to the `Graph` in which the series is drawn into.
@@ -6692,6 +6740,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
  * The MarkerSeries class renders quantitative data by plotting relevant data points 
  * on a graph.
  *
+ * @module charts
  * @class MarkerSeries
  * @extends CartesianSeries
  * @uses Plots
@@ -6793,6 +6842,7 @@ Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
 /**
  * The LineSeries class renders quantitative data on a graph by connecting relevant data points.
  *
+ * @module charts
  * @class LineSeries
  * @extends CartesianSeries
  * @uses Lines
@@ -6886,6 +6936,7 @@ Y.LineSeries = Y.Base.create("lineSeries", Y.CartesianSeries, [Y.Lines], {
 /**
  * SplineSeries renders a graph with data points connected by a curve.
  *
+ * @module charts
  * @class SplineSeries
  * @constructor
  * @extends CartesianSeries
@@ -6948,6 +6999,7 @@ Y.SplineSeries = Y.Base.create("splineSeries",  Y.LineSeries, [Y.CurveUtil, Y.Li
 /**
  * AreaSplineSeries renders an area graph with data points connected by a curve.
  *
+ * @module charts
  * @class AreaSplineSeries
  * @constructor
  * @extends CartesianSeries
@@ -7000,6 +7052,7 @@ Y.AreaSplineSeries = Y.Base.create("areaSplineSeries", Y.CartesianSeries, [Y.Fil
  * StackedSplineSeries creates spline graphs in which the different series are stacked along a value axis
  * to indicate their contribution to a cumulative total.
  *
+ * @module charts
  * @class StackedSplineSeries
  * @constructor
  * @extends SplineSeries
@@ -7037,6 +7090,7 @@ Y.StackedSplineSeries = Y.Base.create("stackedSplineSeries", Y.SplineSeries, [Y.
  * StackedMarkerSeries plots markers with different series stacked along the value axis to indicate each
  * series' contribution to a cumulative total.
  *
+ * @module charts
  * @class StackedMarkerSeries
  * @constructor
  * @extends MarkerSeries
@@ -7075,6 +7129,7 @@ Y.StackedMarkerSeries = Y.Base.create("stackedMarkerSeries", Y.MarkerSeries, [Y.
  * lengths are proportional to the values they represent along a vertical axis.
  * and the relevant data points.
  *
+ * @module charts
  * @class ColumnSeries
  * @extends MarkerSeries
  * @uses Histogram
@@ -7217,6 +7272,7 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
  * lengths are proportional to the values they represent along a horizontal axis.
  * and the relevant data points.
  *
+ * @module charts
  * @class BarSeries
  * @extends MarkerSeries
  * @uses Histogram
@@ -7367,6 +7423,7 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
  * The AreaSeries class renders quantitative data on a graph by creating a fill between 0
  * and the relevant data points.
  *
+ * @module charts
  * @class AreaSeries
  * @extends CartesianSeries
  * @uses Fills
@@ -7456,6 +7513,7 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
 /**
  * StackedAreaSplineSeries creates a stacked area chart with points data points connected by a curve.
  *
+ * @module charts
  * @class StackedAreaSplineSeries
  * @constructor
  * @extends AreaSeries
@@ -7495,6 +7553,7 @@ Y.StackedAreaSplineSeries = Y.Base.create("stackedAreaSplineSeries", Y.AreaSerie
  * series type has a corresponding boolean attribute indicating if it is rendered. By default, lines and plots 
  * are rendered and area is not. 
  *
+ * @module charts
  * @class ComboSeries
  * @extends CartesianSeries 
  * @uses Fills
@@ -7738,11 +7797,11 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
          * Style properties for the series. Contains a key indexed hash of the following:
          *  <dl>
          *      <dt>marker</dt><dd>Style properties for the markers in the series. Specific style attributes are listed
-         *      <a href="#config_marker">here</a>.</dd>
+         *      <a href="#attr_marker">here</a>.</dd>
          *      <dt>line</dt><dd>Style properties for the lines in the series. Specific
-         *      style attributes are listed <a href="#config_line">here</a>.</dd>
+         *      style attributes are listed <a href="#attr_line">here</a>.</dd>
          *      <dt>area</dt><dd>Style properties for the area fills in the series. Specific style attributes are listed
-         *      <a href="#config_area">here</a>.</dd>
+         *      <a href="#attr_area">here</a>.</dd>
          *  </dl>
          *
          * @attribute styles
@@ -7762,6 +7821,7 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
  * series type has a corresponding boolean attribute indicating if it is rendered. By default, all three types are
  * rendered.  
  *
+ * @module charts
  * @class StackedComboSeries
  * @extends ComboSeries
  * @uses StackingUtil
@@ -7834,6 +7894,7 @@ Y.StackedComboSeries = Y.Base.create("stackedComboSeries", Y.ComboSeries, [Y.Sta
  * series type has a corresponding boolean attribute indicating if it is rendered. By default, splines and plots 
  * are rendered and areaspline is not. 
  *
+ * @module charts
  * @class ComboSplineSeries
  * @extends ComboSeries
  * @extends CurveUtil
@@ -7882,6 +7943,7 @@ Y.ComboSplineSeries = Y.Base.create("comboSplineSeries", Y.ComboSeries, [Y.Curve
  * series type has a corresponding boolean attribute indicating if it is rendered. By default, all three types are
  * rendered.  
  *
+ * @module charts
  * @class StackedComboSplineSeries
  * @extends StackedComboSeries
  * @uses CurveUtil
@@ -7939,6 +8001,7 @@ Y.StackedComboSplineSeries = Y.Base.create("stackedComboSplineSeries", Y.Stacked
  * StackedLineSeries creates line graphs in which the different series are stacked along a value axis
  * to indicate their contribution to a cumulative total.
  *
+ * @module charts
  * @class StackedLineSeries
  * @constructor
  * @extends  LineSeries
@@ -7974,9 +8037,10 @@ Y.StackedLineSeries = Y.Base.create("stackedLineSeries", Y.LineSeries, [Y.Stacki
 /**
  * StackedAreaSeries area fills to display data showing its contribution to a whole.
  *
- * @param {Object} config (optional) Configuration parameters for the Chart.
+ * @module charts
  * @class StackedAreaSeries
  * @constructor
+ * @param {Object} config (optional) Configuration parameters for the Chart.
  * @extends AreaSeries
  * @uses StackingUtil
  */
@@ -8023,6 +8087,7 @@ Y.StackedAreaSeries = Y.Base.create("stackedAreaSeries", Y.AreaSeries, [Y.Stacki
  * The StackedColumnSeries renders column chart in which series are stacked vertically to show
  * their contribution to the cumulative total.
  *
+ * @module charts
  * @class StackedColumnSeries
  * @extends ColumnSeries
  * @uses StackingUtil
@@ -8041,7 +8106,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
 		{
 			return;
 		}
-        var isNumber = Y.Lang.isNumber,
+        var isNumber = Y_Lang.isNumber,
             style = this.get("styles").marker, 
             w = style.width,
             h = style.height,
@@ -8075,6 +8140,12 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
             lastCollection = seriesCollection[order - 1];
             negativeBaseValues = lastCollection.get("negativeBaseValues");
             positiveBaseValues = lastCollection.get("positiveBaseValues");
+            if(!negativeBaseValues || !positiveBaseValues)
+            {
+                useOrigin = true;
+                positiveBaseValues = [];
+                negativeBaseValues = [];
+            }
         }
         else
         {
@@ -8286,6 +8357,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
  * The StackedBarSeries renders bar chart in which series are stacked horizontally to show
  * their contribution to the cumulative total.
  *
+ * @module charts
  * @class StackedBarSeries
  * @extends BarSeries
  * @uses StackingUtil
@@ -8306,7 +8378,7 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
 			return;
 		}
 
-        var isNumber = Y.Lang.isNumber,
+        var isNumber = Y_Lang.isNumber,
             style = this.get("styles").marker,
             w = style.width,
             h = style.height,
@@ -8340,6 +8412,12 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
             lastCollection = seriesCollection[order - 1];
             negativeBaseValues = lastCollection.get("negativeBaseValues");
             positiveBaseValues = lastCollection.get("positiveBaseValues");
+            if(!negativeBaseValues || !positiveBaseValues)
+            {
+                useOrigin = true;
+                positiveBaseValues = [];
+                negativeBaseValues = [];
+            }
         }
         else
         {
@@ -8562,6 +8640,7 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
  * PieSeries visualizes data as a circular chart divided into wedges which represent data as a 
  * percentage of a whole.
  *
+ * @module charts
  * @class PieSeries
  * @constructor
  * @extends MarkerSeries
@@ -8755,8 +8834,23 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         if(isFinite(w) && isFinite(h) && w > 0 && h > 0)
         {   
             this._rendered = true;
+            if(this._drawing)
+            {
+                this._callLater = true;
+                return;
+            }
+            this._drawing = true;
+            this._callLater = false;
             this.drawSeries();
-            this.fire("drawingComplete");
+            this._drawing = false;
+            if(this._callLater)
+            {
+                this.draw();
+            }
+            else
+            {
+                this.fire("drawingComplete");
+            }
         }
     },
 
@@ -8785,8 +8879,9 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             tfa,
             padding = styles.padding,
             graph = this.get("graph"),
-            w = graph.get("width") - (padding.left + padding.right),
-            h = graph.get("height") - (padding.top + padding.bottom),
+            minDimension = Math.min(graph.get("width"), graph.get("height")),
+            w = minDimension - (padding.left + padding.right),
+            h = minDimension - (padding.top + padding.bottom),
             startAngle = -90,
             halfWidth = w / 2,
             halfHeight = h / 2,
@@ -8801,7 +8896,6 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             marker,
             graphOrder = this.get("graphOrder"),
             isCanvas = Y.Graphic.NAME == "canvasGraphic";
-
         for(; i < itemCount; ++i)
         {
             value = values[i];
@@ -8935,7 +9029,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         pts += ", " + bx + ", " + by;
         pts += ", " + x + ", " + y;
         this._map.appendChild(areaNode);
-        areaNode.setAttribute("class", "yui3-seriesmarker");
+        areaNode.setAttribute("class", SERIES_MARKER);
         areaNode.setAttribute("id", "hotSpot_" + seriesIndex + "_" + index);
         areaNode.setAttribute("shape", "polygon");
         areaNode.setAttribute("coords", pts);
@@ -8985,7 +9079,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             cfg = Y.clone(styles);
         graphic.set("autoDraw", false);
         marker = graphic.addShape(cfg); 
-        marker.addClass("yui3-seriesmarker");
+        marker.addClass(SERIES_MARKER);
         return marker;
     },
     
@@ -9274,6 +9368,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
 /**
  * Gridlines draws gridlines on a Graph.
  *
+ * @module charts
  * @class Gridlines
  * @constructor
  * @extends Base
@@ -9460,6 +9555,7 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
  * Graph manages and contains series instances for a `CartesianChart`
  * instance.
  *
+ * @module charts
  * @class Graph
  * @constructor
  * @extends Widget
@@ -9686,7 +9782,8 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     },
 
     /**
-     * Creates a `CartesianSeries` instance from an object containing attribute key value pairs.
+     * Creates a `CartesianSeries` instance from an object containing attribute key value pairs. The key value pairs include attributes for the specific series and a type value which defines the type of
+     * series to be used. 
      *
      * @method createSeries
      * @param {Object} seriesData Series attribute key value pairs.
@@ -9716,86 +9813,82 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         typeSeriesCollection.push(series);
         seriesCollection.push(series);
     },
+    
+    /**
+     * String reference for pre-defined `Series` classes.
+     *
+     * @property _seriesMap
+     * @type Object
+     * @private
+     */
+    _seriesMap: {
+        line : Y.LineSeries,
+        column : Y.ColumnSeries,
+        bar : Y.BarSeries,
+        area :  Y.AreaSeries,
+        candlestick : Y.CandlestickSeries,
+        ohlc : Y.OHLCSeries,
+        stackedarea : Y.StackedAreaSeries,
+        stackedline : Y.StackedLineSeries,
+        stackedcolumn : Y.StackedColumnSeries,
+        stackedbar : Y.StackedBarSeries,
+        markerseries : Y.MarkerSeries,
+        spline : Y.SplineSeries,
+        areaspline : Y.AreaSplineSeries,
+        stackedspline : Y.StackedSplineSeries,
+        stackedareaspline : Y.StackedAreaSplineSeries,
+        stackedmarkerseries : Y.StackedMarkerSeries,
+        pie : Y.PieSeries,
+        combo : Y.ComboSeries,
+        stackedcombo : Y.StackedComboSeries,
+        combospline : Y.ComboSplineSeries,
+        stackedcombospline : Y.StackedComboSplineSeries
+    },
 
     /**
-     * Returns a specific `CartesianSeries` class based on key value.
+     * Returns a specific `CartesianSeries` class based on key value from a look up table of a direct reference to a class. When specifying a key value, the following options
+     * are available:
+     *
+     *  <table>
+     *      <tr><th>Key Value</th><th>Class</th></tr>
+     *      <tr><td>line</td><td>Y.LineSeries</td></tr>    
+     *      <tr><td>column</td><td>Y.ColumnSeries</td></tr>    
+     *      <tr><td>bar</td><td>Y.BarSeries</td></tr>    
+     *      <tr><td>area</td><td>Y.AreaSeries</td></tr>    
+     *      <tr><td>stackedarea</td><td>Y.StackedAreaSeries</td></tr>    
+     *      <tr><td>stackedline</td><td>Y.StackedLineSeries</td></tr>    
+     *      <tr><td>stackedcolumn</td><td>Y.StackedColumnSeries</td></tr>    
+     *      <tr><td>stackedbar</td><td>Y.StackedBarSeries</td></tr>    
+     *      <tr><td>markerseries</td><td>Y.MarkerSeries</td></tr>    
+     *      <tr><td>spline</td><td>Y.SplineSeries</td></tr>    
+     *      <tr><td>areaspline</td><td>Y.AreaSplineSeries</td></tr>    
+     *      <tr><td>stackedspline</td><td>Y.StackedSplineSeries</td></tr>
+     *      <tr><td>stackedareaspline</td><td>Y.StackedAreaSplineSeries</td></tr>
+     *      <tr><td>stackedmarkerseries</td><td>Y.StackedMarkerSeries</td></tr>
+     *      <tr><td>pie</td><td>Y.PieSeries</td></tr>
+     *      <tr><td>combo</td><td>Y.ComboSeries</td></tr>
+     *      <tr><td>stackedcombo</td><td>Y.StackedComboSeries</td></tr>
+     *      <tr><td>combospline</td><td>Y.ComboSplineSeries</td></tr>
+     *      <tr><td>stackedcombospline</td><td>Y.StackedComboSplineSeries</td></tr>
+     *  </table>
+     * 
+     * When referencing a class directly, you can specify any of the above classes or any custom class that extends `CartesianSeries` or `PieSeries`.
      *
      * @method _getSeries
-     * @param {String} type Key value for the series class.
+     * @param {String | Object} type Series type.
      * @return CartesianSeries
      * @private
      */
     _getSeries: function(type)
     {
         var seriesClass;
-        switch(type)
+        if(Y_Lang.isString(type))
         {
-            case "line" :
-                seriesClass = Y.LineSeries;
-            break;
-            case "column" :
-                seriesClass = Y.ColumnSeries;
-            break;
-            case "bar" :
-                seriesClass = Y.BarSeries;
-            break;
-            case "area" : 
-                seriesClass = Y.AreaSeries;
-            break;
-            case "candlestick" :
-                seriesClass = Y.CandlestickSeries;
-            break;
-            case "ohlc" :
-                seriesClass = Y.OHLCSeries;
-            break;
-            case "stackedarea" :
-                seriesClass = Y.StackedAreaSeries;
-            break;
-            case "stackedline" :
-                seriesClass = Y.StackedLineSeries;
-            break;
-            case "stackedcolumn" :
-                seriesClass = Y.StackedColumnSeries;
-            break;
-            case "stackedbar" :
-                seriesClass = Y.StackedBarSeries;
-            break;
-            case "markerseries" :
-                seriesClass = Y.MarkerSeries;
-            break;
-            case "spline" :
-                seriesClass = Y.SplineSeries;
-            break;
-            case "areaspline" :
-                seriesClass = Y.AreaSplineSeries;
-            break;
-            case "stackedspline" :
-                seriesClass = Y.StackedSplineSeries;
-            break;
-            case "stackedareaspline" :
-                seriesClass = Y.StackedAreaSplineSeries;
-            break;
-            case "stackedmarkerseries" :
-                seriesClass = Y.StackedMarkerSeries;
-            break;
-            case "pie" :
-                seriesClass = Y.PieSeries;
-            break;
-            case "combo" :
-                seriesClass = Y.ComboSeries;
-            break;
-            case "stackedcombo" :
-                seriesClass = Y.StackedComboSeries;
-            break;
-            case "combospline" :
-                seriesClass = Y.ComboSplineSeries;
-            break;
-            case "stackedcombospline" :
-                seriesClass = Y.StackedComboSplineSeries;
-            break;
-            default:
-                seriesClass = Y.CartesianSeries;
-            break;
+            seriesClass = this._seriesMap[type];
+        }
+        else 
+        {
+            seriesClass = type;
         }
         return seriesClass;
     },
@@ -9913,7 +10006,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         for(; i < len; ++i)
         {
             sc[i].draw();
-            if(!sc[i].get("xcoords") || !sc[i].get("ycoords"))
+            if((!sc[i].get("xcoords") || !sc[i].get("ycoords")) && !sc[i] instanceof Y.PieSeries)
             {
                 this._callLater = true;
                 break;
@@ -9979,6 +10072,15 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     }
 }, {
     ATTRS: {
+        /**
+         * Reference to the chart instance using the graph.
+         *
+         * @attribute chart
+         * @type ChartBase
+         * @readOnly
+         */
+        chart: {},
+
         /**
          * Collection of series. When setting the `seriesCollection` the array can contain a combination of either
          * `CartesianSeries` instances or object literals with properties that will define a series.
@@ -10101,7 +10203,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 if(!this._background)
                 {
                     this._backgroundGraphic = new Y.Graphic({render:this.get("contentBox")});
-                    this._backgroundGraphic.get("node").style.zIndex = -2;
+                    Y.one(this._backgroundGraphic.get("node")).setStyle("zIndex", 0); 
                     this._background = this._backgroundGraphic.addShape({type: "rect"});
                 }
                 return this._background;
@@ -10123,7 +10225,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 if(!this._gridlines)
                 {
                     this._gridlinesGraphic = new Y.Graphic({render:this.get("contentBox")});
-                    this._gridlinesGraphic.get("node").style.zIndex = -1;
+                    Y.one(this._gridlinesGraphic.get("node")).setStyle("zIndex", 1); 
                     this._gridlines = this._gridlinesGraphic.addShape({type: "path"});
                 }
                 return this._gridlines;
@@ -10145,6 +10247,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 if(!this._graphic)
                 {
                     this._graphic = new Y.Graphic({render:this.get("contentBox")});
+                    Y.one(this._graphic.get("node")).setStyle("zIndex", 2); 
                     this._graphic.set("autoDraw", false);
                 }
                 return this._graphic;
@@ -10181,6 +10284,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
 /**
  * The ChartBase class is an abstract class used to create charts.
  *
+ * @module charts
  * @class ChartBase
  * @constructor
  */
@@ -10309,7 +10413,7 @@ ChartBase.prototype = {
      */
     _getGraph: function()
     {
-        var graph = new Y.Graph();
+        var graph = new Y.Graph({chart:this});
         graph.after("chartRendered", Y.bind(function(e) {
             this.fire("chartRendered");
         }, this));
@@ -10329,7 +10433,7 @@ ChartBase.prototype = {
             graph = this.get("graph");
         if(graph)
         {
-            if(Y.Lang.isNumber(val))
+            if(Y_Lang.isNumber(val))
             {
                 series = graph.getSeriesByIndex(val);
             }
@@ -10409,7 +10513,7 @@ ChartBase.prototype = {
      */
     _setDataValues: function(val)
     {
-        if(Y.Lang.isArray(val[0]))
+        if(Y_Lang.isArray(val[0]))
         {
             var hash, 
                 dp = [], 
@@ -10523,17 +10627,18 @@ ChartBase.prototype = {
             cb = this.get("contentBox"),
             interactionType = this.get("interactionType"),
             i = 0,
-            len;
+            len,
+            markerClassName = "." + SERIES_MARKER;
         if(interactionType == "marker")
         {
             hideEvent = tt.hideEvent;
             showEvent = tt.showEvent;
-            Y.delegate("mouseenter", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("mousedown", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("mouseup", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("mouseleave", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("click", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
-            Y.delegate("mousemove", Y.bind(this._positionTooltip, this), cb, ".yui3-seriesmarker");
+            Y.delegate("mouseenter", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("mousedown", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("mouseup", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("mouseleave", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("click", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+            Y.delegate("mousemove", Y.bind(this._positionTooltip, this), cb, markerClassName);
         }
         else if(interactionType == "planar")
         {
@@ -10554,7 +10659,7 @@ ChartBase.prototype = {
                 }
                 if(hideEvent)
                 {
-                    if(Y.Lang.isArray(hideEvent))
+                    if(Y_Lang.isArray(hideEvent))
                     {
                         len = hideEvent.length;
                         for(; i < len; ++i)
@@ -10581,12 +10686,14 @@ ChartBase.prototype = {
             cb = this.get("contentBox"),
             markerNode = e.currentTarget,
             strArr = markerNode.getAttribute("id").split("_"),
-            seriesIndex = strArr[1],
+            index = strArr.pop(),
+            seriesIndex = strArr.pop(),
             series = this.getSeries(parseInt(seriesIndex, 10)),
-            index = strArr[2],
             items = this.getSeriesItems(series, index),
-            x = e.pageX - cb.getX(),
-            y = e.pageY - cb.getY();
+            pageX = e.pageX,
+            pageY = e.pageY,
+            x = pageX - cb.getX(),
+            y = pageY - cb.getY();
         if(type == "mouseenter")
         {
             type = "mouseover";
@@ -10683,12 +10790,27 @@ ChartBase.prototype = {
          *      <dt>node</dt><dd>The dom node of the marker.</dd>
          *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>
          *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>
+         *      <dt>pageX</dt><dd>The x location of the event on the page (including scroll)</dd>
+         *      <dt>pageY</dt><dd>The y location of the event on the page (including scroll)</dd>
          *      <dt>series</dt><dd>Reference to the series of the marker.</dd>
          *      <dt>index</dt><dd>Index of the marker in the series.</dd>
          *      <dt>seriesIndex</dt><dd>The `order` of the marker's series.</dd>
+         *      <dt>originEvent</dt><dd>Underlying dom event.</dd>
          *  </dl>
          */
-        this.fire("markerEvent:" + type, {categoryItem:items.category, valueItem:items.value, node:markerNode, x:x, y:y, series:series, index:index, seriesIndex:seriesIndex});
+        this.fire("markerEvent:" + type, {
+            originEvent: e,
+            pageX:pageX, 
+            pageY:pageY, 
+            categoryItem:items.category, 
+            valueItem:items.value, 
+            node:markerNode, 
+            x:x, 
+            y:y, 
+            series:series, 
+            index:index, 
+            seriesIndex:seriesIndex
+        });
     },
 
     /**
@@ -10841,7 +10963,7 @@ ChartBase.prototype = {
                 planarEventHandler:"planarEventHandler",
                 show:"show"
             };
-        if(Y.Lang.isObject(val))
+        if(Y_Lang.isObject(val))
         {
             styles = val.styles;
             node = Y.one(val.node) || tt.node;
@@ -11022,6 +11144,7 @@ Y.ChartBase = ChartBase;
 /**
  * The CartesianChart class creates a chart with horizontal and vertical axes.
  *
+ * @module charts
  * @class CartesianChart
  * @extends ChartBase
  * @constructor
@@ -11034,7 +11157,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
     renderUI: function()
     {
         var tt = this.get("tooltip"),
-            overlay;
+            overlay,
+            overlayClass = _getClassName("overlay");
         //move the position = absolute logic to a class file
         this.get("boundingBox").setStyle("position", "absolute");
         this.get("contentBox").setStyle("position", "absolute");
@@ -11055,7 +11179,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             this._overlay.setStyle("position", "absolute");
             this._overlay.setStyle("background", "#fff");
             this._overlay.setStyle("opacity", 0);
-            this._overlay.addClass("yui3-overlay");
+            this._overlay.addClass(overlayClass);
             this._overlay.setStyle("zIndex", 4);
         }
         this._redraw();
@@ -11074,12 +11198,14 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         var graph = this.get("graph"),
             bb = this.get("boundingBox"),
             cb = graph.get("contentBox"),
-            x = e.pageX,
-            offsetX = x - cb.getX(),
-            posX = x - bb.getX(),
-            y = e.pageY,
-            offsetY = y - cb.getY(),
-            posY = y - bb.getY(),
+            pageX = e.pageX,
+            pageY = e.pageY,
+            posX = pageX - bb.getX(),
+            posY = pageY - bb.getY(),
+            offset = {
+                x: pageX - cb.getX(),
+                y: pageY - cb.getY()
+            },
             sc = graph.get("seriesCollection"),
             series,
             i = 0,
@@ -11091,73 +11217,117 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             valueItems = [],
             direction = this.get("direction"),
             hasMarkers,
-            coord = direction == "horizontal" ? offsetX : offsetY,
+            catAxis,
+            valAxis,
+            coord,
             //data columns and area data could be created on a graph level
-            markerPlane = direction == "horizontal" ? sc[0].get("xMarkerPlane") : sc[0].get("yMarkerPlane"),
-            len = markerPlane.length;
-       for(; i < len; ++i)
-       {
-            if(coord <= markerPlane[i].end && coord >= markerPlane[i].start)
-            {
-                index = i;
-                break;
-            }
-       }
-       len = sc.length;
-       for(i = 0; i < len; ++i)
-       {
-            series = sc[i];
-            hasMarkers = series.get("markers");
-            if(hasMarkers && !isNaN(oldIndex) && oldIndex > -1)
-            {
-                series.updateMarkerState("mouseout", oldIndex);
-            }
-            if(series.get("ycoords")[index] > -1)
-            {
-                if(hasMarkers && !isNaN(index) && index > -1)
-                {
-                    series.updateMarkerState("mouseover", index);
-                }
-                item = this.getSeriesItems(series, index);
-                categoryItems.push(item.category);
-                valueItems.push(item.value);
-                items.push(series);
-            }
-                
-        }
-        this._selectedIndex = index;
-        
-        /**
-         * Broadcasts when `interactionType` is set to `planar` and a series' marker plane has received a mouseover event.
-         * 
-         *
-         * @event planarEvent:mouseover
-         * @preventable false
-         * @param {EventFacade} e Event facade with the following additional
-         *   properties:
-         *  <dl>
-         *      <dt>categoryItem</dt><dd>An array of hashes, each containing information about the category `Axis` of each marker whose plane has been intersected.</dd>
-         *      <dt>valueItem</dt><dd>An array of hashes, each containing information about the value `Axis` of each marker whose plane has been intersected.</dd>
-         *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>
-         *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>
-         *      <dt>items</dt><dd>An array including all the series which contain a marker whose plane has been intersected.</dd>
-         *      <dt>index</dt><dd>Index of the markers in their respective series.</dd>
-         *  </dl>
-         */
-        /**
-         * Broadcasts when `interactionType` is set to `planar` and a series' marker plane has received a mouseout event.
-         *
-         * @event planarEvent:mouseout
-         * @preventable false
-         * @param {EventFacade} e 
-         */
-        if(index > -1)
+            markerPlane,
+            len,
+            coords;
+        if(direction == "horizontal")
         {
-            this.fire("planarEvent:mouseover", {categoryItem:categoryItems, valueItem:valueItems, x:posX, y:posY, items:items, index:index});
+            catAxis = "x";
+            valAxis = "y";
         }
         else
         {
-            this.fire("planarEvent:mouseout");
+            valAxis = "x";
+            catAxis = "y";
+        }
+        coord = offset[catAxis];
+        if(sc)
+        {
+            len = sc.length;
+            while(i < len && !markerPlane)
+            {
+                if(sc[i])
+                {
+                    markerPlane = sc[i].get(catAxis + "MarkerPlane");
+                }
+                i++;
+            }
+        }
+        if(markerPlane)
+        {
+            len = markerPlane.length;
+            for(i = 0; i < len; ++i)
+            {
+                if(coord <= markerPlane[i].end && coord >= markerPlane[i].start)
+                {
+                    index = i;
+                    break;
+                }
+            }
+            len = sc.length;
+            for(i = 0; i < len; ++i)
+            {
+                series = sc[i];
+                coords = series.get(valAxis + "coords");
+                hasMarkers = series.get("markers");
+                if(hasMarkers && !isNaN(oldIndex) && oldIndex > -1)
+                {
+                    series.updateMarkerState("mouseout", oldIndex);
+                }
+                if(coords && coords[index] > -1)
+                {
+                    if(hasMarkers && !isNaN(index) && index > -1)
+                    {
+                        series.updateMarkerState("mouseover", index);
+                    }
+                    item = this.getSeriesItems(series, index);
+                    categoryItems.push(item.category);
+                    valueItems.push(item.value);
+                    items.push(series);
+                }
+                    
+            }
+            this._selectedIndex = index;
+
+            /**
+             * Broadcasts when `interactionType` is set to `planar` and a series' marker plane has received a mouseover event.
+             * 
+             *
+             * @event planarEvent:mouseover
+             * @preventable false
+             * @param {EventFacade} e Event facade with the following additional
+             *   properties:
+             *  <dl>
+             *      <dt>categoryItem</dt><dd>An array of hashes, each containing information about the category `Axis` of each marker whose plane has been intersected.</dd>
+             *      <dt>valueItem</dt><dd>An array of hashes, each containing information about the value `Axis` of each marker whose plane has been intersected.</dd>
+             *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>
+             *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>
+             *      <dt>pageX</dt><dd>The x location of the event on the page (including scroll)</dd>
+             *      <dt>pageY</dt><dd>The y location of the event on the page (including scroll)</dd>
+             *      <dt>items</dt><dd>An array including all the series which contain a marker whose plane has been intersected.</dd>
+             *      <dt>index</dt><dd>Index of the markers in their respective series.</dd>
+             *      <dt>originEvent</dt><dd>Underlying dom event.</dd>
+             *  </dl>
+             */
+            /**
+             * Broadcasts when `interactionType` is set to `planar` and a series' marker plane has received a mouseout event.
+             *
+             * @event planarEvent:mouseout
+             * @preventable false
+             * @param {EventFacade} e 
+             */
+            if(index > -1)
+            {
+                this.fire("planarEvent:mouseover", {
+                    categoryItem:categoryItems, 
+                    valueItem:valueItems, 
+                    x:posX, 
+                    y:posY, 
+                    pageX:pageX,
+                    pageY:pageY,
+                    items:items, 
+                    index:index,
+                    originEvent:e
+                });
+            }
+            else
+            {
+                this.fire("planarEvent:mouseout");
+            }
         }
     },
 
@@ -11316,7 +11486,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             yAxis = series.get("yAxis"),
             YAxis = Y.Axis,
             axis;
-        if(xAxis && !(xAxis instanceof YAxis) && Y.Lang.isString(xAxis) && axes.hasOwnProperty(xAxis))
+        if(xAxis && !(xAxis instanceof YAxis) && Y_Lang.isString(xAxis) && axes.hasOwnProperty(xAxis))
         {
             axis = axes[xAxis];
             if(axis instanceof YAxis)
@@ -11324,7 +11494,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 series.set("xAxis", axis);
             }
         }
-        if(yAxis && !(yAxis instanceof YAxis) && Y.Lang.isString(yAxis) && axes.hasOwnProperty(yAxis))
+        if(yAxis && !(yAxis instanceof YAxis) && Y_Lang.isString(yAxis) && axes.hasOwnProperty(yAxis))
         {   
             axis = axes[yAxis];
             if(axis instanceof YAxis)
@@ -11723,7 +11893,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                     {
                         categoryAxisName = i;
                         this.set("categoryAxisName", i);
-                        if(Y.Lang.isArray(keys) && keys.length > 0)
+                        if(Y_Lang.isArray(keys) && keys.length > 0)
                         {
                             catKey = keys[0];
                             this.set("categoryKey", catKey);
@@ -11737,7 +11907,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                     else 
                     {
                         newAxes[i] = axis;
-                        if(i != valueAxisName && keys && Y.Lang.isArray(keys))
+                        if(i != valueAxisName && keys && Y_Lang.isArray(keys))
                         {
                             ll = keys.length;
                             for(ii = 0; ii < ll; ++ii)
@@ -12173,7 +12343,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                     l,
                     s;
     
-                if(Y.Lang.isArray(val))
+                if(Y_Lang.isArray(val))
                 {
                     s = this.get("seriesCollection");
                     i = 0;
@@ -12230,19 +12400,19 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
          *      <dt>series</dt><dd>A key indexed hash containing references to the `styles` attribute for each series in the chart.
          *      Specific style attributes vary depending on the series:
          *      <ul>
-         *          <li><a href="AreaSeries.html#config_styles">AreaSeries</a></li>
-         *          <li><a href="BarSeries.html#config_styles">BarSeries</a></li>
-         *          <li><a href="ColumnSeries.html#config_styles">ColumnSeries</a></li>
-         *          <li><a href="ComboSeries.html#config_styles">ComboSeries</a></li>
-         *          <li><a href="LineSeries.html#config_styles">LineSeries</a></li>
-         *          <li><a href="MarkerSeries.html#config_styles">MarkerSeries</a></li>
-         *          <li><a href="SplineSeries.html#config_styles">SplineSeries</a></li>
+         *          <li><a href="AreaSeries.html#attr_styles">AreaSeries</a></li>
+         *          <li><a href="BarSeries.html#attr_styles">BarSeries</a></li>
+         *          <li><a href="ColumnSeries.html#attr_styles">ColumnSeries</a></li>
+         *          <li><a href="ComboSeries.html#attr_styles">ComboSeries</a></li>
+         *          <li><a href="LineSeries.html#attr_styles">LineSeries</a></li>
+         *          <li><a href="MarkerSeries.html#attr_styles">MarkerSeries</a></li>
+         *          <li><a href="SplineSeries.html#attr_styles">SplineSeries</a></li>
          *      </ul>
          *      </dd>
          *      <dt>axes</dt><dd>A key indexed hash containing references to the `styles` attribute for each axes in the chart. Specific
-         *      style attributes can be found in the <a href="Axis.html#config_styles">Axis</a> class.</dd>
+         *      style attributes can be found in the <a href="Axis.html#attr_styles">Axis</a> class.</dd>
          *      <dt>graph</dt><dd>A reference to the `styles` attribute in the chart. Specific style attributes can be found in the
-         *      <a href="Graph.html#config_styles">Graph</a> class.</dd>
+         *      <a href="Graph.html#attr_styles">Graph</a> class.</dd>
          *  </dl>
          *
          * @attribute styles
@@ -12460,7 +12630,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             setter: function(val)
             {
                 var graph = this.get("graph");
-                if(val && !Y.Lang.isObject(val))
+                if(val && !Y_Lang.isObject(val))
                 {
                     val = {};
                 }
@@ -12494,7 +12664,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             setter: function(val)
             {
                 var graph = this.get("graph");
-                if(val && !Y.Lang.isObject(val))
+                if(val && !Y_Lang.isObject(val))
                 {
                     val = {};
                 }
@@ -12558,6 +12728,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
 /**
  * The PieChart class creates a pie chart
  *
+ * @module charts
  * @class PieChart
  * @extends ChartBase
  * @constructor
@@ -12836,7 +13007,11 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
      */
     _sizeChanged: function(e)
     {
-        this._redraw();
+        var graph = this.get("graph");
+        if(graph)
+        {
+            graph.set(e.attrName, e.newVal);
+        }
     },
 
     /**
@@ -12907,6 +13082,7 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
 /**
  * The Chart class is the basic application used to create a chart.
  *
+ * @module charts
  * @class Chart
  * @constructor
  */

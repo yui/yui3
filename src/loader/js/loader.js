@@ -9,12 +9,13 @@
  * YUI files.
  *
  * @module loader
+ * @main loader
  * @submodule loader-base
  */
 
 var NOT_FOUND = {},
     NO_REQUIREMENTS = [],
-    MAX_URL_LENGTH = (Y.UA.ie) ? 2048 : 8192,
+    MAX_URL_LENGTH = 2048,
     GLOBAL_ENV = YUI.Env,
     GLOBAL_LOADED = GLOBAL_ENV._loaded,
     CSS = 'css',
@@ -42,10 +43,14 @@ var NOT_FOUND = {},
                         return path;
                     };
 
+if (YUI.Env.aliases) {
+    YUI.Env.aliases = {}; //Don't need aliases if Loader is present
+}
+
 /**
  * The component metadata is stored in Y.Env.meta.
  * Part of the loader module.
- * @property Env.meta
+ * @property meta
  * @for YUI
  */
 Y.Env.meta = META;
@@ -290,21 +295,12 @@ Y.Loader = function(o) {
     */
     self.comboSep = '&';
     /**
-     * Max url length for combo urls.  The default is 2048 for
-     * internet explorer, and 8192 otherwise.  This is the URL
+     * Max url length for combo urls.  The default is 2048. This is the URL
      * limit for the Yahoo! hosted combo servers.  If consuming
      * a different combo service that has a different URL limit
      * it is possible to override this default by supplying
      * the maxURLLength config option.  The config option will
      * only take effect if lower than the default.
-     *
-     * Browsers:
-     *    IE: 2048
-     *    Other A-Grade Browsers: Higher that what is typically supported
-     *    'capable' mobile browsers:
-     *
-     * Servers:
-     *    Apache: 8192
      *
      * @property maxURLLength
      * @type int
@@ -904,8 +900,12 @@ Y.Loader.prototype = {
      */
     addModule: function(o, name) {
         name = name || o.name;
-
-        if (this.moduleInfo[name]) {
+        
+        //Only merge this data if the temp flag is set
+        //from an earlier pass from a pattern or else
+        //an override module (YUI_config) can not be used to
+        //replace a default module.
+        if (this.moduleInfo[name] && this.moduleInfo[name].temp) {
             //This catches temp modules loaded via a pattern
             // The module will be added twice, once from the pattern and
             // Once from the actual add call, this ensures that properties
@@ -1252,7 +1252,7 @@ Y.Loader.prototype = {
             r.unshift('intl');
             intl = true;
         }
-        o = mod.optional;
+        o = this.filterRequires(mod.optional);
 
         // Y.log("getRequires: " + name + " (dirty:" + this.dirty +
         // ", expanded:" + mod.expanded + ")");
@@ -1278,7 +1278,7 @@ Y.Loader.prototype = {
         }
 
         // get the requirements from superseded modules, if any
-        r = mod.supersedes;
+        r = this.filterRequires(mod.supersedes);
         if (r) {
             for (i = 0; i < r.length; i++) {
                 if (!hash[r[i]]) {
@@ -2084,9 +2084,13 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                         if (m && (m.type === type) && (m.combine || !m.ext)) {
 
                             frag = ((L.isValue(m.root)) ? m.root : self.root) + m.path;
-
-                            if ((url !== j) && (i < (len - 1)) &&
+                            frag = self._filter(frag, m.name);
+                            if ((url !== j) && (i <= (len - 1)) &&
                             ((frag.length + url.length) > self.maxURLLength)) {
+                                //Hack until this is rewritten to use an array and not string concat:
+                                if (url.substr(url.length - 1, 1) === self.comboSep) {
+                                    url = url.substr(0, (url.length - 1));
+                                }
                                 urls.push(self._filter(url));
                                 url = j;
                             }
@@ -2102,6 +2106,10 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                     }
 
                     if (combining.length && (url != j)) {
+                        //Hack until this is rewritten to use an array and not string concat:
+                        if (url.substr(url.length - 1, 1) === self.comboSep) {
+                            url = url.substr(0, (url.length - 1));
+                        }
                         urls.push(self._filter(url));
                     }
                 }
@@ -2267,7 +2275,12 @@ Y.log('attempting to load ' + s[i] + ', ' + self.base, 'info', 'loader');
     _filter: function(u, name) {
         var f = this.filter,
             hasFilter = name && (name in this.filters),
-            modFilter = hasFilter && this.filters[name];
+            modFilter = hasFilter && this.filters[name],
+	    groupName = this.moduleInfo[name] ? this.moduleInfo[name].group:null;		
+	    if (groupName && this.groups[groupName].filter) {		
+	 	   modFilter = this.groups[groupName].filter;
+		   hasFilter = true;		
+	     };
 
         if (u) {
             if (hasFilter) {
@@ -2336,6 +2349,44 @@ Y.log('attempting to load ' + s[i] + ', ' + self.base, 'info', 'loader');
         if (self.combine) {
             out.js = [self.comboBase + out.js.join(self.comboSep)];
             out.css = [self.comboBase + out.css.join(self.comboSep)];
+        }
+
+        return out;
+    },
+    /**
+    * Returns an Object hash of hashes built from `loader.sorted` or from an arbitrary list of sorted modules.
+    * @method hash
+    * @private
+    * @param {Boolean} [calc=false] Perform a loader.calculate() before anything else
+    * @param {Array} [s=loader.sorted] An override for the loader.sorted array
+    * @return {Object} Object hash (js and css) of two object hashes of file lists, with the module name as the key
+    * @example This method can be used as an off-line dep calculator
+    *
+    *        var Y = YUI();
+    *        var loader = new Y.Loader({
+    *            filter: 'debug',
+    *            base: '../../',
+    *            root: 'build/',
+    *            combine: true,
+    *            require: ['node', 'dd', 'console']
+    *        });
+    *        var out = loader.hash(true);
+    *
+    */
+    hash: function(calc, s) {
+        var self = this, i, m, url, out = { js: {}, css: {} };
+
+        if (calc) {
+            self.calculate();
+        }
+        s = s || self.sorted;
+
+        for (i = 0; i < s.length; i++) {
+            m = self.getModule(s[i]);
+            if (m) {
+                url = self._filter(m.fullpath, m.name, '') || self._url(m.path, m.name);
+                out[m.type][m.name] = url;
+            }
         }
 
         return out;

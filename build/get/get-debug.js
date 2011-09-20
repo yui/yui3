@@ -365,7 +365,11 @@ var ua = Y.UA,
     _loaded = function(id, url) {
 
         var q = queues[id],
-            sync = !q.async;
+            sync = (q && !q.async);
+
+        if (!q) {
+            return;
+        }
 
         if (sync) {
             _clearTimeout(q);

@@ -3,6 +3,7 @@
  * lengths are proportional to the values they represent along a vertical axis.
  * and the relevant data points.
  *
+ * @module charts
  * @class ColumnSeries
  * @extends MarkerSeries
  * @uses Histogram

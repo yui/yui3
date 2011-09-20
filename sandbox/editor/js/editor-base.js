@@ -8,14 +8,10 @@ YUI.add('editor-base', function(Y) {
      *      });
      *      editor.render('#demo');
      *
-     * @main editor
-     */     
-    /**
-     * Base class for Editor. Handles the business logic of Editor, no GUI involved only utility methods and events.
      * @class EditorBase
-     * @for EditorBase
      * @extends Base
      * @module editor
+     * @main editor
      * @submodule editor-base
      * @constructor
      */
@@ -130,7 +126,10 @@ YUI.add('editor-base', function(Y) {
                         n = lc;
                     }
                 }
-                
+            }
+            if (!n) {
+                //Fallback to make sure a node is attached to the event
+                n = inst.one(BODY);
             }
             return n;
         },
@@ -181,14 +180,15 @@ YUI.add('editor-base', function(Y) {
                         } else if (Y.UA.gecko) {
                             this.frame.exec._command('inserthtml', EditorBase.TABKEY);
                         } else if (Y.UA.ie) {
-                            sel = new inst.Selection();
-                            if (sel._selection.pasteHTML) {
-                                sel._selection.pasteHTML(EditorBase.TABKEY);
-                            } else {
-                                this.execCommand('inserthtml', EditorBase.TABKEY);
-                            }
+                            this.execCommand('inserthtml', EditorBase.TABKEY);
                         }
                     }
+                    break;
+                case 'backspace-up':
+                    // Fixes #2531090 - Joins text node strings so they become one for bidi
+                    if (Y.UA.webkit && e.changedNode) {
+			            e.changedNode.set('innerHTML', e.changedNode.get('innerHTML'));
+		            }
                     break;
             }
             if (Y.UA.webkit && e.commands && (e.commands.indent || e.commands.outdent)) {
@@ -211,6 +211,8 @@ YUI.add('editor-base', function(Y) {
                 cmds = e.commands;
             }
             
+            var normal = false;
+
             Y.each(changed, function(el) {
                 var tag = el.tagName.toLowerCase(),
                     cmd = EditorBase.TAG2CMD[tag];
@@ -221,6 +223,10 @@ YUI.add('editor-base', function(Y) {
 
                 //Bold and Italic styles
                 var s = el.currentStyle || el.style;
+                
+                if ((''+s.fontWeight) == 'normal') {
+                    normal = true;
+                }
                 if ((''+s.fontWeight) == 'bold') { //Cast this to a string
                     cmds.bold = 1;
                 }
@@ -232,6 +238,7 @@ YUI.add('editor-base', function(Y) {
                 if (s.fontStyle == 'italic') {
                     cmds.italic = 1;
                 }
+
                 if (s.textDecoration == 'underline') {
                     cmds.underline = 1;
                 }
@@ -271,6 +278,11 @@ YUI.add('editor-base', function(Y) {
                 
             });
             
+            if (normal) {
+                delete cmds.bold;
+                delete cmds.italic;
+            }
+
             e.dompath = inst.all(changed);
             e.classNames = classes;
             e.commands = cmds;
@@ -771,16 +783,13 @@ YUI.add('editor-base', function(Y) {
         */
         NAME: 'editorBase',
         /**
-        * Editor Strings
+        * Editor Strings.  By default contains only the `title` property for the
+        * Title of frame document (default "Rich Text Editor").
+        *
         * @static
         * @property STRINGS
         */
         STRINGS: {
-            /**
-            * Title of frame document: Rich Text Editor
-            * @static
-            * @property STRINGS.title
-            */
             title: 'Rich Text Editor'
         },
         ATTRS: {

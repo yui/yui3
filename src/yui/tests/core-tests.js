@@ -104,6 +104,22 @@ YUI.add('core-tests', function(Y) {
 
         },
 
+        test_cached_undefined_null: function() {
+            
+            var f1 = function(a) {
+                return a;
+            };
+            var c1 = Y.cached(f1);
+
+            var a = c1(null);
+            Y.Assert.areEqual(a, null);
+            a = c1(undefined);
+            Y.Assert.areEqual(a, undefined);
+            a = c1('foo');
+            Y.Assert.areEqual(a, 'foo');
+            
+        },
+
         test_ie_enum_bug: function() {
             var o = {
                 valueOf: function() {
@@ -233,6 +249,26 @@ YUI.add('core-tests', function(Y) {
                 testY._loading = false;
             };
             testY.use('editor');
+        },
+        test_multiple_ua: function() {
+            var Assert = Y.Assert,
+                globalUA = YUI.Env.UA,
+                uaFF = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:6.0) Gecko/20100101 Firefox/6.0',
+                uaChrome = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_0) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.860.0 Safari/535.2';
+    
+            var Y1 = YUI();
+            Assert.areEqual(globalUA.userAgent, Y1.UA.userAgent, 'Global UA and local (Y1) UA are different');
+
+            var parsed = YUI.Env.parseUA(uaChrome);
+            Assert.areEqual(parsed.userAgent, uaChrome, 'Parsed UA not equal Chrome');
+            Assert.isTrue((parsed.chrome > 0), 'Parsed UA not equal Chrome');
+
+            var Y2 = YUI();
+            Assert.areEqual(globalUA.userAgent, Y2.UA.userAgent, 'Global UA and local (Y2) UA are different');
+
+
+            Assert.areEqual(YUI.Env.UA.userAgent, Y2.UA.userAgent, 'Global UA and local (Y2) UA are different');
+
         }
     });
 

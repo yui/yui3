@@ -2,6 +2,7 @@
  * The StackedBarSeries renders bar chart in which series are stacked horizontally to show
  * their contribution to the cumulative total.
  *
+ * @module charts
  * @class StackedBarSeries
  * @extends BarSeries
  * @uses StackingUtil
@@ -22,7 +23,7 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
 			return;
 		}
 
-        var isNumber = Y.Lang.isNumber,
+        var isNumber = Y_Lang.isNumber,
             style = this.get("styles").marker,
             w = style.width,
             h = style.height,
@@ -56,6 +57,12 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
             lastCollection = seriesCollection[order - 1];
             negativeBaseValues = lastCollection.get("negativeBaseValues");
             positiveBaseValues = lastCollection.get("positiveBaseValues");
+            if(!negativeBaseValues || !positiveBaseValues)
+            {
+                useOrigin = true;
+                positiveBaseValues = [];
+                negativeBaseValues = [];
+            }
         }
         else
         {

@@ -39,9 +39,9 @@
 
 <p>
     For more information on skinning YUI components and making use of default
-    skins, see our <a
-    href="http://developer.yahoo.com/yui/articles/skinning/">Understanding YUI
-    Skins</a> article.
+    skins, see our
+    <a href="http://yuilibrary.com/yui/docs/tutorials/understanding-skinning/">Understanding
+    YUI Skins</a> tutorial.
 </p>
 
 <h2 id="logging">The YUI logging subsystem</h2>
@@ -99,8 +99,7 @@ YUI({..}).use('console', function (Y) {
 
 <p>
     By default, Console instances are positioned absolutely in the top right
-    corner of the page.  As seen below and in <a
-    href="../examples/console/">the examples</a>, this is configurable by
+    corner of the page.  As seen below and in the examples, this is configurable by
     setting the <code>style</code> attribute.
 </p>
 
@@ -209,7 +208,7 @@ YUI().use('console','overlay', function (Y) {
 ```
 
 <p>
-    Look at the <a href="../examples/console/console_global.html">Creating a
+    Look at the <a href="console-global.html">Creating a
     universal Console</a> example for reference.
 </p>
 
@@ -228,7 +227,7 @@ YUI().use('console','overlay', function (Y) {
     The default placement of a Console is absolutely positioned in the top
     right corner of the page.  This can be configured with the
     <code>style</code> attribute.  The <a
-    href="/yui/3/examples/console/console_basic.html">Creating a Console for
+    href="console-basic.html">Creating a Console for
     debugging</a> example illustrates how to accomplish this.
 </p>
 
@@ -346,7 +345,7 @@ YUI().use('console','overlay', function (Y) {
     <code>logLevel</code>) and by source.  Category filtering is only available
     at the Console level, but source filtering can be accomplished at the YUI
     config level or the Console level (via the <a
-    href="../console-filters/">ConsoleFilters plugin</a>).  Each approach below
+    href="../console-filters/index.html">ConsoleFilters plugin</a>).  Each approach below
     has a varying degree of impact to your page's performance.
 </p>
 
@@ -480,7 +479,7 @@ YUI({
 </p>
 
 <p>
-    Look at the <a href="../examples/console/console_yui_config.html">YUI
+    Look at the <a href="console-yui-config.html">YUI
     configuration to filter log messages</a> example for reference.
 </p>
 
@@ -551,7 +550,7 @@ YUI({
 ```
 var yconsole = new Y.Console();
 yconsole.on('entry', function (e) {
-    
+
     // the normalized message object is stored on the event in the 'message'
     // property.
     if (/Frank/.test(e.message.message)) {
@@ -584,7 +583,7 @@ yconsole.on('entry', function (e) {
 <img src="{{componentAssets}}/images/console_filters.png" alt="Console with the ConsoleFilters UI added" style="float: right; margin-left: 2em;">
 
     For runtime display filtering by both category and source, the <a
-    href="../console-filters/">ConsoleFilters plugin</a> can be added to the
+    href="../console-filters/index.html">ConsoleFilters plugin</a> can be added to the
     Console.
 </p>
 
@@ -624,7 +623,7 @@ YUI({..}).use('console-filters', function (Y) {
 </p>
 
 <p>
-    Look at the <a href="../examples/console/console_filter.html">ConsoleFilters
+    Look at the <a href="../console-filters/console-filters-intro.html">ConsoleFilters
     plugin</a> example.
 </p>
 

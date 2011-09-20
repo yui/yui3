@@ -1,6 +1,7 @@
 /**
  * The CartesianChart class creates a chart with horizontal and vertical axes.
  *
+ * @module charts
  * @class CartesianChart
  * @extends ChartBase
  * @constructor
@@ -13,7 +14,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
     renderUI: function()
     {
         var tt = this.get("tooltip"),
-            overlay;
+            overlay,
+            overlayClass = _getClassName("overlay");
         //move the position = absolute logic to a class file
         this.get("boundingBox").setStyle("position", "absolute");
         this.get("contentBox").setStyle("position", "absolute");
@@ -34,7 +36,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             this._overlay.setStyle("position", "absolute");
             this._overlay.setStyle("background", "#fff");
             this._overlay.setStyle("opacity", 0);
-            this._overlay.addClass("yui3-overlay");
+            this._overlay.addClass(overlayClass);
             this._overlay.setStyle("zIndex", 4);
         }
         this._redraw();
@@ -53,12 +55,14 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         var graph = this.get("graph"),
             bb = this.get("boundingBox"),
             cb = graph.get("contentBox"),
-            x = e.pageX,
-            offsetX = x - cb.getX(),
-            posX = x - bb.getX(),
-            y = e.pageY,
-            offsetY = y - cb.getY(),
-            posY = y - bb.getY(),
+            pageX = e.pageX,
+            pageY = e.pageY,
+            posX = pageX - bb.getX(),
+            posY = pageY - bb.getY(),
+            offset = {
+                x: pageX - cb.getX(),
+                y: pageY - cb.getY()
+            },
             sc = graph.get("seriesCollection"),
             series,
             i = 0,
@@ -70,73 +74,117 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             valueItems = [],
             direction = this.get("direction"),
             hasMarkers,
-            coord = direction == "horizontal" ? offsetX : offsetY,
+            catAxis,
+            valAxis,
+            coord,
             //data columns and area data could be created on a graph level
-            markerPlane = direction == "horizontal" ? sc[0].get("xMarkerPlane") : sc[0].get("yMarkerPlane"),
-            len = markerPlane.length;
-       for(; i < len; ++i)
-       {
-            if(coord <= markerPlane[i].end && coord >= markerPlane[i].start)
-            {
-                index = i;
-                break;
-            }
-       }
-       len = sc.length;
-       for(i = 0; i < len; ++i)
-       {
-            series = sc[i];
-            hasMarkers = series.get("markers");
-            if(hasMarkers && !isNaN(oldIndex) && oldIndex > -1)
-            {
-                series.updateMarkerState("mouseout", oldIndex);
-            }
-            if(series.get("ycoords")[index] > -1)
-            {
-                if(hasMarkers && !isNaN(index) && index > -1)
-                {
-                    series.updateMarkerState("mouseover", index);
-                }
-                item = this.getSeriesItems(series, index);
-                categoryItems.push(item.category);
-                valueItems.push(item.value);
-                items.push(series);
-            }
-                
-        }
-        this._selectedIndex = index;
-        
-        /**
-         * Broadcasts when `interactionType` is set to `planar` and a series' marker plane has received a mouseover event.
-         * 
-         *
-         * @event planarEvent:mouseover
-         * @preventable false
-         * @param {EventFacade} e Event facade with the following additional
-         *   properties:
-         *  <dl>
-         *      <dt>categoryItem</dt><dd>An array of hashes, each containing information about the category `Axis` of each marker whose plane has been intersected.</dd>
-         *      <dt>valueItem</dt><dd>An array of hashes, each containing information about the value `Axis` of each marker whose plane has been intersected.</dd>
-         *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>
-         *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>
-         *      <dt>items</dt><dd>An array including all the series which contain a marker whose plane has been intersected.</dd>
-         *      <dt>index</dt><dd>Index of the markers in their respective series.</dd>
-         *  </dl>
-         */
-        /**
-         * Broadcasts when `interactionType` is set to `planar` and a series' marker plane has received a mouseout event.
-         *
-         * @event planarEvent:mouseout
-         * @preventable false
-         * @param {EventFacade} e 
-         */
-        if(index > -1)
+            markerPlane,
+            len,
+            coords;
+        if(direction == "horizontal")
         {
-            this.fire("planarEvent:mouseover", {categoryItem:categoryItems, valueItem:valueItems, x:posX, y:posY, items:items, index:index});
+            catAxis = "x";
+            valAxis = "y";
         }
         else
         {
-            this.fire("planarEvent:mouseout");
+            valAxis = "x";
+            catAxis = "y";
+        }
+        coord = offset[catAxis];
+        if(sc)
+        {
+            len = sc.length;
+            while(i < len && !markerPlane)
+            {
+                if(sc[i])
+                {
+                    markerPlane = sc[i].get(catAxis + "MarkerPlane");
+                }
+                i++;
+            }
+        }
+        if(markerPlane)
+        {
+            len = markerPlane.length;
+            for(i = 0; i < len; ++i)
+            {
+                if(coord <= markerPlane[i].end && coord >= markerPlane[i].start)
+                {
+                    index = i;
+                    break;
+                }
+            }
+            len = sc.length;
+            for(i = 0; i < len; ++i)
+            {
+                series = sc[i];
+                coords = series.get(valAxis + "coords");
+                hasMarkers = series.get("markers");
+                if(hasMarkers && !isNaN(oldIndex) && oldIndex > -1)
+                {
+                    series.updateMarkerState("mouseout", oldIndex);
+                }
+                if(coords && coords[index] > -1)
+                {
+                    if(hasMarkers && !isNaN(index) && index > -1)
+                    {
+                        series.updateMarkerState("mouseover", index);
+                    }
+                    item = this.getSeriesItems(series, index);
+                    categoryItems.push(item.category);
+                    valueItems.push(item.value);
+                    items.push(series);
+                }
+                    
+            }
+            this._selectedIndex = index;
+
+            /**
+             * Broadcasts when `interactionType` is set to `planar` and a series' marker plane has received a mouseover event.
+             * 
+             *
+             * @event planarEvent:mouseover
+             * @preventable false
+             * @param {EventFacade} e Event facade with the following additional
+             *   properties:
+             *  <dl>
+             *      <dt>categoryItem</dt><dd>An array of hashes, each containing information about the category `Axis` of each marker whose plane has been intersected.</dd>
+             *      <dt>valueItem</dt><dd>An array of hashes, each containing information about the value `Axis` of each marker whose plane has been intersected.</dd>
+             *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>
+             *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>
+             *      <dt>pageX</dt><dd>The x location of the event on the page (including scroll)</dd>
+             *      <dt>pageY</dt><dd>The y location of the event on the page (including scroll)</dd>
+             *      <dt>items</dt><dd>An array including all the series which contain a marker whose plane has been intersected.</dd>
+             *      <dt>index</dt><dd>Index of the markers in their respective series.</dd>
+             *      <dt>originEvent</dt><dd>Underlying dom event.</dd>
+             *  </dl>
+             */
+            /**
+             * Broadcasts when `interactionType` is set to `planar` and a series' marker plane has received a mouseout event.
+             *
+             * @event planarEvent:mouseout
+             * @preventable false
+             * @param {EventFacade} e 
+             */
+            if(index > -1)
+            {
+                this.fire("planarEvent:mouseover", {
+                    categoryItem:categoryItems, 
+                    valueItem:valueItems, 
+                    x:posX, 
+                    y:posY, 
+                    pageX:pageX,
+                    pageY:pageY,
+                    items:items, 
+                    index:index,
+                    originEvent:e
+                });
+            }
+            else
+            {
+                this.fire("planarEvent:mouseout");
+            }
         }
     },
 
@@ -295,7 +343,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             yAxis = series.get("yAxis"),
             YAxis = Y.Axis,
             axis;
-        if(xAxis && !(xAxis instanceof YAxis) && Y.Lang.isString(xAxis) && axes.hasOwnProperty(xAxis))
+        if(xAxis && !(xAxis instanceof YAxis) && Y_Lang.isString(xAxis) && axes.hasOwnProperty(xAxis))
         {
             axis = axes[xAxis];
             if(axis instanceof YAxis)
@@ -303,7 +351,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 series.set("xAxis", axis);
             }
         }
-        if(yAxis && !(yAxis instanceof YAxis) && Y.Lang.isString(yAxis) && axes.hasOwnProperty(yAxis))
+        if(yAxis && !(yAxis instanceof YAxis) && Y_Lang.isString(yAxis) && axes.hasOwnProperty(yAxis))
         {   
             axis = axes[yAxis];
             if(axis instanceof YAxis)
@@ -702,7 +750,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                     {
                         categoryAxisName = i;
                         this.set("categoryAxisName", i);
-                        if(Y.Lang.isArray(keys) && keys.length > 0)
+                        if(Y_Lang.isArray(keys) && keys.length > 0)
                         {
                             catKey = keys[0];
                             this.set("categoryKey", catKey);
@@ -716,7 +764,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                     else 
                     {
                         newAxes[i] = axis;
-                        if(i != valueAxisName && keys && Y.Lang.isArray(keys))
+                        if(i != valueAxisName && keys && Y_Lang.isArray(keys))
                         {
                             ll = keys.length;
                             for(ii = 0; ii < ll; ++ii)
@@ -1152,7 +1200,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                     l,
                     s;
     
-                if(Y.Lang.isArray(val))
+                if(Y_Lang.isArray(val))
                 {
                     s = this.get("seriesCollection");
                     i = 0;
@@ -1209,19 +1257,19 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
          *      <dt>series</dt><dd>A key indexed hash containing references to the `styles` attribute for each series in the chart.
          *      Specific style attributes vary depending on the series:
          *      <ul>
-         *          <li><a href="AreaSeries.html#config_styles">AreaSeries</a></li>
-         *          <li><a href="BarSeries.html#config_styles">BarSeries</a></li>
-         *          <li><a href="ColumnSeries.html#config_styles">ColumnSeries</a></li>
-         *          <li><a href="ComboSeries.html#config_styles">ComboSeries</a></li>
-         *          <li><a href="LineSeries.html#config_styles">LineSeries</a></li>
-         *          <li><a href="MarkerSeries.html#config_styles">MarkerSeries</a></li>
-         *          <li><a href="SplineSeries.html#config_styles">SplineSeries</a></li>
+         *          <li><a href="AreaSeries.html#attr_styles">AreaSeries</a></li>
+         *          <li><a href="BarSeries.html#attr_styles">BarSeries</a></li>
+         *          <li><a href="ColumnSeries.html#attr_styles">ColumnSeries</a></li>
+         *          <li><a href="ComboSeries.html#attr_styles">ComboSeries</a></li>
+         *          <li><a href="LineSeries.html#attr_styles">LineSeries</a></li>
+         *          <li><a href="MarkerSeries.html#attr_styles">MarkerSeries</a></li>
+         *          <li><a href="SplineSeries.html#attr_styles">SplineSeries</a></li>
          *      </ul>
          *      </dd>
          *      <dt>axes</dt><dd>A key indexed hash containing references to the `styles` attribute for each axes in the chart. Specific
-         *      style attributes can be found in the <a href="Axis.html#config_styles">Axis</a> class.</dd>
+         *      style attributes can be found in the <a href="Axis.html#attr_styles">Axis</a> class.</dd>
          *      <dt>graph</dt><dd>A reference to the `styles` attribute in the chart. Specific style attributes can be found in the
-         *      <a href="Graph.html#config_styles">Graph</a> class.</dd>
+         *      <a href="Graph.html#attr_styles">Graph</a> class.</dd>
          *  </dl>
          *
          * @attribute styles
@@ -1439,7 +1487,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             setter: function(val)
             {
                 var graph = this.get("graph");
-                if(val && !Y.Lang.isObject(val))
+                if(val && !Y_Lang.isObject(val))
                 {
                     val = {};
                 }
@@ -1473,7 +1521,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             setter: function(val)
             {
                 var graph = this.get("graph");
-                if(val && !Y.Lang.isObject(val))
+                if(val && !Y_Lang.isObject(val))
                 {
                     val = {};
                 }

@@ -140,6 +140,11 @@ YUI.add('frame', function(Y) {
         */
         _onDomEvent: function(e) {
             var xy, node;
+            
+            if (!Y.Node.getDOMNode(this._iframe)) {
+                //The iframe is null for some reason, bail on sending events.
+                return;
+            }
 
             //Y.log('onDOMEvent: ' + e.type, 'info', 'frame');
             e.frameX = e.frameY = 0;
@@ -573,7 +578,7 @@ YUI.add('frame', function(Y) {
         * @method render
         * @description Render the iframe into the container config option or open the window.
         * @param {String/HTMLElement/Node} node The node to render to
-        * @return {Y.Frame}
+        * @return {Frame}
         * @chainable
         */
         render: function(node) {
@@ -603,6 +608,7 @@ YUI.add('frame', function(Y) {
                         Y.log('New Modules Loaded into main instance', 'info', 'frame');
                         config = this._resolveWinDoc(config);
                         inst = YUI(config);
+                        inst.host = this.get('host'); //Cross reference to Editor
                         inst.log = Y.log; //Dump the instance logs to the parent instance.
 
                         Y.log('Creating new internal instance with node-base only', 'info', 'frame');
@@ -1007,4 +1013,4 @@ YUI.add('frame', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute', 'yui-throttle'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['base', 'node', 'selector-css3', 'substitute', 'yui-throttle']});

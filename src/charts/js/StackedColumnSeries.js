@@ -2,6 +2,7 @@
  * The StackedColumnSeries renders column chart in which series are stacked vertically to show
  * their contribution to the cumulative total.
  *
+ * @module charts
  * @class StackedColumnSeries
  * @extends ColumnSeries
  * @uses StackingUtil
@@ -20,7 +21,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
 		{
 			return;
 		}
-        var isNumber = Y.Lang.isNumber,
+        var isNumber = Y_Lang.isNumber,
             style = this.get("styles").marker, 
             w = style.width,
             h = style.height,
@@ -54,6 +55,12 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
             lastCollection = seriesCollection[order - 1];
             negativeBaseValues = lastCollection.get("negativeBaseValues");
             positiveBaseValues = lastCollection.get("positiveBaseValues");
+            if(!negativeBaseValues || !positiveBaseValues)
+            {
+                useOrigin = true;
+                positiveBaseValues = [];
+                negativeBaseValues = [];
+            }
         }
         else
         {

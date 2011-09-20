@@ -3,7 +3,7 @@
 	"displayName" : "Graphics",
 	"description" : "The Graphics module provides a JavaScript API for creating shapes in a variety of formats across all A-grade browsers.",
 	"author" : "tripp",
-	"tags" : ["utility", "graphics"],
+	"tags" : ["utility", "graphics", "beta"],
 	"use" : ["graphics"],
 	"examples" : [
 		{
@@ -16,7 +16,7 @@
 		},
 		{
 			"name" : "graphics-path",
-			"displayName" : "Basic Path example.",
+			"displayName" : "Basic Path",
 			"description" : "Shows how to draw lines and polygons.",
 			"modules" : ["graphics"],
 			"tags" : ["graphics"],
@@ -24,7 +24,7 @@
 		},
 		{
 			"name" : "graphics-gradients",
-			"displayName" : "Create Gradient Fills.",
+			"displayName" : "Create Gradient Fills",
 			"description" : "Shows how to create linear and radial gradient fills.",
 			"modules" : ["graphics"],
 			"tags" : ["graphics"],
@@ -32,7 +32,7 @@
 		},
 		{
 			"name" : "graphics-drag",
-			"displayName" : "Basic drag with graphic object.",
+			"displayName" : "Basic drag with graphic object",
 			"description" : "Shows how to add drag to a shape.",
 			"modules" : ["graphics"],
 			"tags" : ["graphics"],
@@ -40,7 +40,7 @@
 		},
 		{
 			"name" : "graphics-transforms",
-			"displayName" : "Transform example.",
+			"displayName" : "Using Transforms",
 			"description" : "Shows how to apply transforms to shape.",
 			"modules" : ["graphics"],
 			"tags" : ["graphics"],
@@ -48,7 +48,7 @@
 		},
 		{
 			"name" : "graphics-customshape",
-			"displayName" : "Custom Shape Example",
+			"displayName" : "Custom Shape",
 			"description" : "Shows how to use a custom shape with the Graphics module.",
 			"modules" : ["graphics"],
 			"tags" : ["graphics"],
@@ -56,7 +56,7 @@
 		},
 		{
 			"name" : "graphics-muddyglass",
-			"displayName" : "Transparent Glass with Shadow Example",
+			"displayName" : "Transparent Glass with Shadow",
 			"description" : "Shows to use the graphics api to draw a realistic glass.",
 			"modules" : ["graphics"],
 			"tags" : ["graphics"],
@@ -64,11 +64,25 @@
 		},
 		{
 			"name" : "graphics-violin",
-			"displayName" : "Complex Example: Violin",
+			"displayName" : "Complex Drawing: Violin",
 			"description" : "Shows to use the graphics api to draw a violin.",
 			"modules" : ["graphics"],
 			"tags" : ["graphics"],
             		"hideTableOfContents": true
+		},
+		{
+			"name" : "graphics-pathutility",
+			"displayName" : "Path Drawing Utility",
+			"description" : "A helper utility for interactively composing path code.",
+			"modules" : ["graphics"],
+			"tags" : ["graphics, utility, drawing"],
+            		"hideTableOfContents": true
 		}
-	]	
+	],	
+    "pages": {
+        "graphics-pathutility-example": {
+            "displayName": "Graphics: Path Drawing Utility",
+            "layout"     : "graphics-pathutility-example"
+        }
+    }	
 }

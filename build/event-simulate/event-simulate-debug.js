@@ -2,7 +2,8 @@ YUI.add('event-simulate', function(Y) {
 
 (function() {
 /**
- * Synthetic DOM events
+ * Simulate user interaction by generating native DOM events.
+ *
  * @module event-simulate
  * @requires event
  */

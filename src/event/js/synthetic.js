@@ -443,7 +443,9 @@ Y.mix(SyntheticEvent, {
                 nodes, handle;
 
             // Can't just use Y.all because it doesn't support window (yet?)
-            nodes = (isString(selector)) ? query(selector) : toArray(selector);
+            nodes = (isString(selector)) ?
+                query(selector) :
+                toArray(selector || Y.one(Y.config.win));
 
             if (!nodes.length && isString(selector)) {
                 handle = Y.on('available', function () {
@@ -762,13 +764,13 @@ Y.SyntheticEvent = SyntheticEvent;
  *       </dd>
  * </dl>
  *
- * @method Event.define
+ * @method define
  * @param type {String} the name of the event
  * @param config {Object} the prototype definition for the new event (see above)
  * @param force {Boolean} override an existing event (use with caution)
- * @static
  * @return {SyntheticEvent} the subclass implementation instance created to
  *              handle event subscriptions of this type
+ * @static
  * @for Event
  * @since 3.1.0
  * @in event-synthetic

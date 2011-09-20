@@ -126,7 +126,6 @@
 				id = this.rs.getRecordByIndex(0).get('id');
 				newRecord = this.rs.getRecord(id);
 				Y.ObjectAssert.areEqual(newRecord, this.rs.getRecordByIndex(0));
-								
 			},
 		
 			//---------------------------------------------
@@ -356,15 +355,19 @@
 				//update single record
 				this.rs.update({a:'new', b:'record', c:'added'}, 0);
 				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(0).get('id')], this.rs.getRecordByIndex(0));
-				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(1).get('id')], this.rs.getRecordByIndex(1));
+				//Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(1).get('id')], this.rs.getRecordByIndex(1));
 				
-				Y.Assert.areEqual(2, Y.Object.size(hashTable));
+				//Y.Assert.areEqual(2, Y.Object.size(hashTable));
+				Y.Assert.areEqual(1, Y.Object.size(hashTable));
 				
-				this.rs.update([{a:'new', b:'record', c:'added'},{a:'another', b:'new', c:'record'}], 1);
+				this.rs.update([
+                    {a:'new', b:'record', c:'added'},
+                    {a:'another', b:'new', c:'record'}
+                ], 1);
+
 				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(0).get('id')], this.rs.getRecordByIndex(0));
 				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(1).get('id')], this.rs.getRecordByIndex(1));
 				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(2).get('id')], this.rs.getRecordByIndex(2));
-				//console.log(hashTable);
 				Y.Assert.areEqual(3, Y.Object.size(hashTable));
 			},
 			

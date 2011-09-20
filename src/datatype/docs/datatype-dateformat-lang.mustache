@@ -30,11 +30,11 @@
     <p>The "date-format" module of the DataType Utility leverages the external language resource bundle support provided in 3.1.0, as the preferred way to define and deliver formatting patterns for various languages.</p>
 </div>
 
-<div class="example">
+<div class="example yui3-skin-sam">
     {{>datatype-dateformat-lang-source}}
 </div>
 
-<h4>Using Date Formatting Support</h4>
+<h2>Using Date Formatting Support</h2>
 
 <p>To use Date formatting language resource bundle support in your application, all you need to do is use the `datatype-date` module, and specify the (supported) language you need for the instance.</p>
 
@@ -54,7 +54,7 @@ YUI({lang:"fr-FR"}).use("datatype-date", function (Y) {
 });
 ```
 
-<h4>Switching Languages</h4>
+<h2>Switching Languages</h2>
 
 <p>You can also switch the language resource bundle currently in use for your YUI instance, by invoking `Y.use` to pull down another language resource bundle if required:</p>
 
@@ -82,7 +82,7 @@ YUI({lang:"fr-FR"}).use("datatype-date", function (Y) {
 
 <p>The `Y.Intl` utility, which is automatically pulled down with a language resource bundle acts as a manager for language resource bundle handling, and is used to register new language resource bundles, set the language currently being used, and retrieve strings for the currently language.</p>
 
-<h4>Available Languages</h4>
+<h2>Available Languages</h2>
 
 <p>The set of available languages for a given module, can be obtained from the <code>Intl</code> utility, and we use this support to generate the dropdown for this example:</p>
 

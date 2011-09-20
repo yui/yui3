@@ -1,6 +1,7 @@
 /**
  * The Node Utility provides a DOM-like interface for interacting with DOM nodes.
  * @module node
+ * @main node
  * @submodule node-core
  */
 
@@ -133,7 +134,7 @@ Y_Node._instances = {};
  * @method getDOMNode
  * @static
  *
- * @param {Y.Node || HTMLNode} node The Node instance or an HTMLNode
+ * @param {Node | HTMLNode} node The Node instance or an HTMLNode
  * @return {HTMLNode} The DOM node bound to the Node instance.  If a DOM node is passed
  * as the node argument, it is simply returned.
  */
@@ -153,7 +154,7 @@ Y_Node.getDOMNode = function(node) {
  * @static
  *
  * @param {any} node The Node instance or an HTMLNode
- * @return {Y.Node | Y.NodeList | any} Depends on what is returned from the DOM node.
+ * @return {Node | NodeList | Any} Depends on what is returned from the DOM node.
  */
 Y_Node.scrubVal = function(val, node) {
     if (val) { // only truthy values are risky
@@ -237,14 +238,22 @@ Y_Node.importMethod = function(host, name, altName) {
 };
 
 /**
+ * Retrieves a NodeList based on the given CSS selector.
+ * @method all
+ *
+ * @param {string} selector The CSS selector to test against.
+ * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
+ * @for YUI
+ */
+
+/**
  * Returns a single Node instance bound to the node or the
  * first element matching the given selector. Returns null if no match found.
  * <strong>Note:</strong> For chaining purposes you may want to
  * use <code>Y.all</code>, which returns a NodeList when no match is found.
  * @method one
- * @static
  * @param {String | HTMLElement} node a node or Selector
- * @return {Y.Node | null} a Node instance or null if no match found.
+ * @return {Node | null} a Node instance or null if no match found.
  * @for YUI
  */
 
@@ -256,7 +265,7 @@ Y_Node.importMethod = function(host, name, altName) {
  * @method one
  * @static
  * @param {String | HTMLElement} node a node or Selector
- * @return {Y.Node | null} a Node instance or null if no match found.
+ * @return {Node | null} a Node instance or null if no match found.
  * @for Node
  */
 Y_Node.one = function(node) {
@@ -527,12 +536,22 @@ Y.mix(Y_Node.prototype, {
      * Returns the nearest ancestor that passes the test applied by supplied boolean method.
      * @method ancestor
      * @param {String | Function} fn A selector string or boolean method for testing elements.
+     * If a function is used, it receives the current node being tested as the only argument.
      * @param {Boolean} testSelf optional Whether or not to include the element in the scan
+     * @param {String | Function} stopFn optional A selector string or boolean
+     * method to indicate when the search should stop. The search bails when the function
+     * returns true or the selector matches.
      * If a function is used, it receives the current node being tested as the only argument.
      * @return {Node} The matching Node instance or null if not found
      */
-    ancestor: function(fn, testSelf) {
-        return Y.one(Y_DOM.ancestor(this._node, _wrapFn(fn), testSelf));
+    ancestor: function(fn, testSelf, stopFn) {
+        // testSelf is optional, check for stopFn as 2nd arg
+        if (arguments.length === 2 &&
+                (typeof testSelf == 'string' || typeof testSelf == 'function')) {
+            stopFn = testSelf;
+        }
+
+        return Y.one(Y_DOM.ancestor(this._node, _wrapFn(fn), testSelf, _wrapFn(stopFn)));
     },
 
    /**
@@ -543,8 +562,12 @@ Y.mix(Y_Node.prototype, {
      * If a function is used, it receives the current node being tested as the only argument.
      * @return {NodeList} A NodeList instance containing the matching elements
      */
-    ancestors: function(fn, testSelf) {
-        return Y.all(Y_DOM.ancestors(this._node, _wrapFn(fn), testSelf));
+    ancestors: function(fn, testSelf, stopFn) {
+        if (arguments.length === 2 &&
+                (typeof testSelf == 'string' || typeof testSelf == 'function')) {
+            stopFn = testSelf;
+        }
+        return Y.all(Y_DOM.ancestors(this._node, _wrapFn(fn), testSelf, _wrapFn(stopFn)));
     },
 
     /**
@@ -595,7 +618,7 @@ Y.mix(Y_Node.prototype, {
     },
 
     /**
-     * Retrieves a nodeList based on the given CSS selector.
+     * Retrieves a NodeList based on the given CSS selector.
      * @method all
      *
      * @param {string} selector The CSS selector to test against.
@@ -648,7 +671,7 @@ Y.mix(Y_Node.prototype, {
      * and does not change the node bound to the Node instance.
      * Shortcut for myNode.get('parentNode').replaceChild(newNode, myNode);
      * @method replace
-     * @param {Y.Node || HTMLNode} newNode Node to be inserted
+     * @param {Node | HTMLNode} newNode Node to be inserted
      * @chainable
      *
      */

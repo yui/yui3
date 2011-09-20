@@ -138,7 +138,7 @@ Y.on('io:xdrReady', function() {
 Y.io.transport({
     id:'flash',
     yid: Y.id,
-    src:'../build/io-xdr/io.swf?stamp=' + (new Date()).getTime()
+    src:'{{yuiLocalBuildUrl}}/io-xdr/io.swf?stamp=' + (new Date()).getTime()
 });
 ```
  

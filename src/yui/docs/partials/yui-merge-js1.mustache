@@ -1,0 +1,19 @@
+    var set1 = { foo : "foo" };
+    var set2 = { foo : "BAR", bar : "bar" };
+    var set3 = { foo : "FOO", baz : "BAZ" };
+    var result = Y.one('#demo_result');
+
+    var doMerge = function () {
+
+        Y.log('set1 = ' + Y.dump(set1));
+        Y.log('set2 = ' + Y.dump(set2));
+        Y.log('set3 = ' + Y.dump(set3));
+
+        Y.log('Merging set1, set2, and set3');
+        var merged = Y.merge(set1, set2, set3);
+        Y.log('merged = ' + Y.dump(merged));
+
+        result.setContent(Y.dump(merged));
+    };
+
+    Y.on('click', doMerge, '#demo_btn1');

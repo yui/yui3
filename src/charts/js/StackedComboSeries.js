@@ -4,6 +4,7 @@
  * series type has a corresponding boolean attribute indicating if it is rendered. By default, all three types are
  * rendered.  
  *
+ * @module charts
  * @class StackedComboSeries
  * @extends ComboSeries
  * @uses StackingUtil

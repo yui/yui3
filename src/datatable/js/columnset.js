@@ -59,7 +59,7 @@ Y.extend(Columnset, Y.Base, {
     * @method _setDefinitions
     * @description Clones definitions before setting.
     * @param definitions {Array} Array of column definitions.
-    * @returns Array
+    * @return Array
     * @private
     */
     _setDefinitions: function(definitions) {
@@ -76,7 +76,7 @@ Y.extend(Columnset, Y.Base, {
      * elements.
      *
      * @property tree
-     * @type Y.Column[]
+     * @type {Column[]}
      */
     tree: null,
 
@@ -100,7 +100,7 @@ Y.extend(Columnset, Y.Base, {
      * Array of only Columns that are meant to be displayed in DOM.
      *
      * @property keys
-     * @type Y.Column[]
+     * @type {Column[]}
      */
     keys: null,
 

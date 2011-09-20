@@ -1,3 +1,9 @@
+  <div class="intro">
+      <p>The Transition Utility provides an API for creating advanced transitions between style property values. Native CSS Transitions are used when possible.</p>
+</div>
+
+{{>getting-started}}
+
 				<h2 id="using">Using Transitions</h2>
 				<h3 id="attributes">Transition Method</h3>
                     <p>The Transition Utility adds the <code>transition</code> method to <code>Node</code> instances when the <code>transition</code> module is included.  The method accepts a configuration object, and an optional callback function.  The config may include one or more <code>CSS</code> properties to be transitioned, an optional <code>duration</code> (in seconds), <code>delay</code>, and  <code>easing</code> for fine-tuning transition behavior. Calling the <code>transition</code> method begins the transition.  The <code>callback</code> is run after the transition has completed.</p>
@@ -5,7 +11,7 @@
 ```
 Y.one('#demo').transition({
     easing: 'ease-out',
-    duration: 0.75 // seconds,
+    duration: 0.75, // seconds
     width: '10px',
     height: '10px'
 }, function() {

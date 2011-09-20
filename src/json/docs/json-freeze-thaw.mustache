@@ -1,12 +1,9 @@
-{{>json-freeze-thaw-css}}
-
 <div class="intro">
     <p>This example illustrates one method of serializing and recreating class instances by using the `replacer` and `reviver` parameters to `JSON.stringify` and `JSON.parse` respectively.</p>
 </div>
 
-<div class="example">
-{{>json-freeze-thaw-markup}}
-{{>json-freeze-thaw-js}}
+<div class="example yui3-skin-sam">
+    {{>json-freeze-thaw-source}}
 </div>
 
 <h3>The CaveMan class</h3>
@@ -144,13 +141,5 @@ Y.one('#demo_thaw').on('click',function (e) {
 <h3>Full Code Listing</h3>
 
 ```
-{{>json-freeze-thaw-css}}
-```
-
-```
-{{>json-freeze-thaw-markup}}
-```
-
-```
-{{>json-freeze-thaw-js}}
+{{>json-freeze-thaw-source}}
 ```

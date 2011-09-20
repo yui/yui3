@@ -1,5 +1,9 @@
 /**
- * CanvasGraphic is a simple drawing api that allows for basic drawing operations.
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> implementation of the `Graphic` class. 
+ * `CanvasGraphic` is not intended to be used directly. Instead, use the <a href="Graphic.html">`Graphic`</a> class. 
+ * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities but has 
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Graphic.html">`Graphic`</a> 
+ * class will point to the `CanvasGraphic` class.
  *
  * @module graphics
  * @class CanvasGraphic
@@ -139,7 +143,7 @@ CanvasGraphic.ATTRS = {
     },
 
     /**
-     * When overflow is set to true, by default, the contentBounds will resize to greater values but not smaller values. (for performance)
+     * The contentBounds will resize to greater values but not smaller values. (for performance)
      * When resizing the contentBounds down is desirable, set the resizeDown value to true.
      *
      * @config resizeDown 
@@ -351,7 +355,6 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
      * Generates a shape instance by type.
      *
      * @method addShape
-     * @param {String} type type of shape to generate.
      * @param {Object} cfg attributes for the shape
      * @return Shape
      */
@@ -480,6 +483,7 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
     /**
      * Returns a shape class. Used by `addShape`. 
      *
+     * @method _getShapeClass
      * @param {Shape | String} val Indicates which shape class. 
      * @return Function 
      * @private
@@ -575,10 +579,12 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
     },
 
     /**
-     * Adds a shape to the redraw queue. 
+     * Adds a shape to the redraw queue and calculates the contentBounds. Used internally 
+     * by `Shape` instances.
      *
      * @method addToRedrawQueue
      * @param Shape shape The shape instance to add to the queue
+     * @protected
      */
     addToRedrawQueue: function(shape)
     {
@@ -606,7 +612,7 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
     /**
      * Recalculates and returns the `contentBounds` for the `Graphic` instance.
      *
-     * @method _getUpdateContentBounds
+     * @method _getUpdatedContentBounds
      * @return {Object} 
      * @private
      */

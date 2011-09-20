@@ -6,7 +6,7 @@
 
 
 
-<h4 id="simple">Simple Resize</h4>
+<h2 id="simple">Simple Resize</h2>
 <p>You can create a simple Resize instance by including the `resize` module or `base-resize` submodule and using the following code:</p>
 
 ```
@@ -18,7 +18,7 @@ YUI().use('resize', function(Y) {
 });
 ```
 
-<h4 id="events">Events</h4>
+<h2 id="events">Events</h2>
 
 <p>Resize provides useful events to allow the implementer to control the end-user experience.</p>
 				
@@ -71,7 +71,7 @@ YUI().use('resize', function(Y) {
     </tbody>
 </table>
 
-<h4 id="modules">Module Descriptions</h4>
+<h2 id="modules">Module Descriptions</h2>
 
 <p>Resize for YUI 3 has been broken up into several modules to allow you, as the implementer, to target the specific functionality you want — and omit the functionality you're not using.</p>
 <table>
@@ -97,7 +97,7 @@ YUI().use('resize', function(Y) {
     </tbody>
 </table>
 
-<h4 id="resize-plugins">Resize Plugin for Widgets</h4>
+<h2 id="resize-plugins">Resize Plugin for Widgets</h2>
 
 <p>Along with the standalone utility, a Resize plugin is available and can be plugged into Y.Node or Y.Widget instances. The plugin can be created by adding `resize-plugin` in your use statement, and then plugging in `Y.Plugin.Resize`.</p>
 
@@ -115,7 +115,7 @@ YUI().use('overlay', 'resize-plugin', function(Y) {
     overlay.render();
 });
 ```
-<h5>Listening to events on a widget</h5>
+<h3>Listening to events on a widget</h3>
 <p>With the resize plugin being plugged into a Y.Widget instance, resize events can be listened to under the `resize` namespace. The resize plugin will automatically change `width` and `height` attributes on the widget (and the `x` , `y` attributes if your widget uses `Y.WidgetPosition`).</p>
 
 ```

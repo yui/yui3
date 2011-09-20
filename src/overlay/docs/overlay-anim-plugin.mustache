@@ -242,8 +242,8 @@ For the animation plugin, we want to change how the Overlay updates its UI in re
 
 ```
 destructor : function() {
-    this.get("animVisible").destroy();
-    this.get("animHidden").destroy();
+    this.get("animVisible").stop().destroy();
+    this.get("animHidden").stop().destroy();
 },
 ```
 

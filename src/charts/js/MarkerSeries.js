@@ -2,6 +2,7 @@
  * The MarkerSeries class renders quantitative data by plotting relevant data points 
  * on a graph.
  *
+ * @module charts
  * @class MarkerSeries
  * @extends CartesianSeries
  * @uses Plots

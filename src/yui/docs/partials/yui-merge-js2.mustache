@@ -1,0 +1,29 @@
+    var doCopy = function () {
+
+        // Create set4 with an object property 'obj'
+        var set4 = {
+            obj: {}
+        };
+
+        // Create a shallow copy of set4
+        var copy = Y.merge(set4);
+
+        // Add a property to the copy inside of the 'obj' property
+        copy.obj.addedToCopy = true;
+
+        Y.log('After modifying the copy: ');
+
+        // The result object is not the same as the original, but
+        var msg = ('"copy" should NOT be equal to the "original" (false expected): ' + (copy === set4));
+
+        // objects in the result object will reference the same object in
+        // the input object.
+        msg += '<br><br>copy.obj.addedToCopy should be equal to original.obj.addedToCopy (true expected): ' + 
+                (copy.obj.addedToCopy === set4.obj.addedToCopy);
+
+        Y.log(msg);
+        result.setContent(msg);
+    };
+
+    Y.on('click', doCopy, '#demo_btn2');
+

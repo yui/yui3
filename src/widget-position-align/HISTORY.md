@@ -1,49 +1,42 @@
-Widget Position Align
-=====================
+WidgetPositionAlign Change History
+==================================
 
-3.4.0PR3
---------
+3.4.1
+-----
 
-  * Added "alignOn" attribute which allows the implementer to specify when
-  	the widget should be re-aligned. By default, it re-aligns on window resize
-  	and scroll.
+  * The widget's alignment is now re-synced to the DOM every time the widget's
+    `visible` Attribute is changed to `true`. [Ticket #2530779]
 
+  * Syncing the current alignment to the DOM is now supported in the public API
+    by calling `align()` with no arguments. [Ticket #2529911]
 
-3.4.0PR2
---------
+3.4.0
+-----
 
-  * Widgets are kept in alignment when window is resized or scrolled.
+  * Added `alignOn` attribute which allows the implementer to specify when the
+    Widget should be re-aligned.
 
 3.3.0
 -----
 
-  * No changes
+  * No changes.
 
 3.2.0
 -----
 
-  * No changes
+  * No changes.
 
 3.1.1
 -----
 
-  * No changes
+  * No changes.
 
 3.1.0
 -----
 
-  * Renamed module from widget-position-ext to widget-position-align
+  * Renamed module from widget-position-ext to widget-position-align.
 
 3.0.0
 -----
 
-  * No Changes
-
-3.0.0 beta 1
-------------
-
-  * No Changes
-
-3.0.0PR2 - Initial release
---------------------------
-
+  * Initial release.

@@ -1,6 +1,33 @@
 ScrollView
 ==========
 
+3.4.1
+-----
+
+  * Fixed incorrect scroll width/height calculations to account for
+    translate (for real this time) on Chrome, and now Safari. 
+
+    translateZ applied for h/w acceleration was resulting in the incorrect 
+    scroll values.
+
+  * Removed fallback to cb.scrollWidth/Height, when determining scroll dimensions.
+    This was masking the real problem with translate impacting boundingBox scroll 
+    width/height calcs mentioned above.
+
+  * Fixed scrollbar racing ahead of scroll position on FF 5+ with native transition
+    support enabled.
+
+  * Added ability to disable scrollview completely, disable flick or disable drag
+   
+    // Stops SV from moving through flick/drag or the API.
+    sv.set("disabled", true); 
+
+    // Stops SV from reacting to flick. Can still drag/scroll through API
+    sv.set("flick", false);
+ 
+    // Stops SV from reacting to drag. Can still flick, scroll through API
+    sv.set("drag", false);   
+
 3.4.0
 -----
 
@@ -25,6 +52,14 @@ ScrollView
   * Fixed incorrect scroll width/height calculations on Chrome 9+, FF
     when syncUI() [ or _uiDimensionsChange() ] was called when the ScrollView
     was scrolled over.
+ 
+  * Protected state flags are now reset if _uiDimensionsChange results in
+    flipped orientation.
+
+  * Use the larger of bb.scrollWidth/Height or cb.scrollWidth/Height, to calculate
+    scroll dimensions to account for FF (which clips cb.scrollWidth) and 
+    Chrome/MacOS (which clips bb.scrollWidth when translated even after 
+    incorrect scroll calcs above).
   
 3.3.0
 -----

@@ -1,0 +1,23 @@
+{
+    "name": "event-custom",
+	"displayName": "EventTarget",
+	"description": "EventTarget is a core extension class that provides APIs for publishing, firing, and subscribing to custom events",
+	"author": ["lsmith", "sdesai"],
+
+    "use": ["event-custom"],
+    "tags": ["infrastructure", "custom event", "event target"],
+
+    "examples": [
+        {
+            "name": "flow-example",
+	        "displayName": "Custom Event Bubbling and Behaviors",
+	        "description": "Publish an event with a default behavior, as well as behaviors for reacting to preventing the default or stopping bubbling.",
+            "modules": ["event-custom"],
+
+            "hideTableOfContents": true
+	    }
+    ],
+
+    "pages": {
+    }
+}

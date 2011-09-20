@@ -131,10 +131,14 @@ Y.mix(Y_DOM, {
      */
     getComputedStyle: function(node, att) {
         var val = '',
-            doc = node[OWNER_DOCUMENT];
+            doc = node[OWNER_DOCUMENT],
+            computed;
 
         if (node[STYLE] && doc[DEFAULT_VIEW] && doc[DEFAULT_VIEW][GET_COMPUTED_STYLE]) {
-            val = doc[DEFAULT_VIEW][GET_COMPUTED_STYLE](node, null)[att];
+            computed = doc[DEFAULT_VIEW][GET_COMPUTED_STYLE](node, null);
+            if (computed) { // FF may be null in some cases (ticket #2530548)
+                val = computed[att];
+            }
         }
         return val;
     }

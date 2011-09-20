@@ -1,6 +1,7 @@
 /**
  * The LineSeries class renders quantitative data on a graph by connecting relevant data points.
  *
+ * @module charts
  * @class LineSeries
  * @extends CartesianSeries
  * @uses Lines

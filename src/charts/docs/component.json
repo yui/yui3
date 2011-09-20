@@ -3,7 +3,7 @@
 	"displayName" : "Charts",
 	"description" : "The charts module provides a JavaScript API for visualizing data in a variety of formats accross all A-grade browsers.",
 	"author" : "tripp",
-	"tags" : ["widget", "charts"],
+	"tags" : ["widget", "charts", "beta"],
 	"use" : ["charts"],
 	"examples" : [
 		{
@@ -89,7 +89,7 @@
 		{
 			"name" : "charts-pie",
 			"displayName" : "Pie Chart",
-			"description" : "Shows how ot use charts to create a pie chart.",
+			"description" : "Shows how to use charts to create a pie chart.",
 			"modules" : ["charts"],
 			"tags" : ["charts"],
             		"hideTableOfContents": true

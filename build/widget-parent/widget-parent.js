@@ -6,7 +6,9 @@ YUI.add('widget-parent', function(Y) {
  * @module widget-parent
  */
 
-var Lang = Y.Lang;
+var Lang = Y.Lang,
+    RENDERED = "rendered",
+    BOUNDING_BOX = "boundingBox";
 
 /**
  * Widget extension providing functionality enabling a Widget to be a 
@@ -91,7 +93,6 @@ function Parent(config) {
     //  Widget method overlap
     Y.after(this._renderChildren, this, "renderUI");
     Y.after(this._bindUIParent, this, "bindUI");
-    Y.before(this._destroyChildren, this, "destructor");
 
     this.after("selectionChange", this._afterSelectionChange);
     this.after("selectedChange", this._afterParentSelectedChange);
@@ -161,7 +162,7 @@ Parent.ATTRS = {
 
     /**
      * @attribute selection
-     * @type {Y.ArrayList|Widget}
+     * @type {ArrayList|Widget}
      * @readOnly  
      *
      * @description Returns the currently selected child Widget.  If the 
@@ -207,10 +208,18 @@ Parent.ATTRS = {
 Parent.prototype = {
 
     /**
+     * The destructor implementation for Parent widgets. Destroys all children.
+     * @method destructor
+     */
+    destructor: function() {
+        this._destroyChildren();
+    },
+
+    /**
      * Destroy event listener for each child Widget, responsible for removing 
      * the destroyed child Widget from the parent's internal array of children
      * (_items property).
-     * 
+     *
      * @method _afterDestroyChild
      * @protected
      * @param {EventFacade} event The event facade for the attribute change.
@@ -222,7 +231,6 @@ Parent.prototype = {
             child.remove();
         }        
     },
-
 
     /**
      * Attribute change listener for the <code>selection</code> 
@@ -603,7 +611,7 @@ Parent.prototype = {
     * @description Adds a Widget as a child.  If the specified Widget already
     * has a parent it will be removed from its current parent before
     * being added as a child.
-    * @return {Y.ArrayList} Y.ArrayList containing the successfully added 
+    * @return {ArrayList} Y.ArrayList containing the successfully added 
     * Widget instance(s).  If no children where added, will return an empty 
     * Y.ArrayList instance.
     */
@@ -643,7 +651,7 @@ Parent.prototype = {
     /**
     * @method removeAll
     * @description Removes all of the children from the Widget.
-    * @return {Y.ArrayList} Y.ArrayList instance containing Widgets that were 
+    * @return {ArrayList} Y.ArrayList instance containing Widgets that were 
     * successfully removed.  If no children where removed, will return an empty 
     * Y.ArrayList instance.
     */
@@ -708,7 +716,7 @@ Parent.prototype = {
         child.render(parentNode);
 
         // TODO: Ideally this should be in Child's render UI. 
-        
+
         var childBB = child.get("boundingBox"),
             siblingBB,
             nextSibling = child.next(false),
@@ -720,17 +728,34 @@ Parent.prototype = {
         // state (which should be accurate), means we don't have 
         // to worry about decorator elements which may be added 
         // to the _childContainer node.
+    
+        if (nextSibling && nextSibling.get(RENDERED)) {
 
-        if (nextSibling) {
-            siblingBB = nextSibling.get("boundingBox");
+            siblingBB = nextSibling.get(BOUNDING_BOX);
             siblingBB.insert(childBB, "before");
+
         } else {
+
             prevSibling = child.previous(false);
-            if (prevSibling) {
-                siblingBB = prevSibling.get("boundingBox");
+
+            if (prevSibling && prevSibling.get(RENDERED)) {
+
+                siblingBB = prevSibling.get(BOUNDING_BOX);
                 siblingBB.insert(childBB, "after");
+
+            } else if (!parentNode.contains(childBB)) {
+
+                // Based on pull request from andreas-karlsson
+                // https://github.com/yui/yui3/pull/25#issuecomment-2103536
+
+                // Account for case where a child was rendered independently of the 
+                // parent-child framework, to a node outside of the parentNode,
+                // and there are no siblings.
+
+                parentNode.appendChild(childBB);
             }
         }
+
     },
 
     /**

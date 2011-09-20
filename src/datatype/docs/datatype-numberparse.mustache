@@ -8,7 +8,7 @@
     <p>The Number module of the DataType Utility allows you to take a data value and convert it to a number.</p>
 </div>
 
-<div class="example">
+<div class="example yui3-skin-sam">
     {{>datatype-numberparse-source}}
 </div>
 
@@ -30,6 +30,9 @@ YUI().use("datatype-number", function(Y) {
 
     output = Y.DataType.Number.parse("20 dollars");
     // output is null
+
+    output = Y.DataType.Number.parse("3,000,000.12");
+    // output is null (it's the commas)
 
     output = Y.DataType.Number.parse(new Date("Jan 1, 2000"));
     // output is 946713600000

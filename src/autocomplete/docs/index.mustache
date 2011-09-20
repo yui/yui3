@@ -213,8 +213,7 @@ When the AutoComplete widget is rendered, it will add the CSS class `yui3-aclist
 <!-- After AutoComplete is rendered -->
 <input id="ac-input" type="text" class="yui3-aclist-input"
     aria-autocomplete="list" aria-expanded="false"
-    aria-owns="yui_3_3_0_1_129140941365181" role="combobox"
-    autocomplete="off">
+    aria-owns="yui_3_3_0_1_129140941365181" autocomplete="off">
 ```
 
 <p>
@@ -224,8 +223,8 @@ AutoComplete will also add markup for the list widget. By default, the list mark
 ```
 <!-- AutoCompleteList widget markup with sample results -->
 <div id="yui_3_3_0_1_129140941365147"
-    class="yui3-widget yui3-aclist yui3-widget-positioned yui3-widget-stacked yui3-aclist-hidden"
-    style="z-index: 0; width: 254px; left: 13px; top: 32px; "
+    class="yui3-widget yui3-aclist yui3-widget-positioned yui3-aclist-hidden"
+    style="position: absolute; width: 254px; left: 13px; top: 32px;"
     aria-hidden="true">
 
   <div id="yui_3_3_0_1_129140941365150" class="yui3-aclist-content">
@@ -1092,6 +1091,13 @@ The following filters are available in the `autocomplete-filters` module:
     </tr>
 
     <tr>
+      <td>`subWordMatch`</td>
+      <td>
+        Returns results in which all the words of the query match either whole words or parts of words in the result. Non-word characters like whitespace and certain punctuation are ignored.
+      </td>
+    </tr>
+
+    <tr>
       <td>`wordMatch`</td>
       <td>
         Returns results that contain all the individual words in the query, in any order (not necessarily consecutive).
@@ -1175,6 +1181,13 @@ The following highlighters are available in the `autocomplete-highlighters` modu
       <td>`startsWith`</td>
       <td>
         Highlights the complete query as a phrase at the start of the result.
+      </td>
+    </tr>
+
+    <tr>
+      <td>`subWordMatch`</td>
+      <td>
+        Highlights results in which all the words of the query match either whole words or parts of words in the result. Non-word characters like whitespace and certain punctuation are ignored.
       </td>
     </tr>
 
@@ -1590,11 +1603,6 @@ When the AutoComplete widget is rendered, it adds the following ARIA attributes 
     Not all assistive tools support the `aria-owns` attribute. For this reason, it's strongly recommended that you allow the AutoComplete widget to render its list markup inside the same container element as the input node, and immediately after the input node (this is the default behavior) rather than specifying a different parent node.
     </p>
   </dd>
-
-  <dt>`role="combobox"`</dt>
-  <dd>
-    Indicates that the `inputNode` represents the combination of an editable text field with a popup list.
-  </dd>
 </dl>
 
 <p>
@@ -1620,7 +1628,13 @@ The list markup, which is rendered dynamically, uses the following ARIA attribut
 
 <h2>Known Issues</h2>
 
-<ul class="spaced">
+<ul>
+  <li>
+    <p>
+    The accent folding and word breaking implementations require the use of UTF-8 character data. If YUI is used on a page that doesn't specify a UTF-8 charset either via the `Content-Type` HTTP response header or a `<meta charset="utf-8">` tag, an "Invalid range in character set" error may occur in Internet Explorer when the page is loaded from the cache. Specify a charset to avoid triggering this IE bug (you should always specify a charset in any case, since all kinds of bad things can happen if you don't).
+    </p>
+  </li>
+
   <li>
     <p>
     The accent folding implementation used for filters and highlighters is not comprehensive, since it wouldn't be practical to serve a complete set of character data to clients via JS. The implementation used here provides basic accent folding for common alphanumeric characters only, and is not locale-aware. Whenever possible, accent folding should be done on the server, where more complete character data can be used, and not on the client.
