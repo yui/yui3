@@ -195,7 +195,7 @@ YUI.add('core-tests', function(Y) {
             }
         },
         test_log_params: function() {
-            if (!console || !console.info) {
+            if (typeof console == "undefined" || !console.info) {
                 return;
             }
             var l = console.info,
