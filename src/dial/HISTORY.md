@@ -6,6 +6,14 @@ Dial Change History
 
   * Changed method name from _getNewValueFromMousedown to _handleMousedown
 
+  * Improved mousedown on ring handling [Ticket #2530597]
+ 
+  * Improved handling of dragging the handle past max/min and around multiple
+    revolutions. [Ticket #2530766]
+    
+  * Fixed problem with Dial having incorrect center X and Y following a browser
+    resize. [Ticket #2531111]                  
+
 3.4.0
 -----
 
