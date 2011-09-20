@@ -36,11 +36,11 @@ ol,ul,dl {
 	/*bringing lists on to the page with breathing room */
 	margin-left:2em;
 }
-ol li {
+ol {
 	/*giving OL's LIs generated numbers*/
 	list-style: decimal outside;	
 }
-ul li {
+ul {
 	/*giving UL's LIs generated disc markers*/
 	list-style: disc outside;
 }

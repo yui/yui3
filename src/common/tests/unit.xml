@@ -41,6 +41,7 @@
         <url>dom/tests/dom.html</url>
         <url>dom/tests/selector.html</url>
         <url>dump/tests/dump.html</url>
+	<url>editor/tests/editor.html</url>
         <url>escape/tests/functional/escape.html</url>
         <url>event-custom/tests/customevent.html</url>
         <url>event-valuechange/tests/functional/event-valuechange.html</url>
