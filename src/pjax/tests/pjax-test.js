@@ -1,3 +1,7 @@
+/*
+Note: These tests should ideally be run from an HTTP URL. If run from the local
+filesystem, the tests that require XHR will be skipped.
+*/
 YUI.add('pjax-test', function (Y) {
 
 var Assert = Y.Assert,
@@ -23,7 +27,7 @@ suite.add(new Y.Test.Case({
     },
 
     tearDown: function () {
-        this.node.pjax.unplug();
+        this.node.unplug(Y.Plugin.Pjax);
         delete this.node;
     },
 
@@ -43,7 +47,7 @@ suite.add(new Y.Test.Case({
     },
 
     tearDown: function () {
-        this.node.pjax.unplug();
+        this.node.unplug(Y.Plugin.Pjax);
         delete this.node;
         delete this.pjax;
     },
@@ -100,7 +104,7 @@ suite.add(new Y.Test.Case({
     },
 
     tearDown: function () {
-        this.node.pjax.unplug();
+        this.node.unplug(Y.Plugin.Pjax);
 
         delete this.node;
         delete this.pjax;
@@ -250,6 +254,158 @@ suite.add(new Y.Test.Case({
     }
 }));
 
+// -- Methods ------------------------------------------------------------------
+suite.add(new Y.Test.Case({
+    name: 'Methods',
+
+    _should: {
+        ignore: {
+            '`load()` should load the specified URL and fire a `load` event': disableXHR,
+            '`load()` should call a callback if one is provided': disableXHR,
+            '`load()` callback should receive an error when an error occurs': disableXHR
+        }
+    },
+
+    setUp: function () {
+        this.node = Y.one('#test-content');
+        this.node.setContent('');
+
+        this.pjax = this.node.plug(Y.Plugin.Pjax).pjax;
+
+        // To avoid mucking with the URL.
+        this.pjax.get('controller')._save = function () {};
+    },
+
+    tearDown: function () {
+        this.node.unplug(Y.Plugin.Pjax);
+
+        delete this.node;
+        delete this.pjax;
+    },
+
+    '`load()` should load the specified URL and fire a `load` event': function () {
+        var test = this;
+
+        this.pjax.once('load', function (e) {
+            e.preventDefault();
+            test.resume();
+        });
+
+        this.pjax.load('assets/page-full.html');
+        this.wait(1000);
+    },
+
+    '`load()` should call a callback if one is provided': function () {
+        var test = this;
+
+        this.pjax.once('load', function (e) {
+            e.preventDefault();
+        });
+
+        this.pjax.load('assets/page-full.html', function (err, content, res) {
+            test.resume(function () {
+                Assert.isNull(err);
+                Assert.isObject(content);
+                Assert.isInstanceOf(Y.Node, content.node);
+                Assert.isString(content.title);
+                Assert.isObject(res);
+                Assert.areSame(200, res.status);
+            });
+        });
+
+        this.wait(1000);
+    },
+
+    '`load()` callback should receive an error when an error occurs': function () {
+        var test = this;
+
+        this.pjax.once('error', function (e) {
+            e.preventDefault();
+        });
+
+        this.pjax.load('bogus.html', function (err, content, res) {
+            test.resume(function () {
+                Assert.isString(err);
+                Assert.isObject(content);
+                Assert.isInstanceOf(Y.Node, content.node);
+                Assert.isObject(res);
+                Assert.areSame(404, res.status);
+            });
+        });
+
+        this.wait(1000);
+    }
+}));
+
+// -- General Behavior ---------------------------------------------------------
+suite.add(new Y.Test.Case({
+    name: 'General Behavior',
+
+    _should: {
+        ignore: {
+            'Page title should be updated if the `titleSelector` matches an element': disableXHR || !Y.config.doc,
+            'Host element content should be updated with page content when `contentSelector` is null': disableXHR,
+            'Host element content should be updated with partial content when `contentSelector` selects a node': disableXHR
+        }
+    },
+
+    setUp: function () {
+        this.node = Y.one('#test-content');
+        this.node.setContent('');
+
+        this.pjax = this.node.plug(Y.Plugin.Pjax).pjax;
+
+        // To avoid mucking with the URL.
+        this.pjax.get('controller')._save = function () {};
+    },
+
+    tearDown: function () {
+        this.node.unplug(Y.Plugin.Pjax);
+
+        delete this.node;
+        delete this.pjax;
+    },
+
+    'Page title should be updated if the `titleSelector` matches an element': function () {
+        var test = this;
+
+        this.pjax.load('assets/page-full.html', function (err, content) {
+            test.resume(function () {
+                Assert.areSame('Full Page', content.title);
+                Assert.areSame('Full Page', Y.config.doc.title);
+            });
+        });
+
+        this.wait(1000);
+    },
+
+    'Host element content should be updated with page content when `contentSelector` is null': function () {
+        var test = this;
+
+        this.pjax.load('assets/page-full.html', function (err, content) {
+            test.resume(function () {
+                Assert.isInstanceOf(Y.Node, this.node.one('title'));
+                Y.assert(test.node.get('text').indexOf("I'm a full HTML page!") !== -1);
+            });
+        });
+
+        this.wait(1000);
+    },
+
+    'Host element content should be updated with partial content when `contentSelector` selects a node': function () {
+        var test = this;
+
+        this.pjax.set('contentSelector', 'p.foo');
+
+        this.pjax.load('assets/page-partial.html', function (err, content) {
+            test.resume(function () {
+                Assert.areSame('Hello!', test.node.get('text'));
+            });
+        });
+
+        this.wait(1000);
+    }
+}));
 
 Y.Test.Runner.add(suite);
 

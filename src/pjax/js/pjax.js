@@ -100,9 +100,11 @@ Y.extend(PjaxPlugin, Y.Plugin.Base, {
 
     // Shared by both the 'error' and 'load' events.
     _defCompleteFn: function (e) {
-        this._host.setContent(e.content.node);
+        if (e.content.node) {
+            this._host.setContent(e.content.node);
+        }
 
-        if (e.content.title) {
+        if (e.content.title && Y.config.doc) {
             Y.config.doc.title = e.content.title;
         }
     },
@@ -121,7 +123,8 @@ Y.extend(PjaxPlugin, Y.Plugin.Base, {
             status      : res.status
         });
 
-        callback && callback.call(this, res, content, res);
+        callback && callback.call(this,
+            res.statusText || res.responseText || 'XHR error', content, res);
     },
 
     _onIOSuccess: function (id, res, args) {
@@ -171,7 +174,8 @@ Y.extend(PjaxPlugin, Y.Plugin.Base, {
         },
 
         linkSelector: {
-            value: 'a.' + CLASS_PJAX
+            value    : 'a.' + CLASS_PJAX,
+            writeOnce: 'initOnly'
         },
 
         scrollToTop: {
