@@ -144,13 +144,14 @@ add('load', '1', {
 }, 
     "trigger": "autocomplete-list"
 });
-// dd-gestures
+// graphics-svg
 add('load', '2', {
-    "name": "dd-gestures", 
+    "name": "graphics-svg", 
     "test": function(Y) {
-    return (Y.config.win && ('ontouchstart' in Y.config.win && !Y.UA.chrome));
+    var DOCUMENT = Y.config.doc;
+	return (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
 }, 
-    "trigger": "dd-drag"
+    "trigger": "graphics"
 });
 // history-hash-ie
 add('load', '3', {
@@ -163,8 +164,33 @@ add('load', '3', {
 }, 
     "trigger": "history-hash"
 });
-// transition-timer
+// graphics-vml-default
 add('load', '4', {
+    "name": "graphics-vml-default", 
+    "test": function(Y) {
+    var DOCUMENT = Y.config.doc,
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
+    return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
+}, 
+    "trigger": "graphics"
+});
+// graphics-svg-default
+add('load', '5', {
+    "name": "graphics-svg-default", 
+    "test": function(Y) {
+    var DOCUMENT = Y.config.doc;
+	return (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+}, 
+    "trigger": "graphics"
+});
+// widget-base-ie
+add('load', '6', {
+    "name": "widget-base-ie", 
+    "trigger": "widget-base", 
+    "ua": "ie"
+});
+// transition-timer
+add('load', '7', {
     "name": "transition-timer", 
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -178,27 +204,6 @@ add('load', '4', {
     return ret;
 }, 
     "trigger": "transition"
-});
-// graphics-svg-default
-add('load', '5', {
-    "name": "graphics-svg-default", 
-    "test": function(Y) {
-    var DOCUMENT = Y.config.doc;
-	return (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
-}, 
-    "trigger": "graphics"
-});
-// scrollview-base-ie
-add('load', '6', {
-    "name": "scrollview-base-ie", 
-    "trigger": "scrollview-base", 
-    "ua": "ie"
-});
-// widget-base-ie
-add('load', '7', {
-    "name": "widget-base-ie", 
-    "trigger": "widget-base", 
-    "ua": "ie"
 });
 // dom-style-ie
 add('load', '8', {
@@ -251,24 +256,19 @@ add('load', '10', {
 }, 
     "trigger": "node-base"
 });
-// graphics-svg
+// dd-gestures
 add('load', '11', {
-    "name": "graphics-svg", 
+    "name": "dd-gestures", 
     "test": function(Y) {
-    var DOCUMENT = Y.config.doc;
-	return (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    return (Y.config.win && ('ontouchstart' in Y.config.win && !Y.UA.chrome));
 }, 
-    "trigger": "graphics"
+    "trigger": "dd-drag"
 });
-// graphics-vml-default
+// scrollview-base-ie
 add('load', '12', {
-    "name": "graphics-vml-default", 
-    "test": function(Y) {
-    var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
-    return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
-}, 
-    "trigger": "graphics"
+    "name": "scrollview-base-ie", 
+    "trigger": "scrollview-base", 
+    "ua": "ie"
 });
 // graphics-canvas
 add('load', '13', {
