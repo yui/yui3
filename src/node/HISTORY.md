@@ -4,6 +4,14 @@ Node Change History
 3.4.0
 -----
 
+  * Bug fix: Calling insert(null) was throwing an error. [Ticket 2529991]
+
+  * Bug fix: The removeAttribute method was not chainable in IE < 9. [Ticket 2529230]
+
+  * Bug fix: Calling Y.all() without arguments was failing to return an empty NodeList. [Ticket 2530164]
+
+  * Added optional stopAt function/selector argument for ancestor/ancestors().
+
   * [!] The empty() method now always does a recursive purge. [Ticket 2529829] 
 
   * Added the getDOMNode() and getDOMNodes() methods to Node and NodeList
