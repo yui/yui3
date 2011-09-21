@@ -594,6 +594,13 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @private
      */
     _fireSelectionChange : function () {
+
+   /**
+     * Fired when the set of selected dates changes. Contains a payload with
+     * a `newSelection` property with an array of selected dates.
+     *
+     * @event selectionChange
+     */
       this.fire("selectionChange", {newSelection: this._getSelectedDatesList()});
     },
 
@@ -1498,7 +1505,8 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      *
      * @attribute date
      * @type Date
-     * @default Today's date as set on the user's computer.
+     * @default The first of the month containing today's date, as
+     * set on the end user's system.
      */
     date: {
       value: new Date(),
