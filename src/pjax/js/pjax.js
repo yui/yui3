@@ -1,22 +1,16 @@
-YUI.add('pjax', function (Y) {
-
-var Selector = Y.Selector,
-
-    CLASS_PJAX = Y.ClassNameManager.getClassName('pjax'),
+var CLASS_PJAX = Y.ClassNameManager.getClassName('pjax'),
 
     EVT_ERROR    = 'error',
     EVT_LOAD     = 'load',
     EVT_NAVIGATE = 'navigate';
 
-function PjaxPlugin() {
-    PjaxPlugin.superclass.constructor.apply(this, arguments);
+function Pjax() {
+    Pjax.superclass.constructor.apply(this, arguments);
 }
 
-Y.extend(PjaxPlugin, Y.Plugin.Base, {
+Y.extend(Pjax, Y.Base, {
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function () {
-        this._host = this.get('host');
-
         this.publish(EVT_ERROR, {defaultFn: this._defCompleteFn});
         this.publish(EVT_LOAD, {defaultFn: this._defCompleteFn});
         this.publish(EVT_NAVIGATE, {defaultFn: this._defNavigateFn});
@@ -53,7 +47,7 @@ Y.extend(PjaxPlugin, Y.Plugin.Base, {
 
         controller.save(controller.removeRoot(url));
 
-        if (this.get('scrollToTop')) {
+        if (this.get('scrollToTop') && Y.config.win) {
             // Scroll to the top of the page. The timeout ensures that the
             // scroll happens after navigation begins, so that the current
             // scroll position will be restored if the user clicks the back
@@ -97,17 +91,6 @@ Y.extend(PjaxPlugin, Y.Plugin.Base, {
     },
 
     // -- Protected Event Handlers ---------------------------------------------
-
-    // Shared by both the 'error' and 'load' events.
-    _defCompleteFn: function (e) {
-        if (e.content.node) {
-            this._host.setContent(e.content.node);
-        }
-
-        if (e.content.title && Y.config.doc) {
-            Y.config.doc.title = e.content.title;
-        }
-    },
 
     _defNavigateFn: function (e) {
         this.load(e.url);
@@ -154,7 +137,6 @@ Y.extend(PjaxPlugin, Y.Plugin.Base, {
     }
 }, {
     NAME: 'pjax',
-    NS  : 'pjax',
 
     ATTRS: {
         contentSelector: {
@@ -188,11 +170,4 @@ Y.extend(PjaxPlugin, Y.Plugin.Base, {
     }
 });
 
-Y.Plugin.Pjax = PjaxPlugin;
-
-}, '3.5.0', {
-    requires: [
-        'classnamemanager', 'controller', 'io-base', 'node-base',
-        'node-pluginhost', 'node-event-delegate', 'plugin'
-    ]
-});
+Y.Pjax = Pjax;

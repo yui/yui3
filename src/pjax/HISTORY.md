@@ -1,5 +1,5 @@
-Pjax Plugin Change History
-==========================
+Pjax Change History
+===================
 
 3.5.0
 -----

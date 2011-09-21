@@ -1,4 +1,4 @@
-Pjax Plugin
-===========
+Pjax
+====
 
 Put words here!

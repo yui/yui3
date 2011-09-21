@@ -410,5 +410,5 @@ suite.add(new Y.Test.Case({
 Y.Test.Runner.add(suite);
 
 }, '@VERSION@', {
-    requires: ['pjax', 'test']
+    requires: ['pjax-plugin', 'test']
 });

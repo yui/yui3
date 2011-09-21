@@ -5,9 +5,13 @@
             "controller",
             "io-base",
             "node-base",
-            "node-pluginhost",
-            "node-event-delegate",
-            "plugin"
-        ]
+            "node-event-delegate"
+        ],
+
+        "plugins": {
+            "pjax-plugin": {
+                "requires": ["node-pluginhost", "pjax"]
+            }
+        }
     }
 }

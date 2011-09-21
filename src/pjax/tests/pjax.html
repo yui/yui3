@@ -15,7 +15,6 @@
 </div>
 
 <script src="../../../build/yui/yui.js"></script>
-<script src="../js/pjax.js"></script>
 <script>
 var Y = YUI({
     allowRollup: false,
@@ -34,7 +33,7 @@ var Y = YUI({
 
         'pjax-test': {
             fullpath: 'pjax-test.js',
-            requires: ['pjax', 'node-event-simulate', 'test']
+            requires: ['pjax-plugin', 'test']
         }
     },
     useBrowserConsole: false
