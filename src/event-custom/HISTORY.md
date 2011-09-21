@@ -1,6 +1,12 @@
 Custom Event Infrastructure Change History
 ==========================================
 
+3.4.1
+-----
+
+  * onceAfter (added in 3.4.0) now works for array and object signatures.
+    [Ticket #2531121]
+
 3.4.0
 -----
 
