@@ -8699,7 +8699,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "io-xdr": {
         "requires": [
             "io-base", 
-            "datatype-xml"
+            "datatype-xml-parse"
         ]
     }, 
     "json": {
@@ -8894,6 +8894,21 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "widget-buttons"
         ], 
         "skinnable": true
+    }, 
+    "pjax": {
+        "requires": [
+            "classnamemanager", 
+            "controller", 
+            "io-base", 
+            "node-base", 
+            "node-event-delegate"
+        ]
+    }, 
+    "pjax-plugin": {
+        "requires": [
+            "node-pluginhost", 
+            "pjax"
+        ]
     }, 
     "plugin": {
         "requires": [
@@ -9437,7 +9452,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '94b4cd94d5b5f12f01ec8758dc2d9a6e';
+YUI.Env[Y.version].md5 = '6a554ec14e9324c85b2135e76c0963f4';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
