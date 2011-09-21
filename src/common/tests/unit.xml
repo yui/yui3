@@ -45,6 +45,7 @@
 	<url>editor/tests/editor.html</url>
         <url>escape/tests/functional/escape.html</url>
         <url>event-custom/tests/customevent.html</url>
+        <url>event-custom/tests/event-custom-base.html</url>
         <url>event-valuechange/tests/functional/event-valuechange.html</url>
         <url>event/tests/dom.html</url>
         <url>event/tests/delegate.html</url>
