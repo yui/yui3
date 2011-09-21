@@ -505,17 +505,26 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @private
      */
     _addDateRangeToSelection : function (startDate, endDate) {
-        var startTime = startDate.getTime(),
+        var timezoneDifference = (endDate.getTimezoneOffset() - startDate.getTimezoneOffset())*60000,
+            startTime = startDate.getTime(),
             endTime   = endDate.getTime();
-        
+            
             if (startTime > endTime) {
                 var tempTime = startTime;
                 startTime = endTime;
-                endTime = tempTime;
+                endTime = tempTime + timezoneDifference;
             }
+            else {
+                endTime = endTime - timezoneDifference;
+            }
+                console.log(timezoneDifference);
+                console.log(new Date(startTime));
+                console.log(new Date(endTime));
 
         for (var time = startTime; time <= endTime; time += 86400000) {
-            this._addDateToSelection(new Date(time), time);
+            var addedDate = new Date(time);
+                addedDate.setHours(12);
+            this._addDateToSelection(addedDate, time);
         }
         this._fireSelectionChange();
     },
