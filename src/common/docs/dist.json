@@ -1,6 +1,7 @@
 {
     "apiDocs": "http://yuilibrary.com/yui/docs/api",
 
+    "dist"            : true,
     "yuiBuildUrl"     : "../build",
     "yuiLocalBuildUrl": "../build",
     "yuiVersion"      : "@VERSION@",
