@@ -5,7 +5,7 @@ suite.add(new Y.Test.Case({
 
     _should: {
         fail: {
-            "test before/after with falsy context binds args": "ticket pending"
+            //"test before/after with falsy context binds args": "ticket pending"
         },
         ignore: {
             // Trac ticket noted as value
@@ -95,11 +95,11 @@ suite.add(new Y.Test.Case({
 
         Y.Assert.areNotSame(method, target.method);
         Y.Assert.isObject(handle);
-        Y.Assert.isInstanceOf(handle.evt, Y.Do.Method);
+        Y.Assert.isInstanceOf(Y.Do.Method, handle.evt);
 
         target.method();
 
-        Y.ArrayAssert.itemsAreSame(["before", "callback", "method"]);
+        Y.ArrayAssert.itemsAreSame(["before", "callback", "method"], called);
 
         // restore the method for other tests
         Y.Do.before = before;
@@ -133,11 +133,11 @@ suite.add(new Y.Test.Case({
 
         Y.Assert.areNotSame(method, target.method);
         Y.Assert.isObject(handle);
-        Y.Assert.isInstanceOf(handle.evt, Y.Do.Method);
+        Y.Assert.isInstanceOf(Y.Do.Method, handle.evt);
 
         target.method();
 
-        Y.ArrayAssert.itemsAreSame(["before", "callback", "method"]);
+        Y.ArrayAssert.itemsAreSame(["before", "callback", "method"], called);
 
         // restore the method for other tests
         Y.Do.before = before;
