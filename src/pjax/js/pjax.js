@@ -11,10 +11,7 @@ function Pjax() {
 Y.extend(Pjax, Y.Base, {
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function () {
-        this.publish(EVT_ERROR, {defaultFn: this._defCompleteFn});
-        this.publish(EVT_LOAD, {defaultFn: this._defCompleteFn});
         this.publish(EVT_NAVIGATE, {defaultFn: this._defNavigateFn});
-
         this._bindUI();
     },
 
