@@ -716,7 +716,7 @@ Parent.prototype = {
         child.render(parentNode);
 
         // TODO: Ideally this should be in Child's render UI. 
-        
+
         var childBB = child.get("boundingBox"),
             siblingBB,
             nextSibling = child.next(false),
@@ -730,16 +730,31 @@ Parent.prototype = {
         // to the _childContainer node.
     
         if (nextSibling && nextSibling.get(RENDERED)) {
+
             siblingBB = nextSibling.get(BOUNDING_BOX);
             siblingBB.insert(childBB, "before");
+
         } else {
+
             prevSibling = child.previous(false);
-    
+
             if (prevSibling && prevSibling.get(RENDERED)) {
+
                 siblingBB = prevSibling.get(BOUNDING_BOX);
                 siblingBB.insert(childBB, "after");
+
+            } else if (!parentNode.contains(childBB)) {
+
+                // Based on pull request from andreas-karlsson
+                // https://github.com/yui/yui3/pull/25#issuecomment-2103536
+
+                // Account for case where a child was rendered independently of the 
+                // parent-child framework, to a node outside of the parentNode,
+                // and there are no siblings.
+
+                parentNode.appendChild(childBB);
             }
-        }        
+        }
 
     },
 

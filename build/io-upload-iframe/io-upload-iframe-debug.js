@@ -59,6 +59,12 @@ Y.mix(Y.IO.prototype, {
     * @return {Array} e Array of created fields.
     */
     _addData: function(f, s) {
+        // Serialize an object into a key-value string using
+        // querystring-stringify-simple.
+        if (Y.Lang.isObject(s)) {
+            s = Y.QueryString.stringify(s);
+        }
+
         var o = [],
             m = s.split('='),
             i, l;

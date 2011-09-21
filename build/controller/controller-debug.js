@@ -578,6 +578,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         self._dispatching = self._dispatched = true;
 
         if (!routes || !routes.length) {
+            self._dispatching = false;
             return self;
         }
 
@@ -774,7 +775,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
                 if (Y.UA.ios && Y.UA.ios < 5) {
                     // iOS <5 has buggy HTML5 history support, and needs to be
                     // synchronous.
-                    self._save.spply(self, args);
+                    self._save.apply(self, args);
                 } else {
                     // Wrapped in a timeout to ensure that _save() calls are
                     // always processed asynchronously. This ensures consistency
@@ -859,4 +860,4 @@ Y.Controller = Y.extend(Controller, Y.Base, {
 });
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'base-build', 'history'], optional:['querystring-parse']});
+}, '@VERSION@' ,{optional:['querystring-parse'], requires:['array-extras', 'base-build', 'history']});

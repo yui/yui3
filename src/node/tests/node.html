@@ -178,8 +178,9 @@ button {
 YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-deprecated', 'anim', 'console', 'test', 'node-event-simulate', 'node-load', function(Y) {
     var Assert = Y.Assert,
         ArrayAssert = Y.ArrayAssert,
-        suite = new Y.Test.Suite("yuisuite");
+        suite = new Y.Test.Suite("Node Tests");
 
+    Y.Test.Runner.setName('Node Tests');
     new Y.Console({node: '#yui-log', height: '1000px' }).render('#yui-log');
 
     var byId = function(id) {
@@ -741,6 +742,17 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             Assert.areEqual('0px', node.getComputedStyle('marginTop'), "margin auto");
 
             Assert.areEqual(parseInt(w), Math.round(parseFloat(node.getComputedStyle('width'))), "percent width (from CSS)");
+
+            node = document.createElement('div');
+            node.style.height = '100px';
+            document.body.appendChild(node);
+            Assert.areEqual('100px', Y.one(node).getComputedStyle('height'), "node.getComputedStyle('height'), style set off-dom");
+            document.body.removeChild(node);
+
+            var frame = Y.one('iframe');
+            var frameDoc = frame.get('contentWindow.document');
+            frame.setStyle('visibility', 'hidden');
+            Assert.areEqual('100px', frameDoc.one('#demo').getComputedStyle('height'));
         },
 
         test_setStyles: function() {

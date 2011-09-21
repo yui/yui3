@@ -335,4 +335,4 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
 });
 
 
-}, '@VERSION@' ,{requires:['calendar-base', 'calendarnavigator'], lang:['en', 'ru']});
+}, '@VERSION@' ,{requires:['calendar-base', 'calendarnavigator'], lang:['en', 'ja', 'ru']});

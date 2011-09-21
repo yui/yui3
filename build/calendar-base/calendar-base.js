@@ -88,7 +88,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
    * @type String
    * @private
    */
-  _calendarId : Y.guid(CALENDAR),
+  _calendarId : null,
 
   /**
    * The hash map of selected dates, populated with
@@ -134,10 +134,17 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
 
   /**
    * Designated initializer
+   * Initializes instance-level properties of
+   * calendar.
    *
    * @method initializer
    */  
   initializer : function () {
+    this._paneProperties = {};
+    this._calendarId = Y.guid('calendar');
+    this._selectedDates = {};
+    this._rules = {};
+    this.storedDateCells = {};
   },
 
   /**
@@ -500,17 +507,24 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @private
      */
     _addDateRangeToSelection : function (startDate, endDate) {
-        var startTime = startDate.getTime(),
+        var timezoneDifference = (endDate.getTimezoneOffset() - startDate.getTimezoneOffset())*60000,
+            startTime = startDate.getTime(),
             endTime   = endDate.getTime();
-        
+            
             if (startTime > endTime) {
                 var tempTime = startTime;
                 startTime = endTime;
-                endTime = tempTime;
+                endTime = tempTime + timezoneDifference;
+            }
+            else {
+                endTime = endTime - timezoneDifference;
             }
 
+
         for (var time = startTime; time <= endTime; time += 86400000) {
-            this._addDateToSelection(new Date(time), time);
+            var addedDate = new Date(time);
+                addedDate.setHours(12);
+            this._addDateToSelection(addedDate, time);
         }
         this._fireSelectionChange();
     },
@@ -589,6 +603,13 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @private
      */
     _fireSelectionChange : function () {
+
+   /**
+     * Fired when the set of selected dates changes. Contains a payload with
+     * a `newSelection` property with an array of selected dates.
+     *
+     * @event selectionChange
+     */
       this.fire("selectionChange", {newSelection: this._getSelectedDatesList()});
     },
 
@@ -1493,7 +1514,8 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      *
      * @attribute date
      * @type Date
-     * @default Today's date as set on the user's computer.
+     * @default The first of the month containing today's date, as
+     * set on the end user's system.
      */
     date: {
       value: new Date(),
@@ -1615,4 +1637,4 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
 });
 
 
-}, '@VERSION@' ,{requires:['widget', 'substitute', 'datatype-date', 'datatype-date-math', 'cssgrids'], lang:['en', 'ru']});
+}, '@VERSION@' ,{requires:['widget', 'substitute', 'datatype-date', 'datatype-date-math', 'cssgrids'], lang:['en', 'ja', 'ru']});
