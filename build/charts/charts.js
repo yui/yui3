@@ -3169,6 +3169,24 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     {
         this._updateMinAndMax();
 		this.fire("dataUpdate");
+    },
+
+    /**
+     * Checks to see if data extends beyond the range of the axis. If so,
+     * that data will need to be hidden. This method is internal, temporary and subject
+     * to removal in the future.
+     *
+     * @method _hasDataOverflow
+     * @protected
+     * @return Boolean
+     */
+    _hasDataOverflow: function()
+    {
+        if(this.get("setMin") || this.get("setMax"))
+        {
+            return true;
+        }
+        return false;
     }
 }, {
     ATTRS: {
@@ -3294,6 +3312,8 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
          * @type Number
          */
         maximum: {
+            lazyAdd: false,
+
             getter: function ()
             {
                 var max = this.get("dataMaximum"),
@@ -3342,6 +3362,8 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
          * @type Number
          */
         minimum: {
+            lazyAdd: false,
+
             getter: function ()
             {
                 var min = this.get("dataMinimum");
@@ -3609,9 +3631,9 @@ Y.extend(NumericAxis, Y.AxisType,
             num,
             i,
             key,
-            setMax = this._setMaximum,
-            setMin = this._setMinimum;
-        if(!setMax && !setMin)
+            setMax = this.get("setMax"),
+            setMin = this.get("setMin");
+        if(!setMax || !setMin)
         {
             if(data && data.length && data.length > 0)
             {
@@ -3641,12 +3663,14 @@ Y.extend(NumericAxis, Y.AxisType,
                             min = setMin ? this._setMinimum : min;
                             continue;
                         }
+                        this._actualMaximum = max;
+                        this._actualMinimum = min;
                         max = setMax ? this._setMaximum : Math.max(num, max);
                         min = setMin ? this._setMinimum : Math.min(num, min);
                     }
                 }
             }
-            this._roundMinAndMax(min, max);
+            this._roundMinAndMax(min, max, setMin, setMax);
         }
     },
 
@@ -3658,7 +3682,7 @@ Y.extend(NumericAxis, Y.AxisType,
      * @param {Number} max Maximum value
      * @private
      */
-    _roundMinAndMax: function(min, max)
+    _roundMinAndMax: function(min, max, setMin, setMax)
     {
         var roundingUnit,
             minimumRange,
@@ -3682,46 +3706,143 @@ Y.extend(NumericAxis, Y.AxisType,
                 roundingUnit = this._getMinimumUnit(max, min, units);
                 if(minGreaterThanZero && maxGreaterThanZero)
                 {
-                    if(alwaysShowZero || min < roundingUnit)
+                    if((alwaysShowZero || min < roundingUnit) && !setMin)
                     {
                         min = 0;
-                    }
-                    roundingUnit = this._getMinimumUnit(max, min, units);
-                    max = this._roundUpToNearest(max, roundingUnit);
-                }
-                else if(maxGreaterThanZero && !minGreaterThanZero)
-                {
-                        topTicks = Math.round( units / ((-1 * min)/max + 1)    );
-                        topTicks = Math.max(Math.min(topTicks, units - 1), 1);
-                        botTicks = units - topTicks;
-                        tempMax = Math.ceil( max/topTicks );
-
-                        tempMin = Math.floor( min/botTicks ) * -1;
-                        
-                        roundingUnit = Math.max(tempMax, tempMin);
-                        roundingUnit = this._getNiceNumber(roundingUnit);  
-                        max = roundingUnit * topTicks;
-                        min = roundingUnit * botTicks * -1;
-                }
-                else
-                {
-                    if(alwaysShowZero || max === 0 || max + roundingUnit > 0)
-                    {
-                        max = 0;
                         roundingUnit = this._getMinimumUnit(max, min, units);
+                    }
+                    else
+                    {
+                       min = this._roundDownToNearest(min, roundingUnit);
+                    }
+                    if(setMax)
+                    {
+                        if(!alwaysShowZero)
+                        {
+                            min = max - (roundingUnit * units);
+                        }
+                    }
+                    else if(setMin)
+                    {
+                        max = min + (roundingUnit * units);
                     }
                     else
                     {
                         max = this._roundUpToNearest(max, roundingUnit);
                     }
-                    min = max - (roundingUnit * units);
+                }
+                else if(maxGreaterThanZero && !minGreaterThanZero)
+                {
+                    if(alwaysShowZero)
+                    {
+                        topTicks = Math.round(units/((-1 * min)/max + 1));
+                        topTicks = Math.max(Math.min(topTicks, units - 1), 1);
+                        botTicks = units - topTicks;
+                        tempMax = Math.ceil( max/topTicks );
+                        tempMin = Math.floor( min/botTicks ) * -1;
+                        
+                        if(setMin)
+                        {
+                            while(tempMin < tempMax && botTicks >= 0)
+                            {
+                                botTicks--;
+                                topTicks++;
+                                tempMax = Math.ceil( max/topTicks );
+                                tempMin = Math.floor( min/botTicks ) * -1;
+                            }
+                            //if there are any bottom ticks left calcualate the maximum by multiplying by the tempMin value
+                            //if not, it's impossible to ensure that a zero is shown. skip it
+                            if(botTicks > 0)
+                            {
+                                max = tempMin * topTicks;
+                            }
+                            else
+                            {
+                                max = min + (roundingUnit * units);
+                            }
+                        }
+                        else if(setMax)
+                        {
+                            while(tempMax < tempMin && topTicks >= 0)
+                            {
+                                botTicks++;
+                                topTicks--;
+                                tempMin = Math.floor( min/botTicks ) * -1;
+                                tempMax = Math.ceil( max/topTicks );
+                            }
+                            //if there are any top ticks left calcualate the minimum by multiplying by the tempMax value
+                            //if not, it's impossible to ensure that a zero is shown. skip it
+                            if(topTicks > 0)
+                            {
+                                min = tempMax * botTicks * -1;
+                            }
+                            else
+                            {
+                                min = max - (roundingUnit * units);
+                            }
+                        }
+                        else
+                        {
+                            roundingUnit = Math.max(tempMax, tempMin);
+                            roundingUnit = this._getNiceNumber(roundingUnit);  
+                            max = roundingUnit * topTicks;
+                            min = roundingUnit * botTicks * -1;
+                        }
+                    }
+                    else 
+                    {
+                        if(setMax)
+                        {
+                            min = max - (roundingUnit * units);
+                        }
+                        else if(setMin)
+                        {
+                            max = min + (roundingUnit * units);
+                        }
+                        else
+                        {
+                            min = this._roundDownToNearest(min, roundingUnit);
+                            max = this._roundUpToNearest(max, roundingUnit);
+                        }
+                    }
+                }
+                else
+                {
+                    if(setMin)
+                    {
+                        if(alwaysShowZero)
+                        {
+                            max = 0;
+                        }
+                        else
+                        {
+                            max = min + (roundingUnit * units);
+                        }
+                    }
+                    else if(!setMax)
+                    {
+                        if(alwaysShowZero || max === 0 || max + roundingUnit > 0)
+                        {
+                            max = 0;
+                            roundingUnit = this._getMinimumUnit(max, min, units);
+                        }
+                        else
+                        {
+                            max = this._roundUpToNearest(max, roundingUnit);
+                        }
+                        min = max - (roundingUnit * units);
+                    }
+                    else
+                    {
+                        min = max - (roundingUnit * units);
+                    }
                 }
             }
             else if(roundingMethod == "auto") 
             {
                 if(minGreaterThanZero && maxGreaterThanZero)
                 {
-                    if(alwaysShowZero || min < (max-min)/units)
+                    if((alwaysShowZero || min < (max-min)/units) && !setMin)
                     {
                         min = 0;
                     }
@@ -3797,7 +3918,15 @@ Y.extend(NumericAxis, Y.AxisType,
                 dataRangeGreater = (max - min) > minimumRange;
                 minRound = this._roundDownToNearest(min, roundingUnit);
                 maxRound = this._roundUpToNearest(max, roundingUnit);
-                if(minGreaterThanZero && maxGreaterThanZero)
+                if(setMax)
+                {
+                    min = max - minimumRange;
+                }
+                else if(setMin)
+                {
+                    max = min + minimumRange;
+                }
+                else if(minGreaterThanZero && maxGreaterThanZero)
                 {
                     if(alwaysShowZero || minRound <= 0)
                     {
@@ -3807,30 +3936,16 @@ Y.extend(NumericAxis, Y.AxisType,
                     {
                         min = minRound;
                     }
-                    if(!dataRangeGreater)
-                    {
-                        max = min + minimumRange;
-                    }
-                    else
-                    {
-                        max = maxRound;
-                    }
+                    max = min + minimumRange;
                 }
                 else if(maxGreaterThanZero && !minGreaterThanZero)
                 {
                     min = minRound;
-                    if(!dataRangeGreater)
-                    {
-                        max = min + minimumRange;
-                    }
-                    else
-                    {
-                        max = maxRound;
-                    }
+                    max = min + minimumRange;
                 }
                 else
                 {
-                    if(max === 0 || alwaysShowZero)
+                    if(alwaysShowZero || maxRound >= 0)
                     {
                         max = 0;
                     }
@@ -3838,14 +3953,7 @@ Y.extend(NumericAxis, Y.AxisType,
                     {
                         max = maxRound;
                     }
-                    if(!dataRangeGreater)
-                    {
-                        min = max - minimumRange;
-                    }
-                    else
-                    {
-                        min = minRound;
-                    }
+                    min = max - minimumRange;
                 }
             }
         }
@@ -3867,7 +3975,8 @@ Y.extend(NumericAxis, Y.AxisType,
         var min = this.get("minimum"),
             max = this.get("maximum"),
             increm = (max - min)/(l-1),
-            label;
+            label,
+            roundingMethod = this.get("roundingMethod");
             l -= 1;
         //respect the min and max. calculate all other labels.
         if(i === 0)
@@ -3880,8 +3989,12 @@ Y.extend(NumericAxis, Y.AxisType,
         }
         else
         {
-            label = min + (i * increm);
-            label = this._roundToNearest(label, increm);
+            label = (i * increm);
+            if(this.get("roundingMethod") == "niceNumber")
+            {
+                label = this._roundToNearest(label, increm);
+            }
+            label += min;
         }
         return label;
     },
@@ -3962,6 +4075,34 @@ Y.extend(NumericAxis, Y.AxisType,
         precision = precision || 0;
         var decimalPlaces = Math.pow(10, precision);
         return Math.round(decimalPlaces * number) / decimalPlaces;
+    },
+    
+    /**
+     * Checks to see if data extends beyond the range of the axis. If so,
+     * that data will need to be hidden. This method is internal, temporary and subject
+     * to removal in the future.
+     *
+     * @method _hasDataOverflow
+     * @protected
+     * @return Boolean
+     */
+    _hasDataOverflow: function()
+    {
+        var roundingMethod,
+            min,
+            max;
+        if(this.get("setMin") || this.get("setMax"))
+        {
+            return true;
+        }
+        roundingMethod = this.get("roundingMethod");
+        min = this._actualMinimum;
+        max = this._actualMaximum;
+        if(Y_Lang.isNumber(roundingMethod) && ((Y_Lang.isNumber(max) && max > this._dataMaximum) || (Y_Lang.isNumber(min) && min < this._dataMinimum)))
+        {
+            return true;
+        }
+        return false;
     }
 });
 
@@ -4002,7 +4143,9 @@ Y.extend(StackedAxis, Y.NumericAxis,
             i = 0,
             key,
             num,
-            keys = this.get("keys");
+            keys = this.get("keys"),
+            setMin = this.get("setMin"),
+            setMax = this.get("setMax");
 
         for(key in keys)
         {
@@ -4051,7 +4194,17 @@ Y.extend(StackedAxis, Y.NumericAxis,
                 min = Math.min(min, pos);
             }
         }
-        this._roundMinAndMax(min, max);
+        this._actualMaximum = max;
+        this._actualMinimum = min;
+        if(setMax)
+        {
+            max = this._setMaximum;
+        }
+        if(setMin)
+        {
+            min = this._setMinimum;
+        }
+        this._roundMinAndMax(min, max, setMin, setMax);
     }
 });
 
@@ -12230,7 +12383,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 axis.get("boundingBox").setStyle("left", lw + "px");
                 axis.get("boundingBox").setStyle("top", pts[i].y);
             }
-            if(axis.get("setMax") || axis.get("setMin"))
+            if(axis._hasDataOverflow())
             {
                 graphOverflow = "hidden";
             }
