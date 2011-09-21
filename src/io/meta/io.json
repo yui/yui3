@@ -35,7 +35,7 @@
             "io-xdr": {
                 "requires": [
                     "io-base", 
-                    "datatype-xml"
+                    "datatype-xml-parse"
                 ]
             }
         }
