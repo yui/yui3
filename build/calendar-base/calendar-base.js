@@ -519,9 +519,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
             else {
                 endTime = endTime - timezoneDifference;
             }
-                console.log(timezoneDifference);
-                console.log(new Date(startTime));
-                console.log(new Date(endTime));
+
 
         for (var time = startTime; time <= endTime; time += 86400000) {
             var addedDate = new Date(time);
