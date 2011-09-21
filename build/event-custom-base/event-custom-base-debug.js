@@ -1443,10 +1443,13 @@ ET.prototype = {
      *                       subscription
      */
     onceAfter: function() {
-        var args = YArray(arguments, 0, true);
-        args[0] = AFTER_PREFIX + args[0];
-
-        return this.once.apply(this, args);
+        var handle = this.after.apply(this, arguments);
+        handle.batch(function(hand) {
+            if (hand.sub) {
+                hand.sub.once = true;
+            }
+        });
+        return handle;
     },
 
     /**
