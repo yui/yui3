@@ -1,3 +1,4 @@
+<!doctype html>
 <html>
 <head>
     <title>Calendar Example</title>
@@ -14,7 +15,8 @@
 
 <script>
 YUI({
-base: '../../../../build/'
+base: '../../../../build/',
+    filter: "raw"
 }).use('calendar',  function(Y) {
 
 Y.CalendarBase.CONTENT_TEMPLATE = Y.CalendarBase.TWO_PANE_TEMPLATE;
