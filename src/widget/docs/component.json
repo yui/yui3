@@ -52,23 +52,6 @@
             "tags"       : ["widget", "infrastructure"],
 
             "hideTableOfContents": true
-        },
-
-        {
-            "name"       : "widget-skins",
-            "displayName": "Using Widget Skins",
-            "description": "Shows how to implement YUI Widget skins.",
-            "modules"    : ["widget", "calendar", "datatable", "tabview", "panel"],
-            "tags"       : ["widget", "infrastructure", "skins"],
-
-            "hideTableOfContents": true
         }
-    ],
-
-    "pages": {
-        "widget-skins-example": {
-            "displayName": "Widget Skins Example",
-            "layout"     : "widget-skins-example"
-        }
-    }
+    ]
 }

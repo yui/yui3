@@ -485,6 +485,18 @@
         },
         
         /**
+         * recalculates the XY of the center of the dial. 
+         * This is needed for calculating the angle of the handle
+         *
+         * @method _recalculateDialCenter
+         * @protected
+         */
+        _recalculateDialCenter : function(){ // #2531111 value, and marker don't track handle when dial position changes on page (resize when inline)
+            this._centerYOnPage = (this._ringNode.getY() + this._ringNodeRadius);
+            this._centerXOnPage = (this._ringNode.getX() + this._ringNodeRadius);                     
+        },
+        
+        /**
          * handles the user dragging the handle around the Dial, gets the angle, 
          * checks for wrapping around top center.
          * Sets the new value of the Dial
@@ -546,6 +558,7 @@
             newValue, oppositeMidRangeAngle,
             ang;
             
+            this._recalculateDialCenter(); // #2531111 in case the Dial has moved to a new XY due to browser resize, etc.
             // the event was emitted from mousedown on ring, so center should be the XY of mousedown.
             var handleCenterX = e.pageX,
             handleCenterY = e.pageY;
@@ -689,6 +702,7 @@
          */
         _handleDragStart : function(e){
             this._markerNode.removeClass(Dial.CSS_CLASSES.hidden);
+            this._recalculateDialCenter(); // #2531111 in case the Dial has moved to a new XY due to browser resize, etc.
         },
 
         /*
@@ -762,12 +776,11 @@
             // We would have used visibility:hidden in the css of this class, 
             // but IE8 VML never returns to visible after applying visibility:hidden then removing it.
             this._setSizes();
+            this._recalculateDialCenter(); // #2531111 initialize center of dial
             this._setBorderRadius();
             this._uiSetValue(this.get("value"));
             this._markerNode.addClass(Dial.CSS_CLASSES.hidden);
             this._resetString.addClass(Dial.CSS_CLASSES.hidden);
-            this._centerYOnPage = (this._ringNode.getY() + this._ringNodeRadius); // moved from _handleDragStart for [#2530206]
-            this._centerXOnPage = (this._ringNode.getX() + this._ringNodeRadius); // moved from _handleDragStart for [#2530206]
         },
 
         /**

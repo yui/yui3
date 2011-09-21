@@ -9,6 +9,7 @@
             	],
                 "lang" : [
                     "en", 
+                    "ja",
                     "ru"
                 ],
                 "skinnable": true
