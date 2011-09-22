@@ -710,6 +710,8 @@ Y.extend(DTBase, Y.Widget, {
                 // function formatters need to run before checking if the value
                 // needs defaulting from column.emptyCellValue
                 formatter = Y.bind(this._functionFormatter, this, formatter);
+            } else if (YLang.isObject(formatter)) {
+                formatter = Y.bind(this._hashFormatter, this, formatter);
             } else {
                 if (!YLang.isString(formatter)) {
                     formatter = cellValueTemplate;
@@ -741,6 +743,10 @@ Y.extend(DTBase, Y.Widget, {
         var value = formatter.call(this, o);
 
         return (value !== undefined) ? value : o.emptyCellValue;
+    },
+
+    _hashFormatter: function (hash, o) {
+        return (o.value in hash) ? hash[o.value] : o.emptyCellValue;
     },
 
     _templateFormatter: function (template, o) {
