@@ -652,7 +652,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     _syncScrollX: function() {
         var tBody = this._parentTbodyNode,
             tBodyContainer = this._bodyContainerNode,
-            w;
+            w, p;
 
         this._headerContainerNode.set('scrollLeft',
             this._bodyContainerNode.get('scrollLeft'));
@@ -667,8 +667,8 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
             
         if (tBody.get('rows').size()) {
             this._parentMsgNode.get('parentNode').setStyle('width', "");
-        } else {
-            this._parentMsgNode.get('parentNode').setStyle('width', this._parentTheadNode.get('parentNode').get('offsetWidth')+'px');
+        } else if (p = this._parentTheadNode || this._parentTbodyNode) {
+            this._parentMsgNode.get('parentNode').setStyle('width', p.get('parentNode').get('offsetWidth')+'px');
         }
             
     },
@@ -721,7 +721,9 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
             value = borderWidth + "px solid " + this.get("COLOR_COLUMNFILLER"),
             children = YNode.all('#'+this._parentContainer.get('id')+ ' .' + CLASS_HEADER + ' table thead th');
 
-        children.item(len-1).setStyle('borderRight', value);
+        if (children.size() > 0) {
+            children.item(len-1).setStyle('borderRight', value);
+        }
     }
     
 });
