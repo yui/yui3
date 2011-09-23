@@ -3861,7 +3861,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "io-xdr": {
         "requires": [
             "io-base", 
-            "datatype-xml"
+            "datatype-xml-parse"
         ]
     }, 
     "json": {
@@ -4599,7 +4599,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '94b4cd94d5b5f12f01ec8758dc2d9a6e';
+YUI.Env[Y.version].md5 = '105ebffae27a0e3d7331f8cf5c0bb282';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
