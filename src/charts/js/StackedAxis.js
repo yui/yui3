@@ -33,7 +33,9 @@ Y.extend(StackedAxis, Y.NumericAxis,
             i = 0,
             key,
             num,
-            keys = this.get("keys");
+            keys = this.get("keys"),
+            setMin = this.get("setMin"),
+            setMax = this.get("setMax");
 
         for(key in keys)
         {
@@ -82,7 +84,17 @@ Y.extend(StackedAxis, Y.NumericAxis,
                 min = Math.min(min, pos);
             }
         }
-        this._roundMinAndMax(min, max);
+        this._actualMaximum = max;
+        this._actualMinimum = min;
+        if(setMax)
+        {
+            max = this._setMaximum;
+        }
+        if(setMin)
+        {
+            min = this._setMinimum;
+        }
+        this._roundMinAndMax(min, max, setMin, setMax);
     }
 });
 

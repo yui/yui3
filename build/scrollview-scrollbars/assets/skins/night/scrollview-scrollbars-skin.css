@@ -1,9 +1,3 @@
-.yui3-skin-night{    
-	background-color:#000;
-    font-family: HelveticaNeue,arial,helvetica,clean,sans-serif;
-	color:#fff;
-}
-
 .yui3-skin-night .yui3-scrollview-scrollbar {
     -webkit-transform: translate3d(0, 0, 0);
     -moz-transform: translate(0, 0); 

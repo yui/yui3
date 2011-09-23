@@ -61,9 +61,9 @@ ListPlugin.ATTRS = {
     /**
      * Specifies whether the list elements (the immediate <ul>'s and the immediate <li>'s inside those <ul>'s) have class names attached to them or not
      *
-     * @property isAttached
+     * @attribute isAttached
      * @type boolean
-     * @static
+     * @deprecated No real use for this attribute on the public API
      */
     isAttached: {
         value:false,
@@ -77,20 +77,13 @@ Y.namespace("Plugin").ScrollViewList = Y.extend(ListPlugin, Y.Plugin.Base, {
      * Designated initializer
      *
      * @method initializer
-     */    
+     */
     initializer: function() {
         this._host = this.get(HOST);
-
-        this.afterHostMethod("renderUI", this._addClassesToList);
-
-        if (this._host.get(RENDERED)) {
-            this._addClassesToList();
-        }
-
+        this.afterHostEvent("render", this._addClassesToList);
     },
 
     _addClassesToList: function() {
-
         if (!this.get('isAttached')) {
             var cb = this._host.get(CONTENT_BOX),
             ulList,
@@ -112,10 +105,13 @@ Y.namespace("Plugin").ScrollViewList = Y.extend(ListPlugin, Y.Plugin.Base, {
                 });
 
                 this.set('isAttached', true);
+                
+                // We need to call this again, since sv-list 
+                // relies on the "-vert" class, to apply padding.
+                // [ 1st syncUI pass applies -vert, 2nd pass re-calcs dims ] 
+                this._host.syncUI();
             }
         }
-
-
     }
 
 });
@@ -131,4 +127,4 @@ Y.namespace("Plugin").ScrollViewList = Y.extend(ListPlugin, Y.Plugin.Base, {
 
 
 
-}, '@VERSION@' ,{skinnable:true, requires:['plugin', 'classnamemanager']});
+}, '@VERSION@' ,{requires:['plugin', 'classnamemanager'], skinnable:true});

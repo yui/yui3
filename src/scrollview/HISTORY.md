@@ -26,7 +26,9 @@ ScrollView
     sv.set("flick", false);
  
     // Stops SV from reacting to drag. Can still flick, scroll through API
-    sv.set("drag", false);   
+    sv.set("drag", false);  
+
+  * Resync UI on scrollview-list class application.
 
 3.4.0
 -----

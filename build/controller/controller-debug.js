@@ -578,6 +578,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         self._dispatching = self._dispatched = true;
 
         if (!routes || !routes.length) {
+            self._dispatching = false;
             return self;
         }
 

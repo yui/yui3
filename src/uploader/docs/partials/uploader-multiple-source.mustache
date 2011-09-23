@@ -65,7 +65,12 @@ var overlayRegion = Y.one("#selectLink").get('region');
 Y.one("#uploaderOverlay").set("offsetWidth", overlayRegion.width);
 Y.one("#uploaderOverlay").set("offsetHeight", overlayRegion.height);
 
+
+{{#if dist}} 
+var swfURL = {{yuiLocalBuildUrl}}/uploader/assets/uploader.swf; 
+{{else}} 
 var swfURL = Y.Env.cdn + "uploader/assets/uploader.swf";
+{{/if}}
 
 if (Y.UA.ie >= 6) {
 	swfURL += "?t=" + Y.guid();

@@ -1,6 +1,11 @@
 Anim Change History
 ======================
 
+3.4.1
+-----
+  * no change
+
+
 3.4.0
 -----
   * no change

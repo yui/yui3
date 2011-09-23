@@ -14,6 +14,7 @@
         <url>cache/tests/cache.html</url>
         <url>cache/tests/cache-offline.html</url>
         <url>cache/tests/cache-plugin.html</url>
+        <url>calendar/tests/calendar.html</url>
         <url timeout="600000">charts/tests/charts.html</url>
         <url timeout="200000">charts/tests/seriestests.html</url>
         <url>classnamemanager/tests/classnamemanager.html</url>
@@ -44,6 +45,7 @@
 	<url>editor/tests/editor.html</url>
         <url>escape/tests/functional/escape.html</url>
         <url>event-custom/tests/customevent.html</url>
+        <url>event-custom/tests/event-custom-base.html</url>
         <url>event-valuechange/tests/functional/event-valuechange.html</url>
         <url>event/tests/dom.html</url>
         <url>event/tests/delegate.html</url>

@@ -1,6 +1,27 @@
 IO Utility Change History
 =========================
 
+3.4.1
+-----
+
+  * HTTP 304 now treated as a success condition. [Ticket #2530931]
+
+  * Fixed transport creation error when both io-xdr and io-upload-iframe
+    modules are in use [Ticket #2530999]
+
+  * Querystring stringify added to io-upload-iframe. [Ticket #2531037]
+
+  * Fixed request abort error in IE. [Ticket #2531038]
+
+  * Add try/catch to io-upload-iframe response to handle failure cases 
+    where the document may be inaccessible. [Ticket #2531041]
+
+  * Add IO support for XHR basic user authentication. [Ticket #2530023]
+
+  * Revert Y.mix usage for synchronous requests. [Ticket #2531056]
+
+  * Fixed io-upload-iframe transport destruction.  [Ticket #2531058]
+    
 3.4.0
 -----
 
