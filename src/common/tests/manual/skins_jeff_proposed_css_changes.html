@@ -1,0 +1,363 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>(Jeff) Widget Skins Test Page</title>
+    <script src="../../../../build/yui/yui-min.js"></script>
+    <link type="text/css" rel="stylesheet" href="../../../../build/cssreset/cssreset.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/cssfonts/cssfonts.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/cssgrids/cssgrids.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/slider-base/assets/skins/night/slider-base.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/tabview/assets/skins/night/tabview.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/datatable-base/assets/skins/night/datatable-base.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/dial/assets/skins/night/dial.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/scrollview-list/assets/skins/night/scrollview-list.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/panel/assets/skins/night/panel.css" charset="utf-8">
+
+    <!--
+    <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/gallery-2011.08.04-15-16/build/gallerycss-cssbutton/gallerycss-cssbutton.css" charset="utf-8">
+    -->
+    <link type="text/css" rel="stylesheet" href="http://derek.io/~/fixedbutton.css" charset="utf-8">
+    <style>
+        .yui3-js-enabled .yui3-widget-loading {
+            display: none;
+        }
+
+        .yui3-panel form li {
+            list-style: none;
+        }       
+
+        .yui3-panel label {
+            display: block;
+            margin-top: 1em;
+        }    
+
+        .yui3-widget {
+            margin: 15px;
+        }
+
+        .yui3-tabview {
+            width: 400px;
+        }
+
+        #buttons-dir,
+        #buttons-skin {
+            margin: 0 2em;
+        }
+
+        .button-group {
+            text-align: center;
+        }
+
+        .yui3-panel {
+            position: static !important;
+        }
+
+        /* workaround site CSS */
+        .yui3-datatable th,
+        .yui3-calendar th,
+        .yui3-calendar h4 {
+            background: transparent;
+            border: none;
+            color: inherit;
+            font-size: inherit;
+        }
+
+/* Jeff CSS recommendations */
+html .yui3-skin-sam .yui3-panel-content {
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+/* un-comment this to check the panel box-shadow when over other objects
+html {
+    background: url(assets/images/background_components_panel_shadow_check.png);
+}*/
+
+html .yui3-skin-sam .yui3-scrollview-vert .yui3-scrollview-content .yui3-scrollview-item {
+    /*background-color: #151515;*/
+    border-bottom: 1px solid #cccccc;
+}
+html .yui3-skin-sam .yui3-scrollview {
+    border: solid 1px #808080;
+}
+html .yui3-skin-night .yui3-calendar-content {
+    background: #494A4A;
+    /*border: 1px solid gray;*/
+    border-radius: 5px 5px 5px 5px;
+    color: #fff;
+    font-family: "Lucida Grande","Lucida Sans",Calibri,Helvetica,Arial,sans-serif;
+    font-size: 0.8em;
+    padding: 10px;
+}
+html .yui3-skin-night .yui3-calendar-day, 
+html .yui3-skin-night .yui3-calendar-prevmonth-day,
+html .yui3-skin-night .yui3-calendar-nextmonth-day {
+    background: none repeat scroll 0 0 #585959;
+    border: 1px solid #414342;
+    text-align: center;
+}
+html .yui3-skin-night .yui3-calendar-weekdayrow{
+    color:#969696;
+}
+html .yui3-skin-night .yui3-calendar-day-selected {
+    background-color: #70A4EB;
+    color: #000000;
+}
+    </style> 
+
+    <body class="yui3-skin-sam">
+    <div id="skin-demo"> 
+        <div class="yui3-g button-group">
+            <div id="buttons-skin" class="yui3-u">
+                <button id="sam" class="yui3-button yui3-button-selected">Sam</button>
+                <button id="night" class="yui3-button">Night</button>
+            </div>
+
+            <div id="buttons-dir" class="yui3-u">
+                <button id="rtl" class="yui3-button">RTL</button>
+                <button id="ltr" class="yui3-button yui3-button-selected">LTR</button>
+            </div>
+        </div>
+        <div class="yui3-g">
+            <div class="yui3-u">
+                <div class="yui3-widget-loading" id="demo-tabview"> 
+                    <ul> 
+                        <li> 
+                            <a href="#pork">Pork</a> 
+                        </li> 
+                        <li> 
+                            <a href="#meatball">Meatball</a> 
+                        </li> 
+                        <li> 
+                            <a href="#salami">Salami</a> 
+                        </li> 
+                    </ul> 
+                    <div> 
+                        <div id="pork"> 
+                            <p>Pork tail short loin ground round. Spare ribs bresaola cow prosciutto. Ground round shoulder shankle venison tongue, beef ribs spare ribs salami frankfurter bacon turducken tri-tip tail ribeye pork chop. Chicken tail bacon, biltong corned beef shankle pancetta shoulder brisket pork belly ham pork bresaola pig. Kielbasa filet mignon beef ribs, brisket ham ribeye pig ground round jerky flank turkey ham hock. Bacon swine jowl, pancetta salami boudin rump venison meatloaf strip steak. Fatback shoulder beef capicola.</p> 
+                        </div> 
+                        <div id="meatball"> 
+                            <p>Meatball cow leberkäse, tenderloin sirloin spare ribs beef ribs turkey ball tip flank pork loin fatback andouille strip steak tri-tip. Kielbasa drumstick pastrami tongue, strip steak shank tail beef ribs pork turducken pork loin pork chop. Capicola ground round tail t-bone pork chop kielbasa, chicken prosciutto bacon brisket sausage jowl. Andouille shoulder pork pig swine. Venison beef ribs turducken pork chop, sausage turkey drumstick sirloin ham swine chicken. Kielbasa pancetta t-bone ham. Brisket tenderloin meatball turducken, hamburger ball tip rump pork flank ground round spare ribs kielbasa beef ribs bacon.</p> 
+                        </div> 
+                        <div id="salami"> 
+                            <p>Salami short ribs corned beef, pancetta ham hock jowl frankfurter tail rump flank capicola tri-tip andouille sirloin. Biltong bresaola sausage hamburger ground round, pork loin tri-tip pig andouille fatback short ribs pork jowl. Capicola boudin sirloin tongue, beef prosciutto spare ribs shankle ball tip ham beef ribs turducken tenderloin. Drumstick tenderloin ribeye leberkäse, pork belly pancetta turducken frankfurter bresaola pig biltong. Pastrami beef ribs meatball tri-tip, chuck jerky prosciutto beef rump drumstick bresaola jowl. Hamburger leberkäse pork chop, ball tip meatball ham andouille fatback corned beef pork loin shoulder boudin. Shoulder short loin flank filet mignon tri-tip.</p> 
+                        </div> 
+                    </div> 
+                </div> 
+            </div>
+
+            <div class="yui3-u"><div id="demo-datatable"></div></div>
+
+            <div class="yui3-u">
+                <div class="yui3-panel yui3-widget" id="demo-panel"> 
+                    <div class="yui3-panel-content yui3-widget-stdmod"> 
+                        <div class="yui3-widget-hd">Add A New Product</div> 
+                        <div class="yui3-widget-bd"> 
+                            <form> 
+                                <fieldset> 
+                                    <ul> 
+                                        <li> 
+                                            <label for="productId">ID</label> 
+                                            <input type="text" name="productId" id="productId">
+                                        </li> 
+                                        <li> 
+                                            <label for="name">Name</label> 
+                                            <input type="text" name="name" id="name"> 
+                                        </li> 
+                                        <li> 
+                                            <label for="price">Price</label> 
+                                            <input type="text" name="price" id="price"> 
+                                        </li> 
+                                    </ul> 
+                                </fieldset> 
+                            </form> 
+                        </div>
+                        <div class="yui3-widget-ft"> 
+                            <button class="yui3-button">Add Item</button> 
+                            <button class="yui3-button">Remove All Items</button> 
+                        </div> 
+                    </div> 
+                </div>
+            </div>
+            <div class="yui3-u">
+                 <div id="demo-calendar"></div>
+            </div> 
+            <div class="yui3-u">
+                 <div id="demo-dial"></div>
+            </div> 
+            <div class="yui3-u">
+                 <div id="demo-xslider"></div>
+            </div> 
+            <div class="yui3-u">
+                 <div id="demo-yslider"></div>
+            </div> 
+
+            <div class="yui3-u">
+                <div id="demo-scrollview">
+                    <ul>
+                        <li>Sir DZL</li>
+                        <li>Casual</li>
+                        <li>A-Plus</li>
+                        <li>Opio</li>
+                        <li>Phesto</li>
+                        <li>Tajai</li>
+                        <li>Pep Love</li>
+                        <li>Domino</li>
+                        <li>Toure</li>
+                        <li>Bukue One</li>
+                        <li>Z-Man</li>
+                    </ul>
+                </div>
+            </div> 
+
+            <div class="yui3-u">
+                <div id="demo-menunav" class="yui3-menu"> 
+                    <div class="yui3-menu-content"> 
+                        <ul class="first-of-type"> 
+                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://developer.yahoo.com/">Developer Network</a></li> 
+                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://www.flickr.com">Flickr</a></li> 
+                            <li> 
+                                <a class="yui3-menu-label" href="#pim">PIM</a> 
+                                <div id="pim" class="yui3-menu"> 
+                                    <div class="yui3-menu-content">    
+
+                                        <ul> 
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://mail.yahoo.com">Mail</a></li> 
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://www.zimbra.com">Zimbra</a></li> 
+                                        </ul> 
+
+                                        <ul> 
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://addressbook.yahoo.com">Address Book</a></li> 
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://calendar.yahoo.com">Calendar</a></li> 
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://notepad.yahoo.com">Notepad</a></li> 
+                                        </ul> 
+                                        
+                                        <ul> 
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://messenger.yahoo.com">Messenger</a></li> 
+                                        </ul> 
+                                        
+                                    </div>    
+                                </div>                    
+                            </li> 
+                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://profiles.yahoo.com">Profiles</a> </li> 
+                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://mobile.yahoo.com">Mobile</a></li> 
+                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://mybloglog.yahoo.com/">MyBlogLog</a></li> 
+                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://pride.yahoo.com/">Pride</a></li> 
+                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://upcoming.yahoo.com/">Upcoming</a></li> 
+                        </ul>    
+                    </div> 
+                </div>      
+            </div>      
+        </div>      
+    </div> 
+<script>
+YUI({filter: 'raw'}).use('tabview', 'datatable-sort', 'calendar', 'panel', 'dial', 'node-menunav', 'node-event-delegate', 'slider', 'scrollview', 'scrollview-list', function(Y) {
+    var buttonHandlers = {
+        sam: function(e) {
+            Y.one('body').replaceClass('yui3-skin-night', 'yui3-skin-sam');
+        },
+
+        night: function(e) {
+            Y.one('body').replaceClass('yui3-skin-sam', 'yui3-skin-night');
+        },
+
+        rtl: function(e) {
+            Y.one('body').setAttribute('dir', 'rtl');
+        },
+
+        ltr: function(e) {
+            Y.one('body').setAttribute('dir', 'ltr');
+        }
+    };
+
+    function buttonGroupHandler(e) {
+        var button = e.currentTarget,
+            handler = buttonHandlers[button.get('id')],
+            selectedClass = Y.ClassNameManager.getClassName('button', 'selected');
+
+        if (handler) {
+            button.addClass(selectedClass);
+            button.siblings().removeClass(selectedClass);
+
+            handler.call(this, e);
+        }
+    }
+
+    new Y.TabView({
+        srcNode: '#demo-tabview'
+    }).render();
+
+    // what if...
+    // Y.TabView('#demo-tabview');
+    // Y.one('#demo-tabview').plug('tabs');
+
+    new Y.DataTable.Base({
+        srcNode: '#demo-datatable',
+        columnset: [
+            {key:"Company", label:"Column A", sortable:true},
+            {key:"Phone", label:"Column B", sortable:true},
+            {key:"Contact", label:"Column C", sortable:true}
+        ],
+        recordset: [
+            {Company:"Company Bee", Phone:"415-555-1234", Contact:"Sally Spencer"},
+            {Company:"Acme Company", Phone:"650-555-4444", Contact:"John Jones"},
+            {Company:"Industrial Industries", Phone:"408-555-5678", Contact:"Robin Smith"}
+        ],
+        caption: "Example table with sortable columns"
+    }).plug(Y.Plugin.DataTableSort).render();
+
+    // what if...
+    // plug('sort').render(); 
+
+
+    new Y.Calendar({
+        render: "#demo-calendar"
+    });
+
+    new Y.Dial({
+        render: "#demo-dial"
+    });
+
+    new Y.Slider({
+        axis: 'y',
+        render: '#demo-yslider'
+    });
+
+    new Y.Slider({
+        render: '#demo-xslider'
+    });
+
+    new Y.ScrollView({
+        height: '150px',
+        contentBox: '#demo-scrollview'
+    }).plug(Y.Plugin.ScrollViewList).render();
+
+    // what if...
+    // Y.Calendar('#demo-calendar');
+    // Y.Dial('#demo-dial');
+    // Y.Dial('#demo-dial');
+
+    // new Y.Slider('#demo-yslider', {
+    //    axis: 'y',
+    // });
+
+    Y.one('#demo-menunav').plug(Y.Plugin.NodeMenuNav);
+
+    // what if...
+    // Y.Menu('#demo-menu');
+
+    // handle button groups
+    Y.one('.button-group').delegate('click', buttonGroupHandler, 'button');
+    
+    /* what if...
+     Y.RadioButtons('.button-group', {
+         '#sam': buttonHandlers['sam'],
+         '#night': buttonHandlers['night'],
+         '#ltr': buttonHandlers['ltr'],
+         '#rtl': buttonHandlers['rtl']
+    });
+    */
+
+});
+</script>
+</body>
+</html>

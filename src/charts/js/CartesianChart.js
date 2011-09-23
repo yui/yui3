@@ -1087,7 +1087,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 axis.get("boundingBox").setStyle("left", lw + "px");
                 axis.get("boundingBox").setStyle("top", pts[i].y);
             }
-            if(axis.get("setMax") || axis.get("setMin"))
+            if(axis._hasDataOverflow())
             {
                 graphOverflow = "hidden";
             }

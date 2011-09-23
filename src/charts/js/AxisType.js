@@ -389,6 +389,24 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     {
         this._updateMinAndMax();
 		this.fire("dataUpdate");
+    },
+
+    /**
+     * Checks to see if data extends beyond the range of the axis. If so,
+     * that data will need to be hidden. This method is internal, temporary and subject
+     * to removal in the future.
+     *
+     * @method _hasDataOverflow
+     * @protected
+     * @return Boolean
+     */
+    _hasDataOverflow: function()
+    {
+        if(this.get("setMin") || this.get("setMax"))
+        {
+            return true;
+        }
+        return false;
     }
 }, {
     ATTRS: {
@@ -514,6 +532,8 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
          * @type Number
          */
         maximum: {
+            lazyAdd: false,
+
             getter: function ()
             {
                 var max = this.get("dataMaximum"),
@@ -562,6 +582,8 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
          * @type Number
          */
         minimum: {
+            lazyAdd: false,
+
             getter: function ()
             {
                 var min = this.get("dataMinimum");
