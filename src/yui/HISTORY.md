@@ -12,6 +12,10 @@ YUI Core Change History
   changed in 3.4.0. We're changing it back to preserve backwards compatibility.
   [Ticket #2530501]
 
+* The non-native fallback implementation of `Y.Object.keys()` now contains a
+  workaround for buggy browsers that treat function `prototype` properties as
+  enumerable in violation of the ES5 spec.
+
 * `Y.Object.size()` now returns `0` for non-objects. This was the pre-3.4.0
   behavior, but regressed in 3.4.0. [Ticket #2531069]
 
