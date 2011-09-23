@@ -349,6 +349,7 @@ YUI.add('widget-stack', function(Y) {
                 stackEl.insertBefore(shimEl, stackEl.get(FIRST_CHILD));
 
                 this._detachStackHandles(SHIM_DEFERRED);
+                this.sizeShim();
             }
         },
 
