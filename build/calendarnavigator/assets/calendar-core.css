@@ -23,3 +23,9 @@
 .yui3-calendar-nextmonth-day {
 	cursor: default;
 }
+
+.yui3-calendar-content:hover .yui3-calendar-day,
+.yui3-calendar-content:hover .yui3-calendar-prevmonth-day,
+.yui3-calendar-content:hover .yui3-calendar-nextmonth-day {
+    -moz-user-select: none;
+}
