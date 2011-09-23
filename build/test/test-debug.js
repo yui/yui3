@@ -130,6 +130,7 @@ YUI.add('test', function(Y) {
         this.delay = (Y.Lang.isNumber(delay) ? delay : 0);        
     };
 
+
         
     Y.namespace("Test");
     
@@ -208,6 +209,7 @@ YUI.add('test', function(Y) {
         }
         
     };
+
     
     /*
      * Runs test suites and test cases, providing events to allowing for the
@@ -1217,6 +1219,7 @@ YUI.add('test', function(Y) {
         return new TestRunner();
         
     })();
+
     /**
      * @module test
      */
@@ -1912,6 +1915,7 @@ YUI.add('test', function(Y) {
     //inherit methods
     Y.extend(Y.Assert.UnexpectedError, Y.Assert.Error);
     
+
     /**
      * @module test
      */
@@ -2236,6 +2240,7 @@ YUI.add('test', function(Y) {
         }
         
     };
+
     /**
      * @module test
      */
@@ -2256,6 +2261,40 @@ YUI.add('test', function(Y) {
                     throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Values should be equal for property " + name), expected[name], actual[name]);
                 }
             });            
+        },
+        
+        /**
+         * Asserts that the values in an object are equal to values in another object. 
+         * This uses the double equals sign so type cohersion may occur. Note that the objects 
+         * themselves need not be the same for this test to pass.
+         * @param {Object} expected An object of the expected values.
+         * @param {Object} actual Any object of the actual values.
+         * @param {String} message (Optional) The message to display if the assertion fails.
+         * @method itemsAreEqual
+         * @static
+         */
+        itemsAreEqual : function (expected, actual, message) {
+            
+            var expectedKeys = Y.Object.keys(expected),
+                actualKeys = Y.Object.keys(actual);
+            
+            Y.Assert._increment();
+            
+            //first check array length
+            if (expectedKeys.length != actualKeys.length){
+                Y.Assert.fail(Y.Assert._formatMessage(message, "Object should have " + expectedKeys.length + " keys but has " + actualKeys.length));
+            }
+           
+            //begin checking values
+            for (var i=0; i < expectedKeys.length; i++){
+                if (expected[expectedKeys[i]] != actual[expectedKeys[i]]){
+                    throw new Y.Assert.ComparisonFailure(
+                        Y.Assert._formatMessage(message, "Values at key " + expectedKeys[i] + " are not equal."), 
+                        expected[expectedKeys[i]], 
+                        actual[expectedKeys[i]]
+                    );
+                }
+            }
         },
         
         /**
@@ -2344,6 +2383,7 @@ YUI.add('test', function(Y) {
 
         }     
     };
+
     /**
      * @module test
      */
@@ -2431,6 +2471,7 @@ YUI.add('test', function(Y) {
         }
         
     };
+
     
     Y.namespace("Test.Format");
     
@@ -2660,6 +2701,7 @@ YUI.add('test', function(Y) {
         return "1.." + results.total + "\n" + serializeToTAP(results);
     };
         
+
     /**
      * @module test
      */
@@ -2704,6 +2746,7 @@ YUI.add('test', function(Y) {
 
 
   
+
 
     Y.namespace("Test");
     
@@ -2867,6 +2910,7 @@ YUI.add('test', function(Y) {
         }
     
     };
+
     /**
      * @module test
      */
@@ -3091,6 +3135,7 @@ YUI.add('test', function(Y) {
      * @static
      */
     Y.Mock.Value.Function   = Y.Mock.Value(Y.Assert.isFunction);
+
 /*Stub for future compatibility*/
 if (typeof YUITest == "undefined" || !YUITest) {
     YUITest = {
@@ -3099,6 +3144,7 @@ if (typeof YUITest == "undefined" || !YUITest) {
         CoverageFormat: Y.Coverage.Format
     };
 }
+
 
 
 }, '@VERSION@' ,{requires:['event-simulate','event-custom','substitute','json-stringify']});
