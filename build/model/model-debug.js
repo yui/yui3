@@ -388,17 +388,18 @@ Y.Model = Y.extend(Model, Y.Base, {
     @param {Object} [options] Options to be passed to `sync()` and to `set()`
       when setting synced attributes. It's up to the custom sync implementation
       to determine what options it supports or requires, if any.
-    @param {callback} [callback] Called when the sync operation finishes.
-      @param {Error|null} callback.err If an error occurred, this parameter will
-        contain the error. If the sync operation succeeded, _err_ will be
-        `null`.
+    @param {Function} [callback] Called when the sync operation finishes.
+      @param {Error|null} callback.err If an error occurred or validation
+        failed, this parameter will contain the error. If the sync operation
+        succeeded, _err_ will be `null`.
       @param {Any} callback.response The server's response. This value will
         be passed to the `parse()` method, which is expected to parse it and
         return an attribute hash.
     @chainable
     **/
     save: function (options, callback) {
-        var self = this;
+        var self       = this,
+            validation = self._validate(self.toJSON());
 
         // Allow callback as only arg.
         if (typeof options === 'function') {
@@ -406,7 +407,12 @@ Y.Model = Y.extend(Model, Y.Base, {
             options  = {};
         }
 
-        this.sync(this.isNew() ? 'create' : 'update', options, function (err, response) {
+        if (!validation.valid) {
+            callback && callback.call(null, validation.error);
+            return self;
+        }
+
+        self.sync(self.isNew() ? 'create' : 'update', options, function (err, response) {
             if (!err) {
                 if (response) {
                     self.setAttrs(self.parse(response), options);
@@ -418,7 +424,7 @@ Y.Model = Y.extend(Model, Y.Base, {
             callback && callback.apply(null, arguments);
         });
 
-        return this;
+        return self;
     },
 
     /**
@@ -467,10 +473,6 @@ Y.Model = Y.extend(Model, Y.Base, {
     setAttrs: function (attributes, options) {
         var idAttribute = this.idAttribute,
             changed, e, key, lastChange, transaction;
-
-        if (!this._validate(attributes)) {
-            return this;
-        }
 
         options || (options = {});
         transaction = options._transaction = {};
@@ -631,18 +633,20 @@ Y.Model = Y.extend(Model, Y.Base, {
     /**
     Override this method to provide custom validation logic for this model.
     While attribute-specific validators can be used to validate individual
-    attributes, this method gives you a hook to validate a hash of attributes
-    when multiple attributes are changed at once. This method is called
-    automatically before `set`, `setAttrs`, and `save` take action.
+    attributes, this method gives you a hook to validate a hash of all
+    attributes before the model is saved. This method is called automatically
+    before `save()` takes any action. If validation fails, the `save()` call
+    will be aborted.
 
-    A call to `validate` that doesn't return anything will be treated as a
-    success. If the `validate` method returns a value, it will be treated as a
-    failure, and the returned value (which may be a string or an object
-    containing information about the failure) will be passed along to the
-    `error` event.
+    A call to `validate` that doesn't return anything (or that returns `null`)
+    will be treated as a success. If the `validate` method returns a value, it
+    will be treated as a failure, and the returned value (which may be a string
+    or an object containing information about the failure) will be passed along
+    to the `error` event.
 
     @method validate
-    @param {Object} attributes Attribute hash containing changed attributes.
+    @param {Object} attributes Attribute hash containing all model attributes to
+      be validated.
     @return {Any} Any return value other than `undefined` or `null` will be
       treated as a validation failure.
     **/
@@ -711,7 +715,7 @@ Y.Model = Y.extend(Model, Y.Base, {
 
     @method _validate
     @param {Object} attributes Attribute hash.
-    @return {Boolean} `true` if validation succeeded, `false` otherwise.
+    @return {Object} Validation results.
     @protected
     **/
     _validate: function (attributes) {
@@ -725,10 +729,10 @@ Y.Model = Y.extend(Model, Y.Base, {
                 src       : 'validate'
             });
 
-            return false;
+            return {valid: false, error: error};
         }
 
-        return true;
+        return {valid: true};
     },
 
     // -- Protected Event Handlers ---------------------------------------------

@@ -11,6 +11,10 @@ App Framework Change History
 * Controller: Fixed a bug that caused the controller to get stuck in a
   "dispatching" state if `save()` was called with no routes defined.
 
+* Model: The `validate()` method is now only called when `save()` is called,
+  rather than on every attribute change. If validation fails, the save operation
+  will be aborted.
+
 
 3.4.0
 -----
