@@ -155,7 +155,7 @@ Y.extend(NumericAxis, Y.AxisType,
             min = 0,
             len,
             num,
-            i,
+            i = 0,
             key,
             setMax = this.get("setMax"),
             setMin = this.get("setMin");
@@ -164,36 +164,32 @@ Y.extend(NumericAxis, Y.AxisType,
             if(data && data.length && data.length > 0)
             {
                 len = data.length;
-                max = min = data[0];
-                if(len > 1)
-                {
-                    for(i = 1; i < len; i++)
-                    {	
-                        num = data[i];
-                        if(isNaN(num))
+                for(; i < len; i++)
+                {	
+                    num = data[i];
+                    if(isNaN(num))
+                    {
+                        if(Y_Lang.isObject(num))
                         {
-                            if(Y_Lang.isObject(num))
+                            min = max = 0;
+                            //hloc values
+                            for(key in num)
                             {
-                                min = max = 0;
-                                //hloc values
-                                for(key in num)
-                                {
-                                   if(num.hasOwnProperty(key))
-                                   {
-                                        max = Math.max(num[key], max);
-                                        min = Math.min(num[key], min);
-                                   }
-                                }
+                               if(num.hasOwnProperty(key))
+                               {
+                                    max = Math.max(num[key], max);
+                                    min = Math.min(num[key], min);
+                               }
                             }
-                            max = setMax ? this._setMaximum : max;
-                            min = setMin ? this._setMinimum : min;
-                            continue;
                         }
-                        this._actualMaximum = max;
-                        this._actualMinimum = min;
-                        max = setMax ? this._setMaximum : Math.max(num, max);
-                        min = setMin ? this._setMinimum : Math.min(num, min);
+                        max = setMax ? this._setMaximum : max;
+                        min = setMin ? this._setMinimum : min;
+                        continue;
                     }
+                    max = setMax ? this._setMaximum : Math.max(num, max);
+                    min = setMin ? this._setMinimum : Math.min(num, min);
+                    this._actualMaximum = max;
+                    this._actualMinimum = min;
                 }
             }
             this._roundMinAndMax(min, max, setMin, setMax);

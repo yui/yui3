@@ -571,11 +571,11 @@ Y.PieModel = Y.Base.create('pieModel', Y.Model, [], {
 ```
 
 <p>
-For more details on attribute validators, see the <a href="../attribute/index.html">Attribute User Guide</a>.
+An attribute validator will be called whenever that attribute changes, and can prevent the change from taking effect by returning `false`. Model `error` events are not fired when attribute validators fail. For more details on attribute validators, see the <a href="../attribute/index.html">Attribute User Guide</a>.
 </p>
 
 <p>
-The second way to validate changes is to provide a custom `validate()` method when extending `Y.Model`. When one or more model attributes are changed, this method will receive a hash of attributes that have changed. If the `validate()` method returns anything other than `null` or `undefined`, it will be considered a validation failure and an `error` event will be fired with the returned value as the error message.
+The second way to validate changes is to provide a custom `validate()` method when extending `Y.Model`. The `validate()` method will be called automatically when `save()` is called, and will receive a hash of all the attributes in the model. If the `validate()` method returns anything other than `null` or `undefined`, it will be considered a validation failure, an `error` event will be fired with the returned value as the error message, and the `save()` action will be aborted.
 </p>
 
 ```
