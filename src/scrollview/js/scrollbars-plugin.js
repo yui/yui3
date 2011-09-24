@@ -7,7 +7,7 @@
 var getClassName = Y.ClassNameManager.getClassName,
     _classNames,
 
-    Transition = Y.Transition
+    Transition = Y.Transition,
     NATIVE_TRANSITIONS = Transition.useNative,    
     SCROLLBAR = 'scrollbar',
     SCROLLVIEW = 'scrollview',
