@@ -153,6 +153,54 @@ YUI({
     });
 
     Y.AxisMinAndMaxTestTemplate = AxisMinAndMaxTestTemplate;
+    
+    function AxisDataProviderTemplate()
+    {
+        AxisDataProviderTemplate.superclass.constructor.apply(this, arguments);
+    };
+
+    Y.extend(AxisDataProviderTemplate, AxisTestTemplate, {
+        testAxesMinAndMax: function()
+        {
+            var chart = this.chart,
+                maxValues = this.maxValues,
+                minValues = this.minValues;
+            this.eventListener = this.chart.on("chartRendered", function(e) {
+                var axes = chart.get("axes"),
+                    catKey = chart.get("categoryKey"),
+                    axis,
+                    dataMin,
+                    dataMax,
+                    key,
+                    seriesKey,
+                    keys,
+                    len,
+                    seriesKey;
+                for(key in axes)
+                {
+                    if(axes.hasOwnProperty(key) && key != catKey)
+                    {
+                        axis = axes[key];
+                        keys = axis.get("keys");
+                        for(seriesKey in keys)
+                        {
+                            if(keys.hasOwnProperty(seriesKey))
+                            {
+                                maxValue = maxValues[seriesKey];
+                                minValue = minValues[seriesKey];
+                                Y.assert(axis.get("maximum") >= maxValue);
+                                Y.assert(axis.get("minimum") <= minValue);
+                            }
+
+                        }
+                    }
+                }
+            });
+            this.chart.render("#mychart");
+        }
+    });
+
+    Y.AxisDataProviderTemplate = AxisDataProviderTemplate;
 
     var suite = new Y.Test.Suite("Y.Charts"),
     
@@ -745,7 +793,25 @@ YUI({
     decimalDataProviderDataMax = 9.1,
 
     decimalDataProviderDataMin = 0.05,
+    
+    missingDataSmallDataProvider = [
+        {date: "1/1/2010", expenses: 3700},
+        {date: "1/2/2010", revenue: 2200},
+        {date: "2/1/2010", expenses: 9100},
+        {date: "2/2/2010", revenue: 100}
+    ],
 
+    missingDataLargeDataProvider = [
+        {date: "1/1/2010", expenses: 3700},
+        {date: "1/2/2010", revenue: 2200},
+        {date: "1/3/2010", expenses: 3000},
+        {date: "1/4/2010", revenue: 400},
+        {date: "2/1/2010", expenses: 9100},
+        {date: "2/2/2010", revenue: 100},
+        {date: "2/3/2010", expenses: 3300},
+        {date: "2/4/2010", revenue: 1500}
+    ],
+    
     AxisMinTest = new Y.AxisMinTestTemplate({
         axes: {
             values: {
@@ -1544,8 +1610,127 @@ YUI({
         name: "Axes Max with Positive and Negative Data Test with roundingMethod=1000",
         setMax: 1492,
         dataMin: positiveAndNegativeDataProviderDataMin
+    }),
+
+    DualAxesMissingDataSmallTest = new Y.AxisDataProviderTemplate({
+        axes: {
+            leftAxis: {
+                keys: ["expenses"],
+                type: "numeric",
+                position: "left"
+            },
+            rightAxis: {
+                keys: ["revenue"],
+                type: "numeric",
+                position: "right"
+            }
+        },
+        categoryKey: "date",
+        dataProvider: missingDataSmallDataProvider
+    },
+    {
+        name: "Dual Axes Missing Data (small dataProvider) Test",
+        maxValues: {
+            expenses: 9100,
+            revenue: 2200
+        },
+        minValues: {
+            expenses: 3700,
+            revenue: 100
+        },
+        seriesKeys: ["expenses", "revenue"]
     });
     
+    DualAxesMissingDataLargeTest = new Y.AxisDataProviderTemplate({
+        axes: {
+            leftAxis: {
+                keys: ["expenses"],
+                type: "numeric",
+                position: "left"
+            },
+            rightAxis: {
+                keys: ["revenue"],
+                type: "numeric",
+                position: "right"
+            }
+        },
+        categoryKey: "date",
+        dataProvider: missingDataLargeDataProvider
+    },
+    {
+        name: "Dual Axes Missing Data (large dataProvider) Test",
+        maxValues: {
+            expenses: 9100,
+            revenue: 2200
+        },
+        minValues: {
+            expenses: 3700,
+            revenue: 100
+        },
+        seriesKeys: ["expenses", "revenue"]
+    });
+    
+    DualAxesMissingDataSmallAlwaysShowZeroFalseTest = new Y.AxisDataProviderTemplate({
+        axes: {
+            leftAxis: {
+                keys: ["expenses"],
+                type: "numeric",
+                position: "left",
+                alwaysShowZero: false
+            },
+            rightAxis: {
+                keys: ["revenue"],
+                type: "numeric",
+                position: "right",
+                alwaysShowZero: false
+            }
+        },
+        categoryKey: "date",
+        dataProvider: missingDataSmallDataProvider
+    },
+    {
+        name: "Dual Axes Missing Data (small dataProvider) Test with alwaysShowZero=false",
+        maxValues: {
+            expenses: 9100,
+            revenue: 2200
+        },
+        minValues: {
+            expenses: 3700,
+            revenue: 100
+        },
+        seriesKeys: ["expenses", "revenue"]
+    });
+    
+    DualAxesMissingDataLargeAlwaysShowZeroFalseTest = new Y.AxisDataProviderTemplate({
+        axes: {
+            leftAxis: {
+                keys: ["expenses"],
+                type: "numeric",
+                position: "left",
+                alwaysShowZero: false
+            },
+            rightAxis: {
+                keys: ["revenue"],
+                type: "numeric",
+                position: "right",
+                alwaysShowZero: false
+            }
+        },
+        categoryKey: "date",
+        dataProvider: missingDataLargeDataProvider
+    },
+    {
+        name: "Dual Axes Missing Data (large dataProvider) Test with alwaysShowZero=false",
+        maxValues: {
+            expenses: 9100,
+            revenue: 2200
+        },
+        minValues: {
+            expenses: 3700,
+            revenue: 100
+        },
+        seriesKeys: ["expenses", "revenue"]
+    });
     suite.add(ChartTests);
     suite.add(GraphTests);
     suite.add(AxesTests);
@@ -1603,6 +1788,10 @@ YUI({
     suite.add(AxisMaxWithPositiveAndNegativeDataRoundingMethodNumericTest);
     suite.add(AxisAlwaysShowZero);
     suite.add(AxisAlwaysShowZeroFalse);
+    suite.add(DualAxesMissingDataSmallTest);
+    suite.add(DualAxesMissingDataLargeTest);
+    suite.add(DualAxesMissingDataSmallAlwaysShowZeroFalseTest);
+    suite.add(DualAxesMissingDataLargeAlwaysShowZeroFalseTest);
     suite.add(PieCenterTest);
     
     //create the console
