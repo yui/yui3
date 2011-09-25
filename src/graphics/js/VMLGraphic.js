@@ -434,7 +434,7 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
      * @method clear
      */
     clear: function() {
-        this._removeAllShapes();
+        this.removeAllShapes();
         this._removeChildren(this._node);
     },
 

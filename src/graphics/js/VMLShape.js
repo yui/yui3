@@ -73,6 +73,7 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 			id,
 			type,
 			nodestring,
+            visibility = this.get("visible") ? "visible" : "hidden",
 			strokestring,
 			classString,
 			stroke,
@@ -89,7 +90,7 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 			stroke = this._getStrokeProps();
 			fill = this._getFillProps();
 			
-			nodestring  = '<' + type + '  xmlns="urn:schemas-microsft.com:vml" id="' + id + '" class="' + classString + '" style="behavior:url(#default#VML);display:inline-block;position:absolute;left:' + x + 'px;top:' + y + 'px;width:' + w + 'px;height:' + h + 'px;"';
+			nodestring  = '<' + type + '  xmlns="urn:schemas-microsft.com:vml" id="' + id + '" class="' + classString + '" style="behavior:url(#default#VML);display:inline-block;position:absolute;left:' + x + 'px;top:' + y + 'px;width:' + w + 'px;height:' + h + 'px;visibility:' + visibility + '"';
 
 		    if(stroke && stroke.weight && stroke.weight > 0)
 			{
