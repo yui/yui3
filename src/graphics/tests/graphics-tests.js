@@ -1113,9 +1113,39 @@ transformTests = new Y.Test.Case({
         this.rect.skewX(10);
         Y.assert(this.rect.get("transform") == "translate(30, 10) rotate(90) skewX(10)");
     }
+}),
+
+visibleUpFrontTest = new Y.Test.Case({
+    name: "Test visible attribute",
+
+    setUp: function () {
+        Y.one("body").append('<div id="testbed"></div>');
+        Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="graphiccontainer"></div>');
+        this.graphic = new Y.Graphic({render: "#graphiccontainer"});
+        this.shape = this.graphic.addShape({
+                type: "rect",
+                visible: false,
+                width: 100,
+                height: 100
+            });
+    },
+
+    tearDown: function () {
+        this.graphic.destroy();
+        Y.one("#testbed").remove(true);
+    },
+
+    "testSetVisibleUpfront()" : function()
+    {
+        var shape = this.shape,
+            node = shape.get("node");
+        Y.assert(!shape.get("visible"));
+        Y.assert(node.style.visibility == "hidden");
+    }
 });
 
 suite.add(graphicTests);
+suite.add(visibleUpFrontTest);
 
 if(ENGINE == "svg")
 {

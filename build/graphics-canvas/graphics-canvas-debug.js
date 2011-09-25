@@ -944,6 +944,10 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 		this._context = node.getContext('2d');
 		node.setAttribute("overflow", "visible");
         node.style.overflow = "visible";
+        if(!this.get("visible"))
+        {
+            node.style.visibility = "hidden";
+        }
 		node.setAttribute("id", id);
 		id = "#" + id;
 		this.node = node;
@@ -1737,8 +1741,12 @@ CanvasShape.ATTRS =  {
 		value: true,
 
 		setter: function(val){
-			var visibility = val ? "visible" : "hidden";
-			this.get("node").style.visibility = visibility;
+			var node = this.get("node"),
+                visibility = val ? "visible" : "hidden";
+			if(node)
+            {
+                node.style.visibility = visibility;
+            }
 			return val;
 		}
 	},
@@ -2626,7 +2634,7 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
      */
     destroy: function()
     {
-        this._removeAllShapes();
+        this.removeAllShapes();
         this._removeChildren(this._node);
         if(this._node && this._node.parentNode)
         {

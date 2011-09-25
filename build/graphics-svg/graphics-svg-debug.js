@@ -648,6 +648,10 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 		{
 			node.setAttribute("pointer-events", pointerEvents);
 		}
+        if(!this.get("visible"))
+        {
+            Y.one(node).setStyle("visibility", "hidden");
+        }
 	},
 	
 
@@ -1374,7 +1378,10 @@ SVGShape.ATTRS = {
 
 		setter: function(val){
 			var visibility = val ? "visible" : "hidden";
-			this.node.style.visibility = visibility;
+			if(this.node)
+            {
+                this.node.style.visibility = visibility;
+            }
 			return val;
 		}
 	},
