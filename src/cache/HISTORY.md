@@ -9,7 +9,7 @@ Cache Change History
 3.4.0
 -----
 
-  * Added support to flush a specific request from the cache (hat tip to Tivac)
+  * Added support to flush a specific request from the cache. [Pat Cavit]
 
 3.3.0
 -----
