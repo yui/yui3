@@ -1,5 +1,5 @@
-WidgetPositionAlign Change History
-==================================
+Widget Position Align Change History
+====================================
 
 3.4.1
 -----

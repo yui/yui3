@@ -1,5 +1,5 @@
-Widget Anim
-===========
+Widget Anim Change History
+==========================
 
 3.4.0
 -----

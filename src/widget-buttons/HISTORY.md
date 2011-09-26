@@ -1,5 +1,5 @@
-WidgetButtons Change History
-============================
+Widget Buttons Change History
+=============================
 
 3.4.1
 -----

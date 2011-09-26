@@ -1,5 +1,5 @@
-Widget Position
-===============
+Widget Position Change History
+==============================
 
 3.4.0
 -----

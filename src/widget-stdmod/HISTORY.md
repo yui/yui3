@@ -1,5 +1,5 @@
-Widget Std Mod
-==============
+Widget Std Mod Change History
+=============================
 
 3.4.0
 -----

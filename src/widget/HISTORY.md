@@ -1,5 +1,5 @@
-Widget
-======
+Widget Change History
+=====================
 
 3.4.0
 -----

@@ -1,5 +1,5 @@
-WidgetStack Change History
-==========================
+Widget Stack Change History
+===========================
 
 3.4.1
 -----

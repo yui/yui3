@@ -1,5 +1,5 @@
-IO Utility Change History
-=========================
+QueryString Utility Change History
+==================================
 
 3.4.0
 -----

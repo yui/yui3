@@ -1,5 +1,5 @@
-WidgetModality Change History
-=============================
+Widget Modality Change History
+==============================
 
 3.4.1
 -----

@@ -1,5 +1,5 @@
-Overlay
-=======
+Overlay Change History
+======================
 
 3.4.0
 -----
@@ -38,7 +38,7 @@ Overlay
     fragments instead of innerHTML to preserve event listeners.
 
   * Fixed use of centered, x and y in the constructor. These all
-    needed 'lazyAdd' configuration since they had setters which 
+    needed 'lazyAdd' configuration since they had setters which
     modified other attribute state.
 
 3.0.0 beta 1
