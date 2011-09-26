@@ -11,6 +11,8 @@ Widget Modality Change History
     extension without needing to pass in a configuration Object.
     [Contributed by Jakub Kuźma] [Ticket #2531086]
 
+  * Replaced references to `document` with `Y.config.doc`. [Ticket #2531220]
+
 3.4.0
 -----
 
