@@ -24,15 +24,16 @@ var WIDGET       = 'widget',
 
         /*! IS_POSITION_FIXED_SUPPORTED - Juriy Zaytsev (kangax) - http://yura.thinkweb2.com/cft/ */
 
-        var isSupported = null,
+        var doc         = Y.config.doc,
+            isSupported = null,
             el, root;
 
-        if (document.createElement) {
-            el = document.createElement('div');
+        if (doc.createElement) {
+            el = doc.createElement('div');
             if (el && el.style) {
                 el.style.position = 'fixed';
                 el.style.top = '10px';
-                root = document.body;
+                root = doc.body;
                 if (root && root.appendChild && root.removeChild) {
                     root.appendChild(el);
                     isSupported = (el.offsetTop === 10);
