@@ -21,6 +21,6 @@ Widget Buttons Change History
     [Ticket #2530998]
 
 3.4.0
---------
+-----
 
   * Initial release.

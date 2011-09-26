@@ -24,5 +24,4 @@ Widget Anim Change History
 3.1.0
 -----
 
-  * Initial release
-
+  * Initial release.
