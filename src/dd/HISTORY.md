@@ -1,6 +1,10 @@
 Drag and Drop Change History
 ============================
 
+### 3.4.1
+
+* No changes.
+
 ### 3.4.0
 
 * #2529889 Example for Delegate Drag and Drop has wrong parameters

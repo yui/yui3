@@ -1,7 +1,12 @@
-3.4.0PR3
---------
+Widget Autohide Change History
+==============================
 
-  * Changed from a widget plugin to an extension
+3.4.1
+-----
 
-3.4.0PR2 - Initial release
---------------------------
+  * No changes.
+
+3.4.0
+-----
+
+  * Initial release.
