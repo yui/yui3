@@ -24,6 +24,209 @@ YUI({
 { 
     Y.namespace("example.test");
     
+    var ENGINE = "VML",
+    DOCUMENT = Y.config.doc,
+    canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+    TestSVGNodes = function(lineStyles, tickStyles, valueLinePath, valueTickPath, catLinePath, catTickPath)
+    {
+            var lineColor = lineStyles.color,
+                lineWeight = lineStyles.weight,
+                lineOpacity = lineStyles.alpha,
+                tickColor = tickStyles.color,
+                tickWeight = tickStyles.weight,
+                tickOpacity = tickStyles.alpha;
+            valueLineNode = valueLinePath.get("node");
+            valueTickNode = valueTickPath.get("node");
+            catLineNode = catLinePath.get("node");
+            catTickNode = catTickPath.get("node");
+
+            return  ( lineColor == valueLineNode.getAttribute("stroke") &&
+                    parseFloat(lineWeight) === parseFloat(valueLineNode.getAttribute("stroke-width")) &&
+                    parseFloat(lineOpacity) === parseFloat(valueLineNode.getAttribute("stroke-opacity")) &&
+                    lineColor == catLineNode.getAttribute("stroke") &&
+                    parseFloat(lineWeight) === parseFloat(catLineNode.getAttribute("stroke-width")) &&
+                    parseFloat(lineOpacity) === parseFloat(catLineNode.getAttribute("stroke-opacity")) &&
+                    tickColor == valueTickNode.getAttribute("stroke") &&
+                    parseFloat(tickWeight) === parseFloat(valueTickNode.getAttribute("stroke-width")) &&
+                    parseFloat(tickOpacity) === parseFloat(valueTickNode.getAttribute("stroke-opacity")) &&
+                    tickColor == catTickNode.getAttribute("stroke") &&
+                    parseFloat(tickWeight) === parseFloat(catTickNode.getAttribute("stroke-width")) &&
+                    parseFloat(tickOpacity) === parseFloat(catTickNode.getAttribute("stroke-opacity")));
+    },
+
+    compareVMLColors = function(color, strokeNode, node)
+    {
+        var toHex = Y.Color.toHex,
+            color = toHex(color);
+        
+        return (color == toHex(strokeNode.color) || color == toHex(strokeNode.color.value)) ||
+        (color == toHex(node.strokecolor) || color == toHex(node.strokecolor.value));
+    },
+
+    compareVMLStrokeWeight = function(weight, strokeNode, node)
+    {
+        weight = parseFloat(weight);
+        alert(weight + ", " + node.strokeWeight);
+        alert(weight + ", " + strokeNode.weight);
+        return weight === parseFloat(strokeNode.weight) || weight === parseFloat(node.strokeWeight);
+    },
+
+    TestVMLNodes = function(lineStyles, tickStyles, valueLinePath, valueTickPath, catLinePath, catTickPath)
+    {
+            var lineColor = lineStyles.color,
+                lineWeight = lineStyles.weight,
+                lineOpacity = lineStyles.alpha,
+                tickColor = tickStyles.color,
+                tickWeight = tickStyles.weight,
+                tickOpacity = tickStyles.alpha;
+            valueLineStrokeNode = valueLinePath._strokeNode;
+            valueTickStrokeNode = valueTickPath._strokeNode;
+            valueLineNode = valueLinePath.get("stroke");
+            valueTickNode = valueTickPath.get("stroke");
+            catLineStrokeNode = catLinePath._strokeNode;
+            catTickStrokeNode = catTickPath._strokeNode;
+            catLineNode = catLinePath.get("node");
+            catTickNode = catTickPath.get("node");
+            return compareVMLColors(lineColor, valueLineStrokeNode, valueLineNode) &&
+                    //compareVMLStrokeWeight(lineWeight, valueLineStrokeNode, valueLineNode) &&
+                    parseFloat(lineOpacity) === parseFloat(valueLineStrokeNode.opacity) &&
+                    compareVMLColors(lineColor, catLineStrokeNode, valueLineNode) &&
+                    //compareVMLStrokeWeight(lineWeight, catLineStrokeNode, catLineNode) &&
+                    parseFloat(lineOpacity) === parseFloat(catLineStrokeNode.opacity) &&
+                    compareVMLColors(tickColor, valueTickStrokeNode, valueTickNode) && 
+                    //compareVMLStrokeWeight(tickWeight, valueTickStrokeNode, valueTickNode) &&
+                    parseFloat(tickOpacity) === parseFloat(valueTickStrokeNode.opacity) &&
+                    compareVMLColors(tickColor, catTickStrokeNode, catTickNode) &&
+                    //compareVMLStrokeWeight(tickWeight, catTickStrokeNode, catTickNode) &&
+                    parseFloat(tickOpacity) === parseFloat(catTickStrokeNode.opacity);
+    },
+
+    toRGBA = function(val, alpha) {
+        alpha = (alpha !== undefined) ? alpha : 1;
+        if (!Y.Color.re_RGB.test(val)) {
+            val = Y.Color.toHex(val);
+        }
+
+        if(Y.Color.re_hex.exec(val)) {
+            val = 'rgba(' + [
+                parseInt(RegExp.$1, 16),
+                parseInt(RegExp.$2, 16),
+                parseInt(RegExp.$3, 16)
+            ].join(',') + ',' + alpha + ')';
+        }
+        return val;
+    },
+
+    TestCanvasNodes = function(lineStyles, tickStyles, valueLinePath, valueTickPath, catLinePath, catTickPath)
+    {
+            var toHex = Y.Color.toHex,
+                lineColor = toHex(lineStyles.color),
+                lineWeight = lineStyles.weight,
+                lineOpacity = lineStyles.alpha,
+                tickColor = toHex(tickStyles.color),
+                tickWeight = tickStyles.weight,
+                tickOpacity = tickStyles.alpha,
+                valueLineContext = valueLinePath._context,
+                valueTickContext = valueTickPath._context,
+                catLineContext = catLinePath._context,
+                catTickContext = catTickPath._context,
+                valueLineColor = valueLineContext.strokeStyle,
+                valueTickColor = valueTickContext.strokeStyle,
+                catLineColor = catLineContext.strokeStyle,
+                catTickColor = catTickContext.strokeStyle;
+
+            lineOpacity = Y.Lang.isNumber(lineOpacity) ? lineOpacity : 1;
+            tickOpacity = Y.Lang.isNumber(tickOpacity) ? tickOpacity : 1;
+           
+            //Test values line color and alpha 
+            if(valueLineColor.indexOf("RGBA") > -1 || valueLineColor.indexOf("rgba") > -1)
+            {
+                valueLineColor = valueLineColor.toLowerCase();
+                valueLineColor = valueLineColor.replace(/, /g, ",");
+                if(valueLineColor != toRGBA(toHex(lineColor), lineOpacity))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if(toHex(valueLineColor) != lineColor)
+                {
+                    return false;
+                }
+            }
+
+            //Test values ticks color and alpha 
+            if(valueTickColor.indexOf("RGBA") > -1 || valueTickColor.indexOf("rgba") > -1)
+            {
+                valueTickColor = valueTickColor.toLowerCase();
+                valueTickColor = valueTickColor.replace(/, /g, ",");
+                if(valueTickColor != toRGBA(toHex(tickColor), tickOpacity))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if(toHex(valueTickColor) != tickColor)
+                {
+                    return false;
+                }
+            }
+            
+            
+            //Test category line color and alpha 
+            if(catLineColor.indexOf("RGBA") > -1 || catLineColor.indexOf("rgba") > -1)
+            {
+                catLineColor = catLineColor.toLowerCase();
+                catLineColor = catLineColor.replace(/, /g, ",");
+                if(catLineColor != toRGBA(toHex(lineColor), lineOpacity))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if(toHex(catLineColor) != lineColor)
+                {
+                    return false;
+                }
+            }
+
+            //Test category ticks color and alpha 
+            if(catTickColor.indexOf("RGBA") > -1 || catTickColor.indexOf("rgba") > -1)
+            {
+                catTickColor = catTickColor.toLowerCase();
+                catTickColor = catTickColor.replace(/, /g, ",");
+                if(catTickColor != toRGBA(toHex(tickColor), tickOpacity))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if(toHex(catTickColor) != tickColor)
+                {
+                    return false;
+                }
+            }
+            return lineWeight == valueLineContext.lineWidth &&
+                    lineWeight == catLineContext.lineWidth &&
+                    tickWeight == valueTickContext.lineWidth &&
+                    tickWeight == catTickContext.lineWidth;
+
+    };
+
+    if(DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"))
+    {
+        ENGINE = "SVG";
+    }
+    else if(canvas && canvas.getContext && canvas.getContext("2d"))
+    {
+        ENGINE = "Canvas";
+    }
+    
+
     AxisTestTemplate = function(cfg, globalCfg)
     {
         var i;
@@ -201,6 +404,53 @@ YUI({
     });
 
     Y.AxisDataProviderTemplate = AxisDataProviderTemplate;
+
+    function AxisGraphicStylesTemplate()
+    {
+        AxisGraphicStylesTemplate.superclass.constructor.apply(this, arguments);
+        switch(ENGINE)
+        {
+            case "SVG" :
+                this._testNodes = TestSVGNodes;
+            break;
+            case "Canvas" : 
+                this._testNodes = TestCanvasNodes;
+            break;
+            case "VML" :
+                this._testNodes = TestVMLNodes;
+            break;
+        }
+    };
+
+    Y.extend(AxisGraphicStylesTemplate, AxisTestTemplate, {
+        testGraphicStyles: function()
+        {
+            var chart = this.chart,
+                lineStyles = this.lineStyles,
+                tickStyles = this.tickStyles,
+                testNodes = this._testNodes;
+            this.eventListener = this.chart.on("chartRendered", function(e) {
+                var valueAxis = chart.getAxisByKey("values"),
+                    catAxis = chart.getAxisByKey("category"),
+                    valueLinePath = valueAxis.get("path"),
+                    valueTickPath = valueAxis.get("tickPath"),
+                    catLinePath = catAxis.get("path"),
+                    catTickPath = catAxis.get("tickPath");
+                    Y.Assert.isTrue(testNodes.apply(this, [lineStyles, 
+                                                            tickStyles, 
+                                                            valueLinePath, 
+                                                            valueTickPath, 
+                                                            catLinePath, 
+                                                            catTickPath
+                                                        ]
+                                                   ));
+            });
+            this.chart.render("#mychart");
+        }
+    
+    });
+    
+    Y.AxisGraphicStylesTemplate = AxisGraphicStylesTemplate;
 
     var suite = new Y.Test.Suite("Y.Charts"),
     
@@ -1730,7 +1980,692 @@ YUI({
             revenue: 100
         },
         seriesKeys: ["expenses", "revenue"]
+    }),
+    
+    LeftAndBottomAxisCustomTickAndLinesInsideTicks = new Y.AxisGraphicStylesTemplate({
+        axes: {
+            category: {
+                position: "bottom",
+                type: "category",
+                keys: ["category"],
+                styles: {
+                    line: {
+                        weight: 2,
+                        color: "#ff0000",
+                        alpha: 1
+                    },
+                    majorTicks: {
+                        weight: 1,
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        display: "inside"
+                    }
+                }
+            },
+            values: {
+                position: "left",
+                type: "numeric",
+                keys: ["expenses", "revenue"],
+                styles: {
+                    line: {
+                        weight: 2,
+                        color: "#ff0000",
+                        alpha: 1
+                    },
+                    majorTicks: {
+                        weight: 1,
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        display: "inside"
+                    }
+                }
+            }
+        },
+        dataProvider: allPositiveDataProvider
+    },
+    {
+        name: "Custom Left and Bottom Axes with inside ticks",
+
+        lineStyles: {
+            weight: 2,
+            color: "#ff0000",
+            alpha: 1
+        },
+        tickStyles: {
+            weight: 1,
+            color: "#0000ff",
+            alpha: 0.5,
+            display: "inside"
+        }
+    }),
+
+    LeftAndBottomAxisCustomTickAndLinesOutsideTicks = new Y.AxisGraphicStylesTemplate({
+        axes: {
+            category: {
+                position: "bottom",
+                type: "category",
+                keys: ["category"],
+                styles: {
+                    line: {
+                        weight: 2,
+                        color: "#ff0000",
+                        alpha: 1
+                    },
+                    majorTicks: {
+                        weight: 1,
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        display: "outside"
+                    }
+                }
+            },
+            values: {
+                position: "left",
+                type: "numeric",
+                keys: ["expenses", "revenue"],
+                styles: {
+                    line: {
+                        weight: 2,
+                        color: "#ff0000",
+                        alpha: 1
+                    },
+                    majorTicks: {
+                        weight: 1,
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        display: "outside"
+                    }
+                }
+            }
+        },
+        dataProvider: allPositiveDataProvider
+    },
+    {
+        name: "Custom Left and Bottom Axes with outside ticks",
+
+        lineStyles: {
+            weight: 2,
+            color: "#ff0000",
+            alpha: 1
+        },
+        tickStyles: {
+            weight: 1,
+            color: "#0000ff",
+            alpha: 0.5,
+            display: "outside"
+        }
+    }),
+
+    LeftAndBottomAxisCustomTickAndLinesCrossTicks = new Y.AxisGraphicStylesTemplate({
+        axes: {
+            category: {
+                position: "bottom",
+                type: "category",
+                keys: ["category"],
+                styles: {
+                    line: {
+                        weight: 2,
+                        color: "#ff0000",
+                        alpha: 1
+                    },
+                    majorTicks: {
+                        weight: 1,
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        display: "cross"
+                    }
+                }
+            },
+            values: {
+                position: "left",
+                type: "numeric",
+                keys: ["expenses", "revenue"],
+                styles: {
+                    line: {
+                        weight: 2,
+                        color: "#ff0000",
+                        alpha: 1
+                    },
+                    majorTicks: {
+                        weight: 1,
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        display: "cross"
+                    }
+                }
+            }
+        },
+        dataProvider: allPositiveDataProvider
+    },
+    {
+        name: "Custom Left and Bottom Axes with cross ticks",
+
+        lineStyles: {
+            weight: 2,
+            color: "#ff0000",
+            alpha: 1
+        },
+        tickStyles: {
+            weight: 1,
+            color: "#0000ff",
+            alpha: 0.5,
+            display: "cross"
+        }
+    }),
+
+    RightAndBottomAxisCustomTickAndLinesInsideTicks = new Y.AxisGraphicStylesTemplate({
+        axes: {
+            category: {
+                position: "bottom",
+                type: "category",
+                keys: ["category"],
+                styles: {
+                    line: {
+                        weight: 2,
+                        color: "#ff0000",
+                        alpha: 1
+                    },
+                    majorTicks: {
+                        weight: 1,
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        display: "inside"
+                    }
+                }
+            },
+            values: {
+                position: "right",
+                type: "numeric",
+                keys: ["expenses", "revenue"],
+                styles: {
+                    line: {
+                        weight: 2,
+                        color: "#ff0000",
+                        alpha: 1
+                    },
+                    majorTicks: {
+                        weight: 1,
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        display: "inside"
+                    }
+                }
+            }
+        },
+        dataProvider: allPositiveDataProvider
+    },
+    {
+        name: "Custom Right and Bottom Axes with inside ticks",
+
+        lineStyles: {
+            weight: 2,
+            color: "#ff0000",
+            alpha: 1
+        },
+        tickStyles: {
+            weight: 1,
+            color: "#0000ff",
+            alpha: 0.5,
+            display: "inside"
+        }
+    }),
+
+    RightAndBottomAxisCustomTickAndLinesOutsideTicks = new Y.AxisGraphicStylesTemplate({
+        axes: {
+            category: {
+                position: "bottom",
+                type: "category",
+                keys: ["category"],
+                styles: {
+                    line: {
+                        weight: 2,
+                        color: "#ff0000",
+                        alpha: 1
+                    },
+                    majorTicks: {
+                        weight: 1,
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        display: "outside"
+                    }
+                }
+            },
+            values: {
+                position: "right",
+                type: "numeric",
+                keys: ["expenses", "revenue"],
+                styles: {
+                    line: {
+                        weight: 2,
+                        color: "#ff0000",
+                        alpha: 1
+                    },
+                    majorTicks: {
+                        weight: 1,
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        display: "outside"
+                    }
+                }
+            }
+        },
+        dataProvider: allPositiveDataProvider
+    },
+    {
+        name: "Custom Right and Bottom Axes with outside ticks",
+
+        lineStyles: {
+            weight: 2,
+            color: "#ff0000",
+            alpha: 1
+        },
+        tickStyles: {
+            weight: 1,
+            color: "#0000ff",
+            alpha: 0.5,
+            display: "outside"
+        }
+    }),
+
+    RightAndBottomAxisCustomTickAndLinesCrossTicks = new Y.AxisGraphicStylesTemplate({
+        axes: {
+            category: {
+                position: "bottom",
+                type: "category",
+                keys: ["category"],
+                styles: {
+                    line: {
+                        weight: 2,
+                        color: "#ff0000",
+                        alpha: 1
+                    },
+                    majorTicks: {
+                        weight: 1,
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        display: "cross"
+                    }
+                }
+            },
+            values: {
+                position: "left",
+                type: "numeric",
+                keys: ["expenses", "revenue"],
+                styles: {
+                    line: {
+                        weight: 2,
+                        color: "#ff0000",
+                        alpha: 1
+                    },
+                    majorTicks: {
+                        weight: 1,
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        display: "cross"
+                    }
+                }
+            }
+        },
+        dataProvider: allPositiveDataProvider
+    },
+    {
+        name: "Custom Right and Bottom Axes with cross ticks",
+
+        lineStyles: {
+            weight: 2,
+            color: "#ff0000",
+            alpha: 1
+        },
+        tickStyles: {
+            weight: 1,
+            color: "#0000ff",
+            alpha: 0.5,
+            display: "inside"
+        }
+    }),
+
+    LeftAndTopAxisCustomTickAndLinesInsideTicks = new Y.AxisGraphicStylesTemplate({
+        axes: {
+            category: {
+                position: "top",
+                type: "category",
+                keys: ["category"],
+                styles: {
+                    line: {
+                        weight: 2,
+                        color: "#ff0000",
+                        alpha: 1
+                    },
+                    majorTicks: {
+                        weight: 1,
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        display: "inside"
+                    }
+                }
+            },
+            values: {
+                position: "left",
+                type: "numeric",
+                keys: ["expenses", "revenue"],
+                styles: {
+                    line: {
+                        weight: 2,
+                        color: "#ff0000",
+                        alpha: 1
+                    },
+                    majorTicks: {
+                        weight: 1,
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        display: "inside"
+                    }
+                }
+            }
+        },
+        dataProvider: allPositiveDataProvider
+    },
+    {
+        name: "Custom Left and Top Axes with inside ticks",
+
+        lineStyles: {
+            weight: 2,
+            color: "#ff0000",
+            alpha: 1
+        },
+        tickStyles: {
+            weight: 1,
+            color: "#0000ff",
+            alpha: 0.5,
+            display: "inside"
+        }
+    }),
+
+    LeftAndTopAxisCustomTickAndLinesOutsideTicks = new Y.AxisGraphicStylesTemplate({
+        axes: {
+            category: {
+                position: "top",
+                type: "category",
+                keys: ["category"],
+                styles: {
+                    line: {
+                        weight: 2,
+                        color: "#ff0000",
+                        alpha: 1
+                    },
+                    majorTicks: {
+                        weight: 1,
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        display: "outside"
+                    }
+                }
+            },
+            values: {
+                position: "left",
+                type: "numeric",
+                keys: ["expenses", "revenue"],
+                styles: {
+                    line: {
+                        weight: 2,
+                        color: "#ff0000",
+                        alpha: 1
+                    },
+                    majorTicks: {
+                        weight: 1,
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        display: "outside"
+                    }
+                }
+            }
+        },
+        dataProvider: allPositiveDataProvider
+    },
+    {
+        name: "Custom Left and Top Axes with outside ticks",
+
+        lineStyles: {
+            weight: 2,
+            color: "#ff0000",
+            alpha: 1
+        },
+        tickStyles: {
+            weight: 1,
+            color: "#0000ff",
+            alpha: 0.5,
+            display: "outside"
+        }
+    }),
+
+    LeftAndTopAxisCustomTickAndLinesCrossTicks = new Y.AxisGraphicStylesTemplate({
+        axes: {
+            category: {
+                position: "top",
+                type: "category",
+                keys: ["category"],
+                styles: {
+                    line: {
+                        weight: 2,
+                        color: "#ff0000",
+                        alpha: 1
+                    },
+                    majorTicks: {
+                        weight: 1,
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        display: "cross"
+                    }
+                }
+            },
+            values: {
+                position: "left",
+                type: "numeric",
+                keys: ["expenses", "revenue"],
+                styles: {
+                    line: {
+                        weight: 2,
+                        color: "#ff0000",
+                        alpha: 1
+                    },
+                    majorTicks: {
+                        weight: 1,
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        display: "cross"
+                    }
+                }
+            }
+        },
+        dataProvider: allPositiveDataProvider
+    },
+    {
+        name: "Custom Left and Top Axes with cross ticks",
+
+        lineStyles: {
+            weight: 2,
+            color: "#ff0000",
+            alpha: 1
+        },
+        tickStyles: {
+            weight: 1,
+            color: "#0000ff",
+            alpha: 0.5,
+            display: "cross"
+        }
+    }),
+
+    RightAndTopAxisCustomTickAndLinesInsideTicks = new Y.AxisGraphicStylesTemplate({
+        axes: {
+            category: {
+                position: "top",
+                type: "category",
+                keys: ["category"],
+                styles: {
+                    line: {
+                        weight: 2,
+                        color: "#ff0000",
+                        alpha: 1
+                    },
+                    majorTicks: {
+                        weight: 1,
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        display: "inside"
+                    }
+                }
+            },
+            values: {
+                position: "right",
+                type: "numeric",
+                keys: ["expenses", "revenue"],
+                styles: {
+                    line: {
+                        weight: 2,
+                        color: "#ff0000",
+                        alpha: 1
+                    },
+                    majorTicks: {
+                        weight: 1,
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        display: "inside"
+                    }
+                }
+            }
+        },
+        dataProvider: allPositiveDataProvider
+    },
+    {
+        name: "Custom Right and Top Axes with inside ticks",
+
+        lineStyles: {
+            weight: 2,
+            color: "#ff0000",
+            alpha: 1
+        },
+        tickStyles: {
+            weight: 1,
+            color: "#0000ff",
+            alpha: 0.5,
+            display: "inside"
+        }
+    }),
+
+    RightAndTopAxisCustomTickAndLinesOutsideTicks = new Y.AxisGraphicStylesTemplate({
+        axes: {
+            category: {
+                position: "top",
+                type: "category",
+                keys: ["category"],
+                styles: {
+                    line: {
+                        weight: 2,
+                        color: "#ff0000",
+                        alpha: 1
+                    },
+                    majorTicks: {
+                        weight: 1,
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        display: "outside"
+                    }
+                }
+            },
+            values: {
+                position: "right",
+                type: "numeric",
+                keys: ["expenses", "revenue"],
+                styles: {
+                    line: {
+                        weight: 2,
+                        color: "#ff0000",
+                        alpha: 1
+                    },
+                    majorTicks: {
+                        weight: 1,
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        display: "outside"
+                    }
+                }
+            }
+        },
+        dataProvider: allPositiveDataProvider
+    },
+    {
+        name: "Custom Right and Top Axes with outside ticks",
+
+        lineStyles: {
+            weight: 2,
+            color: "#ff0000",
+            alpha: 1
+        },
+        tickStyles: {
+            weight: 1,
+            color: "#0000ff",
+            alpha: 0.5,
+            display: "outside"
+        }
+    }),
+
+    RightAndTopAxisCustomTickAndLinesCrossTicks = new Y.AxisGraphicStylesTemplate({
+        axes: {
+            category: {
+                position: "top",
+                type: "category",
+                keys: ["category"],
+                styles: {
+                    line: {
+                        weight: 2,
+                        color: "#ff0000",
+                        alpha: 1
+                    },
+                    majorTicks: {
+                        weight: 1,
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        display: "cross"
+                    }
+                }
+            },
+            values: {
+                position: "left",
+                type: "numeric",
+                keys: ["expenses", "revenue"],
+                styles: {
+                    line: {
+                        weight: 2,
+                        color: "#ff0000",
+                        alpha: 1
+                    },
+                    majorTicks: {
+                        weight: 1,
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        display: "cross"
+                    }
+                }
+            }
+        },
+        dataProvider: allPositiveDataProvider
+    },
+    {
+        name: "Custom Right and Top Axes with cross ticks",
+
+        lineStyles: {
+            weight: 2,
+            color: "#ff0000",
+            alpha: 1
+        },
+        tickStyles: {
+            weight: 1,
+            color: "#0000ff",
+            alpha: 0.5,
+            display: "inside"
+        }
     });
+    
     suite.add(ChartTests);
     suite.add(GraphTests);
     suite.add(AxesTests);
@@ -1792,6 +2727,18 @@ YUI({
     suite.add(DualAxesMissingDataLargeTest);
     suite.add(DualAxesMissingDataSmallAlwaysShowZeroFalseTest);
     suite.add(DualAxesMissingDataLargeAlwaysShowZeroFalseTest);
+    suite.add(LeftAndBottomAxisCustomTickAndLinesInsideTicks);
+    suite.add(LeftAndBottomAxisCustomTickAndLinesOutsideTicks);
+    suite.add(LeftAndBottomAxisCustomTickAndLinesCrossTicks);
+    suite.add(RightAndBottomAxisCustomTickAndLinesInsideTicks);
+    suite.add(RightAndBottomAxisCustomTickAndLinesOutsideTicks);
+    suite.add(RightAndBottomAxisCustomTickAndLinesCrossTicks);
+    suite.add(LeftAndTopAxisCustomTickAndLinesInsideTicks);
+    suite.add(LeftAndTopAxisCustomTickAndLinesOutsideTicks);
+    suite.add(LeftAndTopAxisCustomTickAndLinesCrossTicks);
+    suite.add(RightAndTopAxisCustomTickAndLinesInsideTicks);
+    suite.add(RightAndTopAxisCustomTickAndLinesOutsideTicks);
+    suite.add(RightAndTopAxisCustomTickAndLinesCrossTicks);
     suite.add(PieCenterTest);
     
     //create the console

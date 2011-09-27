@@ -4,6 +4,10 @@ Charts Change History
 3.4.1
 -----
 
+  * #2531234 Fixed issue in which axis titles were not positioned properly in IE 6 and 7.
+  * #2531233 Fixed issue in which axis line and tick styles were overriding each other.
+  * #2531232 Fixed issue in which inner axis ticks did not display.
+  * #2531231 Fixed issue in which the top axis line was not positioned properly. 
   * #2530109 Fixed issue in which the NumericAxis roundingMethod was not always being respected when a number was specified.
   * #2531100 Fixed issue in which the NumericAxis was not correctly calculating its data range when a minimum or maximum was explicitly set.
   * #2530127 Added originEvent, pageX and pageY properties to the event facade for marker and planar events.

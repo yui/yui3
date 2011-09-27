@@ -1,5 +1,5 @@
-Widget Parent
-=============
+Widget Parent Change History
+============================
 
 3.4.1
 -----

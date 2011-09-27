@@ -1,6 +1,10 @@
 Resize Utility Change History
 =============================
 
+### 3.4.1
+
+No changes.
+
 ### 3.4.0
 
    * #2529992 Allow Resizable nodes be used with DD.Delegate

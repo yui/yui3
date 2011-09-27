@@ -91,11 +91,12 @@ TopAxisLayout.prototype = {
      * Draws a tick
      *
      * @method drawTick
+     * @param {Path} path reference to the path `Path` element in which to draw the tick.
      * @param {Object} pt hash containing x and y coordinates
      * @param {Object} tickStyles hash of properties used to draw the tick
      * @protected
      */
-    drawTick: function(pt, tickStyles)
+    drawTick: function(path, pt, tickStyles)
     {
         var host = this,
             style = host.get("styles"),
@@ -103,7 +104,7 @@ TopAxisLayout.prototype = {
             tickLength = tickStyles.length,
             start = {x:pt.x, y:padding.top},
             end = {x:pt.x, y:tickLength + padding.top};
-        host.drawLine(start, end, tickStyles);
+        host.drawLine(path, start, end);
     },
     
     /**
@@ -226,6 +227,9 @@ TopAxisLayout.prototype = {
         }
         else
         {
+            label.style.filter = null; 
+            labelWidth = Math.round(label.offsetWidth);
+            labelHeight = Math.round(label.offsetHeight);
             if(rot === 0)
             {
                 leftOffset -= labelWidth * 0.5;
@@ -268,6 +272,7 @@ TopAxisLayout.prototype = {
     {
         var host = this,
             tickOffset = host.get("topTickOffset"),
+            bottomTickOffset = host.get("bottomTickOffset"),
             style = host.get("styles").label,
             titleStyles = host.get("styles").title,
             totalTitleSize = this.get("title") ? this._titleSize + titleStyles.margin.top + titleStyles.margin.bottom : 0,
@@ -345,7 +350,8 @@ TopAxisLayout.prototype = {
             leftOffset -= (cosRadians * labelWidth) - (sinRadians * (labelHeight * 0.6));
             topOffset -= (sinRadians * labelWidth) + (cosRadians * labelHeight);
         }
-        topOffset -= tickOffset;
+        topOffset += bottomTickOffset;
+        topOffset -= margin;
         props.x = Math.round(leftOffset);
         props.y = Math.round(host.get("maxLabelSize") + topOffset);
         this._rotate(label, props);
@@ -399,13 +405,16 @@ TopAxisLayout.prototype = {
     setCalculatedSize: function()
     {
         var host = this,
+            graphic = host.get("graphic"),
             styles = host.get("styles"),
             labelMargin = styles.label.margin,
             titleMargin = styles.title.margin,
             totalLabelSize = labelMargin.top + labelMargin.bottom + host.get("maxLabelSize"),
             totalTitleSize = host.get("title") ? titleMargin.top + titleMargin.bottom + host._titleSize : 0,
-            ttl = Math.round(host.get("topTickOffset") + totalLabelSize + totalTitleSize);
+            topTickOffset = this.get("topTickOffset"),
+            ttl = Math.round(topTickOffset + totalLabelSize + totalTitleSize);
         host.set("height", ttl);
+        graphic.set("y", ttl - topTickOffset);
     }
 };
 Y.TopAxisLayout = TopAxisLayout;
