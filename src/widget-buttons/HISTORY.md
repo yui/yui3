@@ -1,5 +1,5 @@
-WidgetButtons Change History
-============================
+Widget Buttons Change History
+=============================
 
 3.4.1
 -----
@@ -21,6 +21,6 @@ WidgetButtons Change History
     [Ticket #2530998]
 
 3.4.0
---------
+-----
 
   * Initial release.

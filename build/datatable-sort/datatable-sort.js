@@ -213,15 +213,18 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
             newColumn  = columnset.keyHash[newKey],
             tbodyNode  = dt._tbodyNode,
             fromTemplate = Y.Lang.sub,
-            th, sortLabel;
+            th, sortArrow, sortLabel;
 
         // Clear previous UI
         if (prevColumn && prevClass) {
             th = prevColumn.thNode;
+            sortArrow = th.one('a');
 
-            th.one('a').set('title', fromTemplate(strings.sortBy, {
-                column: prevColumn.get('label')
-            }));
+            if (sortArrow) {
+                sortArrow.set('title', fromTemplate(strings.sortBy, {
+                    column: prevColumn.get('label')
+                }));
+            }
 
             th.removeClass(prevClass);
             tbodyNode.all("." + YgetClassName(COLUMN, prevColumn.get("id")))
@@ -231,12 +234,15 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
         // Add new sort UI
         if (newColumn && newClass) {
             th = newColumn.thNode;
+            sortArrow = th.one('a');
 
-            sortLabel = (newVal.dir === ASC) ? "reverseSortBy" : "sortBy";
+            if (sortArrow) {
+                sortLabel = (newVal.dir === ASC) ? "reverseSortBy" : "sortBy";
 
-            th.one('a').set('title', fromTemplate(strings[sortLabel], {
-                column: newColumn.get('label')
-            }));
+                sortArrow.set('title', fromTemplate(strings[sortLabel], {
+                    column: newColumn.get('label')
+                }));
+            }
 
             th.addClass(newClass);
 
@@ -356,4 +362,4 @@ Y.namespace("Plugin").DataTableSort = DataTableSort;
 
 
 
-}, '@VERSION@' ,{lang:['en'], requires:['datatable-base','plugin','recordset-sort']});
+}, '@VERSION@' ,{requires:['datatable-base','plugin','recordset-sort'], lang:['en']});

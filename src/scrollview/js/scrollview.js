@@ -6,8 +6,8 @@
  * </p>
  *
  * <ul>
- *     <li><a href="ScrollView.html">ScrollView API documentation</a></li>
- *     <li><a href="module_scrollview-base.html">scrollview-base Module documentation</a></li>
+ *     <li><a href="../classes/ScrollView.html">ScrollView API documentation</a></li>
+ *     <li><a href="scrollview-base.html">scrollview-base Module documentation</a></li>
  * </ul>
  *
  * @module scrollview

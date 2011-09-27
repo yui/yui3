@@ -1,5 +1,5 @@
-Flick Node Plugin
-=================
+Flick Node Plugin Change History
+================================
 
 3.4.0
 -----

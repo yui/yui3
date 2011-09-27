@@ -1,5 +1,5 @@
-History
-=======
+ClassName Manager Change History
+================================
 
 3.4.0
 -----

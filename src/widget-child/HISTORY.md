@@ -1,5 +1,5 @@
-Widget Child
-============
+Widget Child Change History
+===========================
 
 3.4.0
 -----

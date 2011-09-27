@@ -1,5 +1,5 @@
-Slide Change History
-====================
+Slider Change History
+=====================
 
 3.4.0
 -----
