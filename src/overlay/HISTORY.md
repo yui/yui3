@@ -1,28 +1,30 @@
-Overlay
-=======
+Overlay Change History
+======================
+
+3.4.1
+-----
+
+  * No changes, see Widget and extensions for changes to dependencies.
 
 3.4.0
 -----
 
-  * No changes, see Widget and extensions for changes to
-    dependencies.
+  * No changes, see Widget and extensions for changes to dependencies.
 
 3.3.0
 -----
 
-  * No changes, see Widget and extensions for changes to
-    dependencies.
+  * No changes, see Widget and extensions for changes to dependencies.
 
 3.2.0
 -----
 
-  * No changes, see Widget and extensions for changes to
-    dependencies.
+  * No changes, see Widget and extensions for changes to dependencies.
 
 3.1.1
 -----
 
-  * No changes
+  * No changes.
 
 3.1.0
 -----
@@ -34,17 +36,11 @@ Overlay
 3.0.0
 -----
 
-  * Modified progressive enhancement use case, to use document
-    fragments instead of innerHTML to preserve event listeners.
+  * Initial release.
 
-  * Fixed use of centered, x and y in the constructor. These all
-    needed 'lazyAdd' configuration since they had setters which 
-    modified other attribute state.
+  * Modified progressive enhancement use case, to use Document Fragments instead
+    of `innerHTML` to preserve event listeners.
 
-3.0.0 beta 1
-------------
-
-  * No changes
-
-3.0.0PR2 - Initial release
---------------------------
+  * Fixed use of `centered`, `x` and `y` in the constructor. These all needed
+    `lazyAdd` configuration since they had setters which modified other
+    attribute state.

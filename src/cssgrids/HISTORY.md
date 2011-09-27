@@ -1,5 +1,5 @@
-History Change History
-======================
+CSS Grids Change History
+========================
 
 3.4.1
 -----

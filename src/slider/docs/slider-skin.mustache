@@ -34,14 +34,17 @@
 <h3>Specify the skin in the YUI config</h3>
 <p>
     To access alternate skins for a component, specify an override in the YUI
-    configuration.  Then just `use("slider")` as you normally would.
+    configuration.  The "slider" module is actually a virtual rollup of other
+    modules, so you need to override the skin for "slider-base".
 </p>
+
+<p>Then just `use("slider")` as you normally would.</p>
 
 ```
 YUI({
     skin: {
         overrides: {
-            slider: [ "capsule" ]
+            "slider-base": [ "capsule" ]
         }
     }
 }).use( "slider", function (Y) {
@@ -50,9 +53,17 @@ YUI({
 ```
 
 <h3>Use the appropriate skin class in the markup</h3>
-<p>The default skin is the Sam skin.  Style YUI components with this skin by including the class `yui3-skin-sam` in the class list of an element that contains the component.  Typically, setting `<body class="yui3-skin-sam">` is good enough.</p>
+<p>
+    The default skin is the Sam skin.  Style YUI components with this skin by
+    including the class `yui3-skin-sam` in the class list of an element that
+    contains the component.  Typically, setting `<body class="yui3-skin-sam">`
+    is good enough.
+</p>
 
-<p>When overriding the default skin, use a different class on the containing element.</p>
+<p>
+    When overriding the default skin, use a different class on the containing
+    element.
+</p>
 
 ```
 <div class="yui3-skin-round-dark">
