@@ -66,11 +66,12 @@ LeftAxisLayout.prototype = {
      * Draws a tick
      *
      * @method drawTick
+     * @param {Path} path reference to the path `Path` element in which to draw the tick.
      * @param {Object} pt Point on the axis in which the tick will intersect.
      * @param {Object} tickStyle Hash of properties to apply to the tick.
      * @protected
      */
-    drawTick: function(pt, tickStyles)
+    drawTick: function(path, pt, tickStyles)
     {
         var host = this,
             style = host.get("styles"),
@@ -78,7 +79,7 @@ LeftAxisLayout.prototype = {
             tickLength = tickStyles.length,
             start = {x:padding.left, y:pt.y},
             end = {x:tickLength + padding.left, y:pt.y};
-        host.drawLine(start, end, tickStyles);
+        host.drawLine(path, start, end);
     },
 
     /**
@@ -227,6 +228,9 @@ LeftAxisLayout.prototype = {
         }
         else
         {
+            label.style.filter = null; 
+            labelWidth = Math.round(label.offsetWidth);
+            labelHeight = Math.round(label.offsetHeight);
             if(rot === 0)
             {
                 topOffset -= labelHeight * 0.5;
@@ -269,6 +273,7 @@ LeftAxisLayout.prototype = {
     {
         var host = this,
             tickOffset = host.get("leftTickOffset"),
+            rightTickOffset = host.get("rightTickOffset"),
             style = host.get("styles").label,
             margin = 0,
             leftOffset = pt.x + this._titleSize,
@@ -346,6 +351,8 @@ LeftAxisLayout.prototype = {
                 topOffset -= (sinRadians * labelWidth) + (cosRadians * (labelHeight * 0.6));
             }
         }
+        leftOffset += rightTickOffset;
+        leftOffset -= margin;
         props.x = Math.round(host.get("maxLabelSize") + leftOffset);
         props.y = Math.round(topOffset);
         this._rotate(label, this._labelRotationProps);
