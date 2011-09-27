@@ -103,6 +103,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             w = this.get("width"),
             h = this.get("height");
         bb.setStyle("position", "absolute");
+        bb.setStyle("zIndex", 2);
         w = w ? w + "px" : pn.getStyle("width");
         h = h ? h + "px" : pn.getStyle("height");
         if(p === "top" || p === "bottom")
@@ -234,14 +235,8 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
      * @param {Object} line styles (weight, color and alpha to be applied to the line segment)
      * @private
      */
-    drawLine: function(startPoint, endPoint, line)
+    drawLine: function(path, startPoint, endPoint)
     {
-        var path = this.get("path");
-        path.set("stroke", {
-            weight: line.weight, 
-            color: line.color, 
-            opacity: line.alpha
-        });
         path.moveTo(startPoint.x, startPoint.y);
         path.lineTo(endPoint.x, endPoint.y);
     },
@@ -312,6 +307,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         if(this._layout)
         {
             var styles = this.get("styles"),
+                line = styles.line,
                 labelStyles = styles.label,
                 majorTickStyles = styles.majorTicks,
                 drawTicks = majorTickStyles.display != "none",
@@ -329,9 +325,15 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 labelFunctionScope = this.get("labelFunctionScope"),
                 labelFormat = this.get("labelFormat"),
                 graphic = this.get("graphic"),
-                path = this.get("path");
+                path = this.get("path"),
+                tickPath;
             graphic.set("autoDraw", false);
             path.clear();
+            path.set("stroke", {
+                weight: line.weight, 
+                color: line.color, 
+                opacity: line.alpha
+            });
             this._labelRotationProps = this._getTextRotationProps(labelStyles);
             layout.setTickOffsets.apply(this);
             layoutLength = this.getLength();
@@ -340,10 +342,17 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             majorUnitDistance = this.getMajorUnitDistance(len, layoutLength, majorUnit);
             this.set("edgeOffset", this.getEdgeOffset(len, layoutLength) * 0.5);
             tickPoint = this.getFirstPoint(lineStart);
-            this.drawLine(lineStart, this.getLineEnd(tickPoint), styles.line);
+            this.drawLine(path, lineStart, this.getLineEnd(tickPoint));
             if(drawTicks) 
             {
-               layout.drawTick.apply(this, [tickPoint, majorTickStyles]);
+                tickPath = this.get("tickPath");
+                tickPath.clear();
+                tickPath.set("stroke", {
+                    weight: majorTickStyles.weight,
+                    color: majorTickStyles.color,
+                    opacity: majorTickStyles.alpha
+                });
+               layout.drawTick.apply(this, [tickPath, tickPoint, majorTickStyles]);
             }
             if(len < 1)
             {
@@ -358,7 +367,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             {
                 if(drawTicks) 
                 {
-                    layout.drawTick.apply(this, [tickPoint, majorTickStyles]);
+                    layout.drawTick.apply(this, [tickPath, tickPoint, majorTickStyles]);
                 }
                 position = this.getPosition(tickPoint);
                 label = this.getLabel(tickPoint, labelStyles);
@@ -398,11 +407,22 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
      */
     _updatePathElement: function()
     {
-        var path = this.get("path"),
+        var path = this._path,
+            tickPath = this._tickPath,
+            redrawGraphic = false,
             graphic = this.get("graphic");
         if(path)
         {
+            redrawGraphic = true;
             path.end();
+        }
+        if(tickPath)
+        {
+            redrawGraphic = true;
+            tickPath.end();
+        }
+        if(redrawGraphic)
+        {
             graphic._redraw();
         }
     },
@@ -431,11 +451,13 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             styles = this.get("styles").title;
             if(!titleTextField)
             {
-                titleTextField = Y.config.doc.createElement('span');
+                titleTextField = DOCUMENT.createElement('span');
+                titleTextField.style.display = "block";
+                titleTextField.style.whiteSpace = "nowrap";
                 titleTextField.setAttribute("class", "axisTitle");
                 this.get("contentBox").appendChild(titleTextField);
             }
-            titleTextField.setAttribute("style", "display:block;white-space:nowrap;position:absolute;");
+            titleTextField.style.position = "absolute";
             for(i in styles)
             {
                 if(styles.hasOwnProperty(i) && !customStyles.hasOwnProperty(i))
@@ -819,6 +841,29 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             }
         },
 
+        /**
+         *  @attribute tickPath
+         *  @type Shape
+         *  @readOnly
+         *  @private
+         */
+        tickPath: {
+            readOnly: true,
+
+            getter: function()
+            {
+                if(!this._tickPath)
+                {
+                    var graphic = this.get("graphic");
+                    if(graphic)
+                    {
+                        this._tickPath = graphic.addShape({type:"path"});
+                    }
+                }
+                return this._tickPath;
+            }
+        },
+        
         /**
          * Contains the contents of the axis. 
          *

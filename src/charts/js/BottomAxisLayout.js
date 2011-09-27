@@ -91,11 +91,12 @@ BottomAxisLayout.prototype = {
      * Draws a tick
      *
      * @method drawTick
+     * @param {Path} path reference to the path `Path` element in which to draw the tick.
      * @param {Object} pt hash containing x and y coordinates
      * @param {Object} tickStyles hash of properties used to draw the tick
      * @protected
      */
-    drawTick: function(pt, tickStyles)
+    drawTick: function(path, pt, tickStyles)
     {
         var host = this,
             style = host.get("styles"),
@@ -103,7 +104,7 @@ BottomAxisLayout.prototype = {
             tickLength = tickStyles.length,
             start = {x:pt.x, y:padding.top},
             end = {x:pt.x, y:tickLength + padding.top};
-        host.drawLine(start, end, tickStyles);
+        host.drawLine(path, start, end);
     },
 
     /**
@@ -222,6 +223,9 @@ BottomAxisLayout.prototype = {
         }
         else
         {
+            label.style.filter = null; 
+            labelWidth = Math.round(label.offsetWidth);
+            labelHeight = Math.round(label.offsetHeight);
             if(rot === 0)
             {
                 leftOffset -= labelWidth * 0.5;
