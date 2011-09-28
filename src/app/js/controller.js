@@ -667,6 +667,11 @@ Y.Controller = Y.extend(Controller, Y.Base, {
             return path;
         }
 
+        // Special case for catchall paths.
+        if (path === '*') {
+            return /.*/;
+        }
+
         path = path.replace(this._regexPathParam, function (match, operator, key) {
             keys.push(key);
             return operator === '*' ? '(.*?)' : '([^/]*)';
