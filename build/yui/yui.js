@@ -8914,6 +8914,21 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "skinnable": true
     }, 
+    "pjax": {
+        "requires": [
+            "classnamemanager", 
+            "controller", 
+            "io-base", 
+            "node-base", 
+            "node-event-delegate"
+        ]
+    }, 
+    "pjax-plugin": {
+        "requires": [
+            "node-pluginhost", 
+            "pjax"
+        ]
+    }, 
     "plugin": {
         "requires": [
             "base-base"
@@ -9456,7 +9471,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '105ebffae27a0e3d7331f8cf5c0bb282';
+YUI.Env[Y.version].md5 = '6a554ec14e9324c85b2135e76c0963f4';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

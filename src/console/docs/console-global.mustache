@@ -14,7 +14,7 @@
 
 ```
 // Create the first YUI instance
-YUI($yuiConfig).use($requiredModules, function (Y) {
+YUI().use("node", function (Y) {
 
     Y.one( "#yui1" ).on( "click", function () {
         Y.log( "Message from YUI instance #1" );
@@ -23,7 +23,7 @@ YUI($yuiConfig).use($requiredModules, function (Y) {
 });
 
 // Create the second YUI instance
-YUI($yuiConfig).use($requiredModules, function (Y) {
+YUI().use("node", function (Y) {
 
     Y.one( "#yui2" ).on( "click", function () {
         Y.log( "I'm the second YUI instance" );
@@ -32,7 +32,7 @@ YUI($yuiConfig).use($requiredModules, function (Y) {
 });
 
 // Create a third YUI instance
-YUI($yuiConfig).use($requiredModules, function (Y) {
+YUI().use("node", function (Y) {
 
     Y.one( "#yui3" ).on( "click", function () {
         Y.log( "And this is #3 YUI" );
@@ -48,7 +48,7 @@ YUI($yuiConfig).use($requiredModules, function (Y) {
 
 ```
 // Create a separate YUI instance to listen to all instances' logging
-YUI($yuiConfig).use("console", function (Y) {
+YUI().use("console", function (Y) {
 
     // Configure the Console's logSource to Y.Global to make it universal
     new Y.Console({
