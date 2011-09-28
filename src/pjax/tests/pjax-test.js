@@ -11,11 +11,13 @@ var Assert = Y.Assert,
     disableXHR = Y.config.win &&
         Y.config.win.location.protocol.indexOf('http') === -1,
 
+    html5 = Y.HistoryBase.html5 && (!Y.UA.android || Y.UA.android >= 3),
+
     suite;
 
 // -- Suite --------------------------------------------------------------------
 suite = new Y.Test.Suite({
-    name: 'Pjax Node Plugin',
+    name: 'Pjax Node Plugin'
 });
 
 // -- Lifecycle ----------------------------------------------------------------
@@ -88,8 +90,8 @@ suite.add(new Y.Test.Case({
 
     _should: {
         ignore: {
-            '`error` event should fire on Ajax error': disableXHR,
-            '`load` event should fire on Ajax load': disableXHR
+            '`error` event should fire on Ajax error': disableXHR || !html5,
+            '`load` event should fire on Ajax load': disableXHR || !html5
         }
     },
 
@@ -111,7 +113,7 @@ suite.add(new Y.Test.Case({
     },
 
     'should attach events on init in HTML5 browsers': function () {
-        if (this.pjax.get('controller').html5) {
+        if (html5) {
             Assert.isInstanceOf(Y.EventHandle, this.pjax._events);
         } else {
             Assert.isUndefined(this.pjax._events);
@@ -260,9 +262,9 @@ suite.add(new Y.Test.Case({
 
     _should: {
         ignore: {
-            '`load()` should load the specified URL and fire a `load` event': disableXHR,
-            '`load()` should call a callback if one is provided': disableXHR,
-            '`load()` callback should receive an error when an error occurs': disableXHR
+            '`load()` should load the specified URL and fire a `load` event': disableXHR || !html5,
+            '`load()` should call a callback if one is provided': disableXHR || !html5,
+            '`load()` callback should receive an error when an error occurs': disableXHR || !html5
         }
     },
 
@@ -343,9 +345,9 @@ suite.add(new Y.Test.Case({
 
     _should: {
         ignore: {
-            'Page title should be updated if the `titleSelector` matches an element': disableXHR || !Y.config.doc,
-            'Host element content should be updated with page content when `contentSelector` is null': disableXHR,
-            'Host element content should be updated with partial content when `contentSelector` selects a node': disableXHR
+            'Page title should be updated if the `titleSelector` matches an element': disableXHR || !Y.config.doc || !html5,
+            'Host element content should be updated with page content when `contentSelector` is null': disableXHR || !html5,
+            'Host element content should be updated with partial content when `contentSelector` selects a node': disableXHR || !html5
         }
     },
 
