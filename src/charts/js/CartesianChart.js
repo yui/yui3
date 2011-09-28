@@ -56,11 +56,13 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             bb = this.get("boundingBox"),
             cb = graph.get("contentBox"),
             pageX = e.pageX,
-            offsetX = pageX - cb.getX(),
-            posX = pageX - bb.getX(),
             pageY = e.pageY,
-            offsetY = pageY - cb.getY(),
+            posX = pageX - bb.getX(),
             posY = pageY - bb.getY(),
+            offset = {
+                x: pageX - cb.getX(),
+                y: pageY - cb.getY()
+            },
             sc = graph.get("seriesCollection"),
             series,
             i = 0,
@@ -72,83 +74,117 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             valueItems = [],
             direction = this.get("direction"),
             hasMarkers,
-            coord = direction == "horizontal" ? offsetX : offsetY,
+            catAxis,
+            valAxis,
+            coord,
             //data columns and area data could be created on a graph level
-            markerPlane = direction == "horizontal" ? sc[0].get("xMarkerPlane") : sc[0].get("yMarkerPlane"),
-            len = markerPlane.length;
-       for(; i < len; ++i)
-       {
-            if(coord <= markerPlane[i].end && coord >= markerPlane[i].start)
-            {
-                index = i;
-                break;
-            }
-       }
-       len = sc.length;
-       for(i = 0; i < len; ++i)
-       {
-            series = sc[i];
-            hasMarkers = series.get("markers");
-            if(hasMarkers && !isNaN(oldIndex) && oldIndex > -1)
-            {
-                series.updateMarkerState("mouseout", oldIndex);
-            }
-            if(series.get("ycoords")[index] > -1)
-            {
-                if(hasMarkers && !isNaN(index) && index > -1)
-                {
-                    series.updateMarkerState("mouseover", index);
-                }
-                item = this.getSeriesItems(series, index);
-                categoryItems.push(item.category);
-                valueItems.push(item.value);
-                items.push(series);
-            }
-                
-        }
-        this._selectedIndex = index;
-        
-        /**
-         * Broadcasts when `interactionType` is set to `planar` and a series' marker plane has received a mouseover event.
-         * 
-         *
-         * @event planarEvent:mouseover
-         * @preventable false
-         * @param {EventFacade} e Event facade with the following additional
-         *   properties:
-         *  <dl>
-         *      <dt>categoryItem</dt><dd>An array of hashes, each containing information about the category `Axis` of each marker whose plane has been intersected.</dd>
-         *      <dt>valueItem</dt><dd>An array of hashes, each containing information about the value `Axis` of each marker whose plane has been intersected.</dd>
-         *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>
-         *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>
-         *      <dt>items</dt><dd>An array including all the series which contain a marker whose plane has been intersected.</dd>
-         *      <dt>index</dt><dd>Index of the markers in their respective series.</dd>
-         *  </dl>
-         */
-        /**
-         * Broadcasts when `interactionType` is set to `planar` and a series' marker plane has received a mouseout event.
-         *
-         * @event planarEvent:mouseout
-         * @preventable false
-         * @param {EventFacade} e 
-         */
-        if(index > -1)
+            markerPlane,
+            len,
+            coords;
+        if(direction == "horizontal")
         {
-            this.fire("planarEvent:mouseover", {
-                categoryItem:categoryItems, 
-                valueItem:valueItems, 
-                x:posX, 
-                y:posY, 
-                pageX:pageX,
-                pageY:pageY,
-                items:items, 
-                index:index,
-                originEvent:e
-            });
+            catAxis = "x";
+            valAxis = "y";
         }
         else
         {
-            this.fire("planarEvent:mouseout");
+            valAxis = "x";
+            catAxis = "y";
+        }
+        coord = offset[catAxis];
+        if(sc)
+        {
+            len = sc.length;
+            while(i < len && !markerPlane)
+            {
+                if(sc[i])
+                {
+                    markerPlane = sc[i].get(catAxis + "MarkerPlane");
+                }
+                i++;
+            }
+        }
+        if(markerPlane)
+        {
+            len = markerPlane.length;
+            for(i = 0; i < len; ++i)
+            {
+                if(coord <= markerPlane[i].end && coord >= markerPlane[i].start)
+                {
+                    index = i;
+                    break;
+                }
+            }
+            len = sc.length;
+            for(i = 0; i < len; ++i)
+            {
+                series = sc[i];
+                coords = series.get(valAxis + "coords");
+                hasMarkers = series.get("markers");
+                if(hasMarkers && !isNaN(oldIndex) && oldIndex > -1)
+                {
+                    series.updateMarkerState("mouseout", oldIndex);
+                }
+                if(coords && coords[index] > -1)
+                {
+                    if(hasMarkers && !isNaN(index) && index > -1)
+                    {
+                        series.updateMarkerState("mouseover", index);
+                    }
+                    item = this.getSeriesItems(series, index);
+                    categoryItems.push(item.category);
+                    valueItems.push(item.value);
+                    items.push(series);
+                }
+                    
+            }
+            this._selectedIndex = index;
+
+            /**
+             * Broadcasts when `interactionType` is set to `planar` and a series' marker plane has received a mouseover event.
+             * 
+             *
+             * @event planarEvent:mouseover
+             * @preventable false
+             * @param {EventFacade} e Event facade with the following additional
+             *   properties:
+             *  <dl>
+             *      <dt>categoryItem</dt><dd>An array of hashes, each containing information about the category `Axis` of each marker whose plane has been intersected.</dd>
+             *      <dt>valueItem</dt><dd>An array of hashes, each containing information about the value `Axis` of each marker whose plane has been intersected.</dd>
+             *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>
+             *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>
+             *      <dt>pageX</dt><dd>The x location of the event on the page (including scroll)</dd>
+             *      <dt>pageY</dt><dd>The y location of the event on the page (including scroll)</dd>
+             *      <dt>items</dt><dd>An array including all the series which contain a marker whose plane has been intersected.</dd>
+             *      <dt>index</dt><dd>Index of the markers in their respective series.</dd>
+             *      <dt>originEvent</dt><dd>Underlying dom event.</dd>
+             *  </dl>
+             */
+            /**
+             * Broadcasts when `interactionType` is set to `planar` and a series' marker plane has received a mouseout event.
+             *
+             * @event planarEvent:mouseout
+             * @preventable false
+             * @param {EventFacade} e 
+             */
+            if(index > -1)
+            {
+                this.fire("planarEvent:mouseover", {
+                    categoryItem:categoryItems, 
+                    valueItem:valueItems, 
+                    x:posX, 
+                    y:posY, 
+                    pageX:pageX,
+                    pageY:pageY,
+                    items:items, 
+                    index:index,
+                    originEvent:e
+                });
+            }
+            else
+            {
+                this.fire("planarEvent:mouseout");
+            }
         }
     },
 
@@ -1051,7 +1087,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 axis.get("boundingBox").setStyle("left", lw + "px");
                 axis.get("boundingBox").setStyle("top", pts[i].y);
             }
-            if(axis.get("setMax") || axis.get("setMin"))
+            if(axis._hasDataOverflow())
             {
                 graphOverflow = "hidden";
             }

@@ -1,6 +1,28 @@
 Charts Change History
 =====================
 
+3.4.1
+-----
+
+  * #2531234 Fixed issue in which axis titles were not positioned properly in IE 6 and 7.
+  * #2531233 Fixed issue in which axis line and tick styles were overriding each other.
+  * #2531232 Fixed issue in which inner axis ticks did not display.
+  * #2531231 Fixed issue in which the top axis line was not positioned properly. 
+  * #2530109 Fixed issue in which the NumericAxis roundingMethod was not always being respected when a number was specified.
+  * #2531100 Fixed issue in which the NumericAxis was not correctly calculating its data range when a minimum or maximum was explicitly set.
+  * #2530127 Added originEvent, pageX and pageY properties to the event facade for marker and planar events.
+  * #2530591 Added ability to accept custom series classes.
+  * #2530592 Fixed errors resulting from empty series.
+  * #2530810 Removed hard-coded class prefixes.
+  * #2530908 Fixed issue in which the NumericAxis was not respecting explicitly set minimum and maximum values in some cases.
+  * #2530969 Ensure underlying dom nodes of markers have unique ids.
+  * #2530984 Fixed issue in which PieChart was not resizing properly.
+  * #2531024 Fixed issue in which PieChart did not draw from center when width and height were not equal.
+  * #2530985 Fixed issue in which PieChart failed to always render in MSIE 8.
+  * #2531020 Fixed issue in which gridlines could be hidden by other elements.
+  * #2531040 Fixed issue in which missing data broke stacked histograms.
+  * #2531071 Fixed issue in which charts would not render if one of the series was empty.
+
 3.4.0
 -----
 

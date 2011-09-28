@@ -40,86 +40,36 @@
         YUI({
             useBrowserConsole:false,
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
-        }).use("node-event-simulate", "widget", "widget-parent", "widget-child", "test", "console", function (Y) {
+        }).use("node-event-simulate", "async-queue", "widget", "widget-parent", "widget-child", "test", "console", function (Y) {
 
-            var RootWidget = function () {
-                RootWidget.superclass.constructor.apply(this, arguments);
-            };
+            var RootWidget = Y.RootWidget = Y.Base.create("rootwidget", Y.Widget, [Y.WidgetParent]);
 
-            RootWidget.NAME = "rootwidget";
-
-            Y.extend(RootWidget, Y.Widget);
-
-            Y.RootWidget = Y.Base.build("rootwidget", RootWidget, [Y.WidgetParent], { dynamic: false });
-
-            var ParentWidget = function () {
-                ParentWidget.superclass.constructor.apply(this, arguments);
-            };
-
-            Y.mix(ParentWidget, {
-
-                NAME: "parentwidget",
-
-                ATTRS: {
-
-                    label: {
-                        validator: Y.Lang.isString
-                    }
-
-                }
-
-            });
-
-            Y.extend(ParentWidget, Y.Widget, {
-
+            var ParentWidget = Y.ParentWidget = Y.Base.create("parentwidget", Y.Widget, [Y.WidgetParent, Y.WidgetChild], {
                 renderUI: function () {
-
                     ParentWidget.superclass.renderUI.apply(this, arguments);
-
                     if (this.get("depth") > -1) {
-
-                        var label = Y.Node.create("<em>" + this.get("label") + "</em>"),
-                        parent = this.get("boundingBox").get("parentNode");
-
-                        parent.appendChild(label);
-
+                        this.get("contentBox").insert("<em>" + this.get("label") + "</em>");
                     }
-
                 }
-
-            });
-
-            Y.ParentWidget = Y.Base.build("parentwidget", ParentWidget, [Y.WidgetParent, Y.WidgetChild], { dynamic: false });
-
-
-            var ChildWidget = function () {
-                ChildWidget.superclass.constructor.apply(this, arguments);
-            };
-
-            Y.mix(ChildWidget, {
-
-                NAME: "childwidget",
-
+            }, {
                 ATTRS: {
-
                     label: {
                         validator: Y.Lang.isString
                     }
-
                 }
-
             });
 
-            Y.extend(ChildWidget, Y.Widget, {
-
+            var ChildWidget = Y.ChildWidget = Y.Base.create("childwidget", Y.Widget, [Y.WidgetChild], {
                 renderUI: function () {
                     this.get("contentBox").setContent(this.get("label"));
                 }
-
+            }, {
+                ATTRS: {
+                    label: {
+                        validator: Y.Lang.isString
+                    }
+                }
             });
-
-
-            Y.ChildWidget = Y.Base.build("childwidget", ChildWidget, [Y.WidgetChild], { dynamic: false });
 
             var suite = new Y.Test.Suite("Widget ParentChild Tests");
             suite.add(
@@ -149,8 +99,7 @@
 
                          Y.Assert.isUndefined(child, "Add should return undefined since the type of the child is undefined.");
                          Y.assert((root.size() == 2), "The root Widget should have two children");
-                     }
-                     catch (e) {
+                     } catch (e) {
                          Y.Assert.isNotUndefined(e, "The \"add\" method should throw an error since the type of the child was not specified and the defaultChildType attribute is not defined.");
                      }
 
@@ -160,11 +109,9 @@
                          Y.Assert.isUndefined(child, "The \"add\" method should return undefined since the type of the child is invalid.");
                          Y.assert((root.size() == 2), "The root Widget should have two children");
 
-                     }
-                     catch (e) {
+                     } catch (e) {
                          Y.Assert.isNotUndefined(e, "The \"add\" method should throw an error since the type of the child is invalid.");
                      }
-
 
                      try {
 
@@ -173,11 +120,9 @@
                          Y.Assert.isUndefined(child, "Add should return undefined since the type of the child is invalid.");
                          Y.assert((root.size() == 2), "The root Widget should have two children");
 
-                     }
-                     catch (e) {
+                     } catch (e) {
                          Y.Assert.isNotUndefined(e, "The \"add\" method should throw an error since the type of the child is invalid.");
                      }
-
 
                      root.set("defaultChildType", "ChildWidget");
 
@@ -185,7 +130,6 @@
 
                      Y.Assert.isNotUndefined(child, "Add should return a reference to the child that was created and added.");
                      Y.assert((root.size() == 3), "The root Widget should have three children");
-
 
                      root.set("defaultChildType", ChildWidget);
 
@@ -203,7 +147,6 @@
                      root.set("defaultChildType", MyChild);
 
                      Y.Assert.areEqual(root.get("defaultChildType"), Y.ChildWidget, "Setter for \"defaultChildType\" should disallow setting the attribute to an invalid value.");
-
 
                      root.render();
 
@@ -244,6 +187,81 @@
 
                     widget.destroy();
 
+                },
+
+                testPreRenderedChildWithEmptyParent : function() {
+
+                    // Based on pull request from andreas-karlsson
+                    // https://github.com/yui/yui3/pull/25#issuecomment-2103536
+
+                    var widget = new Y.ParentWidget({
+                        id:"widget-1"
+                    });
+                    widget.render();
+
+                    var child = new Y.ChildWidget({
+                        id:"child-1"
+                    });
+                    child.render();
+
+                    widget.add(child);
+
+                    Y.Assert.areEqual(1, widget.size(1), "expected one child");
+
+                    var renderedChildren = widget.get("contentBox").get("children");
+                    Y.Assert.areEqual(1, renderedChildren.size(), "expected one child node");
+
+                    widget.destroy();
+                },
+
+                testAddOutOfOrderPreRender : function() {
+                    var widget = new Y.ParentWidget({
+                        id:"widget-1"
+                    });
+
+                    widget.add({type: Y.ChildWidget, label: "Child Two", id: "child-2" }, 1);
+                    widget.add({type: Y.ChildWidget, label: "Child One", id: "child-1" }, 0);
+                    widget.add({type: Y.ChildWidget, label: "Child Three", id: "child-3" }, 2);
+                    
+                    widget.render();
+
+                    var children = widget.get("children");
+
+                    Y.Assert.areEqual(widget.item(0).get("id"), "child-1", "child-1 is out of order");
+                    Y.Assert.areEqual(widget.item(1).get("id"), "child-2", "child-2 is out of order");
+                    Y.Assert.areEqual(widget.item(2).get("id"), "child-3", "child-3 is out of order");
+
+                    var renderedChildren = widget.get("contentBox").get("children");
+
+                    Y.Assert.areEqual(renderedChildren.item(0).get("id"), "child-1", "child-1 is out of order");
+                    Y.Assert.areEqual(renderedChildren.item(1).get("id"), "child-2", "child-2 is out of order");
+                    Y.Assert.areEqual(renderedChildren.item(2).get("id"), "child-3", "child-3 is out of order");
+
+                    widget.destroy();
+                },
+                
+                testAddOutOfOrderPostRender : function() {
+                    var widget = new Y.ParentWidget({
+                        id:"widget-1"
+                    });
+                    
+                    widget.render();
+
+                    widget.add({type: Y.ChildWidget, label: "Child Two", id: "child-2" }, 1);
+                    widget.add({type: Y.ChildWidget, label: "Child One", id: "child-1" }, 0);
+                    widget.add({type: Y.ChildWidget, label: "Child Three", id: "child-3" }, 2);
+                    
+                    Y.Assert.areEqual(widget.item(0).get("id"), "child-1", "child-1 is out of order");
+                    Y.Assert.areEqual(widget.item(1).get("id"), "child-2", "child-2 is out of order");
+                    Y.Assert.areEqual(widget.item(2).get("id"), "child-3", "child-3 is out of order");
+
+                    var renderedChildren = widget.get("contentBox").get("children");
+
+                    Y.Assert.areEqual(renderedChildren.item(0).get("id"), "child-1", "child-1 is out of order");
+                    Y.Assert.areEqual(renderedChildren.item(1).get("id"), "child-2", "child-2 is out of order");
+                    Y.Assert.areEqual(renderedChildren.item(2).get("id"), "child-3", "child-3 is out of order");
+
+                    widget.destroy();
                 },
 
                 testRemove: function () {
@@ -723,6 +741,74 @@
                     Y.ArrayAssert.itemsAreEqual(expectedChildEvents, actualChildEvents, "Unexpected Child UI events");
 
                     widget.destroy();
+                },
+                
+                testCustomAsyncRender : function() {
+
+                    // NOTE: This is not a unit test for "out-of-the-box" code per-se.
+
+                    // It's testing an additional check for "rendered", added to _uiAddChild, specifically 
+                    // for a customization which modified child.render() to be async.
+
+                    // See http://yuilibrary.com/projects/yui3/ticket/2529863 for more details.
+
+                    var test = this;
+
+                    var AsyncRenderParent = Y.Base.create("asyncParent", Y.Widget, [Y.WidgetParent], {
+
+                        add: function() {
+                            var parent = this;
+                            parent.renderQ = new Y.AsyncQueue();
+                            Y.WidgetParent.prototype.add.apply(parent, arguments);
+                            parent.renderQ.after("complete", function() {
+                                parent.fire("asyncAddComplete");
+                            });
+                            parent.renderQ.run();
+                        }
+
+                    });
+
+                    var AsyncRenderChild = Y.Base.create("asyncChild", Y.Widget, [Y.WidgetChild], {
+                        render: function() {
+                            var w = this,
+                                args = arguments;
+        
+                            this.get("parent").renderQ.add(function() {
+                                AsyncRenderChild.superclass.render.apply(w, args);
+                            });
+                        }
+                    });
+
+                    var widget = new AsyncRenderParent({
+                        id:"widget-1"
+                    });
+
+                    widget.render();
+
+                    widget.after("asyncAddComplete", function(e) {
+                        test.resume(function() {
+    
+                            Y.Assert.areEqual(widget.item(0).get("id"), "child-1", "child-1 is out of order");
+                            Y.Assert.areEqual(widget.item(1).get("id"), "child-2", "child-2 is out of order");
+                            Y.Assert.areEqual(widget.item(2).get("id"), "child-3", "child-3 is out of order");
+        
+                            var renderedChildren = widget.get("contentBox").get("children");
+        
+                            Y.Assert.areEqual(renderedChildren.item(0).get("id"), "child-1", "child-1 is out of order");
+                            Y.Assert.areEqual(renderedChildren.item(1).get("id"), "child-2", "child-2 is out of order");
+                            Y.Assert.areEqual(renderedChildren.item(2).get("id"), "child-3", "child-3 is out of order");
+    
+                            widget.destroy();
+                        });
+                    });
+
+                    widget.add([
+                        {type: AsyncRenderChild, label: "Child One", id: "child-1"},
+                        {type: AsyncRenderChild, label: "Child Two", id: "child-2"},
+                        {type: AsyncRenderChild, label: "Child Three", id: "child-3"}
+                    ]);
+
+                    test.wait();                    
                 }
 
             }));

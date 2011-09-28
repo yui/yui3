@@ -1,7 +1,7 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
 <title>Chart Series Tests</title>
-<link type="text/css" rel="stylesheet" href="../../../build/logreader/assets/skins/sam/logreader.css" />
 <style type="text/css">
 #mychart {
     width: 400px;
@@ -60,8 +60,7 @@
                     this.result = null;
                     
                     //assign event handler                
-                    //this.handler = Y.on(this.eventType, Y.bind(this.handleEvent,this), this.element);
-                    this.handler = Y.delegate(this.eventType, Y.bind(this.handleEvent, this), this.contentBox, ".yui3-seriesmarker");
+                    this.handler = Y.delegate(this.eventType, Y.bind(this.handleEvent, this), this.contentBox, this.eventNode);
                 },
                 
                 /*
@@ -91,6 +90,7 @@
             function ChartMarkerEventTestCase()
             {
                 ChartMarkerEventTestCase.superclass.constructor.apply(this, arguments);
+                this.eventNode = ".yui3-seriesmarker";
             }
 
             Y.extend(ChartMarkerEventTestCase, ChartEventTestCase, {
@@ -142,6 +142,7 @@
                         categoryValue,
                         seriesValue,
                         marker,
+                        markers,
                         markerData,
                         //determine category and series axes by direction of chart
                         direction = this.chart.get("direction"),
@@ -149,7 +150,8 @@
                         seriesAxis = direction == "horizontal" ? "y" : "x",
                         markerXY,
                         markerWidth,
-                        markerHeight;
+                        markerHeight
+                        getNumber = Y.TimeAxis.prototype._getNumber;
                     for(; i < len; ++i)
                     {
                         keys[this.seriesKeys[i]] = i;
@@ -163,37 +165,45 @@
                             if(currentSeries)
                             {
                                 i = 0;
-                                len = currentSeries.get("markers").length || 0;
-                                categoryKey = currentSeries.get(categoryAxis + "Key");
-                                seriesKey = currentSeries.get(seriesAxis + "Key");
-                                categoryDisplayName = currentSeries.get(categoryAxis + "DisplayName");
-                                seriesDisplayName = currentSeries.get(seriesAxis + "DisplayName");
-                                for(; i < len; ++i)
+                                markers = currentSeries.get("markers");
+                                if(markers)
                                 {
-                                    marker = currentSeries.get("markers")[i];
-                                    if(marker)
+                                    len = markers.length || 0;
+                                    categoryKey = currentSeries.get(categoryAxis + "Key");
+                                    seriesKey = currentSeries.get(seriesAxis + "Key");
+                                    categoryDisplayName = currentSeries.get(categoryAxis + "DisplayName");
+                                    seriesDisplayName = currentSeries.get(seriesAxis + "DisplayName");
+                                    for(; i < len; ++i)
                                     {
-                                        markerWidth = marker.get("width");
-                                        markerHeight = marker.get("height");
-                                        markerXY = marker.getXY();
-                                        Y.Assert.isNumber(marker.get("width"));
-                                        Y.Assert.isNumber(marker.get("height"));
-                                        Y.Event.simulate(marker.get("node"), "mouseover", {
-                                            clientX: markerXY[0] + markerWidth/2,
-                                            clientY: markerXY[1] + markerHeight/2
-                                        }); 
-                                        markerData = this.getMarkerData(this.result);                
-                                        categoryValue = this.chart.get("dataProvider")[markerData.index][categoryKey];
-                                        seriesValue = this.chart.get("dataProvider")[markerData.index][seriesKey];
-                                        Y.assert(markerData.categoryItem.displayName == categoryDisplayName);
-                                        Y.assert(markerData.valueItem.displayName == seriesDisplayName);
-                                        Y.assert(markerData.series == currentSeries);
-                                        Y.assert(markerData.categoryItem.key == categoryKey);
-                                        Y.assert(markerData.valueItem.key == seriesKey);
-                                        Y.assert(markerData.categoryItem.value == categoryValue);
-                                        Y.assert(markerData.valueItem.value == seriesValue);
-                                        Y.assert(markerData.pageX === markerData.originEvent.pageX);
-                                        Y.assert(markerData.pageY === markerData.originEvent.pageY);
+                                        marker = markers[i];
+                                        if(marker)
+                                        {
+                                            markerWidth = marker.get("width");
+                                            markerHeight = marker.get("height");
+                                            markerXY = marker.getXY();
+                                            Y.Assert.isNumber(marker.get("width"));
+                                            Y.Assert.isNumber(marker.get("height"));
+                                            Y.Event.simulate(marker.get("node"), "mouseover", {
+                                                clientX: markerXY[0] + markerWidth/2,
+                                                clientY: markerXY[1] + markerHeight/2
+                                            }); 
+                                            markerData = this.getMarkerData(this.result);                
+                                            categoryValue = this.chart.get("dataProvider")[markerData.index][categoryKey];
+                                            if(this.chart.get("categoryType") == "time")
+                                            {
+                                                categoryValue = getNumber(categoryValue);
+                                            }
+                                            seriesValue = this.chart.get("dataProvider")[markerData.index][seriesKey];
+                                            Y.assert(markerData.categoryItem.displayName == categoryDisplayName);
+                                            Y.assert(markerData.valueItem.displayName == seriesDisplayName);
+                                            Y.assert(markerData.series == currentSeries);
+                                            Y.assert(markerData.categoryItem.key == categoryKey);
+                                            Y.assert(markerData.valueItem.key == seriesKey);
+                                            Y.assert(markerData.categoryItem.value == categoryValue);
+                                            Y.assert(markerData.valueItem.value == seriesValue);
+                                            Y.assert(markerData.pageX === markerData.originEvent.pageX);
+                                            Y.assert(markerData.pageY === markerData.originEvent.pageY);
+                                        }
                                     }
                                 }
                             }
@@ -220,6 +230,186 @@
                         {category:"5/1/2010", expenses:null, revenue:2650},
                         {category:"6/1/2010", expenses:null, revenue:1200}
                 ],
+                MissingSeriesAndSeriesStartingWithZeroConfig = {
+                    dataProvider: [
+                            {
+                                "Time":new Date(2011,09,01,19,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,01,20,00,00,000),
+                                "miscellaneous":5
+                            },
+                            {
+                                "Time":new Date(2011,09,01,21,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,01,22,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,01,23,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,02,00,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,02,01,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,02,02,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,02,03,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,02,04,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,02,05,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,02,06,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,02,07,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,02,08,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,02,09,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,02,10,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,02,11,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,02,12,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,02,13,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,02,14,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,02,15,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,02,16,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,02,17,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,02,18,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,02,19,00,00,000),
+                                "miscellaneous": 0
+                            },
+                            {
+                                "Time":new Date(2011,09,02,20,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,02,21,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,02,22,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,02,23,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,03,00,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,03,01,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,03,02,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,03,03,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,03,04,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,03,05,00,00,000),
+                                "miscellaneous":0
+                            },
+                            {
+                                "Time":new Date(2011,09,03,06,00,00,000),
+                                "miscellaneous":0
+                            }
+                    ],
+                    type: "column",
+                    stacked: true,
+                    render: "#mychart",
+                    categoryType: "time",
+                    axes: {
+                        values:{
+                            position :"left",
+                            type :"stacked"
+                        },
+                        dateRange:{
+                            keys : [
+                                "Time"
+                            ],
+                            position :"bottom",
+                            type :"time",
+                            labelFormat :"%a %l:%M %p"
+                        }
+                    },
+                    seriesCollection : [
+                        {
+                            xAxis : "dateRange",
+                            yAxis : "values",
+                            xKey : "Time",
+                            yKey : "expenses"
+                        },
+                        {
+                            xAxis : "dateRange",
+                            yAxis : "values",
+                            xKey : "Time",
+                            yKey : "miscellaneous"
+                        }
+                    ]
+                },
                 DataProvider,
                 suite  = new Y.Test.Suite("Chart Series Tests"),
                 zeroValueColumnMouseOverTests = new Y.ChartMarkerEventTestCase({
@@ -283,7 +473,8 @@
                     render: "#mychart",
                     dataProvider: DataProviderWithNull,
                     seriesKeys: SeriesKeys
-                }, "mouseover");
+                }, "mouseover"),
+                missingSeriesAndSeriesStartingWithZero = new Y.ChartMarkerEventTestCase(MissingSeriesAndSeriesStartingWithZeroConfig, "mouseover");
             
             suite.add(zeroValueColumnMouseOverTests);
             suite.add(zeroValueBarMouseOverTests);
@@ -295,6 +486,7 @@
             suite.add(nullValueStackedBarMouseOverTests);
             suite.add(zeroValueComboMouseOverTests);
             suite.add(nullValueComboMouseOverTests);
+            suite.add(missingSeriesAndSeriesStartingWithZero); 
             
             //return it
             return suite;

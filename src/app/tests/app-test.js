@@ -286,7 +286,11 @@ controllerSuite.add(new Y.Test.Case({
             });
         });
 
-        controller.replace('/replace');
+        // Wrapped in a setTimeout to make the async test work on iOS<5, which
+        // performs this action synchronously.
+        setTimeout(function () {
+            controller.replace('/replace');
+        }, 1);
 
         this.wait(1000);
     },
@@ -302,7 +306,11 @@ controllerSuite.add(new Y.Test.Case({
             });
         });
 
-        controller.save('/save');
+        // Wrapped in a setTimeout to make the async test work on iOS<5, which
+        // performs this action synchronously.
+        setTimeout(function () {
+            controller.save('/save');
+        }, 1);
 
         this.wait(1000);
     },
@@ -328,9 +336,13 @@ controllerSuite.add(new Y.Test.Case({
             });
         });
 
-        controller.save('/one');
-        controller.save('/two');
-        controller.save('/three');
+        // Wrapped in a setTimeout to make the async test work on iOS<5, which
+        // performs this action synchronously.
+        setTimeout(function () {
+            controller.save('/one');
+            controller.save('/two');
+            controller.save('/three');
+        }, 1);
 
         this.wait(2000);
     },
@@ -1008,29 +1020,51 @@ modelSuite.add(new Y.Test.Case({
         Assert.isUndefined(model.validate());
     },
 
-    'Setting an attribute should call validate() and fire an error if it returns a value': function () {
-        var calls  = 0,
-            errors = 0,
-            model  = new this.TestModel();
+    'validate() should only be called on save()': function () {
+        var calls = 0,
+            model = new this.TestModel();
 
-        model.validate = function (attributes) {
+        model.validate = function (attrs) {
             calls += 1;
-            Assert.isObject(attributes);
+            Y.ObjectAssert.areEqual(model.toJSON(), attrs);
+        };
 
-            return attributes.foo === 'invalid' ? 'Invalid!' : null;
+        model.set('foo', 'bar');
+        model.set('foo', 'baz');
+        model.save();
+
+        Assert.areSame(1, calls);
+    },
+
+    'a validation failure should abort a save() call': function () {
+        var calls         = 0,
+            errors        = 0,
+            model         = new this.TestModel(),
+            saveCallbacks = 0;
+
+        model.validate = function (attrs) {
+            calls += 1;
+            return 'OMG invalid!';
+        };
+
+        model.sync = function () {
+            Assert.fail('sync() should not be called on validation failure');
         };
 
         model.on('error', function (e) {
             errors += 1;
-
-            Assert.areSame('Invalid!', e.error);
+            Assert.areSame('OMG invalid!', e.error);
             Assert.areSame('validate', e.src);
         });
 
-        model.set('foo', 'bar');
-        model.set('foo', 'invalid');
+        model.save(function (err, res) {
+            saveCallbacks += 1;
+            Assert.areSame('OMG invalid!', err);
+            Assert.isUndefined(res);
+        });
 
-        Assert.areSame(3, calls);
+        Assert.areSame(1, calls);
+        Assert.areSame(1, saveCallbacks);
         Assert.areSame(1, errors);
     }
 }));
@@ -1109,6 +1143,7 @@ modelSuite.add(new Y.Test.Case({
         });
 
         model.set('foo', 'bar');
+        model.save();
 
         Assert.areSame(1, calls);
     },
@@ -1695,6 +1730,7 @@ modelListSuite.add(new Y.Test.Case({
         });
 
         model.set('foo', 'invalid');
+        model.save();
 
         Assert.areSame(1, calls);
     },

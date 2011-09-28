@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+<div id="test" style="visibility: hidden;">
+    <div id="test-content"></div>
+    <a href="assets/page-full.html" id="link-full" class="yui3-pjax">full page</a>
+    <a href="assets/page-minimal.html" id="link-minimal" class="yui3-pjax">minimal page</a>
+    <a href="assets/page-text.html" id="link-text" class="yui3-pjax">text page</a>
+</div>
+
+<script src="../../../build/yui/yui.js"></script>
+<script>
+var Y = YUI({
+    allowRollup: false,
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+    modules: {
+        'test-console': {
+            fullpath : '../../common/tests/assets/test-console.js',
+            requires : ['console-filters'],
+            skinnable: true
+        },
+
+        'skin-sam-test-console': {
+            fullpath: '../../common/tests/assets/test-console.css',
+            type    : 'css'
+        },
+
+        'pjax-test': {
+            fullpath: 'pjax-test.js',
+            requires: ['pjax-plugin', 'test']
+        }
+    },
+    useBrowserConsole: false
+}).use('pjax-test', 'test-console', function (Y) {
+    Y.Test.Runner.run();
+});
+</script>
+
+</body>
+</html>

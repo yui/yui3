@@ -1,6 +1,4 @@
-.yui3-skin-night{    
-	background-color:#000;
-    font-family: HelveticaNeue,arial,helvetica,clean,sans-serif;
+.yui3-skin-night .yui3-dial {    
 	color:#fff;
 }
 
@@ -53,7 +51,7 @@
 }
 .yui3-skin-night .yui3-dial-value-string{
 	margin-left:0.5em;
-	color:#fff;
+	color:#DCDCDC;
 	font-size:130%;
 }
 .yui3-skin-night .yui3-dial-value {

@@ -7,13 +7,14 @@
     <tests base="@TEST_ARTIFACTS_BASE@" timeout="120000">
         <url>app/tests/app.html</url>
         <url>arraysort/tests/arraysort.html</url>
-        <!--url>async-queue/tests/async-queue.html</url-->
+        <url>async-queue/tests/async-queue.html</url>
         <url>attribute/tests/attribute.html</url>
         <url>autocomplete/tests/functional/autocomplete.html</url>
         <url>base/tests/base.html</url>
         <url>cache/tests/cache.html</url>
         <url>cache/tests/cache-offline.html</url>
         <url>cache/tests/cache-plugin.html</url>
+        <url>calendar/tests/calendar.html</url>
         <url timeout="600000">charts/tests/charts.html</url>
         <url timeout="200000">charts/tests/seriestests.html</url>
         <url>classnamemanager/tests/classnamemanager.html</url>
@@ -41,8 +42,10 @@
         <url>dom/tests/dom.html</url>
         <url>dom/tests/selector.html</url>
         <url>dump/tests/dump.html</url>
+	<url>editor/tests/editor.html</url>
         <url>escape/tests/functional/escape.html</url>
         <url>event-custom/tests/customevent.html</url>
+        <url>event-custom/tests/event-custom-base.html</url>
         <url>event-valuechange/tests/functional/event-valuechange.html</url>
         <url>event/tests/dom.html</url>
         <url>event/tests/delegate.html</url>
@@ -64,6 +67,7 @@
         <url>jsonp/tests/jsonp-url.html</url-->
         <url>node/tests/node.html</url>
         <!--url>node-focusmanager/tests/focusmanager.html</url-->
+        <url>pjax/tests/pjax.html</url>
         <url>pluginhost/tests/plugins.html</url>
         <url>slider/tests/slider.html</url>
         <url>test/tests/arrayassert.html</url>
@@ -75,7 +79,6 @@
         <url>widget-parent/tests/parent-child.html</url>
         <url>yui/tests/index.html</url>
         <url>yql/tests/index.html</url>
-
         <url>oop/tests/oop.html</url>
         <url>yui/tests/array.html</url>
         <url>substitute/tests/substitute.html</url>
@@ -84,7 +87,6 @@
         <url>panel/tests/unit-tests.html</url>
         <url>widget-buttons/tests/unit-tests.html</url>
         <url>widget-position-align/tests/widget-position-align.html</url>
-
         <!--
         <url>test/tests/testformat.html</url>
         <url>stylesheet/tests/stylesheet.html</url>

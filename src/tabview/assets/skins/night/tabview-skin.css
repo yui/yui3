@@ -1,18 +1,12 @@
-.yui3-skin-night {
-    /*padding:1px 0 0; why was this here?*/
-    font-family: HelveticaNeue,arial,helvetica,clean,sans-serif;
-	color:#fff;
-	background-color:#000;
-}
-
 .yui3-skin-night .yui3-tabview-panel{
 	background-color:#333333;
 	color:#808080;
+	padding:1px;
 }
 .yui3-skin-night .yui3-tab-panel p{
 	margin:10px;
 }
-.yui3-skin-night #tabview-header {
+.yui3-skin-night .yui3-tabview-list {
     background-color:#0f0f0f;
     border-top:1px solid #000;
 	text-align:center;
@@ -33,10 +27,10 @@
     );
 }
 
-.yui3-skin-night #tabview-header li {
+.yui3-skin-night .yui3-tabview-list li {
 	margin-top:8px;
 }
-.yui3-skin-night #tabview-header li a{
+.yui3-skin-night .yui3-tabview-list li a{
 	border:solid 1px #0c0c0c;
 	border-right-style:none;
 
@@ -65,7 +59,7 @@
         to(#3E3F41)     
     );
 }
-.yui3-skin-night #tabview-header li.yui3-tab-selected a {
+.yui3-skin-night .yui3-tabview-list li.yui3-tab-selected a {
 	background-color:#2B2D2D;
 	background: -moz-linear-gradient(
 		0% 100% 90deg, 
@@ -82,12 +76,12 @@
         to(#2C2D2F)     
     );
 }
-.yui3-skin-night #tabview-header li:first-child a{
+.yui3-skin-night .yui3-tabview-list li:first-child a{
 	-moz-border-radius:6px 0 0 6px;
 	-webkit-border-radius:6px 0 0 6px;
 	border-radius:6px 0 0 6px;
 }
-.yui3-skin-night #tabview-header li:last-child a{
+.yui3-skin-night .yui3-tabview-list li:last-child a{
 	border-right-style:solid;
 	-moz-border-radius:0 6px 6px 0;
 	-webkit-border-radius:0 6px 6px 0;

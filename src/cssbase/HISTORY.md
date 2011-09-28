@@ -1,5 +1,11 @@
 CSS Base Change History
-======================
+=======================
+
+3.4.1
+-----
+
+  * Bug fix: Nested mixed list types were incorrectly styled. [Ticket 2530302]
+
 
 3.4.0
 -----

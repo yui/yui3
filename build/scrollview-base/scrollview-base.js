@@ -16,6 +16,7 @@ var getClassName = Y.ClassNameManager.getClassName,
     EV_SCROLL_FLICK = 'flick',
 
     FLICK = EV_SCROLL_FLICK,
+    DRAG = "drag",
 
     UI = 'ui',
     
@@ -27,7 +28,8 @@ var getClassName = Y.ClassNameManager.getClassName,
     SCROLL_Y = "scrollY",
     SCROLL_X = "scrollX",
     BOUNCE = "bounce",
-    
+    DISABLED = "disabled",
+
     DIM_X = "x",
     DIM_Y = "y",
 
@@ -116,26 +118,32 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @method bindUI
      */
     bindUI: function() {
+        var sv = this;
 
-        var sv = this, // kweight
-            cb = sv._cb,
-            bb = sv._bb,
-            scrollChangeHandler = sv._afterScrollChange,
-            dimChangeHandler = sv._afterDimChange, 
-            flick = sv.get(FLICK);
-
-        bb.on('gesturemovestart', Y.bind(sv._onGestureMoveStart, sv));
+        sv._bindDrag(sv.get(DRAG));
+        sv._bindFlick(sv.get(FLICK));
+        sv._bindAttrs();
 
         // IE SELECT HACK. See if we can do this non-natively and in the gesture for a future release.
         if (IE) {
-            sv._fixIESelect(bb, cb);
+            sv._fixIESelect(sv._bb, sv._cb);
         }
+    },
 
-        if (flick) {
-            cb.on("flick", Y.bind(sv._flick, sv), flick);
-        }
+    /**
+     * @method _bindAttrs
+     * @private 
+     */
+    _bindAttrs : function() {
+
+        var sv = this,
+            scrollChangeHandler = sv._afterScrollChange,
+            dimChangeHandler = sv._afterDimChange;
 
         this.after({
+            'disabledChange': sv._afterDisabledChange,
+            'flickChange'   : sv._afterFlickChange,
+            'dragChange'    : sv._afterDragChange,
             'scrollYChange' : scrollChangeHandler,
             'scrollXChange' : scrollChangeHandler,
             'heightChange'  : dimChangeHandler,
@@ -145,12 +153,46 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         // Helps avoid potential CSS race where in the styles from
         // scrollview-list-skin.css are applied after syncUI() fires.
         // Without a _uiDimensionChange() call, the scrollview only 
-        //scrolls partially due to the fact that styles added in the CSS
+        // scrolls partially due to the fact that styles added in the CSS
         // altered the height/width of the bounding box.
         if (!IE) {
             this.after('renderedChange', function(e) {
                 this._uiDimensionsChange();
             });
+        }
+    },
+
+    /**
+     * Bind (or unbind) gesture move listeners required for drag support
+     * 
+     * @method _bindDrag
+     * @param drag {boolean} If true, the method binds listener to enable drag (gesturemovestart). If false, the method unbinds gesturemove listeners for drag support.
+     * @private 
+     */
+    _bindDrag : function(drag) {
+        var bb = this._bb;
+
+        if (drag) {
+            bb.on('drag|gesturemovestart', Y.bind(this._onGestureMoveStart, this));
+        } else {
+            bb.detach('drag|*');
+        }
+    },
+
+    /**
+     * Bind (or unbind) flick listeners.
+     * 
+     * @method _bindFlick
+     * @param flick {Object|boolean} If truthy, the method binds listeners for flick support. If false, the method unbinds flick listeners.  
+     * @private
+     */
+    _bindFlick : function(flick) {
+        var cb = this._cb;
+
+        if (flick) {
+            cb.on("flick|flick", Y.bind(this._flick, this), flick);
+        } else {
+            cb.detach('flick|*');
         }
     },
 
@@ -162,6 +204,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @method syncUI
      */
     syncUI: function() {
+        this._cDisabled = this.get(DISABLED);
         this._uiDimensionsChange();
         this.scrollTo(this.get(SCROLL_X), this.get(SCROLL_Y));
     },
@@ -176,58 +219,61 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @param easing {String} An easing equation if duration is set
      */
     scrollTo: function(x, y, duration, easing) {
-        var cb = this._cb,
-            xSet = (x !== null),
-            ySet = (y !== null),
-            xMove = (xSet) ? x * -1 : 0,
-            yMove = (ySet) ? y * -1 : 0,
-            transition,
-            TRANS = ScrollView._TRANSITION,
-            callback = this._transEndCB;
 
-        duration = duration || 0;
-        easing = easing || ScrollView.EASING;
-
-        if (xSet) {
-            this.set(SCROLL_X, x, { src: UI });
-        }
-
-        if (ySet) {
-            this.set(SCROLL_Y, y, { src: UI });
-        }
-
-        if (NATIVE_TRANSITIONS) {
-            // ANDROID WORKAROUND - try and stop existing transition, before kicking off new one.
-            cb.setStyle(TRANS.DURATION, ZERO).setStyle(TRANS.PROPERTY, EMPTY);
-        }
-
-        if (duration !== 0) {
-
-            transition = {
-                easing : easing,
-                duration : duration/1000
-            };
-
-            if (NATIVE_TRANSITIONS) {
-                transition.transform = this._transform(xMove, yMove);
-            } else {
-                if (xSet) { transition.left = xMove + PX; }
-                if (ySet) { transition.top = yMove + PX; }
+        if (!this._cDisabled) {
+            var cb = this._cb,
+                xSet = (x !== null),
+                ySet = (y !== null),
+                xMove = (xSet) ? x * -1 : 0,
+                yMove = (ySet) ? y * -1 : 0,
+                transition,
+                TRANS = ScrollView._TRANSITION,
+                callback = this._transEndCB;
+    
+            duration = duration || 0;
+            easing = easing || ScrollView.EASING;
+    
+            if (xSet) {
+                this.set(SCROLL_X, x, { src: UI });
             }
-
-
-            if (!callback) {
-                callback = this._transEndCB = Y.bind(this._onTransEnd, this);
+    
+            if (ySet) {
+                this.set(SCROLL_Y, y, { src: UI });
             }
-
-            cb.transition(transition, callback);
-
-        } else {
+    
             if (NATIVE_TRANSITIONS) {
-                cb.setStyle('transform', this._transform(xMove, yMove));
+                // ANDROID WORKAROUND - try and stop existing transition, before kicking off new one.
+                cb.setStyle(TRANS.DURATION, ZERO).setStyle(TRANS.PROPERTY, EMPTY);
+            }
+    
+            if (duration !== 0) {
+    
+                transition = {
+                    easing : easing,
+                    duration : duration/1000
+                };
+    
+                if (NATIVE_TRANSITIONS) {
+                    transition.transform = this._transform(xMove, yMove);
+                } else {
+                    if (xSet) { transition.left = xMove + PX; }
+                    if (ySet) { transition.top = yMove + PX; }
+                }
+    
+    
+                if (!callback) {
+                    callback = this._transEndCB = Y.bind(this._onTransEnd, this);
+                }
+    
+                cb.transition(transition, callback);
+    
             } else {
-                if (xSet) { cb.setStyle(LEFT, xMove + PX); }
-                if (ySet) { cb.setStyle(TOP, yMove + PX); }
+                if (NATIVE_TRANSITIONS) {
+                    cb.setStyle('transform', this._transform(xMove, yMove));
+                } else {
+                    if (xSet) { cb.setStyle(LEFT, xMove + PX); }
+                    if (ySet) { cb.setStyle(TOP, yMove + PX); }
+                }
             }
         }
     },
@@ -311,50 +357,53 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @private
      */
     _onGestureMoveStart: function(e) {
-
+        
         var sv = this,
             bb = sv._bb;
 
-        if (sv._prevent.start) {
-            e.preventDefault();
+        if (!sv._cDisabled) {
+
+            if (sv._prevent.start) {
+                e.preventDefault();
+            }
+    
+            sv._killTimer();
+    
+            sv._hm = bb.on('drag|gesturemove', Y.bind(sv._onGestureMove, sv));
+            sv._hme = bb.on('drag|gesturemoveend', Y.bind(sv._onGestureMoveEnd, sv));
+    
+            sv._startY = e.clientY + sv.get(SCROLL_Y);
+            sv._startX = e.clientX + sv.get(SCROLL_X);
+            sv._startClientY = sv._endClientY = e.clientY;
+            sv._startClientX = sv._endClientX = e.clientX;
+    
+            /**
+             * Internal state, defines whether or not the scrollview is currently being dragged
+             * 
+             * @property _isDragging
+             * @type boolean
+             * @protected
+             */
+            sv._isDragging = false;
+    
+            /**
+             * Internal state, defines whether or not the scrollview is currently animating a flick
+             * 
+             * @property _flicking
+             * @type boolean
+             * @protected
+             */
+            sv._flicking = false;
+    
+            /**
+             * Internal state, defines whether or not the scrollview needs to snap to a boundary edge
+             * 
+             * @property _snapToEdge
+             * @type boolean
+             * @protected
+             */
+            sv._snapToEdge = false;
         }
-
-        sv._killTimer();
-
-        sv._hm = bb.on('gesturemove', Y.bind(sv._onGestureMove, sv));
-        sv._hme = bb.on('gesturemoveend', Y.bind(sv._onGestureMoveEnd, sv));
-
-        sv._startY = e.clientY + sv.get(SCROLL_Y);
-        sv._startX = e.clientX + sv.get(SCROLL_X);
-        sv._startClientY = sv._endClientY = e.clientY;
-        sv._startClientX = sv._endClientX = e.clientX;
-
-        /**
-         * Internal state, defines whether or not the scrollview is currently being dragged
-         * 
-         * @property _isDragging
-         * @type boolean
-         * @protected
-         */
-        sv._isDragging = false;
-        
-        /**
-         * Internal state, defines whether or not the scrollview is currently animating a flick
-         * 
-         * @property _flicking
-         * @type boolean
-         * @protected
-         */
-        sv._flicking = false;
-        
-        /**
-         * Internal state, defines whether or not the scrollview needs to snap to a boundary edge
-         * 
-         * @property _snapToEdge
-         * @type boolean
-         * @protected
-         */
-        sv._snapToEdge = false;
     },    
     
     /**
@@ -507,6 +556,40 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     },
 
     /**
+     * After listener for changes to the flick attribute
+     *
+     * @method _afterFlickChange
+     * @param e {Event.Facade} The event facade
+     * @protected
+     */
+    _afterFlickChange : function(e) {
+        this._bindFlick(e.newVal);
+    },
+    
+    /**
+     * After listener for changes to the disabled attribute
+     *
+     * @method _afterDisabledChange
+     * @param e {Event.Facade} The event facade
+     * @protected
+     */
+    _afterDisabledChange : function(e) {
+        // Cache for performance - we check during move
+        this._cDisabled = e.newVal;
+    },
+
+    /**
+     * After listener for changes to the drag attribute
+     *
+     * @method _afterDragChange
+     * @param e {Event.Facade} The event facade
+     * @protected
+     */
+    _afterDragChange : function(e) {
+        this._bindDrag(e.newVal);
+    },
+
+    /**
      * Used to move the ScrollView content
      *
      * @method _uiScrollTo
@@ -541,7 +624,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     * Utility method to obtain scrollWidth, scrollHeight,
     * accounting for the impact of translate on scrollWidth, scrollHeight
     * @method _getScrollDims
-    * @returns {Array} The scrollWidth and scrollHeight as an array: [scrollWidth, scrollHeight]
+    * @returns {Array} The offsetWidth, offsetHeight, scrollWidth and scrollHeight as an array: [offsetWidth, offsetHeight, scrollWidth, scrollHeight]
     * @private
     */
     _getScrollDims: function() {
@@ -571,9 +654,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         this._forceHWTransforms = false;  // the z translation was causing issues with picking up accurate scrollWidths in Chrome/Mac.
 
         this._moveTo(cb, 0, 0);
-
-        dims = [bb.get('scrollWidth'), bb.get('scrollHeight')];
-
+        dims = [bb.get("offsetWidth"), bb.get("offsetHeight"), bb.get('scrollWidth'), bb.get('scrollHeight')];
         this._moveTo(cb, -1*origX, -1*origY);
 
         this._forceHWTransforms = HWTransform;
@@ -591,16 +672,14 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     _uiDimensionsChange: function() {
         var sv = this,
             bb = sv._bb,
-
             CLASS_NAMES = ScrollView.CLASS_NAMES,
-
-            width = bb.get('offsetWidth'),
-            height = bb.get('offsetHeight'),
 
             scrollDims = this._getScrollDims(),
 
-            scrollWidth = scrollDims[0],
-            scrollHeight = scrollDims[1];
+            width = scrollDims[0],
+            height = scrollDims[1],
+            scrollWidth = scrollDims[2],
+            scrollHeight = scrollDims[3];
 
         if (height && scrollHeight > height) {
             sv._scrollsVertical = true;
@@ -704,28 +783,32 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @protected
      */
     _flick: function(e) {
+        
         var flick = e.flick,
             sv = this;
-
-        /**
-         * Internal state, currently calculated velocity from the flick 
-         * 
-         * @property _currentVelocity
-         * @type number
-         * @protected
-         */
-        sv._currentVelocity = flick.velocity;
-        sv._flicking = true;
-
-        sv._cDecel = sv.get('deceleration');
-        sv._cBounce = sv.get('bounce');
-
-        sv._pastYEdge = false;
-        sv._pastXEdge = false;
-
-        sv._flickFrame();
-
-        sv.fire(EV_SCROLL_FLICK);
+        
+        if (!sv._cDisabled) {
+    
+            /**
+             * Internal state, currently calculated velocity from the flick 
+             * 
+             * @property _currentVelocity
+             * @type number
+             * @protected
+             */
+            sv._currentVelocity = flick.velocity;
+            sv._flicking = true;
+    
+            sv._cDecel = sv.get('deceleration');
+            sv._cBounce = sv.get('bounce');
+    
+            sv._pastYEdge = false;
+            sv._pastXEdge = false;
+    
+            sv._flickFrame();
+    
+            sv.fire(EV_SCROLL_FLICK);
+        }
     },
 
     /**
@@ -834,29 +917,35 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
     /**
      * The scrollX, scrollY setter implementation
-     * 
+     *
      * @method _setScroll
      * @private
      * @param {Number} val
      * @param {String} dim
-     * 
+     *
      * @return {Number} The constrained value, if it exceeds min/max range
      */
     _setScroll : function(val, dim) {
-        var bouncing = this._cachedBounce || this.get(BOUNCE),
-            range = ScrollView.BOUNCE_RANGE,
 
-            maxScroll = (dim == DIM_X) ? this._maxScrollX : this._maxScrollY,
-
-            min = bouncing ? -range : 0,
-            max = bouncing ? maxScroll + range : maxScroll;
-
-        if(!bouncing || !this._isDragging) {
-            if(val < min) {
-                val = min;
-            } else if(val > max) {
-                val = max;
-            }            
+        if (this._cDisabled) {
+            val = Y.Attribute.INVALID_VALUE;
+        } else {
+    
+            var bouncing = this._cachedBounce || this.get(BOUNCE),
+                range = ScrollView.BOUNCE_RANGE,
+    
+                maxScroll = (dim == DIM_X) ? this._maxScrollX : this._maxScrollY,
+    
+                min = bouncing ? -range : 0,
+                max = bouncing ? maxScroll + range : maxScroll;
+    
+            if(!bouncing || !this._isDragging) {
+                if(val < min) {
+                    val = min;
+                } else if(val > max) {
+                    val = max;
+                }            
+            }
         }
 
         return val;
@@ -962,7 +1051,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         },
 
         /**
-         * The minimum distance and/or velocity which define a flick
+         * The minimum distance and/or velocity which define a flick. Can be set to false,
+         * to disable flick support (note: drag support is enabled/disabled separately)
          *
          * @attribute flick
          * @type Object
@@ -973,6 +1063,16 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
                 minDistance: 10,
                 minVelocity: 0.3
             }
+        },
+
+        /**
+         * Enable/Disable dragging the ScrollView content (note: flick support is enabled/disabled separately)
+         * @attribute drag
+         * @type boolean
+         * @default true
+         */
+        drag: {
+            value: true
         }
     },
 

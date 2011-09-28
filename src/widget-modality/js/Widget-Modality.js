@@ -4,35 +4,36 @@
  * @module widget-modality
  */
 
-var WIDGET         = 'widget',
-    RENDER_UI       = 'renderUI',
-    BIND_UI         = 'bindUI',
-    SYNC_UI         = 'syncUI',
-    BOUNDING_BOX    = 'boundingBox',
-    CONTENT_BOX     = 'contentBox',
-    VISIBLE         = 'visible',
-    Z_INDEX         = 'zIndex',
-    CHANGE          = 'Change',
-    isBoolean       = Y.Lang.isBoolean,
-    getCN           = Y.ClassNameManager.getClassName,
-    MaskShow        = "maskShow",
-    MaskHide        = "maskHide",
-    ClickOutside    = "clickoutside",
-    FocusOutside    = "focusoutside",
+var WIDGET       = 'widget',
+    RENDER_UI    = 'renderUI',
+    BIND_UI      = 'bindUI',
+    SYNC_UI      = 'syncUI',
+    BOUNDING_BOX = 'boundingBox',
+    CONTENT_BOX  = 'contentBox',
+    VISIBLE      = 'visible',
+    Z_INDEX      = 'zIndex',
+    CHANGE       = 'Change',
+    isBoolean    = Y.Lang.isBoolean,
+    getCN        = Y.ClassNameManager.getClassName,
+    MaskShow     = "maskShow",
+    MaskHide     = "maskHide",
+    ClickOutside = "clickoutside",
+    FocusOutside = "focusoutside",
 
     supportsPosFixed = (function(){
 
         /*! IS_POSITION_FIXED_SUPPORTED - Juriy Zaytsev (kangax) - http://yura.thinkweb2.com/cft/ */
 
-        var isSupported = null,
+        var doc         = Y.config.doc,
+            isSupported = null,
             el, root;
 
-        if (document.createElement) {
-            el = document.createElement('div');
+        if (doc.createElement) {
+            el = doc.createElement('div');
             if (el && el.style) {
                 el.style.position = 'fixed';
                 el.style.top = '10px';
-                root = document.body;
+                root = doc.body;
                 if (root && root.appendChild && root.removeChild) {
                     root.appendChild(el);
                     isSupported = (el.offsetTop === 10);
@@ -45,14 +46,14 @@ var WIDGET         = 'widget',
     }());
 
     /**
-     * Widget extension, which can be used to add modality support to the base Widget class, 
+     * Widget extension, which can be used to add modality support to the base Widget class,
      * through the Base.create method.
      *
      * @class WidgetModality
      * @param {Object} config User configuration object
      */
     function WidgetModal(config) {
-        if (config.modal) {
+        if (config && config.modal) {
             Y.after(this._renderUIModal, this, RENDER_UI);
             Y.after(this._syncUIModal, this, SYNC_UI);
             Y.after(this._bindUIModal, this, BIND_UI);
@@ -73,7 +74,7 @@ var WIDGET         = 'widget',
         };
 
     /**
-    * Static property used to define the default attribute 
+    * Static property used to define the default attribute
     * configuration introduced by WidgetModality.
     *
     * @property ATTRS
@@ -112,7 +113,7 @@ var WIDGET         = 'widget',
              * The implementer can supply an array of objects, with each object having the following properties:
              * <p>eventName: (string, required): The eventName to listen to.</p>
              * <p>node: (Y.Node, optional): The Y.Node that will fire the event (defaults to the boundingBox of the widget)</p>
-             * <p>By default, this attribute consists of two objects which will cause the widget to re-focus if anything 
+             * <p>By default, this attribute consists of two objects which will cause the widget to re-focus if anything
              * outside the widget is clicked on or focussed upon.</p>
              */
             focusOn: {
@@ -156,14 +157,14 @@ var WIDGET         = 'widget',
             return mask;
         }
         else {
-            
+
             mask = Y.Node.create('<div></div>');
             mask.addClass(MODAL_CLASSES.mask);
             if (supportsPosFixed) {
                 mask.setStyles({
                     position    : 'fixed',
                     width       : '100%',
-                    height      : '100%', 
+                    height      : '100%',
                     top         : '0',
                     left        : '0',
                     display     : 'block'
@@ -186,12 +187,12 @@ var WIDGET         = 'widget',
         }
 
     };
-        
+
     /**
      * A stack of Y.Widget objects representing the current hierarchy of modal widgets presently displayed on the screen
      * @property STACK
      */
-    WidgetModal.STACK = [];    
+    WidgetModal.STACK = [];
 
 
     WidgetModal.prototype = {
@@ -212,7 +213,7 @@ var WIDGET         = 'widget',
          * @protected
          */
         _renderUIModal : function () {
-            
+
             var bb = this.get(BOUNDING_BOX);
                 //cb = this.get(CONTENT_BOX);
 
@@ -241,7 +242,7 @@ var WIDGET         = 'widget',
             this.after(VISIBLE+CHANGE, this._afterHostVisibleChangeModal);
             this.after(Z_INDEX+CHANGE, this._afterHostZIndexChangeModal);
             this.after("focusOnChange", this._afterFocusOnChange);
-            
+
             //realign the mask in the viewport if positionfixed is not supported.
             //ios and android don't support it and the current feature test doesnt
             //account for this, so we are doing UA sniffing here. This should be replaced
@@ -314,31 +315,31 @@ var WIDGET         = 'widget',
                 maskNode    = this.get('maskNode'),
                 isModal     = this.get('modal'),
                 topModal, index;
-            
+
             if (visible) {
-            
+
                 Y.Array.each(stack, function(modal){
                     modal._detachUIHandlesModal();
                     modal._blur();
                 });
-                
+
                 // push on top of stack
                 stack.unshift(this);
-                
+
                 //this._attachUIHandlesModal();
                 this._repositionMask(this);
                 this._uiSetHostZIndexModal(this.get(Z_INDEX));
                 WidgetModal._GET_MASK().show();
-                
+
                 if (isModal) {
                     //this._attachUIHandlesModal();
                     Y.later(1, this, '_attachUIHandlesModal');
                     this._focus();
                 }
-                
-                
+
+
             } else {
-            
+
                 index = Y.Array.indexOf(stack, this);
                 if (index >= 0) {
                     // Remove modal widget from global stack.
@@ -347,9 +348,9 @@ var WIDGET         = 'widget',
 
                 this._detachUIHandlesModal();
                 this._blur();
-                
+
                 if (stack.length) {
-                    topModal = stack[0];                    
+                    topModal = stack[0];
                     this._repositionMask(topModal);
                     //topModal._attachUIHandlesModal();
                     topModal._uiSetHostZIndexModal(topModal.get(Z_INDEX));
@@ -359,15 +360,15 @@ var WIDGET         = 'widget',
                         Y.later(1, topModal, '_attachUIHandlesModal');
                         topModal._focus();
                     }
-                    
+
                 } else {
 
                     if (maskNode.getStyle('display') === 'block') {
                         maskNode.hide();
                     }
-                    
+
                 }
-                
+
             }
         },
 
@@ -382,7 +383,7 @@ var WIDGET         = 'widget',
             if (this.get('modal')) {
                 this.get('maskNode').setStyle(Z_INDEX, zIndex || 0);
             }
-            
+
         },
 
         /**
@@ -406,7 +407,7 @@ var WIDGET         = 'widget',
                 i, len, o;
 
             for (i = 0, len = focusOn.length; i < len; i++) {
-                
+
                 o = {};
                 o.node = focusOn[i].node;
                 o.ev = focusOn[i].eventName;
@@ -426,11 +427,11 @@ var WIDGET         = 'widget',
                 else if (o.node && o.keyCode && o.ev) {
                     uiHandles.push(o.node.on(o.ev, focus, o.keyCode));
                 }
-                
+
                 else {
                     Y.Log('focusOn ATTR Error: The event with name "'+o.ev+'" could not be attached.');
                 }
-                
+
             }
 
             if ( ! supportsPosFixed) {
@@ -443,7 +444,7 @@ var WIDGET         = 'widget',
         },
 
         /**
-         * Detaches all UI Listeners that were set in _attachUIHandlesModal from the widget. 
+         * Detaches all UI Listeners that were set in _attachUIHandlesModal from the widget.
          *
          * @method _detachUIHandlesModal
          */
@@ -455,7 +456,7 @@ var WIDGET         = 'widget',
         },
 
         /**
-         * Default function that is called when visibility is changed on the widget. 
+         * Default function that is called when visibility is changed on the widget.
          *
          * @method _afterHostVisibleChangeModal
          * @param {EventFacade} e The event facade of the change
@@ -466,7 +467,7 @@ var WIDGET         = 'widget',
         },
 
         /**
-         * Default function that is called when z-index is changed on the widget. 
+         * Default function that is called when z-index is changed on the widget.
          *
          * @method _afterHostZIndexChangeModal
          * @param {EventFacade} e The event facade of the change
@@ -520,7 +521,7 @@ var WIDGET         = 'widget',
                 bbParent.insert(maskNode, bbParent.get('firstChild'));
                 this.fire(MaskShow);
             }
-            
+
         },
 
         /**

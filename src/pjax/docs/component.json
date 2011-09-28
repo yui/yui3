@@ -1,0 +1,13 @@
+{
+    "name"       : "pjax",
+    "displayName": "Pjax",
+    "description": "Provides seamless, gracefully degrading pjax (pushState + Ajax) functionality.",
+    "author"     : ["rgrove", "ericf"],
+
+    "tags": [
+        "utility", "beta", "pjax", "pushstate", "ajax", "history", "plugin",
+        "html5"
+    ],
+
+    "use": ["pjax"]
+}

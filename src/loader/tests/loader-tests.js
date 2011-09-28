@@ -108,6 +108,34 @@ YUI.add('loader-tests', function(Y) {
             Assert.isTrue((out.css.length === 1), 'NO CSS files returned');
             Assert.isTrue((out.js[0].indexOf('node-base-debug.js') > 0), 'node-base-debug was not found');
             Assert.isTrue((out.js[0].indexOf('node-core-debug.js') === -1), 'node-core-debug was found');
+        },
+        test_group_filters: function() {
+            var test = this;
+        
+        
+            YUI({
+                debug: true,
+                filter: 'DEBUG',
+                groups: {
+                    local: {
+                        filter: 'raw',
+                        combine: false,
+                        base: './assets/',
+                        modules: {
+                            foo: {
+                                requires: [ 'node', 'widget' ]
+                            }
+                        }
+                    }
+                }
+            }).use('foo', function(Y) {
+                test.resume(function() {
+                    Assert.isTrue(Y.Foo, 'Raw groups module did not load');
+                });                
+            });
+
+            test.wait();
+
         }
     });
 

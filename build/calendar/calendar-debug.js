@@ -157,12 +157,31 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
         }
 
       if (clickedCellIsDay) {
+   /**
+     * Fired when a specific date cell in the calendar is clicked. The event carries a 
+     * payload which includes a `cell` property corresponding to the node of the actual
+     * date cell, and a `date` property, with the `Date` that was clicked.
+     *
+     * @event dateClick
+     */
         this.fire("dateClick", {cell: clickedCell, date: this._nodeToDate(clickedCell)});
       }
       else if (clickedCell.hasClass(CAL_PREVMONTH_DAY)) {
+   /**
+     * Fired when any of the previous month's days displayed before the calendar grid
+     * are clicked.
+     *
+     * @event prevMonthClick
+     */
         this.fire("prevMonthClick");
       }
       else if (clickedCell.hasClass(CAL_NEXTMONTH_DAY)) {
+   /**
+     * Fired when any of the next month's days displayed after the calendar grid
+     * are clicked.
+     *
+     * @event nextMonthClick
+     */
         this.fire("nextMonthClick");
       }
     },
@@ -335,4 +354,4 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
 });
 
 
-}, '@VERSION@' ,{requires:['calendar-base', 'calendarnavigator'], lang:['en', 'ru']});
+}, '@VERSION@' ,{requires:['calendar-base', 'calendarnavigator'], lang:['en', 'ja', 'ru']});

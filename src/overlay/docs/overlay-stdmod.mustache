@@ -39,7 +39,17 @@
 
 .overlay-example .fields {
     float:left;
-    width:20em;
+    width:23em;
+}
+
+.overlay-example .contenttype {
+    margin-bottom:0px;
+    padding-bottom:0px;
+}
+
+.overlay-example .note {
+    margin:0px;
+    padding:0px;
 }
 
 .overlay-example label {
@@ -50,7 +60,7 @@
 
 .overlay-example select {
     width:19em;
-} 
+}
 
 .overlay-example textarea {
     width:19em;
@@ -58,7 +68,7 @@
 }
 
 .overlay-example .filler {
-    margin-left:21em;
+    margin-left:24em;
     margin-top:1em;
     color:#999;
 }
@@ -73,7 +83,7 @@
 </style>
 
 <div class="intro">
-    <p>This example shows how you can work either the `headerContent, bodyContent, footerContent` attributes, to replace content in the Overlay's standard module sections, or use the `setStdModContent(section, content, where)` method to insert content <em>before</em>, or append it <em>after</em> existing content in the section.</p>    
+    <p>This example shows how you can work either the `headerContent, bodyContent, footerContent` attributes, to replace content in the Overlay's standard module sections, or use the `setStdModContent(section, content, where)` method to insert content <em>before</em>, or append it <em>after</em> existing content in the section.</p>
 </div>
 
 <div class="example">
@@ -124,14 +134,14 @@ overlay.render();
 
 <p>We also set it's width and align it to the filler paragraph in the example box ("#overlay-stdmod > .filler"). We don't pass any node references to the `render` method, so the Overlay is rendered in the location of the contentBox provided.</p>
 
-<h3>Setting Content</h3>
+<h3 id="setting-content">Setting Content</h3>
 
 <p>
-The example provides a set of input fields, allowing the user to set content in either of the 3 standard module sections which Overlay supports using Overlay's `setStdModContent` method. 
+The example provides a set of input fields, allowing the user to set content in either of the 3 standard module sections which Overlay supports using Overlay's `setStdModContent` method.
 The content can either be inserted before, appended after, or replace existing content in the specified section.</p>
 
 <p>
-Additionally the new content can be converted to a node instance before being added to the specified section. Although it has no impact on the example, if the new content is added as a string, innerHTML is used to insert before or append after the existing section content, removing any event listeners which may have been attached to elements inside the section. The ability to convert the content to a node instance is provided in the example to illustrate Overlay's ability to handle both content formats.
+Additionally the new content can be converted to a node instance before being added to the specified section. Although it has no impact on the example, if the new content is added as a string, innerHTML is used to insert before or append after the existing section content, removing any event listeners which may have been attached to elements inside the section.
 </p>
 
 ```
@@ -139,23 +149,13 @@ Additionally the new content can be converted to a node instance before being ad
 var content = Y.one("#content");
 var where = Y.one("#where");
 var section = Y.one("#section");
-var asString = Y.one("#asString");
 
 Y.on("click", function() {
 
-    // New content to be added. For this example, we escape the HTML since it's coming from an unknown source,
-    // however Overlay accepts HTML strings as content (you should ensure it's coming from a trusted source).
+    // New content to be added. For this example, we escape the HTML since it's
+    // coming from an unknown source, however Overlay accepts HTML strings as
+    // content (you should ensure it's coming from a trusted source).
     var newContent = Y.Escape.html(content.get("value"));
-
-    // If the "Set content as string" checkbox is checked, we pass new content into the 
-    // setStdModContent method as string (innerHTML will be used to set the new content).
-    
-    // If it's not checked, we create a node reference from the string,
-    // and pass the new content into the setStdModContent as a node reference.
-
-    if (! asString.get("checked") ) {
-        newContent = Y.Node.create(newContent);
-    }
 
     overlay.setStdModContent(section.get("value"), newContent, where.get("value"));
 

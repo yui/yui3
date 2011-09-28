@@ -5,8 +5,8 @@ YUI().use('yql', 'node', 'anim', 'dd', 'dd-plugin', 'dd-drop-plugin', 'slider', 
     wrapper.setStyle('height', (wrapper.get('winHeight') - 50 )+ 'px');
     Y.on('windowresize', function() { wrapper.setStyle('height', (wrapper.get('winHeight') - 50 )+ 'px'); });
     //Make the YQL query.
-    Y.YQL('SELECT * FROM flickr.photos.search(100) WHERE (text="yuiconf") AND (safe_search = 1) AND (media = "photos")', function(e) {
-        if (e.query) {
+    Y.YQL('SELECT * FROM flickr.photos.search(100) WHERE (text="yuiconf") AND (safe_search = 1) AND (media = "photos") AND (api_key = "1895311ec0d2e23431a6407f3e8dffcc")', function(e) {
+        if (e.query && e.query.results) {
             var photos = e.query.results.photo;
             //Walk the returned photos array
             Y.each(photos, function(v, k) {

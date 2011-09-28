@@ -1,0 +1,359 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <style type="text/css">
+            
+        .yui3-scrollview-loading {
+            visibility:hidden;
+            height:0;
+            *height:auto;
+        }
+
+        .container {
+            margin:20px;
+            padding:0;
+            border:1px solid #000;
+            vertical-align:top;
+            display:inline-block;
+            *display:inline;
+            *zoom:1;
+        }
+
+        .container .hd {
+            font:13px/1.231 arial,helvetica,clean,sans-serif;
+            font-size:108%;
+            font-weight:bold;
+            padding:10px;
+            text-align:center;
+            color:#fff;
+            background-color:#6d83a1;
+            background: -webkit-gradient(
+                linear,
+                left top,
+                left bottom,
+                from(#d8dee6),
+                color-stop(0.01, #b0bccc),
+                color-stop(0.49, #889bb3),
+                color-stop(0.50, #8094ae),
+                to(#6d83a1)     
+            );
+        }
+
+        .vert-container {
+            width:200px;
+        }
+
+        .horiz-container {
+            width:300px;
+        }
+
+        .horiz-content ul, .vert-content ul {
+            font:13px/1.231 arial,helvetica,clean,sans-serif;            
+            margin:0;
+            padding:0;
+            list-style:none;
+            white-space:nowrap;
+            *zoom:1;
+        }
+
+        .vert-content ul li {
+            width:198px;
+            height:298px;
+            line-height:298px;
+            margin:0;
+            *zoom:1;
+        }
+
+        .horiz-content ul li {
+            width:298px;
+            height:198px;
+            line-height:198px;
+            margin:0;
+            display:inline-block;
+            *display:inline;
+            *zoom:1;
+        }
+
+        .horiz-content ul li,
+        .vert-content ul li {
+            padding:0;
+            border:1px solid #00ff00;
+            background:#eee;
+            font-size:150px;
+            text-align:center;
+            vertical-align:middle;
+        }
+
+        #state div {
+            margin:10px 3px;
+            border:1px solid #000;
+            background-color:#ccc;
+            color:#aaa;
+            padding:2px 5px;
+            display:inline-block;
+            *display:inline;
+            *zoom:1;
+        }
+
+        #state div.true {
+            background-color:#a00;
+            color:#000;
+        }
+
+        </style>
+        <script src="../../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script>
+        <!--script src="http://yui.yahooapis.com/3.4.0/build/yui/yui.js" type="text/javascript" charset="utf-8"></script-->
+    </head>
+    <body class="yui3-skin-sam">
+
+        <div class="container vert-container">
+            <div class="hd">Vertical</div>
+
+            <!-- SV starts here -->        
+            <div id="sv-vert-content" class="vert-content yui3-scrollview-loading">
+                <ul><li>1</li><li>2</li><li>3</li><li>4</li></ul>
+            </div>
+        </div>
+
+        <div class="container horiz-container">
+            <div class="hd">Horizonal</div>
+
+            <!-- SV starts here -->
+            <div id="sv-horiz-content" class="horiz-content yui3-scrollview-loading">
+                <ul><li>1</li><li>2</li><li>3</li><li>4</li></ul>
+            </div>
+        </div>
+
+        <div class="container vert-container">
+            <div class="hd">Vertical Paged</div>
+
+            <!-- SV starts here -->
+            <div id="sv-vert-paged-content" class="vert-content yui3-scrollview-loading">
+                <ul><li>1</li><li>2</li><li>3</li><li>4</li></ul>
+            </div>
+        </div>
+
+        <div class="container horiz-container">
+            <div class="hd">Horizonal Paged</div>
+
+            <!-- SV starts here -->
+            <div id="sv-horiz-paged-content" class="horiz-content yui3-scrollview-loading">
+                <ul><li>1</li><li>2</li><li>3</li><li>4</li></ul>
+            </div>
+        </div>
+
+        <div id="state">
+            <div id="disabled">Disabled</div>
+            <div id="flickDisabled">Flick Disabled</div>
+            <div id="dragDisabled">Drag Disabled</div>
+        </div>
+
+        <div id="toolbar">
+            <p>
+                <button id="scrollTo">Scroll To</button>
+            </p>
+            <p>
+                <button id="add">Add Content</button>
+                <button id="remove">Remove Content</button>
+                <span>(scrollTo somewhere non-0,0 first, to test translate fix)</span>
+            </p>
+            <p>
+                <button id="disable">Disable</button>
+                <button id="enable">Enable</button>
+            </p>
+            <p>
+                <button id="disableFlick">Disable Flick</button>
+                <button id="enableFlick">Enable Flick</button>
+            </p>
+            <p>
+                <button id="disableDrag">Disable Drag</button>
+                <button id="enableDrag">Enable Drag</button>
+            </p>
+        </div>
+
+        <script type="text/javascript">
+
+            var svHoriz, svVert, svHorizPaged, svVertPaged;
+
+            YUI({filter:"raw"}).use("scrollview", "scrollview-paginator", function(Y) {
+
+                svHoriz = new Y.ScrollView({
+                    id:"svHoriz",
+                    srcNode:"#sv-horiz-content",
+                    height:200,
+                    width:300,
+                    flick: {
+                        minDistance: 10,
+                        minVelocity:0.3,
+                        axis:"x"
+                    },
+                    render:true
+                });
+
+                svVert = new Y.ScrollView({
+                    id:"svVert",
+                    srcNode:"#sv-vert-content",
+                    height:300,
+                    width:200,
+                    flick: {
+                        minDistance: 10,
+                        minVelocity:0.3,
+                        axis:"y"
+                    },                    
+                    render:true
+                });
+
+                svHorizPaged = new Y.ScrollView({
+                    id:"svHorizPaged",
+                    srcNode:"#sv-horiz-paged-content",
+                    height:200,
+                    width:300,
+                    flick: {
+                        minDistance: 10,
+                        minVelocity:0.3,
+                        axis:"x"
+                    },
+                    plugins: [{
+                        fn:Y.Plugin.ScrollViewPaginator, 
+                        cfg:{
+                            selector:">ul>li"
+                        }
+                    }],    
+                    render:true
+                });
+
+                svVertPaged = new Y.ScrollView({
+                    id:"svVertPaged",
+                    srcNode:"#sv-vert-paged-content",
+                    height:300,
+                    width:200,
+                    flick: {
+                        minDistance: 10,
+                        minVelocity:0.3,
+                        axis:"y"
+                    },
+                    plugins: [{
+                        fn:Y.Plugin.ScrollViewPaginator, 
+                        cfg:{
+                            selector:">ul>li"
+                        }
+                    }],                    
+                    render:true
+                });
+                
+                svHoriz._origFlick = svHoriz.get("flick");
+                svVert._origFlick = svVert.get("flick");
+                svVertPaged._origFlick = svVertPaged.get("flick");
+                svHorizPaged._origFlick = svHorizPaged.get("flick");
+
+                var state = Y.one("#state");
+
+                var clickMap = {
+
+                    _scrollPositions : [ 200, 75, 450, 600, 0 ],
+
+                    _scrollToNonZero : function(sv) {
+                        var scrollDim = (sv._scrollsHorizontal) ?  "scrollX" : "scrollY",
+                            position = sv.get(scrollDim);
+
+                        position = (position === 250) ? 100 : 250;
+
+                        sv.set(scrollDim, position, {duration:350});                            
+                    },
+
+                    add: function(sv) {
+                        var list = sv.get("contentBox").one("ul");
+                        var children = list.get("children");
+
+                        sv.once("scrollEnd", function() {
+                            list.append("<li>" + (children.size() + 1) + "</li>");
+                            sv.syncUI();
+                        });
+
+                        this._scrollToNonZero(sv);
+                    },
+                    remove: function(sv) {
+                        var list = sv.get("contentBox").one("ul");                        
+                        var children = list.get("children");
+                        var lastItem;
+
+                        if (children.size() > 3) {
+
+                            sv.once("scrollEnd", function() {
+                                children.pop().remove(true);
+                                sv.syncUI();
+                            });
+
+                            this._scrollToNonZero(sv);
+                        }
+                    },
+                    disable: function(sv) {
+                        sv.disable();
+                        state.one("#disabled").addClass("true");
+                    },
+                    enable: function(sv) {
+                        sv.enable();
+                        state.one("#disabled").removeClass("true");
+                    },
+                    disableFlick: function(sv) {
+                        sv.set("flick", false);
+                        state.one("#flickDisabled").addClass("true");
+                    },
+                    enableFlick: function(sv) {
+                        sv.set("flick", sv._origFlick);
+                        state.one("#flickDisabled").removeClass("true");
+                    },
+                    disableDrag: function(sv) {
+                        sv.set("drag", false);
+                        state.one("#dragDisabled").addClass("true");
+                    },
+                    enableDrag: function(sv) {
+                        sv.set("drag", true);
+                        state.one("#dragDisabled").removeClass("true");
+                    },
+                    scrollTo: function(sv) {
+
+                        var positions = this._scrollPositions.length,
+                            i = sv._scrollPositionIndex || 0,
+                            position = this._scrollPositions[(i % positions)];
+                            sv._scrollPositionIndex = i+1;
+
+                        if (sv._scrollsHorizontal) {
+                            sv.set("scrollX", position, {duration:350});    
+                        } else {
+                            sv.set("scrollY", position, {duration:350});
+                        }
+                    }
+                };
+
+                var pagedClickMap = Y.mix(Y.Object(clickMap), {
+
+                    _scrollToNonZero: function(sv) {
+                        var index = (sv.pages.get("index") == 2) ? 1 : 2;
+                        sv.pages.set("index", index);
+                    },
+    
+                    scrollTo: function(sv) {
+                        var pages = sv.pages.get("total"),
+                            current = sv.pages.get("index"),
+                            position = (current + 1) % pages;
+
+                        sv.pages.set("index", position);    
+                    }
+                }, true);
+
+                Y.one("#toolbar").delegate("click", function(e) {
+                    var method = e.currentTarget.get("id");
+
+                    clickMap[method](svVert);
+                    clickMap[method](svHoriz);
+
+                    pagedClickMap[method](svVertPaged);
+                    pagedClickMap[method](svHorizPaged);
+
+                }, "button");
+
+            });
+        </script>
+    </body>
+</html>

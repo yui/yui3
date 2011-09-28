@@ -1,11 +1,11 @@
 {
     "projectName": "YUI 3",
 
-    "apiDocs": "http://stage.yuilibrary.com/yui/docs/api",
+    "apiDocs": "http://yuilibrary.com/yui/docs/api",
 
     "yuiBuildUrl"     : "build",
     "yuiLocalBuildUrl": "build",
-    "yuiVersion"      : "3.4.0",
+    "yuiVersion"      : "3.4.1",
     "yuiSeedUrl"      : "build/yui/yui-min.js",
 
     "componentDefaults": {

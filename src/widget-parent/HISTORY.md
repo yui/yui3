@@ -1,11 +1,24 @@
-Widget Parent
-=============
+Widget Parent Change History
+============================
 
 3.4.1
 -----
 
   * Fixed issue with children not being destroyed, when
     parent.destroy() is called.
+
+  * Added if (sibling.get("rendered")) check before trying to insert 
+    children after/before siblings. This is not required for the out of
+    the box Parent/Child implementation, but is useful for custom 
+    implementations which customize children to render asynchronously.
+
+    See #2529863
+
+  * Fixed issue where previously rendered children, added to an empty parent,
+    would not get rendered into the parent's child container node.
+
+    Based on the pull request from andreas-karlsson, with the root fix *and* unit
+    test (nicely done): https://github.com/yui/yui3/pull/25
 
 3.4.0
 -----

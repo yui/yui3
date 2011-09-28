@@ -258,6 +258,7 @@
     "calendar": {
         "lang": [
             "en", 
+            "ja", 
             "ru"
         ], 
         "requires": [
@@ -269,6 +270,7 @@
     "calendar-base": {
         "lang": [
             "en", 
+            "ja", 
             "ru"
         ], 
         "requires": [
@@ -325,7 +327,8 @@
     "console": {
         "lang": [
             "en", 
-            "es"
+            "es", 
+            "ja"
         ], 
         "requires": [
             "yui-log", 
@@ -1120,6 +1123,7 @@
     "highlight-base": {
         "requires": [
             "array-extras", 
+            "classnamemanager", 
             "escape", 
             "text-wordbreak"
         ]
@@ -1222,7 +1226,7 @@
     "io-xdr": {
         "requires": [
             "io-base", 
-            "datatype-xml"
+            "datatype-xml-parse"
         ]
     }, 
     "json": {
@@ -1417,6 +1421,21 @@
             "widget-buttons"
         ], 
         "skinnable": true
+    }, 
+    "pjax": {
+        "requires": [
+            "classnamemanager", 
+            "controller", 
+            "io-base", 
+            "node-base", 
+            "node-event-delegate"
+        ]
+    }, 
+    "pjax-plugin": {
+        "requires": [
+            "node-pluginhost", 
+            "pjax"
+        ]
     }, 
     "plugin": {
         "requires": [

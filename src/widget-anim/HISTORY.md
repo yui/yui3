@@ -1,5 +1,10 @@
-Widget Anim
-===========
+Widget Anim Change History
+==========================
+
+3.4.1
+-----
+
+  * No changes.
 
 3.4.0
 -----
@@ -24,5 +29,4 @@ Widget Anim
 3.1.0
 -----
 
-  * Initial release
-
+  * Initial release.
