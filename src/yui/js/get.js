@@ -36,6 +36,13 @@ var ua = Y.UA,
     },
 
     /**
+     * hash to track script/link nodes to avoid duplicate requests
+     * @property tracker
+     * @private
+     */
+    tracker = {},
+
+    /**
      * hash of queues to manage multiple requests
      * @property queues
      * @private
@@ -272,7 +279,8 @@ var ua = Y.UA,
     _purge = function(tId) {
         var nodes, doc, parent, sibling, node, attr, insertBefore,
             i, l,
-            q = queues[tId];
+            q = queues[tId],
+            url;
 
         if (q) {
             nodes = q.nodes;
@@ -294,8 +302,17 @@ var ua = Y.UA,
 
             for (i = 0; i < l; i++) {
                 node = nodes[i];
-                parent = node.parentNode;
+                url = node.getAttribute('src') || node.getAttribute('href') || '';
+                if (url !== '' && tracker[url]) {
+                    if (tracker[url].refCount > 1) {
+                        tracker[url].refCount -= 1;
+                        continue;                    
+                    } else {
+                        delete tracker[url];
+                    }
+                }
 
+                parent = node.parentNode;
                 if (node.clearAttributes) {
                     node.clearAttributes();
                 } else {
@@ -369,7 +386,7 @@ var ua = Y.UA,
             return;
         }
 
-        if (sync) {
+        if (sync && tracker[url].refCount === 1) {
             _clearTimeout(q);
         }
 
@@ -504,18 +521,32 @@ var ua = Y.UA,
                     _timeout(id);
                 }, timeout);
             }
+            
+            if (!tracker[url]) {
+                tracker[url] = {
+                    id: id,
+                    refCount: 1
+                };
 
-            if (type === SCRIPT) {
-                node = _scriptNode(url, win, attrs);
+                if (type === SCRIPT) {
+                    node = _scriptNode(url, win, attrs);
+                } else {
+                    node = _linkNode(url, win, attrs);
+                }
+                tracker[url].node = node;
             } else {
-                node = _linkNode(url, win, attrs);
+                tracker[url].refCount +=  1;
+                node = tracker[url].node;
             }
-
+            
             // add the node to the queue so we can return it in the callback 
             q.nodes.push(node);
 
             _trackLoad(type, node, id, url);
-            _insertInDoc(node, id, win);
+            
+            if (tracker[url].refCount === 1) {
+                _insertInDoc(node, id, win);
+            }
     
             if (!ONLOAD_SUPPORTED[type]) {
                 _loaded(id, url);
