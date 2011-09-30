@@ -62,9 +62,10 @@ Modules
 Examples
 --------
 
-See `tests/manual/todo.html` and the corresponding `todo.js` file for an
-unskinned but functional example of a simple todo list app built using `Model`,
-`ModelList`, and `View`.
+### [Todo List][todo]
 
-Enhanced examples and full documentation will be provided in future preview
-releases of YUI 3.4.0.
+This example demonstrates how to create a todo list app using the Model,
+Model List, and View components. The example also includes a custom sync layer
+that stores the todo items in `localStorage` (in browsers that support it).
+
+[todo]: http://yuilibrary.com/yui/docs/app/app-todo.html

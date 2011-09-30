@@ -1226,7 +1226,7 @@
     "io-xdr": {
         "requires": [
             "io-base", 
-            "datatype-xml"
+            "datatype-xml-parse"
         ]
     }, 
     "json": {
@@ -1421,6 +1421,21 @@
             "widget-buttons"
         ], 
         "skinnable": true
+    }, 
+    "pjax": {
+        "requires": [
+            "classnamemanager", 
+            "controller", 
+            "io-base", 
+            "node-base", 
+            "node-event-delegate"
+        ]
+    }, 
+    "pjax-plugin": {
+        "requires": [
+            "node-pluginhost", 
+            "pjax"
+        ]
     }, 
     "plugin": {
         "requires": [

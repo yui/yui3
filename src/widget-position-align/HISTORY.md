@@ -1,5 +1,5 @@
-WidgetPositionAlign Change History
-==================================
+Widget Position Align Change History
+====================================
 
 3.4.1
 -----
@@ -34,7 +34,7 @@ WidgetPositionAlign Change History
 3.1.0
 -----
 
-  * Renamed module from widget-position-ext to widget-position-align.
+  * Renamed module from `widget-position-ext` to `widget-position-align`.
 
 3.0.0
 -----
