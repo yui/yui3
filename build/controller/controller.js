@@ -263,7 +263,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
             if (html5 && this.upgrade()) {
                 return;
             } else {
-                this._dispatch(this._getPath());
+                this._dispatch(this._getPath(), this._getURL());
             }
         });
 
@@ -327,7 +327,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     },
 
     /**
-    Removes the `root` URL from the from of _path_ (if it's there) and returns
+    Removes the `root` URL from the front of _path_ (if it's there) and returns
     the result. The returned path will always have a leading `/`.
 
     @method removeRoot
@@ -565,10 +565,11 @@ Y.Controller = Y.extend(Controller, Y.Base, {
 
     @method _dispatch
     @param {String} path URL path.
+    @param {String} url Full URL.
     @chainable
     @protected
     **/
-    _dispatch: function (path) {
+    _dispatch: function (path, url) {
         var self   = this,
             routes = self.match(path),
             req;
@@ -580,7 +581,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
             return self;
         }
 
-        req = self._getRequest(path);
+        req = self._getRequest(path, url);
 
         req.next = function (err) {
             var callback, matches, route;
@@ -667,6 +668,11 @@ Y.Controller = Y.extend(Controller, Y.Base, {
             return path;
         }
 
+        // Special case for catchall paths.
+        if (path === '*') {
+            return /.*/;
+        }
+
         path = path.replace(this._regexPathParam, function (match, operator, key) {
             keys.push(key);
             return operator === '*' ? '(.*?)' : '([^/]*)';
@@ -680,14 +686,27 @@ Y.Controller = Y.extend(Controller, Y.Base, {
 
     @method _getRequest
     @param {String} path Current path being dispatched.
+    @param {String} path Current full URL being dispatched.
     @return {Object} Request object.
     @protected
     **/
-    _getRequest: function (path) {
+    _getRequest: function (path, url) {
         return {
             path : path,
-            query: this._parseQuery(this._getQuery())
+            query: this._parseQuery(this._getQuery()),
+            url  : url
         };
+    },
+
+    /**
+    Gets the current full URL.
+
+    @method _getURL
+    @return {String} URL.
+    @protected
+    **/
+    _getURL: function () {
+        return location.toString();
     },
 
     /**
@@ -837,7 +856,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         var self = this;
 
         if (self._ready) {
-            self._dispatch(self._getPath());
+            self._dispatch(self._getPath(), self._getURL());
         }
     },
 
@@ -858,4 +877,4 @@ Y.Controller = Y.extend(Controller, Y.Base, {
 });
 
 
-}, '@VERSION@' ,{optional:['querystring-parse'], requires:['array-extras', 'base-build', 'history']});
+}, '@VERSION@' ,{requires:['array-extras', 'base-build', 'history'], optional:['querystring-parse']});

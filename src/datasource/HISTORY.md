@@ -1,6 +1,12 @@
 DataSource Change History
 =========================
 
+3.4.1
+-----
+
+  * No changes.
+
+
 3.4.0
 -----
 
@@ -20,6 +26,7 @@ DataSource Change History
 
   * Un-anonymize `DataSource.IO` callback functions. [Ticket #2529466]
 
+
 3.2.0
 -----
 
@@ -31,10 +38,12 @@ DataSource Change History
   
   * Added `ioConfig` Attribute to `DataSource.IO`.
 
+
 3.1.1
 -----
 
   * No changes.
+
 
 3.1.0
 -----
@@ -52,12 +61,14 @@ DataSource Change History
   
   * Code reorganized (API and functionality unaffected).
 
+
 3.0.0
 -----
 
   * `DataSource.IO` now passes request value to IO.
   
   * `DataSource.Function` now catches exception and fires error event.
+
 
 3.0.0beta1
 ------------

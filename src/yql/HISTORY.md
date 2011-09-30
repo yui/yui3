@@ -1,6 +1,10 @@
 YQL Change History
 ==================
 
+### 3.4.1
+
+    No changes.
+
 ### 3.4.0
     
     #2530246 - Fixed bug in yql module where options ('opts') were not actually being used.  This prevented use YQL calls over SSL, which some tables require.
