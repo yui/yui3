@@ -2972,9 +2972,33 @@ baseSuite.add(new Y.Test.Case({
     name: "target.detach",
 
     "test target.detach() with not subs is harmless": function () {
+        var target = new Y.EventTarget();
+
+        function fn() {}
+
+        target.detach('test');
+        target.detach('category|test');
+        target.detach('prefix:test');
+        target.detach('category|prefix:test');
+        target.detach('test', fn);
+        target.detach('category|test', fn);
+        target.detach('prefix:test', fn);
+        target.detach('category|prefix:test', fn);
+        target.detach();
+
+        Y.Assert.isTrue(true);
     },
 
     "test target.detachAll() with not subs is harmless": function () {
+        var target = new Y.EventTarget();
+
+        target.detachAll();
+        target.detachAll('test');
+        target.detachAll('prefix:test');
+        target.detachAll('category|test');
+        target.detachAll('category|prefix:test');
+
+        Y.Assert.isTrue(true);
     },
 
     "test target.on() + target.detach(type, fn)": function () {
@@ -3151,7 +3175,7 @@ baseSuite.add(new Y.Test.Case({
 
     "test target.on() + handle.detach()": function () {
         var count = 0,
-            target = new Y.EventTarget();
+            target = new Y.EventTarget(),
             sub;
 
         function increment() {
@@ -3642,16 +3666,777 @@ baseSuite.add(new Y.Test.Case({
         Y.Assert.areSame(2, count);
     },
 
-    "test target.on() + target.after() + target.detach(type) detaches both": function () {
+    "test target.on(type) + target.detach(prefix:type)": function () {
+        var target = new Y.EventTarget({ prefix: 'pre' }),
+            count = 0;
+
+        function increment() {
+            count++;
+        }
+
+        target.on('test', increment);
+
+        target.fire('test');
+
+        Y.Assert.areSame(1, count);
+
+        target.detach('test');
+
+        target.fire('test');
+
+        Y.Assert.areSame(1, count);
+
+        target.on('test', increment);
+
+        target.fire('test');
+
+        Y.Assert.areSame(2, count);
+
+        target.detach('pre:test');
+
+        target.fire('test');
+
+        Y.Assert.areSame(2, count);
     },
 
-    "test target.on(type) + target.detach(prefix:type)": function () {
+    "test target.after() + target.detach(type, fn)": function () {
+        var count = 0,
+            target = new Y.EventTarget();
+
+        function fn() {
+            count++;
+        }
+
+        target.after('test', fn);
+
+        target.fire('test');
+
+        Y.Assert.areSame(1, count);
+
+        target.detach('test', fn);
+
+        target.fire('test');
+
+        Y.Assert.areSame(1, count);
+
+        target.after('test', fn);
+        target.after('test', fn);
+
+        target.fire('test');
+
+        Y.Assert.areSame(3, count);
+
+        target.detach('test', fn);
+
+        target.fire('test');
+
+        Y.Assert.areSame(3, count);
+    },
+
+    "test target.after(type, fn, thisObj) + target.detach(type, fn)": function () {
+        var count = 0,
+            a = {},
+            b = {},
+            target = new Y.EventTarget();
+
+        function fn() {
+            count++;
+        }
+
+        target.after('test', fn, a);
+
+        target.fire('test');
+
+        Y.Assert.areSame(1, count);
+
+        target.detach('test', fn);
+
+        target.fire('test');
+
+        Y.Assert.areSame(1, count);
+
+        target.after('test', fn, a);
+        target.after('test', fn, b);
+
+        target.fire('test');
+
+        Y.Assert.areSame(3, count);
+
+        target.detach('test', fn);
+
+        target.fire('test');
+
+        Y.Assert.areSame(3, count);
+    },
+
+    "test target.after() + target.detach(type)": function () {
+        var count = 0,
+            target = new Y.EventTarget();
+
+        function fn() {
+            count++;
+        }
+
+        target.after('test', fn);
+
+        target.fire('test');
+
+        Y.Assert.areSame(1, count);
+
+        target.detach('test');
+
+        target.fire('test');
+
+        Y.Assert.areSame(1, count);
+
+        target.after('test', fn);
+        target.after('test', fn);
+
+        target.fire('test');
+
+        Y.Assert.areSame(3, count);
+
+        target.detach('test');
+
+        target.fire('test');
+
+        Y.Assert.areSame(3, count);
+    },
+
+    "test target.after() + target.detach()": function () {
+        var count = 0,
+            target = new Y.EventTarget();
+
+        function fn() {
+            count++;
+        }
+
+        target.after('test', fn);
+
+        target.fire('test');
+
+        Y.Assert.areSame(1, count);
+
+        target.detach();
+
+        target.fire('test');
+
+        Y.Assert.areSame(1, count);
+
+        target.after('test', fn);
+        target.after('test', fn);
+
+        target.fire('test');
+
+        Y.Assert.areSame(3, count);
+
+        target.detach();
+
+        target.fire('test');
+
+        Y.Assert.areSame(3, count);
+    },
+
+    "test target.after() + target.detachAll()": function () {
+        var count = 0,
+            target = new Y.EventTarget();
+
+        function fn() {
+            count++;
+        }
+
+        target.after('test', fn);
+
+        target.fire('test');
+
+        Y.Assert.areSame(1, count);
+
+        target.detachAll();
+
+        target.fire('test');
+
+        Y.Assert.areSame(1, count);
+
+        target.after('test', fn);
+        target.after('test', fn);
+
+        target.fire('test');
+
+        Y.Assert.areSame(3, count);
+
+        target.detachAll();
+
+        target.fire('test');
+
+        Y.Assert.areSame(3, count);
+    },
+
+    "test target.after() + handle.detach()": function () {
+        var count = 0,
+            target = new Y.EventTarget(),
+            sub;
+
+        function increment() {
+            count++;
+        }
+
+        sub = target.after('test', increment);
+
+        target.fire('test');
+
+        Y.Assert.areSame(1, count);
+
+        sub.detach();
+
+        target.fire('test');
+
+        Y.Assert.areSame(1, count);
+    },
+
+    "test target.after('cat|__', fn) + target.detach('cat|___')": function () {
+        var count = 0,
+            target = new Y.EventTarget();
+
+        function increment() {
+            count++;
+        }
+
+        target.after('cat|test', increment);
+
+        target.fire('test');
+
+        Y.Assert.areSame(1, count);
+
+        target.detach('cat|test');
+
+        target.fire('test');
+
+        Y.Assert.areSame(1, count);
+    },
+
+    "test target.after('cat|__', fn) + target.detach('cat|___', fn)": function () {
+        var count = 0,
+            target = new Y.EventTarget();
+
+        function increment() {
+            count++;
+        }
+
+        target.after('cat|test', increment);
+
+        target.fire('test');
+
+        Y.Assert.areSame(1, count);
+
+        target.detach('cat|test', increment);
+
+        target.fire('test');
+
+        Y.Assert.areSame(1, count);
+    },
+
+    "test target.after('cat|__', fn) + target.detach('cat|*')": function () {
+        var count = 0,
+            target = new Y.EventTarget();
+
+        function increment() {
+            count++;
+        }
+
+        target.after('cat|test', increment);
+
+        target.fire('test');
+
+        Y.Assert.areSame(1, count);
+
+        target.detach('cat|*');
+
+        target.fire('test');
+
+        Y.Assert.areSame(1, count);
+    },
+
+    "test target.after({...}) + target.detach(type)": function () {
+        var count = 0,
+            target = new Y.EventTarget();
+
+        function increment() {
+            count++;
+        }
+
+        target.after({
+            test1: increment,
+            test2: increment
+        });
+
+        target.fire('test1');
+        target.fire('test2');
+
+        Y.Assert.areSame(2, count);
+
+        target.detach('test1');
+
+        target.fire('test1');
+
+        Y.Assert.areSame(2, count);
+
+        target.fire('test2');
+
+        Y.Assert.areSame(3, count);
+
+        target.detach('test2');
+
+        target.fire('test1');
+        target.fire('test2');
+
+        Y.Assert.areSame(3, count);
+    },
+
+    "test target.after({...}) + target.detach(type, fn)": function () {
+        var count = 0,
+            target = new Y.EventTarget();
+
+        function increment() {
+            count++;
+        }
+
+        target.after({
+            test1: increment,
+            test2: increment
+        });
+
+        target.fire('test1');
+        target.fire('test2');
+
+        Y.Assert.areSame(2, count);
+
+        target.detach('test1', increment);
+
+        target.fire('test1');
+
+        Y.Assert.areSame(2, count);
+
+        target.fire('test2');
+
+        Y.Assert.areSame(3, count);
+
+        target.detach('test2', increment);
+
+        target.fire('test1');
+        target.fire('test2');
+
+        Y.Assert.areSame(3, count);
+    },
+
+    "test target.after({...}) + target.detachAll()": function () {
+        var count = 0,
+            target = new Y.EventTarget();
+
+        function increment() {
+            count++;
+        }
+
+        target.after({
+            test1: increment,
+            test2: increment
+        });
+
+        target.fire('test1');
+        target.fire('test2');
+
+        Y.Assert.areSame(2, count);
+
+        target.detachAll();
+
+        target.fire('test1');
+
+        Y.Assert.areSame(2, count);
+
+        target.fire('test2');
+
+        Y.Assert.areSame(2, count);
+    },
+
+    "test target.after({'cat|type': fn}) + target.detach(type, fn)": function () {
+        var count = 0,
+            target = new Y.EventTarget();
+
+        function increment() {
+            count++;
+        }
+
+        target.after({
+            'cat|test1': increment,
+            test2: increment
+        });
+
+        target.fire('test1');
+        target.fire('test2');
+
+        Y.Assert.areSame(2, count);
+
+        target.detach('test1');
+
+        target.fire('test1');
+
+        Y.Assert.areSame(2, count);
+
+        target.fire('test2');
+
+        Y.Assert.areSame(3, count);
+    },
+
+    "test target.after({'cat|type': fn}) + target.detach('cat|type')": function () {
+        var count = 0,
+            target = new Y.EventTarget();
+
+        function increment() {
+            count++;
+        }
+
+        target.after({
+            'cat|test1': increment,
+            test2: increment
+        });
+
+        target.fire('test1');
+        target.fire('test2');
+
+        Y.Assert.areSame(2, count);
+
+        target.detach('cat|test1');
+
+        target.fire('test1');
+
+        Y.Assert.areSame(2, count);
+
+        target.fire('test2');
+
+        Y.Assert.areSame(3, count);
+    },
+
+    "test target.after({'cat|type': fn}) + target.detach('cat|*')": function () {
+        var count = 0,
+            target = new Y.EventTarget();
+
+        function increment() {
+            count++;
+        }
+
+        target.after({
+            'cat|test1': increment,
+            'cat|test2': increment,
+            test3: increment
+        });
+
+        target.fire('test1');
+        target.fire('test2');
+        target.fire('test3');
+
+        Y.Assert.areSame(3, count);
+
+        target.detach('cat|*');
+
+        target.fire('test1');
+
+        Y.Assert.areSame(3, count);
+
+        target.fire('test2');
+
+        Y.Assert.areSame(3, count);
+
+        target.fire('test3');
+
+        Y.Assert.areSame(4, count);
+    },
+
+    "test target.after([type], fn) + target.detach(type, fn)": function () {
+        var count = 0,
+            target = new Y.EventTarget();
+
+        function increment() {
+            count++;
+        }
+
+        target.after(['test'], increment);
+
+        target.fire('test');
+
+        Y.Assert.areSame(1, count);
+
+        target.detach('test', increment);
+
+        target.fire('test');
+
+        Y.Assert.areSame(1, count);
+    },
+
+    "test target.after([type], fn) + target.detach(type)": function () {
+        var count = 0,
+            target = new Y.EventTarget();
+
+        function increment() {
+            count++;
+        }
+
+        target.after(['test'], increment);
+
+        target.fire('test');
+
+        Y.Assert.areSame(1, count);
+
+        target.detach('test');
+
+        target.fire('test');
+
+        Y.Assert.areSame(1, count);
+    },
+
+    "test target.after([typeA, typeB], fn) + target.detach(typeA)": function () {
+        var count = 0,
+            target = new Y.EventTarget();
+
+        function increment() {
+            count++;
+        }
+
+        target.after(['test1', 'test2'], increment);
+
+        target.fire('test1');
+        target.fire('test2');
+
+        Y.Assert.areSame(2, count);
+
+        target.detach('test1');
+
+        target.fire('test1');
+        target.fire('test2');
+
+        Y.Assert.areSame(3, count);
+
+        target.detach('test2');
+
+        target.fire('test1');
+        target.fire('test2');
+
+        Y.Assert.areSame(3, count);
+    },
+
+    "test target.after([typeA, typeB], fn) + target.detach()": function () {
+        var count = 0,
+            target = new Y.EventTarget();
+
+        function increment() {
+            count++;
+        }
+
+        target.after(['test1', 'test2'], increment);
+
+        target.fire('test1');
+        target.fire('test2');
+
+        Y.Assert.areSame(2, count);
+
+        target.detach();
+
+        target.fire('test1');
+        target.fire('test2');
+
+        Y.Assert.areSame(2, count);
+    },
+
+    "test target.after({}) + target.detach() is harmless": function () {
+        var count = 0,
+            target = new Y.EventTarget();
+
+        target.after({});
+        target.detach();
+
+        Y.Assert.areSame(0, count);
+    },
+
+    "test target.after([], fn) + target.detach() is harmless": function () {
+        var count = 0,
+            target = new Y.EventTarget();
+
+        function increment() {
+            count++;
+        }
+
+        target.after([], increment);
+        target.detach();
+
+        Y.Assert.areSame(0, count);
+    },
+
+    "test target.after({}) + handle.detach() is harmless": function () {
+        var target = new Y.EventTarget(),
+            handle;
+
+        handle = target.after({});
+        handle.detach();
+
+        Y.Assert.isTrue(true);
+    },
+
+    "test target.after([], fn) + handle.detach() is harmless": function () {
+        var target = new Y.EventTarget(),
+            handle;
+
+        handle = target.after([], function () {});
+        handle.detach();
+
+        Y.Assert.isTrue(true);
+    },
+
+    "test target.after({...}) + handle.detach()": function () {
+        var count = 0,
+            target = new Y.EventTarget(),
+            handle;
+
+        function increment() {
+            count++;
+        }
+
+        handle = target.after({
+            test1: increment,
+            test2: increment
+        });
+
+        target.fire('test1');
+        target.fire('test2');
+
+        Y.Assert.areSame(2, count);
+
+        handle.detach();
+
+        target.fire('test1');
+        target.fire('test2');
+
+        Y.Assert.areSame(2, count);
+    },
+
+    "test target.after([typeA, typeB], fn) + handle.detach()": function () {
+        var count = 0,
+            target = new Y.EventTarget(),
+            handle;
+
+        function increment() {
+            count++;
+        }
+
+        handle = target.after(['test1', 'test2'], increment);
+
+        target.fire('test1');
+        target.fire('test2');
+
+        Y.Assert.areSame(2, count);
+
+        handle.detach();
+
+        target.fire('test1');
+        target.fire('test2');
+
+        Y.Assert.areSame(2, count);
+    },
+
+    "test target.after([typeA, typeA], fn) + handle.detach()": function () {
+        var count = 0,
+            target = new Y.EventTarget(),
+            handle;
+
+        function increment() {
+            count++;
+        }
+
+        handle = target.after(['test1', 'test2'], increment);
+
+        target.fire('test1');
+        target.fire('test2');
+
+        Y.Assert.areSame(2, count);
+
+        handle.detach();
+
+        target.fire('test1');
+        target.fire('test2');
+
+        Y.Assert.areSame(2, count);
+    },
+
+    "test target.after(type) + target.detach(prefix:type)": function () {
+        var target = new Y.EventTarget({ prefix: 'pre' }),
+            count = 0;
+
+        function increment() {
+            count++;
+        }
+
+        target.after('test', increment);
+
+        target.fire('test');
+
+        Y.Assert.areSame(1, count);
+
+        target.detach('test');
+
+        target.fire('test');
+
+        Y.Assert.areSame(1, count);
+
+        target.after('test', increment);
+
+        target.fire('test');
+
+        Y.Assert.areSame(2, count);
+
+        target.detach('pre:test');
+
+        target.fire('test');
+
+        Y.Assert.areSame(2, count);
+    },
+
+    "test target.on() + target.after() + target.detach(type) detaches both": function () {
+        var target = new Y.EventTarget(),
+            count = 0;
+
+        function incrementOn() {
+            count++;
+        }
+
+        function incrementAfter() {
+            count++;
+        }
+
+        target.on('test', incrementOn);
+        target.after('test', incrementAfter);
+
+        target.fire('test');
+
+        Y.Assert.areSame(2, count);
+
+        target.detach('test');
+
+        target.fire('test');
+
+        Y.Assert.areSame(2, count);
     },
 
     "test target.detach('~AFTER~')": function () {
-    },
+        var target = new Y.EventTarget(),
+            count = 0;
 
-    // repeat all for after
+        target.after('test', function () {
+            count++;
+        });
+
+        target.detach('~AFTER~');
+
+        target.fire('test');
+
+        Y.Assert.areSame(1, count);
+    }
 }));
 
 baseSuite.add(new Y.Test.Case({
