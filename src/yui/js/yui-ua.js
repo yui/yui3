@@ -44,6 +44,8 @@ YUI.Env.parseUA = function(subUA) {
 
         nav = win && win.navigator,
 
+        proc = Y.config.process,
+
         o = {
 
         /**
@@ -186,6 +188,15 @@ YUI.Env.parseUA = function(subUA) {
          * @static
          */
         webos: 0,
+
+        /**
+         * Detects Node.js version.
+         * @property nodejs
+         * @type float
+         * @static
+         */
+        nodejs: proc && proc.versions &&
+                proc.versions.node && numberify(proc.versions.node),
 
         /**
          * Google Caja version number or 0.

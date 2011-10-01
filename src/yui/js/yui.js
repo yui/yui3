@@ -153,6 +153,7 @@ properties.
         doc = (hasWin) ? win.document : null,
         docEl = doc && doc.documentElement,
         docClass = docEl && docEl.className,
+        proc = typeof process != 'undefined' ? process : null,
         instances = {},
         time = new Date().getTime(),
         add = function(el, type, fn, capture) {
@@ -423,6 +424,7 @@ proto = {
         Y.config = Y.config || {
             win: win,
             doc: doc,
+            process: proc,
             debug: true,
             useBrowserConsole: true,
             throwFail: true,
