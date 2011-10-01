@@ -17,6 +17,7 @@
 
 var domEventProxies = Y.Env.evt.dom_wrappers,
     win = Y.config.win,
+    //FIXME: _yuiid leaks to the global object from this
     key = 'event:' + Y.stamp(win) + 'resizenative',
     config;
     
