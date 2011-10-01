@@ -8983,17 +8983,22 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "pjax": {
         "requires": [
+            "pjax-base", 
+            "io-base"
+        ]
+    }, 
+    "pjax-base": {
+        "requires": [
             "classnamemanager", 
             "controller", 
-            "io-base", 
-            "node-base", 
             "node-event-delegate"
         ]
     }, 
     "pjax-plugin": {
         "requires": [
             "node-pluginhost", 
-            "pjax"
+            "pjax", 
+            "plugin"
         ]
     }, 
     "plugin": {
@@ -9538,7 +9543,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '6a554ec14e9324c85b2135e76c0963f4';
+YUI.Env[Y.version].md5 = '62e5969dfc2ac81c40e7479aaebb32a6';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

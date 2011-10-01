@@ -133,7 +133,7 @@ function simulateKeyEvent(target /*:HTMLElement*/, type /*:String*/,
         cancelable = true; //all key events can be cancelled
     }
     if (!isObject(view)){
-        view = window; //view is typically window
+        view = Y.config.win; //view is typically window
     }
     if (!isBoolean(ctrlKey)){
         ctrlKey = false;
@@ -333,7 +333,7 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
         cancelable = (type != "mousemove"); //mousemove is the only one that can't be cancelled
     }
     if (!isObject(view)){
-        view = window; //view is typically window
+        view = Y.config.win; //view is typically window
     }
     if (!isNumber(detail)){
         detail = 1;  //number of mouse clicks must be at least one
@@ -530,7 +530,7 @@ function simulateUIEvent(target /*:HTMLElement*/, type /*:String*/,
         cancelable = (type == "submit"); //submit is the only one that can be cancelled
     }
     if (!isObject(view)){
-        view = window; //view is typically window
+        view = Y.config.win; //view is typically window
     }
     if (!isNumber(detail)){
         detail = 1;  //usually not used but defaulted to this
