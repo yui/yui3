@@ -473,6 +473,20 @@ controllerSuite.add(new Y.Test.Case({
         controller._dispatch('/foo', {});
 
         Assert.areSame(3, calls);
+    },
+
+    '"*" should be a catch-all route': function () {
+        var calls      = 0,
+            controller = this.controller = new Y.Controller();
+
+        controller.route('*', function (req) {
+            calls += 1;
+        });
+
+        controller._dispatch('/foo', {});
+        controller._dispatch('/bar', {});
+
+        Assert.areSame(2, calls);
     }
 }));
 

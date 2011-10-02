@@ -1,6 +1,13 @@
 App Framework Change History
 ============================
 
+3.5.0
+-----
+
+* Controller: "*" can now be used to create a catch-all route that will match
+  any path (previously it was necessary to use a regex to do this).
+
+
 3.4.1
 -----
 

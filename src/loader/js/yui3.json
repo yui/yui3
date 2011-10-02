@@ -1424,17 +1424,22 @@
     }, 
     "pjax": {
         "requires": [
+            "pjax-base", 
+            "io-base"
+        ]
+    }, 
+    "pjax-base": {
+        "requires": [
             "classnamemanager", 
             "controller", 
-            "io-base", 
-            "node-base", 
             "node-event-delegate"
         ]
     }, 
     "pjax-plugin": {
         "requires": [
             "node-pluginhost", 
-            "pjax"
+            "pjax", 
+            "plugin"
         ]
     }, 
     "plugin": {

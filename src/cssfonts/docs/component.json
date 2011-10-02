@@ -7,6 +7,8 @@
     "tags": ["css", "fonts"],
     "use" : ["cssfonts"],
 
+    "hideAPILink": true,
+
     "examples": [
         {
             "name"       : "cssfonts-basic",
