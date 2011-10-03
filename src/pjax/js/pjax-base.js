@@ -15,7 +15,7 @@ function PjaxBase() {}
 
 PjaxBase.prototype = {
     // -- Properties -----------------------------------------------------------
-    _regexUrl: /^((?:https?:\/\/|\/\/)[^\/]+)?([^?#]*)(.*)$/i,
+    _regexUrl: /^((?:([^:]+):(?:\/\/)?|\/\/)[^\/]*)?([^?#]*)(.*)$/i,
 
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function () {
@@ -54,7 +54,8 @@ PjaxBase.prototype = {
     },
 
     load: function (url) {
-        this.save(this._resolveUrl(url));
+        url = this._resolveUrl(url);
+        this.save(this.removeRoot(url));
 
         if (this.get('scrollToTop') && Y.config.win) {
             // Scroll to the top of the page. The timeout ensures that the
@@ -116,13 +117,22 @@ PjaxBase.prototype = {
             return root;
         }
 
+        // Path is host relative.
+        if (path.charAt(0) === '/') {
+            return path;
+        }
+
         return this._normalizePath(root + '/' + path);
     },
 
     _resolveUrl: function (url) {
         var self = this;
 
-        return url.replace(this._regexUrl, function (match, prefix, path, suffix) {
+        return url.replace(this._regexUrl, function (match, prefix, scheme, path, suffix) {
+            if (scheme && !scheme.match(/https?/i)) {
+                return match;
+            }
+
             return (prefix || '') + self._resolvePath(path) + (suffix || '');
         });
     },
@@ -133,7 +143,7 @@ PjaxBase.prototype = {
     },
 
     _onLinkClick: function (e) {
-        var url = e.currentTarget.get('href');
+        var url = this._resolveUrl(e.currentTarget.get('href'));
 
         // Allow the native behavior on middle/right-click, or when Ctrl or
         // Command are pressed.
