@@ -607,7 +607,7 @@ suite.add( new Y.Test.Case({
 	    // In order to see it, you need to put a breakpoint on the ring.simulate line just after this is called
 	    // Turn the global enableVis to false before check in
         visualInspection: function (x,y,dialObj){
-            var enableVis = true; // Global enable. You'll need to put breakpoints in code to see it.
+            var enableVis = false; // Global enable. You'll need to put breakpoints in code to see it.
             if(enableVis){
                 var eventXYMarker,
                 scrollT = Y.one('document').get('scrollTop'),
