@@ -732,6 +732,8 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     _joinURL: function (url) {
         var root = this.root;
 
+        url = this.removeRoot(url);
+
         if (url.charAt(0) === '/') {
             url = url.substring(1);
         }
