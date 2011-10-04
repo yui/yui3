@@ -15,6 +15,7 @@ function PjaxBase() {}
 
 PjaxBase.prototype = {
     // -- Properties -----------------------------------------------------------
+    _resolved: {},
     _regexUrl: /^((?:([^:]+):(?:\/\/)?|\/\/)[^\/]*)?([^?#]*)(.*)$/i,
 
     // -- Lifecycle Methods ----------------------------------------------------
@@ -30,8 +31,7 @@ PjaxBase.prototype = {
 
     // -- Public Prototype Methods ---------------------------------------------
     load: function (url) {
-        url = this._resolveUrl(url);
-        this.save(this.removeRoot(url));
+        this.save(this._resolveUrl(url));
 
         if (this.get('scrollToTop') && Y.config.win) {
             // Scroll to the top of the page. The timeout ensures that the
@@ -102,15 +102,26 @@ PjaxBase.prototype = {
     },
 
     _resolveUrl: function (url) {
-        var self = this;
+        var self        = this,
+            resolved    = self._resolved,
+            resolvedUrl = resolved[url];
 
-        return url.replace(this._regexUrl, function (match, prefix, scheme, path, suffix) {
-            if (scheme && !scheme.match(/https?/i)) {
+        if (resolvedUrl) {
+            return resolvedUrl;
+        }
+
+        function resolve(match, prefix, scheme, path, suffix) {
+            if (scheme && scheme.toLowerCase().indexOf('http') !== 0) {
                 return match;
             }
 
             return (prefix || '') + self._resolvePath(path) + (suffix || '');
-        });
+        }
+
+        // Cache resolved URL.
+        resolvedUrl = resolved[url] = url.replace(self._regexUrl, resolve);
+
+        return resolvedUrl;
     },
 
     // -- Protected Event Handlers ---------------------------------------------
@@ -126,7 +137,7 @@ PjaxBase.prototype = {
         if (e.button !== 1 || e.ctrlKey || e.metaKey) { return; }
 
         // Do nothing if there's no matching route for this URL.
-        if (!this.hasRoute(this.removeRoot(url))) { return; }
+        if (!this.hasRoute(url)) { return; }
 
         e.preventDefault();
 
