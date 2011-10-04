@@ -204,6 +204,21 @@ controllerSuite.add(new Y.Test.Case({
         Assert.isFalse(controller.hasRoute('/baz/quux'));
     },
 
+    'hasRoute() should support full URLs': function () {
+        var controller = this.controller = new Y.Controller(),
+            routes;
+
+        function noop () {}
+
+        controller.route('/:foo', noop);
+        controller.route(/foo/, noop);
+        controller.route('/bar', noop);
+
+        Assert.isTrue(controller.hasRoute('http://example.com/foo'));
+        Assert.isTrue(controller.hasRoute('https://example.com/bar'));
+        Assert.isFalse(controller.hasRoute('http://example.com/baz/quux'));
+    },
+
     'dispatch() should dispatch to the first route that matches the current URL': function () {
         var test       = this,
             controller = this.controller = new Y.Controller();
