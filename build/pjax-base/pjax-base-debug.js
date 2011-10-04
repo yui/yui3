@@ -17,7 +17,7 @@ function PjaxBase() {}
 
 PjaxBase.prototype = {
     // -- Properties -----------------------------------------------------------
-    _regexUrl: /^((?:https?:\/\/|\/\/)[^\/]+)?([^?#]*)(.*)$/i,
+    _regexUrl: /^((?:([^:]+):(?:\/\/)?|\/\/)[^\/]*)?([^?#]*)(.*)$/i,
 
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function () {
@@ -31,32 +31,9 @@ PjaxBase.prototype = {
     },
 
     // -- Public Prototype Methods ---------------------------------------------
-    getContent: function (responseText) {
-        var content         = {},
-            contentSelector = this.get('contentSelector'),
-            frag            = Y.Node.create(responseText || ''),
-            titleSelector   = this.get('titleSelector'),
-            titleNode;
-
-        if (contentSelector) {
-            content.node = Y.one(frag.all(contentSelector).toFrag());
-        } else {
-            content.node = frag;
-        }
-
-        if (titleSelector) {
-            titleNode = frag.one(titleSelector);
-
-            if (titleNode) {
-                content.title = titleNode.get('text');
-            }
-        }
-
-        return content;
-    },
-
     load: function (url) {
-        this.save(this._resolveUrl(url));
+        url = this._resolveUrl(url);
+        this.save(this.removeRoot(url));
 
         if (this.get('scrollToTop') && Y.config.win) {
             // Scroll to the top of the page. The timeout ensures that the
@@ -118,13 +95,22 @@ PjaxBase.prototype = {
             return root;
         }
 
+        // Path is host relative.
+        if (path.charAt(0) === '/') {
+            return path;
+        }
+
         return this._normalizePath(root + '/' + path);
     },
 
     _resolveUrl: function (url) {
         var self = this;
 
-        return url.replace(this._regexUrl, function (match, prefix, path, suffix) {
+        return url.replace(this._regexUrl, function (match, prefix, scheme, path, suffix) {
+            if (scheme && !scheme.match(/https?/i)) {
+                return match;
+            }
+
             return (prefix || '') + self._resolvePath(path) + (suffix || '');
         });
     },
@@ -135,7 +121,7 @@ PjaxBase.prototype = {
     },
 
     _onLinkClick: function (e) {
-        var url = e.currentTarget.get('href');
+        var url = this._resolveUrl(e.currentTarget.get('href'));
 
         // Allow the native behavior on middle/right-click, or when Ctrl or
         // Command are pressed.
@@ -154,9 +140,6 @@ PjaxBase.prototype = {
 };
 
 PjaxBase.ATTRS = {
-    contentSelector: {
-        value: null
-    },
 
     linkSelector: {
         value    : 'a.' + CLASS_PJAX,
@@ -165,10 +148,6 @@ PjaxBase.ATTRS = {
 
     scrollToTop: {
         value: true
-    },
-
-    titleSelector: {
-        value: 'title'
     }
 };
 
