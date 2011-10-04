@@ -479,21 +479,21 @@
          * @protected
          */
         _getAngleFromHandleCenter : function(handleCenterX, handleCenterY){
-            var ang = Math.atan( (this._centerYOnPage - handleCenterY)  /  (this._centerXOnPage - handleCenterX)  ) * (180 / Math.PI); 
-            ang = ((this._centerXOnPage - handleCenterX) < 0) ? ang + 90 : ang + 90 + 180; // Compensate for neg angles from Math.atan
+            var ang = Math.atan( (this._dialCenterY - handleCenterY)  /  (this._dialCenterX - handleCenterX)  ) * (180 / Math.PI); 
+            ang = ((this._dialCenterX - handleCenterX) < 0) ? ang + 90 : ang + 90 + 180; // Compensate for neg angles from Math.atan
             return ang;
         },
         
         /**
-         * recalculates the XY of the center of the dial. 
+         * calculates the XY of the center of the dial relative to the ring node. 
          * This is needed for calculating the angle of the handle
          *
-         * @method _recalculateDialCenter
+         * @method _calculateDialCenter
          * @protected
          */
-        _recalculateDialCenter : function(){ // #2531111 value, and marker don't track handle when dial position changes on page (resize when inline)
-            this._centerYOnPage = (this._ringNode.getY() + this._ringNodeRadius);
-            this._centerXOnPage = (this._ringNode.getX() + this._ringNodeRadius);                     
+        _calculateDialCenter : function(){ // #2531111 value, and marker don't track handle when dial position changes on page (resize when inline)
+            this._dialCenterX = this._ringNode.get('offsetWidth') / 2;                     
+            this._dialCenterY = this._ringNode.get('offsetHeight') / 2;
         },
         
         /**
@@ -506,15 +506,16 @@
          * @protected
          */
         _handleDrag : function(e){
-            var handleCenterX,   // changes for [#2530206]
-            handleCenterY,   // changes for [#2530206]
+            var handleCenterX,
+            handleCenterY,
             ang,
             newValue;
 
-            // [#2530206] The center of the handle is different relative to the XY of the mousedown event, compared to the drag:drag event. 
-            // the event was emitted from drag:drag of handle. The center of the handle is e.pageX + radius, e.pageY + radius
-            handleCenterX = e.pageX + this._handleNodeRadius;
-            handleCenterY = e.pageY + this._handleNodeRadius;
+            // The event was emitted from drag:drag of handle. 
+            // The center of the handle is top left position of the handle node + radius of handle.
+            // This is different than a mousedown on the ring.
+            handleCenterX = (parseInt(this._handleNode.getStyle('left'),10) + this._handleNodeRadius);
+            handleCenterY = (parseInt(this._handleNode.getStyle('top'),10) + this._handleNodeRadius);
             ang = this._getAngleFromHandleCenter(handleCenterX, handleCenterY);
 
             // check for need to set timesWrapped
@@ -546,7 +547,7 @@
         },
 
         /**
-         * handles a mousedown or gesturemovestart event on the ringNode
+         * handles a mousedown or gesturemovestart event on the ring node
          *
          * @method _handleMousedown
          * @param e {DOMEvent} the event object
@@ -556,12 +557,18 @@
             var minAng = this._getAngleFromValue(this._minValue),
             maxAng = this._getAngleFromValue(this._maxValue),
             newValue, oppositeMidRangeAngle,
+            handleCenterX, handleCenterY, 
             ang;
-            
-            this._recalculateDialCenter(); // #2531111 in case the Dial has moved to a new XY due to browser resize, etc.
-            // the event was emitted from mousedown on ring, so center should be the XY of mousedown.
-            var handleCenterX = e.pageX,
-            handleCenterY = e.pageY;
+
+            // The event was emitted from mousedown on the ring node,
+            // so the center of the handle should be the XY of mousedown. 
+            if(Y.UA.ios){  // ios adds the scrollLeft and top onto clientX and Y in a native click
+                handleCenterX = (e.clientX - this._ringNode.getX());
+                handleCenterY = (e.clientY - this._ringNode.getY());
+            }else{
+                handleCenterX = (e.clientX + Y.one('document').get('scrollLeft') - this._ringNode.getX());
+                handleCenterY = (e.clientY + Y.one('document').get('scrollTop') - this._ringNode.getY());
+            }
             ang = this._getAngleFromHandleCenter(handleCenterX, handleCenterY);
              
             /* ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -702,7 +709,6 @@
          */
         _handleDragStart : function(e){
             this._markerNode.removeClass(Dial.CSS_CLASSES.hidden);
-            this._recalculateDialCenter(); // #2531111 in case the Dial has moved to a new XY due to browser resize, etc.
         },
 
         /*
@@ -776,7 +782,7 @@
             // We would have used visibility:hidden in the css of this class, 
             // but IE8 VML never returns to visible after applying visibility:hidden then removing it.
             this._setSizes();
-            this._recalculateDialCenter(); // #2531111 initialize center of dial
+            this._calculateDialCenter(); // #2531111 initialize center of dial
             this._setBorderRadius();
             this._uiSetValue(this.get("value"));
             this._markerNode.addClass(Dial.CSS_CLASSES.hidden);
