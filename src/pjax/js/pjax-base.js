@@ -29,30 +29,6 @@ PjaxBase.prototype = {
     },
 
     // -- Public Prototype Methods ---------------------------------------------
-    getContent: function (responseText) {
-        var content         = {},
-            contentSelector = this.get('contentSelector'),
-            frag            = Y.Node.create(responseText || ''),
-            titleSelector   = this.get('titleSelector'),
-            titleNode;
-
-        if (contentSelector) {
-            content.node = Y.one(frag.all(contentSelector).toFrag());
-        } else {
-            content.node = frag;
-        }
-
-        if (titleSelector) {
-            titleNode = frag.one(titleSelector);
-
-            if (titleNode) {
-                content.title = titleNode.get('text');
-            }
-        }
-
-        return content;
-    },
-
     load: function (url) {
         url = this._resolveUrl(url);
         this.save(this.removeRoot(url));
@@ -162,9 +138,6 @@ PjaxBase.prototype = {
 };
 
 PjaxBase.ATTRS = {
-    contentSelector: {
-        value: null
-    },
 
     linkSelector: {
         value    : 'a.' + CLASS_PJAX,
@@ -173,10 +146,6 @@ PjaxBase.ATTRS = {
 
     scrollToTop: {
         value: true
-    },
-
-    titleSelector: {
-        value: 'title'
     }
 };
 
