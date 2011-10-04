@@ -372,7 +372,19 @@ controllerSuite.add(new Y.Test.Case({
         controller.root = '/foo/';
         Assert.areSame('/foo/bar', controller._joinURL('bar'));
         Assert.areSame('/foo/bar', controller._joinURL('/bar'));
-    }
+    },
+
+    '_dispatch() should pass `src` through to request object passed to route handlers': function () {
+        var controller = this.controller = new Y.Controller(),
+            calls      = 0,
+            src        = 'API';
+
+        controller.route('/foo', function (req, res, next) {
+            Assert.areSame(src, req.src);
+        });
+
+        controller._dispatch('/foo', {}, src);
+    },
 }));
 
 // -- Controller: Routes -------------------------------------------------------
@@ -406,14 +418,15 @@ controllerSuite.add(new Y.Test.Case({
         Assert.areSame(2, calls);
     },
 
-    'routes should receive a request object and `next` function as params': function () {
+    'routes should receive a request object, response object, and `next` function as params': function () {
         var calls      = 0,
             controller = this.controller = new Y.Controller();
 
-        controller.route('/foo', function (req, next) {
+        controller.route('/foo', function (req, res, next) {
             calls += 1;
 
             Assert.isObject(req);
+            Assert.isObject(res);
             Assert.isFunction(next);
             Assert.areSame(next, req.next);
             Assert.isObject(req.params);
@@ -465,25 +478,50 @@ controllerSuite.add(new Y.Test.Case({
         Assert.areSame(3, calls);
     },
 
+    'calling `res()` should have the same result as calling `next()`': function () {
+        var calls      = 0;
+            controller = this.controller = new Y.Controller();
+
+        controller.route('/foo', function (req, res, next) {
+            calls += 1;
+            Assert.isFunction(res);
+            res();
+        });
+
+        controller.route('/foo', function (req, res, next) {
+            calls += 1;
+            Assert.isFunction(next);
+            next();
+        });
+
+        controller.route('/foo', function () {
+            calls += 1;
+        });
+
+        controller._dispatch('/foo', {});
+
+        Assert.areSame(3, calls);
+    },
+
     'calling `next()` should pass control to the next matching route': function () {
         var calls      = 0,
             controller = this.controller = new Y.Controller();
 
-        controller.route('/foo', function (req, next) {
+        controller.route('/foo', function (req, res, next) {
             calls += 1;
             next();
         });
 
-        controller.route(/foo/, function (req, next) {
+        controller.route(/foo/, function (req, res, next) {
             calls += 1;
             next();
         });
 
-        controller.route('/foo', function (req, next) {
+        controller.route('/foo', function (req, res, next) {
             calls += 1;
         });
 
-        controller.route('/foo', function (req, next) {
+        controller.route('/foo', function (req, res, next) {
             calls += 1;
             Assert.fail('final route should not be called');
         });
