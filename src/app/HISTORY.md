@@ -7,6 +7,8 @@ App Framework Change History
 * Controller: "*" can now be used to create a catch-all route that will match
   any path (previously it was necessary to use a regex to do this).
 
+* Controller: The `hasRoute()` method now accepts full URLs as well as paths.
+
 
 3.4.1
 -----

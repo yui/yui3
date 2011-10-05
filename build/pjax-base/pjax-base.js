@@ -17,7 +17,8 @@ function PjaxBase() {}
 
 PjaxBase.prototype = {
     // -- Properties -----------------------------------------------------------
-    _regexUrl: /^((?:https?:\/\/|\/\/)[^\/]+)?([^?#]*)(.*)$/i,
+    _resolved: {},
+    _regexUrl: /^((?:([^:]+):(?:\/\/)?|\/\/)[^\/]*)?([^?#]*)(.*)$/i,
 
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function () {
@@ -31,30 +32,6 @@ PjaxBase.prototype = {
     },
 
     // -- Public Prototype Methods ---------------------------------------------
-    getContent: function (responseText) {
-        var content         = {},
-            contentSelector = this.get('contentSelector'),
-            frag            = Y.Node.create(responseText || ''),
-            titleSelector   = this.get('titleSelector'),
-            titleNode;
-
-        if (contentSelector) {
-            content.node = Y.one(frag.all(contentSelector).toFrag());
-        } else {
-            content.node = frag;
-        }
-
-        if (titleSelector) {
-            titleNode = frag.one(titleSelector);
-
-            if (titleNode) {
-                content.title = titleNode.get('text');
-            }
-        }
-
-        return content;
-    },
-
     load: function (url) {
         this.save(this._resolveUrl(url));
 
@@ -118,15 +95,35 @@ PjaxBase.prototype = {
             return root;
         }
 
+        // Path is host relative.
+        if (path.charAt(0) === '/') {
+            return path;
+        }
+
         return this._normalizePath(root + '/' + path);
     },
 
     _resolveUrl: function (url) {
-        var self = this;
+        var self        = this,
+            resolved    = self._resolved,
+            resolvedUrl = resolved[url];
 
-        return url.replace(this._regexUrl, function (match, prefix, path, suffix) {
+        if (resolvedUrl) {
+            return resolvedUrl;
+        }
+
+        function resolve(match, prefix, scheme, path, suffix) {
+            if (scheme && scheme.toLowerCase().indexOf('http') !== 0) {
+                return match;
+            }
+
             return (prefix || '') + self._resolvePath(path) + (suffix || '');
-        });
+        }
+
+        // Cache resolved URL.
+        resolvedUrl = resolved[url] = url.replace(self._regexUrl, resolve);
+
+        return resolvedUrl;
     },
 
     // -- Protected Event Handlers ---------------------------------------------
@@ -135,14 +132,14 @@ PjaxBase.prototype = {
     },
 
     _onLinkClick: function (e) {
-        var url = e.currentTarget.get('href');
+        var url = this._resolveUrl(e.currentTarget.get('href'));
 
         // Allow the native behavior on middle/right-click, or when Ctrl or
         // Command are pressed.
         if (e.button !== 1 || e.ctrlKey || e.metaKey) { return; }
 
         // Do nothing if there's no matching route for this URL.
-        if (!this.hasRoute(this.removeRoot(url))) { return; }
+        if (!this.hasRoute(url)) { return; }
 
         e.preventDefault();
 
@@ -154,9 +151,6 @@ PjaxBase.prototype = {
 };
 
 PjaxBase.ATTRS = {
-    contentSelector: {
-        value: null
-    },
 
     linkSelector: {
         value    : 'a.' + CLASS_PJAX,
@@ -165,10 +159,6 @@ PjaxBase.ATTRS = {
 
     scrollToTop: {
         value: true
-    },
-
-    titleSelector: {
-        value: 'title'
     }
 };
 

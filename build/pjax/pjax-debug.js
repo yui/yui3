@@ -15,6 +15,31 @@ Y.Pjax = Y.Base.create('pjax', Y.Controller, [Y.PjaxBase], {
         this.publish(EVT_LOAD,  {defaultFn: this._defCompleteFn});
     },
 
+    // -- Public Methods -------------------------------------------------------
+    getContent: function (responseText) {
+        var content         = {},
+            contentSelector = this.get('contentSelector'),
+            frag            = Y.Node.create(responseText || ''),
+            titleSelector   = this.get('titleSelector'),
+            titleNode;
+
+        if (contentSelector) {
+            content.node = Y.one(frag.all(contentSelector).toFrag());
+        } else {
+            content.node = frag;
+        }
+
+        if (titleSelector) {
+            titleNode = frag.one(titleSelector);
+
+            if (titleNode) {
+                content.title = titleNode.get('text');
+            }
+        }
+
+        return content;
+    },
+
     // -- Private Methods ------------------------------------------------------
     _defaultRoute: function (req) {
         // If there's an outstanding request, abort it.
@@ -79,6 +104,14 @@ Y.Pjax = Y.Base.create('pjax', Y.Controller, [Y.PjaxBase], {
             setter: function (node) {
                 return node ? Y.one(node) : null;
             }
+        },
+
+        contentSelector: {
+            value: null
+        },
+
+        titleSelector: {
+            value: 'title'
         },
 
         timeout: {
