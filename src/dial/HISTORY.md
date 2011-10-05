@@ -10,7 +10,7 @@ Dial Change History
     and from _centerYOnPage to _dialCenterY
     
   * Known issue: On IE7, when browser is zoomed, clicking on dial gives the
-    wrong value. Dragging the handle works.   
+    wrong value.   
 
 3.4.1
 -----

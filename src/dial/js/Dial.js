@@ -412,6 +412,26 @@
         },
         
         /**
+         * Handles the mouseenter on the centerButton
+         * 
+         * @method _handleCenterButtonEnter
+         * @protected
+         */
+        _handleCenterButtonEnter : function(){
+            this._resetString.removeClass(Dial.CSS_CLASSES.hidden);    
+        },                                                     
+        
+        /**
+         * Handles the mouseleave on the centerButton
+         * 
+         * @method _handleCenterButtonLeave
+         * @protected
+         */
+        _handleCenterButtonLeave : function(){
+            this._resetString.addClass(Dial.CSS_CLASSES.hidden);    
+        },                                                     
+        
+        /**
          * Creates the Y.DD.Drag instance used for the handle movement and
          * binds Dial interaction to the configured value model.
          *
@@ -433,14 +453,15 @@
 
             Y.on("key", Y.bind(this._onDirectionKey, this), boundingBox, keyEventSpec);
             Y.on("key", Y.bind(this._onLeftRightKey, this), boundingBox, keyLeftRightSpec);
-            Y.on('mouseenter', function(){this.one('.' + Dial.CSS_CLASSES.resetString).removeClass(Dial.CSS_CLASSES.hidden);}, this._centerButtonNode);
-            Y.on('mouseleave', function(){this.one('.' + Dial.CSS_CLASSES.resetString).addClass(Dial.CSS_CLASSES.hidden);}, this._centerButtonNode);
+            Y.on('mouseenter', Y.bind(this._handleCenterButtonEnter, this), this._centerButtonNode);
+            Y.on('mouseleave', Y.bind(this._handleCenterButtonLeave, this), this._centerButtonNode);
             // Needed to replace mousedown/up with gesturemovestart/end to make behavior on touch devices work the same.
             Y.on('gesturemovestart', Y.bind(this._resetDial, this), this._centerButtonNode);  //[#2530441]    
-            Y.on('gesturemoveend', Y.bind(function(){this._handleNode.focus();}, this), this._centerButtonNode); 
-            Y.on('gesturemovestart', Y.bind(function(){this._handleNode.focus();}, this), this._handleNode);
+            Y.on('gesturemoveend', Y.bind(this._handleCenterButtonMouseup, this), this._centerButtonNode); 
+            Y.on('gesturemovestart', Y.bind(this._handleHandleMousedown, this), this._handleNode);
+
             Y.on('gesturemovestart', Y.bind(this._handleMousedown, this), this._ringNode); // [#2530766] 
-            Y.on('gesturemoveend', Y.bind(function(){this._handleNode.focus();}, this), this._ringNode); // [#2530206] // need to re-focus on the handle so keyboard is accessible
+            Y.on('gesturemoveend', Y.bind(this._handleRingMouseup, this), this._ringNode);
 
             this._dd1 = new Y.DD.Drag({ //// [#2530206] changed global this._dd1 from just var dd1 = new Y.DD.drag so 
                 node: this._handleNode,
@@ -495,6 +516,38 @@
             this._dialCenterX = this._ringNode.get('offsetWidth') / 2;                     
             this._dialCenterY = this._ringNode.get('offsetHeight') / 2;
         },
+        
+        /**
+         * Handles the mouseup on the ring
+         * 
+         * @method _handleRingMouseup
+         * @protected
+         */
+        _handleRingMouseup : function(){
+            this._handleNode.focus();  // need to re-focus on the handle so keyboard is accessible [#2530206] 
+        },                                                     
+        
+        /**
+         * Handles the mouseup on the centerButton
+         * 
+         * @method _handleCenterButtonMouseup
+         * @protected
+         */
+        _handleCenterButtonMouseup : function(){
+            this._handleNode.focus();  // need to re-focus on the handle so keyboard is accessible [#2530206]  
+        },                                                     
+        
+        /**
+         * Handles the mousedown on the handle
+         * 
+         * @method _handleHandleMousedown
+         * @protected
+         */
+        _handleHandleMousedown : function(){
+            this._handleNode.focus();  // need to re-focus on the handle so keyboard is accessible [#2530206]
+            // this is better done here instead of on _handleDragEnd 
+            // because we should make the keyboard accessible after a click of the handle  
+        },                                                     
         
         /**
          * handles the user dragging the handle around the Dial, gets the angle, 
