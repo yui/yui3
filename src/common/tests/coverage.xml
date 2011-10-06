@@ -62,5 +62,6 @@
         -->
         <url>oop/tests/oop.html</url>
         <url>pjax/tests/pjax.html</url>
+        <url>parallel/tests/index.html</url>
     </tests>
 </yuitest>
