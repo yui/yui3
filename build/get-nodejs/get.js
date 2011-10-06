@@ -6,7 +6,7 @@ YUI.add('get', function(Y) {
     * so that you can call outerHTML on the document to print it to the screen.
     * @module get-nodejs
     */
-
+        
         var path = require('path');
 
         Y.config.base = path.join(__dirname, '../');
@@ -61,19 +61,60 @@ YUI.add('get', function(Y) {
         };
 
 
+    var urlInfoPort = function(urlInfo) {
+        return urlInfo.port ? parseInt(urlInfo.port, 10) :
+            urlInfo.protocol === 'http:' ? 80 : 443;
+    };
+
+
     
     var vm = require('vm'),
-        fs = require('fs');
+        fs = require('fs'),
+        n_url = require('url'),
+        http = require('http'),
+        https = require('https');
 
+
+    var exec = function(data, url, cb) {
+        var mod = "(function(YUI) { " + data + ";return YUI; })";
+        var script = vm.createScript(mod, url);
+        var fn = script.runInThisContext(mod);
+        YUI = fn(YUI);
+        cb(null);
+    };
 
     var include = function(url, cb) {
-        var mod = fs.readFileSync(url, 'utf8');
-        var script = vm.createScript(mod, url);
-        var box = {
-            YUI: YUI
-        };
-        script.runInNewContext(box);
-        cb();
+        if (url.match(/^https?:\/\//)) {
+            var u = n_url.parse(url, parseQueryString=false),
+                p = urlInfoPort(u),            
+                req_url = u.pathname;
+
+            if (u.search) {
+                req_url += u.search;
+            }            
+            var h = http;
+            if (p === 443 || u.protocol === 'https:') {
+                h = https;
+            }
+            h.get({
+                host: u.hostname,
+                port: p,
+                path: req_url
+            }, function(res) {
+                var mod = '';
+                res.setEncoding('utf8');
+                res.on('data', function (chunk) {
+                    mod += chunk;
+                });
+                res.on('end', function() {
+                    exec(mod, url, cb);
+                });
+            });
+        } else {
+            fs.readFile(url, 'utf8', function(err, mod) {
+                exec(mod, url, cb);
+            });
+        }
         
     };
 
