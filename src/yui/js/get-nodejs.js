@@ -120,6 +120,10 @@
             fs.readFile(url, 'utf8', function(err, mod) {
                 exec(mod, url, cb);
             });
+            /* //Needs to be in useSync
+            var mod = fs.readFileSync(url,'utf8');
+            exec(mod, url, cb);
+            */
         }
         
     };
