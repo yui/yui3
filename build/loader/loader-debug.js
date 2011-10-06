@@ -13,7 +13,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2011.09.14-20-40',
+            GALLERY_VERSION = 'gallery-2011.10.06-19-55',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -4093,6 +4093,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "skinnable": true
     }, 
+    "parallel": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "pjax": {
         "requires": [
             "pjax-base", 
@@ -4655,7 +4660,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '62e5969dfc2ac81c40e7479aaebb32a6';
+YUI.Env[Y.version].md5 = 'c4899f419139fb547b7304796951b273';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

@@ -1962,6 +1962,46 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("panel")) > -1, "Module (panel) not found in sorted array");
         },
+     "Testing parallel": function(data) {
+            var loader = new Y.Loader({
+                require: ["parallel"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("parallel")) > -1, "Module (parallel) not found in sorted array");
+        },
+     "Testing pjax": function(data) {
+            var loader = new Y.Loader({
+                require: ["pjax"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("pjax")) > -1, "Module (pjax) not found in sorted array");
+        },
+     "Testing pjax-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["pjax-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("pjax-base")) > -1, "Module (pjax-base) not found in sorted array");
+        },
+     "Testing pjax-plugin": function(data) {
+            var loader = new Y.Loader({
+                require: ["pjax-plugin"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("pjax-plugin")) > -1, "Module (pjax-plugin) not found in sorted array");
+        },
      "Testing plugin": function(data) {
             var loader = new Y.Loader({
                 require: ["plugin"],
