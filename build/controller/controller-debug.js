@@ -282,15 +282,15 @@ Y.Controller = Y.extend(Controller, Y.Base, {
 
     /**
     Returns `true` if this controller has at least one route that matches the
-    specified URL path, `false` otherwise.
+    specified URL, `false` otherwise.
 
     @method hasRoute
-    @param {String} path URL path to match.
+    @param {String} url URL to match.
     @return {Boolean} `true` if there's at least one matching route, `false`
       otherwise.
     **/
-    hasRoute: function (path) {
-        return !!this.match(path).length;
+    hasRoute: function (url) {
+        return !!this.match(this.removeRoot(url)).length;
     },
 
     /**
@@ -327,25 +327,25 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     },
 
     /**
-    Removes the `root` URL from the front of _path_ (if it's there) and returns
+    Removes the `root` URL from the front of _url_ (if it's there) and returns
     the result. The returned path will always have a leading `/`.
 
     @method removeRoot
-    @param {String} path URL path.
+    @param {String} url URL.
     @return {String} Rootless path.
     **/
-    removeRoot: function (path) {
+    removeRoot: function (url) {
         var root = this.root;
 
         // Strip out the non-path part of the URL, if any (e.g.
         // "http://foo.com"), so that we're left with just the path.
-        path = path.replace(this._regexUrlStrip, '');
+        url = url.replace(this._regexUrlStrip, '');
 
-        if (root && path.indexOf(root) === 0) {
-            path = path.substring(root.length);
+        if (root && url.indexOf(root) === 0) {
+            url = url.substring(root.length);
         }
 
-        return path.charAt(0) === '/' ? path : '/' + path;
+        return url.charAt(0) === '/' ? url : '/' + url;
     },
 
     /**
@@ -731,6 +731,8 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     **/
     _joinURL: function (url) {
         var root = this.root;
+
+        url = this.removeRoot(url);
 
         if (url.charAt(0) === '/') {
             url = url.substring(1);
