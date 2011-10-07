@@ -3467,83 +3467,27 @@ YUI.add('get', function(Y) {
     * @module get-nodejs
     */
         
-        var path = require('path');
-
-        Y.config.base = path.join(__dirname, '../');
-
-        var end = function(cb, msg, result) {
-            //Y.log('Get end: ' + cb.onEnd);
-            if (Y.Lang.isFunction(cb.onEnd)) {
-                cb.onEnd.call(Y, msg, result);
-            }
-        }, pass = function(cb) {
-            //Y.log('Get pass: ' + cb.onSuccess);
-            if (Y.Lang.isFunction(cb.onSuccess)) {
-                cb.onSuccess.call(Y, cb);
-            }
-            end(cb, 'success', 'success');
-        }, fail = function(cb, er) {
-            //Y.log('Get fail: ' + er);
-            if (Y.Lang.isFunction(cb.onFailure)) {
-                cb.onFailure.call(Y, er, cb);
-            }
-            end(cb, er, 'fail');
-        };
-
-        Y.Get = function() {};
-
-        /**
-        * Override for Get.script for loading local or remote YUI modules.
-        */
-        Y.Get.script = function(s, cb) {
-            var A = Y.Array,
-                urls = A(s), url, i, l = urls.length;
-            for (i=0; i<l; i++) {
-                url = urls[i];
-
-                url = url.replace(/'/g, '%27');
-                Y.log('URL: ' + url, 'info', 'get');
-                // doesn't need to be blocking, so don't block.
-                include(url, function(err) {
-                    if (!Y.config) {
-                        Y.config = {
-                            debug: true
-                        };
-                    }
-                    Y.log('After Load: ' + url, 'info', 'get');
-                    if (err) {
-                        Y.log('----------------------------------------------------------', 'error', 'nodejsYUI3');
-                        if (err.stack) {
-                            A.each(err.stack.split('\n'), function(frame) {
-                                Y.log(frame, 'error', 'nodejsYUI3');
-                            });
-                        } else {
-                            console.log(err);
-                        }
-                        Y.log('----------------------------------------------------------', 'error', 'nodejsYUI3');
-                    } else {
-                        pass(cb);
-                    }
-                });
-            }
-        };
-
-
-    var urlInfoPort = function(urlInfo) {
-        return urlInfo.port ? parseInt(urlInfo.port, 10) :
-            urlInfo.protocol === 'http:' ? 80 : 443;
-    };
-
-
-    
-    var vm = require('vm'),
+    var path = require('path'),
+        vm = require('vm'),
         fs = require('fs'),
         n_url = require('url'),
         http = require('http'),
         https = require('https');
 
+    Y.Get = function() {};
+    Y.config.base = path.join(__dirname, '../');
 
-    var exec = function(data, url, cb) {
+
+    Y.Get.urlInfoPort = function(urlInfo) {
+        return urlInfo.port ? parseInt(urlInfo.port, 10) :
+            urlInfo.protocol === 'http:' ? 80 : 443;
+    };
+
+    
+    
+
+
+    Y.Get._exec = function(data, url, cb) {
         var mod = "(function(YUI) { " + data + ";return YUI; })";
         var script = vm.createScript(mod, url);
         var fn = script.runInThisContext(mod);
@@ -3551,10 +3495,10 @@ YUI.add('get', function(Y) {
         cb(null);
     };
 
-    var include = function(url, cb) {
+    Y.Get._include = function(url, cb) {
         if (url.match(/^https?:\/\//)) {
             var u = n_url.parse(url, parseQueryString=false),
-                p = urlInfoPort(u),            
+                p = Y.Get.urlInfoPort(u),            
                 req_url = u.pathname;
 
             if (u.search) {
@@ -3575,19 +3519,78 @@ YUI.add('get', function(Y) {
                     mod += chunk;
                 });
                 res.on('end', function() {
-                    exec(mod, url, cb);
+                    Y.Get._exec(mod, url, cb);
                 });
             });
         } else {
-            fs.readFile(url, 'utf8', function(err, mod) {
-                exec(mod, url, cb);
-            });
-            /* //Needs to be in useSync
-            var mod = fs.readFileSync(url,'utf8');
-            exec(mod, url, cb);
-            */
+            if (Y.config.useSync) {
+                //Needs to be in useSync
+                var mod = fs.readFileSync(url,'utf8');
+                Y.Get._exec(mod, url, cb);
+            } else {
+                fs.readFile(url, 'utf8', function(err, mod) {
+                    Y.Get._exec(mod, url, cb);
+                });
+            }
         }
         
+    };
+
+
+    var end = function(cb, msg, result) {
+        //Y.log('Get end: ' + cb.onEnd);
+        if (Y.Lang.isFunction(cb.onEnd)) {
+            cb.onEnd.call(Y, msg, result);
+        }
+    }, pass = function(cb) {
+        //Y.log('Get pass: ' + cb.onSuccess);
+        if (Y.Lang.isFunction(cb.onSuccess)) {
+            cb.onSuccess.call(Y, cb);
+        }
+        end(cb, 'success', 'success');
+    }, fail = function(cb, er) {
+        //Y.log('Get fail: ' + er);
+        if (Y.Lang.isFunction(cb.onFailure)) {
+            cb.onFailure.call(Y, er, cb);
+        }
+        end(cb, er, 'fail');
+    };
+
+
+    /**
+    * Override for Get.script for loading local or remote YUI modules.
+    */
+    Y.Get.script = function(s, cb) {
+        var A = Y.Array,
+            urls = A(s), url, i, l = urls.length;
+        for (i=0; i<l; i++) {
+            url = urls[i];
+
+            url = url.replace(/'/g, '%27');
+            Y.log('URL: ' + url, 'info', 'get');
+            // doesn't need to be blocking, so don't block.
+            Y.Get._include(url, function(err) {
+                if (!Y.config) {
+                    Y.config = {
+                        debug: true
+                    };
+                }
+                Y.log('After Load: ' + url, 'info', 'get');
+                if (err) {
+                    Y.log('----------------------------------------------------------', 'error', 'nodejsYUI3');
+                    if (err.stack) {
+                        A.each(err.stack.split('\n'), function(frame) {
+                            Y.log(frame, 'error', 'nodejsYUI3');
+                        });
+                    } else {
+                        console.log(err);
+                    }
+                    Y.log('----------------------------------------------------------', 'error', 'nodejsYUI3');
+                } else {
+                    pass(cb);
+                }
+            });
+        }
     };
 
 
