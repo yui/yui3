@@ -210,7 +210,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         // Set up a history instance or hashchange listener.
         if (html5) {
             self._history = new Y.HistoryHTML5({force: true});
-            self._history.after('change', self._afterHistoryChange, self);
+            Y.after('history:change', self._afterHistoryChange, self);
         } else {
             Y.on('hashchange', self._afterHistoryChange, win, self);
         }
@@ -236,7 +236,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
 
     destructor: function () {
         if (html5) {
-            this._history.detachAll();
+            Y.detach('history:change', this._afterHistoryChange, this);
         } else {
             Y.detach('hashchange', this._afterHistoryChange, win);
         }
@@ -857,7 +857,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     _afterHistoryChange: function (e) {
         var self = this;
 
-        if (self._ready) {
+        if (self._ready || e.src !== 'popstate') {
             self._dispatch(self._getPath(), self._getURL());
         }
     },
