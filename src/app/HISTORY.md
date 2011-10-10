@@ -9,6 +9,11 @@ App Framework Change History
 
 * Controller: The `hasRoute()` method now accepts full URLs as well as paths.
 
+* Controller: When multiple Controller instances exist on a page, calling
+  `save()` in one will now cause matching routes to be dispatched in all
+  controllers, rather than only the controller that was the source of the
+  change.
+
 
 3.4.1
 -----

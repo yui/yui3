@@ -1457,6 +1457,60 @@ suite.add( new Y.Test.Case({
 			Y.Assert.areEqual( 90, dial.get('value'),  'past min CCW, then click 11 0clock');
 
 			dial.destroy();
+		},
+		
+		"test md13 go past max more than maxTimesWrapped. ratchet to maxTimesWrapped": function() { //string must start with "test
+			Y.one('#testbed').append('<div id="dial"></div><div id="ref"></div>');
+			var testbed = Y.one("#dial"),
+			ref     = Y.one("#ref"),
+			dial = new Y.Dial({handleDistance: 1, value: 90, min: 1, max: 300 }).render( testbed ),
+			ring = Y.one('.yui3-dial-ring'),
+            scrollT = Y.one('document').get('scrollTop'),
+            scrollL = Y.one('document').get('scrollLeft'),
+
+            eventX,
+            eventY,
+            getXYProps = function(){ // this returns the properties, the object literal needed for .simulate mousedown only
+                var myX,myY;
+                if(Y.UA.ios){ // clientX and clientY in iOS includes the scrollLeft and scrollTop
+                    myX =  (dial._ringNode.getX() + dial._dialCenterX + eventX); 
+                    myY = (dial._ringNode.getY() + dial._dialCenterY + eventY);
+                }else{  // clientX and clientY in non-iOS do not include the scrollLeft and scrollTop. They are relative to the viewport
+                    myX =  (dial._ringNode.getX() + dial._dialCenterX + eventX - scrollL);     //  but doesn't work zoomed if there's a breakpoint for some reason.
+                    myY = (dial._ringNode.getY() + dial._dialCenterY + eventY - scrollT);
+                }
+                return {clientX: myX, clientY: myY};
+            },
+            positionHandle = function(){
+                dial._handleNode.setStyles({'left':(dial._dialCenterX + eventX), 'top':dial._dialCenterY + eventY})
+            }; 
+			// listeners that bind an event *unused* by Dial to the intended method 
+ 			Y.on('mouseover', Y.bind(dial._handleDrag, dial), dial._handleNode); // make mouseover do what a real drag:drag would do 
+ 			Y.on('mouseout', Y.bind(dial._handleDragEnd, dial), dial._handleNode); // make mouseover do what a real drag:end would do 
+            Y.on('mousedown', Y.bind(dial._handleMousedown, dial), dial._ringNode);  // needed for testsuite to bypass gesturemove
+            
+            dial._timesWrapped = dial._maxTimesWrapped; // set it to maxwrapped, then wrap it again
+            eventX = 30; //Set the X for event simulation. This is offset from dial._dialCenterX
+            eventY = 0; //Set the Y for event simulation. 
+            positionHandle();
+            this.visualInspection(eventX,eventY,dial);
+            dial._handleNode.simulate("mouseover");	
+            dial._handleNode.simulate("mouseout");	
+
+			Y.Assert.areEqual( dial._maxTimesWrapped - 1, dial._timesWrapped,  'ratchet past maxTimesWrapped. stays at maxTimesWrapped -1');
+
+            dial.set('value', 10);
+            dial._timesWrapped = -10; // set it to CCW wrapped many times, then wrap it CCW again
+            eventX = -30; //Set the X for event simulation. This is offset from dial._dialCenterX
+            eventY = 0; //Set the Y for event simulation. 
+            positionHandle();
+            this.visualInspection(eventX,eventY,dial);
+            dial._handleNode.simulate("mouseover");	
+            dial._handleNode.simulate("mouseout");	
+
+			Y.Assert.areEqual( 0, dial._timesWrapped,  'CCW, ratchet never < 0');
+ 
+			dial.destroy();
 		}
 }));
 

@@ -1422,6 +1422,11 @@
         ], 
         "skinnable": true
     }, 
+    "parallel": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "pjax": {
         "requires": [
             "pjax-base", 

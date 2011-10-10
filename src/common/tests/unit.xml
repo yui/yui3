@@ -67,6 +67,7 @@
         <url>jsonp/tests/jsonp-url.html</url-->
         <url>node/tests/node.html</url>
         <!--url>node-focusmanager/tests/focusmanager.html</url-->
+        <url>parallel/tests/index.html</url>
         <url>pjax/tests/pjax.html</url>
         <url>pluginhost/tests/plugins.html</url>
         <url>slider/tests/slider.html</url>
