@@ -411,7 +411,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     be executed.
 
     @example
-        controller.route('/photos/:tag/:page', function (req, next) {
+        controller.route('/photos/:tag/:page', function (req, res, next) {
           Y.log('Current tag: ' + req.params.tag);
           Y.log('Current page number: ' + req.params.page);
         });
@@ -434,6 +434,14 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         @param {Object} callback.req.query Query hash representing the URL query
           string, if any. Parameter names are keys, and are mapped to parameter
           values.
+        @param {String} callback.req.url The full URL.
+        @param {String} callback.req.src What initiated the dispatch. e.g. In a
+          HTML5 browser, when the back/forward browser-buttons are used, this
+          property will have a value of `'popstate'`.
+      @param {Object} callback.res Response object containing methods and
+          information that relates to responding to a request. It contains the
+          following properties.
+        @param {Object} callback.res.req Reference to the request object.
       @param {Function} callback.next Callback to pass control to the next
         matching route. If you don't call this function, then no further route
         handlers will be executed, even if there are more that match. If you do
@@ -568,13 +576,14 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @method _dispatch
     @param {String} path URL path.
     @param {String} url Full URL.
+    @pram {String} src What initiated the dispatch.
     @chainable
     @protected
     **/
-    _dispatch: function (path, url) {
+    _dispatch: function (path, url, src) {
         var self   = this,
             routes = self.match(path),
-            req;
+            req, res;
 
         self._dispatching = self._dispatched = true;
 
@@ -583,7 +592,8 @@ Y.Controller = Y.extend(Controller, Y.Base, {
             return self;
         }
 
-        req = self._getRequest(path, url);
+        req = self._getRequest(path, url, src);
+        res = self._getResponse(req);
 
         req.next = function (err) {
             var callback, matches, route;
@@ -603,7 +613,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
                     req.params = matches.concat();
                 }
 
-                callback.call(self, req, req.next);
+                callback.call(self, req, res, req.next);
             }
         };
 
@@ -688,16 +698,38 @@ Y.Controller = Y.extend(Controller, Y.Base, {
 
     @method _getRequest
     @param {String} path Current path being dispatched.
-    @param {String} path Current full URL being dispatched.
+    @param {String} url Current full URL being dispatched.
+    @pram {String} src What initiated the dispatch.
     @return {Object} Request object.
     @protected
     **/
-    _getRequest: function (path, url) {
+    _getRequest: function (path, url, src) {
         return {
             path : path,
             query: this._parseQuery(this._getQuery()),
-            url  : url
+            url  : url,
+            src  : src
         };
+    },
+
+    /**
+    Gets a response object that can be passed to a route handler.
+
+    @method _getResponse
+    @param {Object} req Request object.
+    @return {Object} Response Object.
+    @protected
+    **/
+    _getResponse: function (req) {
+        // To handle backwards compatability the response object is a function
+        // that when called, delegates to calling `next()` on the request
+        // object and returning the result.
+        var res = function () {
+            return req.next.apply(this, arguments);
+        };
+
+        res.req = req;
+        return res;
     },
 
     /**
@@ -857,10 +889,11 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @protected
     **/
     _afterHistoryChange: function (e) {
-        var self = this;
+        var self = this,
+            src  = e.src;
 
-        if (self._ready || e.src !== 'popstate') {
-            self._dispatch(self._getPath(), self._getURL());
+        if (self._ready || src !== 'popstate') {
+            self._dispatch(self._getPath(), self._getURL(), src);
         }
     },
 
@@ -881,4 +914,4 @@ Y.Controller = Y.extend(Controller, Y.Base, {
 });
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'base-build', 'history'], optional:['querystring-parse']});
+}, '@VERSION@' ,{optional:['querystring-parse'], requires:['array-extras', 'base-build', 'history']});

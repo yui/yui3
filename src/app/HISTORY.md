@@ -4,6 +4,14 @@ App Framework Change History
 3.5.0
 -----
 
+* [!] Controller: The signature for route handlers has changed in a backward-
+  compatible way. Route handlers are now passed three arguments, `req`, `res`,
+  and `next`.
+
+    controller.route('/foo', function (req, res, next) {
+        // `res();` and `next();` do the same thing.
+    });
+
 * Controller: "*" can now be used to create a catch-all route that will match
   any path (previously it was necessary to use a regex to do this).
 
@@ -13,6 +21,9 @@ App Framework Change History
   `save()` in one will now cause matching routes to be dispatched in all
   controllers, rather than only the controller that was the source of the
   change.
+
+* Controller: Added `url` and `src` properties to the request object that is
+  passed to route handlers.
 
 * ModelList: Added a `filter()` method that returns a filtered array of models.
   [Ticket #2531250]
