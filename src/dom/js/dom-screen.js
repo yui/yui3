@@ -145,7 +145,7 @@ Y.mix(Y_DOM, {
                         scrollLeft = (SCROLL_NODE) ? doc[SCROLL_NODE].scrollLeft : Y_DOM.docScrollX(node, doc);
                         scrollTop = (SCROLL_NODE) ? doc[SCROLL_NODE].scrollTop : Y_DOM.docScrollY(node, doc);
                         box = node[GET_BOUNDING_CLIENT_RECT]();
-                        xy = [box.left, box.top];
+                        xy = [Math.ceil(box.left), Math.ceil(box.top)];
 
                             if (Y.UA.ie) {
                                 off1 = 2;
