@@ -449,6 +449,45 @@ When a route is matched, the callback function associated with that route will b
         Hash of query string parameters and values specified in the URL, if any.
         </p>
       </dd>
+
+      <dt><strong>`url` (String)</strong></dt>
+      <dd>
+        <p>
+        The full URL.
+        </p>
+      </dd>
+
+      <dt><strong>`src` (String)</strong></dt>
+      <dd>
+        <p>
+        What initiated the dispatch.
+        </p>
+        <p>
+        e.g. In a HTML5 browser, when the back/forward browser-buttons are used, this property will have a value of `'popstate'`.
+        </p>
+      </dd>
+    </dl>
+  </dd>
+
+  <dt><strong>`res` (Object)</strong></dt>
+  <dd>
+    <p>
+    An object that contains methods and information that relates to responding to a request.
+    </p>
+    <p>
+    <strong>Note: </strong>for backwards-compatibility, the response object is also a function that when called will delegate to calling `req.next()` and behave the same as directly calling `next()`.
+    </p>
+    <p>
+    The response object contains the following properties:
+    </p>
+
+    <dl>
+      <dt><strong>`req` (Object)</strong></dt>
+      <dd>
+        <p>
+        Reference to the request object.
+        </p>
+      </dd>
     </dl>
   </dd>
 
@@ -467,11 +506,11 @@ Inside a route callback, the `this` keyword will always refer to the Controller 
 <h4>Chaining Routes</h4>
 
 <p>
-By default, only the first route that matches a URL will be executed, even if there are several routes that match. However, when a route is executed, it will receive a `next()` function as its second parameter. Calling this function will execute the next matching route if there is one.
+By default, only the first route that matches a URL will be executed, even if there are several routes that match. However, when a route is executed, it will receive a `next()` function as its third parameter. Calling this function will execute the next matching route if there is one.
 </p>
 
 ```
-controller.route('/pie', function (req, next) {
+controller.route('/pie', function (req, res, next) {
   Y.log('Callback #1 executed!');
   next();
 });
@@ -494,7 +533,7 @@ If you want the first route callback to pass some data along to subsequent callb
 </p>
 
 ```
-controller.route('/ice-cream', function (req, next) {
+controller.route('/ice-cream', function (req, res, next) {
   req.flavor = 'cookie dough';
   next();
 });
