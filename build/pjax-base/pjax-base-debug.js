@@ -32,18 +32,11 @@ PjaxBase.prototype = {
     },
 
     // -- Public Prototype Methods ---------------------------------------------
-    load: function (url) {
-        this.save(this._resolveUrl(url));
+    navigate: function (url, options) {
+        options || (options = {});
+        options.url = url;
 
-        if (this.get('scrollToTop') && Y.config.win) {
-            // Scroll to the top of the page. The timeout ensures that the
-            // scroll happens after navigation begins, so that the current
-            // scroll position will be restored if the user clicks the back
-            // button.
-            setTimeout(function () {
-                Y.config.win.scroll(0, 0);
-            }, 1);
-        }
+        this.fire(EVT_NAVIGATE, options);
     },
 
     // -- Protected Prototype Methods ------------------------------------------
@@ -128,7 +121,17 @@ PjaxBase.prototype = {
 
     // -- Protected Event Handlers ---------------------------------------------
     _defNavigateFn: function (e) {
-        this.load(e.url);
+        this.save(this._resolveUrl(e.url));
+
+        if (this.get('scrollToTop') && Y.config.win) {
+            // Scroll to the top of the page. The timeout ensures that the
+            // scroll happens after navigation begins, so that the current
+            // scroll position will be restored if the user clicks the back
+            // button.
+            setTimeout(function () {
+                Y.config.win.scroll(0, 0);
+            }, 1);
+        }
     },
 
     _onLinkClick: function (e) {
@@ -143,10 +146,7 @@ PjaxBase.prototype = {
 
         e.preventDefault();
 
-        this.fire(EVT_NAVIGATE, {
-            originEvent: e,
-            url        : url
-        });
+        this.navigate(url, {originEvent: e});
     }
 };
 
