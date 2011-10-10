@@ -1366,6 +1366,47 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame(1, calls);
     },
 
+    'filter() should filter the list and return an array': function () {
+        var list = this.createList(),
+            filtered;
+
+        list.add([{foo: 'a'}, {foo: 'b'}, {foo: 'c'}, {foo: 'd'}]);
+        Assert.areSame(4, list.size());
+
+        filtered = list.filter(function (model, i, myList) {
+            var foo = model.get('foo');
+
+            Assert.areSame(model, list.item(i));
+            Assert.areSame(list, myList);
+            Assert.areSame(list, this);
+
+            return foo === 'a' || foo === 'd';
+        });
+
+        Assert.isArray(filtered);
+        Assert.areSame(2, filtered.length);
+        Assert.areSame('a', filtered[0].get('foo'));
+        Assert.areSame('d', filtered[1].get('foo'));
+    },
+
+    'filter() should accept a custom `this` object': function () {
+        var list = this.createList(),
+            obj  = {};
+
+        list.add({foo: 'a'});
+
+        list.filter(function () {
+            Assert.areSame(obj, this);
+        }, obj);
+    },
+
+    'filter() should return an empty array if the callback never returns a truthy value': function () {
+        var list = this.createList();
+
+        list.add({foo: 'a'});
+        Assert.areSame(0, list.filter(function () {}).length);
+    },
+
     'get() should return an array of attribute values from all models in the list': function () {
         var list = this.createList();
 

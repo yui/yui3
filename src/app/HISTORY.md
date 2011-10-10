@@ -14,6 +14,9 @@ App Framework Change History
   controllers, rather than only the controller that was the source of the
   change.
 
+* ModelList: Added a `filter()` method that returns a filtered array of models.
+  [Ticket #2531250]
+
 
 3.4.1
 -----
