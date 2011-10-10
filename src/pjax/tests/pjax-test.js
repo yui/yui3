@@ -145,7 +145,7 @@ suite.add(new Y.Test.Case({
         }
     },
 
-    '`error` event should fire on Ajax error': function () {
+    '`error` event should fire on Ajax failure': function () {
         var test = this;
 
         this.pjax.once('error', function (e) {
@@ -157,7 +157,7 @@ suite.add(new Y.Test.Case({
             });
         });
 
-        this.pjax.load('bogus.html');
+        this.pjax.navigate('bogus.html');
         this.wait(1000);
     },
 
@@ -173,7 +173,7 @@ suite.add(new Y.Test.Case({
         this.pjax.fire('error');
     },
 
-    '`load` event should fire on Ajax load': function () {
+    '`load` event should fire on Ajax success': function () {
         var test = this;
 
         this.pjax.once('load', function (e) {
@@ -188,7 +188,7 @@ suite.add(new Y.Test.Case({
             });
         });
 
-        this.pjax.load('assets/page-full.html');
+        this.pjax.navigate('assets/page-full.html');
         this.wait(1000);
     },
 
@@ -202,6 +202,24 @@ suite.add(new Y.Test.Case({
         });
 
         this.pjax.fire('load');
+    },
+
+    '`navigate` event facade should contain the options passed to `navigate()`': function () {
+        var called  = 0,
+            options = {
+                title: 'Bogus Page'
+            },
+            title;
+
+        this.pjax.on('navigate', function (e) {
+            called++;
+            title = e.title;
+        });
+
+        this.pjax.navigate('bogus.html', options);
+
+        Assert.areSame(1, called);
+        Assert.areSame(title, options.title);
     },
 
     '`navigate` event should fire when a pjax link is clicked': function () {
@@ -287,9 +305,7 @@ suite.add(new Y.Test.Case({
 
     _should: {
         ignore: {
-            '`load()` should load the specified URL and fire a `load` event': disableXHR || !html5,
-            '`load()` should call a callback if one is provided': disableXHR || !html5,
-            '`load()` callback should receive an error when an error occurs': disableXHR || !html5
+            '`navigate()` should load the specified URL and fire a `load` event': disableXHR || !html5
         }
     },
 
@@ -307,7 +323,7 @@ suite.add(new Y.Test.Case({
         delete this.pjax;
     },
 
-    '`load()` should load the specified URL and fire a `load` event': function () {
+    '`navigate()` should load the specified URL and fire a `load` event': function () {
         var test = this;
 
         this.pjax.once('load', function (e) {
@@ -315,7 +331,7 @@ suite.add(new Y.Test.Case({
             test.resume();
         });
 
-        this.pjax.load('assets/page-full.html');
+        this.pjax.navigate('assets/page-full.html');
         this.wait(1000);
     }
 }));
@@ -356,7 +372,7 @@ suite.add(new Y.Test.Case({
             });
         });
 
-        this.pjax.load('assets/page-full.html');
+        this.pjax.navigate('assets/page-full.html');
 
         this.wait(1000);
     },
@@ -371,7 +387,7 @@ suite.add(new Y.Test.Case({
             });
         });
 
-        this.pjax.load('assets/page-full.html');
+        this.pjax.navigate('assets/page-full.html');
 
         this.wait(1000);
     },
@@ -387,7 +403,7 @@ suite.add(new Y.Test.Case({
             });
         });
 
-        this.pjax.load('assets/page-partial.html');
+        this.pjax.navigate('assets/page-partial.html');
 
         this.wait(1000);
     }
