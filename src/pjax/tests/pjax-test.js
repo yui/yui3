@@ -118,8 +118,8 @@ suite.add(new Y.Test.Case({
 
     _should: {
         ignore: {
-            '`error` event should fire on Ajax error': disableXHR || !html5,
-            '`load` event should fire on Ajax load': disableXHR || !html5
+            '`error` event should fire on Ajax failure': disableXHR || !html5,
+            '`load` event should fire on Ajax success': disableXHR || !html5
         }
     },
 
