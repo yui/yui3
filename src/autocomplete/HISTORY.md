@@ -1,6 +1,15 @@
 AutoComplete Change History
 ===========================
 
+3.5.0
+-----
+
+* The `requestTemplate` value is now made available to YQL sources via the
+  `{request}` placeholder, which works just like the `{query}` placeholder. Use
+  this when you need to customize the query value (such as double-escaping it)
+  used in the YQL query. [Ticket #2531285]
+
+
 3.4.1
 -----
 
