@@ -24,5 +24,7 @@ cp -R ../../../build/* $out
 wait
 cp ../../../package.json "$out/package.json"
 wait
+cp ./npm_package_shim.js "$out/package.js"
+wait
 echo "Copy complete, running prep"
 ./npm_package.js $out

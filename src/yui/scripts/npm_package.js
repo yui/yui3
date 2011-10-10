@@ -22,22 +22,10 @@ if (!path.existsSync(start)) {
 process.chdir(start);
 
 var makeIndex = function(mod) {
-    var str = 'var mod = "' + mod + '";\n';
-    str += 'var YUI = require("../yui-nodejs/yui-nodejs").YUI;\n';
-    str += 'module.exports = YUI({ useSync: true }).use(mod);\n';
+    var str = 'var inst = require("../package").getInstance();\n';
+    str += 'module.exports = inst.use("' + mod + '");\n';
     return str;
 };
-
-var packageJS = 'exports.path = function() { return __dirname; };\n';
-packageJS += 'exports.YUI = require("./yui-nodejs/yui-nodejs").YUI;\n';
-packageJS += 'exports.use = exports.useSync = function() {\n';
-packageJS += '      var YUI = require("./yui-nodejs/yui-nodejs").YUI;\n';
-packageJS += '      var Y = YUI({ useSync: true });\n';
-packageJS += '      var Y = Y.use.apply(Y, arguments);\n';
-packageJS += '      return Y;\n';
-packageJS += '};\n';
-
-
 
 console.log('Writing index.js files');
 var dirs = fs.readdirSync(start);
@@ -49,7 +37,5 @@ dirs.forEach(function(mod) {
     }
 });
 console.log('Index files written');
-
-fs.writeFileSync(path.join(start, 'package.js'), packageJS, 'utf8');
 
 console.log('NPM Release Ready');
