@@ -381,7 +381,10 @@ controllerSuite.add(new Y.Test.Case({
 
     tearDown: function () {
         this.controller && this.controller.destroy();
+        this.controller2 && this.controller2.destroy();
+
         delete this.controller;
+        delete this.controller2;
     },
 
     'routes should be called in the context of the controller': function () {
@@ -502,6 +505,26 @@ controllerSuite.add(new Y.Test.Case({
         controller._dispatch('/bar', {});
 
         Assert.areSame(2, calls);
+    },
+
+    'multiple controllers should be able to coexist and have duplicate route handlers': function () {
+        var calls = 0,
+            controllerOne = this.controller  = new Y.Controller(),
+            controllerTwo = this.controller2 = new Y.Controller();
+
+        controllerOne.route('/baz', function () {
+            calls += 1;
+        });
+
+        controllerTwo.route('/baz', function () {
+            calls += 1;
+        });
+
+        controllerOne.save('/baz');
+
+        this.wait(function () {
+            Assert.areSame(2, calls);
+        }, 200);
     }
 }));
 
