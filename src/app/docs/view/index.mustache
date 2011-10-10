@@ -383,8 +383,8 @@ var Y.PieListView = Y.Base.create('pieListView', Y.View, [], {
       this.modelList = config.modelList;
 
       // Re-render the view whenever a model is added to or removed from the
-      // model list, or when the entire list is refreshed.
-      this.modelList.after(['add', 'remove', 'refresh'], this.render, this);
+      // model list, or when the entire list is reset.
+      this.modelList.after(['add', 'remove', 'reset'], this.render, this);
     }
   },
 
