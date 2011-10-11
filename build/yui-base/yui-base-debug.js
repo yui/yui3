@@ -3262,7 +3262,17 @@ YUI.Env.parseUA = function(subUA) {
          * @default null
          * @static
          */
-        os: null
+        os: null,
+
+        /**
+         * The Nodejs Version
+         * @property nodejs
+         * @type float
+         * @default 0
+         * @static
+         */
+        nodejs: 0,
+
 
     },
 
@@ -3392,7 +3402,17 @@ YUI.Env.parseUA = function(subUA) {
 
     //It was a parsed UA, do not assign the global value.
     if (!subUA) {
+        
+        if (process) {
+            if (process.versions && process.versions.node) {
+                //NodeJS
+                o.os = process.platform;
+                o.nodejs = process.versions.node;
+            }
+        }
+
         YUI.Env.UA = o;
+
     }
 
     return o;
