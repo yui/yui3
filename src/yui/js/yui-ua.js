@@ -350,7 +350,8 @@ YUI.Env.parseUA = function(subUA) {
     //It was a parsed UA, do not assign the global value.
     if (!subUA) {
         
-        if (process) {
+        if (typeof process == 'object') {
+
             if (process.versions && process.versions.node) {
                 //NodeJS
                 o.os = process.platform;
