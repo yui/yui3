@@ -34,47 +34,47 @@ Usage
 
 Once the yui package has been installed, you can still access it like you used to:
 
-    ```js
-    var YUI = require('yui').YUI;
+```javascript
+var YUI = require('yui').YUI;
 
-    YUI().use('oop', function(Y) {
-        console.log('OOP?', (Y.rbind) ? true : false); //true
-    });
-    ```
+YUI().use('oop', function(Y) {
+    console.log('OOP?', (Y.rbind) ? true : false); //true
+});
+```
 
 We have also added support for YUI "requiring" in a more "CommonJS" manner:
 
-    ```js
-    var Y = require('yui/base-base');
-    console.log('Base?', (Y.Base) ? true : false); //true
+```javascript
+var Y = require('yui/base-base');
+console.log('Base?', (Y.Base) ? true : false); //true
 
-    var Y = require('yui/yql');
-    console.log('YQL?', (Y.YQL) ? true : false); //true
-    ```
+var Y = require('yui/yql');
+console.log('YQL?', (Y.YQL) ? true : false); //true
+```
 
 When you require a YUI module more than once in a process, the YUI instance
 used under the hood is shared. 
 
-    ```js
-    var Y = require('yui/yql');
-    console.log('YQL #1?', (Y.YQL) ? true : false); //true
-    console.log('Base #1?', (Y.Base) ? true : false); //false
+```javascript
+var Y = require('yui/yql');
+console.log('YQL #1?', (Y.YQL) ? true : false); //true
+console.log('Base #1?', (Y.Base) ? true : false); //false
 
-    var Y = require('yui/base-base');
-    console.log('YQL #2?', (Y.YQL) ? true : false); //true
-    console.log('Base #2?', (Y.Base) ? true : false); //true
-    ```
+var Y = require('yui/base-base');
+console.log('YQL #2?', (Y.YQL) ? true : false); //true
+console.log('Base #2?', (Y.Base) ? true : false); //true
+```
 
 
 You can also do one YUI use on require and load several modules at once:
 
-    ```js
-    var Y = require('yui').use('yql', 'oop', 'base-base');
+```javascript
+var Y = require('yui').use('yql', 'oop', 'base-base');
 
-    console.log('OOP?', (Y.rbind) ? true : false); //true
-    console.log('YQL?', (Y.YQL) ? true : false); //true
-    console.log('Base?', (Y.Base) ? true : false); //true
-    ```
+console.log('OOP?', (Y.rbind) ? true : false); //true
+console.log('YQL?', (Y.YQL) ? true : false); //true
+console.log('Base?', (Y.Base) ? true : false); //true
+```
 
 Sync vs Async
 -------------
@@ -82,26 +82,26 @@ Sync vs Async
 Doing a require, like above, where you select your modules inside the require will
 make that YUI instance sync by default:
 
-    ```js
-    //This will be sync
-    var Y = require('yui').use('yql', 'oop', 'base-base');
-    ```
+```javascript
+//This will be sync
+var Y = require('yui').use('yql', 'oop', 'base-base');
+```
 
 Using YUI like you do in the browser will make YUI async:
 
-    ```js
-    var YUI = require('yui').YUI;
-    //This will be async
-    YUI().use('oop', function(Y) {
-        console.log('OOP?', (Y.rbind) ? true : false); //true
-    });
-    ```
+```javascript
+var YUI = require('yui').YUI;
+//This will be async
+YUI().use('oop', function(Y) {
+    console.log('OOP?', (Y.rbind) ? true : false); //true
+});
+```
 
 You can force a sync use by setting the `useSync` config option in they YUI constructor:
 
-    ```js
-    var YUI = require('yui').YUI;
-    //This is sync
-    var Y = YUI({ useSync: true }).use('oop');
-    console.log('OOP?', (Y.rbind) ? true : false); //true
-    ```
+```javascript
+var YUI = require('yui').YUI;
+//This is sync
+var Y = YUI({ useSync: true }).use('oop');
+console.log('OOP?', (Y.rbind) ? true : false); //true
+```
