@@ -433,11 +433,11 @@ Y.Controller = Y.extend(Controller, Y.Base, {
           string, if any. Parameter names are keys, and are mapped to parameter
           values.
         @param {String} callback.req.url The full URL.
-        @param {String} callback.req.src What initiated the dispatch. e.g. In a
-          HTML5 browser, when the back/forward browser-buttons are used, this
-          property will have a value of `'popstate'`.
+        @param {String} callback.req.src What initiated the dispatch. In an
+          HTML5 browser, when the back/forward buttons are used, this property
+          will have a value of "popstate".
       @param {Object} callback.res Response object containing methods and
-          information that relates to responding to a request. It contains the
+          information that relate to responding to a request. It contains the
           following properties.
         @param {Object} callback.res.req Reference to the request object.
       @param {Function} callback.next Callback to pass control to the next
@@ -574,7 +574,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @method _dispatch
     @param {String} path URL path.
     @param {String} url Full URL.
-    @pram {String} src What initiated the dispatch.
+    @param {String} src What initiated the dispatch.
     @chainable
     @protected
     **/
@@ -697,7 +697,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @method _getRequest
     @param {String} path Current path being dispatched.
     @param {String} url Current full URL being dispatched.
-    @pram {String} src What initiated the dispatch.
+    @param {String} src What initiated the dispatch.
     @return {Object} Request object.
     @protected
     **/
@@ -719,9 +719,8 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @protected
     **/
     _getResponse: function (req) {
-        // To handle backwards compatability the response object is a function
-        // that when called, delegates to calling `next()` on the request
-        // object and returning the result.
+        // For backcompat, the response object is a function that calls `next()`
+        // on the request object and returns the result.
         var res = function () {
             return req.next.apply(this, arguments);
         };

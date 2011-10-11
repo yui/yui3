@@ -4,13 +4,11 @@ App Framework Change History
 3.5.0
 -----
 
-* [!] Controller: The signature for route handlers has changed in a backward-
-  compatible way. Route handlers are now passed three arguments, `req`, `res`,
-  and `next`.
-
-    controller.route('/foo', function (req, res, next) {
-        // `res();` and `next();` do the same thing.
-    });
+* [!] Controller: The signature for route handlers has changed. Route handlers
+  now receive three arguments: `req`, `res`, and `next`. To preserve backcompat,
+  `res` is a function that, when executed, calls `next()`. This behavior is
+  deprecated and will be removed in a future version of YUI, so please update
+  your route handlers to expect `next` as the third param.
 
 * Controller: "*" can now be used to create a catch-all route that will match
   any path (previously it was necessary to use a regex to do this).
@@ -22,7 +20,7 @@ App Framework Change History
   controllers, rather than only the controller that was the source of the
   change.
 
-* Controller: Added `url` and `src` properties to the request object that is
+* Controller: Added `url` and `src` properties to the request object that's
   passed to route handlers.
 
 * ModelList: Added a `filter()` method that returns a filtered array of models.

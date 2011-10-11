@@ -462,8 +462,9 @@ When a route is matched, the callback function associated with that route will b
         <p>
         What initiated the dispatch.
         </p>
+
         <p>
-        e.g. In a HTML5 browser, when the back/forward browser-buttons are used, this property will have a value of `'popstate'`.
+        In an HTML5 browser, when the back/forward buttons are used, this property will have a value of "popstate".
         </p>
       </dd>
     </dl>
@@ -472,13 +473,15 @@ When a route is matched, the callback function associated with that route will b
   <dt><strong>`res` (Object)</strong></dt>
   <dd>
     <p>
-    An object that contains methods and information that relates to responding to a request.
+    An object that contains methods and information that relate to responding to a request.
     </p>
+
     <p>
-    <strong>Note: </strong>for backwards-compatibility, the response object is also a function that when called will delegate to calling `req.next()` and behave the same as directly calling `next()`.
+    <strong>Note:</strong> For backwards compatibility, the response object is also a function that when called will behave the same as directly calling `next()`. This backcompat behavior will eventually be removed.
     </p>
+
     <p>
-    The response object contains the following properties:
+    The response object contains the following properties (it will eventually contain more, and may be augmented by subclasses or used to pass information from route to route):
     </p>
 
     <dl>
