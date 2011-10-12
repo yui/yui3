@@ -1,0 +1,15 @@
+{
+    "handlebars": {
+        "use": ["handlebars-base", "handlebars-compiler"],
+
+        "submodules": {
+            "handlebars-base": {
+                "requires": ["escape"]
+            },
+
+            "handlebars-compiler": {
+                "requires": ["yui-base"]
+            }
+        }
+    }
+}
