@@ -3256,9 +3256,7 @@ YUI.Env.parseUA = function(subUA) {
          * @default 0
          * @static
          */
-        nodejs: 0,
-
-
+        nodejs: 0
     },
 
     ua = subUA || nav && nav.userAgent,
@@ -3387,7 +3385,7 @@ YUI.Env.parseUA = function(subUA) {
 
     //It was a parsed UA, do not assign the global value.
     if (!subUA) {
-        
+
         if (typeof process == 'object') {
 
             if (process.versions && process.versions.node) {
