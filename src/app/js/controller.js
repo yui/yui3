@@ -14,30 +14,11 @@ Provides URL-based routing using HTML5 `pushState()` or the location hash.
 @since 3.4.0
 **/
 
-/**
-Provides URL-based routing using HTML5 `pushState()` or the location hash.
-
-This makes it easy to wire up route handlers for different application states
-while providing full back/forward navigation support and bookmarkable, shareable
-URLs.
-
-@class Controller
-@constructor
-@extends Base
-@since 3.4.0
-**/
-
 var HistoryHash = Y.HistoryHash,
     Lang        = Y.Lang,
     QS          = Y.QueryString,
     YArray      = Y.Array,
 
-    // Android versions lower than 3.0 are buggy and don't update
-    // window.location after a pushState() call, so we fall back to hash-based
-    // history for them.
-    //
-    // See http://code.google.com/p/android/issues/detail?id=17471
-    html5    = Y.HistoryBase.html5 && (!Y.UA.android || Y.UA.android >= 3),
     win      = Y.config.win,
     location = win.location,
 
@@ -60,6 +41,25 @@ var HistoryHash = Y.HistoryHash,
     **/
     EVT_READY = 'ready';
 
+/**
+Provides URL-based routing using HTML5 `pushState()` or the location hash.
+
+This makes it easy to wire up route handlers for different application states
+while providing full back/forward navigation support and bookmarkable, shareable
+URLs.
+
+@class Controller
+@param {Object} [config] Config properties.
+    @param {Boolean} [config.html5] Overrides the default capability detection
+        and forces this controller to use (`true`) or not use (`false`) HTML5
+        history.
+    @param {String} [config.root=''] Root path from which all routes should be
+        evaluated.
+    @param {Array} [config.routes=[]] Array of route definition objects.
+@constructor
+@extends Base
+@since 3.4.0
+**/
 function Controller() {
     Controller.superclass.constructor.apply(this, arguments);
 }
@@ -70,13 +70,22 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     /**
     Whether or not this browser is capable of using HTML5 history.
 
-    This property is for informational purposes only. It's not configurable, and
-    changing it will have no effect.
+    This property should only be set via the constructor at instantiation time.
+    Setting this to `false` will force the use of hash-based history even on
+    HTML5 browsers, but please don't do this unless you understand the
+    consequences.
 
     @property html5
     @type Boolean
     **/
-    html5: html5,
+
+    // Android versions lower than 3.0 are buggy and don't update
+    // window.location after a pushState() call, so we fall back to hash-based
+    // history for them.
+    //
+    // See http://code.google.com/p/android/issues/detail?id=17471
+
+    html5: Y.HistoryBase.html5 && (!Y.UA.android || Y.UA.android >= 3),
 
     /**
     Absolute root path from which all routes should be evaluated.
@@ -161,6 +170,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
       1. Parameter prefix character. Either a `:` for subpath parameters that
          should only match a single level of a path, or `*` for splat parameters
          that should match any number of path levels.
+
       2. Parameter name.
 
     @property _regexPathParam
@@ -197,6 +207,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         // Set config properties.
         config || (config = {});
 
+        Lang.isValue(config.html5) && (self.html5 = config.html5);
         config.routes && (self.routes = config.routes);
         Lang.isValue(config.root) && (self.root = config.root);
 
@@ -208,7 +219,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         });
 
         // Set up a history instance or hashchange listener.
-        if (html5) {
+        if (self.html5) {
             self._history = new Y.HistoryHTML5({force: true});
             Y.after('history:change', self._afterHistoryChange, self);
         } else {
@@ -235,7 +246,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     },
 
     destructor: function () {
-        if (html5) {
+        if (this.html5) {
             Y.detach('history:change', this._afterHistoryChange, this);
         } else {
             Y.detach('hashchange', this._afterHistoryChange, win);
@@ -258,7 +269,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         this.once(EVT_READY, function () {
             this._ready = true;
 
-            if (html5 && this.upgrade()) {
+            if (this.html5 && this.upgrade()) {
                 return;
             } else {
                 this._dispatch(this._getPath(), this._getURL());
@@ -503,7 +514,11 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @method upgrade
     @return {Boolean} `true` if the URL was upgraded, `false` otherwise.
     **/
-    upgrade: html5 ? function () {
+    upgrade: function () {
+        if (!this.html5) {
+            return false;
+        }
+
         var hash = this._getHashPath();
 
         if (hash && hash.charAt(0) === '/') {
@@ -519,7 +534,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         }
 
         return false;
-    } : function () { return false; },
+    },
 
     // -- Protected Methods ----------------------------------------------------
 
@@ -640,10 +655,9 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @return {String} Current route path.
     @protected
     **/
-    _getPath: html5 ? function () {
-        return this.removeRoot(location.pathname);
-    } : function () {
-        return this._getHashPath() || this.removeRoot(location.pathname);
+    _getPath: function () {
+        return (!this.html5 && this._getHashPath()) ||
+            this.removeRoot(location.pathname);
     },
 
     /**
@@ -653,9 +667,11 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @return {String} Current route query string.
     @protected
     **/
-    _getQuery: html5 ? function () {
-        return location.search.substring(1);
-    } : function () {
+    _getQuery: function () {
+        if (this.html5) {
+            return location.search.substring(1);
+        }
+
         var hash    = HistoryHash.getHash(),
             matches = hash.match(this._regexUrlQuery);
 
@@ -821,7 +837,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
             self = this;
 
         saveQueue.push(function () {
-            if (html5) {
+            if (self.html5) {
                 if (Y.UA.ios && Y.UA.ios < 5) {
                     // iOS <5 has buggy HTML5 history support, and needs to be
                     // synchronous.
@@ -855,24 +871,25 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @chainable
     @protected
     **/
-    _save: html5 ? function (url, replace) {
+    _save: function (url, replace) {
+        var urlIsString = typeof url === 'string';
+
         // Force _ready to true to ensure that the history change is handled
         // even if _save is called before the `ready` event fires.
         this._ready = true;
 
-        this._history[replace ? 'replace' : 'add'](null, {
-            url: typeof url === 'string' ? this._joinURL(url) : url
-        });
+        if (this.html5) {
+            this._history[replace ? 'replace' : 'add'](null, {
+                url: urlIsString ? this._joinURL(url) : url
+            });
+        } else {
+            if (urlIsString && url.charAt(0) !== '/') {
+                url = '/' + url;
+            }
 
-        return this;
-    } : function (url, replace) {
-        this._ready = true;
-
-        if (typeof url === 'string' && url.charAt(0) !== '/') {
-            url = '/' + url;
+            HistoryHash[replace ? 'replaceHash' : 'setHash'](url);
         }
 
-        HistoryHash[replace ? 'replaceHash' : 'setHash'](url);
         return this;
     },
 
