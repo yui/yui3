@@ -107,6 +107,24 @@ When instantiating Controller, you may optionally pass in a config object contai
   </thead>
   <tbody>
     <tr>
+      <td>`html5`</td>
+      <td><em>auto</em></td>
+      <td>
+        <p>
+        Whether or not to use HTML5 history (`true`) or hash-based history (`false`).
+        </p>
+
+        <p>
+        Feature detection is used to determine the correct default setting for the current browser, but you may override this to force all browsers to use or not use HTML5 history.
+        </p>
+
+        <p>
+        Before overriding this property, please read [[#HTML5 URLs vs. Hash URLs]] and be sure you fully understand the consequences. It's almost always a better idea to leave it alone.
+        </p>
+      </td>
+    </tr>
+
+    <tr>
       <td>`root`</td>
       <td>`''`</td>
       <td>
@@ -150,7 +168,8 @@ Here's an example that sets all the configurable properties:
 
 ```
 var controller = new Y.Controller({
-  root: '/mysite',
+  html5: false,
+  root : '/mysite',
 
   routes: [
     {path: '/',    callback: function () { alert('Hello!'); }},
@@ -158,35 +177,6 @@ var controller = new Y.Controller({
   ]
 });
 ```
-
-<h4>Read-Only Properties</h4>
-
-<p>
-Controller instances currently expose a single informational property, `html5`, which is meant to be read-only.
-</p>
-
-<table>
-  <thead>
-    <tr>
-      <th>Property</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>`html5`</td>
-      <td>
-        <p>
-        Whether or not the user's browser is capable of using HTML5 history.
-        </p>
-
-        <p>
-        This property is for informational purposes only. It's not configurable, and changing it will have no effect.
-        </p>
-      </td>
-    </tr>
-  </tbody>
-</table>
 
 <h4>Setting the Root Path</h4>
 
@@ -809,7 +799,7 @@ Don't skip the server-side changes! Without them, using the `#!` prefix won't do
 <h2>Known Limitations</h2>
 
 <ul>
-  <li><p><strong>HTML5 history is not currently supported by any version of Internet Explorer.</strong> This includes Internet Explorer 9 and developer preview releases of IE10 as of the time these docs were written. Please feel free to let Microsoft know how you feel about this.</p></li>
+  <li><p><strong>HTML5 history is not supported by Internet Explorer 9 or lower.</strong> IE10 is the first version of Internet Explorer that supports HTML5 history. Earlier versions will fall back to hash-based history by default.</p></li>
 
   <li><p><strong>Android 2.x is forced to use hash-based history due to <a href="http://code.google.com/p/android/issues/detail?id=17471">a bug</a> in Android's HTML5 history implementation.</strong> This bug does not affect Android 3.0 and higher.</p></li>
 

@@ -384,7 +384,7 @@ controllerSuite.add(new Y.Test.Case({
         });
 
         controller._dispatch('/foo', {}, src);
-    },
+    }
 }));
 
 // -- Controller: Routes -------------------------------------------------------

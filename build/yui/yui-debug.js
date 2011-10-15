@@ -3262,8 +3262,16 @@ YUI.Env.parseUA = function(subUA) {
          * @default null
          * @static
          */
-        os: null
+        os: null,
 
+        /**
+         * The Nodejs Version
+         * @property nodejs
+         * @type float
+         * @default 0
+         * @static
+         */
+        nodejs: 0
     },
 
     ua = subUA || nav && nav.userAgent,
@@ -3392,7 +3400,18 @@ YUI.Env.parseUA = function(subUA) {
 
     //It was a parsed UA, do not assign the global value.
     if (!subUA) {
+
+        if (typeof process == 'object') {
+
+            if (process.versions && process.versions.node) {
+                //NodeJS
+                o.os = process.platform;
+                o.nodejs = process.versions.node;
+            }
+        }
+
         YUI.Env.UA = o;
+
     }
 
     return o;
@@ -4901,7 +4920,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2011.10.06-19-55',
+            GALLERY_VERSION = 'gallery-2011.10.12-20-24',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
