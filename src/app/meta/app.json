@@ -1,8 +1,12 @@
 {
     "app": {
-        "use": ["controller", "model", "model-list", "view"],
+        "use": ["app-base", "controller", "model", "model-list", "view"],
 
         "submodules": {
+            "app-base": {
+                "requires": ["controller", "pjax-base", "view", "transition"]
+            },
+
             "controller": {
                 "optional": ["querystring-parse"],
                 "requires": ["array-extras", "base-build", "history"]
