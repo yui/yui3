@@ -63,10 +63,19 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "app": {
         "use": [
+            "app-base", 
             "controller", 
             "model", 
             "model-list", 
             "view"
+        ]
+    }, 
+    "app-base": {
+        "requires": [
+            "controller", 
+            "pjax-base", 
+            "view", 
+            "transition"
         ]
     }, 
     "array-extras": {
@@ -2066,4 +2075,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'c4899f419139fb547b7304796951b273';
+YUI.Env[Y.version].md5 = '45e7df24b431d71744d92aeba35114d7';

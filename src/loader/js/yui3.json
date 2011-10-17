@@ -56,10 +56,19 @@
     }, 
     "app": {
         "use": [
+            "app-base", 
             "controller", 
             "model", 
             "model-list", 
             "view"
+        ]
+    }, 
+    "app-base": {
+        "requires": [
+            "controller", 
+            "pjax-base", 
+            "view", 
+            "transition"
         ]
     }, 
     "array-extras": {
