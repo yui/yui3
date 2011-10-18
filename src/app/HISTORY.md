@@ -44,6 +44,13 @@ App Framework Change History
   to use (`true`) or not use (`false`) HTML5 history. Please don't set it to
   `false` unless you understand the consequences.
 
+### View
+
+* [!] The `container`, `model`, `modelList`, and `template` properties are now
+  attributes. Code that refers to the old properties, like `myView.model` and
+  `myView.model = model`, must be updated to use the attribute syntax instead:
+  `myView.get('model')` and `myView.set('model', model)`.
+
 
 3.4.1
 -----

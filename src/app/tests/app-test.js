@@ -2117,8 +2117,8 @@ viewSuite.add(new Y.Test.Case({
     'container should be a <div> node by default': function () {
         var view = new Y.View();
 
-        Assert.isInstanceOf(Y.Node, view.container);
-        Assert.areSame('div', view.container.get('tagName').toLowerCase());
+        Assert.isInstanceOf(Y.Node, view.get('container'));
+        Assert.areSame('div', view.get('container').get('tagName').toLowerCase());
     },
 
     'events property should be an empty object by default': function () {
@@ -2128,29 +2128,29 @@ viewSuite.add(new Y.Test.Case({
         Assert.isTrue(Y.Object.isEmpty(view.events));
     },
 
-    'model property should be undefined by default': function () {
-        Assert.isUndefined(new Y.View().model);
+    'model attribute should be null by default': function () {
+        Assert.isNull(new Y.View().get('model'));
     },
 
     'initializer should allow setting a model reference at init': function () {
         var model = new Y.Model(),
             view  = new Y.View({model: model});
 
-        Assert.areSame(model, view.model);
+        Assert.areSame(model, view.get('model'));
     },
 
     'initializer should allow setting a model list reference at init': function () {
         var modelList = new Y.ModelList(),
             view      = new Y.View({modelList: modelList});
 
-        Assert.areSame(modelList, view.modelList);
+        Assert.areSame(modelList, view.get('modelList'));
     },
 
     'initializer should allow setting a template at init': function () {
         var template = {},
             view     = new Y.View({template: template});
 
-        Assert.areSame(template, view.template);
+        Assert.areSame(template, view.get('template'));
     },
 
     'initializer should call create() to create the container node': function () {
@@ -2179,7 +2179,12 @@ viewSuite.add(new Y.Test.Case({
                     calls += 1;
 
                     Assert.areSame(this.events, events);
+
+                    // Ensure that events specified at instantiation time are
+                    // merged into any default events, rather than overwriting
+                    // all default events.
                     Assert.areSame('handler', events['#foo'].click);
+                    Assert.isObject(events['#bar'], 'Events passed at init should be merged into default events.');
                     Assert.areSame('handler', events['#bar'].click);
                 }
             });
@@ -2192,11 +2197,11 @@ viewSuite.add(new Y.Test.Case({
     'destructor should remove the container from the DOM': function () {
         var view = new Y.View();
 
-        Y.one('body').append(view.container);
-        Assert.isTrue(view.container.inDoc());
+        Y.one('body').append(view.get('container'));
+        Assert.isTrue(view.get('container').inDoc());
 
         view.destroy();
-        Assert.isNull(view.container._node);
+        Assert.isNull(view.get('container')._node);
     }
 }));
 
@@ -2222,11 +2227,11 @@ viewSuite.add(new Y.Test.Case({
     'remove() should remove the container node from the DOM': function () {
         var view = new Y.View();
 
-        Y.one('body').append(view.container);
-        Assert.isTrue(view.container.inDoc());
+        Y.one('body').append(view.get('container'));
+        Assert.isTrue(view.get('container').inDoc());
 
         view.remove();
-        Assert.isFalse(view.container.inDoc());
+        Assert.isFalse(view.get('container').inDoc());
     },
 
     'render() should be a chainable noop': function () {
