@@ -2621,9 +2621,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "app": {
         "use": [
-            "controller", 
             "model", 
             "model-list", 
+            "router", 
             "view"
         ]
     }, 
@@ -2923,13 +2923,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "skinnable": true
     }, 
     "controller": {
-        "optional": [
-            "querystring-parse"
-        ], 
-        "requires": [
-            "array-extras", 
-            "base-build", 
-            "history"
+        "use": [
+            "router"
         ]
     }, 
     "cookie": {
@@ -4071,8 +4066,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "pjax-base": {
         "requires": [
             "classnamemanager", 
-            "controller", 
-            "node-event-delegate"
+            "node-event-delegate", 
+            "router"
         ]
     }, 
     "pjax-plugin": {
@@ -4226,6 +4221,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "get", 
             "features"
+        ]
+    }, 
+    "router": {
+        "optional": [
+            "querystring-parse"
+        ], 
+        "requires": [
+            "array-extras", 
+            "base-build", 
+            "history"
         ]
     }, 
     "scrollview": {
@@ -4624,7 +4629,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'c4899f419139fb547b7304796951b273';
+YUI.Env[Y.version].md5 = '9573e500940f4758392e8b2c2ebbdca0';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
