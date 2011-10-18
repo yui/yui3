@@ -1,7 +1,7 @@
 var EVT_ERROR = 'error',
     EVT_LOAD  = 'load';
 
-Y.Pjax = Y.Base.create('pjax', Y.Controller, [Y.PjaxBase], {
+Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase], {
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function () {
         this.publish(EVT_ERROR, {defaultFn: this._defCompleteFn});

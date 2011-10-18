@@ -4,9 +4,9 @@ var ArrayAssert  = Y.ArrayAssert,
     Assert       = Y.Assert,
     ObjectAssert = Y.ObjectAssert,
 
-    html5 = Y.Controller.html5,
+    html5 = Y.Router.html5,
 
-    controllerSuite,
+    routerSuite,
     modelSuite,
     modelListSuite,
     suite,
@@ -14,592 +14,6 @@ var ArrayAssert  = Y.ArrayAssert,
 
 // -- Global Suite -------------------------------------------------------------
 suite = new Y.Test.Suite('App Framework');
-
-// -- Controller Suite ---------------------------------------------------------
-controllerSuite = new Y.Test.Suite({
-    name: 'Controller',
-
-    setUp: function () {
-        this.oldPath = Y.config.win.location.toString();
-
-        if (!html5) {
-            Y.config.win.location.hash = '';
-        }
-    },
-
-    tearDown: function () {
-        if (html5) {
-            Y.config.win.history.replaceState(null, null, this.oldPath);
-        } else {
-            Y.config.win.location.hash = '';
-        }
-    }
-});
-
-// -- Controller: Lifecycle ----------------------------------------------------
-controllerSuite.add(new Y.Test.Case({
-    name: 'Lifecycle',
-
-    tearDown: function () {
-        this.controller && this.controller.destroy();
-        delete this.controller;
-    },
-
-    'initializer should set attributes based on config options': function () {
-        var controller = this.controller = new Y.Controller({
-                html5: false,
-
-                root: '/foo',
-
-                routes: [
-                    {path: '/', callback: function () {}},
-                    {path: '/foo', callback: function () {}}
-                ]
-            });
-
-        Assert.isFalse(controller.get('html5'));
-
-        Assert.areSame('/foo', controller.get('root'));
-
-        Assert.areSame(2, controller.get('routes').length);
-        Assert.areSame(2, controller._routes.length);
-        Assert.areSame('/', controller.get('routes')[0].path);
-        Assert.areSame('/', controller._routes[0].path);
-        Assert.areSame('/foo', controller.get('routes')[1].path);
-        Assert.areSame('/foo', controller._routes[1].path);
-    },
-
-    'subclass with default routes should work': function () {
-        var MyController = Y.Base.create('myController', Y.Controller, [], {}, {
-                ATTRS: {
-                    routes: {
-                        value: [
-                            {path: '/',    callback: 'index'},
-                            {path: '/pie', callback: 'pie'}
-                        ]
-                    }
-                }
-            }),
-
-            controller = this.controller = new MyController();
-
-        Assert.areSame(2, controller.get('routes').length);
-        Assert.areSame(2, controller._routes.length);
-        Assert.areSame('/', controller.get('routes')[0].path);
-        Assert.areSame('/', controller._routes[0].path);
-        Assert.areSame('/pie', controller.get('routes')[1].path);
-        Assert.areSame('/pie', controller._routes[1].path);
-    }
-}));
-
-// -- Controller: Attributes ---------------------------------------------------
-controllerSuite.add(new Y.Test.Case({
-    name: 'Attributes',
-
-    tearDown: function () {
-        this.controller && this.controller.destroy();
-        delete this.controller;
-    },
-
-    '`html5` attribute should have a default value': function () {
-        var controller = this.controller = new Y.Controller();
-        Assert.areSame(Y.Controller.html5, controller.get('html5'));
-    },
-
-    '`root` attribute should have a default value': function () {
-        var controller = this.controller = new Y.Controller();
-        Assert.areSame('', controller.get('root'));
-    },
-
-    '`routes` attribute should have a default value': function () {
-        var controller = this.controller = new Y.Controller();
-
-        Assert.isArray(controller.get('routes'));
-        ArrayAssert.isEmpty(controller.get('routes'));
-    },
-
-    'setting the `routes` attribute should reset all routes': function () {
-        var controller = this.controller = new Y.Controller();
-
-        controller.set('routes', [
-            {path: '/', callback: function () {}},
-            {path: '/foo', callback: function () {}}
-        ]);
-
-        ArrayAssert.itemsAreSame(controller._routes, controller.get('routes'));
-        Assert.areSame(2, controller._routes.length);
-        Assert.areSame(controller.get('routes')[0].callback, controller._routes[0].callback);
-        Assert.areSame(controller.get('routes')[1].callback, controller._routes[1].callback);
-    }
-}));
-
-// -- Controller: Events -------------------------------------------------------
-controllerSuite.add(new Y.Test.Case({
-    name: 'Events',
-
-    tearDown: function () {
-        this.controller && this.controller.destroy();
-        delete this.controller;
-    },
-
-    '`ready` event should fire when the controller is ready to dispatch': function () {
-        var test = this,
-
-            controller = this.controller = new Y.Controller({
-                on: {
-                    ready: function (e) {
-                        test.resume(function () {
-                            Assert.isFalse(e.dispatched);
-                        });
-                    }
-                }
-            });
-
-        this.wait(1000);
-    },
-
-    '`ready` event should set e.dispatched to true if called after dispatch': function () {
-        var test = this,
-
-            controller = this.controller = new Y.Controller({
-                on: {
-                    initializedChange: function () {
-                        this._dispatch('/fake', {});
-                    },
-
-                    ready: function (e) {
-                        test.resume(function () {
-                            Assert.isTrue(e.dispatched);
-                        });
-                    }
-                }
-            });
-
-        this.wait(1000);
-    }
-}));
-
-// -- Controller: Methods ------------------------------------------------------
-controllerSuite.add(new Y.Test.Case({
-    name: 'Methods',
-
-    tearDown: function () {
-        this.controller && this.controller.destroy();
-        delete this.controller;
-    },
-
-    'route() should add a route': function () {
-        var controller = this.controller = new Y.Controller();
-
-        controller.one = function () {};
-        function two() {}
-
-        Assert.areSame(0, controller._routes.length);
-
-        Assert.areSame(controller, controller.route('/foo', 'one'));
-        Assert.areSame(1, controller._routes.length);
-
-        controller.route(/bar/, two);
-        Assert.areSame(2, controller._routes.length);
-
-        Assert.areSame('one', controller._routes[0].callback);
-        Assert.areSame(two, controller._routes[1].callback);
-    },
-
-    'match() should return an array of routes that match the given path': function () {
-        var controller = this.controller = new Y.Controller(),
-            routes;
-
-        function one () {}
-        function two() {}
-        function three() {}
-
-        controller.route('/:foo', one);
-        controller.route(/foo/, two);
-        controller.route('/bar', three);
-
-        routes = controller.match('/foo');
-
-        Assert.areSame(2, routes.length);
-        Assert.areSame(one, routes[0].callback);
-        Assert.areSame(two, routes[1].callback);
-    },
-
-    'hasRoute() should return `true` if one or more routes match the given path': function () {
-        var controller = this.controller = new Y.Controller(),
-            routes;
-
-        function noop () {}
-
-        controller.route('/:foo', noop);
-        controller.route(/foo/, noop);
-        controller.route('/bar', noop);
-
-        Assert.isTrue(controller.hasRoute('/foo'));
-        Assert.isTrue(controller.hasRoute('/bar'));
-        Assert.isFalse(controller.hasRoute('/baz/quux'));
-    },
-
-    'hasRoute() should support full URLs': function () {
-        var controller = this.controller = new Y.Controller(),
-            routes;
-
-        function noop () {}
-
-        controller.route('/:foo', noop);
-        controller.route(/foo/, noop);
-        controller.route('/bar', noop);
-
-        Assert.isTrue(controller.hasRoute('http://example.com/foo'));
-        Assert.isTrue(controller.hasRoute('https://example.com/bar'));
-        Assert.isFalse(controller.hasRoute('http://example.com/baz/quux'));
-    },
-
-    'dispatch() should dispatch to the first route that matches the current URL': function () {
-        var test       = this,
-            controller = this.controller = new Y.Controller();
-
-        controller.route(/./, function () {
-            test.resume();
-        });
-
-        setTimeout(function () {
-            controller.dispatch();
-        }, 1);
-
-        this.wait(1000);
-    },
-
-    'dispatch() should upgrade hash URLs to HTML5 URLs in HTML5 browsers': function () {
-        if (!html5) {
-            Assert.isTrue(true);
-            return;
-        }
-
-        Y.HistoryHash.setHash('/hashpath');
-
-        var test       = this,
-            controller = this.controller = new Y.Controller();
-
-        controller.route('/hashpath', function (req) {
-            test.resume(function () {
-                Assert.areSame('/hashpath', req.path);
-                Assert.areSame(Y.config.win.location.pathname, '/hashpath');
-            });
-        });
-
-        controller.dispatch();
-        this.wait(500);
-    },
-
-    'removeRoot() should remove the root URL from a given path': function () {
-        var controller = this.controller = new Y.Controller();
-
-        controller.set('root', '/');
-        Assert.areSame('/bar', controller.removeRoot('/bar'));
-        Assert.areSame('/bar', controller.removeRoot('bar'));
-
-        controller.set('root', '/foo');
-        Assert.areSame('/bar', controller.removeRoot('/foo/bar'));
-
-        controller.set('root', '/foo/');
-        Assert.areSame('/bar', controller.removeRoot('/foo/bar'));
-
-        controller.set('root', '/moo');
-        Assert.areSame('/foo/bar', controller.removeRoot('/foo/bar'));
-    },
-
-    'removeRoot() should strip the "http://foo.com" portion of the URL, if any': function () {
-        var controller = this.controller = new Y.Controller();
-
-        Assert.areSame('/foo/bar', controller.removeRoot('http://example.com/foo/bar'));
-        Assert.areSame('/foo/bar', controller.removeRoot('https://example.com/foo/bar'));
-        Assert.areSame('/foo/bar', controller.removeRoot('http://user:pass@example.com/foo/bar'));
-        Assert.areSame('/foo/bar', controller.removeRoot('http://example.com:8080/foo/bar'));
-        Assert.areSame('/foo/bar', controller.removeRoot('http://user:pass@example.com:8080/foo/bar'));
-
-        controller.set('root', '/foo');
-        Assert.areSame('/bar', controller.removeRoot('http://example.com/foo/bar'));
-        Assert.areSame('/bar', controller.removeRoot('https://example.com/foo/bar'));
-        Assert.areSame('/bar', controller.removeRoot('http://user:pass@example.com/foo/bar'));
-        Assert.areSame('/bar', controller.removeRoot('http://example.com:8080/foo/bar'));
-        Assert.areSame('/bar', controller.removeRoot('http://user:pass@example.com:8080/foo/bar'));
-    },
-
-    'replace() should replace the current history entry': function () {
-        var test       = this,
-            controller = this.controller = new Y.Controller();
-
-        controller.route('/replace', function (req) {
-            test.resume(function () {
-                Assert.areSame('/replace', req.path);
-                Assert.isObject(req.query);
-            });
-        });
-
-        // Wrapped in a setTimeout to make the async test work on iOS<5, which
-        // performs this action synchronously.
-        setTimeout(function () {
-            controller.replace('/replace');
-        }, 1);
-
-        this.wait(1000);
-    },
-
-    'save() should create a new history entry': function () {
-        var test       = this,
-            controller = this.controller = new Y.Controller();
-
-        controller.route('/save', function (req) {
-            test.resume(function () {
-                Assert.areSame('/save', req.path);
-                Assert.isObject(req.query);
-            });
-        });
-
-        // Wrapped in a setTimeout to make the async test work on iOS<5, which
-        // performs this action synchronously.
-        setTimeout(function () {
-            controller.save('/save');
-        }, 1);
-
-        this.wait(1000);
-    },
-
-    'consecutive save() calls should dispatch to the correct routes': function () {
-        var paths      = [],
-            test       = this,
-            controller = this.controller = new Y.Controller();
-
-        controller.route('/one', function (req) {
-            paths.push(req.path);
-        });
-
-        controller.route('/two', function (req) {
-            paths.push(req.path);
-        });
-
-        controller.route('/three', function (req) {
-            paths.push(req.path);
-
-            test.resume(function () {
-                ArrayAssert.itemsAreSame(['/one', '/two', '/three'], paths);
-            });
-        });
-
-        // Wrapped in a setTimeout to make the async test work on iOS<5, which
-        // performs this action synchronously.
-        setTimeout(function () {
-            controller.save('/one');
-            controller.save('/two');
-            controller.save('/three');
-        }, 1);
-
-        this.wait(2000);
-    },
-
-    '_joinURL() should normalize / separators': function () {
-        var controller = this.controller = new Y.Controller();
-
-        controller.set('root', '/foo');
-        Assert.areSame('/foo/bar', controller._joinURL('bar'));
-        Assert.areSame('/foo/bar', controller._joinURL('/bar'));
-
-        controller.set('root', '/foo/');
-        Assert.areSame('/foo/bar', controller._joinURL('bar'));
-        Assert.areSame('/foo/bar', controller._joinURL('/bar'));
-    },
-
-    '_dispatch() should pass `src` through to request object passed to route handlers': function () {
-        var controller = this.controller = new Y.Controller(),
-            calls      = 0,
-            src        = 'API';
-
-        controller.route('/foo', function (req, res, next) {
-            Assert.areSame(src, req.src);
-        });
-
-        controller._dispatch('/foo', {}, src);
-    }
-}));
-
-// -- Controller: Routes -------------------------------------------------------
-controllerSuite.add(new Y.Test.Case({
-    name: 'Routes',
-
-    tearDown: function () {
-        this.controller && this.controller.destroy();
-        this.controller2 && this.controller2.destroy();
-
-        delete this.controller;
-        delete this.controller2;
-    },
-
-    'routes should be called in the context of the controller': function () {
-        var calls      = 0,
-            controller = this.controller = new Y.Controller({
-                routes: [{path: '/foo', callback: 'foo'}]
-            });
-
-        controller.foo = function () {
-            calls += 1;
-            Assert.areSame(controller, this);
-        };
-
-        controller.route('/bar', controller.foo);
-        controller._dispatch('/foo', {});
-        controller._dispatch('/bar', {});
-
-        Assert.areSame(2, calls);
-    },
-
-    'routes should receive a request object, response object, and `next` function as params': function () {
-        var calls      = 0,
-            controller = this.controller = new Y.Controller();
-
-        controller.route('/foo', function (req, res, next) {
-            calls += 1;
-
-            Assert.isObject(req);
-            Assert.isObject(res);
-            Assert.isFunction(next);
-            Assert.areSame(next, req.next);
-            Assert.isObject(req.params);
-            Assert.isTrue(Y.Object.isEmpty(req.params));
-            Assert.areSame('/foo', req.path);
-            ObjectAssert.areEqual({bar: 'baz quux', moo: ''}, req.query);
-        });
-
-        // Duckpunching _getQuery so we can test req.query.
-        controller._getQuery = function () {
-            return 'bar=baz%20quux&moo';
-        };
-
-        controller._dispatch('/foo', {foo: 'foo'});
-
-        Assert.areSame(1, calls);
-    },
-
-    'request object should contain captured route parameters': function () {
-        var calls      = 0,
-            controller = this.controller = new Y.Controller();
-
-        controller.route('/foo/:bar/:baz', function (req) {
-            calls += 1;
-
-            ArrayAssert.itemsAreSame(['bar', 'baz'], Y.Object.keys(req.params));
-            ArrayAssert.itemsAreSame(['one', 'two'], Y.Object.values(req.params));
-        });
-
-        controller.route('/bar/*path', function (req) {
-            calls += 1;
-
-            Assert.isObject(req.params);
-            ArrayAssert.itemsAreSame(['path'], Y.Object.keys(req.params));
-            ArrayAssert.itemsAreSame(['one/two'], Y.Object.values(req.params));
-        });
-
-        controller.route(/^\/(baz)\/(quux)$/, function (req) {
-            calls += 1;
-
-            Assert.isArray(req.params);
-            ArrayAssert.itemsAreSame(['/baz/quux', 'baz', 'quux'], req.params);
-        });
-
-        controller._dispatch('/foo/one/two', {});
-        controller._dispatch('/bar/one/two', {});
-        controller._dispatch('/baz/quux', {});
-
-        Assert.areSame(3, calls);
-    },
-
-    'calling `res()` should have the same result as calling `next()`': function () {
-        var calls      = 0;
-            controller = this.controller = new Y.Controller();
-
-        controller.route('/foo', function (req, res, next) {
-            calls += 1;
-            Assert.isFunction(res);
-            res();
-        });
-
-        controller.route('/foo', function (req, res, next) {
-            calls += 1;
-            Assert.isFunction(next);
-            next();
-        });
-
-        controller.route('/foo', function () {
-            calls += 1;
-        });
-
-        controller._dispatch('/foo', {});
-
-        Assert.areSame(3, calls);
-    },
-
-    'calling `next()` should pass control to the next matching route': function () {
-        var calls      = 0,
-            controller = this.controller = new Y.Controller();
-
-        controller.route('/foo', function (req, res, next) {
-            calls += 1;
-            next();
-        });
-
-        controller.route(/foo/, function (req, res, next) {
-            calls += 1;
-            next();
-        });
-
-        controller.route('/foo', function (req, res, next) {
-            calls += 1;
-        });
-
-        controller.route('/foo', function (req, res, next) {
-            calls += 1;
-            Assert.fail('final route should not be called');
-        });
-
-        controller._dispatch('/foo', {});
-
-        Assert.areSame(3, calls);
-    },
-
-    '"*" should be a catch-all route': function () {
-        var calls      = 0,
-            controller = this.controller = new Y.Controller();
-
-        controller.route('*', function (req) {
-            calls += 1;
-        });
-
-        controller._dispatch('/foo', {});
-        controller._dispatch('/bar', {});
-
-        Assert.areSame(2, calls);
-    },
-
-    'multiple controllers should be able to coexist and have duplicate route handlers': function () {
-        var calls = 0,
-            controllerOne = this.controller  = new Y.Controller(),
-            controllerTwo = this.controller2 = new Y.Controller();
-
-        controllerOne.route('/baz', function () {
-            calls += 1;
-        });
-
-        controllerTwo.route('/baz', function () {
-            calls += 1;
-        });
-
-        controllerOne.save('/baz');
-
-        this.wait(function () {
-            Assert.areSame(2, calls);
-        }, 200);
-    }
-}));
 
 // -- Model Suite --------------------------------------------------------------
 modelSuite = new Y.Test.Suite('Model');
@@ -2107,6 +1521,592 @@ modelListSuite.add(new Y.Test.Case({
     }
 }));
 
+// -- Router Suite ---------------------------------------------------------
+routerSuite = new Y.Test.Suite({
+    name: 'Router',
+
+    setUp: function () {
+        this.oldPath = Y.config.win.location.toString();
+
+        if (!html5) {
+            Y.config.win.location.hash = '';
+        }
+    },
+
+    tearDown: function () {
+        if (html5) {
+            Y.config.win.history.replaceState(null, null, this.oldPath);
+        } else {
+            Y.config.win.location.hash = '';
+        }
+    }
+});
+
+// -- Router: Lifecycle ----------------------------------------------------
+routerSuite.add(new Y.Test.Case({
+    name: 'Lifecycle',
+
+    tearDown: function () {
+        this.router && this.router.destroy();
+        delete this.router;
+    },
+
+    'initializer should set attributes based on config options': function () {
+        var router = this.router = new Y.Router({
+                html5: false,
+
+                root: '/foo',
+
+                routes: [
+                    {path: '/', callback: function () {}},
+                    {path: '/foo', callback: function () {}}
+                ]
+            });
+
+        Assert.isFalse(router.get('html5'));
+
+        Assert.areSame('/foo', router.get('root'));
+
+        Assert.areSame(2, router.get('routes').length);
+        Assert.areSame(2, router._routes.length);
+        Assert.areSame('/', router.get('routes')[0].path);
+        Assert.areSame('/', router._routes[0].path);
+        Assert.areSame('/foo', router.get('routes')[1].path);
+        Assert.areSame('/foo', router._routes[1].path);
+    },
+
+    'subclass with default routes should work': function () {
+        var MyRouter = Y.Base.create('myRouter', Y.Router, [], {}, {
+                ATTRS: {
+                    routes: {
+                        value: [
+                            {path: '/',    callback: 'index'},
+                            {path: '/pie', callback: 'pie'}
+                        ]
+                    }
+                }
+            }),
+
+            router = this.router = new MyRouter();
+
+        Assert.areSame(2, router.get('routes').length);
+        Assert.areSame(2, router._routes.length);
+        Assert.areSame('/', router.get('routes')[0].path);
+        Assert.areSame('/', router._routes[0].path);
+        Assert.areSame('/pie', router.get('routes')[1].path);
+        Assert.areSame('/pie', router._routes[1].path);
+    }
+}));
+
+// -- Router: Attributes ---------------------------------------------------
+routerSuite.add(new Y.Test.Case({
+    name: 'Attributes',
+
+    tearDown: function () {
+        this.router && this.router.destroy();
+        delete this.router;
+    },
+
+    '`html5` attribute should have a default value': function () {
+        var router = this.router = new Y.Router();
+        Assert.areSame(Y.Router.html5, router.get('html5'));
+    },
+
+    '`root` attribute should have a default value': function () {
+        var router = this.router = new Y.Router();
+        Assert.areSame('', router.get('root'));
+    },
+
+    '`routes` attribute should have a default value': function () {
+        var router = this.router = new Y.Router();
+
+        Assert.isArray(router.get('routes'));
+        ArrayAssert.isEmpty(router.get('routes'));
+    },
+
+    'setting the `routes` attribute should reset all routes': function () {
+        var router = this.router = new Y.Router();
+
+        router.set('routes', [
+            {path: '/', callback: function () {}},
+            {path: '/foo', callback: function () {}}
+        ]);
+
+        ArrayAssert.itemsAreSame(router._routes, router.get('routes'));
+        Assert.areSame(2, router._routes.length);
+        Assert.areSame(router.get('routes')[0].callback, router._routes[0].callback);
+        Assert.areSame(router.get('routes')[1].callback, router._routes[1].callback);
+    }
+}));
+
+// -- Router: Events -------------------------------------------------------
+routerSuite.add(new Y.Test.Case({
+    name: 'Events',
+
+    tearDown: function () {
+        this.router && this.router.destroy();
+        delete this.router;
+    },
+
+    '`ready` event should fire when the router is ready to dispatch': function () {
+        var test = this,
+
+            router = this.router = new Y.Router({
+                on: {
+                    ready: function (e) {
+                        test.resume(function () {
+                            Assert.isFalse(e.dispatched);
+                        });
+                    }
+                }
+            });
+
+        this.wait(1000);
+    },
+
+    '`ready` event should set e.dispatched to true if called after dispatch': function () {
+        var test = this,
+
+            router = this.router = new Y.Router({
+                on: {
+                    initializedChange: function () {
+                        this._dispatch('/fake', {});
+                    },
+
+                    ready: function (e) {
+                        test.resume(function () {
+                            Assert.isTrue(e.dispatched);
+                        });
+                    }
+                }
+            });
+
+        this.wait(1000);
+    }
+}));
+
+// -- Router: Methods ------------------------------------------------------
+routerSuite.add(new Y.Test.Case({
+    name: 'Methods',
+
+    tearDown: function () {
+        this.router && this.router.destroy();
+        delete this.router;
+    },
+
+    'route() should add a route': function () {
+        var router = this.router = new Y.Router();
+
+        router.one = function () {};
+        function two() {}
+
+        Assert.areSame(0, router._routes.length);
+
+        Assert.areSame(router, router.route('/foo', 'one'));
+        Assert.areSame(1, router._routes.length);
+
+        router.route(/bar/, two);
+        Assert.areSame(2, router._routes.length);
+
+        Assert.areSame('one', router._routes[0].callback);
+        Assert.areSame(two, router._routes[1].callback);
+    },
+
+    'match() should return an array of routes that match the given path': function () {
+        var router = this.router = new Y.Router(),
+            routes;
+
+        function one () {}
+        function two() {}
+        function three() {}
+
+        router.route('/:foo', one);
+        router.route(/foo/, two);
+        router.route('/bar', three);
+
+        routes = router.match('/foo');
+
+        Assert.areSame(2, routes.length);
+        Assert.areSame(one, routes[0].callback);
+        Assert.areSame(two, routes[1].callback);
+    },
+
+    'hasRoute() should return `true` if one or more routes match the given path': function () {
+        var router = this.router = new Y.Router(),
+            routes;
+
+        function noop () {}
+
+        router.route('/:foo', noop);
+        router.route(/foo/, noop);
+        router.route('/bar', noop);
+
+        Assert.isTrue(router.hasRoute('/foo'));
+        Assert.isTrue(router.hasRoute('/bar'));
+        Assert.isFalse(router.hasRoute('/baz/quux'));
+    },
+
+    'hasRoute() should support full URLs': function () {
+        var router = this.router = new Y.Router(),
+            routes;
+
+        function noop () {}
+
+        router.route('/:foo', noop);
+        router.route(/foo/, noop);
+        router.route('/bar', noop);
+
+        Assert.isTrue(router.hasRoute('http://example.com/foo'));
+        Assert.isTrue(router.hasRoute('https://example.com/bar'));
+        Assert.isFalse(router.hasRoute('http://example.com/baz/quux'));
+    },
+
+    'dispatch() should dispatch to the first route that matches the current URL': function () {
+        var test       = this,
+            router = this.router = new Y.Router();
+
+        router.route(/./, function () {
+            test.resume();
+        });
+
+        setTimeout(function () {
+            router.dispatch();
+        }, 1);
+
+        this.wait(1000);
+    },
+
+    'dispatch() should upgrade hash URLs to HTML5 URLs in HTML5 browsers': function () {
+        if (!html5) {
+            Assert.isTrue(true);
+            return;
+        }
+
+        Y.HistoryHash.setHash('/hashpath');
+
+        var test       = this,
+            router = this.router = new Y.Router();
+
+        router.route('/hashpath', function (req) {
+            test.resume(function () {
+                Assert.areSame('/hashpath', req.path);
+                Assert.areSame(Y.config.win.location.pathname, '/hashpath');
+            });
+        });
+
+        router.dispatch();
+        this.wait(500);
+    },
+
+    'removeRoot() should remove the root URL from a given path': function () {
+        var router = this.router = new Y.Router();
+
+        router.set('root', '/');
+        Assert.areSame('/bar', router.removeRoot('/bar'));
+        Assert.areSame('/bar', router.removeRoot('bar'));
+
+        router.set('root', '/foo');
+        Assert.areSame('/bar', router.removeRoot('/foo/bar'));
+
+        router.set('root', '/foo/');
+        Assert.areSame('/bar', router.removeRoot('/foo/bar'));
+
+        router.set('root', '/moo');
+        Assert.areSame('/foo/bar', router.removeRoot('/foo/bar'));
+    },
+
+    'removeRoot() should strip the "http://foo.com" portion of the URL, if any': function () {
+        var router = this.router = new Y.Router();
+
+        Assert.areSame('/foo/bar', router.removeRoot('http://example.com/foo/bar'));
+        Assert.areSame('/foo/bar', router.removeRoot('https://example.com/foo/bar'));
+        Assert.areSame('/foo/bar', router.removeRoot('http://user:pass@example.com/foo/bar'));
+        Assert.areSame('/foo/bar', router.removeRoot('http://example.com:8080/foo/bar'));
+        Assert.areSame('/foo/bar', router.removeRoot('http://user:pass@example.com:8080/foo/bar'));
+
+        router.set('root', '/foo');
+        Assert.areSame('/bar', router.removeRoot('http://example.com/foo/bar'));
+        Assert.areSame('/bar', router.removeRoot('https://example.com/foo/bar'));
+        Assert.areSame('/bar', router.removeRoot('http://user:pass@example.com/foo/bar'));
+        Assert.areSame('/bar', router.removeRoot('http://example.com:8080/foo/bar'));
+        Assert.areSame('/bar', router.removeRoot('http://user:pass@example.com:8080/foo/bar'));
+    },
+
+    'replace() should replace the current history entry': function () {
+        var test       = this,
+            router = this.router = new Y.Router();
+
+        router.route('/replace', function (req) {
+            test.resume(function () {
+                Assert.areSame('/replace', req.path);
+                Assert.isObject(req.query);
+            });
+        });
+
+        // Wrapped in a setTimeout to make the async test work on iOS<5, which
+        // performs this action synchronously.
+        setTimeout(function () {
+            router.replace('/replace');
+        }, 1);
+
+        this.wait(1000);
+    },
+
+    'save() should create a new history entry': function () {
+        var test       = this,
+            router = this.router = new Y.Router();
+
+        router.route('/save', function (req) {
+            test.resume(function () {
+                Assert.areSame('/save', req.path);
+                Assert.isObject(req.query);
+            });
+        });
+
+        // Wrapped in a setTimeout to make the async test work on iOS<5, which
+        // performs this action synchronously.
+        setTimeout(function () {
+            router.save('/save');
+        }, 1);
+
+        this.wait(1000);
+    },
+
+    'consecutive save() calls should dispatch to the correct routes': function () {
+        var paths      = [],
+            test       = this,
+            router = this.router = new Y.Router();
+
+        router.route('/one', function (req) {
+            paths.push(req.path);
+        });
+
+        router.route('/two', function (req) {
+            paths.push(req.path);
+        });
+
+        router.route('/three', function (req) {
+            paths.push(req.path);
+
+            test.resume(function () {
+                ArrayAssert.itemsAreSame(['/one', '/two', '/three'], paths);
+            });
+        });
+
+        // Wrapped in a setTimeout to make the async test work on iOS<5, which
+        // performs this action synchronously.
+        setTimeout(function () {
+            router.save('/one');
+            router.save('/two');
+            router.save('/three');
+        }, 1);
+
+        this.wait(2000);
+    },
+
+    '_joinURL() should normalize / separators': function () {
+        var router = this.router = new Y.Router();
+
+        router.set('root', '/foo');
+        Assert.areSame('/foo/bar', router._joinURL('bar'));
+        Assert.areSame('/foo/bar', router._joinURL('/bar'));
+
+        router.set('root', '/foo/');
+        Assert.areSame('/foo/bar', router._joinURL('bar'));
+        Assert.areSame('/foo/bar', router._joinURL('/bar'));
+    },
+
+    '_dispatch() should pass `src` through to request object passed to route handlers': function () {
+        var router = this.router = new Y.Router(),
+            calls      = 0,
+            src        = 'API';
+
+        router.route('/foo', function (req, res, next) {
+            Assert.areSame(src, req.src);
+        });
+
+        router._dispatch('/foo', {}, src);
+    }
+}));
+
+// -- Router: Routes -------------------------------------------------------
+routerSuite.add(new Y.Test.Case({
+    name: 'Routes',
+
+    tearDown: function () {
+        this.router && this.router.destroy();
+        this.router2 && this.router2.destroy();
+
+        delete this.router;
+        delete this.router2;
+    },
+
+    'routes should be called in the context of the router': function () {
+        var calls      = 0,
+            router = this.router = new Y.Router({
+                routes: [{path: '/foo', callback: 'foo'}]
+            });
+
+        router.foo = function () {
+            calls += 1;
+            Assert.areSame(router, this);
+        };
+
+        router.route('/bar', router.foo);
+        router._dispatch('/foo', {});
+        router._dispatch('/bar', {});
+
+        Assert.areSame(2, calls);
+    },
+
+    'routes should receive a request object, response object, and `next` function as params': function () {
+        var calls      = 0,
+            router = this.router = new Y.Router();
+
+        router.route('/foo', function (req, res, next) {
+            calls += 1;
+
+            Assert.isObject(req);
+            Assert.isObject(res);
+            Assert.isFunction(next);
+            Assert.areSame(next, req.next);
+            Assert.isObject(req.params);
+            Assert.isTrue(Y.Object.isEmpty(req.params));
+            Assert.areSame('/foo', req.path);
+            ObjectAssert.areEqual({bar: 'baz quux', moo: ''}, req.query);
+        });
+
+        // Duckpunching _getQuery so we can test req.query.
+        router._getQuery = function () {
+            return 'bar=baz%20quux&moo';
+        };
+
+        router._dispatch('/foo', {foo: 'foo'});
+
+        Assert.areSame(1, calls);
+    },
+
+    'request object should contain captured route parameters': function () {
+        var calls      = 0,
+            router = this.router = new Y.Router();
+
+        router.route('/foo/:bar/:baz', function (req) {
+            calls += 1;
+
+            ArrayAssert.itemsAreSame(['bar', 'baz'], Y.Object.keys(req.params));
+            ArrayAssert.itemsAreSame(['one', 'two'], Y.Object.values(req.params));
+        });
+
+        router.route('/bar/*path', function (req) {
+            calls += 1;
+
+            Assert.isObject(req.params);
+            ArrayAssert.itemsAreSame(['path'], Y.Object.keys(req.params));
+            ArrayAssert.itemsAreSame(['one/two'], Y.Object.values(req.params));
+        });
+
+        router.route(/^\/(baz)\/(quux)$/, function (req) {
+            calls += 1;
+
+            Assert.isArray(req.params);
+            ArrayAssert.itemsAreSame(['/baz/quux', 'baz', 'quux'], req.params);
+        });
+
+        router._dispatch('/foo/one/two', {});
+        router._dispatch('/bar/one/two', {});
+        router._dispatch('/baz/quux', {});
+
+        Assert.areSame(3, calls);
+    },
+
+    'calling `res()` should have the same result as calling `next()`': function () {
+        var calls      = 0;
+            router = this.router = new Y.Router();
+
+        router.route('/foo', function (req, res, next) {
+            calls += 1;
+            Assert.isFunction(res);
+            res();
+        });
+
+        router.route('/foo', function (req, res, next) {
+            calls += 1;
+            Assert.isFunction(next);
+            next();
+        });
+
+        router.route('/foo', function () {
+            calls += 1;
+        });
+
+        router._dispatch('/foo', {});
+
+        Assert.areSame(3, calls);
+    },
+
+    'calling `next()` should pass control to the next matching route': function () {
+        var calls      = 0,
+            router = this.router = new Y.Router();
+
+        router.route('/foo', function (req, res, next) {
+            calls += 1;
+            next();
+        });
+
+        router.route(/foo/, function (req, res, next) {
+            calls += 1;
+            next();
+        });
+
+        router.route('/foo', function (req, res, next) {
+            calls += 1;
+        });
+
+        router.route('/foo', function (req, res, next) {
+            calls += 1;
+            Assert.fail('final route should not be called');
+        });
+
+        router._dispatch('/foo', {});
+
+        Assert.areSame(3, calls);
+    },
+
+    '"*" should be a catch-all route': function () {
+        var calls      = 0,
+            router = this.router = new Y.Router();
+
+        router.route('*', function (req) {
+            calls += 1;
+        });
+
+        router._dispatch('/foo', {});
+        router._dispatch('/bar', {});
+
+        Assert.areSame(2, calls);
+    },
+
+    'multiple routers should be able to coexist and have duplicate route handlers': function () {
+        var calls = 0,
+            routerOne = this.router  = new Y.Router(),
+            routerTwo = this.router2 = new Y.Router();
+
+        routerOne.route('/baz', function () {
+            calls += 1;
+        });
+
+        routerTwo.route('/baz', function () {
+            calls += 1;
+        });
+
+        routerOne.save('/baz');
+
+        this.wait(function () {
+            Assert.areSame(2, calls);
+        }, 200);
+    }
+}));
+
 // -- View Suite ---------------------------------------------------------------
 viewSuite = new Y.Test.Suite('View');
 
@@ -2235,13 +2235,13 @@ viewSuite.add(new Y.Test.Case({
     }
 }));
 
-suite.add(controllerSuite);
 suite.add(modelSuite);
 suite.add(modelListSuite);
+suite.add(routerSuite);
 suite.add(viewSuite);
 
 Y.Test.Runner.add(suite);
 
 }, '@VERSION@', {
-    requires: ['controller', 'model', 'model-list', 'view', 'test']
+    requires: ['model', 'model-list', 'router', 'view', 'test']
 });

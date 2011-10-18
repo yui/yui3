@@ -1,6 +1,6 @@
 {
-    "name"       : "controller",
-    "displayName": "Controller",
+    "name"       : "router",
+    "displayName": "Router",
     "description": "Provides URL-based same-page routing using HTML5 history or the location hash.",
     "author"     : ["rgrove", "ericf"],
 
@@ -10,5 +10,5 @@
         "router", "routing", "url"
     ],
 
-    "use": ["controller"]
+    "use": ["router"]
 }
