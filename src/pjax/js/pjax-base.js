@@ -73,7 +73,7 @@ PjaxBase.prototype = {
     },
 
     _pjaxBindUI: function () {
-        if (this.html5) {
+        if (this.get('html5')) {
             this._pjaxEvents = Y.one('body').delegate('click',
                 this._onLinkClick, this.get('linkSelector'), this);
         }
@@ -149,7 +149,6 @@ PjaxBase.prototype = {
 };
 
 PjaxBase.ATTRS = {
-
     linkSelector: {
         value    : 'a.' + CLASS_PJAX,
         writeOnce: 'initOnly'

@@ -4,7 +4,7 @@ var ArrayAssert  = Y.ArrayAssert,
     Assert       = Y.Assert,
     ObjectAssert = Y.ObjectAssert,
 
-    html5 = Y.Controller.prototype.html5,
+    html5 = Y.Controller.html5,
 
     controllerSuite,
     modelSuite,
@@ -45,8 +45,10 @@ controllerSuite.add(new Y.Test.Case({
         delete this.controller;
     },
 
-    'initializer should set local `root` and `routes` properties': function () {
+    'initializer should set attributes based on config options': function () {
         var controller = this.controller = new Y.Controller({
+                html5: false,
+
                 root: '/foo',
 
                 routes: [
@@ -55,23 +57,79 @@ controllerSuite.add(new Y.Test.Case({
                 ]
             });
 
-        Assert.areSame('/foo', controller.root);
-        Assert.areSame(2, controller.routes.length);
-        Assert.areSame('/', controller.routes[0].path);
-        Assert.areSame('/foo', controller.routes[1].path);
+        Assert.isFalse(controller.get('html5'));
+
+        Assert.areSame('/foo', controller.get('root'));
+
+        Assert.areSame(2, controller.get('routes').length);
+        Assert.areSame(2, controller._routes.length);
+        Assert.areSame('/', controller.get('routes')[0].path);
+        Assert.areSame('/', controller._routes[0].path);
+        Assert.areSame('/foo', controller.get('routes')[1].path);
+        Assert.areSame('/foo', controller._routes[1].path);
     },
 
-    'initializer should create initial routes': function () {
-        var controller = this.controller = new Y.Controller({
-                routes: [
-                    {path: '/', callback: function () {}},
-                    {path: '/foo', callback: function () {}}
-                ]
-            });
+    'subclass with default routes should work': function () {
+        var MyController = Y.Base.create('myController', Y.Controller, [], {}, {
+                ATTRS: {
+                    routes: {
+                        value: [
+                            {path: '/',    callback: 'index'},
+                            {path: '/pie', callback: 'pie'}
+                        ]
+                    }
+                }
+            }),
 
+            controller = this.controller = new MyController();
+
+        Assert.areSame(2, controller.get('routes').length);
         Assert.areSame(2, controller._routes.length);
-        Assert.areSame(controller.routes[0].callback, controller._routes[0].callback);
-        Assert.areSame(controller.routes[1].callback, controller._routes[1].callback);
+        Assert.areSame('/', controller.get('routes')[0].path);
+        Assert.areSame('/', controller._routes[0].path);
+        Assert.areSame('/pie', controller.get('routes')[1].path);
+        Assert.areSame('/pie', controller._routes[1].path);
+    }
+}));
+
+// -- Controller: Attributes ---------------------------------------------------
+controllerSuite.add(new Y.Test.Case({
+    name: 'Attributes',
+
+    tearDown: function () {
+        this.controller && this.controller.destroy();
+        delete this.controller;
+    },
+
+    '`html5` attribute should have a default value': function () {
+        var controller = this.controller = new Y.Controller();
+        Assert.areSame(Y.Controller.html5, controller.get('html5'));
+    },
+
+    '`root` attribute should have a default value': function () {
+        var controller = this.controller = new Y.Controller();
+        Assert.areSame('', controller.get('root'));
+    },
+
+    '`routes` attribute should have a default value': function () {
+        var controller = this.controller = new Y.Controller();
+
+        Assert.isArray(controller.get('routes'));
+        ArrayAssert.isEmpty(controller.get('routes'));
+    },
+
+    'setting the `routes` attribute should reset all routes': function () {
+        var controller = this.controller = new Y.Controller();
+
+        controller.set('routes', [
+            {path: '/', callback: function () {}},
+            {path: '/foo', callback: function () {}}
+        ]);
+
+        ArrayAssert.itemsAreSame(controller._routes, controller.get('routes'));
+        Assert.areSame(2, controller._routes.length);
+        Assert.areSame(controller.get('routes')[0].callback, controller._routes[0].callback);
+        Assert.areSame(controller.get('routes')[1].callback, controller._routes[1].callback);
     }
 }));
 
@@ -118,28 +176,6 @@ controllerSuite.add(new Y.Test.Case({
             });
 
         this.wait(1000);
-    }
-}));
-
-// -- Controller: Attributes and Properties ------------------------------------
-controllerSuite.add(new Y.Test.Case({
-    name: 'Attributes and Properties',
-
-    tearDown: function () {
-        this.controller && this.controller.destroy();
-        delete this.controller;
-    },
-
-    '`root` property should have a default value': function () {
-        var controller = this.controller = new Y.Controller();
-        Assert.areSame('', controller.root);
-    },
-
-    '`routes` property should have a default value': function () {
-        var controller = this.controller = new Y.Controller();
-
-        Assert.isArray(controller.routes);
-        ArrayAssert.isEmpty(controller.routes);
     }
 }));
 
@@ -259,17 +295,17 @@ controllerSuite.add(new Y.Test.Case({
     'removeRoot() should remove the root URL from a given path': function () {
         var controller = this.controller = new Y.Controller();
 
-        controller.root = '/';
+        controller.set('root', '/');
         Assert.areSame('/bar', controller.removeRoot('/bar'));
         Assert.areSame('/bar', controller.removeRoot('bar'));
 
-        controller.root = '/foo';
+        controller.set('root', '/foo');
         Assert.areSame('/bar', controller.removeRoot('/foo/bar'));
 
-        controller.root = '/foo/';
+        controller.set('root', '/foo/');
         Assert.areSame('/bar', controller.removeRoot('/foo/bar'));
 
-        controller.root = '/moo';
+        controller.set('root', '/moo');
         Assert.areSame('/foo/bar', controller.removeRoot('/foo/bar'));
     },
 
@@ -282,7 +318,7 @@ controllerSuite.add(new Y.Test.Case({
         Assert.areSame('/foo/bar', controller.removeRoot('http://example.com:8080/foo/bar'));
         Assert.areSame('/foo/bar', controller.removeRoot('http://user:pass@example.com:8080/foo/bar'));
 
-        controller.root = '/foo';
+        controller.set('root', '/foo');
         Assert.areSame('/bar', controller.removeRoot('http://example.com/foo/bar'));
         Assert.areSame('/bar', controller.removeRoot('https://example.com/foo/bar'));
         Assert.areSame('/bar', controller.removeRoot('http://user:pass@example.com/foo/bar'));
@@ -365,11 +401,11 @@ controllerSuite.add(new Y.Test.Case({
     '_joinURL() should normalize / separators': function () {
         var controller = this.controller = new Y.Controller();
 
-        controller.root = '/foo';
+        controller.set('root', '/foo');
         Assert.areSame('/foo/bar', controller._joinURL('bar'));
         Assert.areSame('/foo/bar', controller._joinURL('/bar'));
 
-        controller.root = '/foo/';
+        controller.set('root', '/foo/');
         Assert.areSame('/foo/bar', controller._joinURL('bar'));
         Assert.areSame('/foo/bar', controller._joinURL('/bar'));
     },
@@ -411,7 +447,6 @@ controllerSuite.add(new Y.Test.Case({
         };
 
         controller.route('/bar', controller.foo);
-
         controller._dispatch('/foo', {});
         controller._dispatch('/bar', {});
 

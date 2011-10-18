@@ -12,7 +12,13 @@ App Framework Change History
   will be removed in a future version of YUI, so please update your route
   handlers to expect `next` as the third param.
 
-* "*" can now be used to create a catch-all route that will match any path
+* [!] The `html5`, `root`, and `routes` properties are now attributes, and
+  `routes` may be set both during and after init. Code that refers to the old
+  properties, like `myController.root` and `myController.root = '/foo'`, must be
+  updated to use the attribute syntax instead: `myController.get('root')` and
+  `myController.set('root', '/foo')`.
+
+* "*" can now be used to create a wildcard route that will match any path
   (previously it was necessary to use a regex to do this).
 
 * The `hasRoute()` method now accepts full URLs as well as paths.
@@ -24,7 +30,7 @@ App Framework Change History
 * Added `url` and `src` properties to the request object that's passed to route
   handlers.
 
-* Added an `html5` config option to the constructor. This allows you to force a
+* Made the `html5` config attribute writable. This allows you to force a
   controller to use (`true`) or not use (`false`) HTML5 history. Please don't
   set it to `false` unless you understand the consequences.
 
