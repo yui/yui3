@@ -67,73 +67,6 @@ function Controller() {
 }
 
 Y.Controller = Y.extend(Controller, Y.Base, {
-    // -- Public Properties ----------------------------------------------------
-
-    /**
-    Whether or not this browser is capable of using HTML5 history.
-
-    This property should only be set via the constructor at instantiation time.
-    Setting this to `false` will force the use of hash-based history even on
-    HTML5 browsers, but please don't do this unless you understand the
-    consequences.
-
-    @property html5
-    @type Boolean
-    **/
-
-    // Android versions lower than 3.0 are buggy and don't update
-    // window.location after a pushState() call, so we fall back to hash-based
-    // history for them.
-    //
-    // See http://code.google.com/p/android/issues/detail?id=17471
-
-    html5: Y.HistoryBase.html5 && (!Y.UA.android || Y.UA.android >= 3),
-
-    /**
-    Absolute root path from which all routes should be evaluated.
-
-    For example, if your controller is running on a page at
-    `http://example.com/myapp/` and you add a route with the path `/`, your
-    route will never execute, because the path will always be preceded by
-    `/myapp`. Setting `root` to `/myapp` would cause all routes to be evaluated
-    relative to that root URL, so the `/` route would then execute when the
-    user browses to `http://example.com/myapp/`.
-
-    This property may be overridden in a subclass, set after instantiation, or
-    passed as a config attribute when instantiating a `Y.Controller`-based
-    class.
-
-    @property root
-    @type String
-    @default `''`
-    **/
-    root: '',
-
-    /**
-    Array of route objects specifying routes to be created at instantiation
-    time.
-
-    Each item in the array must be an object with the following properties:
-
-      * `path`: String or regex representing the path to match. See the docs for
-        the `route()` method for more details.
-      * `callback`: Function or a string representing the name of a function on
-        this controller instance that should be called when the route is
-        triggered. See the docs for the `route()` method for more details.
-
-    This property may be overridden in a subclass or passed as a config
-    attribute when instantiating a `Y.Controller`-based class, but setting it
-    after instantiation will have no effect (use the `route()` method instead).
-
-    If routes are passed at instantiation time, they will override any routes
-    set on the prototype.
-
-    @property routes
-    @type Object[]
-    @default `[]`
-    **/
-    routes: [],
-
     // -- Protected Properties -------------------------------------------------
 
     /**
@@ -152,6 +85,14 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @property _dispatching
     @type Boolean
     @default undefined
+    @protected
+    **/
+
+    /**
+    Cached copy of the `html5` attribute for internal use.
+
+    @property _html5
+    @type Boolean
     @protected
     **/
 
@@ -206,22 +147,15 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     initializer: function (config) {
         var self = this;
 
-        // Set config properties.
-        config || (config = {});
-
-        Lang.isValue(config.html5) && (self.html5 = config.html5);
-        config.routes && (self.routes = config.routes);
-        Lang.isValue(config.root) && (self.root = config.root);
-
-        // Create routes.
+        self._html5  = self.get('html5');
         self._routes = [];
 
-        YArray.each(self.routes, function (route) {
-            self.route(route.path, route.callback);
-        });
+        // Necessary because setters don't run on init.
+        this._setRoutes(config && config.routes ? config.routes :
+                this.get('routes'));
 
         // Set up a history instance or hashchange listener.
-        if (self.html5) {
+        if (self._html5) {
             self._history = new Y.HistoryHTML5({force: true});
             Y.after('history:change', self._afterHistoryChange, self);
         } else {
@@ -248,7 +182,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     },
 
     destructor: function () {
-        if (this.html5) {
+        if (this._html5) {
             Y.detach('history:change', this._afterHistoryChange, this);
         } else {
             Y.detach('hashchange', this._afterHistoryChange, win);
@@ -271,7 +205,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         this.once(EVT_READY, function () {
             this._ready = true;
 
-            if (this.html5 && this.upgrade()) {
+            if (this._html5 && this.upgrade()) {
                 return;
             } else {
                 this._dispatch(this._getPath(), this._getURL());
@@ -346,7 +280,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @return {String} Rootless path.
     **/
     removeRoot: function (url) {
-        var root = this.root;
+        var root = this.get('root');
 
         // Strip out the non-path part of the URL, if any (e.g.
         // "http://foo.com"), so that we're left with just the path.
@@ -515,7 +449,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @return {Boolean} `true` if the URL was upgraded, `false` otherwise.
     **/
     upgrade: function () {
-        if (!this.html5) {
+        if (!this._html5) {
             return false;
         }
 
@@ -656,7 +590,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @protected
     **/
     _getPath: function () {
-        return (!this.html5 && this._getHashPath()) ||
+        return (!this._html5 && this._getHashPath()) ||
             this.removeRoot(location.pathname);
     },
 
@@ -668,7 +602,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @protected
     **/
     _getQuery: function () {
-        if (this.html5) {
+        if (this._html5) {
             return location.search.substring(1);
         }
 
@@ -746,6 +680,17 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     },
 
     /**
+    Getter for the `routes` attribute.
+
+    @method _getRoutes
+    @return {Object[]} Array of route objects.
+    @protected
+    **/
+    _getRoutes: function () {
+        return this._routes.concat();
+    },
+
+    /**
     Gets the current full URL.
 
     @method _getURL
@@ -775,7 +720,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @protected
     **/
     _joinURL: function (url) {
-        var root = this.root;
+        var root = this.get('root');
 
         url = this.removeRoot(url);
 
@@ -837,7 +782,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
             self = this;
 
         saveQueue.push(function () {
-            if (self.html5) {
+            if (self._html5) {
                 if (Y.UA.ios && Y.UA.ios < 5) {
                     // iOS <5 has buggy HTML5 history support, and needs to be
                     // synchronous.
@@ -878,7 +823,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         // even if _save is called before the `ready` event fires.
         this._ready = true;
 
-        if (this.html5) {
+        if (this._html5) {
             this._history[replace ? 'replace' : 'add'](null, {
                 url: urlIsString ? this._joinURL(url) : url
             });
@@ -891,6 +836,24 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         }
 
         return this;
+    },
+
+    /**
+    Setter for the `routes` attribute.
+
+    @method _setRoutes
+    @param {Object[]} routes Array of route objects.
+    @return {Object[]} Array of route objects.
+    @protected
+    **/
+    _setRoutes: function (routes) {
+        this._routes = [];
+
+        YArray.each(routes, function (route) {
+            this.route(route.path, route.callback);
+        }, this);
+
+        return this._routes.concat();
     },
 
     // -- Protected Event Handlers ---------------------------------------------
@@ -924,7 +887,79 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         this._ready = true;
     }
 }, {
-    NAME: 'controller'
+    // -- Static Properties ----------------------------------------------------
+    NAME: 'controller',
+
+    ATTRS: {
+        /**
+        Whether or not this browser is capable of using HTML5 history.
+
+        Setting this to `false` will force the use of hash-based history even on
+        HTML5 browsers, but please don't do this unless you understand the
+        consequences.
+
+        @attribute html5
+        @type Boolean
+        @initOnly
+        **/
+        html5: {
+            // Android versions lower than 3.0 are buggy and don't update
+            // window.location after a pushState() call, so we fall back to
+            // hash-based history for them.
+            //
+            // See http://code.google.com/p/android/issues/detail?id=17471
+            valueFn: function () { return Y.Controller.html5; },
+            writeOnce: 'initOnly'
+        },
+
+        /**
+        Absolute root path from which all routes should be evaluated.
+
+        For example, if your controller is running on a page at
+        `http://example.com/myapp/` and you add a route with the path `/`, your
+        route will never execute, because the path will always be preceded by
+        `/myapp`. Setting `root` to `/myapp` would cause all routes to be
+        evaluated relative to that root URL, so the `/` route would then execute
+        when the user browses to `http://example.com/myapp/`.
+
+        @attribute root
+        @type String
+        @default `''`
+        **/
+        root: {
+            value: ''
+        },
+
+        /**
+        Array of route objects.
+
+        Each item in the array must be an object with the following properties:
+
+          * `path`: String or regex representing the path to match. See the docs
+            for the `route()` method for more details.
+
+          * `callback`: Function or a string representing the name of a function
+            on this controller instance that should be called when the route is
+            triggered. See the docs for the `route()` method for more details.
+
+        This attribute is intended to be used to set routes at init time, or to
+        completely reset all routes after init. To add routes after init without
+        resetting all existing routes, use the `route()` method.
+
+        @attribute routes
+        @type Object[]
+        @default `[]`
+        @see route
+        **/
+        routes: {
+            value : [],
+            getter: '_getRoutes',
+            setter: '_setRoutes'
+        }
+    },
+
+    // Used as the default value for the `html5` attribute, and for testing.
+    html5: Y.HistoryBase.html5 && (!Y.UA.android || Y.UA.android >= 3)
 });
 
 
