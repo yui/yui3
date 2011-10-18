@@ -91,16 +91,16 @@ var controller = new Y.Controller();
 This is the simplest way of working with Controller, but you may also extend `Y.Controller` to create a custom Controller class that suits your needs. The [[#Extending `Y.Controller`]] section explains how to do this.
 </p>
 
-<h4>Config Properties</h4>
+<h4>Config Attributes</h4>
 
 <p>
-When instantiating Controller, you may optionally pass in a config object containing any of the following properties. For more details on these properties, see Controller's <a href="{{apiDocs}}/modules/module_controller.html">API docs</a>.
+When instantiating Controller, you may optionally pass in a config object containing values for any of the following attributes. For more details on these attributes, see Controller's <a href="{{apiDocs}}/modules/module_controller.html">API docs</a>.
 </p>
 
 <table>
   <thead>
     <tr>
-      <th>Property</th>
+      <th>Attribute</th>
       <th>Default</th>
       <th>Description</th>
     </tr>
@@ -119,7 +119,7 @@ When instantiating Controller, you may optionally pass in a config object contai
         </p>
 
         <p>
-        Before overriding this property, please read [[#HTML5 URLs vs. Hash URLs]] and be sure you fully understand the consequences. It's almost always a better idea to leave it alone.
+        Before changing this value, please read [[#HTML5 URLs vs. Hash URLs]] and be sure you fully understand the consequences. It's almost always a better idea to leave it alone.
         </p>
       </td>
     </tr>
@@ -139,7 +139,7 @@ When instantiating Controller, you may optionally pass in a config object contai
       <td>`[]`</td>
       <td>
         <p>
-        Array of route objects specifying routes to be created at instantiation time. This can be used as an alternative to adding routes via the `route()` method after instantiation.
+        Array of route objects. This can be used to specify routes at instantiation time, or when extending `Y.Controller`. It can also be used after instantiation to reset all existing routes. To add routes after instantiation without resetting existing routes, use the `route()` method.
         </p>
 
         <p>
@@ -163,7 +163,7 @@ When instantiating Controller, you may optionally pass in a config object contai
 </table>
 
 <p>
-Here's an example that sets all the configurable properties:
+Here's an example that sets all the configurable attributes at instantiation time:
 </p>
 
 ```
@@ -189,7 +189,7 @@ You could deal with this by ensuring that all your routes start with `/mysite/`,
 </p>
 
 <p>
-This is where the `root` config property comes in. If you set `root` to `'/mysite'`, then all routes will be evaluated relative to that root path, as illustrated below.
+This is where the `root` config attribute comes in. If you set `root` to `'/mysite'`, then all routes will be evaluated relative to that root path, as illustrated below.
 </p>
 
 <p>
@@ -232,7 +232,7 @@ While `Y.Controller` may be instantiated and used directly, you might find it mo
 </p>
 
 <p>
-Use the `Y.Base.create()` method to extend `Y.Controller` and add or override prototype and static members. You may also optionally specify one or more <a href="../base/index.html#extensions">Base extensions</a> to mix into your new class.
+Use the `Y.Base.create()` method to extend `Y.Controller` and add or override prototype and static members and attributes. You may also optionally specify one or more <a href="../base/index.html#extensions">Base extensions</a> to mix into your new class.
 </p>
 
 ```
@@ -241,24 +241,19 @@ Y.CustomController = Y.Base.create('customController', Y.Controller, [], {
   // Add or override prototype properties and methods here.
 }, {
   // Add static properties and methods here.
+
+  ATTRS: {
+    // Override default attributes here.
+  }
 });
 ```
 
 <p>
-One benefit of extending `Y.Controller` is that you can easily add default config properties, routes, and route handlers to the prototype of your custom Controller class, and they'll be shared by all instances of that class unless overridden at the instance level:
+One benefit of extending `Y.Controller` is that you can easily add default routes and route handlers to your custom Controller class, and they'll be shared by all instances of that class unless overridden at the instance level:
 </p>
 
 ```
 Y.CustomController = Y.Base.create('customController', Y.Controller, [], {
-  // Evaluate all routes relative to this root path.
-  root: '/mysite',
-
-  // Share these default routes with all CustomController instances.
-  routes: [
-    {path: '/',    callback: 'index'},
-    {path: '/pie', callback: 'pie'}
-  ],
-
   // Default route handlers inherited by all CustomController instances.
   index: function (req) {
     // ... handle the / route ...
@@ -266,6 +261,21 @@ Y.CustomController = Y.Base.create('customController', Y.Controller, [], {
 
   pie: function (req) {
     // ... handle the /pie route ...
+  }
+}, {
+  ATTRS: {
+    // Evaluate all routes relative to this root path.
+    root: {
+      value: '/mysite'
+    },
+
+    // Share these default routes with all CustomController instances.
+    routes: {
+      value: [
+        {path: '/',    callback: 'index'},
+        {path: '/pie', callback: 'pie'}
+      ]
+    },
   }
 });
 
@@ -322,7 +332,7 @@ controller.route('/pie', 'pie');
 ```
 
 <p>
-As an alternative to using the `route()` method, routes may be added at instantiation time using the `routes` config property:
+As an alternative to using the `route()` method, routes may be added at instantiation time using the `routes` config attribute:
 </p>
 
 ```
@@ -340,7 +350,7 @@ var controller = new Y.Controller({
 ```
 
 <p>
-This is functionally equivalent to adding the routes via the `route()` method, except that the routes are added during the Controller's initialization stage rather than after.
+This is functionally equivalent to adding the routes via the `route()` method, except that it will replace any default routes, and the routes are added during the Controller's initialization stage rather than after.
 </p>
 
 <h4>Paths, Placeholders, and RegExps</h4>
@@ -381,6 +391,19 @@ controller.route('/files/*path', function (req) {
 
 controller.save('/files/recipes/pie/pecan.html');
 // => "You requested the file recipes/pie/pecan.html"
+```
+
+<p>
+Use `*` all by itself as a wildcard to match any path at all:
+</p>
+
+```
+controller.route('*', function () {
+  Y.log("Wildcard route! I match everything! I'm craaaaaaazy!");
+});
+
+controller.save('/purple/monkey/dishwasher');
+// => "Wildcard route! I match everything! I'm craaaaaaazy!"
 ```
 
 <p>
@@ -522,7 +545,7 @@ controller.save('/pie');
 ```
 
 <p>
-If you want the first route callback to pass some data along to subsequent callbacks, you can attach that data to the `req` object, which is shared between all routes that are executed during a single request.
+If you want the first route callback to pass some data along to subsequent callbacks, you can attach that data to either the `req` object or the `res` object, which are shared between all routes that are executed during a single request.
 </p>
 
 ```
@@ -538,6 +561,10 @@ controller.route('/ice-cream', function (req) {
 controller.save('/ice-cream');
 // => "I sure do like cookie dough ice cream."
 ```
+
+<p>
+Whether to store data on `req` or `res` is up to you, but by convention, data pertaining to the request should be stored on `req`, and data pertaining to a response or to some other result of that request should be stored on `res`.
+</p>
 
 <h3>Updating the URL</h3>
 
@@ -685,7 +712,7 @@ There are two ways to deal with this. One way would be to implement server-side 
 // Always dispatch to an initial route on legacy browsers. Only dispatch to an
 // initial route on HTML5 browsers if it's necessary in order to upgrade a
 // legacy hash URL to an HTML5 URL.
-if (controller.html5) {
+if (controller.get('html5')) {
   controller.upgrade();
 } else {
   controller.dispatch();
