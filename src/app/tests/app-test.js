@@ -2150,7 +2150,7 @@ viewSuite.add(new Y.Test.Case({
         var template = {},
             view     = new Y.View({template: template});
 
-        Assert.areSame(template, view.get('template'));
+        Assert.areSame(template, view.template);
     },
 
     'initializer should call create() to create the container node': function () {

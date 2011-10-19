@@ -46,8 +46,8 @@ App Framework Change History
 
 ### View
 
-* [!] The `container`, `model`, `modelList`, and `template` properties are now
-  attributes. Code that refers to the old properties, like `myView.model` and
+* [!] The `container`, `model`, and `modelList` properties are now attributes.
+  Code that refers to the old properties, like `myView.model` and
   `myView.model = model`, must be updated to use the attribute syntax instead:
   `myView.get('model')` and `myView.set('model', model)`.
 
