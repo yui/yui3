@@ -1,29 +1,9 @@
-/**
-The app framework provides simple MVC-like building blocks (models, model lists,
-views, and controllers) for writing single-page JavaScript applications.
-
-@main app
-@module app
-@since 3.4.0
-**/
+YUI.add('router', function(Y) {
 
 /**
 Provides URL-based routing using HTML5 `pushState()` or the location hash.
 
-@submodule controller
-@since 3.4.0
-**/
-
-/**
-Provides URL-based routing using HTML5 `pushState()` or the location hash.
-
-This makes it easy to wire up route handlers for different application states
-while providing full back/forward navigation support and bookmarkable, shareable
-URLs.
-
-@class Controller
-@constructor
-@extends Base
+@submodule router
 @since 3.4.0
 **/
 
@@ -32,12 +12,6 @@ var HistoryHash = Y.HistoryHash,
     QS          = Y.QueryString,
     YArray      = Y.Array,
 
-    // Android versions lower than 3.0 are buggy and don't update
-    // window.location after a pushState() call, so we fall back to hash-based
-    // history for them.
-    //
-    // See http://code.google.com/p/android/issues/detail?id=17471
-    html5    = Y.HistoryBase.html5 && (!Y.UA.android || Y.UA.android >= 3),
     win      = Y.config.win,
     location = win.location,
 
@@ -47,7 +21,7 @@ var HistoryHash = Y.HistoryHash,
     saveQueue = [],
 
     /**
-    Fired when the controller is ready to begin dispatching to route handlers.
+    Fired when the router is ready to begin dispatching to route handlers.
 
     You shouldn't need to wait for this event unless you plan to implement some
     kind of custom dispatching logic. It's used internally in order to avoid
@@ -60,73 +34,34 @@ var HistoryHash = Y.HistoryHash,
     **/
     EVT_READY = 'ready';
 
-function Controller() {
-    Controller.superclass.constructor.apply(this, arguments);
+/**
+Provides URL-based routing using HTML5 `pushState()` or the location hash.
+
+This makes it easy to wire up route handlers for different application states
+while providing full back/forward navigation support and bookmarkable, shareable
+URLs.
+
+@class Router
+@param {Object} [config] Config properties.
+    @param {Boolean} [config.html5] Overrides the default capability detection
+        and forces this router to use (`true`) or not use (`false`) HTML5
+        history.
+    @param {String} [config.root=''] Root path from which all routes should be
+        evaluated.
+    @param {Array} [config.routes=[]] Array of route definition objects.
+@constructor
+@extends Base
+@since 3.4.0
+**/
+function Router() {
+    Router.superclass.constructor.apply(this, arguments);
 }
 
-Y.Controller = Y.extend(Controller, Y.Base, {
-    // -- Public Properties ----------------------------------------------------
-
-    /**
-    Whether or not this browser is capable of using HTML5 history.
-
-    This property is for informational purposes only. It's not configurable, and
-    changing it will have no effect.
-
-    @property html5
-    @type Boolean
-    **/
-    html5: html5,
-
-    /**
-    Absolute root path from which all routes should be evaluated.
-
-    For example, if your controller is running on a page at
-    `http://example.com/myapp/` and you add a route with the path `/`, your
-    route will never execute, because the path will always be preceded by
-    `/myapp`. Setting `root` to `/myapp` would cause all routes to be evaluated
-    relative to that root URL, so the `/` route would then execute when the
-    user browses to `http://example.com/myapp/`.
-
-    This property may be overridden in a subclass, set after instantiation, or
-    passed as a config attribute when instantiating a `Y.Controller`-based
-    class.
-
-    @property root
-    @type String
-    @default `''`
-    **/
-    root: '',
-
-    /**
-    Array of route objects specifying routes to be created at instantiation
-    time.
-
-    Each item in the array must be an object with the following properties:
-
-      * `path`: String or regex representing the path to match. See the docs for
-        the `route()` method for more details.
-      * `callback`: Function or a string representing the name of a function on
-        this controller instance that should be called when the route is
-        triggered. See the docs for the `route()` method for more details.
-
-    This property may be overridden in a subclass or passed as a config
-    attribute when instantiating a `Y.Controller`-based class, but setting it
-    after instantiation will have no effect (use the `route()` method instead).
-
-    If routes are passed at instantiation time, they will override any routes
-    set on the prototype.
-
-    @property routes
-    @type Object[]
-    @default `[]`
-    **/
-    routes: [],
-
+Y.Router = Y.extend(Router, Y.Base, {
     // -- Protected Properties -------------------------------------------------
 
     /**
-    Whether or not `_dispatch()` has been called since this controller was
+    Whether or not `_dispatch()` has been called since this router was
     instantiated.
 
     @property _dispatched
@@ -141,6 +76,14 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @property _dispatching
     @type Boolean
     @default undefined
+    @protected
+    **/
+
+    /**
+    Cached copy of the `html5` attribute for internal use.
+
+    @property _html5
+    @type Boolean
     @protected
     **/
 
@@ -161,6 +104,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
       1. Parameter prefix character. Either a `:` for subpath parameters that
          should only match a single level of a path, or `*` for splat parameters
          that should match any number of path levels.
+
       2. Parameter name.
 
     @property _regexPathParam
@@ -194,21 +138,15 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     initializer: function (config) {
         var self = this;
 
-        // Set config properties.
-        config || (config = {});
-
-        config.routes && (self.routes = config.routes);
-        Lang.isValue(config.root) && (self.root = config.root);
-
-        // Create routes.
+        self._html5  = self.get('html5');
         self._routes = [];
 
-        YArray.each(self.routes, function (route) {
-            self.route(route.path, route.callback);
-        });
+        // Necessary because setters don't run on init.
+        this._setRoutes(config && config.routes ? config.routes :
+                this.get('routes'));
 
         // Set up a history instance or hashchange listener.
-        if (html5) {
+        if (self._html5) {
             self._history = new Y.HistoryHTML5({force: true});
             Y.after('history:change', self._afterHistoryChange, self);
         } else {
@@ -235,7 +173,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     },
 
     destructor: function () {
-        if (html5) {
+        if (this._html5) {
             Y.detach('history:change', this._afterHistoryChange, this);
         } else {
             Y.detach('hashchange', this._afterHistoryChange, win);
@@ -258,7 +196,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         this.once(EVT_READY, function () {
             this._ready = true;
 
-            if (html5 && this.upgrade()) {
+            if (this._html5 && this.upgrade()) {
                 return;
             } else {
                 this._dispatch(this._getPath(), this._getURL());
@@ -279,7 +217,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     },
 
     /**
-    Returns `true` if this controller has at least one route that matches the
+    Returns `true` if this router has at least one route that matches the
     specified URL, `false` otherwise.
 
     @method hasRoute
@@ -301,7 +239,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     Each returned route object has the following properties:
 
       * `callback`: A function or a string representing the name of a function
-        this controller that should be executed when the route is triggered.
+        this router that should be executed when the route is triggered.
       * `keys`: An array of strings representing the named parameters defined in
         the route's path specification, if any.
       * `path`: The route's path specification, which may be either a string or
@@ -310,8 +248,8 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         This regex is used to determine whether the route matches a given path.
 
     @example
-        controller.route('/foo', function () {});
-        controller.match('/foo');
+        router.route('/foo', function () {});
+        router.match('/foo');
         // => [{callback: ..., keys: [], path: '/foo', regex: ...}]
 
     @method match
@@ -333,7 +271,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @return {String} Rootless path.
     **/
     removeRoot: function (url) {
-        var root = this.root;
+        var root = this.get('root');
 
         // Strip out the non-path part of the URL, if any (e.g.
         // "http://foo.com"), so that we're left with just the path.
@@ -360,18 +298,18 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @example
         // Starting URL: http://example.com/
 
-        controller.replace('/path/');
+        router.replace('/path/');
         // New URL: http://example.com/path/
 
-        controller.replace('/path?foo=bar');
+        router.replace('/path?foo=bar');
         // New URL: http://example.com/path?foo=bar
 
-        controller.replace('/');
+        router.replace('/');
         // New URL: http://example.com/
 
     @method replace
     @param {String} [url] URL to set. Should be a relative URL. If this
-      controller's `root` property is set, this URL must be relative to the
+      router's `root` property is set, this URL must be relative to the
       root URL. If no URL is specified, the page's current URL will be used.
     @chainable
     @see save()
@@ -409,7 +347,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     be executed.
 
     @example
-        controller.route('/photos/:tag/:page', function (req, res, next) {
+        router.route('/photos/:tag/:page', function (req, res, next) {
           Y.log('Current tag: ' + req.params.tag);
           Y.log('Current page number: ' + req.params.page);
         });
@@ -419,7 +357,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
       expression.
     @param {Function|String} callback Callback function to call whenever this
         route is triggered. If specified as a string, the named function will be
-        called on this controller instance.
+        called on this router instance.
       @param {Object} callback.req Request object containing information about
           the request. It contains the following properties.
         @param {Array|Object} callback.req.params Captured parameters matched by
@@ -476,18 +414,18 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @example
         // Starting URL: http://example.com/
 
-        controller.save('/path/');
+        router.save('/path/');
         // New URL: http://example.com/path/
 
-        controller.save('/path?foo=bar');
+        router.save('/path?foo=bar');
         // New URL: http://example.com/path?foo=bar
 
-        controller.save('/');
+        router.save('/');
         // New URL: http://example.com/
 
     @method save
     @param {String} [url] URL to set. Should be a relative URL. If this
-      controller's `root` property is set, this URL must be relative to the
+      router's `root` property is set, this URL must be relative to the
       root URL. If no URL is specified, the page's current URL will be used.
     @chainable
     @see replace()
@@ -503,7 +441,11 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @method upgrade
     @return {Boolean} `true` if the URL was upgraded, `false` otherwise.
     **/
-    upgrade: html5 ? function () {
+    upgrade: function () {
+        if (!this._html5) {
+            return false;
+        }
+
         var hash = this._getHashPath();
 
         if (hash && hash.charAt(0) === '/') {
@@ -519,7 +461,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         }
 
         return false;
-    } : function () { return false; },
+    },
 
     // -- Protected Methods ----------------------------------------------------
 
@@ -640,10 +582,9 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @return {String} Current route path.
     @protected
     **/
-    _getPath: html5 ? function () {
-        return this.removeRoot(location.pathname);
-    } : function () {
-        return this._getHashPath() || this.removeRoot(location.pathname);
+    _getPath: function () {
+        return (!this._html5 && this._getHashPath()) ||
+            this.removeRoot(location.pathname);
     },
 
     /**
@@ -653,9 +594,11 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @return {String} Current route query string.
     @protected
     **/
-    _getQuery: html5 ? function () {
-        return location.search.substring(1);
-    } : function () {
+    _getQuery: function () {
+        if (this._html5) {
+            return location.search.substring(1);
+        }
+
         var hash    = HistoryHash.getHash(),
             matches = hash.match(this._regexUrlQuery);
 
@@ -730,6 +673,17 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     },
 
     /**
+    Getter for the `routes` attribute.
+
+    @method _getRoutes
+    @return {Object[]} Array of route objects.
+    @protected
+    **/
+    _getRoutes: function () {
+        return this._routes.concat();
+    },
+
+    /**
     Gets the current full URL.
 
     @method _getURL
@@ -745,13 +699,13 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     `/` characters.
 
     @example
-        controller.root = '/foo'
-        controller._joinURL('bar');  // => '/foo/bar'
-        controller._joinURL('/bar'); // => '/foo/bar'
+        router.root = '/foo'
+        router._joinURL('bar');  // => '/foo/bar'
+        router._joinURL('/bar'); // => '/foo/bar'
 
-        controller.root = '/foo/'
-        controller._joinURL('bar');  // => '/foo/bar'
-        controller._joinURL('/bar'); // => '/foo/bar'
+        router.root = '/foo/'
+        router._joinURL('bar');  // => '/foo/bar'
+        router._joinURL('/bar'); // => '/foo/bar'
 
     @method _joinURL
     @param {String} url URL to append to the `root` URL.
@@ -759,7 +713,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @protected
     **/
     _joinURL: function (url) {
-        var root = this.root;
+        var root = this.get('root');
 
         url = this.removeRoot(url);
 
@@ -821,7 +775,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
             self = this;
 
         saveQueue.push(function () {
-            if (html5) {
+            if (self._html5) {
                 if (Y.UA.ios && Y.UA.ios < 5) {
                     // iOS <5 has buggy HTML5 history support, and needs to be
                     // synchronous.
@@ -855,25 +809,44 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @chainable
     @protected
     **/
-    _save: html5 ? function (url, replace) {
+    _save: function (url, replace) {
+        var urlIsString = typeof url === 'string';
+
         // Force _ready to true to ensure that the history change is handled
         // even if _save is called before the `ready` event fires.
         this._ready = true;
 
-        this._history[replace ? 'replace' : 'add'](null, {
-            url: typeof url === 'string' ? this._joinURL(url) : url
-        });
+        if (this._html5) {
+            this._history[replace ? 'replace' : 'add'](null, {
+                url: urlIsString ? this._joinURL(url) : url
+            });
+        } else {
+            if (urlIsString && url.charAt(0) !== '/') {
+                url = '/' + url;
+            }
 
-        return this;
-    } : function (url, replace) {
-        this._ready = true;
-
-        if (typeof url === 'string' && url.charAt(0) !== '/') {
-            url = '/' + url;
+            HistoryHash[replace ? 'replaceHash' : 'setHash'](url);
         }
 
-        HistoryHash[replace ? 'replaceHash' : 'setHash'](url);
         return this;
+    },
+
+    /**
+    Setter for the `routes` attribute.
+
+    @method _setRoutes
+    @param {Object[]} routes Array of route objects.
+    @return {Object[]} Array of route objects.
+    @protected
+    **/
+    _setRoutes: function (routes) {
+        this._routes = [];
+
+        YArray.each(routes, function (route) {
+            this.route(route.path, route.callback);
+        }, this);
+
+        return this._routes.concat();
     },
 
     // -- Protected Event Handlers ---------------------------------------------
@@ -907,5 +880,93 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         this._ready = true;
     }
 }, {
-    NAME: 'controller'
+    // -- Static Properties ----------------------------------------------------
+    NAME: 'router',
+
+    ATTRS: {
+        /**
+        Whether or not this browser is capable of using HTML5 history.
+
+        Setting this to `false` will force the use of hash-based history even on
+        HTML5 browsers, but please don't do this unless you understand the
+        consequences.
+
+        @attribute html5
+        @type Boolean
+        @initOnly
+        **/
+        html5: {
+            // Android versions lower than 3.0 are buggy and don't update
+            // window.location after a pushState() call, so we fall back to
+            // hash-based history for them.
+            //
+            // See http://code.google.com/p/android/issues/detail?id=17471
+            valueFn: function () { return Y.Router.html5; },
+            writeOnce: 'initOnly'
+        },
+
+        /**
+        Absolute root path from which all routes should be evaluated.
+
+        For example, if your router is running on a page at
+        `http://example.com/myapp/` and you add a route with the path `/`, your
+        route will never execute, because the path will always be preceded by
+        `/myapp`. Setting `root` to `/myapp` would cause all routes to be
+        evaluated relative to that root URL, so the `/` route would then execute
+        when the user browses to `http://example.com/myapp/`.
+
+        @attribute root
+        @type String
+        @default `''`
+        **/
+        root: {
+            value: ''
+        },
+
+        /**
+        Array of route objects.
+
+        Each item in the array must be an object with the following properties:
+
+          * `path`: String or regex representing the path to match. See the docs
+            for the `route()` method for more details.
+
+          * `callback`: Function or a string representing the name of a function
+            on this router instance that should be called when the route is
+            triggered. See the docs for the `route()` method for more details.
+
+        This attribute is intended to be used to set routes at init time, or to
+        completely reset all routes after init. To add routes after init without
+        resetting all existing routes, use the `route()` method.
+
+        @attribute routes
+        @type Object[]
+        @default `[]`
+        @see route
+        **/
+        routes: {
+            value : [],
+            getter: '_getRoutes',
+            setter: '_setRoutes'
+        }
+    },
+
+    // Used as the default value for the `html5` attribute, and for testing.
+    html5: Y.HistoryBase.html5 && (!Y.UA.android || Y.UA.android >= 3)
 });
+
+/**
+The `Controller` class was deprecated in YUI 3.5.0 and is now an alias for the
+`Router` class. Use that class instead. This alias will be removed in a future
+version of YUI.
+
+@class Controller
+@constructor
+@extends Base
+@deprecated Use `Router` instead.
+@see Router
+**/
+Y.Controller = Y.Router;
+
+
+}, '@VERSION@' ,{requires:['array-extras', 'base-build', 'history'], optional:['querystring-parse']});

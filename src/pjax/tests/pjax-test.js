@@ -14,7 +14,7 @@ var Assert = Y.Assert,
     disableXHR = Y.config.win &&
         Y.config.win.location.protocol.indexOf('http') === -1,
 
-    html5 = Y.Controller.prototype.html5,
+    html5 = Y.Router.html5,
 
     suite;
 

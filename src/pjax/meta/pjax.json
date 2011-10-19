@@ -2,8 +2,8 @@
     "pjax-base": {
         "requires": [
             "classnamemanager",
-            "controller",
-            "node-event-delegate"
+            "node-event-delegate",
+            "router"
         ]
     },
 

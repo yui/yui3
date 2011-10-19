@@ -3,12 +3,7 @@ YUI.add('pjax', function(Y) {
 var EVT_ERROR = 'error',
     EVT_LOAD  = 'load';
 
-Y.Pjax = Y.Base.create('pjax', Y.Controller, [Y.PjaxBase], {
-    // -- Prototype Properties -------------------------------------------------
-    routes: [
-        {path: '*', callback: '_defaultRoute'}
-    ],
-
+Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase], {
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function () {
         this.publish(EVT_ERROR, {defaultFn: this._defCompleteFn});
@@ -108,6 +103,12 @@ Y.Pjax = Y.Base.create('pjax', Y.Controller, [Y.PjaxBase], {
 
         contentSelector: {
             value: null
+        },
+
+        routes: {
+            value: [
+                {path: '*', callback: '_defaultRoute'}
+            ]
         },
 
         titleSelector: {
