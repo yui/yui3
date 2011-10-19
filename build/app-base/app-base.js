@@ -13,27 +13,19 @@ var Lang = Y.Lang;
 Provides a top-level application component which manages navigation and views.
 
   * TODO: Add more description.
-  * TODO: Should this extend Y.Base and mix in Y.Controller along with
+  * TODO: Should this extend Y.Base and mix in Y.Router along with
     Y.PjaxBase and Y.View?
 
 @class App
 @constructor
-@extends Controller
+@extends Base
+@uses Router
 @uses PjaxBase
 @uses View
 @since 3.5.0
 **/
-Y.App = Y.Base.create('app', Y.Controller, [Y.PjaxBase, Y.View], {
+Y.App = Y.Base.create('app', Y.Base, [Y.Router, Y.PjaxBase, Y.View], {
     // -- Public Properties ----------------------------------------------------
-
-    /**
-    Container node into which represents the application's bounding-box.
-
-    @property container
-    @type HTMLElement|Node|String
-    @default Y.one('body')
-    **/
-    container: Y.one('body'),
 
     /**
     Hash of view-name to meta data used to declaratively describe an
@@ -214,7 +206,7 @@ Y.App = Y.Base.create('app', Y.Controller, [Y.PjaxBase, Y.View], {
     **/
     _transitionViews: function (newView, oldView, transition, callback) {
         // TODO: Actually implement the transitions.
-        newView && newView.container.appendTo(this.container);
+        newView && newView.get('container').appendTo(this.get('container'));
         callback && callback.call(this);
     },
 
@@ -303,6 +295,18 @@ Y.App = Y.Base.create('app', Y.Controller, [Y.PjaxBase, Y.View], {
 
 }, {
     ATTRS: {
+        /**
+        Container node into which represents the application's bounding-box.
+
+        @attribute container
+        @type HTMLElement|Node|String
+        @default Y.one('body')
+        @initOnly
+        **/
+        container: {
+            value: Y.one('body')
+        },
+
         /**
         This attribute is provided by `PjaxBase`, but the default value is
         overridden to match all links on the page.
