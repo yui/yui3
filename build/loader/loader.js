@@ -2613,6 +2613,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "anim-base"
         ]
     }, 
+    "anim-transform": {
+        "requires": [
+            "anim-base", 
+            "anim-easing", 
+            "matrix"
+        ]
+    }, 
     "anim-xy": {
         "requires": [
             "anim-base", 
@@ -3662,7 +3669,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "node", 
             "event-custom", 
-            "pluginhost"
+            "pluginhost", 
+            "matrix"
         ]
     }, 
     "graphics-canvas": {
@@ -3911,6 +3919,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "loader-yui3": {
         "requires": [
             "loader-base"
+        ]
+    }, 
+    "matrix": {
+        "requires": [
+            "yui-base"
         ]
     }, 
     "model": {
@@ -4599,7 +4612,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '105ebffae27a0e3d7331f8cf5c0bb282';
+YUI.Env[Y.version].md5 = 'd5ce550fcd0fe1ebd14187eaeab68663';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

@@ -466,6 +466,7 @@ SVGShape = function(cfg)
 {
     this._transforms = [];
     this.matrix = new Y.Matrix();
+    this._normalizedMatrix = new Y.Matrix();
     SVGShape.superclass.constructor.apply(this, arguments);
 };
 
@@ -1029,6 +1030,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
             tx,
             ty,
             matrix = this.matrix,
+            normalizedMatrix = this._normalizedMatrix,
             i = 0,
             len = this._transforms.length;
 
@@ -1042,13 +1044,15 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
             if(isPath)
             {
                 matrix.init({dx: x + this._left, dy: y + this._top});
+                normalizedMatrix.init({dx: x + this._left, dy: y + this._top});
             }
-            matrix.translate(tx, ty);
+            normalizedMatrix.translate(tx, ty);
             for(; i < len; ++i)
             {
                 key = this._transforms[i].shift();
                 if(key)
                 {
+                    normalizedMatrix[key].apply(normalizedMatrix, this._transforms[i]);
                     matrix[key].apply(matrix, this._transforms[i]); 
                 }
                 if(isPath)
@@ -1056,13 +1060,13 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
                     this._transforms[i].unshift(key);
                 }
 			}
-            matrix.translate(-tx, -ty);
-            transform = "matrix(" + matrix.a + "," + 
-                            matrix.b + "," + 
-                            matrix.c + "," + 
-                            matrix.d + "," + 
-                            matrix.dx + "," +
-                            matrix.dy + ")";
+            normalizedMatrix.translate(-tx, -ty);
+            transform = "matrix(" + normalizedMatrix.a + "," + 
+                            normalizedMatrix.b + "," + 
+                            normalizedMatrix.c + "," + 
+                            normalizedMatrix.d + "," + 
+                            normalizedMatrix.dx + "," +
+                            normalizedMatrix.dy + ")";
 		}
         this._graphic.addToRedrawQueue(this);    
         if(transform)
@@ -1147,7 +1151,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	    var type = this._type,
             wt,
             bounds = {},
-            matrix = this.matrix,
+            matrix = this._normalizedMatrix,
             a = matrix.a,
             b = matrix.b,
             c = matrix.c,
@@ -1289,6 +1293,7 @@ SVGShape.ATTRS = {
 		setter: function(val)
         {
             this.matrix.init();	
+            this._normalizedMatrix.init();
 		    this._transforms = this.matrix.getTransformArray(val);
             this._transform = val;
             if(this.initialized)
