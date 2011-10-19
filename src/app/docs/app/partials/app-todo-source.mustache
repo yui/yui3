@@ -355,13 +355,17 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
         // will be delegated from the container. In this case, the #todo-app
         // node already exists on the page, so we don't need to create it.
         container: {
-            value: Y.one('#todo-app')
+            valueFn: function () {
+                return '#todo-app';
+            }
         },
 
         // This is a custom attribute that we'll use to hold a reference to the
         // "new todo" input field.
         inputNode: {
-            value: Y.one('#new-todo')
+            valueFn: function () {
+                return Y.one('#new-todo');
+            }
         },
 
         // The `template` attribute is a convenience attribute for holding a
@@ -369,7 +373,9 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
         // contents of the #todo-stats-template element, which will serve as the
         // template for the statistics displayed at the bottom of the list.
         template: {
-            value: Y.one('#todo-stats-template').getContent()
+            valueFn: function () {
+                return Y.one('#todo-stats-template').getContent();
+            }
         }
     }
 });
@@ -474,13 +480,17 @@ TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
         // instance. The TodoAppView (above) will take care of appending it to
         // the list.
         container: {
-            value: '<li class="todo-item"/>'
+            valueFn: function () {
+                return Y.Node.create('<li class="todo-item"/>');
+            }
         },
 
         // The template property holds the contents of the #todo-item-template
         // element, which will be used as the HTML template for each todo item.
         template: {
-            value: Y.one('#todo-item-template').getContent()
+            valueFn: function () {
+                return Y.one('#todo-item-template').getContent();
+            }
         }
     }
 });

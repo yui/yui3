@@ -51,6 +51,11 @@ App Framework Change History
   `myView.model = model`, must be updated to use the attribute syntax instead:
   `myView.get('model')` and `myView.set('model', model)`.
 
+* [!] The `container` attribute now treats string values as CSS selectors.
+  Previously, it assumed string values represented raw HTML. To get the same
+  functionality as the old behavior, pass your HTML string through
+  `Y.Node.create()` before passing it to `container`.
+
 
 3.4.1
 -----
