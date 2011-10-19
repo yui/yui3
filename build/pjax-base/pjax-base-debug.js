@@ -12,7 +12,7 @@ function getRoot() {
     return segments.join('/');
 }
 
-// PjaxBase is a mixin for Controller.
+// PjaxBase is a mixin for Router.
 function PjaxBase() {}
 
 PjaxBase.prototype = {
@@ -164,4 +164,4 @@ PjaxBase.ATTRS = {
 Y.PjaxBase = PjaxBase;
 
 
-}, '@VERSION@' ,{requires:['classnamemanager', 'controller', 'node-event-delegate']});
+}, '@VERSION@' ,{requires:['classnamemanager', 'node-event-delegate', 'router']});

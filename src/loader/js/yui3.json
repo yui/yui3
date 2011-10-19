@@ -56,9 +56,9 @@
     }, 
     "app": {
         "use": [
-            "controller", 
             "model", 
             "model-list", 
+            "router", 
             "view"
         ]
     }, 
@@ -345,13 +345,8 @@
         "skinnable": true
     }, 
     "controller": {
-        "optional": [
-            "querystring-parse"
-        ], 
-        "requires": [
-            "array-extras", 
-            "base-build", 
-            "history"
+        "use": [
+            "router"
         ]
     }, 
     "cookie": {
@@ -1436,8 +1431,8 @@
     "pjax-base": {
         "requires": [
             "classnamemanager", 
-            "controller", 
-            "node-event-delegate"
+            "node-event-delegate", 
+            "router"
         ]
     }, 
     "pjax-plugin": {
@@ -1591,6 +1586,16 @@
         "requires": [
             "get", 
             "features"
+        ]
+    }, 
+    "router": {
+        "optional": [
+            "querystring-parse"
+        ], 
+        "requires": [
+            "array-extras", 
+            "base-build", 
+            "history"
         ]
     }, 
     "scrollview": {

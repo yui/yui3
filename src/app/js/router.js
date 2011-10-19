@@ -1,16 +1,7 @@
 /**
-The app framework provides simple MVC-like building blocks (models, model lists,
-views, and controllers) for writing single-page JavaScript applications.
-
-@main app
-@module app
-@since 3.4.0
-**/
-
-/**
 Provides URL-based routing using HTML5 `pushState()` or the location hash.
 
-@submodule controller
+@submodule router
 @since 3.4.0
 **/
 
@@ -28,7 +19,7 @@ var HistoryHash = Y.HistoryHash,
     saveQueue = [],
 
     /**
-    Fired when the controller is ready to begin dispatching to route handlers.
+    Fired when the router is ready to begin dispatching to route handlers.
 
     You shouldn't need to wait for this event unless you plan to implement some
     kind of custom dispatching logic. It's used internally in order to avoid
@@ -48,10 +39,10 @@ This makes it easy to wire up route handlers for different application states
 while providing full back/forward navigation support and bookmarkable, shareable
 URLs.
 
-@class Controller
+@class Router
 @param {Object} [config] Config properties.
     @param {Boolean} [config.html5] Overrides the default capability detection
-        and forces this controller to use (`true`) or not use (`false`) HTML5
+        and forces this router to use (`true`) or not use (`false`) HTML5
         history.
     @param {String} [config.root=''] Root path from which all routes should be
         evaluated.
@@ -60,15 +51,15 @@ URLs.
 @extends Base
 @since 3.4.0
 **/
-function Controller() {
-    Controller.superclass.constructor.apply(this, arguments);
+function Router() {
+    Router.superclass.constructor.apply(this, arguments);
 }
 
-Y.Controller = Y.extend(Controller, Y.Base, {
+Y.Router = Y.extend(Router, Y.Base, {
     // -- Protected Properties -------------------------------------------------
 
     /**
-    Whether or not `_dispatch()` has been called since this controller was
+    Whether or not `_dispatch()` has been called since this router was
     instantiated.
 
     @property _dispatched
@@ -224,7 +215,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     },
 
     /**
-    Returns `true` if this controller has at least one route that matches the
+    Returns `true` if this router has at least one route that matches the
     specified URL, `false` otherwise.
 
     @method hasRoute
@@ -246,7 +237,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     Each returned route object has the following properties:
 
       * `callback`: A function or a string representing the name of a function
-        this controller that should be executed when the route is triggered.
+        this router that should be executed when the route is triggered.
       * `keys`: An array of strings representing the named parameters defined in
         the route's path specification, if any.
       * `path`: The route's path specification, which may be either a string or
@@ -255,8 +246,8 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         This regex is used to determine whether the route matches a given path.
 
     @example
-        controller.route('/foo', function () {});
-        controller.match('/foo');
+        router.route('/foo', function () {});
+        router.match('/foo');
         // => [{callback: ..., keys: [], path: '/foo', regex: ...}]
 
     @method match
@@ -305,18 +296,18 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @example
         // Starting URL: http://example.com/
 
-        controller.replace('/path/');
+        router.replace('/path/');
         // New URL: http://example.com/path/
 
-        controller.replace('/path?foo=bar');
+        router.replace('/path?foo=bar');
         // New URL: http://example.com/path?foo=bar
 
-        controller.replace('/');
+        router.replace('/');
         // New URL: http://example.com/
 
     @method replace
     @param {String} [url] URL to set. Should be a relative URL. If this
-      controller's `root` property is set, this URL must be relative to the
+      router's `root` property is set, this URL must be relative to the
       root URL. If no URL is specified, the page's current URL will be used.
     @chainable
     @see save()
@@ -354,7 +345,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     be executed.
 
     @example
-        controller.route('/photos/:tag/:page', function (req, res, next) {
+        router.route('/photos/:tag/:page', function (req, res, next) {
           Y.log('Current tag: ' + req.params.tag);
           Y.log('Current page number: ' + req.params.page);
         });
@@ -364,7 +355,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
       expression.
     @param {Function|String} callback Callback function to call whenever this
         route is triggered. If specified as a string, the named function will be
-        called on this controller instance.
+        called on this router instance.
       @param {Object} callback.req Request object containing information about
           the request. It contains the following properties.
         @param {Array|Object} callback.req.params Captured parameters matched by
@@ -421,18 +412,18 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @example
         // Starting URL: http://example.com/
 
-        controller.save('/path/');
+        router.save('/path/');
         // New URL: http://example.com/path/
 
-        controller.save('/path?foo=bar');
+        router.save('/path?foo=bar');
         // New URL: http://example.com/path?foo=bar
 
-        controller.save('/');
+        router.save('/');
         // New URL: http://example.com/
 
     @method save
     @param {String} [url] URL to set. Should be a relative URL. If this
-      controller's `root` property is set, this URL must be relative to the
+      router's `root` property is set, this URL must be relative to the
       root URL. If no URL is specified, the page's current URL will be used.
     @chainable
     @see replace()
@@ -706,13 +697,13 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     `/` characters.
 
     @example
-        controller.root = '/foo'
-        controller._joinURL('bar');  // => '/foo/bar'
-        controller._joinURL('/bar'); // => '/foo/bar'
+        router.root = '/foo'
+        router._joinURL('bar');  // => '/foo/bar'
+        router._joinURL('/bar'); // => '/foo/bar'
 
-        controller.root = '/foo/'
-        controller._joinURL('bar');  // => '/foo/bar'
-        controller._joinURL('/bar'); // => '/foo/bar'
+        router.root = '/foo/'
+        router._joinURL('bar');  // => '/foo/bar'
+        router._joinURL('/bar'); // => '/foo/bar'
 
     @method _joinURL
     @param {String} url URL to append to the `root` URL.
@@ -888,7 +879,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     }
 }, {
     // -- Static Properties ----------------------------------------------------
-    NAME: 'controller',
+    NAME: 'router',
 
     ATTRS: {
         /**
@@ -908,14 +899,14 @@ Y.Controller = Y.extend(Controller, Y.Base, {
             // hash-based history for them.
             //
             // See http://code.google.com/p/android/issues/detail?id=17471
-            valueFn: function () { return Y.Controller.html5; },
+            valueFn: function () { return Y.Router.html5; },
             writeOnce: 'initOnly'
         },
 
         /**
         Absolute root path from which all routes should be evaluated.
 
-        For example, if your controller is running on a page at
+        For example, if your router is running on a page at
         `http://example.com/myapp/` and you add a route with the path `/`, your
         route will never execute, because the path will always be preceded by
         `/myapp`. Setting `root` to `/myapp` would cause all routes to be
@@ -939,7 +930,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
             for the `route()` method for more details.
 
           * `callback`: Function or a string representing the name of a function
-            on this controller instance that should be called when the route is
+            on this router instance that should be called when the route is
             triggered. See the docs for the `route()` method for more details.
 
         This attribute is intended to be used to set routes at init time, or to
@@ -961,3 +952,16 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     // Used as the default value for the `html5` attribute, and for testing.
     html5: Y.HistoryBase.html5 && (!Y.UA.android || Y.UA.android >= 3)
 });
+
+/**
+The `Controller` class was deprecated in YUI 3.5.0 and is now an alias for the
+`Router` class. Use that class instead. This alias will be removed in a future
+version of YUI.
+
+@class Controller
+@constructor
+@extends Base
+@deprecated Use `Router` instead.
+@see Router
+**/
+Y.Controller = Y.Router;

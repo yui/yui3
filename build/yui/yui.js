@@ -3406,12 +3406,13 @@ YUI.Env.parseUA = function(subUA) {
 Y.UA = YUI.Env.UA || YUI.Env.parseUA();
 YUI.Env.aliases = {
     "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
-    "app": ["controller","model","model-list","view"],
+    "app": ["model","model-list","router","view"],
     "attribute": ["attribute-base","attribute-complex"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
     "cache": ["cache-base","cache-offline","cache-plugin"],
     "collection": ["array-extras","arraylist","arraylist-add","arraylist-filter","array-invoke"],
+    "controller": ["router"],
     "dataschema": ["dataschema-base","dataschema-json","dataschema-xml","dataschema-array","dataschema-text"],
     "datasource": ["datasource-local","datasource-io","datasource-get","datasource-function","datasource-cache","datasource-jsonschema","datasource-xmlschema","datasource-arrayschema","datasource-textschema","datasource-polling"],
     "datatable": ["datatable-base","datatable-datasource","datatable-sort","datatable-scroll"],
@@ -7497,9 +7498,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "app": {
         "use": [
-            "controller", 
             "model", 
             "model-list", 
+            "router", 
             "view"
         ]
     }, 
@@ -7799,13 +7800,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "skinnable": true
     }, 
     "controller": {
-        "optional": [
-            "querystring-parse"
-        ], 
-        "requires": [
-            "array-extras", 
-            "base-build", 
-            "history"
+        "use": [
+            "router"
         ]
     }, 
     "cookie": {
@@ -8947,8 +8943,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "pjax-base": {
         "requires": [
             "classnamemanager", 
-            "controller", 
-            "node-event-delegate"
+            "node-event-delegate", 
+            "router"
         ]
     }, 
     "pjax-plugin": {
@@ -9102,6 +9098,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "get", 
             "features"
+        ]
+    }, 
+    "router": {
+        "optional": [
+            "querystring-parse"
+        ], 
+        "requires": [
+            "array-extras", 
+            "base-build", 
+            "history"
         ]
     }, 
     "scrollview": {
@@ -9500,7 +9506,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'c4899f419139fb547b7304796951b273';
+YUI.Env[Y.version].md5 = '9573e500940f4758392e8b2c2ebbdca0';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
