@@ -1,6 +1,6 @@
 {
     "graphics": {
-        "requires": ["node", "event-custom", "pluginhost"],
+        "requires": ["node", "event-custom", "pluginhost", "matrix"],
         "plugins": {
             "graphics-svg": {
                 "requires": ["graphics"],

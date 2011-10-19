@@ -1,0 +1,7 @@
+{
+    "matrix": {
+        "requires": [
+            "yui-base"
+        ]
+    }
+}

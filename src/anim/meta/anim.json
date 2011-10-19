@@ -48,6 +48,13 @@
                     "anim-base", 
                     "node-screen"
                 ]
+            },
+            "anim-transform": {
+                "requires": [
+                    "anim-base",
+                    "anim-easing",
+                    "matrix"
+                ]
             }
         }
     }
