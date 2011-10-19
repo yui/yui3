@@ -1,6 +1,6 @@
 <div class="intro">
     <p>Base is designed to be a low-level foundation class from which other attribute- and event target-based classes in the
-    YUI library can be derived. It provides a standard template for creating attribute-based objects across the 
+    YUI library can be derived. It provides a standard template for creating attribute-based objects across the
     library and provides a consistent `init()` and `destroy()` sequence that chains
     initialization (`initializer`) and destruction (`destructor`) methods for the class hierarchy.</p>
 
@@ -11,7 +11,7 @@
 
 <h2 id="extendbase">Extending Base</h2>
 
-<p>Although Base can be instantiated, it's really designed to be a root class, which you extend when creating your 
+<p>Although Base can be instantiated, it's really designed to be a root class, which you extend when creating your
 own `Attribute` and `EventTarget` based classes as shown below:</p>
 
 ```
@@ -30,7 +30,7 @@ YUI().use("base", function(Y) {
 
 ```
 
-<p>Base itself augments `Attribute`, which in turn augments `EventTarget`; Base is therefore both an <em>Attribute provider</em> and 
+<p>Base itself augments `Attribute`, which in turn augments `EventTarget`; Base is therefore both an <em>Attribute provider</em> and
 an <em>Event Target</em>.</p>
 
 <p>Base's constructor expects a configuration object literal, which is used to set up initial values for attributes during construction (discussed below).</p>
@@ -49,9 +49,9 @@ function MyClass(config) {
 
 MyClass.NAME = "myClass";
 
-// "Associative Array", used to define the set of attributes 
+// "Associative Array", used to define the set of attributes
 // added by this class. The name of the attribute is the key,
-// and the object literal value acts as the configuration 
+// and the object literal value acts as the configuration
 // object passed to addAttrs
 
 MyClass.ATTRS = {
@@ -107,9 +107,9 @@ o.on("myclass:enabled", function() {
 
 <h3 id="attrsprop">ATTRS</h3>
 
-<p>The `ATTRS` property is an associative array (an object with attribute name/configuration pairs) which is used to define the default set of 
+<p>The `ATTRS` property is an associative array (an object with attribute name/configuration pairs) which is used to define the default set of
 attributes that your class adds to each instance. The instance will contain attributes defined by each class in the class
-hierarchy from which it is created, with each class adding the set of attributes and supporting code that it 
+hierarchy from which it is created, with each class adding the set of attributes and supporting code that it
 requires.</p>
 
 <p>For example, this is the (partial) set of attributes which the <a href="{{apiDocs}}/classes/DD.Drag.html#attrs">Drag</a> class defines:</p>
@@ -152,25 +152,25 @@ Drag.ATTRS = {
 ```
 
 
-<p>Each property in the object literal (e.g. `"dragNode"`), defines the name of the attribute to be added, and 
+<p>Each property in the object literal (e.g. `"dragNode"`), defines the name of the attribute to be added, and
 the corresponding value defines the attribute's configuration. See <a href="../attribute/index.html#configuration">Attribute's discussion of configuration properties</a>
 for more details about how configuration objects should be structured.</p>
 
-<p>When instantiating a class derived from Base, Base's `init()` method will initialize 
+<p>When instantiating a class derived from Base, Base's `init()` method will initialize
 the set of attributes defined by the `ATTRS` property for each class in the class hierarchy. This helps avoid
 replication of attribute initialization code in the constructor/initializer of each class.
 </p>
 
 <p>It also defines a specific order in which
 attributes are initialized &mdash; starting from the Base class first and ending with the specific subclass being instantiated. Within a class, the order in which attributes are defined
-in the `ATTRS` property does not matter. If an attribute defined in the `ATTRS` configuration for the class, requests the value of 
-another attribute defined after it in the `ATTRS` configuration (in its `valueFn` or `getter` for example), 
+in the `ATTRS` property does not matter. If an attribute defined in the `ATTRS` configuration for the class, requests the value of
+another attribute defined after it in the `ATTRS` configuration (in its `valueFn` or `getter` for example),
 the later attribute will be initialized on demand, when the first attribute attempts to `get` the value of the later attribute.
 </p>
 
 <p>
 It is worth noting that Base adds or initializes attributes lazily for performance reasons, meaning the attribute will not be initialized until the first call to get or set it is made. This behavior
-can be overridden if desired for specific attributes by setting the `lazyAdd` configuration property to `false` (for example if the `setter` for the attribute is responsible 
+can be overridden if desired for specific attributes by setting the `lazyAdd` configuration property to `false` (for example if the `setter` for the attribute is responsible
 for setting some other non attribute state in the object).
 </p>
 
@@ -190,7 +190,7 @@ Y.extend(MyClass, Y.Base, {
         this._wrapper = Y.Node.create('<div class="yui-wrapper"></div>');
     },
 
-    // Tasks MyClass needs to perform during 
+    // Tasks MyClass needs to perform during
     // the destroy() lifecycle phase
     destructor : function() {
         Y.Event.purgeElement(this._wrapper);
@@ -209,7 +209,7 @@ The implementations for each class do not need to call superclass versions of th
 <dl>
     <dt>`initializer()`</dt>
     <dd>
-        Base's `init` method, which is invoked by Base's constructor, will invoke the `initializer` method for each class in the hierarchy &mdash; starting from the Base class first and ending with the subclass being instantiated. 
+        Base's `init` method, which is invoked by Base's constructor, will invoke the `initializer` method for each class in the hierarchy &mdash; starting from the Base class first and ending with the subclass being instantiated.
         The `initializer` method for each class is invoked after its attributes have been initialized (as discussed above) and will receive the configuration object literal passed to the `init` method.
     </dd>
     <dt>`destructor()`</dt>
@@ -226,7 +226,7 @@ The implementations for each class do not need to call superclass versions of th
 
 <p>
 Plugins can be used to add atomic pieces of functionality or features to instances of objects derived from Base, without having to bake support, or even
-knowledge of the feature, into the core object class. This allows features to be mixed and matched per instance, without having to build all features into a monolithic class or having to ship multiple 
+knowledge of the feature, into the core object class. This allows features to be mixed and matched per instance, without having to build all features into a monolithic class or having to ship multiple
 classes with varying permutations of features.
 </p>
 
@@ -235,7 +235,7 @@ classes with varying permutations of features.
 </p>
 
 <dl>
-    <dt>`<a href="{{apiDocs}}/Plugin.Host.html#method_plug">plug(pluginClass, pluginConfig)</a>`</dt>
+    <dt><a href="{{apiDocs}}/Plugin.Host.html#method_plug">`plug(pluginClass, pluginConfig)`</a></dt>
     <dd>
     <p>Adds a plugin to the instance with the configuration specified. The `plug` method adds a new instance of the plugin
     and attaches it to the instance on the namespace (property) defined by the plugin class' `NS` property.</p>
@@ -243,12 +243,12 @@ classes with varying permutations of features.
     <p>The `plug` method also allows multiple plugins to be added in a single call by passing in an array of plugins with optional configurations as defined in the API documentation.</p>
 
     </dd>
-    <dt>`<a href="{{apiDocs}}/Plugin.Host.html#method_unplug">unplug(pluginClass)</a>` or `<a href="{{apiDocs}}/Plugin.Host.html#method_unplug">unplug(namespace)</a>`</dt>
+    <dt><a href="{{apiDocs}}/Plugin.Host.html#method_unplug">`unplug(pluginClass)`</a> or <a href="{{apiDocs}}/Plugin.Host.html#method_unplug">`unplug(namespace)`</a></dt>
     <dd>Removes the provided plugin or the plugin at the attached namespace from the instance and destroys it.</dd>
 </dl>
 
-<p>The above 2 methods are designed to be used after an instance of the component has already been created. 
-Plugins can also be added using the constructor configuration object, using the `plugins` 
+<p>The above 2 methods are designed to be used after an instance of the component has already been created.
+Plugins can also be added using the constructor configuration object, using the `plugins`
 configuration key. For example:</p>
 
 ```
@@ -282,7 +282,7 @@ The <a href="{{componentAssets}}/../plugin/myplugin.js.txt">"MyPlugin" template 
 <h3>Build</h3>
 
 <p>The `build` method can be used to dynamically create new classes that are derived from an existing main class and mix in additional "extension" classes to add methods, attributes, events and properties to the main class.
-By default, `build` leaves the original main and mixed-in classes untouched so that the main class can still be used without the additional features mixed in. However `build` can be invoked with a configuration 
+By default, `build` leaves the original main and mixed-in classes untouched so that the main class can still be used without the additional features mixed in. However `build` can be invoked with a configuration
 option so that it modifies the main class if required.</p>
 
 ```
@@ -317,7 +317,7 @@ Resizable.ATTRS = {
 };
 
 Resizable.prototype = {
-    _initResizable : function() { ... } 
+    _initResizable : function() { ... }
     lock : function() { ... }
 };
 
@@ -337,14 +337,14 @@ Modal.prototype = {
     hideMask() : function() { ... }
 };
 
-// Create a new class WindowPanel, which extends Panel, and 
+// Create a new class WindowPanel, which extends Panel, and
 // combines methods/attributes from Resizable and Modal
 
 var WindowPanel = Y.Base.build("windowPanel", Panel, [Resizable, Modal]);
 
 var wp = new WindowPanel({
-    shadow: true, 
-    modal: true, 
+    shadow: true,
+    modal: true,
     handles:["e", "s", "se"]
 });
 
@@ -358,7 +358,7 @@ wp.lock();
     <li>Creates a new 'built' class by extending the main class passed in as the first argument.</li>
     <li>Augments the list of feature classes (the 2nd argument) to the built class, so that it now has their prototype methods.</li>
     <li>
-       Aggregates any known static properties on the built class. Properties to aggregate are defined by a _buildCfg.aggregates on the main class. 
+       Aggregates any known static properties on the built class. Properties to aggregate are defined by a _buildCfg.aggregates on the main class.
        For example Base defines the `ATTRS` property as a property which needs to be aggregated, and Widget adds the `HTML_PARSER` property.
     </li>
 </ul>
@@ -373,7 +373,7 @@ wp.lock();
     will exist on the newly created class.</dd>
     <dt><a href="{{apiDocs}}/Base.html#method_Base.mix">`Base.mix`</a></dt>
     <dd>The `mix` sugar method on the other hand, can be used to add extensions into an already existing class.</dd>
-</dl>                
+</dl>
 
 <p>See Base's <a href="{{apiDocs}}/Base.html">`API documentation`</a> for more details on the `build`, `create` and `mix` methods.</p>
 

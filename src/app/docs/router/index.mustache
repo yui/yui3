@@ -1,6 +1,6 @@
 <div class="intro">
 <p>
-Controller provides URL-based same-page routing using <a href="https://developer.mozilla.org/en/DOM/Manipulating_the_browser_history">HTML5 history</a> (`pushState`) or the location hash, depending on what the user's browser supports.
+Router provides URL-based same-page routing using <a href="https://developer.mozilla.org/en/DOM/Manipulating_the_browser_history">HTML5 history</a> (`pushState`) or the location hash, depending on what the user's browser supports.
 </p>
 
 <p>
@@ -8,11 +8,37 @@ This makes it easy to wire up route handlers for different application states wh
 </p>
 
 <p>
-If you've used a server-side routing framework like <a href="http://expressjs.com/">Express</a> or <a href="http://www.sinatrarb.com/">Sinatra</a>, Controller will look very familiar to you. This is no accident!
+If you've used a server-side routing framework like <a href="http://expressjs.com/">Express</a> or <a href="http://www.sinatrarb.com/">Sinatra</a>, Router will look very familiar to you. This is no accident!
 </p>
 </div>
 
 {{>getting-started}}
+
+<h2>Upgrading from YUI 3.4.x</h2>
+
+<p>
+A beta version of Router was first introduced in YUI 3.4.0, but was named Controller. If you're using Controller in YUI 3.4.0 or 3.4.1, you'll need to make the following changes to your code when upgrading:
+</p>
+
+<ul>
+  <li>
+    <p>
+    The name of the class has changed from `Controller` to `Router`. Change all references to the `Controller` class and the `controller` module in your code to refer to the `Router` class and `router` module, respectively. To ease migration, `Controller` is now an alias for `Router` and will still work, but this alias will be removed in a future release of YUI.
+    </p>
+  </li>
+
+  <li>
+    <p>
+    The `html5`, `root`, and `route` properties are now attributes. If you were accessing them as properties, update your code to access them as attributes instead. For example, `var root = myController.root;` becomes `var root = myRouter.get('root');`, and `myController.root = '/foo';` becomes `myRouter.set('root', '/foo');`.
+    </p>
+  </li>
+
+  <li>
+    <p>
+    The function signature for route handlers has changed. Previously, the second argument passed to all route handlers was the `next()` function. As of YUI 3.5.0, the second argument is a response object, and the third argument is the `next()` function. To preserve backwards compatibility, the response object is also a function that will call `next()`, but you should still update your code to take the new argument order into account.
+    </p>
+  </li>
+</ul>
 
 <h2>URL-based Routing on the Client?</h2>
 
@@ -25,25 +51,25 @@ Server-side web frameworks use URLs to maintain state by routing them to differe
 </p>
 
 <p>
-Controller allows you to define routes that map to callback functions. Whenever the user navigates to a URL that matches a route you've defined, that route's callback function is executed and can update the UI, make Ajax requests, or perform any other necessary actions. See [[#Routing]] for more details on how this works.
+Router allows you to define routes that map to callback functions. Whenever the user navigates to a URL that matches a route you've defined, that route's callback function is executed and can update the UI, make Ajax requests, or perform any other necessary actions. See [[#Routing]] for more details on how this works.
 </p>
 
 <p>
-Often you'll want to change the URL in order to trigger a route handler, perhaps because the user has taken an action that should change the state of your application. Controller provides a `save()` method that sets a new URL and saves it to the user's browser history. There's also a `replace()` method to replace the current URL in the user's browser history without creating a new entry. The [[#Updating the URL]] section describes these methods in detail.
+Often you'll want to change the URL in order to trigger a route handler, perhaps because the user has taken an action that should change the state of your application. Router provides a `save()` method that sets a new URL and saves it to the user's browser history. There's also a `replace()` method to replace the current URL in the user's browser history without creating a new entry. The [[#Updating the URL]] section describes these methods in detail.
 </p>
 
 <h2>Sample URLs</h2>
 
 <p>
-In browsers that support the HTML5 history API, Controller generates real URLs that can gracefully degrade to allow server-side handling of initial pageviews or pageviews without JS enabled. Most modern browsers (including recent versions of Firefox, Chrome, Safari, and Mobile Safari) support HTML5 history.
+In browsers that support the HTML5 history API, Router generates real URLs that can gracefully degrade to allow server-side handling of initial pageviews or pageviews without JS enabled. Most modern browsers (including recent versions of Firefox, Chrome, Safari, and Mobile Safari) support HTML5 history.
 </p>
 
 <p>
-In browsers that don't support the HTML5 history API, Controller falls back on using the location hash to store URL information and trigger history changes. This mostly applies only to older browsers and Internet Explorer. Unfortunately, even Internet Explorer 9 doesn't support the HTML5 history API.
+In browsers that don't support the HTML5 history API, Router falls back on using the location hash to store URL information and trigger history changes. This mostly applies only to older browsers and Internet Explorer. Unfortunately, even Internet Explorer 9 doesn't support the HTML5 history API.
 </p>
 
 <p>
-The table below contains examples of the kinds of URLs Controller might generate when the `save()` method is called on a Controller instance, starting from an initial URL of `http://example.com/`.
+The table below contains examples of the kinds of URLs Router might generate when the `save()` method is called on a Router instance, starting from an initial URL of `http://example.com/`.
 </p>
 
 <table>
@@ -56,51 +82,51 @@ The table below contains examples of the kinds of URLs Controller might generate
   </thead>
   <tbody>
     <tr>
-      <td>`controller.save('/')`</td>
+      <td>`router.save('/')`</td>
       <td>`http://example.com/`</td>
       <td>`http://example.com/#/`</td>
     </tr>
 
     <tr>
-      <td>`controller.save('/pie/yum')`</td>
+      <td>`router.save('/pie/yum')`</td>
       <td>`http://example.com/pie/yum`</td>
       <td>`http://example.com/#/pie/yum`</td>
     </tr>
 
     <tr>
-      <td>`controller.save('/pie?type=pecan&icecream=true')`</td>
+      <td>`router.save('/pie?type=pecan&icecream=true')`</td>
       <td>`http://example.com/pie?type=pecan&icecream=true`</td>
       <td>`http://example.com/#/pie?type=pecan&icecream=true`</td>
     </tr>
   </tbody>
 </table>
 
-<h2>Using Controller</h2>
+<h2>Using Router</h2>
 
-<h3>Instantiating Controller</h3>
+<h3>Instantiating Router</h3>
 
 <p>
-To begin adding route handlers, the first thing you'll need to do is create a new Controller instance.
+To begin adding route handlers, the first thing you'll need to do is create a new Router instance.
 </p>
 
 ```
-var controller = new Y.Controller();
+var router = new Y.Router();
 ```
 
 <p>
-This is the simplest way of working with Controller, but you may also extend `Y.Controller` to create a custom Controller class that suits your needs. The [[#Extending `Y.Controller`]] section explains how to do this.
+This is the simplest way of working with Router, but you may also extend `Y.Router` to create a custom Router class that suits your needs. The [[#Extending `Y.Router`]] section explains how to do this.
 </p>
 
-<h4>Config Properties</h4>
+<h4>Config Attributes</h4>
 
 <p>
-When instantiating Controller, you may optionally pass in a config object containing any of the following properties. For more details on these properties, see Controller's <a href="{{apiDocs}}/modules/module_controller.html">API docs</a>.
+When instantiating Router, you may optionally pass in a config object containing values for any of the following attributes. For more details on these attributes, see Router's <a href="{{apiDocs}}/modules/module_router.html">API docs</a>.
 </p>
 
 <table>
   <thead>
     <tr>
-      <th>Property</th>
+      <th>Attribute</th>
       <th>Default</th>
       <th>Description</th>
     </tr>
@@ -119,7 +145,7 @@ When instantiating Controller, you may optionally pass in a config object contai
         </p>
 
         <p>
-        Before overriding this property, please read [[#HTML5 URLs vs. Hash URLs]] and be sure you fully understand the consequences. It's almost always a better idea to leave it alone.
+        Before changing this value, please read [[#HTML5 URLs vs. Hash URLs]] and be sure you fully understand the consequences. It's almost always a better idea to leave it alone.
         </p>
       </td>
     </tr>
@@ -139,7 +165,7 @@ When instantiating Controller, you may optionally pass in a config object contai
       <td>`[]`</td>
       <td>
         <p>
-        Array of route objects specifying routes to be created at instantiation time. This can be used as an alternative to adding routes via the `route()` method after instantiation.
+        Array of route objects. This can be used to specify routes at instantiation time, or when extending `Y.Router`. It can also be used after instantiation to reset all existing routes. To add routes after instantiation without resetting existing routes, use the `route()` method.
         </p>
 
         <p>
@@ -154,7 +180,7 @@ When instantiating Controller, you may optionally pass in a config object contai
 
           <dt>`callback`</dt>
           <dd>
-            A function or a string representing the name of a function on the Controller instance that should be called when the route is triggered. See [[#Routing]] for more details.
+            A function or a string representing the name of a function on the Router instance that should be called when the route is triggered. See [[#Routing]] for more details.
           </dd>
         </dl>
       </td>
@@ -163,11 +189,11 @@ When instantiating Controller, you may optionally pass in a config object contai
 </table>
 
 <p>
-Here's an example that sets all the configurable properties:
+Here's an example that sets all the configurable attributes at instantiation time:
 </p>
 
 ```
-var controller = new Y.Controller({
+var router = new Y.Router({
   html5: false,
   root : '/mysite',
 
@@ -181,7 +207,7 @@ var controller = new Y.Controller({
 <h4>Setting the Root Path</h4>
 
 <p>
-Let's say the URL for your website is `http://example.com/mysite/`. Since Controller matches routes based on the URL path, it would look for routes beginning with `/mysite/`.
+Let's say the URL for your website is `http://example.com/mysite/`. Since Router matches routes based on the URL path, it would look for routes beginning with `/mysite/`.
 </p>
 
 <p>
@@ -189,7 +215,7 @@ You could deal with this by ensuring that all your routes start with `/mysite/`,
 </p>
 
 <p>
-This is where the `root` config property comes in. If you set `root` to `'/mysite'`, then all routes will be evaluated relative to that root path, as illustrated below.
+This is where the `root` config attribute comes in. If you set `root` to `'/mysite'`, then all routes will be evaluated relative to that root path, as illustrated below.
 </p>
 
 <p>
@@ -225,41 +251,36 @@ The `root` must be an absolute path.
   </tbody>
 </table>
 
-<h3>Extending `Y.Controller`</h3>
+<h3>Extending `Y.Router`</h3>
 
 <p>
-While `Y.Controller` may be instantiated and used directly, you might find it more convenient to extend the `Y.Controller` class to create a subclass customized for your particular needs.
+While `Y.Router` may be instantiated and used directly, you might find it more convenient to extend the `Y.Router` class to create a subclass customized for your particular needs.
 </p>
 
 <p>
-Use the `Y.Base.create()` method to extend `Y.Controller` and add or override prototype and static members. You may also optionally specify one or more <a href="../base/index.html#extensions">Base extensions</a> to mix into your new class.
+Use the `Y.Base.create()` method to extend `Y.Router` and add or override prototype and static members and attributes. You may also optionally specify one or more <a href="../base/index.html#extensions">Base extensions</a> to mix into your new class.
 </p>
 
 ```
-// Create a Y.CustomController class that extends Y.Controller.
-Y.CustomController = Y.Base.create('customController', Y.Controller, [], {
+// Create a Y.CustomRouter class that extends Y.Router.
+Y.CustomRouter = Y.Base.create('customRouter', Y.Router, [], {
   // Add or override prototype properties and methods here.
 }, {
   // Add static properties and methods here.
+
+  ATTRS: {
+    // Override default attributes here.
+  }
 });
 ```
 
 <p>
-One benefit of extending `Y.Controller` is that you can easily add default config properties, routes, and route handlers to the prototype of your custom Controller class, and they'll be shared by all instances of that class unless overridden at the instance level:
+One benefit of extending `Y.Router` is that you can easily add default routes and route handlers to your custom Router class, and they'll be shared by all instances of that class unless overridden at the instance level:
 </p>
 
 ```
-Y.CustomController = Y.Base.create('customController', Y.Controller, [], {
-  // Evaluate all routes relative to this root path.
-  root: '/mysite',
-
-  // Share these default routes with all CustomController instances.
-  routes: [
-    {path: '/',    callback: 'index'},
-    {path: '/pie', callback: 'pie'}
-  ],
-
-  // Default route handlers inherited by all CustomController instances.
+Y.CustomRouter = Y.Base.create('customRouter', Y.Router, [], {
+  // Default route handlers inherited by all CustomRouter instances.
   index: function (req) {
     // ... handle the / route ...
   },
@@ -267,37 +288,52 @@ Y.CustomController = Y.Base.create('customController', Y.Controller, [], {
   pie: function (req) {
     // ... handle the /pie route ...
   }
+}, {
+  ATTRS: {
+    // Evaluate all routes relative to this root path.
+    root: {
+      value: '/mysite'
+    },
+
+    // Share these default routes with all CustomRouter instances.
+    routes: {
+      value: [
+        {path: '/',    callback: 'index'},
+        {path: '/pie', callback: 'pie'}
+      ]
+    },
+  }
 });
 
-// Create a CustomController instance that inherits the defaults and adds to
+// Create a CustomRouter instance that inherits the defaults and adds to
 // them.
-var controller = new Y.CustomController();
+var router = new Y.CustomRouter();
 
-controller.route('/cheesecake', function (req) {
+router.route('/cheesecake', function (req) {
   // ... handle the /cheesecake route
 });
 ```
 
 <p>
-Now all instances of `Y.CustomController` will inherit all the custom defaults and can add to or override them. The `controller` instance created here will handle the `/` and `/pie` routes in addition to its own `/cheesecake` route, and will evaluate all routes from the `/mysite` root path.
+Now all instances of `Y.CustomRouter` will inherit all the custom defaults and can add to or override them. The `router` instance created here will handle the `/` and `/pie` routes in addition to its own `/cheesecake` route, and will evaluate all routes from the `/mysite` root path.
 </p>
 
 <h3>Routing</h3>
 
 <p>
-Use the `route()` method to add a new route to a Controller instance. The first parameter is a path specification or regular expression that the URL path must match, and the second parameter is a callback function or function name to execute when the route is matched.
+Use the `route()` method to add a new route to a Router instance. The first parameter is a path specification or regular expression that the URL path must match, and the second parameter is a callback function or function name to execute when the route is matched.
 </p>
 
 ```
-var controller = new Y.Controller();
+var router = new Y.Router();
 
 // Add a route using a string as the path specification.
-controller.route('/pie', function () {
+router.route('/pie', function () {
   Y.log('You visited http://example.com/pie');
 });
 
 // Add a route using a regular expression as the path specification.
-controller.route(/^\/cake$/, function () {
+router.route(/^\/cake$/, function () {
   Y.log('You visited http://example.com/cake');
 });
 ```
@@ -307,26 +343,26 @@ Routes are always evaluated in the order they're added. The first route that mat
 </p>
 
 <p>
-When a route callback is specified as a string instead of a function, it's assumed to represent the name of a function on the Controller instance.
+When a route callback is specified as a string instead of a function, it's assumed to represent the name of a function on the Router instance.
 </p>
 
 ```
-var controller = new Y.Controller();
+var router = new Y.Router();
 
-controller.pie = function () {
+router.pie = function () {
   Y.log('You visited http://example.com/pie');
 };
 
-// Add a route using controller.pie as the route callback.
-controller.route('/pie', 'pie');
+// Add a route using router.pie as the route callback.
+router.route('/pie', 'pie');
 ```
 
 <p>
-As an alternative to using the `route()` method, routes may be added at instantiation time using the `routes` config property:
+As an alternative to using the `route()` method, routes may be added at instantiation time using the `routes` config attribute:
 </p>
 
 ```
-var controller = new Y.Controller({
+var router = new Y.Router({
   routes: [
     {path: '/pie', callback: function () {
       Y.log('You visited http://example.com/pie');
@@ -340,7 +376,7 @@ var controller = new Y.Controller({
 ```
 
 <p>
-This is functionally equivalent to adding the routes via the `route()` method, except that the routes are added during the Controller's initialization stage rather than after.
+This is functionally equivalent to adding the routes via the `route()` method, except that it will replace any default routes, and the routes are added during the Router's initialization stage rather than after.
 </p>
 
 <h4>Paths, Placeholders, and RegExps</h4>
@@ -358,15 +394,15 @@ A placeholder prefixed by a `:`, like `:pie`, will match any character except fo
 </p>
 
 ```
-controller.route('/pie/:type/:slices', function (req) {
+router.route('/pie/:type/:slices', function (req) {
   Y.log("You ordered " + req.params.slices + " slices of "
       + req.params.type + " pie.");
 });
 
-controller.save('/pie/apple/2');
+router.save('/pie/apple/2');
 // => "You ordered 2 slices of apple pie."
 
-controller.save('/pie/lemon+meringue/42');
+router.save('/pie/lemon+meringue/42');
 // => "You ordered 42 slices of lemon meringue pie."
 ```
 
@@ -375,12 +411,25 @@ A placeholder prefixed by a `*`, like `*path`, will match as many characters as 
 </p>
 
 ```
-controller.route('/files/*path', function (req) {
+router.route('/files/*path', function (req) {
   Y.log("You requested the file " + req.params.path);
 });
 
-controller.save('/files/recipes/pie/pecan.html');
+router.save('/files/recipes/pie/pecan.html');
 // => "You requested the file recipes/pie/pecan.html"
+```
+
+<p>
+Use `*` all by itself as a wildcard to match any path at all:
+</p>
+
+```
+router.route('*', function () {
+  Y.log("Wildcard route! I match everything! I'm craaaaaaazy!");
+});
+
+router.save('/purple/monkey/dishwasher');
+// => "Wildcard route! I match everything! I'm craaaaaaazy!"
 ```
 
 <p>
@@ -392,12 +441,12 @@ When a regular expression is used as a path specification, `req.params` will be 
 </p>
 
 ```
-controller.route(/^\/pie\/([^\/]*)\/([^\/]*)$/, function (req) {
+router.route(/^\/pie\/([^\/]*)\/([^\/]*)$/, function (req) {
   Y.log("You ordered " + req.params[1] + " slices of "
       + req.params[2] + " pie.");
 });
 
-controller.save('/pie/maple+custard/infinity');
+router.save('/pie/maple+custard/infinity');
 // => "You ordered infinity slices of maple custard pie."
 ```
 
@@ -493,7 +542,7 @@ When a route is matched, the callback function associated with that route will b
 </dl>
 
 <p>
-Inside a route callback, the `this` keyword will always refer to the Controller instance that executed that route.
+Inside a route callback, the `this` keyword will always refer to the Router instance that executed that route.
 </p>
 
 <h4>Chaining Routes</h4>
@@ -503,41 +552,45 @@ By default, only the first route that matches a URL will be executed, even if th
 </p>
 
 ```
-controller.route('/pie', function (req, res, next) {
+router.route('/pie', function (req, res, next) {
   Y.log('Callback #1 executed!');
   next();
 });
 
-controller.route('/pie', function (req) {
+router.route('/pie', function (req) {
   Y.log('Callback #2 executed!');
 });
 
-controller.route('/pie', function (req) {
+router.route('/pie', function (req) {
   Y.log('Callback #3 executed!');
 });
 
-controller.save('/pie');
+router.save('/pie');
 // => "Callback #1 executed!"
 // => "Callback #2 executed!"
 ```
 
 <p>
-If you want the first route callback to pass some data along to subsequent callbacks, you can attach that data to the `req` object, which is shared between all routes that are executed during a single request.
+If you want the first route callback to pass some data along to subsequent callbacks, you can attach that data to either the `req` object or the `res` object, which are shared between all routes that are executed during a single request.
 </p>
 
 ```
-controller.route('/ice-cream', function (req, res, next) {
+router.route('/ice-cream', function (req, res, next) {
   req.flavor = 'cookie dough';
   next();
 });
 
-controller.route('/ice-cream', function (req) {
+router.route('/ice-cream', function (req) {
   Y.log("I sure do like " + req.flavor + " ice cream.");
 });
 
-controller.save('/ice-cream');
+router.save('/ice-cream');
 // => "I sure do like cookie dough ice cream."
 ```
+
+<p>
+Whether to store data on `req` or `res` is up to you, but by convention, data pertaining to the request should be stored on `req`, and data pertaining to a response or to some other result of that request should be stored on `res`.
+</p>
 
 <h3>Updating the URL</h3>
 
@@ -551,10 +604,10 @@ The only difference between the two is that `save()` saves a new history entry, 
 
 ```
 // Save a new history entry.
-controller.save('/cake');
+router.save('/cake');
 
 // Replace the current history entry with a new one.
-controller.replace('/pie');
+router.replace('/pie');
 ```
 
 <p>
@@ -566,7 +619,7 @@ When you need to provide state information to your route handlers, it's best to 
 </p>
 
 ```
-controller.route('/ice-cream', function (req) {
+router.route('/ice-cream', function (req) {
   var flavor = req.query.flavor;
 
   if (flavor === 'vanilla') {
@@ -578,13 +631,13 @@ controller.route('/ice-cream', function (req) {
   }
 });
 
-controller.save('/ice-cream?flavor=vanilla');
+router.save('/ice-cream?flavor=vanilla');
 // => "Vanilla? How boring."
 
-controller.save('/ice-cream?flavor=americone+dream');
+router.save('/ice-cream?flavor=americone+dream');
 // => "Mmm, Colbert-flavored ice cream."
 
-controller.save('/ice-cream?flavor=kitten');
+router.save('/ice-cream?flavor=kitten');
 // => "Error! Error! Does not compute!"
 ```
 
@@ -596,8 +649,8 @@ An excellent way to provide progressive enhancement on a page with URLs that can
 
 ```
 // This sample requires the `node-event-delegate` module.
-YUI().use('controller', 'node-event-delegate', function (Y) {
-  // ... create a controller instance as described in the sections above ...
+YUI().use('router', 'node-event-delegate', function (Y) {
+  // ... create a router instance as described in the sections above ...
 
   // Attach a delegated click handler to listen for clicks on all links on the
   // page.
@@ -609,28 +662,28 @@ YUI().use('controller', 'node-event-delegate', function (Y) {
     }
 
     // Remove the non-path portion of the URL, and any portion of the path that
-    // isn't relative to this controller's root path.
-    var path = controller.removeRoot(e.currentTarget.get('href'));
+    // isn't relative to this router's root path.
+    var path = router.removeRoot(e.currentTarget.get('href'));
 
-    // If the controller has a route that matches this path, then use the
-    // controller to update the URL and handle the route. Otherwise, let the
+    // If the router has a route that matches this path, then use the
+    // router to update the URL and handle the route. Otherwise, let the
     // browser handle the click normally.
-    if (controller.hasRoute(path)) {
+    if (router.hasRoute(path)) {
       e.preventDefault();
-      controller.save(path);
+      router.save(path);
     }
   }, 'a');
 });
 ```
 
 <p>
-Now a click on any link, such as `<a href="http://example.com/foo">Click me!</a>`, will automatically be handled by the controller if there's a matching route. If there's no matching route, or if the user doesn't have JavaScript enabled, the link click will be handled normally by the browser.
+Now a click on any link, such as `<a href="http://example.com/foo">Click me!</a>`, will automatically be handled by the router if there's a matching route. If there's no matching route, or if the user doesn't have JavaScript enabled, the link click will be handled normally by the browser.
 </p>
 
 <h3>To Dispatch or Not to Dispatch?</h3>
 
 <p>
-Dispatching is what it's called when Controller looks for routes that match the current URL and then executes the callback of the first matching route (if any).
+Dispatching is what it's called when Router looks for routes that match the current URL and then executes the callback of the first matching route (if any).
 </p>
 
 <p>
@@ -644,7 +697,7 @@ A dispatch can be triggered in the following ways:
 </ul>
 
 <p>
-It's important to remember that if a user bookmarks or copies an HTML5 URL generated by Controller and visits that URL later, the full URL will be sent to the server. On the other hand, if a user bookmarks or copies a hash-based URL in a legacy browser and then visits it later, the hash portion of the URL <em>won't</em> be sent to the server.
+It's important to remember that if a user bookmarks or copies an HTML5 URL generated by Router and visits that URL later, the full URL will be sent to the server. On the other hand, if a user bookmarks or copies a hash-based URL in a legacy browser and then visits it later, the hash portion of the URL <em>won't</em> be sent to the server.
 </p>
 
 <p>
@@ -655,22 +708,22 @@ For instance, let's say a user visits your website at `http://example.com/`. On 
 <button id="pie">Click me if you like pie!</button>
 
 <script>
-YUI().use('controller', 'node', function (Y) {
-  var controller = new Y.Controller();
+YUI().use('router', 'node', function (Y) {
+  var router = new Y.Router();
 
-  controller.route('/pie', function () {
+  router.route('/pie', function () {
     // Show the user a photo of a delicious pie.
   });
 
   Y.one('#pie').on('click', function () {
-    controller.save('/pie');
+    router.save('/pie');
   });
 });
 </script>
 ```
 
 <p>
-In an HTML5 browser, when the user clicks the button, Controller will change the URL to `http://example.com/pie` and then execute the `/pie` route, but the browser won't contact the server. If the user bookmarks this URL and then loads it again later, the web server will handle the request. If it doesn't recognize the path `/pie`, it may return a 404 error, which would be no good.
+In an HTML5 browser, when the user clicks the button, Router will change the URL to `http://example.com/pie` and then execute the `/pie` route, but the browser won't contact the server. If the user bookmarks this URL and then loads it again later, the web server will handle the request. If it doesn't recognize the path `/pie`, it may return a 404 error, which would be no good.
 </p>
 
 <p>
@@ -685,10 +738,10 @@ There are two ways to deal with this. One way would be to implement server-side 
 // Always dispatch to an initial route on legacy browsers. Only dispatch to an
 // initial route on HTML5 browsers if it's necessary in order to upgrade a
 // legacy hash URL to an HTML5 URL.
-if (controller.html5) {
-  controller.upgrade();
+if (router.get('html5')) {
+  router.upgrade();
 } else {
-  controller.dispatch();
+  router.dispatch();
 }
 ```
 
@@ -702,11 +755,11 @@ The other way to handle this would be to configure the server to render the same
 
 ```
 // Dispatch to an initial route on all browsers.
-controller.dispatch();
+router.dispatch();
 ```
 
 <p>
-On the one hand, this solution avoids most of the server-side complexity and keeps all the controller logic on the client. On the other, it requires the client to support JavaScript, so it won't play well with search crawlers that can't run JavaScript or users who disable JavaScript.
+On the one hand, this solution avoids most of the server-side complexity and keeps all the router logic on the client. On the other, it requires the client to support JavaScript, so it won't play well with search crawlers that can't run JavaScript or users who disable JavaScript.
 </p>
 
 <h2>Best Practices</h2>
@@ -726,17 +779,17 @@ Hash-based URLs, on the other hand, can't be handled on the server because brows
 </p>
 
 <p>
-In general, the benefits of HTML5 URLs tend to outweigh the drawbacks when compared to hash-based URLs, which is why Controller automatically defaults to using HTML5 URLs in browsers that support it. The hash-based URLs generated by Controller should be used only as a fallback for legacy browsers.
+In general, the benefits of HTML5 URLs tend to outweigh the drawbacks when compared to hash-based URLs, which is why Router automatically defaults to using HTML5 URLs in browsers that support it. The hash-based URLs generated by Router should be used only as a fallback for legacy browsers.
 </p>
 
 <h3>Cross-browser URL Compatibility</h3>
 
 <p>
-It's very important that any URL generated by Controller be usable in any browser. If a user of a legacy browser copies a URL and shares it with a friend who uses an HTML5 browser, that URL should still work. And if someone copies an HTML5 URL and shares it with a user of a legacy browser, that needs to work too.
+It's very important that any URL generated by Router be usable in any browser. If a user of a legacy browser copies a URL and shares it with a friend who uses an HTML5 browser, that URL should still work. And if someone copies an HTML5 URL and shares it with a user of a legacy browser, that needs to work too.
 </p>
 
 <p>
-When a hash-based URL is loaded in an HTML5 browser and `dispatch()` or `upgrade()` are called, Controller automatically upgrades the URL to an HTML5 URL. So a URL like `http://example.com/#/pie` will become `http://example.com/pie`, and the HTML5 browser will execute the appropriate route handler.
+When a hash-based URL is loaded in an HTML5 browser and `dispatch()` or `upgrade()` are called, Router automatically upgrades the URL to an HTML5 URL. So a URL like `http://example.com/#/pie` will become `http://example.com/pie`, and the HTML5 browser will execute the appropriate route handler.
 </p>
 
 <p>
@@ -748,8 +801,8 @@ When an HTML5 URL like `http://example.com/pie` is loaded in a legacy browser, w
 </p>
 
 <ul>
-  <li><p>If the server is capable of handling the URL, then it should render the page in the appropriate state, and Controller won't need to do anything.</p></li>
-  <li><p>If the server is not capable of handling the URL, then it should render the initial page state and you should call Controller's `dispatch()` method. Controller will parse the HTML5 URL and execute the appropriate route, even in a legacy browser.</p></li>
+  <li><p>If the server is capable of handling the URL, then it should render the page in the appropriate state, and Router won't need to do anything.</p></li>
+  <li><p>If the server is not capable of handling the URL, then it should render the initial page state and you should call Router's `dispatch()` method. Router will parse the HTML5 URL and execute the appropriate route, even in a legacy browser.</p></li>
 </ul>
 
 <p>
@@ -767,13 +820,13 @@ Being able to render the same application states both on the server and the clie
 </p>
 
 <p>
-Controller's routing style and route specification format are intentionally very similar to those of the <a href="http://expressjs.com/">Express.js</a> server-side framework. With a little care, you may be able to use the same route handler code on both the server and the client.
+Router's routing style and route specification format are intentionally very similar to those of the <a href="http://expressjs.com/">Express.js</a> server-side framework. With a little care, you may be able to use the same route handler code on both the server and the client.
 </p>
 
 <h4>Supporting Google's Ajax Crawling Scheme</h4>
 
 <p>
-One of the problems with the hash-based URLs Controller uses to support legacy browsers is that most search engines don't distinguish between a URL with a hash fragment and one without. This means that, to a search bot, the URLs `http://example.com/` and `http://example.com/#/pie` might look the same, even though they might represent completely different content in your application.
+One of the problems with the hash-based URLs Router uses to support legacy browsers is that most search engines don't distinguish between a URL with a hash fragment and one without. This means that, to a search bot, the URLs `http://example.com/` and `http://example.com/#/pie` might look the same, even though they might represent completely different content in your application.
 </p>
 
 <p>
@@ -781,7 +834,7 @@ Google's <a href="http://code.google.com/web/ajaxcrawling/">Ajax Crawling Scheme
 </p>
 
 <p>
-To indicate to the GoogleBot that your hash URLs are crawlable, the hash must be prefixed by `#!` instead of the default `#`. You can make Controller do this automatically by setting the value of the static `Y.HistoryHash.hashPrefix` property before initializing any Controller instances:
+To indicate to the GoogleBot that your hash URLs are crawlable, the hash must be prefixed by `#!` instead of the default `#`. You can make Router do this automatically by setting the value of the static `Y.HistoryHash.hashPrefix` property before initializing any Router instances:
 </p>
 
 ```

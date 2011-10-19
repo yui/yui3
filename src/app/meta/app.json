@@ -1,6 +1,6 @@
 {
     "app": {
-        "use": ["app-base", "controller", "model", "model-list", "view"],
+        "use": ["app-base", "model", "model-list", "router", "view"],
 
         "submodules": {
             "app-base": {
@@ -8,8 +8,7 @@
             },
 
             "controller": {
-                "optional": ["querystring-parse"],
-                "requires": ["array-extras", "base-build", "history"]
+                "use": ["router"]
             },
 
             "model": {
@@ -26,6 +25,11 @@
                     "json-parse",
                     "model"
                 ]
+            },
+
+            "router": {
+                "optional": ["querystring-parse"],
+                "requires": ["array-extras", "base-build", "history"]
             },
 
             "view": {

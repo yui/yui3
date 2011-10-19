@@ -145,9 +145,9 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A rollup module
             Assert.isTrue((loader.sorted.indexOf("app-base")) > -1, "Module (app-base) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("controller")) > -1, "Module (controller) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("model")) > -1, "Module (model) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("model-list")) > -1, "Module (model-list) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("router")) > -1, "Module (router) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("view")) > -1, "Module (view) not found in sorted array");
         },
      "Testing app-base": function(data) {
@@ -549,8 +549,8 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("controller")) > -1, "Module (controller) not found in sorted array");
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("router")) > -1, "Module (router) not found in sorted array");
         },
      "Testing cookie": function(data) {
             var loader = new Y.Loader({
@@ -2249,6 +2249,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("rls")) > -1, "Module (rls) not found in sorted array");
+        },
+     "Testing router": function(data) {
+            var loader = new Y.Loader({
+                require: ["router"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("router")) > -1, "Module (router) not found in sorted array");
         },
      "Testing scrollview": function(data) {
             var loader = new Y.Loader({
