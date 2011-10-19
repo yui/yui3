@@ -346,7 +346,6 @@ var MatrixUtil = {
             shear = MatrixUtil.rad2deg(Math.atan(shear));
             rotate = MatrixUtil.rad2deg(Math.atan2(matrix[1][0], matrix[0][0]));
 
-            console.log(matrix[0][0] + ", " + matrix[1][0]);
             return [
                 ["translate", dx, dy],
                 ["rotate", rotate],
