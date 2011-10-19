@@ -833,6 +833,9 @@ baseSuite.add(new Y.Test.Case({
         this.ac.set('source', 'select * from search.suggest where q="{query}"');
         Assert.areSame('yql', this.ac.get('source').type);
 
+        this.ac.set('source', 'select * from search.suggest where q="{request}"');
+        Assert.areSame('yql', this.ac.get('source').type);
+
         this.ac.set('source', 'set foo="bar" on search; select * from search.suggest where q="{query}"');
         Assert.areSame('yql', this.ac.get('source').type);
 

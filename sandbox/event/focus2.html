@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+<head>
+	<title>YUI Event Delegate Tests</title>
+    <style type="text/css">
+        li {
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body class="yui3-skin-sam">
+
+    <button id="foc">link.focus()</button>
+	<div id="outer">
+        <div id="inner">
+            <button id="button-1">Click Me!</button>
+            <a id="anchor-1" href="http://www.yahoo.com">Click Me!</a>
+            <input type="text" id="text-1">
+        </div>
+	</div>
+    <ul id="out"></ul>
+
+	<script src="../../../build/yui/yui.js"></script>
+	<script>
+			var body   = document.getElementsByTagName('body')[0],
+                outer  = document.getElementById('outer'),
+			    inner  = document.getElementById('inner'),
+                button = document.getElementById('button-1'),
+                link   = document.getElementById('anchor-1'),
+                text   = document.getElementById('text-1'),
+                out    = document.getElementById('out');
+
+            function report(e, thisObj, msg) {
+                var target, t = '(unknown)', ct = '(unknown)';
+                
+                if (e && e.target && thisObj && thisObj.nodeName) {
+                    target = e.target || e.srcElement;
+                    t = target.nodeName + '#' + target.id;
+                    ct = thisObj.nodeName + '#' + thisObj.id;
+                }
+
+                out.appendChild(document.createElement("li")).innerHTML =
+                    msg + " " + t + " " + ct;
+            }
+
+            document.getElementById('foc').onclick = function (e) {
+                link.focus();
+                report(e || event, this, "clicked on <code>focus()</code> button");
+            };
+
+            link.onclick = function (e) {
+                report(e || event, this, "link clicked");
+                if (e) {
+                    e.preventDefault();
+                } else {
+                    event.returnValue = false;
+                }
+            };
+
+            outer.onbeforeactivate = function (e) {
+                report(e || event, this, "beforeactivate (outer)");
+            };
+
+            inner.onbeforeactivate = function (e) {
+                report(e || event, this, "beforeactivate (inner)");
+            };
+
+            link.onbeforeactivate = function (e) {
+                report(e || event, this, "beforeactivate (link)");
+            };
+
+            link.onactivate = function (e) {
+                report(e || event, this, "activate (link)");
+            };
+
+            link.onfocusin = function (e) {
+                report(e || event, this, "focusin (link)");
+            };
+
+            link.onfocus = function (e) {
+                report(e || event, this, "focus (link)");
+            };
+
+            if (link.addEventListener) {
+                link.addEventListener('focusin', function (e) {
+                    report(e, this, "focusin (capture)");
+                }, true);
+                link.addEventListener('focusin', function (e) {
+                    report(e, this, "focusin (bubble)");
+                }, false);
+                link.addEventListener('DOMFocusIn', function (e) {
+                    report(e, this, "DOMFocusIn (capture)");
+                }, true);
+                link.addEventListener('DOMFocusIn', function (e) {
+                    report(e, this, "DOMFocusIn (bubble)");
+                }, false);
+                link.addEventListener('focus', function (e) {
+                    report(e, this, "focus (capture)");
+                }, false);
+                link.addEventListener('focus', function (e) {
+                    report(e, this, "focus (bubble)");
+                }, false);
+            }
+
+            link.focus();
+            report(null, null, "clicked on <code>focus()</code> button");
+	</script>
+</body>
+</html>

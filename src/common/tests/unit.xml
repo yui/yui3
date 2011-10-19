@@ -67,6 +67,8 @@
         <url>jsonp/tests/jsonp-url.html</url-->
         <url>node/tests/node.html</url>
         <!--url>node-focusmanager/tests/focusmanager.html</url-->
+        <url>parallel/tests/index.html</url>
+        <url>pjax/tests/pjax.html</url>
         <url>pluginhost/tests/plugins.html</url>
         <url>slider/tests/slider.html</url>
         <url>test/tests/arrayassert.html</url>
@@ -78,7 +80,6 @@
         <url>widget-parent/tests/parent-child.html</url>
         <url>yui/tests/index.html</url>
         <url>yql/tests/index.html</url>
-
         <url>oop/tests/oop.html</url>
         <url>yui/tests/array.html</url>
         <url>substitute/tests/substitute.html</url>
@@ -87,7 +88,6 @@
         <url>panel/tests/unit-tests.html</url>
         <url>widget-buttons/tests/unit-tests.html</url>
         <url>widget-position-align/tests/widget-position-align.html</url>
-
         <!--
         <url>test/tests/testformat.html</url>
         <url>stylesheet/tests/stylesheet.html</url>

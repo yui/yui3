@@ -1,8 +1,9 @@
-App Framework
+[App Framework][app]
 =============
 
 The app framework provides simple MVC-like building blocks (models, model lists,
-views, and controllers) for writing single-page JavaScript applications.
+views, view-controllers, and URL-based routing) for writing single-page
+JavaScript applications.
 
 These building blocks can be used together or separately to create functionality
 ranging in complexity from simple non-interactive views to rich, multiple-view
@@ -15,57 +16,22 @@ are important differences, though, and the YUI app framework takes full
 advantage of YUI's powerful component and event infrastructure under the hood.
 
 
-Building Blocks
----------------
-
-The app framework provides the following classes, which can be mixed and matched
-in virtually any combination to meet your needs. For simple apps, you may find
-that you only need a `View`, or perhaps a `View` and a `Model`. For complex
-apps, you may want to use the full stack. It's entirely up to you.
-
-The `Controller` class provides URL-based routing using HTML5 `pushState()` or
-the location hash, making it easy to wire up route handlers for different
-application states while providing full back/forward navigation support and
-bookmarkable, shareable URLs.
-
-The `Model` class provides a lightweight `Y.Attribute`-based data model with
-APIs for getting, setting, validating, and syncing attribute values to a
-persistence layer or server, as well as events for being notified of model
-changes.
-
-The `ModelList` class can contain an ordered list of `Model` instances (for
-example, todo items in a todo list). It provides a convenient API for working
-with a list of models and for adding to, removing from, and sorting the list.
-
-Finally, the `View` class represents a logical piece of an application's user
-interface, and is responsible for rendering content. A view instance can be
-associated with a particular model instance to allow for refreshing whenever
-the model changes. Views may also be nested if desired, or even used as
-standalone components with no model associations.
-
-
 Modules
 -------
 
-* `app`: Rollup module that includes all of the following modules. Use this
-  module when you plan to use the full app framework stack.
+* [`app`][app]: Rollup module that includes all of the following modules. Use
+  this module when you plan to use the full app framework stack.
 
-* `controller`: Provides the `Y.Controller` class.
+* [`model`][model]: Provides the `Y.Model` class.
 
-* `model`: Provides the `Y.Model` class.
+* [`model-list`][model-list]: Provides the `Y.ModelList` class.
 
-* `model-list`: Provides the `Y.ModelList` class.
+* [`router`][router]: Provides the `Y.Router` class.
 
-* `view`: Provides the `Y.View` class.
+* [`view`][view]: Provides the `Y.View` class.
 
-
-Examples
---------
-
-### [Todo List][todo]
-
-This example demonstrates how to create a todo list app using the Model,
-Model List, and View components. The example also includes a custom sync layer
-that stores the todo items in `localStorage` (in browsers that support it).
-
-[todo]: http://yuilibrary.com/yui/docs/app/app-todo.html
+[app]: http://yuilibrary.com/yui/docs/app/
+[model]: http://yuilibrary.com/yui/docs/model/index.html
+[model-list]: http://yuilibrary.com/yui/docs/model-list/
+[router]: http://yuilibrary.com/yui/docs/router/index.html
+[view]: http://yuilibrary.com/yui/docs/view/

@@ -158,7 +158,7 @@ Y._rls = function(what) {
             tests: 1 // required in the template
         },
         // The rls base path
-        rls_base = config.rls_base || 'http://l.yimg.com/py/load?httpcache=rls-seed&gzip=1&',
+        rls_base = config.rls_base || 'http://loader.yahooapis.com/v1/load?',
 
         // the template
         rls_tmpl = config.rls_tmpl || function() {
