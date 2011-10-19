@@ -4,7 +4,7 @@
 
         "submodules": {
             "app-base": {
-                "requires": ["controller", "pjax-base", "view", "transition"]
+                "requires": ["pjax-base", "router", "transition", "view"]
             },
 
             "controller": {
