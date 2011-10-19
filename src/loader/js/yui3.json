@@ -1771,6 +1771,13 @@
         ], 
         "skinnable": true
     }, 
+    "test-console": {
+        "requires": [
+            "console-filters", 
+            "test"
+        ], 
+        "skinnable": true
+    }, 
     "text": {
         "use": [
             "text-accentfold", 

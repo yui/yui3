@@ -9355,6 +9355,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "skinnable": true
     }, 
+    "test-console": {
+        "requires": [
+            "console-filters", 
+            "test"
+        ], 
+        "skinnable": true
+    }, 
     "text": {
         "use": [
             "text-accentfold", 
@@ -9573,7 +9580,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '9573e500940f4758392e8b2c2ebbdca0';
+YUI.Env[Y.version].md5 = '42520b1f3c55a4393351fd743c5376c8';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
