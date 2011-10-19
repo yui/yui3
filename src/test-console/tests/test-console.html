@@ -7,7 +7,6 @@
 <body class="yui3-skin-sam">
 
 <div id="log"></div>
-<div id="test"></div>
 
 <script src="../../../build/yui/yui.js"></script>
 <script>
@@ -15,13 +14,13 @@ var Y = YUI({
     allowRollup: false,
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
     modules: {
-        'app-test': {
-            fullpath: 'app-test.js',
-            requires: ['model', 'model-list', 'router', 'view', 'test']
+        'test-console-test': {
+            fullpath: 'test-console-test.js',
+            requires: ['test-console']
         }
     },
     useBrowserConsole: false
-}).use('app-test', 'test-console', function (Y) {
+}).use('test-console-test', function (Y) {
     new Y.Test.Console().render('#log');
     Y.Test.Runner.run();
 });
