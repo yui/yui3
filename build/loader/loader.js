@@ -2630,10 +2630,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "app-base": {
         "requires": [
-            "controller", 
+            "classnamemanager", 
             "pjax-base", 
-            "view", 
-            "transition"
+            "router", 
+            "transition", 
+            "view"
         ]
     }, 
     "array-extras": {
@@ -4638,7 +4639,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'efe67ef041b234852bc6b61cdb988fec';
+YUI.Env[Y.version].md5 = 'b36c264392cf61e70825a5e936db7557';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

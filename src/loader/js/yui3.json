@@ -65,10 +65,11 @@
     }, 
     "app-base": {
         "requires": [
-            "controller", 
+            "classnamemanager", 
             "pjax-base", 
-            "view", 
-            "transition"
+            "router", 
+            "transition", 
+            "view"
         ]
     }, 
     "array-extras": {
