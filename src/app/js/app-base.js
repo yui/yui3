@@ -5,7 +5,10 @@ Provides a top-level application component which manages navigation and views.
 @since 3.5.0
 **/
 
-var Lang = Y.Lang;
+var Lang       = Y.Lang,
+    Transition = Y.Transition,
+
+    App;
 
 /**
 Provides a top-level application component which manages navigation and views.
@@ -17,12 +20,12 @@ Provides a top-level application component which manages navigation and views.
 @class App
 @constructor
 @extends Base
+@uses View
 @uses Router
 @uses PjaxBase
-@uses View
 @since 3.5.0
 **/
-Y.App = Y.Base.create('app', Y.Base, [Y.Router, Y.PjaxBase, Y.View], {
+App = Y.App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
     // -- Public Properties ----------------------------------------------------
 
     /**
@@ -73,7 +76,22 @@ Y.App = Y.Base.create('app', Y.Base, [Y.Router, Y.PjaxBase, Y.View], {
     @type Object
     @default {}
     **/
-    transitions: {},
+    transitions: {
+        navigate: {
+            viewIn : 'app:fadeIn',
+            viewOut: 'app:fadeOut'
+        },
+
+        toChild: {
+            viewIn : 'app:slideLeft',
+            viewOut: 'app:slideLeft'
+        },
+
+        toParent: {
+            viewIn : 'app:slideRight',
+            viewOut: 'app:slideRight'
+        }
+    },
 
     // -- Protected Properties -------------------------------------------------
 
@@ -96,6 +114,7 @@ Y.App = Y.Base.create('app', Y.Base, [Y.Router, Y.PjaxBase, Y.View], {
         this.views = config.views ?
             Y.merge(this.views, config.views) : this.views;
 
+        // TODO: Deep merge?
         this.transitions = config.transitions ?
             Y.merge(this.transitions, config.transitions) : this.transitions;
 
@@ -105,6 +124,21 @@ Y.App = Y.Base.create('app', Y.Base, [Y.Router, Y.PjaxBase, Y.View], {
     },
 
     // -- Public Methods -------------------------------------------------------
+
+    create: function () {
+        var container = Y.View.prototype.create.apply(this, arguments);
+        return container && container.addClass(App.CSS_CLASS);
+    },
+
+    render: function () {
+        var viewContainer = this.get('viewContainer'),
+            activeView    = this.get('activeView');
+
+        activeView && viewContainer.setContent(activeView.get('container'));
+        viewContainer.appendTo(this.get('container'));
+
+        return this;
+    },
 
     /**
     Returns the meta data associated with a view instance or view name defined
@@ -188,6 +222,29 @@ Y.App = Y.Base.create('app', Y.Base, [Y.Router, Y.PjaxBase, Y.View], {
 
     // -- Protected Methods ----------------------------------------------------
 
+    _isChildView: function (view, parent) {
+        var viewInfo   = this.getViewInfo(view),
+            parentInfo = this.getViewInfo(parent);
+
+        if (viewInfo && parentInfo) {
+            return this.getViewInfo(viewInfo.parent) === parentInfo;
+        }
+    },
+
+    _isParentView: function (view, child) {
+        var viewInfo  = this.getViewInfo(view),
+            childInfo = this.getViewInfo(child);
+
+        if (viewInfo && childInfo) {
+            return this.getViewInfo(childInfo.parent) === viewInfo;
+        }
+    },
+
+    _setViewContainer: function (viewContainer) {
+        viewContainer = Y.one(viewContainer);
+        return viewContainer && viewContainer.addClass(App.VIEWS_CSS_CLASS);
+    },
+
     /**
     Transitions the `oldView` out and the `newView` using the provided
     `transition`, or determining which transition to use.
@@ -202,10 +259,19 @@ Y.App = Y.Base.create('app', Y.Base, [Y.Router, Y.PjaxBase, Y.View], {
       has completed.
     @protected
     **/
-    _transitionViews: function (newView, oldView, transition, callback) {
-        // TODO: Actually implement the transitions.
-        newView && newView.get('container').appendTo(this.get('container'));
-        callback && callback.call(this);
+    _transitionViews: function (newView, oldView, fx, fxConfigs, callback) {
+        var self   = this,
+            called = false;
+
+        function done () {
+            if (!called) {
+                called = true;
+                callback && callback.call(self);
+            }
+        }
+
+        newView && newView.get('container').transition(fx.viewIn, fxConfigs.viewIn, done);
+        oldView && oldView.get('container').transition(fx.viewOut, fxConfigs.viewOut, done);
     },
 
     /**
@@ -274,16 +340,38 @@ Y.App = Y.Base.create('app', Y.Base, [Y.Router, Y.PjaxBase, Y.View], {
     @protected
     **/
     _afterActiveViewChange: function (e) {
-        var newView    = e.newVal,
-            oldView    = e.prevVal,
-            callback   = e.callback,
-            transition = e.transition;
+        var newView     = e.newVal,
+            oldView     = e.prevVal,
+            callback    = e.callback,
+            isChild     = this._isChildView(newView, oldView),
+            isParent    = !isChild && this._isParentView(newView, oldView)
+            prepend     = !!e.prepend || isParent,
+            fx          = this.transitions,
+            fxConfigs   = e.transitions || {};
 
+        // Prevent detaching (thus removing) the view we want to show.
+        // Also hard to animate out and in, the same view.
         if (newView === oldView) {
             return callback && callback.call(this, newView);
         }
 
-        this._transitionViews(newView, oldView, transition, function () {
+        // Determine transitions to use.
+        if (isChild) {
+            fx = fx.toChild;
+        } else if (isParent) {
+            fx = fx.toParent;
+        } else {
+            fx = fx.navigate;
+        }
+
+        // Insert the new view.
+        if (newView && prepend) {
+            this.get('viewContainer').prepend(newView.get('container'));
+        } else if (newView) {
+            this.get('viewContainer').append(newView.get('container'));
+        }
+
+        this._transitionViews(newView, oldView, fx, fxConfigs, function () {
             this._detachView(oldView);
             this._attachView(newView);
 
@@ -294,7 +382,7 @@ Y.App = Y.Base.create('app', Y.Base, [Y.Router, Y.PjaxBase, Y.View], {
 }, {
     ATTRS: {
         /**
-        Container node into which represents the application's bounding-box.
+        Container node which represents the application's bounding-box.
 
         @attribute container
         @type HTMLElement|Node|String
@@ -303,6 +391,23 @@ Y.App = Y.Base.create('app', Y.Base, [Y.Router, Y.PjaxBase, Y.View], {
         **/
         container: {
             value: Y.one('body')
+        },
+
+        /**
+        Container node into which all application views will be rendered.
+
+        @attribute viewContainer
+        @type HTMLElement|Node|String
+        @default Y.Node.create('<div/>')
+        @initOnly
+        **/
+        viewContainer: {
+            valueFn: function () {
+                return Y.Node.create('<div/>');
+            },
+
+            setter   : '_setViewContainer',
+            writeOnce: 'initOnly'
         },
 
         /**
@@ -330,6 +435,83 @@ Y.App = Y.Base.create('app', Y.Base, [Y.Router, Y.PjaxBase, Y.View], {
         **/
         activeView: {
             readOnly: true
+        }
+    },
+
+    CSS_CLASS      : Y.ClassNameManager.getClassName('app'),
+    VIEWS_CSS_CLASS: Y.ClassNameManager.getClassName('app', 'views')
+});
+
+// -- Transitions --------------------------------------------------------------
+Y.mix(Transition.fx, {
+    'app:fadeIn': {
+        opacity : 1,
+        duration: 0.35,
+
+        on: {
+            start: function () {
+                var position = this.getStyle('position');
+                // if (position !== 'absolute') {
+                //     this._transitionPosition = position;
+                //     this.setStyle('position', 'absolute');
+                // }
+                this.setStyle('opacity', 0);
+            },
+
+            end: function () {
+                if (this._transitionPosition) {
+                    this.setStyle('position', this._transitionPosition);
+                    delete this._transitionPosition;
+                }
+            }
+        }
+    },
+
+    'app:fadeOut': {
+        opacity : 0,
+        duration: 0.35,
+
+        on: {
+            start: function () {
+                var position = this.getStyle('position');
+                // if (position !== 'absolute') {
+                //     this._transitionPosition = position;
+                //     this.setStyle('position', 'absolute');
+                // }
+            },
+
+            end: function () {
+                if (this._transitionPosition) {
+                    this.setStyle('position', this._transitionPosition);
+                    delete this._transitionPosition;
+                }
+            }
+        }
+    },
+
+    'app:slideLeft': {
+        duration : 0.35,
+        transform: 'translateX(-100%)',
+
+        on: {
+            end: function () {
+                this.setStyle('transform', 'none');
+            }
+        }
+    },
+
+    'app:slideRight': {
+        duration : 0.35,
+        transform: 'translateX(0)',
+
+        on: {
+            start: function () {
+                this.setStyle('transform', 'translateX(-100%)');
+            },
+
+            end: function () {
+                this.setStyle('transform', 'none');
+            }
         }
     }
 });
