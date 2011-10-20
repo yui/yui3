@@ -2482,6 +2482,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("test")) > -1, "Module (test) not found in sorted array");
         },
+     "Testing test-console": function(data) {
+            var loader = new Y.Loader({
+                require: ["test-console"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("test-console")) > -1, "Module (test-console) not found in sorted array");
+        },
      "Testing text": function(data) {
             var loader = new Y.Loader({
                 require: ["text"],
