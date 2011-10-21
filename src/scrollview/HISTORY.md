@@ -1,5 +1,10 @@
-ScrollView
-==========
+ScrollView Change History
+=========================
+
+3.5.0
+-----
+
+  * Allow scrollbar to work with non-px width scrollviews
 
 3.4.1
 -----
@@ -26,7 +31,9 @@ ScrollView
     sv.set("flick", false);
  
     // Stops SV from reacting to drag. Can still flick, scroll through API
-    sv.set("drag", false);   
+    sv.set("drag", false);  
+
+  * Resync UI on scrollview-list class application.
 
 3.4.0
 -----

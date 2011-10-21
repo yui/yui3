@@ -60,7 +60,7 @@ var L = Y.Lang,
 
     UI,
     ATTRS = {},
-    UI_ATTRS = [VISIBLE, DISABLED, HEIGHT, WIDTH, FOCUSED],
+    UI_ATTRS = [VISIBLE, DISABLED, HEIGHT, WIDTH, FOCUSED, TAB_INDEX],
 
     WEBKIT = Y.UA.webkit,
 
@@ -1173,7 +1173,7 @@ Y.extend(Widget, Y.Base, {
      */
     _UI_ATTRS : {
         BIND: UI_ATTRS,
-        SYNC: UI_ATTRS.concat(TAB_INDEX)
+        SYNC: UI_ATTRS
     }
 });
 

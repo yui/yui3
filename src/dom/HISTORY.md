@@ -1,19 +1,45 @@
-DOM Utility
-===============
+DOM Change History
+==================
 
-The DOM Utility is the underlying API used by Node. These are broken out so that
-they can be used independant of Node, however typical usage should be via Node.
+3.4.1
+-----
 
-The following modules are available:
+  * No changes.
 
-  * `dom`: Rollup of `dom-base`, `dom-screen`, `dom-style`, `selector-native`,
-    and `selector-css2`.
-  * `dom-base`: Provides basic support for working with DOM nodes.
-  * `dom-screen`: Provides methods for positioning elements, measuring the
-    document and viewport, and working with regions. 
-  * `dom-style`: Adds setStyle()/getStyle() and getComputedStyle() methods
-    for working with style properties.
-  * `selector-native`: A light wrapper around native querySelector().
-  * `selector`: Fallback support for Selector queries. 
-  * `selector-css2`: Fallback support for CSS2 Selector queries. 
-  * `selector-css3`: Fallback support for CSS3 Selector queries. 
+3.4.0
+-----
+
+  * The ancestor/ancestors methods now accept an optional stopAt function.
+
+3.3.0
+-----
+
+  * IE alpha filter for opacity no longer affects existing filters.
+  * Fixes for IE9, Firefox 4, and Chrome creators.
+  * setStyle(node, '') now clears inline styles.
+  * adds ancestors method.
+
+3.2.0
+-----
+
+  * CSS "transform" vendor prefix is now optional with set/getStyle.
+  * Bug fix: IE6/IE7 were failing inDoc checks for cloned nodes. [Ticket 2529232]
+
+
+3.1.1
+-----
+
+  * Bug fix: viewportRegion() was incorrectly documented. [Ticket 2528756]
+
+
+3.1.0
+-----
+
+  * adds support for hypenated attributes.
+  * Bug fix: iOS already includes scroll amount. [Ticket 2528390]
+
+3.0.0
+-----
+
+  * initial release.
+

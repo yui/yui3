@@ -201,11 +201,12 @@ LeftAxisLayout.prototype = {
      * Draws a tick
      *
      * @method drawTick
+     * @param {Path} path reference to the path `Path` element in which to draw the tick.
      * @param {Object} pt Point on the axis in which the tick will intersect.
      * @param {Object} tickStyle Hash of properties to apply to the tick.
      * @protected
      */
-    drawTick: function(pt, tickStyles)
+    drawTick: function(path, pt, tickStyles)
     {
         var host = this,
             style = host.get("styles"),
@@ -213,7 +214,7 @@ LeftAxisLayout.prototype = {
             tickLength = tickStyles.length,
             start = {x:padding.left, y:pt.y},
             end = {x:tickLength + padding.left, y:pt.y};
-        host.drawLine(start, end, tickStyles);
+        host.drawLine(path, start, end);
     },
 
     /**
@@ -362,6 +363,9 @@ LeftAxisLayout.prototype = {
         }
         else
         {
+            label.style.filter = null; 
+            labelWidth = Math.round(label.offsetWidth);
+            labelHeight = Math.round(label.offsetHeight);
             if(rot === 0)
             {
                 topOffset -= labelHeight * 0.5;
@@ -404,6 +408,7 @@ LeftAxisLayout.prototype = {
     {
         var host = this,
             tickOffset = host.get("leftTickOffset"),
+            rightTickOffset = host.get("rightTickOffset"),
             style = host.get("styles").label,
             margin = 0,
             leftOffset = pt.x + this._titleSize,
@@ -481,6 +486,8 @@ LeftAxisLayout.prototype = {
                 topOffset -= (sinRadians * labelWidth) + (cosRadians * (labelHeight * 0.6));
             }
         }
+        leftOffset += rightTickOffset;
+        leftOffset -= margin;
         props.x = Math.round(host.get("maxLabelSize") + leftOffset);
         props.y = Math.round(topOffset);
         this._rotate(label, this._labelRotationProps);
@@ -611,11 +618,12 @@ RightAxisLayout.prototype = {
      * Draws a tick
      *
      * @method drawTick
+     * @param {Path} path reference to the path `Path` element in which to draw the tick.
      * @param {Object} pt Point on the axis in which the tick will intersect.
      * @param {Object) tickStyle Hash of properties to apply to the tick.
      * @protected
      */
-    drawTick: function(pt, tickStyles)
+    drawTick: function(path, pt, tickStyles)
     {
         var host = this,
             style = host.get("styles"),
@@ -623,7 +631,7 @@ RightAxisLayout.prototype = {
             tickLength = tickStyles.length,
             start = {x:padding.left, y:pt.y},
             end = {x:padding.left + tickLength, y:pt.y};
-        host.drawLine(start, end, tickStyles);
+        host.drawLine(path, start, end);
     },
     
     /**
@@ -774,6 +782,9 @@ RightAxisLayout.prototype = {
         }
         else
         {
+            label.style.filter = null; 
+            labelWidth = Math.round(label.offsetWidth);
+            labelHeight = Math.round(label.offsetHeight);
             if(rot === 0)
             {
                 topOffset -= labelHeight * 0.5;
@@ -1035,11 +1046,12 @@ BottomAxisLayout.prototype = {
      * Draws a tick
      *
      * @method drawTick
+     * @param {Path} path reference to the path `Path` element in which to draw the tick.
      * @param {Object} pt hash containing x and y coordinates
      * @param {Object} tickStyles hash of properties used to draw the tick
      * @protected
      */
-    drawTick: function(pt, tickStyles)
+    drawTick: function(path, pt, tickStyles)
     {
         var host = this,
             style = host.get("styles"),
@@ -1047,7 +1059,7 @@ BottomAxisLayout.prototype = {
             tickLength = tickStyles.length,
             start = {x:pt.x, y:padding.top},
             end = {x:pt.x, y:tickLength + padding.top};
-        host.drawLine(start, end, tickStyles);
+        host.drawLine(path, start, end);
     },
 
     /**
@@ -1166,6 +1178,9 @@ BottomAxisLayout.prototype = {
         }
         else
         {
+            label.style.filter = null; 
+            labelWidth = Math.round(label.offsetWidth);
+            labelHeight = Math.round(label.offsetHeight);
             if(rot === 0)
             {
                 leftOffset -= labelWidth * 0.5;
@@ -1433,11 +1448,12 @@ TopAxisLayout.prototype = {
      * Draws a tick
      *
      * @method drawTick
+     * @param {Path} path reference to the path `Path` element in which to draw the tick.
      * @param {Object} pt hash containing x and y coordinates
      * @param {Object} tickStyles hash of properties used to draw the tick
      * @protected
      */
-    drawTick: function(pt, tickStyles)
+    drawTick: function(path, pt, tickStyles)
     {
         var host = this,
             style = host.get("styles"),
@@ -1445,7 +1461,7 @@ TopAxisLayout.prototype = {
             tickLength = tickStyles.length,
             start = {x:pt.x, y:padding.top},
             end = {x:pt.x, y:tickLength + padding.top};
-        host.drawLine(start, end, tickStyles);
+        host.drawLine(path, start, end);
     },
     
     /**
@@ -1568,6 +1584,9 @@ TopAxisLayout.prototype = {
         }
         else
         {
+            label.style.filter = null; 
+            labelWidth = Math.round(label.offsetWidth);
+            labelHeight = Math.round(label.offsetHeight);
             if(rot === 0)
             {
                 leftOffset -= labelWidth * 0.5;
@@ -1610,6 +1629,7 @@ TopAxisLayout.prototype = {
     {
         var host = this,
             tickOffset = host.get("topTickOffset"),
+            bottomTickOffset = host.get("bottomTickOffset"),
             style = host.get("styles").label,
             titleStyles = host.get("styles").title,
             totalTitleSize = this.get("title") ? this._titleSize + titleStyles.margin.top + titleStyles.margin.bottom : 0,
@@ -1687,7 +1707,8 @@ TopAxisLayout.prototype = {
             leftOffset -= (cosRadians * labelWidth) - (sinRadians * (labelHeight * 0.6));
             topOffset -= (sinRadians * labelWidth) + (cosRadians * labelHeight);
         }
-        topOffset -= tickOffset;
+        topOffset += bottomTickOffset;
+        topOffset -= margin;
         props.x = Math.round(leftOffset);
         props.y = Math.round(host.get("maxLabelSize") + topOffset);
         this._rotate(label, props);
@@ -1741,13 +1762,16 @@ TopAxisLayout.prototype = {
     setCalculatedSize: function()
     {
         var host = this,
+            graphic = host.get("graphic"),
             styles = host.get("styles"),
             labelMargin = styles.label.margin,
             titleMargin = styles.title.margin,
             totalLabelSize = labelMargin.top + labelMargin.bottom + host.get("maxLabelSize"),
             totalTitleSize = host.get("title") ? titleMargin.top + titleMargin.bottom + host._titleSize : 0,
-            ttl = Math.round(host.get("topTickOffset") + totalLabelSize + totalTitleSize);
+            topTickOffset = this.get("topTickOffset"),
+            ttl = Math.round(topTickOffset + totalLabelSize + totalTitleSize);
         host.set("height", ttl);
+        graphic.set("y", ttl - topTickOffset);
     }
 };
 Y.TopAxisLayout = TopAxisLayout;
@@ -1857,6 +1881,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             w = this.get("width"),
             h = this.get("height");
         bb.setStyle("position", "absolute");
+        bb.setStyle("zIndex", 2);
         w = w ? w + "px" : pn.getStyle("width");
         h = h ? h + "px" : pn.getStyle("height");
         if(p === "top" || p === "bottom")
@@ -1988,14 +2013,8 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
      * @param {Object} line styles (weight, color and alpha to be applied to the line segment)
      * @private
      */
-    drawLine: function(startPoint, endPoint, line)
+    drawLine: function(path, startPoint, endPoint)
     {
-        var path = this.get("path");
-        path.set("stroke", {
-            weight: line.weight, 
-            color: line.color, 
-            opacity: line.alpha
-        });
         path.moveTo(startPoint.x, startPoint.y);
         path.lineTo(endPoint.x, endPoint.y);
     },
@@ -2066,6 +2085,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         if(this._layout)
         {
             var styles = this.get("styles"),
+                line = styles.line,
                 labelStyles = styles.label,
                 majorTickStyles = styles.majorTicks,
                 drawTicks = majorTickStyles.display != "none",
@@ -2083,9 +2103,15 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 labelFunctionScope = this.get("labelFunctionScope"),
                 labelFormat = this.get("labelFormat"),
                 graphic = this.get("graphic"),
-                path = this.get("path");
+                path = this.get("path"),
+                tickPath;
             graphic.set("autoDraw", false);
             path.clear();
+            path.set("stroke", {
+                weight: line.weight, 
+                color: line.color, 
+                opacity: line.alpha
+            });
             this._labelRotationProps = this._getTextRotationProps(labelStyles);
             layout.setTickOffsets.apply(this);
             layoutLength = this.getLength();
@@ -2094,10 +2120,17 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             majorUnitDistance = this.getMajorUnitDistance(len, layoutLength, majorUnit);
             this.set("edgeOffset", this.getEdgeOffset(len, layoutLength) * 0.5);
             tickPoint = this.getFirstPoint(lineStart);
-            this.drawLine(lineStart, this.getLineEnd(tickPoint), styles.line);
+            this.drawLine(path, lineStart, this.getLineEnd(tickPoint));
             if(drawTicks) 
             {
-               layout.drawTick.apply(this, [tickPoint, majorTickStyles]);
+                tickPath = this.get("tickPath");
+                tickPath.clear();
+                tickPath.set("stroke", {
+                    weight: majorTickStyles.weight,
+                    color: majorTickStyles.color,
+                    opacity: majorTickStyles.alpha
+                });
+               layout.drawTick.apply(this, [tickPath, tickPoint, majorTickStyles]);
             }
             if(len < 1)
             {
@@ -2112,7 +2145,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             {
                 if(drawTicks) 
                 {
-                    layout.drawTick.apply(this, [tickPoint, majorTickStyles]);
+                    layout.drawTick.apply(this, [tickPath, tickPoint, majorTickStyles]);
                 }
                 position = this.getPosition(tickPoint);
                 label = this.getLabel(tickPoint, labelStyles);
@@ -2152,11 +2185,22 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
      */
     _updatePathElement: function()
     {
-        var path = this.get("path"),
+        var path = this._path,
+            tickPath = this._tickPath,
+            redrawGraphic = false,
             graphic = this.get("graphic");
         if(path)
         {
+            redrawGraphic = true;
             path.end();
+        }
+        if(tickPath)
+        {
+            redrawGraphic = true;
+            tickPath.end();
+        }
+        if(redrawGraphic)
+        {
             graphic._redraw();
         }
     },
@@ -2185,11 +2229,13 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             styles = this.get("styles").title;
             if(!titleTextField)
             {
-                titleTextField = Y.config.doc.createElement('span');
+                titleTextField = DOCUMENT.createElement('span');
+                titleTextField.style.display = "block";
+                titleTextField.style.whiteSpace = "nowrap";
                 titleTextField.setAttribute("class", "axisTitle");
                 this.get("contentBox").appendChild(titleTextField);
             }
-            titleTextField.setAttribute("style", "display:block;white-space:nowrap;position:absolute;");
+            titleTextField.style.position = "absolute";
             for(i in styles)
             {
                 if(styles.hasOwnProperty(i) && !customStyles.hasOwnProperty(i))
@@ -2573,6 +2619,29 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             }
         },
 
+        /**
+         *  @attribute tickPath
+         *  @type Shape
+         *  @readOnly
+         *  @private
+         */
+        tickPath: {
+            readOnly: true,
+
+            getter: function()
+            {
+                if(!this._tickPath)
+                {
+                    var graphic = this.get("graphic");
+                    if(graphic)
+                    {
+                        this._tickPath = graphic.addShape({type:"path"});
+                    }
+                }
+                return this._tickPath;
+            }
+        },
+        
         /**
          * Contains the contents of the axis. 
          *
@@ -3169,6 +3238,24 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     {
         this._updateMinAndMax();
 		this.fire("dataUpdate");
+    },
+
+    /**
+     * Checks to see if data extends beyond the range of the axis. If so,
+     * that data will need to be hidden. This method is internal, temporary and subject
+     * to removal in the future.
+     *
+     * @method _hasDataOverflow
+     * @protected
+     * @return Boolean
+     */
+    _hasDataOverflow: function()
+    {
+        if(this.get("setMin") || this.get("setMax"))
+        {
+            return true;
+        }
+        return false;
     }
 }, {
     ATTRS: {
@@ -3294,6 +3381,8 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
          * @type Number
          */
         maximum: {
+            lazyAdd: false,
+
             getter: function ()
             {
                 var max = this.get("dataMaximum"),
@@ -3342,6 +3431,8 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
          * @type Number
          */
         minimum: {
+            lazyAdd: false,
+
             getter: function ()
             {
                 var min = this.get("dataMinimum");
@@ -3607,46 +3698,44 @@ Y.extend(NumericAxis, Y.AxisType,
             min = 0,
             len,
             num,
-            i,
+            i = 0,
             key,
-            setMax = this._setMaximum,
-            setMin = this._setMinimum;
-        if(!setMax && !setMin)
+            setMax = this.get("setMax"),
+            setMin = this.get("setMin");
+        if(!setMax || !setMin)
         {
             if(data && data.length && data.length > 0)
             {
                 len = data.length;
-                max = min = data[0];
-                if(len > 1)
-                {
-                    for(i = 1; i < len; i++)
-                    {	
-                        num = data[i];
-                        if(isNaN(num))
+                for(; i < len; i++)
+                {	
+                    num = data[i];
+                    if(isNaN(num))
+                    {
+                        if(Y_Lang.isObject(num))
                         {
-                            if(Y_Lang.isObject(num))
+                            min = max = 0;
+                            //hloc values
+                            for(key in num)
                             {
-                                min = max = 0;
-                                //hloc values
-                                for(key in num)
-                                {
-                                   if(num.hasOwnProperty(key))
-                                   {
-                                        max = Math.max(num[key], max);
-                                        min = Math.min(num[key], min);
-                                   }
-                                }
+                               if(num.hasOwnProperty(key))
+                               {
+                                    max = Math.max(num[key], max);
+                                    min = Math.min(num[key], min);
+                               }
                             }
-                            max = setMax ? this._setMaximum : max;
-                            min = setMin ? this._setMinimum : min;
-                            continue;
                         }
-                        max = setMax ? this._setMaximum : Math.max(num, max);
-                        min = setMin ? this._setMinimum : Math.min(num, min);
+                        max = setMax ? this._setMaximum : max;
+                        min = setMin ? this._setMinimum : min;
+                        continue;
                     }
+                    max = setMax ? this._setMaximum : Math.max(num, max);
+                    min = setMin ? this._setMinimum : Math.min(num, min);
+                    this._actualMaximum = max;
+                    this._actualMinimum = min;
                 }
             }
-            this._roundMinAndMax(min, max);
+            this._roundMinAndMax(min, max, setMin, setMax);
         }
     },
 
@@ -3658,7 +3747,7 @@ Y.extend(NumericAxis, Y.AxisType,
      * @param {Number} max Maximum value
      * @private
      */
-    _roundMinAndMax: function(min, max)
+    _roundMinAndMax: function(min, max, setMin, setMax)
     {
         var roundingUnit,
             minimumRange,
@@ -3682,46 +3771,143 @@ Y.extend(NumericAxis, Y.AxisType,
                 roundingUnit = this._getMinimumUnit(max, min, units);
                 if(minGreaterThanZero && maxGreaterThanZero)
                 {
-                    if(alwaysShowZero || min < roundingUnit)
+                    if((alwaysShowZero || min < roundingUnit) && !setMin)
                     {
                         min = 0;
-                    }
-                    roundingUnit = this._getMinimumUnit(max, min, units);
-                    max = this._roundUpToNearest(max, roundingUnit);
-                }
-                else if(maxGreaterThanZero && !minGreaterThanZero)
-                {
-                        topTicks = Math.round( units / ((-1 * min)/max + 1)    );
-                        topTicks = Math.max(Math.min(topTicks, units - 1), 1);
-                        botTicks = units - topTicks;
-                        tempMax = Math.ceil( max/topTicks );
-
-                        tempMin = Math.floor( min/botTicks ) * -1;
-                        
-                        roundingUnit = Math.max(tempMax, tempMin);
-                        roundingUnit = this._getNiceNumber(roundingUnit);  
-                        max = roundingUnit * topTicks;
-                        min = roundingUnit * botTicks * -1;
-                }
-                else
-                {
-                    if(alwaysShowZero || max === 0 || max + roundingUnit > 0)
-                    {
-                        max = 0;
                         roundingUnit = this._getMinimumUnit(max, min, units);
+                    }
+                    else
+                    {
+                       min = this._roundDownToNearest(min, roundingUnit);
+                    }
+                    if(setMax)
+                    {
+                        if(!alwaysShowZero)
+                        {
+                            min = max - (roundingUnit * units);
+                        }
+                    }
+                    else if(setMin)
+                    {
+                        max = min + (roundingUnit * units);
                     }
                     else
                     {
                         max = this._roundUpToNearest(max, roundingUnit);
                     }
-                    min = max - (roundingUnit * units);
+                }
+                else if(maxGreaterThanZero && !minGreaterThanZero)
+                {
+                    if(alwaysShowZero)
+                    {
+                        topTicks = Math.round(units/((-1 * min)/max + 1));
+                        topTicks = Math.max(Math.min(topTicks, units - 1), 1);
+                        botTicks = units - topTicks;
+                        tempMax = Math.ceil( max/topTicks );
+                        tempMin = Math.floor( min/botTicks ) * -1;
+                        
+                        if(setMin)
+                        {
+                            while(tempMin < tempMax && botTicks >= 0)
+                            {
+                                botTicks--;
+                                topTicks++;
+                                tempMax = Math.ceil( max/topTicks );
+                                tempMin = Math.floor( min/botTicks ) * -1;
+                            }
+                            //if there are any bottom ticks left calcualate the maximum by multiplying by the tempMin value
+                            //if not, it's impossible to ensure that a zero is shown. skip it
+                            if(botTicks > 0)
+                            {
+                                max = tempMin * topTicks;
+                            }
+                            else
+                            {
+                                max = min + (roundingUnit * units);
+                            }
+                        }
+                        else if(setMax)
+                        {
+                            while(tempMax < tempMin && topTicks >= 0)
+                            {
+                                botTicks++;
+                                topTicks--;
+                                tempMin = Math.floor( min/botTicks ) * -1;
+                                tempMax = Math.ceil( max/topTicks );
+                            }
+                            //if there are any top ticks left calcualate the minimum by multiplying by the tempMax value
+                            //if not, it's impossible to ensure that a zero is shown. skip it
+                            if(topTicks > 0)
+                            {
+                                min = tempMax * botTicks * -1;
+                            }
+                            else
+                            {
+                                min = max - (roundingUnit * units);
+                            }
+                        }
+                        else
+                        {
+                            roundingUnit = Math.max(tempMax, tempMin);
+                            roundingUnit = this._getNiceNumber(roundingUnit);  
+                            max = roundingUnit * topTicks;
+                            min = roundingUnit * botTicks * -1;
+                        }
+                    }
+                    else 
+                    {
+                        if(setMax)
+                        {
+                            min = max - (roundingUnit * units);
+                        }
+                        else if(setMin)
+                        {
+                            max = min + (roundingUnit * units);
+                        }
+                        else
+                        {
+                            min = this._roundDownToNearest(min, roundingUnit);
+                            max = this._roundUpToNearest(max, roundingUnit);
+                        }
+                    }
+                }
+                else
+                {
+                    if(setMin)
+                    {
+                        if(alwaysShowZero)
+                        {
+                            max = 0;
+                        }
+                        else
+                        {
+                            max = min + (roundingUnit * units);
+                        }
+                    }
+                    else if(!setMax)
+                    {
+                        if(alwaysShowZero || max === 0 || max + roundingUnit > 0)
+                        {
+                            max = 0;
+                            roundingUnit = this._getMinimumUnit(max, min, units);
+                        }
+                        else
+                        {
+                            max = this._roundUpToNearest(max, roundingUnit);
+                        }
+                        min = max - (roundingUnit * units);
+                    }
+                    else
+                    {
+                        min = max - (roundingUnit * units);
+                    }
                 }
             }
             else if(roundingMethod == "auto") 
             {
                 if(minGreaterThanZero && maxGreaterThanZero)
                 {
-                    if(alwaysShowZero || min < (max-min)/units)
+                    if((alwaysShowZero || min < (max-min)/units) && !setMin)
                     {
                         min = 0;
                     }
@@ -3797,7 +3983,15 @@ Y.extend(NumericAxis, Y.AxisType,
                 dataRangeGreater = (max - min) > minimumRange;
                 minRound = this._roundDownToNearest(min, roundingUnit);
                 maxRound = this._roundUpToNearest(max, roundingUnit);
-                if(minGreaterThanZero && maxGreaterThanZero)
+                if(setMax)
+                {
+                    min = max - minimumRange;
+                }
+                else if(setMin)
+                {
+                    max = min + minimumRange;
+                }
+                else if(minGreaterThanZero && maxGreaterThanZero)
                 {
                     if(alwaysShowZero || minRound <= 0)
                     {
@@ -3807,30 +4001,16 @@ Y.extend(NumericAxis, Y.AxisType,
                     {
                         min = minRound;
                     }
-                    if(!dataRangeGreater)
-                    {
-                        max = min + minimumRange;
-                    }
-                    else
-                    {
-                        max = maxRound;
-                    }
+                    max = min + minimumRange;
                 }
                 else if(maxGreaterThanZero && !minGreaterThanZero)
                 {
                     min = minRound;
-                    if(!dataRangeGreater)
-                    {
-                        max = min + minimumRange;
-                    }
-                    else
-                    {
-                        max = maxRound;
-                    }
+                    max = min + minimumRange;
                 }
                 else
                 {
-                    if(max === 0 || alwaysShowZero)
+                    if(alwaysShowZero || maxRound >= 0)
                     {
                         max = 0;
                     }
@@ -3838,14 +4018,7 @@ Y.extend(NumericAxis, Y.AxisType,
                     {
                         max = maxRound;
                     }
-                    if(!dataRangeGreater)
-                    {
-                        min = max - minimumRange;
-                    }
-                    else
-                    {
-                        min = minRound;
-                    }
+                    min = max - minimumRange;
                 }
             }
         }
@@ -3867,7 +4040,8 @@ Y.extend(NumericAxis, Y.AxisType,
         var min = this.get("minimum"),
             max = this.get("maximum"),
             increm = (max - min)/(l-1),
-            label;
+            label,
+            roundingMethod = this.get("roundingMethod");
             l -= 1;
         //respect the min and max. calculate all other labels.
         if(i === 0)
@@ -3880,8 +4054,12 @@ Y.extend(NumericAxis, Y.AxisType,
         }
         else
         {
-            label = min + (i * increm);
-            label = this._roundToNearest(label, increm);
+            label = (i * increm);
+            if(this.get("roundingMethod") == "niceNumber")
+            {
+                label = this._roundToNearest(label, increm);
+            }
+            label += min;
         }
         return label;
     },
@@ -3962,6 +4140,34 @@ Y.extend(NumericAxis, Y.AxisType,
         precision = precision || 0;
         var decimalPlaces = Math.pow(10, precision);
         return Math.round(decimalPlaces * number) / decimalPlaces;
+    },
+    
+    /**
+     * Checks to see if data extends beyond the range of the axis. If so,
+     * that data will need to be hidden. This method is internal, temporary and subject
+     * to removal in the future.
+     *
+     * @method _hasDataOverflow
+     * @protected
+     * @return Boolean
+     */
+    _hasDataOverflow: function()
+    {
+        var roundingMethod,
+            min,
+            max;
+        if(this.get("setMin") || this.get("setMax"))
+        {
+            return true;
+        }
+        roundingMethod = this.get("roundingMethod");
+        min = this._actualMinimum;
+        max = this._actualMaximum;
+        if(Y_Lang.isNumber(roundingMethod) && ((Y_Lang.isNumber(max) && max > this._dataMaximum) || (Y_Lang.isNumber(min) && min < this._dataMinimum)))
+        {
+            return true;
+        }
+        return false;
     }
 });
 
@@ -4002,7 +4208,9 @@ Y.extend(StackedAxis, Y.NumericAxis,
             i = 0,
             key,
             num,
-            keys = this.get("keys");
+            keys = this.get("keys"),
+            setMin = this.get("setMin"),
+            setMax = this.get("setMax");
 
         for(key in keys)
         {
@@ -4051,7 +4259,17 @@ Y.extend(StackedAxis, Y.NumericAxis,
                 min = Math.min(min, pos);
             }
         }
-        this._roundMinAndMax(min, max);
+        this._actualMaximum = max;
+        this._actualMinimum = min;
+        if(setMax)
+        {
+            max = this._setMaximum;
+        }
+        if(setMin)
+        {
+            min = this._setMinimum;
+        }
+        this._roundMinAndMax(min, max, setMin, setMax);
     }
 });
 
@@ -12230,7 +12448,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 axis.get("boundingBox").setStyle("left", lw + "px");
                 axis.get("boundingBox").setStyle("top", pts[i].y);
             }
-            if(axis.get("setMax") || axis.get("setMin"))
+            if(axis._hasDataOverflow())
             {
                 graphOverflow = "hidden";
             }

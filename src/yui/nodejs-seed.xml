@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="componentbuild" default="local">
+    <description>Component Build File</description>
+    <property file="nodejs-seed.properties" />
+    
+
+    <import file="${builddir}/3.x/bootstrap.xml" description="Default Build Properties and Targets" />
+    <import file="core-extras.xml" description="YUI Core Extras" />
+    <target name="local" depends="clean, init, build, core, minify, lint" description="Build and Deploy to Local Build Directory" />
+    
+</project>

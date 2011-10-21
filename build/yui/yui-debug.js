@@ -2750,11 +2750,22 @@ forceEnum = O._forceEnum = [
  *   - <http://whattheheadsaid.com/2010/10/a-safer-object-keys-compatibility-implementation>
  *
  * @property _hasEnumBug
- * @type {Boolean}
+ * @type Boolean
  * @protected
  * @static
  */
 hasEnumBug = O._hasEnumBug = !{valueOf: 0}.propertyIsEnumerable('valueOf'),
+
+/**
+ * `true` if this browser incorrectly considers the `prototype` property of
+ * functions to be enumerable. Currently known to affect Opera 11.50.
+ *
+ * @property _hasProtoEnumBug
+ * @type Boolean
+ * @protected
+ * @static
+ */
+hasProtoEnumBug = O._hasProtoEnumBug = (function () {}).propertyIsEnumerable('prototype'),
 
 /**
  * Returns `true` if _key_ exists on _obj_, `false` if _key_ doesn't exist or
@@ -2811,9 +2822,17 @@ O.keys = (!unsafeNatives && Object.keys) || function (obj) {
     var keys = [],
         i, key, len;
 
-    for (key in obj) {
-        if (owns(obj, key)) {
-            keys.push(key);
+    if (hasProtoEnumBug && typeof obj === 'function') {
+        for (key in obj) {
+            if (owns(obj, key) && key !== 'prototype') {
+                keys.push(key);
+            }
+        }
+    } else {
+        for (key in obj) {
+            if (owns(obj, key)) {
+                keys.push(key);
+            }
         }
     }
 
@@ -3243,8 +3262,16 @@ YUI.Env.parseUA = function(subUA) {
          * @default null
          * @static
          */
-        os: null
+        os: null,
 
+        /**
+         * The Nodejs Version
+         * @property nodejs
+         * @type float
+         * @default 0
+         * @static
+         */
+        nodejs: 0
     },
 
     ua = subUA || nav && nav.userAgent,
@@ -3373,7 +3400,18 @@ YUI.Env.parseUA = function(subUA) {
 
     //It was a parsed UA, do not assign the global value.
     if (!subUA) {
+
+        if (typeof process == 'object') {
+
+            if (process.versions && process.versions.node) {
+                //NodeJS
+                o.os = process.platform;
+                o.nodejs = process.versions.node;
+            }
+        }
+
         YUI.Env.UA = o;
+
     }
 
     return o;
@@ -3383,12 +3421,13 @@ YUI.Env.parseUA = function(subUA) {
 Y.UA = YUI.Env.UA || YUI.Env.parseUA();
 YUI.Env.aliases = {
     "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
-    "app": ["controller","model","model-list","view"],
+    "app": ["model","model-list","router","view"],
     "attribute": ["attribute-base","attribute-complex"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
     "cache": ["cache-base","cache-offline","cache-plugin"],
     "collection": ["array-extras","arraylist","arraylist-add","arraylist-filter","array-invoke"],
+    "controller": ["router"],
     "dataschema": ["dataschema-base","dataschema-json","dataschema-xml","dataschema-array","dataschema-text"],
     "datasource": ["datasource-local","datasource-io","datasource-get","datasource-function","datasource-cache","datasource-jsonschema","datasource-xmlschema","datasource-arrayschema","datasource-textschema","datasource-polling"],
     "datatable": ["datatable-base","datatable-datasource","datatable-sort","datatable-scroll"],
@@ -4882,7 +4921,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2011.09.14-20-40',
+            GALLERY_VERSION = 'gallery-2011.10.20-23-28',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -7526,9 +7565,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "app": {
         "use": [
-            "controller", 
             "model", 
             "model-list", 
+            "router", 
             "view"
         ]
     }, 
@@ -7828,13 +7867,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "skinnable": true
     }, 
     "controller": {
-        "optional": [
-            "querystring-parse"
-        ], 
-        "requires": [
-            "array-extras", 
-            "base-build", 
-            "history"
+        "use": [
+            "router"
         ]
     }, 
     "cookie": {
@@ -8766,7 +8800,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "io-xdr": {
         "requires": [
             "io-base", 
-            "datatype-xml"
+            "datatype-xml-parse"
         ]
     }, 
     "json": {
@@ -8962,6 +8996,31 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "skinnable": true
     }, 
+    "parallel": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
+    "pjax": {
+        "requires": [
+            "pjax-base", 
+            "io-base"
+        ]
+    }, 
+    "pjax-base": {
+        "requires": [
+            "classnamemanager", 
+            "node-event-delegate", 
+            "router"
+        ]
+    }, 
+    "pjax-plugin": {
+        "requires": [
+            "node-pluginhost", 
+            "pjax", 
+            "plugin"
+        ]
+    }, 
     "plugin": {
         "requires": [
             "base-base"
@@ -9106,6 +9165,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "get", 
             "features"
+        ]
+    }, 
+    "router": {
+        "optional": [
+            "querystring-parse"
+        ], 
+        "requires": [
+            "array-extras", 
+            "base-build", 
+            "history"
         ]
     }, 
     "scrollview": {
@@ -9283,6 +9352,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-custom", 
             "substitute", 
             "json-stringify"
+        ], 
+        "skinnable": true
+    }, 
+    "test-console": {
+        "requires": [
+            "console-filters", 
+            "test"
         ], 
         "skinnable": true
     }, 
@@ -9504,7 +9580,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '94b4cd94d5b5f12f01ec8758dc2d9a6e';
+YUI.Env[Y.version].md5 = '42520b1f3c55a4393351fd743c5376c8';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

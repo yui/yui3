@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>sim only test</title>
+
+<!-- Source File and Seed for YUI3-->
+<link rel="stylesheet" type="text/css" href="../../../../build/cssreset/reset-min.css">
+<link type="text/css" rel="stylesheet" href="../../../../build/cssfonts/fonts-min.css">
+
+<script src="../../../../build/yui/yui.js"></script>
+</head>
+<style>
+.obj{
+    display:inline-block;
+    position:absolute;
+    top:30px;
+    left:20px;
+    width:400px;
+    height:400px;
+    background-color:#eee;
+    border:solid 1px #aaa;
+    
+}
+.obj p {
+    margin:1em;
+}
+.end-here {
+    position:absolute;
+    top:300px;
+    left:300px;
+    border:solid 1px #f00;
+    width:40px;
+    height:40px;
+}
+.thing {
+    position:absolute;
+    top:70px;
+    left:40px;
+    border:solid 1px #000;
+    width:20px;
+    height:20px;
+    background-color:#8080ff;
+}
+.btn-container{
+    position:absolute;
+    top:200px;
+    left:460px;
+    width:200px;
+}
+
+</style>
+<body class="yui3-skin-sam">
+    <div class="obj">
+        <p>
+            Click anywhere in the gray rect. to move A to the place you clicked. This is a native event.
+        </p>
+        <div class="end-here">B</div> 
+        <div class="thing">A</div>
+    
+    </div>
+    <div class="btn-container">
+        This button should <button class=sim-md>Simulate</button> a click in the gray rectangle that would place A in B. 
+        <p> There seems to be a problem in IE9 with e.pageX, e.pageY in an event that receives a simulated event...</p>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+YUI({filter:'raw'}).use('node','node-event-simulate','event-move', function(Y) {          //, filter:'raw'  this make it really hard to clear cache on iPad
+ 
+
+
+	var obj = Y.one('obj'),
+    eventX = 330, //Set the X for event simulation. 
+    eventY = 340; //Set the Y for event simulation. 
+        
+
+
+    // clicked the button 
+    var handleSimMd = function(e){
+        var scrollT = Y.one('document').get('scrollTop'),
+        scrollL = Y.one('document').get('scrollLeft');
+        Y.one('.obj').simulate("click", {clientX: eventX, clientY: eventY});
+        
+        //Y.one('.obj').simulate("click", {clientX: (eventX - scrollL), clientY: (eventY - scrollT)});	 // same as line above, only handles scrolled page
+        
+/* this also does not dispatch an event object that contains e.pageX/Y in IE9
+        Y.one('.obj').simulate("click", {
+            clientX: eventX, 
+            pageX: (eventX), 
+            clientY: eventY, 
+            pageY: (eventY)
+        });
+*/        	
+    }
+
+    // a click (or simulated click) is handled by handleObjEvent  
+    var handleObjEvent = function(e){
+        Y.one('.thing').setXY([(e.pageX),(e.pageY)]);   
+        // in IE 9: 
+        // native event the e.pageX and e.pageY have valid values, but,
+        // simulated event the e.pageX and e.pageY == 0
+        // e.clientX, and e.clientY have valid values in native events and simulated events.
+         
+        // this will work in both simulated and native
+        //Y.one('.thing').setXY([(e.clientX),(e.clientY)]);
+        // Changing Dial.js to use e.clientX/Y, seems too risky, post test-fest
+                                                        
+    }
+    
+    
+    // a click on the button goes to handler that simulates a click on the .obj
+    Y.on('click', handleSimMd, '.sim-md');
+    
+    // a click (or simulated click) is handled by handleObjEvent 
+    Y.on('click', handleObjEvent, '.obj');
+    
+});
+    
+    
+</script>

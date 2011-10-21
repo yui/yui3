@@ -11,9 +11,11 @@
 </head>
 <style>
 .foo {
-    position:absolute;
-    top:150px;
-    left:150px;
+/*    position:absolute;
+    top:100px;
+    left:100px;
+*/
+    margin:100px auto;
     border:solid 1px #f00;
     width:200px;
     height:200px;
@@ -21,17 +23,17 @@
 </style>
 <body class="yui3-skin-sam">hello
 
-    <div class="dial-container">foo</div> 
+    <div class="dial-container foo"></div> 
 </body>
 </html>
 <script>
     YUI({filter:'raw'}).use("dial", function(Y) {          //, filter:'raw'  this make it really hard to clear cache on iPad
         var dial = new Y.Dial({
-			min: -40,
-			max: 40,
+			min: 0,
+			max: 100,
 			stepsPerRevolution: 100,
 			value: 0,
-			diameter: 200,
+			diameter: 100,
 			decimalPlaces:0
         });
         dial.render(".dial-container");

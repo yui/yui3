@@ -43,7 +43,29 @@
 </div>
 
 <div class="example yui3-skin-sam">
-    {{>flow-example-source}}
+    <p>
+        <button id="fire" value="Fire">Fire testEvent</button>
+    </p>
+
+    <div>
+        <input type="checkbox" id="stopPropagation">
+            <label for="stopPropagation">
+                Stop Propagation (testEvent won't bubble to the BubbleTarget.)
+            </label>
+    </div>
+    <div>
+        <input type="checkbox" id="preventDefault">
+            <label for="preventDefault">
+                Prevent Default (testEvent's `defaultFn` won't fire.)
+            </label>
+    </div>
+
+    <ol id="log">
+        <li>Custom Event log messages will appear here.</li>
+    </ol>
+    <script>
+    {{>flow-example-js}}
+    </script>
 </div>
 
 <h2>Source Code</h2>

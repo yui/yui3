@@ -1,13 +1,13 @@
 var suite = new Y.Test.Suite("event-resize"),
     win = Y.one( Y.config.win ),
-    eventKey = 'event:' + Y.stamp(Y.config.win) + 'resizenative',
+    eventKey = 'event:' + Y.stamp(Y.config.win) + 'resize',
     isOldGecko = (Y.UA.gecko && Y.UA.gecko < 1.91);
 
 function simulateResize() {
     // IE doesn't allow simulation of window.onresize, so I can't use
     //Y.Event.simulate(Y.config.win, 'resize');
     setTimeout(function () {
-        Y.Env.evt.dom_wrappers[eventKey].fire({
+        Y.Env.evt.dom_wrappers[eventKey].fn({
             type: 'resize',
             srcElement: Y.config.win,
             target: Y.config.win

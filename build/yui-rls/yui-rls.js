@@ -2735,11 +2735,22 @@ forceEnum = O._forceEnum = [
  *   - <http://whattheheadsaid.com/2010/10/a-safer-object-keys-compatibility-implementation>
  *
  * @property _hasEnumBug
- * @type {Boolean}
+ * @type Boolean
  * @protected
  * @static
  */
 hasEnumBug = O._hasEnumBug = !{valueOf: 0}.propertyIsEnumerable('valueOf'),
+
+/**
+ * `true` if this browser incorrectly considers the `prototype` property of
+ * functions to be enumerable. Currently known to affect Opera 11.50.
+ *
+ * @property _hasProtoEnumBug
+ * @type Boolean
+ * @protected
+ * @static
+ */
+hasProtoEnumBug = O._hasProtoEnumBug = (function () {}).propertyIsEnumerable('prototype'),
 
 /**
  * Returns `true` if _key_ exists on _obj_, `false` if _key_ doesn't exist or
@@ -2796,9 +2807,17 @@ O.keys = (!unsafeNatives && Object.keys) || function (obj) {
     var keys = [],
         i, key, len;
 
-    for (key in obj) {
-        if (owns(obj, key)) {
-            keys.push(key);
+    if (hasProtoEnumBug && typeof obj === 'function') {
+        for (key in obj) {
+            if (owns(obj, key) && key !== 'prototype') {
+                keys.push(key);
+            }
+        }
+    } else {
+        for (key in obj) {
+            if (owns(obj, key)) {
+                keys.push(key);
+            }
         }
     }
 
@@ -3228,8 +3247,16 @@ YUI.Env.parseUA = function(subUA) {
          * @default null
          * @static
          */
-        os: null
+        os: null,
 
+        /**
+         * The Nodejs Version
+         * @property nodejs
+         * @type float
+         * @default 0
+         * @static
+         */
+        nodejs: 0
     },
 
     ua = subUA || nav && nav.userAgent,
@@ -3358,7 +3385,18 @@ YUI.Env.parseUA = function(subUA) {
 
     //It was a parsed UA, do not assign the global value.
     if (!subUA) {
+
+        if (typeof process == 'object') {
+
+            if (process.versions && process.versions.node) {
+                //NodeJS
+                o.os = process.platform;
+                o.nodejs = process.versions.node;
+            }
+        }
+
         YUI.Env.UA = o;
+
     }
 
     return o;
@@ -3368,12 +3406,13 @@ YUI.Env.parseUA = function(subUA) {
 Y.UA = YUI.Env.UA || YUI.Env.parseUA();
 YUI.Env.aliases = {
     "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
-    "app": ["controller","model","model-list","view"],
+    "app": ["model","model-list","router","view"],
     "attribute": ["attribute-base","attribute-complex"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
     "cache": ["cache-base","cache-offline","cache-plugin"],
     "collection": ["array-extras","arraylist","arraylist-add","arraylist-filter","array-invoke"],
+    "controller": ["router"],
     "dataschema": ["dataschema-base","dataschema-json","dataschema-xml","dataschema-array","dataschema-text"],
     "datasource": ["datasource-local","datasource-io","datasource-get","datasource-function","datasource-cache","datasource-jsonschema","datasource-xmlschema","datasource-arrayschema","datasource-textschema","datasource-polling"],
     "datatable": ["datatable-base","datatable-datasource","datatable-sort","datatable-scroll"],
@@ -4803,7 +4842,7 @@ Y._rls = function(what) {
             tests: 1 // required in the template
         },
         // The rls base path
-        rls_base = config.rls_base || 'http://l.yimg.com/py/load?httpcache=rls-seed&gzip=1&',
+        rls_base = config.rls_base || 'http://loader.yahooapis.com/v1/load?',
 
         // the template
         rls_tmpl = config.rls_tmpl || function() {

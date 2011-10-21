@@ -1,6 +1,12 @@
 DataSchema Change History
 =========================
 
+3.4.1
+-----
+
+  * No changes.
+
+
 3.4.0
 -----
 
@@ -36,7 +42,7 @@ DataSchema Change History
 3.1.1
 -----
 
-   * No changes.
+  * No changes.
 
 
 3.1.0

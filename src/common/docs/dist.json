@@ -1,13 +1,16 @@
 {
     "apiDocs": "http://yuilibrary.com/yui/docs/api",
 
+    "dist"            : true,
     "yuiBuildUrl"     : "../build",
     "yuiLocalBuildUrl": "../build",
     "yuiVersion"      : "@VERSION@",
     "yuiSeedUrl"      : "../build/yui/yui-min.js",
+    "yuiGridsUrl"     : "../build/cssgrids/grids-min.css",
 
     "componentDefaults": {
         "yuiBuildUrl"     : "../../build",
+        "yuiGridsUrl"     : "../../build/cssgrids/grids-min.css",
         "yuiLocalBuildUrl": "../../build",
         "yuiSeedUrl"      : "../../build/yui/yui-min.js"
     }

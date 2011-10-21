@@ -1,13 +1,7 @@
-.yui3-skin-night {
-    /*padding:1px 0 0; why was this here?*/
-    font-family: HelveticaNeue,arial,helvetica,clean,sans-serif;
-	color:#fff;
-	background-color:#000;
-}
-
 .yui3-skin-night .yui3-tabview-panel{
 	background-color:#333333;
 	color:#808080;
+	padding:1px;
 }
 .yui3-skin-night .yui3-tab-panel p{
 	margin:10px;

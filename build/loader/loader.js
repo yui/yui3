@@ -13,7 +13,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2011.09.14-20-40',
+            GALLERY_VERSION = 'gallery-2011.10.20-23-28',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -2621,9 +2621,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "app": {
         "use": [
-            "controller", 
             "model", 
             "model-list", 
+            "router", 
             "view"
         ]
     }, 
@@ -2923,13 +2923,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "skinnable": true
     }, 
     "controller": {
-        "optional": [
-            "querystring-parse"
-        ], 
-        "requires": [
-            "array-extras", 
-            "base-build", 
-            "history"
+        "use": [
+            "router"
         ]
     }, 
     "cookie": {
@@ -3861,7 +3856,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "io-xdr": {
         "requires": [
             "io-base", 
-            "datatype-xml"
+            "datatype-xml-parse"
         ]
     }, 
     "json": {
@@ -4057,6 +4052,31 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "skinnable": true
     }, 
+    "parallel": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
+    "pjax": {
+        "requires": [
+            "pjax-base", 
+            "io-base"
+        ]
+    }, 
+    "pjax-base": {
+        "requires": [
+            "classnamemanager", 
+            "node-event-delegate", 
+            "router"
+        ]
+    }, 
+    "pjax-plugin": {
+        "requires": [
+            "node-pluginhost", 
+            "pjax", 
+            "plugin"
+        ]
+    }, 
     "plugin": {
         "requires": [
             "base-base"
@@ -4201,6 +4221,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "get", 
             "features"
+        ]
+    }, 
+    "router": {
+        "optional": [
+            "querystring-parse"
+        ], 
+        "requires": [
+            "array-extras", 
+            "base-build", 
+            "history"
         ]
     }, 
     "scrollview": {
@@ -4378,6 +4408,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-custom", 
             "substitute", 
             "json-stringify"
+        ], 
+        "skinnable": true
+    }, 
+    "test-console": {
+        "requires": [
+            "console-filters", 
+            "test"
         ], 
         "skinnable": true
     }, 
@@ -4599,7 +4636,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '94b4cd94d5b5f12f01ec8758dc2d9a6e';
+YUI.Env[Y.version].md5 = '42520b1f3c55a4393351fd743c5376c8';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
