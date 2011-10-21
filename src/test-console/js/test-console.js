@@ -41,8 +41,14 @@ Y.namespace('Test').Console = Y.extend(TestConsole, Y.Console, {
                 info  : true,
                 pass  : false,
                 fail  : true,
-                status: false
-            }, (config && config.filters) || {})
+                status: false,
+            }, (config && config.filters) || {}),
+
+            defaultVisibility: false,
+
+            source: {
+                TestRunner: true
+            }
         });
     },
 
