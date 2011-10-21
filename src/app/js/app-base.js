@@ -30,7 +30,7 @@ App = Y.App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
     // -- Public Properties ----------------------------------------------------
 
     /**
-    Hash of view-name to meta data used to declaratively describe an
+    Hash of view-name to metadata used to declaratively describe an
     application's views and their relationship with the app and other views.
 
     The view info in `views` is an Object keyed to a view name and can have any
@@ -78,11 +78,11 @@ App = Y.App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
         `activeView` of the application.
 
       * `toChild`: The set of transitions to use when the `activeView` changes
-        to a named view who's `parent` property references the meta data of the
+        to a named view who's `parent` property references the metadata of the
         previously active view.
 
       * `toParent`: The set of transitions to use when the `activeView` changes
-        to a named view who's meta data is referenced by the previously active
+        to a named view who's metadata is referenced by the previously active
         view's `parent` property.
 
     With the current state of `Y.Transition`, it is best to used named
@@ -134,8 +134,8 @@ App = Y.App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
     /**
     Map of view instance id (via `Y.stamp()`) to view-info object in `views`.
 
-    This mapping is used to tie a specific view instance back to its meta data
-    by adding a reference to the the related view info on the `views` object.
+    This mapping is used to tie a specific view instance back to its metadata by
+    adding a reference to the the related view info on the `views` object.
 
     @property _viewInfoMap
     @type Object
@@ -201,13 +201,14 @@ App = Y.App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
     },
 
     /**
-    Returns the meta data associated with a view instance or view name defined
-    on the `views` object.
+    Returns the metadata associated with a view instance or view name defined on
+    the `views` object.
 
     @method getViewInfo
     @param {View|String} view View instance, or name of a view defined on the
       `views` object.
-    @return {Object} The meta data for the view.
+    @return {Object} The metadata for the view, or `undefined` if the view is
+      not registered.
     **/
     getViewInfo: function (view) {
         if (view instanceof Y.View) {
@@ -219,10 +220,10 @@ App = Y.App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
 
     /**
     Creates and returns a new view instance using the provided `name` to look up
-    the view info meta data defined in the `views` object. The passed-in
-    `config` object is passed to the view constructor function.
+    the view info metadata defined in the `views` object. The passed-in `config`
+    object is passed to the view constructor function.
 
-    This function also maps a view instance back to its view info meta data.
+    This function also maps a view instance back to its view info metadata.
 
     @method createView
     @param {String} name The name of a view defined on the `views` object.
@@ -231,18 +232,14 @@ App = Y.App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
     @return {View} The new view instance.
     **/
     createView: function (name, config) {
-        // TODO: Should `type` default to Y.View?
         var viewInfo        = this.getViewInfo(name),
-            type            = viewInfo && viewInfo.type,
+            type            = (viewInfo && viewInfo.type) || Y.View,
             ViewConstructor = Lang.isString(type) ? Y[type] : type,
             view;
 
-        // TODO: Default to `Y.View` or throw error if `ViewConstructor` is not
-        // a function?
-        if (Lang.isFunction(ViewConstructor)) {
-            view = new ViewConstructor(config).render();
-            this._viewInfoMap[Y.stamp(view, true)] = viewInfo;
-        }
+        // Create the view instance and map it with its metadata.
+        view = new ViewConstructor(config).render();
+        this._viewInfoMap[Y.stamp(view, true)] = viewInfo;
 
         return view;
     },
@@ -255,26 +252,29 @@ App = Y.App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
     be set to either the preserved instance, or a new view instance will be
     created using the passed in `config`.
 
-    TODO: Document transition info and config.
+    A callback function can be specified as either the third or fourth argument,
+    and this function will be called after the new `view` is the `activeView`
+    and ready to use.
 
     @method showView
     @param {String|View} view The name of a view defined in the `views` object,
       or a view instance.
     @param {Object} [config] Optional configuration to use when creating a new
       view instance.
-    @param {Function|Object} [options] Optional callback Function, or object
-        containing any of the following properties:
+    @param {Object} [options] Optional object containing any of the following
+        properties:
       @param {Object} [options.transitions] An object that contains transition
           configuration overrides for the following properties:
         @param {Object} [options.transitions.viewIn] Transition overrides for
           the view being transitioned-in.
         @param {Object} [options.transitions.viewOut] Transition overrides for
           the view being transitioned-out.
-      @param {Function} [options.callback] Function to callback after setting
-        the new active view.
+    @param {Function} [callback] Optional callback Function to call after the
+        new `activeView` is ready to use, the function will be passed:
+      @param {View} view
     @chainable
     **/
-    showView: function (view, config, options) {
+    showView: function (view, config, options, callback) {
         var viewInfo;
 
         if (Lang.isString(view)) {
@@ -282,7 +282,13 @@ App = Y.App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
             view     = viewInfo.instance || this.createView(view, config);
         }
 
-        Lang.isFunction(options) && (options = {callback: options});
+        options || (options = {});
+
+        if (callback) {
+            options.callback = callback;
+        } else if (Lang.isFunction(options)) {
+            options = {callback: options};
+        }
 
         return this._set('activeView', view, options);
     },
@@ -387,7 +393,7 @@ App = Y.App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
     /**
     Helper method to attach the view instance to the application by making the
     application a bubble target of the view, and assigning the view instance to
-    the `instance` property of the associated view info meta data.
+    the `instance` property of the associated view info metadata.
 
     // TODO: Should attachment handle the actual insertion into the DOM?
     // This might help for extracting the transitions into an app extension.
