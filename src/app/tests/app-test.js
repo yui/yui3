@@ -702,6 +702,100 @@ modelSuite.add(new Y.Test.Case({
         model.parse('moo');
 
         Assert.areSame(1, calls);
+    },
+
+    '`error` event should fire when a load operation fails': function () {
+        var calls = 0,
+            model = new this.TestModel();
+
+        model.on('error', function (e) {
+            calls += 1;
+
+            Assert.areSame('load', e.src);
+            Assert.areSame('foo', e.error);
+            Assert.areSame('{"error": true}', e.response);
+            Assert.isObject(e.options);
+        });
+
+        model.sync = function (action, options, callback) {
+            callback('foo', '{"error": true}');
+        };
+
+        model.load();
+
+        Assert.areSame(1, calls);
+    },
+
+    '`error` event should fire when a save operation fails': function () {
+        var calls = 0,
+            model = new this.TestModel();
+
+        model.on('error', function (e) {
+            calls += 1;
+
+            Assert.areSame('save', e.src);
+            Assert.areSame('foo', e.error);
+            Assert.areSame('{"error": true}', e.response);
+            Assert.isObject(e.options);
+        });
+
+        model.sync = function (action, options, callback) {
+            callback('foo', '{"error": true}');
+        };
+
+        model.save();
+
+        Assert.areSame(1, calls);
+    },
+
+    '`load` event should fire after a successful load operation': function () {
+        var calls = 0,
+            model = new this.TestModel();
+
+        model.on('load', function (e) {
+            calls += 1;
+
+            Assert.areSame('{"foo": "bar"}', e.response);
+            Assert.isObject(e.options);
+            Assert.isObject(e.parsed);
+            Assert.areSame('bar', e.parsed.foo);
+            Assert.areSame('bar', model.get('foo'), 'load event should fire after attribute changes are applied');
+        });
+
+        model.sync = function (action, options, callback) {
+            callback(null, '{"foo": "bar"}');
+        };
+
+        model.load(function () {
+            Assert.areSame(1, calls, 'load event should fire before the callback runs');
+        });
+
+        Assert.areSame(1, calls, 'load event never fired');
+    },
+
+    '`save` event should fire after a successful save operation': function () {
+        var calls = 0,
+            model = new this.TestModel();
+
+        model.on('save', function (e) {
+            calls += 1;
+
+            Assert.areSame('{"foo": "bar"}', e.response);
+            Assert.isObject(e.options);
+            Assert.isObject(e.parsed);
+            Assert.areSame('bar', e.parsed.foo);
+            Assert.areSame('bar', model.get('foo'), 'save event should fire after attribute changes are applied');
+        });
+
+        model.sync = function (action, options, callback) {
+            callback(null, '{"foo": "bar"}');
+        };
+
+        model.save(function () {
+            Assert.areSame(1, calls, 'save event should fire before the callback runs');
+        });
+
+        Assert.areSame(1, calls, 'save event never fired');
     }
 }));
 

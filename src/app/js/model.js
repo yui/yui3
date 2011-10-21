@@ -49,12 +49,45 @@ var GlobalEnv = YUI.namespace('Env.Model'),
     @param {String} src Source of the error. May be one of the following (or any
       custom error source defined by a Model subclass):
 
+      * `load`: An error loading the model from a sync layer. The sync layer's
+        response (if any) will be provided as the `response` property on the
+        event facade.
+
       * `parse`: An error parsing a JSON response. The response in question will
         be provided as the `response` property on the event facade.
+
+      * `save`: An error saving the model to a sync layer. The sync layer's
+        response (if any) will be provided as the `response` property on the
+        event facade.
+
       * `validate`: The model failed to validate. The attributes being validated
         will be provided as the `attributes` property on the event facade.
     **/
-    EVT_ERROR = 'error';
+    EVT_ERROR = 'error',
+
+    /**
+    Fired after model attributes are loaded from a sync layer.
+
+    @event load
+    @param {Object} parsed The parsed version of the sync layer's response to
+        the load request.
+    @param {any} response The sync layer's raw, unparsed response to the load
+        request.
+    @since 3.5.0
+    **/
+    EVT_LOAD = 'load',
+
+    /**
+    Fired after model attributes are saved to a sync layer.
+
+    @event save
+    @param {Object} [parsed] The parsed version of the sync layer's response to
+        the save request, if there was a response.
+    @param {any} [response] The sync layer's raw, unparsed response to the save
+        request, if there was one.
+    @since 3.5.0
+    **/
+    EVT_SAVE = 'save';
 
 function Model() {
     Model.superclass.constructor.apply(this, arguments);
@@ -299,6 +332,9 @@ Y.Model = Y.extend(Model, Y.Base, {
     operation, which is an asynchronous action. Specify a _callback_ function to
     be notified of success or failure.
 
+    A successful load operation will fire a `load` event, while an unsuccessful
+    load operation will fire an `error` event with the `src` value "load".
+
     If the load operation succeeds and one or more of the loaded attributes
     differ from this model's current attributes, a `change` event will be fired.
 
@@ -324,16 +360,41 @@ Y.Model = Y.extend(Model, Y.Base, {
             options  = {};
         }
 
-        this.sync('read', options, function (err, response) {
-            if (!err) {
-                self.setAttrs(self.parse(response), options);
+        options || (options = {});
+
+        self.sync('read', options, function (err, response) {
+            var facade = {
+                    options : options,
+                    response: response
+                },
+
+                parsed;
+
+            if (err) {
+                facade.error = err;
+                facade.src   = 'load';
+
+                self.fire(EVT_ERROR, facade);
+            } else {
+                // Lazy publish.
+                if (!self._loadEvent) {
+                    self._loadEvent = self.publish(EVT_LOAD, {
+                        preventable: false
+                    });
+                }
+
+                parsed = facade.parsed = self.parse(response);
+
+                self.setAttrs(parsed, options);
                 self.changed = {};
+
+                self.fire(EVT_LOAD, facade);
             }
 
             callback && callback.apply(null, arguments);
         });
 
-        return this;
+        return self;
     },
 
     /**
@@ -378,6 +439,9 @@ Y.Model = Y.extend(Model, Y.Base, {
     operation, which is an asynchronous action. Specify a _callback_ function to
     be notified of success or failure.
 
+    A successful load operation will fire a `load` event, while an unsuccessful
+    load operation will fire an `error` event with the `src` value "load".
+
     If the save operation succeeds and one or more of the attributes returned in
     the server's response differ from this model's current attributes, a
     `change` event will be fired.
@@ -410,13 +474,36 @@ Y.Model = Y.extend(Model, Y.Base, {
             return self;
         }
 
+        options || (options = {});
+
         self.sync(self.isNew() ? 'create' : 'update', options, function (err, response) {
-            if (!err) {
+            var facade = {
+                    options : options,
+                    response: response
+                },
+
+                parsed;
+
+            if (err) {
+                facade.error = err;
+                facade.src   = 'save';
+
+                self.fire(EVT_ERROR, facade);
+            } else {
+                // Lazy publish.
+                if (!self._loadEvent) {
+                    self._loadEvent = self.publish(EVT_LOAD, {
+                        preventable: false
+                    });
+                }
+
                 if (response) {
-                    self.setAttrs(self.parse(response), options);
+                    parsed = facade.parsed = self.parse(response);
+                    self.setAttrs(parsed, options);
                 }
 
                 self.changed = {};
+                self.fire(EVT_SAVE, facade);
             }
 
             callback && callback.apply(null, arguments);
@@ -543,7 +630,7 @@ Y.Model = Y.extend(Model, Y.Base, {
 
     @param {Object} [options] Sync options. It's up to the custom sync
       implementation to determine what options it supports or requires, if any.
-    @param {callback} [callback] Called when the sync operation finishes.
+    @param {Function} [callback] Called when the sync operation finishes.
       @param {Error|null} callback.err If an error occurred, this parameter will
         contain the error. If the sync operation succeeded, _err_ will be
         falsy.

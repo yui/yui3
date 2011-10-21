@@ -4,6 +4,16 @@ App Framework Change History
 3.5.0
 -----
 
+### Model
+
+* `load()` now fires a `load` event after the operation completes successfully,
+  or an `error` event on failure. The `load()` callback (if provided) will still
+  be called in both cases. [Ticket #2531207]
+
+* `save()` now fires a `save` event after the operation completes successfully,
+  or an `error` event on failure. The `save()` callback (if provided) will still
+  be called in both cases. [Ticket #2531207]
+
 ### ModelList
 
 * Added a `filter()` method that returns a filtered array of models. [Ticket
