@@ -14,8 +14,9 @@ var Lang       = Y.Lang,
 Provides a top-level application component which manages navigation and views.
 
   * TODO: Add more description.
-  * TODO: Should this extend Y.Base and mix in Y.Router along with
-    Y.PjaxBase and Y.View?
+  * TODO: Should this extend `Y.Base` and mix in `Y.Router` along with
+    `Y.PjaxBase` and `Y.View`? Also need to make sure the `Y.Base`-based
+    extensions are doing the proper thing w.r.t. multiple inheritance.
 
 @class App
 @constructor
@@ -55,6 +56,8 @@ App = Y.App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
         you would rather manage the View lifecyle, but you probably should just
         let this be handled for you.
 
+      * TODO: Should `transitions` be supported on the registered views?
+
     If `views` are passed at instantiation time, they will override any views
     set on the prototype.
 
@@ -67,14 +70,47 @@ App = Y.App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
     /**
     Transitions to use when the `activeView` changes.
 
-    TODO: Implement transitions.
+    Transition configurations contain a two properties: `viewIn` and `viewOut`;
+    there exists three configurations that represent the different scenarios of
+    the `activeView` changing:
 
-    If `transitions` are passed at instantiation time, they will override any
-    transitions set on the prototype.
+      * `navigate`: The default set of transitions to use when changing the
+        `activeView` of the application.
+
+      * `toChild`: The set of transitions to use when the `activeView` changes
+        to a named view who's `parent` property references the meta data of the
+        previously active view.
+
+      * `toParent`: The set of transitions to use when the `activeView` changes
+        to a named view who's meta data is referenced by the previously active
+        view's `parent` property.
+
+    With the current state of `Y.Transition`, it is best to used named
+    transitions that registered on `Y.Transition.fx`. If `transitions` are
+    passed at instantiation time, they will override any transitions set on
+    the prototype.
 
     @property transitions
     @type Object
-    @default {}
+    @default
+
+        {
+            navigate: {
+                viewIn : 'app:fadeIn',
+                viewOut: 'app:fadeOut'
+            },
+
+            toChild: {
+                viewIn : 'app:slideLeft',
+                viewOut: 'app:slideLeft'
+            },
+
+            toParent: {
+                viewIn : 'app:slideRight',
+                viewOut: 'app:slideRight'
+            }
+        }
+
     **/
     transitions: {
         navigate: {
@@ -125,11 +161,35 @@ App = Y.App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
 
     // -- Public Methods -------------------------------------------------------
 
+    /**
+    Creates and returns this app's `container` node from the specified HTML
+    string, DOM element, or existing `Y.Node` instance. This method is called
+    internally when the view is initialized.
+
+    This node is also stamped with the CSS class specified by `Y.App.CSS_CLASS`.
+
+    By default, the created node is _not_ added to the DOM automatically.
+
+    @method create
+    @param {HTMLElement|Node|String} container HTML string, DOM element, or
+        `Y.Node` instance to use as the container node.
+    @return {Node} Node instance of the created container node.
+    **/
     create: function () {
         var container = Y.View.prototype.create.apply(this, arguments);
         return container && container.addClass(App.CSS_CLASS);
     },
 
+    /**
+    Renders this application by appending the `viewContainer` node to the
+    `container` node, and showing the `activeView`.
+
+    You should call this method at least once, usually after the initialization
+    of your `Y.App` instance.
+
+    @method render
+    @chainable
+    **/
     render: function () {
         var viewContainer = this.get('viewContainer'),
             activeView    = this.get('activeView');
@@ -171,6 +231,7 @@ App = Y.App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
     @return {View} The new view instance.
     **/
     createView: function (name, config) {
+        // TODO: Should `type` default to Y.View?
         var viewInfo        = this.getViewInfo(name),
             type            = viewInfo && viewInfo.type,
             ViewConstructor = Lang.isString(type) ? Y[type] : type,
@@ -189,10 +250,10 @@ App = Y.App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
     /**
     Sets which view is visible/active within the application.
 
-    This will set the application's `activeView` attribute to  the view instance
-    passed-in, or when a view name is provided, the `activeView`
-    attribute will be set to either the preserved instance, or a new view
-    instance will be created using the passed in `config`.
+    This will set the application's `activeView` attribute to the view instance
+    passed-in, or when a view name is provided, the `activeView` attribute will
+    be set to either the preserved instance, or a new view instance will be
+    created using the passed in `config`.
 
     TODO: Document transition info and config.
 
@@ -203,6 +264,12 @@ App = Y.App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
       view instance.
     @param {Function|Object} [options] Optional callback Function, or object
         containing any of the following properties:
+      @param {Object} [options.transitions] An object that contains transition
+          configuration overrides for the following properties:
+        @param {Object} [options.transitions.viewIn] Transition overrides for
+          the view being transitioned-in.
+        @param {Object} [options.transitions.viewOut] Transition overrides for
+          the view being transitioned-out.
       @param {Function} [options.callback] Function to callback after setting
         the new active view.
     @chainable
@@ -222,6 +289,20 @@ App = Y.App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
 
     // -- Protected Methods ----------------------------------------------------
 
+    /**
+    Determines if the `view` passed in is configured as a child of the `parent`
+    view passed in. This requires both views to be either named-views, or view
+    instanced created using configuration data that exists in the `views`
+    object.
+
+    @method _isChildView
+    @param {View|String} view The name of a view defined in the `views` object,
+      or a view instance.
+    @param {View|String} parent The name of a view defined in the `views`
+      object, or a view instance.
+    @return {Boolean} Whether the view is configured as a child of the parent.
+    @protected
+    **/
     _isChildView: function (view, parent) {
         var viewInfo   = this.getViewInfo(view),
             parentInfo = this.getViewInfo(parent);
@@ -231,6 +312,20 @@ App = Y.App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
         }
     },
 
+    /**
+    Determines if the `view` passed in is configured as a parent of the `child`
+    view passed in. This requires both views to be either named-views, or view
+    instanced created using configuration data that exists in the `views`
+    object.
+
+    @method _isParentView
+    @param {View|String} view The name of a view defined in the `views` object,
+      or a view instance.
+    @param {View|String} parent The name of a view defined in the `views`
+      object, or a view instance.
+    @return {Boolean} Whether the view is configured as a parent of the child.
+    @protected
+    **/
     _isParentView: function (view, child) {
         var viewInfo  = this.getViewInfo(view),
             childInfo = this.getViewInfo(child);
@@ -246,15 +341,23 @@ App = Y.App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
     },
 
     /**
-    Transitions the `oldView` out and the `newView` using the provided
-    `transition`, or determining which transition to use.
+    Transitions the `oldView` out and the `newView` using the provided `fx` and
+    `fxConfigs` transition overrides.
 
     @method _transitionViews
     @param {View} newView The view instance to transition-in (if any).
     @param {View} oldView The view instance to transition-out (if any).
-    @param {String} [transition] Optional name of the transition to use. By
-      default the transition is determined by the application's `transitions`
-      configuration and relationship between the `newView` and `oldView`.
+    @param {Object} fx The set of named transition effects to use which have
+        been registered on `Y.Transition.fx`. This object should contain two
+        properties:
+      @param {String} fx.viewIn The named transition for the new active view.
+      @param {String} fx.viewOut The named transition for the old active view.
+    @param {Object} [fxConfigs] Optional set of transition overrides, this
+        object can contain the following properties:
+      @param {Object} [fxConfigs.viewIn] Optional transition overrides for the
+        new active view.
+      @param {Object} [fxConfigs.viewOut] Optional transition overrides for the
+        old active view.
     @param {Function} [callback] Optional function to call once the transition
       has completed.
     @protected
@@ -263,6 +366,10 @@ App = Y.App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
         var self   = this,
             called = false;
 
+        // TODO: A better way to handle the completion of the transitions?
+        // This currently assumes at least one view was passed in and that the
+        // transitions have the same duration.
+
         function done () {
             if (!called) {
                 called = true;
@@ -270,14 +377,21 @@ App = Y.App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
             }
         }
 
-        newView && newView.get('container').transition(fx.viewIn, fxConfigs.viewIn, done);
-        oldView && oldView.get('container').transition(fx.viewOut, fxConfigs.viewOut, done);
+        newView && newView.get('container').transition(fx.viewIn,
+            fxConfigs.viewIn, done);
+
+        oldView && oldView.get('container').transition(fx.viewOut,
+            fxConfigs.viewOut, done);
     },
 
     /**
     Helper method to attach the view instance to the application by making the
     application a bubble target of the view, and assigning the view instance to
     the `instance` property of the associated view info meta data.
+
+    // TODO: Should attachment handle the actual insertion into the DOM?
+    // This might help for extracting the transitions into an app extension.
+    // `_detachView` does the removal of the view from the DOM.
 
     @method _attachView
     @param {View} view View to attach.
@@ -332,8 +446,11 @@ App = Y.App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
 
     /**
     Handles the application's `activeViewChange` event (which is fired when the
-    `activeView` attribute changes) by transitioning between the old and new
-    view and calling the callback function passed into `showView()`.
+    `activeView` attribute changes) by detaching the old view, attaching the new
+    view and transitioning between them.
+
+    The `activeView` attribute is read-only, so the public API to change its
+    value is through the `showView()` method.
 
     @method _afterActiveViewChange
     @param {EventFacade} e
@@ -344,7 +461,7 @@ App = Y.App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
             oldView     = e.prevVal,
             callback    = e.callback,
             isChild     = this._isChildView(newView, oldView),
-            isParent    = !isChild && this._isParentView(newView, oldView)
+            isParent    = !isChild && this._isParentView(newView, oldView),
             prepend     = !!e.prepend || isParent,
             fx          = this.transitions,
             fxConfigs   = e.transitions || {};
@@ -365,12 +482,17 @@ App = Y.App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
         }
 
         // Insert the new view.
+        // TODO: Should the insertion move into the `_attachView()` method?
+        // TODO: Is the prepend/append too brittle/hacky just to handle the
+        // slide transition implementation?
         if (newView && prepend) {
             this.get('viewContainer').prepend(newView.get('container'));
         } else if (newView) {
             this.get('viewContainer').append(newView.get('container'));
         }
 
+        // TODO: Consider refactor based on a `app-transitions` extension which
+        // would either override or API `_attachView()` and `_detachView()`.
         this._transitionViews(newView, oldView, fx, fxConfigs, function () {
             this._detachView(oldView);
             this._attachView(newView);
@@ -386,11 +508,11 @@ App = Y.App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
 
         @attribute container
         @type HTMLElement|Node|String
-        @default Y.one('body')
+        @default "body"
         @initOnly
         **/
         container: {
-            value: Y.one('body')
+            value: 'body'
         },
 
         /**
@@ -450,7 +572,10 @@ Y.mix(Transition.fx, {
 
         on: {
             start: function () {
-                var position = this.getStyle('position');
+                // TODO: Cross-fade transition that doesn't require a change in
+                // position?
+
+                // var position = this.getStyle('position');
                 // if (position !== 'absolute') {
                 //     this._transitionPosition = position;
                 //     this.setStyle('position', 'absolute');
@@ -459,10 +584,10 @@ Y.mix(Transition.fx, {
             },
 
             end: function () {
-                if (this._transitionPosition) {
-                    this.setStyle('position', this._transitionPosition);
-                    delete this._transitionPosition;
-                }
+                // if (this._transitionPosition) {
+                //     this.setStyle('position', this._transitionPosition);
+                //     delete this._transitionPosition;
+                // }
             }
         }
     },
@@ -473,7 +598,10 @@ Y.mix(Transition.fx, {
 
         on: {
             start: function () {
-                var position = this.getStyle('position');
+                // TODO: Cross-fade transition that doesn't require a change in
+                // position?
+
+                // var position = this.getStyle('position');
                 // if (position !== 'absolute') {
                 //     this._transitionPosition = position;
                 //     this.setStyle('position', 'absolute');
@@ -481,10 +609,10 @@ Y.mix(Transition.fx, {
             },
 
             end: function () {
-                if (this._transitionPosition) {
-                    this.setStyle('position', this._transitionPosition);
-                    delete this._transitionPosition;
-                }
+                // if (this._transitionPosition) {
+                //     this.setStyle('position', this._transitionPosition);
+                //     delete this._transitionPosition;
+                // }
             }
         }
     },
