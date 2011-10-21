@@ -72,16 +72,35 @@ Y.View = Y.extend(View, Y.Base, {
     **/
     events: {},
 
+    /**
+    Template for this view.
+
+    This is a convenience property that has no default behavior of its own.
+    It's only provided as a convention to allow you to store whatever you
+    consider to be a template, whether that's an HTML string, a `Y.Node`
+    instance, a Mustache template, or anything else your little heart
+    desires.
+
+    How this template gets used is entirely up to you and your custom
+    `render()` method.
+
+    @property template
+    @type mixed
+    @default ''
+    **/
+    template: '',
+
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function (config) {
+        config || (config = {});
+
         this._attachedViewEvents = [];
 
-        // Create the container node.
-        this._set('container', this.create(this.get('container')));
+        config.template && (this.template = config.template);
 
         // Merge events from the config into events in `this.events`, then
         // attach the events to the container node.
-        this.events = config && config.events ?
+        this.events = config.events ?
                 Y.merge(this.events, config.events) : this.events;
 
         this.attachEvents(this.events);
@@ -140,7 +159,7 @@ Y.View = Y.extend(View, Y.Base, {
     },
 
     /**
-    Creates and returns this view's `container` node from the specified HTML
+    Creates and returns this view's container node from the specified selector
     string, DOM element, or existing `Y.Node` instance. This method is called
     internally when the view is initialized.
 
@@ -156,8 +175,7 @@ Y.View = Y.extend(View, Y.Base, {
     @return {Node} Node instance of the created container node.
     **/
     create: function (container) {
-        return typeof container === 'string' ?
-                Y.Node.create(container) : Y.one(container);
+        return Y.one(container);
     },
 
     /**
@@ -223,12 +241,12 @@ Y.View = Y.extend(View, Y.Base, {
         allowing the container's contents to be re-rendered at any time without
         losing event subscriptions.
 
-        The default container is a simple `<div>`, but you can override this in
+        The default container is a `<div>` Node, but you can override this in
         a subclass, or by passing in a custom `container` config value at
         instantiation time.
 
         When `container` is overridden by a subclass or passed as a config
-        option at instantiation time, it may be provided as an HTML string, a
+        option at instantiation time, it may be provided as a selector string, a
         DOM element, or a `Y.Node` instance. During initialization, this view's
         `create()` method will be called to convert the container into a
         `Y.Node` instance if it isn't one already.
@@ -239,12 +257,15 @@ Y.View = Y.extend(View, Y.Base, {
 
         @attribute container
         @type HTMLElement|Node|String
-        @default "<div/>"
+        @default Y.Node.create('<div/>')
         @initOnly
         **/
         container: {
-            // TODO: accept selector strings, not HTML strings
-            value: '<div/>',
+            valueFn: function () {
+                return Y.Node.create('<div/>');
+            },
+
+            setter   : 'create',
             writeOnce: 'initOnly'
         },
 
@@ -278,26 +299,6 @@ Y.View = Y.extend(View, Y.Base, {
         **/
         modelList: {
             value: null
-        },
-
-        /**
-        Template for this view.
-
-        This is a convenience attribute that has no default behavior of its own.
-        It's only provided as a convention to allow you to store whatever you
-        consider to be a template, whether that's an HTML string, a `Y.Node`
-        instance, a Mustache template, or anything else your little heart
-        desires.
-
-        How this template gets used is entirely up to you and your custom
-        `render()` method.
-
-        @attribute template
-        @type mixed
-        @default ''
-        **/
-        template: {
-            value: ''
         }
     }
 });

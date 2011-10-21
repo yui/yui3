@@ -2150,7 +2150,7 @@ viewSuite.add(new Y.Test.Case({
         var template = {},
             view     = new Y.View({template: template});
 
-        Assert.areSame(template, view.get('template'));
+        Assert.areSame(template, view.template);
     },
 
     'initializer should call create() to create the container node': function () {
@@ -2214,13 +2214,12 @@ viewSuite.add(new Y.Test.Case({
 
         Assert.areSame(node, view.create(node), "should return the same node if it's already a node");
 
-        node = view.create('<div class="foo"/>');
-        Assert.isInstanceOf(Y.Node, node);
+        node = view.create('#test');
+        Assert.isInstanceOf(Y.Node, node, "should support selector strings");
         Assert.areSame('div', node.get('tagName').toLowerCase());
-        Assert.isTrue(node.hasClass('foo'));
 
         node = view.create(Y.config.doc.createElement('div'));
-        Assert.isInstanceOf(Y.Node, node);
+        Assert.isInstanceOf(Y.Node, node, "should support DOM elements");
         Assert.areSame('div', node.get('tagName').toLowerCase());
     },
 

@@ -46,10 +46,15 @@ App Framework Change History
 
 ### View
 
-* [!] The `container`, `model`, `modelList`, and `template` properties are now
-  attributes. Code that refers to the old properties, like `myView.model` and
+* [!] The `container`, `model`, and `modelList` properties are now attributes.
+  Code that refers to the old properties, like `myView.model` and
   `myView.model = model`, must be updated to use the attribute syntax instead:
   `myView.get('model')` and `myView.set('model', model)`.
+
+* [!] The `container` attribute now treats string values as CSS selectors.
+  Previously, it assumed string values represented raw HTML. To get the same
+  functionality as the old behavior, pass your HTML string through
+  `Y.Node.create()` before passing it to `container`.
 
 
 3.4.1
