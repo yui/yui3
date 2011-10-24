@@ -5,7 +5,8 @@
     "author"     : ["rgrove"],
 
     "tags": [
-        "utility", "beta", "template", "templating", "mustache", "view"
+        "utility", "beta", "handlebars", "template", "templating", "mustache",
+        "view"
     ],
 
     "use": ["handlebars"]

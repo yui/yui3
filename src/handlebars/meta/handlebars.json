@@ -1,6 +1,6 @@
 {
     "handlebars": {
-        "use": ["handlebars-base", "handlebars-compiler"],
+        "use": ["handlebars-compiler"],
 
         "submodules": {
             "handlebars-base": {
@@ -8,7 +8,7 @@
             },
 
             "handlebars-compiler": {
-                "requires": ["yui-base"]
+                "requires": ["handlebars-base"]
             }
         }
     }
