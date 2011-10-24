@@ -552,20 +552,14 @@ modelSuite.add(new Y.Test.Case({
         model.undo();
     },
 
-    'validate() should be a noop function by default': function () {
-        var model = new this.TestModel();
-
-        Assert.isFunction(model.validate);
-        Assert.isUndefined(model.validate());
-    },
-
     'validate() should only be called on save()': function () {
         var calls = 0,
             model = new this.TestModel();
 
-        model.validate = function (attrs) {
+        model.validate = function (attrs, callback) {
             calls += 1;
             Y.ObjectAssert.areEqual(model.toJSON(), attrs);
+            callback();
         };
 
         model.set('foo', 'bar');
@@ -581,9 +575,9 @@ modelSuite.add(new Y.Test.Case({
             model         = new this.TestModel(),
             saveCallbacks = 0;
 
-        model.validate = function (attrs) {
+        model.validate = function (attrs, callback) {
             calls += 1;
-            return 'OMG invalid!';
+            callback('OMG invalid!');
         };
 
         model.sync = function () {
@@ -605,6 +599,37 @@ modelSuite.add(new Y.Test.Case({
         Assert.areSame(1, calls);
         Assert.areSame(1, saveCallbacks);
         Assert.areSame(1, errors);
+    },
+
+    'validate() should be backwards compatible with the 3.4.x synchronous style': function () {
+        var errors = 0,
+            saves  = 0,
+            model  = new this.TestModel();
+
+        model.on('error', function (e) {
+            errors += 1;
+
+        });
+
+        model.on('save', function (e) {
+            saves += 1;
+        });
+
+        model.validate = function (attrs) {
+            if (attrs.foo !== 'bar') {
+                return 'No no no!';
+            }
+        };
+
+        model.set('foo', 'bar');
+        model.save();
+        Assert.areSame(0, errors);
+        Assert.areSame(1, saves);
+
+        model.set('foo', 'baz');
+        model.save();
+        Assert.areSame(1, errors);
+        Assert.areSame(1, saves);
     }
 }));
 
@@ -668,8 +693,8 @@ modelSuite.add(new Y.Test.Case({
         var calls = 0,
             model = new this.TestModel();
 
-        model.validate = function (hash) {
-            return 'ERROR. ERROR. DOES NOT COMPUTE.';
+        model.validate = function (hash, callback) {
+            callback('ERROR. ERROR. DOES NOT COMPUTE.');
         };
 
         model.on('error', function (e) {
@@ -1390,9 +1415,9 @@ modelListSuite.add(new Y.Test.Case({
             list  = this.createList(),
             model = list.add({});
 
-        model.validate = function (hash) {
+        model.validate = function (hash, callback) {
             if (hash.foo === 'invalid') {
-                return 'fail!';
+                callback('fail!');
             }
         };
 
