@@ -1,0 +1,12 @@
+{
+    "name"       : "test-console",
+    "displayName": "Test Console",
+    "description": "An attractive pre-packaged console widget for displaying YUI Test output.",
+    "author"     : ["rgrove"],
+
+    "tags": [
+        "widget", "beta", "test", "yuitest", "console"
+    ],
+
+    "use": ["test-console"]
+}

@@ -2,7 +2,6 @@
 <html>
 <head>
     <title>Test Page</title>
-    <link rel="stylesheet" href="../assets/test-console.css">
 </head>
 <body class="yui3-skin-sam">
 
@@ -14,24 +13,13 @@ var Y = YUI({
     allowRollup: false,
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
     modules: {
-        'test-console': {
-            fullpath : '../assets/test-console.js',
-            requires : ['console-filters'],
-            skinnable: true
-        },
-
-        'skin-sam-test-console': {
-            fullpath: '../assets/test-console.css',
-            type    : 'css'
-        },
-
         'history-html5-test': {
             fullpath: 'history-html5-test.js',
             requires: ['history-hash', 'history-html5', 'test']
         }
-    },
-    useBrowserConsole: false
+    }
 }).use('history-html5-test', 'test-console', function (Y) {
+    new Y.Test.Console().render('#log');
     Y.Test.Runner.setName('history-html5');
     Y.Test.Runner.run();
 });
