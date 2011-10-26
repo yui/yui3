@@ -255,7 +255,10 @@ Y.extend(Cache, Y.Base, {
             entry = e.entry;
 
         if(this.get("uniqueKeys") && (this.retrieve(e.entry.request))) {
-            entries.shift();
+            pos = this._position(e.entry.request);
+            if(LANG.isValue(pos)) {
+                entries.splice(pos,1);
+            }
         }
 
 
