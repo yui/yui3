@@ -88,4 +88,8 @@ Handlebars.registerHelper('with', function(context, options) {
   return options.fn(context);
 });
 
+Handlebars.registerHelper('log', function(context) {
+  Handlebars.log(context);
+});
+
 // END(BROWSER)
