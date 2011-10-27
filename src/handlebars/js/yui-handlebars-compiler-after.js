@@ -4,5 +4,5 @@
 var levels = ['debug', 'info', 'warn', 'error'];
 
 Handlebars.logger.log = function (level, message) {
-    Y.message(message, levels[level] || 'error', 'Handlebars');
+    Y.log(message, levels[level] || 'error', 'Handlebars');
 };
