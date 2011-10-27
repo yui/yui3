@@ -311,6 +311,14 @@
                 cache.add(1, "c");
                 ASSERT.areSame(2, cache.get("size"), "Expected 2 entries.");
             },
+            
+            testUniqueKeyValues: function() {
+                var cache = new Y.Cache({max:3,uniqueKeys:true});
+                cache.add(1, "a");
+                cache.add(2, "b");
+                cache.add(1, "c");
+                ASSERT.areSame("c", cache.retrieve(1).response, "Expected 'c'");
+            },
 
             testFreshness: function() {
                 var cache = new Y.Cache({max:3});
