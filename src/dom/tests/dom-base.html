@@ -14,10 +14,10 @@ YUI({
     filter: 'raw',
     combine: false,
     useConsole: true
-}).use('console', 'test', 'dom-core-test', 'dom-class-test', 'dom-size-test', 'dom-deprecated-test', function (Y) {
+}).use('test-console', 'test', 'dom-core-test', 'dom-class-test', 'dom-size-test', 'dom-deprecated-test', function (Y) {
     //create the logger
 
-    var logger = new Y.Console({
+    var logger = new Y.Test.Console({
         height: '800px'
     }).render();
     
