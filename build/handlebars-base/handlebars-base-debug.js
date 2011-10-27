@@ -94,8 +94,12 @@ Handlebars.registerHelper('with', function(context, options) {
   return options.fn(context);
 });
 
+Handlebars.registerHelper('log', function(context) {
+  Handlebars.log(context);
+});
+
 // END(BROWSER)
-// This file provides a YUI-specific implementations of Handlebars' lib/utils.js
+// This file provides a YUI-specific implementation of Handlebars' lib/utils.js
 // file. Handlebars unfortunately creates enclosed references to its utils, so
 // we have to maintain a complete fork of this file rather than just overriding
 // specific parts.

@@ -722,7 +722,8 @@ Handlebars.JavaScriptCompiler = function() {};
         'each': true,
         'if': true,
         'unless': true,
-        'with': true
+        'with': true,
+        'log': true
       };
       if (knownHelpers) {
         for (var name in knownHelpers) {
@@ -1374,10 +1375,21 @@ Handlebars.precompile = function(string, options) {
 Handlebars.compile = function(string, options) {
   options = options || {};
 
-  var ast = Handlebars.parse(string);
-  var environment = new Handlebars.Compiler().compile(ast, options);
-  var templateSpec = new Handlebars.JavaScriptCompiler().compile(environment, options, undefined, true);
-  return Handlebars.template(templateSpec);
+  var compiled;
+  function compile() {
+    var ast = Handlebars.parse(string);
+    var environment = new Handlebars.Compiler().compile(ast, options);
+    var templateSpec = new Handlebars.JavaScriptCompiler().compile(environment, options, undefined, true);
+    return Handlebars.template(templateSpec);
+  }
+
+  // Template is only compiled on first use and cached after that point.
+  return function(context, options) {
+    if (!compiled) {
+      compiled = compile();
+    }
+    return compiled.call(this, context, options);
+  };
 };
 
 // END(BROWSER)
@@ -1387,7 +1399,12 @@ Handlebars.compile = function(string, options) {
 var levels = ['debug', 'info', 'warn', 'error'];
 
 Handlebars.logger.log = function (level, message) {
-    Y.message(message, levels[level] || 'error', 'Handlebars');
+    Y.log(message, levels[level] || 'error', 'Handlebars');
+};
+
+Handlebars.render = function (string, context, options) {
+    var template = Handlebars.compile(string);
+    return template(context, options);
 };
 
 
