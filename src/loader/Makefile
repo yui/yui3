@@ -18,6 +18,7 @@ deps:
 	./scripts/deps.sh
 
 test: deps
+	./scripts/node_env.sh
 	./scripts/build_loader_tests.js
 	yuitest ./tests/cli/loader.js
 
