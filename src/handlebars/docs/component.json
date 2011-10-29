@@ -1,0 +1,13 @@
+{
+    "name"       : "handlebars",
+    "displayName": "Handlebars",
+    "description": "A simple template language inspired by Mustache.",
+    "author"     : ["rgrove"],
+
+    "tags": [
+        "utility", "beta", "handlebars", "template", "templating", "mustache",
+        "view"
+    ],
+
+    "use": ["handlebars"]
+}
