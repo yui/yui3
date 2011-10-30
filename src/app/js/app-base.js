@@ -210,8 +210,11 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
         var viewInfo;
 
         if (Lang.isString(view)) {
-            viewInfo = this.getViewInfo(view) || {};
-            view     = viewInfo.instance || this.createView(view, config);
+            viewInfo = this.getViewInfo(view);
+
+            // Use the preserved view instance, or create a new view.
+            view = viewInfo && viewInfo.preserve && viewInfo.instance ?
+                    viewInfo.instance : this.createView(view, config);
         }
 
         options || (options = {});
