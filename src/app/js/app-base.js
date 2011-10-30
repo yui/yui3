@@ -168,7 +168,7 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
             view;
 
         // Create the view instance and map it with its metadata.
-        view = new ViewConstructor(config).render();
+        view = new ViewConstructor(config);
         this._viewInfoMap[Y.stamp(view, true)] = viewInfo;
 
         return view;
@@ -213,9 +213,16 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
             viewInfo = this.getViewInfo(view);
 
             // Use the preserved view instance, or create a new view.
-            view = viewInfo && viewInfo.preserve && viewInfo.instance ?
-                    viewInfo.instance : this.createView(view, config);
+            if (viewInfo && viewInfo.preserve && viewInfo.instance) {
+                view = view.instance;
+            } else {
+                view = this.createView(view, config);
+                view.render();
+            }
         }
+
+        // TODO: Add options.update to update to view with the `config`, if
+        // needed. Would this be too much overloading of the API?
 
         options || (options = {});
 
@@ -316,6 +323,8 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
         view.addTarget(this);
         viewInfo && (viewInfo.instance = view);
 
+        // TODO: Attach events?
+
         // Insert view into the DOM.
         viewContainer[prepend ? 'prepend' : 'append'](view.get('container'));
     },
@@ -338,6 +347,7 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
         var viewInfo = this.getViewInfo(view) || {};
 
         if (viewInfo.preserve) {
+            // TODO: detach events?
             view.remove();
         } else {
             view.destroy();
