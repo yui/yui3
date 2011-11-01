@@ -214,7 +214,7 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
 
             // Use the preserved view instance, or create a new view.
             if (viewInfo && viewInfo.preserve && viewInfo.instance) {
-                view = view.instance;
+                view = viewInfo.instance;
             } else {
                 view = this.createView(view, config);
                 view.render();
