@@ -258,6 +258,7 @@
     "calendar": {
         "lang": [
             "en", 
+            "fr",
             "ja", 
             "ru"
         ], 
@@ -270,6 +271,7 @@
     "calendar-base": {
         "lang": [
             "en", 
+            "fr",
             "ja", 
             "ru"
         ], 
