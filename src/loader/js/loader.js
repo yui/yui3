@@ -460,6 +460,16 @@ Y.Loader = function(o) {
      */
     self.conditions = {};
 
+   /**
+     * Specify whether or not to load optional dependencies for
+     * a specific modules. 
+     * ex. {"history-html5":false, "autocomplete-sources":true}
+     * Overrides loadOptional.
+     * @property loadOptionalCfg
+     * @type {string:boolean}
+     */
+    self.loadOptionalCfg = {};
+
     // map of modules with a hash of modules that meet the requirement
     // self.provides = {};
 
@@ -1220,7 +1230,7 @@ Y.Loader.prototype = {
             intl = mod.lang || mod.intl,
             info = this.moduleInfo,
             ftests = Y.Features && Y.Features.tests.load,
-            hash;
+            hash, isLoadOptional;
 
         // console.log(name);
 
@@ -1305,7 +1315,9 @@ Y.Loader.prototype = {
             }
         }
 
-        if (o && this.loadOptional) {
+	isLoadOptional = (typeof this.loadOptionalCfg[name] == "undefined")? this.loadOptional: this.loadOptionalCfg[name];
+
+        if (o && (isLoadOptional == true)) {
             for (i = 0; i < o.length; i++) {
                 if (!hash[o[i]]) {
                     d.push(o[i]);

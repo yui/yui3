@@ -136,6 +136,24 @@ YUI.add('loader-tests', function(Y) {
 
             test.wait();
 
+        },
+	test_resolve_loadOptional: function() {
+            var loader = new testY.Loader({
+		combine: true,
+		loadOptional: false,	
+		loadOptionalCfg: { "autocomplete-sources": true, "controller": false},	
+		require:['autocomplete-sources', "controller"]
+            });
+            var out = loader.resolve(true);
+
+            Assert.isTrue((out.js.length === 1), 'NO JS files returned');
+            Assert.isTrue((out.css.length === 1), 'NO CSS files returned');
+            Assert.isTrue((out.js[0].indexOf('jsonp-min.js') > 0) 
+			   && (out.js[0].indexOf('json-parse-min.js') > 0)
+			   && (out.js[0].indexOf('io-base-min.js') > 0)
+			   && (out.js[0].indexOf('yql-min.js') > 0)
+			   && (out.js[0].indexOf('querystring-parse-min.js') === -1),
+			 'loadoptionalCfg didn\'t work');
         }
     });
 
