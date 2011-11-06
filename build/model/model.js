@@ -23,6 +23,10 @@ to override the `parse()` method to parse non-generic server responses.
 @since 3.4.0
 **/
 
+// Allows the getSchma class method to propogate down to
+// classes which inherit from Model
+Y.Base._buildCfg.aggregates.push('getSchema');
+
 var GlobalEnv = YUI.namespace('Env.Model'),
     Lang      = Y.Lang,
     YArray    = Y.Array,
@@ -883,6 +887,42 @@ Y.Model = Y.extend(Model, Y.Base, {
     }
 }, {
     NAME: 'model',
+
+    /**
+     * Returns the list of Attribute keys for this model, which can be used
+     * in constructing other class instances, such as a fieldList for a DataSchema,
+     * or a columnset in a DataTable. Will follow this Model's inheritance chain
+     * to list ALL attributes, rather than just those present on the Model's ATTRS
+     * property. By default it will ignore attributes marked readOnly, but can be
+     * configured to return those as well
+     *
+     * @method Y.Model.getSchema
+     * @param {Boolean} allowReadOnly Set to true to return attribues marked 
+     *                  "readOnly" as well
+     * @return {Array} A list of all attribute keys
+     */
+    getSchema : function (allowReadOnly) {
+        var schema = [],
+            c = this.prototype.constructor;
+                
+        function getObjForAttr (val, key, obj, sch) {
+            if ((allowReadOnly || !val.readOnly) && !~Y.Array.indexOf(sch, key)) {
+                sch.push(key);
+            }
+        }
+
+        while (c) {
+            try {
+                if (c.ATTRS) {
+                    Y.Object.each(c.ATTRS, Y.rbind(getObjForAttr, this, schema));
+                }
+            } catch (err) {}
+
+            c = (c.superclass ? c.superclass.constructor : null);
+        }
+
+        return schema;
+    },
 
     ATTRS: {
         /**
