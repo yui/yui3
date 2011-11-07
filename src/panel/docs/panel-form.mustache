@@ -30,7 +30,7 @@ YUI({...}).use("panel", "datatable-base", "dd-plugin", function(Y) {
 
 ```
 <div id="panelContent">
-    <div class="yui3-widget-bd">
+  <div class="yui3-widget-bd">
     <form>
       <fieldset>
         <p><label for="id">ID</label><br/>
@@ -40,8 +40,9 @@ YUI({...}).use("panel", "datatable-base", "dd-plugin", function(Y) {
         <p><label for="password">Price</label><br/>
         <input type="text" name="price" id="price" value="" placeholder="$"></p>
       </fieldset>
-      </form>
+    </form>
   </div>
+</div>
 ```
 
 <p>The container DIV with id="panelContent" is specified as the contentBox for the Panel instance, and during instantiation, the panel will look for DIV's marked with the `yui3-widget-hd, yui3-widget-bd, yui3-widget-ft` classes to setup the Overlay's header, body and footer content attributes.</p>
