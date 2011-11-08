@@ -3426,6 +3426,7 @@ YUI.Env.aliases = {
     "event": ["event-base","event-delegate","event-synthetic","event-mousewheel","event-mouseenter","event-key","event-focus","event-resize","event-hover","event-outside"],
     "event-custom": ["event-custom-base","event-custom-complex"],
     "event-gestures": ["event-flick","event-move"],
+    "handlebars": ["handlebars-compiler"],
     "highlight": ["highlight-base","highlight-accentfold"],
     "history": ["history-base","history-hash","history-hash-ie","history-html5"],
     "io": ["io-base","io-xdr","io-form","io-upload-iframe","io-queue"],
@@ -4890,7 +4891,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2011.10.12-20-24',
+            GALLERY_VERSION = 'gallery-2011.10.20-23-28',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -8610,6 +8611,21 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "trigger": "graphics"
         }
     }, 
+    "handlebars": {
+        "use": [
+            "handlebars-compiler"
+        ]
+    }, 
+    "handlebars-base": {
+        "requires": [
+            "escape"
+        ]
+    }, 
+    "handlebars-compiler": {
+        "requires": [
+            "handlebars-base"
+        ]
+    }, 
     "highlight": {
         "use": [
             "highlight-base", 
@@ -9288,6 +9304,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "skinnable": true
     }, 
+    "test-console": {
+        "requires": [
+            "console-filters", 
+            "test"
+        ], 
+        "skinnable": true
+    }, 
     "text": {
         "use": [
             "text-accentfold", 
@@ -9506,7 +9529,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '9573e500940f4758392e8b2c2ebbdca0';
+YUI.Env[Y.version].md5 = '7f3e2a182ac855f60af5ab295f71fefe';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
