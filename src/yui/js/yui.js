@@ -1046,17 +1046,21 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
     because the supported version of JavaScript reserves the word "long":
     
          Y.namespace("really.long.nested.namespace");
+
+    <em>Note: If you pass multiple arguments to create multiple namespaces, only 
+    the last one created is returned from this function.</em>
     
     @method namespace
     @param  {String} namespace* namespaces to create.
     @return {Object}  A reference to the last namespace object created.
     **/
     namespace: function() {
-        var a = arguments, o = this, i = 0, j, d, arg;
+        var a = arguments, o, i = 0, j, d, arg;
+
         for (; i < a.length; i++) {
-            // d = ('' + a[i]).split('.');
+            o = this; //Reset base object per argument or it will get reused from the last
             arg = a[i];
-            if (arg.indexOf(PERIOD)) {
+            if (arg.indexOf(PERIOD) > -1) { //Skip this if no "." is present
                 d = arg.split(PERIOD);
                 for (j = (d[0] == 'YAHOO') ? 1 : 0; j < d.length; j++) {
                     o[d[j]] = o[d[j]] || {};
@@ -1064,6 +1068,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
                 }
             } else {
                 o[arg] = o[arg] || {};
+                o = o[arg]; //Reset base object to the new object so it's returned
             }
         }
         return o;
