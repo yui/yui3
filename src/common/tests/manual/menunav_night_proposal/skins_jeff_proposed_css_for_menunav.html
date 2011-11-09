@@ -2,18 +2,21 @@
 <html>
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <title>Widget Skins Test Page</title>
-    <script src="../../../../build/yui/yui-min.js"></script>
-    <link type="text/css" rel="stylesheet" href="../../../../build/cssreset/cssreset.css">
-    <link type="text/css" rel="stylesheet" href="../../../../build/cssfonts/cssfonts.css">
-    <link type="text/css" rel="stylesheet" href="../../../../build/cssgrids/cssgrids.css">
-    <link type="text/css" rel="stylesheet" href="../../../../build/slider-base/assets/skins/night/slider-base.css">
-    <link type="text/css" rel="stylesheet" href="../../../../build/tabview/assets/skins/night/tabview.css">
-    <link type="text/css" rel="stylesheet" href="../../../../build/datatable-base/assets/skins/night/datatable-base.css">
-    <link type="text/css" rel="stylesheet" href="../../../../build/dial/assets/skins/night/dial.css">
-    <link type="text/css" rel="stylesheet" href="../../../../build/scrollview-list/assets/skins/night/scrollview-list.css">
-    <link type="text/css" rel="stylesheet" href="../../../../build/scrollview-scrollbars/assets/skins/night/scrollview-scrollbars.css">
-    <link type="text/css" rel="stylesheet" href="../../../../build/panel/assets/skins/night/panel.css" charset="utf-8">
+    <title>Widget Skins MenuNav - Jeff proposal</title>
+    <script src="../../../../../build/yui/yui-min.js"></script>
+    <link type="text/css" rel="stylesheet" href="../../../../../build/cssreset/cssreset.css">
+    <link type="text/css" rel="stylesheet" href="../../../../../build/cssfonts/cssfonts.css">
+    <link type="text/css" rel="stylesheet" href="../../../../../build/cssgrids/cssgrids.css">
+    <link type="text/css" rel="stylesheet" href="../../../../../build/slider-base/assets/skins/night/slider-base.css">
+    <link type="text/css" rel="stylesheet" href="../../../../../build/tabview/assets/skins/night/tabview.css">
+    <link type="text/css" rel="stylesheet" href="../../../../../build/datatable-base/assets/skins/night/datatable-base.css">
+    <link type="text/css" rel="stylesheet" href="../../../../../build/dial/assets/skins/night/dial.css">
+    <link type="text/css" rel="stylesheet" href="../../../../../build/scrollview-list/assets/skins/night/scrollview-list.css">
+    <link type="text/css" rel="stylesheet" href="../../../../../build/scrollview-scrollbars/assets/skins/night/scrollview-scrollbars.css">
+    <link type="text/css" rel="stylesheet" href="../../../../../build/panel/assets/skins/night/panel.css" charset="utf-8">
+
+    <!-- jeff's proposed changes to the css are found in this -->
+    <link type="text/css" rel="stylesheet" href="assets/skin/night/node-menunav-skin.css">
 
     <!--
     <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/gallery-2011.08.04-15-16/build/gallerycss-cssbutton/gallerycss-cssbutton.css" charset="utf-8">
@@ -21,6 +24,9 @@
     <link type="text/css" rel="stylesheet" href="http://derek.io/~/fixedbutton.css" charset="utf-8">
     
     <style>
+        html{
+            background-color: #000; /*jeff*/
+        }
         .yui3-js-enabled .yui3-widget-loading {
             display: none;
         }
@@ -68,7 +74,7 @@
 
     </style> 
 
-    <body class="yui3-skin-sam">
+    <body class="yui3-skin-night">
     <div id="skin-demo"> 
         <div class="yui3-g button-group">
             <div id="buttons-skin" class="yui3-u">
@@ -172,7 +178,8 @@
                     </ul>
                 </div>
             </div> 
-<!-- menunav -->
+
+<!-- MenuNav -->
             <div class="yui3-u">
                 <div id="demo-menunav" class="yui3-menu"> 
                     <div class="yui3-menu-content"> 
@@ -210,7 +217,7 @@
                         </ul>    
                     </div> 
                 </div>      
-            </div>      
+            </div>
 <!-- MenuNav horiz -->
             <div class="yui3-u">
                <div id="demo-menunav-horiz" class="yui3-menu yui3-menu-horizontal">
@@ -264,7 +271,7 @@
         
                             <li>
         
-                                <a class="yui3-menu-label" href="#find-info">Find Info (horiz menu)</a>
+                                <a class="yui3-menu-label" href="#find-info">Find Info (horiz menu. see node-menunav-skin.css line 23) </a>
                                 <div id="find-info" class="yui3-menu">
                                     <div class="yui3-menu-content">
                                         <ul>
@@ -291,6 +298,8 @@
                 </div>
             </div>      
 <!-- end menu nav horizontal-->
+
+                  
         </div>      
     </div> 
 <script>
