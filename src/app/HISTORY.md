@@ -4,6 +4,20 @@ App Framework Change History
 3.5.0
 -----
 
+### Model
+
+* [!] The `validate()` method is now asynchronous, and is expected to call a
+  callback function on success or failure. Old-style synchronous `validate()`
+  methods will still work, but are deprecated. [Ticket #2531218]
+
+* `load()` now fires a `load` event after the operation completes successfully,
+  or an `error` event on failure. The `load()` callback (if provided) will still
+  be called in both cases. [Ticket #2531207]
+
+* `save()` now fires a `save` event after the operation completes successfully,
+  or an `error` event on failure. The `save()` callback (if provided) will still
+  be called in both cases. [Ticket #2531207]
+
 ### ModelList
 
 * Added a `filter()` method that returns a filtered array of models. [Ticket
@@ -46,8 +60,8 @@ App Framework Change History
 
 ### View
 
-* [!] The `container`, `model`, `modelList`, and `template` properties are now
-  attributes. Code that refers to the old properties, like `myView.model` and
+* [!] The `container`, `model`, and `modelList` properties are now attributes.
+  Code that refers to the old properties, like `myView.model` and
   `myView.model = model`, must be updated to use the attribute syntax instead:
   `myView.get('model')` and `myView.set('model', model)`.
 

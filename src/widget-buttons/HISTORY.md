@@ -1,6 +1,13 @@
 Widget Buttons Change History
 =============================
 
+3.5.0
+-----
+
+  * Configurations of named button types, e.g. "close", are now merged with the
+    user-provided configuration allowing overriding of the default options for
+    the named button.
+
 3.4.1
 -----
 

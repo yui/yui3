@@ -18,21 +18,10 @@ var Y = YUI({
         'object-test': {
             fullpath: 'object-test.js',
             requires: ['test']
-        },
-
-        'test-console': {
-            fullpath : '../../common/tests/assets/test-console.js',
-            requires : ['console-filters'],
-            skinnable: true
-        },
-
-        'skin-sam-test-console': {
-            fullpath: '../../common/tests/assets/test-console.css',
-            type    : 'css'
         }
-    },
-    useBrowserConsole: false
+    }
 }).use('object-test', 'test-console', function (Y) {
+    new Y.Test.Console().render('#log');
     Y.Test.Runner.run();
 });
 </script>

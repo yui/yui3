@@ -552,20 +552,14 @@ modelSuite.add(new Y.Test.Case({
         model.undo();
     },
 
-    'validate() should be a noop function by default': function () {
-        var model = new this.TestModel();
-
-        Assert.isFunction(model.validate);
-        Assert.isUndefined(model.validate());
-    },
-
     'validate() should only be called on save()': function () {
         var calls = 0,
             model = new this.TestModel();
 
-        model.validate = function (attrs) {
+        model.validate = function (attrs, callback) {
             calls += 1;
             Y.ObjectAssert.areEqual(model.toJSON(), attrs);
+            callback();
         };
 
         model.set('foo', 'bar');
@@ -581,9 +575,9 @@ modelSuite.add(new Y.Test.Case({
             model         = new this.TestModel(),
             saveCallbacks = 0;
 
-        model.validate = function (attrs) {
+        model.validate = function (attrs, callback) {
             calls += 1;
-            return 'OMG invalid!';
+            callback('OMG invalid!');
         };
 
         model.sync = function () {
@@ -605,6 +599,37 @@ modelSuite.add(new Y.Test.Case({
         Assert.areSame(1, calls);
         Assert.areSame(1, saveCallbacks);
         Assert.areSame(1, errors);
+    },
+
+    'validate() should be backwards compatible with the 3.4.x synchronous style': function () {
+        var errors = 0,
+            saves  = 0,
+            model  = new this.TestModel();
+
+        model.on('error', function (e) {
+            errors += 1;
+
+        });
+
+        model.on('save', function (e) {
+            saves += 1;
+        });
+
+        model.validate = function (attrs) {
+            if (attrs.foo !== 'bar') {
+                return 'No no no!';
+            }
+        };
+
+        model.set('foo', 'bar');
+        model.save();
+        Assert.areSame(0, errors);
+        Assert.areSame(1, saves);
+
+        model.set('foo', 'baz');
+        model.save();
+        Assert.areSame(1, errors);
+        Assert.areSame(1, saves);
     }
 }));
 
@@ -668,8 +693,8 @@ modelSuite.add(new Y.Test.Case({
         var calls = 0,
             model = new this.TestModel();
 
-        model.validate = function (hash) {
-            return 'ERROR. ERROR. DOES NOT COMPUTE.';
+        model.validate = function (hash, callback) {
+            callback('ERROR. ERROR. DOES NOT COMPUTE.');
         };
 
         model.on('error', function (e) {
@@ -702,6 +727,100 @@ modelSuite.add(new Y.Test.Case({
         model.parse('moo');
 
         Assert.areSame(1, calls);
+    },
+
+    '`error` event should fire when a load operation fails': function () {
+        var calls = 0,
+            model = new this.TestModel();
+
+        model.on('error', function (e) {
+            calls += 1;
+
+            Assert.areSame('load', e.src);
+            Assert.areSame('foo', e.error);
+            Assert.areSame('{"error": true}', e.response);
+            Assert.isObject(e.options);
+        });
+
+        model.sync = function (action, options, callback) {
+            callback('foo', '{"error": true}');
+        };
+
+        model.load();
+
+        Assert.areSame(1, calls);
+    },
+
+    '`error` event should fire when a save operation fails': function () {
+        var calls = 0,
+            model = new this.TestModel();
+
+        model.on('error', function (e) {
+            calls += 1;
+
+            Assert.areSame('save', e.src);
+            Assert.areSame('foo', e.error);
+            Assert.areSame('{"error": true}', e.response);
+            Assert.isObject(e.options);
+        });
+
+        model.sync = function (action, options, callback) {
+            callback('foo', '{"error": true}');
+        };
+
+        model.save();
+
+        Assert.areSame(1, calls);
+    },
+
+    '`load` event should fire after a successful load operation': function () {
+        var calls = 0,
+            model = new this.TestModel();
+
+        model.on('load', function (e) {
+            calls += 1;
+
+            Assert.areSame('{"foo": "bar"}', e.response);
+            Assert.isObject(e.options);
+            Assert.isObject(e.parsed);
+            Assert.areSame('bar', e.parsed.foo);
+            Assert.areSame('bar', model.get('foo'), 'load event should fire after attribute changes are applied');
+        });
+
+        model.sync = function (action, options, callback) {
+            callback(null, '{"foo": "bar"}');
+        };
+
+        model.load(function () {
+            Assert.areSame(1, calls, 'load event should fire before the callback runs');
+        });
+
+        Assert.areSame(1, calls, 'load event never fired');
+    },
+
+    '`save` event should fire after a successful save operation': function () {
+        var calls = 0,
+            model = new this.TestModel();
+
+        model.on('save', function (e) {
+            calls += 1;
+
+            Assert.areSame('{"foo": "bar"}', e.response);
+            Assert.isObject(e.options);
+            Assert.isObject(e.parsed);
+            Assert.areSame('bar', e.parsed.foo);
+            Assert.areSame('bar', model.get('foo'), 'save event should fire after attribute changes are applied');
+        });
+
+        model.sync = function (action, options, callback) {
+            callback(null, '{"foo": "bar"}');
+        };
+
+        model.save(function () {
+            Assert.areSame(1, calls, 'save event should fire before the callback runs');
+        });
+
+        Assert.areSame(1, calls, 'save event never fired');
     }
 }));
 
@@ -1296,9 +1415,9 @@ modelListSuite.add(new Y.Test.Case({
             list  = this.createList(),
             model = list.add({});
 
-        model.validate = function (hash) {
+        model.validate = function (hash, callback) {
             if (hash.foo === 'invalid') {
-                return 'fail!';
+                callback('fail!');
             }
         };
 
@@ -2150,7 +2269,7 @@ viewSuite.add(new Y.Test.Case({
         var template = {},
             view     = new Y.View({template: template});
 
-        Assert.areSame(template, view.get('template'));
+        Assert.areSame(template, view.template);
     },
 
     'initializer should call create() to create the container node': function () {

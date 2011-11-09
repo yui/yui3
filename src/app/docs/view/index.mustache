@@ -27,7 +27,7 @@ A beta version of View was first introduced in YUI 3.4.0. If you're using View i
 <ul>
   <li>
     <p>
-    The `container`, `model`, `modelList`, and `template` properties are now attributes. If you were accessing them as properties, update your code to access them as attributes instead. For example, `var model = myView.model` becomes `var model = myView.get('model')`, and `myView.model = thing` becomes `myView.set('model', thing);`.
+    The `container`, `model`, and `modelList` properties are now attributes. If you were accessing them as properties, update your code to access them as attributes instead. For example, `var model = myView.model` becomes `var model = myView.get('model')`, and `myView.model = thing` becomes `myView.set('model', thing);`.
     </p>
   </li>
 
@@ -73,7 +73,7 @@ var pie = new Y.PieModel({type: 'apple'}),
 // Override the render() method to define how the view will be rendered.
 pieView.render = function () {
   var container = this.get('container'),
-      html      = Y.Lang.sub(this.get('template'), this.get('model').toJSON());
+      html      = Y.Lang.sub(this.template, this.get('model').toJSON());
 
   // Render this view's HTML into the container element.
   container.setContent(html);
@@ -135,6 +135,12 @@ Y.PieView = Y.Base.create('pieView', Y.View, [], {
     '.eat': {click: 'eatSlice'}
   },
 
+  // Provide a template that will be used to render the view. The template can
+  // be anything we want, but in this case we'll use a string that will be
+  // processed with Y.Lang.sub().
+  template: '{slices} slice(s) of {type} pie remaining. ' +
+            '<button class="eat">Eat a Slice!</button>',
+
   // The initializer function will run when a view is instantiated. This is a
   // good time to subscribe to change events on a model instance.
   initializer: function () {
@@ -150,7 +156,7 @@ Y.PieView = Y.Base.create('pieView', Y.View, [], {
   // will be called whenever the model changes.
   render: function () {
     var container = this.get('container'),
-        html      = Y.Lang.sub(this.get('template'), this.get('model').toJSON());
+        html      = Y.Lang.sub(this.template, this.get('model').toJSON());
 
     // Render this view's HTML into the container element.
     container.setContent(html);
@@ -180,14 +186,6 @@ Y.PieView = Y.Base.create('pieView', Y.View, [], {
       valueFn: function () {
         return Y.Node.create('<div class="pie"/>');
       }
-    },
-
-    // Provide a template that will be used to render the view. The template can
-    // be anything we want, but in this case we'll use a string that will be
-    // processed with Y.Lang.sub().
-    template: {
-      value: '{slices} slice(s) of {type} pie remaining. ' +
-             '<button class="eat">Eat a Slice!</button>'
     }
   }
 });
@@ -252,8 +250,30 @@ The following properties are meaningful to View classes and subclasses.
         </p>
       </td>
     </tr>
+
+    <tr>
+      <td>`template`</td>
+      <td>`''`</td>
+      <td>
+        <p>
+        Reference to a template for this view.
+        </p>
+
+        <p>
+        This is a convenience property that has no default behavior of its own. It's only provided as a convention to allow you to store whatever you wish to use as a template, whether that's an HTML string, a `Y.Node` instance, a Mustache template, or anything else your heart desires.
+        </p>
+
+        <p>
+        How this template gets used is entirely up to you and your custom `render()` method. See [[#Rendering a View]] for more details.
+        </p>
+      </td>
+    </tr>
   </tbody>
 </table>
+
+<p class="tip">
+The View class uses both properties and attributes. What's the difference? In short, properties are best for storing data that might be useful to multiple instances of a View, whereas attributes are best for storing data that pertains only to a specific instance.
+</p>
 
 <h3>View Attributes</h3>
 
@@ -312,24 +332,6 @@ View classes and subclasses provide the following attributes.
 
         <p>
         Like the `model` attribute, the `modelList` attribute is entirely optional, and is provided for convenience only. For more information, see [[#Associating a View with a Model or Model List]].
-        </p>
-      </td>
-    </tr>
-
-    <tr>
-      <td>`template`</td>
-      <td>`''`</td>
-      <td>
-        <p>
-        Reference to a template for this view.
-        </p>
-
-        <p>
-        Much like the `model` attribute, this is a convenience attribute that has no default behavior of its own. It's only provided as a convention to allow you to store whatever you wish to use as a template, whether that's an HTML string, a `Y.Node` instance, a Mustache template, or anything else your heart desires.
-        </p>
-
-        <p>
-        How this template gets used is entirely up to you and your custom `render()` method. See [[#Rendering a View]] for more details.
         </p>
       </td>
     </tr>
@@ -420,7 +422,7 @@ The ultimate goal of your `render()` function is to put some HTML into the view'
 </p>
 
 <p>
-You might choose to use plain old DOM manipulation to create the elements for your view, or you might store an HTML string in your view's `template` attribute and then render that, or you might even store a full-blown template (perhaps using <a href="http://www.handlebarsjs.com/">Handlebars</a> or <a href="http://mustache.github.com/">Mustache</a>). The View component intentionally avoids dictating how you render things, so you're free to do whatever you like best.
+You might choose to use plain old DOM manipulation to create the elements for your view, or you might store an HTML string in your view's `template` property and then render that, or you might even store a full-blown template (perhaps using <a href="http://www.handlebarsjs.com/">Handlebars</a> or <a href="http://mustache.github.com/">Mustache</a>). The View component intentionally avoids dictating how you render things, so you're free to do whatever you like best.
 </p>
 
 <p>

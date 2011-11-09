@@ -72,13 +72,35 @@ Y.View = Y.extend(View, Y.Base, {
     **/
     events: {},
 
+    /**
+    Template for this view.
+
+    This is a convenience property that has no default behavior of its own.
+    It's only provided as a convention to allow you to store whatever you
+    consider to be a template, whether that's an HTML string, a `Y.Node`
+    instance, a Mustache template, or anything else your little heart
+    desires.
+
+    How this template gets used is entirely up to you and your custom
+    `render()` method.
+
+    @property template
+    @type mixed
+    @default ''
+    **/
+    template: '',
+
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function (config) {
+        config || (config = {});
+
         this._attachedViewEvents = [];
+
+        config.template && (this.template = config.template);
 
         // Merge events from the config into events in `this.events`, then
         // attach the events to the container node.
-        this.events = config && config.events ?
+        this.events = config.events ?
                 Y.merge(this.events, config.events) : this.events;
 
         this.attachEvents(this.events);
@@ -277,26 +299,6 @@ Y.View = Y.extend(View, Y.Base, {
         **/
         modelList: {
             value: null
-        },
-
-        /**
-        Template for this view.
-
-        This is a convenience attribute that has no default behavior of its own.
-        It's only provided as a convention to allow you to store whatever you
-        consider to be a template, whether that's an HTML string, a `Y.Node`
-        instance, a Mustache template, or anything else your little heart
-        desires.
-
-        How this template gets used is entirely up to you and your custom
-        `render()` method.
-
-        @attribute template
-        @type mixed
-        @default ''
-        **/
-        template: {
-            value: ''
         }
     }
 });
