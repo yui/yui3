@@ -1,32 +1,19 @@
-var dd_events = [
-    'drag:drag',
-    'drag:drophit',
-    'drag:end',
-    'drag:start',
-    'drag:enter',
-    'drag:over',
-    'drop:over',
-    'drop:enter',
-    'drop:hit'
-],
-moveCount = 728,
-dropCount = 30;
+YUI.add('dd-tests', function(Y) {
 
+    var dd_events = [
+        'drag:drag',
+        'drag:drophit',
+        'drag:end',
+        'drag:start',
+        'drag:enter',
+        'drag:over',
+        'drop:over',
+        'drop:enter',
+        'drop:hit'
+    ],
+    moveCount = 728,
+    dropCount = 30;
 
-
-YUI({
-    base: '../../../build/',
-    //filter: 'DEBUG',
-    filter: 'RAW',
-    logExclude: {
-        'YUI': true,
-        Event: true,
-        Base: true,
-        Attribute: true,
-        augment: true,
-        useConsole: true
-    }
-}).use('event-synthetic', 'event-gestures', 'dd', 'console', 'test', 'substitute', 'selector-css3', function(Y) {
             
             if (Y.UA.ie) {
                 if (Y.UA.ie >= 9) {
@@ -40,10 +27,6 @@ YUI({
                 }
             }
 
-        var myConsole = new Y.Console({
-            height: Y.one(window).get('winHeight') + 'px',
-            width: '375px'
-        }).render();    
             
         var _count = {},
         _resetCount = function() {
@@ -378,6 +361,5 @@ YUI({
     
     suite.add(new Y.Test.Case(template));
     Y.Test.Runner.add(suite);
-    Y.Test.Runner.run();
 });
 
