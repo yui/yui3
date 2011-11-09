@@ -123,8 +123,8 @@ Y.mix(Y_DOM, {
                     scrollLeft,
                     scrollTop,
                     box,
-                    off1, off2,
-                    bLeft, bTop,
+                    offX,
+                    offY,
                     mode,
                     doc,
                     inDoc,
@@ -144,37 +144,16 @@ Y.mix(Y_DOM, {
                     if (inDoc) {
                         scrollLeft = (SCROLL_NODE) ? doc[SCROLL_NODE].scrollLeft : Y_DOM.docScrollX(node, doc);
                         scrollTop = (SCROLL_NODE) ? doc[SCROLL_NODE].scrollTop : Y_DOM.docScrollY(node, doc);
+                        offX = rootNode.clientLeft;
+                        offY = rootNode.clientTop;
                         box = node[GET_BOUNDING_CLIENT_RECT]();
                         xy = [box.left, box.top];
 
-                            if (Y.UA.ie) {
-                                off1 = 2;
-                                off2 = 2;
-                                mode = doc[COMPAT_MODE];
-                                bLeft = Y_DOM[GET_COMPUTED_STYLE](doc[DOCUMENT_ELEMENT], BORDER_LEFT_WIDTH);
-                                bTop = Y_DOM[GET_COMPUTED_STYLE](doc[DOCUMENT_ELEMENT], BORDER_TOP_WIDTH);
-
-                                if (Y.UA.ie === 6) {
-                                    if (mode !== _BACK_COMPAT) {
-                                        off1 = 0;
-                                        off2 = 0;
-                                    }
-                                }
-                                
-                                if ((mode == _BACK_COMPAT)) {
-                                    if (bLeft !== MEDIUM) {
-                                        off1 = parseInt(bLeft, 10);
-                                    }
-                                    if (bTop !== MEDIUM) {
-                                        off2 = parseInt(bTop, 10);
-                                    }
-                                }
-                                
-                                xy[0] -= off1;
-                                xy[1] -= off2;
-
-                            }
-
+                        if (offX || offY) {
+                                xy[0] -= offX;
+                                xy[1] -= offY;
+                            
+                        }
                         if ((scrollTop || scrollLeft)) {
                             if (!Y.UA.ios || (Y.UA.ios >= 4.2)) {
                                 xy[0] += scrollLeft;
