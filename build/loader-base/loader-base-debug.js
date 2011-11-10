@@ -589,6 +589,8 @@ Y.Loader = function(o) {
 
     self._config(o);
 
+    self.forceMap = (self.force) ? Y.Array.hash(self.force) : {};	
+
     self.testresults = null;
 
     if (Y.config.tests) {
