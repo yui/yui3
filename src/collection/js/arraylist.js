@@ -147,8 +147,6 @@ ArrayListProto = {
  */
 ArrayListProto._item = ArrayListProto.item;
 
-//ArrayList.prototype  = ArrayListProto;
-
 Y.mix(ArrayList.prototype, ArrayListProto);
 
 Y.mix( ArrayList, {
