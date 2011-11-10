@@ -3453,7 +3453,7 @@ var ua = Y.UA,
             i;
 
         if (custAttrs) {
-            Y.mix(attr, custAttrs);
+            Y.mix(attr, custAttrs, true);
         }
 
         for (i in attr) {
@@ -7126,10 +7126,17 @@ Y.log('attempting to load ' + s[i] + ', ' + self.base, 'info', 'loader');
                 if (m.type === CSS) {
                     fn = Y.Get.css;
                     attr = self.cssAttributes;
+                    if (m.cssAttributes) {
+                        attr = Y.mix(attr || {}, m.cssAttributes);
+                    }
                 } else {
                     fn = Y.Get.script;
                     attr = self.jsAttributes;
+                    if (m.jsAttributes) {
+                        attr = Y.mix(attr || {}, m.jsAttributes);
+                    }
                 }
+                console.log(attr);
 
                 url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :
                       self._url(m.path, s[i], group.base || m.base);

@@ -3440,7 +3440,7 @@ var ua = Y.UA,
             i;
 
         if (custAttrs) {
-            Y.mix(attr, custAttrs);
+            Y.mix(attr, custAttrs, true);
         }
 
         for (i in attr) {
