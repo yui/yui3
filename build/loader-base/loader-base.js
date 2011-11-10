@@ -589,6 +589,8 @@ Y.Loader = function(o) {
 
     self._config(o);
 
+    self.forceMap = (self.force) ? Y.Array.hash(self.force) : {};	
+
     self.testresults = null;
 
     if (Y.config.tests) {
@@ -1420,8 +1422,12 @@ Y.Loader.prototype = {
             } else {
                 oeach(cond, function(def, condmod) {
                     if (!hash[condmod]) {
+                        //first see if they've specfied a ua check
+                        //then see if they've got a test fn & if it returns true
+                        //otherwise just having a condition block is enough
                         go = def && ((def.ua && Y.UA[def.ua]) ||
-                                     (def.test && def.test(Y, r)));
+                                     (def.test && def.test(Y, r)) ||
+                                     (true));
                         if (go) {
                             hash[condmod] = true;
                             d.push(condmod);
@@ -2281,9 +2287,15 @@ Y.Loader.prototype = {
                 if (m.type === CSS) {
                     fn = Y.Get.css;
                     attr = self.cssAttributes;
+                    if (m.cssAttributes) {
+                        attr = Y.mix(attr || {}, m.cssAttributes);
+                    }
                 } else {
                     fn = Y.Get.script;
                     attr = self.jsAttributes;
+                    if (m.jsAttributes) {
+                        attr = Y.mix(attr || {}, m.jsAttributes);
+                    }
                 }
 
                 url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :
