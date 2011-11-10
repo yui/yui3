@@ -147,9 +147,9 @@ ArrayListProto = {
  */
 ArrayListProto._item = ArrayListProto.item;
 
-ArrayList.prototype  = ArrayListProto;
+//ArrayList.prototype  = ArrayListProto;
 
-ArrayList.prototype.constructor  = ArrayList;
+Y.mix(ArrayList.prototype, ArrayListProto);
 
 Y.mix( ArrayList, {
 
