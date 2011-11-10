@@ -863,11 +863,9 @@ with any configuration info required for the module.
                         req = m.details.requires;
                         use = m.details.use;
                     } else {
-                        use = Env.aliases[name];
-
                         // CSS files don't register themselves, see if it has
                         // been loaded
-                        if (!use && !G_ENV._loaded[VERSION][name]) {
+                        if (!G_ENV._loaded[VERSION][name]) {
                             missing.push(name);
                         } else {
                             used[name] = true; // probably css
