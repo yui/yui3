@@ -7076,7 +7076,6 @@ Y.Loader.prototype = {
                         attr = Y.mix(attr || {}, m.jsAttributes);
                     }
                 }
-                console.log(attr);
 
                 url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :
                       self._url(m.path, s[i], group.base || m.base);
