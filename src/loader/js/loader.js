@@ -1345,8 +1345,8 @@ Y.Loader.prototype = {
                         //then see if they've got a test fn & if it returns true
                         //otherwise just having a condition block is enough
                         go = def && ((def.ua && Y.UA[def.ua]) ||
-                                     (def.test && def.test(Y, r)) ||
-                                     (true));
+                                    (def.test && def.test(Y, r)));
+
                         if (go) {
                             hash[condmod] = true;
                             d.push(condmod);
