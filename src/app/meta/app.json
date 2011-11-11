@@ -1,11 +1,10 @@
 {
     "app": {
-        "use": ["controller", "model", "model-list", "view"],
+        "use": ["model", "model-list", "router", "view"],
 
         "submodules": {
             "controller": {
-                "optional": ["querystring-parse"],
-                "requires": ["array-extras", "base-build", "history"]
+                "use": ["router"]
             },
 
             "model": {
@@ -22,6 +21,11 @@
                     "json-parse",
                     "model"
                 ]
+            },
+
+            "router": {
+                "optional": ["querystring-parse"],
+                "requires": ["array-extras", "base-build", "history"]
             },
 
             "view": {

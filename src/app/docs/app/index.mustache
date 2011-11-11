@@ -1,6 +1,6 @@
 <div class="intro">
 <p>
-The YUI App Framework is a rollup of the <a href="../controller/index.html">Controller</a>, <a href="../model/index.html">Model</a>, <a href="../model-list/index.html">Model List</a>, and <a href="../view/index.html">View</a> components, combined to form a simple MVC-style framework for writing single-page JavaScript applications.
+The YUI App Framework is a rollup of the <a href="../model/index.html">Model</a>, <a href="../model-list/index.html">Model List</a>, <a href="../router/index.html">Router</a>, and <a href="../view/index.html">View</a> components, combined to form a simple MVC-style framework for writing single-page JavaScript applications.
 </p>
 
 <p>
@@ -30,16 +30,6 @@ The `app` module is a rollup module consisting of the following individual compo
   </thead>
   <tbody>
     <tr>
-      <td><a href="../controller/index.html">Controller</a></td>
-      <td>`controller`</td>
-      <td>
-        <p>
-        Provides URL-based same-page routing using <a href="https://developer.mozilla.org/en/DOM/Manipulating_the_browser_history">HTML5 history</a> (`pushState`) or the location hash, depending on what the user's browser supports.
-        </p>
-      </td>
-    </tr>
-
-    <tr>
       <td><a href="../model/index.html">Model</a></td>
       <td>`model`</td>
       <td>
@@ -53,6 +43,16 @@ The `app` module is a rollup module consisting of the following individual compo
       <td>
         <p>
         An array-like ordered list of `Y.Model` instances with APIs for adding, removing, sorting, filtering, and performing other actions on models in the list. Acts as a bubble target for events fired by the models in the list.
+        </p>
+      </td>
+    </tr>
+
+    <tr>
+      <td><a href="../router/index.html">Router</a></td>
+      <td>`router`</td>
+      <td>
+        <p>
+        Provides URL-based same-page routing using <a href="https://developer.mozilla.org/en/DOM/Manipulating_the_browser_history">HTML5 history</a> (`pushState`) or the location hash, depending on what the user's browser supports.
         </p>
       </td>
     </tr>

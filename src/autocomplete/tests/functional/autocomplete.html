@@ -14,17 +14,6 @@ var Y = YUI({
     allowRollup: false,
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
     modules: {
-        'test-console': {
-            fullpath : '../assets/test-console.js',
-            requires : ['console-filters'],
-            skinnable: true
-        },
-
-        'skin-sam-test-console': {
-            fullpath: '../assets/test-console.css',
-            type    : 'css'
-        },
-
         'autocomplete-test': {
             fullpath: 'autocomplete-test.js',
             requires: [
@@ -38,9 +27,9 @@ var Y = YUI({
         'autocomplete-test-data': {
             fullpath: 'autocomplete-test-data.js'
         }
-    },
-    useBrowserConsole: false
+    }
 }).use('autocomplete-test', 'test-console', function (Y) {
+    new Y.Test.Console().render('#log');
     Y.Test.Runner.run();
 });
 </script>

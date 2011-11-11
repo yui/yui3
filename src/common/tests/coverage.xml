@@ -60,5 +60,10 @@
         <!-- This test hangs on the CI system.
              <url>json/tests/json.html</url>
         -->
+        <url>oop/tests/oop.html</url>
+        <url>pjax/tests/pjax.html</url>
+        <!-- This test hangs on the CI system.
+            <url>parallel/tests/index.html</url>
+        -->
     </tests>
 </yuitest>
