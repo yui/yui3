@@ -151,8 +151,8 @@ Y.extend(NumericAxis, Y.AxisType,
     _updateMinAndMax: function()
     {
         var data = this.get("data"),
-            max = 0,
-            min = 0,
+            max, 
+            min,
             len,
             num,
             i = 0,
@@ -186,8 +186,32 @@ Y.extend(NumericAxis, Y.AxisType,
                         min = setMin ? this._setMinimum : min;
                         continue;
                     }
-                    max = setMax ? this._setMaximum : Math.max(num, max);
-                    min = setMin ? this._setMinimum : Math.min(num, min);
+                    
+                    if(setMin)
+                    {
+                        min = this._setMinimum;
+                    }
+                    else if(min === undefined)
+                    {
+                        min = num;
+                    }
+                    else
+                    {
+                        min = Math.min(num, min); 
+                    }
+                    if(setMax)
+                    {
+                        max = this._setMaximum;
+                    }
+                    else if(max === undefined)
+                    {
+                        max = num;
+                    }
+                    else
+                    {
+                        max = Math.max(num, max);
+                    }
+                    
                     this._actualMaximum = max;
                     this._actualMinimum = min;
                 }
