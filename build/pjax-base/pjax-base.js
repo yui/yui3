@@ -16,7 +16,10 @@ PjaxBase.prototype = {
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function () {
         this.publish(EVT_NAVIGATE, {defaultFn: this._defNavigateFn});
-        this._pjaxBindUI();
+
+        if (this.get('html5')) {
+            this._pjaxBindUI();
+        }
     },
 
     destructor: function () {
@@ -71,7 +74,7 @@ PjaxBase.prototype = {
     },
 
     _pjaxBindUI: function () {
-        if (this.get('html5')) {
+        if (!this._pjaxEvents) {
             this._pjaxEvents = Y.one('body').delegate('click',
                 this._onLinkClick, this.get('linkSelector'), this);
         }
