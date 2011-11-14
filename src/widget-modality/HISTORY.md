@@ -1,6 +1,13 @@
 Widget Modality Change History
 ==============================
 
+3.5.0
+-----
+
+  * Initialization logic will now always run, even when a widget is constructed
+    with `{modal: false}`; previously the initialization logic did not run in
+    this case. [Ticket #2531401]
+
 3.4.1
 -----
 

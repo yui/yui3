@@ -1,0 +1,10 @@
+{
+    "test-console": {
+        "requires": [
+            "console-filters",
+            "test"
+        ],
+
+        "skinnable": true
+    }
+}

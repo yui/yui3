@@ -13,7 +13,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2011.10.12-20-24',
+            GALLERY_VERSION = 'gallery-2011.10.20-23-28',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -588,6 +588,8 @@ Y.Loader = function(o) {
     self._internal = false;
 
     self._config(o);
+
+    self.forceMap = (self.force) ? Y.Array.hash(self.force) : {};	
 
     self.testresults = null;
 
@@ -1420,8 +1422,12 @@ Y.Loader.prototype = {
             } else {
                 oeach(cond, function(def, condmod) {
                     if (!hash[condmod]) {
+                        //first see if they've specfied a ua check
+                        //then see if they've got a test fn & if it returns true
+                        //otherwise just having a condition block is enough
                         go = def && ((def.ua && Y.UA[def.ua]) ||
-                                     (def.test && def.test(Y, r)));
+                                    (def.test && def.test(Y, r)));
+
                         if (go) {
                             hash[condmod] = true;
                             d.push(condmod);
@@ -2281,9 +2287,15 @@ Y.Loader.prototype = {
                 if (m.type === CSS) {
                     fn = Y.Get.css;
                     attr = self.cssAttributes;
+                    if (m.cssAttributes) {
+                        attr = Y.mix(attr || {}, m.cssAttributes);
+                    }
                 } else {
                     fn = Y.Get.script;
                     attr = self.jsAttributes;
+                    if (m.jsAttributes) {
+                        attr = Y.mix(attr || {}, m.jsAttributes);
+                    }
                 }
 
                 url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :

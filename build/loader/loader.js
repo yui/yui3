@@ -13,7 +13,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2011.10.12-20-24',
+            GALLERY_VERSION = 'gallery-2011.10.20-23-28',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -588,6 +588,8 @@ Y.Loader = function(o) {
     self._internal = false;
 
     self._config(o);
+
+    self.forceMap = (self.force) ? Y.Array.hash(self.force) : {};	
 
     self.testresults = null;
 
@@ -1420,8 +1422,12 @@ Y.Loader.prototype = {
             } else {
                 oeach(cond, function(def, condmod) {
                     if (!hash[condmod]) {
+                        //first see if they've specfied a ua check
+                        //then see if they've got a test fn & if it returns true
+                        //otherwise just having a condition block is enough
                         go = def && ((def.ua && Y.UA[def.ua]) ||
-                                     (def.test && def.test(Y, r)));
+                                    (def.test && def.test(Y, r)));
+
                         if (go) {
                             hash[condmod] = true;
                             d.push(condmod);
@@ -2281,9 +2287,15 @@ Y.Loader.prototype = {
                 if (m.type === CSS) {
                     fn = Y.Get.css;
                     attr = self.cssAttributes;
+                    if (m.cssAttributes) {
+                        attr = Y.mix(attr || {}, m.cssAttributes);
+                    }
                 } else {
                     fn = Y.Get.script;
                     attr = self.jsAttributes;
+                    if (m.jsAttributes) {
+                        attr = Y.mix(attr || {}, m.jsAttributes);
+                    }
                 }
 
                 url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :
@@ -2488,8 +2500,6 @@ Y.Loader.prototype._rollup = function() {
                 }
             }
         }
-
-        this.forceMap = (this.force) ? Y.Array.hash(this.force) : {};
     }
 
     // make as many passes as needed to pick up rollup rollups
@@ -2621,9 +2631,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "app": {
         "use": [
-            "controller", 
             "model", 
             "model-list", 
+            "router", 
             "view"
         ]
     }, 
@@ -2923,13 +2933,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "skinnable": true
     }, 
     "controller": {
-        "optional": [
-            "querystring-parse"
-        ], 
-        "requires": [
-            "array-extras", 
-            "base-build", 
-            "history"
+        "use": [
+            "router"
         ]
     }, 
     "cookie": {
@@ -3738,6 +3743,21 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "trigger": "graphics"
         }
     }, 
+    "handlebars": {
+        "use": [
+            "handlebars-compiler"
+        ]
+    }, 
+    "handlebars-base": {
+        "requires": [
+            "escape"
+        ]
+    }, 
+    "handlebars-compiler": {
+        "requires": [
+            "handlebars-base"
+        ]
+    }, 
     "highlight": {
         "use": [
             "highlight-base", 
@@ -4071,8 +4091,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "pjax-base": {
         "requires": [
             "classnamemanager", 
-            "controller", 
-            "node-event-delegate"
+            "node-event-delegate", 
+            "router"
         ]
     }, 
     "pjax-plugin": {
@@ -4226,6 +4246,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "get", 
             "features"
+        ]
+    }, 
+    "router": {
+        "optional": [
+            "querystring-parse"
+        ], 
+        "requires": [
+            "array-extras", 
+            "base-build", 
+            "history"
         ]
     }, 
     "scrollview": {
@@ -4403,6 +4433,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-custom", 
             "substitute", 
             "json-stringify"
+        ], 
+        "skinnable": true
+    }, 
+    "test-console": {
+        "requires": [
+            "console-filters", 
+            "test"
         ], 
         "skinnable": true
     }, 
@@ -4624,7 +4661,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'c4899f419139fb547b7304796951b273';
+YUI.Env[Y.version].md5 = '7f3e2a182ac855f60af5ab295f71fefe';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

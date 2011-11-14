@@ -63,9 +63,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "app": {
         "use": [
-            "controller", 
             "model", 
             "model-list", 
+            "router", 
             "view"
         ]
     }, 
@@ -365,13 +365,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "skinnable": true
     }, 
     "controller": {
-        "optional": [
-            "querystring-parse"
-        ], 
-        "requires": [
-            "array-extras", 
-            "base-build", 
-            "history"
+        "use": [
+            "router"
         ]
     }, 
     "cookie": {
@@ -1180,6 +1175,21 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "trigger": "graphics"
         }
     }, 
+    "handlebars": {
+        "use": [
+            "handlebars-compiler"
+        ]
+    }, 
+    "handlebars-base": {
+        "requires": [
+            "escape"
+        ]
+    }, 
+    "handlebars-compiler": {
+        "requires": [
+            "handlebars-base"
+        ]
+    }, 
     "highlight": {
         "use": [
             "highlight-base", 
@@ -1513,8 +1523,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "pjax-base": {
         "requires": [
             "classnamemanager", 
-            "controller", 
-            "node-event-delegate"
+            "node-event-delegate", 
+            "router"
         ]
     }, 
     "pjax-plugin": {
@@ -1668,6 +1678,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "get", 
             "features"
+        ]
+    }, 
+    "router": {
+        "optional": [
+            "querystring-parse"
+        ], 
+        "requires": [
+            "array-extras", 
+            "base-build", 
+            "history"
         ]
     }, 
     "scrollview": {
@@ -1845,6 +1865,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-custom", 
             "substitute", 
             "json-stringify"
+        ], 
+        "skinnable": true
+    }, 
+    "test-console": {
+        "requires": [
+            "console-filters", 
+            "test"
         ], 
         "skinnable": true
     }, 
@@ -2066,4 +2093,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'c4899f419139fb547b7304796951b273';
+YUI.Env[Y.version].md5 = '7f3e2a182ac855f60af5ab295f71fefe';
