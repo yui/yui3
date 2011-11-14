@@ -87,6 +87,8 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
         this._viewInfoMap = {};
 
         this.after('activeViewChange', this._afterActiveViewChange);
+
+        this._pjaxBindUI();
     },
 
     // -- Public Methods -------------------------------------------------------
