@@ -84,11 +84,7 @@ div#demo .yui3-hd {
     margin:0;
     padding:0.5em 1em;
 }
-/*
-div#demo div.yui3-bd p {
-    margin:0.3em 10px 0 0;  right margin for scrollbar space 
-}
-*/
+
 div#demo .yui3-bd p em {
     font-weight:bold;
 }
@@ -98,48 +94,12 @@ div#demo a.yui3-remove {
     background-position:0 0;  /* "X" icon */
 }
 
-/* scroll example 
-#demo.yui3-scroll {
-    position: relative;
-}
-*/
 .yui3-scroll .yui3-hd {
     position: relative;
 }
 .yui3-scroll .yui3-bd {
     height:10em;
     overflow:hidden;
-}
-
-#demo .yui3-hd .yui3-scroll-controls { /* fake scrollbar */
-    background:#dfdfdf;
-    border-left:1px solid #7a97bb;
-    height:10em;
-    width:13px;
-    position:absolute;
-    right:0;
-    bottom:-10.1em;
-    overflow:hidden;
-}
-
-#demo .yui3-hd .yui3-scroll-controls a {
-    margin: 0;
-    position:absolute;
-    top:0;
-    right:0;
-    height:14px;
-    width:14px;
-    Xborder:1px solid #000;
-}
-
-#demo .yui3-scroll-controls a.yui3-scrollup {
-    background-position:-12px -752px; /* scroll up icon */
-}
-
-#demo .yui3-scroll-controls a.yui3-scrolldown {
-    background-position:-12px -804px; /* scroll down icon */
-    top:auto;
-    bottom:0;
 }
 
 /* reverse and easing examples */
