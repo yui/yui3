@@ -137,6 +137,7 @@ YUI.add('loader-tests', function(Y) {
             test.wait();
 
         },
+        /* Commenting out until bug #2531436 get's completed.
         test_module_attrs: function() {
             var test = this;
         
@@ -166,6 +167,7 @@ YUI.add('loader-tests', function(Y) {
 
             test.wait();
         },
+        */
         test_forcemap: function() {
             var test = this;
 
