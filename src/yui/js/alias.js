@@ -1,6 +1,6 @@
 YUI.Env.aliases = {
     "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
-    "app": ["app-base","model","model-list","router","view"],
+    "app": ["app-base","app-transitions","model","model-list","router","view"],
     "attribute": ["attribute-base","attribute-complex"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
@@ -20,6 +20,7 @@ YUI.Env.aliases = {
     "event": ["event-base","event-delegate","event-synthetic","event-mousewheel","event-mouseenter","event-key","event-focus","event-resize","event-hover","event-outside"],
     "event-custom": ["event-custom-base","event-custom-complex"],
     "event-gestures": ["event-flick","event-move"],
+    "handlebars": ["handlebars-compiler"],
     "highlight": ["highlight-base","highlight-accentfold"],
     "history": ["history-base","history-hash","history-hash-ie","history-html5"],
     "io": ["io-base","io-xdr","io-form","io-upload-iframe","io-queue"],

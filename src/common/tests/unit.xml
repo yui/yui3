@@ -40,6 +40,7 @@
         <url>dd/tests/index.html</url>
         <url>dial/tests/dial.html</url>
         <url>dom/tests/dom.html</url>
+        <url>dom/tests/dom-base.html</url>
         <url>dom/tests/selector.html</url>
         <url>dump/tests/dump.html</url>
 	<url>editor/tests/editor.html</url>
@@ -55,6 +56,7 @@
         <url>event/tests/focusblur.html</url>
         <url>yui/tests/get.html</url>
         <url>graphics/tests/graphics.html</url>
+        <url>handlebars/tests/handlebars.html</url>
         <url>highlight/tests/functional/highlight.html</url>
         <url>history/tests/functional/history-base.html</url>
         <!-- history-hash doesn't work properly with Selenium. Bug #2530385.
@@ -86,7 +88,7 @@
         <url>loader/tests/index.html</url>
         <url>scrollview/tests/scrollview-list-unit-test.html</url>
         <url>panel/tests/unit-tests.html</url>
-        <url>widget-buttons/tests/unit-tests.html</url>
+        <url>widget-buttons/tests/widget-buttons.html</url>
         <url>widget-position-align/tests/widget-position-align.html</url>
         <!--
         <url>test/tests/testformat.html</url>

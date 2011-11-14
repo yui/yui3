@@ -53,47 +53,52 @@ YUI.add('frame', function(Y) {
         * @return {Object} Hash table containing references to the new Document & Window
         */
         _create: function(cb) {
-            var win, doc, res, node;
+            var win, doc, res, node, html = '',
+                extra_css = ((this.get('extracss')) ? '<style id="extra_css">' + this.get('extracss') + '</style>' : '');
             
             this._iframe = Y.Node.create(Frame.HTML);
             this._iframe.setStyle('visibility', 'hidden');
             this._iframe.set('src', this.get('src'));
             this.get('container').append(this._iframe);
 
+            //if the src attr is different than the default, don't create the document
+            var create = (this.get('src') === Frame.ATTRS.src.value);
+
             this._iframe.set('height', '99%');
 
-            
-            var html = '',
-                extra_css = ((this.get('extracss')) ? '<style id="extra_css">' + this.get('extracss') + '</style>' : '');
+            if (create) {
+                Y.log('Creating the document from javascript', 'info', 'frame');
+                html = Y.substitute(Frame.PAGE_HTML, {
+                    DIR: this.get('dir'),
+                    LANG: this.get('lang'),
+                    TITLE: this.get('title'),
+                    META: Frame.META,
+                    LINKED_CSS: this.get('linkedcss'),
+                    CONTENT: this.get('content'),
+                    BASE_HREF: this.get('basehref'),
+                    DEFAULT_CSS: Frame.DEFAULT_CSS,
+                    EXTRA_CSS: extra_css
+                });
+                if (Y.config.doc.compatMode != 'BackCompat') {
+                    Y.log('Adding Doctype to frame: ' + Frame.getDocType(), 'info', 'frame');
+                    
+                    //html = Frame.DOC_TYPE + "\n" + html;
+                    html = Frame.getDocType() + "\n" + html;
+                } else {
+                    Y.log('DocType skipped because we are in BackCompat Mode.', 'warn', 'frame');
+                }
 
-            Y.log('Creating the document from javascript', 'info', 'frame');
-            html = Y.substitute(Frame.PAGE_HTML, {
-                DIR: this.get('dir'),
-                LANG: this.get('lang'),
-                TITLE: this.get('title'),
-                META: Frame.META,
-                LINKED_CSS: this.get('linkedcss'),
-                CONTENT: this.get('content'),
-                BASE_HREF: this.get('basehref'),
-                DEFAULT_CSS: Frame.DEFAULT_CSS,
-                EXTRA_CSS: extra_css
-            });
-            if (Y.config.doc.compatMode != 'BackCompat') {
-                Y.log('Adding Doctype to frame: ' + Frame.getDocType(), 'info', 'frame');
-                
-                //html = Frame.DOC_TYPE + "\n" + html;
-                html = Frame.getDocType() + "\n" + html;
-            } else {
-                Y.log('DocType skipped because we are in BackCompat Mode.', 'warn', 'frame');
+                Y.log('Injecting content into iframe', 'info', 'frame');
             }
 
-            Y.log('Injecting content into iframe', 'info', 'frame');
-
-
             res = this._resolveWinDoc();
-            res.doc.open();
-            res.doc.write(html);
-            res.doc.close();
+
+            if (html) {
+                Y.log('Writing HTML to new document', 'info', 'frame');
+                res.doc.open();
+                res.doc.write(html);
+                res.doc.close();
+            }
 
             if (!res.doc.documentElement) {
                 Y.log('document.documentElement was not found, running timer', 'warn', 'frame');
@@ -2532,7 +2537,7 @@ YUI.add('exec-command', function(Y) {
                             }
                             range.select();
                         }
-                    } else if (Y.UA.ie) {
+                    } else if (Y.UA.ie && Y.UA.ie < 9) {
                         par = inst.one(sel._selection.parentElement());
                         if (par.test('p')) {
                             if (par && par.hasAttribute(DIR)) {

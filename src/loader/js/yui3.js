@@ -64,6 +64,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "app": {
         "use": [
             "app-base", 
+            "app-transitions", 
             "model", 
             "model-list", 
             "router", 
@@ -75,8 +76,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "classnamemanager", 
             "pjax-base", 
             "router", 
-            "transition", 
             "view"
+        ]
+    }, 
+    "app-transitions": {
+        "requires": [
+            "app-base", 
+            "transition"
         ]
     }, 
     "array-extras": {
@@ -1185,6 +1191,21 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "trigger": "graphics"
         }
     }, 
+    "handlebars": {
+        "use": [
+            "handlebars-compiler"
+        ]
+    }, 
+    "handlebars-base": {
+        "requires": [
+            "escape"
+        ]
+    }, 
+    "handlebars-compiler": {
+        "requires": [
+            "handlebars-base"
+        ]
+    }, 
     "highlight": {
         "use": [
             "highlight-base", 
@@ -2088,4 +2109,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '560ec3b825cf445b3c538820288d5d0a';
+YUI.Env[Y.version].md5 = 'c0b46136b92c1358e6010550fcdefca7';

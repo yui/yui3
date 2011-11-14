@@ -14,8 +14,8 @@ suite = new Y.Test.Suite('Test Console');
 suite.add(new Y.Test.Case({
     name: 'General',
 
-    'this test should fail with a forced failure': function () {
-        Assert.fail();
+    'this test should fail': function () {
+        Assert.areSame('foo bar baz', 'moo mar maz');
     },
 
     'this test should fail with an unexpected error': function () {

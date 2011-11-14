@@ -57,6 +57,7 @@
     "app": {
         "use": [
             "app-base", 
+            "app-transitions", 
             "model", 
             "model-list", 
             "router", 
@@ -68,8 +69,13 @@
             "classnamemanager", 
             "pjax-base", 
             "router", 
-            "transition", 
             "view"
+        ]
+    }, 
+    "app-transitions": {
+        "requires": [
+            "app-base", 
+            "transition"
         ]
     }, 
     "array-extras": {
@@ -1112,6 +1118,21 @@
             "test": "graphics-vml.js", 
             "trigger": "graphics"
         }
+    }, 
+    "handlebars": {
+        "use": [
+            "handlebars-compiler"
+        ]
+    }, 
+    "handlebars-base": {
+        "requires": [
+            "escape"
+        ]
+    }, 
+    "handlebars-compiler": {
+        "requires": [
+            "handlebars-base"
+        ]
     }, 
     "highlight": {
         "use": [
