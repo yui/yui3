@@ -1,14 +1,7 @@
-var win          = Y.config.win,
-    originalRoot = getRoot(),
+var win = Y.config.win,
 
     CLASS_PJAX   = Y.ClassNameManager.getClassName('pjax'),
     EVT_NAVIGATE = 'navigate';
-
-function getRoot() {
-    var segments = (win && win.location.pathname.split('/')) || [];
-    segments.pop();
-    return segments.join('/');
-}
 
 // PjaxBase is a mixin for Router.
 function PjaxBase() {}
@@ -20,7 +13,6 @@ PjaxBase.prototype = {
 
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function () {
-        this._pjaxRoot = originalRoot;
         this.publish(EVT_NAVIGATE, {defaultFn: this._defNavigateFn});
         this._pjaxBindUI();
     },
@@ -38,7 +30,11 @@ PjaxBase.prototype = {
     },
 
     // -- Protected Prototype Methods ------------------------------------------
-    _getRoot: getRoot,
+    _getRoot: function () {
+        var segments = (win && win.location.pathname.split('/')) || [];
+        segments.pop();
+        return segments.join('/');
+    },
 
     _normalizePath: function (path) {
         var dots  = '..',
@@ -79,8 +75,8 @@ PjaxBase.prototype = {
         }
     },
 
-    _resolvePath: function (path) {
-        var root = this._pjaxRoot;
+    _resolvePath: function (path, root) {
+        root || (root = this._getRoot());
 
         if (!path) {
             return root;
@@ -95,9 +91,12 @@ PjaxBase.prototype = {
     },
 
     _resolveUrl: function (url) {
-        var self        = this,
-            resolved    = self._resolved,
-            resolvedUrl = resolved[url];
+        var self = this,
+            root = self._getRoot(),
+            resolved, resolvedUrl;
+
+        resolved    = self._resolved[root] || (self._resolved[root] = {});
+        resolvedUrl = resolved[url];
 
         if (resolvedUrl) {
             return resolvedUrl;
@@ -108,7 +107,7 @@ PjaxBase.prototype = {
                 return match;
             }
 
-            return (prefix || '') + self._resolvePath(path) + (suffix || '');
+            return (prefix || '') + self._resolvePath(path, root) + (suffix || '');
         }
 
         // Cache resolved URL.
