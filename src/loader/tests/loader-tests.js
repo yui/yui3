@@ -168,6 +168,34 @@ YUI.add('loader-tests', function(Y) {
             test.wait();
         },
         */
+        test_iter: function() {
+            var test = this;
+
+            YUI({
+                filter: 'debug',
+                gallery: 'gallery-2010.08.04-19-46'
+            }).use('node', 'base', 'gallery-port', 'yui2-yahoo', function(Y) {
+                Assert.isFunction(Y.Base, 'Y.Base did not load');
+                Assert.isUndefined(Y.LOADED, 'Callback executed twice.');
+                Y.LOADED = true;
+            });                                                                                                                                 
+            
+            YUI({
+                filter: 'debug',
+                gallery: 'gallery-2010.08.18-17-12',
+                '2in3': '1',
+                'yui2': '2.7.0'
+            }).use('gallery-treeview', 'yui2-dom', function(Y) {
+                test.resume(function() {
+                    Assert.isObject(Y.YUI2.util.Dom, 'YUI2 DOM did not load.');
+                    Assert.isFunction(Y.apm.TreeView, 'Treeview gallery module did not load.');
+                    Assert.isUndefined(Y.LOADED, 'Callback executed twice.');
+                    Y.LOADED = true;
+                });
+            });                                                                                                                                 
+            
+            test.wait();
+        },
         test_forcemap: function() {
             var test = this;
 
