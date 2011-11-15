@@ -5,7 +5,11 @@ Provides a top-level application component which manages navigation and views.
 @since 3.5.0
 **/
 
-var Lang = Y.Lang,
+var Lang   = Y.Lang,
+    Router = Y.Router,
+
+    win = Y.config.win,
+
     App;
 
 /**
@@ -88,7 +92,11 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
 
         this.after('activeViewChange', this._afterActiveViewChange);
 
-        this._pjaxBindUI();
+        // PjaxBase will bind click events when `html5` is `true`, so this just
+        // forces the binding when `serverRouting` and `html5` are both `false`.
+        if (!this.get('serverRouting')) {
+            this._pjaxBindUI();
+        }
     },
 
     // -- Public Methods -------------------------------------------------------
@@ -238,6 +246,45 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
     },
 
     // -- Protected Methods ----------------------------------------------------
+
+    /**
+    Will either save a history entry using `pushState()` or the location hash,
+    or gracefully-degrade to sending a request to the server causing a full-page
+    reload.
+
+    Overrides Router's `_save()` method to preform graceful-degradation when the
+    app's `serverRouting` is `true` and `html5` is `false` by updating the full
+    URL via standard assignment to `window.location` or by calling
+    `window.location.replace()`; both of which will cause a request to the
+    server resulting in a full-page reload.
+
+    Otherwise this will just delegate off to Router's `_save()` method allowing
+    the client-side enhanced routing to occur.
+
+    @method _save
+    @param {String} [url] URL for the history entry.
+    @param {Boolean} [replace=false] If `true`, the current history entry will
+      be replaced instead of a new one being added.
+    @see Router._save()
+    @chainable
+    @protected
+    **/
+    _save: function (url, replace) {
+        if (this.get('serverRouting') && !this.get('html5')) {
+            // Results in the URL's full path.
+            url = this._joinURL(url || '');
+
+            if (replace) {
+                win && win.location.replace(url);
+            } else {
+                win && (win.location = url);
+            }
+
+            return this;
+        }
+
+        return Router.prototype._save.apply(this, arguments);
+    },
 
     /**
     Determines if the `view` passed in is configured as a child of the `parent`
@@ -407,7 +454,7 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
 
         @attribute container
         @type HTMLElement|Node|String
-        @default "body"
+        @default `'body'`
         @initOnly
         **/
         container: {
@@ -419,7 +466,7 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
 
         @attribute viewContainer
         @type HTMLElement|Node|String
-        @default Y.Node.create('<div/>')
+        @default `Y.Node.create('<div/>')`
         @initOnly
         **/
         viewContainer: {
@@ -427,6 +474,7 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
                 return Y.Node.create('<div/>');
             },
 
+            // TODO: Change to `createViewContainer`?
             setter   : '_setViewContainer',
             writeOnce: 'initOnly'
         },
@@ -437,7 +485,7 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
 
         @attribute linkSelector
         @type String|Function
-        @default "a"
+        @default `'a'`
         **/
         linkSelector: {
             value: 'a'
@@ -456,6 +504,40 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
         **/
         activeView: {
             readOnly: true
+        },
+
+        /**
+        Whether or not this application's server is capable of routing requests
+        and rendering the initial state in the HTML responses.
+
+        Ideally you should always prefer full-path URLs (not /#/foo/), and want
+        full-page reloads when the client's browser is not capable of using the
+        HTML5 history APIs. For the sake of progressive-enhancement
+        (and graceful-degradation), this value defaults to `true`!
+
+        If this is a client-side-only app, setting this value to `false` will
+        cause all routing to be handled by this App.
+
+        **Note:** When this is set to `false`, full-path requests to the app's
+        server will still occur (unless `html5` is also forced to `false`) and
+        need to be handled; usually you can do this by simply sending an HTML
+        "shell" page back to the client with the app's JavaScript code.
+
+        You should feel bad about hurting our precious web if you forcefully set
+        either `serverRouting` or `html5` to `false`, and if you're setting both
+        of them to `false` you *really* better know what you're doing and
+        understand the implications!
+
+        TODO: Rename to `serverRendering`?
+
+        @attribute serverRouting
+        @type Boolean
+        @default `true`
+        @initOnly
+        **/
+        serverRouting: {
+            value    : true,
+            writeOnce: 'initOnly'
         }
     },
 

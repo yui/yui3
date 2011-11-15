@@ -120,8 +120,10 @@
         Foo App
         **/
         fooApp = new Y.App({
-            root     : '/src/app/tests/manual/app/',
-            container: Y.one('#content'),
+            root         : '/src/app/tests/manual/app/',
+            html5        : false,
+            serverRouting: false,
+            container    : Y.one('#content'),
 
             views: {
                 home: {
