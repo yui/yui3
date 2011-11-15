@@ -11,7 +11,7 @@ var isNumber = Y.Lang.isNumber,
     isObject = Y.Lang.isObject,
 
     // List of events that comprise the IO event lifecycle.
-    EVENTS = ['start', 'complete', 'end', 'success', 'failure'],
+    EVENTS = ['start', 'complete', 'end', 'success', 'failure', 'progress', 'load'],
 
     // Whitelist of used XHR response object properties.
     XHR_PROPS = ['status', 'statusText', 'responseText', 'responseXML'],
@@ -192,7 +192,13 @@ IO.prototype = {
                     params.push(args);
                 }
             } else {
-                params.push(transaction.c);
+                if (eventName === EVENTS[5]) {
+                    params.push(transaction.p);
+                } else if (eventName === EVENTS[6]) {
+                    params.push(transaction.ld);
+                } else { 
+                    params.push(transaction.c);
+                }
                 if (args) {
                     params.push(args);
                 }
@@ -296,6 +302,16 @@ IO.prototype = {
         */
         this._evt(EVENTS[4], transaction, config);
         this.end(transaction, config);
+    },
+
+    progress: function(transaction, progress, config) {
+        transaction.p = progress;
+        this._evt(EVENTS[5], transaction, config);
+    },
+
+    loaded: function (transaction, loaded, config) {
+        transaction.ld = loaded;
+        this._evt(EVENTS[6], transaction, config);
     },
 
    /**
@@ -576,7 +592,7 @@ IO.prototype = {
 
         // Serialize an object into a key-value string using
         // querystring-stringify-simple.
-        if (isObject(data)) {
+        if (isObject(data) && (!window.FormData || !(data instanceof FormData))) {
             data = Y.QueryString.stringify(data);
         }
 
@@ -605,9 +621,11 @@ IO.prototype = {
                     // If Content-Type is defined in the configuration object, or
                     // or as a default header, it will be used instead of
                     // 'application/x-www-form-urlencoded; charset=UTF-8'
-                    config.headers = Y.merge({
-                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-                    }, config.headers);
+                    if (!window.FormData || (data && !(data instanceof FormData))) {
+                        config.headers = Y.merge({
+                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                        }, config.headers);
+                    }
                     break;
             }
         }
@@ -621,6 +639,16 @@ IO.prototype = {
             transaction.c.onreadystatechange = function() {
                 io._rS(transaction, config);
             };
+        }
+
+        if (transaction.c.upload) {
+            transaction.c.upload.addEventListener(EVENTS[5], function (progress) {
+                io.progress(transaction, progress, config);
+            }); 
+
+            transaction.c.upload.addEventListener(EVENTS[6], function (loaded) {
+                io.loaded(transaction, loaded, config);
+            });
         }
 
         try {
