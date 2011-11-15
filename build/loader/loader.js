@@ -2639,44 +2639,6 @@ Y.Loader.prototype = {
         }
 
         return resolved;
-    },
-    /**
-    * Returns an Object hash of hashes built from `loader.sorted` or from an arbitrary list of sorted modules.
-    * @method hash
-    * @private
-    * @param {Boolean} [calc=false] Perform a loader.calculate() before anything else
-    * @param {Array} [s=loader.sorted] An override for the loader.sorted array
-    * @return {Object} Object hash (js and css) of two object hashes of file lists, with the module name as the key
-    * @example This method can be used as an off-line dep calculator
-    *
-    *        var Y = YUI();
-    *        var loader = new Y.Loader({
-    *            filter: 'debug',
-    *            base: '../../',
-    *            root: 'build/',
-    *            combine: true,
-    *            require: ['node', 'dd', 'console']
-    *        });
-    *        var out = loader.hash(true);
-    *
-    */
-    hash: function(calc, s) {
-        var self = this, i, m, url, out = { js: {}, css: {} };
-
-        if (calc) {
-            self.calculate();
-        }
-        s = s || self.sorted;
-
-        for (i = 0; i < s.length; i++) {
-            m = self.getModule(s[i]);
-            if (m) {
-                url = self._filter(m.fullpath, m.name, '') || self._url(m.path, m.name);
-                out[m.type][m.name] = url;
-            }
-        }
-
-        return out;
     }
 };
 
