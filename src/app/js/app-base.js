@@ -5,12 +5,12 @@ Provides a top-level application component which manages navigation and views.
 @since 3.5.0
 **/
 
-var Lang   = Y.Lang,
-    Router = Y.Router,
-
-    win = Y.config.win,
-
+var Lang = Y.Lang,
+    win  = Y.config.win,
     App;
+
+// TODO: Use module-scoped references to Y.Router and Y.View because they are
+// referenced throughout this code?
 
 /**
 Provides a top-level application component which manages navigation and views.
@@ -93,7 +93,7 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
         this.after('activeViewChange', this._afterActiveViewChange);
 
         // PjaxBase will bind click events when `html5` is `true`, so this just
-        // forces the binding when `serverRouting` and `html5` are both `false`.
+        // forces the binding when `serverRouting` and `html5` are both falsy.
         if (!this.get('serverRouting')) {
             this._pjaxBindUI();
         }
@@ -248,6 +248,30 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
     // -- Protected Methods ----------------------------------------------------
 
     /**
+    Provides the default value for the `html5` attribute.
+
+    The value returned is dependent on the value of the `serverRouting`
+    attribute. When `serverRouting` is explicit set to `false` (not just falsy),
+    the default value for `html5` will be set to `false` for *all* browsers.
+
+    When `serverRouting` is `true` or `undefined` the returned value will be
+    dependent on the browser's capability of using HTML5 history.
+
+    @method _initHtml5
+    @return {Boolean} Whether or not HTML5 history should be used.
+    @protected
+    **/
+    _initHtml5: function () {
+        // When `serverRouting` is explictiy set to `false` (not just falsy),
+        // forced hash-based URLs in all browsers.
+        if (this.get('serverRouting') === false) {
+            return false;
+        } else {
+            return Y.Router.html5;
+        }
+    },
+
+    /**
     Will either save a history entry using `pushState()` or the location hash,
     or gracefully-degrade to sending a request to the server causing a full-page
     reload.
@@ -270,8 +294,9 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
     @protected
     **/
     _save: function (url, replace) {
+        // Forces full-path URLs to always be used.
         if (this.get('serverRouting') && !this.get('html5')) {
-            // Results in the URL's full path.
+            // Results in the URL's full path starting with '/'.
             url = this._joinURL(url || '');
 
             if (replace) {
@@ -283,7 +308,7 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
             return this;
         }
 
-        return Router.prototype._save.apply(this, arguments);
+        return Y.Router.prototype._save.apply(this, arguments);
     },
 
     /**
@@ -372,7 +397,7 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
         view.addTarget(this);
         viewInfo && (viewInfo.instance = view);
 
-        // TODO: Attach events?
+        // TODO: Attach events here?
 
         // Insert view into the DOM.
         viewContainer[prepend ? 'prepend' : 'append'](view.get('container'));
@@ -396,7 +421,7 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
         var viewInfo = this.getViewInfo(view) || {};
 
         if (viewInfo.preserve) {
-            // TODO: detach events?
+            // TODO: Detach events here?
             view.remove();
         } else {
             view.destroy();
@@ -474,7 +499,7 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
                 return Y.Node.create('<div/>');
             },
 
-            // TODO: Change to `createViewContainer`?
+            // TODO: Change to `createViewContainer()` to be like `create()`?
             setter   : '_setViewContainer',
             writeOnce: 'initOnly'
         },
@@ -507,38 +532,94 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
         },
 
         /**
-        Whether or not this application's server is capable of routing requests
-        and rendering the initial state in the HTML responses.
+        Whether or not this application's server is capable of properly routing
+        all requests and rendering the initial state in the HTML responses.
 
-        Ideally you should always prefer full-path URLs (not /#/foo/), and want
-        full-page reloads when the client's browser is not capable of using the
-        HTML5 history APIs. For the sake of progressive-enhancement
-        (and graceful-degradation), this value defaults to `true`!
+        This can have three different values, each having particular
+        implications on how the app will handle routing and navigation:
 
-        If this is a client-side-only app, setting this value to `false` will
-        cause all routing to be handled by this App.
+          * `undefined`: The best form of URLs will be chosen based on the
+            capabilities of the browser. Given no information about the server
+            environment a balanced approach to routing and navigation is chosen.
 
-        **Note:** When this is set to `false`, full-path requests to the app's
-        server will still occur (unless `html5` is also forced to `false`) and
-        need to be handled; usually you can do this by simply sending an HTML
-        "shell" page back to the client with the app's JavaScript code.
+            The server should be capable of handling full-path requests, since
+            full-URLs will be generated by browsers using HTML5 history. If this
+            is a client-side-only app the server could handle full-URL requests
+            using common URL-rewriting techniques to prevent 404 errors.
+
+          * `true`: The server is *fully* capable of properly handling requests
+            to all full-path URLs the app can produce.
+
+            This is the best option for progressive-enhancement because it will
+            cause *all URLs to always have full-paths*, which means the server
+            will be able to accurately handle all URLs this app produces. e.g.
+
+                http://example.com/user/1
+
+            To meet this strict full-URL requirement, browsers which are not
+            capable of using HTML5 history will make requests to the server
+            resulting in full-page reloads.
+
+          * `false`: The server is *not* capable of properly handling requests
+            to all full-path URLs the app can produce, therefore all routing
+            will be handled by this App instance.
+
+            Be aware that this will cause *all URLs to always be hash-based*,
+            even in browsers that are capable of using HTML5 history. e.g.
+
+                http://example.com/#/user/1
+
+            A single-page or client-side-only app where the server sends a
+            "shell" page with JavaScript to the client might have this
+            restriction. If you're setting this to `false`, read the following:
+
+        **Note:** When this is set to `false`, the server will *never* receive
+        the full URL because browsers do not send the fragment-part to the
+        server, that is everything after and including the '#'.
+
+        Consider the following example:
+
+            URL shown in browser: http://example.com/#/user/1
+            URL sent to server:   http://example.com/
 
         You should feel bad about hurting our precious web if you forcefully set
-        either `serverRouting` or `html5` to `false`, and if you're setting both
-        of them to `false` you *really* better know what you're doing and
-        understand the implications!
+        either `serverRouting` or `html5` to `false`, because you're basically
+        punching the web in the face here with your lossy URLs! Please make sure
+        you know what you're doing and that you understand the implications.
 
-        TODO: Rename to `serverRendering`?
+        Ideally you should always prefer full-path URLs (not /#/foo/), and want
+        full-page reloads when the client's browser is not capable of enhancing
+        the experience using the HTML5 history APIs. Setting this to `true` is
+        the best option for progressive-enhancement (and graceful-degradation).
 
         @attribute serverRouting
         @type Boolean
-        @default `true`
+        @default `undefined`
         @initOnly
         **/
         serverRouting: {
-            value    : true,
             writeOnce: 'initOnly'
-        }
+        },
+
+        /**
+        Whether or not this browser is capable of using HTML5 history.
+
+        This value is dependent on the value of `serverRouting` and will default
+        accordingly.
+
+        Setting this to `false` will force the use of hash-based history even on
+        HTML5 browsers, but please don't do this unless you understand the
+        consequences.
+
+        @attribute html5
+        @type Boolean
+        @initOnly
+        @see serverRouting
+        **/
+        html5: {
+            // TODO: Should this be a setter and not override Router's default?
+            valueFn: '_initHtml5'
+        },
     },
 
     CSS_CLASS      : Y.ClassNameManager.getClassName('app'),
