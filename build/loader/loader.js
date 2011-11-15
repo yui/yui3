@@ -1851,6 +1851,20 @@ Y.Loader.prototype = {
         self._finish(msg, success);
     },
     /**
+    * The default Loader onProgress handler, calls this.onProgress with a payload
+    * @method _onProgress
+    * @private
+    */
+    _onProgress: function(e) {
+        var self = this;
+        if (self.onProgress) {
+            self.onProgress.call(self.context, {
+                name: e.url,
+                data: e.data
+            });
+        }
+    },
+    /**
     * The default Loader onFailure handler, calls this.onFailure with a payload
     * @method _onFailure
     * @private
@@ -1964,6 +1978,7 @@ Y.Loader.prototype = {
         this.sorted = partial;
         this.insert(o, type, true);
     },
+
     /**
     * Handles the actual insertion of script/link tags
     * @method _insert
@@ -2004,10 +2019,12 @@ Y.Loader.prototype = {
             }
         }
 
+        //console.log('Resolved Modules: ', modules);
+
         var complete = function(d) {
             actions++;
             
-            if (d.data && d.data.length) {
+            if (d && d.data && d.data.length) {
                 for (var i = 0; i < d.data.length; i++) {
                     self.inserted[d.data[i].name] = true;
                 }
@@ -2019,6 +2036,15 @@ Y.Loader.prototype = {
             }
         };
 
+        this._loading = true;
+
+        if (!modules.js.length && !modules.css.length) {
+            actions = -1;
+            complete();
+            return;
+        }
+        
+
         if (modules.css.length) { //Load CSS first
             Y.Get.css(modules.css, {
                 data: modules.cssMods,
@@ -2029,7 +2055,10 @@ Y.Loader.prototype = {
                 context: self,
                 async: true,
                 onFailure: self._onFailure,
-                onTimeout: self._onTimeout,                
+                onTimeout: self._onTimeout,
+                onProgress: function(e) {
+                    self._onProgress.call(self, e);
+                },
                 onSuccess: complete
             });
         }
@@ -2043,12 +2072,15 @@ Y.Loader.prototype = {
                 autopurge: false,
                 context: self,
                 async: true,
+                onProgress: function(e) {
+                    self._onProgress.call(self, e);
+                },
                 onFailure: self._onFailure,
                 onTimeout: self._onTimeout,                
                 onSuccess: complete
             });
         }
-        
+
 
         /*
 

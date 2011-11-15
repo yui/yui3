@@ -1870,6 +1870,20 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         self._finish(msg, success);
     },
     /**
+    * The default Loader onProgress handler, calls this.onProgress with a payload
+    * @method _onProgress
+    * @private
+    */
+    _onProgress: function(e) {
+        var self = this;
+        if (self.onProgress) {
+            self.onProgress.call(self.context, {
+                name: e.url,
+                data: e.data
+            });
+        }
+    },
+    /**
     * The default Loader onFailure handler, calls this.onFailure with a payload
     * @method _onFailure
     * @private
@@ -1985,6 +1999,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         this.sorted = partial;
         this.insert(o, type, true);
     },
+
     /**
     * Handles the actual insertion of script/link tags
     * @method _insert
@@ -1995,7 +2010,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     */
     _insert: function(source, o, type, skipcalc) {
 
-// Y.log('private _insert() ' + (type || '') + ', ' + Y.id, "info", "loader");
+ Y.log('private _insert() ' + (type || '') + ', ' + Y.id, "info", "loader");
 
         // restore the state at the time of the request
         if (source) {
@@ -2026,10 +2041,12 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             }
         }
 
+        //console.log('Resolved Modules: ', modules);
+
         var complete = function(d) {
             actions++;
             
-            if (d.data && d.data.length) {
+            if (d && d.data && d.data.length) {
                 for (var i = 0; i < d.data.length; i++) {
                     self.inserted[d.data[i].name] = true;
                 }
@@ -2042,6 +2059,16 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             }
         };
 
+        this._loading = true;
+
+        if (!modules.js.length && !modules.css.length) {
+            Y.log('No modules resolved..', 'warn', 'loader');
+            actions = -1;
+            complete();
+            return;
+        }
+        
+
         if (modules.css.length) { //Load CSS first
             Y.log('Loading CSS modules', 'info', 'loader');
             Y.Get.css(modules.css, {
@@ -2053,7 +2080,10 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 context: self,
                 async: true,
                 onFailure: self._onFailure,
-                onTimeout: self._onTimeout,                
+                onTimeout: self._onTimeout,
+                onProgress: function(e) {
+                    self._onProgress.call(self, e);
+                },
                 onSuccess: complete
             });
         }
@@ -2068,12 +2098,15 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 autopurge: false,
                 context: self,
                 async: true,
+                onProgress: function(e) {
+                    self._onProgress.call(self, e);
+                },
                 onFailure: self._onFailure,
                 onTimeout: self._onTimeout,                
                 onSuccess: complete
             });
         }
-        
+
 
         /*
 
@@ -2148,8 +2181,8 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
      * @param {string} type the type of dependency to insert.
      */
     insert: function(o, type, skipsort) {
-        // Y.log('public insert() ' + (type || '') + ', ' +
-        //  Y.Object.keys(this.required), "info", "loader");
+         Y.log('public insert() ' + (type || '') + ', ' +
+         Y.Object.keys(this.required), "info", "loader");
         var self = this, copy = Y.merge(this);
         delete copy.require;
         delete copy.dirty;
