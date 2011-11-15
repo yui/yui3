@@ -176,7 +176,7 @@ ChartBase.prototype = {
     {
         var axis,
             axes = this.get("axes");
-        if(axes.hasOwnProperty(val))
+        if(axes && axes.hasOwnProperty(val))
         {
             axis = axes[val];
         }
@@ -310,6 +310,16 @@ ChartBase.prototype = {
     _axes: null,
 
     /**
+     * @method initializer
+     * @private
+     */
+    initializer: function()
+    {
+        this._axesRenderQueue = [];
+        this.after("dataProviderChange", this._dataProviderChangeHandler);
+    },
+
+    /**
      * @method renderUI
      * @private
      */
@@ -327,7 +337,7 @@ ChartBase.prototype = {
         }
         this._redraw();
     },
-    
+   
     /**
      * @property bindUI
      * @private
@@ -337,7 +347,6 @@ ChartBase.prototype = {
         this.after("tooltipChange", Y.bind(this._tooltipChangeHandler, this));
         this.after("widthChange", this._sizeChanged);
         this.after("heightChange", this._sizeChanged);
-        this.after("dataProviderChange", this._dataProviderChangeHandler);
         var tt = this.get("tooltip"),
             hideEvent = "mouseout",
             showEvent = "mouseover",
@@ -543,14 +552,17 @@ ChartBase.prototype = {
             axes = this.get("axes"),
             i,
             axis;
-        for(i in axes)
+        if(axes)
         {
-            if(axes.hasOwnProperty(i))
+            for(i in axes)
             {
-                axis = axes[i];
-                if(axis instanceof Y.Axis)
+                if(axes.hasOwnProperty(i))
                 {
-                    axis.set("dataProvider", dataProvider);
+                    axis = axes[i];
+                    if(axis instanceof Y.Axis)
+                    {
+                        axis.set("dataProvider", dataProvider);
+                    }
                 }
             }
         }

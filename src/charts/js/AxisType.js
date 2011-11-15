@@ -8,10 +8,10 @@
  */
 Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     /**
-     * @method bindUI
+     * @method initializer
      * @private
      */
-    bindUI: function()
+    initializer: function()
     {
         this.after("dataReady", Y.bind(this._dataChangeHandler, this));
         this.after("dataUpdate", Y.bind(this._dataChangeHandler, this));
@@ -19,13 +19,20 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
         this.after("maximumChange", Y.bind(this._keyChangeHandler, this));
         this.after("keysChange", this._keyChangeHandler);
         this.after("dataProviderChange", this._dataProviderChangeHandler);
+        this.after("alwaysShowZeroChange", this._keyChangeHandler);
+        this.after("roundingMethodChange", this._keyChangeHandler);
+    },
+
+    /**
+     * @method bindUI
+     * @private
+     */
+    bindUI: function()
+    {
         this.after("stylesChange", this._updateHandler);
-        this.after("positionChange", this._positionChangeHandler);
         this.after("overlapGraphChange", this._updateHandler);
         this.after("widthChange", this._handleSizeChange);
         this.after("heightChange", this._handleSizeChange);
-        this.after("alwaysShowZeroChange", this._keyChangeHandler);
-        this.after("roundingMethodChange", this._keyChangeHandler);
     },
 
     /**
@@ -388,7 +395,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     _keyChangeHandler: function(e)
     {
         this._updateMinAndMax();
-		this.fire("dataUpdate");
+        this.fire("dataUpdate");
     },
 
     /**
