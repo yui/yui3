@@ -1,15 +1,9 @@
 #!/usr/bin/env node
 
-//This is a hack for global modules in npm 1.0
-require.paths.push('/usr/local/lib/node_modules');
-
 var tests = {};
 
 if ('COMBO' in process.env) {
     tests.combo = true;
-}
-if ('RLS' in process.env) {
-    tests.rls = true;
 }
 
 if ('STAR' in process.env) {
@@ -31,13 +25,11 @@ if ('FILTER' in process.env) {
 }
 
 if (!Object.keys(tests).length) {
-    console.error('NO TEST SPECIFIED: RLS, STAR, LOCAL, COMBO');
+    console.error('NO TEST SPECIFIED: STAR, LOCAL, COMBO');
     console.error('export STAR=1; ./server.js');
     console.error('export LOCAL=1; export STAR=1; ./server.js');
     console.error('export LOCAL=1; export STAR=1; export COMBO=1; ./server.js');
     console.error('export LOCAL=1; export STAR=1; export COMBO=1; export LOADER=1; ./server.js #The normal test to run');
-    console.error('export LOCAL=1; export STAR=1; export COMBO=1; export RLS=1; ./server.js');
-    console.error('export LOCAL=1; export STAR=1; export COMBO=1; export LOADER=1; export RLS=1; ./server.js');
     process.exit(1);
 }
 
@@ -47,15 +39,19 @@ var fs = require('fs'),
     express = require('express'),
     app = express.createServer(),
     path = require('path'),
-    yui3 = require('yui3'),
+    YUI = require(path.join(__dirname, '../../../../build/yui-nodejs/yui-nodejs')).YUI,
     comboHandler = require('combohandler'),
-    mods = {};
+    mods = {},
+    Y;
+
+    YUI().use('loader', function(iY) {
+        Y = iY;
+    });
 
 } catch (e) {
     console.error('Express and YUI3 need to be installed globally:');
-    console.error('     npm -g i yui3');
-    console.error('     npm -g i express');
-    console.error('     npm -g i combohandler');
+    console.error('     npm i express');
+    console.error('     npm i combohandler');
     process.exit(1);
 }
 
@@ -104,24 +100,21 @@ Object.keys(json).forEach(function(v) {
 });
 
 var writeTest = function(key, cb) {
-    var p = path.join(__dirname, "../../../../");
-    var YUI = yui3.configure({ debug: false, yuiPath: p, yuiCoreFile: 'build/yui-base/yui-base.js' }).YUI;
 
-    var config = {
-        m: key,
-        v: '3.3.0',
-        env: 'features,get,intl-base,yui,yui-base,yui-later,yui-log'
-    };
-    
-    var rls = new yui3.RLS(YUI, config);
-    rls.compile(function(err, data) {
-        var str = [];
-        data.js.forEach(function(v) {
-            str.push(fs.readFileSync(v, 'utf-8'));
-        });
-        cb(str.join('\n'));
+    var loader = new Y.Loader({
+        base: path.join(__dirname, '../../../../build/'),
+        ignoreRegistered: true,
+        ignore: [ 'features','get','intl-base','yui','yui-base','yui-later','yui-log'],
+        require: [ key ]
     });
-    
+
+    var out = loader.resolve(true);
+    var str = [];
+    out.js.forEach(function(v) {
+        str.push(fs.readFileSync(v, 'utf-8'));
+    });
+    cb(str.join('\n'));
+
 };
 
 var cases = [];

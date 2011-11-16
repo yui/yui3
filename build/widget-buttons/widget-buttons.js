@@ -136,6 +136,10 @@ WidgetButtons.prototype = {
         _buttonsArray    : null,
         _uiHandlesButtons: null,
 
+        destructor: function () {
+            this._detachEventsFromButtons();
+        },
+
         /**
          * Creates the button nodes based on whether they are defined as being in the header or footer
          * <p>
@@ -234,7 +238,7 @@ WidgetButtons.prototype = {
                 // Check to see if the `type` property is defined,
                 // and if a button corresponds to that type.
                 if (button.type && defaultButtons[button.type]) {
-                    button = defaultButtons[button.type];
+                    button = Y.merge(defaultButtons[button.type], button);
                 }
 
                 template = Lang.sub(templates.defaultTemplate, {

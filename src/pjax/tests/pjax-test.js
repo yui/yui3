@@ -16,13 +16,15 @@ var Assert = Y.Assert,
 
     html5 = Y.Router.html5,
 
+    originalUrl = Y.config.win.location.toString(),
+
     suite;
 
 suite = new Y.Test.Suite({
     name: 'Pjax',
 
     setUp: function () {
-        this.oldPath = Y.config.win.location.toString();
+        this.oldPath = originalUrl;
     },
 
     tearDown: function () {
@@ -124,6 +126,8 @@ suite.add(new Y.Test.Case({
     },
 
     setUp: function () {
+        this.oldPath = originalUrl;
+
         this.node = Y.one('#test-content');
         this.node.setContent('');
 
@@ -131,10 +135,15 @@ suite.add(new Y.Test.Case({
     },
 
     tearDown: function () {
+        if (html5) {
+            Y.config.win.history.replaceState(null, null, this.oldPath);
+        }
+
         this.node.unplug(Y.Plugin.Pjax);
 
         delete this.node;
         delete this.pjax;
+        delete this.oldPath;
     },
 
     'should attach events on init in HTML5 browsers': function () {
@@ -310,6 +319,8 @@ suite.add(new Y.Test.Case({
     },
 
     setUp: function () {
+        this.oldPath = originalUrl;
+
         this.node = Y.one('#test-content');
         this.node.setContent('');
 
@@ -317,10 +328,15 @@ suite.add(new Y.Test.Case({
     },
 
     tearDown: function () {
+        if (html5) {
+            Y.config.win.history.replaceState(null, null, this.oldPath);
+        }
+
         this.node.unplug(Y.Plugin.Pjax);
 
         delete this.node;
         delete this.pjax;
+        delete this.oldPath;
     },
 
     '`navigate()` should load the specified URL and fire a `load` event': function () {
@@ -349,6 +365,8 @@ suite.add(new Y.Test.Case({
     },
 
     setUp: function () {
+        this.oldPath = originalUrl;
+
         this.node = Y.one('#test-content');
         this.node.setContent('');
 
@@ -356,10 +374,15 @@ suite.add(new Y.Test.Case({
     },
 
     tearDown: function () {
+        if (html5) {
+            Y.config.win.history.replaceState(null, null, this.oldPath);
+        }
+
         this.node.unplug(Y.Plugin.Pjax);
 
         delete this.node;
         delete this.pjax;
+        delete this.oldPath;
     },
 
     'Page title should be updated if the `titleSelector` matches an element': function () {
