@@ -1803,6 +1803,45 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     },
 
     /**
+     * Handles change to the position attribute
+     *
+     * @method _positionChangeHandler
+     * @param {Object} e Event object
+     * @private
+     */
+    _positionChangeHandler: function(e)
+    {
+        this._updateGraphic(e.newVal);
+        this._updateHandler();
+    },
+
+    /**
+     * Updates the the Graphic instance
+     *
+     * @method _updateGraphic
+     * @param {String} position Position of axis 
+     * @private
+     */
+    _updateGraphic: function(position)
+    {
+        var graphic = this.get("graphic");
+        if(position == "none")
+        {
+            if(graphic)
+            {
+                graphic.destroy();
+            }
+        }
+        else
+        {
+            if(!graphic)
+            {
+                this._setCanvas();
+            }
+        }
+    },
+
+    /**
      * Handles changes to axis.
      *
      * @method _updateHandler
@@ -1816,25 +1855,16 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             this._drawAxis();
         }
     },
-
+   
     /**
      * @method renderUI
      * @private
      */
     renderUI: function()
     {
-        var pos = this.get("position"),
-            layoutClass = this._layoutClasses[pos];
-        if(pos && pos != "none")
-        {
-            this._layout = new layoutClass();
-            if(this._layout)
-            {
-                this._setCanvas();
-            }
-        }
+        this._updateGraphic(this.get("position"));
     },
-   
+
     /**
      * @method syncUI
      * @private
@@ -2657,13 +2687,12 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          * @type String
          */
         position: {
-            setOnce: true,
-
             setter: function(val)
             {
-                if(val == "none")
+                var layoutClass = this._layoutClasses[val];
+                if(val && val != "none")
                 {
-                    this.bindUI();
+                    this._layout = new layoutClass();
                 }
                 return val;
             }
@@ -2857,10 +2886,10 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
  */
 Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     /**
-     * @method bindUI
+     * @method initializer
      * @private
      */
-    bindUI: function()
+    initializer: function()
     {
         this.after("dataReady", Y.bind(this._dataChangeHandler, this));
         this.after("dataUpdate", Y.bind(this._dataChangeHandler, this));
@@ -2868,13 +2897,21 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
         this.after("maximumChange", Y.bind(this._keyChangeHandler, this));
         this.after("keysChange", this._keyChangeHandler);
         this.after("dataProviderChange", this._dataProviderChangeHandler);
-        this.after("stylesChange", this._updateHandler);
-        this.after("positionChange", this._positionChangeHandler);
-        this.after("overlapGraphChange", this._updateHandler);
-        this.after("widthChange", this._handleSizeChange);
-        this.after("heightChange", this._handleSizeChange);
         this.after("alwaysShowZeroChange", this._keyChangeHandler);
         this.after("roundingMethodChange", this._keyChangeHandler);
+    },
+
+    /**
+     * @method bindUI
+     * @private
+     */
+    bindUI: function()
+    {
+        this.after("stylesChange", this._updateHandler);
+        this.after("overlapGraphChange", this._updateHandler);
+        this.after("positionChange", this._positionChangeHandler);
+        this.after("widthChange", this._handleSizeChange);
+        this.after("heightChange", this._handleSizeChange);
     },
 
     /**
@@ -3237,7 +3274,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     _keyChangeHandler: function(e)
     {
         this._updateMinAndMax();
-		this.fire("dataUpdate");
+        this.fire("dataUpdate");
     },
 
     /**
@@ -3694,8 +3731,8 @@ Y.extend(NumericAxis, Y.AxisType,
     _updateMinAndMax: function()
     {
         var data = this.get("data"),
-            max = 0,
-            min = 0,
+            max, 
+            min,
             len,
             num,
             i = 0,
@@ -3729,8 +3766,32 @@ Y.extend(NumericAxis, Y.AxisType,
                         min = setMin ? this._setMinimum : min;
                         continue;
                     }
-                    max = setMax ? this._setMaximum : Math.max(num, max);
-                    min = setMin ? this._setMinimum : Math.min(num, min);
+                    
+                    if(setMin)
+                    {
+                        min = this._setMinimum;
+                    }
+                    else if(min === undefined)
+                    {
+                        min = num;
+                    }
+                    else
+                    {
+                        min = Math.min(num, min); 
+                    }
+                    if(setMax)
+                    {
+                        max = this._setMaximum;
+                    }
+                    else if(max === undefined)
+                    {
+                        max = num;
+                    }
+                    else
+                    {
+                        max = Math.max(num, max);
+                    }
+                    
                     this._actualMaximum = max;
                     this._actualMinimum = min;
                 }
@@ -6474,7 +6535,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
             yData = yData.reverse();
         }
         this._leftOrigin = Math.round(((0 - xMin) * xScaleFactor) + leftPadding + xOffset);
-        this._bottomOrigin =  Math.round((dataHeight + topPadding + yOffset) - (0 - yMin) * yScaleFactor);
+        this._bottomOrigin = Math.round((dataHeight + topPadding + yOffset)); 
         for (; i < dataLength; ++i) 
 		{
             xValue = parseFloat(xData[i]);
@@ -10677,7 +10738,7 @@ ChartBase.prototype = {
     {
         var axis,
             axes = this.get("axes");
-        if(axes.hasOwnProperty(val))
+        if(axes && axes.hasOwnProperty(val))
         {
             axis = axes[val];
         }
@@ -10811,6 +10872,16 @@ ChartBase.prototype = {
     _axes: null,
 
     /**
+     * @method initializer
+     * @private
+     */
+    initializer: function()
+    {
+        this._axesRenderQueue = [];
+        this.after("dataProviderChange", this._dataProviderChangeHandler);
+    },
+
+    /**
      * @method renderUI
      * @private
      */
@@ -10828,7 +10899,7 @@ ChartBase.prototype = {
         }
         this._redraw();
     },
-    
+   
     /**
      * @property bindUI
      * @private
@@ -10838,7 +10909,6 @@ ChartBase.prototype = {
         this.after("tooltipChange", Y.bind(this._tooltipChangeHandler, this));
         this.after("widthChange", this._sizeChanged);
         this.after("heightChange", this._sizeChanged);
-        this.after("dataProviderChange", this._dataProviderChangeHandler);
         var tt = this.get("tooltip"),
             hideEvent = "mouseout",
             showEvent = "mouseover",
@@ -11044,14 +11114,17 @@ ChartBase.prototype = {
             axes = this.get("axes"),
             i,
             axis;
-        for(i in axes)
+        if(axes)
         {
-            if(axes.hasOwnProperty(i))
+            for(i in axes)
             {
-                axis = axes[i];
-                if(axis instanceof Y.Axis)
+                if(axes.hasOwnProperty(i))
                 {
-                    axis.set("dataProvider", dataProvider);
+                    axis = axes[i];
+                    if(axis instanceof Y.Axis)
+                    {
+                        axis.set("dataProvider", dataProvider);
+                    }
                 }
             }
         }
@@ -11587,6 +11660,24 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
     },
 
     /**
+     * Adds axis instance to the appropriate array based on position
+     *
+     * @method _addToAxesCollection
+     * @param {String} position The position of the axis
+     * @param {Axis} axis The `Axis` instance
+     */
+    _addToAxesCollection: function(position, axis)
+    {
+        var axesCollection = this.get(position + "AxesCollection");
+        if(!axesCollection)
+        {
+            axesCollection = [];
+            this.set(position + "AxesCollection", axesCollection);
+        }
+        axesCollection.push(axis);
+    },
+
+    /**
      * Returns the default value for the `seriesCollection` attribute.
      *
      * @method _getDefaultSeriesCollection
@@ -11855,6 +11946,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             i, 
             pos, 
             axis,
+            axisPosition,
             dh, 
             axisClass, 
             config,
@@ -11870,7 +11962,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 }
                 else
                 {
-                    axisClass = this._getAxisClass(dh.type);
+                    axis = null;
                     config = {};
                     config.dataProvider = dh.dataProvider || dp;
                     config.keys = dh.keys;
@@ -11892,7 +11984,36 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                             config[ai] = dh[ai];
                         }
                     }
-                    axis = new axisClass(config);
+                   
+                    //only check for existing axis if we constructed the default axes already
+                    if(val)
+                    {
+                        axis = this.getAxisByKey(i);
+                    }
+                    
+                    if(axis && axis instanceof Y.Axis)
+                    {
+                        axisPosition = axis.get("position");
+                        if(pos != axisPosition)
+                        {
+                            if(axisPosition != "none")
+                            {
+                                axesCollection = this.get(axisPosition + "AxesCollection");
+                                axesCollection.splice(Y.Array.indexOf(axesCollection, axis), 1);
+                            }
+                            if(pos != "none")
+                            {
+                                this._addToAxesCollection(pos, axis);
+                            }
+                        }
+                        axis.setAttrs(config);
+                    }
+                    else
+                    {
+                        axisClass = this._getAxisClass(dh.type);
+                        axis = new axisClass(config);
+                        axis.after("axisRendered", Y.bind(this._axisRendered, this));
+                    }
                 }
 
                 if(axis)
@@ -11902,7 +12023,6 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                     {
                         axis.set("overlapGraph", false);
                     }
-                    axis.after("axisRendered", Y.bind(this._axisRendered, this));
                     axes[i] = axis;
                 }
             }
