@@ -57,6 +57,7 @@
     "app": {
         "use": [
             "app-base", 
+            "app-transitions", 
             "model", 
             "model-list", 
             "router", 
@@ -68,8 +69,13 @@
             "classnamemanager", 
             "pjax-base", 
             "router", 
-            "transition", 
             "view"
+        ]
+    }, 
+    "app-transitions": {
+        "requires": [
+            "app-base", 
+            "transition"
         ]
     }, 
     "array-extras": {

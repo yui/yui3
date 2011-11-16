@@ -148,6 +148,7 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A rollup module
             Assert.isTrue((loader.sorted.indexOf("app-base")) > -1, "Module (app-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("app-transitions")) > -1, "Module (app-transitions) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("model")) > -1, "Module (model) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("model-list")) > -1, "Module (model-list) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("router")) > -1, "Module (router) not found in sorted array");
@@ -162,6 +163,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("app-base")) > -1, "Module (app-base) not found in sorted array");
+        },
+     "Testing app-transitions": function(data) {
+            var loader = new Y.Loader({
+                require: ["app-transitions"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("app-transitions")) > -1, "Module (app-transitions) not found in sorted array");
         },
      "Testing array-extras": function(data) {
             var loader = new Y.Loader({

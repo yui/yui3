@@ -3320,7 +3320,7 @@ YUI.Env.parseUA = function(subUA) {
 Y.UA = YUI.Env.UA || YUI.Env.parseUA();
 YUI.Env.aliases = {
     "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
-    "app": ["model","model-list","router","view"],
+    "app": ["app-base","app-transitions","model","model-list","router","view"],
     "attribute": ["attribute-base","attribute-complex"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
@@ -6814,10 +6814,26 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "app": {
         "use": [
+            "app-base", 
+            "app-transitions", 
             "model", 
             "model-list", 
             "router", 
             "view"
+        ]
+    }, 
+    "app-base": {
+        "requires": [
+            "classnamemanager", 
+            "pjax-base", 
+            "router", 
+            "view"
+        ]
+    }, 
+    "app-transitions": {
+        "requires": [
+            "app-base", 
+            "transition"
         ]
     }, 
     "array-extras": {
@@ -8844,7 +8860,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '7f3e2a182ac855f60af5ab295f71fefe';
+YUI.Env[Y.version].md5 = 'c0b46136b92c1358e6010550fcdefca7';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
