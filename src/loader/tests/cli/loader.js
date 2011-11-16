@@ -2,8 +2,11 @@
 * This file was assembled by ../scripts/build_loader_tests.js
 */
 
-//This is a hack for global modules in npm 1.0
-require.paths.push('/usr/local/lib/node_modules');
+if (process.versions.node < '0.5.0') {
+    //This is a hack for global modules in npm 1.0
+    require.paths.push(process.env.NODE_ENV);
+}
+
 
 var path = require('path'),
     YUI = require(path.join(__dirname, '../../../../', 'build/yui/yui.js')).YUI;
@@ -1548,6 +1551,36 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("graphics-vml-default")) > -1, "Module (graphics-vml-default) not found in sorted array");
+        },
+     "Testing handlebars": function(data) {
+            var loader = new Y.Loader({
+                require: ["handlebars"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("handlebars-compiler")) > -1, "Module (handlebars-compiler) not found in sorted array");
+        },
+     "Testing handlebars-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["handlebars-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("handlebars-base")) > -1, "Module (handlebars-base) not found in sorted array");
+        },
+     "Testing handlebars-compiler": function(data) {
+            var loader = new Y.Loader({
+                require: ["handlebars-compiler"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("handlebars-compiler")) > -1, "Module (handlebars-compiler) not found in sorted array");
         },
      "Testing highlight": function(data) {
             var loader = new Y.Loader({

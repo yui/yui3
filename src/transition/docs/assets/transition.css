@@ -2,31 +2,34 @@
     height: 250px;
 
 }
+
 #demo {
-    background: #ccc;
-    border: 4px solid #999;
     height: 200px;
     margin: 20px;
     overflow: hidden;
     position: relative;
     width: 300px;
     zoom: 1;
+    background-color: #B6BFDA;
+    border: 1px solid #7E869D;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.25);
+    border-radius: 3px;
 }
 
 #demo a {
-    background: #999;
-    border: 2px solid #fff;
-    font-weight: bold;
-    color: #fff;
-    line-height: 12px;
-    height: 14px;
-    width: 15px;
-    overflow: hidden;
-    padding: 3px;
+    background:url(sprite.png) no-repeat;
     position: absolute;
-    top: 1px;
-    right: 1px;
-    text-decoration: none;
-    text-align: center;
+    cursor:pointer;
+    display: inline-block; /* prevent IE margin doubling */
+    overflow:hidden;
+    text-decoration:none;
+    text-indent:9999px;
+    height: 20px;
+    width: 21px;
+    top: 4px;
+    right: 4px;
+    border:solid 1px;
+    border-color: #CCD1E1 #6E7BA0 #6E7BA0 #CCD1E1; 
+    background-color: #97A2C4;
+    border-radius: 2px;
 }
-
