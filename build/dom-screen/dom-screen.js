@@ -131,7 +131,7 @@ Y.mix(Y_DOM, {
 
                 if (node && node.tagName) {
                     doc = node.ownerDocument;
-                    mode = doc.compatMode;
+                    mode = doc[COMPAT_MODE];
 
                     if (mode !== _BACK_COMPAT) {
                         rootNode = doc[DOCUMENT_ELEMENT];
@@ -140,12 +140,10 @@ Y.mix(Y_DOM, {
                     }
 
                     // inline inDoc check for perf
-                    if (typeof inDoc == 'undefined') {
-                        if (rootNode.contains) {
-                            inDoc = rootNode.contains(node); 
-                        } else {
-                            inDoc = Y.DOM.contains(rootNode, node);
-                        }
+                    if (rootNode.contains) {
+                        inDoc = rootNode.contains(node); 
+                    } else {
+                        inDoc = Y.DOM.contains(rootNode, node);
                     }
 
                     if (inDoc) {
