@@ -19,8 +19,6 @@ var COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
     OWNER_DOCUMENT = 'ownerDocument';
 
 var Selector = {
-    _foundCache: [],
-
     useNative: true,
 
     _compare: ('sourceIndex' in Y.config.doc.documentElement) ?
