@@ -34,7 +34,7 @@ YUI().use("overlay", function(Y) {
             width:"8em",
             height:"8em",
             headerContent: 'Overlay <span class="yui3-ovr-number">' + i + '</span>',
-            bodyContent: "zIndex = " + ovrZIndex
+            bodyContent: '<div class="yui3-ovr-z-i"><em>' + ovrZIndex + '</em> = z-index</div>'
         });
 
         overlay.render("#overlay-stack");
@@ -42,7 +42,7 @@ YUI().use("overlay", function(Y) {
 
         // Update body whenever zIndex changes
         overlay.after("zIndexChange", function(e) {
-            this.set("bodyContent", "zIndex = " + e.newVal);
+            this.set("bodyContent", '<div class="yui3-ovr-z-i"><em>' + e.newVal + '</em> = z-index</div>');
         });
     }
 

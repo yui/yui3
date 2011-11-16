@@ -821,10 +821,8 @@ Y.Router = Y.extend(Router, Y.Base, {
                 url: urlIsString ? this._joinURL(url) : url
             });
         } else {
-            if (urlIsString && url.charAt(0) !== '/') {
-                url = '/' + url;
-            }
-
+            // Remove the root from the URL before it's set as the hash.
+            urlIsString && (url = this.removeRoot(url));
             HistoryHash[replace ? 'replaceHash' : 'setHash'](url);
         }
 
@@ -969,4 +967,4 @@ version of YUI.
 Y.Controller = Y.Router;
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'base-build', 'history'], optional:['querystring-parse']});
+}, '@VERSION@' ,{optional:['querystring-parse'], requires:['array-extras', 'base-build', 'history']});
