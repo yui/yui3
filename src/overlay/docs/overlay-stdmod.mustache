@@ -6,29 +6,12 @@
     position:absolute;
 }
 
-/* Overlay Look/Feel */
-.yui3-overlay-content {
-    padding:3px;
-    border:1px solid #000;
-    background-color:#aaa;
-}
-
-.yui3-overlay-content .yui3-widget-hd {
-    padding:5px;
-    border:2px solid #aa0000;
-    background-color:#fff;
-}
-
-.yui3-overlay-content .yui3-widget-bd {
-    padding:5px;
-    border:2px solid #0000aa;
-    background-color:#fff;
-}
+{{>overlay-css}}
 
 .yui3-overlay-content .yui3-widget-ft {
-    padding:5px;
-    border:2px solid #00aa00;
-    background-color:#fff;
+    padding: 0.4em 0.6em 0.5em;
+    background-color:#DFE3F5;
+    border-radius: 0 0 2px 2px;
 }
 
 /* Example Layout CSS */
@@ -176,30 +159,8 @@ Y.on("click", function() {
     position:absolute;
 }
 
-/* Overlay Look/Feel */
-.yui3-overlay-content {
-    padding:3px;
-    border:1px solid #000;
-    background-color:#aaa;
-}
+{{>overlay-css}}
 
-.yui3-overlay-content .yui3-widget-hd {
-    padding:5px;
-    border:2px solid #aa0000;
-    background-color:#fff;
-}
-
-.yui3-overlay-content .yui3-widget-bd {
-    padding:5px;
-    border:2px solid #0000aa;
-    background-color:#fff;
-}
-
-.yui3-overlay-content .yui3-widget-ft {
-    padding:5px;
-    border:2px solid #00aa00;
-    background-color:#fff;
-}
 ```
 
 <h2>Complete Example Source</h2>

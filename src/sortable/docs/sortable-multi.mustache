@@ -3,7 +3,19 @@
 </div>
 
 <div class="example">
-    {{>sortable-multi-source}}
+    <style>
+    {{>sortable-multi-source-css}}
+    {{>sortable-indent-css}}
+    </style>
+    
+    {{>sortable-multi-source-indent-html}}
+    
+    <script>
+    {{>sortable-multi-source-js-pre}}
+    {{>sortable-multi-source-js-post}}
+    </script>
 </div>
 
+
 {{>sortable-multi-base}}
+

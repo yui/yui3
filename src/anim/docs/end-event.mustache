@@ -1,7 +1,7 @@
 <link href="{{componentAssets}}/anim.css" rel="stylesheet" type="text/css">
 <div class="intro">
     <p>This demonstrates how to use the <code>end</code> event.</p>
-    <p> Click the X in the header to fade the element out and remove it from the document once the fade completes.</p>
+    <p> Click the X in the header to fade out the element and remove it from the document once the fade completes.</p>
 </div>
 
 <div class="example">
@@ -12,16 +12,7 @@
 <p>First we add some HTML to animate.</p>
 
 ```
-<div id="demo" class="yui3-module">
-    <div class="yui3-hd">
-        <h3>Animation Demo</h3>
-        <a title="remove module" class="yui3-remove"><em>x</em></a>
-    </div>
-    <div class="yui3-bd">
-        <p>This an example of what you can do with the YUI Animation Utility.</p>
-        <p><em>Follow the instructions above to see the animation in action.</em></p>
-    </div>
-</div>
+{{>end-event-source-html}} 
 ```
 
 <h2>Creating the Anim Instance</h2>
