@@ -15,6 +15,7 @@ YUI.add('dom-xy-test', function(Y) {
             var el = document.createElement('div'),
                 xy = Y.DOM.getXY(n),
                 box,
+                actual,
                 id = n.id;
 
             el.className = 'nodeOver nodeOver-' + n.tagName.toLowerCase();
@@ -25,8 +26,10 @@ YUI.add('dom-xy-test', function(Y) {
             Y.DOM.setXY(el, xy, true);
             box = el.getBoundingClientRect();
 
+            actual = [box.left + Y.DOM.docScrollX(), box.top + Y.DOM.docScrollY()];
+
             tests['should set ' + id + ' in page coords'] = function() {
-                ArrayAssert.itemsAreEqual([box.left + Y.DOM.docScrollX(), box.top + Y.DOM.docScrollY()], [xy[0], xy[1]]);
+                ArrayAssert.itemsAreEqual(actual, [xy[0], xy[1]]);
             };
         });
 
