@@ -65,19 +65,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "app": {
         "use": [
-            "app-base", 
             "model", 
             "model-list", 
             "router", 
-            "view"
-        ]
-    }, 
-    "app-base": {
-        "requires": [
-            "classnamemanager", 
-            "pjax-base", 
-            "router", 
-            "transition", 
             "view"
         ]
     }, 
@@ -1187,6 +1177,21 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "trigger": "graphics"
         }
     }, 
+    "handlebars": {
+        "use": [
+            "handlebars-compiler"
+        ]
+    }, 
+    "handlebars-base": {
+        "requires": [
+            "escape"
+        ]
+    }, 
+    "handlebars-compiler": {
+        "requires": [
+            "handlebars-base"
+        ]
+    }, 
     "highlight": {
         "use": [
             "highlight-base", 
@@ -2090,7 +2095,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '560ec3b825cf445b3c538820288d5d0a';
+YUI.Env[Y.version].md5 = '7f3e2a182ac855f60af5ab295f71fefe';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

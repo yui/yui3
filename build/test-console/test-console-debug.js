@@ -44,7 +44,13 @@ Y.namespace('Test').Console = Y.extend(TestConsole, Y.Console, {
                 pass  : false,
                 fail  : true,
                 status: false
-            }, (config && config.filters) || {})
+            }, (config && config.filters) || {}),
+
+            defaultVisibility: false,
+
+            source: {
+                TestRunner: true
+            }
         });
     },
 
@@ -89,4 +95,4 @@ Y.namespace('Test').Console = Y.extend(TestConsole, Y.Console, {
 });
 
 
-}, '@VERSION@' ,{requires:['console-filters', 'test'], skinnable:true});
+}, '@VERSION@' ,{skinnable:true, requires:['console-filters', 'test']});

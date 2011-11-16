@@ -136,6 +136,48 @@ YUI.add('loader-tests', function(Y) {
 
             test.wait();
 
+        },
+        test_module_attrs: function() {
+            var test = this;
+        
+            YUI({
+                modules: {
+                    'attrs-js': {
+                        fullpath: './assets/attrs.js',
+                        jsAttributes: {
+                            id: 'attrs-js-test'
+                        }
+                    },
+                    'attrs-css': {
+                        fullpath: './assets/attrs.css',
+                        type: 'css',
+                        cssAttributes: {
+                            id: 'attrs-css-test'
+                        }
+                    }
+                }
+            }).use('attrs-js', 'attrs-css', 'node', function(Y) {
+                test.resume(function() {
+                    Assert.isTrue(Y.davglass, 'Attrs JS did not load');
+                    Assert.isNotNull(Y.one('#attrs-js-test'), 'attrs-js-test id was not found');
+                    Assert.isNotNull(Y.one('#attrs-css-test'), 'attrs-css-test id was not found');
+                });                
+            });
+
+            test.wait();
+        },
+        test_forcemap: function() {
+            var test = this;
+
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                force   : ['yui-base'],
+                require : ['json']
+            });
+            loader.calculate();
+
+            Assert.areEqual(loader.sorted[0], 'yui-base', 'Forced yui-base was not included in loader.sorted');
+
         }
     });
 

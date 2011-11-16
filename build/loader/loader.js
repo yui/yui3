@@ -589,6 +589,8 @@ Y.Loader = function(o) {
 
     self._config(o);
 
+    self.forceMap = (self.force) ? Y.Array.hash(self.force) : {};	
+
     self.testresults = null;
 
     if (Y.config.tests) {
@@ -1420,8 +1422,12 @@ Y.Loader.prototype = {
             } else {
                 oeach(cond, function(def, condmod) {
                     if (!hash[condmod]) {
+                        //first see if they've specfied a ua check
+                        //then see if they've got a test fn & if it returns true
+                        //otherwise just having a condition block is enough
                         go = def && ((def.ua && Y.UA[def.ua]) ||
-                                     (def.test && def.test(Y, r)));
+                                    (def.test && def.test(Y, r)));
+
                         if (go) {
                             hash[condmod] = true;
                             d.push(condmod);
@@ -2281,9 +2287,15 @@ Y.Loader.prototype = {
                 if (m.type === CSS) {
                     fn = Y.Get.css;
                     attr = self.cssAttributes;
+                    if (m.cssAttributes) {
+                        attr = Y.mix(attr || {}, m.cssAttributes);
+                    }
                 } else {
                     fn = Y.Get.script;
                     attr = self.jsAttributes;
+                    if (m.jsAttributes) {
+                        attr = Y.mix(attr || {}, m.jsAttributes);
+                    }
                 }
 
                 url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :
@@ -2488,8 +2500,6 @@ Y.Loader.prototype._rollup = function() {
                 }
             }
         }
-
-        this.forceMap = (this.force) ? Y.Array.hash(this.force) : {};
     }
 
     // make as many passes as needed to pick up rollup rollups
@@ -2621,19 +2631,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "app": {
         "use": [
-            "app-base", 
             "model", 
             "model-list", 
             "router", 
-            "view"
-        ]
-    }, 
-    "app-base": {
-        "requires": [
-            "classnamemanager", 
-            "pjax-base", 
-            "router", 
-            "transition", 
             "view"
         ]
     }, 
@@ -3743,6 +3743,21 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "trigger": "graphics"
         }
     }, 
+    "handlebars": {
+        "use": [
+            "handlebars-compiler"
+        ]
+    }, 
+    "handlebars-base": {
+        "requires": [
+            "escape"
+        ]
+    }, 
+    "handlebars-compiler": {
+        "requires": [
+            "handlebars-base"
+        ]
+    }, 
     "highlight": {
         "use": [
             "highlight-base", 
@@ -4646,7 +4661,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '560ec3b825cf445b3c538820288d5d0a';
+YUI.Env[Y.version].md5 = '7f3e2a182ac855f60af5ab295f71fefe';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

@@ -4,6 +4,20 @@ App Framework Change History
 3.5.0
 -----
 
+### Model
+
+* [!] The `validate()` method is now asynchronous, and is expected to call a
+  callback function on success or failure. Old-style synchronous `validate()`
+  methods will still work, but are deprecated. [Ticket #2531218]
+
+* `load()` now fires a `load` event after the operation completes successfully,
+  or an `error` event on failure. The `load()` callback (if provided) will still
+  be called in both cases. [Ticket #2531207]
+
+* `save()` now fires a `save` event after the operation completes successfully,
+  or an `error` event on failure. The `save()` callback (if provided) will still
+  be called in both cases. [Ticket #2531207]
+
 ### ModelList
 
 * Added a `filter()` method that returns a filtered array of models. [Ticket
@@ -32,6 +46,9 @@ App Framework Change History
   (previously it was necessary to use a regex to do this).
 
 * The `hasRoute()` method now accepts full URLs as well as paths.
+
+* The hashes used when `html5` is `false` are now root-less; the router's `root`
+  is removed from the hash before it is set on the URL.
 
 * When multiple Router instances exist on a page, calling `save()` in one will
   now cause matching routes to be dispatched in all routers, rather than only

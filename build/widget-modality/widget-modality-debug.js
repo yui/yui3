@@ -54,19 +54,7 @@ var WIDGET       = 'widget',
      * @class WidgetModality
      * @param {Object} config User configuration object
      */
-    function WidgetModal(config) {
-        if (config && config.modal) {
-            Y.after(this._renderUIModal, this, RENDER_UI);
-            Y.after(this._syncUIModal, this, SYNC_UI);
-            Y.after(this._bindUIModal, this, BIND_UI);
-
-            if (this.get('rendered')) {
-                this._renderUIModal();
-                this._syncUIModal();
-                this._bindUIModal();
-            }
-        }
-    }
+    function WidgetModal(config) {}
 
     var MODAL           = 'modal',
         MASK            = 'mask',
@@ -198,6 +186,16 @@ var WIDGET       = 'widget',
 
 
     WidgetModal.prototype = {
+
+        initializer: function () {
+            Y.after(this._renderUIModal, this, RENDER_UI);
+            Y.after(this._syncUIModal, this, SYNC_UI);
+            Y.after(this._bindUIModal, this, BIND_UI);
+        },
+
+        destructor: function () {
+            this._detachUIHandlesModal();
+        },
 
         // *** Instance Members *** //
 
