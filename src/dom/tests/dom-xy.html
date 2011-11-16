@@ -1,0 +1,201 @@
+<!doctype html>
+<html>
+<head>
+<title>YUI: GetXY</title>
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="dom-xy-test.js"></script>
+<script type="text/javascript">
+YUI({
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+}).use('test-console', 'dom-xy-test', function (Y) {
+        Y.DOM._testXY();
+        new Y.Test.Console().render();
+        Y.Test.Runner.setName('DOM XY Tests');
+        Y.Test.Runner.run();
+});
+</script>
+<style type="text/css" media="screen">
+    .yui3-console {
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+    
+    html {
+        border: 10px solid #000;
+        Xmargin: 20px; /* manual test: false negative */
+    }
+    
+    body {
+        background-image: url( grid.png );
+        background-position: -12.5px -12.5px;
+        Xborder: 30px solid blue; /* manual test: false negative */
+        height: 2000px;
+        margin: 50px;
+        padding: 10px;
+    }
+    .node {
+        height: 50px;
+        width: 50px;
+        border: 3px solid black;
+        background-color: #ccc;
+        opacity: .5;
+        filter: alpha(opacity=50);
+    }
+
+    span.node {
+        height:auto;
+        width:auto;
+    }
+
+    .nodeOver {
+        position: relative;
+        background-color: yellow;
+        opacity: .5;
+        filter: alpha(opacity=50);
+    }
+    .nodeOver-table {
+        background-color: red;
+        opacity: .1;
+        filter: alpha(opacity=10);
+    }
+    .nodeOver-td,
+    .nodeOver-th {
+        background-color: blue;
+    }
+    .nodeOver-tr {
+        background-color: green;
+    }
+    #abs1, #abs2, #abs3, #abs4 {
+        position: absolute;
+        top: 200px;
+        left: 200px;
+    }
+    #rel1, #rel2, #rel3, #rel4 {
+        position: relative;
+        top: 100px;
+        left: 100px;
+    }
+    span.rel {
+        position: relative;
+        top:150px;
+        left:150px;
+    }
+    span.abs {
+        position: absolute;
+        top:250px;
+        left:250px;
+    }
+    #play1, #play2, #play3, #play4 {
+        position: relative;
+        height: 400px;
+        width: 400px;
+        border: 3px solid black;
+        float: left;
+        margin: 10px;
+    }
+
+    #play2, #play3, #play4 {
+        overflow: auto;
+    }
+
+    #play2 .wrap, #play3 .wrap, #play4 .wrap {
+        height: 700px;
+    }
+
+    #play2 {
+        top: 200px;
+        left: 200px;
+    }
+
+    #play3, #play4 {
+        position: static;
+    }
+
+    #runner {
+        clear: both;
+    }
+
+    #fixed {
+        position: fixed;
+        top: 0px;
+        left: 800px;
+    }
+
+    #results {
+        border: 1px solid black;
+        background-color: #ccc;
+        width: 200px;
+    }
+</style>
+</head>
+<body class="yui3-skin-sam">
+<h1 id="h1-1">Positioning Tests</h1>
+<div id="static1" class="node">S1</div>
+<div id="abs1" class="node">A1</div>
+<div id="rel1" class="node">R1</div>
+
+<div id="play1">
+    <div id="static2" class="node">S2</div>
+    <div id="abs2" class="node">A2</div>
+    <div id="rel2" class="node">R2</div>
+</div>
+
+<div id="play2">
+    <div class="wrap">
+        <div id="static3" class="node">S3</div>
+        <div id="abs3" class="node">A3</div>
+        <div id="rel3" class="node">R3</div>
+        Lorem ipsum dolor sit amet, <span id="p2-is" class="node st">P2 Static Inline</span> consectetuer adipiscing elit. Morbi sed mauris in magna tincidunt sodales. Etiam dolor. Aenean non justo. Sed nec diam sed lacus pretium luctus. Vivamus felis tortor, cursus vitae, malesuada in, pharetra vel, arcu. Aliquam erat volutpat. Suspendisse potenti. Maecenas in ipsum ac nisl congue congue. Cras a nibh. Praesent non est. 
+        Morbi non dolor. <span  id="p2-ir" class="node rel">P2 Rel Inline</span> Donec ut est <span id="p2-ia" class="node abs">P2 Abs Inline</span> vitae quam hendrerit tincidunt. Cras non tellus at lectus luctus ultricies. Nullam bibendum leo quis purus. Curabitur cursus tempus elit. Donec fringilla pede in leo. Morbi dapibus vestibulum enim. Phasellus non mi vel nunc luctus lacinia. Phasellus quis urna. Pellentesque dolor risus, fermentum et, molestie tempus, cursus eget, nisl. 
+    </div>
+</div>
+
+<div id="play3">
+    <div class="wrap">
+        <div id="static4" class="node">S4</div>
+    </div>
+</div>
+
+<div id="play4">
+    <div class="wrap">
+        <div id="static5" class="node">S5</div>
+        <div id="abs4" class="node">A4</div>
+        <div id="rel4" class="node">R4</div>
+        Lorem ipsum dolor sit amet, <span id="p4-is" class="node st">P4 Static Inline</span> consectetuer adipiscing elit. Morbi sed mauris in magna tincidunt sodales. Etiam dolor. Aenean non justo. Sed nec diam sed lacus pretium luctus. Vivamus felis tortor, cursus vitae, malesuada in, pharetra vel, arcu. Aliquam erat volutpat. Suspendisse potenti. Maecenas in ipsum ac nisl congue congue. Cras a nibh. Praesent non est. 
+        Morbi non dolor. <span id="p4-ir" class="node rel">P4 Rel Inline</span> Donec ut est <span id="p4-ia" class="node abs">P4 Abs Inline</span> vitae quam hendrerit tincidunt. Cras non tellus at lectus luctus ultricies. Nullam bibendum leo quis purus. Curabitur cursus tempus elit. Donec fringilla pede in leo. Morbi dapibus vestibulum enim. Phasellus non mi vel nunc luctus lacinia. Phasellus quis urna. Pellentesque dolor risus, fermentum et, molestie tempus, cursus eget, nisl. 
+    </div>
+</div>
+
+<div id="fixed" class="node">Fixed</div>
+
+<table border="1" width="300" id="table1">
+    <caption>I am a table</caption>
+    <thead>
+        <tr id="tr1">
+            <th id="th1">1</th><th id="th2">2</th><th id="th3">3</th><th id="th4">4</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr id="tr2">
+            <td id="td2-1">1</td>
+            <td id="td2-2">2</td>
+            <td id="td2-3">3</td>
+            <td id="td2-4">4</td>
+        </tr>
+        <tr id="tr3">
+            <td id="td3-1">1</td>
+            <td id="td3-2">2</td>
+            <td id="td3-3">3</td>
+            <td id="td3-4">4</td>
+        </tr>
+        <tr id="tr4">
+            <td id="td4-1">1</td>
+            <td id="td4-2">2</td>
+            <td id="td4-3">3</td>
+            <td id="td4-4">4</td>
+        </tr>
+    </tbody>
+</table>
+</body>
+</html>
