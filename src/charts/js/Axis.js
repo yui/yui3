@@ -25,6 +25,45 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     },
 
     /**
+     * Handles change to the position attribute
+     *
+     * @method _positionChangeHandler
+     * @param {Object} e Event object
+     * @private
+     */
+    _positionChangeHandler: function(e)
+    {
+        this._updateGraphic(e.newVal);
+        this._updateHandler();
+    },
+
+    /**
+     * Updates the the Graphic instance
+     *
+     * @method _updateGraphic
+     * @param {String} position Position of axis 
+     * @private
+     */
+    _updateGraphic: function(position)
+    {
+        var graphic = this.get("graphic");
+        if(position == "none")
+        {
+            if(graphic)
+            {
+                graphic.destroy();
+            }
+        }
+        else
+        {
+            if(!graphic)
+            {
+                this._setCanvas();
+            }
+        }
+    },
+
+    /**
      * Handles changes to axis.
      *
      * @method _updateHandler
@@ -38,25 +77,16 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             this._drawAxis();
         }
     },
-
+   
     /**
      * @method renderUI
      * @private
      */
     renderUI: function()
     {
-        var pos = this.get("position"),
-            layoutClass = this._layoutClasses[pos];
-        if(pos && pos != "none")
-        {
-            this._layout = new layoutClass();
-            if(this._layout)
-            {
-                this._setCanvas();
-            }
-        }
+        this._updateGraphic(this.get("position"));
     },
-   
+
     /**
      * @method syncUI
      * @private
@@ -879,13 +909,12 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          * @type String
          */
         position: {
-            setOnce: true,
-
             setter: function(val)
             {
-                if(val == "none")
+                var layoutClass = this._layoutClasses[val];
+                if(val && val != "none")
                 {
-                    this.bindUI();
+                    this._layout = new layoutClass();
                 }
                 return val;
             }

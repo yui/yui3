@@ -31,6 +31,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     {
         this.after("stylesChange", this._updateHandler);
         this.after("overlapGraphChange", this._updateHandler);
+        this.after("positionChange", this._positionChangeHandler);
         this.after("widthChange", this._handleSizeChange);
         this.after("heightChange", this._handleSizeChange);
     },

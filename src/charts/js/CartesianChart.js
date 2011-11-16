@@ -226,6 +226,24 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
     },
 
     /**
+     * Adds axis instance to the appropriate array based on position
+     *
+     * @method _addToAxesCollection
+     * @param {String} position The position of the axis
+     * @param {Axis} axis The `Axis` instance
+     */
+    _addToAxesCollection: function(position, axis)
+    {
+        var axesCollection = this.get(position + "AxesCollection");
+        if(!axesCollection)
+        {
+            axesCollection = [];
+            this.set(position + "AxesCollection", axesCollection);
+        }
+        axesCollection.push(axis);
+    },
+
+    /**
      * Returns the default value for the `seriesCollection` attribute.
      *
      * @method _getDefaultSeriesCollection
@@ -494,6 +512,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             i, 
             pos, 
             axis,
+            axisPosition,
             dh, 
             axisClass, 
             config,
@@ -509,7 +528,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 }
                 else
                 {
-                    axisClass = this._getAxisClass(dh.type);
+                    axis = null;
                     config = {};
                     config.dataProvider = dh.dataProvider || dp;
                     config.keys = dh.keys;
@@ -531,7 +550,36 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                             config[ai] = dh[ai];
                         }
                     }
-                    axis = new axisClass(config);
+                   
+                    //only check for existing axis if we constructed the default axes already
+                    if(val)
+                    {
+                        axis = this.getAxisByKey(i);
+                    }
+                    
+                    if(axis && axis instanceof Y.Axis)
+                    {
+                        axisPosition = axis.get("position");
+                        if(pos != axisPosition)
+                        {
+                            if(axisPosition != "none")
+                            {
+                                axesCollection = this.get(axisPosition + "AxesCollection");
+                                axesCollection.splice(Y.Array.indexOf(axesCollection, axis), 1);
+                            }
+                            if(pos != "none")
+                            {
+                                this._addToAxesCollection(pos, axis);
+                            }
+                        }
+                        axis.setAttrs(config);
+                    }
+                    else
+                    {
+                        axisClass = this._getAxisClass(dh.type);
+                        axis = new axisClass(config);
+                        axis.after("axisRendered", Y.bind(this._axisRendered, this));
+                    }
                 }
 
                 if(axis)
@@ -541,7 +589,6 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                     {
                         axis.set("overlapGraph", false);
                     }
-                    axis.after("axisRendered", Y.bind(this._axisRendered, this));
                     axes[i] = axis;
                 }
             }
