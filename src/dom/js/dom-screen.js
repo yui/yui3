@@ -122,30 +122,52 @@ Y.mix(Y_DOM, {
                 var xy = null,
                     scrollLeft,
                     scrollTop,
+                    mode,
                     box,
                     offX,
                     offY,
-                    mode,
                     doc,
+                    win,
                     inDoc,
                     rootNode;
 
                 if (node && node.tagName) {
                     doc = node.ownerDocument;
-                    rootNode = doc[DOCUMENT_ELEMENT];
+                    mode = doc.compatMode;
+
+                    if (mode !== _BACK_COMPAT) {
+                        rootNode = doc[DOCUMENT_ELEMENT];
+                    } else {
+                        rootNode = doc.body;
+                    }
 
                     // inline inDoc check for perf
-                    if (rootNode.contains) {
-                        inDoc = rootNode.contains(node); 
-                    } else {
-                        inDoc = Y.DOM.contains(rootNode, node);
+                    if (typeof inDoc == 'undefined') {
+                        if (rootNode.contains) {
+                            inDoc = rootNode.contains(node); 
+                        } else {
+                            inDoc = Y.DOM.contains(rootNode, node);
+                        }
                     }
 
                     if (inDoc) {
-                        scrollLeft = (SCROLL_NODE) ? doc[SCROLL_NODE].scrollLeft : Y_DOM.docScrollX(node, doc);
-                        scrollTop = (SCROLL_NODE) ? doc[SCROLL_NODE].scrollTop : Y_DOM.docScrollY(node, doc);
-                        offX = rootNode.clientLeft;
-                        offY = rootNode.clientTop;
+                        win = doc.defaultView;
+
+                        // inline scroll calc for perf
+                        if (win && 'pageXOffset' in win) {
+                            scrollLeft = win.pageXOffset;
+                            scrollTop = win.pageYOffset;
+                        } else {
+                            scrollLeft = (SCROLL_NODE) ? doc[SCROLL_NODE].scrollLeft : Y_DOM.docScrollX(node, doc);
+                            scrollTop = (SCROLL_NODE) ? doc[SCROLL_NODE].scrollTop : Y_DOM.docScrollY(node, doc);
+                        }
+
+                        if (Y.UA.ie) { // IE < 8, quirks, or compatMode
+                            if (!doc.documentMode || doc.documentMode < 8 || mode === _BACK_COMPAT) {
+                                offX = rootNode.clientLeft;
+                                offY = rootNode.clientTop;
+                            }
+                        }
                         box = node[GET_BOUNDING_CLIENT_RECT]();
                         xy = [box.left, box.top];
 
