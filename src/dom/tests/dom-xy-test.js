@@ -26,10 +26,11 @@ YUI.add('dom-xy-test', function(Y) {
             Y.DOM.setXY(el, xy, true);
             box = el.getBoundingClientRect();
 
-            actual = [box.left + Y.DOM.docScrollX(), box.top + Y.DOM.docScrollY()];
+            //actual = [box.left + Y.DOM.docScrollX(), box.top + Y.DOM.docScrollY()];
+            actual = [el.offsetLeft, el.offsetTop];
 
             tests['should set ' + id + ' in page coords'] = function() {
-                ArrayAssert.itemsAreEqual(actual, [xy[0], xy[1]]);
+                ArrayAssert.itemsAreEqual(actual, [Math.round(xy[0]), Math.round(xy[1])]);
             };
         });
 
