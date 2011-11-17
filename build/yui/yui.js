@@ -5967,7 +5967,12 @@ Y.Loader.prototype = {
             }
         }
 
+        if (o.supersedes) {
+            o.supersedes = this.filterRequires(o.supersedes);
+        }
+
         if (o.after) {
+            o.after = this.filterRequires(o.after);
             o.after_map = YArray.hash(o.after);
         }
 
@@ -6073,14 +6078,20 @@ Y.Loader.prototype = {
      */
     getRequires: function(mod) {
 
-        if (!mod || mod._parsed) {
+        if (!mod) {
+            //console.log('returning no reqs for ' + mod.name);
             return NO_REQUIREMENTS;
+        }
+
+        if (mod._parsed) {
+            //console.log('returning requires for ' + mod.name, mod.requires);
+            return mod.expanded || NO_REQUIREMENTS;
         }
 
         //TODO add modue cache here out of scope..
 
         var i, m, j, add, packName, lang, testresults = this.testresults,
-            name = mod.name, cond, go,
+            name = mod.name, cond,
             adddef = ON_PAGE[name] && ON_PAGE[name].details,
             d, k, m1,
             r, old_mod,
@@ -6111,7 +6122,6 @@ Y.Loader.prototype = {
 
         d = [];
         hash = {};
-        
         r = this.filterRequires(mod.requires);
         if (mod.lang) {
             //If a module has a lang attribute, auto add the intl requirement.
@@ -6190,6 +6200,8 @@ Y.Loader.prototype = {
         cond = this.conditions[name];
 
         if (cond) {
+            //Set the module to not parsed since we have conditionals and this could change the dependency tree.
+            mod._parsed = false;
             if (testresults && ftests) {
                 oeach(testresults, function(result, id) {
                     var condmod = ftests[id].name;
@@ -6206,7 +6218,7 @@ Y.Loader.prototype = {
                         //first see if they've specfied a ua check
                         //then see if they've got a test fn & if it returns true
                         //otherwise just having a condition block is enough
-                        go = def && ((def.ua && Y.UA[def.ua]) ||
+                        var go = def && ((def.ua && Y.UA[def.ua]) ||
                                     (def.test && def.test(Y, r)));
 
                         if (go) {
@@ -6218,6 +6230,7 @@ Y.Loader.prototype = {
                                 for (j = 0; j < add.length; j++) {
                                     d.push(add[j]);
                                 }
+
                             }
                         }
                     }
