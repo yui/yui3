@@ -1612,6 +1612,18 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             Assert.areEqual(node.get('parentNode.tagName'), 'DIV');
         },
 
+        'should wrap the node with the given DOM node': function() {
+            var node = Y.Node.create('<span/>');
+            node.wrap(document.createElement('div'));
+            Assert.areEqual(node.get('parentNode.tagName'), 'DIV');
+        },
+
+        'should wrap the node with the given node instance': function() {
+            var node = Y.Node.create('<span/>');
+            node.wrap(Y.Node.create('<div/>'));
+            Assert.areEqual(node.get('parentNode.tagName'), 'DIV');
+        },
+
         'should wrap the paragraph with a div': function() {
             var node = Y.Node.create('<p>Hello World</p>');
             node.wrap('<div></div>');
