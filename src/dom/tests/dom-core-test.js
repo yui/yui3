@@ -1160,6 +1160,20 @@ YUI.add('dom-core-test', function(Y) {
             Assert.areEqual(1, el.firstChild.getElementsByTagName('table').length);
 
             Assert.areEqual('TBODY', el.childNodes[1].tagName);
+        },
+
+        'should return null when given null input': function() {
+            var html = null,
+                el = Y.DOM.create(html);
+
+            Assert.areEqual(null, el);
+        },
+
+        'should return null when given undefined input': function() {
+            var html = undefined,
+                el = Y.DOM.create(html);
+
+            Assert.areEqual(null, el);
         }
     }));
 
