@@ -482,7 +482,7 @@ Y.mix(Y.DOM, {
     },
 
     wrap: function(node, html) {
-        var parent = Y.DOM.create(html),
+        var parent = (html && html.nodeType) ? html : Y.DOM.create(html),
             nodes = parent.getElementsByTagName('*');
 
         if (nodes.length) {
