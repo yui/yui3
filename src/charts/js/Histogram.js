@@ -77,13 +77,15 @@ Histogram.prototype = {
             }
         }
         totalSize = len * seriesSize;
-        if(totalSize > graph.get(setSizeKey))
+        this._maxSize = graph.get(setSizeKey);
+        if(totalSize > this._maxSize)
         {
             ratio = graph.get(setSizeKey)/totalSize;
             seriesSize *= ratio;
             offset *= ratio;
             setSize *= ratio;
             setSize = Math.max(setSize, 1);
+            this._maxSize = setSize;
         }
         offset -= seriesSize/2;
         for(i = 0; i < len; ++i)
