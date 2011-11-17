@@ -617,7 +617,6 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
         @see serverRouting
         **/
         html5: {
-            // TODO: Should this be a setter and not override Router's default?
             valueFn: '_initHtml5'
         },
     },
