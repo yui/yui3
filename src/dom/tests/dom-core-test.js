@@ -1897,6 +1897,12 @@ YUI.add('dom-core-test', function(Y) {
             var node = document.createElement('span');
             Y.DOM.wrap(node, '<p><em><strong><span></span></strong></em></p>');
             Assert.areEqual('SPAN', node.parentNode.tagName);
+        },
+
+        'should wrap the paragraph with a div': function() {
+            var node = Y.DOM.create('<p>Hello World</p>');
+            Y.DOM.wrap(node, '<div/>');
+            Assert.areEqual('DIV', node.parentNode.tagName);
         }
     }));
 
