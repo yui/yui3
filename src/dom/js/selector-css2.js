@@ -20,30 +20,6 @@ var PARENT_NODE = 'parentNode',
     SelectorCSS2 = {
         _reRegExpTokens: /([\^\$\?\[\]\*\+\-\.\(\)\|\\])/, // TODO: move?
         SORT_RESULTS: true,
-        _children: function(node, tag) {
-            var ret = node.children,
-                i,
-                children = [],
-                childNodes,
-                child;
-
-            if (node.children && tag && node.children.tags) {
-                children = node.children.tags(tag);
-            } else if ((!ret && node[TAG_NAME]) || (ret && tag)) { // only HTMLElements have children
-                childNodes = ret || node.childNodes;
-                ret = [];
-                for (i = 0; (child = childNodes[i++]);) {
-                    if (child.tagName) {
-                        if (!tag || tag === child.tagName) {
-                            ret.push(child);
-                        }
-                    }
-                }
-            }
-
-            return ret || [];
-        },
-
         _re: {
             attr: /(\[[^\]]*\])/g,
             esc: /\\[:\[\]\(\)#\.\'\>+~"]/gi,

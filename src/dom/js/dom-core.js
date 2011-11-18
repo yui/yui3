@@ -339,6 +339,37 @@ Y_DOM = {
         }   
 
         return id; 
+    },
+
+    children: function(node, tag) {
+        var ret = node.children,
+            i,
+            children = node.children,
+            childNodes,
+            hasComments,
+            child;
+
+        if (children && children.tags) {
+            if (tag) {
+                children = node.children.tags(tag);
+            } else {
+                hasComments = children.tags('!');
+            }
+        }
+        
+        if ((!ret && node[TAG_NAME]) || (ret && tag)) { // only HTMLElements have children
+            childNodes = ret || node.childNodes;
+            ret = [];
+            for (i = 0; (child = childNodes[i++]);) {
+                if (child.nodeType === 1) {
+                    if (!tag || tag === child.tagName) {
+                        ret.push(child);
+                    }
+                }
+            }
+        }
+
+        return ret || [];
     }
 };
 
