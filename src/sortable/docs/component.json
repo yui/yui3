@@ -52,6 +52,14 @@
             "modules"    : ["sortable"],
             "tags"       : ["sortable", "list", "simple", "multi", "join"],
             "sortArrow"  : "arrow-in"
+        },
+        {
+            "name"       : "sortable-multi-out-fish",
+            "displayName": "Fish Sort - Multi Outter Join",
+            "description": "Multiple Sortable Lists that are inner joined together - a fish sorting use case.",
+            "modules"    : ["sortable"],
+            "tags"       : ["sortable", "list", "simple", "multi", "join", "fish"],
+            "sortArrow"  : "arrow-in"
         }
     ]
 }
