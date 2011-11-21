@@ -231,6 +231,25 @@
             "pluginhost"
         ]
     }, 
+    "button": {
+        "use": [
+            "button-base", 
+            "button-group", 
+            "cssbuttons"
+        ]
+    }, 
+    "button-base": {
+        "requires": [
+            "attribute", 
+            "node", 
+            "array-extras"
+        ]
+    }, 
+    "button-group": {
+        "requires": [
+            "button-base"
+        ]
+    }, 
     "cache": {
         "use": [
             "cache-base", 
@@ -379,6 +398,9 @@
             "cssfonts-context", 
             "cssgrids-context"
         ], 
+        "type": "css"
+    }, 
+    "cssbuttons": {
         "type": "css"
     }, 
     "cssfonts": {
