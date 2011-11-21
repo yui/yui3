@@ -17,20 +17,19 @@
 }
 
 #demo a {
-    font-weight: bold;
-    color: #fff;
-    line-height: 12px;
-    height: 14px;
-    width: 15px;
-    overflow: hidden;
-    padding: 3px;
+    background:url(sprite.png) no-repeat;
     position: absolute;
-    top: 3px;
-    right: 3px;
-    text-decoration: none;
-    text-align: center;
-    text-shadow:0 0 1px #000;
+    cursor:pointer;
+    display: inline-block; /* prevent IE margin doubling */
+    overflow:hidden;
+    text-decoration:none;
+    text-indent:9999px;
+    height: 20px;
+    width: 21px;
+    top: 4px;
+    right: 4px;
     border:solid 1px;
     border-color: #CCD1E1 #6E7BA0 #6E7BA0 #CCD1E1; 
     background-color: #97A2C4;
+    border-radius: 2px;
 }

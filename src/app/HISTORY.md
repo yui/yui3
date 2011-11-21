@@ -47,6 +47,9 @@ App Framework Change History
 
 * The `hasRoute()` method now accepts full URLs as well as paths.
 
+* The hashes used when `html5` is `false` are now root-less; the router's `root`
+  is removed from the hash before it is set on the URL.
+
 * When multiple Router instances exist on a page, calling `save()` in one will
   now cause matching routes to be dispatched in all routers, rather than only
   the router that was the source of the change.
