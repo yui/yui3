@@ -1,0 +1,147 @@
+
+<!DOCTYPE html>
+<html>
+
+    <head>
+      
+      <!-- reset the default browser styles -->
+      <style>
+      
+          body .yui3-button-selected {
+              background-color:#426FD9;
+              color:white;
+          }
+          
+      </style>
+      
+      <script src='../../../build/yui/yui-min.js'></script>
+
+      <script>
+      
+        YUI({
+            base: '../../../build/',
+            debug: true,
+            combo: false,
+            filter: 'raw'
+        }).use('button', function(Y){
+            
+            var button = new Y.Button({
+                srcNode: Y.one('#event')
+            });
+            
+            button.get('srcNode').on('mousedown', function(){
+               button.changeColor('#'+Math.floor(Math.random()*16777215).toString(16));
+            });
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            var button2 = new Y.Button({
+                srcNode: Y.one('#toggle'),
+                type: 'toggle'
+            });
+            button2.on('selectedChange', function(){
+               console.log('toggled');
+            });
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            var buttonGroup = new Y.ButtonGroup({
+                srcNodes: '.group',
+                type: 'radio',
+                decorate: true
+            });
+            
+            
+
+            buttonGroup.after('selectionChange', function(e){
+                console.log('buttonGroup selected = ' + buttonGroup.get('selection').length);
+            });
+            
+            
+            
+            var buttonGroup2 = new Y.ButtonGroup({
+                srcNodes: '.multigroup',
+                type: 'checkbox'
+            });
+            
+            buttonGroup2.after('selectionChange', function(e){
+                console.log('buttonGroup2 selected = ' + buttonGroup2.get('selection').length);
+            });
+
+            
+            
+            
+            var buttonGroup3 = new Y.ButtonGroup({
+                srcNodes: Y.all('.generator'),
+                type: 'push'
+            });
+            
+            buttonGroup3.get('srcNodes').on('click', function(e){
+                var type = e.target.getAttribute('x-type');
+                new Y.ButtonGenerator({
+                    parent: Y.one('#generations'),
+                    label: type,
+                    type: type
+                });                
+            })
+            
+            
+            
+            
+            
+            
+            
+            
+        });
+      </script>
+    </head>
+    
+    <body class='yui3-skin-sam'>
+        <h1>JS button prototype</h1>
+        
+        <hr />
+
+        <h2>Event</h2>
+        <button id='event' tabindex='3'>Change <br /> Color</button>
+        
+        <br>
+        
+        <h2>Toggle w/ event</h2>
+        <input type='button' id='toggle' value='Toggle'></input>
+        
+        <br>
+        
+        <h2>Group (radio)</h2>
+        <button class='group' id='btn1'>Button 13</button>
+        <button class='group' id='btn2'>Button 27</button>
+        <button class='group' id='btn3'>Button 40</button>   
+        <br>
+        
+        <h2>Multi-Group (checkbox)</h2>
+        <button class='multigroup' id='btn4'>Button 4</button>
+        <span class='multigroup' id='btn5'>Button 5</span>
+        <span class='multigroup' id='btn6'>Button 6</span>
+        
+        <br>
+        
+        <h2>Generator</h2>
+        <button class='generator' x-type='push'>Generate Push Button</button>
+        <button class='generator' x-type='toggle'>Generate Toggle Button</button>
+        <hr>
+        <div id='generations'>
+            
+        </div>
+    </body>
+</html>
