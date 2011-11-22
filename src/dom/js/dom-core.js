@@ -330,42 +330,6 @@ Y_DOM = {
         return (typeof ret !== 'undefined') ? ret : nodes;
     },
 
-    wrap: function(node, html) {
-        var parent = Y.DOM.create(html),
-            nodes = parent.getElementsByTagName('*');
-
-        if (nodes.length) {
-            parent = nodes[nodes.length - 1];
-        }
-
-        if (node.parentNode) { 
-            node.parentNode.replaceChild(parent, node);
-        }
-        parent.appendChild(node);
-    },
-
-    unwrap: function(node) {
-        var parent = node.parentNode,
-            lastChild = parent.lastChild,
-            next = node,
-            grandparent;
-
-        if (parent) {
-            grandparent = parent.parentNode;
-            if (grandparent) {
-                node = parent.firstChild;
-                while (node !== lastChild) {
-                    next = node.nextSibling;
-                    grandparent.insertBefore(node, parent);
-                    node = next;
-                }
-                grandparent.replaceChild(lastChild, parent);
-            } else {
-                parent.removeChild(node);
-            }
-        }
-    },
-
     generateID: function(el) {
         var id = el.id;
 
