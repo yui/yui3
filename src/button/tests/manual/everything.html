@@ -30,7 +30,8 @@
                 var button = new Y.Button({
                     srcNode: Y.one('#event')
                 });
-
+                
+                // One way of listening for events
                 button.get('srcNode').on('click', function(){
                    button.changeColor('#'+Math.floor(Math.random()*16777215).toString(16));
                 });
@@ -48,8 +49,10 @@
                     srcNode: Y.one('#toggle'),
                     type: 'toggle'
                 });
+                
+                // An alternative to button.get('srcNode').on('click', ...
                 button2.on('selectedChange', function(){
-                   console.log('toggled');
+                   Y.log('toggled');
                 });
 
 
@@ -62,6 +65,7 @@
 
                 /*
                     A 'link' button
+                    Preferably, the user would just apply a yui3-button style to an <a> element and not use JS
                 */
                 var button3 = new Y.Button({
                     srcNode: Y.one('#link')
@@ -104,8 +108,9 @@
                 });
 
                 buttonGroup.after('selectionChange', function(e){
-                    console.log('buttonGroup selected = ' + buttonGroup.get('selection').length);
-                });
+                    Y.log('buttonGroup selection changed');
+                });    
+                
 
 
 
@@ -115,18 +120,18 @@
 
 
                 /*
-                    A group of checkbox-like buttons                
+                    A group of checkbox-like buttons
                 */
                 var buttonGroup2 = new Y.ButtonGroup({
                     buttons: new Y.Buttons({
-                        srcNodes: Y.all('.multigroup'),
-                        type: 'toggle'
+                        srcNodes: Y.all('.multigroup')
                     }),
                     type: 'checkbox'
                 });
 
                 buttonGroup2.after('selectionChange', function(e){
-                    console.log('buttonGroup2 selected = ' + buttonGroup2.get('selection').length);
+                    var selection = buttonGroup2.get('selection');
+                    Y.log('buttonGroup2 selected count = ' + selection.length);
                 });
 
 
@@ -140,16 +145,27 @@
 
                 /*
                     A button generator
+                    Y.Buttons adds nothing useful for the gernator buttons, so just add the class and a listener.
                 */
-                Y.all('.generator').addClass('yui3-button');
-
-                Y.all('.generator').on('click', function(e){
-                    var type = e.target.getAttribute('x-type');
-                    var button = new Y.ButtonGenerator({
-                        label: type,
-                        type: type
-                    });
-                    Y.one("#generated").append(button.get('srcNode'));
+                Y.all('.generator').addClass('yui3-button').on('click', function(e){
+                    var button, type, config;
+                    
+                    type = e.target.getAttribute('x-type');
+                    
+                    config = {
+                        label: type
+                    };
+                    
+                    if (type === 'disabled') {
+                        config.type = 'push';
+                        config.disabled = true;
+                    }
+                    else {
+                        config.type = type;
+                    }
+                    
+                    button = new Y.ButtonGenerator(config);
+                    Y.one('#generated').append(button.get('srcNode'));
                 })
                 
             });
@@ -177,7 +193,7 @@
         
         
         <h2>Link</h2>
-        <a href="http://yahoo.com" id="link">Go to yahoo.com</a>
+        <a href='http://yahoo.com' id='link'>Go to yahoo.com</a>
         
         
         <h2>Disabled</h2>
@@ -208,7 +224,7 @@
         <h2>Generator</h2>
         <button class='generator' x-type='push'>Generate Push Button</button>
         <button class='generator' x-type='toggle'>Generate Toggle Button</button>
-        <hr>
+        <button class='generator' x-type='disabled'>Generate Disabled Button</button>
         <div id='generated' style='border:solid black 1px;'></div>
         
     </body>

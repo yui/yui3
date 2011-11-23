@@ -22,17 +22,14 @@
                 filter: 'raw'
             }).use('button', 'button-group', function(Y){
                 
-                var buttons = new Y.Buttons({
-                    srcNodes: Y.all('.group'),
-                    type: 'toggle'
-                });
-                
-                var bg = new Y.ButtonGroup({
-                    buttons: buttons,
+                var group = new Y.ButtonGroup({
+                    buttons: new Y.Buttons({
+                        srcNodes: Y.all('.group')
+                    }),
                     type: 'radio'
                 });
                 
-                bg.on('selectionChange', function(e){
+                group.on('selectionChange', function(e){
                     console.log('Changed');
                 })
             });
