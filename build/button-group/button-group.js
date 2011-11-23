@@ -18,18 +18,6 @@ var ButtonGroup = function(config) {
         /* The type of ButtonGroup. push/radio/checkbox */
         type      : { 
             value : 'push'
-        },
-        
-        /* The type of buttons this group should generate. push/toggle */
-        buttonType: {
-            valueFn: function(){
-                if (config.type === 'checkbox' || config.type === 'radio') {
-                    return 'toggle';
-                }
-                else {
-                    return 'push';
-                }
-            }
         }
         
     }, config);
@@ -82,7 +70,7 @@ ButtonGroup.prototype._syncSelection = function() {
         return button.get('selected');
     });
     this.set('selection', selections['matches']);
-    // do something with selections['rejects']?
+    // TODO: do something with selections['rejects']?
 }
 
 ButtonGroup.prototype._removeButtonFromSelectionExcept = function(/* Button */ buttonToKeep) {
