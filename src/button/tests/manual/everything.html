@@ -122,11 +122,8 @@
 
                 /*
                     A button generator
-                    Not sure I really like this design, hmm....
                 */
-                new Y.Buttons({
-                    srcNodes: Y.all('.generator')
-                })
+                Y.all('.generator').addClass('yui3-button');
 
                 Y.all('.generator').on('click', function(e){
                     var type = e.target.getAttribute('x-type');

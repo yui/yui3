@@ -97,14 +97,17 @@ var Button = function(config){
     
     var node = this.get('srcNode');
     
+    // TODO: Should I even check for hasClass before adding?
     if (!node.hasClass('yui3-button')) {
         node.addClass('yui3-button');
     }
     
+    // TODO: Same ^
     if (!node.getAttribute('role')) {
         node.set('role', 'button');
     }
     
+    // TODO: Does mousedown/up even work on touch devices?
     node.on('mousedown', function(e){
         e.target.setAttribute('aria-pressed', 'true');
     });
@@ -114,11 +117,11 @@ var Button = function(config){
     });
     
     node.on('focus', function(e){
-        e.target.addClass('yui3-button-focus');
+        e.target.addClass('yui3-button-focused');
     });
     
     node.on('blur', function(e){
-        e.target.removeClass('yui3-button-focus');
+        e.target.removeClass('yui3-button-focused');
     });
     
     node.on('disabledChange', function(value){
@@ -163,6 +166,7 @@ Button._getContrastYIQ = function(hexcolor){
 }
 
 var ButtonGenerator = function(config) {
+    // TODO: SHould this be <button> or <input type="button"> ??
     var node = Y.Node.create('<button>' + config.label + '</button>');
     var button = new Y.Button({
         srcNode: node,
