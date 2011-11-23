@@ -30,49 +30,43 @@ var ButtonGroup = function(config) {
                     return 'push';
                 }
             }
-        },
-        
-        /* A NodeList pointing to all the button elements */
-        srcNodes  : {
-            setter: function(value) {
-                if (Y.Lang.isString(value)) {
-                    return Y.all(config.srcNodes);
-                }
-                else {
-                    return value;
-                }
-            }   
-        },
+        }
         
     }, config);
     
-    var srcNodes = this.get('srcNodes');
-    
-    srcNodes.each(function(node){
-        var button = new Y.Button({
-            type: this.get('buttonType'),
-            srcNode: node
-        });
-        
+    var buttons = this.get('buttons');
+    Y.Array.each(buttons, function(button){
         this.addButton(button);
-        
-        button.before('selectedChange', this._beforeButtonSelectedChange, this);
-        button.after('selectedChange', this._afterButtonSelectedChange, this);
     }, this);
 }
 
 ButtonGroup.prototype.addButton = function(/* Button */ button){
     //console.log('Adding button');
     var buttons = this.get('buttons');
+    if (this.get('type') === 'radio') {
+        button.set('type', 'toggle');
+    }
+    button.before('selectedChange', this._beforeButtonSelectedChange, this);
+    button.after('selectedChange', this._afterButtonSelectedChange, this);
     buttons.push(button);
     this.set('buttons', buttons);
 }
 
 ButtonGroup.prototype._beforeButtonSelectedChange = function(e) {
     //console.log('Before selection change');
+    
     var button = e.target;
+    
     if (this.get('type') === 'radio') {
-        this._removeButtonFromSelectionExcept(button);
+        var selection = this.get('selection');
+        if (selection.length) {
+            if (button.get('srcNode')._yuid === selection[0].get('srcNode')._yuid) {
+                e.preventDefault();
+            }
+            else {
+                this._removeButtonFromSelectionExcept(button);   
+            }
+        }
     }
 }
 
@@ -87,7 +81,6 @@ ButtonGroup.prototype._syncSelection = function() {
     var selections = Y.Array.partition(buttons, function(/* Button */ button){
         return button.get('selected');
     });
-    
     this.set('selection', selections['matches']);
     // do something with selections['rejects']?
 }
@@ -96,14 +89,14 @@ ButtonGroup.prototype._removeButtonFromSelectionExcept = function(/* Button */ b
     var selection = this.get('selection');
     Y.Array.each(selection, function(button){
         if (button.get('srcNode')._yuid !== buttonToKeep.get('srcNode')._yuid) {
-            button.set('selected', false);
+            button.set('selected', false, {propogate:false});
         }
     }, this);                
 }
 
 Y.augment(ButtonGroup, Y.Attribute);
 
-Y.ButtonGroup     = ButtonGroup;
+Y.ButtonGroup = ButtonGroup;
 
 
 }, '@VERSION@' ,{requires:['button-base']});

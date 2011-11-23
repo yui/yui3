@@ -91,6 +91,11 @@
 }
 
 
+.yui3-button-focus{
+    /* TODO */
+    color:pink;
+}
+
 
 .yui3-button.primary{
     color: #fff;
