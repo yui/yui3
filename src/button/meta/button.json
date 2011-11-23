@@ -10,7 +10,8 @@
                 "requires": [
                     "attribute",
                     "node",
-                    "array-extras"
+                    "array-extras",
+                    "event-focus"
                 ]
             }, 
             "button-group": {

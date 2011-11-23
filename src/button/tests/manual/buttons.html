@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- reset the default browser styles -->
+        <style>
+
+            /* Fix this - Shouldn't require body specificity */
+            body .yui3-button-selected {
+                background-color:#426FD9;
+                color:white;
+            }
+          
+        </style>
+      
+        <script src='../../../../build/yui/yui-min.js'></script>
+
+        <script>
+            
+            YUI({
+                debug: true,
+                combo: false,
+                filter: 'raw'
+            }).use('button', 'button-group', function(Y){
+                
+                var buttons = new Y.Buttons({
+                    srcNodes: Y.all('.group'),
+                    type: 'toggle'
+                });
+                
+                var bg = new Y.ButtonGroup({
+                    buttons: buttons,
+                    type: 'radio'
+                });
+                
+                bg.on('selectionChange', function(e){
+                    console.log('Changed');
+                })
+            });
+        </script>
+    </head>
+    
+    <body class='yui3-skin-sam'>
+        
+        <h1>Buttons prototype</h1>
+        
+        <hr />
+        
+        <input type='button' class='group' value='1'>
+        <input type='button' class='group' value='2'>
+        <input type='button' class='group' value='3'>
+        <input type='button' class='group' value='4'>
+        <input type='button' class='group' value='5'>
+        <input type='button' class='group' value='6'>
+    </body>
+</html>

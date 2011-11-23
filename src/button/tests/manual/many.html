@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- reset the default browser styles -->
+        <style>
+
+            /* Fix this - Shouldn't require body specificity */
+            body .yui3-button-selected {
+                background-color:#426FD9;
+                color:white;
+            }
+          
+        </style>
+      
+        <script src='../../../../build/yui/yui-min.js'></script>
+
+        <script>
+            
+            YUI.add('buttons', function(Y){
+                
+                var Buttons = function(config){
+                    
+                    var buttons = [];
+                    
+                    config.srcNodes.each(function(node){
+                        var button = new Y.Button({
+                            type: config.type,
+                            srcNode: node
+                        });
+                        buttons.push(button);
+                    });
+                    
+                    return buttons;
+                }
+                
+                Y.Buttons = Buttons;
+            });
+            
+            YUI({
+                debug: true,
+                combo: false,
+                filter: 'raw'
+            }).use('button', 'buttons', 'button-group', function(Y){
+                
+                Y.one("#generator").once("click", function(){
+                    
+                    var button, buttons = [];
+                    
+                    for(var i=0; i < 100; i++) {
+                        button = new Y.ButtonGenerator( {label: i} );
+                        Y.one("#container").append(button.get('srcNode'));
+                        buttons.push(button);
+                    }
+
+                    new Y.ButtonGroup({
+                        buttons: buttons,
+                        type: 'radio'
+                    });
+                });
+                
+            });
+        </script>
+    </head>
+    
+    <body class='yui3-skin-sam'>
+        
+        <h1>Buttonpalooza</h1>
+        <button id="generator" class="yui3-button">Click to make a lot of buttons</button>
+        <hr />
+        <div id="container"></div>
+    </body>
+</html>
