@@ -8,7 +8,18 @@ var ButtonGroup = function (config) {
         
         /* The array of buttons contained in this group */
         buttons   : {
-            value : []
+            value:[],
+            setter: function(buttons) {
+                var type = this.get('type');
+                
+                Y.Array.each(buttons, function(button){
+                    if (type === 'radio' || type === 'checkbox') {
+                        button.set('type', 'toggle');
+                    }
+                    button.before('selectedChange', this._beforeButtonSelectedChange, this);
+                    button.after('selectedChange', this._afterButtonSelectedChange, this);
+                }, this);
+            }
         },
         
         /* An array of buttons that have 'selected' = true state */
@@ -22,28 +33,18 @@ var ButtonGroup = function (config) {
         }
         
     }, config);
-    
-    var buttons = this.get('buttons');
-    Y.Array.each(buttons, function(button){
-        this.addButton(button);
-    }, this);
 };
+/* Rethink this
 
-ButtonGroup.prototype.addButton = function(/* Button */ button){
-    var buttons;
-    
+ButtonGroup.prototype.addButton = function(button){
+    var buttons, type;
     buttons = this.get('buttons');
     
-    if (this.get('type') === 'radio') {
-        button.set('type', 'toggle');
-    }
-    
-    button.before('selectedChange', this._beforeButtonSelectedChange, this);
-    button.after('selectedChange', this._afterButtonSelectedChange, this);
     buttons.push(button);
     
     this.set('buttons', buttons);
 };
+*/
 
 ButtonGroup.prototype._beforeButtonSelectedChange = function(e) {
     var button, selection;
@@ -71,7 +72,6 @@ ButtonGroup.prototype._syncSelection = function() {
     var buttons, selections;
     
     buttons = this.get('buttons');
-    
     // Split apart the selected from the non-selected buttons
     selections = Y.Array.partition(buttons, function(/* Button */ button){
         return button.get('selected');

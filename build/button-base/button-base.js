@@ -174,17 +174,14 @@ var ButtonGenerator = function(config) {
     // TODO: SHould this be <button> or <input type="button"> ??
     var button, node;
     
-    node = Y.Node.create('<button>' + config.label + '</button>');
-    button = new Y.Button({
-        srcNode: node,
-        type: config.type,
-        name: config.name
-    });
+    config.srcNode = Y.Node.create('<button>' + config.label + '</button>');
+    button = new Y.Button(config);
     return button;
 };
 
 var Buttons = function(config){
     var buttons = [];
+    
     config.srcNodes.each(function(node){
         var button = new Y.Button({
             type: config.type,
