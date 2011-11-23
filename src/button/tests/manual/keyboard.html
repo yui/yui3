@@ -221,6 +221,7 @@
                 Y.Object.some(codes, function(val, key){
                     if (e.button === val) {
                         pressed = key;
+                        return true; // exit `some`
                     }
                 });
 
