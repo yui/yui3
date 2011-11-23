@@ -42,11 +42,15 @@
                 filter: 'raw'
             }).use('button', 'buttons', 'button-group', function(Y){
                 
-                Y.one("#generator").once("click", function(){
+                Y.one("#generator").on("click", function(){
                     
-                    var button, buttons = [];
+                    var count, button, buttons = [];
                     
-                    for(var i=0; i < 100; i++) {
+                    count = Y.one('#count').get('value');
+                    
+                    Y.one("#container").empty(true);
+                    
+                    for(var i=0; i < count; i++) {
                         button = new Y.ButtonGenerator( {label: i} );
                         Y.one("#container").append(button.get('srcNode'));
                         buttons.push(button);
@@ -65,6 +69,8 @@
     <body class='yui3-skin-sam'>
         
         <h1>Buttonpalooza</h1>
+        How many buttons would you like?<input type="text" value="100" id="count">
+        <br /><br />
         <button id="generator" class="yui3-button">Click to make a lot of buttons</button>
         <hr />
         <div id="container"></div>
