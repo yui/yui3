@@ -1,0 +1,45 @@
+<h3>Setting Up the List</h3>
+<p>First we need to create the HTML structure for the lists. Since `Sortable` uses `Y.DD.Delegate`, we need to set up the delegation containers (`#list1, #lists2`) and the list items (`li`).</p>
+
+```
+{{>sortable-fish-html}}
+```
+
+<p>Now we give the lists some CSS to make them visible.</p>
+
+```
+{{>sortable-fish-css}}
+```
+
+<h3>Setting Up the YUI Instance</h3>
+<p>Now we need to create our YUI instance and tell it to load the `sortable` module.</p>
+<p>In this example we are also going to attach a `DD` plugin to the `Sortable` instances.</p>
+
+```
+YUI().use('dd-constrain', 'sortable'
+```
+
+<h3>Making the Lists Draggable</h3>
+<p>Now that we have a YUI instance with the `sortable` module, we need to instantiate a `Sortable` instance on each of the lists.</p>
+
+```
+{{>sortable-multi-source-js-pre}}
+{{>sortable-multi-source-js-post}}
+```
+
+<h3>Applying a DD Plugin</h3>
+<p>Since `Sortable` uses `DD.Delegate`, there is a dd instance available after instantiation.</p>
+<p>The `DD.Delegate` reference is found on the `.delegate` property of the `Sortable`.
+This `DD.Delegate` instance has a `DD.Drag` instance bound to the `dd` property on the `DD.Delegate`
+</p>
+
+```
+{{>sortable-multi-source-js-connect}}
+```
+<p>Applying the `Plugin.DDConstrained` to the `Sortable` instance.</p>
+
+```
+{{>sortable-multi-source-js-pre}}
+{{>sortable-multi-source-js-connect}}
+{{>sortable-multi-source-js-post}}
+```
