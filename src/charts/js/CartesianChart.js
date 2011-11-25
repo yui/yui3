@@ -982,12 +982,29 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
 
    
     /**
-     * Returns an object literal containing a categoryItem and a valueItem for a given series index.
-     *
-     * @method getSeriesItem
+     * Returns an object literal containing a categoryItem and a valueItem for a given series index. Below is the structure of each:
+     * 
+     * @method getSeriesItems
      * @param {CartesianSeries} series Reference to a series.
      * @param {Number} index Index of the specified item within a series.
-     * @return Object
+     * @return Object An object literal containing the following:
+     *
+     *  <dl>
+     *      <dt>categoryItem</dt><dd>Object containing the following data related to the category axis of the series.
+     *  <dl>
+     *      <dt>axis</dt><dd>Reference to the category axis of the series.</dd>
+     *      <dt>key</dt><dd>Category key for the series.</dd>
+     *      <dt>value</dt><dd>Value on the axis corresponding to the series index.</dd>
+     *  </dl>
+     *      </dd>
+     *      <dt>valueItem</dt><dd>Object containing the following data related to the category axis of the series.
+     *  <dl>
+     *      <dt>axis</dt><dd>Reference to the value axis of the series.</dd>
+     *      <dt>key</dt><dd>Value key for the series.</dd>
+     *      <dt>value</dt><dd>Value on the axis corresponding to the series index.</dd>
+     *  </dl>
+     *      </dd>
+     *  </dl>
      */
     getSeriesItems: function(series, index)
     {

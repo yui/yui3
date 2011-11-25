@@ -476,7 +476,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
 
             setter: function(val)
             {
-                this._xDisplayName = val;
+                this._xDisplayName = Y.Escape.html(val);
                 return val;
             }
         },
@@ -495,7 +495,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
 
             setter: function(val)
             {
-                this._yDisplayName = val;
+                this._yDisplayName = Y.Escape.html(val);
                 return val;
             }
         },
@@ -624,7 +624,12 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          * @attribute xKey
          * @type String
          */
-        xKey: {},
+        xKey: {
+            setter: function(val)
+            {
+                return Y.Escape.html(val);
+            }
+        },
 
         /**
          * Indicates which array to from the hash of value arrays in 
@@ -633,7 +638,12 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          * @attribute yKey
          * @type String
          */
-        yKey: {},
+        yKey: {
+            setter: function(val)
+            {
+                return Y.Escape.html(val);
+            }
+        },
 
         /**
          * Array of x values for the series.
