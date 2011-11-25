@@ -329,7 +329,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "widget", 
             "widget-position", 
             "widget-stack", 
-            "graphics"
+            "graphics", 
+            "escape"
         ]
     }, 
     "classnamemanager": {
@@ -2106,4 +2107,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'f84ba8e0dca92596275fd83b58c9fa2f';
+YUI.Env[Y.version].md5 = 'f70a4eb51c4d7a7cd35fb8f9e3f7ef1c';

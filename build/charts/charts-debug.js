@@ -2273,7 +2273,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                     titleTextField.style[i] = styles[i];
                 }
             }
-            titleTextField.innerHTML = title;
+            titleTextField.innerHTML = this.get("titleFunction")(title);
             this._titleTextField = titleTextField;
             this._layout.positionTitle.apply(this, [titleTextField]);
         }
@@ -2822,7 +2822,48 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          *  @attribute title
          *  @type String
          */
-        title: {}
+        title: {
+            setter: function(val)
+            {
+                return Y.Escape.html(val);
+            }
+        },
+
+        /**
+         * Method used for formatting title. The method use would need to implement the arguments below and return a `String` or `HTML`. The default implementation 
+         * of the method returns a `String`. The output of this method will be rendered to the DOM using `innerHTML`. 
+         * <dl>
+         *      <dt>val</dt><dd>Title to be formatted. (`String`)</dd>
+         * </dl>
+         *
+         * @attribute titleFunction
+         * @type Function
+         */
+        titleFunction: {
+            value: function(val)
+            {
+                return val;
+            }
+        },
+        
+        /**
+         * Method used for formatting a label. This attribute allows for the default label formatting method to overridden. The method use would need
+         * to implement the arguments below and return a `String` or `HTML`. The default implementation of the method returns a `String`. The output of this method
+         * will be rendered to the DOM using `innerHTML`. 
+         * <dl>
+         *      <dt>val</dt><dd>Label to be formatted. (`String`)</dd>
+         *      <dt>format</dt><dd>Template for formatting label. (optional)</dd>
+         * </dl>
+         *
+         * @attribute labelFunction
+         * @type Function
+         */
+        labelFunction: {
+            value: function(val, format)
+            {
+                return val;
+            }
+        }
             
         /**
          * Style properties used for drawing an axis. This attribute is inherited from `Renderer`. Below are the default values:
@@ -3119,17 +3160,17 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
      * @method getKeyValueAt
      * @param {String} key value used to look up the correct array
      * @param {Number} index within the array
-     * @return Object
+     * @return Number 
      */
     getKeyValueAt: function(key, index)
     {
         var value = NaN,
             keys = this.get("keys");
-        if(keys[key] && keys[key][index]) 
+        if(keys[key] && Y_Lang.isNumber(parseFloat(keys[key][index])))
         {
             value = keys[key][index];
         }
-        return value;
+        return parseFloat(value);
     },
 
     /**
@@ -3434,7 +3475,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
                 {
                     max = this._setMaximum;
                 }
-                return max;
+                return parseFloat(max);
             },
             setter: function (value)
             {
@@ -3477,7 +3518,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
                 {
                     min = this._setMinimum;
                 }
-                return min;
+                return parseFloat(min);
             },
             setter: function(val)
             {
@@ -3557,24 +3598,6 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
                 return col;
             },
             readOnly: true
-        },
-        
-        /**
-         * Method used for formatting a label. This attribute allows for the default label formatting method to overridden. The method use would need
-         * to implement the arguments below and return a `String`.
-         * <dl>
-         *      <dt>val</dt><dd>Label to be formatted. (`String`)</dd>
-         *      <dt>format</dt><dd>Template for formatting label. (optional)</dd>
-         * </dl>
-         *
-         * @attribute labelFunction
-         * @type Function
-         */
-        labelFunction: {
-            value: function(val, format)
-            {
-                return val;
-            }
         }
     }
 });
@@ -3607,7 +3630,8 @@ NumericAxis.ATTRS = {
     
     /**
      * Method used for formatting a label. This attribute allows for the default label formatting method to overridden. The method use would need
-     * to implement the arguments below and return a `String`.
+     * to implement the arguments below and return a `String` or `HTML`. The default implementation of the method returns a `String`. The output of this method
+     * will be rendered to the DOM using `innerHTML`. 
      * <dl>
      *      <dt>val</dt><dd>Label to be formatted. (`String`)</dd>
      *      <dt>format</dt><dd>Object containing properties used to format the label. (optional)</dd>
@@ -3655,25 +3679,6 @@ Y.extend(NumericAxis, Y.AxisType,
      * @private
      */
     _type: "numeric",
-
-    /**
-     * Returns a value based of a key value and an index.
-     *
-     * @method getKeyValueAt
-     * @param {String} key value used to look up the correct array
-     * @param {Number} index within the array
-     * @return Object
-     */
-    getKeyValueAt: function(key, index)
-    {
-        var value = NaN,
-            keys = this.get("keys");
-        if(keys[key] && Y_Lang.isNumber(parseFloat(keys[key][index])))
-        {
-            value = keys[key][index];
-        }
-        return value;
-    },
 
     /**
      * Helper method for getting a `roundingUnit` when calculating the minimum and maximum values.
@@ -4122,7 +4127,7 @@ Y.extend(NumericAxis, Y.AxisType,
             }
             label += min;
         }
-        return label;
+        return parseFloat(label);
     },
 
     /**
@@ -4404,7 +4409,7 @@ TimeAxis.ATTRS =
             {
                 max = this._getNumber(this.get("dataMaximum"));
             }
-            return max;
+            return parseFloat(max);
         },
         setter: function (value)
         {
@@ -4427,7 +4432,7 @@ TimeAxis.ATTRS =
             {
                 min = this._getNumber(this.get("dataMinimum"));
             }
-                return min;
+            return parseFloat(min);
         },
         setter: function (value)
         {
@@ -4438,7 +4443,8 @@ TimeAxis.ATTRS =
 
     /**
      * Method used for formatting a label. This attribute allows for the default label formatting method to overridden. The method use would need
-     * to implement the arguments below and return a `String`.
+     * to implement the arguments below and return a `String` or `HTML`. The default implementation of the method returns a `String`. The output of this method
+     * will be rendered to the DOM using `innerHTML`. 
      * <dl>
      *      <dt>val</dt><dd>Label to be formatted. (`String`)</dd>
      *      <dt>format</dt><dd>STRFTime string used to format the label. (optional)</dd>
@@ -4455,7 +4461,7 @@ TimeAxis.ATTRS =
             {
                 return Y.DataType.Date.format(val, {format:format});
             }
-            return val;
+            return Y.Escape.html(val.toString());
         }
     },
 
@@ -4841,6 +4847,25 @@ Y.extend(CategoryAxis, Y.AxisType,
     {
         return l/ct;
     },
+
+    /**
+     * Returns a value based of a key value and an index.
+     *
+     * @method getKeyValueAt
+     * @param {String} key value used to look up the correct array
+     * @param {Number} index within the array
+     * @return String 
+     */
+    getKeyValueAt: function(key, index)
+    {
+        var value = NaN,
+            keys = this.get("keys");
+        if(keys[key] && keys[key][index]) 
+        {
+            value = keys[key][index];
+        }
+        return Y.Escape.html(value);
+    },
    
     /**
      * Calculates and returns a value based on the number of labels and the index of
@@ -4864,7 +4889,7 @@ Y.extend(CategoryAxis, Y.AxisType,
         {
             label = data[l - (i + 1)];
         }   
-        return label;
+        return Y.Escape.html(label.toString());
     }
 });
 
@@ -6728,7 +6753,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
 
             setter: function(val)
             {
-                this._xDisplayName = val;
+                this._xDisplayName = Y.Escape.html(val);
                 return val;
             }
         },
@@ -6747,7 +6772,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
 
             setter: function(val)
             {
-                this._yDisplayName = val;
+                this._yDisplayName = Y.Escape.html(val);
                 return val;
             }
         },
@@ -6876,7 +6901,12 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          * @attribute xKey
          * @type String
          */
-        xKey: {},
+        xKey: {
+            setter: function(val)
+            {
+                return Y.Escape.html(val);
+            }
+        },
 
         /**
          * Indicates which array to from the hash of value arrays in 
@@ -6885,7 +6915,12 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          * @attribute yKey
          * @type String
          */
-        yKey: {},
+        yKey: {
+            setter: function(val)
+            {
+                return Y.Escape.html(val);
+            }
+        },
 
         /**
          * Array of x values for the series.
@@ -10670,12 +10705,54 @@ ChartBase.ATTRS = {
      *      <dt>show</dt><dd>Indicates whether or not to show the tooltip</dd>
      *      <dt>markerEventHandler</dt><dd>Displays and hides tooltip based on marker events</dd>
      *      <dt>planarEventHandler</dt><dd>Displays and hides tooltip based on planar events</dd>
-     *      <dt>markerLabelFunction</dt><dd>Reference to the function used to format a marker event triggered tooltip's text</dd>
-     *      <dt>planarLabelFunction</dt><dd>Reference to the function used to format a planar event triggered tooltip's text</dd>
+     *      <dt>markerLabelFunction</dt><dd>Reference to the function used to format a marker event triggered tooltip's text. The method contains 
+     *      the following arguments:
+     *  <dl>
+     *      <dt>categoryItem</dt><dd>An object containing the following:
+     *  <dl>
+     *      <dt>axis</dt><dd>The axis to which the category is bound.</dd>
+     *      <dt>displayName</dt><dd>The display name set to the category (defaults to key if not provided).</dd>
+     *      <dt>key</dt><dd>The key of the category.</dd>
+     *      <dt>value</dt><dd>The value of the category.</dd>
+     *  </dl>
+     *  </dd>
+     *  <dt>valueItem</dt><dd>An object containing the following:
+     *      <dl>
+     *          <dt>axis</dt><dd>The axis to which the item's series is bound.</dd>
+     *          <dt>displayName</dt><dd>The display name of the series. (defaults to key if not provided)</dd>
+     *          <dt>key</dt><dd>The key for the series.</dd>
+     *          <dt>value</dt><dd>The value for the series item.</dd> 
+     *      </dl>
+     *  </dd>
+     *  <dt>itemIndex</dt><dd>The index of the item within the series.</dd>
+     *  <dt>series</dt><dd> The `CartesianSeries` instance of the item.</dd>
+     *  <dt>seriesIndex</dt><dd>The index of the series in the `seriesCollection`.</dd>
+     *  </dl>
+     *  The method returns an html string which is written into the DOM using `innerHTML`. 
+     *  </dd>
+     *  <dt>planarLabelFunction</dt><dd>Reference to the function used to format a planar event triggered tooltip's text
+     *  <dl>
+     *      <dt>categoryAxis</dt><dd> `CategoryAxis` Reference to the categoryAxis of the chart.
+     *      <dt>valueItems</dt><dd>Array of objects for each series that has a data point in the coordinate plane of the event. Each object contains the following data:
+     *  <dl>
+     *      <dt>axis</dt><dd>The value axis of the series.</dd>
+     *      <dt>key</dt><dd>The key for the series.</dd>
+     *      <dt>value</dt><dd>The value for the series item.</dd>
+     *      <dt>displayName</dt><dd>The display name of the series. (defaults to key if not provided)</dd>
+     *  </dl> 
+     *  </dd>
+     *      <dt>index</dt><dd>The index of the item within its series.</dd>
+     *      <dt>seriesArray</dt><dd>Array of series instances for each value item.</dd>
+     *      <dt>seriesIndex</dt><dd>The index of the series in the `seriesCollection`.</dd>
+     *  </dl>
+     *  </dd>
+     *  </dl>
+     *  The method returns an html string which is written into the DOM using `innerHTML`. 
+     *  </dd>
      *  </dl>
      * @attribute tooltip
      * @type Object
-     */
+     */ 
     tooltip: {
         valueFn: "_getTooltip",
 
@@ -11435,6 +11512,7 @@ ChartBase.prototype = {
      *  @param {Number} index The index of the item within its series.
      *  @param {Array} seriesArray Array of series instances for each value item.
      *  @param {Number} seriesIndex The index of the series in the `seriesCollection`.
+     *  @return {String | HTML} 
      * @private
      */
     _planarLabelFunction: function(categoryAxis, valueItems, index, seriesArray, seriesIndex)
@@ -11484,6 +11562,7 @@ ChartBase.prototype = {
      * @param {Number} itemIndex The index of the item within the series.
      * @param {CartesianSeries} series The `CartesianSeries` instance of the item.
      * @param {Number} seriesIndex The index of the series in the `seriesCollection`.
+     * @return {String | HTML}
      * @private
      */
     _tooltipLabelFunction: function(categoryItem, valueItem, itemIndex, series, seriesIndex)
@@ -12505,12 +12584,29 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
 
    
     /**
-     * Returns an object literal containing a categoryItem and a valueItem for a given series index.
-     *
-     * @method getSeriesItem
+     * Returns an object literal containing a categoryItem and a valueItem for a given series index. Below is the structure of each:
+     * 
+     * @method getSeriesItems
      * @param {CartesianSeries} series Reference to a series.
      * @param {Number} index Index of the specified item within a series.
-     * @return Object
+     * @return Object An object literal containing the following:
+     *
+     *  <dl>
+     *      <dt>categoryItem</dt><dd>Object containing the following data related to the category axis of the series.
+     *  <dl>
+     *      <dt>axis</dt><dd>Reference to the category axis of the series.</dd>
+     *      <dt>key</dt><dd>Category key for the series.</dd>
+     *      <dt>value</dt><dd>Value on the axis corresponding to the series index.</dd>
+     *  </dl>
+     *      </dd>
+     *      <dt>valueItem</dt><dd>Object containing the following data related to the category axis of the series.
+     *  <dl>
+     *      <dt>axis</dt><dd>Reference to the value axis of the series.</dd>
+     *      <dt>key</dt><dd>Value key for the series.</dd>
+     *      <dt>value</dt><dd>Value on the axis corresponding to the series index.</dd>
+     *  </dl>
+     *      </dd>
+     *  </dl>
      */
     getSeriesItems: function(series, index)
     {
