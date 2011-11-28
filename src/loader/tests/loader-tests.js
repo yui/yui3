@@ -229,6 +229,32 @@ YUI.add('loader-tests', function(Y) {
 
             test.wait();
         },
+        test_condpattern: function() {
+            var test = this;
+            
+            YUI({
+                groups: {
+                    testpatterns: {
+                        patterns: {
+                            modtest: {
+                                test: function(mname) {
+                                    return (mname === 'mod')
+                                },
+                                configFn: function(me) {
+                                    me.fullpath = './assets/mod.js';
+                                }
+                            }
+                        }
+                    }
+                }
+            }).use('mod', function(Y) {
+                test.resume(function() {
+                    Assert.isTrue(Y.MOD, 'Pattern module failed to load');
+                });
+            });
+
+            test.wait();
+        },
         test_forcemap: function() {
             var test = this;
 
