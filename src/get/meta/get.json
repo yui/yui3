@@ -1,0 +1,5 @@
+{
+    "get": {
+        "requires": ["yui-base"]
+    }
+}
