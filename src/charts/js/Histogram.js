@@ -45,7 +45,13 @@ Histogram.prototype = {
             calculatedSizeKey,
             config,
             fillColors = null,
-            borderColors = null;
+            borderColors = null,
+            xMarkerPlane = [],
+            yMarkerPlane = [],
+            xMarkerPlaneLeft,
+            xMarkerPlaneRight,
+            yMarkerPlaneTop,
+            yMarkerPlaneBottom;
         if(Y_Lang.isArray(style.fill.color))
         {
             fillColors = style.fill.color.concat(); 
@@ -90,6 +96,12 @@ Histogram.prototype = {
         offset -= seriesSize/2;
         for(i = 0; i < len; ++i)
         {
+            xMarkerPlaneLeft = xcoords[i] - seriesSize/2;
+            xMarkerPlaneRight = xMarkerPlaneLeft + seriesSize;
+            yMarkerPlaneTop = ycoords[i] - seriesSize/2;
+            yMarkerPlaneBottom = yMarkerPlaneTop + seriesSize;
+            xMarkerPlane.push({start: xMarkerPlaneLeft, end: xMarkerPlaneRight});
+            yMarkerPlane.push({start: yMarkerPlaneTop, end: yMarkerPlaneBottom});
             if(isNaN(xcoords[i]) || isNaN(ycoords[i]))
             {
                 this._markers.push(null);
@@ -104,6 +116,7 @@ Histogram.prototype = {
                 style[calculatedSizeKey] = config.calculatedSize;
                 style.x = left;
                 style.y = top;
+
                 if(fillColors)
                 {
                     style.fill.color = fillColors[i % fillColors.length];
@@ -119,6 +132,8 @@ Histogram.prototype = {
                 this._markers.push(null);
             }
         }
+        this.set("xMarkerPlane", xMarkerPlane);
+        this.set("yMarkerPlane", yMarkerPlane);
         this._clearMarkerCache();
     },
     

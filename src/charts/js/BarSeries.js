@@ -73,7 +73,8 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
             markerStyles.fill.color = this._getItemColor(markerStyles.fill.color, i);
             markerStyles.border.color = this._getItemColor(markerStyles.border.color, i);
             config = this._getMarkerDimensions(xcoords[i], ycoords[i], styles.height, offset);
-            markerStyles.width = Math.min(this._maxSize, config.calculatedSize);
+            markerStyles.width = config.calculatedSize;
+            markerStyles.height = Math.min(this._maxSize, markerStyles.height);
             marker.set(markerStyles);
             for(; n < seriesLen; ++n)
             {
