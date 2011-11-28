@@ -5911,9 +5911,15 @@ Y.Loader.prototype = {
                     // Y.log('testing pattern ' + i);
                     p = patterns[pname];
 
-                    // use the metadata supplied for the pattern
-                    // as the module definition.
-                    if (mname.indexOf(pname) > -1) {
+                    if (!p.test) {
+                        // use the metadata supplied for the pattern
+                        // as the module definition.
+                        p.test = function(mname, pname) {
+                            return (mname.indexOf(pname) > -1);
+                        };
+                    }
+
+                    if (p.test(mname, pname)) {
                         found = p;
                         break;
                     }
