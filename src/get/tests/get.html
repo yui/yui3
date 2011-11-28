@@ -69,7 +69,7 @@ var YUI_config = {
     gfilter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
 };
 
-YUI({
+var Y = YUI({
     allowRollup: false,
     filter: YUI_config.gfilter,
     modules: {
@@ -82,7 +82,7 @@ YUI({
 
     if (/[?&]delay=true/.test(window.location.search)) {
         // Hit the default 'node ./delay.js port'
-        Y.GetTests.TEST_FILES_BASE = (window.location.protocol + "//" + window.location.host + ":" + "8014/");
+        Y.GetTests.TEST_FILES_BASE = (window.location.protocol + "//" + window.location.hostname + ":" + "8014/");
     }
 
     Y.GetTests.add(Y.GetTests.Scripts);
