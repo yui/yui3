@@ -4273,10 +4273,6 @@ var NOT_FOUND = {},
                         return path;
                     };
 
-if (YUI.Env.aliases) {
-    YUI.Env.aliases = {}; //Don't need aliases if Loader is present
-}
-
 /**
  * The component metadata is stored in Y.Env.meta.
  * Part of the loader module.
