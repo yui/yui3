@@ -41,6 +41,7 @@
         <url>dial/tests/dial.html</url>
         <url>dom/tests/dom.html</url>
         <url>dom/tests/dom-base.html</url>
+        <url>dom/tests/dom-xy.html</url>
         <url>dom/tests/selector.html</url>
         <url>dump/tests/dump.html</url>
 	<url>editor/tests/editor.html</url>
@@ -54,7 +55,7 @@
         <url>event/tests/event-key.html</url>
         <url>event/tests/event-synthetic.html</url>
         <url>event/tests/focusblur.html</url>
-        <url>yui/tests/get.html</url>
+        <url>get/tests/get.html</url>
         <url>graphics/tests/graphics.html</url>
         <url>handlebars/tests/handlebars.html</url>
         <url>highlight/tests/functional/highlight.html</url>

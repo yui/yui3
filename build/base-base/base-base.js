@@ -82,32 +82,36 @@ YUI.add('base-base', function(Y) {
      * </dl>
      */
     function Base() {
+        if (!this._BaseInvoked) {
+            this._BaseInvoked = true;
 
-        // So the object can be used as a hash key (as DD does)
-        Y.stamp(this);
-
-        Attribute.call(this);
-
-        // If Plugin.Host has been augmented [ through base-pluginhost ], setup it's
-        // initial state, but don't initialize Plugins yet. That's done after initialization.
-        var PluginHost = Y.Plugin && Y.Plugin.Host;  
-        if (this._initPlugins && PluginHost) {
-            PluginHost.call(this);
+    
+            // So the object can be used as a hash key (as DD does)
+            Y.stamp(this);
+    
+            Attribute.call(this);
+    
+            // If Plugin.Host has been augmented [ through base-pluginhost ], setup it's
+            // initial state, but don't initialize Plugins yet. That's done after initialization.
+            var PluginHost = Y.Plugin && Y.Plugin.Host;  
+            if (this._initPlugins && PluginHost) {
+                PluginHost.call(this);
+            }
+    
+            if (this._lazyAddAttrs !== false) { this._lazyAddAttrs = true; }
+    
+            /**
+             * The string used to identify the class of this object.
+             *
+             * @deprecated Use this.constructor.NAME
+             * @property name
+             * @type String
+             */
+            this.name = this.constructor.NAME;
+            this._eventPrefix = this.constructor.EVENT_PREFIX || this.constructor.NAME;
+    
+            this.init.apply(this, arguments);
         }
-
-        if (this._lazyAddAttrs !== false) { this._lazyAddAttrs = true; }
-
-        /**
-         * The string used to identify the class of this object.
-         *
-         * @deprecated Use this.constructor.NAME
-         * @property name
-         * @type String
-         */
-        this.name = this.constructor.NAME;
-        this._eventPrefix = this.constructor.EVENT_PREFIX || this.constructor.NAME;
-
-        this.init.apply(this, arguments);
     }
 
     /**

@@ -8,20 +8,53 @@
     height:30em;
 }
 
+#overlay-align {
+    border: solid 1px #fff;
+}
+
 .overlay-example button {
     margin-left:1px;
 }
 
-.overlay-example .filler {
+.overlay-example .yui3-g {
     color:#999;
 }
 
 .align-box {
-    height:12em;
-    width:13em;
-    border:1px solid #aaa;
+    background-color: #ddd;
+    border: solid 1px #ddd;
     margin:0px;
     text-align:center;
+    width: 100%;
+}
+
+.overlay-example .content {
+    margin: 0 1em 0 0;
+    padding: 0;
+}
+
+.overlay-example .example-head {
+    border-bottom: solid 1px #ddd;
+    text-align:center;
+    margin-bottom: 2em;
+    padding-bottom: 1em;
+}
+
+.nav{
+    list-style-type: none;
+    -moz-padding-start: 0;
+    -webkit-padding-start: 0;
+    padding-start: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.nav li {
+    border: solid 1px #ddd;
+    width: 72px;
+    height: 2em;
+    line-height: 2em;
+    text-indent: 0.3em;
 }
 
 .align-box .title {
@@ -29,29 +62,19 @@
     padding:2px;
 }
 
-#align1 {
-    position:static;
-    background-color:#EEE6D2;
-}
-
 #align2 {
-    position:relative;
-    top:-200px;
-    left:250px;
-    background-color:#C7E4C7;
+    width: 400px;
+    height: 171px;
 }
 
 #align3 {
-    position:absolute;
-    bottom:130px;
-    right:20px;
-    background-color:#E6D0D0;
+    height: 3em;
+    line-height: 3em;
 }
 
 #alignment {
     padding:5px;
     margin: 8px auto 6px;
-    /*display:inline;*/
     background-color: #F5F7FE;
     border: 1px solid #CDD2E4;
     border-left-width: 5px;
@@ -63,7 +86,7 @@
     margin-left:22px;
     font-weight: normal;
 }
-.aligned-to{
+#main .aligned-to{ /* highlight the node that overlay is currently aligned to */
     border: solid 1px #f00;
 }
 </style>
