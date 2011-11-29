@@ -121,7 +121,8 @@ suite.add(new Y.Test.Case({
     _should: {
         ignore: {
             '`error` event should fire on Ajax failure': disableXHR || !html5,
-            '`load` event should fire on Ajax success': disableXHR || !html5
+            '`load` event should fire on Ajax success': disableXHR || !html5,
+            '`navigate` event facade should contain the options passed to `navigate()`': disableXHR || !html5
         }
     },
 
