@@ -621,7 +621,7 @@ with any configuration info required for the module.
 
                     //if (!loader || !loader.moduleInfo[name]) {
                     //if ((!loader || !loader.moduleInfo[name]) && !moot) {
-                    if (!moot) {
+                    if (!moot && name) {
                         if ((name.indexOf('skin-') === -1) && (name.indexOf('css') === -1)) {
                             Y.Env._missed.push(name);
                             Y.Env._missed = Y.Array.dedupe(Y.Env._missed);
@@ -6266,7 +6266,7 @@ Y.Loader.prototype = {
                         //first see if they've specfied a ua check
                         //then see if they've got a test fn & if it returns true
                         //otherwise just having a condition block is enough
-                        var go = def && ((def.ua && Y.UA[def.ua]) ||
+                        var go = def && ((!def.ua && !def.test) || (def.ua && Y.UA[def.ua]) ||
                                     (def.test && def.test(Y, r)));
 
                         if (go) {
