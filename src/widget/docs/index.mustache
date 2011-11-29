@@ -21,7 +21,7 @@ Although instantiable and usable by itself, it is designed to be extended to cre
 specific user interaction patterns.</p>
 
 <p>The `Widget` class extends <a href="{{apiDocs}}/Base.html">`Base`</a>. Therefore it provides 
-the same `Attribute`, `Event.Provider` and `Plugin.Host` support as `<a href="../base/index.html#extendbase">Base</a>` does.
+the same `Attribute`, `Event.Provider` and `Plugin.Host` support as <a href="../base/index.html#extendbase">`Base`</a> does.
 
 <p>It adds the following core functionality:</p>
 
@@ -428,13 +428,13 @@ where multiple class name rules, like `.yui3-menu.yui3-hidden` are not well supp
 <p>
 However, providing an IE6-compatible format requires each widget to ship with the CSS rules defined for each of its states.
 Of the state-based rules above, all widgets will definitely end up providing a "yui3-[widgetname]-hidden" implementation to control visibility.
-Whether or not CSS rules for the the other two states are provided is usually a function of whether or not the widget needs special UI handled for the "disabled" and "focused" states.
+Whether or not CSS rules for the other two states are provided is usually a function of whether or not the widget needs special UI handled for the "disabled" and "focused" states.
 </p>
 
 <h3 id="uievents">Default UI Events</h3>
 
 <p>
-Widget publishes and fires custom events for any DOM events (`"click"`, `"mousever"` etc.) which get fired inside its bounding box. 
+Widget publishes and fires custom events for any DOM events (`"click"`, `"mouseover"` etc.) which get fired inside its bounding box. 
 Like all other Widget custom events, these events are prefixed with the widget's name (e.g. 'menuitem:click') and 
 the default context of the event listener will be the widget that fired the event (as opposed to the Node firing the DOM event). 
 These events provide application developers the ability to listen for UI events as part of the logical widget API, without having to be concerned with the DOM elements which make up the widget's UI.

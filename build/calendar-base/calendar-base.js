@@ -307,13 +307,14 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
           return true;
       }
       else {
-        var elements = strList.split(",");
+        var elements = strList.split(","),
+            val;
         for (val in elements) {
             var range = elements[val].split("-");
-            if (range.length == 2 && num >= parseInt(range[0]) && num <= parseInt(range[1])) {
+            if (range.length == 2 && num >= parseInt(range[0], 10) && num <= parseInt(range[1], 10)) {
                 return true;
             }
-            else if (range.length == 1 && (parseInt(elements[val]) == num)) {
+            else if (range.length == 1 && (parseInt(elements[val], 10) == num)) {
                 return true;
             }
         }
@@ -337,7 +338,9 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
           date = oDate.getDate(),
           wday = oDate.getDay(),
           rules = this._rules, 
-          outputRules = [];
+          outputRules = [],
+          years, months, dates, days;
+
       for (years in rules) {
           if (this._isNumInList(year, years)) {
               if (L.isString(rules[years])) {
@@ -507,17 +510,24 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @private
      */
     _addDateRangeToSelection : function (startDate, endDate) {
-        var startTime = startDate.getTime(),
+        var timezoneDifference = (endDate.getTimezoneOffset() - startDate.getTimezoneOffset())*60000,
+            startTime = startDate.getTime(),
             endTime   = endDate.getTime();
-        
+            
             if (startTime > endTime) {
                 var tempTime = startTime;
                 startTime = endTime;
-                endTime = tempTime;
+                endTime = tempTime + timezoneDifference;
+            }
+            else {
+                endTime = endTime - timezoneDifference;
             }
 
+
         for (var time = startTime; time <= endTime; time += 86400000) {
-            this._addDateToSelection(new Date(time), time);
+            var addedDate = new Date(time);
+                addedDate.setHours(12);
+            this._addDateToSelection(addedDate, time);
         }
         this._fireSelectionChange();
     },
@@ -612,7 +622,8 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @private
      */
     _restoreModifiedCells : function () {
-      var contentbox = this.get("contentBox");
+      var contentbox = this.get("contentBox"),
+          id;
       for (id in this._storedDateCells) {
           contentbox.one("#" + id).replace(this._storedDateCells[id]);
           delete this._storedDateCells[id];
@@ -758,12 +769,12 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      */
   _nodeToDate : function (oNode) {
     
-        var idParts = oNode.get("id").split("_"),
-            paneNum = parseInt(idParts[8]),
-            day  = parseInt(idParts[10]);
+        var idParts = oNode.get("id").split("_").reverse(),
+            paneNum = parseInt(idParts[2], 10),
+            day  = parseInt(idParts[0], 10);
 
-        var shiftedDate = ydate.addMonths(this.get("date"), paneNum);
-            year = shiftedDate.getFullYear();
+        var shiftedDate = ydate.addMonths(this.get("date"), paneNum),
+            year = shiftedDate.getFullYear(),
             month = shiftedDate.getMonth();
 
     return new Date(year, month, day, 12, 0, 0, 0);

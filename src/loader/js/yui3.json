@@ -56,9 +56,9 @@
     }, 
     "app": {
         "use": [
-            "controller", 
             "model", 
             "model-list", 
+            "router", 
             "view"
         ]
     }, 
@@ -345,13 +345,8 @@
         "skinnable": true
     }, 
     "controller": {
-        "optional": [
-            "querystring-parse"
-        ], 
-        "requires": [
-            "array-extras", 
-            "base-build", 
-            "history"
+        "use": [
+            "router"
         ]
     }, 
     "cookie": {
@@ -1108,6 +1103,21 @@
             "trigger": "graphics"
         }
     }, 
+    "handlebars": {
+        "use": [
+            "handlebars-compiler"
+        ]
+    }, 
+    "handlebars-base": {
+        "requires": [
+            "escape"
+        ]
+    }, 
+    "handlebars-compiler": {
+        "requires": [
+            "handlebars-base"
+        ]
+    }, 
     "highlight": {
         "use": [
             "highlight-base", 
@@ -1226,7 +1236,7 @@
     "io-xdr": {
         "requires": [
             "io-base", 
-            "datatype-xml"
+            "datatype-xml-parse"
         ]
     }, 
     "json": {
@@ -1422,6 +1432,31 @@
         ], 
         "skinnable": true
     }, 
+    "parallel": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
+    "pjax": {
+        "requires": [
+            "pjax-base", 
+            "io-base"
+        ]
+    }, 
+    "pjax-base": {
+        "requires": [
+            "classnamemanager", 
+            "node-event-delegate", 
+            "router"
+        ]
+    }, 
+    "pjax-plugin": {
+        "requires": [
+            "node-pluginhost", 
+            "pjax", 
+            "plugin"
+        ]
+    }, 
     "plugin": {
         "requires": [
             "base-base"
@@ -1566,6 +1601,16 @@
         "requires": [
             "get", 
             "features"
+        ]
+    }, 
+    "router": {
+        "optional": [
+            "querystring-parse"
+        ], 
+        "requires": [
+            "array-extras", 
+            "base-build", 
+            "history"
         ]
     }, 
     "scrollview": {
@@ -1738,6 +1783,13 @@
             "event-custom", 
             "substitute", 
             "json-stringify"
+        ], 
+        "skinnable": true
+    }, 
+    "test-console": {
+        "requires": [
+            "console-filters", 
+            "test"
         ], 
         "skinnable": true
     }, 

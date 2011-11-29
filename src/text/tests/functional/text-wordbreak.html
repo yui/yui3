@@ -14,24 +14,13 @@ var Y = YUI({
     allowRollup: false,
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
     modules: {
-        'test-console': {
-            fullpath : '../assets/test-console.js',
-            requires : ['console-filters'],
-            skinnable: true
-        },
-
-        'skin-sam-test-console': {
-            fullpath: '../assets/test-console.css',
-            type    : 'css'
-        },
-
         'text-wordbreak-test': {
             fullpath: 'text-wordbreak-test.js',
             requires: ['text-wordbreak', 'test']
         }
-    },
-    useBrowserConsole: false
+    }
 }).use('text-wordbreak-test', 'test-console', function (Y) {
+    new Y.Test.Console().render('#log');
     Y.Test.Runner.setName('text-wordbreak');
     Y.Test.Runner.run();
 });

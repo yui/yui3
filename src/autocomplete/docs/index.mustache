@@ -321,7 +321,13 @@ These attributes are provided by `AutoCompleteBase`, which is the core foundatio
       <td>`requestTemplate`</td>
       <td>`null`</td>
       <td>
+        <p>
         Source request template. This can be a function that accepts a query as a parameter and returns a string, or it can be a string containing the placeholder "{query}", which will be replaced with the URI-encoded query. The resulting string will be appended to the request URL when the `source` attribute is set to a remote DataSource, JSONP URL, or XHR URL.
+        </p>
+
+        <p>
+        When the `source` attribute is set to a YQL query, the `requestTemplate` value will be inserted in place of the "{request}" placeholder rather than being appended to the YQL query. This can be useful if you need to double-encode query values used in YQL queries.
+        </p>
       </td>
     </tr>
 
@@ -890,7 +896,7 @@ Set the `source` attribute to a <a href="http://developer.yahoo.com/yql/">YQL</a
 </p>
 
 <p>
-The string must include a `{query}` placeholder. On each query, AutoComplete will replace this with the current query and will make a call to YQL to get results.
+The string may include a `{query}` placeholder. On each query, AutoComplete will replace this with the current query and will make a call to YQL to get results.
 </p>
 
 ```
@@ -898,6 +904,10 @@ Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
   source: 'select * from search.suggest where query="{query}"'
 });
 ```
+
+<p>
+You may use a `{request}` placeholder to insert the `requestTemplate` value rather than the raw query. This allows you to customize the query if desired (such as by double-escaping it, which is necessary for some YQL queries that embed URLs).
+</p>
 
 <p>
 You may also optionally include a `{maxResults}` placeholder in the YQL query, which will be replaced with the value of the `maxResults` attribute (or 1000 if the `maxResults` attribute is less than or equal to 0).

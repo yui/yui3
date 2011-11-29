@@ -1,7 +1,7 @@
 {
     "projectName": "YUI 3",
 
-    "apiDocs": "http://stage.yuilibrary.com/yui/docs/api",
+    "apiDocs": "http://yuilibrary.com/yui/docs/api",
 
     "yuiBuildUrl"     : "build",
     "yuiLocalBuildUrl": "build",

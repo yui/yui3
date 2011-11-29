@@ -42,9 +42,40 @@ list of third party contributions to YUI.
     Utility, Douglas Crockford's JSON parsing and stringifying methods are
     adapted from work published at [JSON.org](http://json.org/). The adapted
     work is in the public domain.
+
   * **Robert Penner's animation-easing algorithms:** In the Animation Utility,
     YUI makes use of Robert Penner's algorithms for easing.
+
   * **Diego Perini's IEContentLoaded technique:** The Event Utility employs
     [a technique developed by Diego Perini](http://javascript.nwbox.com/IEContentLoaded/)
     and licensed under GPL. YUI's use of this technique is included under our
     BSD license with the author's permission.
+
+  * **Handlebars.js**: The Handlebars component is a YUI port of
+    [Handlebars.js](https://github.com/wycats/handlebars.js) by Yehuda Katz. It
+    is distributed with YUI under the terms of the MIT License below.
+
+
+Handlebars.js MIT License
+-------------------------
+
+Copyright (C) 2011 by Yehuda Katz
+<https://github.com/wycats/handlebars.js>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.

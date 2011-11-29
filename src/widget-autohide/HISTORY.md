@@ -1,7 +1,19 @@
-3.4.0PR3
---------
+Widget Autohide Change History
+==============================
 
-  * Changed from a widget plugin to an extension
+3.5.0
+-----
 
-3.4.0PR2 - Initial release
---------------------------
+  * Moved the default value for the `hideOn` attribute to the `value` property
+    instead of the `valueFn` attribute configuration property; this makes
+    overriding the value easier when sub-classing. [Ticket #2531402]
+
+3.4.1
+-----
+
+  * No changes.
+
+3.4.0
+-----
+
+  * Initial release.

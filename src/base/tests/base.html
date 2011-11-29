@@ -700,6 +700,51 @@ YUI({
             Y.Assert.isFalse(MyClassTwo === Y.Base);
         },
 
+        "test:mutli-inheritance-from-base" : function() {
+
+            var actualMethodCalls = [],
+                expectedMethodCalls = [
+                    "myClassOne::initializer",
+                    10,
+                    "myExt::initializer",
+                    "myClassOne::afterInit"
+                ];
+
+            var Ext1 = Y.Base.create("myExt", Y.Base, [], {
+
+                initializer: function() {
+                    actualMethodCalls.push("myExt::initializer");
+                }
+
+            });
+
+            var MyClassOne = Y.Base.create("myClassOne", Y.Base, [Ext1], {
+                
+                initializer: function() {
+                    actualMethodCalls.push("myClassOne::initializer");
+                    actualMethodCalls.push(this.get("myAttr"));                    
+                }
+
+            }, {
+                ATTRS : {
+                    myAttr: {
+                        value: 10
+                    }
+                }                
+            });
+
+            var o = new MyClassOne( {
+                after: {
+                    init: function() {
+                        actualMethodCalls.push("myClassOne::afterInit");
+                    }
+                }
+            });
+
+            Y.ArrayAssert.itemsAreEqual(expectedMethodCalls, actualMethodCalls, "Unexpected method calls");
+
+        },
+
         "test:extend" : function() {
             
             var actualMethodCalls = [],

@@ -1,10 +1,15 @@
 Cache Change History
 ====================
 
+3.4.1
+-----
+
+  * No changes.
+
 3.4.0
 -----
 
-  * Added support to flush a specific request from the cache (hat tip to Tivac)
+  * Added support to flush a specific request from the cache. [Pat Cavit]
 
 3.3.0
 -----
@@ -17,12 +22,12 @@ Cache Change History
 
   * Added `cache-offline` submodule. The `cache` submodule is renamed to
     `cache-base` and the `cache` module is now a rollup.
-  
+
   * The `Cache` class no longer extends `Plugin.Base`. `Cache` now extends
     `Base`, and `CacheOffline` extends `Cache`. Implementers who wish to use
     `Cache` as a plugin should use `Plugin.Cache` in the `cache-plugin`
     submodule.
-  
+
   * Added `expires` Attribute to `Cache`. Cached entries now include `expires`
     and `cached` values.
 
@@ -38,10 +43,5 @@ Cache Change History
 
 3.0.0
 -----
-
-  * Added `uniqueKeys` Attribute.
-
-3.0.0beta1
-----------
 
   * Initial release.

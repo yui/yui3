@@ -1,6 +1,10 @@
 Rich Text Editor Change History
 ===============================
 
+###3.4.1
+
+No changes.
+
 ### 3.4.0
 
 Third release of EditorBase. Considerable work was done on this component, but there are no

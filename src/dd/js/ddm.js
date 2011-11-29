@@ -48,6 +48,9 @@
         * @description Activates the shim
         */
         _pg_activate: function() {
+            if (!this._pg) {
+                this._createPG();
+            }
             var ah = this.activeDrag.get('activeHandle'), cur = 'auto';
             if (ah) {
                 cur = ah.getStyle('cursor');

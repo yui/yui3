@@ -1,6 +1,5 @@
-// Like most modules in YUI, 'node' requires EventTarget, so it will be
-// included automatically as a dependency.
-YUI().use('node', function (Y) {
+// Bubbling events are added by the event-custom module.
+YUI().use('event-custom', 'node', function (Y) {
 
     var logger          = Y.one("#log");
         stopCheckbox    = Y.one("#stopPropagation"),

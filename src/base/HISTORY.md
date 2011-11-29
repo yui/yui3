@@ -1,5 +1,22 @@
-Base
-====
+Base Change History
+===================
+
+3.5.0
+-----
+
+  * Only invoke Base constructor logic once to 
+    support multi-inheritance scenario in which
+    an extension passed to Base.create inherits from Base
+    itself.
+
+    NOTE: To support multiple inhertiance more deeply, we'd 
+    need to remove the hasOwnProperty restriction around object
+    key iteration.
+
+3.4.1
+-----
+
+  * No changes.
 
 3.4.0
 -----

@@ -1,5 +1,10 @@
-ScrollView
-==========
+ScrollView Change History
+=========================
+
+3.5.0
+-----
+
+  * Allow scrollbar to work with non-px width scrollviews
 
 3.4.1
 -----
