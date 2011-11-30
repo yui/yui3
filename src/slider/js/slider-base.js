@@ -200,8 +200,8 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
         // 37 , 39 = arrow left/right
         keyLeftRightSpec += "37,39";
 
-        Y.on("key", Y.bind(this._onDirectionKey, this), boundingBox, keyEventSpec);
-        Y.on("key", Y.bind(this._onLeftRightKey, this), boundingBox, keyLeftRightSpec);
+        boundingBox.on("key", this._onDirectionKey, keyEventSpec, this);
+        boundingBox.on("key", this._onLeftRightKey, keyLeftRightSpec, this);
         // End keyboard listeners //////////////////////////////////
 
         this._bindThumbDD();
