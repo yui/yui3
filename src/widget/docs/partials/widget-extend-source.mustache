@@ -169,12 +169,13 @@ YUI().use("event-key", "widget", function(Y) {
 
             var boundingBox = this.get("boundingBox");
 
-            // Looking for a key event which will fire continously across browsers while the key is held down. 38, 40 = arrow up/down, 33, 34 = page up/down
+            // Looking for a key event which will fire continuously across browsers while the key is held down. 38, 40 = arrow up/down, 33, 34 = page up/down
             var keyEventSpec = (!Y.UA.opera) ? "down:" : "press:";
             keyEventSpec += "38, 40, 33, 34";
 
             Y.on("key", Y.bind(this._onDirectionKey, this), boundingBox, keyEventSpec);
             Y.on("mousedown", Y.bind(this._onMouseDown, this), boundingBox);
+
             this._documentMouseUpHandle = Y.on("mouseup", Y.bind(this._onDocMouseUp, this), boundingBox.get("ownerDocument"));
 
             Y.on("change", Y.bind(this._onInputChange, this), this.inputNode);
