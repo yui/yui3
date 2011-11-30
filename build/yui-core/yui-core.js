@@ -1687,6 +1687,7 @@ with any configuration info required for the module.
  * @deprecated no longer used
  */
 
+
 YUI.add('yui-base', function(Y) {
 
 /*
@@ -1694,6 +1695,7 @@ YUI.add('yui-base', function(Y) {
  * @module yui
  * @submodule yui-base
  */
+
 /**
  * The YUI module contains the components required for building the YUI
  * seed file.  This includes the script loading mechanism, a simple queue,
@@ -1986,6 +1988,7 @@ L.sub = function(s, o) {
 L.now = Date.now || function () {
     return new Date().getTime();
 };
+
 /**
 @module yui
 @submodule yui-base
@@ -2259,6 +2262,7 @@ YArray.test = function (obj) {
 
     return result;
 };
+
 /**
  * The YUI module contains the components required for building the YUI
  * seed file.  This includes the script loading mechanism, a simple queue,
@@ -2345,6 +2349,7 @@ Queue.prototype = {
 Y.Queue = Queue;
 
 YUI.Env._loaderQueue = YUI.Env._loaderQueue || new Queue();
+
 
 /**
 The YUI module contains the components required for building the YUI seed file.
@@ -2568,6 +2573,7 @@ Y.mix = function(receiver, supplier, overwrite, whitelist, mode, merge) {
 
     return receiver;
 };
+
 /**
  * The YUI module contains the components required for building the YUI
  * seed file.  This includes the script loading mechanism, a simple queue,
@@ -2952,6 +2958,7 @@ O.setValue = function(o, path, val) {
 O.isEmpty = function (obj) {
     return !O.keys(obj).length;
 };
+
 /**
  * The YUI module contains the components required for building the YUI seed
  * file.  This includes the script loading mechanism, a simple queue, and the
@@ -3320,6 +3327,7 @@ YUI.Env.parseUA = function(subUA) {
 
 
 Y.UA = YUI.Env.UA || YUI.Env.parseUA();
+
 YUI.Env.aliases = {
     "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
     "app": ["model","model-list","router","view"],
@@ -3359,4 +3367,6 @@ YUI.Env.aliases = {
 };
 
 
+
 }, '@VERSION@' );
+
