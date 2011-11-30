@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="YUI" default="local">
+    <description>Get - Build All Modules</description>
+
+    <macrodef name="build-get">
+        <attribute name="target"/>
+        <sequential>
+            <subant target="@{target}">
+                <fileset dir="." includes="get*.xml"/>
+            </subant>
+        </sequential>
+    </macrodef>
+
+    <target name="local">
+        <build-get target="local"/>
+    </target>
+    <target name="deploy">
+        <build-get target="deploy"/>
+    </target>
+    <target name="all">
+        <build-get target="all"/>
+    </target>
+    <target name="clean">
+        <build-get target="clean"/>
+    </target>
+
+</project>

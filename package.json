@@ -1,12 +1,12 @@
 {
-    "name": "yui3-core",
+    "name": "yui",
     "version": "3.4.0",
     "description": "YUI 3 Source",
     "author": "Dav Glass <davglass@gmail.com>",
     "bugs": { "web" : "http://yuilibrary.com/projects/yui3/" },
     "os": ["darwin", "linux"],
     "engines": {
-        "node" : ">=0.2.0"
+        "node" : ">=0.4.0"
     },
     "directories": {
         "lib" : "."

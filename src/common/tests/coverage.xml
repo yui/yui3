@@ -53,6 +53,7 @@
         <url>event/tests/event-key.html</url>
         <url>event/tests/event-synthetic.html</url>
         <url>event/tests/focusblur.html</url>
+        <url>get/tests/get.html</url>
         <url>graphics/tests/graphics.html</url>
         <url>highlight/tests/functional/highlight.html</url>
         <url>history/tests/functional/history-base.html</url>
@@ -61,6 +62,9 @@
              <url>json/tests/json.html</url>
         -->
         <url>oop/tests/oop.html</url>
-        <url>pjax/tests/pjax.html</url>
+        <!-- These tests hang on the CI system.
+            <url>pjax/tests/pjax.html</url>
+            <url>parallel/tests/index.html</url>
+        -->
     </tests>
 </yuitest>

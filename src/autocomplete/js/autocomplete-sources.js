@@ -288,29 +288,28 @@ Y.mix(ACBase.prototype, {
         }
 
         function _sendRequest(request) {
-            var cacheKey = request.request,
-                query    = request.query,
-                callback, env, maxResults, opts, yqlQuery;
+            var query      = request.query,
+                env        = that.get('yqlEnv'),
+                maxResults = that.get(MAX_RESULTS),
+                callback, opts, yqlQuery;
 
-            if (cache[cacheKey]) {
-                that[_SOURCE_SUCCESS](cache[cacheKey], request);
+            yqlQuery = Lang.sub(source, {
+                maxResults: maxResults > 0 ? maxResults : 1000,
+                request   : request.request,
+                query     : query
+            });
+
+            if (cache[yqlQuery]) {
+                that[_SOURCE_SUCCESS](cache[yqlQuery], request);
                 return;
             }
 
             callback = function (data) {
-                cache[cacheKey] = data;
+                cache[yqlQuery] = data;
                 that[_SOURCE_SUCCESS](data, request);
             };
 
-            env        = that.get('yqlEnv');
-            maxResults = that.get(MAX_RESULTS);
-
             opts = {proto: that.get('yqlProtocol')};
-
-            yqlQuery = Lang.sub(source, {
-                maxResults: maxResults > 0 ? maxResults : 1000,
-                query     : query
-            });
 
             // Only create a new YQLRequest instance if this is the
             // first request. For subsequent requests, we'll reuse the

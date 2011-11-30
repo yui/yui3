@@ -38,6 +38,7 @@ YUI.add('dom-size-test', function(Y) {
         'should set the node offsetHeight to zero if given a negative number': function() {
             var node = document.createElement('div');
 
+            node.style.overflow = 'hidden'; // IE6 includes overflow in offsetHeight
             document.body.appendChild(node);
             Y.DOM._setSize(node, 'height', -100);
 
@@ -102,6 +103,7 @@ YUI.add('dom-size-test', function(Y) {
         'should set offsetHeight to padding when setting to zero': function() {
             var node = document.createElement('div');
 
+            node.style.overflow = 'hidden'; // IE6 includes overflow in offsetHeight
             document.body.appendChild(node);
             node.style.padding = '10px';
             Y.DOM.setHeight(node, 0);

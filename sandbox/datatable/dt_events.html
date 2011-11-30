@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+    <style type="text/css">
+        body {
+            font: normal 13px/1.3 arial, clean, sans-serif;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 3px 4px;
+        }
+        th {
+            background: #bbb;
+        }
+    </style>
+</head>
+<body class="yui3-skin-sam">
+<div id="x"></div>
+
+<script src="/dev/yui/yui3/build/yui/yui.js"></script>
+<script src="events.js"></script>
+<script>
+YUI({ filter: 'raw' }).use('widget', 'base-build', 'datatable-events', function (Y) {
+
+// Simple table widget to facilitate plugin POC
+var DataTable = Y.Base.create('datatable', Y.Widget, [], {
+    TABLE_TEMPLATE: '<table><thead></thead><tbody></tbody></table>',
+
+    renderUI: function () {
+        this._tableNode = Y.Node.create(this.TABLE_TEMPLATE);
+        this._theadNode = this._tableNode.one('thead');
+        this._tbodyNode = this._tableNode.one('tbody');
+
+        this.get('contentBox').appendChild(this._tableNode);
+    },
+
+    bindUI: function () { },
+
+    syncUI: function () {
+        var data = this.get('data'),
+            row  = '',
+            html = '',
+            sub  = Y.Lang.sub,
+            key, i, len;
+
+        for (key in data[0]) {
+            if (data[0].hasOwnProperty(key)) {
+                html += '<th>' + key + '</th>';
+                row += '<td>{' + key + '}</td>';
+            }
+        }
+
+        this._theadNode.append('<tr>' + html + '</tr>');
+
+        html = '';
+        row  = '<tr>' + row + '</tr>';
+
+        for (i = 0, len = data.length; i < len; ++i) {
+            html += sub(row, data[i]);
+        }
+
+        this._tbodyNode.append(html);
+    }
+
+}, {
+    ATTRS: {
+        data: {}
+    }
+});
+
+
+var datatable = new DataTable({ data: [
+    { foo: 'foo 1', bar: 'bar 1', baz: 'baz 1' },
+    { foo: 'foo 2', bar: 'bar 1', baz: 'baz 2' },
+    { foo: 'foo 3', bar: 'bar 1', baz: 'baz 3' },
+    { foo: 'foo 4', bar: 'bar 1', baz: 'baz 4' },
+    { foo: 'foo 5', bar: 'bar 1', baz: 'baz 5' },
+    { foo: 'foo 6', bar: 'bar 1', baz: 'baz 6' },
+    { foo: 'foo 7', bar: 'bar 1', baz: 'baz 7' },
+    { foo: 'foo 8', bar: 'bar 1', baz: 'baz 8' },
+    { foo: 'foo 9', bar: 'bar 1', baz: 'baz 9' },
+    { foo: 'foo 10', bar: 'bar 1', baz: 'baz 10' },
+    { foo: 'foo 11', bar: 'bar 1', baz: 'baz 11' }
+]});
+
+datatable.plug(Y.Plugin.DataTableEvents);
+datatable.render('#x');
+
+});
+</script>
+</body>
+</html>

@@ -6,7 +6,7 @@
         <attribute name="target"/>
         <sequential>
             <subant target="@{target}">
-                <fileset dir="." includes="app*.xml"/>
+                <fileset dir="." includes="build-*.xml"/>
             </subant>
         </sequential>
     </macrodef>
