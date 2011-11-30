@@ -256,7 +256,9 @@ Y.mix(Y.IO.prototype, {
             io._removeData(f, fields);
         }
         // Restore HTML form attributes to their original values.
-        io._resetAttrs(f, attr);
+        if (!c.noreset) {
+            io._resetAttrs(f, attr);
+        }
 
         return {
             id: o.id,
@@ -286,7 +288,6 @@ Y.mix(Y.IO.prototype, {
         return this._upload(o, uri, c);
     }
 });
-
 
 
 }, '@VERSION@' ,{requires:['io-base','node-base']});
