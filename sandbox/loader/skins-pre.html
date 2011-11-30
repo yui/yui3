@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+    <link type="text/css" rel="stylesheet" href="../../build/cssreset/cssreset.css">
+    <link type="text/css" rel="stylesheet" href="../../build/cssgrids/cssgrids.css">
+    <link type="text/css" rel="stylesheet" href="../../build/widget-base/assets/skins/sam/widget-base.css">
+    <link type="text/css" rel="stylesheet" href="../../build/dial/assets/skins/sam/dial.css">
+    <style>
+    div {
+        height: 0;
+        left: 0;
+        margin: 0;
+        padding: 0;
+        position: absolute;
+        top: 0;
+        width: 0;
+    }
+    </style>
+</head>
+<body class="yui-skin-sam">
+
+<pre></pre>
+
+<script src="../../build/yui/yui-debug.js"></script>
+<script>
+
+YUI({ debug: true }).use('dial', 'cssgrids', function(Y) {
+    var n = Y.one('pre');
+    var l = Y.all('link');
+    n.setContent('# of links: ' + l.size());
+});
+</script>
+</body>
+</html>
