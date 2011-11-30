@@ -447,7 +447,7 @@ proto = {
         if (doc && !doc.getElementById(CSS_STAMP_EL)) {
             el = doc.createElement('div');
             el.id = CSS_STAMP_EL;
-            docEl.insertBefore(el, docEl.firstChild);
+            docEl.appendChild(el);
             YUI.Env.cssStampEl = el;
         }
 
