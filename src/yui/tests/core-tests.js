@@ -242,6 +242,32 @@ YUI.add('core-tests', function(Y) {
             };
             testY.use('editor');
         },
+        test_global_apply_config: function() {
+            var Assert = Y.Assert,
+                test = this;
+
+            YUI.applyConfig({
+                modules: {
+                    davglass: {
+                        fullpath: './assets/davglass.js'
+                    }
+                }
+            });
+
+            YUI.applyConfig({
+                modules: {
+                    foo: {
+                        fullpath: './assets/foo.js'
+                    }
+                }
+            });
+
+            Assert.isObject(YUI.GlobalConfig, 'Global config not created');
+            Assert.isObject(YUI.GlobalConfig.modules, 'modules object in global config not created');
+            Assert.isObject(YUI.GlobalConfig.modules.davglass, 'First module in global config not created');
+            Assert.isObject(YUI.GlobalConfig.modules.foo, 'Second module in global config not created');
+            
+        },
         test_multiple_ua: function() {
             var Assert = Y.Assert,
                 globalUA = YUI.Env.UA,

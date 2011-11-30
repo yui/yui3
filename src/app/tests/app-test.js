@@ -6,6 +6,8 @@ var ArrayAssert  = Y.ArrayAssert,
 
     html5 = Y.Router.html5,
 
+    win = Y.config.win,
+
     routerSuite,
     modelSuite,
     modelListSuite,
@@ -1808,9 +1810,20 @@ routerSuite.add(new Y.Test.Case({
 routerSuite.add(new Y.Test.Case({
     name: 'Methods',
 
+    startUp: function () {
+        this.errorFn   = Y.config.errorFn;
+        this.throwFail = Y.config.throwFail;
+    },
+
     tearDown: function () {
         this.router && this.router.destroy();
         delete this.router;
+
+        Y.config.errorFn = this.errorFn;
+        delete this.errorFn;
+
+        Y.config.throwFail = this.throwFail;
+        delete this.throwFail;
     },
 
     'route() should add a route': function () {
@@ -1835,7 +1848,7 @@ routerSuite.add(new Y.Test.Case({
         var router = this.router = new Y.Router(),
             routes;
 
-        function one () {}
+        function one() {}
         function two() {}
         function three() {}
 
@@ -1851,8 +1864,7 @@ routerSuite.add(new Y.Test.Case({
     },
 
     'hasRoute() should return `true` if one or more routes match the given path': function () {
-        var router = this.router = new Y.Router(),
-            routes;
+        var router = this.router = new Y.Router();
 
         function noop () {}
 
@@ -1867,7 +1879,8 @@ routerSuite.add(new Y.Test.Case({
 
     'hasRoute() should support full URLs': function () {
         var router = this.router = new Y.Router(),
-            routes;
+            loc    = win && win.location,
+            origin = loc ? (loc.origin || (loc.protocol + '//' + loc.host)) : '';
 
         function noop () {}
 
@@ -1875,9 +1888,27 @@ routerSuite.add(new Y.Test.Case({
         router.route(/foo/, noop);
         router.route('/bar', noop);
 
-        Assert.isTrue(router.hasRoute('http://example.com/foo'));
-        Assert.isTrue(router.hasRoute('https://example.com/bar'));
-        Assert.isFalse(router.hasRoute('http://example.com/baz/quux'));
+        Assert.isTrue(router.hasRoute(origin + '/foo'));
+        Assert.isTrue(router.hasRoute(origin + '/bar'));
+        Assert.isFalse(router.hasRoute(origin + '/baz/quux'));
+
+        // Scheme-relative URL.
+        Assert.isTrue(router.hasRoute('//' + loc.host + '/foo'));
+    },
+
+    'hasRoute() should always return `false` for URLs with different origins': function () {
+        var router = this.router = new Y.Router(),
+            origin = 'http://something.really.random.com';
+
+        function noop () {}
+
+        router.route('/:foo', noop);
+        router.route(/foo/, noop);
+        router.route('/bar', noop);
+
+        Assert.isFalse(router.hasRoute(origin + '/foo'));
+        Assert.isFalse(router.hasRoute(origin + '/bar'));
+        Assert.isFalse(router.hasRoute(origin + '/baz/quux'));
     },
 
     'dispatch() should dispatch to the first route that matches the current URL': function () {
@@ -1934,7 +1965,7 @@ routerSuite.add(new Y.Test.Case({
         Assert.areSame('/foo/bar', router.removeRoot('/foo/bar'));
     },
 
-    'removeRoot() should strip the "http://foo.com" portion of the URL, if any': function () {
+    'removeRoot() should strip the origin ("http://foo.com") portion of the URL, if any': function () {
         var router = this.router = new Y.Router();
 
         Assert.areSame('/foo/bar', router.removeRoot('http://example.com/foo/bar'));
@@ -1942,6 +1973,8 @@ routerSuite.add(new Y.Test.Case({
         Assert.areSame('/foo/bar', router.removeRoot('http://user:pass@example.com/foo/bar'));
         Assert.areSame('/foo/bar', router.removeRoot('http://example.com:8080/foo/bar'));
         Assert.areSame('/foo/bar', router.removeRoot('http://user:pass@example.com:8080/foo/bar'));
+        Assert.areSame('/foo/bar', router.removeRoot('file:///foo/bar'));
+        Assert.areSame('/foo/bar', router.removeRoot('/foo/bar'));
 
         router.set('root', '/foo');
         Assert.areSame('/bar', router.removeRoot('http://example.com/foo/bar'));
@@ -1949,10 +1982,12 @@ routerSuite.add(new Y.Test.Case({
         Assert.areSame('/bar', router.removeRoot('http://user:pass@example.com/foo/bar'));
         Assert.areSame('/bar', router.removeRoot('http://example.com:8080/foo/bar'));
         Assert.areSame('/bar', router.removeRoot('http://user:pass@example.com:8080/foo/bar'));
+        Assert.areSame('/bar', router.removeRoot('file:///foo/bar'));
+        Assert.areSame('/bar', router.removeRoot('/foo/bar'));
     },
 
     'replace() should replace the current history entry': function () {
-        var test       = this,
+        var test   = this,
             router = this.router = new Y.Router();
 
         router.route('/replace', function (req) {
@@ -1972,7 +2007,7 @@ routerSuite.add(new Y.Test.Case({
     },
 
     'save() should create a new history entry': function () {
-        var test       = this,
+        var test   = this,
             router = this.router = new Y.Router();
 
         router.route('/save', function (req) {
@@ -2023,16 +2058,78 @@ routerSuite.add(new Y.Test.Case({
         this.wait(2000);
     },
 
-    '_joinURL() should normalize / separators': function () {
+    'replace() should error when the URL is not from the same origin': function () {
+        var router = this.router = new Y.Router(),
+            origin = 'http://something.really.random.com',
+            test   = this;
+
+        // We don't want the uncaught error line noise because we expect an
+        // error to be thrown, and it won't be caught because `save()` is async.
+        Y.config.throwFail = false;
+        Y.config.errorFn   = function (e) {
+            test.resume(function () {
+                Assert.areSame(e, 'Security error: The new URL must be of the same origin as the current URL.');
+            });
+        };
+
+        router.route('/foo', function () {
+            test.resume(function () {
+                Assert.fail('Should not route when URL has different origin.');
+            });
+        });
+
+        // Wrapped in a setTimeout to make the async test work on iOS<5, which
+        // performs this action synchronously.
+        setTimeout(function () {
+            router.replace(origin + '/foo');
+        }, 1);
+
+        this.wait(500);
+    },
+
+    'save() should error when the URL is not from the same origin': function () {
+        var router = this.router = new Y.Router(),
+            origin = 'http://something.really.random.com',
+            test   = this;
+
+        // We don't want the uncaught error line noise because we expect an
+        // error to be thrown, and it won't be caught because `save()` is async.
+        Y.config.throwFail = false;
+        Y.config.errorFn   = function (e) {
+            test.resume(function () {
+                Assert.areSame(e, 'Security error: The new URL must be of the same origin as the current URL.');
+            });
+        };
+
+        router.route('/foo', function () {
+            test.resume(function () {
+                Assert.fail('Should not route when URL has different origin.');
+            });
+        });
+
+        // Wrapped in a setTimeout to make the async test work on iOS<5, which
+        // performs this action synchronously.
+        setTimeout(function () {
+            router.save(origin + '/foo');
+        }, 1);
+
+        this.wait(500);
+    },
+
+    '_joinURL() should normalize "/" separators': function () {
         var router = this.router = new Y.Router();
 
         router.set('root', '/foo');
         Assert.areSame('/foo/bar', router._joinURL('bar'));
         Assert.areSame('/foo/bar', router._joinURL('/bar'));
+        Assert.areSame('/foo/bar', router._joinURL('/foo/bar'));
+        Assert.areSame('/foo/foo/bar', router._joinURL('foo/bar'));
 
         router.set('root', '/foo/');
         Assert.areSame('/foo/bar', router._joinURL('bar'));
         Assert.areSame('/foo/bar', router._joinURL('/bar'));
+        Assert.areSame('/foo/bar', router._joinURL('/foo/bar'));
+        Assert.areSame('/foo/foo/bar', router._joinURL('foo/bar'));
     },
 
     '_dispatch() should pass `src` through to request object passed to route handlers': function () {

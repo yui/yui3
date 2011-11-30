@@ -27,7 +27,7 @@ Y.Test.Runner.add(new Y.Test.Case({
     },
 
     'regex() should escape regular expression characters': function () {
-        Assert.areSame('\\-\\#\\$\\^\\*\\(\\)\\+\\[\\]\\{\\}\\|\\\\\\\,\\.\\?\\ \\\t', Escape.regex('-#$^*()+[]{}|\\,.? \t'));
+        Assert.areSame('\\-#\\$\\^\\*\\(\\)\\+\\[\\]\\{\\}\\|\\\\\\\,\\.\\?\\ \\\t', Escape.regex('-#$^*()+[]{}|\\,.? \t'));
         Assert.areSame('\\*\\*\\*', Escape.regex('***'));
         Assert.areSame('foo', Escape.regex('foo'));
         Assert.areSame('foo\\-bar', Escape.regex('foo-bar'));

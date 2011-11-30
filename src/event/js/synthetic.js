@@ -1,4 +1,5 @@
-/* Define new DOM events that can be subscribed to from Nodes.
+/**
+ * Define new DOM events that can be subscribed to from Nodes.
  *
  * @module event
  * @submodule event-synthetic
