@@ -15,9 +15,9 @@
         <url>cache/tests/cache-offline.html</url>
         <url>cache/tests/cache-plugin.html</url>
         <url>calendar/tests/calendar.html</url>
-        <url timeout="600000">charts/tests/charts.html</url>
-        <url timeout="600000">charts/tests/axes.html</url>
-        <url timeout="200000">charts/tests/seriestests.html</url>
+        <url>charts/tests/charts.html</url>
+        <url>charts/tests/axes.html</url>
+        <url>charts/tests/seriestests.html</url>
         <url>classnamemanager/tests/classnamemanager.html</url>
         <url>collection/tests/arraylist.html</url>
         <url>collection/tests/collection.html</url>
@@ -56,7 +56,7 @@
         <url>event/tests/event-key.html</url>
         <url>event/tests/event-synthetic.html</url>
         <url>event/tests/focusblur.html</url>
-        <url>yui/tests/get.html</url>
+        <url>get/tests/get.html</url>
         <url>graphics/tests/graphics.html</url>
         <url>handlebars/tests/handlebars.html</url>
         <url>highlight/tests/functional/highlight.html</url>

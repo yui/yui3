@@ -1,8 +1,8 @@
-YUI.add('get-tests', function(Y) {
+YUI.add('get-test', function(Y) {
 
     Y.GetTests = new Y.Test.Suite("Get Suite");
     Y.GetTests.TEST_FILES_BASE = "getfiles/";
-    
+
     var FILENAME = /[abc]\.js/;
 
     // TODO: Should get.js stick this somewhere public?
@@ -77,7 +77,7 @@ YUI.add('get-tests', function(Y) {
                     var file = o.url.match(FILENAME);
                     progress.push(file[0]);
                 },
- 
+
                 onSuccess: function(o) {
 
                     var context = this;
@@ -88,7 +88,7 @@ YUI.add('get-tests', function(Y) {
 
                         Y.Assert.areEqual("a.js", G_SCRIPTS[0], "a.js does not seem to be loaded");
                         Y.ArrayAssert.itemsAreEqual(G_SCRIPTS, progress, "Progress does not match G_SCRIPTS");
-                        
+
                         Y.Assert.areEqual(1, G_SCRIPTS.length, "More/Less than 1 script was loaded");
                         Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
 
@@ -114,7 +114,7 @@ YUI.add('get-tests', function(Y) {
 
             this.wait();
         },
-    
+
         'test: single script, failure': function() {
 
             var test = this;
@@ -126,12 +126,12 @@ YUI.add('get-tests', function(Y) {
 
             // TODO: abort() is the only thing which causes onFailure to be hit. 404s don't. Fix when we can fail on 404s
             // Not sure how robust it is to do this inline (that is, could onSuccess fire before abort is hit).
-            
+
             var trans = Y.Get.script(path("a.js"), {
-                
+
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
-                
+
                 onSuccess: function(o) {
                     test.resume(function() {
                         Y.Assert.fail("onSuccess shouldn't have been called");
@@ -140,9 +140,9 @@ YUI.add('get-tests', function(Y) {
                 },
 
                 onFailure: function(o) {
-                    
+
                     var context = this;
-                    
+
                     test.resume(function() {
 
                         counts.failure++;
@@ -180,22 +180,22 @@ YUI.add('get-tests', function(Y) {
 
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
-                
+
                 onSuccess: function() {
                     counts.success++;
                     Y.Assert.areEqual("a.js", G_SCRIPTS[0], "a.js does not seem to be loaded");
                     Y.Assert.areEqual(1, G_SCRIPTS.length, "More/Less than 1 script was loaded");
                     Y.Assert.areEqual(1, counts.success, "onSuccess called more than once");
                 },
-                
+
                 onFailure: function() {
                     Y.Assert.fail("onFailure shouldn't have been called");
                 },
-                
+
                 onEnd : function(o) {
-                    
+
                     var context = this;
-                    
+
                     test.resume(function() {
                         counts.end++;
                         Y.Assert.areEqual(1, counts.end,"onEnd called more than once");
@@ -217,7 +217,7 @@ YUI.add('get-tests', function(Y) {
 
             this.wait();
         },
-        
+
         'test: single script failure, end': function() {
 
             var test = this;
@@ -228,15 +228,15 @@ YUI.add('get-tests', function(Y) {
             };
 
             var trans = Y.Get.script(path("a.js"), {
-                
+
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
-                
+
                 onFailure: function() {
                     counts.failure++;
                     Y.Assert.isTrue(counts.failure === 1, "onFailure called more than once");
                 },
-                
+
                 onSuccess: function() {
                     Y.Assert.fail("onSuccess shouldn't have been called");
                 },
@@ -244,7 +244,7 @@ YUI.add('get-tests', function(Y) {
                 onEnd : function(o) {
 
                     var context = this;
-                    
+
                     test.resume(function() {
                         counts.end++;
                         Y.Assert.areEqual(1, counts.end,"onEnd called more than once");
@@ -270,7 +270,7 @@ YUI.add('get-tests', function(Y) {
         },
 
         'test: multiple script, success': function() {
-            
+
             var test = this;
             var progress = [];
             var counts = {
@@ -279,10 +279,10 @@ YUI.add('get-tests', function(Y) {
             };
 
             var trans = Y.Get.script(path(["b.js", "a.js", "c.js"]), {
-                
+
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
-                
+
                 onFailure: function(o) {
                     test.resume(function() {
                         Y.Assert.fail("onFailure shouldn't have been called");
@@ -296,7 +296,7 @@ YUI.add('get-tests', function(Y) {
                 },
 
                 onSuccess: function(o) {
-                    
+
                     var context = this;
 
                     test.resume(function() {
@@ -304,7 +304,7 @@ YUI.add('get-tests', function(Y) {
                         Y.Assert.areEqual(3, G_SCRIPTS.length, "More/Less than 3 scripts loaded");
                         Y.ArrayAssert.itemsAreEqual(["b.js", "a.js", "c.js"], G_SCRIPTS, "Unexpected script order");
                         Y.ArrayAssert.itemsAreEqual(G_SCRIPTS, progress, "Progress does not match G_SCRIPTS");
- 
+
                         Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
 
                         areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
@@ -314,7 +314,7 @@ YUI.add('get-tests', function(Y) {
                         Y.Assert.isUndefined(o.msg, "Payload should have an undefined msg");
 
                         Y.Assert.areEqual("foo", context.bar, "Callback context not set");
-                        
+
                         test.o = o;
                     });
                 }
@@ -332,10 +332,10 @@ YUI.add('get-tests', function(Y) {
             };
 
             var trans = Y.Get.script(path(["a.js", "b.js", "c.js"]), {
-                
+
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
-                
+
                 onSuccess: function(o) {
                     test.resume(function() {
                         Y.Assert.fail("onSuccess shouldn't have been called");
@@ -343,13 +343,13 @@ YUI.add('get-tests', function(Y) {
                     });
                 },
                 onFailure: function(o) {
-                    
+
                     var context = this;
-                    
+
                     test.resume(function() {
                         counts.failure++;
                         Y.Assert.isTrue(counts.failure === 1, "onFailure called more than once");
-                        
+
                         areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
                         Y.Assert.areEqual(trans.tId, o.tId, "Payload has unexpected tId");
 
@@ -360,7 +360,7 @@ YUI.add('get-tests', function(Y) {
                         Y.Assert.isString(o.msg, "Payload should have a failure msg");
 
                         Y.Assert.areEqual("foo", context.bar, "Callback context not set");
-                        
+
                         test.o = o;
                     });
                 }
@@ -370,7 +370,7 @@ YUI.add('get-tests', function(Y) {
 
             this.wait();
         },
-        
+
         'test: multiple script, success, end': function() {
 
             var test = this;
@@ -382,10 +382,10 @@ YUI.add('get-tests', function(Y) {
             };
 
             var trans = Y.Get.script(path(["c.js", "b.js", "a.js"]), {
-                
+
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
-                
+
                 onSuccess: function() {
                     counts.success++;
 
@@ -394,20 +394,20 @@ YUI.add('get-tests', function(Y) {
                     Y.ArrayAssert.itemsAreEqual(G_SCRIPTS, progress, "Progress does not match G_SCRIPTS");
                     Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
                 },
-                
+
                 onProgress: function(o) {
                     var file = o.url.match(/[abc]\.js/);
                     progress.push(file[0]);
                 },
-                
+
                 onFailure: function() {
                     Y.Assert.fail("onFailure shouldn't have been called");
                 },
-                
+
                 onEnd : function(o) {
 
                     var context = this;
-                    
+
                     test.resume(function() {
                         counts.end++;
                         Y.Assert.areEqual(1, counts.end,"onEnd called more than once");
@@ -427,7 +427,7 @@ YUI.add('get-tests', function(Y) {
             });
 
             this.wait();
-            
+
         },
 
         'test: multiple script, failure, end': function() {
@@ -456,22 +456,22 @@ YUI.add('get-tests', function(Y) {
                 onEnd : function(o) {
 
                     var context = this;
-                    
+
                     test.resume(function() {
                         counts.end++;
                         Y.Assert.areEqual(1, counts.end,"onEnd called more than once");
                         Y.Assert.areEqual(1, counts.failure, "onEnd called before onFailure");
-                        
+
                         areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
                         Y.Assert.areEqual(trans.tId, o.tId, "Payload has unexpected tId");
-                        
+
                         //Y.Assert.areEqual(1, o.nodes.length, "Payload nodes property has unexpected length");
-                        
+
                         Y.Assert.areEqual("failure", o.statusText, "Payload should have a failure statusText");
                         Y.Assert.isString(o.msg, "Payload should have a failure msg");
 
                         Y.Assert.areEqual("foo", context.bar, "Callback context not set");
-                        
+
                         test.o = o;
                     });
                 }
@@ -492,33 +492,33 @@ YUI.add('get-tests', function(Y) {
             };
 
             var trans = Y.Get.script(path(["a.js", "b.js", "c.js"]), {
-                
+
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
-                
+
                 onFailure: function(o) {
                     test.resume(function() {
                         Y.Assert.fail("onFailure shouldn't have been called");
                         test.o = o;
                     });
                 },
-                
+
                 onProgress: function(o) {
                     var file = o.url.match(/[abc]\.js/);
                     progress.push(file[0]);
                 },
-                
+
                 onSuccess: function(o) {
-                    
+
                     var context = this;
-                    
+
                     test.resume(function() {
                         counts.success++;
                         Y.Assert.areEqual(3, G_SCRIPTS.length, "More/Less than 3 scripts loaded");
-                        Y.ArrayAssert.itemsAreEqual(G_SCRIPTS, progress, "Progress does not match G_SCRIPTS");                        
+                        Y.ArrayAssert.itemsAreEqual(G_SCRIPTS, progress, "Progress does not match G_SCRIPTS");
                         Y.ArrayAssert.containsItems( ["c.js", "a.js", "b.js"], G_SCRIPTS, "Unexpected script contents");
                         Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
-                        
+
                         areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
                         Y.Assert.areEqual(trans.tId, o.tId, "Payload has unexpected tId");
                         Y.Assert.areEqual(3, o.nodes.length, "Payload nodes property has unexpected length");
@@ -526,7 +526,7 @@ YUI.add('get-tests', function(Y) {
                         Y.Assert.isUndefined(o.msg, "Payload should have an undefined msg");
 
                         Y.Assert.areEqual("foo", context.bar, "Callback context not set");
-                        
+
                         test.o = o;
                     });
                 },
@@ -549,22 +549,22 @@ YUI.add('get-tests', function(Y) {
 
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
-                
+
                 onSuccess: function() {
                     counts.success++;
                     Y.Assert.areEqual(3, G_SCRIPTS.length, "More/Less than 3 scripts loaded");
                     Y.ArrayAssert.containsItems(["a.js", "b.js", "c.js"], G_SCRIPTS, "Unexpected script contents");
                     Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
                 },
-                
+
                 onFailure: function() {
                     Y.Assert.fail("onFailure shouldn't have been called");
                 },
-                
+
                 onEnd : function(o) {
 
                     var context = this;
-                    
+
                     test.resume(function() {
                         counts.end++;
                         Y.Assert.areEqual(1, counts.end,"onEnd called more than once");
@@ -577,7 +577,7 @@ YUI.add('get-tests', function(Y) {
                         Y.Assert.isUndefined(o.msg, "Payload should have an undefined msg");
 
                         Y.Assert.areEqual("foo", context.bar, "Callback context not set");
-                        
+
                         test.o = o;
                     });
                 },
@@ -585,12 +585,12 @@ YUI.add('get-tests', function(Y) {
             });
 
             this.wait();
-            
+
         },
 
 
         // THE ASYNC FAILURE TESTS NEED TO BE AT THE END,
-        // BECAUSE ABORTING THEM WILL NOT STOP PARALLEL SCRIPTS 
+        // BECAUSE ABORTING THEM WILL NOT STOP PARALLEL SCRIPTS
         // FROM DOWNLOADING (at least currently) AND SINCE WE USE
         // A GLOBAL, IT POLLUTES THE NEXT SUCCESS TEST
 
@@ -608,7 +608,7 @@ YUI.add('get-tests', function(Y) {
 
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
-                
+
                 onSuccess: function(o) {
                     test.resume(function() {
                         Y.Assert.fail("onSuccess shouldn't have been called");
@@ -616,13 +616,13 @@ YUI.add('get-tests', function(Y) {
                     });
                 },
                 onFailure: function(o) {
-                    
+
                     var context = this;
-                    
+
                     test.resume(function() {
                         counts.failure++;
                         Y.Assert.isTrue(counts.failure === 1, "onFailure called more than once");
-                        
+
                         areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
                         Y.Assert.areEqual(trans.tId, o.tId, "Payload has unexpected tId");
 
@@ -658,20 +658,20 @@ YUI.add('get-tests', function(Y) {
 
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
-                
+
                 onSuccess: function() {
                     Y.Assert.fail("onSuccess shouldn't have been called");
                 },
-                
+
                 onFailure: function() {
                     counts.failure++;
                     Y.Assert.isTrue(counts.failure === 1, "onFailure called more than once");
                 },
-                
+
                 onEnd : function(o) {
 
                     var context = this;
-                    
+
                     test.resume(function() {
                         counts.end++;
                         Y.Assert.areEqual(1, counts.end,"onEnd called more than once");
@@ -705,7 +705,7 @@ YUI.add('get-tests', function(Y) {
             test.createInsertBeforeNode();
 
             var trans = Y.Get.script(path("a.js"), {
-                
+
                 insertBefore: "insertBeforeMe",
 
                 onSuccess: function(o) {
@@ -751,7 +751,7 @@ YUI.add('get-tests', function(Y) {
                             Y.Assert.isTrue(n.compareTo(insertBefore.previous()), "Not inserted before insertBeforeMe");
                             insertBefore = n;
                         }
-                        
+
                         test.o = o;
                     });
                 },
@@ -787,7 +787,7 @@ YUI.add('get-tests', function(Y) {
                             Y.Assert.isTrue(n.compareTo(insertBefore.previous()), "Not inserted before insertBeforeMe");
                             insertBefore = n;
                         }
-                        
+
                         test.o = o;
                     });
                 },
@@ -810,7 +810,7 @@ YUI.add('get-tests', function(Y) {
 
             var trans = Y.Get.script(path("a.js"), {
 
-                charset: "ISO-8859-1",  
+                charset: "ISO-8859-1",
 
                 onSuccess: function(o) {
                     test.resume(function() {
@@ -841,7 +841,7 @@ YUI.add('get-tests', function(Y) {
 
             var trans = Y.Get.script(path(["a.js", "b.js", "c.js"]), {
 
-                charset: "ISO-8859-1",  
+                charset: "ISO-8859-1",
 
                 onSuccess: function(o) {
 
@@ -871,14 +871,14 @@ YUI.add('get-tests', function(Y) {
 
             this.wait();
         },
-        
+
         'test: async, charset, multiple' : function() {
 
             var test = this;
 
             var trans = Y.Get.script(path(["a.js", "b.js", "c.js"]), {
 
-                charset: "ISO-8859-1",  
+                charset: "ISO-8859-1",
 
                 onSuccess: function(o) {
 
@@ -919,7 +919,7 @@ YUI.add('get-tests', function(Y) {
 
                 attributes: {
                     "defer":true,         // Too much potential to interfere with global test structure?
-                    "charset": "ISO-8859-1",  
+                    "charset": "ISO-8859-1",
                     "title": "myscripts"
                 },
 
@@ -935,7 +935,7 @@ YUI.add('get-tests', function(Y) {
                         Y.Assert.areEqual("myscripts", node.getAttribute("title"), "title attribute not set");
                         Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
 
-                        // Needs cross browser normalization, IE8 returns "defer", Safari returns "true" etc. 
+                        // Needs cross browser normalization, IE8 returns "defer", Safari returns "true" etc.
                         // Y.Assert.areEqual("true", node.getAttribute("defer"), "defer attribute not set");
 
                         test.o = o;
@@ -961,7 +961,7 @@ YUI.add('get-tests', function(Y) {
 
                 attributes: {
                     "defer":true,         // Too much potential to interfere with global test structure?
-                    "charset": "ISO-8859-1",  
+                    "charset": "ISO-8859-1",
                     "title": "myscripts"
                 },
 
@@ -978,7 +978,7 @@ YUI.add('get-tests', function(Y) {
                             Y.Assert.areEqual("myscripts", node.title, "title property not set");
                             Y.Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
                             Y.Assert.areEqual(true, node.defer, "defer property not set");
-    
+
                             Y.Assert.areEqual("myscripts", node.getAttribute("title"), "title attribute not set");
                             Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
                         }
@@ -997,7 +997,7 @@ YUI.add('get-tests', function(Y) {
 
             this.wait();
         },
-        
+
         'test: async, attributes, multiple' : function() {
 
             var test = this;
@@ -1006,7 +1006,7 @@ YUI.add('get-tests', function(Y) {
 
                 attributes: {
                     "defer":true,         // Too much potential to interfere with global test structure?
-                    "charset": "ISO-8859-1",  
+                    "charset": "ISO-8859-1",
                     "title": "myscripts"
                 },
 
@@ -1023,7 +1023,7 @@ YUI.add('get-tests', function(Y) {
                             Y.Assert.areEqual("myscripts", node.title, "title property not set");
                             Y.Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
                             Y.Assert.areEqual(true, node.defer, "defer property not set");
-    
+
                             Y.Assert.areEqual("myscripts", node.getAttribute("title"), "title attribute not set");
                             Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
                         }
@@ -1062,7 +1062,7 @@ YUI.add('get-tests', function(Y) {
             // Purge only happens at the start of a queue call.
 
             Y.Get.script(path("a.js"), {
-                
+
                 purgethreshold: 1000, // Just to make sure we're not purged as part of the default 20 script purge.
 
                 onSuccess: function(o) {
@@ -1070,9 +1070,9 @@ YUI.add('get-tests', function(Y) {
                     nodes = nodes.concat(o.nodes);
 
                     Y.Get.script(path("b.js"), {
-                        
+
                         purgethreshold: 1000, // Just to make sure we're not purged as part of the default 20 script purge.
-                        
+
                         onSuccess: function(o) {
 
                             nodes = nodes.concat(o.nodes);
@@ -1098,13 +1098,13 @@ YUI.add('get-tests', function(Y) {
                                         for (var i = 0; i < nodeIds.length; i++) {
                                             Y.Assert.isNull(Y.Node.one(nodeIds[i]), "Script from previous transaction was not purged");
                                         }
-    
+
                                         Y.Assert.isTrue(Y.Node.one(o.nodes[0]).inDoc());
-                                        
+
                                         test.o = o;
-                                    });                               
+                                    });
                                 }
-                            });                                            
+                            });
                         }
                     });
                 }
@@ -1160,7 +1160,7 @@ YUI.add('get-tests', function(Y) {
                 success:0,
                 failure:0
             };
-            
+
             // Using test.onload to switch test behavior for IE/Opera vs. others.
             // In IE/Opera we don't need to artifical timeout, since we're notified
             // onload. For the others, onSuccess is called synchronously.
@@ -1177,10 +1177,10 @@ YUI.add('get-tests', function(Y) {
                     setTimeout(function() {
                         test.resume(function() {
                             counts.success++;
-    
+
                             Y.Assert.areEqual("1111", this.na.getComputedStyle("zIndex"), "a.css does not seem to be loaded");
                             Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
-    
+
                             areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
 
                             // TODO: Test infrastructure won't let us easily get a populated trans reference and also wait (AFAICT). So commenting this out.
@@ -1189,9 +1189,9 @@ YUI.add('get-tests', function(Y) {
                             Y.Assert.areEqual(1, o.nodes.length, "Payload nodes property has unexpected length");
                             Y.Assert.isUndefined(o.statusText, "Payload should not have a statusText");
                             Y.Assert.isUndefined(o.msg, "Payload should not have a msg");
-    
+
                             Y.Assert.areEqual("foo", context.bar, "Callback context not set");
-    
+
                             test.o = o;
                         });
                     }, test.onload ? 0 : 200); // need arbit delay to make sure CSS is applied
@@ -1199,7 +1199,7 @@ YUI.add('get-tests', function(Y) {
                     if (!test.onload) {
                         test.wait();
                     }
-                    
+
                 },
 
                 onFailure: function(o) {
@@ -1230,28 +1230,28 @@ YUI.add('get-tests', function(Y) {
                 },
 
                 onSuccess: function(o) {
-                    
+
                     var context = this;
 
                     setTimeout(function() {
                         test.resume(function() {
                             counts.success++;
-    
+
                             Y.Assert.areEqual("1111", this.na.getComputedStyle("zIndex"), "a.css does not seem to be loaded");
                             Y.Assert.areEqual("1234", this.nb.getComputedStyle("zIndex"), "b.css does not seem to be loaded");
                             Y.Assert.areEqual("4321", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be loaded");
                             Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
-                            
+
                             areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
-                            
+
                             //Y.Assert.areEqual(trans.tId, o.tId, "Payload has unexpected tId");
-                            
+
                             Y.Assert.areEqual(3, o.nodes.length, "Payload nodes property has unexpected length");
                             Y.Assert.isUndefined(o.statusText, "Payload should not have a statusText");
                             Y.Assert.isUndefined(o.msg, "Payload should not have a msg");
-    
+
                             Y.Assert.areEqual("foo", context.bar, "Callback context not set");
-                            
+
                             test.o = o;
                         });
                     }, test.onload ? 0 : 400);
@@ -1294,15 +1294,15 @@ YUI.add('get-tests', function(Y) {
                             Y.Assert.areEqual("1234", this.nb.getComputedStyle("zIndex"), "b.css does not seem to be loaded");
                             Y.Assert.areEqual("4321", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be loaded");
                             Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
-                            
+
                             areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
-                            
+
                             //Y.Assert.areEqual(trans.tId, o.tId, "Payload has unexpected tId");
 
                             Y.Assert.areEqual(3, o.nodes.length, "Payload nodes property has unexpected length");
                             Y.Assert.isUndefined(o.statusText, "Payload should not have a statusText");
                             Y.Assert.isUndefined(o.msg, "Payload should not have a msg");
-    
+
                             Y.Assert.areEqual("foo", context.bar, "Callback context not set");
 
                             test.o = o;
@@ -1315,7 +1315,7 @@ YUI.add('get-tests', function(Y) {
                 },
                 async:true
             });
-            
+
             if (test.onload) {
                 test.wait();
             }
@@ -1337,16 +1337,16 @@ YUI.add('get-tests', function(Y) {
                         test.resume(function() {
 
                             var n = Y.Node.one(o.nodes[0]);
-    
+
                             var insertBefore = Y.Node.one("#insertBeforeMe");
-    
+
                             Y.Assert.isTrue(n.compareTo(insertBefore.previous()), "Not inserted before insertBeforeMe");
-    
+
                             /* TODO: These don't work as expected on IE (even though insertBefore worked). Better cross-browser assertion? */
                             if (!Y.UA.ie) {
                                 Y.Assert.areEqual("9991", this.na.getComputedStyle("zIndex"), "a.css does not seem to be inserted before ib.css");
                             }
-    
+
                             test.o = o;
 
                         });
@@ -1377,7 +1377,7 @@ YUI.add('get-tests', function(Y) {
                     setTimeout(function() {
                         test.resume(function() {
                             var insertBefore = Y.Node.one("#insertBeforeMe");
-    
+
                             for (var i = o.nodes.length-1; i >= 0; i--) {
                                 var n = Y.Node.one(o.nodes[i]);
                                 Y.Assert.isTrue(n.compareTo(insertBefore.previous()), "Not inserted before insertBeforeMe");
@@ -1390,7 +1390,7 @@ YUI.add('get-tests', function(Y) {
                                 Y.Assert.areEqual("9992", this.nb.getComputedStyle("zIndex"), "b.css does not seem to be inserted before ib.css");
                                 Y.Assert.areEqual("9993", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be inserted before ib.css");
                             }
-                           
+
                             test.o = o;
                         });
                     }, test.onload ? 0 : 200);
@@ -1421,7 +1421,7 @@ YUI.add('get-tests', function(Y) {
                     setTimeout(function() {
                         test.resume(function() {
                             var insertBefore = Y.Node.one("#insertBeforeMe");
-    
+
                             for (var i = o.nodes.length-1; i >= 0; i--) {
                                 var n = Y.Node.one(o.nodes[i]);
                                 Y.Assert.isTrue(n.compareTo(insertBefore.previous()), "Not inserted before insertBeforeMe");
@@ -1429,12 +1429,12 @@ YUI.add('get-tests', function(Y) {
                             }
 
                             /* TODO: These don't work as expected on IE (even though insertBefore worked). Better cross-browser assertion? */
-                            if (!Y.UA.ie) {        
+                            if (!Y.UA.ie) {
                                 Y.Assert.areEqual("9991", this.na.getComputedStyle("zIndex"), "a.css does not seem to be inserted before ib.css");
                                 Y.Assert.areEqual("9992", this.nb.getComputedStyle("zIndex"), "b.css does not seem to be inserted before ib.css");
                                 Y.Assert.areEqual("9993", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be inserted before ib.css");
                             }
-                            
+
                             test.o = o;
 
                         });
@@ -1453,27 +1453,27 @@ YUI.add('get-tests', function(Y) {
                 test.wait();
             }
         },
-        
+
         'test: charset, single' : function() {
 
             var test = this;
 
             var trans = Y.Get.css(path("a.css?delay=20"), {
 
-                charset: "ISO-8859-1",  
+                charset: "ISO-8859-1",
 
                 onSuccess: function(o) {
                     setTimeout(function() {
                         test.resume(function() {
 
                             var node = document.getElementById(o.nodes[0].id);
-    
+
                             Y.Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
                             Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
-    
+
                             test.o = o;
                         });
-                    
+
                     }, test.onload ? 0 : 100);
 
                     if (!test.onload) {
@@ -1493,7 +1493,7 @@ YUI.add('get-tests', function(Y) {
 
             var trans = Y.Get.css(path(["a.css?delay=10", "b.css?delay=50", "c.css?delay=20"]), {
 
-                charset: "ISO-8859-1",  
+                charset: "ISO-8859-1",
 
                 onSuccess: function(o) {
 
@@ -1501,15 +1501,15 @@ YUI.add('get-tests', function(Y) {
                         test.resume(function() {
 
                             Y.Assert.areEqual(3, o.nodes.length, "Unexpected node count");
-    
+
                             for (var i = 0; i < o.nodes.length; i++) {
-    
+
                                 var node = document.getElementById(o.nodes[i].id);
-    
+
                                 Y.Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
                                 Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
                             }
-    
+
                             test.o = o;
                         });
                     }, test.onload ? 0 : 200);
@@ -1524,14 +1524,14 @@ YUI.add('get-tests', function(Y) {
                 test.wait();
             }
         },
-        
+
         'test: async, charset, multiple' : function() {
 
             var test = this;
 
             var trans = Y.Get.css(path(["a.css?delay=30", "b.css?delay=10", "c.css?delay=20"]), {
 
-                charset: "ISO-8859-1",  
+                charset: "ISO-8859-1",
 
                 onSuccess: function(o) {
 
@@ -1539,18 +1539,18 @@ YUI.add('get-tests', function(Y) {
                         test.resume(function() {
 
                             Y.Assert.areEqual(3, o.nodes.length, "Unexpected node count");
-    
+
                             for (var i = 0; i < o.nodes.length; i++) {
-    
+
                                 var node = document.getElementById(o.nodes[i].id);
-    
+
                                 Y.Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
                                 Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
                             }
-    
+
                             test.o = o;
                         });
-                        
+
                     }, test.onload ? 0 : 200);
 
                     if (!test.onload) {
@@ -1564,7 +1564,7 @@ YUI.add('get-tests', function(Y) {
                 test.wait();
             }
         },
-        
+
         'test: attributes, single' : function() {
 
             var test = this;
@@ -1582,12 +1582,12 @@ YUI.add('get-tests', function(Y) {
                         test.resume(function() {
 
                             var node = document.getElementById(o.nodes[0].id);
-    
+
                             Y.Assert.areEqual("myscripts", node.title, "title property not set");
                             Y.Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
                             Y.Assert.areEqual("myscripts", node.getAttribute("title"), "title attribute not set");
                             Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
-    
+
                             test.o = o;
                         });
 
@@ -1612,7 +1612,7 @@ YUI.add('get-tests', function(Y) {
             var trans = Y.Get.css(path(["a.css?delay=10", "b.css?delay=50", "c.css?delay=20"]), {
 
                 attributes: {
-                    "charset": "ISO-8859-1",  
+                    "charset": "ISO-8859-1",
                     "title": "myscripts"
                 },
 
@@ -1622,17 +1622,17 @@ YUI.add('get-tests', function(Y) {
                         test.resume(function() {
 
                             Y.Assert.areEqual(3, o.nodes.length, "Unexpected node count");
-    
+
                             for (var i = 0; i < o.nodes.length; i++) {
-    
+
                                 var node = document.getElementById(o.nodes[i].id);
-    
+
                                 Y.Assert.areEqual("myscripts", node.title, "title property not set");
                                 Y.Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
                                 Y.Assert.areEqual("myscripts", node.getAttribute("title"), "title attribute not set");
                                 Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
                             }
-    
+
                             test.o = o;
                         });
                     }, test.onload ? 0 : 200);
@@ -1640,7 +1640,7 @@ YUI.add('get-tests', function(Y) {
                     if (!test.onload) {
                         test.wait();
                     }
-                        
+
                 }
             });
 
@@ -1649,7 +1649,7 @@ YUI.add('get-tests', function(Y) {
                 test.wait();
             }
         },
-        
+
         'test: async, attributes, multiple' : function() {
 
             var test = this;
@@ -1657,7 +1657,7 @@ YUI.add('get-tests', function(Y) {
             var trans = Y.Get.css(path(["a.css?delay=10", "b.css?delay=50", "c.css?delay=20"]), {
 
                 attributes: {
-                    "charset": "ISO-8859-1",  
+                    "charset": "ISO-8859-1",
                     "title": "myscripts"
                 },
 
@@ -1667,17 +1667,17 @@ YUI.add('get-tests', function(Y) {
                         test.resume(function() {
 
                             Y.Assert.areEqual(3, o.nodes.length, "Unexpected node count");
-    
+
                             for (var i = 0; i < o.nodes.length; i++) {
-    
+
                                 var node = document.getElementById(o.nodes[i].id);
-    
+
                                 Y.Assert.areEqual("myscripts", node.title, "title property not set");
                                 Y.Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
                                 Y.Assert.areEqual("myscripts", node.getAttribute("title"), "title attribute not set");
                                 Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
                             }
-    
+
                             test.o = o;
                         });
                     }, test.onload ? 0 : 200);
@@ -1697,7 +1697,7 @@ YUI.add('get-tests', function(Y) {
         },
 
         // TODO: CSS failure not widely supported. Enable when success/failure handling is in place
-    
+
         'ignore: single css, failure': function() {
 
             var test = this;
@@ -1705,7 +1705,7 @@ YUI.add('get-tests', function(Y) {
                 success:0,
                 failure:0
             };
-            
+
             Y.Get.abort(Y.Get.css(path("a.css"), {
 
                 data: {a:1, b:2, c:3},
@@ -1719,7 +1719,7 @@ YUI.add('get-tests', function(Y) {
                     counts.failure++;
                     Y.Assert.isTrue(counts.failure === 1, "onFailure called more than once");
                 },
-                
+
                 onEnd: function(o) {
                     test.o = o;
                 }
@@ -1739,13 +1739,13 @@ YUI.add('get-tests', function(Y) {
 
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
-                
+
                 onSuccess: function(o) {
                     test.resume(function() {
                         Y.Assert.fail("onSuccess shouldn't have been called");
                     });
                 },
-                
+
                 onFailure: function(o) {
                     test.resume(function() {
                         counts.failure++;
@@ -1753,7 +1753,7 @@ YUI.add('get-tests', function(Y) {
                         test.o = o;
                     });
                 },
-                
+
                 onEnd: function(o) {
                     test.o = o;
                 }
@@ -1778,7 +1778,7 @@ YUI.add('get-tests', function(Y) {
 
             YUI().use("scrollview", function(Y2) {
                 test.resume(function() {
-                    Y.Assert.isFunction(Y2.ScrollView, "ScrollView not loaded");    
+                    Y.Assert.isFunction(Y2.ScrollView, "ScrollView not loaded");
                 });
             });
 
@@ -1790,7 +1790,7 @@ YUI.add('get-tests', function(Y) {
 
             YUI().use("autocomplete-list", function(Y2) {
                 test.resume(function() {
-                    Y.Assert.isFunction(Y2.AutoCompleteList, "Autocomplete not loaded");    
+                    Y.Assert.isFunction(Y2.AutoCompleteList, "Autocomplete not loaded");
                 });
             });
 
