@@ -130,6 +130,7 @@ YUI.add('test', function(Y) {
         this.delay = (Y.Lang.isNumber(delay) ? delay : 0);        
     };
 
+
         
     Y.namespace("Test");
     
@@ -208,6 +209,7 @@ YUI.add('test', function(Y) {
         }
         
     };
+
     
     /*
      * Runs test suites and test cases, providing events to allowing for the
@@ -1217,6 +1219,7 @@ YUI.add('test', function(Y) {
         return new TestRunner();
         
     })();
+
     /**
      * @module test
      */
@@ -1912,6 +1915,7 @@ YUI.add('test', function(Y) {
     //inherit methods
     Y.extend(Y.Assert.UnexpectedError, Y.Assert.Error);
     
+
     /**
      * @module test
      */
@@ -2236,6 +2240,7 @@ YUI.add('test', function(Y) {
         }
         
     };
+
     /**
      * @module test
      */
@@ -2344,6 +2349,7 @@ YUI.add('test', function(Y) {
 
         }     
     };
+
     /**
      * @module test
      */
@@ -2431,6 +2437,7 @@ YUI.add('test', function(Y) {
         }
         
     };
+
     
     Y.namespace("Test.Format");
     
@@ -2660,6 +2667,7 @@ YUI.add('test', function(Y) {
         return "1.." + results.total + "\n" + serializeToTAP(results);
     };
         
+
     /**
      * @module test
      */
@@ -2704,6 +2712,7 @@ YUI.add('test', function(Y) {
 
 
   
+
 
     Y.namespace("Test");
     
@@ -2867,6 +2876,7 @@ YUI.add('test', function(Y) {
         }
     
     };
+
     /**
      * @module test
      */
@@ -3091,14 +3101,17 @@ YUI.add('test', function(Y) {
      * @static
      */
     Y.Mock.Value.Function   = Y.Mock.Value(Y.Assert.isFunction);
+
 /*Stub for future compatibility*/
 if (typeof YUITest == "undefined" || !YUITest) {
     YUITest = {
-        TestRunner: Y.Test.Runner,
-        ResultsFormat: Y.Test.Format,
+        TestRunner:     Y.Test.Runner,
+        ResultsFormat:  Y.Test.Format,
+        TestFormat:     Y.Test.Format,
         CoverageFormat: Y.Coverage.Format
     };
 }
+
 
 
 }, '@VERSION@' ,{requires:['event-simulate','event-custom','substitute','json-stringify']});
