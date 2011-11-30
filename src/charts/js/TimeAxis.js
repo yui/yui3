@@ -66,7 +66,7 @@ TimeAxis.ATTRS =
             {
                 max = this._getNumber(this.get("dataMaximum"));
             }
-            return max;
+            return parseFloat(max);
         },
         setter: function (value)
         {
@@ -89,7 +89,7 @@ TimeAxis.ATTRS =
             {
                 min = this._getNumber(this.get("dataMinimum"));
             }
-                return min;
+            return parseFloat(min);
         },
         setter: function (value)
         {
@@ -100,7 +100,8 @@ TimeAxis.ATTRS =
 
     /**
      * Method used for formatting a label. This attribute allows for the default label formatting method to overridden. The method use would need
-     * to implement the arguments below and return a `String`.
+     * to implement the arguments below and return a `String` or `HTML`. The default implementation of the method returns a `String`. The output of this method
+     * will be rendered to the DOM using `innerHTML`. 
      * <dl>
      *      <dt>val</dt><dd>Label to be formatted. (`String`)</dd>
      *      <dt>format</dt><dd>STRFTime string used to format the label. (optional)</dd>
@@ -117,7 +118,7 @@ TimeAxis.ATTRS =
             {
                 return Y.DataType.Date.format(val, {format:format});
             }
-            return val;
+            return Y.Escape.html(val.toString());
         }
     },
 

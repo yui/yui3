@@ -27,7 +27,8 @@ NumericAxis.ATTRS = {
     
     /**
      * Method used for formatting a label. This attribute allows for the default label formatting method to overridden. The method use would need
-     * to implement the arguments below and return a `String`.
+     * to implement the arguments below and return a `String` or `HTML`. The default implementation of the method returns a `String`. The output of this method
+     * will be rendered to the DOM using `innerHTML`. 
      * <dl>
      *      <dt>val</dt><dd>Label to be formatted. (`String`)</dd>
      *      <dt>format</dt><dd>Object containing properties used to format the label. (optional)</dd>
@@ -75,25 +76,6 @@ Y.extend(NumericAxis, Y.AxisType,
      * @private
      */
     _type: "numeric",
-
-    /**
-     * Returns a value based of a key value and an index.
-     *
-     * @method getKeyValueAt
-     * @param {String} key value used to look up the correct array
-     * @param {Number} index within the array
-     * @return Object
-     */
-    getKeyValueAt: function(key, index)
-    {
-        var value = NaN,
-            keys = this.get("keys");
-        if(keys[key] && Y_Lang.isNumber(parseFloat(keys[key][index])))
-        {
-            value = keys[key][index];
-        }
-        return value;
-    },
 
     /**
      * Helper method for getting a `roundingUnit` when calculating the minimum and maximum values.
@@ -542,7 +524,7 @@ Y.extend(NumericAxis, Y.AxisType,
             }
             label += min;
         }
-        return label;
+        return parseFloat(label);
     },
 
     /**

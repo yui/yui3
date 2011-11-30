@@ -741,7 +741,35 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             }
         }
     },
-
+   
+    /**
+     * Returns all the keys contained in a  `dataProvider`.
+     *
+     * @method _getAllKeys
+     * @param {Array} dp Collection of objects to be parsed.
+     * @return Object
+     */
+    _getAllKeys: function(dp)
+    {
+        var i = 0,
+            len = dp.length,
+            item,
+            key,
+            keys = {};
+        for(; i < len; ++i)
+        {
+            item = dp[i];
+            for(key in item)
+            {
+                if(item.hasOwnProperty(key))
+                {
+                    keys[key] = true;
+                }
+            }
+        }
+        return keys;
+    },
+    
     /**
      * Generates and returns a key-indexed object containing `Axis` instances or objects used to create `Axis` instances.
      *
@@ -773,7 +801,6 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             categoryPosition,
             valueAxes = [],
             seriesAxis = this.get("stacked") ? "stacked" : "numeric";
-        dv = dp[0];
         if(direction == "vertical")
         {
             seriesPosition = "bottom";
@@ -834,6 +861,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         }
         if(seriesKeys.length < 1)
         {
+            dv = this._getAllKeys(dp);
             for(i in dv)
             {
                 if(dv.hasOwnProperty(i) && i != catKey && Y.Array.indexOf(claimedKeys, i) == -1)
@@ -954,12 +982,29 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
 
    
     /**
-     * Returns an object literal containing a categoryItem and a valueItem for a given series index.
-     *
-     * @method getSeriesItem
+     * Returns an object literal containing a categoryItem and a valueItem for a given series index. Below is the structure of each:
+     * 
+     * @method getSeriesItems
      * @param {CartesianSeries} series Reference to a series.
      * @param {Number} index Index of the specified item within a series.
-     * @return Object
+     * @return Object An object literal containing the following:
+     *
+     *  <dl>
+     *      <dt>categoryItem</dt><dd>Object containing the following data related to the category axis of the series.
+     *  <dl>
+     *      <dt>axis</dt><dd>Reference to the category axis of the series.</dd>
+     *      <dt>key</dt><dd>Category key for the series.</dd>
+     *      <dt>value</dt><dd>Value on the axis corresponding to the series index.</dd>
+     *  </dl>
+     *      </dd>
+     *      <dt>valueItem</dt><dd>Object containing the following data related to the category axis of the series.
+     *  <dl>
+     *      <dt>axis</dt><dd>Reference to the value axis of the series.</dd>
+     *      <dt>key</dt><dd>Value key for the series.</dd>
+     *      <dt>value</dt><dd>Value on the axis corresponding to the series index.</dd>
+     *  </dl>
+     *      </dd>
+     *  </dl>
      */
     getSeriesItems: function(series, index)
     {

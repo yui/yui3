@@ -61,8 +61,8 @@
              <url>json/tests/json.html</url>
         -->
         <url>oop/tests/oop.html</url>
-        <url>pjax/tests/pjax.html</url>
-        <!-- This test hangs on the CI system.
+        <!-- These tests hang on the CI system.
+            <url>pjax/tests/pjax.html</url>
             <url>parallel/tests/index.html</url>
         -->
     </tests>

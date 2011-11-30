@@ -495,7 +495,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                     titleTextField.style[i] = styles[i];
                 }
             }
-            titleTextField.innerHTML = title;
+            titleTextField.innerHTML = this.get("titleFunction")(title);
             this._titleTextField = titleTextField;
             this._layout.positionTitle.apply(this, [titleTextField]);
         }
@@ -1044,7 +1044,48 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          *  @attribute title
          *  @type String
          */
-        title: {}
+        title: {
+            setter: function(val)
+            {
+                return Y.Escape.html(val);
+            }
+        },
+
+        /**
+         * Method used for formatting title. The method use would need to implement the arguments below and return a `String` or `HTML`. The default implementation 
+         * of the method returns a `String`. The output of this method will be rendered to the DOM using `innerHTML`. 
+         * <dl>
+         *      <dt>val</dt><dd>Title to be formatted. (`String`)</dd>
+         * </dl>
+         *
+         * @attribute titleFunction
+         * @type Function
+         */
+        titleFunction: {
+            value: function(val)
+            {
+                return val;
+            }
+        },
+        
+        /**
+         * Method used for formatting a label. This attribute allows for the default label formatting method to overridden. The method use would need
+         * to implement the arguments below and return a `String` or `HTML`. The default implementation of the method returns a `String`. The output of this method
+         * will be rendered to the DOM using `innerHTML`. 
+         * <dl>
+         *      <dt>val</dt><dd>Label to be formatted. (`String`)</dd>
+         *      <dt>format</dt><dd>Template for formatting label. (optional)</dd>
+         * </dl>
+         *
+         * @attribute labelFunction
+         * @type Function
+         */
+        labelFunction: {
+            value: function(val, format)
+            {
+                return val;
+            }
+        }
             
         /**
          * Style properties used for drawing an axis. This attribute is inherited from `Renderer`. Below are the default values:
