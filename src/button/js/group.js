@@ -2,7 +2,7 @@
 
 var ButtonGroup = function (config) {
     
-    this.addAttrs({
+    var ATTRS = {
         
         /* The array of buttons contained in this group */
         buttons   : {
@@ -30,7 +30,9 @@ var ButtonGroup = function (config) {
             value : 'push'
         }
         
-    }, config);
+    };
+    
+    this.addAttrs(ATTRS, config);
 };
 /* Rethink this
 

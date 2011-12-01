@@ -9,24 +9,29 @@ var Button = function(config){
             public methods:
                 - onClick
                 - getDOMNode
-                - changeColor
         
             private methods:
-                - _colorToHex
-                - _getContrastYIQ,
-            
-            events:
-                - selectedChange
-                - disabledChange
-            
+                - _colorToHex (static)
+                - _getContrastYIQ (static)
+                
             attributes:
-                - srcNode
                 - type
                 - disabled
                 - selected
+                - backgroundColor
+
+            events:
+                - typeChange
+                - selectedChange
+                - backgroundColorChange
+                - disabledChange
     */
     
-    this._srcNode = Y.one(config.srcNode)
+    this._srcNode = Y.one(config.srcNode);
+    var node = this._srcNode;
+    
+    node.addClass('yui3-button');
+    node.setAttribute('role', 'button');
     
     var ATTRS = {
         label: {
@@ -90,15 +95,18 @@ var Button = function(config){
             validator: function(val) {
                 return Y.Lang.isBoolean(val);
             }
+        },
+        backgroundColor: {
+            setter: function(color){
+                var fontColor = Button._getContrastYIQ(Button._colorToHex(color));
+                var node = this.getDOMNode();
+                node.setStyle('backgroundColor', color);
+                node.setStyle('color', fontColor);                
+            }
         }
     };
     
     this.addAttrs(ATTRS, config);
-    
-    var node = this.getDOMNode();
-    
-    node.addClass('yui3-button');
-    node.setAttribute('role', 'button');
     
     // TODO: Does mousedown/up even work on touch devices?
     node.on({
@@ -141,13 +149,6 @@ Button.prototype.getDOMNode = function() {
     return this._srcNode;
 };
 
-/* A few methods to handle color contrast, not sure if these will make it in the final build or not */
-Button.prototype.changeColor = function(color) {
-    var fontColor = Button._getContrastYIQ(Button._colorToHex(color));
-    var node = this.getDOMNode();
-    node.setStyle('backgroundColor', color);
-    node.setStyle('color', fontColor);
-};
 
 Button._colorToHex = function(color) {
     var digits, red, green, blue, rgb;
