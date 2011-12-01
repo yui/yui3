@@ -301,6 +301,43 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
             graph.set("width", this.get("width"));
             graph.set("height", this.get("height"));
         }
+    },
+    
+    /**
+     * Formats tooltip text for a pie chart.
+     *
+     * @method _tooltipLabelFunction
+     * @param {Object} categoryItem An object containing the following:
+     *  <dl>
+     *      <dt>axis</dt><dd>The axis to which the category is bound.</dd>
+     *      <dt>displayName</dt><dd>The display name set to the category (defaults to key if not provided)</dd>
+     *      <dt>key</dt><dd>The key of the category.</dd>
+     *      <dt>value</dt><dd>The value of the category</dd>
+     *  </dl>
+     * @param {Object} valueItem An object containing the following:
+     *  <dl>
+     *      <dt>axis</dt><dd>The axis to which the item's series is bound.</dd>
+     *      <dt>displayName</dt><dd>The display name of the series. (defaults to key if not provided)</dd>
+     *      <dt>key</dt><dd>The key for the series.</dd>
+     *      <dt>value</dt><dd>The value for the series item.</dd> 
+     *  </dl>
+     * @param {Number} itemIndex The index of the item within the series.
+     * @param {CartesianSeries} series The `PieSeries` instance of the item.
+     * @param {Number} seriesIndex The index of the series in the `seriesCollection`.
+     * @return {String | HTML}
+     * @private
+     */
+    _tooltipLabelFunction: function(categoryItem, valueItem, itemIndex, series, seriesIndex)
+    {
+        var msg,
+            total = series.getTotalValues(),
+            pct = Math.round((valueItem.value / total) * 10000)/100;
+        msg = categoryItem.displayName +
+        ":&nbsp;" + categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]) + 
+        "<br/>" + valueItem.displayName + 
+        ":&nbsp;" + valueItem.axis.get("labelFunction").apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]) + 
+        "<br/>" + pct + "%";
+        return msg; 
     }
 }, {
     ATTRS: {
