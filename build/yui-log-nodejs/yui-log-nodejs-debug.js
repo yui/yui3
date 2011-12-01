@@ -77,4 +77,5 @@ if (!Y.config.logFn) {
 
 
 
+
 }, '@VERSION@' ,{requires:['yui-log']});
