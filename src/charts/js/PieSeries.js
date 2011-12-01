@@ -260,7 +260,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             isCanvas = Y.Graphic.NAME == "canvasGraphic";
         for(; i < itemCount; ++i)
         {
-            value = values[i];
+            value = parseFloat(values[i]);
             
             values.push(value);
             if(!isNaN(value))
