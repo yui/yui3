@@ -28,7 +28,7 @@ Provides a top-level application component which manages navigation and views.
 @uses PjaxBase
 @since 3.5.0
 **/
-App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
+App = Y.Base.create('app', Y.Base, [Y.Router, Y.PjaxBase, Y.View], {
     // -- Public Properties ----------------------------------------------------
 
     /**
@@ -55,7 +55,7 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
 
       * `instance`: Used internally to manage the current instance of this named
         view. This can be used if your view instance is created up-front, or if
-        you would rather manage the View lifecyle, but you probably should just
+        you would rather manage the View lifecycle, but you probably should just
         let this be handled for you.
 
     If `views` are passed at instantiation time, they will override any views
@@ -262,13 +262,119 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
     @protected
     **/
     _initHtml5: function () {
-        // When `serverRouting` is explictiy set to `false` (not just falsy),
-        // forced hash-based URLs in all browsers.
+        // When `serverRouting` is explicitly set to `false` (not just falsy),
+        // forcing hash-based URLs in all browsers.
         if (this.get('serverRouting') === false) {
             return false;
         } else {
             return Y.Router.html5;
         }
+    },
+
+    /**
+    Navigates to the specified URL if there is a route-handler that matches. In
+    browsers capable of using HTML5 history or when `serverRouting` is falsy,
+    the navigation will be enhanced by firing the `navigate` and having the
+    app handle the "request". When `serverRouting` is `true`, non-HTML5 browsers
+    will navigate to the new URL via manipulation of `window.location`.
+
+    Overrides PjaxBase's `_navigate()` method to first upgrade any hash-based
+    URLs, and when `serverRouting` is falsy, force the navigation to be handled
+    by the app. The applied changes are then delegated back to PjaxBase's
+    `_navigate()` method to complete the navigation.
+
+    When there is a route-handler for the specified URL and it is being
+    navigated to, this method will return `true`, otherwise it will return
+    `false`.
+
+    @method _navigate
+    @param {String} url The fully-resolved URL that the app should dispatch
+      to its route handlers to fulfill the enhanced navigation "request", or use
+      to update `window.location` in non-HTML5 history capable browsers when
+      `serverRouting` is `true`.
+    @param {Object} [options] Additional options to configure the navigation,
+      these are mixed into the `navigate` event facade.
+        @param {Boolean} [options.replace] Whether or not the current history
+          entry will be replaced, or a new entry will be created. Will default
+          to `true` if the specified `url` is the same as the current URL.
+        @param {Boolean} [options.force=false] Whether the enhanced navigation
+          should occur even in browsers without HTML5 history.
+    @protected
+    @see PjaxBase._navigate()
+    **/
+    _navigate: function (url, options) {
+        var upgradedURL = this._upgradeURL(url),
+            path, query;
+
+        options || (options = {});
+
+        // Check if the `url` was upgraded.
+        if (url !== upgradedURL) {
+            url = upgradedURL;
+
+            // Determine if the current history entry should be replaced. Since
+            // we've upgraded a hash-based URL to a full-path URL, "equality" is
+            // determined by whether the new path and query are the same as the
+            // current ones.
+            if (!Lang.isValue(options.replace)) {
+                path  = url.replace(this._regexUrlQuery, '');
+                query = (url.match(this._regexUrlQuery) || [])[1] || '';
+
+                options.replace = path === this._getPath() &&
+                        query === this._getQuery();
+            }
+        }
+
+        // Force navigation to be enhanced and handled by the app when
+        // `serverRouting` is falsy because the server might not be able to
+        // handle the request properly.
+        if (!this.get('serverRouting')) {
+            Lang.isValue(options.force) || (options.force = true);
+        }
+
+        return Y.PjaxBase.prototype._navigate.call(this, url, options);
+    },
+
+
+    /**
+    Upgrades a hash-based URL to a full-path URL if necessary.
+
+    The specified `url` will be upgraded if its of the same origin as the
+    current URL and has a path-like hash. URLs that don't need upgrading will be
+    returned as-is.
+
+    @example
+        app._upgradeURL('http://example.com/#/foo/');
+        // => 'http://example.com/foo/';
+
+    @method _upgradeURL
+    @param {String} url The URL to upgrade from hash-based to full-path.
+    @return {String} The upgraded URL, or the specified URL untouched.
+    @protected
+    **/
+    _upgradeURL: function (url) {
+        // We should not try to upgrade paths for external URLs.
+        if (!this._hasSameOrigin(url)) {
+            return url;
+        }
+
+        // TODO: Should the `root` be removed first, and the hash only
+        // considered if in the form of '/#/'?
+        var hash       = (url.match(/#(.*)$/) || [])[1] || '',
+            hashPrefix = Y.HistoryHash.hashPrefix;
+
+        // Strip any hash prefix, like hash-bangs.
+        if (hashPrefix && hash.indexOf(hashPrefix) === 0) {
+            hash = hash.replace(hashPrefix, '');
+        }
+
+        // If the hash looks like a URL path, assume it is, and upgrade it!
+        if (hash && hash.charAt(0) === '/') {
+            // Re-joins with configured `root` before resolving.
+            url = this._resolveURL(this._joinURL(hash));
+        }
+
+        return url;
     },
 
     /**
@@ -294,11 +400,20 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
     @protected
     **/
     _save: function (url, replace) {
-        // Forces full-path URLs to always be used.
+        // Forces full-path URLs to always be used by modifying
+        // `window.location` in non-HTML5 history capable browsers.
         if (this.get('serverRouting') && !this.get('html5')) {
+            // Perform same-origin check on the specified URL.
+            if (!this._hasSameOrigin(url)) {
+                Y.error('Security error: The new URL must be of the same origin as the current URL.');
+                return this;
+            }
+
             // Results in the URL's full path starting with '/'.
             url = this._joinURL(url || '');
 
+            // Either replace the current history entry or create a new one
+            // while navigating to the `url`.
             if (replace) {
                 win && win.location.replace(url);
             } else {
@@ -554,7 +669,7 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
             cause *all URLs to always have full-paths*, which means the server
             will be able to accurately handle all URLs this app produces. e.g.
 
-                http://example.com/user/1
+                http://example.com/users/1
 
             To meet this strict full-URL requirement, browsers which are not
             capable of using HTML5 history will make requests to the server
@@ -567,7 +682,7 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
             Be aware that this will cause *all URLs to always be hash-based*,
             even in browsers that are capable of using HTML5 history. e.g.
 
-                http://example.com/#/user/1
+                http://example.com/#/users/1
 
             A single-page or client-side-only app where the server sends a
             "shell" page with JavaScript to the client might have this
@@ -579,7 +694,7 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
 
         Consider the following example:
 
-            URL shown in browser: http://example.com/#/user/1
+            URL shown in browser: http://example.com/#/users/1
             URL sent to server:   http://example.com/
 
         You should feel bad about hurting our precious web if you forcefully set
@@ -618,7 +733,7 @@ App = Y.Base.create('app', Y.Base, [Y.View, Y.Router, Y.PjaxBase], {
         **/
         html5: {
             valueFn: '_initHtml5'
-        },
+        }
     },
 
     CSS_CLASS      : Y.ClassNameManager.getClassName('app'),
