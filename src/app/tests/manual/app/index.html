@@ -28,7 +28,9 @@
     <h1>Foo App</h1>
     <ul>
         <li><a href="/src/app/tests/manual/app/">Home</a></li>
-        <li><a href="/src/app/tests/manual/app/user/">Users</a></li>
+        <li><a href="/src/app/tests/manual/app/#/">Home</a> (hash-based URL)</li>
+        <li><a href="/src/app/tests/manual/app/users/">Users</a></li>
+        <li><a href="#/users/">Users</a> (hash-based URL)</li>
         <li><a href="/src/app/tests/manual/app/bogus/">Bogus</a></li>
     </ul>
     <div id="content"></div>
@@ -57,7 +59,7 @@
         **/
         Y.UsersView = Y.Base.create('usersView', Y.View, [], {
             template    : '<h2>All Users</h2><ul></ul>',
-            userTemplate: '<li><a href="/src/app/tests/manual/app/user/{id}/">{name}</a></li>',
+            userTemplate: '<li><a href="/src/app/tests/manual/app/users/{id}/">{name}</a></li>',
 
             initializer: function () {
                 this.get('modelList').after(['add', 'remove', 'reset'], this.render, this);
@@ -146,18 +148,18 @@
             this.showView('home');
         });
 
-        fooApp.route('/user/', function (req, res) {
+        fooApp.route('/users/', function (req, res) {
             this.showView('users', {modelList: users});
         });
 
-        fooApp.route('/user/:id/', function (req, res) {
+        fooApp.route('/users/:id/', function (req, res) {
             var user = users.getById(req.params.id);
             this.showView('user', {model: user}, function (view) {
                 // called after transition is complete.
             });
         });
 
-        fooApp.render();
+        fooApp.dispatch().render();
 
         // HTTP server check.
         if (Y.config.win.location.protocol.indexOf('http') === -1) {
