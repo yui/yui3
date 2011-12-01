@@ -54,7 +54,7 @@ ButtonGroup.prototype._beforeButtonSelectedChange = function(e) {
     if (this.get('type') === 'radio') {
         selection = this.get('selection');
         if (selection.length) {
-            if (button.get('srcNode')._yuid === selection[0].get('srcNode')._yuid) {
+            if (button.getDOMNode()._yuid === selection[0].getDOMNode()._yuid) {
                 e.preventDefault();
             }
             else {
@@ -84,7 +84,7 @@ ButtonGroup.prototype._syncSelection = function() {
 ButtonGroup.prototype._removeButtonFromSelectionExcept = function(/* Button */ buttonToKeep) {
     var selection = this.get('selection');
     Y.Array.each(selection, function(button){
-        if (button.get('srcNode')._yuid !== buttonToKeep.get('srcNode')._yuid) {
+        if (button.getDOMNode()._yuid !== buttonToKeep.getDOMNode()._yuid) {
             button.set('selected', false, {propagate:false});
         }
     }, this);                

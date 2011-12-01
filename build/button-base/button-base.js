@@ -6,17 +6,35 @@ var Button = function(config){
     
     /* For reference
         http://www.w3.org/TR/wai-aria/states_and_properties
+        
+        Y.Button
+            public methods:
+                - onClick
+                - getDOMNode
+                - changeColor
+        
+            private methods:
+                - _colorToHex
+                - _getContrastYIQ,
+            
+            events:
+                - selectedChange
+                - disabledChange
+            
+            attributes:
+                - srcNode
+                - type
+                - disabled
+                - selected
     */
     
-    this.addAttrs({
-        name: {
+    this._srcNode = Y.one(config.srcNode)
+    
+    var ATTRS = {
+        label: {
             setter: function(val) {
-                this.get('srcNode').setAttribute('name', val);
-            }
-        },
-        id: {
-            setter: function(val) {
-                this.get('srcNode').setAttribute('id', val);
+                var node = this.getDOMNode();
+                node.set(node.test('input') ? 'value' : 'text', val)
             }
         },
         type: { 
@@ -26,71 +44,48 @@ var Button = function(config){
             },
             setter: function(val) {
                 if (val === "toggle") {
-                    this.get('srcNode').on('click', function(){
-                        // Reverse
-                        this.set('selected', !this.get('selected'));
+                    var node = this.getDOMNode();
+                    node.on('click', function(){
+                        var button = this;
+                        button.set('selected', !this.get('selected'));
                     }, this);
                 }
             }
         },
         disabled: {
-            value: 'false',
+            value: false,
             validator: function(val) {
                 return Y.Lang.isBoolean(val);
             },
             setter: function(val) {
-                var node;
+                var node = this.getDOMNode();
                 if (val === true) {
-                    node = this.get('srcNode');
                     node.setAttribute('disabled', 'true');
                     node.addClass('yui3-button-disabled');
                 }
                 else {
-                    node = this.get('srcNode');
                     node.removeAttribute('disabled');
                     node.removeClass('yui3-button-disabled');
                 }
             }
         },
-        tabIndex: {
-            value: '0',
-            validator: function(val) {
-                return Y.Lang.isNumber(val);
-            },
-            setter: function(val) {
-                var node = this.get('srcNode');
-                node.setAttribute('tabIndex', val);
-            }
-        },
-        srcNode: {
-            setter: function(val) {
-                if (Y.Lang.isString(val)) {
-                    return Y.one(val);
-                }
-                else {
-                    return val;
-                }
-            }   
-        },
         selected: {
             value: false,
             setter: function(value) {
-                var node;
+                var node = this.getDOMNode();
                 if (value !== this.get('selected')) {
                     if (value) {
-                        node = this.get('srcNode');
                         node.set('aria-selected', 'true');
                         node.addClass('yui3-button-selected');
                     }
                     else {
-                        node = this.get('srcNode');
                         node.set('aria-selected', 'false');
                         node.removeClass('yui3-button-selected');
                     }
                 }
                 /*
                 else {
-                    // Setting to same value, don't do anything (right?)
+                    // Setting to same value, don't do anything (right? return false?)
                 }
                 */
             },
@@ -98,49 +93,62 @@ var Button = function(config){
                 return Y.Lang.isBoolean(val);
             }
         }
-    }, config);
+    };
     
-    var node = this.get('srcNode');
+    this.addAttrs(ATTRS, config);
     
-    // TODO: Should I even check for hasClass before adding?
-    if (!node.hasClass('yui3-button')) {
-        node.addClass('yui3-button');
-    }
+    var node = this.getDOMNode();
     
-    // TODO: Same ^
-    if (!node.getAttribute('role')) {
-        node.set('role', 'button');
-    }
+    node.addClass('yui3-button');
+    node.setAttribute('role', 'button');
     
     // TODO: Does mousedown/up even work on touch devices?
-    node.on('mousedown', function(e){
-        e.target.setAttribute('aria-pressed', 'true');
+    node.on({
+        mousedown: function(e){
+            e.target.setAttribute('aria-pressed', 'true');
+        },
+        mouseup: function(e){
+            e.target.setAttribute('aria-pressed', 'false');
+        },
+        focus: function(e){
+            e.target.addClass('yui3-button-focused');
+        },
+        blur: function(e){
+            e.target.removeClass('yui3-button-focused');
+        }
     });
     
-    node.on('mouseup', function(e){
-        e.target.setAttribute('aria-pressed', 'false');
-    });
-    
-    node.on('focus', function(e){
-        e.target.addClass('yui3-button-focused');
-    });
-    
-    node.on('blur', function(e){
-        e.target.removeClass('yui3-button-focused');
-    });
+    node.on('click', function(e){
+        if(this.onClickfn) {
+            this.onClickfn(e);
+        }
+    }, this);
     
     this.on('selectedChange', function(e){
         if (e.propagate === false) {
             e.stopImmediatePropagation();
         }
-    });
+    }, this);
+    
+    if (config.onClick) {
+        this.onClickfn = config.onClick;
+    }
+};
+
+Button.prototype.onClick = function(fn) {
+    this.onClickfn = fn;
+};
+
+Button.prototype.getDOMNode = function() {
+    return this._srcNode;
 };
 
 /* A few methods to handle color contrast, not sure if these will make it in the final build or not */
 Button.prototype.changeColor = function(color) {
     var fontColor = Button._getContrastYIQ(Button._colorToHex(color));
-    this.get('srcNode').setStyle('backgroundColor', color);
-    this.get('srcNode').setStyle('color', fontColor);
+    var node = this.getDOMNode();
+    node.setStyle('backgroundColor', color);
+    node.setStyle('color', fontColor);
 };
 
 Button._colorToHex = function(color) {
@@ -171,8 +179,7 @@ Button._getContrastYIQ = function(hexcolor){
 };
 
 var ButtonGenerator = function(config) {
-    // TODO: SHould this be <button> or <input type="button"> ??
-    var button, node;
+    var button;
     
     config.srcNode = Y.Node.create('<button>' + config.label + '</button>');
     button = new Y.Button(config);
