@@ -1,19 +1,23 @@
 YUI.add('event-key-tests', function(Y) {
 
-Y.Node.prototype.key = function (code, mods, type) {
+Y.Node.prototype.key = function (keyCode, charCode, mods, type) {
     var simulate = Y.Event.simulate,
         el       = this._node,
-        config   = Y.merge(mods || {}, { keyCode: code, charCode: code });
-
-    if (typeof code === "string") {
-        code = code.charCodeAt(0);
-    }
+        config   = Y.merge(mods || {});
 
     if (type) {
+        if (type === 'keypress') {
+            config.charCode = config.keyCode = config.which = charCode || keyCode;
+        } else {
+            config.keyCode = config.which = keyCode;
+        }
         simulate(el, type, config);
     } else {
+        config.keyCode = config.which = keyCode;
         simulate(el, 'keydown', config);
         simulate(el, 'keyup', config);
+
+        config.charCode = config.keyCode = config.which = charCode || keyCode;
         simulate(el, 'keypress', config);
     }
 };
@@ -596,10 +600,10 @@ suite.add(new Y.Test.Case({
         input.key(65);
         Y.Assert.areSame(1, count);
 
-        input.key(65, null, 'keydown');
+        input.key(65, null, null, 'keydown');
         Y.Assert.areSame(2, count);
 
-        input.key(65, null, 'keypress');
+        input.key(65, 65, null, 'keypress');
         Y.Assert.areSame(2, count);
 
         input.key(99);
@@ -619,10 +623,10 @@ suite.add(new Y.Test.Case({
         input.key(65);
         Y.Assert.areSame(1, count);
 
-        input.key(65, null, 'keyup');
+        input.key(65, null, null, 'keyup');
         Y.Assert.areSame(2, count);
 
-        input.key(65, null, 'keypress');
+        input.key(65, 65, null, 'keypress');
         Y.Assert.areSame(2, count);
 
         input.key(99);
@@ -642,10 +646,10 @@ suite.add(new Y.Test.Case({
         input.key(65);
         Y.Assert.areSame(1, count);
 
-        input.key(65, null, 'keypress');
+        input.key(65, null, null, 'keypress');
         Y.Assert.areSame(2, count);
 
-        input.key(65, null, 'keyup');
+        input.key(65, 65, null, 'keyup');
         Y.Assert.areSame(2, count);
 
         input.key(99);
@@ -662,13 +666,13 @@ suite.add(new Y.Test.Case({
 
         input.on("key", inc, 'a');
 
-        input.key(65);
+        input.key(65, 97);
         Y.Assert.areSame(1, count);
 
-        input.key(65, null, 'keydown');
+        input.key(65, null, null, 'keydown');
         Y.Assert.areSame(1, count);
 
-        input.key(65, null, 'keypress');
+        input.key(65, 97, null, 'keypress');
         Y.Assert.areSame(2, count);
 
         input.key(99);
@@ -685,17 +689,22 @@ suite.add(new Y.Test.Case({
 
         input.on("key", inc, 'down:a');
 
-        input.key(65);
+        // keydown sends keyCode, which for 'a' is 65, but I can't calculate
+        // the keyCode from a character, only the charCode (97).  So none of
+        // these should match.
+        input.key(65, 97);
+        Y.Assert.areSame(0, count);
+
+        input.key(65, null, null, 'keydown');
+        Y.Assert.areSame(0, count);
+
+        input.key(65, 97, null, 'keypress');
+        Y.Assert.areSame(0, count);
+
+        // FIXME: bug confirmation that a different keyCode will trigger the
+        // subscriber (keyCode 97 is NOT 'a' in keydown phase).
+        input.key(97);
         Y.Assert.areSame(1, count);
-
-        input.key(65, null, 'keydown');
-        Y.Assert.areSame(2, count);
-
-        input.key(65, null, 'keypress');
-        Y.Assert.areSame(2, count);
-
-        input.key(99);
-        Y.Assert.areSame(2, count);
     },
 
     "test 'up:a'": function () {
@@ -708,17 +717,22 @@ suite.add(new Y.Test.Case({
 
         input.on("key", inc, 'up:a');
 
-        input.key(65);
+        // keydown sends keyCode, which for 'a' is 65, but I can't calculate
+        // the keyCode from a character, only the charCode (97).  So none of
+        // these should match.
+        input.key(65, 97);
+        Y.Assert.areSame(0, count);
+
+        input.key(65, null, null, 'keyup');
+        Y.Assert.areSame(0, count);
+
+        input.key(65, 97, null, 'keypress');
+        Y.Assert.areSame(0, count);
+
+        // FIXME: bug confirmation that a different keyCode will trigger the
+        // subscriber (keyCode 97 is NOT 'a' in keyup phase).
+        input.key(97);
         Y.Assert.areSame(1, count);
-
-        input.key(65, null, 'keyup');
-        Y.Assert.areSame(2, count);
-
-        input.key(65, null, 'keypress');
-        Y.Assert.areSame(2, count);
-
-        input.key(99);
-        Y.Assert.areSame(2, count);
     },
 
     "test 'press:a'": function () {
@@ -731,13 +745,13 @@ suite.add(new Y.Test.Case({
 
         input.on("key", inc, 'press:a');
 
-        input.key(65);
+        input.key(65, 97);
         Y.Assert.areSame(1, count);
 
-        input.key(65, null, 'keypress');
+        input.key(65, 97, null, 'keypress');
         Y.Assert.areSame(2, count);
 
-        input.key(65, null, 'keyup');
+        input.key(65, 97, null, 'keyup');
         Y.Assert.areSame(2, count);
 
         input.key(99);
@@ -754,16 +768,16 @@ suite.add(new Y.Test.Case({
 
         input.on("key", inc, 'A');
 
-        input.key(65, { shiftKey: true });
+        input.key(65, 65, { shiftKey: true });
         Y.Assert.areSame(1, count);
 
-        input.key(65);
+        input.key(65, 97); // 'a'
         Y.Assert.areSame(1, count);
 
-        input.key(65, { shiftKey: true }, 'keypress');
+        input.key(65, 65, { shiftKey: true }, 'keypress');
         Y.Assert.areSame(2, count);
 
-        input.key(99, { shiftKey: true });
+        input.key(99, 99, { shiftKey: true });
         Y.Assert.areSame(2, count);
     },
 
@@ -791,10 +805,10 @@ suite.add(new Y.Test.Case({
             Y.Assert.areSame(1, count);
 
             // default for named keys is keydown
-            input.key(code, null, 'keydown');
+            input.key(code, null, null, 'keydown');
             Y.Assert.areSame(2, count);
 
-            input.key(code, null, 'keypress');
+            input.key(code, code, null, 'keypress');
             Y.Assert.areSame(2, count);
 
             input.key(code + 1);
@@ -812,16 +826,16 @@ suite.add(new Y.Test.Case({
 
         input.on("key", inc, 'a,b');
 
-        input.key(65);
+        input.key(65, 97);
         Y.Assert.areSame(1, count);
 
-        input.key(66);
+        input.key(66, 98);
         Y.Assert.areSame(2, count);
 
-        input.key(65, null, 'keypress');
+        input.key(65, 97, null, 'keypress');
         Y.Assert.areSame(3, count);
 
-        input.key(66, null, 'keyup');
+        input.key(66, null, null, 'keyup');
         Y.Assert.areSame(3, count);
 
         input.key(99);
@@ -838,31 +852,30 @@ suite.add(new Y.Test.Case({
 
         input.on("key", inc, '65,b,esc');
 
-        input.key(65);
+        input.key(65, 97);
         Y.Assert.areSame(1, count);
 
-        input.key(66);
-        Y.Assert.areSame(2, count);
+        // FIXME: I want this to work, but 'esc' triggers keydown subscription,
+        // which breaks the charCode mapping from 'b'.
+        input.key(66, 98);
+        Y.Assert.areSame(1, count);
 
         input.key(27);
+        Y.Assert.areSame(2, count);
+
+        // subscribed to keydown, so this misses.
+        input.key(65, 97, null, 'keypress');
+        Y.Assert.areSame(2, count);
+
+        // FIXME: cont.
+        input.key(66, null, null, 'keydown');
+        Y.Assert.areSame(2, count);
+
+        input.key(27, null, null, 'keydown');
         Y.Assert.areSame(3, count);
-
-        input.key(65, null, 'keypress');
-        Y.Assert.areSame(3, count);
-
-        input.key(66, null, 'keydown');
-        Y.Assert.areSame(4, count);
-
-        // FIXME: unrealistic test, since esc doesn't fire keypress (does it?)
-        input.key(27, null, 'keypress');
-        Y.Assert.areSame(4, count);
-
-        // FIXME: this should be the line that increments count
-        input.key(27, null, 'keydown');
-        Y.Assert.areSame(5, count);
 
         input.key(99);
-        Y.Assert.areSame(5, count);
+        Y.Assert.areSame(3, count);
     },
 
     "test 'unknownKeyName'": function () {
@@ -876,13 +889,13 @@ suite.add(new Y.Test.Case({
         input.on("key", inc, 'ack!');
 
         // Uses first character
-        input.key(65);
+        input.key(65, 97);
         Y.Assert.areSame(1, count);
 
-        input.key(65, null, 'keypress');
+        input.key(65, 97, null, 'keypress');
         Y.Assert.areSame(2, count);
 
-        input.key(66, null, 'keyup');
+        input.key(66, null, null, 'keyup');
         Y.Assert.areSame(2, count);
 
         input.key(99);
@@ -908,16 +921,16 @@ suite.add(new Y.Test.Case({
 
         input.on("key", inc, 'press:a,b');
 
-        input.key(65);
+        input.key(65, 97);
         Y.Assert.areSame(1, count);
 
-        input.key(66);
+        input.key(66, 98);
         Y.Assert.areSame(2, count);
 
-        input.key(65, null, 'keypress');
+        input.key(65, 97, null, 'keypress');
         Y.Assert.areSame(3, count);
 
-        input.key(66, null, 'keyup');
+        input.key(66, null, null, 'keyup');
         Y.Assert.areSame(3, count);
 
         input.key(99);
@@ -937,13 +950,13 @@ suite.add(new Y.Test.Case({
         input.key(13);
         Y.Assert.areSame(0, count);
 
-        input.key(13, { ctrlKey: true });
+        input.key(13, null, { ctrlKey: true });
         Y.Assert.areSame(1, count);
 
-        input.key(13, { ctrlKey: true }, 'keypress');
+        input.key(13, 13, { ctrlKey: true }, 'keypress');
         Y.Assert.areSame(1, count);
 
-        input.key(13, { ctrlKey: true }, 'keydown');
+        input.key(13, null, { ctrlKey: true }, 'keydown');
         Y.Assert.areSame(2, count);
 
         input.key(99);
@@ -963,31 +976,31 @@ suite.add(new Y.Test.Case({
 
         input.on("key", inc, 'a,b+shift+meta');
 
-        input.key(65);
+        input.key(65, 97);
         Y.Assert.areSame(0, count);
 
-        input.key(65, { ctrlKey: true });
+        input.key(65, 97, { ctrlKey: true });
         Y.Assert.areSame(0, count);
 
-        input.key(65, { ctrlKey: true, shiftKey: true });
+        input.key(65, 65, { ctrlKey: true, shiftKey: true });
         Y.Assert.areSame(0, count);
 
-        input.key(65, { metaKey: true, shiftKey: true });
+        input.key(65, 65, { metaKey: true, shiftKey: true });
         Y.Assert.areSame(1, count);
 
-        input.key(65, { ctrlKey: true, metaKey: true, shiftKey: true });
+        input.key(65, 65, { ctrlKey: true, metaKey: true, shiftKey: true });
         Y.Assert.areSame(2, count);
 
-        input.key(66, { metaKey: true, shiftKey: true });
+        input.key(66, 66, { metaKey: true, shiftKey: true });
         Y.Assert.areSame(3, count);
 
-        input.key(65, { metaKey: true, shiftKey: true }, 'keypress');
+        input.key(65, 65, { metaKey: true, shiftKey: true }, 'keypress');
         Y.Assert.areSame(4, count);
 
-        input.key(65, { metaKey: true, shiftKey: true }, 'keyup');
+        input.key(65, null, { metaKey: true, shiftKey: true }, 'keyup');
         Y.Assert.areSame(4, count);
 
-        input.key(99, { metaKey: true, shiftKey: true });
+        input.key(99, 99, { metaKey: true, shiftKey: true });
         Y.Assert.areSame(4, count);
     },
 
@@ -1010,10 +1023,10 @@ suite.add(new Y.Test.Case({
         input.key(67);
         Y.Assert.areSame(3, count);
 
-        input.key(65, null, 'keyup');
+        input.key(65, null, null, 'keyup');
         Y.Assert.areSame(3, count);
 
-        input.key(65, null, 'keydown');
+        input.key(65, null, null, 'keydown');
         Y.Assert.areSame(4, count);
     },
 
@@ -1036,10 +1049,10 @@ suite.add(new Y.Test.Case({
         input.key(67);
         Y.Assert.areSame(3, count);
 
-        input.key(65, null, 'keyup');
+        input.key(65, null, null, 'keyup');
         Y.Assert.areSame(3, count);
 
-        input.key(40, null, 'keydown');
+        input.key(40, null, null, 'keydown');
         Y.Assert.areSame(4, count);
     },
 
@@ -1056,22 +1069,22 @@ suite.add(new Y.Test.Case({
         input.key(65);
         Y.Assert.areSame(0, count);
 
-        input.key(65, { shiftKey: true });
+        input.key(65, 65, { shiftKey: true });
         Y.Assert.areSame(0, count);
 
-        input.key(65, { ctrlKey: true });
+        input.key(65, 97, { ctrlKey: true });
         Y.Assert.areSame(0, count);
 
-        input.key(65, { shiftKey: true, ctrlKey: true });
+        input.key(65, 65, { shiftKey: true, ctrlKey: true });
         Y.Assert.areSame(1, count);
 
-        input.key(65, { shiftKey: true, ctrlKey: true, metaKey: true });
+        input.key(65, 65, { shiftKey: true, ctrlKey: true, metaKey: true });
         Y.Assert.areSame(2, count);
 
-        input.key(65, { shiftKey: true, ctrlKey: true }, 'keyup');
+        input.key(65, null, { shiftKey: true, ctrlKey: true }, 'keyup');
         Y.Assert.areSame(2, count);
 
-        input.key(65, { shiftKey: true, ctrlKey: true }, 'keypress');
+        input.key(65, 65, { shiftKey: true, ctrlKey: true }, 'keypress');
         Y.Assert.areSame(3, count);
     }
 }));
