@@ -65,15 +65,22 @@ var ALT      = "+alt",
                                 config.type = "down"; // safest
                             }
                         } else {
-                            uc = chr.charAt(0).toUpperCase();
-                            lc = lc.charAt(0);
+                            // FIXME: Character mapping only works for keypress
+                            // events. Otherwise, it uses String.fromCharCode()
+                            // from the keyCode, which is wrong.
+                            chr = chr.charAt(0);
+                            uc  = chr.toUpperCase();
 
-                            // FIXME: possibly stupid assumption that
+                            if (mods["+shift"]) {
+                                chr = uc;
+                            }
+
+                            // FIXME: stupid assumption that
                             // the keycode of the lower case == the
-                            // charcode of the upper case
+                            // charCode of the upper case
                             // a (key:65,char:97), A (key:65,char:65)
-                            config.keys[uc.charCodeAt(0)] =
-                                (lc !== uc && chr === uc) ?
+                            config.keys[chr.charCodeAt(0)] =
+                                (chr === uc) ?
                                     // upper case chars get +shift free
                                     Y.merge(mods, { "+shift": true }) :
                                     mods;
@@ -102,7 +109,7 @@ var ALT      = "+alt",
             // Please use keyCodes or just subscribe directly to keydown,
             // keyup, or keypress
             sub._detach = node[method](type, function (e) {
-                var key = keys ? keys[e.keyCode] : spec.mods;
+                var key = keys ? keys[e.which] : spec.mods;
 
                 if (key &&
                     (!key[ALT]   || (key[ALT]   && e.altKey)) &&

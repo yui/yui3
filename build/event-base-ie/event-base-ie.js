@@ -177,6 +177,8 @@ IELazyFacade.prototype.init = function () {
     this.type     = (overrides && overrides.type) || e.type;
     this.clientX  = e.clientX;
     this.clientY  = e.clientY;
+    this.keyCode  = // chained assignment
+    this.charCode = e.keyCode;
 
     for (prop in lazyProperties) {
         if (lazyProperties.hasOwnProperty(prop)) {
@@ -190,19 +192,12 @@ IELazyFacade.prototype.init = function () {
 };
 
 IELazyFacade._lazyProperties = {
-    charCode: function () {
-        var e = this._event;
-
-        return e.keyCode || e.charCode;
-    },
-    keyCode: function () { return this.charCode; },
-
     button: function () {
         var e = this._event;
 
         return (e.button !== undefined) ?
             (buttonMap[e.button] || e.button) :
-            (e.which || e.charCode || this.charCode);
+            e.keyCode;
     },
     which: function () { return this.button; },
 
