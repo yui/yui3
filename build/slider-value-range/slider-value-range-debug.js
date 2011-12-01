@@ -394,7 +394,7 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
          * @default 1
          */
         minorStep : {
-            value:1
+            value: 1
         },
 
         /**
@@ -406,7 +406,7 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
          * @default 10
          */
         majorStep : {
-            value:10
+            value: 10
         },
 
         /**

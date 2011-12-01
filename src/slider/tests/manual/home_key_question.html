@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+    <style type="text/css">
+        .markup { 
+            margin: 10px 0 0 300px;
+        }
+    </style>
+</head>
+<body class="yui3-skin-sam">
+<div class="markup">
+    <div id="slider"></div>
+
+    <p>
+        <input type="button" id="home" value="Home">
+        <input type="button" id="end" value="End">
+        <!--<input type="button" id="disable" value="Disable">
+        <input type="button" id="incr" value="incr">-->
+    </p>
+    <div id="report">0</div>
+    <div id="slider2"></div>
+
+    <p>
+        <input type="button" id="home2" value="Home">
+        <input type="button" id="end2" value="End">
+        <!--<input type="button" id="disable" value="Disable">
+        <input type="button" id="incr" value="incr">-->
+    </p>
+    <div id="report2">0</div>
+</div>
+
+<!--<script src="../../../../build/yui/yui.js"></script>-->
+<script src="http://yui.yahooapis.com/3.4.1/build/yui/yui-min.js"></script>
+<script>
+YUI({
+    filter: 'raw'
+}).use('slider',function (Y) {
+
+var report = Y.one('#report'),
+    report2 = Y.one('#report2');
+
+var s = new Y.Slider({
+    //axis  : 'y',
+    length: '350px',
+    min   : 0,
+    max   : 100,
+    value : 50,
+//    minorStep: 3,
+    after : {
+        valueChange: function (e) {
+            report.set('innerHTML',e.newVal);
+        }
+    }
+});
+
+s.render('#slider');
+//////////////////////////////
+var s2 = new Y.Slider({
+    //axis  : 'y',
+    length: '350px',
+    min   : 0,
+    max   : 100,
+    value : 50,
+//    minorStep: 3,
+    after : {
+        valueChange: function (e) {
+            report2.set('innerHTML',e.newVal);
+        }
+    }
+});
+
+s2.render('#slider2');
+var initVal = s2.get('value');
+/////////////////////
+report.set('innerHTML',s.get('value'));
+
+Y.one('#home').on('click',function () {
+    s.set('value', s.get('min'));
+});
+Y.one('#home2').on('click',function () {
+    if(s2.get('value') === s2.get('min')){
+        s2.set('value', initVal);
+    }else{
+        s2.set('value', s2.get('min'));
+    }
+});
+
+
+Y.one('#end').on('click',function () {
+    s.set('value', s.get('max'));
+});
+Y.one('#end2').on('click',function () {
+    s2.set('value', s2.get('max'));
+});
+// Y.one('#incr').on('click',function () {
+//     s.set('value', 133);
+//     Y.log('myVal' + s.get('value'));
+//     s.set('value', 134);
+//     Y.log('myVal' + s.get('value'));
+// });
+
+});
+</script>
+</body>
+</html>

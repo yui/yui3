@@ -179,7 +179,7 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
                 thumbImageClass : this.getClassName( 'thumb', 'image' ),
                 thumbShadowUrl  : imageUrl,
                 thumbImageUrl   : imageUrl,
-                thumbAriaLabelId: this.getClassName( 'thumb', Y.guid()) // get unique id for thumb to use with ARIA
+                thumbAriaLabelId: this.getClassName( 'label', Y.guid()) // get unique id for specifying a label for ARIA
             } ) );
     },
 
@@ -195,15 +195,17 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
         // Begin keyboard listeners ///////////////////////////////
         var boundingBox = this.get("boundingBox"), //Y.one('body'),
         // Looking for a key event which will fire continously across browsers while the key is held down.
-        keyEventSpec = (!Y.UA.opera) ? "down:" : "press:",
-        keyLeftRightSpec = (!Y.UA.opera) ? "down:" : "press:";
+        keyEvent = (!Y.UA.opera) ? "down:" : "press:",            
         // 38, 40 = arrow up/down, 33, 34 = page up/down,  35 , 36 = end/home
-        keyEventSpec += "38,40,33,34,35,36";
+        keyEventSpec = keyEvent + "38,40,33,34,35,36",
         // 37 , 39 = arrow left/right
-        keyLeftRightSpec += "37,39";
+        keyLeftRightSpec = keyEvent + "37,39",
+        // 37 , 39 = arrow left/right + meta (command/apple key) for mac
+        keyLeftRightSpecMeta = keyEvent + "37+meta,39+meta";
 
-        Y.on("key", Y.bind(this._onDirectionKey, this), boundingBox, keyEventSpec);
-        Y.on("key", Y.bind(this._onLeftRightKey, this), boundingBox, keyLeftRightSpec);
+        boundingBox.on("key", this._onDirectionKey, keyEventSpec, this);
+        boundingBox.on("key", this._onLeftRightKey, keyLeftRightSpec, this);
+        boundingBox.on("key", this._onLeftRightKeyMeta, keyLeftRightSpecMeta, this);
         // End keyboard listeners //////////////////////////////////
 
         this._bindThumbDD();
@@ -256,17 +258,17 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
     },
 
     /**
-     * resets the Slider value to the initial value. 
+     * sets the Slider value to the min value. 
      *
-     * @method _resetSlider
+     * @method _setToMin
      * @protected
      */
-    _resetSlider : function(e){
-        this.set('value', this._getAttrCfg('value').initValue);
+    _setToMin : function(e){
+        this.set('value', this.get('min'));
     },
 
     /**
-     * resets the Slider value to the max value. 
+     * sets the Slider value to the max value. 
      *
      * @method _setToMax
      * @protected
@@ -296,7 +298,7 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
                     this._decrMinor();
                     break;
                 case 36: // home
-                    this._resetSlider();
+                    this._setToMin();
                     break;
                 case 35: // end
                     this._setToMax();
@@ -327,6 +329,27 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
                     break;
                 case 39: // right
                     this._incrMinor();
+                    break;
+            }
+        }
+    },
+
+    /**
+     * sets the Slider's value in response to left or right key events when a meta (mac command/apple) key is also pressed
+     *
+     * @method _onLeftRightKeyMeta
+     * @param e {Event} the key event
+     * @protected
+     */
+    _onLeftRightKeyMeta : function(e) {
+        e.preventDefault();
+        if(this.get('disabled') === false){
+            switch (e.charCode) {
+                case 37: // left + meta
+                    this._setToMin();
+                    break;
+                case 39: // right + meta
+                    this._setToMax();
                     break;
             }
         }
