@@ -27,6 +27,19 @@ But it also works like this:
 
      var Y = YUI();
 
+Configuring the YUI object:
+
+    YUI({
+        debug: true,
+        combine: false
+    }).use('node', function(Y) {
+        //Node is ready to use
+    });
+
+See the API docs for the <a href="config.html">Config</a> class
+for the complete list of supported configuration properties accepted
+by the YUI constuctor.
+
 @class YUI
 @constructor
 @global
@@ -1096,6 +1109,7 @@ with any configuration info required for the module.
      * @return {YUI} this YUI instance.
      */
     error: function(msg, e, data) {
+        //TODO Add check for window.onerror here
 
         var Y = this, ret;
 
@@ -1286,6 +1300,14 @@ overwriting other scripts configs.
  */
 
 /**
+ * Turns on writing Ylog messages to the browser console.
+ *
+ * @property debug
+ * @type boolean
+ * @default true
+ */
+
+/**
  * Log to the browser console if debug is on and the browser has a
  * supported console.
  *
@@ -1346,10 +1368,11 @@ overwriting other scripts configs.
  */
 
 /**
- * A list of modules that defines the YUI core (overrides the default).
+ * A list of modules that defines the YUI core (overrides the default list).
  *
  * @property core
- * @type string[]
+ * @type Array
+ * @default [ get,features,intl-base,yui-log,yui-later,loader-base, loader-rollup, loader-yui3 ]
  */
 
 /**
@@ -1660,7 +1683,7 @@ overwriting other scripts configs.
  * @since 3.1.0
  * @property yui2
  * @type string
- * @default 2.8.1
+ * @default 2.9.0
  */
 
 /**
@@ -1672,7 +1695,7 @@ overwriting other scripts configs.
  * @since 3.1.0
  * @property 2in3
  * @type string
- * @default 1
+ * @default 4
  */
 
 /**
