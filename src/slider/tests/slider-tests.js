@@ -554,11 +554,7 @@ suite.add( new Y.Test.Case({
         thumb.key(37); // left
         Y.Assert.areEqual(59, slider.get('value'));
         thumb.key(36); // home 
-        Y.Assert.areEqual(50, slider.get('value'), "= Home key first press");
-         thumb.key(36); // home 
-        Y.Assert.areEqual(50, slider.get('value'), "= Home key second press");
-         thumb.key(36); // home 
-        Y.Assert.areEqual(50, slider.get('value'), "= Home key third press");
+        Y.Assert.areEqual(0, slider.get('value'));
         thumb.key(35); // end 
         Y.Assert.areEqual(100, slider.get('value'));
         // beyond max
