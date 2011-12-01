@@ -446,9 +446,9 @@ proto = {
         //Register the CSS stamp element
         if (doc && !doc.getElementById(CSS_STAMP_EL)) {
             el = doc.createElement('div');
-            el.id = CSS_STAMP_EL;
-            docEl.appendChild(el);
-            YUI.Env.cssStampEl = el;
+            el.innerHTML = '<div id="' + CSS_STAMP_EL + '" style="position: absolute !important; visibility: hidden !important"></div>';
+            YUI.Env.cssStampEl = el.firstChild;
+            docEl.appendChild(YUI.Env.cssStampEl);
         }
 
         Y.config.lang = Y.config.lang || 'en-US';
