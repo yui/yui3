@@ -1160,6 +1160,20 @@ YUI.add('dom-core-test', function(Y) {
             Assert.areEqual(1, el.firstChild.getElementsByTagName('table').length);
 
             Assert.areEqual('TBODY', el.childNodes[1].tagName);
+        },
+
+        'should return null when given null input': function() {
+            var html = null,
+                el = Y.DOM.create(html);
+
+            Assert.areEqual(null, el);
+        },
+
+        'should return null when given undefined input': function() {
+            var html = undefined,
+                el = Y.DOM.create(html);
+
+            Assert.areEqual(null, el);
         }
     }));
 
@@ -1883,6 +1897,12 @@ YUI.add('dom-core-test', function(Y) {
             var node = document.createElement('span');
             Y.DOM.wrap(node, '<p><em><strong><span></span></strong></em></p>');
             Assert.areEqual('SPAN', node.parentNode.tagName);
+        },
+
+        'should wrap the paragraph with a div': function() {
+            var node = Y.DOM.create('<p>Hello World</p>');
+            Y.DOM.wrap(node, '<div/>');
+            Assert.areEqual('DIV', node.parentNode.tagName);
         }
     }));
 

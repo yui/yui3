@@ -15,7 +15,12 @@
         <url>cache/tests/cache-offline.html</url>
         <url>cache/tests/cache-plugin.html</url>
         <url>calendar/tests/calendar.html</url>
+        <!-- This test takes longer than 30 seconds to run.
+             Removed until we can increase the YUI Test timeout,
+             since the timeout attribues here are not working.
+             http://yuilibrary.com/projects/yui3/ticket/2531510
         <url timeout="600000">charts/tests/charts.html</url>
+        -->
         <url timeout="200000">charts/tests/seriestests.html</url>
         <url>classnamemanager/tests/classnamemanager.html</url>
         <url>collection/tests/arraylist.html</url>
@@ -41,6 +46,7 @@
         <url>dial/tests/dial.html</url>
         <url>dom/tests/dom.html</url>
         <url>dom/tests/dom-base.html</url>
+        <url>dom/tests/dom-xy.html</url>
         <url>dom/tests/selector.html</url>
         <url>dump/tests/dump.html</url>
 	<url>editor/tests/editor.html</url>
@@ -54,7 +60,7 @@
         <url>event/tests/event-key.html</url>
         <url>event/tests/event-synthetic.html</url>
         <url>event/tests/focusblur.html</url>
-        <url>yui/tests/get.html</url>
+        <url>get/tests/get.html</url>
         <url>graphics/tests/graphics.html</url>
         <url>handlebars/tests/handlebars.html</url>
         <url>highlight/tests/functional/highlight.html</url>

@@ -1,9 +1,6 @@
 {
     "yui": {
         "submodules": {
-            "get": {
-                "requires": ["yui-base"]
-            },
             "yui-base": {},
             "yui-rls": {
             },
