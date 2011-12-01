@@ -15,27 +15,6 @@
         <script src='../../../../build/yui/yui-min.js'></script>
 
         <script>
-            
-            YUI.add('buttons', function(Y){
-                
-                var Buttons = function(config){
-                    
-                    var buttons = [];
-                    
-                    config.srcNodes.each(function(node){
-                        var button = new Y.Button({
-                            type: config.type,
-                            srcNode: node
-                        });
-                        buttons.push(button);
-                    });
-                    
-                    return buttons;
-                }
-                
-                Y.Buttons = Buttons;
-            });
-            
             YUI({
                 debug: true,
                 combo: false,
@@ -52,7 +31,7 @@
                     
                     for(var i=0; i < count; i++) {
                         button = new Y.ButtonGenerator( {label: i} );
-                        Y.one("#container").append(button.get('srcNode'));
+                        Y.one("#container").append(button.getDOMNode());
                         buttons.push(button);
                     }
 

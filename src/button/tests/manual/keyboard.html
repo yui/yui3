@@ -104,19 +104,19 @@
 
             Y.Array.each(keys, function(key){
                 var button = new Y.ButtonGenerator({
-                    label: key,
-                    name: key
+                    label: key
                 });
-
+                var node = button.getDOMNode();
+                node.set('name', key);
                 if (key[0] === "[" && key.length > 1) {
-                    button.get('srcNode').addClass('wide');
+                    node.addClass('wide');
                 }
 
                 if (key === "[space]") {
-                    button.get('srcNode').addClass('space');
+                    node.addClass('space');
                 }
 
-                Y.one("#keyboard").append(button.get('srcNode'));
+                Y.one("#keyboard").append(node);
 
                 if (i === 13 || i === 27 || i ===40 || i ===51) {
                     Y.one("#keyboard").append("<br>");
@@ -211,7 +211,7 @@
 
             Y.one("#output").on(["keydown", "keyup"], function(e){
                 var pressed, node, codes;
-
+                
                 codes = {
                     a:65,b:66,c:67,d:68,e:69,f:70,g:71,h:72,i:73,
                     j:74,k:75,l:76,m:77,n:78,o:79,p:80,q:81,r:82,
@@ -226,7 +226,6 @@
                 });
 
                 node = Y.one('#keyboard .yui3-button[name='+ pressed +']');
-
                 if (node){
                     node.toggleClass('yui3-button-selected');   
                 }

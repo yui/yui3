@@ -32,7 +32,7 @@
                 });
                 
                 // One way of listening for events
-                button.get('srcNode').on('click', function(){
+                button.onClick(function(){
                    button.changeColor('#'+Math.floor(Math.random()*16777215).toString(16));
                 });
 
@@ -150,7 +150,7 @@
                 Y.all('.generator').addClass('yui3-button').on('click', function(e){
                     var button, type, config;
                     
-                    type = e.target.getAttribute('x-type');
+                    type = e.target.getAttribute('data-type');
                     
                     config = {
                         label: type
@@ -165,7 +165,7 @@
                     }
                     
                     button = new Y.ButtonGenerator(config);
-                    Y.one('#generated').append(button.get('srcNode'));
+                    Y.one('#generated').append(button.getDOMNode());
                 })
                 
             });
@@ -222,9 +222,9 @@
         
         
         <h2>Generator</h2>
-        <button class='generator' x-type='push'>Generate Push Button</button>
-        <button class='generator' x-type='toggle'>Generate Toggle Button</button>
-        <button class='generator' x-type='disabled'>Generate Disabled Button</button>
+        <button class='generator' data-type='push'>Generate Push Button</button>
+        <button class='generator' data-type='toggle'>Generate Toggle Button</button>
+        <button class='generator' data-type='disabled'>Generate Disabled Button</button>
         <div id='generated' style='border:solid black 1px;'></div>
         
     </body>
