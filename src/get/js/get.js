@@ -189,6 +189,8 @@ Y.Get = Get = {
             id = transaction;
             transaction = null;
 
+            Y.log('Passing an id to `abort()` is deprecated as of 3.5.0. Pass a transaction object instead.', 'warn', 'get');
+
             if (this._pending && this._pending.transaction.id === id) {
                 transaction = this._pending.transaction;
                 this._pending = null;
@@ -306,12 +308,14 @@ Y.Get = Get = {
 
             // Backcompat for <3.5.0 behavior.
             if (req.win) {
+                Y.log('The `win` option is deprecated as of 3.5.0. Use `doc` instead.', 'warn', 'get');
                 req.doc = req.win.document;
             } else {
                 req.win = req.doc.defaultView || req.doc.parentWindow;
             }
 
             if (req.charset) {
+                Y.log('The `charset` option is deprecated as of 3.5.0. Set `attributes.charset` instead.', 'warn', 'get');
                 req.attributes.charset = req.charset;
             }
 
@@ -433,7 +437,7 @@ Transaction.prototype = {
             i, len, queue, req;
 
         if (state === 'done') {
-            callback && callback(this.errors.length ? this.errors : null, this); // TODO: pass errors if an error occurred.
+            callback && callback(this.errors.length ? this.errors : null, this);
         } else {
             callback && this._callbacks.push(callback);
 
@@ -579,7 +583,6 @@ Transaction.prototype = {
 
         function onError(e) {
             // TODO: What useful info is on `e`, if any?
-            // TODO: Should we abort the rest of the transaction when a single request fails?
             self._progress('Failed to load ' + req.url, req);
         }
 
@@ -607,6 +610,7 @@ Transaction.prototype = {
                 // on insertion order, we'll need to avoid inserting other
                 // scripts until this one finishes loading.
                 if (!env.preservesScriptOrder) {
+                    Y.log("This browser doesn't preserve script execution order, so scripts will be loaded synchronously (which is slower).", 'info', 'get');
                     this._pending = req;
                 }
             }
