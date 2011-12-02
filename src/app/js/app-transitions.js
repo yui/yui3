@@ -95,6 +95,40 @@ AppTransitions.prototype = {
     // -- Public Methods -------------------------------------------------------
 
     /**
+    Sets which view is visible/active within the application.
+
+    This will set the application's `activeView` attribute to the view instance
+    passed-in, or when a view name is provided, the `activeView` attribute will
+    be set to either the preserved instance, or a new view instance will be
+    created using the passed in `config`.
+
+    A callback function can be specified as either the third or fourth argument,
+    and this function will be called after the new `view` is the `activeView`
+    and ready to use.
+
+    @method showView
+    @param {String|View} view The name of a view defined in the `views` object,
+      or a view instance.
+    @param {Object} [config] Optional configuration to use when creating a new
+      view instance.
+    @param {Object} [options] Optional object containing any of the following
+        properties:
+      @param {Boolean} [options.prepend] Whether the new view should be
+        prepended instead of appended to the `viewContainer`.
+      @param {Object} [options.transitions] An object that contains transition
+          configuration overrides for the following properties:
+        @param {Object} [options.transitions.viewIn] Transition overrides for
+          the view being transitioned-in.
+        @param {Object} [options.transitions.viewOut] Transition overrides for
+          the view being transitioned-out.
+    @param {Function} [callback] Optional callback Function to call after the
+        new `activeView` is ready to use, the function will be passed:
+      @param {View} view
+    @chainable
+    **/
+    // Does not override `showView()` but does use additional `options`.
+
+    /**
     Transitions a view.
 
     @method transitionView

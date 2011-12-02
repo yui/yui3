@@ -5,20 +5,21 @@ Provides a top-level application component which manages navigation and views.
 @since 3.5.0
 **/
 
-var Lang = Y.Lang,
-    win  = Y.config.win,
-    App;
+var Lang     = Y.Lang,
+    View     = Y.View,
+    Router   = Y.Router,
+    PjaxBase = Y.PjaxBase,
 
-// TODO: Use module-scoped references to Y.Router and Y.View because they are
-// referenced throughout this code?
+    win = Y.config.win,
+
+    App;
 
 /**
 Provides a top-level application component which manages navigation and views.
 
-  * TODO: Add more description.
-  * TODO: Should this extend `Y.Base` and mix in `Y.Router` along with
-    `Y.PjaxBase` and `Y.View`? Also need to make sure the `Y.Base`-based
-    extensions are doing the proper thing w.r.t. multiple inheritance.
+This gives you a foundation and structure on which to build your application.
+`Y.App` combines robust URL navigation with powerful routing and flexible view
+management.
 
 @class App
 @constructor
@@ -28,7 +29,7 @@ Provides a top-level application component which manages navigation and views.
 @uses PjaxBase
 @since 3.5.0
 **/
-App = Y.Base.create('app', Y.Base, [Y.Router, Y.PjaxBase, Y.View], {
+App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     // -- Public Properties ----------------------------------------------------
 
     /**
@@ -61,6 +62,22 @@ App = Y.Base.create('app', Y.Base, [Y.Router, Y.PjaxBase, Y.View], {
     If `views` are passed at instantiation time, they will override any views
     set on the prototype.
 
+    @example
+        // Imagine that `Y.UsersView` and `Y.UserView` have been defined.
+        var app = new Y.App({
+            views: {
+                users: {
+                    type    : Y.UsersView,
+                    preserve: true
+                },
+
+                user: {
+                    type  : Y.UserView,
+                    parent: 'users'
+                }
+            }
+        });
+
     @property views
     @type Object
     @default {}
@@ -86,7 +103,7 @@ App = Y.Base.create('app', Y.Base, [Y.Router, Y.PjaxBase, Y.View], {
         config || (config = {});
 
         this.views = config.views ?
-            Y.merge(this.views, config.views) : this.views;
+                Y.merge(this.views, config.views) : this.views;
 
         this._viewInfoMap = {};
 
@@ -102,60 +119,22 @@ App = Y.Base.create('app', Y.Base, [Y.Router, Y.PjaxBase, Y.View], {
     // -- Public Methods -------------------------------------------------------
 
     /**
-    Creates and returns this app's `container` node from the specified HTML
+    Creates and returns this apps's container node from the specified selector
     string, DOM element, or existing `Y.Node` instance. This method is called
-    internally when the view is initialized.
+    internally when the app is initialized.
 
     This node is also stamped with the CSS class specified by `Y.App.CSS_CLASS`.
 
     By default, the created node is _not_ added to the DOM automatically.
 
     @method create
-    @param {HTMLElement|Node|String} container HTML string, DOM element, or
-        `Y.Node` instance to use as the container node.
+    @param {String|Node|HTMLElement} container Selector string, `Y.Node`
+        instance, or DOM element to use as the container node.
     @return {Node} Node instance of the created container node.
     **/
     create: function () {
-        var container = Y.View.prototype.create.apply(this, arguments);
+        var container = View.prototype.create.apply(this, arguments);
         return container && container.addClass(App.CSS_CLASS);
-    },
-
-    /**
-    Renders this application by appending the `viewContainer` node to the
-    `container` node, and showing the `activeView`.
-
-    You should call this method at least once, usually after the initialization
-    of your `Y.App` instance.
-
-    @method render
-    @chainable
-    **/
-    render: function () {
-        var viewContainer = this.get('viewContainer'),
-            activeView    = this.get('activeView');
-
-        activeView && viewContainer.setContent(activeView.get('container'));
-        viewContainer.appendTo(this.get('container'));
-
-        return this;
-    },
-
-    /**
-    Returns the metadata associated with a view instance or view name defined on
-    the `views` object.
-
-    @method getViewInfo
-    @param {View|String} view View instance, or name of a view defined on the
-      `views` object.
-    @return {Object} The metadata for the view, or `undefined` if the view is
-      not registered.
-    **/
-    getViewInfo: function (view) {
-        if (view instanceof Y.View) {
-            return this._viewInfoMap[Y.stamp(view, true)];
-        }
-
-        return this.views[view];
     },
 
     /**
@@ -173,7 +152,7 @@ App = Y.Base.create('app', Y.Base, [Y.Router, Y.PjaxBase, Y.View], {
     **/
     createView: function (name, config) {
         var viewInfo        = this.getViewInfo(name),
-            type            = (viewInfo && viewInfo.type) || Y.View,
+            type            = (viewInfo && viewInfo.type) || View,
             ViewConstructor = Lang.isString(type) ? Y[type] : type,
             view;
 
@@ -182,6 +161,69 @@ App = Y.Base.create('app', Y.Base, [Y.Router, Y.PjaxBase, Y.View], {
         this._viewInfoMap[Y.stamp(view, true)] = viewInfo;
 
         return view;
+    },
+
+    /**
+    Creates and returns this app's view-container node from the specified
+    selector string, DOM element, or existing `Y.Node` instance. This method is
+    called internally when the app is initialized.
+
+    This node is also stamped with the CSS class specified by
+    `Y.App.VIEWS_CSS_CLASS`.
+
+    By default, the created node is appended to the `container` node by the
+    `render()` method.
+
+    @method createViewContainer
+    @param {String|Node|HTMLElement} viewContainer Selector string, `Y.Node`
+        instance, or DOM element to use as the view-container node.
+    @return {Node} Node instance of the created view-container node.
+    **/
+    createViewContainer: function (viewContainer) {
+        viewContainer = Y.one(viewContainer);
+        return viewContainer && viewContainer.addClass(App.VIEWS_CSS_CLASS);
+    },
+
+    /**
+    Returns the metadata associated with a view instance or view name defined on
+    the `views` object.
+
+    @method getViewInfo
+    @param {View|String} view View instance, or name of a view defined on the
+      `views` object.
+    @return {Object} The metadata for the view, or `undefined` if the view is
+      not registered.
+    **/
+    getViewInfo: function (view) {
+        if (view instanceof View) {
+            return this._viewInfoMap[Y.stamp(view, true)];
+        }
+
+        return this.views[view];
+    },
+
+    /**
+    Renders this application by appending the `viewContainer` node to the
+    `container` node, and showing the `activeView`.
+
+    You should call this method at least once, usually after the initialization
+    of your `Y.App` instance.
+
+    You may override this method to customize the app's rendering, but it is
+    expected that the `viewContainer` is reserved for the app to manage its
+    `activeView`.
+
+    @method render
+    @chainable
+    **/
+    render: function () {
+        var viewContainer = this.get('viewContainer'),
+            activeView    = this.get('activeView');
+
+        activeView && viewContainer.setContent(activeView.get('container'));
+        viewContainer.appendTo(this.get('container'));
+
+        return this;
     },
 
     /**
@@ -196,6 +238,23 @@ App = Y.Base.create('app', Y.Base, [Y.Router, Y.PjaxBase, Y.View], {
     and this function will be called after the new `view` is the `activeView`
     and ready to use.
 
+    @example
+        var app = new Y.App({
+            views: {
+                users: {
+                    // Imagine that `Y.UsersView` has been defined.
+                    type: Y.UsersView
+                }
+            }
+        });
+
+        app.route('/users/', function () {
+            this.showView('users');
+        });
+
+        app.render();
+        app.navigate('/uses/'); // => Creates a new `Y.UsersView` and shows it.
+
     @method showView
     @param {String|View} view The name of a view defined in the `views` object,
       or a view instance.
@@ -205,15 +264,9 @@ App = Y.Base.create('app', Y.Base, [Y.Router, Y.PjaxBase, Y.View], {
         properties:
       @param {Boolean} [options.prepend] Whether the new view should be
         prepended instead of appended to the `viewContainer`.
-      @param {Object} [options.transitions] An object that contains transition
-          configuration overrides for the following properties:
-        @param {Object} [options.transitions.viewIn] Transition overrides for
-          the view being transitioned-in.
-        @param {Object} [options.transitions.viewOut] Transition overrides for
-          the view being transitioned-out.
     @param {Function} [callback] Optional callback Function to call after the
         new `activeView` is ready to use, the function will be passed:
-      @param {View} view
+      @param {View} callback.view
     @chainable
     **/
     showView: function (view, config, options, callback) {
@@ -248,6 +301,71 @@ App = Y.Base.create('app', Y.Base, [Y.Router, Y.PjaxBase, Y.View], {
     // -- Protected Methods ----------------------------------------------------
 
     /**
+    Helper method to attach the view instance to the application by making the
+    application a bubble target of the view, and assigning the view instance to
+    the `instance` property of the associated view info metadata.
+
+    @method _attachView
+    @param {View} view View to attach.
+    @param {Boolean} prepend Whether the view should be prepended instead of
+      appended to the `viewContainer`.
+    @protected
+    **/
+    _attachView: function (view, prepend) {
+        if (!view) {
+            return;
+        }
+
+        var viewInfo      = this.getViewInfo(view),
+            viewContainer = this.get('viewContainer');
+
+        view.addTarget(this);
+        viewInfo && (viewInfo.instance = view);
+
+        // TODO: Attach events here for perseved Views? See TODO in _detachView.
+
+        // Insert view into the DOM.
+        viewContainer[prepend ? 'prepend' : 'append'](view.get('container'));
+    },
+
+    /**
+    Helper method to detach the view instance from the application by removing
+    the application as a bubble target of the view, and either just removing the
+    view if it is intended to be preserved, or destroying the instance
+    completely.
+
+    @method _detachView
+    @param {View} view View to detach.
+    @protected
+    **/
+    _detachView: function (view) {
+        if (!view) {
+            return;
+        }
+
+        var viewInfo = this.getViewInfo(view) || {};
+
+        if (viewInfo.preserve) {
+            view.remove();
+            // TODO: Detach events here for perserved Views? It is possible that
+            // some event subscriptions are made on elements other than the
+            // View's `container`.
+        } else {
+            view.destroy();
+
+            // Remove from view to view-info map.
+            delete this._viewInfoMap[Y.stamp(view, true)];
+
+            // Remove from view-info instance property.
+            if (view === viewInfo.instance) {
+                delete viewInfo.instance;
+            }
+        }
+
+        view.removeTarget(this);
+    },
+
+    /**
     Provides the default value for the `html5` attribute.
 
     The value returned is dependent on the value of the `serverRouting`
@@ -267,8 +385,58 @@ App = Y.Base.create('app', Y.Base, [Y.Router, Y.PjaxBase, Y.View], {
         if (this.get('serverRouting') === false) {
             return false;
         } else {
-            return Y.Router.html5;
+            return Router.html5;
         }
+    },
+
+    /**
+    Determines if the `view` passed in is configured as a child of the `parent`
+    view passed in. This requires both views to be either named-views, or view
+    instanced created using configuration data that exists in the `views`
+    object.
+
+    @method _isChildView
+    @param {View|String} view The name of a view defined in the `views` object,
+      or a view instance.
+    @param {View|String} parent The name of a view defined in the `views`
+      object, or a view instance.
+    @return {Boolean} Whether the view is configured as a child of the parent.
+    @protected
+    **/
+    _isChildView: function (view, parent) {
+        var viewInfo   = this.getViewInfo(view),
+            parentInfo = this.getViewInfo(parent);
+
+        if (viewInfo && parentInfo) {
+            return this.getViewInfo(viewInfo.parent) === parentInfo;
+        }
+
+        return false;
+    },
+
+    /**
+    Determines if the `view` passed in is configured as a parent of the `child`
+    view passed in. This requires both views to be either named-views, or view
+    instanced created using configuration data that exists in the `views`
+    object.
+
+    @method _isParentView
+    @param {View|String} view The name of a view defined in the `views` object,
+      or a view instance.
+    @param {View|String} parent The name of a view defined in the `views`
+      object, or a view instance.
+    @return {Boolean} Whether the view is configured as a parent of the child.
+    @protected
+    **/
+    _isParentView: function (view, child) {
+        var viewInfo  = this.getViewInfo(view),
+            childInfo = this.getViewInfo(child);
+
+        if (viewInfo && childInfo) {
+            return this.getViewInfo(childInfo.parent) === viewInfo;
+        }
+
+        return false;
     },
 
     /**
@@ -332,49 +500,7 @@ App = Y.Base.create('app', Y.Base, [Y.Router, Y.PjaxBase, Y.View], {
             Lang.isValue(options.force) || (options.force = true);
         }
 
-        return Y.PjaxBase.prototype._navigate.call(this, url, options);
-    },
-
-
-    /**
-    Upgrades a hash-based URL to a full-path URL if necessary.
-
-    The specified `url` will be upgraded if its of the same origin as the
-    current URL and has a path-like hash. URLs that don't need upgrading will be
-    returned as-is.
-
-    @example
-        app._upgradeURL('http://example.com/#/foo/');
-        // => 'http://example.com/foo/';
-
-    @method _upgradeURL
-    @param {String} url The URL to upgrade from hash-based to full-path.
-    @return {String} The upgraded URL, or the specified URL untouched.
-    @protected
-    **/
-    _upgradeURL: function (url) {
-        // We should not try to upgrade paths for external URLs.
-        if (!this._hasSameOrigin(url)) {
-            return url;
-        }
-
-        // TODO: Should the `root` be removed first, and the hash only
-        // considered if in the form of '/#/'?
-        var hash       = (url.match(/#(.*)$/) || [])[1] || '',
-            hashPrefix = Y.HistoryHash.hashPrefix;
-
-        // Strip any hash prefix, like hash-bangs.
-        if (hashPrefix && hash.indexOf(hashPrefix) === 0) {
-            hash = hash.replace(hashPrefix, '');
-        }
-
-        // If the hash looks like a URL path, assume it is, and upgrade it!
-        if (hash && hash.charAt(0) === '/') {
-            // Re-joins with configured `root` before resolving.
-            url = this._resolveURL(this._joinURL(hash));
-        }
-
-        return url;
+        return PjaxBase.prototype._navigate.call(this, url, options);
     },
 
     /**
@@ -423,134 +549,47 @@ App = Y.Base.create('app', Y.Base, [Y.Router, Y.PjaxBase, Y.View], {
             return this;
         }
 
-        return Y.Router.prototype._save.apply(this, arguments);
+        return Router.prototype._save.apply(this, arguments);
     },
 
     /**
-    Determines if the `view` passed in is configured as a child of the `parent`
-    view passed in. This requires both views to be either named-views, or view
-    instanced created using configuration data that exists in the `views`
-    object.
+    Upgrades a hash-based URL to a full-path URL if necessary.
 
-    @method _isChildView
-    @param {View|String} view The name of a view defined in the `views` object,
-      or a view instance.
-    @param {View|String} parent The name of a view defined in the `views`
-      object, or a view instance.
-    @return {Boolean} Whether the view is configured as a child of the parent.
+    The specified `url` will be upgraded if its of the same origin as the
+    current URL and has a path-like hash. URLs that don't need upgrading will be
+    returned as-is.
+
+    @example
+        app._upgradeURL('http://example.com/#/foo/'); // => 'http://example.com/foo/';
+
+    @method _upgradeURL
+    @param {String} url The URL to upgrade from hash-based to full-path.
+    @return {String} The upgraded URL, or the specified URL untouched.
     @protected
     **/
-    _isChildView: function (view, parent) {
-        var viewInfo   = this.getViewInfo(view),
-            parentInfo = this.getViewInfo(parent);
-
-        if (viewInfo && parentInfo) {
-            return this.getViewInfo(viewInfo.parent) === parentInfo;
+    _upgradeURL: function (url) {
+        // We should not try to upgrade paths for external URLs.
+        if (!this._hasSameOrigin(url)) {
+            return url;
         }
 
-        return false;
-    },
+        // TODO: Should the `root` be removed first, and the hash only
+        // considered if in the form of '/#/'?
+        var hash       = (url.match(/#(.*)$/) || [])[1] || '',
+            hashPrefix = Y.HistoryHash.hashPrefix;
 
-    /**
-    Determines if the `view` passed in is configured as a parent of the `child`
-    view passed in. This requires both views to be either named-views, or view
-    instanced created using configuration data that exists in the `views`
-    object.
-
-    @method _isParentView
-    @param {View|String} view The name of a view defined in the `views` object,
-      or a view instance.
-    @param {View|String} parent The name of a view defined in the `views`
-      object, or a view instance.
-    @return {Boolean} Whether the view is configured as a parent of the child.
-    @protected
-    **/
-    _isParentView: function (view, child) {
-        var viewInfo  = this.getViewInfo(view),
-            childInfo = this.getViewInfo(child);
-
-        if (viewInfo && childInfo) {
-            return this.getViewInfo(childInfo.parent) === viewInfo;
+        // Strip any hash prefix, like hash-bangs.
+        if (hashPrefix && hash.indexOf(hashPrefix) === 0) {
+            hash = hash.replace(hashPrefix, '');
         }
 
-        return false;
-    },
-
-    /**
-    Adds the `Y.App.VIEWS_CSS_CLASS` to the `viewContainer`.
-
-    @method _setViewContainer
-    @param {HTMLElement|Node|String} container HTML string, DOM element, or
-      `Y.Node` instance to use as the container node.
-    @return {Node} Node instance of the created container node.
-    @protected
-    **/
-    _setViewContainer: function (viewContainer) {
-        viewContainer = Y.one(viewContainer);
-        return viewContainer && viewContainer.addClass(App.VIEWS_CSS_CLASS);
-    },
-
-    /**
-    Helper method to attach the view instance to the application by making the
-    application a bubble target of the view, and assigning the view instance to
-    the `instance` property of the associated view info metadata.
-
-    @method _attachView
-    @param {View} view View to attach.
-    @param {Boolean} prepend Whether the view should be prepended instead of
-      appended to the `viewContainer`.
-    @protected
-    **/
-    _attachView: function (view, prepend) {
-        if (!view) {
-            return;
+        // If the hash looks like a URL path, assume it is, and upgrade it!
+        if (hash && hash.charAt(0) === '/') {
+            // Re-joins with configured `root` before resolving.
+            url = this._resolveURL(this._joinURL(hash));
         }
 
-        var viewInfo      = this.getViewInfo(view),
-            viewContainer = this.get('viewContainer');
-
-        view.addTarget(this);
-        viewInfo && (viewInfo.instance = view);
-
-        // TODO: Attach events here?
-
-        // Insert view into the DOM.
-        viewContainer[prepend ? 'prepend' : 'append'](view.get('container'));
-    },
-
-    /**
-    Helper method to detach the view instance from the application by removing
-    the application as a bubble target of the view, and either just removing the
-    view if it is intended to be preserved, or destroying the instance
-    completely.
-
-    @method _detachView
-    @param {View} view View to detach.
-    @protected
-    **/
-    _detachView: function (view) {
-        if (!view) {
-            return;
-        }
-
-        var viewInfo = this.getViewInfo(view) || {};
-
-        if (viewInfo.preserve) {
-            // TODO: Detach events here?
-            view.remove();
-        } else {
-            view.destroy();
-
-            // Remove from view to view-info map.
-            delete this._viewInfoMap[Y.stamp(view, true)];
-
-            // Remove from view-info instance property.
-            if (view === viewInfo.instance) {
-                delete viewInfo.instance;
-            }
-        }
-
-        view.removeTarget(this);
+        return url;
     },
 
     // -- Protected Event Handlers ---------------------------------------------
@@ -590,6 +629,21 @@ App = Y.Base.create('app', Y.Base, [Y.Router, Y.PjaxBase, Y.View], {
 }, {
     ATTRS: {
         /**
+        The application's active/visible view.
+
+        This attribute is read-only, to set the `activeView` use the
+        `showView()` method.
+
+        @attribute activeView
+        @type View
+        @readOnly
+        @see showView
+        **/
+        activeView: {
+            readOnly: true
+        },
+
+        /**
         Container node which represents the application's bounding-box.
 
         @attribute container
@@ -602,21 +656,22 @@ App = Y.Base.create('app', Y.Base, [Y.Router, Y.PjaxBase, Y.View], {
         },
 
         /**
-        Container node into which all application views will be rendered.
+        Whether or not this browser is capable of using HTML5 history.
 
-        @attribute viewContainer
-        @type HTMLElement|Node|String
-        @default `Y.Node.create('<div/>')`
+        This value is dependent on the value of `serverRouting` and will default
+        accordingly.
+
+        Setting this to `false` will force the use of hash-based history even on
+        HTML5 browsers, but please don't do this unless you understand the
+        consequences.
+
+        @attribute html5
+        @type Boolean
         @initOnly
+        @see serverRouting
         **/
-        viewContainer: {
-            valueFn: function () {
-                return Y.Node.create('<div/>');
-            },
-
-            // TODO: Change to `createViewContainer()` to be like `create()`?
-            setter   : '_setViewContainer',
-            writeOnce: 'initOnly'
+        html5: {
+            valueFn: '_initHtml5'
         },
 
         /**
@@ -629,21 +684,6 @@ App = Y.Base.create('app', Y.Base, [Y.Router, Y.PjaxBase, Y.View], {
         **/
         linkSelector: {
             value: 'a'
-        },
-
-        /**
-        The application's active/visible view.
-
-        This attribute is read-only, to set the `activeView`, use the
-        `showView()` method.
-
-        @attribute activeView
-        @type View
-        @readOnly
-        @see showView
-        **/
-        activeView: {
-            readOnly: true
         },
 
         /**
@@ -717,22 +757,20 @@ App = Y.Base.create('app', Y.Base, [Y.Router, Y.PjaxBase, Y.View], {
         },
 
         /**
-        Whether or not this browser is capable of using HTML5 history.
+        Container node into which all application views will be rendered.
 
-        This value is dependent on the value of `serverRouting` and will default
-        accordingly.
-
-        Setting this to `false` will force the use of hash-based history even on
-        HTML5 browsers, but please don't do this unless you understand the
-        consequences.
-
-        @attribute html5
-        @type Boolean
+        @attribute viewContainer
+        @type HTMLElement|Node|String
+        @default `Y.Node.create('<div/>')`
         @initOnly
-        @see serverRouting
         **/
-        html5: {
-            valueFn: '_initHtml5'
+        viewContainer: {
+            valueFn: function () {
+                return Y.Node.create('<div/>');
+            },
+
+            setter   : 'createViewContainer',
+            writeOnce: 'initOnly'
         }
     },
 
