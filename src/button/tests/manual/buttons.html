@@ -15,12 +15,11 @@
         <script src='../../../../build/yui/yui-min.js'></script>
 
         <script>
-            
             YUI({
                 debug: true,
                 combo: false,
                 filter: 'raw'
-            }).use('button', 'button-group', function(Y){
+            }).use('button', function(Y){
                 
                 var group = new Y.ButtonGroup({
                     buttons: new Y.Buttons({
@@ -31,7 +30,8 @@
                 
                 group.on('selectionChange', function(e){
                     console.log('Changed');
-                })
+                });
+                
             });
         </script>
     </head>
