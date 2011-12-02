@@ -2,7 +2,6 @@
     "app": {
         "use": [
             "app-base",
-            "app-transitions",
             "model",
             "model-list",
             "router",
