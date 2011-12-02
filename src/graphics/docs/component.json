@@ -69,20 +69,14 @@
 			"modules" : ["graphics"],
 			"tags" : ["graphics"],
             		"hideTableOfContents": true
-		},
-		{
-			"name" : "graphics-pathutility",
-			"displayName" : "Path Drawing Utility",
-			"description" : "A helper utility for interactively composing path code.",
-			"modules" : ["graphics"],
-			"tags" : ["graphics, utility, drawing"],
-            		"hideTableOfContents": true
 		}
 	],	
     "pages": {
         "graphics-pathutility-example": {
-            "displayName": "Graphics: Path Drawing Utility",
             "layout"     : "graphics-pathutility-example"
+        },
+        "graphics-pathutility": {
+            "displayName": "Graphics: Path Drawing Utility"
         }
     }	
 }
