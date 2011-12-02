@@ -103,7 +103,8 @@ Y.Get = Get = {
     @static
     **/
     jsOptions: {
-        doc: Y.config.scriptDoc || Y.config.doc
+        autopurge: true,
+        doc      : Y.config.scriptDoc || Y.config.doc
     },
 
     /**
@@ -116,7 +117,9 @@ Y.Get = Get = {
     options: {
         attributes: {
             charset: 'utf-8'
-        }
+        },
+
+        purgethreshold: 20
     },
 
     // -- Protected Properties -------------------------------------------------
@@ -170,6 +173,16 @@ Y.Get = Get = {
     @static
     **/
     _pending: null,
+
+    /**
+    HTML nodes eligible to be purged next time autopurge is triggered.
+
+    @property _purgeNodes
+    @type HTMLElement[]
+    @protected
+    @static
+    **/
+    _purgeNodes: [],
 
     /**
     Queued transactions and associated callbacks.
@@ -226,6 +239,13 @@ Y.Get = Get = {
     },
 
     // -- Protected Methods ----------------------------------------------------
+    _autoPurge: function (threshold) {
+        if (threshold && this._purgeNodes.length >= threshold) {
+            Y.log('autopurge triggered after ' + this._purgeNodes.length + ' nodes', 'info', 'get');
+            this._purge(this._purgeNodes);
+        }
+    },
+
     _getEnv: function () {
         var doc = Y.config.doc,
             ua  = Y.UA;
@@ -366,6 +386,44 @@ Y.Get = Get = {
                 Get._next();
             });
         }
+    },
+
+    _purge: function (nodes) {
+        var purgeNodes    = this._purgeNodes,
+            isTransaction = nodes !== purgeNodes,
+            attr, index, node, parent;
+
+        while (node = nodes.pop()) {
+            parent = node.parentNode;
+
+            if (node.clearAttributes) {
+                // IE.
+                node.clearAttributes();
+            } else {
+                // Everyone else.
+                for (attr in node) {
+                    if (node.hasOwnProperty(attr)) {
+                        delete node[attr];
+                    }
+                }
+            }
+
+            parent && parent.removeChild(node);
+
+            // If this is a transaction-level purge and this node also exists in
+            // the Get-level _purgeNodes array, we need to remove it from
+            // _purgeNodes to avoid creating a memory leak. The indexOf lookup
+            // sucks, but until we get WeakMaps, this is the least troublesome
+            // way to do this (we can't just hold onto node ids because they may
+            // not be in the same document).
+            if (isTransaction) {
+                index = Y.Array.indexOf(purgeNodes, node);
+
+                if (index > -1) {
+                    purgeNodes.splice(index, 1);
+                }
+            }
+        }
     }
 };
 
@@ -464,25 +522,7 @@ Transaction.prototype = {
     },
 
     purge: function () {
-        var attr, node, parent;
-
-        while (node = this.nodes.pop()) {
-            parent = node.parentNode;
-
-            if (node.clearAttributes) {
-                // IE.
-                node.clearAttributes();
-            } else {
-                // Everyone else.
-                for (attr in node) {
-                    if (node.hasOwnProperty(attr)) {
-                        delete node[attr];
-                    }
-                }
-            }
-
-            parent.removeChild(node);
-        }
+        Get._purge(this.nodes);
     },
 
     // -- Protected Methods ----------------------------------------------------
@@ -599,12 +639,14 @@ Transaction.prototype = {
                 // script asynchronously. This is necessary for older browsers
                 // like Firefox <4.
                 node.async = true;
-            } else if (env.async) {
-                // This browser treats injected scripts as async by default
-                // (standard HTML5 behavior) but asynchronous loading isn't
-                // desired, so tell the browser not to mark this script as
-                // async.
-                node.async = false;
+            } else {
+                if (env.async) {
+                    // This browser treats injected scripts as async by default
+                    // (standard HTML5 behavior) but asynchronous loading isn't
+                    // desired, so tell the browser not to mark this script as
+                    // async.
+                    node.async = false;
+                }
 
                 // If this browser doesn't preserve script execution order based
                 // on insertion order, we'll need to avoid inserting other
@@ -677,6 +719,14 @@ Transaction.prototype = {
         if (options.onProgress) {
             options.onProgress.call(options.context || null,
                 this._getEventData(req));
+        }
+
+        if (req.autopurge) {
+            // Pre-3.5.0 Get always excludes the most recent node from an
+            // autopurge. I find this odd, but I'm keeping that behavior for
+            // the sake of backcompat.
+            Get._autoPurge(this.options.purgethreshold);
+            Get._purgeNodes.push(req.node);
         }
 
         this._pending = null;
