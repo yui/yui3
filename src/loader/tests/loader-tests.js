@@ -298,6 +298,20 @@ YUI.add('loader-tests', function(Y) {
 
             test.wait();
         },
+        test_css_stamp: function() {
+            var test = this,
+                links = document.getElementsByTagName('link').length;
+
+            YUI().use('cssgrids', 'dial', function(Y) {
+                test.resume(function() {
+                    var links2 = document.getElementsByTagName('link').length;
+                    Assert.areEqual(links, links2, 'A new link tag was injected into the page.');
+                });
+            });
+
+            test.wait();
+
+        },
         test_forcemap: function() {
             var test = this;
 
