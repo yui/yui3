@@ -489,7 +489,14 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
                     {
                         if(gradient.hasOwnProperty(i))
                         {
-                            this._fillNode.setAttribute(i, gradient[i]);
+                            if(i == "colors")
+                            {
+                                this._fillNode.colors.value = gradient[i];
+                            }
+                            else
+                            {
+                                this._fillNode[i] = gradient[i];
+                            }
                         }
                     }
                 }
@@ -582,7 +589,8 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 			fx = fill.fx,
 			fy = fill.fy,
 			r = fill.r,
-			pct,
+			actualPct,
+            pct,
 			rotation = fill.rotation || 0;
 		if(type === "linear")
 		{
@@ -622,17 +630,12 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 			opacity = isNumber(opacity) ? opacity : 1;
 			pct = stop.offset || i/(len-1);
 			pct *= (r * 2);
-			if(pct <= 1)
-			{
-				pct = Math.round(100 * pct) + "%";
-				oi = i > 0 ? i + 1 : "";
-				gradientProps["opacity" + oi] = opacity + "";
-				colorstring += ", " + pct + " " + color;
-			}
+            pct = Math.round(100 * pct) + "%";
+            oi = i > 0 ? i + 1 : "";
+            gradientProps["opacity" + oi] = opacity + "";
+            colorstring += ", " + pct + " " + color;
 		}
-		pct = stops[1].offset || 0;
-		pct *= 100;
-		if(parseInt(pct, 10) < 100)
+		if(parseFloat(pct) < 100)
 		{
 			colorstring += ", 100% " + color;
 		}

@@ -342,7 +342,8 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 			cy = fill.cy,
 			fx = fill.fx,
 			fy = fill.fy,
-			r = fill.r;
+			r = fill.r,
+            stopNodes = [];
 		if(type == "linear")
 		{
             cx = w/2;
@@ -396,8 +397,18 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 		
 		len = stops.length;
 		def = 0;
-		for(i = 0; i < len; ++i)
+        for(i = 0; i < len; ++i)
 		{
+            if(this._stops && this._stops.length > 0)
+            {
+                stopNode = this._stops.shift();
+                newStop = false;
+            }
+            else
+            {
+			    stopNode = graphic._createGraphicNode("stop");
+                newStop = true;
+            }
 			stop = stops[i];
 			opacity = stop.opacity;
 			color = stop.color;
@@ -406,13 +417,23 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 			opacity = isNumber(opacity) ? opacity : 1;
 			opacity = Math.max(0, Math.min(1, opacity));
 			def = (i + 1) / len;
-			stopNode = graphic._createGraphicNode("stop");
 			stopNode.setAttribute("offset", offset);
 			stopNode.setAttribute("stop-color", color);
 			stopNode.setAttribute("stop-opacity", opacity);
-			gradientNode.appendChild(stopNode);
+			if(newStop)
+            {
+                gradientNode.appendChild(stopNode);
+            }
+            stopNodes.push(stopNode);
 		}
+        while(this._stops && this._stops.length > 0)
+        {
+            gradientNode.removeChild(this._stops.shift());
+        }
+        this._stops = stopNodes;
 	},
+
+    _stops: null,
 
     /**
      * Sets the value of an attribute.

@@ -156,7 +156,10 @@ SVGGraphic.ATTRS = {
         setter: function(val)
         {
             this._resizeDown = val;
-            this._redraw();
+            if(this._contentNode)
+            {
+                this._redraw();
+            }
             return val;
         }
     },
