@@ -88,7 +88,6 @@ if (!YUI.Env[Y.version]) {
 }
 
 
-
 /**
  * Loader dynamically loads script and css files.  It includes the dependency
  * info for the version of the library in use, and will automatically pull in
@@ -1530,6 +1529,7 @@ Y.Loader.prototype = {
     * @return Boolean
     */
     isCSSLoaded: function(name) {
+        //TODO - Make this call a batching call with name being an array
         if (!name || !YUI.Env.cssStampEl) {
             return false;
         }
@@ -2425,7 +2425,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         return resolved;
     }
 };
-
 
 
 
