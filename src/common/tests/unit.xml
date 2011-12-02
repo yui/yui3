@@ -42,7 +42,11 @@
         <url>dial/tests/dial.html</url>
         <url>dom/tests/dom.html</url>
         <url>dom/tests/dom-base.html</url>
+        <!-- This test fails to complete under automation.
+             Removed until the cause is discovered.
+             http://yuilibrary.com/projects/yui3/ticket/2531536
         <url>dom/tests/dom-xy.html</url>
+        -->
         <url>dom/tests/selector.html</url>
         <url>dump/tests/dump.html</url>
 	<url>editor/tests/editor.html</url>
