@@ -10,6 +10,7 @@
                 "requires": [
                     "attribute",
                     "node",
+                    "arraylist",
                     "array-extras",
                     "event-focus"
                 ]
