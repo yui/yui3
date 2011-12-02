@@ -1,10 +1,10 @@
 YUI.add('datatype-date-math', function(Y) {
 
 /**
- * Parse number submodule.
+ * Datatype Date Math submodule.
  *
  * @module datatype
- * @submodule datatype-date-parse
+ * @submodule datatype-date-math
  * @for DataType.Date
  */
 var LANG = Y.Lang;
@@ -26,19 +26,55 @@ Y.mix(Y.namespace("DataType.Date"), {
             return false;
         }
 	},
-	
+
+	/**
+	 * Checks whether two dates correspond to the same date and time.
+	 * @for DataType.Date
+	 * @method areEqual
+	 * @param aDate {Date} The first date to compare.
+	 * @param bDate {Date} The second date to compare.
+	 * @return {Boolean} True if the two dates correspond to the same
+	 * date and time.
+	 */	
 	areEqual : function (aDate, bDate) {
 		return (this.isValidDate(aDate) && this.isValidDate(bDate) && (aDate.getTime() == bDate.getTime()));	
 	},
 
+	/**
+	 * Checks whether the first date comes later than the second.
+	 * @for DataType.Date
+	 * @method isGreater
+	 * @param aDate {Date} The first date to compare.
+	 * @param bDate {Date} The second date to compare.
+	 * @return {Boolean} True if the first date is later than the second.
+	 */	
     isGreater : function (aDate, bDate) {
     	return (this.isValidDate(aDate) && this.isValidDate(bDate) && (aDate.getTime() > bDate.getTime()));
     },
 
+	/**
+	 * Checks whether the first date comes later than or is the same as
+	 * the second.
+	 * @for DataType.Date
+	 * @method isGreaterOrEqual
+	 * @param aDate {Date} The first date to compare.
+	 * @param bDate {Date} The second date to compare.
+	 * @return {Boolean} True if the first date is later than or 
+	 * the same as the second.
+	 */	
     isGreaterOrEqual : function (aDate, bDate) {
     	return (this.isValidDate(aDate) && this.isValidDate(bDate) && (aDate.getTime() >= bDate.getTime()));
     },
 
+	/**
+	 * Adds a specified number of months to the given date.
+	 * @for DataType.Date
+	 * @method addMonths
+	 * @param oDate {Date} The date to add months to.
+	 * @param numMonths {Number} The number of months to add (can be negative)
+	 * @return {Date} A new Date with the specified number of months
+	 * added to the original date.
+	 */	
 	addMonths : function (oDate, numMonths) {
 		var newYear = oDate.getFullYear();
 		var newMonth = oDate.getMonth() + numMonths;		
@@ -52,7 +88,16 @@ Y.mix(Y.namespace("DataType.Date"), {
 		
 		return newDate;
 	},
-	
+
+	/**
+	 * Adds a specified number of years to the given date.
+	 * @for DataType.Date
+	 * @method addYears
+	 * @param oDate {Date} The date to add years to.
+	 * @param numYears {Number} The number of years to add (can be negative)
+	 * @return {Date} A new Date with the specified number of years
+	 * added to the original date.
+	 */	
 	addYears : function (oDate, numYears) {
 		var newYear = oDate.getFullYear() + numYears;
 		var newDate = new Date(oDate.getTime());
@@ -61,6 +106,14 @@ Y.mix(Y.namespace("DataType.Date"), {
 		return newDate;
 	},
 
+	/**
+	 * Lists all dates in a given month.
+	 * @for DataType.Date
+	 * @method listOfDatesInMonth
+	 * @param oDate {Date} The date corresponding to the month for
+	 * which a list of dates is required.
+	 * @return {Array} An `Array` of `Date`s from a given month.
+	 */	
     listOfDatesInMonth : function (oDate) {
        if (!this.isValidDate(oDate)) {
        	 return [];
@@ -79,11 +132,14 @@ Y.mix(Y.namespace("DataType.Date"), {
     },
 
 	/**
-	 * Takes a native JavaScript Date and returns the number of days in the month that the given date belongs to.
+	 * Takes a native JavaScript Date and returns the number of days
+	 * in the month that the given date belongs to.
 	 * @for DataType.Date
 	 * @method daysInMonth
-	 * @param oDate {Date} Date in the month for which the number of days is desired.
-	 * @return {Number} A number (either 28, 29, 30 or 31) of days in the given month.
+	 * @param oDate {Date} Date in the month for which the number 
+	 * of days is desired.
+	 * @return {Number} A number (either 28, 29, 30 or 31) of days 
+	 * in the given month.
 	 */
 	 daysInMonth : function (oDate) {
 		if (!this.isValidDate(oDate)) {
