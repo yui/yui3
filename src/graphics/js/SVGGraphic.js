@@ -672,7 +672,7 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
         var contentNode = this._createGraphicNode("svg"),
             pointerEvents = this.get("pointerEvents");
         contentNode.style.position = "absolute";
-        contentNode.style.top = "px";
+        contentNode.style.top = "0px";
         contentNode.style.left = "0px";
         contentNode.style.overflow = "auto";
         contentNode.setAttribute("overflow", "auto");
