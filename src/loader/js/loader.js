@@ -1439,6 +1439,7 @@ Y.Loader.prototype = {
     * @return Boolean
     */
     isCSSLoaded: function(name) {
+        //TODO - Make this call a batching call with name being an array
         if (!name || !YUI.Env.cssStampEl) {
             return false;
         }
