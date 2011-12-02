@@ -1,19 +1,24 @@
-YUI.add('slider-base-tests', function(Y) {
+YUI.add('slider-tests', function(Y) {
+
 // copied this from event-key-test.js to add tests for changing value by keyboard
-Y.Node.prototype.key = function (code, mods, type) {
+Y.Node.prototype.key = function (keyCode, charCode, mods, type) {
     var simulate = Y.Event.simulate,
         el       = this._node,
-        config   = Y.merge(mods || {}, { keyCode: code, charCode: code });
-
-    if (typeof code === "string") {
-        code = code.charCodeAt(0);
-    }
+        config   = Y.merge(mods || {});
 
     if (type) {
+        if (type === 'keypress') {
+            config.charCode = config.keyCode = config.which = charCode || keyCode;
+        } else {
+            config.keyCode = config.which = keyCode;
+        }
         simulate(el, type, config);
     } else {
+        config.keyCode = config.which = keyCode;
         simulate(el, 'keydown', config);
         simulate(el, 'keyup', config);
+
+        config.charCode = config.keyCode = config.which = charCode || keyCode;
         simulate(el, 'keypress', config);
     }
 };
@@ -519,6 +524,12 @@ suite.add( new Y.Test.Case({
 suite.add( new Y.Test.Case({
     name: "Keyboard",
 
+    _should: {
+        fail: {
+            "test keyboard input and resultant value change, when Slider length is less than max - min": 2531498
+        }
+    },
+
     setUp: function () {
         Y.one("body").append('<div id="testbed"></div>');
     },
@@ -659,26 +670,4 @@ suite.add( new Y.Test.Case({
 Y.Test.Runner.add( suite );
 
 
-}, '@VERSION@' ,{requires:['slider-base', 'test']});
-YUI.add('slider-value-range-tests', function(Y) {
-
-
-
-
-}, '@VERSION@' ,{requires:['slider-value-range', 'test']});
-YUI.add('clickable-rail-tests', function(Y) {
-
-
-
-
-}, '@VERSION@' ,{requires:['clickable-rail', 'test']});
-YUI.add('range-slider-tests', function(Y) {
-
-
-
-
-}, '@VERSION@' ,{requires:['range-slider', 'test']});
-
-
-YUI.add('slider-tests', function(Y){}, '@VERSION@' ,{use:['slider-base-tests', 'slider-value-range-tests', 'clickable-rail-tests', 'range-slider-tests']});
-
+}, '@VERSION@' ,{requires:['slider', 'test']});
