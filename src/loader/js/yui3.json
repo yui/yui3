@@ -242,7 +242,9 @@
         "requires": [
             "attribute", 
             "node", 
-            "array-extras"
+            "arraylist", 
+            "array-extras", 
+            "event-focus"
         ]
     }, 
     "button-group": {

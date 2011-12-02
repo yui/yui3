@@ -78,7 +78,7 @@ var Button = function(config){
             value: false,
             setter: function(value) {
                 var node = this.getDOMNode();
-                if (value !== this.get('selected')) {
+                //if (value !== this.get('selected')) {
                     if (value) {
                         node.set('aria-selected', 'true');
                         node.addClass('yui3-button-selected');
@@ -87,7 +87,7 @@ var Button = function(config){
                         node.set('aria-selected', 'false');
                         node.removeClass('yui3-button-selected');
                     }
-                }
+               //}
                 /*
                 else {
                     // Setting to same value, don't do anything (right? return false?)
