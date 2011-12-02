@@ -16,13 +16,33 @@ var Y = YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
     modules: {
         'app-test': {
-            fullpath: 'app-test.js',
-            requires: ['model', 'model-list', 'router', 'view', 'test']
+            use: ['model-test', 'model-list-test', 'router-test', 'view-test']
+        },
+
+        'model-test': {
+            fullpath: 'model-test.js',
+            requires: ['model', 'model-list', 'test']
+        },
+
+        'model-list-test': {
+            fullpath: 'model-list-test.js',
+            requires: ['model-list', 'test']
+        },
+
+        'router-test': {
+            fullpath: 'router-test.js',
+            requires: ['router', 'test']
+        },
+
+        'view-test': {
+            fullpath: 'view-test.js',
+            requires: ['model', 'model-list', 'view', 'test']
         }
     },
     useBrowserConsole: false
 }).use('app-test', 'test-console', function (Y) {
     new Y.Test.Console().render('#log');
+    Y.Test.Runner.add(Y.AppTestSuite);
     Y.Test.Runner.run();
 });
 </script>
