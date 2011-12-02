@@ -17,7 +17,7 @@
 <script src="../../../build/yui-log/yui-log.js"></script>
 <script src="../../../build/yui-later/yui-later.js"></script>
 
-<script src="../../../build/get/get.js"></script>
+<script src="../../../build/get/get-debug.js"></script>
 
 <!-- Adding these manually and doing a use("*") so we don't need "get" to test "get" -->
 <script src="../../../build/features/features.js" charset="utf-8"></script>
@@ -93,7 +93,7 @@ var Y = YUI({
     }
 
     Y.GetTests.add(Y.GetTests.Scripts);
-    Y.GetTests.add(Y.GetTests.CSS);
+    // Y.GetTests.add(Y.GetTests.CSS);
     // Y.GetTests.add(Y.GetTests.Functional);
 
     new Y.Test.Console().render('#log');
