@@ -128,17 +128,11 @@ var imp = Y.config.doc && Y.config.doc.implementation,
             // events, so Y.Event.simulate sets relatedTarget instead.
             this.relatedTarget = resolve(t || e.relatedTarget);
 
-            // which should contain the unicode key code if this is a key event
-            // if (e.charCode) {
-            //     this.which = e.charCode;
-            // }
-
-            // for click events, which is normalized for which mouse button was
+            // which should contain the unicode key code if this is a key event.
+            // For click events, which is normalized for which mouse button was
             // clicked.
-            if (e.button !== undefined) {
-                this.which = this.button = buttonMap[e.button] || e.button;
-            }
-
+            this.which = // chained assignment
+            this.button = e.keyCode || buttonMap[e.button] || e.button;
         },
 
         stopPropagation: function() {
@@ -179,6 +173,8 @@ IELazyFacade.prototype.init = function () {
     this.clientY  = e.clientY;
     this.keyCode  = // chained assignment
     this.charCode = e.keyCode;
+    this.which    = // chained assignment
+    this.button   = e.keyCode || buttonMap[e.button] || e.button;
 
     for (prop in lazyProperties) {
         if (lazyProperties.hasOwnProperty(prop)) {
@@ -192,15 +188,6 @@ IELazyFacade.prototype.init = function () {
 };
 
 IELazyFacade._lazyProperties = {
-    button: function () {
-        var e = this._event;
-
-        return (e.button !== undefined) ?
-            (buttonMap[e.button] || e.button) :
-            e.keyCode;
-    },
-    which: function () { return this.button; },
-
     target: function () {
         return resolve(this._event.srcElement);
     },
