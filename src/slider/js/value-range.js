@@ -11,6 +11,8 @@
 var MIN       = 'min',
     MAX       = 'max',
     VALUE     = 'value',
+//     MINORSTEP = 'minorStep',
+//     MAJORSTEP = 'majorStep',
 
     round = Math.round;
 
@@ -123,7 +125,13 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
             // slider.set() -> afterValueChange -> uiMoveThumb ->
             // fire(thumbMove) -> _defThumbMoveFn -> this.set()
             if ( previous !== value ) {
-                this.set( VALUE, value, { positioned: true } );
+                this.set( VALUE, value, { positioned: true } );   
+                /* FIXME: aria and keyboard have problems with this 
+                "if condition" when slider length is less than max - min. 
+                If the value change caused by keyboard doesn't result 
+                in the thumb moving, the value is set back to previous value 
+                by _defThumbMoveFn (slider-value-range.js).
+                */ 
             }
         },
 
@@ -249,10 +257,13 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
          * @protected
          */
         _afterValueChange: function ( e ) {
+            var val = e.newVal;
             if ( !e.positioned ) {
                 Y.log("Positioning thumb after set('value',x)","info","slider");
                 this._setPosition( e.newVal );
             }
+            this.thumb.set('aria-valuenow', this.get('value'));
+            this.thumb.set('aria-valuetext', this.get('value'));
         },
 
         /**
@@ -370,6 +381,30 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
         max: {
             value    : 100,
             validator: '_validateNewMax'
+        },
+        
+        /**
+         * amount to increment/decrement the Slider value
+         * when the arrow up/down/left/right keys are pressed
+         *
+         * @attribute minorStep
+         * @type {Number}
+         * @default 1
+         */
+        minorStep : {
+            value: 1
+        },
+
+        /**
+         * amount to increment/decrement the Slider value
+         * when the page up/down keys are pressed
+         *
+         * @attribute majorStep
+         * @type {Number}
+         * @default 10
+         */
+        majorStep : {
+            value: 10
         },
 
         /**
