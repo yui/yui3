@@ -6,6 +6,10 @@ YUI.add('get-test', function(Y) {
         ua       = Y.UA,
 
         supports = {
+            // True if this browser should call an onFailure callback on a link
+            // that 404s. Currently only Firefox 9+ supports this.
+            cssFailure: ua.gecko >= 9,
+
             // True if this browser should call an onFailure callback on a
             // script that 404s.
             jsFailure: !((ua.ie && ua.ie < 9) || (ua.opera && ua.opera < 11.6) || (ua.webkit && ua.webkit < 530.17))
@@ -117,7 +121,7 @@ YUI.add('get-test', function(Y) {
                 }
             });
 
-            this.wait(500);
+            this.wait();
         },
 
         // TODO: need to test abort()
@@ -160,7 +164,7 @@ YUI.add('get-test', function(Y) {
                 }
             });
 
-            this.wait(500);
+            this.wait();
         },
 
         'test: single script success, end': function() {
@@ -205,7 +209,7 @@ YUI.add('get-test', function(Y) {
                 }
             });
 
-            this.wait(500);
+            this.wait();
         },
 
         'test: single script failure, end': function() {
@@ -248,7 +252,7 @@ YUI.add('get-test', function(Y) {
                 }
             });
 
-            this.wait(500);
+            this.wait();
         },
 
         'test: multiple scripts, success': function() {
@@ -297,7 +301,7 @@ YUI.add('get-test', function(Y) {
                 }
             });
 
-            this.wait(500);
+            this.wait();
         },
 
         'test: multiple scripts, one failure': function() {
@@ -337,7 +341,7 @@ YUI.add('get-test', function(Y) {
                 }
             });
 
-            this.wait(500);
+            this.wait();
         },
 
         'test: multiple scripts, success, end': function() {
@@ -390,7 +394,7 @@ YUI.add('get-test', function(Y) {
                 }
             });
 
-            this.wait(500);
+            this.wait();
         },
 
         'test: multiple scripts, failure, end': function() {
@@ -434,7 +438,7 @@ YUI.add('get-test', function(Y) {
                 }
             });
 
-            this.wait(500);
+            this.wait();
         },
 
         'test: async multiple scripts, success': function() {
@@ -484,7 +488,7 @@ YUI.add('get-test', function(Y) {
                 async:true
             });
 
-            this.wait(500);
+            this.wait();
         },
 
         'test: async multiple scripts, success, end': function() {
@@ -530,7 +534,7 @@ YUI.add('get-test', function(Y) {
                 async:true
             });
 
-            this.wait(500);
+            this.wait();
         },
 
         // THE ASYNC FAILURE TESTS NEED TO BE AT THE END,
@@ -577,7 +581,7 @@ YUI.add('get-test', function(Y) {
                 async:true
             });
 
-            this.wait(500);
+            this.wait();
         },
 
         'test: async multiple script, failure, end': function() {
@@ -621,7 +625,7 @@ YUI.add('get-test', function(Y) {
                 async:true
             });
 
-            this.wait(500);
+            this.wait();
         },
 
         'test: insertBefore, single' : function() {
@@ -651,7 +655,7 @@ YUI.add('get-test', function(Y) {
                 }
             });
 
-            this.wait(500);
+            this.wait();
         },
 
         'test: insertBefore, multiple' : function() {
@@ -684,7 +688,7 @@ YUI.add('get-test', function(Y) {
                 }
             });
 
-            this.wait(500);
+            this.wait();
         },
 
         'test: async, insertBefore, multiple' : function() {
@@ -718,7 +722,7 @@ YUI.add('get-test', function(Y) {
                 async:true
             });
 
-            this.wait(500);
+            this.wait();
         },
 
         'test: charset, single' : function() {
@@ -747,7 +751,7 @@ YUI.add('get-test', function(Y) {
                 }
             });
 
-            this.wait(500);
+            this.wait();
         },
 
         'test: charset, multiple' : function() {
@@ -779,7 +783,7 @@ YUI.add('get-test', function(Y) {
                 }
             });
 
-            this.wait(500);
+            this.wait();
         },
 
         'test: async, charset, multiple' : function() {
@@ -813,7 +817,7 @@ YUI.add('get-test', function(Y) {
                 async :true
             });
 
-            this.wait(500);
+            this.wait();
         },
 
         'test: attributes, single' : function() {
@@ -850,7 +854,7 @@ YUI.add('get-test', function(Y) {
                 }
             });
 
-            this.wait(500);
+            this.wait();
         },
 
         'test: attributes, multiple' : function() {
@@ -888,7 +892,7 @@ YUI.add('get-test', function(Y) {
                 }
             });
 
-            this.wait(500);
+            this.wait();
         },
 
         'test: async, attributes, multiple' : function() {
@@ -928,7 +932,7 @@ YUI.add('get-test', function(Y) {
                 async :true
             });
 
-            this.wait(500);
+            this.wait();
         },
 
         'ignore: abort' : function() {
@@ -987,7 +991,7 @@ YUI.add('get-test', function(Y) {
                 }
             });
 
-            this.wait(500);
+            this.wait();
         }
     });
 
@@ -1017,6 +1021,13 @@ YUI.add('get-test', function(Y) {
             this.removeInsertBeforeNode();
         },
 
+        _should: {
+            ignore: {
+                'test: single css, failure': !supports.cssFailure,
+                'test: multiple css, failure': !supports.cssFailure
+            }
+        },
+
         createInsertBeforeNode: function() {
             this.ib = Y.Node.create('<link id="insertBeforeMe" href="' + path("ib.css?delay=0") + '" rel="stylesheet" type="text/css" charset="utf-8">');
             Y.Node.one("head").appendChild(this.ib);
@@ -1035,44 +1046,27 @@ YUI.add('get-test', function(Y) {
                 failure:0
             };
 
-            // Using test.onload to switch test behavior for IE/Opera vs. others.
-            // In IE/Opera we don't need to artifical timeout, since we're notified
-            // onload. For the others, onSuccess is called synchronously.
-
             var trans = Y.Get.css(path("a.css?delay=50"), {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
                 onSuccess: function(o) {
-
                     var context = this;
 
-                    setTimeout(function() {
-                        test.resume(function() {
-                            counts.success++;
+                    test.resume(function() {
+                        counts.success++;
 
-                            Y.Assert.areEqual("1111", this.na.getComputedStyle("zIndex"), "a.css does not seem to be loaded");
-                            Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
+                        Y.Assert.areEqual("1111", this.na.getComputedStyle("zIndex"), "a.css does not seem to be loaded");
+                        Y.Assert.areEqual(1, counts.success, "onSuccess called more than once");
 
-                            areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
+                        areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
 
-                            // TODO: Test infrastructure won't let us easily get a populated trans reference and also wait (AFAICT). So commenting this out.
-                            // Y.Assert.areEqual(trans.tId, o.tId, "Payload has unexpected tId");
+                        Y.Assert.areEqual(trans.tId, o.tId, "Payload has unexpected tId");
+                        Y.Assert.areEqual(1, o.nodes.length, "Payload nodes property has unexpected length");
+                        Y.Assert.areEqual("foo", context.bar, "Callback context not set");
 
-                            Y.Assert.areEqual(1, o.nodes.length, "Payload nodes property has unexpected length");
-                            Y.Assert.isUndefined(o.statusText, "Payload should not have a statusText");
-                            Y.Assert.isUndefined(o.msg, "Payload should not have a msg");
-
-                            Y.Assert.areEqual("foo", context.bar, "Callback context not set");
-
-                            test.o = o;
-                        });
-                    }, test.onload ? 0 : 200); // need arbit delay to make sure CSS is applied
-
-                    if (!test.onload) {
-                        test.wait();
-                    }
-
+                        test.o = o;
+                    });
                 },
 
                 onFailure: function(o) {
@@ -1080,13 +1074,10 @@ YUI.add('get-test', function(Y) {
                 }
             });
 
-            // if (test.onload) {
-                test.wait(500);
-            // }
+            test.wait(500);
         },
 
         'test: multiple css, success': function() {
-
             var test = this;
             var counts = {
                 success:0,
@@ -1094,7 +1085,6 @@ YUI.add('get-test', function(Y) {
             };
 
             var trans = Y.Get.css(path(["a.css?delay=50", "b.css?delay=100", "c.css?delay=75"]), {
-
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -1103,513 +1093,233 @@ YUI.add('get-test', function(Y) {
                 },
 
                 onSuccess: function(o) {
-
                     var context = this;
 
-                    setTimeout(function() {
-                        test.resume(function() {
-                            counts.success++;
+                    test.resume(function() {
+                        counts.success++;
 
-                            Y.Assert.areEqual("1111", this.na.getComputedStyle("zIndex"), "a.css does not seem to be loaded");
-                            Y.Assert.areEqual("1234", this.nb.getComputedStyle("zIndex"), "b.css does not seem to be loaded");
-                            Y.Assert.areEqual("4321", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be loaded");
-                            Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
+                        Y.Assert.areEqual("1111", this.na.getComputedStyle("zIndex"), "a.css does not seem to be loaded");
+                        Y.Assert.areEqual("1234", this.nb.getComputedStyle("zIndex"), "b.css does not seem to be loaded");
+                        Y.Assert.areEqual("4321", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be loaded");
+                        Y.Assert.areEqual(1, counts.success, "onSuccess called more than once");
 
-                            areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
+                        areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
 
-                            //Y.Assert.areEqual(trans.tId, o.tId, "Payload has unexpected tId");
+                        Y.Assert.areEqual(trans.tId, o.tId, "Payload has unexpected tId");
+                        Y.Assert.areEqual(3, o.nodes.length, "Payload nodes property has unexpected length");
+                        Y.Assert.areEqual("foo", context.bar, "Callback context not set");
 
-                            Y.Assert.areEqual(3, o.nodes.length, "Payload nodes property has unexpected length");
-                            Y.Assert.isUndefined(o.statusText, "Payload should not have a statusText");
-                            Y.Assert.isUndefined(o.msg, "Payload should not have a msg");
-
-                            Y.Assert.areEqual("foo", context.bar, "Callback context not set");
-
-                            test.o = o;
-                        });
-                    }, test.onload ? 0 : 400);
-
-                    if (!test.onload) {
-                        test.wait();
-                    }
+                        test.o = o;
+                    });
                 }
             });
 
-            if (test.onload) {
-                test.wait();
-            }
-        },
-
-        'test: async multiple css, success': function() {
-
-            var test = this;
-            var counts = {
-                success:0,
-                failure:0
-            };
-
-            var trans = Y.Get.css(path(["a.css?delay=100", "b.css?delay=75", "c.css?delay=50"]), {
-
-                data: {a:1, b:2, c:3},
-                context: {bar:"foo"},
-
-                onFailure: function(o) {
-                    Y.Assert.fail("onFailure shouldn't have been called");
-                },
-                onSuccess: function(o) {
-
-                    var context = this;
-
-                    setTimeout(function() {
-                        test.resume(function() {
-                            counts.success++;
-                            Y.Assert.areEqual("1111", this.na.getComputedStyle("zIndex"), "a.css does not seem to be loaded");
-                            Y.Assert.areEqual("1234", this.nb.getComputedStyle("zIndex"), "b.css does not seem to be loaded");
-                            Y.Assert.areEqual("4321", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be loaded");
-                            Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
-
-                            areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
-
-                            //Y.Assert.areEqual(trans.tId, o.tId, "Payload has unexpected tId");
-
-                            Y.Assert.areEqual(3, o.nodes.length, "Payload nodes property has unexpected length");
-                            Y.Assert.isUndefined(o.statusText, "Payload should not have a statusText");
-                            Y.Assert.isUndefined(o.msg, "Payload should not have a msg");
-
-                            Y.Assert.areEqual("foo", context.bar, "Callback context not set");
-
-                            test.o = o;
-                        });
-                    }, test.onload ? 0 : 400);
-
-                    if (!test.onload) {
-                        test.wait();
-                    }
-                },
-                async:true
-            });
-
-            if (test.onload) {
-                test.wait();
-            }
+            test.wait(500);
         },
 
         'test: insertBefore, single' : function() {
-
             var test = this;
 
             test.createInsertBeforeNode();
 
             var trans = Y.Get.css(path("a.css?delay=30"), {
-
                 insertBefore: "insertBeforeMe",
 
                 onSuccess: function(o) {
+                    test.resume(function() {
+                        var n = Y.Node.one(o.nodes[0]);
+                        var insertBefore = Y.Node.one("#insertBeforeMe");
 
-                    setTimeout(function() {
-                        test.resume(function() {
+                        Y.Assert.isTrue(n.compareTo(insertBefore.previous()), "Not inserted before insertBeforeMe");
 
-                            var n = Y.Node.one(o.nodes[0]);
+                        // TODO: These don't work as expected on IE (even though insertBefore worked). Better cross-browser assertion?
+                        if (!Y.UA.ie) {
+                            Y.Assert.areEqual("9991", this.na.getComputedStyle("zIndex"), "a.css does not seem to be inserted before ib.css");
+                        }
 
-                            var insertBefore = Y.Node.one("#insertBeforeMe");
+                        test.o = o;
 
-                            Y.Assert.isTrue(n.compareTo(insertBefore.previous()), "Not inserted before insertBeforeMe");
-
-                            // TODO: These don't work as expected on IE (even though insertBefore worked). Better cross-browser assertion?
-                            if (!Y.UA.ie) {
-                                Y.Assert.areEqual("9991", this.na.getComputedStyle("zIndex"), "a.css does not seem to be inserted before ib.css");
-                            }
-
-                            test.o = o;
-
-                        });
-                    }, test.onload ? 0 : 100);
-
-                    if (!test.onload) {
-                        test.wait();
-                    }
+                    });
                 }
             });
 
-            if (test.onload) {
-                test.wait();
-            }
+            test.wait(500);
         },
 
         'test: insertBefore, multiple' : function() {
-
             var test = this;
 
             test.createInsertBeforeNode();
 
             var trans = Y.Get.css(path(["a.css?delay=20", "b.css?delay=75", "c.css?delay=10"]), {
-
                 insertBefore: "insertBeforeMe",
 
                 onSuccess: function(o) {
-                    setTimeout(function() {
-                        test.resume(function() {
-                            var insertBefore = Y.Node.one("#insertBeforeMe");
+                    test.resume(function() {
+                        var insertBefore = Y.Node.one("#insertBeforeMe");
 
-                            for (var i = o.nodes.length-1; i >= 0; i--) {
-                                var n = Y.Node.one(o.nodes[i]);
-                                Y.Assert.isTrue(n.compareTo(insertBefore.previous()), "Not inserted before insertBeforeMe");
-                                insertBefore = n;
-                            }
+                        for (var i = o.nodes.length-1; i >= 0; i--) {
+                            var n = Y.Node.one(o.nodes[i]);
+                            Y.Assert.isTrue(n.compareTo(insertBefore.previous()), "Not inserted before insertBeforeMe");
+                            insertBefore = n;
+                        }
 
-                            // TODO: These don't work as expected on IE (even though insertBefore worked). Better cross-browser assertion?
-                            if (!Y.UA.ie) {
-                                Y.Assert.areEqual("9991", this.na.getComputedStyle("zIndex"), "a.css does not seem to be inserted before ib.css");
-                                Y.Assert.areEqual("9992", this.nb.getComputedStyle("zIndex"), "b.css does not seem to be inserted before ib.css");
-                                Y.Assert.areEqual("9993", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be inserted before ib.css");
-                            }
+                        // TODO: These don't work as expected on IE (even though insertBefore worked). Better cross-browser assertion?
+                        if (!Y.UA.ie) {
+                            Y.Assert.areEqual("9991", this.na.getComputedStyle("zIndex"), "a.css does not seem to be inserted before ib.css");
+                            Y.Assert.areEqual("9992", this.nb.getComputedStyle("zIndex"), "b.css does not seem to be inserted before ib.css");
+                            Y.Assert.areEqual("9993", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be inserted before ib.css");
+                        }
 
-                            test.o = o;
-                        });
-                    }, test.onload ? 0 : 200);
-
-                    if (!test.onload) {
-                        test.wait();
-                    }
+                        test.o = o;
+                    });
                 }
             });
 
-            if (test.onload) {
-                test.wait();
-            }
-        },
-
-        'test: async, insertBefore, multiple' : function() {
-
-            var test = this;
-
-            test.createInsertBeforeNode();
-
-            var trans = Y.Get.css(path(["a.css?delay=30", "b.css?delay=10", "c.css?delay=50"]), {
-
-                insertBefore: "insertBeforeMe",
-
-                onSuccess: function(o) {
-
-                    setTimeout(function() {
-                        test.resume(function() {
-                            var insertBefore = Y.Node.one("#insertBeforeMe");
-
-                            for (var i = o.nodes.length-1; i >= 0; i--) {
-                                var n = Y.Node.one(o.nodes[i]);
-                                Y.Assert.isTrue(n.compareTo(insertBefore.previous()), "Not inserted before insertBeforeMe");
-                                insertBefore = n;
-                            }
-
-                            // TODO: These don't work as expected on IE (even though insertBefore worked). Better cross-browser assertion?
-                            if (!Y.UA.ie) {
-                                Y.Assert.areEqual("9991", this.na.getComputedStyle("zIndex"), "a.css does not seem to be inserted before ib.css");
-                                Y.Assert.areEqual("9992", this.nb.getComputedStyle("zIndex"), "b.css does not seem to be inserted before ib.css");
-                                Y.Assert.areEqual("9993", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be inserted before ib.css");
-                            }
-
-                            test.o = o;
-
-                        });
-
-                    }, test.onload ? 0 : 200);
-
-                    if (!test.onload) {
-                        test.wait();
-                    }
-                },
-
-                async:true
-            });
-
-            if (test.onload) {
-                test.wait();
-            }
+            test.wait(500);
         },
 
         'test: charset, single' : function() {
-
             var test = this;
 
             var trans = Y.Get.css(path("a.css?delay=20"), {
-
                 charset: "ISO-8859-1",
 
                 onSuccess: function(o) {
-                    setTimeout(function() {
-                        test.resume(function() {
+                    test.resume(function() {
+                        var node = document.getElementById(o.nodes[0].id);
 
-                            var node = document.getElementById(o.nodes[0].id);
+                        Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
 
-                            Y.Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
-                            Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
-
-                            test.o = o;
-                        });
-
-                    }, test.onload ? 0 : 100);
-
-                    if (!test.onload) {
-                        test.wait();
-                    }
+                        test.o = o;
+                    });
                 }
             });
 
-            if (test.onload) {
-                test.wait();
-            }
+            test.wait(500);
         },
 
         'test: charset, multiple' : function() {
-
             var test = this;
 
             var trans = Y.Get.css(path(["a.css?delay=10", "b.css?delay=50", "c.css?delay=20"]), {
-
                 charset: "ISO-8859-1",
 
                 onSuccess: function(o) {
+                    test.resume(function() {
 
-                    setTimeout(function() {
-                        test.resume(function() {
+                        Y.Assert.areEqual(3, o.nodes.length, "Unexpected node count");
 
-                            Y.Assert.areEqual(3, o.nodes.length, "Unexpected node count");
+                        for (var i = 0; i < o.nodes.length; i++) {
+                            var node = document.getElementById(o.nodes[i].id);
 
-                            for (var i = 0; i < o.nodes.length; i++) {
+                            Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
+                        }
 
-                                var node = document.getElementById(o.nodes[i].id);
-
-                                Y.Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
-                                Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
-                            }
-
-                            test.o = o;
-                        });
-                    }, test.onload ? 0 : 200);
-
-                    if (!test.onload) {
-                        test.wait();
-                    }
+                        test.o = o;
+                    });
                 }
             });
 
-            if (test.onload) {
-                test.wait();
-            }
-        },
-
-        'test: async, charset, multiple' : function() {
-
-            var test = this;
-
-            var trans = Y.Get.css(path(["a.css?delay=30", "b.css?delay=10", "c.css?delay=20"]), {
-
-                charset: "ISO-8859-1",
-
-                onSuccess: function(o) {
-
-                    setTimeout(function() {
-                        test.resume(function() {
-
-                            Y.Assert.areEqual(3, o.nodes.length, "Unexpected node count");
-
-                            for (var i = 0; i < o.nodes.length; i++) {
-
-                                var node = document.getElementById(o.nodes[i].id);
-
-                                Y.Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
-                                Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
-                            }
-
-                            test.o = o;
-                        });
-
-                    }, test.onload ? 0 : 200);
-
-                    if (!test.onload) {
-                        test.wait();
-                    }
-                },
-                async :true
-            });
-
-            if (test.onload) {
-                test.wait();
-            }
+            test.wait(500);
         },
 
         'test: attributes, single' : function() {
-
             var test = this;
 
             var trans = Y.Get.css(path("a.css?delay=10"), {
-
                 attributes: {
                     "charset": "ISO-8859-1",
                     "title": "myscripts"
                 },
 
                 onSuccess: function(o) {
+                    test.resume(function() {
+                        var node = document.getElementById(o.nodes[0].id);
 
-                    setTimeout(function() {
-                        test.resume(function() {
+                        Y.Assert.areEqual("myscripts", node.title, "title property not set");
+                        Y.Assert.areEqual("myscripts", node.getAttribute("title"), "title attribute not set");
+                        Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
 
-                            var node = document.getElementById(o.nodes[0].id);
-
-                            Y.Assert.areEqual("myscripts", node.title, "title property not set");
-                            Y.Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
-                            Y.Assert.areEqual("myscripts", node.getAttribute("title"), "title attribute not set");
-                            Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
-
-                            test.o = o;
-                        });
-
-                    }, test.onload ? 0 : 100);
-
-                    if (!test.onload) {
-                        test.wait();
-                    }
+                        test.o = o;
+                    });
                 }
             });
 
-
-            if (test.onload) {
-                test.wait();
-            }
+            test.wait(500);
         },
 
         'test: attributes, multiple' : function() {
-
             var test = this;
 
             var trans = Y.Get.css(path(["a.css?delay=10", "b.css?delay=50", "c.css?delay=20"]), {
-
                 attributes: {
                     "charset": "ISO-8859-1",
                     "title": "myscripts"
                 },
 
                 onSuccess: function(o) {
+                    test.resume(function() {
 
-                    setTimeout(function() {
-                        test.resume(function() {
+                        Y.Assert.areEqual(3, o.nodes.length, "Unexpected node count");
 
-                            Y.Assert.areEqual(3, o.nodes.length, "Unexpected node count");
+                        for (var i = 0; i < o.nodes.length; i++) {
 
-                            for (var i = 0; i < o.nodes.length; i++) {
+                            var node = document.getElementById(o.nodes[i].id);
 
-                                var node = document.getElementById(o.nodes[i].id);
+                            Y.Assert.areEqual("myscripts", node.title, "title property not set");
+                            Y.Assert.areEqual("myscripts", node.getAttribute("title"), "title attribute not set");
+                            Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
+                        }
 
-                                Y.Assert.areEqual("myscripts", node.title, "title property not set");
-                                Y.Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
-                                Y.Assert.areEqual("myscripts", node.getAttribute("title"), "title attribute not set");
-                                Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
-                            }
-
-                            test.o = o;
-                        });
-                    }, test.onload ? 0 : 200);
-
-                    if (!test.onload) {
-                        test.wait();
-                    }
-
+                        test.o = o;
+                    });
                 }
             });
 
-
-            if (test.onload) {
-                test.wait();
-            }
+            test.wait(500);
         },
 
-        'test: async, attributes, multiple' : function() {
-
-            var test = this;
-
-            var trans = Y.Get.css(path(["a.css?delay=10", "b.css?delay=50", "c.css?delay=20"]), {
-
-                attributes: {
-                    "charset": "ISO-8859-1",
-                    "title": "myscripts"
-                },
-
-                onSuccess: function(o) {
-
-                    setTimeout(function() {
-                        test.resume(function() {
-
-                            Y.Assert.areEqual(3, o.nodes.length, "Unexpected node count");
-
-                            for (var i = 0; i < o.nodes.length; i++) {
-
-                                var node = document.getElementById(o.nodes[i].id);
-
-                                Y.Assert.areEqual("myscripts", node.title, "title property not set");
-                                Y.Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
-                                Y.Assert.areEqual("myscripts", node.getAttribute("title"), "title attribute not set");
-                                Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
-                            }
-
-                            test.o = o;
-                        });
-                    }, test.onload ? 0 : 200);
-
-                    if (!test.onload) {
-                        test.wait();
-                    }
-                },
-
-                async :true
-            });
-
-
-            if (test.onload) {
-                test.wait();
-            }
-        },
-
-        // TODO: CSS failure not widely supported. Enable when success/failure handling is in place
-
-        'ignore: single css, failure': function() {
-
+        'test: single css, failure': function() {
             var test = this;
             var counts = {
                 success:0,
                 failure:0
             };
 
-            Y.Get.abort(Y.Get.css(path("a.css"), {
-
+            Y.Get.css(path("bogus.css"), {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
                 onSuccess: function(o) {
-                    Y.Assert.fail("onSuccess shouldn't have been called");
+                    test.resume(function () {
+                        Y.Assert.fail("onSuccess shouldn't have been called");
+                    });
                 },
 
                 onFailure: function(o) {
-                    counts.failure++;
-                    Y.Assert.isTrue(counts.failure === 1, "onFailure called more than once");
+                    test.resume(function () {
+                        counts.failure++;
+                        Y.Assert.areEqual(1, counts.failure, "onFailure called more than once");
+                    });
                 },
 
                 onEnd: function(o) {
                     test.o = o;
                 }
-            }));
+            });
+
+            test.wait(500);
         },
 
-        // TODO: CSS failure not widely supported. Enable when success/failure handling is in place
-
-        'ignore: multiple css, failure': function() {
+        'test: multiple css, failure': function() {
             var test = this;
             var counts = {
                 success:0,
                 failure:0
             };
 
-            Y.Get.abort(Y.Get.css(path(["a.css", "b.css", "c.css"]), {
-
+            Y.Get.css(path(["a.css", "bogus.css", "c.css"]), {
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
 
@@ -1622,7 +1332,14 @@ YUI.add('get-test', function(Y) {
                 onFailure: function(o) {
                     test.resume(function() {
                         counts.failure++;
-                        Y.Assert.isTrue(counts.failure === 1, "onFailure called more than once");
+                        Y.Assert.areEqual(1, counts.failure, "onFailure called more than once");
+
+                        if (!Y.UA.ie) {
+                            Y.Assert.areEqual("1111", this.na.getComputedStyle("zIndex"), "a.css does not seem to be loaded");
+                            Y.Assert.areNotEqual("1234", this.nb.getComputedStyle("zIndex"), "b.css was loaded when it shouldn't have been");
+                            Y.Assert.areEqual("4321", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be loaded");
+                        }
+
                         test.o = o;
                     });
                 },
@@ -1630,20 +1347,13 @@ YUI.add('get-test', function(Y) {
                 onEnd: function(o) {
                     test.o = o;
                 }
-            }));
+            });
 
             this.wait();
-        },
-
-        // TODO: CSS failure not widely supported. Enable when success/failure handling is in place
-
-        'ignore: async multiple css, failure': function() {
         }
     });
 
-/*
     Y.GetTests.Functional = new Y.Test.Case({
-
         name: "Functional Tests",
 
         'test: Loader, ScrollView' : function() {
@@ -1670,6 +1380,4 @@ YUI.add('get-test', function(Y) {
             this.wait();
         }
     });
-
-*/
 });

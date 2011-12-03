@@ -13,14 +13,18 @@
 
 <p>You need to run 'node delay.js' if you pass delay=true in the querystring. Otherwise tests will fail.</p>
 
-<script src="../../../build/yui-core/yui-core.js"></script>
-<script src="../../../build/yui-log/yui-log.js"></script>
-<script src="../../../build/yui-later/yui-later.js"></script>
+<!-- <script src="../../../build/yui/yui.js" charset="utf-8"></script> -->
 
-<script src="../../../build/get/get-debug.js"></script>
+<script src="../../../build/yui-core/yui-core.js" charset="utf-8"></script>
+<script src="../../../build/yui-log/yui-log.js" charset="utf-8"></script>
+<script src="../../../build/yui-later/yui-later.js" charset="utf-8"></script>
+
+<script src="../../../build/get/get-debug.js" charset="utf-8"></script>
+
+<script src="../../../build/loader/loader.js" charset="utf-8"></script>
+<script src="../../../build/features/features.js" charset="utf-8"></script>
 
 <!-- Adding these manually and doing a use("*") so we don't need "get" to test "get" -->
-<script src="../../../build/features/features.js" charset="utf-8"></script>
 <script src="../../../build/oop/oop.js" charset="utf-8"></script>
 <script src="../../../build/event-custom-base/event-custom-base.js" charset="utf-8"></script>
 <script src="../../../build/event-custom-complex/event-custom-complex.js" charset="utf-8"></script>
@@ -93,8 +97,8 @@ var Y = YUI({
     }
 
     Y.GetTests.add(Y.GetTests.Scripts);
-    // Y.GetTests.add(Y.GetTests.CSS);
-    // Y.GetTests.add(Y.GetTests.Functional);
+    Y.GetTests.add(Y.GetTests.CSS);
+    Y.GetTests.add(Y.GetTests.Functional);
 
     new Y.Test.Console().render('#log');
     Y.Test.Runner.add(Y.GetTests);

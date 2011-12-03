@@ -13,70 +13,6 @@
 var Lang = Y.Lang,
     Get, Transaction;
 
-/**
-Returns a new object containing a deep merge of the enumerable properties of all
-passed objects. Properties in later arguments take precedence over properties
-with the same name in earlier arguments. Plain objects and arrays are
-deep-cloned rather than copied by reference. All other complex objects (
-functions, Dates, RegExps, etc.) are copied by reference.
-
-@method deepMerge
-@param {object} obj* One or more objects to merge.
-@return {object} New object with merged values from all other objects.
-**/
-function deepMerge() {
-    var args = Array.prototype.slice.call(arguments);
-    args.unshift({});
-    return simpleMix.apply(this, args);
-}
-
-/**
-Like `deepMerge()`, but modifies the first passed object with a deep merge of
-the enumerable properties of all other passed objects, rather than returning a
-brand new object.
-
-@method simpleMix
-@param {object} target Object to receive mixed-in properties.
-@param {object} obj* One or more objects to mix into _target_.
-@return {object} Reference to the same _target_ object that was passed in.
-**/
-function simpleMix() {
-    var args     = Array.prototype.slice.call(arguments),
-        target   = args.shift(),
-
-        hasOwn   = Object.prototype.hasOwnProperty,
-        toString = Object.prototype.toString,
-
-        i, key, keys, len, source, type, value;
-
-    while ((source = args.shift())) { // assignment
-        keys = Y.Object.keys(source);
-
-        for (i = 0, len = keys.length; i < len; ++i) {
-            key   = keys[i];
-            value = source[key];
-            type  = value && Y.Lang.type(value);
-
-            if ((type === 'object' || type === 'array') && !value.nodeType) {
-                // The value.nodeType check above prevents us from trying to
-                // merge the document object. Ideally we should add a few more
-                // checks for other non-plain objects as well, but this'll do
-                // for now.
-
-                if (!target[key] || Y.Lang.type(target[key]) !== type) {
-                    target[key] = type === 'object' ? {} : [];
-                }
-
-                simpleMix(target[key], value);
-            } else {
-                target[key] = value;
-            }
-        }
-    }
-
-    return target;
-}
-
 Y.Get = Get = {
     // -- Public Properties ----------------------------------------------------
 
@@ -92,7 +28,8 @@ Y.Get = Get = {
             rel: 'stylesheet'
         },
 
-        doc: Y.config.linkDoc || Y.config.doc
+        doc         : Y.config.linkDoc || Y.config.doc,
+        pollInterval: 50
     },
 
     /**
@@ -263,12 +200,7 @@ Y.Get = Get = {
             // link node finishes loading. This is currently true for IE, Opera,
             // and Firefox 9+. Note that IE versions <9 fire the DOM 0 "onload"
             // event, but not "load". All versions of IE fire "onload".
-            cssLoad: ua.gecko >= 9 || !ua.webkit,
-
-            // True if this browser fires an event when a dynamically injected
-            // link node fails to load. Currently, Firefox 9+ is the only
-            // browser known to support this.
-            cssError: ua.gecko >= 9,
+            cssLoad: !!(ua.gecko ? ua.gecko >= 9 : !ua.webkit),
 
             // True if this browser preserves script execution order while
             // loading scripts in parallel as long as the script node's `async`
@@ -287,22 +219,26 @@ Y.Get = Get = {
 
         for (i = 0, len = urls.length; i < len; ++i) {
             url = urls[i];
+            req = {attributes: {}};
 
-            // If `url` is a string, we create a URL object for it, then merge
-            // in global options and request-specific options. If it's an object
+            // If `url` is a string, we create a URL object for it, then mix in
+            // global options and request-specific options. If it's an object
             // with a "url" property, we assume it's a request object containing
             // URL-specific options.
             if (typeof url === 'string') {
-                req = deepMerge({url: url}, this.options, options);
+                req.url = url;
             } else if (url.url) {
                 // URL-specific options override both global defaults and
                 // request-specific options.
-                req = deepMerge(this.options, options, url);
+                Y.mix(req, url, false, null, 0, true);
                 url = url.url; // Make url a string so we can use it later.
             } else {
                 Y.log('URL must be a string or an object with a `url` property.', 'error', 'get');
                 continue;
             }
+
+            Y.mix(req, options, false, null, 0, true);
+            Y.mix(req, this.options, false, null, 0, true);
 
             // If we didn't get an explicit type for this URL either in the
             // request options or the URL-specific options, try to determine
@@ -321,7 +257,8 @@ Y.Get = Get = {
 
             // Mix in type-specific default options, but don't overwrite any
             // options that have already been set.
-            simpleMix(req, req.type === 'js' ? this.jsOptions : this.cssOptions);
+            Y.mix(req, req.type === 'js' ? this.jsOptions : this.cssOptions,
+                false, null, 0, true);
 
             // Give the node an id attribute if it doesn't already have one.
             req.attributes.id || (req.attributes.id = Y.guid());
@@ -480,45 +417,54 @@ Transaction.prototype = {
     _state: 'new', // "new", "executing", or "done"
 
     // -- Public Methods -------------------------------------------------------
-    abort: function () {
-        this._pending = null;
-        this._queue   = [];
-        this._waiting = 0;
+    abort: function (msg) {
+        this._pending    = null;
+        this._pendingCSS = null;
+        this._pollTimer  = clearTimeout(this._pollTimer);
+        this._queue      = [];
+        this._waiting    = 0;
 
-        this.errors.push({error: 'Aborted'});
+        this.errors.push({error: msg || 'Aborted'});
         this._finish();
     },
 
     execute: function (callback) {
-        var requests = this.requests,
-            state    = this._state,
+        var self     = this,
+            requests = self.requests,
+            state    = self._state,
             i, len, queue, req;
 
         if (state === 'done') {
-            callback && callback(this.errors.length ? this.errors : null, this);
+            callback && callback(self.errors.length ? self.errors : null, self);
         } else {
-            callback && this._callbacks.push(callback);
+            callback && self._callbacks.push(callback);
 
             if (state === 'executing') {
                 return;
             }
         }
 
-        this._state = 'executing';
-        this._queue = queue = [];
+        self._state = 'executing';
+        self._queue = queue = [];
+
+        if (self.options.timeout) {
+            self._timeout = setTimeout(function () {
+                self.abort('Timeout');
+            }, self.options.timeout);
+        }
 
         for (i = 0, len = requests.length; i < len; ++i) {
-            req = this.requests[i];
+            req = self.requests[i];
 
             if (req.async || req.type === 'css') {
                 // No need to queue CSS or fully async JS.
-                this._insert(req);
+                self._insert(req);
             } else {
                 queue.push(req);
             }
         }
 
-        this._next();
+        self._next();
     },
 
     purge: function () {
@@ -555,10 +501,16 @@ Transaction.prototype = {
             this._callbacks[i](errors, this);
         }
 
-        if (options.onFailure || options.onSuccess || options.onEnd) {
+        if (options.onEnd || options.onFailure || options.onSuccess
+                || options.onTimeout) {
+
             data = this._getEventData();
 
             if (errors) {
+                if (options.onTimeout && errors[errors.length - 1] === 'Timeout') {
+                    options.onTimeout.call(thisObj, data);
+                }
+
                 if (options.onFailure) {
                     options.onFailure.call(thisObj, data);
                 }
@@ -614,11 +566,20 @@ Transaction.prototype = {
             isScript     = req.type === 'js',
             node         = req.node,
             self         = this,
-            ua           = Y.UA;
+            ua           = Y.UA,
+            nodeType;
 
         if (!node) {
-            node = req.node = this._createNode(isScript ? 'script' : 'link',
-                req.attributes, req.doc);
+            if (isScript) {
+                nodeType = 'script';
+            } else if (!env.cssLoad && ua.gecko) {
+                nodeType = 'style';
+            } else {
+                nodeType = 'link';
+            }
+
+            node = req.node = this._createNode(nodeType, req.attributes,
+                req.doc);
         }
 
         function onError(e) {
@@ -657,7 +618,20 @@ Transaction.prototype = {
                 }
             }
         } else {
-            node.setAttribute('href', req.url);
+            if (!env.cssLoad && ua.gecko) {
+                // In Firefox <9, we can import the requested URL into a <style>
+                // node and poll for the existence of node.sheet.cssRules. This
+                // gives us a reliable way to determine CSS load completion that
+                // also works for cross-domain stylesheets.
+                //
+                // Props to Zach Leatherman for calling my attention to this
+                // technique.
+                node.innerHTML = (req.attributes.charset ?
+                    '@charset "' + req.attributes.charset + '";' : '') +
+                    '@import "' + req.url + '";';
+            } else {
+                node.setAttribute('href', req.url);
+            }
         }
 
         // Inject the node.
@@ -671,9 +645,10 @@ Transaction.prototype = {
             };
         } else if (!isScript && !env.cssLoad) {
             // CSS on Firefox <9 or WebKit.
-            // TODO
+            this._poll(req);
         } else {
-            // Script or CSS on everything else.
+            // Script or CSS on everything else. Using DOM 0 events because that
+            // evens the playing field with older IEs.
             node.onerror = onError;
             node.onload  = onLoad;
         }
@@ -697,6 +672,76 @@ Transaction.prototype = {
             this._insert(this._queue.shift());
         } else if (!this._waiting) {
             this._finish();
+        }
+    },
+
+    _poll: function (newReq) {
+        var self       = this,
+            pendingCSS = self._pendingCSS,
+            isWebKit   = Y.UA.webkit,
+            i, hasRules, j, nodeHref, req, sheets;
+
+        if (newReq) {
+            pendingCSS || (pendingCSS = self._pendingCSS = []);
+            pendingCSS.push(newReq);
+
+            if (self._pollTimer) {
+                // A poll timeout is already pending, so no need to create a
+                // new one.
+                return;
+            }
+        }
+
+        self._pollTimer = null;
+
+        // Note: in both the WebKit and Gecko hacks below, a CSS URL that 404s
+        // will still be treated as a success. There's no good workaround for
+        // this.
+
+        for (i = 0; i < pendingCSS.length; ++i) {
+            req = pendingCSS[i];
+
+            if (isWebKit) {
+                // Look for a stylesheet matching the pending URL.
+                sheets   = req.doc.styleSheets;
+                j        = sheets.length;
+                nodeHref = req.node.href;
+
+                while (--j >= 0) {
+                    if (sheets[j].href === nodeHref) {
+                        pendingCSS.splice(i, 1);
+                        i -= 1;
+                        self._progress(null, req);
+                        break;
+                    }
+                }
+            } else {
+                // Many thanks to Zach Leatherman for calling my attention to
+                // the @import-based cross-domain technique used here, and to
+                // Oleg Slobodskoi for an earlier same-domain implementation.
+                //
+                // See Zach's blog for more details:
+                // http://www.zachleat.com/web/2010/07/29/load-css-dynamically/
+                try {
+                    // We don't really need to store this value since we never
+                    // use it again, but if we don't store it, Closure Compiler
+                    // assumes the code is useless and removes it.
+                    hasRules = !!req.node.sheet.cssRules;
+
+                    // If we get here, the stylesheet has loaded.
+                    pendingCSS.splice(i, 1);
+                    i -= 1;
+                    self._progress(null, req);
+                } catch (ex) {
+                    // An exception means the stylesheet is still loading.
+                }
+            }
+        }
+
+        if (pendingCSS.length) {
+            self._pollTimer = setTimeout(function () {
+                self._poll.call(self);
+            }, self.options.pollInterval);
         }
     },
 
@@ -729,7 +774,10 @@ Transaction.prototype = {
             Get._purgeNodes.push(req.node);
         }
 
-        this._pending = null;
+        if (this._pending === req) {
+            this._pending = null;
+        }
+
         this._waiting -= 1;
         this._next();
     }
