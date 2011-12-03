@@ -178,7 +178,9 @@ var dial_02 = new Y.Dial({
 		value: 10,
 //		value: 100,
 		diameter: 200,
-		decimalPlaces:0
+		decimalPlaces:0,
+        strings:{label:'Monkeys in barrel:', resetStr: 'Reset', tooltipHandle: 'my tool tip text'}
+		
 	});
 	dial_02.render("#dial_container3");
 	drawMinMaxLines(dial_02);
@@ -189,7 +191,9 @@ var dial_03 = new Y.Dial({
 		stepsPerRevolution:100,
 		value: 10,
 		diameter: 200,
-		decimalPlaces:0
+		decimalPlaces:0,
+        strings:{label:'Altitude in Kilometers:', resetStr: 'Reset', tooltipHandle: 'Drag to set'}
+
 	});
 	dial_03.render("#dial_container4");
 	drawMinMaxLines(dial_03);
