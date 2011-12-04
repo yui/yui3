@@ -73,6 +73,7 @@
         <url>json/tests/json.html</url>
         <!--url>jsonp/tests/jsonp.html</url>
         <url>jsonp/tests/jsonp-url.html</url-->
+        <url>matrix/tests/matrix.html</url>
         <url>node/tests/node.html</url>
         <!--url>node-focusmanager/tests/focusmanager.html</url-->
         <url>parallel/tests/index.html</url>
