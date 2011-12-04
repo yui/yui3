@@ -345,6 +345,8 @@ SVGDrawing.prototype = {
      */
     clear: function()
     {
+        this._width = 0;
+        this._height = 0;
         this._left = 0;
         this._right = 0;
         this._top = 0;
@@ -795,7 +797,8 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 			cy = fill.cy,
 			fx = fill.fx,
 			fy = fill.fy,
-			r = fill.r;
+			r = fill.r,
+            stopNodes = [];
 		if(type == "linear")
 		{
             cx = w/2;
@@ -849,8 +852,18 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 		
 		len = stops.length;
 		def = 0;
-		for(i = 0; i < len; ++i)
+        for(i = 0; i < len; ++i)
 		{
+            if(this._stops && this._stops.length > 0)
+            {
+                stopNode = this._stops.shift();
+                newStop = false;
+            }
+            else
+            {
+			    stopNode = graphic._createGraphicNode("stop");
+                newStop = true;
+            }
 			stop = stops[i];
 			opacity = stop.opacity;
 			color = stop.color;
@@ -859,13 +872,23 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 			opacity = isNumber(opacity) ? opacity : 1;
 			opacity = Math.max(0, Math.min(1, opacity));
 			def = (i + 1) / len;
-			stopNode = graphic._createGraphicNode("stop");
 			stopNode.setAttribute("offset", offset);
 			stopNode.setAttribute("stop-color", color);
 			stopNode.setAttribute("stop-opacity", opacity);
-			gradientNode.appendChild(stopNode);
+			if(newStop)
+            {
+                gradientNode.appendChild(stopNode);
+            }
+            stopNodes.push(stopNode);
 		}
+        while(this._stops && this._stops.length > 0)
+        {
+            gradientNode.removeChild(this._stops.shift());
+        }
+        this._stops = stopNodes;
 	},
+
+    _stops: null,
 
     /**
      * Sets the value of an attribute.
@@ -895,8 +918,6 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 */
 	translate: function(x, y)
 	{
-		this._translateX += x;
-		this._translateY += y;
 		this._addTransform("translate", arguments);
 	},
 
@@ -909,7 +930,6 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 */
 	translateX: function(x)
     {
-        this._translateX += x;
         this._addTransform("translateX", arguments);
     },
 
@@ -922,7 +942,6 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 */
 	translateY: function(y)
     {
-        this._translateY += y;
         this._addTransform("translateY", arguments);
     },
 
@@ -961,15 +980,6 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 },
 
 	/**
-     * Storage for `rotation` atribute.
-     *
-     * @property _rotation
-     * @type Number
-	 * @private
-	 */
-	 _rotation: 0,
-
-	/**
 	 * Rotates the shape clockwise around it transformOrigin.
 	 *
 	 * @method rotate
@@ -977,7 +987,6 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 */
 	 rotate: function(deg)
 	 {
-		this._rotation = deg;
 		this._addTransform("rotate", arguments);
 	 },
 
@@ -1041,9 +1050,15 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
             transformOrigin = this.get("transformOrigin");
             tx = x + (transformOrigin[0] * this.get("width"));
             ty = y + (transformOrigin[1] * this.get("height")); 
+            //need to use translate for x/y coords
             if(isPath)
             {
-                matrix.init({dx: x + this._left, dy: y + this._top});
+                //adjust origin for custom shapes 
+                if(!(this instanceof Y.SVGPath))
+                {
+                    tx = this._left + (transformOrigin[0] * this.get("width"));
+                    ty = this._top + (transformOrigin[1] * this.get("height"));
+                }
                 normalizedMatrix.init({dx: x + this._left, dy: y + this._top});
             }
             normalizedMatrix.translate(tx, ty);
@@ -1109,24 +1124,6 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	{
 		this._draw();
 	},
-	
-	/**
-	 * Storage for translateX
-	 *
-     * @property _translateX
-     * @type Number
-	 * @private
-	 */
-	_translateX: 0,
-
-	/**
-	 * Storage for translateY
-	 *
-     * @property _translateY
-     * @type Number
-	 * @private
-	 */
-	_translateY: 0,
     
     /**
      * Storage for the transform attribute.
@@ -2181,7 +2178,10 @@ SVGGraphic.ATTRS = {
         setter: function(val)
         {
             this._resizeDown = val;
-            this._redraw();
+            if(this._contentNode)
+            {
+                this._redraw();
+            }
             return val;
         }
     },
@@ -2694,7 +2694,7 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
         var contentNode = this._createGraphicNode("svg"),
             pointerEvents = this.get("pointerEvents");
         contentNode.style.position = "absolute";
-        contentNode.style.top = "px";
+        contentNode.style.top = "0px";
         contentNode.style.left = "0px";
         contentNode.style.overflow = "auto";
         contentNode.setAttribute("overflow", "auto");

@@ -12,8 +12,7 @@
 <script>
 var Y = YUI({
     allowRollup: false,
-    filter: "raw",
-    //filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
     modules: {
         'matrix-test': {
             fullpath: 'matrix-test.js',

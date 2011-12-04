@@ -13,7 +13,7 @@ VMLShape = function()
 {
     this._transforms = [];
     this.matrix = new Y.Matrix();
-    this.rotationMatrix = new Y.Matrix();
+    this._normalizedMatrix = new Y.Matrix();
     VMLShape.superclass.constructor.apply(this, arguments);
 };
 
@@ -85,7 +85,7 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 			fill,
 			fillstring;
 			id = this.get("id");
-			type = this._type;
+			type = this._type == "path" ? "shape" : this._type;
 			classString = 'vml' + type + ' yui3-vmlShape yui3-' + this.constructor.NAME; 
 			stroke = this._getStrokeProps();
 			fill = this._getFillProps();
@@ -489,7 +489,14 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
                     {
                         if(gradient.hasOwnProperty(i))
                         {
-                            this._fillNode.setAttribute(i, gradient[i]);
+                            if(i == "colors")
+                            {
+                                this._fillNode.colors.value = gradient[i];
+                            }
+                            else
+                            {
+                                this._fillNode[i] = gradient[i];
+                            }
                         }
                     }
                 }
@@ -582,7 +589,8 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 			fx = fill.fx,
 			fy = fill.fy,
 			r = fill.r,
-			pct,
+			actualPct,
+            pct,
 			rotation = fill.rotation || 0;
 		if(type === "linear")
 		{
@@ -622,17 +630,12 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 			opacity = isNumber(opacity) ? opacity : 1;
 			pct = stop.offset || i/(len-1);
 			pct *= (r * 2);
-			if(pct <= 1)
-			{
-				pct = Math.round(100 * pct) + "%";
-				oi = i > 0 ? i + 1 : "";
-				gradientProps["opacity" + oi] = opacity + "";
-				colorstring += ", " + pct + " " + color;
-			}
+            pct = Math.round(100 * pct) + "%";
+            oi = i > 0 ? i + 1 : "";
+            gradientProps["opacity" + oi] = opacity + "";
+            colorstring += ", " + pct + " " + color;
 		}
-		pct = stops[1].offset || 0;
-		pct *= 100;
-		if(parseInt(pct, 10) < 100)
+		if(parseFloat(pct) < 100)
 		{
 			colorstring += ", 100% " + color;
 		}
@@ -679,14 +682,18 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
             tx,
             ty,
             matrix = this.matrix,
-            rotationMatrix = this.rotationMatrix,
+            normalizedMatrix = this._normalizedMatrix,
+            isPathShape = this instanceof Y.VMLPath,
             i = 0,
             len = this._transforms.length;
-
         if(this._transforms && this._transforms.length > 0)
 		{
             transformOrigin = this.get("transformOrigin");
-            
+       
+            if(isPathShape)
+            {
+                normalizedMatrix.translate(this._left, this._top);
+            }
             //vml skew matrix transformOrigin ranges from -0.5 to 0.5.
             //subtract 0.5 from values
             tx = transformOrigin[0] - 0.5;
@@ -695,19 +702,23 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
             //ensure the values are within the appropriate range to avoid errors
             tx = Math.max(-0.5, Math.min(0.5, tx));
             ty = Math.max(-0.5, Math.min(0.5, ty));
-
             for(; i < len; ++i)
             {
                 key = this._transforms[i].shift();
                 if(key)
                 {
+                    normalizedMatrix[key].apply(normalizedMatrix, this._transforms[i]); 
                     matrix[key].apply(matrix, this._transforms[i]); 
                 }
 			}
-            transform = matrix.a + "," + 
-                        matrix.c + "," + 
-                        matrix.b + "," + 
-                        matrix.d + "," + 
+            if(isPathShape)
+            {
+                normalizedMatrix.translate(-this._left, -this._top);
+            }
+            transform = normalizedMatrix.a + "," + 
+                        normalizedMatrix.c + "," + 
+                        normalizedMatrix.b + "," + 
+                        normalizedMatrix.d + "," + 
                         0 + "," +
                         0;
 		}
@@ -722,12 +733,15 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
             this._skew.matrix = transform;
             this._skew.on = true;
             //use offset for translate
-            this._skew.offset = matrix.dx + "px, " + matrix.dy + "px";
+            this._skew.offset = normalizedMatrix.dx + "px, " + normalizedMatrix.dy + "px";
             this._skew.origin = tx + ", " + ty;
         }
-        this._transforms = [];
+        if(this._type != "path")
+        {
+            this._transforms = [];
+        }
         node.style.left = x + "px";
-		node.style.top =  y + "px";
+        node.style.top =  y + "px";
     },
 	
 	/**
@@ -831,16 +845,6 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 		this._addTransform("skewY", arguments);
 	 },
 
-
-	/**
-     * Storage for `rotation` atribute.
-     *
-     * @property _rotation
-     * @type Number
-	 * @private
-	 */
-	_rotation: 0,
-
 	/**
 	 * Rotates the shape clockwise around it transformOrigin.
 	 *
@@ -849,7 +853,6 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 	 */
 	 rotate: function(deg)
 	 {
-		this._rotation += deg;
 		this._addTransform("rotate", arguments);
 	 },
 
@@ -1113,17 +1116,13 @@ VMLShape.ATTRS = {
             var i = 0,
                 len,
                 transform;
-            this._rotation = 0;
             this.matrix.init();	
-		    this._transforms = this.matrix.getTransformArray(val);
+            this._normalizedMatrix.init();	
+            this._transforms = this.matrix.getTransformArray(val);
             len = this._transforms.length;
             for(;i < len; ++i)
             {
                 transform = this._transforms[i];
-                if(transform[0] == "rotate")  
-                {
-                    this._rotation += transform[1];
-                }
             }
             this._transform = val;
             if(this.initialized)

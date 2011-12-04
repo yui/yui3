@@ -1806,7 +1806,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "widget", 
             "dd-constrain", 
-            "substitute"
+            "substitute", 
+            "event-key"
         ], 
         "skinnable": true
     }, 
@@ -2111,4 +2112,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '2b6588af6231ebca3fa0adae54eac33c';
+YUI.Env[Y.version].md5 = 'ed1b9e5be75ac1b3f895338f10b69f42';

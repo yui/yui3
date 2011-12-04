@@ -459,6 +459,18 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     _handleVisibleChange: function(e) 
     {
         this._toggleVisible(this.get("visible"));
+    },
+
+    /**
+     * Returns the sum of all values for the series.
+     *
+     * @method getTotalValues
+     * @return Number
+     */
+    getTotalValues: function()
+    {
+        var total = this.get("valueAxis").getTotalByKey(this.get("valueKey"));
+        return total;
     }
 }, {
     ATTRS: {

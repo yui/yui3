@@ -454,7 +454,8 @@ Y.Router = Y.extend(Router, Y.Base, {
             return false;
         }
 
-        var hash = this._getHashPath();
+        // Get the full hash in all its glory!
+        var hash = HistoryHash.getHash();
 
         if (hash && hash.charAt(0) === '/') {
             // This is an HTML5 browser and we have a hash-based path in the
@@ -878,7 +879,15 @@ Y.Router = Y.extend(Router, Y.Base, {
         } else {
             // Remove the root from the URL before it's set as the hash.
             urlIsString && (url = this.removeRoot(url));
-            HistoryHash[replace ? 'replaceHash' : 'setHash'](url);
+
+            // The `hashchange` event only fires when the new hash is actually
+            // different. This makes sure we'll always dequeue and dispatch,
+            // mimicking the HTML5 behavior.
+            if (url === HistoryHash.getHash()) {
+                this._dispatch(this._getPath(), this._getURL());
+            } else {
+                HistoryHash[replace ? 'replaceHash' : 'setHash'](url);
+            }
         }
 
         return this;

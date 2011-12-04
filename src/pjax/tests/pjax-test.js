@@ -122,7 +122,11 @@ suite.add(new Y.Test.Case({
         ignore: {
             '`error` event should fire on Ajax failure': disableXHR || !html5,
             '`load` event should fire on Ajax success': disableXHR || !html5,
-            '`navigate` event facade should contain the options passed to `navigate()`': disableXHR || !html5
+            '`navigate` event facade should contain the options passed to `navigate()`': disableXHR || !html5,
+            '`navigate` event should fire when a pjax link is clicked': !html5,
+            '`navigate` event should be preventable': !html5,
+            '`navigate` event should not fire when a link is clicked with a button other than the left button': !html5,
+            '`navigate` event should not fire when a modifier key is pressed': !html5
         }
     },
 

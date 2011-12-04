@@ -69,6 +69,31 @@ NumericAxis.ATTRS = {
 Y.extend(NumericAxis, Y.AxisType,
 {
     /**
+     * Returns the sum of all values per key.
+     *
+     * @method getTotalByKey
+     * @param {String} key The identifier for the array whose values will be calculated.
+     * @return Number
+     */
+    getTotalByKey: function(key)
+    {
+        var total = 0,
+            values = this.getDataByKey(key),
+            i = 0,
+            val,
+            len = values ? values.length : 0;
+        for(; i < len; ++i)
+        {
+           val = parseFloat(values[i]);
+           if(!isNaN(val))
+           {
+                total += val;
+           }
+        }
+        return total;
+    },
+
+    /**
      * Type of data used in `Axis`.
      *
      * @property _type
