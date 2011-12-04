@@ -326,8 +326,7 @@ var MatrixUtil = {
             //normalize components of vector(ab)
             a /= sx;
             b /= sx;
-            //get the dot product of vector(ac) and vector(bd)
-            shear = MatrixUtil._round(a * b + c * d);
+            shear = MatrixUtil._round(a * c + b * d);
             c -= a * shear;
             d -= b * shear;
             //get length of vector(cd)
@@ -344,9 +343,10 @@ var MatrixUtil = {
                 d = -d;
                 shear = -shear;
                 sx = -sx;
+                sy = -sy;
             }
-            shear = MatrixUtil.rad2deg(Math.atan(shear));
-            rotate = MatrixUtil.rad2deg(Math.atan2(matrix[1][0], matrix[0][0]));
+            shear = MatrixUtil._round(MatrixUtil.rad2deg(Math.atan(shear)));
+            rotate = MatrixUtil._round(MatrixUtil.rad2deg(Math.atan2(matrix[1][0], matrix[0][0])));
 
             return [
                 ["translate", dx, dy],
