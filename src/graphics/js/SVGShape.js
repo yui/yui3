@@ -463,8 +463,6 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 */
 	translate: function(x, y)
 	{
-		this._translateX += x;
-		this._translateY += y;
 		this._addTransform("translate", arguments);
 	},
 
@@ -477,7 +475,6 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 */
 	translateX: function(x)
     {
-        this._translateX += x;
         this._addTransform("translateX", arguments);
     },
 
@@ -490,7 +487,6 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 */
 	translateY: function(y)
     {
-        this._translateY += y;
         this._addTransform("translateY", arguments);
     },
 
@@ -529,15 +525,6 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 },
 
 	/**
-     * Storage for `rotation` atribute.
-     *
-     * @property _rotation
-     * @type Number
-	 * @private
-	 */
-	 _rotation: 0,
-
-	/**
 	 * Rotates the shape clockwise around it transformOrigin.
 	 *
 	 * @method rotate
@@ -545,7 +532,6 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 */
 	 rotate: function(deg)
 	 {
-		this._rotation = deg;
 		this._addTransform("rotate", arguments);
 	 },
 
@@ -609,9 +595,15 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
             transformOrigin = this.get("transformOrigin");
             tx = x + (transformOrigin[0] * this.get("width"));
             ty = y + (transformOrigin[1] * this.get("height")); 
+            //need to use translate for x/y coords
             if(isPath)
             {
-                matrix.init({dx: x + this._left, dy: y + this._top});
+                //adjust origin for custom shapes 
+                if(!(this instanceof Y.SVGPath))
+                {
+                    tx = this._left + (transformOrigin[0] * this.get("width"));
+                    ty = this._top + (transformOrigin[1] * this.get("height"));
+                }
                 normalizedMatrix.init({dx: x + this._left, dy: y + this._top});
             }
             normalizedMatrix.translate(tx, ty);
@@ -677,24 +669,6 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	{
 		this._draw();
 	},
-	
-	/**
-	 * Storage for translateX
-	 *
-     * @property _translateX
-     * @type Number
-	 * @private
-	 */
-	_translateX: 0,
-
-	/**
-	 * Storage for translateY
-	 *
-     * @property _translateY
-     * @type Number
-	 * @private
-	 */
-	_translateY: 0,
     
     /**
      * Storage for the transform attribute.
