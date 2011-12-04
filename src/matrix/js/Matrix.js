@@ -363,7 +363,7 @@ Matrix.prototype = {
      */
     getDeterminant: function()
     {
-        return Y.MatrixUtil.getDeterminant.apply(this, [this.getMatrixArray()]);
+        return Y.MatrixUtil.getDeterminant(this.getMatrixArray());
     },
 
     /**
@@ -374,7 +374,7 @@ Matrix.prototype = {
      */
     inverse: function()
     {
-        return Y.MatrixUtil.inverse.apply(this, [this.getMatrixArray()]);
+        return Y.MatrixUtil.inverse(this.getMatrixArray());
     },
 
     /**
@@ -385,7 +385,7 @@ Matrix.prototype = {
      */
     transpose: function()
     {
-        return Y.MatrixUtil.transpose.apply(this, [this]);
+        return Y.MatrixUtil.transpose(this.getMatrixArray());
     },
 
     /**
@@ -396,7 +396,7 @@ Matrix.prototype = {
      */
     decompose: function()
     {
-        return Y.MatrixUtil.decompose.apply(this, [this.getMatrixArray()]);
+        return Y.MatrixUtil.decompose(this.getMatrixArray());
     }
 };
 
