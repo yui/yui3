@@ -2463,7 +2463,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
                 node = Y.Node.create('<div/>');
 
             node.setHTML(html);
-            Assert.areEqual(html, node._node.innerHTML);
+            Assert.areEqual(html, node._node.innerHTML.toLowerCase());
         },
 
         'should get html from div': function() {
@@ -2471,7 +2471,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
                 node = Y.Node.create('<div/>');
 
             node.setHTML(html);
-            Assert.areEqual(html, node.getHTML());
+            Assert.areEqual(html, node.getHTML().toLowerCase());
         }
     }));
     Y.Test.Runner.add(suite);
