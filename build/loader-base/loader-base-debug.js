@@ -2137,9 +2137,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 insertBefore: self.insertBefore,
                 charset: self.charset,
                 timeout: self.timeout,
-                autopurge: false,
                 context: self,
-                async: true,
                 onFailure: self._onFailure,
                 onTimeout: self._onTimeout,
                 onProgress: function(e) {
@@ -2428,4 +2426,4 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
 
 
-}, '@VERSION@' ,{requires:['get']});
+}, '@VERSION@' ,{requires:['get', 'features']});
