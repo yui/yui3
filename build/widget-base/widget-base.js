@@ -594,7 +594,7 @@ Y.extend(Widget, Y.Base, {
      */
     bindUI: EMPTY_FN,
 
-    /**å
+    /**
      * Adds nodes to the DOM 
      * 
      * This method is not called by framework and is not chained 
@@ -683,7 +683,7 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-     * Helper method to collect the boundingBox and contentBox, set styles and append to the provided parentNode, if not
+     * Helper method to collect the boundingBox and contentBox and append to the provided parentNode, if not
      * already a child. The owner document of the boundingBox, or the owner document of the contentBox will be used 
      * as the document into which the Widget is rendered if a parentNode is node is not provided. If both the boundingBox and
      * the contentBox are not currently in the document, and no parentNode is provided, the widget will be rendered 
@@ -1127,7 +1127,9 @@ Y.extend(Widget, Y.Base, {
      * @param {EventFacade} e
      */
     _setAttrUI : function(e) {
-        this[_UISET + _toInitialCap(e.attrName)](e.newVal, e.src);
+        if (e.target === this) {
+            this[_UISET + _toInitialCap(e.attrName)](e.newVal, e.src);
+        }
     },
 
     /**
@@ -1183,4 +1185,4 @@ Y.extend(Widget, Y.Base, {
 Y.Widget = Widget;
 
 
-}, '@VERSION@' ,{requires:['attribute', 'event-focus', 'base-base', 'base-pluginhost', 'node-base', 'node-style', 'classnamemanager'], skinnable:true});
+}, '@VERSION@' ,{skinnable:true, requires:['attribute', 'event-focus', 'base-base', 'base-pluginhost', 'node-base', 'node-style', 'classnamemanager']});

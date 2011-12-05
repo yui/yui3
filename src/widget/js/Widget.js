@@ -1129,7 +1129,9 @@ Y.extend(Widget, Y.Base, {
      * @param {EventFacade} e
      */
     _setAttrUI : function(e) {
-        this[_UISET + _toInitialCap(e.attrName)](e.newVal, e.src);
+        if (e.target === this) {
+            this[_UISET + _toInitialCap(e.attrName)](e.newVal, e.src);
+        }
     },
 
     /**
