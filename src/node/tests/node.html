@@ -2464,8 +2464,15 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
 
             node.setHTML(html);
             Assert.areEqual(html, node._node.innerHTML);
-        }
+        },
 
+        'should get html from div': function() {
+            var html = '<p>foo</p>',
+                node = Y.Node.create('<div/>');
+
+            node.setHTML(html);
+            Assert.areEqual(html, node.getHTML());
+        }
     }));
     Y.Test.Runner.add(suite);
 
