@@ -1,14 +1,10 @@
 /**
- * Provides a mechanism to fetch remote resources and
- * insert them into a document.
- * @module get
- */
+Provides dynamic loading of remote JavaScript and CSS resources.
 
-/**
- * Fetches and inserts one or more script or link nodes into the document
- * @class Get
- * @static
- */
+@module get
+@class Get
+@static
+**/
 
 var Lang = Y.Lang,
     Get, Transaction;
@@ -17,11 +13,15 @@ Y.Get = Get = {
     // -- Public Properties ----------------------------------------------------
 
     /**
-    Default options for CSS requests.
+    Default options for CSS requests. Options specified here will override
+    global defaults for CSS requests.
+
+    See the `options` property for all available options.
 
     @property cssOptions
     @type Object
     @static
+    @since 3.5.0
     **/
     cssOptions: {
         attributes: {
@@ -33,11 +33,15 @@ Y.Get = Get = {
     },
 
     /**
-    Default options for JS requests.
+    Default options for JS requests. Options specified here will override global
+    defaults for JS requests.
+
+    See the `options` property for all available options.
 
     @property jsOptions
     @type Object
     @static
+    @since 3.5.0
     **/
     jsOptions: {
         autopurge: true,
@@ -45,11 +49,84 @@ Y.Get = Get = {
     },
 
     /**
-    Default options for all requests.
+    Default options to use for all requests.
 
-    @property options
-    @type Object
+    Note that while all available options are documented here for ease of
+    discovery, some options (like callback functions) only make sense at the
+    transaction level.
+
+    Callback functions specified via the options object or the `options`
+    parameter of the `css()`, `js()`, or `load()` methods will receive the
+    transaction object as a parameter. See `Y.Get.Transaction` for details on
+    the properties and methods available on transactions.
+
     @static
+    @since 3.5.0
+    @property {Object} options
+
+    @property {Boolean} [options.async=false] Whether or not to load scripts
+        asynchronously, meaning they're requested in parallel and execution
+        order is not guaranteed. Has no effect on CSS, since CSS is always
+        loaded asynchronously.
+
+    @property {Object} [options.attributes] HTML attribute name/value pairs that
+        should be added to inserted nodes. By default, the `charset` attribute
+        will be set to "utf-8" and nodes will be given an auto-generated `id`
+        attribute, but you can override these with your own values if desired.
+
+    @property {Boolean} [options.autopurge] Whether or not to automatically
+        purge inserted nodes after the purge threshold is reached. This is
+        `true` by default for JavaScript, but `false` for CSS since purging a
+        CSS node will also remove any styling applied by the referenced file.
+
+    @property {Object} [options.context] `this` object to use when calling
+        callback functions. Defaults to the transaction object.
+
+    @property {Mixed} [options.data] Arbitrary data object to pass to "on*"
+        callbacks.
+
+    @property {Document} [options.doc] Document into which nodes should be
+        inserted. By default, the current document is used.
+
+    @property {HTMLElement|String} [options.insertBefore] HTML element or id
+        string of an element before which all generated nodes should be
+        inserted. If not specified, Get will automatically determine the best
+        place to insert nodes for maximum compatibility.
+
+    @property {Function} [options.onEnd] Callback to execute after a transaction
+        is complete, regardless of whether it succeeded or failed.
+
+    @property {Function} [options.onFailure] Callback to execute after a
+        transaction fails, times out, or is aborted.
+
+    @property {Function} [options.onSuccess] Callback to execute after a
+        transaction completes successfully with no errors. Note that in browsers
+        that don't support the `error` event on CSS `<link>` nodes, a failed CSS
+        request may still be reported as a success because in these browsers
+        it can be difficult or impossible to distinguish between success and
+        failure for CSS resources.
+
+    @property {Function} [options.onTimeout] Callback to execute after a
+        transaction times out.
+
+    @property {Number} [options.pollInterval=50] Polling interval (in
+        milliseconds) for detecting CSS load completion in browsers that don't
+        support the `load` event on `<link>` nodes. This isn't used for
+        JavaScript.
+
+    @property {Number} [options.purgethreshold=20] Number of nodes to insert
+        before triggering an automatic purge when `autopurge` is `true`.
+
+    @property {Number} [options.timeout] Number of milliseconds to wait before
+        aborting a transaction. When a timeout occurs, the `onTimeout` callback
+        is called, followed by `onFailure` and finally `onEnd`. By default,
+        there is no timeout.
+
+    @property {String} [options.type] Resource type ("css" or "js"). This option
+        is set automatically by the `css()` and `js()` functions and will be
+        ignored there, but may be useful when using the `load()` function. If
+        not specified, the type will be inferred from the URL, defaulting to
+        "js" if the URL doesn't contain a recognizable file extension.
     **/
     options: {
         attributes: {
@@ -62,31 +139,34 @@ Y.Get = Get = {
     // -- Protected Properties -------------------------------------------------
 
     /**
-    Regex that matches a CSS URL.
+    Regex that matches a CSS URL. Used to guess the file type when it's not
+    specified.
 
     @property REGEX_CSS
     @type RegExp
     @final
     @protected
     @static
+    @since 3.5.0
     **/
     REGEX_CSS: /\.css(?:[?;].*)?$/i,
 
     /**
-    Regex that matches a JS URL.
+    Regex that matches a JS URL. Used to guess the file type when it's not
+    specified.
 
     @property REGEX_JS
     @type RegExp
     @final
     @protected
     @static
+    @since 3.5.0
     **/
     REGEX_JS : /\.js(?:[?;].*)?$/i,
 
     /**
-    Contains information about the current environment, such as whether it's a
-    browser or a server-side environment, and what script and link injection
-    features it supports.
+    Contains information about the current environment, such as what script and
+    link injection features it supports.
 
     This object is created and populated the first time the `_getEnv()` method
     is called.
@@ -95,19 +175,21 @@ Y.Get = Get = {
     @type Object
     @protected
     @static
+    @since 3.5.0
     **/
 
     /**
-    Currently pending transaction, if any.
+    Information about the currently pending transaction, if any.
 
     This is actually an object with two properties: `callback`, containing the
-    optional callback passed to `css()`, `load()`, or `script()`; and
-    `transaction`, containing the actual transaction instance.
+    optional callback passed to `css()`, `load()`, or `js()`; and `transaction`,
+    containing the actual transaction instance.
 
     @property _pending
     @type Object
     @protected
     @static
+    @since 3.5.0
     **/
     _pending: null,
 
@@ -118,6 +200,7 @@ Y.Get = Get = {
     @type HTMLElement[]
     @protected
     @static
+    @since 3.5.0
     **/
     _purgeNodes: [],
 
@@ -128,18 +211,35 @@ Y.Get = Get = {
     @type Object[]
     @protected
     @static
+    @since 3.5.0
     **/
     _queue: [],
 
     // -- Public Methods -------------------------------------------------------
+
+    /**
+    Aborts the specified transaction.
+
+    This will cause the transaction's `onFailure` callback to be called and
+    will prevent any new script and link nodes from being added to the document,
+    but any resources that have already been requested will continue loading
+    (there's no safe way to prevent this, unfortunately).
+
+    *Note:* This method is deprecated as of 3.5.0, and will be removed in a
+    future version of YUI. Use the transaction-level `abort()` method instead.
+
+    @method abort
+    @param {Get.Transaction} transaction Transaction to abort.
+    @deprecated Use the `abort()` method on the transaction instead.
+    **/
     abort: function (transaction) {
         var i, id, item, len;
+
+        Y.log('`Y.Get.abort()` is deprecated as of 3.5.0. Use the `abort()` method on the transaction instead.', 'warn', 'get');
 
         if (!(typeof transaction === 'object')) {
             id = transaction;
             transaction = null;
-
-            Y.log('Passing an id to `abort()` is deprecated as of 3.5.0. Pass a transaction object instead.', 'warn', 'get');
 
             if (this._pending && this._pending.transaction.id === id) {
                 transaction = this._pending.transaction;
@@ -162,20 +262,216 @@ Y.Get = Get = {
         }
     },
 
+    /**
+    Loads one or more CSS files.
+
+    The _urls_ parameter may be provided as a URL string, a request object,
+    or an array of URL strings and/or request objects.
+
+    A request object is just an object that contains a `url` property and zero
+    or more options that should apply specifically to that request.
+    Request-specific options take priority over transaction-level options and
+    default options.
+
+    URLs may be relative or absolute, and do not have to have the same origin
+    as the current page.
+
+    The `options` parameter may be omitted completely and a callback passed in
+    its place, if desired.
+
+    @example
+
+        // Load a single CSS file and log a message on completion.
+        Y.Get.css('foo.css', function (err) {
+            if (err) {
+                Y.log('foo.css failed to load!');
+            } else {
+                Y.log('foo.css was loaded successfully');
+            }
+        });
+
+        // Load multiple CSS files and log a message when all have finished
+        // loading.
+        var urls = ['foo.css', 'http://example.com/bar.css', 'baz/quux.css'];
+
+        Y.Get.css(urls, function (err) {
+            if (err) {
+                Y.log('one or more files failed to load!');
+            } else {
+                Y.log('all files loaded successfully');
+            }
+        });
+
+        // Specify transaction-level options, which will apply to all requests
+        // within the transaction.
+        Y.Get.css(urls, {
+            attributes: {'class': 'my-css'},
+            timeout   : 5000
+        });
+
+        // Specify per-request options, which override transaction-level and
+        // default options.
+        Y.Get.css([
+            {url: 'foo.css', attributes: {id: 'foo'}},
+            {url: 'bar.css', attributes: {id: 'bar', charset: 'iso-8859-1'}}
+        ]);
+
+    @method css
+    @param {String|Object|Array} urls URL string, request object, or array
+        of URLs and/or request objects to load.
+    @param {Object} [options] Options for this transaction. See the
+        `Y.Get.options` property for a complete list of available options.
+    @param {Function} [callback] Callback function to be called on completion.
+        This is a general callback and will be called before any more granular
+        callbacks (`onSuccess`, `onFailure`, etc.) specified in the `options`
+        object.
+
+        @param {Array|null} err Array of errors that occurred during the
+            transaction, or `null` on success.
+        @param {Get.Transaction} Transaction object.
+
+    @return {Get.Transaction} Transaction object.
+    **/
     css: function (urls, options, callback) {
         return this._load('css', urls, options, callback);
     },
 
+    /**
+    Loads one or more JavaScript resources.
+
+    The _urls_ parameter may be provided as a URL string, a request object,
+    or an array of URL strings and/or request objects.
+
+    A request object is just an object that contains a `url` property and zero
+    or more options that should apply specifically to that request.
+    Request-specific options take priority over transaction-level options and
+    default options.
+
+    URLs may be relative or absolute, and do not have to have the same origin
+    as the current page.
+
+    The `options` parameter may be omitted completely and a callback passed in
+    its place, if desired.
+
+    Scripts will be executed in the order they're specified unless the `async`
+    option is `true`, in which case they'll be loaded in parallel and executed
+    in whatever order they finish loading.
+
+    @example
+
+        // Load a single JS file and log a message on completion.
+        Y.Get.js('foo.js', function (err) {
+            if (err) {
+                Y.log('foo.js failed to load!');
+            } else {
+                Y.log('foo.js was loaded successfully');
+            }
+        });
+
+        // Load multiple JS files, execute them in order, and log a message when
+        // all have finished loading.
+        var urls = ['foo.js', 'http://example.com/bar.js', 'baz/quux.js'];
+
+        Y.Get.js(urls, function (err) {
+            if (err) {
+                Y.log('one or more files failed to load!');
+            } else {
+                Y.log('all files loaded successfully');
+            }
+        });
+
+        // Specify transaction-level options, which will apply to all requests
+        // within the transaction.
+        Y.Get.js(urls, {
+            attributes: {'class': 'my-js'},
+            timeout   : 5000
+        });
+
+        // Specify per-request options, which override transaction-level and
+        // default options.
+        Y.Get.js([
+            {url: 'foo.js', attributes: {id: 'foo'}},
+            {url: 'bar.js', attributes: {id: 'bar', charset: 'iso-8859-1'}}
+        ]);
+
+    @method js
+    @param {String|Object|Array} urls URL string, request object, or array
+        of URLs and/or request objects to load.
+    @param {Object} [options] Options for this transaction. See the
+        `Y.Get.options` property for a complete list of available options.
+    @param {Function} [callback] Callback function to be called on completion.
+        This is a general callback and will be called before any more granular
+        callbacks (`onSuccess`, `onFailure`, etc.) specified in the `options`
+        object.
+
+        @param {Array|null} err Array of errors that occurred during the
+            transaction, or `null` on success.
+        @param {Get.Transaction} Transaction object.
+
+    @return {Get.Transaction} Transaction object.
+    @since 3.5.0
+    **/
     js: function (urls, options, callback) {
         return this._load('js', urls, options, callback);
     },
 
-    // Loads both CSS and JS.
+    /**
+    Loads one or more CSS and/or JavaScript resources in the same transaction.
+
+    Use this method when you want to load both CSS and JavaScript in a single
+    transaction and be notified when all requested URLs have finished loading,
+    regardless of type.
+
+    Behavior and options are the same as for the `css()` and `js()` methods. If
+    a resource type isn't specified in per-request options or transaction-level
+    options, Get will guess the file type based on the URL's extension (`.css`
+    or `.js`, with or without a following query string). If the file type can't
+    be guessed from the URL, a warning will be logged and Get will assume the
+    URL is a JavaScript resource.
+
+    @example
+
+        // Load both CSS and JS files in a single transaction, and log a message
+        // when all files have finished loading.
+        Y.Get.load(['foo.css', 'bar.js', 'baz.css'], function (err) {
+            if (err) {
+                Y.log('one or more files failed to load!');
+            } else {
+                Y.log('all files loaded successfully');
+            }
+        });
+
+    @method load
+    @param {String|Object|Array} urls URL string, request object, or array
+        of URLs and/or request objects to load.
+    @param {Object} [options] Options for this transaction. See the
+        `Y.Get.options` property for a complete list of available options.
+    @param {Function} [callback] Callback function to be called on completion.
+        This is a general callback and will be called before any more granular
+        callbacks (`onSuccess`, `onFailure`, etc.) specified in the `options`
+        object.
+
+        @param {Array|null} err Array of errors that occurred during the
+            transaction, or `null` on success.
+        @param {Get.Transaction} Transaction object.
+
+    @return {Get.Transaction} Transaction object.
+    @since 3.5.0
+    **/
     load: function (urls, options, callback) {
         return this._load(null, urls, options, callback);
     },
 
     // -- Protected Methods ----------------------------------------------------
+
+    /**
+    Triggers an automatic purge if the purge threshold has been reached.
+
+    @method _autoPurge
+    @param {Number} threshold Purge threshold to use, in milliseconds.
+    @protected
+    @since 3.5.0
+    **/
     _autoPurge: function (threshold) {
         if (threshold && this._purgeNodes.length >= threshold) {
             Y.log('autopurge triggered after ' + this._purgeNodes.length + ' nodes', 'info', 'get');
@@ -183,6 +479,15 @@ Y.Get = Get = {
         }
     },
 
+    /**
+    Populates the `_env` property with information about the current
+    environment.
+
+    @method _getEnv
+    @return {Object} Environment information.
+    @protected
+    @since 3.5.0
+    **/
     _getEnv: function () {
         var doc = Y.config.doc,
             ua  = Y.UA;
@@ -365,10 +670,9 @@ Y.Get = Get = {
 };
 
 /**
-Alias for `js()`. Deprecated as of 3.5.0.
+Alias for `js()`.
 
 @method js
-@deprecated Use `js()` instead.
 @static
 **/
 Get.script = Get.js;
@@ -378,15 +682,17 @@ Represents a Get transaction, which may contain requests for one or more JS or
 CSS files.
 
 This class should not be instantiated manually. Instances will be created and
-returned as needed by Y.Get's `css()`, `load()`, and `script()` methods.
+returned as needed by Y.Get's `css()`, `js()`, and `load()` methods.
 
 @class Get.Transaction
 @constructor
+@since 3.5.0
 **/
 Get.Transaction = Transaction = function (requests, options) {
     var self = this;
 
     self.id       = Transaction._lastId += 1;
+    self.data     = options.data;
     self.errors   = [];
     self.nodes    = [];
     self.options  = options;
@@ -397,10 +703,59 @@ Get.Transaction = Transaction = function (requests, options) {
     self._waiting   = 0;
 
     // Deprecated pre-3.5.0 properties.
-    self.data  = options.data;
     self.tId   = self.id; // Use `id` instead.
     self.win   = options.win || Y.config.win;
 };
+
+/**
+Arbitrary data object associated with this transaction.
+
+This object comes from the options passed to `Get.css()`, `Get.js()`, or
+`Get.load()`, and will be `undefined` if no data object was specified.
+
+@property {Object} data
+**/
+
+/**
+Array of errors that have occurred during this transaction, if any.
+
+@since 3.5.0
+@property {Object[]} errors
+@property {String} errors.error Error message.
+@property {Object} errors.request Request object related to the error.
+**/
+
+/**
+Numeric id for this transaction, unique among all transactions within the same
+YUI sandbox in the current pageview.
+
+@property {Number} id
+@since 3.5.0
+**/
+
+/**
+HTMLElement nodes (native ones, not YUI Node instances) that have been inserted
+during the current transaction.
+
+@property {HTMLElement[]} nodes
+**/
+
+/**
+Options associated with this transaction.
+
+See `Get.options` for the full list of available options.
+
+@property {Object} options
+@since 3.5.0
+**/
+
+/**
+Request objects contained in this transaction. Each request object represents
+one CSS or JS URL that will be (or has been) requested and loaded into the page.
+
+@property {Object} requests
+@since 3.5.0
+**/
 
 /**
 Id of the most recent transaction.
@@ -414,9 +769,30 @@ Transaction._lastId = 0;
 
 Transaction.prototype = {
     // -- Public Properties ----------------------------------------------------
+
+    /**
+    Current state of this transaction. One of "new", "executing", or "done".
+
+    @property _state
+    @type String
+    @protected
+    **/
     _state: 'new', // "new", "executing", or "done"
 
     // -- Public Methods -------------------------------------------------------
+
+    /**
+    Aborts this transaction.
+
+    This will cause the transaction's `onFailure` callback to be called and
+    will prevent any new script and link nodes from being added to the document,
+    but any resources that have already been requested will continue loading
+    (there's no safe way to prevent this, unfortunately).
+
+    @method abort
+    @param {String} [msg="Aborted."] Optional message to use in the `errors`
+        array describing why the transaction was aborted.
+    **/
     abort: function (msg) {
         this._pending    = null;
         this._pendingCSS = null;
@@ -428,6 +804,24 @@ Transaction.prototype = {
         this._finish();
     },
 
+    /**
+    Begins execting the transaction.
+
+    There's usually no reason to call this manually, since Get will call it
+    automatically when other pending transactions have finished. If you really
+    want to execute your transaction before Get does, you can, but be aware that
+    this transaction's scripts may end up executing before the scripts in other
+    pending transactions.
+
+    If the transaction is already executing, the specified callback (if any)
+    will be queued and called after execution finishes. If the transaction has
+    already finished, the callback will be called immediately (the transaction
+    will not be executed again).
+
+    @method execute
+    @param {Function} callback Callback function to execute after all requests
+        in the transaction are complete, or after the transaction is aborted.
+    **/
     execute: function (callback) {
         var self     = this,
             requests = self.requests,
@@ -467,6 +861,15 @@ Transaction.prototype = {
         self._next();
     },
 
+    /**
+    Manually purges any `<script>` or `<link>` nodes this transaction has
+    created.
+
+    Be careful when purging a transaction that contains CSS requests, since
+    removing `<link>` nodes will also remove any styles they applied.
+
+    @method purge
+    **/
     purge: function () {
         Get._purge(this.nodes);
     },
@@ -488,7 +891,7 @@ Transaction.prototype = {
     _finish: function () {
         var errors  = this.errors.length ? this.errors : null,
             options = this.options,
-            thisObj = options.context,
+            thisObj = options.context || this,
             data, i, len;
 
         if (this._state === 'done') {
@@ -498,7 +901,7 @@ Transaction.prototype = {
         this._state = 'done';
 
         for (i = 0, len = this._callbacks.length; i < len; ++i) {
-            this._callbacks[i](errors, this);
+            this._callbacks[i].call(thisObj, errors, this);
         }
 
         if (options.onEnd || options.onFailure || options.onSuccess
@@ -762,7 +1165,7 @@ Transaction.prototype = {
         req.finished = true;
 
         if (options.onProgress) {
-            options.onProgress.call(options.context || null,
+            options.onProgress.call(options.context || this,
                 this._getEventData(req));
         }
 
@@ -782,95 +1185,3 @@ Transaction.prototype = {
         this._next();
     }
 };
-
-/*
-Public functions:
-
-  - abort(o) void
-    - o: transaction object or tId string
-
-  - css(urls, options) String (transaction object)
-  - script(urls, options) String (transaction object)
-
-
-Public callbacks:
-
-  - onEnd
-    - Executes after the transaction finishes, regardless of success or failure.
-
-  - onFailure
-    - Same payload as onSuccess.
-
-  - onProgress(e)
-    - Same payload as onSuccess, but with an additional e.url property
-      containing the URL of the loaded file.
-
-  - onSuccess(e)
-    - e.win: Window the nodes were inserted into.
-    - e.data: Arbitrary data object provided at request time.
-    - e.nodes: Array of inserted nodes.
-    - e.purge: Function that will purge the inserted nodes.
-
-  - onTimeout(e)
-    - Same payload as onSuccess.
-
-
-Options:
-
-  - async: When true, an array of files will be loaded in parallel rather than
-    in serial.
-
-  - attributes: Object literal containing additional attributes to add to nodes.
-
-  - autopurge: Whether or not nodes should be automatically purged.
-
-  - charset: Charset for inserted nodes (deprecated -- use the `attributes` config
-    instead).
-
-  - context: Execution context (`this` object) for callback functions.
-
-  - data: Arbitrary data object to supply to callbacks.
-
-  - insertBefore: node or node id before which script/link nodes should be
-    inserted.
-
-  - purgethreshold: Number of transactions before autopurge should occur.
-
-  - timeout: Number of milliseconds to wait before aborting and firing onTimeout.
-
-  - win: Window into which nodes should be inserted. Defaults to current window.
-
-
-Features:
-
-  - charset="utf-8" by default
-  - autopurge after 20 nodes inserted
-  - node id is a Y.guid()
-  - log a warning on failure
-  - clear a node's attributes before purging it (why? to help GC?)
-  - insertBefore option defaults to the first "base" element, if any
-
-
-Transaction objects:
-
-    {
-        tId: 'transaction id string'
-    }
-
-
-Callback data payload:
-
-    {
-        tId: q.tId,
-        win: q.win,
-        data: q.data,
-        nodes: q.nodes,
-        msg: msg,
-        statusText: result,
-        url: url,
-
-        purge: function() {
-            _purge(this.tId);
-        }
-    }
-*/
