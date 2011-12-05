@@ -27,6 +27,19 @@ But it also works like this:
 
      var Y = YUI();
 
+Configuring the YUI object:
+
+    YUI({
+        debug: true,
+        combine: false
+    }).use('node', function(Y) {
+        //Node is ready to use
+    });
+
+See the API docs for the <a href="config.html">Config</a> class
+for the complete list of supported configuration properties accepted
+by the YUI constuctor.
+
 @class YUI
 @constructor
 @global
@@ -143,6 +156,7 @@ properties.
         PERIOD = '.',
         BASE = 'http://yui.yahooapis.com/',
         DOC_LABEL = 'yui3-js-enabled',
+        CSS_STAMP_EL = 'yui3-css-stamp',
         NOOP = function() {},
         SLICE = Array.prototype.slice,
         APPLY_TO_AUTH = { 'io.xdrReady': 1,   // the functions applyTo
@@ -264,6 +278,7 @@ proto = {
         if (loader) {
             loader._config(o);
         }
+
     },
     /**
     * Old way to apply a config to the instance (calls `applyConfig` under the hood)
@@ -281,7 +296,7 @@ proto = {
      * @method _init
      */
     _init: function() {
-        var filter,
+        var filter, el,
             Y = this,
             G_ENV = YUI.Env,
             Env = Y.Env,
@@ -415,7 +430,7 @@ proto = {
         }
 
         Y.constructor = YUI;
-
+        
         // configuration defaults
         Y.config = Y.config || {
             win: win,
@@ -427,6 +442,14 @@ proto = {
             cacheUse: true,
             fetchCSS: true
         };
+
+        //Register the CSS stamp element
+        if (doc && !doc.getElementById(CSS_STAMP_EL)) {
+            el = doc.createElement('div');
+            el.innerHTML = '<div id="' + CSS_STAMP_EL + '" style="position: absolute !important; visibility: hidden !important"></div>';
+            YUI.Env.cssStampEl = el.firstChild;
+            docEl.insertBefore(YUI.Env.cssStampEl, docEl.firstChild);
+        }
 
         Y.config.lang = Y.config.lang || 'en-US';
 
@@ -619,7 +642,7 @@ with any configuration info required for the module.
 
                     //if (!loader || !loader.moduleInfo[name]) {
                     //if ((!loader || !loader.moduleInfo[name]) && !moot) {
-                    if (!moot) {
+                    if (!moot && name) {
                         if ((name.indexOf('skin-') === -1) && (name.indexOf('css') === -1)) {
                             Y.Env._missed.push(name);
                             Y.Env._missed = Y.Array.dedupe(Y.Env._missed);
@@ -743,6 +766,7 @@ with any configuration info required for the module.
             callback = args[args.length - 1],
             Y = this,
             i = 0,
+            a = [],
             name,
             Env = Y.Env,
             provisioned = true;
@@ -826,6 +850,7 @@ with any configuration info required for the module.
             mods = G_ENV.mods,
             Env = Y.Env,
             used = Env._used,
+            aliases = G_ENV.aliases,
             queue = G_ENV._loaderQueue,
             firstArg = args[0],
             YArray = Y.Array,
@@ -837,8 +862,21 @@ with any configuration info required for the module.
             fetchCSS = config.fetchCSS,
             process = function(names, skip) {
 
+                var i = 0, a = [];
+
                 if (!names.length) {
                     return;
+                }
+
+                if (aliases) {
+                    for (i = 0; i < names.length; i++) {
+                        if (aliases[names[i]]) {
+                            a = [].concat(a, aliases[names[i]]);
+                        } else {
+                            a.push(names[i]);
+                        }
+                    }
+                    names = a;
                 }
 
                 YArray.each(names, function(name) {
@@ -1080,6 +1118,7 @@ with any configuration info required for the module.
      * @return {YUI} this YUI instance.
      */
     error: function(msg, e, data) {
+        //TODO Add check for window.onerror here
 
         var Y = this, ret;
 
@@ -1168,8 +1207,6 @@ with any configuration info required for the module.
      */
 };
 
-
-
     YUI.prototype = proto;
 
     // inheritance utilities are not available yet
@@ -1178,6 +1215,52 @@ with any configuration info required for the module.
             YUI[prop] = proto[prop];
         }
     }
+    
+    /**
+Static method on the Global YUI object to apply a config to all YUI instances.
+It's main use case is "mashups" where several third party scripts are trying to write to
+a global YUI config at the same time. This way they can all call `YUI.applyConfig({})` instead of
+overwriting other scripts configs.
+@static
+@since 3.5.0
+@method applyConfig
+@param {Object} o the configuration object.
+@example
+
+    YUI.applyConfig({
+        modules: {
+            davglass: {
+                fullpath: './davglass.js'
+            }
+        }
+    });
+
+    YUI.applyConfig({
+        modules: {
+            foo: {
+                fullpath: './foo.js'
+            }
+        }
+    });
+
+    YUI().use('davglass', function(Y) {
+        //Module davglass will be available here..
+    });
+    
+    */
+    YUI.applyConfig = function(o) {
+        if (!o) {
+            return;
+        }
+        //If there is a GlobalConfig, apply it first to set the defaults
+        if (YUI.GlobalConfig) {
+            this.prototype.applyConfig.call(this, YUI.GlobalConfig);
+        }
+        //Apply this config to it
+        this.prototype.applyConfig.call(this, o);
+        //Reset GlobalConfig to the combined config
+        YUI.GlobalConfig = this.config;
+    };
 
     // set up the environment
     YUI._init();
@@ -1221,6 +1304,14 @@ with any configuration info required for the module.
  * metadata to dynamically load additional dependencies.
  *
  * @property bootstrap
+ * @type boolean
+ * @default true
+ */
+
+/**
+ * Turns on writing Ylog messages to the browser console.
+ *
+ * @property debug
  * @type boolean
  * @default true
  */
@@ -1286,10 +1377,11 @@ with any configuration info required for the module.
  */
 
 /**
- * A list of modules that defines the YUI core (overrides the default).
+ * A list of modules that defines the YUI core (overrides the default list).
  *
  * @property core
- * @type string[]
+ * @type Array
+ * @default [ get,features,intl-base,yui-log,yui-later,loader-base, loader-rollup, loader-yui3 ]
  */
 
 /**
@@ -1600,7 +1692,7 @@ with any configuration info required for the module.
  * @since 3.1.0
  * @property yui2
  * @type string
- * @default 2.8.1
+ * @default 2.9.0
  */
 
 /**
@@ -1612,7 +1704,7 @@ with any configuration info required for the module.
  * @since 3.1.0
  * @property 2in3
  * @type string
- * @default 1
+ * @default 4
  */
 
 /**
@@ -3324,7 +3416,7 @@ YUI.Env.aliases = {
     "dd": ["dd-ddm-base","dd-ddm","dd-ddm-drop","dd-drag","dd-proxy","dd-constrain","dd-drop","dd-scroll","dd-delegate"],
     "dom": ["dom-base","dom-screen","dom-style","selector-native","selector"],
     "editor": ["frame","selection","exec-command","editor-base","editor-para","editor-br","editor-bidi","editor-tab","createlink-base"],
-    "event": ["event-base","event-delegate","event-synthetic","event-mousewheel","event-mouseenter","event-key","event-focus","event-resize","event-hover","event-outside"],
+    "event": ["event-base","event-delegate","event-synthetic","event-mousewheel","event-mouseenter","event-key","event-focus","event-resize","event-hover","event-outside","event-touch","event-move","event-flick","event-valuechange"],
     "event-custom": ["event-custom-base","event-custom-complex"],
     "event-gestures": ["event-flick","event-move"],
     "handlebars": ["handlebars-compiler"],
@@ -4325,9 +4417,15 @@ Y.mix(Y.namespace('Features'), {
 
 /* This file is auto-generated by src/loader/scripts/meta_join.py */
 var add = Y.Features.add;
-// graphics-canvas-default
+// scrollview-base-ie
 add('load', '0', {
-    "name": "graphics-canvas-default", 
+    "name": "scrollview-base-ie", 
+    "trigger": "scrollview-base", 
+    "ua": "ie"
+});
+// graphics-canvas
+add('load', '1', {
+    "name": "graphics-canvas", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
@@ -4336,7 +4434,7 @@ add('load', '0', {
     "trigger": "graphics"
 });
 // autocomplete-list-keys
-add('load', '1', {
+add('load', '2', {
     "name": "autocomplete-list-keys", 
     "test": function (Y) {
     // Only add keyboard support to autocomplete-list if this doesn't appear to
@@ -4354,17 +4452,16 @@ add('load', '1', {
 }, 
     "trigger": "autocomplete-list"
 });
-// graphics-svg
-add('load', '2', {
-    "name": "graphics-svg", 
+// dd-gestures
+add('load', '3', {
+    "name": "dd-gestures", 
     "test": function(Y) {
-    var DOCUMENT = Y.config.doc;
-	return (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    return (Y.config.win && ('ontouchstart' in Y.config.win && !Y.UA.chrome));
 }, 
-    "trigger": "graphics"
+    "trigger": "dd-drag"
 });
 // history-hash-ie
-add('load', '3', {
+add('load', '4', {
     "name": "history-hash-ie", 
     "test": function (Y) {
     var docMode = Y.config.doc && Y.config.doc.documentMode;
@@ -4375,7 +4472,7 @@ add('load', '3', {
     "trigger": "history-hash"
 });
 // graphics-vml-default
-add('load', '4', {
+add('load', '5', {
     "name": "graphics-vml-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -4385,7 +4482,7 @@ add('load', '4', {
     "trigger": "graphics"
 });
 // graphics-svg-default
-add('load', '5', {
+add('load', '6', {
     "name": "graphics-svg-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc;
@@ -4394,26 +4491,10 @@ add('load', '5', {
     "trigger": "graphics"
 });
 // widget-base-ie
-add('load', '6', {
+add('load', '7', {
     "name": "widget-base-ie", 
     "trigger": "widget-base", 
     "ua": "ie"
-});
-// transition-timer
-add('load', '7', {
-    "name": "transition-timer", 
-    "test": function (Y) {
-    var DOCUMENT = Y.config.doc,
-        node = (DOCUMENT) ? DOCUMENT.documentElement: null,
-        ret = true;
-
-    if (node && node.style) {
-        ret = !('MozTransition' in node.style || 'WebkitTransition' in node.style);
-    } 
-
-    return ret;
-}, 
-    "trigger": "transition"
 });
 // dom-style-ie
 add('load', '8', {
@@ -4466,23 +4547,34 @@ add('load', '10', {
 }, 
     "trigger": "node-base"
 });
-// dd-gestures
+// graphics-svg
 add('load', '11', {
-    "name": "dd-gestures", 
+    "name": "graphics-svg", 
     "test": function(Y) {
-    return (Y.config.win && ('ontouchstart' in Y.config.win && !Y.UA.chrome));
+    var DOCUMENT = Y.config.doc;
+	return (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
 }, 
-    "trigger": "dd-drag"
+    "trigger": "graphics"
 });
-// scrollview-base-ie
+// transition-timer
 add('load', '12', {
-    "name": "scrollview-base-ie", 
-    "trigger": "scrollview-base", 
-    "ua": "ie"
+    "name": "transition-timer", 
+    "test": function (Y) {
+    var DOCUMENT = Y.config.doc,
+        node = (DOCUMENT) ? DOCUMENT.documentElement: null,
+        ret = true;
+
+    if (node && node.style) {
+        ret = !('MozTransition' in node.style || 'WebkitTransition' in node.style);
+    } 
+
+    return ret;
+}, 
+    "trigger": "transition"
 });
-// graphics-canvas
+// graphics-canvas-default
 add('load', '13', {
-    "name": "graphics-canvas", 
+    "name": "graphics-canvas-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas");

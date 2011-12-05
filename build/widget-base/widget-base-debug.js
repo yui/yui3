@@ -387,7 +387,8 @@ Y.extend(Widget, Y.Base, {
     initializer: function(config) {
         Y.log('initializer called', 'life', 'widget');
 
-        _instances[Y.stamp(this.get(BOUNDING_BOX))] = this;
+        this._boxYuid = Y.guid();
+        _instances[this._boxYuid] = this;
 
         /**
          * Notification event, which widget implementations can fire, when
@@ -417,8 +418,7 @@ Y.extend(Widget, Y.Base, {
     destructor: function() {
         Y.log('destructor called', 'life', 'widget');
 
-        var boundingBox = this.get(BOUNDING_BOX),
-            bbGuid = Y.stamp(boundingBox, TRUE);
+        var bbGuid = this._boxYuid;
 
         if (bbGuid in _instances) {
             delete _instances[bbGuid];
@@ -462,24 +462,29 @@ Y.extend(Widget, Y.Base, {
         var boundingBox = this.get(BOUNDING_BOX),
             contentBox = this.get(CONTENT_BOX),
             deep = this._destroyAllNodes,
+            same;
+
+        if (boundingBox instanceof Y.Node) {
+
             same = boundingBox && boundingBox.compareTo(contentBox);
 
-        if (this.UI_EVENTS) {
-            this._destroyUIEvents();
-        }
-
-        this._unbindUI(boundingBox);
-
-        if (deep) {
-            // Removes and destroys all child nodes.
-            boundingBox.empty();
-            boundingBox.remove(TRUE);
-        } else {
-            if (contentBox) {
-                contentBox.remove(TRUE);
+            if (this.UI_EVENTS) {
+                this._destroyUIEvents();
             }
-            if (!same) {
+
+            this._unbindUI(boundingBox);
+
+            if (deep) {
+                // Removes and destroys all child nodes.
+                boundingBox.empty();
                 boundingBox.remove(TRUE);
+            } else {
+                if (contentBox) {
+                    contentBox.remove(TRUE);
+                }
+                if (!same) {
+                    boundingBox.remove(TRUE);
+                }
             }
         }
     },
@@ -696,7 +701,7 @@ Y.extend(Widget, Y.Base, {
     _renderBox: function(parentNode) {
 
         // TODO: Performance Optimization [ More effective algo to reduce Node refs, compares, replaces? ]
-        
+
         var widget = this, // kweight
             contentBox = widget.get(CONTENT_BOX),
             boundingBox = widget.get(BOUNDING_BOX),
@@ -704,6 +709,8 @@ Y.extend(Widget, Y.Base, {
             defParentNode = widget.DEF_PARENT_NODE,
 
             doc = (srcNode && srcNode.get(OWNER_DOCUMENT)) || boundingBox.get(OWNER_DOCUMENT) || contentBox.get(OWNER_DOCUMENT);
+
+        boundingBox._yuid = this._boxYuid;
 
         // If srcNode (assume it's always in doc), have contentBox take its place (widget render responsible for re-use of srcNode contents)
         if (srcNode && !srcNode.compareTo(contentBox) && !contentBox.inDoc(doc)) {

@@ -1,5 +1,12 @@
 YUI.add('node-event-html5', function(Y) {
 
+/**
+ * Adds HTML5 event support to Node.
+ *
+ * @module node
+ * @submodule node-event-html5
+ **/
+
 Y.mix(Y.Node.DOM_EVENTS, {
     DOMActivate: 1,
     DOMContentLoaded: 1,

@@ -258,6 +258,9 @@ YUI().use('dd', 'anim', 'yql', 'cookie', 'json', function(Y) {
                                 if (v.link && (Y.Lang.isArray(v.link))) {
                                     v.link = v.link[0];
                                 }
+                                if (v.link && (Y.Lang.isObject(v.link))) {
+                                    v.link = v.link.href;
+                                }
                                 html += Y.Lang.sub('<li><a href="{link}" target="_blank">{title}</a>', v);
                             }
                         });

@@ -15,8 +15,9 @@
         <url>cache/tests/cache-offline.html</url>
         <url>cache/tests/cache-plugin.html</url>
         <url>calendar/tests/calendar.html</url>
-        <url timeout="600000">charts/tests/charts.html</url>
-        <url timeout="200000">charts/tests/seriestests.html</url>
+        <url>charts/tests/charts.html</url>
+        <!--url>charts/tests/axes.html</url-->
+        <url>charts/tests/seriestests.html</url>
         <url>classnamemanager/tests/classnamemanager.html</url>
         <url>collection/tests/arraylist.html</url>
         <url>collection/tests/collection.html</url>
@@ -41,7 +42,11 @@
         <url>dial/tests/dial.html</url>
         <url>dom/tests/dom.html</url>
         <url>dom/tests/dom-base.html</url>
+        <!-- This test fails to complete under automation.
+             Removed until the cause is discovered.
+             http://yuilibrary.com/projects/yui3/ticket/2531536
         <url>dom/tests/dom-xy.html</url>
+        -->
         <url>dom/tests/selector.html</url>
         <url>dump/tests/dump.html</url>
 	<url>editor/tests/editor.html</url>
@@ -55,7 +60,7 @@
         <url>event/tests/event-key.html</url>
         <url>event/tests/event-synthetic.html</url>
         <url>event/tests/focusblur.html</url>
-        <url>yui/tests/get.html</url>
+        <url>get/tests/get.html</url>
         <url>graphics/tests/graphics.html</url>
         <url>handlebars/tests/handlebars.html</url>
         <url>highlight/tests/functional/highlight.html</url>
@@ -68,6 +73,7 @@
         <url>json/tests/json.html</url>
         <!--url>jsonp/tests/jsonp.html</url>
         <url>jsonp/tests/jsonp-url.html</url-->
+        <url>matrix/tests/matrix.html</url>
         <url>node/tests/node.html</url>
         <!--url>node-focusmanager/tests/focusmanager.html</url-->
         <url>parallel/tests/index.html</url>

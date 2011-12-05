@@ -226,6 +226,10 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 		this._context = node.getContext('2d');
 		node.setAttribute("overflow", "visible");
         node.style.overflow = "visible";
+        if(!this.get("visible"))
+        {
+            node.style.visibility = "hidden";
+        }
 		node.setAttribute("id", id);
 		id = "#" + id;
 		this.node = node;
@@ -894,6 +898,7 @@ CanvasShape.ATTRS =  {
      *        <dt>translateY</dt><dd>Translates the shape along the y-axis.</dd>
      *        <dt>skewX</dt><dd>Skews the shape around the x-axis.</dd>
      *        <dt>skewY</dt><dd>Skews the shape around the y-axis.</dd>
+     *        <dt>matrix</dt><dd>Specifies a 2D transformation matrix comprised of the specified six values.</dd>      
      *    </dl>
      * </p>
      * <p>Applying transforms through the transform attribute will reset the transform matrix and apply a new transform. The shape class also contains corresponding methods for each transform
@@ -1018,8 +1023,12 @@ CanvasShape.ATTRS =  {
 		value: true,
 
 		setter: function(val){
-			var visibility = val ? "visible" : "hidden";
-			this.get("node").style.visibility = visibility;
+			var node = this.get("node"),
+                visibility = val ? "visible" : "hidden";
+			if(node)
+            {
+                node.style.visibility = visibility;
+            }
 			return val;
 		}
 	},

@@ -12,7 +12,8 @@
                 "requires": [
                     "widget", 
                     "dd-constrain", 
-                    "substitute"
+                    "substitute",
+                    "event-key"
                 ], 
                 "skinnable": true
             },

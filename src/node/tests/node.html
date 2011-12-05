@@ -495,8 +495,10 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             var insertNode = document.createElement('div');
             Y.stamp(insertNode);
             insertNode.innerHTML = 'inserted node';
-            Y.one('body').appendChild(Y.one('div'));
+            Y.one('body').appendChild(Y.one('#test-append'));
+
             Assert.isTrue(Y.one('body').get('lastChild').compareTo(Y.one('#test-append')), 'get("body").appendChild(Y.one("#test-append"))');
+
             Assert.areEqual(byId('test-append'), Y.Node.getDOMNode(Y.one('body').get('lastChild')), 'get("body").appendChild(Y.one([0]"#test-append"))');
             Assert.areEqual('inserted node', node.appendChild(insertNode).get('innerHTML'), 'appendChild(element input)');
             Assert.areEqual('inserted node', node.removeChild(insertNode).get('innerHTML'), 'removeChild(element input)');
@@ -2451,6 +2453,26 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             Assert.areEqual('DIV', Y.one(node).get('children').item(0).get('tagName'));
         }
 
+    }));
+
+    Y.Test.Runner.add(new Y.Test.Case({
+        name: 'Y.Node.setHTML',
+
+        'should insert html into div': function() {
+            var html = '<p>foo</p>',
+                node = Y.Node.create('<div/>');
+
+            node.setHTML(html);
+            Assert.areEqual(html, node._node.innerHTML);
+        },
+
+        'should get html from div': function() {
+            var html = '<p>foo</p>',
+                node = Y.Node.create('<div/>');
+
+            node.setHTML(html);
+            Assert.areEqual(html, node.getHTML());
+        }
     }));
     Y.Test.Runner.add(suite);
 
