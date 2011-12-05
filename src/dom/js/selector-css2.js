@@ -23,17 +23,24 @@ var PARENT_NODE = 'parentNode',
         _children: function(node, tag) {
             var ret = node.children,
                 i,
-                children = [],
+                children = node.children,
                 childNodes,
+                hasComments,
                 child;
 
-            if (node.children && tag && node.children.tags) {
-                children = node.children.tags(tag);
-            } else if ((!ret && node[TAG_NAME]) || (ret && tag)) { // only HTMLElements have children
+            if (children && children.tags) {
+                if (tag) {
+                    children = node.children.tags(tag);
+                } else { // IE leaks comments into children
+                    hasComments = children.tags('!');
+                }
+            }
+            
+            if ((!ret && node[TAG_NAME]) || (ret && tag)) { // only HTMLElements have children
                 childNodes = ret || node.childNodes;
                 ret = [];
                 for (i = 0; (child = childNodes[i++]);) {
-                    if (child.tagName) {
+                    if (child.nodeType === 1) {
                         if (!tag || tag === child.tagName) {
                             ret.push(child);
                         }

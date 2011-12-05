@@ -537,6 +537,12 @@ onload = function() {
 
                 Assert.isNotNull(node);
                 Assert.areEqual(node, Y.Selector.query('#1', null, true));
+            },
+
+            'should omit comments from children': function() {
+                var node = document.getElementById('test-dl');
+                Assert.areEqual(document.getElementById('last-dd'),
+                        Y.Selector.query(':last-child', node, true));
             }
 
         });
@@ -630,8 +636,8 @@ onload = function() {
         <dt>Window size</dt>
         <dd class="test-dd1">dd1</dd>
         <dt>Document size</dt>
-        <dd class="test-dd2">dd2</dd>
-
+        <dd id="last-dd" class="test-dd2">dd2</dd>
+        <!-- test comment -->
     </dl>
     <div id="test:colon"><h2>test</h2></div>
     <div id="test-custom-attr" foo="bar" foo-bar="bar">custom attribute</div>
