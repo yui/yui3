@@ -1,6 +1,12 @@
 Widget Change History
 =====================
 
+3.5.0
+-----
+
+ * Refactored some of the box stamping code, to avoid Node references
+   until render.
+
 3.4.1
 -----
 
