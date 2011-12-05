@@ -13,6 +13,7 @@ SVGShape = function(cfg)
 {
     this._transforms = [];
     this.matrix = new Y.Matrix();
+    this._normalizedMatrix = new Y.Matrix();
     SVGShape.superclass.constructor.apply(this, arguments);
 };
 
@@ -195,6 +196,10 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 		{
 			node.setAttribute("pointer-events", pointerEvents);
 		}
+        if(!this.get("visible"))
+        {
+            Y.one(node).setStyle("visibility", "hidden");
+        }
 	},
 	
 
@@ -337,7 +342,8 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 			cy = fill.cy,
 			fx = fill.fx,
 			fy = fill.fy,
-			r = fill.r;
+			r = fill.r,
+            stopNodes = [];
 		if(type == "linear")
 		{
             cx = w/2;
@@ -391,8 +397,18 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 		
 		len = stops.length;
 		def = 0;
-		for(i = 0; i < len; ++i)
+        for(i = 0; i < len; ++i)
 		{
+            if(this._stops && this._stops.length > 0)
+            {
+                stopNode = this._stops.shift();
+                newStop = false;
+            }
+            else
+            {
+			    stopNode = graphic._createGraphicNode("stop");
+                newStop = true;
+            }
 			stop = stops[i];
 			opacity = stop.opacity;
 			color = stop.color;
@@ -401,13 +417,23 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 			opacity = isNumber(opacity) ? opacity : 1;
 			opacity = Math.max(0, Math.min(1, opacity));
 			def = (i + 1) / len;
-			stopNode = graphic._createGraphicNode("stop");
 			stopNode.setAttribute("offset", offset);
 			stopNode.setAttribute("stop-color", color);
 			stopNode.setAttribute("stop-opacity", opacity);
-			gradientNode.appendChild(stopNode);
+			if(newStop)
+            {
+                gradientNode.appendChild(stopNode);
+            }
+            stopNodes.push(stopNode);
 		}
+        while(this._stops && this._stops.length > 0)
+        {
+            gradientNode.removeChild(this._stops.shift());
+        }
+        this._stops = stopNodes;
 	},
+
+    _stops: null,
 
     /**
      * Sets the value of an attribute.
@@ -437,8 +463,6 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 */
 	translate: function(x, y)
 	{
-		this._translateX += x;
-		this._translateY += y;
 		this._addTransform("translate", arguments);
 	},
 
@@ -451,7 +475,6 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 */
 	translateX: function(x)
     {
-        this._translateX += x;
         this._addTransform("translateX", arguments);
     },
 
@@ -464,7 +487,6 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 */
 	translateY: function(y)
     {
-        this._translateY += y;
         this._addTransform("translateY", arguments);
     },
 
@@ -503,15 +525,6 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 },
 
 	/**
-     * Storage for `rotation` atribute.
-     *
-     * @property _rotation
-     * @type Number
-	 * @private
-	 */
-	 _rotation: 0,
-
-	/**
 	 * Rotates the shape clockwise around it transformOrigin.
 	 *
 	 * @method rotate
@@ -519,7 +532,6 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 */
 	 rotate: function(deg)
 	 {
-		this._rotation = deg;
 		this._addTransform("rotate", arguments);
 	 },
 
@@ -572,6 +584,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
             tx,
             ty,
             matrix = this.matrix,
+            normalizedMatrix = this._normalizedMatrix,
             i = 0,
             len = this._transforms.length;
 
@@ -579,45 +592,41 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 		{
             x = this.get("x");
             y = this.get("y");
-            
+            transformOrigin = this.get("transformOrigin");
+            tx = x + (transformOrigin[0] * this.get("width"));
+            ty = y + (transformOrigin[1] * this.get("height")); 
+            //need to use translate for x/y coords
             if(isPath)
             {
-                x += this._left;
-                y += this._top;
-                matrix.init({dx: x, dy: y});
-                x = 0;
-                y = 0;
+                //adjust origin for custom shapes 
+                if(!(this instanceof Y.SVGPath))
+                {
+                    tx = this._left + (transformOrigin[0] * this.get("width"));
+                    ty = this._top + (transformOrigin[1] * this.get("height"));
+                }
+                normalizedMatrix.init({dx: x + this._left, dy: y + this._top});
             }
+            normalizedMatrix.translate(tx, ty);
             for(; i < len; ++i)
             {
                 key = this._transforms[i].shift();
                 if(key)
                 {
-                    if(key == "rotate" || key == "scale")
-                    {
-				        transformOrigin = this.get("transformOrigin");
-                        tx = x + (transformOrigin[0] * this.get("width"));
-                        ty = y + (transformOrigin[1] * this.get("height")); 
-                        matrix.translate(tx, ty);
-                        matrix[key].apply(matrix, this._transforms[i]); 
-                        matrix.translate(0 - tx, 0 - ty);
-                    }
-                    else
-                    {
-                        matrix[key].apply(matrix, this._transforms[i]); 
-                    }
+                    normalizedMatrix[key].apply(normalizedMatrix, this._transforms[i]);
+                    matrix[key].apply(matrix, this._transforms[i]); 
                 }
                 if(isPath)
                 {
                     this._transforms[i].unshift(key);
                 }
 			}
-            transform = "matrix(" + matrix.a + "," + 
-                            matrix.b + "," + 
-                            matrix.c + "," + 
-                            matrix.d + "," + 
-                            matrix.dx + "," +
-                            matrix.dy + ")";
+            normalizedMatrix.translate(-tx, -ty);
+            transform = "matrix(" + normalizedMatrix.a + "," + 
+                            normalizedMatrix.b + "," + 
+                            normalizedMatrix.c + "," + 
+                            normalizedMatrix.d + "," + 
+                            normalizedMatrix.dx + "," +
+                            normalizedMatrix.dy + ")";
 		}
         this._graphic.addToRedrawQueue(this);    
         if(transform)
@@ -660,24 +669,6 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	{
 		this._draw();
 	},
-	
-	/**
-	 * Storage for translateX
-	 *
-     * @property _translateX
-     * @type Number
-	 * @private
-	 */
-	_translateX: 0,
-
-	/**
-	 * Storage for translateY
-	 *
-     * @property _translateY
-     * @type Number
-	 * @private
-	 */
-	_translateY: 0,
     
     /**
      * Storage for the transform attribute.
@@ -702,7 +693,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	    var type = this._type,
             wt,
             bounds = {},
-            matrix = this.matrix,
+            matrix = this._normalizedMatrix,
             a = matrix.a,
             b = matrix.b,
             c = matrix.c,
@@ -823,6 +814,7 @@ SVGShape.ATTRS = {
      *        <dt>translateY</dt><dd>Translates the shape along the y-axis.</dd>
      *        <dt>skewX</dt><dd>Skews the shape around the x-axis.</dd>
      *        <dt>skewY</dt><dd>Skews the shape around the y-axis.</dd>
+     *        <dt>matrix</dt><dd>Specifies a 2D transformation matrix comprised of the specified six values.</dd>      
      *    </dl>
      * </p>
      * <p>Applying transforms through the transform attribute will reset the transform matrix and apply a new transform. The shape class also contains corresponding methods for each transform
@@ -841,8 +833,9 @@ SVGShape.ATTRS = {
 	 */
 	transform: {
 		setter: function(val)
-		{
+        {
             this.matrix.init();	
+            this._normalizedMatrix.init();
 		    this._transforms = this.matrix.getTransformArray(val);
             this._transform = val;
             if(this.initialized)
@@ -932,7 +925,10 @@ SVGShape.ATTRS = {
 
 		setter: function(val){
 			var visibility = val ? "visible" : "hidden";
-			this.node.style.visibility = visibility;
+			if(this.node)
+            {
+                this.node.style.visibility = visibility;
+            }
 			return val;
 		}
 	},
