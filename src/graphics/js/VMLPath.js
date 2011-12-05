@@ -33,18 +33,13 @@ VMLPath.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 	/**
 	 * Indicates the width of the shape
 	 * 
-	 * @config width 
+	 * @config width
 	 * @type Number
 	 */
 	width: {
 		getter: function()
 		{
-			return this._width;
-		},
-
-		setter: function(val)
-		{
-			this._width = val;
+			var val = Math.max(this._right - this._left, 0);
 			return val;
 		}
 	},
@@ -58,13 +53,7 @@ VMLPath.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 	height: {
 		getter: function()
 		{
-			return this._height;
-		},
-
-		setter: function(val)
-		{
-			this._height = val;
-			return val;
+			return Math.max(this._bottom - this._top, 0);
 		}
 	},
 	

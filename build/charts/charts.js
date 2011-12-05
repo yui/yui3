@@ -1803,6 +1803,45 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     },
 
     /**
+     * Handles change to the position attribute
+     *
+     * @method _positionChangeHandler
+     * @param {Object} e Event object
+     * @private
+     */
+    _positionChangeHandler: function(e)
+    {
+        this._updateGraphic(e.newVal);
+        this._updateHandler();
+    },
+
+    /**
+     * Updates the the Graphic instance
+     *
+     * @method _updateGraphic
+     * @param {String} position Position of axis 
+     * @private
+     */
+    _updateGraphic: function(position)
+    {
+        var graphic = this.get("graphic");
+        if(position == "none")
+        {
+            if(graphic)
+            {
+                graphic.destroy();
+            }
+        }
+        else
+        {
+            if(!graphic)
+            {
+                this._setCanvas();
+            }
+        }
+    },
+
+    /**
      * Handles changes to axis.
      *
      * @method _updateHandler
@@ -1816,25 +1855,16 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             this._drawAxis();
         }
     },
-
+   
     /**
      * @method renderUI
      * @private
      */
     renderUI: function()
     {
-        var pos = this.get("position"),
-            layoutClass = this._layoutClasses[pos];
-        if(pos && pos != "none")
-        {
-            this._layout = new layoutClass();
-            if(this._layout)
-            {
-                this._setCanvas();
-            }
-        }
+        this._updateGraphic(this.get("position"));
     },
-   
+
     /**
      * @method syncUI
      * @private
@@ -2243,7 +2273,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                     titleTextField.style[i] = styles[i];
                 }
             }
-            titleTextField.innerHTML = title;
+            titleTextField.innerHTML = this.get("titleFunction")(title);
             this._titleTextField = titleTextField;
             this._layout.positionTitle.apply(this, [titleTextField]);
         }
@@ -2657,13 +2687,12 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          * @type String
          */
         position: {
-            setOnce: true,
-
             setter: function(val)
             {
-                if(val == "none")
+                var layoutClass = this._layoutClasses[val];
+                if(val && val != "none")
                 {
-                    this.bindUI();
+                    this._layout = new layoutClass();
                 }
                 return val;
             }
@@ -2793,7 +2822,48 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          *  @attribute title
          *  @type String
          */
-        title: {}
+        title: {
+            setter: function(val)
+            {
+                return Y.Escape.html(val);
+            }
+        },
+
+        /**
+         * Method used for formatting title. The method use would need to implement the arguments below and return a `String` or `HTML`. The default implementation 
+         * of the method returns a `String`. The output of this method will be rendered to the DOM using `innerHTML`. 
+         * <dl>
+         *      <dt>val</dt><dd>Title to be formatted. (`String`)</dd>
+         * </dl>
+         *
+         * @attribute titleFunction
+         * @type Function
+         */
+        titleFunction: {
+            value: function(val)
+            {
+                return val;
+            }
+        },
+        
+        /**
+         * Method used for formatting a label. This attribute allows for the default label formatting method to overridden. The method use would need
+         * to implement the arguments below and return a `String` or `HTML`. The default implementation of the method returns a `String`. The output of this method
+         * will be rendered to the DOM using `innerHTML`. 
+         * <dl>
+         *      <dt>val</dt><dd>Label to be formatted. (`String`)</dd>
+         *      <dt>format</dt><dd>Template for formatting label. (optional)</dd>
+         * </dl>
+         *
+         * @attribute labelFunction
+         * @type Function
+         */
+        labelFunction: {
+            value: function(val, format)
+            {
+                return val;
+            }
+        }
             
         /**
          * Style properties used for drawing an axis. This attribute is inherited from `Renderer`. Below are the default values:
@@ -2857,10 +2927,10 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
  */
 Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     /**
-     * @method bindUI
+     * @method initializer
      * @private
      */
-    bindUI: function()
+    initializer: function()
     {
         this.after("dataReady", Y.bind(this._dataChangeHandler, this));
         this.after("dataUpdate", Y.bind(this._dataChangeHandler, this));
@@ -2868,13 +2938,21 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
         this.after("maximumChange", Y.bind(this._keyChangeHandler, this));
         this.after("keysChange", this._keyChangeHandler);
         this.after("dataProviderChange", this._dataProviderChangeHandler);
-        this.after("stylesChange", this._updateHandler);
-        this.after("positionChange", this._positionChangeHandler);
-        this.after("overlapGraphChange", this._updateHandler);
-        this.after("widthChange", this._handleSizeChange);
-        this.after("heightChange", this._handleSizeChange);
         this.after("alwaysShowZeroChange", this._keyChangeHandler);
         this.after("roundingMethodChange", this._keyChangeHandler);
+    },
+
+    /**
+     * @method bindUI
+     * @private
+     */
+    bindUI: function()
+    {
+        this.after("stylesChange", this._updateHandler);
+        this.after("overlapGraphChange", this._updateHandler);
+        this.after("positionChange", this._positionChangeHandler);
+        this.after("widthChange", this._handleSizeChange);
+        this.after("heightChange", this._handleSizeChange);
     },
 
     /**
@@ -3082,17 +3160,17 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
      * @method getKeyValueAt
      * @param {String} key value used to look up the correct array
      * @param {Number} index within the array
-     * @return Object
+     * @return Number 
      */
     getKeyValueAt: function(key, index)
     {
         var value = NaN,
             keys = this.get("keys");
-        if(keys[key] && keys[key][index]) 
+        if(keys[key] && Y_Lang.isNumber(parseFloat(keys[key][index])))
         {
             value = keys[key][index];
         }
-        return value;
+        return parseFloat(value);
     },
 
     /**
@@ -3237,7 +3315,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     _keyChangeHandler: function(e)
     {
         this._updateMinAndMax();
-		this.fire("dataUpdate");
+        this.fire("dataUpdate");
     },
 
     /**
@@ -3397,7 +3475,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
                 {
                     max = this._setMaximum;
                 }
-                return max;
+                return parseFloat(max);
             },
             setter: function (value)
             {
@@ -3440,7 +3518,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
                 {
                     min = this._setMinimum;
                 }
-                return min;
+                return parseFloat(min);
             },
             setter: function(val)
             {
@@ -3520,24 +3598,6 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
                 return col;
             },
             readOnly: true
-        },
-        
-        /**
-         * Method used for formatting a label. This attribute allows for the default label formatting method to overridden. The method use would need
-         * to implement the arguments below and return a `String`.
-         * <dl>
-         *      <dt>val</dt><dd>Label to be formatted. (`String`)</dd>
-         *      <dt>format</dt><dd>Template for formatting label. (optional)</dd>
-         * </dl>
-         *
-         * @attribute labelFunction
-         * @type Function
-         */
-        labelFunction: {
-            value: function(val, format)
-            {
-                return val;
-            }
         }
     }
 });
@@ -3570,7 +3630,8 @@ NumericAxis.ATTRS = {
     
     /**
      * Method used for formatting a label. This attribute allows for the default label formatting method to overridden. The method use would need
-     * to implement the arguments below and return a `String`.
+     * to implement the arguments below and return a `String` or `HTML`. The default implementation of the method returns a `String`. The output of this method
+     * will be rendered to the DOM using `innerHTML`. 
      * <dl>
      *      <dt>val</dt><dd>Label to be formatted. (`String`)</dd>
      *      <dt>format</dt><dd>Object containing properties used to format the label. (optional)</dd>
@@ -3611,6 +3672,31 @@ NumericAxis.ATTRS = {
 Y.extend(NumericAxis, Y.AxisType,
 {
     /**
+     * Returns the sum of all values per key.
+     *
+     * @method getTotalByKey
+     * @param {String} key The identifier for the array whose values will be calculated.
+     * @return Number
+     */
+    getTotalByKey: function(key)
+    {
+        var total = 0,
+            values = this.getDataByKey(key),
+            i = 0,
+            val,
+            len = values ? values.length : 0;
+        for(; i < len; ++i)
+        {
+           val = parseFloat(values[i]);
+           if(!isNaN(val))
+           {
+                total += val;
+           }
+        }
+        return total;
+    },
+
+    /**
      * Type of data used in `Axis`.
      *
      * @property _type
@@ -3618,25 +3704,6 @@ Y.extend(NumericAxis, Y.AxisType,
      * @private
      */
     _type: "numeric",
-
-    /**
-     * Returns a value based of a key value and an index.
-     *
-     * @method getKeyValueAt
-     * @param {String} key value used to look up the correct array
-     * @param {Number} index within the array
-     * @return Object
-     */
-    getKeyValueAt: function(key, index)
-    {
-        var value = NaN,
-            keys = this.get("keys");
-        if(keys[key] && Y_Lang.isNumber(parseFloat(keys[key][index])))
-        {
-            value = keys[key][index];
-        }
-        return value;
-    },
 
     /**
      * Helper method for getting a `roundingUnit` when calculating the minimum and maximum values.
@@ -3694,8 +3761,8 @@ Y.extend(NumericAxis, Y.AxisType,
     _updateMinAndMax: function()
     {
         var data = this.get("data"),
-            max = 0,
-            min = 0,
+            max, 
+            min,
             len,
             num,
             i = 0,
@@ -3729,8 +3796,32 @@ Y.extend(NumericAxis, Y.AxisType,
                         min = setMin ? this._setMinimum : min;
                         continue;
                     }
-                    max = setMax ? this._setMaximum : Math.max(num, max);
-                    min = setMin ? this._setMinimum : Math.min(num, min);
+                    
+                    if(setMin)
+                    {
+                        min = this._setMinimum;
+                    }
+                    else if(min === undefined)
+                    {
+                        min = num;
+                    }
+                    else
+                    {
+                        min = Math.min(num, min); 
+                    }
+                    if(setMax)
+                    {
+                        max = this._setMaximum;
+                    }
+                    else if(max === undefined)
+                    {
+                        max = num;
+                    }
+                    else
+                    {
+                        max = Math.max(num, max);
+                    }
+                    
                     this._actualMaximum = max;
                     this._actualMinimum = min;
                 }
@@ -4061,7 +4152,7 @@ Y.extend(NumericAxis, Y.AxisType,
             }
             label += min;
         }
-        return label;
+        return parseFloat(label);
     },
 
     /**
@@ -4343,7 +4434,7 @@ TimeAxis.ATTRS =
             {
                 max = this._getNumber(this.get("dataMaximum"));
             }
-            return max;
+            return parseFloat(max);
         },
         setter: function (value)
         {
@@ -4366,7 +4457,7 @@ TimeAxis.ATTRS =
             {
                 min = this._getNumber(this.get("dataMinimum"));
             }
-                return min;
+            return parseFloat(min);
         },
         setter: function (value)
         {
@@ -4377,7 +4468,8 @@ TimeAxis.ATTRS =
 
     /**
      * Method used for formatting a label. This attribute allows for the default label formatting method to overridden. The method use would need
-     * to implement the arguments below and return a `String`.
+     * to implement the arguments below and return a `String` or `HTML`. The default implementation of the method returns a `String`. The output of this method
+     * will be rendered to the DOM using `innerHTML`. 
      * <dl>
      *      <dt>val</dt><dd>Label to be formatted. (`String`)</dd>
      *      <dt>format</dt><dd>STRFTime string used to format the label. (optional)</dd>
@@ -4394,7 +4486,7 @@ TimeAxis.ATTRS =
             {
                 return Y.DataType.Date.format(val, {format:format});
             }
-            return val;
+            return Y.Escape.html(val.toString());
         }
     },
 
@@ -4780,6 +4872,25 @@ Y.extend(CategoryAxis, Y.AxisType,
     {
         return l/ct;
     },
+
+    /**
+     * Returns a value based of a key value and an index.
+     *
+     * @method getKeyValueAt
+     * @param {String} key value used to look up the correct array
+     * @param {Number} index within the array
+     * @return String 
+     */
+    getKeyValueAt: function(key, index)
+    {
+        var value = NaN,
+            keys = this.get("keys");
+        if(keys[key] && keys[key][index]) 
+        {
+            value = keys[key][index];
+        }
+        return Y.Escape.html(value);
+    },
    
     /**
      * Calculates and returns a value based on the number of labels and the index of
@@ -4803,7 +4914,7 @@ Y.extend(CategoryAxis, Y.AxisType,
         {
             label = data[l - (i + 1)];
         }   
-        return label;
+        return Y.Escape.html(label.toString());
     }
 });
 
@@ -6064,7 +6175,13 @@ Histogram.prototype = {
             calculatedSizeKey,
             config,
             fillColors = null,
-            borderColors = null;
+            borderColors = null,
+            xMarkerPlane = [],
+            yMarkerPlane = [],
+            xMarkerPlaneLeft,
+            xMarkerPlaneRight,
+            yMarkerPlaneTop,
+            yMarkerPlaneBottom;
         if(Y_Lang.isArray(style.fill.color))
         {
             fillColors = style.fill.color.concat(); 
@@ -6096,17 +6213,25 @@ Histogram.prototype = {
             }
         }
         totalSize = len * seriesSize;
-        if(totalSize > graph.get(setSizeKey))
+        this._maxSize = graph.get(setSizeKey);
+        if(totalSize > this._maxSize)
         {
             ratio = graph.get(setSizeKey)/totalSize;
             seriesSize *= ratio;
             offset *= ratio;
             setSize *= ratio;
             setSize = Math.max(setSize, 1);
+            this._maxSize = setSize;
         }
         offset -= seriesSize/2;
         for(i = 0; i < len; ++i)
         {
+            xMarkerPlaneLeft = xcoords[i] - seriesSize/2;
+            xMarkerPlaneRight = xMarkerPlaneLeft + seriesSize;
+            yMarkerPlaneTop = ycoords[i] - seriesSize/2;
+            yMarkerPlaneBottom = yMarkerPlaneTop + seriesSize;
+            xMarkerPlane.push({start: xMarkerPlaneLeft, end: xMarkerPlaneRight});
+            yMarkerPlane.push({start: yMarkerPlaneTop, end: yMarkerPlaneBottom});
             if(isNaN(xcoords[i]) || isNaN(ycoords[i]))
             {
                 this._markers.push(null);
@@ -6121,6 +6246,7 @@ Histogram.prototype = {
                 style[calculatedSizeKey] = config.calculatedSize;
                 style.x = left;
                 style.y = top;
+
                 if(fillColors)
                 {
                     style.fill.color = fillColors[i % fillColors.length];
@@ -6136,6 +6262,8 @@ Histogram.prototype = {
                 this._markers.push(null);
             }
         }
+        this.set("xMarkerPlane", xMarkerPlane);
+        this.set("yMarkerPlane", yMarkerPlane);
         this._clearMarkerCache();
     },
     
@@ -6474,7 +6602,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
             yData = yData.reverse();
         }
         this._leftOrigin = Math.round(((0 - xMin) * xScaleFactor) + leftPadding + xOffset);
-        this._bottomOrigin =  Math.round((dataHeight + topPadding + yOffset) - (0 - yMin) * yScaleFactor);
+        this._bottomOrigin = Math.round((dataHeight + topPadding + yOffset)); 
         for (; i < dataLength; ++i) 
 		{
             xValue = parseFloat(xData[i]);
@@ -6648,6 +6776,18 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     _handleVisibleChange: function(e) 
     {
         this._toggleVisible(this.get("visible"));
+    },
+
+    /**
+     * Returns the sum of all values for the series.
+     *
+     * @method getTotalValues
+     * @return Number
+     */
+    getTotalValues: function()
+    {
+        var total = this.get("valueAxis").getTotalByKey(this.get("valueKey"));
+        return total;
     }
 }, {
     ATTRS: {
@@ -6665,7 +6805,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
 
             setter: function(val)
             {
-                this._xDisplayName = val;
+                this._xDisplayName = Y.Escape.html(val);
                 return val;
             }
         },
@@ -6684,7 +6824,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
 
             setter: function(val)
             {
-                this._yDisplayName = val;
+                this._yDisplayName = Y.Escape.html(val);
                 return val;
             }
         },
@@ -6813,7 +6953,12 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          * @attribute xKey
          * @type String
          */
-        xKey: {},
+        xKey: {
+            setter: function(val)
+            {
+                return Y.Escape.html(val);
+            }
+        },
 
         /**
          * Indicates which array to from the hash of value arrays in 
@@ -6822,7 +6967,12 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          * @attribute yKey
          * @type String
          */
-        yKey: {},
+        yKey: {
+            setter: function(val)
+            {
+                return Y.Escape.html(val);
+            }
+        },
 
         /**
          * Array of x values for the series.
@@ -7401,6 +7551,7 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
                 xcoords = this.get("xcoords"),
                 ycoords = this.get("ycoords"),
                 marker = this._markers[i],
+                markers,
                 graph = this.get("graph"),
                 seriesStyles,
                 seriesCollection = graph.seriesTypes[this.get("type")],
@@ -7412,17 +7563,18 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
                 xs = [],
                 order = this.get("order"),
                 config;
-            markerStyles = state == "off" || !styles[state] ? styles : styles[state]; 
+            markerStyles = state == "off" || !styles[state] ? Y.clone(styles) : Y.clone(styles[state]); 
             markerStyles.fill.color = this._getItemColor(markerStyles.fill.color, i);
             markerStyles.border.color = this._getItemColor(markerStyles.border.color, i);
             config = this._getMarkerDimensions(xcoords[i], ycoords[i], styles.width, offset);
             markerStyles.height = config.calculatedSize;
+            markerStyles.width = Math.min(this._maxSize, markerStyles.width);
             marker.set(markerStyles);
             for(; n < seriesLen; ++n)
             {
                 xs[n] = xcoords[i] + seriesSize;
                 seriesStyles = seriesCollection[n].get("styles").marker;
-                seriesSize += seriesStyles.width;
+                seriesSize += Math.min(this._maxSize, seriesStyles.width);
                 if(order > n)
                 {
                     offset = seriesSize;
@@ -7431,10 +7583,14 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
             }
             for(n = 0; n < seriesLen; ++n)
             {
-                renderer = seriesCollection[n].get("markers")[i];
-                if(renderer && renderer !== undefined)
+                markers = seriesCollection[n].get("markers");
+                if(markers)
                 {
-                    renderer.set("x", (xs[n] - seriesSize/2));
+                    renderer = markers[i];
+                    if(renderer && renderer !== undefined)
+                    {
+                        renderer.set("x", (xs[n] - seriesSize/2));
+                    }
                 }
             }
         }
@@ -7544,6 +7700,7 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
                 xcoords = this.get("xcoords"),
                 ycoords = this.get("ycoords"),
                 marker = this._markers[i],
+                markers,
                 graph = this.get("graph"),
                 seriesCollection = graph.seriesTypes[this.get("type")],
                 seriesLen = seriesCollection.length,
@@ -7560,12 +7717,13 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
             markerStyles.border.color = this._getItemColor(markerStyles.border.color, i);
             config = this._getMarkerDimensions(xcoords[i], ycoords[i], styles.height, offset);
             markerStyles.width = config.calculatedSize;
+            markerStyles.height = Math.min(this._maxSize, markerStyles.height);
             marker.set(markerStyles);
             for(; n < seriesLen; ++n)
             {
                 ys[n] = ycoords[i] + seriesSize;
                 seriesStyles = seriesCollection[n].get("styles").marker;
-                seriesSize += seriesStyles.height; 
+                seriesSize += Math.min(this._maxSize, seriesStyles.height); 
                 if(order > n)
                 {
                     offset = seriesSize;
@@ -7574,10 +7732,14 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
             }
             for(n = 0; n < seriesLen; ++n)
             {
-                renderer = seriesCollection[n].get("markers")[i];
-                if(renderer && renderer !== undefined)
+                markers = seriesCollection[n].get("markers");
+                if(markers)
                 {
-                    renderer.set("y", (ys[n] - seriesSize/2));
+                    renderer = markers[i];
+                    if(renderer && renderer !== undefined)
+                    {
+                        renderer.set("y", (ys[n] - seriesSize/2));
+                    }
                 }
             }
         }
@@ -8320,12 +8482,12 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
 	 */
 	drawSeries: function()
 	{
-	    if(this.get("xcoords").length < 1) 
-		{
-			return;
-		}
+        if(this.get("xcoords").length < 1) 
+        {
+            return;
+        }
         var isNumber = Y_Lang.isNumber,
-            style = this.get("styles").marker, 
+            style = Y.clone(this.get("styles").marker), 
             w = style.width,
             h = style.height,
             xcoords = this.get("xcoords"),
@@ -8341,11 +8503,21 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
             graphOrder = this.get("graphOrder"),
             left,
             marker,
+            fillColors,
+            borderColors,
             lastCollection,
             negativeBaseValues,
             positiveBaseValues,
             useOrigin = order === 0,
             totalWidth = len * w;
+        if(Y_Lang.isArray(style.fill.color))
+        {
+            fillColors = style.fill.color.concat(); 
+        }
+        if(Y_Lang.isArray(style.border.color))
+        {
+            borderColors = style.border.colors.concat();
+        }
         this._createMarkerCache();
         if(totalWidth > this.get("width"))
         {
@@ -8430,6 +8602,14 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
                 style.height = h;
                 style.x = left;
                 style.y = top;
+                if(fillColors)
+                {
+                    style.fill.color = fillColors[i % fillColors.length];
+                }
+                if(borderColors)
+                {
+                    style.border.color = borderColors[i % borderColors.length];
+                }
                 marker = this.getMarker(style, graphOrder, i);
             }
             else
@@ -8457,14 +8637,34 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
                 state = this._getState(type),
                 xcoords = this.get("xcoords"),
                 marker = this._markers[i],
-                offset = 0;        
+                offset = 0,
+                fillColor,
+                borderColor;        
             styles = this.get("styles").marker;
             offset = styles.width * 0.5;
-            markerStyles = state == "off" || !styles[state] ? styles : styles[state]; 
+            markerStyles = state == "off" || !styles[state] ? Y.clone(styles) : Y.clone(styles[state]); 
             markerStyles.height = marker.get("height");
             markerStyles.x = (xcoords[i] - offset);
             markerStyles.y = marker.get("y");
             markerStyles.id = marker.get("id");
+            fillColor = markerStyles.fill.color; 
+            borderColor = markerStyles.border.color;
+            if(Y_Lang.isArray(fillColor))
+            {
+                markerStyles.fill.color = fillColor[i % fillColor.length];
+            }
+            else
+            {
+                markerStyles.fill.color = this._getItemColor(markerStyles.fill.color, i);
+            }
+            if(Y_Lang.isArray(borderColor))
+            {
+                markerStyles.border.color = borderColor[i % borderColor.length];
+            }
+            else
+            {
+                markerStyles.border.color = this._getItemColor(markerStyles.border.color, i);
+            }
             marker.set(markerStyles);
         }
     },
@@ -8591,13 +8791,13 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
      */
     drawSeries: function()
 	{
-	    if(this.get("xcoords").length < 1) 
-		{
-			return;
-		}
+        if(this.get("xcoords").length < 1) 
+        {
+            return;
+        }
 
         var isNumber = Y_Lang.isNumber,
-            style = this.get("styles").marker,
+            style = Y.clone(this.get("styles").marker),
             w = style.width,
             h = style.height,
             xcoords = this.get("xcoords"),
@@ -8616,8 +8816,18 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
             lastCollection,
             negativeBaseValues,
             positiveBaseValues,
+            fillColors,
+            borderColors,
             useOrigin = order === 0,
             totalHeight = len * h;
+        if(Y_Lang.isArray(style.fill.color))
+        {
+            fillColors = style.fill.color.concat(); 
+        }
+        if(Y_Lang.isArray(style.border.color))
+        {
+            borderColors = style.border.colors.concat();
+        }
         this._createMarkerCache();
         if(totalHeight > this.get("height"))
         {
@@ -8701,6 +8911,14 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
                 style.height = h;
                 style.x = left;
                 style.y = top;
+                if(fillColors)
+                {
+                    style.fill.color = fillColors[i % fillColors.length];
+                }
+                if(borderColors)
+                {
+                    style.border.color = borderColors[i % borderColors.length];
+                }
                 marker = this.getMarker(style, graphOrder, i);
             }
             else
@@ -8729,11 +8947,31 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
                 marker = this._markers[i],
                 styles = this.get("styles").marker,
                 h = styles.height,
-                markerStyles = state == "off" || !styles[state] ? styles : styles[state]; 
+                markerStyles = state == "off" || !styles[state] ? Y.clone(styles) : Y.clone(styles[state]), 
+                fillColor,
+                borderColor;        
             markerStyles.y = (ycoords[i] - h/2);
             markerStyles.x = marker.get("x");
             markerStyles.width = marker.get("width");
             markerStyles.id = marker.get("id");
+            fillColor = markerStyles.fill.color; 
+            borderColor = markerStyles.border.color;
+            if(Y_Lang.isArray(fillColor))
+            {
+                markerStyles.fill.color = fillColor[i % fillColor.length];
+            }
+            else
+            {
+                markerStyles.fill.color = this._getItemColor(markerStyles.fill.color, i);
+            }
+            if(Y_Lang.isArray(borderColor))
+            {
+                markerStyles.border.color = borderColor[i % borderColor.length];
+            }
+            else
+            {
+                markerStyles.border.color = this._getItemColor(markerStyles.border.color, i);
+            }
             marker.set(markerStyles);
         }
     },
@@ -9116,7 +9354,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             isCanvas = Y.Graphic.NAME == "canvasGraphic";
         for(; i < itemCount; ++i)
         {
-            value = values[i];
+            value = parseFloat(values[i]);
             
             values.push(value);
             if(!isNaN(value))
@@ -10520,12 +10758,54 @@ ChartBase.ATTRS = {
      *      <dt>show</dt><dd>Indicates whether or not to show the tooltip</dd>
      *      <dt>markerEventHandler</dt><dd>Displays and hides tooltip based on marker events</dd>
      *      <dt>planarEventHandler</dt><dd>Displays and hides tooltip based on planar events</dd>
-     *      <dt>markerLabelFunction</dt><dd>Reference to the function used to format a marker event triggered tooltip's text</dd>
-     *      <dt>planarLabelFunction</dt><dd>Reference to the function used to format a planar event triggered tooltip's text</dd>
+     *      <dt>markerLabelFunction</dt><dd>Reference to the function used to format a marker event triggered tooltip's text. The method contains 
+     *      the following arguments:
+     *  <dl>
+     *      <dt>categoryItem</dt><dd>An object containing the following:
+     *  <dl>
+     *      <dt>axis</dt><dd>The axis to which the category is bound.</dd>
+     *      <dt>displayName</dt><dd>The display name set to the category (defaults to key if not provided).</dd>
+     *      <dt>key</dt><dd>The key of the category.</dd>
+     *      <dt>value</dt><dd>The value of the category.</dd>
+     *  </dl>
+     *  </dd>
+     *  <dt>valueItem</dt><dd>An object containing the following:
+     *      <dl>
+     *          <dt>axis</dt><dd>The axis to which the item's series is bound.</dd>
+     *          <dt>displayName</dt><dd>The display name of the series. (defaults to key if not provided)</dd>
+     *          <dt>key</dt><dd>The key for the series.</dd>
+     *          <dt>value</dt><dd>The value for the series item.</dd> 
+     *      </dl>
+     *  </dd>
+     *  <dt>itemIndex</dt><dd>The index of the item within the series.</dd>
+     *  <dt>series</dt><dd> The `CartesianSeries` instance of the item.</dd>
+     *  <dt>seriesIndex</dt><dd>The index of the series in the `seriesCollection`.</dd>
+     *  </dl>
+     *  The method returns an html string which is written into the DOM using `innerHTML`. 
+     *  </dd>
+     *  <dt>planarLabelFunction</dt><dd>Reference to the function used to format a planar event triggered tooltip's text
+     *  <dl>
+     *      <dt>categoryAxis</dt><dd> `CategoryAxis` Reference to the categoryAxis of the chart.
+     *      <dt>valueItems</dt><dd>Array of objects for each series that has a data point in the coordinate plane of the event. Each object contains the following data:
+     *  <dl>
+     *      <dt>axis</dt><dd>The value axis of the series.</dd>
+     *      <dt>key</dt><dd>The key for the series.</dd>
+     *      <dt>value</dt><dd>The value for the series item.</dd>
+     *      <dt>displayName</dt><dd>The display name of the series. (defaults to key if not provided)</dd>
+     *  </dl> 
+     *  </dd>
+     *      <dt>index</dt><dd>The index of the item within its series.</dd>
+     *      <dt>seriesArray</dt><dd>Array of series instances for each value item.</dd>
+     *      <dt>seriesIndex</dt><dd>The index of the series in the `seriesCollection`.</dd>
+     *  </dl>
+     *  </dd>
+     *  </dl>
+     *  The method returns an html string which is written into the DOM using `innerHTML`. 
+     *  </dd>
      *  </dl>
      * @attribute tooltip
      * @type Object
-     */
+     */ 
     tooltip: {
         valueFn: "_getTooltip",
 
@@ -10677,7 +10957,7 @@ ChartBase.prototype = {
     {
         var axis,
             axes = this.get("axes");
-        if(axes.hasOwnProperty(val))
+        if(axes && axes.hasOwnProperty(val))
         {
             axis = axes[val];
         }
@@ -10811,6 +11091,16 @@ ChartBase.prototype = {
     _axes: null,
 
     /**
+     * @method initializer
+     * @private
+     */
+    initializer: function()
+    {
+        this._axesRenderQueue = [];
+        this.after("dataProviderChange", this._dataProviderChangeHandler);
+    },
+
+    /**
      * @method renderUI
      * @private
      */
@@ -10828,7 +11118,7 @@ ChartBase.prototype = {
         }
         this._redraw();
     },
-    
+   
     /**
      * @property bindUI
      * @private
@@ -10838,7 +11128,6 @@ ChartBase.prototype = {
         this.after("tooltipChange", Y.bind(this._tooltipChangeHandler, this));
         this.after("widthChange", this._sizeChanged);
         this.after("heightChange", this._sizeChanged);
-        this.after("dataProviderChange", this._dataProviderChangeHandler);
         var tt = this.get("tooltip"),
             hideEvent = "mouseout",
             showEvent = "mouseover",
@@ -11044,14 +11333,17 @@ ChartBase.prototype = {
             axes = this.get("axes"),
             i,
             axis;
-        for(i in axes)
+        if(axes)
         {
-            if(axes.hasOwnProperty(i))
+            for(i in axes)
             {
-                axis = axes[i];
-                if(axis instanceof Y.Axis)
+                if(axes.hasOwnProperty(i))
                 {
-                    axis.set("dataProvider", dataProvider);
+                    axis = axes[i];
+                    if(axis instanceof Y.Axis)
+                    {
+                        axis.set("dataProvider", dataProvider);
+                    }
                 }
             }
         }
@@ -11273,6 +11565,7 @@ ChartBase.prototype = {
      *  @param {Number} index The index of the item within its series.
      *  @param {Array} seriesArray Array of series instances for each value item.
      *  @param {Number} seriesIndex The index of the series in the `seriesCollection`.
+     *  @return {String | HTML} 
      * @private
      */
     _planarLabelFunction: function(categoryAxis, valueItems, index, seriesArray, seriesIndex)
@@ -11322,6 +11615,7 @@ ChartBase.prototype = {
      * @param {Number} itemIndex The index of the item within the series.
      * @param {CartesianSeries} series The `CartesianSeries` instance of the item.
      * @param {Number} seriesIndex The index of the series in the `seriesCollection`.
+     * @return {String | HTML}
      * @private
      */
     _tooltipLabelFunction: function(categoryItem, valueItem, itemIndex, series, seriesIndex)
@@ -11584,6 +11878,24 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         {
             this._axesRenderQueue.push(axis);
         }
+    },
+
+    /**
+     * Adds axis instance to the appropriate array based on position
+     *
+     * @method _addToAxesCollection
+     * @param {String} position The position of the axis
+     * @param {Axis} axis The `Axis` instance
+     */
+    _addToAxesCollection: function(position, axis)
+    {
+        var axesCollection = this.get(position + "AxesCollection");
+        if(!axesCollection)
+        {
+            axesCollection = [];
+            this.set(position + "AxesCollection", axesCollection);
+        }
+        axesCollection.push(axis);
     },
 
     /**
@@ -11855,6 +12167,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             i, 
             pos, 
             axis,
+            axisPosition,
             dh, 
             axisClass, 
             config,
@@ -11870,7 +12183,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 }
                 else
                 {
-                    axisClass = this._getAxisClass(dh.type);
+                    axis = null;
                     config = {};
                     config.dataProvider = dh.dataProvider || dp;
                     config.keys = dh.keys;
@@ -11892,7 +12205,36 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                             config[ai] = dh[ai];
                         }
                     }
-                    axis = new axisClass(config);
+                   
+                    //only check for existing axis if we constructed the default axes already
+                    if(val)
+                    {
+                        axis = this.getAxisByKey(i);
+                    }
+                    
+                    if(axis && axis instanceof Y.Axis)
+                    {
+                        axisPosition = axis.get("position");
+                        if(pos != axisPosition)
+                        {
+                            if(axisPosition != "none")
+                            {
+                                axesCollection = this.get(axisPosition + "AxesCollection");
+                                axesCollection.splice(Y.Array.indexOf(axesCollection, axis), 1);
+                            }
+                            if(pos != "none")
+                            {
+                                this._addToAxesCollection(pos, axis);
+                            }
+                        }
+                        axis.setAttrs(config);
+                    }
+                    else
+                    {
+                        axisClass = this._getAxisClass(dh.type);
+                        axis = new axisClass(config);
+                        axis.after("axisRendered", Y.bind(this._axisRendered, this));
+                    }
                 }
 
                 if(axis)
@@ -11902,7 +12244,6 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                     {
                         axis.set("overlapGraph", false);
                     }
-                    axis.after("axisRendered", Y.bind(this._axisRendered, this));
                     axes[i] = axis;
                 }
             }
@@ -12055,7 +12396,35 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             }
         }
     },
-
+   
+    /**
+     * Returns all the keys contained in a  `dataProvider`.
+     *
+     * @method _getAllKeys
+     * @param {Array} dp Collection of objects to be parsed.
+     * @return Object
+     */
+    _getAllKeys: function(dp)
+    {
+        var i = 0,
+            len = dp.length,
+            item,
+            key,
+            keys = {};
+        for(; i < len; ++i)
+        {
+            item = dp[i];
+            for(key in item)
+            {
+                if(item.hasOwnProperty(key))
+                {
+                    keys[key] = true;
+                }
+            }
+        }
+        return keys;
+    },
+    
     /**
      * Generates and returns a key-indexed object containing `Axis` instances or objects used to create `Axis` instances.
      *
@@ -12087,7 +12456,6 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             categoryPosition,
             valueAxes = [],
             seriesAxis = this.get("stacked") ? "stacked" : "numeric";
-        dv = dp[0];
         if(direction == "vertical")
         {
             seriesPosition = "bottom";
@@ -12148,6 +12516,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         }
         if(seriesKeys.length < 1)
         {
+            dv = this._getAllKeys(dp);
             for(i in dv)
             {
                 if(dv.hasOwnProperty(i) && i != catKey && Y.Array.indexOf(claimedKeys, i) == -1)
@@ -12268,12 +12637,29 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
 
    
     /**
-     * Returns an object literal containing a categoryItem and a valueItem for a given series index.
-     *
-     * @method getSeriesItem
+     * Returns an object literal containing a categoryItem and a valueItem for a given series index. Below is the structure of each:
+     * 
+     * @method getSeriesItems
      * @param {CartesianSeries} series Reference to a series.
      * @param {Number} index Index of the specified item within a series.
-     * @return Object
+     * @return Object An object literal containing the following:
+     *
+     *  <dl>
+     *      <dt>categoryItem</dt><dd>Object containing the following data related to the category axis of the series.
+     *  <dl>
+     *      <dt>axis</dt><dd>Reference to the category axis of the series.</dd>
+     *      <dt>key</dt><dd>Category key for the series.</dd>
+     *      <dt>value</dt><dd>Value on the axis corresponding to the series index.</dd>
+     *  </dl>
+     *      </dd>
+     *      <dt>valueItem</dt><dd>Object containing the following data related to the category axis of the series.
+     *  <dl>
+     *      <dt>axis</dt><dd>Reference to the value axis of the series.</dd>
+     *      <dt>key</dt><dd>Value key for the series.</dd>
+     *      <dt>value</dt><dd>Value on the axis corresponding to the series index.</dd>
+     *  </dl>
+     *      </dd>
+     *  </dl>
      */
     getSeriesItems: function(series, index)
     {
@@ -13246,6 +13632,43 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
             graph.set("width", this.get("width"));
             graph.set("height", this.get("height"));
         }
+    },
+    
+    /**
+     * Formats tooltip text for a pie chart.
+     *
+     * @method _tooltipLabelFunction
+     * @param {Object} categoryItem An object containing the following:
+     *  <dl>
+     *      <dt>axis</dt><dd>The axis to which the category is bound.</dd>
+     *      <dt>displayName</dt><dd>The display name set to the category (defaults to key if not provided)</dd>
+     *      <dt>key</dt><dd>The key of the category.</dd>
+     *      <dt>value</dt><dd>The value of the category</dd>
+     *  </dl>
+     * @param {Object} valueItem An object containing the following:
+     *  <dl>
+     *      <dt>axis</dt><dd>The axis to which the item's series is bound.</dd>
+     *      <dt>displayName</dt><dd>The display name of the series. (defaults to key if not provided)</dd>
+     *      <dt>key</dt><dd>The key for the series.</dd>
+     *      <dt>value</dt><dd>The value for the series item.</dd> 
+     *  </dl>
+     * @param {Number} itemIndex The index of the item within the series.
+     * @param {CartesianSeries} series The `PieSeries` instance of the item.
+     * @param {Number} seriesIndex The index of the series in the `seriesCollection`.
+     * @return {String | HTML}
+     * @private
+     */
+    _tooltipLabelFunction: function(categoryItem, valueItem, itemIndex, series, seriesIndex)
+    {
+        var msg,
+            total = series.getTotalValues(),
+            pct = Math.round((valueItem.value / total) * 10000)/100;
+        msg = categoryItem.displayName +
+        ":&nbsp;" + categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]) + 
+        "<br/>" + valueItem.displayName + 
+        ":&nbsp;" + valueItem.axis.get("labelFunction").apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]) + 
+        "<br/>" + pct + "%";
+        return msg; 
     }
 }, {
     ATTRS: {

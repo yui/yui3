@@ -1259,6 +1259,10 @@ suite.add(new YUITest.TestCase({
             Assert.isTrue((loader.sorted.indexOf("event-resize")) > -1, "Module (event-resize) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("event-hover")) > -1, "Module (event-hover) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("event-outside")) > -1, "Module (event-outside) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("event-touch")) > -1, "Module (event-touch) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("event-move")) > -1, "Module (event-move) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("event-flick")) > -1, "Module (event-flick) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("event-valuechange")) > -1, "Module (event-valuechange) not found in sorted array");
         },
      "Testing event-base": function(data) {
             var loader = new Y.Loader({

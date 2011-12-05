@@ -255,6 +255,63 @@ YUI.add('loader-tests', function(Y) {
 
             test.wait();
         },
+        test_cond_with_test_function: function() {
+            var test = this;
+            
+            YUI({
+                modules: {
+                    cond2: {
+                        fullpath: './assets/cond2.js',
+                        condition: {
+                            trigger: 'jsonp',
+                            test: function() {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }).use('jsonp', function(Y) {   
+                test.resume(function() {
+                    Assert.isTrue(Y.COND2, 'Conditional module failed to load with test function');
+                });
+            });
+
+            test.wait();
+        },
+        test_cond_no_test_or_ua: function() {
+            var test = this;
+            
+            YUI({
+                modules: {
+                    cond: {
+                        fullpath: './assets/cond.js',
+                        condition: {
+                            trigger: 'yql'
+                        }
+                    }
+                }
+            }).use('yql', function(Y) {
+                test.resume(function() {
+                    Assert.isTrue(Y.COND, 'Conditional module failed to load with no test function or UA defined');
+                });
+            });
+
+            test.wait();
+        },
+        test_css_stamp: function() {
+            var test = this,
+                links = document.getElementsByTagName('link').length;
+
+            YUI().use('cssgrids', 'dial', function(Y) {
+                test.resume(function() {
+                    var links2 = document.getElementsByTagName('link').length;
+                    Assert.areEqual(links, links2, 'A new link tag was injected into the page.');
+                });
+            });
+
+            test.wait();
+
+        },
         test_forcemap: function() {
             var test = this;
 

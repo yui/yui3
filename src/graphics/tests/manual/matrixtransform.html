@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<style>
+#rect {
+    width: 200px;
+    height: 100px;
+    position: absolute;
+    top: 50px;
+    left: 100px;
+    background-color: #fc0;
+    -moz-transform: matrix(1, -0.2, 0, 1, 0, 0);
+    -webkit-transform: matrix(1, -0.2, 0, 1, 0, 0);
+    -o-transform: matrix(1, -0.2, 0, 1, 0, 0);
+    -ms-transform: matrix(1, -0.2, 0, 1, 0, 0);
+    transform: matrix(1, -0.2, 0, 1, 0, 0); 
+    border: 1px solid #000;
+}
+
+#rect2 {
+    background-color: #9aa;
+    border: 1px solid #000;
+    width: 300px;
+    height: 200px;
+    position: absolute;
+    top: 200px;
+    left: 0px;
+    -moz-transform: matrix(1, 0, 0.6, 1, 15em, 0);
+    -webkit-transform: matrix(1, 0, 0.6, 1,  250, 0);
+    -o-transform: matrix(1, 0, 0.6, 1,  250, 0);
+    -ms-transform: matrix(1, 0, 0.6, 1,  250, 0);
+    transform: matrix(1, 0, 0.6, 1,  250, 0);
+}
+
+#graphiccontainer {
+    position: absolute;
+    top: 0px;
+    left: 600px;
+}
+</style>
+<link rel="stylesheet" type="text/css" href="../../../../build/cssfonts/fonts.css">
+<!-- BEGIN EXAMPLE CODE -->	
+</head>		
+<body class="yui3-skin-sam">
+<script src="../../../../build/yui/yui.js"></script>
+<div id="rect"></div>
+<div id="rect2"></div>
+<div id="graphiccontainer"></div>
+<script type="text/javascript">
+    YUI({filter:"raw"}).use('graphics', function(Y) {
+        var mygraphic,
+            myrect,
+            myrect2;
+
+        mygraphic = new Y.Graphic({render: "#graphiccontainer"});
+        mygraphic.addShape({
+            type:"rect",
+            fill: {
+                color: "#fc0"
+            },
+            stroke: {
+                weight: 1,
+                color: "#000"
+            },
+            width: 200,
+            height: 100,
+            x: 100,
+            y: 50,
+            transform: "matrix(1, -0.2, 0, 1, 0, 0)"
+        });
+        mygraphic.addShape({
+            type: "rect",
+            fill: {
+                color: "#9aa"
+            },
+            stroke: {
+                weight: 1,
+                color: "#000"
+            },
+            width: 300,
+            height: 200,
+            x: 0,
+            y: 200,
+            transform: "matrix(1, 0, 0.6, 1,  250, 0)" 
+        });
+    });
+</script>
+</body>
+</html>

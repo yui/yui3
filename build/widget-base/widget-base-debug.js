@@ -387,7 +387,8 @@ Y.extend(Widget, Y.Base, {
     initializer: function(config) {
         Y.log('initializer called', 'life', 'widget');
 
-        _instances[Y.stamp(this.get(BOUNDING_BOX))] = this;
+        this._boxYuid = Y.guid();
+        _instances[this._boxYuid] = this;
 
         /**
          * Notification event, which widget implementations can fire, when
@@ -417,8 +418,7 @@ Y.extend(Widget, Y.Base, {
     destructor: function() {
         Y.log('destructor called', 'life', 'widget');
 
-        var boundingBox = this.get(BOUNDING_BOX),
-            bbGuid = Y.stamp(boundingBox, TRUE);
+        var bbGuid = this._boxYuid;
 
         if (bbGuid in _instances) {
             delete _instances[bbGuid];
@@ -462,24 +462,29 @@ Y.extend(Widget, Y.Base, {
         var boundingBox = this.get(BOUNDING_BOX),
             contentBox = this.get(CONTENT_BOX),
             deep = this._destroyAllNodes,
+            same;
+
+        if (boundingBox instanceof Y.Node) {
+
             same = boundingBox && boundingBox.compareTo(contentBox);
 
-        if (this.UI_EVENTS) {
-            this._destroyUIEvents();
-        }
-
-        this._unbindUI(boundingBox);
-
-        if (deep) {
-            // Removes and destroys all child nodes.
-            boundingBox.empty();
-            boundingBox.remove(TRUE);
-        } else {
-            if (contentBox) {
-                contentBox.remove(TRUE);
+            if (this.UI_EVENTS) {
+                this._destroyUIEvents();
             }
-            if (!same) {
+
+            this._unbindUI(boundingBox);
+
+            if (deep) {
+                // Removes and destroys all child nodes.
+                boundingBox.empty();
                 boundingBox.remove(TRUE);
+            } else {
+                if (contentBox) {
+                    contentBox.remove(TRUE);
+                }
+                if (!same) {
+                    boundingBox.remove(TRUE);
+                }
             }
         }
     },
@@ -593,7 +598,7 @@ Y.extend(Widget, Y.Base, {
      */
     bindUI: EMPTY_FN,
 
-    /**å
+    /**
      * Adds nodes to the DOM 
      * 
      * This method is not called by framework and is not chained 
@@ -682,7 +687,7 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-     * Helper method to collect the boundingBox and contentBox, set styles and append to the provided parentNode, if not
+     * Helper method to collect the boundingBox and contentBox and append to the provided parentNode, if not
      * already a child. The owner document of the boundingBox, or the owner document of the contentBox will be used 
      * as the document into which the Widget is rendered if a parentNode is node is not provided. If both the boundingBox and
      * the contentBox are not currently in the document, and no parentNode is provided, the widget will be rendered 
@@ -696,7 +701,7 @@ Y.extend(Widget, Y.Base, {
     _renderBox: function(parentNode) {
 
         // TODO: Performance Optimization [ More effective algo to reduce Node refs, compares, replaces? ]
-        
+
         var widget = this, // kweight
             contentBox = widget.get(CONTENT_BOX),
             boundingBox = widget.get(BOUNDING_BOX),
@@ -704,6 +709,8 @@ Y.extend(Widget, Y.Base, {
             defParentNode = widget.DEF_PARENT_NODE,
 
             doc = (srcNode && srcNode.get(OWNER_DOCUMENT)) || boundingBox.get(OWNER_DOCUMENT) || contentBox.get(OWNER_DOCUMENT);
+
+        boundingBox._yuid = this._boxYuid;
 
         // If srcNode (assume it's always in doc), have contentBox take its place (widget render responsible for re-use of srcNode contents)
         if (srcNode && !srcNode.compareTo(contentBox) && !contentBox.inDoc(doc)) {
@@ -1124,7 +1131,9 @@ Y.extend(Widget, Y.Base, {
      * @param {EventFacade} e
      */
     _setAttrUI : function(e) {
-        this[_UISET + _toInitialCap(e.attrName)](e.newVal, e.src);
+        if (e.target === this) {
+            this[_UISET + _toInitialCap(e.attrName)](e.newVal, e.src);
+        }
     },
 
     /**
@@ -1180,4 +1189,4 @@ Y.extend(Widget, Y.Base, {
 Y.Widget = Widget;
 
 
-}, '@VERSION@' ,{requires:['attribute', 'event-focus', 'base-base', 'base-pluginhost', 'node-base', 'node-style', 'classnamemanager'], skinnable:true});
+}, '@VERSION@' ,{skinnable:true, requires:['attribute', 'event-focus', 'base-base', 'base-pluginhost', 'node-base', 'node-style', 'classnamemanager']});
