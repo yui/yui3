@@ -45,22 +45,25 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
       * `preserve`: Boolean for whether the view instance should be retained. By
         default, the view instance will be destroyed when it is no longer the
-        active view. If `true` the view instance will simply be `removed()` from
-        the DOM when it is no longer active. This is useful when the view is
-        frequently used and may be expensive to re-create.
+        `activeView`. If `true` the view instance will simply be `removed()`
+        from the DOM when it is no longer active. This is useful when the view
+        is frequently used and may be expensive to re-create.
 
       * `parent`: String to another named view in this hash that represents
         parent view within the application's view hierarchy; e.g. a `"photo"`
         view could have `"album"` has its `parent` view. This parent/child
-        relationship is used a queue for which transition to use.
+        relationship is a useful cue for things like transitions.
 
       * `instance`: Used internally to manage the current instance of this named
         view. This can be used if your view instance is created up-front, or if
         you would rather manage the View lifecycle, but you probably should just
         let this be handled for you.
 
-    If `views` are passed at instantiation time, they will override any views
-    set on the prototype.
+    If `views` are specified at instantiation time, the metadata in the `views`
+    Object here will be used as defaults when creating the instance's `views`.
+
+    Every `Y.App` instance gets its own copy of a `views` object so this Object
+    on the prototype will not be polluted.
 
     @example
         // Imagine that `Y.UsersView` and `Y.UserView` have been defined.
@@ -102,8 +105,13 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     initializer: function (config) {
         config || (config = {});
 
-        this.views = config.views ?
-                Y.merge(this.views, config.views) : this.views;
+        // Create a shallow copy of specified `config.views` metadata to
+        // preserve the caller's intention.
+        var views = Y.merge(config.views);
+
+        // Mix-in default `views` metadata from the prototype (deep merge), and
+        // give every instance its own copy of a `views` Object.
+        this.views = Y.mix(views, this.views, false, null, 0, true);
 
         this._viewInfoMap = {};
 
@@ -115,6 +123,8 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
             this._pjaxBindUI();
         }
     },
+
+    // TODO: `destructor` to destory the `activeView`?
 
     // -- Public Methods -------------------------------------------------------
 
@@ -237,10 +247,10 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     /**
     Sets which view is visible/active within the application.
 
-    This will set the application's `activeView` attribute to the view instance
-    passed-in, or when a view name is provided, the `activeView` attribute will
-    be set to either the preserved instance, or a new view instance will be
-    created using the passed in `config`.
+    This will set the application's `activeView` attribute to the specified view
+    instance, or when a registered view-name is provided, the `activeView`
+    attribute will be set to either the preserved instance, or a new view
+    instance created using the specified `config`.
 
     A callback function can be specified as either the third or fourth argument,
     and this function will be called after the new `view` is the `activeView`
@@ -286,6 +296,8 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
             // Use the preserved view instance, or create a new view.
             if (viewInfo && viewInfo.preserve && viewInfo.instance) {
                 view = viewInfo.instance;
+                // Make sure there's a mapping back to the view metadata.
+                this._viewInfoMap[Y.stamp(view, true)] = viewInfo;
             } else {
                 view = this.createView(view, config);
                 view.render();
@@ -293,7 +305,8 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         }
 
         // TODO: Add options.update to update to view with the `config`, if
-        // needed. Would this be too much overloading of the API?
+        // needed. This could also call `setAttrs()` when the specified `view`
+        // already a View instance. Is this be too much overloading of the API?
 
         options || (options = {});
 
@@ -303,6 +316,9 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
             options = {callback: options};
         }
 
+        // TODO: Should the `callback` _always_ be called, even when the
+        // `activeView` does not change?
+
         return this._set('activeView', view, options);
     },
 
@@ -310,8 +326,8 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
     /**
     Helper method to attach the view instance to the application by making the
-    application a bubble target of the view, and assigning the view instance to
-    the `instance` property of the associated view info metadata.
+    app a bubble target of the view, append the view to the `viewContainer`, and
+    assign it to the `instance` property of the associated view info metadata.
 
     @method _attachView
     @param {View} view View to attach.
@@ -680,10 +696,12 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
         @attribute activeView
         @type View
+        @default `null`
         @readOnly
         @see showView
         **/
         activeView: {
+            value   : null,
             readOnly: true
         },
 
