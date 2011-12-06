@@ -1,8 +1,22 @@
 {
     "app": {
-        "use": ["model", "model-list", "router", "view"],
+        "use": [
+            "app-base",
+            "model",
+            "model-list",
+            "router",
+            "view"
+        ],
 
         "submodules": {
+            "app-base": {
+                "requires": ["classnamemanager", "pjax-base", "router", "view"]
+            },
+
+            "app-transitions": {
+                "requires": ["app-base", "transition"]
+            },
+
             "controller": {
                 "use": ["router"]
             },

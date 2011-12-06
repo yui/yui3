@@ -63,10 +63,25 @@
     }, 
     "app": {
         "use": [
+            "app-base", 
             "model", 
             "model-list", 
             "router", 
             "view"
+        ]
+    }, 
+    "app-base": {
+        "requires": [
+            "classnamemanager", 
+            "pjax-base", 
+            "router", 
+            "view"
+        ]
+    }, 
+    "app-transitions": {
+        "requires": [
+            "app-base", 
+            "transition"
         ]
     }, 
     "array-extras": {

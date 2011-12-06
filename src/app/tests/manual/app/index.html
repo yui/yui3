@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Foo App</title>
+
+    <style>
+        .yui3-app {
+            overflow-x: hidden;
+        }
+        .yui3-app-views {
+            position: relative;
+            white-space: nowrap;
+        }
+        .yui3-app-views > * {
+            display: inline-block;
+            width: 100%;
+            vertical-align: top;
+        }
+
+        .yui3-app-views h2 {
+            background: black;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Foo App</h1>
+    <ul>
+        <li><a href="/src/app/tests/manual/app/">Home</a></li>
+        <li><a href="/src/app/tests/manual/app/#/">Home</a> (hash-based URL)</li>
+        <li><a href="/src/app/tests/manual/app/users/">Users</a></li>
+        <li><a href="#/users/">Users</a> (hash-based URL)</li>
+        <li><a href="/src/app/tests/manual/app/bogus/">Bogus</a></li>
+    </ul>
+    <div id="content"></div>
+
+    <script src="../../../../../build/yui/yui.js"></script>
+    <script>
+    YUI({filter: 'raw'}).use('app', function (Y) {
+
+        /**
+        User Model
+        **/
+        Y.User = Y.Base.create('user', Y.Model, [], {}, {
+            ATTRS: {
+                name  : {},
+                saying: {}
+            }
+        });
+
+        /**
+        Users ModelList
+        **/
+        Y.Users = Y.Base.create('users', Y.ModelList, [], {model: Y.User});
+
+        /**
+        Users View
+        **/
+        Y.UsersView = Y.Base.create('usersView', Y.View, [], {
+            template    : '<h2>All Users</h2><ul></ul>',
+            userTemplate: '<li><a href="/src/app/tests/manual/app/users/{id}/">{name}</a></li>',
+
+            initializer: function () {
+                this.get('modelList').after(['add', 'remove', 'reset'], this.render, this);
+            },
+
+            render: function () {
+                var users        = this.get('modelList'),
+                    userTemplate = this.userTemplate,
+                    content      = Y.Node.create(this.template),
+                    list         = content.one('ul');
+
+                users.each(function (user) {
+                    list.append(Y.Lang.sub(userTemplate, {
+                        id  : user.get('id'),
+                        name: user.get('name')
+                    }));
+                });
+
+                this.get('container').setContent(content);
+                return this;
+            }
+        });
+
+        /**
+        User View
+        **/
+        Y.UserView = Y.Base.create('userView', Y.View, [], {
+            template: '<h2>{name}</h2><p>{saying}</p>',
+
+            initializer: function () {
+                this.get('model').after('change', this.render, this);
+            },
+
+            render: function () {
+                var model = this.get('model'),
+                    content;
+
+                content = Y.Lang.sub(this.template, {
+                    name  : model.get('name'),
+                    saying: model.get('saying')
+                });
+
+                this.get('container').setContent(content);
+                return this;
+            }
+        });
+
+        var users, fooApp;
+
+        /**
+        Users Data
+        **/
+        users = new Y.Users().reset([
+            {id: 1, name: 'Eric',   saying: 'Likes YUI.'},
+            {id: 2, name: 'Ryan',   saying: 'Really likes `Math.PI`.'},
+            {id: 3, name: 'Satyen', saying: 'Likes baseball now-a-days.'},
+            {id: 4, name: 'Matt',   saying: 'Good beer is cool.'}
+        ]);
+
+        /**
+        Foo App
+        **/
+        fooApp = new Y.App({
+            root         : '/src/app/tests/manual/app/',
+            serverRouting: false,
+            container    : Y.one('#content'),
+
+            views: {
+                home: {
+                    preserve: true
+                },
+
+                users: {
+                    type    : Y.UsersView,
+                    preserve: true
+                },
+
+                user: {
+                    type  : Y.UserView,
+                    parent: 'users'
+                }
+            }
+        });
+
+        fooApp.route('/', function (req, res) {
+            this.showView('home');
+        });
+
+        fooApp.route('/users/', function (req, res) {
+            this.showView('users', {modelList: users});
+        });
+
+        fooApp.route('/users/:id/', function (req, res) {
+            var user = users.getById(req.params.id);
+            this.showView('user', {model: user}, function (view) {
+                // called after transition is complete.
+            });
+        });
+
+        fooApp.dispatch().render();
+
+        // HTTP server check.
+        if (Y.config.win.location.protocol.indexOf('http') === -1) {
+            Y.log('I need to run via an HTTP server!');
+        }
+
+    });
+    </script>
+</body>
+</html>
