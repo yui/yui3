@@ -5,7 +5,7 @@ Widget Change History
 -----
 
  * Refactored some of the box stamping code, to avoid Node references
-   until render.
+   until render. Changed caching mechanism for Y.Widget.getByNode to use node.get("id")
 
  * Patched after listeners in Widget with a if (e.target === this), so that homogenous 
    bubbles don't end up changing state at both the source and the target. Broader

@@ -62,7 +62,7 @@ var L = Y.Lang,
 
     WEBKIT = Y.UA.webkit,
 
-    // Widget nodeguid-to-instance map.
+    // Widget nodeid-to-instance map.
     _instances = {};
 
 /**
@@ -337,13 +337,15 @@ _getWidgetClassName = Widget.getClassName;
  */
 Widget.getByNode = function(node) {
     var widget,
+        nodeid,
         widgetMarker = _getWidgetClassName();
 
     node = Node.one(node);
     if (node) {
         node = node.ancestor("." + widgetMarker, true);
         if (node) {
-            widget = _instances[Y.stamp(node, TRUE)];
+            nodeid = node.get(ID);
+            widget = _instances[nodeid];
         }
     }
 
@@ -387,7 +389,7 @@ Y.extend(Widget, Y.Base, {
 
         var bb = this.get(BOUNDING_BOX);
         if (bb instanceof Node) {
-            this._mapInstance(bb);
+            this._mapInstance(bb.get(ID));
         }
 
         /**
@@ -408,19 +410,17 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-     * Utility method used to add an entry to the boundingBox node yuid-to-width instance map. 
+     * Utility method used to add an entry to the boundingBox id to instance map. 
      *
      * This method can be used to populate the instance with lazily created boundingBox Node references. 
      *
      * @method _mapInstance
-     * @param {Node} The boundingBox instance
+     * @param {String} The boundingBox id
      * @protected
      */
-    _mapInstance : function(boundingBox) {
-        var yuid = Y.stamp(boundingBox);
-
-        if (!(_instances[yuid])) {
-            _instances[yuid] = this;
+    _mapInstance : function(id) {
+        if (!(_instances[id])) {
+            _instances[id] = this;
         }
     },
 
@@ -436,14 +436,15 @@ Y.extend(Widget, Y.Base, {
         Y.log('destructor called', 'life', 'widget');
 
         var boundingBox = this.get(BOUNDING_BOX),
-            bbGuid;
+            bbid;
 
         if (boundingBox instanceof Node) {
-            bbGuid = Y.stamp(boundingBox, TRUE);
-            if (bbGuid in _instances) {
-                delete _instances[bbGuid];
+            bbid = boundingBox.get(ID);
+
+            if (bbid in _instances) {
+                delete _instances[bbid];
             }
-            
+
             this._destroyBox();
         }
     },
