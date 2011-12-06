@@ -148,7 +148,7 @@
 
         /**
          * @attribute headerContent
-         * @type {String | Node}
+         * @type HTML
          * @default undefined
          * @description The content to be added to the header section. This will replace any existing content
          * in the header. If you want to append, or insert new content, use the <a href="#method_setStdModContent">setStdModContent</a> method.
@@ -159,7 +159,7 @@
 
         /**
          * @attribute footerContent
-         * @type {String | Node}
+         * @type HTML
          * @default undefined
          * @description The content to be added to the footer section. This will replace any existing content
          * in the footer. If you want to append, or insert new content, use the <a href="#method_setStdModContent">setStdModContent</a> method.
@@ -170,7 +170,7 @@
 
         /**
          * @attribute bodyContent
-         * @type {String | Node}
+         * @type HTML
          * @default undefined
          * @description The content to be added to the body section. This will replace any existing content
          * in the body. If you want to append, or insert new content, use the <a href="#method_setStdModContent">setStdModContent</a> method.
