@@ -116,7 +116,7 @@ need to stop all execution, use `e.stopImmediatePropagation()` or
 <p>`node.on()` and all
 <a href="#more">other subscription methods</a> return a
 subscription object that can be used to unbind that subscription.  Node also
-supports a `detach()` method and <a href="#detach-methods">other ways to cleaup
+supports a `detach()` method and <a href="#detach-methods">other ways to cleanup
 subscriptions</a>.</p>
 
 ```
@@ -484,7 +484,7 @@ node.on('click', overlay.show, overlay);
 node.once('mouseover', door.unlock, door);
 
 // `this` override comes after the filter; also shifted for the 'key' event's
-// custome signature.
+// custom signature.
 container.delegate('key', validator.isValid, 'enter,tab', 'input', validator);
 
 // Corresponding alternatives from Y
@@ -834,7 +834,7 @@ code is needed.</p>
 
 <h4 id="function-reference">My callback is executing at the wrong time. What's going on?</h4>
 
-<p>It's likely that you've included parenthese in the subscription.</p>
+<p>It's likely that you've included parenthesis in the subscription.</p>
 ```
 // WRONG
 node.on('click', someFunction());
@@ -1419,7 +1419,7 @@ Y.mix(Y.Node.DOM_EVENTS, {
         <dd>
             Prevents the default action associated with the event. E.g. page
             navigation from an &lt;a&gt;nchor `click` or form submission and
-            page reload from a %lt;form&gt; `submit`.
+            page reload from a &lt;form&gt; `submit`.
         </dd>
     <dt>`e.stopPropagation()`</dt>
         <dd>
