@@ -16,7 +16,7 @@ var Y = YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
     modules: {
         'app-test': {
-            use: ['model-test', 'model-list-test', 'router-test', 'view-test']
+            use: ['model-test', 'model-list-test', 'router-test', 'view-test', 'app-base-test']
         },
 
         'model-test': {
@@ -37,6 +37,11 @@ var Y = YUI({
         'view-test': {
             fullpath: 'view-test.js',
             requires: ['model', 'model-list', 'view', 'test']
+        },
+
+        'app-base-test': {
+            fullpath: 'app-base-test.js',
+            requires: ['app-base', 'test']
         }
     },
     useBrowserConsole: false
