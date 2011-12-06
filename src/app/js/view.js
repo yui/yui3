@@ -105,10 +105,7 @@ Y.View = Y.extend(View, Y.Base, {
     },
 
     destructor: function () {
-        var container = this.get('container');
-
-        // Remove the container from the DOM and purge all event listeners.
-        container && container.remove(true);
+        this._destroyContainer();
         this._attachedViewEvents = [];
     },
 
@@ -226,6 +223,19 @@ Y.View = Y.extend(View, Y.Base, {
     **/
     render: function () {
         return this;
+    },
+
+    // -- Protected Methods ----------------------------------------------------
+
+    /**
+    Removes the `container` from the DOM and purges all its event listeners.
+
+    @method _destroyContainer
+    @protected
+    **/
+    _destroyContainer: function () {
+        var container = this.get('container');
+        container && container.remove(true);
     }
 }, {
     NAME: 'view',
