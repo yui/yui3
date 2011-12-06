@@ -22,9 +22,32 @@ implement custom views.
 @since 3.4.0
 **/
 
+var _instances = {}, 
+    className = Y.ClassNameManager.getClassName('view');
+
 function View() {
     View.superclass.constructor.apply(this, arguments);
 }
+
+/**
+ * @method Y.View.getByNode
+ * @param {HTMLElement|Node|String} node HTML string, DOM element, or
+        `Y.Node` instance to lookup a View by. Will return the first
+        View that has this node or an ancestor as it's <em>container</em>
+ */
+View.getByNode = function (node) {
+    var view; 
+    node = Y.Node.one(node);
+
+    if (node) {
+        node = node.ancestor("." + className, true);
+        if (node) {
+            view = _instances[Y.stamp(node, true)];
+        }   
+    }   
+
+    return view || null;
+};  
 
 Y.View = Y.extend(View, Y.Base, {
     // -- Public Properties ----------------------------------------------------
@@ -96,6 +119,14 @@ Y.View = Y.extend(View, Y.Base, {
 
         config.template && (this.template = config.template);
 
+        var container = this.get('container');
+        if (container) {
+            // Add identifying container class and store instance
+            // reference
+            container.addClass(className);
+            _instances[Y.stamp(container, true)] = this;
+        }
+
         // Merge events from the config into events in `this.events`, then
         // attach the events to the container node.
         this.events = config.events ?
@@ -108,7 +139,10 @@ Y.View = Y.extend(View, Y.Base, {
         var container = this.get('container');
 
         // Remove the container from the DOM and purge all event listeners.
-        container && container.remove(true);
+        if (container) {
+            delete _instances[Y.stamp(container, true)];
+            container.remove(true);
+        }
         this._attachedViewEvents = [];
     },
 
