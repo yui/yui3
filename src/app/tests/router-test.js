@@ -4,12 +4,20 @@ var ArrayAssert  = Y.ArrayAssert,
     Assert       = Y.Assert,
     ObjectAssert = Y.ObjectAssert,
 
-    html5 = Y.Router.html5,
-
-    win = Y.config.win,
+    html5       = Y.Router.html5,
+    win         = Y.config.win,
+    originalURL = (win && win.location.toString()) || '',
 
     suite,
     routerSuite;
+
+function resetURL() {
+    if (html5) {
+        win && win.history.replaceState(null, null, originalURL);
+    } else {
+        win && (win.location.hash = '');
+    }
+}
 
 // -- Global Suite -------------------------------------------------------------
 suite = Y.AppTestSuite || (Y.AppTestSuite = new Y.Test.Suite('App Framework'));
@@ -19,19 +27,11 @@ routerSuite = new Y.Test.Suite({
     name: 'Router',
 
     setUp: function () {
-        this.oldPath = Y.config.win.location.toString();
-
-        if (!html5) {
-            Y.config.win.location.hash = '';
-        }
+        resetURL();
     },
 
     tearDown: function () {
-        if (html5) {
-            Y.config.win.history.replaceState(null, null, this.oldPath);
-        } else {
-            Y.config.win.location.hash = '';
-        }
+        resetURL();
     }
 });
 
@@ -182,7 +182,7 @@ routerSuite.add(new Y.Test.Case({
 routerSuite.add(new Y.Test.Case({
     name: 'Methods',
 
-    startUp: function () {
+    setUp: function () {
         this.errorFn   = Y.config.errorFn;
         this.throwFail = Y.config.throwFail;
     },
@@ -506,8 +506,8 @@ routerSuite.add(new Y.Test.Case({
 
     '_dispatch() should pass `src` through to request object passed to route handlers': function () {
         var router = this.router = new Y.Router(),
-            calls      = 0,
-            src        = 'API';
+            calls  = 0,
+            src    = 'API';
 
         router.route('/foo', function (req, res, next) {
             Assert.areSame(src, req.src);
@@ -530,7 +530,7 @@ routerSuite.add(new Y.Test.Case({
     },
 
     'routes should be called in the context of the router': function () {
-        var calls      = 0,
+        var calls  = 0,
             router = this.router = new Y.Router({
                 routes: [{path: '/foo', callback: 'foo'}]
             });
@@ -548,7 +548,7 @@ routerSuite.add(new Y.Test.Case({
     },
 
     'routes should receive a request object, response object, and `next` function as params': function () {
-        var calls      = 0,
+        var calls  = 0,
             router = this.router = new Y.Router();
 
         router.route('/foo', function (req, res, next) {
@@ -575,7 +575,7 @@ routerSuite.add(new Y.Test.Case({
     },
 
     'request object should contain captured route parameters': function () {
-        var calls      = 0,
+        var calls  = 0,
             router = this.router = new Y.Router();
 
         router.route('/foo/:bar/:baz', function (req) {
