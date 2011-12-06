@@ -385,8 +385,10 @@ Y.extend(Widget, Y.Base, {
     initializer: function(config) {
         Y.log('initializer called', 'life', 'widget');
 
-        this._boxYuid = Y.guid();
-        _instances[this._boxYuid] = this;
+        var bb = this.get(BOUNDING_BOX);
+        if (bb instanceof Node) {
+            this._mapInstance(bb);
+        }
 
         /**
          * Notification event, which widget implementations can fire, when
@@ -406,6 +408,23 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
+     * Utility method used to add an entry to the boundingBox node yuid-to-width instance map. 
+     *
+     * This method can be used to populate the instance with lazily created boundingBox Node references. 
+     *
+     * @method _mapInstance
+     * @param {Node} The boundingBox instance
+     * @protected
+     */
+    _mapInstance : function(boundingBox) {
+        var yuid = Y.stamp(boundingBox);
+
+        if (!(_instances[yuid])) {
+            _instances[yuid] = this;
+        }
+    },
+
+    /**
      * Destructor lifecycle implementation for the Widget class. Purges events attached
      * to the bounding box (and all child nodes) and removes the Widget from the 
      * list of registered widgets.
@@ -416,13 +435,17 @@ Y.extend(Widget, Y.Base, {
     destructor: function() {
         Y.log('destructor called', 'life', 'widget');
 
-        var bbGuid = this._boxYuid;
+        var boundingBox = this.get(BOUNDING_BOX),
+            bbGuid;
 
-        if (bbGuid in _instances) {
-            delete _instances[bbGuid];
+        if (boundingBox instanceof Node) {
+            bbGuid = Y.stamp(boundingBox, TRUE);
+            if (bbGuid in _instances) {
+                delete _instances[bbGuid];
+            }
+            
+            this._destroyBox();
         }
-
-        this._destroyBox();
     },
 
     /**
@@ -462,27 +485,24 @@ Y.extend(Widget, Y.Base, {
             deep = this._destroyAllNodes,
             same;
 
-        if (boundingBox instanceof Y.Node) {
+        same = boundingBox && boundingBox.compareTo(contentBox);
 
-            same = boundingBox && boundingBox.compareTo(contentBox);
+        if (this.UI_EVENTS) {
+            this._destroyUIEvents();
+        }
 
-            if (this.UI_EVENTS) {
-                this._destroyUIEvents();
+        this._unbindUI(boundingBox);
+
+        if (deep) {
+            // Removes and destroys all child nodes.
+            boundingBox.empty();
+            boundingBox.remove(TRUE);
+        } else {
+            if (contentBox) {
+                contentBox.remove(TRUE);
             }
-
-            this._unbindUI(boundingBox);
-
-            if (deep) {
-                // Removes and destroys all child nodes.
-                boundingBox.empty();
+            if (!same) {
                 boundingBox.remove(TRUE);
-            } else {
-                if (contentBox) {
-                    contentBox.remove(TRUE);
-                }
-                if (!same) {
-                    boundingBox.remove(TRUE);
-                }
             }
         }
     },
@@ -707,8 +727,6 @@ Y.extend(Widget, Y.Base, {
             defParentNode = widget.DEF_PARENT_NODE,
 
             doc = (srcNode && srcNode.get(OWNER_DOCUMENT)) || boundingBox.get(OWNER_DOCUMENT) || contentBox.get(OWNER_DOCUMENT);
-
-        boundingBox._yuid = this._boxYuid;
 
         // If srcNode (assume it's always in doc), have contentBox take its place (widget render responsible for re-use of srcNode contents)
         if (srcNode && !srcNode.compareTo(contentBox) && !contentBox.inDoc(doc)) {
