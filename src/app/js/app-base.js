@@ -123,7 +123,8 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     string, DOM element, or existing `Y.Node` instance. This method is called
     internally when the app is initialized.
 
-    This node is also stamped with the CSS class specified by `Y.App.CSS_CLASS`.
+    This node is also stamped with the CSS class specified by
+    `Y.App.Base.CSS_CLASS`.
 
     By default, the created node is _not_ added to the DOM automatically.
 
@@ -169,7 +170,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     called internally when the app is initialized.
 
     This node is also stamped with the CSS class specified by
-    `Y.App.VIEWS_CSS_CLASS`.
+    `Y.App.Base.VIEWS_CSS_CLASS`.
 
     By default, the created node is appended to the `container` node by the
     `render()` method.
@@ -217,11 +218,18 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @chainable
     **/
     render: function () {
-        var viewContainer = this.get('viewContainer'),
-            activeView    = this.get('activeView');
+        var container     = this.get('container'),
+            viewContainer = this.get('viewContainer'),
+            activeView    = this.get('activeView'),
+            areSame       = container.compareTo(viewContainer);
 
-        activeView && viewContainer.setContent(activeView.get('container'));
-        viewContainer.appendTo(this.get('container'));
+        if (activeView && viewContainer) {
+            viewContainer.setContent(activeView.get('container'));
+        }
+
+        if (container && !container.contains(viewContainer) && !areSame) {
+            container.appendChild(viewContainer);
+        }
 
         return this;
     },
@@ -326,6 +334,42 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
         // Insert view into the DOM.
         viewContainer[prepend ? 'prepend' : 'append'](view.get('container'));
+    },
+
+    /**
+    Overrides View's container destruction to deal with `viewContainer` and
+    checks to make sure not to remove and purge the `<body>`.
+
+    @method _destroyContainer
+    @protected
+    **/
+    _destroyContainer: function () {
+        var container     = this.get('container'),
+            viewContainer = this.get('viewContainer'),
+            areSame       = container.compareTo(viewContainer);
+
+        // We do not want to remove or destroy the `<body>`.
+        if (Y.one('body').compareTo(container)) {
+            // Just clean-up our events listeners.
+            this.detachEvents();
+
+            // Clean-up `yui3-app` CSS class on the `container`.
+            container && container.removeClass(App.CSS_CLASS);
+
+            if (areSame) {
+                // Clean-up `yui3-app-views` CSS class on the `container`.
+                container && container.removeClass(App.VIEWS_CSS_CLASS);
+            } else {
+                // Destroy and purge the `viewContainer`.
+                viewContainer && viewContainer.remove(true);
+            }
+
+            return;
+        }
+
+        // Remove and purge events from both containers.
+        viewContainer && viewContainer.remove(true);
+        !areSame && container && container.remove(true);
     },
 
     /**
@@ -648,11 +692,13 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
         @attribute container
         @type HTMLElement|Node|String
-        @default `'body'`
+        @default `<body>`
         @initOnly
         **/
         container: {
-            value: 'body'
+            valueFn: function () {
+                return Y.one('body');
+            }
         },
 
         /**
