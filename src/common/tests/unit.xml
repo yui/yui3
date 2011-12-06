@@ -15,7 +15,11 @@
         <url>cache/tests/cache-offline.html</url>
         <url>cache/tests/cache-plugin.html</url>
         <url>calendar/tests/calendar.html</url>
+        <url>charts/tests/axesattrs.html</url>
         <url>charts/tests/charts.html</url>
+        <url>charts/tests/dataprovider.html</url>
+        <url>charts/tests/graph.html</url>
+        <url>charts/tests/pie.html</url>
         <!--url>charts/tests/axes.html</url-->
         <url>charts/tests/seriestests.html</url>
         <url>classnamemanager/tests/classnamemanager.html</url>
