@@ -1,10 +1,45 @@
 <div class="overlay-example" id="overlay-align">
-    <p><pre id="alignment"></pre><span id="step"></span></p>
-    <p><button type="button" id="align">Next Alignment</button></p>
-    <p class="filler">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc pretium quam eu mi varius pulvinar. Duis orci arcu, ullamcorper sit amet, luctus ut, interdum ac, quam. Pellentesque euismod. Nam tincidunt, purus in ultrices congue, urna neque posuere arcu, aliquam tristique purus sapien id nulla. Etiam rhoncus nulla at leo. Cras scelerisque nisl in nibh. Sed eget odio. Morbi elit elit, porta a, convallis sit amet, rhoncus non, felis. Mauris nulla pede, pretium eleifend, porttitor at, rutrum id, orci. Quisque non urna. Nulla aliquam rhoncus est.</p>
-    <div id="align1" class="align-box"><span class="title">id = #align1</span></div>
-    <div id="align2" class="align-box"><span class="title">id = #align2</span></div>
-    <div id="align3" class="align-box"><span class="title">id = #align3</span></div>
+    <p></p>
+    <div class="example-head">
+        <button type="button" class="button" id="align">View Next Alignment</button>
+    </div>
+    <div class="yui3-g">
+        <div class="yui3-u-1-8">
+            <ul class="nav">
+                <li>Nibh</li>
+                <li id="align1" class="align-box"><span class="title">#align1</span></li>
+                <li>Arcu</li>
+                <li>Congue</li>
+                <li>Purus</li>
+                <li>Quam</li>
+                <li>Neque</li>
+                <li>Aiquam</li>
+                <li>Eget</li>
+                <li>Etiam</li>
+            </ul>
+        </div>
+        <div class="yui3-u-5-8">
+            <div class="content">
+                Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc pretium quam 
+                eu mi varius pulvinar. Duis orci arcu, ullamcorper sit amet,
+                luctus ut, 
+                interdum ac, quam. Pellentesque euismod. Nam tincidunt, purus in ultrices 
+                <img id="align2" class="align-box" src="{{{componentAssets}}}/img/nevada.png" alt="Nevada landscape (id='align2')"/>
+                congue, urna neque posuere arcu, aliquam tristique purus sapien id nulla. 
+                Etiam rhoncus nulla at leo. Cras scelerisque nisl in nibh. Sed eget odio.
+            </div> 
+        </div>
+        <div class="yui3-u-1-4">
+            <div class="content">
+                <div id="align3" class="align-box"><span class="title">#align3</span></div>
+                Morbi elit elit, porta a, convallis sit amet, rhoncus non, felis. Mauris 
+                nulla pede, pretium eleifend, porttitor at, rutrum id, orci. Quisque non 
+                urna. Nulla aliquam rhoncus est.
+            </div>
+        </div>
+        
+    
+    </div>
 </div>
 
 <script type="text/javascript">
@@ -12,10 +47,9 @@ YUI().use("overlay", function(Y) {
 
     /* Create Overlay from script, this time. No footer */
     var overlay = new Y.Overlay({
-        width:"10em",
-        height:"10em",
-        headerContent: "Aligned Overlay",
-        bodyContent: "Click the 'Next Alignment' button to try a new alignment",
+        width:"16em",
+        headerContent: 'Aligned Overlay<span id="step"></span>',
+        bodyContent: '<div class="descr"></div><div id="alignment"></div>',
         zIndex:2
     });
 
@@ -24,40 +58,51 @@ YUI().use("overlay", function(Y) {
 
     var alignment = Y.one("#alignment");
     var stepNumber = Y.one("#step");
+    var descr = Y.one('.yui3-widget-bd .descr');
 
     /* Setup local variable for Y.WidgetPositionAlign, since we use it multiple times */
-    var WidgetPositionAlign = Y.WidgetPositionAlign;
+    var wPA = Y.WidgetPositionAlign;
 
     var steps = [
         function() {
-            /* Center in #overlay-align */
-            overlay.set("align", {node:"#overlay-align", points:[WidgetPositionAlign.CC, WidgetPositionAlign.CC]});
-            alignment.set("innerHTML", 'align: {node:"#overlay-align", points:["cc", "cc"]}');
-        },
-        function() {
             /* Align top-left corner of overlay, with top-right corner of #align1 */
-            overlay.set("align", {node:"#align1", points:[WidgetPositionAlign.TL, WidgetPositionAlign.TR]});
-            alignment.set("innerHTML", 'align: {node:"#align1", points:["tl", "tr"]}');
+            alignment.setContent('overlay.set("align", {node:"#align1", points:[wPA.TL, wPA.TR]});');
+            descr.setContent('Align top-left corner of overlay, with top-right corner of #align1');
+            Y.one('#align1').addClass('aligned-to');
+            overlay.set("align", {node:"#align1", points:[wPA.TL, wPA.TR]});
         },
         function() {
             /* Center overlay in #align2 */
+            alignment.setContent('overlay.set("centered", "#align2");');
+            descr.setContent('Center overlay in #align2');
+            Y.one('#align2').addClass('aligned-to');
             overlay.set("centered", "#align2");
-            alignment.set("innerHTML", 'centered: "#align2"');
-        },
-        function() {
-            /* Align right-center edge of overlay with right-center edge of viewport */
-            overlay.set("align", {points:[WidgetPositionAlign.RC, WidgetPositionAlign.RC]});
-            alignment.set("innerHTML", 'align: {points:["rc", "rc"]} (viewport)');
-        },
-        function() {
-            /* Center overlay in viewport */
-            overlay.set("centered", true);
-            alignment.set("innerHTML", "centered: true (viewport)");
         },
         function() {
             /* Align top-center edge of overlay with bottom-center edge of #align3 */
-            overlay.set("align", {node:"#align3", points:[WidgetPositionAlign.TC, WidgetPositionAlign.BC]});
-            alignment.set("innerHTML", 'align: {node:"#align3", points:["tc", "bc"]}');
+            alignment.setContent('overlay.set("align", {node:"#align3", points:[wPA.TC, wPA.BC]});');
+            descr.setContent('Align top-center edge of overlay with bottom-center edge of #align3');
+            Y.one('#align3').addClass('aligned-to');
+            overlay.set("align", {node:"#align3", points:[wPA.TC, wPA.BC]});
+        },
+        function() {
+            /* Align right-center edge of overlay with right-center edge of viewport */
+            alignment.setContent('overlay.set("align", {points:[wPA.RC, wPA.RC]});');
+            descr.setContent('Align right-center edge of overlay with right-center edge of viewport');
+            overlay.set("align", {points:[wPA.RC, wPA.RC]});
+        },
+        function() {
+            /* Center overlay in viewport */
+            alignment.setContent('overlay.set("centered", true);');
+            descr.setContent('Center overlay in viewport');
+            overlay.set("centered", true);
+        },
+        function() {
+            /* Center in #overlay-align */
+            alignment.setContent('overlay.set("align", {node:"#overlay-align", points:[wPA.CC, wPA.CC]});');
+            descr.setContent('Center in #overlay-align');
+            Y.one('#overlay-align').addClass('aligned-to');
+            overlay.set("align", {node:"#overlay-align", points:[wPA.CC, wPA.CC]});
         }
     ];
 
@@ -65,7 +110,8 @@ YUI().use("overlay", function(Y) {
     var totalSteps = steps.length;
 
     function alignNext() {
-        stepNumber.set("innerHTML", "Alignment " + (step+1) + " of " + totalSteps);
+        stepNumber.setContent((step+1) + " of " + totalSteps);
+        Y.all('.aligned-to').removeClass('aligned-to');
         steps[step]();
         step = (++step)%(totalSteps);
     }

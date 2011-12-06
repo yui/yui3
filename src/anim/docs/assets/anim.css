@@ -1,18 +1,24 @@
 /* color and iteration examples */
 a#demo {
-    background:#8dd5e7;
-    border:1px solid #004c6d;
     color:#004c6d;
-    display:block;
-    height:2em;
-    line-height:2em;
-    width:6em;
+    display:inline-block;
+
+
+    border: 1px solid #9EA8C6;
+    background: #ECEFFB;
+    border-radius: 3px;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.25);
+    text-decoration:none;
+
+
+    
+    padding:1.6em;
     text-align:center;
 }
 
 /* xy and curve examples */
 span#demo {
-    background:#ffa928;
+    background:#ff8800;
     display:block;
     height:10px;
     width:10px;
@@ -20,59 +26,63 @@ span#demo {
 
 /* module examples */
 div#demo {
+    position:relative;
     width:22em;
     overflow:hidden;
-}
-
-div#demo {
-    border-bottom:1px solid #7a97bb;
+    border: 1px solid #9EA8C6;
+    background: #ECEFFB;
+    border-radius: 3px;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.25);
 }
 
 div#demo .yui3-hd {
-    background: #406ed9;
-    border:1px solid #243356;
+    background-color: #B6BFDA;
+    position:relative;
     zoom:1;
 }
 
 div#demo .yui3-hd h3 {
     border:0;
-    color:#fff;
-    margin:0;
+    color: #30418C;
+    margin:0 25px 0 0;
 }
 
 #demo .yui3-hd a { /* module control (close remove, etc) */
     background:url(sprite.png) no-repeat;
-    color:#abceff;
+    position: absolute;
     cursor:pointer;
-    cursor:hand;
-    display: inline; /* prevent IE margin doubling */
-    float: right;
-    margin-top: -18px;
-    height:12px;
-    width:24px;
+    display: inline-block; /* prevent IE margin doubling */
     overflow:hidden;
-    text-align: right;
     text-decoration:none;
     text-indent:9999px;
+    height: 20px;
+    width: 21px;
+    top: 4px;
+    right: 4px;
+    border:solid 1px;
+    border-color: #CCD1E1 #6E7BA0 #6E7BA0 #CCD1E1; 
+    background-color: #97A2C4;
+    border-radius: 2px;
+}
+
+#demo .yui3-hd a:hover {
+    background-color:#8793b8;    
 }
 
 div#demo .yui3-bd {
-    background:#abceff;
-    border:solid #7a97bb;
-    border-width:0 1px;
     clear: both;
     overflow:hidden;
     zoom:1;
 }
 
-div#demo .yui3-hd,
 div#demo .yui3-bd p {
     margin:0;
-    padding:0.5em 1em;
+    padding:0.8em 1em 1em;
 }
 
-div#demo div.yui3-bd p {
-    margin:0.3em 10px 0 0; /* right margin for scrollbar space */
+div#demo .yui3-hd {
+    margin:0;
+    padding:0.5em 1em;
 }
 
 div#demo .yui3-bd p em {
@@ -81,14 +91,7 @@ div#demo .yui3-bd p em {
 
 /* basic example */
 div#demo a.yui3-remove {
-    background-position:0 -300px;
-    height:16px;
-    width:26px;
-}
-
-/* scroll example */
-#demo.yui3-scroll {
-    position: relative;
+    background-position:0 0;  /* "X" icon */
 }
 
 .yui3-scroll .yui3-hd {
@@ -99,46 +102,13 @@ div#demo a.yui3-remove {
     overflow:hidden;
 }
 
-#demo .yui3-hd .yui3-scroll-controls { /* fake scrollbar */
-    background:#dfdfdf;
-    border-left:1px solid #7a97bb;
-    height:10em;
-    width:13px;
-    position:absolute;
-    right:0;
-    bottom:-10.1em;
-    overflow:hidden;
-}
-
-#demo .yui3-hd .yui3-scroll-controls a {
-    margin: 0;
-    position:absolute;
-    top:0;
-    right:0;
-    height:14px;
-    width:14px;
-    Xborder:1px solid #000;
-}
-
-#demo .yui3-scroll-controls a.yui3-scrollup {
-    background-position:-12px -752px; /* scroll up icon */
-}
-
-#demo .yui3-scroll-controls a.yui3-scrolldown {
-    background-position:-12px -804px; /* scroll down icon */
-    top:auto;
-    bottom:0;
-}
-
 /* reverse and easing examples */
 #demo a.yui3-toggle {
-    background-position:0 -400px; /* close (minus) icon */
-    height:15px;
-    width:15px;
+    background-position:0 -60px; /* close (minus) icon */
 }
 
 #demo.yui3-closed a.yui3-toggle {
-    background-position:0 -350px; /* open (plus) icon */
+    background-position:0 -30px; /* open (plus) icon */
 }
 
 #demo-stage {

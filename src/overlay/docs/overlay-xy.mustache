@@ -6,30 +6,7 @@
     position:absolute;
 }
 
-/* Overlay Look/Feel */
-.yui3-overlay-content {
-    padding:3px;
-    border:1px solid #000;
-    background-color:#aaa;
-}
-
-.yui3-overlay-content .yui3-widget-hd {
-    padding:5px;
-    border:2px solid #aa0000;
-    background-color:#fff;
-}
-
-.yui3-overlay-content .yui3-widget-bd {
-    padding:5px;
-    border:2px solid #0000aa;
-    background-color:#fff;
-}
-
-.yui3-overlay-content .yui3-widget-ft {
-    padding:5px;
-    border:2px solid #00aa00;
-    background-color:#fff;
-}
+{{>overlay-css}}
 
 /* Example Layout CSS */
 .overlay-example {
@@ -104,9 +81,9 @@ YUI({...}).use("overlay", function(Y) {
 // Create an overlay from markup, using an existing contentBox.
 var overlay = new Y.Overlay({
     srcNode:"#overlay",
-    width:"10em",
+    width:"13em",
     height:"10em",
-    xy:[xy[0] + 10, xy[1] + 35]
+    xy:[xy[0] + 30, xy[1] + 38]
 });
 overlay.render();
 ```
@@ -143,35 +120,11 @@ Y.on("click", function(e) {
 ```
 /* Hide overlay markup while loading, if js is enabled */
 .yui3-js-enabled .yui3-overlay-loading {
-    top:-1000em;
-    left:-1000em;
-    position:absolute;
+    top: -1000em;
+    left: -1000em;
+    position: absolute;
 }
-
-/* Overlay Look/Feel */
-.yui3-overlay-content {
-    padding:3px;
-    border:1px solid #000;
-    background-color:#aaa;
-}
-
-.yui3-overlay-content .yui3-widget-hd {
-    padding:5px;
-    border:2px solid #aa0000;
-    background-color:#fff;
-}
-
-.yui3-overlay-content .yui3-widget-bd {
-    padding:5px;
-    border:2px solid #0000aa;
-    background-color:#fff;
-}
-
-.yui3-overlay-content .yui3-widget-ft {
-    padding:5px;
-    border:2px solid #00aa00;
-    background-color:#fff;
-}
+{{>overlay-css}}
 ```
 
 <p><strong>NOTE:</strong> As discussed on the <a href="../widget/index.html#widget-markup-diagram">Widget user guide</a>, all widgets are enclosed in 2 containing elements - the boundingBox is the outer(most) element, and the contentBox is the inner element into which the widget's content is added. It is advised to apply any look/feel CSS for the widget to the content box and it's children. This leaves the bounding box without padding/borders, allowing for consistent positioning/sizing across box models.</p>

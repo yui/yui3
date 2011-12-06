@@ -1,5 +1,7 @@
 <div class="intro">
-    <p>This example demonstrates how to set up and instantiate Y.Panel to take advantage of its nested modality and header/footer button support. In this example, we create a simple datatable with some basic information that is updated and removed through a modal form with some custom buttons.</p>
+    <p>
+    This example demonstrates how to set up and instantiate Y.Panel to take advantage of its nested modality and header/footer button support. In this example, we create a simple datatable with some basic information that is updated and removed through a modal form with some custom buttons.
+    </p>
 </div>
 
 <div class="example newwindow">
@@ -12,148 +14,157 @@
 
 <h3>Setting Up The YUI Instance</h3>
 
-<p>To create an instance of a Panel on your page, the only module you need to request is the `panel` module. The `panel` module will pull in the `widget`, `widget-stack`, `widget-position`, `widget-position-align`, `widget-position-constrain`, `widget-stdmod`, `widget-buttons`, `widget-modality` and `widget-autohide` extensions it uses.</p>
+<p>
+To create an instance of a Panel on your page, the only module you need to request is the `panel` module. The `panel` module will pull in the `widget`, `widget-stack`, `widget-position`, `widget-position-align`, `widget-position-constrain`, `widget-stdmod`, `widget-buttons`, `widget-modality` and `widget-autohide` extensions it uses.
+</p>
 
-<p>For this example, we also use the YUI3 Datatable, and the Drag plugin to make the panels draggable. This requires us to also request the `datatable-base` and `dd-plugin` modules in our use statement.
+<p>
+For this example, we also use the YUI3 Datatable, and the Drag plugin to make the panels draggable. This requires us to also request the `datatable-base` and `dd-plugin` modules in our use statement.
+</p>
 
-```
-YUI({...}).use("panel", "datatable-base", "dd-plugin", function(Y) {
-    // We'll write example code here where we have Y.Datatable, Y.Plugin.Drag and Y.Panel available 
+```javascript
+YUI().use("panel", "datatable-base", "dd-plugin", function (Y) {
+    // We'll write example code here where we have Y.Datatable, Y.Plugin.Drag and Y.Panel available
 });
 ```
 
-<p>Note, using the `panel` module, will also pull down the default CSS required for panel. The CSS that styles the Panel requires you to have the class `yui3-skin-sam` on a parent element, commonly the `<body>` tag.</p>
+<p>
+Note, using the `panel` module, will also pull down the default CSS required for panel. The CSS that styles the Panel requires you to have the class `yui3-skin-sam` on a parent element, commonly the `<body>` tag.
+</p>
 
 <h3>Creating a Panel From Markup</h3>
 
-<p>For this example, we'll need two panel instances. The first will be created through markup, while the second will be created through JavaScript (just to illustrate the differences). The code snippet below is the markup for our modal form. It consists of a fieldset with a couple of `<input>` boxes. The `yui3-widget-bd` class is not required, but tells the Panel that this content goes in the body of the widget.</p>
+<p>
+For this example, we'll need two panel instances. The first will be created through markup, while the second will be created through JavaScript (just to illustrate the differences). The code snippet below is the markup for our modal form. It consists of a fieldset with a couple of `<input>` boxes. The `yui3-widget-bd` class is not required, but tells the Panel that this content goes in the body of the widget.
+</p>
 
-```
+```html
 <div id="panelContent">
     <div class="yui3-widget-bd">
-    <form>
-      <fieldset>
-        <p><label for="id">ID</label><br/>
-        <input type="text" name="id" id="productId" placeholder=""></p>
-        <p><label for="name">Name</label><br/>
-        <input type="text" name="name" id="name" value="" placeholder=""></p>
-        <p><label for="password">Price</label><br/>
-        <input type="text" name="price" id="price" value="" placeholder="$"></p>
-      </fieldset>
-      </form>
-  </div>
+        <form>
+            <fieldset>
+                <p>
+                    <label for="id">ID</label><br/>
+                    <input type="text" name="id" id="productId" placeholder="">
+                </p>
+                <p>
+                    <label for="name">Name</label><br/>
+                    <input type="text" name="name" id="name" value="" placeholder="">
+                </p>
+                <p>
+                    <label for="password">Price</label><br/>
+                    <input type="text" name="price" id="price" value="" placeholder="$">
+                </p>
+            </fieldset>
+        </form>
+    </div>
+</div>
 ```
 
-<p>The container DIV with id="panelContent" is specified as the contentBox for the Panel instance, and during instantiation, the panel will look for DIV's marked with the `yui3-widget-hd, yui3-widget-bd, yui3-widget-ft` classes to setup the Overlay's header, body and footer content attributes.</p>
+<p>
+The container DIV with id="panelContent" is specified as the contentBox for the Panel instance, and during instantiation, the panel will look for DIV's marked with the `yui3-widget-hd, yui3-widget-bd, yui3-widget-ft` classes to setup the Overlay's header, body and footer content attributes.
+</p>
 
 <h3>Instantiating the Parent Panel</h3>
 
-<p>To create a panel instance, we use the panel constructor `Y.Panel`. We can pass in some additional configuration attributes such as `modal`, `headerContent`, and `centered`. We can make the panel draggable by adding the `Y.Plugin.Drag` plugin.</p>
+<p>
+To create a panel instance, we use the panel constructor `Y.Panel`. We can pass in some additional configuration attributes such as `modal`, `headerContent`, and `centered`. We can make the panel draggable by adding the `Y.Plugin.Drag` plugin.
+</p>
 
-<p>After creating the panel instance, we invoke `panel.render()` to update the DOM to reflect the current state of the panel.</p>
-
-```
+```javascript
 var panel = new Y.Panel({
-  srcNode: "#panelContent",
-  width: 250,
-  centered: true,
-  visible: false,
-  modal:true,
-  headerContent: "Add A New Product",
-  plugins: [Y.Plugin.Drag]
+    srcNode      : '#panelContent',
+    headerContent: 'Add A New Product',
+    width        : 250,
+    zIndex       : 5,
+    centered     : true,
+    modal        : true,
+    visible      : false,
+    render       : true,
+    plugins      : [Y.Plugin.Drag]
 });
-
-panel.render();
 ```
 
 <h3>Adding Footer buttons to the Panel</h3>
 
-<p>The parent panel has two buttons in the footer, "Add Item" and "Remove All Items". We add these buttons through the `addButton()` method present on the Y.Panel instance. For each button, we specify an `action` function, which will be called when the button is clicked, and a `section` property that specifies whether it should get rendered in the header or the footer.</p>
+<p>
+The parent panel has two buttons in the footer, "Add Item" and "Remove All Items". We add these buttons through the `addButton()` method present on the Y.Panel instance. For each button, we specify an `action` function, which will be called when the button is clicked, and a `section` property that specifies whether it should get rendered in the header or the footer.
+</p>
 
-```
-panel.addButton(
-  {
-      value: "Add Item",
-      action: function(e) { 
-        e.preventDefault(); 
-        addItem(); //this method adds a record to the datatable
-      },
-      section: Y.WidgetStdMod.FOOTER
-  }
-);
-panel.addButton(
-  {
-      value: "Remove All Items",
-      action: function(e) { 
-        e.preventDefault(); 
+```javascript
+panel.addButton({
+    value  : 'Add Item',
+    section: Y.WidgetStdMod.FOOTER,
+    action : function (e) {
+        e.preventDefault();
+        addItem();
+    }
+});
+
+panel.addButton({
+    value  : 'Remove All Items',
+    section: Y.WidgetStdMod.FOOTER,
+    action : function (e) {
+        e.preventDefault();
         removeAllItemsConfirm();
-      },
-      section: Y.WidgetStdMod.FOOTER
-  }
-);
+    }
+});
 ```
-
 
 <h3>Creating the nested Panel through JavaScript</h3>
 
-<p>In the example, clicking the "Remove all items" button renders a nested confirmation panel. Since Y.Panel implements the `Y.WidgetStack` and `Y.WidgetModality` extensions, creating nested panels are easy to do for the developer. The nested panel code is as follows:</p>
+<p>
+In the example, clicking the "Remove all items" button renders a nested confirmation panel. Since Y.Panel implements the `Y.WidgetStack` and `Y.WidgetModality` extensions, creating nested panels are easy to do for the developer. The nested panel code is as follows:
+</p>
 
 ```
 var nestedPanel = new Y.Panel({
-  bodyContent: "Are you sure you want to remove all items?",
-  zIndex: 5, //We set a z-index higher than the parent's z-index
-  centered:true,
-  width:400,
-  modal:true,
-
-  //We add the "Yes" and "No" buttons
-  buttons: [
-    {
-        value: "Yes",
-        action  : function(e) { 
-          e.preventDefault(); 
-          nestedPanel.hide();
-          panel.hide();
-          removeItems(); //this method removes all data from the datatable
+    bodyContent: 'Are you sure you want to remove all items?',
+    width      : 400,
+    zIndex     : 6,
+    centered   : true,
+    modal      : true,
+    render     : '#nestedPanel',
+    buttons: [
+        {
+            value  : 'Yes',
+            section: Y.WidgetStdMod.FOOTER,
+            action : function (e) {
+                e.preventDefault();
+                nestedPanel.hide();
+                panel.hide();
+                removeItems();
+            }
         },
-        section: Y.WidgetStdMod.FOOTER
-    },
-    {
-        value: "No",
-        action: function(e) { 
-          e.preventDefault(); 
-          nestedPanel.hide();
-        },
-        section: Y.WidgetStdMod.FOOTER
-    }
-  ]
+        {
+            value  : 'No',
+            section: Y.WidgetStdMod.FOOTER,
+            action : function (e) {
+                e.preventDefault();
+                nestedPanel.hide();
+            }
+        }
+    ]
 });
-
-nestedPanel.render('#nestedPanel');
 ```
 
-<p>In this case, we pass in an array of buttons to the `buttons` attribute. As a result, the nested panel does not have the close button in the top-right corner.</p>
-
 <p>
-
+In this case, we pass in an array of buttons to the `buttons` attribute. As a result, the nested panel does not have the close button in the top-right corner.
+</p>
 
 <h3>CSS: Panel Look/Feel</h3>
 
-<p>The panel.css Sam Skin file (build/panel/assets/skins/sam/panel.css) provides the default functional CSS for the panel. In addition, an image file (build/panel/assets/skins/sam/sprite_icons.gif) provides the icons for the "close" button.</p>
+<p>
+The panel.css Sam Skin file (build/panel/assets/skins/sam/panel.css) provides the default functional CSS for the panel. In addition, an image file (build/panel/assets/skins/sam/sprite_icons.gif) provides the icons for the "close" button.
+</p>
 
 
-<p><strong>NOTE:</strong> As discussed on the Widget landing page, all widgets are enclosed in 2 containing elements - the boundingBox is the outer(most) element, and the contentBox is the inner element into which the widget's content is added. It is advised to apply any look/feel CSS for the widget to the content box and it's children. This leaves the bounding box without padding/borders, allowing for consistent positioning/sizing across box models.</p>
+<p>
+<strong>NOTE:</strong> As discussed on the Widget landing page, all widgets are enclosed in two containing elements - the `boundingBox` is the outer(most) element, and the `contentBox` is the inner element into which the widget's content is added. It is advised to apply any look/feel CSS for the widget to the content box and it's children. This leaves the bounding box without padding/borders, allowing for consistent positioning/sizing across box models.
+</p>
 
 <h3>Complete Example Source</h3>
+
 ```
-    <style type="text/css">
-        {{>panel-form-css-source}}
-    </style>
-
-
-    {{>panel-form-html-source}}
-
-    <script type="text/javascript">
-        {{>panel-form-js-source}}
-    </script>
+{{>panel-form-source}}
 ```

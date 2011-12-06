@@ -2,7 +2,7 @@
     "name"       : "panel",
     "displayName": "Panel",
     "description": "The Panel is a UI Control that is meant to behave similarly to an OS window. The Panel control extends the functionality of Overlay, adding support for modality, close/dismiss buttons, autohiding and autofocus. Plugins to make it draggable and resizable are supported as well. Panel includes a pre-defined stylesheet to support default look and feel characteristics.",
-    "author"     : ["ericf"],
+    "author"     : ["ericf", "tilomitra"],
 
     "tags": ["widget", "beta", "panel", "extension"],
     "use" : ["panel"],
@@ -10,7 +10,7 @@
     "examples" : [
         {
             "name"       : "panel-form",
-            "displayName": "Creating a modal form",
+            "displayName": "Creating a Modal Form",
             "description": "Shows how to instantiate multiple Panel instances, and use nested modality to interact with a Datatable.",
             "modules"    : ["panel", "datatable"],
             "tags"       : ["panel", "datatable"],
@@ -19,7 +19,7 @@
         },
         {
             "name"       : "panel-animate",
-            "displayName": "Creating an animated panel",
+            "displayName": "Creating an Animated Panel",
             "description": "Shows how to create a panel that animates as it is shown and hidden",
             "modules"    : ["panel", "transition"],
             "tags"       : ["panel", "transition"],
@@ -31,13 +31,12 @@
     "pages": {
         "panel-form-example": {
             "displayName": "Using a panel to show a modal form",
-            "layout": "panel-example"
-            
+            "layout"     : "panel-example"
         },
+
         "panel-animate-example": {
             "displayName": "Creating an animated panel using transitions",
-            "layout": "panel-example"
-            
+            "layout"     : "panel-example"
         }
     }
 }

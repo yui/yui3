@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <style>
+            /*Supplemental: CSS for the YUI distribution*/
+            #custom-doc { width: 95%; min-width: 950px; }
+            #pagetitle {background-image: url(../../assets/bg_hd.gif);}
+            #mychart {
+                padding:10px 10px 10px 10px;
+            }
+        </style>
+        <link rel="stylesheet" type="text/css" href="../../../build/cssfonts/fonts-min.css">
+    </head>		
+<body class="yui3-skin-sam">
+<h3>Unit Tests</h3>
+<div id="mychart"></div>
+<script type="text/javascript" src="../../../build/yui/yui-min.js"></script>
+<script>            
+YUI({
+    allowRollup: false,
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+}).use('charts', 'test', 'console', function (Y) 
+{ 
+    Y.namespace("example.test");
+
+    var suite = new Y.Test.Suite("Y.Charts.Pie"),
+    
+    //test to ensure that pie charts are drawn from center
+    //pie charts need to have the same width/height
+    PieCenterTest = new Y.Test.Case({
+        name: "PieChartCenterTest",
+        setUp: function() {
+            var myDataValues = [ 
+                {day:"Monday", taxes:2000}, 
+                {day:"Tuesday", taxes:50}, 
+                {day:"Wednesday", taxes:4000}, 
+                {day:"Thursday", taxes:200}, 
+                {day:"Friday", taxes:2000}
+            ];
+            var mychart = new Y.Chart({type: "pie", width:400, height:400, dataProvider:myDataValues});
+            mychart.render("#mychart");
+            this.chart = mychart;
+        },
+
+        tearDown: function() {
+            this.chart.destroy();
+        },
+
+        testWidthAndHeightEqual: function()
+        {
+            var graphic = this.chart.get("graph").get("graphic"),
+                shapes = graphic.get("shapes"),
+                i,
+                shape;
+            for(i in shapes)
+            {
+                if(shapes.hasOwnProperty(i))
+                {
+                    shape = shapes[i];
+                    Y.assert(shape.get("width") === shape.get("height"));
+                }
+            }
+        },
+
+        testWidthGreaterThanHeight: function()
+        {
+            var graphic = this.chart.get("graph").get("graphic"),
+                shapes,
+                i,
+                shape;
+            this.chart.set("width", 500);
+            shapes = graphic.get("shapes");
+            for(i in shapes)
+            {
+                if(shapes.hasOwnProperty(i))
+                {
+                    shape = shapes[i];
+                    Y.assert(shape.get("width") === shape.get("height"));
+                }
+            }
+        },
+
+        testHeightGreaterThanWidth: function()
+        {
+            var graphic = this.chart.get("graph").get("graphic"),
+                shapes,
+                i,
+                shape;
+            this.chart.set("height", 600);
+            shapes = graphic.get("shapes");
+            for(i in shapes)
+            {
+                if(shapes.hasOwnProperty(i))
+                {
+                    shape = shapes[i];
+                    Y.assert(shape.get("width") === shape.get("height"));
+                }
+            }
+        }
+    });
+
+    suite.add(PieCenterTest);
+
+    //create the console
+    var r = new Y.Console({
+        newestOnTop : false,
+        style: 'block' // to anchor in the example content
+    });
+    
+    r.render('#testLogger');
+
+    //run the tests
+    Y.Test.Runner.setName("Y.Charts.Pie");
+    Y.Test.Runner.add(suite);
+    Y.Test.Runner.run();
+});
+</script>
+</body>
+</html>

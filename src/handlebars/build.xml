@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="YUI" default="local">
+    <description>Handlebars - Build All Modules</description>
+
+    <macrodef name="build-handlebars">
+        <attribute name="target"/>
+        <sequential>
+            <subant target="@{target}">
+                <fileset dir="." includes="build-*.xml"/>
+            </subant>
+        </sequential>
+    </macrodef>
+
+    <target name="local">
+        <build-handlebars target="local"/>
+    </target>
+    <target name="deploy">
+        <build-handlebars target="deploy"/>
+    </target>
+    <target name="all">
+        <build-handlebars target="all"/>
+    </target>
+    <target name="clean">
+        <build-handlebars target="clean"/>
+    </target>
+</project>

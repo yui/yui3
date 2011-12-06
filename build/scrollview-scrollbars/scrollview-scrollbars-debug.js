@@ -290,8 +290,8 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             dim = WIDTH;
             dimOffset = LEFT;
             dimCache = HORIZ_CACHE;
-            widgetSize = host.get(dim);
-            contentSize = host._scrollWidth || cb.get(SCROLL_WIDTH);
+            widgetSize = host._width;
+            contentSize = host._scrollWidth;
             translate = TRANSLATE_X;
             scale = SCALE_X;
             current = (current !== undefined) ? current : host.get(SCROLL_X);
@@ -299,8 +299,8 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             dim = HEIGHT;
             dimOffset = TOP;
             dimCache = VERT_CACHE;
-            widgetSize = host.get(dim);
-            contentSize = host._scrollHeight || cb.get(SCROLL_HEIGHT);
+            widgetSize = host._height;
+            contentSize = host._scrollHeight;
             translate = TRANSLATE_Y;
             scale = SCALE_Y;
             current = (current !== undefined) ? current : host.get(SCROLL_Y);
@@ -503,21 +503,10 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * @method flash
      */
     flash: function() {
-        var shouldFlash = false,
-            host = this._host;
+        var host = this._host;
 
-        if (host._scrollsVertical && (host._scrollHeight > host.get(HEIGHT))) {
-            shouldFlash = true;
-        }
-
-        if (host._scrollsHorizontal && (host._scrollWidth > host.get(WIDTH))) {
-            shouldFlash = true;
-        }
-
-        if (shouldFlash) {
-            this.show(true);
-            this._flashTimer = Y.later(800, this, 'hide', true);
-        }
+        this.show(true);
+        this._flashTimer = Y.later(800, this, 'hide', true);
     },
 
     /**

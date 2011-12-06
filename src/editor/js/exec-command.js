@@ -498,7 +498,7 @@
                             }
                             range.select();
                         }
-                    } else if (Y.UA.ie) {
+                    } else if (Y.UA.ie && Y.UA.ie < 9) {
                         par = inst.one(sel._selection.parentElement());
                         if (par.test('p')) {
                             if (par && par.hasAttribute(DIR)) {

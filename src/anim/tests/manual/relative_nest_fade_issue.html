@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>simple fade nested relative and absolute</title>
+
+<!-- Source File and Seed for YUI3-->
+<script src="../../../../build/yui/yui.js"></script>
+</head>
+<style>
+#demo{
+    /*position:relative;  uncomment this and fade works on container and contents*/
+    color: #000;
+    font-size: 100%;
+    border:solid 1px #f00;
+    width: 300px;
+}
+#demo .yui3-hd {
+    position:relative;/**/
+    color: #000;
+    background-color: #abc;
+}
+
+#demo .yui3-remove{
+    position:absolute;
+    top: 4px;
+    right: 4px;
+    text-decoration: underline;
+}
+</style>
+<body class="yui3-skin-sam">
+
+    <div class="yui3-module" id="demo">
+        <div class="yui3-hd">
+            <h3>Basic Animation</h3>
+            <a class="yui3-remove" title="fade out module">fade</a>
+        </div>
+        <div class="yui3-bd">
+            <p>Clicking the fade link should fade the whole container and it's contents.
+            In IE 6, The container, #demo, fades out, but it's contents that are
+            position: relative, or position: absolute do not fade out
+            unless the container, #demo, is also set to position: relative. 
+            </p>
+        </div>
+    </div> 
+</body>
+</html>
+<script type="text/javascript">
+YUI().use('anim', function(Y) {
+    var anim = new Y.Anim({
+        node: '#demo',
+        to: { opacity: 0 }
+    });
+
+    var onClick = function(e) {
+        e.preventDefault(); 
+        anim.run();
+    };
+
+    Y.one('#demo .yui3-remove').on('click', onClick);
+
+});
+
+</script>

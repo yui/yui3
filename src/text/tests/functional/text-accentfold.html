@@ -14,24 +14,13 @@ var Y = YUI({
     allowRollup: false,
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
     modules: {
-        'test-console': {
-            fullpath : '../assets/test-console.js',
-            requires : ['console-filters'],
-            skinnable: true
-        },
-
-        'skin-sam-test-console': {
-            fullpath: '../assets/test-console.css',
-            type    : 'css'
-        },
-
         'text-accentfold-test': {
             fullpath: 'text-accentfold-test.js',
             requires: ['text-accentfold', 'test']
         }
-    },
-    useBrowserConsole: false
+    }
 }).use('text-accentfold-test', 'test-console', function (Y) {
+    new Y.Test.Console().render('#log');
     Y.Test.Runner.setName('text-accentfold');
     Y.Test.Runner.run();
 });

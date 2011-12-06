@@ -4,7 +4,18 @@ Both lists are sortable, but List #1 can move its items into List #2 and they be
 </div>
 
 <div class="example">
-    {{>sortable-multi-out-source}}
+    <style>
+    {{>sortable-multi-source-css}}
+    {{>sortable-indent-css}}
+    {{>sortable-arrows-css}}
+    </style>
+    
+    {{>sortable-multi-source-indent-html}}
+    {{>sortable-arrows}}
+    
+    <script>
+    {{>sortable-multi-out-source-js}}
+    </script>
 </div>
 
 <p><strong>Note: When using an outer or inner joined list, you must pick a moveType of 'move' or 'copy', the default 'swap' won't give you the results you expect.</strong></p>

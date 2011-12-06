@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>pjax Test — Foo</title>
+</head>
+<body>
+
+    <h1>pjax Test</h1>
+    <p>Current Time: <strong id="now"></strong></p>
+
+    <div id="content">
+        <h2>Foo</h2>
+        <ul id="nav">
+            <li><a href="../">Index</a></li>
+            <li><a href="../foo/">Foo</a></li>
+            <li><a href="../bar/">Bar</a></li>
+            <li><a href="../baz/">Baz</a></li>
+        </ul>
+    </div>
+
+    <script src="../../../../../build/yui/yui.js"></script>
+    <script>
+    YUI({ filter: 'raw' }).use('pjax-plugin', function (Y) {
+
+        // Shows a timestamp so you notice full page reloads.
+        Y.one('#now').set('text', new Date());
+
+        // Plug-in the pjax.
+        Y.one('#content').plug(Y.Plugin.Pjax, {
+            contentSelector: '#content > *',
+            linkSelector   : '#nav a'
+        });
+
+    });
+    </script>
+
+</body>
+</html>

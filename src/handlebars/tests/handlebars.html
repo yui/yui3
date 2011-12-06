@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+
+<script src="../../../build/yui/yui.js"></script>
+<script>
+var Y = YUI({
+    allowRollup: false,
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+    modules: {
+        'handlebars-test': {
+            fullpath: 'handlebars-test.js',
+            requires: ['handlebars', 'test']
+        }
+    }
+}).use('handlebars-test', 'test-console', function (Y) {
+    new Y.Test.Console().render('#log');
+    Y.Test.Runner.run();
+});
+</script>
+
+</body>
+</html>

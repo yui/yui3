@@ -130,7 +130,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         this.set(TOTAL, pages.size());
 
         this._pgOff = offsets = pages.get((vert) ? "offsetTop" : "offsetLeft");
-        offsets.push(size - bb.get((vert) ? "offsetHeight" : "offsetWidth"));
     },
 
     /**
@@ -281,7 +280,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             vert = host._scrollsVertical;
 
         host._killTimer();
-
 
         host.set((vert) ? SCROLL_Y : SCROLL_X, this._pgOff[this.get(INDEX)], {
             duration: duration,

@@ -60,11 +60,11 @@ var L = Y.Lang,
 
     UI,
     ATTRS = {},
-    UI_ATTRS = [VISIBLE, DISABLED, HEIGHT, WIDTH, FOCUSED],
+    UI_ATTRS = [VISIBLE, DISABLED, HEIGHT, WIDTH, FOCUSED, TAB_INDEX],
 
     WEBKIT = Y.UA.webkit,
 
-    // Widget nodeguid-to-instance map.
+    // Widget nodeid-to-instance map.
     _instances = {};
 
 /**
@@ -338,13 +338,15 @@ _getWidgetClassName = Widget.getClassName;
  */
 Widget.getByNode = function(node) {
     var widget,
+        nodeid,
         widgetMarker = _getWidgetClassName();
 
     node = Node.one(node);
     if (node) {
         node = node.ancestor("." + widgetMarker, true);
         if (node) {
-            widget = _instances[Y.stamp(node, TRUE)];
+            nodeid = node.get(ID);
+            widget = _instances[nodeid];
         }
     }
 
@@ -385,7 +387,10 @@ Y.extend(Widget, Y.Base, {
      */
     initializer: function(config) {
 
-        _instances[Y.stamp(this.get(BOUNDING_BOX))] = this;
+        var bb = this.get(BOUNDING_BOX);
+        if (bb instanceof Node) {
+            this._mapInstance(bb.get(ID));
+        }
 
         /**
          * Notification event, which widget implementations can fire, when
@@ -405,6 +410,21 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
+     * Utility method used to add an entry to the boundingBox id to instance map. 
+     *
+     * This method can be used to populate the instance with lazily created boundingBox Node references. 
+     *
+     * @method _mapInstance
+     * @param {String} The boundingBox id
+     * @protected
+     */
+    _mapInstance : function(id) {
+        if (!(_instances[id])) {
+            _instances[id] = this;
+        }
+    },
+
+    /**
      * Destructor lifecycle implementation for the Widget class. Purges events attached
      * to the bounding box (and all child nodes) and removes the Widget from the 
      * list of registered widgets.
@@ -415,13 +435,17 @@ Y.extend(Widget, Y.Base, {
     destructor: function() {
 
         var boundingBox = this.get(BOUNDING_BOX),
-            bbGuid = Y.stamp(boundingBox, TRUE);
+            bbid;
 
-        if (bbGuid in _instances) {
-            delete _instances[bbGuid];
+        if (boundingBox instanceof Node) {
+            bbid = boundingBox.get(ID);
+
+            if (bbid in _instances) {
+                delete _instances[bbid];
+            }
+
+            this._destroyBox();
         }
-
-        this._destroyBox();
     },
 
     /**
@@ -459,7 +483,9 @@ Y.extend(Widget, Y.Base, {
         var boundingBox = this.get(BOUNDING_BOX),
             contentBox = this.get(CONTENT_BOX),
             deep = this._destroyAllNodes,
-            same = boundingBox && boundingBox.compareTo(contentBox);
+            same;
+
+        same = boundingBox && boundingBox.compareTo(contentBox);
 
         if (this.UI_EVENTS) {
             this._destroyUIEvents();
@@ -589,7 +615,7 @@ Y.extend(Widget, Y.Base, {
      */
     bindUI: EMPTY_FN,
 
-    /**å
+    /**
      * Adds nodes to the DOM 
      * 
      * This method is not called by framework and is not chained 
@@ -678,7 +704,7 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-     * Helper method to collect the boundingBox and contentBox, set styles and append to the provided parentNode, if not
+     * Helper method to collect the boundingBox and contentBox and append to the provided parentNode, if not
      * already a child. The owner document of the boundingBox, or the owner document of the contentBox will be used 
      * as the document into which the Widget is rendered if a parentNode is node is not provided. If both the boundingBox and
      * the contentBox are not currently in the document, and no parentNode is provided, the widget will be rendered 
@@ -692,7 +718,7 @@ Y.extend(Widget, Y.Base, {
     _renderBox: function(parentNode) {
 
         // TODO: Performance Optimization [ More effective algo to reduce Node refs, compares, replaces? ]
-        
+
         var widget = this, // kweight
             contentBox = widget.get(CONTENT_BOX),
             boundingBox = widget.get(BOUNDING_BOX),
@@ -1120,7 +1146,9 @@ Y.extend(Widget, Y.Base, {
      * @param {EventFacade} e
      */
     _setAttrUI : function(e) {
-        this[_UISET + _toInitialCap(e.attrName)](e.newVal, e.src);
+        if (e.target === this) {
+            this[_UISET + _toInitialCap(e.attrName)](e.newVal, e.src);
+        }
     },
 
     /**
@@ -1169,11 +1197,11 @@ Y.extend(Widget, Y.Base, {
      */
     _UI_ATTRS : {
         BIND: UI_ATTRS,
-        SYNC: UI_ATTRS.concat(TAB_INDEX)
+        SYNC: UI_ATTRS
     }
 });
 
 Y.Widget = Widget;
 
 
-}, '@VERSION@' ,{requires:['attribute', 'event-focus', 'base-base', 'base-pluginhost', 'node-base', 'node-style', 'classnamemanager'], skinnable:true});
+}, '@VERSION@' ,{skinnable:true, requires:['attribute', 'event-focus', 'base-base', 'base-pluginhost', 'node-base', 'node-style', 'classnamemanager']});

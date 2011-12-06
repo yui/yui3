@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+    <head>
+        <script type="text/javascript" src="../../build/yui/yui.js"></script>
+        <script type="text/javascript">
+            YUI().use("dd-plugin", function(Y) {
+                Y.one("#myNode").plug(Y.Plugin.Drag);
+
+                Y.one("#myButton").on("click", function(ev) {
+                    Y.use("dd-ddm", function(Y2) {
+                        console.log('DDM Loaded..');
+                    });
+                });
+            });
+        </script>
+        <style type="text/css">
+            #myNode {display: inline-block; width: 100px; height: 100px; border: 1px solid red; cursor:move}
+        </style>
+    </head>
+    <body>
+        <p>Drag the square around and let go, all is well. Click the button, and do it again, the drop operation fails and the square is still being dragged around, despite the fact that the mouse button has been released, view the JavaScript console to see errors.</p>
+
+        <div id="myNode"></div>
+
+        <button id="myButton">Load dd-ddm</button>
+    </body>
+</html>

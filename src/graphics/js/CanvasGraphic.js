@@ -158,7 +158,10 @@ CanvasGraphic.ATTRS = {
         setter: function(val)
         {
             this._resizeDown = val;
-            this._redraw();
+            if(this._node)
+            {
+                this._redraw();
+            }
             return val;
         }
     },
@@ -343,7 +346,7 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
      */
     destroy: function()
     {
-        this._removeAllShapes();
+        this.removeAllShapes();
         this._removeChildren(this._node);
         if(this._node && this._node.parentNode)
         {

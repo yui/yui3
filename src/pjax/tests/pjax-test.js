@@ -1,4 +1,7 @@
 /*
+These tests test Y.Plugin.Pjax, since it sits at the top of a stack that
+includes Y.PjaxBase and Y.Pjax, giving us full coverage of all three.
+
 Note: These tests should ideally be run from an HTTP URL. If run from the local
 filesystem, the tests that require XHR will be skipped.
 */
@@ -9,15 +12,31 @@ var Assert = Y.Assert,
     // Tests that require XHR are ignored when the protocol isn't http or https,
     // since the XHR requests will fail.
     disableXHR = Y.config.win &&
-        Y.config.win.location.protocol.indexOf('http') === -1,
+            Y.config.win.location.protocol.indexOf('http') === -1,
 
-    html5 = Y.HistoryBase.html5 && (!Y.UA.android || Y.UA.android >= 3),
+    html5       = Y.Router.html5,
+    win         = Y.config.win,
+    originalURL = (win && win.location.toString()) || '',
 
     suite;
 
+function resetURL() {
+    if (html5) {
+        win && win.history.replaceState(null, null, originalURL);
+    }
+}
+
 // -- Suite --------------------------------------------------------------------
 suite = new Y.Test.Suite({
-    name: 'Pjax Node Plugin'
+    name: 'Pjax',
+
+    setUp: function () {
+        resetURL();
+    },
+
+    tearDown: function () {
+        resetURL();
+    }
 });
 
 // -- Lifecycle ----------------------------------------------------------------
@@ -54,21 +73,33 @@ suite.add(new Y.Test.Case({
         delete this.pjax;
     },
 
+    '`container` should be null by default': function () {
+        var pjax = new Y.Pjax();
+
+        Assert.isNull(pjax.get('container'));
+        pjax.destroy();
+    },
+
+    'container` should always be `null` or a Node instance': function () {
+        var pjax = new Y.Pjax();
+
+        pjax.set('container', '#test-content');
+        Assert.isInstanceOf(Y.Node, pjax.get('container'));
+
+        pjax.set('container', Y.one('#test-content'));
+        Assert.isInstanceOf(Y.Node, pjax.get('container'));
+
+        pjax.set('container', Y.config.doc.getElementById('test-content'));
+        Assert.isInstanceOf(Y.Node, pjax.get('container'));
+
+        pjax.set('container', null);
+        Assert.isNull(pjax.get('container'));
+
+        pjax.destroy();
+    },
+
     '`contentSelector` should be null by default': function () {
         Assert.isNull(this.pjax.get('contentSelector'));
-    },
-
-    '`controller` should default to a new controller if one is not specified': function () {
-        Assert.isInstanceOf(Y.Controller, this.pjax.get('controller'));
-        Assert.areSame(this.pjax, this.pjax.get('controller')._pjaxOwner);
-    },
-
-    '`controller` should use the specified controller if one is given': function () {
-        var controller = new Y.Controller(),
-            pjax       = Y.one('#test-content').plug(Y.Plugin.Pjax, {controller: controller}).pjax;
-
-        Assert.areSame(controller, pjax.get('controller'));
-        Assert.isUndefined(pjax.get('controller')._pjaxOwner);
     },
 
     '`linkSelector` should select links with class "yui3-pjax" by default': function () {
@@ -77,6 +108,10 @@ suite.add(new Y.Test.Case({
 
     '`scrollToTop` should be true by default': function () {
         Assert.isTrue(this.pjax.get('scrollToTop'));
+    },
+
+    '`timeout` should default to 30000ms': function () {
+        Assert.areSame(30000, this.pjax.get('timeout'));
     },
 
     '`titleSelector` should select the title tag by default': function () {
@@ -90,8 +125,13 @@ suite.add(new Y.Test.Case({
 
     _should: {
         ignore: {
-            '`error` event should fire on Ajax error': disableXHR || !html5,
-            '`load` event should fire on Ajax load': disableXHR || !html5
+            '`error` event should fire on Ajax failure': disableXHR || !html5,
+            '`load` event should fire on Ajax success': disableXHR || !html5,
+            '`navigate` event facade should contain the options passed to `navigate()`': disableXHR || !html5,
+            '`navigate` event should fire when a pjax link is clicked': !html5,
+            '`navigate` event should be preventable': !html5,
+            '`navigate` event should not fire when a link is clicked with a button other than the left button': !html5,
+            '`navigate` event should not fire when a modifier key is pressed': !html5
         }
     },
 
@@ -100,27 +140,27 @@ suite.add(new Y.Test.Case({
         this.node.setContent('');
 
         this.pjax = this.node.plug(Y.Plugin.Pjax).pjax;
-
-        // To avoid mucking with the URL.
-        this.pjax.get('controller')._save = function () {};
     },
 
     tearDown: function () {
+        resetURL();
+
         this.node.unplug(Y.Plugin.Pjax);
 
         delete this.node;
         delete this.pjax;
+        delete this.oldPath;
     },
 
     'should attach events on init in HTML5 browsers': function () {
         if (html5) {
-            Assert.isInstanceOf(Y.EventHandle, this.pjax._events);
+            Assert.isInstanceOf(Y.EventHandle, this.pjax._pjaxEvents);
         } else {
-            Assert.isUndefined(this.pjax._events);
+            Assert.isUndefined(this.pjax._pjaxEvents);
         }
     },
 
-    '`error` event should fire on Ajax error': function () {
+    '`error` event should fire on Ajax failure': function () {
         var test = this;
 
         this.pjax.once('error', function (e) {
@@ -132,7 +172,7 @@ suite.add(new Y.Test.Case({
             });
         });
 
-        this.pjax.load('bogus.html');
+        this.pjax.navigate('bogus.html');
         this.wait(1000);
     },
 
@@ -148,7 +188,7 @@ suite.add(new Y.Test.Case({
         this.pjax.fire('error');
     },
 
-    '`load` event should fire on Ajax load': function () {
+    '`load` event should fire on Ajax success': function () {
         var test = this;
 
         this.pjax.once('load', function (e) {
@@ -163,7 +203,7 @@ suite.add(new Y.Test.Case({
             });
         });
 
-        this.pjax.load('assets/page-full.html');
+        this.pjax.navigate('assets/page-full.html');
         this.wait(1000);
     },
 
@@ -177,6 +217,24 @@ suite.add(new Y.Test.Case({
         });
 
         this.pjax.fire('load');
+    },
+
+    '`navigate` event facade should contain the options passed to `navigate()`': function () {
+        var called  = 0,
+            options = {
+                title: 'Bogus Page'
+            },
+            title;
+
+        this.pjax.on('navigate', function (e) {
+            called++;
+            title = e.title;
+        });
+
+        this.pjax.navigate('bogus.html', options);
+
+        Assert.areSame(1, called);
+        Assert.areSame(title, options.title);
     },
 
     '`navigate` event should fire when a pjax link is clicked': function () {
@@ -262,9 +320,7 @@ suite.add(new Y.Test.Case({
 
     _should: {
         ignore: {
-            '`load()` should load the specified URL and fire a `load` event': disableXHR || !html5,
-            '`load()` should call a callback if one is provided': disableXHR || !html5,
-            '`load()` callback should receive an error when an error occurs': disableXHR || !html5
+            '`navigate()` should load the specified URL and fire a `load` event': disableXHR || !html5
         }
     },
 
@@ -273,19 +329,19 @@ suite.add(new Y.Test.Case({
         this.node.setContent('');
 
         this.pjax = this.node.plug(Y.Plugin.Pjax).pjax;
-
-        // To avoid mucking with the URL.
-        this.pjax.get('controller')._save = function () {};
     },
 
     tearDown: function () {
+        resetURL();
+
         this.node.unplug(Y.Plugin.Pjax);
 
         delete this.node;
         delete this.pjax;
+        delete this.oldPath;
     },
 
-    '`load()` should load the specified URL and fire a `load` event': function () {
+    '`navigate()` should load the specified URL and fire a `load` event': function () {
         var test = this;
 
         this.pjax.once('load', function (e) {
@@ -293,48 +349,7 @@ suite.add(new Y.Test.Case({
             test.resume();
         });
 
-        this.pjax.load('assets/page-full.html');
-        this.wait(1000);
-    },
-
-    '`load()` should call a callback if one is provided': function () {
-        var test = this;
-
-        this.pjax.once('load', function (e) {
-            e.preventDefault();
-        });
-
-        this.pjax.load('assets/page-full.html', function (err, content, res) {
-            test.resume(function () {
-                Assert.isNull(err);
-                Assert.isObject(content);
-                Assert.isInstanceOf(Y.Node, content.node);
-                Assert.isString(content.title);
-                Assert.isObject(res);
-                Assert.areSame(200, res.status);
-            });
-        });
-
-        this.wait(1000);
-    },
-
-    '`load()` callback should receive an error when an error occurs': function () {
-        var test = this;
-
-        this.pjax.once('error', function (e) {
-            e.preventDefault();
-        });
-
-        this.pjax.load('bogus.html', function (err, content, res) {
-            test.resume(function () {
-                Assert.isString(err);
-                Assert.isObject(content);
-                Assert.isInstanceOf(Y.Node, content.node);
-                Assert.isObject(res);
-                Assert.areSame(404, res.status);
-            });
-        });
-
+        this.pjax.navigate('assets/page-full.html');
         this.wait(1000);
     }
 }));
@@ -356,27 +371,29 @@ suite.add(new Y.Test.Case({
         this.node.setContent('');
 
         this.pjax = this.node.plug(Y.Plugin.Pjax).pjax;
-
-        // To avoid mucking with the URL.
-        this.pjax.get('controller')._save = function () {};
     },
 
     tearDown: function () {
+        resetURL();
+
         this.node.unplug(Y.Plugin.Pjax);
 
         delete this.node;
         delete this.pjax;
+        delete this.oldPath;
     },
 
     'Page title should be updated if the `titleSelector` matches an element': function () {
         var test = this;
 
-        this.pjax.load('assets/page-full.html', function (err, content) {
+        this.pjax.onceAfter('load', function (e) {
             test.resume(function () {
-                Assert.areSame('Full Page', content.title);
+                Assert.areSame('Full Page', e.content.title);
                 Assert.areSame('Full Page', Y.config.doc.title);
             });
         });
+
+        this.pjax.navigate('assets/page-full.html');
 
         this.wait(1000);
     },
@@ -384,12 +401,14 @@ suite.add(new Y.Test.Case({
     'Host element content should be updated with page content when `contentSelector` is null': function () {
         var test = this;
 
-        this.pjax.load('assets/page-full.html', function (err, content) {
+        this.pjax.onceAfter('load', function (e) {
             test.resume(function () {
-                Assert.isInstanceOf(Y.Node, this.node.one('title'));
+                Assert.isInstanceOf(Y.Node, test.node.one('title'));
                 Y.assert(test.node.get('text').indexOf("I'm a full HTML page!") !== -1);
             });
         });
+
+        this.pjax.navigate('assets/page-full.html');
 
         this.wait(1000);
     },
@@ -399,11 +418,13 @@ suite.add(new Y.Test.Case({
 
         this.pjax.set('contentSelector', 'p.foo');
 
-        this.pjax.load('assets/page-partial.html', function (err, content) {
+        this.pjax.onceAfter('load', function (e) {
             test.resume(function () {
                 Assert.areSame('Hello!', test.node.get('text'));
             });
         });
+
+        this.pjax.navigate('assets/page-partial.html');
 
         this.wait(1000);
     }

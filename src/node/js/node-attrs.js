@@ -70,7 +70,7 @@ Y_Node.ATTRS = {
                 children = [];
 
                 for (i = 0, len = childNodes.length; i < len; ++i) {
-                    if (childNodes[i][TAG_NAME]) {
+                    if (childNodes[i].tagName) {
                         children[children.length] = childNodes[i];
                     }
                 }

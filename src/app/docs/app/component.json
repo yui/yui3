@@ -1,7 +1,7 @@
 {
     "name"       : "app",
     "displayName": "App Framework",
-    "description": "Rollup of the Controller, Model, Model List, and View components, which make it easy to write MVC-style JavaScript applications.",
+    "description": "Rollup of the Model, Model List, Router, and View components, which make it easy to write MVC-style JavaScript applications.",
     "author"     : ["rgrove", "ericf"],
 
     "tags": [

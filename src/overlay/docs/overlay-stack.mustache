@@ -6,29 +6,25 @@
     position:absolute;
 }
 
-/* Overlay Look/Feel */
-.yui3-overlay-content {
-    padding:3px;
-    border:1px solid #000;
-    background-color:#aaa;
+{{>overlay-css}}
+.yui3-overlay-content .yui3-widget-bd {
+    position: relative;
 }
 
-.yui3-overlay-content .yui3-widget-hd {
-    padding:5px;
-    border:2px solid #aa0000;
-    background-color:#fff;
+.yui3-overlay-content .yui3-widget-bd .yui3-ovr-z-i{
+    position: absolute;
+    bottom: 1em;
+}
+
+.yui3-overlay-content .yui3-widget-bd .yui3-ovr-z-i em{
+    color: #FF8800;
+    font-size: 160%;
+    font-style: normal;
+    font-weight: bold;
 }
 
 .yui3-overlay-content .yui3-widget-bd {
-    padding:5px;
-    border:2px solid #0000aa;
-    background-color:#fff;
-}
-
-.yui3-overlay-content .yui3-widget-ft {
-    padding:5px;
-    border:2px solid #00aa00;
-    background-color:#fff;
+    padding-top:6em;
 }
 
 /* Example Layout CSS */
@@ -86,7 +82,7 @@ for (var i = 0; i < n; ++i) {
         width:"8em",
         height:"8em",
         headerContent: 'Overlay <span class="yui3-ovr-number">' + i + '</span>',
-        bodyContent: "zIndex = " + ovrZIndex
+        bodyContent: "z-index = " + ovrZIndex
     });
 
     overlay.render("#overlay-stack");
@@ -103,7 +99,7 @@ overlays.push(overlay);
 
 // Update body whenever zIndex changes
 overlay.after("zIndexChange", function(e) {
-    this.set("bodyContent", "zIndex = " + e.newVal);
+    this.set("bodyContent", "z-index = " + e.newVal);
 });
 ```
 
@@ -183,31 +179,10 @@ function bringToTop(overlay) {
 <p>The example provides it's own look and feel for the Overlay, by defining rules for the content box, header and body sections:</p>
 
 ```
-/* Overlay Look/Feel */
-.yui3-overlay-content {
-    padding:2px;
-    border:1px solid #000;
-    background-color:#aaa;
-    font-size:93%;
-}
-
-.yui3-overlay-content .yui3-widget-hd {
-    font-weight:bold;
-    text-align:center;
-    padding:2px;
-    border:2px solid #aa0000;
-    background-color:#fff;
-}
-
-.yui3-overlay-content .yui3-widget-bd {
-    text-align:left;
-    padding:2px;
-    border:2px solid #0000aa;
-    background-color:#fff;
-}
-
-.yui3-overlay-content .yui3-widget-hd .yui3-ovr-number {
-    color:#aa0000;
+{{>overlay-css}}
+.yui3-overlay-content .yui3-widget-bd .yui3-ovr-z-i{
+    line-height: 3.5em;
+    font-size:190%;
 }
 ```
 

@@ -686,12 +686,14 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             sv._maxScrollY = scrollHeight - height;
             sv._minScrollY = 0;
             sv._scrollHeight = scrollHeight;
+            sv._height = height;
             bb.addClass(CLASS_NAMES.vertical);
         } else {
             sv._scrollsVertical = false;
             delete sv._maxScrollY;
             delete sv._minScrollY;
             delete sv._scrollHeight;
+            delete sv._height;
             bb.removeClass(CLASS_NAMES.vertical);
         }
 
@@ -700,12 +702,14 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             sv._maxScrollX = scrollWidth - width;
             sv._minScrollX = 0;
             sv._scrollWidth = scrollWidth;
+            sv._width = width;            
             bb.addClass(CLASS_NAMES.horizontal);
         } else {
             sv._scrollsHorizontal = false;
             delete sv._maxScrollX;
             delete sv._minScrollX;
             delete sv._scrollWidth;
+            delete sv._width;
             bb.removeClass(CLASS_NAMES.horizontal);
         }
 

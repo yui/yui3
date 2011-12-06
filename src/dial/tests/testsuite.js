@@ -428,19 +428,10 @@ suite.add( new Y.Test.Case({
 
         var testbed = Y.one("#dial"),
             ref     = Y.one("#ref"),
-            dial, delta, bb;
-
-        dial = new Y.Dial().render( testbed );
-        bb = testbed.get('firstChild');
-
-        delta = bb.get('offsetWidth') - parseInt(dial.get('diameter'), 10);
-
-        dial.destroy();
+            dial;
 
         dial = new Y.Dial({ diameter: 300 }).render( testbed );
-        bb = testbed.get('firstChild');
-
-        Y.Assert.areEqual( (300 + delta), bb.get('offsetWidth') );
+        Y.Assert.areEqual( (300), dial._ringNode.get('offsetWidth') );
 
 /*		I don't believe the diameter should be able to be changed after render
         dial.set('diameter', 200);
@@ -462,9 +453,8 @@ suite.add( new Y.Test.Case({
         Y.one('#testbed').append('<div id="dial"></div><div id="ref"></div>');
         var testbed = Y.one("#dial"),
             ref     = Y.one("#ref"),
-            dial, calcSize, bb;
+            dial, calcSize;
         dial = new Y.Dial({handleDiameter: 0.53 }).render( testbed );
-        bb = testbed.get('firstChild');
         calcSize = dial.get('diameter') * dial.get('handleDiameter');
         Y.Assert.areEqual( calcSize, dial._handleNode.get('offsetWidth') );
         dial.destroy();
@@ -629,10 +619,10 @@ suite.add( new Y.Test.Case({
                     eventXYMarker = Y.Node.create('<div class="mDMarker" style="position:absolute; width:3px; height:3px; background-color:#f00;"></div>')
                     Y.one('.yui3-dial-ring').append(eventXYMarker);
                 }
-                eventXYMarker.setXY([(dialObj._centerXOnPage + x - scrollL), (dialObj._centerYOnPage + y - scrollT)]);
+                //eventXYMarker.setXY([(dialObj._dialCenterX + dialObj._ringNode.getX() + x - scrollL), (dialObj._dialCenterY + dialObj._ringNode.getY() + y - scrollT)]);
+                eventXYMarker.setStyles({'left':dial._dialCenterX + x, 'top':dial._dialCenterY + y});
             }
 	    },
-	
 
 		"test md00 centerButton mousedown": function() { //string must start with "test
 			Y.one('#testbed').append('<div id="dial"></div><div id="ref"></div>');
@@ -645,7 +635,7 @@ suite.add( new Y.Test.Case({
             eventX,
             eventY,
             getXYProps = function(){ // this returns the properties, the object literal needed for .simulate
-                return { clientX: (dial._centerXOnPage + eventX - scrollL), clientY: (dial._centerYOnPage + eventY - scrollT)};
+                return { clientX: (dial._dialCenterX + eventX - scrollL), clientY: (dial._dialCenterY + eventY - scrollT)};
             }; 
 			// listeners that bind an event *unused* by Dial to the intended method 
  			//Y.on('mouseover', Y.bind(dial._handleDrag, dial), dial._ringNode); // make mouseover do what a real drag:drag would do 
@@ -657,13 +647,11 @@ suite.add( new Y.Test.Case({
 			
 			
     		dial.set('value', 35);
-            eventX = 12; //Set the X for event simulation. This is offset from dial._centerXOnPage
+            eventX = 12; //Set the X for event simulation. This is offset from dial._dialCenterX
             eventY = -12; //Set the Y for event simulation. 
             dial._centerButtonNode.simulate("mousedown", getXYProps());	
     		Y.Assert.areEqual( dial._originalValue, dial.get('value'));
         },
-
-
 	
 		"test md01 min:0 max:100 -- drag past max/max, then click 11 or 1 o'clock.": function() { //string must start with "test
 			Y.one('#testbed').append('<div id="dial"></div><div id="ref"></div>');
@@ -673,10 +661,21 @@ suite.add( new Y.Test.Case({
 			ring = Y.one('.yui3-dial-ring'),
             scrollT = Y.one('document').get('scrollTop'),
             scrollL = Y.one('document').get('scrollLeft'),
-            eventX,
+            eventX, // the desired X of the simulated event relative to the center of the ringNode
             eventY,
-            getXYProps = function(){ // this returns the properties, the object literal needed for .simulate
-                return { clientX: (dial._centerXOnPage + eventX - scrollL), clientY: (dial._centerYOnPage + eventY - scrollT)};
+            getXYProps = function(){ // this returns the properties, the object literal needed for .simulate mousedown only
+                var myX,myY;
+                if(Y.UA.ios){ // clientX and clientY in iOS includes the scrollLeft and scrollTop
+                    myX =  (dial._ringNode.getX() + dial._dialCenterX + eventX); 
+                    myY = (dial._ringNode.getY() + dial._dialCenterY + eventY);
+                }else{  // clientX and clientY in non-iOS do not include the scrollLeft and scrollTop. They are relative to the viewport
+                    myX =  (dial._ringNode.getX() + dial._dialCenterX + eventX - scrollL);     //  but doesn't work zoomed if there's a breakpoint for some reason.
+                    myY = (dial._ringNode.getY() + dial._dialCenterY + eventY - scrollT);
+                }
+                return {clientX: myX, clientY: myY};
+            },
+            positionHandle = function(){
+                dial._handleNode.setStyles({'left':(dial._dialCenterX + eventX), 'top':dial._dialCenterY + eventY})
             }; 
 			// listeners that bind an event *unused* by Dial to the intended method 
  			Y.on('mouseover', Y.bind(dial._handleDrag, dial), dial._handleNode); // make mouseover do what a real drag:drag would do 
@@ -692,29 +691,30 @@ suite.add( new Y.Test.Case({
 
 
 			
-            eventX = 22; //Set the X for event simulation. This is offset from dial._centerXOnPage
-            eventY = -30; //Set the Y for event simulation. 
+            eventX = 22; //Set the X for event simulation. This is offset from dial._dialCenterX
+            eventY = -30; //Set the Y for event simulation.
+            positionHandle(); 
             this.visualInspection(eventX,eventY,dial);
-            dial._handleNode.simulate("mouseover", getXYProps());	
-            dial._handleNode.simulate("mouseout", getXYProps());	
+            dial._handleNode.simulate("mouseover"); // bound to dial._handleDrag	
+            dial._handleNode.simulate("mouseout");  // bound to dial._handleDragEnd	
 			Y.Assert.areEqual( 100, dial.get('value'),  'drag CW past max:100');
 
-            eventX = -22; //Set the X for event simulation. This is offset from dial._centerXOnPage
+            eventX = -22; //Set the X for event simulation. This is offset from dial._dialCenterX
             eventY = -30; 
             this.visualInspection(eventX,eventY,dial);
             ring.simulate("mousedown", getXYProps());	
 			Y.Assert.areEqual( 90, dial.get('value'),  'then click 11 0clock');
-			
 			dial.set('value', 10);
-			
-			eventX = -22; //Set the X for event simulation. This is offset from dial._centerXOnPage
+
+			eventX = -22; //Set the X for event simulation. This is offset from dial._dialCenterX
             eventY = -30; 
+            positionHandle(); 
             this.visualInspection(eventX,eventY,dial);
-            dial._handleNode.simulate("mouseover", getXYProps());	
-            dial._handleNode.simulate("mouseout", getXYProps());	
+            dial._handleNode.simulate("mouseover");	
+            dial._handleNode.simulate("mouseout");	
 			Y.Assert.areEqual( 0, dial.get('value'),  'drag CCW past min:0');
 
-            eventX = 22; //Set the X for event simulation. This is offset from dial._centerXOnPage
+            eventX = 22; //Set the X for event simulation. This is offset from dial._dialCenterX
             eventY = -30; 
             this.visualInspection(eventX,eventY,dial);
             ring.simulate("mousedown", getXYProps());	
@@ -722,14 +722,15 @@ suite.add( new Y.Test.Case({
 
 			dial.set('value', 10);
 			
-			eventX = -22; //Set the X for event simulation. This is offset from dial._centerXOnPage
+			eventX = -22; //Set the X for event simulation. This is offset from dial._dialCenterX
             eventY = -30; 
+            positionHandle(); 
             this.visualInspection(eventX,eventY,dial);
-            dial._handleNode.simulate("mouseover", getXYProps());	
-            dial._handleNode.simulate("mouseout", getXYProps());	
+            dial._handleNode.simulate("mouseover");	
+            dial._handleNode.simulate("mouseout");	
 			Y.Assert.areEqual( 0, dial.get('value'),  'drag CCW past min:0');
 
-            eventX = -22; //Set the X for event simulation. This is offset from dial._centerXOnPage
+            eventX = -22; //Set the X for event simulation. This is offset from dial._dialCenterX
             eventY = -30; 
             this.visualInspection(eventX,eventY,dial);
             ring.simulate("mousedown", getXYProps());	
@@ -748,74 +749,87 @@ suite.add( new Y.Test.Case({
 
             eventX,
             eventY,
-            getXYProps = function(){ // this returns the properties, the object literal needed for .simulate
-                return { clientX: (dial._centerXOnPage + eventX - scrollL), clientY: (dial._centerYOnPage + eventY - scrollT)};
+            getXYProps = function(){ // this returns the properties, the object literal needed for .simulate mousedown only
+                var myX,myY;
+                if(Y.UA.ios){ // clientX and clientY in iOS includes the scrollLeft and scrollTop
+                    myX =  (dial._ringNode.getX() + dial._dialCenterX + eventX); 
+                    myY = (dial._ringNode.getY() + dial._dialCenterY + eventY);
+                }else{  // clientX and clientY in non-iOS do not include the scrollLeft and scrollTop. They are relative to the viewport
+                    myX =  (dial._ringNode.getX() + dial._dialCenterX + eventX - scrollL);     //  but doesn't work zoomed if there's a breakpoint for some reason.
+                    myY = (dial._ringNode.getY() + dial._dialCenterY + eventY - scrollT);
+                }
+                return {clientX: myX, clientY: myY};
+            },
+            positionHandle = function(){
+                dial._handleNode.setStyles({'left':(dial._dialCenterX + eventX), 'top':dial._dialCenterY + eventY})
             }; 
             Y.on('mousedown', Y.bind(dial._handleMousedown, dial), dial._ringNode);  // needed for testsuite to bypass gesturemove
 			
-            eventX = 22; //Set the X for click simulation. This is offset from dial._centerXOnPage
-            eventY = -30; //Set the Y for click simulation. This is offset from dial._centerYOnPage
+            eventX = 22; //Set the X for click simulation. This is offset from dial._dialCenterX
+            eventY = -30; //Set the Y for click simulation. This is offset from dial._dialCenterY
             this.visualInspection(eventX,eventY,dial);
             ring.simulate("mousedown", getXYProps());	
 			Y.Assert.areEqual( 110, dial.get('value'));
 			dial.destroy();
 		},
-
-
-
 		
 		"test md03  min:0 max:100 -- mousedown on and off North. Range = one revolution": function() { //string must start with "test
 			Y.one('#testbed').append('<div id="dial"></div><div id="ref"></div>');
 			var testbed = Y.one("#dial"),
 				ref     = Y.one("#ref"),
-			dial = new Y.Dial({handleDistance: 1, value: 0, min: 0, max: 100 }).render( testbed ),
+			dial = new Y.Dial({handleDistance: 1, value: 0, min: 0, max: 10, stepsPerRevolution:10 }).render( testbed ),
 			ring = Y.one('.yui3-dial-ring'),
             scrollT = Y.one('document').get('scrollTop'),
             scrollL = Y.one('document').get('scrollLeft'),
 
             eventX,
             eventY,
-            getXYProps = function(){ // this returns the properties, the object literal needed for .simulate
-                return { clientX: (dial._centerXOnPage + eventX - scrollL), clientY: (dial._centerYOnPage + eventY - scrollT)};
+            getXYProps = function(){ // this returns the properties, the object literal needed for .simulate mousedown only
+                var myX,myY;
+                if(Y.UA.ios){ // clientX and clientY in iOS includes the scrollLeft and scrollTop
+                    myX =  (dial._ringNode.getX() + dial._dialCenterX + eventX); 
+                    myY = (dial._ringNode.getY() + dial._dialCenterY + eventY);
+                }else{  // clientX and clientY in non-iOS do not include the scrollLeft and scrollTop. They are relative to the viewport
+                    myX =  (dial._ringNode.getX() + dial._dialCenterX + eventX - scrollL);     //  but doesn't work zoomed if there's a breakpoint for some reason.
+                    myY = (dial._ringNode.getY() + dial._dialCenterY + eventY - scrollT);
+                }
+                return {clientX: myX, clientY: myY};
+            },
+            positionHandle = function(){
+                dial._handleNode.setStyles({'left':(dial._dialCenterX + eventX), 'top':dial._dialCenterY + eventY})
             }; 
 			// listeners that bind an event *unused* by Dial to the intended method 
             Y.on('mousedown', Y.bind(dial._handleMousedown, dial), dial._ringNode);  // needed for testsuite to bypass gesturemove
 			
-            eventX = -15; //Set the X for click simulation. This is offset from dial._centerXOnPage
-            eventY = -30; //Set the Y for click simulation. This is offset from dial._centerYOnPage
+            eventX = -20; //Set the X for click simulation. This is offset from dial._dialCenterX
+            eventY = 2; //Set the Y for click simulation. This is offset from dial._dialCenterY
             this.visualInspection(eventX,eventY,dial);
             ring.simulate("mousedown", getXYProps());	
-			Y.Assert.areEqual( 93, dial.get('value'));
+			Y.Assert.areEqual( 7, dial.get('value'));
 
-            eventX = 0; //Set the X for click simulation. This is offset from dial._centerXOnPage
-            eventY = -30; //Set the Y for click simulation. This is offset from dial._centerYOnPage
+            eventX = 1; //Set the X for click simulation. This is offset from dial._dialCenterX
+            eventY = -30; //Set the Y for click simulation. This is offset from dial._dialCenterY
             this.visualInspection(eventX,eventY,dial);
             ring.simulate("mousedown", getXYProps());	
-			Y.Assert.areEqual( 100, dial.get('value'));
+			Y.Assert.areEqual( 0, dial.get('value'));
 			
-            eventX = -15;
-            eventY = -30;
-            this.visualInspection(eventX,eventY,dial);
-            ring.simulate("mousedown", getXYProps());	
-			Y.Assert.areEqual( 93, dial.get('value'));
-
-            eventX = 1;
+            eventX = 0;
             eventY = 30;
             this.visualInspection(eventX,eventY,dial);
             ring.simulate("mousedown", getXYProps());	
-			Y.Assert.areEqual( 49, dial.get('value'));
+			Y.Assert.areEqual( 5, dial.get('value'));
 
-            eventX = 3;
+            eventX = 2;
             eventY = -30;
             this.visualInspection(eventX,eventY,dial);
             ring.simulate("mousedown", getXYProps());	
-			Y.Assert.areEqual( 2, dial.get('value'));
+			Y.Assert.areEqual( 0, dial.get('value'));
 
             eventX = 0;
             eventY = -30;
             this.visualInspection(eventX,eventY,dial);
             ring.simulate("mousedown", getXYProps());	
-			Y.Assert.areEqual( 100, dial.get('value'));
+			Y.Assert.areEqual( 10, dial.get('value'));
 
 			dial.destroy();
 		},
@@ -830,36 +844,49 @@ suite.add( new Y.Test.Case({
 
             eventX,
             eventY,
-            getXYProps = function(){ // this returns the properties, the object literal needed for .simulate
-                return { clientX: (dial._centerXOnPage + eventX - scrollL), clientY: (dial._centerYOnPage + eventY - scrollT)};
+            getXYProps = function(){ // this returns the properties, the object literal needed for .simulate mousedown only
+                var myX,myY;
+                if(Y.UA.ios){ // clientX and clientY in iOS includes the scrollLeft and scrollTop
+                    myX =  (dial._ringNode.getX() + dial._dialCenterX + eventX); 
+                    myY = (dial._ringNode.getY() + dial._dialCenterY + eventY);
+                }else{  // clientX and clientY in non-iOS do not include the scrollLeft and scrollTop. They are relative to the viewport
+                    myX =  (dial._ringNode.getX() + dial._dialCenterX + eventX - scrollL);     //  but doesn't work zoomed if there's a breakpoint for some reason.
+                    myY = (dial._ringNode.getY() + dial._dialCenterY + eventY - scrollT);
+                }
+                return {clientX: myX, clientY: myY};
+            },
+            positionHandle = function(){
+                dial._handleNode.setStyles({'left':(dial._dialCenterX + eventX), 'top':dial._dialCenterY + eventY})
             }; 
 			// listeners that bind an event *unused* by Dial to the intended method 
  			Y.on('mouseover', Y.bind(dial._handleDrag, dial), dial._handleNode); // make mouseover do what a real drag:drag would do 
  			Y.on('mouseout', Y.bind(dial._handleDragEnd, dial), dial._handleNode); // make mouseover do what a real drag:end would do 
             Y.on('mousedown', Y.bind(dial._handleMousedown, dial), dial._ringNode);  // needed for testsuite to bypass gesturemove
 			
-            eventX = 22; //Set the X for event simulation. This is offset from dial._centerXOnPage
+            eventX = 22; //Set the X for event simulation. This is offset from dial._dialCenterX
             eventY = -30; //Set the Y for event simulation. 
+            positionHandle();
             this.visualInspection(eventX,eventY,dial);
-            dial._handleNode.simulate("mouseover", getXYProps());	
-            dial._handleNode.simulate("mouseout", getXYProps());	
+            dial._handleNode.simulate("mouseover");	
+            dial._handleNode.simulate("mouseout");	
 			Y.Assert.areEqual( 200, dial.get('value'),  'drag CW past max:200');
 
-            eventX = -22; //Set the X for event simulation. This is offset from dial._centerXOnPage
+            eventX = -22; //Set the X for event simulation. This is offset from dial._dialCenterX
             eventY = -30; 
             this.visualInspection(eventX,eventY,dial);
             ring.simulate("mousedown", getXYProps());	
 			Y.Assert.areEqual( 190, dial.get('value'),  'then click 11 0clock');
 			dial.set('value', 10); ////////////////////////////////////////////////////////
 			
-			eventX = -22; //Set the X for event simulation. This is offset from dial._centerXOnPage
+			eventX = -22; //Set the X for event simulation. This is offset from dial._dialCenterX
             eventY = -30; 
+            positionHandle();
             this.visualInspection(eventX,eventY,dial);
-            dial._handleNode.simulate("mouseover", getXYProps());	
-            dial._handleNode.simulate("mouseout", getXYProps());	
+            dial._handleNode.simulate("mouseover");	
+            dial._handleNode.simulate("mouseout");	
 			Y.Assert.areEqual( 0, dial.get('value'),  'drag CCW past min:0');
 
-            eventX = 22; //Set the X for event simulation. This is offset from dial._centerXOnPage
+            eventX = 22; //Set the X for event simulation. This is offset from dial._dialCenterX
             eventY = -30; 
             this.visualInspection(eventX,eventY,dial);
             ring.simulate("mousedown", getXYProps());	
@@ -867,20 +894,21 @@ suite.add( new Y.Test.Case({
 
 			dial.set('value', 10); /////////////////////////////////////////////
 			
-			eventX = -22; //Set the X for event simulation. This is offset from dial._centerXOnPage
+			eventX = -22; //Set the X for event simulation. This is offset from dial._dialCenterX
             eventY = -30; 
+            positionHandle();
             this.visualInspection(eventX,eventY,dial);
-            dial._handleNode.simulate("mouseover", getXYProps());	
-            dial._handleNode.simulate("mouseout", getXYProps());	
+            dial._handleNode.simulate("mouseover");	
+            dial._handleNode.simulate("mouseout");	
 			Y.Assert.areEqual( 0, dial.get('value'),  'drag CCW past min:0');
 
-            eventX = -22; //Set the X for event simulation. This is offset from dial._centerXOnPage
+            eventX = -22; //Set the X for event simulation. This is offset from dial._dialCenterX
             eventY = -30; 
             this.visualInspection(eventX,eventY,dial);
             ring.simulate("mousedown", getXYProps());	
 			Y.Assert.areEqual( 0, dial.get('value'),  'then click 11 o`clock');
  
-            eventX = 22; //Set the X for event simulation. This is offset from dial._centerXOnPage
+            eventX = 22; //Set the X for event simulation. This is offset from dial._dialCenterX
             eventY = 31; // weird that 30 results in dial.get('value') == 0
             this.visualInspection(eventX,eventY,dial);
             ring.simulate("mousedown", getXYProps());
@@ -890,58 +918,74 @@ suite.add( new Y.Test.Case({
 			dial.destroy();
 		},
 
-
 		"test md05 min: 0, max: 200 -- click through two revolutions CW": function() { //string must start with "test
 			Y.one('#testbed').append('<div id="dial"></div><div id="ref"></div>');
 			var testbed = Y.one("#dial"),
 				ref     = Y.one("#ref"),
-			dial = new Y.Dial({handleDistance: 1, value: 90, min: 0, max: 200 }).render( testbed ),
+			dial = new Y.Dial({handleDistance: 1, value: 8, min: 0, max: 20, stepsPerRevolution:10 }).render( testbed ),
 			ring = Y.one('.yui3-dial-ring'),
             scrollT = Y.one('document').get('scrollTop'),
             scrollL = Y.one('document').get('scrollLeft'),
             eventX,
             eventY,
-            getXYProps = function(){ // this returns the properties, the object literal needed for .simulate
-                return { clientX: (dial._centerXOnPage + eventX - scrollL), clientY: (dial._centerYOnPage + eventY - scrollT)};
+            getXYProps = function(){ // this returns the properties, the object literal needed for .simulate mousedown only
+                var myX,myY;
+                if(Y.UA.ios){ // clientX and clientY in iOS includes the scrollLeft and scrollTop
+                    myX =  (dial._ringNode.getX() + dial._dialCenterX + eventX); 
+                    myY = (dial._ringNode.getY() + dial._dialCenterY + eventY);
+                }else{  // clientX and clientY in non-iOS do not include the scrollLeft and scrollTop. They are relative to the viewport
+                    myX =  (dial._ringNode.getX() + dial._dialCenterX + eventX - scrollL);     //  but doesn't work zoomed if there's a breakpoint for some reason.
+                    myY = (dial._ringNode.getY() + dial._dialCenterY + eventY - scrollT);
+                }
+                return {clientX: myX, clientY: myY};
+            },
+            positionHandle = function(){
+                dial._handleNode.setStyles({'left':(dial._dialCenterX + eventX), 'top':dial._dialCenterY + eventY})
             }; 
 			// listeners that bind an event *unused* by Dial to the intended method 
             Y.on('mousedown', Y.bind(dial._handleMousedown, dial), dial._ringNode);  // needed for testsuite to bypass gesturemove
 			
-            eventX = -15; //Set the X for click simulation. This is offset from dial._centerXOnPage
-            eventY = -30; //Set the Y for click simulation. This is offset from dial._centerYOnPage
+            eventX = -15; //Set the X for click simulation. This is offset from dial._dialCenterX
+            eventY = -30; //Set the Y for click simulation. This is offset from dial._dialCenterY
             this.visualInspection(eventX,eventY,dial);
             ring.simulate("mousedown", getXYProps());	
-			Y.Assert.areEqual( 93, dial.get('value'));
+			Y.Assert.areEqual( 9, dial.get('value'), '@ 11 o\'clock');
 
-            eventX = 0; //Set the X for click simulation. This is offset from dial._centerXOnPage
-            eventY = -30; //Set the Y for click simulation. This is offset from dial._centerYOnPage
+            eventX = 0; //Set the X for click simulation. This is offset from dial._dialCenterX
+            eventY = -30; //Set the Y for click simulation. This is offset from dial._dialCenterY
             this.visualInspection(eventX,eventY,dial);
             ring.simulate("mousedown", getXYProps());	
-			Y.Assert.areEqual( 100, dial.get('value'));
+			Y.Assert.areEqual( 10, dial.get('value'));
 			
             eventX = 15;
             eventY = -30;
             this.visualInspection(eventX,eventY,dial);
             ring.simulate("mousedown", getXYProps());	
-			Y.Assert.areEqual( 107, dial.get('value'));
+			Y.Assert.areEqual( 11, dial.get('value'));
 
-            eventX = 1;
+            eventX = 0;
             eventY = 30;
             this.visualInspection(eventX,eventY,dial);
             ring.simulate("mousedown", getXYProps());	
-			Y.Assert.areEqual( 149, dial.get('value'));
+			Y.Assert.areEqual( 15, dial.get('value'));
 
-            eventX = -2;
+            eventX = -30;
+            eventY = 0;
+            this.visualInspection(eventX,eventY,dial);
+            ring.simulate("mousedown", getXYProps());	
+			Y.Assert.areEqual( 18, dial.get('value'));
+
+            eventX = 0;
             eventY = -30;
             this.visualInspection(eventX,eventY,dial);
             ring.simulate("mousedown", getXYProps());	
-			Y.Assert.areEqual( 199, dial.get('value'));
+			Y.Assert.areEqual( 20, dial.get('value'));
 
-            eventX = 3;
+            eventX = 10;
             eventY = -30;
             this.visualInspection(eventX,eventY,dial);
             ring.simulate("mousedown", getXYProps());	
-			Y.Assert.areEqual( 200, dial.get('value'));
+			Y.Assert.areEqual( 20, dial.get('value'), '@ beyond max of 200');
 
 			dial.destroy();
 		},
@@ -956,19 +1000,31 @@ suite.add( new Y.Test.Case({
             scrollL = Y.one('document').get('scrollLeft'),
             eventX,
             eventY,
-            getXYProps = function(){ // this returns the properties, the object literal needed for .simulate
-                return { clientX: (dial._centerXOnPage + eventX - scrollL), clientY: (dial._centerYOnPage + eventY - scrollT)};
+            getXYProps = function(){ // this returns the properties, the object literal needed for .simulate mousedown only
+                var myX,myY;
+                if(Y.UA.ios){ // clientX and clientY in iOS includes the scrollLeft and scrollTop
+                    myX =  (dial._ringNode.getX() + dial._dialCenterX + eventX); 
+                    myY = (dial._ringNode.getY() + dial._dialCenterY + eventY);
+                }else{  // clientX and clientY in non-iOS do not include the scrollLeft and scrollTop. They are relative to the viewport
+                    myX =  (dial._ringNode.getX() + dial._dialCenterX + eventX - scrollL);     //  but doesn't work zoomed if there's a breakpoint for some reason.
+                    myY = (dial._ringNode.getY() + dial._dialCenterY + eventY - scrollT);
+                }
+                return {clientX: myX, clientY: myY};
+            },
+            positionHandle = function(){
+                dial._handleNode.setStyles({'left':(dial._dialCenterX + eventX), 'top':dial._dialCenterY + eventY})
             }; 
 			// listeners that bind an event *unused* by Dial to the intended method 
  			Y.on('mouseover', Y.bind(dial._handleDrag, dial), dial._handleNode); // make mouseover do what a real drag:drag would do 
  			Y.on('mouseout', Y.bind(dial._handleDragEnd, dial), dial._handleNode); // make mouseover do what a real drag:end would do 
             Y.on('mousedown', Y.bind(dial._handleMousedown, dial), dial._ringNode);  // needed for testsuite to bypass gesturemove
 			
-            eventX = -22; //Set the X for click simulation. This is offset from dial._centerXOnPage
-            eventY = 30; //Set the Y for click simulation. This is offset from dial._centerYOnPage
+            eventX = -22; //Set the X for click simulation. This is offset from dial._dialCenterX
+            eventY = 30; //Set the Y for click simulation. This is offset from dial._dialCenterY
+            positionHandle();
             this.visualInspection(eventX,eventY,dial);
-            dial._handleNode.simulate("mouseover", getXYProps());	
-            dial._handleNode.simulate("mouseout", getXYProps());	
+            dial._handleNode.simulate("mouseover");	
+            dial._handleNode.simulate("mouseout");	
 			Y.Assert.areEqual( -35, dial.get('value'),  'drag CCW past min:-35');
 			
             eventX = 30;
@@ -998,10 +1054,11 @@ suite.add( new Y.Test.Case({
             dial.set('decimalPlaces', 2);
 
             eventX = -8; // -8 results in value 0.35 ... -12. results in -0.35
-            eventY = -100; //Set the Y for click simulation. This is offset from dial._centerYOnPage
+            eventY = -100; //Set the Y for click simulation. This is offset from dial._dialCenterY
+            positionHandle();
             this.visualInspection(eventX,eventY,dial);
-            dial._handleNode.simulate("mouseover", getXYProps());	
-            dial._handleNode.simulate("mouseout", getXYProps());	
+            dial._handleNode.simulate("mouseover");	
+            dial._handleNode.simulate("mouseout");	
 //			Y.Assert.areEqual( 0, dial.get('value'),  'drag to get value 0 but angle slightly > 0'); // check dial._prevAng
 
             dial.set('decimalPlaces', 0); // round to integer for Y.assert
@@ -1018,10 +1075,11 @@ suite.add( new Y.Test.Case({
             dial.set('decimalPlaces', 2);
 
             eventX = -12; // -8 results in value 0.35 ... -12. results in -0.35 
-            eventY = -100; //Set the Y for click simulation. This is offset from dial._centerYOnPage
+            eventY = -100; //Set the Y for click simulation. This is offset from dial._dialCenterY
+            positionHandle();
             this.visualInspection(eventX,eventY,dial);
-            dial._handleNode.simulate("mouseover", getXYProps());	
-            dial._handleNode.simulate("mouseout", getXYProps());	
+            dial._handleNode.simulate("mouseover");	
+            dial._handleNode.simulate("mouseout");	
 //			Y.Assert.areEqual( 0, dial.get('value'),  'drag to get value 0 but angle slightly < 0'); // check dial._prevAng
 
             dial.set('decimalPlaces', 0); // round to integer for Y.assert
@@ -1062,20 +1120,31 @@ suite.add( new Y.Test.Case({
 
             eventX,
             eventY,
-            getXYProps = function(){ // this returns the properties, the object literal needed for .simulate
-                return { clientX: (dial._centerXOnPage + eventX - scrollL), clientY: (dial._centerYOnPage + eventY - scrollT)};
+            getXYProps = function(){ // this returns the properties, the object literal needed for .simulate mousedown only
+                var myX,myY;
+                if(Y.UA.ios){ // clientX and clientY in iOS includes the scrollLeft and scrollTop
+                    myX =  (dial._ringNode.getX() + dial._dialCenterX + eventX); 
+                    myY = (dial._ringNode.getY() + dial._dialCenterY + eventY);
+                }else{  // clientX and clientY in non-iOS do not include the scrollLeft and scrollTop. They are relative to the viewport
+                    myX =  (dial._ringNode.getX() + dial._dialCenterX + eventX - scrollL);     //  but doesn't work zoomed if there's a breakpoint for some reason.
+                    myY = (dial._ringNode.getY() + dial._dialCenterY + eventY - scrollT);
+                }
+                return {clientX: myX, clientY: myY};
+            },
+            positionHandle = function(){
+                dial._handleNode.setStyles({'left':(dial._dialCenterX + eventX), 'top':dial._dialCenterY + eventY})
             }; 
 			// listeners that bind an event *unused* by Dial to the intended method 
             Y.on('mousedown', Y.bind(dial._handleMousedown, dial), dial._ringNode);  // needed for testsuite to bypass gesturemove
 			
-            eventX = -15; //Set the X for click simulation. This is offset from dial._centerXOnPage
-            eventY = -30; //Set the Y for click simulation. This is offset from dial._centerYOnPage
+            eventX = -15; //Set the X for click simulation. This is offset from dial._dialCenterX
+            eventY = -30; //Set the Y for click simulation. This is offset from dial._dialCenterY
             this.visualInspection(eventX,eventY,dial);
             ring.simulate("mousedown", getXYProps());	
 			Y.Assert.areEqual( 10, dial.get('value'));
 
-            eventX = 28; //Set the X for click simulation. This is offset from dial._centerXOnPage
-            eventY = -30; //Set the Y for click simulation. This is offset from dial._centerYOnPage
+            eventX = 28; //Set the X for click simulation. This is offset from dial._dialCenterX
+            eventY = -30; //Set the Y for click simulation. This is offset from dial._dialCenterY
             this.visualInspection(eventX,eventY,dial);
             ring.simulate("mousedown", getXYProps());	
 			Y.Assert.areEqual( 12, dial.get('value'));
@@ -1124,20 +1193,31 @@ suite.add( new Y.Test.Case({
 
             eventX,
             eventY,
-            getXYProps = function(){ // this returns the properties, the object literal needed for .simulate
-                return { clientX: (dial._centerXOnPage + eventX - scrollL), clientY: (dial._centerYOnPage + eventY - scrollT)};
+            getXYProps = function(){ // this returns the properties, the object literal needed for .simulate mousedown only
+                var myX,myY;
+                if(Y.UA.ios){ // clientX and clientY in iOS includes the scrollLeft and scrollTop
+                    myX =  (dial._ringNode.getX() + dial._dialCenterX + eventX); 
+                    myY = (dial._ringNode.getY() + dial._dialCenterY + eventY);
+                }else{  // clientX and clientY in non-iOS do not include the scrollLeft and scrollTop. They are relative to the viewport
+                    myX =  (dial._ringNode.getX() + dial._dialCenterX + eventX - scrollL);     //  but doesn't work zoomed if there's a breakpoint for some reason.
+                    myY = (dial._ringNode.getY() + dial._dialCenterY + eventY - scrollT);
+                }
+                return {clientX: myX, clientY: myY};
+            },
+            positionHandle = function(){
+                dial._handleNode.setStyles({'left':(dial._dialCenterX + eventX), 'top':dial._dialCenterY + eventY})
             }; 
 			// listeners that bind an event *unused* by Dial to the intended method 
             Y.on('mousedown', Y.bind(dial._handleMousedown, dial), dial._ringNode);  // needed for testsuite to bypass gesturemove
 			
-            eventX =  15; //Set the X for click simulation. This is offset from dial._centerXOnPage
-            eventY = -30; //Set the Y for click simulation. This is offset from dial._centerYOnPage
+            eventX =  15; //Set the X for click simulation. This is offset from dial._dialCenterX
+            eventY = -30; //Set the Y for click simulation. This is offset from dial._dialCenterY
             this.visualInspection(eventX,eventY,dial);
             ring.simulate("mousedown", getXYProps());	
 			Y.Assert.areEqual( 90, dial.get('value'));
 
-            eventX = -28; //Set the X for click simulation. This is offset from dial._centerXOnPage
-            eventY = -30; //Set the Y for click simulation. This is offset from dial._centerYOnPage
+            eventX = -28; //Set the X for click simulation. This is offset from dial._dialCenterX
+            eventY = -30; //Set the Y for click simulation. This is offset from dial._dialCenterY
             this.visualInspection(eventX,eventY,dial);
             ring.simulate("mousedown", getXYProps());	
 			Y.Assert.areEqual( 88, dial.get('value'));
@@ -1175,7 +1255,6 @@ suite.add( new Y.Test.Case({
 			dial.destroy();
 		},
 
-
 		"test md09 min: 5, max: 80 -- mousedown text min max and opposite mid angle": function() { //string must start with "test
 			Y.one('#testbed').append('<div id="dial"></div><div id="ref"></div>');
 			var testbed = Y.one("#dial"),
@@ -1184,23 +1263,33 @@ suite.add( new Y.Test.Case({
 			ring = Y.one('.yui3-dial-ring'),
             scrollT = Y.one('document').get('scrollTop'),
             scrollL = Y.one('document').get('scrollLeft'),
-
             eventX,
             eventY,
-            getXYProps = function(){ // this returns the properties, the object literal needed for .simulate
-                return { clientX: (dial._centerXOnPage + eventX - scrollL), clientY: (dial._centerYOnPage + eventY - scrollT)};
+            getXYProps = function(){ // this returns the properties, the object literal needed for .simulate mousedown only
+                var myX,myY;
+                if(Y.UA.ios){ // clientX and clientY in iOS includes the scrollLeft and scrollTop
+                    myX =  (dial._ringNode.getX() + dial._dialCenterX + eventX); 
+                    myY = (dial._ringNode.getY() + dial._dialCenterY + eventY);
+                }else{  // clientX and clientY in non-iOS do not include the scrollLeft and scrollTop. They are relative to the viewport
+                    myX =  (dial._ringNode.getX() + dial._dialCenterX + eventX - scrollL);     //  but doesn't work zoomed if there's a breakpoint for some reason.
+                    myY = (dial._ringNode.getY() + dial._dialCenterY + eventY - scrollT);
+                }
+                return {clientX: myX, clientY: myY};
+            },
+            positionHandle = function(){
+                dial._handleNode.setStyles({'left':(dial._dialCenterX + eventX), 'top':dial._dialCenterY + eventY})
             }; 
 			// listeners that bind an event *unused* by Dial to the intended method 
             Y.on('mousedown', Y.bind(dial._handleMousedown, dial), dial._ringNode);  // needed for testsuite to bypass gesturemove
 			
-            eventX = -5; //Set the X for click simulation. This is offset from dial._centerXOnPage
-            eventY = -30; //Set the Y for click simulation. This is offset from dial._centerYOnPage
+            eventX = -5; //Set the X for click simulation. This is offset from dial._dialCenterX
+            eventY = -30; //Set the Y for click simulation. This is offset from dial._dialCenterY
             this.visualInspection(eventX,eventY,dial);
             ring.simulate("mousedown", getXYProps());	
 			Y.Assert.areEqual( 5, dial.get('value'));
 
-            eventX = -30; //Set the X for click simulation. This is offset from dial._centerXOnPage
-            eventY = 0; //Set the Y for click simulation. This is offset from dial._centerYOnPage
+            eventX = -30; //Set the X for click simulation. This is offset from dial._dialCenterX
+            eventY = 0; //Set the Y for click simulation. This is offset from dial._dialCenterY
             this.visualInspection(eventX,eventY,dial);
             ring.simulate("mousedown", getXYProps());	
 			Y.Assert.areEqual( 75, dial.get('value'));
@@ -1232,7 +1321,6 @@ suite.add( new Y.Test.Case({
 			dial.destroy();
 		},
 
-
 		"test md10 drag CW past max, then click 11 O'clock -- min: 0, max: 100": function() { //string must start with "test
 			Y.one('#testbed').append('<div id="dial"></div><div id="ref"></div>');
 			var testbed = Y.one("#dial"),
@@ -1244,21 +1332,34 @@ suite.add( new Y.Test.Case({
 
             eventX,
             eventY,
-            getXYProps = function(){ // this returns the properties, the object literal needed for .simulate
-                return { clientX: (dial._centerXOnPage + eventX - scrollL), clientY: (dial._centerYOnPage + eventY - scrollT)};
+            getXYProps = function(){ // this returns the properties, the object literal needed for .simulate mousedown only
+                var myX,myY;
+                if(Y.UA.ios){ // clientX and clientY in iOS includes the scrollLeft and scrollTop
+                    myX =  (dial._ringNode.getX() + dial._dialCenterX + eventX); 
+                    myY = (dial._ringNode.getY() + dial._dialCenterY + eventY);
+                }else{  // clientX and clientY in non-iOS do not include the scrollLeft and scrollTop. They are relative to the viewport
+                    myX =  (dial._ringNode.getX() + dial._dialCenterX + eventX - scrollL);     //  but doesn't work zoomed if there's a breakpoint for some reason.
+                    myY = (dial._ringNode.getY() + dial._dialCenterY + eventY - scrollT);
+                }
+                return {clientX: myX, clientY: myY};
+            },
+            positionHandle = function(){
+                dial._handleNode.setStyles({'left':(dial._dialCenterX + eventX), 'top':dial._dialCenterY + eventY})
             }; 
 			// listeners that bind an event *unused* by Dial to the intended method 
  			Y.on('mouseover', Y.bind(dial._handleDrag, dial), dial._handleNode); // make mouseover do what a real drag:drag would do 
  			Y.on('mouseout', Y.bind(dial._handleDragEnd, dial), dial._handleNode); // make mouseover do what a real drag:end would do 
             Y.on('mousedown', Y.bind(dial._handleMousedown, dial), dial._ringNode);  // needed for testsuite to bypass gesturemove
 
-            eventX = 22; //Set the X for event simulation. This is offset from dial._centerXOnPage
+            eventX = 22; //Set the X for event simulation. This is offset from dial._dialCenterX
             eventY = -30; //Set the Y for event simulation. 
-            dial._handleNode.simulate("mouseover", getXYProps());	
-            dial._handleNode.simulate("mouseout", getXYProps());	
+            positionHandle();
+            this.visualInspection(eventX,eventY,dial);
+            dial._handleNode.simulate("mouseover");	
+            dial._handleNode.simulate("mouseout");	
 
 
-            eventX = -22; //Set the X for event simulation. This is offset from dial._centerXOnPage
+            eventX = -22; //Set the X for event simulation. This is offset from dial._dialCenterX
             eventY = -30; //Set the Y
             ring.simulate("mousedown", getXYProps());	
 			Y.Assert.areEqual( 90, dial.get('value'),  'past min CCW, then click 11 0clock');
@@ -1277,141 +1378,140 @@ suite.add( new Y.Test.Case({
 
             eventX,
             eventY,
-            getXYProps = function(){ // this returns the properties, the object literal needed for .simulate
-                return { clientX: (dial._centerXOnPage + eventX - scrollL), clientY: (dial._centerYOnPage + eventY - scrollT)};
+            getXYProps = function(){ // this returns the properties, the object literal needed for .simulate mousedown only
+                var myX,myY;
+                if(Y.UA.ios){ // clientX and clientY in iOS includes the scrollLeft and scrollTop
+                    myX =  (dial._ringNode.getX() + dial._dialCenterX + eventX); 
+                    myY = (dial._ringNode.getY() + dial._dialCenterY + eventY);
+                }else{  // clientX and clientY in non-iOS do not include the scrollLeft and scrollTop. They are relative to the viewport
+                    myX =  (dial._ringNode.getX() + dial._dialCenterX + eventX - scrollL);     //  but doesn't work zoomed if there's a breakpoint for some reason.
+                    myY = (dial._ringNode.getY() + dial._dialCenterY + eventY - scrollT);
+                }
+                return {clientX: myX, clientY: myY};
+            },
+            positionHandle = function(){
+                dial._handleNode.setStyles({'left':(dial._dialCenterX + eventX), 'top':dial._dialCenterY + eventY})
             }; 
 			// listeners that bind an event *unused* by Dial to the intended method 
  			Y.on('mouseover', Y.bind(dial._handleDrag, dial), dial._handleNode); // make mouseover do what a real drag:drag would do 
  			Y.on('mouseout', Y.bind(dial._handleDragEnd, dial), dial._handleNode); // make mouseover do what a real drag:end would do 
             Y.on('mousedown', Y.bind(dial._handleMousedown, dial), dial._ringNode);  // needed for testsuite to bypass gesturemove
 
-            eventX = -22; //Set the X for event simulation. This is offset from dial._centerXOnPage
+            eventX = -22; //Set the X for event simulation. This is offset from dial._dialCenterX
             eventY = -30; 
-            dial._handleNode.simulate("mouseover", getXYProps());	
-            dial._handleNode.simulate("mouseout", getXYProps());	
+            positionHandle();
+            this.visualInspection(eventX,eventY,dial);
+            dial._handleNode.simulate("mouseover");	
+            dial._handleNode.simulate("mouseout");	
 
 
-            eventX =  22; //Set the X for event simulation. This is offset from dial._centerXOnPage
+            eventX =  22; //Set the X for event simulation. This is offset from dial._dialCenterX
             eventY = -30; 
             ring.simulate("mousedown", getXYProps());	
 			Y.Assert.areEqual( 10, dial.get('value'),  'past min CCW, then click 11 0clock');
-
 			dial.destroy();
 		},
-		"test md12 min:0, max:100 -- drag (no drag:end) handle past max, around one revolution, then back to less than max. See ratchet effect": function() { //string must start with "test
-            
+		
+		"test md12 instantiate dial, increase margin, then click ring": function() { //string must start with "test
 			Y.one('#testbed').append('<div id="dial"></div><div id="ref"></div>');
 			var testbed = Y.one("#dial"),
-				ref     = Y.one("#ref"),
-			dial = new Y.Dial({handleDistance: 1, value: 80, min: 0, max: 100 }).render( testbed ),
+			ref     = Y.one("#ref"),
+			dial = new Y.Dial({handleDistance: 1, value: 90, min: 0, max: 100 }).render( testbed ),
 			ring = Y.one('.yui3-dial-ring'),
             scrollT = Y.one('document').get('scrollTop'),
             scrollL = Y.one('document').get('scrollLeft'),
+
             eventX,
             eventY,
-            getXYProps = function(){ // this returns the properties, the object literal needed for .simulate
-                return { clientX: (dial._centerXOnPage + eventX - scrollL), clientY: (dial._centerYOnPage + eventY - scrollT)};
+            getXYProps = function(){ // this returns the properties, the object literal needed for .simulate mousedown only
+                var myX,myY;
+                if(Y.UA.ios){ // clientX and clientY in iOS includes the scrollLeft and scrollTop
+                    myX =  (dial._ringNode.getX() + dial._dialCenterX + eventX); 
+                    myY = (dial._ringNode.getY() + dial._dialCenterY + eventY);
+                }else{  // clientX and clientY in non-iOS do not include the scrollLeft and scrollTop. They are relative to the viewport
+                    myX =  (dial._ringNode.getX() + dial._dialCenterX + eventX - scrollL);     //  but doesn't work zoomed if there's a breakpoint for some reason.
+                    myY = (dial._ringNode.getY() + dial._dialCenterY + eventY - scrollT);
+                }
+                return {clientX: myX, clientY: myY};
+            },
+            positionHandle = function(){
+                dial._handleNode.setStyles({'left':(dial._dialCenterX + eventX), 'top':dial._dialCenterY + eventY})
             }; 
 			// listeners that bind an event *unused* by Dial to the intended method 
  			Y.on('mouseover', Y.bind(dial._handleDrag, dial), dial._handleNode); // make mouseover do what a real drag:drag would do 
  			Y.on('mouseout', Y.bind(dial._handleDragEnd, dial), dial._handleNode); // make mouseover do what a real drag:end would do 
             Y.on('mousedown', Y.bind(dial._handleMousedown, dial), dial._ringNode);  // needed for testsuite to bypass gesturemove
-			
-            // Simulating a drag is not possible with Y.event.simulate
-            // So I have to use an event supported by simulate.
-            // One that doesn't interfere with the other events of dial as mousedown does
-            // I chose mouseover on the ring as the event
-            // and send it to the dial._handleDrag method,
-            // which is what drag is attached to in the Dial.js code.
- 			Y.on('mouseover', Y.bind(dial._handleDrag, dial), dial._ringNode); 
 
-            eventX = -25; //Set the X for event simulation. This is offset from dial._centerXOnPage
-            eventY = -30; //Set the Y for event simulation. This is offset from dial._centerYOnPage
+            Y.one('#testbed').setStyle('margin', '3em');
+            eventX = 22; //Set the X for event simulation. This is offset from dial._dialCenterX
+            eventY = -30; //Set the Y for event simulation. 
+            positionHandle();
             this.visualInspection(eventX,eventY,dial);
-            dial._handleNode.simulate("mouseover", getXYProps());	
-			Y.Assert.areEqual( 90, dial.get('value'), 'Less than max at 11 oclock');
-
-            eventX =  25;
-            eventY = -30;
-            this.visualInspection(eventX,eventY,dial);
-            dial._handleNode.simulate("mouseover", getXYProps());	
-			Y.Assert.areEqual( 100, dial.get('value'), '> max at 1 oclock');
-
-            eventX =  25; 
-            eventY = 30; 
-            this.visualInspection(eventX,eventY,dial);
-            dial._handleNode.simulate("mouseover", getXYProps());	
-			Y.Assert.areEqual( 100, dial.get('value'), '> max at 4 oclock');
-
-            eventX =  -25; 
-            eventY = 30; 
-            this.visualInspection(eventX,eventY,dial);
-            dial._handleNode.simulate("mouseover", getXYProps());	
-			Y.Assert.areEqual( 100, dial.get('value'), '> max at 7 oclock');
-
-            eventX =  -25; 
-            eventY = -30; 
-            this.visualInspection(eventX,eventY,dial);
-            dial._handleNode.simulate("mouseover", getXYProps());	
-			Y.Assert.areEqual( 100, dial.get('value'), '> max at 11oclock');
- 
-            eventX =  25; 
-            eventY = -30; 
-            this.visualInspection(eventX,eventY,dial);
-            dial._handleNode.simulate("mouseover", getXYProps());	
-			Y.Assert.areEqual( 100, dial.get('value'), 'passed max the second time');
-
-            eventX =  -25; 
-            eventY = -30; 
-            this.visualInspection(eventX,eventY,dial);
-            dial._handleNode.simulate("mouseover", getXYProps());	
-			Y.Assert.areEqual( 90, dial.get('value'), 'was > max, now back to < max');
-
-            ///////////////////////////////////////// Now do min
-            dial.set('value', 2);
-            
-            eventX = -22; //Set the X for event simulation. This is offset from dial._centerXOnPage
-            eventY = -30; //Set the Y for event simulation. This is offset from dial._centerYOnPage
-            this.visualInspection(eventX,eventY,dial);
-            dial._handleNode.simulate("mouseover", getXYProps());	
-			Y.Assert.areEqual( 0, dial.get('value'), '< min at 11 oclock');
-
-            eventX =  -22; 
-            eventY = 30; 
-            this.visualInspection(eventX,eventY,dial);
-            dial._handleNode.simulate("mouseover", getXYProps());	
-			Y.Assert.areEqual( 0, dial.get('value'), '< min at 7 oclock');
-
-            eventX =  22; 
-            eventY = 30; 
-            this.visualInspection(eventX,eventY,dial);
-            dial._handleNode.simulate("mouseover", getXYProps());	
-			Y.Assert.areEqual( 0, dial.get('value'), '< min at 4 oclock');
-
-            eventX =  22;
-            eventY = -30;
-            this.visualInspection(eventX,eventY,dial);
-            dial._handleNode.simulate("mouseover", getXYProps());	
-			Y.Assert.areEqual( 0, dial.get('value'), '< min at 1 oclock');
+            dial._handleNode.simulate("mouseover");	
+            dial._handleNode.simulate("mouseout");	
 
 
-
-            eventX =  -22; 
-            eventY = -30; 
-            this.visualInspection(eventX,eventY,dial);
-            dial._handleNode.simulate("mouseover", getXYProps());	
-			Y.Assert.areEqual( 0, dial.get('value'), '< min at 11oclock passed min 2nd time');
- 
-            eventX =  22; 
-            eventY = -30; 
-            this.visualInspection(eventX,eventY,dial);
-            dial._handleNode.simulate("mouseover", getXYProps());	
-			Y.Assert.areEqual( 16, dial.get('value'), 'now drag back to > min');
-
+            eventX = -22; //Set the X for event simulation. This is offset from dial._dialCenterX
+            eventY = -30; //Set the Y
+            ring.simulate("mousedown", getXYProps());	
+			Y.Assert.areEqual( 90, dial.get('value'),  'past min CCW, then click 11 0clock');
 
 			dial.destroy();
-		} //,
+		},
+		
+		"test md13 go past max more than maxTimesWrapped. ratchet to maxTimesWrapped": function() { //string must start with "test
+			Y.one('#testbed').append('<div id="dial"></div><div id="ref"></div>');
+			var testbed = Y.one("#dial"),
+			ref     = Y.one("#ref"),
+			dial = new Y.Dial({handleDistance: 1, value: 90, min: 1, max: 300 }).render( testbed ),
+			ring = Y.one('.yui3-dial-ring'),
+            scrollT = Y.one('document').get('scrollTop'),
+            scrollL = Y.one('document').get('scrollLeft'),
 
+            eventX,
+            eventY,
+            getXYProps = function(){ // this returns the properties, the object literal needed for .simulate mousedown only
+                var myX,myY;
+                if(Y.UA.ios){ // clientX and clientY in iOS includes the scrollLeft and scrollTop
+                    myX =  (dial._ringNode.getX() + dial._dialCenterX + eventX); 
+                    myY = (dial._ringNode.getY() + dial._dialCenterY + eventY);
+                }else{  // clientX and clientY in non-iOS do not include the scrollLeft and scrollTop. They are relative to the viewport
+                    myX =  (dial._ringNode.getX() + dial._dialCenterX + eventX - scrollL);     //  but doesn't work zoomed if there's a breakpoint for some reason.
+                    myY = (dial._ringNode.getY() + dial._dialCenterY + eventY - scrollT);
+                }
+                return {clientX: myX, clientY: myY};
+            },
+            positionHandle = function(){
+                dial._handleNode.setStyles({'left':(dial._dialCenterX + eventX), 'top':dial._dialCenterY + eventY})
+            }; 
+			// listeners that bind an event *unused* by Dial to the intended method 
+ 			Y.on('mouseover', Y.bind(dial._handleDrag, dial), dial._handleNode); // make mouseover do what a real drag:drag would do 
+ 			Y.on('mouseout', Y.bind(dial._handleDragEnd, dial), dial._handleNode); // make mouseover do what a real drag:end would do 
+            Y.on('mousedown', Y.bind(dial._handleMousedown, dial), dial._ringNode);  // needed for testsuite to bypass gesturemove
+            
+            dial._timesWrapped = dial._maxTimesWrapped; // set it to maxwrapped, then wrap it again
+            eventX = 30; //Set the X for event simulation. This is offset from dial._dialCenterX
+            eventY = 0; //Set the Y for event simulation. 
+            positionHandle();
+            this.visualInspection(eventX,eventY,dial);
+            dial._handleNode.simulate("mouseover");	
+            dial._handleNode.simulate("mouseout");	
+
+			Y.Assert.areEqual( dial._maxTimesWrapped - 1, dial._timesWrapped,  'ratchet past maxTimesWrapped. stays at maxTimesWrapped -1');
+
+            dial.set('value', 10);
+            dial._timesWrapped = -10; // set it to CCW wrapped many times, then wrap it CCW again
+            eventX = -30; //Set the X for event simulation. This is offset from dial._dialCenterX
+            eventY = 0; //Set the Y for event simulation. 
+            positionHandle();
+            this.visualInspection(eventX,eventY,dial);
+            dial._handleNode.simulate("mouseover");	
+            dial._handleNode.simulate("mouseout");	
+
+			Y.Assert.areEqual( 0, dial._timesWrapped,  'CCW, ratchet never < 0');
+ 
+			dial.destroy();
+		}
 }));
 
 suite.add( new Y.Test.Case({

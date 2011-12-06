@@ -3,71 +3,11 @@
 <head>
     <title>DragDrop Tests</title>
     <script type="text/javascript" src="../../../build/yui/yui.js"></script>
-    <script type="text/javascript" src="../../../build/event/event-touch.js"></script>
-    <script type="text/javascript" src="../../../build/event/event-debug.js"></script>
-    <script type="text/javascript" src="../../../build/event/event-synthetic-debug.js"></script>
-    <script type="text/javascript" src="../../../build/event-gestures/event-gestures-debug.js"></script>
-
-    <style>
-        #wrap {
-            width: 900px;
-            height: 600px;
-            border: 1px solid black;
-            position: relative;
-        }
-        #drag {
-            height: 100px;
-            width: 100px;
-            border: 1px solid black;
-            background-color: #ccc;
-            position: relative;
-            z-index: 1;
-        }
-        #drop {
-            position: absolute;
-            height: 200px;
-            width: 200px;
-            border: 1px solid black;
-            background-color: #ccc;
-            top: 10px;
-            right: 10px;
-        }
-        .yui-skin-sam .yui-console-entry-pass .yui-console-entry-cat {
-            background-color: green;
-            color: white;
-            font-weight: bold;
-        }
-        .yui-skin-sam .yui-console-entry-src,
-        .yui-skin-sam .yui-console-entry-time {
-            display: none;
-        }
-        .yui-skin-sam .yui-console-entry {
-            position: relative;
-        }
-        .yui-skin-sam .yui-console-entry-pass .yui-console-entry-content {
-            position: absolute;
-            top: 1px;
-            right: 4px;
-        }
-        .yui-skin-sam .yui-console-entry-fail .yui-console-entry-cat {
-            background-color: red;
-            color: white;
-            font-weight: bold;
-        }
-        .yui-skin-sam .yui-console-bd {
-            height: auto !important;
-        }
-
-        #del {
-            display: none;
-        }
-        #del li.disabled {
-            opacity: .5;
-        }
-    </style>
-
+    <link href="dd.css" rel="stylesheet" type="text/css">
 </head>
 <body class="yui3-skin-sam">
+    <div id="log"></div>
+
     <div id="wrap">
         <div id="drag"></div>
         <div id="drop"></div>
@@ -83,6 +23,38 @@
             <li>item</li>
         </ul>
     </div>
-<script type="text/javascript" src="dd.js"></script>
+<script>
+
+var YUI_config = {
+    gconfig: true,
+    gfilter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+};
+
+YUI({
+    allowRollup: false,
+    logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true },    
+    filter: YUI_config.gfilter,
+    modules: {
+        'dd-tests': {
+            fullpath: './dd-tests.js',
+            requires: [ 'event-synthetic', 'event-gestures', 'dd', 'console', 'test', 'substitute', 'selector-css3' ]
+        },
+        'test-console': {
+            fullpath : '../../common/tests/assets/test-console.js',
+            requires : ['console-filters'],
+            skinnable: true
+        },
+
+        'skin-sam-test-console': {
+            fullpath: '../../common/tests/assets/test-console.css',
+            type    : 'css'
+        }
+        
+    }
+}).use('dd-tests', 'test-console', 'test', function(Y) {
+    Y.Test.Runner.run();
+});
+
+</script>
 </body>
 </html>

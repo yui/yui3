@@ -195,11 +195,11 @@ Y_Node.addMethod = function(name, fn, context) {
                 node = this,
                 ret;
 
-            if (args[0] && Y.instanceOf(args[0], Y_Node)) {
+            if (args[0] && args[0]._node) {
                 args[0] = args[0]._node;
             }
 
-            if (args[1] && Y.instanceOf(args[1], Y_Node)) {
+            if (args[1] && args[1]._node) {
                 args[1] = args[1]._node;
             }
             args.unshift(node._node);
@@ -502,7 +502,7 @@ Y.mix(Y_Node.prototype, {
     compareTo: function(refNode) {
         var node = this._node;
 
-        if (Y.instanceOf(refNode, Y_Node)) {
+        if (refNode && refNode._node) {
             refNode = refNode._node;
         }
         return node === refNode;
@@ -749,11 +749,11 @@ Y.mix(Y_Node.prototype, {
         var node = this._node,
             ret;
 
-        if (a && Y.instanceOf(a, Y_Node)) {
+        if (a && a._node) {
             a = a._node;
         }
 
-        if (b && Y.instanceOf(b, Y_Node)) {
+        if (b && b._node) {
             b = b._node;
         }
 

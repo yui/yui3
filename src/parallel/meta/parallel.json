@@ -1,0 +1,5 @@
+{
+    "parallel": {
+        "requires": [ "yui-base" ]
+    }
+}

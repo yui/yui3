@@ -1,4 +1,13 @@
 /**
+The app framework provides simple MVC-like building blocks (models, model lists,
+views, and URL-based routing) for writing single-page JavaScript applications.
+
+@main app
+@module app
+@since 3.4.0
+**/
+
+/**
 Provides an API for managing an ordered list of Model instances.
 
 @submodule model-list
@@ -222,11 +231,11 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         to the list.
       @param {Boolean} [options.silent=false] If `true`, no `add` event(s) will
           be fired.
-    @param {callback} [callback] Called when the sync operation finishes.
+    @param {Function} [callback] Called when the sync operation finishes.
       @param {Error} callback.err If an error occurred, this parameter will
         contain the error. If the sync operation succeeded, _err_ will be
         falsy.
-      @param {mixed} callback.response The server's response.
+      @param {Any} callback.response The server's response.
     @return {Model} Created model.
     **/
     create: function (model, options, callback) {
@@ -249,6 +258,48 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
             callback && callback.apply(null, arguments);
         });
+    },
+
+    /**
+    Executes the supplied function on each model in this list. Returns an array
+    containing the models for which the supplied function returned a truthy
+    value.
+
+    @example
+
+        // Get an array containing only the models whose "enabled" attribute is
+        // truthy.
+        var filtered = list.filter(function (model) {
+            return model.get('enabled');
+        });
+
+    @method filter
+    @param {Function} callback Function to execute on each model.
+        @param {Model} callback.model Model instance.
+        @param {Number} callback.index Index of the current model.
+        @param {ModelList} callback.list The ModelList being filtered.
+    @param {Object} [thisObj] Optional `this` object (defaults to this
+        ModelList instance).
+    @return {Array} Array of models for which the callback function returned a
+        truthy value (empty if it never returned a truthy value).
+    @since 3.5.0
+    */
+    filter: function (callback, thisObj) {
+        var filtered = [],
+            items    = this._items,
+            i, item, len;
+
+        thisObj || (thisObj = this);
+
+        for (i = 0, len = items.length; i < len; ++i) {
+            item = items[i];
+
+            if (callback.call(thisObj, item, i, this)) {
+                filtered.push(item);
+            }
+        }
+
+        return filtered;
     },
 
     /**
@@ -290,7 +341,6 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
         return this.invoke('getAsHTML', name);
     },
-
 
     /**
     If _name_ refers to an attribute on this ModelList instance, returns the

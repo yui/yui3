@@ -136,6 +136,194 @@ YUI.add('loader-tests', function(Y) {
 
             test.wait();
 
+        },
+        /* Commenting out until bug #2531436 get's completed.
+        test_module_attrs: function() {
+            var test = this;
+        
+            YUI({
+                modules: {
+                    'attrs-js': {
+                        fullpath: './assets/attrs.js',
+                        jsAttributes: {
+                            id: 'attrs-js-test'
+                        }
+                    },
+                    'attrs-css': {
+                        fullpath: './assets/attrs.css',
+                        type: 'css',
+                        cssAttributes: {
+                            id: 'attrs-css-test'
+                        }
+                    }
+                }
+            }).use('attrs-js', 'attrs-css', 'node', function(Y) {
+                test.resume(function() {
+                    Assert.isTrue(Y.davglass, 'Attrs JS did not load');
+                    Assert.isNotNull(Y.one('#attrs-js-test'), 'attrs-js-test id was not found');
+                    Assert.isNotNull(Y.one('#attrs-css-test'), 'attrs-css-test id was not found');
+                });                
+            });
+
+            test.wait();
+        },
+        */
+        test_iter: function() {
+            var test = this;
+
+            YUI({
+                filter: 'debug',
+                gallery: 'gallery-2010.08.04-19-46',
+                '2in3': '4',
+                'yui2': '2.9.0'
+            }).use('node', 'base', 'gallery-port', 'yui2-yahoo', function(Y) {
+                Assert.areEqual(Y.config.yui2, Y.YUI2.VERSION, 'Failed to load ' + Y.config.yui2);
+                Assert.isFunction(Y.Base, 'Y.Base did not load');
+                Assert.isUndefined(Y.LOADED, 'Callback executed twice.');
+                Y.LOADED = true;
+            });                                                                                                                                 
+            
+            YUI({
+                filter: 'debug',
+                gallery: 'gallery-2010.08.04-19-46',
+                '2in3': '4',
+                'yui2': '2.9.0'
+            }).use('gallery-treeview', 'yui2-dom', function(Y) {
+                test.resume(function() {
+                    Assert.areEqual(Y.config.yui2, Y.YUI2.VERSION, 'Failed to load ' + Y.config.yui2);
+                    Assert.isObject(Y.YUI2.util.Dom, 'YUI2 DOM did not load.');
+                    Assert.isFunction(Y.apm.TreeView, 'Treeview gallery module did not load.');
+                    Assert.isUndefined(Y.LOADED, 'Callback executed twice.');
+                    Y.LOADED = true;
+                });
+            });                                                                                                                                 
+            
+            test.wait();
+        },
+        test_progress: function() {
+            var test = this,
+                proContext,
+                counter = 0;
+
+            YUI({
+                '2in3': '4',
+                'yui2': '2.9.0',
+                onProgress: function(e) {
+                    proContext = this;
+                    if (e.name.indexOf('-ie') === -1) { //Weed out IE only modules
+                        counter++;
+                    }
+                },
+            }).use('gallery-bitly', 'yui2-editor', function(Y) {
+                test.resume(function() {
+                    Assert.areEqual(Y.config.yui2, Y.YUI2.VERSION, 'Failed to load ' + Y.config.yui2);
+                    Assert.isTrue((counter > 2), 'Did not load enough files..');
+                    Assert.areSame(proContext, Y, 'onProgress context does not match');
+                    Assert.isUndefined(Y.LOADED, 'Callback executed twice.');
+                    Assert.isObject(Y.YUI2.util.Dom, 'YUI2 DOM did not load.');
+                    Assert.isFunction(Y.YUI2.widget.Editor, 'YUI2 Editor did not load.');
+                    Assert.isFunction(Y.bitly, 'gallery-bitly did not load.');
+                    Y.LOADED = true;
+                });
+            });
+
+            test.wait();
+        },
+        test_condpattern: function() {
+            var test = this;
+            
+            YUI({
+                groups: {
+                    testpatterns: {
+                        patterns: {
+                            modtest: {
+                                test: function(mname) {
+                                    return (mname === 'mod')
+                                },
+                                configFn: function(me) {
+                                    me.fullpath = './assets/mod.js';
+                                }
+                            }
+                        }
+                    }
+                }
+            }).use('mod', function(Y) {
+                test.resume(function() {
+                    Assert.isTrue(Y.MOD, 'Pattern module failed to load');
+                });
+            });
+
+            test.wait();
+        },
+        test_cond_with_test_function: function() {
+            var test = this;
+            
+            YUI({
+                modules: {
+                    cond2: {
+                        fullpath: './assets/cond2.js',
+                        condition: {
+                            trigger: 'jsonp',
+                            test: function() {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }).use('jsonp', function(Y) {   
+                test.resume(function() {
+                    Assert.isTrue(Y.COND2, 'Conditional module failed to load with test function');
+                });
+            });
+
+            test.wait();
+        },
+        test_cond_no_test_or_ua: function() {
+            var test = this;
+            
+            YUI({
+                modules: {
+                    cond: {
+                        fullpath: './assets/cond.js',
+                        condition: {
+                            trigger: 'yql'
+                        }
+                    }
+                }
+            }).use('yql', function(Y) {
+                test.resume(function() {
+                    Assert.isTrue(Y.COND, 'Conditional module failed to load with no test function or UA defined');
+                });
+            });
+
+            test.wait();
+        },
+        test_css_stamp: function() {
+            var test = this,
+                links = document.getElementsByTagName('link').length;
+
+            YUI().use('cssgrids', 'dial', function(Y) {
+                test.resume(function() {
+                    var links2 = document.getElementsByTagName('link').length;
+                    Assert.areEqual(links, links2, 'A new link tag was injected into the page.');
+                });
+            });
+
+            test.wait();
+
+        },
+        test_forcemap: function() {
+            var test = this;
+
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                force   : ['yui-base'],
+                require : ['json']
+            });
+            loader.calculate();
+
+            Assert.areEqual(loader.sorted[0], 'yui-base', 'Forced yui-base was not included in loader.sorted');
+
         }
     });
 

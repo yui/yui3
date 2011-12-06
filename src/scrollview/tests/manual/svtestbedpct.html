@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+
+        <style type="text/css">
+
+        html, body {
+            margin:0;
+            padding:0;
+        }
+
+        .yui3-scrollview-loading {
+            visibility:hidden;
+            height:0;
+            *height:auto;
+        }
+
+        .container {
+            margin:0;
+            padding:0;
+            border:1px solid #000;
+        }
+
+        .container .hd {
+            font:13px/1.231 arial,helvetica,clean,sans-serif;
+            font-size:108%;
+            font-weight:bold;
+            padding:10px;
+            text-align:center;
+            color:#fff;
+            background-color:#6d83a1;
+            background: -webkit-gradient(
+                linear,
+                left top,
+                left bottom,
+                from(#d8dee6),
+                color-stop(0.01, #b0bccc),
+                color-stop(0.49, #889bb3),
+                color-stop(0.50, #8094ae),
+                to(#6d83a1)     
+            );
+        }
+
+        #page {
+            display:inline-block;
+            color:#a00;
+            background-color:#fff;
+            height:1.3em;
+            line-height:1.3em;
+            width:1.3em;
+            border:1px solid #000;
+            vertical-align:middle;
+        }
+
+        .horiz-content ul {
+            font:13px/1.231 arial,helvetica,clean,sans-serif;            
+            margin:0;
+            padding:0;
+            list-style:none;
+            white-space:nowrap;
+            *zoom:1;
+        }
+
+        .horiz-content ul li {
+            width:100%;
+            height:100px;
+            line-height:100px;
+            margin:0;
+            white-space:normal;
+            display:inline-block;
+            *display:inline;
+            *zoom:1;
+        }
+
+        .horiz-content ul li {
+            padding:0;
+            border:1px solid #00ff00;
+            background:#eee;
+            font-size:50px;
+            text-align:center;
+            vertical-align:middle;
+        }
+        </style>
+
+        <script src="../../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script>
+    </head>
+    <body class="yui3-skin-sam">
+        <div class="container horiz-container">
+            <div class="hd">Page: <span id="page"></span></div>
+
+            <!-- SV starts here -->
+            <div id="sv-horiz-paged-content" class="horiz-content yui3-scrollview-loading">
+                <ul><li>1</li><li>2</li><li>3</li><li>4</li></ul>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+
+            YUI({filter:"raw"}).use("scrollview", "scrollview-paginator", function(Y) {
+
+                function allowPageScroll(sv) {
+
+                    sv._prevent.move = false;
+            
+                    var bb = sv.get("boundingBox");
+
+                    bb.on("gesturemovestart", function(e) {
+            
+                        var origXY = [e.pageX, e.pageY];
+            
+                        // Figure out direction on first move event, and then detach
+                        bb.once("gesturemove", function(e) {
+                            var currXY = [e.pageX, e.pageY],
+                                xMove = Math.abs(currXY[0] - origXY[0]),
+                                yMove = Math.abs(currXY[1] - origXY[1]),
+                                angleMove = (180/Math.PI)*(Math.atan2(yMove,xMove));
+            
+                            if (angleMove < 60) {
+                                e.preventDefault();
+                            }
+            
+                        });
+                    });
+                }
+
+                function handleResize(e) {
+                    this.syncUI();
+                    this.pages.scrollTo(this.pages.get("index"));
+                }
+
+                function bindPageUI(page, sv) {
+                    page.setContent(sv.pages.get("index") + 1);
+    
+                    sv.pages.after("indexChange", function(e) {
+                        page.setContent(e.newVal + 1);                                                    
+                    });
+                } 
+
+                var svHorizPaged = new Y.ScrollView({
+                    id:"svHorizPaged",
+                    srcNode:"#sv-horiz-paged-content",
+                    flick: {
+                        minDistance: 10,
+                        minVelocity:0.5,
+                        axis:"x"
+                    },
+                    plugins: {
+                        fn:Y.Plugin.ScrollViewPaginator, 
+                        cfg:{
+                            selector:">ul>li"
+                        }
+                    },  
+                    render:true
+                });
+
+                allowPageScroll(svHorizPaged);
+                bindPageUI(Y.one("#page"), svHorizPaged);
+
+                Y.one("window").on("resize", Y.bind(handleResize, svHorizPaged));
+                
+            });
+        </script>
+    </body>
+</html>

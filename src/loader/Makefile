@@ -19,6 +19,6 @@ deps:
 
 test: deps
 	./scripts/build_loader_tests.js
-	yuitest ./tests/cli/loader.js
+	./scripts/launch_tests.sh
 
 .PHONY: meta check tests deps test all

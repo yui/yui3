@@ -6,7 +6,7 @@
         p, h2 {
             margin: 1em;
         }
-        #test, #test2, #test3 {
+        #test, #test2, #test3, #test4 {
             height: 300px;
             width: 300px;
             border: 3px solid red;
@@ -21,6 +21,10 @@
         }
         #test3 {
             left: 950px;
+        }
+        #test4 {
+            top: 500px;
+            left: 250px;
         }
         #stub {
             display: none;
@@ -53,6 +57,7 @@
 <div id="test">Click me to render the Frame</div>
 <div id="test2"></div>
 <div id="test3"></div>
+<div id="test4"></div>
 
 <div id="arrow"></div>
 
@@ -223,6 +228,12 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', functio
         Y.one('#arrow').setStyle('display', 'block').setXY([e.frameX - 8, e.frameY - 20]);
     });
     
+    var iframe4 = new Y.Frame({
+        container: '#test4',
+        src: 'local.htm',
+        //content: Y.one('#stub').get('innerHTML'),
+        use: ['node','selector-css3', 'anim']
+    }).render();
     
     //console.log(iframe.get('id'));
     //console.log(iframe2.get('id'));

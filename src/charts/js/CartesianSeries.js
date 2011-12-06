@@ -285,7 +285,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
             yData = yData.reverse();
         }
         this._leftOrigin = Math.round(((0 - xMin) * xScaleFactor) + leftPadding + xOffset);
-        this._bottomOrigin =  Math.round((dataHeight + topPadding + yOffset) - (0 - yMin) * yScaleFactor);
+        this._bottomOrigin = Math.round((dataHeight + topPadding + yOffset)); 
         for (; i < dataLength; ++i) 
 		{
             xValue = parseFloat(xData[i]);
@@ -459,6 +459,18 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     _handleVisibleChange: function(e) 
     {
         this._toggleVisible(this.get("visible"));
+    },
+
+    /**
+     * Returns the sum of all values for the series.
+     *
+     * @method getTotalValues
+     * @return Number
+     */
+    getTotalValues: function()
+    {
+        var total = this.get("valueAxis").getTotalByKey(this.get("valueKey"));
+        return total;
     }
 }, {
     ATTRS: {
@@ -476,7 +488,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
 
             setter: function(val)
             {
-                this._xDisplayName = val;
+                this._xDisplayName = Y.Escape.html(val);
                 return val;
             }
         },
@@ -495,7 +507,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
 
             setter: function(val)
             {
-                this._yDisplayName = val;
+                this._yDisplayName = Y.Escape.html(val);
                 return val;
             }
         },
@@ -624,7 +636,12 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          * @attribute xKey
          * @type String
          */
-        xKey: {},
+        xKey: {
+            setter: function(val)
+            {
+                return Y.Escape.html(val);
+            }
+        },
 
         /**
          * Indicates which array to from the hash of value arrays in 
@@ -633,7 +650,12 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          * @attribute yKey
          * @type String
          */
-        yKey: {},
+        yKey: {
+            setter: function(val)
+            {
+                return Y.Escape.html(val);
+            }
+        },
 
         /**
          * Array of x values for the series.

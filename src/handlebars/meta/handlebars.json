@@ -1,0 +1,15 @@
+{
+    "handlebars": {
+        "use": ["handlebars-compiler"],
+
+        "submodules": {
+            "handlebars-base": {
+                "requires": ["escape"]
+            },
+
+            "handlebars-compiler": {
+                "requires": ["handlebars-base"]
+            }
+        }
+    }
+}

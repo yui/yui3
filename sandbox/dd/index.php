@@ -425,6 +425,14 @@ YUI(yConfig2).use('classnamemanager', 'event-synthetic', 'event-gestures', 'dd-d
         console.log('DDM:end :: ', e);
     });
     
+    Y.one('#drag').on('click', function() {
+        console.log('Clicked', dd);
+        if (dd) {
+            dd.destroy();
+            dd = null;
+        }
+    });
+
     dd = new Y.DD.Drag({
         node: '#drag',
         groups: ['one', 'three'],

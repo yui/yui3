@@ -27,6 +27,19 @@ But it also works like this:
 
      var Y = YUI();
 
+Configuring the YUI object:
+
+    YUI({
+        debug: true,
+        combine: false
+    }).use('node', function(Y) {
+        //Node is ready to use
+    });
+
+See the API docs for the <a href="config.html">Config</a> class
+for the complete list of supported configuration properties accepted
+by the YUI constuctor.
+
 @class YUI
 @constructor
 @global
@@ -143,6 +156,7 @@ properties.
         PERIOD = '.',
         BASE = 'http://yui.yahooapis.com/',
         DOC_LABEL = 'yui3-js-enabled',
+        CSS_STAMP_EL = 'yui3-css-stamp',
         NOOP = function() {},
         SLICE = Array.prototype.slice,
         APPLY_TO_AUTH = { 'io.xdrReady': 1,   // the functions applyTo
@@ -241,7 +255,6 @@ proto = {
             config = this.config,
             mods = config.modules,
             groups = config.groups,
-            rls = config.rls,
             loader = this.Env._loader;
 
         for (name in o) {
@@ -251,8 +264,6 @@ proto = {
                     clobber(mods, attr);
                 } else if (groups && name == 'groups') {
                     clobber(groups, attr);
-                } else if (rls && name == 'rls') {
-                    clobber(rls, attr);
                 } else if (name == 'win') {
                     config[name] = attr.contentWindow || attr;
                     config.doc = config[name].document;
@@ -267,6 +278,7 @@ proto = {
         if (loader) {
             loader._config(o);
         }
+
     },
     /**
     * Old way to apply a config to the instance (calls `applyConfig` under the hood)
@@ -284,7 +296,7 @@ proto = {
      * @method _init
      */
     _init: function() {
-        var filter,
+        var filter, el,
             Y = this,
             G_ENV = YUI.Env,
             Env = Y.Env,
@@ -317,7 +329,7 @@ proto = {
                 // Regex in English:
                 // I'll start at the \b(simpleyui).
                 // 1. Look in the test string for "simpleyui" or "yui" or
-                //    "yui-base" or "yui-rls" or "yui-foobar" that comes after a word break.  That is, it
+                //    "yui-base" or "yui-davglass" or "yui-foobar" that comes after a word break.  That is, it
                 //    can't match "foyui" or "i_heart_simpleyui". This can be anywhere in the string.
                 // 2. After #1 must come a forward slash followed by the string matched in #1, so
                 //    "yui-base/yui-base" or "simpleyui/simpleyui" or "yui-pants/yui-pants".
@@ -326,7 +338,7 @@ proto = {
                 // 4. This is followed by ".js", so "yui/yui.js", "simpleyui/simpleyui-min.js"
                 // 0. Going back to the beginning, now. If all that stuff in 1-4 comes after a "?" in the string,
                 //    then capture the junk between the LAST "&" and the string in 1-4.  So
-                //    "blah?foo/yui/yui.js" will capture "foo/" and "blah?some/thing.js&3.3.0/build/yui-rls/yui-rls.js"
+                //    "blah?foo/yui/yui.js" will capture "foo/" and "blah?some/thing.js&3.3.0/build/yui-davglass/yui-davglass.js"
                 //    will capture "3.3.0/build/"
                 //
                 // Regex Exploded:
@@ -418,7 +430,7 @@ proto = {
         }
 
         Y.constructor = YUI;
-
+        
         // configuration defaults
         Y.config = Y.config || {
             win: win,
@@ -428,13 +440,15 @@ proto = {
             throwFail: true,
             bootstrap: true,
             cacheUse: true,
-            fetchCSS: true,
-            use_rls: @YUI_RLS@,
-            rls_timeout: 2000
+            fetchCSS: true
         };
 
-        if (YUI.Env.rls_disabled) {
-            Y.config.use_rls = false;
+        //Register the CSS stamp element
+        if (doc && !doc.getElementById(CSS_STAMP_EL)) {
+            el = doc.createElement('div');
+            el.innerHTML = '<div id="' + CSS_STAMP_EL + '" style="position: absolute !important; visibility: hidden !important"></div>';
+            YUI.Env.cssStampEl = el.firstChild;
+            docEl.insertBefore(YUI.Env.cssStampEl, docEl.firstChild);
         }
 
         Y.config.lang = Y.config.lang || 'en-US';
@@ -630,7 +644,7 @@ with any configuration info required for the module.
 
                     //if (!loader || !loader.moduleInfo[name]) {
                     //if ((!loader || !loader.moduleInfo[name]) && !moot) {
-                    if (!moot) {
+                    if (!moot && name) {
                         if ((name.indexOf('skin-') === -1) && (name.indexOf('css') === -1)) {
                             Y.Env._missed.push(name);
                             Y.Env._missed = Y.Array.dedupe(Y.Env._missed);
@@ -754,6 +768,7 @@ with any configuration info required for the module.
             callback = args[args.length - 1],
             Y = this,
             i = 0,
+            a = [],
             name,
             Env = Y.Env,
             provisioned = true;
@@ -838,6 +853,7 @@ with any configuration info required for the module.
             mods = G_ENV.mods,
             Env = Y.Env,
             used = Env._used,
+            aliases = G_ENV.aliases,
             queue = G_ENV._loaderQueue,
             firstArg = args[0],
             YArray = Y.Array,
@@ -849,8 +865,21 @@ with any configuration info required for the module.
             fetchCSS = config.fetchCSS,
             process = function(names, skip) {
 
+                var i = 0, a = [];
+
                 if (!names.length) {
                     return;
+                }
+
+                if (aliases) {
+                    for (i = 0; i < names.length; i++) {
+                        if (aliases[names[i]]) {
+                            a = [].concat(a, aliases[names[i]]);
+                        } else {
+                            a.push(names[i]);
+                        }
+                    }
+                    names = a;
                 }
 
                 YArray.each(names, function(name) {
@@ -993,49 +1022,6 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
             loader.insert(null, (fetchCSS) ? null : 'js');
             // loader.partial(missing, (fetchCSS) ? null : 'js');
 
-        } else if (len && Y.config.use_rls && !YUI.Env.rls_enabled) {
-
-            G_ENV._rls_queue = G_ENV._rls_queue || new Y.Queue();
-
-            // server side loader service
-            handleRLS = function(instance, argz) {
-
-                var rls_end = function(o) {
-                    handleLoader(o);
-                    instance.rls_advance();
-                },
-                rls_url = instance._rls(argz);
-
-                if (rls_url) {
-                    Y.log('Fetching RLS url', 'info', 'rls');
-                    instance.rls_oncomplete(function(o) {
-                        rls_end(o);
-                    });
-                    instance.Get.script(rls_url, {
-                        data: argz,
-                        timeout: instance.config.rls_timeout,
-                        onFailure: instance.rls_handleFailure,
-                        onTimeout: instance.rls_handleTimeout
-                    });
-                } else {
-                    rls_end({
-                        success: true,
-                        data: argz
-                    });
-                }
-            };
-
-            G_ENV._rls_queue.add(function() {
-                Y.log('executing queued rls request', 'info', 'rls');
-                G_ENV._rls_in_progress = true;
-                Y.rls_callback = callback;
-                Y.rls_locals(Y, args, handleRLS);
-            });
-
-            if (!G_ENV._rls_in_progress && G_ENV._rls_queue.size()) {
-                G_ENV._rls_queue.next()();
-            }
-
         } else if (boot && len && Y.Get && !Env.bootstrapped) {
 
             Y._loading = true;
@@ -1098,17 +1084,21 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
     because the supported version of JavaScript reserves the word "long":
     
          Y.namespace("really.long.nested.namespace");
+
+    <em>Note: If you pass multiple arguments to create multiple namespaces, only 
+    the last one created is returned from this function.</em>
     
     @method namespace
     @param  {String} namespace* namespaces to create.
     @return {Object}  A reference to the last namespace object created.
     **/
     namespace: function() {
-        var a = arguments, o = this, i = 0, j, d, arg;
+        var a = arguments, o, i = 0, j, d, arg;
+
         for (; i < a.length; i++) {
-            // d = ('' + a[i]).split('.');
+            o = this; //Reset base object per argument or it will get reused from the last
             arg = a[i];
-            if (arg.indexOf(PERIOD)) {
+            if (arg.indexOf(PERIOD) > -1) { //Skip this if no "." is present
                 d = arg.split(PERIOD);
                 for (j = (d[0] == 'YAHOO') ? 1 : 0; j < d.length; j++) {
                     o[d[j]] = o[d[j]] || {};
@@ -1116,6 +1106,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
                 }
             } else {
                 o[arg] = o[arg] || {};
+                o = o[arg]; //Reset base object to the new object so it's returned
             }
         }
         return o;
@@ -1140,6 +1131,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
      * @return {YUI} this YUI instance.
      */
     error: function(msg, e, data) {
+        //TODO Add check for window.onerror here
 
         var Y = this, ret;
 
@@ -1228,8 +1220,6 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
      */
 };
 
-
-
     YUI.prototype = proto;
 
     // inheritance utilities are not available yet
@@ -1238,6 +1228,52 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
             YUI[prop] = proto[prop];
         }
     }
+    
+    /**
+Static method on the Global YUI object to apply a config to all YUI instances.
+It's main use case is "mashups" where several third party scripts are trying to write to
+a global YUI config at the same time. This way they can all call `YUI.applyConfig({})` instead of
+overwriting other scripts configs.
+@static
+@since 3.5.0
+@method applyConfig
+@param {Object} o the configuration object.
+@example
+
+    YUI.applyConfig({
+        modules: {
+            davglass: {
+                fullpath: './davglass.js'
+            }
+        }
+    });
+
+    YUI.applyConfig({
+        modules: {
+            foo: {
+                fullpath: './foo.js'
+            }
+        }
+    });
+
+    YUI().use('davglass', function(Y) {
+        //Module davglass will be available here..
+    });
+    
+    */
+    YUI.applyConfig = function(o) {
+        if (!o) {
+            return;
+        }
+        //If there is a GlobalConfig, apply it first to set the defaults
+        if (YUI.GlobalConfig) {
+            this.prototype.applyConfig.call(this, YUI.GlobalConfig);
+        }
+        //Apply this config to it
+        this.prototype.applyConfig.call(this, o);
+        //Reset GlobalConfig to the combined config
+        YUI.GlobalConfig = this.config;
+    };
 
     // set up the environment
     YUI._init();
@@ -1281,6 +1317,14 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
  * metadata to dynamically load additional dependencies.
  *
  * @property bootstrap
+ * @type boolean
+ * @default true
+ */
+
+/**
+ * Turns on writing Ylog messages to the browser console.
+ *
+ * @property debug
  * @type boolean
  * @default true
  */
@@ -1346,10 +1390,11 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
  */
 
 /**
- * A list of modules that defines the YUI core (overrides the default).
+ * A list of modules that defines the YUI core (overrides the default list).
  *
  * @property core
- * @type string[]
+ * @type Array
+ * @default [ get,features,intl-base,yui-log,yui-later,loader-base, loader-rollup, loader-yui3 ]
  */
 
 /**
@@ -1660,7 +1705,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
  * @since 3.1.0
  * @property yui2
  * @type string
- * @default 2.8.1
+ * @default 2.9.0
  */
 
 /**
@@ -1672,7 +1717,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
  * @since 3.1.0
  * @property 2in3
  * @type string
- * @default 1
+ * @default 4
  */
 
 /**
@@ -1732,57 +1777,3 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
  * @deprecated no longer used
  */
 
-/**
- * The parameter defaults for the remote loader service. **Requires the rls seed file.** The properties that are supported:
- * 
- *  * `m`: comma separated list of module requirements.  This
- *    must be the param name even for custom implemetations.
- *  * `v`: the version of YUI to load.  Defaults to the version
- *    of YUI that is being used.
- *  * `gv`: the version of the gallery to load (see the gallery config)
- *  * `env`: comma separated list of modules already on the page.
- *      this must be the param name even for custom implemetations.
- *  * `lang`: the languages supported on the page (see the lang config)
- *  * `'2in3v'`:  the version of the 2in3 wrapper to use (see the 2in3 config).
- *  * `'2v'`: the version of yui2 to use in the yui 2in3 wrappers
- *  * `filt`: a filter def to apply to the urls (see the filter config).
- *  * `filts`: a list of custom filters to apply per module
- *  * `tests`: this is a map of conditional module test function id keys
- * with the values of 1 if the test passes, 0 if not.  This must be
- * the name of the querystring param in custom templates.
- *
- * @since 3.2.0
- * @property rls
- * @type {Object}
- */
-
-/**
- * The base path to the remote loader service. **Requires the rls seed file.**
- *
- * @since 3.2.0
- * @property rls_base
- * @type {String}
- */
-
-/**
- * The template to use for building the querystring portion
- * of the remote loader service url.  The default is determined
- * by the rls config -- each property that has a value will be
- * represented. **Requires the rls seed file.**
- * 
- * @since 3.2.0
- * @property rls_tmpl
- * @type {String}
- * @example
- *      m={m}&v={v}&env={env}&lang={lang}&filt={filt}&tests={tests}
- *
- */
-
-/**
- * Configure the instance to use a remote loader service instead of
- * the client loader. **Requires the rls seed file.**
- *
- * @since 3.2.0
- * @property use_rls
- * @type {Boolean}
- */

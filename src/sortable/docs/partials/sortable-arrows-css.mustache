@@ -1,10 +1,12 @@
 .example .arrow {
     display: none;
-    height: 30px;
+    height: 28px;
     margin: 10px auto;
     width: 300px;
     position: relative;
     background-repeat: no-repeat;
+    opacity: 0.15;
+    filter: alpha(opacity=15);
 }
 
 .example .arrow em {
@@ -12,42 +14,38 @@
     position: absolute;
     top: 0;
     right: 0;
-    height: 30px;
-    width: 30px;
+    height: 28px;
+    width: 19px;
     background-repeat: no-repeat;
 }
 
 .example .arrow div {
     height: 8px;
     position: relative;
-    top: 12px;
-    margin: 0 30px;
-    background-image: url({{componentAssets}}/bar.png);
+    top: 10px;
+    margin: 0 5px;
+    font-size: 1px; /* for IE */
+    background-color: #000;
 }
 
 .example .arrow-full {
     display: block;
-    background-image: url({{componentAssets}}/arrow-left.png);
+    background-image: url({{{componentAssets}}}/arrow-left.png);
 }
 
 .example .arrow-full em {
-    background-image: url({{componentAssets}}/arrow-right.png);
+    background-image: url({{{componentAssets}}}/arrow-right.png);
 }
 
 .example .arrow-out {
     display: block;
-    background-image: url({{componentAssets}}/arrow-right.png);
 }
 
 .example .arrow-out em {
-    background-image: url({{componentAssets}}/arrow-right.png);
+    background-image: url({{{componentAssets}}}/arrow-right.png);
 }
 
 .example .arrow-in {
     display: block;
-    background-image: url({{componentAssets}}/arrow-left.png);
-}
-
-.example .arrow-in em {
-    background-image: url({{componentAssets}}/arrow-left.png);
+    background-image: url({{{componentAssets}}}/arrow-left.png);
 }

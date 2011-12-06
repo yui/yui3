@@ -1,32 +1,6 @@
 <style type="text/css" scoped>
 
-/* Overlay Look/Feel */
-.yui3-overlay-content {
-    text-align: center;
-    padding: 2px;
-    border: 1px solid #000;
-    background-color: #aaa;
-    font-size: 93%;
-}
-
-.yui3-overlay-content .yui3-widget-hd {
-    font-weight: bold;
-    padding: 5px;
-    border: 2px solid #aa0000;
-    background-color: #fff;
-}
-
-.yui3-overlay-content .yui3-widget-ft {
-    padding: 5px;
-    border: 2px solid #000;
-    background-color: #ccc;
-}
-
-.yui3-overlay-content .yui3-widget-bd {
-    padding: 5px;
-    border: 2px solid #0000aa;
-    background-color: #fff;
-}
+{{>overlay-css}}
 
 /* Example Layout CSS */
 .overlay-example {
@@ -36,8 +10,8 @@
 }
 
 #constrain-box {
-    border: 1px solid #000;
-    background-color: #004C6D;
+    background-color: #F0F7F0;
+    border: 1px solid #DBE3DB;
 
     position: relative;
 
@@ -194,33 +168,7 @@ The example provides it's own look and feel for the Overlay, by defining rules f
 </p>
 
 ```
-/* Overlay Look/Feel */
-.yui3-overlay-content {
-    text-align: center;
-    padding: 2px;
-    border: 1px solid #000;
-    background-color: #aaa;
-    font-size: 93%;
-}
-
-.yui3-overlay-content .yui3-widget-hd {
-    font-weight: bold;
-    padding: 5px;
-    border: 2px solid #aa0000;
-    background-color: #fff;
-}
-
-.yui3-overlay-content .yui3-widget-ft {
-    padding: 5px;
-    border: 2px solid #000;
-    background-color: #ccc;
-}
-
-.yui3-overlay-content .yui3-widget-bd {
-    padding: 5px;
-    border: 2px solid #0000aa;
-    background-color: #fff;
-}
+{{>overlay-css}}
 ```
 
 <h2>Complete Example Source</h2>

@@ -43,7 +43,6 @@
                     <filterchain>
                         <replacetokens>
                             <token key="YUI_CORE" value="${component.core}"/>
-                            <token key="YUI_RLS" value="${yui.rls}"/>
                             <token key="GALLERY" value="${loader.gallery}"/>
                             <token key="TNT" value="${loader.tnt}"/>
                             <token key="YUI2" value="${loader.yui2}"/>

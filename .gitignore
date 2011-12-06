@@ -11,6 +11,7 @@ CVS/
 src/build.log
 .com.apple.timemachine.supported
 src/out
+node_modules
 api-js/
 build/autocomplete-base/assets/autocomplete-list-core.css
 build/autocomplete-filters-accentfold/assets/autocomplete-list-core.css

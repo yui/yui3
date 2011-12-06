@@ -1,26 +1,5 @@
 <style type="text/css" scoped>
-/* Overlay Look/Feel */
-.yui3-overlay-content {
-    padding:2px;
-    border:1px solid #000;
-    background-color:#aaa;
-    font-size:93%;
-}
-
-.yui3-overlay-content .yui3-widget-hd {
-    font-weight:bold;
-    text-align:center;
-    padding:2px;
-    border:2px solid #aa0000;
-    background-color:#fff;
-}
-
-.yui3-overlay-content .yui3-widget-bd {
-    text-align:left;
-    padding:2px;
-    border:2px solid #0000aa;
-    background-color:#fff;
-}
+{{>overlay-css}}
 
 /* Example Layout CSS */
 .overlay-example {
@@ -29,57 +8,86 @@
     height:30em;
 }
 
+#overlay-align {
+    border: solid 1px #fff;
+}
+
 .overlay-example button {
     margin-left:1px;
 }
 
-.overlay-example .filler {
+.overlay-example .yui3-g {
     color:#999;
 }
 
 .align-box {
-    height:13em;
-    width:13em;
-    border:1px solid #000;
+    background-color: #ddd;
+    border: solid 1px #ddd;
     margin:0px;
     text-align:center;
+    width: 100%;
+}
+
+.overlay-example .content {
+    margin: 0 1em 0 0;
+    padding: 0;
+}
+
+.overlay-example .example-head {
+    border-bottom: solid 1px #ddd;
+    text-align:center;
+    margin-bottom: 2em;
+    padding-bottom: 1em;
+}
+
+.nav{
+    list-style-type: none;
+    -moz-padding-start: 0;
+    -webkit-padding-start: 0;
+    padding-start: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.nav li {
+    border: solid 1px #ddd;
+    width: 72px;
+    height: 2em;
+    line-height: 2em;
+    text-indent: 0.3em;
 }
 
 .align-box .title {
-    font-weight:bold;
-    color:#fff;
+    color:#000;
     padding:2px;
 }
 
-#align1 {
-    position:static;
-    background-color:#0000cc;
-}
-
 #align2 {
-    position:relative;
-    top:-200px;
-    left:250px;
-    background-color:#00cc00;
+    width: 400px;
+    height: 171px;
 }
 
 #align3 {
-    position:absolute;
-    bottom:130px;
-    right:20px;
-    background-color:#cc0000;
+    height: 3em;
+    line-height: 3em;
 }
 
 #alignment {
     padding:5px;
-    display:inline;
-    background-color:#fff;
-    border:1px solid black;
+    margin: 8px auto 6px;
+    background-color: #F5F7FE;
+    border: 1px solid #CDD2E4;
+    border-left-width: 5px;
+    font-family: Menlo,'DejaVu Sans Mono','Bitstream Vera Sans Mono','Consolas','Monaco',fixed;
 }
 
 #step {
-    font-size:85%;
-    margin-left:5px;
+    font-size:55%;
+    margin-left:22px;
+    font-weight: normal;
+}
+#main .aligned-to{ /* highlight the node that overlay is currently aligned to */
+    border: solid 1px #f00;
 }
 </style>
 
@@ -112,10 +120,9 @@ YUI({...}).use("overlay", function(Y) {
 ```
 /* Create Overlay from script, this time. With no footer */
 var overlay = new Y.Overlay({
-    width:"10em",
-    height:"10em",
-    headerContent: "Aligned Overlay",
-    bodyContent: "Click the 'Next Alignment' button to try a new alignment",
+    width:"16em",
+    headerContent: 'Aligned Overlay<span id="step"></span>',
+    bodyContent: '<div class="descr"></div><div id="alignment"></div>',
     zIndex:2
 });
 
@@ -156,30 +163,30 @@ overlay.render("#overlay-align");
 
 ```
 /* Setup local variable for Y.WidgetPositionAlign, since we use it multiple times */
-var WidgetPositionAlign = Y.WidgetPositionAlign;
+var wPA = Y.WidgetPositionAlign;
 
 ...
 
-/* Center in #overlay-align (example box) */
-overlay.set("align", {node:"#overlay-align", 
-                      points:[WidgetPositionAlign.CC, WidgetPositionAlign.CC]});
-
 /* Align top-left corner of overlay, with top-right corner of #align1 */
 overlay.set("align", {node:"#align1", 
-                      points:[WidgetPositionAlign.TL, WidgetPositionAlign.TR]});
+                      points:[wPA.TL, wPA.TR]});
 
 /* Center overlay in #align2 */
 overlay.set("centered", "#align2");
 
+/* Align top-center edge of overlay with bottom-center edge of #align3 */
+overlay.set("align", {node:"#align3", 
+                      points:[wPA.TC, wPA.BC]});
+
 /* Align right-center edge of overlay with right-center edge of viewport */
-overlay.set("align", {points:[WidgetPositionAlign.RC, WidgetPositionAlign.RC]});
+overlay.set("align", {points:[wPA.RC, wPA.RC]});
 
 /* Center overlay in viewport */
 overlay.set("centered", true);
 
-/* Align top-center edge of overlay with bottom-center edge of #align3 */
-overlay.set("align", {node:"#align3", 
-                      points:[WidgetPositionAlign.TC, WidgetPositionAlign.BC]});
+/* Center in #overlay-align (example box) */
+overlay.set("align", {node:"#overlay-align", 
+                      points:[wPA.CC, wPA.CC]});
 ```
 
 <h3>CSS: Overlay Look/Feel</h3>
@@ -189,27 +196,7 @@ overlay.set("align", {node:"#align3",
 <p>The example provides it's own look and feel for the Overlay, by defining rules for the content box, header and body sections:</p>
 
 ```
-.yui3-overlay-content {
-    padding:2px;
-    border:1px solid #000;
-    background-color:#aaa;
-    font-size:93%;
-}
-
-.yui3-overlay-content .yui3-widget-hd {
-    font-weight:bold;
-    text-align:center;
-    padding:2px;
-    border:2px solid #aa0000;
-    background-color:#fff;
-}
-
-.yui3-overlay-content .yui3-widget-bd {
-    text-align:left;
-    padding:2px;
-    border:2px solid #0000aa;
-    background-color:#fff;
-}
+{{>overlay-css}}
 ```
 
 <h2>Complete Example Source</h2>

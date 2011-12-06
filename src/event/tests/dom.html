@@ -17,16 +17,13 @@
     <!-- Initialization process //-->
     <script type="text/javascript">
         YUI({
-            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
-            allowRollup: false,
             //lazyEventFacade: true,
-            logExclude: {
-                yui:true, get: true, 'selector-native': true, loader: true,
-                Dom: true, Selector: true, Node: true, attribute: true, base: true, widget: true}
-        }).use('console', 'test', 'node', 'event-simulate', function (Y) {
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+            allowRollup: false
+        }).use('test-console', 'test', 'node', 'event-simulate', function (Y) {
 
             // creating the console...
-            (new Y.Console()).render();
+            (new Y.Test.Console()).render();
 
             // starting the testing process
 
@@ -44,6 +41,12 @@
                         // runs afoul of the document.createEventObject(e)
                         // used to allow getters
                         "test left and right click, mouseup": Y.config.lazyEventFacade
+                    }
+                },
+
+                tearDown: function () {
+                    if (this.timer) {
+                        this.timer.cancel();
                     }
                 },
 
@@ -614,9 +617,37 @@
                     handle.detach();
 
                     Y.Assert.isTrue(fired.mouseup);
+                },
+
+                "error in onavailable callback should not result in infinite _poll": function () {
+                    var test = this,
+                        found = false;
+
+                    Y.Assert.isFalse(!!Y.Event.locked);
+
+                    Y.on('available', function () {
+                        found = true;
+                        throw "test error";
+                    }, '#infinite-poll');
+
+                    this.timer = Y.later(25, {}, function () {
+                        if (found) {
+                            test.timer.cancel();
+                            Y.one('#infinite-poll').remove(true);
+
+                            test.resume(function () {
+                                Y.Assert.isFalse(Y.Event.locked);
+                            });
+                        }
+                    }, null, true);
+    
+                    Y.later(25, {}, function () {
+                        Y.one('#clickcontainer')
+                            .append('<p id="infinite-poll">THIS SHOULD NOT BE LEFT OVER</p>');
+                    });
+
+                    test.wait();
                 }
-
-
             }));
 
             //run all tests

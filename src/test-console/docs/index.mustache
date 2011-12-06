@@ -1,0 +1,156 @@
+<div class="intro">
+<p>
+Test Console is a specialized subclass of the Console widget that's pre-configured to display YUI Test output in an attractive, readable log with no extra configuration needed. Just drop it into your test page and run your tests!
+</p>
+</div>
+
+{{>getting-started}}
+
+<h2>Using Test Console</h2>
+
+<p>
+First, create some tests using <a href="../test/index.html">YUI Test</a>. Next, create a Test Console instance on your test page and run your tests.
+</p>
+
+```
+<div id="log" class="yui3-skin-sam"></div>
+
+<script>
+YUI().use('test-console', function (Y) {
+    // ... set up your test cases here ...
+
+    // Render the console inside the #log div, then run the tests.
+    new Y.Test.Console().render('#log');
+    Y.Test.Runner.run();
+});
+</script>
+```
+
+<p>
+Test results will automatically be displayed in the test console. By default, only failing tests and the final summary info will be displayed to keep things readable. If you'd like to see an entry for passing tests as well, just click the "pass" checkbox at the bottom of the console.
+</p>
+
+<h3>Category Filters</h3>
+
+<p>
+The Test Console supports filtering of the entries it displays. By default, failing tests and a final summary are always displayed, while passing tests and other status information are hidden to avoid clutter.
+</p>
+
+<p>
+You can change which categories are displayed or hidden by passing a custom configuration for the `filters` attribute.
+</p>
+
+```
+// Show passing tests as well as failing tests by default.
+new Y.Test.Console({
+    filters: {
+        pass: true,
+        fail: true
+    }
+}).render();
+```
+
+<p>
+The following entry categories are available.
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>fail</td>
+            <td>`true`</td>
+            <td>
+                <p>
+                A failing test.
+                </p>
+            </td>
+        </tr>
+
+        <tr>
+            <td>info</td>
+            <td>`true`</td>
+            <td>
+                <p>
+                Summary information displayed after all tests have run, such as the total number of passing and failing tests.
+                </p>
+            </td>
+        </tr>
+
+        <tr>
+            <td>pass</td>
+            <td>`false`</td>
+            <td>
+                <p>
+                A passing test.
+                </p>
+            </td>
+        </tr>
+
+        <tr>
+            <td>status</td>
+            <td>`false`</td>
+            <td>
+                <p>
+                Status information displayed after each test case has run. This can be noisy when running a test suite with many test cases, so it's disabled by default.
+                </p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Demo</h2>
+
+<p>
+Here's a working example you can play with. Try checking the "pass" checkbox to see passing tests.
+</p>
+
+<div id="log" class="yui3-skin-sam">
+    <style scoped>
+    #log h4 {
+        border: none;
+        margin: default;
+        padding: default;
+        text-transform: none;
+    }
+    </style>
+</div>
+
+<script>
+YUI().use('test-console', function (Y) {
+    var Assert = Y.Assert,
+        suite;
+
+    suite = new Y.Test.Suite('Test Console');
+
+    suite.add(new Y.Test.Case({
+        name: 'General',
+
+        'this test should fail with a forced failure': function () {
+            Assert.fail();
+        },
+
+        'this test should fail with an unexpected error': function () {
+            throw new Error('OMG!');
+        },
+
+        'this test should pass': function () {
+            Assert.areEqual(true, true);
+        },
+
+        'this test should also pass': function () {
+            Assert.areEqual('monkeys', 'monkeys');
+        }
+    }));
+
+    Y.Test.Runner.add(suite);
+    new Y.Test.Console().render('#log');
+    Y.Test.Runner.run();
+});
+</script>

@@ -51,12 +51,45 @@ var GlobalEnv = YUI.namespace('Env.Model'),
     @param {String} src Source of the error. May be one of the following (or any
       custom error source defined by a Model subclass):
 
+      * `load`: An error loading the model from a sync layer. The sync layer's
+        response (if any) will be provided as the `response` property on the
+        event facade.
+
       * `parse`: An error parsing a JSON response. The response in question will
         be provided as the `response` property on the event facade.
+
+      * `save`: An error saving the model to a sync layer. The sync layer's
+        response (if any) will be provided as the `response` property on the
+        event facade.
+
       * `validate`: The model failed to validate. The attributes being validated
         will be provided as the `attributes` property on the event facade.
     **/
-    EVT_ERROR = 'error';
+    EVT_ERROR = 'error',
+
+    /**
+    Fired after model attributes are loaded from a sync layer.
+
+    @event load
+    @param {Object} parsed The parsed version of the sync layer's response to
+        the load request.
+    @param {any} response The sync layer's raw, unparsed response to the load
+        request.
+    @since 3.5.0
+    **/
+    EVT_LOAD = 'load',
+
+    /**
+    Fired after model attributes are saved to a sync layer.
+
+    @event save
+    @param {Object} [parsed] The parsed version of the sync layer's response to
+        the save request, if there was a response.
+    @param {any} [response] The sync layer's raw, unparsed response to the save
+        request, if there was one.
+    @since 3.5.0
+    **/
+    EVT_SAVE = 'save';
 
 function Model() {
     Model.superclass.constructor.apply(this, arguments);
@@ -301,6 +334,9 @@ Y.Model = Y.extend(Model, Y.Base, {
     operation, which is an asynchronous action. Specify a _callback_ function to
     be notified of success or failure.
 
+    A successful load operation will fire a `load` event, while an unsuccessful
+    load operation will fire an `error` event with the `src` value "load".
+
     If the load operation succeeds and one or more of the loaded attributes
     differ from this model's current attributes, a `change` event will be fired.
 
@@ -326,16 +362,41 @@ Y.Model = Y.extend(Model, Y.Base, {
             options  = {};
         }
 
-        this.sync('read', options, function (err, response) {
-            if (!err) {
-                self.setAttrs(self.parse(response), options);
+        options || (options = {});
+
+        self.sync('read', options, function (err, response) {
+            var facade = {
+                    options : options,
+                    response: response
+                },
+
+                parsed;
+
+            if (err) {
+                facade.error = err;
+                facade.src   = 'load';
+
+                self.fire(EVT_ERROR, facade);
+            } else {
+                // Lazy publish.
+                if (!self._loadEvent) {
+                    self._loadEvent = self.publish(EVT_LOAD, {
+                        preventable: false
+                    });
+                }
+
+                parsed = facade.parsed = self.parse(response);
+
+                self.setAttrs(parsed, options);
                 self.changed = {};
+
+                self.fire(EVT_LOAD, facade);
             }
 
             callback && callback.apply(null, arguments);
         });
 
-        return this;
+        return self;
     },
 
     /**
@@ -380,6 +441,9 @@ Y.Model = Y.extend(Model, Y.Base, {
     operation, which is an asynchronous action. Specify a _callback_ function to
     be notified of success or failure.
 
+    A successful load operation will fire a `load` event, while an unsuccessful
+    load operation will fire an `error` event with the `src` value "load".
+
     If the save operation succeeds and one or more of the attributes returned in
     the server's response differ from this model's current attributes, a
     `change` event will be fired.
@@ -398,8 +462,7 @@ Y.Model = Y.extend(Model, Y.Base, {
     @chainable
     **/
     save: function (options, callback) {
-        var self       = this,
-            validation = self._validate(self.toJSON());
+        var self = this;
 
         // Allow callback as only arg.
         if (typeof options === 'function') {
@@ -407,21 +470,46 @@ Y.Model = Y.extend(Model, Y.Base, {
             options  = {};
         }
 
-        if (!validation.valid) {
-            callback && callback.call(null, validation.error);
-            return self;
-        }
+        options || (options = {});
 
-        self.sync(self.isNew() ? 'create' : 'update', options, function (err, response) {
-            if (!err) {
-                if (response) {
-                    self.setAttrs(self.parse(response), options);
-                }
-
-                self.changed = {};
+        self._validate(self.toJSON(), function (err) {
+            if (err) {
+                callback && callback.call(null, err);
+                return;
             }
 
-            callback && callback.apply(null, arguments);
+            self.sync(self.isNew() ? 'create' : 'update', options, function (err, response) {
+                var facade = {
+                        options : options,
+                        response: response
+                    },
+
+                    parsed;
+
+                if (err) {
+                    facade.error = err;
+                    facade.src   = 'save';
+
+                    self.fire(EVT_ERROR, facade);
+                } else {
+                    // Lazy publish.
+                    if (!self._loadEvent) {
+                        self._loadEvent = self.publish(EVT_LOAD, {
+                            preventable: false
+                        });
+                    }
+
+                    if (response) {
+                        parsed = facade.parsed = self.parse(response);
+                        self.setAttrs(parsed, options);
+                    }
+
+                    self.changed = {};
+                    self.fire(EVT_SAVE, facade);
+                }
+
+                callback && callback.apply(null, arguments);
+            });
         });
 
         return self;
@@ -545,7 +633,7 @@ Y.Model = Y.extend(Model, Y.Base, {
 
     @param {Object} [options] Sync options. It's up to the custom sync
       implementation to determine what options it supports or requires, if any.
-    @param {callback} [callback] Called when the sync operation finishes.
+    @param {Function} [callback] Called when the sync operation finishes.
       @param {Error|null} callback.err If an error occurred, this parameter will
         contain the error. If the sync operation succeeded, _err_ will be
         falsy.
@@ -632,25 +720,47 @@ Y.Model = Y.extend(Model, Y.Base, {
 
     /**
     Override this method to provide custom validation logic for this model.
+
     While attribute-specific validators can be used to validate individual
     attributes, this method gives you a hook to validate a hash of all
     attributes before the model is saved. This method is called automatically
     before `save()` takes any action. If validation fails, the `save()` call
     will be aborted.
 
-    A call to `validate` that doesn't return anything (or that returns `null`)
-    will be treated as a success. If the `validate` method returns a value, it
-    will be treated as a failure, and the returned value (which may be a string
-    or an object containing information about the failure) will be passed along
-    to the `error` event.
+    In your validation method, call the provided `callback` function with no
+    arguments to indicate success. To indicate failure, pass a single argument,
+    which may contain an error message, an array of error messages, or any other
+    value. This value will be passed along to the `error` event.
+
+    @example
+
+        model.validate = function (attrs, callback) {
+            if (attrs.pie !== true) {
+                // No pie?! Invalid!
+                callback('Must provide pie.');
+                return;
+            }
+
+            // Success!
+            callback();
+        };
 
     @method validate
-    @param {Object} attributes Attribute hash containing all model attributes to
-      be validated.
-    @return {Any} Any return value other than `undefined` or `null` will be
-      treated as a validation failure.
+    @param {Object} attrs Attribute hash containing all model attributes to
+        be validated.
+    @param {Function} callback Validation callback. Call this function when your
+        validation logic finishes. To trigger a validation failure, pass any
+        value as the first argument to the callback (ideally a meaningful
+        validation error of some kind).
+
+        @param {Any} [callback.err] Validation error. Don't provide this
+            argument if validation succeeds. If validation fails, set this to an
+            error message or some other meaningful value. It will be passed
+            along to the resulting `error` event.
     **/
-    validate: function (/* attributes */) {},
+    validate: function (attrs, callback) {
+        callback && callback();
+    },
 
     // -- Protected Methods ----------------------------------------------------
 
@@ -666,7 +776,7 @@ Y.Model = Y.extend(Model, Y.Base, {
     @param {String} name The name of the attribute.
     @param {Object} config An object with attribute configuration property/value
       pairs, specifying the configuration for the attribute.
-    @param {boolean} lazy (optional) Whether or not to add this attribute lazily
+    @param {Boolean} lazy (optional) Whether or not to add this attribute lazily
       (on the first call to get/set).
     @return {Object} A reference to the host object.
     @chainable
@@ -715,24 +825,37 @@ Y.Model = Y.extend(Model, Y.Base, {
 
     @method _validate
     @param {Object} attributes Attribute hash.
-    @return {Object} Validation results.
+    @param {Function} callback Validation callback.
+        @param {Any} [callback.err] Value on failure, non-value on success.
     @protected
     **/
-    _validate: function (attributes) {
-        var error = this.validate(attributes);
+    _validate: function (attributes, callback) {
+        var self = this;
 
-        if (Lang.isValue(error)) {
-            // Validation failed. Fire an error.
-            this.fire(EVT_ERROR, {
-                attributes: attributes,
-                error     : error,
-                src       : 'validate'
-            });
+        function handler(err) {
+            if (Lang.isValue(err)) {
+                // Validation failed. Fire an error.
+                self.fire(EVT_ERROR, {
+                    attributes: attributes,
+                    error     : err,
+                    src       : 'validate'
+                });
 
-            return {valid: false, error: error};
+                callback(err);
+                return;
+            }
+
+            callback();
         }
 
-        return {valid: true};
+        if (self.validate.length === 1) {
+            // Backcompat for 3.4.x-style synchronous validate() functions that
+            // don't take a callback argument.
+            Y.log('Synchronous validate() methods are deprecated since YUI 3.5.0.', 'warn', 'Model');
+            handler(self.validate(attributes, handler));
+        } else {
+            self.validate(attributes, handler);
+        }
     },
 
     // -- Protected Event Handlers ---------------------------------------------

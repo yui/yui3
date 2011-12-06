@@ -13,7 +13,7 @@ This simple example will create a Panel with default functionality. By default, 
 </p>
 
 ```javascript
-YUI().use('panel', function(Y) {
+YUI().use('panel', function (Y) {
 
     var panel = new Y.Panel({
         srcNode : '#myPanelContent',
@@ -32,7 +32,7 @@ A Panel is not modal by default. This functionality can be changed through the `
 </p>
 
 ```javascript
-YUI().use('panel', function(Y) {
+YUI().use('panel', function (Y) {
 
     var panel = new Y.Panel({
         srcNode: '#myPanelContent',
@@ -62,7 +62,7 @@ The following code snippet shows how to change the default "hide" behavior. Inst
 </p>
 
 ```javascript
-YUI().use('panel', function(Y) {
+YUI().use('panel', function (Y) {
 
     var panel = new Y.Panel({
         srcNode : '#myPanelContent',
@@ -103,9 +103,8 @@ Similarly, the `focusOn` attribute can be changed to configure the default focus
         modal   : false,
         render  : true,
 
-        // The `hideOn` Attribute takes an array of objects with a required
-        // `eventName` property, and two optional properties:
-        // `node` and `keyCode`.
+        // The `focusOn` Attribute takes an array of objects with a required
+        // `eventName` property, and optionally the `node` property.
         focusOn: [
             {
                 // When we don't specify a `node`,
@@ -134,9 +133,9 @@ Panel supports header/footer buttons through the <a href="{{apiDocs}}/classes/Wi
 </p>
 
 ```javascript
-YUI().use('panel', function(Y) {
+YUI().use('panel', function (Y) {
 
-    function doSomethingElse () {
+    function doSomethingElse() {
         // ...
     }
 
@@ -155,7 +154,7 @@ YUI().use('panel', function(Y) {
 
                 // The `action` property takes the Function that should be
                 // executed on a click event.
-                action: function (e) {
+                action: function(e) {
                     e.preventDefault();
                     panel.hide();
                     doSomethingElse();
@@ -165,7 +164,7 @@ YUI().use('panel', function(Y) {
                 // should be `Y.WidgetStdMod.HEADER` or `Y.WidgetStdMod.FOOTER`.
                 section: Y.WidgetStdMod.FOOTER
 
-                // Optional `classNames` property to add CSS classes to the 
+                // Optional `classNames` property to add CSS classes to the
                 // button Node.
 
                 // optional `href` property if you are linking to an URL.
@@ -183,18 +182,18 @@ If you want to append buttons to the ones that are already present within the Pa
 </p>
 
 ```javascript
-    var cancelButton = {
-        value : 'Cancel',
-        action: function (e) {
-            e.preventDefault();
-            // ...
-        },
+var cancelButton = {
+    value : 'Cancel',
+    action: function(e) {
+        e.preventDefault();
+        // ...
+    },
 
-        // 'header', 'footer' or Y.WidgetStdMod.HEADER also work here.
-        section: Y.WidgetStdMod.FOOTER
-    };
+    // 'header', 'footer' or Y.WidgetStdMod.HEADER also work here.
+    section: Y.WidgetStdMod.FOOTER
+};
 
-    panel.addButton(cancelButton);
+panel.addButton(cancelButton);
 ```
 
 <h2>Notes Regarding Older Browsers</h2>

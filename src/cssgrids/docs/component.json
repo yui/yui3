@@ -7,6 +7,8 @@
     "tags": ["css", "grids", "beta"],
     "use" : ["cssgrids"],
 
+    "hideAPILink": true,
+
     "examples": [
         {
             "name"       : "cssgrids-units",

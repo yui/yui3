@@ -151,6 +151,18 @@ Y.extend(DOMEventFacade, Object, {
         this.pageX = x;
         this.pageY = y;
 
+        // charCode is unknown in keyup, keydown. keyCode is unknown in keypress.
+        // FF 3.6 - 8+? pass 0 for keyCode in keypress events.
+        // Webkit, FF 3.6-8+?, and IE9+? pass 0 for charCode in keydown, keyup.
+        // Webkit and IE9+? duplicate charCode in keyCode.
+        // Opera never sets charCode, always keyCode (though with the charCode).
+        // IE6-8 don't set charCode or which.
+        // All browsers other than IE6-8 set which=keyCode in keydown, keyup, and 
+        // which=charCode in keypress.
+        //
+        // Moral of the story: (e.which || e.keyCode) will always return the
+        // known code for that key event phase. e.keyCode is often different in
+        // keypress from keydown and keyup.
         c = e.keyCode || e.charCode;
 
         if (ua.webkit && (c in webkitKeymap)) {
@@ -159,6 +171,8 @@ Y.extend(DOMEventFacade, Object, {
 
         this.keyCode = c;
         this.charCode = c;
+        // Fill in e.which for IE - implementers should always use this over
+        // e.keyCode or e.charCode.
         this.which = e.which || e.charCode || c;
         // this.button = e.button;
         this.button = this.which;
@@ -1043,20 +1057,23 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
 
             executeItem = function (el, item) {
                 var context, ov = item.override;
-                if (item.compat) {
-                    if (item.override) {
-                        if (ov === true) {
-                            context = item.obj;
+                try {
+                    if (item.compat) {
+                        if (item.override) {
+                            if (ov === true) {
+                                context = item.obj;
+                            } else {
+                                context = ov;
+                            }
                         } else {
-                            context = ov;
+                            context = el;
                         }
+                        item.fn.call(context, item.obj);
                     } else {
-                        context = el;
+                        context = item.obj || Y.one(el);
+                        item.fn.apply(context, (Y.Lang.isArray(ov)) ? ov : []);
                     }
-                    item.fn.call(context, item.obj);
-                } else {
-                    context = item.obj || Y.one(el);
-                    item.fn.apply(context, (Y.Lang.isArray(ov)) ? ov : []);
+                } catch (e) {
                 }
             };
 

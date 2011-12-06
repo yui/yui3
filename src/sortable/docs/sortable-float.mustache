@@ -3,7 +3,16 @@
 </div>
 
 <div class="example">
-    {{>sortable-float-source}}
+    <style>
+    {{> sortable-float-source-css}}
+    {{> sortable-float-color-step-css}}
+    </style>
+    
+    {{> sortable-float-source-color-step-html}}
+    
+    <script>
+    {{> sortable-float-source-js}}
+    </script>
 </div>
 
 <h3>Setting Up the List</h3>

@@ -1,11 +1,24 @@
 {
     "app": {
-        "use": ["controller", "model", "model-list", "view"],
+        "use": [
+            "app-base",
+            "model",
+            "model-list",
+            "router",
+            "view"
+        ],
 
         "submodules": {
+            "app-base": {
+                "requires": ["classnamemanager", "pjax-base", "router", "view"]
+            },
+
+            "app-transitions": {
+                "requires": ["app-base", "transition"]
+            },
+
             "controller": {
-                "optional": ["querystring-parse"],
-                "requires": ["array-extras", "base-build", "history"]
+                "use": ["router"]
             },
 
             "model": {
@@ -22,6 +35,11 @@
                     "json-parse",
                     "model"
                 ]
+            },
+
+            "router": {
+                "optional": ["querystring-parse"],
+                "requires": ["array-extras", "base-build", "history"]
             },
 
             "view": {

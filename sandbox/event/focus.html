@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+<head>
+	<title>YUI Event Delegate Tests</title>
+    <style type="text/css">
+        li {
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body class="yui3-skin-sam">
+
+    <button id="foc">link.focus()</button>
+	<div id="outer">
+        <div id="inner">
+            <button id="button-1">Click Me!</button>
+            <a id="anchor-1" href="http://www.yahoo.com">Click Me!</a>
+            <input type="text" id="text-1">
+        </div>
+	</div>
+    <ul id="out"></ul>
+
+	<script src="../../../../build/yui/yui.js"></script>
+	<script>
+		YUI({
+            filter: 'raw',
+            lazyEventFacade: true
+		}).use('node', 'event', function (Y) {
+			var body   = Y.one('body'),
+                outer  = Y.one('#outer'),
+			    inner  = Y.one('#inner'),
+                button = Y.one('#button-1'),
+                link   = Y.one('#anchor-1'),
+                text   = Y.one('#text-1'),
+                out    = Y.one('#out');
+
+            function report(e, thisObj, msg) {
+                var target  = e.target.toString().replace(/yui_.*/,''),
+                    ctarget = e.currentTarget.toString().replace(/yui_.*/,'');
+
+                out.append("<li>" + msg + " " + target + " " + ctarget + "</li>");
+            }
+
+            Y.one('#foc').on('click', function (e) {
+                link.focus();
+                report(e, this, "clicked on <code>focus()</code> button");
+            });
+
+            link.on('click', function (e) {
+                report(e, this, "link clicked");
+                e.preventDefault();
+            });
+
+            button.on('click', function (e) {
+                report(e, this, "button clicked");
+            });
+
+            outer.on({
+                focus: function (e) { report(e, this, "focus (outer)"); },
+                blur : function (e) { report(e, this, "blur (outer)"); }
+            });
+
+            inner.on({
+                focus: function (e) { report(e, this, "focus (inner)"); },
+                blur : function (e) { report(e, this, "blur (inner)"); }
+            });
+
+            /*
+            body.on({
+                focus: function (e) { report(e, this, "focus (body)"); },
+                blur : function (e) { report(e, this, "blur (body)"); }
+            });
+
+            Y.one(Y.config.doc).on({
+                focus: function (e) { report(e, this, "focus (doc)"); },
+                blur : function (e) { report(e, this, "blur (doc)"); }
+            });
+            */
+
+            button.on({
+                focus: function (e) { report(e, this, "button focused"); },
+                blur:  function (e) { report(e, this, "button blurred"); }
+            });
+            link.on({
+                focus: function (e) { report(e, this, "link focused"); },
+                blur:  function (e) { report(e, this, "link blurred"); }
+            });
+            text.on({
+                focus: function (e) { report(e, this, "text focused"); },
+                blur:  function (e) { report(e, this, "text blurred"); }
+            });
+
+            outer.delegate('focus', function (e) {
+                report(e, this, "delegate focus for links (outer)");
+            }, 'a');
+            inner.delegate('focus', function (e) {
+                report(e, this, "delegate focus for links (inner)");
+            }, 'a');
+            body.delegate('focus', function (e) {
+                report(e, this, "delegate focus for links (body)");
+            }, 'a');
+            /*
+            */
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<div class="intro">
+<p>This example has 2 sortable lists, each with floated nodes. 
+The lists are outer joined together. 
+The small fish on the left
+can move into the groups on the right, and become sortable (and larger). 
+However, the items in the groups on the right 
+<strong>can not</strong> move back into the list of small fish.</p>
+</div>
+
+<div class="example">
+    <style>
+    {{>sortable-fish-css}}
+    </style>
+    
+    {{>sortable-fish-html}}
+    
+    <script>
+    {{>sortable-multi-out-source-js}}
+    </script>
+</div>
+
+<p>Images of fish etchings are from Jacob Theodor Klein, mid 1700s. 
+Source: http://www.flickr.com/photos/biodivlibrary/sets/72157627937663760/.         
+Contributed by: MBLWHOI Library, Woods Hole.</p> 
+<p><strong>Note: When using an outer or inner joined list, you must pick a moveType of 'move' or 'copy', the default 'swap' won't give you the results you expect.</strong></p>
+<p>This example assumes that you have seen the Multiple Sortable Lists - Full Join example and continues from there.</p>
+
+{{>sortable-fish-base}}
+
+{{>sortable-multi-source-join}}
+
+<h3>Putting it together</h3>
+
+```
+{{>sortable-multi-out-source-js}}
+```

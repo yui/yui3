@@ -53,43 +53,47 @@ YUI.add('frame', function(Y) {
         * @return {Object} Hash table containing references to the new Document & Window
         */
         _create: function(cb) {
-            var win, doc, res, node;
+            var win, doc, res, node, html = '',
+                extra_css = ((this.get('extracss')) ? '<style id="extra_css">' + this.get('extracss') + '</style>' : '');
             
             this._iframe = Y.Node.create(Frame.HTML);
             this._iframe.setStyle('visibility', 'hidden');
             this._iframe.set('src', this.get('src'));
             this.get('container').append(this._iframe);
 
+            //if the src attr is different than the default, don't create the document
+            var create = (this.get('src') === Frame.ATTRS.src.value);
+
             this._iframe.set('height', '99%');
 
-            
-            var html = '',
-                extra_css = ((this.get('extracss')) ? '<style id="extra_css">' + this.get('extracss') + '</style>' : '');
+            if (create) {
+                html = Y.substitute(Frame.PAGE_HTML, {
+                    DIR: this.get('dir'),
+                    LANG: this.get('lang'),
+                    TITLE: this.get('title'),
+                    META: Frame.META,
+                    LINKED_CSS: this.get('linkedcss'),
+                    CONTENT: this.get('content'),
+                    BASE_HREF: this.get('basehref'),
+                    DEFAULT_CSS: Frame.DEFAULT_CSS,
+                    EXTRA_CSS: extra_css
+                });
+                if (Y.config.doc.compatMode != 'BackCompat') {
+                    
+                    //html = Frame.DOC_TYPE + "\n" + html;
+                    html = Frame.getDocType() + "\n" + html;
+                } else {
+                }
 
-            html = Y.substitute(Frame.PAGE_HTML, {
-                DIR: this.get('dir'),
-                LANG: this.get('lang'),
-                TITLE: this.get('title'),
-                META: Frame.META,
-                LINKED_CSS: this.get('linkedcss'),
-                CONTENT: this.get('content'),
-                BASE_HREF: this.get('basehref'),
-                DEFAULT_CSS: Frame.DEFAULT_CSS,
-                EXTRA_CSS: extra_css
-            });
-            if (Y.config.doc.compatMode != 'BackCompat') {
-                
-                //html = Frame.DOC_TYPE + "\n" + html;
-                html = Frame.getDocType() + "\n" + html;
-            } else {
             }
 
-
-
             res = this._resolveWinDoc();
-            res.doc.open();
-            res.doc.write(html);
-            res.doc.close();
+
+            if (html) {
+                res.doc.open();
+                res.doc.write(html);
+                res.doc.close();
+            }
 
             if (!res.doc.documentElement) {
                 var timer = Y.later(1, this, function() {

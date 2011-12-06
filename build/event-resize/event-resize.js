@@ -16,36 +16,27 @@ YUI.add('event-resize', function(Y) {
  * @event windowresize
  * @for YUI
  */
-
-var domEventProxies = Y.Env.evt.dom_wrappers,
-    win = Y.config.win,
-    key = 'event:' + Y.stamp(win) + 'resizenative',
-    config;
-    
-
 Y.Event.define('windowresize', {
 
     on: (Y.UA.gecko && Y.UA.gecko < 1.91) ?
         function (node, sub, notifier) {
-            sub._handle = Y.Event._attach(['resize', function (e) {
-                notifier.fire(
-                    new Y.DOMEventFacade(e, win, domEventProxies[key]));
-            }], { facade: false });
+            sub._handle = Y.Event.attach('resize', function (e) {
+                notifier.fire(e);
+            });
         } :
         function (node, sub, notifier) {
             // interval bumped from 40 to 100ms as of 3.4.1
             var delay = Y.config.windowResizeDelay || 100;
 
-            sub._handle = Y.Event._attach(['resize', function (e) {
+            sub._handle = Y.Event.attach('resize', function (e) {
                 if (sub._timer) {
                     sub._timer.cancel();
                 }
 
                 sub._timer = Y.later(delay, Y, function () {
-                    notifier.fire(
-                        new Y.DOMEventFacade(e, win, domEventProxies[key]));
+                    notifier.fire(e);
                 });
-            }], { facade: false });
+            });
         },
 
     detach: function (node, sub) {

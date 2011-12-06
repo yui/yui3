@@ -13,24 +13,13 @@ var Y = YUI({
     allowRollup: false,
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
     modules: {
-        'test-console': {
-            fullpath : '../assets/test-console.js',
-            requires : ['console-filters'],
-            skinnable: true
-        },
-
-        'skin-sam-test-console': {
-            fullpath: '../assets/test-console.css',
-            type    : 'css'
-        },
-
         'history-base-test': {
             fullpath: 'history-base-test.js',
             requires: ['history-base', 'test']
         }
-    },
-    useBrowserConsole: false
+    }
 }).use('history-base-test', 'test-console', function (Y) {
+    new Y.Test.Console().render('#log');
     Y.Test.Runner.setName('history-base');
     Y.Test.Runner.run();
 });
