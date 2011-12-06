@@ -19,12 +19,54 @@ ChartBase.ATTRS = {
      *      <dt>show</dt><dd>Indicates whether or not to show the tooltip</dd>
      *      <dt>markerEventHandler</dt><dd>Displays and hides tooltip based on marker events</dd>
      *      <dt>planarEventHandler</dt><dd>Displays and hides tooltip based on planar events</dd>
-     *      <dt>markerLabelFunction</dt><dd>Reference to the function used to format a marker event triggered tooltip's text</dd>
-     *      <dt>planarLabelFunction</dt><dd>Reference to the function used to format a planar event triggered tooltip's text</dd>
+     *      <dt>markerLabelFunction</dt><dd>Reference to the function used to format a marker event triggered tooltip's text. The method contains 
+     *      the following arguments:
+     *  <dl>
+     *      <dt>categoryItem</dt><dd>An object containing the following:
+     *  <dl>
+     *      <dt>axis</dt><dd>The axis to which the category is bound.</dd>
+     *      <dt>displayName</dt><dd>The display name set to the category (defaults to key if not provided).</dd>
+     *      <dt>key</dt><dd>The key of the category.</dd>
+     *      <dt>value</dt><dd>The value of the category.</dd>
+     *  </dl>
+     *  </dd>
+     *  <dt>valueItem</dt><dd>An object containing the following:
+     *      <dl>
+     *          <dt>axis</dt><dd>The axis to which the item's series is bound.</dd>
+     *          <dt>displayName</dt><dd>The display name of the series. (defaults to key if not provided)</dd>
+     *          <dt>key</dt><dd>The key for the series.</dd>
+     *          <dt>value</dt><dd>The value for the series item.</dd> 
+     *      </dl>
+     *  </dd>
+     *  <dt>itemIndex</dt><dd>The index of the item within the series.</dd>
+     *  <dt>series</dt><dd> The `CartesianSeries` instance of the item.</dd>
+     *  <dt>seriesIndex</dt><dd>The index of the series in the `seriesCollection`.</dd>
+     *  </dl>
+     *  The method returns an html string which is written into the DOM using `innerHTML`. 
+     *  </dd>
+     *  <dt>planarLabelFunction</dt><dd>Reference to the function used to format a planar event triggered tooltip's text
+     *  <dl>
+     *      <dt>categoryAxis</dt><dd> `CategoryAxis` Reference to the categoryAxis of the chart.
+     *      <dt>valueItems</dt><dd>Array of objects for each series that has a data point in the coordinate plane of the event. Each object contains the following data:
+     *  <dl>
+     *      <dt>axis</dt><dd>The value axis of the series.</dd>
+     *      <dt>key</dt><dd>The key for the series.</dd>
+     *      <dt>value</dt><dd>The value for the series item.</dd>
+     *      <dt>displayName</dt><dd>The display name of the series. (defaults to key if not provided)</dd>
+     *  </dl> 
+     *  </dd>
+     *      <dt>index</dt><dd>The index of the item within its series.</dd>
+     *      <dt>seriesArray</dt><dd>Array of series instances for each value item.</dd>
+     *      <dt>seriesIndex</dt><dd>The index of the series in the `seriesCollection`.</dd>
+     *  </dl>
+     *  </dd>
+     *  </dl>
+     *  The method returns an html string which is written into the DOM using `innerHTML`. 
+     *  </dd>
      *  </dl>
      * @attribute tooltip
      * @type Object
-     */
+     */ 
     tooltip: {
         valueFn: "_getTooltip",
 
@@ -176,7 +218,7 @@ ChartBase.prototype = {
     {
         var axis,
             axes = this.get("axes");
-        if(axes.hasOwnProperty(val))
+        if(axes && axes.hasOwnProperty(val))
         {
             axis = axes[val];
         }
@@ -310,6 +352,16 @@ ChartBase.prototype = {
     _axes: null,
 
     /**
+     * @method initializer
+     * @private
+     */
+    initializer: function()
+    {
+        this._axesRenderQueue = [];
+        this.after("dataProviderChange", this._dataProviderChangeHandler);
+    },
+
+    /**
      * @method renderUI
      * @private
      */
@@ -327,7 +379,7 @@ ChartBase.prototype = {
         }
         this._redraw();
     },
-    
+   
     /**
      * @property bindUI
      * @private
@@ -337,7 +389,6 @@ ChartBase.prototype = {
         this.after("tooltipChange", Y.bind(this._tooltipChangeHandler, this));
         this.after("widthChange", this._sizeChanged);
         this.after("heightChange", this._sizeChanged);
-        this.after("dataProviderChange", this._dataProviderChangeHandler);
         var tt = this.get("tooltip"),
             hideEvent = "mouseout",
             showEvent = "mouseover",
@@ -543,14 +594,17 @@ ChartBase.prototype = {
             axes = this.get("axes"),
             i,
             axis;
-        for(i in axes)
+        if(axes)
         {
-            if(axes.hasOwnProperty(i))
+            for(i in axes)
             {
-                axis = axes[i];
-                if(axis instanceof Y.Axis)
+                if(axes.hasOwnProperty(i))
                 {
-                    axis.set("dataProvider", dataProvider);
+                    axis = axes[i];
+                    if(axis instanceof Y.Axis)
+                    {
+                        axis.set("dataProvider", dataProvider);
+                    }
                 }
             }
         }
@@ -772,6 +826,7 @@ ChartBase.prototype = {
      *  @param {Number} index The index of the item within its series.
      *  @param {Array} seriesArray Array of series instances for each value item.
      *  @param {Number} seriesIndex The index of the series in the `seriesCollection`.
+     *  @return {String | HTML} 
      * @private
      */
     _planarLabelFunction: function(categoryAxis, valueItems, index, seriesArray, seriesIndex)
@@ -821,6 +876,7 @@ ChartBase.prototype = {
      * @param {Number} itemIndex The index of the item within the series.
      * @param {CartesianSeries} series The `CartesianSeries` instance of the item.
      * @param {Number} seriesIndex The index of the series in the `seriesCollection`.
+     * @return {String | HTML}
      * @private
      */
     _tooltipLabelFunction: function(categoryItem, valueItem, itemIndex, series, seriesIndex)

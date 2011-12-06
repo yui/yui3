@@ -150,6 +150,21 @@ Y.mix(Y_Node.prototype, {
     }
 });
 
+/**
+ * Replaces the node's current html content with the content provided.
+ * @method setHTML
+ * @param {String | HTML | Node | HTMLElement | NodeList | HTMLCollection} content The content to insert
+ * @chainable
+ */
+Y.Node.prototype.setHTML = Y.Node.prototype.setContent;
+
+/**
+ * Returns the node's current html content (e.g. innerHTML)
+ * @method getContent
+ * @return {String} The html content
+ */
+Y.Node.prototype.getHTML = Y.Node.prototype.getContent;
+
 Y.NodeList.importMethod(Y.Node.prototype, [
     /**
      * Called on each Node instance
