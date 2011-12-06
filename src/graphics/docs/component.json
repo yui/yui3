@@ -72,11 +72,11 @@
 		}
 	],	
     "pages": {
-        "graphics-pathutility-example": {
-            "layout"     : "graphics-pathutility-example"
+        "graphics-path-tool-example": {
+            "layout"     : "graphics-path-tool-example"
         },
-        "graphics-pathutility": {
-            "displayName": "Graphics: Path Drawing Utility"
+        "graphics-path-tool": {
+            "displayName": "Graphics: Path Drawing Tool"
         }
     }	
 }
