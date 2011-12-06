@@ -55,6 +55,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "anim-base"
         ]
     }, 
+    "anim-transform": {
+        "requires": [
+            "anim-base", 
+            "anim-easing", 
+            "matrix"
+        ]
+    }, 
     "anim-xy": {
         "requires": [
             "anim-base", 
@@ -322,7 +329,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "widget", 
             "widget-position", 
             "widget-stack", 
-            "graphics"
+            "graphics", 
+            "escape"
         ]
     }, 
     "classnamemanager": {
@@ -1103,7 +1111,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "node", 
             "event-custom", 
-            "pluginhost"
+            "pluginhost", 
+            "matrix"
         ]
     }, 
     "graphics-canvas": {
@@ -1356,7 +1365,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "loader-base": {
         "requires": [
-            "get"
+            "get", 
+            "features"
         ]
     }, 
     "loader-rollup": {
@@ -1367,6 +1377,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "loader-yui3": {
         "requires": [
             "loader-base"
+        ]
+    }, 
+    "matrix": {
+        "requires": [
+            "yui-base"
         ]
     }, 
     "model": {
@@ -1792,7 +1807,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "widget", 
             "dd-constrain", 
-            "substitute"
+            "substitute", 
+            "event-key"
         ], 
         "skinnable": true
     }, 
@@ -2097,4 +2113,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'fe98e0957c2b01a00632342af767a28f';
+YUI.Env[Y.version].md5 = '57de9e97531889f49ed2555529e54a92';

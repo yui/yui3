@@ -343,6 +343,8 @@ SVGDrawing.prototype = {
      */
     clear: function()
     {
+        this._width = 0;
+        this._height = 0;
         this._left = 0;
         this._right = 0;
         this._top = 0;

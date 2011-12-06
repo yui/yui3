@@ -185,6 +185,25 @@ Y.extend(CategoryAxis, Y.AxisType,
     {
         return l/ct;
     },
+
+    /**
+     * Returns a value based of a key value and an index.
+     *
+     * @method getKeyValueAt
+     * @param {String} key value used to look up the correct array
+     * @param {Number} index within the array
+     * @return String 
+     */
+    getKeyValueAt: function(key, index)
+    {
+        var value = NaN,
+            keys = this.get("keys");
+        if(keys[key] && keys[key][index]) 
+        {
+            value = keys[key][index];
+        }
+        return Y.Escape.html(value);
+    },
    
     /**
      * Calculates and returns a value based on the number of labels and the index of
@@ -208,7 +227,7 @@ Y.extend(CategoryAxis, Y.AxisType,
         {
             label = data[l - (i + 1)];
         }   
-        return label;
+        return Y.Escape.html(label.toString());
     }
 });
 
