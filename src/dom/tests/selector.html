@@ -541,6 +541,7 @@ onload = function() {
 
             'should omit comments from children': function() {
                 var node = document.getElementById('test-dl');
+                debugger;
                 Assert.areEqual(document.getElementById('last-dd'),
                         Y.Selector.query(':last-child', node, true));
             }
