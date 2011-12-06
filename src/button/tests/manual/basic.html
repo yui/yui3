@@ -20,7 +20,8 @@
                 debug: true,
                 combo: false,
                 filter: 'raw'
-            }).use('button', 'cssfonts', function(Y){
+            }).use('button', function(Y){
+                
                 var push = new Y.Button({
                     label: 'Click to select',
                     srcNode: Y.one('#push'),
@@ -59,7 +60,7 @@
     
     <body>
         
-        <h1>Button: Basic</h1>
+        <h1>Button Example: Basic</h1>
         
         <hr />
 
@@ -72,6 +73,7 @@
         
         <h2>Toggle</h2>
         <input type='button' id='toggle' value='Toggle'></input>
+        
         
         <br>
         

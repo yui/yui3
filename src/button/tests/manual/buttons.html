@@ -21,15 +21,35 @@
                 filter: 'raw'
             }).use('button', function(Y){
                 
-                var group = new Y.ButtonGroup({
+                var groupA = new Y.ButtonGroup({
                     buttons: new Y.Buttons({
-                        srcNodes: Y.all('.group')
+                        srcNodes: Y.all('.radioGroupA')
                     }),
+                    type: 'radio'
+                });
+                
+                var groupB = new Y.ButtonGroup({
+                    srcNodes: Y.all('.radioGroupB'),
+                    type: 'radio'
+                });
+                
+                var groupC = new Y.ButtonGroup({
                     type: 'checkbox'
                 });
                 
-                group.on('selectionChange', function(e){
-                    console.log('Changed');
+                Y.all('.cbGroup').each(function(node){
+                    groupC.addButton(new Y.Button({
+                        srcNode: node
+                    }));
+                });
+                
+                groupB.on('selectionChange', function(e){
+                    console.log('Currently selected: ' + groupB.getSelectedValues());
+                    //console.log(groupB.getBar());
+                });
+                
+                groupC.on('selectionChange', function(e){
+                    console.log('Currently selected: ' + groupC.getSelectedValues());
                 });
                 
             });
@@ -38,15 +58,32 @@
     
     <body class='yui3-skin-sam'>
         
-        <h1>Buttons prototype</h1>
+        <h1>Button Example: Groups</h1>
         
         <hr />
         
-        <input type='button' class='group' value='1'>
-        <input type='button' class='group' value='2'>
-        <input type='button' class='group' value='3'>
-        <input type='button' class='group' value='4'>
-        <input type='button' class='group' value='5'>
-        <input type='button' class='group' value='6'>
+        <h2>Radio</h2>
+        <input type='button' class='radioGroupA' value='1'>
+        <input type='button' class='radioGroupA' value='2'>
+        <input type='button' class='radioGroupA' value='3'>
+        <input type='button' class='radioGroupA' value='4'>
+        <input type='button' class='radioGroupA' value='5'>
+        <input type='button' class='radioGroupA' value='6'>
+        
+        <h2>Radio</h2>
+        <input type='button' class='radioGroupB' value='1'>
+        <input type='button' class='radioGroupB' value='2'>
+        <input type='button' class='radioGroupB' value='3'>
+        <input type='button' class='radioGroupB' value='4'>
+        <input type='button' class='radioGroupB' value='5'>
+        <input type='button' class='radioGroupB' value='6'>
+        
+        <h2>Checkbox</h2>
+        <input type='button' class='cbGroup' value='a'>
+        <input type='button' class='cbGroup' value='b'>
+        <input type='button' class='cbGroup' value='c'>
+        <input type='button' class='cbGroup' value='d'>
+        <input type='button' class='cbGroup' value='e'>
+        <input type='button' class='cbGroup' value='f'>
     </body>
 </html>

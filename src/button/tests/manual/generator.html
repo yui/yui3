@@ -1,17 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <!-- reset the default browser styles -->
-        <style>
-
-            /* Fix this - Shouldn't require body specificity */
-            body .yui3-button-selected {
-                background-color:#426FD9;
-                color:white;
-            }
-          
-        </style>
-      
+        
         <script src='../../../../build/yui/yui-min.js'></script>
 
         <script>
@@ -23,9 +13,10 @@
                 
                 Y.one("#generator").on("click", function(){
                     
-                    var count, button, buttons = [];
+                    var count, button, buttons = [], type, group;
                     
                     count = Y.one('#count').get('value');
+                    type = Y.one('input[name=type]:checked').get('value');
                     
                     Y.one("#container").empty(true);
                     
@@ -35,22 +26,46 @@
                         buttons.push(button);
                     }
 
-                    new Y.ButtonGroup({
+                    group = new Y.ButtonGroup({
                         buttons: buttons,
-                        type: 'radio'
+                        type: type
+                    });
+                    
+                    group.on('selectionChange', function(e){
+                        console.log('Changed');
                     });
                 });
                 
             });
         </script>
+
+        <style>
+
+            .yui3-button-selected {
+                background-color:#426FD9;
+                color:white;
+            }
+
+        </style>
     </head>
     
     <body class='yui3-skin-sam'>
         
-        <h1>Buttonpalooza</h1>
-        How many buttons would you like? <input type="text" value="100" id="count">
-        <button id="generator" class="yui3-button">Make buttons!</button>
+        
+        <h1>Button Example: Generator</h1>
+        
         <hr />
+        
+        How many buttons would you like? <input type="text" value="100" id="count">
+        
+        Type: <input type='radio' name='type' value='radio' checked='true'> Radio
+              <input type='radio' name='type' value='checkbox'> Checkbox
+              <input type='radio' name='type' value='push' checked='true'> Push
+        
+        <button id="generator" class="yui3-button">Make buttons!</button>
+        
+        <br><br>
+        
         <div id="container"></div>
     </body>
 </html>
