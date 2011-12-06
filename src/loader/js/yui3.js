@@ -1365,7 +1365,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "loader-base": {
         "requires": [
-            "get"
+            "get", 
+            "features"
         ]
     }, 
     "loader-rollup": {
@@ -2112,4 +2113,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'ed1b9e5be75ac1b3f895338f10b69f42';
+YUI.Env[Y.version].md5 = '57de9e97531889f49ed2555529e54a92';
