@@ -27,7 +27,8 @@ NumericAxis.ATTRS = {
     
     /**
      * Method used for formatting a label. This attribute allows for the default label formatting method to overridden. The method use would need
-     * to implement the arguments below and return a `String`.
+     * to implement the arguments below and return a `String` or `HTML`. The default implementation of the method returns a `String`. The output of this method
+     * will be rendered to the DOM using `innerHTML`. 
      * <dl>
      *      <dt>val</dt><dd>Label to be formatted. (`String`)</dd>
      *      <dt>format</dt><dd>Object containing properties used to format the label. (optional)</dd>
@@ -68,6 +69,31 @@ NumericAxis.ATTRS = {
 Y.extend(NumericAxis, Y.AxisType,
 {
     /**
+     * Returns the sum of all values per key.
+     *
+     * @method getTotalByKey
+     * @param {String} key The identifier for the array whose values will be calculated.
+     * @return Number
+     */
+    getTotalByKey: function(key)
+    {
+        var total = 0,
+            values = this.getDataByKey(key),
+            i = 0,
+            val,
+            len = values ? values.length : 0;
+        for(; i < len; ++i)
+        {
+           val = parseFloat(values[i]);
+           if(!isNaN(val))
+           {
+                total += val;
+           }
+        }
+        return total;
+    },
+
+    /**
      * Type of data used in `Axis`.
      *
      * @property _type
@@ -75,25 +101,6 @@ Y.extend(NumericAxis, Y.AxisType,
      * @private
      */
     _type: "numeric",
-
-    /**
-     * Returns a value based of a key value and an index.
-     *
-     * @method getKeyValueAt
-     * @param {String} key value used to look up the correct array
-     * @param {Number} index within the array
-     * @return Object
-     */
-    getKeyValueAt: function(key, index)
-    {
-        var value = NaN,
-            keys = this.get("keys");
-        if(keys[key] && Y_Lang.isNumber(parseFloat(keys[key][index])))
-        {
-            value = keys[key][index];
-        }
-        return value;
-    },
 
     /**
      * Helper method for getting a `roundingUnit` when calculating the minimum and maximum values.
@@ -151,8 +158,8 @@ Y.extend(NumericAxis, Y.AxisType,
     _updateMinAndMax: function()
     {
         var data = this.get("data"),
-            max = 0,
-            min = 0,
+            max, 
+            min,
             len,
             num,
             i = 0,
@@ -186,8 +193,32 @@ Y.extend(NumericAxis, Y.AxisType,
                         min = setMin ? this._setMinimum : min;
                         continue;
                     }
-                    max = setMax ? this._setMaximum : Math.max(num, max);
-                    min = setMin ? this._setMinimum : Math.min(num, min);
+                    
+                    if(setMin)
+                    {
+                        min = this._setMinimum;
+                    }
+                    else if(min === undefined)
+                    {
+                        min = num;
+                    }
+                    else
+                    {
+                        min = Math.min(num, min); 
+                    }
+                    if(setMax)
+                    {
+                        max = this._setMaximum;
+                    }
+                    else if(max === undefined)
+                    {
+                        max = num;
+                    }
+                    else
+                    {
+                        max = Math.max(num, max);
+                    }
+                    
                     this._actualMaximum = max;
                     this._actualMinimum = min;
                 }
@@ -518,7 +549,7 @@ Y.extend(NumericAxis, Y.AxisType,
             }
             label += min;
         }
-        return label;
+        return parseFloat(label);
     },
 
     /**

@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+<head>
+    <title>2 sliders aria check</title>
+    <style type="text/css">
+        .markup { 
+            margin: 10px 0 0 300px;
+        }
+    </style>
+</head>
+<body class="yui3-skin-sam">
+<div class="markup">
+    <div id="slider"></div>
+
+    <p>
+        <input type="button" id="size" value="Change size">
+        <input type="button" id="val" value="Set Value">
+        <input type="button" id="disable" value="Disable">
+        <!--<input type="button" id="incr" value="incr">-->
+    </p>
+    <div id="report">0</div>
+    <div id="slider2"></div>
+    <label id="my-added-label">label for Slider 2</label>
+</div>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+YUI({
+    filter: 'raw'
+}).use('slider',function (Y) {
+
+var report = Y.one('#report');
+
+var s = new Y.Slider({
+    //axis  : 'y',
+    length: '350px',
+    min   : -37,
+    max   : 218,
+    value : 136,
+//    minorStep: 3,
+    after : {
+        valueChange: function (e) {
+            report.set('innerHTML',e.newVal);
+        }
+    }
+});
+
+s.set('min', 10);
+
+s.render('#slider');
+
+report.set('innerHTML',s.get('value'));
+
+Y.one('#size').on('click',function () {
+    s.set('length','155px');
+});
+Y.one('#val').on('click',function () {
+    s.set('value',s.get('value') === -92 ? 100 : -92);
+});
+Y.one('#disable').on('click',function () {
+    var disabled = !s.get('disabled');
+    s.set('disabled',disabled);
+    this.set('value', disabled ? "Enable" : "Disable");
+});
+// Y.one('#incr').on('click',function () {
+//     s.set('value', 133);
+//     Y.log('myVal' + s.get('value'));
+//     s.set('value', 134);
+//     Y.log('myVal' + s.get('value'));
+// });
+
+    var slider2 = new Y.Slider({
+        //axis  : 'y',
+        length: '350px',
+        min   : -37,
+        max   : 218,
+        value : 136,
+    //    minorStep: 3,
+        after : {
+            valueChange: function (e) {
+                report.set('innerHTML',e.newVal);
+            }
+        }
+    });
+    
+        
+    slider2.render('#slider2');
+    Y.log("s1 label: " + Y.one('#slider .yui3-slider-thumb').getAttribute('aria-labelledby'));
+    Y.log("s2 label: " + Y.one('#slider2 .yui3-slider-thumb').getAttribute('aria-labelledby'));
+    Y.one('#my-added-label').setAttribute('id', Y.one('#slider2 .yui3-slider-thumb').getAttribute('aria-labelledby'))
+
+
+
+});
+</script>
+</body>
+</html>

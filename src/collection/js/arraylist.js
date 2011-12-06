@@ -147,7 +147,9 @@ ArrayListProto = {
  */
 ArrayListProto._item = ArrayListProto.item;
 
-ArrayList.prototype  = ArrayListProto;
+// Mixed onto existing proto to preserve constructor NOT being an own property.
+// This has bitten me when composing classes by enumerating, copying prototypes.
+Y.mix(ArrayList.prototype, ArrayListProto);
 
 Y.mix( ArrayList, {
 

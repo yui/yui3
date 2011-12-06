@@ -165,8 +165,8 @@ Y.View = Y.extend(View, Y.Base, {
     `Y.Node` instance.
 
     @method create
-    @param {HTMLElement|Node|String} container HTML string, DOM element, or
-        `Y.Node` instance to use as the container node.
+    @param {HTMLElement|Node|String} container Selector string, `Y.Node`
+        instance, or DOM element to use as the container node.
     @return {Node} Node instance of the created container node.
     **/
     create: function (container) {

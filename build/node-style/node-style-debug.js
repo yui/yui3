@@ -10,6 +10,7 @@ YUI.add('node-style', function(Y) {
 var methods = [
     /**
      * Returns the style's current value.
+     * Use camelCase (e.g. 'backgroundColor') for multi-word properties.
      * @method getStyle
      * @for Node
      * @param {String} attr The style attribute to retrieve. 
@@ -19,8 +20,7 @@ var methods = [
 
     /**
      * Returns the computed value for the given style property.
-     * Use CSS case (e.g. 'background-color') for multi-word properties.
-
+     * Use camelCase (e.g. 'backgroundColor') for multi-word properties.
      * @method getComputedStyle
      * @param {String} attr The style attribute to retrieve. 
      * @return {String} The computed value of the style property for the element.
@@ -28,8 +28,8 @@ var methods = [
     'getComputedStyle',
 
     /**
-     * Sets a style property of the node. Use CSS case (e.g. 'background-color')
-     * for multi-word properties.
+     * Sets a style property of the node.
+     * Use camelCase (e.g. 'backgroundColor') for multi-word properties.
      * @method setStyle
      * @param {String} attr The style attribute to set. 
      * @param {String|Number} val The value. 
@@ -39,6 +39,7 @@ var methods = [
 
     /**
      * Sets multiple style properties on the node.
+     * Use camelCase (e.g. 'backgroundColor') for multi-word properties.
      * @method setStyles
      * @param {Object} hash An object literal of property:value pairs. 
      * @chainable
@@ -48,6 +49,7 @@ var methods = [
 Y.Node.importMethod(Y.DOM, methods);
 /**
  * Returns an array of values for each node.
+ * Use camelCase (e.g. 'backgroundColor') for multi-word properties.
  * @method getStyle
  * @for NodeList
  * @see Node.getStyle
@@ -57,6 +59,7 @@ Y.Node.importMethod(Y.DOM, methods);
 
 /**
  * Returns an array of the computed value for each node.
+ * Use camelCase (e.g. 'backgroundColor') for multi-word properties.
  * @method getComputedStyle
  * @see Node.getComputedStyle
  * @param {String} attr The style attribute to retrieve. 
@@ -65,6 +68,7 @@ Y.Node.importMethod(Y.DOM, methods);
 
 /**
  * Sets a style property on each node.
+ * Use camelCase (e.g. 'backgroundColor') for multi-word properties.
  * @method setStyle
  * @see Node.setStyle
  * @param {String} attr The style attribute to set. 
@@ -74,6 +78,7 @@ Y.Node.importMethod(Y.DOM, methods);
 
 /**
  * Sets multiple style properties on each node.
+ * Use camelCase (e.g. 'backgroundColor') for multi-word properties.
  * @method setStyles
  * @see Node.setStyles
  * @param {Object} hash An object literal of property:value pairs. 
