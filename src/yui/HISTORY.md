@@ -1,6 +1,13 @@
 YUI Core Change History
 =======================
 
+3.5.0
+-----
+
+* `Y.Object.isEmpty()` now casts the given value to an object if it isn't one
+  already, which prevents exceptions when it's given a non-object.
+
+
 3.4.1
 -----
 
