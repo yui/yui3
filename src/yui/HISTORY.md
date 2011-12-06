@@ -46,15 +46,6 @@ YUI Core Change History
   implementations of `Y.Array.each`, `Y.Array.hash`, and `Y.Array.some`.
   [Ticket #2530376]
 
-* Added async:true support to Get, to dispatch scripts/link nodes in parallel.
-  NOTE: Order of execution is not guaranteed (it's not required for the YUI
-  Module use case, for which this feature was introduced - to improve performance).
-  onSuccess is called once, after all files are loaded.
-
-* Added onProgress callback support to Get, which is useful when dispatching
-  multiple scripts using the [] syntax. onProgress is called when each script
-  is done loading.
-
 
 3.3.0
 -----
@@ -120,8 +111,6 @@ YUI Core Change History
   `Y.Array.some()`.
 
 * UA refinements for Chrome, Android and other browsers/platforms.
-
-* Inserted script nodes get `charset="utf-8"` by default.
 
 * Added `last()` to `Queue` for LIFO support.
 
