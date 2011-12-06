@@ -3,32 +3,14 @@ YUI.add('button-group', function(Y) {
 
 var ButtonGroup = function (config) {
     
+    this.buttons = new Y.ArrayList();
+    
     var ATTRS = {
-        /* The array of buttons contained in this group */
-        buttons   : {
-            setter: function(buttons) {
-                
-                var ButtonList = new Y.ArrayList(buttons);
-                var type = this.get('type');
-                
-                ButtonList.each(function(button){
-                    if (type === 'radio' || type === 'checkbox') {
-                        button.set('type', 'toggle');
-                    }
-                    button.before('selectedChange', this._beforeButtonSelectedChange, this);
-                    //button.on('selectedChange', this._onButtonSelectedChange, this);
-                    button.after('selectedChange', this._afterButtonSelectedChange, this);
-                }, this);
-                
-                return ButtonList;
-            }
-        },
         selection : {
             value : [],
             getter: function(){
-                var buttons = this.get('buttons');
                 var selected = [];
-                buttons.each(function(button){
+                this.buttons.each(function(button){
                     if (button.get('selected')) {
                         selected.push(button);
                     }
@@ -37,43 +19,74 @@ var ButtonGroup = function (config) {
                 return selected;
             }
         },
-        type: { 
-            value: 'push',
+        type: {
+            value: 'radio',
             validator: function(val) {
-                return Y.Array.indexOf(['push', 'radio', 'checkbox'], val);
+                return Y.Array.indexOf(['radio', 'checkbox'], val);
             }
         },
-
     };
 
     this.addAttrs(ATTRS, config);
+    
+    if (config.srcNodes){
+        if (Y.Lang.isString(config.srcNodes)){
+            config.srcNodes = Y.all(config.srcNodes);
+        }
+        
+        config.buttons = new Y.Buttons(config);
+        delete config.srcNodes;
+    }
+    
+    if (config.buttons) {
+        Y.Array.each(config.buttons, function(button){
+            this.addButton(button);
+        }, this);
+    }
 };
 
-/* Rethink this
+ButtonGroup.prototype.getSelectedButtons = function() {
+
+    var selected = [], buttons;
+    buttons = this.buttons;
+
+    buttons.each(function(button){
+        if (button.get('selected')){
+            selected.push(button);
+        }
+    });
+
+    return selected;
+};
+
+ButtonGroup.prototype.getSelectedValues = function() {
+    var selected, values = [];
+    selected = this.getSelectedButtons();
+    Y.Array.each(selected, function(button){
+        values.push(button.getDOMNode().get('value'));
+    })
+    
+    return values;
+};
 
 ButtonGroup.prototype.addButton = function(button){
-    var buttons, type;
-    buttons = this.get('buttons');
-
-    buttons.push(button);
-
-    this.set('buttons', buttons);
+    button.set('type', 'toggle');
+    button.before('selectedChange', this._beforeButtonSelectedChange, this);
+    //button.on('selectedChange', this._onButtonSelectedChange, this);
+    button.after('selectedChange', this._afterButtonSelectedChange, this);
+    
+    this.buttons.add(button);
 };
-*/
 
 ButtonGroup.prototype._beforeButtonSelectedChange = function(e) {
-    var button, selection;
-
-    button = e.target;
-    
     if (this.get('type') === 'radio') {
-        var isSelected = button.get('selected');
+        var isSelected = e.target.get('selected');
         if (isSelected) {
             e.preventDefault();
             return false;
         }
         else {
-            /* Nothing */
+            /* Nothing? */
         }
     }
 };
@@ -83,19 +96,26 @@ ButtonGroup.prototype._onButtonSelectedChange = function(e) {
 };
 
 ButtonGroup.prototype._afterButtonSelectedChange = function(e) {
-    var button, buttons, target;
-    target = e.target;
+    var fireChange = false;
+    var buttons = this.buttons;
     
     if (this.get('type') === 'radio') {
-        buttons = this.get('buttons');
         buttons.each(function(button){
-            if (buttons.indexOf(target) != buttons.indexOf(button)) {
+            if (buttons.indexOf(e.target) != buttons.indexOf(button)) {
+                fireChange = true;
                 button.set('selected', false, {propagate:false});
             }
             else {
                 /* Nothing */
             }
         });
+    }
+    else if (this.get('type') === 'checkbox') {
+        fireChange = true;
+    }
+    
+    if (fireChange) {
+        this.fire('selectionChange');
     }
 };
 

@@ -189,7 +189,6 @@ var ButtonGenerator = function(config) {
 
 var Buttons = function(config){
     var buttons = [];
-    
     config.srcNodes.each(function(node){
         var button = new Y.Button({
             type: config.type,

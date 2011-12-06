@@ -6957,6 +6957,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "attribute", 
             "node", 
             "arraylist", 
+            "arraylist-add", 
             "array-extras", 
             "event-focus"
         ]
@@ -8811,7 +8812,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '9fe2700503f6f52b305085561a159530';
+YUI.Env[Y.version].md5 = 'f453291cd765466e0877614d43692b0d';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

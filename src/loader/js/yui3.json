@@ -243,6 +243,7 @@
             "attribute", 
             "node", 
             "arraylist", 
+            "arraylist-add", 
             "array-extras", 
             "event-focus"
         ]
