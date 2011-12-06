@@ -507,9 +507,10 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     will navigate to the new URL via manipulation of `window.location`.
 
     Overrides PjaxBase's `_navigate()` method to first upgrade any hash-based
-    URLs, and when `serverRouting` is falsy, force the navigation to be handled
-    by the app. The applied changes are then delegated back to PjaxBase's
-    `_navigate()` method to complete the navigation.
+    URLs that has a path-like hash (i.e. hashes that start with '/'), and when
+    `serverRouting` is falsy, force the navigation to be handled by the app. The
+    applied changes are then delegated back to PjaxBase's `_navigate()` method
+    to complete the navigation.
 
     When there is a route-handler for the specified URL and it is being
     navigated to, this method will return `true`, otherwise it will return
@@ -531,33 +532,22 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @see PjaxBase._navigate()
     **/
     _navigate: function (url, options) {
-        var upgradedURL = this._upgradeURL(url),
-            path, query;
+        url = this._upgradeURL(url);
 
         options || (options = {});
 
-        // Check if the `url` was upgraded.
-        if (url !== upgradedURL) {
-            url = upgradedURL;
+        if (!this.get('serverRouting')) {
+            // Force navigation to be enhanced and handled by the app when
+            // `serverRouting` is falsy because the server might not be able to
+            // handle the request properly.
+            Lang.isValue(options.force) || (options.force = true);
 
             // Determine if the current history entry should be replaced. Since
-            // we've upgraded a hash-based URL to a full-path URL, "equality" is
-            // determined by whether the new path and query are the same as the
-            // current ones.
+            // we're upgrading hash-based URL to a full-path URL, we'll do the
+            // same for the current URL before comparing the two URLs.
             if (!Lang.isValue(options.replace)) {
-                path  = url.replace(this._regexUrlQuery, '');
-                query = (url.match(this._regexUrlQuery) || [])[1] || '';
-
-                options.replace = path === this._getPath() &&
-                        query === this._getQuery();
+                options.replace = url === this._upgradeURL(this._getURL());
             }
-        }
-
-        // Force navigation to be enhanced and handled by the app when
-        // `serverRouting` is falsy because the server might not be able to
-        // handle the request properly.
-        if (!this.get('serverRouting')) {
-            Lang.isValue(options.force) || (options.force = true);
         }
 
         return PjaxBase.prototype._navigate.call(this, url, options);
@@ -613,7 +603,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     },
 
     /**
-    Upgrades a hash-based URL to a full-path URL if necessary.
+    Upgrades a hash-based URL to a full-path URL, if necessary.
 
     The specified `url` will be upgraded if its of the same origin as the
     current URL and has a path-like hash. URLs that don't need upgrading will be
@@ -645,7 +635,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
         // If the hash looks like a URL path, assume it is, and upgrade it!
         if (hash && hash.charAt(0) === '/') {
-            // Re-joins with configured `root` before resolving.
+            // Re-join with configured `root` before resolving.
             url = this._resolveURL(this._joinURL(hash));
         }
 
