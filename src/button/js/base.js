@@ -27,13 +27,15 @@ var Button = function(config){
                 - disabledChange
     */
     
-    this._srcNode = Y.one(config.srcNode);
-    var node = this._srcNode;
+    var node, ATTRS;
     
+    this._srcNode = Y.one(config.srcNode);
+    
+    node = this._srcNode;
     node.addClass('yui3-button');
     node.setAttribute('role', 'button');
     
-    var ATTRS = {
+    ATTRS = {
         label: {
             setter: function(val) {
                 var node = this.getDOMNode();
@@ -76,21 +78,14 @@ var Button = function(config){
             value: false,
             setter: function(value) {
                 var node = this.getDOMNode();
-                //if (value !== this.get('selected')) {
-                    if (value) {
-                        node.set('aria-selected', 'true');
-                        node.addClass('yui3-button-selected');
-                    }
-                    else {
-                        node.set('aria-selected', 'false');
-                        node.removeClass('yui3-button-selected');
-                    }
-               //}
-                /*
-                else {
-                    // Setting to same value, don't do anything (right? return false?)
+                if (value) {
+                    node.set('aria-selected', 'true');
+                    node.addClass('yui3-button-selected');
                 }
-                */
+                else {
+                    node.set('aria-selected', 'false');
+                    node.removeClass('yui3-button-selected');
+                }
             },
             validator: function(val) {
                 return Y.Lang.isBoolean(val);
@@ -98,8 +93,9 @@ var Button = function(config){
         },
         backgroundColor: {
             setter: function(color){
-                var fontColor = Button._getContrastYIQ(Button._colorToHex(color));
-                var node = this.getDOMNode();
+                var fontColor, node;
+                fontColor = Button._getContrastYIQ(Button._colorToHex(color));
+                node = this.getDOMNode();
                 node.setStyle('backgroundColor', color);
                 node.setStyle('color', fontColor);                
             }
