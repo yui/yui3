@@ -1,6 +1,5 @@
 YUI.add('button-group', function(Y) {
 
-
 var ButtonGroup = function (config) {
     
     this.buttons = new Y.ArrayList();
@@ -24,7 +23,7 @@ var ButtonGroup = function (config) {
             validator: function(val) {
                 return Y.Array.indexOf(['radio', 'checkbox'], val);
             }
-        },
+        }
     };
 
     this.addAttrs(ATTRS, config);
@@ -64,7 +63,7 @@ ButtonGroup.prototype.getSelectedValues = function() {
     selected = this.getSelectedButtons();
     Y.Array.each(selected, function(button){
         values.push(button.getDOMNode().get('value'));
-    })
+    });
     
     return values;
 };
@@ -98,12 +97,14 @@ ButtonGroup.prototype._onButtonSelectedChange = function(e) {
 };
 
 ButtonGroup.prototype._afterButtonSelectedChange = function(e) {
-    var fireChange = false;
-    var buttons = this.buttons;
+    var fireChange, buttons;
+    
+    fireChange = false;
+    buttons = this.buttons;
     
     if (this.get('type') === 'radio') {
         buttons.each(function(button){
-            if (buttons.indexOf(e.target) != buttons.indexOf(button)) {
+            if (buttons.indexOf(e.target) !== buttons.indexOf(button)) {
                 fireChange = true;
                 button.set('selected', false, {propagate:false});
             }
