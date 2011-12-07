@@ -1,15 +1,12 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <!-- reset the default browser styles -->
         <style>
 
-            /* Fix this - Shouldn't require body specificity */
             body .yui3-button-selected {
                 background-color:#426FD9;
                 color:white;
             }
-          
         </style>
       
         <script src='../../../../build/yui/yui-min.js'></script>
@@ -19,7 +16,9 @@
                 debug: true,
                 combo: false,
                 filter: 'raw'
-            }).use('button', function(Y){
+            }).use('button', 'console', function(Y){
+                
+                new Y.Console().render();
                 
                 var groupA = new Y.ButtonGroup({
                     buttons: new Y.Buttons({
@@ -43,13 +42,18 @@
                     }));
                 });
                 
-                groupB.on('selectionChange', function(e){
-                    console.log('Currently selected: ' + groupB.getSelectedValues());
+                groupA.on('selectionChange', function(){
+                    Y.log('groupA - Currently selected: ' + this.getSelectedValues());
                     //console.log(groupB.getBar());
                 });
                 
-                groupC.on('selectionChange', function(e){
-                    console.log('Currently selected: ' + groupC.getSelectedValues());
+                groupB.on('selectionChange', function(){
+                    Y.log('groupB - Currently selected: ' + groupB.getSelectedValues());
+                    //console.log(groupB.getBar());
+                });
+                
+                groupC.on('selectionChange', function(){
+                    Y.log('groupC - Currently selected: ' + groupC.getSelectedValues());
                 });
                 
             });
@@ -58,11 +62,13 @@
     
     <body class='yui3-skin-sam'>
         
+        <div id='yconsole'></div>
+        
         <h1>Button Example: Groups</h1>
         
         <hr />
         
-        <h2>Radio</h2>
+        <h2>Radio A</h2>
         <input type='button' class='radioGroupA' value='1'>
         <input type='button' class='radioGroupA' value='2'>
         <input type='button' class='radioGroupA' value='3'>
@@ -70,7 +76,7 @@
         <input type='button' class='radioGroupA' value='5'>
         <input type='button' class='radioGroupA' value='6'>
         
-        <h2>Radio</h2>
+        <h2>Radio B</h2>
         <input type='button' class='radioGroupB' value='1'>
         <input type='button' class='radioGroupB' value='2'>
         <input type='button' class='radioGroupB' value='3'>
@@ -85,5 +91,6 @@
         <input type='button' class='cbGroup' value='d'>
         <input type='button' class='cbGroup' value='e'>
         <input type='button' class='cbGroup' value='f'>
+        
     </body>
 </html>

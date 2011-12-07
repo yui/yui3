@@ -20,14 +20,16 @@
                 debug: true,
                 combo: false,
                 filter: 'raw'
-            }).use('button', function(Y){
+            }).use('button', 'console', function(Y){
+                
+                new Y.Console().render();
                 
                 var push = new Y.Button({
                     label: 'Click to select',
                     srcNode: Y.one('#push'),
                     onClick: function(e){
                         push.set('selected', true);
-                        console.log('click push')
+                        Y.log('click push')
                     }
                 });
                 
@@ -52,13 +54,15 @@
                 });
                 
                 toggle.onClick(function(e){
-                    console.log('click toggle')
+                    Y.log('click toggle')
                 });
             });
         </script>
     </head>
     
-    <body>
+    <body class='yui3-skin-sam'>
+        
+        <div id='yconsole'></div>
         
         <h1>Button Example: Basic</h1>
         

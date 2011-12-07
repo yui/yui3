@@ -9,7 +9,9 @@
                 debug: true,
                 combo: false,
                 filter: 'raw'
-            }).use('button', function(Y){
+            }).use('button', 'console', function(Y){
+                
+                new Y.Console().render();
                 
                 Y.one("#generator").on("click", function(){
                     
@@ -32,7 +34,7 @@
                     });
                     
                     group.on('selectionChange', function(e){
-                        console.log('Changed');
+                        Y.log('Changed');
                     });
                 });
                 
@@ -51,6 +53,7 @@
     
     <body class='yui3-skin-sam'>
         
+        <div id='yconsole'></div>
         
         <h1>Button Example: Generator</h1>
         
@@ -60,7 +63,6 @@
         
         Type: <input type='radio' name='type' value='radio' checked='true'> Radio
               <input type='radio' name='type' value='checkbox'> Checkbox
-              <input type='radio' name='type' value='push' checked='true'> Push
         
         <button id="generator" class="yui3-button">Make buttons!</button>
         

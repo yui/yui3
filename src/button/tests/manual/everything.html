@@ -21,8 +21,9 @@
                 debug: true,
                 combo: false,
                 filter: 'raw'
-            }).use('button', 'cssfonts', function(Y){
-
+            }).use('button', 'cssfonts', 'console', function(Y){
+                
+                new Y.Console().render();
 
                 /*
                     Just a basic test with a listener
@@ -174,10 +175,12 @@
     
     <body class='yui3-skin-sam'>
         
+        <div id='yconsole'></div>
+        
         <h1>Button prototype</h1>
         
         <hr />
-
+        
         <h2>Event</h2>
         <button id='event' tabindex='3'>Change <br /> Color</button>
         
