@@ -71,23 +71,25 @@ ButtonGroup.prototype.getSelectedValues = function() {
 
 ButtonGroup.prototype.addButton = function(button){
     button.set('type', 'toggle');
-    button.before('selectedChange', this._beforeButtonSelectedChange, this);
+    
+    if (this.get('type') === 'radio') {
+        button.before('selectedChange', this._beforeButtonSelectedChange, this);
+    }
+    
     //button.on('selectedChange', this._onButtonSelectedChange, this);
     button.after('selectedChange', this._afterButtonSelectedChange, this);
     
     this.buttons.add(button);
 };
 
+// This is only fired if the group type is a radio
 ButtonGroup.prototype._beforeButtonSelectedChange = function(e) {
-    if (this.get('type') === 'radio') {
-        var isSelected = e.target.get('selected');
-        if (isSelected) {
-            e.preventDefault();
-            return false;
-        }
-        else {
-            /* Nothing? */
-        }
+    if (e.target.get('selected')) {
+        e.preventDefault();
+        return false;
+    }
+    else {
+        /* Nothing? */
     }
 };
 
