@@ -111,7 +111,7 @@ Y.Router = Y.extend(Router, Y.Base, {
     @type RegExp
     @protected
     **/
-    _regexPathParam: /([:\*])([\w\-]*)/g,
+    _regexPathParam: /([:*])([\w\-]+)?/g,
 
     /**
     Regex that matches and captures the query portion of a URL, minus the
