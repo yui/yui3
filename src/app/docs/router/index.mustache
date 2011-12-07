@@ -430,6 +430,25 @@ router.route('*', function () {
 
 router.save('/purple/monkey/dishwasher');
 // => "Wildcard route! I match everything! I'm craaaaaaazy!"
+
+router.save('/blue/jeans/pizza');
+// => "Wildcard route! I match everything! I'm craaaaaaazy!"
+```
+
+<p>
+Wildcards can also be used within a path:
+</p>
+
+```
+router.route('/purple/*', function () {
+  Y.log("I only like purple stuffz!");
+});
+
+router.save('/purple/monkey/dishwasher');
+// => "I only like purple stuffz!"
+
+router.save('/purple/pants');
+// => "I only like purple stuffz!"
 ```
 
 <p>
