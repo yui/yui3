@@ -171,7 +171,7 @@ SWF.prototype =
 	 * ExternalInterface.
 	 * @method callSWF
 	 * @param func {String} the name of the function to call
-	 * @param args {Object} the set of arguments to pass to the function.
+	 * @param args {Array} the set of arguments to pass to the function.
 	 */
 	
 	callSWF: function (func, args)
