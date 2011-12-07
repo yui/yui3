@@ -30,7 +30,7 @@
         var script = vm.createScript(mod, url);
         var fn = script.runInThisContext(mod);
         YUI = fn(YUI);
-        cb(null);
+        cb(null, url);
     };
 
     Y.Get._include = function(url, cb) {
@@ -115,7 +115,7 @@
             url = url.replace(/'/g, '%27');
             Y.log('URL: ' + url, 'info', 'get');
             // doesn't need to be blocking, so don't block.
-            Y.Get._include(url, function(err) {
+            Y.Get._include(url, function(err, url) {
                 if (!Y.config) {
                     Y.config = {
                         debug: true
