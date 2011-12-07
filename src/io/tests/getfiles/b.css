@@ -1,0 +1,6 @@
+.get_test_b {
+    position:absolute;
+    z-index:1234;
+    /* Just for eyeballing, not used to test */
+    background-color:#00ff00;
+}
