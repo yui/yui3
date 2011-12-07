@@ -380,5 +380,5 @@ O.setValue = function(o, path, val) {
  * @since 3.2.0
  */
 O.isEmpty = function (obj) {
-    return !O.keys(obj).length;
+    return !O.keys(Object(obj)).length;
 };

@@ -265,8 +265,8 @@ proto = {
                 } else if (groups && name == 'groups') {
                     clobber(groups, attr);
                 } else if (name == 'win') {
-                    config[name] = attr.contentWindow || attr;
-                    config.doc = config[name].document;
+                    config[name] = (attr && attr.contentWindow) || attr;
+                    config.doc = config[name] ? config[name].document : null;
                 } else if (name == '_yuid') {
                     // preserve the guid
                 } else {
@@ -3040,7 +3040,7 @@ O.setValue = function(o, path, val) {
  * @since 3.2.0
  */
 O.isEmpty = function (obj) {
-    return !O.keys(obj).length;
+    return !O.keys(Object(obj)).length;
 };
 /**
  * The YUI module contains the components required for building the YUI seed
@@ -3412,7 +3412,7 @@ YUI.Env.parseUA = function(subUA) {
 Y.UA = YUI.Env.UA || YUI.Env.parseUA();
 YUI.Env.aliases = {
     "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
-    "app": ["model","model-list","router","view"],
+    "app": ["app-base","model","model-list","router","view"],
     "attribute": ["attribute-base","attribute-complex"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
