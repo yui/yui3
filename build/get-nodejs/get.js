@@ -99,7 +99,15 @@ YUI.add('get', function(Y) {
     */
     Y.Get.script = function(s, cb) {
         var A = Y.Array,
-            urls = A(s), url, i, l = urls.length;
+            urls = A(s), url, i, l = urls.length, c= 0,
+            check = function() {
+                if (c === l) {
+                    pass(cb);
+                }
+            };
+
+
+
         for (i=0; i<l; i++) {
             url = urls[i];
 
@@ -119,7 +127,8 @@ YUI.add('get', function(Y) {
                         console.log(err);
                     }
                 } else {
-                    pass(cb);
+                    c++;
+                    check();
                 }
             });
         }
