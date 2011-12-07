@@ -1,6 +1,6 @@
 /**
  * Provides standard module support for Widgets through an extension.
- * 
+ *
  * @module widget-stdmod
  */
     var L = Y.Lang,
@@ -17,7 +17,7 @@
         FOOTER = "footer",
         FILL_HEIGHT = "fillHeight",
         STDMOD = "stdmod",
-        
+
         NODE_SUFFIX = "Node",
         CONTENT_SUFFIX = "Content",
 
@@ -47,11 +47,11 @@
         UI = Y.Widget.UI_SRC;
 
     /**
-     * Widget extension, which can be used to add Standard Module support to the 
-     * base Widget class, through the <a href="Base.html#method_build">Base.build</a> 
+     * Widget extension, which can be used to add Standard Module support to the
+     * base Widget class, through the <a href="Base.html#method_build">Base.build</a>
      * method.
      * <p>
-     * The extension adds header, body and footer sections to the Widget's content box and 
+     * The extension adds header, body and footer sections to the Widget's content box and
      * provides the corresponding methods and attributes to modify the contents of these sections.
      * </p>
      * @class WidgetStdMod
@@ -68,7 +68,7 @@
 
     /**
      * Constant used to refer the the standard module header, in methods which expect a section specifier
-     * 
+     *
      * @property HEADER
      * @static
      * @type String
@@ -77,7 +77,7 @@
 
     /**
      * Constant used to refer the the standard module body, in methods which expect a section specifier
-     * 
+     *
      * @property BODY
      * @static
      * @type String
@@ -86,7 +86,7 @@
 
     /**
      * Constant used to refer the the standard module footer, in methods which expect a section specifier
-     * 
+     *
      * @property FOOTER
      * @static
      * @type String
@@ -94,7 +94,7 @@
     StdMod.FOOTER = FOOTER;
 
     /**
-     * Constant used to specify insertion position, when adding content to sections of the standard module in 
+     * Constant used to specify insertion position, when adding content to sections of the standard module in
      * methods which expect a "where" argument.
      * <p>
      * Inserts new content <em>before</em> the sections existing content.
@@ -131,15 +131,15 @@
     var STD_HEADER = StdMod.HEADER,
         STD_BODY = StdMod.BODY,
         STD_FOOTER = StdMod.FOOTER,
-        
+
         HEADER_CONTENT = STD_HEADER + CONTENT_SUFFIX,
         FOOTER_CONTENT = STD_FOOTER + CONTENT_SUFFIX,
         BODY_CONTENT = STD_BODY + CONTENT_SUFFIX;
 
     /**
-     * Static property used to define the default attribute 
+     * Static property used to define the default attribute
      * configuration introduced by WidgetStdMod.
-     * 
+     *
      * @property ATTRS
      * @type Object
      * @static
@@ -148,7 +148,7 @@
 
         /**
          * @attribute headerContent
-         * @type {String | Node}
+         * @type HTML
          * @default undefined
          * @description The content to be added to the header section. This will replace any existing content
          * in the header. If you want to append, or insert new content, use the <a href="#method_setStdModContent">setStdModContent</a> method.
@@ -159,7 +159,7 @@
 
         /**
          * @attribute footerContent
-         * @type {String | Node}
+         * @type HTML
          * @default undefined
          * @description The content to be added to the footer section. This will replace any existing content
          * in the footer. If you want to append, or insert new content, use the <a href="#method_setStdModContent">setStdModContent</a> method.
@@ -167,10 +167,10 @@
         footerContent: {
             value:null
         },
-        
+
         /**
          * @attribute bodyContent
-         * @type {String | Node}
+         * @type HTML
          * @default undefined
          * @description The content to be added to the body section. This will replace any existing content
          * in the body. If you want to append, or insert new content, use the <a href="#method_setStdModContent">setStdModContent</a> method.
@@ -178,13 +178,13 @@
         bodyContent: {
             value:null
         },
-        
+
         /**
          * @attribute fillHeight
          * @type {String}
          * @default WidgetStdMod.BODY
-         * @description The section (WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER) which should be resized to fill the height of the standard module, when a 
-         * height is set on the Widget. If a height is not set on the widget, then all sections are sized based on 
+         * @description The section (WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER) which should be resized to fill the height of the standard module, when a
+         * height is set on the Widget. If a height is not set on the widget, then all sections are sized based on
          * their content.
          */
         fillHeight: {
@@ -197,7 +197,7 @@
 
     /**
      * The HTML parsing rules for the WidgetStdMod class.
-     * 
+     *
      * @property HTML_PARSER
      * @static
      * @type Object
@@ -266,11 +266,11 @@
         _syncUIStdMod : function() {
             var stdModParsed = this._stdModParsed;
 
-            if (!stdModParsed || !stdModParsed[HEADER_CONTENT]) { 
-                this._uiSetStdMod(STD_HEADER, this.get(HEADER_CONTENT)); 
+            if (!stdModParsed || !stdModParsed[HEADER_CONTENT]) {
+                this._uiSetStdMod(STD_HEADER, this.get(HEADER_CONTENT));
             }
 
-            if (!stdModParsed || !stdModParsed[BODY_CONTENT]) { 
+            if (!stdModParsed || !stdModParsed[BODY_CONTENT]) {
                 this._uiSetStdMod(STD_BODY, this.get(BODY_CONTENT));
             }
 
@@ -310,7 +310,7 @@
         },
 
         /**
-         * Binds event listeners responsible for updating the UI state in response to 
+         * Binds event listeners responsible for updating the UI state in response to
          * Widget standard module related state changes.
          * <p>
          * This method is invoked after bindUI is invoked for the Widget class
@@ -325,7 +325,7 @@
             // this.after(FooterChange, this._afterFooterChange);
 
             this.after(FillHeightChange, this._afterFillHeightChange);
-            this.after(HeightChange, this._fillHeight);            
+            this.after(HeightChange, this._fillHeight);
             this.after(ContentUpdate, this._fillHeight);
         },
 
@@ -374,7 +374,7 @@
         /**
          * Default attribute change listener for the fillHeight attribute, responsible
          * for updating the UI, in response to attribute changes.
-         * 
+         *
          * @method _afterFillHeightChange
          * @protected
          * @param {EventFacade} e The event facade for the attribute change
@@ -384,7 +384,7 @@
         },
 
         /**
-         * Default validator for the fillHeight attribute. Verifies that the 
+         * Default validator for the fillHeight attribute. Verifies that the
          * value set is a valid section specifier - one of WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER,
          * or a falsey value if fillHeight is to be disabled.
          *
@@ -394,14 +394,14 @@
          * @return true if valid, false if not
          */
         _validateFillHeight : function(val) {
-            return !val || val == StdMod.BODY || val == StdMod.HEADER || val == StdMod.FOOTER;    
+            return !val || val == StdMod.BODY || val == StdMod.HEADER || val == StdMod.FOOTER;
         },
 
         /**
-         * Updates the rendered UI, to resize the provided section so that the standard module fills out 
-         * the specified widget height. Note: This method does not check whether or not a height is set 
+         * Updates the rendered UI, to resize the provided section so that the standard module fills out
+         * the specified widget height. Note: This method does not check whether or not a height is set
          * on the Widget.
-         * 
+         *
          * @method _uiSetFillHeight
          * @protected
          * @param {String} fillSection A valid section specifier - one of WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER
@@ -425,7 +425,7 @@
          * Updates the rendered UI, to resize the current section specified by the fillHeight attribute, so
          * that the standard module fills out the Widget height. If a height has not been set on Widget,
          * the section is not resized (height is set to "auto").
-         * 
+         *
          * @method _fillHeight
          * @private
          */
@@ -433,7 +433,7 @@
             if (this.get(FILL_HEIGHT)) {
                 var height = this.get(HEIGHT);
                 if (height != EMPTY && height != AUTO) {
-                    this.fillHeight(this._currFillNode);    
+                    this.fillHeight(this._currFillNode);
                 }
             }
         },
@@ -442,17 +442,17 @@
          * Updates the rendered UI, adding the provided content (either an HTML string, or node reference),
          * to the specified section. The content is either added before, after or replaces existing content
          * in the section, based on the value of the <code>where</code> argument.
-         * 
+         *
          * @method _uiSetStdMod
          * @protected
-         * 
-         * @param {String} section The section to be updated. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER. 
+         *
+         * @param {String} section The section to be updated. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.
          * @param {String | Node} content The new content (either as an HTML string, or Node reference) to add to the section
          * @param {String} where Optional. Either WidgetStdMod.AFTER, WidgetStdMod.BEFORE or WidgetStdMod.REPLACE.
          * If not provided, the content will replace existing content in the section.
          */
         _uiSetStdMod : function(section, content, where) {
-            // Using isValue, so that "" is valid content 
+            // Using isValue, so that "" is valid content
             if (L.isValue(content)) {
                 var node = this.getStdModNode(section) || this._renderStdMod(section);
 
@@ -546,12 +546,12 @@
 
         /**
          * Helper method to add content to a StdMod section node.
-         * The content is added either before, after or replaces the existing node content 
+         * The content is added either before, after or replaces the existing node content
          * based on the value of the <code>where</code> argument.
-         * 
+         *
          * @method _addStdModContent
          * @private
-         * 
+         *
          * @param {Node} node The section Node to be updated.
          * @param {Node|NodeList|String} children The new content Node, NodeList or String to be added to section Node provided.
          * @param {String} where Optional. Either WidgetStdMod.AFTER, WidgetStdMod.BEFORE or WidgetStdMod.REPLACE.
@@ -568,7 +568,7 @@
                     where = undefined;
                     break;
                 default:            // replace is replace, not specified is replace
-                    where = StdMod.REPLACE; 
+                    where = StdMod.REPLACE;
             }
 
             node.insert(children, where);
@@ -600,7 +600,7 @@
         /**
          * Helper method to to find the rendered node for the given section,
          * if it exists.
-         * 
+         *
          * @method _findStdModSection
          * @private
          * @param {String} section The section for which the render Node is to be found. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.
@@ -637,17 +637,17 @@
         },
 
         /**
-         * This method is injected before the _applyParsedConfig step in 
-         * the application of HTML_PARSER, and sets up the state to 
+         * This method is injected before the _applyParsedConfig step in
+         * the application of HTML_PARSER, and sets up the state to
          * identify whether or not we should remove the current DOM content
          * or not, based on whether or not the current content attribute value
          * was extracted from the DOM, or provided by the user configuration
-         * 
+         *
          * @method _applyStdModParsedConfig
          * @private
          */
         _applyStdModParsedConfig : function(node, cfg, parsedCfg) {
-            var parsed = this._stdModParsed; 
+            var parsed = this._stdModParsed;
             if (parsed) {
                 parsed[HEADER_CONTENT] = !(HEADER_CONTENT in cfg) && (HEADER_CONTENT in parsed);
                 parsed[BODY_CONTENT] = !(BODY_CONTENT in cfg) && (BODY_CONTENT in parsed);
@@ -657,7 +657,7 @@
 
         /**
          * Retrieves the child nodes (content) of a standard module section
-         * 
+         *
          * @method _getStdModContent
          * @private
          * @param {String} section The standard module section whose child nodes are to be retrieved. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.
@@ -688,7 +688,7 @@
         /**
          * Returns the node reference for the given section. Note: The DOM is not queried for the node reference. The reference
          * stored by the widget instance is returned if set.
-         * 
+         *
          * @method getStdModNode
          * @param {String} section The section whose node reference is required. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.
          * @return {Node} The node reference for the section, or null if not set.
@@ -698,15 +698,15 @@
         },
 
         /**
-         * Sets the height on the provided header, body or footer element to 
-         * fill out the height of the Widget. It determines the height of the 
-         * widgets bounding box, based on it's configured height value, and 
-         * sets the height of the provided section to fill out any 
-         * space remaining after the other standard module section heights 
+         * Sets the height on the provided header, body or footer element to
+         * fill out the height of the Widget. It determines the height of the
+         * widgets bounding box, based on it's configured height value, and
+         * sets the height of the provided section to fill out any
+         * space remaining after the other standard module section heights
          * have been accounted for.
-         * 
-         * <p><strong>NOTE:</strong> This method is not designed to work if an explicit 
-         * height has not been set on the Widget, since for an "auto" height Widget, 
+         *
+         * <p><strong>NOTE:</strong> This method is not designed to work if an explicit
+         * height has not been set on the Widget, since for an "auto" height Widget,
          * the heights of the header/body/footer will drive the height of the Widget.</p>
          *
          * @method fillHeight
@@ -743,9 +743,9 @@
                     }
 
                     cbContentHeight = contentBox.get(OFFSET_HEIGHT) -
-                            parseInt(contentBox.getComputedStyle("paddingTop"), 10) - 
-                            parseInt(contentBox.getComputedStyle("paddingBottom"), 10) - 
-                            parseInt(contentBox.getComputedStyle("borderBottomWidth"), 10) - 
+                            parseInt(contentBox.getComputedStyle("paddingTop"), 10) -
+                            parseInt(contentBox.getComputedStyle("paddingBottom"), 10) -
+                            parseInt(contentBox.getComputedStyle("borderBottomWidth"), 10) -
                             parseInt(contentBox.getComputedStyle("borderTopWidth"), 10);
 
                     if (L.isNumber(cbContentHeight)) {

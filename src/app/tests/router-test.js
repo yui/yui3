@@ -674,6 +674,30 @@ routerSuite.add(new Y.Test.Case({
         Assert.areSame(2, calls);
     },
 
+    'routes containing a "*" should match the segments which follow it': function () {
+        var calls  = 0,
+            router = this.router = new Y.Router();
+
+        router.route('/foo/*', function (req) {
+            calls += 1;
+        });
+
+        router.route('/foo/*/bar', function (req) {
+            calls += 1;
+        });
+
+        router.route('/bar*', function (req) {
+            calls += 1;
+        });
+
+        router._dispatch('/foo/1', {});
+        router._dispatch('/foo/1/2/bar', {});
+        router._dispatch('/barbar', {});
+        router._dispatch('/bar/1', {});
+
+        Assert.areSame(4, calls);
+    },
+
     'multiple routers should be able to coexist and have duplicate route handlers': function () {
         var calls = 0,
             routerOne = this.router  = new Y.Router(),

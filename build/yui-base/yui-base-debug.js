@@ -265,8 +265,8 @@ proto = {
                 } else if (groups && name == 'groups') {
                     clobber(groups, attr);
                 } else if (name == 'win') {
-                    config[name] = attr.contentWindow || attr;
-                    config.doc = config[name].document;
+                    config[name] = (attr && attr.contentWindow) || attr;
+                    config.doc = config[name] ? config[name].document : null;
                 } else if (name == '_yuid') {
                     // preserve the guid
                 } else {
@@ -3040,7 +3040,7 @@ O.setValue = function(o, path, val) {
  * @since 3.2.0
  */
 O.isEmpty = function (obj) {
-    return !O.keys(obj).length;
+    return !O.keys(Object(obj)).length;
 };
 /**
  * The YUI module contains the components required for building the YUI seed
@@ -3685,6 +3685,7 @@ Y.Get = Get = {
     @method abort
     @param {Get.Transaction} transaction Transaction to abort.
     @deprecated Use the `abort()` method on the transaction instead.
+    @static
     **/
     abort: function (transaction) {
         var i, id, item, len;
@@ -3780,11 +3781,12 @@ Y.Get = Get = {
         callbacks (`onSuccess`, `onFailure`, etc.) specified in the `options`
         object.
 
-        @param {Array|null} err Array of errors that occurred during the
-            transaction, or `null` on success.
-        @param {Get.Transaction} Transaction object.
+        @param {Array|null} callback.err Array of errors that occurred during
+            the transaction, or `null` on success.
+        @param {Get.Transaction} callback.transaction Transaction object.
 
     @return {Get.Transaction} Transaction object.
+    @static
     **/
     css: function (urls, options, callback) {
         return this._load('css', urls, options, callback);
@@ -3858,12 +3860,13 @@ Y.Get = Get = {
         callbacks (`onSuccess`, `onFailure`, etc.) specified in the `options`
         object.
 
-        @param {Array|null} err Array of errors that occurred during the
-            transaction, or `null` on success.
-        @param {Get.Transaction} Transaction object.
+        @param {Array|null} callback.err Array of errors that occurred during
+            the transaction, or `null` on success.
+        @param {Get.Transaction} callback.transaction Transaction object.
 
     @return {Get.Transaction} Transaction object.
     @since 3.5.0
+    @static
     **/
     js: function (urls, options, callback) {
         return this._load('js', urls, options, callback);
@@ -3911,6 +3914,7 @@ Y.Get = Get = {
 
     @return {Get.Transaction} Transaction object.
     @since 3.5.0
+    @static
     **/
     load: function (urls, options, callback) {
         return this._load(null, urls, options, callback);
@@ -3925,6 +3929,7 @@ Y.Get = Get = {
     @param {Number} threshold Purge threshold to use, in milliseconds.
     @protected
     @since 3.5.0
+    @static
     **/
     _autoPurge: function (threshold) {
         if (threshold && this._purgeNodes.length >= threshold) {
@@ -3941,6 +3946,7 @@ Y.Get = Get = {
     @return {Object} Environment information.
     @protected
     @since 3.5.0
+    @static
     **/
     _getEnv: function () {
         var doc = Y.config.doc,
@@ -4126,7 +4132,7 @@ Y.Get = Get = {
 /**
 Alias for `js()`.
 
-@method js
+@method script
 @static
 **/
 Get.script = Get.js;
