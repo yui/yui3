@@ -265,8 +265,8 @@ proto = {
                 } else if (groups && name == 'groups') {
                     clobber(groups, attr);
                 } else if (name == 'win') {
-                    config[name] = attr.contentWindow || attr;
-                    config.doc = config[name].document;
+                    config[name] = (attr && attr.contentWindow) || attr;
+                    config.doc = config[name] ? config[name].document : null;
                 } else if (name == '_yuid') {
                     // preserve the guid
                 } else {
@@ -3441,9 +3441,8 @@ YUI.add('get', function(Y) {
 
     /**
     * NodeJS specific Get module used to load remote resources. It contains the same signature as the default Get module so there is no code change needed.
-    * Note: There is an added method called Get.domScript, which is the same as Get.script in a browser, it simply loads the script into the dom tree
-    * so that you can call outerHTML on the document to print it to the screen.
     * @module get-nodejs
+    * @class GetNodeJS
     */
         
     var path = require('path'),
@@ -3454,26 +3453,81 @@ YUI.add('get', function(Y) {
         https = require('https');
 
     Y.Get = function() {};
+
+    //Setup the default config base path
     Y.config.base = path.join(__dirname, '../');
 
-
+    /**
+    * Get the port number from a URL based on the port from the URL module or http(s)
+    * @method urlInfoPort
+    * @param {Object} urlInfo Info from `require('url').parse(url)`
+    * @return {Number} The port number
+    */
     Y.Get.urlInfoPort = function(urlInfo) {
         return urlInfo.port ? parseInt(urlInfo.port, 10) :
             urlInfo.protocol === 'http:' ? 80 : 443;
     };
 
     
+    YUI.require = require;
+    YUI.process = process;
     
+    /**
+    * Escape the path for Windows, they need to be double encoded when used as `__dirname` or `__filename`
+    * @method escapeWinPath
+    * @protected
+    * @param {String} p The path to modify
+    * @return {String} The encoded path
+    */
+    var escapeWinPath = function(p) {
+        return p.replace(/\\/g, '\\\\');
+    };
 
+    /**
+    * Takes the raw JS files and wraps them to be executed in the YUI context so they can be loaded
+    * into the YUI object
+    * @method _exec
+    * @private
+    * @param {String} data The JS to execute
+    * @param {String} url The path to the file that was parsed
+    * @param {Callback} cb The callback to execute when this is completed
+    * @param {Error} cb.err=null Error object
+    * @param {String} cb.url The URL that was just parsed
+    */
 
     Y.Get._exec = function(data, url, cb) {
-        var mod = "(function(YUI) { " + data + ";return YUI; })";
+        var dirName = escapeWinPath(path.dirname(file));
+        var fileName = escapeWinPath(file);
+
+        if (dirName.match(/^https?:\/\//)) {
+            dirName = '.';
+            fileName = 'remoteResource';
+        }
+
+        var mod = "(function(YUI) { var __dirname = '" + dirName + "'; "+
+            "var __filename = '" + fileName + "'; " +
+            "var process = YUI.process;" +
+            "var require = function(file) {" +
+            " if (file.indexOf('./') === 0) {" +
+            "   file = __dirname + file.replace('./', '/'); }" +
+            " return YUI.require(file); }; " +
+            data + " ;return YUI; })";
+    
+        //var mod = "(function(YUI) { " + data + ";return YUI; })";
         var script = vm.createScript(mod, url);
         var fn = script.runInThisContext(mod);
         YUI = fn(YUI);
-        cb(null);
+        cb(null, url);
     };
-
+    
+    /**
+    * Fetches the content from a remote URL or a file from disc and passes the content
+    * off to `_exec` for parsing
+    * @method _include
+    * @private
+    * @param {String} url The URL/File path to fetch the content from
+    * @param {Callback} cb The callback to fire once the content has been executed via `_exec`
+    */
     Y.Get._include = function(url, cb) {
         if (url.match(/^https?:\/\//)) {
             var u = n_url.parse(url, parseQueryString=false),
@@ -3535,6 +3589,9 @@ YUI.add('get', function(Y) {
 
     /**
     * Override for Get.script for loading local or remote YUI modules.
+    * @method script
+    * @param {Array|String} s The URL's to load into this context
+    * @param {Callback} cb The callback to execute once the transaction is complete.
     */
     Y.Get.script = function(s, cb) {
         var A = Y.Array,
@@ -3552,7 +3609,7 @@ YUI.add('get', function(Y) {
 
             url = url.replace(/'/g, '%27');
             // doesn't need to be blocking, so don't block.
-            Y.Get._include(url, function(err) {
+            Y.Get._include(url, function(err, url) {
                 if (!Y.config) {
                     Y.config = {
                         debug: true
