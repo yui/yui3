@@ -639,24 +639,10 @@ Y.Get = Get = {
     _purge: function (nodes) {
         var purgeNodes    = this._purgeNodes,
             isTransaction = nodes !== purgeNodes,
-            attr, index, node, parent;
+            index, node;
 
-        while (node = nodes.pop()) {
-            parent = node.parentNode;
-
-            if (node.clearAttributes) {
-                // IE.
-                node.clearAttributes();
-            } else {
-                // Everyone else.
-                for (attr in node) {
-                    if (node.hasOwnProperty(attr)) {
-                        delete node[attr];
-                    }
-                }
-            }
-
-            parent && parent.removeChild(node);
+        while (node = nodes.pop()) { // assignment
+            node.parentNode && node.parentNode.removeChild(node);
 
             // If this is a transaction-level purge and this node also exists in
             // the Get-level _purgeNodes array, we need to remove it from
