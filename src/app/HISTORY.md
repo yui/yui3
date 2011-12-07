@@ -4,6 +4,10 @@ App Framework Change History
 3.5.0
 -----
 
+### App
+
+* Initial release.
+
 ### Model
 
 * [!] The `validate()` method is now asynchronous, and is expected to call a
