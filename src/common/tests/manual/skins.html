@@ -75,6 +75,7 @@
             <div id="buttons-skin" class="yui3-u">
                 <button id="sam" class="yui3-button yui3-button-selected">Sam</button>
                 <button id="night" class="yui3-button">Night</button>
+                <button id="togglebkg" class="yui3-button">Toggle HTML Bkg Color</button>
             </div>
 
             <div id="buttons-dir" class="yui3-u">
@@ -351,6 +352,14 @@ YUI({filter: 'raw'}).use('tabview', 'datatable-sort', 'calendar', 'panel', 'dial
 
         night: function(e) {
             Y.one('body').replaceClass('yui3-skin-sam', 'yui3-skin-night');
+        },
+        
+        togglebkg: function(e) {
+            if(Y.one('html').getStyle('backgroundColor') === "rgb(255, 255, 255)"){
+                Y.one('html').setStyle('backgroundColor',  "rgb(0, 0, 0)");
+            }else{
+                Y.one('html').setStyle('backgroundColor',  "rgb(255, 255, 255)");
+            }
         },
 
         rtl: function(e) {
