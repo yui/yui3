@@ -55,8 +55,8 @@
     */
 
     Y.Get._exec = function(data, url, cb) {
-        var dirName = escapeWinPath(path.dirname(file));
-        var fileName = escapeWinPath(file);
+        var dirName = escapeWinPath(path.dirname(url));
+        var fileName = escapeWinPath(url);
 
         if (dirName.match(/^https?:\/\//)) {
             dirName = '.';
