@@ -103,13 +103,13 @@ Y.Router = Y.extend(Router, Y.Base, {
          should only match a single level of a path, or `*` for splat parameters
          that should match any number of path levels.
 
-      2. Parameter name.
+      2. Parameter name, if specified, otherwise it is a wildcard match.
 
     @property _regexPathParam
     @type RegExp
     @protected
     **/
-    _regexPathParam: /([:*])([\w\-]+)/g,
+    _regexPathParam: /([:\*])([\w\-]*)/g,
 
     /**
     Regex that matches and captures the query portion of a URL, minus the
@@ -648,6 +648,12 @@ Y.Router = Y.extend(Router, Y.Base, {
         }
 
         path = path.replace(this._regexPathParam, function (match, operator, key) {
+            // Only `*` operators are supported for key-less matches to allowing
+            // in-path wildcards like: '/foo/*'.
+            if (!key) {
+                return operator === '*' ? '.*' : match;
+            }
+
             keys.push(key);
             return operator === '*' ? '(.*?)' : '([^/]*)';
         });
