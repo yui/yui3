@@ -32,6 +32,7 @@ var Button = function(config){
     var node, ATTRS;
     
     this._srcNode = Y.one(config.srcNode);
+    this._clickHandler = false;
     
     node = this._srcNode;
     node.addClass('yui3-button');
@@ -47,15 +48,21 @@ var Button = function(config){
         type: { 
             value: 'push',
             validator: function(val) {
-                return Y.Array.indexOf(['push', 'toggle'], val);
+                var valid = Y.Array.indexOf(['push', 'toggle'], val) !== -1 ? true : false;
+                return valid;
             },
             setter: function(val) {
                 if (val === "toggle") {
                     var node = this.getDOMNode();
-                    node.on('click', function(){
-                        var button = this;
-                        button.set('selected', !this.get('selected'));
+                    this._clickHandler = node.on('click', function(){
+                        this.set('selected', !this.get('selected'));
                     }, this);
+                }
+                else {
+                    if (this._clickHandler) {
+                        this._clickHandler.detach();
+                        this._clickHandler = false;
+                    }
                 }
             }
         },
