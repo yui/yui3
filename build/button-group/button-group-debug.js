@@ -44,6 +44,10 @@ var ButtonGroup = function (config) {
     }
 };
 
+ButtonGroup.prototype.getButtons = function() {
+    return this.buttons._items;
+};
+
 ButtonGroup.prototype.getSelectedButtons = function() {
 
     var selected = [], buttons;
