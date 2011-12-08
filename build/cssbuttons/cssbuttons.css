@@ -30,7 +30,8 @@
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#80ffffff', endColorstr='#00ffffff', GradientType=0);
     text-shadow: 0 1px 0 rgba(255,255,255, 0.30);
     text-decoration: none;
-    border: 0;
+    border: none;
+    *border: solid 1px #999;
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
@@ -89,20 +90,6 @@
     -moz-box-shadow: 0 0 0 1px rgba(0,0,0, 0.25) inset;
     box-shadow: 0 0 0 1px rgba(0,0,0, 0.25) inset;
 }
-
-
-.yui3-button-focused{
-    /* TODO */
-    color:pink;
-}
-
-
-.yui3-button.primary{
-    color: #fff;
-    background-color: #0064cd;
-    text-shadow: 0 -1px 0 rgba(0,0,0, 0.30);
-}
-
 
 
 .yui3-button::-moz-focus-inner{
