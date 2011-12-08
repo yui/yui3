@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- reset the default browser styles -->
+        <style>
+            
+            .yui3-button-icon {
+                background-repeat: no-repeat;
+                display: inline-block;
+                height: 20px;
+                vertical-align: middle;
+                width: 20px;
+            }
+            
+            .yui3-button-icon {
+                background-image: url("../../assets/icon-sprite-dark-and-light-24.png");
+            }
+
+            .yui3-button-icon-bold {
+              background-position: 1px -1px;
+            }
+
+            .yui3-button-icon-italic {
+              background-position: 1px -37px;
+            }
+
+            .yui3-button-icon-underline {
+              background-position: 1px -73px;
+            }
+        </style>
+      
+        <script src='../../../../build/yui/yui-min.js'></script>
+
+        <script>
+
+            YUI({
+                base: '../../../../build/',
+                debug: true,
+                combo: false,
+                filter: 'raw'
+            }).use('button', 'cssfonts', function(Y){
+                
+            });
+        </script>
+    </head>
+    
+    <body>
+        
+        <h1>Button Example: Icons</h1>
+        
+        <button class="yui3-button">
+            <span class="yui3-button-icon yui3-button-icon-bold"></span>
+        </button>
+        
+        <button class="yui3-button">
+            <span class="yui3-button-icon yui3-button-icon-bold"></span>
+            Bold
+        </button>
+        
+        <br /><br />
+        
+        <button class="yui3-button">
+            <span class="yui3-button-icon yui3-button-icon-italic"></span>
+        </button>
+        
+        <button class="yui3-button">
+            <span class="yui3-button-icon yui3-button-icon-italic"></span>
+            Italic
+        </button>
+        
+        <br /><br />
+        
+        <button class="yui3-button">
+            <span class="yui3-button-icon yui3-button-icon-underline"></span>
+        </button>
+        
+        <button class="yui3-button">
+            <span class="yui3-button-icon yui3-button-icon-underline"></span>
+            Underline
+        </button>
+        
+    </body>
+</html>

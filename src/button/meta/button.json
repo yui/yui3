@@ -1,0 +1,29 @@
+{
+    "button": {
+        "use": [
+             "button-base",
+             "button-group",
+             "cssbuttons"
+         ],
+        "submodules": {
+            "button-base": {
+                "requires": [
+                    "attribute",
+                    "node",
+                    "arraylist",
+                    "arraylist-add",
+                    "array-extras",
+                    "event-focus"
+                ]
+            }, 
+            "button-group": {
+                "requires": [
+                    "button-base"
+                ]
+            }, 
+            "cssbuttons": {
+                "type": "css"
+            }
+        }
+    }
+}

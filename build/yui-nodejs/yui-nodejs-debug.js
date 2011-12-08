@@ -3416,6 +3416,7 @@ YUI.Env.aliases = {
     "attribute": ["attribute-base","attribute-complex"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
+    "button": ["button-base","button-group","cssbuttons"],
     "cache": ["cache-base","cache-offline","cache-plugin"],
     "collection": ["array-extras","arraylist","arraylist-add","arraylist-filter","array-invoke"],
     "controller": ["router"],
@@ -7111,6 +7112,28 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "pluginhost"
         ]
     }, 
+    "button": {
+        "use": [
+            "button-base", 
+            "button-group", 
+            "cssbuttons"
+        ]
+    }, 
+    "button-base": {
+        "requires": [
+            "attribute", 
+            "node", 
+            "arraylist", 
+            "arraylist-add", 
+            "array-extras", 
+            "event-focus"
+        ]
+    }, 
+    "button-group": {
+        "requires": [
+            "button-base"
+        ]
+    }, 
     "cache": {
         "use": [
             "cache-base", 
@@ -7260,6 +7283,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "cssfonts-context", 
             "cssgrids-context"
         ], 
+        "type": "css"
+    }, 
+    "cssbuttons": {
         "type": "css"
     }, 
     "cssfonts": {
@@ -8966,7 +8992,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'c075c6b01045f120558254c68a43f92e';
+YUI.Env[Y.version].md5 = 'c85105bc509660cb12992d3b414548f7';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
