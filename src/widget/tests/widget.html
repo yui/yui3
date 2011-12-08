@@ -1163,6 +1163,9 @@
 
                     "on:renderedChange", 
                     "after:renderedChange",
+                    
+                    "on:focusedChange",
+                    "after:focusedChange",
 
                     "on:visibleChange",
                     "after:visibleChange",
@@ -1181,9 +1184,6 @@
                     
                     "on:tabIndexChange",
                     "after:tabIndexChange",
-                    
-                    "on:focusedChange",
-                    "after:focusedChange",
 
                     "on:destroyedChange",
                     "after:destroyedChange"
@@ -1216,15 +1216,15 @@
                 w.set("srcNode", Y.Node.one("<span>"));
                 w.set("id", Y.Node.one("foo"));
 
+                // focused is readOnly, need to go through the focus/blur API
+                w.focus();
+
                 w.set("visible", false);
                 w.set("disabled", true);
                 w.set("height", "100px");
                 w.set("width", "100px");
                 w.set("strings", {newStrings: "foo"});
                 w.set("tabIndex", 7);
-
-                // focused is readOnly, need to go through the focus/blur API
-                w.focus();
 
                 w.destroy();
                 

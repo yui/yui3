@@ -14,6 +14,7 @@
     <link type="text/css" rel="stylesheet" href="../../../../build/scrollview-list/assets/skins/night/scrollview-list.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/scrollview-scrollbars/assets/skins/night/scrollview-scrollbars.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/panel/assets/skins/night/panel.css" charset="utf-8">
+    <link type="text/css" rel="stylesheet" href="../../../../build/node-menunav/assets/skins/night/node-menunav.css" charset="utf-8">
 
     <!--
     <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/gallery-2011.08.04-15-16/build/gallerycss-cssbutton/gallerycss-cssbutton.css" charset="utf-8">
@@ -74,6 +75,7 @@
             <div id="buttons-skin" class="yui3-u">
                 <button id="sam" class="yui3-button yui3-button-selected">Sam</button>
                 <button id="night" class="yui3-button">Night</button>
+                <button id="togglebkg" class="yui3-button">Toggle HTML Bkg Color</button>
             </div>
 
             <div id="buttons-dir" class="yui3-u">
@@ -264,7 +266,7 @@
         
                             <li>
         
-                                <a class="yui3-menu-label" href="#find-info">Find Info (horiz menu)</a>
+                                <a class="yui3-menu-label" href="#find-info">Find Info</a>
                                 <div id="find-info" class="yui3-menu">
                                     <div class="yui3-menu-content">
                                         <ul>
@@ -291,6 +293,54 @@
                 </div>
             </div>      
 <!-- end menu nav horizontal-->
+<!-- MenuNav horiz split button-->
+            <div class="yui3-u">
+                <div id="menu-1" class="yui3-menu yui3-menu-horizontal yui3-splitbuttonnav"><!-- Bounding box -->
+                    <div class="yui3-menu-content"><!-- Content box -->
+                        <ul>
+                            <li>
+                
+                                <span class="yui3-menu-label"><!-- menu label root node -->
+                                    <a href="http://answers.yahoo.com">Answers</a><!-- menu label default action -->
+                                    <a href="#answers-options" class="yui3-menu-toggle">Answers Options</a><!-- menu label submenu toggle -->
+                                </span>
+                
+                                <div id="answers-options" class="yui3-menu">
+                                    <div class="yui3-menu-content">
+                                        <ul>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://answers.yahoo.com/dir/">Answer</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://answersonthestreet.yahoo.com/">Answers on the Street</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://answers.yahoo.com/question/;_ylt=Av3Nt22Mr7YNs651NWFv8YUPzKIX;_ylv=3?link=ask">Ask</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://answers.yahoo.com/dir/;_ylt=Aqp_jJlsYDP7urcq2WGC6HBJxQt.;_ylv=3?link=over&amp;amp;more=y">Discover</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                
+                            </li>
+                            <li>
+                
+                                <span class="yui3-menu-label"><!-- menu label root node -->
+                                    <a href="http://answers.yahoo.com">Answers</a><!-- menu label default action -->
+                                    <a href="#answers-options" class="yui3-menu-toggle">Answers Options</a><!-- menu label submenu toggle -->
+                                </span>
+                
+                                <div id="answers-options" class="yui3-menu">
+                                    <div class="yui3-menu-content">
+                                        <ul>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://answers.yahoo.com/dir/">Answer</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://answersonthestreet.yahoo.com/">Answers on the Street</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://answers.yahoo.com/question/;_ylt=Av3Nt22Mr7YNs651NWFv8YUPzKIX;_ylv=3?link=ask">Ask</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://answers.yahoo.com/dir/;_ylt=Aqp_jJlsYDP7urcq2WGC6HBJxQt.;_ylv=3?link=over&amp;amp;more=y">Discover</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>      
+<!-- end menu nav horizontal split button-->
         </div>      
     </div> 
 <script>
@@ -302,6 +352,14 @@ YUI({filter: 'raw'}).use('tabview', 'datatable-sort', 'calendar', 'panel', 'dial
 
         night: function(e) {
             Y.one('body').replaceClass('yui3-skin-sam', 'yui3-skin-night');
+        },
+        
+        togglebkg: function(e) {
+            if(Y.one('html').getStyle('backgroundColor') === "rgb(255, 255, 255)"){
+                Y.one('html').setStyle('backgroundColor',  "rgb(0, 0, 0)");
+            }else{
+                Y.one('html').setStyle('backgroundColor',  "rgb(255, 255, 255)");
+            }
         },
 
         rtl: function(e) {
@@ -389,6 +447,8 @@ YUI({filter: 'raw'}).use('tabview', 'datatable-sort', 'calendar', 'panel', 'dial
 
     Y.one('#demo-menunav').plug(Y.Plugin.NodeMenuNav);
     Y.one('#demo-menunav-horiz').plug(Y.Plugin.NodeMenuNav);
+    var menu = Y.one("#menu-1");
+    menu.plug(Y.Plugin.NodeMenuNav, { autoSubmenuDisplay: false, mouseOutHideDelay: 0 });
 
     // what if...
     // Y.Menu('#demo-menu');
