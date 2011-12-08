@@ -1,8 +1,11 @@
-YUI.add('get-test', function(Y) {
-    Y.GetTests = new Y.Test.Suite("Get Suite");
+YUI.add('get-test', function (Y) {
+    Y.GetTests = new Y.Test.Suite("Y.Get");
     Y.GetTests.TEST_FILES_BASE = "getfiles/";
 
-    var FILENAME = /[abc]\.js/,
+    var ArrayAssert = Y.ArrayAssert,
+        Assert      = Y.Assert,
+
+        FILENAME = /[abc]\.js/,
         ua       = Y.UA,
 
         supports = {
@@ -37,8 +40,9 @@ YUI.add('get-test', function(Y) {
         return urls;
     }
 
-    Y.GetTests.Scripts = new Y.Test.Case({
-        name: "Script Tests",
+    // -- Basic JS loading -----------------------------------------------------
+    Y.GetTests.BasicJS = new Y.Test.Case({
+        name: "Basic JS loading",
 
         setUp: function() {
             G_SCRIPTS = [];
@@ -97,17 +101,17 @@ YUI.add('get-test', function(Y) {
                     test.resume(function() {
                         counts.success++;
 
-                        Y.Assert.areEqual("a.js", G_SCRIPTS[0], "a.js does not seem to be loaded");
-                        Y.ArrayAssert.itemsAreEqual(G_SCRIPTS, progress, "Progress does not match G_SCRIPTS");
+                        Assert.areEqual("a.js", G_SCRIPTS[0], "a.js does not seem to be loaded");
+                        ArrayAssert.itemsAreEqual(G_SCRIPTS, progress, "Progress does not match G_SCRIPTS");
 
-                        Y.Assert.areEqual(1, G_SCRIPTS.length, "More/Less than 1 script was loaded");
-                        Y.Assert.areEqual(1, counts.success, "onSuccess called more than once");
+                        Assert.areEqual(1, G_SCRIPTS.length, "More/Less than 1 script was loaded");
+                        Assert.areEqual(1, counts.success, "onSuccess called more than once");
 
                         areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
-                        Y.Assert.areEqual(trans.tId, o.tId, "Payload has unexpected tId");
-                        Y.Assert.areEqual(1, o.nodes.length, "Payload nodes property has unexpected length");
+                        Assert.areEqual(trans.id, o.id, "Payload has unexpected id");
+                        Assert.areEqual(1, o.nodes.length, "Payload nodes property has unexpected length");
 
-                        Y.Assert.areEqual("foo", context.bar, "Callback context not set");
+                        Assert.areEqual("foo", context.bar, "Callback context not set");
 
                         test.o = o;
                     });
@@ -115,7 +119,7 @@ YUI.add('get-test', function(Y) {
 
                 onFailure: function(o) {
                     test.resume(function() {
-                        Y.Assert.fail("onFailure shouldn't have been called");
+                        Assert.fail("onFailure shouldn't have been called");
                         test.o = o;
                     });
                 }
@@ -123,8 +127,6 @@ YUI.add('get-test', function(Y) {
 
             this.wait();
         },
-
-        // TODO: need to test abort()
 
         'test: single script, failure': function() {
             var test = this;
@@ -140,7 +142,7 @@ YUI.add('get-test', function(Y) {
 
                 onSuccess: function(o) {
                     test.resume(function() {
-                        Y.Assert.fail("onSuccess shouldn't have been called");
+                        Assert.fail("onSuccess shouldn't have been called");
                         test.o = o;
                     });
                 },
@@ -151,13 +153,13 @@ YUI.add('get-test', function(Y) {
                     test.resume(function() {
                         counts.failure += 1;
 
-                        Y.Assert.areEqual(1, counts.failure, "onFailure called more than once");
+                        Assert.areEqual(1, counts.failure, "onFailure called more than once");
 
                         areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
-                        Y.Assert.areEqual(trans.tId, o.tId, "Payload has unexpected tId");
-                        Y.Assert.areEqual(1, o.nodes.length, "Payload nodes property has unexpected length");
+                        Assert.areEqual(trans.id, o.id, "Payload has unexpected id");
+                        Assert.areEqual(1, o.nodes.length, "Payload nodes property has unexpected length");
 
-                        Y.Assert.areEqual("foo", context.bar, "Callback context not set");
+                        Assert.areEqual("foo", context.bar, "Callback context not set");
 
                         test.o = o;
                     });
@@ -181,13 +183,13 @@ YUI.add('get-test', function(Y) {
 
                 onSuccess: function() {
                     counts.success++;
-                    Y.Assert.areEqual("a.js", G_SCRIPTS[0], "a.js does not seem to be loaded");
-                    Y.Assert.areEqual(1, G_SCRIPTS.length, "More/Less than 1 script was loaded");
-                    Y.Assert.areEqual(1, counts.success, "onSuccess called more than once");
+                    Assert.areEqual("a.js", G_SCRIPTS[0], "a.js does not seem to be loaded");
+                    Assert.areEqual(1, G_SCRIPTS.length, "More/Less than 1 script was loaded");
+                    Assert.areEqual(1, counts.success, "onSuccess called more than once");
                 },
 
                 onFailure: function() {
-                    Y.Assert.fail("onFailure shouldn't have been called");
+                    Assert.fail("onFailure shouldn't have been called");
                 },
 
                 onEnd: function(o) {
@@ -195,14 +197,14 @@ YUI.add('get-test', function(Y) {
 
                     test.resume(function() {
                         counts.end++;
-                        Y.Assert.areEqual(1, counts.end,"onEnd called more than once");
-                        Y.Assert.areEqual(1, counts.success, "onEnd called before onSuccess");
+                        Assert.areEqual(1, counts.end,"onEnd called more than once");
+                        Assert.areEqual(1, counts.success, "onEnd called before onSuccess");
 
                         areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
-                        Y.Assert.areEqual(trans.tId, o.tId, "Payload has unexpected tId");
-                        Y.Assert.areEqual(1, o.nodes.length, "Payload nodes property has unexpected length");
+                        Assert.areEqual(trans.id, o.id, "Payload has unexpected id");
+                        Assert.areEqual(1, o.nodes.length, "Payload nodes property has unexpected length");
 
-                        Y.Assert.areEqual("foo", context.bar, "Callback context not set");
+                        Assert.areEqual("foo", context.bar, "Callback context not set");
 
                         test.o = o;
                     });
@@ -226,11 +228,11 @@ YUI.add('get-test', function(Y) {
 
                 onFailure: function() {
                     counts.failure++;
-                    Y.Assert.isTrue(counts.failure === 1, "onFailure called more than once");
+                    Assert.isTrue(counts.failure === 1, "onFailure called more than once");
                 },
 
                 onSuccess: function() {
-                    Y.Assert.fail("onSuccess shouldn't have been called");
+                    Assert.fail("onSuccess shouldn't have been called");
                 },
 
                 onEnd : function(o) {
@@ -238,14 +240,14 @@ YUI.add('get-test', function(Y) {
 
                     test.resume(function() {
                         counts.end++;
-                        Y.Assert.areEqual(1, counts.end,"onEnd called more than once");
-                        Y.Assert.areEqual(1, counts.failure, "onEnd called before onFailure");
+                        Assert.areEqual(1, counts.end,"onEnd called more than once");
+                        Assert.areEqual(1, counts.failure, "onEnd called before onFailure");
 
                         areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
-                        Y.Assert.areEqual(trans.tId, o.tId, "Payload has unexpected tId");
-                        Y.Assert.areEqual(1, o.nodes.length, "Payload nodes property has unexpected length");
+                        Assert.areEqual(trans.id, o.id, "Payload has unexpected id");
+                        Assert.areEqual(1, o.nodes.length, "Payload nodes property has unexpected length");
 
-                        Y.Assert.areEqual("foo", context.bar, "Callback context not set");
+                        Assert.areEqual("foo", context.bar, "Callback context not set");
 
                         test.o = o;
                     });
@@ -269,7 +271,7 @@ YUI.add('get-test', function(Y) {
 
                 onFailure: function(o) {
                     test.resume(function() {
-                        Y.Assert.fail("onFailure shouldn't have been called");
+                        Assert.fail("onFailure shouldn't have been called");
                         test.o = o;
                     });
                 },
@@ -284,17 +286,17 @@ YUI.add('get-test', function(Y) {
 
                     test.resume(function() {
                         counts.success++;
-                        Y.Assert.areEqual(3, G_SCRIPTS.length, "More/Less than 3 scripts loaded");
-                        Y.ArrayAssert.itemsAreEqual(["b.js", "a.js", "c.js"], G_SCRIPTS, "Unexpected script order");
-                        Y.ArrayAssert.itemsAreEqual(G_SCRIPTS, progress, "Progress does not match G_SCRIPTS");
+                        Assert.areEqual(3, G_SCRIPTS.length, "More/Less than 3 scripts loaded");
+                        ArrayAssert.itemsAreEqual(["b.js", "a.js", "c.js"], G_SCRIPTS, "Unexpected script order");
+                        ArrayAssert.itemsAreEqual(G_SCRIPTS, progress, "Progress does not match G_SCRIPTS");
 
-                        Y.Assert.areEqual(1, counts.success, "onSuccess called more than once");
+                        Assert.areEqual(1, counts.success, "onSuccess called more than once");
 
                         areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
-                        Y.Assert.areEqual(trans.tId, o.tId, "Payload has unexpected tId");
-                        Y.Assert.areEqual(3, o.nodes.length, "Payload nodes property has unexpected length");
+                        Assert.areEqual(trans.id, o.id, "Payload has unexpected id");
+                        Assert.areEqual(3, o.nodes.length, "Payload nodes property has unexpected length");
 
-                        Y.Assert.areEqual("foo", context.bar, "Callback context not set");
+                        Assert.areEqual("foo", context.bar, "Callback context not set");
 
                         test.o = o;
                     });
@@ -317,7 +319,7 @@ YUI.add('get-test', function(Y) {
 
                 onSuccess: function(o) {
                     test.resume(function() {
-                        Y.Assert.fail("onSuccess shouldn't have been called");
+                        Assert.fail("onSuccess shouldn't have been called");
                         test.o = o;
                     });
                 },
@@ -328,13 +330,13 @@ YUI.add('get-test', function(Y) {
                     test.resume(function() {
                         counts.failure++;
 
-                        Y.Assert.areEqual(2, G_SCRIPTS.length, "More/fewer than 2 scripts loaded");
-                        Y.Assert.areEqual(1, counts.failure, "onFailure called more than once");
-                        Y.ArrayAssert.itemsAreEqual(["a.js", "c.js"], G_SCRIPTS, "Unexpected script order");
+                        Assert.areEqual(2, G_SCRIPTS.length, "More/fewer than 2 scripts loaded");
+                        Assert.areEqual(1, counts.failure, "onFailure called more than once");
+                        ArrayAssert.itemsAreEqual(["a.js", "c.js"], G_SCRIPTS, "Unexpected script order");
 
                         areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
-                        Y.Assert.areEqual(trans.tId, o.tId, "Payload has unexpected tId");
-                        Y.Assert.areEqual("foo", context.bar, "Callback context not set");
+                        Assert.areEqual(trans.id, o.id, "Payload has unexpected id");
+                        Assert.areEqual("foo", context.bar, "Callback context not set");
 
                         test.o = o;
                     });
@@ -360,10 +362,10 @@ YUI.add('get-test', function(Y) {
                 onSuccess: function() {
                     counts.success++;
 
-                    Y.Assert.areEqual(3, G_SCRIPTS.length, "More/Less than 3 scripts loaded");
-                    Y.ArrayAssert.itemsAreEqual(["c.js", "b.js", "a.js"], G_SCRIPTS,  "Unexpected script order");
-                    Y.ArrayAssert.itemsAreEqual(G_SCRIPTS, progress, "Progress does not match G_SCRIPTS");
-                    Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
+                    Assert.areEqual(3, G_SCRIPTS.length, "More/Less than 3 scripts loaded");
+                    ArrayAssert.itemsAreEqual(["c.js", "b.js", "a.js"], G_SCRIPTS,  "Unexpected script order");
+                    ArrayAssert.itemsAreEqual(G_SCRIPTS, progress, "Progress does not match G_SCRIPTS");
+                    Assert.isTrue(counts.success === 1, "onSuccess called more than once");
                 },
 
                 onProgress: function(o) {
@@ -372,7 +374,7 @@ YUI.add('get-test', function(Y) {
                 },
 
                 onFailure: function() {
-                    Y.Assert.fail("onFailure shouldn't have been called");
+                    Assert.fail("onFailure shouldn't have been called");
                 },
 
                 onEnd: function(o) {
@@ -380,14 +382,14 @@ YUI.add('get-test', function(Y) {
 
                     test.resume(function() {
                         counts.end++;
-                        Y.Assert.areEqual(1, counts.end,"onEnd called more than once");
-                        Y.Assert.areEqual(1, counts.success, "onEnd called before onSuccess");
+                        Assert.areEqual(1, counts.end,"onEnd called more than once");
+                        Assert.areEqual(1, counts.success, "onEnd called before onSuccess");
 
                         areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
-                        Y.Assert.areEqual(trans.tId, o.tId, "Payload has unexpected tId");
-                        Y.Assert.areEqual(3, o.nodes.length, "Payload nodes property has unexpected length");
+                        Assert.areEqual(trans.id, o.id, "Payload has unexpected id");
+                        Assert.areEqual(3, o.nodes.length, "Payload nodes property has unexpected length");
 
-                        Y.Assert.areEqual("foo", context.bar, "Callback context not set");
+                        Assert.areEqual("foo", context.bar, "Callback context not set");
 
                         test.o = o;
                     });
@@ -410,12 +412,12 @@ YUI.add('get-test', function(Y) {
                 context: {bar:"foo"},
 
                 onSuccess: function() {
-                    Y.Assert.fail("onSuccess shouldn't have been called");
+                    Assert.fail("onSuccess shouldn't have been called");
                 },
 
                 onFailure: function() {
                     counts.failure++;
-                    Y.Assert.areEqual(1, counts.failure, "onFailure called more than once");
+                    Assert.areEqual(1, counts.failure, "onFailure called more than once");
                 },
 
                 onEnd: function(o) {
@@ -423,15 +425,15 @@ YUI.add('get-test', function(Y) {
 
                     test.resume(function() {
                         counts.end++;
-                        Y.Assert.areEqual(1, counts.end,"onEnd called more than once");
-                        Y.Assert.areEqual(1, counts.failure, "onEnd called before onFailure");
-                        Y.Assert.areEqual(2, G_SCRIPTS.length, "More/fewer than 2 scripts loaded");
-                        Y.ArrayAssert.itemsAreEqual(["a.js", "c.js"], G_SCRIPTS, "Unexpected script order");
+                        Assert.areEqual(1, counts.end,"onEnd called more than once");
+                        Assert.areEqual(1, counts.failure, "onEnd called before onFailure");
+                        Assert.areEqual(2, G_SCRIPTS.length, "More/fewer than 2 scripts loaded");
+                        ArrayAssert.itemsAreEqual(["a.js", "c.js"], G_SCRIPTS, "Unexpected script order");
 
                         areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
-                        Y.Assert.areEqual(trans.tId, o.tId, "Payload has unexpected tId");
+                        Assert.areEqual(trans.id, o.id, "Payload has unexpected id");
 
-                        Y.Assert.areEqual("foo", context.bar, "Callback context not set");
+                        Assert.areEqual("foo", context.bar, "Callback context not set");
 
                         test.o = o;
                     });
@@ -455,7 +457,7 @@ YUI.add('get-test', function(Y) {
 
                 onFailure: function(o) {
                     test.resume(function() {
-                        Y.Assert.fail("onFailure shouldn't have been called");
+                        Assert.fail("onFailure shouldn't have been called");
                         test.o = o;
                     });
                 },
@@ -470,16 +472,16 @@ YUI.add('get-test', function(Y) {
 
                     test.resume(function() {
                         counts.success++;
-                        Y.Assert.areEqual(3, G_SCRIPTS.length, "More/Less than 3 scripts loaded");
-                        Y.ArrayAssert.itemsAreEqual(G_SCRIPTS, progress, "Progress does not match G_SCRIPTS");
-                        Y.ArrayAssert.containsItems( ["c.js", "a.js", "b.js"], G_SCRIPTS, "Unexpected script contents");
-                        Y.Assert.areEqual(1, counts.success, "onSuccess called more than once");
+                        Assert.areEqual(3, G_SCRIPTS.length, "More/Less than 3 scripts loaded");
+                        ArrayAssert.itemsAreEqual(G_SCRIPTS, progress, "Progress does not match G_SCRIPTS");
+                        ArrayAssert.containsItems( ["c.js", "a.js", "b.js"], G_SCRIPTS, "Unexpected script contents");
+                        Assert.areEqual(1, counts.success, "onSuccess called more than once");
 
                         areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
-                        Y.Assert.areEqual(trans.tId, o.tId, "Payload has unexpected tId");
-                        Y.Assert.areEqual(3, o.nodes.length, "Payload nodes property has unexpected length");
+                        Assert.areEqual(trans.id, o.id, "Payload has unexpected id");
+                        Assert.areEqual(3, o.nodes.length, "Payload nodes property has unexpected length");
 
-                        Y.Assert.areEqual("foo", context.bar, "Callback context not set");
+                        Assert.areEqual("foo", context.bar, "Callback context not set");
 
                         test.o = o;
                     });
@@ -505,13 +507,13 @@ YUI.add('get-test', function(Y) {
 
                 onSuccess: function() {
                     counts.success++;
-                    Y.Assert.areEqual(3, G_SCRIPTS.length, "More/Less than 3 scripts loaded");
-                    Y.ArrayAssert.containsItems(["a.js", "b.js", "c.js"], G_SCRIPTS, "Unexpected script contents");
-                    Y.Assert.areEqual(1, counts.success, "onSuccess called more than once");
+                    Assert.areEqual(3, G_SCRIPTS.length, "More/Less than 3 scripts loaded");
+                    ArrayAssert.containsItems(["a.js", "b.js", "c.js"], G_SCRIPTS, "Unexpected script contents");
+                    Assert.areEqual(1, counts.success, "onSuccess called more than once");
                 },
 
                 onFailure: function() {
-                    Y.Assert.fail("onFailure shouldn't have been called");
+                    Assert.fail("onFailure shouldn't have been called");
                 },
 
                 onEnd: function(o) {
@@ -519,14 +521,14 @@ YUI.add('get-test', function(Y) {
 
                     test.resume(function() {
                         counts.end++;
-                        Y.Assert.areEqual(1, counts.end,"onEnd called more than once");
-                        Y.Assert.areEqual(1, counts.success, "onEnd called before onSuccess");
+                        Assert.areEqual(1, counts.end,"onEnd called more than once");
+                        Assert.areEqual(1, counts.success, "onEnd called before onSuccess");
 
                         areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
-                        Y.Assert.areEqual(trans.tId, o.tId, "Payload has unexpected tId");
-                        Y.Assert.areEqual(3, o.nodes.length, "Payload nodes property has unexpected length");
+                        Assert.areEqual(trans.id, o.id, "Payload has unexpected id");
+                        Assert.areEqual(3, o.nodes.length, "Payload nodes property has unexpected length");
 
-                        Y.Assert.areEqual("foo", context.bar, "Callback context not set");
+                        Assert.areEqual("foo", context.bar, "Callback context not set");
 
                         test.o = o;
                     });
@@ -557,7 +559,7 @@ YUI.add('get-test', function(Y) {
 
                 onSuccess: function(o) {
                     test.resume(function() {
-                        Y.Assert.fail("onSuccess shouldn't have been called");
+                        Assert.fail("onSuccess shouldn't have been called");
                         test.o = o;
                     });
                 },
@@ -567,13 +569,13 @@ YUI.add('get-test', function(Y) {
 
                     test.resume(function() {
                         counts.failure++;
-                        Y.Assert.areEqual(1, counts.failure, "onFailure called more than once");
-                        Y.Assert.areEqual(2, G_SCRIPTS.length, "More/fewer than 2 scripts loaded");
-                        Y.ArrayAssert.containsItems(["a.js", "c.js"], G_SCRIPTS, "Unexpected script contents");
+                        Assert.areEqual(1, counts.failure, "onFailure called more than once");
+                        Assert.areEqual(2, G_SCRIPTS.length, "More/fewer than 2 scripts loaded");
+                        ArrayAssert.containsItems(["a.js", "c.js"], G_SCRIPTS, "Unexpected script contents");
 
                         areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
-                        Y.Assert.areEqual(trans.tId, o.tId, "Payload has unexpected tId");
-                        Y.Assert.areEqual("foo", context.bar, "Callback context not set");
+                        Assert.areEqual(trans.id, o.id, "Payload has unexpected id");
+                        Assert.areEqual("foo", context.bar, "Callback context not set");
 
                         test.o = o;
                     });
@@ -597,12 +599,12 @@ YUI.add('get-test', function(Y) {
                 context: {bar:"foo"},
 
                 onSuccess: function() {
-                    Y.Assert.fail("onSuccess shouldn't have been called");
+                    Assert.fail("onSuccess shouldn't have been called");
                 },
 
                 onFailure: function() {
                     counts.failure++;
-                    Y.Assert.isTrue(counts.failure === 1, "onFailure called more than once");
+                    Assert.isTrue(counts.failure === 1, "onFailure called more than once");
                 },
 
                 onEnd: function(o) {
@@ -610,14 +612,14 @@ YUI.add('get-test', function(Y) {
 
                     test.resume(function() {
                         counts.end++;
-                        Y.Assert.areEqual(1, counts.end,"onEnd called more than once");
-                        Y.Assert.areEqual(1, counts.failure, "onEnd called before onFailure");
-                        Y.Assert.areEqual(2, G_SCRIPTS.length, "More/fewer than 2 scripts loaded");
-                        Y.ArrayAssert.containsItems(["a.js", "c.js"], G_SCRIPTS, "Unexpected script contents");
+                        Assert.areEqual(1, counts.end,"onEnd called more than once");
+                        Assert.areEqual(1, counts.failure, "onEnd called before onFailure");
+                        Assert.areEqual(2, G_SCRIPTS.length, "More/fewer than 2 scripts loaded");
+                        ArrayAssert.containsItems(["a.js", "c.js"], G_SCRIPTS, "Unexpected script contents");
 
                         areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
-                        Y.Assert.areEqual(trans.tId, o.tId, "Payload has unexpected tId");
-                        Y.Assert.areEqual("foo", context.bar, "Callback context not set");
+                        Assert.areEqual(trans.id, o.id, "Payload has unexpected id");
+                        Assert.areEqual("foo", context.bar, "Callback context not set");
 
                         test.o = o;
                     });
@@ -641,7 +643,7 @@ YUI.add('get-test', function(Y) {
                         var n = Y.Node.one(o.nodes[0]);
                         var insertBefore = Y.Node.one("#insertBeforeMe");
 
-                        Y.Assert.isTrue(n.compareTo(insertBefore.previous()), "Not inserted before insertBeforeMe");
+                        Assert.isTrue(n.compareTo(insertBefore.previous()), "Not inserted before insertBeforeMe");
 
                         test.o = o;
                     });
@@ -649,7 +651,7 @@ YUI.add('get-test', function(Y) {
 
                 onFailure: function(o) {
                     test.resume(function() {
-                        Y.Assert.fail("onFailure shouldn't have been called");
+                        Assert.fail("onFailure shouldn't have been called");
                         test.o = o;
                     });
                 }
@@ -672,7 +674,7 @@ YUI.add('get-test', function(Y) {
 
                         for (var i = o.nodes.length-1; i >= 0; i--) {
                             var n = Y.Node.one(o.nodes[i]);
-                            Y.Assert.isTrue(n.compareTo(insertBefore.previous()), "Not inserted before insertBeforeMe");
+                            Assert.isTrue(n.compareTo(insertBefore.previous()), "Not inserted before insertBeforeMe");
                             insertBefore = n;
                         }
 
@@ -682,7 +684,7 @@ YUI.add('get-test', function(Y) {
 
                 onFailure: function(o) {
                     test.resume(function() {
-                        Y.Assert.fail("onFailure shouldn't have been called");
+                        Assert.fail("onFailure shouldn't have been called");
                         test.o = o;
                     });
                 }
@@ -705,7 +707,7 @@ YUI.add('get-test', function(Y) {
 
                         for (var i = o.nodes.length-1; i >= 0; i--) {
                             var n = Y.Node.one(o.nodes[i]);
-                            Y.Assert.isTrue(n.compareTo(insertBefore.previous()), "Not inserted before insertBeforeMe");
+                            Assert.isTrue(n.compareTo(insertBefore.previous()), "Not inserted before insertBeforeMe");
                             insertBefore = n;
                         }
 
@@ -715,7 +717,7 @@ YUI.add('get-test', function(Y) {
 
                 onFailure: function(o) {
                     test.resume(function() {
-                        Y.Assert.fail("onFailure shouldn't have been called");
+                        Assert.fail("onFailure shouldn't have been called");
                         test.o = o;
                     });
                 },
@@ -736,8 +738,8 @@ YUI.add('get-test', function(Y) {
 
                         var node = document.getElementById(o.nodes[0].id);
 
-                        Y.Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
-                        Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
+                        Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
+                        Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
 
                         test.o = o;
                     });
@@ -745,7 +747,7 @@ YUI.add('get-test', function(Y) {
 
                 onFailure: function(o) {
                     test.resume(function() {
-                        Y.Assert.fail("onFailure shouldn't have been called");
+                        Assert.fail("onFailure shouldn't have been called");
                         test.o = o;
                     });
                 }
@@ -762,13 +764,13 @@ YUI.add('get-test', function(Y) {
 
                 onSuccess: function(o) {
                     test.resume(function() {
-                        Y.Assert.areEqual(3, o.nodes.length, "Unexpected node count");
+                        Assert.areEqual(3, o.nodes.length, "Unexpected node count");
 
                         for (var i = 0; i < o.nodes.length; i++) {
                             var node = document.getElementById(o.nodes[i].id);
 
-                            Y.Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
-                            Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
+                            Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
+                            Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
                         }
 
                         test.o = o;
@@ -777,7 +779,7 @@ YUI.add('get-test', function(Y) {
 
                 onFailure: function(o) {
                     test.resume(function() {
-                        Y.Assert.fail("onFailure shouldn't have been called");
+                        Assert.fail("onFailure shouldn't have been called");
                         test.o = o;
                     });
                 }
@@ -794,13 +796,13 @@ YUI.add('get-test', function(Y) {
 
                 onSuccess: function(o) {
                     test.resume(function() {
-                        Y.Assert.areEqual(3, o.nodes.length, "Unexpected node count");
+                        Assert.areEqual(3, o.nodes.length, "Unexpected node count");
 
                         for (var i = 0; i < o.nodes.length; i++) {
                             var node = document.getElementById(o.nodes[i].id);
 
-                            Y.Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
-                            Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
+                            Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
+                            Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
                         }
 
                         test.o = o;
@@ -809,7 +811,7 @@ YUI.add('get-test', function(Y) {
 
                 onFailure: function(o) {
                     test.resume(function() {
-                        Y.Assert.fail("onFailure shouldn't have been called");
+                        Assert.fail("onFailure shouldn't have been called");
                         test.o = o;
                     });
                 },
@@ -834,13 +836,13 @@ YUI.add('get-test', function(Y) {
                     test.resume(function() {
                         var node = document.getElementById(o.nodes[0].id);
 
-                        Y.Assert.areEqual("myscripts", node.title, "title property not set");
-                        Y.Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
-                        Y.Assert.areEqual("my-awesome-script", node.id, "id attribute not set");
+                        Assert.areEqual("myscripts", node.title, "title property not set");
+                        Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
+                        Assert.areEqual("my-awesome-script", node.id, "id attribute not set");
 
-                        Y.Assert.areEqual("myscripts", node.getAttribute("title"), "title attribute not set");
-                        Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
-                        Y.Assert.areEqual("my-awesome-script", node.getAttribute("id"), "id attribute not set");
+                        Assert.areEqual("myscripts", node.getAttribute("title"), "title attribute not set");
+                        Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
+                        Assert.areEqual("my-awesome-script", node.getAttribute("id"), "id attribute not set");
 
                         test.o = o;
                     });
@@ -848,7 +850,7 @@ YUI.add('get-test', function(Y) {
 
                 onFailure: function(o) {
                     test.resume(function() {
-                        Y.Assert.fail("onFailure shouldn't have been called");
+                        Assert.fail("onFailure shouldn't have been called");
                         test.o = o;
                     });
                 }
@@ -868,16 +870,16 @@ YUI.add('get-test', function(Y) {
 
                 onSuccess: function(o) {
                     test.resume(function() {
-                        Y.Assert.areEqual(3, o.nodes.length, "Unexpected node count");
+                        Assert.areEqual(3, o.nodes.length, "Unexpected node count");
 
                         for (var i = 0; i < o.nodes.length; i++) {
                             var node = document.getElementById(o.nodes[i].id);
 
-                            Y.Assert.areEqual("myscripts", node.title, "title property not set");
-                            Y.Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
+                            Assert.areEqual("myscripts", node.title, "title property not set");
+                            Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
 
-                            Y.Assert.areEqual("myscripts", node.getAttribute("title"), "title attribute not set");
-                            Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
+                            Assert.areEqual("myscripts", node.getAttribute("title"), "title attribute not set");
+                            Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
                         }
 
                         test.o = o;
@@ -886,7 +888,7 @@ YUI.add('get-test', function(Y) {
 
                 onFailure: function(o) {
                     test.resume(function() {
-                        Y.Assert.fail("onFailure shouldn't have been called");
+                        Assert.fail("onFailure shouldn't have been called");
                         test.o = o;
                     });
                 }
@@ -906,16 +908,16 @@ YUI.add('get-test', function(Y) {
 
                 onSuccess: function(o) {
                     test.resume(function() {
-                        Y.Assert.areEqual(3, o.nodes.length, "Unexpected node count");
+                        Assert.areEqual(3, o.nodes.length, "Unexpected node count");
 
                         for (var i = 0; i < o.nodes.length; i++) {
                             var node = document.getElementById(o.nodes[i].id);
 
-                            Y.Assert.areEqual("myscripts", node.title, "title property not set");
-                            Y.Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
+                            Assert.areEqual("myscripts", node.title, "title property not set");
+                            Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
 
-                            Y.Assert.areEqual("myscripts", node.getAttribute("title"), "title attribute not set");
-                            Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
+                            Assert.areEqual("myscripts", node.getAttribute("title"), "title attribute not set");
+                            Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
                         }
 
                         test.o = o;
@@ -924,7 +926,7 @@ YUI.add('get-test', function(Y) {
 
                 onFailure: function(o) {
                     test.resume(function() {
-                        Y.Assert.fail("onFailure shouldn't have been called");
+                        Assert.fail("onFailure shouldn't have been called");
                         test.o = o;
                     });
                 },
@@ -961,11 +963,11 @@ YUI.add('get-test', function(Y) {
                         onSuccess: function(o) {
                             nodes = nodes.concat(o.nodes);
 
-                            Y.Assert.areEqual(2, nodes.length, "2 nodes should have been added");
+                            Assert.areEqual(2, nodes.length, "2 nodes should have been added");
 
                             for (var i = 0; i < nodes.length; i++) {
                                 var node = Y.Node.one(nodes[i]);
-                                Y.Assert.isTrue(node.inDoc(), "Scripts should still be in the document");
+                                Assert.isTrue(node.inDoc(), "Scripts should still be in the document");
 
                                 // Convert to id, for final doc check, because purge destroys parentNode
                                 nodeIds[i] = node.get("id");
@@ -977,10 +979,10 @@ YUI.add('get-test', function(Y) {
                                 onSuccess: function(o) {
                                     test.resume(function() {
                                         for (var i = 0; i < nodeIds.length; i++) {
-                                            Y.Assert.isNull(document.getElementById(nodeIds[i]), "Script from previous transaction was not purged");
+                                            Assert.isNull(document.getElementById(nodeIds[i]), "Script from previous transaction was not purged");
                                         }
 
-                                        Y.Assert.isTrue(Y.one(o.nodes[0]).inDoc());
+                                        Assert.isTrue(Y.one(o.nodes[0]).inDoc());
 
                                         test.o = o;
                                     });
@@ -995,9 +997,9 @@ YUI.add('get-test', function(Y) {
         }
     });
 
-    // -- CSS Tests ------------------------------------------------------------
-    Y.GetTests.CSS = new Y.Test.Case({
-        name: "CSS Tests",
+    // -- Basic CSS loading ----------------------------------------------------
+    Y.GetTests.BasicCSS = new Y.Test.Case({
+        name: "Basic CSS loading",
 
         setUp: function() {
             this.na = Y.Node.create('<div class="get_test_a">get_test_a</div>');
@@ -1056,21 +1058,21 @@ YUI.add('get-test', function(Y) {
                     test.resume(function() {
                         counts.success++;
 
-                        Y.Assert.areEqual("1111", this.na.getComputedStyle("zIndex"), "a.css does not seem to be loaded");
-                        Y.Assert.areEqual(1, counts.success, "onSuccess called more than once");
+                        Assert.areEqual("1111", this.na.getComputedStyle("zIndex"), "a.css does not seem to be loaded");
+                        Assert.areEqual(1, counts.success, "onSuccess called more than once");
 
                         areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
 
-                        Y.Assert.areEqual(trans.tId, o.tId, "Payload has unexpected tId");
-                        Y.Assert.areEqual(1, o.nodes.length, "Payload nodes property has unexpected length");
-                        Y.Assert.areEqual("foo", context.bar, "Callback context not set");
+                        Assert.areEqual(trans.id, o.id, "Payload has unexpected id");
+                        Assert.areEqual(1, o.nodes.length, "Payload nodes property has unexpected length");
+                        Assert.areEqual("foo", context.bar, "Callback context not set");
 
                         test.o = o;
                     });
                 },
 
                 onFailure: function(o) {
-                    Y.Assert.fail("onFailure shouldn't have been called");
+                    Assert.fail("onFailure shouldn't have been called");
                 }
             });
 
@@ -1089,7 +1091,7 @@ YUI.add('get-test', function(Y) {
                 context: {bar:"foo"},
 
                 onFailure: function(o) {
-                    Y.Assert.fail("onFailure shouldn't have been called");
+                    Assert.fail("onFailure shouldn't have been called");
                 },
 
                 onSuccess: function(o) {
@@ -1098,16 +1100,16 @@ YUI.add('get-test', function(Y) {
                     test.resume(function() {
                         counts.success++;
 
-                        Y.Assert.areEqual("1111", this.na.getComputedStyle("zIndex"), "a.css does not seem to be loaded");
-                        Y.Assert.areEqual("1234", this.nb.getComputedStyle("zIndex"), "b.css does not seem to be loaded");
-                        Y.Assert.areEqual("4321", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be loaded");
-                        Y.Assert.areEqual(1, counts.success, "onSuccess called more than once");
+                        Assert.areEqual("1111", this.na.getComputedStyle("zIndex"), "a.css does not seem to be loaded");
+                        Assert.areEqual("1234", this.nb.getComputedStyle("zIndex"), "b.css does not seem to be loaded");
+                        Assert.areEqual("4321", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be loaded");
+                        Assert.areEqual(1, counts.success, "onSuccess called more than once");
 
                         areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
 
-                        Y.Assert.areEqual(trans.tId, o.tId, "Payload has unexpected tId");
-                        Y.Assert.areEqual(3, o.nodes.length, "Payload nodes property has unexpected length");
-                        Y.Assert.areEqual("foo", context.bar, "Callback context not set");
+                        Assert.areEqual(trans.id, o.id, "Payload has unexpected id");
+                        Assert.areEqual(3, o.nodes.length, "Payload nodes property has unexpected length");
+                        Assert.areEqual("foo", context.bar, "Callback context not set");
 
                         test.o = o;
                     });
@@ -1130,11 +1132,11 @@ YUI.add('get-test', function(Y) {
                         var n = Y.Node.one(o.nodes[0]);
                         var insertBefore = Y.Node.one("#insertBeforeMe");
 
-                        Y.Assert.isTrue(n.compareTo(insertBefore.previous()), "Not inserted before insertBeforeMe");
+                        Assert.isTrue(n.compareTo(insertBefore.previous()), "Not inserted before insertBeforeMe");
 
                         // TODO: These don't work as expected on IE (even though insertBefore worked). Better cross-browser assertion?
                         if (!Y.UA.ie) {
-                            Y.Assert.areEqual("9991", this.na.getComputedStyle("zIndex"), "a.css does not seem to be inserted before ib.css");
+                            Assert.areEqual("9991", this.na.getComputedStyle("zIndex"), "a.css does not seem to be inserted before ib.css");
                         }
 
                         test.o = o;
@@ -1160,15 +1162,15 @@ YUI.add('get-test', function(Y) {
 
                         for (var i = o.nodes.length-1; i >= 0; i--) {
                             var n = Y.Node.one(o.nodes[i]);
-                            Y.Assert.isTrue(n.compareTo(insertBefore.previous()), "Not inserted before insertBeforeMe");
+                            Assert.isTrue(n.compareTo(insertBefore.previous()), "Not inserted before insertBeforeMe");
                             insertBefore = n;
                         }
 
                         // TODO: These don't work as expected on IE (even though insertBefore worked). Better cross-browser assertion?
                         if (!Y.UA.ie) {
-                            Y.Assert.areEqual("9991", this.na.getComputedStyle("zIndex"), "a.css does not seem to be inserted before ib.css");
-                            Y.Assert.areEqual("9992", this.nb.getComputedStyle("zIndex"), "b.css does not seem to be inserted before ib.css");
-                            Y.Assert.areEqual("9993", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be inserted before ib.css");
+                            Assert.areEqual("9991", this.na.getComputedStyle("zIndex"), "a.css does not seem to be inserted before ib.css");
+                            Assert.areEqual("9992", this.nb.getComputedStyle("zIndex"), "b.css does not seem to be inserted before ib.css");
+                            Assert.areEqual("9993", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be inserted before ib.css");
                         }
 
                         test.o = o;
@@ -1189,7 +1191,7 @@ YUI.add('get-test', function(Y) {
                     test.resume(function() {
                         var node = document.getElementById(o.nodes[0].id);
 
-                        Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
+                        Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
 
                         test.o = o;
                     });
@@ -1208,12 +1210,12 @@ YUI.add('get-test', function(Y) {
                 onSuccess: function(o) {
                     test.resume(function() {
 
-                        Y.Assert.areEqual(3, o.nodes.length, "Unexpected node count");
+                        Assert.areEqual(3, o.nodes.length, "Unexpected node count");
 
                         for (var i = 0; i < o.nodes.length; i++) {
                             var node = document.getElementById(o.nodes[i].id);
 
-                            Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
+                            Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
                         }
 
                         test.o = o;
@@ -1237,9 +1239,9 @@ YUI.add('get-test', function(Y) {
                     test.resume(function() {
                         var node = document.getElementById(o.nodes[0].id);
 
-                        Y.Assert.areEqual("myscripts", node.title, "title property not set");
-                        Y.Assert.areEqual("myscripts", node.getAttribute("title"), "title attribute not set");
-                        Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
+                        Assert.areEqual("myscripts", node.title, "title property not set");
+                        Assert.areEqual("myscripts", node.getAttribute("title"), "title attribute not set");
+                        Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
 
                         test.o = o;
                     });
@@ -1261,15 +1263,15 @@ YUI.add('get-test', function(Y) {
                 onSuccess: function(o) {
                     test.resume(function() {
 
-                        Y.Assert.areEqual(3, o.nodes.length, "Unexpected node count");
+                        Assert.areEqual(3, o.nodes.length, "Unexpected node count");
 
                         for (var i = 0; i < o.nodes.length; i++) {
 
                             var node = document.getElementById(o.nodes[i].id);
 
-                            Y.Assert.areEqual("myscripts", node.title, "title property not set");
-                            Y.Assert.areEqual("myscripts", node.getAttribute("title"), "title attribute not set");
-                            Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
+                            Assert.areEqual("myscripts", node.title, "title property not set");
+                            Assert.areEqual("myscripts", node.getAttribute("title"), "title attribute not set");
+                            Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
                         }
 
                         test.o = o;
@@ -1293,14 +1295,14 @@ YUI.add('get-test', function(Y) {
 
                 onSuccess: function(o) {
                     test.resume(function () {
-                        Y.Assert.fail("onSuccess shouldn't have been called");
+                        Assert.fail("onSuccess shouldn't have been called");
                     });
                 },
 
                 onFailure: function(o) {
                     test.resume(function () {
                         counts.failure++;
-                        Y.Assert.areEqual(1, counts.failure, "onFailure called more than once");
+                        Assert.areEqual(1, counts.failure, "onFailure called more than once");
                     });
                 },
 
@@ -1325,19 +1327,19 @@ YUI.add('get-test', function(Y) {
 
                 onSuccess: function(o) {
                     test.resume(function() {
-                        Y.Assert.fail("onSuccess shouldn't have been called");
+                        Assert.fail("onSuccess shouldn't have been called");
                     });
                 },
 
                 onFailure: function(o) {
                     test.resume(function() {
                         counts.failure++;
-                        Y.Assert.areEqual(1, counts.failure, "onFailure called more than once");
+                        Assert.areEqual(1, counts.failure, "onFailure called more than once");
 
                         if (!Y.UA.ie) {
-                            Y.Assert.areEqual("1111", this.na.getComputedStyle("zIndex"), "a.css does not seem to be loaded");
-                            Y.Assert.areNotEqual("1234", this.nb.getComputedStyle("zIndex"), "b.css was loaded when it shouldn't have been");
-                            Y.Assert.areEqual("4321", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be loaded");
+                            Assert.areEqual("1111", this.na.getComputedStyle("zIndex"), "a.css does not seem to be loaded");
+                            Assert.areNotEqual("1234", this.nb.getComputedStyle("zIndex"), "b.css was loaded when it shouldn't have been");
+                            Assert.areEqual("4321", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be loaded");
                         }
 
                         test.o = o;
@@ -1353,15 +1355,740 @@ YUI.add('get-test', function(Y) {
         }
     });
 
+    // -- Y.Get Methods --------------------------------------------------------
+    Y.GetTests.GetMethods = new Y.Test.Case({
+        name: 'Y.Get methods',
+
+        tearDown: function () {
+            this.t && this.t.purge();
+            this.interval && clearInterval(this.interval);
+        },
+
+        'abort() should abort a transaction when given a transaction object': function () {
+            var test = this;
+
+            test.t = Y.Get.js([path('a.js'), path('b.js'), path('c.js')], {
+                onFailure: function () {
+                    test.resume(function () {
+                        ArrayAssert.containsMatch(function (item) {
+                            return item.error === 'Aborted'
+                        }, test.t.errors, "Transaction failed, but wasn't aborted.");
+                    });
+                },
+
+                onProgress: function () {
+                    Y.Get.abort(test.t);
+                },
+
+                onSuccess: function () {
+                    test.resume(function () {
+                        Assert.fail('onSuccess should not be called');
+                    });
+                }
+            });
+
+            test.wait();
+        },
+
+        'abort() should abort a transaction when given a transaction id': function () {
+            var test = this;
+
+            test.t = Y.Get.js([path('a.js'), path('b.js'), path('c.js')], {
+                onFailure: function () {
+                    test.resume(function () {
+                        ArrayAssert.containsMatch(function (item) {
+                            return item.error === 'Aborted'
+                        }, test.t.errors, "Transaction failed, but wasn't aborted.");
+                    });
+                },
+
+                onProgress: function () {
+                    Y.Get.abort(test.t.id);
+                },
+
+                onSuccess: function () {
+                    test.resume(function () {
+                        Assert.fail('onSuccess should not be called');
+                    });
+                }
+            });
+
+            this.wait();
+        },
+
+        // -- css() ------------------------------------------------------------
+        'css() should accept a URL': function () {
+            var test = this,
+                url  = path('a.css');
+
+            setTimeout(function () {
+                test.t = Y.Get.css(url);
+            }, 1);
+
+            // Silly hack so we can verify that the CSS request finished without
+            // having to pass a callback to Y.Get.css().
+            test.interval = setInterval(function () {
+                var t = test.t;
+
+                if (!t.requests.length) {
+                    return;
+                }
+
+                if (t.requests[0].finished) {
+                    clearInterval(test.interval);
+                    test.resume();
+                }
+            }, 20);
+
+            this.wait();
+        },
+
+        'css() should accept a URL, options object, and callback function': function () {
+            var test = this,
+                callbackCalled;
+
+            test.t = Y.Get.css(path('a.css'), {
+                onFailure: function () {
+                    test.resume(function () {
+                        Assert.fail('onFailure should not be called');
+                    });
+                },
+
+                onSuccess: function () {
+                    test.resume(function () {
+                        Assert.isTrue(callbackCalled, 'inline callback should be called before onSuccess');
+                    });
+                }
+            }, function (err, transaction) {
+                var self = this;
+
+                callbackCalled = true;
+
+                test.resume(function () {
+                    Assert.isNull(err, '`err` should be null');
+                    Assert.areSame(test.t, transaction, 'transaction should be passed to the callback');
+                    Assert.areSame(test.t, self, '`this` object should be the transaction');
+
+                    test.wait(100);
+                });
+            });
+
+            this.wait();
+        },
+
+        'css() should allow the callback function as the second parameter': function () {
+            var test = this;
+
+            test.t = Y.Get.css(path('a.css'), function (err, transaction) {
+                var self = this;
+
+                test.resume(function () {
+                    Assert.isNull(err, '`err` should be null');
+                    Assert.areSame(test.t, transaction, 'transaction should be passed to the callback');
+                    Assert.areSame(test.t, self, '`this` object should be the transaction');
+                });
+            });
+
+            this.wait();
+        },
+
+        'css() should accept an array of URLs': function () {
+            var test = this;
+
+            test.t = Y.Get.css([path('a.css'), path('b.css'), path('c.css')], {
+                onFailure: function () {
+                    test.resume(function () {
+                        Assert.fail('onFailure should not be called');
+                    });
+                },
+
+                onSuccess: function () {
+                    test.resume(function () {
+                        Assert.areSame(3, test.t.requests.length, '3 requests should have been made');
+                        Assert.areSame(3, test.t.nodes.length, '3 nodes should have been inserted');
+                    });
+                }
+            });
+
+            this.wait();
+        },
+
+        'css() should accept a request object': function () {
+            var test = this;
+
+            test.t = Y.Get.css({url: path('a.css')}, {
+                onFailure: function () {
+                    test.resume(function () {
+                        Assert.fail('onFailure should not be called');
+                    });
+                },
+
+                onSuccess: function () {
+                    test.resume(function () {
+                        Assert.areSame(1, test.t.requests.length, '1 request should have been made');
+                        Assert.areSame(1, test.t.nodes.length, '1 node should have been inserted');
+                    });
+                }
+            });
+
+            this.wait();
+        },
+
+        'css() should accept an array of request objects': function () {
+            var test = this;
+
+            test.t = Y.Get.css([{url: path('a.css')}, {url: path('b.css')}, {url: path('c.css')}], {
+                onFailure: function () {
+                    test.resume(function () {
+                        Assert.fail('onFailure should not be called');
+                    });
+                },
+
+                onSuccess: function () {
+                    test.resume(function () {
+                        Assert.areSame(3, test.t.requests.length, '3 requests should have been made');
+                        Assert.areSame(3, test.t.nodes.length, '3 nodes should have been inserted');
+                    });
+                }
+            });
+
+            this.wait();
+        },
+
+        'css() should accept a mixed array of URLs and request objects': function () {
+            var test = this;
+
+            test.t = Y.Get.css([path('a.css'), {url: path('b.css')}, path('c.css')], {
+                onFailure: function () {
+                    test.resume(function () {
+                        Assert.fail('onFailure should not be called');
+                    });
+                },
+
+                onSuccess: function () {
+                    test.resume(function () {
+                        Assert.areSame(3, test.t.requests.length, '3 requests should have been made');
+                        Assert.areSame(3, test.t.nodes.length, '3 nodes should have been inserted');
+                    });
+                }
+            });
+
+            this.wait();
+        },
+
+        // -- js() -------------------------------------------------------------
+        'js() should accept a URL': function () {
+            var test = this,
+                url  = path('a.js');
+
+            setTimeout(function () {
+                test.t = Y.Get.js(url);
+            }, 1);
+
+            // Silly hack so we can verify that the request finished without
+            // having to pass a callback to Y.Get.js().
+            test.interval = setInterval(function () {
+                var t = test.t;
+
+                if (!t.requests.length) {
+                    return;
+                }
+
+                if (t.requests[0].finished) {
+                    clearInterval(test.interval);
+                    test.resume();
+                }
+            }, 20);
+
+            this.wait();
+        },
+
+        'js() should accept a URL, options object, and callback function': function () {
+            var test = this,
+                callbackCalled;
+
+            test.t = Y.Get.js(path('a.js'), {
+                onFailure: function () {
+                    test.resume(function () {
+                        Assert.fail('onFailure should not be called');
+                    });
+                },
+
+                onSuccess: function () {
+                    test.resume(function () {
+                        Assert.isTrue(callbackCalled, 'inline callback should be called before onSuccess');
+                    });
+                }
+            }, function (err, transaction) {
+                var self = this;
+
+                callbackCalled = true;
+
+                test.resume(function () {
+                    Assert.isNull(err, '`err` should be null');
+                    Assert.areSame(test.t, transaction, 'transaction should be passed to the callback');
+                    Assert.areSame(test.t, self, '`this` object should be the transaction');
+
+                    test.wait(100);
+                });
+            });
+
+            this.wait();
+        },
+
+        'js() should allow the callback function as the second parameter': function () {
+            var test = this;
+
+            test.t = Y.Get.js(path('a.js'), function (err, transaction) {
+                var self = this;
+
+                test.resume(function () {
+                    Assert.isNull(err, '`err` should be null');
+                    Assert.areSame(test.t, transaction, 'transaction should be passed to the callback');
+                    Assert.areSame(test.t, self, '`this` object should be the transaction');
+                });
+            });
+
+            this.wait();
+        },
+
+        'js() should accept an array of URLs': function () {
+            var test = this;
+
+            test.t = Y.Get.js([path('a.js'), path('b.js'), path('c.js')], {
+                onFailure: function () {
+                    test.resume(function () {
+                        Assert.fail('onFailure should not be called');
+                    });
+                },
+
+                onSuccess: function () {
+                    test.resume(function () {
+                        Assert.areSame(3, test.t.requests.length, '3 requests should have been made');
+                        Assert.areSame(3, test.t.nodes.length, '3 nodes should have been inserted');
+                    });
+                }
+            });
+
+            this.wait();
+        },
+
+        'js() should accept a request object': function () {
+            var test = this;
+
+            test.t = Y.Get.js({url: path('a.js')}, {
+                onFailure: function () {
+                    test.resume(function () {
+                        Assert.fail('onFailure should not be called');
+                    });
+                },
+
+                onSuccess: function () {
+                    test.resume(function () {
+                        Assert.areSame(1, test.t.requests.length, '1 request should have been made');
+                        Assert.areSame(1, test.t.nodes.length, '1 node should have been inserted');
+                    });
+                }
+            });
+
+            this.wait();
+        },
+
+        'js() should accept an array of request objects': function () {
+            var test = this;
+
+            test.t = Y.Get.js([{url: path('a.js')}, {url: path('b.js')}, {url: path('c.js')}], {
+                onFailure: function () {
+                    test.resume(function () {
+                        Assert.fail('onFailure should not be called');
+                    });
+                },
+
+                onSuccess: function () {
+                    test.resume(function () {
+                        Assert.areSame(3, test.t.requests.length, '3 requests should have been made');
+                        Assert.areSame(3, test.t.nodes.length, '3 nodes should have been inserted');
+                    });
+                }
+            });
+
+            this.wait();
+        },
+
+        'js() should accept a mixed array of URLs and request objects': function () {
+            var test = this;
+
+            test.t = Y.Get.js([path('a.js'), {url: path('b.js')}, path('c.js')], {
+                onFailure: function () {
+                    test.resume(function () {
+                        Assert.fail('onFailure should not be called');
+                    });
+                },
+
+                onSuccess: function () {
+                    test.resume(function () {
+                        Assert.areSame(3, test.t.requests.length, '3 requests should have been made');
+                        Assert.areSame(3, test.t.nodes.length, '3 nodes should have been inserted');
+                    });
+                }
+            });
+
+            this.wait();
+        },
+
+        // -- load() -----------------------------------------------------------
+        'load() should accept a URL': function () {
+            var test = this,
+                url  = path('a.js');
+
+            setTimeout(function () {
+                test.t = Y.Get.load(url);
+            }, 1);
+
+            // Silly hack so we can verify that the request finished without
+            // having to pass a callback to Y.Get.load().
+            test.interval = setInterval(function () {
+                var t = test.t;
+
+                if (!t.requests.length) {
+                    return;
+                }
+
+                if (t.requests[0].finished) {
+                    clearInterval(test.interval);
+                    test.resume(function () {
+                        Assert.areSame('js', t.requests[0].type, 'request type should be "js"');
+                    });
+                }
+            }, 20);
+
+            this.wait();
+        },
+
+        'load() should accept a URL, options object, and callback function': function () {
+            var test = this,
+                callbackCalled;
+
+            test.t = Y.Get.load(path('a.css'), {
+                onFailure: function () {
+                    test.resume(function () {
+                        Assert.fail('onFailure should not be called');
+                    });
+                },
+
+                onSuccess: function () {
+                    test.resume(function () {
+                        Assert.isTrue(callbackCalled, 'inline callback should be called before onSuccess');
+                        Assert.areSame('css', test.t.requests[0].type, 'request type should be "css"');
+                    });
+                }
+            }, function (err, transaction) {
+                var self = this;
+
+                callbackCalled = true;
+
+                test.resume(function () {
+                    Assert.isNull(err, '`err` should be null');
+                    Assert.areSame(test.t, transaction, 'transaction should be passed to the callback');
+                    Assert.areSame(test.t, self, '`this` object should be the transaction');
+
+                    test.wait(100);
+                });
+            });
+
+            this.wait();
+        },
+
+        'load() should allow the callback function as the second parameter': function () {
+            var test = this;
+
+            test.t = Y.Get.load(path('a.js'), function (err, transaction) {
+                var self = this;
+
+                test.resume(function () {
+                    Assert.isNull(err, '`err` should be null');
+                    Assert.areSame(test.t, transaction, 'transaction should be passed to the callback');
+                    Assert.areSame(test.t, self, '`this` object should be the transaction');
+                });
+            });
+
+            this.wait();
+        },
+
+        'load() should accept an array of URLs': function () {
+            var test = this;
+
+            test.t = Y.Get.load([path('a.js'), path('b.css'), path('c.js')], {
+                onFailure: function () {
+                    test.resume(function () {
+                        Assert.fail('onFailure should not be called');
+                    });
+                },
+
+                onSuccess: function () {
+                    test.resume(function () {
+                        Assert.areSame(3, test.t.requests.length, '3 requests should have been made');
+                        Assert.areSame(3, test.t.nodes.length, '3 nodes should have been inserted');
+                        Assert.areSame('js', test.t.requests[0].type, 'first request type should be "js"');
+                        Assert.areSame('css', test.t.requests[1].type, 'second request type should be "css"');
+                        Assert.areSame('js', test.t.requests[2].type, 'third request type should be "js"');
+                    });
+                }
+            });
+
+            this.wait();
+        },
+
+        'load() should accept a request object': function () {
+            var test = this;
+
+            test.t = Y.Get.load({url: path('a.js')}, {
+                onFailure: function () {
+                    test.resume(function () {
+                        Assert.fail('onFailure should not be called');
+                    });
+                },
+
+                onSuccess: function () {
+                    test.resume(function () {
+                        Assert.areSame(1, test.t.requests.length, '1 request should have been made');
+                        Assert.areSame(1, test.t.nodes.length, '1 node should have been inserted');
+                        Assert.areSame('js', test.t.requests[0].type, 'request type should be "js"');
+                    });
+                }
+            });
+
+            this.wait();
+        },
+
+        'load() should accept an array of request objects': function () {
+            var test = this;
+
+            test.t = Y.Get.load([{url: path('a.css')}, {url: path('b.js')}, {url: path('c.css')}], {
+                onFailure: function () {
+                    test.resume(function () {
+                        Assert.fail('onFailure should not be called');
+                    });
+                },
+
+                onSuccess: function () {
+                    test.resume(function () {
+                        Assert.areSame(3, test.t.requests.length, '3 requests should have been made');
+                        Assert.areSame(3, test.t.nodes.length, '3 nodes should have been inserted');
+                        Assert.areSame('css', test.t.requests[0].type, 'first request type should be "css"');
+                        Assert.areSame('js', test.t.requests[1].type, 'second request type should be "js"');
+                        Assert.areSame('css', test.t.requests[2].type, 'third request type should be "css"');
+                    });
+                }
+            });
+
+            this.wait();
+        },
+
+        'load() should accept a mixed array of URLs and request objects': function () {
+            var test = this;
+
+            test.t = Y.Get.load([path('a.js'), {url: path('b.js')}, path('c.css')], {
+                onFailure: function () {
+                    test.resume(function () {
+                        Assert.fail('onFailure should not be called');
+                    });
+                },
+
+                onSuccess: function () {
+                    test.resume(function () {
+                        Assert.areSame(3, test.t.requests.length, '3 requests should have been made');
+                        Assert.areSame(3, test.t.nodes.length, '3 nodes should have been inserted');
+                        Assert.areSame('js', test.t.requests[0].type, 'first request type should be "js"');
+                        Assert.areSame('js', test.t.requests[1].type, 'second request type should be "js"');
+                        Assert.areSame('css', test.t.requests[2].type, 'third request type should be "css"');
+                    });
+                }
+            });
+
+            this.wait();
+        },
+
+        // -- script() ---------------------------------------------------------
+        'script() should be an alias for js()': function () {
+            Assert.areSame(Y.Get.js, Y.Get.script);
+        }
+    });
+
+    // -- Y.Get.Transaction methods --------------------------------------------
+    Y.GetTests.TransactionMethods = new Y.Test.Case({
+        name: 'Transaction methods',
+
+        tearDown: function () {
+            this.t && this.t.purge();
+        },
+
+        'abort() should abort the transaction': function () {
+            var test = this;
+
+            test.t = Y.Get.js([path('a.js'), path('b.js'), path('c.js')], {
+                onFailure: function () {
+                    test.resume(function () {
+                        ArrayAssert.containsMatch(function (item) {
+                            return item.error === 'Aborted'
+                        }, test.t.errors, "Transaction failed, but wasn't aborted.");
+                    });
+                },
+
+                onProgress: function () {
+                    test.t.abort();
+                },
+
+                onSuccess: function () {
+                    test.resume(function () {
+                        Assert.fail('onSuccess should not be called');
+                    });
+                }
+            });
+
+            test.wait();
+        },
+
+        'abort() should accept a custom error message': function () {
+            var test = this;
+
+            test.t = Y.Get.js([path('a.js'), path('b.js'), path('c.js')], {
+                onFailure: function () {
+                    test.resume(function () {
+                        ArrayAssert.containsMatch(function (item) {
+                            return item.error === 'monkey britches!'
+                        }, test.t.errors, "Transaction failed, but wasn't aborted (or was aborted with the wrong error message).");
+                    });
+                },
+
+                onProgress: function () {
+                    test.t.abort('monkey britches!');
+                },
+
+                onSuccess: function () {
+                    test.resume(function () {
+                        Assert.fail('onSuccess should not be called');
+                    });
+                }
+            });
+
+            test.wait();
+        },
+
+        'execute() should queue callbacks': function () {
+            var test = this,
+                callbackOne, callbackTwo;
+
+            test.t = Y.Get.js(path('a.js'));
+
+            test.t.execute(function (err, transaction) {
+                callbackOne = true;
+
+                test.resume(function () {
+                    Assert.isUndefined(callbackTwo, 'callback two should not have been called before callback one');
+                    Assert.isNull(err, '`err` should be null');
+                    Assert.areSame(test.t, transaction, 'transaction should be passed to the callback');
+
+                    test.wait(100);
+                });
+            });
+
+            test.t.execute(function (err, transaction) {
+                callbackTwo = true;
+
+                test.resume(function () {
+                    Assert.isTrue(callbackOne, 'callback one should have been called first');
+                    Assert.isNull(err, '`err` should be null');
+                    Assert.areSame(test.t, transaction, 'transaction should be passed to the callback');
+                });
+            });
+
+            this.wait();
+        },
+
+        'execute() should call the callback immediately if the transaction has already finished': function () {
+            var test = this;
+
+            test.t = Y.Get.js(path('a.js'), function (err, transaction) {
+                test.resume(function () {
+                    var callbackOne, callbackTwo;
+
+                    Assert.isNull(err, '`err` should be null');
+                    Assert.areSame(test.t, transaction, 'transaction should be passed to the callback');
+
+                    test.t.execute(function (err, transaction) {
+                        callbackOne = true;
+
+                        Assert.isUndefined(callbackTwo, 'callback two should not have been called before callback one');
+                        Assert.isNull(err, '`err` should be null');
+                        Assert.areSame(test.t, transaction, 'transaction should be passed to the callback');
+                    });
+
+                    test.t.execute(function (err, transaction) {
+                        callbackTwo = true;
+
+                        Assert.isTrue(callbackOne, 'callback one should have been called first');
+                        Assert.isNull(err, '`err` should be null');
+                        Assert.areSame(test.t, transaction, 'transaction should be passed to the callback');
+                    });
+
+                    Assert.isTrue(callbackOne, 'callback one should have been called synchronously');
+                    Assert.isTrue(callbackTwo, 'callback two should have been called synchronously');
+                });
+            });
+
+            this.wait();
+        },
+
+        'purge() should purge any nodes inserted by the transaction': function () {
+            var test = this;
+
+            test.t = Y.Get.js([path('a.js'), path('b.js'), path('c.js')], function (err, t) {
+                test.resume(function () {
+                    var ids = [];
+
+                    Assert.isNull(err, '`err` should be null');
+                    Assert.areSame(3, t.nodes.length, '3 nodes should have been inserted');
+
+                    Y.Array.each(t.nodes, function (node) {
+                        ids.push(node.id);
+                    });
+
+                    t.purge();
+
+                    Assert.areSame(0, t.nodes.length, 'the `nodes` array should now be empty');
+
+                    Y.Array.each(ids, function (id) {
+                        var node = Y.config.doc.getElementById(id);
+                        Assert.isNull(node, 'node should not exist in the document anymore');
+                    });
+                });
+            });
+
+            test.wait();
+        }
+    });
+
+    // -- TODO: Y.Get.Transaction properties -----------------------------------------
+    Y.GetTests.TransactionProperties = new Y.Test.Case({
+        name: 'Transaction properties'
+    });
+
+    // -- TODO: Options --------------------------------------------------------------
+    Y.GetTests.Options = new Y.Test.Case({
+        name: 'Options'
+    });
+
+    // -- Functional tests -----------------------------------------------------
     Y.GetTests.Functional = new Y.Test.Case({
-        name: "Functional Tests",
+        name: "Functional tests",
 
         'test: Loader, ScrollView' : function() {
             var test = this;
 
             YUI().use("scrollview", function(Y2) {
                 test.resume(function() {
-                    Y.Assert.isFunction(Y2.ScrollView, "ScrollView not loaded");
+                    Assert.isFunction(Y2.ScrollView, "ScrollView not loaded");
                 });
             });
 
@@ -1373,11 +2100,13 @@ YUI.add('get-test', function(Y) {
 
             YUI().use("autocomplete-list", function(Y2) {
                 test.resume(function() {
-                    Y.Assert.isFunction(Y2.AutoCompleteList, "Autocomplete not loaded");
+                    Assert.isFunction(Y2.AutoCompleteList, "Autocomplete not loaded");
                 });
             });
 
             this.wait();
         }
     });
+}, '3.5.0', {
+    requires: ['get', 'test']
 });

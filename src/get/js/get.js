@@ -597,6 +597,12 @@ Y.Get = Get = {
     _load: function (type, urls, options, callback) {
         var transaction;
 
+        // Allow callback as third param.
+        if (typeof options === 'function') {
+            callback = options;
+            options  = {};
+        }
+
         options || (options = {});
         options.type = type;
 
@@ -823,6 +829,7 @@ Transaction.prototype = {
 
         if (state === 'done') {
             callback && callback(self.errors.length ? self.errors : null, self);
+            return;
         } else {
             callback && self._callbacks.push(callback);
 
