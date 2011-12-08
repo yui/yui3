@@ -17,11 +17,15 @@ var Y = YUI({
     modules: {
         'button-test': {
             fullpath: 'button-test.js',
-            requires: ['button', 'test', 'node-event-simulate']
+            requires: ['button-base', 'test', 'node-event-simulate']
+        },
+        'button-group-test': {
+            fullpath: 'button-group-test.js',
+            requires: ['button-group', 'test', 'node-event-simulate']
         }
     },
     useBrowserConsole: false
-}).use('button-test', 'test-console', function (Y) {
+}).use('button-group-test', 'test-console', function (Y) {
     new Y.Test.Console().render('#log');
     Y.Test.Runner.run();
 });

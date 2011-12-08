@@ -5,7 +5,7 @@ var Assert      = Y.Assert,
     suite;
 
 // -- Suite --------------------------------------------------------------------
-suite      = new Y.Test.Suite('Buttons');
+suite = new Y.Test.Suite('Buttons');
 
 // -- Methods ----------------------------------------------------------------
 suite.add(new Y.Test.Case({
