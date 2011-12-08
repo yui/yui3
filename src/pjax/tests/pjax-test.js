@@ -17,6 +17,7 @@ var Assert = Y.Assert,
     html5       = Y.Router.html5,
     win         = Y.config.win,
     originalURL = (win && win.location.toString()) || '',
+    yeti        = win && $yetify,
 
     suite;
 
@@ -125,7 +126,7 @@ suite.add(new Y.Test.Case({
 
     _should: {
         ignore: {
-            '`error` event should fire on Ajax failure': disableXHR || !html5,
+            '`error` event should fire on Ajax failure': disableXHR || !html5 || yeti,
             '`load` event should fire on Ajax success': disableXHR || !html5,
             '`navigate` event facade should contain the options passed to `navigate()`': disableXHR || !html5,
             '`navigate` event should fire when a pjax link is clicked': !html5,
