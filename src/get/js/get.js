@@ -1041,7 +1041,6 @@ Transaction.prototype = {
                 // on insertion order, we'll need to avoid inserting other
                 // scripts until this one finishes loading.
                 if (!env.preservesScriptOrder) {
-                    Y.log("This browser doesn't preserve script execution order, so scripts will be loaded synchronously (which is slower).", 'info', 'get');
                     this._pending = req;
                 }
             }
