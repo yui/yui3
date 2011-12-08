@@ -5,18 +5,15 @@ Base IO functionality. Provides basic XHR transport support.
 @for IO
 **/
 
-var isNumber = Y.Lang.isNumber,
-    isObject = Y.Lang.isObject,
-
-    // List of events that comprise the IO event lifecycle.
-    EVENTS = ['start', 'complete', 'end', 'success', 'failure', 'progress', 'load'],
+var // List of events that comprise the IO event lifecycle.
+    EVENTS = ['start', 'complete', 'end', 'success', 'failure', 'progress'],
 
     // Whitelist of used XHR response object properties.
     XHR_PROPS = ['status', 'statusText', 'responseText', 'responseXML'],
 
     win = Y.config.win,
-    NativeXHR = win.XMLHttpRequest,
-    NativeXDR = win.XDomainRequest,
+    XHR = win.XMLHttpRequest,
+    XDR = win.XDomainRequest,
     uid = 0;
 
 /**
@@ -79,12 +76,12 @@ IO.prototype = {
     //--------------------------------------
 
     _init: function(config) {
-        var io = this, i;
+        var io = this, i, len;
         
         io.cfg = config || {};
 
         Y.augment(io, Y.EventTarget);
-        for (i = 0; i < 5; i++) {
+        for (i = 0, len = EVENTS.length; i < len; ++i) {
             // Publish IO global events with configurations, if any.
             // IO global events are set to broadcast by default.
             // These events use the "io:" namespace.
@@ -109,12 +106,12 @@ IO.prototype = {
     _create: function(config, id) {
         var io = this,
             transaction = {
-                id : isNumber(id) ? id : io._id++,
+                id : Y.Lang.isNumber(id) ? id : io._id++,
                 uid: io._uid
             },
             xdrConfig = config.xdr,
             use = xdrConfig && xdrConfig.use,
-            ie  = (xdrConfig && xdrConfig.use === 'native' && NativeXDR),
+            ie  = (xdrConfig && xdrConfig.use === 'native' && XDR),
             transport = io._transport;
 
         if (!use) {
@@ -125,25 +122,44 @@ IO.prototype = {
             case 'native':
             case 'xhr':
                 transaction.c = ie ?
-                    new NativeXDR() :
-                    NativeXHR ?
-                        new NativeXHR() :
+                    new XDR() :
+                    XHR ?
+                        new XHR() :
                         new ActiveXObject('Microsoft.XMLHTTP');
-                transaction.t =  ie ? true : false;
+
+				if (win && win.FormData && config.data instanceof FormData) {
+					//u = Y.UA.chrome ? transaction.c : transaction.c.upload;
+					transaction.c.upload.onprogress = function (e) {
+						io.progress(transaction, e, config);
+					};
+					transaction.c.onload = function (e) {
+						io.load(transaction, e, config);
+					};
+					transaction.c.onerror = function (e) {
+						io.error(transaction, e, config);
+					};
+					transaction.upload = true;
+				}
+
+                transaction.transport =  ie ? true : false;
                 break;
             default:
                 transaction.c = (transport && transport[use]) || {};
-                transaction.t = true;
+                transaction.transport = true;
         }
 
         return transaction;
     },
 
     _destroy: function(transaction) {
-        if (win && !transaction.t) {
-            if (NativeXHR) {
+		if (win && !transaction.transport) {
+            if (XHR && !transaction.upload) {
                 transaction.c.onreadystatechange = null;
-            } else if (Y.UA.ie && !transaction.e) {
+            } else if (transaction.upload) {
+				transaction.c.upload.onprogress = null;
+				transaction.c.onload = null;
+				transaction.c.onerror = null;
+			} else if (Y.UA.ie && !transaction.e) {
                 // IE, when using XMLHttpRequest as an ActiveX Object, will throw
                 // a "Type Mismatch" error if the event handler is set to "null".
                 transaction.c.abort();
@@ -174,7 +190,7 @@ IO.prototype = {
         }
 
         // Fire event with parameters or an Event Facade.
-        params = [(emitFacade) ?
+        params = [ emitFacade ?
             {
                 id: transaction.id,
                 data: transaction.c,
@@ -185,17 +201,15 @@ IO.prototype = {
         ];
 
         if (!emitFacade) {
-            if (eventName === EVENTS[0] || eventName === EVENTS[2]) {
+            if (eventName === EVENTS[0] || eventName === EVENTS[2] && args) {
                 if (args) {
                     params.push(args);
                 }
             } else {
-                if (eventName === EVENTS[5]) {
-                    params.push(transaction.p);
-                } else if (eventName === EVENTS[6]) {
-                    params.push(transaction.ld);
+                if (transaction.evt) {
+                    params.push(transaction.evt);
                 } else { 
-                    params.push(transaction.c);
+					params.push(transaction.c);
                 }
                 if (args) {
                     params.push(args);
@@ -302,14 +316,54 @@ IO.prototype = {
         this.end(transaction, config);
     },
 
-    progress: function(transaction, progress, config) {
-        transaction.p = progress;
+   /**
+    * Fires event "io:progress" and creates, fires a transaction-specific
+    * "progress" event -- for XMLHttpRequest file upload -- if
+    * config.on.progress is defined.
+    *
+    * @method progress
+    * @param {Object} transaction Transaction object.
+    * @param {Object} progress event.
+    * @param {Object} config Configuration object for the transaction.
+    */
+    progress: function(transaction, e, config) {
+       /**
+        * Signals the interactive state during a file upload transaction.
+		* This event fires after io:start and before io:complete.
+        * @event io:progress
+        */
+        transaction.evt = e;
         this._evt(EVENTS[5], transaction, config);
     },
 
-    loaded: function (transaction, loaded, config) {
-        transaction.ld = loaded;
-        this._evt(EVENTS[6], transaction, config);
+   /**
+    * Fires event "io:complete" and creates, fires a transaction-specific
+    * "complete" event -- for XMLHttpRequest file upload -- if
+    * config.on.complete is defined.
+    *
+    * @method load
+    * @param {Object} transaction Transaction object.
+    * @param {Object} load event.
+    * @param {Object} config Configuration object for the transaction.
+    */
+    load: function (transaction, e, config) {
+        transaction.evt = e.target;
+        this._evt(EVENTS[1], transaction, config);
+    },
+
+   /**
+    * Fires event "io:failure" and creates, fires a transaction-specific
+    * "failure" event -- for XMLHttpRequest file upload -- if
+    * config.on.failure is defined.
+    *
+    * @method error
+    * @param {Object} transaction Transaction object.
+    * @param {Object} error event.
+    * @param {Object} config Configuration object for the transaction.
+    */
+    error: function (transaction, e, config) {
+        transaction.evt = e;
+        this._evt(EVENTS[4], transaction, config);
     },
 
    /**
@@ -590,7 +644,7 @@ IO.prototype = {
 
         // Serialize an object into a key-value string using
         // querystring-stringify-simple.
-        if (isObject(data) && (!window.FormData || !(data instanceof FormData))) {
+        if (Y.Lang.isObject(data) && !transaction.upload) {
             data = Y.QueryString.stringify(data);
         }
 
@@ -619,34 +673,22 @@ IO.prototype = {
                     // If Content-Type is defined in the configuration object, or
                     // or as a default header, it will be used instead of
                     // 'application/x-www-form-urlencoded; charset=UTF-8'
-                    if (!window.FormData || (data && !(data instanceof FormData))) {
-                        config.headers = Y.merge({
-                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-                        }, config.headers);
-                    }
+					config.headers = Y.merge({
+						'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+					}, config.headers);
                     break;
             }
         }
 
-        if (transaction.t) {
+        if (transaction.transport) {
             // Cross-domain request or custom transport configured.
             return io.xdr(u, transaction, config);
         }
 
-        if (!sync) {
+        if (!sync && !transaction.upload) {
             transaction.c.onreadystatechange = function() {
                 io._rS(transaction, config);
             };
-        }
-
-        if (transaction.c.upload) {
-            transaction.c.upload.addEventListener(EVENTS[5], function (progress) {
-                io.progress(transaction, progress, config);
-            }); 
-
-            transaction.c.upload.addEventListener(EVENTS[6], function (loaded) {
-                io.loaded(transaction, loaded, config);
-            });
         }
 
         try {
@@ -690,7 +732,7 @@ IO.prototype = {
                 return response;
             }
         } catch(e) {
-            if (transaction.t) {
+            if (transaction.transport) {
                 // This exception is usually thrown by browsers
                 // that do not support XMLHttpRequest Level 2.
                 // Retry the request with the XDR transport set
