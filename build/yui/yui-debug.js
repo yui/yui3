@@ -3452,6 +3452,8 @@ YUI.Env.aliases = {
 }, '@VERSION@' );
 YUI.add('get', function(Y) {
 
+/*jslint boss:true, expr:true, laxbreak: true */
+
 /**
 Provides dynamic loading of remote JavaScript and CSS resources.
 
@@ -3688,16 +3690,17 @@ Y.Get = Get = {
     @static
     **/
     abort: function (transaction) {
-        var i, id, item, len;
+        var i, id, item, len, pending;
 
         Y.log('`Y.Get.abort()` is deprecated as of 3.5.0. Use the `abort()` method on the transaction instead.', 'warn', 'get');
 
-        if (!(typeof transaction === 'object')) {
-            id = transaction;
+        if (!transaction.abort) {
+            id          = transaction;
+            pending     = this._pending;
             transaction = null;
 
-            if (this._pending && this._pending.transaction.id === id) {
-                transaction = this._pending.transaction;
+            if (pending && pending.transaction.id === id) {
+                transaction   = pending.transaction;
                 this._pending = null;
             } else {
                 for (i = 0, len = this._queue.length; i < len; ++i) {
@@ -3712,9 +3715,7 @@ Y.Get = Get = {
             }
         }
 
-        if (transaction) {
-            transaction.abort();
-        }
+        transaction && transaction.abort();
     },
 
     /**
@@ -3955,7 +3956,7 @@ Y.Get = Get = {
         // Note: some of these checks require browser sniffs since it's not
         // feasible to load test files on every pageview just to perform a
         // feature test. I'm sorry if this makes you sad.
-        return this._env = {
+        return (this._env = {
             // True if this is a browser that supports disabling async mode on
             // dynamically created script nodes. See
             // https://developer.mozilla.org/En/HTML/Element/Script#Attributes
@@ -3971,14 +3972,14 @@ Y.Get = Get = {
             // loading scripts in parallel as long as the script node's `async`
             // attribute is set to false to explicitly disable async execution.
             preservesScriptOrder: !!(ua.gecko || ua.opera)
-        };
+        });
     },
 
     _getTransaction: function (urls, options) {
         var requests = [],
             i, len, req, url;
 
-        if (typeof urls === 'string') {
+        if (!Lang.isArray(urls)) {
             urls = [urls];
         }
 
@@ -4050,6 +4051,12 @@ Y.Get = Get = {
     _load: function (type, urls, options, callback) {
         var transaction;
 
+        // Allow callback as third param.
+        if (typeof options === 'function') {
+            callback = options;
+            options  = {};
+        }
+
         options || (options = {});
         options.type = type;
 
@@ -4093,24 +4100,10 @@ Y.Get = Get = {
     _purge: function (nodes) {
         var purgeNodes    = this._purgeNodes,
             isTransaction = nodes !== purgeNodes,
-            attr, index, node, parent;
+            index, node;
 
-        while (node = nodes.pop()) {
-            parent = node.parentNode;
-
-            if (node.clearAttributes) {
-                // IE.
-                node.clearAttributes();
-            } else {
-                // Everyone else.
-                for (attr in node) {
-                    if (node.hasOwnProperty(attr)) {
-                        delete node[attr];
-                    }
-                }
-            }
-
-            parent && parent.removeChild(node);
+        while (node = nodes.pop()) { // assignment
+            node.parentNode && node.parentNode.removeChild(node);
 
             // If this is a transaction-level purge and this node also exists in
             // the Get-level _purgeNodes array, we need to remove it from
@@ -4290,6 +4283,7 @@ Transaction.prototype = {
 
         if (state === 'done') {
             callback && callback(self.errors.length ? self.errors : null, self);
+            return;
         } else {
             callback && self._callbacks.push(callback);
 
@@ -4364,26 +4358,22 @@ Transaction.prototype = {
             this._callbacks[i].call(thisObj, errors, this);
         }
 
-        if (options.onEnd || options.onFailure || options.onSuccess
-                || options.onTimeout) {
+        data = this._getEventData();
 
-            data = this._getEventData();
-
-            if (errors) {
-                if (options.onTimeout && errors[errors.length - 1] === 'Timeout') {
-                    options.onTimeout.call(thisObj, data);
-                }
-
-                if (options.onFailure) {
-                    options.onFailure.call(thisObj, data);
-                }
-            } else if (options.onSuccess) {
-                options.onSuccess.call(thisObj, data);
+        if (errors) {
+            if (options.onTimeout && errors[errors.length - 1] === 'Timeout') {
+                options.onTimeout.call(thisObj, data);
             }
 
-            if (options.onEnd) {
-                options.onEnd.call(thisObj, data);
+            if (options.onFailure) {
+                options.onFailure.call(thisObj, data);
             }
+        } else if (options.onSuccess) {
+            options.onSuccess.call(thisObj, data);
+        }
+
+        if (options.onEnd) {
+            options.onEnd.call(thisObj, data);
         }
     },
 
@@ -4445,8 +4435,7 @@ Transaction.prototype = {
                 req.doc);
         }
 
-        function onError(e) {
-            // TODO: What useful info is on `e`, if any?
+        function onError() {
             self._progress('Failed to load ' + req.url, req);
         }
 
