@@ -28,15 +28,17 @@ suite.add(new Y.Test.Case({
     },
 
     'button.onClick() should make `selected` attribute = true and `yui3-button-selected` class': function () {
-
         var button = this.button;
         var node = button.getDOMNode();
         
+        // Ensure the button is deselected by default
         Assert.isFalse(button.get('selected'));
         Assert.isFalse(node.hasClass('yui3-button-selected'));
         
+        // Simulate the button click
         node.simulate('click');
         
+        // Now make sure it is selected and has all the approriate attributes
         Assert.isTrue(button.get('selected'));
         Assert.isTrue(node.hasClass('yui3-button-selected'));
         Assert.areSame('true', node.get('aria-selected'));

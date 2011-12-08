@@ -13,7 +13,8 @@ suite.add(new Y.Test.Case({
 
     setUp : function () {
         var buttons = [];
-
+        
+        // Create a few buttons
         for(var i=0; i < 5; i++) {
             button = new Y.ButtonGenerator( {label: i} );
             button.getDOMNode().set('value', i);
@@ -44,6 +45,7 @@ suite.add(new Y.Test.Case({
         // Ensure no buttons are selected
         Assert.areSame(0, ButtonGroup.getSelectedButtons().length);
         
+        // Select specific buttons, and make sure the selected array jives
         buttons[1].set('selected', true);
         Assert.areSame(1, ButtonGroup.getSelectedButtons().length);
                 
@@ -53,6 +55,7 @@ suite.add(new Y.Test.Case({
         buttons[3].set('selected', true);
         Assert.areSame(3, ButtonGroup.getSelectedButtons().length);
         
+        // Deselect
         buttons[2].set('selected', false);
         Assert.areSame(2, ButtonGroup.getSelectedButtons().length);
     },
@@ -64,10 +67,18 @@ suite.add(new Y.Test.Case({
         // Ensure no buttons are selected
         Assert.areSame(0, ButtonGroup.getSelectedButtons().length);
         
+        // Select some buttons and ensure the array of values matches
         buttons[1].set('selected', true);
         ArrayAssert.itemsAreEqual([1], ButtonGroup.getSelectedValues());
         
+        buttons[3].set('selected', true);
+        ArrayAssert.itemsAreEqual([1, 3], ButtonGroup.getSelectedValues());
+        
         buttons[4].set('selected', true);
+        ArrayAssert.itemsAreEqual([1, 3, 4], ButtonGroup.getSelectedValues());
+        
+        // Deselect
+        buttons[3].set('selected', false);
         ArrayAssert.itemsAreEqual([1, 4], ButtonGroup.getSelectedValues());
     },
     
@@ -75,13 +86,14 @@ suite.add(new Y.Test.Case({
         var ButtonGroup = this.ButtonGroup;
         var buttons = ButtonGroup.getButtons();
         
+        // Create a new button
         var newButton = new Y.ButtonGenerator({label: 6});
         
         // Ensure no buttons are selected
         Assert.areSame(5, ButtonGroup.getButtons().length);
         
+        // Add the button, and assert the new length
         ButtonGroup.addButton(newButton);
-        
         Assert.areSame(6, ButtonGroup.getButtons().length);
     }
 }));

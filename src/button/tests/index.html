@@ -1,35 +1,34 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8">
-    <title>Test Page</title>
-</head>
-<body class="yui3-skin-sam">
 
-<div id="log"></div>
-<div id="test"></div>
+    <head>
+        <meta charset="utf-8">
+        <title>Test Page</title>
+    </head>
+    
+    <body class="yui3-skin-sam">
 
-<script src="../../../build/yui/yui.js"></script>
-<script>
-var Y = YUI({
-    allowRollup: false,
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
-    modules: {
-        'button-test': {
-            fullpath: 'button-test.js',
-            requires: ['button-base', 'test', 'node-event-simulate']
-        },
-        'button-group-test': {
-            fullpath: 'button-group-test.js',
-            requires: ['button-group', 'test', 'node-event-simulate']
-        }
-    },
-    useBrowserConsole: false
-}).use('button-group-test', 'test-console', function (Y) {
-    new Y.Test.Console().render('#log');
-    Y.Test.Runner.run();
-});
-</script>
+        <div id="log"></div>
+        <div id="test"></div>
 
-</body>
+        <script src="../../../build/yui/yui.js"></script>
+        <script>
+            YUI({
+                modules: {
+                    'button-test': {
+                        fullpath: 'button-test.js',
+                        requires: ['button-base', 'test', 'node-event-simulate']
+                    },
+                    'button-group-test': {
+                        fullpath: 'button-group-test.js',
+                        requires: ['button-group', 'test', 'node-event-simulate']
+                    }
+                }
+            }).use('button-test', 'button-group-test', 'test-console', function (Y) {
+                new Y.Test.Console().render('#log');
+                Y.Test.Runner.run();
+            });
+        </script>
+    </body>
+    
 </html>
