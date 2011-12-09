@@ -1,213 +1,266 @@
 YUI.add('button-base', function(Y) {
 
-/*global Y */
 
-var Button = function(config){
+    function Button(config) {
+        Button.superclass.constructor.apply(this, arguments);
+    }
     
-    /* For reference
-        http://www.w3.org/TR/wai-aria/states_and_properties
+    Button.NAME = "button";
+    
+    Y.extend(Button, Y.Base, {
         
-        Y.Button
-            public methods:
-                - onClick
-                - getDOMNode
+        /**
+        * @method initializer
+        * @description Internal init() handler.
+        * @param config {Object} Config object.
+        * @private
+        */
+        initializer: function(config){
+            this._srcNode = Y.one(config.srcNode);
+            this._typeSetter(config.type);
+            this._disabledSetter(config.disabled);
+            this._selectedSetter(config.selected);
+            this.renderUI();
+            this.bindUI();
+        },
         
-            private methods:
-                - _colorToHex (static)
-                - _getContrastYIQ (static)
+        /**
+        * @method destructor
+        * @description 
+        * @param config {Object} Config object.
+        * @private
+        */
+        destructor: function () {
+            
+        },
+
+        /**
+        *
+        */        
+        renderUI: function() {
+            var node = this._srcNode;
+            
+            node.addClass(Button.CLASS_NAMES.button);
+            node.setAttribute('role', 'button');
+        },
+        
+        /**
+        *
+        */        
+        bindUI: function() {
+            
+            var node = this._srcNode;
                 
-            attributes:
-                - type
-                - disabled
-                - selected
-                - backgroundColor
+            // TODO: Does mousedown/up even work on touch devices?
+            node.on({
+                mousedown: function(e){
+                    e.target.setAttribute('aria-pressed', 'true');
+                },
+                mouseup: function(e){
+                    e.target.setAttribute('aria-pressed', 'false');
+                },
+                focus: function(e){
+                    e.target.addClass(Button.CLASS_NAMES.focused);
+                },
+                blur: function(e){
+                    e.target.removeClass(Button.CLASS_NAMES.focused);
+                }
+            });
 
-            events:
-                - typeChange
-                - selectedChange
-                - backgroundColorChange
-                - disabledChange
-    */
-    
-    var node, ATTRS;
-    
-    this._srcNode = Y.one(config.srcNode);
-    this._clickHandler = false;
-    
-    node = this._srcNode;
-    node.addClass('yui3-button');
-    node.setAttribute('role', 'button');
-    
-    ATTRS = {
-        label: {
-            setter: function(val) {
-                var node = this.getDOMNode();
-                node.set(node.test('input') ? 'value' : 'text', val)
+            node.on('click', function(e){
+                if(this.onClickfn) {
+                    this.onClickfn(e);
+                }
+            }, this);
+
+            this.on('selectedChange', function(e){
+                if (e.propagate === false) {
+                    e.stopImmediatePropagation();
+                }
+            }, this);            
+        },
+        
+        /**
+        *
+        */
+        onClick: function(fn) {
+            this.onClickfn = fn;
+        },
+
+        /**
+        *
+        */
+        getNode: function() {
+            return this._srcNode;
+        },
+
+        /**
+        *
+        */
+        select: function() {
+            this.set('selected', true);
+        },
+
+        /**
+        *
+        */
+        deselect: function() {
+            this.set('selected', false);
+        },
+
+        /**
+        *
+        */
+        enable: function() {
+            this.set('disabled', false);
+        },
+
+        /**
+        *
+        */
+        disable: function() {
+            this.set('disabled', true);
+        },
+
+        /**
+        *
+        */
+        setBackgroundColor: function(color) {
+            this.set('backgroundColor', color);
+        },
+
+        /**
+        *
+        */
+        _labelSetter: function (value) {
+            var node = this.getNode();
+            node.set(node.test('input') ? 'value' : 'text', value)
+        },
+
+        /**
+        *
+        */
+        _disabledSetter: function (value) {
+            var node = this.getNode();
+            if (value === true) {
+                node.setAttribute('disabled', 'true');
+                node.addClass(Button.CLASS_NAMES.disabled);
+            }
+            else {
+                node.removeAttribute('disabled');
+                node.removeClass(Button.CLASS_NAMES.disabled);
             }
         },
-        type: { 
-            value: 'push',
-            validator: function(val) {
-                var valid = Y.Array.indexOf(['push', 'toggle'], val) !== -1 ? true : false;
-                return valid;
-            },
-            setter: function(val) {
-                if (val === "toggle") {
-                    var node = this.getDOMNode();
-                    this._clickHandler = node.on('click', function(){
-                        this.set('selected', !this.get('selected'));
-                    }, this);
-                }
-                else {
-                    if (this._clickHandler) {
-                        this._clickHandler.detach();
-                        this._clickHandler = false;
-                    }
+
+        /**
+        *
+        */
+        _selectedSetter: function(value) {
+            var node = this.getNode();
+            if (value) {
+                node.set('aria-selected', 'true');
+                node.addClass(Button.CLASS_NAMES.selected);
+            }
+            else {
+                node.set('aria-selected', 'false');
+                node.removeClass(Button.CLASS_NAMES.selected);
+            }
+        },
+
+        /**
+        *
+        */
+        _typeSetter: function(value) {
+            if (value === "toggle") {
+                var node = this.getNode();
+                this._clickHandler = node.on('click', function(){
+                    this.set('selected', !this.get('selected'));
+                }, this);
+            }
+            else {
+                if (this._clickHandler) {
+                    this._clickHandler.detach();
+                    this._clickHandler = false;
                 }
             }
         },
-        disabled: {
-            value: false,
-            validator: function(val) {
-                return Y.Lang.isBoolean(val);
-            },
-            setter: function(val) {
-                var node = this.getDOMNode();
-                if (val === true) {
-                    node.setAttribute('disabled', 'true');
-                    node.addClass('yui3-button-disabled');
-                }
-                else {
-                    node.removeAttribute('disabled');
-                    node.removeClass('yui3-button-disabled');
-                }
-            }
-        },
-        selected: {
-            value: false,
-            setter: function(value) {
-                var node = this.getDOMNode();
-                if (value) {
-                    node.set('aria-selected', 'true');
-                    node.addClass('yui3-button-selected');
-                }
-                else {
-                    node.set('aria-selected', 'false');
-                    node.removeClass('yui3-button-selected');
-                }
-            },
-            validator: function(val) {
-                return Y.Lang.isBoolean(val);
-            }
-        },
-        backgroundColor: {
-            setter: function(color){
-                var fontColor, node;
-                fontColor = Button._getContrastYIQ(Button._colorToHex(color));
-                node = this.getDOMNode();
-                node.setStyle('backgroundColor', color);
-                node.setStyle('color', fontColor);                
-            }
+        
+        /**
+        *
+        */
+        _backgroundColorSetter: function(color){
+            var fontColor, node;
+            fontColor = getContrastYIQ(colorToHex(color));
+            node = this.getNode();
+            node.setStyle('backgroundColor', color);
+            node.setStyle('color', fontColor);
         }
+    }, {        
+        ATTRS: {
+            label: {
+                setter: '_labelSetter'
+            },
+            type: {
+                value: 'push',
+                setter: '_typeSetter'
+            },
+            disabled: {
+                value: false,
+                setter: '_disabledSetter'
+            },
+            selected: {
+                value: false,
+                setter: '_selectedSetter'
+            },
+            backgroundColor: {
+                setter: '_backgroundColorSetter'
+            }
+        },
+
+        CLASS_NAMES: {
+            button  : makeClassName(),
+            selected: makeClassName('selected'),
+            focused : makeClassName('focused'),
+            disabled: makeClassName('disabled')
+        }
+    });
+    
+    function colorToHex(color) {
+        var digits, red, green, blue, rgb;
+
+        if (color.substr(0, 1) === '#') {
+            return color;
+        }
+        digits = /(.*?)rgb\((\d+), (\d+), (\d+)\)/.exec(color);
+
+        red = parseInt(digits[2], 10);
+        green = parseInt(digits[3], 10);
+        blue = parseInt(digits[4], 10);
+
+        rgb = blue | (green << 8) | (red << 16);
+        return digits[1] + '#' + rgb.toString(16);
     };
     
-    this.addAttrs(ATTRS, config);
+    function getContrastYIQ (hexcolor){
+        var r, g, b, yiq;
+
+    	r = parseInt(hexcolor.substr(1,2),16);
+    	g = parseInt(hexcolor.substr(3,2),16);
+    	b = parseInt(hexcolor.substr(5,2),16);
+    	yiq = ((r*299)+(g*587)+(b*114))/1000;
+    	return (yiq >= 128) ? 'black' : 'white';
+    };
     
-    // TODO: Does mousedown/up even work on touch devices?
-    node.on({
-        mousedown: function(e){
-            e.target.setAttribute('aria-pressed', 'true');
-        },
-        mouseup: function(e){
-            e.target.setAttribute('aria-pressed', 'false');
-        },
-        focus: function(e){
-            e.target.addClass('yui3-button-focused');
-        },
-        blur: function(e){
-            e.target.removeClass('yui3-button-focused');
+    function makeClassName(str) {
+        if (str) {
+            return Y.ClassNameManager.getClassName(Button.NAME, str);
         }
-    });
-    
-    node.on('click', function(e){
-        if(this.onClickfn) {
-            this.onClickfn(e);
+        else {
+            return Y.ClassNameManager.getClassName(Button.NAME); 
         }
-    }, this);
-    
-    this.on('selectedChange', function(e){
-        if (e.propagate === false) {
-            e.stopImmediatePropagation();
-        }
-    }, this);
-    
-    if (config.onClick) {
-        this.onClickfn = config.onClick;
     }
-};
-
-Button.prototype.onClick = function(fn) {
-    this.onClickfn = fn;
-};
-
-Button.prototype.getDOMNode = function() {
-    return this._srcNode;
-};
-
-
-Button._colorToHex = function(color) {
-    var digits, red, green, blue, rgb;
     
-    if (color.substr(0, 1) === '#') {
-        return color;
-    }
-    digits = /(.*?)rgb\((\d+), (\d+), (\d+)\)/.exec(color);
-
-    red = parseInt(digits[2], 10);
-    green = parseInt(digits[3], 10);
-    blue = parseInt(digits[4], 10);
-
-    rgb = blue | (green << 8) | (red << 16);
-    return digits[1] + '#' + rgb.toString(16);
-};
-
-
-Button._getContrastYIQ = function(hexcolor){
-    var r, g, b, yiq;
-    
-	r = parseInt(hexcolor.substr(1,2),16);
-	g = parseInt(hexcolor.substr(3,2),16);
-	b = parseInt(hexcolor.substr(5,2),16);
-	yiq = ((r*299)+(g*587)+(b*114))/1000;
-	return (yiq >= 128) ? 'black' : 'white';
-};
-
-var ButtonGenerator = function(config) {
-    var button;
-    
-    config.srcNode = Y.Node.create('<button>' + config.label + '</button>');
-    button = new Y.Button(config);
-    return button;
-};
-
-var Buttons = function(config){
-    var buttons = [];
-    config.srcNodes.each(function(node){
-        var button = new Y.Button({
-            type: config.type,
-            srcNode: node
-        });
-        buttons.push(button);
-    });
-    
-    return buttons;
-};
-
-Y.augment(Button, Y.Attribute);
-
-Y.Button          = Button;
-Y.Buttons         = Buttons;
-Y.ButtonGenerator = ButtonGenerator;
+    Y.Button = Button;
 
 
 }, '@VERSION@' ,{requires:['yui-base', 'attribute', 'node', 'array-extras']});

@@ -27,13 +27,17 @@ var ButtonGroup = function (config) {
     };
 
     this.addAttrs(ATTRS, config);
-    
+
     if (config.srcNodes){
         if (Y.Lang.isString(config.srcNodes)){
             config.srcNodes = Y.all(config.srcNodes);
         }
+        config.buttons = [];
+        config.srcNodes.each(function(node){
+            config.srcNode = node;
+            config.buttons.push(new Y.Button(config));
+        });
         
-        config.buttons = new Y.Buttons(config);
         delete config.srcNodes;
     }
     
@@ -66,7 +70,7 @@ ButtonGroup.prototype.getSelectedValues = function() {
     var selected, values = [];
     selected = this.getSelectedButtons();
     Y.Array.each(selected, function(button){
-        values.push(button.getDOMNode().get('value'));
+        values.push(button.getNode().get('value'));
     });
     
     return values;

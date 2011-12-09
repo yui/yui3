@@ -7065,17 +7065,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "button-base": {
         "requires": [
-            "attribute", 
-            "node", 
-            "arraylist", 
-            "arraylist-add", 
-            "array-extras", 
-            "event-focus"
+            "base", 
+            "classnamemanager"
         ]
     }, 
     "button-group": {
         "requires": [
-            "button-base"
+            "button-base", 
+            "arraylist", 
+            "arraylist-add"
         ]
     }, 
     "cache": {
@@ -8936,7 +8934,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'c85105bc509660cb12992d3b414548f7';
+YUI.Env[Y.version].md5 = '207bb0b02c38ca640a815996fb358bc3';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
