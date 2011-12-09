@@ -24,9 +24,9 @@
             }).use('button', 'cssbuttons', 'cssfonts', 'console', function(Y){
                 
                 new Y.Console().render();
-
-                Y.log(new Y.Button({label:'A ninja button'}).getNode().getContent());
                 
+                Y.log(new Y.Button({label:'A ninja button'}).getNode().getContent());
+
                 /*
                     Just a basic test with a listener
                 */
@@ -36,11 +36,8 @@
                 
                 // One way of listening for events
                 button.on('click', function(e){
-                    console.log("Clicked!");
+                    Y.log("Clicked!");
                 });
-
-
-
                 
                 
                 /*

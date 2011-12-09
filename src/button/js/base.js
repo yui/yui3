@@ -28,18 +28,10 @@
         },
         
         /**
-        * @method destructor
-        * @description 
-        * @param config {Object} Config object.
+        * @method renderUI
+        * @description Renders any UI elements for Y.Button instances
         * @private
         */
-        destructor: function () {
-            
-        },
-
-        /**
-        *
-        */        
         renderUI: function() {
             var node = this.getNode();
             
@@ -53,25 +45,13 @@
         bindUI: function() {
             var button = this;
             var node = button.getNode();
-
-            node.on({
-                click: function(e){
-                    button.fire('click', e);
-                },
-                mousedown: function(e){
-                    e.target.setAttribute('aria-pressed', 'true');
-                },
-                mouseup: function(e){
-                    e.target.setAttribute('aria-pressed', 'false');
-                },
-                focus: function(e){
-                    e.target.addClass(Button.CLASS_NAMES.focused);
-                },
-                blur: function(e){
-                    e.target.removeClass(Button.CLASS_NAMES.focused);
-                }
-            });
-
+            
+            node.on('click', this._onClick, button);
+            node.on('mousedown', this._onMouseDown, button);
+            node.on('mouseup', this._onMouseUp, button);
+            node.on('focus', this._onFocus, button);
+            node.on('blur', this._onMouseDown, button);
+            
             button.on('selectedChange', function(e){
                 if (e.propagate === false) {
                     e.stopImmediatePropagation();
@@ -194,5 +174,25 @@
             disabled: makeClassName('disabled')
         }
     });
+    
+    Button.prototype._onClick = function(e){
+        this.fire('click', e);
+    };
+    
+    Button.prototype._onBlur = function(e){
+        e.target.removeClass(Button.CLASS_NAMES.focused);
+    };
+    
+    Button.prototype._onFocus = function(e){
+        e.target.addClass(Button.CLASS_NAMES.focused);
+    };
+    
+    Button.prototype._onMouseUp = function(e){
+        e.target.setAttribute('aria-pressed', 'false');
+    };
+    
+    Button.prototype._onMouseDown = function(e){
+        e.target.setAttribute('aria-pressed', 'true');
+    };
     
     Y.Button = Button;
