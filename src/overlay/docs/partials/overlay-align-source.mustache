@@ -1,7 +1,8 @@
 <div class="overlay-example" id="overlay-align">
-    <p></p>
+    
     <div class="example-head">
         <button type="button" class="button" id="align">View Next Alignment</button>
+        <pre class="code" id="alignment"></pre>
     </div>
     <div class="yui3-g">
         <div class="yui3-u-1-8">
@@ -49,7 +50,7 @@ YUI().use("overlay", function(Y) {
     var overlay = new Y.Overlay({
         width:"16em",
         headerContent: 'Aligned Overlay<span id="step"></span>',
-        bodyContent: '<div class="descr"></div><div id="alignment"></div>',
+        bodyContent: '<div class="descr"></div>',
         zIndex:2
     });
 
@@ -61,48 +62,50 @@ YUI().use("overlay", function(Y) {
     var descr = Y.one('.yui3-widget-bd .descr');
 
     /* Setup local variable for Y.WidgetPositionAlign, since we use it multiple times */
-    var wPA = Y.WidgetPositionAlign;
+    var a = Y.WidgetPositionAlign,
+        declareA = "var a = Y.WidgetPostionAlign; // Local variable<br><br>",
+        dontDeclareA = "<br><br>";
 
     var steps = [
         function() {
             /* Align top-left corner of overlay, with top-right corner of #align1 */
-            alignment.setContent('overlay.set("align", {node:"#align1", points:[wPA.TL, wPA.TR]});');
+            alignment.setContent(declareA + 'overlay.set("align", {<br>    node: "#align1",<br>    points: [a.TL, a.TR]<br>});');
             descr.setContent('Align top-left corner of overlay, with top-right corner of #align1');
             Y.one('#align1').addClass('aligned-to');
-            overlay.set("align", {node:"#align1", points:[wPA.TL, wPA.TR]});
+            overlay.set("align", {node:"#align1", points: [a.TL, a.TR]});
         },
         function() {
             /* Center overlay in #align2 */
-            alignment.setContent('overlay.set("centered", "#align2");');
-            descr.setContent('Center overlay in #align2');
+            alignment.setContent(dontDeclareA + 'overlay.set("centered", "#align2");');
+            descr.setContent('Center overlay in #align2 <br>(an image)');
             Y.one('#align2').addClass('aligned-to');
             overlay.set("centered", "#align2");
         },
         function() {
             /* Align top-center edge of overlay with bottom-center edge of #align3 */
-            alignment.setContent('overlay.set("align", {node:"#align3", points:[wPA.TC, wPA.BC]});');
+            alignment.setContent(declareA + 'overlay.set("align", {<br>    node: "#align3",<br>    points: [a.TC, a.BC]<br>});');
             descr.setContent('Align top-center edge of overlay with bottom-center edge of #align3');
             Y.one('#align3').addClass('aligned-to');
-            overlay.set("align", {node:"#align3", points:[wPA.TC, wPA.BC]});
+            overlay.set("align", {node:"#align3", points:[a.TC, a.BC]});
         },
         function() {
             /* Align right-center edge of overlay with right-center edge of viewport */
-            alignment.setContent('overlay.set("align", {points:[wPA.RC, wPA.RC]});');
+            alignment.setContent(declareA + 'overlay.set("align", {<br>    points: [a.RC, a.RC]<br>});');
             descr.setContent('Align right-center edge of overlay with right-center edge of viewport');
-            overlay.set("align", {points:[wPA.RC, wPA.RC]});
+            overlay.set("align", {points:[a.RC, a.RC]});
         },
         function() {
             /* Center overlay in viewport */
-            alignment.setContent('overlay.set("centered", true);');
+            alignment.setContent(dontDeclareA + 'overlay.set("centered", true);');
             descr.setContent('Center overlay in viewport');
             overlay.set("centered", true);
         },
         function() {
             /* Center in #overlay-align */
-            alignment.setContent('overlay.set("align", {node:"#overlay-align", points:[wPA.CC, wPA.CC]});');
+            alignment.setContent(declareA + 'overlay.set("align", {<br>    node: "#overlay-align",<br>    points: [a.CC, a.CC]<br>});');
             descr.setContent('Center in #overlay-align');
             Y.one('#overlay-align').addClass('aligned-to');
-            overlay.set("align", {node:"#overlay-align", points:[wPA.CC, wPA.CC]});
+            overlay.set("align", {node:"#overlay-align", points:[a.CC, a.CC]});
         }
     ];
 
