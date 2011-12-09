@@ -126,28 +126,16 @@
         *
         */
         _disabledSetter: function (value) {
-            var node = this.getNode();
-            if (value === true) {
-                node.setAttribute('disabled', true).addClass(Button.CLASS_NAMES.disabled);
-            }
-            else {
-                node.removeAttribute('disabled').removeClass(Button.CLASS_NAMES.disabled);
-            }
+            this.getNode().set('disabled', value)
+                .toggleClass(Button.CLASS_NAMES.disabled, value);
         },
-
+        
         /**
         *
         */
         _selectedSetter: function(value) {
-            var node = this.getNode();
-            if (value) {
-                node.set('aria-selected', 'true');
-                node.addClass(Button.CLASS_NAMES.selected);
-            }
-            else {
-                node.set('aria-selected', 'false');
-                node.removeClass(Button.CLASS_NAMES.selected);
-            }
+            this.getNode().set('aria-selected', value)
+                .toggleClass(Button.CLASS_NAMES.selected, value);
         },
 
         /**
