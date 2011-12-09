@@ -17,7 +17,7 @@ var Assert = Y.Assert,
     html5       = Y.Router.html5,
     win         = Y.config.win,
     originalURL = (win && win.location.toString()) || '',
-    yeti        = win && $yetify,
+    yeti        = win && win.$yetify,
 
     suite;
 
