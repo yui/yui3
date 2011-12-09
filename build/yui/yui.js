@@ -3622,6 +3622,18 @@ Y.Get = Get = {
     **/
 
     /**
+    Mapping of document _yuid strings to <head> or <base> node references so we
+    don't have to look the node up each time we want to insert a request node.
+
+    @property _insertCache
+    @type Object
+    @protected
+    @static
+    @since 3.5.0
+    **/
+    _insertCache: {},
+
+    /**
     Information about the currently pending transaction, if any.
 
     This is actually an object with two properties: `callback`, containing the
@@ -4365,23 +4377,41 @@ Transaction.prototype = {
 
     _getInsertBefore: function (req) {
         var doc = req.doc,
-            el  = req.insertBefore || doc.getElementsByTagName('base')[0];
-
-        // Inserting before a <base> tag apparently works around an IE bug
-        // (according to a comment from pre-3.5.0 Y.Get), but I'm not sure what
-        // bug that is, exactly. Better safe than sorry?
+            el  = req.insertBefore,
+            cache, cachedNode, docStamp;
 
         if (el) {
             return typeof el === 'string' ? doc.getElementById(el) : el;
         }
 
-        // Barring an explicit insertBefore config or a <base> element, we'll
-        // try to insert before the first child of <head>. If <head> doesn't
-        // exist, we'll throw our hands in the air and insert before the first
-        // <script>, which we know must exist because *something* put Y.Get on
-        // the page.
+        cache    = Get._insertCache;
+        docStamp = Y.stamp(doc);
+
+        if ((el = cache[docStamp])) { // assignment
+            return el;
+        }
+
+        // Inserting before a <base> tag apparently works around an IE bug
+        // (according to a comment from pre-3.5.0 Y.Get), but I'm not sure what
+        // bug that is, exactly. Better safe than sorry?
+        if ((el = doc.getElementsByTagName('base')[0])) { // assignment
+            return (cache[docStamp] = el);
+        }
+
+        // Look for a <head> element.
         el = doc.head || doc.getElementsByTagName('head')[0];
-        return el ? el.firstChild : doc.getElementsByTagName('script')[0];
+
+        if (el) {
+            // Create a marker node at the end of <head> to use as an insertion
+            // point. Inserting before this node will ensure that all our CSS
+            // gets inserted in the correct order, to maintain style precedence.
+            el.appendChild(doc.createTextNode(''));
+            return (cache[docStamp] = el.lastChild);
+        }
+
+        // If all else fails, just insert before the first script node on the
+        // page, which is virtually guaranteed to exist.
+        return (cache[docStamp] = doc.getElementsByTagName('script')[0]);
     },
 
     _insert: function (req) {
