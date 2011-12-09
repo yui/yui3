@@ -271,7 +271,7 @@ YUI.add('dd-tests', function(Y) {
         },
         test_window_scroll: function() {
             //Skip this test on mobile devices, they don't like the scrollTop settings to test against.
-            if (Y.UA.mobile) {
+            if (Y.UA.mobile || Y.UA.android || Y.UA.webos) {
                 return true;
             }
             Y.one('body').setStyle('height', '3000px');
