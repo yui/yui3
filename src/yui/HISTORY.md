@@ -6,6 +6,11 @@ YUI Core Change History
 
 * `Y.Object.isEmpty()` now casts the given value to an object if it isn't one
   already, which prevents exceptions when it's given a non-object.
+* 2530970 Should we provide a YUI.applyConfig(), to avoid clobbering of YUI_config in 'mashup' use cases
+* 2531247 namespace function behaves wrong with multiple arguments
+* 2531512 'debug' parameter missing from the YUI Config object documentation; the Config object documentation ...
+* YUI is now native on Node.js, no shim needed to run. See README.nodejs.md
+  
 
 
 3.4.1
