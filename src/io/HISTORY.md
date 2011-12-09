@@ -1,13 +1,21 @@
 IO Utility Change History
 =========================
 
+3.5.0
+-----
+
+  * Fixed error in sending an XML document as POST data. [Ticket #2531257]
+
+  * Configuration data can now include an instance of FormData for HTTP
+    POST requests. [Ticket #2531274]
+
 3.4.1
 -----
 
   * HTTP 304 now treated as a success condition. [Ticket #2530931]
 
   * Fixed transport creation error when both io-xdr and io-upload-iframe
-    modules are in use [Ticket #2530999]
+    modules are in use. [Ticket #2530999]
 
   * Querystring stringify added to io-upload-iframe. [Ticket #2531037]
 
