@@ -262,17 +262,15 @@
     }, 
     "button-base": {
         "requires": [
-            "attribute", 
-            "node", 
-            "arraylist", 
-            "arraylist-add", 
-            "array-extras", 
-            "event-focus"
+            "base", 
+            "classnamemanager"
         ]
     }, 
     "button-group": {
         "requires": [
-            "button-base"
+            "button-base", 
+            "arraylist", 
+            "arraylist-add"
         ]
     }, 
     "cache": {
