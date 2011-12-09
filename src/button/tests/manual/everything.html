@@ -25,12 +25,22 @@
                 
                 new Y.Console().render();
 
+
                 /*
                     Just a basic test with a listener
                 */
                 var button = new Y.Button({
                     srcNode: Y.one('#event')
                 });
+                
+                // One way of listening for events
+                button.on('click', function(e){
+                    console.log("Clicked!");
+                });
+
+
+
+                
                 
                 /*
                     A 'toggle' button listening for the selectedChange event
@@ -40,21 +50,10 @@
                     type: 'toggle'
                 });
                 
-                // One way of listening for events
-                button.onClick(function(){
-                   button.setBackgroundColor('#'+Math.floor(Math.random()*16777215).toString(16));
-                });
-                
-
-
-
-                
                 // An alternative to button.get('srcNode').on('click', ...
                 button2.on('selectedChange', function(){
                    Y.log('toggled');
                 });
-
-
 
 
                 /*
@@ -76,9 +75,8 @@
                 */
                 var button4 = new Y.Button({
                     srcNode: Y.one('#disabled'),
-                    disabled: false
+                    disabled: true
                 });
-                button4.set('disabled', true);
 
 
 
