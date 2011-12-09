@@ -172,7 +172,6 @@
     }, {
         ATTRS: {
             srcNode: {
-                lazyAdd: false,
                 setter: Y.one
             },
             label: {
@@ -186,14 +185,12 @@
             disabled: {
                 value: false,
                 lazyAdd: false,
-                setter: '_disabledSetter',
-                validator: Y.Lang.isBoolean
+                setter: '_disabledSetter'
             },
             selected: {
                 value: false,
                 lazyAdd: false,
-                setter: '_selectedSetter',
-                validator: Y.Lang.isBoolean
+                setter: '_selectedSetter'
             }
         },
 
