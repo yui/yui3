@@ -167,19 +167,13 @@
                     button._clickHandler = false;
                 }
             }
-        },
-        
-        /**
-        *
-        */
-        _srcNodeSetter: function(value) {
-            return Y.one(value);
         }
+        
     }, {
         ATTRS: {
             srcNode: {
                 lazyAdd: false,
-                setter: '_srcNodeSetter'
+                setter: Y.one
             },
             label: {
                 setter: '_labelSetter'
