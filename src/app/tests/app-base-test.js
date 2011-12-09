@@ -434,19 +434,20 @@ appBaseSuite.add(new Y.Test.Case({
     },
 
     '`getViewInfo()` should return the metadata for a named, registered view': function () {
-        var myviewInfo = {},
+        var myviewInfo = {type: function () {}},
             app        = this.app = new Y.App({views: {myview: myviewInfo}});
 
-        Assert.areSame(myviewInfo, app.getViewInfo('myview'));
+        Assert.areSame(myviewInfo.type, app.getViewInfo('myview').type);
     },
 
     '`getViewInfo()` should return the metadata for a view constructed by `createView()`': function () {
-        var myviewInfo = {},
-            app        = this.app = new Y.App({views: {myview: myviewInfo}}),
-            view       = app.createView('myview');
+        var TestView = Y.Base.create('testView', Y.View, []),
+            app      = this.app = new Y.App({views: {myview: {type: TestView}}}),
+            view     = app.createView('myview');
 
         Assert.isInstanceOf(Y.View, view);
-        Assert.areSame(myviewInfo, app.getViewInfo(view));
+        Assert.isInstanceOf(TestView, view);
+        Assert.areSame(app.views.myview, app.getViewInfo(view));
     },
 
     '`render()` should append the `viewContainer` into the `container`': function () {
