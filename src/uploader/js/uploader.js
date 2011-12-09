@@ -384,7 +384,7 @@ Y.extend(Uploader, Y.Base, {
     * Disables the uploader user input (mouse clicks on the 'Browse' button). If the button skin 
     * is applied, the sprite is set to the 'disabled' state.
     *
-    * @method enable
+    * @method disable
     */	
 	disable : function () {
 		this.uploaderswf.callSWF("disable");
