@@ -642,9 +642,9 @@ IO.prototype = {
         sync = config.sync;
         data = config.data;
 
-        // Serialize an object into a key-value string using
+        // Serialize an map object into a key-value string using
         // querystring-stringify-simple.
-        if (Y.Lang.isObject(data) && !transaction.upload) {
+        if ((Y.Lang.isObject(data) && !data.nodeType) && !transaction.upload) {
             data = Y.QueryString.stringify(data);
         }
 
