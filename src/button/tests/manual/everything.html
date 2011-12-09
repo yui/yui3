@@ -21,7 +21,7 @@
                 debug: true,
                 combo: false,
                 filter: 'raw'
-            }).use('button', 'cssfonts', 'console', function(Y){
+            }).use('button', 'cssbuttons', 'cssfonts', 'console', function(Y){
                 
                 new Y.Console().render();
 
@@ -32,17 +32,6 @@
                     srcNode: Y.one('#event')
                 });
                 
-                // One way of listening for events
-                button.onClick(function(){
-                   button.set('backgroundColor', '#'+Math.floor(Math.random()*16777215).toString(16));
-                });
-
-
-
-
-
-
-
                 /*
                     A 'toggle' button listening for the selectedChange event
                 */
@@ -51,15 +40,19 @@
                     type: 'toggle'
                 });
                 
+                // One way of listening for events
+                button.onClick(function(){
+                   button.setBackgroundColor('#'+Math.floor(Math.random()*16777215).toString(16));
+                });
+                
+
+
+
+                
                 // An alternative to button.get('srcNode').on('click', ...
                 button2.on('selectedChange', function(){
                    Y.log('toggled');
                 });
-
-
-
-
-
 
 
 
@@ -71,9 +64,6 @@
                 var button3 = new Y.Button({
                     srcNode: Y.one('#link')
                 });
-
-
-
 
 
 
@@ -97,23 +87,17 @@
 
 
 
-
                 /*
                     A group of radio-like buttons
                 */
                 var buttonGroup = new Y.ButtonGroup({
-                    buttons: new Y.Buttons({
-                        srcNodes: Y.all('.group')
-                    }),
+                    srcNodes: Y.all('.group'),
                     type: 'radio'
                 });
 
                 buttonGroup.after('selectionChange', function(e){
                     Y.log('buttonGroup selection changed');
-                });    
-                
-
-
+                });
 
 
 
@@ -124,9 +108,7 @@
                     A group of checkbox-like buttons
                 */
                 var buttonGroup2 = new Y.ButtonGroup({
-                    buttons: new Y.Buttons({
-                        srcNodes: Y.all('.multigroup')
-                    }),
+                    srcNodes: Y.all('.multigroup'),
                     type: 'checkbox'
                 });
 
@@ -165,8 +147,10 @@
                         config.type = type;
                     }
                     
-                    button = new Y.ButtonGenerator(config);
-                    Y.one('#generated').append(button.getDOMNode());
+                    config.srcNode = Y.Node.create('<button>' + config.label + '</button>');
+                    button = new Y.Button(config);
+                    
+                    Y.one('#generated').append(button.getNode());
                 })
                 
             });

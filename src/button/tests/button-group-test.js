@@ -16,8 +16,10 @@ suite.add(new Y.Test.Case({
         
         // Create a few buttons
         for(var i=0; i < 5; i++) {
-            button = new Y.ButtonGenerator( {label: i} );
-            button.getDOMNode().set('value', i);
+            button = new Y.Button({
+                srcNode: Y.Node.create('<button>' + i + '</button>')
+            });
+            button.getNode().set('value', i);
             buttons.push(button);
         }
 
@@ -87,7 +89,9 @@ suite.add(new Y.Test.Case({
         var buttons = ButtonGroup.getButtons();
         
         // Create a new button
-        var newButton = new Y.ButtonGenerator({label: 6});
+        newButton = new Y.Button({
+            srcNode: Y.Node.create('<button>6</button>')
+        });
         
         // Ensure no buttons are selected
         Assert.areSame(5, ButtonGroup.getButtons().length);
