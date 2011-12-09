@@ -7,6 +7,15 @@ YUI.add('button-base', function(Y) {
     
     Button.NAME = "button";
     
+    function makeClassName(str) {
+        if (str) {
+            return Y.ClassNameManager.getClassName(Button.NAME, str);
+        }
+        else {
+            return Y.ClassNameManager.getClassName(Button.NAME); 
+        }
+    }
+    
     Y.extend(Button, Y.Base, {
         
         /**
@@ -16,10 +25,6 @@ YUI.add('button-base', function(Y) {
         * @private
         */
         initializer: function(config){
-            this._srcNode = Y.one(config.srcNode);
-            this._typeSetter(config.type);
-            this._disabledSetter(config.disabled);
-            this._selectedSetter(config.selected);
             this.renderUI();
             this.bindUI();
         },
@@ -38,7 +43,7 @@ YUI.add('button-base', function(Y) {
         *
         */        
         renderUI: function() {
-            var node = this._srcNode;
+            var node = this.getNode();
             
             node.addClass(Button.CLASS_NAMES.button);
             node.setAttribute('role', 'button');
@@ -48,11 +53,13 @@ YUI.add('button-base', function(Y) {
         *
         */        
         bindUI: function() {
-            
-            var node = this._srcNode;
-                
-            // TODO: Does mousedown/up even work on touch devices?
+            var button = this;
+            var node = button.getNode();
+
             node.on({
+                click: function(e){
+                    button.fire('click', e);
+                },
                 mousedown: function(e){
                     e.target.setAttribute('aria-pressed', 'true');
                 },
@@ -67,31 +74,18 @@ YUI.add('button-base', function(Y) {
                 }
             });
 
-            node.on('click', function(e){
-                if(this.onClickfn) {
-                    this.onClickfn(e);
-                }
-            }, this);
-
-            this.on('selectedChange', function(e){
+            button.on('selectedChange', function(e){
                 if (e.propagate === false) {
                     e.stopImmediatePropagation();
                 }
-            }, this);            
-        },
-        
-        /**
-        *
-        */
-        onClick: function(fn) {
-            this.onClickfn = fn;
+            });            
         },
 
         /**
         *
         */
         getNode: function() {
-            return this._srcNode;
+            return this.get('srcNode');
         },
 
         /**
@@ -125,13 +119,6 @@ YUI.add('button-base', function(Y) {
         /**
         *
         */
-        setBackgroundColor: function(color) {
-            this.set('backgroundColor', color);
-        },
-
-        /**
-        *
-        */
         _labelSetter: function (value) {
             var node = this.getNode();
             node.set(node.test('input') ? 'value' : 'text', value)
@@ -143,12 +130,10 @@ YUI.add('button-base', function(Y) {
         _disabledSetter: function (value) {
             var node = this.getNode();
             if (value === true) {
-                node.setAttribute('disabled', 'true');
-                node.addClass(Button.CLASS_NAMES.disabled);
+                node.setAttribute('disabled', true).addClass(Button.CLASS_NAMES.disabled);
             }
             else {
-                node.removeAttribute('disabled');
-                node.removeClass(Button.CLASS_NAMES.disabled);
+                node.removeAttribute('disabled').removeClass(Button.CLASS_NAMES.disabled);
             }
         },
 
@@ -171,16 +156,17 @@ YUI.add('button-base', function(Y) {
         *
         */
         _typeSetter: function(value) {
+            var button = this;
             if (value === "toggle") {
-                var node = this.getNode();
-                this._clickHandler = node.on('click', function(){
-                    this.set('selected', !this.get('selected'));
-                }, this);
+                var node = button.getNode();
+                button._clickHandler = node.on('click', function(){
+                    button.set('selected', !button.get('selected'));
+                }, button);
             }
             else {
-                if (this._clickHandler) {
-                    this._clickHandler.detach();
-                    this._clickHandler = false;
+                if (button._clickHandler) {
+                    button._clickHandler.detach();
+                    button._clickHandler = false;
                 }
             }
         },
@@ -188,32 +174,34 @@ YUI.add('button-base', function(Y) {
         /**
         *
         */
-        _backgroundColorSetter: function(color){
-            var fontColor, node;
-            fontColor = getContrastYIQ(colorToHex(color));
-            node = this.getNode();
-            node.setStyle('backgroundColor', color);
-            node.setStyle('color', fontColor);
+        _srcNodeSetter: function(value) {
+            return Y.one(value);
         }
-    }, {        
+    }, {
         ATTRS: {
+            srcNode: {
+                lazyAdd: false,
+                setter: '_srcNodeSetter'
+            },
             label: {
                 setter: '_labelSetter'
             },
             type: {
                 value: 'push',
+                lazyAdd: false,
                 setter: '_typeSetter'
             },
             disabled: {
                 value: false,
-                setter: '_disabledSetter'
+                lazyAdd: false,
+                setter: '_disabledSetter',
+                validator: Y.Lang.isBoolean
             },
             selected: {
                 value: false,
-                setter: '_selectedSetter'
-            },
-            backgroundColor: {
-                setter: '_backgroundColorSetter'
+                lazyAdd: false,
+                setter: '_selectedSetter',
+                validator: Y.Lang.isBoolean
             }
         },
 
@@ -224,41 +212,6 @@ YUI.add('button-base', function(Y) {
             disabled: makeClassName('disabled')
         }
     });
-    
-    function colorToHex(color) {
-        var digits, red, green, blue, rgb;
-
-        if (color.substr(0, 1) === '#') {
-            return color;
-        }
-        digits = /(.*?)rgb\((\d+), (\d+), (\d+)\)/.exec(color);
-
-        red = parseInt(digits[2], 10);
-        green = parseInt(digits[3], 10);
-        blue = parseInt(digits[4], 10);
-
-        rgb = blue | (green << 8) | (red << 16);
-        return digits[1] + '#' + rgb.toString(16);
-    };
-    
-    function getContrastYIQ (hexcolor){
-        var r, g, b, yiq;
-
-    	r = parseInt(hexcolor.substr(1,2),16);
-    	g = parseInt(hexcolor.substr(3,2),16);
-    	b = parseInt(hexcolor.substr(5,2),16);
-    	yiq = ((r*299)+(g*587)+(b*114))/1000;
-    	return (yiq >= 128) ? 'black' : 'white';
-    };
-    
-    function makeClassName(str) {
-        if (str) {
-            return Y.ClassNameManager.getClassName(Button.NAME, str);
-        }
-        else {
-            return Y.ClassNameManager.getClassName(Button.NAME); 
-        }
-    }
     
     Y.Button = Button;
 
