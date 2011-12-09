@@ -160,9 +160,14 @@
     }, {
         ATTRS: {
             srcNode: {
-                setter: Y.one
+                setter: Y.one,
+                lazyAdd: false,
+                valueFn: function () {
+                    return Y.Node.create('<button></button>');
+                }
             },
             label: {
+                lazyAdd: false,
                 setter: '_labelSetter'
             },
             type: {
