@@ -10,7 +10,11 @@ Dial Change History
     and from _centerYOnPage to _dialCenterY
     
   * Known issue: On IE7, when browser is zoomed, clicking on dial gives the
-    wrong value.   
+    wrong value.
+    
+  * Multiple instances of Dial all had the same ARIA label. 
+    They are now unique. Screenreaders now read both the label and the value.
+    [Ticket #2531505]   
 
 3.4.1
 -----

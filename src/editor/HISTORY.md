@@ -1,6 +1,10 @@
 Rich Text Editor Change History
 ===============================
 
+### 3.5.0
+    * 2530547 Frame: src attribute doesn't do anything
+    * General fixes for Y! Mail deployment
+
 ###3.4.1
 
 No changes.
