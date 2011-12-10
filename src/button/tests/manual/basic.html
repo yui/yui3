@@ -26,16 +26,15 @@
                 
                 var push = new Y.Button({
                     label: 'Click to select',
-                    srcNode: Y.one('#push'),
-                    onClick: function(e){
-                        push.set('selected', true);
-                        Y.log('click push')
-                    }
+                    srcNode: Y.one('#push')
                 });
-                
+                push.on('click', function(e){
+                    push.set('selected', true);
+                    Y.log('click push')
+                });
                 push.once('selectedChange', function(){
                     push.set('label', 'Click to disable');
-                    push.onClick(function(){
+                    push.on('click', function(){
                         push.set('label', 'Disabled');
                         push.set('selected', false);
                         push.set('disabled', true);
@@ -53,7 +52,7 @@
                     disabled: true
                 });
                 
-                toggle.onClick(function(e){
+                toggle.on('click', function(e){
                     Y.log('click toggle')
                 });
             });

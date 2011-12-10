@@ -23,8 +23,8 @@
                     Y.one("#container").empty(true);
                     
                     for(var i=0; i < count; i++) {
-                        button = new Y.ButtonGenerator( {label: i} );
-                        Y.one("#container").append(button.getDOMNode());
+                        button = new Y.Button( {label: i} );
+                        Y.one("#container").append(button.getNode());
                         buttons.push(button);
                     }
 
