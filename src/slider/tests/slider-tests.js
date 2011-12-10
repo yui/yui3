@@ -524,12 +524,6 @@ suite.add( new Y.Test.Case({
 suite.add( new Y.Test.Case({
     name: "Keyboard",
 
-    _should: {
-        fail: {
-            "test keyboard input and resultant value change, when Slider length is less than max - min": 2531498
-        }
-    },
-
     setUp: function () {
         Y.one("body").append('<div id="testbed"></div>');
     },
