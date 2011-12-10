@@ -8,7 +8,7 @@ var Lang = Y.Lang,
 Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
     TBODY_TEMPLATE:
-        '<tbody class="{tbodyClasses}">{content}</tbody>',
+        '<tbody class="{classes}">{content}</tbody>',
 
     ROW_TEMPLATE :
         '<tr id="{clientId}" class="{rowClasses}">' +
@@ -47,7 +47,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         // Needed for mutation
         this._createRowTemplate(columns);
 
-        if ((!tbody || replace) && data.size()) {
+        if ((!tbody || replace) && data) {
             tbody = Y.Node.create(this._createDataHTML(columns));
 
             this._applyNodeFormatters(tbody, columns);
@@ -134,7 +134,13 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                         //attributes: {}
                     };
 
-                    value = col.formatter.apply(host, formatterData);
+                    // Formatters can either return a value
+                    value = col.formatter.call(host, formatterData);
+
+                    // or update the value property of the data obj passed
+                    if (value === undefined) {
+                        value = formatterData.value;
+                    }
 
                     data[key + '-classes'] = formatterData.classnames;
 
@@ -173,6 +179,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         var host = this.host,
             formatters = [],
             tbodyNode  = tbody.getDOMNode(),
+            linerQuery = '.' + this.host.getClassName('liner'),
             i, len;
 
         // Only iterate the ModelList again if there are nodeFormatters
@@ -194,14 +201,15 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
                 if (row) {
                     for (i = 0, len = formatters.length; i < len; ++i) {
-                        cell = Y.one(row.cells[i]);
+                        cell = Y.one(row.cells[formatters[i]]);
 
                         if (cell) {
                             col = formatterData.column = columns[formatters[i]];
                             key = col.key || col._yuid;
 
                             formatterData.value = record.get(key);
-                            formatterData.cell  = cell;
+                            formatterData.td    = cell;
+                            formatterData.cell  = cell.one(linerQuery) || cell;
 
                             keep = col.nodeFormatter.call(host, formatterData);
 

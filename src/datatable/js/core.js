@@ -102,8 +102,12 @@ Y.mix(Table.prototype, {
             if (!attrHost) {
                 data = this.get('data');
 
-                if (data && data.size()) {
-                    attrHost = data.item(0).constructor;
+                if (data) {
+                    if (isArray(data) && data.length) {
+                        columns = keys(data[0]);
+                    } else if (data.size && data.size()) {
+                        attrHost = data.item(0).constructor;
+                    }
                 }
             }
 
@@ -111,7 +115,6 @@ Y.mix(Table.prototype, {
                 // TODO: merge superclass attributes up to Model?
                 columns = keys(attrHost.ATTRS);
             }
-
         }
 
         this._columns = this._parseColumns(columns || []);
@@ -126,7 +129,7 @@ Y.mix(Table.prototype, {
             row = 0,
             col, i, len;
         
-        if (isArray(columns)) {
+        if (isArray(columns) && columns.length) {
             data.byPosition.push([]);
             for (i = 0, len = columns.length; i < len; ++i) {
                 col = columns[i];
@@ -206,6 +209,7 @@ Y.mix(Table.prototype, {
         if (!this._tableNode) {
             this._tableNode = Y.Node.create(this.TABLE_TEMPLATE);
         }
+        this._tableNode.addClass(this.getClassName('table'));
 
         this._uiUpdateSummary(this.get('summary'));
 

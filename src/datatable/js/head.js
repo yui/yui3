@@ -46,27 +46,29 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
         if (!thead) {
             thead = '';
 
-            for (i = 0, len = columns.length; i < len; ++i) {
-                html = '';
+            if (columns.length) {
+                for (i = 0, len = columns.length; i < len; ++i) {
+                    html = '';
 
-                for (j = 0, jlen = columns[i].length; j < jlen; ++j) {
-                    col = columns[i][j];
-                    if (col.hidden !== true && col.visible !== false) {
-                        html += fromTemplate(this.CELL_TEMPLATE,
-                            Y.merge(
-                                defaults,
-                                col, {
-                                    content: col.label ||
-                                             col.key   ||
-                                             ("Column " + j)
-                                }
-                            ));
+                    for (j = 0, jlen = columns[i].length; j < jlen; ++j) {
+                        col = columns[i][j];
+                        if (col.hidden !== true && col.visible !== false) {
+                            html += fromTemplate(this.CELL_TEMPLATE,
+                                Y.merge(
+                                    defaults,
+                                    col, {
+                                        content: col.label ||
+                                                 col.key   ||
+                                                 ("Column " + j)
+                                    }
+                                ));
+                        }
                     }
-                }
 
-                thead += fromTemplate(this.ROW_TEMPLATE, {
-                    content: html
-                });
+                    thead += fromTemplate(this.ROW_TEMPLATE, {
+                        content: html
+                    });
+                }
             }
 
             thead = fromTemplate(this.THEAD_TEMPLATE, {
