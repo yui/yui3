@@ -119,21 +119,9 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
          * @protected
          */
         _defThumbMoveFn: function ( e ) {
-            var previous = this.get( VALUE ),
-                value    = this._offsetToValue( e.offset );
-
-            // This test avoids duplication of this.set(..) if the origin
-            // of this thumbMove is from slider.set('value',x);
-            // slider.set() -> afterValueChange -> uiMoveThumb ->
-            // fire(thumbMove) -> _defThumbMoveFn -> this.set()
-            if ( previous !== value ) {
-                this.set( VALUE, value, { positioned: true } );   
-                /* FIXME: aria and keyboard have problems with this 
-                "if condition" when slider length is less than max - min. 
-                If the value change caused by keyboard doesn't result 
-                in the thumb moving, the value is set back to previous value 
-                by _defThumbMoveFn (slider-value-range.js).
-                */ 
+            // To prevent set('value', x) from looping back around
+            if (e.source !== 'set') {
+                this.set(VALUE, this._offsetToValue(e.offset));
             }
         },
 
@@ -260,22 +248,22 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
          */
         _afterValueChange: function ( e ) {
             var val = e.newVal;
-            if ( !e.positioned ) {
-                Y.log("Positioning thumb after set('value',x)","info","slider");
-                this._setPosition( e.newVal );
-            }
-            this.thumb.set('aria-valuenow', this.get('value'));
-            this.thumb.set('aria-valuetext', this.get('value'));
+            Y.log("Positioning thumb after set('value',x)","info","slider");
+            this._setPosition( val, { source: 'set' } );
+            this.thumb.set('aria-valuenow', val);
+            this.thumb.set('aria-valuetext', val);
         },
 
         /**
          * Positions the thumb in accordance with the translated value.
          *
          * @method _setPosition
+         * @param value {Number} Value to translate to a pixel position
+         * @param [options] {Object} Details object to pass to `_uiMoveThumb`
          * @protected
          */
-        _setPosition: function ( value ) {
-            this._uiMoveThumb( this._valueToOffset( value ) );
+        _setPosition: function ( value, options ) {
+            this._uiMoveThumb( this._valueToOffset( value ), options );
         },
 
         /**
@@ -283,8 +271,8 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
          * are acceptable.  Override this to enforce different rules.
          *
          * @method _validateNewMin
-         * @param value { mixed } Value assigned to <code>min</code> attribute.
-         * @return { Boolean } True for numbers.  False otherwise.
+         * @param value {Any} Value assigned to <code>min</code> attribute.
+         * @return {Boolean} True for numbers.  False otherwise.
          * @protected
          */
         _validateNewMin: function ( value ) {
@@ -425,7 +413,6 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
         }
     }
 }, true );
-
 
 
 }, '@VERSION@' ,{requires:['slider-base']});
