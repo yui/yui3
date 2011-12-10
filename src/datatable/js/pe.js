@@ -23,6 +23,10 @@ Y.mix(EnhanceMarkup, {
 });
 
 Y.mix(EnhanceMarkup.prototype, {
+    // -- Instance properties -------------------------------------------------
+    RE_COLUMN_ATTR: /data-yui3-column-(.*)/,
+
+    // -- Public methods ------------------------------------------------------
     initializer: function (config) {
         if (config) {
             // Node references from HTML_PARSER to support progressive
@@ -35,37 +39,45 @@ Y.mix(EnhanceMarkup.prototype, {
         }
     },
 
+    // -- Protected and private methods ---------------------------------------
+    _findHTMLCaptionNode: function (srcNode) {
+        return srcNode.one(DOT + this.getClassName('table') + ' > caption');
+    },
+
     _findHTMLTableNode: function (srcNode) {
         return (srcNode.get('tagName') === 'table') ?
             srcNode :
             srcNode.one(DOT + this.getClassName('table'));
     },
 
-    _findHTMLCaptionNode: function (srcNode) {
-        return srcNode.one(DOT + this.getClassName('table') + ' > caption');
-    },
-
-    _findHTMLTheadNode: function (srcNode) {
-        return srcNode.one(DOT + this.getClassName('head'));
+    _findHTMLTbodyNode: function (srcNode) {
+        return srcNode.one(DOT + this.getClassName('data'));
     },
 
     _findHTMLTfootNode: function (srcNode) {
         return srcNode.one(DOT + this.getClassName('foot'));
     },
 
-    _findHTMLTbodyNode: function (srcNode) {
-        return srcNode.one(DOT + this.getClassName('data'));
+    _findHTMLTheadNode: function (srcNode) {
+        return srcNode.one(DOT + this.getClassName('head'));
+    },
+
+    _parseHTMLCaption: function (srcNode) {
+        var caption = this._findHTMLCaptionNode(srcNode);
+
+        return caption && caption.getContent();
     },
 
     _parseHTMLColumns: function (srcNode) {
-        var ths = srcNode.all('> .' + CN_THEAD + ' th'),
+        var self = this,
+            ths  = srcNode.all('> .' + CN_THEAD + ' th'),
             columns = [];
 
         ths.each(function (th) {
             // TODO: if (th.get('colspan')) { => children }
             // TODO: use dataset shim when it becomes available
             var attributes = th.getDOMNode().attributes,
-                dataAttrRE = Table.RE_COLUMN_ATTR,
+                dataAttrRE = self.RE_COLUMN_ATTR,
                 col = {
                         key: th.get('text'),
                         label: th.getContent()
@@ -89,12 +101,6 @@ Y.mix(EnhanceMarkup.prototype, {
         });
 
         return (columns.length) ? columns : null;
-    },
-
-    _parseHTMLCaption: function (srcNode) {
-        var caption = this._findHTMLCaptionNode(srcNode);
-
-        return caption && caption.getContent();
     },
 
     _parseHTMLSummary: function (srcNode) {

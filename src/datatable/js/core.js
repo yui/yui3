@@ -71,14 +71,50 @@ Y.mix(Table, {
         columnset: {
             // TODO: back compat pass through to columns
         }
-    },
-
-    RE_COLUMN_ATTR: /data-yui3-column-(.*)/
+    }
 });
 
 Y.mix(Table.prototype, {
+    // -- Instance properties -------------------------------------------------
     TABLE_TEMPLATE  : '<table></table>',
     CAPTION_TEMPLATE: '<caption></caption>',
+
+    // -- Public methods ------------------------------------------------------
+    bindUI: function () {
+        // TODO: handle widget attribute changes
+        this.after({
+            captionChange: this._afterCaptionChange,
+            summaryChange: this._afterSummaryChange
+        });
+    },
+
+    getCell: function (row, col) {
+        var el = null;
+        if (this._tbodyNode) {
+            el = this._tbodyNode.getDOMNode().rows[+row];
+            el && (el = el.cells[+col]);
+        }
+        
+        return Y.one(el);
+    },
+
+    getColumn: function (name) {
+        return this.get('columns.' + name);
+    },
+
+    getColumnData: function () {
+        return this._columns;
+    },
+
+    getRow: function (index) {
+        var el;
+
+        if (this._tbodyNode) {
+            el = this._tbodyNode.getDOMNode().rows[+index];
+        }
+
+        return Y.one(el);
+    },
 
     initializer: function (config) {
         this._initColumns();
@@ -88,6 +124,68 @@ Y.mix(Table.prototype, {
         this._initData();
 
         this.after('columnsChange', this._afterColumnsChange);
+    },
+
+    renderUI: function () {
+        var contentBox = this.get('contentBox'),
+            table;
+
+        this._renderTable();
+
+        this._renderHeader();
+
+        this._renderFooter();
+
+        this._renderBody();
+
+        table = this._tableNode;
+
+        if (table) {
+            // off DOM or in an existing node attached to a different parentNode
+            if (!table.inDoc() || !table.ancestor().compareTo(contentBox)) {
+                contentBox.append(table);
+            }
+        } else { Y.log('Problem rendering DataTable: table not created', 'warn', 'datatable'); // On the same line to allow builder to strip the else clause
+        }
+    },
+
+    // -- Protected and private methods ---------------------------------------
+
+    _afterCaptionChange: function (e) {
+        this._uiUpdateCaption(e.newVal);
+    },
+
+    _afterColumnsChange: function (e) {
+        this._columns = this.parseColumns(e.newVal);
+    },
+
+    _afterSummaryChange: function (e) {
+        this._uiUpdateSummary(e.newVal);
+    },
+
+    _createRecordClass: function (attrs) {
+        var ATTRS = {},
+            i, len;
+
+        for (i = 0, len = attrs.length; i < len; ++i) {
+            ATTRS[attrs[i]] = {};
+        }
+
+        return Y.Base.create('record', Y.Model, [], null, { ATTRS: ATTRS });
+    },
+
+    _getColumns: function (columns, name) {
+        // name will be 'columns' or 'columns.foo'. Trim to the dot.
+        // TODO: support name as an index or (row,column) index pair
+        name = name.slice(8);
+
+        return (name) ?
+            this._columns.byKey(name) :
+            columns;
+    },
+
+    _getData: function (val) {
+        return this.data || val;
     },
 
     _initColumns: function () {
@@ -120,215 +218,26 @@ Y.mix(Table.prototype, {
         this._columns = this._parseColumns(columns || []);
     },
 
-    _parseColumns: function (columns) {
-        var data = {
-                dataColumns: [],
-                byKey: {},
-                byPosition: []
-            },
-            row = 0,
-            col, i, len;
-        
-        if (isArray(columns) && columns.length) {
-            data.byPosition.push([]);
-            for (i = 0, len = columns.length; i < len; ++i) {
-                col = columns[i];
+    _initData: function () {
+        var data = this.get('data'),
+            recordType, values;
 
-                if (isString(col)) {
-                    col = { key: col };
-                }
+        if (isArray(data)) {
+            recordType = this.get('recordType');
 
-                col.headers = [Y.stamp(col)];
+            values = data;
+            data = new Y.ModelList();
 
-                data.byPosition[row].push(col);
-
-                if (isArray(col.children)) {
-                    row++;
-                    data.byPosition.push([]);
-                    // TODO
-                    // child.parentIds = (col.parentIds || []).concat(col._yuid);
-                } else {
-                    data.dataColumns.push(col);
-
-                    if (col.key) {
-                        data.byKey[col.key] = col;
-                    }
-               }
+            // _initRecordType is run before this, so recordType will be set
+            // if the data array had any records.  Otherwise, values is an
+            // empty array, so no need to call reset();
+            if (recordType) {
+                data.model = recordType;
+                data.reset(values, { silent: true });
             }
         }
 
-        return data;
-    },
-
-    _afterColumnsChange: function (e) {
-        this._columns = this.parseColumns(e.newVal);
-    },
-
-    renderUI: function () {
-        var contentBox = this.get('contentBox'),
-            table;
-
-        this._renderTable();
-
-        this._renderHeader();
-
-        this._renderFooter();
-
-        this._renderBody();
-
-        table = this._tableNode;
-
-        if (table) {
-            // off DOM or in an existing node attached to a different parentNode
-            if (!table.inDoc() || !table.ancestor().compareTo(contentBox)) {
-                contentBox.append(table);
-            }
-        } else { Y.log('Problem rendering DataTable: table not created', 'warn', 'datatable'); // On the same line to allow builder to strip the else clause
-        }
-    },
-
-    bindUI: function () {
-        // TODO: handle widget
-        this.after({
-            captionChange: this._afterCaptionChange,
-            summaryChange: this._afterSummaryChange
-        });
-    },
-
-    _afterCaptionChange: function (e) {
-        this._uiUpdateCaption(e.newVal);
-    },
-
-    _afterSummaryChange: function (e) {
-        this._uiUpdateSummary(e.newVal);
-    },
-
-    _renderTable: function () {
-        var caption = this.get('caption');
-
-        if (!this._tableNode) {
-            this._tableNode = Y.Node.create(this.TABLE_TEMPLATE);
-        }
-        this._tableNode.addClass(this.getClassName('table'));
-
-        this._uiUpdateSummary(this.get('summary'));
-
-        this._uiUpdateCaption(caption);
-    },
-
-    _uiUpdateCaption: function (htmlContent) {
-        var caption = this._tableNode.one('> caption');
-
-        if (htmlContent) {
-            if (!this._captionNode) {
-                this._captionNode = Y.Node.create(this.CAPTION_TEMPLATE);
-            }
-
-            this._captionNode.setContent(htmlContent);
-
-            if (caption) {
-                if (!caption.compareTo(this._captionNode)) {
-                    caption.replace(this._captionNode);
-                }
-            } else {
-                this._tableNode.prepend(this._captionNode);
-            }
-
-            this._captionNode = caption;
-        } else {
-            if (this._captionNode) {
-                if (caption && caption.compareTo(this._captionNode)) {
-                    caption = null;
-                }
-
-                this._captionNode.remove(true);
-                delete this._captionNode;
-            }
-
-            if (caption) {
-                caption.remove(true);
-            }
-        }
-    },
-
-    _uiUpdateSummary: function (summary) {
-        this._tableNode.setAttribute('summary', summary || '');
-    },
-
-    _renderHeader: function () {
-        var HeaderView = this.get('headerView');
-        
-        if (HeaderView) {
-            this.head = (isFunction(HeaderView)) ? 
-                new HeaderView({
-                    source: this,
-                    table : this._tableNode,
-                    data  : this.data
-                }) :
-                HeaderView; // Assume if it's not a function, it's an instance
-
-            this.head.addTarget(this);
-            this.head.render();
-        }
-        // TODO: If there's no HeaderView, should I remove an existing <thead>?
-
-        this._theadNode = this._tableNode.one('>.' + this.getClassName('head'));
-    },
-
-    _renderFooter: function (table, data) {
-        var FooterView = this.get('footerView');
-        
-        if (FooterView) {
-            this.foot = (isFunction(FooterView)) ? 
-                new FooterView({
-                    source: this,
-                    table : this._tableNode,
-                    data  : this.data
-                }) :
-                FooterView;
-
-            this.foot.addTarget(this);
-            this.foot.render();
-        }
-
-        this._tfootNode = this._tableNode.one('>.' + this.getClassName('foot'));
-    },
-
-    _renderBody: function (table, data) {
-        var BodyView = this.get('bodyView');
-
-        if (BodyView) {
-            this.body = (isFunction(BodyView)) ? 
-                new BodyView({
-                    source: this,
-                    table : this._tableNode,
-                    data  : this.data
-                }) :
-                BodyView;
-
-            this.body.addTarget(this);
-            this.body.render();
-        }
-
-        this._tbodyNode = this._tableNode.one('>.' + this.getClassName('data'));
-    },
-
-    getColumn: function (name) {
-        return this.get('columns.' + name);
-    },
-
-    getColumnData: function () {
-        return this._columns;
-    },
-
-    _getColumns: function (columns, name) {
-        // name will be 'columns' or 'columns.foo'. Trim to the dot.
-        // TODO: support name as an index or (row,column) index pair
-        name = name.slice(8);
-
-        return (name) ?
-            this._columns.byKey(name) :
-            columns;
+        this.data = data;
     },
 
     _initRecordType: function () {
@@ -394,37 +303,115 @@ Y.mix(Table.prototype, {
         }
     },
 
-    _createRecordClass: function (attrs) {
-        var ATTRS = {},
-            i, len;
+    _parseColumns: function (columns) {
+        var data = {
+                dataColumns: [],
+                byKey: {},
+                byPosition: []
+            },
+            row = 0,
+            col, i, len;
+        
+        if (isArray(columns) && columns.length) {
+            data.byPosition.push([]);
+            for (i = 0, len = columns.length; i < len; ++i) {
+                col = columns[i];
 
-        for (i = 0, len = attrs.length; i < len; ++i) {
-            ATTRS[attrs[i]] = {};
-        }
+                if (isString(col)) {
+                    col = { key: col };
+                }
 
-        return Y.Base.create('record', Y.Model, [], null, { ATTRS: ATTRS });
-    },
+                col.headers = [Y.stamp(col)];
 
-    _initData: function () {
-        var data = this.get('data'),
-            recordType, values;
+                data.byPosition[row].push(col);
 
-        if (isArray(data)) {
-            recordType = this.get('recordType');
+                if (isArray(col.children)) {
+                    row++;
+                    data.byPosition.push([]);
+                    // TODO
+                    // child.parentIds = (col.parentIds || []).concat(col._yuid);
+                } else {
+                    data.dataColumns.push(col);
 
-            values = data;
-            data = new Y.ModelList();
-
-            // _initRecordType is run before this, so recordType will be set
-            // if the data array had any records.  Otherwise, values is an
-            // empty array, so no need to call reset();
-            if (recordType) {
-                data.model = recordType;
-                data.reset(values, { silent: true });
+                    if (col.key) {
+                        data.byKey[col.key] = col;
+                    }
+               }
             }
         }
 
-        this.data = data;
+        return data;
+    },
+
+    _renderBody: function (table, data) {
+        var BodyView = this.get('bodyView');
+
+        if (BodyView) {
+            this.body = (isFunction(BodyView)) ? 
+                new BodyView({
+                    source: this,
+                    table : this._tableNode,
+                    data  : this.data
+                }) :
+                BodyView;
+
+            this.body.addTarget(this);
+            this.body.render();
+        }
+
+        this._tbodyNode = this._tableNode.one('>.' + this.getClassName('data'));
+    },
+
+    _renderFooter: function (table, data) {
+        var FooterView = this.get('footerView');
+        
+        if (FooterView) {
+            this.foot = (isFunction(FooterView)) ? 
+                new FooterView({
+                    source: this,
+                    table : this._tableNode,
+                    data  : this.data
+                }) :
+                FooterView;
+
+            this.foot.addTarget(this);
+            this.foot.render();
+        }
+
+        this._tfootNode = this._tableNode.one('>.' + this.getClassName('foot'));
+    },
+
+    _renderHeader: function () {
+        var HeaderView = this.get('headerView');
+        
+        if (HeaderView) {
+            this.head = (isFunction(HeaderView)) ? 
+                new HeaderView({
+                    source: this,
+                    table : this._tableNode,
+                    data  : this.data
+                }) :
+                HeaderView; // Assume if it's not a function, it's an instance
+
+            this.head.addTarget(this);
+            this.head.render();
+        }
+        // TODO: If there's no HeaderView, should I remove an existing <thead>?
+
+        this._theadNode = this._tableNode.one('>.' + this.getClassName('head'));
+    },
+
+    _renderTable: function () {
+        var caption = this.get('caption');
+
+        if (!this._tableNode) {
+            this._tableNode = Y.Node.create(this.TABLE_TEMPLATE);
+        }
+        this._tableNode.addClass(this.getClassName('table'));
+
+        this._uiUpdateSummary(this.get('summary'));
+
+        this._uiUpdateCaption(caption);
     },
 
     _setData: function (val) {
@@ -456,8 +443,43 @@ Y.mix(Table.prototype, {
         return val;
     },
 
-    _getData: function (val) {
-        return this.data || val;
+    _uiUpdateCaption: function (htmlContent) {
+        var caption = this._tableNode.one('> caption');
+
+        if (htmlContent) {
+            if (!this._captionNode) {
+                this._captionNode = Y.Node.create(this.CAPTION_TEMPLATE);
+            }
+
+            this._captionNode.setContent(htmlContent);
+
+            if (caption) {
+                if (!caption.compareTo(this._captionNode)) {
+                    caption.replace(this._captionNode);
+                }
+            } else {
+                this._tableNode.prepend(this._captionNode);
+            }
+
+            this._captionNode = caption;
+        } else {
+            if (this._captionNode) {
+                if (caption && caption.compareTo(this._captionNode)) {
+                    caption = null;
+                }
+
+                this._captionNode.remove(true);
+                delete this._captionNode;
+            }
+
+            if (caption) {
+                caption.remove(true);
+            }
+        }
+    },
+
+    _uiUpdateSummary: function (summary) {
+        this._tableNode.setAttribute('summary', summary || '');
     },
 
     _validateRecordType: function (val) {

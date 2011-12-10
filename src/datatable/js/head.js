@@ -1,13 +1,7 @@
 var fromTemplate = Y.Lang.sub;
 
 Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
-
-    THEAD_TEMPLATE:
-        '<thead class="{classes}">{content}</thead>',
-
-    ROW_TEMPLATE:
-        '<tr>{content}</tr>',
-
+    // -- Instance properties -------------------------------------------------
     CELL_TEMPLATE :
         '<th id="{_yuid}" abbr="{abbr}" ' +
                 'colspan="{colspan}" rowspan="{rowspan}">' +
@@ -16,16 +10,31 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
             '</div>' +
         '</th>',
 
+    ROW_TEMPLATE:
+        '<tr>{content}</tr>',
+
+    THEAD_TEMPLATE:
+        '<thead class="{classes}">{content}</thead>',
+
+    // -- Public methods ------------------------------------------------------
+    bindUI: function () {
+        this._eventHandles.push(
+            this.host.after('columnChange', this._afterColumnChange),
+            this.data.after(
+                ['*:change', '*:destroy'],
+                this._afterDataChange, this));
+    },
+
+    destructor: function () {
+        (new Y.EventHandle(this._eventHandles)).detach();
+    },
+
     initializer: function (config) {
         this.host  = config.source;
         this.table = config.table;
         this.data  = config.data;
 
         this._eventHandles = [];
-    },
-
-    destructor: function () {
-        (new Y.EventHandle(this._eventHandles)).detach();
     },
 
     render: function () {
@@ -90,14 +99,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
         return this;
     },
 
-    bindUI: function () {
-        this._eventHandles.push(
-            this.host.after('columnChange', this._afterColumnChange),
-            this.data.after(
-                ['*:change', '*:destroy'],
-                this._afterDataChange, this));
-    },
-
+    // -- Protected and private methods ---------------------------------------
     _afterColumnChange: function (e) {
         // TODO
     },

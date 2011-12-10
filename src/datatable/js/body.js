@@ -1,12 +1,10 @@
 var Lang = Y.Lang,
     isObject = Lang.isObject,
-
     htmlEscape = Y.Escape.html,
-
     fromTemplate = Y.Lang.sub;
 
 Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
-
+    // -- Instance properties -------------------------------------------------
     TBODY_TEMPLATE:
         '<tbody class="{classes}">{content}</tbody>',
 
@@ -22,16 +20,25 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             '</div>' +
         '</td>',
 
+    // -- Public methods ------------------------------------------------------
+    bindUI: function () {
+        this._eventHandles.push(
+            this.host.after('columnChange', this._afterColumnChange),
+            this.data.after(
+                ['*:change', '*:destroy'],
+                this._afterDataChange, this));
+    },
+
+    destructor: function () {
+        (new Y.EventHandle(this._eventHandles)).detach();
+    },
+
     initializer: function (config) {
         this.host = config.source;
         this.table = config.table;
         this.data  = config.data;
 
         this._eventHandles = [];
-    },
-
-    destructor: function () {
-        (new Y.EventHandle(this._eventHandles)).detach();
     },
 
     render: function () {
@@ -66,42 +73,66 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         return this;
     },
 
-    _createRowTemplate: function (columns) {
-        var html         = '',
-            cellTemplate = this.CELL_TEMPLATE,
-            linerClass   = this.host.getClassName('liner'),
-            i, len, col, key, tokenValues;
+    // -- Protected and private methods ---------------------------------------
+    _afterColumnChange: function (e) {
+        // TODO
+    },
 
+    _afterDataChange: function (e) {
+        // TODO
+    },
+
+    _applyNodeFormatters: function (tbody, columns) {
+        var host = this.host,
+            formatters = [],
+            tbodyNode  = tbody.getDOMNode(),
+            linerQuery = '.' + this.host.getClassName('liner'),
+            i, len;
+
+        // Only iterate the ModelList again if there are nodeFormatters
         for (i = 0, len = columns.length; i < len; ++i) {
-            col = columns[i];
-
-            if (col.hidden === true || col.visible === false) {
-                columns.splice(i, 1);
-                --i;
-            } else {
-                key = col.key || col._yuid;
-                tokenValues = {
-                    content   : '{' + key + '}',
-                    headers   : col.headers.join(' '),
-                    linerClass: linerClass,
-                    attributes: '{' + key + '-attributes}',
-                    classes   : '{' + key + '-classes}'
-                };
-
-                if (col.nodeFormatter) {
-                    // Defer all node decoration to the formatter
-                    tokenValues.content    = '';
-                    tokenValues.attributes = '';
-                    tokenValues.classes    = '';
-                }
-
-                html += fromTemplate(cellTemplate, tokenValues);
+            if (columns[i].nodeFormatter) {
+                formatters.push(i);
             }
         }
 
-        this._rowTemplate = fromTemplate(this.ROW_TEMPLATE, {
-            content: html
-        });
+        if (formatters.length) {
+            this.data.each(function (record, index) {
+                var formatterData = {
+                        record    : record,
+                        rowindex  : index
+                    },
+                    row = tbodyNode.rows[index],
+                    i, len, col, key, cell, keep;
+
+
+                if (row) {
+                    for (i = 0, len = formatters.length; i < len; ++i) {
+                        cell = Y.one(row.cells[formatters[i]]);
+
+                        if (cell) {
+                            col = formatterData.column = columns[formatters[i]];
+                            key = col.key || col._yuid;
+
+                            formatterData.value = record.get(key);
+                            formatterData.td    = cell;
+                            formatterData.cell  = cell.one(linerQuery) || cell;
+
+                            keep = col.nodeFormatter.call(host, formatterData);
+
+                            if (keep === false) {
+                                // Remove from the Node cache to reduce
+                                // memory footprint.  This also purges events,
+                                // which you shouldn't be scoping to a cell
+                                // anyway.  You've been warned.  Incidentally,
+                                // you should always return false. Just sayin.
+                                cell.destroy(true);
+                            }
+                        }
+                    }
+                }
+            });
+        }
     },
 
     _createDataHTML: function (columns) {
@@ -175,72 +206,41 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         });
     },
 
-    _applyNodeFormatters: function (tbody, columns) {
-        var host = this.host,
-            formatters = [],
-            tbodyNode  = tbody.getDOMNode(),
-            linerQuery = '.' + this.host.getClassName('liner'),
-            i, len;
+    _createRowTemplate: function (columns) {
+        var html         = '',
+            cellTemplate = this.CELL_TEMPLATE,
+            linerClass   = this.host.getClassName('liner'),
+            i, len, col, key, tokenValues;
 
-        // Only iterate the ModelList again if there are nodeFormatters
         for (i = 0, len = columns.length; i < len; ++i) {
-            if (columns[i].nodeFormatter) {
-                formatters.push(i);
+            col = columns[i];
+
+            if (col.hidden === true || col.visible === false) {
+                columns.splice(i, 1);
+                --i;
+            } else {
+                key = col.key || col._yuid;
+                tokenValues = {
+                    content   : '{' + key + '}',
+                    headers   : col.headers.join(' '),
+                    linerClass: linerClass,
+                    attributes: '{' + key + '-attributes}',
+                    classes   : '{' + key + '-classes}'
+                };
+
+                if (col.nodeFormatter) {
+                    // Defer all node decoration to the formatter
+                    tokenValues.content    = '';
+                    tokenValues.attributes = '';
+                    tokenValues.classes    = '';
+                }
+
+                html += fromTemplate(cellTemplate, tokenValues);
             }
         }
 
-        if (formatters.length) {
-            this.data.each(function (record, index) {
-                var formatterData = {
-                        record    : record,
-                        rowindex  : index
-                    },
-                    row = tbodyNode.rows[index],
-                    i, len, col, key, cell, keep;
-
-
-                if (row) {
-                    for (i = 0, len = formatters.length; i < len; ++i) {
-                        cell = Y.one(row.cells[formatters[i]]);
-
-                        if (cell) {
-                            col = formatterData.column = columns[formatters[i]];
-                            key = col.key || col._yuid;
-
-                            formatterData.value = record.get(key);
-                            formatterData.td    = cell;
-                            formatterData.cell  = cell.one(linerQuery) || cell;
-
-                            keep = col.nodeFormatter.call(host, formatterData);
-
-                            if (keep === false) {
-                                // Remove from the Node cache to reduce
-                                // memory footprint.  This also purges events,
-                                // which you shouldn't be scoping to a cell
-                                // anyway.  You've been warned.  Incidentally,
-                                // you should always return false. Just sayin.
-                                cell.destroy(true);
-                            }
-                        }
-                    }
-                }
-            });
-        }
-    },
-
-    bindUI: function () {
-        this._eventHandles.push(
-            this.host.after('columnChange', this._afterColumnChange),
-            this.data.after(
-                ['*:change', '*:destroy'],
-                this._afterDataChange, this));
-    },
-
-    _afterColumnChange: function (e) {
-        // TODO
-    },
-
-    _afterDataChange: function (e) {
-        // TODO
+        this._rowTemplate = fromTemplate(this.ROW_TEMPLATE, {
+            content: html
+        });
     }
 });
