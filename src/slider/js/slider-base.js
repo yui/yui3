@@ -407,15 +407,19 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
      *
      * @method _uiMoveThumb
      * @param offset {Number} the pixel offset to set as left or top style
+     * @param [options] {Object} Details to send with the `thumbMove` event
      * @protected
      */
-    _uiMoveThumb: function ( offset ) {
+    _uiMoveThumb: function ( offset, options ) {
         if ( this.thumb ) {
             this.thumb.setStyle( this._key.minEdge, offset + 'px' );
 
             Y.log("Setting thumb " + this._key.minEdge + " to " + offset + "px","info","slider");
 
-            this.fire( 'thumbMove', { offset: offset } );
+            options || (options = {});
+            options.offset = offset;
+
+            this.fire( 'thumbMove', options );
         }
     },
 
