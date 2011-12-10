@@ -90,17 +90,22 @@ var Y = YUI({
         }
     }
 }).use('*', function(Y) {
-
     if (/[?&]delay=true/.test(window.location.search)) {
         // Hit the default 'node ./delay.js port'
         Y.GetTests.TEST_FILES_BASE = (window.location.protocol + "//" + window.location.hostname + ":" + "8014/");
     }
 
-    Y.GetTests.add(Y.GetTests.Scripts);
-    Y.GetTests.add(Y.GetTests.CSS);
+    Y.GetTests.add(Y.GetTests.BasicJS);
+    Y.GetTests.add(Y.GetTests.BasicCSS);
+    Y.GetTests.add(Y.GetTests.GetMethods);
+    Y.GetTests.add(Y.GetTests.TransactionBehavior);
+    Y.GetTests.add(Y.GetTests.TransactionMethods);
+    Y.GetTests.add(Y.GetTests.TransactionProperties);
+    Y.GetTests.add(Y.GetTests.Options);
     Y.GetTests.add(Y.GetTests.Functional);
 
     new Y.Test.Console().render('#log');
+
     Y.Test.Runner.add(Y.GetTests);
     Y.Test.Runner.run();
 });

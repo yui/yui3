@@ -1,6 +1,12 @@
 MenuNav Change History
 ======================
 
+3.5.0
+-----
+
+  * Added Night skin for MenuNav
+   
+
 3.4.1
 -----
 

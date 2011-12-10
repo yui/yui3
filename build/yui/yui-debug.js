@@ -265,8 +265,8 @@ proto = {
                 } else if (groups && name == 'groups') {
                     clobber(groups, attr);
                 } else if (name == 'win') {
-                    config[name] = attr.contentWindow || attr;
-                    config.doc = config[name].document;
+                    config[name] = (attr && attr.contentWindow) || attr;
+                    config.doc = config[name] ? config[name].document : null;
                 } else if (name == '_yuid') {
                     // preserve the guid
                 } else {
@@ -3040,7 +3040,7 @@ O.setValue = function(o, path, val) {
  * @since 3.2.0
  */
 O.isEmpty = function (obj) {
-    return !O.keys(obj).length;
+    return !O.keys(Object(obj)).length;
 };
 /**
  * The YUI module contains the components required for building the YUI seed
@@ -3452,6 +3452,8 @@ YUI.Env.aliases = {
 }, '@VERSION@' );
 YUI.add('get', function(Y) {
 
+/*jslint boss:true, expr:true, laxbreak: true */
+
 /**
 Provides dynamic loading of remote JavaScript and CSS resources.
 
@@ -3633,6 +3635,18 @@ Y.Get = Get = {
     **/
 
     /**
+    Mapping of document _yuid strings to <head> or <base> node references so we
+    don't have to look the node up each time we want to insert a request node.
+
+    @property _insertCache
+    @type Object
+    @protected
+    @static
+    @since 3.5.0
+    **/
+    _insertCache: {},
+
+    /**
     Information about the currently pending transaction, if any.
 
     This is actually an object with two properties: `callback`, containing the
@@ -3685,18 +3699,20 @@ Y.Get = Get = {
     @method abort
     @param {Get.Transaction} transaction Transaction to abort.
     @deprecated Use the `abort()` method on the transaction instead.
+    @static
     **/
     abort: function (transaction) {
-        var i, id, item, len;
+        var i, id, item, len, pending;
 
         Y.log('`Y.Get.abort()` is deprecated as of 3.5.0. Use the `abort()` method on the transaction instead.', 'warn', 'get');
 
-        if (!(typeof transaction === 'object')) {
-            id = transaction;
+        if (!transaction.abort) {
+            id          = transaction;
+            pending     = this._pending;
             transaction = null;
 
-            if (this._pending && this._pending.transaction.id === id) {
-                transaction = this._pending.transaction;
+            if (pending && pending.transaction.id === id) {
+                transaction   = pending.transaction;
                 this._pending = null;
             } else {
                 for (i = 0, len = this._queue.length; i < len; ++i) {
@@ -3711,9 +3727,7 @@ Y.Get = Get = {
             }
         }
 
-        if (transaction) {
-            transaction.abort();
-        }
+        transaction && transaction.abort();
     },
 
     /**
@@ -3780,11 +3794,12 @@ Y.Get = Get = {
         callbacks (`onSuccess`, `onFailure`, etc.) specified in the `options`
         object.
 
-        @param {Array|null} err Array of errors that occurred during the
-            transaction, or `null` on success.
-        @param {Get.Transaction} Transaction object.
+        @param {Array|null} callback.err Array of errors that occurred during
+            the transaction, or `null` on success.
+        @param {Get.Transaction} callback.transaction Transaction object.
 
     @return {Get.Transaction} Transaction object.
+    @static
     **/
     css: function (urls, options, callback) {
         return this._load('css', urls, options, callback);
@@ -3858,12 +3873,13 @@ Y.Get = Get = {
         callbacks (`onSuccess`, `onFailure`, etc.) specified in the `options`
         object.
 
-        @param {Array|null} err Array of errors that occurred during the
-            transaction, or `null` on success.
-        @param {Get.Transaction} Transaction object.
+        @param {Array|null} callback.err Array of errors that occurred during
+            the transaction, or `null` on success.
+        @param {Get.Transaction} callback.transaction Transaction object.
 
     @return {Get.Transaction} Transaction object.
     @since 3.5.0
+    @static
     **/
     js: function (urls, options, callback) {
         return this._load('js', urls, options, callback);
@@ -3911,6 +3927,7 @@ Y.Get = Get = {
 
     @return {Get.Transaction} Transaction object.
     @since 3.5.0
+    @static
     **/
     load: function (urls, options, callback) {
         return this._load(null, urls, options, callback);
@@ -3925,6 +3942,7 @@ Y.Get = Get = {
     @param {Number} threshold Purge threshold to use, in milliseconds.
     @protected
     @since 3.5.0
+    @static
     **/
     _autoPurge: function (threshold) {
         if (threshold && this._purgeNodes.length >= threshold) {
@@ -3941,6 +3959,7 @@ Y.Get = Get = {
     @return {Object} Environment information.
     @protected
     @since 3.5.0
+    @static
     **/
     _getEnv: function () {
         var doc = Y.config.doc,
@@ -3949,7 +3968,7 @@ Y.Get = Get = {
         // Note: some of these checks require browser sniffs since it's not
         // feasible to load test files on every pageview just to perform a
         // feature test. I'm sorry if this makes you sad.
-        return this._env = {
+        return (this._env = {
             // True if this is a browser that supports disabling async mode on
             // dynamically created script nodes. See
             // https://developer.mozilla.org/En/HTML/Element/Script#Attributes
@@ -3965,14 +3984,14 @@ Y.Get = Get = {
             // loading scripts in parallel as long as the script node's `async`
             // attribute is set to false to explicitly disable async execution.
             preservesScriptOrder: !!(ua.gecko || ua.opera)
-        };
+        });
     },
 
     _getTransaction: function (urls, options) {
         var requests = [],
             i, len, req, url;
 
-        if (typeof urls === 'string') {
+        if (!Lang.isArray(urls)) {
             urls = [urls];
         }
 
@@ -4044,6 +4063,12 @@ Y.Get = Get = {
     _load: function (type, urls, options, callback) {
         var transaction;
 
+        // Allow callback as third param.
+        if (typeof options === 'function') {
+            callback = options;
+            options  = {};
+        }
+
         options || (options = {});
         options.type = type;
 
@@ -4087,24 +4112,10 @@ Y.Get = Get = {
     _purge: function (nodes) {
         var purgeNodes    = this._purgeNodes,
             isTransaction = nodes !== purgeNodes,
-            attr, index, node, parent;
+            index, node;
 
-        while (node = nodes.pop()) {
-            parent = node.parentNode;
-
-            if (node.clearAttributes) {
-                // IE.
-                node.clearAttributes();
-            } else {
-                // Everyone else.
-                for (attr in node) {
-                    if (node.hasOwnProperty(attr)) {
-                        delete node[attr];
-                    }
-                }
-            }
-
-            parent && parent.removeChild(node);
+        while (node = nodes.pop()) { // assignment
+            node.parentNode && node.parentNode.removeChild(node);
 
             // If this is a transaction-level purge and this node also exists in
             // the Get-level _purgeNodes array, we need to remove it from
@@ -4126,7 +4137,7 @@ Y.Get = Get = {
 /**
 Alias for `js()`.
 
-@method js
+@method script
 @static
 **/
 Get.script = Get.js;
@@ -4284,6 +4295,7 @@ Transaction.prototype = {
 
         if (state === 'done') {
             callback && callback(self.errors.length ? self.errors : null, self);
+            return;
         } else {
             callback && self._callbacks.push(callback);
 
@@ -4358,26 +4370,22 @@ Transaction.prototype = {
             this._callbacks[i].call(thisObj, errors, this);
         }
 
-        if (options.onEnd || options.onFailure || options.onSuccess
-                || options.onTimeout) {
+        data = this._getEventData();
 
-            data = this._getEventData();
-
-            if (errors) {
-                if (options.onTimeout && errors[errors.length - 1] === 'Timeout') {
-                    options.onTimeout.call(thisObj, data);
-                }
-
-                if (options.onFailure) {
-                    options.onFailure.call(thisObj, data);
-                }
-            } else if (options.onSuccess) {
-                options.onSuccess.call(thisObj, data);
+        if (errors) {
+            if (options.onTimeout && errors[errors.length - 1] === 'Timeout') {
+                options.onTimeout.call(thisObj, data);
             }
 
-            if (options.onEnd) {
-                options.onEnd.call(thisObj, data);
+            if (options.onFailure) {
+                options.onFailure.call(thisObj, data);
             }
+        } else if (options.onSuccess) {
+            options.onSuccess.call(thisObj, data);
+        }
+
+        if (options.onEnd) {
+            options.onEnd.call(thisObj, data);
         }
     },
 
@@ -4398,23 +4406,41 @@ Transaction.prototype = {
 
     _getInsertBefore: function (req) {
         var doc = req.doc,
-            el  = req.insertBefore || doc.getElementsByTagName('base')[0];
-
-        // Inserting before a <base> tag apparently works around an IE bug
-        // (according to a comment from pre-3.5.0 Y.Get), but I'm not sure what
-        // bug that is, exactly. Better safe than sorry?
+            el  = req.insertBefore,
+            cache, cachedNode, docStamp;
 
         if (el) {
             return typeof el === 'string' ? doc.getElementById(el) : el;
         }
 
-        // Barring an explicit insertBefore config or a <base> element, we'll
-        // try to insert before the first child of <head>. If <head> doesn't
-        // exist, we'll throw our hands in the air and insert before the first
-        // <script>, which we know must exist because *something* put Y.Get on
-        // the page.
+        cache    = Get._insertCache;
+        docStamp = Y.stamp(doc);
+
+        if ((el = cache[docStamp])) { // assignment
+            return el;
+        }
+
+        // Inserting before a <base> tag apparently works around an IE bug
+        // (according to a comment from pre-3.5.0 Y.Get), but I'm not sure what
+        // bug that is, exactly. Better safe than sorry?
+        if ((el = doc.getElementsByTagName('base')[0])) { // assignment
+            return (cache[docStamp] = el);
+        }
+
+        // Look for a <head> element.
         el = doc.head || doc.getElementsByTagName('head')[0];
-        return el ? el.firstChild : doc.getElementsByTagName('script')[0];
+
+        if (el) {
+            // Create a marker node at the end of <head> to use as an insertion
+            // point. Inserting before this node will ensure that all our CSS
+            // gets inserted in the correct order, to maintain style precedence.
+            el.appendChild(doc.createTextNode(''));
+            return (cache[docStamp] = el.lastChild);
+        }
+
+        // If all else fails, just insert before the first script node on the
+        // page, which is virtually guaranteed to exist.
+        return (cache[docStamp] = doc.getElementsByTagName('script')[0]);
     },
 
     _insert: function (req) {
@@ -4439,8 +4465,7 @@ Transaction.prototype = {
                 req.doc);
         }
 
-        function onError(e) {
-            // TODO: What useful info is on `e`, if any?
+        function onError() {
             self._progress('Failed to load ' + req.url, req);
         }
 
@@ -4470,7 +4495,6 @@ Transaction.prototype = {
                 // on insertion order, we'll need to avoid inserting other
                 // scripts until this one finishes loading.
                 if (!env.preservesScriptOrder) {
-                    Y.log("This browser doesn't preserve script execution order, so scripts will be loaded synchronously (which is slower).", 'info', 'get');
                     this._pending = req;
                 }
             }

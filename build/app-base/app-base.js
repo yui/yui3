@@ -8,9 +8,10 @@ Provides a top-level application component which manages navigation and views.
 **/
 
 var Lang     = Y.Lang,
-    View     = Y.View,
-    Router   = Y.Router,
     PjaxBase = Y.PjaxBase,
+    Router   = Y.Router,
+    View     = Y.View,
+    YObject  = Y.Object,
 
     win = Y.config.win,
 
@@ -109,13 +110,24 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     initializer: function (config) {
         config || (config = {});
 
-        // Create a shallow copy of specified `config.views` metadata to
-        // preserve the caller's intention.
-        var views = Y.merge(config.views);
+        var views = {};
 
-        // Mix-in default `views` metadata from the prototype (deep merge), and
-        // give every instance its own copy of a `views` Object.
-        this.views = Y.mix(views, this.views, false, null, 0, true);
+        // Merges-in specified view metadata into local `views` object.
+        function mergeViewConfig(view, name) {
+            views[name] = Y.merge(views[name], view);
+        }
+
+        // First, each view in the `views` prototype object has its metadata
+        // merged-in, providing the defaults.
+        YObject.each(this.views, mergeViewConfig);
+
+        // Then, each view in the specified in the `config.views` object has its
+        // metadata merged-in.
+        YObject.each(config.views, mergeViewConfig);
+
+        // The resulting hodgepodge of metadata is then stored as the instance's
+        // `views` object, and no one's objects were harmed in the making.
+        this.views = views;
 
         this._viewInfoMap = {};
 

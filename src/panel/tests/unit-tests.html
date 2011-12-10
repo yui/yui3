@@ -2,13 +2,13 @@
 <html>
 <head>
 <title>Panel Tests</title>
-<script type="text/javascript" src="../../../build/yui/yui-min.js"></script>
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
 </head>
 
 <body class="yui3-skin-sam">
 <h1>Panel Tests</h1>
 <div id="container"></div>
-<p><input type="button" value="Run Tests" id="btnRun" disabled=true></p>
+<p><input type="button" value="Run Tests" id="btnRun" disabled="disabled"/></p>
 
 <script type="text/javascript">
 (function() {
@@ -16,7 +16,7 @@
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
         allowRollup: false
     }).use("console", "test", "dump", "panel", function(Y) {
-	
+
 
         // Set up the page
         var ASSERT = Y.Assert,
@@ -27,7 +27,7 @@
             Y.Test.Runner.run();
         }, BTNRUN);
         var myConsole = new Y.Console().render();
-		
+
 
         var testBasic = new Y.Test.Case({
             name: "API Tests",
@@ -37,7 +37,7 @@
 		    //---------------------------------------------
 
 		    setUp : function () {
-		        
+
 				//create recordset
 				var template = "<div id='panelContent'></div>";
 				Y.one('#container').appendChild(Y.Node.create(template));
@@ -216,10 +216,8 @@
 		    	Y.Assert.areEqual(btns.size(), 2);
 		    	Y.Assert.areEqual(btnspan.size(), 2);
 
-		    	//use innerText instead of getContent() to keep IE happy - it arbitrarily puts a </a> in sometimes
-		    	Y.Assert.areEqual(btnspan.item(0).get('innerText'), "ft button 1");
-		    	Y.Assert.areEqual(btnspan.item(1).get('innerText'), "ft button 2");
-
+		    	Y.Assert.areEqual(btnspan.item(0).get('text'), "ft button 1");
+		    	Y.Assert.areEqual(btnspan.item(1).get('text'), "ft button 2");
 
 		    	//mask is not visible
 		    	var mask = Y.one('.yui3-widget-mask');
@@ -273,7 +271,7 @@
 		    	Y.Assert.isTrue(ft.hasChildNodes());
 		    	Y.Assert.areEqual(btns.size(), 2);
 		    	Y.Assert.areEqual(btnspan.size(), 2);
-		    	Y.Assert.areEqual(btnspan.item(1).get('innerText'), "ft button 1");
+		    	Y.Assert.areEqual(btnspan.item(1).get('text'), "ft button 1");
 
 		    	//add the close button in to the header
 		    	this.panel.addButton({
@@ -289,14 +287,14 @@
 		    	Y.Assert.isTrue(ft.hasChildNodes());
 		    	Y.Assert.areEqual(btns.size(), 3);
 		    	Y.Assert.areEqual(btnspan.size(), 3);
-		    	Y.Assert.areEqual(btnspan.item(2).get('innerText'), "ft button 1"); //the last one should be the footer since the first 2 are the header [x] buttons
+		    	Y.Assert.areEqual(btnspan.item(2).get('text'), "ft button 1"); //the last one should be the footer since the first 2 are the header [x] buttons
 
 		    	//mask is visible
 		    	var mask = Y.one('.yui3-widget-mask');
 		    	Y.Assert.areEqual(mask.getStyle('display'), "block");
 		    }
 
-			
+
 			//---------------------------------------------
 		    // Instantiation
 		    //---------------------------------------------
@@ -304,60 +302,60 @@
 			// testCreateEmptyRecordset: function() {
 			// 	var rs = new Y.Recordset(),
 			// 		rem;
-					
+
 			// 	rs.on('remove', function(e) {
 			// 		rem = e.removed;
 			// 	});
-				
+
 			// 	//instantiate empty recordset
 			// 	Y.Assert.isTrue(rs instanceof Y.Recordset);
-				
-				
+
+
 			// 	//perform operations on it
 			// 	rs.add({a:1, b:2, c:3});
 			// 	Y.ObjectAssert.areEqual(rs.getRecord(0).getValue(), {a:1, b:2, c:3});
-				
+
 			// 	rs.add([{a:'hey', b:'yo', c:'hi!'}, {a:2, b:5, c:6}]);
 			// 	Y.ObjectAssert.areEqual(rs.getRecord(2).getValue(), {a:2, b:5, c:6});
 			// 	Y.Assert.areEqual(3, rs.getLength());
-				
+
 			// 	rs.remove(2);
 			// 	Y.Assert.areEqual(2, rs.getLength());
 			// 	Y.ObjectAssert.areEqual(rem[0].getValue(), {a:2, b:5, c:6});
-				
+
 			// },
-			
+
 			// //---------------------------------------------
 		 //    // Get Records
 		 //    //---------------------------------------------
-			
+
 			// testGetRecords: function() {
 			// 	var newRecord,newRecord1, newRecord2, id;
 			// 	//this.rs.get('records');
 			// 	// var newrs = new Y.Recordset({records: [{a:10,b:10,c:10}]});
-			// 	// newrs.get('records');		
-						
+			// 	// newrs.get('records');
+
 			// 	//Single Record
 			// 	newRecord1 = this.rs.getRecordByIndex(1);
 			// 	newRecord2 = this.rs.getRecord(1);
-				
+
 			// 	Y.ObjectAssert.areEqual(newRecord1.getValue(), this.initialData[1]);
 			// 	Y.ObjectAssert.areEqual(newRecord1, newRecord2);
-				
-				
+
+
 			// 	//Multiple Records
 			// 	newRecord = this.rs.getRecordsByIndex(1,2);
 			// 	Y.ObjectAssert.areEqual(newRecord[0].getValue(), this.initialData[1]);
 			// 	Y.ObjectAssert.areEqual(newRecord[1].getValue(), this.initialData[2]);
-				
+
 			// 	//By ID
 			// 	id = this.rs.getRecordByIndex(0).get('id');
 			// 	newRecord = this.rs.getRecord(id);
 			// 	Y.ObjectAssert.areEqual(newRecord, this.rs.getRecordByIndex(0));
-								
+
 			// },
-		
-			
+
+
         });
 
         var suite = new Y.Test.Suite({name:"Panel Test Suite"});

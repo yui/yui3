@@ -1,6 +1,10 @@
 YUI Throttle Change History
 ===========================
 
+## 3.5.0
+
+No Changes.
+
 ## 3.4.1
 
 No changes.
