@@ -31,11 +31,18 @@
                     Just a basic test with a listener
                 */
                 var button = new Y.Button({
-                    srcNode: Y.one('#event')
+                    srcNode: Y.one('#event'),
+                    on: {
+                        click: function(){
+                            console.log('boom');
+                        },
+                        mouseover: function(){
+                            console.log('over')
+                        }
+                    }
                 });
                 
-                // One way of listening for events
-                button.on('click', function(e){
+                button.on("click",  function(e){
                     Y.log("Clicked!");
                 });
                 

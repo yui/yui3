@@ -65,8 +65,15 @@ Y.extend(Button, Y.Base, {
     * @private
     */
     initializer: function(config){
+        
         this.renderUI();
         this.bindUI();
+        
+        // Because the srcNode isn't available the first time this.on is run. Why?
+        if (config.on) {
+            this.on(config.on);
+        }
+        
     },
     
     /**
@@ -90,7 +97,6 @@ Y.extend(Button, Y.Base, {
         var button = this;
         var node = button.getNode();
         
-        node.on('click', this._onClick, button);
         node.on('mousedown', this._onMouseDown, button);
         node.on('mouseup', this._onMouseUp, button);
         node.on('focus', this._onFocus, button);
@@ -142,6 +148,43 @@ Y.extend(Button, Y.Base, {
     */
     disable: function() {
         this.set('disabled', true);
+    },
+    
+    /**
+    * @method on
+    * @description Determines whether to dispatch events to Y.Node (for DOM events) or Y.EventTarget (for everything else)
+    * @param {String} type The name of the event
+    * @param {Function} fn The callback to execute in response to the event
+    * @param {Object} [context] Override this object in callback
+    * @param {Any} [arg*] 0..n additional arguments to supply to the subscriber
+    * @return {EventHandle} A subscription handle capable of detaching that subscription
+    */
+    on: function(type, fn, ctx, arg) {
+        
+        // Do we have a many type/fn pairs, or just one?
+        if (Y.Lang.isObject(arguments[0])){ // many
+            // Loop through each event, recursively calling this.on() with the pair
+            Y.Object.each(arguments[0], function(){
+               this.on(arguments[1], arguments[0]); 
+            }, this);
+        }
+        
+        // We just have a single type/fn pair
+        else {
+            var button = this;
+            var node = button.getNode();
+            
+            // Dispatch DOM events to Y.Node, everything else to EventTarget
+            if (Y.Object.hasKey(Y.Node.DOM_EVENTS, type)) {
+                // TODO: srcNode is not available yet.  Figure out why.
+                if (node) {
+                    return Y.Node.prototype.on.apply(node, arguments);
+                }
+            }
+            else {
+                return Y.EventTarget.prototype.on.apply(button, arguments);
+            }
+        }
     },
 
     /**
@@ -248,16 +291,6 @@ Y.extend(Button, Y.Base, {
         disabled: makeClassName('disabled')
     }
 });
-
-/**
-* @method _onClick
-* @description An event handler for 'click' events
-* @param e {DOMEvent} the event object
-* @protected
-*/
-Button.prototype._onClick = function(e){
-    this.fire('click', e);
-};
 
 /**
 * @method _onBlur
