@@ -31,7 +31,7 @@ suite.add(new Y.Test.Case({
         var button = this.button;
         var node = button.getNode();
         
-        // Ensure the button is deselected by default
+        // Ensure the button is unselected by default
         Assert.isFalse(button.get('selected'));
         Assert.isFalse(node.hasClass('yui3-button-selected'));
         
@@ -55,7 +55,7 @@ suite.add(new Y.Test.Case({
         Assert.isTrue(node.hasClass('yui3-button-selected'));
     },
 
-    'button.deselect() should set the `selected` attribute to `false`': function () {
+    'button.unselect() should set the `selected` attribute to `false`': function () {
         var button = this.button;
         var node = button.getNode();
         
@@ -63,7 +63,7 @@ suite.add(new Y.Test.Case({
         Assert.isTrue(button.get('selected'));
         Assert.isTrue(node.hasClass('yui3-button-selected'));
         
-        button.deselect();
+        button.unselect();
         Assert.isFalse(button.get('selected'));
         Assert.isFalse(node.hasClass('yui3-button-selected'));
     },

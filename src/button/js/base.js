@@ -50,7 +50,7 @@
             node.on('mousedown', this._onMouseDown, button);
             node.on('mouseup', this._onMouseUp, button);
             node.on('focus', this._onFocus, button);
-            node.on('blur', this._onMouseDown, button);
+            node.on('blur', this._onBlur, button);
             
             button.on('selectedChange', function(e){
                 if (e.propagate === false) {
@@ -76,7 +76,7 @@
         /**
         *
         */
-        deselect: function() {
+        unselect: function() {
             this.set('selected', false);
         },
 
