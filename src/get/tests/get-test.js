@@ -2,8 +2,9 @@ YUI.add('get-test', function (Y) {
     Y.GetTests = new Y.Test.Suite("Y.Get");
     Y.GetTests.TEST_FILES_BASE = "getfiles/";
 
-    var ArrayAssert = Y.ArrayAssert,
-        Assert      = Y.Assert,
+    var ArrayAssert  = Y.ArrayAssert,
+        Assert       = Y.Assert,
+        ObjectAssert = Y.ObjectAssert,
 
         FILENAME = /[abc]\.js/,
         ua       = Y.UA,
@@ -1076,7 +1077,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            test.wait(500);
+            test.wait();
         },
 
         'test: multiple css, success': function() {
@@ -1091,7 +1092,9 @@ YUI.add('get-test', function (Y) {
                 context: {bar:"foo"},
 
                 onFailure: function(o) {
-                    Assert.fail("onFailure shouldn't have been called");
+                    test.resume(function () {
+                        Assert.fail("onFailure shouldn't have been called");
+                    });
                 },
 
                 onSuccess: function(o) {
@@ -1116,7 +1119,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            test.wait(500);
+            test.wait();
         },
 
         'test: insertBefore, single' : function() {
@@ -1145,7 +1148,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            test.wait(500);
+            test.wait();
         },
 
         'test: insertBefore, multiple' : function() {
@@ -1178,7 +1181,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            test.wait(500);
+            test.wait();
         },
 
         'test: charset, single' : function() {
@@ -1198,7 +1201,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            test.wait(500);
+            test.wait();
         },
 
         'test: charset, multiple' : function() {
@@ -1223,7 +1226,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            test.wait(500);
+            test.wait();
         },
 
         'test: attributes, single' : function() {
@@ -1248,7 +1251,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            test.wait(500);
+            test.wait();
         },
 
         'test: attributes, multiple' : function() {
@@ -1279,7 +1282,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            test.wait(500);
+            test.wait();
         },
 
         'test: single css, failure': function() {
@@ -1311,7 +1314,7 @@ YUI.add('get-test', function (Y) {
                 }
             });
 
-            test.wait(500);
+            test.wait();
         },
 
         'test: multiple css, failure': function() {
@@ -1349,6 +1352,26 @@ YUI.add('get-test', function (Y) {
                 onEnd: function(o) {
                     test.o = o;
                 }
+            });
+
+            this.wait();
+        },
+
+        'CSS nodes should be inserted in order': function () {
+            var test = this;
+
+            test.o = Y.Get.css([
+                {url: path('a.css'), attributes: {id: 'a'}},
+                {url: path('b.css'), attributes: {id: 'b'}},
+                {url: path('c.css'), attributes: {id: 'c'}}
+            ], function (err, transaction) {
+                test.resume(function () {
+                    var nodes = transaction.nodes;
+
+                    Assert.isNull(err, '`err` should be null');
+                    Assert.areEqual('b', Y.one(nodes[0]).next('link,style').get('id'), 'b.css should have been inserted after a.css');
+                    Assert.areEqual('c', Y.one(nodes[1]).next('link,style').get('id'), 'b.css should have been inserted after a.css');
+                });
             });
 
             this.wait();
@@ -1915,6 +1938,42 @@ YUI.add('get-test', function (Y) {
         }
     });
 
+    // -- Y.Get.Transaction behavior -------------------------------------------
+    Y.GetTests.TransactionBehavior = new Y.Test.Case({
+        name: 'Transaction behavior',
+
+        'transactions should always execute one at a time by default': function () {
+            var test = this,
+
+                t1 = Y.Get.js(path(['a.js', 'b.js']), finish),
+                t2 = Y.Get.css(path('a.css'), finish),
+                t3 = Y.Get.load(path('c.js'), function (err, t) {
+                    finish(err, t);
+
+                    test.resume(function () {
+                        Assert.areSame('done', t1._state, 'transaction 1 should be finished');
+                        Assert.areSame('done', t2._state, 'transaction 2 should be finished');
+                        Assert.areSame('done', t3._state, 'transaction 3 should be finished');
+
+                        // This has to be a >= comparison or it'll fail on Windows due to IE's
+                        // low-res timer.
+                        Assert.isTrue(t2.finish >= t1.finish, "transaction 2 shouldn't start before transaction 1 finishes");
+                        Assert.isTrue(t3.finish >= t2.finish, "transaction 3 shouldn't start before transaction 2 finishes");
+
+                        t1.purge();
+                        t2.purge();
+                        t3.purge();
+                    });
+                });
+
+            function finish(err, t) {
+                t.finish = Y.Lang.now();
+            }
+
+            this.wait();
+        }
+    });
+
     // -- Y.Get.Transaction methods --------------------------------------------
     Y.GetTests.TransactionMethods = new Y.Test.Case({
         name: 'Transaction methods',
@@ -2071,7 +2130,94 @@ YUI.add('get-test', function (Y) {
 
     // -- TODO: Y.Get.Transaction properties -----------------------------------------
     Y.GetTests.TransactionProperties = new Y.Test.Case({
-        name: 'Transaction properties'
+        name: 'Transaction properties',
+
+        tearDown: function () {
+            this.t && this.t.purge();
+        },
+
+        'transactions should have a unique `id` property': function () {
+            var t1 = Y.Get.js('getfiles/a.js'),
+                t2 = Y.Get.js('getfiles/b.js');
+
+            Assert.isNotUndefined(t1.id, 'id property should not be undefined');
+            Assert.isNotUndefined(t2.id, 'id property should not be undefined');
+            Assert.areNotSame(t1.id, t2.id);
+
+            t1.purge();
+            t2.purge();
+        },
+
+        'transactions should have a `data` property when a data object is provided': function () {
+            var data = {};
+
+            this.t = Y.Get.js('getfiles/a.js', {data: data});
+            Assert.areSame(data, this.t.data);
+        },
+
+        '`errors` property should contain an array of error objects': function () {
+            var test = this;
+
+            this.t = Y.Get.js(['bogus.js', 'bogus.js'], function (err, t) {
+                test.resume(function () {
+                    Assert.isArray(t.errors, '`errors` should be an array');
+
+                    if (supports.jsFailure) {
+                        Assert.areSame(2, t.errors.length, '`errors` array should have two items');
+                        ObjectAssert.ownsKeys(['error', 'request'], t.errors[0]);
+                        ObjectAssert.ownsKeys(['error', 'request'], t.errors[1]);
+                    }
+                });
+            });
+
+            this.wait();
+        },
+
+        '`nodes` property should contain an array of injected nodes': function () {
+            var test = this;
+
+            this.t = Y.Get.js(['getfiles/a.js', 'getfiles/b.js'], function (err, t) {
+                test.resume(function () {
+                    Assert.isArray(t.nodes, '`nodes` should be an array');
+                    Assert.areSame(2, t.nodes.length, '`nodes` array should contain two items');
+                    Assert.areSame('script', t.nodes[0].nodeName.toLowerCase());
+                    Assert.areSame('script', t.nodes[1].nodeName.toLowerCase());
+                });
+            });
+
+            this.wait();
+        },
+
+        '`options` property should contain transaction options': function () {
+            this.t = Y.Get.js('getfiles/a.js', {
+                attributes: {'class': 'testing'},
+                data: 'foo',
+                bar: 'baz'
+            });
+
+            Assert.isObject(this.t.options, '`options` should be an object');
+            ObjectAssert.ownsKeys(['attributes', 'data', 'bar'], this.t.options);
+
+            this.t.abort();
+        },
+
+        '`requests` property should contain an array of request objects': function () {
+            var test = this;
+
+            this.t = Y.Get.js(['getfiles/a.js', 'getfiles/b.js'], function (err, t) {
+                test.resume(function () {
+                    Assert.isArray(t.requests, '`requests` should be an array');
+                    Assert.areSame(2, t.requests.length, '`requests` array should contain two items');
+                    Assert.areSame('getfiles/a.js', t.requests[0].url);
+                    Assert.areSame('getfiles/b.js', t.requests[1].url);
+
+                    Assert.isTrue(t.requests[0].finished);
+                    Assert.isTrue(t.requests[0].finished);
+                });
+            });
+
+            this.wait();
+        }
     });
 
     // -- TODO: Options --------------------------------------------------------------
