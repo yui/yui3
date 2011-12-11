@@ -1,0 +1,480 @@
+<script>
+YUI().use('app', 'handlebars', 'jsonp', function (Y) {
+
+var GithubSync,
+    User, Repo, RepoList, Contributor, ContributorList,
+    UserView, RepoView, RepoListView, ContributorListView,
+    HomePageView, UserPageView, RepoPageView,
+    ContributorsApp;
+
+function addLabel(data, field, label) {
+    var num = data[field];
+    data[field] || (data[field] = '0');
+    data[field + '_label'] = num === 1 ? label : (label + 's');
+}
+
+// -- GithubSync ---------------------------------------------------------------
+
+GithubSync = function () {};
+
+GithubSync.API_ORIGIN = 'https://api.github.com';
+
+GithubSync.prototype = {
+    githubURL: '/',
+
+    buildURL: function () {
+        return this.githubURL;
+    },
+
+    sync: function (action, options, callback) {
+        Y.Lang.isFunction(callback) || (callback = function () {});
+
+        if (action !== 'read') {
+            return callback('Read-only');
+        }
+
+        var url = this.buildURL() + '?per_page=100&callback={callback}';
+
+        Y.jsonp(GithubSync.API_ORIGIN + url, function (res) {
+            var meta = res.meta,
+                data = res.data;
+
+            if (meta.status >= 200 && meta.status < 300) {
+                callback(null, res);
+            } else {
+                callback(data.message, res);
+            }
+        });
+    },
+
+    parse: function (res) {
+        return res.data;
+    }
+};
+
+// -- User ---------------------------------------------------------------------
+
+User = Y.Base.create('user', Y.Model, [GithubSync], {
+    idAttribute: 'login',
+    githubURL  : '/users/{id}',
+
+    buildURL: function () {
+        return Y.Lang.sub(this.githubURL, {
+            id: this.getAsURL('id')
+        });
+    }
+}, {
+    ATTRS: {
+        login        : {value: null},
+        name         : {value: null},
+        html_url     : {value: null},
+        avatar_url   : {value: null},
+        public_repos : {value: 0},
+        followers    : {value: 0}
+    }
+});
+
+// -- Repo ---------------------------------------------------------------------
+
+Repo = Y.Base.create('repo', Y.Model, [], {
+    idAttribute: 'name'
+}, {
+    ATTRS: {
+        name       : {value: null},
+        html_url   : {value: null},
+        description: {value: null},
+        watchers   : {value: 0},
+        forks      : {value: 0},
+        language   : {value: null},
+        owner      : {value: null}
+    }
+});
+
+// -- RepoList -----------------------------------------------------------------
+
+RepoList = Y.Base.create('repoList', Y.ModelList, [GithubSync], {
+    model    : Repo,
+    githubURL: '/users/{user}/repos',
+
+    buildURL: function () {
+        return Y.Lang.sub(this.githubURL, {
+            user: this.get('user').getAsURL('id')
+        });
+    },
+
+    comparator: function (repo) {
+        return -repo.get('watchers');
+    }
+}, {
+    ATTRS: {
+        user: {value: null}
+    }
+});
+
+// -- Contributor --------------------------------------------------------------
+
+Contributor = Y.Base.create('contributor', User, [], {}, {
+    ATTRS: {
+        contributions: {value: 0}
+    }
+});
+
+// -- ContributorList ----------------------------------------------------------
+
+ContributorList = Y.Base.create('contributorList', Y.ModelList, [GithubSync], {
+    model    : Contributor,
+    githubURL: '/repos/{user}/{repo}/contributors',
+
+    buildURL: function () {
+        var repo = this.get('repo');
+
+        return Y.Lang.sub(this.githubURL, {
+            user: repo.getAsURL('owner.login'),
+            repo: repo.getAsURL('name')
+        });
+    },
+
+    comparator: function (contributor) {
+        return -contributor.get('contributions');
+    }
+}, {
+    ATTRS: {
+        repo: {value: null}
+    }
+});
+
+
+// -- User View ----------------------------------------------------------------
+
+UserView = Y.Base.create('userView', Y.View, [], {
+    template: Y.Handlebars.compile(Y.one('#t-user').getContent()),
+
+    render: function () {
+        var user = this.get('model').toJSON(),
+            content;
+
+        addLabel(user, 'public_repos', 'Public Repo');
+        addLabel(user, 'followers', 'Follower');
+
+        content = this.template(user);
+        this.get('container').setContent(content);
+        return this;
+    }
+});
+
+// -- RepoList View ------------------------------------------------------------
+
+RepoListView = Y.Base.create('repoListView', Y.View, [], {
+    template: Y.Handlebars.compile(Y.one('#t-repo-list').getContent()),
+
+    render: function () {
+        var repos = this.get('modelList'),
+            reposData, content;
+
+        reposData = repos.map(function (repo) {
+            var data = repo.toJSON();
+
+            addLabel(data, 'watchers', 'Watcher');
+            addLabel(data, 'forks', 'Fork');
+
+            return data;
+        });
+
+        content = this.template({repos: reposData});
+        this.get('container').setContent(content);
+        return this;
+    }
+});
+
+// -- Repo View ----------------------------------------------------------------
+
+RepoView = Y.Base.create('repoView', Y.View, [], {
+    template: Y.Handlebars.compile(Y.one('#t-repo').getContent()),
+
+    render: function () {
+        var repo = this.get('model').toJSON(),
+            content;
+
+        addLabel(repo, 'watchers', 'Watcher');
+        addLabel(repo, 'forks', 'Fork');
+
+        content = this.template(repo);
+        this.get('container').setContent(content);
+        return this;
+    }
+});
+
+// -- ContributorList View -----------------------------------------------------
+
+ContributorListView = Y.Base.create('contributorListView', Y.View, [], {
+    template: Y.Handlebars.compile(Y.one('#t-contributor-list').getContent()),
+
+    render: function () {
+        var contributors = this.get('modelList'),
+            contributorsData, content;
+
+        contributorsData = contributors.map(function (contributor) {
+            var data = contributor.getAttrs(['login', 'avatar_url', 'contributions']);
+            addLabel(data, 'contributions', 'Contribution');
+            return data;
+        });
+
+        content = this.template({
+            num         : contributors.size(),
+            contributors: contributorsData
+        });
+
+        this.get('container').setContent(content);
+        return this;
+    }
+});
+
+
+// -- HomePage View ------------------------------------------------------------
+
+HomePageView = Y.Base.create('homePageView', Y.View, [], {
+    template: Y.Handlebars.compile(Y.one('#t-home').getContent()),
+
+    events: {
+        'button': {
+            click: 'changeUser'
+        },
+
+        'input': {
+            keypress: 'enter'
+        }
+    },
+
+    initializer: function () {
+        this.publish('changeUser', {preventable: false});
+    },
+
+    create: function (container) {
+        return Y.one(container).addClass('home-page');
+    },
+
+    render: function () {
+        var user    = this.get('model'),
+            content = this.template(user.getAttrs(['login']));
+
+        this.get('container').setContent(content);
+        return this;
+    },
+
+    changeUser: function () {
+        var user = this.get('container').one('input').get('value');
+        if (user) {
+            this.fire('changeUser', {user: user});
+        }
+    },
+
+    enter: function (e) {
+        // Check for 'enter' keypress.
+        if (e.keyCode === 13) {
+            this.changeUser();
+        }
+    }
+});
+
+// -- UserPage View ------------------------------------------------------------
+
+UserPageView = Y.Base.create('userPageView', Y.View, [], {
+    initializer: function () {
+        var user  = this.get('model'),
+            repos = this.get('modelList');
+
+        this.userView     = new UserView({model: user});
+        this.repoListView = new RepoListView({modelList: repos});
+    },
+
+    create: function (container) {
+        return Y.one(container).addClass('user-page');
+    },
+
+    render: function () {
+        var content = Y.one(Y.config.doc.createDocumentFragment());
+
+        content.append(this.userView.render().get('container'));
+        content.append(this.repoListView.render().get('container'));
+
+        this.get('container').setContent(content);
+        return this;
+    }
+});
+
+// -- RepoPage View ------------------------------------------------------------
+
+RepoPageView = Y.Base.create('repoPageView', Y.View, [], {
+    initializer: function () {
+        var repo         = this.get('model'),
+            contributors = this.get('modelList');
+
+        this.repoView            = new RepoView({model: repo});
+        this.contributorListView = new ContributorListView({modelList: contributors});
+    },
+
+    create: function (container) {
+        return Y.one(container).addClass('repo-page');
+    },
+
+    render: function () {
+        var content = Y.one(Y.config.doc.createDocumentFragment());
+
+        content.append(this.repoView.render().get('container'));
+        content.append(this.contributorListView.render().get('container'));
+
+        this.get('container').setContent(content);
+        return this;
+    }
+});
+
+
+// -- Contributors App ---------------------------------------------------------
+
+ContributorsApp = new Y.Base.create('contributorsApp', Y.App, [], {
+    views: {
+        homePage: {
+            type: HomePageView
+        },
+
+        userPage: {
+            type  : UserPageView,
+            parent: 'homePage'
+        },
+
+        repoPage: {
+            type  : RepoPageView,
+            parent: 'userPage'
+        }
+    },
+
+    initializer: function () {
+        this.on('navigate', this.indicateLoading);
+        this.on('homePageView:changeUser', this.navigateToUser);
+
+        this.once('ready', function (e) {
+            if (this.hasRoute(this.getPath())) {
+                this.dispatch();
+            } else {
+                this.replace('/');
+            }
+        });
+    },
+
+    // -- Event Handlers -------------------------------------------------------
+
+    indicateLoading: function (e) {
+        this.get('activeView').get('container').addClass('loading');
+    },
+
+    navigateToUser: function (e) {
+        this.navigate('/github/' + e.user + '/');
+    },
+
+    // -- Route Handlers -------------------------------------------------------
+
+    handleUser: function (req, res, next) {
+        var userId = req.params.user,
+            user   = this.get('user'),
+            self   = this;
+
+        if (userId === user.get('id')) {
+            req.user = user;
+            next();
+        } else {
+            user = new User({id: userId});
+            user.load(function () {
+                self.set('user', user);
+                req.user = user;
+                next();
+            });
+        }
+    },
+
+    handleRepos: function (req, res, next) {
+        var user  = req.user,
+            repos = this.get('repos');
+
+        req.repos = repos;
+
+        if (user === repos.get('user')) {
+            next();
+        } else {
+            repos.set('user', user).load(function () {
+                next();
+            });
+        }
+    },
+
+    handleRepo: function (req, res, next) {
+        var repoId       = req.params.repo,
+            repos        = req.repos,
+            repo         = repos.getById(repoId),
+            contributors = this.get('contributors');
+
+        if (!repo) {
+            return next('GitHub repository was not found.');
+        }
+
+        req.repo         = repo;
+        req.contributors = contributors;
+
+        if (repo === contributors.get('repo')) {
+            next();
+        } else {
+            contributors.set('repo', repo).load(function () {
+                next();
+            });
+        }
+    },
+
+    showHomePage: function (req) {
+        this.showView('homePage', {
+            model: this.get('user')
+        });
+    },
+
+    showUserPage: function (req) {
+        this.showView('userPage', {
+            model    : req.user,
+            modelList: req.repos
+        });
+    },
+
+    showRepoPage: function (req) {
+        this.showView('repoPage', {
+            model    : req.repo,
+            modelList: req.contributors
+        });
+    }
+}, {
+    ATTRS: {
+        user        : {value: new User()},
+        repos       : {value: new RepoList()},
+        contributors: {value: new ContributorList()},
+
+        routes: {
+            value: [
+                {path: '/',                    callback: 'showHomePage'},
+
+                {path: '/github/:user/*',      callback: 'handleUser'},
+                {path: '/github/:user/*',      callback: 'handleRepos'},
+                {path: '/github/:user/',       callback: 'showUserPage'},
+
+                {path: '/github/:user/:repo/', callback: 'handleRepo'},
+                {path: '/github/:user/:repo/', callback: 'showRepoPage'}
+            ]
+        }
+    }
+});
+
+// -- Go-go-gadget App! --------------------------------------------------------
+
+new ContributorsApp({
+    serverRouting: false,
+    container    : '#github-app',
+    linkSelector : '#github-app a'
+}).render();
+
+});
+</script>

@@ -1,0 +1,78 @@
+<style scoped>
+.scrollable pre {
+    overflow-y: auto;
+    max-height: 40em;
+    -webkit-overflow-scrolling: touch;
+}
+</style>
+
+<div class="intro">
+<p>
+This example demonstrates the powerful navigation and view management features `Y.App` provides by creating an application to browse through the contributors of GitHub projects.
+</p>
+</div>
+
+<section>
+<div id="github-app" class="example">
+{{>app-contributors-css}}
+{{>app-contributors-templates}}
+{{>app-contributors-javascript}}
+</div>
+</section>
+
+<h2>HTML</h2>
+
+<h3>Templates</h3>
+
+<div class="scrollable">
+```
+{{>app-contributors-templates}}
+```
+</div>
+
+<h2>CSS</h2>
+<div class="scrollable">
+```
+{{>app-contributors-css}}
+```
+</div>
+
+<h2>JavaScript</h2>
+
+<h3>Models</h3>
+
+<h4>User</h4>
+
+<h4>Repo</h4>
+
+<h4>Contributor</h4>
+
+<h3>Model Lists</h3>
+
+<h4>RepoList</h4>
+
+<h4>ContributorList</h4>
+
+<h3>Views</h3>
+
+<h4>UserView</h4>
+
+<h4>RepoView</h4>
+
+<h4>RepoListView</h4>
+
+<h4>ContributorListView</h4>
+
+<h3>App</h3>
+
+<h4>Page Views</h4>
+
+<h4>Routes</h4>
+
+<h2>Complete Example Source</h2>
+
+```
+{{>app-contributors-css}}
+{{>app-contributors-templates}}
+{{>app-contributors-javascript}}
+```
