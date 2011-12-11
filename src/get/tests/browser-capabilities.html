@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Browser CSS/JS loading capabilities</title>
+    <style>
+        td, th {
+            border: 1px solid #efefef;
+            padding: 1px 4px;
+        }
+
+        td.result {
+            color: #fff;
+            text-align: center;
+        }
+
+        td.N { background: red; }
+        td.Y { background: green; }
+
+    </style>
+</head>
+<body>
+
+<h1>Browser CSS/JS loading capabilities</h1>
+
+<p>
+Just a little chart to help me remember what supports what, since this stuff is
+a pain to feature-test.
+</p>
+
+<p>
+Test your own browser <a href="http://bit.ly/gettest">here</a>.
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th rowspan="2">Browser</th>
+            <th colspan="5">&lt;script&gt;</th>
+            <th colspan="5">&lt;link&gt;</th>
+        </tr>
+
+        <tr>
+            <th>onload</th>
+            <th>onerror</th>
+            <th>load</th>
+            <th>error</th>
+            <th>onreadystatechange</th>
+
+            <th>onload</th>
+            <th>onerror</th>
+            <th>load</th>
+            <th>error</th>
+            <th>onreadystatechange</th>
+        </tr>
+    </thead>
+
+    <tbody id="results-body">
+    </tbody>
+</table>
+
+<script id="result-row" type="text/x-template">
+    <tr class="result-row">
+        <td class="browser">{browser}</td>
+        <td class="result {jsonload}">{jsonload}</td>
+        <td class="result {jsonerror}">{jsonerror}</td>
+        <td class="result {jsload}">{jsload}</td>
+        <td class="result {jserror}">{jserror}</td>
+        <td class="result {jsonreadystatechange}">{jsonreadystatechange}</td>
+
+        <td class="result {cssonload}">{cssonload}</td>
+        <td class="result {cssonerror}">{cssonerror}</td>
+        <td class="result {cssload}">{cssload}</td>
+        <td class="result {csserror}">{csserror}</td>
+        <td class="result {cssonreadystatechange}">{cssonreadystatechange}</td>
+    </tr>
+</script>
+
+<p>
+
+</p>
+
+<script src="browser-capabilities.js"></script>
+<script src="http://yui.yahooapis.com/3.4.1/build/yui/yui-min.js"></script>
+<script>
+YUI().use('node', function (Y) {
+
+var frag     = Y.one(Y.config.doc.createDocumentFragment()),
+    template = Y.one('#result-row').getContent();
+
+Y.Object.each(results, function (data, browser) {
+    var results = {browser: browser};
+
+    Y.Array.each(['onload', 'onerror', 'load', 'error', 'onreadystatechange'], function (key) {
+        results['css' + key] = data.css[key] ? 'Y' : 'N';
+        results['js' + key] = data.js[key] ? 'Y' : 'N';
+    });
+
+    frag.append(Y.Lang.sub(template, results));
+});
+
+Y.one('#results-body').append(frag);
+
+});
+</script>
+
+<p>
+Got feedback or more data? I'm <a href="http://twitter.com/yaypie">@yaypie</a>
+on Twitter. Or email <a href="mailto:ryan@wonko.com">ryan@wonko.com</a>.
+</p>
+
+</body>
+</html>

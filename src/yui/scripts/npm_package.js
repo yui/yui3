@@ -35,16 +35,40 @@ var makeIndex = function(mod, p) {
     return str;
 };
 
+var makeDebug = function(mod, p) {
+    var o = '../package';
+    if (p) {
+        o = './package';
+    }
+    var str = 'var inst = require("' + o + '").getInstance();\n';
+    str += 'inst.applyConfig({ debug: true, filter: "debug" });\n';
+    str += 'module.exports = inst.use("' + mod + '");\n';
+    return str;
+};
+
 console.log('Writing index.js files');
 var dirs = fs.readdirSync(start);
 dirs.forEach(function(mod) {
     var p = path.join(start, mod, 'index.js');
+    var d = path.join(start, mod, 'debug.js');
     var stat = fs.statSync(path.join(start, mod))
     if (stat.isDirectory()) {
         fs.writeFileSync(p, makeIndex(mod), 'utf8');
+        fs.writeFileSync(d, makeDebug(mod), 'utf8');
     }
 });
 console.log('Index files written');
+
+console.log('Writing seed debug file');
+var index = 'exports.path = function() {' + 
+    '   return __dirname;' +
+    '};\n' + 
+    'var YUI = require("./yui-nodejs/yui-nodejs-debug").YUI;\n' +
+    'YUI.applyConfig({ debug: true, filter: "debug" });\n' +
+    'exports.YUI = YUI;';
+
+var p = path.join(start, 'debug.js');
+fs.writeFileSync(p, index, 'utf8');
 
 console.log('Writing alias files');
 Object.keys(YUI.Env.aliases).forEach(function(mod) {

@@ -277,7 +277,13 @@ VMLDrawing.prototype = {
      */
     clear: function()
     {
-		this._path = "";
+		this._right = 0;
+        this._bottom = 0;
+        this._width = 0;
+        this._height = 0;
+        this._left = 0;
+        this._top = 0;
+        this._path = "";
     },
 
     /**

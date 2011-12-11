@@ -23,27 +23,33 @@ var PARENT_NODE = 'parentNode',
         _reRegExpTokens: /([\^\$\?\[\]\*\+\-\.\(\)\|\\])/, // TODO: move?
         SORT_RESULTS: true,
         _children: function(node, tag) {
-            var ret = node.children,
-                i,
-                children = [],
+                var i = 0,
+                children = node.children,
                 childNodes,
+                hasComments,
                 child;
 
-            if (node.children && tag && node.children.tags) {
-                children = node.children.tags(tag);
-            } else if ((!ret && node[TAG_NAME]) || (ret && tag)) { // only HTMLElements have children
-                childNodes = ret || node.childNodes;
-                ret = [];
-                for (i = 0; (child = childNodes[i++]);) {
-                    if (child.tagName) {
+            if (children && children.tags) { // use tags filter when possible
+                if (tag) {
+                    children = node.children.tags(tag);
+                } else { // IE leaks comments into children
+                    hasComments = children.tags('!').length;
+                }
+            }
+            
+            if (!children || (!children.tag && tag) || hasComments) {
+                childNodes = children || node.childNodes;
+                children = [];
+                while ((child = childNodes[i++])) {
+                    if (child.nodeType === 1) {
                         if (!tag || tag === child.tagName) {
-                            ret.push(child);
+                            children.push(child);
                         }
                     }
                 }
             }
 
-            return ret || [];
+            return children || [];
         },
 
         _re: {

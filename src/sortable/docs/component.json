@@ -52,6 +52,14 @@
             "modules"    : ["sortable"],
             "tags"       : ["sortable", "list", "simple", "multi", "join"],
             "sortArrow"  : "arrow-in"
+        },
+        {
+            "name"       : "sortable-fish",
+            "displayName": "Fish Sort - Multi Outer Join",
+            "description": "A fish sorting example. Multiple sortable lists with floated nodes that are outer joined together.",
+            "modules"    : ["sortable"],
+            "tags"       : ["sortable", "list", "simple", "multi", "join", "fish"],
+            "sortArrow"  : "arrow-out"
         }
     ]
 }

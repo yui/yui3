@@ -57,6 +57,7 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
                 xcoords = this.get("xcoords"),
                 ycoords = this.get("ycoords"),
                 marker = this._markers[i],
+                markers,
                 graph = this.get("graph"),
                 seriesCollection = graph.seriesTypes[this.get("type")],
                 seriesLen = seriesCollection.length,
@@ -73,12 +74,13 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
             markerStyles.border.color = this._getItemColor(markerStyles.border.color, i);
             config = this._getMarkerDimensions(xcoords[i], ycoords[i], styles.height, offset);
             markerStyles.width = config.calculatedSize;
+            markerStyles.height = Math.min(this._maxSize, markerStyles.height);
             marker.set(markerStyles);
             for(; n < seriesLen; ++n)
             {
                 ys[n] = ycoords[i] + seriesSize;
                 seriesStyles = seriesCollection[n].get("styles").marker;
-                seriesSize += seriesStyles.height; 
+                seriesSize += Math.min(this._maxSize, seriesStyles.height); 
                 if(order > n)
                 {
                     offset = seriesSize;
@@ -87,10 +89,14 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
             }
             for(n = 0; n < seriesLen; ++n)
             {
-                renderer = seriesCollection[n].get("markers")[i];
-                if(renderer && renderer !== undefined)
+                markers = seriesCollection[n].get("markers");
+                if(markers)
                 {
-                    renderer.set("y", (ys[n] - seriesSize/2));
+                    renderer = markers[i];
+                    if(renderer && renderer !== undefined)
+                    {
+                        renderer.set("y", (ys[n] - seriesSize/2));
+                    }
                 }
             }
         }

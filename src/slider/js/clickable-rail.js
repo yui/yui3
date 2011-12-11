@@ -126,7 +126,7 @@ Y.ClickableRail = Y.mix(ClickableRail, {
                         Math.max(xy, 0),
                         (length - thumbSize));
 
-                this._uiMoveThumb(xy);
+                this._uiMoveThumb(xy, { source: 'rail' });
 
                 // Set e.target for DD's IE9 patch which calls
                 // e.target._node.setCapture() to allow imgs to be dragged.

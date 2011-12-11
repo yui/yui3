@@ -495,8 +495,10 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             var insertNode = document.createElement('div');
             Y.stamp(insertNode);
             insertNode.innerHTML = 'inserted node';
-            Y.one('body').appendChild(Y.one('div'));
+            Y.one('body').appendChild(Y.one('#test-append'));
+
             Assert.isTrue(Y.one('body').get('lastChild').compareTo(Y.one('#test-append')), 'get("body").appendChild(Y.one("#test-append"))');
+
             Assert.areEqual(byId('test-append'), Y.Node.getDOMNode(Y.one('body').get('lastChild')), 'get("body").appendChild(Y.one([0]"#test-append"))');
             Assert.areEqual('inserted node', node.appendChild(insertNode).get('innerHTML'), 'appendChild(element input)');
             Assert.areEqual('inserted node', node.removeChild(insertNode).get('innerHTML'), 'removeChild(element input)');
@@ -1612,6 +1614,24 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             Assert.areEqual(node.get('parentNode.tagName'), 'DIV');
         },
 
+        'should wrap the node with the given DOM node': function() {
+            var node = Y.Node.create('<span/>');
+            node.wrap(document.createElement('div'));
+            Assert.areEqual(node.get('parentNode.tagName'), 'DIV');
+        },
+
+        'should wrap the node with the given node instance': function() {
+            var node = Y.Node.create('<span/>');
+            node.wrap(Y.Node.create('<div/>'));
+            Assert.areEqual(node.get('parentNode.tagName'), 'DIV');
+        },
+
+        'should wrap the paragraph with a div': function() {
+            var node = Y.Node.create('<p>Hello World</p>');
+            node.wrap('<div></div>');
+            Assert.areEqual(node.get('parentNode.tagName'), 'DIV');
+        },
+
         'should remove the node from its parent': function() {
             var node = Y.Node.create('<div/>').append('<span><em>foo</em></span>').one('em');
             node.unwrap();
@@ -2422,6 +2442,38 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
 
     }));
 
+
+    Y.Test.Runner.add(new Y.Test.Case({
+        name: 'Y.Node.ATTRS.children',
+
+        'should return children from document fragment': function() {
+            var node = document.createDocumentFragment();
+            node.appendChild(document.createElement('div'));
+
+            Assert.areEqual('DIV', Y.one(node).get('children').item(0).get('tagName'));
+        }
+
+    }));
+
+    Y.Test.Runner.add(new Y.Test.Case({
+        name: 'Y.Node.setHTML',
+
+        'should insert html into div': function() {
+            var html = '<p>foo</p>',
+                node = Y.Node.create('<div/>');
+
+            node.setHTML(html);
+            Assert.areEqual(html, node._node.innerHTML.toLowerCase());
+        },
+
+        'should get html from div': function() {
+            var html = '<p>foo</p>',
+                node = Y.Node.create('<div/>');
+
+            node.setHTML(html);
+            Assert.areEqual(html, node.getHTML().toLowerCase());
+        }
+    }));
     Y.Test.Runner.add(suite);
 
     Y.on('load', function() {

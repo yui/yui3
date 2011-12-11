@@ -1,7 +1,7 @@
 {
     "name": "YUI 3",
     "description": "YUI 3 JavaScript Framework",
-    "version": "3.4.0",
+    "version": "3.5.0",
     "url": "http://yuilibrary.com/",
     "options": {
         "linkNatives": "true",        

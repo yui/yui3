@@ -57,6 +57,7 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
                 xcoords = this.get("xcoords"),
                 ycoords = this.get("ycoords"),
                 marker = this._markers[i],
+                markers,
                 graph = this.get("graph"),
                 seriesStyles,
                 seriesCollection = graph.seriesTypes[this.get("type")],
@@ -68,17 +69,18 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
                 xs = [],
                 order = this.get("order"),
                 config;
-            markerStyles = state == "off" || !styles[state] ? styles : styles[state]; 
+            markerStyles = state == "off" || !styles[state] ? Y.clone(styles) : Y.clone(styles[state]); 
             markerStyles.fill.color = this._getItemColor(markerStyles.fill.color, i);
             markerStyles.border.color = this._getItemColor(markerStyles.border.color, i);
             config = this._getMarkerDimensions(xcoords[i], ycoords[i], styles.width, offset);
             markerStyles.height = config.calculatedSize;
+            markerStyles.width = Math.min(this._maxSize, markerStyles.width);
             marker.set(markerStyles);
             for(; n < seriesLen; ++n)
             {
                 xs[n] = xcoords[i] + seriesSize;
                 seriesStyles = seriesCollection[n].get("styles").marker;
-                seriesSize += seriesStyles.width;
+                seriesSize += Math.min(this._maxSize, seriesStyles.width);
                 if(order > n)
                 {
                     offset = seriesSize;
@@ -87,10 +89,14 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
             }
             for(n = 0; n < seriesLen; ++n)
             {
-                renderer = seriesCollection[n].get("markers")[i];
-                if(renderer && renderer !== undefined)
+                markers = seriesCollection[n].get("markers");
+                if(markers)
                 {
-                    renderer.set("x", (xs[n] - seriesSize/2));
+                    renderer = markers[i];
+                    if(renderer && renderer !== undefined)
+                    {
+                        renderer.set("x", (xs[n] - seriesSize/2));
+                    }
                 }
             }
         }

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Y.Matrix tests</title>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+
+<script src="../../../build/yui/yui.js"></script>
+<script>
+var Y = YUI({
+    allowRollup: false,
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+    modules: {
+        'matrix-test': {
+            fullpath: 'matrix-test.js',
+            requires: ['test']
+        },
+
+        'test-console': {
+            fullpath : '../../common/tests/assets/test-console.js',
+            requires : ['console-filters'],
+            skinnable: true
+        },
+
+        'skin-sam-test-console': {
+            fullpath: '../../common/tests/assets/test-console.css',
+            type    : 'css'
+        }
+    },
+    useBrowserConsole: false
+}).use('matrix', 'matrix-test', 'test-console', function (Y) {
+    Y.Test.Runner.run();
+});
+</script>
+
+</body>
+</html>
