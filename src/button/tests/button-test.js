@@ -144,10 +144,10 @@ suite.add(new Y.Test.Case({
         
         Assert.isFalse(node.hasClass('yui3-button-focused'));
         
-        node.simulate('focus');
+        node.focus();
         Assert.isTrue(node.hasClass('yui3-button-focused'));
         
-        node.simulate('blur');
+        node.blur();
         Assert.isFalse(node.hasClass('yui3-button-focused'));
     }
 }));
