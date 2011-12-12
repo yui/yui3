@@ -113,20 +113,19 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
 
     _parseColumns: function (data) {
         var columns = [],
-            rowStack = [],
-            index = [],
+            stack = [],
             rowSpan = 1,
-            row, col, children, i, len, j, jlen;
+            entry, row, col, children, parent, i, len, j;
         
         if (isArray(data) && data.length) {
             // First pass, assign colspans and calculate row count for
             // non-nested headers' rowspan
-            rowStack.push(data);
-            index.push(-1);
+            stack.push([data, -1]);
 
-            while (rowStack.length) {
-                row = rowStack[rowStack.length - 1];
-                i = index[index.length - 1] + 1;
+            while (stack.length) {
+                entry = stack[stack.length - 1];
+                row   = entry[0];
+                i     = entry[1] + 1;
 
                 for (len = row.length; i < len; ++i) {
                     col = row[i];
@@ -139,10 +138,10 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
                     Y.stamp(col);
 
                     if (isArray(children) && children.length) {
-                        rowStack.push(children);
-                        index[index.length - 1] = i;
-                        index.push(-1);
-                        rowSpan = Math.max(rowSpan, rowStack.length);
+                        stack.push([children, -1]);
+                        entry[1] = i;
+
+                        rowSpan = Math.max(rowSpan, stack.length);
 
                         // break to let the while loop process the children
                         break;
@@ -153,22 +152,22 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
 
                 if (i >= len) {
                     // All columns in this row are processed
-                    if (rowStack.length > 1) {
-                        // The parent column
-                        col = rowStack[rowStack.length-2][index[index.length-2]];
-                        col.colspan = 0;
+                    if (stack.length > 1) {
+                        entry  = stack[stack.length - 2];
+                        parent = entry[0][entry[1]];
+
+                        parent.colspan = 0;
 
                         for (i = 0, len = row.length; i < len; ++i) {
                             // Can't use .length because in 3+ rows, colspan
                             // needs to aggregate the colspans of children
-                            col.colspan += row[i].colspan;
+                            parent.colspan += row[i].colspan;
 
                             // Assign the parent column for ease of navigation
-                            row[i].parent = col;
+                            row[i].parent = parent;
                         }
                     }
-                    rowStack.pop();
-                    index.pop();
+                    stack.pop();
                 }
             }
 
@@ -177,43 +176,44 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
                 columns.push([]);
             }
 
-            rowStack.push(data);
-            index.push(-1);
+            stack.push([data, -1]);
 
-            while (rowStack.length) {
-                row = rowStack[rowStack.length - 1];
-                i = index[index.length - 1] + 1;
+            while (stack.length) {
+                entry = stack[stack.length - 1];
+                row   = entry[0];
+                i     = entry[1] + 1;
 
                 for (len = row.length; i < len; ++i) {
                     col = row[i];
                     children = col.children;
 
-                    columns[rowStack.length - 1].push(col);
+                    columns[stack.length - 1].push(col);
 
-                    index[index.length - 1] = i;
+                    entry[1] = i;
 
                     if (children && children.length) {
-                        rowStack.push(children);
-                        index.push(-1);
+                        // parent cells must assume rowspan 1 (long story)
 
                         // break to let the while loop process the children
+                        stack.push([children, -1]);
                         break;
                     } else {
                         // collect the IDs of parent cols
-                        col.headers = [];
+                        col.headers = [col._yuid];
 
-                        for (j = 0, jlen = rowStack.length; j < jlen; ++j) {
-                            col.headers.push(rowStack[j][index[j]]._yuid);
+                        for (j = stack.length - 2; j >= 0; --j) {
+                            parent = stack[j][0][stack[j][1]];
+
+                            col.headers.unshift(parent._yuid);
                         }
 
-                        col.rowspan = rowSpan - rowStack.length + 1;
+                        col.rowspan = rowSpan - stack.length + 1;
                     }
                 }
 
                 if (i >= len) {
                     // All columns in this row are processed
-                    rowStack.pop();
-                    index.pop();
+                    stack.pop();
                 }
             }
         }
