@@ -70,7 +70,7 @@ Y.mix(EnhanceMarkup.prototype, {
 
     _parseHTMLColumns: function (srcNode) {
         var self = this,
-            ths  = srcNode.all('> .' + CN_THEAD + ' th'),
+            ths  = srcNode.all('> .' + this.getClassName('head') + ' th'),
             columns = [];
 
         ths.each(function (th) {
