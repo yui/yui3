@@ -21,11 +21,11 @@
                 debug: true,
                 combo: false,
                 filter: 'raw'
-            }).use('button', 'cssbuttons', 'cssfonts', 'console', function(Y){
+            }).use('button', 'cssfonts', 'console', function(Y){
                 
                 new Y.Console().render();
                 
-                Y.log(new Y.Button({label:'A ninja button'}).getNode().getContent());
+                Y.log('A ninja button called ' + new Y.Button({label:'Bruce Lee'}).getNode().getContent());
 
                 /*
                     Just a basic test with a listener
@@ -33,17 +33,17 @@
                 var button = new Y.Button({
                     srcNode: Y.one('#event'),
                     on: {
-                        click: function(){
-                            console.log('boom');
-                        },
                         mouseover: function(){
-                            console.log('over')
+                            Y.log('mouseover')
+                        },
+                        mouseout: function(){
+                            Y.log('mouseout');
                         }
                     }
                 });
                 
-                button.on("click",  function(e){
-                    Y.log("Clicked!");
+                button.on("click", function(e){
+                    Y.log("click");
                 });
                 
                 
@@ -52,12 +52,12 @@
                 */
                 var button2 = new Y.Button({
                     srcNode: Y.one('#toggle'),
-                    type: 'toggle'
-                });
-                
-                // An alternative to button.get('srcNode').on('click', ...
-                button2.on('selectedChange', function(){
-                   Y.log('toggled');
+                    type: 'toggle',
+                    on: {
+                        selectedChange:function(){
+                           Y.log('selectedChange');
+                        }
+                    }
                 });
 
 

@@ -13,8 +13,7 @@ suite.add(new Y.Test.Case({
 
     setUp : function () {
         this.button = new Y.Button({
-            srcNode : '#test',
-            type : 'toggle'
+            srcNode : '#test'
         });
     },
     
@@ -27,9 +26,10 @@ suite.add(new Y.Test.Case({
         Assert.isInstanceOf(Y.Node, node);
     },
 
-    'button.onClick() should make `selected` attribute = true and `yui3-button-selected` class': function () {
+    'button.simulate(click) should make `selected` attribute = true and `yui3-button-selected` class': function () {
         var button = this.button;
         var node = button.getNode();
+        button.set('type', 'toggle');
         
         // Ensure the button is unselected by default
         Assert.isFalse(button.get('selected'));

@@ -15,9 +15,9 @@
 * @constructor
 */
 function Button(config) {
+    this._eventsToAssign = {};
     Button.superclass.constructor.apply(this, arguments);
 }
-
 
 
 // -- Private Methods ----------------------------------------------------------
@@ -40,21 +40,6 @@ function makeClassName(str) {
 }
 
 
-
-// -- Private Methods ----------------------------------------------------------
- 
-/**
-* Name of this component.
-*
-* @property NAME
-* @type String
-* @static
-*/
-Button.NAME = "button";
-
-
-
-
 /* Button extends the Base class */
 Y.extend(Button, Y.Base, {
     
@@ -65,15 +50,9 @@ Y.extend(Button, Y.Base, {
     * @private
     */
     initializer: function(config){
-        
         this.renderUI();
         this.bindUI();
-        
-        // Because the srcNode isn't available the first time this.on is run. Why?
-        if (config.on) {
-            this.on(config.on);
-        }
-        
+        this.on(this._eventsToAssign);
     },
     
     /**
@@ -162,11 +141,13 @@ Y.extend(Button, Y.Base, {
     on: function(type, fn, ctx, arg) {
         
         // Do we have a many type/fn pairs, or just one?
-        if (Y.Lang.isObject(arguments[0])){ // many
+        if (Y.Lang.isObject(arguments[0])){
             // Loop through each event, recursively calling this.on() with the pair
             Y.Object.each(arguments[0], function(){
                this.on(arguments[1], arguments[0]); 
             }, this);
+            
+            // TODO: This should return a batch of events
         }
         
         // We just have a single type/fn pair
@@ -176,9 +157,11 @@ Y.extend(Button, Y.Base, {
             
             // Dispatch DOM events to Y.Node, everything else to EventTarget
             if (Y.Object.hasKey(Y.Node.DOM_EVENTS, type)) {
-                // TODO: srcNode is not available yet.  Figure out why.
                 if (node) {
                     return Y.Node.prototype.on.apply(node, arguments);
+                }
+                else { // srcNode is not available yet, so store for later assignment
+                    this._eventsToAssign[type] = fn;
                 }
             }
             else {
@@ -237,7 +220,6 @@ Y.extend(Button, Y.Base, {
             }
         }
     }
-    
 }, {
     /** 
     * Array of attributes
@@ -249,8 +231,8 @@ Y.extend(Button, Y.Base, {
     */
     ATTRS: {
         srcNode: {
+            writeOnce: 'initOnly',
             setter: Y.one,
-            lazyAdd: false,
             valueFn: function () {
                 return Y.Node.create('<button></button>');
             }
@@ -274,23 +256,37 @@ Y.extend(Button, Y.Base, {
             lazyAdd: false,
             setter: '_selectedSetter'
         }
-    },
-    
-    /** 
-    * Array of static constants used to identify the classnames applied to the Button DOM objects
-    *
-    * @property CLASS_NAMES
-    * @type {Array}
-    * @private
-    * @static
-    */
-    CLASS_NAMES: {
-        button  : makeClassName(),
-        selected: makeClassName('selected'),
-        focused : makeClassName('focused'),
-        disabled: makeClassName('disabled')
     }
 });
+
+
+// -- Static Properties ----------------------------------------------------------
+
+/**
+* Name of this component.
+*
+* @property NAME
+* @type String
+* @static
+*/
+Button.NAME = "button";
+
+/** 
+* Array of static constants used to identify the classnames applied to the Button DOM objects
+*
+* @property CLASS_NAMES
+* @type {Array}
+* @static
+*/
+Button.CLASS_NAMES = {
+    button  : makeClassName(),
+    selected: makeClassName('selected'),
+    focused : makeClassName('focused'),
+    disabled: makeClassName('disabled')
+}
+
+
+// -- Protected Methods ----------------------------------------------------------
 
 /**
 * @method _onBlur
@@ -332,4 +328,5 @@ Button.prototype._onMouseDown = function(e){
     e.target.setAttribute('aria-pressed', 'true');
 };
 
+// Export Button
 Y.Button = Button;
