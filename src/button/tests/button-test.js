@@ -93,7 +93,7 @@ suite.add(new Y.Test.Case({
         button.enable();
         Assert.isFalse(button.get('disabled'));
         Assert.isFalse(node.hasClass('yui3-button-disabled'));
-    },
+    }
 
     
 }));
