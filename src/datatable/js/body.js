@@ -1,7 +1,9 @@
-var Lang = Y.Lang,
-    isObject = Lang.isObject,
-    htmlEscape = Y.Escape.html,
-    fromTemplate = Y.Lang.sub;
+var Lang         = Y.Lang,
+    isObject     = Lang.isObject,
+    isArray      = Lang.isArray,
+    htmlEscape   = Y.Escape.html,
+    fromTemplate = Y.Lang.sub,
+    arrayIndexOf = Y.Array.indexOf;
 
 Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     // -- Instance properties -------------------------------------------------
@@ -34,9 +36,12 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     },
 
     initializer: function (config) {
-        this.host = config.source;
-        this.table = config.table;
-        this.data  = config.data;
+        this.host    = config.source;
+        this.table   = config.table;
+        this.data    = config.data;
+        this.columns = this._parseColumns(config.columns);
+
+        this.host.after('columnsChange', this._afterColumnsChange);
 
         this._eventHandles = [];
     },
@@ -44,12 +49,10 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     render: function () {
         var table    = this.table,
             data     = this.data,
-            existing = table.one('> .' + this.host.getClassName('data')),
+            columns  = this.columns,
             tbody    = this.host._tbodyNode,
-            replace  = existing && (!tbody || !tbody.compareTo(existing)),
-                       // Copy taken so hidden and nodeFormatter columns
-                       // can be removed for template assembly and population
-            columns  = Y.Array(this.host.getColumnData().dataColumns);
+            existing = table.one('> .' + this.host.getClassName('data')),
+            replace  = existing && (!tbody || !tbody.compareTo(existing));
 
         // Needed for mutation
         this._createRowTemplate(columns);
@@ -74,8 +77,35 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     },
 
     // -- Protected and private methods ---------------------------------------
-    _afterColumnChange: function (e) {
-        // TODO
+    _afterColumnsChange: function (e) {
+        var prevCols = this.columns,
+            existing = this.table.one('> .' + this.host.getClassName('data')),
+            newCols, i, len, colA, colB, colAIndex, colBIndex, redraw;
+
+        this._parseColumns(e.newVal);
+
+        if (prevCols && existing) {
+            newCols = this.columns;
+
+            if (prevCols.length !== newCols.length) {
+                redraw = true;
+            } else {
+                for (i = 0, len = prevCols.length; i < len; ++i) {
+                    colA = prevCols[i];
+                    colB = newCols[i];
+
+                    if (!this._isSameColumn) {
+                        redraw = true;
+                        break;
+                    }
+                }
+            }
+
+            if (redraw) {
+                // TODO: can't call render() because it doesn't replace the same
+                // tbody, and it calls bindUI()
+            }
+        }
     },
 
     _afterDataChange: function (e) {
@@ -165,24 +195,28 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                         //attributes: {}
                     };
 
-                    // Formatters can either return a value
-                    value = col.formatter.call(host, formatterData);
+                    if (typeof col.formatter === 'string') {
+                        value = fromTemplate(col.formatter, formatterData);
+                    } else {
+                        // Formatters can either return a value
+                        value = col.formatter.call(host, formatterData);
 
-                    // or update the value property of the data obj passed
-                    if (value === undefined) {
-                        value = formatterData.value;
-                    }
+                        // or update the value property of the data obj passed
+                        if (value === undefined) {
+                            value = formatterData.value;
+                        }
 
-                    data[key + '-classes'] = formatterData.classnames;
+                        data[key + '-classes'] = formatterData.classnames;
 
-                    attributes = formatterData.attributes;
+                        attributes = formatterData.attributes;
 
-                    if (isObject(attributes)) {
-                        for (attr in attributes) {
-                            if (attributes.hasOwnProperty(attr)) {
-                                data[key + '-attributes'] +=
-                                    ' ' + attr + '="' +
-                                        htmlEscape(attributes[attr]) + '"';
+                        if (isObject(attributes)) {
+                            for (attr in attributes) {
+                                if (attributes.hasOwnProperty(attr)) {
+                                    data[key + '-attributes'] +=
+                                        ' ' + attr + '="' +
+                                            htmlEscape(attributes[attr]) + '"';
+                                }
                             }
                         }
                     }
@@ -242,5 +276,58 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         this._rowTemplate = fromTemplate(this.ROW_TEMPLATE, {
             content: html
         });
+    },
+
+    // Custom Array.indexOf to search by property rather than object
+    // identity.  Columns may be reset with new objects with the same props.
+    _findColumnIndex: function (columns, column) {
+        var i, len;
+
+        for (i = 0, len = columns.length; i < len; ++i) {
+            if (this._isSameColumn(columns[i], column)) {
+                return i;
+            }
+        }
+
+        return -1;
+    },
+
+    _isModifiedColumn: function (a, b) {
+        return a.formatter      !== b.formatter     ||
+               a.nodeFormatter  !== b.nodeFormatter ||
+               a.emptyCellValue !== b.emptyCellValue;
+    },
+
+    _isSameColumn: function (a, b) {
+        return (a && b) && (
+            (a.key === b.key) ||
+            (!a.key && !b.key && (
+                (a.formatter && a.formatter === b.formatter) ||
+                (a.nodeFormatter && a.nodeFormatter === b.nodeFormatter))));
+    },
+
+    _parseColumns: function (data, columns) {
+        var col, i, len;
+        
+        columns || (columns = []);
+
+        if (isArray(data) && data.length) {
+            for (i = 0, len = data.length; i < len; ++i) {
+                col = data[i];
+
+                if (typeof col === 'string') {
+                    col = { key: col };
+                }
+
+                if (col.key || col.formatter || col.nodeFormatter) {
+                    columns.push(col);
+                } else if (col.children) {
+                    this._parseColumns(col.children, columns);
+                }
+            }
+        }
+
+        return columns;
     }
+
 });

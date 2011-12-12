@@ -102,10 +102,6 @@ Y.mix(Table.prototype, {
         return this.get('columns.' + name);
     },
 
-    getColumnData: function () {
-        return this._columns;
-    },
-
     getRow: function (index) {
         var el;
 
@@ -156,7 +152,7 @@ Y.mix(Table.prototype, {
     },
 
     _afterColumnsChange: function (e) {
-        this._columns = this.parseColumns(e.newVal);
+        this._columnMap = this._parseColumns(e.newVal);
     },
 
     _afterSummaryChange: function (e) {
@@ -179,9 +175,7 @@ Y.mix(Table.prototype, {
         // TODO: support name as an index or (row,column) index pair
         name = name.slice(8);
 
-        return (name) ?
-            this._columns.byKey(name) :
-            columns;
+        return (name) ? this._columnMap[name] : columns;
     },
 
     _getData: function (val) {
@@ -215,7 +209,7 @@ Y.mix(Table.prototype, {
             }
         }
 
-        this._columns = this._parseColumns(columns || []);
+        this._columnMap = this._parseColumns(columns || []);
     },
 
     _initData: function () {
@@ -245,7 +239,7 @@ Y.mix(Table.prototype, {
             
         if (!this.get('recordType')) {
             data    = this.get('data');
-            columns = (this._columns || {}).byKey;
+            columns = this._columnMap;
 
             // Use the ModelList's specified Model class
             if (data.model) {
@@ -303,44 +297,26 @@ Y.mix(Table.prototype, {
         }
     },
 
-    _parseColumns: function (columns) {
-        var data = {
-                dataColumns: [],
-                byKey: {},
-                byPosition: []
-            },
-            row = 0,
-            col, i, len;
+    _parseColumns: function (columns, map) {
+        var i, len, col;
+
+        map || (map = {});
         
-        if (isArray(columns) && columns.length) {
-            data.byPosition.push([]);
-            for (i = 0, len = columns.length; i < len; ++i) {
-                col = columns[i];
+        for (i = 0, len = columns.length; i < len; ++i) {
+            col = columns[i];
 
-                if (isString(col)) {
-                    col = { key: col };
-                }
+            if (isString(col)) {
+                col = { key: col };
+            }
 
-                col.headers = [Y.stamp(col)];
-
-                data.byPosition[row].push(col);
-
-                if (isArray(col.children)) {
-                    row++;
-                    data.byPosition.push([]);
-                    // TODO
-                    // child.parentIds = (col.parentIds || []).concat(col._yuid);
-                } else {
-                    data.dataColumns.push(col);
-
-                    if (col.key) {
-                        data.byKey[col.key] = col;
-                    }
-               }
+            if (col.key) {
+                map[col.key] = col;
+            } else if (isArray(col.children)) {
+                this._parseColumns(col.children, map);
             }
         }
 
-        return data;
+        return map;
     },
 
     _renderBody: function (table, data) {
@@ -349,9 +325,10 @@ Y.mix(Table.prototype, {
         if (BodyView) {
             this.body = (isFunction(BodyView)) ? 
                 new BodyView({
-                    source: this,
-                    table : this._tableNode,
-                    data  : this.data
+                    source : this,
+                    table  : this._tableNode,
+                    columns: this.get('columns'),
+                    data   : this.data
                 }) :
                 BodyView;
 
@@ -368,9 +345,10 @@ Y.mix(Table.prototype, {
         if (FooterView) {
             this.foot = (isFunction(FooterView)) ? 
                 new FooterView({
-                    source: this,
-                    table : this._tableNode,
-                    data  : this.data
+                    source : this,
+                    table  : this._tableNode,
+                    columns: this.get('columns'),
+                    data   : this.data
                 }) :
                 FooterView;
 
@@ -387,9 +365,10 @@ Y.mix(Table.prototype, {
         if (HeaderView) {
             this.head = (isFunction(HeaderView)) ? 
                 new HeaderView({
-                    source: this,
-                    table : this._tableNode,
-                    data  : this.data
+                    source : this,
+                    table  : this._tableNode,
+                    columns: this.get('columns'),
+                    data   : this.data
                 }) :
                 HeaderView; // Assume if it's not a function, it's an instance
 
