@@ -1,6 +1,13 @@
 Node Change History
 ===================
 
+3.5.0
+-----
+
+  * Bug fix: Children collection now accessible from documentFragments. [Ticket 2531356] 
+  * Bug fix: The compareTo() method now works across sandboxes. [Ticket 2530381] 
+
+
 3.4.1
 -----
 

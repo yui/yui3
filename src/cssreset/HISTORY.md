@@ -1,6 +1,11 @@
 CSS Reset Change History
 ========================
 
+3.5.0
+-----
+  * No change.
+
+
 3.4.1
 -----
   * Moved list-type to list declaration.
