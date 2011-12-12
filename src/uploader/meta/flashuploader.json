@@ -1,0 +1,11 @@
+{
+    "flashuploader": {
+        "requires": [
+            "swf",
+            "base", 
+            "node",
+            "event-custom",
+            "uploadqueue"
+        ] 
+    }
+}

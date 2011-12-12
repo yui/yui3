@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Uploader Build File -->
+
+<!-- YUI 3 Uploader Build File -->
+
 <project name="Uploader" default="local">
     <description>Uploader Build File</description>
-    <property file="build.properties" />
-    <import file="${builddir}/3.x/bootstrap.xml" description="Default Build Properties and Targets" />
+
+    <target name="all">
+    	<ant antfile="uploadqueue.xml" target="all" />
+    	<ant antfile="html5uploader.xml" target="all" />   	
+    	<!-- 
+    	<ant antfile="flashuploader.xml" target="all" />
+    	<ant antfile="uploader.xml" target="all" />
+    -->
+    </target>
 </project>
