@@ -2,20 +2,22 @@
 <html>
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <title>Widget Skins Test Page</title>
+    <title>Skin Tutorial Test</title>
     <script src="../../../../build/yui/yui-min.js"></script>
     <link type="text/css" rel="stylesheet" href="../../../../build/cssreset/cssreset.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/cssfonts/cssfonts.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/cssgrids/cssgrids.css">
-    <link type="text/css" rel="stylesheet" href="../../../../build/autocomplete-list/assets/skins/night/autocomplete-list.css">
+    <!--    
     <link type="text/css" rel="stylesheet" href="../../../../build/slider-base/assets/skins/night/slider-base.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/tabview/assets/skins/night/tabview.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/datatable-base/assets/skins/night/datatable-base.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/dial/assets/skins/night/dial.css">
+
     <link type="text/css" rel="stylesheet" href="../../../../build/scrollview-list/assets/skins/night/scrollview-list.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/scrollview-scrollbars/assets/skins/night/scrollview-scrollbars.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/panel/assets/skins/night/panel.css" charset="utf-8">
     <link type="text/css" rel="stylesheet" href="../../../../build/node-menunav/assets/skins/night/node-menunav.css" charset="utf-8">
+    -->
 
     <!--
     <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/gallery-2011.08.04-15-16/build/gallerycss-cssbutton/gallerycss-cssbutton.css" charset="utf-8">
@@ -84,17 +86,6 @@
                 <button id="ltr" class="yui3-button yui3-button-selected">LTR</button>
             </div>
         </div>
-<!-- Autocomplete -->        
-        <div class="yui3-g">
-            <div class="yui3-u">
-                <div id="autocomplete">
-                    <label for="ac-input">Enter the name of a US state:</label><br>
-                    <input id="ac-input" type="text">
-                </div>
-            </div>
-        </div>
-
-<!-- TabView -->        
         <div class="yui3-g">
             <div class="yui3-u">
                 <div class="yui3-widget-loading" id="demo-tabview"> 
@@ -356,7 +347,7 @@
         </div>      
     </div> 
 <script>
-YUI({filter: 'raw'}).use('autocomplete', 'autocomplete-filters', 'autocomplete-highlighters', 'tabview', 'datatable-sort', 'calendar', 'panel', 'dial', 'node-menunav', 'node-event-delegate', 'slider', 'scrollview', 'scrollview-list', function(Y) {
+YUI({filter: 'raw'}).use('tabview', 'datatable-sort', 'calendar', 'panel', 'dial', 'node-menunav', 'node-event-delegate', 'slider', 'scrollview', 'scrollview-list', function(Y) {
     var buttonHandlers = {
         sam: function(e) {
             Y.one('body').replaceClass('yui3-skin-night', 'yui3-skin-sam');
@@ -395,70 +386,7 @@ YUI({filter: 'raw'}).use('autocomplete', 'autocomplete-filters', 'autocomplete-h
             handler.call(this, e);
         }
     }
-/////////// autocomplete
-  var states = [
-    'Alabama',
-    'Alaska',
-    'Arizona',
-    'Arkansas',
-    'California',
-    'Colorado',
-    'Connecticut',
-    'Delaware',
-    'Florida',
-    'Georgia',
-    'Hawaii',
-    'Idaho',
-    'Illinois',
-    'Indiana',
-    'Iowa',
-    'Kansas',
-    'Kentucky',
-    'Louisiana',
-    'Maine',
-    'Maryland',
-    'Massachusetts',
-    'Michigan',
-    'Minnesota',
-    'Mississippi',
-    'Missouri',
-    'Montana',
-    'Nebraska',
-    'Nevada',
-    'New Hampshire',
-    'New Jersey',
-    'New Mexico',
-    'New York',
-    'North Dakota',
-    'North Carolina',
-    'Ohio',
-    'Oklahoma',
-    'Oregon',
-    'Pennsylvania',
-    'Rhode Island',
-    'South Carolina',
-    'South Dakota',
-    'Tennessee',
-    'Texas',
-    'Utah',
-    'Vermont',
-    'Virginia',
-    'Washington',
-    'West Virginia',
-    'Wisconsin',
-    'Wyoming'
-  ];
 
-  Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
-    resultFilters    : 'phraseMatch',
-    resultHighlighter: 'phraseMatch',
-    source           : states
-  });
-
-
-
-
-/////////// end autocomplete
     new Y.TabView({
         srcNode: '#demo-tabview'
     }).render();
