@@ -263,7 +263,8 @@
     "button-base": {
         "requires": [
             "base", 
-            "classnamemanager"
+            "classnamemanager", 
+            "node"
         ]
     }, 
     "button-group": {
