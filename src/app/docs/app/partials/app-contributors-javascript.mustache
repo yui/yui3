@@ -7,6 +7,8 @@ var GithubSync,
     HomePageView, UserPageView, RepoPageView,
     ContributorsApp;
 
+// A helper function used by the Views to create labels for numerical fields
+// which are correctly pluralized, and puts the label back on the `data` object.
 function addLabel(data, field, label) {
     var num = data[field];
     data[field] || (data[field] = '0');
@@ -20,25 +22,37 @@ GithubSync = function () {};
 GithubSync.API_ORIGIN = 'https://api.github.com';
 
 GithubSync.prototype = {
+    // Intended to be overridden with a GitHub API endpoint URL.
     githubURL: '/',
 
+    // Can be overridden to customize the actual URL used when making the
+    // request; this way the `githubURL` can be more of a template, and this
+    // method can substitute place-holders in the template with specific values.
     buildURL: function () {
         return this.githubURL;
     },
 
+    // Provides an implementation for a Model/ModelList's `sync()` method which
+    // can read data from GitHub's API.
     sync: function (action, options, callback) {
         Y.Lang.isFunction(callback) || (callback = function () {});
 
+        // Enforce ready-only constraint.
         if (action !== 'read') {
             return callback('Read-only');
         }
 
+        // Creates the API URL and adds params for 100 items per-page and a
+        // JSONP callback placeholder.
         var url = this.buildURL() + '?per_page=100&callback={callback}';
 
+        // Performs JSONP request to GitHub's API.
         Y.jsonp(GithubSync.API_ORIGIN + url, function (res) {
             var meta = res.meta,
                 data = res.data;
 
+            // Check for a successful response, otherwise return the error
+            // message returned by the GitHub API.
             if (meta.status >= 200 && meta.status < 300) {
                 callback(null, res);
             } else {
@@ -47,6 +61,8 @@ GithubSync.prototype = {
         });
     },
 
+    // Provides an implementation for a Model/ModelList's `parse()` method which
+    // simply returns the `data` object or array from the response JSON.
     parse: function (res) {
         return res.data;
     }
@@ -55,6 +71,7 @@ GithubSync.prototype = {
 // -- User ---------------------------------------------------------------------
 
 User = Y.Base.create('user', Y.Model, [GithubSync], {
+    // The `id` attribute for this Model will be an alias for `login`.
     idAttribute: 'login',
     githubURL  : '/users/{id}',
 
@@ -64,6 +81,8 @@ User = Y.Base.create('user', Y.Model, [GithubSync], {
         });
     }
 }, {
+    // These attributes correspond to the GitHub user data we care about:
+    // http://developer.github.com/v3/users/
     ATTRS: {
         login        : {value: null},
         name         : {value: null},
@@ -77,8 +96,11 @@ User = Y.Base.create('user', Y.Model, [GithubSync], {
 // -- Repo ---------------------------------------------------------------------
 
 Repo = Y.Base.create('repo', Y.Model, [], {
+    // The `id` attribute for this Model will be an alias for `name`.
     idAttribute: 'name'
 }, {
+    // These attributes correspond to the GitHub repo data we care about:
+    // http://developer.github.com/v3/repos/
     ATTRS: {
         name       : {value: null},
         html_url   : {value: null},
@@ -97,16 +119,22 @@ RepoList = Y.Base.create('repoList', Y.ModelList, [GithubSync], {
     githubURL: '/users/{user}/repos',
 
     buildURL: function () {
+        // This list's `user` is used to build the API URL.
         return Y.Lang.sub(this.githubURL, {
             user: this.get('user').getAsURL('id')
         });
     },
 
+    // Override the default `comparator()` so items are sorted by most number of
+    // watchers to least number of watchers.
     comparator: function (repo) {
+        // Note the minus sign.
         return -repo.get('watchers');
     }
 }, {
     ATTRS: {
+        // A `RepoList` has a `User` associated with it, this allows for a
+        // loose-coupling between a user and set of repositories.
         user: {value: null}
     }
 });
@@ -126,6 +154,7 @@ ContributorList = Y.Base.create('contributorList', Y.ModelList, [GithubSync], {
     githubURL: '/repos/{user}/{repo}/contributors',
 
     buildURL: function () {
+        // This list's `repo` is used to build the API URL.
         var repo = this.get('repo');
 
         return Y.Lang.sub(this.githubURL, {
@@ -134,11 +163,16 @@ ContributorList = Y.Base.create('contributorList', Y.ModelList, [GithubSync], {
         });
     },
 
+    // Override the default `comparator()` so items are sorted by most number of
+    // contributors to least number of contributors.
     comparator: function (contributor) {
+        // Note the minus sign.
         return -contributor.get('contributions');
     }
 }, {
     ATTRS: {
+        // A `ContributorList` has a `Repo` associated with it, this allows for
+        // a loose-coupling between a repo and set of contributors.
         repo: {value: null}
     }
 });
@@ -147,17 +181,23 @@ ContributorList = Y.Base.create('contributorList', Y.ModelList, [GithubSync], {
 // -- User View ----------------------------------------------------------------
 
 UserView = Y.Base.create('userView', Y.View, [], {
+    // Compiles the User Template into a reusable Handlebars template.
     template: Y.Handlebars.compile(Y.one('#t-user').getContent()),
 
     render: function () {
+        // Retrieves all of the model instance's data as a simple JSON struct.
         var user = this.get('model').toJSON(),
             content;
 
+        // Add proper pluralized labels for numerical data fields.
         addLabel(user, 'public_repos', 'Public Repo');
         addLabel(user, 'followers', 'Follower');
 
+        // Applies the `User` model data to the User Template and sets the
+        // resulting HTML as the contents of this view's container.
         content = this.template(user);
         this.get('container').setContent(content);
+
         return this;
     }
 });
@@ -165,23 +205,30 @@ UserView = Y.Base.create('userView', Y.View, [], {
 // -- RepoList View ------------------------------------------------------------
 
 RepoListView = Y.Base.create('repoListView', Y.View, [], {
+    // Compiles the RepoList Template into a reusable Handlebars template.
     template: Y.Handlebars.compile(Y.one('#t-repo-list').getContent()),
 
     render: function () {
         var repos = this.get('modelList'),
             reposData, content;
 
+        // Iterates over all `Repo` models in the list and retrieves each model
+        // instance's data as a simple JSON structs and collects it in an array.
         reposData = repos.map(function (repo) {
             var data = repo.toJSON();
 
+            // Add proper pluralized labels for numerical data fields.
             addLabel(data, 'watchers', 'Watcher');
             addLabel(data, 'forks', 'Fork');
 
             return data;
         });
 
+        // Applies the `RepoList` data to the RepoList Template and sets the
+        // resulting HTML as the contents of this view's container.
         content = this.template({repos: reposData});
         this.get('container').setContent(content);
+
         return this;
     }
 });
@@ -189,17 +236,23 @@ RepoListView = Y.Base.create('repoListView', Y.View, [], {
 // -- Repo View ----------------------------------------------------------------
 
 RepoView = Y.Base.create('repoView', Y.View, [], {
+    // Compiles the Repo Template into a reusable Handlebars template.
     template: Y.Handlebars.compile(Y.one('#t-repo').getContent()),
 
     render: function () {
+        // Retrieves all of the model instance's data as a simple JSON struct.
         var repo = this.get('model').toJSON(),
             content;
 
+        // Add proper pluralized labels for numerical data fields.
         addLabel(repo, 'watchers', 'Watcher');
         addLabel(repo, 'forks', 'Fork');
 
+        // Applies the `Repo` model data to the Repo Template and sets the
+        // resulting HTML as the contents of this view's container.
         content = this.template(repo);
         this.get('container').setContent(content);
+
         return this;
     }
 });
@@ -207,24 +260,37 @@ RepoView = Y.Base.create('repoView', Y.View, [], {
 // -- ContributorList View -----------------------------------------------------
 
 ContributorListView = Y.Base.create('contributorListView', Y.View, [], {
+    // Compiles the ContributorList Template into a reusable Handlebars template.
     template: Y.Handlebars.compile(Y.one('#t-contributor-list').getContent()),
 
     render: function () {
         var contributors = this.get('modelList'),
             contributorsData, content;
 
+        // Iterates over all `Contributor` models in the list and retrieves a
+        // sub-set of each model instance's data as a simple JSON structs and
+        // collects it in an array.
         contributorsData = contributors.map(function (contributor) {
+            // Only a few of the `Contributor` data attributes are needed.
             var data = contributor.getAttrs(['login', 'avatar_url', 'contributions']);
+
+            // Add proper pluralized labels for numerical data fields.
             addLabel(data, 'contributions', 'Contribution');
+
             return data;
         });
 
+        // Applies the `ContributorList` data to the ContributorList Template
+        // along with the total number of contributors for the repo.
         content = this.template({
             num         : contributors.size(),
             contributors: contributorsData
         });
 
+        // Sets the resulting HTML from apply the data to the template as the
+        // contents of this view's container.
         this.get('container').setContent(content);
+
         return this;
     }
 });
@@ -233,8 +299,12 @@ ContributorListView = Y.Base.create('contributorListView', Y.View, [], {
 // -- HomePage View ------------------------------------------------------------
 
 HomePageView = Y.Base.create('homePageView', Y.View, [], {
+    // Compiles the HomePage Template into a reusable Handlebars template.
     template: Y.Handlebars.compile(Y.one('#t-home').getContent()),
 
+    // Attach DOM events for the view. The `events` object is a mapping of
+    // selectors to an object containing one or more events to attach to the
+    // node(s) matching each selector.
     events: {
         'button': {
             click: 'changeUser'
@@ -246,21 +316,32 @@ HomePageView = Y.Base.create('homePageView', Y.View, [], {
     },
 
     initializer: function () {
+        // The `changeUser` event is fired when the user chooses a GitHub user
+        // to start browsing. This event will bubble up to the `ContributorsApp`
+        // when this view is the app's `activeView`.
         this.publish('changeUser', {preventable: false});
     },
 
     create: function (container) {
+        // Adds CSS class to the container node.
         return Y.one(container).addClass('home-page');
     },
 
     render: function () {
+        // Retrieves just the `login` of the `User` model instance and applies
+        // it to the HomePage Template.
         var user    = this.get('model'),
             content = this.template(user.getAttrs(['login']));
 
+        // Sets the resulting HTML as the contents of this view's container.
         this.get('container').setContent(content);
+
         return this;
     },
 
+    // Called when the user clicks the "Show Repos" button. This will retrieve
+    // the GitHub username from the text `<input>` and fire the `changeUser`
+    // event, passing on the username to the app.
     changeUser: function () {
         var user = this.get('container').one('input').get('value');
         if (user) {
@@ -268,8 +349,10 @@ HomePageView = Y.Base.create('homePageView', Y.View, [], {
         }
     },
 
+    // Called when the user types inside the text `<input>`; when the "enter"
+    // key is pressed, this will call the `changeUser()` method.
     enter: function (e) {
-        // Check for 'enter' keypress.
+        // Check for "enter" keypress.
         if (e.keyCode === 13) {
             this.changeUser();
         }
@@ -283,21 +366,29 @@ UserPageView = Y.Base.create('userPageView', Y.View, [], {
         var user  = this.get('model'),
             repos = this.get('modelList');
 
+        // This view serves as a "page"-level view containing two sub-views to
+        // which it delegates rendering and stitches together the resulting UI.
+        // Sub-views are created to render the `User` and `RepoList`.
         this.userView     = new UserView({model: user});
         this.repoListView = new RepoListView({modelList: repos});
     },
 
     create: function (container) {
+        // Adds CSS class to the container node.
         return Y.one(container).addClass('user-page');
     },
 
     render: function () {
+        // A document fragment is created to hold the resulting HTML created
+        // from rendering to two sub-views.
         var content = Y.one(Y.config.doc.createDocumentFragment());
 
+        // This renders each of the two sub-views into the document fragment,
+        // then sets the fragment as the contents of this view's container.
         content.append(this.userView.render().get('container'));
         content.append(this.repoListView.render().get('container'));
-
         this.get('container').setContent(content);
+
         return this;
     }
 });
@@ -309,21 +400,30 @@ RepoPageView = Y.Base.create('repoPageView', Y.View, [], {
         var repo         = this.get('model'),
             contributors = this.get('modelList');
 
+        // This view serves as a "page"-level view containing two sub-views to
+        // which it delegates rendering and stitches together the resulting UI.
+        // Sub-views are created to render the `RepoView` and
+        // `ContributorListView`.
         this.repoView            = new RepoView({model: repo});
         this.contributorListView = new ContributorListView({modelList: contributors});
     },
 
     create: function (container) {
+        // Adds CSS class to the container node.
         return Y.one(container).addClass('repo-page');
     },
 
     render: function () {
+        // A document fragment is created to hold the resulting HTML created
+        // from rendering to two sub-views.
         var content = Y.one(Y.config.doc.createDocumentFragment());
 
+        // This renders each of the two sub-views into the document fragment,
+        // then sets the fragment as the contents of this view's container.
         content.append(this.repoView.render().get('container'));
         content.append(this.contributorListView.render().get('container'));
-
         this.get('container').setContent(content);
+
         return this;
     }
 });
@@ -332,6 +432,9 @@ RepoPageView = Y.Base.create('repoPageView', Y.View, [], {
 // -- Contributors App ---------------------------------------------------------
 
 ContributorsApp = new Y.Base.create('contributorsApp', Y.App, [], {
+    // This is where we can declare our page-level views and define the
+    // relationship between the "pages" of our application. We can later use the
+    // `showView()` method to create and display these views.
     views: {
         homePage: {
             type: HomePageView
@@ -349,14 +452,23 @@ ContributorsApp = new Y.Base.create('contributorsApp', Y.App, [], {
     },
 
     initializer: function () {
+        // When a user navigates to different "pages" within our app, the
+        // `navigate` event will fire, we can listen to this event and show some
+        // indication that the app is busy loading data.
         this.on('navigate', this.indicateLoading);
+
+        // We are registering a listen for the `HomePageView`'s `changeUser`
+        // event. When the `HomePageView` is the `activeView`, its events will
+        // bubble up to this app instance.
         this.on('homePageView:changeUser', this.navigateToUser);
 
+        // Once our app is ready, we'll either dispatch to our route-handlers if
+        // the current URL matches one, or we'll simply show the `HomePageView`.
         this.once('ready', function (e) {
             if (this.hasRoute(this.getPath())) {
                 this.dispatch();
             } else {
-                this.replace('/');
+                this.showHomePage();
             }
         });
     },
