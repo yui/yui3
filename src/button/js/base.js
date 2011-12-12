@@ -15,7 +15,6 @@
 * @constructor
 */
 function Button(config) {
-    this._eventsToAssign = {};
     Button.superclass.constructor.apply(this, arguments);
 }
 
@@ -50,9 +49,8 @@ Y.extend(Button, Y.Base, {
     * @private
     */
     initializer: function(config){
-        this.renderUI();
+        this.renderUI(config);
         this.bindUI();
-        this.on(this._eventsToAssign);
     },
     
     /**
@@ -60,11 +58,29 @@ Y.extend(Button, Y.Base, {
     * @description Renders any UI/DOM elements for Button instances
     * @private
     */
-    renderUI: function() {
+    renderUI: function(config) {
         var node = this.getNode();
         
+        // Set some default node attributes
         node.addClass(Button.CLASS_NAMES.button);
-        node.setAttribute('role', 'button');
+        node.set('role', 'button');
+        
+        // Apply any config attributes that may have been passed in.
+        if (config.label) {
+            this._renderLabel(this.get('label'));
+        }
+        
+        if (config.type) {
+            this._renderType(this.get('type'));
+        }
+        
+        if (config.disabled) {
+            this._renderDisabled(this.get('disabled'));
+        }
+        
+        if (config.selected) {
+            this._renderSelected(this.get('selected'));
+        }
     },
     
     /**
@@ -76,16 +92,28 @@ Y.extend(Button, Y.Base, {
         var button = this;
         var node = button.getNode();
         
-        node.on('mousedown', this._onMouseDown, button);
-        node.on('mouseup', this._onMouseUp, button);
-        node.on('focus', this._onFocus, button);
-        node.on('blur', this._onBlur, button);
+        // Listen on some events to handle ARIA & class management
+        node.on('mousedown', this._onMouseDown);
+        node.on('mouseup', this._onMouseUp);
+        node.on('focus', this._onFocus);
+        node.on('blur', this._onBlur);
         
-        button.on('selectedChange', function(e){
-            if (e.propagate === false) {
-                e.stopImmediatePropagation();
-            }
-        });            
+        // Listen for attribute changes to handle UI updates
+        button.after('labelChange', function(e){
+             this._renderLabel(this.get('label'));
+        });
+        
+        button.after('typeChange', function(e){
+            this._renderType(this.get('type'));
+        });
+        
+        button.after('disabledChange', function(e){
+            this._renderDisabled(this.get('disabled'));
+        });
+        
+        button.after('selectedChange', function(e){
+            this._renderSelected(this.get('selected'));
+        });
     },
 
     /**
@@ -138,10 +166,14 @@ Y.extend(Button, Y.Base, {
     * @param {Any} [arg*] 0..n additional arguments to supply to the subscriber
     * @return {EventHandle} A subscription handle capable of detaching that subscription
     */
+    /*
+    This is close, but doesn't quite work
     on: function(type, fn, ctx, arg) {
         
         // Do we have a many type/fn pairs, or just one?
+        //if (false){ // Ugh, can't get it to work properly
         if (Y.Lang.isObject(arguments[0])){
+            
             // Loop through each event, recursively calling this.on() with the pair
             Y.Object.each(arguments[0], function(){
                this.on(arguments[1], arguments[0]); 
@@ -157,27 +189,23 @@ Y.extend(Button, Y.Base, {
             
             // Dispatch DOM events to Y.Node, everything else to EventTarget
             if (Y.Object.hasKey(Y.Node.DOM_EVENTS, type)) {
-                if (node) {
-                    return Y.Node.prototype.on.apply(node, arguments);
-                }
-                else { // srcNode is not available yet, so store for later assignment
-                    this._eventsToAssign[type] = fn;
-                }
+                return Y.Node.prototype.on.apply(node, arguments);
             }
             else {
                 return Y.EventTarget.prototype.on.apply(button, arguments);
             }
         }
     },
+    */
 
     /**
     * @method _labelSetter
     * @description A setter method for the label attribute
     * @protected
     */
-    _labelSetter: function (value) {
+    _renderLabel: function (value) {
         var node = this.getNode();
-        node.set(node.test('input') ? 'value' : 'text', value)
+        node.set(node.test('input') ? 'value' : 'text', value);
     },
 
     /**
@@ -185,7 +213,7 @@ Y.extend(Button, Y.Base, {
     * @description A setter method for the disabled attribute
     * @protected
     */
-    _disabledSetter: function (value) {
+    _renderDisabled: function (value) {
         this.getNode().set('disabled', value)
             .toggleClass(Button.CLASS_NAMES.disabled, value);
     },
@@ -195,7 +223,7 @@ Y.extend(Button, Y.Base, {
     * @description A setter method for the selected attribute
     * @protected
     */
-    _selectedSetter: function(value) {
+    _renderSelected: function(value) {
         this.getNode().set('aria-selected', value)
             .toggleClass(Button.CLASS_NAMES.selected, value);
     },
@@ -205,7 +233,7 @@ Y.extend(Button, Y.Base, {
     * @description A setter method for the type attribute
     * @protected
     */
-    _typeSetter: function(value) {
+    _renderType: function(value) {
         var button = this;
         if (value === "toggle") {
             var node = button.getNode();
@@ -237,24 +265,15 @@ Y.extend(Button, Y.Base, {
                 return Y.Node.create('<button></button>');
             }
         },
-        label: {
-            lazyAdd: false,
-            setter: '_labelSetter'
-        },
+        label: { },
         type: {
-            value: 'push',
-            lazyAdd: false,
-            setter: '_typeSetter'
+            value: 'push'
         },
         disabled: {
-            value: false,
-            lazyAdd: false,
-            setter: '_disabledSetter'
+            value: false
         },
         selected: {
-            value: false,
-            lazyAdd: false,
-            setter: '_selectedSetter'
+            value: false
         }
     }
 });

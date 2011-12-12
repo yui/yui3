@@ -12,13 +12,14 @@ suite.add(new Y.Test.Case({
     name: 'Methods',
 
     setUp : function () {
+        Y.one('#test').append('<button id="foo">Test label</button>')
         this.button = new Y.Button({
-            srcNode : '#test'
+            srcNode : '#foo'
         });
     },
     
     tearDown: function () {
-        Y.one('#test').empty();
+        Y.one('#test').empty(true);
     },
 
     'button.getNode() should return a Y.Node instance': function () {
@@ -50,6 +51,7 @@ suite.add(new Y.Test.Case({
         
         Assert.isFalse(button.get('selected'));
         Assert.isFalse(node.hasClass('yui3-button-selected'));
+        
         button.select();
         Assert.isTrue(button.get('selected'));
         Assert.isTrue(node.hasClass('yui3-button-selected'));
@@ -74,6 +76,7 @@ suite.add(new Y.Test.Case({
         
         Assert.isFalse(button.get('disabled'));
         Assert.isFalse(node.hasClass('yui3-button-disabled'));
+        
         button.disable();
         Assert.isTrue(button.get('disabled'));
         Assert.isTrue(node.hasClass('yui3-button-disabled'));
@@ -98,10 +101,11 @@ suite.add(new Y.Test.Case({
 // -- Rendering ----------------------------------------------------------------
 suite.add(new Y.Test.Case({
     name: 'Render',
-    
+
     setUp : function () {
+        Y.one('#test').append('<button id="foo">Test label</button>')
         this.button = new Y.Button({
-            srcNode : '#test'
+            srcNode : '#foo'
         });
     },
     
@@ -153,8 +157,9 @@ suite.add(new Y.Test.Case({
     name: 'Attributes',
     
     setUp : function () {
+        Y.one('#test').append('<button id="foo">Test label</button>')
         this.button = new Y.Button({
-            srcNode : '#test'
+            srcNode : '#foo'
         });
     },
     

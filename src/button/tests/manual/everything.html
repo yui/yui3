@@ -31,18 +31,10 @@
                     Just a basic test with a listener
                 */
                 var button = new Y.Button({
-                    srcNode: Y.one('#event'),
-                    on: {
-                        mouseover: function(){
-                            Y.log('mouseover')
-                        },
-                        mouseout: function(){
-                            Y.log('mouseout');
-                        }
-                    }
+                    srcNode: Y.one('#event')
                 });
                 
-                button.on("click", function(e){
+                button.getNode().on("click", function(e){
                     Y.log("click");
                 });
                 
@@ -59,7 +51,6 @@
                         }
                     }
                 });
-
 
                 /*
                     A 'link' button
