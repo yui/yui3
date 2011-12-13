@@ -210,13 +210,11 @@ The `User` model contains only the data attributes from the <a href="http://deve
 
 ```
 User = Y.Base.create('user', Y.Model, [GithubSync], {
-    // The `id` attribute for this Model will be an alias for `login`.
-    idAttribute: 'login',
-    githubURL  : '/users/{id}',
+    githubURL: '/users/{user}',
 
     buildURL: function () {
         return Y.Lang.sub(this.githubURL, {
-            id: this.getAsURL('id')
+            user: this.getAsURL('login')
         });
     }
 }, {
@@ -272,7 +270,7 @@ RepoList = Y.Base.create('repoList', Y.ModelList, [GithubSync], {
     buildURL: function () {
         // This list's `user` is used to build the API URL.
         return Y.Lang.sub(this.githubURL, {
-            user: this.get('user').getAsURL('id')
+            user: this.get('user').getAsURL('login')
         });
     },
 
@@ -695,7 +693,7 @@ With our app grouped into three "pages", we need to make these pages accessible 
 <ul>
     <li>
         <p>
-        <b>`/`</b>:<br/> Displays the [[#`HomePageView`]] which takes a [[#`User`]] model, but the user data is not required because we'll have the "yui" GitHub user be the default.
+        <b>`/`</b>:<br/> Displays the [[#`HomePageView`]] and uses the current [[#`User`]] model to pre-fill the text input.
         </p>
     </li>
     <li>
@@ -759,7 +757,10 @@ Let's see how our page-level views and route-handlers work together by looking a
 
 <h4>ContributorsApp</h4>
 
-<div class="scrollable">
+<p>
+Here is our subclass of `Y.App` where we have defined our three page-level views, our app's URL-space, and our route-handlers. The infrastructure provided by `Y.App` will take care of managing our page-views and dispatching to our route-handlers as our users navigate through our app.
+</p>
+
 ```
 ContributorsApp = new Y.Base.create('contributorsApp', Y.App, [], {
     // This is where we can declare our page-level views and define the
@@ -783,17 +784,18 @@ ContributorsApp = new Y.Base.create('contributorsApp', Y.App, [], {
 
     initializer: function () {
         // When a user navigates to different "pages" within our app, the
-        // `navigate` event will fire, we can listen to this event and show some
+        // `navigate` event will fire; we can listen to this event and show some
         // indication that the app is busy loading data.
         this.on('navigate', this.indicateLoading);
 
-        // We are registering a listen for the `HomePageView`'s `changeUser`
+        // Here we register a listener for the `HomePageView`'s `changeUser`
         // event. When the `HomePageView` is the `activeView`, its events will
         // bubble up to this app instance.
         this.on('homePageView:changeUser', this.navigateToUser);
 
         // Once our app is ready, we'll either dispatch to our route-handlers if
-        // the current URL matches one, or we'll simply show the `HomePageView`.
+        // the current URL matches one of our routes, or we'll simply show the
+        // `HomePageView`.
         this.once('ready', function (e) {
             if (this.hasRoute(this.getPath())) {
                 this.dispatch();
@@ -809,22 +811,40 @@ ContributorsApp = new Y.Base.create('contributorsApp', Y.App, [], {
         this.get('activeView').get('container').addClass('loading');
     },
 
+    // When called, this will navigate the application to the user-page for the
+    // GitHub username specified on the event facade. This will cause our app to
+    // dispatch to its route-handlers along with updating the URL.
     navigateToUser: function (e) {
         this.navigate('/github/' + e.user + '/');
     },
 
     // -- Route Handlers -------------------------------------------------------
 
+    // This will be called for all URLs which start with: "/github/:user/"; its
+    // job is to make sure a `User` model for the specified GitHub username is
+    // fully-loaded and placed on the request object for other route-handlers.
     handleUser: function (req, res, next) {
-        var userId = req.params.user,
-            user   = this.get('user'),
-            self   = this;
+        var username = req.params.user,
+            user     = this.get('user'),
+            self     = this;
 
-        if (userId === user.get('id')) {
+        // When the current `User` model set on the app is new or the specified
+        // GitHub username from the URL is different, a new user model instance
+        // is created, loaded, and set on this app before adding it to the
+        // request object.
+        if (!user.isNew() && username === user.get('login')) {
+            // Places a reference to the user model on the request object before
+            // delegating to the next route-handler.
             req.user = user;
             next();
         } else {
-            user = new User({id: userId});
+            // Create a new `User` model instance using the specified GitHub
+            // username from the URL.
+            user = new User({login: username});
+
+            // Load the user's data from the GitHub API, then sent the user
+            // model on both this app and the request object before delegating
+            // to the next route-handler.
             user.load(function () {
                 self.set('user', user);
                 req.user = user;
@@ -833,49 +853,74 @@ ContributorsApp = new Y.Base.create('contributorsApp', Y.App, [], {
         }
     },
 
+    // This will be called for all URLs which start with: "/github/:user/"; its
+    // job is to make sure a fully-loaded `RepoList` instance is placed on the
+    // request object. It is assumed that `handleUser()` route-handler has
+    // already placed the `User` model on the request object.
     handleRepos: function (req, res, next) {
         var user  = req.user,
             repos = this.get('repos');
 
+        // Adds a reference to this app's `RepoList` to the request object.
         req.repos = repos;
 
+        // This makes sure the `RepoList` is loaded for the current user.
         if (user === repos.get('user')) {
             next();
         } else {
+            // Sets the current user model on the `RepoList` instance and loads
+            // the repos for the given user before continuing.
             repos.set('user', user).load(function () {
                 next();
             });
         }
     },
 
+    // This will be called for URLs which match: "/github/:user/:repo/"; its job
+    // is to make sure a fully-loaded `ContributorList` instance is placed on
+    // the request object. It is assumed that the `handleUser()` and
+    // `handleRepos()` route-handlers have already placed the `User` model and
+    // `RepoList` model-list on the request object.
     handleRepo: function (req, res, next) {
+        // This uses data from the request object to look for a `Repo` model
+        // instance in the `RepoList`.
         var repoId       = req.params.repo,
             repos        = req.repos,
             repo         = repos.getById(repoId),
             contributors = this.get('contributors');
 
+        // We error-out when the specified repo name does not exist in the list
+        // of repos for the current GitHub user.
         if (!repo) {
             return next('GitHub repository was not found.');
         }
 
+        // Adds a reference to the `Repo` model and `ContributorList` to the
+        // request object.
         req.repo         = repo;
         req.contributors = contributors;
 
+        // This makes sure the `ContributorList` is loaded for the current repo.
         if (repo === contributors.get('repo')) {
             next();
         } else {
+            // Sets the current repo model on the `ContributorList` instance and
+            // loads the contributors before continuing.
             contributors.set('repo', repo).load(function () {
                 next();
             });
         }
     },
 
+    // This is called when the URL is "/" and will show our app's home page.
     showHomePage: function (req) {
         this.showView('homePage', {
             model: this.get('user')
         });
     },
 
+    // This is the final route for "/github/:user/" URLs and will show our app's
+    // user page which lists the user's repos.
     showUserPage: function (req) {
         this.showView('userPage', {
             model    : req.user,
@@ -883,6 +928,8 @@ ContributorsApp = new Y.Base.create('contributorsApp', Y.App, [], {
         });
     },
 
+    // This is the final route for "/github/:user/:repo/" URLs and will show our
+    // app's repo page which lists the contributors to the repo/project.
     showRepoPage: function (req) {
         this.showView('repoPage', {
             model    : req.repo,
@@ -891,10 +938,16 @@ ContributorsApp = new Y.Base.create('contributorsApp', Y.App, [], {
     }
 }, {
     ATTRS: {
+        // These attributes will be used by the app to hold its current state,
+        // and they will be accessed and modified by our route-handlers.
         user        : {value: new User()},
         repos       : {value: new RepoList()},
         contributors: {value: new ContributorList()},
 
+        // Our app will use more advanced routing features where multiple
+        // route-handlers will be used to fulfill a "request", allowing us to
+        // encapsulate and reuse our data processing logic. Note: the order the
+        // route-handlers are defined in is significant.
         routes: {
             value: [
                 {path: '/',                    callback: 'showHomePage'},
@@ -910,15 +963,26 @@ ContributorsApp = new Y.Base.create('contributorsApp', Y.App, [], {
     }
 });
 ```
-</div>
 
 <h4>Initializing the App</h4>
 
+<p>
+Finally we can create a new instance of our `ContributorsApp`, render it to the page, and be good to go!
+</p>
+
 ```
+// Create and render a new instance of our `ContributorsApp`!
 new ContributorsApp({
+    // We force this to false for this example app because there is no server.
     serverRouting: false,
-    container    : '#github-app',
-    linkSelector : '#github-app a'
+
+    // Here we set our app's rendering container, and restrict which links on
+    // the page should cause the app to navigate.
+    container   : '#github-app',
+    linkSelector: '#github-app a',
+
+    // We'll define the default GitHub user to be "yui".
+    user: new User({login: 'yui'})
 }).render();
 ```
 

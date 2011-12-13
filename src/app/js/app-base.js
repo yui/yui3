@@ -1,4 +1,13 @@
 /**
+The App Framework provides simple MVC-like building blocks (models, model lists,
+views, and URL-based routing) for writing single-page JavaScript applications.
+
+@main app
+@module app
+@since 3.4.0
+**/
+
+/**
 Provides a top-level application component which manages navigation and views.
 
 @submodule app-base
@@ -18,13 +27,18 @@ var Lang     = Y.Lang,
 /**
 Provides a top-level application component which manages navigation and views.
 
-This gives you a foundation and structure on which to build your application.
-`Y.App` combines robust URL navigation with powerful routing and flexible view
+This gives you a foundation and structure on which to build your application; it
+combines robust URL navigation with powerful routing and flexible view
 management.
 
-// TODO: Document Y.App.Base
-
-@class App
+@class App.Base
+@param {Object} [config] The following are configuration properties that can be
+    specified _in addition_ to default attribute values and the non-attribute
+    properties provided by `Y.Base`:
+  @param {Object} [config.views] Hash of view-name to metadata used to
+    declaratively describe an application's views and their relationship with
+    the app and other views. The views specified here will override any defaults
+    provided by the `views` object on the `prototype`.
 @constructor
 @extends Base
 @uses View
@@ -86,7 +100,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
     @property views
     @type Object
-    @default {}
+    @default `{}`
     **/
     views: {},
 
@@ -115,11 +129,11 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
             views[name] = Y.merge(views[name], view);
         }
 
-        // First, each view in the `views` prototype object has its metadata
+        // First, each view in the `views` prototype object gets its metadata
         // merged-in, providing the defaults.
         YObject.each(this.views, mergeViewConfig);
 
-        // Then, each view in the specified in the `config.views` object has its
+        // Then, each view in the specified `config.views` object gets its
         // metadata merged-in.
         YObject.each(config.views, mergeViewConfig);
 
@@ -852,4 +866,35 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
 // -- Namespace ----------------------------------------------------------------
 Y.namespace('App').Base = App;
+
+/**
+Provides a top-level application component which manages navigation and views.
+
+This gives you a foundation and structure on which to build your application; it
+combines robust URL navigation with powerful routing and flexible view
+management.
+
+`Y.App` is both a namespace and constructor function. The `Y.App` class is
+special in that any `Y.App` class extensions that are included in the YUI
+instance will be **auto-mixed** on to the `Y.App` class. Consider this example:
+
+    YUI().use('app-base', 'app-transitions', function (Y) {
+        // This will create two YUI Apps, `basicApp` will not have transitions,
+        // but `fancyApp` will have transitions support included.
+        var basicApp = new Y.App.Base(),
+            fancyApp = new Y.App();
+    });
+
+@class App
+@param {Object} [config] The following are configuration properties that can be
+    specified _in addition_ to default attribute values and the non-attribute
+    properties provided by `Y.Base`:
+  @param {Object} [config.views] Hash of view-name to metadata used to
+    declaratively describe an application's views and their relationship with
+    the app and other views. The views specified here will override any defaults
+    provided by the `views` object on the `prototype`.
+@constructor
+@extends App.Base
+@since 3.5.0
+**/
 Y.App = Y.mix(Y.Base.create('app', Y.App.Base, []), Y.App, true);

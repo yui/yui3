@@ -11,12 +11,7 @@ Template HTML used by the `HomePageView` to render the app's home page.
 <script id="t-home" type="text/x-handlebars-template">
     <h1>Contributors of GitHub Projects</h1>
     <p>
-    \{{#if login}}
         <input type="text" value="\{{login}}" placeholder="GitHub Username" />
-    \{{else}}
-        <input type="text" value="yui" placeholder="GitHub Username" />
-    \{{/if}}
-
         <button>Show Repos »</button>
     </p>
 </script>
