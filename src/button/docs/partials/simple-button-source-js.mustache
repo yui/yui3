@@ -1,0 +1,25 @@
+YUI().use('button', function(Y){
+    
+    var buttonA = new Y.Button({
+        srcNode:'#myButton',
+    });
+    
+    buttonA.getNode().on('click', function(){
+        alert("Hello!");
+    })
+    
+    var buttonB = new Y.Button({
+        srcNode:'#myToggleButton',
+        type: 'toggle'
+    });
+    
+    buttonB.after('selectedChange', function (b) {
+        var button = this;
+        if (button.get('selected')) {
+            button.set('label', 'I am selected');
+        }
+        else {
+            button.set('label', 'I am not selected');                    
+        }
+    });
+});
