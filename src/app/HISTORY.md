@@ -4,6 +4,10 @@ App Framework Change History
 3.5.0
 -----
 
+### App
+
+* Initial release.
+
 ### Model
 
 * [!] The `validate()` method is now asynchronous, and is expected to call a
@@ -43,7 +47,9 @@ App Framework Change History
   handlers to expect `next` as the third param.
 
 * "*" can now be used to create a wildcard route that will match any path
-  (previously it was necessary to use a regex to do this).
+  (previously it was necessary to use a regex to do this). Additionally, paths
+  which contain a "*" (e.g., "/users/*") act as a wildcard matching everything
+  after it.
 
 * The `hasRoute()` method now accepts full URLs as well as paths.
 

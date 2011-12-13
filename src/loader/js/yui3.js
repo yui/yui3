@@ -55,6 +55,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "anim-base"
         ]
     }, 
+    "anim-transform": {
+        "requires": [
+            "anim-base", 
+            "anim-easing", 
+            "matrix"
+        ]
+    }, 
     "anim-xy": {
         "requires": [
             "anim-base", 
@@ -63,10 +70,25 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "app": {
         "use": [
+            "app-base", 
             "model", 
             "model-list", 
             "router", 
             "view"
+        ]
+    }, 
+    "app-base": {
+        "requires": [
+            "classnamemanager", 
+            "pjax-base", 
+            "router", 
+            "view"
+        ]
+    }, 
+    "app-transitions": {
+        "requires": [
+            "app-base", 
+            "transition"
         ]
     }, 
     "array-extras": {
@@ -251,28 +273,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "pluginhost"
         ]
     }, 
-    "button": {
-        "use": [
-            "button-base", 
-            "button-group", 
-            "cssbuttons"
-        ]
-    }, 
-    "button-base": {
-        "requires": [
-            "attribute", 
-            "node", 
-            "arraylist", 
-            "arraylist-add", 
-            "array-extras", 
-            "event-focus"
-        ]
-    }, 
-    "button-group": {
-        "requires": [
-            "button-base"
-        ]
-    }, 
     "cache": {
         "use": [
             "cache-base", 
@@ -344,7 +344,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "widget", 
             "widget-position", 
             "widget-stack", 
-            "graphics"
+            "graphics", 
+            "escape"
         ]
     }, 
     "classnamemanager": {
@@ -421,9 +422,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "cssfonts-context", 
             "cssgrids-context"
         ], 
-        "type": "css"
-    }, 
-    "cssbuttons": {
         "type": "css"
     }, 
     "cssfonts": {
@@ -970,7 +968,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-focus", 
             "event-resize", 
             "event-hover", 
-            "event-outside"
+            "event-outside", 
+            "event-touch", 
+            "event-move", 
+            "event-flick", 
+            "event-valuechange"
         ]
     }, 
     "event-base": {
@@ -1124,7 +1126,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "node", 
             "event-custom", 
-            "pluginhost"
+            "pluginhost", 
+            "matrix"
         ]
     }, 
     "graphics-canvas": {
@@ -1377,7 +1380,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "loader-base": {
         "requires": [
-            "get"
+            "get", 
+            "features"
         ]
     }, 
     "loader-rollup": {
@@ -1388,6 +1392,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "loader-yui3": {
         "requires": [
             "loader-base"
+        ]
+    }, 
+    "matrix": {
+        "requires": [
+            "yui-base"
         ]
     }, 
     "model": {
@@ -1813,7 +1822,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "widget", 
             "dd-constrain", 
-            "substitute"
+            "substitute", 
+            "event-key"
         ], 
         "skinnable": true
     }, 
@@ -2118,4 +2128,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'f453291cd765466e0877614d43692b0d';
+YUI.Env[Y.version].md5 = 'c075c6b01045f120558254c68a43f92e';

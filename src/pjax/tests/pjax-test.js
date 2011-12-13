@@ -12,25 +12,31 @@ var Assert = Y.Assert,
     // Tests that require XHR are ignored when the protocol isn't http or https,
     // since the XHR requests will fail.
     disableXHR = Y.config.win &&
-        Y.config.win.location.protocol.indexOf('http') === -1,
+            Y.config.win.location.protocol.indexOf('http') === -1,
 
-    html5 = Y.Router.html5,
-
-    originalUrl = Y.config.win.location.toString(),
+    html5       = Y.Router.html5,
+    win         = Y.config.win,
+    originalURL = (win && win.location.toString()) || '',
+    yeti        = win && win.$yetify,
 
     suite;
 
+function resetURL() {
+    if (html5) {
+        win && win.history.replaceState(null, null, originalURL);
+    }
+}
+
+// -- Suite --------------------------------------------------------------------
 suite = new Y.Test.Suite({
     name: 'Pjax',
 
     setUp: function () {
-        this.oldPath = originalUrl;
+        resetURL();
     },
 
     tearDown: function () {
-        if (html5) {
-            Y.config.win.history.replaceState(null, null, this.oldPath);
-        }
+        resetURL();
     }
 });
 
@@ -120,14 +126,17 @@ suite.add(new Y.Test.Case({
 
     _should: {
         ignore: {
-            '`error` event should fire on Ajax failure': disableXHR || !html5,
-            '`load` event should fire on Ajax success': disableXHR || !html5
+            '`error` event should fire on Ajax failure': disableXHR || !html5 || yeti,
+            '`load` event should fire on Ajax success': disableXHR || !html5,
+            '`navigate` event facade should contain the options passed to `navigate()`': disableXHR || !html5,
+            '`navigate` event should fire when a pjax link is clicked': !html5,
+            '`navigate` event should be preventable': !html5,
+            '`navigate` event should not fire when a link is clicked with a button other than the left button': !html5,
+            '`navigate` event should not fire when a modifier key is pressed': !html5
         }
     },
 
     setUp: function () {
-        this.oldPath = originalUrl;
-
         this.node = Y.one('#test-content');
         this.node.setContent('');
 
@@ -135,9 +144,7 @@ suite.add(new Y.Test.Case({
     },
 
     tearDown: function () {
-        if (html5) {
-            Y.config.win.history.replaceState(null, null, this.oldPath);
-        }
+        resetURL();
 
         this.node.unplug(Y.Plugin.Pjax);
 
@@ -319,8 +326,6 @@ suite.add(new Y.Test.Case({
     },
 
     setUp: function () {
-        this.oldPath = originalUrl;
-
         this.node = Y.one('#test-content');
         this.node.setContent('');
 
@@ -328,9 +333,7 @@ suite.add(new Y.Test.Case({
     },
 
     tearDown: function () {
-        if (html5) {
-            Y.config.win.history.replaceState(null, null, this.oldPath);
-        }
+        resetURL();
 
         this.node.unplug(Y.Plugin.Pjax);
 
@@ -365,8 +368,6 @@ suite.add(new Y.Test.Case({
     },
 
     setUp: function () {
-        this.oldPath = originalUrl;
-
         this.node = Y.one('#test-content');
         this.node.setContent('');
 
@@ -374,9 +375,7 @@ suite.add(new Y.Test.Case({
     },
 
     tearDown: function () {
-        if (html5) {
-            Y.config.win.history.replaceState(null, null, this.oldPath);
-        }
+        resetURL();
 
         this.node.unplug(Y.Plugin.Pjax);
 

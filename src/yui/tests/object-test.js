@@ -111,6 +111,14 @@ suite.add(new Y.Test.Case({
         Assert.isTrue(Y.Object.isEmpty(Y.Object(this.o)), 'should return true for objects with no own properties');
     },
 
+    'test: isEmpty() should work on non-objects': function () {
+        Assert.isTrue(Y.Object.isEmpty(null));
+        Assert.isTrue(Y.Object.isEmpty(''));
+        Assert.isTrue(Y.Object.isEmpty([]));
+        Assert.isFalse(Y.Object.isEmpty('hi'));
+        Assert.isFalse(Y.Object.isEmpty(['yo']));
+    },
+
     test_keys: function () {
         var el = doc.createElement('span');
 

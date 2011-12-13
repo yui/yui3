@@ -156,7 +156,10 @@ SVGGraphic.ATTRS = {
         setter: function(val)
         {
             this._resizeDown = val;
-            this._redraw();
+            if(this._contentNode)
+            {
+                this._redraw();
+            }
             return val;
         }
     },
@@ -669,7 +672,7 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
         var contentNode = this._createGraphicNode("svg"),
             pointerEvents = this.get("pointerEvents");
         contentNode.style.position = "absolute";
-        contentNode.style.top = "px";
+        contentNode.style.top = "0px";
         contentNode.style.left = "0px";
         contentNode.style.overflow = "auto";
         contentNode.setAttribute("overflow", "auto");

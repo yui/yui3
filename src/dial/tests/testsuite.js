@@ -1548,7 +1548,7 @@ suite.add( new Y.Test.Case({
         input.key(37); // left
         Y.Assert.areEqual(21, dial.get('value'));
         input.key(36); // home 
-        Y.Assert.areEqual(12, dial.get('value'));
+        Y.Assert.areEqual(-52, dial.get('value'));
         input.key(35); // end 
         Y.Assert.areEqual(97, dial.get('value'));
         // beyond max

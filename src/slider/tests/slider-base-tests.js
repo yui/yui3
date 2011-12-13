@@ -1,5 +1,29 @@
 YUI.add('slider-base-tests', function(Y) {
 
+// copied this from event-key-test.js to add tests for changing value by keyboard
+Y.Node.prototype.key = function (keyCode, charCode, mods, type) {
+    var simulate = Y.Event.simulate,
+        el       = this._node,
+        config   = Y.merge(mods || {});
+
+    if (type) {
+        if (type === 'keypress') {
+            config.charCode = config.keyCode = config.which = charCode || keyCode;
+        } else {
+            config.keyCode = config.which = keyCode;
+        }
+        simulate(el, type, config);
+    } else {
+        config.keyCode = config.which = keyCode;
+        simulate(el, 'keydown', config);
+        simulate(el, 'keyup', config);
+
+        config.charCode = config.keyCode = config.which = charCode || keyCode;
+        simulate(el, 'keypress', config);
+    }
+};
+// END   copied this from event-key-test.js to add tests for changing value by keyboard
+
 var suite = new Y.Test.Suite("Y.Slider");
 
 suite.add( new Y.Test.Case({
@@ -493,6 +517,124 @@ suite.add( new Y.Test.Case({
     },
 
     "test value": function () {
+    }
+}));
+
+
+suite.add( new Y.Test.Case({
+    name: "Keyboard",
+
+    _should: {
+        fail: {
+            "test keyboard input and resultant value change, when Slider length is less than max - min": 2531498
+        }
+    },
+
+    setUp: function () {
+        Y.one("body").append('<div id="testbed"></div>');
+    },
+
+    tearDown: function () {
+        Y.one("#testbed").remove(true);
+    },
+
+    "test keyboard input": function () {
+        var slider = new Y.Slider({
+            length: '350px',
+            min   : 0,
+            max   : 100,
+            value : 50
+        });
+
+        slider.render( "#testbed" );
+        Y.Assert.areEqual( 50, slider.get('value') );
+        var thumb = slider.thumb;
+        thumb.key(33); // pageUp  // .key() method is at top of this file
+        Y.Assert.areEqual(60, slider.get('value'));
+        thumb.key(38); // up
+        Y.Assert.areEqual(61, slider.get('value'));
+        thumb.key(39); // right
+        Y.Assert.areEqual(62, slider.get('value'));
+        thumb.key(33); // pageUp
+        Y.Assert.areEqual(72, slider.get('value'));
+        thumb.key(40); // down
+        Y.Assert.areEqual(71, slider.get('value'));
+        thumb.key(34); // pageDown
+        Y.Assert.areEqual(61, slider.get('value'));
+        thumb.key(37); // left
+        thumb.key(37); // left
+        Y.Assert.areEqual(59, slider.get('value'));
+        thumb.key(36); // home 
+        Y.Assert.areEqual(0, slider.get('value'));
+        thumb.key(35); // end 
+        Y.Assert.areEqual(100, slider.get('value'));
+        // beyond max
+        thumb.key(33); // pageUp
+        Y.Assert.areEqual(100, slider.get('value'));
+        thumb.key(38); // up
+        Y.Assert.areEqual(100, slider.get('value'));
+        thumb.key(39); // right
+        Y.Assert.areEqual(100, slider.get('value'));
+
+        // min and beyond
+        slider.set('value', 0);
+        thumb.key(34); // pageDown
+        Y.Assert.areEqual(0, slider.get('value'), "= pageDown at min");
+        thumb.key(40); // down
+        Y.Assert.areEqual(0, slider.get('value'));
+        thumb.key(37); // left
+        Y.Assert.areEqual(0, slider.get('value'));
+
+        slider.destroy();
+
+    },
+    
+    /*
+     * This tests changing the value by one unit
+     * that would not move the slider a full pixel
+     * and because of ticket #2531498, was
+     * changing the value back to previous value
+     * to match the thumb position
+     */                             
+    "test keyboard input and resultant value change, when Slider length is less than max - min": function () {
+        var slider = new Y.Slider({
+            length: '30px',  // length less than max - min
+            min   : 0,
+            max   : 100,
+            value : 0
+        });
+
+        slider.render( "#testbed" );
+        Y.Assert.areEqual( 0, slider.get('value') );
+        var thumb = slider.thumb;
+        thumb.key(38); // up   // .key() method is at top of this file
+        Y.Assert.areEqual(1, slider.get('value'), "** init at 0, then keyUp");
+
+        slider.destroy();
+
+    },
+    
+    "test ARIA attributes while values change by keyboard input": function () {
+        var slider = new Y.Slider({
+            length: '300px',  // length less than max - min
+            min   : 0,
+            max   : 100,
+            value : 50
+        });
+
+        slider.render( "#testbed" );
+        Y.Assert.areEqual( 50, slider.get('value') );
+        var thumb = slider.thumb;
+        Y.Assert.areEqual(0, thumb.getAttribute('aria-valuemin'));
+        Y.Assert.areEqual(100, thumb.getAttribute('aria-valuemax'));
+        thumb.key(38); // up   // .key() method is at top of this file
+        Y.Assert.areEqual(51, thumb.getAttribute('aria-valuenow'));
+        Y.Assert.areEqual(51, thumb.getAttribute('aria-valuetext'));
+        thumb.key(33); // pageUp
+        Y.Assert.areEqual(61, thumb.getAttribute('aria-valuenow'));
+        Y.Assert.areEqual(61, thumb.getAttribute('aria-valuetext'));
+
+        slider.destroy();
     }
 }));
 

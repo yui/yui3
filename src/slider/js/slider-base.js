@@ -176,7 +176,8 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
                 thumbShadowClass: this.getClassName( 'thumb', 'shadow' ),
                 thumbImageClass : this.getClassName( 'thumb', 'image' ),
                 thumbShadowUrl  : imageUrl,
-                thumbImageUrl   : imageUrl
+                thumbImageUrl   : imageUrl,
+                thumbAriaLabelId: this.getClassName( 'label', Y.guid()) // get unique id for specifying a label for ARIA
             } ) );
     },
 
@@ -188,13 +189,173 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
      * @protected
      */
     bindUI : function () {
+    
+        // Begin keyboard listeners ///////////////////////////////
+        var boundingBox = this.get("boundingBox"), //Y.one('body'),
+        // Looking for a key event which will fire continously across browsers while the key is held down.
+        keyEvent = (!Y.UA.opera) ? "down:" : "press:",            
+        // 38, 40 = arrow up/down, 33, 34 = page up/down,  35 , 36 = end/home
+        keyEventSpec = keyEvent + "38,40,33,34,35,36",
+        // 37 , 39 = arrow left/right
+        keyLeftRightSpec = keyEvent + "37,39",
+        // 37 , 39 = arrow left/right + meta (command/apple key) for mac
+        keyLeftRightSpecMeta = keyEvent + "37+meta,39+meta";
+
+        boundingBox.on("key", this._onDirectionKey, keyEventSpec, this);
+        boundingBox.on("key", this._onLeftRightKey, keyLeftRightSpec, this);
+        boundingBox.on("key", this._onLeftRightKeyMeta, keyLeftRightSpecMeta, this);
+        // End keyboard listeners //////////////////////////////////
+
         this._bindThumbDD();
 
         this._bindValueLogic();
 
         this.after( 'disabledChange', this._afterDisabledChange );
         this.after( 'lengthChange',   this._afterLengthChange );
+        
     },
+                      
+    /**
+     * increments Slider value by a minor increment
+     *
+     * @method _incrMinor
+     * @protected
+     */
+    _incrMinor : function(){
+        this.set('value', (this.get('value') + this.get('minorStep')));
+    },
+    
+    /**
+     * decrements Slider value by a minor increment
+     *
+     * @method _decrMinor
+     * @protected
+     */
+    _decrMinor : function(){
+        this.set('value', (this.get('value') - this.get('minorStep')));
+    },
+        
+    /**
+     * increments Slider value by a major increment
+     *
+     * @method _incrMajor
+     * @protected
+     */
+    _incrMajor : function(){
+        this.set('value', (this.get('value') + this.get('majorStep')));
+    },
+    
+    /**
+     * decrements Slider value by a major increment
+     *
+     * @method _decrMajor
+     * @protected
+     */
+    _decrMajor : function(){
+        this.set('value', (this.get('value') - this.get('majorStep')));
+    },
+
+    /**
+     * sets the Slider value to the min value. 
+     *
+     * @method _setToMin
+     * @protected
+     */
+    _setToMin : function(e){
+        this.set('value', this.get('min'));
+    },
+
+    /**
+     * sets the Slider value to the max value. 
+     *
+     * @method _setToMax
+     * @protected
+     */
+    _setToMax : function(e){
+        this.set('value', this.get('max'));
+    },
+
+    /**
+     * sets the Slider's value in response to key events.
+     * Left and right keys are in a separate method 
+     * in case an implementation wants to increment values
+     * but needs left and right arrow keys for other purposes.
+     *
+     * @method _onDirectionKey
+     * @param e {Event} the key event
+     * @protected
+     */
+    _onDirectionKey : function(e) {
+        e.preventDefault();
+        if(this.get('disabled') === false){
+            switch (e.charCode) {
+                case 38: // up
+                    this._incrMinor();
+                    break;
+                case 40: // down
+                    this._decrMinor();
+                    break;
+                case 36: // home
+                    this._setToMin();
+                    break;
+                case 35: // end
+                    this._setToMax();
+                    break;
+                case 33: // page up
+                    this._incrMajor();
+                    break;
+                case 34: // page down
+                    this._decrMajor();
+                    break;
+            }
+        }
+    },
+
+    /**
+     * sets the Slider's value in response to left or right key events
+     *
+     * @method _onLeftRightKey
+     * @param e {Event} the key event
+     * @protected
+     */
+    _onLeftRightKey : function(e) {
+        e.preventDefault();
+        if(this.get('disabled') === false){
+            switch (e.charCode) {
+                case 37: // left
+                    this._decrMinor();
+                    break;
+                case 39: // right
+                    this._incrMinor();
+                    break;
+            }
+        }
+    },
+
+    /**
+     * sets the Slider's value in response to left or right key events when a meta (mac command/apple) key is also pressed
+     *
+     * @method _onLeftRightKeyMeta
+     * @param e {Event} the key event
+     * @protected
+     */
+    _onLeftRightKeyMeta : function(e) {
+        e.preventDefault();
+        if(this.get('disabled') === false){
+            switch (e.charCode) {
+                case 37: // left + meta
+                    this._setToMin();
+                    break;
+                case 39: // right + meta
+                    this._setToMax();
+                    break;
+            }
+        }
+    },
+
+
+
+
 
     /**
      * Makes the thumb draggable and constrains it to the rail.
@@ -246,15 +407,19 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
      *
      * @method _uiMoveThumb
      * @param offset {Number} the pixel offset to set as left or top style
+     * @param [options] {Object} Details to send with the `thumbMove` event
      * @protected
      */
-    _uiMoveThumb: function ( offset ) {
+    _uiMoveThumb: function ( offset, options ) {
         if ( this.thumb ) {
             this.thumb.setStyle( this._key.minEdge, offset + 'px' );
 
             Y.log("Setting thumb " + this._key.minEdge + " to " + offset + "px","info","slider");
 
-            this.fire( 'thumbMove', { offset: offset } );
+            options || (options = {});
+            options.offset = offset;
+
+            this.fire( 'thumbMove', options );
         }
     },
 
@@ -373,6 +538,8 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
         // Forces a reflow of the bounding box to address IE8 inline-block
         // container not expanding correctly. bug 2527905
         //this.get('boundingBox').toggleClass('');
+        this.thumb.set('aria-valuemin', this.get('min'));
+        this.thumb.set('aria-valuemax', this.get('max'));
     },
 
     /**
@@ -492,7 +659,7 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
      * @type {String}
      * @default &lt;span class="{thumbClass}" tabindex="-1">&lt;img src="{thumbShadowUrl}" alt="Slider thumb shadow" class="{thumbShadowClass}">&lt;img src="{thumbImageUrl}" alt="Slider thumb" class="{thumbImageClass}">&lt;/span>
      */
-    THUMB_TEMPLATE    : '<span class="{thumbClass}" tabindex="-1">' +
+    THUMB_TEMPLATE    : '<span class="{thumbClass}" aria-labelledby="{thumbAriaLabelId}" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider" tabindex="0">' +   // keyboard access jeff     tabindex="-1"
                             '<img src="{thumbShadowUrl}" ' +
                                 'alt="Slider thumb shadow" ' +
                                 'class="{thumbShadowClass}">' +

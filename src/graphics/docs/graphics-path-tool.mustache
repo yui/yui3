@@ -1,0 +1,102 @@
+<div class="intro" style="min-height: 184px;">
+    <p>
+        <img src="{{componentAssets}}/img/path-tool-capture.png" alt="Screen capture of Graphics path tool"  style="border: 1px solid #bfbfbf; float:right; height:149px; margin: 0 0 8px 8px; width:395px;"/>
+        This simple tool helps you by generating code while you interactively
+        draw graphic paths. This was used to draw the <a href="graphics-violin.html">violin example</a>.
+    </p>
+</div>
+
+<div class="example newwindow">
+    <a href="graphics-path-tool-example.html" target="_blank" class="button">
+        Run Tool in New Window
+    </a>
+</div>
+
+<h2>The Path Tool</h2>
+
+<p>As you drag the pencil icon, corresponding graphics code is auto-generated.
+This code can be copied and pasted into a graphics instance to reproduce 
+the paths you created with the pencil.
+</p>
+
+
+<h2>Initial State</h2>
+<p>When the tool window is loaded, its generated code is placed
+in the text area control. The generated code assumes you will have a separate
+page to paste it into. This separate page must contain the following code: 
+A graphics container such as this,</p>
+```
+<div id="mygraphiccontainer"></div>
+```
+<p>CSS such as this,</p>
+```
+#mygraphiccontainer {
+    position: relative;
+    width: 700px;
+    height:400px;
+}
+```
+and a YUI instance containing a `Graphics` object such as this.
+```
+YUI().use('graphics', function (Y) {
+
+    var mygraphic = new Y.Graphic({render:"#mygraphiccontainer"});
+    // generated code from the path tool goes here
+    
+});
+```
+<p>The tool generates pastable code for an `addShape` method that will
+create and render a path. It generates some fill and stroke placeholder code.
+You can change this to change the attributes of the fill and stroke
+after it's pasted into your code.</p>
+<p><Strong>Note:</strong>
+As you draw paths with the pencil, they won't have these attributes, you'll 
+only see thin, red lines for precision. The placeholder attibutes below will 
+only show after you paste the code in your page.</p>
+```
+{
+   type: "path",
+   stroke: {
+       weight: 2,
+       color: "#00dd00"
+   },
+   fill: {
+       type: "linear",
+       stops: [
+       {color: "#cc0000", opacity: 1, offset: 0},
+       {color: "#00cc00", opacity: 0.3, offset: 0.8} // Opacity of stops not available in IE
+       ]
+   }
+}
+```
+
+<h2>LineTo (Drag Pencil)</h2>
+<p>Drag the pencil icon. The `drag:end` event sets the lineTo XY value.</p>
+
+<h2>MoveTo (Shift + Drag)</h2>
+<p>Drag the pencil icon with the shift key down to move without drawing a line.</p>
+
+<h2>CurveTo (Alt + Drag)</h2>
+<p>Drag the pencil icon with the alt key down. This draws a curve and displays
+two draggable control points. The curve adjusts while you drag the control points.
+Clicking the pencil icon, or starting another line, finalizes the `curveTo`.</p>
+
+<h2>New Path Object</h2>
+<p>Crate a new path object with a new name by changing the name in the 
+'Graphic Object Name' text input, then clicking the 'New' button.</p>
+
+<h2>Trace an Image</h2>
+<p>You can modify the CSS of #mygraphiccontainer to include an image background.
+This will allow you to trace the contours of an image.</p>
+
+```
+#mygraphiccontainer {
+    background: url(assets/images/my-dog.jpg);
+}
+```
+
+<img src="{{componentAssets}}/img/my-dog.jpg" alt="Tracing a picture of my dog
+with a Graphics path" width="652" height="268"/>
+
+zooming the browser can be helpful in accuracy.
+

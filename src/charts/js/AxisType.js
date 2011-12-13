@@ -8,10 +8,10 @@
  */
 Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     /**
-     * @method bindUI
+     * @method initializer
      * @private
      */
-    bindUI: function()
+    initializer: function()
     {
         this.after("dataReady", Y.bind(this._dataChangeHandler, this));
         this.after("dataUpdate", Y.bind(this._dataChangeHandler, this));
@@ -19,13 +19,21 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
         this.after("maximumChange", Y.bind(this._keyChangeHandler, this));
         this.after("keysChange", this._keyChangeHandler);
         this.after("dataProviderChange", this._dataProviderChangeHandler);
-        this.after("stylesChange", this._updateHandler);
-        this.after("positionChange", this._positionChangeHandler);
-        this.after("overlapGraphChange", this._updateHandler);
-        this.after("widthChange", this._handleSizeChange);
-        this.after("heightChange", this._handleSizeChange);
         this.after("alwaysShowZeroChange", this._keyChangeHandler);
         this.after("roundingMethodChange", this._keyChangeHandler);
+    },
+
+    /**
+     * @method bindUI
+     * @private
+     */
+    bindUI: function()
+    {
+        this.after("stylesChange", this._updateHandler);
+        this.after("overlapGraphChange", this._updateHandler);
+        this.after("positionChange", this._positionChangeHandler);
+        this.after("widthChange", this._handleSizeChange);
+        this.after("heightChange", this._handleSizeChange);
     },
 
     /**
@@ -233,17 +241,17 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
      * @method getKeyValueAt
      * @param {String} key value used to look up the correct array
      * @param {Number} index within the array
-     * @return Object
+     * @return Number 
      */
     getKeyValueAt: function(key, index)
     {
         var value = NaN,
             keys = this.get("keys");
-        if(keys[key] && keys[key][index]) 
+        if(keys[key] && Y_Lang.isNumber(parseFloat(keys[key][index])))
         {
             value = keys[key][index];
         }
-        return value;
+        return parseFloat(value);
     },
 
     /**
@@ -388,7 +396,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     _keyChangeHandler: function(e)
     {
         this._updateMinAndMax();
-		this.fire("dataUpdate");
+        this.fire("dataUpdate");
     },
 
     /**
@@ -548,7 +556,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
                 {
                     max = this._setMaximum;
                 }
-                return max;
+                return parseFloat(max);
             },
             setter: function (value)
             {
@@ -591,7 +599,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
                 {
                     min = this._setMinimum;
                 }
-                return min;
+                return parseFloat(min);
             },
             setter: function(val)
             {
@@ -671,24 +679,6 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
                 return col;
             },
             readOnly: true
-        },
-        
-        /**
-         * Method used for formatting a label. This attribute allows for the default label formatting method to overridden. The method use would need
-         * to implement the arguments below and return a `String`.
-         * <dl>
-         *      <dt>val</dt><dd>Label to be formatted. (`String`)</dd>
-         *      <dt>format</dt><dd>Template for formatting label. (optional)</dd>
-         * </dl>
-         *
-         * @attribute labelFunction
-         * @type Function
-         */
-        labelFunction: {
-            value: function(val, format)
-            {
-                return val;
-            }
         }
     }
 });

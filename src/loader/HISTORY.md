@@ -1,6 +1,23 @@
 YUI Loader Change History
 =========================
 
+### 3.5.0
+
+The biggest change made was the use of the `async` flag on `Y.Get` requests. Loader will now use the
+`Y.Loader.resolve()` method under the hood to calculate all the dependencies that it is aware of, then
+build the URL's to complete this request. It will then batch those into one `Y.Get` transation and fetch
+all of them asynchronously, then return to loader for post processing of the injected dependencies.
+
+    * 2529521 Consider making the presence of YUI CSS detectable by the loader
+    * 2530135 Add support for loading YUI modules in parallel in all browsers, since execution order is unimportan...
+    * 2530177 [Pull Request] - Bug #2530111  If the condition block is defined w/o a test fn or UA check, assume i...
+    * 2530343 Loader.sorted does not contain conditional modules
+    * 2530565 Slider one-off skins not being loaded
+    * 2530958 Loader.resolve not properly handling CSS modules
+    * 2531319 The aliased modules are reported as missing 
+    * 2531324 Support regular expressions in the patterns configuration
+
+
 ### 3.4.1
 
   * No changes.
