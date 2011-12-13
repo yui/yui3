@@ -10,7 +10,15 @@
     "examples": [
         {
             "name"       : "simple-button",
-            "displayName": "Simple Button",
+            "displayName": "Button",
+            "description": "",
+            "modules"    : ["button"],
+            "tags"       : ["button"],
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "css-button",
+            "displayName": "CSS Buttons",
             "description": "",
             "modules"    : ["button"],
             "tags"       : ["button"],

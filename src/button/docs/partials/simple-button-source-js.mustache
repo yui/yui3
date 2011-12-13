@@ -1,25 +1,51 @@
 YUI().use('button', function(Y){
     
-    var buttonA = new Y.Button({
+    // A basic push button
+    var pushButton = new Y.Button({
         srcNode:'#myButton',
     });
     
-    buttonA.getNode().on('click', function(){
-        alert("Hello!");
+    
+    // A toggle button with a state change listener
+    var toggleButton = new Y.Button({
+        srcNode:'#myToggleButton',
+        type: 'toggle',
+        after: {
+            'selectedChange': function () {
+                var button = this;
+                var selected = button.get('selected');
+                if (selected) {
+                    button.set('label', 'Toggle Button: Selected');
+                }
+                else {
+                    button.set('label', 'Toggle Button: Unselected');                    
+                }
+            }
+        }
+    });
+    
+    
+    // A disabled button
+    var disabledButton = new Y.Button({
+        srcNode:'#myDisabledButton',
+        disabled: true
+    });
+    
+    
+    // An event button, listening for a click
+    var eventButton = new Y.Button({
+        srcNode:'#myEventButton',
+    });
+    
+    eventButton.getNode().on('click', function(){
+        alert("I was clicked!");
     })
     
-    var buttonB = new Y.Button({
-        srcNode:'#myToggleButton',
-        type: 'toggle'
+    
+    // A disabled button
+    var selectedButton = new Y.Button({
+        srcNode:'#mySelectedButton',
+        selected: true
     });
     
-    buttonB.after('selectedChange', function (b) {
-        var button = this;
-        if (button.get('selected')) {
-            button.set('label', 'I am selected');
-        }
-        else {
-            button.set('label', 'I am not selected');                    
-        }
-    });
 });

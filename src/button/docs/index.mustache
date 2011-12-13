@@ -1,4 +1,4 @@
-<div class="intro">
+<div class='intro'>
     <p>The Button component for YUI 3 is a light-weight, Y.Base wrapper around DOM elements you'd like treated like a button.  This includes things like look &amp; feel, state management, and accessibility.</p>
 </div>
 
@@ -6,16 +6,16 @@
 
 <h2>Using Button</h2>
 <h3>Quick Start</h3>
-<p>There are two ways to create a Y.Button instance.</p>
+<p>There are two ways to create a Y.Button instance.  The most common method is to assign it to an existing DOM node, like:</p>
 
 ```
-// Or, use an existing node
+// Use an existing node
 var button = new Y.Button({
-    srcNode: "#myButton"
+    srcNode: '#myButton'
 })
 ```
 
-You can also create an unattached node and 
+Or, you can also create an unattached node and append to a parent container:
 ```
 // Dynamically create the node
 var button = new Y.Button();
@@ -23,42 +23,40 @@ var node = button.getNode();
 Y.one('#container').append(node);
 ```
 
-<p>In either case, you will receive a Y.Button instance that contains a few attributes, and wraps around a Y.Node instance.  The markup generated will look something similar to:</p>
+<p>In either case, the object you receive from the constructor will be a Y.Button instance that contains a few attributes, and wraps around a Y.Node instance.  The markup generated will look something similar to:</p>
 
 ```
-<button id="myButton" class="yui3-button" role="button"
-        aria-selected="false" aria-pressed="false">My Button</button>
+<button id='myButton'
+        role='button'
+        class='yui3-button'
+        aria-selected='false'
+        aria-pressed='false'>My Button</button>
 ```
 
 <p>At this point, you can modify `button`'s attributes, manipulate its state, or listen for change events.</p>
 
 <h3>Events</h3>
 
-<p>Most commonly with button elements, you want to listen for any clicks that occur.  That can be achieved with something like this...</p>
+<p>Most commonly with button elements, you want to listen for any clicks, or other <a href='/yui/docs/api/files/node_js_node-event.js.html#l8'>DOM events</a> that occur.</p>
 
 ```
 var button = new Y.Button({
-    srcNode: "#myButton"
+    srcNode: '#myButton'
 });
+var node = button.getNode();
 
-button.on('click', function(){
-    alert("Hello!");
+node.on('click', function(){
+    alert('Hello!');
 });
 ```
 
-<p>You can also pass in groups of events at creation:</p>
+<p>If you are more interested in listening to a `button`'s attribute change events, that can be done at creation.</p>
 
 ```
 var button = new Y.Button({
     srcNode: '#myButton',
     type: 'toggle',
     on: {
-        click: function(){
-            Y.log('This will fire when the button is clicked.')
-        },
-        focus: function(){
-            Y.log('The button is now focused')
-        },
         selectedChange: function(){
             Y.log('This will fire when the toggled state changed')
         }
@@ -66,19 +64,21 @@ var button = new Y.Button({
 })
 ```
 
-<p>Any event handlers can also be assigned by using the `on` property in the configuration object.  Valid events include any <a href="">DOM events</a>, as well as Y.Button attribute change events (e.g. 'selectedChange').</p>
+<p>Any event handlers can also be assigned by using the `on` property in the configuration object.  Valid events include any , as well as Y.Button attribute change events (e.g. 'selectedChange').</p>
 
 <h3>Benefits</h3>
-<p>So what do you get from Y.Button over just creating your own, via `new Y.Node.create('<button></button>')`</p>
+<p>So what do you get from Y.Button over just creating your own button node, via something like `new Y.Node.create('<button></button>')`</p>
 <ul>
-    <li><strong>Accessibility</strong> - Your buttons automatically create and manage their own ARIA states.  This includes `aria-selected` and `aria-pressed`.  Y.Button instances also automatically get the `role='button'` attribute to properly identify their purpose (as a button) to screen readers even if they are not a `<button>` or `<input type="button">` element.</li>
-<li><strong>State management</strong> - Y.Button instances automatically apply classes, such as yui3-button-selected, yui3-button-disabled, and yui3-button-focused, which are useful for styling purposes. Also, assigning a type of 'toggle' will fire a 'selectedChange' event only when it's state changes from selected to unselected, or vice-versa, eliminating the classical case of listening for 'click' and then checking to see if the state changed.</li>
+    <li><strong>Accessibility</strong> - Your buttons automatically create and manage their own <a href='http://www.w3.org/TR/wai-aria/states_and_properties'>ARIA states</a>.  This includes `aria-selected` and `aria-pressed`.  Y.Button instances also automatically get the `role='button'` attribute to properly identify their purpose (as a button) to screen readers even if they are not a `<button>` or `<input type='button'>` element.</li>
+<li><strong>State management</strong> - Y.Button instances automatically apply classes, such as `yui3-button-selected`, `yui3-button-disabled`, and `yui3-button-focused`, which are useful for styling purposes. Also, assigning a type of 'toggle' will fire a 'selectedChange' event only when the button state changes from selected to unselected, or vice-versa, eliminating the typical case of listening for 'click' and then checking to see if the state changed.</li>
 </ul>
 
 <p><em>Note: In the future, Y.Button instances will be capable of being assigned to groups and managed via a new ButtonGroup module.</em></p>
 
 <h3>Styling</h3>
-<p>YUI's Button component was designed with the idea in mind that you may only want button styles, no JS functionality.  Instead of `use('button')`, you can just include the `cssbuttons` sub-module.  This can be done either dynamically by `use('cssbuttons')` or statically with a <link> tag.  Including this module will load in a stylesheet consisting of the following classes:</p>
+<p>YUI's Button component was designed with the idea in mind that you may only want button styles, no JS functionality.  Instead of `use('button')`, you can just include the `cssbuttons` sub-module.  This can be done dynamically with `use('cssbuttons')`, or statically with a `<link>` tag.</p>
+
+<p>Including this CSS module will load in a stylesheet consisting of the following classes:</p>
 <ul>
     <li>yui3-button</li>
     <li>yui3-button:hover</li>
@@ -86,13 +86,17 @@ var button = new Y.Button({
     <li>yui3-button-disabled</li>
 </ul>
 
-<p>These styles are designed to progressively enhance.  In legacy browsers, you'll get styles that appear a bit nicer than native buttons, and in modern browsers you'll get buttons using the latest styles that CSS3 has to offer.</p>
+<p>These styles are designed to progressively enhance.  In legacy browsers, you'll get styles that appear a bit nicer than native buttons, and in modern browsers you'll get buttons using the latest CSS3 styles.</p>
 
 
 
 
 
 <h3>Events</h3>
+<p>Here are the events emitted from a Y.Button instance </p>
+<p>`button.on('eventName', fn)` will fire <strong>before</strong> the attribute &amp; UI are updated. 
+<br>`button.after('eventName', fn)` will fire <strong>after</strong> the attribute &amp; UI are updated.</p>
+
 <table>
   <thead>
     <tr>
@@ -104,25 +108,25 @@ var button = new Y.Button({
     <tr>
       <td>`selectedChange`</td>
       <td>
-         
+         Fires for toggle buttons to notify the subscriber the selected state is about to be, or has been updated.
       </td>
     </tr>
     <tr>
       <td>`disabledChange`</td>
       <td>
-         
+           Fires to notify the subscriber the disabled state is about to be, or has been updated.
       </td>
     </tr>
     <tr>
       <td>`typeChange`</td>
       <td>
-         
+         Fires to inform the subscriber that the button's type is about to be, or has been updated.
       </td>
     </tr>
     <tr>
       <td>`labelChange`</td>
       <td>
-         
+           Fires to inform the subscriber that the button's label is about to be, or has been updated.
       </td>
     </tr>
   </tbody>
@@ -130,6 +134,7 @@ var button = new Y.Button({
 
 
 <h3>Configuration</h3>
+<p>Here are the attributes that can be set on instantiation.</p>
 <table>
   <thead>
     <tr>
@@ -153,7 +158,8 @@ var button = new Y.Button({
     <tr>
       <td>`on`</td>
       <td>
-         Any single event, or group of events
+         Any single event, or group of events to listen for. 
+         <br> Note: These are attribute change events, not DOM events.
       </td>
     </tr>
     <tr>
