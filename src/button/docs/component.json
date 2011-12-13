@@ -1,0 +1,28 @@
+{
+    "name"       : "button",
+    "displayName": "Button",
+    "description": "",
+    "author"     : "drgath",
+
+    "tags": ["button"],
+    "use" : ["button"],
+
+    "examples": [
+        {
+            "name"       : "simple-button",
+            "displayName": "Button",
+            "description": "",
+            "modules"    : ["button"],
+            "tags"       : ["button"],
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "css-button",
+            "displayName": "CSS Buttons",
+            "description": "",
+            "modules"    : ["button"],
+            "tags"       : ["button"],
+            "hideTableOfContents": true
+        }
+    ]
+}

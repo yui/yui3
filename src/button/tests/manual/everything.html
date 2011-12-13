@@ -24,6 +24,8 @@
             }).use('button', 'cssfonts', 'console', function(Y){
                 
                 new Y.Console().render();
+                
+                Y.log('A ninja button called ' + new Y.Button({label:'Bruce Lee'}).getNode().getContent());
 
                 /*
                     Just a basic test with a listener
@@ -32,37 +34,23 @@
                     srcNode: Y.one('#event')
                 });
                 
-                // One way of listening for events
-                button.onClick(function(){
-                   button.set('backgroundColor', '#'+Math.floor(Math.random()*16777215).toString(16));
+                button.getNode().on("click", function(e){
+                    Y.log("click");
                 });
-
-
-
-
-
-
-
+                
+                
                 /*
                     A 'toggle' button listening for the selectedChange event
                 */
                 var button2 = new Y.Button({
                     srcNode: Y.one('#toggle'),
-                    type: 'toggle'
+                    type: 'toggle',
+                    on: {
+                        selectedChange:function(){
+                           Y.log('selectedChange');
+                        }
+                    }
                 });
-                
-                // An alternative to button.get('srcNode').on('click', ...
-                button2.on('selectedChange', function(){
-                   Y.log('toggled');
-                });
-
-
-
-
-
-
-
-
 
                 /*
                     A 'link' button
@@ -77,19 +65,14 @@
 
 
 
-
-
-
  
                 /*
                     A disabled button
                 */
                 var button4 = new Y.Button({
                     srcNode: Y.one('#disabled'),
-                    disabled: false
+                    disabled: true
                 });
-                button4.set('disabled', true);
-
 
 
 
@@ -102,18 +85,13 @@
                     A group of radio-like buttons
                 */
                 var buttonGroup = new Y.ButtonGroup({
-                    buttons: new Y.Buttons({
-                        srcNodes: Y.all('.group')
-                    }),
+                    srcNodes: Y.all('.group'),
                     type: 'radio'
                 });
 
                 buttonGroup.after('selectionChange', function(e){
                     Y.log('buttonGroup selection changed');
-                });    
-                
-
-
+                });
 
 
 
@@ -124,9 +102,7 @@
                     A group of checkbox-like buttons
                 */
                 var buttonGroup2 = new Y.ButtonGroup({
-                    buttons: new Y.Buttons({
-                        srcNodes: Y.all('.multigroup')
-                    }),
+                    srcNodes: Y.all('.multigroup'),
                     type: 'checkbox'
                 });
 
@@ -165,8 +141,10 @@
                         config.type = type;
                     }
                     
-                    button = new Y.ButtonGenerator(config);
-                    Y.one('#generated').append(button.getDOMNode());
+                    config.srcNode = Y.Node.create('<button>' + config.label + '</button>');
+                    button = new Y.Button(config);
+                    
+                    Y.one('#generated').append(button.getNode());
                 })
                 
             });
@@ -182,7 +160,7 @@
         <hr />
         
         <h2>Event</h2>
-        <button id='event' tabindex='3'>Change <br /> Color</button>
+        <button id='event' tabindex='3'>Log a message</button>
         
         
         <br>

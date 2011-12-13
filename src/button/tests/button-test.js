@@ -12,26 +12,27 @@ suite.add(new Y.Test.Case({
     name: 'Methods',
 
     setUp : function () {
+        Y.one('#test').append('<button id="foo">Test label</button>')
         this.button = new Y.Button({
-            srcNode : '#test',
-            type : 'toggle'
+            srcNode : '#foo'
         });
     },
     
     tearDown: function () {
-        Y.one('#test').empty();
+        Y.one('#test').empty(true);
     },
 
-    'button.getDOMNode() should return a Y.Node instance': function () {
-        var node = this.button.getDOMNode();
+    'button.getNode() should return a Y.Node instance': function () {
+        var node = this.button.getNode();
         Assert.isInstanceOf(Y.Node, node);
     },
 
-    'button.onClick() should make `selected` attribute = true and `yui3-button-selected` class': function () {
+    'button.simulate(click) should make `selected` attribute = true and `yui3-button-selected` class': function () {
         var button = this.button;
-        var node = button.getDOMNode();
+        var node = button.getNode();
+        button.set('type', 'toggle');
         
-        // Ensure the button is deselected by default
+        // Ensure the button is unselected by default
         Assert.isFalse(button.get('selected'));
         Assert.isFalse(node.hasClass('yui3-button-selected'));
         
@@ -42,16 +43,69 @@ suite.add(new Y.Test.Case({
         Assert.isTrue(button.get('selected'));
         Assert.isTrue(node.hasClass('yui3-button-selected'));
         Assert.areSame('true', node.get('aria-selected'));
+    },
+    
+    'button.select() should set the `selected` attribute to `true`': function () {
+        var button = this.button;
+        var node = button.getNode();
+        
+        Assert.isFalse(button.get('selected'));
+        Assert.isFalse(node.hasClass('yui3-button-selected'));
+        
+        button.select();
+        Assert.isTrue(button.get('selected'));
+        Assert.isTrue(node.hasClass('yui3-button-selected'));
+    },
+
+    'button.unselect() should set the `selected` attribute to `false`': function () {
+        var button = this.button;
+        var node = button.getNode();
+        
+        button.select();
+        Assert.isTrue(button.get('selected'));
+        Assert.isTrue(node.hasClass('yui3-button-selected'));
+        
+        button.unselect();
+        Assert.isFalse(button.get('selected'));
+        Assert.isFalse(node.hasClass('yui3-button-selected'));
+    },
+
+    'button.disable() should set the `disable` attribute to `true`': function () {
+        var button = this.button;
+        var node = button.getNode();
+        
+        Assert.isFalse(button.get('disabled'));
+        Assert.isFalse(node.hasClass('yui3-button-disabled'));
+        
+        button.disable();
+        Assert.isTrue(button.get('disabled'));
+        Assert.isTrue(node.hasClass('yui3-button-disabled'));
+    },
+
+    'button.enable() should set the `disabled` attribute to `false`': function () {
+        var button = this.button;
+        var node = button.getNode();
+        
+        button.disable();
+        Assert.isTrue(button.get('disabled'));
+        Assert.isTrue(node.hasClass('yui3-button-disabled'));
+        
+        button.enable();
+        Assert.isFalse(button.get('disabled'));
+        Assert.isFalse(node.hasClass('yui3-button-disabled'));
     }
+
+    
 }));
 
 // -- Rendering ----------------------------------------------------------------
 suite.add(new Y.Test.Case({
     name: 'Render',
-    
+
     setUp : function () {
+        Y.one('#test').append('<button id="foo">Test label</button>')
         this.button = new Y.Button({
-            srcNode : '#test'
+            srcNode : '#foo'
         });
     },
     
@@ -61,21 +115,21 @@ suite.add(new Y.Test.Case({
     
     'button should have `yui3-button` class': function () {
         var button = this.button;
-        var node = button.getDOMNode();
+        var node = button.getNode();
         
         Assert.isTrue(node.hasClass('yui3-button'));
     },
     
     'button should have `button` role': function () {
         var button = this.button;
-        var node = button.getDOMNode();
+        var node = button.getNode();
         
         Assert.areEqual('button', node.get('role'));
     },
     
     'button mouse events should toggle aria-pressed attributes': function () {
         var button = this.button;
-        var node = button.getDOMNode();
+        var node = button.getNode();
         
         node.simulate('mousedown');
         Assert.areSame('true', node.get('aria-pressed'));
@@ -86,14 +140,14 @@ suite.add(new Y.Test.Case({
     
     'button focus/blur events should toggle yui3-button-focused': function () {
         var button = this.button;
-        var node = button.getDOMNode();
+        var node = button.getNode();
         
         Assert.isFalse(node.hasClass('yui3-button-focused'));
         
-        node.simulate('focus');
+        node.focus();
         Assert.isTrue(node.hasClass('yui3-button-focused'));
         
-        node.simulate('blur');
+        node.blur();
         Assert.isFalse(node.hasClass('yui3-button-focused'));
     }
 }));
@@ -103,8 +157,9 @@ suite.add(new Y.Test.Case({
     name: 'Attributes',
     
     setUp : function () {
+        Y.one('#test').append('<button id="foo">Test label</button>')
         this.button = new Y.Button({
-            srcNode : '#test'
+            srcNode : '#foo'
         });
     },
     
@@ -115,7 +170,7 @@ suite.add(new Y.Test.Case({
     'setting label attribute should set innerHTML': function () {
         var label;
         var button = this.button;
-        var node = button.getDOMNode();
+        var node = button.getNode();
         
         label = 'foobar';
         button.set('label', label);
@@ -130,7 +185,7 @@ suite.add(new Y.Test.Case({
     
     'setting disabled=`true` attribute should add class `yui3-button-disabled`': function () {
         var button = this.button;
-        var node = button.getDOMNode();
+        var node = button.getNode();
         
         // Ensure button is enabled by default
         Assert.isFalse(button.get('disabled'));
@@ -146,7 +201,7 @@ suite.add(new Y.Test.Case({
     
     'setting disabled=`false` attribute should remove class `yui3-button-disabled`': function () {
         var button = this.button;
-        var node = button.getDOMNode();
+        var node = button.getNode();
         
         // Disable button
         button.set('disabled', true);
@@ -165,7 +220,7 @@ suite.add(new Y.Test.Case({
     
     'setting type=`toggle` attribute should make button toggle-able': function () {
         var button = this.button;
-        var node = button.getDOMNode();
+        var node = button.getNode();
         
         // Ensure button is unselected by default
         Assert.isFalse(button.get('selected'));

@@ -103,10 +103,10 @@
             ];
 
             Y.Array.each(keys, function(key){
-                var button = new Y.ButtonGenerator({
+                var button = new Y.Button({
                     label: key
                 });
-                var node = button.getDOMNode();
+                var node = button.getNode();
                 node.set('name', key);
                 if (key[0] === "[" && key.length > 1) {
                     node.addClass('wide');
