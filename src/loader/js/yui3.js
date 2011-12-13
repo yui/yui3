@@ -134,29 +134,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "attribute-base": {
         "requires": [
-            "attribute-core", 
-            "attribute-events", 
-            "attribute-extras"
+            "event-custom"
         ]
     }, 
     "attribute-complex": {
         "requires": [
             "attribute-base"
-        ]
-    }, 
-    "attribute-core": {
-        "requires": [
-            "yui-base"
-        ]
-    }, 
-    "attribute-events": {
-        "requires": [
-            "event-custom"
-        ]
-    }, 
-    "attribute-extras": {
-        "requires": [
-            "yui-base"
         ]
     }, 
     "autocomplete": {
@@ -288,6 +271,27 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "base-base", 
             "pluginhost"
+        ]
+    }, 
+    "button": {
+        "use": [
+            "button-base", 
+            "button-group", 
+            "cssbuttons"
+        ]
+    }, 
+    "button-base": {
+        "requires": [
+            "base", 
+            "classnamemanager", 
+            "node"
+        ]
+    }, 
+    "button-group": {
+        "requires": [
+            "button-base", 
+            "arraylist", 
+            "arraylist-add"
         ]
     }, 
     "cache": {
@@ -439,6 +443,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "cssfonts-context", 
             "cssgrids-context"
         ], 
+        "type": "css"
+    }, 
+    "cssbuttons": {
         "type": "css"
     }, 
     "cssfonts": {
@@ -2145,4 +2152,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '379c2e4db926fa1003bce8819f55c278';
+YUI.Env[Y.version].md5 = 'fd65ffbe383c8e074317d8315f7cb036';
