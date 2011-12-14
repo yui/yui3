@@ -1,6 +1,10 @@
 var fromTemplate = Y.Lang.sub,
     Lang = Y.Lang,
-    isArray = Lang.isArray;
+    isArray = Lang.isArray,
+    toArray = Y.Array,
+
+    ClassNameManager = Y.ClassNameManager,
+    _getClassName    = ClassNameManager.getClassName;
 
 Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     // -- Instance properties -------------------------------------------------
@@ -20,42 +24,61 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
 
     // -- Public methods ------------------------------------------------------
     bindUI: function () {
+        // TODO: How best to decouple this?
         this._eventHandles.push(
-            this.host.after('columnChange', this._afterColumnChange),
-            this.data.after(
-                ['*:change', '*:destroy'],
-                this._afterDataChange, this));
+            this.host.after('columnsChange', this._afterColumnChange));
     },
 
     destructor: function () {
         (new Y.EventHandle(this._eventHandles)).detach();
     },
 
+    getClassName: function () {
+        var args = toArray(arguments);
+        args.unshift(this._cssPrefix);
+        args.push(true);
+
+        return _getClassName.apply(ClassNameManager, args);
+    },
+
     initializer: function (config) {
-        this.host  = config.source;
-        this.table = config.table;
-        this.data  = config.data;
+        var cssPrefix = config.cssPrefix || (config.host || {}).cssPrefix;
+
+        this.host    = config.source;
         this.columns = this._parseColumns(config.columns);
 
-        this.host.after('columnsChange', this._afterColumnsChange);
-
         this._eventHandles = [];
+
+        if (cssPrefix) {
+            this._cssPrefix = cssPrefix;
+        }
     },
 
     render: function () {
-        var table    = this.table,
+        var table    = this.get('container'),
             columns  = this.columns,
-            existing = table.one('> .' + this.host.getClassName('head')),
             thead    = this.host._theadNode,
-            replace  = existing && (!thead || !thead.compareTo(existing)),
             defaults = {
                             abbr: '',
                             colspan: 1,
                             rowspan: 1,
                             // TODO: remove dependence on this.host
-                            linerClass: this.host.getClassName('liner')
+                            linerClass: this.getClassName('liner')
                        },
-            i, len, j, jlen, col, html;
+            existing, replace, i, len, j, jlen, col, html;
+
+        table = Y.one(table);
+        if (table && table.get('tagName') !== 'TABLE') {
+            table = table.one('table');
+        }
+
+        if (!table) {
+            Y.log('Could not render thead. Table not provided', 'warn');
+            return this;
+        }
+
+        existing = table.one('> .' + this.getClassName('columns'));
+        replace  = existing && (!thead || !thead.compareTo(existing));
 
         if (!thead) {
             thead = '';
@@ -84,7 +107,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
             }
 
             thead = fromTemplate(this.THEAD_TEMPLATE, {
-                classes: this.host.getClassName('head'),
+                classes: this.getClassName('columns'),
                 content: thead
             });
         }
@@ -107,9 +130,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
         // TODO
     },
 
-    _afterDataChange: function (e) {
-        // TODO
-    },
+    _cssPrefix: 'table',
 
     _parseColumns: function (data) {
         var columns = [],
