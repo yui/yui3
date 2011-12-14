@@ -7576,7 +7576,7 @@ Y.Loader.prototype = {
 
         if (!self.combine || singles.length) {
 
-            s = singles ? singles : self.sorted;
+            s = singles.length ? singles : self.sorted;
             len = s.length;
 
             for (i = 0; i < len; i = i + 1) {
