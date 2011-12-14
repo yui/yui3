@@ -11,68 +11,66 @@ var INVALID    = Y.Attribute.INVALID_VALUE,
     
 Table = Y.namespace('DataTable').Core = function () {};
 
-Y.mix(Table, {
-    ATTRS: {
-        columns: {
-            // TODO: change to setter to coerce Columnset?
-            validator: isArray,
-            getter: '_getColumns'
-        },
+Table.ATTRS = {
+    columns: {
+        // TODO: change to setter to coerce Columnset?
+        validator: isArray,
+        getter: '_getColumns'
+    },
 
-        recordType: {
-            validator: '_validateRecordType',
-            writeOnce: true
-        },
+    recordType: {
+        validator: '_validateRecordType',
+        writeOnce: true
+    },
 
-        data: {
-            value : [],
-            setter: '_setData',
-            getter: '_getData'
-        },
+    data: {
+        value : [],
+        setter: '_setData',
+        getter: '_getData'
+    },
 
-        headerView: {
-            validator: '_validateView',
-            writeOnce: true
-        },
+    headerView: {
+        validator: '_validateView',
+        writeOnce: true
+    },
 
-        footerView: {
-            validator: '_validateView',
-            writeOnce: true
-        },
+    footerView: {
+        validator: '_validateView',
+        writeOnce: true
+    },
 
-        bodyView: {
-            validator: '_validateView',
-            writeOnce: true
-        },
+    bodyView: {
+        validator: '_validateView',
+        writeOnce: true
+    },
 
-        summary: {
-            value: '',
-            // For paranoid reasons, the value is escaped on its way in because
-            // rendering can be based on string concatenation.
-            setter: Y.Escape.html
-        },
+    summary: {
+        value: '',
+        // For paranoid reasons, the value is escaped on its way in because
+        // rendering can be based on string concatenation.
+        setter: Y.Escape.html
+    },
 
-        /**
-        HTML content of an optional `<caption>` element to appear above the table.
-        Leave this config unset or set to a falsy value to remove the caption.
+    /**
+    HTML content of an optional `<caption>` element to appear above the table.
+    Leave this config unset or set to a falsy value to remove the caption.
 
-        @attribute caption
-        @type HTML
-        @default '' (empty string)
-        **/
-        caption: {
-            value: ''
-        },
+    @attribute caption
+    @type HTML
+    @default '' (empty string)
+    **/
+    caption: {
+        value: ''
+    },
 
-        recordset: {
-            // TODO: back compat pass through to ML
-        },
+    recordset: {
+        // TODO: back compat pass through to ML
+    },
 
-        columnset: {
-            // TODO: back compat pass through to columns
-        }
+    columnset: {
+        // TODO: back compat pass through to columns
     }
-});
+};
 
 Y.mix(Table.prototype, {
     // -- Instance properties -------------------------------------------------
@@ -89,13 +87,7 @@ Y.mix(Table.prototype, {
     },
 
     getCell: function (row, col) {
-        var el = null;
-        if (this._tbodyNode) {
-            el = this._tbodyNode.getDOMNode().rows[+row];
-            el && (el = el.cells[+col]);
-        }
-        
-        return Y.one(el);
+        return this.body && this.body.getCell && this.body.getCell(row, col);
     },
 
     getColumn: function (name) {
@@ -103,13 +95,7 @@ Y.mix(Table.prototype, {
     },
 
     getRow: function (index) {
-        var el;
-
-        if (this._tbodyNode) {
-            el = this._tbodyNode.getDOMNode().rows[+index];
-        }
-
-        return Y.one(el);
+        return this.body && this.body.getCell && this.body.getRow(index);
     },
 
     initializer: function (config) {
@@ -322,21 +308,22 @@ Y.mix(Table.prototype, {
     _renderBody: function (table, data) {
         var BodyView = this.get('bodyView');
 
+        // TODO: use a _viewConfig object that can be mixed onto by class
+        // extensions, then pass that to either the view constructor or setAttrs
         if (BodyView) {
             this.body = (isFunction(BodyView)) ? 
                 new BodyView({
-                    source : this,
-                    table  : this._tableNode,
-                    columns: this.get('columns'),
-                    data   : this.data
+                    source   : this,
+                    container: this._tableNode,
+                    columns  : this.get('columns'),
+                    modelList: this.data,
+                    cssPrefix: this._cssPrefix
                 }) :
                 BodyView;
 
             this.body.addTarget(this);
             this.body.render();
         }
-
-        this._tbodyNode = this._tableNode.one('>.' + this.getClassName('data'));
     },
 
     _renderFooter: function (table, data) {
@@ -345,18 +332,17 @@ Y.mix(Table.prototype, {
         if (FooterView) {
             this.foot = (isFunction(FooterView)) ? 
                 new FooterView({
-                    source : this,
-                    table  : this._tableNode,
-                    columns: this.get('columns'),
-                    data   : this.data
+                    source   : this,
+                    container: this._tableNode,
+                    columns  : this.get('columns'),
+                    modelList: this.data,
+                    cssPrefix: this._cssPrefix
                 }) :
                 FooterView;
 
             this.foot.addTarget(this);
             this.foot.render();
         }
-
-        this._tfootNode = this._tableNode.one('>.' + this.getClassName('foot'));
     },
 
     _renderHeader: function () {
@@ -365,10 +351,11 @@ Y.mix(Table.prototype, {
         if (HeaderView) {
             this.head = (isFunction(HeaderView)) ? 
                 new HeaderView({
-                    source : this,
-                    table  : this._tableNode,
-                    columns: this.get('columns'),
-                    data   : this.data
+                    source   : this,
+                    container: this._tableNode,
+                    columns  : this.get('columns'),
+                    modelList: this.data,
+                    cssPrefix: this._cssPrefix
                 }) :
                 HeaderView; // Assume if it's not a function, it's an instance
 
@@ -376,8 +363,6 @@ Y.mix(Table.prototype, {
             this.head.render();
         }
         // TODO: If there's no HeaderView, should I remove an existing <thead>?
-
-        this._theadNode = this._tableNode.one('>.' + this.getClassName('head'));
     },
 
     _renderTable: function () {
