@@ -1,4 +1,3 @@
-
     /**
      * The class allows you to create a Drag & Drop reordered list.
      * @module sortable
@@ -214,7 +213,7 @@
             return this;
         },
         /**
-        * @method plug
+        * @method sync
         * @description Passthrough to the DD.Delegate syncTargets method.
         * @chainable
         */
