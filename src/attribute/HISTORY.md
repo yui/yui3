@@ -16,7 +16,12 @@ Attribute Change History
     Y.AttributeCore is likely to form the basis for BaseCore and WidgetCore 
     (ala Node Plugins, where low-level state change events are not required). 
 
-    Y.Attribute's public and protected API reimain unchanged.
+    Y.Attribute's public and protected API reimain unchanged, and loader will
+    pull in the new dependencies.
+
+    However if you're manually pulling in attribute-base, you'll need to 
+    manually pull in attribute-core, attribute-events and attribute-extras 
+    before it.
 
     **IMPORTANT** AttributeCore, AttributeEvents and AttributeExtras are 
     considered beta, and may be subject to change over the course 
