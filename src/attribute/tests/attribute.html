@@ -213,8 +213,8 @@
                         return this.get("D") + this.get("E");
                     }
                 },
-
-                complex: {
+				
+				complex: {
                     value: {
                         X : {
                             A: 1
@@ -697,7 +697,35 @@
 
                     Y.Assert.areEqual("MyDEVal", h.get("DE"));
                 },
+				testDefaultSet : function() {
+					function TestClass(config) {
+			    		TestClass.superclass.constructor.apply(this, arguments);
+					};
 
+					TestClass.NAME = "testClass";
+
+					TestClass.ATTRS = {
+							FOO : {
+								value: "Default FOO",
+						        setter: function ( v ) {
+		        				    if ( v !== 'A' && v !== 'B' ) {
+		        				        return Y.Attribute.INVALID_VALUE;
+		        				    }
+		        				    return v;
+		        				}//end of setter.
+    						}
+					};
+
+					Y.extend(TestClass, Y.Base);	
+					var m = new TestClass({'FOO':'BAR'});					
+					Y.Assert.areNotEqual(undefined, m.get("FOO"));
+					Y.Assert.areEqual("Default FOO", m.get("FOO"));
+					m.set('FOO','ATT');//set a invalid value
+					Y.Assert.areEqual("Default FOO", m.get("FOO"));
+					m.set('FOO','A');//set a invalid value
+					Y.Assert.areEqual("A", m.get("FOO"));
+					Y.log("val of FOO:" + m.get('FOO'));
+				},
                 testSet : function() {
 
                     var h = this.createHost();
@@ -717,7 +745,6 @@
 
                     Y.Assert.areEqual("MyNewDEVal", h.get("DE"));
                 },
-
                 testWriteOncePostInit : function() {
 
                     var h = this.createHost();
