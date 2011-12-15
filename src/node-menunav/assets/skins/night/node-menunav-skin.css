@@ -3,11 +3,11 @@
 .yui3-skin-night .yui3-menu-content, 
 .yui3-skin-night .yui3-menu .yui3-menu .yui3-menu-content {
 
-    font-size: 93%;  /* 12px */
+    font-size: 100%;  
     line-height: 1.5;  /* 18px */
     *line-height: 1.45; /* For IE */
-    border: solid 1px #000;
-    background: #6D6E6E;
+    border: solid 1px #303030;
+    background: #151515;
     padding: 3px 0;
 
 }
@@ -49,7 +49,7 @@
 
 	margin-top: 3px;
 	padding-top: 3px;
-    border-top: solid 1px #5E5E5E;
+    border-top: solid 1px #303030;
 
 }
 
@@ -80,7 +80,7 @@
 		"block" by node-menunav-core.css file.
     */
 
-    _border-bottom: solid 1px #6D6E6E;
+    _border-bottom: solid 1px #151515;
 
 }
 
@@ -118,7 +118,15 @@
 .yui3-skin-night .yui3-menuitem-content,
 .yui3-skin-night .yui3-menu .yui3-menu .yui3-menuitem-content {
 
-    padding: 0 20px;
+    /*padding: 0 20px;*/
+    padding: 0.4em 1em 0.6em;
+    /*background-color: #2F3030;*/
+    
+    
+    
+    
+    
+    
     color: #fff;
     text-decoration: none;
     cursor: default;
@@ -222,7 +230,7 @@
 .yui3-skin-night .yui3-menu .yui3-menu .yui3-menu-label-active,
 .yui3-skin-night .yui3-menu .yui3-menu .yui3-menu-label-menuvisible {
 
-	background-color: #575858;
+	background-color: #292a2a;
 
 }
 
@@ -230,7 +238,19 @@
 .yui3-skin-night .yui3-menu .yui3-menu .yui3-menuitem-active .yui3-menuitem-content {
 
 	background-image: none;
-    background-color: #575858;
+    background-color: #292a2a;
+    background: -moz-linear-gradient(
+		0% 100% 90deg,
+		#252626 0%,
+		#333434 100%
+	);
+    background: -webkit-gradient(
+        linear,
+        left top,
+        left bottom,
+        from(#333434),
+        to(#252626)
+    );
     
     /*
     	Undo values set for "border-left-width" and "margin-left" when the root 

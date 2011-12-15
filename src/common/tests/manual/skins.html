@@ -67,6 +67,32 @@
             color: inherit;
             font-size: inherit;
         }
+/* ======================    temp. MAKE SURE TO DELETE THESE CALENDAR REMOMMENDATIONS BEFORE TESTING ==============================*/
+html .yui3-skin-night .yui3-calendar-content {
+    background: #494A4A;
+    /*border: 1px solid gray;*/
+    border-radius: 5px 5px 5px 5px;
+    color: #fff;
+    font-family: "Lucida Grande","Lucida Sans",Calibri,Helvetica,Arial,sans-serif;
+    font-size: 0.8em;
+    padding: 10px;
+}
+html .yui3-skin-night .yui3-calendar-day, 
+html .yui3-skin-night .yui3-calendar-prevmonth-day,
+html .yui3-skin-night .yui3-calendar-nextmonth-day {
+    background: none repeat scroll 0 0 #585959;
+    border: 1px solid #414342;
+    text-align: center;
+}
+html .yui3-skin-night .yui3-calendar-weekdayrow{
+    color:#969696;
+}
+html .yui3-skin-night .yui3-calendar-day-selected {
+    background-color: #70A4EB;
+    color: #000000;
+}
+/* ======================   end  temp. MAKE SURE TO DELETE THESE CALENDAR REMOMMENDATIONS BEFORE TESTING ==============================*/
+
 
     </style> 
 
@@ -209,6 +235,8 @@
                             </li> 
                             <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://news.yahoo.com">News</a> </li> 
                             <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://mobile.yahoo.com">Mobile</a></li> 
+                        </ul>
+                        <ul>
                             <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://finance.yahoo.com/">Finance</a></li> 
                             <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://shine.yahoo.com/">Shine</a></li> 
                             <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://shopping.yahoo.com/">Shopping</a></li> 
@@ -231,7 +259,7 @@
                                             <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://yahoo.com/">Yahoo!</a></li>
                                             <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://www.flickr.com">Flickr</a></li>
                                             <li>
-                                                <a class="yui3-menu-label" href="#pim">PIM</a>
+                                                <a class="yui3-menu-label" href="#pim">Mail</a>
         
                                                 <div id="pim" class="yui3-menu">
                                                     <div class="yui3-menu-content">
