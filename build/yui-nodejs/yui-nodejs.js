@@ -6539,6 +6539,7 @@ Y.Loader.prototype = {
             comboSource, comboSources, mods, comboBase,
             base, urls, u = [], tmpBase, baseLen, resCombos = {},
             self = this,
+            singles = [],
             resolved = { js: [], jsMods: [], css: [], cssMods: [] },
             type = self.loadType || 'js';
 
@@ -6568,6 +6569,8 @@ Y.Loader.prototype = {
 
                     if (!group.combine) {
                         m.combine = false;
+                        //This is not a combo module, skip it and load it singly later.
+                        singles.push(s[i]);
                         continue;
                     }
                     m.combine = true;
@@ -6646,9 +6649,11 @@ Y.Loader.prototype = {
 
             resCombos = null;
             
-        } else {
+        }
 
-            s = self.sorted;
+        if (!self.combine || singles.length) {
+
+            s = singles.length ? singles : self.sorted;
             len = s.length;
 
             for (i = 0; i < len; i = i + 1) {
