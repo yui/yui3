@@ -13,6 +13,12 @@ Base Change History
     need to remove the hasOwnProperty restriction around object
     key iteration.
 
+  * Added Y.BaseCore which is core Base functionality without
+    Custom Events (it uses Y.AttributCore instead of Y.Attribute). 
+
+    Y.Base is now Y.BaseCore + Y.Attribute, and is 100% backwards
+    compatible.
+
 3.4.1
 -----
 
