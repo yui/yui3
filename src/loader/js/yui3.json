@@ -1496,14 +1496,14 @@
     "panel": {
         "requires": [
             "widget", 
-            "widget-stdmod", 
+            "widget-autohide", 
+            "widget-buttons", 
+            "widget-modality", 
             "widget-position", 
             "widget-position-align", 
-            "widget-stack", 
             "widget-position-constrain", 
-            "widget-modality", 
-            "widget-autohide", 
-            "widget-buttons"
+            "widget-stack", 
+            "widget-stdmod"
         ], 
         "skinnable": true
     }, 
@@ -1974,8 +1974,9 @@
     }, 
     "widget-buttons": {
         "requires": [
-            "widget", 
+            "cssbuttons", 
             "base-build", 
+            "widget", 
             "widget-stdmod"
         ], 
         "skinnable": true
