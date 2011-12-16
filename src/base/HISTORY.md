@@ -14,7 +14,12 @@ Base Change History
     key iteration.
 
   * Added Y.BaseCore which is core Base functionality without
-    Custom Events (it uses Y.AttributCore instead of Y.Attribute). 
+    Custom Events (it uses Y.AttributCore instead of Y.Attribute).
+
+    Y.BaseCore still maintains the ATTRS handling, init/destroy
+    lifecycle and plugin support, but doesn't fire any custom evnets
+    of it's own (the idea is that it will the base for Node-Plugin 
+    type components, built off of a WidgetCore) 
 
     Y.Base is now Y.BaseCore + Y.Attribute, and is 100% backwards
     compatible.
