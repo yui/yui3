@@ -1,3 +1,18 @@
+/**
+The core implementation of the `DataTable` and `DataTable.Base` Widgets.
+
+Use this class extension with Widget or another Base-based superclass to create
+the basic DataTable API and composing class structure.
+
+Notable about this architecture is that rendering and UI event management for
+the header, body, and footer of the table are deferred to configurable classes
+in the `headerView`, `bodyView`, and `footerView` attributes.  In this extension
+they have no default values, requiring implementers to supply their own classes
+to render the table content.
+
+@module datatable-core
+**/
+
 var INVALID    = Y.Attribute.INVALID_VALUE,
 
     Lang       = Y.Lang,
@@ -9,41 +24,178 @@ var INVALID    = Y.Attribute.INVALID_VALUE,
 
     Table;
     
+/**
+Class extension providing the core API and structure for the DataTable Widget.
+
+@class DataTable.Core
+**/
 Table = Y.namespace('DataTable').Core = function () {};
 
 Table.ATTRS = {
+    /**
+    Columns to include in the rendered table.
+    
+    If omitted, the attributes on the configured `recordType` or the first item
+    in the `data` collection will be used as a source.
+
+    This attribute takes an array of strings or objects (mixing the two is
+    fine).  Each string or object is considered a column to be rendered.
+    Strings are converted to objects, so `columns: ['first', 'last']` becomes
+    `columns: [{ key: 'first' }, { key: 'last' }]`.
+
+    DataTable.Core only concerns itself with the `key` property of columns.
+    All other properties are for use by the `headerView`, `bodyView`,
+    `footerView`, and any class extensions or plugins on the final class or
+    instance. See the descriptions of the view classes and feature class
+    extensions and plugins for details on the specific properties they read or
+    add to column definitions.
+
+    @attribute columns
+    @type {Object[]|String[]}
+    @default (from `recordType` ATTRS or first item in the `data`)
+    **/
     columns: {
         // TODO: change to setter to coerce Columnset?
         validator: isArray,
         getter: '_getColumns'
     },
 
+    /**
+    Model subclass to use as the `model` for the ModelList stored in the `data`
+    attribute.
+
+    If not provided, it will try really hard to figure out what to use.  The
+    following attempts will be made to set a default value:
+    
+    1. If the `data` attribute is set with a ModelList instance and its `model`
+       property is set, that will be used.
+    2. If the `data` attribute is set with a ModelList instance, and its
+       `model` property is unset, but it is populated, the `ATTRS` of the
+       `constructor of the first item will be used.
+    3. If the `data` attribute is set with a non-empty array, a Model subclass
+       will be generated using the keys of the first item as its `ATTRS` (see
+       the `_createRecordClass` method).
+    4. If the `columns` attribute is set, a Model subclass will be generated
+       using the columns defined with a `key`. This is least desirable because
+       columns can be duplicated or nested in a way that's not parsable.
+    5. If neither `data` nor `columns` is set or populated, a change event
+       subscriber will listen for the first to be changed and try all over
+       again.
+
+    @attribute recordType
+    @type {Function}
+    @default (see description)
+    **/
     recordType: {
         validator: '_validateRecordType',
         writeOnce: true
     },
 
+    /**
+    The collection of data records to display.  This attribute is a pass
+    through to a `data` property, which is a ModelList instance.
+
+    If this attribute is passed a ModelList or subclass, it will be assigned to
+    the property directly.  If an array of objects is passed, a new ModelList
+    will be created using the configured `recordType` as its `model` property
+    and seeded with the array.
+
+    Retrieving this attribute will return the ModelList stored in the `data`
+    property.
+
+    @attribute data
+    @type {ModelList|Object[]}
+    @default `new ModelList()`
+    **/
     data: {
         value : [],
         setter: '_setData',
         getter: '_getData'
     },
 
+    /**
+    The class or object to use for rendering the `<thead>` and column headers
+    for the table.  This attribute is responsible for populating the the
+    instance's `head` property.
+
+    If a class constructor (function) is passed, an instance of that clas will
+    be created at `render()` time and assigned to `this.head`.  If an object is
+    passed, `head` will be set immediately.
+
+    Valid objects or classes will have a `render()` method, though it is
+    recommended that they be subclasses of `Y.Base` or `Y.View`.  If the object
+    or class supports events, its `addTarget()` method will be called to bubble
+    its events to this instance.
+
+    The core implementaion does not define a default `headerView`.  Classes
+    built from this extension should define a default.
+
+    @attribute headerView
+    @type {Function|Object}
+    **/
     headerView: {
         validator: '_validateView',
         writeOnce: true
     },
 
+    /**
+    The class or object to use for rendering the `<tfoot>` and any relevant
+    content for it.  This attribute is responsible for populating the the
+    instance's `foot` property.
+
+    If a class constructor (function) is passed, an instance of that clas will
+    be created at `render()` time and assigned to `this.foot`.  If an object is
+    passed, `foot` will be set immediately.
+
+    Valid objects or classes will have a `render()` method, though it is
+    recommended that they be subclasses of `Y.Base` or `Y.View`.  If the object
+    or class supports events, its `addTarget()` method will be called to bubble
+    its events to this instance.
+
+    The core implementaion does not define a default `footerView`.  Classes
+    built from this extension should define a default if appropriate.
+
+    @attribute footerView
+    @type {Function|Object}
+    **/
     footerView: {
         validator: '_validateView',
         writeOnce: true
     },
 
+    /**
+    The class or object to use for rendering the `<tbody>` or `<tbody>`s and
+    all data row content for the table.  This attribute is responsible for
+    populating the the instance's `body` property.
+
+    If a class constructor (function) is passed, an instance of that clas will
+    be created at `render()` time and assigned to `this.body`.  If an object is
+    passed, `body` will be set immediately.
+
+    Valid objects or classes will have a `render()` method, though it is
+    recommended that they be subclasses of `Y.Base` or `Y.View`.  If the object
+    or class supports events, its `addTarget()` method will be called to bubble
+    its events to this instance.
+
+    The core implementaion does not define a default `bodyView`.  Classes
+    built from this extension should define a default.
+
+    @attribute footerView
+    @type {Function|Object}
+    **/
     bodyView: {
         validator: '_validateView',
         writeOnce: true
     },
 
+    /**
+    Content for the `<table summary="ATTRIBUTE VALUE HERE">`.  Values assigned
+    to this attribute will be HTML escaped for security.
+
+    @attribute summary
+    @type {String}
+    @default '' (empty string)
+    **/
     summary: {
         value: '',
         // For paranoid reasons, the value is escaped on its way in because
@@ -63,21 +215,116 @@ Table.ATTRS = {
         value: ''
     },
 
+    /**
+    Deprecated as of 3.5.0. Passes through to the `data` attribute.
+
+    @attribute recordset
+    @type {Object[]|Recordset}
+    @deprecated Use the `data` attribute
+    **/
     recordset: {
-        // TODO: back compat pass through to ML
+        setter: '_setRecordset',
+        getter: '_setRecordset'
     },
 
+    /**
+    Deprecated as of 3.5.0. Passes through to the `columns` attribute.
+
+    If a Columnset object is passed, its raw object and array column data will
+    be extracted for use.
+
+    @attribute columnset
+    @type {Object[]|Columnset}
+    @deprecated Use the `columns` attribute
+    **/
     columnset: {
-        // TODO: back compat pass through to columns
+        setter: '_setColumnset',
+        getter: '_setColumnset'
     }
 };
 
 Y.mix(Table.prototype, {
     // -- Instance properties -------------------------------------------------
-    TABLE_TEMPLATE  : '<table></table>',
+
+    /**
+    The HTML template used to create the caption Node if the `caption`
+    attribute is set.
+
+    @property CAPTION_TEMPLATE
+    @type {String}
+    @default '<caption></caption>'
+    **/
     CAPTION_TEMPLATE: '<caption></caption>',
 
+    /**
+    The HTML template used to create the table Node.
+
+    @property TABLE_TEMPLATE
+    @type {String}
+    @default '<table></table>'
+    **/
+    TABLE_TEMPLATE  : '<table></table>',
+
+    /**
+    A map of column key to column configuration objects parsed from the
+    `columns` attribute.
+
+    @property _columnMap
+    @type {Object}
+    @default undefined (initially unset)
+    @protected
+    **/
+    //_columnMap: null,
+
+    /**
+    The object or instance of the class assigned to `bodyView` that is
+    responsible for rendering and managing the table's `<tbody>`(s) and its
+    content.
+
+    @property body
+    @type {Object}
+    @default undefined (initially unset)
+    **/
+    //body: null,
+
+    /**
+    The object or instance of the class assigned to `footerView` that is
+    responsible for rendering and managing the table's `<tfoot>` and its
+    content.
+
+    @property foot
+    @type {Object}
+    @default undefined (initially unset)
+    **/
+    //foot: null,
+
+    /**
+    The object or instance of the class assigned to `headerView` that is
+    responsible for rendering and managing the table's `<thead>` and its
+    content.
+
+    @property head
+    @type {Object}
+    @default undefined (initially unset)
+    **/
+    //head: null,
+
+    /**
+    The ModelList that manages the table's data.
+
+    @property data
+    @type {ModelList}
+    @default undefined (initially unset)
+    **/
+    //data: null,
+
     // -- Public methods ------------------------------------------------------
+
+    /**
+    Subscribes to attribute change events to update the UI.
+
+    @method bindUI
+    **/
     bindUI: function () {
         // TODO: handle widget attribute changes
         this.after({
@@ -86,65 +333,125 @@ Y.mix(Table.prototype, {
         });
     },
 
+    /**
+    Returns the Node for a cell at the given coordinates.
+
+    Technically, this only relays to the `bodyView` instance's `getCell` method.
+    If the `bodyView` doesn't have a `getCell` method, `undefined` is returned.
+
+    @method getCell
+    @param {Number} row Index of the cell's containing row
+    @param {Number} col Index of the cell's containing column
+    @return {Node}
+    **/
     getCell: function (row, col) {
         return this.body && this.body.getCell && this.body.getCell(row, col);
     },
 
-    getColumn: function (name) {
-        return this.get('columns.' + name);
+    /**
+    Gets the column configuration object for the given key.
+    `instance.getColumn('foo')` is an alias for `instance.get('columns.foo')`.
+
+    @method getColumn
+    @param {String} key
+    @return {Object} the column configuration object
+    **/
+    getColumn: function (key) {
+        return key ? this.get('columns.' + key) : null;
     },
 
+    /**
+    Returns the Node for a row at the given index.
+
+    Technically, this only relays to the `bodyView` instance's `getRow` method.
+    If the `bodyView` doesn't have a `getRow` method, `undefined` is returned.
+
+    @method getRow
+    @param {Number} index Index of the row in the data `<tbody>`
+    @return {Node}
+    **/
     getRow: function (index) {
         return this.body && this.body.getCell && this.body.getRow(index);
     },
 
-    initializer: function (config) {
-        this._initColumns();
+    /**
+    Builds the table and attaches it to the DOM.  This requires the host class
+    to provide a `contentBox` attribute.  This is typically provided by Widget.
 
-        this._initRecordType();
-
-        this._initData();
-
-        this.after('columnsChange', this._afterColumnsChange);
-    },
-
+    @method renderUI
+    **/
     renderUI: function () {
         var contentBox = this.get('contentBox'),
             table;
 
-        this._renderTable();
+        if (contentBox) {
+            this._renderTable();
 
-        this._renderHeader();
+            this._renderHeader();
 
-        this._renderFooter();
+            this._renderFooter();
 
-        this._renderBody();
+            this._renderBody();
 
-        table = this._tableNode;
+            table = this._tableNode;
 
-        if (table) {
-            // off DOM or in an existing node attached to a different parentNode
-            if (!table.inDoc() || !table.ancestor().compareTo(contentBox)) {
-                contentBox.append(table);
+            if (table) {
+                // off DOM or in an existing node attached to a different parentNode
+                if (!table.inDoc() || !table.ancestor().compareTo(contentBox)) {
+                    contentBox.append(table);
+                }
+            } else { Y.log('Problem rendering DataTable: table not created', 'warn', 'datatable'); // On the same line to allow builder to strip the else clause
             }
-        } else { Y.log('Problem rendering DataTable: table not created', 'warn', 'datatable'); // On the same line to allow builder to strip the else clause
+        } else { Y.log('Problem rendering DataTable: contentBox not found', 'warn', 'datatable'); // On the same line to allow builder to strip the else clause
         }
     },
 
     // -- Protected and private methods ---------------------------------------
 
+    /**
+    Relays `captionChange` events to `_uiUpdateCaption`.
+
+    @method _afterCaptionChange
+    @param {EventFacade} e The `captionChange` event object
+    @protected
+    **/
     _afterCaptionChange: function (e) {
         this._uiUpdateCaption(e.newVal);
     },
 
+    /**
+    Updates the `_columnMap` property in response to changes in the `columns`
+    attribute.
+
+    @method _afterColumnsChange
+    @param {EventFacade} e The `columnsChange` event object
+    @protected
+    **/
     _afterColumnsChange: function (e) {
-        this._columnMap = this._parseColumns(e.newVal);
+        this._setColumnMap(e.newVal);
     },
 
+    /**
+    Relays `summaryChange` events to `_uiUpdateSummary`.
+
+    @method _afterSummaryChange
+    @param {EventFacade} e The `summaryChange` event object
+    @protected
+    **/
     _afterSummaryChange: function (e) {
         this._uiUpdateSummary(e.newVal);
     },
 
+    /**
+    Creates a Model subclass from an array of attribute names.  This is used
+    to generate a class suitable to represent the data passed to the `data`
+    attribute if no `recordType` is set.
+
+    @method _createRecordClass
+    @param {String[]} attrs Names assigned to the Model subclass's `ATTRS`
+    @return {Model}
+    @protected
+    **/
     _createRecordClass: function (attrs) {
         var ATTRS = {},
             i, len;
@@ -156,6 +463,17 @@ Y.mix(Table.prototype, {
         return Y.Base.create('record', Y.Model, [], null, { ATTRS: ATTRS });
     },
 
+    /**
+    The getter for the `columns` attribute.  Returns the array of column
+    configuration objects if `instance.get('columns')` is called, or the
+    specific column object if `instance.get('columns.columnKey')` is called.
+
+    @method _getColumns
+    @param {Object[]} columns The full array of column objects
+    @param {String} name The attribute name requested
+                         (e.g. 'columns' or 'columns.foo');
+    @protected
+    **/
     _getColumns: function (columns, name) {
         // name will be 'columns' or 'columns.foo'. Trim to the dot.
         // TODO: support name as an index or (row,column) index pair
@@ -164,40 +482,55 @@ Y.mix(Table.prototype, {
         return (name) ? this._columnMap[name] : columns;
     },
 
+    /**
+    The getter for the `data` attribute.  Returns the ModelList stored in the
+    `data` property.  If the ModelList is not yet set, it returns the current
+    raw data (presumably an empty array or `undefined`).
+
+    @method _getData
+    @param {Object[]|ModelList} val The current data stored in the attribute
+    @protected
+    **/
     _getData: function (val) {
         return this.data || val;
     },
 
+    /**
+    Initializes the instance's `_columnMap` from the configured `columns`
+    attribute.  If `columns` is not set, but `recordType` is, it uses the
+    `ATTRS` of that class.  If neither are set, it temporarily falls back to an
+    empty array. `_initRecordType` will call back into this method if it finds
+    the `columnMap` empty.
+
+    @method _initColumns
+    @protected
+    **/
     _initColumns: function () {
-        var columns = this.get('columns'),
-            data, attrHost;
+        var columns    = this.get('columns'),
+            recordType = this.get('recordType');
         
-        // Default column definition from the configured recordType or the
-        // first item in the data.
+        // Default column definition from the configured recordType
         if (!columns) {
-            attrHost = this.get('recordType');
+            // TODO: merge superclass attributes up to Model?
+            columns = (recordType && recordType.ATTRS) ?
+                      keys(recordType.ATTRS) : [];
 
-            if (!attrHost) {
-                data = this.get('data');
-
-                if (data) {
-                    if (isArray(data) && data.length) {
-                        columns = keys(data[0]);
-                    } else if (data.size && data.size()) {
-                        attrHost = data.item(0).constructor;
-                    }
-                }
-            }
-
-            if (attrHost && attrHost.ATTRS) {
-                // TODO: merge superclass attributes up to Model?
-                columns = keys(attrHost.ATTRS);
-            }
+            this.set('columns', columns, { silent: true });
         }
 
-        this._columnMap = this._parseColumns(columns || []);
+        this._setColumnMap(columns);
     },
 
+    /**
+    Initializes the instance's `data` property from the value of the `data`
+    attribute.  If the attribute value is a ModelList, it is assigned directly
+    to `this.data`.  If it is an array, a ModelList is created, its `model`
+    property is set to the configured `recordType` class, and it is seeded with
+    the array data.  This ModelList is then assigned to `this.data`.
+
+    @method _initData
+    @protected
+    **/
     _initData: function () {
         var data = this.get('data'),
             recordType, values;
@@ -215,11 +548,55 @@ Y.mix(Table.prototype, {
                 data.model = recordType;
                 data.reset(values, { silent: true });
             }
+
+            // Make sure the attribute state object contains the ModelList.
+            // TODO: maybe better would be to purge the attribute state value?
+            this.set('data', data, { silent: true });
         }
 
         this.data = data;
     },
 
+    /**
+    Initializes the columns, `recordType` and data ModelList.
+
+    @method initializer
+    @protected
+    **/
+    initializer: function () {
+        this._initColumns();
+
+        this._initRecordType();
+
+        this._initData();
+
+        this.after('columnsChange', this._afterColumnsChange);
+    },
+
+    /**
+    Defaults the Model class used by the `data` ModelList to represent the
+    data records for the data set in the case where the `recordType` attribute
+    was not set.
+
+    It tries the following methods to determine a default:
+    1. If the `data` attribute is set with a ModelList with a `model` property,
+       that class is used.
+    2. If the `data` attribute is set with a non-empty ModelList, the
+       `constructor` of the first item is used.
+    3. If the `data` attribute is set with a non-empty array, a custom Model
+       subclass is generated using the keys of the first item as its `ATTRS`.
+    4. If the `_columnMap` property has keys, a custom Model subclass is
+       generated using those keys as its `ATTRS`.
+
+    Of none of those are successful, it subscribes to the change events for
+    `columns`, `recordType`, and `data` to try again.
+
+    If defaulting the `recordType` and the current `_columnMap` property is
+    empty, it will call `_initColumns`.
+
+    @method _initRecordType
+    @protected
+    **/
     _initRecordType: function () {
         var data, columns, recordType, handle;
             
@@ -247,7 +624,7 @@ Y.mix(Table.prototype, {
             if (recordType) {
                 this.set('recordType', recordType, { silent: true });
 
-                if (!columns) {
+                if (!columns || !columns.length) {
                     this._initColumns();
                 }
             } else {
@@ -283,6 +660,11 @@ Y.mix(Table.prototype, {
         }
     },
 
+    /**
+
+    @method _parseColumns
+    @protected
+    **/
     _parseColumns: function (columns, map) {
         var i, len, col;
 
@@ -305,6 +687,11 @@ Y.mix(Table.prototype, {
         return map;
     },
 
+    /**
+
+    @method _renderBody
+    @protected
+    **/
     _renderBody: function (table, data) {
         var BodyView = this.get('bodyView');
 
@@ -326,6 +713,11 @@ Y.mix(Table.prototype, {
         }
     },
 
+    /**
+
+    @method _renderFooter
+    @protected
+    **/
     _renderFooter: function (table, data) {
         var FooterView = this.get('footerView');
         
@@ -345,6 +737,11 @@ Y.mix(Table.prototype, {
         }
     },
 
+    /**
+
+    @method _renderHeader
+    @protected
+    **/
     _renderHeader: function () {
         var HeaderView = this.get('headerView');
         
@@ -365,6 +762,11 @@ Y.mix(Table.prototype, {
         // TODO: If there's no HeaderView, should I remove an existing <thead>?
     },
 
+    /**
+
+    @method _renderTable
+    @protected
+    **/
     _renderTable: function () {
         var caption = this.get('caption');
 
@@ -378,6 +780,24 @@ Y.mix(Table.prototype, {
         this._uiUpdateCaption(caption);
     },
 
+    /**
+    Assigns the `_columnMap` property with the parsed results of the array of
+    column definitions passed.
+
+    @method _setColumnMap
+    @param {Object[]|String[]} columns the raw column configuration objects or
+                                       key names
+    @protected
+    **/
+    _setColumnMap: function (columns) {
+        this._columnMap = this._parseColumns(columns);
+    },
+
+    /**
+
+    @method _setData
+    @protected
+    **/
     _setData: function (val) {
         if (val === null) {
             val = [];
@@ -407,6 +827,11 @@ Y.mix(Table.prototype, {
         return val;
     },
 
+    /**
+
+    @method _uiUpdateCaption
+    @protected
+    **/
     _uiUpdateCaption: function (htmlContent) {
         var caption = this._tableNode.one('> caption');
 
@@ -442,10 +867,20 @@ Y.mix(Table.prototype, {
         }
     },
 
+    /**
+
+    @method _uiUpdateSummary
+    @protected
+    **/
     _uiUpdateSummary: function (summary) {
         this._tableNode.setAttribute('summary', summary || '');
     },
 
+    /**
+
+    @method _validateRecordType
+    @protected
+    **/
     _validateRecordType: function (val) {
         var api = (isFunction(val)) ? val.prototype : {};
 
@@ -453,6 +888,11 @@ Y.mix(Table.prototype, {
         return api.addTarget && api.get && api.getAttrs && api.set;
     },
 
+    /**
+
+    @method _validateView
+    @protected
+    **/
     _validateView: function (val) {
         var api = isFunction(val) ? val.prototype : val;
 
