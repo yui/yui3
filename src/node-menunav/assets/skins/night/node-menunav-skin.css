@@ -4,11 +4,11 @@
 .yui3-skin-night .yui3-menu .yui3-menu .yui3-menu-content {
 
     font-size: 100%;  
-    line-height: 1.5;  /* 18px */
+    line-height: 2.25;  /* 18px 1.5*/
     *line-height: 1.45; /* For IE */
     border: solid 1px #303030;
     background: #151515;
-    padding: 3px 0;
+    /*padding: 3px 0;*/
 
 }
 
@@ -119,7 +119,7 @@
 .yui3-skin-night .yui3-menu .yui3-menu .yui3-menuitem-content {
 
     /*padding: 0 20px;*/
-    padding: 0.4em 1em 0.6em;
+    padding: 0 1em;
     /*background-color: #2F3030;*/
     
     

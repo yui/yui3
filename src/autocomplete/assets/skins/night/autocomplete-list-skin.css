@@ -4,7 +4,7 @@
 
 .yui3-skin-night .yui3-aclist-content {
 	font-size: 100%;
-    background: #0E0E0E;
+    background-color: #151515;
 	color: #ccc;
     border: 1px solid #303030;
 	-moz-box-shadow: 0 0 17px rgba(0,0,0,0.58);
@@ -43,6 +43,9 @@
     );
 }
 
-.yui3-skin-night .yui3-aclist-item { padding: 0.4em 1em 0.6em; }
+.yui3-skin-night .yui3-aclist-item { 
+    padding: 0 1em;   /*0.4em 1em 0.6em*/
+    line-height: 2.25;
+}
 .yui3-skin-night .yui3-aclist-item-active { outline: none; }
 .yui3-skin-night .yui3-highlight { color:#EFEFEF; }
