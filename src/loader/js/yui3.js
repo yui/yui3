@@ -134,12 +134,29 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "attribute-base": {
         "requires": [
-            "event-custom"
+            "attribute-core", 
+            "attribute-events", 
+            "attribute-extras"
         ]
     }, 
     "attribute-complex": {
         "requires": [
             "attribute-base"
+        ]
+    }, 
+    "attribute-core": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
+    "attribute-events": {
+        "requires": [
+            "event-custom"
+        ]
+    }, 
+    "attribute-extras": {
+        "requires": [
+            "yui-base"
         ]
     }, 
     "autocomplete": {
@@ -1556,14 +1573,14 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "panel": {
         "requires": [
             "widget", 
-            "widget-stdmod", 
+            "widget-autohide", 
+            "widget-buttons", 
+            "widget-modality", 
             "widget-position", 
             "widget-position-align", 
-            "widget-stack", 
             "widget-position-constrain", 
-            "widget-modality", 
-            "widget-autohide", 
-            "widget-buttons"
+            "widget-stack", 
+            "widget-stdmod"
         ], 
         "skinnable": true
     }, 
@@ -2049,8 +2066,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "widget-buttons": {
         "requires": [
-            "widget", 
+            "cssbuttons", 
             "base-build", 
+            "widget", 
             "widget-stdmod"
         ], 
         "skinnable": true
@@ -2152,4 +2170,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'fd65ffbe383c8e074317d8315f7cb036';
+YUI.Env[Y.version].md5 = '1afee6030a31ffe3a9b87818f8825ea5';

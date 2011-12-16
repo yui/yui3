@@ -7,6 +7,9 @@
         <sequential>
             <ant antfile="build-base.xml" target="@{target}"/>
             <ant antfile="build-complex.xml" target="@{target}"/>
+            <ant antfile="build-core.xml" target="@{target}"/>
+            <ant antfile="build-events.xml" target="@{target}"/>
+            <ant antfile="build-extras.xml" target="@{target}"/>
         </sequential>
     </macrodef>
 

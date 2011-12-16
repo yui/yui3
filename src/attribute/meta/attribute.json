@@ -2,9 +2,26 @@
     "attribute": {
         "use": ["attribute-base", "attribute-complex"],
         "submodules": {
+            "attribute-core": {
+                "requires" : [
+                    "yui-base"
+                ]
+            },
+            "attribute-extras": {
+                "requires" : [
+                    "yui-base"
+                ]
+            },
+            "attribute-events": {
+                "requires" : [
+                    "event-custom"
+                ]
+            },
             "attribute-base": {
                 "requires": [
-                    "event-custom"
+                    "attribute-core",
+                    "attribute-events",
+                    "attribute-extras"
                 ]
             }, 
             "attribute-complex": {

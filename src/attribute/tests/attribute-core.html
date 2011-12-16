@@ -1,0 +1,671 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Attribute Core Tests</title>
+
+    <script type="text/javascript" src="../../../build/yui/yui.js"></script>
+
+    <style type="text/css">
+        #console .yui3-console-entry {
+            padding:2px;
+            margin:0px;
+            min-height:0;
+        }
+
+        #console .yui3-console-entry-fail .yui3-console-entry-cat {
+            background-color:red;
+        }
+
+        #console .yui3-console-entry-pass .yui3-console-entry-cat {
+            background-color:green;
+        }
+
+        #console .yui3-console-entry-perf .yui3-console-entry-cat {
+            background-color:blue;
+        }
+
+        #console {
+            position:static;
+        }
+
+        html, body {
+            height:100%;
+        }
+    </style>
+
+    <script type="text/javascript">
+        YUI({
+            useBrowserConsole:false,
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+        }).use("dump", "attribute-core", "console", "test", function(Y) {
+
+            function areObjectsReallyEqual(o1, o2) {
+                Y.ObjectAssert.areEqual(o1, o2);
+                Y.ObjectAssert.areEqual(o2, o1);
+            }
+
+            function TestAugment(attrs, values) {}
+            Y.augment(TestAugment, Y.AttributeCore);
+
+            function TestAugmentWithATTRS(attrs, values) {}
+            TestAugmentWithATTRS.ATTRS = {
+                foo: {
+                    value:"bar"
+                }
+            };
+            Y.augment(TestAugmentWithATTRS, Y.AttributeCore);
+
+            function Test(cfg, lazy) {
+                this._initAttrHost(null, cfg, lazy);
+            };
+
+            Test.ATTRS = {
+
+                attr1: {
+                    value: "Foo",
+                    setter: function(n) {
+                        return n;
+                    }
+                },
+
+                attr2: {
+                    value: "Bar",
+                    setter: function(n) {
+                        return n;
+                    }
+                },
+        
+                attr3: {
+                    value: true
+                },
+        
+                attr4: {
+                    value: 3
+                },
+        
+                attr5: {
+                    value: 3
+                },
+        
+                attr6: {
+                    value: false,
+                    setter: function(lock) {
+                        return lock;
+                    }
+                },
+        
+                attr7: {
+                    value: false
+                },
+        
+                attr8: {
+                    value: true
+                },
+        
+                attr9: {
+                    value: true
+                },
+        
+                attr10: {
+                    value: false
+                },
+        
+                attr11: {
+                    value: true
+                },
+        
+                attr12: {
+                    value: false
+                },
+        
+                attr13: {
+                    value: false
+                },
+        
+                attr14: {
+                    value: false,
+                    setter: function(val) {
+                        return val;
+                    }
+                },
+        
+                attr15: {
+                    value: null,
+                    setter: function(val) {
+                        return false;
+                    }
+                },
+        
+                attr16: {
+                    value: ['default'],
+        
+                    getter: function() {
+                        return false;
+                    },
+        
+                    setter: function(g) {
+                        return g;
+                    }
+                },
+                attr17: {
+                    value: null,
+                    setter: function(g) {
+                        return g;
+                    }
+                },
+                attr18: {
+                    writeOnce: true,
+                    value: null
+                },
+                attr19: {
+                    writeOnce: true,
+                    value: null
+                },
+                attr20: {
+                    writeOnce: true,
+                    value: null
+                }
+            };
+
+            // Straightup augment, no wrapper functions
+            Y.mix(Test, Y.AttributeCore, false, null, 1);
+
+            function AttrHost(cfg) {
+                this._initAttrHost(null, cfg, true);
+            }
+
+            AttrHost.ATTRS = {
+                A: {
+                    value:"AVal",
+                    validator: Y.Lang.isString,
+                    broadcast:1
+                },
+
+                B: {
+                    validator: function(value) {
+                        return (value === undefined || Y.Lang.isString(value) || Y.Lang.isNumber(value));
+                    },
+                    broadcast:2
+                },
+
+                C: {
+                    writeOnce: true
+                },
+
+                D: {
+                    value:"DVal",
+                    readOnly: true
+                },
+
+                E: {
+                    value:"EVal",
+                    writeOnce: true
+                },
+
+                DE: {
+                    valueFn: function() {
+                        return this.get("D") + this.get("E");
+                    }
+                },
+
+                complex: {
+                    value: {
+                        X : {
+                            A: 1
+                        },
+                        Y : {
+                            A: 2
+                        },
+                        Z : {
+                            A: 3
+                        }
+                    }
+                },
+
+                initOnly : {
+                    writeOnce:"initOnly"
+                }    
+            };
+
+            // Straightup augment, no wrapper functions
+            Y.mix(AttrHost, Y.AttributeCore, false, null, 1);
+
+            var augmentTemplate = {
+
+                name: "Augment Tests",
+
+                testSetGetNoAttrs : function() {
+                    var h = new TestAugment();
+                    h.set("foo", "bar");
+                    Y.Assert.areEqual("bar", h.get("foo"));
+                },
+
+                testSetGetWithAttrs : function() {
+                    var h = new TestAugmentWithATTRS();
+                    Y.Assert.areEqual("bar", h.get("foo"));
+
+                    h.set("foo", "foobar");
+                    Y.Assert.areEqual("foobar", h.get("foo"));
+                },
+
+                testCustomAugment : function() {
+
+                    function FooBar(userVals) {
+                        Y.Attribute.call(this, null, userVals);
+                    };
+
+                    FooBar.ATTRS = {
+                        foo:{
+                            value:"bar"
+                        }
+                    };
+
+                    // Straightup augment, no wrapper functions
+                    Y.mix(FooBar, Y.Attribute, false, null, 1);
+
+                    var o1 = new FooBar();
+                    Y.Assert.areEqual("bar", o1.get("foo"));
+
+                    o1.set("foo", "foobar");
+                    Y.Assert.areEqual("foobar", o1.get("foo"));
+
+                    var o2 = new FooBar({foo:"barfoo"});
+                    Y.Assert.areEqual("barfoo", o2.get("foo"));
+                },
+
+                testObjectAugment: function() {
+                    var o = {
+                        methodOne: function() {}
+                    };
+                    
+                    Y.augment(o, Y.Attribute);
+
+                    o.set("foo", "bar");
+                    Y.Assert.areEqual("bar", o.get("foo"));
+                }
+            };
+
+            var basicTemplate = {
+
+                name: "Core Base Class Tests",
+
+                createHost : function(cfg) {
+                    return new AttrHost(cfg);
+                },
+
+                setUp : function() {},
+
+                tearDown : function() {},
+
+                testDefault : function() {
+                    var h = this.createHost();
+
+                    Y.Assert.areEqual("AVal", h.get("A"));
+                    Y.Assert.areEqual(undefined, h.get("B"));
+                    Y.Assert.areEqual(undefined, h.get("C"));
+                    Y.Assert.areEqual("DVal", h.get("D"));    // Readonly
+                    Y.Assert.areEqual("EVal", h.get("E"));    // Write once, but not twice
+
+                    Y.Assert.areEqual("DValEVal", h.get("DE"));
+                },
+
+                testConstructor : function() {
+                    var h = this.createHost({A:"MyAVal", B:"MyBVal", C:"MyCVal", D:"MyDVal", E:"MyEVal", DE:"MyDEVal"});
+
+                    h.set("C", "MyNewCVal");
+                    h.set("D", "MyNewDVal");
+                    h.set("E", "MyNewEVal");
+
+                    Y.Assert.areEqual("MyAVal", h.get("A"));
+                    Y.Assert.areEqual("MyBVal", h.get("B"));
+                    Y.Assert.areEqual("MyCVal", h.get("C")); // Write Once, set in constructor
+                    Y.Assert.areEqual("DVal", h.get("D"));   // Read Only
+                    Y.Assert.areEqual("MyEVal", h.get("E")); // Write Once, set in constructor
+
+                    Y.Assert.areEqual("MyDEVal", h.get("DE"));
+                },
+
+                testSet : function() {
+
+                    var h = this.createHost();
+
+                    h.set("A", "MyNewAVal");
+                    h.set("B", "MyNewBVal");
+                    h.set("C", "MyNewCVal");
+                    h.set("D", "MyNewDVal");
+                    h.set("E", "MyNewEVal");
+                    h.set("DE", "MyNewDEVal");
+
+                    Y.Assert.areEqual("MyNewAVal", h.get("A"));
+                    Y.Assert.areEqual("MyNewBVal", h.get("B"));
+                    Y.Assert.areEqual("MyNewCVal", h.get("C")); // Write once, set on first set.
+                    Y.Assert.areEqual("DVal", h.get("D"));   // Read Only
+                    Y.Assert.areEqual("EVal", h.get("E"));   // Write Once
+
+                    Y.Assert.areEqual("MyNewDEVal", h.get("DE"));
+                },
+
+                testWriteOncePostInit : function() {
+
+                    var h = this.createHost();
+                    h.set("E", "MyNewEVal");
+                    h.set("C", "MyNewCVal");
+
+                    Y.Assert.areEqual("MyNewCVal", h.get("C"));   // Write Once, default value
+                    Y.Assert.areEqual("EVal", h.get("E"));   // Write Once, default value
+                },
+
+                testWriteOnce : function() {
+                    var h = this.createHost({E:"MyEVal"});
+                    h.set("E", "MyNewEVal");
+
+                    Y.Assert.areEqual("MyEVal", h.get("E"));   // Write Once, on init
+                },
+
+                testWriteOnceInitOnly : function() {
+                    var h = this.createHost({ initOnly: "initOnlyVal"});
+                    h.set("initOnly", "NewInitOnlyVal");
+
+                    Y.Assert.areEqual("initOnlyVal", h.get("initOnly"));
+                },
+
+                testWriteOnceInitOnlyNotProvided : function() {
+                    var h1 = this.createHost();
+                    h1.set("initOnly", "InitOnlyVal");
+                    Y.Assert.areEqual(undefined, h1.get("initOnly"));
+                },
+
+                testAdHocGetSet : function() {
+                    var h = this.createHost();
+
+                    Y.Assert.areEqual(undefined, h.get("AdHoc"));
+                    h.set("AdHoc", "TestAdHoc");
+                    Y.Assert.areEqual("TestAdHoc", h.get("AdHoc"));
+
+                    h.addAttr("AdHoc", {
+                        setter: function(val) {
+                            return val.toUpperCase();
+                        }
+                    });
+
+                    h.set("AdHoc", "TestAdHocConfigured");
+                    Y.Assert.areEqual("TESTADHOCCONFIGURED", h.get("AdHoc"));
+                },
+
+                testMassSetGet : function() {
+                    var h = this.createHost();
+
+                    h.setAttrs({
+                        "A" : "MyNewAVal",
+                        "B": "MyNewBVal",
+                        "C": "MyNewCVal",
+                        "D": "MyNewDVal",
+                        "E": "MyNewEVal",
+                        "DE": "MyNewDEVal",
+                        complex: "MyNewComplexVal"
+                    });
+
+                    var expectedVals = {
+                        A: "MyNewAVal",
+                        B: "MyNewBVal",
+                        C: "MyNewCVal",
+                        D: "DVal",
+                        E: "EVal",
+                        DE: "MyNewDEVal",
+                        complex: "MyNewComplexVal"
+                    };
+
+                    Y.Assert.areEqual(expectedVals.A, h.get("A"));
+                    Y.Assert.areEqual(expectedVals.B, h.get("B"));
+                    Y.Assert.areEqual(expectedVals.C, h.get("C")); // Write once, set on first set.
+                    Y.Assert.areEqual(expectedVals.D, h.get("D"));   // Read Only
+                    Y.Assert.areEqual(expectedVals.E, h.get("E"));   // Write Once
+                    Y.Assert.areEqual(expectedVals.DE, h.get("DE"));
+
+                    areObjectsReallyEqual(expectedVals, h.getAttrs());
+                },
+
+                testModifiedAttrs : function() {
+                    var h = this.createHost();
+
+                    h.setAttrs({
+                        A: "MyNewAVal",
+                        C: "MyNewCVal",
+                        D: "MyNewDVal"
+                    });
+
+                    var expectedVals = {
+                        A: "MyNewAVal"
+                    };
+
+                    areObjectsReallyEqual(expectedVals, h.getAttrs(true));
+                },
+
+                testValidation : function() {
+                    var h = this.createHost();
+
+                    h.set("A", "MyAVal");
+                    Y.Assert.areEqual("MyAVal", h.get("A"));
+
+                    h.set("A", 100);
+                    Y.Assert.areEqual("MyAVal", h.get("A")); // Validation should prevent the attribute from being set
+
+                    h.set("B", "two");
+                    Y.Assert.areEqual("two", h.get("B"));
+
+                    h.set("B", 2);
+                    Y.Assert.areEqual(2, h.get("B"));
+
+                    h.set("B", false);
+                    Y.Assert.areEqual(2, h.get("B")); // Validation should prevent the attribute from being set
+                },
+
+                testPrivateSet : function() {
+                    var h = this.createHost();
+
+                    h.set("D", "MyNewDVal");
+                    h.set("E", "MyNewEVal");
+
+                    Y.Assert.areEqual("DVal", h.get("D"));
+                    Y.Assert.areEqual("EVal", h.get("E"));
+
+                    h._set("D", "TryDAgain");
+                    h._set("E", "TryEAgain");
+
+                    Y.Assert.areEqual("TryDAgain", h.get("D"));
+                    Y.Assert.areEqual("TryEAgain", h.get("E"));
+                },
+
+                testComplexDefault : function() {
+                    var h = this.createHost();
+
+                    var o = {
+                        X : {
+                            A: 1
+                        },
+                        Y : {
+                            A: 2
+                        },
+                        Z : {
+                            A: 3
+                        }
+                    };
+
+                    Y.Assert.areEqual(1, h.get("complex.X.A"));
+                    Y.Assert.areEqual(2, h.get("complex.Y.A"));
+                    Y.Assert.areEqual(3, h.get("complex.Z.A"));
+
+                    areObjectsReallyEqual({A:1}, h.get("complex.X"));
+                    areObjectsReallyEqual({A:2}, h.get("complex.Y"));
+                    areObjectsReallyEqual({A:3}, h.get("complex.Z"));
+
+                    var val = h.get("complex");
+
+                    Y.each(val, function(v, k) {
+                        areObjectsReallyEqual(v, o[k]);
+                    });
+                },
+
+                testComplexSet : function() {
+                    var h = this.createHost();
+
+                    h.set("complex.X.A", 111);
+                    Y.Assert.areEqual(111, h.get("complex.X.A"));
+
+                    h.set("complex.X.B", 112);
+                    Y.Assert.areEqual(112, h.get("complex.X.B"));
+                    areObjectsReallyEqual({A:111, B:112}, h.get("complex.X"));
+
+                    h.set("complex.W.B", 113);
+                    Y.Assert.areEqual(undefined, h.get("complex.W"));
+                    Y.Assert.areEqual(undefined, h.get("complex.W.B"));
+ 
+                    h.set("complex.Y", {B:222});
+                    Y.Assert.areEqual(222, h.get("complex.Y.B"));
+                    Y.Assert.areEqual(undefined, h.get("complex.Y.A"));
+                },
+
+                testInitialValidation: function() {
+                    var h = this.createHost({A:5});
+                    Y.Assert.areEqual("AVal", h.get("A")); // Numerical value validation failure should revert to default value
+                },
+
+                testProtect : function() {
+                    var h = this.createHost();
+                    var q = h._protectAttrs(AttrHost.ATTRS);
+
+                    Y.Assert.areNotSame(AttrHost.ATTRS, q);
+                    Y.Assert.areEqual(Y.dump(AttrHost.ATTRS), Y.dump(q));
+
+                    q.A.newprop = "new prop value";
+                    q.A.value = "modified value";
+
+                    Y.Assert.areNotEqual(Y.dump(AttrHost.ATTRS), Y.dump(q));
+                }
+            };
+
+            var perfTemplate = {
+                
+                name: "Performance Tests",
+
+                testTimeConstruction: function() {
+                    var start, end, n = 20, t, i;
+
+                    start = new Date().getTime();
+                    for (i = 0; i < n; i++) {
+                        t = new Test(null, false);
+                        t.getAttrs();
+                        t = null;
+                    }
+                    end = new Date().getTime();
+                    Y.log("Construction Time Populated (upfront): " + ((end-start)/n), "perf");
+
+                    start = new Date().getTime();
+                    for (i = 0; i < n; i++) {
+                        t = new Test();
+                        t.getAttrs();
+                        t = null;
+                    }
+                    end = new Date().getTime();
+                    Y.log("Construction Time Populated (lazy): " + ((end-start)/n), "perf");
+
+                    start = new Date().getTime();
+                    for (i = 0; i < n; i++) {
+                        t = new Test(null, false);
+                        t = null;
+                    }
+                    end = new Date().getTime();
+                    Y.log("Construction Time (upfront): " + ((end-start)/n), "perf");
+
+                    start = new Date().getTime();
+                    for (i = 0; i < n; i++) {
+                        t = new Test();
+                        t = null;
+                    }
+                    end = new Date().getTime();
+
+                    var time = (end-start)/n;
+                    var expectedTime = (Y.UA.ie && Y.UA.ie <= 6) ? 15 : 10;
+
+                    Y.log("Construction Time (lazy): " + time, "perf");
+
+                    start = new Date().getTime();
+                    for (i = 0; i < n; i++) {
+                        t = new Test(null, true, true);
+                        t = null;
+                    }
+                    end = new Date().getTime();
+                    Y.log("Construction Time (lazy and silent init): " + ((end-start)/n), "perf");
+
+                    Y.Assert.isTrue((time < expectedTime));
+                },
+
+                testStateForPerfSwitches : function() {
+
+                    // Lazy
+                    t = new Test();
+                    var x = t.getAttrs();
+
+                    // Non Lazy (Upfront)
+                    t = new Test(null, false);
+                    var y = t.getAttrs();
+
+                    // Lazy and Silent
+                    t = new Test(null, true, true);
+                    var z = t.getAttrs();
+
+                    Y.Assert.areEqual(Y.dump(x), Y.dump(y), "Lazy vs. Upfront: attr state is not equal");
+                    Y.Assert.areEqual(Y.dump(y), Y.dump(z), "Upfront vs. Lazy and Silent: attr state is not equal");
+                }
+            }
+
+            var suite = new Y.Test.Suite({name:"Attribute Core Unit Tests"});
+
+            suite.add(new Y.Test.Case(basicTemplate));
+            suite.add(new Y.Test.Case(augmentTemplate));
+
+            suite.add(new Y.Test.Case(basicTemplate));
+            suite.add(new Y.Test.Case(augmentTemplate));  // run twice, just to make sure static class state not modified
+
+            Y.Test.Runner.add(suite);
+            Y.Test.Runner.setName("Attribute Core Tests");
+            Y.Test.Runner.disableLogging();
+            Y.Test.Runner.run();
+
+            var console;
+
+            Y.one("#btnRun").set("disabled", false).on("click", function() {
+
+                if (!console) {
+
+                    //create the console
+                    console = new Y.Console({
+                        width:"100%",
+                        height:"95%",
+                        id:"console",
+                        verbose : false,
+                        printTimeout: 0,
+                        newestOnTop : false,
+                        entryTemplate: '<pre class="{entry_class} {cat_class} {src_class}">'+
+                                '<span class="{entry_cat_class}">{label}</span>'+
+                                '<span class="{entry_content_class}">{message}</span>'+
+                        '</pre>',
+                        render:true
+                    });
+
+                    var perfSuite = new Y.Test.Suite({name:"Attribute Performance Tests"});
+                    perfSuite.add(new Y.Test.Case(perfTemplate));
+
+                    Y.Test.Runner.add(perfSuite);
+                }
+
+                Y.Test.Runner.enableLogging();
+                Y.Test.Runner.run();
+            });
+        });
+    </script>
+</head>
+<body class="yui3-skin-sam">
+    <p><input type="button" value="Run Tests" id="btnRun" disabled=true></p>
+</body>
+</html>
