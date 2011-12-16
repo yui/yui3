@@ -9,7 +9,7 @@
      * @constructor
      * @class State
      */
-    Y.State = function() { 
+    Y.State = function() {
         /**
          * Hash of attributes
          * @property data
@@ -29,8 +29,8 @@
          */
         add : function(name, key, val) {
             var d = this.data;
-            d[key] = d[key] || {};
-            d[key][name] = val;
+            d[name] = d[name] || {};
+            d[name][key] = val;
         },
 
         /**
@@ -42,6 +42,7 @@
          */
         addAll: function(name, o) {
             var key;
+
             for (key in o) {
                 if (o.hasOwnProperty(key)) {
                     this.add(name, key, o[key]);
@@ -58,8 +59,8 @@
          */
         remove: function(name, key) {
             var d = this.data;
-            if (d[key] && (name in d[key])) {
-                delete d[key][name];
+            if (d[name]) {
+                delete d[name][key];
             }
         },
 
@@ -92,26 +93,33 @@
          */
         get: function(name, key) {
             var d = this.data;
-            return (d[key] && name in d[key]) ?  d[key][name] : undefined;
+            return (d[name]) ? d[name][key] : undefined;
         },
 
         /**
-         * For the given item, returns a disposable object with all of the
-         * item's property/value pairs.
+         * For the given item, returns an object with all of the
+         * item's property/value pairs. By default the object returned
+         * is a shallow copy of the stored data, but passing in true
+         * as the second parameter will return a reference to the stored
+         * data.
          *
          * @method getAll
          * @param name {String} The name of the item
+         * @param reference {boolean} true, if you want a reference to the stored
+         * object 
          * @return {Object} An object with property/value pairs for the item.
          */
-        getAll : function(name) {
+        getAll : function(name, reference) {
             var d = this.data, o;
 
-            Y.each(d, function(v, k) {
-                if (name in d[k]) {
-                    o = o || {};
-                    o[k] = v[name];
-                }
-            }, this);
+            if (!reference) {
+                Y.each(d[name], function(v, k) {
+                        o = o || {};
+                        o[k] = v;
+                });
+            } else {
+                o = d[name];
+            }
 
             return o;
         }

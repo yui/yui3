@@ -4,6 +4,10 @@ App Framework Change History
 3.5.0
 -----
 
+### App
+
+* Initial release.
+
 ### Model
 
 * [!] The `validate()` method is now asynchronous, and is expected to call a
@@ -42,10 +46,10 @@ App Framework Change History
   will be removed in a future version of YUI, so please update your route
   handlers to expect `next` as the third param.
 
-* "*" can now be used to create a wildcard route that will match any path
+* `"*"` can now be used to create a wildcard route that will match any path
   (previously it was necessary to use a regex to do this). Additionally, paths
-  which contain a "*" (e.g., "/users/*") act as a wildcard matching everything
-  after it.
+  which contain a `"*"` (e.g., `"/users/*"`) act as a wildcard matching
+  everything after it.
 
 * The `hasRoute()` method now accepts full URLs as well as paths.
 
@@ -62,6 +66,12 @@ App Framework Change History
 * Made the `html5` config attribute writable. This allows you to force a router
   to use (`true`) or not use (`false`) HTML5 history. Please don't set it to
   `false` unless you understand the consequences.
+
+* Added a workaround for a nasty iOS 5 bug that destroys stored references to
+  `window.location` when the page is restored from the page cache. We already
+  had a workaround in place since this issue is present in desktop Safari as
+  well, but the old workaround no longer does the trick in iOS 5.
+  [Ticket #2531608]
 
 ### View
 

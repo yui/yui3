@@ -29,6 +29,24 @@ var HistoryBase = Y.HistoryBase,
     location        = win.location,
     useHistoryHTML5 = Y.config.useHistoryHTML5;
 
+// In order to work around a nasty bug in WebKit that affects iOS 5, we need to
+// listen for the pageshow event (which occurs when the page is restored from
+// the page cache) and recreate our `window` and `location` references, since
+// old references get detached even though they shouldn't be.
+//
+// Older versions of iOS bypass the page cache when an `unload` event listener
+// is attached, but not iOS 5 for some reason.
+//
+// More details at https://bugs.webkit.org/show_bug.cgi?id=34679
+if (Y.UA.ios >= 5) {
+    Y.config.win.addEventListener('pageshow', function (e) {
+        if (e.persisted) {
+            win      = Y.config.win;
+            location = win.location;
+        }
+    }, false);
+}
+
 function HistoryHash() {
     HistoryHash.superclass.constructor.apply(this, arguments);
 }
@@ -421,21 +439,6 @@ if (HistoryBase.nativeHashChange) {
     // Begin polling for location hash changes if there's not already a global
     // poll running.
     if (!GlobalEnv._hashPoll) {
-        if (Y.UA.webkit && !Y.UA.chrome &&
-                navigator.vendor.indexOf('Apple') !== -1) {
-            // Attach a noop unload handler to disable Safari's back/forward
-            // cache. This works around a nasty Safari bug when the back button
-            // is used to return from a page on another domain, but results in
-            // slightly worse performance. This bug is not present in Chrome.
-            //
-            // Unfortunately a UA sniff is unavoidable here, but the
-            // consequences of a false positive are minor.
-            //
-            // Current as of Safari 5.0 (6533.16).
-            // See: https://bugs.webkit.org/show_bug.cgi?id=34679
-            Y.on('unload', function () {}, win);
-        }
-
         GlobalEnv._hashPoll = Y.later(50, null, function () {
             var newHash = HistoryHash.getHash(),
                 facade, newUrl;
@@ -459,6 +462,26 @@ if (HistoryBase.nativeHashChange) {
             }
         }, null, true);
     }
+}
+
+if (Y.UA.webkit && !Y.UA.chrome &&
+        navigator.vendor.indexOf('Apple') !== -1) {
+
+    // Attach a noop unload handler to disable Safari's back/forward cache. This
+    // works around a nasty Safari bug when the back button is used to return
+    // from a page on another domain, but results in slightly worse performance.
+    // This bug is not present in Chrome.
+    //
+    // Unfortunately a UA sniff is unavoidable here, but the consequences of a
+    // false positive are minor.
+    //
+    // Current as of Safari 5.0 (6533.16).
+    // See: https://bugs.webkit.org/show_bug.cgi?id=34679
+    //
+    // Note that this workaround has no effect in iOS 5, so a separate
+    // workaround using the 'pageshow' event is used there (see the top of this
+    // file).
+    Y.on('unload', function () {}, win);
 }
 
 Y.HistoryHash = HistoryHash;

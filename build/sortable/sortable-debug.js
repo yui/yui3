@@ -1,6 +1,5 @@
 YUI.add('sortable', function(Y) {
 
-
     /**
      * The class allows you to create a Drag & Drop reordered list.
      * @module sortable
@@ -216,7 +215,7 @@ YUI.add('sortable', function(Y) {
             return this;
         },
         /**
-        * @method plug
+        * @method sync
         * @description Passthrough to the DD.Delegate syncTargets method.
         * @chainable
         */

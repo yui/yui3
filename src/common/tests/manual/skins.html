@@ -7,6 +7,7 @@
     <link type="text/css" rel="stylesheet" href="../../../../build/cssreset/cssreset.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/cssfonts/cssfonts.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/cssgrids/cssgrids.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/autocomplete-list/assets/skins/night/autocomplete-list.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/slider-base/assets/skins/night/slider-base.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/tabview/assets/skins/night/tabview.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/datatable-base/assets/skins/night/datatable-base.css">
@@ -14,6 +15,7 @@
     <link type="text/css" rel="stylesheet" href="../../../../build/scrollview-list/assets/skins/night/scrollview-list.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/scrollview-scrollbars/assets/skins/night/scrollview-scrollbars.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/panel/assets/skins/night/panel.css" charset="utf-8">
+    <link type="text/css" rel="stylesheet" href="../../../../build/node-menunav/assets/skins/night/node-menunav.css" charset="utf-8">
 
     <!--
     <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/gallery-2011.08.04-15-16/build/gallerycss-cssbutton/gallerycss-cssbutton.css" charset="utf-8">
@@ -40,7 +42,7 @@
         }
 
         .yui3-tabview {
-            width: 400px;
+            width: 300px;
         }
 
         #buttons-dir,
@@ -65,6 +67,32 @@
             color: inherit;
             font-size: inherit;
         }
+/* ======================    temp. MAKE SURE TO DELETE THESE CALENDAR REMOMMENDATIONS BEFORE TESTING ==============================*/
+html .yui3-skin-night .yui3-calendar-content {
+    background: #494A4A;
+    /*border: 1px solid gray;*/
+    border-radius: 5px 5px 5px 5px;
+    color: #fff;
+    font-family: "Lucida Grande","Lucida Sans",Calibri,Helvetica,Arial,sans-serif;
+    font-size: 0.8em;
+    padding: 10px;
+}
+html .yui3-skin-night .yui3-calendar-day, 
+html .yui3-skin-night .yui3-calendar-prevmonth-day,
+html .yui3-skin-night .yui3-calendar-nextmonth-day {
+    background: none repeat scroll 0 0 #585959;
+    border: 1px solid #414342;
+    text-align: center;
+}
+html .yui3-skin-night .yui3-calendar-weekdayrow{
+    color:#969696;
+}
+html .yui3-skin-night .yui3-calendar-day-selected {
+    background-color: #70A4EB;
+    color: #000000;
+}
+/* ======================   end  temp. MAKE SURE TO DELETE THESE CALENDAR REMOMMENDATIONS BEFORE TESTING ==============================*/
+
 
     </style> 
 
@@ -74,6 +102,7 @@
             <div id="buttons-skin" class="yui3-u">
                 <button id="sam" class="yui3-button yui3-button-selected">Sam</button>
                 <button id="night" class="yui3-button">Night</button>
+                <button id="togglebkg" class="yui3-button">Toggle HTML Bkg Color</button>
             </div>
 
             <div id="buttons-dir" class="yui3-u">
@@ -82,6 +111,8 @@
             </div>
         </div>
         <div class="yui3-g">
+
+<!-- TabView -->        
             <div class="yui3-u">
                 <div class="yui3-widget-loading" id="demo-tabview"> 
                     <ul> 
@@ -97,13 +128,13 @@
                     </ul> 
                     <div> 
                         <div id="pork"> 
-                            <p>Pork tail short loin ground round. Spare ribs bresaola cow prosciutto. Ground round shoulder shankle venison tongue, beef ribs spare ribs salami frankfurter bacon turducken tri-tip tail ribeye pork chop. Chicken tail bacon, biltong corned beef shankle pancetta shoulder brisket pork belly ham pork bresaola pig. Kielbasa filet mignon beef ribs, brisket ham ribeye pig ground round jerky flank turkey ham hock. Bacon swine jowl, pancetta salami boudin rump venison meatloaf strip steak. Fatback shoulder beef capicola.</p> 
+                            <p>Pork tail short loin ground round. Spare ribs bresaola cow prosciutto. Ground round shoulder shankle venison tongue, beef ribs spare ribs salami frankfurter bacon turducken tri-tip tail ribeye pork chop. Chicken tail bacon, biltong corned beef shankle pancetta shoulder brisket pork belly ham pork bresaola pig.</p> 
                         </div> 
                         <div id="meatball"> 
-                            <p>Meatball cow leberkäse, tenderloin sirloin spare ribs beef ribs turkey ball tip flank pork loin fatback andouille strip steak tri-tip. Kielbasa drumstick pastrami tongue, strip steak shank tail beef ribs pork turducken pork loin pork chop. Capicola ground round tail t-bone pork chop kielbasa, chicken prosciutto bacon brisket sausage jowl. Andouille shoulder pork pig swine. Venison beef ribs turducken pork chop, sausage turkey drumstick sirloin ham swine chicken. Kielbasa pancetta t-bone ham. Brisket tenderloin meatball turducken, hamburger ball tip rump pork flank ground round spare ribs kielbasa beef ribs bacon.</p> 
+                            <p>Meatball cow leberkäse, tenderloin sirloin spare ribs beef ribs turkey ball tip flank pork loin fatback andouille strip steak tri-tip. Kielbasa drumstick pastrami tongue, strip steak shank tail beef ribs pork turducken pork loin pork chop. Capicola ground round tail t-bone pork chop kielbasa, chicken prosciutto bacon brisket sausage jowl. Andouille shoulder pork pig swine. Venison beef ribs turducken pork chop, sausage turkey drumstick sirloin ham swine chicken.</p> 
                         </div> 
                         <div id="salami"> 
-                            <p>Salami short ribs corned beef, pancetta ham hock jowl frankfurter tail rump flank capicola tri-tip andouille sirloin. Biltong bresaola sausage hamburger ground round, pork loin tri-tip pig andouille fatback short ribs pork jowl. Capicola boudin sirloin tongue, beef prosciutto spare ribs shankle ball tip ham beef ribs turducken tenderloin. Drumstick tenderloin ribeye leberkäse, pork belly pancetta turducken frankfurter bresaola pig biltong. Pastrami beef ribs meatball tri-tip, chuck jerky prosciutto beef rump drumstick bresaola jowl. Hamburger leberkäse pork chop, ball tip meatball ham andouille fatback corned beef pork loin shoulder boudin. Shoulder short loin flank filet mignon tri-tip.</p> 
+                            <p>Salami short ribs corned beef, pancetta ham hock jowl frankfurter tail rump flank capicola tri-tip andouille sirloin. Biltong bresaola sausage hamburger ground round, pork loin tri-tip pig andouille fatback short ribs pork jowl. Capicola boudin sirloin tongue, beef prosciutto spare ribs shankle ball tip ham beef ribs turducken tenderloin. Drumstick tenderloin ribeye leberkäse, pork belly pancetta turducken frankfurter bresaola pig biltong.</p> 
                         </div> 
                     </div> 
                 </div> 
@@ -127,17 +158,17 @@
                                             <label for="name">Name</label> 
                                             <input type="text" name="name" id="name"> 
                                         </li> 
-                                        <li> 
+                                        <!--<li> 
                                             <label for="price">Price</label> 
                                             <input type="text" name="price" id="price"> 
-                                        </li> 
+                                        </li>--> 
                                     </ul> 
                                 </fieldset> 
                             </form> 
                         </div>
                         <div class="yui3-widget-ft"> 
-                            <button class="yui3-button">Add Item</button> 
-                            <button class="yui3-button">Remove All Items</button> 
+                            <button class="yui3-button">Cancel</button> 
+                            <button class="yui3-button">Add</button> 
                         </div> 
                     </div> 
                 </div>
@@ -180,13 +211,13 @@
                             <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://developer.yahoo.com/">Developer Network</a></li> 
                             <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://www.flickr.com">Flickr</a></li> 
                             <li> 
-                                <a class="yui3-menu-label" href="#pim">PIM</a> 
+                                <a class="yui3-menu-label" href="#pim">Mail</a> 
                                 <div id="pim" class="yui3-menu"> 
                                     <div class="yui3-menu-content">    
 
                                         <ul> 
                                             <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://mail.yahoo.com">Mail</a></li> 
-                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://www.zimbra.com">Zimbra</a></li> 
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://mail.yahoo.com">Contact Lists</a></li> 
                                         </ul> 
 
                                         <ul> 
@@ -202,11 +233,13 @@
                                     </div>    
                                 </div>                    
                             </li> 
-                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://profiles.yahoo.com">Profiles</a> </li> 
+                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://news.yahoo.com">News</a> </li> 
                             <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://mobile.yahoo.com">Mobile</a></li> 
-                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://mybloglog.yahoo.com/">MyBlogLog</a></li> 
-                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://pride.yahoo.com/">Pride</a></li> 
-                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://upcoming.yahoo.com/">Upcoming</a></li> 
+                        </ul>
+                        <ul>
+                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://finance.yahoo.com/">Finance</a></li> 
+                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://shine.yahoo.com/">Shine</a></li> 
+                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://shopping.yahoo.com/">Shopping</a></li> 
                         </ul>    
                     </div> 
                 </div>      
@@ -223,23 +256,23 @@
                                 <div id="connect" class="yui3-menu">
                                     <div class="yui3-menu-content">
                                         <ul>
-                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://developer.yahoo.com/">Developer Network</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://yahoo.com/">Yahoo!</a></li>
                                             <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://www.flickr.com">Flickr</a></li>
                                             <li>
-                                                <a class="yui3-menu-label" href="#pim">PIM</a>
+                                                <a class="yui3-menu-label" href="#pim">Mail</a>
         
                                                 <div id="pim" class="yui3-menu">
                                                     <div class="yui3-menu-content">
         
                                                         <ul>
                                                             <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://mail.yahoo.com">Mail</a></li>
-                                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://www.zimbra.com">Zimbra</a></li>
+                                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://calendar.yahoo.com">Calendar</a></li>
                                                         </ul>
         
                                                         <ul>
         
                                                             <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://addressbook.yahoo.com">Address Book</a></li>
-                                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://calendar.yahoo.com">Calendar</a></li>
+                                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://calendar.yahoo.com">What's New</a></li>
                                                             <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://notepad.yahoo.com">Notepad</a></li>
                                                         </ul>
         
@@ -251,12 +284,12 @@
                                                     </div>
                                                 </div>
                                             </li>
-                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://profiles.yahoo.com">Profiles</a> </li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://movies.yahoo.com">Movies</a> </li>
                                             <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://mobile.yahoo.com">Mobile</a></li>
-                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://mybloglog.yahoo.com/">MyBlogLog</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://travel.yahoo.com/">Travel</a></li>
         
-                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://pride.yahoo.com/">Pride</a></li>
-                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://upcoming.yahoo.com/">Upcoming</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://sports.yahoo.com/">Sports</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://finance.yahoo.com/">Finance</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -264,11 +297,11 @@
         
                             <li>
         
-                                <a class="yui3-menu-label" href="#find-info">Find Info (horiz menu)</a>
+                                <a class="yui3-menu-label" href="#find-info">Find Info</a>
                                 <div id="find-info" class="yui3-menu">
                                     <div class="yui3-menu-content">
                                         <ul>
-                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://answers.yahoo.com">Answers</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://search.yahoo.com">Yahoo! Search</a></li>
                                             <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://babelfish.yahoo.com/">Babel Fish Translations</a></li>
                                             <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://info.yahoo.com/">Company Info</a></li>
         
@@ -291,10 +324,65 @@
                 </div>
             </div>      
 <!-- end menu nav horizontal-->
+<!-- MenuNav horiz split button-->
+            <div class="yui3-u">
+                <div id="menu-1" class="yui3-menu yui3-menu-horizontal yui3-splitbuttonnav"><!-- Bounding box -->
+                    <div class="yui3-menu-content"><!-- Content box -->
+                        <ul>
+                            <li>
+                
+                                <span class="yui3-menu-label"><!-- menu label root node -->
+                                    <a href="http://travel.yahoo.com">Travel</a><!-- menu label default action -->
+                                    <a href="#travel-options" class="yui3-menu-toggle">Travel Options</a><!-- menu label submenu toggle -->
+                                </span>
+                
+                                <div id="travel-options" class="yui3-menu">
+                                    <div class="yui3-menu-content">
+                                        <ul>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://travel.yahoo.com/beach;_ylt=AtWGJZLM73jp52fJNMJcOwGhpYMA">Beach</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://travel.yahoo.com/honeymoon;_ylt=ArJByEt5iYogEYMdhsWy_sWhpYMA">Honeymoon</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://travel.yahoo.com/national-parks;_ylt=Aisxea9BMnUZdmrYv.sOYk2hpYMA">National Parks</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://travel.yahoo.com/family;_ylt=Aiz4pI2rCCo6cy7G0XqfdPehpYMA">Family</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                
+                            </li>
+                            <li>
+                
+                                <span class="yui3-menu-label"><!-- menu label root node -->
+                                    <a href="http://news.yahoo.com">News</a><!-- menu label default action -->
+                                    <a href="#news-options" class="yui3-menu-toggle">News Options</a><!-- menu label submenu toggle -->
+                                </span>
+                
+                                <div id="news-options" class="yui3-menu">
+                                    <div class="yui3-menu-content">
+                                        <ul>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://news.yahoo.com/">News</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://news.yahoo.com/world">World</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://news.yahoo.com/tech">Tech</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://news.yahoo.com/sports">Sports</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>      
+<!-- end menu nav horizontal split button-->
+<!-- Autocomplete -->           
+            <div class="yui3-u">
+                <div id="autocomplete" class="yui3-widget">
+                    <label for="ac-input">Enter the name of a US state:</label><br>
+                    <input id="ac-input" type="text">
+                </div>
+            </div>
         </div>      
     </div> 
 <script>
-YUI({filter: 'raw'}).use('tabview', 'datatable-sort', 'calendar', 'panel', 'dial', 'node-menunav', 'node-event-delegate', 'slider', 'scrollview', 'scrollview-list', function(Y) {
+YUI({filter: 'raw'}).use('autocomplete', 'autocomplete-filters', 'autocomplete-highlighters', 'tabview', 'datatable-sort', 'calendar', 'panel', 'dial', 'node-menunav', 'node-event-delegate', 'slider', 'scrollview', 'scrollview-list', function(Y) {
     var buttonHandlers = {
         sam: function(e) {
             Y.one('body').replaceClass('yui3-skin-night', 'yui3-skin-sam');
@@ -302,6 +390,16 @@ YUI({filter: 'raw'}).use('tabview', 'datatable-sort', 'calendar', 'panel', 'dial
 
         night: function(e) {
             Y.one('body').replaceClass('yui3-skin-sam', 'yui3-skin-night');
+        },
+        
+        togglebkg: function(e) {
+            if(Y.one('html').getStyle('backgroundColor') === "rgb(255, 255, 255)"){
+                Y.one('html').setStyle('backgroundColor',  "rgb(0, 0, 0)");
+                //Y.one('html').setStyle('color',  "rgb(255, 255, 255)");
+            }else{
+                Y.one('html').setStyle('backgroundColor',  "rgb(255, 255, 255)");
+                // Y.one('html').setStyle('color',  "rgb(0, 0, 0)");   the default
+            }
         },
 
         rtl: function(e) {
@@ -325,7 +423,70 @@ YUI({filter: 'raw'}).use('tabview', 'datatable-sort', 'calendar', 'panel', 'dial
             handler.call(this, e);
         }
     }
+/////////// autocomplete
+  var states = [
+    'Alabama',
+    'Alaska',
+    'Arizona',
+    'Arkansas',
+    'California',
+    'Colorado',
+    'Connecticut',
+    'Delaware',
+    'Florida',
+    'Georgia',
+    'Hawaii',
+    'Idaho',
+    'Illinois',
+    'Indiana',
+    'Iowa',
+    'Kansas',
+    'Kentucky',
+    'Louisiana',
+    'Maine',
+    'Maryland',
+    'Massachusetts',
+    'Michigan',
+    'Minnesota',
+    'Mississippi',
+    'Missouri',
+    'Montana',
+    'Nebraska',
+    'Nevada',
+    'New Hampshire',
+    'New Jersey',
+    'New Mexico',
+    'New York',
+    'North Dakota',
+    'North Carolina',
+    'Ohio',
+    'Oklahoma',
+    'Oregon',
+    'Pennsylvania',
+    'Rhode Island',
+    'South Carolina',
+    'South Dakota',
+    'Tennessee',
+    'Texas',
+    'Utah',
+    'Vermont',
+    'Virginia',
+    'Washington',
+    'West Virginia',
+    'Wisconsin',
+    'Wyoming'
+  ];
 
+  Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
+    resultFilters    : 'phraseMatch',
+    resultHighlighter: 'phraseMatch',
+    source           : states
+  });
+
+
+
+
+/////////// end autocomplete
     new Y.TabView({
         srcNode: '#demo-tabview'
     }).render();
@@ -372,7 +533,7 @@ YUI({filter: 'raw'}).use('tabview', 'datatable-sort', 'calendar', 'panel', 'dial
 
     new Y.ScrollView({
         height: 150,
-        width: 300,
+        width: 150,
         srcNode: '#demo-scrollview',
         plugins:[Y.Plugin.ScrollViewList],
         render:true
@@ -389,6 +550,8 @@ YUI({filter: 'raw'}).use('tabview', 'datatable-sort', 'calendar', 'panel', 'dial
 
     Y.one('#demo-menunav').plug(Y.Plugin.NodeMenuNav);
     Y.one('#demo-menunav-horiz').plug(Y.Plugin.NodeMenuNav);
+    var menu = Y.one("#menu-1");
+    menu.plug(Y.Plugin.NodeMenuNav, { autoSubmenuDisplay: false, mouseOutHideDelay: 0 });
 
     // what if...
     // Y.Menu('#demo-menu');

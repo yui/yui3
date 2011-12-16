@@ -119,5 +119,8 @@ YUI.add('attribute-complex', function(Y) {
 
     Y.mix(Y.Attribute, Y.Attribute.Complex, true, null, 1);
 
+    // Consistency with the rest of the Attribute addons for now. 
+    Y.AttributeComplex = Y.Attribute.Complex;
+
 
 }, '@VERSION@' ,{requires:['attribute-base']});

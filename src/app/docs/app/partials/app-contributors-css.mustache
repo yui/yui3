@@ -1,0 +1,191 @@
+<style scoped>
+#github-app h1 {
+    padding: 0;
+}
+
+#github-app .loading {
+    opacity: 0.5;
+    -webkit-transition: opacity 0.15s;
+}
+
+#github-app .avatar,
+#github-app .avatar img {
+    display: block;
+    width: 76px;
+    height: 76px;
+    border: 0;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+#github-app .avatar {
+    display: inline-block;
+    *display: inline; zoom: 1;
+    height: 76px;
+    padding: 2px;
+}
+#github-app .avatar:hover,
+#github-app .user-avatar {
+    -webkit-box-shadow: 0 0 2px rgba(0,0,0,0.25);
+    -moz-box-shadow: 0 0 2px rgba(0,0,0,0.25);
+    box-shadow: 0 0 2px rgba(0,0,0,0.25);
+}
+
+#github-app .home-page h1,
+#github-app .home-page p {
+    display: block;
+    text-align: center;
+}
+#github-app .home-page input,
+#github-app .home-page button {
+    font-size: 20px;
+    line-height: normal;
+    margin: 5px auto 0;
+    padding: 6px;
+}
+#github-app .home-page input {
+    display: inline-block;
+    *display: inline; zoom: 1;
+    font-family: Helvetica, sans-serif;
+    width: 200px;
+    text-align: left;
+}
+
+#github-app .user-choose,
+#github-app .user-github,
+#github-app .repo-choose,
+#github-app .repo-github {
+    margin-top: 0;
+}
+#github-app .user-github,
+#github-app .repo-github {
+    text-align: right;
+}
+#github-app .user-info h1,
+#github-app .repo-info h1 {
+    margin: 0;
+}
+#github-app .user-avatar {
+    margin-right: 10px;
+}
+#github-app .user-name {
+    font-weight: 400;
+}
+#github-app .user-info .user-avatar,
+#github-app .user-info .user-login,
+#github-app .user-info .user-name,
+#github-app .repo-info .user-avatar,
+#github-app .repo-info .user-login,
+#github-app .repo-info .repo-name {
+    vertical-align: middle;
+}
+#github-app .user-page .user-stats ul,
+#github-app .repo-page .repo-stats ul {
+    margin: 0;
+    padding: 8px;
+    color: #30418C;
+    background: #F0F1F8;
+    border: 1px solid #D4D8EB;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    text-align: center;
+    list-style: none;
+}
+#github-app .user-page .user-repos b,
+#github-app .user-page .user-followers b,
+#github-app .repo-page .repo-watchers b,
+#github-app .repo-page .repo-forks b {
+    display: block;
+    font-size: 36px;
+    line-height: 44px;
+}
+
+#github-app .repos,
+#github-app .contributors {
+    padding-left: 0;
+    list-style: none;
+}
+
+#github-app .repo {
+    margin: 10px -13px;
+    padding: 0 13px;
+    color: #30418C;
+    background: #F9F9FC;
+}
+#github-app .repo-stats ul {
+    margin-top: 6px;
+    list-style: none;
+    padding-left: 0;
+}
+#github-app .repo-name h3 {
+    margin: 6px 0 0 0;
+}
+#github-app .repo-stats {
+    text-align: right;
+}
+#github-app .repo-stats b {
+    display: block;
+}
+#github-app .repo-stats span {
+    display: block;
+    font-size: 11px;
+    line-height: 11px;
+    color: #B6BCD7;
+    color: rgba(48, 65, 140, 0.40);
+}
+#github-app .repo-desc {
+    margin: 10px 20px 0 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #B6BCD7;
+    color: rgba(48, 65, 140, 0.40);
+}
+
+#github-app .contributors {
+    margin-left: -5px;
+    margin-right: -5px;
+}
+#github-app .contributor {
+    margin: 5px;
+}
+#github-app .contributor .avatar {
+    position: relative;
+    display: block;
+}
+#github-app .contributor .avatar:link,
+#github-app .contributor .avatar:visited,
+#github-app .contributor .avatar:hover,
+#github-app .contributor .avatar:active {
+    text-decoration: none;
+}
+#github-app .contributor-name,
+#github-app .contributor-contributions {
+    position: absolute;
+    margin: 2px;
+    padding: 0 4px;
+    max-width: 68px;
+    font-size: 11px;
+    color: #000;
+    background: #FFF;
+    background: rgba(255,255,255, 0.75);
+    -webkit-border-top-right-radius: 3px;
+    -webkit-border-bottom-left-radius: 3px;
+    -moz-border-radius-topright: 3px;
+    -moz-border-radius-bottomleft: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+#github-app .contributor-name {
+    bottom: 0;
+    left: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+#github-app .contributor-contributions {
+    top: 0;
+    right: 0;
+}
+</style>

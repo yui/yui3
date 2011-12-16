@@ -3224,6 +3224,20 @@ YUI.Env.parseUA = function(subUA) {
          */
         android: 0,
         /**
+         * Detects Kindle Silk
+         * @property silk
+         * @type float
+         * @static
+         */
+        silk: 0,
+        /**
+         * Detects Kindle Silk Acceleration
+         * @property accel
+         * @type Boolean
+         * @static
+         */
+        accel: false,
+        /**
          * Detects Palms WebOS version
          * @property webos
          * @type float
@@ -3342,6 +3356,19 @@ YUI.Env.parseUA = function(subUA) {
                     }
 
                 }
+                if (/Silk/.test(ua)) {
+                    m = ua.match(/Silk\/([^\s]*)\)/);
+                    if (m && m[1]) {
+                        o.silk = numberify(m[1]);
+                    }
+                    if (!o.android) {
+                        o.android = 2.34; //Hack for desktop mode in Kindle
+                        o.os = 'Android';
+                    }
+                    if (/Accelerated=true/.test(ua)) {
+                        o.accel = true;
+                    }
+                }
             }
 
             m = ua.match(/Chrome\/([^\s]*)/);
@@ -3416,6 +3443,7 @@ YUI.Env.aliases = {
     "attribute": ["attribute-base","attribute-complex"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
+    "button": ["button-base","button-group","cssbuttons"],
     "cache": ["cache-base","cache-offline","cache-plugin"],
     "collection": ["array-extras","arraylist","arraylist-add","arraylist-filter","array-invoke"],
     "controller": ["router"],
@@ -3451,6 +3479,8 @@ YUI.Env.aliases = {
 
 }, '@VERSION@' );
 YUI.add('get', function(Y) {
+
+/*jslint boss:true, expr:true, laxbreak: true */
 
 /**
 Provides dynamic loading of remote JavaScript and CSS resources.
@@ -3633,6 +3663,18 @@ Y.Get = Get = {
     **/
 
     /**
+    Mapping of document _yuid strings to <head> or <base> node references so we
+    don't have to look the node up each time we want to insert a request node.
+
+    @property _insertCache
+    @type Object
+    @protected
+    @static
+    @since 3.5.0
+    **/
+    _insertCache: {},
+
+    /**
     Information about the currently pending transaction, if any.
 
     This is actually an object with two properties: `callback`, containing the
@@ -3688,16 +3730,17 @@ Y.Get = Get = {
     @static
     **/
     abort: function (transaction) {
-        var i, id, item, len;
+        var i, id, item, len, pending;
 
         Y.log('`Y.Get.abort()` is deprecated as of 3.5.0. Use the `abort()` method on the transaction instead.', 'warn', 'get');
 
-        if (!(typeof transaction === 'object')) {
-            id = transaction;
+        if (!transaction.abort) {
+            id          = transaction;
+            pending     = this._pending;
             transaction = null;
 
-            if (this._pending && this._pending.transaction.id === id) {
-                transaction = this._pending.transaction;
+            if (pending && pending.transaction.id === id) {
+                transaction   = pending.transaction;
                 this._pending = null;
             } else {
                 for (i = 0, len = this._queue.length; i < len; ++i) {
@@ -3712,9 +3755,7 @@ Y.Get = Get = {
             }
         }
 
-        if (transaction) {
-            transaction.abort();
-        }
+        transaction && transaction.abort();
     },
 
     /**
@@ -3955,7 +3996,7 @@ Y.Get = Get = {
         // Note: some of these checks require browser sniffs since it's not
         // feasible to load test files on every pageview just to perform a
         // feature test. I'm sorry if this makes you sad.
-        return this._env = {
+        return (this._env = {
             // True if this is a browser that supports disabling async mode on
             // dynamically created script nodes. See
             // https://developer.mozilla.org/En/HTML/Element/Script#Attributes
@@ -3971,14 +4012,14 @@ Y.Get = Get = {
             // loading scripts in parallel as long as the script node's `async`
             // attribute is set to false to explicitly disable async execution.
             preservesScriptOrder: !!(ua.gecko || ua.opera)
-        };
+        });
     },
 
     _getTransaction: function (urls, options) {
         var requests = [],
             i, len, req, url;
 
-        if (typeof urls === 'string') {
+        if (!Lang.isArray(urls)) {
             urls = [urls];
         }
 
@@ -4050,6 +4091,12 @@ Y.Get = Get = {
     _load: function (type, urls, options, callback) {
         var transaction;
 
+        // Allow callback as third param.
+        if (typeof options === 'function') {
+            callback = options;
+            options  = {};
+        }
+
         options || (options = {});
         options.type = type;
 
@@ -4093,24 +4140,10 @@ Y.Get = Get = {
     _purge: function (nodes) {
         var purgeNodes    = this._purgeNodes,
             isTransaction = nodes !== purgeNodes,
-            attr, index, node, parent;
+            index, node;
 
-        while (node = nodes.pop()) {
-            parent = node.parentNode;
-
-            if (node.clearAttributes) {
-                // IE.
-                node.clearAttributes();
-            } else {
-                // Everyone else.
-                for (attr in node) {
-                    if (node.hasOwnProperty(attr)) {
-                        delete node[attr];
-                    }
-                }
-            }
-
-            parent && parent.removeChild(node);
+        while (node = nodes.pop()) { // assignment
+            node.parentNode && node.parentNode.removeChild(node);
 
             // If this is a transaction-level purge and this node also exists in
             // the Get-level _purgeNodes array, we need to remove it from
@@ -4290,6 +4323,7 @@ Transaction.prototype = {
 
         if (state === 'done') {
             callback && callback(self.errors.length ? self.errors : null, self);
+            return;
         } else {
             callback && self._callbacks.push(callback);
 
@@ -4364,26 +4398,22 @@ Transaction.prototype = {
             this._callbacks[i].call(thisObj, errors, this);
         }
 
-        if (options.onEnd || options.onFailure || options.onSuccess
-                || options.onTimeout) {
+        data = this._getEventData();
 
-            data = this._getEventData();
-
-            if (errors) {
-                if (options.onTimeout && errors[errors.length - 1] === 'Timeout') {
-                    options.onTimeout.call(thisObj, data);
-                }
-
-                if (options.onFailure) {
-                    options.onFailure.call(thisObj, data);
-                }
-            } else if (options.onSuccess) {
-                options.onSuccess.call(thisObj, data);
+        if (errors) {
+            if (options.onTimeout && errors[errors.length - 1] === 'Timeout') {
+                options.onTimeout.call(thisObj, data);
             }
 
-            if (options.onEnd) {
-                options.onEnd.call(thisObj, data);
+            if (options.onFailure) {
+                options.onFailure.call(thisObj, data);
             }
+        } else if (options.onSuccess) {
+            options.onSuccess.call(thisObj, data);
+        }
+
+        if (options.onEnd) {
+            options.onEnd.call(thisObj, data);
         }
     },
 
@@ -4404,23 +4434,41 @@ Transaction.prototype = {
 
     _getInsertBefore: function (req) {
         var doc = req.doc,
-            el  = req.insertBefore || doc.getElementsByTagName('base')[0];
-
-        // Inserting before a <base> tag apparently works around an IE bug
-        // (according to a comment from pre-3.5.0 Y.Get), but I'm not sure what
-        // bug that is, exactly. Better safe than sorry?
+            el  = req.insertBefore,
+            cache, cachedNode, docStamp;
 
         if (el) {
             return typeof el === 'string' ? doc.getElementById(el) : el;
         }
 
-        // Barring an explicit insertBefore config or a <base> element, we'll
-        // try to insert before the first child of <head>. If <head> doesn't
-        // exist, we'll throw our hands in the air and insert before the first
-        // <script>, which we know must exist because *something* put Y.Get on
-        // the page.
+        cache    = Get._insertCache;
+        docStamp = Y.stamp(doc);
+
+        if ((el = cache[docStamp])) { // assignment
+            return el;
+        }
+
+        // Inserting before a <base> tag apparently works around an IE bug
+        // (according to a comment from pre-3.5.0 Y.Get), but I'm not sure what
+        // bug that is, exactly. Better safe than sorry?
+        if ((el = doc.getElementsByTagName('base')[0])) { // assignment
+            return (cache[docStamp] = el);
+        }
+
+        // Look for a <head> element.
         el = doc.head || doc.getElementsByTagName('head')[0];
-        return el ? el.firstChild : doc.getElementsByTagName('script')[0];
+
+        if (el) {
+            // Create a marker node at the end of <head> to use as an insertion
+            // point. Inserting before this node will ensure that all our CSS
+            // gets inserted in the correct order, to maintain style precedence.
+            el.appendChild(doc.createTextNode(''));
+            return (cache[docStamp] = el.lastChild);
+        }
+
+        // If all else fails, just insert before the first script node on the
+        // page, which is virtually guaranteed to exist.
+        return (cache[docStamp] = doc.getElementsByTagName('script')[0]);
     },
 
     _insert: function (req) {
@@ -4445,8 +4493,7 @@ Transaction.prototype = {
                 req.doc);
         }
 
-        function onError(e) {
-            // TODO: What useful info is on `e`, if any?
+        function onError() {
             self._progress('Failed to load ' + req.url, req);
         }
 
@@ -4476,7 +4523,6 @@ Transaction.prototype = {
                 // on insertion order, we'll need to avoid inserting other
                 // scripts until this one finishes loading.
                 if (!env.preservesScriptOrder) {
-                    Y.log("This browser doesn't preserve script execution order, so scripts will be loaded synchronously (which is slower).", 'info', 'get');
                     this._pending = req;
                 }
             }
@@ -5232,7 +5278,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2011.11.30-20-58',
+            GALLERY_VERSION = 'gallery-2011.12.14-21-12',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -7503,6 +7549,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             comboSource, comboSources, mods, comboBase,
             base, urls, u = [], tmpBase, baseLen, resCombos = {},
             self = this,
+            singles = [],
             resolved = { js: [], jsMods: [], css: [], cssMods: [] },
             type = self.loadType || 'js';
 
@@ -7532,6 +7579,8 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
                     if (!group.combine) {
                         m.combine = false;
+                        //This is not a combo module, skip it and load it singly later.
+                        singles.push(s[i]);
                         continue;
                     }
                     m.combine = true;
@@ -7611,9 +7660,11 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
             resCombos = null;
             
-        } else {
+        }
 
-            s = self.sorted;
+        if (!self.combine || singles.length) {
+
+            s = singles.length ? singles : self.sorted;
             len = s.length;
 
             for (i = 0; i < len; i = i + 1) {
@@ -7886,12 +7937,29 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "attribute-base": {
         "requires": [
-            "event-custom"
+            "attribute-core", 
+            "attribute-events", 
+            "attribute-extras"
         ]
     }, 
     "attribute-complex": {
         "requires": [
             "attribute-base"
+        ]
+    }, 
+    "attribute-core": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
+    "attribute-events": {
+        "requires": [
+            "event-custom"
+        ]
+    }, 
+    "attribute-extras": {
+        "requires": [
+            "yui-base"
         ]
     }, 
     "autocomplete": {
@@ -8023,6 +8091,27 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "base-base", 
             "pluginhost"
+        ]
+    }, 
+    "button": {
+        "use": [
+            "button-base", 
+            "button-group", 
+            "cssbuttons"
+        ]
+    }, 
+    "button-base": {
+        "requires": [
+            "base", 
+            "classnamemanager", 
+            "node"
+        ]
+    }, 
+    "button-group": {
+        "requires": [
+            "button-base", 
+            "arraylist", 
+            "arraylist-add"
         ]
     }, 
     "cache": {
@@ -8174,6 +8263,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "cssfonts-context", 
             "cssgrids-context"
         ], 
+        "type": "css"
+    }, 
+    "cssbuttons": {
         "type": "css"
     }, 
     "cssfonts": {
@@ -9880,7 +9972,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'c075c6b01045f120558254c68a43f92e';
+YUI.Env[Y.version].md5 = 'e719c1fc98639334a030a60a79f19ad5';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

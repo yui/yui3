@@ -70,13 +70,15 @@ WidgetAutohide.ATTRS = {
      */
     hideOn: {
         validator: Y.Lang.isArray,
-        value    : [
-            {
-                node: Y.one(DOCUMENT),
-                eventName: KEY,
-                keyCode: PRESS_ESCAPE
-            }
-        ]
+        valueFn  : function() {
+            return [
+                {
+                    node: Y.one(DOCUMENT),
+                    eventName: KEY,
+                    keyCode: PRESS_ESCAPE
+                }
+            ];
+        }
     }
 };
 

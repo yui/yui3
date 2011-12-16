@@ -6,8 +6,8 @@
 
     "tags": [
         "infrastructure", "app", "beta", "controller", "list", "model",
-        "modellist", "model-list", "mvc", "route", "router", "routing", "sync",
-        "view"
+        "modellist", "model-list", "mvc", "navigation", "pjax", "route",
+        "router", "routing", "sync", "template", "url", "view"
     ],
 
     "use": ["app"],
@@ -17,10 +17,21 @@
             "name"       : "app-todo",
             "displayName": "Todo List",
             "description": "A basic todo list built with the Model, Model List, and View components.",
-            "modules"    : ["app", "model", "model-list", "view"],
+            "modules"    : ["event-focus", "json", "model", "model-list", "view"],
             "tags"       : [
                 "app", "todo", "model", "model-list", "view", "modellist",
                 "list"
+            ]
+        },
+
+        {
+            "name"       : "app-contributors",
+            "displayName": "GitHub Contributors",
+            "description": "An application to browse through the contributors of a GitHub project.",
+            "modules"    : ["app", "model", "model-list", "view"],
+            "tags"       : [
+                "app", "browsing", "model", "model-list", "naivgation", "pjax",
+                "view", "handlebars", "template"
             ]
         }
     ]

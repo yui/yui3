@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src='../../../../build/yui/yui-min.js'></script>
+
+        <script>
+            YUI({
+                base: '../../../../build/',
+                debug: true,
+                combo: false,
+                filter: 'raw'
+            }).use('button', function(Y){
+                new Y.Button({
+                    srcNode: '#image-button',
+                    type: 'toggle'
+                })
+            });
+        </script>
+        
+        <style>
+            .yui3-button{
+                padding:20px;
+            }
+            
+            .yui3-button-selected {
+                background-color:#F2F194;
+                color:white;
+            }
+        </style>
+    </head>
+    
+    <body>
+        
+        <h1>Button Example: Image</h1>
+        
+        <input type='image' id='image-button' value='asd' src="http://yuilibrary.com/img/yui-logo.png"></input>
+        
+    </body>
+</html>

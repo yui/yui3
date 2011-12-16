@@ -1,6 +1,22 @@
 Charts Change History
 =====================
 
+3.5.0
+-----
+
+  * #2529859 Fixed issue in which Chart with timeAxis was not correctly initialized when setting dataProvider.
+  * #2529922 Fixed issue in which updates to axes config after chart render did not take affect.  
+  * #2530032 Fixed issue in which changing dataProvider after instantiation but pre-render resulted in the original dataProvider being used by the chart.
+  * #2531245 Fixed issue in which the alwaysShowZero attribute was ignored by the NumericAxis.
+  * #2531277 Fixed issue in which the area charts bled outside of content bounds when minimum was higher than zero.
+  * #2531283 Fixed issue in which stacked historgrams did not accept an array for marker color values.
+  * #2531314 Fixed issue in which a series failed to show if its value was missing from the first index of the dataProvider.  
+  * #2529878 Added a percentage of whole value to the tooltip for PieChart.
+  * #2529916 Added ability to distinguish between zero and null values in histograms. 
+  * #2531515 Fixed issue in which PieChart was not handling numbers of type string.
+  * #2531459 Fixed issue with histogram marker size irregularity on mouseover when specified width/height values are larger than the area available on the graph.
+
+
 3.4.1
 -----
 

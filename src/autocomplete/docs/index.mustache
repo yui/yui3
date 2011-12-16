@@ -1641,12 +1641,6 @@ The list markup, which is rendered dynamically, uses the following ARIA attribut
 <ul>
   <li>
     <p>
-    The accent folding and word breaking implementations require the use of UTF-8 character data. If YUI is used on a page that doesn't specify a UTF-8 charset either via the `Content-Type` HTTP response header or a `<meta charset="utf-8">` tag, an "Invalid range in character set" error may occur in Internet Explorer when the page is loaded from the cache. Specify a charset to avoid triggering this IE bug (you should always specify a charset in any case, since all kinds of bad things can happen if you don't).
-    </p>
-  </li>
-
-  <li>
-    <p>
     The accent folding implementation used for filters and highlighters is not comprehensive, since it wouldn't be practical to serve a complete set of character data to clients via JS. The implementation used here provides basic accent folding for common alphanumeric characters only, and is not locale-aware. Whenever possible, accent folding should be done on the server, where more complete character data can be used, and not on the client.
     </p>
   </li>

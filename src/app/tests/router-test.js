@@ -442,6 +442,8 @@ routerSuite.add(new Y.Test.Case({
             test.resume(function () {
                 Assert.areSame(e, 'Security error: The new URL must be of the same origin as the current URL.');
             });
+
+            return true;
         };
 
         router.route('/foo', function () {
@@ -471,6 +473,8 @@ routerSuite.add(new Y.Test.Case({
             test.resume(function () {
                 Assert.areSame(e, 'Security error: The new URL must be of the same origin as the current URL.');
             });
+
+            return true;
         };
 
         router.route('/foo', function () {
