@@ -16,13 +16,39 @@
     <link type="text/css" rel="stylesheet" href="../../../../build/scrollview-scrollbars/assets/skins/night/scrollview-scrollbars.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/panel/assets/skins/night/panel.css" charset="utf-8">
     <link type="text/css" rel="stylesheet" href="../../../../build/node-menunav/assets/skins/night/node-menunav.css" charset="utf-8">
+    <link type="text/css" rel="stylesheet" href="../../../../build/cssbuttons/cssbuttons.css">
 
-    <!--
-    <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/gallery-2011.08.04-15-16/build/gallerycss-cssbutton/gallerycss-cssbutton.css" charset="utf-8">
-    -->
-    <link type="text/css" rel="stylesheet" href="http://derek.io/~/fixedbutton.css" charset="utf-8">
     
     <style>
+        body {
+            margin: 3.5em;
+        }
+        /* night button */
+        .yui3-skin-night .yui3-button {
+            background-color: #343536;
+            color: #DCDCDC;                                                  /* default was 0.30 */
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25) inset, 0 2px 0 rgba(255, 255, 255, 0.15) inset, 0 1px 2px rgba(0, 0, 0, 0.15);    
+        }
+        .yui3-skin-night .yui3-button-selected {
+            background-color: #747576;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+            /*color: #fff;*/    
+        }
+        /*end night button*/
+                
+        /* sam button */
+        .yui3-skin-sam .yui3-button {
+            /*
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25) inset, 0 2px 0 rgba(255, 255, 255, 0.5) inset, 0 1px 2px rgba(0, 0, 0, 0.15);
+            */    
+        }
+        .yui3-skin-sam .yui3-button-selected {
+            background-color: #345FCB;
+            color: #fff;    
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25) inset, 0 2px 0 rgba(255, 255, 255, 0.17) inset, 0 1px 2px rgba(0, 0, 0, 0.15);    
+        }
+        /*end sam button*/
+                
         .yui3-js-enabled .yui3-widget-loading {
             display: none;
         }
@@ -111,7 +137,9 @@ html .yui3-skin-night .yui3-calendar-day-selected {
             </div>
         </div>
         <div class="yui3-g">
-
+            <div class="yui3-u">
+                <button class="yui3-button">Derek</button>
+            </div>
 <!-- TabView -->        
             <div class="yui3-u">
                 <div class="yui3-widget-loading" id="demo-tabview"> 

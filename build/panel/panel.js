@@ -30,4 +30,4 @@ YUI.add('panel', function(Y) {
 Y.Panel = Y.Base.create("panel", Y.Widget, [Y.WidgetStdMod, Y.WidgetPosition, Y.WidgetStack, Y.WidgetPositionAlign, Y.WidgetPositionConstrain, Y.WidgetModality, Y.WidgetAutohide, Y.WidgetButtons]);
 
 
-}, '@VERSION@' ,{requires:['widget', 'widget-stdmod', 'widget-position', 'widget-stack', 'widget-position-align', 'widget-position-constrain', 'widget-modality', 'widget-autohide', 'widget-buttons']});
+}, '@VERSION@' ,{requires:['widget', 'widget-autohide', 'widget-buttons',  'widget-modality', 'widget-position', 'widget-position-align', 'widget-position-constrain', 'widget-stack', 'widget-stdmod']});
