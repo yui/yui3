@@ -1,6 +1,11 @@
 Dump Change History
 ===================
 
+3.5.0
+-----
+
+  * No changes.
+
 3.4.1
 -----
 

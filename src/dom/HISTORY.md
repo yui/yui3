@@ -1,6 +1,12 @@
 DOM Change History
 ==================
 
+3.5.0
+-----
+  * Bug fix: Comments are now filtered from IE child queries. [Ticket 2530101]
+  * Bug fix: Root node border correctly accounted for in IE. [Ticket 2531246]
+
+
 3.4.1
 -----
 

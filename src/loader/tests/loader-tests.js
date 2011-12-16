@@ -327,5 +327,8 @@ YUI.add('loader-tests', function(Y) {
         }
     });
 
-    Y.Test.Runner.add(testLoader);
+    var suite = new Y.Test.Suite("Loader Automated Tests");
+    suite.add(testLoader);
+    Y.Test.Runner.add(suite);
+    
 });

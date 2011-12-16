@@ -1,0 +1,753 @@
+Buildfile: /Users/sdesai/dev/gitroot/yui3/src/attribute/build.xml
+
+all:
+     [echo] Starting Build For attribute-base
+     [echo] Ant Properties
+     [echo]     Home : /Users/sdesai/dev/ant
+     [echo]     Ant Version : Apache Ant version 1.8.1 compiled on April 30 2010
+     [echo]     Build File : /Users/sdesai/dev/gitroot/yui3/src/attribute/build-base.xml
+     [echo] Local Build Properties
+     [echo]     version : 3
+     [echo]     srcdir : ../..
+     [echo]     builddir : ../../../builder/componentbuild
+     [echo]     component : attribute-base
+     [echo]     component.basefilename : attribute-base
+     [echo]     component.basedir : /Users/sdesai/dev/gitroot/yui3/src/attribute
+     [echo]     component.builddir : /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+     [echo] Global Build Properties
+     [echo]     global.build.base : /Users/sdesai/dev/gitroot/yui3/build
+     [echo]     global.build.component : /Users/sdesai/dev/gitroot/yui3/build/attribute-base
+     [echo]     global.build.component.assets : /Users/sdesai/dev/gitroot/yui3/build/attribute-base/assets
+
+clean:
+   [delete] Deleting directory /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+
+init:
+    [mkdir] Created dir: /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+     [echo] Starting Build For attribute-base
+     [echo] Ant Properties
+     [echo]     Home : /Users/sdesai/dev/ant
+     [echo]     Ant Version : Apache Ant version 1.8.1 compiled on April 30 2010
+     [echo]     Build File : /Users/sdesai/dev/gitroot/yui3/src/attribute/build-base.xml
+     [echo] Local Build Properties
+     [echo]     version : 3
+     [echo]     srcdir : ../..
+     [echo]     builddir : ../../../builder/componentbuild
+     [echo]     component : attribute-base
+     [echo]     component.basefilename : attribute-base
+     [echo]     component.basedir : /Users/sdesai/dev/gitroot/yui3/src/attribute
+     [echo]     component.builddir : /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+     [echo] Global Build Properties
+     [echo]     global.build.base : /Users/sdesai/dev/gitroot/yui3/build
+     [echo]     global.build.component : /Users/sdesai/dev/gitroot/yui3/build/attribute-base
+     [echo]     global.build.component.assets : /Users/sdesai/dev/gitroot/yui3/build/attribute-base/assets
+
+-lint-server:
+     [echo] Starting Build For attribute-base
+     [echo] Ant Properties
+     [echo]     Home : /Users/sdesai/dev/ant
+     [echo]     Ant Version : Apache Ant version 1.8.1 compiled on April 30 2010
+     [echo]     Build File : /Users/sdesai/dev/gitroot/yui3/src/attribute/build-base.xml
+     [echo] Local Build Properties
+     [echo]     version : 3
+     [echo]     srcdir : ../..
+     [echo]     builddir : ../../../builder/componentbuild
+     [echo]     component : attribute-base
+     [echo]     component.basefilename : attribute-base
+     [echo]     component.basedir : /Users/sdesai/dev/gitroot/yui3/src/attribute
+     [echo]     component.builddir : /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+     [echo] Global Build Properties
+     [echo]     global.build.base : /Users/sdesai/dev/gitroot/yui3/build
+     [echo]     global.build.component : /Users/sdesai/dev/gitroot/yui3/build/attribute-base
+     [echo]     global.build.component.assets : /Users/sdesai/dev/gitroot/yui3/build/attribute-base/assets
+
+-node:
+     [exec] v0.4.12
+     [echo] Spawning Node.js app at: ../../../builder/componentbuild/lib/jslint/jslint-node.js
+
+-concatdebug:
+     [echo] Concatenating
+     [echo]     Source Files : Attribute.js
+     [echo]     In Source Dir : /Users/sdesai/dev/gitroot/yui3/src/attribute/js
+     [echo]     To : /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-base-debug.js
+     [copy] Copying 1 file to /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/ant
+   [delete] Deleting directory /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/ant
+
+-registerdebug:
+     [echo] Wrapping /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-base-debug.js in YUI.add module
+     [copy] Copying 1 file to /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+
+-prependdebug:
+
+-appenddebug:
+
+builddebug:
+
+-createcore:
+     [copy] Copying 1 file to /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+
+-loggerregex:
+     [echo] Replacing Logger Statements in /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-base.js
+
+buildcore:
+
+-rollupjs:
+
+-concatskins:
+
+-buildskins:
+
+-rollupcss:
+
+buildskins:
+
+-buildlangs:
+
+-rolluplangs:
+
+buildlangs:
+
+build:
+
+minify:
+
+lint:
+     [post] Opening connection for post to http://127.0.0.1:8081/...
+     [post] Connected, sending data...
+     [post] files=%2FUsers%2Fsdesai%2Fdev%2Fgitroot%2Fyui3%2Fsrc%2Fattribute%2Fbuild_tmp%2Fattribute-base-debug.js%27+%27%2FUsers%2Fsdesai%2Fdev%2Fgitroot%2Fyui3%2Fsrc%2Fattribute%2Fbuild_tmp%2Fattribute-base-min.js%27+%27%2FUsers%2Fsdesai%2Fdev%2Fgitroot%2Fyui3%2Fsrc%2Fattribute%2Fbuild_tmp%2Fattribute-base.js&failonerror=false
+     [post] Data sent.
+     [post] Waiting for response...
+     [post] 200
+     [post] OK
+     [post] null=HTTP/1.1 200 OK
+     [post] null=HTTP/1.1 200 OK
+     [post] Content-type=text/plain
+     [post] null=HTTP/1.1 200 OK
+     [post] Content-type=text/plain
+     [post] Transfer-Encoding=chunked
+     [post] null=HTTP/1.1 200 OK
+     [post] Content-type=text/plain
+     [post] Transfer-Encoding=chunked
+     [post] Connection=keep-alive
+     [post] 
+     [post] 
+     [post] Post complete.
+
+local:
+
+deploybuild:
+     [copy] Copying 3 files to /Users/sdesai/dev/gitroot/yui3/build/attribute-base
+     [copy] Copying /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-base-min.js to /Users/sdesai/dev/gitroot/yui3/build/attribute-base/attribute-base-min.js
+     [copy] Copying /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-base-debug.js to /Users/sdesai/dev/gitroot/yui3/build/attribute-base/attribute-base-debug.js
+     [copy] Copying /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-base.js to /Users/sdesai/dev/gitroot/yui3/build/attribute-base/attribute-base.js
+
+deployassets:
+
+deployskins:
+
+deploylang:
+
+deploydocs:
+
+deploy:
+
+all:
+     [echo] Starting Build For attribute-complex
+     [echo] Ant Properties
+     [echo]     Home : /Users/sdesai/dev/ant
+     [echo]     Ant Version : Apache Ant version 1.8.1 compiled on April 30 2010
+     [echo]     Build File : /Users/sdesai/dev/gitroot/yui3/src/attribute/build-complex.xml
+     [echo] Local Build Properties
+     [echo]     version : 3
+     [echo]     srcdir : ../..
+     [echo]     builddir : ../../../builder/componentbuild
+     [echo]     component : attribute-complex
+     [echo]     component.basefilename : attribute-complex
+     [echo]     component.basedir : /Users/sdesai/dev/gitroot/yui3/src/attribute
+     [echo]     component.builddir : /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+     [echo] Global Build Properties
+     [echo]     global.build.base : /Users/sdesai/dev/gitroot/yui3/build
+     [echo]     global.build.component : /Users/sdesai/dev/gitroot/yui3/build/attribute-complex
+     [echo]     global.build.component.assets : /Users/sdesai/dev/gitroot/yui3/build/attribute-complex/assets
+
+clean:
+   [delete] Deleting directory /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+
+init:
+    [mkdir] Created dir: /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+     [echo] Starting Build For attribute-complex
+     [echo] Ant Properties
+     [echo]     Home : /Users/sdesai/dev/ant
+     [echo]     Ant Version : Apache Ant version 1.8.1 compiled on April 30 2010
+     [echo]     Build File : /Users/sdesai/dev/gitroot/yui3/src/attribute/build-complex.xml
+     [echo] Local Build Properties
+     [echo]     version : 3
+     [echo]     srcdir : ../..
+     [echo]     builddir : ../../../builder/componentbuild
+     [echo]     component : attribute-complex
+     [echo]     component.basefilename : attribute-complex
+     [echo]     component.basedir : /Users/sdesai/dev/gitroot/yui3/src/attribute
+     [echo]     component.builddir : /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+     [echo] Global Build Properties
+     [echo]     global.build.base : /Users/sdesai/dev/gitroot/yui3/build
+     [echo]     global.build.component : /Users/sdesai/dev/gitroot/yui3/build/attribute-complex
+     [echo]     global.build.component.assets : /Users/sdesai/dev/gitroot/yui3/build/attribute-complex/assets
+
+-lint-server:
+     [echo] Starting Build For attribute-complex
+     [echo] Ant Properties
+     [echo]     Home : /Users/sdesai/dev/ant
+     [echo]     Ant Version : Apache Ant version 1.8.1 compiled on April 30 2010
+     [echo]     Build File : /Users/sdesai/dev/gitroot/yui3/src/attribute/build-complex.xml
+     [echo] Local Build Properties
+     [echo]     version : 3
+     [echo]     srcdir : ../..
+     [echo]     builddir : ../../../builder/componentbuild
+     [echo]     component : attribute-complex
+     [echo]     component.basefilename : attribute-complex
+     [echo]     component.basedir : /Users/sdesai/dev/gitroot/yui3/src/attribute
+     [echo]     component.builddir : /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+     [echo] Global Build Properties
+     [echo]     global.build.base : /Users/sdesai/dev/gitroot/yui3/build
+     [echo]     global.build.component : /Users/sdesai/dev/gitroot/yui3/build/attribute-complex
+     [echo]     global.build.component.assets : /Users/sdesai/dev/gitroot/yui3/build/attribute-complex/assets
+
+-node:
+
+-concatdebug:
+     [echo] Concatenating
+     [echo]     Source Files : ComplexAttribute.js
+     [echo]     In Source Dir : /Users/sdesai/dev/gitroot/yui3/src/attribute/js
+     [echo]     To : /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-complex-debug.js
+     [copy] Copying 1 file to /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/ant
+   [delete] Deleting directory /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/ant
+
+-registerdebug:
+     [echo] Wrapping /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-complex-debug.js in YUI.add module
+     [copy] Copying 1 file to /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+
+-prependdebug:
+
+-appenddebug:
+
+builddebug:
+
+-createcore:
+     [copy] Copying 1 file to /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+
+-loggerregex:
+     [echo] Replacing Logger Statements in /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-complex.js
+
+buildcore:
+
+-rollupjs:
+
+-concatskins:
+
+-buildskins:
+
+-rollupcss:
+
+buildskins:
+
+-buildlangs:
+
+-rolluplangs:
+
+buildlangs:
+
+build:
+
+minify:
+
+lint:
+     [post] Opening connection for post to http://127.0.0.1:8081/...
+     [post] Connected, sending data...
+     [post] files=%2FUsers%2Fsdesai%2Fdev%2Fgitroot%2Fyui3%2Fsrc%2Fattribute%2Fbuild_tmp%2Fattribute-complex-debug.js%27+%27%2FUsers%2Fsdesai%2Fdev%2Fgitroot%2Fyui3%2Fsrc%2Fattribute%2Fbuild_tmp%2Fattribute-complex-min.js%27+%27%2FUsers%2Fsdesai%2Fdev%2Fgitroot%2Fyui3%2Fsrc%2Fattribute%2Fbuild_tmp%2Fattribute-complex.js&failonerror=false
+     [post] Data sent.
+     [post] Waiting for response...
+     [post] 200
+     [post] OK
+     [post] null=HTTP/1.1 200 OK
+     [post] null=HTTP/1.1 200 OK
+     [post] Content-type=text/plain
+     [post] null=HTTP/1.1 200 OK
+     [post] Content-type=text/plain
+     [post] Transfer-Encoding=chunked
+     [post] null=HTTP/1.1 200 OK
+     [post] Content-type=text/plain
+     [post] Transfer-Encoding=chunked
+     [post] Connection=keep-alive
+     [post] 
+     [post] 
+     [post] Post complete.
+
+local:
+
+deploybuild:
+     [copy] Copying 3 files to /Users/sdesai/dev/gitroot/yui3/build/attribute-complex
+     [copy] Copying /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-complex-debug.js to /Users/sdesai/dev/gitroot/yui3/build/attribute-complex/attribute-complex-debug.js
+     [copy] Copying /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-complex-min.js to /Users/sdesai/dev/gitroot/yui3/build/attribute-complex/attribute-complex-min.js
+     [copy] Copying /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-complex.js to /Users/sdesai/dev/gitroot/yui3/build/attribute-complex/attribute-complex.js
+
+deployassets:
+
+deployskins:
+
+deploylang:
+
+deploydocs:
+
+deploy:
+
+all:
+     [echo] Starting Build For attribute-core
+     [echo] Ant Properties
+     [echo]     Home : /Users/sdesai/dev/ant
+     [echo]     Ant Version : Apache Ant version 1.8.1 compiled on April 30 2010
+     [echo]     Build File : /Users/sdesai/dev/gitroot/yui3/src/attribute/build-core.xml
+     [echo] Local Build Properties
+     [echo]     version : 3
+     [echo]     srcdir : ../..
+     [echo]     builddir : ../../../builder/componentbuild
+     [echo]     component : attribute-core
+     [echo]     component.basefilename : attribute-core
+     [echo]     component.basedir : /Users/sdesai/dev/gitroot/yui3/src/attribute
+     [echo]     component.builddir : /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+     [echo] Global Build Properties
+     [echo]     global.build.base : /Users/sdesai/dev/gitroot/yui3/build
+     [echo]     global.build.component : /Users/sdesai/dev/gitroot/yui3/build/attribute-core
+     [echo]     global.build.component.assets : /Users/sdesai/dev/gitroot/yui3/build/attribute-core/assets
+
+clean:
+   [delete] Deleting directory /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+
+init:
+    [mkdir] Created dir: /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+     [echo] Starting Build For attribute-core
+     [echo] Ant Properties
+     [echo]     Home : /Users/sdesai/dev/ant
+     [echo]     Ant Version : Apache Ant version 1.8.1 compiled on April 30 2010
+     [echo]     Build File : /Users/sdesai/dev/gitroot/yui3/src/attribute/build-core.xml
+     [echo] Local Build Properties
+     [echo]     version : 3
+     [echo]     srcdir : ../..
+     [echo]     builddir : ../../../builder/componentbuild
+     [echo]     component : attribute-core
+     [echo]     component.basefilename : attribute-core
+     [echo]     component.basedir : /Users/sdesai/dev/gitroot/yui3/src/attribute
+     [echo]     component.builddir : /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+     [echo] Global Build Properties
+     [echo]     global.build.base : /Users/sdesai/dev/gitroot/yui3/build
+     [echo]     global.build.component : /Users/sdesai/dev/gitroot/yui3/build/attribute-core
+     [echo]     global.build.component.assets : /Users/sdesai/dev/gitroot/yui3/build/attribute-core/assets
+
+-lint-server:
+     [echo] Starting Build For attribute-core
+     [echo] Ant Properties
+     [echo]     Home : /Users/sdesai/dev/ant
+     [echo]     Ant Version : Apache Ant version 1.8.1 compiled on April 30 2010
+     [echo]     Build File : /Users/sdesai/dev/gitroot/yui3/src/attribute/build-core.xml
+     [echo] Local Build Properties
+     [echo]     version : 3
+     [echo]     srcdir : ../..
+     [echo]     builddir : ../../../builder/componentbuild
+     [echo]     component : attribute-core
+     [echo]     component.basefilename : attribute-core
+     [echo]     component.basedir : /Users/sdesai/dev/gitroot/yui3/src/attribute
+     [echo]     component.builddir : /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+     [echo] Global Build Properties
+     [echo]     global.build.base : /Users/sdesai/dev/gitroot/yui3/build
+     [echo]     global.build.component : /Users/sdesai/dev/gitroot/yui3/build/attribute-core
+     [echo]     global.build.component.assets : /Users/sdesai/dev/gitroot/yui3/build/attribute-core/assets
+
+-node:
+
+-concatdebug:
+     [echo] Concatenating
+     [echo]     Source Files : State.js, AttributeCore.js
+     [echo]     In Source Dir : /Users/sdesai/dev/gitroot/yui3/src/attribute/js
+     [echo]     To : /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-core-debug.js
+     [copy] Copying 2 files to /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/ant
+   [delete] Deleting directory /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/ant
+
+-registerdebug:
+     [echo] Wrapping /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-core-debug.js in YUI.add module
+     [copy] Copying 1 file to /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+
+-prependdebug:
+
+-appenddebug:
+
+builddebug:
+
+-createcore:
+     [copy] Copying 1 file to /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+
+-loggerregex:
+     [echo] Replacing Logger Statements in /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-core.js
+
+buildcore:
+
+-rollupjs:
+
+-concatskins:
+
+-buildskins:
+
+-rollupcss:
+
+buildskins:
+
+-buildlangs:
+
+-rolluplangs:
+
+buildlangs:
+
+build:
+
+minify:
+
+lint:
+     [post] Opening connection for post to http://127.0.0.1:8081/...
+     [post] Connected, sending data...
+     [post] files=%2FUsers%2Fsdesai%2Fdev%2Fgitroot%2Fyui3%2Fsrc%2Fattribute%2Fbuild_tmp%2Fattribute-core-debug.js%27+%27%2FUsers%2Fsdesai%2Fdev%2Fgitroot%2Fyui3%2Fsrc%2Fattribute%2Fbuild_tmp%2Fattribute-core-min.js%27+%27%2FUsers%2Fsdesai%2Fdev%2Fgitroot%2Fyui3%2Fsrc%2Fattribute%2Fbuild_tmp%2Fattribute-core.js&failonerror=false
+     [post] Data sent.
+     [post] Waiting for response...
+     [post] 200
+     [post] OK
+     [post] null=HTTP/1.1 200 OK
+     [post] null=HTTP/1.1 200 OK
+     [post] Content-type=text/plain
+     [post] null=HTTP/1.1 200 OK
+     [post] Content-type=text/plain
+     [post] Transfer-Encoding=chunked
+     [post] null=HTTP/1.1 200 OK
+     [post] Content-type=text/plain
+     [post] Transfer-Encoding=chunked
+     [post] Connection=keep-alive
+     [post] 
+     [post] 
+     [post] Post complete.
+
+local:
+
+deploybuild:
+     [copy] Copying 3 files to /Users/sdesai/dev/gitroot/yui3/build/attribute-core
+     [copy] Copying /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-core.js to /Users/sdesai/dev/gitroot/yui3/build/attribute-core/attribute-core.js
+     [copy] Copying /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-core-min.js to /Users/sdesai/dev/gitroot/yui3/build/attribute-core/attribute-core-min.js
+     [copy] Copying /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-core-debug.js to /Users/sdesai/dev/gitroot/yui3/build/attribute-core/attribute-core-debug.js
+
+deployassets:
+
+deployskins:
+
+deploylang:
+
+deploydocs:
+
+deploy:
+
+all:
+     [echo] Starting Build For attribute-events
+     [echo] Ant Properties
+     [echo]     Home : /Users/sdesai/dev/ant
+     [echo]     Ant Version : Apache Ant version 1.8.1 compiled on April 30 2010
+     [echo]     Build File : /Users/sdesai/dev/gitroot/yui3/src/attribute/build-events.xml
+     [echo] Local Build Properties
+     [echo]     version : 3
+     [echo]     srcdir : ../..
+     [echo]     builddir : ../../../builder/componentbuild
+     [echo]     component : attribute-events
+     [echo]     component.basefilename : attribute-events
+     [echo]     component.basedir : /Users/sdesai/dev/gitroot/yui3/src/attribute
+     [echo]     component.builddir : /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+     [echo] Global Build Properties
+     [echo]     global.build.base : /Users/sdesai/dev/gitroot/yui3/build
+     [echo]     global.build.component : /Users/sdesai/dev/gitroot/yui3/build/attribute-events
+     [echo]     global.build.component.assets : /Users/sdesai/dev/gitroot/yui3/build/attribute-events/assets
+
+clean:
+   [delete] Deleting directory /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+
+init:
+    [mkdir] Created dir: /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+     [echo] Starting Build For attribute-events
+     [echo] Ant Properties
+     [echo]     Home : /Users/sdesai/dev/ant
+     [echo]     Ant Version : Apache Ant version 1.8.1 compiled on April 30 2010
+     [echo]     Build File : /Users/sdesai/dev/gitroot/yui3/src/attribute/build-events.xml
+     [echo] Local Build Properties
+     [echo]     version : 3
+     [echo]     srcdir : ../..
+     [echo]     builddir : ../../../builder/componentbuild
+     [echo]     component : attribute-events
+     [echo]     component.basefilename : attribute-events
+     [echo]     component.basedir : /Users/sdesai/dev/gitroot/yui3/src/attribute
+     [echo]     component.builddir : /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+     [echo] Global Build Properties
+     [echo]     global.build.base : /Users/sdesai/dev/gitroot/yui3/build
+     [echo]     global.build.component : /Users/sdesai/dev/gitroot/yui3/build/attribute-events
+     [echo]     global.build.component.assets : /Users/sdesai/dev/gitroot/yui3/build/attribute-events/assets
+
+-lint-server:
+     [echo] Starting Build For attribute-events
+     [echo] Ant Properties
+     [echo]     Home : /Users/sdesai/dev/ant
+     [echo]     Ant Version : Apache Ant version 1.8.1 compiled on April 30 2010
+     [echo]     Build File : /Users/sdesai/dev/gitroot/yui3/src/attribute/build-events.xml
+     [echo] Local Build Properties
+     [echo]     version : 3
+     [echo]     srcdir : ../..
+     [echo]     builddir : ../../../builder/componentbuild
+     [echo]     component : attribute-events
+     [echo]     component.basefilename : attribute-events
+     [echo]     component.basedir : /Users/sdesai/dev/gitroot/yui3/src/attribute
+     [echo]     component.builddir : /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+     [echo] Global Build Properties
+     [echo]     global.build.base : /Users/sdesai/dev/gitroot/yui3/build
+     [echo]     global.build.component : /Users/sdesai/dev/gitroot/yui3/build/attribute-events
+     [echo]     global.build.component.assets : /Users/sdesai/dev/gitroot/yui3/build/attribute-events/assets
+
+-node:
+
+-concatdebug:
+     [echo] Concatenating
+     [echo]     Source Files : AttributeEvents.js
+     [echo]     In Source Dir : /Users/sdesai/dev/gitroot/yui3/src/attribute/js
+     [echo]     To : /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-events-debug.js
+     [copy] Copying 1 file to /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/ant
+   [delete] Deleting directory /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/ant
+
+-registerdebug:
+     [echo] Wrapping /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-events-debug.js in YUI.add module
+     [copy] Copying 1 file to /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+
+-prependdebug:
+
+-appenddebug:
+
+builddebug:
+
+-createcore:
+     [copy] Copying 1 file to /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+
+-loggerregex:
+     [echo] Replacing Logger Statements in /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-events.js
+
+buildcore:
+
+-rollupjs:
+
+-concatskins:
+
+-buildskins:
+
+-rollupcss:
+
+buildskins:
+
+-buildlangs:
+
+-rolluplangs:
+
+buildlangs:
+
+build:
+
+minify:
+
+lint:
+     [post] Opening connection for post to http://127.0.0.1:8081/...
+     [post] Connected, sending data...
+     [post] files=%2FUsers%2Fsdesai%2Fdev%2Fgitroot%2Fyui3%2Fsrc%2Fattribute%2Fbuild_tmp%2Fattribute-events-debug.js%27+%27%2FUsers%2Fsdesai%2Fdev%2Fgitroot%2Fyui3%2Fsrc%2Fattribute%2Fbuild_tmp%2Fattribute-events-min.js%27+%27%2FUsers%2Fsdesai%2Fdev%2Fgitroot%2Fyui3%2Fsrc%2Fattribute%2Fbuild_tmp%2Fattribute-events.js&failonerror=false
+     [post] Data sent.
+     [post] Waiting for response...
+     [post] 200
+     [post] OK
+     [post] null=HTTP/1.1 200 OK
+     [post] null=HTTP/1.1 200 OK
+     [post] Content-type=text/plain
+     [post] null=HTTP/1.1 200 OK
+     [post] Content-type=text/plain
+     [post] Transfer-Encoding=chunked
+     [post] null=HTTP/1.1 200 OK
+     [post] Content-type=text/plain
+     [post] Transfer-Encoding=chunked
+     [post] Connection=keep-alive
+     [post] 
+     [post] 
+     [post] Post complete.
+
+local:
+
+deploybuild:
+     [copy] Copying 3 files to /Users/sdesai/dev/gitroot/yui3/build/attribute-events
+     [copy] Copying /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-events.js to /Users/sdesai/dev/gitroot/yui3/build/attribute-events/attribute-events.js
+     [copy] Copying /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-events-min.js to /Users/sdesai/dev/gitroot/yui3/build/attribute-events/attribute-events-min.js
+     [copy] Copying /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-events-debug.js to /Users/sdesai/dev/gitroot/yui3/build/attribute-events/attribute-events-debug.js
+
+deployassets:
+
+deployskins:
+
+deploylang:
+
+deploydocs:
+
+deploy:
+
+all:
+     [echo] Starting Build For attribute-extras
+     [echo] Ant Properties
+     [echo]     Home : /Users/sdesai/dev/ant
+     [echo]     Ant Version : Apache Ant version 1.8.1 compiled on April 30 2010
+     [echo]     Build File : /Users/sdesai/dev/gitroot/yui3/src/attribute/build-extras.xml
+     [echo] Local Build Properties
+     [echo]     version : 3
+     [echo]     srcdir : ../..
+     [echo]     builddir : ../../../builder/componentbuild
+     [echo]     component : attribute-extras
+     [echo]     component.basefilename : attribute-extras
+     [echo]     component.basedir : /Users/sdesai/dev/gitroot/yui3/src/attribute
+     [echo]     component.builddir : /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+     [echo] Global Build Properties
+     [echo]     global.build.base : /Users/sdesai/dev/gitroot/yui3/build
+     [echo]     global.build.component : /Users/sdesai/dev/gitroot/yui3/build/attribute-extras
+     [echo]     global.build.component.assets : /Users/sdesai/dev/gitroot/yui3/build/attribute-extras/assets
+
+clean:
+   [delete] Deleting directory /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+
+init:
+    [mkdir] Created dir: /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+     [echo] Starting Build For attribute-extras
+     [echo] Ant Properties
+     [echo]     Home : /Users/sdesai/dev/ant
+     [echo]     Ant Version : Apache Ant version 1.8.1 compiled on April 30 2010
+     [echo]     Build File : /Users/sdesai/dev/gitroot/yui3/src/attribute/build-extras.xml
+     [echo] Local Build Properties
+     [echo]     version : 3
+     [echo]     srcdir : ../..
+     [echo]     builddir : ../../../builder/componentbuild
+     [echo]     component : attribute-extras
+     [echo]     component.basefilename : attribute-extras
+     [echo]     component.basedir : /Users/sdesai/dev/gitroot/yui3/src/attribute
+     [echo]     component.builddir : /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+     [echo] Global Build Properties
+     [echo]     global.build.base : /Users/sdesai/dev/gitroot/yui3/build
+     [echo]     global.build.component : /Users/sdesai/dev/gitroot/yui3/build/attribute-extras
+     [echo]     global.build.component.assets : /Users/sdesai/dev/gitroot/yui3/build/attribute-extras/assets
+
+-lint-server:
+     [echo] Starting Build For attribute-extras
+     [echo] Ant Properties
+     [echo]     Home : /Users/sdesai/dev/ant
+     [echo]     Ant Version : Apache Ant version 1.8.1 compiled on April 30 2010
+     [echo]     Build File : /Users/sdesai/dev/gitroot/yui3/src/attribute/build-extras.xml
+     [echo] Local Build Properties
+     [echo]     version : 3
+     [echo]     srcdir : ../..
+     [echo]     builddir : ../../../builder/componentbuild
+     [echo]     component : attribute-extras
+     [echo]     component.basefilename : attribute-extras
+     [echo]     component.basedir : /Users/sdesai/dev/gitroot/yui3/src/attribute
+     [echo]     component.builddir : /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+     [echo] Global Build Properties
+     [echo]     global.build.base : /Users/sdesai/dev/gitroot/yui3/build
+     [echo]     global.build.component : /Users/sdesai/dev/gitroot/yui3/build/attribute-extras
+     [echo]     global.build.component.assets : /Users/sdesai/dev/gitroot/yui3/build/attribute-extras/assets
+
+-node:
+
+-concatdebug:
+     [echo] Concatenating
+     [echo]     Source Files : AttributeExtras.js
+     [echo]     In Source Dir : /Users/sdesai/dev/gitroot/yui3/src/attribute/js
+     [echo]     To : /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-extras-debug.js
+     [copy] Copying 1 file to /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/ant
+   [delete] Deleting directory /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/ant
+
+-registerdebug:
+     [echo] Wrapping /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-extras-debug.js in YUI.add module
+     [copy] Copying 1 file to /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+
+-prependdebug:
+
+-appenddebug:
+
+builddebug:
+
+-createcore:
+     [copy] Copying 1 file to /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp
+
+-loggerregex:
+     [echo] Replacing Logger Statements in /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-extras.js
+
+buildcore:
+
+-rollupjs:
+
+-concatskins:
+
+-buildskins:
+
+-rollupcss:
+
+buildskins:
+
+-buildlangs:
+
+-rolluplangs:
+
+buildlangs:
+
+build:
+
+minify:
+
+lint:
+     [post] Opening connection for post to http://127.0.0.1:8081/...
+     [post] Connected, sending data...
+     [post] files=%2FUsers%2Fsdesai%2Fdev%2Fgitroot%2Fyui3%2Fsrc%2Fattribute%2Fbuild_tmp%2Fattribute-extras-debug.js%27+%27%2FUsers%2Fsdesai%2Fdev%2Fgitroot%2Fyui3%2Fsrc%2Fattribute%2Fbuild_tmp%2Fattribute-extras-min.js%27+%27%2FUsers%2Fsdesai%2Fdev%2Fgitroot%2Fyui3%2Fsrc%2Fattribute%2Fbuild_tmp%2Fattribute-extras.js&failonerror=false
+     [post] Data sent.
+     [post] Waiting for response...
+     [post] 200
+     [post] OK
+     [post] null=HTTP/1.1 200 OK
+     [post] null=HTTP/1.1 200 OK
+     [post] Content-type=text/plain
+     [post] null=HTTP/1.1 200 OK
+     [post] Content-type=text/plain
+     [post] Transfer-Encoding=chunked
+     [post] null=HTTP/1.1 200 OK
+     [post] Content-type=text/plain
+     [post] Transfer-Encoding=chunked
+     [post] Connection=keep-alive
+     [post] 
+     [post] 
+     [post] Post complete.
+
+local:
+
+deploybuild:
+     [copy] Copying 3 files to /Users/sdesai/dev/gitroot/yui3/build/attribute-extras
+     [copy] Copying /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-extras.js to /Users/sdesai/dev/gitroot/yui3/build/attribute-extras/attribute-extras.js
+     [copy] Copying /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-extras-min.js to /Users/sdesai/dev/gitroot/yui3/build/attribute-extras/attribute-extras-min.js
+     [copy] Copying /Users/sdesai/dev/gitroot/yui3/src/attribute/build_tmp/attribute-extras-debug.js to /Users/sdesai/dev/gitroot/yui3/build/attribute-extras/attribute-extras-debug.js
+
+deployassets:
+
+deployskins:
+
+deploylang:
+
+deploydocs:
+
+deploy:
+
+all:
+
+BUILD SUCCESSFUL
+Total time: 6 seconds

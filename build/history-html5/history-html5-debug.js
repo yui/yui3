@@ -175,4 +175,4 @@ if (useHistoryHTML5 === true || (useHistoryHTML5 !== false &&
 }
 
 
-}, '@VERSION@' ,{requires:['event-base', 'history-base', 'node-base'], optional:['json']});
+}, '@VERSION@' ,{optional:['json'], requires:['event-base', 'history-base', 'node-base']});

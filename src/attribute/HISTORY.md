@@ -1,6 +1,41 @@
 Attribute Change History
 ========================
 
+3.5.0
+-----
+
+  * Broke Y.Attribute up into:
+
+    - Y.AttributeCore
+    - Y.AttributeEvents
+    - Y.AttributeExtras
+
+    To support core Attribute usage, without Events, but still allow upgrade 
+    path to add Events, if required.
+
+    Y.AttributeCore is likely to form the basis for BaseCore and WidgetCore 
+    (ala Node Plugins, where low-level state change events are not required). 
+
+    Y.Attribute's public and protected API reimain unchanged, and loader will
+    pull in the new dependencies.
+
+    However if you're manually pulling in attribute-base, you'll need to 
+    manually pull in attribute-core, attribute-events and attribute-extras 
+    before it.
+
+    **IMPORTANT** AttributeCore, AttributeEvents and AttributeExtras are 
+    considered beta, and may be subject to change over the course 
+    of the 3.5.0PRS. 
+
+    Y.Attribute will remain unchanged however. 
+
+  * Changed State's internal data structure, to store pairs by 
+    [name][property], instead of [property][name] to improve performance
+    (most Attribute operations are name centric, not property centric).
+
+    If you're working directly with Attribute's private _state.data, you
+    may need to update your code to account for the change in structure. 
+
 3.4.1
 -----
 

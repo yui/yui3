@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- reset the default browser styles -->
+        <style>
+            html, body{
+                width:100%;
+                height:100%;
+            }
+            
+            #output {
+                width:100%;
+                height:45%;
+                font-size:6em;
+                color:#666;
+                border:dotted;
+                font-family: Terminal, monospace;
+            }
+            
+            #keyboard{
+                width:100%;
+                text-align:center;
+                display:inline-block;
+                padding:10px;
+                background-color: #444444;
+                background-image: -webkit-linear-gradient(top, #ccc, #999); 
+                background-image: -moz-linear-gradient(top, #ccc, #999);
+                position: absolute;
+                bottom: 0;
+            }
+            
+            body .yui3-button-selected {
+                background-color:#666;
+                color:white;
+            }
+            
+            body .yui3-button{
+                font-size:2em;
+                height:3em;
+                width:3em;
+                margin:3px;
+            }
+            
+            
+            body .yui3-button.wide {
+                width:6em;
+                margin:3px 6px 3px 6px;
+            }
+            
+            body .yui3-button.space {
+                width:34em;;
+            }
+        </style>
+      
+        <script src='../../../../build/yui/yui-min.js'></script>
+
+        <script>
+            
+        /*globals YUI */
+        YUI({
+            debug: true,
+            combo: false,
+            filter: 'raw'
+        }).use('button', 'cssreset', 'cssfonts', function(Y){
+
+            var caps, alt, i, textarea, keys, altKeys;
+
+            caps = false;
+            alt = false;
+            i = 0;
+            textarea = Y.one("#output");
+
+            keys = [
+                '`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '[del]',
+                '[tab]', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\',
+                '[caps]', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', "'", '[return]', 
+                '[shift]', 'z', 'x', 'c', 'v', 'b', 'n', ',', '.', '/', '[shift]',
+                '[space]'];
+
+            altKeys = [
+                // [orginal, replacement]
+                ['`', '~'],
+                ['1', '!'],
+                ['2', '@'],
+                ['3', '#'],
+                ['4', '$'],
+                ['5', '%'],
+                ['6', '^'],
+                ['7', '&amp;'],
+                ['8', '*'],
+                ['9', '('],
+                ['0', ')'],
+                ['-', '_'],
+                ['=', '+'],
+                ['[', '{'],
+                [']', '}'],
+                ['\\', '|'],
+                [';', ':'],
+                ['\'', '"'],
+                [',', '&lt;'],
+                ['.', '&gt;'],
+                ['/', '?']
+            ];
+
+            Y.Array.each(keys, function(key){
+                var button = new Y.Button({
+                    label: key
+                });
+                var node = button.getNode();
+                node.set('name', key);
+                if (key[0] === "[" && key.length > 1) {
+                    node.addClass('wide');
+                }
+
+                if (key === "[space]") {
+                    node.addClass('space');
+                }
+
+                Y.one("#keyboard").append(node);
+
+                if (i === 13 || i === 27 || i ===40 || i ===51) {
+                    Y.one("#keyboard").append("<br>");
+                }
+
+                if (key === '[caps]' || key === '[shift]') {
+                    button.set('type', 'toggle');
+                }
+                i+=1;
+            });
+
+
+            function goAlt() {
+                var x, y, nodeList;
+                
+                nodeList = Y.all('#keyboard .yui3-button');
+
+                if (alt) {
+                    x = 0;
+                    y = 1;
+                }
+                else {
+                    x = 1;
+                    y = 0;
+                }
+
+                Y.Array.each(altKeys, function(pair){
+                    nodeList.each(function(node){
+                        if (node.getContent() === pair[x]) {
+                            node.setContent(pair[y]);
+                        }
+                    });
+                });
+            }
+
+            function goCaps() {
+                var nodeList = Y.all('#keyboard .yui3-button');
+                
+                nodeList.each(function(node){
+                    var key = node.getContent();
+                    if (key.length === 1) { // Only need to worry about the 1-character 'input' buttons
+                        if (caps) {
+                            key = key.toUpperCase();
+                        }
+                        else {
+                            key = key.toLowerCase();
+                        }
+                        node.setContent(key);   
+                    }
+                });
+            }
+
+            Y.one("#keyboard").delegate("click", function(e){
+                var key, content, newContent;
+
+                key = e.target.getContent();
+                content = Y.one("#output").get("value");
+                
+                switch(key) {
+                    case "[del]":
+                         newContent = content.substr(0, content.length-1);
+                         newContent = Y.Lang.trimRight(newContent);
+                         textarea.set('value', newContent);
+                         break;
+                    case "[tab]":
+                         textarea.set('value', content + '\t');
+                         break;
+                    case "[space]":
+                         textarea.set('value', content + ' ');
+                         break;
+                     case '[return]':
+                        textarea.set('value', content + '\n');
+                        break;
+                    case '[shift]':
+                        caps = !caps;
+                        alt = !alt;
+                        goAlt();
+                        break;
+                    case '[caps]':
+                        caps = !caps;
+                        goCaps();
+                        break;
+                    default:
+                        if (caps) {
+                            key = key.toUpperCase();
+                        }
+                        textarea.set('value', content + key);
+                        break;
+                }
+
+            }, '.yui3-button');
+
+            Y.one("#output").on(["keydown", "keyup"], function(e){
+                var pressed, node, codes;
+                
+                codes = {
+                    a:65,b:66,c:67,d:68,e:69,f:70,g:71,h:72,i:73,
+                    j:74,k:75,l:76,m:77,n:78,o:79,p:80,q:81,r:82,
+                    s:83,t:84,u:85,v:86,w:87,x:88,y:89,z:90
+                };
+
+                Y.Object.some(codes, function(val, key){
+                    if (e.button === val) {
+                        pressed = key;
+                        return true; // exit `some`
+                    }
+                });
+
+                node = Y.one('#keyboard .yui3-button[name='+ pressed +']');
+                if (node){
+                    node.toggleClass('yui3-button-selected');   
+                }
+            });
+        });
+        </script>
+    </head>
+    
+    <body>
+        <textarea id="output">... typed text will appear here</textarea>
+        <div id="keyboard"></div>
+    </body>
+</html>

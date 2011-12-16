@@ -87,7 +87,7 @@ Get Utility Change History
 * The logic used to determine where a node should be inserted when no custom
   `insertBefore` node has been specified has changed slightly. By default,
   script and link nodes will now be inserted before the first `<base>` element
-  if there is one, or failing that, before the first child of the `<head>`
+  if there is one, or failing that, before the last child of the `<head>`
   element, or if there's no `<head>` element, before the first `<script>`
   element on the page.
 

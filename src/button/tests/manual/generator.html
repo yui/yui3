@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        
+        <script src='../../../../build/yui/yui-min.js'></script>
+
+        <script>
+            YUI({
+                debug: true,
+                combo: false,
+                filter: 'raw'
+            }).use('button', 'console', function(Y){
+                
+                new Y.Console().render();
+                
+                Y.one("#generator").on("click", function(){
+                    
+                    var count, button, buttons = [], type, group;
+                    
+                    count = Y.one('#count').get('value');
+                    type = Y.one('input[name=type]:checked').get('value');
+                    
+                    Y.one("#container").empty(true);
+                    
+                    for(var i=0; i < count; i++) {
+                        button = new Y.Button( {label: i} );
+                        Y.one("#container").append(button.getNode());
+                        buttons.push(button);
+                    }
+
+                    group = new Y.ButtonGroup({
+                        buttons: buttons,
+                        type: type
+                    });
+                    
+                    group.on('selectionChange', function(e){
+                        Y.log('Changed');
+                    });
+                });
+                
+            });
+        </script>
+
+        <style>
+
+            .yui3-button-selected {
+                background-color:#426FD9;
+                color:white;
+            }
+
+        </style>
+    </head>
+    
+    <body class='yui3-skin-sam'>
+        
+        <div id='yconsole'></div>
+        
+        <h1>Button Example: Generator</h1>
+        
+        <hr />
+        
+        How many buttons would you like? <input type="text" value="100" id="count">
+        
+        Type: <input type='radio' name='type' value='radio' checked='true'> Radio
+              <input type='radio' name='type' value='checkbox'> Checkbox
+        
+        <button id="generator" class="yui3-button">Make buttons!</button>
+        
+        <br><br>
+        
+        <div id="container"></div>
+    </body>
+</html>
