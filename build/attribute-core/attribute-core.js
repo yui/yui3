@@ -982,8 +982,12 @@ YUI.add('attribute-core', function(Y) {
             // ATTRS support for Node, which is not Base based
             attrs = attrs || this.constructor.ATTRS;
     
-            var Base = Y.Base;
-            if ( attrs && !(Base && Y.instanceOf(this, Base))) {
+            var Base = Y.Base,
+                BaseCore = Y.BaseCore,
+                baseInst = (Base && Y.instanceOf(this, Base)),
+                baseCoreInst = (!baseInst && BaseCore && Y.instanceOf(this, BaseCore));
+
+            if ( attrs && !baseInst && !baseCoreInst) {
                 this.addAttrs(this._protectAttrs(attrs), values, lazy);
             }
         }

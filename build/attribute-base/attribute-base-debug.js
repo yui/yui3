@@ -18,7 +18,7 @@ YUI.add('attribute-base', function(Y) {
      * @submodule attribute-base
      */
     
-  /**
+    /**
      * <p>
      * Attribute provides configurable attribute support along with attribute change events. It is designed to be 
      * augmented on to a host class, and provides the host with the ability to configure attributes to store and retrieve state, 
