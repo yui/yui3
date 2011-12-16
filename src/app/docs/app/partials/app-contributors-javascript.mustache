@@ -499,7 +499,7 @@ ContributorsApp = new Y.Base.create('contributorsApp', Y.App, [], {
         // GitHub username from the URL is different, a new user model instance
         // is created, loaded, and set on this app before adding it to the
         // request object.
-        if (!user.isNew() && username === user.get('login')) {
+        if (username === user.get('login') && !user.isNew()) {
             // Places a reference to the user model on the request object before
             // delegating to the next route-handler.
             req.user = user;
