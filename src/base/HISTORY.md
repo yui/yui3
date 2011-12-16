@@ -14,7 +14,7 @@ Base Change History
     key iteration.
 
   * Added Y.BaseCore which is core Base functionality without
-    Custom Events (it uses Y.AttributCore instead of Y.Attribute).
+    Custom Events (it uses Y.AttributeCore instead of Y.Attribute).
 
     Y.BaseCore still maintains the ATTRS handling, init/destroy
     lifecycle and plugin support, but doesn't fire any custom evnets
@@ -23,6 +23,25 @@ Base Change History
 
     Y.Base is now Y.BaseCore + Y.Attribute, and is 100% backwards
     compatible.
+
+    Summary:
+
+    Y.Attribute     - Common Attribute Functionality (100% backwards compat)
+    Y.Base          - Common Base Functionality (100% backwards compat)
+   
+    Y.AttributeCore - Lightest Attribute support, without CustomEvents
+    Y.BaseCore      - Lightest Base support, without CustomEvents
+
+    --
+
+    Y.AttributeEvents - Augmentable Attribute Events support
+    Y.AttributeExtras - Augmentable 20% usage for Attribute (modifyAttr, removeAttr, reset ...)
+    Y.AttributeComplex - Augmentable support for constructor complex attribute parsing ({"x.y":foo})
+
+    --
+ 
+    Y.Attribute = Y.AttributeCore + Y.AttributeEvents + Y.AttributeExtras
+    Y.Base      = Y.BaseCore + Y.Attribute
 
 3.4.1
 -----
