@@ -21,30 +21,30 @@
     
     <style>
         body {
-            margin: 3.5em;
+            margin: 0em;
         }
+        
         /* night button */
         .yui3-skin-night .yui3-button {
             background-color: #343536;
-            color: #DCDCDC;                                                  /* default was 0.30 */
+            color: #DCDCDC;                                    /* top edge highlight was 0.30 */
             box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25) inset, 0 2px 0 rgba(255, 255, 255, 0.15) inset, 0 1px 2px rgba(0, 0, 0, 0.15);    
         }
         .yui3-skin-night .yui3-button-selected {
             background-color: #747576;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
-            /*color: #fff;*/    
         }
         /*end night button*/
                 
         /* sam button */
         .yui3-skin-sam .yui3-button {
-            /*
+                                                             /* top edge highlight was 0.30 */
             box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25) inset, 0 2px 0 rgba(255, 255, 255, 0.5) inset, 0 1px 2px rgba(0, 0, 0, 0.15);
-            */    
         }
         .yui3-skin-sam .yui3-button-selected {
             background-color: #345FCB;
-            color: #fff;    
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
             box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25) inset, 0 2px 0 rgba(255, 255, 255, 0.17) inset, 0 1px 2px rgba(0, 0, 0, 0.15);    
         }
         /*end sam button*/
@@ -73,7 +73,7 @@
 
         #buttons-dir,
         #buttons-skin {
-            margin: 0 2em;
+            margin: 1em;
         }
 
         .button-group {
@@ -94,13 +94,22 @@
             font-size: inherit;
         }
 /* ======================    temp. MAKE SURE TO DELETE THESE CALENDAR REMOMMENDATIONS BEFORE TESTING ==============================*/
+html .yui3-calendar-content{
+    font-size: 100% !important;
+    font-family: !inherit;
+}
+html .yui3-skin-night .yui3-calendar-day, 
+html .yui3-skin-night .yui3-calendar-prevmonth-day,
+html .yui3-skin-night .yui3-calendar-nextmonth-day {
+    padding: 0.3em !important;
+    
+}
 html .yui3-skin-night .yui3-calendar-content {
     background: #494A4A;
     /*border: 1px solid gray;*/
     border-radius: 5px 5px 5px 5px;
     color: #fff;
-    font-family: "Lucida Grande","Lucida Sans",Calibri,Helvetica,Arial,sans-serif;
-    font-size: 0.8em;
+    /*font-family: "Lucida Grande","Lucida Sans",Calibri,Helvetica,Arial,sans-serif;*/
     padding: 10px;
 }
 html .yui3-skin-night .yui3-calendar-day, 
@@ -136,10 +145,23 @@ html .yui3-skin-night .yui3-calendar-day-selected {
                 <button id="ltr" class="yui3-button yui3-button-selected">LTR</button>
             </div>
         </div>
-        <div class="yui3-g">
+
+
+
             <div class="yui3-u">
-                <button class="yui3-button">Derek</button>
+                <div id="button-demo">
+                    <div class="yui3-u">
+                        <button class="yui3-button">Button</button>
+                        <button class="yui3-button yui3-button-selected">Selected</button>
+                        <button class="yui3-button yui3-button-disabled">Disabled</button>
+                    </div>    
+                </div>
             </div>
+
+
+
+
+        <div class="yui3-g">
 <!-- TabView -->        
             <div class="yui3-u">
                 <div class="yui3-widget-loading" id="demo-tabview"> 
@@ -197,10 +219,22 @@ html .yui3-skin-night .yui3-calendar-day-selected {
                         <div class="yui3-widget-ft"> 
                             <button class="yui3-button">Cancel</button> 
                             <button class="yui3-button">Add</button> 
-                        </div> 
+                        </div>
                     </div> 
                 </div>
             </div>
+            
+            
+            
+<!--  for panel from JS  
+            <div class="yui3-u">
+                 <div id="myPanelContent">
+                    <div class="yui3-widget-hd">I'm from JS</div>
+                    <div class="yui3-widget-bd">My buttons have no margin. Why?</div>
+                    <div class="yui3-widget-ft"></div>
+                 </div>
+            </div> 
+-->
             <div class="yui3-u">
                  <div id="demo-calendar"></div>
             </div> 
@@ -595,6 +629,36 @@ YUI({filter: 'raw'}).use('autocomplete', 'autocomplete-filters', 'autocomplete-h
          '#rtl': buttonHandlers['rtl']
     });
     */
+
+
+    /*panel from JS 
+    
+    var panel = new Y.Panel({
+        srcNode : '#myPanelContent',
+        width   : 200,
+        centered: true,
+        render  : true,
+                // Make changes to the buttons through the `buttons` attribute,
+        // which takes an Array of Objects.
+        buttons: [
+            {
+                // Each object has a `value` property,
+                // which can be text or an HTML string.
+                value: "Okay",
+
+                // The `section` property tells where to render the button and
+                // should be `Y.WidgetStdMod.HEADER` or `Y.WidgetStdMod.FOOTER`.
+                section: Y.WidgetStdMod.FOOTER
+            },
+            {
+                value: "Nope",
+                section: Y.WidgetStdMod.FOOTER
+            }
+        ]
+
+    });
+    */
+
 
 });
 </script>
