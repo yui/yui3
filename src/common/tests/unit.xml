@@ -11,6 +11,7 @@
         <url>attribute/tests/attribute.html</url>
         <url>attribute/tests/attribute-core.html</url>
         <url>autocomplete/tests/functional/autocomplete.html</url>
+        <url>base/tests/base-core.html</url>
         <url>base/tests/base.html</url>
         <url>cache/tests/cache.html</url>
         <url>cache/tests/cache-offline.html</url>
