@@ -43,6 +43,16 @@ Base Change History
     Y.Attribute = Y.AttributeCore + Y.AttributeEvents + Y.AttributeExtras
     Y.Base      = Y.BaseCore + Y.Attribute
 
+    -- 
+
+    Modules:
+    
+    "base-base" : Y.Base
+    "base-core" : Y.BaseCore
+
+    "base-build" : Y.Base.build/create/mix mixin
+
+
 3.4.1
 -----
 

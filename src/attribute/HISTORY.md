@@ -44,6 +44,17 @@ Attribute Change History
 
     Y.Attribute = Y.AttributeCore + Y.AttributeEvents + Y.AttributeExtras
 
+    --
+
+    Modules:
+
+    "attribute-base" : Y.Attribute
+    "attribute-core" : Y.AttributeCore
+
+    "attribute-complex" : Y.AttributeComplex mixin (mixed into Y.Attribute)
+    "attribute-events" : Y.AttributeEvents mixin
+    "attribute-extras" : Y.AttributeExtras mixin
+
   * Changed State's internal data structure, to store pairs by 
     [name][property], instead of [property][name] to improve performance
     (most Attribute operations are name centric, not property centric).

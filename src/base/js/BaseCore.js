@@ -7,11 +7,14 @@
      */
 
     /**
-     * The base-base submodule provides the Base class without the Plugin support, provided by Plugin.Host, 
-     * and without the extension support provided by BaseCore.build.
+     * The base-core module provides the BaseCore class, the lightest version of Base, 
+     * which provides Base's basic lifecycle management and ATTRS construction support, 
+     * but doesn't fire init/destroy or attribute change events. 
+     * 
+     * It mixes in AttributeCore, which is the lightest version of Attribute
      *
      * @module base
-     * @submodule base-base
+     * @submodule base-core
      */
     var O = Y.Object,
         L = Y.Lang,
@@ -38,42 +41,27 @@
 
     /**
      * <p>
-     * A base class which objects requiring attributes and custom event support can 
-     * extend. Base also handles the chaining of initializer and destructor methods across 
-     * the hierarchy as part of object construction and destruction. Additionally, attributes configured 
-     * through the static <a href="#property_BaseCore.ATTRS">ATTRS</a> property for each class 
-     * in the hierarchy will be initialized by BaseCore.
+     * A base class which objects requiring attributes can extend. 
+     * 
+     * BaseCore also handles the chaining of initializer and destructor methods across 
+     * the hierarchy as part of object construction and destruction. 
+     * 
+     * Additionally, attributes configured through the static <a href="#property_BaseCore.ATTRS">ATTRS</a> property 
+     * for each class in the hierarchy will be initialized by BaseCore.
      * </p>
      *
      * <p>
      * The static <a href="#property_BaseCore.NAME">NAME</a> property of each class extending 
-     * from Base will be used as the identifier for the class, and is used by Base to prefix 
-     * all events fired by instances of that class.
+     * from BaseCore will be used as the identifier for the class.
      * </p>
      *
-     * @class Base
+     * @class BaseCore
      * @constructor
-     * @uses Attribute
-     * @uses Plugin.Host
+     * @uses AttributeCore
      *
-     * @param {Object} config Object with configuration property name/value pairs. The object can be 
-     * used to provide default values for the objects published attributes.
-     *
-     * <p>
-     * The config object can also contain the following non-attribute properties, providing a convenient 
-     * way to configure events listeners and plugins for the instance, as part of the constructor call:
-     * </p>
-     *
-     * <dl>
-     *     <dt>on</dt>
-     *     <dd>An event name to listener function map, to register event listeners for the "on" moment of the event. A constructor convenience property for the <a href="BaseCore.html#method_on">on</a> method.</dd>
-     *     <dt>after</dt>
-     *     <dd>An event name to listener function map, to register event listeners for the "after" moment of the event. A constructor convenience property for the <a href="BaseCore.html#method_after">after</a> method.</dd>
-     *     <dt>bubbleTargets</dt>
-     *     <dd>An object, or array of objects, to register as bubble targets for bubbled events fired by this instance. A constructor convenience property for the <a href="EventTarget.html#method_addTarget">addTarget</a> method.</dd>
-     *     <dt>plugins</dt>
-     *     <dd>A plugin, or array of plugins to be plugged into the instance (see PluginHost's plug method for signature details). A constructor convenience property for the <a href="Plugin.Host.html#method_plug">plug</a> method.</dd>
-     * </dl>
+     * @param {Object} config Object with configuration property name/value pairs. 
+     * The object can be used to provide initial values for the objects published 
+     * attributes.
      */
     function BaseCore(cfg) {
         if (!this._BaseInvoked) {
@@ -86,8 +74,8 @@
     }
 
     /**
-     * The list of properties which can be configured for 
-     * each attribute (e.g. setter, getter, writeOnce, readOnly etc.)
+     * The list of properties which can be configured for each attribute 
+     * (e.g. setter, getter, writeOnce, readOnly etc.)
      *
      * @property _ATTR_CFG
      * @type Array
@@ -99,11 +87,10 @@
 
     /**
      * <p>
-     * The string to be used to identify instances of 
-     * this class, for example in prefixing events.
+     * The string to be used to identify instances of this class.
      * </p>
      * <p>
-     * Classes extending Base, should define their own
+     * Classes extending BaseCore, should define their own
      * static NAME property, which should be camelCase by
      * convention (e.g. MyClass.NAME = "myClass";).
      * </p>
@@ -116,12 +103,13 @@
     /**
      * The default set of attributes which will be available for instances of this class, and 
      * their configuration. In addition to the configuration properties listed by 
-     * Attribute's <a href="Attribute.html#method_addAttr">addAttr</a> method, the attribute 
-     * can also be configured with a "cloneDefaultValue" property, which defines how the statically
-     * defined value field should be protected ("shallow", "deep" and false are supported values). 
+     * AttributeCore's <a href="AttributeCore.html#method_addAttr">addAttr</a> method, 
+     * the attribute can also be configured with a "cloneDefaultValue" property, which 
+     * defines how the statically defined value field should be protected 
+     * ("shallow", "deep" and false are supported values). 
      *
-     * By default if the value is an object literal or an array it will be "shallow" cloned, to 
-     * protect the default value.
+     * By default if the value is an object literal or an array it will be "shallow" 
+     * cloned, to protect the default value.
      *
      * @property ATTRS
      * @type Object
@@ -160,10 +148,10 @@
     BaseCore.prototype = {
 
         /**
-         * Internal construction logic for Base.
+         * Internal construction logic for BaseCore.
          *
          * @method _initBase
-         * @param {Object} config
+         * @param {Object} config The constructor configuration object
          * @private
          */
         _initBase : function(config) {
@@ -192,21 +180,26 @@
     
             this.init.apply(this, arguments);
         },
-        
+
+        /**
+         * Initializes AttributeCore 
+         * 
+         * @method _initAttribute
+         * @private
+         */
         _initAttribute: function() {
             this._attrCfgHash = BaseCore._ATTR_CFG_HASH;
             AttributeCore.apply(this);            
         },
 
         /**
-         * Init lifecycle method, invoked during construction.
-         * Fires the init event prior to setting up attributes and 
-         * invoking initializers for the class hierarchy.
+         * Init lifecycle method, invoked during construction. Sets up attributes 
+         * and invokes initializers for the class hierarchy.
          *
          * @method init
          * @chainable
          * @param {Object} cfg Object with configuration property name/value pairs
-         * @return {Base} A reference to this object
+         * @return {BaseCore} A reference to this object
          */
         init: function(cfg) {
             Y.log('init called', 'life', 'base');
@@ -217,7 +210,7 @@
         },
 
         /**
-         * Internal init implementation for Base
+         * Internal initialization implementation for BaseCore
          *
          * @method _baseInit
          * @private
@@ -233,18 +226,10 @@
         },
 
         /**
-         * <p>
-         * Destroy lifecycle method. Fires the destroy
-         * event, prior to invoking destructors for the
-         * class hierarchy.
-         * </p>
-         * <p>
-         * Subscribers to the destroy
-         * event can invoke preventDefault on the event object, to prevent destruction
-         * from proceeding.
-         * </p>
+         * Destroy lifecycle method. Invokes destructors for the class hierarchy.
+         *
          * @method destroy
-         * @return {Base} A reference to this object
+         * @return {BaseCore} A reference to this object
          * @chainable
          */
         destroy: function() {
@@ -253,7 +238,7 @@
         },
 
         /**
-         * Internal destroy implementation for Base
+         * Internal destroy implementation for BaseCore
          *
          * @method _baseDestroy
          * @private
@@ -267,7 +252,7 @@
         },
 
         /**
-         * Returns the class hierarchy for this object, with Base being the last class in the array.
+         * Returns the class hierarchy for this object, with BaseCore being the last class in the array.
          *
          * @method _getClasses
          * @protected
@@ -283,7 +268,8 @@
         },
 
         /**
-         * Returns an aggregated set of attribute configurations, by traversing the class hierarchy.
+         * Returns an aggregated set of attribute configurations, by traversing 
+         * the class hierarchy.
          *
          * @method _getAttrCfgs
          * @protected
@@ -529,7 +515,6 @@
         toString: function() {
             return this.name + "[" + Y.stamp(this, true) + "]";
         }
-
     };
 
     // Straightup augment, no wrapper functions
