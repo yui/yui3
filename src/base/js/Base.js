@@ -58,8 +58,8 @@
      *
      * @class Base
      * @constructor
+     * @uses BaseCore
      * @uses Attribute
-     * @uses Plugin.Host
      *
      * @param {Object} config Object with configuration property name/value pairs. The object can be 
      * used to provide default values for the objects published attributes.
