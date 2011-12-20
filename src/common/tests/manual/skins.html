@@ -18,6 +18,11 @@
     <link type="text/css" rel="stylesheet" href="../../../../build/node-menunav/assets/skins/night/node-menunav.css" charset="utf-8">
     <link type="text/css" rel="stylesheet" href="../../../../build/cssbuttons/cssbuttons.css">
 
+
+    <link type="text/css" rel="stylesheet" href="../../../calendar/assets/skins/night/calendar-base-skin.css">
+    <link type="text/css" rel="stylesheet" href="../../../calendar/assets/skins/night/calendarnavigator-skin.css">
+
+
     
     <style>
         body {
@@ -69,40 +74,6 @@
             color: inherit;
             font-size: inherit;
         }
-/* ======================    temp. MAKE SURE TO DELETE THESE CALENDAR REMOMMENDATIONS BEFORE TESTING ==============================*/
-html .yui3-calendar-content{
-    font-size: 100% !important;
-    font-family: !inherit;
-}
-html .yui3-skin-night .yui3-calendar-day, 
-html .yui3-skin-night .yui3-calendar-prevmonth-day,
-html .yui3-skin-night .yui3-calendar-nextmonth-day {
-    padding: 0.3em !important;
-    
-}
-html .yui3-skin-night .yui3-calendar-content {
-    background: #494A4A;
-    /*border: 1px solid gray;*/
-    border-radius: 5px 5px 5px 5px;
-    color: #fff;
-    /*font-family: "Lucida Grande","Lucida Sans",Calibri,Helvetica,Arial,sans-serif;*/
-    padding: 10px;
-}
-html .yui3-skin-night .yui3-calendar-day, 
-html .yui3-skin-night .yui3-calendar-prevmonth-day,
-html .yui3-skin-night .yui3-calendar-nextmonth-day {
-    background: none repeat scroll 0 0 #585959;
-    border: 1px solid #414342;
-    text-align: center;
-}
-html .yui3-skin-night .yui3-calendar-weekdayrow{
-    color:#969696;
-}
-html .yui3-skin-night .yui3-calendar-day-selected {
-    background-color: #70A4EB;
-    color: #000000;
-}
-/* ======================   end  temp. MAKE SURE TO DELETE THESE CALENDAR REMOMMENDATIONS BEFORE TESTING ==============================*/
 
 
     </style> 
@@ -555,6 +526,8 @@ YUI({filter: 'raw'}).use('autocomplete', 'autocomplete-filters', 'autocomplete-h
     new Y.Calendar({
         render: "#demo-calendar"
     });
+    Y.one('.calendar_col7').addClass('yui3-calendar-selection-disabled');
+//    Y.one('.yui3-calendar-nextmonth-day').setstyl('hello');
 
     new Y.Dial({
         render: "#demo-dial"
