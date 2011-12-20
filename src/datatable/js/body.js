@@ -1,9 +1,29 @@
+/**
+View class responsible for rendering the `<tbody>` section of a table. Used as
+the default `bodyView` for `Y.DataTable.Base` and `Y.DataTable` classes.
+
+Translates the provided `modelList` into a rendered `<tbody>` based on the data
+in the constituent Models, altered or ammended by any special column
+configurations.
+    
+Supported properties of the column objects include:
+
+  * `key`    - The HTML content of the header cell.
+
+The column object is also used to provide values for {placeholder} tokens in the
+instance's `CELL_TEMPLATE`, so you can modify the template and include other
+column object properties to populate them.
+
+@module datatable-body
+@class BodyView
+@namespace DataTable
+@extends View
+**/
 var Lang         = Y.Lang,
-    isObject     = Lang.isObject,
     isArray      = Lang.isArray,
-    htmlEscape   = Y.Escape.html,
+    // TODO: Use this when generating content unless column.allowHTML
+    //htmlEscape   = Y.Escape.html,
     fromTemplate = Y.Lang.sub,
-    arrayIndexOf = Y.Array.indexOf,
     toArray      = Y.Array,
 
     ClassNameManager = Y.ClassNameManager,
@@ -11,14 +31,17 @@ var Lang         = Y.Lang,
 
 Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     // -- Instance properties -------------------------------------------------
-    TBODY_TEMPLATE:
-        '<tbody class="{classes}">{content}</tbody>',
 
-    ROW_TEMPLATE :
-        '<tr id="{clientId}" class="{rowClasses}">' +
-            '{content}' +
-        '</tr>',
+    /**
+    HTML template used to create table cells.
 
+    @property CELL_TEMPLATE
+    @type {HTML}
+    @default
+        '<td headers="{headers}" class="{classes}">
+            '<div class="{linerClass}">{content}</div>
+        </td>'
+    **/
     CELL_TEMPLATE:
         '<td headers="{headers}" class="{classes}">' +
             '<div class="{linerClass}">' +
@@ -26,19 +49,82 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             '</div>' +
         '</td>',
 
-    // -- Public methods ------------------------------------------------------
-    bindUI: function () {
-        this._eventHandles.push(
-            this.host.after('columnChange', this._afterColumnChange),
-            this.get('modelList').after(
-                ['*:change', '*:destroy'],
-                this._afterDataChange, this));
-    },
+    /**
+    CSS class applied to even rows.  This is assigned at instantiation after
+    setting up the `_cssPrefix` for the instance.
+    
+    For DataTable, this will be `yui3-datatable-even`.
 
+    @property CLASS_EVEN
+    @type {String}
+    @default 'yui3-table-even'
+    **/
+    //CLASS_EVEN: null
+
+    /**
+    CSS class applied to odd rows.  This is assigned at instantiation after
+    setting up the `_cssPrefix` for the instance.
+    
+    When used by DataTable instances, this will be `yui3-datatable-odd`.
+
+    @property CLASS_ODD
+    @type {String}
+    @default 'yui3-table-odd'
+    **/
+    //CLASS_ODD: null
+
+    /**
+    HTML template used to create table rows.
+
+    @property ROW_TEMPLATE
+    @type {HTML}
+    @default '<tr id="{clientId}" class="{rowClasses}">{content}</tr>'
+    **/
+    ROW_TEMPLATE :
+        '<tr id="{clientId}" class="{rowClasses}">' +
+            '{content}' +
+        '</tr>',
+
+    /**
+    The object that serves as the source of truth for column and row data.
+    This property is assigned at instantiation from the `source` property of
+    the configuration object passed to the constructor.
+
+    @property source
+    @type {Object}
+    @default (initially unset)
+    **/
+    //TODO: should this be protected?
+    //source: null,
+
+    /**
+    HTML template used to create table's `<tbody>`.
+
+    @property TBODY_TEMPLATE
+    @type {HTML}
+    @default '<tbody class="{classes}">{content}</tbody>'
+    **/
+    TBODY_TEMPLATE: '<tbody class="{classes}">{content}</tbody>',
+
+    // -- Public methods ------------------------------------------------------
+    /**
+    Destroys the instance.
+
+    @method destructor
+    **/
     destructor: function () {
         (new Y.EventHandle(this._eventHandles)).detach();
     },
 
+    /**
+    Returns the `<td>` Node from the given row and column index.  If there is
+    no cell at the given coordinates, `null` is returned.
+
+    @method getCell
+    @param {Number} row Zero based index of the row with the target cell
+    @param {Number} col Zero based index of the column with the target cell
+    @return {Node}
+    **/
     getCell: function (row, col) {
         var el = null;
 
@@ -50,6 +136,17 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         return Y.one(el);
     },
 
+    /**
+    Builds a CSS class name from the provided tokens.  If the instance is
+    created with `cssPrefix` or `source` in the configuration, it will use this
+    prefix (the `_cssPrefix` of the `source` object) as the base token.  This
+    allows class instances to generate markup with class names that correspond
+    to the parent class that is consuming them.
+
+    @method getClassName
+    @param {String} token* Any number of tokens to include in the class name
+    @return {String} The generated class name
+    **/
     getClassName: function () {
         var args = toArray(arguments);
         args.unshift(this._cssPrefix);
@@ -58,6 +155,15 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         return _getClassName.apply(ClassNameManager, args);
     },
 
+    /**
+    Returns the `<tr>` Node from the given row index.  If there is
+    no row at the given index, `null` is returned.
+
+    @method getRow
+    @param {Number} row Zero based index of the row
+    @return {Node}
+    **/
+    // TODO: Support index as clientId => _tbodyNode.one('> #' + index)?
     getRow: function (index) {
         var el;
 
@@ -68,20 +174,33 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         return Y.one(el);
     },
 
-    initializer: function (config) {
-        var cssPrefix = config.cssPrefix || (config.host || {}).cssPrefix;
+    /**
+    Creates the table's `<tbody>` Node by assembling markup generated by
+    populating the `TBODY_TEMPLATE`, `ROW_TEMPLATE`, and `CELL_TEMPLATE`
+    templates with content from the `columns` property and `modelList`
+    attribute.
 
-        this.host    = config.source;
-        this.columns = this._parseColumns(config.columns);
-        this._tbodyNode = config.tbodyNode;
+    The rendering process happens in four stages:
 
-        this._eventHandles = [];
+    1. A row template is assembled from the `columns` property (see
+       `_createRowTemplate`)
 
-        if (cssPrefix) {
-            this._cssPrefix = cssPrefix;
-        }
-    },
+    2. An HTML string is built up by concatening the application of the data in
+       each Model in the `modelList` to the row template. For cells with
+       `formatter`s, the function is called to generate cell content. Cells
+       with `nodeFormatter`s are ignored. For all other cells, the data value
+       from the Model attribute for the given column key is used.  The
+       accumulated row markup is then inserted into the `TBODY_TEMPLATE`.
 
+    3. The `<tbody>` Node is created from the HTML string.
+
+    4. If any column is configured with a `nodeFormatter`, the `modelList` is
+       iterated again to apply the `nodeFormatter`s.
+
+    @method render
+    @return {BodyView} The instance
+    @chainable
+    **/
     render: function () {
         var table    = this.get('container'),
             data     = this.get('modelList'),
@@ -126,18 +245,50 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     },
 
     // -- Protected and private methods ---------------------------------------
+    /**
+    Handles changes in the source's columns attribute.  Redraws the table data.
+
+    @method _afterColumnChange
+    @param {EventFacade} e The `columnsChange` event object
+    @protected
+    **/
+    // TODO: Preserve existing DOM
+    // This will involve parsing and comparing the old and new column configs
+    // and reacting to four types of changes:
+    // 1. formatter, nodeFormatter, emptyCellValue changes
+    // 2. column deletions
+    // 3. column additions
+    // 4. column moves (preserve cells)
     _afterColumnsChange: function (e) {
         this._parseColumns(e.newVal);
 
+        // FIXME: This will call bindUI() a second time.
         this.render();
     },
     
+    /**
+    Handles modelList changes, including additions, deletions, and updates.
+
+    Modifies the existing table DOM accordingly.
+
+    @method _afterDataChange
+    @param {EventFacade} e The `change` event from the ModelList
+    @protected
+    **/
     _afterDataChange: function (e) {
         // TODO
     },
 
+    /**
+    Iterates the `modelList`, and calls any `nodeFormatter`s found in the `columns` param on the appropriate cell Nodes in the `tbody`.
+
+    @method _applyNodeFormatters
+    @param {Node} tbody The `<tbody>` Node whose columns to update
+    @param {Object[]} columns The column configurations
+    @protected
+    **/
     _applyNodeFormatters: function (tbody, columns) {
-        var host = this.host,
+        var source = this.source,
             data = this.get('modelList'),
             formatters = [],
             tbodyNode  = tbody.getDOMNode(),
@@ -154,6 +305,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         if (data && formatters.length) {
             data.each(function (record, index) {
                 var formatterData = {
+                        data      : record.getAttrs(),
                         record    : record,
                         rowindex  : index
                     },
@@ -173,7 +325,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                             formatterData.td    = cell;
                             formatterData.cell  = cell.one(linerQuery) || cell;
 
-                            keep = col.nodeFormatter.call(host, formatterData);
+                            keep = col.nodeFormatter.call(source,formatterData);
 
                             if (keep === false) {
                                 // Remove from the Node cache to reduce
@@ -190,63 +342,50 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         }
     },
 
-    _cssPrefix: 'table',
+    /**
+    Binds event subscriptions from the UI and the source (if assigned).
 
+    @method bindUI
+    @protected
+    **/
+    bindUI: function () {
+        this._eventHandles.push(
+            this.source.after('columnChange', this._afterColumnChange),
+            this.get('modelList').after(
+                ['*:change', '*:destroy'],
+                this._afterDataChange, this));
+    },
+
+    /**
+    The base token for classes created with the `getClassName` method.
+
+    @property _cssPrefix
+    @type {String}
+    @default 'yui3-table'
+    @protected
+    **/
+    _cssPrefix: ClassNameManager.getClassName('table'),
+
+    /**
+    Iterates the `modelList` and applies each Model to the `_rowTemplate`,
+    allowing any column `formatter` or `emptyCellValue` to override cell
+    content for the appropriate column.  The aggregated HTML string is
+    returned.
+
+    @method _createDataHTML
+    @param {Object[]} columns The column configurations to customize the
+                generated cell content or class names
+    @protected
+    @return {HTML} The markup for all Models in the `modelList`, each applied
+                to the `_rowTemplate`
+    **/
     _createDataHTML: function (columns) {
-        var host = this.host,
-            data = this.get('modelList'),
-            odd  = this.getClassName('odd'),
-            even = this.getClassName('even'),
-            rowTemplate = this._rowTemplate,
+        var data = this.get('modelList'),
             html = '';
 
         if (data) {
-            data.each(function (record, index) {
-                var data = record.getAttrs(),
-                    i, len, col, key, value, formatterData, attr;
-
-                for (i = 0, len = columns.length; i < len; ++i) {
-                    col = columns[i];
-                    key = col.key || col._yuid;
-                    value = data[key];
-
-                    data[key + '-classes']    = '';
-
-                    if (col.formatter) {
-                        formatterData = {
-                            value     : value,
-                            data      : data,
-                            column    : col,
-                            record    : record,
-                            classnames: '',
-                            rowindex  : index
-                        };
-
-                        if (typeof col.formatter === 'string') {
-                            value = fromTemplate(col.formatter, formatterData);
-                        } else {
-                            // Formatters can either return a value
-                            value = col.formatter.call(host, formatterData);
-
-                            // or update the value property of the data obj passed
-                            if (value === undefined) {
-                                value = formatterData.value;
-                            }
-
-                            data[key + '-classes'] = formatterData.classnames;
-                        }
-                    }
-
-                    if (value === '' && col.emptyCellValue) {
-                        value = col.emptyCellValue;
-                    }
-
-                    data[key] = value;
-                }
-
-                data.rowClasses = (index % 2) ? odd : even;
-
-                html += fromTemplate(rowTemplate, data);
+            data.each(function (model, index) {
+                html += this._createRowHTML(model, index);
             });
         }
 
@@ -256,6 +395,101 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         });
     },
 
+    /**
+    Applies the data of a given Model, modified by any column formatters and
+    supplemented by other template values to the instance's `_rowTemplate` (see
+    `_createRowTemplate`).  The generated string is then returned.
+
+    The data from Model's attributes is fetched by `getAttrs` and this data
+    object is appended with other properties to supply values to {placeholders}
+    in the template.  For a template generated from a Model with 'foo' and 'bar'
+    attributes, the data object would end up with the following properties
+    before being used to populate the `_rowTemplate`:
+
+      * `clientID` - From Model, used the assign the `<tr>`'s 'id' attribute.
+      * `foo` - The value to populate the 'foo' column cell content.  This
+        value will be the result of the column's `formatter` if assigned, and
+        will default from '' or `undefined` to the value of the column's
+        `emptyCellValue` if assigned.
+      * `bar` - Same for the 'bar' column cell content.
+      * `foo-classes` - String of CSS classes to apply to the `<td>`.
+      * `bar-classes` - Same.
+      * `rowClasses`  - String of CSS classes to apply to the `<tr>`. This will
+        default to the odd/even class per the specified index, but can be
+        accessed and ammended by any column formatter via `o.data.rowClasses`.
+
+    Because this object is available to formatters, any additional properties
+    can be added to fill in custom {placeholders} in the `_rowTemplate`.
+
+    @method _createRowHTML
+    @param {Model} model The Model instance to apply to the row template
+    @param {Number} index The index the row will be appearing
+    @return {HTML} The markup for the provided Model, less any `nodeFormatter`s
+    **/
+    _createRowHTML: function (model, index) {
+        var data    = model.getAttrs(),
+            source  = this.source || this,
+            columns = this.columns,
+            i, len, col, key, value, formatterData;
+
+        // TODO: Be consistent and change to row-classes? This could be
+        // clobbered by a column named 'row'.
+        data.rowClasses = (index % 2) ? this.CLASS_ODD : this.CLASS_EVEN;
+
+        for (i = 0, len = columns.length; i < len; ++i) {
+            col   = columns[i];
+            key   = col.key || col._yuid;
+            value = data[key];
+
+            data[key + '-classes'] = '';
+
+            if (col.formatter) {
+                formatterData = {
+                    value     : value,
+                    data      : data,
+                    column    : col,
+                    record    : model,
+                    classnames: '',
+                    rowindex  : index
+                };
+
+                if (typeof col.formatter === 'string') {
+                    // TODO: look for known formatters by string name
+                    value = fromTemplate(col.formatter, formatterData);
+                } else {
+                    // Formatters can either return a value
+                    value = col.formatter.call(source, formatterData);
+
+                    // or update the value property of the data obj passed
+                    if (value === undefined) {
+                        value = formatterData.value;
+                    }
+
+                    data[key + '-classes'] = formatterData.classnames;
+                }
+            }
+
+            if ((value === undefined || value === '') &&
+                col.emptyCellValue) {
+                value = col.emptyCellValue;
+            }
+
+            data[key] = value;
+        }
+
+        return fromTemplate(this._rowTemplate, data);
+    },
+
+    /**
+    Creates a custom HTML template string for use in generating the markup for
+    individual table rows with {placeholder}s to capture data from the Models
+    in the `modelList` attribute or from column `formatter`s.
+
+    Assigns the `_rowTemplate` attribute.
+
+    @method _createRowTemplate
+    @param {Object[]} columns Array of column configuration objects
+    **/
     _createRowTemplate: function (columns) {
         var html         = '',
             cellTemplate = this.CELL_TEMPLATE,
@@ -288,6 +522,45 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         });
     },
 
+    /**
+    Initializes the instance. Reads the following configuration properties in
+    addition to the instance attributes:
+
+      * `columns` - (REQUIRED) The initial column information
+      * `cssPrefix` - The base string for classes generated by `getClassName`
+      * `source` - The object to serve as source of truth for column info
+
+    @method initializer
+    @param {Object} config Configuration data
+    **/
+    initializer: function (config) {
+        var cssPrefix = config.cssPrefix || (config.source || {}).cssPrefix;
+
+        this.source  = config.source;
+        this.columns = this._parseColumns(config.columns);
+        this._tbodyNode = config.tbodyNode;
+
+        this._eventHandles = [];
+
+        if (cssPrefix) {
+            this._cssPrefix = cssPrefix;
+        }
+
+        this.CLASS_ODD  = this.getClassName('odd');
+        this.CLASS_EVEN = this.getClassName('even');
+    },
+
+    /**
+    Flattens an array of potentially nested column configurations into a single
+    depth array of data columns.  Columns that have children are disregarded in
+    favor of searching their child columns.  The resulting array corresponds 1:1
+    with columns that will contain data in the `<tbody>`.
+
+    @method _parseColumns
+    @param {Object[]} data Array of unfiltered column configuration objects
+    @param {Object[]} columns Working array of data columns. Used for recursion.
+    @return {Object[]} Only those columns that will be rendered.
+    **/
     _parseColumns: function (data, columns) {
         var col, i, len;
         
@@ -312,4 +585,15 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
         return columns;
     }
+
+    /**
+    The HTML template used to create a full row of markup for a single Model in
+    the `modelList` plus any customizations defined in the column
+    configurations.
+
+    @property _rowTemplate
+    @type {HTML}
+    @default (initially unset)
+    **/
+    //_rowTemplate: null
 });
