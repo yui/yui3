@@ -7,11 +7,11 @@
      */
 
     /**
-     * The base-core module provides the BaseCore class, the lightest version of Base, 
+     * <p>The base-core module provides the BaseCore class, the lightest version of Base, 
      * which provides Base's basic lifecycle management and ATTRS construction support, 
-     * but doesn't fire init/destroy or attribute change events. 
+     * but doesn't fire init/destroy or attribute change events.</p> 
      * 
-     * It mixes in AttributeCore, which is the lightest version of Attribute
+     * <p>It mixes in AttributeCore, which is the lightest version of Attribute</p>
      *
      * @module base
      * @submodule base-core
@@ -40,26 +40,23 @@
         };
 
     /**
-     * <p>
-     * A base class which objects requiring attributes can extend. 
-     * 
+     * The BaseCore class, is the lightest version of Base, and provides Base's 
+     * basic lifecycle management and ATTRS construction support, but doesn't 
+     * fire init/destroy or attribute change events.
+     *
      * BaseCore also handles the chaining of initializer and destructor methods across 
-     * the hierarchy as part of object construction and destruction. 
+     * the hierarchy as part of object construction and destruction. Additionally, attributes 
+     * configured through the static <a href="#property_BaseCore.ATTRS">ATTRS</a> 
+     * property for each class in the hierarchy will be initialized by BaseCore.
+     *
+     * Classes which require attribute support, but don't intend to use/expose attribute 
+     * change events can extend BaseCore instead of Base for optimal kweight and 
+     * runtime performance.
      * 
-     * Additionally, attributes configured through the static <a href="#property_BaseCore.ATTRS">ATTRS</a> property 
-     * for each class in the hierarchy will be initialized by BaseCore.
-     * </p>
-     *
-     * <p>
-     * The static <a href="#property_BaseCore.NAME">NAME</a> property of each class extending 
-     * from BaseCore will be used as the identifier for the class.
-     * </p>
-     *
      * @class BaseCore
      * @constructor
      * @uses AttributeCore
-     *
-     * @param {Object} config Object with configuration property name/value pairs. 
+     * @param {Object} cfg Object with configuration property name/value pairs. 
      * The object can be used to provide initial values for the objects published 
      * attributes.
      */
