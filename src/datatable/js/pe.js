@@ -9,28 +9,32 @@ var getClassName = Y.ClassNameManager.getClassName,
 
 function EnhanceMarkup() {}
 
-Y.mix(EnhanceMarkup, {
-    HTML_PARSER: {
-        _tableNode  : '_findHTMLTableNode',
-        _captionNode: '_findHTMLCaptionNode',
-        _theadNode  : '_findHTMLTheadNode',
-        _tfootNode  : '_findHTMLTfootNode',
-        _tbodyNode  : '_findHTMLTbodyNode',
-        columns: '_parseHTMLColumns',
-        caption: '_parseHTMLCaption',
-        summary: '_parseHTMLSummary'
-    }
-});
+EnhanceMarkup.HTML_PARSER = {
+    _tableNode  : '_findHTMLTableNode',
+    _captionNode: '_findHTMLCaptionNode',
+    _theadNode  : '_findHTMLTheadNode',
+    _tfootNode  : '_findHTMLTfootNode',
+    _tbodyNode  : '_findHTMLTbodyNode',
+    columns: '_parseHTMLColumns',
+    caption: '_parseHTMLCaption',
+    summary: '_parseHTMLSummary'
+};
 
 Y.mix(EnhanceMarkup.prototype, {
     // -- Instance properties -------------------------------------------------
     RE_COLUMN_ATTR: /data-yui3-column-(.*)/,
 
     // -- Public methods ------------------------------------------------------
+    enhance: function (srcNode) {
+        // TODO? Worthwhile, or duplicating construction with srcNode + render()
+    },
+
     initializer: function (config) {
         if (config) {
             // Node references from HTML_PARSER to support progressive
             // enhancement, but aren't stored as attributes.
+            // TODO: these should be captured in a single object which can be
+            // used as a config/setAttrs object for the views.
             this._tableNode   = config._tableNode;
             this._captionNode = config._captionNode;
             this._theadNode   = config._theadNode;
