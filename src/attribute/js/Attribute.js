@@ -34,7 +34,7 @@
      * </ul>
      *
      * <p>See the <a href="#method_addAttr">addAttr</a> method, for the complete set of configuration
-     * options available for attributes</p>.
+     * options available for attributes.</p>
      *
      * <p><strong>NOTE:</strong> Most implementations will be better off extending the <a href="Base.html">Base</a> class, 
      * instead of augmenting Attribute directly. Base augments Attribute and will handle the initial configuration 

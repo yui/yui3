@@ -172,9 +172,9 @@ YUI.add('attribute-core', function(Y) {
 
     /**
      * <p>
-     * AttributeCore provides configurable attribute support. It is designed to be 
+     * AttributeCore provides the lightest level of configurable attribute support. It is designed to be 
      * augmented on to a host class, and provides the host with the ability to configure 
-     * attributes to store and retrieve state, without support for attribute change events.
+     * attributes to store and retrieve state, <strong>but without support for attribute change events</strong>.
      * </p>
      * <p>For example, attributes added to the host can be configured:</p>
      * <ul>
@@ -188,7 +188,11 @@ YUI.add('attribute-core', function(Y) {
      * </ul>
      *
      * <p>See the <a href="#method_addAttr">addAttr</a> method, for the complete set of configuration
-     * options available for attributes</p>.
+     * options available for attributes.</p>
+     * 
+     * <p>Object/Classes based on AttributeCore can augment <a href="AttributeEvents.html">AttributeEvents</a> 
+     * (with true for overwrite) and <a href="AttributeExtras.html">AttributeExtras</a> to add attribute event and 
+     * additional, less commonly used attribute methods, such as `modifyAttr`, `removeAttr` and `reset`.</p>   
      *
      * @class AttributeCore
      * @param attrs {Object} The attributes to add during construction (passed through to <a href="#method_addAttrs">addAttrs</a>). These can also be defined on the constructor being augmented with Attribute by defining the ATTRS property on the constructor.
@@ -238,6 +242,7 @@ YUI.add('attribute-core', function(Y) {
          * @param attrs {Object} The attributes to add during construction (passed through to <a href="#method_addAttrs">addAttrs</a>). These can also be defined on the constructor being augmented with Attribute by defining the ATTRS property on the constructor.
          * @param values {Object} The initial attribute values to apply (passed through to <a href="#method_addAttrs">addAttrs</a>). These are not merged/cloned. The caller is responsible for isolating user provided values if required.
          * @param lazy {boolean} Whether or not to add attributes lazily (passed through to <a href="#method_addAttrs">addAttrs</a>).
+         * @private
          */
         _initAttrHost : function(attrs, values, lazy) {
             this._state = new Y.State();

@@ -27,11 +27,10 @@
         };
 
     /**
-     * A mixin implementation for AttributeCore, providing less frequently used 
+     * A augmentable implementation for AttributeCore, providing less frequently used 
      * methods for Attribute management such as modifyAttrs(), removeAttr and reset()   
      *
      * @class AttributeExtras
-     * @for AttributeCore
      */
     function AttributeExtras() {}
 
@@ -46,7 +45,6 @@
          * broadcast and getter.
          * </p>
          * @method modifyAttr
-         * @for AttributeCore
          * @param {String} name The name of the attribute whose configuration is to be updated.
          * @param {Object} config An object with configuration property/value pairs, specifying the configuration properties to modify.
          */
@@ -80,7 +78,6 @@
          * Removes an attribute from the host object
          *
          * @method removeAttr
-         * @for AttributeCore
          * @param {String} name The name of the attribute to be removed.
          */
         removeAttr: function(name) {
@@ -92,7 +89,6 @@
          * the attribute is not readOnly, or writeOnce.
          *
          * @method reset
-         * @for AttributeCore
          * @param {String} name Optional. The name of the attribute to reset.  If omitted, all attributes are reset.
          * @return {Object} A reference to the host object.
          * @chainable
@@ -115,11 +111,10 @@
 
         /**
          * Returns an object with the configuration properties (and value)
-         * for the given attrubute. If attrName is not provided, returns the
+         * for the given attribute. If attrName is not provided, returns the
          * configuration properties for all attributes.
          *
          * @method _getAttrCfg
-         * @for AttributeCore
          * @protected
          * @param {String} name Optional. The attribute name. If not provided, the method will return the configuration for all attributes.
          * @return {Object} The configuration properties for the given attribute, or all attributes.
