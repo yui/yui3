@@ -75,7 +75,7 @@ Table.ATTRS = {
        `constructor of the first item will be used.
     3. If the `data` attribute is set with a non-empty array, a Model subclass
        will be generated using the keys of the first item as its `ATTRS` (see
-       the `_createRecordClass` method).
+       the `\_createRecordClass` method).
     4. If the `columns` attribute is set, a Model subclass will be generated
        using the columns defined with a `key`. This is least desirable because
        columns can be duplicated or nested in a way that's not parsable.
@@ -429,7 +429,7 @@ Y.mix(Table.prototype, {
     //_tableNode: null,
 
     /**
-    Relays `captionChange` events to `_uiUpdateCaption`.
+    Relays `captionChange` events to `\_uiUpdateCaption`.
 
     @method _afterCaptionChange
     @param {EventFacade} e The `captionChange` event object
@@ -440,7 +440,7 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Updates the `_columnMap` property in response to changes in the `columns`
+    Updates the `\_columnMap` property in response to changes in the `columns`
     attribute.
 
     @method _afterColumnsChange
@@ -452,7 +452,7 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Relays `summaryChange` events to `_uiUpdateSummary`.
+    Relays `summaryChange` events to `\_uiUpdateSummary`.
 
     @method _afterSummaryChange
     @param {EventFacade} e The `summaryChange` event object
@@ -542,10 +542,10 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Initializes the instance's `_columnMap` from the configured `columns`
+    Initializes the instance's `\_columnMap` from the configured `columns`
     attribute.  If `columns` is not set, but `recordType` is, it uses the
     `ATTRS` of that class.  If neither are set, it temporarily falls back to an
-    empty array. `_initRecordType` will call back into this method if it finds
+    empty array. `\_initRecordType` will call back into this method if it finds
     the `columnMap` empty.
 
     @method _initColumns
@@ -624,6 +624,7 @@ Y.mix(Table.prototype, {
     default value.
 
     It tries the following methods to determine a default:
+
     1. If the `data` attribute is set with a ModelList with a `model` property,
        that class is used.
     2. If the `data` attribute is set with a non-empty ModelList, the
@@ -638,8 +639,8 @@ Y.mix(Table.prototype, {
     Of none of those are successful, it subscribes to the change events for
     `columns`, `recordType`, and `data` to try again.
 
-    If defaulting the `recordType` and the current `_columnMap` property is
-    empty, it will call `_initColumns`.
+    If defaulting the `recordType` and the current `\_columnMap` property is
+    empty, it will call `\_initColumns`.
 
     @method _initRecordType
     @protected
@@ -830,7 +831,7 @@ Y.mix(Table.prototype, {
     /**
     Creates the table and caption and assigns the table's summary attribute.
 
-    Assigns the generated table to the `_tableNode` property.
+    Assigns the generated table to the `\_tableNode` property.
 
     @method _renderTable
     @protected
@@ -849,7 +850,7 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Assigns the `_columnMap` property with the parsed results of the array of
+    Assigns the `\_columnMap` property with the parsed results of the array of
     column definitions passed.
 
     @method _setColumnMap
