@@ -17,6 +17,7 @@ var INVALID    = Y.Attribute.INVALID_VALUE,
 
     Lang       = Y.Lang,
     isFunction = Lang.isFunction,
+    isObject   = Lang.isObject,
     isArray    = Lang.isArray,
     isString   = Lang.isString,
 
@@ -180,7 +181,7 @@ Table.ATTRS = {
     The core implementaion does not define a default `bodyView`.  Classes
     built from this extension should define a default.
 
-    @attribute footerView
+    @attribute bodyView
     @type {Function|Object}
     **/
     bodyView: {
@@ -218,13 +219,16 @@ Table.ATTRS = {
     /**
     Deprecated as of 3.5.0. Passes through to the `data` attribute.
 
+    WARNING: `get('recordset')` will NOT return a Recordset instance as of
+    3.5.0.  This is a break in backward compatibility.
+
     @attribute recordset
     @type {Object[]|Recordset}
     @deprecated Use the `data` attribute
     **/
     recordset: {
         setter: '_setRecordset',
-        getter: '_setRecordset'
+        getter: '_getRecordset'
     },
 
     /**
@@ -233,13 +237,16 @@ Table.ATTRS = {
     If a Columnset object is passed, its raw object and array column data will
     be extracted for use.
 
+    WARNING: `get('columnset')` will NOT return a Columnset instance as of
+    3.5.0.  This is a break in backward compatibility.
+
     @attribute columnset
     @type {Object[]|Columnset}
     @deprecated Use the `columns` attribute
     **/
     columnset: {
         setter: '_setColumnset',
-        getter: '_setColumnset'
+        getter: '_getColumnset'
     }
 };
 
@@ -264,17 +271,6 @@ Y.mix(Table.prototype, {
     @default '<table></table>'
     **/
     TABLE_TEMPLATE  : '<table></table>',
-
-    /**
-    A map of column key to column configuration objects parsed from the
-    `columns` attribute.
-
-    @property _columnMap
-    @type {Object}
-    @default undefined (initially unset)
-    @protected
-    **/
-    //_columnMap: null,
 
     /**
     The object or instance of the class assigned to `bodyView` that is
@@ -319,19 +315,6 @@ Y.mix(Table.prototype, {
     //data: null,
 
     // -- Public methods ------------------------------------------------------
-
-    /**
-    Subscribes to attribute change events to update the UI.
-
-    @method bindUI
-    **/
-    bindUI: function () {
-        // TODO: handle widget attribute changes
-        this.after({
-            captionChange: this._afterCaptionChange,
-            summaryChange: this._afterSummaryChange
-        });
-    },
 
     /**
     Returns the Node for a cell at the given coordinates.
@@ -406,7 +389,44 @@ Y.mix(Table.prototype, {
         }
     },
 
-    // -- Protected and private methods ---------------------------------------
+    // -- Protected and private properties and methods ------------------------
+
+    /**
+    Subscribes to attribute change events to update the UI.
+
+    @method bindUI
+    @protected
+    **/
+    bindUI: function () {
+        // TODO: handle widget attribute changes
+        this.after({
+            captionChange: this._afterCaptionChange,
+            summaryChange: this._afterSummaryChange
+        });
+    },
+
+    /**
+    A map of column key to column configuration objects parsed from the
+    `columns` attribute.
+
+    @property _columnMap
+    @type {Object}
+    @default undefined (initially unset)
+    @protected
+    **/
+    //_columnMap: null,
+
+    /**
+    The Node instance of the table containing the data rows.  This is set when
+    the table is rendered.  It may also be set by progressive enhancement,
+    though this extension does not provide the logic to parse from source.
+
+    @property _tableNode
+    @type {Node}
+    @default undefined (initially unset)
+    @protected
+    **/
+    //_tableNode: null,
 
     /**
     Relays `captionChange` events to `_uiUpdateCaption`.
@@ -443,21 +463,28 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Creates a Model subclass from an array of attribute names.  This is used
-    to generate a class suitable to represent the data passed to the `data`
-    attribute if no `recordType` is set.
+    Creates a Model subclass from an array of attribute names or an object of
+    attribute definitions.  This is used to generate a class suitable to
+    represent the data passed to the `data` attribute if no `recordType` is
+    set.
 
     @method _createRecordClass
-    @param {String[]} attrs Names assigned to the Model subclass's `ATTRS`
+    @param {String[]|Object} attrs Names assigned to the Model subclass's
+                `ATTRS` or its entire `ATTRS` definition object
     @return {Model}
     @protected
     **/
     _createRecordClass: function (attrs) {
-        var ATTRS = {},
-            i, len;
+        var ATTRS, i, len;
 
-        for (i = 0, len = attrs.length; i < len; ++i) {
-            ATTRS[attrs[i]] = {};
+        if (isArray(attrs)) {
+            ATTRS = {};
+
+            for (i = 0, len = attrs.length; i < len; ++i) {
+                ATTRS[attrs[i]] = {};
+            }
+        } else if (isObject(attrs)) {
+            ATTRS = attrs;
         }
 
         return Y.Base.create('record', Y.Model, [], null, { ATTRS: ATTRS });
@@ -480,6 +507,25 @@ Y.mix(Table.prototype, {
         name = name.slice(8);
 
         return (name) ? this._columnMap[name] : columns;
+    },
+
+    /**
+    Relays the `get()` request for the deprecated `columnset` attribute to the
+    `columns` attribute.
+
+    THIS BREAKS BACKWARD COMPATIBILITY.  3.4.1 and prior implementations will
+    expect a Columnset instance returned from `get('columnset')`.
+
+    @method _getColumnset
+    @param {Object} ignored The current value stored in the `columnset` state
+    @param {String} name The attribute name requested
+                         (e.g. 'columnset' or 'columnset.foo');
+    @deprecated This will be removed with the `columnset` attribute in a future
+                version.
+    @protected
+    **/
+    _getColumnset: function (_, name) {
+        return this.get(name.replace(/^columnset/, 'columns'));
     },
 
     /**
@@ -574,18 +620,19 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Defaults the Model class used by the `data` ModelList to represent the
-    data records for the data set in the case where the `recordType` attribute
-    was not set.
+    If the `recordType` attribute is not set, this method attempts to set a
+    default value.
 
     It tries the following methods to determine a default:
     1. If the `data` attribute is set with a ModelList with a `model` property,
        that class is used.
     2. If the `data` attribute is set with a non-empty ModelList, the
        `constructor` of the first item is used.
-    3. If the `data` attribute is set with a non-empty array, a custom Model
+    3. If the `data` attribute is set with a non-empty array and the first item
+       is a Base subclass, its constructor is used.
+    4. If the `data` attribute is set with a non-empty array a custom Model
        subclass is generated using the keys of the first item as its `ATTRS`.
-    4. If the `_columnMap` property has keys, a custom Model subclass is
+    5. If the `_columnMap` property has keys, a custom Model subclass is
        generated using those keys as its `ATTRS`.
 
     Of none of those are successful, it subscribes to the change events for
@@ -614,7 +661,9 @@ Y.mix(Table.prototype, {
 
             // Or if the data is an array, build a class from the first item
             } else if (isArray(data) && data.length) {
-                recordType = this._createRecordClass(keys(data[0]));
+                recordType = (data[0].constructor.ATTRS) ?
+                    data[0].constructor :
+                    this._createRecordClass(keys(data[0]));
 
             // Or if the columns were defined, build a class from the keys
             } else if (keys(columns).length) {
@@ -661,8 +710,19 @@ Y.mix(Table.prototype, {
     },
 
     /**
+    Iterates the array of column configurations to capture all columns with a
+    `key` property.  Columns that are represented as strings will be replaced
+    with objects with the string assigned as the `key` property.  If a column
+    has a `children` property, it will be iterated, adding any nested column
+    keys to the returned map. There is no limit to the levels of nesting.
+
+    The result is an object map with column keys as the property name and the
+    corresponding column object as the associated value.
 
     @method _parseColumns
+    @param {Object[]|String[]} columns The array of column names or
+                configuration objects to scan
+    @param {Object} [map] The map to add keyed columns to
     @protected
     **/
     _parseColumns: function (columns, map) {
@@ -674,7 +734,9 @@ Y.mix(Table.prototype, {
             col = columns[i];
 
             if (isString(col)) {
-                col = { key: col };
+                // Update the array entry as well, so the attribute state array
+                // contains the same objects.
+                columns[i] = col = { key: col };
             }
 
             if (col.key) {
@@ -688,11 +750,12 @@ Y.mix(Table.prototype, {
     },
 
     /**
+    Delegates rendering to the configured `bodyView`.
 
     @method _renderBody
     @protected
     **/
-    _renderBody: function (table, data) {
+    _renderBody: function () {
         var BodyView = this.get('bodyView');
 
         // TODO: use a _viewConfig object that can be mixed onto by class
@@ -714,6 +777,7 @@ Y.mix(Table.prototype, {
     },
 
     /**
+    Delegates rendering to the configured `footerView`.
 
     @method _renderFooter
     @protected
@@ -738,6 +802,7 @@ Y.mix(Table.prototype, {
     },
 
     /**
+    Delegates rendering to the configured `headerView`.
 
     @method _renderHeader
     @protected
@@ -763,6 +828,9 @@ Y.mix(Table.prototype, {
     },
 
     /**
+    Creates the table and caption and assigns the table's summary attribute.
+
+    Assigns the generated table to the `_tableNode` property.
 
     @method _renderTable
     @protected
@@ -794,6 +862,36 @@ Y.mix(Table.prototype, {
     },
 
     /**
+    Relays attribute assignments of the deprecated `columnset` attribute to the
+    `columns` attribute.  If a Columnset is object is passed, its basic object
+    structure is mined.
+
+    @method _setColumnset
+    @param {Array|Columnset} val The columnset value to relay
+    @deprecated This will be removed with the deprecated `columnset` attribute
+                in a later version.
+    @protected
+    **/
+    _setColumnset: function (val) {
+        if (val && val instanceof Y.Columnset) {
+            val = val.get('definitions');
+        }
+
+        return isArray(val) ? val : INVALID;
+    },
+
+    /**
+    Accepts an object with `each` and `getAttrs` (preferably a ModelList or
+    subclass) or an array of data objects.  If an array is passes, it will
+    create a ModelList to wrap the data.  In doing so, it will set the created
+    ModelList's `model` property to the class in the `recordType` attribute,
+    which will be defaulted if not yet set.
+
+    If the `data` property is already set with a ModelList, passing an array as
+    the value will call the ModelList's `reset()` method with that array rather
+    than replacing the stored ModelList wholesale.
+
+    Any non-ModelList-ish and non-array value is invalid.
 
     @method _setData
     @protected
@@ -809,15 +907,17 @@ Y.mix(Table.prototype, {
                     // FIXME: this should happen only once, but this is a side
                     // effect in the setter.  Bad form, but I need the model set
                     // before calling reset()
-                    this.set('recordType', this._createRecordClass(keys(val[0])));
+                    this.set('recordType', keys(val[0]));
                 }
 
                 this.data.reset(val);
-                // TODO: return true to decrease memory footprint?
+                // TODO: return true to avoid storing the data object both in
+                // the state object underlying the attribute an in the data
+                // property (decrease memory footprint)?
             }
             // else pass through the array data, but don't assign this.data
             // Let the _initData process clean up.
-        } else if (val && val.getAttrs && val.addTarget) {
+        } else if (val && val.each && val.getAttrs) {
             this.data = val;
             // TODO: return true to decrease memory footprint?
         } else {
@@ -828,8 +928,64 @@ Y.mix(Table.prototype, {
     },
 
     /**
+    Relays the value assigned to the deprecated `recordset` attribute to the
+    `data` attribute.  If a Recordset instance is passed, the raw object data
+    will be culled from it.
+
+    @method _setRecordset
+    @param {Object[]|Recordset} val The recordset value to relay
+    @deprecated This will be removed with the deprecated `recordset` attribute
+                in a later version.
+    @protected
+    **/
+    _setRecordset: function (val) {
+        var data;
+
+        if (val && val instanceof Y.Recordset) {
+            data = [];
+            val.each(function (record) {
+                data.push(record.get('data'));
+            });
+            val = data;
+        }
+
+        return val;
+    },
+
+    /**
+    Accepts a Base subclass (preferably a Model subclass). Alternately, it will
+    generate a custom Model subclass from an array of attribute names or an
+    object defining attributes and their respective configurations (it is
+    assigned as the `ATTRS` of the new class).
+
+    Any other value is invalid.
+
+    @method _setRecordType
+    @param {Function|String[]|Object} val The Model subclass, array of
+            attribute names, or the `ATTRS` definition for a custom model
+            subclass
+    @return {Function} A Base/Model subclass
+    @protected
+    **/
+    _setRecordType: function (val) {
+        var modelClass;
+
+        // Duck type based on known/likely consumed APIs
+        if (isFunction(val) && val.prototype.set && val.prototype.getAttrs) {
+            modelClass = val;
+        } else if (isObject(val)) {
+            modelClass = this._createRecordClass(val);
+        }
+
+        return modelClass || INVALID;
+    },
+
+    /**
+    Creates, removes, or updates the table's `<caption>` element per the input
+    value.  Empty values result in the caption being removed.
 
     @method _uiUpdateCaption
+    @param {HTML} htmlContent The content to populate the table caption
     @protected
     **/
     _uiUpdateCaption: function (htmlContent) {
@@ -868,6 +1024,7 @@ Y.mix(Table.prototype, {
     },
 
     /**
+    Updates the table's `summary` attribute with the input value.
 
     @method _uiUpdateSummary
     @protected
@@ -877,25 +1034,13 @@ Y.mix(Table.prototype, {
     },
 
     /**
-
-    @method _validateRecordType
-    @protected
-    **/
-    _validateRecordType: function (val) {
-        var api = (isFunction(val)) ? val.prototype : {};
-
-        // Duck type based on known/likely consumed APIs
-        return api.addTarget && api.get && api.getAttrs && api.set;
-    },
-
-    /**
+    Verifies the input value is a function with a `render` method on its
+    prototype.
 
     @method _validateView
     @protected
     **/
     _validateView: function (val) {
-        var api = isFunction(val) ? val.prototype : val;
-
-        return (api === null) || (api.render && api.addTarget);
+        return isFunction(val) && val.prototype.render;
     }
 });
