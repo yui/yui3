@@ -1229,15 +1229,39 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
     },
 
     /**
-     * Destroys the instance.
+     * Destroys the shape instance.
      *
      * @method destroy
      */
     destroy: function()
     {
-        if(this._graphic && this._graphic._contentNode)
+        var graphic = this.get("graphic");
+        if(graphic)
         {
-            this._graphic._contentNode.removeChild(this.node);
+            graphic.removeShape(this);
+        }
+        else
+        {
+            this._destroy();
+        }
+    },
+
+    /**
+     *  Implementation for shape destruction
+     *
+     *  @method destroy
+     *  @protected
+     */
+    _destroy: function()
+    {
+        if(this.node)
+        {
+            Y.Event.purgeElement(this.node, true);
+            if(this.node.parentNode)
+            {
+                this.node.parentNode.removeChild(this.node);
+            }
+            this.node = null;
         }
     }
  }, Y.SVGDrawing.prototype));
@@ -2348,12 +2372,11 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
         var parentNode = Y.one(render),
             w = this.get("width") || parseInt(parentNode.getComputedStyle("width"), 10),
             h = this.get("height") || parseInt(parentNode.getComputedStyle("height"), 10);
-        parentNode = parentNode || DOCUMENT.body;
-        parentNode.appendChild(this._node);
+        parentNode = parentNode || Y.one(DOCUMENT.body);
+        parentNode.append(this._node);
         this.parentNode = parentNode;
         this.set("width", w);
         this.set("height", h);
-        this.parentNode = parentNode;
         return this;
     },
 
@@ -2365,10 +2388,20 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
     destroy: function()
     {
         this.removeAllShapes();
-        this._removeChildren(this._node);
-        if(this._node && this._node.parentNode)
+        if(this._contentNode)
         {
-            this._node.parentNode.removeChild(this._node);
+            this._removeChildren(this._contentNode);
+            if(this._contentNode.parentNode)
+            {
+                this._contentNode.parentNode.removeChild(this._contentNode);
+            }
+            this._contentNode = null;
+        }
+        if(this._node)
+        {
+            this._removeChildren(this._node);
+            Y.one(this._node).remove(true);
+            this._node = null;
         }
     },
 
@@ -2426,7 +2459,7 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
         }
         if(shape && shape instanceof SVGShape)
         {
-            shape.destroy();
+            shape._destroy();
             delete this._shapes[shape.get("id")];
         }
         if(this.get("autoDraw")) 
@@ -2449,7 +2482,7 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
         {
             if(shapes.hasOwnProperty(i))
             {
-                shapes[i].destroy();
+                shapes[i]._destroy();
             }
         }
         this._shapes = {};

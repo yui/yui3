@@ -2263,7 +2263,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 titleTextField.style.display = "block";
                 titleTextField.style.whiteSpace = "nowrap";
                 titleTextField.setAttribute("class", "axisTitle");
-                this.get("contentBox").appendChild(titleTextField);
+                this.get("contentBox").append(titleTextField);
             }
             titleTextField.style.position = "absolute";
             for(i in styles)
@@ -2305,19 +2305,18 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 rotation: "rotation",
                 margin: "margin",
                 alpha: "alpha"
-            },
-            cache = this._labelCache;
-        if(cache.length > 0)
+            };
+        if(this._labelCache && this._labelCache.length > 0)
         {
-            label = cache.shift();
+            label = this._labelCache.shift();
         }
         else
         {
             label = DOCUMENT.createElement("span");
             label.style.display = "block";
             label.style.whiteSpace = "nowrap";
-            Y.one(label).addClass("axisLabel");
-            this.get("contentBox").appendChild(label);
+            label.className = Y.Lang.trim([label.className, "axisLabel"].join(' '));
+            this.get("contentBox").append(label);
         }
         label.style.position = "absolute";
         this._labels.push(label);
@@ -2343,13 +2342,9 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     {
         if(this._labels)
         {
-            if(this._labelCache)
+            while(this._labels.length > 0)
             {
-                this._labelCache = this._labels.concat(this._labelCache);
-            }
-            else
-            {
-                this._labelCache = this._labels.concat();
+                this._labelCache.push(this._labels.shift());
             }
         }
         else
@@ -2371,11 +2366,12 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         {
             var len = this._labelCache.length,
                 i = 0,
-                label,
-                labelCache = this._labelCache;
+                label;
             for(; i < len; ++i)
             {
-                label = labelCache[i];
+                label = this._labelCache[i];
+                this._removeChildren(label);
+                Y.Event.purgeElement(label, true);
                 label.parentNode.removeChild(label);
             }
         }
@@ -2601,6 +2597,57 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             {
                 label.style.filter = filterString;
             }
+        }
+    },
+    
+    /**
+     * Removes all DOM elements from an HTML element. Used to clear out labels during detruction
+     * phase.
+     *
+     * @method _removeChildren
+     * @private
+     */
+    _removeChildren: function(node)
+    {
+        if(node.hasChildNodes())
+        {
+            var child;
+            while(node.firstChild)
+            {
+                child = node.firstChild;
+                this._removeChildren(child);
+                node.removeChild(child);
+            }
+        }
+    },
+    
+    /**
+     * Destructor implementation Axis class. Removes all labels and the Graphic instance from the widget.
+     *
+     * @method destructor
+     * @protected
+     */
+    destructor: function()
+    {
+        var cb = this.get("contentBox").getDOMNode(),
+            labels = this.get("labels"),
+            graphic = this.get("graphic"),
+            i = 0,
+            label,
+            len = labels ? labels.length : 0;
+        if(len > 0)
+        {
+            while(labels.length > 0)
+            {
+                label = labels.shift();
+                this._removeChildren(label);
+                cb.removeChild(label);
+                label = null;
+            }
+        }
+        if(graphic)
+        {
+            graphic.destroy();
         }
     }
 }, {
@@ -6788,6 +6835,29 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     {
         var total = this.get("valueAxis").getTotalByKey(this.get("valueKey"));
         return total;
+    },
+
+    /**
+     * Destructor implementation for the CartesianSeries class. Calls destroy on all Graphic instances.
+     *
+     * @method destructor
+     * @protected
+     */
+    destructor: function()
+    {
+        if(this._path)
+        {
+            this._path.destroy();
+        }
+        if(this._lineGraphic)
+        {
+            this._lineGraphic.destroy();
+            this._lineGraphic = null;
+        }
+        if(this.get("graphic"))
+        {
+            this.get("graphic").destroy();
+        }   
     }
 }, {
     ATTRS: {
@@ -10525,6 +10595,28 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
             }
         };
         return defs;
+    },
+
+    /**
+     * Destructor implementation Graph class. Removes all Graphic instances from the widget.
+     *
+     * @method destructor
+     * @protected
+     */
+    destructor: function()
+    {
+        if(this._graphic)
+        {
+            this._graphic.destroy();
+        }
+        if(this._background)
+        {
+            this._background.get("graphic").destroy();
+        }
+        if(this._gridlines)
+        {
+            this._gridlines.get("graphic").destroy();
+        }
     }
 }, {
     ATTRS: {
@@ -10659,7 +10751,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 if(!this._background)
                 {
                     this._backgroundGraphic = new Y.Graphic({render:this.get("contentBox")});
-                    Y.one(this._backgroundGraphic.get("node")).setStyle("zIndex", 0); 
+                    this._backgroundGraphic.get("node").style.zIndex = 0; 
                     this._background = this._backgroundGraphic.addShape({type: "rect"});
                 }
                 return this._background;
@@ -10681,7 +10773,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 if(!this._gridlines)
                 {
                     this._gridlinesGraphic = new Y.Graphic({render:this.get("contentBox")});
-                    Y.one(this._gridlinesGraphic.get("node")).setStyle("zIndex", 1); 
+                    this._gridlinesGraphic.get("node").style.zIndex = 1; 
                     this._gridlines = this._gridlinesGraphic.addShape({type: "path"});
                 }
                 return this._gridlines;
@@ -10703,7 +10795,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 if(!this._graphic)
                 {
                     this._graphic = new Y.Graphic({render:this.get("contentBox")});
-                    Y.one(this._graphic.get("node")).setStyle("zIndex", 2); 
+                    this._graphic.get("node").style.zIndex = 2; 
                     this._graphic.set("autoDraw", false);
                 }
                 return this._graphic;
@@ -12287,8 +12379,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                         this.set("height", node.get("offsetHeight"));
                         h = this.get("height");
                     }
-                    axis.set("width", w);
-                    axis.set("height", h);
+                    axis.set("width", 0);
+                    axis.set("height", 0);
                     this._addToAxesRenderQueue(axis);
                     pos = axis.get("position");
                     if(!this.get(pos + "AxesCollection"))
@@ -12862,6 +12954,51 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             this._overlay.setStyle("width", (w - (lw + rw)) + "px");
             this._overlay.setStyle("height", (h - (th + bh)) + "px");
         }
+    },
+
+    /**
+     * Destructor implementation for the CartesianChart class. Calls destroy on all axes, series and the Graph instance.
+     * Removes the tooltip and overlay HTML elements.
+     *
+     * @method destructor
+     * @protected
+     */
+    destructor: function()
+    {
+        var graph = this.get("graph"),
+            i = 0,
+            len,
+            seriesCollection = this.get("seriesCollection"),
+            axesCollection = this._axesCollection,
+            tooltip = this.get("tooltip").node;
+        len = seriesCollection ? seriesCollection.length : 0;
+        for(; i < len; ++i)
+        {
+            if(seriesCollection[i] instanceof Y.CartesianSeries)
+            {
+                seriesCollection[i].destroy(true);
+            }
+        }
+        len = axesCollection ? axesCollection.length : 0;
+        for(i = 0; i < len; ++i)
+        {
+            if(axesCollection[i] instanceof Y.Axis)
+            {
+                axesCollection[i].destroy(true);
+            }
+        }
+        if(graph)
+        {
+            graph.destroy(true);
+        }
+        if(tooltip)
+        {
+            tooltip.remove(true);
+        }
+        if(this._overlay)
+        {
+            this._overlay.remove(true);
+        }
     }
 }, {
     ATTRS: {
@@ -13071,7 +13208,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
          * @type Object
          */
         axes: {
-            valueFn: "_parseAxes",
+            valueFn: "_getDefaultAxes",
 
             setter: function(val)
             {
