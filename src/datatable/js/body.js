@@ -494,7 +494,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         if (data) {
             data.each(function (model, index) {
                 html += this._createRowHTML(model, index);
-            });
+            }, this);
         }
 
         return fromTemplate(this.TBODY_TEMPLATE, {
