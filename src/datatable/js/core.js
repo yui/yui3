@@ -88,7 +88,7 @@ Table.ATTRS = {
     @default (see description)
     **/
     recordType: {
-        validator: '_validateRecordType',
+        setter: '_setRecordType',
         writeOnce: true
     },
 
