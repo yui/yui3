@@ -410,13 +410,12 @@ PjaxBase.prototype = {
 
 PjaxBase.ATTRS = {
     /**
-    This selector is used so only the click events who's links match will have
-    the enhanced navigation behavior applied.
+    CSS selector string used to filter link click events so that only the links
+    which match it will have the enhanced-navigation behavior of pjax applied.
 
-    When a link being clicked on matches this selector, the browsers default of
-    navigating to the URL by doing a full-page reload will be prevented;
-    instead, navigating to the URL will be enhanced by have the router fulfill
-    the "request" by updating the URL and content of the page.
+    When a link is clicked and that link matches this selector, navigating to
+    the link's `href` URL using the enhanced, pjax, behavior will be attempted;
+    and the browser's default way to navigate to new pages will be the fallback.
 
     @attribute linkSelector
     @type String|Function

@@ -1,11 +1,3 @@
-.yui3-widget-buttons .yui3-button {
-    display: inline-block;
-    *display: inline;
-    zoom: 1;
-    cursor: pointer;
-    text-decoration: none;
-}
-
 .yui3-widget-buttons .yui3-button-close,
 .yui3-widget-buttons .yui3-button-close .yui3-button-content,
 .yui3-widget-buttons .yui3-button-close .yui3-button-icon {

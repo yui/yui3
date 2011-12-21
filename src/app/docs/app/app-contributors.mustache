@@ -346,6 +346,20 @@ We've separated our data-related logic from our presentation by creating our mod
 </p>
 
 <p>
+The data model for our app consists of many numerical values which our views will need to display with labels. Before we dig into the views, let's first create a helper function we can use to add these labels to the data object we pass to our templates:
+</p>
+
+```
+// A helper function used by the Views to create labels for numerical fields
+// which are correctly pluralized, and puts the label back on the `data` object.
+function addLabel(data, field, label) {
+    var num = data[field];
+    data[field] || (data[field] = '0');
+    data[field + '_label'] = num === 1 ? label : (label + 's');
+}
+```
+
+<p>
 The views for our app will be pretty trivial; they mainly just prepare the model or model list data and apply it to the corresponding template during rendering. Usually you're views would involve handling of DOM events created by user interactions and binding to the model or model list changes so the view can be updated or re-rendered. We'll create the following views by sub-classing `Y.View`: [[#`UserView`]], [[#`RepoView`]], [[#`RepoListView`]], and [[#`ContributorListView`]].
 </p>
 
@@ -693,7 +707,7 @@ With our app grouped into three "pages", we need to make these pages accessible 
 <ul>
     <li>
         <p>
-        <b>`/`</b>:<br/> Displays the [[#`HomePageView`]] and uses the current [[#`User`]] model to pre-fill the text input.
+        <b>`/`</b>: Displays the [[#`HomePageView`]] and uses the current [[#`User`]] model to pre-fill the text input.
         </p>
     </li>
     <li>
@@ -832,7 +846,7 @@ ContributorsApp = new Y.Base.create('contributorsApp', Y.App, [], {
         // GitHub username from the URL is different, a new user model instance
         // is created, loaded, and set on this app before adding it to the
         // request object.
-        if (!user.isNew() && username === user.get('login')) {
+        if (username === user.get('login') && !user.isNew()) {
             // Places a reference to the user model on the request object before
             // delegating to the next route-handler.
             req.user = user;

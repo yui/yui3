@@ -49,28 +49,3 @@
 	padding: 8px;
     text-align: right;
 }
-.yui3-skin-sam .yui3-panel-content .yui3-widget-ft .yui3-button {
-	padding: 2px 8px;
-    margin: 0px 3px;
-    border: 1px solid gray;
-    -moz-border-radius: 0.435em;
-    -webkit-border-radius: 0.435em;
-    border-radius: 0.435em;
-    color: black;
-    background: #D8D8DA;
-    background: -moz-linear-gradient(
-        0% 100% 90deg,
-        #D8D8DA 18%,
-        #F1F2F2 50%,
-        white 100%
-    );
-	background: -webkit-gradient(
-        linear,
-        left bottom,
-        left top,
-        from(#D8D8DA),
-        color-stop(0.18, #D8D8DA),
-        color-stop(0.5, #F1F2F2),
-        to(white)
-    );
-}

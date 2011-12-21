@@ -63,6 +63,13 @@ YUI({
 		  Y.log(calendar.get('selectedDates'));
 		});
 
+		Y.one("#setNightSkin").on('click', function () {
+		  Y.one('body').replaceClass('yui3-skin-sam','yui3-skin-night');
+		});
+		Y.one("#setBkgBlack").on('click', function () {
+		  Y.one('html').setStyle('backgroundColor', '#000');
+		});
+
 		calendar.on("selectionChange", function (ev) {Y.log(ev);});
 
 });

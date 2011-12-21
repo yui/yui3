@@ -3224,6 +3224,20 @@ YUI.Env.parseUA = function(subUA) {
          */
         android: 0,
         /**
+         * Detects Kindle Silk
+         * @property silk
+         * @type float
+         * @static
+         */
+        silk: 0,
+        /**
+         * Detects Kindle Silk Acceleration
+         * @property accel
+         * @type Boolean
+         * @static
+         */
+        accel: false,
+        /**
          * Detects Palms WebOS version
          * @property webos
          * @type float
@@ -3341,6 +3355,19 @@ YUI.Env.parseUA = function(subUA) {
                         o.android = numberify(m[1]);
                     }
 
+                }
+                if (/Silk/.test(ua)) {
+                    m = ua.match(/Silk\/([^\s]*)\)/);
+                    if (m && m[1]) {
+                        o.silk = numberify(m[1]);
+                    }
+                    if (!o.android) {
+                        o.android = 2.34; //Hack for desktop mode in Kindle
+                        o.os = 'Android';
+                    }
+                    if (/Accelerated=true/.test(ua)) {
+                        o.accel = true;
+                    }
                 }
             }
 
@@ -4116,6 +4143,12 @@ Y.Get = Get = {
             index, node;
 
         while (node = nodes.pop()) { // assignment
+            // Don't purge nodes that haven't finished loading (or errored out),
+            // since this can hang the transaction.
+            if (!node._yuiget_finished) {
+                continue;
+            }
+
             node.parentNode && node.parentNode.removeChild(node);
 
             // If this is a transaction-level purge and this node also exists in
@@ -4641,7 +4674,7 @@ Transaction.prototype = {
             Y.log(err, 'error', 'get');
         }
 
-        req.finished = true;
+        req.node._yuiget_finished = req.finished = true;
 
         if (options.onProgress) {
             options.onProgress.call(options.context || this,

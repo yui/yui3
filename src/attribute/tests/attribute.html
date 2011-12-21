@@ -43,12 +43,6 @@
                 Y.ObjectAssert.areEqual(o2, o1);
             }
 
-            function Test(cfg, lazy, silentInit) {
-                this._lazyAddAttrs = lazy;
-                this._silentInit = silentInit;
-                Test.superclass.constructor.apply(this, arguments);
-            };
-
             function TestAugment(attrs, values) {}
             Y.augment(TestAugment, Y.Attribute);
 
@@ -60,6 +54,12 @@
                 }
             };
             Y.augment(TestAugmentWithATTRS, Y.Attribute);
+
+            function Test(cfg, lazy, silentInit) {
+                this._lazyAddAttrs = lazy;
+                this._silentInit = silentInit;
+                Test.superclass.constructor.apply(this, arguments);
+            };
 
             Test.NAME = 'test';
 

@@ -212,7 +212,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     This node is also stamped with the CSS class specified by
     `Y.App.Base.VIEWS_CSS_CLASS`.
 
-    By default, the created node is appended to the `container` node by the
+    By default, the created node will appended to the `container` node by the
     `render()` method.
 
     @method createViewContainer
@@ -245,14 +245,16 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
     /**
     Renders this application by appending the `viewContainer` node to the
-    `container` node, and showing the `activeView`.
+    `container` node if it isn't already a child of the container, and the
+    `activeView` will be set as the contents of the view container.
 
     You should call this method at least once, usually after the initialization
-    of your `Y.App` instance.
+    of your app instance so the proper DOM structure is setup and optionally
+    append the container to the DOM if it's not there already.
 
     You may override this method to customize the app's rendering, but it is
-    expected that the `viewContainer` is reserved for the app to manage its
-    `activeView`.
+    expected that the `viewContainer`'s contents will be reserved reserved for
+    the app to manage for purpose of rendering the `activeView`.
 
     @method render
     @chainable
@@ -275,16 +277,18 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     },
 
     /**
-    Sets which view is visible/active within the application.
+    Sets which view is active/visible for the application. This will set the
+    app's `activeView` attribute to the specified `view`.
 
-    This will set the application's `activeView` attribute to the specified view
-    instance, or when a registered view-name is provided, the `activeView`
-    attribute will be set to either the preserved instance, or a new view
-    instance created using the specified `config`.
+    When a string-name is provided for a view which has been registered on this
+    app's `views` object, the referenced metadata will be used and the
+    `activeView` will be set to either a preserved view instance, or a new
+    instance of the registered view will be created using the specified `config`
+    object passed-into this method.
 
     A callback function can be specified as either the third or fourth argument,
-    and this function will be called after the new `view` is the `activeView`
-    and ready to use.
+    and this function will be called after the new `view` becomes the
+    `activeView`, is rendered to the `viewContainer`, and is ready to use.
 
     @example
         var app = new Y.App({
@@ -376,14 +380,15 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         view.addTarget(this);
         viewInfo && (viewInfo.instance = view);
 
-        // TODO: Attach events here for perseved Views? See TODO in _detachView.
+        // TODO: Attach events here for persevered Views?
+        // See related TODO in `_detachView`.
 
         // Insert view into the DOM.
         viewContainer[prepend ? 'prepend' : 'append'](view.get('container'));
     },
 
     /**
-    Overrides View's container destruction to deal with `viewContainer` and
+    Overrides View's container destruction to deal with the `viewContainer` and
     checks to make sure not to remove and purge the `<body>`.
 
     @method _destroyContainer
@@ -437,7 +442,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
         if (viewInfo.preserve) {
             view.remove();
-            // TODO: Detach events here for perserved Views? It is possible that
+            // TODO: Detach events here for preserved Views? It is possible that
             // some event subscriptions are made on elements other than the
             // View's `container`.
         } else {
@@ -726,7 +731,28 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         },
 
         /**
-        Container node which represents the application's bounding-box.
+        Container node which represents the application's bounding-box, into
+        which this app's content will be rendered.
+
+        The container node serves as the host for all DOM events attached by the
+        app. Delegation is used to handle events on children of the container,
+        allowing the container's contents to be re-rendered at any time without
+        losing event subscriptions.
+
+        The default container is the `<body>` Node, but you can override this in
+        a subclass, or by passing in a custom `container` config value at
+        instantiation time.
+
+        When `container` is overridden by a subclass or passed as a config
+        option at instantiation time, it may be provided as a selector string, a
+        DOM element, or a `Y.Node` instance. During initialization, this app's
+        `create()` method will be called to convert the container into a
+        `Y.Node` instance if it isn't one already and stamp it with the CSS
+        class: `"yui3-app"`.
+
+        The container is not added to the page automatically. This allows you to
+        have full control over how and when your app is actually rendered to
+        the page.
 
         @attribute container
         @type HTMLElement|Node|String
@@ -759,12 +785,20 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         },
 
         /**
-        This attribute is provided by `PjaxBase`, but the default value is
-        overridden to match all links on the page.
+        CSS selector string used to filter link click events so that only the
+        links which match it will have the enhanced-navigation behavior of pjax
+        applied.
+
+        When a link is clicked and that link matches this selector, navigating
+        to the link's `href` URL using the enhanced, pjax, behavior will be
+        attempted; and the browser's default way to navigate to new pages will
+        be the fallback.
+
+        By default this selector will match _all_ links on the page.
 
         @attribute linkSelector
         @type String|Function
-        @default `'a'`
+        @default `"a"`
         **/
         linkSelector: {
             value: 'a'
@@ -845,11 +879,33 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         },
 
         /**
-        Container node into which all application views will be rendered.
+        The node into which this app's views will be rendered. This node's
+        contents are fully-managed by this app instance.
+
+        The view container node serves as the container to hold the app's
+        `activeView`. Each time the `activeView` is set via `showView()`, the
+        contents of this node will be replaced by the new active view's
+        `container` node.
+
+        The default view container is `<div>` Node, but you can override this in
+        a subclass, or by passing in a custom `viewContainer` config value at
+        instantiation time.
+
+        When `viewContainer` is overridden by a subclass or passed as a config
+        option at instantiation time, it may be provided as a selector string,
+        DOM element, or a `Y.Node` instance (having the `viewContainer` and the
+        `container` be the same node is also supported). During initialization,
+        the app's `createViewContainer()` method will be called to convert the
+        view container into a `Y.Node` instance if it isn't one already and
+        stamp it with the CSS class: `"yui3-app-views"`.
+
+        The app's `render()` method will append the view container to the app's
+        `container` node if it isn't already, and any `activeView` will be set
+        as its contents.
 
         @attribute viewContainer
         @type HTMLElement|Node|String
-        @default `Y.Node.create('<div/>')`
+        @default `Y.Node.create("<div/>")`
         @initOnly
         **/
         viewContainer: {

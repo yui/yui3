@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Router Mobile Safari Test</title>
+    <script src="../../../../build/yui/yui.js"></script>
+</head>
+<body>
+    <h1>Router Mobile Safari Test</h1>
+
+    <h2>Description</h2>
+
+    <p>Router state is not properly restored on Mobile Safari when visiting an external link and coming back to the page. Desktop Safari behaves correctly. The quick hacky solution is to reload on the pageshow event.</p>
+
+    <h2>Steps to Reproduce</h2>
+
+    <ul>
+        <li>Click "External" link</li>
+        <li>Browser back button</li>
+        <li>Click "Internal" link</li>
+        <li>Notice error: "undefined"</li>
+    </ul>
+
+    <h2>Links</h2>
+
+    <ul>
+        <li id="test1"><a href="#/foo">Internal</a></li>
+        <li id="test2"><a href="http://www.yahoo.com">External</a></li>
+    </ul>
+
+    <script type="text/javascript">
+    var Y = YUI().use('node', 'router', function (Y) {
+        Y.config.win.addEventListener("pageshow", function (e) {
+            if (e.persisted) {
+                console.log('loaded from page cache');
+            }
+        }, false);
+
+        var router = new Y.Router({
+            html5: false,
+            root: Y.config.win.location.pathname,
+
+            routes: [
+                {path: '/', callback: function () {
+                    console.log('/');
+                }},
+                {path: '/foo', callback: function () {
+                    console.log('/foo');
+                }}
+            ]
+        });
+
+        router.dispatch();
+    });
+    </script>
+</body>
+</html>

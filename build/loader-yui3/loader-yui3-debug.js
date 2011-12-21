@@ -278,12 +278,18 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "attribute-complex"
         ], 
         "requires": [
+            "base-core", 
             "attribute-base"
         ]
     }, 
     "base-build": {
         "requires": [
             "base-base"
+        ]
+    }, 
+    "base-core": {
+        "requires": [
+            "attribute-core"
         ]
     }, 
     "base-pluginhost": {
@@ -1575,14 +1581,14 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "panel": {
         "requires": [
             "widget", 
-            "widget-stdmod", 
+            "widget-autohide", 
+            "widget-buttons", 
+            "widget-modality", 
             "widget-position", 
             "widget-position-align", 
-            "widget-stack", 
             "widget-position-constrain", 
-            "widget-modality", 
-            "widget-autohide", 
-            "widget-buttons"
+            "widget-stack", 
+            "widget-stdmod"
         ], 
         "skinnable": true
     }, 
@@ -2068,8 +2074,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "widget-buttons": {
         "requires": [
-            "widget", 
+            "cssbuttons", 
             "base-build", 
+            "widget", 
             "widget-stdmod"
         ], 
         "skinnable": true
@@ -2171,7 +2178,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'e719c1fc98639334a030a60a79f19ad5';
+YUI.Env[Y.version].md5 = 'fa418b2fd0367987315e8644686ff274';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
