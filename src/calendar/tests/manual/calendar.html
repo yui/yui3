@@ -3,9 +3,15 @@
 <head>
     <title>Calendar Tests</title>
     <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+    <link type="text/css" rel="stylesheet" href="../../../../build/calendar/assets/skins/night/calendar-base-skin.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/calendar/assets/skins/night/calendarnavigator-skin.css">
+    
 <style>
 .yui3-skin-sam .redtext {
 	color:#ff0000;
+}
+.yui3-skin-night .redtext {
+	color:#0abc;
 }
 </style>
 </head>
@@ -20,6 +26,9 @@
 <a href="#" id="togglePrevMonth">Toggle Show Previous Month</a><br>
 <a href="#" id="toggleNextMonth">Toggle Show Next Month</a><br>
 <a href="#" id="getSelectedDates">Get Selected Dates</a><br>
+
+<a href="#" id="setNightSkin">Set Night Skin</a><br>
+<a href="#" id="setBkgBlack">Set Background Black</a><br>
 
 <div id="currentDate">Current Date</div>
 </div>

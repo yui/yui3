@@ -1,6 +1,12 @@
 CSS Base Change History
 =======================
 
+3.5.0
+-----
+
+  * No code changes.
+
+
 3.4.1
 -----
 

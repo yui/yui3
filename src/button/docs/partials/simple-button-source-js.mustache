@@ -1,0 +1,43 @@
+YUI().use('button', function(Y){
+    
+    // A basic push button
+    var pushButton = new Y.Button({
+        srcNode:'#myButton'
+    });
+    
+    
+    // A disabled button
+    var disabledButton = new Y.Button({
+        srcNode:'#myDisabledButton',
+        disabled: true
+    });
+    
+    
+    // An event button, listening for a click
+    var eventButton = new Y.Button({
+        srcNode:'#myEventButton'
+    });
+    
+    eventButton.getNode().on('click', function(){
+        alert('I was clicked!');
+    });
+    
+    
+    // A toggle button with a state change listener
+    var toggleButton = new Y.Button({
+        srcNode:'#myToggleButton',
+        type: 'toggle',
+        after: {
+            'selectedChange': function () {
+                var button = this;
+                var selected = button.get('selected');
+                if (selected) {
+                    button.set('label', 'Toggle Button: Selected');
+                }
+                else {
+                    button.set('label', 'Toggle Button: Unselected');                    
+                }
+            }
+        }
+    });
+});

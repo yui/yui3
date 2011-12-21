@@ -1,6 +1,11 @@
 CSS Fonts Change History
 ========================
 
+3.5.0
+-----
+  * No change.
+
+
 3.4.1
 -----
   * No change.

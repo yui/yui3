@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src='../../../../build/yui/yui-min.js'></script>
+
+        <script>
+
+            YUI({
+                base: '../../../../build/',
+                debug: true,
+                combo: false,
+                filter: 'raw'
+            }).use('button', 'cssfonts', 'console', function(Y){
+                
+                new Y.Console().render();
+                
+                Y.log('A ninja button called ' + new Y.Button({label:'Bruce Lee'}).getNode().getContent());
+
+                /*
+                    Just a basic test with a listener
+                */
+                var button = new Y.Button({
+                    srcNode: Y.one('#event')
+                });
+                
+                button.getNode().on("click", function(e){
+                    Y.log("click");
+                });
+                
+                
+                /*
+                    A 'toggle' button listening for the selectedChange event
+                */
+                var button2 = new Y.Button({
+                    srcNode: Y.one('#toggle'),
+                    type: 'toggle',
+                    on: {
+                        selectedChange:function(){
+                           Y.log('selectedChange');
+                        }
+                    }
+                });
+
+                /*
+                    A 'link' button
+                    Preferably, the user would just apply a yui3-button style to an <a> element and not use JS
+                */
+                var button3 = new Y.Button({
+                    srcNode: Y.one('#link')
+                });
+
+
+
+
+
+
+ 
+                /*
+                    A disabled button
+                */
+                var button4 = new Y.Button({
+                    srcNode: Y.one('#disabled'),
+                    disabled: true
+                });
+
+
+
+
+
+
+
+
+                /*
+                    A group of radio-like buttons
+                */
+                var buttonGroup = new Y.ButtonGroup({
+                    srcNodes: Y.all('.group'),
+                    type: 'radio'
+                });
+
+                buttonGroup.after('selectionChange', function(e){
+                    Y.log('buttonGroup selection changed');
+                });
+
+
+
+
+
+
+                /*
+                    A group of checkbox-like buttons
+                */
+                var buttonGroup2 = new Y.ButtonGroup({
+                    srcNodes: Y.all('.multigroup'),
+                    type: 'checkbox'
+                });
+
+                buttonGroup2.after('selectionChange', function(e){
+                    var selection = buttonGroup2.get('selection');
+                    Y.log('buttonGroup2 selected count = ' + selection.length);
+                });
+
+
+
+
+
+
+
+
+
+
+                /*
+                    A button generator
+                    Y.Buttons adds nothing useful for the gernator buttons, so just add the class and a listener.
+                */
+                Y.all('.generator').addClass('yui3-button').on('click', function(e){
+                    var button, type, config;
+                    
+                    type = e.target.getAttribute('data-type');
+                    
+                    config = {
+                        label: type
+                    };
+                    
+                    if (type === 'disabled') {
+                        config.type = 'push';
+                        config.disabled = true;
+                    }
+                    else {
+                        config.type = type;
+                    }
+                    
+                    config.srcNode = Y.Node.create('<button>' + config.label + '</button>');
+                    button = new Y.Button(config);
+                    
+                    Y.one('#generated').append(button.getNode());
+                })
+                
+            });
+        </script>
+    </head>
+    
+    <body class='yui3-skin-sam'>
+        
+        <div id='yconsole'></div>
+        
+        <h1>Button prototype</h1>
+        
+        <hr />
+        
+        <h2>Event</h2>
+        <button id='event' tabindex='3'>Log a message</button>
+        
+        
+        <br>
+        
+        
+        <h2>Toggle w/ event</h2>
+        <input type='button' id='toggle' value='Toggle'></input>
+        
+        
+        <br>
+        
+        
+        <h2>Link</h2>
+        <a href='http://yahoo.com' id='link'>Go to yahoo.com</a>
+        
+        
+        <h2>Disabled</h2>
+        <button id='disabled'>Should be disabled</button>
+        
+        
+        <br>
+        
+        
+        <h2>Group (radio)</h2>
+        <button class='group' id='btn1'>Button 13</button>
+        <button class='group' id='btn2'>Button 27</button>
+        <button class='group' id='btn3'>Button 40</button>
+        
+        
+        <br>
+        
+        
+        <h2>Multi-Group (checkbox)</h2>
+        <button class='multigroup' id='btn4'>Button 4</button>
+        <button class='multigroup' id='btn5'>Button 5</button>
+        <button type='button' class='multigroup' id='btn6'>Button 6</button>
+        
+        
+        <br>
+        
+        
+        <h2>Generator</h2>
+        <button class='generator' data-type='push'>Generate Push Button</button>
+        <button class='generator' data-type='toggle'>Generate Toggle Button</button>
+        <button class='generator' data-type='disabled'>Generate Disabled Button</button>
+        <div id='generated' style='border:solid black 1px;'></div>
+        
+    </body>
+</html>

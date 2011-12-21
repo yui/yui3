@@ -1,13 +1,4 @@
 /**
-The app framework provides simple MVC-like building blocks (models, model lists,
-views, and URL-based routing) for writing single-page JavaScript applications.
-
-@main app
-@module app
-@since 3.4.0
-**/
-
-/**
 Provides an API for managing an ordered list of Model instances.
 
 @submodule model-list

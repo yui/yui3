@@ -1,6 +1,18 @@
 Event Infrastructure Change History
 ===================================
 
+3.5.0
+-----
+  * `event-simulate` references to `window` replaced with `Y.config.win`
+    [#2531223]
+  * `event-resize` no longer throws an exception in IE [#2531310]
+  * "avilable" and "contentready" handlers that throw exceptions no longer
+    result in infinite polling [#2531375]
+  * Added `event-touch`, `event-flick`, `event-move`, and `event-valuechange` to
+    the `event` virtual rollup in accordance with the docs.
+  * 'key' event does a better job parsing character filters. Uses `e.which`
+    instead of `e.keyCode` or `e.charCode`.
+
 3.4.1
 -----
   * Calling Y.on('syntheticEvent', callback) without a context/selector argument

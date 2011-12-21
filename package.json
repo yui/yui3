@@ -3,7 +3,7 @@
     "version": "3.5.0pre",
     "description": "YUI 3 Source",
     "author": "Dav Glass <davglass@gmail.com>",
-    "bugs": { "web" : "http://yuilibrary.com/projects/yui3/" },
+    "bugs": { "url" : "http://yuilibrary.com/projects/yui3/" },
     "os": ["darwin", "linux"],
     "engines": {
         "node" : ">=0.4.0"
@@ -15,7 +15,7 @@
     "licenses":[
         {
             "type" : "BSD",
-            "url" : "http://developer.yahoo.com/yui/license.html"
+            "url" : "http://yuilibrary.com/license/"
         }
     ],
     "repository": {
