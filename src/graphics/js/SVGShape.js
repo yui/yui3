@@ -774,15 +774,39 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
     },
 
     /**
-     * Destroys the instance.
+     * Destroys the shape instance.
      *
      * @method destroy
      */
     destroy: function()
     {
-        if(this._graphic && this._graphic._contentNode)
+        var graphic = this.get("graphic");
+        if(graphic)
         {
-            this._graphic._contentNode.removeChild(this.node);
+            graphic.removeShape(this);
+        }
+        else
+        {
+            this._destroy();
+        }
+    },
+
+    /**
+     *  Implementation for shape destruction
+     *
+     *  @method destroy
+     *  @protected
+     */
+    _destroy: function()
+    {
+        if(this.node)
+        {
+            Y.Event.purgeElement(this.node, true);
+            if(this.node.parentNode)
+            {
+                this.node.parentNode.removeChild(this.node);
+            }
+            this.node = null;
         }
     }
  }, Y.SVGDrawing.prototype));

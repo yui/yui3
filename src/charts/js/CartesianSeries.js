@@ -471,6 +471,29 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     {
         var total = this.get("valueAxis").getTotalByKey(this.get("valueKey"));
         return total;
+    },
+
+    /**
+     * Destructor implementation for the CartesianSeries class. Calls destroy on all Graphic instances.
+     *
+     * @method destructor
+     * @protected
+     */
+    destructor: function()
+    {
+        if(this._path)
+        {
+            this._path.destroy();
+        }
+        if(this._lineGraphic)
+        {
+            this._lineGraphic.destroy();
+            this._lineGraphic = null;
+        }
+        if(this.get("graphic"))
+        {
+            this.get("graphic").destroy();
+        }   
     }
 }, {
     ATTRS: {

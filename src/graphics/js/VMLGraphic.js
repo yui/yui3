@@ -325,7 +325,7 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
     destroy: function()
     {
         this.clear();
-        this._node.parentNode.removeChild(this._node);
+        Y.one(this._node).remove(true);
     },
 
     /**
@@ -382,7 +382,8 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
         }
         if(shape && shape instanceof VMLShape)
         {
-            shape.destroy();
+            shape._destroy();
+            this._shapes[shape.get("id")] = null;
             delete this._shapes[shape.get("id")];
         }
         if(this.get("autoDraw"))

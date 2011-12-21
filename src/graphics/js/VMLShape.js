@@ -155,7 +155,7 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 				node.appendChild(this._fillNode);
 			}
 
-			this.node = node;
+            this.node = node;
             this._strokeFlag = false;
             this._fillFlag = false;
 	},
@@ -1046,22 +1046,38 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
      */
     destroy: function()
     {
-        var parentNode = this._graphic && this._graphic._node ? this._graphic._node : null,
-            node = this.node;
+        var graphic = this.get("graphic");
+        if(graphic)
+        {
+            graphic.removeShape(this);
+        }
+        else
+        {
+            this._destroy();
+        }
+    },
+
+    /**
+     *  Implementation for shape destruction
+     *
+     *  @method destroy
+     *  @protected
+     */
+    _destroy: function()
+    {
         if(this.node)
         {   
             if(this._fillNode)
             {
-                node.removeChild(this._fillNode);
+                this.node.removeChild(this._fillNode);
+                this._fillNode = null;
             }
             if(this._strokeNode)
             {
-                node.removeChild(this._strokeNode);
+                this.node.removeChild(this._strokeNode);
+                this._strokeNode = null;
             }
-            if(parentNode)
-            {
-                parentNode.removeChild(node);
-            }
+            Y.one(this.node).remove(true);
         }
     }
 }, Y.VMLDrawing.prototype));

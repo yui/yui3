@@ -632,8 +632,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                         this.set("height", node.get("offsetHeight"));
                         h = this.get("height");
                     }
-                    axis.set("width", w);
-                    axis.set("height", h);
+                    axis.set("width", 0);
+                    axis.set("height", 0);
                     this._addToAxesRenderQueue(axis);
                     pos = axis.get("position");
                     if(!this.get(pos + "AxesCollection"))
@@ -1207,6 +1207,51 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             this._overlay.setStyle("width", (w - (lw + rw)) + "px");
             this._overlay.setStyle("height", (h - (th + bh)) + "px");
         }
+    },
+
+    /**
+     * Destructor implementation for the CartesianChart class. Calls destroy on all axes, series and the Graph instance.
+     * Removes the tooltip and overlay HTML elements.
+     *
+     * @method destructor
+     * @protected
+     */
+    destructor: function()
+    {
+        var graph = this.get("graph"),
+            i = 0,
+            len,
+            seriesCollection = this.get("seriesCollection"),
+            axesCollection = this._axesCollection,
+            tooltip = this.get("tooltip").node;
+        len = seriesCollection ? seriesCollection.length : 0;
+        for(; i < len; ++i)
+        {
+            if(seriesCollection[i] instanceof Y.CartesianSeries)
+            {
+                seriesCollection[i].destroy(true);
+            }
+        }
+        len = axesCollection ? axesCollection.length : 0;
+        for(i = 0; i < len; ++i)
+        {
+            if(axesCollection[i] instanceof Y.Axis)
+            {
+                axesCollection[i].destroy(true);
+            }
+        }
+        if(graph)
+        {
+            graph.destroy(true);
+        }
+        if(tooltip)
+        {
+            tooltip.remove(true);
+        }
+        if(this._overlay)
+        {
+            this._overlay.remove(true);
+        }
     }
 }, {
     ATTRS: {
@@ -1416,7 +1461,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
          * @type Object
          */
         axes: {
-            valueFn: "_parseAxes",
+            valueFn: "_getDefaultAxes",
 
             setter: function(val)
             {
