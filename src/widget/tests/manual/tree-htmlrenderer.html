@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+
+        <script src="../../../../build/yui/yui.js"></script>
+        <script src="../../../../build/widget-htmlrenderer/widget-htmlrenderer.js"></script>
+
+        <style>
+            .yui3-parentwidget-content {
+                border:4px solid blue;
+                padding:5px;
+            }
+
+            .yui3-childwidget-content {
+                border:4px solid red;
+                padding:5px;
+            }
+        </style>
+    </head>
+
+    <body>
+        NOTE: Loader Meta-Data for widget-htmlrenderer has not been added, since it may be rolled into treeview as tree-htmlrenderer,
+        so wasn't worth adding the merge overhead for yui/loader. So you need to add it to the page manually for now (see script tags)
+
+        <script>
+
+        YUI({filter:"raw", combine:false}).use('base', 'widget', 'widget-parent', 'widget-child', 'widget-htmlrenderer', function (Y) {
+
+            var ParentWidget = Y.ParentWidget = Y.Base.create("parentwidget", Y.Widget, [Y.WidgetParent, Y.WidgetChild, Y.WidgetHTMLRenderer], {
+
+                BOUNDING_TEMPLATE : '<ul id="{{id}}" class="{{boundingClasses}}">{{{contentBox}}}</ul>',
+                CONTENT_TEMPLATE : null,
+
+                renderUI: function (contentBuffer) {
+                    if (this.get("depth") > -1) {
+                        contentBuffer.push("<em>" + this.get("label") + "</em>");
+                    }
+                },
+
+                bindUI: function() {
+                    if (this.isRoot()) {
+
+                        // Use node references, not widget.on("click") when setting up stuff
+                        // internally
+
+                        this.get("boundingBox").on("click", function(e) {
+
+                            var widget = Y.Widget.getByNode(e.target);
+                            
+                            // Optional - Maybe we can render here, or when user asks for a child, 
+                            // so we can use get("boundingBox")/get("contentBox")?
+
+                            // widget.render();
+                            // console.log(widget.get("id") + ":" + widget.get("boundingBox").get("className"));
+                            
+                            console.log(widget.get("id") + ":" + widget.name);
+
+                        });
+                    }
+                },
+
+                _renderChildren: function (contentBuffer) {
+            
+                    // Left this as a string on purpose, since the other buffer was 
+                    // confusing you. 
+                    
+                    // But you can see how you could replace the
+
+                    //    childrenHTML = ""; childrenHTML += child.renderHTML(); with
+                    //    childrenHTML = [], childrenHTML.push(child.renderHTML());
+
+                    var childrenHTML = "";
+
+                    this.each(function (child) {
+                        childrenHTML += child.renderHTML();
+                    });
+
+                    contentBuffer.push(childrenHTML);                    
+                }
+
+            }, {
+                ATTRS: {
+                    label: {
+                        value:"Default Parent Label"
+                    }
+                }
+            });
+
+            var ChildWidget = Y.ChildWidget = Y.Base.create("childwidget", Y.Widget, [Y.WidgetChild, Y.WidgetHTMLRenderer], {
+
+                BOUNDING_TEMPLATE : '<li id="{{id}}" class="{{boundingClasses}}">{{{contentBox}}}</li>',
+                CONTENT_TEMPLATE : null,
+
+                renderUI: function (contentBuffer) {
+                    contentBuffer.push(this.get("label"));
+                }
+
+            }, {
+                ATTRS: {
+                    label: {
+                        value:"Default Child Label"
+                    }
+                }
+            });
+
+            var tree = new Y.ParentWidget({
+
+               id: "tree",
+               children: [
+
+                   { type: Y.ChildWidget, id: "leaf-1", label: "Leaf One" },
+                   { type: Y.ChildWidget, id: "leaf-2", label: "Leaf Two" },
+                   { type: Y.ParentWidget, id: "subtree", label: "Subtree", children: [
+
+                      { type: Y.ChildWidget, id: "subtree-leaf-1", label: "Subtree - Leaf One" },
+                      { type: Y.ChildWidget, id: "subtree-leaf-2", label: "Subtree - Leaf Two" },
+                      { type: Y.ChildWidget, id: "subtree-leaf-3", label: "Subtree - Leaf Three" },
+                      { type: Y.ChildWidget, id: "subtree-leaf-4", label: "Subtree - Leaf Four" }
+
+                   ]}
+               ]
+
+            });
+
+            tree.render();
+            
+            
+        });
+        </script>
+    </body>
+</html>

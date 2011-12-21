@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <script src="../../../../build/yui/yui.js"></script>
+        <script src="../../../../build/widget-htmlrenderer/widget-htmlrenderer.js"></script>
+
+        <style>
+            .yui3-strwidget {
+                margin:10px;
+                border:1px solid black;
+            }
+
+            .yui3-strwidget-content {
+                border:1px solid red;
+                padding:5px;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <div id="renderTargetOne"></div>
+        <div id="renderTargetTwo"></div>
+        <div id="renderTargetThree"></div>
+        <div id="renderTargetFour"></div>
+
+        NOTE: Loader Meta-Data for widget-htmlrenderer has not been added, since it may be rolled into treeview as tree-htmlrenderer for 3.5.0,
+        so wasn't worth adding the merge overhead for yui/loader. So you need to add it to the page manually for now (see script tags)
+
+        <script>
+        YUI({filter:"raw", combine:false}).use('base', 'widget', 'widget-htmlrenderer', function (Y) {
+
+            var appendTargetOne = Y.Node.one("#renderTargetOne");
+            var appendTargetTwo = Y.Node.one("#renderTargetTwo");
+            var appendTargetThree = Y.Node.one("#renderTargetThree");
+            var appendTargetFour = Y.Node.one("#renderTargetFour");
+
+            var MyWidget = Y.Base.create("strWidget", Y.Widget, [Y.WidgetHTMLRenderer], {
+
+                // Maintain tokens
+                BOUNDING_TEMPLATE : '<ul id="{{id}}" class="{{boundingClasses}}">{{{contentBox}}}</ul>',
+                CONTENT_TEMPLATE : '<li class="{{contentClasses}}">{{{content}}}</li>',
+
+                renderUI : function(contentBuffer) {
+                    // Example - can use Handlebars, or whatever you want. Only contract is that the rendered string needs to end up in the contentBuffer.
+                    contentBuffer.push(Y.Handlebars.render('<a href="#">{{label}}</a>', {label:this.get("label")}));
+                }
+
+            }, {
+
+                ATTRS: {
+                    label: {
+                        value:"Default Content"
+                    }
+                }
+
+            });
+
+            var w = new MyWidget({
+                id:"one",
+                label: "Widget One"
+            });
+
+            var html = w.renderHTML();
+            appendTargetOne.setContent(html);
+
+            w.set("height", 100);
+            w.set("width", 200);
+
+            w.render();
+
+            // ---
+    
+            var w2 = new MyWidget({
+                id:"two",
+                label: "Widget Two",
+                height:100,
+                width:200
+            });
+            w2.renderHTML(appendTargetTwo);
+            
+
+            // later that day ...
+            w2.render();
+
+            // ---
+
+            var w3 = new MyWidget({
+                id:"three",
+                label: "Widget Three",
+                height:100,
+                width:200
+            });
+
+            var buffer = [];
+
+            w3.renderHTML(buffer);
+            appendTargetThree.setContent(buffer.join());
+
+            // later that day ...
+            w3.render();
+
+            // ---
+
+            var w4 = new MyWidget({
+                id:"four",
+                label: "Widget Four",
+                height:100,
+                width:200
+            });
+            w4.render(appendTargetFour);
+
+            // ---
+
+            var w5 = new MyWidget({
+                id:"five",
+                label: "Widget Five (insert to body)",                
+                height:100,
+                width:200
+            });
+            w5.render();
+            
+            // Make sure we can destroy OK pre/post render
+
+            var w6 = new MyWidget({
+                id:"six",
+                label: "Widget Six"                
+            });
+
+            w6.destroy();
+
+            // --
+
+            var w7 = new MyWidget({
+                id:"seven",
+                label: "Widget Seven"
+            });
+
+            w7.render();
+            w7.destroy();
+        });
+        </script>
+    </body>
+</html>
