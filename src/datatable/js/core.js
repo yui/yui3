@@ -357,38 +357,6 @@ Y.mix(Table.prototype, {
         return this.body && this.body.getCell && this.body.getRow(index);
     },
 
-    /**
-    Builds the table and attaches it to the DOM.  This requires the host class
-    to provide a `contentBox` attribute.  This is typically provided by Widget.
-
-    @method renderUI
-    **/
-    renderUI: function () {
-        var contentBox = this.get('contentBox'),
-            table;
-
-        if (contentBox) {
-            this._renderTable();
-
-            this._renderHeader();
-
-            this._renderFooter();
-
-            this._renderBody();
-
-            table = this._tableNode;
-
-            if (table) {
-                // off DOM or in an existing node attached to a different parentNode
-                if (!table.inDoc() || !table.ancestor().compareTo(contentBox)) {
-                    contentBox.append(table);
-                }
-            } else { Y.log('Problem rendering DataTable: table not created', 'warn', 'datatable'); // On the same line to allow builder to strip the else clause
-            }
-        } else { Y.log('Problem rendering DataTable: contentBox not found', 'warn', 'datatable'); // On the same line to allow builder to strip the else clause
-        }
-    },
-
     // -- Protected and private properties and methods ------------------------
 
     /**
@@ -928,6 +896,39 @@ Y.mix(Table.prototype, {
         this._uiUpdateSummary(this.get('summary'));
 
         this._uiUpdateCaption(caption);
+    },
+
+    /**
+    Builds the table and attaches it to the DOM.  This requires the host class
+    to provide a `contentBox` attribute.  This is typically provided by Widget.
+
+    @method renderUI
+    @protected
+    **/
+    renderUI: function () {
+        var contentBox = this.get('contentBox'),
+            table;
+
+        if (contentBox) {
+            this._renderTable();
+
+            this._renderHeader();
+
+            this._renderFooter();
+
+            this._renderBody();
+
+            table = this._tableNode;
+
+            if (table) {
+                // off DOM or in an existing node attached to a different parentNode
+                if (!table.inDoc() || !table.ancestor().compareTo(contentBox)) {
+                    contentBox.append(table);
+                }
+            } else { Y.log('Problem rendering DataTable: table not created', 'warn', 'datatable'); // On the same line to allow builder to strip the else clause
+            }
+        } else { Y.log('Problem rendering DataTable: contentBox not found', 'warn', 'datatable'); // On the same line to allow builder to strip the else clause
+        }
     },
 
     /**
