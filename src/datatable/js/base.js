@@ -163,30 +163,7 @@ those classes for more details about how they operate.
 @main
 **/
 
-/**
-The baseline implementation of a DataTable.  This class should be used
-primarily as a superclass for a custom DataTable with a specific set of
-features.  Because features can be composed onto `Y.DataTable`, custom
-subclasses of DataTable.Base will remain unmodified when new feature modules
-are loaded.
-
-DataTable.Base is built from DataTable.Core, and sets the default `headerView`
-to `Y.DataTable.HeaderView` and default `bodyView` to `Y.DataTable.BodyView`.
-
-@class Base
-@extends Widget
-@uses DataTable.Core
-@namespace DataTable
-**/
-Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core],
-    null, {
-        ATTRS: {
-            // Default head and body views
-            headerView: { value: Y.DataTable.HeaderView },
-            bodyView  : { value: Y.DataTable.BodyView }
-        }
-    });
-
+// DataTable API docs included before DataTable.Base to make yuidoc work
 /**
 A Widget for displaying tabular data.  Before feature modules are `use()`d,
 this class is functionally equivalent to DataTable.Base.  However, feature
@@ -251,6 +228,33 @@ var table = new Y.DataTable({
 @class DataTable
 @extends DataTable.Base
 **/
+
+// DataTable API docs included before DataTable.Base to make yuidoc work
+/**
+The baseline implementation of a DataTable.  This class should be used
+primarily as a superclass for a custom DataTable with a specific set of
+features.  Because features can be composed onto `Y.DataTable`, custom
+subclasses of DataTable.Base will remain unmodified when new feature modules
+are loaded.
+
+DataTable.Base is built from DataTable.Core, and sets the default `headerView`
+to `Y.DataTable.HeaderView` and default `bodyView` to `Y.DataTable.BodyView`.
+
+@class Base
+@extends Widget
+@uses DataTable.Core
+@namespace DataTable
+**/
+Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core],
+    null, {
+        ATTRS: {
+            // Default head and body views
+            headerView: { value: Y.DataTable.HeaderView },
+            bodyView  : { value: Y.DataTable.BodyView }
+        }
+    });
+
+// The DataTable API docs are above DataTable.Base docs.
 Y.DataTable = Y.mix(
     Y.Base.create('datatable', Y.DataTable.Base, []), // Create the class
     Y.DataTable); // Migrate static and namespaced classes
