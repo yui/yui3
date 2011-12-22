@@ -751,7 +751,7 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Delegates rendering to the configured `bodyView`.
+    Delegates rendering the table `<tbody>` to the configured `bodyView`.
 
     @method _renderBody
     @protected
@@ -778,7 +778,7 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Delegates rendering to the configured `footerView`.
+    Delegates rendering the table `<tfoot>` to the configured `footerView`.
 
     @method _renderFooter
     @protected
@@ -803,7 +803,7 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Delegates rendering to the configured `headerView`.
+    Delegates rendering the table `<thead>` to the configured `headerView`.
 
     @method _renderHeader
     @protected
@@ -1036,12 +1036,12 @@ Y.mix(Table.prototype, {
 
     /**
     Verifies the input value is a function with a `render` method on its
-    prototype.
+    prototype.  `null` is also accepted to remove the default View.
 
     @method _validateView
     @protected
     **/
     _validateView: function (val) {
-        return isFunction(val) && val.prototype.render;
+        return val === null || (isFunction(val) && val.prototype.render);
     }
 });
