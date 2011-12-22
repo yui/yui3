@@ -392,18 +392,17 @@ Y.mix(Table.prototype, {
     // -- Protected and private properties and methods ------------------------
 
     /**
-    Subscribes to attribute change events to update the UI.
+    Configuration object passed to the class constructor in `bodyView` during
+    render.
 
-    @method bindUI
+    This property is set by the `\_initViewConfig` method at instantiation.
+
+    @property _bodyConfig
+    @type {Object}
+    @default undefined (initially unset)
     @protected
     **/
-    bindUI: function () {
-        // TODO: handle widget attribute changes
-        this.after({
-            captionChange: this._afterCaptionChange,
-            summaryChange: this._afterSummaryChange
-        });
-    },
+    //_bodyConfig: null,
 
     /**
     A map of column key to column configuration objects parsed from the
@@ -417,6 +416,32 @@ Y.mix(Table.prototype, {
     //_columnMap: null,
 
     /**
+    Configuration object passed to the class constructor in `footerView` during
+    render.
+
+    This property is set by the `\_initViewConfig` method at instantiation.
+
+    @property _footerConfig
+    @type {Object}
+    @default undefined (initially unset)
+    @protected
+    **/
+    //_footerConfig: null,
+
+    /**
+    Configuration object passed to the class constructor in `headerView` during
+    render.
+
+    This property is set by the `\_initViewConfig` method at instantiation.
+
+    @property _headerConfig
+    @type {Object}
+    @default undefined (initially unset)
+    @protected
+    **/
+    //_headerConfig: null,
+
+    /**
     The Node instance of the table containing the data rows.  This is set when
     the table is rendered.  It may also be set by progressive enhancement,
     though this extension does not provide the logic to parse from source.
@@ -427,6 +452,20 @@ Y.mix(Table.prototype, {
     @protected
     **/
     //_tableNode: null,
+
+    /**
+    Configuration object used as the prototype of `\_headerConfig`,
+    `\_bodyConfig`, and `\_footerConfig`. Add properties to this object if you
+    want them in all three of the other config objects.
+
+    This property is set by the `\_initViewConfig` method at instantiation.
+
+    @property _viewConfig
+    @type {Object}
+    @default undefined (initially unset)
+    @protected
+    **/
+    //_viewConfig: null,
 
     /**
     Relays `captionChange` events to `\_uiUpdateCaption`.
@@ -460,6 +499,20 @@ Y.mix(Table.prototype, {
     **/
     _afterSummaryChange: function (e) {
         this._uiUpdateSummary(e.newVal);
+    },
+
+    /**
+    Subscribes to attribute change events to update the UI.
+
+    @method bindUI
+    @protected
+    **/
+    bindUI: function () {
+        // TODO: handle widget attribute changes
+        this.after({
+            captionChange: this._afterCaptionChange,
+            summaryChange: this._afterSummaryChange
+        });
     },
 
     /**
@@ -616,6 +669,8 @@ Y.mix(Table.prototype, {
 
         this._initData();
 
+        this._initViewConfig();
+
         this.after('columnsChange', this._afterColumnsChange);
     },
 
@@ -711,6 +766,32 @@ Y.mix(Table.prototype, {
     },
 
     /**
+    Initializes the `\_viewConfig`, `\_headerConfig`, `\_bodyConfig`, and
+    `\_footerConfig` properties with the configuration objects that will be
+    passed to the constructors of the `headerView`, `bodyView`, and
+    `footerView`.
+    
+    Extensions can add to the config objects to deliver custom parameters at
+    view instantiation.  `\_viewConfig` is used as the prototype of the other
+    three config objects, so properties added here will be inherited by all
+    configs.
+
+    @method _initViewConfig
+    @protected
+    **/
+    _initViewConfig: function () {
+        this._viewConfig = {
+            source   : this,
+            cssPrefix: this._cssPrefix
+        };
+
+        // Use prototypal inheritance to share common configs from _viewConfig
+        this._headerConfig = Y.Object(this._viewConfig);
+        this._bodyConfig   = Y.Object(this._viewConfig);
+        this._footerConfig = Y.Object(this._viewConfig);
+    },
+
+    /**
     Iterates the array of column configurations to capture all columns with a
     `key` property.  Columns that are represented as strings will be replaced
     with objects with the string assigned as the `key` property.  If a column
@@ -762,15 +843,15 @@ Y.mix(Table.prototype, {
         // TODO: use a _viewConfig object that can be mixed onto by class
         // extensions, then pass that to either the view constructor or setAttrs
         if (BodyView) {
-            this.body = (isFunction(BodyView)) ? 
-                new BodyView({
-                    source   : this,
-                    container: this._tableNode,
-                    columns  : this.get('columns'),
-                    modelList: this.data,
-                    cssPrefix: this._cssPrefix
-                }) :
-                BodyView;
+            // Can't use merge because it doesn't iterate prototype properties,
+            // so would miss the configs from _viewConfig.
+            Y.mix(this._bodyConfig, {
+                container: this._tableNode,
+                columns  : this.get('columns'),
+                modelList: this.data
+            }, true);
+
+            this.body = new BodyView(this._bodyConfig);
 
             this.body.addTarget(this);
             this.body.render();
@@ -787,15 +868,15 @@ Y.mix(Table.prototype, {
         var FooterView = this.get('footerView');
         
         if (FooterView) {
-            this.foot = (isFunction(FooterView)) ? 
-                new FooterView({
-                    source   : this,
-                    container: this._tableNode,
-                    columns  : this.get('columns'),
-                    modelList: this.data,
-                    cssPrefix: this._cssPrefix
-                }) :
-                FooterView;
+            // Can't use merge because it doesn't iterate prototype properties,
+            // so would miss the configs from _viewConfig.
+            Y.mix(this._footerConfig, {
+                container: this._tableNode,
+                columns  : this.get('columns'),
+                modelList: this.data
+            }, true);
+
+            this.foot = new FooterView(this._footerConfig);
 
             this.foot.addTarget(this);
             this.foot.render();
@@ -812,15 +893,15 @@ Y.mix(Table.prototype, {
         var HeaderView = this.get('headerView');
         
         if (HeaderView) {
-            this.head = (isFunction(HeaderView)) ? 
-                new HeaderView({
-                    source   : this,
-                    container: this._tableNode,
-                    columns  : this.get('columns'),
-                    modelList: this.data,
-                    cssPrefix: this._cssPrefix
-                }) :
-                HeaderView; // Assume if it's not a function, it's an instance
+            // Can't use merge because it doesn't iterate prototype properties,
+            // so would miss the configs from _viewConfig.
+            Y.mix(this._headerConfig, {
+                container: this._tableNode,
+                columns  : this.get('columns'),
+                modelList: this.data
+            }, true);
+
+            this.head = new HeaderView(this._headerConfig);
 
             this.head.addTarget(this);
             this.head.render();
@@ -1042,6 +1123,7 @@ Y.mix(Table.prototype, {
     @protected
     **/
     _validateView: function (val) {
+        // TODO support View instances?
         return val === null || (isFunction(val) && val.prototype.render);
     }
 });
