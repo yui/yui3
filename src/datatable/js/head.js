@@ -188,7 +188,9 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
             return this;
         }
 
-        existing = table.one('> .' + this.getClassName('columns'));
+        // TODO: limit to correctly classed thead?  Then I would need to
+        // replace a found thead without the class.
+        existing = table.one('> thead');
 
         if (existing) {
             if (!existing.compareTo(thead)) {
