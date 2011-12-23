@@ -77,6 +77,7 @@ var Lang         = Y.Lang,
     //htmlEscape   = Y.Escape.html,
     fromTemplate = Y.Lang.sub,
     toArray      = Y.Array,
+    bind         = Y.bind,
 
     ClassNameManager = Y.ClassNameManager,
     _getClassName    = ClassNameManager.getClassName;
@@ -159,14 +160,6 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     TBODY_TEMPLATE: '<tbody class="{classes}">{content}</tbody>',
 
     // -- Public methods ------------------------------------------------------
-    /**
-    Destroys the instance.
-
-    @method destructor
-    **/
-    destructor: function () {
-        (new Y.EventHandle(this._eventHandles)).detach();
-    },
 
     /**
     Returns the `<td>` Node from the given row and column index.  If there is
@@ -314,7 +307,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             data     = this.get('modelList'),
             columns  = this.columns,
             tbody    = this._tbodyNode,
-            existing, replace;
+            existing;
 
         table =  Y.one(table);
 
@@ -328,26 +321,31 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         }
 
         existing = table.one('> .' + this.getClassName('data'));
-        replace  = existing && (!tbody || !tbody.compareTo(existing));
 
         // Needed for mutation
         this._createRowTemplate(columns);
 
-        if ((!tbody || replace) && data) {
+        if (existing) {
+            if (tbody) {
+                if (!existing.compareTo(tbody)) {
+                    existing.replace(tbody);
+                }
+            } else {
+                this._tbodyNode = existing;
+            }
+        } else if (data) {
             tbody = Y.Node.create(this._createDataHTML(columns));
 
             this._applyNodeFormatters(tbody, columns);
-        }
 
-        if (existing) {
-            if (replace) {
-                existing.replace(tbody);
-            }
-        } else {
             table.append(tbody);
+
+            this._tbodyNode = tbody;
         }
 
-        this.bindUI();
+        if (this._tbodyNode) {
+            this.bindUI();
+        }
 
         return this;
     },
@@ -370,7 +368,6 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     _afterColumnsChange: function (e) {
         this._parseColumns(e.newVal);
 
-        // FIXME: This will call bindUI() a second time.
         this.render();
     },
     
@@ -384,11 +381,18 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @protected
     **/
     _afterDataChange: function (e) {
-        // TODO
+        // Baseline view will just rerender the tbody entirely
+        if (this._tbodyNode) {
+            this._tbodyNode.remove().destroy(true);
+            delete this._tbodyNode;
+        }
+
+        this.render();
     },
 
     /**
-    Iterates the `modelList`, and calls any `nodeFormatter`s found in the `columns` param on the appropriate cell Nodes in the `tbody`.
+    Iterates the `modelList`, and calls any `nodeFormatter`s found in the
+    `columns` param on the appropriate cell Nodes in the `tbody`.
 
     @method _applyNodeFormatters
     @param {Node} tbody The `<tbody>` Node whose columns to update
@@ -457,11 +461,20 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @protected
     **/
     bindUI: function () {
-        this._eventHandles.push(
-            this.source.after('columnChange', this._afterColumnChange),
-            this.get('modelList').after(
-                ['*:change', '*:destroy'],
-                this._afterDataChange, this));
+        var handles = this._eventHandles,
+            data    = this.get('modelList');
+
+        if (this.source && !handles.columnsChange) {
+            handles.columnsChange =
+                this.source.after('columnsChange',
+                    bind('_afterColumnsChange', this));
+        }
+
+        if (!handles.dataChange) {
+            handles.dataChange = 
+                data.after(['*:change', '*:add', '*:remove', '*:destroy', '*:reset'],
+                    bind('_afterDataChange', this));
+        }
     },
 
     /**
@@ -632,6 +645,26 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     },
 
     /**
+    Destroys the instance.
+
+    @method destructor
+    @protected
+    **/
+    destructor: function () {
+        (new Y.EventHandle(Y.Object.values(this._eventHandles))).detach();
+    },
+
+    /**
+    Holds the event subscriptions needing to be detached when the instance is `destroy()`ed.
+
+    @property _eventHandles
+    @type {Object}
+    @default undefined (initially unset)
+    @protected
+    **/
+    //_eventHandles: null,
+
+    /**
     Initializes the instance. Reads the following configuration properties in
     addition to the instance attributes:
 
@@ -650,7 +683,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         this.columns = this._parseColumns(config.columns);
         this._tbodyNode = config.tbodyNode;
 
-        this._eventHandles = [];
+        this._eventHandles = {};
 
         if (cssPrefix) {
             this._cssPrefix = cssPrefix;
