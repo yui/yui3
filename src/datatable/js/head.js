@@ -137,15 +137,6 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     // -- Public methods ------------------------------------------------------
 
     /**
-    Destroys the instance.
-
-    @method destructor
-    **/
-    destructor: function () {
-        (new Y.EventHandle(this._eventHandles)).detach();
-    },
-
-    /**
     Builds a CSS class name from the provided tokens.  If the instance is
     created with `cssPrefix` or `source` in the configuration, it will use this
     prefix (the `\_cssPrefix` of the `source` object) as the base token.  This
@@ -184,9 +175,10 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
                             // TODO: remove dependence on this.source
                             linerClass: this.getClassName('liner')
                        },
-            existing, replace, i, len, j, jlen, col, html;
+            existing, i, len, j, jlen, col, html;
 
         table = Y.one(table);
+
         if (table && table.get('tagName') !== 'TABLE') {
             table = table.one('table');
         }
@@ -197,9 +189,14 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
         }
 
         existing = table.one('> .' + this.getClassName('columns'));
-        replace  = existing && (!thead || !thead.compareTo(existing));
 
-        if (!thead) {
+        if (existing) {
+            if (!existing.compareTo(thead)) {
+                existing.replace(thead);
+            } else {
+                this._theadNode = existing;
+            }
+        } else {
             thead = '';
 
             if (columns.length) {
@@ -225,17 +222,12 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
                 }
             }
 
-            thead = fromTemplate(this.THEAD_TEMPLATE, {
-                classes: this.getClassName('columns'),
-                content: thead
-            });
-        }
-
-        if (existing) {
-            if (replace) {
-                existing.replace(thead);
-            }
-        } else {
+            this._theadNode = thead = Y.Node.create(
+                fromTemplate(this.THEAD_TEMPLATE, {
+                    classes: this.getClassName('columns'),
+                    content: thead
+                }));
+            
             table.insertBefore(thead, table.one('> tfoot, > tbody'));
         }
 
@@ -258,12 +250,19 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     /**
     Handles changes in the source's columns attribute.  Redraws the headers.
 
-    @method _afterColumnChange
+    @method _afterColumnsChange
     @param {EventFacade} e The `columnsChange` event object
     @protected
     **/
-    _afterColumnChange: function (e) {
-        // TODO
+    _afterColumnsChange: function (e) {
+        this.columns = this._parseColumns(e.newVal);
+
+        if (this._theadNode) {
+            this._theadNode.remove().destroy(true);
+            delete this._theadNode;
+        }
+
+        this.render();
     },
 
     /**
@@ -273,12 +272,34 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     @protected
     **/
     bindUI: function () {
-        if (this.source) {
+        if (this.source && !this._eventHandles.columnsChange) {
             // TODO: How best to decouple this?
-            this._eventHandles.push(
-                this.source.after('columnsChange', this._afterColumnsChange));
+            this._eventHandles.columnsChange =
+                this.source.after('columnsChange',
+                    Y.bind('_afterColumnsChange', this));
         }
     },
+
+    /**
+    Destroys the instance.
+
+    @method destructor
+    @protected
+    **/
+    destructor: function () {
+        (new Y.EventHandle(Y.Object.values(this._eventHandles))).detach();
+    },
+
+    /**
+    Holds the event subscriptions needing to be detached when the instance is
+    `destroy()`ed.
+
+    @property _eventHandles
+    @type {Object}
+    @default undefined (initially unset)
+    @protected
+    **/
+    //_eventHandles: null,
 
     /**
     Initializes the instance. Reads the following configuration properties:
