@@ -73,11 +73,11 @@ advisable to always return `false` from your `nodeFormatter`s_.
 **/
 var Lang         = Y.Lang,
     isArray      = Lang.isArray,
-    // TODO: Use this when generating content unless column.allowHTML
-    //htmlEscape   = Y.Escape.html,
+    htmlEscape   = Y.Escape.html,
     fromTemplate = Y.Lang.sub,
     toArray      = Y.Array,
     bind         = Y.bind,
+    YObject      = Y.Object,
 
     ClassNameManager = Y.ClassNameManager,
     _getClassName    = ClassNameManager.getClassName;
@@ -366,7 +366,12 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     // 3. column additions
     // 4. column moves (preserve cells)
     _afterColumnsChange: function (e) {
-        this._parseColumns(e.newVal);
+        this.columns = this._parseColumns(e.newVal);
+
+        if (this._tbodyNode) {
+            this._tbodyNode.remove().destroy(true);
+            delete this._tbodyNode;
+        }
 
         this.render();
     },
@@ -550,20 +555,23 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     **/
     _createRowHTML: function (model, index) {
         var data    = model.getAttrs(),
+            // To prevent formatters from leaking changes when more than one
+            // column refer to the same key
+            values  = YObject(data),
             source  = this.source || this,
             columns = this.columns,
-            i, len, col, key, value, formatterData;
+            i, len, col, token, value, formatterData;
 
         // TODO: Be consistent and change to row-classes? This could be
         // clobbered by a column named 'row'.
-        data.rowClasses = (index % 2) ? this.CLASS_ODD : this.CLASS_EVEN;
+        values.rowClasses = (index % 2) ? this.CLASS_ODD : this.CLASS_EVEN;
 
         for (i = 0, len = columns.length; i < len; ++i) {
             col   = columns[i];
-            key   = col.key || col._yuid;
-            value = data[key];
+            value = data[col.key];
+            token = col._renderToken || col.key || col._yuid;
 
-            data[key + '-classes'] = '';
+            values[token + '-classes'] = '';
 
             if (col.formatter) {
                 formatterData = {
@@ -587,7 +595,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                         value = formatterData.value;
                     }
 
-                    data[key + '-classes'] = formatterData.classnames;
+                    values[token + '-classes'] = formatterData.classnames;
                 }
             }
 
@@ -596,10 +604,10 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                 value = col.emptyCellValue;
             }
 
-            data[key] = value;
+            values[token] = col.allowHTML ? value : htmlEscape(value);
         }
 
-        return fromTemplate(this._rowTemplate, data);
+        return fromTemplate(this._rowTemplate, values);
     },
 
     /**
@@ -617,17 +625,31 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         var html         = '',
             cellTemplate = this.CELL_TEMPLATE,
             linerClass   = this.getClassName('liner'),
-            i, len, col, key, tokenValues;
+            tokens       = {},
+            i, len, col, key, token, tokenValues;
 
         for (i = 0, len = columns.length; i < len; ++i) {
             col = columns[i];
+            key = col.key;
 
-            key = col.key || col.name || col._yuid;
+            if (key) {
+                if (tokens[key]) {
+                    token = key + (tokens[key]++);
+                    col._renderToken = token;
+                } else {
+                    token = key;
+                    tokens[key] = 1;
+                }
+            } else {
+                token = col.name || col._yuid;
+            }
+
             tokenValues = {
-                content   : '{' + key + '}',
+                content   : '{' + token + '}',
                 headers   : col.headers.join(' '),
                 linerClass: linerClass,
-                classes   : this.getClassName(key) + ' {' + key + '-classes}'
+                // TODO: should this be getClassName(token)? Both?
+                classes   : this.getClassName(key) + ' {' + token + '-classes}'
             };
 
             if (col.nodeFormatter) {
@@ -651,11 +673,12 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @protected
     **/
     destructor: function () {
-        (new Y.EventHandle(Y.Object.values(this._eventHandles))).detach();
+        (new Y.EventHandle(YObject.values(this._eventHandles))).detach();
     },
 
     /**
-    Holds the event subscriptions needing to be detached when the instance is `destroy()`ed.
+    Holds the event subscriptions needing to be detached when the instance is
+    `destroy()`ed.
 
     @property _eventHandles
     @type {Object}
