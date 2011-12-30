@@ -188,7 +188,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 			pointerEvents = this.get("pointerEvents");
 		this.node = node;
 		this.addClass("yui3-" + SHAPE + " yui3-" + this.name);
-		if(id)
+        if(id)
 		{
 			node.setAttribute("id", id);
 		}
@@ -320,6 +320,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 			opacity,
 			color,
 			stopNode,
+            newStop,
 			isNumber = Y_LANG.isNumber,
 			graphic = this._graphic,
 			type = fill.type, 

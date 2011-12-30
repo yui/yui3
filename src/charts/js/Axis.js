@@ -300,21 +300,13 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             absRot = Math.abs(rot),
             radCon = Math.PI/180,
             sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
-            cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
-            m11 = cosRadians,
-            m12 = rot > 0 ? -sinRadians : sinRadians,
-            m21 = -m12,
-            m22 = m11;
+            cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8));
         return {
             rot: rot,
             absRot: absRot,
             radCon: radCon,
             sinRadians: sinRadians,
             cosRadians: cosRadians,
-            m11: m11,
-            m12: m12,
-            m21: m21,
-            m22: m22,
             textAlpha: styles.alpha
         };
     },
@@ -391,7 +383,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             }
             this._createLabelCache();
             this._tickPoints = [];
-            this.set("maxLabelSize", 0); 
+            this._maxLabelSize = 0; 
             this._titleSize = 0;
             for(; i < len; ++i)
             {
@@ -523,23 +515,31 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     {
         var i,
             label,
+            labelCache = this._labelCache,
             customStyles = {
                 rotation: "rotation",
                 margin: "margin",
                 alpha: "alpha"
             };
-        if(this._labelCache && this._labelCache.length > 0)
+        if(labelCache && labelCache.length > 0)
         {
-            label = this._labelCache.shift();
+            label = labelCache.shift();
         }
         else
         {
             label = DOCUMENT.createElement("span");
-            label.style.display = "block";
-            label.style.whiteSpace = "nowrap";
             label.className = Y.Lang.trim([label.className, "axisLabel"].join(' '));
             this.get("contentBox").append(label);
         }
+        if(!DOCUMENT.createElementNS)
+        {
+            if(label.style.filter)
+            {
+                label.style.filter = null;
+            }
+        }
+        label.style.display = "block";
+        label.style.whiteSpace = "nowrap";
         label.style.position = "absolute";
         this._labels.push(label);
         this._tickPoints.push({x:pt.x, y:pt.y});
@@ -767,44 +767,50 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         var rot = props.rot,
             x = props.x,
             y = props.y,
-            absRot,
-            radCon,
-            sinRadians,
-            cosRadians,
-            m11,
-            m12,
-            m21,
-            m22,
             filterString,
-            textAlpha;
-        if(Y.config.doc.createElementNS)
+            textAlpha,
+            matrix = new Y.Matrix(),
+            transformOrigin = props.transformOrigin || [0, 0],
+            transformX,
+            transformY,
+            offsetRect;
+        if(DOCUMENT.createElementNS)
         {
-            label.style.MozTransformOrigin =  "0 0";
-            label.style.MozTransform = "translate(" + x + "px," + y + "px) rotate(" + rot + "deg)";
-            label.style.webkitTransformOrigin = "0 0";
-            label.style.webkitTransform = "translate(" + x + "px," + y + "px) rotate(" + rot + "deg)";
-            label.style.msTransformOrigin =  "0 0";
-            label.style.msTransform = "translate(" + x + "px," + y + "px) rotate(" + rot + "deg)";
-            label.style.OTransformOrigin =  "0 0";
-            label.style.OTransform = "translate(" + x + "px," + y + "px) rotate(" + rot + "deg)";
+            matrix.translate(x, y);
+            matrix.rotate(rot);
+            label.style.MozTransformOrigin = (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%";
+            label.style.MozTransform = matrix.toCSSText();
+            label.style.webkitTransformOrigin = (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%";
+            label.style.webkitTransform = matrix.toCSSText();
+            label.style.msTransformOrigin = (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%";
+            label.style.msTransform = matrix.toCSSText();
+            label.style.OTransformOrigin = (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%";
+            label.style.OTransform = matrix.toCSSText();
         }
         else
         {
-            textAlpha = props.textAlpha;
-            absRot = props.absRot;
-            radCon = props.radCon;
-            sinRadians = props.sinRadians;
-            cosRadians = props.cosRadians;
-            m11 = props.m11;
-            m12 = props.m12;
-            m21 = props.m21;
-            m22 = props.m22;
             if(Y_Lang.isNumber(textAlpha) && textAlpha < 1 && textAlpha > -1 && !isNaN(textAlpha))
             {
                 filterString = "progid:DXImageTransform.Microsoft.Alpha(Opacity=" + Math.round(textAlpha * 100) + ")";
             }
             if(rot !== 0)
             {
+                //ms filters kind of, sort of uses a transformOrigin of 0, 0. 
+                //we'll translate the difference to create a true 0, 0 origin.
+                matrix.rotate(rot);
+                offsetRect = matrix.getContentRect(props.labelWidth, props.labelHeight);
+                matrix.init();
+                matrix.translate(offsetRect.left, offsetRect.top);
+
+                transformX = transformOrigin[0] * props.labelWidth;
+                transformX = !isNaN(transformX) ? transformX : 0;
+                transformY = transformOrigin[1] * props.labelHeight;
+                transformY = !isNaN(transformY) ? transformY : 0;
+                textAlpha = props.textAlpha;
+                matrix.translate(x, y);
+                matrix.translate(transformX, transformY);
+                matrix.rotate(rot);
+                matrix.translate(-transformX, -transformY);
                 if(filterString)
                 {
                     filterString += " ";
@@ -813,7 +819,14 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 {
                     filterString = ""; 
                 }
-                filterString += 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
+                filterString += matrix.toFilterText();
+                label.style.left = matrix.dx + "px";
+                label.style.top = matrix.dy + "px";
+            }
+            else
+            {
+                label.style.left = x + "px";
+                label.style.top = y + "px";
             }
             if(filterString)
             {
@@ -871,7 +884,16 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         {
             graphic.destroy();
         }
-    }
+    },
+
+    /**
+     * Length in pixels of largest text bounding box. Used to calculate the height of the axis.
+     *
+     * @properties maxLabelSize
+     * @type Number
+     * @protected
+     */
+    _maxLabelSize: 0
 }, {
     ATTRS: 
     {
@@ -1076,7 +1098,16 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          * @protected
          */
         maxLabelSize: {
-            value: 0
+            getter: function()
+            {
+                return this._maxLabelSize;
+            },
+
+            setter: function(val)
+            {
+                this._maxLabelSize = val;
+                return val; 
+            }
         },
         
         /**

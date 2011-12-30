@@ -677,8 +677,6 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 			transformOrigin,
             x = this.get("x"),
             y = this.get("y"),
-            w = this.get("width"),
-            h = this.get("height"),
             tx,
             ty,
             matrix = this.matrix,
@@ -733,15 +731,18 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
             this._skew.matrix = transform;
             this._skew.on = true;
             //use offset for translate
-            this._skew.offset = normalizedMatrix.dx + "px, " + normalizedMatrix.dy + "px";
+            this._skew.offset = (normalizedMatrix.dx + x) + "px, " + (normalizedMatrix.dy + y) + "px";
             this._skew.origin = tx + ", " + ty;
+        }
+        else
+        {
+            node.style.left = x + "px";
+            node.style.top =  y + "px";
         }
         if(this._type != "path")
         {
             this._transforms = [];
         }
-        node.style.left = x + "px";
-        node.style.top =  y + "px";
     },
 	
 	/**

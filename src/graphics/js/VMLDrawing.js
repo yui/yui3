@@ -249,7 +249,7 @@ VMLDrawing.prototype = {
         {
             node.path = path + pathEnd;
         }
-        if(w && h)
+        if(!isNaN(w) && !isNaN(h))
         {
             node.coordSize =  w + ', ' + h;
             node.style.position = "absolute";
