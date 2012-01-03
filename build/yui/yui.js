@@ -7307,17 +7307,14 @@ Y.Loader.prototype = {
             self = this, comp = 0, actions = 0;
 
         if (type) {
-            var m = modules[type];
-            modules = {};
-            modules[type] = m;
+            //Filter out the opposite type and reset the array so the checks later work
+            modules[((type === JS) ? CSS : JS)] = [];
+        }
+        if (modules.js.length) {
             comp++;
-        } else {
-            if (modules.js.length) {
-                comp++;
-            }
-            if (modules.css.length) {
-                comp++;
-            }
+        }
+        if (modules.css.length) {
+            comp++;
         }
 
         //console.log('Resolved Modules: ', modules);
