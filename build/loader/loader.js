@@ -557,15 +557,13 @@ Y.Loader = function(o) {
 
     if (cache) {
         oeach(cache, function modCache(v, k) {
-            //self.moduleInfo[k] = Y.merge(v);
-            self.moduleInfo[k] = v;
+            self.moduleInfo[k] = Y.merge(v);
         });
 
         cache = GLOBAL_ENV._conditions;
 
         oeach(cache, function condCache(v, k) {
-            //self.conditions[k] = Y.merge(v);
-            self.conditions[k] = v;
+            self.conditions[k] = Y.merge(v);
         });
 
     } else {
@@ -573,10 +571,8 @@ Y.Loader = function(o) {
     }
 
     if (!GLOBAL_ENV._renderedMods) {
-        //GLOBAL_ENV._renderedMods = Y.merge(self.moduleInfo);
-        //GLOBAL_ENV._conditions = Y.merge(self.conditions);
-        GLOBAL_ENV._renderedMods = self.moduleInfo;
-        GLOBAL_ENV._conditions = self.conditions;
+        GLOBAL_ENV._renderedMods = Y.merge(self.moduleInfo);
+        GLOBAL_ENV._conditions = Y.merge(self.conditions);
     }
 
 
@@ -1209,8 +1205,16 @@ Y.Loader.prototype = {
             ret = o.configFn(o);
             if (ret === false) {
                 delete this.moduleInfo[name];
+                delete GLOBAL_ENV._renderedMods[name];
                 o = null;
             }
+        }
+        //Add to global cache
+        if (o) {
+            if (!GLOBAL_ENV._renderedMods) {
+                GLOBAL_ENV._renderedMods = {};
+            }
+            GLOBAL_ENV._renderedMods[name] = o;
         }
 
         return o;
@@ -1520,10 +1524,10 @@ Y.Loader.prototype = {
     */
     isCSSLoaded: function(name) {
         //TODO - Make this call a batching call with name being an array
-        if (!name || !YUI.Env.cssStampEl) {
+        if (!name || !YUI.Env.cssStampEl || this.ignoreRegistered) {
             return false;
         }
-        
+
         var el = YUI.Env.cssStampEl,
             ret = false,
             style = el.currentStyle; //IE
