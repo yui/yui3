@@ -6897,19 +6897,27 @@ Y.Loader.prototype = {
     */
     _addLangPack: function(lang, m, packName) {
         var name = m.name,
-            packPath,
+            packPath, conf,
             existing = this.moduleInfo[packName];
 
         if (!existing) {
 
             packPath = _path((m.pkg || name), packName, JS, true);
 
-            this.addModule({ path: packPath,
-                             intl: true,
-                             langPack: true,
-                             ext: m.ext,
-                             group: m.group,
-                             supersedes: [] }, packName);
+            conf = {
+                path: packPath,
+                intl: true,
+                langPack: true,
+                ext: m.ext,
+                group: m.group,
+                supersedes: []
+            };
+
+            if (m.configFn) {
+                conf.configFn = m.configFn;
+            }
+
+            this.addModule(conf, packName);
 
             if (lang) {
                 Y.Env.lang = Y.Env.lang || {};
