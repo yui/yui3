@@ -14,6 +14,8 @@ Handlebars.Exception = function (message) {
             this[key] = error[key];
         }
     }
+
+    this.message = error.message;
 };
 
 Handlebars.Exception.prototype = new Error();

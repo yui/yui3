@@ -984,8 +984,10 @@ with any configuration info required for the module.
             loader = getLoader(Y);
             loader.require(args);
             loader.ignoreRegistered = true;
+            loader._boot = true;
             loader.calculate(null, (fetchCSS) ? null : 'js');
             args = loader.sorted;
+            loader._boot = false;
         }
 
         // process each requirement and any additional requirements
@@ -4709,7 +4711,7 @@ Y.Loader = function(o) {
      * @property ignoreRegistered
      * @default false
      */
-    // self.ignoreRegistered = false;
+    //self.ignoreRegistered = false;
 
     /**
      * Root path to prepend to module path for the combo
@@ -4868,26 +4870,17 @@ Y.Loader = function(o) {
 
     if (cache) {
         oeach(cache, function modCache(v, k) {
-            //self.moduleInfo[k] = Y.merge(v);
-            self.moduleInfo[k] = v;
+            self.moduleInfo[k] = Y.merge(v);
         });
 
         cache = GLOBAL_ENV._conditions;
 
         oeach(cache, function condCache(v, k) {
-            //self.conditions[k] = Y.merge(v);
-            self.conditions[k] = v;
+            self.conditions[k] = Y.merge(v);
         });
 
     } else {
         oeach(defaults, self.addModule, self);
-    }
-
-    if (!GLOBAL_ENV._renderedMods) {
-        //GLOBAL_ENV._renderedMods = Y.merge(self.moduleInfo);
-        //GLOBAL_ENV._conditions = Y.merge(self.conditions);
-        GLOBAL_ENV._renderedMods = self.moduleInfo;
-        GLOBAL_ENV._conditions = self.conditions;
     }
 
 
@@ -5005,7 +4998,7 @@ Y.Loader.prototype = {
         //Inspect the page for CSS only modules and mark them as loaded.
         oeach(this.moduleInfo, function(v, k) {
             if (v.type && v.type === CSS) {
-                if (this.isCSSLoaded(k)) {
+                if (this.isCSSLoaded(v.name)) {
                     this.loaded[k] = true;
                 }
             }
@@ -5520,8 +5513,17 @@ Y.Loader.prototype = {
             ret = o.configFn(o);
             if (ret === false) {
                 delete this.moduleInfo[name];
+                delete GLOBAL_ENV._renderedMods[name];
                 o = null;
             }
+        }
+        //Add to global cache
+        if (o) {
+            if (!GLOBAL_ENV._renderedMods) {
+                GLOBAL_ENV._renderedMods = {};
+            }
+            GLOBAL_ENV._renderedMods[name] = Y.merge(o);
+            GLOBAL_ENV._conditions = conditions;
         }
 
         return o;
@@ -5791,13 +5793,13 @@ Y.Loader.prototype = {
                 }
                 for (i = 0; i < skindef[skinname].length; i++) {
                     skinmod = this._addSkin(skindef[skinname][i], name);
-                    if (!this.isCSSLoaded(skinmod)) {
+                    if (!this.isCSSLoaded(skinmod, this._boot)) {
                         d.push(skinmod);
                     }
                 }
             } else {
                 skinmod = this._addSkin(this.skin.defaultSkin, name);
-                if (!this.isCSSLoaded(skinmod)) {
+                if (!this.isCSSLoaded(skinmod, this._boot)) {
                     d.push(skinmod);
                 }
             }
@@ -5829,12 +5831,12 @@ Y.Loader.prototype = {
     * @param {String} name The name of the css file
     * @return Boolean
     */
-    isCSSLoaded: function(name) {
+    isCSSLoaded: function(name, skip) {
         //TODO - Make this call a batching call with name being an array
-        if (!name || !YUI.Env.cssStampEl) {
+        if (!name || !YUI.Env.cssStampEl || (!skip && this.ignoreRegistered)) {
             return false;
         }
-        
+
         var el = YUI.Env.cssStampEl,
             ret = false,
             style = el.currentStyle; //IE
@@ -5926,19 +5928,27 @@ Y.Loader.prototype = {
     */
     _addLangPack: function(lang, m, packName) {
         var name = m.name,
-            packPath,
+            packPath, conf,
             existing = this.moduleInfo[packName];
 
         if (!existing) {
 
             packPath = _path((m.pkg || name), packName, JS, true);
 
-            this.addModule({ path: packPath,
-                             intl: true,
-                             langPack: true,
-                             ext: m.ext,
-                             group: m.group,
-                             supersedes: [] }, packName);
+            conf = {
+                path: packPath,
+                intl: true,
+                langPack: true,
+                ext: m.ext,
+                group: m.group,
+                supersedes: []
+            };
+
+            if (m.configFn) {
+                conf.configFn = m.configFn;
+            }
+
+            this.addModule(conf, packName);
 
             if (lang) {
                 Y.Env.lang = Y.Env.lang || {};
@@ -6242,7 +6252,15 @@ Y.Loader.prototype = {
     * @private
     */
     _onFailure: function(o) {
-        var f = this.onFailure, msg = 'failure: ' + o.msg;
+        var f = this.onFailure, msg = [], i = 0, len = o.errors.length;
+        
+        for (i; i < len; i++) {
+            msg.push(o.errors[i].error);
+        }
+
+        msg = msg.join(',');
+
+        
         if (f) {
             f.call(this.context, {
                 msg: msg,
@@ -6250,7 +6268,9 @@ Y.Loader.prototype = {
                 success: false
             });
         }
+        
         this._finish(msg, false);
+
     },
 
     /**
@@ -6378,33 +6398,42 @@ Y.Loader.prototype = {
             self = this, comp = 0, actions = 0;
 
         if (type) {
-            var m = modules[type];
-            modules = {};
-            modules[type] = m;
+            //Filter out the opposite type and reset the array so the checks later work
+            modules[((type === JS) ? CSS : JS)] = [];
+        }
+        if (modules.js.length) {
             comp++;
-        } else {
-            if (modules.js.length) {
-                comp++;
-            }
-            if (modules.css.length) {
-                comp++;
-            }
+        }
+        if (modules.css.length) {
+            comp++;
         }
 
         //console.log('Resolved Modules: ', modules);
 
         var complete = function(d) {
             actions++;
+            var errs = {}, i = 0, u = '', fn;
+
+            if (d && d.errors) {
+                for (i = 0; i < d.errors.length; i++) {
+                    u = d.errors[i].request.url;
+                    errs[u] = u;
+                }
+            }
             
             if (d && d.data && d.data.length) {
-                for (var i = 0; i < d.data.length; i++) {
+                for (i = 0; i < d.data.length; i++) {
                     self.inserted[d.data[i].name] = true;
                 }
             }
             
             if (actions === comp) {
                 self._loading = null;
-                self._onSuccess();
+                if (d && d.fn) {
+                    fn = d.fn;
+                    delete d.fn;
+                    fn.call(self, d);
+                }
             }
         };
 
@@ -6412,7 +6441,9 @@ Y.Loader.prototype = {
 
         if (!modules.js.length && !modules.css.length) {
             actions = -1;
-            complete();
+            complete({
+                fn: self._onSuccess
+            });
             return;
         }
         
@@ -6424,12 +6455,21 @@ Y.Loader.prototype = {
                 charset: self.charset,
                 timeout: self.timeout,
                 context: self,
-                onFailure: self._onFailure,
-                onTimeout: self._onTimeout,
                 onProgress: function(e) {
                     self._onProgress.call(self, e);
                 },
-                onSuccess: complete
+                onTimeout: function(d) {
+                    d.fn = self._onTimeout;
+                    complete.call(self, d);
+                },
+                onSuccess: function(d) {
+                    d.fn = self._onSuccess;
+                    complete.call(self, d);
+                },
+                onFailure: function(d) {
+                    d.fn = self._onFailure;
+                    complete.call(self, d);
+                }
             });
         }
 
@@ -6445,9 +6485,18 @@ Y.Loader.prototype = {
                 onProgress: function(e) {
                     self._onProgress.call(self, e);
                 },
-                onFailure: self._onFailure,
-                onTimeout: self._onTimeout,                
-                onSuccess: complete
+                onTimeout: function(d) {
+                    d.fn = self._onTimeout;
+                    complete.call(self, d);
+                },
+                onSuccess: function(d) {
+                    d.fn = self._onSuccess;
+                    complete.call(self, d);
+                },
+                onFailure: function(d) {
+                    d.fn = self._onFailure;
+                    complete.call(self, d);
+                }
             });
         }
     },
@@ -6567,6 +6616,7 @@ Y.Loader.prototype = {
             base, urls, u = [], tmpBase, baseLen, resCombos = {},
             self = this,
             singles = [],
+            inserted = (self.ignoreRegistered) ? {} : self.inserted,
             resolved = { js: [], jsMods: [], css: [], cssMods: [] },
             type = self.loadType || 'js';
 
@@ -6624,6 +6674,9 @@ Y.Loader.prototype = {
                     
                     if (len) {
                         for (i = 0; i < len; i++) {
+                            if (inserted[mods[i]]) {
+                                continue;
+                            }
                             m = mods[i];
                             // Do not try to combine non-yui JS unless combo def
                             // is found
@@ -6684,7 +6737,9 @@ Y.Loader.prototype = {
             len = s.length;
 
             for (i = 0; i < len; i = i + 1) {
-
+                if (inserted[s[i]]) {
+                    continue;
+                }
                 m = self.getModule(s[i]);
 
                 if (!m) {
@@ -6704,6 +6759,7 @@ Y.Loader.prototype = {
                 resolved[m.type + 'Mods'].push(m);
             }
         }
+
 
         return resolved;
     }

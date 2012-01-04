@@ -4,9 +4,7 @@ YUI.add('loader-tests', function(Y) {
     testY = YUI();
 
     var testLoader = new Y.Test.Case({
-
         name: "Loader Tests",
-        
         test_resolve_no_calc: function() {
             var loader = new testY.Loader({
                 ignoreRegistered: true,
@@ -300,11 +298,11 @@ YUI.add('loader-tests', function(Y) {
         },
         test_css_stamp: function() {
             var test = this,
-                links = document.getElementsByTagName('link').length;
+                links = document.getElementsByTagName('link').length + document.getElementsByTagName('style').length;
 
             YUI().use('cssgrids', 'dial', function(Y) {
                 test.resume(function() {
-                    var links2 = document.getElementsByTagName('link').length;
+                    var links2 = document.getElementsByTagName('link').length + document.getElementsByTagName('style').length;
                     Assert.areEqual(links, links2, 'A new link tag was injected into the page.');
                 });
             });
@@ -324,6 +322,21 @@ YUI.add('loader-tests', function(Y) {
 
             Assert.areEqual(loader.sorted[0], 'yui-base', 'Forced yui-base was not included in loader.sorted');
 
+        },
+        test_global_mods: function() {
+            var conf = {
+                combine: false,
+                require: ['widget-base'],
+                ignoreRegistered: true // force loader to include modules already on the page
+            },
+            Loader1 = new Y.Loader(conf),
+            Loader2 = new Y.Loader(conf),
+            mods1 = Loader1.resolve(true),
+            mods2 = Loader2.resolve(true);
+
+            Assert.areEqual(mods1.css.length, mods2.css.length, 'CSS Modules are not equal in 2 loader instances');
+            Assert.areEqual(1, mods1.css.length, 'CSS Mods #1 not equal 1');
+            Assert.areEqual(1, mods2.css.length, 'CSS Mods #2 not equal 1');
         }
     });
 
