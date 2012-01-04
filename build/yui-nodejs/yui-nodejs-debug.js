@@ -991,8 +991,10 @@ with any configuration info required for the module.
             loader = getLoader(Y);
             loader.require(args);
             loader.ignoreRegistered = true;
+            loader._boot = true;
             loader.calculate(null, (fetchCSS) ? null : 'js');
             args = loader.sorted;
+            loader._boot = false;
         }
 
         // process each requirement and any additional requirements
@@ -4731,7 +4733,7 @@ Y.Loader = function(o) {
      * @property ignoreRegistered
      * @default false
      */
-    // self.ignoreRegistered = false;
+    //self.ignoreRegistered = false;
 
     /**
      * Root path to prepend to module path for the combo
@@ -4903,11 +4905,6 @@ Y.Loader = function(o) {
         oeach(defaults, self.addModule, self);
     }
 
-    if (!GLOBAL_ENV._renderedMods) {
-        GLOBAL_ENV._renderedMods = Y.merge(self.moduleInfo);
-        GLOBAL_ENV._conditions = Y.merge(self.conditions);
-    }
-
 
     /**
      * Set when beginning to compute the dependency tree.
@@ -5023,8 +5020,8 @@ Y.Loader.prototype = {
         //Inspect the page for CSS only modules and mark them as loaded.
         oeach(this.moduleInfo, function(v, k) {
             if (v.type && v.type === CSS) {
-                if (this.isCSSLoaded(k)) {
-                    Y.log('Found CSS module on page: ' + k, 'info', 'loader');
+                if (this.isCSSLoaded(v.name)) {
+                    Y.log('Found CSS module on page: ' + v.name, 'info', 'loader');
                     this.loaded[k] = true;
                 }
             }
@@ -5230,7 +5227,7 @@ Y.Loader.prototype = {
                 }
                 this.addModule(nmod, name);
 
-                Y.log('adding skin ' + name + ', ' + parent + ', ' + pkg + ', ' + info[name].path);
+                Y.log('Adding skin (' + name + '), ' + parent + ', ' + pkg + ', ' + info[name].path, 'info', 'loader');
             }
         }
 
@@ -5542,6 +5539,7 @@ Y.Loader.prototype = {
         if (o.configFn) {
             ret = o.configFn(o);
             if (ret === false) {
+                Y.log('Config function returned false for ' + name + ', skipping.', 'info', 'loader');
                 delete this.moduleInfo[name];
                 delete GLOBAL_ENV._renderedMods[name];
                 o = null;
@@ -5552,7 +5550,8 @@ Y.Loader.prototype = {
             if (!GLOBAL_ENV._renderedMods) {
                 GLOBAL_ENV._renderedMods = {};
             }
-            GLOBAL_ENV._renderedMods[name] = o;
+            GLOBAL_ENV._renderedMods[name] = Y.merge(o);
+            GLOBAL_ENV._conditions = conditions;
         }
 
         return o;
@@ -5826,13 +5825,13 @@ Y.Loader.prototype = {
                 }
                 for (i = 0; i < skindef[skinname].length; i++) {
                     skinmod = this._addSkin(skindef[skinname][i], name);
-                    if (!this.isCSSLoaded(skinmod)) {
+                    if (!this.isCSSLoaded(skinmod, this._boot)) {
                         d.push(skinmod);
                     }
                 }
             } else {
                 skinmod = this._addSkin(this.skin.defaultSkin, name);
-                if (!this.isCSSLoaded(skinmod)) {
+                if (!this.isCSSLoaded(skinmod, this._boot)) {
                     d.push(skinmod);
                 }
             }
@@ -5865,9 +5864,10 @@ Y.Loader.prototype = {
     * @param {String} name The name of the css file
     * @return Boolean
     */
-    isCSSLoaded: function(name) {
+    isCSSLoaded: function(name, skip) {
         //TODO - Make this call a batching call with name being an array
-        if (!name || !YUI.Env.cssStampEl || this.ignoreRegistered) {
+        if (!name || !YUI.Env.cssStampEl || (!skip && this.ignoreRegistered)) {
+            Y.log('isCSSLoaded was skipped for ' + name, 'warn', 'loader');
             return false;
         }
 
@@ -6815,6 +6815,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 resolved[m.type + 'Mods'].push(m);
             }
         }
+
 
         return resolved;
     }
