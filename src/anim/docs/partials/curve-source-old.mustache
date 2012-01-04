@@ -1,0 +1,44 @@
+<div id="demo-stage">
+    <span id="demo"></span>
+</div>
+
+<script type="text/javascript">
+YUI().use('anim', function(Y) {
+    var node = Y.one('#demo');
+
+    var anim = new Y.Anim({
+        node: node,
+        duration: 1.5,
+        easing: Y.Easing.easeOut
+    });
+
+    var randomCurve = function(end) {
+        var points = [],
+            n = 3,
+            winWidth = node.get('winWidth'),
+            winHeight = node.get('winHeight');
+
+        for (var i = 0; i < n; ++i) {
+            points.push([
+                Math.floor(Math.random() * winWidth),
+                Math.floor(Math.random() * winHeight)
+            ]);
+        }
+
+        if (end) {
+            points.push(end);
+        }
+        return points;
+    };
+
+    var onClick = function(e) {
+        anim.set('to', {
+            curve: randomCurve([e.pageX, e.pageY])
+        });
+        anim.run();
+    };
+    
+    Y.one('#demo-stage').on('click', onClick);
+
+});
+</script>
