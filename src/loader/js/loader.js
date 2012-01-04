@@ -1130,6 +1130,7 @@ Y.Loader.prototype = {
                 GLOBAL_ENV._renderedMods = {};
             }
             GLOBAL_ENV._renderedMods[name] = o;
+            GLOBAL_ENV._conditions = conditions;
         }
 
         return o;
