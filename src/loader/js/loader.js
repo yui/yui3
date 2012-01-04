@@ -480,11 +480,6 @@ Y.Loader = function(o) {
         oeach(defaults, self.addModule, self);
     }
 
-    if (!GLOBAL_ENV._renderedMods) {
-        GLOBAL_ENV._renderedMods = Y.merge(self.moduleInfo);
-        GLOBAL_ENV._conditions = Y.merge(self.conditions);
-    }
-
 
     /**
      * Set when beginning to compute the dependency tree.
