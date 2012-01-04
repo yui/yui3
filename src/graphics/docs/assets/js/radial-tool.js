@@ -122,7 +122,7 @@ YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','dd-constrain'
         Y.one('#btn-close-code').setStyle('visibility', 'visible');
         Y.one('#output-grad textarea').setStyle('visibility', 'visible');
         var html = ''+
-        'myellipse = mygraphic.addShape({\n'+
+        'var myellipse = mygraphic.addShape({\n'+
         '    type: "ellipse",\n'+
         '    fill: {\n'+
         '        type: "radial",\n'+
