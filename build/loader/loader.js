@@ -1943,7 +1943,15 @@ Y.Loader.prototype = {
     * @private
     */
     _onFailure: function(o) {
-        var f = this.onFailure, msg = 'failure: ' + o.msg;
+        var f = this.onFailure, msg = [], i = 0, len = o.errors.length;
+        
+        for (i; i < len; i++) {
+            msg.push(o.errors[i].error);
+        }
+
+        msg = msg.join(',');
+
+        
         if (f) {
             f.call(this.context, {
                 msg: msg,
@@ -1951,7 +1959,9 @@ Y.Loader.prototype = {
                 success: false
             });
         }
+        
         this._finish(msg, false);
+
     },
 
     /**
@@ -2093,16 +2103,28 @@ Y.Loader.prototype = {
 
         var complete = function(d) {
             actions++;
+            var errs = {}, i = 0, u = '', fn;
+
+            if (d && d.errors) {
+                for (i = 0; i < d.errors.length; i++) {
+                    u = d.errors[i].request.url;
+                    errs[u] = u;
+                }
+            }
             
             if (d && d.data && d.data.length) {
-                for (var i = 0; i < d.data.length; i++) {
+                for (i = 0; i < d.data.length; i++) {
                     self.inserted[d.data[i].name] = true;
                 }
             }
             
             if (actions === comp) {
                 self._loading = null;
-                self._onSuccess();
+                if (d && d.fn) {
+                    fn = d.fn;
+                    delete d.fn;
+                    fn.call(self, d);
+                }
             }
         };
 
@@ -2110,7 +2132,9 @@ Y.Loader.prototype = {
 
         if (!modules.js.length && !modules.css.length) {
             actions = -1;
-            complete();
+            complete({
+                fn: self._onSuccess
+            });
             return;
         }
         
@@ -2122,12 +2146,21 @@ Y.Loader.prototype = {
                 charset: self.charset,
                 timeout: self.timeout,
                 context: self,
-                onFailure: self._onFailure,
-                onTimeout: self._onTimeout,
                 onProgress: function(e) {
                     self._onProgress.call(self, e);
                 },
-                onSuccess: complete
+                onTimeout: function(d) {
+                    d.fn = self._onTimeout;
+                    complete.call(self, d);
+                },
+                onSuccess: function(d) {
+                    d.fn = self._onSuccess;
+                    complete.call(self, d);
+                },
+                onFailure: function(d) {
+                    d.fn = self._onFailure;
+                    complete.call(self, d);
+                }
             });
         }
 
@@ -2143,9 +2176,18 @@ Y.Loader.prototype = {
                 onProgress: function(e) {
                     self._onProgress.call(self, e);
                 },
-                onFailure: self._onFailure,
-                onTimeout: self._onTimeout,                
-                onSuccess: complete
+                onTimeout: function(d) {
+                    d.fn = self._onTimeout;
+                    complete.call(self, d);
+                },
+                onSuccess: function(d) {
+                    d.fn = self._onSuccess;
+                    complete.call(self, d);
+                },
+                onFailure: function(d) {
+                    d.fn = self._onFailure;
+                    complete.call(self, d);
+                }
             });
         }
     },
@@ -2265,6 +2307,7 @@ Y.Loader.prototype = {
             base, urls, u = [], tmpBase, baseLen, resCombos = {},
             self = this,
             singles = [],
+            inserted = (self.ignoreRegistered) ? {} : self.inserted,
             resolved = { js: [], jsMods: [], css: [], cssMods: [] },
             type = self.loadType || 'js';
 
@@ -2322,6 +2365,9 @@ Y.Loader.prototype = {
                     
                     if (len) {
                         for (i = 0; i < len; i++) {
+                            if (inserted[mods[i]]) {
+                                continue;
+                            }
                             m = mods[i];
                             // Do not try to combine non-yui JS unless combo def
                             // is found
@@ -2382,7 +2428,9 @@ Y.Loader.prototype = {
             len = s.length;
 
             for (i = 0; i < len; i = i + 1) {
-
+                if (inserted[s[i]]) {
+                    continue;
+                }
                 m = self.getModule(s[i]);
 
                 if (!m) {

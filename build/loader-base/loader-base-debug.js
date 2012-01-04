@@ -1962,8 +1962,16 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     * @private
     */
     _onFailure: function(o) {
-        Y.log('load error: ' + o.msg + ', ' + Y.id, 'error', 'loader');
-        var f = this.onFailure, msg = 'failure: ' + o.msg;
+        var f = this.onFailure, msg = [], i = 0, len = o.errors.length;
+        
+        for (i; i < len; i++) {
+            msg.push(o.errors[i].error);
+        }
+
+        msg = msg.join(',');
+
+        Y.log('load error: ' + msg + ', ' + Y.id, 'error', 'loader');
+        
         if (f) {
             f.call(this.context, {
                 msg: msg,
@@ -1971,7 +1979,9 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 success: false
             });
         }
+        
         this._finish(msg, false);
+
     },
 
     /**
@@ -2115,9 +2125,17 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
         var complete = function(d) {
             actions++;
+            var errs = {}, i = 0, u = '', fn;
+
+            if (d && d.errors) {
+                for (i = 0; i < d.errors.length; i++) {
+                    u = d.errors[i].request.url;
+                    errs[u] = u;
+                }
+            }
             
             if (d && d.data && d.data.length) {
-                for (var i = 0; i < d.data.length; i++) {
+                for (i = 0; i < d.data.length; i++) {
                     self.inserted[d.data[i].name] = true;
                 }
             }
@@ -2125,7 +2143,12 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             if (actions === comp) {
                 self._loading = null;
                 Y.log('Loader actions complete!', 'info', 'loader');
-                self._onSuccess();
+                if (d && d.fn) {
+                    Y.log('Firing final Loader callback!', 'info', 'loader');
+                    fn = d.fn;
+                    delete d.fn;
+                    fn.call(self, d);
+                }
             }
         };
 
@@ -2134,7 +2157,9 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         if (!modules.js.length && !modules.css.length) {
             Y.log('No modules resolved..', 'warn', 'loader');
             actions = -1;
-            complete();
+            complete({
+                fn: self._onSuccess
+            });
             return;
         }
         
@@ -2147,12 +2172,21 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 charset: self.charset,
                 timeout: self.timeout,
                 context: self,
-                onFailure: self._onFailure,
-                onTimeout: self._onTimeout,
                 onProgress: function(e) {
                     self._onProgress.call(self, e);
                 },
-                onSuccess: complete
+                onTimeout: function(d) {
+                    d.fn = self._onTimeout;
+                    complete.call(self, d);
+                },
+                onSuccess: function(d) {
+                    d.fn = self._onSuccess;
+                    complete.call(self, d);
+                },
+                onFailure: function(d) {
+                    d.fn = self._onFailure;
+                    complete.call(self, d);
+                }
             });
         }
 
@@ -2169,9 +2203,18 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 onProgress: function(e) {
                     self._onProgress.call(self, e);
                 },
-                onFailure: self._onFailure,
-                onTimeout: self._onTimeout,                
-                onSuccess: complete
+                onTimeout: function(d) {
+                    d.fn = self._onTimeout;
+                    complete.call(self, d);
+                },
+                onSuccess: function(d) {
+                    d.fn = self._onSuccess;
+                    complete.call(self, d);
+                },
+                onFailure: function(d) {
+                    d.fn = self._onFailure;
+                    complete.call(self, d);
+                }
             });
         }
     },
@@ -2294,6 +2337,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             base, urls, u = [], tmpBase, baseLen, resCombos = {},
             self = this,
             singles = [],
+            inserted = (self.ignoreRegistered) ? {} : self.inserted,
             resolved = { js: [], jsMods: [], css: [], cssMods: [] },
             type = self.loadType || 'js';
 
@@ -2351,6 +2395,9 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                     
                     if (len) {
                         for (i = 0; i < len; i++) {
+                            if (inserted[mods[i]]) {
+                                continue;
+                            }
                             m = mods[i];
                             // Do not try to combine non-yui JS unless combo def
                             // is found
@@ -2412,7 +2459,9 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             len = s.length;
 
             for (i = 0; i < len; i = i + 1) {
-
+                if (inserted[s[i]]) {
+                    continue;
+                }
                 m = self.getModule(s[i]);
 
                 if (!m) {
