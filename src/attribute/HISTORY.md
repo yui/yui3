@@ -27,7 +27,33 @@ Attribute Change History
     considered beta, and may be subject to change over the course 
     of the 3.5.0PRS. 
 
-    Y.Attribute will remain unchanged however. 
+    Y.Attribute will remain unchanged however.
+
+    Summary:
+
+    Y.Attribute     - Common Attribute Functionality (100% backwards compat)
+    Y.AttributeCore - Lightest Attribute support, without CustomEvents
+
+    --
+
+    Y.AttributeEvents - Augmentable Attribute Events support
+    Y.AttributeExtras - Augmentable 20% usage for Attribute (modifyAttr, removeAttr, reset ...)
+    Y.AttributeComplex - Augmentable support for constructor complex attribute parsing ({"x.y":foo})
+
+    --
+
+    Y.Attribute = Y.AttributeCore + Y.AttributeEvents + Y.AttributeExtras
+
+    --
+
+    Modules:
+
+    "attribute-base" : Y.Attribute
+    "attribute-core" : Y.AttributeCore
+
+    "attribute-complex" : Y.AttributeComplex mixin (mixed into Y.Attribute)
+    "attribute-events" : Y.AttributeEvents mixin
+    "attribute-extras" : Y.AttributeExtras mixin
 
   * Changed State's internal data structure, to store pairs by 
     [name][property], instead of [property][name] to improve performance

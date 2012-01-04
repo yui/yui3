@@ -2,8 +2,14 @@
     "base": {
         "use": ["base-base", "base-pluginhost", "base-build"],
         "submodules": {
+	    "base-core": {
+		"requires": [
+                    "attribute-core"
+                ]
+	    },
             "base-base": {
                 "requires": [
+                    "base-core",
                     "attribute-base"
                 ],
                 "after": [

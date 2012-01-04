@@ -8,9 +8,9 @@
 
 <h1>Loading..</h1>
 
-<!--script src="http://127.0.0.1:3000/"></script-->
-<script src="http://yui.yahooapis.com/3.5.0pr1/build/yui/yui.js"></script>
-<script src="./bug_2531587-patch.js"></script>
+<script src="http://127.0.0.1:3000/"></script>
+<!--script src="http://yui.yahooapis.com/3.5.0pr1/build/yui/yui.js"></script>
+<script src="./bug_2531587-patch.js"></script-->
 <script>
 var config = {
     combine: true,    // <---- CHANGE THIS TO FALSE AND LIBRARY WILL LOAD
@@ -26,12 +26,14 @@ var config = {
     }
 };
 
+config.combine = false;
+
 YUI(config).use('node','test-load', function(Y) {
     
+    console.log('Node?', Y.Node);
     if (typeof JSLINT == 'undefined') {
         Y.one('h1').setContent('library not loaded');
-    } 
-    else {
+    } else {
         Y.one('h1').setContent('library loaded');
     }
     

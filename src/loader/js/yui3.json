@@ -256,12 +256,18 @@
             "attribute-complex"
         ], 
         "requires": [
+            "base-core", 
             "attribute-base"
         ]
     }, 
     "base-build": {
         "requires": [
             "base-base"
+        ]
+    }, 
+    "base-core": {
+        "requires": [
+            "attribute-core"
         ]
     }, 
     "base-pluginhost": {

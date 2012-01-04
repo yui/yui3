@@ -449,6 +449,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("base-build")) > -1, "Module (base-build) not found in sorted array");
         },
+     "Testing base-core": function(data) {
+            var loader = new Y.Loader({
+                require: ["base-core"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("base-core")) > -1, "Module (base-core) not found in sorted array");
+        },
      "Testing base-pluginhost": function(data) {
             var loader = new Y.Loader({
                 require: ["base-pluginhost"],
