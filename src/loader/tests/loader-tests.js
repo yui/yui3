@@ -139,6 +139,28 @@ YUI.add('loader-tests', function(Y) {
             Assert.areSame(3, out.js.length, 'JS Files returned more or less than expected');
             Assert.areSame(1, out.css.length, 'CSS Files returned more or less than expected');
         },
+        test_resolve_maxurl_length_higher: function() {
+            var loader = new testY.Loader({
+                maxURLLength: 8024,
+                combine: true,
+                ignoreRegistered: true,
+                require: ['node', 'dd', 'console']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(1, out.js.length, 'JS Files returned more or less than expected');
+            Assert.areSame(1, out.css.length, 'CSS Files returned more or less than expected');
+        },
+        test_resolve_maxurl_length_too_low: function() {
+            var loader = new testY.Loader({
+                maxURLLength: 14,
+                combine: true,
+                ignoreRegistered: true,
+                require: ['oop']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(1, out.js.length, 'JS Files returned more or less than expected');
+            Assert.areSame(0, out.css.length, 'CSS Files returned more or less than expected');
+        },
         test_resolve_maxurl_length_group: function() {
             var loader = new testY.Loader({
                 combine: true,
