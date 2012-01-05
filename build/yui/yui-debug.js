@@ -7702,6 +7702,10 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                         len = urls.length;
                         tmpBase = base + urls.join(comboSep);
                         baseLen = tmpBase.length;
+                        if (maxURLLength <= base.length) {
+                            Y.log('maxURLLength (' + maxURLLength + ') is lower than the comboBase length (' + base.length + '), resetting to default (' + MAX_URL_LENGTH + ')', 'error', 'loader');
+                            maxURLLength = MAX_URL_LENGTH;
+                        }
                         
                         if (len) {
                             if (baseLen > maxURLLength) {
@@ -7715,7 +7719,10 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                                         m = u.pop();
                                         tmpBase = base + u.join(comboSep)
                                         resolved[type].push(tmpBase);
-                                        u = [m];
+                                        u = [];
+                                        if (m) {
+                                            u.push(m);
+                                        }
                                     }
                                 }
                                 if (u.length) {

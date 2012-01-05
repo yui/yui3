@@ -6709,6 +6709,9 @@ Y.Loader.prototype = {
                         len = urls.length;
                         tmpBase = base + urls.join(comboSep);
                         baseLen = tmpBase.length;
+                        if (maxURLLength <= base.length) {
+                            maxURLLength = MAX_URL_LENGTH;
+                        }
                         
                         if (len) {
                             if (baseLen > maxURLLength) {
@@ -6721,7 +6724,10 @@ Y.Loader.prototype = {
                                         m = u.pop();
                                         tmpBase = base + u.join(comboSep)
                                         resolved[type].push(tmpBase);
-                                        u = [m];
+                                        u = [];
+                                        if (m) {
+                                            u.push(m);
+                                        }
                                     }
                                 }
                                 if (u.length) {
