@@ -1630,6 +1630,12 @@ overwriting other scripts configs.
  *          yui2: {
  *              // specify whether or not this group has a combo service
  *              combine: true,
+ *
+ *              // The comboSeperator to use with this group's combo handler
+ *              comboSep: ';',
+ *
+ *              // The maxURLLength for this server
+ *              maxURLLength: 500,
  * 
  *              // the base path for non-combo paths
  *              base: 'http://yui.yahooapis.com/2.8.0r4/build/',
