@@ -1,5 +1,5 @@
 [App Framework][app]
-=============
+====================
 
 The app framework provides simple MVC-like building blocks (models, model lists,
 views, view-controllers, and URL-based routing) for writing single-page
@@ -22,6 +22,8 @@ Modules
 * [`app`][app]: Rollup module that includes all of the following modules. Use
   this module when you plan to use the full app framework stack.
 
+* [`app-base`][app-base]: Provides the `Y.App` class.
+
 * [`model`][model]: Provides the `Y.Model` class.
 
 * [`model-list`][model-list]: Provides the `Y.ModelList` class.
@@ -30,8 +32,9 @@ Modules
 
 * [`view`][view]: Provides the `Y.View` class.
 
-[app]: http://yuilibrary.com/yui/docs/app/
-[model]: http://yuilibrary.com/yui/docs/model/index.html
+[app]:        http://yuilibrary.com/yui/docs/app/
+[app-base]:   http://yuilibrary.com/yui/docs/app/#app-component
+[model]:      http://yuilibrary.com/yui/docs/model/
 [model-list]: http://yuilibrary.com/yui/docs/model-list/
-[router]: http://yuilibrary.com/yui/docs/router/index.html
-[view]: http://yuilibrary.com/yui/docs/view/
+[router]:     http://yuilibrary.com/yui/docs/router/
+[view]:       http://yuilibrary.com/yui/docs/view/

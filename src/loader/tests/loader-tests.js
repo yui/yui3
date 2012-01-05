@@ -4,9 +4,7 @@ YUI.add('loader-tests', function(Y) {
     testY = YUI();
 
     var testLoader = new Y.Test.Case({
-
         name: "Loader Tests",
-        
         test_resolve_no_calc: function() {
             var loader = new testY.Loader({
                 ignoreRegistered: true,
@@ -300,11 +298,11 @@ YUI.add('loader-tests', function(Y) {
         },
         test_css_stamp: function() {
             var test = this,
-                links = document.getElementsByTagName('link').length;
+                links = document.getElementsByTagName('link').length + document.getElementsByTagName('style').length;
 
             YUI().use('cssgrids', 'dial', function(Y) {
                 test.resume(function() {
-                    var links2 = document.getElementsByTagName('link').length;
+                    var links2 = document.getElementsByTagName('link').length + document.getElementsByTagName('style').length;
                     Assert.areEqual(links, links2, 'A new link tag was injected into the page.');
                 });
             });
