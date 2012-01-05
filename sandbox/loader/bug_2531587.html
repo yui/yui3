@@ -10,7 +10,7 @@
 
 <!--script src="http://127.0.0.1:3000/?filter=debug"></script-->
 <script src="http://yui.yahooapis.com/3.5.0pr1/build/yui/yui-debug.js"></script>
-<script src="../../build/loader/loader.js"></script>
+<script src="../../build/loader/loader-debug.js"></script>
 <script>
 var config = {
     onFailure: function() {
@@ -23,11 +23,12 @@ var config = {
         console.log('END OUTSIDE: ', arguments);
     },
     combine: true,    // <---- CHANGE THIS TO FALSE AND LIBRARY WILL LOAD
+
     modules: {
         xlogin: {
             fullpath: './app/js/xlogin'
         }
-    },
+    }/*,
     groups: {
         js: {
             base: 'http://jsfiddle.net/js/',            
@@ -38,19 +39,14 @@ var config = {
             }
         }
     }
+    */
 };
 
-config.combine = false;
+//config.combine = false;
 
-YUI(config).use('xlogin', 'node','test-load', function(Y) {
+YUI(config).use('xlogin', function(Y) {
     
-    console.log('Node?', Y.Node);
-    if (typeof JSLINT == 'undefined') {
-        Y.one('h1').setContent('library not loaded');
-    } else {
-        Y.one('h1').setContent('library loaded');
-    }
-    
+    console.log('Callback executed..');
     
 });
 </script>

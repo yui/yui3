@@ -1,0 +1,44 @@
+<div class="example">
+{{>graphics-radial-tool-source}}
+</div>
+
+<h2>The Radial Gradient Tool</h2>
+
+<p>The Interactive Control modifies the gradient fill.
+As you drag the center dot, or drag or resize the outer disc,
+the fill preview updates. You can also see the fill's 
+property values update. The center color, and outer color can also be changed.
+These are the colors of the gradient stops.
+Click the "Get Code Snippet" button. This code can be copied and pasted 
+into a graphics instance to reproduce the gradient fill in your code.
+</p>
+
+
+<h2>Using the Generated Code</h2>
+<p>When you click the "Get Code Snippet" button, generated code is placed
+in the text area control. The generated code assumes you will have a separate
+page to paste it into. This separate page must contain the following code: 
+A graphics container such as this,</p>
+```
+<div id="mygraphiccontainer"></div>
+```
+<p>CSS such as this,</p>
+```
+#mygraphiccontainer {
+    position: relative;
+    width: 400px;
+    height: 400px;
+}
+```
+and a YUI instance containing a `Graphics` object such as this.
+```
+YUI().use('graphics', function (Y) {
+
+    var mygraphic = new Y.Graphic({render:"#mygraphiccontainer"});
+    // generated code from the radial gradient tool goes here
+    
+});
+```
+<p>The tool generates pastable code for an `addShape` method that will
+create and render an ellipse. You can change this after it's pasted into 
+your code.</p>

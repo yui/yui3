@@ -41,8 +41,8 @@ YUI.add('loader-tests', function(Y) {
                 require: ['node', 'dd', 'console']
             });
             var out = loader.resolve(true);
-            Assert.isTrue((out.js.length === 1), 'NO JS files returned');
-            Assert.isTrue((out.css.length === 1), 'NO CSS files returned');
+            Assert.areSame(3, out.js.length, 'JS Files returned more or less than expected');
+            Assert.areSame(1, out.css.length, 'CSS Files returned more or less than expected');
         },
         test_resolve_filter_debug: function() {
             var loader = new testY.Loader({
@@ -52,8 +52,8 @@ YUI.add('loader-tests', function(Y) {
                 require: ['node', 'dd', 'console']
             });
             var out = loader.resolve(true);
-            Assert.isTrue((out.js.length === 1), 'NO JS files returned');
-            Assert.isTrue((out.css.length === 1), 'NO CSS files returned');
+            Assert.isTrue((out.js.length >= 3), 'JS Files returned more or less than expected');
+            Assert.areSame(1, out.css.length, 'CSS Files returned more or less than expected');
             Assert.isTrue((out.js[0].indexOf('-debug') > 0), 'Debug filter did not work');
         },
         test_resolve_filter_min: function() {
@@ -64,8 +64,8 @@ YUI.add('loader-tests', function(Y) {
                 require: ['node', 'dd', 'console']
             });
             var out = loader.resolve(true);
-            Assert.isTrue((out.js.length === 1), 'NO JS files returned');
-            Assert.isTrue((out.css.length === 1), 'NO CSS files returned');
+            Assert.areSame(3, out.js.length, 'JS Files returned more or less than expected');
+            Assert.areSame(1, out.css.length, 'CSS Files returned more or less than expected');
             Assert.isTrue((out.js[0].indexOf('-min') > 0), 'Min filter did not work');
         },
         test_resolve_filter_raw: function() {
@@ -76,8 +76,8 @@ YUI.add('loader-tests', function(Y) {
                 require: ['node', 'dd', 'console']
             });
             var out = loader.resolve(true);
-            Assert.isTrue((out.js.length === 1), 'NO JS files returned');
-            Assert.isTrue((out.css.length === 1), 'NO CSS files returned');
+            Assert.areSame(3, out.js.length, 'JS Files returned more or less than expected');
+            Assert.areSame(1, out.css.length, 'CSS Files returned more or less than expected');
             Assert.isTrue((out.js[0].indexOf('-min') === -1), 'Raw filter did not work');
             Assert.isTrue((out.js[0].indexOf('-debug') === -1), 'Raw filter did not work');
         },
@@ -89,10 +89,105 @@ YUI.add('loader-tests', function(Y) {
                 require: ['node', 'dd', 'console']
             });
             var out = loader.resolve(true);
-            Assert.isTrue((out.js.length === 1), 'NO JS files returned');
-            Assert.isTrue((out.css.length === 1), 'NO CSS files returned');
+            Assert.isTrue((out.js.length >= 3), 'JS Files returned more or less than expected');
+            Assert.areSame(1, out.css.length, 'CSS Files returned more or less than expected');
             Assert.isTrue((out.js[0].indexOf('&') === -1), 'comboSep did not work');
             Assert.isTrue((out.js[0].indexOf('==!!==') > 0), 'comboSep did not work');
+        },
+        test_resolve_combo_sep_group: function() {
+            var loader = new testY.Loader({
+                comboSep: '==!!==',
+                combine: true,
+                ignoreRegistered: true,
+                require: ['foo'],
+                groups: {
+                    extra: {
+                        combine: true,
+                        comboSep: '==;;==',
+                        root: '',
+                        base: '',
+                        comboBase: 'http://secondhost.com/combo?',
+                        modules: {
+                            foo: {
+                                requires: ['yql', 'bar']
+                            },
+                            bar: {
+                                requires: ['dd']
+                            }
+                        }
+
+                    }
+                }
+            });
+            var out = loader.resolve(true);
+            Assert.isTrue((out.js.length >= 4), 'JS Files returned more or less than expected');
+            Assert.areSame(0, out.css.length, 'CSS Files returned more than expected');
+            Assert.isTrue((out.js[0].indexOf('&') === -1), 'Main comboSep did not work');
+            Assert.isTrue((out.js[0].indexOf('==!!==') > 0), 'Main comboSep did not work');
+            Assert.isTrue((out.js[3].indexOf('&') === -1), 'Group comboSep did not work');
+            Assert.isTrue((out.js[3].indexOf('==!!==') === -1), 'Group comboSep contains Main comboSep');
+            Assert.isTrue((out.js[3].indexOf('==;;==') > 0), 'Group comboSep did not work');
+        },
+        test_resolve_maxurl_length: function() {
+            var loader = new testY.Loader({
+                maxURLLength: 1024,
+                combine: true,
+                ignoreRegistered: true,
+                require: ['node', 'dd', 'console']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(3, out.js.length, 'JS Files returned more or less than expected');
+            Assert.areSame(1, out.css.length, 'CSS Files returned more or less than expected');
+        },
+        test_resolve_maxurl_length_higher: function() {
+            var loader = new testY.Loader({
+                maxURLLength: 8024,
+                combine: true,
+                ignoreRegistered: true,
+                require: ['node', 'dd', 'console']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(1, out.js.length, 'JS Files returned more or less than expected');
+            Assert.areSame(1, out.css.length, 'CSS Files returned more or less than expected');
+        },
+        test_resolve_maxurl_length_too_low: function() {
+            var loader = new testY.Loader({
+                maxURLLength: 14,
+                combine: true,
+                ignoreRegistered: true,
+                require: ['oop']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(1, out.js.length, 'JS Files returned more or less than expected');
+            Assert.areSame(0, out.css.length, 'CSS Files returned more or less than expected');
+        },
+        test_resolve_maxurl_length_group: function() {
+            var loader = new testY.Loader({
+                combine: true,
+                ignoreRegistered: true,
+                require: ['foo'],
+                groups: {
+                    extra: {
+                        combine: true,
+                        maxURLLength: 45,
+                        root: '',
+                        base: '',
+                        comboBase: 'http://secondhost.com/combo?',
+                        modules: {
+                            foo: {
+                                requires: ['yql', 'bar']
+                            },
+                            bar: {
+                                requires: ['dd']
+                            }
+                        }
+
+                    }
+                }
+            });
+            var out = loader.resolve(true);
+            Assert.areSame(5, out.js.length, 'JS Files returned more or less than expected');
+            Assert.areSame(0, out.css.length, 'CSS Files returned more expected');
         },
         test_resolve_filters: function() {
             var loader = new testY.Loader({
@@ -102,8 +197,8 @@ YUI.add('loader-tests', function(Y) {
                 require: ['node', 'dd', 'console']
             });
             var out = loader.resolve(true);
-            Assert.isTrue((out.js.length === 1), 'NO JS files returned');
-            Assert.isTrue((out.css.length === 1), 'NO CSS files returned');
+            Assert.areSame(3, out.js.length, 'JS Files returned more than expected');
+            Assert.areSame(1, out.css.length, 'CSS Files returned more than one');
             Assert.isTrue((out.js[0].indexOf('node-base-debug.js') > 0), 'node-base-debug was not found');
             Assert.isTrue((out.js[0].indexOf('node-core-debug.js') === -1), 'node-core-debug was found');
         },
