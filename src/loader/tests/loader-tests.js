@@ -52,7 +52,7 @@ YUI.add('loader-tests', function(Y) {
                 require: ['node', 'dd', 'console']
             });
             var out = loader.resolve(true);
-            Assert.areSame(3, out.js.length, 'JS Files returned more or less than expected');
+            Assert.isTrue((out.js.length >= 3), 'JS Files returned more or less than expected');
             Assert.areSame(1, out.css.length, 'CSS Files returned more or less than expected');
             Assert.isTrue((out.js[0].indexOf('-debug') > 0), 'Debug filter did not work');
         },
@@ -89,7 +89,7 @@ YUI.add('loader-tests', function(Y) {
                 require: ['node', 'dd', 'console']
             });
             var out = loader.resolve(true);
-            Assert.areSame(3, out.js.length, 'JS Files returned more or less than expected');
+            Assert.isTrue((out.js.length >= 3), 'JS Files returned more or less than expected');
             Assert.areSame(1, out.css.length, 'CSS Files returned more or less than expected');
             Assert.isTrue((out.js[0].indexOf('&') === -1), 'comboSep did not work');
             Assert.isTrue((out.js[0].indexOf('==!!==') > 0), 'comboSep did not work');
@@ -120,7 +120,7 @@ YUI.add('loader-tests', function(Y) {
                 }
             });
             var out = loader.resolve(true);
-            Assert.areSame(4, out.js.length, 'JS Files returned more or less than expected');
+            Assert.isTrue((out.js.length >= 4), 'JS Files returned more or less than expected');
             Assert.areSame(0, out.css.length, 'CSS Files returned more than expected');
             Assert.isTrue((out.js[0].indexOf('&') === -1), 'Main comboSep did not work');
             Assert.isTrue((out.js[0].indexOf('==!!==') > 0), 'Main comboSep did not work');
