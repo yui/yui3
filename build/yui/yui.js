@@ -5347,7 +5347,7 @@ if (!YUI.Env[Y.version]) {
 
 var NOT_FOUND = {},
     NO_REQUIREMENTS = [],
-    MAX_URL_LENGTH = 2048,
+    MAX_URL_LENGTH = 1024,
     GLOBAL_ENV = YUI.Env,
     GLOBAL_LOADED = GLOBAL_ENV._loaded,
     CSS = 'css',
@@ -6048,8 +6048,6 @@ Y.Loader.prototype = {
                         this.groups.gallery.update(val);
                     } else if (i == 'yui2' || i == '2in3') {
                         this.groups.yui2.update(o['2in3'], o.yui2);
-                    } else if (i == 'maxURLLength') {
-                        self[i] = Math.min(MAX_URL_LENGTH, val);
                     } else {
                         self[i] = val;
                     }
@@ -7543,8 +7541,7 @@ Y.Loader.prototype = {
         var len, i, m, url, fn, msg, attr, group, groupName, j, frag,
             comboSource, comboSources, mods, comboBase,
             base, urls, u = [], tmpBase, baseLen, resCombos = {},
-            self = this,
-            singles = [],
+            self = this, comboSep, maxURLLength, singles = [],
             inserted = (self.ignoreRegistered) ? {} : self.inserted,
             resolved = { js: [], jsMods: [], css: [], cssMods: [] },
             type = self.loadType || 'js';
@@ -7587,7 +7584,8 @@ Y.Loader.prototype = {
                     if ("root" in group && L.isValue(group.root)) {
                         m.root = group.root;
                     }
-
+                    m.comboSep = group.comboSep || self.comboSep;
+                    m.maxURLLength = group.maxURLLength || self.maxURLLength;
                 }
 
                 comboSources[comboSource] = comboSources[comboSource] || [];
@@ -7610,14 +7608,17 @@ Y.Loader.prototype = {
                             // Do not try to combine non-yui JS unless combo def
                             // is found
                             if (m && (m.combine || !m.ext)) {
-
+                                resCombos[j].comboSep = m.comboSep;
+                                resCombos[j].maxURLLength = m.maxURLLength;
                                 frag = ((L.isValue(m.root)) ? m.root : self.root) + m.path;
                                 frag = self._filter(frag, m.name);
                                 resCombos[j][m.type].push(frag);
                                 resCombos[j][m.type + 'Mods'].push(m);
                             } else {
                                 //Add them to the next process..
-                                singles.push(m.name);
+                                if (mods[i]) {
+                                    singles.push(mods[i]);
+                                }
                             }
 
                         }
@@ -7625,36 +7626,42 @@ Y.Loader.prototype = {
                 }
             }
 
+
             for (j in resCombos) {
                 base = j;
+                comboSep = resCombos[base].comboSep || self.comboSep;
+                maxURLLength = resCombos[base].maxURLLength || self.maxURLLength;
                 for (type in resCombos[base]) {
                     if (type === JS || type === CSS) {
                         urls = resCombos[base][type];
                         mods = resCombos[base][type + 'Mods'];
                         len = urls.length;
-                        tmpBase = base + urls.join(self.comboSep);
+                        tmpBase = base + urls.join(comboSep);
                         baseLen = tmpBase.length;
                         
                         if (len) {
-                            if (baseLen > self.maxURLLength) {
+                            if (baseLen > maxURLLength) {
                                 u = [];
-                                m = [];
                                 for (s = 0; s < len; s++) {
-                                    tmpBase = base + u.join(self.comboSep);
-                                    if (tmpBase.length < self.maxURLLength) {
-                                        u.push(urls[s]);
-                                        m.push(mods[s]);
-                                    } else {
+                                    u.push(urls[s]);
+                                    tmpBase = base + u.join(comboSep);
+
+                                    if (tmpBase.length > maxURLLength) {
+                                        m = u.pop();
+                                        tmpBase = base + u.join(comboSep)
                                         resolved[type].push(tmpBase);
-                                        u = [];
-                                        m = [];
+                                        u = [m];
                                     }
+                                }
+                                if (u.length) {
+                                    tmpBase = base + u.join(comboSep)
+                                    resolved[type].push(tmpBase);
                                 }
                             } else {
                                 resolved[type].push(tmpBase);
-                                resolved[type + 'Mods'] = mods;
                             }
                         }
+                        resolved[type + 'Mods'] = mods;
                     }
                 }
             }
