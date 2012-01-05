@@ -20,6 +20,9 @@ var INVALID    = Y.Attribute.INVALID_VALUE,
     isObject   = Lang.isObject,
     isArray    = Lang.isArray,
     isString   = Lang.isString,
+    isNumber   = Lang.isNumber,
+
+    toArray    = Y.Array,
 
     keys       = Y.Object.keys,
 
@@ -332,15 +335,73 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Gets the column configuration object for the given key.
-    `instance.getColumn('foo')` is an alias for `instance.get('columns.foo')`.
+    Gets the column configuration object for the given key, name, or index.  For
+    nested columns, `name` can be an array of indexes, each identifying the index
+    of that column in the respective parent's "children" array.
+
+    If you pass a column object, it will be returned.
+
+    For columns with keys, you can also fetch the column with
+    `instance.get('columns.foo')`.
 
     @method getColumn
-    @param {String} key
+    @param {String|Number|Number[]} name Key, "name", index, or index array to
+                identify the column
     @return {Object} the column configuration object
     **/
-    getColumn: function (key) {
-        return key ? this.get('columns.' + key) : null;
+    getColumn: function (name) {
+        var col, columns, stack, entry, i, len, cols;
+
+        if (isObject(name) && !isArray(name)) {
+            // TODO: support getting a column from a DOM node - this will cross
+            // the line into the View logic, so it should be relayed
+
+            // Assume an object passed in is already a column def
+            col = name;
+        } else {
+            col = this.get('columns.' + name);
+        }
+
+        if (col) {
+            return col;
+        }
+
+        columns = this.get('columns');
+
+        if (isNumber(name) || isArray(name)) {
+            name = toArray(name);
+            cols = columns;
+
+            for (i = 0, len = name.length - 1; cols && i < len; ++i) {
+                cols = cols[name[i]] && cols[name[i]].children;
+            }
+
+            return (cols && cols[i]) || null;
+        } else if (isString(name)) {
+            stack = [[columns, 0]];
+            while (stack.length) {
+                entry = stack[stack.length - 1];
+                cols  = entry[0];
+                for (i = entry[1], len = cols.length; i < len; ++i) {
+                    col = cols[i];
+                    // Only need to check against name because the initial
+                    // col = get('columns.' + name) would get it from the key map
+                    if (col.name === name) {
+                        return col;
+                    } else if (col.children) {
+                        entry[1] = i + 1;
+                        stack.push([col.children, 0]);
+                        break;
+                    }
+                }
+
+                if (i > len) {
+                    stack.pop();
+                }
+            }
+        }
+
+        return null;
     },
 
     /**
@@ -523,11 +584,10 @@ Y.mix(Table.prototype, {
     @protected
     **/
     _getColumns: function (columns, name) {
-        // name will be 'columns' or 'columns.foo'. Trim to the dot.
-        // TODO: support name as an index or (row,column) index pair
-        name = name.slice(8);
-
-        return (name) ? this._columnMap[name] : columns;
+        // Workaround for an attribute oddity (ticket #2529254)
+        // getter is expected to return an object if get('columns.foo') is called.
+        // Note 'columns.' is 8 characters
+        return name.length > 8 ? this._columnMap : columns;
     },
 
     /**
