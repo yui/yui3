@@ -303,16 +303,17 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @chainable
     **/
     render: function () {
-        var container     = this.get('container'),
-            viewContainer = this.get('viewContainer'),
-            activeView    = this.get('activeView'),
-            areSame       = container.compareTo(viewContainer);
+        var container           = this.get('container'),
+            viewContainer       = this.get('viewContainer'),
+            activeView          = this.get('activeView'),
+            activeViewContainer = activeView && activeView.get('container'),
+            areSame             = container.compareTo(viewContainer);
 
-        if (activeView && viewContainer) {
-            viewContainer.setContent(activeView.get('container'));
+        if (activeView && !viewContainer.contains(activeViewContainer)) {
+            viewContainer.appendChild(activeViewContainer);
         }
 
-        if (container && !container.contains(viewContainer) && !areSame) {
+        if (!container.contains(viewContainer) && !areSame) {
             container.appendChild(viewContainer);
         }
 
