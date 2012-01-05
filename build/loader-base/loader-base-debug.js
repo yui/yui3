@@ -2405,6 +2405,9 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                                 frag = self._filter(frag, m.name);
                                 resCombos[j][m.type].push(frag);
                                 resCombos[j][m.type + 'Mods'].push(m);
+                            } else {
+                                //Add them to the next process..
+                                singles.push(m.name);
                             }
 
                         }
