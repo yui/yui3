@@ -479,7 +479,7 @@ suite.add(new YUITest.TestCase({
             //Testing A rollup module
             Assert.isTrue((loader.sorted.indexOf("button-base")) > -1, "Module (button-base) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("button-group")) > -1, "Module (button-group) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("cssbuttons")) > -1, "Module (cssbuttons) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("cssbutton")) > -1, "Module (cssbutton) not found in sorted array");
         },
      "Testing button-base": function(data) {
             var loader = new Y.Loader({
