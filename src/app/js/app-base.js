@@ -296,8 +296,8 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     append the container to the DOM if it's not there already.
 
     You may override this method to customize the app's rendering, but you
-    should expected that the `viewContainer`'s contents will be modified by the
-    app for purpose of rendering the `activeView` when it changes.
+    should expect that the `viewContainer`'s contents will be modified by the
+    app for the purpose of rendering the `activeView` when it changes.
 
     @method render
     @chainable
@@ -1010,9 +1010,9 @@ instance will be **auto-mixed** on to the `Y.App` class. Consider this example:
 
     YUI().use('app-base', 'app-transitions', function (Y) {
         // This will create two YUI Apps, `basicApp` will not have transitions,
-        // but `fancyApp` will have transitions support included.
+        // but `fancyApp` will have transitions support included and turn it on.
         var basicApp = new Y.App.Base(),
-            fancyApp = new Y.App();
+            fancyApp = new Y.App({transitions: true});
     });
 
 @class App
