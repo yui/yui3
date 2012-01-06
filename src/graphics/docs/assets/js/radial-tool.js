@@ -1,4 +1,4 @@
-YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','dd-constrain','resize','json', 'cssbutton', 'cssbuttons', function (Y){
+YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','dd-constrain','resize','json', 'cssbutton', 'cssbutton', function (Y){
     
     
 ///////////////////// gradient UI controls //////////////////////
