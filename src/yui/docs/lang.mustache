@@ -1,0 +1,71 @@
+<p>`Lang` contains JavaScript language utilities and extensions that are used in the YUI library.
+
+
+```
+var Y = YUI();
+
+// true, an array literal is an array
+Y.Lang.isArray([1, 2]);
+
+// false, an object literal is not an array
+Y.Lang.isArray({"one": "two"});
+
+// however, when declared as an array, it is true
+function() {
+    var a = new Array();
+    a["one"] = "two";
+    return Y.Lang.isArray(a);
+}();
+
+// false, a collection of elements is like an array, but isn't
+Y.Lang.isArray(document.getElementsByTagName("body"));
+
+// true, false is a boolean
+Y.Lang.isBoolean(false);
+
+// false, 1 and the string "true" are not booleans
+Y.Lang.isBoolean(1);
+Y.Lang.isBoolean("true");
+
+// null is null, but false, undefined and "" are not
+Y.Lang.isNull(null); // true
+Y.Lang.isNull(undefined); // false
+Y.Lang.isNull(""); // false
+
+// a function is a function, but an object is not
+Y.Lang.isFunction(function(){}); // true
+Y.Lang.isFunction({foo: "bar"}); // false
+
+// true, ints and floats are numbers
+Y.Lang.isNumber(0);
+Y.Lang.isNumber(123.123);
+
+// false, strings that can be cast to numbers aren't really numbers
+Y.Lang.isNumber("123.123");
+
+// false, undefined numbers and infinity are not numbers we want to use
+Y.Lang.isNumber(1/0);
+
+// true, objects, functions, and arrays are objects
+Y.Lang.isObject({});
+Y.Lang.isObject(function(){});
+Y.Lang.isObject([1,2]);
+
+// false, primitives are not objects
+Y.Lang.isObject(1);
+Y.Lang.isObject(true);
+Y.Lang.isObject("{}");
+
+// strings
+Y.Lang.isString("{}"); // true
+Y.Lang.isString({foo: "bar"}); // false
+Y.Lang.isString(123); // false
+Y.Lang.isString(true); // false
+
+// undefined is undefined, but null and false are not
+Y.Lang.isUndefined(undefined); // true
+Y.Lang.isUndefined(false); // false
+Y.Lang.isUndefined(null); // false
+```
+
+

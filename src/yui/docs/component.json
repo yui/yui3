@@ -84,5 +84,21 @@
             "modules"    : ["yui"],
             "tags"       : ["yui", "core", "gallery"]
         }
-    ]
+    ],
+    "pages": {
+        "nodejs": {
+            "displayName": "YUI on Node.js"
+        },
+        "modules": {
+            "displayName": "YUI Modules List",
+            "hideTableOfContents": true
+        },
+        "loader": {
+            "displayName": "YUI Loader"
+        },
+        "lang": {
+            "displayName": "Y.Lang",
+            "hideTableOfContents": true
+        }
+    }   
 }
