@@ -6703,7 +6703,7 @@ Y.Loader.prototype = {
                             } else {
                                 //Add them to the next process..
                                 if (mods[i]) {
-                                    singles.push(mods[i]);
+                                    singles.push(mods[i].name);
                                 }
                             }
 
