@@ -1,4 +1,6 @@
-all:
+all: aliases build docmods
+
+build:
 	ant all
 
 alias: aliases
