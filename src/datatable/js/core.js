@@ -531,6 +531,17 @@ Y.mix(Table.prototype, {
     },
 
     /**
+    Relays `widthChange` events to `\_uiUpdateWidth`.
+
+    @method _afterWidthChange
+    @param {EventFacade} e The `widthChange` event object
+    @protected
+    **/
+    _afterWidthChange: function (e) {
+        this._uiUpdateWidth(e.newVal);
+    },
+
+    /**
     Subscribes to attribute change events to update the UI.
 
     @method bindUI
@@ -540,7 +551,8 @@ Y.mix(Table.prototype, {
         // TODO: handle widget attribute changes
         this.after({
             captionChange: this._afterCaptionChange,
-            summaryChange: this._afterSummaryChange
+            summaryChange: this._afterSummaryChange,
+            widthChange  : this._afterWidthChange
         });
     },
 
@@ -956,6 +968,8 @@ Y.mix(Table.prototype, {
         this._uiUpdateSummary(this.get('summary'));
 
         this._uiUpdateCaption(caption);
+
+        this._uiUpdateWidth(this.get('width'));
     },
 
     /**
@@ -1174,6 +1188,19 @@ Y.mix(Table.prototype, {
     **/
     _uiUpdateSummary: function (summary) {
         this._tableNode.setAttribute('summary', summary || '');
+    },
+
+    /**
+    Updates the table width per the input value.
+
+    @method _uiUpdateWidth
+    @param {Number|String} width The width to make the table
+    @protected
+    **/
+    _uiUpdateWidth: function (width) {
+        if (isString(width) || isNumber(width)) {
+            this._tableNode.setStyle('width', width);
+        }
     },
 
     /**
