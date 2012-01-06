@@ -1,11 +1,10 @@
 #!/usr/bin/env node
 
 var path = require('path'),
-    fs = require('fs');
-
-var base = path.join(__dirname, '../../../api-js/data.json');
-
-var out = path.join(__dirname, '../docs/partials/modules.mustache');
+    fs = require('fs'),
+    base = path.join(__dirname, '../../../api-js/data.json'),
+    alias_json = path.join(__dirname, '../../loader/js/yui3.json'),
+    out = path.join(__dirname, '../docs/partials/modules.mustache');
 
 if (!path.existsSync(base)) {
     console.error('\n[error] Please run `yuidoc` first to generate API documentation!');
@@ -14,6 +13,7 @@ if (!path.existsSync(base)) {
 
 console.log('[info] Loading module meta data');
 var data = JSON.parse(fs.readFileSync(base, 'utf8'));
+var alias_data = JSON.parse(fs.readFileSync(alias_json, 'utf8'));
 
 var nameSort = function(a, b) {
     if (!a.name || !b.name) {
@@ -41,7 +41,9 @@ Object.keys(data.modules).forEach(function(i) {
     
     d = d.split('\n')[0].replace('<p>', '').replace('</p>', '');
 
-
+    if (alias_data[v.name] && alias_data[v.name].use) {
+        d = 'Alias module for: `' + alias_data[v.name].use.join(', ') + '`';
+    }
 
     var o = {
         name: v.name,
