@@ -15,7 +15,7 @@ Provides view transitions for `Y.App`.
 When this module is used, it will automatically mix itself on to `Y.App` adding
 transitions to `activeView` changes.
 
-@class AppTransitions
+@class App.Transitions
 @since 3.5.0
 **/
 function AppTransitions() {}

@@ -13,7 +13,7 @@ Provides view transitions for `Y.App`.
 When this module is used, it will automatically mix itself on to `Y.App` adding
 transitions to `activeView` changes.
 
-@class AppTransitions
+@class App.Transitions
 @since 3.5.0
 **/
 function AppTransitions() {}
@@ -89,7 +89,7 @@ AppTransitions.prototype = {
 
         // TODO: Deep merge?
         this.transitions = config.transitions ?
-            Y.merge(this.transitions, config.transitions) : this.transitions;
+            Y.merge(this.transitions, config.transitions) : null;
     },
 
     // -- Public Methods -------------------------------------------------------
@@ -161,6 +161,10 @@ AppTransitions.prototype = {
     // -- Protected Event Handlers ---------------------------------------------
 
     /**
+    TODO: Only run transitions if `this.transitions` isn't falsy. It also needs
+    to be investigated whether a better approach to overriding the default
+    behavior should be used.
+
     Handles the application's `activeViewChange` event (which is fired when the
     `activeView` attribute changes) by detaching the old view, attaching the new
     view and transitioning between them.
@@ -192,6 +196,7 @@ AppTransitions.prototype = {
         }
 
         // Determine transitions to use.
+        // TODO: This should be a fn, this looks super gross!
         if (isChild) {
             fx = fx.toChild;
         } else if (isParent) {

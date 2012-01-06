@@ -112,7 +112,7 @@ All of these things will live inside the following YUI instance:
 <script src="http://yui.yahooapis.com/{{yuiVersion}}/build/yui/yui-min.js"></script>
 
 <script>
-YUI().use('app', 'handlebars', 'jsonp', function (Y) {
+YUI().use('app', 'handlebars', 'jsonp', 'cssbutton', function (Y) {
 
 var GithubSync,
     User, Repo, RepoList, Contributor, ContributorList,
@@ -210,13 +210,11 @@ The `User` model contains only the data attributes from the <a href="http://deve
 
 ```
 User = Y.Base.create('user', Y.Model, [GithubSync], {
-    // The `id` attribute for this Model will be an alias for `login`.
-    idAttribute: 'login',
-    githubURL  : '/users/{id}',
+    githubURL: '/users/{user}',
 
     buildURL: function () {
         return Y.Lang.sub(this.githubURL, {
-            id: this.getAsURL('id')
+            user: this.getAsURL('login')
         });
     }
 }, {
@@ -272,7 +270,7 @@ RepoList = Y.Base.create('repoList', Y.ModelList, [GithubSync], {
     buildURL: function () {
         // This list's `user` is used to build the API URL.
         return Y.Lang.sub(this.githubURL, {
-            user: this.get('user').getAsURL('id')
+            user: this.get('user').getAsURL('login')
         });
     },
 
@@ -346,6 +344,20 @@ ContributorList = Y.Base.create('contributorList', Y.ModelList, [GithubSync], {
 <p>
 We've separated our data-related logic from our presentation by creating our models and model lists; we'll continue this by keeping our presentation-logic separate from our [[#templates]], and create <a href="../view/index.html">View</a> classes which contain the presentation-related logic that can render a model or model list using a template.
 </p>
+
+<p>
+The data model for our app consists of many numerical values which our views will need to display with labels. Before we dig into the views, let's first create a helper function we can use to add these labels to the data object we pass to our templates:
+</p>
+
+```
+// A helper function used by the Views to create labels for numerical fields
+// which are correctly pluralized, and puts the label back on the `data` object.
+function addLabel(data, field, label) {
+    var num = data[field];
+    data[field] || (data[field] = '0');
+    data[field + '_label'] = num === 1 ? label : (label + 's');
+}
+```
 
 <p>
 The views for our app will be pretty trivial; they mainly just prepare the model or model list data and apply it to the corresponding template during rendering. Usually you're views would involve handling of DOM events created by user interactions and binding to the model or model list changes so the view can be updated or re-rendered. We'll create the following views by sub-classing `Y.View`: [[#`UserView`]], [[#`RepoView`]], [[#`RepoListView`]], and [[#`ContributorListView`]].
@@ -438,6 +450,23 @@ RepoListView = Y.Base.create('repoListView', Y.View, [], {
     // Compiles the RepoList Template into a reusable Handlebars template.
     template: Y.Handlebars.compile(Y.one('#t-repo-list').getContent()),
 
+    // Attach DOM events for the view. The `events` object is a mapping of
+    // selectors to an object containing one or more events to attach to the
+    // node(s) matching each selector.
+    events: {
+        '.repo': {
+            click: 'selectRepo'
+        }
+    },
+
+    initializer: function () {
+        // The `selectRepo` event is fired when the user chooses a GitHub repo
+        // to view its contributors. This event will bubble up to the
+        // `ContributorsApp` via the `UserPageView` view when it is the app's
+        // `activeView`.
+        this.publish('selectRepo', {preventable: false});
+    },
+
     render: function () {
         var repos = this.get('modelList'),
             reposData, content;
@@ -446,6 +475,11 @@ RepoListView = Y.Base.create('repoListView', Y.View, [], {
         // instance's data as a simple JSON structs and collects it in an array.
         reposData = repos.map(function (repo) {
             var data = repo.toJSON();
+
+            // Add `clientId` to the data, this is ignored by `toJSON()`. This
+            // will be used by the template and is an easy way to regain access
+            // to the associated Repo model.
+            data.clientId = repo.get('clientId');
 
             // Add proper pluralized labels for numerical data fields.
             addLabel(data, 'watchers', 'Watcher');
@@ -460,6 +494,27 @@ RepoListView = Y.Base.create('repoListView', Y.View, [], {
         this.get('container').setContent(content);
 
         return this;
+    },
+
+    // Called when the user clicks anywhere on a repo line-item in our list
+    // of repos. This will retreive the corresponding Repo model instance
+    // from the RepoList via the `clientId`.
+    selectRepo: function (e) {
+        // Noop when the element clicked is an anchor, we'll let the link
+        // preform its default action.
+        if (e.target.test('a')) {
+            return;
+        }
+
+        // Because we've rendered our list of repos with the `clientId` as the
+        // `id` attribute for each repo node, we can use the client id to
+        // retreive the Repo model instance from the RepoList.
+        var repos = this.get('modelList'),
+            repo  = repos.getByClientId(e.currentTarget.get('id'));
+
+        if (repo) {
+            this.fire('selectRepo', {repo: repo});
+        }
     }
 });
 ```
@@ -622,6 +677,20 @@ UserPageView = Y.Base.create('userPageView', Y.View, [], {
         // Sub-views are created to render the `User` and `RepoList`.
         this.userView     = new UserView({model: user});
         this.repoListView = new RepoListView({modelList: repos});
+
+        // This will cause the sub-views' custom events to bubble up to here.
+        this.userView.addTarget(this);
+        this.repoListView.addTarget(this);
+    },
+
+    // This destructor is specified so this view's sub-views can be properly
+    // destroyed and cleaned up.
+    destructor: function () {
+        this.userView.destroy();
+        this.repoListView.destroy();
+
+        delete this.userView;
+        delete this.repoListView;
     },
 
     create: function (container) {
@@ -631,7 +700,7 @@ UserPageView = Y.Base.create('userPageView', Y.View, [], {
 
     render: function () {
         // A document fragment is created to hold the resulting HTML created
-        // from rendering to two sub-views.
+        // from rendering the two sub-views.
         var content = Y.one(Y.config.doc.createDocumentFragment());
 
         // This renders each of the two sub-views into the document fragment,
@@ -663,6 +732,20 @@ RepoPageView = Y.Base.create('repoPageView', Y.View, [], {
         // `ContributorListView`.
         this.repoView            = new RepoView({model: repo});
         this.contributorListView = new ContributorListView({modelList: contributors});
+
+        // This will cause the sub-views' custom events to bubble up to here.
+        this.repoView.addTarget(this);
+        this.contributorListView.addTarget(this);
+    },
+
+    // This destructor is specified so this view's sub-views can be properly
+    // destroyed and cleaned up.
+    destructor: function () {
+        this.repoView.destroy();
+        this.contributorListView.destroy();
+
+        delete this.repoView;
+        delete this.contributorListView;
     },
 
     create: function (container) {
@@ -672,7 +755,7 @@ RepoPageView = Y.Base.create('repoPageView', Y.View, [], {
 
     render: function () {
         // A document fragment is created to hold the resulting HTML created
-        // from rendering to two sub-views.
+        // from rendering the two sub-views.
         var content = Y.one(Y.config.doc.createDocumentFragment());
 
         // This renders each of the two sub-views into the document fragment,
@@ -695,7 +778,7 @@ With our app grouped into three "pages", we need to make these pages accessible 
 <ul>
     <li>
         <p>
-        <b>`/`</b>:<br/> Displays the [[#`HomePageView`]] which takes a [[#`User`]] model, but the user data is not required because we'll have the "yui" GitHub user be the default.
+        <b>`/`</b>: Displays the [[#`HomePageView`]] and uses the current [[#`User`]] model to pre-fill the text input.
         </p>
     </li>
     <li>
@@ -759,9 +842,12 @@ Let's see how our page-level views and route-handlers work together by looking a
 
 <h4>ContributorsApp</h4>
 
-<div class="scrollable">
+<p>
+Here is our subclass of `Y.App` where we have defined our three page-level views, our app's URL-space, and our route-handlers. The infrastructure provided by `Y.App` will take care of managing our page-views and dispatching to our route-handlers as our users navigate through our app.
+</p>
+
 ```
-ContributorsApp = new Y.Base.create('contributorsApp', Y.App, [], {
+ContributorsApp = Y.Base.create('contributorsApp', Y.App, [], {
     // This is where we can declare our page-level views and define the
     // relationship between the "pages" of our application. We can later use the
     // `showView()` method to create and display these views.
@@ -783,17 +869,24 @@ ContributorsApp = new Y.Base.create('contributorsApp', Y.App, [], {
 
     initializer: function () {
         // When a user navigates to different "pages" within our app, the
-        // `navigate` event will fire, we can listen to this event and show some
+        // `navigate` event will fire; we can listen to this event and show some
         // indication that the app is busy loading data.
         this.on('navigate', this.indicateLoading);
 
-        // We are registering a listen for the `HomePageView`'s `changeUser`
+        // Here we register a listener for the `HomePageView`'s `changeUser`
         // event. When the `HomePageView` is the `activeView`, its events will
         // bubble up to this app instance.
-        this.on('homePageView:changeUser', this.navigateToUser);
+        this.on('*:changeUser', this.navigateToUser);
+
+        // Here we register a listener for the `RepoListView`'s `selectRepo`
+        // event. The `RepoListView`'s events bubble up to the `UserPageView`,
+        // so when it is the `activeView`, its events will bubble up to this
+        // app instance.
+        this.on('*:selectRepo', this.navigateToRepo);
 
         // Once our app is ready, we'll either dispatch to our route-handlers if
-        // the current URL matches one, or we'll simply show the `HomePageView`.
+        // the current URL matches one of our routes, or we'll simply show the
+        // `HomePageView`.
         this.once('ready', function (e) {
             if (this.hasRoute(this.getPath())) {
                 this.dispatch();
@@ -809,22 +902,48 @@ ContributorsApp = new Y.Base.create('contributorsApp', Y.App, [], {
         this.get('activeView').get('container').addClass('loading');
     },
 
+    // When called, this will navigate the application to the user-page for the
+    // GitHub username specified on the event facade. This will cause our app to
+    // dispatch to its route-handlers along with updating the URL.
     navigateToUser: function (e) {
         this.navigate('/github/' + e.user + '/');
     },
 
+    // When called, this will navigate the application to the repo-page for the
+    // GitHub repository specified on the event facade. This will cause our app
+    // to dispatch to its route-handlers along with updating the URL.
+    navigateToRepo: function (e) {
+        var repo = e.repo;
+        this.navigate('/github/' + repo.get('owner.login') + '/' + repo.get('name') + '/');
+    },
+
     // -- Route Handlers -------------------------------------------------------
 
+    // This will be called for all URLs which start with: "/github/:user/"; its
+    // job is to make sure a `User` model for the specified GitHub username is
+    // fully-loaded and placed on the request object for other route-handlers.
     handleUser: function (req, res, next) {
-        var userId = req.params.user,
-            user   = this.get('user'),
-            self   = this;
+        var username = req.params.user,
+            user     = this.get('user'),
+            self     = this;
 
-        if (userId === user.get('id')) {
+        // When the current `User` model set on the app is new or the specified
+        // GitHub username from the URL is different, a new user model instance
+        // is created, loaded, and set on this app before adding it to the
+        // request object.
+        if (username === user.get('login') && !user.isNew()) {
+            // Places a reference to the user model on the request object before
+            // delegating to the next route-handler.
             req.user = user;
             next();
         } else {
-            user = new User({id: userId});
+            // Create a new `User` model instance using the specified GitHub
+            // username from the URL.
+            user = new User({login: username});
+
+            // Load the user's data from the GitHub API, then sent the user
+            // model on both this app and the request object before delegating
+            // to the next route-handler.
             user.load(function () {
                 self.set('user', user);
                 req.user = user;
@@ -833,49 +952,74 @@ ContributorsApp = new Y.Base.create('contributorsApp', Y.App, [], {
         }
     },
 
+    // This will be called for all URLs which start with: "/github/:user/"; its
+    // job is to make sure a fully-loaded `RepoList` instance is placed on the
+    // request object. It is assumed that `handleUser()` route-handler has
+    // already placed the `User` model on the request object.
     handleRepos: function (req, res, next) {
         var user  = req.user,
             repos = this.get('repos');
 
+        // Adds a reference to this app's `RepoList` to the request object.
         req.repos = repos;
 
+        // This makes sure the `RepoList` is loaded for the current user.
         if (user === repos.get('user')) {
             next();
         } else {
+            // Sets the current user model on the `RepoList` instance and loads
+            // the repos for the given user before continuing.
             repos.set('user', user).load(function () {
                 next();
             });
         }
     },
 
+    // This will be called for URLs which match: "/github/:user/:repo/"; its job
+    // is to make sure a fully-loaded `ContributorList` instance is placed on
+    // the request object. It is assumed that the `handleUser()` and
+    // `handleRepos()` route-handlers have already placed the `User` model and
+    // `RepoList` model-list on the request object.
     handleRepo: function (req, res, next) {
+        // This uses data from the request object to look for a `Repo` model
+        // instance in the `RepoList`.
         var repoId       = req.params.repo,
             repos        = req.repos,
             repo         = repos.getById(repoId),
             contributors = this.get('contributors');
 
+        // We error-out when the specified repo name does not exist in the list
+        // of repos for the current GitHub user.
         if (!repo) {
             return next('GitHub repository was not found.');
         }
 
+        // Adds a reference to the `Repo` model and `ContributorList` to the
+        // request object.
         req.repo         = repo;
         req.contributors = contributors;
 
+        // This makes sure the `ContributorList` is loaded for the current repo.
         if (repo === contributors.get('repo')) {
             next();
         } else {
+            // Sets the current repo model on the `ContributorList` instance and
+            // loads the contributors before continuing.
             contributors.set('repo', repo).load(function () {
                 next();
             });
         }
     },
 
+    // This is called when the URL is "/" and will show our app's home page.
     showHomePage: function (req) {
         this.showView('homePage', {
             model: this.get('user')
         });
     },
 
+    // This is the final route for "/github/:user/" URLs and will show our app's
+    // user page which lists the user's repos.
     showUserPage: function (req) {
         this.showView('userPage', {
             model    : req.user,
@@ -883,6 +1027,8 @@ ContributorsApp = new Y.Base.create('contributorsApp', Y.App, [], {
         });
     },
 
+    // This is the final route for "/github/:user/:repo/" URLs and will show our
+    // app's repo page which lists the contributors to the repo/project.
     showRepoPage: function (req) {
         this.showView('repoPage', {
             model    : req.repo,
@@ -891,10 +1037,16 @@ ContributorsApp = new Y.Base.create('contributorsApp', Y.App, [], {
     }
 }, {
     ATTRS: {
+        // These attributes will be used by the app to hold its current state,
+        // and they will be accessed and modified by our route-handlers.
         user        : {value: new User()},
         repos       : {value: new RepoList()},
         contributors: {value: new ContributorList()},
 
+        // Our app will use more advanced routing features where multiple
+        // route-handlers will be used to fulfill a "request", allowing us to
+        // encapsulate and reuse our data processing logic. Note: the order the
+        // route-handlers are defined in is significant.
         routes: {
             value: [
                 {path: '/',                    callback: 'showHomePage'},
@@ -910,15 +1062,26 @@ ContributorsApp = new Y.Base.create('contributorsApp', Y.App, [], {
     }
 });
 ```
-</div>
 
 <h4>Initializing the App</h4>
 
+<p>
+Finally we can create a new instance of our `ContributorsApp`, render it to the page, and be good to go!
+</p>
+
 ```
+// Create and render a new instance of our `ContributorsApp`!
 new ContributorsApp({
+    // We force this to false for this example app because there is no server.
     serverRouting: false,
-    container    : '#github-app',
-    linkSelector : '#github-app a'
+
+    // Here we set our app's rendering container, and restrict which links on
+    // the page should cause the app to navigate.
+    container   : '#github-app',
+    linkSelector: '#github-app a',
+
+    // We'll define the default GitHub user to be "yui".
+    user: new User({login: 'yui'})
 }).render();
 ```
 

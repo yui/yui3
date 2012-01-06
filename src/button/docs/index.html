@@ -1,0 +1,94 @@
+# Button
+
+The Button component for YUI 3 is a light-weight, Y.Base wrapper around DOM elements you'd like treated like a button.  This includes things like look &amp; feel, state management, and accessibility.  
+
+## Basics
+There are two ways to create a Y.Button instance. 
+
+`// Dynamically create the node
+var button = new Y.Button();
+
+// Or, use an existing node
+var button = new Y.Button({
+    srcNode: "#myButton"
+})
+`
+
+In either case, you will receive a Y.Button instance that contains a few attributes, and wraps around a Y.Node instance.  The markup generated will look something similar to:
+
+<button id="myButton" aria-selected="false" class="yui3-button" role="button" aria-pressed="false">This is a Y.Button</button>
+
+At this point, you can modify `button`'s attributes, manipulate its state, or listen for change events.
+
+## Events
+
+Most commonly with button elements, you want to listen for any clicks that occur.  That can be achieved with something like this...
+
+`
+var button = new Y.Button({
+    srcNode: "#myButton"
+});
+
+button.on('click', function(){
+    alert("Hello!");
+});
+`
+
+You can also pass in groups of events at instantiation:
+
+`
+var button = new Y.Button({
+    srcNode: '#myButton',
+    type: 'toggle',
+    on: {
+        click: function(){
+            Y.log('This will fire when the button is clicked.')
+        },
+        focus: function(){
+            Y.log('The button is now focused')
+        },
+        selectedChange: function(){
+            Y.log('This will fire when the toggled state changed')
+        }
+    }
+})
+`
+
+Any event handlers can also be assigned by using the `on` property in the configuration object.  Valid events include any <a href="">DOM events</a>, as well as Y.Button attribute change events (e.g. 'selectedChange').  
+
+So what do you get from Y.Button over just creating your own, via `new Y.Node.create('<button></button>')`?  
+- Accessibility - Your buttons automatically create and manage their own ARIA states.  This includes `aria-selected` and `aria-pressed`.  Y.Button instances also automatically get the `role='button'` attribute to properly identify their purpose (as a button) to screen readers even if they are not a <button> or <input type="button"> element.
+- State management - Y.Button instances automatically apply classes, such as yui3-button-selected, yui3-button-disabled, and yui3-button-focused, which are useful for styling purposes. Also, assigning a type of 'toggle' will fire a 'selectedChange' event only when it's state changes from selected to unselected, or vice-versa, eliminating the classical case of listening for 'click' and then checking to see if the state changed.
+
+Note: In the future, Y.Button instances will be capable of being assigned to groups and managed via a new ButtonGroup module.
+
+## Styling
+YUI's Button component was designed with the idea in mind that you may only want button styles, no JS functionality.  Instead of `use('button')`, you can just include the `cssbutton` sub-module.  This can be done either dynamically by `use('cssbutton')` or statically with a <link> tag.  Including this module will load in a stylesheet consisting of the following classes:
+- yui3-button
+- yui3-button:hover
+- yui3-button:active
+- yui3-button-disabled
+
+These styles are designed to progressively enhance.  In legacy browsers, you'll get styles that appear a bit nicer than native buttons, and in modern browsers you'll get buttons using the latest styles that CSS3 has to offer.
+
+
+
+
+
+
+// attribute change events
+selectedChange
+disabledChange
+typeChange
+labelChange
+
+// conf options
+srcNode // The source node 
+label // The textual representation of the element
+on // Any single event, or group of events
+disabled // Whether or not the button should be disabled by default
+selected // Whether or not the button should be selected by default
+
+
+## Events
+- Explain the diff between DOM & attribute events

@@ -34,6 +34,25 @@ var HistoryHash = Y.HistoryHash,
     **/
     EVT_READY = 'ready';
 
+// In order to work around a nasty bug in WebKit that affects iOS 5, we need to
+// listen for the pageshow event (which occurs when the page is restored from
+// the page cache) and recreate our `window` and `location` references, since
+// old references get detached even though they shouldn't be.
+//
+// Older versions of iOS bypass the page cache when an `unload` event listener
+// is attached, but not iOS 5 for some reason.
+//
+// More details at https://bugs.webkit.org/show_bug.cgi?id=34679
+if (Y.UA.ios >= 5) {
+    Y.config.win.addEventListener('pageshow', function (e) {
+        if (e.persisted) {
+            win      = Y.config.win;
+            location = win.location;
+            origin   = location.origin || (location.protocol + '//' + location.host);
+        }
+    }, false);
+}
+
 /**
 Provides URL-based routing using HTML5 `pushState()` or the location hash.
 

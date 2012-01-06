@@ -338,4 +338,4 @@ WidgetButtons.prototype = {
 Y.WidgetButtons = WidgetButtons;
 
 
-}, '@VERSION@' ,{requires:['base-build', 'widget', 'widget-stdmod']});
+}, '@VERSION@' ,{requires:['cssbutton', 'base-build', 'widget', 'widget-stdmod']});

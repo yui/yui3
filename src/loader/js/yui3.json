@@ -127,12 +127,29 @@
     }, 
     "attribute-base": {
         "requires": [
-            "event-custom"
+            "attribute-core", 
+            "attribute-events", 
+            "attribute-extras"
         ]
     }, 
     "attribute-complex": {
         "requires": [
             "attribute-base"
+        ]
+    }, 
+    "attribute-core": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
+    "attribute-events": {
+        "requires": [
+            "event-custom"
+        ]
+    }, 
+    "attribute-extras": {
+        "requires": [
+            "yui-base"
         ]
     }, 
     "autocomplete": {
@@ -239,6 +256,7 @@
             "attribute-complex"
         ], 
         "requires": [
+            "base-core", 
             "attribute-base"
         ]
     }, 
@@ -247,10 +265,36 @@
             "base-base"
         ]
     }, 
+    "base-core": {
+        "requires": [
+            "attribute-core"
+        ]
+    }, 
     "base-pluginhost": {
         "requires": [
             "base-base", 
             "pluginhost"
+        ]
+    }, 
+    "button": {
+        "use": [
+            "button-base", 
+            "button-group", 
+            "cssbutton"
+        ]
+    }, 
+    "button-base": {
+        "requires": [
+            "base", 
+            "classnamemanager", 
+            "node"
+        ]
+    }, 
+    "button-group": {
+        "requires": [
+            "button-base", 
+            "arraylist", 
+            "arraylist-add"
         ]
     }, 
     "cache": {
@@ -402,6 +446,9 @@
             "cssfonts-context", 
             "cssgrids-context"
         ], 
+        "type": "css"
+    }, 
+    "cssbutton": {
         "type": "css"
     }, 
     "cssfonts": {
@@ -1455,14 +1502,14 @@
     "panel": {
         "requires": [
             "widget", 
-            "widget-stdmod", 
+            "widget-autohide", 
+            "widget-buttons", 
+            "widget-modality", 
             "widget-position", 
             "widget-position-align", 
-            "widget-stack", 
             "widget-position-constrain", 
-            "widget-modality", 
-            "widget-autohide", 
-            "widget-buttons"
+            "widget-stack", 
+            "widget-stdmod"
         ], 
         "skinnable": true
     }, 
@@ -1933,8 +1980,9 @@
     }, 
     "widget-buttons": {
         "requires": [
-            "widget", 
+            "cssbutton", 
             "base-build", 
+            "widget", 
             "widget-stdmod"
         ], 
         "skinnable": true

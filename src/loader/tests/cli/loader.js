@@ -284,6 +284,36 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("attribute-complex")) > -1, "Module (attribute-complex) not found in sorted array");
         },
+     "Testing attribute-core": function(data) {
+            var loader = new Y.Loader({
+                require: ["attribute-core"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("attribute-core")) > -1, "Module (attribute-core) not found in sorted array");
+        },
+     "Testing attribute-events": function(data) {
+            var loader = new Y.Loader({
+                require: ["attribute-events"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("attribute-events")) > -1, "Module (attribute-events) not found in sorted array");
+        },
+     "Testing attribute-extras": function(data) {
+            var loader = new Y.Loader({
+                require: ["attribute-extras"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("attribute-extras")) > -1, "Module (attribute-extras) not found in sorted array");
+        },
      "Testing autocomplete": function(data) {
             var loader = new Y.Loader({
                 require: ["autocomplete"],
@@ -419,6 +449,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("base-build")) > -1, "Module (base-build) not found in sorted array");
         },
+     "Testing base-core": function(data) {
+            var loader = new Y.Loader({
+                require: ["base-core"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("base-core")) > -1, "Module (base-core) not found in sorted array");
+        },
      "Testing base-pluginhost": function(data) {
             var loader = new Y.Loader({
                 require: ["base-pluginhost"],
@@ -428,6 +468,38 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("base-pluginhost")) > -1, "Module (base-pluginhost) not found in sorted array");
+        },
+     "Testing button": function(data) {
+            var loader = new Y.Loader({
+                require: ["button"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("button-base")) > -1, "Module (button-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("button-group")) > -1, "Module (button-group) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("cssbutton")) > -1, "Module (cssbutton) not found in sorted array");
+        },
+     "Testing button-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["button-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("button-base")) > -1, "Module (button-base) not found in sorted array");
+        },
+     "Testing button-group": function(data) {
+            var loader = new Y.Loader({
+                require: ["button-group"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("button-group")) > -1, "Module (button-group) not found in sorted array");
         },
      "Testing cache": function(data) {
             var loader = new Y.Loader({

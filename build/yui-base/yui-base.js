@@ -984,8 +984,10 @@ with any configuration info required for the module.
             loader = getLoader(Y);
             loader.require(args);
             loader.ignoreRegistered = true;
+            loader._boot = true;
             loader.calculate(null, (fetchCSS) ? null : 'js');
             args = loader.sorted;
+            loader._boot = false;
         }
 
         // process each requirement and any additional requirements
@@ -1106,18 +1108,18 @@ with any configuration info required for the module.
     dump: function (o) { return ''+o; },
 
     /**
-     * Report an error.  The reporting mechanism is controled by
+     * Report an error.  The reporting mechanism is controlled by
      * the `throwFail` configuration attribute.  If throwFail is
      * not specified, the message is written to the Logger, otherwise
      * a JS error is thrown
      * @method error
      * @param msg {String} the error message.
      * @param e {Error|String} Optional JS error that was caught, or an error string.
-     * @param data Optional additional info
+     * @param src Optional additional info (passed to `Y.config.errorFn` and `Y.message`)
      * and `throwFail` is specified, this error will be re-thrown.
      * @return {YUI} this YUI instance.
      */
-    error: function(msg, e, data) {
+    error: function(msg, e, src) {
         //TODO Add check for window.onerror here
 
         var Y = this, ret;
@@ -1129,7 +1131,7 @@ with any configuration info required for the module.
         if (Y.config.throwFail && !ret) {
             throw (e || new Error(msg));
         } else {
-            Y.message(msg, 'error'); // don't scrub this one
+            Y.message(msg, 'error', ''+src); // don't scrub this one
         }
 
         return Y;
@@ -1628,6 +1630,12 @@ overwriting other scripts configs.
  *          yui2: {
  *              // specify whether or not this group has a combo service
  *              combine: true,
+ *
+ *              // The comboSeperator to use with this group's combo handler
+ *              comboSep: ';',
+ *
+ *              // The maxURLLength for this server
+ *              maxURLLength: 500,
  * 
  *              // the base path for non-combo paths
  *              base: 'http://yui.yahooapis.com/2.8.0r4/build/',
@@ -3211,6 +3219,20 @@ YUI.Env.parseUA = function(subUA) {
          */
         android: 0,
         /**
+         * Detects Kindle Silk
+         * @property silk
+         * @type float
+         * @static
+         */
+        silk: 0,
+        /**
+         * Detects Kindle Silk Acceleration
+         * @property accel
+         * @type Boolean
+         * @static
+         */
+        accel: false,
+        /**
          * Detects Palms WebOS version
          * @property webos
          * @type float
@@ -3329,6 +3351,19 @@ YUI.Env.parseUA = function(subUA) {
                     }
 
                 }
+                if (/Silk/.test(ua)) {
+                    m = ua.match(/Silk\/([^\s]*)\)/);
+                    if (m && m[1]) {
+                        o.silk = numberify(m[1]);
+                    }
+                    if (!o.android) {
+                        o.android = 2.34; //Hack for desktop mode in Kindle
+                        o.os = 'Android';
+                    }
+                    if (/Accelerated=true/.test(ua)) {
+                        o.accel = true;
+                    }
+                }
             }
 
             m = ua.match(/Chrome\/([^\s]*)/);
@@ -3403,6 +3438,7 @@ YUI.Env.aliases = {
     "attribute": ["attribute-base","attribute-complex"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
+    "button": ["button-base","button-group","cssbutton"],
     "cache": ["cache-base","cache-offline","cache-plugin"],
     "collection": ["array-extras","arraylist","arraylist-add","arraylist-filter","array-invoke"],
     "controller": ["router"],
@@ -4086,6 +4122,12 @@ Y.Get = Get = {
             index, node;
 
         while (node = nodes.pop()) { // assignment
+            // Don't purge nodes that haven't finished loading (or errored out),
+            // since this can hang the transaction.
+            if (!node._yuiget_finished) {
+                continue;
+            }
+
             node.parentNode && node.parentNode.removeChild(node);
 
             // If this is a transaction-level purge and this node also exists in
@@ -4610,7 +4652,7 @@ Transaction.prototype = {
 
         }
 
-        req.finished = true;
+        req.node._yuiget_finished = req.finished = true;
 
         if (options.onProgress) {
             options.onProgress.call(options.context || this,

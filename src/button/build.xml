@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="YUI" default="local">
+    <description>Build All Modules</description>
+    <macrodef name="build-submodules">
+        <attribute name="target"/>
+        <sequential>
+            <ant antfile="button-base.xml" target="@{target}"/>
+            <ant antfile="button-group.xml" target="@{target}"/>
+            <ant antfile="button-cssbutton.xml" target="@{target}"/>
+        </sequential>
+    </macrodef>
+
+    <target name="local">
+        <build-submodules target="local"/>
+    </target>
+    <target name="deploy">
+        <build-submodules target="deploy"/>
+    </target>
+    <target name="all">
+        <build-submodules target="all"/>
+    </target>
+    <target name="clean">
+        <build-submodules target="clean"/>
+    </target>
+    <target name="tests">
+        <build-submodules target="clean"/>
+    </target>
+
+</project>
