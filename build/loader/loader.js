@@ -4657,7 +4657,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "widget-buttons": {
         "requires": [
-            "cssbuttons", 
+            "cssbutton", 
             "base-build", 
             "widget", 
             "widget-stdmod"
@@ -4761,7 +4761,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '35cdcaa312a4820c931b28c943346e92';
+YUI.Env[Y.version].md5 = 'c6efe4903a42424a75caedc9a6249230';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
