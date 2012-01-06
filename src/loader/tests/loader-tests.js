@@ -432,6 +432,27 @@ YUI.add('loader-tests', function(Y) {
             Assert.areEqual(mods1.css.length, mods2.css.length, 'CSS Modules are not equal in 2 loader instances');
             Assert.areEqual(1, mods1.css.length, 'CSS Mods #1 not equal 1');
             Assert.areEqual(1, mods2.css.length, 'CSS Mods #2 not equal 1');
+        },
+        test_skin_default: function() {
+            var loader = new Y.Loader();
+
+            Assert.areSame(loader.skin.defaultSkin, Y.Env.meta.skin.defaultSkin, 'Default skin was not set from default');
+        },
+        test_skin_string: function() {
+            var loader = new Y.Loader({
+                skin: 'night'
+            });
+
+            Assert.areSame(loader.skin.defaultSkin, 'night', 'Default skin was not set from string');
+        },
+        test_skin_object: function() {
+            var loader = new Y.Loader({
+                skin: {
+                    defaultSkin: 'foobar'
+                }
+            });
+
+            Assert.areSame(loader.skin.defaultSkin, 'foobar', 'Default skin was not set from object');
         }
     });
 

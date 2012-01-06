@@ -1108,18 +1108,18 @@ with any configuration info required for the module.
     dump: function (o) { return ''+o; },
 
     /**
-     * Report an error.  The reporting mechanism is controled by
+     * Report an error.  The reporting mechanism is controlled by
      * the `throwFail` configuration attribute.  If throwFail is
      * not specified, the message is written to the Logger, otherwise
      * a JS error is thrown
      * @method error
      * @param msg {String} the error message.
      * @param e {Error|String} Optional JS error that was caught, or an error string.
-     * @param data Optional additional info
+     * @param src Optional additional info (passed to `Y.config.errorFn` and `Y.message`)
      * and `throwFail` is specified, this error will be re-thrown.
      * @return {YUI} this YUI instance.
      */
-    error: function(msg, e, data) {
+    error: function(msg, e, src) {
         //TODO Add check for window.onerror here
 
         var Y = this, ret;
@@ -1131,7 +1131,7 @@ with any configuration info required for the module.
         if (Y.config.throwFail && !ret) {
             throw (e || new Error(msg));
         } else {
-            Y.message(msg, 'error'); // don't scrub this one
+            Y.message(msg, 'error', ''+src); // don't scrub this one
         }
 
         return Y;
@@ -1630,6 +1630,12 @@ overwriting other scripts configs.
  *          yui2: {
  *              // specify whether or not this group has a combo service
  *              combine: true,
+ *
+ *              // The comboSeperator to use with this group's combo handler
+ *              comboSep: ';',
+ *
+ *              // The maxURLLength for this server
+ *              maxURLLength: 500,
  * 
  *              // the base path for non-combo paths
  *              base: 'http://yui.yahooapis.com/2.8.0r4/build/',
