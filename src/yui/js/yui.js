@@ -1214,6 +1214,8 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
      * memory leak in IE when the item tested is
      * window/document
      * @method instanceOf
+     * @param o {Object} The object to check.
+     * @param type {Object} The class to check against.
      * @since 3.3.0
      */
 };
