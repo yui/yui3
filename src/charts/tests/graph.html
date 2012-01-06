@@ -1,0 +1,218 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <style>
+            /*Supplemental: CSS for the YUI distribution*/
+            #custom-doc { width: 95%; min-width: 950px; }
+            #pagetitle {background-image: url(../../assets/bg_hd.gif);}
+            #mychart {
+                padding:10px 10px 10px 10px;
+            }
+        </style>
+        <link rel="stylesheet" type="text/css" href="../../../build/cssfonts/fonts-min.css">
+    </head>		
+<body class="yui3-skin-sam">
+<h3>Unit Tests</h3>
+<div id="mychart"></div>
+<script type="text/javascript" src="../../../build/yui/yui-min.js"></script>
+<script>            
+YUI({
+    allowRollup: false,
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+}).use('charts', 'test', 'console', function (Y) 
+{ 
+    Y.namespace("example.test");
+
+    var suite = new Y.Test.Suite("Y.Charts.Graph"),
+
+    GraphTests = new Y.Test.Case({
+        name: "Graph Tests",
+        
+        setUp: function() {
+            var myDataValues = [ 
+                {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
+                {category:"5/2/2010", values:50, expenses:9100, revenue:100}, 
+                {category:"5/3/2010", values:400, expenses:1100, revenue:1500}, 
+                {category:"5/4/2010", values:200, expenses:1900, revenue:2800}, 
+                {category:"5/5/2010", values:5000, expenses:5000, revenue:2650}
+            ];
+            var mychart = new Y.Chart({width:400, height:300, dataProvider:myDataValues, seriesKeys:["values", "revenue"]});
+            mychart.render("#mychart");
+            this.chart = mychart;
+        },
+        
+        tearDown: function() {
+            this.chart.destroy();
+        },
+
+        "test:graph._getSeries(line)": function()
+        {
+            var graph = this.chart.get("graph"),
+                series = graph._getSeries("line");
+            Y.Assert.areEqual(series, Y.LineSeries, "The series type should be Y.LineSeries");
+        },
+        
+        "test:graph._getSeries(column)": function()
+        {
+            var graph = this.chart.get("graph"),
+                series = graph._getSeries("column");
+            Y.Assert.areEqual(series, Y.ColumnSeries, "The series type should be Y.ColumnSeries");
+        },
+        
+        "test:graph._getSeries(bar)": function()
+        {
+            var graph = this.chart.get("graph"),
+                series = graph._getSeries("bar");
+            Y.Assert.areEqual(series, Y.BarSeries, "The series type should be Y.BarSeries");
+        },
+        
+        "test:graph._getSeries(area)": function()
+        {
+            var graph = this.chart.get("graph"),
+                series = graph._getSeries("area");
+            Y.Assert.areEqual(series, Y.AreaSeries, "The series type should be Y.AreaSeries");
+        },
+        
+        "test:graph._getSeries(stackedarea)": function()
+        {
+            var graph = this.chart.get("graph"),
+                series = graph._getSeries("stackedarea");
+            Y.Assert.areEqual(series, Y.StackedAreaSeries, "The series type should be Y.StackedAreaSeries");
+        },
+        
+        "test:graph._getSeries(stackedcolumn)": function()
+        {
+            var graph = this.chart.get("graph"),
+                series = graph._getSeries("stackedcolumn");
+            Y.Assert.areEqual(series, Y.StackedColumnSeries, "The series type should be Y.StackedColumnSeries");
+        },
+        
+        "test:graph._getSeries(stackedbar)": function()
+        {
+            var graph = this.chart.get("graph"),
+                series = graph._getSeries("stackedbar");
+            Y.Assert.areEqual(series, Y.StackedBarSeries, "The series type should be Y.StackedBarSeries");
+        },
+        
+        "test:graph._getSeries(stackedline)": function()
+        {
+            var graph = this.chart.get("graph"),
+                series = graph._getSeries("stackedline");
+            Y.Assert.areEqual(series, Y.StackedLineSeries, "The series type should be Y.StackedLineSeries");
+        },
+        
+        "test:graph._getSeries(markerseries)": function()
+        {
+            var graph = this.chart.get("graph"),
+                series = graph._getSeries("markerseries");
+            Y.Assert.areEqual(series, Y.MarkerSeries, "The series type should be Y.MarkerSeries");
+        },
+        
+        "test:graph._getSeries(stackedmarkerseries)": function()
+        {
+            var graph = this.chart.get("graph"),
+                series = graph._getSeries("stackedmarkerseries");
+            Y.Assert.areEqual(series, Y.StackedMarkerSeries, "The series type should be Y.StackedMarkerSeries");
+        },
+        
+        "test:graph._getSeries(spline)": function()
+        {
+            var graph = this.chart.get("graph"),
+                series = graph._getSeries("spline");
+            Y.Assert.areEqual(series, Y.SplineSeries, "The series type should be Y.SplineSeries");
+        },
+        
+        "test:graph._getSeries(areaspline)": function()
+        {
+            var graph = this.chart.get("graph"),
+                series = graph._getSeries("areaspline");
+            Y.Assert.areEqual(series, Y.AreaSplineSeries, "The series type should be Y.AreaSplineSeries");
+        },
+        
+        "test:graph._getSeries(stackedspline)": function()
+        {
+            var graph = this.chart.get("graph"),
+                series = graph._getSeries("stackedspline");
+            Y.Assert.areEqual(series, Y.StackedSplineSeries, "The series type should be Y.StackedSplineSeries");
+        },
+        
+        "test:graph._getSeries(stackedareapline)": function()
+        {
+            var graph = this.chart.get("graph"),
+                series = graph._getSeries("stackedareaspline");
+            Y.Assert.areEqual(series, Y.StackedAreaSplineSeries, "The series type should be Y.StackedAreaSplineSeries");
+        },
+        
+        "test:graph._getSeries(pie)": function()
+        {
+            var graph = this.chart.get("graph"),
+                series = graph._getSeries("pie");
+            Y.Assert.areEqual(series, Y.PieSeries, "The series type should be Y.PieSeries");
+        },
+        
+        "test:graph._getSeries(combo)": function()
+        {
+            var graph = this.chart.get("graph"),
+                series = graph._getSeries("combo");
+            Y.Assert.areEqual(series, Y.ComboSeries, "The series type should be Y.ComboSeries");
+        },
+        
+        "test:graph._getSeries(stackedcombo)": function()
+        {
+            var graph = this.chart.get("graph"),
+                series = graph._getSeries("stackedcombo");
+            Y.Assert.areEqual(series, Y.StackedComboSeries, "The series type should be Y.StackedComboSeries");
+        },
+        "test:graph._getSeries(combospline)": function()
+        {
+            var graph = this.chart.get("graph"),
+                series = graph._getSeries("combospline");
+            Y.Assert.areEqual(series, Y.ComboSplineSeries, "The series type should be Y.ComboSplineSeries");
+        },
+        
+        "test:graph._getSeries(stackedcombospline)": function()
+        {
+            var graph = this.chart.get("graph"),
+                series = graph._getSeries("stackedcombospline");
+            Y.Assert.areEqual(series, Y.StackedComboSplineSeries, "The series type should be Y.StackedComboSplineSeries");
+        },
+
+        "test:graph._getSeries(customclass)" : function()
+        {
+            var graph = this.chart.get("graph"),
+                series;
+
+            Y.CustomLineSeries = Y.Base.create("customLineSeries", Y.LineSeries, [], {
+                mycustomprop: null,
+
+                mycustommethod: function()
+                {
+                    var yaypie = "mmmm";
+                    yaypie += "Pie";
+                }
+            });
+
+            series = graph._getSeries(Y.CustomLineSeries);
+            Y.Assert.areEqual(series, Y.CustomLineSeries, "The series type should be Y.CustomLineSeries");
+        }
+    });
+
+    suite.add(GraphTests);
+
+    //create the console
+    var r = new Y.Console({
+        newestOnTop : false,
+        style: 'block' // to anchor in the example content
+    });
+    
+    r.render('#testLogger');
+
+    //run the tests
+    Y.Test.Runner.setName("Y.Charts.Graph");
+    Y.Test.Runner.add(suite);
+    Y.Test.Runner.run();
+});
+</script>
+</body>
+</html>

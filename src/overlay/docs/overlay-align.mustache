@@ -3,9 +3,9 @@
 
 /* Example Layout CSS */
 .overlay-example {
-    position:relative;
-    padding:5px;
-    height:30em;
+    position: relative;
+    padding: 5px;
+    height: 34.5em;
 }
 
 #overlay-align {
@@ -13,18 +13,18 @@
 }
 
 .overlay-example button {
-    margin-left:1px;
+    margin-left: 1px;
 }
 
 .overlay-example .yui3-g {
-    color:#999;
+    color: #999;
 }
 
 .align-box {
     background-color: #ddd;
     border: solid 1px #ddd;
-    margin:0px;
-    text-align:center;
+    margin: 0px;
+    text-align: center;
     width: 100%;
 }
 
@@ -35,9 +35,22 @@
 
 .overlay-example .example-head {
     border-bottom: solid 1px #ddd;
-    text-align:center;
     margin-bottom: 2em;
     padding-bottom: 1em;
+    height: 8.6em;
+}
+
+.overlay-example .example-head pre{
+    margin: 0;
+}
+
+#alignment {
+    position: absolute;
+    right: 5px;
+    text-align: left;
+    top: 0;
+    height: 9em;
+    width: 40em;
 }
 
 .nav{
@@ -58,8 +71,8 @@
 }
 
 .align-box .title {
-    color:#000;
-    padding:2px;
+    color: #000;
+    padding: 2px;
 }
 
 #align2 {
@@ -72,18 +85,10 @@
     line-height: 3em;
 }
 
-#alignment {
-    padding:5px;
-    margin: 8px auto 6px;
-    background-color: #F5F7FE;
-    border: 1px solid #CDD2E4;
-    border-left-width: 5px;
-    font-family: Menlo,'DejaVu Sans Mono','Bitstream Vera Sans Mono','Consolas','Monaco',fixed;
-}
 
 #step {
-    font-size:55%;
-    margin-left:22px;
+    font-size: 55%;
+    margin-left: 22px;
     font-weight: normal;
 }
 #main .aligned-to{ /* highlight the node that overlay is currently aligned to */
@@ -163,30 +168,30 @@ overlay.render("#overlay-align");
 
 ```
 /* Setup local variable for Y.WidgetPositionAlign, since we use it multiple times */
-var wPA = Y.WidgetPositionAlign;
+var a = Y.WidgetPositionAlign;
 
 ...
 
 /* Align top-left corner of overlay, with top-right corner of #align1 */
 overlay.set("align", {node:"#align1", 
-                      points:[wPA.TL, wPA.TR]});
+                      points:[a.TL, a.TR]});
 
 /* Center overlay in #align2 */
 overlay.set("centered", "#align2");
 
 /* Align top-center edge of overlay with bottom-center edge of #align3 */
 overlay.set("align", {node:"#align3", 
-                      points:[wPA.TC, wPA.BC]});
+                      points:[a.TC, a.BC]});
 
 /* Align right-center edge of overlay with right-center edge of viewport */
-overlay.set("align", {points:[wPA.RC, wPA.RC]});
+overlay.set("align", {points:[a.RC, a.RC]});
 
 /* Center overlay in viewport */
 overlay.set("centered", true);
 
 /* Center in #overlay-align (example box) */
 overlay.set("align", {node:"#overlay-align", 
-                      points:[wPA.CC, wPA.CC]});
+                      points:[a.CC, a.CC]});
 ```
 
 <h3>CSS: Overlay Look/Feel</h3>

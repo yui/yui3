@@ -120,7 +120,7 @@ This is the simplest way of working with Router, but you may also extend `Y.Rout
 <h4>Config Attributes</h4>
 
 <p>
-When instantiating Router, you may optionally pass in a config object containing values for any of the following attributes. For more details on these attributes, see Router's <a href="{{apiDocs}}/modules/module_router.html">API docs</a>.
+When instantiating Router, you may optionally pass in a config object containing values for any of the following attributes. For more details on these attributes, see Router's <a href="{{apiDocs}}/modules/router.html">API docs</a>.
 </p>
 
 <table>
@@ -430,6 +430,25 @@ router.route('*', function () {
 
 router.save('/purple/monkey/dishwasher');
 // => "Wildcard route! I match everything! I'm craaaaaaazy!"
+
+router.save('/blue/jeans/pizza');
+// => "Wildcard route! I match everything! I'm craaaaaaazy!"
+```
+
+<p>
+Wildcards can also be used within a path:
+</p>
+
+```
+router.route('/purple/*', function () {
+  Y.log("I only like purple stuffz!");
+});
+
+router.save('/purple/monkey/dishwasher');
+// => "I only like purple stuffz!"
+
+router.save('/purple/pants');
+// => "I only like purple stuffz!"
 ```
 
 <p>

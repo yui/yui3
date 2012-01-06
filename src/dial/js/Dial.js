@@ -263,20 +263,19 @@
         dragging : Y.ClassNameManager.getClassName("dd-dragging")
     };
     
-    
     /* Static constants used to define the markup templates used to create Dial DOM elements */
-    var labelId = Dial.CSS_CLASSES.label + Y.guid(); //get this unique id once then use
+    
 
     /**
      * template that will contain the Dial's label.
      *
      * @property LABEL_TEMPLATE
      * @type {HTML}
-     * @default &lt;div id="' + labelId + '" class="[...-label]">&lt;span class="[...-label-string]">{label}&lt;/span>&lt;span class="[...-value-string]">&lt;/span>&lt;/div>
+     * @default &lt;div class="[...-label]">&lt;span id="" class="[...-label-string]">{label}&lt;/span>&lt;span class="[...-value-string]">&lt;/span>&lt;/div>
      * @protected
      */
 
-	Dial.LABEL_TEMPLATE = '<div id="' + labelId + '" class="' + Dial.CSS_CLASSES.label + '"><span class="' + Dial.CSS_CLASSES.labelString + '">{label}</span><span class="' + Dial.CSS_CLASSES.valueString + '"></span></div>';
+	Dial.LABEL_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.label + '"><span id="" class="' + Dial.CSS_CLASSES.labelString + '">{label}</span><span class="' + Dial.CSS_CLASSES.valueString + '"></span></div>';
 
 	if(supportsVML === false){
 		/**
@@ -314,10 +313,10 @@
 		 *
 		 * @property HANDLE_TEMPLATE
 		 * @type {HTML}
-		 * @default &lt;div class="[...-handle]">&lt;div class="[...-handleUser]" aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0">&lt;/div>&lt;/div>';// title="{tooltipHandle}"
+		 * @default &lt;div class="[...-handle]">&lt;div class="[...-handleUser]" aria-labelledby="" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0">&lt;/div>&lt;/div>';// title="{tooltipHandle}"
 		 * @protected
 		 */
-		Dial.HANDLE_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.handle + '" aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0" title="{tooltipHandle}">';
+		Dial.HANDLE_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.handle + '" aria-labelledby="" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0" title="{tooltipHandle}">';
 	
 	}else{ // VML case
 		Dial.RING_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.ring +  ' ' + Dial.CSS_CLASSES.ringVml + '">'+
@@ -339,7 +338,7 @@
 											'<div class="' + Dial.CSS_CLASSES.resetString + ' ' + Dial.CSS_CLASSES.hidden + '">{resetStr}</div>'+
 									'</div>'+
 									'';
-		Dial.HANDLE_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.handleVml + '" aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0" title="{tooltipHandle}">'+
+		Dial.HANDLE_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.handleVml + '" aria-labelledby="" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0" title="{tooltipHandle}">'+
 										'<v:oval stroked="false">'+
 											'<v:fill opacity="20%" color="#6C3A3A"/>'+
 										'</v:oval>'+
@@ -442,17 +441,19 @@
             this.after("valueChange", this._afterValueChange);
 
             var boundingBox = this.get("boundingBox"),
-
-            // Looking for a key event which will fire continously across browsers while the key is held down.
-            keyEventSpec = (!Y.UA.opera) ? "down:" : "press:",
-            keyLeftRightSpec = (!Y.UA.opera) ? "down:" : "press:";
-            // 38, 40 = arrow up/down, 33, 34 = page up/down,  35 , 36 = end/home
-            keyEventSpec += "38,40,33,34,35,36";
-            // 37 , 39 = arrow left/right
-            keyLeftRightSpec += "37,39";
+                // Looking for a key event which will fire continously across browsers while the key is held down.
+                keyEvent = (!Y.UA.opera) ? "down:" : "press:",            
+                // 38, 40 = arrow up/down, 33, 34 = page up/down,  35 , 36 = end/home
+                keyEventSpec = keyEvent + "38,40,33,34,35,36",
+                // 37 , 39 = arrow left/right
+                keyLeftRightSpec = keyEvent + "37,39",
+                // 37 , 39 = arrow left/right + meta (command/apple key) for mac
+                keyLeftRightSpecMeta = keyEvent + "37+meta,39+meta";
 
             Y.on("key", Y.bind(this._onDirectionKey, this), boundingBox, keyEventSpec);
             Y.on("key", Y.bind(this._onLeftRightKey, this), boundingBox, keyLeftRightSpec);
+            boundingBox.on("key", this._onLeftRightKeyMeta, keyLeftRightSpecMeta, this);
+
             Y.on('mouseenter', Y.bind(this._handleCenterButtonEnter, this), this._centerButtonNode);
             Y.on('mouseleave', Y.bind(this._handleCenterButtonLeave, this), this._centerButtonNode);
             // Needed to replace mousedown/up with gesturemovestart/end to make behavior on touch devices work the same.
@@ -962,11 +963,14 @@
          * @method _renderHandle
          * @protected
          */
-        _renderHandle : function() {
-            var contentBox = this.get("contentBox"),
-            handle = contentBox.one("." + Dial.CSS_CLASSES.handle);
+        _renderHandle : function() {        
+            var labelId = Dial.CSS_CLASSES.label + Y.guid(), //get this unique id once then use for handle and label for ARIA
+                contentBox = this.get("contentBox"),
+                handle = contentBox.one("." + Dial.CSS_CLASSES.handle);
             if (!handle) {
                 handle = Node.create(Y.substitute(Dial.HANDLE_TEMPLATE, this.get('strings')));
+                handle.setAttribute('aria-labelledby', labelId);  // get unique id for specifying a label & handle for ARIA
+                this._labelNode.one('.' + Dial.CSS_CLASSES.labelString).setAttribute('id', labelId);  // When handle gets focus, screen reader will include label text when reading the value.
                 contentBox.one('.' + Dial.CSS_CLASSES.ring).append(handle);
             }
             this._handleNode = handle;
@@ -1031,7 +1035,7 @@
                     this._decrMinor();
                     break;
                 case 36: // home
-                    this._resetDial();
+                    this._setToMin();
                     break;
                 case 35: // end
                     this._setToMax();
@@ -1060,6 +1064,25 @@
                     break;
                 case 39: // right
                     this._incrMinor();
+                    break;
+            }
+        },
+
+        /**
+         * sets the Dial's value in response to left or right key events when a meta (mac command/apple) key is also pressed
+         *
+         * @method _onLeftRightKeyMeta
+         * @param e {Event} the key event
+         * @protected
+         */
+        _onLeftRightKeyMeta : function(e) {
+            e.preventDefault();
+            switch (e.charCode) {
+                case 37: // left + meta
+                    this._setToMin();
+                    break;
+                case 39: // right + meta
+                    this._setToMax();
                     break;
             }
         },

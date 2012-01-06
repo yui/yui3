@@ -1,0 +1,28 @@
+{
+    "button": {
+        "use": [
+             "button-base",
+             "button-group",
+             "cssbutton"
+         ],
+        "submodules": {
+            "button-base": {
+                "requires": [
+                    "base",
+                    "classnamemanager",
+                    "node"
+                ]
+            }, 
+            "button-group": {
+                "requires": [
+                    "button-base",
+                    "arraylist",
+                    "arraylist-add"
+                ]
+            }, 
+            "cssbutton": {
+                "type": "css"
+            }
+        }
+    }
+}

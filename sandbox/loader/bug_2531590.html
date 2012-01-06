@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../build/yui/yui-debug.js"></script>
+</head>
+<body>
+    <script>
+    YUI().use(function(Y) {
+        var conf = {
+            combine: false,
+            require: ['widget-base'],
+            ignoreRegistered: true // force loader to include modules already on the page
+        },
+        L0 = new Y.Loader(conf),
+        L1 = new Y.Loader(conf),
+        mods0 = L0.resolve(true),
+        mods1 = L1.resolve(true);
+        
+        console.log(mods0);
+        console.log(mods1);
+        if (mods0.css[0] !== mods1.css[0]) {
+            console.info('CSS not the same', mods0.css[0], ' :: ', mods1.css[0]);
+        }
+    });
+    </script>
+</body>
+</html>

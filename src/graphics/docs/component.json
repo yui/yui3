@@ -69,20 +69,19 @@
 			"modules" : ["graphics"],
 			"tags" : ["graphics"],
             		"hideTableOfContents": true
-		},
-		{
-			"name" : "graphics-pathutility",
-			"displayName" : "Path Drawing Utility",
-			"description" : "A helper utility for interactively composing path code.",
-			"modules" : ["graphics"],
-			"tags" : ["graphics, utility, drawing"],
-            		"hideTableOfContents": true
 		}
 	],	
     "pages": {
-        "graphics-pathutility-example": {
-            "displayName": "Graphics: Path Drawing Utility",
-            "layout"     : "graphics-pathutility-example"
+        "graphics-path-tool-example": {
+            "layout"     : "graphics-path-tool-example"
+        },
+        "graphics-path-tool": {
+            "displayName": "Graphics: Path Drawing Tool",
+            		"hideTableOfContents": true            
+        },
+        "graphics-radial-tool": {
+            "displayName": "Graphics: Radial Gradient Tool",
+            		"hideTableOfContents": true            
         }
     }	
 }

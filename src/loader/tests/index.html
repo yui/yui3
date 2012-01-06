@@ -1,7 +1,11 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-<title>Loader Automated Tests</title>
+    <!-- These link tags are required for the css-stamp tests DO NOT REMOVE -->
+    <link type="text/css" rel="stylesheet" href="../../../build/cssgrids/cssgrids.css">
+    <link type="text/css" rel="stylesheet" href="../../../build/widget-base/assets/skins/sam/widget-base.css">
+    <link type="text/css" rel="stylesheet" href="../../../build/dial/assets/skins/sam/dial.css">    
+    <title>Loader Automated Tests</title>
 </head>
 <body class="yui3-skin-sam">
 
@@ -38,7 +42,6 @@ YUI({
         
     }
 }).use('loader-tests', 'test-console', 'test', function(Y) {
-    Y.Test.Runner.setName("Loader");
     Y.Test.Runner.run();
 });
 

@@ -13,16 +13,29 @@
 
 <p>You need to run 'node delay.js' if you pass delay=true in the querystring. Otherwise tests will fail.</p>
 
-<script src="../../../build/yui/yui.js"></script>
+<!-- <script src="../../../build/yui/yui.js" charset="utf-8"></script> -->
+
+<script src="../../../build/yui-core/yui-core.js" charset="utf-8"></script>
+<script src="../../../build/yui-log/yui-log.js" charset="utf-8"></script>
+<script src="../../../build/yui-later/yui-later.js" charset="utf-8"></script>
+
+<script src="../../../build/get/get-debug.js" charset="utf-8"></script>
+
+<script src="../../../build/loader/loader.js" charset="utf-8"></script>
+<script src="../../../build/features/features.js" charset="utf-8"></script>
 
 <!-- Adding these manually and doing a use("*") so we don't need "get" to test "get" -->
-
 <script src="../../../build/oop/oop.js" charset="utf-8"></script>
 <script src="../../../build/event-custom-base/event-custom-base.js" charset="utf-8"></script>
 <script src="../../../build/event-custom-complex/event-custom-complex.js" charset="utf-8"></script>
+<script src="../../../build/intl-base/intl-base.js" charset="utf-8"></script>
 <script src="../../../build/intl/intl.js" charset="utf-8"></script>
+<script src="../../../build/attribute-core/attribute-core.js" charset="utf-8"></script>
+<script src="../../../build/attribute-events/attribute-events.js" charset="utf-8"></script>
+<script src="../../../build/attribute-extras/attribute-extras.js" charset="utf-8"></script>
 <script src="../../../build/attribute-base/attribute-base.js" charset="utf-8"></script>
 <script src="../../../build/attribute-complex/attribute-complex.js" charset="utf-8"></script>
+<script src="../../../build/base-core/base-core.js" charset="utf-8"></script>
 <script src="../../../build/base-base/base-base.js" charset="utf-8"></script>
 <script src="../../../build/plugin/plugin.js" charset="utf-8"></script>
 <script src="../../../build/console/lang/console.js" charset="utf-8"></script>
@@ -54,6 +67,7 @@
 <script src="../../../build/widget-base/widget-base.js" charset="utf-8"></script>
 <script src="../../../build/widget-uievents/widget-uievents.js" charset="utf-8"></script>
 <script src="../../../build/widget-htmlparser/widget-htmlparser.js" charset="utf-8"></script>
+<script src="../../../build/widget-skin/widget-skin.js" charset="utf-8"></script>
 <script src="../../../build/substitute/substitute.js" charset="utf-8"></script>
 <script src="../../../build/console/console.js" charset="utf-8"></script>
 <script src="../../../build/console-filters/console-filters.js" charset="utf-8"></script>
@@ -61,6 +75,7 @@
 <script src="../../../build/event-simulate/event-simulate.js" charset="utf-8"></script>
 <script src="../../../build/json-stringify/json-stringify.js" charset="utf-8"></script>
 <script src="../../../build/test/test.js" charset="utf-8"></script>
+
 <script src="./get-test.js" charset="utf-8"></script>
 
 <script>
@@ -69,7 +84,7 @@ var YUI_config = {
     gfilter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
 };
 
-YUI({
+var Y = YUI({
     allowRollup: false,
     filter: YUI_config.gfilter,
     modules: {
@@ -79,17 +94,22 @@ YUI({
         }
     }
 }).use('*', function(Y) {
-
     if (/[?&]delay=true/.test(window.location.search)) {
         // Hit the default 'node ./delay.js port'
-        Y.GetTests.TEST_FILES_BASE = (window.location.protocol + "//" + window.location.host + ":" + "8014/");
+        Y.GetTests.TEST_FILES_BASE = (window.location.protocol + "//" + window.location.hostname + ":" + "8014/");
     }
 
-    Y.GetTests.add(Y.GetTests.Scripts);
-    Y.GetTests.add(Y.GetTests.CSS);
+    Y.GetTests.add(Y.GetTests.BasicJS);
+    Y.GetTests.add(Y.GetTests.BasicCSS);
+    Y.GetTests.add(Y.GetTests.GetMethods);
+    Y.GetTests.add(Y.GetTests.TransactionBehavior);
+    Y.GetTests.add(Y.GetTests.TransactionMethods);
+    Y.GetTests.add(Y.GetTests.TransactionProperties);
+    Y.GetTests.add(Y.GetTests.Options);
     Y.GetTests.add(Y.GetTests.Functional);
 
     new Y.Test.Console().render('#log');
+
     Y.Test.Runner.add(Y.GetTests);
     Y.Test.Runner.run();
 });

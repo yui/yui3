@@ -1,0 +1,217 @@
+<style scoped>
+/*-- Common Styles ----------------------------------------------------------*/
+
+#github-app h1 {
+    padding: 0;
+}
+
+#github-app .loading {
+    opacity: 0.5;
+    -webkit-transition: opacity 0.15s;
+}
+
+#github-app .avatar,
+#github-app .avatar img {
+    display: block;
+    width: 76px;
+    height: 76px;
+    border: 0;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+#github-app .avatar {
+    display: inline-block;
+    *display: inline; zoom: 1;
+    height: 76px;
+    padding: 2px;
+}
+#github-app .avatar:hover,
+#github-app .user-avatar {
+    -webkit-box-shadow: 0 0 2px rgba(0,0,0,0.25);
+    -moz-box-shadow: 0 0 2px rgba(0,0,0,0.25);
+    box-shadow: 0 0 2px rgba(0,0,0,0.25);
+}
+
+#github-app .back,
+#github-app .view-on-github {
+    margin-top: 0;
+}
+#github-app .view-on-github {
+    text-align: right;
+}
+
+#github-app .info h1 {
+    margin: 0;
+}
+#github-app .info .user-avatar,
+#github-app .info .user-login,
+#github-app .info .user-name,
+#github-app .info .repo-name {
+    vertical-align: middle;
+}
+#github-app .info .user-avatar {
+    margin-right: 10px;
+}
+#github-app .info .user-name {
+    font-weight: 400;
+}
+
+#github-app .stats ul {
+    margin: 0;
+    padding: 8px;
+    color: #30418C;
+    background: #F0F1F8;
+    border: 1px solid #D4D8EB;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    text-align: center;
+    list-style: none;
+}
+#github-app .stats b {
+    display: block;
+    font-size: 36px;
+    line-height: 44px;
+}
+
+/*-- HomePage Styles --------------------------------------------------------*/
+
+#github-app .home-page h1,
+#github-app .home-page p {
+    display: block;
+    text-align: center;
+}
+#github-app .home-page label,
+#github-app .home-page input,
+#github-app .home-page button {
+    font-size: 20px;
+}
+#github-app .home-page label {
+    color: #A6A6A6;
+}
+#github-app .home-page input {
+    display: inline-block;
+    *display: inline; zoom: 1;
+    font-family: Helvetica, sans-serif;
+    line-height: normal;
+    margin: 5px auto 0;
+    padding: 6px;
+    width: 200px;
+    text-align: left;
+}
+
+/*-- UserPage Styles --------------------------------------------------------*/
+
+#github-app .repos {
+    padding-left: 0;
+    list-style: none;
+    border-top: 1px solid #E5E6F1;
+    margin: 0 -13px;
+}
+#github-app .repo {
+    margin: 1px 0;
+    padding: 0 13px 6px;
+    color: #30418C;
+    background: #F9F9FC;
+    cursor: pointer;
+    border-bottom: 1px solid #E5E6F1;
+}
+#github-app .repo:hover {
+    background: #F1F1F4;
+}
+#github-app .repo-name h3 {
+    margin: 6px 0 0 0;
+}
+#github-app .repo-stats {
+    margin-top: 6px;
+    background: url({{componentAssets}}/arrow.gif) right center no-repeat;
+}
+#github-app .repo-stats ul {
+    list-style: none;
+    padding-left: 0;
+    height: 47px;
+    line-height: 47px;
+}
+#github-app .repo-stats b {
+    display: block;
+}
+#github-app .repo-stats span {
+    display: block;
+    font-size: 11px;
+    color: #B6BCD7;
+    color: rgba(48, 65, 140, 0.40);
+}
+#github-app .repo-stats .repo-watchers,
+#github-app .repo-stats .repo-forks {
+    text-align: center;
+    line-height: 11px;
+    margin-top: 15px;
+}
+#github-app .repo-desc {
+    margin: 10px 20px 0 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #B6BCD7;
+    color: rgba(48, 65, 140, 0.40);
+}
+
+/*-- RepoPage Styles --------------------------------------------------------*/
+
+#github-app .contributors {
+    margin-left: -5px;
+    margin-right: -5px;
+    padding-left: 0;
+    list-style: none;
+}
+#github-app .contributor {
+    margin: 5px;
+    display: inline-block;
+    *display: inline; zoom: 1;
+}
+#github-app .contributor .avatar {
+    position: relative;
+    display: block;
+}
+#github-app .contributor .avatar:link,
+#github-app .contributor .avatar:visited,
+#github-app .contributor .avatar:hover,
+#github-app .contributor .avatar:active {
+    text-decoration: none;
+}
+#github-app .contributor-name,
+#github-app .contributor-contributions {
+    position: absolute;
+    left: 0;
+    margin: 2px;
+    padding: 0 4px;
+    width: 68px;
+    font-size: 11px;
+    color: #fff;
+    background: #000;
+    background: rgba(0,0,0, 0.2);
+    text-shadow: 0 1px 0 rgba(0,0,0, 0.4);
+}
+#github-app .contributor-name {
+    bottom: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-border-bottom-right-radius: 3px;
+    -webkit-border-bottom-left-radius: 3px;
+    -moz-border-radius-bottomright: 3px;
+    -moz-border-radius-bottomleft: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+#github-app .contributor-contributions {
+    top: 0;
+    -webkit-border-top-left-radius: 3px;
+    -webkit-border-top-right-radius: 3px;
+    -moz-border-radius-topleft: 3px;
+    -moz-border-radius-topright: 3px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+</style>

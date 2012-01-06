@@ -1,0 +1,37 @@
+<div class="intro">
+    <p>This example shows how to use a `Dial` widget to animate an image sprite.</p>
+    <p>Drag the `Dial` handle, or use the keyboard arrow keys to see the duck image "animate".</p>
+</div>
+
+<div class="example yui3-skin-sam">
+    {{>duck-source}}
+</div>
+
+<h3>The Image Sprite</h3>
+<p><img src="{{{componentAssets}}}/images/sprite_duck.jpg" width="700" height="34"/></p>
+
+<h3>The Markup</h3>
+<p>The `<div id="duck"></div>` element will have the sprite as its background-image.
+<p>The `<div id="demo"></div>` element will contain the dial.</p>
+<p></p>
+
+```
+    {{>duck-markup}}
+```
+<h3>The JavaScript</h3>
+<p>The stepsPerRevolution attribute of the `Dial` 
+is given a value equal to the number of frames in the sprite.
+</p>
+<p> 
+On `valueChange` of the `dial`, the `background-position` of `<div id="duck">` 
+is changed to a new multiple of the
+width of one frame in the sprite.
+</p>
+```
+{{>duck-script}}    
+```
+<h3>Complete Example Source</h3>
+```
+{{>duck-source}}
+```
+

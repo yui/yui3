@@ -93,6 +93,7 @@
             MyWidget.superclass.constructor.apply(this, arguments);
         }
         Y.extend(MyWidget, Y.Widget);
+
         MyWidget.NAME = "myWidget";
 
         // Single Box Widget
@@ -1162,6 +1163,9 @@
 
                     "on:renderedChange", 
                     "after:renderedChange",
+                    
+                    "on:focusedChange",
+                    "after:focusedChange",
 
                     "on:visibleChange",
                     "after:visibleChange",
@@ -1180,9 +1184,6 @@
                     
                     "on:tabIndexChange",
                     "after:tabIndexChange",
-                    
-                    "on:focusedChange",
-                    "after:focusedChange",
 
                     "on:destroyedChange",
                     "after:destroyedChange"
@@ -1215,15 +1216,15 @@
                 w.set("srcNode", Y.Node.one("<span>"));
                 w.set("id", Y.Node.one("foo"));
 
+                // focused is readOnly, need to go through the focus/blur API
+                w.focus();
+
                 w.set("visible", false);
                 w.set("disabled", true);
                 w.set("height", "100px");
                 w.set("width", "100px");
                 w.set("strings", {newStrings: "foo"});
                 w.set("tabIndex", 7);
-
-                // focused is readOnly, need to go through the focus/blur API
-                w.focus();
 
                 w.destroy();
                 
@@ -1248,6 +1249,43 @@
                 Y.ArrayAssert.itemsAreEqual(expected, actual, "Unexpected content update events");
 
                 w.destroy();
+            },
+            
+            "testHomogenousBubble" : function() {
+
+                var w1 = this.createWidget({
+                    height:100,
+                    render:"#widgetRenderContainer"
+                });
+
+                var w2 = this.createWidget({
+                    height:200,
+                    render: "#widgetRenderContainer"
+                });
+
+                // w1 bubbled to w2
+                w1.addTarget(w2);
+
+                var bb1 = w1.get("boundingBox"),
+                    bb2 = w2.get("boundingBox");
+    
+                // Default CSS has no border/padding/margin on BB/CB so this should be fine in all browsers
+                Y.Assert.areEqual(100, bb1.get("offsetHeight"), "100 height not set correctly in DOM");
+                Y.Assert.areEqual(200, bb2.get("offsetHeight"), "200 height not set correctly in DOM");
+    
+                w2.set("height", "300px");
+
+                Y.Assert.areEqual(100, bb1.get("offsetHeight"), "100px height not set correctly on bb1");
+                Y.Assert.areEqual(300, bb2.get("offsetHeight"), "300px height not set correctly on bb2");
+
+                w1.set("height", "400px"); 
+
+                Y.Assert.areEqual(400, bb1.get("offsetHeight"), "400px height not set correctly in bb1");
+                Y.Assert.areEqual(300, bb2.get("offsetHeight"), "300px height not set correctly in bb2");
+
+                w1.destroy(true);
+                w2.destroy(true);
+                
             }
             
         };

@@ -8,12 +8,12 @@ Provides URL-based routing using HTML5 `pushState()` or the location hash.
 **/
 
 var HistoryHash = Y.HistoryHash,
-    Lang        = Y.Lang,
     QS          = Y.QueryString,
     YArray      = Y.Array,
 
     win      = Y.config.win,
     location = win.location,
+    origin   = location.origin || (location.protocol + '//' + location.host),
 
     // We have to queue up pushState calls to avoid race conditions, since the
     // popstate event doesn't actually provide any info on what URL it's
@@ -33,6 +33,25 @@ var HistoryHash = Y.HistoryHash,
     @fireOnce
     **/
     EVT_READY = 'ready';
+
+// In order to work around a nasty bug in WebKit that affects iOS 5, we need to
+// listen for the pageshow event (which occurs when the page is restored from
+// the page cache) and recreate our `window` and `location` references, since
+// old references get detached even though they shouldn't be.
+//
+// Older versions of iOS bypass the page cache when an `unload` event listener
+// is attached, but not iOS 5 for some reason.
+//
+// More details at https://bugs.webkit.org/show_bug.cgi?id=34679
+if (Y.UA.ios >= 5) {
+    Y.config.win.addEventListener('pageshow', function (e) {
+        if (e.persisted) {
+            win      = Y.config.win;
+            location = win.location;
+            origin   = location.origin || (location.protocol + '//' + location.host);
+        }
+    }, false);
+}
 
 /**
 Provides URL-based routing using HTML5 `pushState()` or the location hash.
@@ -105,13 +124,13 @@ Y.Router = Y.extend(Router, Y.Base, {
          should only match a single level of a path, or `*` for splat parameters
          that should match any number of path levels.
 
-      2. Parameter name.
+      2. Parameter name, if specified, otherwise it is a wildcard match.
 
     @property _regexPathParam
     @type RegExp
     @protected
     **/
-    _regexPathParam: /([:*])([\w-]+)/g,
+    _regexPathParam: /([:*])([\w\-]+)?/g,
 
     /**
     Regex that matches and captures the query portion of a URL, minus the
@@ -124,15 +143,15 @@ Y.Router = Y.extend(Router, Y.Base, {
     _regexUrlQuery: /\?([^#]*).*$/,
 
     /**
-    Regex that matches everything before the path portion of an HTTP or HTTPS
-    URL. This will be used to strip this part of the URL from a string when we
+    Regex that matches everything before the path portion of a URL (the origin).
+    This will be used to strip this part of the URL from a string when we
     only want the path.
 
-    @property _regexUrlStrip
+    @property _regexUrlOrigin
     @type RegExp
     @protected
     **/
-    _regexUrlStrip: /^https?:\/\/[^\/]*/i,
+    _regexUrlOrigin: /^(?:[^\/#?:]+:\/\/|\/\/)[^\/]*/,
 
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function (config) {
@@ -220,12 +239,20 @@ Y.Router = Y.extend(Router, Y.Base, {
     Returns `true` if this router has at least one route that matches the
     specified URL, `false` otherwise.
 
+    This method enforces the same-origin security constraint on the specified
+    `url`; any URL which is not from the same origin as the current URL will
+    always return `false`.
+
     @method hasRoute
     @param {String} url URL to match.
     @return {Boolean} `true` if there's at least one matching route, `false`
       otherwise.
     **/
     hasRoute: function (url) {
+        if (!this._hasSameOrigin(url)) {
+            return false;
+        }
+
         return !!this.match(this.removeRoot(url)).length;
     },
 
@@ -275,7 +302,7 @@ Y.Router = Y.extend(Router, Y.Base, {
 
         // Strip out the non-path part of the URL, if any (e.g.
         // "http://foo.com"), so that we're left with just the path.
-        url = url.replace(this._regexUrlStrip, '');
+        url = url.replace(this._regexUrlOrigin, '');
 
         if (root && url.indexOf(root) === 0) {
             url = url.substring(root.length);
@@ -308,9 +335,9 @@ Y.Router = Y.extend(Router, Y.Base, {
         // New URL: http://example.com/
 
     @method replace
-    @param {String} [url] URL to set. Should be a relative URL. If this
-      router's `root` property is set, this URL must be relative to the
-      root URL. If no URL is specified, the page's current URL will be used.
+    @param {String} [url] URL to set. This URL needs to be of the same origin as
+      the current URL. This can be a URL relative to the router's `root`
+      attribute. If no URL is specified, the page's current URL will be used.
     @chainable
     @see save()
     **/
@@ -424,9 +451,9 @@ Y.Router = Y.extend(Router, Y.Base, {
         // New URL: http://example.com/
 
     @method save
-    @param {String} [url] URL to set. Should be a relative URL. If this
-      router's `root` property is set, this URL must be relative to the
-      root URL. If no URL is specified, the page's current URL will be used.
+    @param {String} [url] URL to set. This URL needs to be of the same origin as
+      the current URL. This can be a URL relative to the router's `root`
+      attribute. If no URL is specified, the page's current URL will be used.
     @chainable
     @see replace()
     **/
@@ -446,7 +473,8 @@ Y.Router = Y.extend(Router, Y.Base, {
             return false;
         }
 
-        var hash = this._getHashPath();
+        // Get the full hash in all its glory!
+        var hash = HistoryHash.getHash();
 
         if (hash && hash.charAt(0) === '/') {
             // This is an HTML5 browser and we have a hash-based path in the
@@ -576,15 +604,29 @@ Y.Router = Y.extend(Router, Y.Base, {
     },
 
     /**
-    Gets the current route path.
+    Gets the location origin (i.e., protocol, host, and port) as a URL.
+
+    @example
+        http://example.com
+
+    @method _getOrigin
+    @return {String} Location origin (i.e., protocol, host, and port).
+    @protected
+    **/
+    _getOrigin: function () {
+        return origin;
+    },
+
+    /**
+    Gets the current route path, relative to the `root` (if any).
 
     @method _getPath
     @return {String} Current route path.
     @protected
     **/
     _getPath: function () {
-        return (!this._html5 && this._getHashPath()) ||
-            this.removeRoot(location.pathname);
+        var path = (!this._html5 && this._getHashPath()) || location.pathname;
+        return this.removeRoot(path);
     },
 
     /**
@@ -627,6 +669,12 @@ Y.Router = Y.extend(Router, Y.Base, {
         }
 
         path = path.replace(this._regexPathParam, function (match, operator, key) {
+            // Only `*` operators are supported for key-less matches to allowing
+            // in-path wildcards like: '/foo/*'.
+            if (!key) {
+                return operator === '*' ? '.*' : match;
+            }
+
             keys.push(key);
             return operator === '*' ? '(.*?)' : '([^/]*)';
         });
@@ -662,8 +710,8 @@ Y.Router = Y.extend(Router, Y.Base, {
     @protected
     **/
     _getResponse: function (req) {
-        // For backcompat, the response object is a function that calls `next()`
-        // on the request object and returns the result.
+        // For backwards compatibility, the response object is a function that
+        // calls `next()` on the request object and returns the result.
         var res = function () {
             return req.next.apply(this, arguments);
         };
@@ -695,15 +743,38 @@ Y.Router = Y.extend(Router, Y.Base, {
     },
 
     /**
+    Returns `true` when the specified `url` is from the same origin as the
+    current URL; i.e., the protocol, host, and port of the URLs are the same.
+
+    All host or path relative URLs are of the same origin. A scheme-relative URL
+    is first prefixed with the current scheme before being evaluated.
+
+    @method _hasSameOrigin
+    @param {String} url URL to compare origin with the current URL.
+    @return {Boolean} Whether the URL has the same origin of the current URL.
+    @protected
+    **/
+    _hasSameOrigin: function (url) {
+        var origin = ((url && url.match(this._regexUrlOrigin)) || [])[0];
+
+        // Prepend current scheme to scheme-relative URLs.
+        if (origin && origin.indexOf('//') === 0) {
+            origin = location.protocol + origin;
+        }
+
+        return !origin || origin === this._getOrigin();
+    },
+
+    /**
     Joins the `root` URL to the specified _url_, normalizing leading/trailing
     `/` characters.
 
     @example
-        router.root = '/foo'
+        router.set('root', '/foo');
         router._joinURL('bar');  // => '/foo/bar'
         router._joinURL('/bar'); // => '/foo/bar'
 
-        router.root = '/foo/'
+        router.set('root', '/foo/');
         router._joinURL('bar');  // => '/foo/bar'
         router._joinURL('/bar'); // => '/foo/bar'
 
@@ -802,6 +873,10 @@ Y.Router = Y.extend(Router, Y.Base, {
     /**
     Saves a history entry using either `pushState()` or the location hash.
 
+    This method enforces the same-origin security constraint; attempting to save
+    a `url` that is not from the same origin as the current URL will result in
+    an error.
+
     @method _save
     @param {String} [url] URL for the history entry.
     @param {Boolean} [replace=false] If `true`, the current history entry will
@@ -811,6 +886,12 @@ Y.Router = Y.extend(Router, Y.Base, {
     **/
     _save: function (url, replace) {
         var urlIsString = typeof url === 'string';
+
+        // Perform same-origin check on the specified URL.
+        if (urlIsString && !this._hasSameOrigin(url)) {
+            Y.error('Security error: The new URL must be of the same origin as the current URL.');
+            return this;
+        }
 
         // Force _ready to true to ensure that the history change is handled
         // even if _save is called before the `ready` event fires.
@@ -823,7 +904,15 @@ Y.Router = Y.extend(Router, Y.Base, {
         } else {
             // Remove the root from the URL before it's set as the hash.
             urlIsString && (url = this.removeRoot(url));
-            HistoryHash[replace ? 'replaceHash' : 'setHash'](url);
+
+            // The `hashchange` event only fires when the new hash is actually
+            // different. This makes sure we'll always dequeue and dispatch,
+            // mimicking the HTML5 behavior.
+            if (url === HistoryHash.getHash()) {
+                this._dispatch(this._getPath(), this._getURL());
+            } else {
+                HistoryHash[replace ? 'replaceHash' : 'setHash'](url);
+            }
         }
 
         return this;

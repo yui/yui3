@@ -21,7 +21,7 @@
 
 <p>This seed file contains the core items you need to use YUI core modules. It also includes the capability to fetch our dynamic script loader. <em>This seed was our old `yui.js`</em></p>
 
-<h2 id="why">Why the namespace change?</h2>
+<!--h2 id="why">Why the namespace change?</h2>
 <ol>
     <li><strong>Backward Compatibility</strong>: With the change from <code>YAHOO</code> to <code>YUI</code> we are guaranteed not to break backward compatibility. This allows you to use both YUI 2 and YUI 3 on
     the same page without fear of breaking existing code.</li>
@@ -35,7 +35,7 @@
     <li><strong>More Dynamic</strong>: With Loader built into the core, loading files when you need them just got easier.</li>
     <li><strong>Selector Powered</strong>: Using Selector as its base for node handling, you now get more power and ease of use for free.</li>
     <li><strong>Event Normalization</strong>: With the new Event Facade, you get maximum event normalization for cleaner cross browser code.</li>
-</ol>
+</ol-->
 
 
 <h2 id="core">YUI Core</h2>
@@ -111,7 +111,7 @@ This is required if you do not have all dependencies on the page.</p>
 <p>The callback method has one argument passed, the YUI instance that we are dealing with. In this function you know that all the modules have been loaded and it's ok to use them.</p>
 
 ```
-YUI().use('animation', function(Y) {
+YUI().use('anim', function(Y) {
     // Y.Anim is available
 });
 ```
@@ -138,6 +138,87 @@ YUI().use('*', function(Y) {
    access to any of the requested modules if anything has to be dynamically loaded.
    You can prevent YUI from automatically trying to obtain missing dependencies by setting the
    YUI config <code>bootstrap</code> to false.</p>
+
+
+<h2 id="config">Configuring the YUI instance</h2>
+
+There are 4 primary ways to configure YUI and each have their own unique benefits. The YUI object
+is configured via properties on a simple Javascript Object.
+
+    ```
+    {
+        debug: true,
+        combine: true,
+        comboBase: 'http://mydomain.com/combo?',
+        root: 'yui3/'
+    }
+    ```
+
+
+A complete list of configuration options are
+<a href="/yui/docs/api/classes/config.html">available in the API Docs</a>.
+
+<h3>YUI_config</h3>
+
+Setting options on the global variable `YUI_config`, the implementor can configure every YUI
+instance on the page <strong>before</strong> YUI is loaded onto the page.
+
+    ```
+    YUI_config = {
+        debug: true,
+        combine: true,
+        comboBase: 'http://mydomain.com/combo?',
+        root: 'yui3/'
+    };
+    ```
+
+<h3>YUI.GlobalConfig</h3>
+
+Setting options to the `YUI.GlobalConfig` object, the implementor can configure every YUI
+instance on the page <strong>after</strong> YUI is loaded onto the page.
+    
+    ```
+    YUI.GlobalConfig = {
+        debug: true,
+        combine: true,
+        comboBase: 'http://mydomain.com/combo?',
+        root: 'yui3/'
+    };
+    ```
+
+<h3>YUI.applyConfig</h3>
+
+The global `YUI.applyConfig()` method allows the implementor to configure every YUI instance
+on the page, but it <strong>merges</strong> configs passed to it. This can be useful if your
+module is loaded onto the page in a <em>mashup</em>. The other configuration options do not
+merge, they are simply an object.
+
+    ```
+    YUI.applyConfig({
+        debug: true,
+        combine: true
+    });
+    YUI.applyConfig({
+        comboBase: 'http://mydomain.com/combo?',
+        root: 'yui3/'
+    });
+    ```
+
+<h3>Instance Config</h3>
+
+The instance level configuration is the most common configuration option. You simply
+pass your configuration object directly to the `YUI` constructor:
+
+    ```
+    YUI({
+        debug: true,
+        combine: true,
+        comboBase: 'http://mydomain.com/combo?',
+        root: 'yui3/'
+    }).use('node', function(Y) {
+        //
+    });
+    ```
 
 
 <h2 id="modulelist">Module List</h2>
