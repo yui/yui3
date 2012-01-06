@@ -38,7 +38,7 @@ Object.keys(data.modules).forEach(function(i) {
     var v = data.modules[i];
 
     var d = v.description || '';
-    
+
     d = d.split('\n')[0].replace('<p>', '').replace('</p>', '');
 
     if (alias_data[v.name] && alias_data[v.name].use) {

@@ -91,7 +91,8 @@
         },
         "modules": {
             "displayName": "YUI Modules List",
-            "hideTableOfContents": true
+            "hideTableOfContents": true,
+            "hideExamples": true
         },
         "loader": {
             "displayName": "YUI Loader"
@@ -100,5 +101,5 @@
             "displayName": "Y.Lang",
             "hideTableOfContents": true
         }
-    }   
+    }
 }
