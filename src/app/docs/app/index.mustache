@@ -126,7 +126,7 @@ In the following example, we are including both the `app-base` and `app-transiti
 ```
 YUI().use('app-base', 'app-transitions', function (Y) {
     // This will create two YUI Apps, `basicApp` will not have transitions,
-    // but `fancyApp` will have transitions support included and turn them on.
+    // but `fancyApp` will have transitions support included and turn itself on.
     var basicApp = new Y.App.Base(),
         fancyApp = new Y.App({transitions: true});
 });
@@ -537,11 +537,125 @@ Before you subclass `Y.App`, you should refer to <a href="{{apiDocs}}/modules/ap
 }}
 
 <h3>Rendering an App</h3>
-{{! TODO:
 
-  * Note about View's `container` attribute, and App's CSS classes.
+<p>
+App inherits both its `container` attribute and `render()` method from View. Unlike <a href="../view/index.html#rendering-a-view">View's empty `render()` implementation</a>, App provides a default implementation which appends the `activeView` (if there is one) to the `viewContainer` node which itself is appended to the `container` node.
+</p>
 
-}}
+<p>
+The basic usage of your app's `render()` method is to call it at least once, usually after you instantiate your app, to ensure the proper DOM structure is setup to handle rendering the app's [[#View Management|views]].
+</p>
+
+```
+var app = new Y.App();
+app.render();
+```
+
+<p>
+This results in the HTML of the page looking like this:
+</p>
+
+```
+<body class="yui3-app">
+    ...
+    <div class="yui3-app-views"></div>
+</body>
+```
+
+<p>
+By default, an app's `container` node will be the `<body>` element and its `viewContainer` node will be a new `<div>`.
+</p>
+
+<p>
+<strong>Note:</strong> The `"yui3-app"` and `"yui3-app-views"` CSS classes are added to the `container` and `viewContainer` respectively — this happens during initialization, when the app's `create()` and `createViewContainer()` methods are called.
+</p>
+
+<h4>Specifying Container Nodes</h4>
+
+<p>
+When constructing a new App instance you can specify values for the app's `container` and `viewContainer` attributes, and they can even reference the same node.
+</p>
+
+```
+var app = new Y.App({
+    container    : '#wrapper',
+    viewContainer: '#wrapper'
+});
+
+app.render();
+```
+
+<p>
+Assuming that a `<div id="wrapper">` node already exists on the page, this uses a CSS selector string to reference the node, assigns it to both containers, and results in the following HTML:
+</p>
+
+```
+<div id="wrapper" class="yui3-app yui3-app-views">
+    ...
+</div>
+```
+
+<p>
+If you specify a `container` that is not already within the markup of the page, you'll need to manually append it to an element that is:
+</p>
+
+```
+var app = new Y.App({
+    container: Y.Node.create('<div id="fancy-app" />')
+});
+
+app.render().get('container').appendTo('body');
+```
+
+<p>
+This results in the HTML of the page looking like this:
+</p>
+
+```
+<body>
+    ...
+    <div id="fancy-app" class="yui3-app">
+        <div class="yui3-app-views"></div>
+    </div>
+</body>
+```
+
+<p>
+Refer to App's API Docs for more details about <a href="{{apiDocs}}/classes/App.html#attr_container">`container`</a> and <a href="/classes/App.html#attr_viewContainer">`viewContainer`</a> attributes.
+</p>
+
+<h4>Overriding `render()`</h4>
+
+<p>
+You may override the `render()` method to customize how the app renders itself, particularly if you are creating an App subclass.
+</p>
+
+<p>
+<strong>Note:</strong> You should expect that the `viewContainer`'s contents will be modified by the app for the purpose of rendering the `activeView` when it changes; and ideally your `render()` method should also return `this` at the end to allow chaining, but that's up to you.
+</p>
+
+<p>
+The following provides a templates for how you could subclass `Y.App` and implement a custom `render()` method while still preserving its default behavior:
+</p>
+
+```
+Y.CustomApp = Y.Base.create('customApp', Y.App, [], {
+    render: function () {
+        // This calls the superclass' (Y.App) implementation of the `render()`
+        // method to preserve the default behavior.
+        Y.CustomApp.superclass.render.apply(this, arguments);
+
+        // Provide your custom rendering logic here.
+
+        // Returns this `Y.CustomApp` instance to allow for chaining.
+        return this;
+    }
+});
+```
+
+<p>
+Refer to App's API Docs for more details about the <a href="{{apiDocs}}/classes/App.html#method_render">`render()`</a> method.
+</p>
 
 <h3>View Management</h3>
 
@@ -556,7 +670,7 @@ The `views` property of an App class allows you to specify a mapping of view-nam
 </p>
 
 <p>
-You can setup this views mapping on both App subclasses and instances. Every App instance will receive its own copy of a `views` object, any `views` metadata defined at the class-level will be used as defaults and merged with any `views` specificed during instantiation time.
+You can setup this views mapping on both App subclasses and instances. Every App instance will receive its own copy of a `views` object, any `views` metadata defined at the class-level will be used as defaults and merged with any `views` specified during instantiation time.
 </p>
 
 <p>
@@ -652,6 +766,7 @@ This results in the HTML of the page looking like this:
 
 ```
 <body class="yui3-app">
+    ...
     <div class="yui3-app-views">
         <div>Hello World!</div>
     </div>
@@ -714,6 +829,7 @@ This results in the URL being updated to either `"/eric"` or `"/#/eric"` dependi
 
 ```
 <body class="yui3-app">
+    ...
     <div class="yui3-app-views">
         <div>Hello eric!</div>
     </div>
@@ -723,7 +839,7 @@ This results in the URL being updated to either `"/eric"` or `"/#/eric"` dependi
 
 
 <p>
-Refer to <a href="{{apiDocs}}/modules/app-base.html">App's API docs</a> for more details about the <a href="{{apiDocs}}/classes/App.Base.html#method_showView">`showView()` method</a>.
+Refer to App's API docs</a> for more details about the <a href="{{apiDocs}}/classes/App.html#method_showView">`showView()` method</a>.
 </p>
 
 <h3>Navigating Between "Pages"</h3>
