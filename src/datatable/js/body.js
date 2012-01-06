@@ -555,9 +555,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     **/
     _createRowHTML: function (model, index) {
         var data    = model.getAttrs(),
-            // To prevent formatters from leaking changes when more than one
-            // column refer to the same key
-            values  = YObject(data),
+            values  = {},
             source  = this.source || this,
             columns = this.columns,
             i, len, col, token, value, formatterData;
@@ -599,9 +597,8 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                 }
             }
 
-            if ((value === undefined || value === '') &&
-                col.emptyCellValue) {
-                value = col.emptyCellValue;
+            if ((value === undefined || value === '')) {
+                value = col.emptyCellValue || '';
             }
 
             values[token] = col.allowHTML ? value : htmlEscape(value);
