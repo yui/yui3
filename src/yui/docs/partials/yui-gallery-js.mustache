@@ -1,4 +1,4 @@
-YUI().use('node', 'gallery-bitly', function(Y) {
+YUI().use('event-key', 'node', 'gallery-bitly', function(Y) {
     /*
         To use the bit.ly module, you must have a bit.ly username and apiKey.
         If you do not have an apiKey, sign up for a bitly account and go to 
@@ -8,6 +8,8 @@ YUI().use('node', 'gallery-bitly', function(Y) {
         username: username,
         key: key
     }),
+    exp = Y.one('#expand'),
+    short = Y.one('#shorten'),
     createElm = function(par, url) {
         var item = '';
         if (par.one('em')) {
@@ -18,25 +20,47 @@ YUI().use('node', 'gallery-bitly', function(Y) {
         }
         item.set('innerHTML', '<a href="' + url + '">' + url + '</a>');
         return item;
+    },
+    shorten = function(node) {
+        bitly.shorten(short.get('value'), function(r) {
+            var par = node.get('parentNode'),
+                item = createElm(par, r.shortUrl);
+
+            exp.set('value', r.shortUrl);
+        });
+    },
+    expand = function(node) {
+        bitly.expandByURL(exp.get('value'), function(r) {
+            var par = node.get('parentNode'),
+                item = createElm(par, r.longUrl);
+
+            short.set('value', r.longUrl);
+        });
     };
     
 
     Y.on('click', function(e) {
-        bitly.shorten(Y.one('#shorten').get('value'), function(r) {
-            var par = e.target.get('parentNode'),
-                item = createElm(par, r.shortUrl);
-
-            Y.one('#expand').set('value', r.shortUrl);
-        });
+        shorten(e.target);
     }, '#do_shorten');
 
     Y.on('click', function(e) {
-        bitly.expandByURL(Y.one('#expand').get('value'), function(r) {
-            var par = e.target.get('parentNode'),
-                item = createElm(par, r.longUrl);
-
-            Y.one('#shorten').set('value', r.longUrl);
-        });
+        expand(e.target);
     }, '#do_expand');
+
+    Y.on('blur', function(e) {
+        shorten(e.target);
+    }, '#shorten');
+
+    Y.on('blur', function(e) {
+        expand(e.target);
+    }, '#expand');
+
+    short.on('key', function(e) {
+        shorten(e.target);
+    }, 'enter');
+
+    exp.on('key', function(e) {
+        expand(e.target);
+    }, 'enter');
 
 });
