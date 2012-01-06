@@ -3451,7 +3451,7 @@ YUI.Env.aliases = {
     "attribute": ["attribute-base","attribute-complex"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
-    "button": ["button-base","button-group","cssbuttons"],
+    "button": ["button-base","button-group","cssbutton"],
     "cache": ["cache-base","cache-offline","cache-plugin"],
     "collection": ["array-extras","arraylist","arraylist-add","arraylist-filter","array-invoke"],
     "controller": ["router"],
@@ -8203,7 +8203,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "use": [
             "button-base", 
             "button-group", 
-            "cssbuttons"
+            "cssbutton"
         ]
     }, 
     "button-base": {
@@ -8371,7 +8371,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "type": "css"
     }, 
-    "cssbuttons": {
+    "cssbutton": {
         "type": "css"
     }, 
     "cssfonts": {
@@ -10079,7 +10079,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'fa418b2fd0367987315e8644686ff274';
+YUI.Env[Y.version].md5 = '35cdcaa312a4820c931b28c943346e92';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

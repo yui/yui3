@@ -302,7 +302,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "use": [
             "button-base", 
             "button-group", 
-            "cssbuttons"
+            "cssbutton"
         ]
     }, 
     "button-base": {
@@ -470,7 +470,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "type": "css"
     }, 
-    "cssbuttons": {
+    "cssbutton": {
         "type": "css"
     }, 
     "cssfonts": {
@@ -2178,7 +2178,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'fa418b2fd0367987315e8644686ff274';
+YUI.Env[Y.version].md5 = '35cdcaa312a4820c931b28c943346e92';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
