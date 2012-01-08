@@ -5,33 +5,21 @@
  * @submodule datatype-date-parse
  * @for DataType.Date
  */
-var LANG = Y.Lang;
-
 Y.mix(Y.namespace("DataType.Date"), {
     /**
      * Converts data to type Date.
      *
      * @method parse
-     * @param data {String | Number} Data to convert. Values supported by the Date constructor are supported.
-     * @return {Date} A Date, or null.
+     * @param data {Date|Number|String} date object, timestamp (string or number), or string parsable by Date.parse
+     * @return {Date} a Date object or null if unable to parse
      */
     parse: function(data) {
-        var date = null;
-
-        //Convert to date
-        if(!(LANG.isDate(data))) {
-            date = new Date(data);
-        }
-        else {
-            return date;
-        }
-
+        var val = new Date(+data || data);
         // Validate
-        if(LANG.isDate(date) && (date != "Invalid Date") && !isNaN(date)) { // Workaround for bug 2527965
-            return date;
-        }
-        else {
-            Y.log("Could not convert data " + LANG.dump(date) + " to type Date", "warn", "date");
+        if (Y.Lang.isDate(val)) {
+            return val;
+        } else {
+            Y.log("Could not convert data " + Y.dump(data) + " to type Date", "warn", "date");
             return null;
         }
     }
