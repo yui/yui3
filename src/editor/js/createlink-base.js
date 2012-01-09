@@ -54,7 +54,7 @@
                 Y.log('Adding link: ' + url, 'info', 'createLinkBase');
 
                 this.get('host')._execCommand(cmd, url);
-                sel = new inst.Selection();
+                sel = new inst.EditorSelection();
                 out = sel.getSelected();
                 if (!sel.isCollapsed && out.size()) {
                     //We have a selection

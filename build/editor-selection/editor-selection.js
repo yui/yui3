@@ -1,8 +1,8 @@
-YUI.add('selection', function(Y) {
+YUI.add('editor-selection', function(Y) {
 
     /**
      * Wraps some common Selection/Range functionality into a simple object
-     * @class Selection
+     * @class EditorSelection
      * @constructor
      * @module editor
      * @submodule selection
@@ -17,7 +17,7 @@ YUI.add('selection', function(Y) {
         textContent = 'nodeValue';
     }
 
-    Y.Selection = function(domEvent) {
+    Y.EditorSelection = function(domEvent) {
         var sel, par, ieNode, nodes, rng, i;
 
         if (Y.config.win.getSelection) {
@@ -64,7 +64,7 @@ YUI.add('selection', function(Y) {
                             }
                         }
                     }
-                    this.anchorNode = this.focusNode = Y.Selection.resolve(ieNode);
+                    this.anchorNode = this.focusNode = Y.EditorSelection.resolve(ieNode);
                     
                     rng.moveToElementText(sel.parentElement());
                     var comp = sel.compareEndPoints('StartToStart', rng),
@@ -99,8 +99,8 @@ YUI.add('selection', function(Y) {
             //debugger;
         } else {
             this.isCollapsed = sel.isCollapsed;
-            this.anchorNode = Y.Selection.resolve(sel.anchorNode);
-            this.focusNode = Y.Selection.resolve(sel.focusNode);
+            this.anchorNode = Y.EditorSelection.resolve(sel.anchorNode);
+            this.focusNode = Y.EditorSelection.resolve(sel.focusNode);
             this.anchorOffset = sel.anchorOffset;
             this.focusOffset = sel.focusOffset;
             
@@ -123,14 +123,14 @@ YUI.add('selection', function(Y) {
     * @static
     * @method removeFontFamily
     */
-    Y.Selection.removeFontFamily = function(n) {
+    Y.EditorSelection.removeFontFamily = function(n) {
         n.removeAttribute('face');
         var s = n.getAttribute('style').toLowerCase();
         if (s === '' || (s == 'font-family: ')) {
             n.removeAttribute('style');
         }
-        if (s.match(Y.Selection.REG_FONTFAMILY)) {
-            s = s.replace(Y.Selection.REG_FONTFAMILY, '');
+        if (s.match(Y.EditorSelection.REG_FONTFAMILY)) {
+            s = s.replace(Y.EditorSelection.REG_FONTFAMILY, '');
             n.setAttribute('style', s);
         }
     };
@@ -142,10 +142,10 @@ YUI.add('selection', function(Y) {
     * @static
     * @method filter
     */
-    Y.Selection.filter = function(blocks) {
+    Y.EditorSelection.filter = function(blocks) {
         var startTime = (new Date()).getTime();
 
-        var nodes = Y.all(Y.Selection.ALL),
+        var nodes = Y.all(Y.EditorSelection.ALL),
             baseNodes = Y.all('strong,em'),
             doc = Y.config.doc, hrs,
             classNames = {}, cssString = '',
@@ -158,7 +158,7 @@ YUI.add('selection', function(Y) {
                 classNames['.' + n._yuid] = raw.style[FONT_FAMILY];
                 n.addClass(n._yuid);
 
-                Y.Selection.removeFontFamily(raw);
+                Y.EditorSelection.removeFontFamily(raw);
             }
             /*
             if (n.getStyle(FONT_FAMILY)) {
@@ -219,7 +219,7 @@ YUI.add('selection', function(Y) {
             if (t === 'strong') {
                 newTag = 'b';
             }
-            Y.Selection.prototype._swap(baseNodes.item(k), newTag);
+            Y.EditorSelection.prototype._swap(baseNodes.item(k), newTag);
         });
 
         //Filter out all the empty UL/OL's
@@ -232,7 +232,7 @@ YUI.add('selection', function(Y) {
         });
         
         if (blocks) {
-            Y.Selection.filterBlocks();
+            Y.EditorSelection.filterBlocks();
         }
         var endTime = (new Date()).getTime();
     };
@@ -242,7 +242,7 @@ YUI.add('selection', function(Y) {
     * @static
     * @method filterBlocks
     */
-    Y.Selection.filterBlocks = function() {
+    Y.EditorSelection.filterBlocks = function() {
         var startTime = (new Date()).getTime();
         var childs = Y.config.doc.body.childNodes, i, node, wrapped = false, doit = true,
             sel, single, br, divs, spans, c, s;
@@ -250,11 +250,11 @@ YUI.add('selection', function(Y) {
         if (childs) {
             for (i = 0; i < childs.length; i++) {
                 node = Y.one(childs[i]);
-                if (!node.test(Y.Selection.BLOCKS)) {
+                if (!node.test(Y.EditorSelection.BLOCKS)) {
                     doit = true;
                     if (childs[i].nodeType == 3) {
-                        c = childs[i][textContent].match(Y.Selection.REG_CHAR);
-                        s = childs[i][textContent].match(Y.Selection.REG_NON);
+                        c = childs[i][textContent].match(Y.EditorSelection.REG_CHAR);
+                        s = childs[i][textContent].match(Y.EditorSelection.REG_NON);
                         if (c === null && s) {
                             doit = false;
                             
@@ -267,13 +267,13 @@ YUI.add('selection', function(Y) {
                         wrapped.push(childs[i]);
                     }
                 } else {
-                    wrapped = Y.Selection._wrapBlock(wrapped);
+                    wrapped = Y.EditorSelection._wrapBlock(wrapped);
                 }
             }
-            wrapped = Y.Selection._wrapBlock(wrapped);
+            wrapped = Y.EditorSelection._wrapBlock(wrapped);
         }
 
-        single = Y.all(Y.Selection.DEFAULT_BLOCK_TAG);
+        single = Y.all(Y.EditorSelection.DEFAULT_BLOCK_TAG);
         if (single.size() === 1) {
             br = single.item(0).all('br');
             if (br.size() === 1) {
@@ -282,8 +282,8 @@ YUI.add('selection', function(Y) {
                 }
                 var html = single.item(0).get('innerHTML');
                 if (html === '' || html === ' ') {
-                    single.set('innerHTML', Y.Selection.CURSOR);
-                    sel = new Y.Selection();
+                    single.set('innerHTML', Y.EditorSelection.CURSOR);
+                    sel = new Y.EditorSelection();
                     sel.focusCursor(true, true);
                 }
                 if (br.item(0).test('.yui-cursor') && Y.UA.ie) {
@@ -335,28 +335,28 @@ YUI.add('selection', function(Y) {
     * @static
     * @property REG_FONTFAMILY
     */   
-    Y.Selection.REG_FONTFAMILY = /font-family: ;/;
+    Y.EditorSelection.REG_FONTFAMILY = /font-family: ;/;
 
     /**
     * Regular Expression to determine if a string has a character in it
     * @static
     * @property REG_CHAR
     */   
-    Y.Selection.REG_CHAR = /[a-zA-Z-0-9_!@#\$%\^&*\(\)-=_+\[\]\\{}|;':",.\/<>\?]/gi;
+    Y.EditorSelection.REG_CHAR = /[a-zA-Z-0-9_!@#\$%\^&*\(\)-=_+\[\]\\{}|;':",.\/<>\?]/gi;
 
     /**
     * Regular Expression to determine if a string has a non-character in it
     * @static
     * @property REG_NON
     */
-    Y.Selection.REG_NON = /[\s|\n|\t]/gi;
+    Y.EditorSelection.REG_NON = /[\s|\n|\t]/gi;
 
     /**
     * Regular Expression to remove all HTML from a string
     * @static
     * @property REG_NOHTML
     */
-    Y.Selection.REG_NOHTML = /<\S[^><]*>/g;
+    Y.EditorSelection.REG_NOHTML = /<\S[^><]*>/g;
 
 
     /**
@@ -365,9 +365,9 @@ YUI.add('selection', function(Y) {
     * @private
     * @method _wrapBlock
     */
-    Y.Selection._wrapBlock = function(wrapped) {
+    Y.EditorSelection._wrapBlock = function(wrapped) {
         if (wrapped) {
-            var newChild = Y.Node.create('<' + Y.Selection.DEFAULT_BLOCK_TAG + '></' + Y.Selection.DEFAULT_BLOCK_TAG + '>'),
+            var newChild = Y.Node.create('<' + Y.EditorSelection.DEFAULT_BLOCK_TAG + '></' + Y.EditorSelection.DEFAULT_BLOCK_TAG + '>'),
                 firstChild = Y.one(wrapped[0]), i;
 
             for (i = 1; i < wrapped.length; i++) {
@@ -385,7 +385,7 @@ YUI.add('selection', function(Y) {
     * @method unfilter
     * @return {String} The filtered HTML
     */
-    Y.Selection.unfilter = function() {
+    Y.EditorSelection.unfilter = function() {
         var nodes = Y.all('body [class]'),
             html = '', nons, ids,
             body = Y.one('body');
@@ -444,7 +444,7 @@ YUI.add('selection', function(Y) {
     * @param {HTMLElement} n The HTMLElement to resolve. Might be a TextNode, gives parentNode.
     * @return {Node} The Resolved node
     */
-    Y.Selection.resolve = function(n) {
+    Y.EditorSelection.resolve = function(n) {
         if (n && n.nodeType === 3) {
             //Adding a try/catch here because in rare occasions IE will
             //Throw a error accessing the parentNode of a stranded text node.
@@ -465,65 +465,65 @@ YUI.add('selection', function(Y) {
     * @param {Node} node The Node instance to remove the HTML from
     * @return {String} The string of text
     */
-    Y.Selection.getText = function(node) {
-        var txt = node.get('innerHTML').replace(Y.Selection.REG_NOHTML, '');
+    Y.EditorSelection.getText = function(node) {
+        var txt = node.get('innerHTML').replace(Y.EditorSelection.REG_NOHTML, '');
         //Clean out the cursor subs to see if the Node is empty
         txt = txt.replace('<span><br></span>', '').replace('<br>', '');
         return txt;
     };
 
-    //Y.Selection.DEFAULT_BLOCK_TAG = 'div';
-    Y.Selection.DEFAULT_BLOCK_TAG = 'p';
+    //Y.EditorSelection.DEFAULT_BLOCK_TAG = 'div';
+    Y.EditorSelection.DEFAULT_BLOCK_TAG = 'p';
 
     /**
     * The selector to use when looking for Nodes to cache the value of: [style],font[face]
     * @static
     * @property ALL
     */
-    Y.Selection.ALL = '[style],font[face]';
+    Y.EditorSelection.ALL = '[style],font[face]';
 
     /**
     * The selector to use when looking for block level items.
     * @static
     * @property BLOCKS
     */
-    Y.Selection.BLOCKS = 'p,div,ul,ol,table,style';
+    Y.EditorSelection.BLOCKS = 'p,div,ul,ol,table,style';
     /**
     * The temporary fontname applied to a selection to retrieve their values: yui-tmp
     * @static
     * @property TMP
     */
-    Y.Selection.TMP = 'yui-tmp';
+    Y.EditorSelection.TMP = 'yui-tmp';
     /**
     * The default tag to use when creating elements: span
     * @static
     * @property DEFAULT_TAG
     */
-    Y.Selection.DEFAULT_TAG = 'span';
+    Y.EditorSelection.DEFAULT_TAG = 'span';
 
     /**
     * The id of the outer cursor wrapper
     * @static
     * @property DEFAULT_TAG
     */
-    Y.Selection.CURID = 'yui-cursor';
+    Y.EditorSelection.CURID = 'yui-cursor';
 
     /**
     * The id used to wrap the inner space of the cursor position
     * @static
     * @property CUR_WRAPID
     */
-    Y.Selection.CUR_WRAPID = 'yui-cursor-wrapper';
+    Y.EditorSelection.CUR_WRAPID = 'yui-cursor-wrapper';
 
     /**
     * The default HTML used to focus the cursor..
     * @static
     * @property CURSOR
     */
-    Y.Selection.CURSOR = '<span><br class="yui-cursor"></span>';
+    Y.EditorSelection.CURSOR = '<span><br class="yui-cursor"></span>';
 
-    Y.Selection.hasCursor = function() {
-        var cur = Y.all('#' + Y.Selection.CUR_WRAPID);
+    Y.EditorSelection.hasCursor = function() {
+        var cur = Y.all('#' + Y.EditorSelection.CUR_WRAPID);
         return cur.size();
     };
 
@@ -532,7 +532,7 @@ YUI.add('selection', function(Y) {
     * @static
     * @method cleanCursor
     */
-    Y.Selection.cleanCursor = function() {
+    Y.EditorSelection.cleanCursor = function() {
         var cur, sel = 'br.yui-cursor';
         cur = Y.all(sel);
         if (cur.size()) {
@@ -541,7 +541,7 @@ YUI.add('selection', function(Y) {
                 if (c.size()) {
                     b.remove();
                 } else {
-                    html = Y.Selection.getText(c.item(0));
+                    html = Y.EditorSelection.getText(c.item(0));
                     if (html !== '') {
                         b.remove();
                     }
@@ -549,7 +549,7 @@ YUI.add('selection', function(Y) {
             });
         }
         /*
-        var cur = Y.all('#' + Y.Selection.CUR_WRAPID);
+        var cur = Y.all('#' + Y.EditorSelection.CUR_WRAPID);
         if (cur.size()) {
             cur.each(function(c) {
                 var html = c.get('innerHTML');
@@ -563,7 +563,7 @@ YUI.add('selection', function(Y) {
         */
     };
 
-    Y.Selection.prototype = {
+    Y.EditorSelection.prototype = {
         /**
         * Range text value
         * @property text
@@ -655,15 +655,15 @@ YUI.add('selection', function(Y) {
         * @return {NodeList} A NodeList of all items in the selection.
         */
         getSelected: function() {
-            Y.Selection.filter();
-            Y.config.doc.execCommand('fontname', null, Y.Selection.TMP);
-            var nodes = Y.all(Y.Selection.ALL),
+            Y.EditorSelection.filter();
+            Y.config.doc.execCommand('fontname', null, Y.EditorSelection.TMP);
+            var nodes = Y.all(Y.EditorSelection.ALL),
                 items = [];
             
             nodes.each(function(n, k) {
-                if (n.getStyle(FONT_FAMILY) ==  Y.Selection.TMP) {
+                if (n.getStyle(FONT_FAMILY) ==  Y.EditorSelection.TMP) {
                     n.setStyle(FONT_FAMILY, '');
-                    Y.Selection.removeFontFamily(n);
+                    Y.EditorSelection.removeFontFamily(n);
                     if (!n.test('body')) {
                         items.push(Y.Node.getDOMNode(nodes.item(k)));
                     }
@@ -690,7 +690,7 @@ YUI.add('selection', function(Y) {
         * @return {Node} The inserted Node.
         */
         insertAtCursor: function(html, node, offset, collapse) {
-            var cur = Y.Node.create('<' + Y.Selection.DEFAULT_TAG + ' class="yui-non"></' + Y.Selection.DEFAULT_TAG + '>'),
+            var cur = Y.Node.create('<' + Y.EditorSelection.DEFAULT_TAG + ' class="yui-non"></' + Y.EditorSelection.DEFAULT_TAG + '>'),
                 inHTML, txt, txt2, newNode, range = this.createRange(), b;
 
             if (node && node.test('body')) {
@@ -796,7 +796,7 @@ YUI.add('selection', function(Y) {
         * @return {NodeList} A NodeList of all items in the selection.
         */
         wrapContent: function(tag) {
-            tag = (tag) ? tag : Y.Selection.DEFAULT_TAG;
+            tag = (tag) ? tag : Y.EditorSelection.DEFAULT_TAG;
 
             if (!this.isCollapsed) {
                 var items = this.getSelected(),
@@ -869,7 +869,7 @@ YUI.add('selection', function(Y) {
         * Destroy the range.
         * @method remove
         * @chainable
-        * @return {Selection}
+        * @return {EditorSelection}
         */
         remove: function() {
             this._selection.removeAllRanges();
@@ -893,7 +893,7 @@ YUI.add('selection', function(Y) {
         * @param {Node} node The node to select
         * @param {Boolean} collapse Should the range be collapsed after insertion. default: false
         * @chainable
-        * @return {Selection}
+        * @return {EditorSelection}
         */
         selectNode: function(node, collapse, end) {
             if (!node) {
@@ -934,7 +934,7 @@ YUI.add('selection', function(Y) {
         */
         setCursor: function() {
             this.removeCursor(false);
-            return this.insertContent(Y.Selection.CURSOR);
+            return this.insertContent(Y.EditorSelection.CURSOR);
         },
         /**
         * Get the placeholder in the DOM at the current cursor position.
@@ -942,7 +942,7 @@ YUI.add('selection', function(Y) {
         * @return {Node}
         */
         getCursor: function() {
-            return Y.all('#' + Y.Selection.CURID);
+            return Y.all('#' + Y.EditorSelection.CURID);
         },
         /**
         * Remove the cursor placeholder from the DOM.
@@ -987,9 +987,13 @@ YUI.add('selection', function(Y) {
         * @return {String}
         */
         toString: function() {
-            return 'Selection Object';
+            return 'EditorSelection Object';
         }
     };
+
+    //TODO Remove this alias in 3.6.0
+    Y.Selection = Y.EditorSelection;
+
 
 
 }, '@VERSION@' ,{skinnable:false, requires:['node']});
