@@ -184,7 +184,7 @@ YUI({
             Y.Assert.isInstanceOf(Y.Plugin.EditorBidi, editor.editorBidi, 'EditorBidi plugin failed to load');
             editor.focus(function() {
                 var inst = editor.getInstance();
-                var sel = new inst.Selection();
+                var sel = new inst.EditorSelection();
                 var b = inst.one('b');
                 Y.Assert.areEqual(b.get('parentNode').get('dir'), '', 'Default direction');
                 sel.selectNode(b, true, true);
