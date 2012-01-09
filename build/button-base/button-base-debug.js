@@ -353,4 +353,4 @@ Button.prototype._onMouseDown = function(e){
 Y.Button = Button;
 
 
-}, '@VERSION@' ,{requires:['yui-base', 'attribute', 'node', 'array-extras']});
+}, '@VERSION@' ,{requires:['base', 'classnamemanager', 'node']});

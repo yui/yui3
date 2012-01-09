@@ -17,6 +17,8 @@ var getClassName = Y.ClassNameManager.getClassName,
 
     FLICK = EV_SCROLL_FLICK,
     DRAG = "drag",
+    
+    MOUSEWHEEL_ENABLED = true,
 
     UI = 'ui',
     
@@ -122,6 +124,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         sv._bindDrag(sv.get(DRAG));
         sv._bindFlick(sv.get(FLICK));
+        sv._bindMousewheel(MOUSEWHEEL_ENABLED);
         sv._bindAttrs();
 
         // IE SELECT HACK. See if we can do this non-natively and in the gesture for a future release.
@@ -195,6 +198,15 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             cb.detach('flick|*');
         }
     },
+    
+    _bindMousewheel : function(mousewheel) {
+        var cb = this._cb;
+        if (mousewheel) {
+            cb.on("mousewheel", Y.bind(this._mousewheel, this), mousewheel);
+        } else {
+            cb.detach('mousewheel|*');
+        }
+    },
 
     /**
      * syncUI implementation.
@@ -219,7 +231,17 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @param easing {String} An easing equation if duration is set
      */
     scrollTo: function(x, y, duration, easing) {
-
+        
+        // TODO: Figure out a better way to detect mousewheel events
+        if (easing === undefined) {
+            if ( y < this._minScrollY) {
+                y = this._minScrollY;
+            }
+            else if ( y > this._maxScrollY) {
+                y = this._maxScrollY;
+            }
+        }
+        
         if (!this._cDisabled) {
             var cb = this._cb,
                 xSet = (x !== null),
@@ -813,6 +835,27 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     
             sv.fire(EV_SCROLL_FLICK);
         }
+    },
+
+    _mousewheel: function(e) {
+        var scrollY = this.get('scrollY'),
+            contentBox = this._cb,
+            scrollOffset = 10, // 10px
+            scrollToY = scrollY - (e.wheelDelta * scrollOffset);
+
+        this.scrollTo(0, scrollToY);
+        
+        // if we have scrollbars plugin, update & set the flash timer on the scrollbar
+        if (this.scrollbars) {
+            // TODO: The scrollbars should handle this themselves
+            this.scrollbars._update();
+            this.scrollbars.flash();
+            // or just this
+            // this.scrollbars._hostDimensionsChange();
+        }
+
+        // prevent browser default behavior on mouse scroll
+        e.preventDefault();
     },
 
     /**

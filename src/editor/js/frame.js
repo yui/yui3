@@ -333,8 +333,8 @@
                 //TODO Circle around and deal with CSS loading...
                 args.push(Y.bind(function() {
                     Y.log('Callback from final internal use call', 'info', 'frame');
-                    if (inst.Selection) {
-                        inst.Selection.DEFAULT_BLOCK_TAG = this.get('defaultblock');
+                    if (inst.EditorSelection) {
+                        inst.EditorSelection.DEFAULT_BLOCK_TAG = this.get('defaultblock');
                     }
                     //Moved to here so that the iframe is ready before allowing editing..
                     if (this.get('designMode')) {
@@ -645,7 +645,7 @@
         */
         _handleFocus: function() {
             var inst = this.getInstance(),
-                sel = new inst.Selection();
+                sel = new inst.EditorSelection();
 
             if (sel.anchorNode) {
                 Y.log('_handleFocus being called..', 'info', 'frame');

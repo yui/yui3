@@ -8,14 +8,29 @@
 
 <h1>Loading..</h1>
 
-<!--script src="http://127.0.0.1:3000/"></script-->
-<script src="http://yui.yahooapis.com/3.5.0pr1/build/yui/yui.js"></script>
-<script src="./bug_2531587-patch.js"></script>
+<!--script src="http://127.0.0.1:3000/?filter=debug"></script-->
+<script src="http://yui.yahooapis.com/3.5.0pr1/build/yui/yui-debug.js"></script>
+<script src="../../build/loader/loader-debug.js"></script>
 <script>
 var config = {
+    onFailure: function() {
+        console.log('FAILURE OUTSIDE: ', arguments);
+    },
+    onSuccess: function() {
+        console.log('SUCCESS OUTSIDE: ', arguments);
+    },
+    onEnd: function() {
+        console.log('END OUTSIDE: ', arguments);
+    },
     combine: true,    // <---- CHANGE THIS TO FALSE AND LIBRARY WILL LOAD
+
+    modules: {
+        xlogin: {
+            fullpath: './app/js/xlogin'
+        }
+    }/*,
     groups: {
-        js: { 
+        js: {
             base: 'http://jsfiddle.net/js/',            
             modules: {
                 'test-load': {
@@ -24,17 +39,14 @@ var config = {
             }
         }
     }
+    */
 };
 
-YUI(config).use('node','test-load', function(Y) {
+//config.combine = false;
+
+YUI(config).use('xlogin', function(Y) {
     
-    if (typeof JSLINT == 'undefined') {
-        Y.one('h1').setContent('library not loaded');
-    } 
-    else {
-        Y.one('h1').setContent('library loaded');
-    }
-    
+    console.log('Callback executed..');
     
 });
 </script>

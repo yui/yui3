@@ -991,8 +991,10 @@ with any configuration info required for the module.
             loader = getLoader(Y);
             loader.require(args);
             loader.ignoreRegistered = true;
+            loader._boot = true;
             loader.calculate(null, (fetchCSS) ? null : 'js');
             args = loader.sorted;
+            loader._boot = false;
         }
 
         // process each requirement and any additional requirements
@@ -1119,18 +1121,18 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
     dump: function (o) { return ''+o; },
 
     /**
-     * Report an error.  The reporting mechanism is controled by
+     * Report an error.  The reporting mechanism is controlled by
      * the `throwFail` configuration attribute.  If throwFail is
      * not specified, the message is written to the Logger, otherwise
      * a JS error is thrown
      * @method error
      * @param msg {String} the error message.
      * @param e {Error|String} Optional JS error that was caught, or an error string.
-     * @param data Optional additional info
+     * @param src Optional additional info (passed to `Y.config.errorFn` and `Y.message`)
      * and `throwFail` is specified, this error will be re-thrown.
      * @return {YUI} this YUI instance.
      */
-    error: function(msg, e, data) {
+    error: function(msg, e, src) {
         //TODO Add check for window.onerror here
 
         var Y = this, ret;
@@ -1142,7 +1144,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
         if (Y.config.throwFail && !ret) {
             throw (e || new Error(msg));
         } else {
-            Y.message(msg, 'error'); // don't scrub this one
+            Y.message(msg, 'error', ''+src); // don't scrub this one
         }
 
         return Y;
@@ -1216,6 +1218,8 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
      * memory leak in IE when the item tested is
      * window/document
      * @method instanceOf
+     * @param o {Object} The object to check.
+     * @param type {Object} The class to check against.
      * @since 3.3.0
      */
 };
@@ -1641,6 +1645,12 @@ overwriting other scripts configs.
  *          yui2: {
  *              // specify whether or not this group has a combo service
  *              combine: true,
+ *
+ *              // The comboSeperator to use with this group's combo handler
+ *              comboSep: ';',
+ *
+ *              // The maxURLLength for this server
+ *              maxURLLength: 500,
  * 
  *              // the base path for non-combo paths
  *              base: 'http://yui.yahooapis.com/2.8.0r4/build/',
@@ -3443,7 +3453,7 @@ YUI.Env.aliases = {
     "attribute": ["attribute-base","attribute-complex"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
-    "button": ["button-base","button-group","cssbuttons"],
+    "button": ["button-base","button-group","cssbutton"],
     "cache": ["cache-base","cache-offline","cache-plugin"],
     "collection": ["array-extras","arraylist","arraylist-add","arraylist-filter","array-invoke"],
     "controller": ["router"],
@@ -3456,7 +3466,7 @@ YUI.Env.aliases = {
     "datatype-xml": ["datatype-xml-parse","datatype-xml-format"],
     "dd": ["dd-ddm-base","dd-ddm","dd-ddm-drop","dd-drag","dd-proxy","dd-constrain","dd-drop","dd-scroll","dd-delegate"],
     "dom": ["dom-base","dom-screen","dom-style","selector-native","selector"],
-    "editor": ["frame","selection","exec-command","editor-base","editor-para","editor-br","editor-bidi","editor-tab","createlink-base"],
+    "editor": ["frame","editor-selection","exec-command","editor-base","editor-para","editor-br","editor-bidi","editor-tab","createlink-base"],
     "event": ["event-base","event-delegate","event-synthetic","event-mousewheel","event-mouseenter","event-key","event-focus","event-resize","event-hover","event-outside","event-touch","event-move","event-flick","event-valuechange"],
     "event-custom": ["event-custom-base","event-custom-complex"],
     "event-gestures": ["event-flick","event-move"],
@@ -5284,7 +5294,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2011.12.14-21-12',
+            GALLERY_VERSION = 'gallery-2012.01.04-22-09',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -5361,10 +5371,8 @@ if (!YUI.Env[Y.version]) {
 
 /**
  * Loader dynamically loads script and css files.  It includes the dependency
- * info for the version of the library in use, and will automatically pull in
- * dependencies for the modules requested.  It supports rollup files and will
- * automatically use these when appropriate in order to minimize the number of
- * http connections required to load all of the dependencies.  It can load the
+ * information for the version of the library in use, and will automatically pull in
+ * dependencies for the modules requested. It can also load the
  * files from the Yahoo! CDN, and it can utilize the combo service provided on
  * this network to reduce the number of http connections required to download
  * YUI files.
@@ -5376,7 +5384,7 @@ if (!YUI.Env[Y.version]) {
 
 var NOT_FOUND = {},
     NO_REQUIREMENTS = [],
-    MAX_URL_LENGTH = 2048,
+    MAX_URL_LENGTH = 1024,
     GLOBAL_ENV = YUI.Env,
     GLOBAL_LOADED = GLOBAL_ENV._loaded,
     CSS = 'css',
@@ -5520,6 +5528,9 @@ Y.Loader = function(o) {
 
     var defaults = META.modules,
         self = this;
+    
+    //Catch no config passed.
+    o = o || {};
 
     modulekey = META.md5;
 
@@ -5669,7 +5680,7 @@ Y.Loader = function(o) {
      * @property ignoreRegistered
      * @default false
      */
-    // self.ignoreRegistered = false;
+    //self.ignoreRegistered = false;
 
     /**
      * Root path to prepend to module path for the combo
@@ -5828,26 +5839,17 @@ Y.Loader = function(o) {
 
     if (cache) {
         oeach(cache, function modCache(v, k) {
-            //self.moduleInfo[k] = Y.merge(v);
-            self.moduleInfo[k] = v;
+            self.moduleInfo[k] = Y.merge(v);
         });
 
         cache = GLOBAL_ENV._conditions;
 
         oeach(cache, function condCache(v, k) {
-            //self.conditions[k] = Y.merge(v);
-            self.conditions[k] = v;
+            self.conditions[k] = Y.merge(v);
         });
 
     } else {
         oeach(defaults, self.addModule, self);
-    }
-
-    if (!GLOBAL_ENV._renderedMods) {
-        //GLOBAL_ENV._renderedMods = Y.merge(self.moduleInfo);
-        //GLOBAL_ENV._conditions = Y.merge(self.conditions);
-        GLOBAL_ENV._renderedMods = self.moduleInfo;
-        GLOBAL_ENV._conditions = self.conditions;
     }
 
 
@@ -5965,8 +5967,8 @@ Y.Loader.prototype = {
         //Inspect the page for CSS only modules and mark them as loaded.
         oeach(this.moduleInfo, function(v, k) {
             if (v.type && v.type === CSS) {
-                if (this.isCSSLoaded(k)) {
-                    Y.log('Found CSS module on page: ' + k, 'info', 'loader');
+                if (this.isCSSLoaded(v.name)) {
+                    Y.log('Found CSS module on page: ' + v.name, 'info', 'loader');
                     this.loaded[k] = true;
                 }
             }
@@ -6070,7 +6072,15 @@ Y.Loader.prototype = {
                     if (i == 'require') {
                         self.require(val);
                     } else if (i == 'skin') {
-                        Y.mix(self.skin, o[i], true);
+                        //If the config.skin is a string, format to the expected object
+                        if (typeof val === 'string') {
+                            self.skin.defaultSkin = o.skin;
+                            val = {
+                                defaultSkin: val
+                            };
+                        }
+
+                        Y.mix(self.skin, val, true);
                     } else if (i == 'groups') {
                         for (j in val) {
                             if (val.hasOwnProperty(j)) {
@@ -6088,8 +6098,6 @@ Y.Loader.prototype = {
                         this.groups.gallery.update(val);
                     } else if (i == 'yui2' || i == '2in3') {
                         this.groups.yui2.update(o['2in3'], o.yui2);
-                    } else if (i == 'maxURLLength') {
-                        self[i] = Math.min(MAX_URL_LENGTH, val);
                     } else {
                         self[i] = val;
                     }
@@ -6172,7 +6180,7 @@ Y.Loader.prototype = {
                 }
                 this.addModule(nmod, name);
 
-                Y.log('adding skin ' + name + ', ' + parent + ', ' + pkg + ', ' + info[name].path);
+                Y.log('Adding skin (' + name + '), ' + parent + ', ' + pkg + ', ' + info[name].path, 'info', 'loader');
             }
         }
 
@@ -6484,9 +6492,19 @@ Y.Loader.prototype = {
         if (o.configFn) {
             ret = o.configFn(o);
             if (ret === false) {
+                Y.log('Config function returned false for ' + name + ', skipping.', 'info', 'loader');
                 delete this.moduleInfo[name];
+                delete GLOBAL_ENV._renderedMods[name];
                 o = null;
             }
+        }
+        //Add to global cache
+        if (o) {
+            if (!GLOBAL_ENV._renderedMods) {
+                GLOBAL_ENV._renderedMods = {};
+            }
+            GLOBAL_ENV._renderedMods[name] = Y.merge(o);
+            GLOBAL_ENV._conditions = conditions;
         }
 
         return o;
@@ -6760,13 +6778,13 @@ Y.Loader.prototype = {
                 }
                 for (i = 0; i < skindef[skinname].length; i++) {
                     skinmod = this._addSkin(skindef[skinname][i], name);
-                    if (!this.isCSSLoaded(skinmod)) {
+                    if (!this.isCSSLoaded(skinmod, this._boot)) {
                         d.push(skinmod);
                     }
                 }
             } else {
                 skinmod = this._addSkin(this.skin.defaultSkin, name);
-                if (!this.isCSSLoaded(skinmod)) {
+                if (!this.isCSSLoaded(skinmod, this._boot)) {
                     d.push(skinmod);
                 }
             }
@@ -6799,12 +6817,13 @@ Y.Loader.prototype = {
     * @param {String} name The name of the css file
     * @return Boolean
     */
-    isCSSLoaded: function(name) {
+    isCSSLoaded: function(name, skip) {
         //TODO - Make this call a batching call with name being an array
-        if (!name || !YUI.Env.cssStampEl) {
+        if (!name || !YUI.Env.cssStampEl || (!skip && this.ignoreRegistered)) {
+            Y.log('isCSSLoaded was skipped for ' + name, 'warn', 'loader');
             return false;
         }
-        
+
         var el = YUI.Env.cssStampEl,
             ret = false,
             style = el.currentStyle; //IE
@@ -6897,19 +6916,27 @@ Y.Loader.prototype = {
     */
     _addLangPack: function(lang, m, packName) {
         var name = m.name,
-            packPath,
+            packPath, conf,
             existing = this.moduleInfo[packName];
 
         if (!existing) {
 
             packPath = _path((m.pkg || name), packName, JS, true);
 
-            this.addModule({ path: packPath,
-                             intl: true,
-                             langPack: true,
-                             ext: m.ext,
-                             group: m.group,
-                             supersedes: [] }, packName);
+            conf = {
+                path: packPath,
+                intl: true,
+                langPack: true,
+                ext: m.ext,
+                group: m.group,
+                supersedes: []
+            };
+
+            if (m.configFn) {
+                conf.configFn = m.configFn;
+            }
+
+            this.addModule(conf, packName);
 
             if (lang) {
                 Y.Env.lang = Y.Env.lang || {};
@@ -7221,8 +7248,16 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     * @private
     */
     _onFailure: function(o) {
-        Y.log('load error: ' + o.msg + ', ' + Y.id, 'error', 'loader');
-        var f = this.onFailure, msg = 'failure: ' + o.msg;
+        var f = this.onFailure, msg = [], i = 0, len = o.errors.length;
+        
+        for (i; i < len; i++) {
+            msg.push(o.errors[i].error);
+        }
+
+        msg = msg.join(',');
+
+        Y.log('load error: ' + msg + ', ' + Y.id, 'error', 'loader');
+        
         if (f) {
             f.call(this.context, {
                 msg: msg,
@@ -7230,7 +7265,9 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 success: false
             });
         }
+        
         this._finish(msg, false);
+
     },
 
     /**
@@ -7360,26 +7397,31 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             self = this, comp = 0, actions = 0;
 
         if (type) {
-            var m = modules[type];
-            modules = {};
-            modules[type] = m;
+            //Filter out the opposite type and reset the array so the checks later work
+            modules[((type === JS) ? CSS : JS)] = [];
+        }
+        if (modules.js.length) {
             comp++;
-        } else {
-            if (modules.js.length) {
-                comp++;
-            }
-            if (modules.css.length) {
-                comp++;
-            }
+        }
+        if (modules.css.length) {
+            comp++;
         }
 
         //console.log('Resolved Modules: ', modules);
 
         var complete = function(d) {
             actions++;
+            var errs = {}, i = 0, u = '', fn;
+
+            if (d && d.errors) {
+                for (i = 0; i < d.errors.length; i++) {
+                    u = d.errors[i].request.url;
+                    errs[u] = u;
+                }
+            }
             
             if (d && d.data && d.data.length) {
-                for (var i = 0; i < d.data.length; i++) {
+                for (i = 0; i < d.data.length; i++) {
                     self.inserted[d.data[i].name] = true;
                 }
             }
@@ -7387,7 +7429,12 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             if (actions === comp) {
                 self._loading = null;
                 Y.log('Loader actions complete!', 'info', 'loader');
-                self._onSuccess();
+                if (d && d.fn) {
+                    Y.log('Firing final Loader callback!', 'info', 'loader');
+                    fn = d.fn;
+                    delete d.fn;
+                    fn.call(self, d);
+                }
             }
         };
 
@@ -7396,7 +7443,9 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         if (!modules.js.length && !modules.css.length) {
             Y.log('No modules resolved..', 'warn', 'loader');
             actions = -1;
-            complete();
+            complete({
+                fn: self._onSuccess
+            });
             return;
         }
         
@@ -7409,12 +7458,21 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 charset: self.charset,
                 timeout: self.timeout,
                 context: self,
-                onFailure: self._onFailure,
-                onTimeout: self._onTimeout,
                 onProgress: function(e) {
                     self._onProgress.call(self, e);
                 },
-                onSuccess: complete
+                onTimeout: function(d) {
+                    d.fn = self._onTimeout;
+                    complete.call(self, d);
+                },
+                onSuccess: function(d) {
+                    d.fn = self._onSuccess;
+                    complete.call(self, d);
+                },
+                onFailure: function(d) {
+                    d.fn = self._onFailure;
+                    complete.call(self, d);
+                }
             });
         }
 
@@ -7431,9 +7489,18 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 onProgress: function(e) {
                     self._onProgress.call(self, e);
                 },
-                onFailure: self._onFailure,
-                onTimeout: self._onTimeout,                
-                onSuccess: complete
+                onTimeout: function(d) {
+                    d.fn = self._onTimeout;
+                    complete.call(self, d);
+                },
+                onSuccess: function(d) {
+                    d.fn = self._onSuccess;
+                    complete.call(self, d);
+                },
+                onFailure: function(d) {
+                    d.fn = self._onFailure;
+                    complete.call(self, d);
+                }
             });
         }
     },
@@ -7554,8 +7621,8 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         var len, i, m, url, fn, msg, attr, group, groupName, j, frag,
             comboSource, comboSources, mods, comboBase,
             base, urls, u = [], tmpBase, baseLen, resCombos = {},
-            self = this,
-            singles = [],
+            self = this, comboSep, maxURLLength, singles = [],
+            inserted = (self.ignoreRegistered) ? {} : self.inserted,
             resolved = { js: [], jsMods: [], css: [], cssMods: [] },
             type = self.loadType || 'js';
 
@@ -7597,7 +7664,8 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                     if ("root" in group && L.isValue(group.root)) {
                         m.root = group.root;
                     }
-
+                    m.comboSep = group.comboSep || self.comboSep;
+                    m.maxURLLength = group.maxURLLength || self.maxURLLength;
                 }
 
                 comboSources[comboSource] = comboSources[comboSource] || [];
@@ -7613,15 +7681,24 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                     
                     if (len) {
                         for (i = 0; i < len; i++) {
+                            if (inserted[mods[i]]) {
+                                continue;
+                            }
                             m = mods[i];
                             // Do not try to combine non-yui JS unless combo def
                             // is found
                             if (m && (m.combine || !m.ext)) {
-
+                                resCombos[j].comboSep = m.comboSep;
+                                resCombos[j].maxURLLength = m.maxURLLength;
                                 frag = ((L.isValue(m.root)) ? m.root : self.root) + m.path;
                                 frag = self._filter(frag, m.name);
                                 resCombos[j][m.type].push(frag);
                                 resCombos[j][m.type + 'Mods'].push(m);
+                            } else {
+                                //Add them to the next process..
+                                if (mods[i]) {
+                                    singles.push(mods[i].name);
+                                }
                             }
 
                         }
@@ -7629,37 +7706,51 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 }
             }
 
+
             for (j in resCombos) {
                 base = j;
+                comboSep = resCombos[base].comboSep || self.comboSep;
+                maxURLLength = resCombos[base].maxURLLength || self.maxURLLength;
+                Y.log('Using maxURLLength of ' + maxURLLength, 'info', 'loader');
                 for (type in resCombos[base]) {
                     if (type === JS || type === CSS) {
                         urls = resCombos[base][type];
                         mods = resCombos[base][type + 'Mods'];
                         len = urls.length;
-                        tmpBase = base + urls.join(self.comboSep);
+                        tmpBase = base + urls.join(comboSep);
                         baseLen = tmpBase.length;
+                        if (maxURLLength <= base.length) {
+                            Y.log('maxURLLength (' + maxURLLength + ') is lower than the comboBase length (' + base.length + '), resetting to default (' + MAX_URL_LENGTH + ')', 'error', 'loader');
+                            maxURLLength = MAX_URL_LENGTH;
+                        }
                         
                         if (len) {
-                            if (baseLen > self.maxURLLength) {
-                                Y.log('Exceeded maxURLLength for ' + type + ', splitting', 'info', 'loader');
+                            if (baseLen > maxURLLength) {
+                                Y.log('Exceeded maxURLLength (' + maxURLLength + ') for ' + type + ', splitting', 'info', 'loader');
                                 u = [];
-                                m = [];
                                 for (s = 0; s < len; s++) {
-                                    tmpBase = base + u.join(self.comboSep);
-                                    if (tmpBase.length < self.maxURLLength) {
-                                        u.push(urls[s]);
-                                        m.push(mods[s]);
-                                    } else {
+                                    u.push(urls[s]);
+                                    tmpBase = base + u.join(comboSep);
+
+                                    if (tmpBase.length > maxURLLength) {
+                                        m = u.pop();
+                                        tmpBase = base + u.join(comboSep)
                                         resolved[type].push(tmpBase);
                                         u = [];
-                                        m = [];
+                                        if (m) {
+                                            u.push(m);
+                                        }
                                     }
+                                }
+                                if (u.length) {
+                                    tmpBase = base + u.join(comboSep)
+                                    resolved[type].push(tmpBase);
                                 }
                             } else {
                                 resolved[type].push(tmpBase);
-                                resolved[type + 'Mods'] = mods;
                             }
                         }
+                        resolved[type + 'Mods'] = mods;
                     }
                 }
             }
@@ -7674,7 +7765,9 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             len = s.length;
 
             for (i = 0; i < len; i = i + 1) {
-
+                if (inserted[s[i]]) {
+                    continue;
+                }
                 m = self.getModule(s[i]);
 
                 if (!m) {
@@ -7695,6 +7788,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 resolved[m.type + 'Mods'].push(m);
             }
         }
+
 
         return resolved;
     }
@@ -8109,7 +8203,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "use": [
             "button-base", 
             "button-group", 
-            "cssbuttons"
+            "cssbutton"
         ]
     }, 
     "button-base": {
@@ -8277,7 +8371,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "type": "css"
     }, 
-    "cssbuttons": {
+    "cssbutton": {
         "type": "css"
     }, 
     "cssfonts": {
@@ -8761,7 +8855,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "editor": {
         "use": [
             "frame", 
-            "selection", 
+            "editor-selection", 
             "exec-command", 
             "editor-base", 
             "editor-para", 
@@ -8777,7 +8871,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "frame", 
             "node", 
             "exec-command", 
-            "selection"
+            "editor-selection"
         ]
     }, 
     "editor-bidi": {
@@ -8798,6 +8892,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "editor-para": {
         "requires": [
             "editor-base"
+        ]
+    }, 
+    "editor-selection": {
+        "requires": [
+            "node"
         ]
     }, 
     "editor-tab": {
@@ -9624,11 +9723,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "skinnable": true
     }, 
-    "selection": {
-        "requires": [
-            "node"
-        ]
-    }, 
     "selector": {
         "requires": [
             "selector-native"
@@ -9881,7 +9975,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "widget-buttons": {
         "requires": [
-            "cssbuttons", 
+            "cssbutton", 
             "base-build", 
             "widget", 
             "widget-stdmod"
@@ -9985,7 +10079,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'fa418b2fd0367987315e8644686ff274';
+YUI.Env[Y.version].md5 = '5501010443cec05eadde20bdbece9ed0';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

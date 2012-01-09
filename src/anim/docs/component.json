@@ -62,7 +62,7 @@
             "name"       : "curve",
             "displayName": "Animating Along a Curved Path",
             "description": 	"This example demonstrates animating an element along a curved path using bezier control points.",
-            "modules"    : ["anim"],
+            "modules"    : ["anim", "dd-drag", "graphics", "cssbutton"],
             "tags"       : ["anim", "xy", "position", "bezier"],
 
             "hideTableOfContents": true
