@@ -247,11 +247,15 @@ YUI.add('editor-para', function(Y) {
                             if (p) {
                                 if (!p.previous() && p.get(PARENT_NODE) && p.get(PARENT_NODE).test(BODY)) {
                                     e.changedEvent.frameEvent.halt();
+                                    e.preventDefault();
                                 }
                             }
                         }
                         if (Y.UA.webkit) {
                             if (e.changedNode) {
+                                //All backspace calls in Webkit need a preventDefault to
+                                //stop history navigation #2531299
+                                e.preventDefault();
                                 item = e.changedNode;
                                 if (item.test('li') && (!item.previous() && !item.next())) {
                                     html = item.get('innerHTML').replace(BR, '');
@@ -259,7 +263,6 @@ YUI.add('editor-para', function(Y) {
                                         if (item.get(PARENT_NODE)) {
                                             item.get(PARENT_NODE).replace(inst.Node.create(BR));
                                             e.changedEvent.frameEvent.halt();
-                                            e.preventDefault();
                                             inst.EditorSelection.filterBlocks();
                                         }
                                     }
