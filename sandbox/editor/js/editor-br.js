@@ -29,7 +29,7 @@ YUI.add('editor-br', function(Y) {
             }
             if (e.keyCode == 13) {
                 var host = this.get(HOST), inst = host.getInstance(),
-                    sel = new inst.Selection(),
+                    sel = new inst.EditorSelection(),
                     last = '';
 
                 if (sel) {
