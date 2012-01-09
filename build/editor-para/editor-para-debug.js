@@ -35,10 +35,10 @@ YUI.add('editor-para', function(Y) {
                 col = false;
             }
 
-            body.innerHTML = '<' + P + '>' + html + inst.Selection.CURSOR + '</' + P + '>';
+            body.innerHTML = '<' + P + '>' + html + inst.EditorSelection.CURSOR + '</' + P + '>';
 
             n = inst.one(FIRST_P);
-            sel = new inst.Selection();
+            sel = new inst.EditorSelection();
 
             sel.selectNode(n, true, col);
         },
@@ -49,7 +49,7 @@ YUI.add('editor-para', function(Y) {
         */
         _onNodeChange: function(e) {
             var host = this.get(HOST), inst = host.getInstance(),
-                html, txt, par , d, sel, btag = inst.Selection.DEFAULT_BLOCK_TAG,
+                html, txt, par , d, sel, btag = inst.EditorSelection.DEFAULT_BLOCK_TAG,
                 inHTML, txt2, childs, aNode, index, node2, top, n, sib,
                 ps, br, item, p, imgs, t, LAST_CHILD = ':last-child';
 
@@ -117,20 +117,20 @@ YUI.add('editor-para', function(Y) {
                         }
                     }
                     if (e.changedNode.test('li') && !Y.UA.ie) {
-                        html = inst.Selection.getText(e.changedNode);
+                        html = inst.EditorSelection.getText(e.changedNode);
                         if (html === '') {
                             par = e.changedNode.ancestor('ol,ul');
                             var dir = par.getAttribute('dir');
                             if (dir !== '') {
                                 dir = ' dir = "' + dir + '"';
                             }
-                            par = e.changedNode.ancestor(inst.Selection.BLOCKS);
-                            d = inst.Node.create('<p' + dir + '>' + inst.Selection.CURSOR + '</p>');
+                            par = e.changedNode.ancestor(inst.EditorSelection.BLOCKS);
+                            d = inst.Node.create('<p' + dir + '>' + inst.EditorSelection.CURSOR + '</p>');
                             par.insert(d, 'after');
                             e.changedNode.remove();
                             e.changedEvent.halt();
 
-                            sel = new inst.Selection();
+                            sel = new inst.EditorSelection();
                             sel.selectNode(d, true, false);
                         }
                     }
@@ -144,7 +144,7 @@ YUI.add('editor-para', function(Y) {
                             }
                             d = inst.Node.create('<' + btag + '></' + btag + '>');
                             par.insert(d, 'after');
-                            sel = new inst.Selection();
+                            sel = new inst.EditorSelection();
                             if (sel.anchorOffset) {
                                 inHTML = sel.anchorNode.get('textContent');
 
@@ -192,11 +192,11 @@ YUI.add('editor-para', function(Y) {
                             if (d.get(FC)) {
                                 d = d.get(FC);
                             }
-                            d.prepend(inst.Selection.CURSOR);
+                            d.prepend(inst.EditorSelection.CURSOR);
                             sel.focusCursor(true, true);
-                            html = inst.Selection.getText(d);
+                            html = inst.EditorSelection.getText(d);
                             if (html !== '') {
-                                inst.Selection.cleanCursor();
+                                inst.EditorSelection.cleanCursor();
                             }
                             e.changedEvent.preventDefault();
                         }
@@ -226,7 +226,7 @@ YUI.add('editor-para', function(Y) {
                             br.removeAttribute('class');
                         }
 
-                        txt = inst.Selection.getText(item);
+                        txt = inst.EditorSelection.getText(item);
                         txt = txt.replace(/ /g, '').replace(/\n/g, '');
                         imgs = item.all('img');
                         
@@ -262,7 +262,7 @@ YUI.add('editor-para', function(Y) {
                                             item.get(PARENT_NODE).replace(inst.Node.create(BR));
                                             e.changedEvent.frameEvent.halt();
                                             e.preventDefault();
-                                            inst.Selection.filterBlocks();
+                                            inst.EditorSelection.filterBlocks();
                                         }
                                     }
                                 }
@@ -301,8 +301,8 @@ YUI.add('editor-para', function(Y) {
         _afterEditorReady: function() {
             var host = this.get(HOST), inst = host.getInstance(), btag;
             if (inst) {
-                inst.Selection.filterBlocks();
-                btag = inst.Selection.DEFAULT_BLOCK_TAG;
+                inst.EditorSelection.filterBlocks();
+                btag = inst.EditorSelection.DEFAULT_BLOCK_TAG;
                 FIRST_P = BODY + ' > ' + btag;
                 P = btag;
             }
@@ -314,8 +314,8 @@ YUI.add('editor-para', function(Y) {
         */
         _afterContentChange: function() {
             var host = this.get(HOST), inst = host.getInstance();
-            if (inst && inst.Selection) {
-                inst.Selection.filterBlocks();
+            if (inst && inst.EditorSelection) {
+                inst.EditorSelection.filterBlocks();
             }
         },
         /**
@@ -325,10 +325,10 @@ YUI.add('editor-para', function(Y) {
         */
         _afterPaste: function() {
             var host = this.get(HOST), inst = host.getInstance(),
-                sel = new inst.Selection();
+                sel = new inst.EditorSelection();
 
             Y.later(50, host, function() {
-                inst.Selection.filterBlocks();
+                inst.EditorSelection.filterBlocks();
             });
             
         },
