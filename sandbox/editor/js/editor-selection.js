@@ -19,7 +19,7 @@ YUI.add('editor-selection', function(Y) {
     Y.EditorSelection = function(domEvent) {
         var sel, par, ieNode, nodes, rng, i;
 
-        if (Y.config.win.getSelection) {
+        if (Y.config.win.getSelection && (Y.UA.IE < 8)) {
 	        sel = Y.config.win.getSelection();
         } else if (Y.config.doc.selection) {
     	    sel = Y.config.doc.selection.createRange();
