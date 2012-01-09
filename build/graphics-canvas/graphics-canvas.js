@@ -1567,26 +1567,38 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
     },
 
     /**
-     * Destroys the instance.
+     * Destroys the shape instance.
      *
      * @method destroy
      */
     destroy: function()
     {
-        var node = this.node,
-            context = this._context;
-        if(node)
+        var graphic = this.get("graphic");
+        if(graphic)
         {
-            if(context)
-            {
-                context.clearRect(0, 0, node.width, node.height);
-            }
-            if(this._graphic && this._graphic._node)
-            {
-                this._graphic._node.removeChild(this.node);
-            }
+            graphic.removeShape(this);
         }
-	}
+        else
+        {
+            this._destroy();
+        }
+    },
+
+    /**
+     *  Implementation for shape destruction
+     *
+     *  @method destroy
+     *  @protected
+     */
+    _destroy: function()
+    {
+        if(this.node)
+        {
+            Y.one(this.node).remove(true);
+            this._context = null;
+            this.node = null;
+        }
+    }
 }, Y.CanvasDrawing.prototype));
 
 CanvasShape.ATTRS =  {
@@ -2638,10 +2650,10 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
     destroy: function()
     {
         this.removeAllShapes();
-        this._removeChildren(this._node);
-        if(this._node && this._node.parentNode)
+        if(this._node)
         {
-            this._node.parentNode.removeChild(this._node);
+            this._removeChildren(this._node);
+            Y.one(this._node).destroy();
         }
     },
 
@@ -2699,7 +2711,7 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
         }
         if(shape && shape instanceof CanvasShape)
         {
-            shape.destroy();
+            shape._destroy();
             delete this._shapes[shape.get("id")];
         }
         if(this.get("autoDraw")) 
@@ -2737,7 +2749,7 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
      */
     _removeChildren: function(node)
     {
-        if(node.hasChildNodes())
+        if(node && node.hasChildNodes())
         {
             var child;
             while(node.firstChild)
