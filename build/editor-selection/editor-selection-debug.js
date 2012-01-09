@@ -1012,5 +1012,9 @@ YUI.add('editor-selection', function(Y) {
         }
     };
 
+    //TODO Remove this alias in 3.6.0
+    Y.Selection = Y.EditorSelection;
+
+
 
 }, '@VERSION@' ,{skinnable:false, requires:['node']});
