@@ -166,10 +166,11 @@ suite.add(new Y.Test.Case({
 
         this.pjax.once('error', function (e) {
             test.resume(function () {
-                Assert.isObject(e.content);
-                Assert.isInstanceOf(Y.Node, e.content.node);
-                Assert.isString(e.responseText);
-                Assert.areSame(404, e.status);
+                Assert.isObject(e.content, 'Response content should be passed on the event facade.');
+                Assert.isInstanceOf(Y.Node, e.content.node, 'Response content should contain a Node instance.');
+                Assert.isString(e.responseText, 'Response text should be passed on the event facade.');
+                Assert.areSame(404, e.status, 'HTTP status should be passed on the event facade.');
+                Assert.isTrue(/\/bogus\.html$/.test(e.url), 'URL should be passed on the event facade.');
             });
         });
 
@@ -196,11 +197,12 @@ suite.add(new Y.Test.Case({
             e.preventDefault();
 
             test.resume(function () {
-                Assert.isObject(e.content);
-                Assert.isInstanceOf(Y.Node, e.content.node);
-                Assert.isString(e.content.title);
-                Assert.isString(e.responseText);
-                Assert.areSame(200, e.status);
+                Assert.isObject(e.content, 'Response content should be passed on the event facade.');
+                Assert.isInstanceOf(Y.Node, e.content.node, 'Response content should contain a Node instance.');
+                Assert.isString(e.content.title, 'Content title should be extracted.');
+                Assert.isString(e.responseText, 'Response text should be passed on the event facade.');
+                Assert.areSame(200, e.status, 'HTTP status should be passed on the event facade.');
+                Assert.isTrue(/\/assets\/page-full\.html$/.test(e.url), 'URL should be passed on the event facade.');
             });
         });
 

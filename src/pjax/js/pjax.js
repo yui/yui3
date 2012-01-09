@@ -31,6 +31,7 @@ Fired when an error occurs while attempting to load a URL via Ajax.
     `contentSelector`, if any.
 @param {String} responseText Raw Ajax response text.
 @param {Number} status HTTP status code for the Ajax response.
+@param {String} url The absolute URL that failed to load.
 **/
 var EVT_ERROR = 'error',
 
@@ -42,6 +43,7 @@ Fired when a URL is successfully loaded via Ajax.
     `contentSelector`, if any.
 @param {String} responseText Raw Ajax response text.
 @param {Number} status HTTP status code for the Ajax response.
+@param {String} url The absolute URL that was loaded.
 **/
 EVT_LOAD = 'load';
 
@@ -113,9 +115,10 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase], {
 
         // Send a request.
         this._request = Y.io(req.url, {
-            context: this,
-            headers: {'X-PJAX': 'true'},
-            timeout: this.get('timeout'),
+            arguments: {url: req.url},
+            context  : this,
+            headers  : {'X-PJAX': 'true'},
+            timeout  : this.get('timeout'),
 
             on: {
                 end    : this._onPjaxIOEnd,
@@ -165,13 +168,14 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase], {
     @method _onPjaxIOFailure
     @protected
     **/
-    _onPjaxIOFailure: function (id, res) {
+    _onPjaxIOFailure: function (id, res, details) {
         var content = this.getContent(res.responseText);
 
         this.fire(EVT_ERROR, {
             content     : content,
             responseText: res.responseText,
-            status      : res.status
+            status      : res.status,
+            url         : details.url,
         });
     },
 
@@ -181,13 +185,14 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase], {
     @method _onPjaxIOSuccess
     @protected
     **/
-    _onPjaxIOSuccess: function (id, res, args) {
+    _onPjaxIOSuccess: function (id, res, details) {
         var content = this.getContent(res.responseText);
 
         this.fire(EVT_LOAD, {
             content     : content,
             responseText: res.responseText,
-            status      : res.status
+            status      : res.status,
+            url         : details.url
         });
     }
 }, {
