@@ -1010,4 +1010,8 @@ YUI.add('editor-selection', function(Y) {
             return 'EditorSelection Object';
         }
     };
+
+    //TODO Remove this alias in 3.6.0
+    Y.Selection = Y.EditorSelection;
+
 });
