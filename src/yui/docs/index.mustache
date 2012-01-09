@@ -383,25 +383,3 @@ YUI().use('my-module', function (Y) {
 <p>
 A module's `add()` callback isn't executed until that module is attached to a YUI instance via `use()`. Each time a module is attached via `use()`, the module's `add()` callback will be executed, and will receive as an argument the same YUI instance that will later be passed to the `use()` callback.
 </p>
-
-<h2 id="nodejs">Using YUI on Node.js</h2>
-
-<p>As of version 3.5.0, YUI runs natively on <a href="http://nodejs.org/">Node.js</a> and comes with an official <a href="http://search.npmjs.org/#/yui">npm package</a> for easy installation. More information on using YUI on Node.js can be found in the <a href="nodejs.html">YUI on Node.js guide</a>.</p>
-
-<h2 id="loader">Loader</h2>
-<p><a href="loader.html">Loader</a>'s functionality is now built into the YUI Global Object
-   (as long as it's on the page) and puts its power behind the
-   `YUI().use` method.</p>
-<p>If you request a module that is not loaded on the page
-(or a dependency that is not loaded), loader will fetch a copy
-of that module (and its dependencies) and attach them to your
-YUI instance.</p>
-
-<p>You can find <a href="loader.html">more information about Loader here</a>.</p>
-
-
-<h2 id="Lang">Y.Lang</h2>
-<p>`Y.Lang` contains JavaScript language utilities and extensions that are used in the YUI library.
-
-<p>Find more <a href="lang.html">information on `Y.Lang` here</a>.</p>
-
