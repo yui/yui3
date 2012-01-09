@@ -110,12 +110,19 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase], {
     @protected
     **/
     _defaultRoute: function (req) {
+        var url = req.url;
+
         // If there's an outstanding request, abort it.
         this._request && this._request.abort();
 
+        // Add a 'pjax=1' query parameter if enabled.
+        if (this.get('addPjaxParam')) {
+            url += (url.indexOf('?') > -1 ? '&' : '?') + 'pjax=1';
+        }
+
         // Send a request.
-        this._request = Y.io(req.url, {
-            arguments: {url: req.url},
+        this._request = Y.io(url, {
+            arguments: {url: url},
             context  : this,
             headers  : {'X-PJAX': 'true'},
             timeout  : this.get('timeout'),
@@ -197,6 +204,27 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase], {
     }
 }, {
     ATTRS: {
+        /**
+        If `true`, a "pjax=1" query parameter will be appended to all URLs
+        requested via Pjax.
+
+        Browsers ignore HTTP request headers when caching content, so if the
+        same URL is used to request a partial Pjax page and a full page, the
+        browser will cache them under the same key and may later load the
+        cached partial page when the user actually requests a full page (or vice
+        versa).
+
+        To prevent this, we can add a bogus query parameter to the URL so that
+        Pjax URLs will always be cached separately from non-Pjax URLs.
+
+        @attribute addPjaxParam
+        @type Boolean
+        @default true
+        **/
+        addPjaxParam: {
+            value: true
+        },
+
         /**
         Node into which content should be inserted when a page is loaded via
         Pjax. This node's existing contents will be removed to make way for the
