@@ -91,6 +91,16 @@ YUI.add('exec-command', function(Y) {
                 this.get('host').on('dom:keypress', Y.bind(function(e) {
                     this._lastKey = e.keyCode;
                 }, this));
+            },
+            _wrapContent: function(str, override) {
+                var useP = (this._inst.host.editorPara && !override ? true : false);
+                
+                if (useP) {
+                    str = '<p>' + str + '</p>';
+                } else {
+                    str = str + '<br>';
+                }
+                return str;
             }
         }, {
             /**
@@ -401,7 +411,7 @@ YUI.add('exec-command', function(Y) {
                 * @param {String} tag The tag to deal with
                 */
                 list: function(cmd, tag) {
-                    var inst = this.getInstance(), html,
+                    var inst = this.getInstance(), html, self = this,
                         DIR = 'dir', cls = 'yui3-touched',
                         dir, range, div, elm, n, str, s, par, list, lis,
                         useP = (inst.host.editorPara ? true : false),
@@ -424,11 +434,7 @@ YUI.add('exec-command', function(Y) {
 
                             str = '<div>';
                             lis.each(function(l) {
-                                if (useP) {
-                                    str += '<p>' + l.get('innerHTML') + '</p>';
-                                } else {
-                                    str += l.get('innerHTML') + '<br>';
-                                }
+                                str = self._wrapContent(l.get('innerHTML'));
                             });
                             str += '</div>';
                             s = inst.Node.create(str);
@@ -535,14 +541,11 @@ YUI.add('exec-command', function(Y) {
                             dir = par.getAttribute(DIR);
                         }
                         if (par && par.test(tag)) {
+                            var hasPParent = par.ancestor('p');
                             html = inst.Node.create('<div/>');
                             elm = par.all('li');
                             elm.each(function(h) {
-                                if (useP) {
-                                    html.append('<p>' + h.get('innerHTML') + '</p>');
-                                } else {
-                                    html.append(h.get('innerHTML') + '<br>');
-                                }
+                                html.append(self._wrapContent(h.get('innerHTML'), hasPParent));
                             });
                             if (dir) {
                                 if (useP) {
@@ -552,11 +555,11 @@ YUI.add('exec-command', function(Y) {
                                 }
                             }
                             if (useP) {
-                                par.replace(html.get('innerHTML'));
-                            } else {
-                                par.replace(html);
+                                html = inst.Node.create(html.get('innerHTML'));
                             }
-                            sel.selectNode(html.get('firstChild'));
+                            var fc = html.get('firstChild');
+                            par.replace(html);
+                            sel.selectNode(fc);
                         } else {
                             this._command(cmd, null);
                         }

@@ -36,9 +36,8 @@ YUI.add('editor-br', function(Y) {
                 if (sel) {
                     if (Y.UA.ie) {
                         if (!sel.anchorNode || (!sel.anchorNode.test(LI) && !sel.anchorNode.ancestor(LI))) {
-                            sel._selection.pasteHTML('<br>');
-                            sel._selection.collapse(false);
-                            sel._selection.select();
+                            var host = this.get(HOST);
+                            host.execCommand('inserthtml', inst.EditorSelection.CURSOR);
                             e.halt();
                         }
                     }
