@@ -740,6 +740,30 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame(1, calls);
     },
 
+    '`load` event should fire after a successful load operation': function () {
+        var calls = 0,
+            list  = this.createList();
+
+        list.on('load', function (e) {
+            calls += 1;
+
+            Assert.areSame('[{"foo": "bar"}]', e.response);
+            Assert.isObject(e.options);
+            Assert.isObject(e.parsed);
+            Assert.areSame('bar', e.parsed[0].foo);
+        });
+
+        list.sync = function (action, options, callback) {
+            callback(null, '[{"foo": "bar"}]');
+        };
+
+        list.load(function () {
+            Assert.areSame(1, calls, 'load event should fire before the callback runs');
+        });
+
+        Assert.areSame(1, calls, 'load event never fired');
+    },
+
     '`reset` event should fire when the list is reset or sorted': function () {
         var calls  = 0,
             list   = this.createList(),

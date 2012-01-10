@@ -34,6 +34,8 @@ App Framework Change History
   `create()` method, but before that model has actually been saved and added to
   the list (and before the `add` method has fired). [Ticket #2531400]
 
+* Added a `load` event that fires when models are loaded. [Ticket #2531399]
+
 * ModelList now allows you to add models to the list even if they were
   instantiated in another window or another YUI sandbox. [Ticket #2531543]
 
