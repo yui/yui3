@@ -623,7 +623,7 @@ Y.Model = Y.extend(Model, Y.Base, {
                     });
                 }
 
-                this.fire(EVT_CHANGE, {changed: lastChange});
+                this.fire(EVT_CHANGE, Y.merge(options, {changed: lastChange}));
             }
         }
 

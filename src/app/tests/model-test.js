@@ -689,6 +689,30 @@ modelSuite.add(new Y.Test.Case({
         model.setAttrs({bar: 'baz'}, {silent: true});
     },
 
+    '`change` event facade should contain options passed to set()/setAttrs()': function () {
+        var calls = 0,
+            model = new this.TestModel();
+
+        model.on('change', function (e) {
+            calls += 1;
+
+            Assert.areSame(e.src, 'test');
+            Assert.areSame(e.foo, 'bar');
+        });
+
+        model.setAttrs({
+            foo: 'foo',
+            bar: 'bar'
+        }, {src: 'test', foo: 'bar'});
+
+        model.set('foo', 'bar', {
+            src: 'test',
+            foo: 'bar'
+        });
+
+        Assert.areSame(2, calls);
+    },
+
     '`error` event should fire when validation fails': function () {
         var calls = 0,
             model = new this.TestModel();

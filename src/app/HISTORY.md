@@ -22,6 +22,9 @@ App Framework Change History
   or an `error` event on failure. The `save()` callback (if provided) will still
   be called in both cases. [Ticket #2531207]
 
+* Options passed to `set()` and `setAttrs()` are now correctly merged into the
+  event facade of the `change` event. [Ticket #2531492]
+
 ### ModelList
 
 * Added a `filter()` method that returns a filtered array of models. [Ticket
