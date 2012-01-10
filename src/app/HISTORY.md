@@ -85,6 +85,10 @@ App Framework Change History
   functionality as the old behavior, pass your HTML string through
   `Y.Node.create()` before passing it to `container`.
 
+* Added a View extension, `Y.View.NodeMap`, that can be mixed into a `View`
+  subclass to provide a static `getByNode()` method that returns the nearest
+  View instance associated with a given Node (similar to `Widget.getByNode()`).
+
 
 3.4.1
 -----
