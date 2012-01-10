@@ -102,7 +102,7 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase], {
         return content;
     },
 
-    // -- Private Methods ------------------------------------------------------
+    // -- Protected Methods ----------------------------------------------------
 
     /**
     Default Pjax route handler. Makes an Ajax request for the requested URL.
