@@ -44,6 +44,10 @@
 
             "view": {
                 "requires": ["base-build", "node-event-delegate"]
+            },
+
+            "view-node-map": {
+                "requires": ["view"]
             }
         }
     }
