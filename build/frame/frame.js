@@ -260,7 +260,7 @@ YUI.add('frame', function(Y) {
             });
             inst.one('body').setStyle('display', 'block');
             if (Y.UA.ie) {
-                this._fixIECursors();
+                //this._fixIECursors();
             }
         },
         /**

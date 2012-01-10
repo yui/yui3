@@ -140,8 +140,6 @@
 </div>
 
 <div id="stub">
-</div>
-<!--
     <b>This is bold</b><br><br>
     <strong>This is strong</strong><br><br>
     <span style="font-weight: bold">This is font-weight bold</span><br><br>
@@ -201,7 +199,7 @@
             </div><br><br>
         </div>
     </div>
-</div-->
+</div>
 <!--p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
 This is some <strong>other</strong> loose test.
 <p>This <strong>is</strong> <font face="Courier New">another</font> test.</p>
@@ -213,8 +211,8 @@ This is some <strong>other</strong> loose test.
 <hr>
 <p>This <strong>is</strong> <font face="Courier New">another</font> test.</p>
 <ul>
-</div-->
-
+</div>
+-->
 <script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(time()); ?>"></script>
 <!--script type="text/javascript" src="http://yui.yahooapis.com/3.2.0/build/yui/yui-debug.js"></script-->
 
