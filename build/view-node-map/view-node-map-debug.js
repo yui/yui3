@@ -66,7 +66,11 @@ NodeMap.prototype = {
     },
 
     destructor: function () {
-        delete Y.stamp(this.get('container'), true);
+        var stamp = Y.stamp(this.get('container'), true);
+
+        if (stamp in instances) {
+            delete stamp;
+        }
     }
 };
 
