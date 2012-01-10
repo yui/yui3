@@ -163,6 +163,21 @@ Y.Model = Y.extend(Model, Y.Base, {
     @default `[]`
     **/
 
+    // -- Protected Properties -------------------------------------------------
+
+    /**
+    Total hack to allow us to identify Model instances without using
+    `instanceof`, which won't work when the instance was created in another
+    window.
+
+    @property _isYUIModel
+    @type Boolean
+    @default true
+    @protected
+    @since 3.5.0
+    **/
+    _isYUIModel: true,
+
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function (config) {
         this.changed    = {};

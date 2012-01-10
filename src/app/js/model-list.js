@@ -250,7 +250,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
         options || (options = {});
 
-        if (!(model instanceof Y.Model)) {
+        if (!model._isYUIModel) {
             model = new this.model(model);
         }
 
@@ -562,8 +562,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         var facade = Y.merge(options, {
                 src   : 'reset',
                 models: YArray.map(models, function (model) {
-                    return model instanceof Y.Model ? model :
-                            new this.model(model);
+                    return model._isYUIModel ? model : new this.model(model);
                 }, this)
             });
 
@@ -698,7 +697,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
         options || (options = {});
 
-        if (!(model instanceof Y.Model)) {
+        if (!model._isYUIModel) {
             model = new this.model(model);
         }
 

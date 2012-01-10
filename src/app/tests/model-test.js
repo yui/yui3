@@ -150,6 +150,11 @@ modelSuite.add(new Y.Test.Case({
         Assert.areSame('foo', model.get('customId'));
     },
 
+    '`_isYUIModel` property should be true': function () {
+        var model = new this.TestModel();
+        Assert.isTrue(model._isYUIModel);
+    },
+
     '`id` attribute should be an alias for the custom id attribute': function () {
         var calls = 0,
             model = new this.TestModel();

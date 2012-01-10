@@ -100,6 +100,16 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame('bar', added[1].get('bar'));
     },
 
+    'add() should support models created in other windows': function () {
+        var list   = this.createList(),
+            iframe = document.getElementById('test-iframe'),
+            model  = iframe.contentWindow.iframeModel;
+
+        list.add(model);
+
+        Assert.areSame(model, list.item(0));
+    },
+
     'comparator() should be undefined by default': function () {
         Assert.isUndefined(this.createList().comparator);
     },
@@ -156,6 +166,16 @@ modelListSuite.add(new Y.Test.Case({
         });
 
         Assert.areSame(1, calls);
+    },
+
+    'create() should support models created in other windows': function () {
+        var list   = this.createList(),
+            iframe = document.getElementById('test-iframe'),
+            model  = iframe.contentWindow.iframeModel;
+
+        list.create(model);
+
+        Assert.areSame(model, list.item(0));
     },
 
     'filter() should filter the list and return an array': function () {
@@ -416,6 +436,16 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame(2, list.size());
         list.reset();
         Assert.areSame(0, list.size());
+    },
+
+    'reset() should support models created in other windows': function () {
+        var list   = this.createList(),
+            iframe = document.getElementById('test-iframe'),
+            model  = iframe.contentWindow.iframeModel;
+
+        list.reset([model]);
+
+        Assert.areSame(model, list.item(0));
     },
 
     'remove() should remove a single model from the list': function () {
