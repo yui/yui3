@@ -596,6 +596,40 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame(2, calls);
     },
 
+    '`create` event should fire when a model is created': function () {
+        var calls = 0,
+            list  = this.createList(),
+            model = this.createModel();
+
+        list.on('create', function (e) {
+            calls += 1;
+            Assert.areSame(model, e.model, 'Model should be passed in the event facade.');
+        });
+
+        list.on('add', function (e) {
+            Assert.areSame(1, calls, '`add` should fire after `create`.');
+        });
+
+        list.create(model);
+
+        Assert.areSame(1, calls, '`create` event should be fired.');
+    },
+
+    '`create` event should receive options passed to the create() method': function () {
+        var calls = 0,
+            list  = this.createList(),
+            model = this.createModel();
+
+        list.on('create', function (e) {
+            calls += 1;
+            Assert.areSame('foo', e.src, 'Options should be merged into the event facade.');
+        });
+
+        list.create(model, {src: 'foo'});
+
+        Assert.areSame(1, calls, '`create` event should be fired.');
+    },
+
     '`error` event should bubble up from models': function () {
         var calls = 0,
             list  = this.createList(),

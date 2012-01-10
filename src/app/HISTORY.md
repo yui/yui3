@@ -27,6 +27,10 @@ App Framework Change History
 * Added a `filter()` method that returns a filtered array of models. [Ticket
   #2531250]
 
+* Added a `create` event that fires when a model is created/updated via the
+  `create()` method, but before that model has actually been saved and added to
+  the list (and before the `add` method has fired). [Ticket #2531400]
+
 ### Router (formerly Controller)
 
 * [!] The `Controller` class and `controller` module have been renamed to
