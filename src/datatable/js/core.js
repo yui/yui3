@@ -13,18 +13,19 @@ to render the table content.
 @module datatable-core
 **/
 
-var INVALID    = Y.Attribute.INVALID_VALUE,
+var INVALID = Y.Attribute.INVALID_VALUE,
 
-    Lang       = Y.Lang,
-    isFunction = Lang.isFunction,
-    isObject   = Lang.isObject,
-    isArray    = Lang.isArray,
-    isString   = Lang.isString,
-    isNumber   = Lang.isNumber,
+    Lang         = Y.Lang,
+    isFunction   = Lang.isFunction,
+    isObject     = Lang.isObject,
+    isArray      = Lang.isArray,
+    isString     = Lang.isString,
+    isNumber     = Lang.isNumber,
+    fromTemplate = Lang.sub,
 
-    toArray    = Y.Array,
+    toArray = Y.Array,
 
-    keys       = Y.Object.keys,
+    keys = Y.Object.keys,
 
     Table;
     
@@ -276,6 +277,38 @@ Y.mix(Table.prototype, {
     TABLE_TEMPLATE  : '<table></table>',
 
     /**
+    HTML template used to create table's `<tbody>` if configured with a
+    `bodyView`.
+
+    @property TBODY_TEMPLATE
+    @type {HTML}
+    @default '<tbody class="{classes}"></tbody>'
+    **/
+    TBODY_TEMPLATE: '<tbody class="{classes}"></tbody>',
+
+    /**
+    Template used to create the table's `<tfoot>` if configured with a
+    `footerView`.
+
+    @property TFOOT_TEMPLATE
+    @type {HTML}
+    @default '<tfoot class="{classes}"></tfoot>'
+    **/
+    TFOOT_TEMPLATE:
+        '<tfoot class="{classes}"></tfoot>',
+
+    /**
+    Template used to create the table's `<thead>` if configured with a
+    `headerView`.
+
+    @property THEAD_TEMPLATE
+    @type {HTML}
+    @default '<thead class="{classes}"></thead>'
+    **/
+    THEAD_TEMPLATE:
+        '<thead class="{classes}"></thead>',
+
+    /**
     The object or instance of the class assigned to `bodyView` that is
     responsible for rendering and managing the table's `<tbody>`(s) and its
     content.
@@ -418,6 +451,16 @@ Y.mix(Table.prototype, {
         return this.body && this.body.getCell && this.body.getRow(index);
     },
 
+    /**
+    Updates the UI with the current attribute state.
+
+    @method syncUI
+    **/
+    syncUI: function () {
+        // This is stubbed to allow extensions to use it as a Y.Do.after anchor
+        // point rather than risk collision with other extensions.
+    },
+
     // -- Protected and private properties and methods ------------------------
 
     /**
@@ -531,17 +574,6 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Relays `widthChange` events to `\_uiUpdateWidth`.
-
-    @method _afterWidthChange
-    @param {EventFacade} e The `widthChange` event object
-    @protected
-    **/
-    _afterWidthChange: function (e) {
-        this._uiUpdateWidth(e.newVal);
-    },
-
-    /**
     Subscribes to attribute change events to update the UI.
 
     @method bindUI
@@ -582,6 +614,42 @@ Y.mix(Table.prototype, {
         }
 
         return Y.Base.create('record', Y.Model, [], null, { ATTRS: ATTRS });
+    },
+
+    /**
+    Creates a `<tbody>` node from the `TBODY_TEMPLATE`.
+
+    @method _createTBody
+    @protected
+    **/
+    _createTBody: function () {
+        return Y.Node.create(fromTemplate(this.TBODY_TEMPLATE, {
+            classes: this.getClassName('data')
+        }));
+    },
+
+    /**
+    Creates a `<tfoot>` node from the `TFOOT_TEMPLATE`.
+
+    @method _createTFoot
+    @protected
+    **/
+    _createTFoot: function () {
+        return Y.Node.create(fromTemplate(this.TFOOT_TEMPLATE, {
+            classes: this.getClassName('footer')
+        }));
+    },
+
+    /**
+    Creates a `<thead>` node from the `THEAD_TEMPLATE`.
+
+    @method _createTHead
+    @protected
+    **/
+    _createTHead: function () {
+        return Y.Node.create(fromTemplate(this.THEAD_TEMPLATE, {
+            classes: this.getClassName('columns')
+        }));
     },
 
     /**
@@ -883,10 +951,15 @@ Y.mix(Table.prototype, {
         // TODO: use a _viewConfig object that can be mixed onto by class
         // extensions, then pass that to either the view constructor or setAttrs
         if (BodyView) {
+            if (!this._tbodyNode) {
+                // FIXME: This limits the body renderer to one <tbody>
+                this._tbodyNode = this._createTBody();
+            }
+
             // Can't use merge because it doesn't iterate prototype properties,
             // so would miss the configs from _viewConfig.
             Y.mix(this._bodyConfig, {
-                container: this._tableNode,
+                container: this._tbodyNode,
                 columns  : this.get('columns'),
                 modelList: this.data
             }, true);
@@ -895,6 +968,8 @@ Y.mix(Table.prototype, {
 
             this.body.addTarget(this);
             this.body.render();
+
+            this._tableNode.append(this._tbodyNode);
         }
     },
 
@@ -908,10 +983,14 @@ Y.mix(Table.prototype, {
         var FooterView = this.get('footerView');
         
         if (FooterView) {
+            if (!this._tfootNode) {
+                this._tfootNode = this._createTFoot();
+            }
+
             // Can't use merge because it doesn't iterate prototype properties,
             // so would miss the configs from _viewConfig.
             Y.mix(this._footerConfig, {
-                container: this._tableNode,
+                container: this._tfootNode,
                 columns  : this.get('columns'),
                 modelList: this.data
             }, true);
@@ -920,6 +999,9 @@ Y.mix(Table.prototype, {
 
             this.foot.addTarget(this);
             this.foot.render();
+
+            this._tableNode.insertBefore(this._tfootNode,
+                this._tableNode.one('> tbody'));
         }
     },
 
@@ -933,10 +1015,14 @@ Y.mix(Table.prototype, {
         var HeaderView = this.get('headerView');
         
         if (HeaderView) {
+            if (!this._theadNode) {
+                this._theadNode = this._createTHead();
+            }
+
             // Can't use merge because it doesn't iterate prototype properties,
             // so would miss the configs from _viewConfig.
             Y.mix(this._headerConfig, {
-                container: this._tableNode,
+                container: this._theadNode,
                 columns  : this.get('columns'),
                 modelList: this.data
             }, true);
@@ -945,6 +1031,9 @@ Y.mix(Table.prototype, {
 
             this.head.addTarget(this);
             this.head.render();
+
+            this._tableNode.insertBefore(this._theadNode,
+                this._tableNode.one('> tfoot, > tbody'));
         }
         // TODO: If there's no HeaderView, should I remove an existing <thead>?
     },
@@ -958,8 +1047,6 @@ Y.mix(Table.prototype, {
     @protected
     **/
     _renderTable: function () {
-        var caption = this.get('caption');
-
         if (!this._tableNode) {
             this._tableNode = Y.Node.create(this.TABLE_TEMPLATE);
         }
@@ -967,9 +1054,7 @@ Y.mix(Table.prototype, {
 
         this._uiUpdateSummary(this.get('summary'));
 
-        this._uiUpdateCaption(caption);
-
-        this._uiUpdateWidth(this.get('width'));
+        this._uiUpdateCaption(this.get('caption'));
     },
 
     /**
@@ -1191,14 +1276,20 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Updates the table width per the input value.
+    Sets the `boundingBox` and table width per the input value.
 
-    @method _uiUpdateWidth
+    @method _uiSetWidth
     @param {Number|String} width The width to make the table
     @protected
     **/
-    _uiUpdateWidth: function (width) {
-        if (isString(width) || isNumber(width)) {
+    _uiSetWidth: function (width) {
+        if (isNumber(width)) {
+            // DEF_UNIT from Widget
+            width += this.DEF_UNIT;
+        }
+
+        if (isString(width)) {
+            this._uiSetDim('width', width);
             this._tableNode.setStyle('width', width);
         }
     },
