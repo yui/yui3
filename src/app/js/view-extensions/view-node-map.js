@@ -67,7 +67,7 @@ NodeMap.prototype = {
         var stamp = Y.stamp(this.get('container'), true);
 
         if (stamp in instances) {
-            delete stamp;
+            delete instances[stamp];
         }
     }
 };
