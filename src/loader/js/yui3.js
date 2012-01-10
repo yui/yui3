@@ -2024,6 +2024,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "node-event-delegate"
         ]
     }, 
+    "view-node-map": {
+        "requires": [
+            "view"
+        ]
+    }, 
     "widget": {
         "use": [
             "widget-base", 
@@ -2176,4 +2181,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '5501010443cec05eadde20bdbece9ed0';
+YUI.Env[Y.version].md5 = '80937492f10391aee88b5c6a96af50fc';
