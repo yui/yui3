@@ -2733,6 +2733,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("view")) > -1, "Module (view) not found in sorted array");
         },
+     "Testing view-node-map": function(data) {
+            var loader = new Y.Loader({
+                require: ["view-node-map"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("view-node-map")) > -1, "Module (view-node-map) not found in sorted array");
+        },
      "Testing widget": function(data) {
             var loader = new Y.Loader({
                 require: ["widget"],
