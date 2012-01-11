@@ -12,4 +12,4 @@ docmods:
 	./scripts/build_doc_modules.js
 
 npm:
-	./scripts/npm_package.sh
+	ant -f npm.xml
