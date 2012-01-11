@@ -3,7 +3,7 @@
         "use": [
              "button-base",
              "button-group",
-             "cssbuttons"
+             "cssbutton"
          ],
         "submodules": {
             "button-base": {
@@ -20,7 +20,7 @@
                     "arraylist-add"
                 ]
             }, 
-            "cssbuttons": {
+            "cssbutton": {
                 "type": "css"
             }
         }

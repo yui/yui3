@@ -1,44 +1,286 @@
-<div id="demo-stage">
-    <span id="demo"></span>
-</div>
+<style>
+.example {
+    position: relative;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
 
-<script type="text/javascript">
-YUI().use('anim', function(Y) {
-    var node = Y.one('#demo');
+.example div, .example p, .example span{
+    padding: 0;
+    margin: 0;
+}
 
+#mygraphiccontainer {
+    width: 650px;
+    height: 400px;
+}
+
+.example #demo {
+    position: absolute;
+    left: 92px;
+    top: 103px;
+    background-color: #f00;
+    text-align: center;
+    line-height: 1.5em;
+    border: solid 1px #cc0000;
+    border-radius: 0;
+    -moz-box-shadow: 3px 3px 7px rgba(0,0,0,0.4);
+    -webkit-box-shadow: 3px 3px 7px rgba(0,0,0,0.4);
+    width: 20px;
+    height: 20px;
+}
+
+.dot {
+    position: absolute;
+    color: #396491;
+    font-size: 20px;
+    height: 0;
+    line-height: 12px;
+    opacity: 0.8;
+    width: 0;
+    cursor: move;
+}
+
+.dot .point { 
+    background-color: #000;
+    position: absolute;
+    left: -3px;
+    top: -3px;
+    width: 6px;
+    height: 6px;
+    border-radius: 3px;
+    font-size: 0px;
+}
+
+.number-label {
+    position: absolute;
+    top: -1em;
+    left: -0.9em;
+    width: 1em;
+    height: 1em;
+}
+
+/* Gives the points a larger target area to drag */
+.dot .fat-finger {
+    position: absolute;
+    top: -30px; /* minus half the fat-finger height */
+    left: -30px;
+    width: 60px;
+    height: 60px;
+    -moz-border-radius: 30px;
+    -webkit-border-radius: 30px;
+    background-color: #abc;
+    opacity: 0.3;
+    filter: alpha (opacity = 30);
+}
+
+#dot-3 .fat-finger {
+    background-color: #f80;
+    opacity: 0.4;
+}
+
+#dot-0 .fat-finger {
+    background-color: #8DAA16;
+    opacity: 0.4;
+}
+
+#dot-0, #demo {
+    top: 103px;
+    left: 92px;        
+}
+
+#dot-1 {
+    top: 317px;
+    left: 147px;        
+}
+
+#dot-2 {
+    top: 179px;
+    left: 532px;        
+}
+
+#dot-3 {
+    left: 538px;
+    top: 288px;
+}
+
+#info {
+    position: absolute;
+    width: 450px;
+    height: 15em;
+    right: 1em;
+    top: 1em;
+}
+
+code span {
+    color: #CC3300;
+}
+
+.point {
+    font-size: 24px;
+    left: 5px;
+    position: absolute;
+    top: -5px;
+}
+
+</style>
+<!-- In order for the script to run, this HTML markup must be nested in a <div class="example"> --> 
+    <div id="mygraphiccontainer"></div> <!-- Container for the preview of the curve line -->
+    <div id="info">
+        <button id="btn-animate" class='yui3-button'>Animate On Path</button>
+        <p>To see anim along a path, click the button above, or drag point 0, 1, 2, or 3.</p>
+        <p>The X and Y of point 0 is <code>[<span class="arr0">92,103</span>]</code></p>
+        <p>The X and Y of 1, 2, and 3, are the sub-arrays in array value of "curve:" in the anim.set()</p>
+        <p><code>anim.set('to', {curve: [
+        [<span class="arr1">147,317</span>],
+        [<span class="arr2">532,179</span>],
+        [<span class="arr3">538,288</span>] ]});</code></p>
+    </div>
+    <div id="dot-0" class="dot zero">
+        <div class="point"></div>
+        <div class="fat-finger" title="Drag to change start point"></div> <!-- Gives the points a larger target area to drag -->
+        <div class="number-label">0</div>
+    </div>
+    <div id="dot-1" class="dot one">
+        <div class="point"></div>
+        <div class="fat-finger" title="Drag to change path"></div>
+        <div class="number-label">1</div>
+    </div>
+    <div id="dot-2" class="dot two">
+        <div class="point"></div>
+        <div class="fat-finger" title="Drag to change path"></div>
+        <div class="number-label">2</div>
+    </div>
+    <div id="dot-3" class="dot three">
+        <div class="point"></div>
+        <div class="fat-finger" title="Drag to change end point"></div>
+        <div class="number-label">3</div>
+    </div>
+    <div id="demo">A</div>
+    
+<script>
+YUI().use('anim', 'dd-drag', 'graphics', 'cssbutton', function(Y){
+
+    var mygraphic = new Y.Graphic({render:"#mygraphiccontainer"}),
+        origin = Y.one('.example'), // The XY values for the animation are based on the upper-left corner of this element
+        demoA = Y.one('#demo'), // The animated element
+        dotList = Y.all('.dot');
+        // Draggable points
+        dot0 = Y.one('#dot-0'), dot1 = Y.one('#dot-1'), dot2 = Y.one('#dot-2'), dot3 = Y.one('#dot-3'),
+        
+        // Array of XY arrays of draggable points
+        arrDot = [ 
+            [parseInt(dotList.item(0).getStyle('left'), 10), parseInt(dotList.item(0).getStyle('top'), 10)], 
+            [parseInt(dotList.item(1).getStyle('left'), 10), parseInt(dotList.item(1).getStyle('top'), 10)], 
+            [parseInt(dotList.item(2).getStyle('left'), 10), parseInt(dotList.item(2).getStyle('top'), 10)], 
+            [parseInt(dotList.item(3).getStyle('left'), 10), parseInt(dotList.item(3).getStyle('top'), 10)] 
+        ],
+        
+        // Make points draggable
+        dd0 = new Y.DD.Drag({
+            node: '#dot-0'
+        }),
+        dd1 = new Y.DD.Drag({
+            node: '#dot-1'
+        }),
+        dd2 = new Y.DD.Drag({
+            node: '#dot-2'
+        }),
+        dd3 = new Y.DD.Drag({
+            node: '#dot-3'
+        });
+
+    // Puts current XY values of points into displayed code snippet
+    var updateCodeSnippetValues = function(){
+        Y.one('.arr0').setContent(arrDot[0][0] + ',' + arrDot[0][1]); // Start       
+        Y.one('.arr1').setContent(arrDot[1][0] + ',' + arrDot[1][1]); // Control point 1     
+        Y.one('.arr2').setContent(arrDot[2][0] + ',' + arrDot[2][1]); // Control point 2       
+        Y.one('.arr3').setContent(arrDot[3][0] + ',' + arrDot[3][1]); // End        
+    }
+    
+    /** 
+     * Stops the animation
+     * Updates the array of point XY values      
+     * Updates the curve preview
+     * Updates displayed XY point values in code snippet
+     */
+    var dotDragHandler = function(dot){
+        Y.Anim.stop();
+        arrDot[dotList.indexOf(dot)] = [parseInt(dot.getStyle('left'), 10), parseInt(dot.getStyle('top'), 10)];
+        drawCurve();
+        updateCodeSnippetValues();
+    }
+    
+    dd0.on('drag:drag', function(e){
+        dotDragHandler(this.get('dragNode'));
+    });
+    dd1.on('drag:drag', function(e){
+        dotDragHandler(this.get('dragNode'));
+    });
+    dd2.on('drag:drag', function(e){
+        dotDragHandler(this.get('dragNode'));
+    });
+    dd3.on('drag:drag', function(e){
+        dotDragHandler(this.get('dragNode'));
+    });
+    
+    // button handler
+    Y.one('#btn-animate').on('click', function(){
+        Y.Anim.stop();
+        setTimeout(startAnim, 500);
+    });
+      
+    Y.all('.dot').on('mouseup', function(e){
+        setTimeout(startAnim, 500);
+    });
+
+    // Create the animation instance
     var anim = new Y.Anim({
-        node: node,
+        node: demoA,
         duration: 1.5,
         easing: Y.Easing.easeOut
     });
-
-    var randomCurve = function(end) {
-        var points = [],
-            n = 3,
-            winWidth = node.get('winWidth'),
-            winHeight = node.get('winHeight');
-
-        for (var i = 0; i < n; ++i) {
-            points.push([
-                Math.floor(Math.random() * winWidth),
-                Math.floor(Math.random() * winHeight)
-            ]);
-        }
-
-        if (end) {
-            points.push(end);
-        }
-        return points;
-    };
-
-    var onClick = function(e) {
+    
+    /**
+     * Sets the anim curve values with the XY values from the arrDot array
+     * Adds the origin offset values because anim works off page coordinates
+     */
+    var startAnim = function(e){
+        var oX = origin.getX(),
+            oY = origin.getY();
+        
+        // Reset the animated element to the start position. 
+        // This is needed for running the animation multiple times
+        demoA.setStyles({'left':arrDot[0][0], 'top':arrDot[0][1]});
+        
         anim.set('to', {
-            curve: randomCurve([e.pageX, e.pageY])
+            curve: [ [(arrDot[1][0] + oX), (arrDot[1][1] + oY)], [ (arrDot[2][0] + oX), (arrDot[2][1] + oY) ], [ (arrDot[3][0] + oX), (arrDot[3][1] + oY) ]  ]
         });
         anim.run();
     };
     
-    Y.one('#demo-stage').on('click', onClick);
+    // Adds a YUI Graphics path shape to the Graphics instance mygraphic
+    var animPath = mygraphic.addShape({
+        type: "path",
+        stroke: {
+            weight: 4,
+            color: "#aabbcc"
+        }
+    });
+    
+    // Draw a preview curve with the Graphics animPath shape to match the Anim curve
+    var drawCurve = function(){
+        animPath.clear();
+        animPath.moveTo(arrDot[0][0],arrDot[0][1]);
+        animPath.curveTo(arrDot[1][0],arrDot[1][1],   arrDot[2][0],arrDot[2][1],    arrDot[3][0],arrDot[3][1]);
+        animPath.end();
+    }
+
+    drawCurve(); // Initial drawing of the preview curve
+    updateCodeSnippetValues(); // Initial setting of code snippet XY values
 
 });
+
 </script>
+

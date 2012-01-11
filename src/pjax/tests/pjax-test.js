@@ -63,15 +63,75 @@ suite.add(new Y.Test.Case({
 suite.add(new Y.Test.Case({
     name: 'Attributes and Properties',
 
+    _should: {
+        ignore: {
+            'Pjax param should be added when `addPjaxParam` is true': disableXHR || !html5,
+            'Pjax param should be appended to an existing query string when `addPjaxParam` is true': disableXHR || !html5,
+            'Pjax param should not be added when `addPjaxParam` is false': disableXHR || !html5
+        }
+    },
+
     setUp: function () {
         this.node = Y.one('#test-content');
         this.pjax = this.node.plug(Y.Plugin.Pjax).pjax;
     },
 
     tearDown: function () {
+        resetURL();
+
         this.node.unplug(Y.Plugin.Pjax);
         delete this.node;
         delete this.pjax;
+    },
+
+    '`addPjaxParam` should be true by default': function () {
+        Assert.isTrue(this.pjax.get('addPjaxParam'));
+    },
+
+    'Pjax param should be added when `addPjaxParam` is true': function () {
+        var test = this;
+
+        this.pjax.once('load', function (e) {
+            e.preventDefault();
+
+            test.resume(function () {
+                Assert.isTrue(/\.html\?pjax=1$/.test(e.url), 'URL should contain a pjax param.');
+            });
+        });
+
+        this.pjax.navigate('assets/page-full.html');
+        this.wait(1000);
+    },
+
+    'Pjax param should be appended to an existing query string when `addPjaxParam` is true': function () {
+        var test = this;
+
+        this.pjax.once('load', function (e) {
+            e.preventDefault();
+
+            test.resume(function () {
+                Assert.isTrue(/\.html\?foo=bar&pjax=1$/.test(e.url), 'URL should contain a pjax param.');
+            });
+        });
+
+        this.pjax.navigate('assets/page-full.html?foo=bar');
+        this.wait(1000);
+    },
+
+    'Pjax param should not be added when `addPjaxParam` is false': function () {
+        var test = this;
+
+        this.pjax.set('addPjaxParam', false);
+        this.pjax.once('load', function (e) {
+            e.preventDefault();
+
+            test.resume(function () {
+                Assert.isTrue(/\.html$/.test(e.url), 'URL should not contain a pjax param.');
+            });
+        });
+
+        this.pjax.navigate('assets/page-full.html');
+        this.wait(1000);
     },
 
     '`container` should be null by default': function () {
@@ -166,10 +226,11 @@ suite.add(new Y.Test.Case({
 
         this.pjax.once('error', function (e) {
             test.resume(function () {
-                Assert.isObject(e.content);
-                Assert.isInstanceOf(Y.Node, e.content.node);
-                Assert.isString(e.responseText);
-                Assert.areSame(404, e.status);
+                Assert.isObject(e.content, 'Response content should be passed on the event facade.');
+                Assert.isInstanceOf(Y.Node, e.content.node, 'Response content should contain a Node instance.');
+                Assert.isString(e.responseText, 'Response text should be passed on the event facade.');
+                Assert.areSame(404, e.status, 'HTTP status should be passed on the event facade.');
+                Assert.isTrue(/\/bogus\.html\?pjax=1$/.test(e.url), 'URL should be passed on the event facade.');
             });
         });
 
@@ -196,11 +257,12 @@ suite.add(new Y.Test.Case({
             e.preventDefault();
 
             test.resume(function () {
-                Assert.isObject(e.content);
-                Assert.isInstanceOf(Y.Node, e.content.node);
-                Assert.isString(e.content.title);
-                Assert.isString(e.responseText);
-                Assert.areSame(200, e.status);
+                Assert.isObject(e.content, 'Response content should be passed on the event facade.');
+                Assert.isInstanceOf(Y.Node, e.content.node, 'Response content should contain a Node instance.');
+                Assert.isString(e.content.title, 'Content title should be extracted.');
+                Assert.isString(e.responseText, 'Response text should be passed on the event facade.');
+                Assert.areSame(200, e.status, 'HTTP status should be passed on the event facade.');
+                Assert.isTrue(/\/assets\/page-full\.html\?pjax=1$/.test(e.url), 'URL should be passed on the event facade.');
             });
         });
 

@@ -60,7 +60,7 @@
         * @method send
         * @description The method that executes the YQL Request.
         * @chainable
-        * @returns {YQLRequest}
+        * @return {YQLRequest}
         */
         send: function() {
             var qs = [], url = ((this._opts && this._opts.proto) ? this._opts.proto : Y.YQLRequest.PROTO);
