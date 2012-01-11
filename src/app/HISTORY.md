@@ -36,6 +36,11 @@ App Framework Change History
 
 * Added a `load` event that fires when models are loaded. [Ticket #2531399]
 
+* The `add()`, `remove()` and `reset()` methods now accept other ModelList
+  instances in addition to models and arrays of models. For example, passing a
+  ModelList to `add()` will add all the models in that list to this list as
+  well. [Ticket #2531408]
+
 * ModelList now allows you to add models to the list even if they were
   instantiated in another window or another YUI sandbox. [Ticket #2531543]
 
