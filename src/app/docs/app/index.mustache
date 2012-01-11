@@ -543,7 +543,7 @@ App inherits both its `container` attribute and `render()` method from View. Unl
 </p>
 
 <p>
-The basic usage of your app's `render()` method is to call it at least once, usually after you instantiate your app, to ensure the proper DOM structure is setup to handle rendering the app's [[#View Management|views]].
+The basic usage of your app's `render()` method is to call it at least once, usually after you instantiate your app, this ensures the proper DOM structure is setup to handle rendering the app's [[#View Management|views]].
 </p>
 
 ```
@@ -654,7 +654,7 @@ Y.CustomApp = Y.Base.create('customApp', Y.App, [], {
 ```
 
 <p>
-Refer to App's API Docs for more details about the <a href="{{apiDocs}}/classes/App.html#method_render">`render()`</a> method.
+Refer to App's API Docs for more details about the <a href="{{apiDocs}}/classes/App.html#method_render">`render()` method</a>.
 </p>
 
 <h3>View Management</h3>
@@ -738,7 +738,7 @@ When decomposing an application into discrete user-interfaces, it is natural to 
 </p>
 
 <p>
-Working in concert with an app's registered `views`, the `showView()` method will take a specified view and make it the app's `activeView`. This view will be "attached" to the app by rendering it inside the app's `viewContainer` and any custom events fired by the view will bubble up to the app. Any previously active view will be "detached" from the app, removed from the DOM, and either preserved for later use or properly destroyed.
+Working in concert with an app's registered `views`, the `showView()` method will take a specified view and make it the app's `activeView`. This view will be "attached" to the app by rendering it inside the app's `viewContainer` and any custom events fired by the view will bubble to the app. Any previously active view will be "detached" from the app, removed from the DOM, and either preserved for later use or properly destroyed.
 </p>
 
 <p>
@@ -756,8 +756,13 @@ view.render = function () {
     return this;
 };
 
-// Renders the app and view, then sets the view as the app's `activeView`.
+// Renders the `app` and `view`, then sets the view as the app's `activeView`.
 app.render().showView(view.render());
+
+// Verify that `view` is now the `activeView`, and that the view's `container`
+// is now rendered within the app's `viewContainer`.
+Y.log(app.get('activeView') === view);                           // => true
+Y.log(app.get('viewContainer').contains(view.get('container'))); // => true
 ```
 
 <p>
