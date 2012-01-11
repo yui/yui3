@@ -1,24 +1,4 @@
-YUI({
-    lazyEventFacade: true,
-    base: '../../../build/',
-    //filter: 'DEBUG',
-    filter: 'RAW',
-    allowRollup: false,
-    logExclude: {
-        'YUI': true,
-        Event: true,
-        Base: true,
-        Attribute: true,
-        augment: true,
-        useConsole: true
-    }
-}).use('console', 'test', 'editor-base', 'editor-para', 'editor-br', 'editor-bidi', 'node-event-simulate', function(Y) {
-
-    var myConsole = new Y.Console({
-        height: Y.one(window).get('winHeight') + 'px',
-        width: '375px'
-    }).render();    
-            
+YUI.add('editor-tests', function(Y) {
 
     var editor = null,
     template = {
@@ -184,7 +164,7 @@ YUI({
             Y.Assert.isInstanceOf(Y.Plugin.EditorBidi, editor.editorBidi, 'EditorBidi plugin failed to load');
             editor.focus(function() {
                 var inst = editor.getInstance();
-                var sel = new inst.Selection();
+                var sel = new inst.EditorSelection();
                 var b = inst.one('b');
                 Y.Assert.areEqual(b.get('parentNode').get('dir'), '', 'Default direction');
                 sel.selectNode(b, true, true);
@@ -213,6 +193,5 @@ YUI({
     
     suite.add(new Y.Test.Case(template));
     Y.Test.Runner.add(suite);
-    Y.Test.Runner.run();
-});
 
+});

@@ -1,10 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="YUI" default="local">
-    <description>Rollup build file for Editor-Base</description>
-    <property environment="env" />
+    <description>Editor Build</description>
 
-    <property file="build.properties" />
 
-    <import file="${builddir}/3.x/bootstrap.xml" 
-            description="Default Build Properties and Targets" />
+    <macrodef name="build-editor">
+        <attribute name="target"/>
+        <sequential>
+            <ant antfile="build.base.xml" target="@{target}"/>
+            <ant antfile="build.bidi.xml" target="@{target}"/>
+            <ant antfile="build.br.xml" target="@{target}"/>
+            <ant antfile="build.exec.xml" target="@{target}"/>
+            <ant antfile="build.frame.xml" target="@{target}"/>
+            <ant antfile="build.link-base.xml" target="@{target}"/>
+            <ant antfile="build.lists.xml" target="@{target}"/>
+            <ant antfile="build.para.xml" target="@{target}"/>
+            <ant antfile="build.selection.xml" target="@{target}"/>
+            <ant antfile="build.tab.xml" target="@{target}"/>
+        </sequential>
+    </macrodef>
+
+    <target name="local">
+        <build-editor target="local"/>
+    </target>
+    <target name="deploy">
+        <build-editor target="deploy"/>
+    </target>
+    <target name="all">
+        <build-editor target="all"/>
+    </target>
+    <target name="clean">
+        <build-editor target="clean"/>
+    </target>
+
 </project>

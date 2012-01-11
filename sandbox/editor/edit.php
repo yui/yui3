@@ -140,8 +140,6 @@
 </div>
 
 <div id="stub">
-</div>
-<!--
     <b>This is bold</b><br><br>
     <strong>This is strong</strong><br><br>
     <span style="font-weight: bold">This is font-weight bold</span><br><br>
@@ -201,7 +199,7 @@
             </div><br><br>
         </div>
     </div>
-</div-->
+</div>
 <!--p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
 This is some <strong>other</strong> loose test.
 <p>This <strong>is</strong> <font face="Courier New">another</font> test.</p>
@@ -213,8 +211,8 @@ This is some <strong>other</strong> loose test.
 <hr>
 <p>This <strong>is</strong> <font face="Courier New">another</font> test.</p>
 <ul>
-</div-->
-
+</div>
+-->
 <script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(time()); ?>"></script>
 <!--script type="text/javascript" src="http://yui.yahooapis.com/3.2.0/build/yui/yui-debug.js"></script-->
 
@@ -222,7 +220,7 @@ This is some <strong>other</strong> loose test.
 <script type="text/javascript" src="js/editor-base.js?bust=<?php echo(time()); ?>"></script>
 <script type="text/javascript" src="js/frame.js?bust=<?php echo(time()); ?>"></script>
 <script type="text/javascript" src="js/exec-command.js?bust=<?php echo(time()); ?>"></script>
-<script type="text/javascript" src="js/selection.js?bust=<?php echo(time()); ?>"></script>
+<script type="text/javascript" src="js/editor-selection.js?bust=<?php echo(time()); ?>"></script>
 <script type="text/javascript" src="js/lists.js?bust=<?php echo(time()); ?>"></script>
 <script type="text/javascript" src="js/editor-tab.js?bust=<?php echo(time()); ?>"></script>
 <script type="text/javascript" src="js/createlink-base.js?bust=<?php echo(time()); ?>"></script>
@@ -400,7 +398,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
         },
         replacecontent: function() {
             var inst = this.getInstance(),
-                sel = new inst.Selection();
+                sel = new inst.EditorSelection();
 
             sel.setCursor();
             var html = this.get('host').get('content');
@@ -509,8 +507,8 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
     editor.on('frame:ready', function() {
         Y.log('frame:ready, set content', 'info', 'editor');
         var inst = this.getInstance();
-        //this.set('content', '<p>' + inst.Selection.CURSOR + '</p>');
-        //this.set('content', '<div><div>' + inst.Selection.CURSOR + '</div><br><div>This is some content below the HR</div></div>');
+        //this.set('content', '<p>' + inst.EditorSelection.CURSOR + '</p>');
+        //this.set('content', '<div><div>' + inst.EditorSelection.CURSOR + '</div><br><div>This is some content below the HR</div></div>');
         //this.set('content', ' ');
 
         //This stops image resizes, but for all images!!
@@ -545,7 +543,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
 
         if (editor._lastBookmark) {
         } else {
-            sel = new inst.Selection();
+            sel = new inst.EditorSelection();
             cur = sel.getCursor();
 
             if (cur && cur.size()) {
@@ -574,7 +572,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
         console.log("Blur called");
         if (!Y.UA.ie) {
             var inst = this.getInstance(),
-                sel = new inst.Selection();
+                sel = new inst.EditorSelection();
             sel.setCursor();
         }
     });
@@ -584,7 +582,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
     /*
     editor.on('dom:keyup', function(e) {
         var inst = this.getInstance(),
-            sel = new inst.Selection();
+            sel = new inst.EditorSelection();
 
         if (sel.anchorNode) {
             var txt = sel.anchorNode.get('text');

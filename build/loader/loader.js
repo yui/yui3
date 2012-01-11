@@ -90,10 +90,8 @@ if (!YUI.Env[Y.version]) {
 
 /**
  * Loader dynamically loads script and css files.  It includes the dependency
- * info for the version of the library in use, and will automatically pull in
- * dependencies for the modules requested.  It supports rollup files and will
- * automatically use these when appropriate in order to minimize the number of
- * http connections required to load all of the dependencies.  It can load the
+ * information for the version of the library in use, and will automatically pull in
+ * dependencies for the modules requested. It can also load the
  * files from the Yahoo! CDN, and it can utilize the combo service provided on
  * this network to reduce the number of http connections required to download
  * YUI files.
@@ -2386,7 +2384,7 @@ Y.Loader.prototype = {
                             } else {
                                 //Add them to the next process..
                                 if (mods[i]) {
-                                    singles.push(mods[i]);
+                                    singles.push(mods[i].name);
                                 }
                             }
 
@@ -3537,7 +3535,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "editor": {
         "use": [
             "frame", 
-            "selection", 
+            "editor-selection", 
             "exec-command", 
             "editor-base", 
             "editor-para", 
@@ -3553,7 +3551,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "frame", 
             "node", 
             "exec-command", 
-            "selection"
+            "editor-selection"
         ]
     }, 
     "editor-bidi": {
@@ -3574,6 +3572,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "editor-para": {
         "requires": [
             "editor-base"
+        ]
+    }, 
+    "editor-selection": {
+        "requires": [
+            "node"
         ]
     }, 
     "editor-tab": {
@@ -4400,11 +4403,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "skinnable": true
     }, 
-    "selection": {
-        "requires": [
-            "node"
-        ]
-    }, 
     "selector": {
         "requires": [
             "selector-native"
@@ -4609,6 +4607,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "node-event-delegate"
         ]
     }, 
+    "view-node-map": {
+        "requires": [
+            "view"
+        ]
+    }, 
     "widget": {
         "use": [
             "widget-base", 
@@ -4761,7 +4764,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'c6efe4903a42424a75caedc9a6249230';
+YUI.Env[Y.version].md5 = '80937492f10391aee88b5c6a96af50fc';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

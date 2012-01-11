@@ -100,6 +100,16 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame('bar', added[1].get('bar'));
     },
 
+    'add() should support models created in other windows': function () {
+        var list   = this.createList(),
+            iframe = document.getElementById('test-iframe'),
+            model  = iframe.contentWindow.iframeModel;
+
+        list.add(model);
+
+        Assert.areSame(model, list.item(0));
+    },
+
     'comparator() should be undefined by default': function () {
         Assert.isUndefined(this.createList().comparator);
     },
@@ -156,6 +166,16 @@ modelListSuite.add(new Y.Test.Case({
         });
 
         Assert.areSame(1, calls);
+    },
+
+    'create() should support models created in other windows': function () {
+        var list   = this.createList(),
+            iframe = document.getElementById('test-iframe'),
+            model  = iframe.contentWindow.iframeModel;
+
+        list.create(model);
+
+        Assert.areSame(model, list.item(0));
     },
 
     'filter() should filter the list and return an array': function () {
@@ -418,6 +438,16 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame(0, list.size());
     },
 
+    'reset() should support models created in other windows': function () {
+        var list   = this.createList(),
+            iframe = document.getElementById('test-iframe'),
+            model  = iframe.contentWindow.iframeModel;
+
+        list.reset([model]);
+
+        Assert.areSame(model, list.item(0));
+    },
+
     'remove() should remove a single model from the list': function () {
         var list = this.createList();
 
@@ -596,6 +626,40 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame(2, calls);
     },
 
+    '`create` event should fire when a model is created': function () {
+        var calls = 0,
+            list  = this.createList(),
+            model = this.createModel();
+
+        list.on('create', function (e) {
+            calls += 1;
+            Assert.areSame(model, e.model, 'Model should be passed in the event facade.');
+        });
+
+        list.on('add', function (e) {
+            Assert.areSame(1, calls, '`add` should fire after `create`.');
+        });
+
+        list.create(model);
+
+        Assert.areSame(1, calls, '`create` event should be fired.');
+    },
+
+    '`create` event should receive options passed to the create() method': function () {
+        var calls = 0,
+            list  = this.createList(),
+            model = this.createModel();
+
+        list.on('create', function (e) {
+            calls += 1;
+            Assert.areSame('foo', e.src, 'Options should be merged into the event facade.');
+        });
+
+        list.create(model, {src: 'foo'});
+
+        Assert.areSame(1, calls, '`create` event should be fired.');
+    },
+
     '`error` event should bubble up from models': function () {
         var calls = 0,
             list  = this.createList(),
@@ -674,6 +738,30 @@ modelListSuite.add(new Y.Test.Case({
         list.parse('{"foo": "bar"}');
 
         Assert.areSame(1, calls);
+    },
+
+    '`load` event should fire after a successful load operation': function () {
+        var calls = 0,
+            list  = this.createList();
+
+        list.on('load', function (e) {
+            calls += 1;
+
+            Assert.areSame('[{"foo": "bar"}]', e.response);
+            Assert.isObject(e.options);
+            Assert.isObject(e.parsed);
+            Assert.areSame('bar', e.parsed[0].foo);
+        });
+
+        list.sync = function (action, options, callback) {
+            callback(null, '[{"foo": "bar"}]');
+        };
+
+        list.load(function () {
+            Assert.areSame(1, calls, 'load event should fire before the callback runs');
+        });
+
+        Assert.areSame(1, calls, 'load event never fired');
     },
 
     '`reset` event should fire when the list is reset or sorted': function () {

@@ -905,7 +905,7 @@
     "editor": {
         "use": [
             "frame", 
-            "selection", 
+            "editor-selection", 
             "exec-command", 
             "editor-base", 
             "editor-para", 
@@ -921,7 +921,7 @@
             "frame", 
             "node", 
             "exec-command", 
-            "selection"
+            "editor-selection"
         ]
     }, 
     "editor-bidi": {
@@ -942,6 +942,11 @@
     "editor-para": {
         "requires": [
             "editor-base"
+        ]
+    }, 
+    "editor-selection": {
+        "requires": [
+            "node"
         ]
     }, 
     "editor-tab": {
@@ -1738,11 +1743,6 @@
         ], 
         "skinnable": true
     }, 
-    "selection": {
-        "requires": [
-            "node"
-        ]
-    }, 
     "selector": {
         "requires": [
             "selector-native"
@@ -1930,6 +1930,11 @@
         "requires": [
             "base-build", 
             "node-event-delegate"
+        ]
+    }, 
+    "view-node-map": {
+        "requires": [
+            "view"
         ]
     }, 
     "widget": {
