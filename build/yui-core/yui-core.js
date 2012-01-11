@@ -1012,7 +1012,6 @@ with any configuration info required for the module.
             loader.ignoreRegistered = false;
             loader.require(args);
             loader.insert(null, (fetchCSS) ? null : 'js');
-            // loader.partial(missing, (fetchCSS) ? null : 'js');
 
         } else if (boot && len && Y.Get && !Env.bootstrapped) {
 

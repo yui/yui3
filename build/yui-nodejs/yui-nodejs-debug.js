@@ -1022,7 +1022,6 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
             loader.ignoreRegistered = false;
             loader.require(args);
             loader.insert(null, (fetchCSS) ? null : 'js');
-            // loader.partial(missing, (fetchCSS) ? null : 'js');
 
         } else if (boot && len && Y.Get && !Env.bootstrapped) {
 
@@ -6421,15 +6420,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
         this.sorted = s;
     },
-    /**
-    * (Unimplemented)
-    * @method partial
-    * @unimplemented
-    */
-    partial: function(partial, o, type) {
-        this.sorted = partial;
-        this.insert(o, type, true);
-    },
 
     /**
     * Handles the actual insertion of script/link tags
@@ -6652,7 +6642,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
      * @method _url
      * @param {string} path the path fragment.
      * @param {String} name The name of the module
-     * @pamra {String} [base=self.base] The base url to use
+     * @param {String} [base=self.base] The base url to use
      * @return {string} the full url.
      * @private
      */
