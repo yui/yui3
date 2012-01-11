@@ -1,4 +1,4 @@
-YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','dd-constrain','resize','json', 'cssbutton', 'cssbutton', function (Y){
+YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','dd-constrain','resize','json', 'cssbutton', 'panel', 'dd-plugin', function (Y){
     
     
 ///////////////////// gradient UI controls //////////////////////
@@ -71,11 +71,9 @@ YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','dd-constrain'
     });
     resize.after('resize:end', function(){
         recenterGradientR();
-        closeCode();
     });
     resize.after('resize:resize', function(){    // seem to need both resize:resize and resize:end
         recenterGradientR();
-        closeCode();
     });
 
 
@@ -100,7 +98,6 @@ YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','dd-constrain'
         outCX.setContent(theCX);
         outCY.setContent(theCY);
         updateGraphic();                
-        closeCode();
     });
     
     
@@ -114,13 +111,10 @@ YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','dd-constrain'
         outFX.setContent(theFX);
         outFY.setContent(theFY);
         updateGraphic();        
-        closeCode();
     });
     
     // Handle a click on the 'get code snippet' button
     Y.one('#btn-get-code').on('click', function(){
-        Y.one('#btn-close-code').setStyle('visibility', 'visible');
-        Y.one('#output-grad textarea').setStyle('visibility', 'visible');
         var html = ''+
         'var myellipse = mygraphic.addShape({\n'+
         '    type: "ellipse",\n'+
@@ -145,21 +139,12 @@ YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','dd-constrain'
         '    x: 35,\n'+
         '    y: 35\n'+
         '});\n';
-        var textArea = Y.one('#output-grad textarea')
+        var textArea = Y.one('#panel-content textarea')
         textArea.setContent(html);
+        panel.show();
         textArea.focus();
         textArea.select();
-        
-    });
-    var closeCode = function(){
-        var tarea = Y.one('#output-grad textarea');
-        if(tarea.getStyle('visibility') === 'visible'){
-            Y.one('#btn-close-code').setStyle('visibility', 'hidden');
-            tarea.setStyle('visibility', 'hidden');
-        }
-    }
-    Y.one('#btn-close-code').on('click', function(){
-        closeCode();
+        textArea.scrollTop();
     });
     Y.one('#center-color').on('change', function(){
         centerColor = this.get('value');
@@ -169,7 +154,6 @@ YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','dd-constrain'
                 {color: outerColor, opacity:1, offset:1}
             ];
         updateGraphic();
-        closeCode();
     });
     Y.one('#outer-color').on('change', function(){
         outerColor = this.get('value');
@@ -179,7 +163,6 @@ YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','dd-constrain'
                 {color: outerColor, opacity:1, offset:1}
             ];
         updateGraphic();
-        closeCode();
     });
 ///////////////////// END gradient UI controls //////////////////////
 
@@ -216,4 +199,29 @@ YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','dd-constrain'
     }
 
     loadGraphics();
+    
+    
+    ////////////////////////////////////////
+    var panel = new Y.Panel({
+        bodyContent: '<div class="textarea-box"><textarea></textarea></div>',
+        headerContent: 'Code Snippet',
+        width        : 350,
+        height       : 400,
+        zIndex       : 5,
+        centered     : true,
+        modal        : true,
+        visible      : false,
+        render       : '#panel-content',
+        plugins      : [Y.Plugin.Drag]
+    });
+
+    panel.addButton({
+        value  : 'Close',
+        section: Y.WidgetStdMod.FOOTER,
+        action : function (e) {
+            e.preventDefault();
+            panel.hide();
+        }
+    });    
+    
 });
