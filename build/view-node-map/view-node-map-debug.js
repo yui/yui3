@@ -60,6 +60,9 @@ NodeMap.getByNode = function (node) {
     return view || null;
 };
 
+// To make this testable.
+NodeMap._instances = instances;
+
 NodeMap.prototype = {
     initializer: function () {
         instances[Y.stamp(this.get('container'))] = this;

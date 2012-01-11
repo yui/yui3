@@ -47,6 +47,17 @@ var AttrProto = Y.Attribute.prototype,
     EVT_ADD = 'add',
 
     /**
+    Fired when a model is created or updated via the `create()` method, but
+    before the model is actually saved or added to the list. The `add` event
+    will be fired after the model has been saved and added to the list.
+
+    @event create
+    @param {Model} model The model being created/updated.
+    @since 3.5.0
+    **/
+    EVT_CREATE = 'create',
+
+    /**
     Fired when an error occurs, such as when an attempt is made to add a
     duplicate model to the list, or when a sync layer response can't be parsed.
 
@@ -69,6 +80,35 @@ var AttrProto = Y.Attribute.prototype,
     EVT_ERROR = 'error',
 
     /**
+    Fired after models are loaded from a sync layer.
+
+    @event load
+    @param {Object} parsed The parsed version of the sync layer's response to
+        the load request.
+    @param {Mixed} response The sync layer's raw, unparsed response to the load
+        request.
+    @since 3.5.0
+    **/
+    EVT_LOAD = 'load',
+
+    /**
+    Fired when a model is removed from the list.
+
+    Listen to the `on` phase of this event to be notified before a model is
+    removed from the list. Calling `e.preventDefault()` during the `on` phase
+    will prevent the model from being removed.
+
+    Listen to the `after` phase of this event to be notified after a model has
+    been removed from the list.
+
+    @event remove
+    @param {Model} model The model being removed.
+    @param {Number} index The index of the model being removed.
+    @preventable _defRemoveFn
+    **/
+    EVT_REMOVE = 'remove',
+
+    /**
     Fired when the list is completely reset via the `reset()` method or sorted
     via the `sort()` method.
 
@@ -85,24 +125,7 @@ var AttrProto = Y.Attribute.prototype,
       `'sort'`.
     @preventable _defResetFn
     **/
-    EVT_RESET = 'reset',
-
-    /**
-    Fired when a model is removed from the list.
-
-    Listen to the `on` phase of this event to be notified before a model is
-    removed from the list. Calling `e.preventDefault()` during the `on` phase
-    will prevent the model from being removed.
-
-    Listen to the `after` phase of this event to be notified after a model has
-    been removed from the list.
-
-    @event remove
-    @param {Model} model The model being removed.
-    @param {int} index The index of the model being removed.
-    @preventable _defRemoveFn
-    **/
-    EVT_REMOVE = 'remove';
+    EVT_RESET = 'reset';
 
 function ModelList() {
     ModelList.superclass.constructor.apply(this, arguments);
@@ -218,8 +241,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
       instance or a hash of model attributes, in which case a new model instance
       will be created from the hash.
     @param {Object} [options] Options to be passed to the model's `sync()` and
-        `set()` methods and mixed into the `add` event when the model is added
-        to the list.
+        `set()` methods and mixed into the `create` and `add` event facades.
       @param {Boolean} [options.silent=false] If `true`, no `add` event(s) will
           be fired.
     @param {Function} [callback] Called when the sync operation finishes.
@@ -238,9 +260,15 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
             options  = {};
         }
 
-        if (!(model instanceof Y.Model)) {
+        options || (options = {});
+
+        if (!model._isYUIModel) {
             model = new this.model(model);
         }
+
+        self.fire(EVT_CREATE, Y.merge(options, {
+            model: model
+        }));
 
         return model.save(options, function (err) {
             if (!err) {
@@ -437,9 +465,31 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
             options  = {};
         }
 
+        options || (options = {});
+
         this.sync('read', options, function (err, response) {
-            if (!err) {
-                self.reset(self.parse(response), options);
+            var facade = {
+                    options : options,
+                    response: response
+                },
+
+                parsed;
+
+            if (err) {
+                facade.error = err;
+                facade.src   = 'load';
+
+                self.fire(EVT_ERROR, facade);
+            } else {
+                // Lazy publish.
+                if (!self._loadEvent) {
+                    self._loadEvent = self.publish(EVT_LOAD, {
+                        preventable: false
+                    });
+                }
+
+                parsed = facade.parsed = self.parse(response);
+                self.fire(EVT_LOAD, facade);
             }
 
             callback && callback.apply(null, arguments);
@@ -546,8 +596,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         var facade = Y.merge(options, {
                 src   : 'reset',
                 models: YArray.map(models, function (model) {
-                    return model instanceof Y.Model ? model :
-                            new this.model(model);
+                    return model._isYUIModel ? model : new this.model(model);
                 }, this)
             });
 
@@ -682,7 +731,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
         options || (options = {});
 
-        if (!(model instanceof Y.Model)) {
+        if (!model._isYUIModel) {
             model = new this.model(model);
         }
 

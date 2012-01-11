@@ -14,7 +14,7 @@ nodeMapSuite = new Y.Test.Suite('View.NodeMap');
 MappedView = Y.Base.create('mappedView', Y.View, [Y.View.NodeMap]);
 
 nodeMapSuite.add(new Y.Test.Case({
-    name: 'Methods',
+    name: 'General',
 
     setUp: function () {
         this.container = Y.Node.create('<div id="node-map-container"><div id="node-map-child"></div></div>');
@@ -24,7 +24,7 @@ nodeMapSuite.add(new Y.Test.Case({
     },
 
     tearDown: function () {
-        this.view.destroy();
+        this.view && this.view.destroy();
     },
 
     'getByNode() should return a View instance associated with the given Node': function () {
@@ -48,6 +48,15 @@ nodeMapSuite.add(new Y.Test.Case({
         Y.one('#test').append(div);
         Assert.isNull(MappedView.getByNode(div));
         div.remove(true);
+    },
+
+    'View should be removed from the instances map when destroy() is called': function () {
+        var key = Y.stamp(this.container, true);
+
+        ObjectAssert.ownsKey(key, Y.View.NodeMap._instances, 'Node stamp should exist in the instances map.');
+        this.view.destroy();
+        Assert.isFalse(key in Y.View.NodeMap._instances, 'Node stamp should not exist in the instances map after the instance is destroyed.');
+        this.view = null;
     }
 }));
 
