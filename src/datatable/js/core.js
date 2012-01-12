@@ -262,19 +262,37 @@ Y.mix(Table.prototype, {
     attribute is set.
 
     @property CAPTION_TEMPLATE
-    @type {String}
-    @default '<caption></caption>'
+    @type {HTML}
+    @default '<caption/>'
     **/
-    CAPTION_TEMPLATE: '<caption></caption>',
+    CAPTION_TEMPLATE: '<caption/>',
+
+    /**
+    The HTML template used to create the table's `<col>`s.
+
+    @property COL_TEMPLATE
+    @type {HTML}
+    @default '<col/>'
+    **/
+    COL_TEMPLATE: '<col/>',
+
+    /**
+    The HTML template used to create the table's `<colgroup>`.
+
+    @property COLGROUP_TEMPLATE
+    @type {HTML}
+    @default '<colgroup/>'
+    **/
+    COLGROUP_TEMPLATE: '<colgroup/>',
 
     /**
     The HTML template used to create the table Node.
 
     @property TABLE_TEMPLATE
-    @type {String}
-    @default '<table></table>'
+    @type {HTML}
+    @default '<table/>'
     **/
-    TABLE_TEMPLATE  : '<table></table>',
+    TABLE_TEMPLATE  : '<table/>',
 
     /**
     HTML template used to create table's `<tbody>` if configured with a
@@ -282,9 +300,9 @@ Y.mix(Table.prototype, {
 
     @property TBODY_TEMPLATE
     @type {HTML}
-    @default '<tbody class="{classes}"></tbody>'
+    @default '<tbody class="{classes}"/>'
     **/
-    TBODY_TEMPLATE: '<tbody class="{classes}"></tbody>',
+    TBODY_TEMPLATE: '<tbody class="{classes}"/>',
 
     /**
     Template used to create the table's `<tfoot>` if configured with a
@@ -292,10 +310,10 @@ Y.mix(Table.prototype, {
 
     @property TFOOT_TEMPLATE
     @type {HTML}
-    @default '<tfoot class="{classes}"></tfoot>'
+    @default '<tfoot class="{classes}"/>'
     **/
     TFOOT_TEMPLATE:
-        '<tfoot class="{classes}"></tfoot>',
+        '<tfoot class="{classes}"/',
 
     /**
     Template used to create the table's `<thead>` if configured with a
@@ -303,10 +321,10 @@ Y.mix(Table.prototype, {
 
     @property THEAD_TEMPLATE
     @type {HTML}
-    @default '<thead class="{classes}"></thead>'
+    @default '<thead class="{classes}"/>'
     **/
     THEAD_TEMPLATE:
-        '<thead class="{classes}"></thead>',
+        '<thead class="{classes}"/>',
 
     /**
     The object or instance of the class assigned to `bodyView` that is
@@ -560,6 +578,10 @@ Y.mix(Table.prototype, {
     **/
     _afterColumnsChange: function (e) {
         this._setColumnMap(e.newVal);
+
+        if (this.get('rendered')) {
+            this._uiSetCols();
+        }
     },
 
     /**
@@ -942,6 +964,9 @@ Y.mix(Table.prototype, {
     /**
     Delegates rendering the table `<tbody>` to the configured `bodyView`.
 
+    The instance of the `bodyView` created is stored in the `body` property
+    and the `<tbody>` in the `\_tbodyNode`.
+
     @method _renderBody
     @protected
     **/
@@ -974,7 +999,31 @@ Y.mix(Table.prototype, {
     },
 
     /**
+    Renders the table's `<colgroup>` and populates the `\_colgroupNode` property.
+
+    @method _renderColumnGroup
+    @protected
+    **/
+    _renderColumnGroup: function () {
+        if (!this._colgroupNode) {
+            // Probably don't need the > col
+            // I don't like the idea of removing the existing columns, but
+            // that's what the PE module is supposed to account for.
+            this._tableNode.all('> colgroup, > col').remove();
+            this._colgroupNode = Y.Node.create(this.COLGROUP_TEMPLATE);
+        }
+
+        this._tableNode.insertBefore(this._colgroupNode,
+            this._tableNode.one('> thead, > tfoot, > tbody'));
+
+        this._uiSetCols();
+    },
+
+    /**
     Delegates rendering the table `<tfoot>` to the configured `footerView`.
+
+    The instance of the `footerView` created is stored in the `foot` property
+    and the `<tfoot>` in the `\_tfootNode`.
 
     @method _renderFooter
     @protected
@@ -1007,6 +1056,9 @@ Y.mix(Table.prototype, {
 
     /**
     Delegates rendering the table `<thead>` to the configured `headerView`.
+
+    The instance of the `headerView` created is stored in the `head` property
+    and the `<thead>` in the `\_theadNode`.
 
     @method _renderHeader
     @protected
@@ -1051,10 +1103,6 @@ Y.mix(Table.prototype, {
             this._tableNode = Y.Node.create(this.TABLE_TEMPLATE);
         }
         this._tableNode.addClass(this.getClassName('table'));
-
-        this._uiUpdateSummary(this.get('summary'));
-
-        this._uiUpdateCaption(this.get('caption'));
     },
 
     /**
@@ -1070,6 +1118,12 @@ Y.mix(Table.prototype, {
 
         if (contentBox) {
             this._renderTable();
+
+            this._uiUpdateSummary(this.get('summary'));
+
+            this._uiUpdateCaption(this.get('caption'));
+
+            this._renderColumnGroup();
 
             this._renderHeader();
 
@@ -1273,6 +1327,52 @@ Y.mix(Table.prototype, {
     **/
     _uiUpdateSummary: function (summary) {
         this._tableNode.setAttribute('summary', summary || '');
+    },
+
+    /**
+    Populates the table's `<colgroup>` with a `<col>` per item in the `columns`
+    attribute without children.  It is assumed that these are the columns that
+    have data cells renderered for them.
+
+    Assigns the created Nodes to their respective column configuration objects.
+
+    @method _uiSetCols
+    @protected
+    **/
+    _uiSetCols: function () {
+        var removeCols = this._tableNode.all('col'),
+            template   = this.COL_TEMPLATE,
+            colgroup   = this._colgroupNode,
+            insert = 0;
+
+        function process(columns) {
+            var col, i, len, index;
+
+            for (i = 0, len = columns.length; i < len; ++i) {
+                if (columns[i].children) {
+                    process(columns[i].children);
+                } else {
+                    col = columns[i].colNode;
+
+                    if (col) {
+                        index = removeCols.indexOf(col);
+                        if (index > -1) {
+                            removeCols.splice(index, 1);
+                        }
+                    } else {
+                        col = columns[i].colNode = Y.Node.create(template);
+                    }
+                    
+                    col.setStyle('width', columns[i].width || '');
+
+                    colgroup.insert(col, insert++);
+                }
+            }
+        }
+
+        process(this.get('columns'));
+
+        removeCols.remove();
     },
 
     /**
