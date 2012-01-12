@@ -107,7 +107,9 @@
      */
     Stack.HTML_PARSER = {
         zIndex: function(contentBox) {
-            return contentBox.getStyle(ZINDEX);
+            var zIndex = contentBox.getStyle(ZINDEX);
+            
+            return zIndex !== "auto" ? zIndex : null;
         }
     };
 

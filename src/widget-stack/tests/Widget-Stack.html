@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Widget-Stack Tests</title>
+    <meta charset="utf-8">
+    <style>
+        .css-htmlparser { z-index: 2; }
+    </style>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+
+<div class="style-htmlparser" style="z-index: 2;"></div>
+<div class="css-htmlparser"></div>
+
+<script src="../../../build/yui/yui.js"></script>
+<script src="../../../build/widget-stack/widget-stack.js"></script>
+<script src="tests-widget-stack.js"></script>
+<script>
+var config = {
+        filter : "raw",
+        combine : false,
+        allowRollup: false,
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+    };
+
+var Y = YUI(config).use("widget-stack-tests", "test-console", function(Y) {
+    new Y.Test.Console().render("#log");
+    
+    Y.Test.Runner.add(Y.Tests.WidgetStack);
+
+    Y.Test.Runner.on("fail", function(e) { 
+        console.error(e.error); 
+    });
+    
+    Y.Test.Runner.run();
+});
+</script>
+</body>
+</html>
