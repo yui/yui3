@@ -83,6 +83,13 @@
             "description": "Natively use YUI Gallery Modules",
             "modules"    : ["yui"],
             "tags"       : ["yui", "core", "gallery"]
+        },
+        {
+            "name"       : "loader-resolve",
+            "displayName": "Progamatically use Loader",
+            "description": "Progamatically use Loader",
+            "modules"    : ["yui"],
+            "tags"       : ["yui", "core", "loader", "nodejs", "cli", "utility"]
         }
     ],
     "pages": {
@@ -98,8 +105,7 @@
             "displayName": "YUI Loader"
         },
         "lang": {
-            "displayName": "Y.Lang",
-            "hideTableOfContents": true
+            "displayName": "Y.Lang"
         }
     }
 }

@@ -1,0 +1,61 @@
+<div class="intro">
+<p>Loader can be used programatically as an offline dependency calculator.</p>
+</div>
+
+<h2>Instantiating Loader</h2>
+
+<p>Loader comes with the `YUI` seed file by default, so it's ready to be used immediately, so there is 
+no need to load any additional files.</p>
+
+```
+var Y = YUI();
+var loader = new Y.Loader();
+```
+
+<h2>Resolving dependencies</h2>
+
+<p>`Loader` comes with a `resolve` method that it uses internally to calculate dependencies and 
+build URL's for injecting scripts into the page.</p>
+
+```
+var Y = YUI();
+var loader = new Y.Loader({
+    require: [ 'node' ]
+});
+
+//Tell loader to calculate dependencies
+loader.calculate();
+
+var out = loader.resolve();
+```
+
+<p>In the above code, `out` will be an Object containing the keys, `js` and `css` that will contain
+an array of URL's to load the modules needed to resolve `node`.</p>
+
+<h2>Advanced Usage</h2>
+
+```
+{{>loader-resolve}}
+```
+<p>The above code will generate this URL for you:</p>
+
+<div class="example code" id="resolve1">
+</div>
+
+<script>
+{{>loader-resolve}}
+
+document.getElementById('resolve1').innerHTML = out.js[0];
+</script>
+
+<p>You can use any `Loader` configuration option here as well: `modules`, `groups`, `patterns`, etc.</p>
+
+<h2>CLI use within Node.js</h2>
+
+<p>Here we use Loader to calculate dependencies from the command line and generate a combined
+file. This could be used in a build system to auto-generate a custom seed file with modules
+needed for immediate access.</p>
+
+```
+{{>loader-resolve-node}}
+```

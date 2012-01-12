@@ -1,0 +1,11 @@
+var Y = YUI();
+var loader = new Y.Loader({
+    combine: true,
+    comboBase: 'http://mysite.com/yui-combo?',
+    root: '',
+    base: '',
+    ignoreRegistered: true,
+    require: [ 'node' ]
+});
+
+var out = loader.resolve(true);
