@@ -759,6 +759,9 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     /**
     Adds the specified _model_ if it isn't already in this list.
 
+    If the model's `clientId` or `id` matches that of a model that's already in
+    the list, an `error` event will be fired and the model will not be added.
+
     @method _add
     @param {Model|Object} model Model or object to add.
     @param {Object} [options] Data to be mixed into the event facade of the
@@ -769,7 +772,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @protected
     **/
     _add: function (model, options) {
-        var facade;
+        var facade, id;
 
         options || (options = {});
 
@@ -777,7 +780,11 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
             model = new this.model(model);
         }
 
-        if (this._clientIdMap[model.get('clientId')]) {
+        id = model.get('id');
+
+        if (this._clientIdMap[model.get('clientId')]
+                || (Lang.isValue(id) && this._idMap[id])) {
+
             this.fire(EVT_ERROR, {
                 error: 'Model is already in the list.',
                 model: model,

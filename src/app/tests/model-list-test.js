@@ -739,10 +739,11 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame(1, calls);
     },
 
-    '`error` event should fire when a duplicate model is added': function () {
-        var calls = 0,
-            list  = this.createList(),
-            model = this.createModel();
+    '`error` event should fire when a model with a duplicate clientId is added': function () {
+        var calls  = 0,
+            list   = this.createList(),
+            model  = this.createModel(),
+            model2 = this.createModel();
 
         list.on('error', function (e) {
             calls += 1;
@@ -751,8 +752,30 @@ modelListSuite.add(new Y.Test.Case({
             Assert.areSame('add', e.src);
         });
 
-        list.add(model);
+        list.add([model, model2]);
         list.add(model, {src: 'test'});
+        list.add({});
+
+        Assert.areSame(1, calls);
+    },
+
+    '`error` event should fire when a model with a duplicate id is added': function () {
+        var calls  = 0,
+            list   = this.createList(),
+            model  = this.createModel(),
+            model2 = this.createModel(),
+            model3 = this.createModel();
+
+        model.set('id', 0);
+        model3.set('id', 0);
+
+        list.on('error', function (e) {
+            calls += 1;
+            Assert.areSame(model3, e.model);
+        });
+
+        list.add([model, model2]);
+        list.add(model3);
         list.add({});
 
         Assert.areSame(1, calls);
