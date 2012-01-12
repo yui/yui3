@@ -98,8 +98,7 @@
             "displayName": "YUI Loader"
         },
         "lang": {
-            "displayName": "Y.Lang",
-            "hideTableOfContents": true
+            "displayName": "Y.Lang"
         }
     }
 }
