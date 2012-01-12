@@ -30,15 +30,40 @@ TYPES = {
     '[object Error]'   : 'error'
 },
 
-SUBREGEX  = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g,
-TRIMREGEX = /^\s+|\s+$/g,
+SUBREGEX        = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g,
+TRIMREGEX       = /^\s+|\s+$/g,
+NATIVE_FN_REGEX = /\{\s*\[(?:native code|function)\]\s*\}/i;
 
-// If either MooTools or Prototype is on the page, then there's a chance that we
-// can't trust "native" language features to actually be native. When this is
-// the case, we take the safe route and fall back to our own non-native
-// implementation.
-win           = Y.config.win,
-unsafeNatives = win && !!(win.MooTools || win.Prototype);
+// -- Protected Methods --------------------------------------------------------
+
+/**
+Returns _true_ if the given function appears to be implemented in native code,
+_false_ otherwise. This isn't guaranteed to be 100% accurate and won't work for
+anything other than functions, but it can be useful for determining whether
+a function like `Array.prototype.forEach` is native or a JS shim provided by
+another library.
+
+There's a great article by @kangax discussing the flaws with this technique:
+<http://perfectionkills.com/detecting-built-in-host-methods/>
+
+While his points are valid, it's still possible to benefit from this function
+as long as it's used carefully and sparingly, and in such a way that false
+negatives have minimal consequences. It's used internally to avoid using
+potentially broken non-native ES5 shims that have been added to the page by
+other libraries.
+
+@method _isNative
+@param {Function} fn Function to test.
+@return {Boolean} _true_ if _fn_ appears to be native, _false_ otherwise.
+@static
+@protected
+@since 3.5.0
+**/
+L._isNative = function (fn) {
+    return !!(fn && NATIVE_FN_REGEX.test(fn));
+};
+
+// -- Public Methods -----------------------------------------------------------
 
 /**
  * Determines whether or not the provided item is an array.
@@ -52,7 +77,7 @@ unsafeNatives = win && !!(win.MooTools || win.Prototype);
  * @return {boolean} true if o is an array.
  * @static
  */
-L.isArray = (!unsafeNatives && Array.isArray) || function (o) {
+L.isArray = L._isNative(Array.isArray) ? Array.isArray : function (o) {
     return L.type(o) === 'array';
 };
 
