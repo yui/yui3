@@ -109,7 +109,9 @@ YUI.add('widget-stack', function(Y) {
      */
     Stack.HTML_PARSER = {
         zIndex: function(contentBox) {
-            return contentBox.getStyle(ZINDEX);
+            var zIndex = contentBox.getStyle(ZINDEX);
+            
+            return zIndex !== "auto" ? zIndex : null;
         }
     };
 
@@ -400,6 +402,7 @@ YUI.add('widget-stack', function(Y) {
     };
 
     Y.WidgetStack = Stack;
+
 
 
 }, '@VERSION@' ,{requires:['base-build', 'widget']});
