@@ -5,7 +5,8 @@ Provides view transitions for `Y.App`.
 @since 3.5.0
 **/
 
-var Lang = Y.Lang;
+var Lang    = Y.Lang,
+    YObject = Y.Object;
 
 /**
 Provides view transitions for `Y.App`.
@@ -87,24 +88,65 @@ AppTransitions.prototype = {
     initializer: function (config) {
         config || (config = {});
 
-        // TODO: Deep merge?
-        this.transitions = config.transitions ?
-            Y.merge(this.transitions, config.transitions) : null;
+        // Requires a truthy value to enable transitions support.
+        if (!config.transitions) {
+            this.transitions = false;
+            return;
+        }
+
+        var transitions = {};
+
+        // Merges-in specified transition metadata into local `transitions`
+        // object.
+        function mergeTransitionConfig(transition, name) {
+            transitions[name] = Y.merge(transitions[name], transition);
+        }
+
+        // First, each transition in the `transitions` prototype object gets its
+        // metadata merged-in, providing the defaults.
+        YObject.each(this.transitions, mergeTransitionConfig);
+
+        // Then, each transition in the specified `config.transitions` object
+        // gets its metadata merged-in.
+        YObject.each(config.transitions, mergeTransitionConfig);
+
+        // The resulting hodgepodge of metadata is then stored as the instance's
+        // `transitions` object, and no one's objects were harmed in the making.
+        this.transitions = transitions;
     },
 
     // -- Public Methods -------------------------------------------------------
 
     /**
-    Sets which view is visible/active within the application.
+    Sets which view is active/visible for the application. This will set the
+    app's `activeView` attribute to the specified `view`.
 
-    This will set the application's `activeView` attribute to the view instance
-    passed-in, or when a view name is provided, the `activeView` attribute will
-    be set to either the preserved instance, or a new view instance will be
-    created using the passed in `config`.
+    When a string-name is provided for a view which has been registered on this
+    app's `views` object, the referenced metadata will be used and the
+    `activeView` will be set to either a preserved view instance, or a new
+    instance of the registered view will be created using the specified `config`
+    object passed-into this method.
 
     A callback function can be specified as either the third or fourth argument,
-    and this function will be called after the new `view` is the `activeView`
-    and ready to use.
+    and this function will be called after the new `view` becomes the
+    `activeView`, is rendered to the `viewContainer`, and is ready to use.
+
+    @example
+        var app = new Y.App({
+            views: {
+                users: {
+                    // Imagine that `Y.UsersView` has been defined.
+                    type: Y.UsersView
+                }
+            }
+        });
+
+        app.route('/users/', function () {
+            this.showView('users');
+        });
+
+        app.render();
+        app.navigate('/uses/'); // => Creates a new `Y.UsersView` and shows it.
 
     @method showView
     @param {String|View} view The name of a view defined in the `views` object,
@@ -123,7 +165,7 @@ AppTransitions.prototype = {
           the view being transitioned-out.
     @param {Function} [callback] Optional callback Function to call after the
         new `activeView` is ready to use, the function will be passed:
-      @param {View} view
+      @param {View} callback.view A reference to the new `activeView`.
     @chainable
     **/
     // Does not override `showView()` but does use additional `options`.
@@ -158,36 +200,79 @@ AppTransitions.prototype = {
         }
     },
 
+    // -- Protected Methods ----------------------------------------------------
+
+    /**
+    Returns a transition object containing a named fx for both `viewIn` and
+    `viewOut` based on the relationship between the specified `newView` and
+    `oldView`.
+
+    @method _getTransition
+    @param {View} newView The View being transitioned-in.
+    @param {View} oldView The View being transitioned-out.
+    @return {Object} The transition object containing a named fx for both
+      `viewIn` and `viewOut`.
+    @protected
+    **/
+    _getTransition: function (newView, oldView) {
+        var transitions = this.transitions;
+
+        if (!transitions) {
+            return null;
+        }
+
+        if (this._isChildView(newView, oldView)) {
+            return transitions.toChild;
+        }
+
+        if (this._isParentView(newView, oldView)) {
+            return transitions.toParent;
+        }
+
+        return transitions.navigate;
+    },
+
     // -- Protected Event Handlers ---------------------------------------------
 
     /**
-    TODO: Only run transitions if `this.transitions` isn't falsy. It also needs
-    to be investigated whether a better approach to overriding the default
-    behavior should be used.
+    Performs the actual change of the app's `activeView` by attaching the
+    `newView` to this app, and detaching the `oldView` from this app using any
+    specified `options`.
 
-    Handles the application's `activeViewChange` event (which is fired when the
-    `activeView` attribute changes) by detaching the old view, attaching the new
-    view and transitioning between them.
+    The `newView` is attached to the app by rendering it to the `viewContainer`,
+    and making this app a bubble target of its events.
 
-    The `activeView` attribute is read-only, so the public API to change its
-    value is through the `showView()` method.
+    The `oldView` is detached from the app by removing it from the
+    `viewContainer`, and removing this app as a bubble target for its events.
+    The `oldView` will either be preserved or properly destroyed.
+
+    The `activeView` attribute is read-only and can be changed by calling the
+    `showView()` method.
 
     TODO: Update docs to talk about transitions.
 
-    @method _afterActiveViewChange
-    @param {EventFacade} e
+    @method _uiSetActiveView
+    @param {View} newView The View which is now this app's `activeView`.
+    @param {View} [oldView] The View which was this app's `activeView`.
+    @param {Object} [options] Optional object containing any of the following
+        properties:
+      @param {Boolean} [options.prepend] Whether the new view should be
+        prepended instead of appended to the `viewContainer`.
+      @param {Function} [callback] Optional callback Function to call after the
+        `newView` is ready to use, the function will be passed:
+        @param {View} options.callback.view A reference to the `newView`.
     @protected
     **/
-    _afterActiveViewChange: function (e) {
-        var newView   = e.newVal,
-            oldView   = e.prevVal,
-            callback  = e.callback,
-            isChild   = this._isChildView(newView, oldView),
-            isParent  = !isChild && this._isParentView(newView, oldView),
-            prepend   = !!e.prepend || isParent,
-            fx        = this.transitions,
-            fxConfigs = e.transitions || {},
-            fxRemaining;
+    _uiSetActiveView: function (newView, oldView, options) {
+        options || (options = {});
+
+        var callback   = options.callback,
+            isChild    = this._isChildView(newView, oldView),
+            isParent   = !isChild && this._isParentView(newView, oldView),
+            prepend    = !!options.prepend || isParent,
+            transition = this._getTransition(newView, oldView),
+            fxConfigs  = options.transitions || {},
+            fx;
 
         // Prevent detaching (thus removing) the view we want to show.
         // Also hard to animate out and in, the same view.
@@ -195,35 +280,26 @@ AppTransitions.prototype = {
             return callback && callback.call(this, newView);
         }
 
-        // Determine transitions to use.
-        // TODO: This should be a fn, this looks super gross!
-        if (isChild) {
-            fx = fx.toChild;
-        } else if (isParent) {
-            fx = fx.toParent;
-        } else {
-            fx = fx.navigate;
-        }
-
-        function done() {
-            fxRemaining -= 1;
-
-            if (!fxRemaining) {
-                // Detach and remove the old view from the DOM.
-                this._detachView(oldView);
-                // The view swap has happened, transitions have completed.
-                callback && callback.call(this, newView);
-            }
-        }
-
         // Attach the new active view, and insert into the DOM so it can be
         // transitioned in.
         this._attachView(newView, prepend);
 
-        // Expected to be called-back twice.
-        fxRemaining = 2;
-        this.transitionView(newView, fx.viewIn, fxConfigs.viewIn, done);
-        this.transitionView(oldView, fx.viewOut, fxConfigs.viewOut, done);
+        // Setup a new stack to run the view transitions in parallel.
+        fx = new Y.Parallel({context: this});
+
+        // If `transitions` have been enabled for this app, they are added to
+        // the stack of callbacks to wait to be called before continuing.
+        if (transition) {
+            this.transitionView(newView, transition.viewIn, fxConfigs.viewIn, fx.add());
+            this.transitionView(oldView, transition.viewOut, fxConfigs.viewOut, fx.add());
+        }
+
+        // Called when view transitions completed, if none were added this will
+        // run right away.
+        fx.done(function () {
+            this._detachView(oldView);
+            callback && callback.call(this, newView);
+        });
     }
 };
 

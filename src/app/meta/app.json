@@ -14,7 +14,7 @@
             },
 
             "app-transitions": {
-                "requires": ["app-base", "transition"]
+                "requires": ["app-base", "parallel", "transition"]
             },
 
             "controller": {
