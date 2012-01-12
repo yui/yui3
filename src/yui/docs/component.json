@@ -90,6 +90,13 @@
             "description": "Progamatically use Loader",
             "modules"    : ["yui"],
             "tags"       : ["yui", "core", "loader", "nodejs", "cli", "utility"]
+        },
+        {
+            "name"       : "parallel",
+            "displayName": "Using Y.Parallel",
+            "description": "Executing functions in parallel",
+            "modules"    : ["yui"],
+            "tags"       : ["yui", "core", "nodejs", "paralell", "async"]
         }
     ],
     "pages": {
