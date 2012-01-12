@@ -816,7 +816,7 @@
         * @method getDocType
         * @description Parses document.doctype and generates a DocType to match the parent page, if supported.
         * For IE8, it grabs document.all[0].nodeValue and uses that. For IE < 8, it falls back to Frame.DOC_TYPE.
-        * @returns {String} The normalized DocType to apply to the iframe
+        * @return {String} The normalized DocType to apply to the iframe
         */
         getDocType: function() {
             var dt = Y.config.doc.doctype,

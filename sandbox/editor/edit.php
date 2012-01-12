@@ -140,6 +140,8 @@
 </div>
 
 <div id="stub">
+</div>
+<!--
     <b>This is bold</b><br><br>
     <strong>This is strong</strong><br><br>
     <span style="font-weight: bold">This is font-weight bold</span><br><br>
@@ -199,7 +201,7 @@
             </div><br><br>
         </div>
     </div>
-</div>
+</div-->
 <!--p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
 This is some <strong>other</strong> loose test.
 <p>This <strong>is</strong> <font face="Courier New">another</font> test.</p>
