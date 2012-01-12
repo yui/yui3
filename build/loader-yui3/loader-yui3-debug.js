@@ -90,6 +90,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "app-transitions": {
         "requires": [
             "app-base", 
+            "parallel", 
             "transition"
         ]
     }, 
@@ -2183,7 +2184,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '80937492f10391aee88b5c6a96af50fc';
+YUI.Env[Y.version].md5 = '4d48b229bf0f105ff3567a5a9d83f8cb';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
