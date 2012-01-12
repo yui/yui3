@@ -1110,7 +1110,8 @@ with any configuration info required for the module.
      * Report an error.  The reporting mechanism is controlled by
      * the `throwFail` configuration attribute.  If throwFail is
      * not specified, the message is written to the Logger, otherwise
-     * a JS error is thrown
+     * a JS error is thrown. If an `errorFn` is specified in the config
+     * it must return `true` to keep the error from being thrown.
      * @method error
      * @param msg {String} the error message.
      * @param e {Error|String} Optional JS error that was caught, or an error string.
@@ -1729,7 +1730,8 @@ overwriting other scripts configs.
  * A callback to execute when Y.error is called.  It receives the
  * error message and an javascript error object if Y.error was
  * executed because a javascript error was caught.  The function
- * is executed in the YUI instance context.
+ * is executed in the YUI instance context. Returning `true` from this
+ * function will stop the Error from being thrown.
  *
  * @since 3.2.0
  * @property errorFn
