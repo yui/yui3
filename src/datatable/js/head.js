@@ -78,15 +78,10 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
 
     @property CELL_TEMPLATE
     @type {HTML}
-    @default '<th id="{_yuid}" abbr="{abbr} colspan="{colspan}" rowspan="{rowspan}"><div class="{linerClass}">{content}</div></th>'
+    @default '<th id="{_yuid}" abbr="{abbr} colspan="{colspan}" rowspan="{rowspan}">{content}</th>'
     **/
     CELL_TEMPLATE :
-        '<th id="{_yuid}" abbr="{abbr}" ' +
-                'colspan="{colspan}" rowspan="{rowspan}">' +
-            '<div class="{linerClass}">' +
-                '{content}' +
-            '</div>' +
-        '</th>',
+        '<th id="{_yuid}" abbr="{abbr}" colspan="{colspan}" rowspan="{rowspan}">{content}</th>',
 
     /**
     The data representation of the header rows to render.  This is assigned by
@@ -160,8 +155,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
             defaults = {
                 abbr: '',
                 colspan: 1,
-                rowspan: 1,
-                linerClass: this.getClassName('liner')
+                rowspan: 1
             },
             i, len, j, jlen, col, html, content;
 

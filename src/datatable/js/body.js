@@ -90,17 +90,9 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
     @property CELL_TEMPLATE
     @type {HTML}
-    @default
-        '<td headers="{headers}" class="{classes}">
-            '<div class="{linerClass}">{content}</div>
-        </td>'
+    @default '<td headers="{headers}" class="{classes}">{content}</td>'
     **/
-    CELL_TEMPLATE:
-        '<td headers="{headers}" class="{classes}">' +
-            '<div class="{linerClass}">' +
-                '{content}' +
-            '</div>' +
-        '</td>',
+    CELL_TEMPLATE: '<td headers="{headers}" class="{classes}">{content}</td>',
 
     /**
     CSS class applied to even rows.  This is assigned at instantiation after
@@ -564,7 +556,6 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     _createRowTemplate: function (columns) {
         var html         = '',
             cellTemplate = this.CELL_TEMPLATE,
-            linerClass   = this.getClassName('liner'),
             tokens       = {},
             i, len, col, key, token, tokenValues;
 
@@ -588,7 +579,6 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             tokenValues = {
                 content   : '{' + token + '}',
                 headers   : col.headers.join(' '),
-                linerClass: linerClass,
                 // TODO: should this be getClassName(token)? Both?
                 classes   : this.getClassName(key) + ' {' + token + '-classes}'
             };
