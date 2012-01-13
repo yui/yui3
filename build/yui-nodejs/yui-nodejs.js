@@ -3687,6 +3687,11 @@ YUI.add('get', function(Y) {
             });
         }
     };
+    
+    //Place holder for SS Dom access
+    Y.Get.css = function(s, cb) {
+        pass(cb);
+    };
 
 
 
