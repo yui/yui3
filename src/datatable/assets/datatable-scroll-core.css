@@ -4,9 +4,16 @@
 }
 
 .yui3-datatable-scrollable-y .yui3-datatable-content {
-    /* To keep table rows from visibly overflowing the configured height during
-       height calculations */
+    /*
+    To keep table rows from visibly overflowing the configured height during
+    height calculations
+    */
     overflow-y: hidden;
+
+    /*
+    To allow offsetTop calculation for assigning height to the scrolling div
+    */
+    position: relative;
 }
 .yui3-datatable-scrollable-y .yui3-datatable-data-container {
     display: inline-block;
