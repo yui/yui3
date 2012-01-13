@@ -382,10 +382,10 @@ Y.mix(Mutable.prototype, {
     **/
     initializer: function () {
         this.publish({
-            addColumn:    { defaultFn: this._defAddColumnFn },
-            removeColumn: { defaultFn: this._defRemoveColumnFn },
-            moveColumn:   { defaultFn: this._defMoveColumnFn },
-            modifyColumn: { defaultFn: this._defModifyColumnFn }
+            addColumn:    { defaultFn: Y.bind('_defAddColumnFn', this) },
+            removeColumn: { defaultFn: Y.bind('_defRemoveColumnFn', this) },
+            moveColumn:   { defaultFn: Y.bind('_defMoveColumnFn', this) },
+            modifyColumn: { defaultFn: Y.bind('_defModifyColumnFn', this) }
         });
     }
 });
