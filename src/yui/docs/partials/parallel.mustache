@@ -1,0 +1,32 @@
+YUI().use('parallel', 'node', function(Y) {
+    
+    //Create the stack
+    var stack = new Y.Parallel(),
+        //Setup our results node
+        res = Y.one('#results');
+
+    //Listen for the click on the button
+    Y.one('#runner').on('click', function(e) {
+        //Prevent the link from navigating
+        e.preventDefault();
+
+        //Note that we are starting the test.
+        res.append('<strong>Running example</strong><br><br>');
+
+        for (var i = 1000; i <= 5000; i=i+1000) {
+            //Adding a timeout with callback for ~1s apart.
+            Y.later(i, null, stack.add(function() {
+                //This is called when the timeout is reached.
+                res.append('Callback fired<br>');
+            }));
+        
+        }
+
+        //What to do when all the callbacks are completed.
+        stack.done(function() {
+            res.append('<br><strong>All Callbacks Done!</strong>');
+        });
+
+    });
+
+});

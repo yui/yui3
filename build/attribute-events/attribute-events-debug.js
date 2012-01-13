@@ -12,7 +12,7 @@ YUI.add('attribute-events', function(Y) {
 
     /**
      * The attribute-events submodule provides augmentable attribute change event support 
-     * for implementation using AttributeCore.
+     * for AttributeCore based implementations.
      *
      * @module attribute
      * @submodule attribute-events
@@ -29,7 +29,6 @@ YUI.add('attribute-events', function(Y) {
      *
      * @class AttributeEvents
      * @uses EventTarget
-     * @for AttributeCore
      */
     function AttributeEvents() {
         // Perf tweak - avoid creating event literals if not required.

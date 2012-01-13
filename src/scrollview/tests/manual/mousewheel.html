@@ -1,0 +1,146 @@
+
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<style>
+			#scrollableParent {
+			    background:#ccc;
+			}
+		</style>
+		
+        <script src="../../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script>
+
+	</head>
+
+	<body class="yui3-skin-sam">
+		<h1>Header</h1>
+		<div id="scrollableParent">
+			<div id="scrollable">
+				<ul>
+					<li>AC/DC</li>
+					<li>Aerosmith</li>
+					<li>Billy Joel</li>
+					<li>Bob Dylan</li>
+					<li>Bob Seger</li>
+					<li>Bon Jovi</li>
+					<li>Bruce Springsteen</li>
+					<li>Creed</li>
+					<li>Creedence Clearwater Revival</li>
+					<li>Dave Matthews Band</li>
+					<li>Def Leppard</li>
+					<li>Eagles</li>
+					<li>Eminem</li>
+					<li>Fleetwood Mac</li>
+					<li>Green Day</li>
+					<li>Guns N' Roses</li>
+					<li>James Taylor</li>
+					<li>Jay-Z</li>
+					<li>Jimi Hendrix</li>
+					<li>Led Zeppelin</li>
+					<li>Lynyrd Skynyrd</li>
+					<li>Metallica</li>
+					<li>Motley Crue</li>
+					<li>Neil Diamond</li>
+					<li>Nirvana</li>
+					<li>Ozzy Osbourne</li>
+					<li>Pearl Jam</li>
+					<li>Pink Floyd</li>
+					<li>Queen</li>
+					<li>Rod Stewart</li>
+					<li>Rush</li>
+					<li>Santana</li>
+					<li>Simon and Garfunkel</li>
+					<li>Steve Miller Band</li>
+					<li>The Beatles</li>
+					<li>The Doors</li>
+					<li>The Police</li>
+					<li>The Rolling Stones</li>
+					<li>Tom Petty</li>
+					<li>U2</li>
+					<li>Van Halen</li>
+					<li>Willie Nelson</li>
+					<li>ZZ Top</li>
+				</ul>
+			</div>
+		</div>
+        <h2>Footer</h2>
+
+		<script type="text/javascript">
+		
+		YUI.add('scrollview-mousewheel', function(Y){
+		    
+            function MouseWheelPlugin(config) {
+                MouseWheelPlugin.superclass.constructor.apply(this, arguments);
+            }
+
+            MouseWheelPlugin.NAME = 'pluginScrollViewMouseWheel';
+            MouseWheelPlugin.NS = 'mousewheel';
+            MouseWheelPlugin.ATTRS = {
+                
+            }
+            
+            Y.extend(MouseWheelPlugin, Y.Plugin.Base, {
+                initializer: function() {
+                    this.host = this.get('host');
+                    this.afterHostEvent('render', this._afterRender);
+                },
+                
+                _afterRender: function() {
+                    var host = this.host;
+                    var contentBox = host.get("contentBox");
+                    var lineHeight = contentBox.one("ul li").getComputedStyle('height'); // This probably shouldn't assume `ul li`
+                    var lineHeightInt = parseInt(lineHeight, 10);
+
+                    contentBox.on("mousewheel", function(e) {
+                        var preventDefault = true;
+                        var scrollY = host.get('scrollY');
+                        var scroll_to = scrollY - (e.wheelDelta * lineHeightInt);
+
+                        host.scrollTo(0, scroll_to);
+                        // if we have scrollbars plugin, flash the scrollbar
+                        if (host.scrollbars) {
+                            host.scrollbars.flash();
+                        }
+
+                        // prevent browser default behavior on mouse scroll
+                        if (preventDefault) {
+                            e.preventDefault();
+                        }
+                    });
+                }
+            });
+            
+            Y.Base.plug(Y.ScrollView, MouseWheelPlugin);
+		});
+		
+        YUI({
+            filter:"raw",
+            modules:{
+                'scrollview-mousewheel' : {
+                    requires: ['event-mousewheel']
+                }
+            }
+        }).use('event-mousewheel', 'scrollview', 'cssreset', 'cssfonts', function(Y) {
+
+             var scrollView = new Y.ScrollView({
+                id: "scrollview",
+                srcNode: Y.one("#scrollable"),
+                height: 200,
+                mousewheel: true,
+                flick: {
+                    minDistance:10,
+                    minVelocity:0.3,
+                    axis: "y"
+                }
+            }).render();
+            
+            scrollView.get("contentBox").on('mouseover', function(e){
+               console.log(e); 
+            });
+		});
+		
+		</script>
+	</body>
+</html>

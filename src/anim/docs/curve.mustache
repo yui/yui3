@@ -1,7 +1,11 @@
-<link href="{{componentAssets}}/anim.css" rel="stylesheet" type="text/css">
 <div class="intro">
     <p>This demonstrates how to animate the position of an element along a <code>curve</code>.</p>
-    <p>Click anywhere on the gray box below and the little orange box will move to the click position.</p>
+    <p>Click the button or drag the dots to see the animation. You can use this
+    example as a tool to find the right XY values for start, end, and control points
+    that will give you the right shape path for your own animation on a curve.</p>
+    <p>The curved line shown here between points 0 and 3 is just for preview 
+    purposes, and is not part of animation on a curve. The draggable points 0 - 3
+    are displayed only for UI interactivity.</p>
 </div>
 
 <div class="example">
@@ -11,8 +15,9 @@
 <h2>Setting up the HTML</h2>
 <p>First we add some HTML to animate.</p>
 ```
-<div id="demo-stage">
-    <span id="demo"></span>
+<div class="example">
+    <button id="btn-animate" class='yui3-button'>Animate On Path</button>
+    <div id="demo">A</div>
 </div>
 ```
 
@@ -20,10 +25,10 @@
 <p>Now we create an instance of <code>Y.Anim</code>, passing it a configuration object that includes the <code>node</code> we wish to animate.</p>
 
 ```
-var node = Y.one('#demo');
+var demoA = Y.one('#demo');
 
 var anim = new Y.Anim({
-    node: node,
+    node: demoA,
     duration: 1.5,
     easing: Y.Easing.easeOut
 });
@@ -33,22 +38,34 @@ var anim = new Y.Anim({
 <p>A click handler will set the <code>to</code> value before <code>run</code> is called.</p>
 
 ```
-var onClick = function(e) {
+var startAnim = function(e) {
     anim.set('to', {
-        curve: randomCurve([e.pageX, e.pageY])
+        curve: [ [x1, y1], [x2, y2], [x3, y3] ] // Where 1 and 2 are curve control points, and 3 is the end point.
     });
     anim.run();
 };
 ```
 
 <h2>Running the Animation</h2>
+<p>If the animation will be run multiple times, you'll need to reset the position of the animated element.</p>
 <p>Finally we add an event handler to run the animation.</p>
 
 ```
-Y.one('#demo-stage').on('click', onClick);
+var resetToAnimStart = function(){
+	demoA.setStyles({'left': x0, 'top': y0}); // Where x0, y0 is the animation starting point  
+}
+
+Y.one('#btn-animate').on('click', function(){
+	resetToAnimStart();
+	startAnim();
+});
 ```
 
 <h2>Complete Example Source</h2>
+<p>The code shown above does the basics. 
+This example however, allows dragging the points, displays xy values for each point
+while you drag, and displays a path preview of the animation using YUI Graphics
+Utility. This adds some complexity.</p>
 ```
-{{>anim-xy-source}}
+{{>curve-source}}
 ```

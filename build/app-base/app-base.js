@@ -16,6 +16,17 @@ Provides a top-level application component which manages navigation and views.
 @since 3.5.0
 **/
 
+// TODO: Better handling of lifecycle for registered views:
+//
+//   * Seems like any view created via `createView` should listen for the view's
+//     `destroy` event and use that to remove it from the `_viewsInfoMap`. I
+//     should look at what ModelList does for Models as a reference.
+//
+//   * Should we have a companion `destroyView()` method? Maybe this wouldn't be
+//     needed if we have a `getView(name, create)` method, and already doing the
+//     above? We could do `app.getView('foo').destroy()` and it would be removed
+//     from the `_viewsInfoMap` as well.
+
 var Lang     = Y.Lang,
     PjaxBase = Y.PjaxBase,
     Router   = Y.Router,
@@ -53,10 +64,10 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
     /**
     Hash of view-name to metadata used to declaratively describe an
-    application's views and their relationship with the app and other views.
+    application's views and their relationship with the app and its other views.
 
-    The view info in `views` is an Object keyed to a view name and can have any
-    or all of the following properties:
+    The view metadata is composed of Objects keyed to a view-name that can have
+    any or all of the following properties:
 
       * `type`: Function or a string representing the view constructor to use to
         create view instances. If a string is used, the constructor function is
@@ -68,7 +79,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         from the DOM when it is no longer active. This is useful when the view
         is frequently used and may be expensive to re-create.
 
-      * `parent`: String to another named view in this hash that represents
+      * `parent`: String to another named view in this hash that represents the
         parent view within the application's view hierarchy; e.g. a `"photo"`
         view could have `"album"` has its `parent` view. This parent/child
         relationship is a useful cue for things like transitions.
@@ -318,7 +329,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         prepended instead of appended to the `viewContainer`.
     @param {Function} [callback] Optional callback Function to call after the
         new `activeView` is ready to use, the function will be passed:
-      @param {View} callback.view
+      @param {View} callback.view A reference to the new `activeView`.
     @chainable
     **/
     showView: function (view, config, options, callback) {
@@ -328,6 +339,9 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
             viewInfo = this.getViewInfo(view);
 
             // Use the preserved view instance, or create a new view.
+            // TODO: Maybe we can remove the strict check for `preserve` and
+            // assume we'll use a View instance if it is there, and just check
+            // `preserve` when detaching?
             if (viewInfo && viewInfo.preserve && viewInfo.instance) {
                 view = viewInfo.instance;
                 // Make sure there's a mapping back to the view metadata.
@@ -338,9 +352,13 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
             }
         }
 
-        // TODO: Add options.update to update to view with the `config`, if
+        // TODO: Add `options.update` to update to view with the `config`, if
         // needed. This could also call `setAttrs()` when the specified `view`
         // already a View instance. Is this be too much overloading of the API?
+
+        // TODO: Add `options.render` to provide a way to control whether a view
+        // is rendered or not; by default, `render()` will only be called if
+        // this method created the View.
 
         options || (options = {});
 
@@ -353,7 +371,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         // TODO: Should the `callback` _always_ be called, even when the
         // `activeView` does not change?
 
-        return this._set('activeView', view, options);
+        return this._set('activeView', view, {options: options});
     },
 
     // -- Protected Methods ----------------------------------------------------
@@ -447,6 +465,9 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
             // View's `container`.
         } else {
             view.destroy();
+
+            // TODO: The following should probably happen automagically from
+            // `destroy()` being called! Possibly `removeTarget()` as well.
 
             // Remove from view to view-info map.
             delete this._viewInfoMap[Y.stamp(view, true)];
@@ -638,6 +659,53 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     },
 
     /**
+    Performs the actual change of the app's `activeView` by attaching the
+    `newView` to this app, and detaching the `oldView` from this app using any
+    specified `options`.
+
+    The `newView` is attached to the app by rendering it to the `viewContainer`,
+    and making this app a bubble target of its events.
+
+    The `oldView` is detached from the app by removing it from the
+    `viewContainer`, and removing this app as a bubble target for its events.
+    The `oldView` will either be preserved or properly destroyed.
+
+    The `activeView` attribute is read-only and can be changed by calling the
+    `showView()` method.
+
+    @method _uiSetActiveView
+    @param {View} newView The View which is now this app's `activeView`.
+    @param {View} [oldView] The View which was this app's `activeView`.
+    @param {Object} [options] Optional object containing any of the following
+        properties:
+      @param {Boolean} [options.prepend] Whether the new view should be
+        prepended instead of appended to the `viewContainer`.
+      @param {Function} [callback] Optional callback Function to call after the
+        `newView` is ready to use, the function will be passed:
+        @param {View} options.callback.view A reference to the `newView`.
+    @protected
+    **/
+    _uiSetActiveView: function (newView, oldView, options) {
+        options || (options = {});
+
+        var callback = options.callback,
+            isChild  = this._isChildView(newView, oldView),
+            isParent = !isChild && this._isParentView(newView, oldView),
+            prepend  = !!options.prepend || isParent;
+
+        // Prevent detaching (thus removing) the view we want to show.
+        // Also hard to animate out and in, the same view.
+        if (newView === oldView) {
+            return callback && callback.call(this, newView);
+        }
+
+        this._attachView(newView, prepend);
+        this._detachView(oldView);
+
+        callback && callback.call(this, newView);
+    },
+
+    /**
     Upgrades a hash-based URL to a full-path URL, if necessary.
 
     The specified `url` will be upgraded if its of the same origin as the
@@ -692,24 +760,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @protected
     **/
     _afterActiveViewChange: function (e) {
-        var newView  = e.newVal,
-            oldView  = e.prevVal,
-            callback = e.callback,
-            isChild  = this._isChildView(newView, oldView),
-            isParent = !isChild && this._isParentView(newView, oldView),
-            prepend  = !!e.prepend || isParent;
-
-        // Prevent detaching (thus removing) the view we want to show.
-        // Also hard to animate out and in, the same view.
-        if (newView === oldView) {
-            return callback && callback.call(this, newView);
-        }
-
-        // TODO: Remove `viewContainer` before making DOM updates?
-        this._attachView(newView, prepend);
-        this._detachView(oldView);
-
-        callback && callback.call(this, newView);
+        this._uiSetActiveView(e.newVal, e.prevVal, e.options);
     }
 }, {
     ATTRS: {
@@ -827,7 +878,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
             to all full-path URLs the app can produce.
 
             This is the best option for progressive-enhancement because it will
-            cause *all URLs to always have full-paths*, which means the server
+            cause **all URLs to always have full-paths**, which means the server
             will be able to accurately handle all URLs this app produces. e.g.
 
                 http://example.com/users/1
@@ -840,7 +891,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
             to all full-path URLs the app can produce, therefore all routing
             will be handled by this App instance.
 
-            Be aware that this will cause *all URLs to always be hash-based*,
+            Be aware that this will cause **all URLs to always be hash-based**,
             even in browsers that are capable of using HTML5 history. e.g.
 
                 http://example.com/#/users/1

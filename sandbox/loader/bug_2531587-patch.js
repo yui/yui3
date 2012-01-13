@@ -1,5 +1,7 @@
 (function() {
 
+    var NOT_FOUND = {};
+
     YUI.Env.core.push('loader-patch');
 
     YUI.add('loader-patch', function(Y) {

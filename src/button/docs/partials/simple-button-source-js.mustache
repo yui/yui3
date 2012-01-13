@@ -2,7 +2,24 @@ YUI().use('button', function(Y){
     
     // A basic push button
     var pushButton = new Y.Button({
-        srcNode:'#myButton',
+        srcNode:'#myButton'
+    });
+    
+    
+    // A disabled button
+    var disabledButton = new Y.Button({
+        srcNode:'#myDisabledButton',
+        disabled: true
+    });
+    
+    
+    // An event button, listening for a click
+    var eventButton = new Y.Button({
+        srcNode:'#myEventButton'
+    });
+    
+    eventButton.getNode().on('click', function(){
+        alert('I was clicked!');
     });
     
     
@@ -23,29 +40,4 @@ YUI().use('button', function(Y){
             }
         }
     });
-    
-    
-    // A disabled button
-    var disabledButton = new Y.Button({
-        srcNode:'#myDisabledButton',
-        disabled: true
-    });
-    
-    
-    // An event button, listening for a click
-    var eventButton = new Y.Button({
-        srcNode:'#myEventButton',
-    });
-    
-    eventButton.getNode().on('click', function(){
-        alert("I was clicked!");
-    })
-    
-    
-    // A disabled button
-    var selectedButton = new Y.Button({
-        srcNode:'#mySelectedButton',
-        selected: true
-    });
-    
 });

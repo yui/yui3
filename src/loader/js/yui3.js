@@ -88,6 +88,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "app-transitions": {
         "requires": [
             "app-base", 
+            "parallel", 
             "transition"
         ]
     }, 
@@ -276,12 +277,18 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "attribute-complex"
         ], 
         "requires": [
+            "base-core", 
             "attribute-base"
         ]
     }, 
     "base-build": {
         "requires": [
             "base-base"
+        ]
+    }, 
+    "base-core": {
+        "requires": [
+            "attribute-core"
         ]
     }, 
     "base-pluginhost": {
@@ -294,7 +301,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "use": [
             "button-base", 
             "button-group", 
-            "cssbuttons"
+            "cssbutton"
         ]
     }, 
     "button-base": {
@@ -462,7 +469,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "type": "css"
     }, 
-    "cssbuttons": {
+    "cssbutton": {
         "type": "css"
     }, 
     "cssfonts": {
@@ -946,7 +953,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "editor": {
         "use": [
             "frame", 
-            "selection", 
+            "editor-selection", 
             "exec-command", 
             "editor-base", 
             "editor-para", 
@@ -962,7 +969,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "frame", 
             "node", 
             "exec-command", 
-            "selection"
+            "editor-selection"
         ]
     }, 
     "editor-bidi": {
@@ -983,6 +990,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "editor-para": {
         "requires": [
             "editor-base"
+        ]
+    }, 
+    "editor-selection": {
+        "requires": [
+            "node"
         ]
     }, 
     "editor-tab": {
@@ -1573,14 +1585,14 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "panel": {
         "requires": [
             "widget", 
-            "widget-stdmod", 
+            "widget-autohide", 
+            "widget-buttons", 
+            "widget-modality", 
             "widget-position", 
             "widget-position-align", 
-            "widget-stack", 
             "widget-position-constrain", 
-            "widget-modality", 
-            "widget-autohide", 
-            "widget-buttons"
+            "widget-stack", 
+            "widget-stdmod"
         ], 
         "skinnable": true
     }, 
@@ -1809,11 +1821,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "skinnable": true
     }, 
-    "selection": {
-        "requires": [
-            "node"
-        ]
-    }, 
     "selector": {
         "requires": [
             "selector-native"
@@ -2018,6 +2025,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "node-event-delegate"
         ]
     }, 
+    "view-node-map": {
+        "requires": [
+            "view"
+        ]
+    }, 
     "widget": {
         "use": [
             "widget-base", 
@@ -2066,8 +2078,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "widget-buttons": {
         "requires": [
-            "widget", 
+            "cssbutton", 
             "base-build", 
+            "widget", 
             "widget-stdmod"
         ], 
         "skinnable": true
@@ -2169,4 +2182,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'e719c1fc98639334a030a60a79f19ad5';
+YUI.Env[Y.version].md5 = '4d48b229bf0f105ff3567a5a9d83f8cb';

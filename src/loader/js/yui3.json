@@ -81,6 +81,7 @@
     "app-transitions": {
         "requires": [
             "app-base", 
+            "parallel", 
             "transition"
         ]
     }, 
@@ -256,12 +257,18 @@
             "attribute-complex"
         ], 
         "requires": [
+            "base-core", 
             "attribute-base"
         ]
     }, 
     "base-build": {
         "requires": [
             "base-base"
+        ]
+    }, 
+    "base-core": {
+        "requires": [
+            "attribute-core"
         ]
     }, 
     "base-pluginhost": {
@@ -274,7 +281,7 @@
         "use": [
             "button-base", 
             "button-group", 
-            "cssbuttons"
+            "cssbutton"
         ]
     }, 
     "button-base": {
@@ -442,7 +449,7 @@
         ], 
         "type": "css"
     }, 
-    "cssbuttons": {
+    "cssbutton": {
         "type": "css"
     }, 
     "cssfonts": {
@@ -899,7 +906,7 @@
     "editor": {
         "use": [
             "frame", 
-            "selection", 
+            "editor-selection", 
             "exec-command", 
             "editor-base", 
             "editor-para", 
@@ -915,7 +922,7 @@
             "frame", 
             "node", 
             "exec-command", 
-            "selection"
+            "editor-selection"
         ]
     }, 
     "editor-bidi": {
@@ -936,6 +943,11 @@
     "editor-para": {
         "requires": [
             "editor-base"
+        ]
+    }, 
+    "editor-selection": {
+        "requires": [
+            "node"
         ]
     }, 
     "editor-tab": {
@@ -1496,14 +1508,14 @@
     "panel": {
         "requires": [
             "widget", 
-            "widget-stdmod", 
+            "widget-autohide", 
+            "widget-buttons", 
+            "widget-modality", 
             "widget-position", 
             "widget-position-align", 
-            "widget-stack", 
             "widget-position-constrain", 
-            "widget-modality", 
-            "widget-autohide", 
-            "widget-buttons"
+            "widget-stack", 
+            "widget-stdmod"
         ], 
         "skinnable": true
     }, 
@@ -1732,11 +1744,6 @@
         ], 
         "skinnable": true
     }, 
-    "selection": {
-        "requires": [
-            "node"
-        ]
-    }, 
     "selector": {
         "requires": [
             "selector-native"
@@ -1926,6 +1933,11 @@
             "node-event-delegate"
         ]
     }, 
+    "view-node-map": {
+        "requires": [
+            "view"
+        ]
+    }, 
     "widget": {
         "use": [
             "widget-base", 
@@ -1974,8 +1986,9 @@
     }, 
     "widget-buttons": {
         "requires": [
-            "widget", 
+            "cssbutton", 
             "base-build", 
+            "widget", 
             "widget-stdmod"
         ], 
         "skinnable": true

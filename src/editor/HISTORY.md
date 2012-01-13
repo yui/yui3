@@ -4,6 +4,10 @@ Rich Text Editor Change History
 ### 3.5.0
     * 2530547 Frame: src attribute doesn't do anything
     * General fixes for Y! Mail deployment
+    * 2531329 - Breaking change, more below:
+
+Bug #2531329 changed the old Y.Selection to Y.EditorSelection. This has been aliased until 3.6.0, bug #2531659
+created to track that change.
 
 ###3.4.1
 

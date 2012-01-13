@@ -215,7 +215,7 @@ YUI.add('sortable', function(Y) {
             return this;
         },
         /**
-        * @method plug
+        * @method sync
         * @description Passthrough to the DD.Delegate syncTargets method.
         * @chainable
         */
@@ -299,7 +299,7 @@ YUI.add('sortable', function(Y) {
         * A custom callback to allow a user to extract some sort of id or any other data from the node to use in the "ordering list" and then that data should be returned from the callback.
         * @method getOrdering
         * @param Function callback 
-        * @returns Array
+        * @return Array
         */
         getOrdering: function(callback) {
             var ordering = [];

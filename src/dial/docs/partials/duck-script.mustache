@@ -1,0 +1,24 @@
+<script type="text/javascript">
+    YUI().use("dial", function(Y) {
+        var oneFrameWidth = 300,
+            framesInSprite = 13;
+        var dial = new Y.Dial({
+            min: 0,
+            max: 26000,
+            value: 13000, // initial value in the middle of a large range allows rotation both ways
+            minorStep: 1,
+            majorStep: 2,
+            stepsPerRevolution: framesInSprite,
+            diameter: 150
+        });
+        dial.render('#demo');
+        
+        // Reposition the duck sprite background image
+        dial.on( "valueChange", function(e){
+            // Handle values greater than one revolution
+            var moduloValue = (e.newVal % framesInSprite);
+             
+            Y.one('#duck').setStyle('backgroundPosition', (moduloValue * -oneFrameWidth) + 'px 0px');
+        }, '#duck' );
+    });
+</script>

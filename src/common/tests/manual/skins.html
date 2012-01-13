@@ -16,13 +16,22 @@
     <link type="text/css" rel="stylesheet" href="../../../../build/scrollview-scrollbars/assets/skins/night/scrollview-scrollbars.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/panel/assets/skins/night/panel.css" charset="utf-8">
     <link type="text/css" rel="stylesheet" href="../../../../build/node-menunav/assets/skins/night/node-menunav.css" charset="utf-8">
+    <link type="text/css" rel="stylesheet" href="../../../../build/cssbutton/cssbutton.css">
 
-    <!--
-    <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/gallery-2011.08.04-15-16/build/gallerycss-cssbutton/gallerycss-cssbutton.css" charset="utf-8">
-    -->
-    <link type="text/css" rel="stylesheet" href="http://derek.io/~/fixedbutton.css" charset="utf-8">
+<!--
+    <link type="text/css" rel="stylesheet" href="../../../calendar/assets/skins/night/calendar-base-skin.css">
+    <link type="text/css" rel="stylesheet" href="../../../calendar/assets/skins/night/calendarnavigator-skin.css">
+-->
+    <link type="text/css" rel="stylesheet" href="../../../../build/calendar/assets/skins/night/calendar-base-skin.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/calendar/assets/skins/night/calendarnavigator-skin.css">
+
     
     <style>
+        body {
+            margin: 0em;
+        }
+        
+                
         .yui3-js-enabled .yui3-widget-loading {
             display: none;
         }
@@ -47,7 +56,7 @@
 
         #buttons-dir,
         #buttons-skin {
-            margin: 0 2em;
+            margin: 1em;
         }
 
         .button-group {
@@ -67,31 +76,6 @@
             color: inherit;
             font-size: inherit;
         }
-/* ======================    temp. MAKE SURE TO DELETE THESE CALENDAR REMOMMENDATIONS BEFORE TESTING ==============================*/
-html .yui3-skin-night .yui3-calendar-content {
-    background: #494A4A;
-    /*border: 1px solid gray;*/
-    border-radius: 5px 5px 5px 5px;
-    color: #fff;
-    font-family: "Lucida Grande","Lucida Sans",Calibri,Helvetica,Arial,sans-serif;
-    font-size: 0.8em;
-    padding: 10px;
-}
-html .yui3-skin-night .yui3-calendar-day, 
-html .yui3-skin-night .yui3-calendar-prevmonth-day,
-html .yui3-skin-night .yui3-calendar-nextmonth-day {
-    background: none repeat scroll 0 0 #585959;
-    border: 1px solid #414342;
-    text-align: center;
-}
-html .yui3-skin-night .yui3-calendar-weekdayrow{
-    color:#969696;
-}
-html .yui3-skin-night .yui3-calendar-day-selected {
-    background-color: #70A4EB;
-    color: #000000;
-}
-/* ======================   end  temp. MAKE SURE TO DELETE THESE CALENDAR REMOMMENDATIONS BEFORE TESTING ==============================*/
 
 
     </style> 
@@ -110,8 +94,23 @@ html .yui3-skin-night .yui3-calendar-day-selected {
                 <button id="ltr" class="yui3-button yui3-button-selected">LTR</button>
             </div>
         </div>
-        <div class="yui3-g">
 
+
+
+            <div class="yui3-u">
+                <div id="button-demo">
+                    <div class="yui3-u">
+                        <button class="yui3-button">Button</button>
+                        <button class="yui3-button yui3-button-selected">Selected</button>
+                        <button class="yui3-button yui3-button-disabled">Disabled</button>
+                    </div>    
+                </div>
+            </div>
+
+
+
+
+        <div class="yui3-g">
 <!-- TabView -->        
             <div class="yui3-u">
                 <div class="yui3-widget-loading" id="demo-tabview"> 
@@ -169,10 +168,22 @@ html .yui3-skin-night .yui3-calendar-day-selected {
                         <div class="yui3-widget-ft"> 
                             <button class="yui3-button">Cancel</button> 
                             <button class="yui3-button">Add</button> 
-                        </div> 
+                        </div>
                     </div> 
                 </div>
             </div>
+            
+            
+            
+<!--  for panel from JS  
+            <div class="yui3-u">
+                 <div id="myPanelContent">
+                    <div class="yui3-widget-hd">I'm from JS</div>
+                    <div class="yui3-widget-bd">My buttons have no margin. Why?</div>
+                    <div class="yui3-widget-ft"></div>
+                 </div>
+            </div> 
+-->
             <div class="yui3-u">
                  <div id="demo-calendar"></div>
             </div> 
@@ -517,6 +528,8 @@ YUI({filter: 'raw'}).use('autocomplete', 'autocomplete-filters', 'autocomplete-h
     new Y.Calendar({
         render: "#demo-calendar"
     });
+    Y.one('.calendar_col7').addClass('yui3-calendar-selection-disabled');
+//    Y.one('.yui3-calendar-nextmonth-day').setstyl('hello');
 
     new Y.Dial({
         render: "#demo-dial"
@@ -567,6 +580,36 @@ YUI({filter: 'raw'}).use('autocomplete', 'autocomplete-filters', 'autocomplete-h
          '#rtl': buttonHandlers['rtl']
     });
     */
+
+
+    /*panel from JS 
+    
+    var panel = new Y.Panel({
+        srcNode : '#myPanelContent',
+        width   : 200,
+        centered: true,
+        render  : true,
+                // Make changes to the buttons through the `buttons` attribute,
+        // which takes an Array of Objects.
+        buttons: [
+            {
+                // Each object has a `value` property,
+                // which can be text or an HTML string.
+                value: "Okay",
+
+                // The `section` property tells where to render the button and
+                // should be `Y.WidgetStdMod.HEADER` or `Y.WidgetStdMod.FOOTER`.
+                section: Y.WidgetStdMod.FOOTER
+            },
+            {
+                value: "Nope",
+                section: Y.WidgetStdMod.FOOTER
+            }
+        ]
+
+    });
+    */
+
 
 });
 </script>

@@ -1,23 +1,10 @@
-YUI().use('dd-drag', 'yui2-calendar', 'yui2-logger', function(Y) {
+YUI().use('node', 'anim', 'yui2-imagecropper', function(Y) {
+
+    Y.one('body').addClass('yui-skin-sam');
 
     //This will make your YUI 2 code run unmodified
-    var YAHOO = Y.YUI2,
-    setupDD = function() {
-        var dd = new Y.DD.Drag({
-            node: '#cal1Cont'
-        }).addHandle('div.calheader');
+    var YAHOO = Y.YUI2;
 
-        cal1.renderEvent.unsubscribe(setupDD);
-    },
-    cal1 = new YAHOO.widget.Calendar('cal1', 'cal1Cont');
-    
-    cal1.renderEvent.subscribe(setupDD);
-    
-    cal1.selectEvent.subscribe(function(e, dates) {
-        var d = dates[0][0],
-            dateStr = d[1] + '/' + d[2] + '/' + d[0];
+    var crop = new YAHOO.widget.ImageCropper('cropper'); 
 
-        Y.one('#results').setContent('You clicked on: ' + dateStr);
-    });
-    cal1.render();
 });

@@ -1,0 +1,10 @@
+YUI({
+    modules: {
+        external: {
+            fullpath: '{{componentAssets}}/external.js',
+            requires: ['node']
+        }
+    }
+}).use('external', function(Y) {
+    Y.External.run();
+});

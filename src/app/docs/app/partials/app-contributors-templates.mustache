@@ -11,8 +11,11 @@ Template HTML used by the `HomePageView` to render the app's home page.
 <script id="t-home" type="text/x-handlebars-template">
     <h1>Contributors of GitHub Projects</h1>
     <p>
-        <input type="text" value="\{{login}}" placeholder="GitHub Username" />
-        <button>Show Repos »</button>
+        <input id="github-app-username" type="text" value="\{{login}}" placeholder="GitHub Username" />
+        <button class="yui3-button">Show Repos</button>
+    </p>
+    <p>
+        <label for="github-app-username">(e.g. yui, davglass, rgrove)</label>
     </p>
 </script>
 
@@ -24,16 +27,16 @@ user's page in the app; this displays info and stats about the GitHub user.
 -->
 <script id="t-user" type="text/x-handlebars-template">
     <div class="yui3-g">
-        <p class="user-choose yui3-u-1-2">
+        <p class="back yui3-u-1-2">
             <a href="#/">« Choose Someone Different</a>
         </p>
-        <p class="user-github yui3-u-1-2">
+        <p class="view-on-github yui3-u-1-2">
             <a href="\{{html_url}}">View on GitHub</a>
         </p>
     </div>
 
     <div class="yui3-g">
-        <div class="user-info yui3-u-2-3">
+        <div class="info yui3-u-2-3">
             <h1>
                 <span class="avatar user-avatar">
                     <img src="\{{avatar_url}}" alt="\{{login}}'s avatar" />
@@ -44,7 +47,7 @@ user's page in the app; this displays info and stats about the GitHub user.
             \{{/if}}
             </h1>
         </div>
-        <div class="user-stats yui3-u-1-3">
+        <div class="stats yui3-u-1-3">
             <ul class="yui3-g">
                 <li class="user-repos yui3-u-1-2">
                     <b>\{{public_repos}}</b> \{{public_repos_label}}
@@ -68,7 +71,7 @@ page in the app; this displays the list of project repos for the GitHub user.
 
     <ul class="repos">
     \{{#each repos}}
-        <li class="repo yui3-g">
+        <li id="\{{clientId}}" class="repo yui3-g">
             <div class="repo-name yui3-u-2-3">
                 <h3 class="no-toc">
                     <a href="#/github/\{{owner.login}}/\{{name}}/">\{{name}}</a>
@@ -105,16 +108,16 @@ repo page in the app; this displays info and stats about a GitHub user's repo.
 -->
 <script id="t-repo" type="text/x-handlebars-template">
     <div class="yui3-g">
-        <p class="repo-choose yui3-u-1-2">
+        <p class="back yui3-u-1-2">
             <a href="#/github/\{{owner.login}}/">« Select Repository</a>
         </p>
-        <p class="repo-github yui3-u-1-2">
+        <p class="view-on-github yui3-u-1-2">
             <a href="\{{html_url}}">View on GitHub</a>
         </p>
     </div>
 
     <div class="yui3-g">
-        <div class="repo-info yui3-u-2-3">
+        <div class="info yui3-u-2-3">
             <h1>
                 <span class="avatar user-avatar">
                     <img src="\{{owner.avatar_url}}" alt="\{{owner.login}}'s avatar" />
@@ -123,7 +126,7 @@ repo page in the app; this displays info and stats about a GitHub user's repo.
                 <span class="repo-name">\{{name}}</span>
             </h1>
         </div>
-        <div class="repo-stats yui3-u-1-3">
+        <div class="stats yui3-u-1-3">
             <ul class="yui3-g">
                 <li class="repo-watchers yui3-u-1-2">
                     <b>\{{watchers}}</b> \{{watchers_label}}
@@ -145,9 +148,9 @@ page in the app; this displays the list of contributors to the GitHub project.
 <script id="t-contributor-list" type="text/x-handlebars-template">
     <h2 class="no-toc">Project Contributors (\{{num}})</h2>
 
-    <ul class="contributors yui3-g">
+    <ul class="contributors">
     \{{#each contributors}}
-        <li class="contributor yui3-u">
+        <li class="contributor">
             <a class="avatar" href="#/github/\{{login}}/"
                     title="\{{login}} has \{{contributions}} \{{contributions_label}}">
                 <img alt="\{{login}}'s avatar" src="\{{avatar_url}}" />

@@ -991,8 +991,10 @@ with any configuration info required for the module.
             loader = getLoader(Y);
             loader.require(args);
             loader.ignoreRegistered = true;
+            loader._boot = true;
             loader.calculate(null, (fetchCSS) ? null : 'js');
             args = loader.sorted;
+            loader._boot = false;
         }
 
         // process each requirement and any additional requirements
@@ -1020,7 +1022,6 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
             loader.ignoreRegistered = false;
             loader.require(args);
             loader.insert(null, (fetchCSS) ? null : 'js');
-            // loader.partial(missing, (fetchCSS) ? null : 'js');
 
         } else if (boot && len && Y.Get && !Env.bootstrapped) {
 
@@ -1119,18 +1120,19 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
     dump: function (o) { return ''+o; },
 
     /**
-     * Report an error.  The reporting mechanism is controled by
+     * Report an error.  The reporting mechanism is controlled by
      * the `throwFail` configuration attribute.  If throwFail is
      * not specified, the message is written to the Logger, otherwise
-     * a JS error is thrown
+     * a JS error is thrown. If an `errorFn` is specified in the config
+     * it must return `true` to keep the error from being thrown.
      * @method error
      * @param msg {String} the error message.
      * @param e {Error|String} Optional JS error that was caught, or an error string.
-     * @param data Optional additional info
+     * @param src Optional additional info (passed to `Y.config.errorFn` and `Y.message`)
      * and `throwFail` is specified, this error will be re-thrown.
      * @return {YUI} this YUI instance.
      */
-    error: function(msg, e, data) {
+    error: function(msg, e, src) {
         //TODO Add check for window.onerror here
 
         var Y = this, ret;
@@ -1142,7 +1144,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
         if (Y.config.throwFail && !ret) {
             throw (e || new Error(msg));
         } else {
-            Y.message(msg, 'error'); // don't scrub this one
+            Y.message(msg, 'error', ''+src); // don't scrub this one
         }
 
         return Y;
@@ -1216,6 +1218,8 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
      * memory leak in IE when the item tested is
      * window/document
      * @method instanceOf
+     * @param o {Object} The object to check.
+     * @param type {Object} The class to check against.
      * @since 3.3.0
      */
 };
@@ -1641,6 +1645,12 @@ overwriting other scripts configs.
  *          yui2: {
  *              // specify whether or not this group has a combo service
  *              combine: true,
+ *
+ *              // The comboSeperator to use with this group's combo handler
+ *              comboSep: ';',
+ *
+ *              // The maxURLLength for this server
+ *              maxURLLength: 500,
  * 
  *              // the base path for non-combo paths
  *              base: 'http://yui.yahooapis.com/2.8.0r4/build/',
@@ -1733,7 +1743,8 @@ overwriting other scripts configs.
  * A callback to execute when Y.error is called.  It receives the
  * error message and an javascript error object if Y.error was
  * executed because a javascript error was caught.  The function
- * is executed in the YUI instance context.
+ * is executed in the YUI instance context. Returning `true` from this
+ * function will stop the Error from being thrown.
  *
  * @since 3.2.0
  * @property errorFn
@@ -1816,15 +1827,40 @@ TYPES = {
     '[object Error]'   : 'error'
 },
 
-SUBREGEX  = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g,
-TRIMREGEX = /^\s+|\s+$/g,
+SUBREGEX        = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g,
+TRIMREGEX       = /^\s+|\s+$/g,
+NATIVE_FN_REGEX = /\{\s*\[(?:native code|function)\]\s*\}/i;
 
-// If either MooTools or Prototype is on the page, then there's a chance that we
-// can't trust "native" language features to actually be native. When this is
-// the case, we take the safe route and fall back to our own non-native
-// implementation.
-win           = Y.config.win,
-unsafeNatives = win && !!(win.MooTools || win.Prototype);
+// -- Protected Methods --------------------------------------------------------
+
+/**
+Returns _true_ if the given function appears to be implemented in native code,
+_false_ otherwise. This isn't guaranteed to be 100% accurate and won't work for
+anything other than functions, but it can be useful for determining whether
+a function like `Array.prototype.forEach` is native or a JS shim provided by
+another library.
+
+There's a great article by @kangax discussing the flaws with this technique:
+<http://perfectionkills.com/detecting-built-in-host-methods/>
+
+While his points are valid, it's still possible to benefit from this function
+as long as it's used carefully and sparingly, and in such a way that false
+negatives have minimal consequences. It's used internally to avoid using
+potentially broken non-native ES5 shims that have been added to the page by
+other libraries.
+
+@method _isNative
+@param {Function} fn Function to test.
+@return {Boolean} _true_ if _fn_ appears to be native, _false_ otherwise.
+@static
+@protected
+@since 3.5.0
+**/
+L._isNative = function (fn) {
+    return !!(fn && NATIVE_FN_REGEX.test(fn));
+};
+
+// -- Public Methods -----------------------------------------------------------
 
 /**
  * Determines whether or not the provided item is an array.
@@ -1838,7 +1874,7 @@ unsafeNatives = win && !!(win.MooTools || win.Prototype);
  * @return {boolean} true if o is an array.
  * @static
  */
-L.isArray = (!unsafeNatives && Array.isArray) || function (o) {
+L.isArray = L._isNative(Array.isArray) ? Array.isArray : function (o) {
     return L.type(o) === 'array';
 };
 
@@ -1851,6 +1887,17 @@ L.isArray = (!unsafeNatives && Array.isArray) || function (o) {
  */
 L.isBoolean = function(o) {
     return typeof o === 'boolean';
+};
+
+/**
+ * Determines whether or not the supplied item is a date instance.
+ * @method isDate
+ * @static
+ * @param o The object to test.
+ * @return {boolean} true if o is a date.
+ */
+L.isDate = function(o) {
+    return L.type(o) === 'date' && o.toString() !== 'Invalid Date' && !isNaN(o);
 };
 
 /**
@@ -1879,17 +1926,6 @@ L.isBoolean = function(o) {
  */
 L.isFunction = function(o) {
     return L.type(o) === 'function';
-};
-
-/**
- * Determines whether or not the supplied item is a date instance.
- * @method isDate
- * @static
- * @param o The object to test.
- * @return {boolean} true if o is a date.
- */
-L.isDate = function(o) {
-    return L.type(o) === 'date' && o.toString() !== 'Invalid Date' && !isNaN(o);
 };
 
 /**
@@ -1954,6 +1990,60 @@ L.isUndefined = function(o) {
 };
 
 /**
+ * A convenience method for detecting a legitimate non-null value.
+ * Returns false for null/undefined/NaN, true for other values,
+ * including 0/false/''
+ * @method isValue
+ * @static
+ * @param o The item to test.
+ * @return {boolean} true if it is not null/undefined/NaN || false.
+ */
+L.isValue = function(o) {
+    var t = L.type(o);
+
+    switch (t) {
+        case 'number':
+            return isFinite(o);
+
+        case 'null': // fallthru
+        case 'undefined':
+            return false;
+
+        default:
+            return !!t;
+    }
+};
+
+/**
+ * Returns the current time in milliseconds.
+ *
+ * @method now
+ * @return {Number} Current time in milliseconds.
+ * @static
+ * @since 3.3.0
+ */
+L.now = Date.now || function () {
+    return new Date().getTime();
+};
+
+/**
+ * Lightweight version of <code>Y.substitute</code>. Uses the same template
+ * structure as <code>Y.substitute</code>, but doesn't support recursion,
+ * auto-object coersion, or formats.
+ * @method sub
+ * @param {string} s String to be modified.
+ * @param {object} o Object containing replacement values.
+ * @return {string} the substitute result.
+ * @static
+ * @since 3.2.0
+ */
+L.sub = function(s, o) {
+    return s.replace ? s.replace(SUBREGEX, function (match, key) {
+        return L.isUndefined(o[key]) ? match : o[key];
+    }) : s;
+};
+
+/**
  * Returns a string without any leading or trailing whitespace.  If
  * the input is not a string, the input will be returned untouched.
  * @method trim
@@ -1998,31 +2088,6 @@ L.trimRight = STRING_PROTO.trimRight ? function (s) {
 };
 
 /**
- * A convenience method for detecting a legitimate non-null value.
- * Returns false for null/undefined/NaN, true for other values,
- * including 0/false/''
- * @method isValue
- * @static
- * @param o The item to test.
- * @return {boolean} true if it is not null/undefined/NaN || false.
- */
-L.isValue = function(o) {
-    var t = L.type(o);
-
-    switch (t) {
-        case 'number':
-            return isFinite(o);
-
-        case 'null': // fallthru
-        case 'undefined':
-            return false;
-
-        default:
-            return !!t;
-    }
-};
-
-/**
  * <p>
  * Returns a string representing the type of the item passed in.
  * </p>
@@ -2046,35 +2111,6 @@ L.isValue = function(o) {
  */
 L.type = function(o) {
     return TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? 'object' : 'null');
-};
-
-/**
- * Lightweight version of <code>Y.substitute</code>. Uses the same template
- * structure as <code>Y.substitute</code>, but doesn't support recursion,
- * auto-object coersion, or formats.
- * @method sub
- * @param {string} s String to be modified.
- * @param {object} o Object containing replacement values.
- * @return {string} the substitute result.
- * @static
- * @since 3.2.0
- */
-L.sub = function(s, o) {
-    return s.replace ? s.replace(SUBREGEX, function (match, key) {
-        return L.isUndefined(o[key]) ? match : o[key];
-    }) : s;
-};
-
-/**
- * Returns the current time in milliseconds.
- *
- * @method now
- * @return {Number} Current time in milliseconds.
- * @static
- * @since 3.3.0
- */
-L.now = Date.now || function () {
-    return new Date().getTime();
 };
 /**
 @module yui
@@ -2185,7 +2221,7 @@ the native ES5 `Array.forEach()` method if available.
 @return {YUI} The YUI instance.
 @static
 **/
-YArray.each = YArray.forEach = Native.forEach ? function (array, fn, thisObj) {
+YArray.each = YArray.forEach = Lang._isNative(Native.forEach) ? function (array, fn, thisObj) {
     Native.forEach.call(array || [], fn, thisObj || Y);
     return Y;
 } : function (array, fn, thisObj) {
@@ -2249,7 +2285,7 @@ This method wraps the native ES5 `Array.indexOf()` method if available.
   found.
 @static
 **/
-YArray.indexOf = Native.indexOf ? function (array, value) {
+YArray.indexOf = Lang._isNative(Native.indexOf) ? function (array, value) {
     // TODO: support fromIndex
     return Native.indexOf.call(array, value);
 } : function (array, value) {
@@ -2301,7 +2337,7 @@ value from the function will stop the processing of remaining items.
   items in the array; `false` otherwise.
 @static
 **/
-YArray.some = Native.some ? function (array, fn, thisObj) {
+YArray.some = Lang._isNative(Native.some) ? function (array, fn, thisObj) {
     return Native.some.call(array, fn, thisObj);
 } : function (array, fn, thisObj) {
     for (var i = 0, len = array.length; i < len; ++i) {
@@ -2672,16 +2708,10 @@ Y.mix = function(receiver, supplier, overwrite, whitelist, mode, merge) {
  * @class Object
  */
 
-var hasOwn = Object.prototype.hasOwnProperty,
+var Lang   = Y.Lang,
+    hasOwn = Object.prototype.hasOwnProperty,
 
-// If either MooTools or Prototype is on the page, then there's a chance that we
-// can't trust "native" language features to actually be native. When this is
-// the case, we take the safe route and fall back to our own non-native
-// implementations.
-win           = Y.config.win,
-unsafeNatives = win && !!(win.MooTools || win.Prototype),
-
-UNDEFINED, // <-- Note the comma. We're still declaring vars.
+    UNDEFINED, // <-- Note the comma. We're still declaring vars.
 
 /**
  * Returns a new object that uses _obj_ as its prototype. This method wraps the
@@ -2694,7 +2724,7 @@ UNDEFINED, // <-- Note the comma. We're still declaring vars.
  * @return {Object} New object using _obj_ as its prototype.
  * @static
  */
-O = Y.Object = (!unsafeNatives && Object.create) ? function (obj) {
+O = Y.Object = Lang._isNative(Object.create) ? function (obj) {
     // We currently wrap the native Object.create instead of simply aliasing it
     // to ensure consistency with our fallback shim, which currently doesn't
     // support Object.create()'s second argument (properties). Once we have a
@@ -2805,8 +2835,8 @@ O.hasKey = owns;
  * @return {String[]} Array of keys.
  * @static
  */
-O.keys = (!unsafeNatives && Object.keys) || function (obj) {
-    if (!Y.Lang.isObject(obj)) {
+O.keys = Lang._isNative(Object.keys) ? Object.keys : function (obj) {
+    if (!Lang.isObject(obj)) {
         throw new TypeError('Object.keys called on a non-object');
     }
 
@@ -2980,7 +3010,7 @@ O.some = function (obj, fn, thisObj, proto) {
  * if an empty path is provided.
  */
 O.getValue = function(o, path) {
-    if (!Y.Lang.isObject(o)) {
+    if (!Lang.isObject(o)) {
         return UNDEFINED;
     }
 
@@ -3073,7 +3103,7 @@ O.isEmpty = function (obj) {
 * @static
 * @method parseUA
 * @param {String} [subUA=navigator.userAgent] UA string to parse
-* @returns {Object} The Y.UA object
+* @return {Object} The Y.UA object
 */
 YUI.Env.parseUA = function(subUA) {
 
@@ -3443,7 +3473,7 @@ YUI.Env.aliases = {
     "attribute": ["attribute-base","attribute-complex"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
-    "button": ["button-base","button-group","cssbuttons"],
+    "button": ["button-base","button-group","cssbutton"],
     "cache": ["cache-base","cache-offline","cache-plugin"],
     "collection": ["array-extras","arraylist","arraylist-add","arraylist-filter","array-invoke"],
     "controller": ["router"],
@@ -3456,7 +3486,7 @@ YUI.Env.aliases = {
     "datatype-xml": ["datatype-xml-parse","datatype-xml-format"],
     "dd": ["dd-ddm-base","dd-ddm","dd-ddm-drop","dd-drag","dd-proxy","dd-constrain","dd-drop","dd-scroll","dd-delegate"],
     "dom": ["dom-base","dom-screen","dom-style","selector-native","selector"],
-    "editor": ["frame","selection","exec-command","editor-base","editor-para","editor-br","editor-bidi","editor-tab","createlink-base"],
+    "editor": ["frame","editor-selection","exec-command","editor-base","editor-para","editor-br","editor-bidi","editor-tab","createlink-base"],
     "event": ["event-base","event-delegate","event-synthetic","event-mousewheel","event-mouseenter","event-key","event-focus","event-resize","event-hover","event-outside","event-touch","event-move","event-flick","event-valuechange"],
     "event-custom": ["event-custom-base","event-custom-complex"],
     "event-gestures": ["event-flick","event-move"],
@@ -4143,6 +4173,12 @@ Y.Get = Get = {
             index, node;
 
         while (node = nodes.pop()) { // assignment
+            // Don't purge nodes that haven't finished loading (or errored out),
+            // since this can hang the transaction.
+            if (!node._yuiget_finished) {
+                continue;
+            }
+
             node.parentNode && node.parentNode.removeChild(node);
 
             // If this is a transaction-level purge and this node also exists in
@@ -4668,7 +4704,7 @@ Transaction.prototype = {
             Y.log(err, 'error', 'get');
         }
 
-        req.finished = true;
+        req.node._yuiget_finished = req.finished = true;
 
         if (options.onProgress) {
             options.onProgress.call(options.context || this,

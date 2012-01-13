@@ -1,10 +1,12 @@
 {
     "widget-buttons": {
         "requires": [
-            "widget",
+            "cssbutton",
             "base-build",
+            "widget",
             "widget-stdmod"
-        ], 
+        ],
+
         "skinnable": true
     }
 }

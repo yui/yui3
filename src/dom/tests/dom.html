@@ -741,6 +741,16 @@
                 Assert.isFalse(Y.DOM.inDoc(node), "clone inDoc false");
                 document.body.appendChild(node);
                 Assert.isTrue(Y.DOM.inDoc(node), "clone inDoc true");
+            },
+
+            test_getScrollbarWidth: function () {
+                Assert.isFunction(Y.DOM.getScrollbarWidth);
+
+                var width = Y.DOM.getScrollbarWidth();
+
+                Assert.isNumber(width);
+                
+                Assert.areSame(width, Y.DOM.getScrollbarWidth());
             }
 
         })); 
