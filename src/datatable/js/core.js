@@ -605,8 +605,7 @@ Y.mix(Table.prototype, {
         // TODO: handle widget attribute changes
         this.after({
             captionChange: this._afterCaptionChange,
-            summaryChange: this._afterSummaryChange,
-            widthChange  : this._afterWidthChange
+            summaryChange: this._afterSummaryChange
         });
     },
 
@@ -1337,12 +1336,13 @@ Y.mix(Table.prototype, {
     Assigns the created Nodes to their respective column configuration objects.
 
     @method _uiSetCols
+    @param {Boolean} replace Force replacement of existing <col> nodes
     @protected
     **/
-    _uiSetCols: function () {
-        var removeCols = this._tableNode.all('col'),
-            template   = this.COL_TEMPLATE,
-            colgroup   = this._colgroupNode,
+    _uiSetCols: function (replace) {
+        var cols     = this._tableNode.all('col'),
+            template = this.COL_TEMPLATE,
+            colgroup = this._colgroupNode,
             insert = 0;
 
         function process(columns) {
@@ -1355,11 +1355,12 @@ Y.mix(Table.prototype, {
                     col = columns[i].colNode;
 
                     if (col) {
-                        index = removeCols.indexOf(col);
-                        if (index > -1) {
-                            removeCols.splice(index, 1);
+                        if (replace || cols.indexOf(col) === -1) {
+                            col.remove().destroy();
                         }
-                    } else {
+                    }
+                    
+                    if (replace || !col) {
                         col = columns[i].colNode = Y.Node.create(template);
                     }
                     
@@ -1371,8 +1372,6 @@ Y.mix(Table.prototype, {
         }
 
         process(this.get('columns'));
-
-        removeCols.remove();
     },
 
     /**
