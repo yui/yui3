@@ -10,6 +10,10 @@ History Change History
   well, but the old workaround no longer does the trick in iOS 5.
   [Ticket #2531608]
 
+* Bug fix: HTML5 history is no longer used by default in Android <2.4, even if
+  feature detection shows it's available. It's just too broken.
+  [Ticket #2531670]
+
 
 3.4.1
 -----
