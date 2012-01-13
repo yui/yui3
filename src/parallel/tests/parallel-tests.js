@@ -107,9 +107,12 @@ YUI.add('parallel-tests', function(Y) {
             }, []);
         },
         test_add_nofn: function() {
-            var stack = new Y.Parallel();
+            var stack = new Y.Parallel(),
+                callback;
 
-            stack.add()();
+            // Calls `add()` with no args, then calls the returned callback fn.
+            callback = stack.add();
+            callback();
 
             stack.done(function(results, data) {
                 Assert.areEqual(1, stack.finished, 'Stack did not complete properly');
