@@ -14,6 +14,9 @@
 
 
 <div class="intro">
+{{! TODO:
+  * Provide more of an intro to the apps organization. Expand on this in a section after the rendered example, but before the code.
+}}
 <p>
 This example demonstrates the powerful navigation and view management features `Y.App` provides by creating an application to browse through the contributors of GitHub projects.
 </p>
@@ -360,7 +363,7 @@ function addLabel(data, field, label) {
 ```
 
 <p>
-The views for our app will be pretty trivial; they mainly just prepare the model or model list data and apply it to the corresponding template during rendering. Usually you're views would involve handling of DOM events created by user interactions and binding to the model or model list changes so the view can be updated or re-rendered. We'll create the following views by sub-classing `Y.View`: [[#`UserView`]], [[#`RepoView`]], [[#`RepoListView`]], and [[#`ContributorListView`]].
+The views for our app will be pretty trivial; they mainly just prepare the model or model list data and apply it to the corresponding template during rendering. Usually your views would involve handling of DOM events created by user interactions and binding to the model or model list changes so the view can be updated or re-rendered. We'll create the following views by sub-classing `Y.View`: [[#`UserView`]], [[#`RepoView`]], [[#`RepoListView`]], and [[#`ContributorListView`]].
 </p>
 
 <p>
@@ -584,7 +587,7 @@ In the section that follow, we'll define our app's URL-space and what data we'll
 <h4>Page Views</h4>
 
 <p>
-We will now group our [[#Views]] into "pages" to implement the three main features of our app. We'll use combine the views we've already created into composite page-level views: [[#`HomePageView`]], [[#`UserPageView`]], and [[#`RepoPageView`]].
+We will now group our [[#Views]] into "pages" to implement the three main features of our app. We'll combine the views we've already created into composite page-level views: [[#`HomePageView`]], [[#`UserPageView`]], and [[#`RepoPageView`]].
 </p>
 
 <p>
