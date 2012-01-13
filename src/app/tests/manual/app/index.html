@@ -37,7 +37,7 @@
 
     <script src="../../../../../build/yui/yui.js"></script>
     <script>
-    YUI({filter: 'raw'}).use('app', function (Y) {
+    YUI({filter: 'raw'}).use('app', 'app-transitions', function (Y) {
 
         /**
         User Model
@@ -125,7 +125,9 @@
         fooApp = new Y.App({
             root         : '/src/app/tests/manual/app/',
             serverRouting: false,
-            container    : Y.one('#content'),
+
+            container  : Y.one('#content'),
+            transitions: true,
 
             views: {
                 home: {

@@ -7,7 +7,9 @@ Adds additional utility methods to the `Y.Array` class.
 @submodule array-extras
 **/
 
-var L = Y.Lang, Native = Array.prototype, A = Y.Array;
+var A          = Y.Array,
+    L          = Y.Lang,
+    ArrayProto = Array.prototype;
 
 /**
 Returns the index of the last item in the array that contains the specified
@@ -25,7 +27,7 @@ value, or `-1` if the value isn't found.
 @static
 @for Array
 **/
-A.lastIndexOf = Native.lastIndexOf ?
+A.lastIndexOf = L._isNative(ArrayProto.lastIndexOf) ?
     function(a, val, fromIndex) {
         // An undefined fromIndex is still considered a value by some (all?)
         // native implementations, so we can't pass it unless it's actually
@@ -116,7 +118,7 @@ containing the items for which the supplied function returned a truthy value.
   truthy value (empty if it never returned a truthy value).
 @static
 */
-A.filter = Native.filter ?
+A.filter = L._isNative(ArrayProto.filter) ?
     function(a, f, o) {
         return a.filter(f, o);
     } :
@@ -169,7 +171,7 @@ supplied function does not return a truthy value.
   supplied function, `false` otherwise.
 @static
 */
-A.every = Native.every ?
+A.every = L._isNative(ArrayProto.every) ?
     function(a, f, o) {
         return a.every(f, o);
     } :
@@ -203,7 +205,7 @@ containing all the values returned by the supplied function.
   for each item in the original array.
 @static
 */
-A.map = Native.map ?
+A.map = L._isNative(ArrayProto.map) ?
     function(a, f, o) {
         return a.map(f, o);
     } :
@@ -242,10 +244,10 @@ into a single value.
   element in the array.
 @static
 */
-A.reduce = Native.reduce ?
+A.reduce = L._isNative(ArrayProto.reduce) ?
     function(a, init, f, o) {
         // ES5 Array.reduce doesn't support a thisObject, so we need to
-        // implement it manually
+        // implement it manually.
         return a.reduce(function(init, item, i, a) {
             return f.call(o, init, item, i, a);
         }, init);

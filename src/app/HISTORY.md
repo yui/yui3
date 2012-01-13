@@ -36,6 +36,16 @@ App Framework Change History
 
 * Added a `load` event that fires when models are loaded. [Ticket #2531399]
 
+* Models' `id` attributes (if set) are now used to enforce uniqueness. If you
+  attempt to add a model to the list that has the same id as another model in
+  the list, an `error` event will be fired and the model will not be added.
+  [Ticket #2531409]
+
+* The `add()`, `remove()` and `reset()` methods now accept other ModelList
+  instances in addition to models and arrays of models. For example, passing a
+  ModelList to `add()` will add all the models in that list to this list as
+  well. [Ticket #2531408]
+
 * ModelList now allows you to add models to the list even if they were
   instantiated in another window or another YUI sandbox. [Ticket #2531543]
 
