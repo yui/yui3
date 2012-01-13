@@ -29,6 +29,19 @@ var INVALID = Y.Attribute.INVALID_VALUE,
 
     Table;
     
+// TODO: add this to Y.Object
+function flatten(o) {
+    var flat = {},
+        key;
+
+    for (key in o) {
+        // Not doing a hasOwnProperty check on purpose
+        flat[key] = o[key];
+    }
+
+    return flat;
+};
+
 /**
 Class extension providing the core API and structure for the DataTable Widget.
 
@@ -274,7 +287,7 @@ Y.mix(Table.prototype, {
     @type {HTML}
     @default '<col/>'
     **/
-    COL_TEMPLATE: '<col/>',
+    COL_TEMPLATE: '<col style="{style}"/>',
 
     /**
     The HTML template used to create the table's `<colgroup>`.
@@ -292,7 +305,7 @@ Y.mix(Table.prototype, {
     @type {HTML}
     @default '<table/>'
     **/
-    TABLE_TEMPLATE  : '<table/>',
+    TABLE_TEMPLATE  : '<table class="{classes}"/>',
 
     /**
     HTML template used to create table's `<tbody>` if configured with a
@@ -456,6 +469,36 @@ Y.mix(Table.prototype, {
     },
 
     /**
+    Returns a flat list of column configuration objects for columns that do not
+    have children.  It is assumed that all such columns are meant for display
+    in the `<tbody>`.
+
+    If `columns` are not supplied, the current `columns` attribute value is used.
+
+    @method getDisplayColumns
+    @param {Object[]} [columns] Array of column configurations
+    @return {Object[]}
+    **/
+    getDisplayColumns: function (columns) {
+        var ret = [],
+            i, len, col;
+
+        columns || (columns = this.get('columns'));
+
+        for (i = 0, len = columns.length; i < len; ++i) {
+            col = columns[i];
+
+            if (col.children) {
+                ret.push.apply(ret, this.getDisplayColumns(col.children));
+            } else {
+                ret.push(col);
+            }
+        }
+
+        return ret;
+    },
+
+    /**
     Returns the Node for a row at the given index.
 
     Technically, this only relays to the `bodyView` instance's `getRow` method.
@@ -475,8 +518,7 @@ Y.mix(Table.prototype, {
     @method syncUI
     **/
     syncUI: function () {
-        // This is stubbed to allow extensions to use it as a Y.Do.after anchor
-        // point rather than risk collision with other extensions.
+        this._uiSetSummary(this.get('summary'));
     },
 
     // -- Protected and private properties and methods ------------------------
@@ -558,14 +600,14 @@ Y.mix(Table.prototype, {
     //_viewConfig: null,
 
     /**
-    Relays `captionChange` events to `\_uiUpdateCaption`.
+    Relays `captionChange` events to `\_uiSetCaption`.
 
     @method _afterCaptionChange
     @param {EventFacade} e The `captionChange` event object
     @protected
     **/
     _afterCaptionChange: function (e) {
-        this._uiUpdateCaption(e.newVal);
+        this._uiSetCaption(e.newVal);
     },
 
     /**
@@ -580,19 +622,19 @@ Y.mix(Table.prototype, {
         this._setColumnMap(e.newVal);
 
         if (this.get('rendered')) {
-            this._uiSetCols();
+            this._uiSetColumns(e.newVal);
         }
     },
 
     /**
-    Relays `summaryChange` events to `\_uiUpdateSummary`.
+    Relays `summaryChange` events to `\_uiSetSummary`.
 
     @method _afterSummaryChange
     @param {EventFacade} e The `summaryChange` event object
     @protected
     **/
     _afterSummaryChange: function (e) {
-        this._uiUpdateSummary(e.newVal);
+        this._uiSetSummary(e.newVal);
     },
 
     /**
@@ -638,6 +680,19 @@ Y.mix(Table.prototype, {
     },
 
     /**
+    Creates the `<table>`.
+
+    @method _createTable
+    @return {Node} The `<table>` node
+    @protected
+    **/
+    _createTable: function () {
+        return Y.Node.create(fromTemplate(this.TABLE_TEMPLATE, {
+            classes: this.getClassName('table')
+        }));
+    },
+
+    /**
     Creates a `<tbody>` node from the `TBODY_TEMPLATE`.
 
     @method _createTBody
@@ -671,6 +726,124 @@ Y.mix(Table.prototype, {
         return Y.Node.create(fromTemplate(this.THEAD_TEMPLATE, {
             classes: this.getClassName('columns')
         }));
+    },
+
+    /**
+    Calls `render()` on the `bodyView` class instance and inserts the view's
+    container into the `<table>`.
+
+    Assigns the instance's `body` property from `e.view` and the `_tbodyNode`
+    from the view's `container` attribute.
+
+    @method _defRenderBodyFn
+    @param {EventFacade} e The renderBody event
+    @protected
+    **/
+    _defRenderBodyFn: function (e) {
+        e.view.render();
+
+        this.body = e.view;
+        this._tbodyNode = e.view.get('container');
+
+        this._tableNode.append(this._tbodyNode);
+    },
+
+    /**
+    Calls `render()` on the `footerView` class instance and inserts the view's
+    container into the `<table>`.
+
+    Assigns the instance's `foot` property from `e.view` and the `_tfootNode`
+    from the view's `container` attribute.
+
+    @method _defRenderFooterFn
+    @param {EventFacade} e The renderFooter event
+    @protected
+    **/
+    _defRenderFooterFn: function (e) {
+        e.view.render();
+
+        this.foot = e.view;
+        this._tfootNode = e.view.get('container');
+
+        this._tableNode.insertBefore(this._tfootNode,
+            this._tableNode.one('> tbody'));
+    },
+
+    /**
+    Calls `render()` on the `headerView` class instance and inserts the view's
+    container into the `<table>`.
+
+    Assigns the instance's `head` property from `e.view` and the `_theadNode`
+    from the view's `container` attribute.
+
+    @method _defRenderHeaderFn
+    @param {EventFacade} e The renderHeader event
+    @protected
+    **/
+    _defRenderHeaderFn: function (e) {
+        e.view.render();
+
+        this.head = e.view;
+        this._theadNode = e.view.get('container');
+
+        this._tableNode.insertBefore(this._theadNode,
+            this._tableNode.one('> tfoot, > tbody'));
+    },
+
+    /**
+    Renders the `<table>`, `<caption>`, and `<colgroup>`.
+
+    Assigns the generated table to the `\_tableNode` property.
+
+    @method _defRenderTableFn
+    @param {EventFacade} e The renderTable event
+    @protected
+    **/
+    _defRenderTableFn: function (e) {
+        var view, config;
+
+        this._tableNode = this._createTable();
+
+        // TODO: Should this be named something different?
+        this._uiSetCaption(this.get('caption'));
+
+        // TODO: Should this be named something different?
+        this._uiSetColumns(this.get('columns'));
+
+        // TODO: Should this be inside _uiSetColumns?
+        this._tableNode.insertBefore(
+            this._colgroupNode,
+            this._tableNode.one('> thead, > tfoot, > tbody'));
+
+        if (e.headerView) {
+            config = flatten(e.headerConfig || {});
+            config.container = this._createTHead();
+
+            view = new e.headerView(config);
+            view.addTarget(this);
+
+            this.fire('renderHeader', { view: view });
+        }
+
+        if (e.footerView) {
+            config = flatten(e.footerConfig || {});
+            config.container = this._createTFoot();
+
+            view = new e.footerView(config);
+            view.addTarget(this);
+
+            this.fire('renderFooter', { view: view });
+        }
+
+        if (e.bodyView) {
+            config = flatten(e.bodyConfig || {});
+            config.container = this._createTBody();
+
+            view = new e.bodyView(config);
+            view.addTarget(this);
+
+            this.fire('renderBody', { view: view });
+        }
     },
 
     /**
@@ -786,6 +959,34 @@ Y.mix(Table.prototype, {
     },
 
     /**
+    Publishes core events.
+
+    @method _initEvents
+    @protected
+    **/
+    _initEvents: function () {
+        this.publish({
+            // Y.bind used to allow late binding for method override support
+            renderTable : {
+                fireOnce: true,
+                defaultFn: Y.bind('_defRenderTableFn', this)
+            },
+            renderHeader: {
+                fireOnce: true,
+                defaultFn: Y.bind('_defRenderHeaderFn', this)
+            },
+            renderBody  : {
+                fireOnce: true,
+                defaultFn: Y.bind('_defRenderBodyFn', this)
+            },
+            renderFooter: {
+                fireOnce: true,
+                defaultFn: Y.bind('_defRenderFooterFn', this)
+            }
+        });
+    },
+
+    /**
     Initializes the columns, `recordType` and data ModelList.
 
     @method initializer
@@ -799,6 +1000,8 @@ Y.mix(Table.prototype, {
         this._initData();
 
         this._initViewConfig();
+
+        this._initEvents();
 
         this.after('columnsChange', this._afterColumnsChange);
     },
@@ -961,147 +1164,13 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Delegates rendering the table `<tbody>` to the configured `bodyView`.
-
-    The instance of the `bodyView` created is stored in the `body` property
-    and the `<tbody>` in the `\_tbodyNode`.
-
-    @method _renderBody
-    @protected
-    **/
-    _renderBody: function () {
-        var BodyView = this.get('bodyView');
-
-        // TODO: use a _viewConfig object that can be mixed onto by class
-        // extensions, then pass that to either the view constructor or setAttrs
-        if (BodyView) {
-            if (!this._tbodyNode) {
-                // FIXME: This limits the body renderer to one <tbody>
-                this._tbodyNode = this._createTBody();
-            }
-
-            // Can't use merge because it doesn't iterate prototype properties,
-            // so would miss the configs from _viewConfig.
-            Y.mix(this._bodyConfig, {
-                container: this._tbodyNode,
-                columns  : this.get('columns'),
-                modelList: this.data
-            }, true);
-
-            this.body = new BodyView(this._bodyConfig);
-
-            this.body.addTarget(this);
-            this.body.render();
-
-            this._tableNode.append(this._tbodyNode);
-        }
-    },
-
-    /**
     Renders the table's `<colgroup>` and populates the `\_colgroupNode` property.
 
-    @method _renderColumnGroup
+    @method _createColumnGroup
     @protected
     **/
-    _renderColumnGroup: function () {
-        if (!this._colgroupNode) {
-            // Probably don't need the > col
-            // I don't like the idea of removing the existing columns, but
-            // that's what the PE module is supposed to account for.
-            this._tableNode.all('> colgroup, > col').remove();
-            this._colgroupNode = Y.Node.create(this.COLGROUP_TEMPLATE);
-        }
-
-        this._tableNode.insertBefore(this._colgroupNode,
-            this._tableNode.one('> thead, > tfoot, > tbody'));
-
-        this._uiSetCols();
-    },
-
-    /**
-    Delegates rendering the table `<tfoot>` to the configured `footerView`.
-
-    The instance of the `footerView` created is stored in the `foot` property
-    and the `<tfoot>` in the `\_tfootNode`.
-
-    @method _renderFooter
-    @protected
-    **/
-    _renderFooter: function (table, data) {
-        var FooterView = this.get('footerView');
-        
-        if (FooterView) {
-            if (!this._tfootNode) {
-                this._tfootNode = this._createTFoot();
-            }
-
-            // Can't use merge because it doesn't iterate prototype properties,
-            // so would miss the configs from _viewConfig.
-            Y.mix(this._footerConfig, {
-                container: this._tfootNode,
-                columns  : this.get('columns'),
-                modelList: this.data
-            }, true);
-
-            this.foot = new FooterView(this._footerConfig);
-
-            this.foot.addTarget(this);
-            this.foot.render();
-
-            this._tableNode.insertBefore(this._tfootNode,
-                this._tableNode.one('> tbody'));
-        }
-    },
-
-    /**
-    Delegates rendering the table `<thead>` to the configured `headerView`.
-
-    The instance of the `headerView` created is stored in the `head` property
-    and the `<thead>` in the `\_theadNode`.
-
-    @method _renderHeader
-    @protected
-    **/
-    _renderHeader: function () {
-        var HeaderView = this.get('headerView');
-        
-        if (HeaderView) {
-            if (!this._theadNode) {
-                this._theadNode = this._createTHead();
-            }
-
-            // Can't use merge because it doesn't iterate prototype properties,
-            // so would miss the configs from _viewConfig.
-            Y.mix(this._headerConfig, {
-                container: this._theadNode,
-                columns  : this.get('columns'),
-                modelList: this.data
-            }, true);
-
-            this.head = new HeaderView(this._headerConfig);
-
-            this.head.addTarget(this);
-            this.head.render();
-
-            this._tableNode.insertBefore(this._theadNode,
-                this._tableNode.one('> tfoot, > tbody'));
-        }
-        // TODO: If there's no HeaderView, should I remove an existing <thead>?
-    },
-
-    /**
-    Creates the table and caption and assigns the table's summary attribute.
-
-    Assigns the generated table to the `\_tableNode` property.
-
-    @method _renderTable
-    @protected
-    **/
-    _renderTable: function () {
-        if (!this._tableNode) {
-            this._tableNode = Y.Node.create(this.TABLE_TEMPLATE);
-        }
-        this._tableNode.addClass(this.getClassName('table'));
+    _createColumnGroup: function () {
+        return Y.Node.create(this.COLGROUP_TEMPLATE);
     },
 
     /**
@@ -1116,19 +1185,20 @@ Y.mix(Table.prototype, {
             table;
 
         if (contentBox) {
-            this._renderTable();
+            // _viewConfig is the prototype for _headerConfig et al.
+            this._viewConfig.columns   = this.get('columns');
+            this._viewConfig.modelList = this.data;
 
-            this._uiUpdateSummary(this.get('summary'));
+            this.fire('renderTable', {
+                headerView  : this.get('headerView'),
+                headerConfig: this._headerConfig,
 
-            this._uiUpdateCaption(this.get('caption'));
+                bodyView    : this.get('bodyView'),
+                bodyConfig  : this._bodyConfig,
 
-            this._renderColumnGroup();
-
-            this._renderHeader();
-
-            this._renderFooter();
-
-            this._renderBody();
+                footerView  : this.get('footerView'),
+                footerConfig: this._footerConfig
+            });
 
             table = this._tableNode;
 
@@ -1279,11 +1349,11 @@ Y.mix(Table.prototype, {
     Creates, removes, or updates the table's `<caption>` element per the input
     value.  Empty values result in the caption being removed.
 
-    @method _uiUpdateCaption
+    @method _uiSetCaption
     @param {HTML} htmlContent The content to populate the table caption
     @protected
     **/
-    _uiUpdateCaption: function (htmlContent) {
+    _uiSetCaption: function (htmlContent) {
         var caption = this._tableNode.one('> caption');
 
         if (htmlContent) {
@@ -1319,59 +1389,54 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Updates the table's `summary` attribute with the input value.
-
-    @method _uiUpdateSummary
-    @protected
-    **/
-    _uiUpdateSummary: function (summary) {
-        this._tableNode.setAttribute('summary', summary || '');
-    },
-
-    /**
     Populates the table's `<colgroup>` with a `<col>` per item in the `columns`
     attribute without children.  It is assumed that these are the columns that
     have data cells renderered for them.
 
     Assigns the created Nodes to their respective column configuration objects.
 
-    @method _uiSetCols
+    @method _uiSetColumns
     @param {Boolean} replace Force replacement of existing <col> nodes
     @protected
     **/
-    _uiSetCols: function (replace) {
-        var cols     = this._tableNode.all('col'),
-            template = this.COL_TEMPLATE,
-            colgroup = this._colgroupNode,
-            insert = 0;
+    _uiSetColumns: function (columns) {
+        var template = this.COL_TEMPLATE,
+            html = '',
+            i, len, col, style;
 
-        function process(columns) {
-            var col, i, len, index;
-
-            for (i = 0, len = columns.length; i < len; ++i) {
-                if (columns[i].children) {
-                    process(columns[i].children);
-                } else {
-                    col = columns[i].colNode;
-
-                    if (col) {
-                        if (replace || cols.indexOf(col) === -1) {
-                            col.remove().destroy();
-                        }
-                    }
-                    
-                    if (replace || !col) {
-                        col = columns[i].colNode = Y.Node.create(template);
-                    }
-                    
-                    col.setStyle('width', columns[i].width || '');
-
-                    colgroup.insert(col, insert++);
-                }
-            }
+        if (!this._colgroupNode) {
+            this._colgroupNode = this._createColumnGroup();
         }
 
-        process(this.get('columns'));
+        columns = this.getDisplayColumns(columns);
+
+        for (i = 0, len = columns.length; i < len; ++i) {
+            col = columns[i];
+
+            style = col.width || '';
+
+            if (style) {
+                if (isNumber(style)) {
+                    style += 'px';
+                }
+
+                style = 'width:' + style;
+            }
+
+            html += fromTemplate(template, { style: style });
+        }
+
+        this._colgroupNode.setContent(html);
+    },
+
+    /**
+    Updates the table's `summary` attribute with the input value.
+
+    @method _uiSetSummary
+    @protected
+    **/
+    _uiSetSummary: function (summary) {
+        this._tableNode.setAttribute('summary', summary || '');
     },
 
     /**
