@@ -408,7 +408,9 @@ named method for readability.
 Mutable.prototype.addRows = Mutable.prototype.addRow;
 
 // Add feature APIs to public Y.DataTable class
-Y.Base.mix(Y.DataTable, [Mutable]);
+if (YLang.isFunction(Y.DataTable)) {
+    Y.Base.mix(Y.DataTable, [Mutable]);
+}
 
 /**
 Fired by the `addColumn` method.
