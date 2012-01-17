@@ -453,6 +453,42 @@ YUI.add('loader-tests', function(Y) {
             });
 
             Assert.areSame(loader.skin.defaultSkin, 'foobar', 'Default skin was not set from object');
+        },
+        test_outside_group: function() {
+            var loader = new Y.Loader({
+                combine: true,
+                ignoreRegistered: true,
+                require: [ 'gallery-calendar' ],
+                groups: {
+                    mygallery: {
+                        base:'./js/yui-library/',
+                        combine:true,
+                        comboBase: '/yui/?',
+                        root:'yui-library/',
+                        modules: {
+                            'gallery-calendar':{
+                                requires: ['node-base','node-style','node-screen','calendar-skin']
+                            }
+                        }
+                    },
+                    outside: {
+                        combine:false,
+                        modules:{
+                            'calendar-skin': {
+                                fullpath: '/css/calendar-skin.css',
+                                type:'css'
+                            }
+                        }
+                    }
+                }
+            });
+
+            var out = loader.resolve(true);
+
+            Assert.areEqual(2, out.js.length, 'Number of JS modules is not correct');
+            Assert.isTrue((out.jsMods.length > 1), 'Number of JS module data is not correct');
+            Assert.areEqual(1, out.css.length, 'Number of CSS modules is not correct');
+
         }
     });
 
