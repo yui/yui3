@@ -126,7 +126,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @default '<tr id="{clientId}" class="{rowClasses}">{content}</tr>'
     **/
     ROW_TEMPLATE :
-        '<tr id="{clientId}" class="{rowClasses}">' +
+        '<tr role="row" id="{rowId}" class="{rowClasses}">' +
             '{content}' +
         '</tr>',
 
@@ -415,7 +415,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
         if (!handles.dataChange) {
             handles.dataChange = 
-                data.after(['*:change', '*:add', '*:remove', '*:destroy', '*:reset'],
+                data.after(['*:change', 'add', 'remove', 'reset'],
                     bind('_afterDataChange', this));
         }
     },
@@ -490,14 +490,15 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     **/
     _createRowHTML: function (model, index) {
         var data    = model.getAttrs(),
-            values  = {},
+            values  = {
+                rowId: data.clientId,
+                // TODO: Be consistent and change to row-classes? This could be
+                // clobbered by a column named 'row'.
+                rowClasses: (index % 2) ? this.CLASS_ODD : this.CLASS_EVEN
+            },
             source  = this.source || this,
             columns = this.columns,
             i, len, col, token, value, formatterData;
-
-        // TODO: Be consistent and change to row-classes? This could be
-        // clobbered by a column named 'row'.
-        values.rowClasses = (index % 2) ? this.CLASS_ODD : this.CLASS_EVEN;
 
         for (i = 0, len = columns.length; i < len; ++i) {
             col   = columns[i];
