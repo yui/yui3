@@ -40,7 +40,7 @@ function flatten(o) {
     }
 
     return flat;
-};
+}
 
 /**
 Class extension providing the core API and structure for the DataTable Widget.
@@ -281,24 +281,6 @@ Y.mix(Table.prototype, {
     CAPTION_TEMPLATE: '<caption/>',
 
     /**
-    The HTML template used to create the table's `<col>`s.
-
-    @property COL_TEMPLATE
-    @type {HTML}
-    @default '<col/>'
-    **/
-    COL_TEMPLATE: '<col style="{style}"/>',
-
-    /**
-    The HTML template used to create the table's `<colgroup>`.
-
-    @property COLGROUP_TEMPLATE
-    @type {HTML}
-    @default '<colgroup/>'
-    **/
-    COLGROUP_TEMPLATE: '<colgroup/>',
-
-    /**
     The HTML template used to create the table Node.
 
     @property TABLE_TEMPLATE
@@ -469,36 +451,6 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Returns a flat list of column configuration objects for columns that do not
-    have children.  It is assumed that all such columns are meant for display
-    in the `<tbody>`.
-
-    If `columns` are not supplied, the current `columns` attribute value is used.
-
-    @method getDisplayColumns
-    @param {Object[]} [columns] Array of column configurations
-    @return {Object[]}
-    **/
-    getDisplayColumns: function (columns) {
-        var ret = [],
-            i, len, col;
-
-        columns || (columns = this.get('columns'));
-
-        for (i = 0, len = columns.length; i < len; ++i) {
-            col = columns[i];
-
-            if (col.children) {
-                ret.push.apply(ret, this.getDisplayColumns(col.children));
-            } else {
-                ret.push(col);
-            }
-        }
-
-        return ret;
-    },
-
-    /**
     Returns the Node for a row at the given index.
 
     Technically, this only relays to the `bodyView` instance's `getRow` method.
@@ -518,6 +470,7 @@ Y.mix(Table.prototype, {
     @method syncUI
     **/
     syncUI: function () {
+        this._uiSetCaption(this.get('caption'));
         this._uiSetSummary(this.get('summary'));
     },
 
@@ -620,10 +573,7 @@ Y.mix(Table.prototype, {
     **/
     _afterColumnsChange: function (e) {
         this._setColumnMap(e.newVal);
-
-        if (this.get('rendered')) {
-            this._uiSetColumns(e.newVal);
-        }
+        this._setDisplayColumns(e.newVal);
     },
 
     /**
@@ -804,17 +754,6 @@ Y.mix(Table.prototype, {
 
         this._tableNode = this._createTable();
 
-        // TODO: Should this be named something different?
-        this._uiSetCaption(this.get('caption'));
-
-        // TODO: Should this be named something different?
-        this._uiSetColumns(this.get('columns'));
-
-        // TODO: Should this be inside _uiSetColumns?
-        this._tableNode.insertBefore(
-            this._colgroupNode,
-            this._tableNode.one('> thead, > tfoot, > tbody'));
-
         if (e.headerView) {
             config = flatten(e.headerConfig || {});
             config.container = this._createTHead();
@@ -844,7 +783,17 @@ Y.mix(Table.prototype, {
 
             this.fire('renderBody', { view: view });
         }
+
     },
+
+    /**
+    Contains column configuration objects for those columns believed to be intended for display in the `<tbody>`. Populated by `\_setDisplayColumns`.
+
+    @property _displayColumns
+    @type {Object[]}
+    @value undefined (initially not set)
+    **/
+    //_displayColumns: null,
 
     /**
     The getter for the `columns` attribute.  Returns the array of column
@@ -920,6 +869,8 @@ Y.mix(Table.prototype, {
         }
 
         this._setColumnMap(columns);
+
+        this._setDisplayColumns(columns);
     },
 
     /**
@@ -956,6 +907,8 @@ Y.mix(Table.prototype, {
         }
 
         this.data = data;
+
+        this.data.addTarget(this);
     },
 
     /**
@@ -1164,16 +1117,6 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Renders the table's `<colgroup>` and populates the `\_colgroupNode` property.
-
-    @method _createColumnGroup
-    @protected
-    **/
-    _createColumnGroup: function () {
-        return Y.Node.create(this.COLGROUP_TEMPLATE);
-    },
-
-    /**
     Builds the table and attaches it to the DOM.  This requires the host class
     to provide a `contentBox` attribute.  This is typically provided by Widget.
 
@@ -1293,6 +1236,36 @@ Y.mix(Table.prototype, {
     },
 
     /**
+    Stores an array of columns intended for display in the `\_displayColumns`
+    property.  This method assumes that if a column configuration object does
+    not have children, it is a display column.
+
+    @method _setDisplayColumns
+    @param {Object[]} columns Column config array to extract display columns from
+    @protected
+    **/
+    _setDisplayColumns: function (columns) {
+        function extract(cols) {
+            var display = [],
+                i, len, col;
+
+            for (i = 0, len = cols.length; i < len; ++i) {
+                col = cols[i];
+
+                if (col.children) {
+                    display.push.apply(display, extract(col.children));
+                } else {
+                    display.push(col);
+                }
+            }
+
+            return display;
+        }
+
+        this._displayColumns = extract(columns);
+    },
+
+    /**
     Relays the value assigned to the deprecated `recordset` attribute to the
     `data` attribute.  If a Recordset instance is passed, the raw object data
     will be culled from it.
@@ -1386,47 +1359,6 @@ Y.mix(Table.prototype, {
                 caption.remove(true);
             }
         }
-    },
-
-    /**
-    Populates the table's `<colgroup>` with a `<col>` per item in the `columns`
-    attribute without children.  It is assumed that these are the columns that
-    have data cells renderered for them.
-
-    Assigns the created Nodes to their respective column configuration objects.
-
-    @method _uiSetColumns
-    @param {Boolean} replace Force replacement of existing <col> nodes
-    @protected
-    **/
-    _uiSetColumns: function (columns) {
-        var template = this.COL_TEMPLATE,
-            html = '',
-            i, len, col, style;
-
-        if (!this._colgroupNode) {
-            this._colgroupNode = this._createColumnGroup();
-        }
-
-        columns = this.getDisplayColumns(columns);
-
-        for (i = 0, len = columns.length; i < len; ++i) {
-            col = columns[i];
-
-            style = col.width || '';
-
-            if (style) {
-                if (isNumber(style)) {
-                    style += 'px';
-                }
-
-                style = 'width:' + style;
-            }
-
-            html += fromTemplate(template, { style: style });
-        }
-
-        this._colgroupNode.setContent(html);
     },
 
     /**
