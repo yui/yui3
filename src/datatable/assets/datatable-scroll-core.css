@@ -21,5 +21,6 @@
     letter-spacing: normal;
     word-spacing: normal;
     vertical-align: top;
-    overflow-y: auto;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
