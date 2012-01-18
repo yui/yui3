@@ -437,6 +437,7 @@ proto = {
             doc: doc,
             debug: true,
             useBrowserConsole: true,
+            alwaysThrow: false,
             throwFail: true,
             bootstrap: true,
             cacheUse: true,
@@ -687,11 +688,15 @@ with any configuration info required for the module.
                     }
 
                     if (mod.fn) {
-                        try {
+                        if (Y.config && Y.config.alwaysThrow) {
                             mod.fn(Y, name);
-                        } catch (e) {
-                            Y.error('Attach error: ' + name, e, name);
-                            return false;
+                        } else {
+                            try {
+                                mod.fn(Y, name);
+                            } catch (e) {
+                                Y.error('Attach error: ' + name, e, name);
+                                return false;
+                            }
                         }
                     }
 
@@ -820,10 +825,14 @@ with any configuration info required for the module.
         if (!response.success && this.config.loadErrorFn) {
             this.config.loadErrorFn.call(this, this, callback, response, args);
         } else if (callback) {
-            try {
+            if (this.config.alwaysThrow) {
                 callback(this, response);
-            } catch (e) {
-                this.error('use callback error', e, args);
+            } else {
+                try {
+                    callback(this, response);
+                } catch (e) {
+                    this.error('use callback error', e, args);
+                }
             }
         }
     },
@@ -1362,6 +1371,17 @@ overwriting other scripts configs.
  * @property throwFail
  * @type boolean
  * @default true
+ */
+
+/**
+ * If `alwaysThrow` is set, this will override `throwFail` and `errorFn` and invoke the 
+ * `use` and `attach` callbacks without a wrapped `try/catch` so stack traces will be
+ * available in your debugger. __This setting is not recommended for production sites
+ * and should be used with caution__
+ *
+ * @property alwaysThrow
+ * @type boolean
+ * @default false
  */
 
 /**
