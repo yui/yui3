@@ -8,7 +8,6 @@
     border-right: 0 none;
     border-collapse: collapse;
 	color:#8E8E8E;
-    font-size: inherit;
     margin: 0;
     padding: 0;
 }
@@ -26,6 +25,7 @@
 .yui3-skin-night .yui3-datatable td,
 .yui3-skin-night .yui3-datatable th {
     border-right: 1px solid #303030;/*  inner column border */
+    font-size: inherit;
     margin: 0;
 	overflow: visible; /*to make ths where the title is really long work*/
     padding: 4px 10px 4px 10px; /* cell padding */
@@ -51,6 +51,7 @@
     );
     color: #eee;
     font-weight: normal;
+    text-align: left;
     vertical-align: bottom;
 }
 

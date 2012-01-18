@@ -3,7 +3,6 @@
     margin: 0;
     padding: 0;
     font-family: arial, sans-serif;
-    font-size: inherit;
     border-collapse: collapse;
     border: 1px solid #7f7f7f;
 }
@@ -21,6 +20,7 @@
 .yui3-skin-sam .yui3-datatable td,
 .yui3-skin-sam .yui3-datatable th {
     border-right: 1px solid #cbcbcb;/*  inner column border */
+    font-size: inherit;
     margin: 0;
 	overflow: visible; /*to make ths where the title is really long work*/
     padding: 4px 10px 4px 10px; /* cell padding */
@@ -31,6 +31,7 @@
     background: #d8d8da url(../../../../assets/skins/sam/sprite.png) repeat-x 0 0;
     color: #000;
     font-weight: normal;
+    text-align: left;
     vertical-align: bottom;
 }
 
