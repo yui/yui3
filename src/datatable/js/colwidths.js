@@ -97,6 +97,7 @@ Y.Features.add('table', 'badColWidth', {
 Class extension for DataTable to add support for assigning column widths.
 
 @class DataTable.ColumnWidths
+@for DataTable
 **/
 function ColumnWidths() {}
 

@@ -518,6 +518,8 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
                 }
 
                 parsed = facade.parsed = self.parse(response);
+
+                self.reset(parsed, options);
                 self.fire(EVT_LOAD, facade);
             }
 

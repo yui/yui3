@@ -1,6 +1,11 @@
 Custom Event Infrastructure Change History
 ==========================================
 
+3.5.0
+-----
+
+  * Multiple calls to target.publish({ ... }) now work [Ticket #2531671]
+
 3.4.1
 -----
 
