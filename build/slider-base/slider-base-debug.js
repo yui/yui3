@@ -182,7 +182,18 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
                 thumbAriaLabelId: this.getClassName( 'label', Y.guid()) // get unique id for specifying a label for ARIA
             } ) );
     },
-
+    
+    /**
+     * Gives focus to the thumb enabling keyboard access after clicking thumb or rail
+     *
+     * @method _focusThumb
+     * @protected
+     */
+    _focusThumb : function(e){
+        this.thumb.focus();
+    },
+    
+    
     /**
      * Creates the Y.DD.Drag instance used to handle the thumb movement and
      * binds Slider interaction to the configured value model.
@@ -207,6 +218,8 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
         boundingBox.on("key", this._onLeftRightKey, keyLeftRightSpec, this);
         boundingBox.on("key", this._onLeftRightKeyMeta, keyLeftRightSpecMeta, this);
         // End keyboard listeners //////////////////////////////////
+
+        this.thumb.on('click', this._focusThumb, this);
 
         this._bindThumbDD();
 
@@ -742,6 +755,7 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
         }
     }
 });
+
 
 
 }, '@VERSION@' ,{requires:['widget', 'substitute', 'dd-constrain', 'event-key']});

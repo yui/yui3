@@ -140,6 +140,7 @@ YUI().use('node', 'event-synthetic', 'transition', function (Y) {
         if (subs) {
             subs.detach();
             subs = null;
+            Y.all('.robot').removeClass('yui3-focused');
         }
     }
 
@@ -157,6 +158,16 @@ YUI().use('node', 'event-synthetic', 'transition', function (Y) {
     });
 
     Y.one("#detach").on("click", detachSubs);
+    Y.all('.robot').on('focus', function(e){
+        if (subs) {
+            Y.all('.robot').removeClass('yui3-focused');
+            e.target.addClass('yui3-focused');
+        }
+    });
+
+    Y.all('.robot').on('click', function(e){
+        e.target.focus();
+    });
 
 });
 </script>

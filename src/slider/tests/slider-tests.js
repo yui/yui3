@@ -23,6 +23,13 @@ Y.Node.prototype.key = function (keyCode, charCode, mods, type) {
     }
 };
 // END   copied this from event-key-test.js to add tests for changing value by keyboard
+Y.Node.prototype.simulate = function (type) {
+    var simulate = Y.Event.simulate,
+        el       = this._node;
+    if(type) {
+        simulate(el, type);
+    } 
+};
 
 var suite = new Y.Test.Suite("Y.Slider");
 
@@ -581,6 +588,29 @@ suite.add( new Y.Test.Case({
 
         slider.destroy();
 
+    },
+
+    "test focus on thumb by click": function () {
+        var slider = new Y.Slider({
+            length: '350px',
+            min   : 0,
+            max   : 100,
+            value : 50,
+            majorStep : 34
+        });
+
+        slider.render( "#testbed" );
+        Y.Assert.areEqual( 50, slider.get('value') );
+        var thumb = slider.thumb;
+        thumb.on('focus', function(){
+            // 33 is pageUp. Increase value = init value + majorStep
+            // .key() method is at top of this file
+            thumb.key(33);  
+        });
+        thumb.simulate('click'); // Should set focus on thumb  
+        Y.Assert.areEqual(84, slider.get('value'));
+
+        slider.destroy();
     },
     
     /*

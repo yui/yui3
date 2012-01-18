@@ -97,6 +97,20 @@
             "description": "Executing functions in parallel",
             "modules"    : ["yui"],
             "tags"       : ["yui", "core", "nodejs", "paralell", "async"]
+        },
+        {
+            "name"       : "nodejs-dom",
+            "displayName": "YUI, Node.js and DOM",
+            "description": "Using YUI with a DOM in Node.js",
+            "modules"    : ["yui"],
+            "tags"       : ["yui", "core", "nodejs", "dom", "jsdom"]
+        },
+        {
+            "name"       : "nodejs-package",
+            "displayName": "Packaging a YUI script with npm",
+            "description": "Packaging a YUI script with npm",
+            "modules"    : ["yui"],
+            "tags"       : ["yui", "core", "nodejs", "npm", "packaging"]
         }
     ],
     "pages": {

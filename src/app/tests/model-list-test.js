@@ -393,6 +393,46 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame(2, calls);
     },
 
+    'load() should reset the list with the loaded items': function () {
+        var calls = 0,
+            list  = this.createList();
+
+        list.sync = function (action, options, callback) {
+            if (action === 'read') {
+                callback(null, '[{"foo":"modelOne"}, {"foo":"modelTwo"}]');
+            }
+        };
+
+        list.load(function (err) {
+            calls += 1;
+
+            Assert.isNull(err, 'load error should be null');
+            Assert.areSame(2, list.size(), 'list should contain two models');
+            Assert.areSame('modelOne', list.item(0).get('foo'), 'modelOne should be loaded correctly');
+            Assert.areSame('modelTwo', list.item(1).get('foo'), 'modelTwo should be loaded correctly');
+        });
+
+        Assert.areSame(1, calls);
+    },
+
+    'load() callback should receive an error when a sync error occurs': function () {
+        var calls = 0,
+            list  = this.createList();
+
+        list.sync = function (action, options, callback) {
+            callback(new Error('OMG!'));
+        };
+
+        list.load(function (err) {
+            calls += 1;
+
+            Assert.isInstanceOf(Error, err);
+            Assert.areSame('OMG!', err.message);
+        });
+
+        Assert.areSame(1, calls);
+    },
+
     'map() should execute a function on every model in the list and return an array of return values': function () {
         var list = this.createList(),
             obj  = {},

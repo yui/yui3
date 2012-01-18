@@ -3687,6 +3687,11 @@ YUI.add('get', function(Y) {
             });
         }
     };
+    
+    //Place holder for SS Dom access
+    Y.Get.css = function(s, cb) {
+        pass(cb);
+    };
 
 
 
@@ -6766,7 +6771,7 @@ Y.Loader.prototype = {
                                 resolved[type].push(tmpBase);
                             }
                         }
-                        resolved[type + 'Mods'] = mods;
+                        resolved[type + 'Mods'] = resolved[type + 'Mods'].concat(mods);
                     }
                 }
             }

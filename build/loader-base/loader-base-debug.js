@@ -2460,7 +2460,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                                 resolved[type].push(tmpBase);
                             }
                         }
-                        resolved[type + 'Mods'] = mods;
+                        resolved[type + 'Mods'] = resolved[type + 'Mods'].concat(mods);
                     }
                 }
             }
