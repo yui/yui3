@@ -32,6 +32,7 @@ the following values:
 var YLang = Y.Lang,
     isString = YLang.isString,
     isNumber = YLang.isNumber,
+    isArray  = YLang.isArray,
 
     Scrollable;
 
@@ -60,30 +61,98 @@ Scrollable.ATTRS = {
 };
 
 Y.mix(Scrollable.prototype, {
+    /**
+    Template for the `<div>` that is used to contain the rows when the table is
+    vertically scrolling.
+
+    @property SCROLLING_CONTAINER_TEMPLATE
+    @type {HTML}
+    @value '<div class="{classes}"><table></table></div>'
+    **/
     SCROLLING_CONTAINER_TEMPLATE: '<div class="{classes}"><table></table></div>',
 
+    /**
+    Scrolls a given row or cell into view if the table is scrolling.  Pass the
+    `clientId` of a Model from the DataTable's `data` ModelList or its row
+    index to scroll to a row or a [row index, column index] array to scroll to
+    a cell.  Alternately, to scroll to any element contained within the table's
+    scrolling areas, pass its ID, or the Node itself (though you could just as
+    well call `node.scrollIntoView()` yourself, but hey, whatever).
+
+    @method scrollTo
+    @param {String|Number|Number[]|Node} id A row clientId, row index, cell
+            coordinate array, id string, or Node
+    **/
     scrollTo: function (id) {
-        //TODO
+        var target;
+
+        if (id && this._tbodyNode && (this._yScrollNode || this._xScrollNode)) {
+            if (isArray(id)) {
+                target = this.getCell(id);
+            } else if (isNumber(id)) { 
+                target = this.getRow(id);
+            } else if (isString(id)) {
+                target = this._tbodyNode.one('#' + id);
+            } else if (id instanceof Y.Node &&
+                    // TODO: ancestor(yScrollNode, xScrollNode)
+                    id.ancestor('.yui3-datatable') === this.get('boundingBox')) {
+                target = id;
+            }
+
+            target && target.scrollIntoView();
+        }
     },
 
     //----------------------------------------------------------------------------
     // Protected properties and methods
     //----------------------------------------------------------------------------
+    /**
+    Relays changes in the table structure or content to trigger a reflow of the
+    scrolling setup.
 
+    @method _afterContentChange
+    @param {EventFacade} e The relevant change event (ignored)
+    @protected
+    **/
     _afterContentChange: function (e) {
         this._mergeYScrollContent();
         this._syncScrollUI();
     },
 
+    /**
+    Reacts to changes in the `scrollable` attribute by updating the `\_xScroll`
+    and `\_yScroll` properties and syncing the scrolling structure accordingly.
+
+    @method _afterScrollableChange
+    @param {EventFacade} e The relevant change event (ignored)
+    @protected
+    **/
     _afterScrollableChange: function (e) {
         this._uiSetScrollable();
         this._syncScrollUI();
     },
 
+    /**
+    Syncs the scrolling structure if the table is configured to scroll vertically.
+
+    @method _afterScrollHeightChange
+    @param {EventFacade} e The relevant change event (ignored)
+    @protected
+    **/
     _afterScrollHeightChange: function (e) {
         this._yScroll && this._syncScrollUI();
     },
 
+    /**
+    Attaches internal subscriptions to keep the scrolling structure up to date
+    with changes in the table's `data`, `columns`, `caption`, or `height`.  The
+    `width is taken care of already.
+
+    This executes after the table's native `bindUI` method.
+
+    @method _bindScrollUI
+    @protected
+    **/
     _bindScrollUI: function () {
         this.after([
             'dataChange',
@@ -97,6 +166,14 @@ Y.mix(Scrollable.prototype, {
             Y.bind('_afterContentChange', this));
     },
 
+    /**
+    Calculates the height of the div containing the vertically scrolling rows.
+    The height is produced by subtracting the `offsetHeight` of the scrolling
+    `<div>` from the `clientHeight` of the `contentBox`.
+
+    @method _calcScrollHeight
+    @protected
+    **/
     _calcScrollHeight: function () {
         var scrollNode = this._yScrollNode;
 
@@ -107,6 +184,13 @@ Y.mix(Scrollable.prototype, {
                scrollNode.get('clientHeight');
     },
 
+    /**
+    Populates the `\_yScrollNode` property by creating the `<div>` Node described
+    by the `SCROLLING_CONTAINER_TEMPLATE`.
+
+    @method _createYScrollNode
+    @protected
+    **/
     _createYScrollNode: function () {
         if (!this._yScrollNode) {
             this._yScrollNode = Y.Node.create(
@@ -116,6 +200,14 @@ Y.mix(Scrollable.prototype, {
         }
     },
 
+    /**
+    Assigns style widths to all columns based on their current `offsetWidth`s.
+    This faciliates creating a clone of the `<colgroup>` so column widths are
+    the same after the table is split in to header and data tables.
+
+    @method _fixColumnWidths
+    @protected
+    **/
     _fixColumnWidths: function () {
         var tbody     = this._tbodyNode,
             table     = tbody.get('parentNode'),
@@ -154,10 +246,16 @@ Y.mix(Scrollable.prototype, {
         }
     },
 
+    /**
+    Sets up event handlers and AOP advice methods to bind the DataTable's natural
+    behaviors with the scrolling APIs and state.
+
+    @method initializer
+    @param {Object} config The config object passed to the constructor (ignored)
+    @protected
+    **/
     initializer: function () {
         this._setScrollProperties();
-
-        this.on('renderBody', this._onRenderBody);
 
         this.after(['scrollableChange', 'heightChange', 'widthChange'],
             this._setScrollProperties);
@@ -166,13 +264,12 @@ Y.mix(Scrollable.prototype, {
         Y.Do.after(this._syncScrollUI, this, 'syncUI');
     },
 
-    _onRenderBody: function () {
-        // Done here and not in syncUI to prevent content jumping.
-        // _uiSetScrollable should apply the scrollable-y class to the contentBox
-        // if the table is configured to scroll vertically.
-        this._uiSetScrollable(this.get('scrollable'));
-    },
+    /**
+    Merges the header and data tables back into one table if they are split.
 
+    @method _mergeYScrollContent
+    @protected
+    **/
     _mergeYScrollContent: function () {
         this.get('boundingBox').removeClass(this.getClassName('scrollable-y'));
 
@@ -191,6 +288,13 @@ Y.mix(Scrollable.prototype, {
         this._uiSetColumns();
     },
 
+    /**
+    Removes the additional padding added to the last cells in each header row to
+    allow the scrollbar to fit below.
+
+    @method _removeHeaderScrollPadding
+    @protected
+    **/
     _removeHeaderScrollPadding: function () {
         var rows = this._theadNode.all('> tr').getDOMNodes(),
             cell, i, len;
@@ -202,6 +306,14 @@ Y.mix(Scrollable.prototype, {
         }
     },
 
+    /**
+    Moves the ARIA "grid" role from the table to the `contentBox` and adds the
+    "presentation" role to both header and data tables to support the two
+    tables reporting as one table for screen readers.
+
+    @method _setARIARoles
+    @protected
+    **/
     _setARIARoles: function () {
         var contentBox = this.get('contentBox');
 
@@ -215,6 +327,13 @@ Y.mix(Scrollable.prototype, {
         }
     },
 
+    /**
+    Adds additional padding to the current amount of right padding on each row's
+    last cell to account for the width of the scrollbar below.
+
+    @method _setHeaderScrollPadding
+    @protected
+    **/
     _setHeaderScrollPadding: function () {
         var rows = this._theadNode.all('> tr').getDOMNodes(),
             padding, cell, i, len;
@@ -231,6 +350,16 @@ Y.mix(Scrollable.prototype, {
         }
     },
 
+    /**
+    Accepts (case insensitive) values "x", "y", "xy", `true`, and `false`.
+    `true` is translated to "xy" and upper case values are converted to lower
+    case.  All other values are invalid.
+
+    @method _setScrollable
+    @param {String|Boolea} val Incoming value for the `scrollable` attribute
+    @return {String}
+    @protected
+    **/
     _setScrollable: function (val) {
         if (val === true) {
             val = 'xy';
@@ -245,6 +374,14 @@ Y.mix(Scrollable.prototype, {
             Y.Attribute.INVALID_VALUE;
     },
 
+    /**
+    Assigns the `\_xScroll` and `\_yScroll` properties to true if an
+    appropriate value is set in the `scrollable` attribute and the `height`
+    and/or `width` is set.
+
+    @method _setScrollProperties
+    @protected
+    **/
     _setScrollProperties: function () {
         var scrollable = this.get('scrollable') || '',
             width      = this.get('width'),
@@ -254,6 +391,15 @@ Y.mix(Scrollable.prototype, {
         this._yScroll = height && scrollable.indexOf('y') > -1;
     },
 
+    /**
+    Clones the fixed (see `\_fixColumnWidths` method) `<colgroup>` for use by the
+    table in the vertical scrolling container.  The last column's width is reduced
+    by the width of the scrollbar (which is offset by additional padding on the
+    last header cell(s) in the header table - see `\_setHeaderScrollPadding`).
+
+    @method _setYScrollColWidths
+    @protected
+    **/
     _setYScrollColWidths: function () {
         var scrollNode = this._yScrollNode,
             table      = scrollNode && scrollNode.one('> table'),
@@ -263,6 +409,7 @@ Y.mix(Scrollable.prototype, {
         if (table) {
             scrollNode.all('colgroup,col').remove();
             colgroup = this._colgroupNode.cloneNode(true);
+            colgroup.set('id', Y.stamp(colgroup));
 
             // Browsers with proper support for column widths need the
             // scrollbar width subtracted from the last column.
@@ -279,6 +426,13 @@ Y.mix(Scrollable.prototype, {
         }
     },
 
+    /**
+    Splits the unified table with headers and data into two tables, the latter
+    contained within a vertically scrollable container `<div>`.
+
+    @method _splitYScrollContent
+    @protected
+    **/
     _splitYScrollContent: function () {
         var table = this._tableNode,
             scrollNode = this._yScrollTable,
@@ -322,6 +476,14 @@ Y.mix(Scrollable.prototype, {
         this._setYScrollColWidths();
     },
 
+    /**
+    Calls `\_mergeYScrollContent` or `\_splitYScrollContent` depending on the
+    current widget state, accounting for current state.  That is, if the table
+    needs to be split, but is already, nothing happens.
+
+    @method _syncScrollUI
+    @protected
+    **/
     _syncScrollUI: function () {
         var scrollable  = this._xScroll || this._yScroll,
             cBox        = this.get('contentBox'),
@@ -329,6 +491,8 @@ Y.mix(Scrollable.prototype, {
             table       = node.one('table'),
             overflowing = this._yScroll &&
                            (table.get('scrollHeight') > node.get('clientHeight'));
+
+        this._uiSetScrollable();
 
         if (scrollable) {
             // Only split the table if the content is longer than the height
@@ -348,6 +512,15 @@ Y.mix(Scrollable.prototype, {
         // than the configured width.
     },
 
+    /**
+    Overrides the default Widget `\_uiSetWidth` to assign the width to either
+    the table or the `contentBox` (for horizontal scrolling) in addition to the
+    native behavior of setting the width of the `boundingBox`.
+
+    @method _uiSetWidth
+    @param {String|Number} width CSS width value or number of pixels
+    @protected
+    **/
     _uiSetWidth: function (width) {
         var scrollable = parseInt(width, 10) &&
                          (this.get('scrollable')||'').indexOf('x') > -1;
@@ -367,7 +540,16 @@ Y.mix(Scrollable.prototype, {
         }
     },
 
-    _uiSetScrollable: function (scrollable) {
+    /**
+    Assigns the appropriate class to the `boundingBox` to identify the DataTable
+    as horizontally scrolling, vertically scrolling, or both (adds both classes).
+
+    Classes added are "yui3-datatable-scrollable-x" or "...-y"
+
+    @method _uiSetScrollable
+    @protected
+    **/
+    _uiSetScrollable: function () {
         // Initially add classes.  These may be purged by _syncScrollUI.
         this.get('boundingBox')
             .toggleClass(this.getClassName('scrollable','x'), this._xScroll)
@@ -403,6 +585,8 @@ Y.mix(Scrollable.prototype, {
     @protected
     **/
     //_yScrollNode
+
+    // TODO: Add _xScrollNode
 }, true);
 
 Y.Base.mix(Y.DataTable, [Scrollable]);
