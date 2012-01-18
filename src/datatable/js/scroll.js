@@ -26,8 +26,8 @@ the following values:
          also set.
 
  @module @datatable-scroll
- @for DataTable
  @class DataTable.Scrollable
+ @for DataTable
 **/
 var YLang = Y.Lang,
     isString = YLang.isString,
