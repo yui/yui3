@@ -287,6 +287,45 @@ YUI.add('core-tests', function(Y) {
 
             Assert.areEqual(YUI.Env.UA.userAgent, Y2.UA.userAgent, 'Global UA and local (Y2) UA are different');
 
+        },
+        test_fail: function() {
+            var Assert = Y.Assert,
+                caught = false;
+
+            YUI.add('mod1', function(Y) {
+                X.push();
+            });
+
+            YUI({
+                errorFn: function() {
+                    caught = true;
+                    //Stop the throw
+                    return true;
+                }
+            }).use('mod1', function(Y) {
+                Y.push();
+            });
+
+            Assert.isTrue(caught, 'errorFn did not trap the error');
+
+        },
+        test_alwaysFail: function() {
+
+            YUI.add('mod1', function(Y) {
+                X.push();
+            });
+
+            YUI({
+                alwaysFail: true
+            }).use('mod1', function(Y) {
+                YUI.foo.push();
+            });
+
+        },
+        _should: {
+            error: {
+                "test_alwaysFail": true
+            }
         }
     });
 
