@@ -6771,7 +6771,7 @@ Y.Loader.prototype = {
                                 resolved[type].push(tmpBase);
                             }
                         }
-                        resolved[type + 'Mods'] = mods;
+                        resolved[type + 'Mods'] = resolved[type + 'Mods'].concat(mods);
                     }
                 }
             }
