@@ -17,16 +17,16 @@ either add a column `formatter` or update the table's `bodyView`'s
 your CSS.  For example, to give the column "foo" an absolute width, add this to
 your site CSS:
 
-```
+<pre><code>
 .yui3-datatable .yui3-datatable-foo .yui3-datatable-liner {
     overflow: hidden;
     width: 125px;
 }
-```
+</pre></code>
 
 and assign a `formatter` for the "foo" column in your JavaScript:
 
-```
+<pre><code>
 var table = new Y.DataTable({
     columns: [
         {
@@ -38,24 +38,26 @@ var table = new Y.DataTable({
     ],
     ...
 });
-```
+</code></pre>
 
 To add a liner to all columns, either provide a custom `bodyView` to the
 DataTable constructor or update the default `bodyView`'s `CELL_TEMPLATE` like
 so:
 
-```
+<pre><code>
 table.on('renderBody', function (e) {
     e.view.CELL_TEMPLATE = e.view.CELL_TEMPLATE.replace(/\{content\}/,
             '<div class="yui3-datatable-liner">{content}</div>');
 });
-```
+</code></pre>
 
 Keep in mind that DataTable skins apply cell `padding`, so assign your CSS
 `width`s accordingly or override the `padding` style for that column's `<td>`s
 to 0, and add `padding` to the liner `<div>`'s styles.
 
 @module datatable-column-widths
+@class DataTable.ColumnWidths
+@for DataTable
 **/
 var isNumber = Y.Lang.isNumber,
     arrayIndex = Y.Array.indexOf;
@@ -93,12 +95,6 @@ Y.Features.add('table', 'badColWidth', {
     }
 });
 
-/**
-Class extension for DataTable to add support for assigning column widths.
-
-@class DataTable.ColumnWidths
-@for DataTable
-**/
 function ColumnWidths() {}
 
 Y.mix(ColumnWidths.prototype, {
