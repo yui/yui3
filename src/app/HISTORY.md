@@ -49,6 +49,11 @@ App Framework Change History
 * ModelList now allows you to add models to the list even if they were
   instantiated in another window or another YUI sandbox. [Ticket #2531543]
 
+* ModelList subclasses can now override the protected `_compare()` method to
+  customize the low-level comparison logic used for sorting. This makes it easy
+  to do things like descending sort, multi-field sorting, etc. See the API docs
+  for details.
+
 ### Router (formerly Controller)
 
 * [!] The `Controller` class and `controller` module have been renamed to
