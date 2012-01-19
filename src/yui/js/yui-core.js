@@ -10,7 +10,9 @@ utilities for the library.
 var CACHED_DELIMITER = '__',
 
     hasOwn   = Object.prototype.hasOwnProperty,
-    isObject = Y.Lang.isObject;
+    isObject = Y.Lang.isObject,
+
+    win = Y.config.win;
 
 /**
 Returns a wrapper for a function which caches the return value of that function,
@@ -50,6 +52,31 @@ Y.cached = function (source, cache, refetch) {
 
         return cache[key];
     };
+};
+
+/**
+Returns the `location` object from the window/frame in which this YUI instance
+operates, or `undefined` when executing in a non-browser environment
+(e.g. Node.js).
+
+It is _not_ recommended to hold references to the `window.location` object
+outside of the scope of a function in which its properties are being accessed or
+its methods are being called. This is because of a nasty bug/issue that exists
+in both Safari and MobileSafari browsers:
+[WebKit Bug 34679](https://bugs.webkit.org/show_bug.cgi?id=34679).
+
+@method getLocation
+@return {location} The `location` object from the window/frame in which this YUI
+    instance operates.
+@since 3.5.0
+**/
+Y.getLocation = function () {
+    // The reference to the `window` object created outside this function's
+    // scope is safe to hold on to, but it is not safe to do so with the
+    // `location` object. The WebKit engine used in Safari and MobileSafari will
+    // "disconnect" the `location` object from the `window` when a page is
+    // restored from back/forward history cache.
+    return win && win.location;
 };
 
 /**
