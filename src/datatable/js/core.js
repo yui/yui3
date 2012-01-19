@@ -92,7 +92,7 @@ Table.ATTRS = {
        `constructor of the first item will be used.
     3. If the `data` attribute is set with a non-empty array, a Model subclass
        will be generated using the keys of the first item as its `ATTRS` (see
-       the `\_createRecordClass` method).
+       the `_createRecordClass` method).
     4. If the `columns` attribute is set, a Model subclass will be generated
        using the columns defined with a `key`. This is least desirable because
        columns can be duplicated or nested in a way that's not parsable.
@@ -480,7 +480,7 @@ Y.mix(Table.prototype, {
     Configuration object passed to the class constructor in `bodyView` during
     render.
 
-    This property is set by the `\_initViewConfig` method at instantiation.
+    This property is set by the `_initViewConfig` method at instantiation.
 
     @property _bodyConfig
     @type {Object}
@@ -504,7 +504,7 @@ Y.mix(Table.prototype, {
     Configuration object passed to the class constructor in `footerView` during
     render.
 
-    This property is set by the `\_initViewConfig` method at instantiation.
+    This property is set by the `_initViewConfig` method at instantiation.
 
     @property _footerConfig
     @type {Object}
@@ -517,7 +517,7 @@ Y.mix(Table.prototype, {
     Configuration object passed to the class constructor in `headerView` during
     render.
 
-    This property is set by the `\_initViewConfig` method at instantiation.
+    This property is set by the `_initViewConfig` method at instantiation.
 
     @property _headerConfig
     @type {Object}
@@ -539,11 +539,11 @@ Y.mix(Table.prototype, {
     //_tableNode: null,
 
     /**
-    Configuration object used as the prototype of `\_headerConfig`,
-    `\_bodyConfig`, and `\_footerConfig`. Add properties to this object if you
+    Configuration object used as the prototype of `_headerConfig`,
+    `_bodyConfig`, and `_footerConfig`. Add properties to this object if you
     want them in all three of the other config objects.
 
-    This property is set by the `\_initViewConfig` method at instantiation.
+    This property is set by the `_initViewConfig` method at instantiation.
 
     @property _viewConfig
     @type {Object}
@@ -553,7 +553,7 @@ Y.mix(Table.prototype, {
     //_viewConfig: null,
 
     /**
-    Relays `captionChange` events to `\_uiSetCaption`.
+    Relays `captionChange` events to `_uiSetCaption`.
 
     @method _afterCaptionChange
     @param {EventFacade} e The `captionChange` event object
@@ -564,7 +564,7 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Updates the `\_columnMap` property in response to changes in the `columns`
+    Updates the `_columnMap` property in response to changes in the `columns`
     attribute.
 
     @method _afterColumnsChange
@@ -577,7 +577,7 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Relays `summaryChange` events to `\_uiSetSummary`.
+    Relays `summaryChange` events to `_uiSetSummary`.
 
     @method _afterSummaryChange
     @param {EventFacade} e The `summaryChange` event object
@@ -743,7 +743,7 @@ Y.mix(Table.prototype, {
     /**
     Renders the `<table>`, `<caption>`, and `<colgroup>`.
 
-    Assigns the generated table to the `\_tableNode` property.
+    Assigns the generated table to the `_tableNode` property.
 
     @method _defRenderTableFn
     @param {EventFacade} e The renderTable event
@@ -787,7 +787,7 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Contains column configuration objects for those columns believed to be intended for display in the `<tbody>`. Populated by `\_setDisplayColumns`.
+    Contains column configuration objects for those columns believed to be intended for display in the `<tbody>`. Populated by `_setDisplayColumns`.
 
     @property _displayColumns
     @type {Object[]}
@@ -846,10 +846,10 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Initializes the instance's `\_columnMap` from the configured `columns`
+    Initializes the `_columnMap` property from the configured `columns`
     attribute.  If `columns` is not set, but `recordType` is, it uses the
     `ATTRS` of that class.  If neither are set, it temporarily falls back to an
-    empty array. `\_initRecordType` will call back into this method if it finds
+    empty array. `_initRecordType` will call back into this method if it finds
     the `columnMap` empty.
 
     @method _initColumns
@@ -979,8 +979,8 @@ Y.mix(Table.prototype, {
     Of none of those are successful, it subscribes to the change events for
     `columns`, `recordType`, and `data` to try again.
 
-    If defaulting the `recordType` and the current `\_columnMap` property is
-    empty, it will call `\_initColumns`.
+    If defaulting the `recordType` and the current `_columnMap` property is
+    empty, it will call `_initColumns`.
 
     @method _initRecordType
     @protected
@@ -1051,13 +1051,13 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Initializes the `\_viewConfig`, `\_headerConfig`, `\_bodyConfig`, and
-    `\_footerConfig` properties with the configuration objects that will be
+    Initializes the `_viewConfig`, `_headerConfig`, `_bodyConfig`, and
+    `_footerConfig` properties with the configuration objects that will be
     passed to the constructors of the `headerView`, `bodyView`, and
     `footerView`.
     
     Extensions can add to the config objects to deliver custom parameters at
-    view instantiation.  `\_viewConfig` is used as the prototype of the other
+    view instantiation.  `_viewConfig` is used as the prototype of the other
     three config objects, so properties added here will be inherited by all
     configs.
 
@@ -1157,7 +1157,7 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Assigns the `\_columnMap` property with the parsed results of the array of
+    Assigns the `_columnMap` property with the parsed results of the array of
     column definitions passed.
 
     @method _setColumnMap
@@ -1236,7 +1236,7 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Stores an array of columns intended for display in the `\_displayColumns`
+    Stores an array of columns intended for display in the `_displayColumns`
     property.  This method assumes that if a column configuration object does
     not have children, it is a display column.
 

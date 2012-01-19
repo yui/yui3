@@ -127,7 +127,7 @@ Y.mix(ColumnWidths.prototype, {
 
     @method setColumnWidth
     @param {Number|String|Object} id The column config object or key, name, or
-            index of a column in the host's `\_displayColumns` array.
+            index of a column in the host's `_displayColumns` array.
     @param {Number|String} width CSS width value. Numbers are treated as pixels
     **/
     setColumnWidth: function (id, width) {
@@ -150,7 +150,7 @@ Y.mix(ColumnWidths.prototype, {
     //----------------------------------------------------------------------------
 
     /**
-    Renders the table's `<colgroup>` and populates the `\_colgroupNode` property.
+    Renders the table's `<colgroup>` and populates the `_colgroupNode` property.
 
     @method _createColumnGroup
     @protected

@@ -99,7 +99,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
     /**
     CSS class applied to even rows.  This is assigned at instantiation after
-    setting up the `\_cssPrefix` for the instance.
+    setting up the `_cssPrefix` for the instance.
     
     For DataTable, this will be `yui3-datatable-even`.
 
@@ -111,7 +111,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
     /**
     CSS class applied to odd rows.  This is assigned at instantiation after
-    setting up the `\_cssPrefix` for the instance.
+    setting up the `_cssPrefix` for the instance.
     
     When used by DataTable instances, this will be `yui3-datatable-odd`.
 
@@ -171,7 +171,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     /**
     Builds a CSS class name from the provided tokens.  If the instance is
     created with `cssPrefix` or `source` in the configuration, it will use this
-    prefix (the `\_cssPrefix` of the `source` object) as the base token.  This
+    prefix (the `_cssPrefix` of the `source` object) as the base token.  This
     allows class instances to generate markup with class names that correspond
     to the parent class that is consuming them.
 
@@ -210,7 +210,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     The rendering process happens in three stages:
 
     1. A row template is assembled from the `columns` property (see
-       `\_createRowTemplate`)
+       `_createRowTemplate`)
 
     2. An HTML string is built up by concatening the application of the data in
        each Model in the `modelList` to the row template. For cells with
@@ -434,7 +434,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     _cssPrefix: ClassNameManager.getClassName('table'),
 
     /**
-    Iterates the `modelList` and applies each Model to the `\_rowTemplate`,
+    Iterates the `modelList` and applies each Model to the `_rowTemplate`,
     allowing any column `formatter` or `emptyCellValue` to override cell
     content for the appropriate column.  The aggregated HTML string is
     returned.
@@ -443,7 +443,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @param {Object[]} columns The column configurations to customize the
                 generated cell content or class names
     @return {HTML} The markup for all Models in the `modelList`, each applied
-                to the `\_rowTemplate`
+                to the `_rowTemplate`
     @protected
     **/
     _createDataHTML: function (columns) {
@@ -461,14 +461,14 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
     /**
     Applies the data of a given Model, modified by any column formatters and
-    supplemented by other template values to the instance's `\_rowTemplate` (see
-    `\_createRowTemplate`).  The generated string is then returned.
+    supplemented by other template values to the instance's `_rowTemplate` (see
+    `_createRowTemplate`).  The generated string is then returned.
 
     The data from Model's attributes is fetched by `getAttrs` and this data
     object is appended with other properties to supply values to {placeholders}
     in the template.  For a template generated from a Model with 'foo' and 'bar'
     attributes, the data object would end up with the following properties
-    before being used to populate the `\_rowTemplate`:
+    before being used to populate the `_rowTemplate`:
 
       * `clientID` - From Model, used the assign the `<tr>`'s 'id' attribute.
       * `foo` - The value to populate the 'foo' column cell content.  This
@@ -483,7 +483,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         accessed and ammended by any column formatter via `o.data.rowClasses`.
 
     Because this object is available to formatters, any additional properties
-    can be added to fill in custom {placeholders} in the `\_rowTemplate`.
+    can be added to fill in custom {placeholders} in the `_rowTemplate`.
 
     @method _createRowHTML
     @param {Model} model The Model instance to apply to the row template
@@ -551,7 +551,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     individual table rows with {placeholder}s to capture data from the Models
     in the `modelList` attribute or from column `formatter`s.
 
-    Assigns the `\_rowTemplate` property.
+    Assigns the `_rowTemplate` property.
 
     @method _createRowTemplate
     @param {Object[]} columns Array of column configuration objects
