@@ -11,9 +11,7 @@ var HistoryHash = Y.HistoryHash,
     QS          = Y.QueryString,
     YArray      = Y.Array,
 
-    win      = Y.config.win,
-    location = win.location,
-    origin   = location.origin || (location.protocol + '//' + location.host),
+    win = Y.config.win,
 
     // We have to queue up pushState calls to avoid race conditions, since the
     // popstate event doesn't actually provide any info on what URL it's
@@ -33,25 +31,6 @@ var HistoryHash = Y.HistoryHash,
     @fireOnce
     **/
     EVT_READY = 'ready';
-
-// In order to work around a nasty bug in WebKit that affects iOS 5, we need to
-// listen for the pageshow event (which occurs when the page is restored from
-// the page cache) and recreate our `window` and `location` references, since
-// old references get detached even though they shouldn't be.
-//
-// Older versions of iOS bypass the page cache when an `unload` event listener
-// is attached, but not iOS 5 for some reason.
-//
-// More details at https://bugs.webkit.org/show_bug.cgi?id=34679
-if (Y.UA.ios >= 5) {
-    Y.config.win.addEventListener('pageshow', function (e) {
-        if (e.persisted) {
-            win      = Y.config.win;
-            location = win.location;
-            origin   = location.origin || (location.protocol + '//' + location.host);
-        }
-    }, false);
-}
 
 /**
 Provides URL-based routing using HTML5 `pushState()` or the location hash.
@@ -614,7 +593,8 @@ Y.Router = Y.extend(Router, Y.Base, {
     @protected
     **/
     _getOrigin: function () {
-        return origin;
+        var location = Y.getLocation();
+        return location.origin || (location.protocol + '//' + location.host);
     },
 
     /**
@@ -625,7 +605,9 @@ Y.Router = Y.extend(Router, Y.Base, {
     @protected
     **/
     _getPath: function () {
-        var path = (!this._html5 && this._getHashPath()) || location.pathname;
+        var path = (!this._html5 && this._getHashPath()) ||
+                Y.getLocation().pathname;
+
         return this.removeRoot(path);
     },
 
@@ -637,12 +619,15 @@ Y.Router = Y.extend(Router, Y.Base, {
     @protected
     **/
     _getQuery: function () {
+        var location = Y.getLocation(),
+            hash, matches;
+
         if (this._html5) {
             return location.search.substring(1);
         }
 
-        var hash    = HistoryHash.getHash(),
-            matches = hash.match(this._regexUrlQuery);
+        hash    = HistoryHash.getHash();
+        matches = hash.match(this._regexUrlQuery);
 
         return hash && matches ? matches[1] : location.search.substring(1);
     },
@@ -739,7 +724,7 @@ Y.Router = Y.extend(Router, Y.Base, {
     @protected
     **/
     _getURL: function () {
-        return location.toString();
+        return Y.getLocation().toString();
     },
 
     /**
@@ -759,7 +744,7 @@ Y.Router = Y.extend(Router, Y.Base, {
 
         // Prepend current scheme to scheme-relative URLs.
         if (origin && origin.indexOf('//') === 0) {
-            origin = location.protocol + origin;
+            origin = Y.getLocation().protocol + origin;
         }
 
         return !origin || origin === this._getOrigin();

@@ -9,8 +9,7 @@ implemented using the pjax technique (HTML5 pushState + Ajax).
 @since 3.5.0
 **/
 
-var win      = Y.config.win,
-    location = win.location,
+var win = Y.config.win,
 
     Lang = Y.Lang,
 
@@ -166,7 +165,7 @@ PjaxBase.prototype = {
     **/
     _getRoot: function () {
         var slash = '/',
-            path  = location.pathname,
+            path  = Y.getLocation().pathname,
             segments;
 
         if (path.charAt(path.length - 1) === slash) {
@@ -216,9 +215,9 @@ PjaxBase.prototype = {
             this.fire(EVT_NAVIGATE, options);
         } else {
             if (options.replace) {
-                location.replace(url);
+                win && win.location.replace(url);
             } else {
-                win.location = url;
+                win && (win.location = url);
             }
         }
 
@@ -341,7 +340,7 @@ PjaxBase.prototype = {
         if (origin) {
             // Prepend the current scheme for scheme-relative URLs.
             if (origin.indexOf('//') === 0) {
-                origin = location.protocol + origin;
+                origin = Y.getLocation().protocol + origin;
             }
 
             return origin + (path || '/') + (suffix + '');
