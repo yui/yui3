@@ -31,7 +31,7 @@ var table = new Y.DataTable({
     columns: [
         {
             key: 'foo',
-            formatter: '<div class="yui3-datatable-liner">{value}</div>',
+            formatter: '&lt;div class="yui3-datatable-liner">{value}&lt;/div>',
             allowHTML: true
         },
         ...
@@ -47,7 +47,7 @@ so:
 <pre><code>
 table.on('renderBody', function (e) {
     e.view.CELL_TEMPLATE = e.view.CELL_TEMPLATE.replace(/\{content\}/,
-            '<div class="yui3-datatable-liner">{content}</div>');
+            '&lt;div class="yui3-datatable-liner">{content}&lt;/div>');
 });
 </code></pre>
 
