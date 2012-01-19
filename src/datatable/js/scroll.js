@@ -146,7 +146,7 @@ Y.mix(Scrollable.prototype, {
     /**
     Attaches internal subscriptions to keep the scrolling structure up to date
     with changes in the table's `data`, `columns`, `caption`, or `height`.  The
-    `width is taken care of already.
+    `width` is taken care of already.
 
     This executes after the table's native `bindUI` method.
 
@@ -186,7 +186,7 @@ Y.mix(Scrollable.prototype, {
 
     /**
     Populates the `\_yScrollNode` property by creating the `<div>` Node described
-    by the `SCROLLING_CONTAINER_TEMPLATE`.
+    by the `SCROLLING\_CONTAINER_TEMPLATE`.
 
     @method _createYScrollNode
     @protected
