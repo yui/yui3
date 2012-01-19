@@ -38,6 +38,13 @@ YUI.add('core-tests', function(Y) {
 
         name: "Core tests",
 
+        _should: {
+            ignore: {
+                'getLocation() should return the location object': Y.UA.nodejs,
+                'getLocation() should return `undefined` when executing in node.js': !Y.UA.nodejs
+            }
+        },
+
         'cached functions should execute only once per input': function() {
 
             var r1 = "", r2 = "", r3 = "";
@@ -96,8 +103,16 @@ YUI.add('core-tests', function(Y) {
 
         },
 
+        'getLocation() should return the location object': function () {
+            Y.Assert.areSame(Y.config.win.location, Y.getLocation(), 'Did not return Y.config.win.location.');
+        },
+
+        'getLocation() should return `undefined` when executing in node.js': function () {
+            Y.Assert.isUndefined(Y.getLocation(), 'Did not return `undefined`');
+        },
+
         test_cached_undefined_null: function() {
-            
+
             var f1 = function(a) {
                 return a;
             };
@@ -109,7 +124,7 @@ YUI.add('core-tests', function(Y) {
             Y.Assert.areEqual(a, undefined);
             a = c1('foo');
             Y.Assert.areEqual(a, 'foo');
-            
+
         },
 
         test_ie_enum_bug: function() {
@@ -124,7 +139,7 @@ YUI.add('core-tests', function(Y) {
         },
         test_guid: function() {
             var id, id2, i;
-            for (i = 0; i < 1000; i++) {           
+            for (i = 0; i < 1000; i++) {
                 id = Y.guid();
                 id2 = Y.guid();
                 Y.Assert.areNotEqual(id, id2, 'GUID creation failed, ids match');
@@ -132,7 +147,7 @@ YUI.add('core-tests', function(Y) {
         },
         test_stamp: function() {
             var id, id2, i;
-            for (i = 0; i < 1000; i++) {           
+            for (i = 0; i < 1000; i++) {
                 id = Y.stamp({});
                 id2 = Y.stamp({});
                 Y.Assert.areNotEqual(id, id2, 'STAMP GUID creation failed, ids match');
@@ -203,7 +218,7 @@ YUI.add('core-tests', function(Y) {
                   logMe: true,
                   butNotMe: false
               };
-              
+
               Y.log('test logInclude logMe','info','logMe');
               Assert.areEqual(last, 'logMe', 'logInclude (true) Failed');
               last = undefined;
@@ -226,7 +241,7 @@ YUI.add('core-tests', function(Y) {
         },
         test_loader_combo_sep: function() {
             var Assert = Y.Assert;
-            
+
             var testY = YUI({
                 debug: true,
                 combine: true,
@@ -266,14 +281,14 @@ YUI.add('core-tests', function(Y) {
             Assert.isObject(YUI.GlobalConfig.modules, 'modules object in global config not created');
             Assert.isObject(YUI.GlobalConfig.modules.davglass, 'First module in global config not created');
             Assert.isObject(YUI.GlobalConfig.modules.foo, 'Second module in global config not created');
-            
+
         },
         test_multiple_ua: function() {
             var Assert = Y.Assert,
                 globalUA = YUI.Env.UA,
                 uaFF = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:6.0) Gecko/20100101 Firefox/6.0',
                 uaChrome = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_0) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.860.0 Safari/535.2';
-    
+
             var Y1 = YUI();
             Assert.areEqual(globalUA.userAgent, Y1.UA.userAgent, 'Global UA and local (Y1) UA are different');
 
