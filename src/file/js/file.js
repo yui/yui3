@@ -24,6 +24,9 @@
         else if (Y.File.isValidFile(o.file)) {
             file = o.file;
         }
+        else {
+            file = false;
+        }
 
         YFile.superclass.constructor.apply(this, arguments);      
         
@@ -47,6 +50,9 @@
                this._set("dateModified", file.lastModifiedDate);
            }
         }
+        else if (this.get("uploader")) {
+        
+        }
     };
 
 
@@ -58,9 +64,40 @@
             }
         },
         
-        _uploadEventHandler: function (event) {
-        
+        _swfEventHandler: function (event) {
+          if (event.id === this.get("id")) {
+          console.log("FE:::" + event.id + ":::" + this.get("id") + ":::" + event.type);
+          console.log(event);
+          switch (event.type) {
+            case "uploadstart":
+                 this.fire("uploadstart", {uploader: this.get("uploader")});
+                 break;
+            case "uploadprogress":
+                 this.fire("uploadprogress", {originEvent: event,
+                                              bytesLoaded: event.bytesLoaded, 
+                                              bytesTotal: event.bytesTotal, 
+                                              percentLoaded: Math.min(100, Math.round(10000*event.bytesLoaded/event.bytesTotal)/100)
+                                             });
+                 this._set("bytesUploaded", event.bytesLoaded);
+                 break;
+            case "uploadcomplete":
+                 this.fire("uploadfinished", {originEvent: event});
+                 break;
+            case "uploadcompletedata":
+                 this.fire("uploadcomplete", {originEvent: event,
+                                              data: event.data});  
+                 break;
+            case "uploadcancel":
+                 this.fire("uploadcancel", {originEvent: event});
+                 break;
+            case "uploaderror":
+                 this.fire("uploaderror", {originEvent: event});         
 
+          }
+        }
+        },
+
+        _uploadEventHandler: function (event) {
             switch (event.type) {
                 case "progress":
                    this.fire("uploadprogress", {originEvent: event,
@@ -116,7 +153,10 @@
     */
 
         startUpload: function(url, parameters, fileFieldName) {
+         
+         console.log("Starting upload of file " + this.get("id"));
          if (this.get("html5")) {
+            console.log("We are using html5 upload method");
             this._set("bytesUploaded", 0);
             //console.log ("Initializing xhr");
 
@@ -152,6 +192,31 @@
           //   console.log(xhr);
              this.fire("uploadstart", {xhr: xhr});
          }
+
+         else if (this.get("uploader")) {
+            console.log("Using Flash upload method");
+
+            var myUploader = this.get("uploader"),
+                fileField = fileFieldName || "Filedata",
+                id = this.get("id"),
+                params = parameters || null;
+            console.log("The uploader instance is ");
+            console.log(myUploader);
+
+            console.log(id);
+
+            this._set("bytesUploaded", 0);
+            
+            myUploader.on("uploadstart", this._swfEventHandler, this);
+            myUploader.on("uploadprogress", this._swfEventHandler, this);
+            myUploader.on("uploadcomplete", this._swfEventHandler, this);
+            myUploader.on("uploadcompletedata", this._swfEventHandler, this);
+            myUploader.on("uploaderror", this._swfEventHandler, this);
+
+            console.log("Calling upload on the file...");
+            myUploader.callSWF("upload", [id, url, params, fileField]);
+         }
+
         },
    /**
     * Cancels the upload of a specific file, if currently in progress.
@@ -159,7 +224,12 @@
     * @method cancelUpload
     */  
         cancelUpload: function () {
+         if (this.get("html5")) {
             xhr.abort();
+         }
+         else if (this.get("uploader")) {
+           this.get("uploader").callSWF("cancel", [this.get("id")]);
+         }
         },
 
 

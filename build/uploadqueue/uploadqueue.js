@@ -41,6 +41,14 @@ YUI.add('uploadqueue', function(Y) {
 
         },
 
+        _uploadErrorHandler : function (event) {
+           var updatedEvent = event;
+           updatedEvent.file = event.target;
+           updatedEvent.originEvent = event;
+           
+           this.fire("uploaderror", updatedEvent);  
+        },
+
         _uploadCompleteHandler : function (event) {
            
            uploadsLeftCounter -= 1;
@@ -96,17 +104,26 @@ YUI.add('uploadqueue', function(Y) {
 
         startUpload: function() {
 
+          console.log("Starting upload inside uploadqueue....");
+
            while (lastUploadPointer < this.get("simUploads") && lastUploadPointer < fileListLength) {
-               
+                console.log("Launching upload of " + lastUploadPointer);
+
                var currentFile = this.get("fileList")[lastUploadPointer],
                    fileId = currentFile.get("id"),
                    parameters = this.get("perFileParameters"),
                    fileParameters = Lang.isArray(parameters) ? parameters[lastUploadPointer] : parameters;
                
+                console.log("The file I am looking at is ");
+                console.log(currentFile);
+
                currentUploads[fileId] = 0;
 
                currentFile.on("uploadprogress", this._uploadProgressHandler, this);
                currentFile.on("uploadcomplete", this._uploadCompleteHandler, this);
+               currentFile.on("uploaderror", this._uploadErrorHandler, this);
+
+               console.log("Starting the upload of said file...");
 
                currentFile.startUpload(this.get("uploadURL"), fileParameters);
                lastUploadPointer+=1;

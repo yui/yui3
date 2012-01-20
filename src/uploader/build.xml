@@ -8,9 +8,7 @@
     <target name="all">
     	<ant antfile="uploadqueue.xml" target="all" />
     	<ant antfile="html5uploader.xml" target="all" />   	
-    	<!-- 
     	<ant antfile="flashuploader.xml" target="all" />
     	<ant antfile="uploader.xml" target="all" />
-    -->
     </target>
 </project>

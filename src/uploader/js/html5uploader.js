@@ -34,6 +34,8 @@ Y.Html5Uploader = Y.extend( Html5Uploader, Y.Widget, {
                 case "uploadqueue:alluploadscomplete":
                    this.fire("alluploadscomplete", event);
                 break;
+                case "uploadqueue:uploaderror":
+                   this.fire("uploaderror", event);
     }	
 
 	},
@@ -54,17 +56,17 @@ Y.Html5Uploader = Y.extend( Html5Uploader, Y.Widget, {
     _updateFileList : function (ev) {
  
        var newfiles = ev.target.getDOMNode().files,
-           parsedfiles = [];
+           parsedFiles = [];
        Y.each(newfiles, function (value) {
-         parsedfiles.push(new Y.File(value));
+         parsedFiles.push(new Y.File(value));
        });
 
-       this.fire("fileselect", {fileList: parsedfiles});
+       this.fire("fileselect", {fileList: parsedFiles});
 
        var oldfiles = this.get("fileList");
 
 	   this.set("fileList", 
-	            this.get("appendNewFiles") ? oldfiles.concat(parsedfiles) : parsedfiles );
+	            this.get("appendNewFiles") ? oldfiles.concat(parsedFiles) : parsedFiles );
 
     },
 
@@ -167,14 +169,14 @@ Y.Html5Uploader = Y.extend( Html5Uploader, Y.Widget, {
 
 	ATTRS: {
 		selectFilesButton : {
-			value: Y.Node.create("<button type='button'>Select Files</button>")
+           value: Y.Node.create("<button type='button' style='height:100%;width:100%'>Select Files</button>")
 		},
 
 		dragAndDropArea: {
 			value: null
 		},
 
-		multiFiles: {
+		multipleFiles: {
 			value: false
 		},
 

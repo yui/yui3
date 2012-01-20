@@ -8134,9 +8134,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "flashuploader": {
         "requires": [
             "swf", 
+            "widget", 
+            "substitute", 
             "base", 
             "node", 
             "event-custom", 
+            "file", 
             "uploadqueue"
         ]
     }, 
@@ -9173,7 +9176,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'abc77900e9131e4781e5207c9fdcbc29';
+YUI.Env[Y.version].md5 = 'a24d67d2ab7d0ea7d43f2824c8945701';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

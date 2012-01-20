@@ -1,24 +1,25 @@
-YUI.add('html5uploader', function(Y) {
+YUI.add('flashuploader', function(Y) {
 
 var  substitute  = Y.substitute;
 
-function Html5Uploader(config) {
-  Html5Uploader.superclass.constructor.apply ( this, arguments );
+function FlashUploader(config) {
+  FlashUploader.superclass.constructor.apply ( this, arguments );
 }
 
 
 
-Y.Html5Uploader = Y.extend( Html5Uploader, Y.Widget, {
+Y.FlashUploader = Y.extend(FlashUploader, Y.Widget, {
 
-	_foo: null,
-
-	_fileInputField: null,
+	_swfReference: null,
 
 	_uploadQueue: null,
 
+	_swfContainerId: null,
+
 
 	initializer : function () {
-		
+		this._swfContainerId = Y.guid("uploader");
+		this.publish("fileselect");
 	},
 
 	_uploadEventHandler : function (event) {
@@ -38,28 +39,46 @@ Y.Html5Uploader = Y.extend( Html5Uploader, Y.Widget, {
                 break;
                 case "uploadqueue:uploaderror":
                    this.fire("uploaderror", event);
+                break;
     }	
 
 	},
 
     _setMultipleFiles : function () {
-    	    if (this.get("multipleFiles") === true) {
-				this._fileInputField.set("multiple", "multiple");
-			}
-			else {
-				this._fileInputField.set("multiple", "");
+    	    if (this._swfReference) {
+				this._swfReference.callSWF("setAllowMultipleFiles", [this.get("multipleFiles")]);
 			}
     },
 
-    _bindSelectButton : function () {
-       this.get("selectFilesButton").on("click", this.openFileSelectDialog, this);
+    _setFileFilters : function () {
+            if (this._swfReference && this.get("fileFilters") != null) {
+            	this._swfReference.callSWF("setFileFilters", [this.get("fileFilters")]);
+            }	
+
     },
+
 
     _updateFileList : function (ev) {
+       
+       var newfiles = ev.fileList,
+           fileConfObjects = [],
+           parsedFiles = [],
+           swfRef = this._swfReference;
  
-       var newfiles = ev.target.getDOMNode().files,
-           parsedFiles = [];
        Y.each(newfiles, function (value) {
+       	 var newFileConf = {};
+       	 newFileConf.id = value.fileId;
+       	 newFileConf.name = value.fileReference.name;
+       	 newFileConf.size = value.fileReference.size;
+       	 newFileConf.type = value.fileReference.type;
+       	 newFileConf.dateCreated = value.fileReference.creationDate;
+       	 newFileConf.dateModified = value.fileReference.modificationDate;
+       	 newFileConf.uploader = swfRef;
+
+         fileConfObjects.push(newFileConf);
+       });
+
+       Y.each(fileConfObjects, function (value) {
          parsedFiles.push(new Y.File(value));
        });
 
@@ -68,33 +87,35 @@ Y.Html5Uploader = Y.extend( Html5Uploader, Y.Widget, {
        var oldfiles = this.get("fileList");
 
 	   this.set("fileList", 
-	            this.get("appendNewFiles") ? oldfiles.concat(parsedFiles) : parsedFiles );
+	             this.get("appendNewFiles") ? oldfiles.concat(parsedFiles) : parsedFiles );
 
     },
 
-    openFileSelectDialog : function () {
-      var fileDomNode = this._fileInputField.getDOMNode();
-			if (fileDomNode.click) {
-				fileDomNode.click();
-			}	
-    },
 
 	renderUI : function () {
 	   var contentBox = this.get('contentBox');
 	   contentBox.append(this.get("selectFilesButton"));
-	   this._fileInputField = Y.Node.create(Html5Uploader.HTML5FILE_FIELD);
+	   contentBox.append(Y.Node.create(substitute(FlashUploader.FLASH_CONTAINER, 
+		                                          {swfContainerId: this._swfContainerId})));
+	   var flashContainer = Y.one("#" + this._swfContainerId);
+	   var params = {version: "10.0.45",
+                     fixedAttributes: {wmode: "transparent", allowScriptAccess:"always", allowNetworking:"all", scale: "noscale"},
+                    };
+	   this._swfReference = new Y.SWF(flashContainer, this.get("swfURL"), params);
        contentBox.append(this._fileInputField);
 	},
 
 	bindUI : function () {
-
-		this._bindSelectButton();
-		this._setMultipleFiles();
-
-		this.after("multipleFilesChange", this._setMultipleFiles, this);
-        this.after("selectFilesButtonChange", this._bindSelectButton, this);
-
-        this._fileInputField.on("change", this._updateFileList, this);
+		console.log("Binding UI...");
+		this._swfReference.on("swfReady", function () {
+			this._setMultipleFiles();
+			this._setFileFilters();
+			this.after("multipleFilesChange", this._setMultipleFiles, this);
+			this.after("fileFiltersChange", this._setFileFilters, this);
+		}, this);
+        
+        console.log("Listening to fileselect...");
+		this._swfReference.on("fileselect", this._updateFileList, this);
 	},
 
 	syncUI : function () {
@@ -125,10 +146,14 @@ Y.Html5Uploader = Y.extend( Html5Uploader, Y.Widget, {
 
 	uploadAll : function (url, postvars) {
 
+        // Starting upload of all selected files.
+        console.log("Starting upload of all selected files");
         var uploadURL = url || this.get("uploadURL"),
             postVars = postvars || this.get("postVarsPerFile");
 
 
+           // Creating a new upload queue with the current file list
+        console.log("Creating a new instance of upload queue");
 		   this._uploadQueue = new Y.Uploader.UploadQueue({simUploads: this.get("simLimit"), 
 	                                                       errorAction: "restart",
 	                                                       fileList: this.get("fileList"),
@@ -136,11 +161,15 @@ Y.Html5Uploader = Y.extend( Html5Uploader, Y.Widget, {
 	                                                       perFileParameters: postVars
 	                                                      });
 
+           // Subscribing to events
+        console.log("Subscribing to uploadqueue's events");
 	       this._uploadQueue.on("uploadprogress", this._uploadEventHandler, this);
 	       this._uploadQueue.on("totaluploadprogress", this._uploadEventHandler, this);
 	       this._uploadQueue.on("uploadcomplete", this._uploadEventHandler, this);
 	       this._uploadQueue.on("alluploadscomplete", this._uploadEventHandler, this);
 
+           // Starting the upload.
+        console.log("Starting upload in the queue");
 	       this._uploadQueue.startUpload();		
 	},
 
@@ -159,27 +188,28 @@ Y.Html5Uploader = Y.extend( Html5Uploader, Y.Widget, {
 	       this._uploadQueue.on("totaluploadprogress", this._uploadEventHandler, this);
 	       this._uploadQueue.on("uploadcomplete", this._uploadEventHandler, this);
 	       this._uploadQueue.on("alluploadscomplete", this._uploadEventHandler, this);
+	       this._uploadQueue.on("uploaderror", this._uploadEventHandler, this);
 
 	       this._uploadQueue.startUpload();
 	}
 },
 
 {
-	HTML5FILE_FIELD: "<input type='file' style='visibility:hidden; width:0px; height: 0px;'>",
+	FLASH_CONTAINER: "<div id='{swfContainerId}' style='position:absolute; top:0px; left: 0px; width:100%; height:100%'></div>",
 
-	NAME: "html5uploader",
+	NAME: "flashuploader",
 
 	ATTRS: {
 		selectFilesButton : {
-           value: Y.Node.create("<button type='button' style='height:100%;width:100%'>Select Files</button>")
-		},
-
-		dragAndDropArea: {
-			value: null
+			value: Y.Node.create("<button type='button' style='height:100%;width:100%'>Select Files</button>")
 		},
 
 		multipleFiles: {
 			value: false
+		},
+
+		fileFilters: {
+			value: null
 		},
 
 		appendNewFiles : {
@@ -203,6 +233,10 @@ Y.Html5Uploader = Y.extend( Html5Uploader, Y.Widget, {
 
         uploadURL: {
         	value: ""
+        },
+
+        swfURL: {
+        	value: "assets/flashuploader.swf"
         }
 	}
 });
@@ -210,4 +244,4 @@ Y.Html5Uploader = Y.extend( Html5Uploader, Y.Widget, {
 
 
 
-}, '@VERSION@' ,{requires:['widget', 'substitute', 'node-event-simulate', 'file', 'uploadqueue']});
+}, '@VERSION@' ,{requires:['swf', 'widget', 'substitute', 'base', 'node', 'event-custom', 'file', 'uploadqueue']});

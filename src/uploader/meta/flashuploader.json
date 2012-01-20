@@ -2,9 +2,12 @@
     "flashuploader": {
         "requires": [
             "swf",
+            "widget",
+            "substitute",
             "base", 
             "node",
             "event-custom",
+            "file",
             "uploadqueue"
         ] 
     }
