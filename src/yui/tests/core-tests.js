@@ -239,24 +239,6 @@ YUI.add('core-tests', function(Y) {
             });
             console.info = l;
         },
-        test_loader_combo_sep: function() {
-            var Assert = Y.Assert;
-
-            var testY = YUI({
-                debug: true,
-                combine: true,
-                comboSep: '--;;--'
-            });
-            var loader = new testY.Loader(testY.config);
-            testY.Env._loader = loader;
-
-            testY.Get.script = function(s) {
-                var url = s[0];
-                Assert.isTrue((url.indexOf(testY.config.comboSep) > 5), 'Combo seperator (' + testY.config.comboSep + ') was not used');
-                testY._loading = false;
-            };
-            testY.use('editor');
-        },
         test_global_apply_config: function() {
             var Assert = Y.Assert,
                 test = this;
@@ -282,6 +264,18 @@ YUI.add('core-tests', function(Y) {
             Assert.isObject(YUI.GlobalConfig.modules.davglass, 'First module in global config not created');
             Assert.isObject(YUI.GlobalConfig.modules.foo, 'Second module in global config not created');
 
+        },
+        test_global_config: function() {
+            var Assert = Y.Assert,
+                test = this;
+            
+            YUI().use('global-mod', function(Y) {
+                test.resume(function() {
+                    Assert.isTrue(Y.GlobalMod, 'Module in global config failed to load');
+                });
+            });
+
+            test.wait(3000);
         },
         test_multiple_ua: function() {
             var Assert = Y.Assert,
