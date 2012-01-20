@@ -977,6 +977,10 @@ with any configuration info required for the module.
             return Y;
         }
 
+        if (mods['loader'] && !Y.Loader) {
+            Y._attach(['loader']);
+        }
+
 
         // use loader to expand dependencies and sort the
         // requirements if it is available.

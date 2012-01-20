@@ -983,6 +983,11 @@ with any configuration info required for the module.
             return Y;
         }
 
+        if (mods['loader'] && !Y.Loader) {
+            Y.log('Loader was found in meta, but it is not attached. Attaching..', 'info', 'yui');
+            Y._attach(['loader']);
+        }
+
         // Y.log('before loader requirements: ' + args, 'info', 'yui');
 
         // use loader to expand dependencies and sort the
