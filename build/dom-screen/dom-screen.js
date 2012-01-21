@@ -184,7 +184,7 @@ Y.mix(Y_DOM, {
                     }
                 }
                 return xy;                   
-            }
+            };
         } else {
             return function(node) { // manually calculate by crawling up offsetParents
                 //Calculate the Top and Left border sizes (assumes pixels)
@@ -248,6 +248,32 @@ Y.mix(Y_DOM, {
             };
         }
     }(),// NOTE: Executing for loadtime branching
+
+    /**
+    Gets the width of vertical scrollbars on overflowed containers in the body
+    content.
+
+    @method getScrollbarWidth
+    @return {Number} Pixel width of a scrollbar in the current browser
+    **/
+    getScrollbarWidth: Y.cached(function () {
+        var doc      = Y.config.doc,
+            testNode = doc.createElement('div'),
+            body     = doc.getElementsByTagName('body')[0],
+            // 0.1 because cached doesn't support falsy refetch values
+            width    = 0.1;
+            
+        if (body) {
+            testNode.style.cssText = "position:absolute;visibility:hidden;overflow:scroll;width:20px;";
+            testNode.appendChild(doc.createElement('p')).style.height = '1px';
+            body.insertBefore(testNode, body.firstChild);
+            width = testNode.offsetWidth - testNode.clientWidth;
+
+            body.removeChild(testNode);
+        }
+
+        return width;
+    }, null, 0.1),
 
     /**
      * Gets the current X position of an element based on page coordinates. 

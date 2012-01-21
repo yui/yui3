@@ -358,6 +358,37 @@ YUI.add('dd-tests', function(Y) {
                 currentTarget: Y.one('#del ul li:nth-child(6)')
             });
             Y.Assert.isFalse(mDown, 'Delegate mouseDown fired on a disabled item');
+        },
+        test_css_gutter: function() {
+            var gutter1 = '2px';
+            var obj = Y.DD.DDM.cssSizestoObject(gutter1);
+            Y.Assert.areSame(2, obj.top, gutter1 + ' failed to parse top');
+            Y.Assert.areSame(2, obj.bottom, gutter1 + ' failed to parse bottom');
+            Y.Assert.areSame(2, obj.left, gutter1 + ' failed to parse left');
+            Y.Assert.areSame(2, obj.right, gutter1 + ' failed to parse right');
+
+            var gutter1 = '1px 2px';
+            var obj = Y.DD.DDM.cssSizestoObject(gutter1);
+            Y.Assert.areSame(1, obj.top, gutter1 + ' failed to parse top');
+            Y.Assert.areSame(1, obj.bottom, gutter1 + ' failed to parse bottom');
+            Y.Assert.areSame(2, obj.left, gutter1 + ' failed to parse left');
+            Y.Assert.areSame(2, obj.right, gutter1 + ' failed to parse right');
+
+            var gutter1 = '1px 2px 3px';
+            var obj = Y.DD.DDM.cssSizestoObject(gutter1);
+            Y.Assert.areSame(1, obj.top, gutter1 + ' failed to parse top');
+            Y.Assert.areSame(2, obj.right, gutter1 + ' failed to parse right');
+            Y.Assert.areSame(3, obj.bottom, gutter1 + ' failed to parse bottom');
+            Y.Assert.areSame(2, obj.left, gutter1 + ' failed to parse left');
+
+            var gutter1 = '1px 2px 3px 4px';
+            var obj = Y.DD.DDM.cssSizestoObject(gutter1);
+            Y.Assert.areSame(1, obj.top, gutter1 + ' failed to parse top');
+            Y.Assert.areSame(2, obj.right, gutter1 + ' failed to parse right');
+            Y.Assert.areSame(3, obj.bottom, gutter1 + ' failed to parse bottom');
+            Y.Assert.areSame(4, obj.left, gutter1 + ' failed to parse left');
+
+
         }
     };
     

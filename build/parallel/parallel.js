@@ -9,8 +9,6 @@ YUI.add('parallel', function(Y) {
 
 /**
 A concurrent parallel processor to help in running several async functions.
-@class Parallel
-@example
 
     var stack = new Y.Parallel();
 
@@ -26,8 +24,11 @@ A concurrent parallel processor to help in running several async functions.
     stack.done(function() {
     });
 
+@class Parallel
 @param {Object} o A config object
 @param {Object} [o.context=Y] The execution context of the callback to done
+
+
 */
 
 Y.Parallel = function(o) {
@@ -41,21 +42,21 @@ Y.Parallel = function(o) {
 Y.Parallel.prototype = {
     /**
     * An Array of results from all the callbacks in the stack
-    * @property {Array} results
-    * @private
+    * @property results
+    * @type Array
     */
-    
+
     results: null,
     /**
     * The total items in the stack
-    * @property {Number} total
-    * @private
+    * @property total
+    * @type Number
     */
     total: null,
     /**
     * The number of stacked callbacks executed
-    * @property {Number} finished
-    * @private
+    * @property finished
+    * @type Number
     */
     finished: null,
     /**
@@ -68,9 +69,9 @@ Y.Parallel.prototype = {
         self.total += 1;
         return function () {
             self.finished++;
-            self.results.push(fn.apply(self.context, arguments));
+            self.results.push(fn && fn.apply(self.context, arguments));
             self.test();
-        }
+        };
     },
     /**
     * Test to see if all registered items in the stack have completed, if so call the callback to `done`

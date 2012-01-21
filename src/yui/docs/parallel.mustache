@@ -1,0 +1,58 @@
+<div class="intro">
+    <p>Using `Y.Parallel` for batch async function calls.</p>
+</div>
+
+<div class="example">
+    <style>
+        #results {
+            margin: 1em;
+        }
+    </style>
+    <a href="#" class="button" id="runner">Run example</a><br>
+    <div id="results">
+    </div>
+</div>
+
+<h2>Why Parallel</h2>
+
+<p>You may need to do a batch of asyncronious function calls and never care that each one is done,
+you just care that all of them are done. That's where `Y.Parallel` comes in handy.</p>
+
+<h2>Using Parallel</h2>
+
+<p>`Y.Parallel` is more like a stack tool than anything else. First you create your stack:</p>
+
+```
+var stack = new Y.Parallel();
+```
+
+<p>Then you can start adding callbacks to that stack:</p>
+
+```
+var stack = new Y.Parallel();
+
+stack.add(function() {});
+stack.add(function() {});
+stack.add(function() {});
+stack.add(function() {});
+```
+
+<p>Finally, you listen for the stack to be complete:</p>
+
+```
+stack.done(function() {
+    Y.log('Stack complete');
+});
+```
+
+<h2>Simple Example</h2>
+
+<p>This is a simple example of calling a callback once all 5 of the `Y.later` calls have completed.</p>
+
+```
+{{>parallel}}
+```
+
+<script>
+{{>parallel}}
+</script>

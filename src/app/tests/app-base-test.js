@@ -774,8 +774,9 @@ appBaseSuite.add(new Y.Test.Case({
         app.after('activeViewChange', function (e) {
             calls += 1;
 
-            ObjectAssert.hasKey(guid, e);
-            Assert.areSame(true, e[guid]);
+            Assert.isObject(e.options);
+            ObjectAssert.hasKey(guid, e.options);
+            Assert.areSame(true, e.options[guid]);
         });
 
         options[guid] = true;

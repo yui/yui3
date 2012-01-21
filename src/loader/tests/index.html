@@ -11,7 +11,8 @@
 
 <div id="log"></div>
 
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../build/yui-base/yui-base.js"></script>
+<!--script type="text/javascript" src="../../../build/loader/loader.js"></script-->
 <script type="text/javascript">
 
 var YUI_config = {
@@ -22,6 +23,7 @@ var YUI_config = {
 
 YUI({
     allowRollup: false,
+    loaderPath: 'loader/loader.js',
     logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true },    
     filter: YUI_config.gfilter,
     modules: {
