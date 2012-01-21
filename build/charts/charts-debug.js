@@ -220,7 +220,7 @@ CircleGroup.ATTRS = Y.merge(Y.ShapeGroup.ATTRS, {
             {
                 width = dimensions.width;
                 height = dimensions.height;
-                radius = width * 0.5;
+                radius = Y_Lang.isArray(width) ? this._getRadiusCollection(width) : (width * 0.5);
                 yRadius = radius;
                 return {
                     width: width,
