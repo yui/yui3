@@ -308,7 +308,7 @@ Y.mix(Table.prototype, {
     @default '<tfoot class="{classes}"/>'
     **/
     TFOOT_TEMPLATE:
-        '<tfoot class="{classes}"/',
+        '<tfoot class="{classes}"/>',
 
     /**
     Template used to create the table's `<thead>` if configured with a
@@ -1219,9 +1219,11 @@ Y.mix(Table.prototype, {
                 }
 
                 this.data.reset(val);
-                // TODO: return true to avoid storing the data object both in
-                // the state object underlying the attribute an in the data
-                // property (decrease memory footprint)?
+
+                // Return true to avoid storing the data both in the state
+                // object underlying the attribute and in the data property.
+                // Decreases memory consumption.
+                val = true;
             }
             // else pass through the array data, but don't assign this.data
             // Let the _initData process clean up.
