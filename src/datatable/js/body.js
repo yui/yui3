@@ -157,8 +157,8 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @return {Node}
     **/
     getCell: function (row, col) {
-        var el    = null,
-            tbody = this.get('container');
+        var tbody = this.get('container'),
+            el;
 
         if (tbody) {
             el = tbody.getDOMNode().rows[+row];
@@ -536,7 +536,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                 }
             }
 
-            if ((value === undefined || value === '')) {
+            if (value === undefined || value === '') {
                 value = col.emptyCellValue || '';
             }
 
