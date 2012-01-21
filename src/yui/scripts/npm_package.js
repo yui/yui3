@@ -9,7 +9,7 @@ var fs = require('fs'),
 YUI.Env.core = [];
 Y = YUI(); //This makes YUI.Env.aliases valid
 
-console.log('Prepping release for npm');
+console.error('Prepping release for npm');
 
 var start = process.argv[2];
 
@@ -17,6 +17,8 @@ if (!start) {
     console.error('No out directory given');
     process.exit(1);
 }
+
+start = path.resolve(start);
 
 if (!path.existsSync(start)) {
     console.error('Out directory does not exist, exiting..');
@@ -46,7 +48,7 @@ var makeDebug = function(mod, p) {
     return str;
 };
 
-console.log('Writing index.js files');
+console.error('Writing index.js files');
 var dirs = fs.readdirSync(start);
 dirs.forEach(function(mod) {
     var p = path.join(start, mod, 'index.js');
@@ -57,9 +59,9 @@ dirs.forEach(function(mod) {
         fs.writeFileSync(d, makeDebug(mod), 'utf8');
     }
 });
-console.log('Index files written');
+console.error('Index files written');
 
-console.log('Writing seed debug file');
+console.error('Writing seed debug file');
 var index = 'exports.path = function() {' + 
     '   return __dirname;' +
     '};\n' + 
@@ -70,11 +72,11 @@ var index = 'exports.path = function() {' +
 var p = path.join(start, 'debug.js');
 fs.writeFileSync(p, index, 'utf8');
 
-console.log('Writing alias files');
+console.error('Writing alias files');
 Object.keys(YUI.Env.aliases).forEach(function(mod) {
     var index = makeIndex(mod, true);
     var p = path.join(start, mod + '.js');
     fs.writeFileSync(p, index, 'utf8');
 });
 
-console.log('NPM Release Ready');
+console.error('NPM Release Ready');

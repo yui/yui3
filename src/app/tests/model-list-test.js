@@ -25,10 +25,6 @@ modelListSuite.add(new Y.Test.Case({
         delete this.list;
     },
 
-    'ModelLists should have a `model` property': function () {
-        Assert.isNull(new Y.ModelList().model);
-    },
-
     'destructor should detach all models from the list': function () {
         var model = new Y.Model();
 
@@ -37,6 +33,27 @@ modelListSuite.add(new Y.Test.Case({
 
         this.list.destroy();
         ArrayAssert.isEmpty(model.lists);
+    }
+}));
+
+// -- ModelList: Attributes and Properties -------------------------------------
+modelListSuite.add(new Y.Test.Case({
+    name: 'Attributes & Properties',
+
+    setUp: function () {
+        this.list = new Y.ModelList({model: Y.Model});
+    },
+
+    tearDown: function () {
+        delete this.list;
+    },
+
+    'ModelList instances should have an `_isYUIModelList` property': function () {
+        Assert.isTrue(this.list._isYUIModelList);
+    },
+
+    'ModelList instances should have a `model` property': function () {
+        Assert.isNull(new Y.ModelList().model);
     }
 }));
 
@@ -100,6 +117,29 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame('bar', added[1].get('bar'));
     },
 
+    'add() should add models in another ModelList to the list': function () {
+        var list        = this.createList(),
+            otherList   = this.createList(),
+            otherModels = [this.createModel(), this.createModel()];
+
+        otherList.add(otherModels);
+
+        ArrayAssert.itemsAreSame(otherModels, list.add(otherList), 'should return an array of added models');
+        Assert.areSame(2, list.size(), 'list should contain 2 models');
+        Assert.areSame(otherList.item(0), list.item(0));
+        Assert.areSame(otherList.item(1), list.item(1));
+    },
+
+    'add() should support models created in other windows': function () {
+        var list   = this.createList(),
+            iframe = document.getElementById('test-iframe'),
+            model  = iframe.contentWindow.iframeModel;
+
+        list.add(model);
+
+        Assert.areSame(model, list.item(0));
+    },
+
     'comparator() should be undefined by default': function () {
         Assert.isUndefined(this.createList().comparator);
     },
@@ -156,6 +196,16 @@ modelListSuite.add(new Y.Test.Case({
         });
 
         Assert.areSame(1, calls);
+    },
+
+    'create() should support models created in other windows': function () {
+        var list   = this.createList(),
+            iframe = document.getElementById('test-iframe'),
+            model  = iframe.contentWindow.iframeModel;
+
+        list.create(model);
+
+        Assert.areSame(model, list.item(0));
     },
 
     'filter() should filter the list and return an array': function () {
@@ -343,6 +393,46 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame(2, calls);
     },
 
+    'load() should reset the list with the loaded items': function () {
+        var calls = 0,
+            list  = this.createList();
+
+        list.sync = function (action, options, callback) {
+            if (action === 'read') {
+                callback(null, '[{"foo":"modelOne"}, {"foo":"modelTwo"}]');
+            }
+        };
+
+        list.load(function (err) {
+            calls += 1;
+
+            Assert.isNull(err, 'load error should be null');
+            Assert.areSame(2, list.size(), 'list should contain two models');
+            Assert.areSame('modelOne', list.item(0).get('foo'), 'modelOne should be loaded correctly');
+            Assert.areSame('modelTwo', list.item(1).get('foo'), 'modelTwo should be loaded correctly');
+        });
+
+        Assert.areSame(1, calls);
+    },
+
+    'load() callback should receive an error when a sync error occurs': function () {
+        var calls = 0,
+            list  = this.createList();
+
+        list.sync = function (action, options, callback) {
+            callback(new Error('OMG!'));
+        };
+
+        list.load(function (err) {
+            calls += 1;
+
+            Assert.isInstanceOf(Error, err);
+            Assert.areSame('OMG!', err.message);
+        });
+
+        Assert.areSame(1, calls);
+    },
+
     'map() should execute a function on every model in the list and return an array of return values': function () {
         var list = this.createList(),
             obj  = {},
@@ -373,6 +463,39 @@ modelListSuite.add(new Y.Test.Case({
 
         Assert.areSame(array, list.parse(array));
         Assert.areSame(object, list.parse(object));
+    },
+
+    'remove() should remove a single model from the list': function () {
+        var list = this.createList();
+
+        list.add([{foo: 'zero'}, {foo: 'one'}]);
+
+        Assert.areSame('zero', list.remove(list.item(0)).get('foo'));
+        Assert.areSame(1, list.size());
+    },
+
+    'remove() should remove an array of models from the list': function () {
+        var list = this.createList(),
+            removed;
+
+        list.add([{foo: 'zero'}, {foo: 'one'}]);
+        removed = list.remove([list.item(0), list.item(1)]);
+
+        Assert.areSame('zero', removed[0].get('foo'));
+        Assert.areSame('one', removed[1].get('foo'));
+        Assert.areSame(0, list.size());
+    },
+
+    'remove() should remove models in another ModelList from the list': function () {
+        var list        = this.createList(),
+            otherList   = this.createList(),
+            otherModels = [this.createModel(), this.createModel()];
+
+        list.add(otherModels);
+        otherList.add(otherModels);
+
+        ArrayAssert.itemsAreSame(otherModels, list.remove(otherList), 'should return an array of removed models');
+        Assert.areSame(0, list.size(), 'list should contain 0 models');
     },
 
     'reset() should replace all models in the list': function () {
@@ -418,25 +541,27 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame(0, list.size());
     },
 
-    'remove() should remove a single model from the list': function () {
-        var list = this.createList();
+    'reset() should add models in another ModelList to the list': function () {
+        var list        = this.createList(),
+            otherList   = this.createList(),
+            otherModels = [this.createModel(), this.createModel()];
 
-        list.add([{foo: 'zero'}, {foo: 'one'}]);
+        otherList.add(otherModels);
+        list.add(otherList);
 
-        Assert.areSame('zero', list.remove(list.item(0)).get('foo'));
-        Assert.areSame(1, list.size());
+        Assert.areSame(2, list.size(), 'list should contain 2 models');
+        Assert.areSame(otherList.item(0), list.item(0));
+        Assert.areSame(otherList.item(1), list.item(1));
     },
 
-    'remove() should remove an array of models from the list': function () {
-        var list = this.createList(),
-            removed;
+    'reset() should support models created in other windows': function () {
+        var list   = this.createList(),
+            iframe = document.getElementById('test-iframe'),
+            model  = iframe.contentWindow.iframeModel;
 
-        list.add([{foo: 'zero'}, {foo: 'one'}]);
-        removed = list.remove([list.item(0), list.item(1)]);
+        list.reset([model]);
 
-        Assert.areSame('zero', removed[0].get('foo'));
-        Assert.areSame('one', removed[1].get('foo'));
-        Assert.areSame(0, list.size());
+        Assert.areSame(model, list.item(0));
     },
 
     // 'set() should set a single attribute value on all models in the list': function () {
@@ -596,6 +721,40 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame(2, calls);
     },
 
+    '`create` event should fire when a model is created': function () {
+        var calls = 0,
+            list  = this.createList(),
+            model = this.createModel();
+
+        list.on('create', function (e) {
+            calls += 1;
+            Assert.areSame(model, e.model, 'Model should be passed in the event facade.');
+        });
+
+        list.on('add', function (e) {
+            Assert.areSame(1, calls, '`add` should fire after `create`.');
+        });
+
+        list.create(model);
+
+        Assert.areSame(1, calls, '`create` event should be fired.');
+    },
+
+    '`create` event should receive options passed to the create() method': function () {
+        var calls = 0,
+            list  = this.createList(),
+            model = this.createModel();
+
+        list.on('create', function (e) {
+            calls += 1;
+            Assert.areSame('foo', e.src, 'Options should be merged into the event facade.');
+        });
+
+        list.create(model, {src: 'foo'});
+
+        Assert.areSame(1, calls, '`create` event should be fired.');
+    },
+
     '`error` event should bubble up from models': function () {
         var calls = 0,
             list  = this.createList(),
@@ -620,10 +779,11 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame(1, calls);
     },
 
-    '`error` event should fire when a duplicate model is added': function () {
-        var calls = 0,
-            list  = this.createList(),
-            model = this.createModel();
+    '`error` event should fire when a model with a duplicate clientId is added': function () {
+        var calls  = 0,
+            list   = this.createList(),
+            model  = this.createModel(),
+            model2 = this.createModel();
 
         list.on('error', function (e) {
             calls += 1;
@@ -632,8 +792,30 @@ modelListSuite.add(new Y.Test.Case({
             Assert.areSame('add', e.src);
         });
 
-        list.add(model);
+        list.add([model, model2]);
         list.add(model, {src: 'test'});
+        list.add({});
+
+        Assert.areSame(1, calls);
+    },
+
+    '`error` event should fire when a model with a duplicate id is added': function () {
+        var calls  = 0,
+            list   = this.createList(),
+            model  = this.createModel(),
+            model2 = this.createModel(),
+            model3 = this.createModel();
+
+        model.set('id', 0);
+        model3.set('id', 0);
+
+        list.on('error', function (e) {
+            calls += 1;
+            Assert.areSame(model3, e.model);
+        });
+
+        list.add([model, model2]);
+        list.add(model3);
         list.add({});
 
         Assert.areSame(1, calls);
@@ -674,6 +856,30 @@ modelListSuite.add(new Y.Test.Case({
         list.parse('{"foo": "bar"}');
 
         Assert.areSame(1, calls);
+    },
+
+    '`load` event should fire after a successful load operation': function () {
+        var calls = 0,
+            list  = this.createList();
+
+        list.on('load', function (e) {
+            calls += 1;
+
+            Assert.areSame('[{"foo": "bar"}]', e.response);
+            Assert.isObject(e.options);
+            Assert.isObject(e.parsed);
+            Assert.areSame('bar', e.parsed[0].foo);
+        });
+
+        list.sync = function (action, options, callback) {
+            callback(null, '[{"foo": "bar"}]');
+        };
+
+        list.load(function () {
+            Assert.areSame(1, calls, 'load event should fire before the callback runs');
+        });
+
+        Assert.areSame(1, calls, 'load event never fired');
     },
 
     '`reset` event should fire when the list is reset or sorted': function () {

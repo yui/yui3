@@ -81,6 +81,7 @@
     "app-transitions": {
         "requires": [
             "app-base", 
+            "parallel", 
             "transition"
         ]
     }, 
@@ -1930,6 +1931,11 @@
         "requires": [
             "base-build", 
             "node-event-delegate"
+        ]
+    }, 
+    "view-node-map": {
+        "requires": [
+            "view"
         ]
     }, 
     "widget": {

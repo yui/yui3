@@ -1123,6 +1123,22 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                 a.fire('foo');
 
                 Y.Assert.areSame("ABCDAC", result);
+            },
+
+            test_multiple_object_publish: function () {
+                var target = new Y.EventTarget({ emitFacade: true, prefix: 'a' }),
+                    pass;
+
+                target.publish({ foo: {} });
+                target.publish({
+                    bar: {
+                        defaultFn: function () { pass = true; }
+                    }
+                });
+
+                target.fire('bar');
+
+                Y.Assert.isTrue(pass);
             }
         });
 

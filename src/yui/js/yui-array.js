@@ -107,7 +107,7 @@ the native ES5 `Array.forEach()` method if available.
 @return {YUI} The YUI instance.
 @static
 **/
-YArray.each = YArray.forEach = Native.forEach ? function (array, fn, thisObj) {
+YArray.each = YArray.forEach = Lang._isNative(Native.forEach) ? function (array, fn, thisObj) {
     Native.forEach.call(array || [], fn, thisObj || Y);
     return Y;
 } : function (array, fn, thisObj) {
@@ -171,7 +171,7 @@ This method wraps the native ES5 `Array.indexOf()` method if available.
   found.
 @static
 **/
-YArray.indexOf = Native.indexOf ? function (array, value) {
+YArray.indexOf = Lang._isNative(Native.indexOf) ? function (array, value) {
     // TODO: support fromIndex
     return Native.indexOf.call(array, value);
 } : function (array, value) {
@@ -223,7 +223,7 @@ value from the function will stop the processing of remaining items.
   items in the array; `false` otherwise.
 @static
 **/
-YArray.some = Native.some ? function (array, fn, thisObj) {
+YArray.some = Lang._isNative(Native.some) ? function (array, fn, thisObj) {
     return Native.some.call(array, fn, thisObj);
 } : function (array, fn, thisObj) {
     for (var i = 0, len = array.length; i < len; ++i) {

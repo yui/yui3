@@ -1,16 +1,23 @@
-YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','dd-constrain','resize','json', 'cssbutton', 'cssbutton', function (Y){
-    
-    
+YUI({
+    filter: 'raw',
+    skin: {
+        overrides: {
+            panel: ['night']
+        }
+    }
+}).use('graphics','dd','event-key','dd-delegate','dd-constrain','resize','json', 'cssbutton', 'panel', 'dd-plugin', function (Y){
+
+
 ///////////////////// gradient UI controls //////////////////////
     var resizeNode = Y.one('#resize-r'),
     gradControlNode = Y.one('#grad-control'),
-    outCX = Y.one('#out-cx'), 
-    outCY = Y.one('#out-cy'), 
-    outFX = Y.one('#out-fx'), 
-    outFY = Y.one('#out-fy'), 
+    outCX = Y.one('#out-cx'),
+    outCY = Y.one('#out-cy'),
+    outFX = Y.one('#out-fx'),
+    outFY = Y.one('#out-fy'),
     outR = Y.one('#out-r'),
     myellipse,
-    bounds = Y.one('#grad-control'),  
+    bounds = Y.one('#grad-control'),
     origX = bounds.getX(),
     origY = bounds.getY(),
     maxX = bounds.get('offsetWidth'),
@@ -37,31 +44,31 @@ YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','dd-constrain'
                 cy: theCY,
                 fx: theFX,
                 fy: theFY,
-                r: theR                
+                r: theR
             }
         );
     }
-    
+
     // This recenters the outter edge of the gradient control, as it is sized
     var recenterGradientR = function(e){
         var radius = resizeNode.get('offsetWidth')/2 + 'px';
         resizeNode.setStyles({
-            'left': '-' + radius, 
+            'left': '-' + radius,
             'top': '-' + radius,
             'borderRadius': radius
             }  );
         theR =  (resizeNode.get('offsetWidth') / 2)  / gradControlNode.get('offsetWidth');
         theR = Math.round(theR * 100) / 100;
         outR.setContent(theR);
-        updateGraphic();        
+        updateGraphic();
     }
-    
+
     // Instatiate a resize object on the outter gradient control ring
     var resize = new Y.Resize({
         //Selector of the node to resize
         node: '#resize-r',
         handles: ['bl', 'br', 'tl', 'tr']
-    });   
+    });
     resize.plug(Y.Plugin.ResizeConstrained, {
         minWidth: 20,
         minHeight: 20,
@@ -71,11 +78,9 @@ YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','dd-constrain'
     });
     resize.after('resize:end', function(){
         recenterGradientR();
-        closeCode();
     });
     resize.after('resize:resize', function(){    // seem to need both resize:resize and resize:end
         recenterGradientR();
-        closeCode();
     });
 
 
@@ -83,7 +88,7 @@ YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','dd-constrain'
     var ddC = new Y.DD.Drag({
         node: '.grad-c'
     });
-    
+
     // Instantiate a drag on the container of the inner gradient control ring
     ddF = new Y.DD.Drag({
         node: '.grad-f'
@@ -91,36 +96,32 @@ YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','dd-constrain'
 
     // Handle drag of the container of the outter control ring
     ddC.on('drag:drag', function(e){
-        
+
         theCX = (this.lastXY[0] - origX) / (maxX - cW);
         theCY = (this.lastXY[1] - origY) / (maxY - cW);
         theCX = Math.round(theCX * 100) / 100;
         theCY = Math.round(theCY * 100) / 100;
-        
+
         outCX.setContent(theCX);
         outCY.setContent(theCY);
-        updateGraphic();                
-        closeCode();
+        updateGraphic();
     });
-    
-    
+
+
     // Handle drag of the container of the inner control ring
     ddF.on('drag:drag', function(e){
-        
+
         theFX = (this.lastXY[0] - origX) / (maxX - fW);
         theFY = (this.lastXY[1] - origY) / (maxY - fW);
         theFX = Math.round(theFX * 100) / 100;
         theFY = Math.round(theFY * 100) / 100;
         outFX.setContent(theFX);
         outFY.setContent(theFY);
-        updateGraphic();        
-        closeCode();
+        updateGraphic();
     });
-    
+
     // Handle a click on the 'get code snippet' button
     Y.one('#btn-get-code').on('click', function(){
-        Y.one('#btn-close-code').setStyle('visibility', 'visible');
-        Y.one('#output-grad textarea').setStyle('visibility', 'visible');
         var html = ''+
         'var myellipse = mygraphic.addShape({\n'+
         '    type: "ellipse",\n'+
@@ -134,7 +135,7 @@ YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','dd-constrain'
         '        cy: ' + theCY + ',\n'+
         '        fx: ' + theFX + ',\n'+
         '        fy: ' + theFY + ',\n'+
-        '        r: ' + theR + '\n'+                
+        '        r: ' + theR + '\n'+
         '    },\n'+
         '    stroke: {\n'+
         '        weight: 0,\n'+
@@ -145,21 +146,12 @@ YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','dd-constrain'
         '    x: 35,\n'+
         '    y: 35\n'+
         '});\n';
-        var textArea = Y.one('#output-grad textarea')
+        var textArea = Y.one('#panel-content textarea')
         textArea.setContent(html);
+        panel.show();
         textArea.focus();
         textArea.select();
-        
-    });
-    var closeCode = function(){
-        var tarea = Y.one('#output-grad textarea');
-        if(tarea.getStyle('visibility') === 'visible'){
-            Y.one('#btn-close-code').setStyle('visibility', 'hidden');
-            tarea.setStyle('visibility', 'hidden');
-        }
-    }
-    Y.one('#btn-close-code').on('click', function(){
-        closeCode();
+        textArea.scrollTop();
     });
     Y.one('#center-color').on('change', function(){
         centerColor = this.get('value');
@@ -169,7 +161,6 @@ YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','dd-constrain'
                 {color: outerColor, opacity:1, offset:1}
             ];
         updateGraphic();
-        closeCode();
     });
     Y.one('#outer-color').on('change', function(){
         outerColor = this.get('value');
@@ -179,7 +170,6 @@ YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','dd-constrain'
                 {color: outerColor, opacity:1, offset:1}
             ];
         updateGraphic();
-        closeCode();
     });
 ///////////////////// END gradient UI controls //////////////////////
 
@@ -200,7 +190,7 @@ YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','dd-constrain'
                 cy: 0.5,
                 fx: 0.5,
                 fy: 0.5,
-                r: 0.5                
+                r: 0.5
             },
             stroke: {
                 weight: 0,
@@ -216,4 +206,29 @@ YUI({filter:"raw"}).use('graphics','dd','event-key','dd-delegate','dd-constrain'
     }
 
     loadGraphics();
+
+
+    ////////////////////////////////////////
+    var panel = new Y.Panel({
+        bodyContent: '<div class="textarea-box"><textarea></textarea></div>',
+        headerContent: 'Code Snippet',
+        width        : 350,
+        height       : 400,
+        zIndex       : 5,
+        centered     : true,
+        modal        : true,
+        visible      : false,
+        render       : '#panel-content',
+        plugins      : [Y.Plugin.Drag]
+    });
+
+    panel.addButton({
+        value  : 'Close',
+        section: Y.WidgetStdMod.FOOTER,
+        action : function (e) {
+            e.preventDefault();
+            panel.hide();
+        }
+    });
+
 });

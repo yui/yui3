@@ -22,10 +22,37 @@ App Framework Change History
   or an `error` event on failure. The `save()` callback (if provided) will still
   be called in both cases. [Ticket #2531207]
 
+* Options passed to `set()` and `setAttrs()` are now correctly merged into the
+  event facade of the `change` event. [Ticket #2531492]
+
 ### ModelList
 
 * Added a `filter()` method that returns a filtered array of models. [Ticket
   #2531250]
+
+* Added a `create` event that fires when a model is created/updated via the
+  `create()` method, but before that model has actually been saved and added to
+  the list (and before the `add` method has fired). [Ticket #2531400]
+
+* Added a `load` event that fires when models are loaded. [Ticket #2531399]
+
+* Models' `id` attributes (if set) are now used to enforce uniqueness. If you
+  attempt to add a model to the list that has the same id as another model in
+  the list, an `error` event will be fired and the model will not be added.
+  [Ticket #2531409]
+
+* The `add()`, `remove()` and `reset()` methods now accept other ModelList
+  instances in addition to models and arrays of models. For example, passing a
+  ModelList to `add()` will add all the models in that list to this list as
+  well. [Ticket #2531408]
+
+* ModelList now allows you to add models to the list even if they were
+  instantiated in another window or another YUI sandbox. [Ticket #2531543]
+
+* ModelList subclasses can now override the protected `_compare()` method to
+  customize the low-level comparison logic used for sorting. This makes it easy
+  to do things like descending sort, multi-field sorting, etc. See the API docs
+  for details.
 
 ### Router (formerly Controller)
 
@@ -84,6 +111,10 @@ App Framework Change History
   Previously, it assumed string values represented raw HTML. To get the same
   functionality as the old behavior, pass your HTML string through
   `Y.Node.create()` before passing it to `container`.
+
+* Added a View extension, `Y.View.NodeMap`, that can be mixed into a `View`
+  subclass to provide a static `getByNode()` method that returns the nearest
+  View instance associated with a given Node (similar to `Widget.getByNode()`).
 
 
 3.4.1

@@ -1,6 +1,5 @@
 <div class="intro">
-<p>This example shows how to use YUI 2 and 3 at the same time as well as interacting with each other.
-We will make a YUI 2 Calendar Control draggable with YUI 3 Drag &amp; Drop and use YUI 3's Node to handle the Calendar's Select Event.</p>
+<p>This example shows how to use YUI 2 and 3 at the same time as well as interacting with each other.</p>
 </div>
 
 <div class="example">
@@ -8,57 +7,47 @@ We will make a YUI 2 Calendar Control draggable with YUI 3 Drag &amp; Drop and u
 </div>
 
 <h3>Using YUI 2 inside of YUI 3</h3>
-<p>In this example, we are using the new YUI 3 support for loading and sandboxing YUI 2. From the `YUI().use()` statement, you will be able to load any module/utility/widget from YUI 2 and use it like you would in YUI 2.</p>
+<p>In this example, we are using the new YUI 3 support for loading and sandboxing YUI 2. 
+From the `YUI().use()` statement, you will be able to load any module/utility/widget from
+YUI 2 and use it like you would in YUI 2.</p>
 
 <h3>Creating your YUI instance</h3>
-<p>Now we need to create our YUI instance with the `dd-drag` and `yui2-calendar` modules, so we can create a YUI 2 calendar and make it draggable with YUI 3.</p>
+<p>Now we need to create our YUI instance with the `node` and `yui2-imagecropper`
+modules, so we can create a YUI 2 ImageCropper and do some simple DOM manipulation with `Node`.</p>
 
 ```
-YUI().use('dd-drag', 'yui2-calendar', function(Y) {
+YUI().use('node', 'yui2-imagecropper', function(Y) {
 });
 ```
 
-<h3>Creating the Calendar</h3>
-<p>Now that we have our tools in place, let's create the calendar. Using the new support for loading YUI 2 into a YUI 3 instance, you can set up a simple variable to help you cut and paste your YUI 2 based code.</p>
-<p>In the code sample below, we are creating a scoped variable called `YAHOO` and assigning it from `Y.YUI2`. The `YUI2` property of the `YUI` instance is a scoped version of the YUI 2 `YAHOO` object. If this page is inspected, you will notice that there is no global `YAHOO` variable.</p>
+<h3>Creating the ImageCropper</h3>
+<p>Now that we have our tools in place, let's create the ImageCropper. Using the new support 
+for loading YUI 2 into a YUI 3 instance, you can set up a simple variable to help you cut 
+and paste your YUI 2 based code.</p>
+<p>In the code sample below, we are creating a scoped variable called `YAHOO` and assigning
+it from `Y.YUI2`. The `YUI2` property of the `YUI` instance is a scoped version of the 
+YUI 2 `YAHOO` object. If this page is inspected, you will notice that there is no global `YAHOO` variable.</p>
 
 ```
-YUI().use('dd-drag', 'yui2-calendar', function(Y) {
+YUI().use('node', 'yui2-imagecropper', function(Y) {
     //This will make your YUI 2 code run unmodified
     var YAHOO = Y.YUI2;
 
-    var cal1 = new YAHOO.widget.Calendar('cal1', 'cal1Cont');
-    cal1.render();
-});
-```
-
-<h3>Making it draggable</h3>
-<p>Now we make the calendar draggable with the YUI 3 `dd-drag` module.</p>
-<p>First we listen for the renderEvent of the Calendar and set up the DD instance on it. After it's created, we need to remove the renderEvent listener as it's fired on Calendar page change.</p>
-
-```
-YUI().use('dd-drag', 'yui2-calendar', function(Y) {
-
-    //This will make your YUI 2 code run unmodified
-    var YAHOO = Y.YUI2,
-    setupDD = function() {
-        var dd = new Y.DD.Drag({
-            node: '#cal1Cont'
-        }).addHandle('div.calheader');
-
-        cal1.renderEvent.unsubscribe(setupDD);
-    },
-    cal1 = new YAHOO.widget.Calendar('cal1', 'cal1Cont');
+    var crop = new YAHOO.widget.ImageCropper('cropper'); 
     
-    cal1.renderEvent.subscribe(setupDD);
-    cal1.render();
-
 });
 ```
 
-<h3>Handling the Calendar's Select Event with Node</h3>
-<p>Now we need to hook up the `selectEvent` and handle that with YUI 3's `Node`.</p>
+<h3>Using Node too</h3>
+<p>Now we need to add the `yui-skin-sam` class to the body so the skin works.</p>
 
 ```
-{{>yui-yui2-js}}
+    Y.one('body').addClass('yui-skin-sam');
+
+```
+
+<h3>Full example source</h3>
+
+```
+{{>yui-yui2}}
 ```

@@ -90,6 +90,16 @@
                 this.get('host').on('dom:keypress', Y.bind(function(e) {
                     this._lastKey = e.keyCode;
                 }, this));
+            },
+            _wrapContent: function(str, override) {
+                var useP = (this._inst.host.editorPara && !override ? true : false);
+                
+                if (useP) {
+                    str = '<p>' + str + '</p>';
+                } else {
+                    str = str + '<br>';
+                }
+                return str;
             }
         }, {
             /**
@@ -400,7 +410,7 @@
                 * @param {String} tag The tag to deal with
                 */
                 list: function(cmd, tag) {
-                    var inst = this.getInstance(), html,
+                    var inst = this.getInstance(), html, self = this,
                         DIR = 'dir', cls = 'yui3-touched',
                         dir, range, div, elm, n, str, s, par, list, lis,
                         useP = (inst.host.editorPara ? true : false),
@@ -423,11 +433,7 @@
 
                             str = '<div>';
                             lis.each(function(l) {
-                                if (useP) {
-                                    str += '<p>' + l.get('innerHTML') + '</p>';
-                                } else {
-                                    str += l.get('innerHTML') + '<br>';
-                                }
+                                str = self._wrapContent(l.get('innerHTML'));
                             });
                             str += '</div>';
                             s = inst.Node.create(str);
@@ -498,7 +504,7 @@
                             }
                             range.select();
                         }
-                    } else if (Y.UA.ie && Y.UA.ie < 9) {
+                    } else if (Y.UA.ie) {
                         par = inst.one(sel._selection.parentElement());
                         if (par.test('p')) {
                             if (par && par.hasAttribute(DIR)) {
@@ -534,14 +540,11 @@
                             dir = par.getAttribute(DIR);
                         }
                         if (par && par.test(tag)) {
+                            var hasPParent = par.ancestor('p');
                             html = inst.Node.create('<div/>');
                             elm = par.all('li');
                             elm.each(function(h) {
-                                if (useP) {
-                                    html.append('<p>' + h.get('innerHTML') + '</p>');
-                                } else {
-                                    html.append(h.get('innerHTML') + '<br>');
-                                }
+                                html.append(self._wrapContent(h.get('innerHTML'), hasPParent));
                             });
                             if (dir) {
                                 if (useP) {
@@ -551,11 +554,11 @@
                                 }
                             }
                             if (useP) {
-                                par.replace(html.get('innerHTML'));
-                            } else {
-                                par.replace(html);
+                                html = inst.Node.create(html.get('innerHTML'));
                             }
-                            sel.selectNode(html.get('firstChild'));
+                            var fc = html.get('firstChild');
+                            par.replace(html);
+                            sel.selectNode(fc);
                         } else {
                             this._command(cmd, null);
                         }

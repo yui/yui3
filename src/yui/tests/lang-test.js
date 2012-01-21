@@ -3,12 +3,31 @@ YUI.add('lang-test', function (Y) {
 var Assert = Y.Assert,
     Lang   = Y.Lang,
 
-    win = Y.config.win,
+    doc = Y.config.doc,
 
     suite = new Y.Test.Suite('Y.Lang');
 
 suite.add(new Y.Test.Case({
     name: 'Lang tests',
+
+    '_isNative() should return true for native functions': function () {
+        Assert.isTrue(Lang._isNative(Object.prototype.toString), 'Object.prototype.toString is native');
+        Assert.isTrue(Lang._isNative(Array.prototype.concat), 'Array.prototype.concat is native');
+        Assert.isTrue(Lang._isNative(String.prototype.replace), 'String.prototype.replace is native');
+
+        if (doc) { // may not exist in Node.js
+            Assert.isTrue(Lang._isNative(doc.getElementById), 'document.getElementById is native');
+            Assert.isTrue(Lang._isNative(doc.getElementsByTagName('body')[0].cloneNode), 'DOM cloneNode() is native');
+        }
+    },
+
+    '_isNative() should return false for non-native functions': function () {
+        Assert.isFalse(Lang._isNative(Lang._isNative), 'Lang._isNative is not native');
+        Assert.isFalse(Lang._isNative(YUI), 'YUI is not native');
+        Assert.isFalse(Lang._isNative(function () {}, 'An anonymous function is not native'));
+        Assert.isFalse(Lang._isNative(function () { '[native code]' }, 'Tricky non-native function is not native'));
+        Assert.isFalse(Lang._isNative(function () { return '[native code]'; }, 'Anothre tricky non-native function is not native'));
+    },
 
     test_is_array: function() {
         Assert.isTrue(Lang.isArray([1, 2]), "Array literals are arrays");
