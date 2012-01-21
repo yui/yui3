@@ -349,6 +349,8 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 graphic = this.get("graphic"),
                 path = this.get("path"),
                 tickPath;
+            this._labelWidths = [];
+            this._labelHeights = [];
             graphic.set("autoDraw", false);
             path.clear();
             path.set("stroke", {
@@ -394,6 +396,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 position = this.getPosition(tickPoint);
                 label = this.getLabel(tickPoint, labelStyles);
                 label.innerHTML = labelFunction.apply(labelFunctionScope, [this.getLabelByIndex(i, len), labelFormat]);
+                this._layout.updateMaxLabelSize.apply(this, [label]);
                 tickPoint = this.getNextPoint(tickPoint, majorUnitDistance);
             }
             this._clearLabelCache();
@@ -406,7 +409,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             layout.setCalculatedSize.apply(this);
             for(i = 0; i < len; ++i)
             {
-                layout.positionLabel.apply(this, [this.get("labels")[i], this._tickPoints[i]]);
+                layout.positionLabel.apply(this, [this.get("labels")[i], this._tickPoints[i], styles, i]);
             }
         }
         this._drawing = false;
@@ -543,7 +546,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         label.style.position = "absolute";
         this._labels.push(label);
         this._tickPoints.push({x:pt.x, y:pt.y});
-        this._layout.updateMaxLabelSize.apply(this, [label]);
         for(i in styles)
         {
             if(styles.hasOwnProperty(i) && !customStyles.hasOwnProperty(i))
@@ -867,7 +869,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         var cb = this.get("contentBox").getDOMNode(),
             labels = this.get("labels"),
             graphic = this.get("graphic"),
-            i = 0,
             label,
             len = labels ? labels.length : 0;
         if(len > 0)

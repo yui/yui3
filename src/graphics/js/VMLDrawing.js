@@ -138,6 +138,70 @@ VMLDrawing.prototype = {
     },
 
     /**
+     * Draws a circle. Used internally by `CanvasCircle` class.
+     *
+     * @method drawCircle
+     * @param {Number} x y-coordinate
+     * @param {Number} y x-coordinate
+     * @param {Number} r radius
+     * @protected
+     */
+	drawCircle: function(x, y, radius) {
+        var startAngle = 0,
+            endAngle = 360,
+            circum = radius * 2;
+        endAngle *= 65535;
+        this._drawingComplete = false;
+        this._trackSize(x + circum, y + circum);
+        this._path += " m " + (x + circum) + " " + (y + radius) + " ae " + (x + radius) + " " + (y + radius) + " " + radius + " " + radius + " " + startAngle + " " + endAngle;
+        return this;
+    },
+    
+    /**
+     * Draws an ellipse.
+     *
+     * @method drawEllipse
+     * @param {Number} x x-coordinate
+     * @param {Number} y y-coordinate
+     * @param {Number} w width
+     * @param {Number} h height
+     * @protected
+     */
+	drawEllipse: function(x, y, w, h) {
+        var startAngle = 0,
+            endAngle = 360,
+            radius = w * 0.5,
+            yRadius = h * 0.5;
+        endAngle *= 65535;
+        this._drawingComplete = false;
+        this._trackSize(x + w, y + h);
+        this._path += " m " + (x + w) + " " + (y + yRadius) + " ae " + (x + radius) + " " + (y + yRadius) + " " + radius + " " + yRadius + " " + startAngle + " " + endAngle;
+        return this;
+    },
+    
+    /**
+     * Draws a diamond.     
+     * 
+     * @method drawDiamond
+     * @param {Number} x y-coordinate
+     * @param {Number} y x-coordinate
+     * @param {Number} width width
+     * @param {Number} height height
+     * @protected
+     */
+    drawDiamond: function(x, y, width, height)
+    {
+        var midWidth = width * 0.5,
+            midHeight = height * 0.5;
+        this.moveTo(x + midWidth, y);
+        this.lineTo(x + width, y + midHeight);
+        this.lineTo(x + midWidth, y + height);
+        this.lineTo(x, y + midHeight);
+        this.lineTo(x + midWidth, y);
+        return this;
+    },
+
+    /**
      * Draws a wedge.
      *
      * @method drawWedge
@@ -268,6 +332,16 @@ VMLDrawing.prototype = {
     end: function()
     {
         this._closePath();
+    },
+
+    /**
+     * Ends a fill and stroke
+     *
+     * @method closePath
+     */
+    closePath: function()
+    {
+        this._path += ' x e ';
     },
 
     /**

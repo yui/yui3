@@ -137,18 +137,22 @@ RightAxisLayout.prototype = {
             absRot = props.absRot,
             sinRadians = props.sinRadians,
             cosRadians = props.cosRadians,
-            max;
+            max,
+            labelWidth = label.offsetWidth,
+            labelHeight = label.offsetHeight;
+        this._labelWidths.push(Math.round(labelWidth));
+        this._labelHeights.push(Math.round(labelHeight));
         if(rot === 0)
         {
-            max = label.offsetWidth;
+            max = labelWidth;
         }
         else if(absRot === 90)
         {
-            max = label.offsetHeight;
+            max = labelHeight;
         }
         else
         {
-            max = (cosRadians * label.offsetWidth) + (sinRadians * label.offsetHeight);
+            max = (cosRadians * labelWidth) + (sinRadians * labelHeight);
         }
         host._maxLabelSize = Math.max(host._maxLabelSize, max);
     },
@@ -258,22 +262,22 @@ RightAxisLayout.prototype = {
      * against.
      * @protected
      */
-    positionLabel: function(label, pt)
+    positionLabel: function(label, pt, styles, i)
     {
         var host = this,
             tickOffset = host.get("rightTickOffset"),
-            style = host.get("styles").label,
+            labelStyles = styles.label,
             margin = 0,
             leftOffset = pt.x,
             topOffset = pt.y,
             props = this._labelRotationProps,
             rot = props.rot,
             absRot = props.absRot,
-            labelWidth = Math.round(label.offsetWidth),
-            labelHeight = Math.round(label.offsetHeight);
-        if(style.margin && style.margin.left)
+            labelWidth = this._labelWidths[i],
+            labelHeight = this._labelHeights[i];
+        if(labelStyles.margin && labelStyles.margin.left)
         {
-            margin = style.margin.left;
+            margin = labelStyles.margin.left;
         }
         if(rot === 0)
         {
@@ -351,8 +355,11 @@ RightAxisLayout.prototype = {
     setCalculatedSize: function()
     {
         var host = this,
-            style = host.get("styles").label,
-            ttl = Math.round(host.get("rightTickOffset") + host._maxLabelSize + this._titleSize + host.get("styles").title.margin.left + style.margin.left);
+            styles = host.get("styles"),
+            labelStyle = styles.label,
+            titleMargin = styles.title.margin,
+            totalTitleSize = host.get("title") ? titleMargin.left + titleMargin.right + host._titleSize : 0,
+            ttl = Math.round(host.get("rightTickOffset") + host._maxLabelSize + totalTitleSize + labelStyle.margin.left);
         host.set("width", ttl);
     }
 };

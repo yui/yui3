@@ -136,19 +136,23 @@ LeftAxisLayout.prototype = {
             absRot = props.absRot,
             sinRadians = props.sinRadians,
             cosRadians = props.cosRadians,
+            labelWidth = Math.round(label.offsetWidth),
+            labelHeight = Math.round(label.offsetHeight),
             max;
         if(rot === 0)
         {
-            max = label.offsetWidth;
+            max = labelWidth;
         }
         else if(absRot === 90)
         {
-            max = label.offsetHeight;
+            max = labelHeight;
         }
         else
         {
-            max = (cosRadians * label.offsetWidth) + (sinRadians * label.offsetHeight);
+            max = (cosRadians * labelWidth) + (sinRadians * labelHeight);
         }
+        this._labelWidths.push(labelWidth);
+        this._labelHeights.push(labelHeight);
         host._maxLabelSize = Math.max(host._maxLabelSize, max);
     },
 
@@ -256,25 +260,20 @@ LeftAxisLayout.prototype = {
      * against.
      * @protected
      */
-    positionLabel: function(label, pt)
+    positionLabel: function(label, pt, styles, i)
     {
         var host = this,
-            style = host.get("styles").label,
-            titleStyles = host.get("styles").title,
-            margin = 0,
+            titleStyles = styles.title,
+            tickOffset = host.get("leftTickOffset"),
             totalTitleSize = this.get("title") ? this._titleSize + titleStyles.margin.right + titleStyles.margin.left : 0,
-            leftOffset = pt.x + totalTitleSize,
+            leftOffset = pt.x + totalTitleSize - tickOffset,
             topOffset = pt.y,
             props = this._labelRotationProps,
             rot = props.rot,
             absRot = props.absRot,
             maxLabelSize = host._maxLabelSize,
-            labelWidth = Math.round(label.offsetWidth),
-            labelHeight = Math.round(label.offsetHeight);
-        if(style.margin && style.margin.right)
-        {
-            margin = style.margin.right;
-        }
+            labelWidth = this._labelWidths[i],
+            labelHeight = this._labelHeights[i];
         if(rot === 0)
         {
             leftOffset -= labelWidth;

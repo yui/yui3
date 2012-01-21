@@ -543,7 +543,7 @@ Y.extend(NumericAxis, Y.AxisType,
         else
         {
             label = (i * increm);
-            if(this.get("roundingMethod") == "niceNumber")
+            if(roundingMethod == "niceNumber")
             {
                 label = this._roundToNearest(label, increm);
             }

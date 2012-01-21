@@ -731,18 +731,15 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
             this._skew.matrix = transform;
             this._skew.on = true;
             //use offset for translate
-            this._skew.offset = (normalizedMatrix.dx + x) + "px, " + (normalizedMatrix.dy + y) + "px";
+            this._skew.offset = normalizedMatrix.dx + "px, " + normalizedMatrix.dy + "px";
             this._skew.origin = tx + ", " + ty;
-        }
-        else
-        {
-            node.style.left = x + "px";
-            node.style.top =  y + "px";
         }
         if(this._type != "path")
         {
             this._transforms = [];
         }
+        node.style.left = x + "px";
+        node.style.top =  y + "px";
     },
 	
 	/**
@@ -994,50 +991,21 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 	 */
 	getBounds: function(cfg)
 	{
-	    var wt,
-            bounds = {},
-            matrix = cfg || this.matrix,
-            a = matrix.a,
-            b = matrix.b,
-            c = matrix.c,
-            d = matrix.d,
-            dx = matrix.dx,
-            dy = matrix.dy,
-            w = this.get("width"),
-            h = this.get("height"),
-            left = this.get("x"), 
-            top = this.get("y"), 
-            right = left + w,
-            bottom = top + h,
-			stroke = this.get("stroke"),
-            //[x1, y1]
-            x1 = (a * left + c * top + dx), 
-            y1 = (b * left + d * top + dy),
-            //[x2, y2]
-            x2 = (a * right + c * top + dx),
-            y2 = (b * right + d * top + dy),
-            //[x3, y3]
-            x3 = (a * left + c * bottom + dx),
-            y3 = (b * left + d * bottom + dy),
-            //[x4, y4]
-            x4 = (a * right + c * bottom + dx),
-            y4 = (b * right + d * bottom + dy);
-        bounds.left = Math.min(x3, Math.min(x1, Math.min(x2, x4)));
-        bounds.right = Math.max(x3, Math.max(x1, Math.max(x2, x4)));
-        bounds.top = Math.min(y2, Math.min(y4, Math.min(y3, y1)));
-        bounds.bottom = Math.max(y2, Math.max(y4, Math.max(y3, y1)));
-        //if there is a stroke, extend the bounds to accomodate
-        if(stroke && stroke.weight)
+		var stroke = this.get("stroke"),
+			w = this.get("width"),
+			h = this.get("height"),
+			x = this.get("x"),
+			y = this.get("y"),
+            wt = 0;
+		if(stroke && stroke.weight)
 		{
 			wt = stroke.weight;
-            bounds.left -= wt;
-            bounds.right += wt;
-            bounds.top -= wt;
-            bounds.bottom += wt;
 		}
-        bounds.width = bounds.right - bounds.left;
-        bounds.height = bounds.bottom - bounds.top;
-        return bounds;
+        w = (x + w + wt) - (x - wt); 
+        h = (y + h + wt) - (y - wt);
+        x -= wt;
+        y -= wt;
+		return this._normalizedMatrix.getContentRect(w, h, x, y);
 	},
 	
     /**

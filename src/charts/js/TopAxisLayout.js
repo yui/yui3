@@ -135,18 +135,22 @@ TopAxisLayout.prototype = {
             absRot = props.absRot,
             sinRadians = props.sinRadians,
             cosRadians = props.cosRadians,
+            labelWidth = label.offsetWidth,
+            labelHeight = label.offsetHeight,
             max;
+        this._labelWidths.push(Math.round(labelWidth));
+        this._labelHeights.push(Math.round(labelHeight));
         if(rot === 0)
         {
-            max = label.offsetHeight;
+            max = labelHeight;
         }
         else if(absRot === 90)
         {
-            max = label.offsetWidth;
+            max = labelWidth;
         }
         else
         {
-            max = (sinRadians * label.offsetWidth) + (cosRadians * label.offsetHeight); 
+            max = (sinRadians * labelWidth) + (cosRadians * labelHeight); 
         }
         host._maxLabelSize = Math.max(host._maxLabelSize, max);
     },
@@ -255,26 +259,19 @@ TopAxisLayout.prototype = {
      * against.
      * @protected
      */
-    positionLabel: function(label, pt)
+    positionLabel: function(label, pt, styles, i)
     {
         var host = this,
-            tickOffset = host.get("topTickOffset"),
-            style = host.get("styles").label,
-            titleStyles = host.get("styles").title,
+            titleStyles = styles.title,
             totalTitleSize = this.get("title") ? this._titleSize + titleStyles.margin.top + titleStyles.margin.bottom : 0,
             maxLabelSize = host._maxLabelSize,
-            margin = 0,
             leftOffset = pt.x,
             topOffset = pt.y + totalTitleSize + maxLabelSize,
             props = this._labelRotationProps,
             rot = props.rot,
             absRot = props.absRot,
-            labelWidth = Math.round(label.offsetWidth),
-            labelHeight = Math.round(label.offsetHeight);
-        if(style.margin && style.margin.bottom)
-        {
-            margin = style.margin.top;
-        }
+            labelWidth = this._labelWidths[i],
+            labelHeight = this._labelHeights[i];
         if(rot === 0)
         {
             props.transformOrigin = [0, 0];
@@ -306,8 +303,6 @@ TopAxisLayout.prototype = {
                 topOffset -= labelHeight - (labelHeight * absRot/180);
             }
         }
-        topOffset += tickOffset;
-        topOffset -= margin;
         props.x = Math.round(leftOffset);
         props.y = Math.round(topOffset);
         props.labelWidth = labelWidth;

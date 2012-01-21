@@ -721,6 +721,16 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 }
                 return this._graphic;
             }
+        },
+
+        /**
+         * Indicates whether or not markers for a series will be grouped and rendered in a single complex shape instance.
+         *
+         * @attribute groupMarkers
+         * @type Boolean
+         */
+        groupMarkers: {
+            value: false
         }
 
         /**
