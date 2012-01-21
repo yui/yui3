@@ -287,6 +287,28 @@ CanvasDrawing.prototype = {
     },
 
     /**
+     * Draws a diamond.     
+     * 
+     * @method drawDiamond
+     * @param {Number} x y-coordinate
+     * @param {Number} y x-coordinate
+     * @param {Number} width width
+     * @param {Number} height height
+     * @protected
+     */
+    drawDiamond: function(x, y, width, height)
+    {
+        var midWidth = width * 0.5,
+            midHeight = height * 0.5;
+        this.moveTo(x + midWidth, y);
+        this.lineTo(x + width, y + midHeight);
+        this.lineTo(x + midWidth, y + height);
+        this.lineTo(x, y + midHeight);
+        this.lineTo(x + midWidth, y);
+        return this;
+    },
+
+    /**
      * Draws an ellipse. Used internally by `CanvasEllipse` class.
      *
      * @method drawEllipse
@@ -465,8 +487,19 @@ CanvasDrawing.prototype = {
      * @method end
      */
     end: function() {
-        this._paint();
+        this._closePath();
         return this;
+    },
+
+    /**
+     * Ends a fill and stroke
+     *
+     * @method closePath
+     */
+    closePath: function()
+    {
+        this._updateDrawingQueue(["closePath"]);
+        this._updateDrawingQueue(["beginPath"]);
     },
 
 	/**
@@ -1283,7 +1316,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	{
         var node = this.node;
         this.clear();
-		this._paint();
+		this._closePath();
 		node.style.left = this.get("x") + "px";
 		node.style.top = this.get("y") + "px";
 	},
@@ -1291,10 +1324,10 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	/**
 	 * Completes a shape or drawing
 	 *
-	 * @method _paint
+	 * @method _closePath
 	 * @private
 	 */
-	_paint: function()
+	_closePath: function()
 	{
 		if(!this._methods)
 		{
@@ -1337,9 +1370,9 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 					}
 				}
 			}
-            node.setAttribute("width", w);
-			node.setAttribute("height", h);
-			context.beginPath();
+            node.setAttribute("width", Math.min(w, 2000));
+            node.setAttribute("height", Math.min(2000, h));
+            context.beginPath();
 			for(i = 0; i < len; ++i)
 			{
 				args = methods[i].concat();
@@ -1348,6 +1381,10 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 					method = args.shift();
 					if(method)
 					{
+                        if(method == "closePath")
+                        {
+                            this._strokeAndFill(context);
+                        }
 						if(method && method == "lineTo" && this._dashstyle)
 						{
 							args.unshift(this._xcoords[i] - this._left, this._ycoords[i] - this._top);
@@ -1361,45 +1398,56 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 				}
 			}
 
-
-			if (this._fillType) 
-			{
-				if(this._fillType == "linear")
-				{
-					context.fillStyle = this._getLinearGradient();
-				}
-				else if(this._fillType == "radial")
-				{
-					context.fillStyle = this._getRadialGradient();
-				}
-				else
-				{
-					context.fillStyle = this._fillColor;
-				}
-				context.closePath();
-				context.fill();
-			}
-
-			if (this._stroke) {
-				if(this._strokeWeight)
-				{
-					context.lineWidth = this._strokeWeight;
-				}
-				context.lineCap = this._linecap;
-				context.lineJoin = this._linejoin;
-				if(this._miterlimit)
-				{
-					context.miterLimit = this._miterlimit;
-				}
-				context.strokeStyle = this._strokeStyle;
-				context.stroke();
-			}
+            this._strokeAndFill(context);
 			this._drawingComplete = true;
 			this._clearAndUpdateCoords();
 			this._updateNodePosition();
 			this._methods = cachedMethods;
 		}
 	},
+
+    /**
+     * Completes a stroke and/or fill operation on the context.
+     *
+     * @method _strokeAndFill
+     * @param {Context} Reference to the context element of the canvas instance.
+     * @private
+     */
+    _strokeAndFill: function(context)
+    {
+        if (this._fillType) 
+        {
+            if(this._fillType == "linear")
+            {
+                context.fillStyle = this._getLinearGradient();
+            }
+            else if(this._fillType == "radial")
+            {
+                context.fillStyle = this._getRadialGradient();
+            }
+            else
+            {
+                context.fillStyle = this._fillColor;
+            }
+            context.closePath();
+            context.fill();
+        }
+
+        if (this._stroke) {
+            if(this._strokeWeight)
+            {
+                context.lineWidth = this._strokeWeight;
+            }
+            context.lineCap = this._linecap;
+            context.lineJoin = this._linejoin;
+            if(this._miterlimit)
+            {
+                context.miterLimit = this._miterlimit;
+            }
+            context.strokeStyle = this._strokeStyle;
+            context.stroke();
+        }
+    },
 
 	/**
 	 * Draws a dashed line between two points.
@@ -1473,98 +1521,22 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 */
 	getBounds: function()
 	{
-		var rotation = this.get("rotation"),
-			radCon = Math.PI/180,
-			sinRadians = PARSE_FLOAT(PARSE_FLOAT(Math.sin(rotation * radCon)).toFixed(8)),
-			cosRadians = PARSE_FLOAT(PARSE_FLOAT(Math.cos(rotation * radCon)).toFixed(8)),
+		var stroke = this.get("stroke"),
 			w = this.get("width"),
 			h = this.get("height"),
-			stroke = this.get("stroke"),
 			x = this.get("x"),
 			y = this.get("y"),
-            right = x + w,
-            bottom = y + h,
-            tlx,
-            tly,
-            blx,
-            bly,
-            brx,
-            bry,
-            trx,
-            trY,
-            wt = 0,
-			tx = this.get("translateX"),
-			ty = this.get("translateY"),
-			bounds = {},
-			transformOrigin = this.get("transformOrigin"),
-			tox = transformOrigin[0],
-			toy = transformOrigin[1];
+            wt = 0;
 		if(stroke && stroke.weight)
 		{
 			wt = stroke.weight;
 		}
-		if(rotation !== 0)
-		{
-            tox = x + (tox * w);
-            toy = y + (toy * h);
-            tlx = this._getRotatedCornerX(x, y, tox, toy, cosRadians, sinRadians); 
-            tly = this._getRotatedCornerY(x, y, tox, toy, cosRadians, sinRadians); 
-            blx = this._getRotatedCornerX(x, bottom, tox, toy, cosRadians, sinRadians); 
-            bly = this._getRotatedCornerY(x, bottom, tox, toy, cosRadians, sinRadians);
-            brx = this._getRotatedCornerX(right, bottom, tox, toy, cosRadians, sinRadians);
-            bry = this._getRotatedCornerY(right, bottom, tox, toy, cosRadians, sinRadians);
-            trx = this._getRotatedCornerX(right, y, tox, toy, cosRadians, sinRadians);
-            trY = this._getRotatedCornerY(right, y, tox, toy, cosRadians, sinRadians);
-            bounds.left = Math.min(tlx, Math.min(blx, Math.min(brx, trx)));
-            bounds.right = Math.max(tlx, Math.max(blx, Math.max(brx, trx)));
-            bounds.top = Math.min(tly, Math.min(bly, Math.min(bry, trY)));
-            bounds.bottom = Math.max(tly, Math.max(bly, Math.max(bry, trY)));
-		}
-        else
-        {
-            bounds.left = x - wt + tx;
-            bounds.top = y - wt + ty;
-            bounds.right = x + w + wt + tx;
-            bounds.bottom = y + h + wt + ty;
-        }
-		return bounds;
+        w = (x + w + wt) - (x - wt); 
+        h = (y + h + wt) - (y - wt);
+        x -= wt;
+        y -= wt;
+		return this.matrix.getContentRect(w, h, x, y);
 	},
-
-    /**
-     * Returns the x coordinate for a bounding box's corner based on the corner's original x/y coordinates, rotation and transform origin of the rotation.
-     *
-     * @method _getRotatedCornerX
-     * @param {Number} x original x-coordinate of corner
-     * @param {Number} y original y-coordinate of corner
-     * @param {Number} tox transform origin x-coordinate of rotation
-     * @param {Number} toy transform origin y-coordinate of rotation
-     * @param {Number} cosRadians cosine (in radians) of rotation
-     * @param {Number} sinRadians sin (in radians) or rotation
-     * @return Number
-     * @private
-     */
-    _getRotatedCornerX: function(x, y, tox, toy, cosRadians, sinRadians)
-    {
-        return (tox + (x - tox) * cosRadians + (y - toy) * sinRadians);
-    },
-
-    /**
-     * Returns the y coordinate for a bounding box's corner based on the corner's original x/y coordinates, rotation and transform origin of the rotation.
-     *
-     * @method _getRotatedCornerY
-     * @param {Number} x original x-coordinate of corner
-     * @param {Number} y original y-coordinate of corner
-     * @param {Number} tox transform origin x-coordinate of rotation
-     * @param {Number} toy transform origin y-coordinate of rotation
-     * @param {Number} cosRadians cosine (in radians) of rotation
-     * @param {Number} sinRadians sin (in radians) or rotation
-     * @return Number
-     * @private
-     */
-    _getRotatedCornerY: function(x, y, tox, toy, cosRadians, sinRadians)
-    {
-        return (toy - (x - tox) * sinRadians + (y - toy) * cosRadians);
-    },
 
     /**
      * Destroys the shape instance.
@@ -1903,7 +1875,7 @@ CanvasShape.ATTRS =  {
 		{
 			return this._graphic;
 		}
-	}
+    }
 };
 Y.CanvasShape = CanvasShape;
 /**
@@ -1940,7 +1912,7 @@ Y.extend(CanvasPath, Y.CanvasShape, {
 	 */
     _draw: function()
     {
-        this._paint();
+        this._closePath();
     },
 
 	/**
@@ -2072,7 +2044,7 @@ Y.extend(CanvasRect, Y.CanvasShape, {
 			h = this.get("height");
 		this.clear();
         this.drawRect(0, 0, w, h);
-		this._paint();
+		this._closePath();
 	}
 });
 CanvasRect.ATTRS = Y.CanvasShape.ATTRS;
@@ -2117,7 +2089,7 @@ Y.extend(CanvasEllipse, CanvasShape, {
 			h = this.get("height");
 		this.clear();
         this.drawEllipse(0, 0, w, h);
-		this._paint();
+		this._closePath();
 	}
 });
 CanvasEllipse.ATTRS = CanvasShape.ATTRS;
@@ -2163,7 +2135,7 @@ Y.extend(CanvasCircle, Y.CanvasShape, {
 		{
             this.clear();
             this.drawCircle(0, 0, radius);
-			this._paint();
+			this._closePath();
 		}
 	}
 });

@@ -160,6 +160,72 @@ SVGDrawing.prototype = {
 	},
 
     /**
+     * Draws a circle.     
+     * 
+     * @method drawCircle
+     * @param {Number} x y-coordinate
+     * @param {Number} y x-coordinate
+     * @param {Number} r radius
+     * @protected
+     */
+	drawCircle: function(x, y, radius) {
+        var circum = radius * 2;
+        this._drawingComplete = false;
+        this._trackSize(x, y);
+        this._trackSize(x + circum, y + circum);
+        this._pathArray = this._pathArray || [];
+        this._pathArray.push(["M", x + radius, y]);
+        this._pathArray.push(["A",  radius, radius, 0, 1, 0, x + radius, y + circum]);
+        this._pathArray.push(["A",  radius, radius, 0, 1, 0, x + radius, y]);
+        return this;
+    },
+   
+    /**
+     * Draws an ellipse.
+     *
+     * @method drawEllipse
+     * @param {Number} x x-coordinate
+     * @param {Number} y y-coordinate
+     * @param {Number} w width
+     * @param {Number} h height
+     * @protected
+     */
+	drawEllipse: function(x, y, w, h) {
+        var radius = w * 0.5,
+            yRadius = h * 0.5;
+        this._drawingComplete = false;
+        this._trackSize(x, y);
+        this._trackSize(x + w, y + h);
+        this._pathArray = this._pathArray || [];
+        this._pathArray.push(["M", x + radius, y]);
+        this._pathArray.push(["A",  radius, yRadius, 0, 1, 0, x + radius, y + h]);
+        this._pathArray.push(["A",  radius, yRadius, 0, 1, 0, x + radius, y]);
+        return this;
+    },
+
+    /**
+     * Draws a diamond.     
+     * 
+     * @method drawDiamond
+     * @param {Number} x y-coordinate
+     * @param {Number} y x-coordinate
+     * @param {Number} width width
+     * @param {Number} height height
+     * @protected
+     */
+    drawDiamond: function(x, y, width, height)
+    {
+        var midWidth = width * 0.5,
+            midHeight = height * 0.5;
+        this.moveTo(x + midWidth, y);
+        this.lineTo(x + width, y + midHeight);
+        this.lineTo(x + midWidth, y + height);
+        this.lineTo(x, y + midHeight);
+        this.lineTo(x + midWidth, y);
+        return this;
+    },
+
+    /**
      * Draws a wedge.
      *
      * @method drawWedge
@@ -383,7 +449,18 @@ SVGDrawing.prototype = {
                 segmentArray = pathArray.shift();
                 len = segmentArray.length;
                 pathType = segmentArray[0];
-                path += " " + pathType + (segmentArray[1] - left);
+                if(pathType === "A")
+                {
+                    path += pathType + segmentArray[1] + "," + segmentArray[2];
+                }
+                else if(pathType != "z")
+                {
+                    path += " " + pathType + (segmentArray[1] - left);
+                }
+                else
+                {
+                    path += " z ";
+                }
                 switch(pathType)
                 {
                     case "L" :
@@ -396,6 +473,12 @@ SVGDrawing.prototype = {
                             path += ", " + val;
                         }
                     break;
+                    case "A" :
+                        val = " " + segmentArray[3] + " " + segmentArray[4];
+                        val += "," + segmentArray[5] + " " + (segmentArray[6] - left);
+                        val += "," + (segmentArray[7] - top);
+                        path += " " + val;
+                    break;
                     case "C" :
                         for(i = 2; i < len; ++i)
                         {
@@ -405,7 +488,6 @@ SVGDrawing.prototype = {
                             path += " " + val2;
                         }
                     break;
-
                 }
             }
             if(fill && fill.color)
@@ -424,6 +506,16 @@ SVGDrawing.prototype = {
         }
     },
 
+    /**
+     * Ends a fill and stroke
+     *
+     * @method closePath
+     */
+    closePath: function()
+    {
+        this._pathArray.push(["z"]);
+    },
+    
     /**
      * Updates the size of the graphics object
      *
@@ -1146,88 +1238,23 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 */
 	getBounds: function()
 	{
-	    var type = this._type,
-            wt,
-            bounds = {},
-            matrix = this._normalizedMatrix,
-            a = matrix.a,
-            b = matrix.b,
-            c = matrix.c,
-            d = matrix.d,
-            dx = matrix.dx,
-            dy = matrix.dy,
-            w = this.get("width"),
-            h = this.get("height"),
-            //The svg path element does not have x and y coordinates. Shapes based on path use translate to "fake" x and y. As a
-            //result, these values will show up in the transform matrix and should not be used in any conversion formula.
-            left = type == "path" ? 0 : this.get("x"), 
-            top = type == "path" ? 0 : this.get("y"), 
-            right = left + w,
-            bottom = top + h,
-			stroke = this.get("stroke"),
-            //[x1, y1]
-            x1 = (a * left + c * top + dx), 
-            y1 = (b * left + d * top + dy),
-            //[x2, y2]
-            x2 = (a * right + c * top + dx),
-            y2 = (b * right + d * top + dy),
-            //[x3, y3]
-            x3 = (a * left + c * bottom + dx),
-            y3 = (b * left + d * bottom + dy),
-            //[x4, y4]
-            x4 = (a * right + c * bottom + dx),
-            y4 = (b * right + d * bottom + dy);
-        bounds.left = Math.min(x3, Math.min(x1, Math.min(x2, x4)));
-        bounds.right = Math.max(x3, Math.max(x1, Math.max(x2, x4)));
-        bounds.top = Math.min(y2, Math.min(y4, Math.min(y3, y1)));
-        bounds.bottom = Math.max(y2, Math.max(y4, Math.max(y3, y1)));
-        //if there is a stroke, extend the bounds to accomodate
+		var type = this._type,
+            stroke = this.get("stroke"),
+			w = this.get("width"),
+			h = this.get("height"),
+			x = type == "path" ? 0 : this.get("x"),
+			y = type == "path" ? 0 : this.get("y"),
+            wt = 0;
         if(stroke && stroke.weight)
 		{
 			wt = stroke.weight;
-            bounds.left -= wt;
-            bounds.right += wt;
-            bounds.top -= wt;
-            bounds.bottom += wt;
 		}
-        return bounds;
+        w = (x + w + wt) - (x - wt); 
+        h = (y + h + wt) - (y - wt);
+        x -= wt;
+        y -= wt;
+		return this._normalizedMatrix.getContentRect(w, h, x, y);
 	},
-
-    /**
-     * Returns the x coordinate for a bounding box's corner based on the corner's original x/y coordinates, rotation and transform origin of the rotation.
-     *
-     * @method _getRotatedCornerX
-     * @param {Number} x original x-coordinate of corner
-     * @param {Number} y original y-coordinate of corner
-     * @param {Number} tox transform origin x-coordinate of rotation
-     * @param {Number} toy transform origin y-coordinate of rotation
-     * @param {Number} cosRadians cosine (in radians) of rotation
-     * @param {Number} sinRadians sin (in radians) or rotation
-     * @return Number
-     * @private
-     */
-    _getRotatedCornerX: function(x, y, tox, toy, cosRadians, sinRadians)
-    {
-        return (tox + (x - tox) * cosRadians + (y - toy) * sinRadians);
-    },
-
-    /**
-     * Returns the y coordinate for a bounding box's corner based on the corner's original x/y coordinates, rotation and transform origin of the rotation.
-     *
-     * @method _getRotatedCornerY
-     * @param {Number} x original x-coordinate of corner
-     * @param {Number} y original y-coordinate of corner
-     * @param {Number} tox transform origin x-coordinate of rotation
-     * @param {Number} toy transform origin y-coordinate of rotation
-     * @param {Number} cosRadians cosine (in radians) of rotation
-     * @param {Number} sinRadians sin (in radians) or rotation
-     * @return Number
-     * @private
-     */
-    _getRotatedCornerY: function(x, y, tox, toy, cosRadians, sinRadians)
-    {
-        return (toy - (x - tox) * sinRadians + (y - toy) * cosRadians);
-    },
 
     /**
      * Destroys the shape instance.

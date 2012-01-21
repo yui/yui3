@@ -14,8 +14,314 @@ var DOCUMENT = Y.config.doc,
     BottomAxisLayout,
     TopAxisLayout,
     _getClassName = Y.ClassNameManager.getClassName,
-    SERIES_MARKER = _getClassName("seriesmarker");
+    SERIES_MARKER = _getClassName("seriesmarker"),
+    ShapeGroup,
+    CircleGroup,
+    RectGroup,
+    EllipseGroup,
+    DiamondGroup;
 
+
+/**
+ * Abstract class for creating groups of shapes with the same styles and dimensions.
+ *
+ * @module graphics
+ * @class ShapeGroup
+ * @constructor
+ */
+ ShapeGroup = function(cfg)
+ {
+    ShapeGroup.superclass.constructor.apply(this, arguments);
+ };
+    
+ ShapeGroup.NAME = "shapeGroup";
+
+ Y.extend(ShapeGroup, Y.Path, {    
+    /**
+     * Updates the shape.
+     *
+     * @method _draw
+     * @private
+     */
+    _draw: function()
+    {
+        var xvalues = this.get("xvalues"),
+            yvalues = this.get("yvalues"),
+            x,
+            y,
+            xRad,
+            yRad,
+            i = 0,
+            len,
+            attrs = [],
+            dimensions = this.get("dimensions"),
+            width = dimensions.width,
+            height = dimensions.height,
+            radius = dimensions.radius,
+            yRadius = dimensions.yRadius,
+            id = this.get("id"),
+            className = this.node.className,
+            widthIsArray = Y_Lang.isArray(width),
+            heightIsArray = Y_Lang.isArray(height),
+            radiusIsArray = Y_Lang.isArray(radius),
+            yRadiusIsArray = Y_Lang.isArray(yRadius);
+        if(xvalues && yvalues && xvalues.length > 0)
+        {
+            this.clear();
+
+            len = xvalues.length;
+            for(; i < len; ++i)
+            {
+                x = xvalues[i];
+                y = yvalues[i];
+                xRad = radiusIsArray ? radius[i] : radius;
+                yRad = yRadiusIsArray ? yRadius[i] : yRadius;
+                if(!isNaN(x) && !isNaN(y) && !isNaN(xRad))
+                {
+                    this.drawShape({
+                        x: x,
+                        y: y,
+                        width: widthIsArray ? width[i] : width,
+                        height: heightIsArray ? height[i] : height,
+                        radius: xRad,
+                        yRadius: yRad 
+                    });
+                    this.closePath();
+                    attrs[i] = {
+                        id: id + "_" + i,
+                        className: className,
+                        coords: (x - this._left) + ", " + (y - this._top)  + ", " + radius,
+                        shape: "circle"
+                    };
+                }
+            }
+            this._closePath();
+        }
+    },
+
+    /**
+     * Parses and array of lengths into radii
+     *
+     * @method _getRadiusCollection
+     * @param {Array} val Array of lengths
+     * @return Array
+     * @private
+     */
+    _getRadiusCollection: function(val)
+    {
+        var i = 0,
+            len = val.length,
+            radii = [];
+        for(; i < len; ++i)
+        {   
+            radii[i] = val[i] * 0.5;
+        }
+        return radii;
+    }
+ });
+    
+ShapeGroup.ATTRS = Y.merge(Y.Path.ATTRS, {
+    dimensions: {
+        getter: function()
+        {
+            var dimensions = this._dimensions,
+                radius,
+                yRadius,
+                width,
+                height;
+            if(dimensions.hasOwnProperty("radius"))
+            {
+                return dimensions;
+            }
+            else
+            {
+                width = dimensions.width;
+                height = dimensions.height;
+                radius = Y_Lang.isArray(width) ? this._getRadiusCollection(width) : (width * 0.5);
+                yRadius = Y_Lang.isArray(height) ? this._getRadiusCollection(height) : (height * 0.5);
+                return {
+                    width: width,
+                    height: height,
+                    radius: radius,
+                    yRadius: yRadius
+                };
+            }
+        },
+
+        setter: function(val)
+        {
+            this._dimensions = val;
+            return val;
+        }
+    },
+    xvalues: {
+        getter: function()
+        {
+            return this._xvalues;
+        },
+        setter: function(val)
+        {
+            this._xvalues = val;
+        }
+    },
+    yvalues: {
+        getter: function()
+        {
+            return this._yvalues;
+        },
+        setter: function(val)
+        {
+            this._yvalues = val;
+        }
+    }
+});
+Y.ShapeGroup = ShapeGroup;
+/**
+ * Abstract class for creating groups of circles with the same styles and dimensions.
+ *
+ * @module graphics
+ * @class GroupCircle
+ * @constructor
+ */
+ CircleGroup = function(cfg)
+ {
+    CircleGroup.superclass.constructor.apply(this, arguments);
+ };
+    
+ CircleGroup.NAME = "circleGroup";
+
+ Y.extend(CircleGroup, Y.ShapeGroup, {    
+    /**
+     * Algorithm for drawing shape.
+     *
+     * @method drawShape
+     * @param {Object} cfg Parameters used to draw the shape.
+     */
+    drawShape: function(cfg)
+    {
+        this.drawCircle(cfg.x, cfg.y, cfg.radius);
+    }
+ });
+
+CircleGroup.ATTRS = Y.merge(Y.ShapeGroup.ATTRS, {
+    dimensions: {
+        getter: function()
+        {
+            var dimensions = this._dimensions,
+                radius,
+                yRadius,
+                width,
+                height;
+            if(dimensions.hasOwnProperty("radius"))
+            {
+                return dimensions;
+            }
+            else
+            {
+                width = dimensions.width;
+                height = dimensions.height;
+                radius = width * 0.5;
+                yRadius = radius;
+                return {
+                    width: width,
+                    height: height,
+                    radius: radius,
+                    yRadius: yRadius
+                };
+            }
+        }
+    }
+});
+    
+CircleGroup.ATTRS = Y.ShapeGroup.ATTRS;
+Y.CircleGroup = CircleGroup;
+/**
+ * Abstract class for creating groups of rects with the same styles and dimensions.
+ *
+ * @module graphics
+ * @class GroupRect
+ * @constructor
+ */
+ RectGroup = function(cfg)
+ {
+    RectGroup.superclass.constructor.apply(this, arguments);
+ };
+    
+ RectGroup.NAME = "rectGroup";
+
+ Y.extend(RectGroup, Y.ShapeGroup, {    
+    /**
+     * Updates the rect.
+     *
+     * @method _draw
+     * @private
+     */
+    drawShape: function(cfg)
+    {
+        this.drawRect(cfg.x, cfg.y, cfg.width, cfg.height);
+    }
+ });
+    
+RectGroup.ATTRS = Y.ShapeGroup.ATTRS;
+Y.RectGroup = RectGroup;
+/**
+ * Abstract class for creating groups of diamonds with the same styles and dimensions.
+ *
+ * @module graphics
+ * @class GroupDiamond
+ * @constructor
+ */
+ DiamondGroup = function(cfg)
+ {
+    DiamondGroup.superclass.constructor.apply(this, arguments);
+ };
+    
+ DiamondGroup.NAME = "diamondGroup";
+
+ Y.extend(DiamondGroup, Y.ShapeGroup, {    
+    /**
+     * Updates the diamond.
+     *
+     * @method _draw
+     * @private
+     */
+    drawShape: function(cfg)
+    {
+        this.drawDiamond(cfg.x, cfg.y, cfg.width, cfg.height);
+    }
+ });
+    
+DiamondGroup.ATTRS = Y.ShapeGroup.ATTRS;
+Y.DiamondGroup = DiamondGroup;
+/**
+ * Abstract class for creating groups of diamonds with the same styles and dimensions.
+ *
+ * @module graphics
+ * @class EllipseGroup
+ * @constructor
+ */
+ EllipseGroup = function(cfg)
+ {
+    EllipseGroup.superclass.constructor.apply(this, arguments);
+ };
+    
+ EllipseGroup.NAME = "diamondGroup";
+
+ Y.extend(EllipseGroup, Y.ShapeGroup, {    
+    /**
+     * Updates the diamond.
+     *
+     * @method _draw
+     * @private
+     */
+    drawShape: function(cfg)
+    {
+        this.drawEllipse(cfg.x, cfg.y, cfg.width, cfg.height);
+    }
+ });
+    
+EllipseGroup.ATTRS = Y.ShapeGroup.ATTRS;
+Y.EllipseGroup = EllipseGroup;
 /**
  * The Renderer class is a base class for chart components that use the `styles`
  * attribute.
@@ -100,7 +406,7 @@ Renderer.prototype = {
         var newstyles = Y.merge(b, {});
         Y.Object.each(a, function(value, key, a)
         {
-            if(b.hasOwnProperty(key) && Y_Lang.isObject(value) && !Y_Lang.isArray(value))
+            if(b.hasOwnProperty(key) && Y_Lang.isObject(value) && !Y_Lang.isFunction(value) && !Y_Lang.isArray(value))
             {
                 newstyles[key] = this._mergeStyles(value, b[key]);
             }
@@ -271,19 +577,23 @@ LeftAxisLayout.prototype = {
             absRot = props.absRot,
             sinRadians = props.sinRadians,
             cosRadians = props.cosRadians,
+            labelWidth = Math.round(label.offsetWidth),
+            labelHeight = Math.round(label.offsetHeight),
             max;
         if(rot === 0)
         {
-            max = label.offsetWidth;
+            max = labelWidth;
         }
         else if(absRot === 90)
         {
-            max = label.offsetHeight;
+            max = labelHeight;
         }
         else
         {
-            max = (cosRadians * label.offsetWidth) + (sinRadians * label.offsetHeight);
+            max = (cosRadians * labelWidth) + (sinRadians * labelHeight);
         }
+        this._labelWidths.push(labelWidth);
+        this._labelHeights.push(labelHeight);
         host._maxLabelSize = Math.max(host._maxLabelSize, max);
     },
 
@@ -391,25 +701,20 @@ LeftAxisLayout.prototype = {
      * against.
      * @protected
      */
-    positionLabel: function(label, pt)
+    positionLabel: function(label, pt, styles, i)
     {
         var host = this,
-            style = host.get("styles").label,
-            titleStyles = host.get("styles").title,
-            margin = 0,
+            titleStyles = styles.title,
+            tickOffset = host.get("leftTickOffset"),
             totalTitleSize = this.get("title") ? this._titleSize + titleStyles.margin.right + titleStyles.margin.left : 0,
-            leftOffset = pt.x + totalTitleSize,
+            leftOffset = pt.x + totalTitleSize - tickOffset,
             topOffset = pt.y,
             props = this._labelRotationProps,
             rot = props.rot,
             absRot = props.absRot,
             maxLabelSize = host._maxLabelSize,
-            labelWidth = Math.round(label.offsetWidth),
-            labelHeight = Math.round(label.offsetHeight);
-        if(style.margin && style.margin.right)
-        {
-            margin = style.margin.right;
-        }
+            labelWidth = this._labelWidths[i],
+            labelHeight = this._labelHeights[i];
         if(rot === 0)
         {
             leftOffset -= labelWidth;
@@ -639,18 +944,22 @@ RightAxisLayout.prototype = {
             absRot = props.absRot,
             sinRadians = props.sinRadians,
             cosRadians = props.cosRadians,
-            max;
+            max,
+            labelWidth = label.offsetWidth,
+            labelHeight = label.offsetHeight;
+        this._labelWidths.push(Math.round(labelWidth));
+        this._labelHeights.push(Math.round(labelHeight));
         if(rot === 0)
         {
-            max = label.offsetWidth;
+            max = labelWidth;
         }
         else if(absRot === 90)
         {
-            max = label.offsetHeight;
+            max = labelHeight;
         }
         else
         {
-            max = (cosRadians * label.offsetWidth) + (sinRadians * label.offsetHeight);
+            max = (cosRadians * labelWidth) + (sinRadians * labelHeight);
         }
         host._maxLabelSize = Math.max(host._maxLabelSize, max);
     },
@@ -760,22 +1069,22 @@ RightAxisLayout.prototype = {
      * against.
      * @protected
      */
-    positionLabel: function(label, pt)
+    positionLabel: function(label, pt, styles, i)
     {
         var host = this,
             tickOffset = host.get("rightTickOffset"),
-            style = host.get("styles").label,
+            labelStyles = styles.label,
             margin = 0,
             leftOffset = pt.x,
             topOffset = pt.y,
             props = this._labelRotationProps,
             rot = props.rot,
             absRot = props.absRot,
-            labelWidth = Math.round(label.offsetWidth),
-            labelHeight = Math.round(label.offsetHeight);
-        if(style.margin && style.margin.left)
+            labelWidth = this._labelWidths[i],
+            labelHeight = this._labelHeights[i];
+        if(labelStyles.margin && labelStyles.margin.left)
         {
-            margin = style.margin.left;
+            margin = labelStyles.margin.left;
         }
         if(rot === 0)
         {
@@ -853,8 +1162,11 @@ RightAxisLayout.prototype = {
     setCalculatedSize: function()
     {
         var host = this,
-            style = host.get("styles").label,
-            ttl = Math.round(host.get("rightTickOffset") + host._maxLabelSize + this._titleSize + host.get("styles").title.margin.left + style.margin.left);
+            styles = host.get("styles"),
+            labelStyle = styles.label,
+            titleMargin = styles.title.margin,
+            totalTitleSize = host.get("title") ? titleMargin.left + titleMargin.right + host._titleSize : 0,
+            ttl = Math.round(host.get("rightTickOffset") + host._maxLabelSize + totalTitleSize + labelStyle.margin.left);
         host.set("width", ttl);
     }
 };
@@ -997,18 +1309,22 @@ BottomAxisLayout.prototype = {
             absRot = props.absRot,
             sinRadians = props.sinRadians,
             cosRadians = props.cosRadians,
+            labelWidth = Math.round(label.offsetWidth),
+            labelHeight = Math.round(label.offsetHeight),
             max;
+        this._labelWidths.push(labelWidth);
+        this._labelHeights.push(labelHeight);
         if(rot === 0)
         {
-            max = label.offsetHeight;
+            max = labelHeight;
         }
         else if(absRot === 90)
         {
-            max = label.offsetWidth;
+            max = labelWidth;
         }
         else
         {
-            max = (sinRadians * label.offsetWidth) + (cosRadians * label.offsetHeight); 
+            max = (sinRadians * labelWidth) + (cosRadians * labelHeight); 
         }
         host._maxLabelSize = Math.max(host._maxLabelSize, max);
     },
@@ -1113,28 +1429,27 @@ BottomAxisLayout.prototype = {
      * against.
      * @protected
      */
-    positionLabel: function(label, pt)
+    positionLabel: function(label, pt, styles, i)
     {
         var host = this,
             tickOffset = host.get("bottomTickOffset"),
-            style = host.get("styles").label,
+            labelStyles = styles.label,
             margin = 0,
             props = this._labelRotationProps,
             rot = props.rot,
             absRot = props.absRot,
             leftOffset = Math.round(pt.x),
             topOffset = Math.round(pt.y),
-            labelWidth = Math.round(label.offsetWidth),
-            labelHeight = Math.round(label.offsetHeight);
-        if(style.margin && style.margin.top)
+            labelWidth = this._labelWidths[i],
+            labelHeight = this._labelHeights[i];
+        if(labelStyles.margin && labelStyles.margin.top)
         {
-            margin = style.margin.top;
+            margin = labelStyles.margin.top;
         }
         if(rot > 0)
         {
             props.transformOrigin = [0, 0.5];
             topOffset -= labelHeight/2 * rot/90;
-
         }
         else if(rot < 0)
         {
@@ -1200,8 +1515,11 @@ BottomAxisLayout.prototype = {
     setCalculatedSize: function()
     {
         var host = this,
-            style = host.get("styles").label,
-            ttl = Math.round(host.get("bottomTickOffset") + host._maxLabelSize + style.margin.top + this.get("styles").title.margin.top + this._titleSize);
+            styles = host.get("styles"),
+            labelStyle = styles.label,
+            titleMargin = styles.title.margin,
+            totalTitleSize = host.get("title") ? titleMargin.top + titleMargin.bottom + host._titleSize : 0,
+            ttl = Math.round(host.get("bottomTickOffset") + host._maxLabelSize + labelStyle.margin.top + totalTitleSize);
         host.set("height", ttl);
     }
 };
@@ -1343,18 +1661,22 @@ TopAxisLayout.prototype = {
             absRot = props.absRot,
             sinRadians = props.sinRadians,
             cosRadians = props.cosRadians,
+            labelWidth = label.offsetWidth,
+            labelHeight = label.offsetHeight,
             max;
+        this._labelWidths.push(Math.round(labelWidth));
+        this._labelHeights.push(Math.round(labelHeight));
         if(rot === 0)
         {
-            max = label.offsetHeight;
+            max = labelHeight;
         }
         else if(absRot === 90)
         {
-            max = label.offsetWidth;
+            max = labelWidth;
         }
         else
         {
-            max = (sinRadians * label.offsetWidth) + (cosRadians * label.offsetHeight); 
+            max = (sinRadians * labelWidth) + (cosRadians * labelHeight); 
         }
         host._maxLabelSize = Math.max(host._maxLabelSize, max);
     },
@@ -1463,26 +1785,19 @@ TopAxisLayout.prototype = {
      * against.
      * @protected
      */
-    positionLabel: function(label, pt)
+    positionLabel: function(label, pt, styles, i)
     {
         var host = this,
-            tickOffset = host.get("topTickOffset"),
-            style = host.get("styles").label,
-            titleStyles = host.get("styles").title,
+            titleStyles = styles.title,
             totalTitleSize = this.get("title") ? this._titleSize + titleStyles.margin.top + titleStyles.margin.bottom : 0,
             maxLabelSize = host._maxLabelSize,
-            margin = 0,
             leftOffset = pt.x,
             topOffset = pt.y + totalTitleSize + maxLabelSize,
             props = this._labelRotationProps,
             rot = props.rot,
             absRot = props.absRot,
-            labelWidth = Math.round(label.offsetWidth),
-            labelHeight = Math.round(label.offsetHeight);
-        if(style.margin && style.margin.bottom)
-        {
-            margin = style.margin.top;
-        }
+            labelWidth = this._labelWidths[i],
+            labelHeight = this._labelHeights[i];
         if(rot === 0)
         {
             props.transformOrigin = [0, 0];
@@ -1514,8 +1829,6 @@ TopAxisLayout.prototype = {
                 topOffset -= labelHeight - (labelHeight * absRot/180);
             }
         }
-        topOffset += tickOffset;
-        topOffset -= margin;
         props.x = Math.round(leftOffset);
         props.y = Math.round(topOffset);
         props.labelWidth = labelWidth;
@@ -1936,6 +2249,8 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 graphic = this.get("graphic"),
                 path = this.get("path"),
                 tickPath;
+            this._labelWidths = [];
+            this._labelHeights = [];
             graphic.set("autoDraw", false);
             path.clear();
             path.set("stroke", {
@@ -1981,6 +2296,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 position = this.getPosition(tickPoint);
                 label = this.getLabel(tickPoint, labelStyles);
                 label.innerHTML = labelFunction.apply(labelFunctionScope, [this.getLabelByIndex(i, len), labelFormat]);
+                this._layout.updateMaxLabelSize.apply(this, [label]);
                 tickPoint = this.getNextPoint(tickPoint, majorUnitDistance);
             }
             this._clearLabelCache();
@@ -1993,7 +2309,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             layout.setCalculatedSize.apply(this);
             for(i = 0; i < len; ++i)
             {
-                layout.positionLabel.apply(this, [this.get("labels")[i], this._tickPoints[i]]);
+                layout.positionLabel.apply(this, [this.get("labels")[i], this._tickPoints[i], styles, i]);
             }
         }
         this._drawing = false;
@@ -2130,7 +2446,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         label.style.position = "absolute";
         this._labels.push(label);
         this._tickPoints.push({x:pt.x, y:pt.y});
-        this._layout.updateMaxLabelSize.apply(this, [label]);
         for(i in styles)
         {
             if(styles.hasOwnProperty(i) && !customStyles.hasOwnProperty(i))
@@ -2454,7 +2769,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         var cb = this.get("contentBox").getDOMNode(),
             labels = this.get("labels"),
             graphic = this.get("graphic"),
-            i = 0,
             label,
             len = labels ? labels.length : 0;
         if(len > 0)
@@ -4033,7 +4347,7 @@ Y.extend(NumericAxis, Y.AxisType,
         else
         {
             label = (i * increm);
-            if(this.get("roundingMethod") == "niceNumber")
+            if(roundingMethod == "niceNumber")
             {
                 label = this._roundToNearest(label, increm);
             }
@@ -5671,9 +5985,35 @@ Plots.prototype = {
             marker,
             offsetWidth = w/2,
             offsetHeight = h/2,
+            xvalues,
+            yvalues,
             fillColors = null,
             borderColors = null,
-            graphOrder = this.get("graphOrder");
+            graphOrder = this.get("graphOrder"),
+            groupMarkers = this.get("groupMarkers");
+        if(groupMarkers)
+        {
+            xvalues = [];
+            yvalues = [];
+            for(; i < len; ++i)
+            {
+                xvalues.push(parseFloat(xcoords[i] - offsetWidth));
+                yvalues.push(parseFloat(ycoords[i] - offsetHeight));
+            }
+            this._createGroupMarker({
+                xvalues: xvalues,
+                yvalues: yvalues,
+                fill: style.fill,
+                border: style.border,
+                dimensions: {
+                    width: w,
+                    height: h
+                },
+                graphOrder: graphOrder,
+                shape: style.shape
+            });
+            return;
+        }
         if(Y_Lang.isArray(style.fill.color))
         {
             fillColors = style.fill.color.concat(); 
@@ -5706,6 +6046,34 @@ Plots.prototype = {
             marker = this.getMarker(style, graphOrder, i);
         }
         this._clearMarkerCache();
+    },
+
+    /**
+     * Pre-defined group shapes.
+     *
+     * @property _groupShapes
+     * @private
+     */
+    _groupShapes: {
+        circle: Y.CircleGroup,
+        rect: Y.RectGroup
+    },
+
+    /**
+     * Returns the correct group shape class.
+     *
+     * @method _getGroupShape
+     * @param {Shape | String} shape Indicates which shape class. 
+     * @return Function
+     * @protected
+     */
+    _getGroupShape: function(shape)
+    {
+        if(Y_Lang.isString(shape))
+        {
+            shape = this._groupShapes[shape];
+        }
+        return shape;
     },
 
     /**
@@ -5797,7 +6165,7 @@ Plots.prototype = {
         }
         this._markers.push(marker);
         return marker;
-    },   
+    },
     
     /**
      * Creates a shape to be used as a marker.
@@ -5829,6 +6197,11 @@ Plots.prototype = {
      */
     _createMarkerCache: function()
     {
+        if(this._groupMarker)
+        {
+            this._groupMarker.destroy();
+            this._groupMarker = null;
+        }
         if(this._markers && this._markers.length > 0)
         {
             this._markerCache = this._markers.concat();
@@ -5839,7 +6212,60 @@ Plots.prototype = {
         }
         this._markers = [];
     },
-    
+  
+    /**
+     * Draws a series of markers in a single shape instance.
+     *
+     * @method _createGroupMarkers
+     * @param {Object} styles Set of configuration properties used to create the markers.
+     * @protected
+     */
+    _createGroupMarker: function(styles)
+    {
+        var marker,
+            markers = this.get("markers"),
+            border = styles.border,
+            graphic,
+            cfg,
+            shape;
+        if(markers && markers.length > 0)
+        {
+            while(markers.length > 0)
+            {
+                marker = markers.shift();
+                marker.destroy();
+            }
+            this.set("markers", []);
+        }
+        //fix name differences between graphic layer
+        border.opacity = border.alpha;
+        cfg = {
+            id: this.get("chart").get("id") + "_" + styles.graphOrder,
+            stroke: border,
+            fill: styles.fill,
+            dimensions: styles.dimensions,
+            xvalues: styles.xvalues,
+            yvalues: styles.yvalues
+        };
+        cfg.fill.opacity = styles.fill.alpha;
+        shape = this._getGroupShape(styles.shape);
+        if(shape)
+        {
+            cfg.type = shape;
+        }
+        if(styles.hasOwnProperty("radius") && !isNaN(styles.radius))
+        {
+            cfg.dimensions.radius = styles.radius;
+        }
+        if(this._groupMarker)
+        {
+            this._groupMarker.destroy();
+        }
+        graphic = this.get("graphic");
+        graphic.set("autoDraw", true);
+        this._groupMarker = graphic.addShape(cfg);
+    },
+
     /**
      * Toggles visibility
      *
@@ -5896,7 +6322,7 @@ Plots.prototype = {
      */
     updateMarkerState: function(type, i)
     {
-        if(this._markers[i])
+        if(this._markers && this._markers[i])
         {
             var w,
                 h,
@@ -6068,7 +6494,14 @@ Histogram.prototype = {
             xMarkerPlaneLeft,
             xMarkerPlaneRight,
             yMarkerPlaneTop,
-            yMarkerPlaneBottom;
+            yMarkerPlaneBottom,
+            dimensions = {
+                width: [],
+                height: []
+            },
+            xvalues = [],
+            yvalues = [],
+            groupMarkers = this.get("groupMarkers");
         if(Y_Lang.isArray(style.fill.color))
         {
             fillColors = style.fill.color.concat(); 
@@ -6129,29 +6562,54 @@ Histogram.prototype = {
             {
                 top = config.top;
                 left = config.left;
-                style[setSizeKey] = setSize;
-                style[calculatedSizeKey] = config.calculatedSize;
-                style.x = left;
-                style.y = top;
 
-                if(fillColors)
+                if(groupMarkers)
                 {
-                    style.fill.color = fillColors[i % fillColors.length];
+                    dimensions[setSizeKey][i] = setSize;
+                    dimensions[calculatedSizeKey][i] = config.calculatedSize;
+                    xvalues.push(left);
+                    yvalues.push(top);
                 }
-                if(borderColors)
+                else
                 {
-                    style.border.colors = borderColors[i % borderColors.length];
+                    style[setSizeKey] = setSize;
+                    style[calculatedSizeKey] = config.calculatedSize;
+                    style.x = left;
+                    style.y = top;
+                    if(fillColors)
+                    {
+                        style.fill.color = fillColors[i % fillColors.length];
+                    }
+                    if(borderColors)
+                    {
+                        style.border.colors = borderColors[i % borderColors.length];
+                    }
+                    marker = this.getMarker(style, graphOrder, i);
                 }
-                marker = this.getMarker(style, graphOrder, i);
+
             }
-            else
+            else if(!groupMarkers)
             {
                 this._markers.push(null);
             }
         }
         this.set("xMarkerPlane", xMarkerPlane);
         this.set("yMarkerPlane", yMarkerPlane);
-        this._clearMarkerCache();
+        if(groupMarkers)
+        {
+            this._createGroupMarker({
+                fill: style.fill,
+                border: style.border,
+                dimensions: dimensions,
+                xvalues: xvalues,
+                yvalues: yvalues,
+                shape: style.shape
+            });
+        }
+        else
+        {
+            this._clearMarkerCache();
+        }
     },
     
     /**
@@ -7011,6 +7469,32 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          */
         direction: {
             value: "horizontal"
+        },
+
+        /**
+         * Indicates whether or not markers for a series will be grouped and rendered in a single complex shape instance.
+         *
+         * @attribute groupMarkers
+         * @type Boolean
+         */
+        groupMarkers: {
+            getter: function()
+            {
+                if(this._groupMarkers === undefined)
+                {
+                    return this.get("graph").get("groupMarkers");
+                }
+                else
+                {
+                    return this._groupMarkers;
+                }
+            },
+
+            setter: function(val)
+            {
+                this._groupMarkers = val;
+                return val;
+            }
         }
     }
 });
@@ -7453,7 +7937,7 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
      */
     updateMarkerState: function(type, i)
     {
-        if(this._markers[i])
+        if(this._markers && this._markers[i])
         {
             var styles = Y.clone(this.get("styles").marker),
                 markerStyles,
@@ -7602,7 +8086,7 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
      */
     updateMarkerState: function(type, i)
     {
-        if(this._markers[i])
+        if(this._markers && this._markers[i])
         {
             var styles = Y.clone(this.get("styles").marker),
                 markerStyles,
@@ -8419,7 +8903,14 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
             negativeBaseValues,
             positiveBaseValues,
             useOrigin = order === 0,
-            totalWidth = len * w;
+            totalWidth = len * w,
+            dimensions = {
+                width: [],
+                height: []
+            },
+            xvalues = [],
+            yvalues = [],
+            groupMarkers = this.get("groupMarkers");
         if(Y_Lang.isArray(style.fill.color))
         {
             fillColors = style.fill.color.concat(); 
@@ -8508,26 +8999,50 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
             if(!isNaN(h) && h > 0)
             {
                 left -= w/2;
-                style.width = w;
-                style.height = h;
-                style.x = left;
-                style.y = top;
-                if(fillColors)
+                if(groupMarkers)
                 {
-                    style.fill.color = fillColors[i % fillColors.length];
+                    dimensions.width[i] = w;
+                    dimensions.height[i] = h;
+                    xvalues.push(left);
+                    yvalues.push(top);
                 }
-                if(borderColors)
+                else
                 {
-                    style.border.color = borderColors[i % borderColors.length];
+                    style.width = w;
+                    style.height = h;
+                    style.x = left;
+                    style.y = top;
+                    if(fillColors)
+                    {
+                        style.fill.color = fillColors[i % fillColors.length];
+                    }
+                    if(borderColors)
+                    {
+                        style.border.color = borderColors[i % borderColors.length];
+                    }
+                    marker = this.getMarker(style, graphOrder, i);
                 }
-                marker = this.getMarker(style, graphOrder, i);
             }
-            else
+            else if(!groupMarkers)
             {
-                this._markers.push(null);
+               this._markers.push(null);
             }
         }
-        this._clearMarkerCache();
+        if(groupMarkers)
+        {
+            this._createGroupMarker({
+                fill: style.fill,
+                border: style.border,
+                dimensions: dimensions,
+                xvalues: xvalues,
+                yvalues: yvalues,
+                shape: style.shape
+            });
+        }
+        else
+        {
+            this._clearMarkerCache();
+        }
     },
 
     /**
@@ -8540,7 +9055,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
      */
     updateMarkerState: function(type, i)
     {
-        if(this._markers[i])
+        if(this._markers && this._markers[i])
         {
             var styles,
                 markerStyles,
@@ -8729,7 +9244,14 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
             fillColors,
             borderColors,
             useOrigin = order === 0,
-            totalHeight = len * h;
+            totalHeight = len * h,
+            dimensions = {
+                width: [],
+                height: []
+            },
+            xvalues = [],
+            yvalues = [],
+            groupMarkers = this.get("groupMarkers");
         if(Y_Lang.isArray(style.fill.color))
         {
             fillColors = style.fill.color.concat(); 
@@ -8816,27 +9338,51 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
             }
             if(!isNaN(w) && w > 0)
             {
-                top -= h/2;        
-                style.width = w;
-                style.height = h;
-                style.x = left;
-                style.y = top;
-                if(fillColors)
+                top -= h/2;
+                if(groupMarkers)
                 {
-                    style.fill.color = fillColors[i % fillColors.length];
+                    dimensions.width[i] = w;
+                    dimensions.height[i] = h;
+                    xvalues.push(left);
+                    yvalues.push(top);
                 }
-                if(borderColors)
+                else
                 {
-                    style.border.color = borderColors[i % borderColors.length];
+                    style.width = w;
+                    style.height = h;
+                    style.x = left;
+                    style.y = top;
+                    if(fillColors)
+                    {
+                        style.fill.color = fillColors[i % fillColors.length];
+                    }
+                    if(borderColors)
+                    {
+                        style.border.color = borderColors[i % borderColors.length];
+                    }
+                    marker = this.getMarker(style, graphOrder, i);
                 }
-                marker = this.getMarker(style, graphOrder, i);
             }
-            else
+            else if(!groupMarkers)
             {
                 this._markers.push(null);
             }
         }
-        this._clearMarkerCache();
+        if(groupMarkers)
+        {
+            this._createGroupMarker({
+                fill: style.fill,
+                border: style.border,
+                dimensions: dimensions,
+                xvalues: xvalues,
+                yvalues: yvalues,
+                shape: style.shape
+            });
+        }
+        else
+        {
+            this._clearMarkerCache();
+        }
     },
 
     /**
@@ -10640,6 +11186,16 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 }
                 return this._graphic;
             }
+        },
+
+        /**
+         * Indicates whether or not markers for a series will be grouped and rendered in a single complex shape instance.
+         *
+         * @attribute groupMarkers
+         * @type Boolean
+         */
+        groupMarkers: {
+            value: false
         }
 
         /**
@@ -10830,7 +11386,26 @@ ChartBase.ATTRS = {
      */
     graph: {
         valueFn: "_getGraph"
-   }
+    },
+
+    /**
+     * Indicates whether or not markers for a series will be grouped and rendered in a single complex shape instance.
+     *
+     * @attribute groupMarkers
+     * @type Boolean
+     */
+    groupMarkers: {
+        value: false,
+
+        setter: function(val)
+        {
+            if(this.get("graph"))
+            {
+                this.get("graph").set("groupMarkers", val);
+            }
+            return val;
+        }
+    }
 };
 
 ChartBase.prototype = {
@@ -10843,7 +11418,10 @@ ChartBase.prototype = {
      */
     _getGraph: function()
     {
-        var graph = new Y.Graph({chart:this});
+        var graph = new Y.Graph({
+            chart:this,
+            groupMarkers: this.get("groupMarkers")    
+        });
         graph.after("chartRendered", Y.bind(function(e) {
             this.fire("chartRendered");
         }, this));
