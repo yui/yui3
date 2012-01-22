@@ -139,7 +139,7 @@ suite.add(new Y.Test.Case({
     'buttonB should have `button` role': function () {
         var button = this.buttonB;
         var node = button.getNode();
-        console.log(node.get('role'));
+        
         Assert.areEqual('button', node.get('role'));
     },
     

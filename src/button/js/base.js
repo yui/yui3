@@ -70,9 +70,9 @@ Y.extend(Button, Y.Base, {
             this._renderLabel(this.get('label'));
         }
         
-        if (config.type) {
+        //if (config.type) {
             this._renderType(this.get('type'));
-        }
+        //}
         
         if (config.disabled) {
             this._renderDisabled(this.get('disabled'));
@@ -258,9 +258,9 @@ Y.extend(Button, Y.Base, {
             // nothing ?
         }
         else {
-            //if (!node.test('input') && !node.test('button')) {
+            if (!node.test('input') && !node.test('button')) {
                 role = 'button';
-            //}
+            }
             
             // This probably shouldn't be set, but if it is.
             if (button._clickHandler) {
@@ -268,7 +268,7 @@ Y.extend(Button, Y.Base, {
                 button._clickHandler = false;
             }
         }
-        //console.log(role);
+
         node.set('role', role);
     }
 }, {
