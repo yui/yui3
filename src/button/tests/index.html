@@ -24,7 +24,7 @@
                         requires: ['button-group', 'test', 'node-event-simulate']
                     }
                 }
-            }).use('button-test', /*'button-group-test',*/ 'test-console', function (Y) {
+            }).use('button-test', 'button-group-test', 'test-console', function (Y) {
                 new Y.Test.Console().render('#log');
                 Y.Test.Runner.run();
             });

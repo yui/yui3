@@ -239,7 +239,7 @@ Y.extend(Button, Y.Base, {
     _renderType: function(value) {
         var button = this;
         var node = button.getNode();
-        
+        var role = value;
         
         if (value === 'checkbox') {
             this.ARIASelectedState = Button.ARIA.CHECKED;
@@ -249,19 +249,17 @@ Y.extend(Button, Y.Base, {
         }
             
         if (value === 'toggle' || value === 'checkbox') {
-            
-            node.set('role', value);
             button._clickHandler = node.on('click', function(){
                 button.set('selected', !button.get('selected'));
             }, button);
             
         }
         else if (value === 'radio') {
-            node.set('role', value);
+            // nothing ?
         }
         else {
             if (!node.test('input') && !node.test('button')) {
-                node.set('role', 'button');
+                role = 'button';
             }
             
             // This probably shouldn't be set, but if it is.
@@ -270,6 +268,8 @@ Y.extend(Button, Y.Base, {
                 button._clickHandler = false;
             }
         }
+        //console.log(role);
+        node.set('role', role);
     }
 }, {
     /** 
