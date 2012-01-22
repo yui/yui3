@@ -1,8 +1,140 @@
-var ButtonGroup = function (config) {
+/**
+* TODO
+*
+* @module ButtonGroup
+* @main ButtonGroup
+* @since 3.5.0
+*/
+
+/**
+* Creates a ButtonGroup
+*
+* @class ButtonGroup
+* @extends Base
+* @param config {Object} Configuration object
+* @constructor
+*/
+function ButtonGroup(config) {
+    ButtonGroup.superclass.constructor.apply(this, arguments);
+}
+
+
+
+// -- Private Methods ----------------------------------------------------------
+
+// -- /Private Methods ----------------------------------------------------------
+
+/* Button extends the Base class */
+Y.extend(ButtonGroup, Y.Base, {
     
-    this.buttons = new Y.ArrayList();
+    /**
+    * @method initializer
+    * @description Internal init() handler.
+    * @param config {Object} Config object.
+    * @private
+    */
+    initializer: function(config){
+        
+        this.buttons = new Y.ArrayList();
+
+        if (config.srcNodes){
+            if (Y.Lang.isString(config.srcNodes)){
+                config.srcNodes = Y.all(config.srcNodes);
+            }
+            config.buttons = [];
+            config.srcNodes.each(function(node){
+                config.srcNode = node;
+                config.buttons.push(new Y.Button(config));
+            });
+
+            delete config.srcNodes;
+        }
+        
+        if (config.buttons) {
+            Y.Array.each(config.buttons, function(button){
+                this.addButton(button);
+            }, this);
+        }
+        
+    },
     
-    var ATTRS = {
+    /*Public Methods*/
+    
+    getButtons: function() {
+        return this.buttons._items;
+    },
+    
+    getSelectedButtons: function() {
+
+        var selected = [], buttons;
+        buttons = this.buttons;
+
+        buttons.each(function(button){
+            if (button.get('selected')){
+                selected.push(button);
+            }
+        });
+
+        return selected;
+    },
+    
+    getSelectedValues: function() {
+        var selected, values = [];
+        selected = this.getSelectedButtons();
+        Y.Array.each(selected, function(button){
+            values.push(button.getNode().get('value'));
+        });
+
+        return values;
+    },
+    
+    addButton: function(button){
+        var type = this.get('type');
+        
+        if (type === 'checkbox') {
+            button.set('type', 'checkbox');
+        }
+        else if (type === 'radio') {
+            button.on('click', this._onButtonClick, this);
+        }
+        
+        this.buttons.add(button);
+    },
+    
+    
+    
+    /*Protected Methods*/
+    
+
+    // This is only fired if the group type is radio
+    _onButtonClick: function(e) {
+
+        var clickedButton = e.target;
+        
+        if (!clickedButton.get('selected')) {
+            var selectedButtons = this.getSelectedButtons();
+            Y.Array.each(selectedButtons, function(button){
+                button.unselect();
+            });
+            clickedButton.select();
+            this.fire('selectionChange');
+        }
+        else {
+            console.log('already');
+        }
+    }
+    
+    
+}, {
+    /** 
+    * Array of attributes
+    *
+    * @property ATTRS
+    * @type {Array}
+    * @private
+    * @static
+    */
+    ATTRS: {
         selection : {
             value : [],
             getter: function(){
@@ -22,112 +154,34 @@ var ButtonGroup = function (config) {
                 return Y.Array.indexOf(['radio', 'checkbox'], val);
             }
         }
-    };
-
-    this.addAttrs(ATTRS, config);
-
-    if (config.srcNodes){
-        if (Y.Lang.isString(config.srcNodes)){
-            config.srcNodes = Y.all(config.srcNodes);
-        }
-        config.buttons = [];
-        config.srcNodes.each(function(node){
-            config.srcNode = node;
-            config.buttons.push(new Y.Button(config));
-        });
-        
-        delete config.srcNodes;
     }
-    
-    if (config.buttons) {
-        Y.Array.each(config.buttons, function(button){
-            this.addButton(button);
-        }, this);
-    }
-};
+});
 
-ButtonGroup.prototype.getButtons = function() {
-    return this.buttons._items;
-};
+// -- Static Properties ----------------------------------------------------------
 
-ButtonGroup.prototype.getSelectedButtons = function() {
+/**
+* Name of this component.
+*
+* @property NAME
+* @type String
+* @static
+*/
+ButtonGroup.NAME = "buttongroup";
 
-    var selected = [], buttons;
-    buttons = this.buttons;
+/** 
+* Array of static constants used to identify the classnames applied to the Button DOM objects
+*
+* @property CLASS_NAMES
+* @type {Array}
+* @static
+*/
+ButtonGroup.CLASS_NAMES = {
+}
 
-    buttons.each(function(button){
-        if (button.get('selected')){
-            selected.push(button);
-        }
-    });
 
-    return selected;
-};
+// -- Protected Methods ----------------------------------------------------------
+// -- /Protected Methods ----------------------------------------------------------
 
-ButtonGroup.prototype.getSelectedValues = function() {
-    var selected, values = [];
-    selected = this.getSelectedButtons();
-    Y.Array.each(selected, function(button){
-        values.push(button.getNode().get('value'));
-    });
-    
-    return values;
-};
 
-ButtonGroup.prototype.addButton = function(button){
-    button.set('type', 'toggle');
-    
-    if (this.get('type') === 'radio') {
-        button.before('selectedChange', this._beforeButtonSelectedChange, this);
-    }
-    
-    //button.on('selectedChange', this._onButtonSelectedChange, this);
-    button.after('selectedChange', this._afterButtonSelectedChange, this);
-    
-    this.buttons.add(button);
-};
-
-// This is only fired if the group type is a radio
-ButtonGroup.prototype._beforeButtonSelectedChange = function(e) {
-    if (e.target.get('selected')) {
-        e.preventDefault();
-        return false;
-    }
-    else {
-        /* Nothing? */
-    }
-};
-
-ButtonGroup.prototype._onButtonSelectedChange = function(e) {
-
-};
-
-ButtonGroup.prototype._afterButtonSelectedChange = function(e) {
-    var fireChange, buttons;
-    
-    fireChange = false;
-    buttons = this.buttons;
-    
-    if (this.get('type') === 'radio') {
-        buttons.each(function(button){
-            if (buttons.indexOf(e.target) !== buttons.indexOf(button)) {
-                fireChange = true;
-                button.set('selected', false, {propagate:false});
-            }
-            else {
-                /* Nothing */
-            }
-        });
-    }
-    else if (this.get('type') === 'checkbox') {
-        fireChange = true;
-    }
-    
-    if (fireChange) {
-        this.fire('selectionChange');
-    }
-};
-
-Y.augment(ButtonGroup, Y.Attribute);
-
+// Export Button
 Y.ButtonGroup = ButtonGroup;

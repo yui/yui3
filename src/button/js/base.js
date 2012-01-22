@@ -59,11 +59,11 @@ Y.extend(Button, Y.Base, {
     * @private
     */
     renderUI: function(config) {
-        var node = this.getNode();
+        var button = this;
+        var node = button.getNode();
         
         // Set some default node attributes
         node.addClass(Button.CLASS_NAMES.button);
-        node.set('role', 'button');
         
         // Apply any config attributes that may have been passed in.
         if (config.label) {
@@ -93,26 +93,29 @@ Y.extend(Button, Y.Base, {
         var node = button.getNode();
         
         // Listen on some events to handle ARIA & class management
-        node.on('mousedown', this._onMouseDown);
-        node.on('mouseup', this._onMouseUp);
-        node.on('focus', this._onFocus);
-        node.on('blur', this._onBlur);
+        node.on('focus', button._onFocus);
+        node.on('blur', button._onBlur);
+        
+        // hack
+        node.on('click', function(){
+            this.fire('click');
+        }, button);
         
         // Listen for attribute changes to handle UI updates
         button.after('labelChange', function(e){
-             this._renderLabel(this.get('label'));
+             button._renderLabel(button.get('label'));
         });
         
         button.after('typeChange', function(e){
-            this._renderType(this.get('type'));
+            button._renderType(button.get('type'));
         });
         
         button.after('disabledChange', function(e){
-            this._renderDisabled(this.get('disabled'));
+            button._renderDisabled(button.get('disabled'));
         });
         
         button.after('selectedChange', function(e){
-            this._renderSelected(this.get('selected'));
+            button._renderSelected(button.get('selected'));
         });
     },
 
@@ -224,7 +227,15 @@ Y.extend(Button, Y.Base, {
     * @protected
     */
     _renderSelected: function(value) {
-        this.getNode().set('aria-selected', value)
+        
+        if (this.get('type') === 'checkbox') {
+            var foo = 'aria-checked';
+        }
+        else {
+            var foo = 'aria-pressed';
+        }
+        
+        this.getNode().set(foo, value)
             .toggleClass(Button.CLASS_NAMES.selected, value);
     },
 
@@ -235,13 +246,23 @@ Y.extend(Button, Y.Base, {
     */
     _renderType: function(value) {
         var button = this;
-        if (value === "toggle") {
-            var node = button.getNode();
+        var node = button.getNode();
+        
+        if (value === 'toggle' || value === 'checkbox') {
+            node.set('role', value);
             button._clickHandler = node.on('click', function(){
                 button.set('selected', !button.get('selected'));
             }, button);
         }
+        else if (value === 'radio') {
+            node.set('role', value);
+        }
         else {
+            if (!node.test('input') && !node.test('button')) {
+                node.set('role', 'button');
+            }
+            
+            // This probably shouldn't be set, but if it is.
             if (button._clickHandler) {
                 button._clickHandler.detach();
                 button._clickHandler = false;
@@ -325,26 +346,6 @@ Button.prototype._onBlur = function(e){
 */
 Button.prototype._onFocus = function(e){
     e.target.addClass(Button.CLASS_NAMES.focused);
-};
-
-/**
-* @method _onMouseUp
-* @description An event handler for 'mouseup' events
-* @param e {DOMEvent} the event object
-* @protected
-*/
-Button.prototype._onMouseUp = function(e){
-    e.target.setAttribute('aria-pressed', 'false');
-};
-
-/**
-* @method _onMouseDown
-* @description An event handler for 'mousedown' events
-* @param e {DOMEvent} the event object
-* @protected
-*/
-Button.prototype._onMouseDown = function(e){
-    e.target.setAttribute('aria-pressed', 'true');
 };
 
 // Export Button

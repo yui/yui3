@@ -30,7 +30,7 @@ suite.add(new Y.Test.Case({
     },
     
     tearDown: function () {
-        Y.one('#test').empty();
+        Y.one('#container').empty();
     },
 
     'ButtonGroup.getButtons() should return an array of Y.Buttons instances': function () {
