@@ -52,8 +52,6 @@ Y.extend(ButtonGroup, Y.Base, {
         
     },
     
-    /*Public Methods*/
-    
     /**
     * @method getButtons
     * @description 
@@ -115,8 +113,6 @@ Y.extend(ButtonGroup, Y.Base, {
         this.buttons.add(button);
     },
     
-    
-    
     /**
     * @method _onButtonClick
     * @description 
@@ -138,7 +134,6 @@ Y.extend(ButtonGroup, Y.Base, {
             console.log('already');
         }
     }
-    
     
 }, {
     /** 
@@ -167,20 +162,6 @@ Y.extend(ButtonGroup, Y.Base, {
 */
 ButtonGroup.NAME = "buttongroup";
 
-/** 
-* Array of static constants used to identify the classnames applied to the Button DOM objects
-*
-* @property CLASS_NAMES
-* @type {Array}
-* @static
-*/
-ButtonGroup.CLASS_NAMES = {
-}
 
-
-// -- Protected Methods ----------------------------------------------------------
-// -- /Protected Methods ----------------------------------------------------------
-
-
-// Export Button
+// Export ButtonGroup
 Y.ButtonGroup = ButtonGroup;
