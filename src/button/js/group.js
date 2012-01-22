@@ -18,13 +18,7 @@ function ButtonGroup(config) {
     ButtonGroup.superclass.constructor.apply(this, arguments);
 }
 
-
-
-// -- Private Methods ----------------------------------------------------------
-
-// -- /Private Methods ----------------------------------------------------------
-
-/* Button extends the Base class */
+/* ButtonGroup extends the Base class */
 Y.extend(ButtonGroup, Y.Base, {
     
     /**
@@ -60,10 +54,20 @@ Y.extend(ButtonGroup, Y.Base, {
     
     /*Public Methods*/
     
+    /**
+    * @method getButtons
+    * @description 
+    * @public
+    */
     getButtons: function() {
         return this.buttons._items;
     },
     
+    /**
+    * @method getSelectedButtons
+    * @description 
+    * @public
+    */
     getSelectedButtons: function() {
 
         var selected = [], buttons;
@@ -78,6 +82,11 @@ Y.extend(ButtonGroup, Y.Base, {
         return selected;
     },
     
+    /**
+    * @method getSelectedValues
+    * @description 
+    * @public
+    */
     getSelectedValues: function() {
         var selected, values = [];
         selected = this.getSelectedButtons();
@@ -88,6 +97,11 @@ Y.extend(ButtonGroup, Y.Base, {
         return values;
     },
     
+    /**
+    * @method addButton
+    * @description 
+    * @public
+    */
     addButton: function(button){
         var type = this.get('type');
         
@@ -103,10 +117,11 @@ Y.extend(ButtonGroup, Y.Base, {
     
     
     
-    /*Protected Methods*/
-    
-
-    // This is only fired if the group type is radio
+    /**
+    * @method _onButtonClick
+    * @description 
+    * @protected
+    */
     _onButtonClick: function(e) {
 
         var clickedButton = e.target;
@@ -135,24 +150,8 @@ Y.extend(ButtonGroup, Y.Base, {
     * @static
     */
     ATTRS: {
-        selection : {
-            value : [],
-            getter: function(){
-                var selected = [];
-                this.buttons.each(function(button){
-                    if (button.get('selected')) {
-                        selected.push(button);
-                    }
-                });
-                
-                return selected;
-            }
-        },
         type: {
-            value: 'radio',
-            validator: function(val) {
-                return Y.Array.indexOf(['radio', 'checkbox'], val);
-            }
+            value: 'radio'
         }
     }
 });

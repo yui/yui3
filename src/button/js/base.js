@@ -63,7 +63,7 @@ Y.extend(Button, Y.Base, {
         var node = button.getNode();
         
         // Set some default node attributes
-        node.addClass(Button.CLASS_NAMES.button);
+        node.addClass(Button.CLASS_NAMES.BUTTON);
         
         // Apply any config attributes that may have been passed in.
         if (config.label) {
@@ -218,7 +218,7 @@ Y.extend(Button, Y.Base, {
     */
     _renderDisabled: function (value) {
         this.getNode().set('disabled', value)
-            .toggleClass(Button.CLASS_NAMES.disabled, value);
+            .toggleClass(Button.CLASS_NAMES.DISABLED, value);
     },
     
     /**
@@ -227,16 +227,8 @@ Y.extend(Button, Y.Base, {
     * @protected
     */
     _renderSelected: function(value) {
-        
-        if (this.get('type') === 'checkbox') {
-            var foo = 'aria-checked';
-        }
-        else {
-            var foo = 'aria-pressed';
-        }
-        
-        this.getNode().set(foo, value)
-            .toggleClass(Button.CLASS_NAMES.selected, value);
+        this.getNode().set(this.ARIASelectedState, value)
+            .toggleClass(Button.CLASS_NAMES.SELECTED, value);
     },
 
     /**
@@ -248,11 +240,21 @@ Y.extend(Button, Y.Base, {
         var button = this;
         var node = button.getNode();
         
+        
+        if (value === 'checkbox') {
+            this.ARIASelectedState = Button.ARIA.CHECKED;
+        }
+        else {
+            this.ARIASelectedState = Button.ARIA.PRESSED;
+        }
+            
         if (value === 'toggle' || value === 'checkbox') {
+            
             node.set('role', value);
             button._clickHandler = node.on('click', function(){
                 button.set('selected', !button.get('selected'));
             }, button);
+            
         }
         else if (value === 'radio') {
             node.set('role', value);
@@ -319,10 +321,15 @@ Button.NAME = "button";
 * @static
 */
 Button.CLASS_NAMES = {
-    button  : makeClassName(),
-    selected: makeClassName('selected'),
-    focused : makeClassName('focused'),
-    disabled: makeClassName('disabled')
+    BUTTON  : makeClassName(),
+    SELECTED: makeClassName('selected'),
+    FOCUSED : makeClassName('focused'),
+    DISABLED: makeClassName('disabled')
+}
+
+Button.ARIA = {
+    CHECKED: 'aria-checked',
+    PRESSED: 'aria-pressed',
 }
 
 
@@ -335,7 +342,7 @@ Button.CLASS_NAMES = {
 * @protected
 */
 Button.prototype._onBlur = function(e){
-    e.target.removeClass(Button.CLASS_NAMES.focused);
+    e.target.removeClass(Button.CLASS_NAMES.FOCUSED);
 };
 
 /**
@@ -345,7 +352,7 @@ Button.prototype._onBlur = function(e){
 * @protected
 */
 Button.prototype._onFocus = function(e){
-    e.target.addClass(Button.CLASS_NAMES.focused);
+    e.target.addClass(Button.CLASS_NAMES.FOCUSED);
 };
 
 // Export Button
