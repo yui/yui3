@@ -139,8 +139,8 @@ suite.add(new Y.Test.Case({
     'buttonB should have `button` role': function () {
         var button = this.buttonB;
         var node = button.getNode();
-        
-        //Assert.areEqual('button', node.get('role'));
+        console.log(node.get('role'));
+        Assert.areEqual('button', node.get('role'));
     },
     
     'button focus/blur events should toggle yui3-button-focused': function () {

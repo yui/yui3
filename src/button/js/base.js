@@ -258,9 +258,9 @@ Y.extend(Button, Y.Base, {
             // nothing ?
         }
         else {
-            if (!node.test('input') && !node.test('button')) {
+            //if (!node.test('input') && !node.test('button')) {
                 role = 'button';
-            }
+            //}
             
             // This probably shouldn't be set, but if it is.
             if (button._clickHandler) {
