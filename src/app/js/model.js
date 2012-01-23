@@ -168,7 +168,7 @@ Y.Model = Y.extend(Model, Y.Base, {
     /**
     Total hack to allow us to identify Model instances without using
     `instanceof`, which won't work when the instance was created in another
-    window.
+    window or YUI sandbox.
 
     @property _isYUIModel
     @type Boolean

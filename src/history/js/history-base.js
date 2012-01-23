@@ -127,7 +127,8 @@ HistoryBase.SRC_REPLACE = SRC_REPLACE;
 // true for 'onpopstate' in win. In order to support Gecko 2, we fall back to a
 // UA sniff for now. (current as of Firefox 4.0b2)
 HistoryBase.html5 = !!(win.history && win.history.pushState &&
-        win.history.replaceState && ('onpopstate' in win || Y.UA.gecko >= 2));
+        win.history.replaceState && ('onpopstate' in win || Y.UA.gecko >= 2) &&
+        (!Y.UA.android || Y.UA.android >= 2.4));
 
 /**
  * Whether or not this browser supports the <code>window.onhashchange</code>

@@ -1,0 +1,181 @@
+<div class="intro">
+    <p>YUI does not come with Server Side DOM support out of the box, but you can still use one.
+    This example will show you one way to accomplish this task.</p>
+</div>
+
+<h2>Installing the packages</h2>
+
+<p>This example uses the <a href="https://github.com/tmpvar/jsdom">JSDom</a> npm package, 
+but theortically YUI can be used with any valid DOM.</p>
+
+```terminal
+npm install yui jsdom
+```
+
+<h2>Setup the DOM</h2>
+
+<p>JSDom has many useful features and some that are a little on the edge, luckily it's highly configurable.</p>
+<p>Here we will `require` jsdom, configure it to our liking and 
+then create the `window` and `document` references that we will later give to our YUI instance.</p>
+
+```
+#!/usr/bin/env node
+
+    var jsdom = require('jsdom');
+
+    //Turn off all the things we don't want.
+    jsdom.defaultDocumentFeatures = {
+        //Don't bring in outside resources
+        FetchExternalResources   : false,
+        //Don't process them
+        ProcessExternalResources : false,
+        //Don't expose Mutation events (for performance)
+        MutationEvents           : false,
+        //Do not use their implementation of QSA
+        QuerySelector            : false
+    };
+    
+    var dom = jsdom.defaultLevel;
+    //Hack in focus and blur methods so they don't fail when a YUI widget calls them
+    dom.Element.prototype.blur = function() {};
+    dom.Element.prototype.focus = function() {};
+
+
+    //Create the document and window
+    var document = jsdom.jsdom("<html><head><title></title></head><body><h1>Hello YUI!</h1></body></html>"),
+    window = document.createWindow();
+
+```
+
+<h2>Applying this DOM to a YUI instance</h2>
+
+<p>Using the references to `window` and `document` from the above snippet, you
+just pass them to the YUI constructor as the `win` and `doc` properties.</p>
+
+```
+YUI({
+    win: window,
+    doc: document
+}).use('node', function(Y) {
+    
+    Y.one('title').setContent('YUI Server Side DOM');
+    console.log(Y.one('doc').get('outerHTML'));
+
+});
+
+```
+
+<p>This will output this:</p>
+
+```
+<html style="">
+  <head>
+    <title>YUI Server Side DOM</title>
+  </head>
+  <body>
+    <h1>Hello YUI!</h1>
+  </body>
+</html>
+```
+
+<h2>Rendering a widget (Full Source)</h2>
+
+<p>In this example, we will render a `TabView` in Node.js and print the `document` to the screen:</p>
+
+```
+#!/usr/bin/env node
+
+    var jsdom = require('jsdom');
+
+    //Turn off all the things we don't want.
+    jsdom.defaultDocumentFeatures = {
+      FetchExternalResources   : false,
+      ProcessExternalResources : false,
+      MutationEvents           : false,
+      QuerySelector            : false
+    };
+    
+    var dom = jsdom.defaultLevel;
+    //Hack in focus and blur methods so they don't fail
+    dom.Element.prototype.blur = function() {};
+    dom.Element.prototype.focus = function() {};
+
+
+    //Create the document and window
+    var document = jsdom.jsdom("<html><head><title></title></head><body><h1>Hello YUI!</h1></body></html>"),
+    window = document.createWindow();
+
+
+var YUI = require('yui').YUI;
+
+YUI({
+    win: window,
+    doc: document
+}).use('tabview', function(Y) {
+
+    Y.one('title').setContent('YUI Server Side DOM');
+
+    Y.one('body').append('<div id="demo"></div>');
+    
+    Y.log('Creating the TabView from script..');
+
+    var tabview = new Y.TabView({
+        children: [{
+            label: 'foo',
+            content: '<p>foo content</p>'
+        }, {
+            label: 'bar',
+            content: '<p>bar content</p>'
+        }, {
+            label: 'baz',
+            content: '<p>baz content</p>'
+        }]
+    });
+
+    Y.log('Rendering..');
+    tabview.render('#demo');
+
+    console.log(Y.one('doc').get('outerHTML'));
+});
+```
+
+<p>The above script will output this:</p>
+
+```
+<html style="">
+  <head>
+    <title>YUI Server Side DOM</title>
+  </head>
+  <body>
+    <h1>Hello YUI!</h1>
+    <div id="demo">
+      <div id="yui_3_3_0_1_1326472765944_13" class="yui3-widget yui3-tabview" style="">
+        <div id="yui_3_3_0_1_1326472765944_15" class="yui3-tabview-content">
+          <ul class="yui3-tabview-list">
+            <li class="yui3-tab yui3-widget yui3-tab-selected" id="yui_3_3_0_1_1326472765944_41" role="presentation" style="">
+              <a class="yui3-tab-label yui3-tab-content" id="yui_3_3_0_1_1326472765944_43" role="tab">foo</a>
+            </li>
+            <li class="yui3-tab yui3-widget" id="yui_3_3_0_1_1326472765944_63" role="presentation" style="">
+              <a class="yui3-tab-label yui3-tab-content" id="yui_3_3_0_1_1326472765944_65" role="tab" tabindex="-1">bar</a>
+            </li>
+            <li class="yui3-tab yui3-widget" id="yui_3_3_0_1_1326472765944_83" role="presentation" style="">
+              <a class="yui3-tab-label yui3-tab-content" id="yui_3_3_0_1_1326472765944_85" role="tab" tabindex="-1">baz</a>
+            </li>
+          </ul>
+          <div class="yui3-tabview-panel">
+            <div class="yui3-tab-panel yui3-tab-panel-selected" role="tabpanel" aria-labelledby="yui_3_3_0_1_1326472765944_43">
+              <p>foo content</p>
+            </div>
+            <div class="yui3-tab-panel" role="tabpanel" aria-labelledby="yui_3_3_0_1_1326472765944_65">
+              <p>bar content</p>
+            </div>
+            <div class="yui3-tab-panel" role="tabpanel" aria-labelledby="yui_3_3_0_1_1326472765944_85">
+              <p>baz content</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+```

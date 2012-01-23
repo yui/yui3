@@ -4,6 +4,9 @@ AutoComplete Change History
 3.5.0
 -----
 
+* Added an `enableCache` config attribute. Set this to `false` to prevent the
+  built-in result sources from caching results (it's `true` by default).
+
 * The `requestTemplate` value is now made available to YQL sources via the
   `{request}` placeholder, which works just like the `{query}` placeholder. Use
   this when you need to customize the query value (such as double-escaping it)
