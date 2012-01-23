@@ -609,7 +609,7 @@ LeftAxisLayout.prototype = {
                 totalTitleSize = host._totalTitleSize,
                 leftTickOffset = host.get("leftTickOffset"),
                 margin = styles.label.margin.right;
-            host._maxlabelsize =  w - (leftTickOffset + margin + totalTitleSize);
+            host._maxLabelSize =  w - (leftTickOffset + margin + totalTitleSize);
             return true;
         }
         return false;
@@ -727,7 +727,7 @@ LeftAxisLayout.prototype = {
         {
             ttl = this._explicitWidth;
         }
-        this.set("width", ttl);
+        this.set("calculatedWidth", ttl);
         graphic.set("x", ttl - tickOffset);
     }
 };
@@ -904,7 +904,7 @@ RightAxisLayout.prototype = {
                 totalTitleSize = this._totalTitleSize,
                 rightTickOffset = host.get("rightTickOffset"),
                 margin = styles.label.margin.right;
-            host._maxlabelsize =  w - (rightTickOffset + margin + totalTitleSize);
+            host._maxLabelSize =  w - (rightTickOffset + margin + totalTitleSize);
             return true;
         }
         return false;
@@ -1028,7 +1028,7 @@ RightAxisLayout.prototype = {
         {
             ttl = this._explicitWidth;
         }
-        host.set("width", ttl);
+        host.set("calculatedWidth", ttl);
         host.get("contentBox").setStyle("width", ttl);
     }
 };
@@ -1203,7 +1203,7 @@ BottomAxisLayout.prototype = {
                 totalTitleSize = host._totalTitleSize,
                 bottomTickOffset = host.get("bottomTickOffset"),
                 margin = styles.label.margin.right;
-            host._maxlabelsize =  h - (bottomTickOffset + margin + totalTitleSize);
+            host._maxLabelSize =  h - (bottomTickOffset + margin + totalTitleSize);
             return true;
         }
         return false;
@@ -1320,7 +1320,7 @@ BottomAxisLayout.prototype = {
         {
             ttl = host._explicitHeight;
         }
-        host.set("height", ttl);
+        host.set("calculatedHeight", ttl);
     }
 };
 Y.BottomAxisLayout = BottomAxisLayout;
@@ -1491,9 +1491,9 @@ TopAxisLayout.prototype = {
             var host = this,
                 h = host._explicitHeight,
                 totalTitleSize = host._totalTitleSize,
-                bottomtickoffset = host.get("topTickoffset"),
+                topTickOffset = host.get("topTickOffset"),
                 margin = styles.label.margin.right;
-            host._maxlabelsize =  h - (bottomtickoffset + margin + totalTitleSize);
+            host._maxLabelSize =  h - (topTickOffset + margin + totalTitleSize);
             return true;
         }
         return false;
@@ -1619,7 +1619,7 @@ TopAxisLayout.prototype = {
         {
            ttl = this._explicitWidth; 
         }
-        host.set("height", ttl);
+        host.set("calculatedHeight", ttl);
         graphic.set("y", ttl - topTickOffset);
     }
 };
@@ -1636,6 +1636,24 @@ Y.TopAxisLayout = TopAxisLayout;
  * @param {Object} config (optional) Configuration parameters for the Chart.
  */
 Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
+    /**
+     * Storage for calculatedWidth value.
+     *
+     * @property _calculatedWidth
+     * @type Number
+     * @private
+     */
+    _calculatedWidth: 0,
+
+    /**
+     * Storage for calculatedHeight value.
+     *
+     * @property _calculatedHeight
+     * @type Number
+     * @private
+     */
+    _calculatedHeight: 0,
+
     /**
      * Handles change to the dataProvider
      * 
@@ -2591,19 +2609,24 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     {
         /**
          * When set, defines the width of a vertical axis instance. By default, vertical axes automatically size based on their contents. When the
-         * explicitWidth attribute is set, the width is the value of explicitWidth. When using the explicitWidth
-         * attribute, it must be set to a value greater than the total content width. Otherwise, excess content will overflow.
+         * width attribute is set, the axis will not calculate its width. When the width attribute is explicitly set, axis labels will postion themselves off of the 
+         * the inner edge of the axis and the title, if present, will position itself off of the outer edge. If a specified width is less than the sum of 
+         * the axis' contents, excess content will overflow.
          *
-         * @attribute explicitWidth
+         * @attribute width
          * @lazyAdd false
          * @type Number
          */
-        explicitWidth: {
+        width: {
             lazyAdd: false,
 
             getter: function() 
             {
-                return this._explicitWidth;        
+                if(this._explicitWidth)
+                {
+                    return this._explicitWidth;        
+                }
+                return this._calculatedWidth;
             },
 
             setter: function(val)
@@ -2615,19 +2638,24 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
 
         /**
          * When set, defines the height of a horizontal axis instance. By default, horizontal axes automatically size based on their contents. When the
-         * explicitHeight attribute is set, the height is the value of explicitHeight. When using the explicitHeight
-         * attribute, it must be set to a value greater than the total content height. Otherwise, excess content will overflow.
+         * height attribute is set, the axis will not calculate its height. When the height attribute is explicitly set, axis labels will postion themselves off of the 
+         * the inner edge of the axis and the title, if present, will position itself off of the outer edge. If a specified height is less than the sum of 
+         * the axis' contents, excess content will overflow.
          *
-         * @attribute explicitHeight
+         * @attribute height
          * @lazyAdd false
          * @type Number
          */
-        explicitHeight: {
+        height: {
             lazyAdd: false,
 
             getter: function() 
             {
-                return this._explicitHeight;        
+                if(this._explicitHeight)
+                {
+                    return this._explicitHeight;        
+                }
+                return this._calculatedHeight;
             },
 
             setter: function(val)
@@ -2636,6 +2664,47 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 return val;
             }
         },
+
+        /**
+         * Calculated value of an axis' width. By default, the value is used internally for vertical axes. If the `width` attribute is explicitly set, this value will be ignored.
+         *
+         * @attribute calculatedWidth
+         * @type Number
+         * @private
+         */
+        calculatedWidth: {
+            getter: function()
+            {
+                return this._calculatedWidth;
+            },
+
+            setter: function(val)
+            {
+                this._calculatedWidth = val;
+                return val;
+            }
+        },
+
+        /**
+         * Calculated value of an axis' height. By default, the value is used internally for horizontal axes. If the `height` attribute is explicitly set, this value will be ignored.
+         *
+         * @attribute calculatedHeight
+         * @type Number
+         * @private
+         */
+        calculatedHeight: {
+            getter: function()
+            {
+                return this._calculatedHeight;
+            },
+
+            setter: function(val)
+            {
+                this._calculatedHeight = val;
+                return val;
+            }
+        },
+
         /**
          * Difference betweend the first/last tick and edge of axis.
          *
@@ -2992,6 +3061,8 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
         this.after("positionChange", this._positionChangeHandler);
         this.after("widthChange", this._handleSizeChange);
         this.after("heightChange", this._handleSizeChange);
+        this.after("calculatedWidthChange", this._handleSizeChange);
+        this.after("calculatedHeightChange", this._handleSizeChange);
     },
 
     /**
@@ -12509,8 +12580,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 roundingMethod:"roundingMethod",
                 alwaysShowZero:"alwaysShowZero",
                 title:"title",
-                explicitWidth:"explicitWidth",
-                explicitHeight:"explicitHeight"
+                width:"width",
+                height:"height"
             },
             dp = this.get("dataProvider"),
             ai,
@@ -12637,8 +12708,6 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                         this.set("height", node.get("offsetHeight"));
                         h = this.get("height");
                     }
-                    axis.set("width", 0);
-                    axis.set("height", 0);
                     this._addToAxesRenderQueue(axis);
                     pos = axis.get("position");
                     if(!this.get(pos + "AxesCollection"))
