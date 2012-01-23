@@ -7608,11 +7608,12 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         var f = this.filter,
             hasFilter = name && (name in this.filters),
             modFilter = hasFilter && this.filters[name],
-	    groupName = this.moduleInfo[name] ? this.moduleInfo[name].group:null;		
-	    if (groupName && this.groups[groupName].filter) {		
-	 	   modFilter = this.groups[groupName].filter;
-		   hasFilter = true;		
-	     };
+	        groupName = this.moduleInfo[name] ? this.moduleInfo[name].group : null;
+
+	    if (groupName && this.groups[groupName] && this.groups[groupName].filter) {		
+	 	    modFilter = this.groups[groupName].filter;
+		    hasFilter = true;		
+	    };
 
         if (u) {
             if (hasFilter) {
@@ -7674,7 +7675,24 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         }
         s = s || self.sorted;
 
-        if (self.combine) {
+        var addSingle = function(m) {
+            
+            if (m) {
+                group = (m.group && self.groups[m.group]) || NOT_FOUND;
+
+                url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :
+                      self._url(m.path, s[i], group.base || m.base);
+                
+
+                resolved[m.type].push(url);
+                resolved[m.type + 'Mods'].push(m);
+            } else {
+                Y.log('Undefined Module', 'warn', 'loader');
+            }
+            
+        };
+
+        //if (self.combine) {
 
             len = s.length;
 
@@ -7689,14 +7707,13 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 comboSource = comboBase;
                 m = self.getModule(s[i]);
                 groupName = m && m.group;
-                if (groupName) {
-
-                    group = self.groups[groupName];
+                group = self.groups[groupName];
+                if (groupName && group) {
 
                     if (!group.combine) {
-                        m.combine = false;
                         //This is not a combo module, skip it and load it singly later.
-                        singles.push(s[i]);
+                        //singles.push(s[i]);
+                        addSingle(m);
                         continue;
                     }
                     m.combine = true;
@@ -7709,6 +7726,13 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                     }
                     m.comboSep = group.comboSep || self.comboSep;
                     m.maxURLLength = group.maxURLLength || self.maxURLLength;
+                } else {
+                    if (!self.combine) {
+                        //This is not a combo module, skip it and load it singly later.
+                        //singles.push(s[i]);
+                        addSingle(m);
+                        continue;
+                    }
                 }
 
                 comboSources[comboSource] = comboSources[comboSource] || [];
@@ -7740,7 +7764,8 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                             } else {
                                 //Add them to the next process..
                                 if (mods[i]) {
-                                    singles.push(mods[i].name);
+                                    //singles.push(mods[i].name);
+                                    addSingle(mods[i]);
                                 }
                             }
 
@@ -7800,8 +7825,10 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
             resCombos = null;
             
-        }
+        //}
 
+        
+        /*
         if (!self.combine || singles.length) {
 
             s = singles.length ? singles : self.sorted;
@@ -7827,10 +7854,22 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :
                       self._url(m.path, s[i], group.base || m.base);
                 
-                resolved[m.type].push(url);
+                /*
+                * This is so top level (non-comboed) YUI modules are at the top of the list.
+                * All other modules come below, this should only happen when `self.combine`
+                * is false.
+                * /
+                if (!self.combine) {
+                    resolved[m.type].unshift(url);
+                } else {
+                    resolved[m.type].push(url);
+                }
+
+
                 resolved[m.type + 'Mods'].push(m);
             }
         }
+        */
 
 
         return resolved;
