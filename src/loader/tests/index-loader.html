@@ -11,9 +11,9 @@
 
 <div id="log"></div>
 
-<!-- This is the main test file, notice it's using the `yui-base` seed file 
-without Loader on the page, so Loader is fetched before tests are executed. -->
+<!-- This is the loader test file, notice it's using the `yui-base` seed file & including loader so it is NOT fetched. -->
 <script type="text/javascript" src="../../../build/yui-base/yui-base.js"></script>
+<script type="text/javascript" src="../../../build/loader/loader.js"></script>
 <script type="text/javascript">
 
 var YUI_config = {
@@ -46,8 +46,8 @@ YUI({
     }
 }).use('loader-tests', 'test-console', 'test', function(Y) {
     //This is a YUITest hack to rename this test for reporting
-    Y.Test.Runner.masterSuite.name = 'Loader Fetch Test Suite';
-    Y.Test.Runner.masterSuite.items[0].name = 'Loader Fetch Test Suite';
+    Y.Test.Runner.masterSuite.name = 'Loader Included Static Test Suite';
+    Y.Test.Runner.masterSuite.items[0].name = 'Loader Included Static Test Suite';
     Y.Test.Runner.run();
 });
 
