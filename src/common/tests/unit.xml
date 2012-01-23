@@ -107,6 +107,8 @@
         <url>yui/tests/index-full.html</url>
         <url>yui/tests/index-loader.html</url>
 
+        <url>yui-throttle/tests/index.html</url>
+
         <url>scrollview/tests/scrollview-list-unit-test.html</url>
         <url>panel/tests/unit-tests.html</url>
         <url>widget-buttons/tests/widget-buttons.html</url>
