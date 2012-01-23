@@ -163,7 +163,7 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
 
         /**
          * @attribute label
-         * @type String
+         * @type HTML
          */
         label: { 
             setter: '_defLabelSetter',
@@ -172,7 +172,7 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
 
         /**
          * @attribute content
-         * @type String
+         * @type HTML
          */
         content: {
             setter: '_defContentSetter',
