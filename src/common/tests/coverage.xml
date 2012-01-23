@@ -73,6 +73,9 @@
         <url>yui/tests/array.html</url>
         <url>yui/tests/lang.html</url>
         <url>yui/tests/object.html</url>
+
+        <url>yui-throttle/tests/index.html</url>
+
         <url>yql/tests/index.html</url>
     </tests>
 </yuitest>
