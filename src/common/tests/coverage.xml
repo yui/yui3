@@ -68,8 +68,8 @@
             <url>pjax/tests/pjax.html</url>
             <url>parallel/tests/index.html</url>
         -->
-        <url>loader/tests/index.html</url>
-        <url>yui/tests/index.html</url>
+        <url>loader/tests/index-full.html</url>
+        <url>yui/tests/index-full.html</url>
         <url>yui/tests/array.html</url>
         <url>yui/tests/lang.html</url>
         <url>yui/tests/object.html</url>
