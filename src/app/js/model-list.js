@@ -516,6 +516,8 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
                 }
 
                 parsed = facade.parsed = self.parse(response);
+
+                self.reset(parsed, options);
                 self.fire(EVT_LOAD, facade);
             }
 
@@ -669,12 +671,12 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @chainable
     **/
     sort: function (options) {
-        var models = this._items.concat(),
-            facade;
-
         if (!this.comparator) {
             return this;
         }
+
+        var models = this._items.concat(),
+            facade;
 
         options || (options = {});
 
@@ -833,6 +835,24 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     },
 
     /**
+    Compares the value _a_ to the value _b_ for sorting purposes. Values are
+    assumed to be the result of calling a model's `comparator()` method. You can
+    override this method to implement custom sorting logic, such as a descending
+    sort or multi-field sorting.
+
+    @method _compare
+    @param {Mixed} a First value to compare.
+    @param {Mixed} b Second value to compare.
+    @return {Number} `-1` if _a_ should come before _b_, `0` if they're
+        equivalent, `1` if _a_ should come after _b_.
+    @protected
+    @since 3.5.0
+    **/
+    _compare: function (a, b) {
+        return a < b ? -1 : (a > b ? 1 : 0);
+    },
+
+    /**
     Removes this list as a bubble target for the specified model's events.
 
     @method _detachList
@@ -858,15 +878,16 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @protected
     **/
     _findIndex: function (model) {
-        var comparator = this.comparator,
-            items      = this._items,
-            max        = items.length,
-            min        = 0,
+        var items = this._items,
+            max   = items.length,
+            min   = 0,
             item, middle, needle;
 
-        if (!comparator || !items.length) { return items.length; }
+        if (!this.comparator || !max) {
+            return max;
+        }
 
-        needle = comparator(model);
+        needle = this.comparator(model);
 
         // Perform an iterative binary search to determine the correct position
         // based on the return value of the `comparator` function.
@@ -874,7 +895,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
             middle = (min + max) >> 1; // Divide by two and discard remainder.
             item   = items[middle];
 
-            if (comparator(item) < needle) {
+            if (this._compare(this.comparator(item), needle) < 0) {
                 min = middle + 1;
             } else {
                 max = middle;
@@ -933,10 +954,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @protected
     **/
     _sort: function (a, b) {
-        var aValue = this.comparator(a),
-            bValue = this.comparator(b);
-
-        return aValue < bValue ? -1 : (aValue > bValue ? 1 : 0);
+        return this._compare(this.comparator(a), this.comparator(b));
     },
 
     // -- Event Handlers -------------------------------------------------------

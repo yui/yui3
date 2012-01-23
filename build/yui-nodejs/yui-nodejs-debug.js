@@ -518,7 +518,7 @@ proto = {
                     this.log('applyTo not found: ' + method, 'warn', 'yui');
                 }
             }
-            return m.apply(instance, args);
+            return m && m.apply(instance, args);
         }
 
         return null;
@@ -981,6 +981,11 @@ with any configuration info required for the module.
                 handleLoader();
             }
             return Y;
+        }
+
+        if (mods['loader'] && !Y.Loader) {
+            Y.log('Loader was found in meta, but it is not attached. Attaching..', 'info', 'yui');
+            Y._attach(['loader']);
         }
 
         // Y.log('before loader requirements: ' + args, 'info', 'yui');
@@ -2484,7 +2489,9 @@ utilities for the library.
 var CACHED_DELIMITER = '__',
 
     hasOwn   = Object.prototype.hasOwnProperty,
-    isObject = Y.Lang.isObject;
+    isObject = Y.Lang.isObject,
+
+    win = Y.config.win;
 
 /**
 Returns a wrapper for a function which caches the return value of that function,
@@ -2524,6 +2531,31 @@ Y.cached = function (source, cache, refetch) {
 
         return cache[key];
     };
+};
+
+/**
+Returns the `location` object from the window/frame in which this YUI instance
+operates, or `undefined` when executing in a non-browser environment
+(e.g. Node.js).
+
+It is _not_ recommended to hold references to the `window.location` object
+outside of the scope of a function in which its properties are being accessed or
+its methods are being called. This is because of a nasty bug/issue that exists
+in both Safari and MobileSafari browsers:
+[WebKit Bug 34679](https://bugs.webkit.org/show_bug.cgi?id=34679).
+
+@method getLocation
+@return {location} The `location` object from the window/frame in which this YUI
+    instance operates.
+@since 3.5.0
+**/
+Y.getLocation = function () {
+    // The reference to the `window` object created outside this function's
+    // scope is safe to hold on to, but it is not safe to do so with the
+    // `location` object. The WebKit engine used in Safari and MobileSafari will
+    // "disconnect" the `location` object from the `window` when a page is
+    // restored from back/forward history cache.
+    return win && win.location;
 };
 
 /**
@@ -3707,6 +3739,11 @@ YUI.add('get', function(Y) {
                 }
             });
         }
+    };
+    
+    //Place holder for SS Dom access
+    Y.Get.css = function(s, cb) {
+        pass(cb);
     };
 
 
@@ -6638,11 +6675,12 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         var f = this.filter,
             hasFilter = name && (name in this.filters),
             modFilter = hasFilter && this.filters[name],
-	    groupName = this.moduleInfo[name] ? this.moduleInfo[name].group:null;		
-	    if (groupName && this.groups[groupName].filter) {		
-	 	   modFilter = this.groups[groupName].filter;
-		   hasFilter = true;		
-	     };
+	        groupName = this.moduleInfo[name] ? this.moduleInfo[name].group : null;
+
+	    if (groupName && this.groups[groupName] && this.groups[groupName].filter) {		
+	 	    modFilter = this.groups[groupName].filter;
+		    hasFilter = true;		
+	    };
 
         if (u) {
             if (hasFilter) {
@@ -6704,7 +6742,24 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         }
         s = s || self.sorted;
 
-        if (self.combine) {
+        var addSingle = function(m) {
+            
+            if (m) {
+                group = (m.group && self.groups[m.group]) || NOT_FOUND;
+
+                url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :
+                      self._url(m.path, s[i], group.base || m.base);
+                
+
+                resolved[m.type].push(url);
+                resolved[m.type + 'Mods'].push(m);
+            } else {
+                Y.log('Undefined Module', 'warn', 'loader');
+            }
+            
+        };
+
+        //if (self.combine) {
 
             len = s.length;
 
@@ -6719,14 +6774,13 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 comboSource = comboBase;
                 m = self.getModule(s[i]);
                 groupName = m && m.group;
-                if (groupName) {
-
-                    group = self.groups[groupName];
+                group = self.groups[groupName];
+                if (groupName && group) {
 
                     if (!group.combine) {
-                        m.combine = false;
                         //This is not a combo module, skip it and load it singly later.
-                        singles.push(s[i]);
+                        //singles.push(s[i]);
+                        addSingle(m);
                         continue;
                     }
                     m.combine = true;
@@ -6739,6 +6793,13 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                     }
                     m.comboSep = group.comboSep || self.comboSep;
                     m.maxURLLength = group.maxURLLength || self.maxURLLength;
+                } else {
+                    if (!self.combine) {
+                        //This is not a combo module, skip it and load it singly later.
+                        //singles.push(s[i]);
+                        addSingle(m);
+                        continue;
+                    }
                 }
 
                 comboSources[comboSource] = comboSources[comboSource] || [];
@@ -6770,7 +6831,8 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                             } else {
                                 //Add them to the next process..
                                 if (mods[i]) {
-                                    singles.push(mods[i].name);
+                                    //singles.push(mods[i].name);
+                                    addSingle(mods[i]);
                                 }
                             }
 
@@ -6823,15 +6885,17 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                                 resolved[type].push(tmpBase);
                             }
                         }
-                        resolved[type + 'Mods'] = mods;
+                        resolved[type + 'Mods'] = resolved[type + 'Mods'].concat(mods);
                     }
                 }
             }
 
             resCombos = null;
             
-        }
+        //}
 
+        
+        /*
         if (!self.combine || singles.length) {
 
             s = singles.length ? singles : self.sorted;
@@ -6857,10 +6921,22 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :
                       self._url(m.path, s[i], group.base || m.base);
                 
-                resolved[m.type].push(url);
+                /*
+                * This is so top level (non-comboed) YUI modules are at the top of the list.
+                * All other modules come below, this should only happen when `self.combine`
+                * is false.
+                * /
+                if (!self.combine) {
+                    resolved[m.type].unshift(url);
+                } else {
+                    resolved[m.type].push(url);
+                }
+
+
                 resolved[m.type + 'Mods'].push(m);
             }
         }
+        */
 
 
         return resolved;

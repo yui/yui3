@@ -518,7 +518,7 @@ proto = {
                     this.log('applyTo not found: ' + method, 'warn', 'yui');
                 }
             }
-            return m.apply(instance, args);
+            return m && m.apply(instance, args);
         }
 
         return null;
@@ -981,6 +981,11 @@ with any configuration info required for the module.
                 handleLoader();
             }
             return Y;
+        }
+
+        if (mods['loader'] && !Y.Loader) {
+            Y.log('Loader was found in meta, but it is not attached. Attaching..', 'info', 'yui');
+            Y._attach(['loader']);
         }
 
         // Y.log('before loader requirements: ' + args, 'info', 'yui');
