@@ -167,6 +167,11 @@ YUI.add('core-tests', function(Y) {
                 Assert.isObject(Y.Node, 'Node was not loaded');
             });
         },
+        /* TODO Find a better way to test this.
+        This test will fail since it's loading all modules.
+        Including test modules so the test will re-execute and
+        loop de loop..
+
         test_use_star: function() {
             var Assert = Y.Assert,
                 testY = YUI().use('*');
@@ -174,6 +179,7 @@ YUI.add('core-tests', function(Y) {
             Assert.isObject(testY.Test, 'Failed to load via use *');
             
         },
+        */
         test_one_submodule: function() {
             var Assert = Y.Assert;
             YUI({
@@ -297,10 +303,10 @@ YUI.add('core-tests', function(Y) {
                 Assert.isTrue(false, 'testY.foobar should not have ever fired.');
             };
 
-            YUI.applyTo(id, 'io.xdrReady', {}); //Should call
-            YUI.applyTo(id, 'io.xdrResponse', {}); //Does not exist
-            YUI.applyTo(id, 'foobar', {}); //Should not call
-            YUI.applyTo('1234567890', 'io.xdrReady', {}); //Should not call since instance id is invalid
+            YUI.applyTo(id, 'io.xdrReady', []); //Should call
+            YUI.applyTo(id, 'io.xdrResponse', []); //Does not exist
+            YUI.applyTo(id, 'foobar', []); //Should not call
+            YUI.applyTo('1234567890', 'io.xdrReady', []); //Should not call since instance id is invalid
         },
         test_global_config: function() {
             var Assert = Y.Assert,
