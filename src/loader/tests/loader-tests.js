@@ -517,7 +517,6 @@ YUI.add('loader-tests', function(Y) {
             });
 
             var out = loader.resolve(true);
-            console.log(out);
 
             Assert.areEqual(3, out.js.length, 'Number of JS modules is not correct');
             Assert.isTrue((out.js[2].indexOf('/yui/?yui-library') === 0), 'Combo URL is not correct');
