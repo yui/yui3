@@ -254,35 +254,6 @@ LeftAxisLayout.prototype = {
         props.y = Math.round(topOffset);
         this._rotate(label, props);
     },
-
-    /**
-     * Calculates the size and positions the content elements.
-     *
-     * @method setSizeAndPosition
-     * @protected
-     */
-    setSizeAndPosition: function()
-    {
-        var host = this,
-            labelSize = host._maxLabelSize,
-            style = host.get("styles"),
-            leftTickOffset = host.get("leftTickOffset"),
-            sz = labelSize + leftTickOffset,
-            totalTitleSize = this._totalTitleSize,
-            margin = style.label.margin;
-        if(margin && margin.right)
-        {
-            sz += margin.right;
-        }
-        sz += totalTitleSize;
-        sz = Math.round(sz);
-        if(this._explicitWidth)
-        {
-            sz = this._explicitWidth;
-        }
-        host.set("width", sz);
-        host.get("contentBox").setStyle("width", sz);
-    },
     
     /**
      * Adjust the position of the Axis widget's content box for internal axes.

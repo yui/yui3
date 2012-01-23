@@ -253,31 +253,6 @@ BottomAxisLayout.prototype = {
         props.y = topOffset;
         host._rotate(label, props);
     },
-    
-    /**
-     * Calculates the size and positions the content elements.
-     *
-     * @method setSizeAndPosition
-     * @protected
-     */
-    setSizeAndPosition: function()
-    {
-        var host = this,
-            labelSize = host._maxLabelSize,
-            tickLength = host.get("bottomTickLength"),
-            style = host.get("styles"),
-            sz = tickLength + labelSize,
-            margin = style.label.margin;
-        if(margin && margin.top)
-        {   
-            sz += margin.top;
-        }
-        sz = Math.round(sz);
-        if(!host._explicitHeight)
-        {
-            host.height = sz;
-        }
-    },
 
     /**
      * Adjusts position for inner ticks.

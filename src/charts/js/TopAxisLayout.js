@@ -261,38 +261,6 @@ TopAxisLayout.prototype = {
         props.labelHeight = labelHeight;
         this._rotate(label, props);
     },
-
-    /**
-     * Calculates the size and positions the content elements.
-     *
-     * @method setSizeAndPosition
-     * @protected
-     */
-    setSizeAndPosition: function()
-    {
-        var host = this,
-            labelSize = host._maxLabelSize,
-            tickOffset = host.get("topTickOffset"),
-            style = host.get("styles"),
-            margin = style.label.margin,
-            graphic = host.get("graphic"),
-            sz = tickOffset + labelSize,
-            titleMargin = style.title.margin;
-        if(margin && margin.bottom)
-        {
-            sz += margin.bottom;
-        }
-        if(this.get("title"))
-        {
-            sz += this._titleSize + titleMargin.top + titleMargin.bottom;
-        }
-        if(this._explicitHeight)
-        {
-            sz = this._explicitHeight;
-        }
-        host.set("height", sz);
-        graphic.set("y", sz - tickOffset);
-    },
     
     /**
      * Adjusts position for inner ticks.

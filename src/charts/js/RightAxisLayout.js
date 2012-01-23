@@ -260,32 +260,6 @@ RightAxisLayout.prototype = {
         props.y = Math.round(topOffset);
         this._rotate(label, props);
     },
-
-    /**
-     * Calculates the size and positions the content elements.
-     *
-     * @method setSizeAndPosition
-     * @protected
-     */
-    setSizeAndPosition: function()
-    {
-        var host = this,
-            label = host.get("styles").label,
-            labelSize = host._maxLabelSize,
-            tickOffset = host.get("rightTickOffset"),
-            sz = tickOffset + labelSize;
-        if(label.margin && label.margin.left)
-        {
-            sz += label.margin.left;
-        }
-        sz += this._titleSize;
-        if(this._explicitWidth)
-        {
-            sz = this._explicitWith;
-        }
-        host.set("width", sz);
-        host.get("contentBox").setStyle("width", sz);
-    },
     
     /**
      * Adjusts position for inner ticks.
