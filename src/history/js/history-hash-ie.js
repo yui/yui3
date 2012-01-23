@@ -16,9 +16,8 @@ if (Y.UA.ie && !Y.HistoryBase.nativeHashChange) {
         GlobalEnv   = YUI.namespace('Env.HistoryHash'),
         HistoryHash = Y.HistoryHash,
 
-        iframe      = GlobalEnv._iframe,
-        win         = Y.config.win,
-        location    = win.location;
+        iframe = GlobalEnv._iframe,
+        win    = Y.config.win;
 
     /**
      * Gets the raw (not decoded) current location hash from the IE iframe,

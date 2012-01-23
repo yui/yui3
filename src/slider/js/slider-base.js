@@ -182,12 +182,12 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
     },
     
     /**
-     * Gives focus to the thumb enabling keyboard access after clicking thumb or rail
+     * Gives focus to the thumb enabling keyboard access after clicking thumb
      *
-     * @method _focusThumb
+     * @method _onThumbClick
      * @protected
      */
-    _focusThumb : function(e){
+    _onThumbClick : function(e){
         this.thumb.focus();
     },
     
@@ -217,7 +217,7 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
         boundingBox.on("key", this._onLeftRightKeyMeta, keyLeftRightSpecMeta, this);
         // End keyboard listeners //////////////////////////////////
 
-        this.thumb.on('click', this._focusThumb, this);
+        this.thumb.on('click', this._onThumbClick, this);
 
         this._bindThumbDD();
 

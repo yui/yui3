@@ -68,8 +68,7 @@ Y.mix(ACBase.prototype, {
      * @for AutoCompleteBase
      */
     _createIOSource: function (source) {
-        var cache    = {},
-            ioSource = {type: 'io'},
+        var ioSource = {type: 'io'},
             that     = this,
             ioRequest, lastRequest, loading;
 
@@ -80,8 +79,8 @@ Y.mix(ACBase.prototype, {
                 query    = request.query;
 
             // Return immediately on a cached response.
-            if (cache[cacheKey]) {
-                that[_SOURCE_SUCCESS](cache[cacheKey], request);
+            if (that._cache && cacheKey in that._cache) {
+                that[_SOURCE_SUCCESS](that._cache[cacheKey], request);
                 return;
             }
 
@@ -102,7 +101,7 @@ Y.mix(ACBase.prototype, {
                         }
 
                         if (data) {
-                            cache[cacheKey] = data;
+                            that._cache && (that._cache[cacheKey] = data);
                             that[_SOURCE_SUCCESS](data, request);
                         }
                     }
@@ -144,8 +143,7 @@ Y.mix(ACBase.prototype, {
      * @for AutoCompleteBase
      */
     _createJSONPSource: function (source) {
-        var cache       = {},
-            jsonpSource = {type: 'jsonp'},
+        var jsonpSource = {type: 'jsonp'},
             that        = this,
             lastRequest, loading;
 
@@ -153,8 +151,8 @@ Y.mix(ACBase.prototype, {
             var cacheKey = request.request,
                 query    = request.query;
 
-            if (cache[cacheKey]) {
-                that[_SOURCE_SUCCESS](cache[cacheKey], request);
+            if (that._cache && cacheKey in that._cache) {
+                that[_SOURCE_SUCCESS](that._cache[cacheKey], request);
                 return;
             }
 
@@ -167,7 +165,7 @@ Y.mix(ACBase.prototype, {
             //
             // http://yuilibrary.com/projects/yui3/ticket/2529371
             source._config.on.success = function (data) {
-                cache[cacheKey] = data;
+                that._cache && (that._cache[cacheKey] = data);
                 that[_SOURCE_SUCCESS](data, request);
             };
 
@@ -280,13 +278,12 @@ Y.mix(ACBase.prototype, {
      * @for AutoCompleteBase
      */
     _createYQLSource: function (source) {
-        var cache     = {},
+        var that      = this,
             yqlSource = {type: 'yql'},
-            that      = this,
             lastRequest, loading, yqlRequest;
 
-        if (!this.get(RESULT_LIST_LOCATOR)) {
-            this.set(RESULT_LIST_LOCATOR, this._defaultYQLLocator);
+        if (!that.get(RESULT_LIST_LOCATOR)) {
+            that.set(RESULT_LIST_LOCATOR, that._defaultYQLLocator);
         }
 
         function _sendRequest(request) {
@@ -301,13 +298,13 @@ Y.mix(ACBase.prototype, {
                 query     : query
             });
 
-            if (cache[yqlQuery]) {
-                that[_SOURCE_SUCCESS](cache[yqlQuery], request);
+            if (that._cache && yqlQuery in that._cache) {
+                that[_SOURCE_SUCCESS](that._cache[yqlQuery], request);
                 return;
             }
 
             callback = function (data) {
-                cache[yqlQuery] = data;
+                that._cache && (that._cache[yqlQuery] = data);
                 that[_SOURCE_SUCCESS](data, request);
             };
 

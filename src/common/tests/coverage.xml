@@ -42,9 +42,11 @@
         <url>datasource/tests/datasource-polling.html</url>
         <url>datasource/tests/datasource-textschema.html</url>
         <url>datasource/tests/datasource-xmlschema.html</url>
+        <url>dd/tests/index.html</url>
         <url>dial/tests/dial.html</url>
         <url>dump/tests/dump.html</url>
         <url>escape/tests/functional/escape.html</url>
+        <url>editor/tests/editor.html</url>
         <url>event-custom/tests/customevent.html</url>
         <url>event-valuechange/tests/functional/event-valuechange.html</url>
         <url>event/tests/dom.html</url>
@@ -66,5 +68,14 @@
             <url>pjax/tests/pjax.html</url>
             <url>parallel/tests/index.html</url>
         -->
+        <url>loader/tests/index.html</url>
+        <url>yui/tests/index.html</url>
+        <url>yui/tests/array.html</url>
+        <url>yui/tests/lang.html</url>
+        <url>yui/tests/object.html</url>
+
+        <url>yui-throttle/tests/index.html</url>
+
+        <url>yql/tests/index.html</url>
     </tests>
 </yuitest>

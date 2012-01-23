@@ -115,8 +115,11 @@ suite.add(new Y.Test.Case({
         Assert.isTrue(Y.Object.isEmpty(null));
         Assert.isTrue(Y.Object.isEmpty(''));
         Assert.isTrue(Y.Object.isEmpty([]));
-        Assert.isFalse(Y.Object.isEmpty('hi'));
-        Assert.isFalse(Y.Object.isEmpty(['yo']));
+
+        if (!Y.UA.ie) {
+            Assert.isFalse(Y.Object.isEmpty('hi'));
+            Assert.isFalse(Y.Object.isEmpty(['yo']));
+        }
     },
 
     test_keys: function () {
