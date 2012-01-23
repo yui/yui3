@@ -42,7 +42,11 @@
         <url>datasource/tests/datasource-polling.html</url>
         <url>datasource/tests/datasource-textschema.html</url>
         <url>datasource/tests/datasource-xmlschema.html</url>
-        <url>dd/tests/index.html</url>
+
+        <!-- This test hangs on the CI system.
+
+            <url>dd/tests/index.html</url>
+        -->
         <url>dial/tests/dial.html</url>
         <url>dump/tests/dump.html</url>
         <url>escape/tests/functional/escape.html</url>
