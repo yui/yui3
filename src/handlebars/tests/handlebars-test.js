@@ -43,6 +43,15 @@ suite.add(new Y.Test.Case({
             "foo bar",
             template({bar: 'bar'})
         );
+    },
+
+    '`0` should be considered a non-empty value': function () {
+        var template = H.compile('foo {{bar}}');
+
+        Assert.areSame(
+            "foo 0",
+            template({bar: 0})
+        );
     }
 }));
 
