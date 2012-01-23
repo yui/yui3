@@ -10,6 +10,24 @@
  */
 Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     /**
+     * Storage for calculatedWidth value.
+     *
+     * @property _calculatedWidth
+     * @type Number
+     * @private
+     */
+    _calculatedWidth: 0,
+
+    /**
+     * Storage for calculatedHeight value.
+     *
+     * @property _calculatedHeight
+     * @type Number
+     * @private
+     */
+    _calculatedHeight: 0,
+
+    /**
      * Handles change to the dataProvider
      * 
      * @method _dataChangeHandler
@@ -964,19 +982,24 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     {
         /**
          * When set, defines the width of a vertical axis instance. By default, vertical axes automatically size based on their contents. When the
-         * explicitWidth attribute is set, the width is the value of explicitWidth. When using the explicitWidth
-         * attribute, it must be set to a value greater than the total content width. Otherwise, excess content will overflow.
+         * width attribute is set, the axis will not calculate its width. When the width attribute is explicitly set, axis labels will postion themselves off of the 
+         * the inner edge of the axis and the title, if present, will position itself off of the outer edge. If a specified width is less than the sum of 
+         * the axis' contents, excess content will overflow.
          *
-         * @attribute explicitWidth
+         * @attribute width
          * @lazyAdd false
          * @type Number
          */
-        explicitWidth: {
+        width: {
             lazyAdd: false,
 
             getter: function() 
             {
-                return this._explicitWidth;        
+                if(this._explicitWidth)
+                {
+                    return this._explicitWidth;        
+                }
+                return this._calculatedWidth;
             },
 
             setter: function(val)
@@ -988,19 +1011,24 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
 
         /**
          * When set, defines the height of a horizontal axis instance. By default, horizontal axes automatically size based on their contents. When the
-         * explicitHeight attribute is set, the height is the value of explicitHeight. When using the explicitHeight
-         * attribute, it must be set to a value greater than the total content height. Otherwise, excess content will overflow.
+         * height attribute is set, the axis will not calculate its height. When the height attribute is explicitly set, axis labels will postion themselves off of the 
+         * the inner edge of the axis and the title, if present, will position itself off of the outer edge. If a specified height is less than the sum of 
+         * the axis' contents, excess content will overflow.
          *
-         * @attribute explicitHeight
+         * @attribute height
          * @lazyAdd false
          * @type Number
          */
-        explicitHeight: {
+        height: {
             lazyAdd: false,
 
             getter: function() 
             {
-                return this._explicitHeight;        
+                if(this._explicitHeight)
+                {
+                    return this._explicitHeight;        
+                }
+                return this._calculatedHeight;
             },
 
             setter: function(val)
@@ -1009,6 +1037,47 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 return val;
             }
         },
+
+        /**
+         * Calculated value of an axis' width. By default, the value is used internally for vertical axes. If the `width` attribute is explicitly set, this value will be ignored.
+         *
+         * @attribute calculatedWidth
+         * @type Number
+         * @private
+         */
+        calculatedWidth: {
+            getter: function()
+            {
+                return this._calculatedWidth;
+            },
+
+            setter: function(val)
+            {
+                this._calculatedWidth = val;
+                return val;
+            }
+        },
+
+        /**
+         * Calculated value of an axis' height. By default, the value is used internally for horizontal axes. If the `height` attribute is explicitly set, this value will be ignored.
+         *
+         * @attribute calculatedHeight
+         * @type Number
+         * @private
+         */
+        calculatedHeight: {
+            getter: function()
+            {
+                return this._calculatedHeight;
+            },
+
+            setter: function(val)
+            {
+                this._calculatedHeight = val;
+                return val;
+            }
+        },
+
         /**
          * Difference betweend the first/last tick and edge of axis.
          *

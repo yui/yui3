@@ -169,7 +169,7 @@ RightAxisLayout.prototype = {
                 totalTitleSize = this._totalTitleSize,
                 rightTickOffset = host.get("rightTickOffset"),
                 margin = styles.label.margin.right;
-            host._maxlabelsize =  w - (rightTickOffset + margin + totalTitleSize);
+            host._maxLabelSize =  w - (rightTickOffset + margin + totalTitleSize);
             return true;
         }
         return false;
@@ -293,7 +293,7 @@ RightAxisLayout.prototype = {
         {
             ttl = this._explicitWidth;
         }
-        host.set("width", ttl);
+        host.set("calculatedWidth", ttl);
         host.get("contentBox").setStyle("width", ttl);
     }
 };

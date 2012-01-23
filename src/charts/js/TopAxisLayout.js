@@ -165,9 +165,9 @@ TopAxisLayout.prototype = {
             var host = this,
                 h = host._explicitHeight,
                 totalTitleSize = host._totalTitleSize,
-                bottomtickoffset = host.get("topTickoffset"),
+                topTickOffset = host.get("topTickOffset"),
                 margin = styles.label.margin.right;
-            host._maxlabelsize =  h - (bottomtickoffset + margin + totalTitleSize);
+            host._maxLabelSize =  h - (topTickOffset + margin + totalTitleSize);
             return true;
         }
         return false;
@@ -293,7 +293,7 @@ TopAxisLayout.prototype = {
         {
            ttl = this._explicitWidth; 
         }
-        host.set("height", ttl);
+        host.set("calculatedHeight", ttl);
         graphic.set("y", ttl - topTickOffset);
     }
 };

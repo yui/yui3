@@ -168,7 +168,7 @@ LeftAxisLayout.prototype = {
                 totalTitleSize = host._totalTitleSize,
                 leftTickOffset = host.get("leftTickOffset"),
                 margin = styles.label.margin.right;
-            host._maxlabelsize =  w - (leftTickOffset + margin + totalTitleSize);
+            host._maxLabelSize =  w - (leftTickOffset + margin + totalTitleSize);
             return true;
         }
         return false;
@@ -286,7 +286,7 @@ LeftAxisLayout.prototype = {
         {
             ttl = this._explicitWidth;
         }
-        this.set("width", ttl);
+        this.set("calculatedWidth", ttl);
         graphic.set("x", ttl - tickOffset);
     }
 };

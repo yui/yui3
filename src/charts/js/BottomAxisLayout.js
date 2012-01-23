@@ -167,7 +167,7 @@ BottomAxisLayout.prototype = {
                 totalTitleSize = host._totalTitleSize,
                 bottomTickOffset = host.get("bottomTickOffset"),
                 margin = styles.label.margin.right;
-            host._maxlabelsize =  h - (bottomTickOffset + margin + totalTitleSize);
+            host._maxLabelSize =  h - (bottomTickOffset + margin + totalTitleSize);
             return true;
         }
         return false;
@@ -284,7 +284,7 @@ BottomAxisLayout.prototype = {
         {
             ttl = host._explicitHeight;
         }
-        host.set("height", ttl);
+        host.set("calculatedHeight", ttl);
     }
 };
 Y.BottomAxisLayout = BottomAxisLayout;
