@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<html class="foo">
 <head>
 <title>YUI Seed Tests</title>
 </head>
@@ -7,6 +7,10 @@
 
 <div id="log"></div>
 
+
+<script>
+var YUI = {};
+</script>
 <!-- This is the main test file, notice it's using the `yui-base` seed file 
 without Loader on the page, so Loader is fetched before tests are executed. -->
 <script type="text/javascript" src="../../../build/yui-base/yui-base.js"></script>
@@ -16,6 +20,16 @@ YUI.GlobalConfig = {
     modules: {
         'global-mod': {
             fullpath: './assets/globalmod.js'
+        }
+    },
+    groups: {
+        //Just for code coverage..
+        noop: {
+            modules: {
+                noop: {
+                    fullpath: './noop.js'
+                }
+            }
         }
     }
 };

@@ -167,6 +167,13 @@ YUI.add('core-tests', function(Y) {
                 Assert.isObject(Y.Node, 'Node was not loaded');
             });
         },
+        test_use_star: function() {
+            var Assert = Y.Assert,
+                testY = YUI().use('*');
+
+            Assert.isObject(testY.Test, 'Failed to load via use *');
+            
+        },
         test_one_submodule: function() {
             var Assert = Y.Assert;
             YUI({
@@ -265,6 +272,36 @@ YUI.add('core-tests', function(Y) {
             Assert.isObject(YUI.GlobalConfig.modules.foo, 'Second module in global config not created');
 
         },
+        test_old_config: function() {
+            var Assert = Y.Assert,
+                testY = YUI();
+
+            testY._config({
+                foo: true
+            });
+
+            Assert.isTrue(testY.config.foo, 'Old style config did not apply');
+        },
+        test_applyTo: function() {
+            var Assert = Y.Assert,
+                testY = YUI(),
+                id = testY.id;
+
+            testY.io = {
+                xdrReady: function() {
+                    Assert.areSame(id, this.id, 'Did not apply to the right instance');
+                }
+            };
+
+            testY.foobar = function() {
+                Assert.isTrue(false, 'testY.foobar should not have ever fired.');
+            };
+
+            YUI.applyTo(id, 'io.xdrReady', {}); //Should call
+            YUI.applyTo(id, 'io.xdrResponse', {}); //Does not exist
+            YUI.applyTo(id, 'foobar', {}); //Should not call
+            YUI.applyTo('1234567890', 'io.xdrReady', {}); //Should not call since instance id is invalid
+        },
         test_global_config: function() {
             var Assert = Y.Assert,
                 test = this;
@@ -296,6 +333,91 @@ YUI.add('core-tests', function(Y) {
 
             Assert.areEqual(YUI.Env.UA.userAgent, Y2.UA.userAgent, 'Global UA and local (Y2) UA are different');
 
+        },
+        test_conditional: function() {
+            var Assert = Y.Assert,
+            test = this;
+
+            YUI.add('cond', function(Y) {
+                Y.cond = true;
+            });
+
+            YUI.add('cond-test', function(Y) {
+                Y.condTest = true;
+            });
+
+            YUI({
+                modules: {
+                    'cond-test': {
+                        condition: {
+                            trigger: 'cond',
+                            test: function() {
+                                return true;
+                            }
+                        }                       
+                    }
+                }
+            }).use('cond', function(Y2) {
+                //Should be sync..
+                Assert.isTrue(Y2.cond, 'Conditional module was not loaded.');
+                Assert.isTrue(Y2.condTest, 'Conditional module was not loaded.');
+            });
+            
+        },
+        test_missed: function() {
+            var Assert = Y.Assert;
+
+            var testY = YUI().use('bogus');
+
+            Assert.areSame(1, testY.Env._missed.length, 'Failed to error on bogus module');
+            Assert.areSame('bogus', testY.Env._missed[0], 'Failed to error on bogus module');
+
+            YUI.add('bogus', function(Y) { Y.bogus = true; });
+
+            testY.use('bogus');
+
+            Assert.areSame(0, testY.Env._missed.length, 'Failed to remove added bogus module');
+
+        },
+        test_attach_error: function() {
+            var Assert = Y.Assert;
+            YUI.add('attach-error', function() { Y.push(); });
+
+            YUI({
+                errorFn: function(str) {
+                    Assert.isTrue(str.indexOf('attach-error') > -1, 'Failed to fire errorFn on attach error');
+                    return true;
+                }
+            }).use('attach-error');
+        },
+        test_attach_after: function() {
+            var Assert = Y.Assert;
+            YUI.add('after-test', function(Y) {
+                Y.afterTest = true; 
+                Assert.isObject(Y.Node, 'Node not loaded before this module');
+            }, '1.0.0', {
+                after: [ 'node' ]
+            });
+
+            YUI().use('after-test', function(Y2) {
+                Assert.isTrue(Y2.afterTest, 'after-test module was not loaded');
+            });
+        },
+        test_dump_core: function() {
+            var Assert = Y.Assert,
+                o = {},
+                testY = YUI();
+
+            var str = testY.dump(o);
+            Assert.isString(str, 'Default Y.dump failed to return a string');
+        },
+        test_destroy: function() {
+            var Assert = Y.Assert,
+                testY = YUI();
+            
+            testY.destroy();
+            Assert.isUndefined(testY.Env, 'Environment not destroyed');
+            Assert.isUndefined(testY.config, 'Instance config not destroyed');
         }
     });
 
