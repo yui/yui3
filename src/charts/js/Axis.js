@@ -343,12 +343,15 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 position,
                 lineStart,
                 label,
+                labelWidth,
+                labelHeight,
                 labelFunction = this.get("labelFunction"),
                 labelFunctionScope = this.get("labelFunctionScope"),
                 labelFormat = this.get("labelFormat"),
                 graphic = this.get("graphic"),
                 path = this.get("path"),
-                tickPath;
+                tickPath,
+                explicitlySized;
             this._labelWidths = [];
             this._labelHeights = [];
             graphic.set("autoDraw", false);
@@ -386,7 +389,10 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             this._createLabelCache();
             this._tickPoints = [];
             this._maxLabelSize = 0; 
+            this._totalTitleSize = 0;
             this._titleSize = 0;
+            this._setTitle();
+            explicitlySized = layout.getExplicitlySized.apply(this, [styles]);
             for(; i < len; ++i)
             {
                 if(drawTicks) 
@@ -396,17 +402,26 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 position = this.getPosition(tickPoint);
                 label = this.getLabel(tickPoint, labelStyles);
                 label.innerHTML = labelFunction.apply(labelFunctionScope, [this.getLabelByIndex(i, len), labelFormat]);
-                this._layout.updateMaxLabelSize.apply(this, [label]);
+                labelWidth = Math.round(label.offsetWidth);
+                labelHeight = Math.round(label.offsetHeight);
+                if(!explicitlySized)
+                {
+                    this._layout.updateMaxLabelSize.apply(this, [labelWidth, labelHeight]);
+                }
+                this._labelWidths.push(labelWidth);
+                this._labelHeights.push(labelHeight);
                 tickPoint = this.getNextPoint(tickPoint, majorUnitDistance);
             }
             this._clearLabelCache();
-            this._updateTitle();
-            layout.setSizeAndPosition.apply(this);
             if(this.get("overlapGraph"))
             {
                layout.offsetNodeForTick.apply(this, [this.get("contentBox")]);
             }
             layout.setCalculatedSize.apply(this);
+            if(this._titleTextField)
+            {
+                this._layout.positionTitle.apply(this, [this._titleTextField]);
+            }
             for(i = 0; i < len; ++i)
             {
                 layout.positionLabel.apply(this, [this.get("labels")[i], this._tickPoints[i], styles, i]);
@@ -422,6 +437,46 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             this._updatePathElement();
             this.fire("axisRendered");
         }
+    },
+
+    /**
+     * Calculates and sets the total size of a title.
+     *
+     * @method _setTotalTitleSize
+     * @param {Object} styles Properties for the title field.
+     * @private
+     */
+    _setTotalTitleSize: function(styles)
+    {
+        var title = this._titleTextField,
+            w = title.offsetWidth,
+            h = title.offsetHeight,
+            rot = this._titleRotationProps.rot,
+            bounds,
+            size,
+            margin = styles.margin,
+            position = this.get("position"),
+            matrix = new Y.Matrix();
+        matrix.rotate(rot);
+        bounds = matrix.getContentRect(w, h);
+        if(position == "left" || position == "right")
+        {
+            size = bounds.right - bounds.left;
+            if(margin)
+            {
+                size += margin.left + margin.right;
+            }
+        }
+        else
+        {
+            size = bounds.bottom - bounds.top;
+            if(margin)
+            {
+                size += margin.top + margin.bottom;
+            }
+        }
+        this._titleBounds = bounds;
+        this._totalTitleSize = size;
     },
 
     /**
@@ -458,7 +513,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
      * @method _updateTitle
      * @private
      */
-    _updateTitle: function()
+    _setTitle: function()
     {
         var i,
             styles,
@@ -482,6 +537,13 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 titleTextField.setAttribute("class", "axisTitle");
                 this.get("contentBox").append(titleTextField);
             }
+            else if(!DOCUMENT.createElementNS)
+            {
+                if(titleTextField.style.filter)
+                {
+                    titleTextField.style.filter = null;
+                }
+            }
             titleTextField.style.position = "absolute";
             for(i in styles)
             {
@@ -492,7 +554,8 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             }
             titleTextField.innerHTML = this.get("titleFunction")(title);
             this._titleTextField = titleTextField;
-            this._layout.positionTitle.apply(this, [titleTextField]);
+            this._titleRotationProps = this._getTextRotationProps(styles);
+            this._setTotalTitleSize(styles);
         }
         else if(titleTextField)
         {
@@ -502,6 +565,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 parentNode.removeChild(titleTextField);
             }
             this._titleTextField = null;
+            this._totalTitleSize = 0;
         }
     },
 
@@ -898,6 +962,53 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
 }, {
     ATTRS: 
     {
+        /**
+         * When set, defines the width of a vertical axis instance. By default, vertical axes automatically size based on their contents. When the
+         * explicitWidth attribute is set, the width is the value of explicitWidth. When using the explicitWidth
+         * attribute, it must be set to a value greater than the total content width. Otherwise, excess content will overflow.
+         *
+         * @attribute explicitWidth
+         * @lazyAdd false
+         * @type Number
+         */
+        explicitWidth: {
+            lazyAdd: false,
+
+            getter: function() 
+            {
+                return this._explicitWidth;        
+            },
+
+            setter: function(val)
+            {
+                this._explicitWidth = val;
+                return val;
+            }
+        },
+
+        /**
+         * When set, defines the height of a horizontal axis instance. By default, horizontal axes automatically size based on their contents. When the
+         * explicitHeight attribute is set, the height is the value of explicitHeight. When using the explicitHeight
+         * attribute, it must be set to a value greater than the total content height. Otherwise, excess content will overflow.
+         *
+         * @attribute explicitHeight
+         * @lazyAdd false
+         * @type Number
+         */
+        explicitHeight: {
+            lazyAdd: false,
+
+            getter: function() 
+            {
+                return this._explicitHeight;        
+            },
+
+            setter: function(val)
+            {
+                this._explicitHeight = val;
+                return val;
+            }
+        },
         /**
          * Difference betweend the first/last tick and edge of axis.
          *

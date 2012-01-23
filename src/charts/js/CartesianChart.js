@@ -505,7 +505,9 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 minimum:"minimum", 
                 roundingMethod:"roundingMethod",
                 alwaysShowZero:"alwaysShowZero",
-                title:"title"
+                title:"title",
+                explicitWidth:"explicitWidth",
+                explicitHeight:"explicitHeight"
             },
             dp = this.get("dataProvider"),
             ai,

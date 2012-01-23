@@ -129,7 +129,7 @@ RightAxisLayout.prototype = {
      * @param {HTMLElement} label to measure
      * @protected
      */
-    updateMaxLabelSize: function(label)
+    updateMaxLabelSize: function(labelWidth, labelHeight)
     {
         var host = this,
             props = this._labelRotationProps,
@@ -137,11 +137,7 @@ RightAxisLayout.prototype = {
             absRot = props.absRot,
             sinRadians = props.sinRadians,
             cosRadians = props.cosRadians,
-            max,
-            labelWidth = label.offsetWidth,
-            labelHeight = label.offsetHeight;
-        this._labelWidths.push(Math.round(labelWidth));
-        this._labelHeights.push(Math.round(labelHeight));
+            max;
         if(rot === 0)
         {
             max = labelWidth;
@@ -156,6 +152,28 @@ RightAxisLayout.prototype = {
         }
         host._maxLabelSize = Math.max(host._maxLabelSize, max);
     },
+    
+    /**
+     * Determines the available label width when the axis width has been explicitly set.
+     *
+     * @method getExplicitlySized
+     * @return Boolean
+     * @protected
+     */
+    getExplicitlySized: function(styles)
+    {
+        if(this._explicitWidth)
+        {
+            var host = this,
+                w = host._explicitWidth,
+                totalTitleSize = this._totalTitleSize,
+                rightTickOffset = host.get("rightTickOffset"),
+                margin = styles.label.margin.right;
+            host._maxlabelsize =  w - (rightTickOffset + margin + totalTitleSize);
+            return true;
+        }
+        return false;
+    },
 
     /**
      * Rotate and position title.
@@ -167,90 +185,24 @@ RightAxisLayout.prototype = {
     positionTitle: function(label)
     {
         var host = this,
-            max,
-            styles = host.get("styles").title,
-            margin = styles.margin,
-            props = this._getTextRotationProps(styles),
-            rot = props.rot,
-            absRot = props.absRot,
-            sinRadians = props.sinRadians,
-            cosRadians = props.cosRadians,
-            x = 0,
-            y = this.get("height")/2,
-            leftOffset = this._maxLabelSize + margin.left + this.get("rightTickOffset") + this.get("styles").label.margin.left,
-            topOffset = 0,
+            bounds = host._titleBounds,
+            margin = host.get("styles").title.margin,
+            props = host._titleRotationProps,
             labelWidth = label.offsetWidth,
-            labelHeight = label.offsetHeight;
-        if(Y.config.doc.createElementNS)
+            labelHeight = label.offsetHeight,
+            w = bounds.right - bounds.left,
+            x = this.get("width") - (labelWidth * 0.5) - (w * 0.5),
+            y = (host.get("height") * 0.5) - (labelHeight * 0.5);
+        props.labelWidth = labelWidth;
+        props.labelHeight = labelHeight;
+        if(margin && margin.right)
         {
-            if(rot === 0)
-            {
-                max = labelWidth;
-                topOffset -= labelHeight * 0.5;
-            }
-            else if(absRot === 90)
-            {
-                max = labelHeight;
-                if(rot === 90)
-                {
-                    topOffset -= labelWidth * 0.5;
-                    leftOffset += labelHeight;
-                }
-                else
-                {
-                    topOffset += labelWidth * 0.5;
-                }
-            }
-            else
-            {
-                max = (cosRadians * labelWidth) + (sinRadians * labelHeight);
-                if(rot > 0)
-                {
-                    topOffset -= ((sinRadians * labelWidth) + (cosRadians * labelHeight))/2;
-                    leftOffset += Math.min(labelHeight, (sinRadians * labelHeight));
-                }
-                else
-                {
-                    topOffset += (sinRadians * labelWidth)/2 - (cosRadians * labelHeight)/2;
-                }
-            }
-            y += topOffset;
-            x += leftOffset;
-            props.x = Math.round(x);
-            props.y = Math.round(y);
+            x -= margin.left;
         }
-        else
-        {
-            label.style.filter = null; 
-            labelWidth = Math.round(label.offsetWidth);
-            labelHeight = Math.round(label.offsetHeight);
-            if(rot === 0)
-            {
-                topOffset -= labelHeight * 0.5;
-                max = labelWidth;
-            }
-            else if(rot === 90)
-            {
-                topOffset -= labelWidth * 0.5;
-                max = labelHeight;
-            }
-            else if(rot === -90)
-            {
-                topOffset -= labelWidth * 0.5;
-                max = labelHeight;
-            }
-            else
-            {
-                max = (cosRadians * labelWidth) + (sinRadians * labelHeight);
-                topOffset -= ((sinRadians * labelWidth) + (cosRadians * labelHeight))/2;
-            }
-            y += topOffset;
-            x += leftOffset;
-            props.x = Math.round(x);
-            props.y = Math.round(y);
-        }
-        this._titleSize = max;
-        this._rotate(label, props);
+        props.x = x;
+        props.y = y;
+        props.transformOrigin = [0.5, 0.5];
+        host._rotate(label, props);
     },
 
     /**
@@ -327,6 +279,10 @@ RightAxisLayout.prototype = {
             sz += label.margin.left;
         }
         sz += this._titleSize;
+        if(this._explicitWidth)
+        {
+            sz = this._explicitWith;
+        }
         host.set("width", sz);
         host.get("contentBox").setStyle("width", sz);
     },
@@ -357,10 +313,14 @@ RightAxisLayout.prototype = {
         var host = this,
             styles = host.get("styles"),
             labelStyle = styles.label,
-            titleMargin = styles.title.margin,
-            totalTitleSize = host.get("title") ? titleMargin.left + titleMargin.right + host._titleSize : 0,
+            totalTitleSize = this._totalTitleSize,
             ttl = Math.round(host.get("rightTickOffset") + host._maxLabelSize + totalTitleSize + labelStyle.margin.left);
+        if(this._explicitWidth)
+        {
+            ttl = this._explicitWidth;
+        }
         host.set("width", ttl);
+        host.get("contentBox").setStyle("width", ttl);
     }
 };
 
