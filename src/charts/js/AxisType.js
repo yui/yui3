@@ -34,6 +34,8 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
         this.after("positionChange", this._positionChangeHandler);
         this.after("widthChange", this._handleSizeChange);
         this.after("heightChange", this._handleSizeChange);
+        this.after("calculatedWidthChange", this._handleSizeChange);
+        this.after("calculatedHeightChange", this._handleSizeChange);
     },
 
     /**

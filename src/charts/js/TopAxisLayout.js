@@ -127,7 +127,7 @@ TopAxisLayout.prototype = {
      * @param {HTMLElement} label to measure
      * @protected
      */
-    updateMaxLabelSize: function(label)
+    updateMaxLabelSize: function(labelWidth, labelHeight)
     {
         var host = this,
             props = this._labelRotationProps,
@@ -138,17 +138,39 @@ TopAxisLayout.prototype = {
             max;
         if(rot === 0)
         {
-            max = label.offsetHeight;
+            max = labelHeight;
         }
         else if(absRot === 90)
         {
-            max = label.offsetWidth;
+            max = labelWidth;
         }
         else
         {
-            max = (sinRadians * label.offsetWidth) + (cosRadians * label.offsetHeight); 
+            max = (sinRadians * labelWidth) + (cosRadians * labelHeight); 
         }
         host._maxLabelSize = Math.max(host._maxLabelSize, max);
+    },
+
+    /**
+     * Determines the available label height when the axis width has been explicitly set.
+     *
+     * @method getExplicitlySized
+     * @return Boolean
+     * @protected
+     */
+    getExplicitlySized: function(styles)
+    {
+        if(this._explicitHeight)
+        {
+            var host = this,
+                h = host._explicitHeight,
+                totalTitleSize = host._totalTitleSize,
+                topTickOffset = host.get("topTickOffset"),
+                margin = styles.label.margin.right;
+            host._maxLabelSize =  h - (topTickOffset + margin + totalTitleSize);
+            return true;
+        }
+        return false;
     },
 
     /**
@@ -161,89 +183,24 @@ TopAxisLayout.prototype = {
     positionTitle: function(label)
     {
         var host = this,
-            max,
-            styles = host.get("styles").title,
-            props = this._getTextRotationProps(styles),
-            rot = props.rot,
-            absRot = props.absRot,
-            sinRadians = props.sinRadians,
-            cosRadians = props.cosRadians,
-            x = this.get("width")/2,
-            y = styles.margin.top,
-            leftOffset = 0,
-            topOffset = 0,
+            bounds = host._titleBounds,
+            margin = host.get("styles").title.margin,
+            props = host._titleRotationProps,
             labelWidth = label.offsetWidth,
-            labelHeight = label.offsetHeight;
-        if(Y.config.doc.createElementNS)
+            labelHeight = label.offsetHeight,
+            h = bounds.bottom - bounds.top,
+            x = (host.get("width") * 0.5) - (labelWidth * 0.5),
+            y = h/2 - labelHeight/2;
+        props.labelWidth = labelWidth;
+        props.labelHeight = labelHeight;
+        if(margin && margin.top)
         {
-            if(rot === 0)
-            {
-                max = labelHeight;
-                leftOffset -= labelWidth * 0.5;
-            }
-            else if(absRot === 90)
-            {
-                max = labelWidth;
-                if(rot === 90)
-                {
-                    leftOffset += labelHeight/2;
-                }
-                else
-                {
-                    topOffset += labelWidth;
-                    leftOffset -= labelHeight/2;
-                }
-            }
-            else
-            {
-                max = (sinRadians * labelWidth) + (cosRadians * labelHeight);
-                if(rot > 0)
-                {
-                    leftOffset -= (cosRadians * labelWidth)/2 - (sinRadians * labelHeight)/2;
-                }
-                else
-                {
-                    topOffset += (sinRadians * labelWidth);
-                    leftOffset -= (cosRadians * labelWidth)/2 + (sinRadians * labelHeight)/2;
-                }
-            }
-            x += leftOffset;
-            y += topOffset;
-            props.x = Math.round(x);
-            props.y = Math.round(y);
+            y += margin.top;
         }
-        else
-        {
-            label.style.filter = null; 
-            labelWidth = Math.round(label.offsetWidth);
-            labelHeight = Math.round(label.offsetHeight);
-            if(rot === 0)
-            {
-                leftOffset -= labelWidth * 0.5;
-                max = labelHeight;
-            }
-            else if(rot === 90)
-            {
-                leftOffset -= labelHeight * 0.5;
-                max = labelWidth;
-            }
-            else if(rot === -90)
-            {
-                leftOffset -= labelHeight * 0.5;
-                max = labelWidth;
-            }
-            else
-            {
-                max = (sinRadians * labelWidth) + (cosRadians * labelHeight);
-                leftOffset -= ((cosRadians * labelWidth) + (sinRadians * labelHeight))/2;
-            }
-            x += leftOffset;
-            y += topOffset;
-            props.x = Math.round(x);
-            props.y = Math.round(y);
-        }
-        this._titleSize = max;
-        this._rotate(label, props);
+        props.x = x;
+        props.y = y;
+        props.transformOrigin = [0.5, 0.5];
+        host._rotate(label, props);
     },
 
     /**
@@ -255,26 +212,18 @@ TopAxisLayout.prototype = {
      * against.
      * @protected
      */
-    positionLabel: function(label, pt)
+    positionLabel: function(label, pt, styles, i)
     {
         var host = this,
-            tickOffset = host.get("topTickOffset"),
-            style = host.get("styles").label,
-            titleStyles = host.get("styles").title,
-            totalTitleSize = this.get("title") ? this._titleSize + titleStyles.margin.top + titleStyles.margin.bottom : 0,
+            totalTitleSize = this._totalTitleSize,
             maxLabelSize = host._maxLabelSize,
-            margin = 0,
             leftOffset = pt.x,
             topOffset = pt.y + totalTitleSize + maxLabelSize,
             props = this._labelRotationProps,
             rot = props.rot,
             absRot = props.absRot,
-            labelWidth = Math.round(label.offsetWidth),
-            labelHeight = Math.round(label.offsetHeight);
-        if(style.margin && style.margin.bottom)
-        {
-            margin = style.margin.top;
-        }
+            labelWidth = this._labelWidths[i],
+            labelHeight = this._labelHeights[i];
         if(rot === 0)
         {
             props.transformOrigin = [0, 0];
@@ -306,41 +255,11 @@ TopAxisLayout.prototype = {
                 topOffset -= labelHeight - (labelHeight * absRot/180);
             }
         }
-        topOffset += tickOffset;
-        topOffset -= margin;
         props.x = Math.round(leftOffset);
         props.y = Math.round(topOffset);
         props.labelWidth = labelWidth;
         props.labelHeight = labelHeight;
         this._rotate(label, props);
-    },
-
-    /**
-     * Calculates the size and positions the content elements.
-     *
-     * @method setSizeAndPosition
-     * @protected
-     */
-    setSizeAndPosition: function()
-    {
-        var host = this,
-            labelSize = host._maxLabelSize,
-            tickOffset = host.get("topTickOffset"),
-            style = host.get("styles"),
-            margin = style.label.margin,
-            graphic = host.get("graphic"),
-            sz = tickOffset + labelSize,
-            titleMargin = style.title.margin;
-        if(margin && margin.bottom)
-        {
-            sz += margin.bottom;
-        }
-        if(this.get("title"))
-        {
-            sz += this._titleSize + titleMargin.top + titleMargin.bottom;
-        }
-        host.set("height", sz);
-        graphic.set("y", sz - tickOffset);
     },
     
     /**
@@ -366,12 +285,15 @@ TopAxisLayout.prototype = {
             graphic = host.get("graphic"),
             styles = host.get("styles"),
             labelMargin = styles.label.margin,
-            titleMargin = styles.title.margin,
             totalLabelSize = labelMargin.bottom + host._maxLabelSize,
-            totalTitleSize = host.get("title") ? titleMargin.top + titleMargin.bottom + host._titleSize : 0,
+            totalTitleSize = host._totalTitleSize,
             topTickOffset = this.get("topTickOffset"),
             ttl = Math.round(topTickOffset + totalLabelSize + totalTitleSize);
-        host.set("height", ttl);
+        if(this._explicitHeight)
+        {
+           ttl = this._explicitWidth; 
+        }
+        host.set("calculatedHeight", ttl);
         graphic.set("y", ttl - topTickOffset);
     }
 };

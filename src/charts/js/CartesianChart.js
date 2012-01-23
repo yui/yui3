@@ -505,7 +505,9 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 minimum:"minimum", 
                 roundingMethod:"roundingMethod",
                 alwaysShowZero:"alwaysShowZero",
-                title:"title"
+                title:"title",
+                width:"width",
+                height:"height"
             },
             dp = this.get("dataProvider"),
             ai,
@@ -632,8 +634,6 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                         this.set("height", node.get("offsetHeight"));
                         h = this.get("height");
                     }
-                    axis.set("width", 0);
-                    axis.set("height", 0);
                     this._addToAxesRenderQueue(axis);
                     pos = axis.get("position");
                     if(!this.get(pos + "AxesCollection"))

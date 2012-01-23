@@ -159,7 +159,26 @@ ChartBase.ATTRS = {
      */
     graph: {
         valueFn: "_getGraph"
-   }
+    },
+
+    /**
+     * Indicates whether or not markers for a series will be grouped and rendered in a single complex shape instance.
+     *
+     * @attribute groupMarkers
+     * @type Boolean
+     */
+    groupMarkers: {
+        value: false,
+
+        setter: function(val)
+        {
+            if(this.get("graph"))
+            {
+                this.get("graph").set("groupMarkers", val);
+            }
+            return val;
+        }
+    }
 };
 
 ChartBase.prototype = {
@@ -172,7 +191,10 @@ ChartBase.prototype = {
      */
     _getGraph: function()
     {
-        var graph = new Y.Graph({chart:this});
+        var graph = new Y.Graph({
+            chart:this,
+            groupMarkers: this.get("groupMarkers")    
+        });
         graph.after("chartRendered", Y.bind(function(e) {
             this.fire("chartRendered");
         }, this));

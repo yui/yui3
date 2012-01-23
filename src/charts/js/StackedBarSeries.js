@@ -46,7 +46,14 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
             fillColors,
             borderColors,
             useOrigin = order === 0,
-            totalHeight = len * h;
+            totalHeight = len * h,
+            dimensions = {
+                width: [],
+                height: []
+            },
+            xvalues = [],
+            yvalues = [],
+            groupMarkers = this.get("groupMarkers");
         if(Y_Lang.isArray(style.fill.color))
         {
             fillColors = style.fill.color.concat(); 
@@ -133,27 +140,51 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
             }
             if(!isNaN(w) && w > 0)
             {
-                top -= h/2;        
-                style.width = w;
-                style.height = h;
-                style.x = left;
-                style.y = top;
-                if(fillColors)
+                top -= h/2;
+                if(groupMarkers)
                 {
-                    style.fill.color = fillColors[i % fillColors.length];
+                    dimensions.width[i] = w;
+                    dimensions.height[i] = h;
+                    xvalues.push(left);
+                    yvalues.push(top);
                 }
-                if(borderColors)
+                else
                 {
-                    style.border.color = borderColors[i % borderColors.length];
+                    style.width = w;
+                    style.height = h;
+                    style.x = left;
+                    style.y = top;
+                    if(fillColors)
+                    {
+                        style.fill.color = fillColors[i % fillColors.length];
+                    }
+                    if(borderColors)
+                    {
+                        style.border.color = borderColors[i % borderColors.length];
+                    }
+                    marker = this.getMarker(style, graphOrder, i);
                 }
-                marker = this.getMarker(style, graphOrder, i);
             }
-            else
+            else if(!groupMarkers)
             {
                 this._markers.push(null);
             }
         }
-        this._clearMarkerCache();
+        if(groupMarkers)
+        {
+            this._createGroupMarker({
+                fill: style.fill,
+                border: style.border,
+                dimensions: dimensions,
+                xvalues: xvalues,
+                yvalues: yvalues,
+                shape: style.shape
+            });
+        }
+        else
+        {
+            this._clearMarkerCache();
+        }
     },
 
     /**
