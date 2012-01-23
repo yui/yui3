@@ -16,6 +16,7 @@
 <script type="text/javascript">
 
 var YUI_config = {
+    loaderPath: 'loader/loader.js',
     gconfig: true,
     gfilter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
 };
@@ -23,27 +24,18 @@ var YUI_config = {
 
 YUI({
     allowRollup: false,
-    loaderPath: 'loader/loader.js',
     logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true },    
     filter: YUI_config.gfilter,
     modules: {
         'loader-tests': {
             fullpath: './loader-tests.js',
             requires: [ 'test']
-        },
-        'test-console': {
-            fullpath : '../../common/tests/assets/test-console.js',
-            requires : ['console-filters'],
-            skinnable: true
-        },
-
-        'skin-sam-test-console': {
-            fullpath: '../../common/tests/assets/test-console.css',
-            type    : 'css'
         }
         
     }
 }).use('loader-tests', 'test-console', 'test', function(Y) {
+    new Y.Test.Console().render('#log');
+
     //This is a YUITest hack to rename this test for reporting
     Y.Test.Runner.masterSuite.name = 'Loader Main Seed Test Suite';
     Y.Test.Runner.masterSuite.items[0].name = 'Loader Main Seed Test Suite';
