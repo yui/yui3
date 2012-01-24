@@ -301,6 +301,10 @@ YUI.add('loader-tests', function(Y) {
             YUI({
                 '2in3': '4',
                 'yui2': '2.9.0',
+                onSuccess: function(e) {
+                    Assert.areEqual('success', e.msg, 'Failed to load files');
+                    Assert.isTrue(e.success, 'Success handler failed');
+                },
                 onProgress: function(e) {
                     proContext = this;
                     if (e.name.indexOf('-ie') === -1) { //Weed out IE only modules
@@ -321,6 +325,55 @@ YUI.add('loader-tests', function(Y) {
             });
 
             test.wait();
+        },
+        test_failure: function() {
+            var test = this,
+                fMsg;
+
+            YUI({
+                onFailure: function(e) {
+                    fMsg = e;
+                },
+                modules: {
+                    'bogus-module': {
+                        fullpath: './does/not/exist.js'
+                    }
+                }
+            }).use('bogus-module', function(Y) {
+                test.resume(function() {
+                    var e = fMsg;
+                    Assert.isFalse(e.success, 'Bogus module reported it was loaded');
+                    Assert.areSame('Failed to load ./does/not/exist.js', e.msg, 'Failure event was not sent');
+                });
+            });
+
+            test.wait();
+            
+        },
+        test_timeout: function() {
+            var test = this,
+                fMsg;
+
+            YUI({
+                timeout: 1,
+                onTimeout: function(e) {
+                    fMsg = e;
+                },
+                modules: {
+                    'bogus-module': {
+                        fullpath: './does/not/exist.js'
+                    }
+                }
+            }).use('bogus-module', function(Y) {
+                test.resume(function() {
+                    var e = fMsg;
+                    Assert.isFalse(e.success, 'Bogus module reported it was loaded');
+                    Assert.areSame('timeout', e.msg, 'Failure event was not sent');
+                });
+            });
+
+            test.wait();
+            
         },
         test_condpattern: function() {
             var test = this;
