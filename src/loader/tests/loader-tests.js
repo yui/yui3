@@ -225,7 +225,7 @@ YUI.add('loader-tests', function(Y) {
                         base: './assets/',
                         modules: {
                             foo: {
-                                requires: [ 'node', 'widget' ]
+                                requires: [ 'oop' ]
                             }
                         }
                     }
@@ -278,7 +278,7 @@ YUI.add('loader-tests', function(Y) {
                 gallery: 'gallery-2010.08.04-19-46',
                 '2in3': '4',
                 'yui2': '2.9.0'
-            }).use('node', 'base', 'gallery-port', 'yui2-yahoo', function(Y) {
+            }).use('base', 'gallery-port', 'yui2-yahoo', function(Y) {
                 Assert.areEqual(Y.config.yui2, Y.YUI2.VERSION, 'Failed to load ' + Y.config.yui2);
                 Assert.isFunction(Y.Base, 'Y.Base did not load');
                 Assert.isUndefined(Y.LOADED, 'Callback executed twice.');
