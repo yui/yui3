@@ -1138,7 +1138,7 @@ Y.mix(Table.prototype, {
             this._viewConfig.columns   = this.get('columns');
             this._viewConfig.modelList = this.data;
 
-            contentBox.addAttribute('role', 'grid');
+            contentBox.setAttribute('role', 'grid');
 
             this.fire('renderTable', {
                 headerView  : this.get('headerView'),
