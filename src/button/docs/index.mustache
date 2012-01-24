@@ -33,7 +33,8 @@ Y.one('#container').append(node); // Append it to #container
 
 ```
 // Create a toggle button
-button.getNode().on('click', function(){
+var node = button.getNode()
+node.on('click', function(){
     button.set('selected', !button.get('selected'));
 });
 ```
@@ -52,8 +53,8 @@ button.getNode().on('click', function(){
 <h2>Anatomy of Button</h2>
 <p>YUI's Button component introduces 3 modules:</p>
 <ul>
-    <li>`button-base` - Exports the Y.Button factory.</li>
-    <li>`button-group` - Exports the Y.ButtonGroup factory.</li>
+    <li>`button-base` - Exports the Y.Button constructor.</li>
+    <li>`button-group` - Exports the Y.ButtonGroup constructor.</li>
     <li>`cssbutton` - Imports various classes to provide default styles for your buttons.</li>
 </ul>
 
@@ -67,8 +68,8 @@ button.getNode().on('click', function(){
 var button = new Y.Button({
     srcNode: '#myButton'
 });
-var node = button.getNode();
 
+var node = button.getNode();
 node.on('click', function(){
     alert('Hello!');
 });

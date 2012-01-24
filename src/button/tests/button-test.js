@@ -172,17 +172,90 @@ suite.add(new Y.Test.Case({
         Y.one('#container').empty();
     },
 
+    'setting label attribute should fire labelChange': function () {
+        var button = this.button;
+        var node = button.getNode();
+        var eventsTriggered = 0;
+        
+        button.on('labelChange', function(){
+            eventsTriggered++;
+        });
+        
+        Assert.areEqual(0, eventsTriggered);
+        
+        button.set('label', 'a');
+        Assert.areEqual(1, eventsTriggered);
+        
+        button.set('label', 'b');
+        Assert.areEqual(2, eventsTriggered);
+    },
+    
+    'setting label attribute should fire disabledChange': function () {
+        var button = this.button;
+        var node = button.getNode();
+        var eventsTriggered = 0;
+        
+        button.on('disabledChange', function(){
+            eventsTriggered++;
+        });
+        
+        Assert.areEqual(0, eventsTriggered);
+        
+        button.set('disabled', true);
+        Assert.areEqual(1, eventsTriggered);
+        
+        button.set('disabled', false);
+        Assert.areEqual(2, eventsTriggered);
+    },
+    
+    'setting label attribute should fire selectedChange': function () {
+        var button = this.button;
+        var node = button.getNode();
+        var eventsTriggered = 0;
+        
+        button.on('selectedChange', function(){
+            eventsTriggered++;
+        });
+        
+        Assert.areEqual(0, eventsTriggered);
+        
+        button.set('selected', true);
+        Assert.areEqual(1, eventsTriggered);
+        
+        button.set('selected', false);
+        Assert.areEqual(2, eventsTriggered);
+    },
+    
+    'setting label attribute should fire typeChange': function () {
+        var button = this.button;
+        var node = button.getNode();
+        var eventsTriggered = 0;
+        
+        button.on('typeChange', function(){
+            eventsTriggered++;
+        });
+        
+        Assert.areEqual(0, eventsTriggered);
+        
+        button.set('type', 'toggle');
+        Assert.areEqual(1, eventsTriggered);
+        
+        button.set('type', 'push');
+        Assert.areEqual(2, eventsTriggered);
+    },
+    
     'setting label attribute should set innerHTML': function () {
         var label;
         var button = this.button;
         var node = button.getNode();
         
+            
         label = 'foobar';
+        
         button.set('label', label);
         Assert.areEqual(label, button.get('label'));
         Assert.areEqual(label, node.getContent());
         
-        label = 'fizzbuzz';
         button.set('label', label);
         Assert.areEqual(label, button.get('label'));
         Assert.areEqual(label, node.getContent());
@@ -199,7 +272,7 @@ suite.add(new Y.Test.Case({
         // Disable button
         button.set('disabled', true);
         
-        // Ensure button is enabled by default
+        // Ensure button is disabled
         Assert.isTrue(button.get('disabled'));
         Assert.isTrue(node.hasClass('yui3-button-disabled'));
     },
