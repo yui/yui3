@@ -227,27 +227,31 @@ YUI.add('core-tests', function(Y) {
             };
 
             YUI().use(function (Y) {
-              Y.config.logInclude = {
-                  logMe: true,
-                  butNotMe: false
-              };
+                Y.applyConfig({
+                    logInclude: {
+                        logMe: true,
+                        butNotMe: false
+                    }
+                });
 
-              Y.log('test logInclude logMe','info','logMe');
-              Assert.areEqual(last, 'logMe', 'logInclude (true) Failed');
-              last = undefined;
+                Y.log('test logInclude logMe','info','logMe');
+                Assert.areEqual(last, 'logMe', 'logInclude (true) Failed');
+                last = undefined;
 
-              Y.log('test logInclude butNotMe','info','butNotMe');
-              Assert.isUndefined(last, 'logInclude (false) Failed');
+                Y.log('test logInclude butNotMe','info','butNotMe');
+                Assert.isUndefined(last, 'logInclude (false) Failed');
 
-              Y.config.logInclude = '';
-              Y.config.logExclude = {
-                  excludeMe: true,
-                  butDontExcludeMe: false
-              };
-              Y.log('test logExclude excludeMe','info','excludeMe');
-              Assert.isUndefined(last, 'excludeInclude (true) Failed');
-              Y.log('test logExclude butDontExcludeMe','info','butDontExcludeMe');
-              Assert.areEqual(last, 'butDontExcludeMe', 'logExclue (false) Failed');
+                Y.applyConfig({
+                    logInclude: '',
+                    logExclude: {
+                        excludeMe: true,
+                        butDontExcludeMe: false
+                    }
+                });
+                Y.log('test logExclude excludeMe','info','excludeMe');
+                Assert.isUndefined(last, 'excludeInclude (true) Failed');
+                Y.log('test logExclude butDontExcludeMe','info','butDontExcludeMe');
+                Assert.areEqual(last, 'butDontExcludeMe', 'logExclue (false) Failed');
 
             });
             console.info = l;
@@ -424,6 +428,15 @@ YUI.add('core-tests', function(Y) {
             testY.destroy();
             Assert.isUndefined(testY.Env, 'Environment not destroyed');
             Assert.isUndefined(testY.config, 'Instance config not destroyed');
+        },
+        test_features: function() {
+            var Assert = Y.Assert,
+                testY = YUI(),
+                results = testY.Features.all('load', [testY]);
+
+            Assert.isString(results, 'Feature tests failed to return a string');
+            Assert.isTrue((results.length > 0), 'Feature tests failed to return results');
+            Assert.areEqual(testY.Object.keys(testY.Features.tests.load).length, results.split(';').length, 'Failed to return all results for Feature Tests');
         }
     });
 

@@ -42,15 +42,15 @@
         <url>datasource/tests/datasource-polling.html</url>
         <url>datasource/tests/datasource-textschema.html</url>
         <url>datasource/tests/datasource-xmlschema.html</url>
-
-        <!-- This test hangs on the CI system.
-
-            <url>dd/tests/index.html</url>
-        -->
+        <url>dd/tests/index.html</url>
         <url>dial/tests/dial.html</url>
         <url>dump/tests/dump.html</url>
         <url>escape/tests/functional/escape.html</url>
+        <!-- Editor uses selector-css3, which doesn't
+             instrument due to a bug in YUI Test Coverage.
+
         <url>editor/tests/editor.html</url>
+        -->
         <url>event-custom/tests/customevent.html</url>
         <url>event-valuechange/tests/functional/event-valuechange.html</url>
         <url>event/tests/dom.html</url>
@@ -72,14 +72,16 @@
             <url>pjax/tests/pjax.html</url>
             <url>parallel/tests/index.html</url>
         -->
-        <url>loader/tests/index-full.html</url>
-        <url>yui/tests/index-full.html</url>
-        <url>yui/tests/array.html</url>
-        <url>yui/tests/lang.html</url>
-        <url>yui/tests/object.html</url>
+        <!-- Using a better coverage page for loader tests. -->
+        <url>loader/tests/index-coverage.html</url>
+        <!-- Combined yui-base, array, object, lang, features
+            test page -->
+        <url>yui/tests/index-coverage.html</url>
 
         <url>yui-throttle/tests/index.html</url>
 
+        <!-- These tests hang on the CI system.
         <url>yql/tests/index.html</url>
+        -->
     </tests>
 </yuitest>
