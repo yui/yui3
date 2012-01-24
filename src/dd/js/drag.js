@@ -1016,6 +1016,13 @@
             node.detachAll('mouseup');
             node.detachAll('dragstart');
             node.detachAll(Drag.START_EVENT);
+            this.mouseXY = null;
+            this.deltaXY = null;
+            this.startXY = null;
+            this.nodeXY = null;
+            this.lastXY = null;
+            this.actXY = null;
+            this.realXY = null;
         },
         /**
         * @method start

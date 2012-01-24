@@ -23,6 +23,9 @@ YUI Core Change History
 * Fixed issue #2531512: 'debug' parameter missing from the YUI Config object
   documentation.
 
+* Added `Y.getLocation()` which returns the `location` object from the
+  window/frame in which a YUI instance operates. [Ticket #2531608]
+
 
 3.4.1
 -----

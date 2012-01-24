@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<title>AutoComplete + Editor</title>
+<body class="yui3-skin-sam">
+
+<p>Type things here:</p>
+<div id="editor"></div>
+
+<script src="http://yui.yahooapis.com/3.4.1/build/yui/yui-min.js"></script>
+<script>
+YUI().use('autocomplete', 'autocomplete-highlighters', 'autocomplete-filters', 'editor-base', 'escape', function(Y) {
+    var editorNode = Y.one('#editor'),
+        editor     = new Y.EditorBase(),
+
+        ac = new Y.AutoComplete({
+            inputNode: editorNode,
+            queryDelimiter: ' ',
+            resultHighlighter: 'startsWith',
+            resultFilters: 'startsWith',
+
+            source: 'select * from search.suggest where query="{query}"',
+            yqlEnv: 'http://pieisgood.org/yql/tables.env'
+        });
+
+    editor.after('dom:blur', function (e) {
+        ac._afterListInputBlur();
+    });
+
+    editor.after('dom:focus', function (e) {
+        ac._afterListInputFocus();
+    });
+
+    editor.after('nodeChange', function (e) {
+        var type = e.changedType,
+            newVal;
+
+        if (type === 'keyup' || type === 'backspace' || type === 'delete') {
+            newVal = e.changedNode.get('text');
+
+            if (newVal !== ac.get('value')) {
+                ac.set('value', newVal, {src: Y.AutoCompleteBase.UI_SRC});
+            }
+        }
+    });
+
+    ac.on('select', function (e) {
+        var query  = ac.get('query'),
+            result = e.result.text,
+            sel    = new (editor.getInstance().Selection);
+
+        // Remove the portion of the result text that already exists in the
+        // editor so we don't insert it twice.
+        result = result.replace(new RegExp('^' + Y.Escape.regex(query), 'i'), '');
+
+        sel.insertContent(result);
+        editor.focus();
+    });
+
+
+    editor.render(editorNode);
+    ac.render();
+});
+</script>
+</body>
