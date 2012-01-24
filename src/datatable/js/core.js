@@ -287,7 +287,7 @@ Y.mix(Table.prototype, {
     @type {HTML}
     @default '<table class="{className}"/>'
     **/
-    TABLE_TEMPLATE  : '<table class="{className}"/>',
+    TABLE_TEMPLATE  : '<table role="presentation" class="{className}"/>',
 
     /**
     HTML template used to create table's `<tbody>` if configured with a
@@ -1137,6 +1137,8 @@ Y.mix(Table.prototype, {
             // _viewConfig is the prototype for _headerConfig et al.
             this._viewConfig.columns   = this.get('columns');
             this._viewConfig.modelList = this.data;
+
+            contentBox.addAttribute('role', 'grid');
 
             this.fire('renderTable', {
                 headerView  : this.get('headerView'),
