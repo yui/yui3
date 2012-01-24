@@ -78,10 +78,10 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
 
     @property CELL_TEMPLATE
     @type {HTML}
-    @default '<th id="{_yuid}" abbr="{abbr} colspan="{colspan}" rowspan="{rowspan}">{content}</th>'
+    @default '<th id="{_yuid}" abbr="{abbr} colspan="{colspan}" rowspan="{rowspan}" class="{className}">{content}</th>'
     **/
     CELL_TEMPLATE :
-        '<th id="{_yuid}" abbr="{abbr}" colspan="{colspan}" rowspan="{rowspan}">{content}</th>',
+        '<th id="{_yuid}" abbr="{abbr}" colspan="{colspan}" rowspan="{rowspan}" class="{className}">{content}</th>',
 
     /**
     The data representation of the header rows to render.  This is assigned by
@@ -157,7 +157,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
                 colspan: 1,
                 rowspan: 1
             },
-            i, len, j, jlen, col, html, content;
+            i, len, j, jlen, col, className, html, content;
 
         if (thead && columns) {
             html = '';
@@ -168,13 +168,19 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
 
                     for (j = 0, jlen = columns[i].length; j < jlen; ++j) {
                         col = columns[i][j];
+                        className = this.getClassName('header');
+
+                        if (col._id) {
+                            className += ' ' + this.getClassName('col', col._id);
+                        }
+
                         content += fromTemplate(this.CELL_TEMPLATE,
                             Y.merge(
                                 defaults,
                                 col, {
-                                    content: col.label ||
-                                             col.key   ||
-                                             ("Column " + (j + 1))
+                                    className: className,
+                                    content  : col.label || col.key ||
+                                               ("Column " + (j + 1))
                                 }
                             ));
                     }
