@@ -81,7 +81,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     @default '<th id="{_yuid}" abbr="{abbr} colspan="{colspan}" rowspan="{rowspan}" class="{className}">{content}</th>'
     **/
     CELL_TEMPLATE :
-        '<th id="{_yuid}" abbr="{abbr}" colspan="{colspan}" rowspan="{rowspan}" class="{className}">{content}</th>',
+        '<th id="{_yuid}" abbr="{abbr}" colspan="{colspan}" rowspan="{rowspan}" class="{className}" scope="col" role="columnheader">{content}</th>',
 
     /**
     The data representation of the header rows to render.  This is assigned by
@@ -116,7 +116,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     @default '<tr>{content}</tr>'
     **/
     ROW_TEMPLATE:
-        '<tr>{content}</tr>',
+        '<tr role="row">{content}</tr>',
 
 
     // -- Public methods ------------------------------------------------------
