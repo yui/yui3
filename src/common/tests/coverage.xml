@@ -73,10 +73,9 @@
             <url>parallel/tests/index.html</url>
         -->
         <url>loader/tests/index.html</url>
-        <url>yui/tests/index.html</url>
-        <url>yui/tests/array.html</url>
-        <url>yui/tests/lang.html</url>
-        <url>yui/tests/object.html</url>
+        <!-- Combined yui-base, array, object, lang, features
+            test page -->
+        <url>yui/tests/index-coverage.html</url>
 
         <url>yui-throttle/tests/index.html</url>
 
