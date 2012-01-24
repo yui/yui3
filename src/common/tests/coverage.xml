@@ -72,7 +72,8 @@
             <url>pjax/tests/pjax.html</url>
             <url>parallel/tests/index.html</url>
         -->
-        <url>loader/tests/index.html</url>
+        <!-- Using a better coverage page for loader tests. -->
+        <url>loader/tests/index-coverage.html</url>
         <!-- Combined yui-base, array, object, lang, features
             test page -->
         <url>yui/tests/index-coverage.html</url>
