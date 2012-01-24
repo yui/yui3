@@ -253,6 +253,21 @@ AutoCompleteBase.ATTRS = {
     },
 
     /**
+     * Whether or not to enable in-memory caching in result sources that support
+     * it.
+     *
+     * @attribute enableCache
+     * @type Boolean
+     * @default true
+     * @since 3.5.0
+     */
+    enableCache: {
+        lazyAdd: false, // we need the setter to run on init
+        setter: '_setEnableCache',
+        value: true
+    },
+
+    /**
      * Node to monitor for changes, which will generate <code>query</code>
      * events when appropriate. May be either an input field or a textarea.
      *
@@ -838,6 +853,18 @@ AutoCompleteBase.prototype = {
     // -- Public Prototype Methods ---------------------------------------------
 
     /**
+     * Clears the result cache.
+     *
+     * @method clearCache
+     * @chainable
+     * @since 3.5.0
+     */
+    clearCache: function () {
+        this._cache && (this._cache = {});
+        return this;
+    },
+
+    /**
      * <p>
      * Sends a request to the configured source. If no source is configured,
      * this method won't do anything.
@@ -1222,6 +1249,22 @@ AutoCompleteBase.prototype = {
         }
 
         return Lang.trimLeft(value);
+    },
+
+    /**
+     * Setter for the `enableCache` attribute.
+     *
+     * @method _setEnableCache
+     * @param {Boolean} value
+     * @protected
+     * @since 3.5.0
+     */
+    _setEnableCache: function (value) {
+        // When `this._cache` is an object, result sources will store cached
+        // results in it. When it's falsy, they won't. This way result sources
+        // don't need to get the value of the `enableCache` attribute on every
+        // request, which would be sloooow.
+        this._cache = value ? {} : null;
     },
 
     /**

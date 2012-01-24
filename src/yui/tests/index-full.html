@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html class="foo">
+<html>
 <head>
 <title>YUI Seed Tests</title>
 </head>
@@ -7,29 +7,14 @@
 
 <div id="log"></div>
 
-
-<script>
-var YUI = {};
-</script>
-<!-- This is the main test file, notice it's using the `yui-base` seed file 
-without Loader on the page, so Loader is fetched before tests are executed. -->
-<script type="text/javascript" src="../../../build/yui-base/yui-base.js"></script>
+<!-- This is the full test file, notice it's using the `yui` seed file, so loader is NOT fetched. -->
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
 <script type="text/javascript">
 
 YUI.GlobalConfig = {
     modules: {
         'global-mod': {
             fullpath: './assets/globalmod.js'
-        }
-    },
-    groups: {
-        //Just for code coverage..
-        noop: {
-            modules: {
-                noop: {
-                    fullpath: './noop.js'
-                }
-            }
         }
     }
 };
@@ -72,8 +57,8 @@ YUI({
     new Y.Test.Console().render('#log');
 
     //This is a YUITest hack to rename this test for reporting
-    Y.Test.Runner.masterSuite.name = 'YUI Seed Fetch Loader Test Suite';
-    Y.Test.Runner.masterSuite.items[0].name = 'YUI Seed Fetch Loader Test Suite';
+    Y.Test.Runner.masterSuite.name = 'YUI Seed Full Test Suite';
+    Y.Test.Runner.masterSuite.items[0].name = 'YUI Seed Full Test Suite';
     Y.Test.Runner.run();
 });
 

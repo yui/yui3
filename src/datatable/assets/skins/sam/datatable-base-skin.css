@@ -1,15 +1,14 @@
 /* basic skin styles */
-.yui3-skin-sam .yui3-datatable table {
+.yui3-skin-sam .yui3-datatable-table {
     margin: 0;
     padding: 0;
     font-family: arial, sans-serif;
-    border-collapse: separate;
-    border-spacing: 0;
+    border-collapse: collapse;
     border: 1px solid #cbcbcb;
     border-right: 0 none;
 }
 
-.yui3-skin-sam .yui3-datatable caption {
+.yui3-skin-sam .yui3-datatable-caption {
     color: #000;
     font-size: 85%;
     font-style: italic;
@@ -19,8 +18,8 @@
     text-align: center;
 }
 
-.yui3-skin-sam .yui3-datatable td,
-.yui3-skin-sam .yui3-datatable th {
+.yui3-skin-sam .yui3-datatable-cell,
+.yui3-skin-sam .yui3-datatable-header {
     border-right: 1px solid #cbcbcb;/*  inner column border */
     font-size: inherit;
     margin: 0;
@@ -28,7 +27,7 @@
     padding: 4px 10px 4px 10px; /* cell padding */
     white-space: nowrap;
 }
-.yui3-skin-sam .yui3-datatable th {
+.yui3-skin-sam .yui3-datatable-header {
     /* header gradient */
     background: #d8d8da url(../../../../assets/skins/sam/sprite.png) repeat-x 0 0;
 
@@ -87,6 +86,12 @@ striping:
    even - #fff (white)
    odd  - #edf5ff (light blue)
 */
-.yui3-skin-sam .yui3-datatable td        { background-color: transparent; }
-.yui3-skin-sam tr.yui3-datatable-even td { background-color: #fff; }
-.yui3-skin-sam tr.yui3-datatable-odd td  { background-color: #edf5ff; }
+.yui3-skin-sam .yui3-datatable-cell {
+    background-color: transparent;
+}
+.yui3-skin-sam .yui3-datatable-even .yui3-datatable-cell {
+    background-color: #fff;
+}
+.yui3-skin-sam .yui3-datatable-odd  .yui3-datatable-cell  {
+    background-color: #edf5ff;
+}
