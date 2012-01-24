@@ -105,9 +105,10 @@ Y.extend(ButtonGroup, Y.Base, {
         
         if (type === 'checkbox') {
             button.set('type', 'checkbox');
+            button.on('click', this._onCBButtonClick, this);
         }
         else if (type === 'radio') {
-            button.on('click', this._onButtonClick, this);
+            button.on('click', this._onRadioButtonClick, this);
         }
         
         this.buttons.add(button);
@@ -118,7 +119,7 @@ Y.extend(ButtonGroup, Y.Base, {
     * @description 
     * @protected
     */
-    _onButtonClick: function(e) {
+    _onRadioButtonClick: function(e) {
 
         var clickedButton = e.target;
         
@@ -128,11 +129,23 @@ Y.extend(ButtonGroup, Y.Base, {
                 button.unselect();
             });
             clickedButton.select();
+
+            // Fire change event
             this.fire('selectionChange');
         }
         else {
-            console.log('already');
+            // TODO: anything?
         }
+    },
+    
+    /**
+    * @method _onButtonClick
+    * @description 
+    * @protected
+    */
+    _onCBButtonClick: function(e) {
+        // Fire change event
+        this.fire('selectionChange');
     }
     
 }, {

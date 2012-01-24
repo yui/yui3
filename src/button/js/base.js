@@ -65,21 +65,20 @@ Y.extend(Button, Y.Base, {
         // Set some default node attributes
         node.addClass(Button.CLASS_NAMES.BUTTON);
         
+        
         // Apply any config attributes that may have been passed in.
+        
+        // These should always be run
+        this._renderType(this.get('type'));
+        this._renderSelected(this.get('selected'));
+        
+        // These are optional
         if (config.label) {
             this._renderLabel(this.get('label'));
         }
         
-        //if (config.type) {
-            this._renderType(this.get('type'));
-        //}
-        
         if (config.disabled) {
             this._renderDisabled(this.get('disabled'));
-        }
-        
-        if (config.selected) {
-            this._renderSelected(this.get('selected'));
         }
     },
     
@@ -96,7 +95,8 @@ Y.extend(Button, Y.Base, {
         node.on('focus', button._onFocus);
         node.on('blur', button._onBlur);
         
-        // hack
+        // TODO: hack to make 'click' a Y.Button event until support is built for DOM events.  
+        // You should not use this.  Use button.getNode().on() instead.
         node.on('click', function(){
             this.fire('click');
         }, button);
@@ -252,7 +252,6 @@ Y.extend(Button, Y.Base, {
             button._clickHandler = node.on('click', function(){
                 button.set('selected', !button.get('selected'));
             }, button);
-            
         }
         else if (value === 'radio') {
             // nothing ?
