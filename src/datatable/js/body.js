@@ -363,7 +363,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         if (data && formatters.length) {
             data.each(function (record, index) {
                 var formatterData = {
-                        data      : record.getAttrs(),
+                        data      : record.toJSON(),
                         record    : record,
                         rowindex  : index
                     },
