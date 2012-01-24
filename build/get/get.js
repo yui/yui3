@@ -911,7 +911,7 @@ Transaction.prototype = {
         data = this._getEventData();
 
         if (errors) {
-            if (options.onTimeout && errors[errors.length - 1] === 'Timeout') {
+            if (options.onTimeout && errors[errors.length - 1].error === 'Timeout') {
                 options.onTimeout.call(thisObj, data);
             }
 
