@@ -170,6 +170,23 @@ YUI.add('get-test', function (Y) {
             this.wait();
         },
 
+        'test: single script timeout callback': function() {
+            var test = this;
+
+            var trans = Y.Get.script(path("bogus.js"), {
+                timeout: 1,
+                onTimeout: function(e) {
+                    Assert.areSame('Timeout', e.errors[0].error, 'Failure message is not a timeout message');
+                },
+                onFailure: function(e) {
+                    Assert.areSame('Timeout', e.errors[0].error, 'Failure message is not a timeout message');
+                },
+                onSuccess: function() {
+                    Assert.fail('onSuccess should not be called');
+                }
+            });
+        },
+
         'test: single script success, end': function() {
             var test = this;
             var counts = {
