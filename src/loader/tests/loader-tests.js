@@ -516,6 +516,29 @@ YUI.add('loader-tests', function(Y) {
 
             Assert.areSame(loader.skin.defaultSkin, 'foobar', 'Default skin was not set from object');
         },
+        test_skin_overrides: function() {
+            var loader = new Y.Loader({
+                skin: {
+                    overrides: {
+                        slider: [
+                            'sam',
+                            'sam-dark',
+                            'round',
+                            'round-dark',
+                            'capsule',
+                            'capsule-dark',
+                            'audio',
+                            'audio-light'
+                        ]
+                    }
+                },
+                require: [ 'slider' ]
+            });
+            
+            var out = loader.resolve(true);
+            Assert.areSame(loader.skin.overrides.slider.length, out.css.length, 'Failed to load all override skins');
+            
+        },
         test_load_optional: function() {
             var loader = new Y.Loader({
                 loadOptional: true,
@@ -603,6 +626,75 @@ YUI.add('loader-tests', function(Y) {
             Assert.isTrue((out.js[0].indexOf('yahooapis') > 0), 'First JS file returned is not a YUI module');
             Assert.isTrue((out.js[0].indexOf('yui-base') > 0), 'First JS file is not the seed file');
 
+        },
+        test_submodules: function() {
+            
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                combine: false,
+                root: '',
+                base: '',
+                filter: 'raw',
+                ignore: [ 'yui-base', 'intl-base', 'oop', 'event-custom-base', 'event-custom-complex', 'intl' ],
+                modules: {
+                    sub1: {
+                        fullpath: './sub1.js',
+                        submodules: {
+                            subsub1: {
+                            },
+                            subsub2: {
+                                lang: 'en',
+                                skinnable: true
+                            }
+                        }
+                    }
+                },
+                require: [ 'subsub2' ]
+            });
+            
+            var out = loader.resolve(true);
+            Assert.areSame('sub1/lang/subsub2.js', out.js[0], 'Failed to combine submodule with module path for LANG JS');
+            Assert.areSame('sub1/subsub2.js', out.js[1], 'Failed to combine submodule with module path JS');
+            Assert.areSame('sub1/assets/skins/sam/subsub2.css', out.css[0], 'Failed to combine submodule with module path CSS');
+            Assert.areEqual(1, out.css.length, 'Failed to skin submodule');
+        },
+        test_plugins: function() {
+            
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                combine: false,
+                root: '',
+                base: '',
+                filter: 'raw',
+                ignore: [ 'yui-base', 'intl-base', 'oop', 'event-custom-base', 'event-custom-complex', 'intl' ],
+                modules: {
+                    plug1: {
+                        fullpath: './sub1.js',
+                        plugins: {
+                            subplug1: {
+                                lang: 'en',
+                                skinnable: true
+                            },
+                            subplug2: {
+                                lang: 'en',
+                                skinnable: true,
+                                requires: [ 'subplug1' ]
+                            }
+                        }
+                    }
+                },
+                require: [ 'subplug2' ]
+            });
+            
+            var out = loader.resolve(true);
+            Assert.areSame('plug1/lang/subplug2.js', out.js[0], 'Failed to combine plugin with module path LANG JS');
+            Assert.areSame('plug1/lang/subplug1.js', out.js[1], 'Failed to combine plugin with module path LANG JS');
+            Assert.areSame('plug1/subplug1.js', out.js[2], 'Failed to combine plugin with module path JS');
+            Assert.areSame('plug1/subplug2.js', out.js[3], 'Failed to combine plugin with module path JS');
+
+            Assert.areSame('plug1/assets/skins/sam/subplug1.css', out.css[0], 'Failed to combine plugin with module path CSS');
+            Assert.areSame('plug1/assets/skins/sam/subplug2.css', out.css[1], 'Failed to combine plugin with module path CSS');
+            Assert.areEqual(2, out.css.length, 'Failed to skin plugins');
         }
     });
 
