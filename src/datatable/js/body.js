@@ -576,7 +576,6 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             if (col.nodeFormatter) {
                 // Defer all node decoration to the formatter
                 tokenValues.content   = '';
-                tokenValues.className = '';
             }
 
             html += fromTemplate(cellTemplate, tokenValues);
