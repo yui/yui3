@@ -2,9 +2,18 @@ YUI.add('loader-tests', function(Y) {
     
     var Assert = Y.Assert,
     testY = YUI();
+    var ua = Y.UA;
+    var jsFailure = !((ua.ie && ua.ie < 9) || (ua.opera && ua.opera < 11.6) || (ua.webkit && ua.webkit < 530.17));
+
 
     var testLoader = new Y.Test.Case({
         name: "Loader Tests",
+        _should: {
+            ignore: {
+                'test_failure': !jsFailure,
+                'test_timeout': !jsFailure
+            }
+        },       
         test_resolve_no_calc: function() {
             var loader = new testY.Loader({
                 ignoreRegistered: true,
@@ -506,6 +515,22 @@ YUI.add('loader-tests', function(Y) {
             });
 
             Assert.areSame(loader.skin.defaultSkin, 'foobar', 'Default skin was not set from object');
+        },
+        test_load_optional: function() {
+            var loader = new Y.Loader({
+                loadOptional: true,
+                ignoreRegistered: true,
+                require: [ 'dd-plugin' ]
+            });
+
+            var out = loader.resolve(true);
+            var hasOptional = false;
+            Y.each(out.jsMods, function(module) {
+                if (module.name == 'dd-proxy') {
+                    hasOptional = true;
+                }
+            });
+            Assert.isTrue(hasOptional, 'Optional modules failed to load');
         },
         test_outside_group: function() {
             var loader = new Y.Loader({
