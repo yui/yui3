@@ -30,7 +30,7 @@ suite.add(new Y.Test.Case({
     },
     
     tearDown: function () {
-        Y.one('#test').empty();
+        Y.one('#container').empty();
     },
 
     'ButtonGroup.getButtons() should return an array of Y.Buttons instances': function () {
@@ -48,17 +48,17 @@ suite.add(new Y.Test.Case({
         Assert.areSame(0, ButtonGroup.getSelectedButtons().length);
         
         // Select specific buttons, and make sure the selected array jives
-        buttons[1].set('selected', true);
+        buttons[1].select();
         Assert.areSame(1, ButtonGroup.getSelectedButtons().length);
                 
-        buttons[2].set('selected', true);
+        buttons[2].select();
         Assert.areSame(2, ButtonGroup.getSelectedButtons().length);
         
-        buttons[3].set('selected', true);
+        buttons[3].select();
         Assert.areSame(3, ButtonGroup.getSelectedButtons().length);
         
-        // Deselect
-        buttons[2].set('selected', false);
+        // Unselect
+        buttons[2].unselect();
         Assert.areSame(2, ButtonGroup.getSelectedButtons().length);
     },
     
@@ -70,17 +70,17 @@ suite.add(new Y.Test.Case({
         Assert.areSame(0, ButtonGroup.getSelectedButtons().length);
         
         // Select some buttons and ensure the array of values matches
-        buttons[1].set('selected', true);
+        buttons[1].select();
         ArrayAssert.itemsAreEqual([1], ButtonGroup.getSelectedValues());
         
-        buttons[3].set('selected', true);
+        buttons[3].select();
         ArrayAssert.itemsAreEqual([1, 3], ButtonGroup.getSelectedValues());
         
-        buttons[4].set('selected', true);
+        buttons[4].select();
         ArrayAssert.itemsAreEqual([1, 3, 4], ButtonGroup.getSelectedValues());
         
-        // Deselect
-        buttons[3].set('selected', false);
+        // Unselect
+        buttons[3].unselect();
         ArrayAssert.itemsAreEqual([1, 4], ButtonGroup.getSelectedValues());
     },
     
@@ -100,6 +100,7 @@ suite.add(new Y.Test.Case({
         ButtonGroup.addButton(newButton);
         Assert.areSame(6, ButtonGroup.getButtons().length);
     }
+    
 }));
 
 Y.Test.Runner.add(suite);

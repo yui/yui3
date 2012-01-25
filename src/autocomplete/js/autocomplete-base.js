@@ -123,6 +123,11 @@ function AutoCompleteBase() {
      *   <dd>
      *     Value of the query before it was cleared.
      *   </dd>
+     *
+     *   <dt>src (String)</dt>
+     *   <dd>
+     *     Source of the event.
+     *   </dd>
      * </dl>
      *
      * @preventable _defClearFn
@@ -151,6 +156,11 @@ function AutoCompleteBase() {
      *     Autocomplete query. This is the string that will be used to
      *     request completion results. It may or may not be the same as
      *     <code>inputValue</code>.
+     *   </dd>
+     *
+     *   <dt>src (String)</dt>
+     *   <dd>
+     *     Source of the event.
      *   </dd>
      * </dl>
      *
@@ -1512,46 +1522,51 @@ AutoCompleteBase.prototype = {
      * @protected
      */
     _afterValueChange: function (e) {
-        var delay,
-            fire,
-            minQueryLength,
-            newVal = e.newVal,
-            query,
-            that;
+        var newVal   = e.newVal,
+            self     = this,
+            uiChange = e.src === AutoCompleteBase.UI_SRC,
+            delay, fire, minQueryLength, query;
 
-        // Don't query on value changes that didn't come from the user.
-        if (e.src !== AutoCompleteBase.UI_SRC) {
-            this._inputNode.set(VALUE, newVal);
-            return;
+        // Update the UI if the value was changed programmatically.
+        if (!uiChange) {
+            self._inputNode.set(VALUE, newVal);
         }
 
         Y.log('valueChange: new: "' + newVal + '"; old: "' + e.prevVal + '"', 'info', 'autocomplete-base');
 
-        minQueryLength = this.get('minQueryLength');
-        query          = this._parseValue(newVal) || '';
+        minQueryLength = self.get('minQueryLength');
+        query          = self._parseValue(newVal) || '';
 
         if (minQueryLength >= 0 && query.length >= minQueryLength) {
-            delay = this.get('queryDelay');
-            that  = this;
+            // Only query on changes that originate from the UI.
+            if (uiChange) {
+                delay = self.get('queryDelay');
 
-            fire = function () {
-                that.fire(EVT_QUERY, {
-                    inputValue: newVal,
-                    query     : query
-                });
-            };
+                fire = function () {
+                    self.fire(EVT_QUERY, {
+                        inputValue: newVal,
+                        query     : query,
+                        src       : e.src
+                    });
+                };
 
-            if (delay) {
-                clearTimeout(this._delay);
-                this._delay = setTimeout(fire, delay);
+                if (delay) {
+                    clearTimeout(self._delay);
+                    self._delay = setTimeout(fire, delay);
+                } else {
+                    fire();
+                }
             } else {
-                fire();
+                // For programmatic value changes, just update the query
+                // attribute without sending a query.
+                self._set(QUERY, query);
             }
         } else {
-            clearTimeout(this._delay);
+            clearTimeout(self._delay);
 
-            this.fire(EVT_CLEAR, {
-                prevVal: e.prevVal ? this._parseValue(e.prevVal) : null
+            self.fire(EVT_CLEAR, {
+                prevVal: e.prevVal ? self._parseValue(e.prevVal) : null,
+                src    : e.src
             });
         }
     },
@@ -1608,11 +1623,9 @@ AutoCompleteBase.prototype = {
 
         // Don't query if the internal value is the same as the new value
         // reported by valueChange.
-        if (newVal === this.get(VALUE)) {
-            return;
+        if (newVal !== this.get(VALUE)) {
+            this.set(VALUE, newVal, {src: AutoCompleteBase.UI_SRC});
         }
-
-        this.set(VALUE, newVal, {src: AutoCompleteBase.UI_SRC});
     },
 
     /**
@@ -1633,7 +1646,7 @@ AutoCompleteBase.prototype = {
 
     /**
      * Default <code>clear</code> event handler. Sets the <code>results</code>
-     * property to an empty array and <code>query</code> to null.
+     * attribute to an empty array and <code>query</code> to null.
      *
      * @method _defClearFn
      * @protected
@@ -1645,22 +1658,20 @@ AutoCompleteBase.prototype = {
 
     /**
      * Default <code>query</code> event handler. Sets the <code>query</code>
-     * property and sends a request to the source if one is configured.
+     * attribute and sends a request to the source if one is configured.
      *
      * @method _defQueryFn
      * @param {EventFacade} e
      * @protected
      */
     _defQueryFn: function (e) {
-        var query = e.query;
-
-        Y.log('query: "' + query + '"; inputValue: "' + e.inputValue + '"', 'info', 'autocomplete-base');
-        this.sendRequest(query); // sendRequest will set the 'query' attribute
+        Y.log('query: "' + e.query + '"; inputValue: "' + e.inputValue + '"', 'info', 'autocomplete-base');
+        this.sendRequest(e.query); // sendRequest will set the 'query' attribute
     },
 
     /**
      * Default <code>results</code> event handler. Sets the <code>results</code>
-     * property to the latest results.
+     * attribute to the latest results.
      *
      * @method _defResultsFn
      * @param {EventFacade} e
