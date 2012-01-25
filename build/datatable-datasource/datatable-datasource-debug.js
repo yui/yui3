@@ -170,14 +170,11 @@ Y.extend(DataTableDataSource, Y.Plugin.Base, {
     onDataReturnInitializeTable : function(e) {
         var records = (e.response && e.response.results) || [];
 
-        this.get("host").get("recordset").set("records", records);
+        this.get("host").set("data", records);
     }
 });
 
 Y.namespace("Plugin").DataTableDataSource = DataTableDataSource;
-
-
-
 
 
 }, '@VERSION@' ,{requires:['datatable-base','plugin','datasource-local']});

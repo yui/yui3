@@ -1,5 +1,3 @@
-YUI.add('datatable-base', function(Y) {
-
 /**
 A Widget for displaying tabular data.  The base implementation of DataTable
 provides the ability to dynamically generate an HTML table from a set of column
@@ -260,6 +258,3 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core],
 Y.DataTable = Y.mix(
     Y.Base.create('datatable', Y.DataTable.Base, []), // Create the class
     Y.DataTable); // Migrate static and namespaced classes
-
-
-}, '@VERSION@' ,{requires:['datatable-core', 'base-build', 'widget', 'datatable-head', 'datatable-body']});
