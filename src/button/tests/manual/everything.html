@@ -68,8 +68,6 @@
 
 
 
-
-
                 /*
                     A group of radio-like buttons
                 */
@@ -96,7 +94,7 @@
                 });
 
                 buttonGroup2.after('selectionChange', function(e){
-                    var selection = buttonGroup2.get('selection');
+                    var selection = buttonGroup2.getSelectedButtons();
                     Y.log('buttonGroup2 selected count = ' + selection.length);
                 });
 
@@ -173,19 +171,19 @@
         <br>
         
         
-        <h2>Group (radio)</h2>
-        <button class='group' id='btn1'>Button 13</button>
-        <button class='group' id='btn2'>Button 27</button>
-        <button class='group' id='btn3'>Button 40</button>
+        <h2>Multi-Group (checkbox)</h2>
+        <button class='multigroup' id='btn4'>Button 4</button>
+        <button class='multigroup' id='btn5'>Button 5</button>
+        <button class='multigroup' id='btn6'>Button 6</button>
         
         
         <br>
         
         
-        <h2>Multi-Group (checkbox)</h2>
-        <button class='multigroup' id='btn4'>Button 4</button>
-        <button class='multigroup' id='btn5'>Button 5</button>
-        <button type='button' class='multigroup' id='btn6'>Button 6</button>
+        <h2>Group (radio)</h2>
+        <button class='group' id='btn1'>Button 13</button>
+        <button class='group' id='btn2'>Button 27</button>
+        <button class='group' id='btn3'>Button 40</button>
         
         
         <br>

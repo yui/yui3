@@ -95,7 +95,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @type {HTML}
     @default '<td headers="{headers}" class="{className}">{content}</td>'
     **/
-    CELL_TEMPLATE: '<td headers="{headers}" class="{className}">{content}</td>',
+    CELL_TEMPLATE: '<td role="gridcell" headers="{headers}" class="{className}">{content}</td>',
 
     /**
     CSS class applied to even rows.  This is assigned at instantiation after

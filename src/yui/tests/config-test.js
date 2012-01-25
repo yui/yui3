@@ -1,4 +1,3 @@
-
 YUI.add('config-test', function(Y) {
         var testCore = new Y.Test.Case({
 
