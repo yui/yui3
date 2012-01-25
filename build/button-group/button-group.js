@@ -1,7 +1,7 @@
 YUI.add('button-group', function(Y) {
 
 /**
-* TODO
+* Allows Y.Button instances to be grouped together
 *
 * @module ButtonGroup
 * @main ButtonGroup
@@ -56,7 +56,7 @@ Y.extend(ButtonGroup, Y.Base, {
     
     /**
     * @method getButtons
-    * @description 
+    * @description Returns all Y.Buttons instances assigned to this group
     * @public
     */
     getButtons: function() {
@@ -65,7 +65,7 @@ Y.extend(ButtonGroup, Y.Base, {
     
     /**
     * @method getSelectedButtons
-    * @description 
+    * @description Returns all Y.Buttons instances that are selected
     * @public
     */
     getSelectedButtons: function() {
@@ -84,7 +84,7 @@ Y.extend(ButtonGroup, Y.Base, {
     
     /**
     * @method getSelectedValues
-    * @description 
+    * @description Returns the values of all Y.Button instances that are selected
     * @public
     */
     getSelectedValues: function() {
@@ -99,12 +99,11 @@ Y.extend(ButtonGroup, Y.Base, {
     
     /**
     * @method addButton
-    * @description 
+    * @description Assigns a Y.Button instance to this group
     * @public
     */
     addButton: function(button){
         var type = this.get('type');
-        
         if (type === 'checkbox') {
             button.set('type', 'checkbox');
             button.on('click', this._onCBButtonClick, this);
@@ -118,11 +117,10 @@ Y.extend(ButtonGroup, Y.Base, {
     
     /**
     * @method _onButtonClick
-    * @description 
+    * @description Triggered when a button is clicked and this is a radio group
     * @protected
     */
     _onRadioButtonClick: function(e) {
-
         var clickedButton = e.target;
         
         if (!clickedButton.get('selected')) {
@@ -142,7 +140,7 @@ Y.extend(ButtonGroup, Y.Base, {
     
     /**
     * @method _onButtonClick
-    * @description 
+    * @description Triggered when a button is clicked and this is a checkbox group
     * @protected
     */
     _onCBButtonClick: function(e) {
@@ -161,6 +159,7 @@ Y.extend(ButtonGroup, Y.Base, {
     */
     ATTRS: {
         type: {
+            writeOnce: 'initOnly',
             value: 'radio'
         }
     }

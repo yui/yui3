@@ -2437,9 +2437,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             node = Y.one(node.getElementsByTagName('div')[0]);
 
             Assert.areEqual(node, node.removeAttribute('id'));
-
         }
-
     }));
 
 
@@ -2474,6 +2472,53 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             Assert.areEqual(html, node.getHTML().toLowerCase());
         }
     }));
+
+    Y.Test.Runner.add(new Y.Test.Case({
+        name: 'Y.Node.getStyle',
+
+        'should return undefined when given invalid property': function() {
+            var node = Y.Node.create('<div/>'),
+                val = node.getStyle('foo');
+
+            Assert.isUndefined(val);
+        }
+
+    }));
+    Y.Test.Runner.add(new Y.Test.Case({
+        name: 'Y.Node.getComputedStyle',
+
+        'should return undefined when given invalid property': function() {
+            var node = Y.Node.create('<div/>'),
+                val = node.getComputedStyle('foo');
+
+            Assert.isUndefined(val);
+        }
+    }));
+
+    Y.Test.Runner.add(new Y.Test.Case({
+        name: 'Y.NodeList.getStyle',
+
+        'should return array of undefined when given invalid property': function() {
+            var nodes = Y.all('div'),
+                val = nodes.getStyle('foo');
+
+            Assert.isUndefined(val[0]);
+            Assert.isUndefined(val[1]);
+        }
+    }));
+
+    Y.Test.Runner.add(new Y.Test.Case({
+        name: 'Y.NodeList.getComputedStyle',
+
+        'should return array of undefined when given invalid property': function() {
+            var nodes = Y.all('div'),
+                val = nodes.getComputedStyle('foo');
+
+            Assert.isUndefined(val[0]);
+            Assert.isUndefined(val[1]);
+        }
+    }));
+
     Y.Test.Runner.add(suite);
 
     Y.on('load', function() {

@@ -328,7 +328,7 @@ Button.CLASS_NAMES = {
 
 Button.ARIA = {
     CHECKED: 'aria-checked',
-    PRESSED: 'aria-pressed',
+    PRESSED: 'aria-pressed'
 }
 
 
