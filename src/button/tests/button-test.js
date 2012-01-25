@@ -12,23 +12,25 @@ suite.add(new Y.Test.Case({
     name: 'Methods',
 
     setUp : function () {
-        Y.one('#test').append('<button id="foo">Test label</button>')
-        this.button = new Y.Button({
-            srcNode : '#foo'
+        Y.one('#container').append('<button id="foo">Test label</button>');
+        
+        this.buttonA = new Y.Button({
+            srcNode : '#foo',
+            type : 'toggle'
         });
     },
     
     tearDown: function () {
-        Y.one('#test').empty(true);
+        Y.one('#container').empty(true);
     },
 
     'button.getNode() should return a Y.Node instance': function () {
-        var node = this.button.getNode();
+        var node = this.buttonA.getNode();
         Assert.isInstanceOf(Y.Node, node);
     },
 
     'button.simulate(click) should make `selected` attribute = true and `yui3-button-selected` class': function () {
-        var button = this.button;
+        var button = this.buttonA;
         var node = button.getNode();
         button.set('type', 'toggle');
         
@@ -42,11 +44,11 @@ suite.add(new Y.Test.Case({
         // Now make sure it is selected and has all the approriate attributes
         Assert.isTrue(button.get('selected'));
         Assert.isTrue(node.hasClass('yui3-button-selected'));
-        Assert.areSame('true', node.get('aria-selected'));
+        Assert.areSame('true', node.get('aria-pressed'));
     },
     
     'button.select() should set the `selected` attribute to `true`': function () {
-        var button = this.button;
+        var button = this.buttonA;
         var node = button.getNode();
         
         Assert.isFalse(button.get('selected'));
@@ -58,7 +60,7 @@ suite.add(new Y.Test.Case({
     },
 
     'button.unselect() should set the `selected` attribute to `false`': function () {
-        var button = this.button;
+        var button = this.buttonA;
         var node = button.getNode();
         
         button.select();
@@ -71,7 +73,7 @@ suite.add(new Y.Test.Case({
     },
 
     'button.disable() should set the `disable` attribute to `true`': function () {
-        var button = this.button;
+        var button = this.buttonA;
         var node = button.getNode();
         
         Assert.isFalse(button.get('disabled'));
@@ -83,7 +85,7 @@ suite.add(new Y.Test.Case({
     },
 
     'button.enable() should set the `disabled` attribute to `false`': function () {
-        var button = this.button;
+        var button = this.buttonA;
         var node = button.getNode();
         
         button.disable();
@@ -103,43 +105,46 @@ suite.add(new Y.Test.Case({
     name: 'Render',
 
     setUp : function () {
-        Y.one('#test').append('<button id="foo">Test label</button>')
-        this.button = new Y.Button({
-            srcNode : '#foo'
+        Y.one('#container').append('<button id="foo">Test label</button>');
+        Y.one('#container').append('<a id="bar">Test label</button>');
+        
+        this.buttonA = new Y.Button({
+            srcNode : '#foo',
+            type: 'toggle'
+        });
+        
+        this.buttonB = new Y.Button({
+            srcNode : '#bar'
         });
     },
     
     tearDown: function () {
-        Y.one('#test').empty();
+        Y.one('#container').empty();
     },
     
     'button should have `yui3-button` class': function () {
-        var button = this.button;
+        var button = this.buttonA;
         var node = button.getNode();
         
         Assert.isTrue(node.hasClass('yui3-button'));
     },
     
-    'button should have `button` role': function () {
-        var button = this.button;
+    'buttonA should have `toggle` role': function () {
+        var button = this.buttonA;
+        var node = button.getNode();
+        
+        Assert.areEqual('toggle', node.get('role'));
+    },
+    
+    'buttonB should have `button` role': function () {
+        var button = this.buttonB;
         var node = button.getNode();
         
         Assert.areEqual('button', node.get('role'));
     },
     
-    'button mouse events should toggle aria-pressed attributes': function () {
-        var button = this.button;
-        var node = button.getNode();
-        
-        node.simulate('mousedown');
-        Assert.areSame('true', node.get('aria-pressed'));
-        
-        node.simulate('mouseup');
-        Assert.areSame('false', node.get('aria-pressed'));
-    },
-    
     'button focus/blur events should toggle yui3-button-focused': function () {
-        var button = this.button;
+        var button = this.buttonA;
         var node = button.getNode();
         
         Assert.isFalse(node.hasClass('yui3-button-focused'));
@@ -157,27 +162,100 @@ suite.add(new Y.Test.Case({
     name: 'Attributes',
     
     setUp : function () {
-        Y.one('#test').append('<button id="foo">Test label</button>')
+        Y.one('#container').append('<button id="foo">Test label</button>')
         this.button = new Y.Button({
             srcNode : '#foo'
         });
     },
     
     tearDown: function () {
-        Y.one('#test').empty();
+        Y.one('#container').empty();
     },
 
+    'setting label attribute should fire labelChange': function () {
+        var button = this.button;
+        var node = button.getNode();
+        var eventsTriggered = 0;
+        
+        button.on('labelChange', function(){
+            eventsTriggered++;
+        });
+        
+        Assert.areEqual(0, eventsTriggered);
+        
+        button.set('label', 'a');
+        Assert.areEqual(1, eventsTriggered);
+        
+        button.set('label', 'b');
+        Assert.areEqual(2, eventsTriggered);
+    },
+    
+    'setting label attribute should fire disabledChange': function () {
+        var button = this.button;
+        var node = button.getNode();
+        var eventsTriggered = 0;
+        
+        button.on('disabledChange', function(){
+            eventsTriggered++;
+        });
+        
+        Assert.areEqual(0, eventsTriggered);
+        
+        button.set('disabled', true);
+        Assert.areEqual(1, eventsTriggered);
+        
+        button.set('disabled', false);
+        Assert.areEqual(2, eventsTriggered);
+    },
+    
+    'setting label attribute should fire selectedChange': function () {
+        var button = this.button;
+        var node = button.getNode();
+        var eventsTriggered = 0;
+        
+        button.on('selectedChange', function(){
+            eventsTriggered++;
+        });
+        
+        Assert.areEqual(0, eventsTriggered);
+        
+        button.set('selected', true);
+        Assert.areEqual(1, eventsTriggered);
+        
+        button.set('selected', false);
+        Assert.areEqual(2, eventsTriggered);
+    },
+    
+    'setting label attribute should fire typeChange': function () {
+        var button = this.button;
+        var node = button.getNode();
+        var eventsTriggered = 0;
+        
+        button.on('typeChange', function(){
+            eventsTriggered++;
+        });
+        
+        Assert.areEqual(0, eventsTriggered);
+        
+        button.set('type', 'toggle');
+        Assert.areEqual(1, eventsTriggered);
+        
+        button.set('type', 'push');
+        Assert.areEqual(2, eventsTriggered);
+    },
+    
     'setting label attribute should set innerHTML': function () {
         var label;
         var button = this.button;
         var node = button.getNode();
         
+            
         label = 'foobar';
+        
         button.set('label', label);
         Assert.areEqual(label, button.get('label'));
         Assert.areEqual(label, node.getContent());
         
-        label = 'fizzbuzz';
         button.set('label', label);
         Assert.areEqual(label, button.get('label'));
         Assert.areEqual(label, node.getContent());
@@ -194,7 +272,7 @@ suite.add(new Y.Test.Case({
         // Disable button
         button.set('disabled', true);
         
-        // Ensure button is enabled by default
+        // Ensure button is disabled
         Assert.isTrue(button.get('disabled'));
         Assert.isTrue(node.hasClass('yui3-button-disabled'));
     },

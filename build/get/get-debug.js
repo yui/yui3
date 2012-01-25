@@ -103,6 +103,9 @@ Y.Get = Get = {
     @property {Function} [options.onFailure] Callback to execute after a
         transaction fails, times out, or is aborted.
 
+    @property {Function} [options.onProgress] Callback to execute after each
+        individual request in a transaction either succeeds or fails.
+
     @property {Function} [options.onSuccess] Callback to execute after a
         transaction completes successfully with no errors. Note that in browsers
         that don't support the `error` event on CSS `<link>` nodes, a failed CSS
@@ -927,7 +930,7 @@ Transaction.prototype = {
         data = this._getEventData();
 
         if (errors) {
-            if (options.onTimeout && errors[errors.length - 1] === 'Timeout') {
+            if (options.onTimeout && errors[errors.length - 1].error === 'Timeout') {
                 options.onTimeout.call(thisObj, data);
             }
 

@@ -13,9 +13,9 @@ YUI.add('throttle-tests', function(Y) {
 
             fn = Y.throttle(function() {
                 counter++;
-            }, 10);
+            }, 2);
 
-            for (i; i< 350000; i++) {
+            for (i; i< 35000; i++) {
                 out++;
                 fn();
             }
@@ -42,7 +42,7 @@ YUI.add('throttle-tests', function(Y) {
                 counter++;
             }, -1);
 
-            for (i; i< 350000; i++) {
+            for (i; i< 3500; i++) {
                 out++;
                 fn();
             }
