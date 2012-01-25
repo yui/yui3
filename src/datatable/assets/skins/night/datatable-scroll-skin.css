@@ -1,0 +1,18 @@
+/* Jeff added this to cover the datatable attribute COLOR_COLUMNFILLER which sets the style through js */
+.yui3-skin-night .yui3-datatable-scrollable thead .yui3-datatable-first th:last-child div{
+	border-right:solid 30px #2F3031;	
+}
+
+.yui3-skin-night .yui3-datatable-scrollable table {border:none;}
+.yui3-skin-night .yui3-datatable-scrollable .yui3-datatable-hd {
+	border-left:1px solid #303030;
+	border-top:1px solid #303030;
+	border-right:1px solid #303030;
+}
+.yui3-skin-night .yui3-datatable-scrollable .yui3-datatable-bd {
+	border-left:1px solid #303030;
+	border-bottom:1px solid #303030;
+	border-right:1px solid #303030;
+	background-color:#000;/*FFF*/
+}
+.yui3-skin-night .yui3-datatable-scrollable .yui3-datatable-data tr.yui3-datatable-last td {border-bottom:1px solid #303030;}

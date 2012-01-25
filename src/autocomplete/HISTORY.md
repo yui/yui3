@@ -18,6 +18,9 @@ AutoComplete Change History
   `query` event. Use the `sendRequest()` method to trigger a query
   programmatically.
 
+* Added a workaround for an IE7 bug that would cause the result list to appear
+  empty when it first becomes visible.
+
 
 3.4.1
 -----

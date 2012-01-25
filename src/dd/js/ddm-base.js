@@ -293,6 +293,9 @@
         * @return {Node}
         */
         getNode: function(n) {
+            if (n instanceof Y.Node) {
+                return n;
+            }
             if (n && n.get) {
                 if (Y.Widget && (n instanceof Y.Widget)) {
                     n = n.get('boundingBox');
