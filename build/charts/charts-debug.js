@@ -9,6 +9,7 @@ YUI.add('charts', function(Y) {
  */
 var DOCUMENT = Y.config.doc,
     Y_Lang = Y.Lang,
+    IS_STRING = Y_Lang.isString,
     LeftAxisLayout,
     RightAxisLayout,
     BottomAxisLayout,
@@ -19,7 +20,26 @@ var DOCUMENT = Y.config.doc,
     CircleGroup,
     RectGroup,
     EllipseGroup,
-    DiamondGroup;
+    DiamondGroup,
+    /**
+     * Updates the content of text field. This method writes a value into a text field using 
+     * `appendChild`. If the value is a `String`, it is converted to a `TextNode` first. 
+     *
+     * @method SETTEXT
+     * @param label {HTMLElement} label to be updated
+     * @param val {String} value with which to update the label
+     * @private
+     */
+    SETTEXT = function(textField, val)
+    {
+        textField.innerHTML = "";
+        if(IS_STRING(val))
+        {
+            val = DOCUMENT.createTextNode(val);
+        }
+        textField.appendChild(val);
+    };
+
 
 
 /**
@@ -2316,7 +2336,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 }
                 position = this.getPosition(tickPoint);
                 label = this.getLabel(tickPoint, labelStyles);
-                label.innerHTML = labelFunction.apply(labelFunctionScope, [this.getLabelByIndex(i, len), labelFormat]);
+                this.get("appendLabelFunction")(label, labelFunction.apply(labelFunctionScope, [this.getLabelByIndex(i, len), labelFormat]));
                 labelWidth = Math.round(label.offsetWidth);
                 labelHeight = Math.round(label.offsetHeight);
                 if(!explicitlySized)
@@ -2353,7 +2373,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             this.fire("axisRendered");
         }
     },
-
+    
     /**
      * Calculates and sets the total size of a title.
      *
@@ -2467,7 +2487,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                     titleTextField.style[i] = styles[i];
                 }
             }
-            titleTextField.innerHTML = this.get("titleFunction")(title);
+            this.get("appendTitleFunction")(titleTextField, title);
             this._titleTextField = titleTextField;
             this._titleRotationProps = this._getTextRotationProps(styles);
             this._setTotalTitleSize(styles);
@@ -2869,7 +2889,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             props = this._getTextRotationProps(labelStyles);
             props.transformOrigin = layout._getTransformOrigin(props.rot);
         label = this.getLabel({x: 0, y: 0}, labelStyles);
-        label.innerHTML = this.get("labelFunction").apply(this, [val, this.get("labelFormat")]); 
+        this.get("appendLabelFunction")(label, this.get("labelFunction").apply(this, [val, this.get("labelFormat")]));
         props.labelWidth = label.offsetWidth;
         props.labelHeight = label.offsetHeight;
         label = this._labels.pop();
@@ -2937,7 +2957,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     /**
      * Length in pixels of largest text bounding box. Used to calculate the height of the axis.
      *
-     * @properties maxLabelSize
+     * @property maxLabelSize
      * @type Number
      * @protected
      */
@@ -2952,7 +2972,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          * the axis' contents, excess content will overflow.
          *
          * @attribute width
-         * @lazyAdd false
          * @type Number
          */
         width: {
@@ -2981,7 +3000,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          * the axis' contents, excess content will overflow.
          *
          * @attribute height
-         * @lazyAdd false
          * @type Number
          */
         height: {
@@ -3269,33 +3287,12 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          *  @type String
          */
         title: {
-            setter: function(val)
-            {
-                return Y.Escape.html(val);
-            }
-        },
-
-        /**
-         * Method used for formatting title. The method use would need to implement the arguments below and return a `String` or `HTML`. The default implementation 
-         * of the method returns a `String`. The output of this method will be rendered to the DOM using `innerHTML`. 
-         * <dl>
-         *      <dt>val</dt><dd>Title to be formatted. (`String`)</dd>
-         * </dl>
-         *
-         * @attribute titleFunction
-         * @type Function
-         */
-        titleFunction: {
-            value: function(val)
-            {
-                return val;
-            }
+            value: null
         },
         
         /**
          * Method used for formatting a label. This attribute allows for the default label formatting method to overridden. The method use would need
-         * to implement the arguments below and return a `String` or `HTML`. The default implementation of the method returns a `String`. The output of this method
-         * will be rendered to the DOM using `innerHTML`. 
+         * to implement the arguments below and return a `String` or `HTMLElement`. 
          * <dl>
          *      <dt>val</dt><dd>Label to be formatted. (`String`)</dd>
          *      <dt>format</dt><dd>Template for formatting label. (optional)</dd>
@@ -3308,6 +3305,48 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             value: function(val, format)
             {
                 return val;
+            }
+        },
+        
+        /**
+         * Function used to append an axis value to an axis label. This function has the following signature:
+         *  <dl>
+         *      <dt>textField</dt><dd>The axis label to be appended. (`HTMLElement`)</dd>
+         *      <dt>val</dt><dd>The value to attach to the text field. This method will accept an `HTMLELement`
+         *      or a `String`. This method does not use (`HTMLElement` | `String`)</dd>
+         *  </dl>
+         * The default method appends a value to the `HTMLElement` using the `appendChild` method. If the given 
+         * value is a `String`, the method will convert the the value to a `textNode` before appending to the 
+         * `HTMLElement`. This method will not convert an `HTMLString` to an `HTMLElement`. 
+         *
+         * @attribute appendLabelFunction
+         * @type Function
+         */
+        appendLabelFunction: {
+            getter: function()
+            {
+                return SETTEXT;
+            }
+        },
+        
+        /**
+         * Function used to append a title value to the title object. This function has the following signature:
+         *  <dl>
+         *      <dt>textField</dt><dd>The title text field to be appended. (`HTMLElement`)</dd>
+         *      <dt>val</dt><dd>The value to attach to the text field. This method will accept an `HTMLELement`
+         *      or a `String`. This method does not use (`HTMLElement` | `String`)</dd>
+         *  </dl>
+         * The default method appends a value to the `HTMLElement` using the `appendChild` method. If the given 
+         * value is a `String`, the method will convert the the value to a `textNode` before appending to the 
+         * `HTMLElement` element. This method will not convert an `HTMLString` to an `HTMLElement`. 
+         *
+         * @attribute appendTitleFunction
+         * @type Function
+         */
+        appendTitleFunction: {
+            getter: function()
+            {
+                return SETTEXT;
             }
         }
             
@@ -4102,8 +4141,9 @@ NumericAxis.ATTRS = {
     
     /**
      * Method used for formatting a label. This attribute allows for the default label formatting method to overridden. The method use would need
-     * to implement the arguments below and return a `String` or `HTML`. The default implementation of the method returns a `String`. The output of this method
-     * will be rendered to the DOM using `innerHTML`. 
+     * to implement the arguments below and return a `String` or an `HTMLElement`. The default implementation of the method returns a `String`. The output of this method
+     * will be rendered to the DOM using `appendChild`. If you override the `labelFunction` method and return an html string, you will also need to override the Axis' 
+     * `appendLabelFunction` to accept html as a `String`.
      * <dl>
      *      <dt>val</dt><dd>Label to be formatted. (`String`)</dd>
      *      <dt>format</dt><dd>Object containing properties used to format the label. (optional)</dd>
@@ -4940,8 +4980,9 @@ TimeAxis.ATTRS =
 
     /**
      * Method used for formatting a label. This attribute allows for the default label formatting method to overridden. The method use would need
-     * to implement the arguments below and return a `String` or `HTML`. The default implementation of the method returns a `String`. The output of this method
-     * will be rendered to the DOM using `innerHTML`. 
+     * to implement the arguments below and return a `String` or an `HTMLElement`. The default implementation of the method returns a `String`. The output of this method
+     * will be rendered to the DOM using `appendChild`. If you override the `labelFunction` method and return an html string, you will also need to override the Axis' 
+     * `appendLabelFunction` to accept html as a `String`.
      * <dl>
      *      <dt>val</dt><dd>Label to be formatted. (`String`)</dd>
      *      <dt>format</dt><dd>STRFTime string used to format the label. (optional)</dd>
@@ -5361,7 +5402,7 @@ Y.extend(CategoryAxis, Y.AxisType,
         {
             value = keys[key][index];
         }
-        return Y.Escape.html(value);
+        return value.toString();
     },
    
     /**
@@ -5386,7 +5427,7 @@ Y.extend(CategoryAxis, Y.AxisType,
         {
             label = data[l - (i + 1)];
         }   
-        return Y.Escape.html(label.toString());
+        return label.toString();
     },
 
     /**
@@ -11569,7 +11610,8 @@ ChartBase.ATTRS = {
      *  <dt>series</dt><dd> The `CartesianSeries` instance of the item.</dd>
      *  <dt>seriesIndex</dt><dd>The index of the series in the `seriesCollection`.</dd>
      *  </dl>
-     *  The method returns an html string which is written into the DOM using `innerHTML`. 
+     *  The method returns an `HTMLElement` which is written into the DOM using `appendChild`. If you override this method and choose to return an html string, you
+     *  will also need to override the tooltip's `setTextFunction` method to accept an html string.
      *  </dd>
      *  <dt>planarLabelFunction</dt><dd>Reference to the function used to format a planar event triggered tooltip's text
      *  <dl>
@@ -11588,7 +11630,16 @@ ChartBase.ATTRS = {
      *  </dl>
      *  </dd>
      *  </dl>
-     *  The method returns an html string which is written into the DOM using `innerHTML`. 
+     *  The method returns an `HTMLElement` which is written into the DOM using `appendChild`. If you override this method and choose to return an html string, you
+     *  will also need to override the tooltip's `setTextFunction` method to accept an html string.
+     *  </dd>
+     *  <dt>setTextFunction</dt><dd>Method that writes content returned from `planarLabelFunction` or `markerLabelFunction` into the the tooltip node.
+     *  has the following signature:
+     *  <dl>
+     *      <dt>label</dt><dd>The `HTMLElement` that the content is to be added.</dd>
+     *      <dt>val</dt><dd>The content to be rendered into tooltip. This can be a `String` or `HTMLElement`. If an HTML string is used, it will be rendered as a
+     *      string.</dd>
+     *  </dl>
      *  </dd>
      *  </dl>
      * @attribute tooltip
@@ -12195,7 +12246,7 @@ ChartBase.prototype = {
         if(msg)
         {
             tt.visible = true;
-            node.set("innerHTML", msg);
+            tt.setTextFunction(node, msg);
             node.setStyle("top", y + "px");
             node.setStyle("left", x + "px");
             node.setStyle("visibility", "visible");
@@ -12277,6 +12328,7 @@ ChartBase.prototype = {
             props = {
                 markerLabelFunction:"markerLabelFunction",
                 planarLabelFunction:"planarLabelFunction",
+                setTextFunction:"setTextFunction",
                 showEvent:"showEvent",
                 hideEvent:"hideEvent",
                 markerEventHandler:"markerEventHandler",
@@ -12320,6 +12372,7 @@ ChartBase.prototype = {
     {
         var node = DOCUMENT.createElement("div"),
             tt = {
+                setTextFunction: SETTEXT,
                 markerLabelFunction: this._tooltipLabelFunction,
                 planarLabelFunction: this._planarLabelFunction,
                 show: true,
@@ -12380,7 +12433,7 @@ ChartBase.prototype = {
      */
     _planarLabelFunction: function(categoryAxis, valueItems, index, seriesArray, seriesIndex)
     {
-        var msg = "",
+        var msg = DOCUMENT.createElement("div"),
             valueItem,
             i = 0,
             len = seriesArray.length,
@@ -12388,7 +12441,7 @@ ChartBase.prototype = {
             series;
         if(categoryAxis)
         {
-            msg += categoryAxis.get("labelFunction").apply(this, [categoryAxis.getKeyValueAt(this.get("categoryKey"), index), categoryAxis.get("labelFormat")]);
+            msg.appendChild(DOCUMENT.createTextNode(categoryAxis.get("labelFunction").apply(this, [categoryAxis.getKeyValueAt(this.get("categoryKey"), index), categoryAxis.get("labelFormat")])));
         }
 
         for(; i < len; ++i)
@@ -12398,7 +12451,8 @@ ChartBase.prototype = {
             {
                 valueItem = valueItems[i];
                 axis = valueItem.axis;
-                msg += "<br/><span>" + valueItem.displayName + ": " + axis.get("labelFunction").apply(this, [axis.getKeyValueAt(valueItem.key, index), axis.get("labelFormat")]) + "</span>";
+                msg.appendChild(DOCUMENT.createElement("br"));
+                msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName + ": " + axis.get("labelFunction").apply(this, [axis.getKeyValueAt(valueItem.key, index), axis.get("labelFormat")])));
             }
         }
         return msg;
@@ -12430,10 +12484,12 @@ ChartBase.prototype = {
      */
     _tooltipLabelFunction: function(categoryItem, valueItem, itemIndex, series, seriesIndex)
     {
-        var msg = categoryItem.displayName +
-        ":&nbsp;" + categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]) + 
-        "<br/>" + valueItem.displayName + 
-        ":&nbsp;" + valueItem.axis.get("labelFunction").apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]);
+        var msg = DOCUMENT.createElement("div");
+        msg.appendChild(DOCUMENT.createTextNode(categoryItem.displayName +
+        ": " + categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]))); 
+        msg.appendChild(DOCUMENT.createElement("br"));
+        msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName + 
+        ": " + valueItem.axis.get("labelFunction").apply(this, [valueItem.value, valueItem.axis.get("labelFormat")])));
         return msg; 
     },
 
