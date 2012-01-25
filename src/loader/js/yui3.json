@@ -620,7 +620,8 @@
     "datatable-core": {
         "requires": [
             "escape", 
-            "model-list"
+            "model-list", 
+            "node-event-delegate"
         ]
     }, 
     "datatable-datasource": {

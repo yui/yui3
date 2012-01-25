@@ -8560,7 +8560,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "datatable-core": {
         "requires": [
             "escape", 
-            "model-list"
+            "model-list", 
+            "node-event-delegate"
         ]
     }, 
     "datatable-datasource": {
@@ -10140,7 +10141,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'b006701b144fdd54014542330c92d138';
+YUI.Env[Y.version].md5 = 'a34c57126e92995f7dae426b74ceaed9';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
