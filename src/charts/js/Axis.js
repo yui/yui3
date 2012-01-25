@@ -420,7 +420,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 }
                 position = this.getPosition(tickPoint);
                 label = this.getLabel(tickPoint, labelStyles);
-                label.innerHTML = labelFunction.apply(labelFunctionScope, [this.getLabelByIndex(i, len), labelFormat]);
+                this.get("appendLabelFunction")(label, labelFunction.apply(labelFunctionScope, [this.getLabelByIndex(i, len), labelFormat]));
                 labelWidth = Math.round(label.offsetWidth);
                 labelHeight = Math.round(label.offsetHeight);
                 if(!explicitlySized)
@@ -457,7 +457,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             this.fire("axisRendered");
         }
     },
-
+    
     /**
      * Calculates and sets the total size of a title.
      *
@@ -571,7 +571,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                     titleTextField.style[i] = styles[i];
                 }
             }
-            titleTextField.innerHTML = this.get("titleFunction")(title);
+            this.get("appendTitleFunction")(titleTextField, title);
             this._titleTextField = titleTextField;
             this._titleRotationProps = this._getTextRotationProps(styles);
             this._setTotalTitleSize(styles);
@@ -973,7 +973,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             props = this._getTextRotationProps(labelStyles);
             props.transformOrigin = layout._getTransformOrigin(props.rot);
         label = this.getLabel({x: 0, y: 0}, labelStyles);
-        label.innerHTML = this.get("labelFunction").apply(this, [val, this.get("labelFormat")]); 
+        this.get("appendLabelFunction")(label, this.get("labelFunction").apply(this, [val, this.get("labelFormat")]));
         props.labelWidth = label.offsetWidth;
         props.labelHeight = label.offsetHeight;
         label = this._labels.pop();
@@ -1041,7 +1041,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     /**
      * Length in pixels of largest text bounding box. Used to calculate the height of the axis.
      *
-     * @properties maxLabelSize
+     * @property maxLabelSize
      * @type Number
      * @protected
      */
@@ -1056,7 +1056,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          * the axis' contents, excess content will overflow.
          *
          * @attribute width
-         * @lazyAdd false
          * @type Number
          */
         width: {
@@ -1085,7 +1084,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          * the axis' contents, excess content will overflow.
          *
          * @attribute height
-         * @lazyAdd false
          * @type Number
          */
         height: {
@@ -1373,33 +1371,12 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          *  @type String
          */
         title: {
-            setter: function(val)
-            {
-                return Y.Escape.html(val);
-            }
-        },
-
-        /**
-         * Method used for formatting title. The method use would need to implement the arguments below and return a `String` or `HTML`. The default implementation 
-         * of the method returns a `String`. The output of this method will be rendered to the DOM using `innerHTML`. 
-         * <dl>
-         *      <dt>val</dt><dd>Title to be formatted. (`String`)</dd>
-         * </dl>
-         *
-         * @attribute titleFunction
-         * @type Function
-         */
-        titleFunction: {
-            value: function(val)
-            {
-                return val;
-            }
+            value: null
         },
         
         /**
          * Method used for formatting a label. This attribute allows for the default label formatting method to overridden. The method use would need
-         * to implement the arguments below and return a `String` or `HTML`. The default implementation of the method returns a `String`. The output of this method
-         * will be rendered to the DOM using `innerHTML`. 
+         * to implement the arguments below and return a `String` or `HTMLElement`. 
          * <dl>
          *      <dt>val</dt><dd>Label to be formatted. (`String`)</dd>
          *      <dt>format</dt><dd>Template for formatting label. (optional)</dd>
@@ -1412,6 +1389,48 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             value: function(val, format)
             {
                 return val;
+            }
+        },
+        
+        /**
+         * Function used to append an axis value to an axis label. This function has the following signature:
+         *  <dl>
+         *      <dt>textField</dt><dd>The axis label to be appended. (`HTMLElement`)</dd>
+         *      <dt>val</dt><dd>The value to attach to the text field. This method will accept an `HTMLELement`
+         *      or a `String`. This method does not use (`HTMLElement` | `String`)</dd>
+         *  </dl>
+         * The default method appends a value to the `HTMLElement` using the `appendChild` method. If the given 
+         * value is a `String`, the method will convert the the value to a `textNode` before appending to the 
+         * `HTMLElement`. This method will not convert an `HTMLString` to an `HTMLElement`. 
+         *
+         * @attribute appendLabelFunction
+         * @type Function
+         */
+        appendLabelFunction: {
+            getter: function()
+            {
+                return SETTEXT;
+            }
+        },
+        
+        /**
+         * Function used to append a title value to the title object. This function has the following signature:
+         *  <dl>
+         *      <dt>textField</dt><dd>The title text field to be appended. (`HTMLElement`)</dd>
+         *      <dt>val</dt><dd>The value to attach to the text field. This method will accept an `HTMLELement`
+         *      or a `String`. This method does not use (`HTMLElement` | `String`)</dd>
+         *  </dl>
+         * The default method appends a value to the `HTMLElement` using the `appendChild` method. If the given 
+         * value is a `String`, the method will convert the the value to a `textNode` before appending to the 
+         * `HTMLElement` element. This method will not convert an `HTMLString` to an `HTMLElement`. 
+         *
+         * @attribute appendTitleFunction
+         * @type Function
+         */
+        appendTitleFunction: {
+            getter: function()
+            {
+                return SETTEXT;
             }
         }
             

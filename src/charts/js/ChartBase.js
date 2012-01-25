@@ -42,7 +42,8 @@ ChartBase.ATTRS = {
      *  <dt>series</dt><dd> The `CartesianSeries` instance of the item.</dd>
      *  <dt>seriesIndex</dt><dd>The index of the series in the `seriesCollection`.</dd>
      *  </dl>
-     *  The method returns an html string which is written into the DOM using `innerHTML`. 
+     *  The method returns an `HTMLElement` which is written into the DOM using `appendChild`. If you override this method and choose to return an html string, you
+     *  will also need to override the tooltip's `setTextFunction` method to accept an html string.
      *  </dd>
      *  <dt>planarLabelFunction</dt><dd>Reference to the function used to format a planar event triggered tooltip's text
      *  <dl>
@@ -61,7 +62,16 @@ ChartBase.ATTRS = {
      *  </dl>
      *  </dd>
      *  </dl>
-     *  The method returns an html string which is written into the DOM using `innerHTML`. 
+     *  The method returns an `HTMLElement` which is written into the DOM using `appendChild`. If you override this method and choose to return an html string, you
+     *  will also need to override the tooltip's `setTextFunction` method to accept an html string.
+     *  </dd>
+     *  <dt>setTextFunction</dt><dd>Method that writes content returned from `planarLabelFunction` or `markerLabelFunction` into the the tooltip node.
+     *  has the following signature:
+     *  <dl>
+     *      <dt>label</dt><dd>The `HTMLElement` that the content is to be added.</dd>
+     *      <dt>val</dt><dd>The content to be rendered into tooltip. This can be a `String` or `HTMLElement`. If an HTML string is used, it will be rendered as a
+     *      string.</dd>
+     *  </dl>
      *  </dd>
      *  </dl>
      * @attribute tooltip
@@ -668,7 +678,7 @@ ChartBase.prototype = {
         if(msg)
         {
             tt.visible = true;
-            node.set("innerHTML", msg);
+            tt.setTextFunction(node, msg);
             node.setStyle("top", y + "px");
             node.setStyle("left", x + "px");
             node.setStyle("visibility", "visible");
@@ -750,6 +760,7 @@ ChartBase.prototype = {
             props = {
                 markerLabelFunction:"markerLabelFunction",
                 planarLabelFunction:"planarLabelFunction",
+                setTextFunction:"setTextFunction",
                 showEvent:"showEvent",
                 hideEvent:"hideEvent",
                 markerEventHandler:"markerEventHandler",
@@ -793,6 +804,7 @@ ChartBase.prototype = {
     {
         var node = DOCUMENT.createElement("div"),
             tt = {
+                setTextFunction: SETTEXT,
                 markerLabelFunction: this._tooltipLabelFunction,
                 planarLabelFunction: this._planarLabelFunction,
                 show: true,
@@ -853,7 +865,7 @@ ChartBase.prototype = {
      */
     _planarLabelFunction: function(categoryAxis, valueItems, index, seriesArray, seriesIndex)
     {
-        var msg = "",
+        var msg = DOCUMENT.createElement("div"),
             valueItem,
             i = 0,
             len = seriesArray.length,
@@ -861,7 +873,7 @@ ChartBase.prototype = {
             series;
         if(categoryAxis)
         {
-            msg += categoryAxis.get("labelFunction").apply(this, [categoryAxis.getKeyValueAt(this.get("categoryKey"), index), categoryAxis.get("labelFormat")]);
+            msg.appendChild(DOCUMENT.createTextNode(categoryAxis.get("labelFunction").apply(this, [categoryAxis.getKeyValueAt(this.get("categoryKey"), index), categoryAxis.get("labelFormat")])));
         }
 
         for(; i < len; ++i)
@@ -871,7 +883,8 @@ ChartBase.prototype = {
             {
                 valueItem = valueItems[i];
                 axis = valueItem.axis;
-                msg += "<br/><span>" + valueItem.displayName + ": " + axis.get("labelFunction").apply(this, [axis.getKeyValueAt(valueItem.key, index), axis.get("labelFormat")]) + "</span>";
+                msg.appendChild(DOCUMENT.createElement("br"));
+                msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName + ": " + axis.get("labelFunction").apply(this, [axis.getKeyValueAt(valueItem.key, index), axis.get("labelFormat")])));
             }
         }
         return msg;
@@ -903,10 +916,12 @@ ChartBase.prototype = {
      */
     _tooltipLabelFunction: function(categoryItem, valueItem, itemIndex, series, seriesIndex)
     {
-        var msg = categoryItem.displayName +
-        ":&nbsp;" + categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]) + 
-        "<br/>" + valueItem.displayName + 
-        ":&nbsp;" + valueItem.axis.get("labelFunction").apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]);
+        var msg = DOCUMENT.createElement("div");
+        msg.appendChild(DOCUMENT.createTextNode(categoryItem.displayName +
+        ": " + categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]))); 
+        msg.appendChild(DOCUMENT.createElement("br"));
+        msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName + 
+        ": " + valueItem.axis.get("labelFunction").apply(this, [valueItem.value, valueItem.axis.get("labelFormat")])));
         return msg; 
     },
 

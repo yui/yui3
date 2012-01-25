@@ -202,7 +202,7 @@ Y.extend(CategoryAxis, Y.AxisType,
         {
             value = keys[key][index];
         }
-        return Y.Escape.html(value);
+        return value.toString();
     },
    
     /**
@@ -227,7 +227,7 @@ Y.extend(CategoryAxis, Y.AxisType,
         {
             label = data[l - (i + 1)];
         }   
-        return Y.Escape.html(label.toString());
+        return label.toString();
     },
 
     /**

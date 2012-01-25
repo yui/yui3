@@ -7,6 +7,7 @@
  */
 var DOCUMENT = Y.config.doc,
     Y_Lang = Y.Lang,
+    IS_STRING = Y_Lang.isString,
     LeftAxisLayout,
     RightAxisLayout,
     BottomAxisLayout,
@@ -17,7 +18,26 @@ var DOCUMENT = Y.config.doc,
     CircleGroup,
     RectGroup,
     EllipseGroup,
-    DiamondGroup;
+    DiamondGroup,
+    /**
+     * Updates the content of text field. This method writes a value into a text field using 
+     * `appendChild`. If the value is a `String`, it is converted to a `TextNode` first. 
+     *
+     * @method SETTEXT
+     * @param label {HTMLElement} label to be updated
+     * @param val {String} value with which to update the label
+     * @private
+     */
+    SETTEXT = function(textField, val)
+    {
+        textField.innerHTML = "";
+        if(IS_STRING(val))
+        {
+            val = DOCUMENT.createTextNode(val);
+        }
+        textField.appendChild(val);
+    };
+
 
 
 /**
