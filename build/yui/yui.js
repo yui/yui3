@@ -3631,6 +3631,9 @@ Y.Get = Get = {
     @property {Function} [options.onFailure] Callback to execute after a
         transaction fails, times out, or is aborted.
 
+    @property {Function} [options.onProgress] Callback to execute after each
+        individual request in a transaction either succeeds or fails.
+
     @property {Function} [options.onSuccess] Callback to execute after a
         transaction completes successfully with no errors. Note that in browsers
         that don't support the `error` event on CSS `<link>` nodes, a failed CSS
@@ -5314,7 +5317,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.01.18-21-09',
+            GALLERY_VERSION = 'gallery-2012.01.25-21-14',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
