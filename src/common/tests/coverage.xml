@@ -22,10 +22,10 @@
 <yuitest>
     <tests base="@TEST_ARTIFACTS_BASE@" timeout="120000">
         <!-- Using a better coverage page for loader tests. -->
-        <url>loader/tests/index-coverage.html</url>
+        <url>loader/tests/index-automated.html</url>
         <!-- Combined yui-base, array, object, lang, features
             test page -->
-        <url>yui/tests/index-coverage.html</url>
+        <url>yui/tests/index-automated.html</url>
 
 
         <url>app/tests/app.html</url>
