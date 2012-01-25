@@ -1,17 +1,31 @@
 <style scoped>
-/* custom styles for this example */
-.dt-example {margin:1em;}
-
 /* css to counter global site css */
-.dt-example th {text-transform:none;}
-.dt-example table {width:auto;}
-.dt-example caption {display:table-caption;}
+.example table {
+    width: auto;
+}
+.example caption {
+    display: table-caption;
+}
+.example th,
+.example td {
+    border: 0 none;
+    text-transform :none;
+}
 </style>
 
 <div class="intro">
-    <p>This example shows how to populate a DataTable with data from the Yahoo! Local webservice retrieved via a YQL query. First we create a DataSource.Get instance pointing to YQL, then using the DataTableDataSource plugin we can load data for pizza places near our office.</p>
+    <p>
+        This example shows how to populate a DataTable with data from the
+        Yahoo! Local webservice retrieved via a YQL query. First we create a
+        DataSource.Get instance pointing to YQL, then using the
+        DataTableDataSource plugin we can load data for pizza places near our
+        office.
+    </p>
 
-    <p>In this example, we render the DataTable first, then load data into it in a separate call.</p>
+    <p>
+        In this example, we render the DataTable first, then load data into it
+        in a separate call.
+    </p>
 </div>
 
 <div class="example yui3-skin-sam">
@@ -20,16 +34,25 @@
 
 <h2>Populating Your DataTable with Remote Data Using DataSource.Get</h2>
 
-<p>Your table can be easily popluated with remote JSON data from a JSONP webservice by creating a DataSource instance and using the DataTableDataSource plugin to load the data into a DataTable.</p>
+<p>
+    Your table can be easily popluated with remote JSON data from a JSONP
+    webservice by creating a DataSource instance and using the
+    DataTableDataSource plugin to load the data into a DataTable.
+</p>
 
 <p>Start with the `use()` statement:</p>
 
 ```
-YUI().use("datasource-get", "datasource-jsonschema", "datatable-datasource", function(Y) {
+YUI().use("datatable", "datasource-get", "datasource-jsonschema", "datatable-datasource", function(Y) {
 });
 ```
 
-<p>Next create a DataSource.Get instance pointing to YQL. The <a href="http://developer.yahoo.com/yql/console/">YQL Console</a> makes it easy to determine the REST URL we want to send. You also need to define the correct schema for the DataSourceJSONSchema plugin. This is a good time to call `sendRequest` to make sure the data returns as expected.</p>
+<p>
+    Next create a DataSource.Get instance pointing to YQL. The <a
+    href="http://developer.yahoo.com/yql/console/">YQL Console</a> makes it
+    easy to determine the REST URL we want to send. You also need to define the
+    correct schema for the DataSourceJSONSchema plugin.
+</p>
 
 ```
 var dataSource = new Y.DataSource.Get({
@@ -42,10 +65,17 @@ var dataSource = new Y.DataSource.Get({
 dataSource.plug(Y.Plugin.DataSourceJSONSchema, {
     schema: {
         resultListLocator: "query.results.Result",
-        resultFields: ["Title", "Phone", "Rating.AverageRating"]
+        resultFields: [ "Title", "Phone", "Rating" ]
     }
 });
+```
 
+<p>
+    This is a good time to call `sendRequest` to make sure the data returns as
+    expected.
+</p>
+
+```
 dataSource.sendRequest({
     callback: {
         success: function(e) {
@@ -55,37 +85,150 @@ dataSource.sendRequest({
 });
 ```
 
-<p>Now that the DataSource is created properly, define the columns that you want your table to show. These columns map directly to the parameter names returned in the data.</p>
+Results:
+```
+{
+    "query": {
+        ...
+        "results": {
+            "Result":[
+                {
+                    "Title" : "Giovannis Pizzeria",
+                    "Phone" : "(408) 734-4221",
+                    ...
+                    "Rating": {
+                        "AverageRating": "4",
+                        ...
+                    }
+                },
+                {
+                    "Title" : "Pizza",
+                    "Phone" : "(800) 555-1212",
+                    ...
+                    "Rating": {
+                        "AverageRating":"NaN",
+                        ...
+                    }
+                },
+                ...
+            ]
+        }
+    }
+}
+```
+
+<p>
+    Uh oh. The `Rating` data we're receiving is an object rather than a single value.  It looks like `Rating.AverageRating` is what we want, but it's a numeric string, and sometimes the unfortunate value "NaN".
+</p>
+
+<p>
+    We'll add a `locator` to the schema to extract the `Rating.AverageRating`
+    value for our `Rating` data field, and also a `parser` that will convert
+    the numeric string into a real number, using `-1` for restaurants that
+    haven't received a rating yet.  It's a good policy to store the table model
+    data as the appropriate type.
+</p>
+
+```
+    schema: {
+        resultListLocator: "query.results.Result",
+        resultFields: [
+            "Title",
+            "Phone",
+            {
+                key: "Rating",
+                locator: "Rating.AverageRating",
+                parser: function (val) {
+                    return isNaN(val) : -1 : +val;
+                }
+            }
+        ]
+    }
+```
+
+<p>
+    Now that the DataSource is created properly, define the columns that you
+    want your table to show. These columns map directly to the parameter names
+    returned in the data.  We'll add a formatter to the `Rating` column to
+    deal with those `-1`s, instead displaying "(none)".
+</p>
 
 ```
 var cols = [
     "Title",
     "Phone",
-    { key: "Rating.AverageRating", label: "Rating" }
+    {
+        key: "Rating",
+        formatter: function (o) {
+            // formatters can either return the new content or update o.value
+            if (o.value === -1) {
+                o.value = "(none)";
+            }
+        }
+    }
 ];
 ```
 
-<p>Now you are ready to create a DataTable using the columns you have defined. When you plug the instance with the DataTableDataSource plugin, point to your DataSource instance. After you render the table, load the data via the plugin.</p>
+<p>
+    Now you are ready to create a DataTable using the columns you have defined.
+    When you plug the instance with the DataTableDataSource plugin, point to
+    your DataSource instance. After you render the table, load the data via the
+    plugin.
+</p>
 
 ```
-var table = new Y.DataTable.Base({
-    columnset: cols,
-    summary:"Pizza places near 98089",
-    caption:"Table with JSON data from YQL"
+var table = new Y.DataTable({
+    columns : cols,
+    summary : "Pizza places near 98089",
+    caption : "Table with JSON data from YQL"
 });
 
-table.plug(Y.Plugin.DataTableDataSource, {
-    datasource: dataSource
-}).render("#pizza");
+table.plug(Y.Plugin.DataTableDataSource, { datasource: dataSource });
+
+table.render("#pizza");
 
 table.datasource.load();
 ```
 
-<p>One final change you can make is to split the URL between the DataSource `source` value and the `request` value sent to the DataTableDataSource plugin. Splitting the URL this way facilitates making future requests to the same DataSource.  You can see this in the <a href="#fullcode">Full Code Listing</a> below.</p>
+<p>
+    One final change you can make is to split the URL between the DataSource
+    `source` value and the `request` value sent to the DataTableDataSource
+    plugin. Splitting the URL this way facilitates making future requests to
+    the same DataSource.  You can see this in the <a href="#fullcode">Full Code
+    Listing</a> below.
+</p>
 
 <h2 id="fullcode">Full Code Listing</h2>
 
 ```
-    {{>datatable-dsget-source}}
+{{>datatable-dsget-source}}
 ```
 
+<h3>Lighten the module payload</h3>
+
+<p>
+    The `datatable` module includes a number of features not used in this
+    example.  For a smaller module payload, use the `datatable-base` module.
+</p>
+
+```
+// datatable-base includes only basic table rendering, but in this case,
+// that's enough.
+YUI().use("datatable-base", "datasource-get", "datasource-jsonschema", "datatable-datasource", function(Y) {
+
+    ...
+
+    var table = new Y.DataTable({
+        columns : cols,
+        summary : "Pizza places near 98089",
+        caption : "Table with JSON data from YQL"
+    });
+
+    table.plug(Y.Plugin.DataTableDataSource, { datasource: dataSource });
+
+    table.render("#pizza");
+
+    table.datasource.load();
+
+});
+```
