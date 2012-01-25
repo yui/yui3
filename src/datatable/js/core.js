@@ -364,6 +364,25 @@ Y.mix(Table.prototype, {
     //data: null,
 
     // -- Public methods ------------------------------------------------------
+    /**
+    Pass through to `delegate()` called from the `contentBox`.
+
+    @method delegate
+    @param type {String} the event type to delegate
+    @param fn {Function} the callback function to execute.  This function
+                 will be provided the event object for the delegated event.
+    @param spec {String|Function} a selector that must match the target of the
+                 event or a function to test target and its parents for a match
+    @param context {Object} optional argument that specifies what 'this' refers to
+    @param args* {any} 0..n additional arguments to pass on to the callback
+                 function.  These arguments will be added after the event object.
+    @return {EventHandle} the detach handle
+    **/
+    delegate: function () {
+        var contentBox = this.get('contentBox');
+
+        return contentBox.delegate.apply(contentBox, arguments);
+    },
 
     /**
     Returns the Node for a cell at the given coordinates.
