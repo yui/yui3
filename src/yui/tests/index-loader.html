@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>YUI Seed Tests</title>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+
+<!-- This is the loader test file, notice it's using the `yui-base` seed file & including loader so it is NOT fetched. -->
+<script type="text/javascript" src="../../../build/yui-base/yui-base.js"></script>
+<script type="text/javascript" src="../../../build/loader/loader.js"></script>
+<script type="text/javascript">
+
+YUI.GlobalConfig = {
+    modules: {
+        'global-mod': {
+            fullpath: './assets/globalmod.js'
+        }
+    }
+};
+
+var YUI_config = {
+    loaderPath: 'loader/loader.js',
+    gconfig: true,
+    gfilter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+};
+
+
+YUI({
+    allowRollup: false,
+    logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true },    
+    filter: YUI_config.gfilter,
+    modules: {
+        'seed-tests': {
+            fullpath: './seed-tests.js',
+            requires: [ 'test']
+        },
+        'core-tests': {
+            fullpath: './core-tests.js',
+            requires: [ 'classnamemanager']
+        },
+
+        'config-test': {
+            fullpath: 'config-test.js'
+        },
+
+        'later-test': {
+            fullpath: 'later-test.js'
+        },
+
+        'namespace-test': {
+            fullpath: 'namespace-test.js'
+        }
+        
+    }
+}).use('seed-tests', 'core-tests', 'config-test', 'later-test', 'namespace-test', 'test-console', 'test', function(Y) {
+    new Y.Test.Console().render('#log');
+
+    //This is a YUITest hack to rename this test for reporting
+    Y.Test.Runner.masterSuite.name = 'YUI Seed Static Loader Test Suite';
+    Y.Test.Runner.masterSuite.items[0].name = 'YUI Seed Static Loader Test Suite';
+    Y.Test.Runner.run();
+});
+
+</script>
+</body>
+</html>

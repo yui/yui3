@@ -12,7 +12,7 @@
             "name"       : "simple-button",
             "displayName": "Button",
             "description": "",
-            "modules"    : ["button"],
+            "modules"    : ["button-base", "cssbutton"],
             "tags"       : ["button"],
             "hideTableOfContents": true
         },
@@ -20,8 +20,16 @@
             "name"       : "css-button",
             "displayName": "CSS Buttons",
             "description": "",
-            "modules"    : ["button"],
+            "modules"    : ["button-base", "cssbutton"],
             "tags"       : ["button"],
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "button-group",
+            "displayName": "Button Group",
+            "description": "",
+            "modules"    : ["button-group"],
+            "tags"       : ["button", "button-group"],
             "hideTableOfContents": true
         }
     ]

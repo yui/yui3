@@ -2,9 +2,18 @@ YUI.add('loader-tests', function(Y) {
     
     var Assert = Y.Assert,
     testY = YUI();
+    var ua = Y.UA;
+    var jsFailure = !((ua.ie && ua.ie < 9) || (ua.opera && ua.opera < 11.6) || (ua.webkit && ua.webkit < 530.17));
+
 
     var testLoader = new Y.Test.Case({
         name: "Loader Tests",
+        _should: {
+            ignore: {
+                'test_failure': !jsFailure,
+                'test_timeout': !jsFailure
+            }
+        },       
         test_resolve_no_calc: function() {
             var loader = new testY.Loader({
                 ignoreRegistered: true,
@@ -41,8 +50,8 @@ YUI.add('loader-tests', function(Y) {
                 require: ['node', 'dd', 'console']
             });
             var out = loader.resolve(true);
-            Assert.areSame(3, out.js.length, 'JS Files returned more or less than expected');
-            Assert.areSame(1, out.css.length, 'CSS Files returned more or less than expected');
+            Assert.isTrue((out.js.length >=3), 'JS Files returned less than expected');
+            Assert.isTrue((out.css.length >=1), 'CSS Files returned less than expected');
         },
         test_resolve_filter_debug: function() {
             var loader = new testY.Loader({
@@ -64,7 +73,7 @@ YUI.add('loader-tests', function(Y) {
                 require: ['node', 'dd', 'console']
             });
             var out = loader.resolve(true);
-            Assert.areSame(3, out.js.length, 'JS Files returned more or less than expected');
+            Assert.isTrue((out.js.length >=3), 'JS Files returned less than expected');
             Assert.areSame(1, out.css.length, 'CSS Files returned more or less than expected');
             Assert.isTrue((out.js[0].indexOf('-min') > 0), 'Min filter did not work');
         },
@@ -76,7 +85,7 @@ YUI.add('loader-tests', function(Y) {
                 require: ['node', 'dd', 'console']
             });
             var out = loader.resolve(true);
-            Assert.areSame(3, out.js.length, 'JS Files returned more or less than expected');
+            Assert.isTrue((out.js.length >= 3), 'JS Files returned less than expected');
             Assert.areSame(1, out.css.length, 'CSS Files returned more or less than expected');
             Assert.isTrue((out.js[0].indexOf('-min') === -1), 'Raw filter did not work');
             Assert.isTrue((out.js[0].indexOf('-debug') === -1), 'Raw filter did not work');
@@ -124,9 +133,9 @@ YUI.add('loader-tests', function(Y) {
             Assert.areSame(0, out.css.length, 'CSS Files returned more than expected');
             Assert.isTrue((out.js[0].indexOf('&') === -1), 'Main comboSep did not work');
             Assert.isTrue((out.js[0].indexOf('==!!==') > 0), 'Main comboSep did not work');
-            Assert.isTrue((out.js[3].indexOf('&') === -1), 'Group comboSep did not work');
-            Assert.isTrue((out.js[3].indexOf('==!!==') === -1), 'Group comboSep contains Main comboSep');
-            Assert.isTrue((out.js[3].indexOf('==;;==') > 0), 'Group comboSep did not work');
+            Assert.isTrue((out.js[out.js.length - 1].indexOf('&') === -1), 'Group comboSep did not work');
+            Assert.isTrue((out.js[out.js.length - 1].indexOf('==!!==') === -1), 'Group comboSep contains Main comboSep');
+            Assert.isTrue((out.js[out.js.length - 1].indexOf('==;;==') > 0), 'Group comboSep did not work');
         },
         test_resolve_maxurl_length: function() {
             var loader = new testY.Loader({
@@ -136,7 +145,7 @@ YUI.add('loader-tests', function(Y) {
                 require: ['node', 'dd', 'console']
             });
             var out = loader.resolve(true);
-            Assert.areSame(3, out.js.length, 'JS Files returned more or less than expected');
+            Assert.isTrue((out.js.length >= 3), 'JS Files returned less than expected');
             Assert.areSame(1, out.css.length, 'CSS Files returned more or less than expected');
         },
         test_resolve_maxurl_length_higher: function() {
@@ -186,7 +195,7 @@ YUI.add('loader-tests', function(Y) {
                 }
             });
             var out = loader.resolve(true);
-            Assert.areSame(5, out.js.length, 'JS Files returned more or less than expected');
+            Assert.isTrue((out.js.length >= 5), 'JS Files returned less than expected');
             Assert.areSame(0, out.css.length, 'CSS Files returned more expected');
         },
         test_resolve_filters: function() {
@@ -197,7 +206,7 @@ YUI.add('loader-tests', function(Y) {
                 require: ['node', 'dd', 'console']
             });
             var out = loader.resolve(true);
-            Assert.areSame(3, out.js.length, 'JS Files returned more than expected');
+            Assert.isTrue((out.js.length >= 3), 'JS Files returned less than expected');
             Assert.areSame(1, out.css.length, 'CSS Files returned more than one');
             Assert.isTrue((out.js[0].indexOf('node-base-debug.js') > 0), 'node-base-debug was not found');
             Assert.isTrue((out.js[0].indexOf('node-core-debug.js') === -1), 'node-core-debug was found');
@@ -216,7 +225,7 @@ YUI.add('loader-tests', function(Y) {
                         base: './assets/',
                         modules: {
                             foo: {
-                                requires: [ 'node', 'widget' ]
+                                requires: [ 'oop' ]
                             }
                         }
                     }
@@ -269,7 +278,7 @@ YUI.add('loader-tests', function(Y) {
                 gallery: 'gallery-2010.08.04-19-46',
                 '2in3': '4',
                 'yui2': '2.9.0'
-            }).use('node', 'base', 'gallery-port', 'yui2-yahoo', function(Y) {
+            }).use('base', 'gallery-port', 'yui2-yahoo', function(Y) {
                 Assert.areEqual(Y.config.yui2, Y.YUI2.VERSION, 'Failed to load ' + Y.config.yui2);
                 Assert.isFunction(Y.Base, 'Y.Base did not load');
                 Assert.isUndefined(Y.LOADED, 'Callback executed twice.');
@@ -301,6 +310,10 @@ YUI.add('loader-tests', function(Y) {
             YUI({
                 '2in3': '4',
                 'yui2': '2.9.0',
+                onSuccess: function(e) {
+                    Assert.areEqual('success', e.msg, 'Failed to load files');
+                    Assert.isTrue(e.success, 'Success handler failed');
+                },
                 onProgress: function(e) {
                     proContext = this;
                     if (e.name.indexOf('-ie') === -1) { //Weed out IE only modules
@@ -321,6 +334,55 @@ YUI.add('loader-tests', function(Y) {
             });
 
             test.wait();
+        },
+        test_failure: function() {
+            var test = this,
+                fMsg;
+
+            YUI({
+                onFailure: function(e) {
+                    fMsg = e;
+                },
+                modules: {
+                    'bogus-module': {
+                        fullpath: './does/not/exist.js'
+                    }
+                }
+            }).use('bogus-module', function(Y) {
+                test.resume(function() {
+                    var e = fMsg;
+                    Assert.isFalse(e.success, 'Bogus module reported it was loaded');
+                    Assert.areSame('Failed to load ./does/not/exist.js', e.msg, 'Failure event was not sent');
+                });
+            });
+
+            test.wait();
+            
+        },
+        test_timeout: function() {
+            var test = this,
+                fMsg;
+
+            YUI({
+                timeout: 1,
+                onTimeout: function(e) {
+                    fMsg = e;
+                },
+                modules: {
+                    'bogus-module': {
+                        fullpath: './does/not/exist.js'
+                    }
+                }
+            }).use('bogus-module', function(Y) {
+                test.resume(function() {
+                    var e = fMsg;
+                    Assert.isFalse(e.success, 'Bogus module reported it was loaded');
+                    Assert.areSame('timeout', e.msg, 'Failure event was not sent');
+                });
+            });
+
+            test.wait();
+            
         },
         test_condpattern: function() {
             var test = this;
@@ -454,6 +516,45 @@ YUI.add('loader-tests', function(Y) {
 
             Assert.areSame(loader.skin.defaultSkin, 'foobar', 'Default skin was not set from object');
         },
+        test_skin_overrides: function() {
+            var loader = new Y.Loader({
+                skin: {
+                    overrides: {
+                        slider: [
+                            'sam',
+                            'sam-dark',
+                            'round',
+                            'round-dark',
+                            'capsule',
+                            'capsule-dark',
+                            'audio',
+                            'audio-light'
+                        ]
+                    }
+                },
+                require: [ 'slider' ]
+            });
+            
+            var out = loader.resolve(true);
+            Assert.areSame(loader.skin.overrides.slider.length, out.css.length, 'Failed to load all override skins');
+            
+        },
+        test_load_optional: function() {
+            var loader = new Y.Loader({
+                loadOptional: true,
+                ignoreRegistered: true,
+                require: [ 'dd-plugin' ]
+            });
+
+            var out = loader.resolve(true);
+            var hasOptional = false;
+            Y.each(out.jsMods, function(module) {
+                if (module.name == 'dd-proxy') {
+                    hasOptional = true;
+                }
+            });
+            Assert.isTrue(hasOptional, 'Optional modules failed to load');
+        },
         test_outside_group: function() {
             var loader = new Y.Loader({
                 combine: true,
@@ -489,6 +590,111 @@ YUI.add('loader-tests', function(Y) {
             Assert.isTrue((out.jsMods.length > 1), 'Number of JS module data is not correct');
             Assert.areEqual(1, out.css.length, 'Number of CSS modules is not correct');
 
+        },
+        test_outside_nocombine: function() {
+            var loader = new Y.Loader({
+                combine: false,
+                ignoreRegistered: true,
+                require: [ 'gallery-calendar' ],
+                groups: {
+                    mygallery: {
+                        base:'./js/yui-library/',
+                        combine:true,
+                        comboBase: '/yui/?',
+                        root:'yui-library/',
+                        modules: {
+                            'gallery-calendar':{
+                                requires: [ 'gallery-calendar2' ]
+                            },
+                            'gallery-calendar2':{
+                                requires: [ 'gallery-calendar3' ]
+                            },
+                            'gallery-calendar3':{
+                                requires: [ 'yui-base', 'oop' ]
+                            }
+                        }
+                    }
+                }
+            });
+
+            var out = loader.resolve(true);
+
+            Assert.areEqual(3, out.js.length, 'Number of JS modules is not correct');
+            Assert.isTrue((out.js[2].indexOf('/yui/?yui-library') === 0), 'Combo URL is not correct');
+            Assert.isTrue((out.jsMods.length === 5), 'Number of JS module data is not correct');
+            Assert.areEqual(0, out.css.length, 'Number of CSS modules is not correct');
+            Assert.isTrue((out.js[0].indexOf('yahooapis') > 0), 'First JS file returned is not a YUI module');
+            Assert.isTrue((out.js[0].indexOf('yui-base') > 0), 'First JS file is not the seed file');
+
+        },
+        test_submodules: function() {
+            
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                combine: false,
+                root: '',
+                base: '',
+                filter: 'raw',
+                ignore: [ 'yui-base', 'intl-base', 'oop', 'event-custom-base', 'event-custom-complex', 'intl' ],
+                modules: {
+                    sub1: {
+                        fullpath: './sub1.js',
+                        submodules: {
+                            subsub1: {
+                            },
+                            subsub2: {
+                                lang: 'en',
+                                skinnable: true
+                            }
+                        }
+                    }
+                },
+                require: [ 'subsub2' ]
+            });
+            
+            var out = loader.resolve(true);
+            Assert.areSame('sub1/lang/subsub2.js', out.js[0], 'Failed to combine submodule with module path for LANG JS');
+            Assert.areSame('sub1/subsub2.js', out.js[1], 'Failed to combine submodule with module path JS');
+            Assert.areSame('sub1/assets/skins/sam/subsub2.css', out.css[0], 'Failed to combine submodule with module path CSS');
+            Assert.areEqual(1, out.css.length, 'Failed to skin submodule');
+        },
+        test_plugins: function() {
+            
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                combine: false,
+                root: '',
+                base: '',
+                filter: 'raw',
+                ignore: [ 'yui-base', 'intl-base', 'oop', 'event-custom-base', 'event-custom-complex', 'intl' ],
+                modules: {
+                    plug1: {
+                        fullpath: './sub1.js',
+                        plugins: {
+                            subplug1: {
+                                lang: 'en',
+                                skinnable: true
+                            },
+                            subplug2: {
+                                lang: 'en',
+                                skinnable: true,
+                                requires: [ 'subplug1' ]
+                            }
+                        }
+                    }
+                },
+                require: [ 'subplug2' ]
+            });
+            
+            var out = loader.resolve(true);
+            Assert.areSame('plug1/lang/subplug2.js', out.js[0], 'Failed to combine plugin with module path LANG JS');
+            Assert.areSame('plug1/lang/subplug1.js', out.js[1], 'Failed to combine plugin with module path LANG JS');
+            Assert.areSame('plug1/subplug1.js', out.js[2], 'Failed to combine plugin with module path JS');
+            Assert.areSame('plug1/subplug2.js', out.js[3], 'Failed to combine plugin with module path JS');
+
+            Assert.areSame('plug1/assets/skins/sam/subplug1.css', out.css[0], 'Failed to combine plugin with module path CSS');
+            Assert.areSame('plug1/assets/skins/sam/subplug2.css', out.css[1], 'Failed to combine plugin with module path CSS');
+            Assert.areEqual(2, out.css.length, 'Failed to skin plugins');
         }
     });
 

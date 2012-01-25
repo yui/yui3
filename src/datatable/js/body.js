@@ -40,7 +40,7 @@ Column `formatter`s are passed an object (`o`) with the following properties:
   * `data` - An object map of Model keys to their current values.
   * `record` - The Model instance.
   * `column` - The column configuration object for the current column.
-  * `classnames` - Initially empty string to allow `formatter`s to add CSS 
+  * `className` - Initially empty string to allow `formatter`s to add CSS 
     classes to the cell's `<td>`.
   * `rowindex` - The zero-based row number.
 
@@ -93,9 +93,9 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
     @property CELL_TEMPLATE
     @type {HTML}
-    @default '<td headers="{headers}" class="{classes}">{content}</td>'
+    @default '<td headers="{headers}" class="{className}">{content}</td>'
     **/
-    CELL_TEMPLATE: '<td headers="{headers}" class="{classes}">{content}</td>',
+    CELL_TEMPLATE: '<td role="gridcell" headers="{headers}" class="{className}">{content}</td>',
 
     /**
     CSS class applied to even rows.  This is assigned at instantiation after
@@ -247,7 +247,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
       * `data` - An object map of Model keys to their current values.
       * `record` - The Model instance.
       * `column` - The column configuration object for the current column.
-      * `classnames` - Initially empty string to allow `formatter`s to add CSS 
+      * `className` - Initially empty string to allow `formatter`s to add CSS 
         classes to the cell's `<td>`.
       * `rowindex` - The zero-based row number.
 
@@ -363,7 +363,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         if (data && formatters.length) {
             data.each(function (record, index) {
                 var formatterData = {
-                        data      : record.getAttrs(),
+                        data      : record.toJSON(),
                         record    : record,
                         rowindex  : index
                     },
@@ -476,8 +476,8 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         will default from '' or `undefined` to the value of the column's
         `emptyCellValue` if assigned.
       * `bar` - Same for the 'bar' column cell content.
-      * `foo-classes` - String of CSS classes to apply to the `<td>`.
-      * `bar-classes` - Same.
+      * `foo-className` - String of CSS classes to apply to the `<td>`.
+      * `bar-className` - Same.
       * `rowClasses`  - String of CSS classes to apply to the `<tr>`. This will
         default to the odd/even class per the specified index, but can be
         accessed and ammended by any column formatter via `o.data.rowClasses`.
@@ -492,11 +492,9 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @protected
     **/
     _createRowHTML: function (model, index) {
-        var data    = model.getAttrs(),
+        var data    = model.toJSON(),
             values  = {
-                rowId: data.clientId,
-                // TODO: Be consistent and change to row-classes? This could be
-                // clobbered by a column named 'row'.
+                rowId: model.get('clientId'),
                 rowClasses: (index % 2) ? this.CLASS_ODD : this.CLASS_EVEN
             },
             source  = this.source || this,
@@ -506,18 +504,18 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         for (i = 0, len = columns.length; i < len; ++i) {
             col   = columns[i];
             value = data[col.key];
-            token = col._renderToken || col.key || col._yuid;
+            token = col._id;
 
-            values[token + '-classes'] = '';
+            values[token + '-className'] = '';
 
             if (col.formatter) {
                 formatterData = {
-                    value     : value,
-                    data      : data,
-                    column    : col,
-                    record    : model,
-                    classnames: '',
-                    rowindex  : index
+                    value    : value,
+                    data     : data,
+                    column   : col,
+                    record   : model,
+                    className: '',
+                    rowindex : index
                 };
 
                 if (typeof col.formatter === 'string') {
@@ -532,7 +530,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                         value = formatterData.value;
                     }
 
-                    values[token + '-classes'] = formatterData.classnames;
+                    values[token + '-className'] = formatterData.className;
                 }
             }
 
@@ -560,37 +558,24 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     _createRowTemplate: function (columns) {
         var html         = '',
             cellTemplate = this.CELL_TEMPLATE,
-            tokens       = {},
             i, len, col, key, token, tokenValues;
 
         for (i = 0, len = columns.length; i < len; ++i) {
-            col = columns[i];
-            key = col.key;
-
-            if (key) {
-                if (tokens[key]) {
-                    token = key + (tokens[key]++);
-                } else {
-                    token = key;
-                    tokens[key] = 1;
-                }
-            } else {
-                token = col.name || col._yuid;
-            }
-
-            col._renderToken = token;
+            col   = columns[i];
+            key   = col.key;
+            token = col._id;
 
             tokenValues = {
-                content   : '{' + token + '}',
-                headers   : col.headers.join(' '),
-                // TODO: should this be getClassName(token)? Both?
-                classes   : this.getClassName(key) + ' {' + token + '-classes}'
+                content  : '{' + token + '}',
+                headers  : col.headers.join(' '),
+                className: this.getClassName('col', token) + ' ' +
+                           this.getClassName('cell') +
+                           ' {' + token + '-className}'
             };
 
             if (col.nodeFormatter) {
                 // Defer all node decoration to the formatter
-                tokenValues.content    = '';
-                tokenValues.classes    = '';
+                tokenValues.content   = '';
             }
 
             html += fromTemplate(cellTemplate, tokenValues);

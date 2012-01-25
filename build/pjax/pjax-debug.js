@@ -29,8 +29,12 @@ support) in newer browsers.
 Fired when an error occurs while attempting to load a URL via Ajax.
 
 @event error
-@param {String} content Content extracted from the response using the
-    `contentSelector`, if any.
+@param {Object} content Content extracted from the response, if any.
+    @param {Node} content.node A `Y.Node` instance for a document fragment
+        containing the extracted HTML content.
+    @param {String} [content.title] The title of the HTML page, if any,
+        extracted using the `titleSelector` attribute. If `titleSelector` is not
+        set or if a title could not be found, this property will be `undefined`.
 @param {String} responseText Raw Ajax response text.
 @param {Number} status HTTP status code for the Ajax response.
 @param {String} url The absolute URL that failed to load.
@@ -41,8 +45,12 @@ var EVT_ERROR = 'error',
 Fired when a URL is successfully loaded via Ajax.
 
 @event load
-@param {String} content Content extracted from the response using the
-    `contentSelector`, if any.
+@param {Object} content Content extracted from the response, if any.
+    @param {Node} content.node A `Y.Node` instance for a document fragment
+        containing the extracted HTML content.
+    @param {String} [content.title] The title of the HTML page, if any,
+        extracted using the `titleSelector` attribute. If `titleSelector` is not
+        set or if a title could not be found, this property will be `undefined`.
 @param {String} responseText Raw Ajax response text.
 @param {Number} status HTTP status code for the Ajax response.
 @param {String} url The absolute URL that was loaded.

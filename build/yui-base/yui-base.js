@@ -517,7 +517,7 @@ proto = {
                     this.log('applyTo not found: ' + method, 'warn', 'yui');
                 }
             }
-            return m.apply(instance, args);
+            return m && m.apply(instance, args);
         }
 
         return null;
@@ -975,6 +975,10 @@ with any configuration info required for the module.
                 handleLoader();
             }
             return Y;
+        }
+
+        if (mods['loader'] && !Y.Loader) {
+            Y._attach(['loader']);
         }
 
 
@@ -2471,7 +2475,9 @@ utilities for the library.
 var CACHED_DELIMITER = '__',
 
     hasOwn   = Object.prototype.hasOwnProperty,
-    isObject = Y.Lang.isObject;
+    isObject = Y.Lang.isObject,
+
+    win = Y.config.win;
 
 /**
 Returns a wrapper for a function which caches the return value of that function,
@@ -2511,6 +2517,31 @@ Y.cached = function (source, cache, refetch) {
 
         return cache[key];
     };
+};
+
+/**
+Returns the `location` object from the window/frame in which this YUI instance
+operates, or `undefined` when executing in a non-browser environment
+(e.g. Node.js).
+
+It is _not_ recommended to hold references to the `window.location` object
+outside of the scope of a function in which its properties are being accessed or
+its methods are being called. This is because of a nasty bug/issue that exists
+in both Safari and MobileSafari browsers:
+[WebKit Bug 34679](https://bugs.webkit.org/show_bug.cgi?id=34679).
+
+@method getLocation
+@return {location} The `location` object from the window/frame in which this YUI
+    instance operates.
+@since 3.5.0
+**/
+Y.getLocation = function () {
+    // The reference to the `window` object created outside this function's
+    // scope is safe to hold on to, but it is not safe to do so with the
+    // `location` object. The WebKit engine used in Safari and MobileSafari will
+    // "disconnect" the `location` object from the `window` when a page is
+    // restored from back/forward history cache.
+    return win && win.location;
 };
 
 /**
@@ -3466,7 +3497,7 @@ YUI.Env.aliases = {
     "controller": ["router"],
     "dataschema": ["dataschema-base","dataschema-json","dataschema-xml","dataschema-array","dataschema-text"],
     "datasource": ["datasource-local","datasource-io","datasource-get","datasource-function","datasource-cache","datasource-jsonschema","datasource-xmlschema","datasource-arrayschema","datasource-textschema","datasource-polling"],
-    "datatable": ["datatable-base","datatable-datasource","datatable-sort","datatable-scroll"],
+    "datatable": ["datatable-core","datatable-head","datatable-body","datatable-base","datatable-column-widths","datatable-mutable","datatable-scroll","datatable-datasource","datatable-sort"],
     "datatype": ["datatype-number","datatype-date","datatype-xml"],
     "datatype-date": ["datatype-date-parse","datatype-date-format"],
     "datatype-number": ["datatype-number-parse","datatype-number-format"],
@@ -3599,6 +3630,9 @@ Y.Get = Get = {
 
     @property {Function} [options.onFailure] Callback to execute after a
         transaction fails, times out, or is aborted.
+
+    @property {Function} [options.onProgress] Callback to execute after each
+        individual request in a transaction either succeeds or fails.
 
     @property {Function} [options.onSuccess] Callback to execute after a
         transaction completes successfully with no errors. Note that in browsers
@@ -4408,7 +4442,7 @@ Transaction.prototype = {
         data = this._getEventData();
 
         if (errors) {
-            if (options.onTimeout && errors[errors.length - 1] === 'Timeout') {
+            if (options.onTimeout && errors[errors.length - 1].error === 'Timeout') {
                 options.onTimeout.call(thisObj, data);
             }
 

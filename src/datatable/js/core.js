@@ -276,18 +276,18 @@ Y.mix(Table.prototype, {
 
     @property CAPTION_TEMPLATE
     @type {HTML}
-    @default '<caption/>'
+    @default '<caption class="{className}"/>'
     **/
-    CAPTION_TEMPLATE: '<caption/>',
+    CAPTION_TEMPLATE: '<caption class="{className}"/>',
 
     /**
     The HTML template used to create the table Node.
 
     @property TABLE_TEMPLATE
     @type {HTML}
-    @default '<table/>'
+    @default '<table class="{className}"/>'
     **/
-    TABLE_TEMPLATE  : '<table class="{classes}"/>',
+    TABLE_TEMPLATE  : '<table role="presentation" class="{className}"/>',
 
     /**
     HTML template used to create table's `<tbody>` if configured with a
@@ -295,9 +295,9 @@ Y.mix(Table.prototype, {
 
     @property TBODY_TEMPLATE
     @type {HTML}
-    @default '<tbody class="{classes}"/>'
+    @default '<tbody class="{className}"/>'
     **/
-    TBODY_TEMPLATE: '<tbody class="{classes}"/>',
+    TBODY_TEMPLATE: '<tbody class="{className}"/>',
 
     /**
     Template used to create the table's `<tfoot>` if configured with a
@@ -305,10 +305,10 @@ Y.mix(Table.prototype, {
 
     @property TFOOT_TEMPLATE
     @type {HTML}
-    @default '<tfoot class="{classes}"/>'
+    @default '<tfoot class="{className}"/>'
     **/
     TFOOT_TEMPLATE:
-        '<tfoot class="{classes}"/>',
+        '<tfoot class="{className}"/>',
 
     /**
     Template used to create the table's `<thead>` if configured with a
@@ -316,10 +316,10 @@ Y.mix(Table.prototype, {
 
     @property THEAD_TEMPLATE
     @type {HTML}
-    @default '<thead class="{classes}"/>'
+    @default '<thead class="{className}"/>'
     **/
     THEAD_TEMPLATE:
-        '<thead class="{classes}"/>',
+        '<thead class="{className}"/>',
 
     /**
     The object or instance of the class assigned to `bodyView` that is
@@ -461,7 +461,7 @@ Y.mix(Table.prototype, {
     @return {Node}
     **/
     getRow: function (index) {
-        return this.body && this.body.getCell && this.body.getRow(index);
+        return this.body && this.body.getRow && this.body.getRow(index);
     },
 
     /**
@@ -553,17 +553,6 @@ Y.mix(Table.prototype, {
     //_viewConfig: null,
 
     /**
-    Relays `captionChange` events to `_uiSetCaption`.
-
-    @method _afterCaptionChange
-    @param {EventFacade} e The `captionChange` event object
-    @protected
-    **/
-    _afterCaptionChange: function (e) {
-        this._uiSetCaption(e.newVal);
-    },
-
-    /**
     Updates the `_columnMap` property in response to changes in the `columns`
     attribute.
 
@@ -577,17 +566,6 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Relays `summaryChange` events to `_uiSetSummary`.
-
-    @method _afterSummaryChange
-    @param {EventFacade} e The `summaryChange` event object
-    @protected
-    **/
-    _afterSummaryChange: function (e) {
-        this._uiSetSummary(e.newVal);
-    },
-
-    /**
     Subscribes to attribute change events to update the UI.
 
     @method bindUI
@@ -595,10 +573,6 @@ Y.mix(Table.prototype, {
     **/
     bindUI: function () {
         // TODO: handle widget attribute changes
-        this.after({
-            captionChange: this._afterCaptionChange,
-            summaryChange: this._afterSummaryChange
-        });
     },
 
     /**
@@ -638,7 +612,7 @@ Y.mix(Table.prototype, {
     **/
     _createTable: function () {
         return Y.Node.create(fromTemplate(this.TABLE_TEMPLATE, {
-            classes: this.getClassName('table')
+            className: this.getClassName('table')
         }));
     },
 
@@ -650,7 +624,7 @@ Y.mix(Table.prototype, {
     **/
     _createTBody: function () {
         return Y.Node.create(fromTemplate(this.TBODY_TEMPLATE, {
-            classes: this.getClassName('data')
+            className: this.getClassName('data')
         }));
     },
 
@@ -662,7 +636,7 @@ Y.mix(Table.prototype, {
     **/
     _createTFoot: function () {
         return Y.Node.create(fromTemplate(this.TFOOT_TEMPLATE, {
-            classes: this.getClassName('footer')
+            className: this.getClassName('footer')
         }));
     },
 
@@ -674,7 +648,7 @@ Y.mix(Table.prototype, {
     **/
     _createTHead: function () {
         return Y.Node.create(fromTemplate(this.THEAD_TEMPLATE, {
-            classes: this.getClassName('columns')
+            className: this.getClassName('columns')
         }));
     },
 
@@ -792,6 +766,7 @@ Y.mix(Table.prototype, {
     @property _displayColumns
     @type {Object[]}
     @value undefined (initially not set)
+    @protected
     **/
     //_displayColumns: null,
 
@@ -957,6 +932,12 @@ Y.mix(Table.prototype, {
         this._initEvents();
 
         this.after('columnsChange', this._afterColumnsChange);
+
+        // FIXME: this needs to be added to Widget._buildCfg.custom
+        this._UI_ATTRS = {
+            BIND: this._UI_ATTRS.BIND.concat(['caption', 'summary']),
+            SYNC: this._UI_ATTRS.SYNC.concat(['caption', 'summary'])
+        };
     },
 
     /**
@@ -1089,29 +1070,55 @@ Y.mix(Table.prototype, {
     @method _parseColumns
     @param {Object[]|String[]} columns The array of column names or
                 configuration objects to scan
-    @param {Object} [map] The map to add keyed columns to
     @protected
     **/
-    _parseColumns: function (columns, map) {
-        var i, len, col;
-
-        map || (map = {});
+    _parseColumns: function (columns) {
+        var map  = {},
+            keys = {};
         
-        for (i = 0, len = columns.length; i < len; ++i) {
-            col = columns[i];
+        function process(cols) {
+            var i, len, col, key, yuid, id;
 
-            if (isString(col)) {
-                // Update the array entry as well, so the attribute state array
-                // contains the same objects.
-                columns[i] = col = { key: col };
-            }
+            for (i = 0, len = cols.length; i < len; ++i) {
+                col = cols[i];
 
-            if (col.key) {
-                map[col.key] = col;
-            } else if (isArray(col.children)) {
-                this._parseColumns(col.children, map);
+                if (isString(col)) {
+                    // Update the array entry as well, so the attribute state array
+                    // contains the same objects.
+                    cols[i] = col = { key: col };
+                }
+
+                yuid = Y.stamp(col);
+
+                if (isArray(col.children)) {
+                    process(col.children);
+                } else {
+                    key = col.key;
+
+                    if (key) {
+                        map[col.key] = col;
+                    }
+
+                    // Unique id based on the column's configured name or key,
+                    // falling back to the yuid.  Duplicates will have a counter
+                    // added to the end.
+                    id = col.name || col.key || col._yuid;
+
+                    if (keys[id]) {
+                        id += (keys[id]++);
+                    } else {
+                        keys[id] = 1;
+                    }
+
+                    col._id = id;
+
+                    //TODO: named columns can conflict with keyed columns
+                    map[id] = col;
+                }
             }
         }
+
+        process(columns);
 
         return map;
     },
@@ -1131,6 +1138,8 @@ Y.mix(Table.prototype, {
             // _viewConfig is the prototype for _headerConfig et al.
             this._viewConfig.columns   = this.get('columns');
             this._viewConfig.modelList = this.data;
+
+            contentBox.setAttribute('role', 'grid');
 
             this.fire('renderTable', {
                 headerView  : this.get('headerView'),
@@ -1333,7 +1342,10 @@ Y.mix(Table.prototype, {
 
         if (htmlContent) {
             if (!this._captionNode) {
-                this._captionNode = Y.Node.create(this.CAPTION_TEMPLATE);
+                this._captionNode = Y.Node.create(
+                    fromTemplate(this.CAPTION_TEMPLATE, {
+                        className: this.getClassName('caption')
+                    }));
             }
 
             this._captionNode.setContent(htmlContent);

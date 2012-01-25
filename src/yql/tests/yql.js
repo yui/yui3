@@ -67,6 +67,25 @@ YUI.add('yql-tests', function(Y) {
             });
 
             this.wait();
+        },
+        test_requery: function() {
+            var test = this,
+                counter = 0;
+            
+            var q = Y.YQL('select * from weather.forecast where location=62896', function(r) {
+                counter++;
+                if (counter === 1) {
+                    q.send();
+                } else {
+                    test.resume(function() {
+                        Y.Assert.isTrue((counter === 2), 'Query did not send twice');
+                        Y.Assert.isObject(r, 'Query Failure');
+                        Y.Assert.isObject(r.query, 'Query object not present');
+                    });
+                }
+            });
+
+            this.wait();
         }
     };
     var suite = new Y.Test.Suite("YQL");

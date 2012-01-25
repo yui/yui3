@@ -13,7 +13,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.01.11-21-03',
+            GALLERY_VERSION = 'gallery-2012.01.18-21-09',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -2101,7 +2101,11 @@ Y.Loader.prototype = {
 
             if (d && d.errors) {
                 for (i = 0; i < d.errors.length; i++) {
-                    u = d.errors[i].request.url;
+                    if (d.errors[i].request) {
+                        u = d.errors[i].request.url;
+                    } else {
+                        u = d.errors[i];
+                    }
                     errs[u] = u;
                 }
             }
@@ -2243,11 +2247,12 @@ Y.Loader.prototype = {
         var f = this.filter,
             hasFilter = name && (name in this.filters),
             modFilter = hasFilter && this.filters[name],
-	    groupName = this.moduleInfo[name] ? this.moduleInfo[name].group:null;		
-	    if (groupName && this.groups[groupName].filter) {		
-	 	   modFilter = this.groups[groupName].filter;
-		   hasFilter = true;		
-	     };
+	        groupName = this.moduleInfo[name] ? this.moduleInfo[name].group : null;
+
+	    if (groupName && this.groups[groupName] && this.groups[groupName].filter) {		
+	 	    modFilter = this.groups[groupName].filter;
+		    hasFilter = true;		
+	    };
 
         if (u) {
             if (hasFilter) {
@@ -2309,7 +2314,23 @@ Y.Loader.prototype = {
         }
         s = s || self.sorted;
 
-        if (self.combine) {
+        var addSingle = function(m) {
+            
+            if (m) {
+                group = (m.group && self.groups[m.group]) || NOT_FOUND;
+
+                url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :
+                      self._url(m.path, s[i], group.base || m.base);
+                
+
+                resolved[m.type].push(url);
+                resolved[m.type + 'Mods'].push(m);
+            } else {
+            }
+            
+        };
+
+        //if (self.combine) {
 
             len = s.length;
 
@@ -2324,14 +2345,13 @@ Y.Loader.prototype = {
                 comboSource = comboBase;
                 m = self.getModule(s[i]);
                 groupName = m && m.group;
-                if (groupName) {
-
-                    group = self.groups[groupName];
+                group = self.groups[groupName];
+                if (groupName && group) {
 
                     if (!group.combine) {
-                        m.combine = false;
                         //This is not a combo module, skip it and load it singly later.
-                        singles.push(s[i]);
+                        //singles.push(s[i]);
+                        addSingle(m);
                         continue;
                     }
                     m.combine = true;
@@ -2344,6 +2364,13 @@ Y.Loader.prototype = {
                     }
                     m.comboSep = group.comboSep || self.comboSep;
                     m.maxURLLength = group.maxURLLength || self.maxURLLength;
+                } else {
+                    if (!self.combine) {
+                        //This is not a combo module, skip it and load it singly later.
+                        //singles.push(s[i]);
+                        addSingle(m);
+                        continue;
+                    }
                 }
 
                 comboSources[comboSource] = comboSources[comboSource] || [];
@@ -2375,7 +2402,8 @@ Y.Loader.prototype = {
                             } else {
                                 //Add them to the next process..
                                 if (mods[i]) {
-                                    singles.push(mods[i].name);
+                                    //singles.push(mods[i].name);
+                                    addSingle(mods[i]);
                                 }
                             }
 
@@ -2432,8 +2460,10 @@ Y.Loader.prototype = {
 
             resCombos = null;
             
-        }
+        //}
 
+        
+        /*
         if (!self.combine || singles.length) {
 
             s = singles.length ? singles : self.sorted;
@@ -2458,10 +2488,22 @@ Y.Loader.prototype = {
                 url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :
                       self._url(m.path, s[i], group.base || m.base);
                 
-                resolved[m.type].push(url);
+                /*
+                * This is so top level (non-comboed) YUI modules are at the top of the list.
+                * All other modules come below, this should only happen when `self.combine`
+                * is false.
+                * /
+                if (!self.combine) {
+                    resolved[m.type].unshift(url);
+                } else {
+                    resolved[m.type].push(url);
+                }
+
+
                 resolved[m.type + 'Mods'].push(m);
             }
         }
+        */
 
 
         return resolved;
@@ -3178,20 +3220,44 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "datatable": {
         "use": [
+            "datatable-core", 
+            "datatable-head", 
+            "datatable-body", 
             "datatable-base", 
+            "datatable-column-widths", 
+            "datatable-mutable", 
+            "datatable-scroll", 
             "datatable-datasource", 
-            "datatable-sort", 
-            "datatable-scroll"
+            "datatable-sort"
         ]
     }, 
     "datatable-base": {
         "requires": [
-            "recordset-base", 
-            "widget", 
-            "substitute", 
-            "event-mouseenter"
+            "datatable-core", 
+            "datatable-head", 
+            "datatable-body", 
+            "base-build", 
+            "widget"
         ], 
         "skinnable": true
+    }, 
+    "datatable-body": {
+        "requires": [
+            "datatable-core", 
+            "view", 
+            "classnamemanager"
+        ]
+    }, 
+    "datatable-column-widths": {
+        "requires": [
+            "datatable-base"
+        ]
+    }, 
+    "datatable-core": {
+        "requires": [
+            "escape", 
+            "model-list"
+        ]
     }, 
     "datatable-datasource": {
         "requires": [
@@ -3200,11 +3266,25 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "datasource-local"
         ]
     }, 
+    "datatable-head": {
+        "requires": [
+            "datatable-core", 
+            "view", 
+            "classnamemanager"
+        ]
+    }, 
+    "datatable-mutable": {
+        "requires": [
+            "datatable-base"
+        ]
+    }, 
     "datatable-scroll": {
         "requires": [
             "datatable-base", 
-            "plugin"
-        ]
+            "datatable-column-widths", 
+            "dom-screen"
+        ], 
+        "skinnable": true
     }, 
     "datatable-sort": {
         "lang": [
@@ -3212,9 +3292,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "requires": [
             "datatable-base", 
-            "plugin", 
             "recordset-sort"
-        ]
+        ], 
+        "skinnable": true
     }, 
     "datatype": {
         "use": [
@@ -4756,7 +4836,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '4d48b229bf0f105ff3567a5a9d83f8cb';
+YUI.Env[Y.version].md5 = 'b006701b144fdd54014542330c92d138';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
