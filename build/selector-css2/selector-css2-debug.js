@@ -28,36 +28,6 @@ var PARENT_NODE = 'parentNode',
     SelectorCSS2 = {
         _reRegExpTokens: /([\^\$\?\[\]\*\+\-\.\(\)\|\\])/, // TODO: move?
         SORT_RESULTS: true,
-        _children: function(node, tag) {
-                var i = 0,
-                children = node.children,
-                childNodes,
-                hasComments,
-                child;
-
-            if (children && children.tags) { // use tags filter when possible
-                if (tag) {
-                    children = node.children.tags(tag);
-                } else { // IE leaks comments into children
-                    hasComments = children.tags('!').length;
-                }
-            }
-            
-            if (!children || (!children.tag && tag) || hasComments) {
-                childNodes = children || node.childNodes;
-                children = [];
-                while ((child = childNodes[i++])) {
-                    if (child.nodeType === 1) {
-                        if (!tag || tag === child.tagName) {
-                            children.push(child);
-                        }
-                    }
-                }
-            }
-
-            return children || [];
-        },
-
         _re: {
             attr: /(\[[^\]]*\])/g,
             esc: /\\[:\[\]\(\)#\.\'\>+~"]/gi,
@@ -90,7 +60,7 @@ var PARENT_NODE = 'parentNode',
 
         pseudos: {
            'first-child': function(node) { 
-                return Y.Selector._children(node[PARENT_NODE])[0] === node; 
+                return Y.DOM._children(node[PARENT_NODE])[0] === node; 
             } 
         },
 
