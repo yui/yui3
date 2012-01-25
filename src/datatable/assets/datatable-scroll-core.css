@@ -9,7 +9,7 @@
     */
     position: relative;
 }
-.yui3-datatable-scrollable-y .yui3-datatable-data-container {
+.yui3-datatable-scrollable-y .yui3-datatable-y-scroller {
     overflow-y: scroll;
     overflow-x: hidden;
 }
