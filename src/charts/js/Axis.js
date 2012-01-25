@@ -380,6 +380,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 opacity: line.alpha
             });
             this._labelRotationProps = this._getTextRotationProps(labelStyles);
+            this._labelRotationProps.transformOrigin = layout._getTransformOrigin(this._labelRotationProps.rot);
             layout.setTickOffsets.apply(this);
             layoutLength = this.getLength();
             lineStart = layout.getLineStart.apply(this);
@@ -855,8 +856,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             textAlpha,
             matrix = new Y.Matrix(),
             transformOrigin = props.transformOrigin || [0, 0],
-            transformX,
-            transformY,
             offsetRect;
         if(DOCUMENT.createElementNS)
         {
@@ -873,6 +872,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         }
         else
         {
+            textAlpha = props.textAlpha;
             if(Y_Lang.isNumber(textAlpha) && textAlpha < 1 && textAlpha > -1 && !isNaN(textAlpha))
             {
                 filterString = "progid:DXImageTransform.Microsoft.Alpha(Opacity=" + Math.round(textAlpha * 100) + ")";
@@ -885,16 +885,8 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 offsetRect = matrix.getContentRect(props.labelWidth, props.labelHeight);
                 matrix.init();
                 matrix.translate(offsetRect.left, offsetRect.top);
-
-                transformX = transformOrigin[0] * props.labelWidth;
-                transformX = !isNaN(transformX) ? transformX : 0;
-                transformY = transformOrigin[1] * props.labelHeight;
-                transformY = !isNaN(transformY) ? transformY : 0;
-                textAlpha = props.textAlpha;
                 matrix.translate(x, y);
-                matrix.translate(transformX, transformY);
-                matrix.rotate(rot);
-                matrix.translate(-transformX, -transformY);
+                this._simulateRotateWithTransformOrigin(matrix, rot, transformOrigin, props.labelWidth, props.labelHeight);
                 if(filterString)
                 {
                     filterString += " ";
@@ -919,6 +911,83 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         }
     },
     
+    /**
+     * Simulates a rotation with a specified transformOrigin. 
+     *
+     * @method _simulateTransformOrigin
+     * @param {Matrix} matrix Reference to a `Matrix` instance.
+     * @param {Number} rot The rotation (in degrees) that will be performed on a matrix.
+     * @param {Array} transformOrigin An array represeniting the origin in which to perform the transform. The first 
+     * index represents the x origin and the second index represents the y origin.
+     * @param {Number} w The width of the object that will be transformed.
+     * @param {Number} h The height of the object that will be transformed.
+     * @private
+     */
+    _simulateRotateWithTransformOrigin: function(matrix, rot, transformOrigin, w, h)
+    {
+        var transformX = transformOrigin[0] * w,
+            transformY = transformOrigin[1] * h;
+        transformX = !isNaN(transformX) ? transformX : 0;
+        transformY = !isNaN(transformY) ? transformY : 0;
+        matrix.translate(transformX, transformY);
+        matrix.rotate(rot);
+        matrix.translate(-transformX, -transformY);
+    },
+
+    /**
+     * Returns the coordinates (top, right, bottom, left) for the bounding box of the last label. 
+     *
+     * @method getMaxLabelBounds
+     * @return Object
+     */
+    getMaxLabelBounds: function()
+    {
+        return this._getLabelBounds(this.getMaximumValue());
+    },
+
+    /**
+     * Returns the coordinates (top, right, bottom, left) for the bounding box of the first label. 
+     *
+     * @method getMinLabelBounds
+     * @return Object
+     */
+    getMinLabelBounds: function()
+    {
+        return this._getLabelBounds(this.getMinimumValue());
+    },
+    
+    /**
+     * Returns the coordinates (top, right, bottom, left) for the bounding box of a label. 
+     *
+     * @method _getLabelBounds
+     * @param {String} Value of the label
+     * @return Object
+     * @private
+     */
+    _getLabelBounds: function(val)
+    {
+        var layout = this._layout,
+            labelStyles = this.get("styles").label,
+            matrix = new Y.Matrix(),
+            label,
+            props = this._getTextRotationProps(labelStyles);
+            props.transformOrigin = layout._getTransformOrigin(props.rot);
+        label = this.getLabel({x: 0, y: 0}, labelStyles);
+        label.innerHTML = this.get("labelFunction").apply(this, [val, this.get("labelFormat")]); 
+        props.labelWidth = label.offsetWidth;
+        props.labelHeight = label.offsetHeight;
+        label = this._labels.pop();
+        this._removeChildren(label);
+        Y.Event.purgeElement(label, true);
+        label.parentNode.removeChild(label);
+        props.x = 0;
+        props.y = 0;
+        layout._setRotationCoords(props);
+        matrix.translate(props.x, props.y);
+        this._simulateRotateWithTransformOrigin(matrix, props.rot, props.transformOrigin, props.labelWidth, props.labelHeight);
+        return matrix.getContentRect(props.labelWidth, props.labelHeight);
+    },
+
     /**
      * Removes all DOM elements from an HTML element. Used to clear out labels during detruction
      * phase.

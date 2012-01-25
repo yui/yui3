@@ -231,18 +231,15 @@ BottomAxisLayout.prototype = {
         }
         if(rot > 0)
         {
-            props.transformOrigin = [0, 0.5];
             topOffset -= labelHeight/2 * rot/90;
         }
         else if(rot < 0)
         {
-            props.transformOrigin = [1, 0.5];
             leftOffset -= labelWidth;
             topOffset -= labelHeight/2 * absRot/90;
         }
         else
         {
-            props.transformOrigin = [0, 0];
             leftOffset -= labelWidth * 0.5;
         }
         topOffset += margin;
@@ -252,6 +249,68 @@ BottomAxisLayout.prototype = {
         props.x = leftOffset;
         props.y = topOffset;
         host._rotate(label, props);
+    },
+    
+    /**
+     * Adjusts the coordinates of an axis label based on the rotation.
+     *
+     * @method _setRotationCoords
+     * @param {Object} props Coordinates, dimension and rotation properties of the label.
+     * @protected
+     */
+    _setRotationCoords: function(props)
+    {
+        var rot = props.rot,
+            absRot = props.absRot,
+            labelWidth = props.labelWidth,
+            labelHeight = props.labelHeight,
+            leftOffset,
+            topOffset;
+
+        if(rot > 0)
+        {
+            leftOffset = 0;
+            topOffset = labelHeight/2 * rot/90;
+        }
+        else if(rot < 0)
+        {
+            leftOffset = labelWidth;
+            topOffset = labelHeight/2 * absRot/90;
+        }
+        else
+        {
+            leftOffset = labelWidth * 0.5;
+            topOffset = 0;
+        }
+        props.x -= leftOffset;
+        props.y -= topOffset;
+    },
+
+    /**
+     * Returns the transformOrigin to use for an axis label based on the position of the axis 
+     * and the rotation of the label.
+     *
+     * @method _getTransformOrigin
+     * @param {Number} rot The rotation (in degrees) of the label.
+     * @return Array
+     * @protected
+     */
+    _getTransformOrigin: function(rot)
+    {
+        var transformOrigin;
+        if(rot > 0)
+        {
+            transformOrigin = [0, 0.5];
+        }
+        else if(rot < 0)
+        {
+            transformOrigin = [1, 0.5];
+        }
+        else
+        {
+            transformOrigin = [0, 0];
+        }
+        return transformOrigin;
     },
 
     /**

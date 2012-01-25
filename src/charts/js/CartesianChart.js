@@ -1084,6 +1084,158 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             this._redraw();
         }
     },
+    
+    /**
+     * Returns the maximum distance in pixels that the extends outside the top bounds of all vertical axes.
+     *
+     * @method _getTopOverflow
+     * @param {Array} set1 Collection of axes to check.
+     * @param {Array} set2 Seconf collection of axes to check.
+     * @param {Number} width Width of the axes
+     * @return Number
+     * @private
+     */
+    _getTopOverflow: function(set1, set2, height)
+    {
+        var i = 0,
+            len,
+            overflow = 0,
+            axis;
+        if(set1)
+        {
+            len = set1.length;
+            for(; i < len; ++i)
+            {
+                axis = set1[i];
+                overflow = Math.max(overflow, Math.abs(axis.getMaxLabelBounds().top) - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, height) * 0.5));
+            }
+        }
+        if(set2)
+        {
+            i = 0;
+            len = set2.length;
+            for(; i < len; ++i)
+            {
+                axis = set2[i];
+                overflow = Math.max(overflow, Math.abs(axis.getMaxLabelBounds().top) - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, height) * 0.5));
+            }
+        }
+        return overflow;
+    },
+    
+    /**
+     * Returns the maximum distance in pixels that the extends outside the right bounds of all horizontal axes.
+     *
+     * @method _getRightOverflow
+     * @param {Array} set1 Collection of axes to check.
+     * @param {Array} set2 Seconf collection of axes to check.
+     * @param {Number} width Width of the axes
+     * @return Number
+     * @private
+     */
+    _getRightOverflow: function(set1, set2, width)
+    {
+        var i = 0,
+            len,
+            overflow = 0,
+            axis;
+        if(set1)
+        {
+            len = set1.length;
+            for(; i < len; ++i)
+            {
+                axis = set1[i];
+                overflow = Math.max(overflow, axis.getMaxLabelBounds().right - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, width) * 0.5));
+            }
+        }
+        if(set2)
+        {
+            i = 0;
+            len = set2.length;
+            for(; i < len; ++i)
+            {
+                axis = set2[i];
+                overflow = Math.max(overflow, axis.getMaxLabelBounds().right - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, width) * 0.5));
+            }
+        }
+        return overflow;
+    },
+    
+    /**
+     * Returns the maximum distance in pixels that the extends outside the left bounds of all horizontal axes.
+     *
+     * @method _getLeftOverflow
+     * @param {Array} set1 Collection of axes to check.
+     * @param {Array} set2 Seconf collection of axes to check.
+     * @param {Number} width Width of the axes
+     * @return Number
+     * @private
+     */
+    _getLeftOverflow: function(set1, set2, width)
+    {
+        var i = 0,
+            len,
+            overflow = 0,
+            axis;
+        if(set1)
+        {
+            len = set1.length;
+            for(; i < len; ++i)
+            {
+                axis = set1[i];
+                overflow = Math.max(overflow, Math.abs(axis.getMinLabelBounds().left) - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, width) * 0.5));
+            }
+        }
+        if(set2)
+        {
+            i = 0;
+            len = set2.length;
+            for(; i < len; ++i)
+            {
+                axis = set2[i];
+                overflow = Math.max(overflow, Math.abs(axis.getMinLabelBounds().left) - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, width) * 0.5));
+            }
+        }
+        return overflow;
+    },
+    
+    /**
+     * Returns the maximum distance in pixels that the extends outside the bottom bounds of all vertical axes.
+     *
+     * @method _getBottomOverflow
+     * @param {Array} set1 Collection of axes to check.
+     * @param {Array} set2 Seconf collection of axes to check.
+     * @param {Number} height Height of the axes
+     * @return Number
+     * @private
+     */
+    _getBottomOverflow: function(set1, set2, height)
+    {
+        var i = 0,
+            len,
+            overflow = 0,
+            axis;
+        if(set1)
+        {
+            len = set1.length;
+            for(; i < len; ++i)
+            {
+                axis = set1[i];
+                overflow = Math.max(overflow, axis.getMinLabelBounds().bottom - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, height) * 0.5));
+            }
+        }
+        if(set2)
+        {
+            i = 0;
+            len = set2.length;
+            for(; i < len; ++i)
+            {
+                axis = set2[i];
+                overflow = Math.max(overflow, axis.getMinLabelBounds().bottom - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, height) * 0.5));
+            }
+        }
+        return overflow;
+    },
 
     /**
      * Redraws and position all the components of the chart instance.
@@ -1102,89 +1254,229 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         this._callLater = false;
         var w = this.get("width"),
             h = this.get("height"),
-            lw = 0,
-            rw = 0,
-            th = 0,
-            bh = 0,
-            lc = this.get("leftAxesCollection"),
-            rc = this.get("rightAxesCollection"),
-            tc = this.get("topAxesCollection"),
-            bc = this.get("bottomAxesCollection"),
+            leftAxesWidth = 0,
+            rightAxesWidth = 0,
+            topAxesHeight = 0,
+            bottomAxesHeight = 0,
+            leftAxesCollection = this.get("leftAxesCollection"),
+            rightAxesCollection = this.get("rightAxesCollection"),
+            topAxesCollection = this.get("topAxesCollection"),
+            bottomAxesCollection = this.get("bottomAxesCollection"),
             i = 0,
             l,
             axis,
-            pos,
-            pts = [],
             graphOverflow = "visible",
-            graph = this.get("graph"); 
-        if(lc)
+            graph = this.get("graph"),
+            topOverflow,
+            bottomOverflow,
+            leftOverflow,
+            rightOverflow,
+            graphWidth,
+            graphHeight,
+            graphX,
+            graphY,
+            allowContentOverflow = this.get("allowContentOverflow"),
+            diff,
+            rightAxesXCoords,
+            leftAxesXCoords,
+            topAxesYCoords,
+            bottomAxesYCoords,
+            graphRect = {};
+        if(leftAxesCollection)
         {
-            l = lc.length;
+            leftAxesXCoords = [];
+            l = leftAxesCollection.length;
             for(i = l - 1; i > -1; --i)
             {
-                pts[Y.Array.indexOf(this._axesCollection, lc[i])] = {x:lw + "px"};
-                lw += lc[i].get("width");
+                leftAxesXCoords.unshift(leftAxesWidth);
+                leftAxesWidth += leftAxesCollection[i].get("width");
             }
         }
-        if(rc)
+        if(rightAxesCollection)
         {
-            l = rc.length;
+            rightAxesXCoords = [];
+            l = rightAxesCollection.length;
             i = 0;
             for(i = l - 1; i > -1; --i)
             {
-                rw += rc[i].get("width");
-                pts[Y.Array.indexOf(this._axesCollection, rc[i])] = {x:(w - rw) + "px"};
+                rightAxesWidth += rightAxesCollection[i].get("width");
+                rightAxesXCoords.unshift(w - rightAxesWidth);
             }
         }
-        if(tc)
+        if(topAxesCollection)
         {
-            l = tc.length;
+            topAxesYCoords = [];
+            l = topAxesCollection.length;
             for(i = l - 1; i > -1; --i)
             {
-                pts[Y.Array.indexOf(this._axesCollection, tc[i])] = {y:th + "px"};
-                th += tc[i].get("height");
+                topAxesYCoords.unshift(topAxesHeight);
+                topAxesHeight += topAxesCollection[i].get("height");
             }
         }
-        if(bc)
+        if(bottomAxesCollection)
         {
-            l = bc.length;
+            bottomAxesYCoords = [];
+            l = bottomAxesCollection.length;
             for(i = l - 1; i > -1; --i)
             {
-                bh += bc[i].get("height");
-                pts[Y.Array.indexOf(this._axesCollection, bc[i])] = {y:(h - bh) + "px"};
+                bottomAxesHeight += bottomAxesCollection[i].get("height");
+                bottomAxesYCoords.unshift(h - bottomAxesHeight);
             }
         }
-        l = this._axesCollection.length;
-        i = 0;
         
-        for(; i < l; ++i)
+        graphWidth = w - (leftAxesWidth + rightAxesWidth);
+        graphHeight = h - (bottomAxesHeight + topAxesHeight);
+        graphRect.left = leftAxesWidth;
+        graphRect.top = topAxesHeight;
+        graphRect.bottom = h - bottomAxesHeight;
+        graphRect.right = w - rightAxesWidth;
+        if(!allowContentOverflow)
         {
-            axis = this._axesCollection[i];
-            pos = axis.get("position");
-            if(pos == "left" || pos === "right")
+            topOverflow = this._getTopOverflow(leftAxesCollection, rightAxesCollection);
+            bottomOverflow = this._getBottomOverflow(leftAxesCollection, rightAxesCollection);
+            leftOverflow = this._getLeftOverflow(bottomAxesCollection, topAxesCollection);
+            rightOverflow = this._getRightOverflow(bottomAxesCollection, topAxesCollection);
+            
+            diff = topOverflow - topAxesHeight;
+            if(diff > 0)
             {
-                axis.get("boundingBox").setStyle("top", th + "px");
-                axis.get("boundingBox").setStyle("left", pts[i].x);
-                if(axis.get("height") !== h - (bh + th))
+                graphRect.top = topOverflow;
+                if(topAxesYCoords)
                 {
-                    axis.set("height", h - (bh + th));
+                    i = 0;
+                    l = topAxesYCoords.length;
+                    for(; i < l; ++i)
+                    {
+                        topAxesYCoords[i] += diff;
+                    }
                 }
             }
-            else if(pos == "bottom" || pos == "top")
+
+            diff = bottomOverflow - bottomAxesHeight;
+            if(diff > 0)
             {
-                if(axis.get("width") !== w - (lw + rw))
+                graphRect.bottom = h - bottomOverflow;
+                if(bottomAxesYCoords)
                 {
-                    axis.set("width", w - (lw + rw));
+                    i = 0;
+                    l = bottomAxesYCoords.length;
+                    for(; i < l; ++i)
+                    {
+                        bottomAxesYCoords[i] -= diff;
+                    }
                 }
-                axis.get("boundingBox").setStyle("left", lw + "px");
-                axis.get("boundingBox").setStyle("top", pts[i].y);
+            }
+
+            diff = leftOverflow - leftAxesWidth;
+            if(diff > 0)
+            {
+                graphRect.left = leftOverflow;
+                if(leftAxesXCoords)
+                {
+                    i = 0;
+                    l = leftAxesXCoords.length;
+                    for(; i < l; ++i)
+                    {
+                        leftAxesXCoords[i] += diff;
+                    }
+                }
+            }
+
+            diff = rightOverflow - rightAxesWidth;
+            if(diff > 0)
+            {
+                graphRect.right = w - rightOverflow;
+                if(rightAxesXCoords)
+                {
+                    i = 0;
+                    l = rightAxesXCoords.length;
+                    for(; i < l; ++i)
+                    {
+                        rightAxesXCoords[i] -= diff;
+                    }
+                }
+            }
+        }
+        graphWidth = graphRect.right - graphRect.left;
+        graphHeight = graphRect.bottom - graphRect.top;
+        graphX = graphRect.left;
+        graphY = graphRect.top;
+        if(topAxesCollection)
+        {
+            l = topAxesCollection.length;
+            i = 0;
+            for(; i < l; i++)
+            {
+                axis = topAxesCollection[i];
+                if(axis.get("width") !== graphWidth)
+                {
+                    axis.set("width", graphWidth);
+                }
+                axis.get("boundingBox").setStyle("left", graphX + "px");
+                axis.get("boundingBox").setStyle("top", topAxesYCoords[i] + "px");
             }
             if(axis._hasDataOverflow())
             {
                 graphOverflow = "hidden";
             }
         }
-        
+        if(bottomAxesCollection)
+        {
+            l = bottomAxesCollection.length;
+            i = 0;
+            for(; i < l; i++)
+            {
+                axis = bottomAxesCollection[i];
+                if(axis.get("width") !== graphWidth)
+                {
+                    axis.set("width", graphWidth);
+                }
+                axis.get("boundingBox").setStyle("left", graphX + "px");
+                axis.get("boundingBox").setStyle("top", bottomAxesYCoords[i] + "px");
+            }
+            if(axis._hasDataOverflow())
+            {
+                graphOverflow = "hidden";
+            }
+        }
+        if(leftAxesCollection)
+        {
+            l = leftAxesCollection.length;
+            i = 0;
+            for(; i < l; ++i)
+            {
+                axis = leftAxesCollection[i];
+                axis.get("boundingBox").setStyle("top", graphY + "px");
+                axis.get("boundingBox").setStyle("left", leftAxesXCoords[i] + "px");
+                if(axis.get("height") !== graphHeight)
+                {
+                    axis.set("height", graphHeight);
+                }
+            }
+            if(axis._hasDataOverflow())
+            {
+                graphOverflow = "hidden";
+            }
+        }
+        if(rightAxesCollection)
+        {
+            l = rightAxesCollection.length;
+            i = 0;
+            for(; i < l; ++i)
+            {
+                axis = rightAxesCollection[i];
+                axis.get("boundingBox").setStyle("top", graphY + "px");
+                axis.get("boundingBox").setStyle("left", rightAxesXCoords[i] + "px");
+                if(axis.get("height") !== graphHeight)
+                {
+                    axis.set("height", graphHeight);
+                }
+            }
+            if(axis._hasDataOverflow())
+            {
+                graphOverflow = "hidden";
+            }
+        }
         this._drawing = false;
         if(this._callLater)
         {
@@ -1193,19 +1485,19 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         }
         if(graph)
         {
-            graph.get("boundingBox").setStyle("left", lw + "px");
-            graph.get("boundingBox").setStyle("top", th + "px");
-            graph.set("width", w - (lw + rw));
-            graph.set("height", h - (th + bh));
+            graph.get("boundingBox").setStyle("left", graphX + "px");
+            graph.get("boundingBox").setStyle("top", graphY + "px");
+            graph.set("width", graphWidth);
+            graph.set("height", graphHeight);
             graph.get("boundingBox").setStyle("overflow", graphOverflow);
         }
 
         if(this._overlay)
         {
-            this._overlay.setStyle("left", lw + "px");
-            this._overlay.setStyle("top", th + "px");
-            this._overlay.setStyle("width", (w - (lw + rw)) + "px");
-            this._overlay.setStyle("height", (h - (th + bh)) + "px");
+            this._overlay.setStyle("left", graphX + "px");
+            this._overlay.setStyle("top", graphY + "px");
+            this._overlay.setStyle("width", graphWidth + "px");
+            this._overlay.setStyle("height", graphHeight + "px");
         }
     },
 
@@ -1255,6 +1547,16 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
     }
 }, {
     ATTRS: {
+        /**
+         * Indicates whether axis labels are allowed to overflow beyond the bounds of the chart's content box.
+         *
+         * @attribute allowContentOverflow
+         * @type Boolean
+         */
+        allowContentOverflow: {
+            value: false
+        },
+
         /**
          * Style object for the axes.
          *

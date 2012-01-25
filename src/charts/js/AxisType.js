@@ -417,6 +417,30 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
             return true;
         }
         return false;
+    },
+
+    /**
+     * Returns a string corresponding to the first label on an 
+     * axis.
+     *
+     * @method getMinimumValue
+     * @return String
+     */
+    getMinimumValue: function()
+    {
+        return this.get("minimum");
+    },
+
+    /**
+     * Returns a string corresponding to the last label on an 
+     * axis.
+     *
+     * @method getMaximumValue
+     * @return String
+     */
+    getMaximumValue: function()
+    {
+        return this.get("maximum");
     }
 }, {
     ATTRS: {

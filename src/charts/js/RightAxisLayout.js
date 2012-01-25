@@ -239,18 +239,15 @@ RightAxisLayout.prototype = {
         {
             leftOffset -= labelWidth * 0.5;
             topOffset -= labelHeight;
-            props.transformOrigin = [0.5, 1];
         }
         else if(rot === -90)
         {
             leftOffset -= labelWidth * 0.5;
-            props.transformOrigin = [0.5, 0];
         }
         else
         {
             topOffset -= labelHeight * 0.5;
             leftOffset += labelHeight/2 * absRot/90;
-            props.transformOrigin = [0, 0.5];
         }
         leftOffset += margin;
         leftOffset += tickOffset;
@@ -260,7 +257,75 @@ RightAxisLayout.prototype = {
         props.y = Math.round(topOffset);
         this._rotate(label, props);
     },
-    
+ 
+    /**
+     * Adjusts the coordinates of an axis label based on the rotation.
+     *
+     * @method _setRotationCoords
+     * @param {Object} props Coordinates, dimension and rotation properties of the label.
+     * @protected
+     */
+    _setRotationCoords: function(props)
+    {
+        var rot = props.rot,
+            absRot = props.absRot,
+            leftOffset = 0,
+            topOffset = 0,
+            labelWidth = props.labelWidth,
+            labelHeight = props.labelHeight;
+        if(rot === 0)
+        {
+            topOffset = labelHeight * 0.5;
+        }
+        else if(rot === 90)
+        {
+            leftOffset = labelWidth * 0.5;
+            topOffset = labelHeight;
+        }
+        else if(rot === -90)
+        {
+            leftOffset = labelWidth * 0.5;
+        }
+        else
+        {
+            topOffset = labelHeight * -0.5;
+            leftOffset = labelHeight/2 * absRot/90;
+        }
+        props.x -= leftOffset;
+        props.y -= topOffset;
+    },
+   
+    /**
+     * Returns the transformOrigin to use for an axis label based on the position of the axis 
+     * and the rotation of the label.
+     *
+     * @method _getTransformOrigin
+     * @param {Number} rot The rotation (in degrees) of the label.
+     * @return Array
+     * @protected
+     */
+    _getTransformOrigin: function(rot)
+    {
+        var transformOrigin;
+        if(rot === 0)
+        {
+            transformOrigin = [0, 0];
+        }
+        else if(rot === 90)
+        {
+            transformOrigin = [0.5, 1];
+        }
+        else if(rot === -90)
+        {
+            transformOrigin = [0.5, 0];
+        }
+        else
+        {
+            transformOrigin = [0, 0.5];
+        }
+        return transformOrigin;
+    },
+
     /**
      * Adjusts position for inner ticks.
      *

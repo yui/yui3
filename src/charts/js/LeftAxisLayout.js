@@ -234,19 +234,16 @@ LeftAxisLayout.prototype = {
         else if(rot === 90)
         {
             leftOffset -= labelWidth * 0.5;
-            props.transformOrigin = [0.5, 0];
         }
         else if(rot === -90)
         {
             leftOffset -= labelWidth * 0.5;
             topOffset -= labelHeight;
-            props.transformOrigin = [0.5, 1];
         }
         else
         {
             leftOffset -= labelWidth + (labelHeight * absRot/360);
             topOffset -= labelHeight * 0.5;
-            props.transformOrigin = [1, 0.5];
         }
         props.labelWidth = labelWidth;
         props.labelHeight = labelHeight;
@@ -254,7 +251,77 @@ LeftAxisLayout.prototype = {
         props.y = Math.round(topOffset);
         this._rotate(label, props);
     },
-    
+
+    /**
+     * Adjusts the coordinates of an axis label based on the rotation.
+     *
+     * @method _setRotationCoords
+     * @param {Object} props Coordinates, dimension and rotation properties of the label.
+     * @protected
+     */
+    _setRotationCoords: function(props)
+    {
+        var rot = props.rot,
+            absRot = props.absRot,
+            leftOffset,
+            topOffset,
+            labelWidth = props.labelWidth,
+            labelHeight = props.labelHeight;
+        if(rot === 0)
+        {
+            leftOffset = labelWidth;
+            topOffset = labelHeight * 0.5;
+        }
+        else if(rot === 90)
+        {
+            topOffset = 0;
+            leftOffset = labelWidth * 0.5;
+        }
+        else if(rot === -90)
+        {
+            leftOffset = labelWidth * 0.5;
+            topOffset = labelHeight;
+        }
+        else
+        {
+            leftOffset = labelWidth + (labelHeight * absRot/360);
+            topOffset = labelHeight * 0.5;
+        }
+        props.x -= leftOffset;
+        props.y -= topOffset;
+    },
+
+    /**
+     * Returns the transformOrigin to use for an axis label based on the position of the axis 
+     * and the rotation of the label.
+     *
+     * @method _getTransformOrigin
+     * @param {Number} rot The rotation (in degrees) of the label.
+     * @return Array
+     * @protected
+     */
+    _getTransformOrigin: function(rot)
+    {
+        var transformOrigin;
+        if(rot === 0)
+        {
+            transformOrigin = [0, 0];
+        }
+        else if(rot === 90)
+        {
+            transformOrigin = [0.5, 0];
+        }
+        else if(rot === -90)
+        {
+            transformOrigin = [0.5, 1];
+        }
+        else
+        {
+            transformOrigin = [1, 0.5];
+        }
+        return transformOrigin;
+    },
+
     /**
      * Adjust the position of the Axis widget's content box for internal axes.
      *
