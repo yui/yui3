@@ -766,6 +766,7 @@ Y.mix(Table.prototype, {
     @property _displayColumns
     @type {Object[]}
     @value undefined (initially not set)
+    @protected
     **/
     //_displayColumns: null,
 

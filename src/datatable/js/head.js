@@ -78,10 +78,10 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
 
     @property CELL_TEMPLATE
     @type {HTML}
-    @default '<th id="{_yuid}" abbr="{abbr} colspan="{colspan}" rowspan="{rowspan}" class="{className}">{content}</th>'
+    @default '<th id="{_yuid}" abbr="{abbr} colspan="{colspan}" rowspan="{rowspan}" class="{className}" {headers}>{content}</th>'
     **/
     CELL_TEMPLATE :
-        '<th id="{_yuid}" abbr="{abbr}" colspan="{colspan}" rowspan="{rowspan}" class="{className}" scope="col" role="columnheader">{content}</th>',
+        '<th id="{_yuid}" abbr="{abbr}" colspan="{colspan}" rowspan="{rowspan}" class="{className}" scope="col" role="columnheader" {headers}>{content}</th>',
 
     /**
     The data representation of the header rows to render.  This is assigned by
@@ -157,7 +157,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
                 colspan: 1,
                 rowspan: 1
             },
-            i, len, j, jlen, col, className, html, content;
+            i, len, j, jlen, col, className, html, content, values;
 
         if (thead && columns) {
             html = '';
@@ -169,20 +169,27 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
                     for (j = 0, jlen = columns[i].length; j < jlen; ++j) {
                         col = columns[i][j];
                         className = this.getClassName('header');
+                        values = Y.merge(
+                            defaults,
+                            col, {
+                                className: className,
+                                content  : col.label || col.key ||
+                                           ("Column " + (j + 1)),
+                                headers  : ''
+                            }
+                        );
 
                         if (col._id) {
-                            className += ' ' + this.getClassName('col', col._id);
+                            values.className +=
+                                ' ' + this.getClassName('col', col._id);
                         }
 
-                        content += fromTemplate(this.CELL_TEMPLATE,
-                            Y.merge(
-                                defaults,
-                                col, {
-                                    className: className,
-                                    content  : col.label || col.key ||
-                                               ("Column " + (j + 1))
-                                }
-                            ));
+                        if (col.parent) {
+                            values.headers =
+                                'headers="' + col.parent.headers.join(' ') + '"';
+                        }
+
+                        content += fromTemplate(this.CELL_TEMPLATE, values);
                     }
 
                     html += fromTemplate(this.ROW_TEMPLATE, {
@@ -420,6 +427,15 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
 
                     entry[1] = i;
 
+                    // collect the IDs of parent cols
+                    col.headers = [col._yuid];
+
+                    for (j = stack.length - 2; j >= 0; --j) {
+                        parent = stack[j][0][stack[j][1]];
+
+                        col.headers.unshift(parent._yuid);
+                    }
+
                     if (children && children.length) {
                         // parent cells must assume rowspan 1 (long story)
 
@@ -427,15 +443,6 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
                         stack.push([children, -1]);
                         break;
                     } else {
-                        // collect the IDs of parent cols
-                        col.headers = [col._yuid];
-
-                        for (j = stack.length - 2; j >= 0; --j) {
-                            parent = stack[j][0][stack[j][1]];
-
-                            col.headers.unshift(parent._yuid);
-                        }
-
                         col.rowspan = rowSpan - stack.length + 1;
                     }
                 }
