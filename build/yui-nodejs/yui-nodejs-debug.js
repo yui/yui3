@@ -518,7 +518,7 @@ proto = {
                     this.log('applyTo not found: ' + method, 'warn', 'yui');
                 }
             }
-            return m.apply(instance, args);
+            return m && m.apply(instance, args);
         }
 
         return null;
@@ -6525,7 +6525,11 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
             if (d && d.errors) {
                 for (i = 0; i < d.errors.length; i++) {
-                    u = d.errors[i].request.url;
+                    if (d.errors[i].request) {
+                        u = d.errors[i].request.url;
+                    } else {
+                        u = d.errors[i];
+                    }
                     errs[u] = u;
                 }
             }

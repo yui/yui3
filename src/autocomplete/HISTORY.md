@@ -12,6 +12,12 @@ AutoComplete Change History
   this when you need to customize the query value (such as double-escaping it)
   used in the YQL query. [Ticket #2531285]
 
+* Changing the value of the `value` attribute programmatically will now also
+  update the value of the `query` attribute and will fire a `clear` event when
+  the value is cleared (thus clearing results), but still will not fire a
+  `query` event. Use the `sendRequest()` method to trigger a query
+  programmatically.
+
 
 3.4.1
 -----
