@@ -550,7 +550,6 @@ baseSuite.add(new Y.Test.Case({
         this.ac.on('clear', function (e) {
             fired += 1;
             Assert.areSame('foo', e.prevVal);
-            console.log(e.src);
         });
 
         // Without delimiter.
@@ -576,7 +575,6 @@ baseSuite.add(new Y.Test.Case({
         this.ac.on('clear', function (e) {
             fired += 1;
             Assert.areSame('foo', e.prevVal);
-            console.log(e.src);
         });
 
         this.simulateInput('foo');
