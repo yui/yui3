@@ -807,6 +807,32 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          */
         direction: {
             value: "horizontal"
+        },
+
+        /**
+         * Indicates whether or not markers for a series will be grouped and rendered in a single complex shape instance.
+         *
+         * @attribute groupMarkers
+         * @type Boolean
+         */
+        groupMarkers: {
+            getter: function()
+            {
+                if(this._groupMarkers === undefined)
+                {
+                    return this.get("graph").get("groupMarkers");
+                }
+                else
+                {
+                    return this._groupMarkers;
+                }
+            },
+
+            setter: function(val)
+            {
+                this._groupMarkers = val;
+                return val;
+            }
         }
     }
 });

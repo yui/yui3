@@ -14,8 +14,314 @@ var DOCUMENT = Y.config.doc,
     BottomAxisLayout,
     TopAxisLayout,
     _getClassName = Y.ClassNameManager.getClassName,
-    SERIES_MARKER = _getClassName("seriesmarker");
+    SERIES_MARKER = _getClassName("seriesmarker"),
+    ShapeGroup,
+    CircleGroup,
+    RectGroup,
+    EllipseGroup,
+    DiamondGroup;
 
+
+/**
+ * Abstract class for creating groups of shapes with the same styles and dimensions.
+ *
+ * @module graphics
+ * @class ShapeGroup
+ * @constructor
+ */
+ ShapeGroup = function(cfg)
+ {
+    ShapeGroup.superclass.constructor.apply(this, arguments);
+ };
+    
+ ShapeGroup.NAME = "shapeGroup";
+
+ Y.extend(ShapeGroup, Y.Path, {    
+    /**
+     * Updates the shape.
+     *
+     * @method _draw
+     * @private
+     */
+    _draw: function()
+    {
+        var xvalues = this.get("xvalues"),
+            yvalues = this.get("yvalues"),
+            x,
+            y,
+            xRad,
+            yRad,
+            i = 0,
+            len,
+            attrs = [],
+            dimensions = this.get("dimensions"),
+            width = dimensions.width,
+            height = dimensions.height,
+            radius = dimensions.radius,
+            yRadius = dimensions.yRadius,
+            id = this.get("id"),
+            className = this.node.className,
+            widthIsArray = Y_Lang.isArray(width),
+            heightIsArray = Y_Lang.isArray(height),
+            radiusIsArray = Y_Lang.isArray(radius),
+            yRadiusIsArray = Y_Lang.isArray(yRadius);
+        if(xvalues && yvalues && xvalues.length > 0)
+        {
+            this.clear();
+
+            len = xvalues.length;
+            for(; i < len; ++i)
+            {
+                x = xvalues[i];
+                y = yvalues[i];
+                xRad = radiusIsArray ? radius[i] : radius;
+                yRad = yRadiusIsArray ? yRadius[i] : yRadius;
+                if(!isNaN(x) && !isNaN(y) && !isNaN(xRad))
+                {
+                    this.drawShape({
+                        x: x,
+                        y: y,
+                        width: widthIsArray ? width[i] : width,
+                        height: heightIsArray ? height[i] : height,
+                        radius: xRad,
+                        yRadius: yRad 
+                    });
+                    this.closePath();
+                    attrs[i] = {
+                        id: id + "_" + i,
+                        className: className,
+                        coords: (x - this._left) + ", " + (y - this._top)  + ", " + radius,
+                        shape: "circle"
+                    };
+                }
+            }
+            this._closePath();
+        }
+    },
+
+    /**
+     * Parses and array of lengths into radii
+     *
+     * @method _getRadiusCollection
+     * @param {Array} val Array of lengths
+     * @return Array
+     * @private
+     */
+    _getRadiusCollection: function(val)
+    {
+        var i = 0,
+            len = val.length,
+            radii = [];
+        for(; i < len; ++i)
+        {   
+            radii[i] = val[i] * 0.5;
+        }
+        return radii;
+    }
+ });
+    
+ShapeGroup.ATTRS = Y.merge(Y.Path.ATTRS, {
+    dimensions: {
+        getter: function()
+        {
+            var dimensions = this._dimensions,
+                radius,
+                yRadius,
+                width,
+                height;
+            if(dimensions.hasOwnProperty("radius"))
+            {
+                return dimensions;
+            }
+            else
+            {
+                width = dimensions.width;
+                height = dimensions.height;
+                radius = Y_Lang.isArray(width) ? this._getRadiusCollection(width) : (width * 0.5);
+                yRadius = Y_Lang.isArray(height) ? this._getRadiusCollection(height) : (height * 0.5);
+                return {
+                    width: width,
+                    height: height,
+                    radius: radius,
+                    yRadius: yRadius
+                };
+            }
+        },
+
+        setter: function(val)
+        {
+            this._dimensions = val;
+            return val;
+        }
+    },
+    xvalues: {
+        getter: function()
+        {
+            return this._xvalues;
+        },
+        setter: function(val)
+        {
+            this._xvalues = val;
+        }
+    },
+    yvalues: {
+        getter: function()
+        {
+            return this._yvalues;
+        },
+        setter: function(val)
+        {
+            this._yvalues = val;
+        }
+    }
+});
+Y.ShapeGroup = ShapeGroup;
+/**
+ * Abstract class for creating groups of circles with the same styles and dimensions.
+ *
+ * @module graphics
+ * @class GroupCircle
+ * @constructor
+ */
+ CircleGroup = function(cfg)
+ {
+    CircleGroup.superclass.constructor.apply(this, arguments);
+ };
+    
+ CircleGroup.NAME = "circleGroup";
+
+ Y.extend(CircleGroup, Y.ShapeGroup, {    
+    /**
+     * Algorithm for drawing shape.
+     *
+     * @method drawShape
+     * @param {Object} cfg Parameters used to draw the shape.
+     */
+    drawShape: function(cfg)
+    {
+        this.drawCircle(cfg.x, cfg.y, cfg.radius);
+    }
+ });
+
+CircleGroup.ATTRS = Y.merge(Y.ShapeGroup.ATTRS, {
+    dimensions: {
+        getter: function()
+        {
+            var dimensions = this._dimensions,
+                radius,
+                yRadius,
+                width,
+                height;
+            if(dimensions.hasOwnProperty("radius"))
+            {
+                return dimensions;
+            }
+            else
+            {
+                width = dimensions.width;
+                height = dimensions.height;
+                radius = Y_Lang.isArray(width) ? this._getRadiusCollection(width) : (width * 0.5);
+                yRadius = radius;
+                return {
+                    width: width,
+                    height: height,
+                    radius: radius,
+                    yRadius: yRadius
+                };
+            }
+        }
+    }
+});
+    
+CircleGroup.ATTRS = Y.ShapeGroup.ATTRS;
+Y.CircleGroup = CircleGroup;
+/**
+ * Abstract class for creating groups of rects with the same styles and dimensions.
+ *
+ * @module graphics
+ * @class GroupRect
+ * @constructor
+ */
+ RectGroup = function(cfg)
+ {
+    RectGroup.superclass.constructor.apply(this, arguments);
+ };
+    
+ RectGroup.NAME = "rectGroup";
+
+ Y.extend(RectGroup, Y.ShapeGroup, {    
+    /**
+     * Updates the rect.
+     *
+     * @method _draw
+     * @private
+     */
+    drawShape: function(cfg)
+    {
+        this.drawRect(cfg.x, cfg.y, cfg.width, cfg.height);
+    }
+ });
+    
+RectGroup.ATTRS = Y.ShapeGroup.ATTRS;
+Y.RectGroup = RectGroup;
+/**
+ * Abstract class for creating groups of diamonds with the same styles and dimensions.
+ *
+ * @module graphics
+ * @class GroupDiamond
+ * @constructor
+ */
+ DiamondGroup = function(cfg)
+ {
+    DiamondGroup.superclass.constructor.apply(this, arguments);
+ };
+    
+ DiamondGroup.NAME = "diamondGroup";
+
+ Y.extend(DiamondGroup, Y.ShapeGroup, {    
+    /**
+     * Updates the diamond.
+     *
+     * @method _draw
+     * @private
+     */
+    drawShape: function(cfg)
+    {
+        this.drawDiamond(cfg.x, cfg.y, cfg.width, cfg.height);
+    }
+ });
+    
+DiamondGroup.ATTRS = Y.ShapeGroup.ATTRS;
+Y.DiamondGroup = DiamondGroup;
+/**
+ * Abstract class for creating groups of diamonds with the same styles and dimensions.
+ *
+ * @module graphics
+ * @class EllipseGroup
+ * @constructor
+ */
+ EllipseGroup = function(cfg)
+ {
+    EllipseGroup.superclass.constructor.apply(this, arguments);
+ };
+    
+ EllipseGroup.NAME = "diamondGroup";
+
+ Y.extend(EllipseGroup, Y.ShapeGroup, {    
+    /**
+     * Updates the diamond.
+     *
+     * @method _draw
+     * @private
+     */
+    drawShape: function(cfg)
+    {
+        this.drawEllipse(cfg.x, cfg.y, cfg.width, cfg.height);
+    }
+ });
+    
+EllipseGroup.ATTRS = Y.ShapeGroup.ATTRS;
+Y.EllipseGroup = EllipseGroup;
 /**
  * The Renderer class is a base class for chart components that use the `styles`
  * attribute.
@@ -100,7 +406,7 @@ Renderer.prototype = {
         var newstyles = Y.merge(b, {});
         Y.Object.each(a, function(value, key, a)
         {
-            if(b.hasOwnProperty(key) && Y_Lang.isObject(value) && !Y_Lang.isArray(value))
+            if(b.hasOwnProperty(key) && Y_Lang.isObject(value) && !Y_Lang.isFunction(value) && !Y_Lang.isArray(value))
             {
                 newstyles[key] = this._mergeStyles(value, b[key]);
             }
@@ -263,7 +569,7 @@ LeftAxisLayout.prototype = {
      * @param {HTMLElement} label to measure
      * @protected
      */
-    updateMaxLabelSize: function(label)
+    updateMaxLabelSize: function(labelWidth, labelHeight)
     {
         var host = this,
             props = this._labelRotationProps,
@@ -274,17 +580,39 @@ LeftAxisLayout.prototype = {
             max;
         if(rot === 0)
         {
-            max = label.offsetWidth;
+            max = labelWidth;
         }
         else if(absRot === 90)
         {
-            max = label.offsetHeight;
+            max = labelHeight;
         }
         else
         {
-            max = (cosRadians * label.offsetWidth) + (sinRadians * label.offsetHeight);
+            max = (cosRadians * labelWidth) + (sinRadians * labelHeight);
         }
         host._maxLabelSize = Math.max(host._maxLabelSize, max);
+    },
+    
+    /**
+     * Determines the available label width when the axis width has been explicitly set.
+     *
+     * @method getExplicitlySized
+     * @return Boolean
+     * @protected
+     */
+    getExplicitlySized: function(styles)
+    {
+        if(this._explicitWidth)
+        {
+            var host = this,
+                w = host._explicitWidth,
+                totalTitleSize = host._totalTitleSize,
+                leftTickOffset = host.get("leftTickOffset"),
+                margin = styles.label.margin.right;
+            host._maxLabelSize =  w - (leftTickOffset + margin + totalTitleSize);
+            return true;
+        }
+        return false;
     },
 
     /**
@@ -297,89 +625,24 @@ LeftAxisLayout.prototype = {
     positionTitle: function(label)
     {
         var host = this,
-            max,
-            styles = host.get("styles").title,
-            props = this._getTextRotationProps(styles),
-            rot = props.rot,
-            absRot = props.absRot,
-            sinRadians = props.sinRadians,
-            cosRadians = props.cosRadians,
-            x = 0,
-            y = this.get("height")/2,
-            leftOffset = 0,
-            topOffset = 0,
+            bounds = host._titleBounds,
+            margin = host.get("styles").title.margin,
+            props = host._titleRotationProps,
+            w = bounds.right - bounds.left,
             labelWidth = label.offsetWidth,
-            labelHeight = label.offsetHeight;
-        if(Y.config.doc.createElementNS)
+            labelHeight = label.offsetHeight,
+            x = (labelWidth * -0.5) + (w * 0.5),
+            y = (host.get("height") * 0.5) - (labelHeight * 0.5);
+        props.labelWidth = labelWidth;
+        props.labelHeight = labelHeight;
+        if(margin && margin.left)
         {
-            if(rot === 0)
-            {
-                max = labelWidth;
-                topOffset -= labelHeight * 0.5;
-            }
-            else if(absRot === 90)
-            {
-                max = labelHeight;
-                if(rot === 90)
-                {
-                    leftOffset += labelHeight;
-                    topOffset -= labelWidth * 0.5;
-                }
-                else
-                {
-                    topOffset += labelWidth * 0.5;
-                }
-            }
-            else
-            {
-                max = (cosRadians * labelWidth) + (sinRadians * labelHeight);
-                if(rot > 0)
-                {
-                    topOffset -= ((sinRadians * labelWidth) + (cosRadians * labelHeight))/2;
-                    leftOffset += Math.min(labelHeight, (sinRadians * labelHeight));
-                }
-                else
-                {
-                    topOffset += (sinRadians * labelWidth)/2 - (cosRadians * labelHeight)/2;
-                }
-            }
-            y += topOffset;
-            x += leftOffset;
-            props.x = Math.round(x);
-            props.y = Math.round(y);
+            x += margin.left;
         }
-        else
-        {
-            label.style.filter = null; 
-            labelWidth = Math.round(label.offsetWidth);
-            labelHeight = Math.round(label.offsetHeight);
-            if(rot === 0)
-            {
-                topOffset -= labelHeight * 0.5;
-                max = labelWidth;
-            }
-            else if(rot === 90)
-            {
-                topOffset -= labelWidth * 0.5;
-                max = labelHeight;
-            }
-            else if(rot === -90)
-            {
-                topOffset -= labelWidth * 0.5;
-                max = labelHeight;
-            }
-            else
-            {
-                max = (cosRadians * labelWidth) + (sinRadians * labelHeight);
-                topOffset -= ((sinRadians * labelWidth) + (cosRadians * labelHeight))/2;
-            }
-            y += topOffset;
-            x += leftOffset;
-            props.x = Math.round(x);
-            props.y = Math.round(y);
-        }
-        this._titleSize = max;
-        this._rotate(label, props);
+        props.x = x;
+        props.y = y;
+        props.transformOrigin = [0.5, 0.5];
+        host._rotate(label, props);
     },
 
     /**
@@ -391,25 +654,19 @@ LeftAxisLayout.prototype = {
      * against.
      * @protected
      */
-    positionLabel: function(label, pt)
+    positionLabel: function(label, pt, styles, i)
     {
         var host = this,
-            style = host.get("styles").label,
-            titleStyles = host.get("styles").title,
-            margin = 0,
-            totalTitleSize = this.get("title") ? this._titleSize + titleStyles.margin.right + titleStyles.margin.left : 0,
-            leftOffset = pt.x + totalTitleSize,
+            tickOffset = host.get("leftTickOffset"),
+            totalTitleSize = this._totalTitleSize,
+            leftOffset = pt.x + totalTitleSize - tickOffset,
             topOffset = pt.y,
             props = this._labelRotationProps,
             rot = props.rot,
             absRot = props.absRot,
             maxLabelSize = host._maxLabelSize,
-            labelWidth = Math.round(label.offsetWidth),
-            labelHeight = Math.round(label.offsetHeight);
-        if(style.margin && style.margin.right)
-        {
-            margin = style.margin.right;
-        }
+            labelWidth = this._labelWidths[i],
+            labelHeight = this._labelHeights[i];
         if(rot === 0)
         {
             leftOffset -= labelWidth;
@@ -418,19 +675,16 @@ LeftAxisLayout.prototype = {
         else if(rot === 90)
         {
             leftOffset -= labelWidth * 0.5;
-            props.transformOrigin = [0.5, 0];
         }
         else if(rot === -90)
         {
             leftOffset -= labelWidth * 0.5;
             topOffset -= labelHeight;
-            props.transformOrigin = [0.5, 1];
         }
         else
         {
             leftOffset -= labelWidth + (labelHeight * absRot/360);
             topOffset -= labelHeight * 0.5;
-            props.transformOrigin = [1, 0.5];
         }
         props.labelWidth = labelWidth;
         props.labelHeight = labelHeight;
@@ -440,33 +694,75 @@ LeftAxisLayout.prototype = {
     },
 
     /**
-     * Calculates the size and positions the content elements.
+     * Adjusts the coordinates of an axis label based on the rotation.
      *
-     * @method setSizeAndPosition
+     * @method _setRotationCoords
+     * @param {Object} props Coordinates, dimension and rotation properties of the label.
      * @protected
      */
-    setSizeAndPosition: function()
+    _setRotationCoords: function(props)
     {
-        var host = this,
-            labelSize = host._maxLabelSize,
-            style = host.get("styles"),
-            leftTickOffset = host.get("leftTickOffset"),
-            sz = labelSize + leftTickOffset,
-            graphic = host.get("graphic"),
-            titleMargin = style.title.margin,
-            totalTitleSize = host.get("title") ? titleMargin.left + titleMargin.right + host._titleSize : 0,
-            margin = style.label.margin;
-        if(margin && margin.right)
+        var rot = props.rot,
+            absRot = props.absRot,
+            leftOffset,
+            topOffset,
+            labelWidth = props.labelWidth,
+            labelHeight = props.labelHeight;
+        if(rot === 0)
         {
-            sz += margin.right;
+            leftOffset = labelWidth;
+            topOffset = labelHeight * 0.5;
         }
-        sz += totalTitleSize;
-        sz = Math.round(sz);
-        host.set("width", sz);
-        host.get("contentBox").setStyle("width", sz);
-        graphic.set("x", sz - leftTickOffset);
+        else if(rot === 90)
+        {
+            topOffset = 0;
+            leftOffset = labelWidth * 0.5;
+        }
+        else if(rot === -90)
+        {
+            leftOffset = labelWidth * 0.5;
+            topOffset = labelHeight;
+        }
+        else
+        {
+            leftOffset = labelWidth + (labelHeight * absRot/360);
+            topOffset = labelHeight * 0.5;
+        }
+        props.x -= leftOffset;
+        props.y -= topOffset;
     },
-    
+
+    /**
+     * Returns the transformOrigin to use for an axis label based on the position of the axis 
+     * and the rotation of the label.
+     *
+     * @method _getTransformOrigin
+     * @param {Number} rot The rotation (in degrees) of the label.
+     * @return Array
+     * @protected
+     */
+    _getTransformOrigin: function(rot)
+    {
+        var transformOrigin;
+        if(rot === 0)
+        {
+            transformOrigin = [0, 0];
+        }
+        else if(rot === 90)
+        {
+            transformOrigin = [0.5, 0];
+        }
+        else if(rot === -90)
+        {
+            transformOrigin = [0.5, 1];
+        }
+        else
+        {
+            transformOrigin = [1, 0.5];
+        }
+        return transformOrigin;
+    },
+
     /**
      * Adjust the position of the Axis widget's content box for internal axes.
      *
@@ -487,15 +783,19 @@ LeftAxisLayout.prototype = {
     setCalculatedSize: function()
     {
         var host = this,
+            graphic = this.get("graphic"),
             style = host.get("styles"),
             label = style.label,
-            titleMargin = style.title.margin,
             tickOffset = host.get("leftTickOffset"),
             max = host._maxLabelSize,
-            totalTitleSize = host.get("title") ? titleMargin.left + titleMargin.right + host._titleSize : 0,
+            totalTitleSize = this._totalTitleSize,
             ttl = Math.round(totalTitleSize + tickOffset + max + label.margin.right);
-        host.get("contentBox").setStyle("width", ttl);
-        host.set("width", ttl);
+        if(this._explicitWidth)
+        {
+            ttl = this._explicitWidth;
+        }
+        this.set("calculatedWidth", ttl);
+        graphic.set("x", ttl - tickOffset);
     }
 };
 
@@ -631,7 +931,7 @@ RightAxisLayout.prototype = {
      * @param {HTMLElement} label to measure
      * @protected
      */
-    updateMaxLabelSize: function(label)
+    updateMaxLabelSize: function(labelWidth, labelHeight)
     {
         var host = this,
             props = this._labelRotationProps,
@@ -642,17 +942,39 @@ RightAxisLayout.prototype = {
             max;
         if(rot === 0)
         {
-            max = label.offsetWidth;
+            max = labelWidth;
         }
         else if(absRot === 90)
         {
-            max = label.offsetHeight;
+            max = labelHeight;
         }
         else
         {
-            max = (cosRadians * label.offsetWidth) + (sinRadians * label.offsetHeight);
+            max = (cosRadians * labelWidth) + (sinRadians * labelHeight);
         }
         host._maxLabelSize = Math.max(host._maxLabelSize, max);
+    },
+    
+    /**
+     * Determines the available label width when the axis width has been explicitly set.
+     *
+     * @method getExplicitlySized
+     * @return Boolean
+     * @protected
+     */
+    getExplicitlySized: function(styles)
+    {
+        if(this._explicitWidth)
+        {
+            var host = this,
+                w = host._explicitWidth,
+                totalTitleSize = this._totalTitleSize,
+                rightTickOffset = host.get("rightTickOffset"),
+                margin = styles.label.margin.right;
+            host._maxLabelSize =  w - (rightTickOffset + margin + totalTitleSize);
+            return true;
+        }
+        return false;
     },
 
     /**
@@ -665,90 +987,24 @@ RightAxisLayout.prototype = {
     positionTitle: function(label)
     {
         var host = this,
-            max,
-            styles = host.get("styles").title,
-            margin = styles.margin,
-            props = this._getTextRotationProps(styles),
-            rot = props.rot,
-            absRot = props.absRot,
-            sinRadians = props.sinRadians,
-            cosRadians = props.cosRadians,
-            x = 0,
-            y = this.get("height")/2,
-            leftOffset = this._maxLabelSize + margin.left + this.get("rightTickOffset") + this.get("styles").label.margin.left,
-            topOffset = 0,
+            bounds = host._titleBounds,
+            margin = host.get("styles").title.margin,
+            props = host._titleRotationProps,
             labelWidth = label.offsetWidth,
-            labelHeight = label.offsetHeight;
-        if(Y.config.doc.createElementNS)
+            labelHeight = label.offsetHeight,
+            w = bounds.right - bounds.left,
+            x = this.get("width") - (labelWidth * 0.5) - (w * 0.5),
+            y = (host.get("height") * 0.5) - (labelHeight * 0.5);
+        props.labelWidth = labelWidth;
+        props.labelHeight = labelHeight;
+        if(margin && margin.right)
         {
-            if(rot === 0)
-            {
-                max = labelWidth;
-                topOffset -= labelHeight * 0.5;
-            }
-            else if(absRot === 90)
-            {
-                max = labelHeight;
-                if(rot === 90)
-                {
-                    topOffset -= labelWidth * 0.5;
-                    leftOffset += labelHeight;
-                }
-                else
-                {
-                    topOffset += labelWidth * 0.5;
-                }
-            }
-            else
-            {
-                max = (cosRadians * labelWidth) + (sinRadians * labelHeight);
-                if(rot > 0)
-                {
-                    topOffset -= ((sinRadians * labelWidth) + (cosRadians * labelHeight))/2;
-                    leftOffset += Math.min(labelHeight, (sinRadians * labelHeight));
-                }
-                else
-                {
-                    topOffset += (sinRadians * labelWidth)/2 - (cosRadians * labelHeight)/2;
-                }
-            }
-            y += topOffset;
-            x += leftOffset;
-            props.x = Math.round(x);
-            props.y = Math.round(y);
+            x -= margin.left;
         }
-        else
-        {
-            label.style.filter = null; 
-            labelWidth = Math.round(label.offsetWidth);
-            labelHeight = Math.round(label.offsetHeight);
-            if(rot === 0)
-            {
-                topOffset -= labelHeight * 0.5;
-                max = labelWidth;
-            }
-            else if(rot === 90)
-            {
-                topOffset -= labelWidth * 0.5;
-                max = labelHeight;
-            }
-            else if(rot === -90)
-            {
-                topOffset -= labelWidth * 0.5;
-                max = labelHeight;
-            }
-            else
-            {
-                max = (cosRadians * labelWidth) + (sinRadians * labelHeight);
-                topOffset -= ((sinRadians * labelWidth) + (cosRadians * labelHeight))/2;
-            }
-            y += topOffset;
-            x += leftOffset;
-            props.x = Math.round(x);
-            props.y = Math.round(y);
-        }
-        this._titleSize = max;
-        this._rotate(label, props);
+        props.x = x;
+        props.y = y;
+        props.transformOrigin = [0.5, 0.5];
+        host._rotate(label, props);
     },
 
     /**
@@ -760,22 +1016,22 @@ RightAxisLayout.prototype = {
      * against.
      * @protected
      */
-    positionLabel: function(label, pt)
+    positionLabel: function(label, pt, styles, i)
     {
         var host = this,
             tickOffset = host.get("rightTickOffset"),
-            style = host.get("styles").label,
+            labelStyles = styles.label,
             margin = 0,
             leftOffset = pt.x,
             topOffset = pt.y,
             props = this._labelRotationProps,
             rot = props.rot,
             absRot = props.absRot,
-            labelWidth = Math.round(label.offsetWidth),
-            labelHeight = Math.round(label.offsetHeight);
-        if(style.margin && style.margin.left)
+            labelWidth = this._labelWidths[i],
+            labelHeight = this._labelHeights[i];
+        if(labelStyles.margin && labelStyles.margin.left)
         {
-            margin = style.margin.left;
+            margin = labelStyles.margin.left;
         }
         if(rot === 0)
         {
@@ -785,18 +1041,15 @@ RightAxisLayout.prototype = {
         {
             leftOffset -= labelWidth * 0.5;
             topOffset -= labelHeight;
-            props.transformOrigin = [0.5, 1];
         }
         else if(rot === -90)
         {
             leftOffset -= labelWidth * 0.5;
-            props.transformOrigin = [0.5, 0];
         }
         else
         {
             topOffset -= labelHeight * 0.5;
             leftOffset += labelHeight/2 * absRot/90;
-            props.transformOrigin = [0, 0.5];
         }
         leftOffset += margin;
         leftOffset += tickOffset;
@@ -806,29 +1059,75 @@ RightAxisLayout.prototype = {
         props.y = Math.round(topOffset);
         this._rotate(label, props);
     },
-
+ 
     /**
-     * Calculates the size and positions the content elements.
+     * Adjusts the coordinates of an axis label based on the rotation.
      *
-     * @method setSizeAndPosition
+     * @method _setRotationCoords
+     * @param {Object} props Coordinates, dimension and rotation properties of the label.
      * @protected
      */
-    setSizeAndPosition: function()
+    _setRotationCoords: function(props)
     {
-        var host = this,
-            label = host.get("styles").label,
-            labelSize = host._maxLabelSize,
-            tickOffset = host.get("rightTickOffset"),
-            sz = tickOffset + labelSize;
-        if(label.margin && label.margin.left)
+        var rot = props.rot,
+            absRot = props.absRot,
+            leftOffset = 0,
+            topOffset = 0,
+            labelWidth = props.labelWidth,
+            labelHeight = props.labelHeight;
+        if(rot === 0)
         {
-            sz += label.margin.left;
+            topOffset = labelHeight * 0.5;
         }
-        sz += this._titleSize;
-        host.set("width", sz);
-        host.get("contentBox").setStyle("width", sz);
+        else if(rot === 90)
+        {
+            leftOffset = labelWidth * 0.5;
+            topOffset = labelHeight;
+        }
+        else if(rot === -90)
+        {
+            leftOffset = labelWidth * 0.5;
+        }
+        else
+        {
+            topOffset = labelHeight * -0.5;
+            leftOffset = labelHeight/2 * absRot/90;
+        }
+        props.x -= leftOffset;
+        props.y -= topOffset;
     },
-    
+   
+    /**
+     * Returns the transformOrigin to use for an axis label based on the position of the axis 
+     * and the rotation of the label.
+     *
+     * @method _getTransformOrigin
+     * @param {Number} rot The rotation (in degrees) of the label.
+     * @return Array
+     * @protected
+     */
+    _getTransformOrigin: function(rot)
+    {
+        var transformOrigin;
+        if(rot === 0)
+        {
+            transformOrigin = [0, 0];
+        }
+        else if(rot === 90)
+        {
+            transformOrigin = [0.5, 1];
+        }
+        else if(rot === -90)
+        {
+            transformOrigin = [0.5, 0];
+        }
+        else
+        {
+            transformOrigin = [0, 0.5];
+        }
+        return transformOrigin;
+    },
+
     /**
      * Adjusts position for inner ticks.
      *
@@ -853,9 +1152,16 @@ RightAxisLayout.prototype = {
     setCalculatedSize: function()
     {
         var host = this,
-            style = host.get("styles").label,
-            ttl = Math.round(host.get("rightTickOffset") + host._maxLabelSize + this._titleSize + host.get("styles").title.margin.left + style.margin.left);
-        host.set("width", ttl);
+            styles = host.get("styles"),
+            labelStyle = styles.label,
+            totalTitleSize = this._totalTitleSize,
+            ttl = Math.round(host.get("rightTickOffset") + host._maxLabelSize + totalTitleSize + labelStyle.margin.left);
+        if(this._explicitWidth)
+        {
+            ttl = this._explicitWidth;
+        }
+        host.set("calculatedWidth", ttl);
+        host.get("contentBox").setStyle("width", ttl);
     }
 };
 
@@ -989,7 +1295,7 @@ BottomAxisLayout.prototype = {
      * @param {HTMLElement} label to measure
      * @protected
      */
-    updateMaxLabelSize: function(label)
+    updateMaxLabelSize: function(labelWidth, labelHeight)
     {
         var host = this,
             props = this._labelRotationProps,
@@ -1000,19 +1306,41 @@ BottomAxisLayout.prototype = {
             max;
         if(rot === 0)
         {
-            max = label.offsetHeight;
+            max = labelHeight;
         }
         else if(absRot === 90)
         {
-            max = label.offsetWidth;
+            max = labelWidth;
         }
         else
         {
-            max = (sinRadians * label.offsetWidth) + (cosRadians * label.offsetHeight); 
+            max = (sinRadians * labelWidth) + (cosRadians * labelHeight); 
         }
         host._maxLabelSize = Math.max(host._maxLabelSize, max);
     },
     
+    /**
+     * Determines the available label height when the axis width has been explicitly set.
+     *
+     * @method getExplicitlySized
+     * @return Boolean
+     * @protected
+     */
+    getExplicitlySized: function(styles)
+    {
+        if(this._explicitHeight)
+        {
+            var host = this,
+                h = host._explicitHeight,
+                totalTitleSize = host._totalTitleSize,
+                bottomTickOffset = host.get("bottomTickOffset"),
+                margin = styles.label.margin.right;
+            host._maxLabelSize =  h - (bottomTickOffset + margin + totalTitleSize);
+            return true;
+        }
+        return false;
+    },
+
     /**
      * Rotate and position title.
      *
@@ -1023,85 +1351,24 @@ BottomAxisLayout.prototype = {
     positionTitle: function(label)
     {
         var host = this,
-            max,
-            styles = host.get("styles").title,
-            props = this._getTextRotationProps(styles),
-            rot = props.rot,
-            absRot = props.absRot,
-            sinRadians = props.sinRadians,
-            cosRadians = props.cosRadians,
-            x = this.get("width")/2,
-            y = this._maxLabelSize + this.get("styles").label.margin.top + styles.margin.top + this.get("bottomTickOffset"),
-            leftOffset = 0,
-            topOffset = 0,
+            bounds = host._titleBounds,
+            margin = host.get("styles").title.margin,
+            props = host._titleRotationProps,
+            h = bounds.bottom - bounds.top,
             labelWidth = label.offsetWidth,
-            labelHeight = label.offsetHeight;
-        if(Y.config.doc.createElementNS)
+            labelHeight = label.offsetHeight,
+            x = (host.get("width") * 0.5) - (labelWidth * 0.5),
+            y = host.get("height") - labelHeight/2 - h/2;
+        props.labelWidth = labelWidth;
+        props.labelHeight = labelHeight;
+        if(margin && margin.bottom)
         {
-            if(rot === 0)
-            {
-                max = labelHeight;
-                leftOffset -= labelWidth * 0.5;
-            }
-            else if(absRot === 90)
-            {
-                max = labelWidth;
-                if(rot === -90)
-                {
-                    topOffset += labelWidth;
-                    leftOffset -= labelHeight;
-                }
-            }
-            else
-            {
-                max = (sinRadians * labelWidth) + (cosRadians * labelHeight);
-                if(rot > 0)
-                {
-                    leftOffset -= (cosRadians * labelWidth)/2 - (sinRadians * labelHeight)/2;
-                }
-                else
-                {
-                    topOffset += (sinRadians * labelWidth) - (cosRadians * labelHeight)/2;
-                    leftOffset -= (cosRadians * labelWidth)/2 + (sinRadians * labelHeight)/2;
-                }
-            }
-            x += leftOffset;
-            y += topOffset;
-            props.x = Math.round(x);
-            props.y = Math.round(y);
+            y -= margin.bottom;
         }
-        else
-        {
-            label.style.filter = null; 
-            labelWidth = Math.round(label.offsetWidth);
-            labelHeight = Math.round(label.offsetHeight);
-            if(rot === 0)
-            {
-                leftOffset -= labelWidth * 0.5;
-                max = labelHeight;
-            }
-            else if(rot === 90)
-            {
-                leftOffset -= labelHeight * 0.5;
-                max = labelWidth;
-            }
-            else if(rot === -90)
-            {
-                leftOffset -= labelHeight * 0.5;
-                max = labelWidth;
-            }
-            else
-            {
-                max = (sinRadians * labelWidth) + (cosRadians * labelHeight);
-                leftOffset -= ((cosRadians * labelWidth) + (sinRadians * labelHeight))/2;
-            }
-            x += leftOffset;
-            y += topOffset;
-            props.x = Math.round(x);
-            props.y = Math.round(y);
-        }
-        this._titleSize = max;
-        this._rotate(label, props);
+        props.x = x;
+        props.y = y;
+        props.transformOrigin = [0.5, 0.5];
+        host._rotate(label, props);
     },
     
     /**
@@ -1113,38 +1380,34 @@ BottomAxisLayout.prototype = {
      * against.
      * @protected
      */
-    positionLabel: function(label, pt)
+    positionLabel: function(label, pt, styles, i)
     {
         var host = this,
             tickOffset = host.get("bottomTickOffset"),
-            style = host.get("styles").label,
+            labelStyles = styles.label,
             margin = 0,
-            props = this._labelRotationProps,
+            props = host._labelRotationProps,
             rot = props.rot,
             absRot = props.absRot,
             leftOffset = Math.round(pt.x),
             topOffset = Math.round(pt.y),
-            labelWidth = Math.round(label.offsetWidth),
-            labelHeight = Math.round(label.offsetHeight);
-        if(style.margin && style.margin.top)
+            labelWidth = host._labelWidths[i],
+            labelHeight = host._labelHeights[i];
+        if(labelStyles.margin && labelStyles.margin.top)
         {
-            margin = style.margin.top;
+            margin = labelStyles.margin.top;
         }
         if(rot > 0)
         {
-            props.transformOrigin = [0, 0.5];
             topOffset -= labelHeight/2 * rot/90;
-
         }
         else if(rot < 0)
         {
-            props.transformOrigin = [1, 0.5];
             leftOffset -= labelWidth;
             topOffset -= labelHeight/2 * absRot/90;
         }
         else
         {
-            props.transformOrigin = [0, 0];
             leftOffset -= labelWidth * 0.5;
         }
         topOffset += margin;
@@ -1153,29 +1416,69 @@ BottomAxisLayout.prototype = {
         props.labelHeight = labelHeight;
         props.x = leftOffset;
         props.y = topOffset;
-        this._rotate(label, props);
+        host._rotate(label, props);
     },
     
     /**
-     * Calculates the size and positions the content elements.
+     * Adjusts the coordinates of an axis label based on the rotation.
      *
-     * @method setSizeAndPosition
+     * @method _setRotationCoords
+     * @param {Object} props Coordinates, dimension and rotation properties of the label.
      * @protected
      */
-    setSizeAndPosition: function()
+    _setRotationCoords: function(props)
     {
-        var host = this,
-            labelSize = host._maxLabelSize,
-            tickLength = host.get("bottomTickLength"),
-            style = host.get("styles"),
-            sz = tickLength + labelSize,
-            margin = style.label.margin;
-        if(margin && margin.top)
-        {   
-            sz += margin.top;
+        var rot = props.rot,
+            absRot = props.absRot,
+            labelWidth = props.labelWidth,
+            labelHeight = props.labelHeight,
+            leftOffset,
+            topOffset;
+
+        if(rot > 0)
+        {
+            leftOffset = 0;
+            topOffset = labelHeight/2 * rot/90;
         }
-        sz = Math.round(sz);
-        host.set("height", sz);
+        else if(rot < 0)
+        {
+            leftOffset = labelWidth;
+            topOffset = labelHeight/2 * absRot/90;
+        }
+        else
+        {
+            leftOffset = labelWidth * 0.5;
+            topOffset = 0;
+        }
+        props.x -= leftOffset;
+        props.y -= topOffset;
+    },
+
+    /**
+     * Returns the transformOrigin to use for an axis label based on the position of the axis 
+     * and the rotation of the label.
+     *
+     * @method _getTransformOrigin
+     * @param {Number} rot The rotation (in degrees) of the label.
+     * @return Array
+     * @protected
+     */
+    _getTransformOrigin: function(rot)
+    {
+        var transformOrigin;
+        if(rot > 0)
+        {
+            transformOrigin = [0, 0.5];
+        }
+        else if(rot < 0)
+        {
+            transformOrigin = [1, 0.5];
+        }
+        else
+        {
+            transformOrigin = [0, 0];
+        }
+        return transformOrigin;
     },
 
     /**
@@ -1200,9 +1503,15 @@ BottomAxisLayout.prototype = {
     setCalculatedSize: function()
     {
         var host = this,
-            style = host.get("styles").label,
-            ttl = Math.round(host.get("bottomTickOffset") + host._maxLabelSize + style.margin.top + this.get("styles").title.margin.top + this._titleSize);
-        host.set("height", ttl);
+            styles = host.get("styles"),
+            labelStyle = styles.label,
+            totalTitleSize = host._totalTitleSize,
+            ttl = Math.round(host.get("bottomTickOffset") + host._maxLabelSize + labelStyle.margin.top + totalTitleSize);
+        if(host._explicitHeight)
+        {
+            ttl = host._explicitHeight;
+        }
+        host.set("calculatedHeight", ttl);
     }
 };
 Y.BottomAxisLayout = BottomAxisLayout;
@@ -1335,7 +1644,7 @@ TopAxisLayout.prototype = {
      * @param {HTMLElement} label to measure
      * @protected
      */
-    updateMaxLabelSize: function(label)
+    updateMaxLabelSize: function(labelWidth, labelHeight)
     {
         var host = this,
             props = this._labelRotationProps,
@@ -1346,17 +1655,39 @@ TopAxisLayout.prototype = {
             max;
         if(rot === 0)
         {
-            max = label.offsetHeight;
+            max = labelHeight;
         }
         else if(absRot === 90)
         {
-            max = label.offsetWidth;
+            max = labelWidth;
         }
         else
         {
-            max = (sinRadians * label.offsetWidth) + (cosRadians * label.offsetHeight); 
+            max = (sinRadians * labelWidth) + (cosRadians * labelHeight); 
         }
         host._maxLabelSize = Math.max(host._maxLabelSize, max);
+    },
+
+    /**
+     * Determines the available label height when the axis width has been explicitly set.
+     *
+     * @method getExplicitlySized
+     * @return Boolean
+     * @protected
+     */
+    getExplicitlySized: function(styles)
+    {
+        if(this._explicitHeight)
+        {
+            var host = this,
+                h = host._explicitHeight,
+                totalTitleSize = host._totalTitleSize,
+                topTickOffset = host.get("topTickOffset"),
+                margin = styles.label.margin.right;
+            host._maxLabelSize =  h - (topTickOffset + margin + totalTitleSize);
+            return true;
+        }
+        return false;
     },
 
     /**
@@ -1369,89 +1700,24 @@ TopAxisLayout.prototype = {
     positionTitle: function(label)
     {
         var host = this,
-            max,
-            styles = host.get("styles").title,
-            props = this._getTextRotationProps(styles),
-            rot = props.rot,
-            absRot = props.absRot,
-            sinRadians = props.sinRadians,
-            cosRadians = props.cosRadians,
-            x = this.get("width")/2,
-            y = styles.margin.top,
-            leftOffset = 0,
-            topOffset = 0,
+            bounds = host._titleBounds,
+            margin = host.get("styles").title.margin,
+            props = host._titleRotationProps,
             labelWidth = label.offsetWidth,
-            labelHeight = label.offsetHeight;
-        if(Y.config.doc.createElementNS)
+            labelHeight = label.offsetHeight,
+            h = bounds.bottom - bounds.top,
+            x = (host.get("width") * 0.5) - (labelWidth * 0.5),
+            y = h/2 - labelHeight/2;
+        props.labelWidth = labelWidth;
+        props.labelHeight = labelHeight;
+        if(margin && margin.top)
         {
-            if(rot === 0)
-            {
-                max = labelHeight;
-                leftOffset -= labelWidth * 0.5;
-            }
-            else if(absRot === 90)
-            {
-                max = labelWidth;
-                if(rot === 90)
-                {
-                    leftOffset += labelHeight/2;
-                }
-                else
-                {
-                    topOffset += labelWidth;
-                    leftOffset -= labelHeight/2;
-                }
-            }
-            else
-            {
-                max = (sinRadians * labelWidth) + (cosRadians * labelHeight);
-                if(rot > 0)
-                {
-                    leftOffset -= (cosRadians * labelWidth)/2 - (sinRadians * labelHeight)/2;
-                }
-                else
-                {
-                    topOffset += (sinRadians * labelWidth);
-                    leftOffset -= (cosRadians * labelWidth)/2 + (sinRadians * labelHeight)/2;
-                }
-            }
-            x += leftOffset;
-            y += topOffset;
-            props.x = Math.round(x);
-            props.y = Math.round(y);
+            y += margin.top;
         }
-        else
-        {
-            label.style.filter = null; 
-            labelWidth = Math.round(label.offsetWidth);
-            labelHeight = Math.round(label.offsetHeight);
-            if(rot === 0)
-            {
-                leftOffset -= labelWidth * 0.5;
-                max = labelHeight;
-            }
-            else if(rot === 90)
-            {
-                leftOffset -= labelHeight * 0.5;
-                max = labelWidth;
-            }
-            else if(rot === -90)
-            {
-                leftOffset -= labelHeight * 0.5;
-                max = labelWidth;
-            }
-            else
-            {
-                max = (sinRadians * labelWidth) + (cosRadians * labelHeight);
-                leftOffset -= ((cosRadians * labelWidth) + (sinRadians * labelHeight))/2;
-            }
-            x += leftOffset;
-            y += topOffset;
-            props.x = Math.round(x);
-            props.y = Math.round(y);
-        }
-        this._titleSize = max;
-        this._rotate(label, props);
+        props.x = x;
+        props.y = y;
+        props.transformOrigin = [0.5, 0.5];
+        host._rotate(label, props);
     },
 
     /**
@@ -1463,29 +1729,20 @@ TopAxisLayout.prototype = {
      * against.
      * @protected
      */
-    positionLabel: function(label, pt)
+    positionLabel: function(label, pt, styles, i)
     {
         var host = this,
-            tickOffset = host.get("topTickOffset"),
-            style = host.get("styles").label,
-            titleStyles = host.get("styles").title,
-            totalTitleSize = this.get("title") ? this._titleSize + titleStyles.margin.top + titleStyles.margin.bottom : 0,
+            totalTitleSize = this._totalTitleSize,
             maxLabelSize = host._maxLabelSize,
-            margin = 0,
             leftOffset = pt.x,
             topOffset = pt.y + totalTitleSize + maxLabelSize,
             props = this._labelRotationProps,
             rot = props.rot,
             absRot = props.absRot,
-            labelWidth = Math.round(label.offsetWidth),
-            labelHeight = Math.round(label.offsetHeight);
-        if(style.margin && style.margin.bottom)
-        {
-            margin = style.margin.top;
-        }
+            labelWidth = this._labelWidths[i],
+            labelHeight = this._labelHeights[i];
         if(rot === 0)
         {
-            props.transformOrigin = [0, 0];
             leftOffset -= labelWidth * 0.5;
             topOffset -= labelHeight;
         }
@@ -1495,27 +1752,21 @@ TopAxisLayout.prototype = {
             {
                 leftOffset -= labelWidth;
                 topOffset -= (labelHeight * 0.5);
-                props.transformOrigin = [1, 0.5];
             }
             else if (rot === -90)
             {
-                props.transformOrigin = [0, 0.5];
                 topOffset -= (labelHeight * 0.5);
             }    
             else if(rot > 0)
             {
-                props.transformOrigin = [1, 0.5];
                 leftOffset -= labelWidth;
                 topOffset -= labelHeight - (labelHeight * rot/180);
             }
             else
             {
-                props.transformOrigin = [0, 0.5];
                 topOffset -= labelHeight - (labelHeight * absRot/180);
             }
         }
-        topOffset += tickOffset;
-        topOffset -= margin;
         props.x = Math.round(leftOffset);
         props.y = Math.round(topOffset);
         props.labelWidth = labelWidth;
@@ -1524,33 +1775,88 @@ TopAxisLayout.prototype = {
     },
 
     /**
-     * Calculates the size and positions the content elements.
+     * Adjusts the coordinates of an axis label based on the rotation.
      *
-     * @method setSizeAndPosition
+     * @method _setRotationCoords
+     * @param {Object} props Coordinates, dimension and rotation properties of the label.
      * @protected
      */
-    setSizeAndPosition: function()
+    _setRotationCoords: function(props)
     {
-        var host = this,
-            labelSize = host._maxLabelSize,
-            tickOffset = host.get("topTickOffset"),
-            style = host.get("styles"),
-            margin = style.label.margin,
-            graphic = host.get("graphic"),
-            sz = tickOffset + labelSize,
-            titleMargin = style.title.margin;
-        if(margin && margin.bottom)
+        var rot = props.rot,
+            absRot = props.absRot,
+            labelWidth = props.labelWidth,
+            labelHeight = props.labelHeight,
+            leftOffset,
+            topOffset;
+        if(rot === 0)
         {
-            sz += margin.bottom;
+            leftOffset = labelWidth * 0.5;
+            topOffset = labelHeight;
         }
-        if(this.get("title"))
+        else
         {
-            sz += this._titleSize + titleMargin.top + titleMargin.bottom;
+            if(rot === 90)
+            {
+                leftOffset = labelWidth;
+                topOffset = (labelHeight * 0.5);
+            }
+            else if (rot === -90)
+            {
+                topOffset = (labelHeight * 0.5);
+            }    
+            else if(rot > 0)
+            {
+                leftOffset = labelWidth;
+                topOffset = labelHeight - (labelHeight * rot/180);
+            }
+            else
+            {
+                topOffset = labelHeight - (labelHeight * absRot/180);
+            }
         }
-        host.set("height", sz);
-        graphic.set("y", sz - tickOffset);
+        props.x -= leftOffset;
+        props.y -= topOffset;
     },
-    
+
+    /**
+     * Returns the transformOrigin to use for an axis label based on the position of the axis 
+     * and the rotation of the label.
+     *
+     * @method _getTransformOrigin
+     * @param {Number} rot The rotation (in degrees) of the label.
+     * @return Array
+     * @protected
+     */
+    _getTransformOrigin: function(rot)
+    {
+        var transformOrigin;
+        if(rot === 0)
+        {
+            transformOrigin = [0, 0];
+        }
+        else
+        {
+            if(rot === 90)
+            {
+                transformOrigin = [1, 0.5];
+            }
+            else if (rot === -90)
+            {
+                transformOrigin = [0, 0.5];
+            }    
+            else if(rot > 0)
+            {
+                transformOrigin = [1, 0.5];
+            }
+            else
+            {
+                transformOrigin = [0, 0.5];
+            }
+        }
+        return transformOrigin;
+    },
+
     /**
      * Adjusts position for inner ticks.
      *
@@ -1574,12 +1880,15 @@ TopAxisLayout.prototype = {
             graphic = host.get("graphic"),
             styles = host.get("styles"),
             labelMargin = styles.label.margin,
-            titleMargin = styles.title.margin,
             totalLabelSize = labelMargin.bottom + host._maxLabelSize,
-            totalTitleSize = host.get("title") ? titleMargin.top + titleMargin.bottom + host._titleSize : 0,
+            totalTitleSize = host._totalTitleSize,
             topTickOffset = this.get("topTickOffset"),
             ttl = Math.round(topTickOffset + totalLabelSize + totalTitleSize);
-        host.set("height", ttl);
+        if(this._explicitHeight)
+        {
+           ttl = this._explicitWidth; 
+        }
+        host.set("calculatedHeight", ttl);
         graphic.set("y", ttl - topTickOffset);
     }
 };
@@ -1596,6 +1905,24 @@ Y.TopAxisLayout = TopAxisLayout;
  * @param {Object} config (optional) Configuration parameters for the Chart.
  */
 Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
+    /**
+     * Storage for calculatedWidth value.
+     *
+     * @property _calculatedWidth
+     * @type Number
+     * @private
+     */
+    _calculatedWidth: 0,
+
+    /**
+     * Storage for calculatedHeight value.
+     *
+     * @property _calculatedHeight
+     * @type Number
+     * @private
+     */
+    _calculatedHeight: 0,
+
     /**
      * Handles change to the dataProvider
      * 
@@ -1930,12 +2257,17 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 position,
                 lineStart,
                 label,
+                labelWidth,
+                labelHeight,
                 labelFunction = this.get("labelFunction"),
                 labelFunctionScope = this.get("labelFunctionScope"),
                 labelFormat = this.get("labelFormat"),
                 graphic = this.get("graphic"),
                 path = this.get("path"),
-                tickPath;
+                tickPath,
+                explicitlySized;
+            this._labelWidths = [];
+            this._labelHeights = [];
             graphic.set("autoDraw", false);
             path.clear();
             path.set("stroke", {
@@ -1944,6 +2276,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 opacity: line.alpha
             });
             this._labelRotationProps = this._getTextRotationProps(labelStyles);
+            this._labelRotationProps.transformOrigin = layout._getTransformOrigin(this._labelRotationProps.rot);
             layout.setTickOffsets.apply(this);
             layoutLength = this.getLength();
             lineStart = layout.getLineStart.apply(this);
@@ -1971,7 +2304,10 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             this._createLabelCache();
             this._tickPoints = [];
             this._maxLabelSize = 0; 
+            this._totalTitleSize = 0;
             this._titleSize = 0;
+            this._setTitle();
+            explicitlySized = layout.getExplicitlySized.apply(this, [styles]);
             for(; i < len; ++i)
             {
                 if(drawTicks) 
@@ -1981,19 +2317,29 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 position = this.getPosition(tickPoint);
                 label = this.getLabel(tickPoint, labelStyles);
                 label.innerHTML = labelFunction.apply(labelFunctionScope, [this.getLabelByIndex(i, len), labelFormat]);
+                labelWidth = Math.round(label.offsetWidth);
+                labelHeight = Math.round(label.offsetHeight);
+                if(!explicitlySized)
+                {
+                    this._layout.updateMaxLabelSize.apply(this, [labelWidth, labelHeight]);
+                }
+                this._labelWidths.push(labelWidth);
+                this._labelHeights.push(labelHeight);
                 tickPoint = this.getNextPoint(tickPoint, majorUnitDistance);
             }
             this._clearLabelCache();
-            this._updateTitle();
-            layout.setSizeAndPosition.apply(this);
             if(this.get("overlapGraph"))
             {
                layout.offsetNodeForTick.apply(this, [this.get("contentBox")]);
             }
             layout.setCalculatedSize.apply(this);
+            if(this._titleTextField)
+            {
+                this._layout.positionTitle.apply(this, [this._titleTextField]);
+            }
             for(i = 0; i < len; ++i)
             {
-                layout.positionLabel.apply(this, [this.get("labels")[i], this._tickPoints[i]]);
+                layout.positionLabel.apply(this, [this.get("labels")[i], this._tickPoints[i], styles, i]);
             }
         }
         this._drawing = false;
@@ -2006,6 +2352,46 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             this._updatePathElement();
             this.fire("axisRendered");
         }
+    },
+
+    /**
+     * Calculates and sets the total size of a title.
+     *
+     * @method _setTotalTitleSize
+     * @param {Object} styles Properties for the title field.
+     * @private
+     */
+    _setTotalTitleSize: function(styles)
+    {
+        var title = this._titleTextField,
+            w = title.offsetWidth,
+            h = title.offsetHeight,
+            rot = this._titleRotationProps.rot,
+            bounds,
+            size,
+            margin = styles.margin,
+            position = this.get("position"),
+            matrix = new Y.Matrix();
+        matrix.rotate(rot);
+        bounds = matrix.getContentRect(w, h);
+        if(position == "left" || position == "right")
+        {
+            size = bounds.right - bounds.left;
+            if(margin)
+            {
+                size += margin.left + margin.right;
+            }
+        }
+        else
+        {
+            size = bounds.bottom - bounds.top;
+            if(margin)
+            {
+                size += margin.top + margin.bottom;
+            }
+        }
+        this._titleBounds = bounds;
+        this._totalTitleSize = size;
     },
 
     /**
@@ -2042,7 +2428,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
      * @method _updateTitle
      * @private
      */
-    _updateTitle: function()
+    _setTitle: function()
     {
         var i,
             styles,
@@ -2066,6 +2452,13 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 titleTextField.setAttribute("class", "axisTitle");
                 this.get("contentBox").append(titleTextField);
             }
+            else if(!DOCUMENT.createElementNS)
+            {
+                if(titleTextField.style.filter)
+                {
+                    titleTextField.style.filter = null;
+                }
+            }
             titleTextField.style.position = "absolute";
             for(i in styles)
             {
@@ -2076,7 +2469,8 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             }
             titleTextField.innerHTML = this.get("titleFunction")(title);
             this._titleTextField = titleTextField;
-            this._layout.positionTitle.apply(this, [titleTextField]);
+            this._titleRotationProps = this._getTextRotationProps(styles);
+            this._setTotalTitleSize(styles);
         }
         else if(titleTextField)
         {
@@ -2086,6 +2480,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 parentNode.removeChild(titleTextField);
             }
             this._titleTextField = null;
+            this._totalTitleSize = 0;
         }
     },
 
@@ -2130,7 +2525,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         label.style.position = "absolute";
         this._labels.push(label);
         this._tickPoints.push({x:pt.x, y:pt.y});
-        this._layout.updateMaxLabelSize.apply(this, [label]);
         for(i in styles)
         {
             if(styles.hasOwnProperty(i) && !customStyles.hasOwnProperty(i))
@@ -2358,8 +2752,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             textAlpha,
             matrix = new Y.Matrix(),
             transformOrigin = props.transformOrigin || [0, 0],
-            transformX,
-            transformY,
             offsetRect;
         if(DOCUMENT.createElementNS)
         {
@@ -2376,6 +2768,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         }
         else
         {
+            textAlpha = props.textAlpha;
             if(Y_Lang.isNumber(textAlpha) && textAlpha < 1 && textAlpha > -1 && !isNaN(textAlpha))
             {
                 filterString = "progid:DXImageTransform.Microsoft.Alpha(Opacity=" + Math.round(textAlpha * 100) + ")";
@@ -2388,16 +2781,8 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 offsetRect = matrix.getContentRect(props.labelWidth, props.labelHeight);
                 matrix.init();
                 matrix.translate(offsetRect.left, offsetRect.top);
-
-                transformX = transformOrigin[0] * props.labelWidth;
-                transformX = !isNaN(transformX) ? transformX : 0;
-                transformY = transformOrigin[1] * props.labelHeight;
-                transformY = !isNaN(transformY) ? transformY : 0;
-                textAlpha = props.textAlpha;
                 matrix.translate(x, y);
-                matrix.translate(transformX, transformY);
-                matrix.rotate(rot);
-                matrix.translate(-transformX, -transformY);
+                this._simulateRotateWithTransformOrigin(matrix, rot, transformOrigin, props.labelWidth, props.labelHeight);
                 if(filterString)
                 {
                     filterString += " ";
@@ -2422,6 +2807,83 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         }
     },
     
+    /**
+     * Simulates a rotation with a specified transformOrigin. 
+     *
+     * @method _simulateTransformOrigin
+     * @param {Matrix} matrix Reference to a `Matrix` instance.
+     * @param {Number} rot The rotation (in degrees) that will be performed on a matrix.
+     * @param {Array} transformOrigin An array represeniting the origin in which to perform the transform. The first 
+     * index represents the x origin and the second index represents the y origin.
+     * @param {Number} w The width of the object that will be transformed.
+     * @param {Number} h The height of the object that will be transformed.
+     * @private
+     */
+    _simulateRotateWithTransformOrigin: function(matrix, rot, transformOrigin, w, h)
+    {
+        var transformX = transformOrigin[0] * w,
+            transformY = transformOrigin[1] * h;
+        transformX = !isNaN(transformX) ? transformX : 0;
+        transformY = !isNaN(transformY) ? transformY : 0;
+        matrix.translate(transformX, transformY);
+        matrix.rotate(rot);
+        matrix.translate(-transformX, -transformY);
+    },
+
+    /**
+     * Returns the coordinates (top, right, bottom, left) for the bounding box of the last label. 
+     *
+     * @method getMaxLabelBounds
+     * @return Object
+     */
+    getMaxLabelBounds: function()
+    {
+        return this._getLabelBounds(this.getMaximumValue());
+    },
+
+    /**
+     * Returns the coordinates (top, right, bottom, left) for the bounding box of the first label. 
+     *
+     * @method getMinLabelBounds
+     * @return Object
+     */
+    getMinLabelBounds: function()
+    {
+        return this._getLabelBounds(this.getMinimumValue());
+    },
+    
+    /**
+     * Returns the coordinates (top, right, bottom, left) for the bounding box of a label. 
+     *
+     * @method _getLabelBounds
+     * @param {String} Value of the label
+     * @return Object
+     * @private
+     */
+    _getLabelBounds: function(val)
+    {
+        var layout = this._layout,
+            labelStyles = this.get("styles").label,
+            matrix = new Y.Matrix(),
+            label,
+            props = this._getTextRotationProps(labelStyles);
+            props.transformOrigin = layout._getTransformOrigin(props.rot);
+        label = this.getLabel({x: 0, y: 0}, labelStyles);
+        label.innerHTML = this.get("labelFunction").apply(this, [val, this.get("labelFormat")]); 
+        props.labelWidth = label.offsetWidth;
+        props.labelHeight = label.offsetHeight;
+        label = this._labels.pop();
+        this._removeChildren(label);
+        Y.Event.purgeElement(label, true);
+        label.parentNode.removeChild(label);
+        props.x = 0;
+        props.y = 0;
+        layout._setRotationCoords(props);
+        matrix.translate(props.x, props.y);
+        this._simulateRotateWithTransformOrigin(matrix, props.rot, props.transformOrigin, props.labelWidth, props.labelHeight);
+        return matrix.getContentRect(props.labelWidth, props.labelHeight);
+    },
+
     /**
      * Removes all DOM elements from an HTML element. Used to clear out labels during detruction
      * phase.
@@ -2454,7 +2916,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         var cb = this.get("contentBox").getDOMNode(),
             labels = this.get("labels"),
             graphic = this.get("graphic"),
-            i = 0,
             label,
             len = labels ? labels.length : 0;
         if(len > 0)
@@ -2484,6 +2945,104 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
 }, {
     ATTRS: 
     {
+        /**
+         * When set, defines the width of a vertical axis instance. By default, vertical axes automatically size based on their contents. When the
+         * width attribute is set, the axis will not calculate its width. When the width attribute is explicitly set, axis labels will postion themselves off of the 
+         * the inner edge of the axis and the title, if present, will position itself off of the outer edge. If a specified width is less than the sum of 
+         * the axis' contents, excess content will overflow.
+         *
+         * @attribute width
+         * @lazyAdd false
+         * @type Number
+         */
+        width: {
+            lazyAdd: false,
+
+            getter: function() 
+            {
+                if(this._explicitWidth)
+                {
+                    return this._explicitWidth;        
+                }
+                return this._calculatedWidth;
+            },
+
+            setter: function(val)
+            {
+                this._explicitWidth = val;
+                return val;
+            }
+        },
+
+        /**
+         * When set, defines the height of a horizontal axis instance. By default, horizontal axes automatically size based on their contents. When the
+         * height attribute is set, the axis will not calculate its height. When the height attribute is explicitly set, axis labels will postion themselves off of the 
+         * the inner edge of the axis and the title, if present, will position itself off of the outer edge. If a specified height is less than the sum of 
+         * the axis' contents, excess content will overflow.
+         *
+         * @attribute height
+         * @lazyAdd false
+         * @type Number
+         */
+        height: {
+            lazyAdd: false,
+
+            getter: function() 
+            {
+                if(this._explicitHeight)
+                {
+                    return this._explicitHeight;        
+                }
+                return this._calculatedHeight;
+            },
+
+            setter: function(val)
+            {
+                this._explicitHeight = val;
+                return val;
+            }
+        },
+
+        /**
+         * Calculated value of an axis' width. By default, the value is used internally for vertical axes. If the `width` attribute is explicitly set, this value will be ignored.
+         *
+         * @attribute calculatedWidth
+         * @type Number
+         * @private
+         */
+        calculatedWidth: {
+            getter: function()
+            {
+                return this._calculatedWidth;
+            },
+
+            setter: function(val)
+            {
+                this._calculatedWidth = val;
+                return val;
+            }
+        },
+
+        /**
+         * Calculated value of an axis' height. By default, the value is used internally for horizontal axes. If the `height` attribute is explicitly set, this value will be ignored.
+         *
+         * @attribute calculatedHeight
+         * @type Number
+         * @private
+         */
+        calculatedHeight: {
+            getter: function()
+            {
+                return this._calculatedHeight;
+            },
+
+            setter: function(val)
+            {
+                this._calculatedHeight = val;
+                return val;
+            }
+        },
+
         /**
          * Difference betweend the first/last tick and edge of axis.
          *
@@ -2840,6 +3399,8 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
         this.after("positionChange", this._positionChangeHandler);
         this.after("widthChange", this._handleSizeChange);
         this.after("heightChange", this._handleSizeChange);
+        this.after("calculatedWidthChange", this._handleSizeChange);
+        this.after("calculatedHeightChange", this._handleSizeChange);
     },
 
     /**
@@ -3221,6 +3782,30 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
             return true;
         }
         return false;
+    },
+
+    /**
+     * Returns a string corresponding to the first label on an 
+     * axis.
+     *
+     * @method getMinimumValue
+     * @return String
+     */
+    getMinimumValue: function()
+    {
+        return this.get("minimum");
+    },
+
+    /**
+     * Returns a string corresponding to the last label on an 
+     * axis.
+     *
+     * @method getMaximumValue
+     * @return String
+     */
+    getMaximumValue: function()
+    {
+        return this.get("maximum");
     }
 }, {
     ATTRS: {
@@ -4033,7 +4618,7 @@ Y.extend(NumericAxis, Y.AxisType,
         else
         {
             label = (i * increm);
-            if(this.get("roundingMethod") == "niceNumber")
+            if(roundingMethod == "niceNumber")
             {
                 label = this._roundToNearest(label, increm);
             }
@@ -4801,6 +5386,35 @@ Y.extend(CategoryAxis, Y.AxisType,
         {
             label = data[l - (i + 1)];
         }   
+        return Y.Escape.html(label.toString());
+    },
+
+    /**
+     * Returns a string corresponding to the first label on an 
+     * axis.
+     *
+     * @method getMinimumValue
+     * @return String
+     */
+    getMinimumValue: function()
+    {
+        var data = this.get("data"),
+            label = data[0];
+        return Y.Escape.html(label.toString());
+    },
+
+    /**
+     * Returns a string corresponding to the last label on an 
+     * axis.
+     *
+     * @method getMaximumValue
+     * @return String
+     */
+    getMaximumValue: function()
+    {
+        var data = this.get("data"),
+            len = data.length - 1,
+            label = data[len];
         return Y.Escape.html(label.toString());
     }
 });
@@ -5671,9 +6285,35 @@ Plots.prototype = {
             marker,
             offsetWidth = w/2,
             offsetHeight = h/2,
+            xvalues,
+            yvalues,
             fillColors = null,
             borderColors = null,
-            graphOrder = this.get("graphOrder");
+            graphOrder = this.get("graphOrder"),
+            groupMarkers = this.get("groupMarkers");
+        if(groupMarkers)
+        {
+            xvalues = [];
+            yvalues = [];
+            for(; i < len; ++i)
+            {
+                xvalues.push(parseFloat(xcoords[i] - offsetWidth));
+                yvalues.push(parseFloat(ycoords[i] - offsetHeight));
+            }
+            this._createGroupMarker({
+                xvalues: xvalues,
+                yvalues: yvalues,
+                fill: style.fill,
+                border: style.border,
+                dimensions: {
+                    width: w,
+                    height: h
+                },
+                graphOrder: graphOrder,
+                shape: style.shape
+            });
+            return;
+        }
         if(Y_Lang.isArray(style.fill.color))
         {
             fillColors = style.fill.color.concat(); 
@@ -5706,6 +6346,34 @@ Plots.prototype = {
             marker = this.getMarker(style, graphOrder, i);
         }
         this._clearMarkerCache();
+    },
+
+    /**
+     * Pre-defined group shapes.
+     *
+     * @property _groupShapes
+     * @private
+     */
+    _groupShapes: {
+        circle: Y.CircleGroup,
+        rect: Y.RectGroup
+    },
+
+    /**
+     * Returns the correct group shape class.
+     *
+     * @method _getGroupShape
+     * @param {Shape | String} shape Indicates which shape class. 
+     * @return Function
+     * @protected
+     */
+    _getGroupShape: function(shape)
+    {
+        if(Y_Lang.isString(shape))
+        {
+            shape = this._groupShapes[shape];
+        }
+        return shape;
     },
 
     /**
@@ -5797,7 +6465,7 @@ Plots.prototype = {
         }
         this._markers.push(marker);
         return marker;
-    },   
+    },
     
     /**
      * Creates a shape to be used as a marker.
@@ -5829,6 +6497,11 @@ Plots.prototype = {
      */
     _createMarkerCache: function()
     {
+        if(this._groupMarker)
+        {
+            this._groupMarker.destroy();
+            this._groupMarker = null;
+        }
         if(this._markers && this._markers.length > 0)
         {
             this._markerCache = this._markers.concat();
@@ -5839,7 +6512,60 @@ Plots.prototype = {
         }
         this._markers = [];
     },
-    
+  
+    /**
+     * Draws a series of markers in a single shape instance.
+     *
+     * @method _createGroupMarkers
+     * @param {Object} styles Set of configuration properties used to create the markers.
+     * @protected
+     */
+    _createGroupMarker: function(styles)
+    {
+        var marker,
+            markers = this.get("markers"),
+            border = styles.border,
+            graphic,
+            cfg,
+            shape;
+        if(markers && markers.length > 0)
+        {
+            while(markers.length > 0)
+            {
+                marker = markers.shift();
+                marker.destroy();
+            }
+            this.set("markers", []);
+        }
+        //fix name differences between graphic layer
+        border.opacity = border.alpha;
+        cfg = {
+            id: this.get("chart").get("id") + "_" + styles.graphOrder,
+            stroke: border,
+            fill: styles.fill,
+            dimensions: styles.dimensions,
+            xvalues: styles.xvalues,
+            yvalues: styles.yvalues
+        };
+        cfg.fill.opacity = styles.fill.alpha;
+        shape = this._getGroupShape(styles.shape);
+        if(shape)
+        {
+            cfg.type = shape;
+        }
+        if(styles.hasOwnProperty("radius") && !isNaN(styles.radius))
+        {
+            cfg.dimensions.radius = styles.radius;
+        }
+        if(this._groupMarker)
+        {
+            this._groupMarker.destroy();
+        }
+        graphic = this.get("graphic");
+        graphic.set("autoDraw", true);
+        this._groupMarker = graphic.addShape(cfg);
+    },
+
     /**
      * Toggles visibility
      *
@@ -5896,7 +6622,7 @@ Plots.prototype = {
      */
     updateMarkerState: function(type, i)
     {
-        if(this._markers[i])
+        if(this._markers && this._markers[i])
         {
             var w,
                 h,
@@ -6068,7 +6794,14 @@ Histogram.prototype = {
             xMarkerPlaneLeft,
             xMarkerPlaneRight,
             yMarkerPlaneTop,
-            yMarkerPlaneBottom;
+            yMarkerPlaneBottom,
+            dimensions = {
+                width: [],
+                height: []
+            },
+            xvalues = [],
+            yvalues = [],
+            groupMarkers = this.get("groupMarkers");
         if(Y_Lang.isArray(style.fill.color))
         {
             fillColors = style.fill.color.concat(); 
@@ -6129,29 +6862,54 @@ Histogram.prototype = {
             {
                 top = config.top;
                 left = config.left;
-                style[setSizeKey] = setSize;
-                style[calculatedSizeKey] = config.calculatedSize;
-                style.x = left;
-                style.y = top;
 
-                if(fillColors)
+                if(groupMarkers)
                 {
-                    style.fill.color = fillColors[i % fillColors.length];
+                    dimensions[setSizeKey][i] = setSize;
+                    dimensions[calculatedSizeKey][i] = config.calculatedSize;
+                    xvalues.push(left);
+                    yvalues.push(top);
                 }
-                if(borderColors)
+                else
                 {
-                    style.border.colors = borderColors[i % borderColors.length];
+                    style[setSizeKey] = setSize;
+                    style[calculatedSizeKey] = config.calculatedSize;
+                    style.x = left;
+                    style.y = top;
+                    if(fillColors)
+                    {
+                        style.fill.color = fillColors[i % fillColors.length];
+                    }
+                    if(borderColors)
+                    {
+                        style.border.colors = borderColors[i % borderColors.length];
+                    }
+                    marker = this.getMarker(style, graphOrder, i);
                 }
-                marker = this.getMarker(style, graphOrder, i);
+
             }
-            else
+            else if(!groupMarkers)
             {
                 this._markers.push(null);
             }
         }
         this.set("xMarkerPlane", xMarkerPlane);
         this.set("yMarkerPlane", yMarkerPlane);
-        this._clearMarkerCache();
+        if(groupMarkers)
+        {
+            this._createGroupMarker({
+                fill: style.fill,
+                border: style.border,
+                dimensions: dimensions,
+                xvalues: xvalues,
+                yvalues: yvalues,
+                shape: style.shape
+            });
+        }
+        else
+        {
+            this._clearMarkerCache();
+        }
     },
     
     /**
@@ -7011,6 +7769,32 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          */
         direction: {
             value: "horizontal"
+        },
+
+        /**
+         * Indicates whether or not markers for a series will be grouped and rendered in a single complex shape instance.
+         *
+         * @attribute groupMarkers
+         * @type Boolean
+         */
+        groupMarkers: {
+            getter: function()
+            {
+                if(this._groupMarkers === undefined)
+                {
+                    return this.get("graph").get("groupMarkers");
+                }
+                else
+                {
+                    return this._groupMarkers;
+                }
+            },
+
+            setter: function(val)
+            {
+                this._groupMarkers = val;
+                return val;
+            }
         }
     }
 });
@@ -7453,7 +8237,7 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
      */
     updateMarkerState: function(type, i)
     {
-        if(this._markers[i])
+        if(this._markers && this._markers[i])
         {
             var styles = Y.clone(this.get("styles").marker),
                 markerStyles,
@@ -7602,7 +8386,7 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
      */
     updateMarkerState: function(type, i)
     {
-        if(this._markers[i])
+        if(this._markers && this._markers[i])
         {
             var styles = Y.clone(this.get("styles").marker),
                 markerStyles,
@@ -8419,7 +9203,14 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
             negativeBaseValues,
             positiveBaseValues,
             useOrigin = order === 0,
-            totalWidth = len * w;
+            totalWidth = len * w,
+            dimensions = {
+                width: [],
+                height: []
+            },
+            xvalues = [],
+            yvalues = [],
+            groupMarkers = this.get("groupMarkers");
         if(Y_Lang.isArray(style.fill.color))
         {
             fillColors = style.fill.color.concat(); 
@@ -8508,26 +9299,50 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
             if(!isNaN(h) && h > 0)
             {
                 left -= w/2;
-                style.width = w;
-                style.height = h;
-                style.x = left;
-                style.y = top;
-                if(fillColors)
+                if(groupMarkers)
                 {
-                    style.fill.color = fillColors[i % fillColors.length];
+                    dimensions.width[i] = w;
+                    dimensions.height[i] = h;
+                    xvalues.push(left);
+                    yvalues.push(top);
                 }
-                if(borderColors)
+                else
                 {
-                    style.border.color = borderColors[i % borderColors.length];
+                    style.width = w;
+                    style.height = h;
+                    style.x = left;
+                    style.y = top;
+                    if(fillColors)
+                    {
+                        style.fill.color = fillColors[i % fillColors.length];
+                    }
+                    if(borderColors)
+                    {
+                        style.border.color = borderColors[i % borderColors.length];
+                    }
+                    marker = this.getMarker(style, graphOrder, i);
                 }
-                marker = this.getMarker(style, graphOrder, i);
             }
-            else
+            else if(!groupMarkers)
             {
-                this._markers.push(null);
+               this._markers.push(null);
             }
         }
-        this._clearMarkerCache();
+        if(groupMarkers)
+        {
+            this._createGroupMarker({
+                fill: style.fill,
+                border: style.border,
+                dimensions: dimensions,
+                xvalues: xvalues,
+                yvalues: yvalues,
+                shape: style.shape
+            });
+        }
+        else
+        {
+            this._clearMarkerCache();
+        }
     },
 
     /**
@@ -8540,7 +9355,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
      */
     updateMarkerState: function(type, i)
     {
-        if(this._markers[i])
+        if(this._markers && this._markers[i])
         {
             var styles,
                 markerStyles,
@@ -8729,7 +9544,14 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
             fillColors,
             borderColors,
             useOrigin = order === 0,
-            totalHeight = len * h;
+            totalHeight = len * h,
+            dimensions = {
+                width: [],
+                height: []
+            },
+            xvalues = [],
+            yvalues = [],
+            groupMarkers = this.get("groupMarkers");
         if(Y_Lang.isArray(style.fill.color))
         {
             fillColors = style.fill.color.concat(); 
@@ -8816,27 +9638,51 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
             }
             if(!isNaN(w) && w > 0)
             {
-                top -= h/2;        
-                style.width = w;
-                style.height = h;
-                style.x = left;
-                style.y = top;
-                if(fillColors)
+                top -= h/2;
+                if(groupMarkers)
                 {
-                    style.fill.color = fillColors[i % fillColors.length];
+                    dimensions.width[i] = w;
+                    dimensions.height[i] = h;
+                    xvalues.push(left);
+                    yvalues.push(top);
                 }
-                if(borderColors)
+                else
                 {
-                    style.border.color = borderColors[i % borderColors.length];
+                    style.width = w;
+                    style.height = h;
+                    style.x = left;
+                    style.y = top;
+                    if(fillColors)
+                    {
+                        style.fill.color = fillColors[i % fillColors.length];
+                    }
+                    if(borderColors)
+                    {
+                        style.border.color = borderColors[i % borderColors.length];
+                    }
+                    marker = this.getMarker(style, graphOrder, i);
                 }
-                marker = this.getMarker(style, graphOrder, i);
             }
-            else
+            else if(!groupMarkers)
             {
                 this._markers.push(null);
             }
         }
-        this._clearMarkerCache();
+        if(groupMarkers)
+        {
+            this._createGroupMarker({
+                fill: style.fill,
+                border: style.border,
+                dimensions: dimensions,
+                xvalues: xvalues,
+                yvalues: yvalues,
+                shape: style.shape
+            });
+        }
+        else
+        {
+            this._clearMarkerCache();
+        }
     },
 
     /**
@@ -10640,6 +11486,16 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 }
                 return this._graphic;
             }
+        },
+
+        /**
+         * Indicates whether or not markers for a series will be grouped and rendered in a single complex shape instance.
+         *
+         * @attribute groupMarkers
+         * @type Boolean
+         */
+        groupMarkers: {
+            value: false
         }
 
         /**
@@ -10830,7 +11686,26 @@ ChartBase.ATTRS = {
      */
     graph: {
         valueFn: "_getGraph"
-   }
+    },
+
+    /**
+     * Indicates whether or not markers for a series will be grouped and rendered in a single complex shape instance.
+     *
+     * @attribute groupMarkers
+     * @type Boolean
+     */
+    groupMarkers: {
+        value: false,
+
+        setter: function(val)
+        {
+            if(this.get("graph"))
+            {
+                this.get("graph").set("groupMarkers", val);
+            }
+            return val;
+        }
+    }
 };
 
 ChartBase.prototype = {
@@ -10843,7 +11718,10 @@ ChartBase.prototype = {
      */
     _getGraph: function()
     {
-        var graph = new Y.Graph({chart:this});
+        var graph = new Y.Graph({
+            chart:this,
+            groupMarkers: this.get("groupMarkers")    
+        });
         graph.after("chartRendered", Y.bind(function(e) {
             this.fire("chartRendered");
         }, this));
@@ -12092,7 +12970,9 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 minimum:"minimum", 
                 roundingMethod:"roundingMethod",
                 alwaysShowZero:"alwaysShowZero",
-                title:"title"
+                title:"title",
+                width:"width",
+                height:"height"
             },
             dp = this.get("dataProvider"),
             ai,
@@ -12219,8 +13099,6 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                         this.set("height", node.get("offsetHeight"));
                         h = this.get("height");
                     }
-                    axis.set("width", 0);
-                    axis.set("height", 0);
                     this._addToAxesRenderQueue(axis);
                     pos = axis.get("position");
                     if(!this.get(pos + "AxesCollection"))
@@ -12671,6 +13549,158 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             this._redraw();
         }
     },
+    
+    /**
+     * Returns the maximum distance in pixels that the extends outside the top bounds of all vertical axes.
+     *
+     * @method _getTopOverflow
+     * @param {Array} set1 Collection of axes to check.
+     * @param {Array} set2 Seconf collection of axes to check.
+     * @param {Number} width Width of the axes
+     * @return Number
+     * @private
+     */
+    _getTopOverflow: function(set1, set2, height)
+    {
+        var i = 0,
+            len,
+            overflow = 0,
+            axis;
+        if(set1)
+        {
+            len = set1.length;
+            for(; i < len; ++i)
+            {
+                axis = set1[i];
+                overflow = Math.max(overflow, Math.abs(axis.getMaxLabelBounds().top) - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, height) * 0.5));
+            }
+        }
+        if(set2)
+        {
+            i = 0;
+            len = set2.length;
+            for(; i < len; ++i)
+            {
+                axis = set2[i];
+                overflow = Math.max(overflow, Math.abs(axis.getMaxLabelBounds().top) - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, height) * 0.5));
+            }
+        }
+        return overflow;
+    },
+    
+    /**
+     * Returns the maximum distance in pixels that the extends outside the right bounds of all horizontal axes.
+     *
+     * @method _getRightOverflow
+     * @param {Array} set1 Collection of axes to check.
+     * @param {Array} set2 Seconf collection of axes to check.
+     * @param {Number} width Width of the axes
+     * @return Number
+     * @private
+     */
+    _getRightOverflow: function(set1, set2, width)
+    {
+        var i = 0,
+            len,
+            overflow = 0,
+            axis;
+        if(set1)
+        {
+            len = set1.length;
+            for(; i < len; ++i)
+            {
+                axis = set1[i];
+                overflow = Math.max(overflow, axis.getMaxLabelBounds().right - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, width) * 0.5));
+            }
+        }
+        if(set2)
+        {
+            i = 0;
+            len = set2.length;
+            for(; i < len; ++i)
+            {
+                axis = set2[i];
+                overflow = Math.max(overflow, axis.getMaxLabelBounds().right - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, width) * 0.5));
+            }
+        }
+        return overflow;
+    },
+    
+    /**
+     * Returns the maximum distance in pixels that the extends outside the left bounds of all horizontal axes.
+     *
+     * @method _getLeftOverflow
+     * @param {Array} set1 Collection of axes to check.
+     * @param {Array} set2 Seconf collection of axes to check.
+     * @param {Number} width Width of the axes
+     * @return Number
+     * @private
+     */
+    _getLeftOverflow: function(set1, set2, width)
+    {
+        var i = 0,
+            len,
+            overflow = 0,
+            axis;
+        if(set1)
+        {
+            len = set1.length;
+            for(; i < len; ++i)
+            {
+                axis = set1[i];
+                overflow = Math.max(overflow, Math.abs(axis.getMinLabelBounds().left) - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, width) * 0.5));
+            }
+        }
+        if(set2)
+        {
+            i = 0;
+            len = set2.length;
+            for(; i < len; ++i)
+            {
+                axis = set2[i];
+                overflow = Math.max(overflow, Math.abs(axis.getMinLabelBounds().left) - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, width) * 0.5));
+            }
+        }
+        return overflow;
+    },
+    
+    /**
+     * Returns the maximum distance in pixels that the extends outside the bottom bounds of all vertical axes.
+     *
+     * @method _getBottomOverflow
+     * @param {Array} set1 Collection of axes to check.
+     * @param {Array} set2 Seconf collection of axes to check.
+     * @param {Number} height Height of the axes
+     * @return Number
+     * @private
+     */
+    _getBottomOverflow: function(set1, set2, height)
+    {
+        var i = 0,
+            len,
+            overflow = 0,
+            axis;
+        if(set1)
+        {
+            len = set1.length;
+            for(; i < len; ++i)
+            {
+                axis = set1[i];
+                overflow = Math.max(overflow, axis.getMinLabelBounds().bottom - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, height) * 0.5));
+            }
+        }
+        if(set2)
+        {
+            i = 0;
+            len = set2.length;
+            for(; i < len; ++i)
+            {
+                axis = set2[i];
+                overflow = Math.max(overflow, axis.getMinLabelBounds().bottom - (axis.getEdgeOffset(axis.get("styles").majorTicks.count, height) * 0.5));
+            }
+        }
+        return overflow;
+    },
 
     /**
      * Redraws and position all the components of the chart instance.
@@ -12689,89 +13719,229 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         this._callLater = false;
         var w = this.get("width"),
             h = this.get("height"),
-            lw = 0,
-            rw = 0,
-            th = 0,
-            bh = 0,
-            lc = this.get("leftAxesCollection"),
-            rc = this.get("rightAxesCollection"),
-            tc = this.get("topAxesCollection"),
-            bc = this.get("bottomAxesCollection"),
+            leftAxesWidth = 0,
+            rightAxesWidth = 0,
+            topAxesHeight = 0,
+            bottomAxesHeight = 0,
+            leftAxesCollection = this.get("leftAxesCollection"),
+            rightAxesCollection = this.get("rightAxesCollection"),
+            topAxesCollection = this.get("topAxesCollection"),
+            bottomAxesCollection = this.get("bottomAxesCollection"),
             i = 0,
             l,
             axis,
-            pos,
-            pts = [],
             graphOverflow = "visible",
-            graph = this.get("graph"); 
-        if(lc)
+            graph = this.get("graph"),
+            topOverflow,
+            bottomOverflow,
+            leftOverflow,
+            rightOverflow,
+            graphWidth,
+            graphHeight,
+            graphX,
+            graphY,
+            allowContentOverflow = this.get("allowContentOverflow"),
+            diff,
+            rightAxesXCoords,
+            leftAxesXCoords,
+            topAxesYCoords,
+            bottomAxesYCoords,
+            graphRect = {};
+        if(leftAxesCollection)
         {
-            l = lc.length;
+            leftAxesXCoords = [];
+            l = leftAxesCollection.length;
             for(i = l - 1; i > -1; --i)
             {
-                pts[Y.Array.indexOf(this._axesCollection, lc[i])] = {x:lw + "px"};
-                lw += lc[i].get("width");
+                leftAxesXCoords.unshift(leftAxesWidth);
+                leftAxesWidth += leftAxesCollection[i].get("width");
             }
         }
-        if(rc)
+        if(rightAxesCollection)
         {
-            l = rc.length;
+            rightAxesXCoords = [];
+            l = rightAxesCollection.length;
             i = 0;
             for(i = l - 1; i > -1; --i)
             {
-                rw += rc[i].get("width");
-                pts[Y.Array.indexOf(this._axesCollection, rc[i])] = {x:(w - rw) + "px"};
+                rightAxesWidth += rightAxesCollection[i].get("width");
+                rightAxesXCoords.unshift(w - rightAxesWidth);
             }
         }
-        if(tc)
+        if(topAxesCollection)
         {
-            l = tc.length;
+            topAxesYCoords = [];
+            l = topAxesCollection.length;
             for(i = l - 1; i > -1; --i)
             {
-                pts[Y.Array.indexOf(this._axesCollection, tc[i])] = {y:th + "px"};
-                th += tc[i].get("height");
+                topAxesYCoords.unshift(topAxesHeight);
+                topAxesHeight += topAxesCollection[i].get("height");
             }
         }
-        if(bc)
+        if(bottomAxesCollection)
         {
-            l = bc.length;
+            bottomAxesYCoords = [];
+            l = bottomAxesCollection.length;
             for(i = l - 1; i > -1; --i)
             {
-                bh += bc[i].get("height");
-                pts[Y.Array.indexOf(this._axesCollection, bc[i])] = {y:(h - bh) + "px"};
+                bottomAxesHeight += bottomAxesCollection[i].get("height");
+                bottomAxesYCoords.unshift(h - bottomAxesHeight);
             }
         }
-        l = this._axesCollection.length;
-        i = 0;
         
-        for(; i < l; ++i)
+        graphWidth = w - (leftAxesWidth + rightAxesWidth);
+        graphHeight = h - (bottomAxesHeight + topAxesHeight);
+        graphRect.left = leftAxesWidth;
+        graphRect.top = topAxesHeight;
+        graphRect.bottom = h - bottomAxesHeight;
+        graphRect.right = w - rightAxesWidth;
+        if(!allowContentOverflow)
         {
-            axis = this._axesCollection[i];
-            pos = axis.get("position");
-            if(pos == "left" || pos === "right")
+            topOverflow = this._getTopOverflow(leftAxesCollection, rightAxesCollection);
+            bottomOverflow = this._getBottomOverflow(leftAxesCollection, rightAxesCollection);
+            leftOverflow = this._getLeftOverflow(bottomAxesCollection, topAxesCollection);
+            rightOverflow = this._getRightOverflow(bottomAxesCollection, topAxesCollection);
+            
+            diff = topOverflow - topAxesHeight;
+            if(diff > 0)
             {
-                axis.get("boundingBox").setStyle("top", th + "px");
-                axis.get("boundingBox").setStyle("left", pts[i].x);
-                if(axis.get("height") !== h - (bh + th))
+                graphRect.top = topOverflow;
+                if(topAxesYCoords)
                 {
-                    axis.set("height", h - (bh + th));
+                    i = 0;
+                    l = topAxesYCoords.length;
+                    for(; i < l; ++i)
+                    {
+                        topAxesYCoords[i] += diff;
+                    }
                 }
             }
-            else if(pos == "bottom" || pos == "top")
+
+            diff = bottomOverflow - bottomAxesHeight;
+            if(diff > 0)
             {
-                if(axis.get("width") !== w - (lw + rw))
+                graphRect.bottom = h - bottomOverflow;
+                if(bottomAxesYCoords)
                 {
-                    axis.set("width", w - (lw + rw));
+                    i = 0;
+                    l = bottomAxesYCoords.length;
+                    for(; i < l; ++i)
+                    {
+                        bottomAxesYCoords[i] -= diff;
+                    }
                 }
-                axis.get("boundingBox").setStyle("left", lw + "px");
-                axis.get("boundingBox").setStyle("top", pts[i].y);
+            }
+
+            diff = leftOverflow - leftAxesWidth;
+            if(diff > 0)
+            {
+                graphRect.left = leftOverflow;
+                if(leftAxesXCoords)
+                {
+                    i = 0;
+                    l = leftAxesXCoords.length;
+                    for(; i < l; ++i)
+                    {
+                        leftAxesXCoords[i] += diff;
+                    }
+                }
+            }
+
+            diff = rightOverflow - rightAxesWidth;
+            if(diff > 0)
+            {
+                graphRect.right = w - rightOverflow;
+                if(rightAxesXCoords)
+                {
+                    i = 0;
+                    l = rightAxesXCoords.length;
+                    for(; i < l; ++i)
+                    {
+                        rightAxesXCoords[i] -= diff;
+                    }
+                }
+            }
+        }
+        graphWidth = graphRect.right - graphRect.left;
+        graphHeight = graphRect.bottom - graphRect.top;
+        graphX = graphRect.left;
+        graphY = graphRect.top;
+        if(topAxesCollection)
+        {
+            l = topAxesCollection.length;
+            i = 0;
+            for(; i < l; i++)
+            {
+                axis = topAxesCollection[i];
+                if(axis.get("width") !== graphWidth)
+                {
+                    axis.set("width", graphWidth);
+                }
+                axis.get("boundingBox").setStyle("left", graphX + "px");
+                axis.get("boundingBox").setStyle("top", topAxesYCoords[i] + "px");
             }
             if(axis._hasDataOverflow())
             {
                 graphOverflow = "hidden";
             }
         }
-        
+        if(bottomAxesCollection)
+        {
+            l = bottomAxesCollection.length;
+            i = 0;
+            for(; i < l; i++)
+            {
+                axis = bottomAxesCollection[i];
+                if(axis.get("width") !== graphWidth)
+                {
+                    axis.set("width", graphWidth);
+                }
+                axis.get("boundingBox").setStyle("left", graphX + "px");
+                axis.get("boundingBox").setStyle("top", bottomAxesYCoords[i] + "px");
+            }
+            if(axis._hasDataOverflow())
+            {
+                graphOverflow = "hidden";
+            }
+        }
+        if(leftAxesCollection)
+        {
+            l = leftAxesCollection.length;
+            i = 0;
+            for(; i < l; ++i)
+            {
+                axis = leftAxesCollection[i];
+                axis.get("boundingBox").setStyle("top", graphY + "px");
+                axis.get("boundingBox").setStyle("left", leftAxesXCoords[i] + "px");
+                if(axis.get("height") !== graphHeight)
+                {
+                    axis.set("height", graphHeight);
+                }
+            }
+            if(axis._hasDataOverflow())
+            {
+                graphOverflow = "hidden";
+            }
+        }
+        if(rightAxesCollection)
+        {
+            l = rightAxesCollection.length;
+            i = 0;
+            for(; i < l; ++i)
+            {
+                axis = rightAxesCollection[i];
+                axis.get("boundingBox").setStyle("top", graphY + "px");
+                axis.get("boundingBox").setStyle("left", rightAxesXCoords[i] + "px");
+                if(axis.get("height") !== graphHeight)
+                {
+                    axis.set("height", graphHeight);
+                }
+            }
+            if(axis._hasDataOverflow())
+            {
+                graphOverflow = "hidden";
+            }
+        }
         this._drawing = false;
         if(this._callLater)
         {
@@ -12780,19 +13950,19 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         }
         if(graph)
         {
-            graph.get("boundingBox").setStyle("left", lw + "px");
-            graph.get("boundingBox").setStyle("top", th + "px");
-            graph.set("width", w - (lw + rw));
-            graph.set("height", h - (th + bh));
+            graph.get("boundingBox").setStyle("left", graphX + "px");
+            graph.get("boundingBox").setStyle("top", graphY + "px");
+            graph.set("width", graphWidth);
+            graph.set("height", graphHeight);
             graph.get("boundingBox").setStyle("overflow", graphOverflow);
         }
 
         if(this._overlay)
         {
-            this._overlay.setStyle("left", lw + "px");
-            this._overlay.setStyle("top", th + "px");
-            this._overlay.setStyle("width", (w - (lw + rw)) + "px");
-            this._overlay.setStyle("height", (h - (th + bh)) + "px");
+            this._overlay.setStyle("left", graphX + "px");
+            this._overlay.setStyle("top", graphY + "px");
+            this._overlay.setStyle("width", graphWidth + "px");
+            this._overlay.setStyle("height", graphHeight + "px");
         }
     },
 
@@ -12842,6 +14012,16 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
     }
 }, {
     ATTRS: {
+        /**
+         * Indicates whether axis labels are allowed to overflow beyond the bounds of the chart's content box.
+         *
+         * @attribute allowContentOverflow
+         * @type Boolean
+         */
+        allowContentOverflow: {
+            value: false
+        },
+
         /**
          * Style object for the axes.
          *

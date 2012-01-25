@@ -140,6 +140,70 @@ VMLDrawing.prototype = {
     },
 
     /**
+     * Draws a circle. Used internally by `CanvasCircle` class.
+     *
+     * @method drawCircle
+     * @param {Number} x y-coordinate
+     * @param {Number} y x-coordinate
+     * @param {Number} r radius
+     * @protected
+     */
+	drawCircle: function(x, y, radius) {
+        var startAngle = 0,
+            endAngle = 360,
+            circum = radius * 2;
+        endAngle *= 65535;
+        this._drawingComplete = false;
+        this._trackSize(x + circum, y + circum);
+        this._path += " m " + (x + circum) + " " + (y + radius) + " ae " + (x + radius) + " " + (y + radius) + " " + radius + " " + radius + " " + startAngle + " " + endAngle;
+        return this;
+    },
+    
+    /**
+     * Draws an ellipse.
+     *
+     * @method drawEllipse
+     * @param {Number} x x-coordinate
+     * @param {Number} y y-coordinate
+     * @param {Number} w width
+     * @param {Number} h height
+     * @protected
+     */
+	drawEllipse: function(x, y, w, h) {
+        var startAngle = 0,
+            endAngle = 360,
+            radius = w * 0.5,
+            yRadius = h * 0.5;
+        endAngle *= 65535;
+        this._drawingComplete = false;
+        this._trackSize(x + w, y + h);
+        this._path += " m " + (x + w) + " " + (y + yRadius) + " ae " + (x + radius) + " " + (y + yRadius) + " " + radius + " " + yRadius + " " + startAngle + " " + endAngle;
+        return this;
+    },
+    
+    /**
+     * Draws a diamond.     
+     * 
+     * @method drawDiamond
+     * @param {Number} x y-coordinate
+     * @param {Number} y x-coordinate
+     * @param {Number} width width
+     * @param {Number} height height
+     * @protected
+     */
+    drawDiamond: function(x, y, width, height)
+    {
+        var midWidth = width * 0.5,
+            midHeight = height * 0.5;
+        this.moveTo(x + midWidth, y);
+        this.lineTo(x + width, y + midHeight);
+        this.lineTo(x + midWidth, y + height);
+        this.lineTo(x, y + midHeight);
+        this.lineTo(x + midWidth, y);
+        return this;
+    },
+
+    /**
      * Draws a wedge.
      *
      * @method drawWedge
@@ -270,6 +334,16 @@ VMLDrawing.prototype = {
     end: function()
     {
         this._closePath();
+    },
+
+    /**
+     * Ends a fill and stroke
+     *
+     * @method closePath
+     */
+    closePath: function()
+    {
+        this._path += ' x e ';
     },
 
     /**
@@ -1062,18 +1136,15 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
             this._skew.matrix = transform;
             this._skew.on = true;
             //use offset for translate
-            this._skew.offset = (normalizedMatrix.dx + x) + "px, " + (normalizedMatrix.dy + y) + "px";
+            this._skew.offset = normalizedMatrix.dx + "px, " + normalizedMatrix.dy + "px";
             this._skew.origin = tx + ", " + ty;
-        }
-        else
-        {
-            node.style.left = x + "px";
-            node.style.top =  y + "px";
         }
         if(this._type != "path")
         {
             this._transforms = [];
         }
+        node.style.left = x + "px";
+        node.style.top =  y + "px";
     },
 	
 	/**
@@ -1325,50 +1396,21 @@ Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
 	 */
 	getBounds: function(cfg)
 	{
-	    var wt,
-            bounds = {},
-            matrix = cfg || this.matrix,
-            a = matrix.a,
-            b = matrix.b,
-            c = matrix.c,
-            d = matrix.d,
-            dx = matrix.dx,
-            dy = matrix.dy,
-            w = this.get("width"),
-            h = this.get("height"),
-            left = this.get("x"), 
-            top = this.get("y"), 
-            right = left + w,
-            bottom = top + h,
-			stroke = this.get("stroke"),
-            //[x1, y1]
-            x1 = (a * left + c * top + dx), 
-            y1 = (b * left + d * top + dy),
-            //[x2, y2]
-            x2 = (a * right + c * top + dx),
-            y2 = (b * right + d * top + dy),
-            //[x3, y3]
-            x3 = (a * left + c * bottom + dx),
-            y3 = (b * left + d * bottom + dy),
-            //[x4, y4]
-            x4 = (a * right + c * bottom + dx),
-            y4 = (b * right + d * bottom + dy);
-        bounds.left = Math.min(x3, Math.min(x1, Math.min(x2, x4)));
-        bounds.right = Math.max(x3, Math.max(x1, Math.max(x2, x4)));
-        bounds.top = Math.min(y2, Math.min(y4, Math.min(y3, y1)));
-        bounds.bottom = Math.max(y2, Math.max(y4, Math.max(y3, y1)));
-        //if there is a stroke, extend the bounds to accomodate
-        if(stroke && stroke.weight)
+		var stroke = this.get("stroke"),
+			w = this.get("width"),
+			h = this.get("height"),
+			x = this.get("x"),
+			y = this.get("y"),
+            wt = 0;
+		if(stroke && stroke.weight)
 		{
 			wt = stroke.weight;
-            bounds.left -= wt;
-            bounds.right += wt;
-            bounds.top -= wt;
-            bounds.bottom += wt;
 		}
-        bounds.width = bounds.right - bounds.left;
-        bounds.height = bounds.bottom - bounds.top;
-        return bounds;
+        w = (x + w + wt) - (x - wt); 
+        h = (y + h + wt) - (y - wt);
+        x -= wt;
+        y -= wt;
+		return this._normalizedMatrix.getContentRect(w, h, x, y);
 	},
 	
     /**
@@ -1769,21 +1811,7 @@ VMLPath = function()
 };
 
 VMLPath.NAME = "vmlPath";
-Y.extend(VMLPath, Y.VMLShape, {
-	/**
-     * Updates `Shape` based on attribute changes.
-     *
-     * @method _updateHandler
-	 * @private
-	 */
-    _updateHandler: function()
-    {   
-        var host = this;
-            host._fillChangeHandler();
-            host._strokeChangeHandler();
-        host._updateTransform();
-    }
-});
+Y.extend(VMLPath, Y.VMLShape);
 VMLPath.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 	/**
 	 * Indicates the width of the shape

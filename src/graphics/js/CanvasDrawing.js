@@ -285,6 +285,28 @@ CanvasDrawing.prototype = {
     },
 
     /**
+     * Draws a diamond.     
+     * 
+     * @method drawDiamond
+     * @param {Number} x y-coordinate
+     * @param {Number} y x-coordinate
+     * @param {Number} width width
+     * @param {Number} height height
+     * @protected
+     */
+    drawDiamond: function(x, y, width, height)
+    {
+        var midWidth = width * 0.5,
+            midHeight = height * 0.5;
+        this.moveTo(x + midWidth, y);
+        this.lineTo(x + width, y + midHeight);
+        this.lineTo(x + midWidth, y + height);
+        this.lineTo(x, y + midHeight);
+        this.lineTo(x + midWidth, y);
+        return this;
+    },
+
+    /**
      * Draws an ellipse. Used internally by `CanvasEllipse` class.
      *
      * @method drawEllipse
@@ -463,8 +485,19 @@ CanvasDrawing.prototype = {
      * @method end
      */
     end: function() {
-        this._paint();
+        this._closePath();
         return this;
+    },
+
+    /**
+     * Ends a fill and stroke
+     *
+     * @method closePath
+     */
+    closePath: function()
+    {
+        this._updateDrawingQueue(["closePath"]);
+        this._updateDrawingQueue(["beginPath"]);
     },
 
 	/**

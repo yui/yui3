@@ -39,7 +39,7 @@ Y.extend(CanvasCircle, Y.CanvasShape, {
 		{
             this.clear();
             this.drawCircle(0, 0, radius);
-			this._paint();
+			this._closePath();
 		}
 	}
 });

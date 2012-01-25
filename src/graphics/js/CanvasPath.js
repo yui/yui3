@@ -32,7 +32,7 @@ Y.extend(CanvasPath, Y.CanvasShape, {
 	 */
     _draw: function()
     {
-        this._paint();
+        this._closePath();
     },
 
 	/**

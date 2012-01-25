@@ -10,6 +10,24 @@
  */
 Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     /**
+     * Storage for calculatedWidth value.
+     *
+     * @property _calculatedWidth
+     * @type Number
+     * @private
+     */
+    _calculatedWidth: 0,
+
+    /**
+     * Storage for calculatedHeight value.
+     *
+     * @property _calculatedHeight
+     * @type Number
+     * @private
+     */
+    _calculatedHeight: 0,
+
+    /**
      * Handles change to the dataProvider
      * 
      * @method _dataChangeHandler
@@ -343,12 +361,17 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 position,
                 lineStart,
                 label,
+                labelWidth,
+                labelHeight,
                 labelFunction = this.get("labelFunction"),
                 labelFunctionScope = this.get("labelFunctionScope"),
                 labelFormat = this.get("labelFormat"),
                 graphic = this.get("graphic"),
                 path = this.get("path"),
-                tickPath;
+                tickPath,
+                explicitlySized;
+            this._labelWidths = [];
+            this._labelHeights = [];
             graphic.set("autoDraw", false);
             path.clear();
             path.set("stroke", {
@@ -357,6 +380,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 opacity: line.alpha
             });
             this._labelRotationProps = this._getTextRotationProps(labelStyles);
+            this._labelRotationProps.transformOrigin = layout._getTransformOrigin(this._labelRotationProps.rot);
             layout.setTickOffsets.apply(this);
             layoutLength = this.getLength();
             lineStart = layout.getLineStart.apply(this);
@@ -384,7 +408,10 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             this._createLabelCache();
             this._tickPoints = [];
             this._maxLabelSize = 0; 
+            this._totalTitleSize = 0;
             this._titleSize = 0;
+            this._setTitle();
+            explicitlySized = layout.getExplicitlySized.apply(this, [styles]);
             for(; i < len; ++i)
             {
                 if(drawTicks) 
@@ -394,19 +421,29 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 position = this.getPosition(tickPoint);
                 label = this.getLabel(tickPoint, labelStyles);
                 label.innerHTML = labelFunction.apply(labelFunctionScope, [this.getLabelByIndex(i, len), labelFormat]);
+                labelWidth = Math.round(label.offsetWidth);
+                labelHeight = Math.round(label.offsetHeight);
+                if(!explicitlySized)
+                {
+                    this._layout.updateMaxLabelSize.apply(this, [labelWidth, labelHeight]);
+                }
+                this._labelWidths.push(labelWidth);
+                this._labelHeights.push(labelHeight);
                 tickPoint = this.getNextPoint(tickPoint, majorUnitDistance);
             }
             this._clearLabelCache();
-            this._updateTitle();
-            layout.setSizeAndPosition.apply(this);
             if(this.get("overlapGraph"))
             {
                layout.offsetNodeForTick.apply(this, [this.get("contentBox")]);
             }
             layout.setCalculatedSize.apply(this);
+            if(this._titleTextField)
+            {
+                this._layout.positionTitle.apply(this, [this._titleTextField]);
+            }
             for(i = 0; i < len; ++i)
             {
-                layout.positionLabel.apply(this, [this.get("labels")[i], this._tickPoints[i]]);
+                layout.positionLabel.apply(this, [this.get("labels")[i], this._tickPoints[i], styles, i]);
             }
         }
         this._drawing = false;
@@ -419,6 +456,46 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             this._updatePathElement();
             this.fire("axisRendered");
         }
+    },
+
+    /**
+     * Calculates and sets the total size of a title.
+     *
+     * @method _setTotalTitleSize
+     * @param {Object} styles Properties for the title field.
+     * @private
+     */
+    _setTotalTitleSize: function(styles)
+    {
+        var title = this._titleTextField,
+            w = title.offsetWidth,
+            h = title.offsetHeight,
+            rot = this._titleRotationProps.rot,
+            bounds,
+            size,
+            margin = styles.margin,
+            position = this.get("position"),
+            matrix = new Y.Matrix();
+        matrix.rotate(rot);
+        bounds = matrix.getContentRect(w, h);
+        if(position == "left" || position == "right")
+        {
+            size = bounds.right - bounds.left;
+            if(margin)
+            {
+                size += margin.left + margin.right;
+            }
+        }
+        else
+        {
+            size = bounds.bottom - bounds.top;
+            if(margin)
+            {
+                size += margin.top + margin.bottom;
+            }
+        }
+        this._titleBounds = bounds;
+        this._totalTitleSize = size;
     },
 
     /**
@@ -455,7 +532,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
      * @method _updateTitle
      * @private
      */
-    _updateTitle: function()
+    _setTitle: function()
     {
         var i,
             styles,
@@ -479,6 +556,13 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 titleTextField.setAttribute("class", "axisTitle");
                 this.get("contentBox").append(titleTextField);
             }
+            else if(!DOCUMENT.createElementNS)
+            {
+                if(titleTextField.style.filter)
+                {
+                    titleTextField.style.filter = null;
+                }
+            }
             titleTextField.style.position = "absolute";
             for(i in styles)
             {
@@ -489,7 +573,8 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             }
             titleTextField.innerHTML = this.get("titleFunction")(title);
             this._titleTextField = titleTextField;
-            this._layout.positionTitle.apply(this, [titleTextField]);
+            this._titleRotationProps = this._getTextRotationProps(styles);
+            this._setTotalTitleSize(styles);
         }
         else if(titleTextField)
         {
@@ -499,6 +584,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 parentNode.removeChild(titleTextField);
             }
             this._titleTextField = null;
+            this._totalTitleSize = 0;
         }
     },
 
@@ -543,7 +629,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         label.style.position = "absolute";
         this._labels.push(label);
         this._tickPoints.push({x:pt.x, y:pt.y});
-        this._layout.updateMaxLabelSize.apply(this, [label]);
         for(i in styles)
         {
             if(styles.hasOwnProperty(i) && !customStyles.hasOwnProperty(i))
@@ -771,8 +856,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             textAlpha,
             matrix = new Y.Matrix(),
             transformOrigin = props.transformOrigin || [0, 0],
-            transformX,
-            transformY,
             offsetRect;
         if(DOCUMENT.createElementNS)
         {
@@ -789,6 +872,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         }
         else
         {
+            textAlpha = props.textAlpha;
             if(Y_Lang.isNumber(textAlpha) && textAlpha < 1 && textAlpha > -1 && !isNaN(textAlpha))
             {
                 filterString = "progid:DXImageTransform.Microsoft.Alpha(Opacity=" + Math.round(textAlpha * 100) + ")";
@@ -801,16 +885,8 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 offsetRect = matrix.getContentRect(props.labelWidth, props.labelHeight);
                 matrix.init();
                 matrix.translate(offsetRect.left, offsetRect.top);
-
-                transformX = transformOrigin[0] * props.labelWidth;
-                transformX = !isNaN(transformX) ? transformX : 0;
-                transformY = transformOrigin[1] * props.labelHeight;
-                transformY = !isNaN(transformY) ? transformY : 0;
-                textAlpha = props.textAlpha;
                 matrix.translate(x, y);
-                matrix.translate(transformX, transformY);
-                matrix.rotate(rot);
-                matrix.translate(-transformX, -transformY);
+                this._simulateRotateWithTransformOrigin(matrix, rot, transformOrigin, props.labelWidth, props.labelHeight);
                 if(filterString)
                 {
                     filterString += " ";
@@ -835,6 +911,83 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         }
     },
     
+    /**
+     * Simulates a rotation with a specified transformOrigin. 
+     *
+     * @method _simulateTransformOrigin
+     * @param {Matrix} matrix Reference to a `Matrix` instance.
+     * @param {Number} rot The rotation (in degrees) that will be performed on a matrix.
+     * @param {Array} transformOrigin An array represeniting the origin in which to perform the transform. The first 
+     * index represents the x origin and the second index represents the y origin.
+     * @param {Number} w The width of the object that will be transformed.
+     * @param {Number} h The height of the object that will be transformed.
+     * @private
+     */
+    _simulateRotateWithTransformOrigin: function(matrix, rot, transformOrigin, w, h)
+    {
+        var transformX = transformOrigin[0] * w,
+            transformY = transformOrigin[1] * h;
+        transformX = !isNaN(transformX) ? transformX : 0;
+        transformY = !isNaN(transformY) ? transformY : 0;
+        matrix.translate(transformX, transformY);
+        matrix.rotate(rot);
+        matrix.translate(-transformX, -transformY);
+    },
+
+    /**
+     * Returns the coordinates (top, right, bottom, left) for the bounding box of the last label. 
+     *
+     * @method getMaxLabelBounds
+     * @return Object
+     */
+    getMaxLabelBounds: function()
+    {
+        return this._getLabelBounds(this.getMaximumValue());
+    },
+
+    /**
+     * Returns the coordinates (top, right, bottom, left) for the bounding box of the first label. 
+     *
+     * @method getMinLabelBounds
+     * @return Object
+     */
+    getMinLabelBounds: function()
+    {
+        return this._getLabelBounds(this.getMinimumValue());
+    },
+    
+    /**
+     * Returns the coordinates (top, right, bottom, left) for the bounding box of a label. 
+     *
+     * @method _getLabelBounds
+     * @param {String} Value of the label
+     * @return Object
+     * @private
+     */
+    _getLabelBounds: function(val)
+    {
+        var layout = this._layout,
+            labelStyles = this.get("styles").label,
+            matrix = new Y.Matrix(),
+            label,
+            props = this._getTextRotationProps(labelStyles);
+            props.transformOrigin = layout._getTransformOrigin(props.rot);
+        label = this.getLabel({x: 0, y: 0}, labelStyles);
+        label.innerHTML = this.get("labelFunction").apply(this, [val, this.get("labelFormat")]); 
+        props.labelWidth = label.offsetWidth;
+        props.labelHeight = label.offsetHeight;
+        label = this._labels.pop();
+        this._removeChildren(label);
+        Y.Event.purgeElement(label, true);
+        label.parentNode.removeChild(label);
+        props.x = 0;
+        props.y = 0;
+        layout._setRotationCoords(props);
+        matrix.translate(props.x, props.y);
+        this._simulateRotateWithTransformOrigin(matrix, props.rot, props.transformOrigin, props.labelWidth, props.labelHeight);
+        return matrix.getContentRect(props.labelWidth, props.labelHeight);
+    },
+
     /**
      * Removes all DOM elements from an HTML element. Used to clear out labels during detruction
      * phase.
@@ -867,7 +1020,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         var cb = this.get("contentBox").getDOMNode(),
             labels = this.get("labels"),
             graphic = this.get("graphic"),
-            i = 0,
             label,
             len = labels ? labels.length : 0;
         if(len > 0)
@@ -897,6 +1049,104 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
 }, {
     ATTRS: 
     {
+        /**
+         * When set, defines the width of a vertical axis instance. By default, vertical axes automatically size based on their contents. When the
+         * width attribute is set, the axis will not calculate its width. When the width attribute is explicitly set, axis labels will postion themselves off of the 
+         * the inner edge of the axis and the title, if present, will position itself off of the outer edge. If a specified width is less than the sum of 
+         * the axis' contents, excess content will overflow.
+         *
+         * @attribute width
+         * @lazyAdd false
+         * @type Number
+         */
+        width: {
+            lazyAdd: false,
+
+            getter: function() 
+            {
+                if(this._explicitWidth)
+                {
+                    return this._explicitWidth;        
+                }
+                return this._calculatedWidth;
+            },
+
+            setter: function(val)
+            {
+                this._explicitWidth = val;
+                return val;
+            }
+        },
+
+        /**
+         * When set, defines the height of a horizontal axis instance. By default, horizontal axes automatically size based on their contents. When the
+         * height attribute is set, the axis will not calculate its height. When the height attribute is explicitly set, axis labels will postion themselves off of the 
+         * the inner edge of the axis and the title, if present, will position itself off of the outer edge. If a specified height is less than the sum of 
+         * the axis' contents, excess content will overflow.
+         *
+         * @attribute height
+         * @lazyAdd false
+         * @type Number
+         */
+        height: {
+            lazyAdd: false,
+
+            getter: function() 
+            {
+                if(this._explicitHeight)
+                {
+                    return this._explicitHeight;        
+                }
+                return this._calculatedHeight;
+            },
+
+            setter: function(val)
+            {
+                this._explicitHeight = val;
+                return val;
+            }
+        },
+
+        /**
+         * Calculated value of an axis' width. By default, the value is used internally for vertical axes. If the `width` attribute is explicitly set, this value will be ignored.
+         *
+         * @attribute calculatedWidth
+         * @type Number
+         * @private
+         */
+        calculatedWidth: {
+            getter: function()
+            {
+                return this._calculatedWidth;
+            },
+
+            setter: function(val)
+            {
+                this._calculatedWidth = val;
+                return val;
+            }
+        },
+
+        /**
+         * Calculated value of an axis' height. By default, the value is used internally for horizontal axes. If the `height` attribute is explicitly set, this value will be ignored.
+         *
+         * @attribute calculatedHeight
+         * @type Number
+         * @private
+         */
+        calculatedHeight: {
+            getter: function()
+            {
+                return this._calculatedHeight;
+            },
+
+            setter: function(val)
+            {
+                this._calculatedHeight = val;
+                return val;
+            }
+        },
+
         /**
          * Difference betweend the first/last tick and edge of axis.
          *
