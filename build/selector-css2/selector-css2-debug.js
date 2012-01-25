@@ -19,6 +19,12 @@ var PARENT_NODE = 'parentNode',
 
     Selector = Y.Selector,
 
+    // TODO: better detection
+    _isXML = (function() {
+        var isXML = (Y.config.doc.createElement('div').tagName !== 'DIV');
+        return isXML;
+    })(),
+
     SelectorCSS2 = {
         _reRegExpTokens: /([\^\$\?\[\]\*\+\-\.\(\)\|\\])/, // TODO: move?
         SORT_RESULTS: true,
@@ -295,7 +301,12 @@ var PARENT_NODE = 'parentNode',
                 name: TAG_NAME,
                 re: /^((?:-?[_a-z]+[\w-]*)|\*)/i,
                 fn: function(match, token) {
-                    var tag = match[1].toUpperCase();
+                    var tag = match[1];
+
+                    if (!_isXML) {
+                        tag = tag.toUpperCase();
+                    }
+
                     token.tagName = tag;
 
                     if (tag !== '*' && (!token.last || token.prefilter)) {
