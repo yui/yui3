@@ -582,7 +582,7 @@ if (!testFeature('innerhtml', 'table')) {
         // IE adds TBODY when creating TABLE elements (which may share this impl)
     creators.tbody = function(html, doc) {
         var frag = Y_DOM.create(TABLE_OPEN + html + TABLE_CLOSE, doc),
-            tb = frag.children.tags('tbody')[0];
+            tb = Y.DOM._children(frag, 'tbody')[0];
 
         if (frag.children.length > 1 && tb && !re_tbody.test(html)) {
             tb.parentNode.removeChild(tb); // strip extraneous tbody
