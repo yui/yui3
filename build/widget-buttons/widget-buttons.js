@@ -27,12 +27,7 @@ var BOUNDING_BOX  = "boundingBox",
  * @class WidgetButtons
  * @param {Object} config User configuration object
  */
-function WidgetButtons(config) {
-
-    Y.after(this._renderUIButtons, this, RENDER_UI);
-    Y.after(this._bindUIButtons, this, BIND_UI);
-    Y.after(this._syncUIButtons, this, SYNC_UI);
-}
+function WidgetButtons() {}
 
 /**
  * Static hash of default class names used for the inner <span> ("content"),
@@ -136,6 +131,12 @@ WidgetButtons.prototype = {
         _buttonsArray    : null,
         _uiHandlesButtons: null,
 
+        initializer: function () {
+            Y.after(this._renderUIButtons, this, RENDER_UI);
+            Y.after(this._bindUIButtons, this, BIND_UI);
+            Y.after(this._syncUIButtons, this, SYNC_UI);
+        },
+
         destructor: function () {
             this._detachEventsFromButtons();
         },
@@ -170,16 +171,8 @@ WidgetButtons.prototype = {
          * @protected
          */
         _bindUIButtons : function () {
-
-            var self = this;
-
-            this._uiHandlesButtons = [];
-
-            Y.each(this._buttonsArray, function(o) {
-               self._attachEventsToButton(o);
-            });
             this.after(BUTTON_CHANGE, this._afterButtonsChange);
-
+            this._attachEventsToButtons();
         },
 
         /**
@@ -188,7 +181,7 @@ WidgetButtons.prototype = {
          * This method is invoked after bindUI is invoked for the Widget class
          * using YUI's aop infrastructure.
          * </p>
-         * @method _bindUIButtons
+         * @method _syncUIButtons
          * @protected
          */
         _syncUIButtons : function () {
@@ -204,7 +197,7 @@ WidgetButtons.prototype = {
         /**
          * Add a button to the existing set of buttons
          *
-         * @method _bindUIButtons
+         * @method addButton
          * @param button {object} The object literal consisting of the button's properties and callback function
          * @public
          */
@@ -279,8 +272,12 @@ WidgetButtons.prototype = {
          * @method _attachEventsToButton
          * @protected
          */
-        _attachEventsToButton : function (o) {
-            this._uiHandlesButtons.push(o.node.after(CLICK, o.cb, this));
+        _attachEventsToButtons : function (o) {
+            this._detachEventsFromButtons();
+
+            Y.each(this._buttonsArray, function (o) {
+                this._uiHandlesButtons.push(o.node.after(CLICK, o.cb, this));
+            }, this);
         },
 
         /**
@@ -290,10 +287,9 @@ WidgetButtons.prototype = {
          * @protected
          */
         _afterButtonsChange : function (e) {
-            this._detachEventsFromButtons();
             this._renderUIButtons();
-            this._bindUIButtons();
             this._syncUIButtons();
+            this._attachEventsToButtons();
         },
 
         /**

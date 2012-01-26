@@ -109,6 +109,16 @@ YUI.add('dd-drop', function(Y) {
         */        
         groups: {
             value: ['default'],
+            getter: function() {
+                if (!this._groups) {
+                    this._groups = {};
+                }
+                var ret = [];
+                Y.each(this._groups, function(v, k) {
+                    ret[ret.length] = k;
+                });
+                return ret;
+            },            
             setter: function(g) {
                 this._groups = {};
                 Y.each(g, function(v, k) {
@@ -544,4 +554,4 @@ YUI.add('dd-drop', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm-drop', 'dd-drag']});
+}, '@VERSION@' ,{requires:['dd-ddm-drop', 'dd-drag'], skinnable:false});

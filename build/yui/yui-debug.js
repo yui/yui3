@@ -6355,6 +6355,10 @@ Y.Loader.prototype = {
 
         if (!o.type) {
             o.type = JS;
+            var p = o.path || o.fullpath;
+            if (p && p.indexOf('.' + CSS) > -1) {
+                o.type = CSS;
+            }
         }
 
         if (!o.path && !o.fullpath) {
