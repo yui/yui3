@@ -175,12 +175,12 @@ YUI.add('dd-tests', function(Y) {
         test_drop_overs: function() {
             dd.target._createShim();
             dd.target._handleOverEvent();
-            var zIndex = dd.target.shim.getStyle('zIndex');
-            Y.Assert.areSame('999', zIndex, 'Failed to change zIndex of shim');
+            var zIndex = parseInt(dd.target.shim.getStyle('zIndex'), 0);
+            Y.Assert.areSame(999, zIndex, 'Failed to change zIndex of shim');
 
             dd.target._handleOutEvent();
-            var zIndex = dd.target.shim.getStyle('zIndex');
-            Y.Assert.areSame('1', zIndex, 'Failed to change zIndex of shim');
+            var zIndex = parseInt(dd.target.shim.getStyle('zIndex'), 0);
+            Y.Assert.areSame(1, zIndex, 'Failed to change zIndex of shim');
             
             dd.target.overTarget = true;
             Y.DD.DDM.activeDrag = dd.target;
