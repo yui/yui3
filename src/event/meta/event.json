@@ -70,7 +70,14 @@
                 "requires": [
                     "event-synthetic"
                 ]
-            }
+            },
+            "event-contextmenu": {
+                "requires": [
+                    "event-synthetic",
+                    "event-simulate",
+                    "dom-screen"
+                ]
+            }            
         },
         "plugins": {
             "event-touch": {

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>contextmenu synthetic event</title>
+        <meta name="author" content="Todd Kloots">
+        <style type="text/css">
+        
+          body {
+            padding-top: 500px;
+            padding-bottom: 200px;
+          }
+        
+        </style>
+        
+      	<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+        <script type="text/javascript">
+        
+          YUI({
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+            allowRollup: false,
+            lazyEventFacade: true
+          }).use("event-contextmenu", "node", "event", "overlay", function (Y) {
+
+            Y.one("doc").delegate("contextmenu", function (e) {
+              Y.log(e.pageX);
+              Y.log(e.pageY);
+              
+              var overlay = Y.Overlay({ bodyContent: "Hello, World" });
+              overlay.render(Y.one("body"));
+              
+              
+            }, "button");
+          
+            Y.one("#btn-1").on("contextmenu", function (e) {
+              Y.log(e.pageX);
+              Y.log(e.pageY);
+            });
+          
+          });
+
+        
+        </script>
+
+	</head>
+	<body>
+
+
+
+	   <button id="btn-1">Button 1</button>
+	   <button id="detach-btn">Detach Listeners</button>
+
+	</body>
+</html>

@@ -1002,6 +1002,13 @@
             "node-base"
         ]
     }, 
+    "event-contextmenu": {
+        "requires": [
+            "event-synthetic", 
+            "event-simulate", 
+            "dom-screen"
+        ]
+    }, 
     "event-custom": {
         "use": [
             "event-custom-base", 
