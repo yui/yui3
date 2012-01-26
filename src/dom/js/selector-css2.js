@@ -17,20 +17,20 @@ var PARENT_NODE = 'parentNode',
 
     Selector = Y.Selector,
 
-    // TODO: better detection
-    _isXML = (function() {
-        var isXML = (Y.config.doc.createElement('div').tagName !== 'DIV');
-        return isXML;
-    })(),
-
     SelectorCSS2 = {
-        _reRegExpTokens: /([\^\$\?\[\]\*\+\-\.\(\)\|\\])/, // TODO: move?
+        _reRegExpTokens: /([\^\$\?\[\]\*\+\-\.\(\)\|\\])/,
         SORT_RESULTS: true,
         _re: {
             attr: /(\[[^\]]*\])/g,
             esc: /\\[:\[\]\(\)#\.\'\>+~"]/gi,
             pseudos: /(\([^\)]*\))/g
         },
+
+        // TODO: better detection, document specific
+        _isXML: (function() {
+            var isXML = (Y.config.doc.createElement('div').tagName !== 'DIV');
+            return isXML;
+        }()),
 
         /**
          * Mapping of shorthand tokens to corresponding attribute selector 
@@ -50,8 +50,6 @@ var PARENT_NODE = 'parentNode',
          */
         operators: {
             '': function(node, attr) { return Y.DOM.getAttribute(node, attr) !== ''; }, // Just test for existence of attribute
-            //'': '.+',
-            //'=': '^{val}$', // equality
             '~=': '(?:^|\\s+){val}(?:\\s+|$)', // space-delimited
             '|=': '^{val}-?' // optional hyphen-delimited
         },
@@ -73,16 +71,6 @@ var PARENT_NODE = 'parentNode',
                 className,
                 tagName;
 
-
-            // if we have an initial ID, set to root when in document
-            /*
-            if (tokens[0] && rootDoc === root &&  
-                    (id = tokens[0].id) &&
-                    rootDoc.getElementById(id)) {
-                root = rootDoc.getElementById(id);
-            }
-            */
-
             if (token) {
                 // prefilter nodes
                 id = token.id;
@@ -92,7 +80,6 @@ var PARENT_NODE = 'parentNode',
                 if (root.getElementsByTagName) { // non-IE lacks DOM api on doc frags
                     // try ID first, unless no root.all && root not in document
                     // (root.all works off document, but not getElementById)
-                    // TODO: move to allById?
                     if (id && (root.all || (root.nodeType === 9 || Y.DOM.inDoc(root)))) {
                         nodes = Y.DOM.allById(id, root);
                     // try className
@@ -133,12 +120,10 @@ var PARENT_NODE = 'parentNode',
                 token,
                 path,
                 pass,
-                //FUNCTION = 'function',
                 value,
                 tests,
                 test;
 
-            //do {
             for (i = 0; (tmpNode = node = nodes[i++]);) {
                 n = len - 1;
                 path = null;
@@ -155,6 +140,9 @@ var PARENT_NODE = 'parentNode',
                                 value = getters[test[0]](tmpNode, test[0]);
                             } else {
                                 value = tmpNode[test[0]];
+                                if (test[0] === 'tagName' && !Selector._isXML) {
+                                    value = value.toUpperCase();    
+                                }
                                 // use getAttribute for non-standard attributes
                                 if (value === undefined && tmpNode.getAttribute) {
                                     value = tmpNode.getAttribute(test[0]);
@@ -204,7 +192,7 @@ var PARENT_NODE = 'parentNode',
                         break;
                     }
                 }
-            }// while (tmpNode = node = nodes[++i]);
+            }
             node = tmpNode = null;
             return result;
         },
@@ -271,7 +259,7 @@ var PARENT_NODE = 'parentNode',
                 fn: function(match, token) {
                     var tag = match[1];
 
-                    if (!_isXML) {
+                    if (!Selector._isXML) {
                         tag = tag.toUpperCase();
                     }
 
