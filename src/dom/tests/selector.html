@@ -25,7 +25,6 @@ onload = function() {
 
         };
 
-        Y.Selector.useNative = false;
         Y.Test.Runner.setName('Selector Tests');
 
         Y.Dom = {
@@ -544,6 +543,17 @@ onload = function() {
                 var node = document.getElementById('test-dl');
                 Assert.areEqual(document.getElementById('last-dd'),
                         Y.Selector.query(':last-child', node, true));
+            },
+
+            'should allow documentFragment root node': function() {
+                var frag = document.createDocumentFragment();
+                frag.appendChild(document.createElement('div'));
+                Assert.areEqual('DIV',
+                        Y.Selector.query('div', frag, true).tagName);
+
+                frag.appendChild(document.createElement('span'));
+                Assert.areEqual('SPAN',
+                        Y.Selector.query('span', frag, true).tagName);
             }
 
         });
