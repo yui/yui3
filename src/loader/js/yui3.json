@@ -1116,18 +1116,6 @@
             "base"
         ]
     }, 
-    "flashuploader": {
-        "requires": [
-            "swf", 
-            "widget", 
-            "substitute", 
-            "base", 
-            "node", 
-            "event-custom", 
-            "file", 
-            "uploadqueue"
-        ]
-    }, 
     "frame": {
         "requires": [
             "base", 
@@ -1278,15 +1266,6 @@
             "event-base", 
             "history-base", 
             "node-base"
-        ]
-    }, 
-    "html5uploader": {
-        "requires": [
-            "widget", 
-            "node-event-simulate", 
-            "substitute", 
-            "file", 
-            "uploadqueue"
         ]
     }, 
     "imageloader": {
@@ -1952,11 +1931,32 @@
     }, 
     "uploader": {
         "requires": [
-            "html5uploader", 
-            "flashuploader"
+            "uploader-html5", 
+            "uploader-flash"
         ]
     }, 
-    "uploadqueue": {
+    "uploader-flash": {
+        "requires": [
+            "swf", 
+            "widget", 
+            "substitute", 
+            "base", 
+            "node", 
+            "event-custom", 
+            "file", 
+            "uploader-queue"
+        ]
+    }, 
+    "uploader-html5": {
+        "requires": [
+            "widget", 
+            "node-event-simulate", 
+            "substitute", 
+            "file", 
+            "uploader-queue"
+        ]
+    }, 
+    "uploader-queue": {
         "requires": [
             "base"
         ]

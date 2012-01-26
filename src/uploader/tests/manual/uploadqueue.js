@@ -4,7 +4,7 @@ YUI({
     filter: "raw",
     debug: true,
     useBrowserConsole: true
-}).use('node', 'file', 'uploadqueue',  function(Y) {
+}).use('node', 'file', 'uploader-queue',  function(Y) {
 
 var fs = Y.one("#selectFiles");
 var uf = Y.one("#uploadFiles");
@@ -21,7 +21,7 @@ fs.on("change", function (ev) {
      	out.append("<div id='" + newfile.get("id") + "'>" + newfile.get("name") + " | " + 0 + "%</div>");
      });
      
-     myqueue = new Y.Uploader.UploadQueue({simUploads: 2, 
+     myqueue = new Y.Uploader.Queue({simUploads: 2, 
 	                                       errorAction: "restart",
 	                                       fileList: allfiles,
 	                                       uploadURL: "upload.php",

@@ -4,12 +4,12 @@ YUI({
     filter: "raw",
     debug: true,
     useBrowserConsole: true
-}).use('node', 'flashuploader', function(Y) {
+}).use('node', 'uploader-flash', function(Y) {
  
   var selectButton = Y.one("#fileselection");
 
 
-  var myuploader = new Y.FlashUploader({contentBox: selectButton, 
+  var myuploader = new Y.UploaderFlash({contentBox: selectButton, 
                                         multipleFiles: true, 
                                         uploadURL: "http://localhost/myyui/src/uploader/tests/manual/upload.php"});
 

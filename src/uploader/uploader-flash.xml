@@ -2,7 +2,7 @@
 <project name="Uploader" default="local">
     <property environment="env" />
 
-    <property file="html5uploader.properties" />
+    <property file="uploader-flash.properties" />
 
     <import file="${builddir}/3.x/bootstrap.xml" 
             description="Default Build Properties and Targets" />

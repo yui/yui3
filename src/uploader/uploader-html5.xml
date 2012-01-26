@@ -2,7 +2,7 @@
 <project name="Uploader" default="local">
     <property environment="env" />
 
-    <property file="uploadqueue.properties" />
+    <property file="uploader-html5.properties" />
 
     <import file="${builddir}/3.x/bootstrap.xml" 
             description="Default Build Properties and Targets" />

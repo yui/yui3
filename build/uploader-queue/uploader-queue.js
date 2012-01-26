@@ -1,18 +1,12 @@
-YUI.add('uploadqueue', function(Y) {
+YUI.add('uploader-queue', function(Y) {
 
 
     /**
      * The class manages a queue of files that should be uploaded to the server.
      * It initializes the required number of uploads, tracks them as they progress,
      * and automatically advances to the next upload when a preceding one has completed.
-     * @module uploadqueue
+     * @module uploader-queue
      */     
-    /**
-     * The class manages a queue of files to be uploaded to the server.
-     * @class UploadQueue
-     * @extends Base
-     * @constructor
-     */
 
     var Lang = Y.Lang,
         Bind = Y.bind,
@@ -24,18 +18,25 @@ YUI.add('uploadqueue', function(Y) {
         totalBytesUploaded,
         totalBytes;
 
-    var UploadQueue = function(o) {
+
+    /**
+     * The class manages a queue of files to be uploaded to the server.
+     * @class UploaderQueue
+     * @extends Base
+     * @constructor
+     */
+    var UploaderQueue = function(o) {
         currentUploads = {};
         lastUploadPointer = 0;
         fileListLength = 0;
         uploadsLeftCounter = 0;
         totalBytesUploaded = 0;
         totalBytes = 0;      
-        UploadQueue.superclass.constructor.apply(this, arguments);
+        UploaderQueue.superclass.constructor.apply(this, arguments);
     };
 
 
-    Y.extend(UploadQueue, Y.Base, {
+    Y.extend(UploaderQueue, Y.Base, {
 
         initializer : function (cfg) {
 
@@ -64,7 +65,7 @@ YUI.add('uploadqueue', function(Y) {
                currentFile.on("uploadprogress", this._uploadProgressHandler, this);
                currentFile.on("uploadcomplete", this._uploadCompleteHandler, this);
 
-               currentFile.startUpload(this.get("uploadURL"), fileParameters);
+               currentFile.startUpload(this.get("uploadURL"), fileParameters, this.get("fileFieldName"));
                currentUploads[currentFile.get("id")] = 0;
                lastUploadPointer += 1;
            }
@@ -104,18 +105,12 @@ YUI.add('uploadqueue', function(Y) {
 
         startUpload: function() {
 
-          console.log("Starting upload inside uploadqueue....");
-
            while (lastUploadPointer < this.get("simUploads") && lastUploadPointer < fileListLength) {
-                console.log("Launching upload of " + lastUploadPointer);
 
                var currentFile = this.get("fileList")[lastUploadPointer],
                    fileId = currentFile.get("id"),
                    parameters = this.get("perFileParameters"),
                    fileParameters = Lang.isArray(parameters) ? parameters[lastUploadPointer] : parameters;
-               
-                console.log("The file I am looking at is ");
-                console.log(currentFile);
 
                currentUploads[fileId] = 0;
 
@@ -123,9 +118,7 @@ YUI.add('uploadqueue', function(Y) {
                currentFile.on("uploadcomplete", this._uploadCompleteHandler, this);
                currentFile.on("uploaderror", this._uploadErrorHandler, this);
 
-               console.log("Starting the upload of said file...");
-
-               currentFile.startUpload(this.get("uploadURL"), fileParameters);
+               currentFile.startUpload(this.get("uploadURL"), fileParameters, this.get("fileFieldName"));
                lastUploadPointer+=1;
            }
         },
@@ -144,7 +137,7 @@ YUI.add('uploadqueue', function(Y) {
         }
     }, {
 
-        NAME: 'uploadqueue',
+        NAME: 'uploaderqueue',
 
         ATTRS: {
        
@@ -161,9 +154,9 @@ YUI.add('uploadqueue', function(Y) {
         },
 
         errorAction: {
-            value: UploadQueue.CONTINUE,
+            value: UploaderQueue.CONTINUE,
             validator: function (val, name) {
-                return (val === UploadQueue.CONTINUE || val === UploadQueue.STOP || val === UploadQueue.RESTART);
+                return (val === UploaderQueue.CONTINUE || val === UploaderQueue.STOP || val === UploaderQueue.RESTART);
             }
         },
 
@@ -191,6 +184,10 @@ YUI.add('uploadqueue', function(Y) {
             }   
         },
 
+        fileFieldName: {
+           value: "Filedata"
+        },
+
         uploadURL: {
           value: ""
         },
@@ -207,7 +204,7 @@ YUI.add('uploadqueue', function(Y) {
 
 
     Y.namespace('Uploader');
-    Y.Uploader.UploadQueue = UploadQueue;
+    Y.Uploader.Queue = UploaderQueue;
 
 
 

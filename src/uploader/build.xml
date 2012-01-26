@@ -6,9 +6,9 @@
     <description>Uploader Build File</description>
 
     <target name="all">
-    	<ant antfile="uploadqueue.xml" target="all" />
-    	<ant antfile="html5uploader.xml" target="all" />   	
-    	<ant antfile="flashuploader.xml" target="all" />
+    	<ant antfile="uploader-queue.xml" target="all" />
+    	<ant antfile="uploader-html5.xml" target="all" />   	
+    	<ant antfile="uploader-flash.xml" target="all" />
     	<ant antfile="uploader.xml" target="all" />
     </target>
 </project>

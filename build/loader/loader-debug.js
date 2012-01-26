@@ -3790,18 +3790,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "base"
         ]
     }, 
-    "flashuploader": {
-        "requires": [
-            "swf", 
-            "widget", 
-            "substitute", 
-            "base", 
-            "node", 
-            "event-custom", 
-            "file", 
-            "uploadqueue"
-        ]
-    }, 
     "frame": {
         "requires": [
             "base", 
@@ -3979,15 +3967,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-base", 
             "history-base", 
             "node-base"
-        ]
-    }, 
-    "html5uploader": {
-        "requires": [
-            "widget", 
-            "node-event-simulate", 
-            "substitute", 
-            "file", 
-            "uploadqueue"
         ]
     }, 
     "imageloader": {
@@ -4668,11 +4647,32 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "uploader": {
         "requires": [
-            "html5uploader", 
-            "flashuploader"
+            "uploader-html5", 
+            "uploader-flash"
         ]
     }, 
-    "uploadqueue": {
+    "uploader-flash": {
+        "requires": [
+            "swf", 
+            "widget", 
+            "substitute", 
+            "base", 
+            "node", 
+            "event-custom", 
+            "file", 
+            "uploader-queue"
+        ]
+    }, 
+    "uploader-html5": {
+        "requires": [
+            "widget", 
+            "node-event-simulate", 
+            "substitute", 
+            "file", 
+            "uploader-queue"
+        ]
+    }, 
+    "uploader-queue": {
         "requires": [
             "base"
         ]
@@ -4835,7 +4835,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'a24d67d2ab7d0ea7d43f2824c8945701';
+YUI.Env[Y.version].md5 = '45eb77b39306ccaa92fad1a351de984d';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

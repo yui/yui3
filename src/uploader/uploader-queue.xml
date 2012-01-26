@@ -2,7 +2,7 @@
 <project name="Uploader" default="local">
     <property environment="env" />
 
-    <property file="flashuploader.properties" />
+    <property file="uploader-queue.properties" />
 
     <import file="${builddir}/3.x/bootstrap.xml" 
             description="Default Build Properties and Targets" />

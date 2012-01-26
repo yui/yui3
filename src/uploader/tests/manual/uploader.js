@@ -4,11 +4,11 @@ YUI({
     filter: "raw",
     debug: true,
     useBrowserConsole: true
-}).use('uploader-html5',  function(Y) {
+}).use('uploader',  function(Y) {
 
-var myuploader = new Y.UploaderHTML5({contentBox: "#fileselection", 
-                                      multipleFiles: true, 
-                                      uploadURL: "upload.php"});
+var myuploader = new Y.Uploader({contentBox: "#fileselection", 
+                                 multipleFiles: true, 
+                                 uploadURL: "upload.php"});
 myuploader.render();
 
 myuploader.set("multipleFiles", true);

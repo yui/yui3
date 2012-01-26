@@ -1,11 +1,11 @@
 {
-    "html5uploader": {
+    "uploader-html5": {
         "requires": [
             "widget",
             "node-event-simulate",
             "substitute",
             "file",
-            "uploadqueue"
+            "uploader-queue"
         ] 
     }
 }

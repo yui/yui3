@@ -1,8 +1,8 @@
 {
     "uploader": {
         "requires": [
-            "html5uploader", 
-            "flashuploader"
+            "uploader-html5", 
+            "uploader-flash"
         ] 
     }
 }
