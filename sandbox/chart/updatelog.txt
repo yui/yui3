@@ -1,1 +1,0 @@
-Prototyped as/js bridge to register for listeners from swf, with Event.on. 

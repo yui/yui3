@@ -86,6 +86,7 @@ Y.ClickableRail = Y.mix(ClickableRail, {
         _onRailMouseDown: function (e) {
             if (this.get('clickableRail') && !this.get('disabled')) {
                 this.fire('railMouseDown', { ev: e });
+                this.thumb.focus();
             }
         },
 

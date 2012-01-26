@@ -1265,7 +1265,7 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A rollup module
             Assert.isTrue((loader.sorted.indexOf("frame")) > -1, "Module (frame) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("selection")) > -1, "Module (selection) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("editor-selection")) > -1, "Module (editor-selection) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("exec-command")) > -1, "Module (exec-command) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("editor-base")) > -1, "Module (editor-base) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("editor-para")) > -1, "Module (editor-para) not found in sorted array");
@@ -1323,6 +1323,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("editor-para")) > -1, "Module (editor-para) not found in sorted array");
+        },
+     "Testing editor-selection": function(data) {
+            var loader = new Y.Loader({
+                require: ["editor-selection"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("editor-selection")) > -1, "Module (editor-selection) not found in sorted array");
         },
      "Testing editor-tab": function(data) {
             var loader = new Y.Loader({
@@ -2459,16 +2469,6 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("scrollview-scrollbars")) > -1, "Module (scrollview-scrollbars) not found in sorted array");
         },
-     "Testing selection": function(data) {
-            var loader = new Y.Loader({
-                require: ["selection"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("selection")) > -1, "Module (selection) not found in sorted array");
-        },
      "Testing selector": function(data) {
             var loader = new Y.Loader({
                 require: ["selector"],
@@ -2732,6 +2732,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("view")) > -1, "Module (view) not found in sorted array");
+        },
+     "Testing view-node-map": function(data) {
+            var loader = new Y.Loader({
+                require: ["view-node-map"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("view-node-map")) > -1, "Module (view-node-map) not found in sorted array");
         },
      "Testing widget": function(data) {
             var loader = new Y.Loader({

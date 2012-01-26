@@ -1,0 +1,219 @@
+<div class="intro">
+    <p>
+        Loader dynamically loads script and css files for YUI modules as well as external modules.
+        It includes the dependency
+        infomation for the version of the library in use, and will automatically pull in
+        dependencies for the modules requested. It can load the
+        files from the Yahoo! CDN as well as local combo servers.
+    </p>
+</div>
+
+<h2>Configuration Options</h2>
+
+<p>The valid configuration options for Loader are as follows:<p>
+<ul>
+    <li>`lang`: The list of preferred languages, as BCP 47 language tags, in order of preference.
+    The loader uses this list to determine the best language to use for modules with
+    language sensitive behavior and to load the necessary resource bundles.
+    See the <a href="../intl/">Internationalization</a> module for more information.</li>
+    <li>`base`: The base dir</li>
+    <li>`comboBase`: The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?</li>
+    <li>`maxURLLength`: The maximum URL length a combo url should be before it's chopped into a separate request.</li>
+    <li>`comboSep`: The separator to use to build the combo request (defaults to &amp;)</li>
+    <li>`root`: The root path to prepend to module names for the combo service. Ex: 2.5.2/build/</li>
+    <li>`filter`: A filter to apply to result urls.  This filter will modify the default
+        path for all modules.  The default path for the YUI library is the
+        minified version of the files (e.g., event-min.js).  The filter property
+        can be a predefined filter or a custom filter.  The valid predefined
+        filters are:
+        <ul>
+            <li>`DEBUG`: Selects the debug versions of the library (e.g., event-debug.js). </li>
+            <li>`RAW`: Selects the non-minified version of the library (e.g., event.js).</li>
+        </ul>
+        You can also define a custom filter, which must be an object literal
+        containing a search expression and a replace string:
+        <pre>
+        myFilter: &#123;
+        'searchExp': "-min\\.js",
+        'replaceStr': "-debug.js"
+        &#125;
+        </pre>
+    </li>
+    <li>`combine`: Use the YUI combo service to reduce the number of http connections required to load your dependencies</li>
+    <li>`ignore`: A list of modules that should never be dynamically loaded</li>
+    <li>`force`: A list of modules that should always be loaded when required, even if already present on the page</li>
+    <li>`insertBefore`: Node or id for a node that should be used as the insertion point for new nodes</li>
+    <li>`charset`: charset for dynamic nodes</li>
+    <li>`jsAttributes`: attributes to apply to dynamic script nodes</li>
+    <li>`cssAttributes`: attributes to apply to dynamic link nodes</li>
+    <li>`timeout`: number of milliseconds before a timeout occurs when dynamically loading nodes.  in not set, there is no timeout</li>
+    <li>`context`: execution context for all callbacks</li>
+    <li>`modules`:  A list of module definitions.  The valid module configuration data is as follows:
+        <ul>
+            <li>`name`:       required, the component name</li>
+            <li>`type`:       required, the component type (js or css)</li>
+            <li>`path`:       required if fullpath is not specified, the path to the script from "base"</li>
+            <li>`fullpath`:   required if path isn't specified, the full path to the script.  "base" will not be used to build the url</li>
+            <li>`requires`:   array of modules required by this component</li>
+            <li>`optional`:   array of optional modules for this component</li>
+            <li>`supersedes`: array of the modules this component replaces</li>
+            <li>`after`:      array of modules the components which, if present, should be sorted above this one</li>
+            <li>`rollup`:     the number of superseded modules required for automatic rollup</li>
+            <li>`lang`:       array of BCP 47 language tags of languages for which this module has localized resource bundles</li>
+            <li>`condition`: Specifies that the module should be loaded automatically if
+                a condition is met.  This is an object with up to three fields:
+                <ul>
+                    <li>`trigger` - the name of a module that can trigger the auto-load</li>
+                    <li>`test` - a function that returns true when the module is to be loaded.</li>
+                    <li>`when` - specifies the load order of the conditional module with regard to the position of the trigger module.
+                        This should be one of three values: `before`, `after`, or `instead`.  The default is `after`.</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li>`groups`: in 3.1.0, the groups config was added as an enhancement over the 'modules' config.  Each group can override
+    the `base`, `comboBase`, `root`, `combine`, `maxURLLength`, `comboSep` and `modules`
+    configs listed above.  These values are used for all of the modules listed in the group</li>
+</ul>
+
+<h2>Using Loader on Node.js</h2>
+
+<p>
+    Loader can be used on Node.js for offline dependency calculations as well as dynamic file serving.
+</p>
+
+```
+var loader = new Y.Loader({
+    //Don't combine the files
+    combine: false,
+    //Ignore things that are already loaded (in this process)
+    ignoreRegistered: true,
+    //Set the base path
+    base: 'build/'
+    //And the root
+    root: __dirname,
+    //Require your deps
+    require: [ 'node', 'yql' ]
+});
+
+var out = loader.resolve(true);
+
+//This will be an object of js and css files needed to complete this request.
+console.log(out);
+
+```
+
+<h3>Custom Modules</h3>
+<p>
+You can also use custom YUI modules as well as core YUI modules:
+</p>
+
+```
+var loader = new Y.Loader({
+    modules: {
+        foo: {
+            fullpath: path.join(__dirname, './foo.js')
+        }
+    },
+    require: ['foo']
+});
+```
+
+<h3>External Modules</h3>
+<p>
+    And you can even use external modules:
+</p>
+
+```
+#!/usr/bin/env node
+
+var Y = require('./yui-min').YUI();
+
+var loader = new Y.Loader({
+    base: __dirname,
+    modules: {
+        jquery: {
+            path: '/vendor/jquery.js'
+        },
+        backbone: {
+            path: '/vendor/backbone.js',
+            requires: [ 'jquery' ]
+        }
+    }
+});
+
+loader.require('backbone');
+
+var out = loader.resolve(true);
+
+console.log(out);
+
+/*
+{
+    js: 
+      [ '/Users/davglass/src/loader/vendor/jquery.js',
+        '/Users/davglass/src/loader/vendor/backbone.js' ],
+    css: []
+}
+*/
+
+```
+
+<p>
+    Using this approach, you can build CLI tools to concat files for deployment or even use query string parameters
+    passed to a web app to return the content.
+</p>
+
+<h2>Example config</h2>
+
+```
+YUI({
+       lang: 'ko-KR,en-GB,zh-Hant-TW', // languages in order of preference
+       base: '../../build/', // the base path to the YUI install.  Usually not needed because the default is the same base path as the yui.js include file
+       charset: 'utf-8', // specify a charset for inserted nodes, default is utf-8
+       loadOptional: true, // automatically load optional dependencies, default false
+       combine: true, // use the Yahoo! CDN combo service for YUI resources, default is true unless 'base' has been changed
+       filter: 'raw', // apply a filter to load the raw or debug version of YUI files
+       timeout: 10000, // specify the amount of time to wait for a node to finish loading before aborting
+       insertBefore: 'customstyles', // The insertion point for new nodes
+       // one or more external modules that can be loaded along side of YUI.  This is the only pattern
+       // that was supported in 3.0.0 for declaring external modules.  3.1.0 adds 'groups' support,
+       // which is an easier way to define a group of modules.  See below.
+       modules:  {
+           yui2_yde_datasource: {
+               fullpath: 'http://yui.yahooapis.com/combo?2.7.0/build/yahoo-dom-event/yahoo-dom-event.js&2.7.0/build/datasource/datasource-min.js'
+           },
+           yui_flot: {
+               fullpath: 'http://bluesmoon.github.com/yui-flot/yui.flot.js',
+               requires: ['yui2_yde_datasource']
+           }
+       },
+
+       // one or more groups of modules which share the same base path and
+       // combo service specification.
+       groups: {
+           // Note, while this is a valid way to load YUI2, 3.1.0 has intrinsic
+           // YUI 2 loading built in.  See the examples to learn how to use
+           // this feature.
+           yui2: {
+               combine: true,
+               base: 'http://yui.yahooapis.com/2.8.0r4/build/',
+               comboBase: 'http://yui.yahooapis.com/combo?',
+               root: '2.8.0r4/build/',
+               modules:  { // one or more external modules that can be loaded along side of YUI
+                   yui2_yde: {
+                       path: "yahoo-dom-event/yahoo-dom-event.js"
+                   },
+                   yui2_anim: {
+                       path: "animation/animation.js",
+                       requires: ['yui2_yde']
+                   }
+               }
+           }
+       }
+}).use('dd', 'yui_flot', function(Y) {
+    // All YUI modules required to get drag and drop to work are now loaded.
+});
+```
+
+

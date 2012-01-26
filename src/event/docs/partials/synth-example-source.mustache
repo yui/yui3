@@ -2,11 +2,11 @@
     <p>Step 1. <button type="button" id="attach" tabindex="1">subscribe</button> to the <code>arrow</code> event.<br>
     <input type="checkbox" id="delegate" value="1" tabindex="1">
         <label for="delegate">Use a delegated subscription</label></p>
-    <p>Step 2. Click on a robot and move it around with the arrow keys.</p>
+    <p>Step 2. Click on a toaster-bot and move it around with the arrow keys.</p>
 
     <div id="homebase">
-        <div id="A" class="robot" tabindex="2"></div>
-        <div id="B" class="robot" tabindex="3"></div>
+        <img id="A" class="robot" tabindex="3" src="{{{componentAssets}}}/toast-8b-left.png" />
+        <img id="B" class="robot" tabindex="3" src="{{{componentAssets}}}/toast-8b-right.png" />
     </div>
 
     <button type="button" id="detach" tabindex="4">Detach subscriptions</button>
@@ -14,7 +14,6 @@
 
 <script>
 YUI().use('node', 'event-synthetic', 'transition', function (Y) {
-
     Y.Event.define("arrow", {
         // Webkit and IE repeat keydown when you hold down arrow keys.
         // Opera links keypress to page scroll; others keydown.
@@ -58,30 +57,82 @@ YUI().use('node', 'event-synthetic', 'transition', function (Y) {
 
     var robotA = Y.one('#A'),
         robotB = Y.one('#B'),
-        subs;
+        subs,
+        moving = false;
 
     robotA.setData('x', parseInt(robotA.getStyle('left'), 10));
     robotA.setData('y', parseInt(robotA.getStyle('top'), 10));
     robotB.setData('x', parseInt(robotB.getStyle('left'), 10));
     robotB.setData('y', parseInt(robotB.getStyle('top'), 10));
 
+    // create variables for image path/filenames
+    // Use 8bit pngs for IE
+    var imgBits = (Y.UA.ie && Y.UA.ie < 9) ? '-8b-' : '-24b-',
+        imgNamePre = '{{{componentAssets}}}/toast' + imgBits,
+
+        imgUp = imgNamePre + 'up.png',
+        imgDown = imgNamePre + 'down.png',
+        imgLeft = imgNamePre + 'left.png',
+        imgRight = imgNamePre + 'right.png';
+
+    Y.one('#A').setAttribute('src', imgLeft);
+    Y.one('#B').setAttribute('src', imgRight);
+
     function move(e) {
         // to prevent page scrolling
         e.preventDefault();
-
-        var xy = this.getData();
-
-        switch (e.direction) {
-            case 'up':    xy.y -= 10; break;
-            case 'down':  xy.y += 10; break;
-            case 'left':  xy.x -= 10; break;
-            case 'right': xy.x += 10; break;
+        if(moving){
+            return; // Don't move during a transition (a move)
+        }else{
+            moving = true; // During moving, block other arrow keys from moving
         }
-
+                
+        var xy = this.getData(),
+            imgWidth,
+            imgHeight,
+            // var scale is used to make the image size and distance moved
+            // proportional to the Y position of the image
+            scale = (150 + xy.y) / 150, 
+            moveXDistance = 40,
+            moveYDistance = 20;
+           
+        switch (e.direction) {
+            case 'up':
+                if(xy.y < -100){ 
+                    moving = false;
+                    return; // Stop moving when image gets too small
+                }    
+                xy.y -= Math.round(moveYDistance * scale);
+                e.target.setAttribute('src', imgUp);
+                break;
+            case 'down':  
+                if(xy.y > 90){
+                    moving = false;
+                    return; // Stop moving when image gets too big
+                }    
+                xy.y += Math.round(moveYDistance * scale);
+                e.target.setAttribute('src', imgDown);
+                break;
+            case 'left':
+                xy.x -= Math.round(moveXDistance * scale);
+                e.target.setAttribute('src', imgLeft);
+                break;
+            case 'right':
+                xy.x += Math.round(moveXDistance * scale);
+                e.target.setAttribute('src', imgRight);
+                break;
+        }
+        scale = 150 / (150 - xy.y); // calculate scale with new Y dimentions
+        imgWidth = Math.round(scale * 180) + 'px';
+        imgHeight = Math.round(scale * 210) + 'px';
         this.transition({
             top : (xy.y + 'px'),
             left: (xy.x + 'px'),
-            duration: .2
+            width: imgWidth,
+            height: imgHeight,
+            duration: .8
+        }, function(){
+            moving = false; // now that move is done, allow arrow keys to move again
         });
     }
 
@@ -89,6 +140,7 @@ YUI().use('node', 'event-synthetic', 'transition', function (Y) {
         if (subs) {
             subs.detach();
             subs = null;
+            Y.all('.robot').removeClass('yui3-focused');
         }
     }
 
@@ -106,6 +158,16 @@ YUI().use('node', 'event-synthetic', 'transition', function (Y) {
     });
 
     Y.one("#detach").on("click", detachSubs);
+    Y.all('.robot').on('focus', function(e){
+        if (subs) {
+            Y.all('.robot').removeClass('yui3-focused');
+            e.target.addClass('yui3-focused');
+        }
+    });
+
+    Y.all('.robot').on('click', function(e){
+        e.target.focus();
+    });
 
 });
 </script>

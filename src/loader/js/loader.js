@@ -1,9 +1,7 @@
 /**
  * Loader dynamically loads script and css files.  It includes the dependency
- * info for the version of the library in use, and will automatically pull in
- * dependencies for the modules requested.  It supports rollup files and will
- * automatically use these when appropriate in order to minimize the number of
- * http connections required to load all of the dependencies.  It can load the
+ * information for the version of the library in use, and will automatically pull in
+ * dependencies for the modules requested. It can also load the
  * files from the Yahoo! CDN, and it can utilize the combo service provided on
  * this network to reduce the number of http connections required to download
  * YUI files.
@@ -1990,15 +1988,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
         this.sorted = s;
     },
-    /**
-    * (Unimplemented)
-    * @method partial
-    * @unimplemented
-    */
-    partial: function(partial, o, type) {
-        this.sorted = partial;
-        this.insert(o, type, true);
-    },
 
     /**
     * Handles the actual insertion of script/link tags
@@ -2046,7 +2035,11 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
             if (d && d.errors) {
                 for (i = 0; i < d.errors.length; i++) {
-                    u = d.errors[i].request.url;
+                    if (d.errors[i].request) {
+                        u = d.errors[i].request.url;
+                    } else {
+                        u = d.errors[i];
+                    }
                     errs[u] = u;
                 }
             }
@@ -2196,11 +2189,12 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         var f = this.filter,
             hasFilter = name && (name in this.filters),
             modFilter = hasFilter && this.filters[name],
-	    groupName = this.moduleInfo[name] ? this.moduleInfo[name].group:null;		
-	    if (groupName && this.groups[groupName].filter) {		
-	 	   modFilter = this.groups[groupName].filter;
-		   hasFilter = true;		
-	     };
+	        groupName = this.moduleInfo[name] ? this.moduleInfo[name].group : null;
+
+	    if (groupName && this.groups[groupName] && this.groups[groupName].filter) {		
+	 	    modFilter = this.groups[groupName].filter;
+		    hasFilter = true;		
+	    };
 
         if (u) {
             if (hasFilter) {
@@ -2221,7 +2215,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
      * @method _url
      * @param {string} path the path fragment.
      * @param {String} name The name of the module
-     * @pamra {String} [base=self.base] The base url to use
+     * @param {String} [base=self.base] The base url to use
      * @return {string} the full url.
      * @private
      */
@@ -2262,7 +2256,24 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         }
         s = s || self.sorted;
 
-        if (self.combine) {
+        var addSingle = function(m) {
+            
+            if (m) {
+                group = (m.group && self.groups[m.group]) || NOT_FOUND;
+
+                url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :
+                      self._url(m.path, s[i], group.base || m.base);
+                
+
+                resolved[m.type].push(url);
+                resolved[m.type + 'Mods'].push(m);
+            } else {
+                Y.log('Undefined Module', 'warn', 'loader');
+            }
+            
+        };
+
+        //if (self.combine) {
 
             len = s.length;
 
@@ -2277,14 +2288,13 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 comboSource = comboBase;
                 m = self.getModule(s[i]);
                 groupName = m && m.group;
-                if (groupName) {
-
-                    group = self.groups[groupName];
+                group = self.groups[groupName];
+                if (groupName && group) {
 
                     if (!group.combine) {
-                        m.combine = false;
                         //This is not a combo module, skip it and load it singly later.
-                        singles.push(s[i]);
+                        //singles.push(s[i]);
+                        addSingle(m);
                         continue;
                     }
                     m.combine = true;
@@ -2297,6 +2307,13 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                     }
                     m.comboSep = group.comboSep || self.comboSep;
                     m.maxURLLength = group.maxURLLength || self.maxURLLength;
+                } else {
+                    if (!self.combine) {
+                        //This is not a combo module, skip it and load it singly later.
+                        //singles.push(s[i]);
+                        addSingle(m);
+                        continue;
+                    }
                 }
 
                 comboSources[comboSource] = comboSources[comboSource] || [];
@@ -2328,7 +2345,8 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                             } else {
                                 //Add them to the next process..
                                 if (mods[i]) {
-                                    singles.push(mods[i]);
+                                    //singles.push(mods[i].name);
+                                    addSingle(mods[i]);
                                 }
                             }
 
@@ -2381,15 +2399,17 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                                 resolved[type].push(tmpBase);
                             }
                         }
-                        resolved[type + 'Mods'] = mods;
+                        resolved[type + 'Mods'] = resolved[type + 'Mods'].concat(mods);
                     }
                 }
             }
 
             resCombos = null;
             
-        }
+        //}
 
+        
+        /*
         if (!self.combine || singles.length) {
 
             s = singles.length ? singles : self.sorted;
@@ -2415,10 +2435,22 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :
                       self._url(m.path, s[i], group.base || m.base);
                 
-                resolved[m.type].push(url);
+                /*
+                * This is so top level (non-comboed) YUI modules are at the top of the list.
+                * All other modules come below, this should only happen when `self.combine`
+                * is false.
+                * /
+                if (!self.combine) {
+                    resolved[m.type].unshift(url);
+                } else {
+                    resolved[m.type].push(url);
+                }
+
+
                 resolved[m.type + 'Mods'].push(m);
             }
         }
+        */
 
 
         return resolved;

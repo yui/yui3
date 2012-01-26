@@ -327,7 +327,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         prepended instead of appended to the `viewContainer`.
     @param {Function} [callback] Optional callback Function to call after the
         new `activeView` is ready to use, the function will be passed:
-      @param {View} callback.view
+      @param {View} callback.view A reference to the new `activeView`.
     @chainable
     **/
     showView: function (view, config, options, callback) {
@@ -369,7 +369,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         // TODO: Should the `callback` _always_ be called, even when the
         // `activeView` does not change?
 
-        return this._set('activeView', view, options);
+        return this._set('activeView', view, {options: options});
     },
 
     // -- Protected Methods ----------------------------------------------------
@@ -657,6 +657,53 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     },
 
     /**
+    Performs the actual change of the app's `activeView` by attaching the
+    `newView` to this app, and detaching the `oldView` from this app using any
+    specified `options`.
+
+    The `newView` is attached to the app by rendering it to the `viewContainer`,
+    and making this app a bubble target of its events.
+
+    The `oldView` is detached from the app by removing it from the
+    `viewContainer`, and removing this app as a bubble target for its events.
+    The `oldView` will either be preserved or properly destroyed.
+
+    The `activeView` attribute is read-only and can be changed by calling the
+    `showView()` method.
+
+    @method _uiSetActiveView
+    @param {View} newView The View which is now this app's `activeView`.
+    @param {View} [oldView] The View which was this app's `activeView`.
+    @param {Object} [options] Optional object containing any of the following
+        properties:
+      @param {Boolean} [options.prepend] Whether the new view should be
+        prepended instead of appended to the `viewContainer`.
+      @param {Function} [callback] Optional callback Function to call after the
+        `newView` is ready to use, the function will be passed:
+        @param {View} options.callback.view A reference to the `newView`.
+    @protected
+    **/
+    _uiSetActiveView: function (newView, oldView, options) {
+        options || (options = {});
+
+        var callback = options.callback,
+            isChild  = this._isChildView(newView, oldView),
+            isParent = !isChild && this._isParentView(newView, oldView),
+            prepend  = !!options.prepend || isParent;
+
+        // Prevent detaching (thus removing) the view we want to show.
+        // Also hard to animate out and in, the same view.
+        if (newView === oldView) {
+            return callback && callback.call(this, newView);
+        }
+
+        this._attachView(newView, prepend);
+        this._detachView(oldView);
+
+        callback && callback.call(this, newView);
+    },
+
+    /**
     Upgrades a hash-based URL to a full-path URL, if necessary.
 
     The specified `url` will be upgraded if its of the same origin as the
@@ -711,24 +758,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @protected
     **/
     _afterActiveViewChange: function (e) {
-        var newView  = e.newVal,
-            oldView  = e.prevVal,
-            callback = e.callback,
-            isChild  = this._isChildView(newView, oldView),
-            isParent = !isChild && this._isParentView(newView, oldView),
-            prepend  = !!e.prepend || isParent;
-
-        // Prevent detaching (thus removing) the view we want to show.
-        // Also hard to animate out and in, the same view.
-        if (newView === oldView) {
-            return callback && callback.call(this, newView);
-        }
-
-        // TODO: Remove `viewContainer` before making DOM updates?
-        this._attachView(newView, prepend);
-        this._detachView(oldView);
-
-        callback && callback.call(this, newView);
+        this._uiSetActiveView(e.newVal, e.prevVal, e.options);
     }
 }, {
     ATTRS: {

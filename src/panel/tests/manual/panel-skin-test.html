@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<head>
+<style>
+</style>
+<script type="text/javascript" src="../../../../build/yui/yui-debug.js"></script> 
+<link type="text/css" rel="stylesheet" href="../../../../build/panel/assets/skins/night/panel.css" charset="utf-8">
+
+</head>
+
+<body class="yui3-skin-sam">
+    <div class="yui3-skin-night">
+        <div id="panel"></div>
+    </div>
+
+<script type="text/javascript">
+
+	YUI({filter:"raw"}).use('panel', function(Y) {
+
+    var panel = new Y.Panel({
+        bodyContent: '<p>Is this text white on white?</p><p>body CSS seems like mixture of yui3-skin-sam</p>',
+        headerContent: 'Header CSS seems like yui3-skin-sam',
+        width        : 350,
+        height       : 400,
+        zIndex       : 5,
+        centered     : true,
+        modal        : true,
+        visible      : true,
+        render       : '#panel'
+    });
+
+    panel.addButton({
+        value  : 'Close',
+        section: Y.WidgetStdMod.FOOTER,
+        action : function (e) {
+            e.preventDefault();
+            panel.hide();
+        }
+    });    
+
+
+	});
+	</script>
+</body>
+</html>

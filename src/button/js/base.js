@@ -59,27 +59,26 @@ Y.extend(Button, Y.Base, {
     * @private
     */
     renderUI: function(config) {
-        var node = this.getNode();
+        var button = this;
+        var node = button.getNode();
         
         // Set some default node attributes
-        node.addClass(Button.CLASS_NAMES.button);
-        node.set('role', 'button');
+        node.addClass(Button.CLASS_NAMES.BUTTON);
+        
         
         // Apply any config attributes that may have been passed in.
+        
+        // These should always be run
+        this._renderType(this.get('type'));
+        this._renderSelected(this.get('selected'));
+        
+        // These are optional
         if (config.label) {
             this._renderLabel(this.get('label'));
         }
         
-        if (config.type) {
-            this._renderType(this.get('type'));
-        }
-        
         if (config.disabled) {
             this._renderDisabled(this.get('disabled'));
-        }
-        
-        if (config.selected) {
-            this._renderSelected(this.get('selected'));
         }
     },
     
@@ -93,26 +92,30 @@ Y.extend(Button, Y.Base, {
         var node = button.getNode();
         
         // Listen on some events to handle ARIA & class management
-        node.on('mousedown', this._onMouseDown);
-        node.on('mouseup', this._onMouseUp);
-        node.on('focus', this._onFocus);
-        node.on('blur', this._onBlur);
+        node.on('focus', button._onFocus);
+        node.on('blur', button._onBlur);
+        
+        // TODO: hack to make 'click' a Y.Button event until support is built for DOM events.  
+        // You should not use this.  Use button.getNode().on() instead.
+        node.on('click', function(){
+            this.fire('click');
+        }, button);
         
         // Listen for attribute changes to handle UI updates
         button.after('labelChange', function(e){
-             this._renderLabel(this.get('label'));
+             button._renderLabel(button.get('label'));
         });
         
         button.after('typeChange', function(e){
-            this._renderType(this.get('type'));
+            button._renderType(button.get('type'));
         });
         
         button.after('disabledChange', function(e){
-            this._renderDisabled(this.get('disabled'));
+            button._renderDisabled(button.get('disabled'));
         });
         
         button.after('selectedChange', function(e){
-            this._renderSelected(this.get('selected'));
+            button._renderSelected(button.get('selected'));
         });
     },
 
@@ -215,7 +218,7 @@ Y.extend(Button, Y.Base, {
     */
     _renderDisabled: function (value) {
         this.getNode().set('disabled', value)
-            .toggleClass(Button.CLASS_NAMES.disabled, value);
+            .toggleClass(Button.CLASS_NAMES.DISABLED, value);
     },
     
     /**
@@ -224,8 +227,8 @@ Y.extend(Button, Y.Base, {
     * @protected
     */
     _renderSelected: function(value) {
-        this.getNode().set('aria-selected', value)
-            .toggleClass(Button.CLASS_NAMES.selected, value);
+        this.getNode().set(this.ARIASelectedState, value)
+            .toggleClass(Button.CLASS_NAMES.SELECTED, value);
     },
 
     /**
@@ -235,18 +238,37 @@ Y.extend(Button, Y.Base, {
     */
     _renderType: function(value) {
         var button = this;
-        if (value === "toggle") {
-            var node = button.getNode();
+        var node = button.getNode();
+        var role = value;
+        
+        if (value === 'checkbox') {
+            this.ARIASelectedState = Button.ARIA.CHECKED;
+        }
+        else {
+            this.ARIASelectedState = Button.ARIA.PRESSED;
+        }
+            
+        if (value === 'toggle' || value === 'checkbox') {
             button._clickHandler = node.on('click', function(){
                 button.set('selected', !button.get('selected'));
             }, button);
         }
+        else if (value === 'radio') {
+            // nothing ?
+        }
         else {
+            if (!node.test('input') && !node.test('button')) {
+                role = 'button';
+            }
+            
+            // This probably shouldn't be set, but if it is.
             if (button._clickHandler) {
                 button._clickHandler.detach();
                 button._clickHandler = false;
             }
         }
+
+        node.set('role', role);
     }
 }, {
     /** 
@@ -298,10 +320,15 @@ Button.NAME = "button";
 * @static
 */
 Button.CLASS_NAMES = {
-    button  : makeClassName(),
-    selected: makeClassName('selected'),
-    focused : makeClassName('focused'),
-    disabled: makeClassName('disabled')
+    BUTTON  : makeClassName(),
+    SELECTED: makeClassName('selected'),
+    FOCUSED : makeClassName('focused'),
+    DISABLED: makeClassName('disabled')
+}
+
+Button.ARIA = {
+    CHECKED: 'aria-checked',
+    PRESSED: 'aria-pressed'
 }
 
 
@@ -314,7 +341,7 @@ Button.CLASS_NAMES = {
 * @protected
 */
 Button.prototype._onBlur = function(e){
-    e.target.removeClass(Button.CLASS_NAMES.focused);
+    e.target.removeClass(Button.CLASS_NAMES.FOCUSED);
 };
 
 /**
@@ -324,27 +351,7 @@ Button.prototype._onBlur = function(e){
 * @protected
 */
 Button.prototype._onFocus = function(e){
-    e.target.addClass(Button.CLASS_NAMES.focused);
-};
-
-/**
-* @method _onMouseUp
-* @description An event handler for 'mouseup' events
-* @param e {DOMEvent} the event object
-* @protected
-*/
-Button.prototype._onMouseUp = function(e){
-    e.target.setAttribute('aria-pressed', 'false');
-};
-
-/**
-* @method _onMouseDown
-* @description An event handler for 'mousedown' events
-* @param e {DOMEvent} the event object
-* @protected
-*/
-Button.prototype._onMouseDown = function(e){
-    e.target.setAttribute('aria-pressed', 'true');
+    e.target.addClass(Button.CLASS_NAMES.FOCUSED);
 };
 
 // Export Button
