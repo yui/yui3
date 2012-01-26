@@ -188,7 +188,7 @@
                                                 clientY: markerXY[1] + markerHeight/2
                                             }); 
                                             markerData = this.getMarkerData(this.result);                
-                                            categoryValue = Y.Escape.html(this.chart.get("dataProvider")[markerData.index][categoryKey]);
+                                            categoryValue = this.chart.get("dataProvider")[markerData.index][categoryKey];
                                             if(this.chart.get("categoryType") == "time")
                                             {
                                                 categoryValue = getNumber(categoryValue);

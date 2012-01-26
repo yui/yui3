@@ -20,27 +20,7 @@ var DOCUMENT = Y.config.doc,
     CircleGroup,
     RectGroup,
     EllipseGroup,
-    DiamondGroup,
-    /**
-     * Updates the content of text field. This method writes a value into a text field using 
-     * `appendChild`. If the value is a `String`, it is converted to a `TextNode` first. 
-     *
-     * @method SETTEXT
-     * @param label {HTMLElement} label to be updated
-     * @param val {String} value with which to update the label
-     * @private
-     */
-    SETTEXT = function(textField, val)
-    {
-        textField.innerHTML = "";
-        if(IS_STRING(val))
-        {
-            val = DOCUMENT.createTextNode(val);
-        }
-        textField.appendChild(val);
-    };
-
-
+    DiamondGroup;
 
 /**
  * Abstract class for creating groups of shapes with the same styles and dimensions.
@@ -2961,7 +2941,26 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
      * @type Number
      * @protected
      */
-    _maxLabelSize: 0
+    _maxLabelSize: 0,
+    
+    /**
+     * Updates the content of text field. This method writes a value into a text field using 
+     * `appendChild`. If the value is a `String`, it is converted to a `TextNode` first. 
+     *
+     * @method _setText
+     * @param label {HTMLElement} label to be updated
+     * @param val {String} value with which to update the label
+     * @private
+     */
+    _setText: function(textField, val)
+    { 
+        textField.innerHTML = "";
+        if(IS_STRING(val))
+        {
+            val = DOCUMENT.createTextNode(val);
+        }
+        textField.appendChild(val);
+    }
 }, {
     ATTRS: 
     {
@@ -3325,7 +3324,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         appendLabelFunction: {
             getter: function()
             {
-                return SETTEXT;
+                return this._setText;
             }
         },
         
@@ -3346,7 +3345,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         appendTitleFunction: {
             getter: function()
             {
-                return SETTEXT;
+                return this._setText;
             }
         }
             
@@ -12372,7 +12371,7 @@ ChartBase.prototype = {
     {
         var node = DOCUMENT.createElement("div"),
             tt = {
-                setTextFunction: SETTEXT,
+                setTextFunction: this._setText,
                 markerLabelFunction: this._tooltipLabelFunction,
                 planarLabelFunction: this._planarLabelFunction,
                 show: true,
@@ -12516,6 +12515,25 @@ ChartBase.prototype = {
                 }
             }
         }
+    },
+    
+    /**
+     * Updates the content of text field. This method writes a value into a text field using 
+     * `appendChild`. If the value is a `String`, it is converted to a `TextNode` first. 
+     *
+     * @method _setText
+     * @param label {HTMLElement} label to be updated
+     * @param val {String} value with which to update the label
+     * @private
+     */
+    _setText: function(textField, val)
+    { 
+        textField.setContent("");
+        if(IS_STRING(val))
+        {
+            val = DOCUMENT.createTextNode(val);
+        }
+        textField.appendChild(val);
     }
 };
 Y.ChartBase = ChartBase;
