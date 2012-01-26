@@ -1045,7 +1045,26 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
      * @type Number
      * @protected
      */
-    _maxLabelSize: 0
+    _maxLabelSize: 0,
+    
+    /**
+     * Updates the content of text field. This method writes a value into a text field using 
+     * `appendChild`. If the value is a `String`, it is converted to a `TextNode` first. 
+     *
+     * @method _setText
+     * @param label {HTMLElement} label to be updated
+     * @param val {String} value with which to update the label
+     * @private
+     */
+    _setText: function(textField, val)
+    { 
+        textField.innerHTML = "";
+        if(IS_STRING(val))
+        {
+            val = DOCUMENT.createTextNode(val);
+        }
+        textField.appendChild(val);
+    }
 }, {
     ATTRS: 
     {
@@ -1409,7 +1428,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         appendLabelFunction: {
             getter: function()
             {
-                return SETTEXT;
+                return this._setText;
             }
         },
         
@@ -1430,7 +1449,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         appendTitleFunction: {
             getter: function()
             {
-                return SETTEXT;
+                return this._setText;
             }
         }
             
