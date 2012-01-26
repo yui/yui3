@@ -89,13 +89,15 @@ var PARENT_NODE = 'parentNode',
                         nodes = root.getElementsByTagName(tagName);
                     }
 
-                } else { // brute getElementsByTagName('*')
+                } else { // brute getElementsByTagName()
                     child = root.firstChild;
                     while (child) {
-                        if (child.tagName) { // only collect HTMLElements
+                        // only collect HTMLElements
+                        // match tag to supplement missing getElementsByTagName
+                        if (child.tagName && (tagName === '*' || child.tagName === tagName)) {
                             nodes.push(child);
                         }
-                        child = child.nextSilbing || child.firstChild;
+                        child = child.nextSibling || child.firstChild;
                     }
                 }
                 if (nodes.length) {
