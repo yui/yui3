@@ -869,8 +869,12 @@ YUI({
                 });
                 node.destroy();
                 test.wait(2000);
+            },
+
+            'should clean up style object': function() {
+
             }
-        }));           
+        }));
 
         suite.add(new Y.Test.Case({
             name: 'toggleView Tests',
