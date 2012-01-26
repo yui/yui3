@@ -253,7 +253,7 @@ YUI.add('frame', function(Y) {
             inst.on('focus', Y.bind(this._onDomEvent, this), inst.config.win);
             inst.on('blur', Y.bind(this._onDomEvent, this), inst.config.win);
 
-            inst._use = inst.use;
+            inst.__use = inst.use;
             inst.use = Y.bind(this.use, this);
             this._iframe.setStyles({
                 visibility: 'inherit'
@@ -531,7 +531,7 @@ YUI.add('frame', function(Y) {
 
                 });
             }
-            inst._use.apply(inst, args);
+            inst.__use.apply(inst, args);
         },
         /**
         * @method delegate
@@ -989,4 +989,4 @@ YUI.add('frame', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['base', 'node', 'selector-css3', 'substitute', 'yui-throttle']});
+}, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute', 'yui-throttle'], skinnable:false});
