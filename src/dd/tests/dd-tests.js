@@ -344,7 +344,6 @@ YUI.add('dd-tests', function(Y) {
             if (Y.UA.mobile || Y.UA.android || Y.UA.webos || (Y.one('win').get('winHeight') < 200)) {
                 return true;
             }
-            console.log();
             Y.one('body').setStyle('height', '3000px');
             Y.one('#drag').setStyles({ top: '', left: '' });
             dd = new Y.DD.Drag({
