@@ -107,6 +107,16 @@
         */        
         groups: {
             value: ['default'],
+            getter: function() {
+                if (!this._groups) {
+                    this._groups = {};
+                }
+                var ret = [];
+                Y.each(this._groups, function(v, k) {
+                    ret[ret.length] = k;
+                });
+                return ret;
+            },            
             setter: function(g) {
                 this._groups = {};
                 Y.each(g, function(v, k) {
