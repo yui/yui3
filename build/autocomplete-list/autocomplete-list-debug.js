@@ -541,6 +541,15 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             // container is hidden.
             this._boundingBox.get('offsetWidth');
         }
+
+        // In some pages, IE7 fails to repaint the contents of the list after it
+        // becomes visible. Toggling a bogus class on the body forces a repaint
+        // that fixes the issue.
+        if (Y.UA.ie === 7) {
+            Y.one('body')
+                .addClass('yui3-ie7-sucks')
+                .removeClass('yui3-ie7-sucks');
+        }
     },
 
     // -- Protected Event Handlers ---------------------------------------------
