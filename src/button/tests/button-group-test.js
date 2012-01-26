@@ -86,19 +86,59 @@ suite.add(new Y.Test.Case({
     
     'ButtonGroup.addButton() should add an additional Y.Button instance to the array of buttons': function () {
         var ButtonGroup = this.ButtonGroup;
-        var buttons = ButtonGroup.getButtons();
         
         // Create a new button
         newButton = new Y.Button({
             srcNode: Y.Node.create('<button>6</button>')
         });
         
-        // Ensure no buttons are selected
         Assert.areSame(5, ButtonGroup.getButtons().length);
         
         // Add the button, and assert the new length
         ButtonGroup.addButton(newButton);
         Assert.areSame(6, ButtonGroup.getButtons().length);
+    }
+    
+}));
+
+// -- Methods ----------------------------------------------------------------
+suite.add(new Y.Test.Case({
+    name: 'Methods',
+
+    setUp : function () {
+        var buttons = [];
+        
+        // Create a few buttons
+        for(var i=0; i < 5; i++) {
+            button = new Y.Button({
+                srcNode: Y.Node.create('<button>' + i + '</button>')
+            });
+            button.getNode().set('value', i);
+            buttons.push(button);
+        }
+
+        this.ButtonGroup = new Y.ButtonGroup({
+            buttons: buttons,
+            type: 'radio'
+        });
+    },
+    
+    tearDown: function () {
+        Y.one('#container').empty();
+    },
+    
+    'ButtonGroup type radio should only have 0 or 1 buttons selected': function () {
+        var ButtonGroup = this.ButtonGroup;
+        var buttons = ButtonGroup.getButtons();
+
+        Assert.areSame(0, ButtonGroup.getSelectedButtons().length);
+        
+        buttons[1].getNode().simulate('click');
+        Assert.areSame(1, ButtonGroup.getSelectedButtons().length);
+        
+        buttons[2].getNode().simulate('click');
+        buttons[3].getNode().simulate('click');
+        Assert.areSame(1, ButtonGroup.getSelectedButtons().length);
     }
     
 }));

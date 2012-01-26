@@ -94,7 +94,7 @@
                 });
 
                 buttonGroup2.after('selectionChange', function(e){
-                    var selection = buttonGroup2.get('selection');
+                    var selection = buttonGroup2.getSelectedButtons();
                     Y.log('buttonGroup2 selected count = ' + selection.length);
                 });
 
