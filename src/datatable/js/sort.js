@@ -4,88 +4,112 @@ Adds support for column sort.
 @module datatable-sort
 **/
 var YLang     = Y.Lang,
-    isString  = YLang.isString,
     isBoolean = YLang.isBoolean,
     isArray   = YLang.isArray,
     isObject  = YLang.isObject,
 
-    toArray    = Y.Array,
-    arrayIndex = Y.Array.indexOf;
+    toArray     = Y.Array,
+    arraySearch = Y.Array.some,
+
+    dirMap = {
+        asc : 1,
+        desc: -1,
+        "1" : 1,
+        "-1": -1
+    };
 
 
 function Sortable() {}
 
 Sortable.ATTRS = {
+    // Which columns in the UI should suggest and respond to sorting interaction
+    // pass an empty array if no UI columns should show sortable, but you want the
+    // table.sort(...) API
     sortable: {
         value: 'auto',
         validator: '_validateSortable'
+    },
+
+    // Current sort state
+    sortBy: {
+        setter: '_setSortBy'
     }
 };
 
 Y.mix(Sortable.prototype, {
+
     sort: function (fields, payload) {
-        var sortBy = [],
-            modelFields = this.get('recordType').ATTRS,
-            sortDir { asc: 1, desc: -1, 1: 1, -1: -1 },
-            i, len, field, dir;
+        var modelFields = this.get('recordType').ATTRS,
+            sortBy      = fields ? [] : this._sort,
+            i, len, name, dir, field, column;
 
         // Calling sort() without args will redo the current sort
         if (fields) {
-            if (isArray(fields)) {
-                for (i = 0, len = fields.length; i < len; ++i) {
-                    field = fields[i];
+            fields = toArray(fields);
 
-                    if (isString(field)) {
-                        field = this.getColumn(field);
+            for (i = 0, len = fields.length; i < len; ++i) {
+                name = sortBy[i];
+                dir  = 1;
 
-                        if (!field && modelFields[field]) {
-                            field = {
-                                key: field,
-
-                            }
+                if (isObject(name)) {
+                    field = name;
+                    // Have to use a for-in loop to process sort({ foo: -1 })
+                    for (name in field) {
+                        if (field.hasOwnProperty(name)) {
+                            dir = dirMap[field[name]];
+                            break;
                         }
                     }
+                }
 
-                    if (col) {
-                        col.sortDir = col.sortDir ? sortDir[col.sortDir] : 1;
-                        sortBy.push(col);
+                if (name) {
+                    // Allow sorting of any model field and any column
+                    column = this.getColumn(name) ||
+                             (modelFields[name] && { _id: name, key: name });
+
+                    if (column) {
+                        // FIXME: This updates the column configuration before the
+                        // sortByChange or sort event, which could be prevented
+                        column.sortDir = dir;
+                        sortBy.push(column);
                     }
                 }
             }
         }
-        columns = columns ? toArray(columns) : this._sort;
-
-        for (i = 0, len = columns.length) {
-            col = columns[i];
-
-            if (isArray(col)) {
-            }
-        }
 
         this.fire('sort', Y.merge((payload || {}), {
-            sortBy: columns
+            sortBy: sortBy
         }));
     },
 
     toggleSort: function (columns, payload) {
-        var current = this._sort,
-            i, len, col, indexdir;
+        var sortBy = this._sort,
+            i, len, j, col, index;
 
-        columns = toArray(columns || current);
+        if (columns) {
+            columns = toArray(columns);
 
-        for (i = 0, len = columns.length; i < len; ++i) {
-            col = columns[i];
+            for (i = 0, len = columns.length; i < len; ++i) {
+                col = columns[i];
+                index = -1;
 
-            if (!isObject(col)) {
-                col = this.getColumn(col);
+                for (j = sortBy.length - 1; i >= 0; --i) {
+                    if (sortBy[j]._id === col) {
+                        sortBy[j].sortDir *= -1;
+                        break;
+                    }
+                }
             }
-
-            index = arrayIndex(current, col);
-
-            if (index > -1) {
-                columns
+        } else {
+            for (i = 0, len = sortBy.length; i < len; ++i) {
+                sortBy[i].sortDir *= -1;
             }
         }
+
+        // FIXME: cache previous directions and publish with a preventedFn?
+        this.fire('sort', Y.merge((payload || {}), {
+            sortBy: sortBy
+        }));
     },
 
     //----------------------------------------------------------------------------
@@ -101,10 +125,14 @@ Y.mix(Sortable.prototype, {
         }
     },
 
-    _bindSortUI: function () {
-        this._uiSetSortable();
+    _afterSortByChange: function (e) {
+        this._sort = e.sortBy || [];
 
-        this.after(['sortableChange', 'columnsChange'],
+        this.data.sort();
+    },
+
+    _bindSortUI: function () {
+        this.after(['sortableChange', 'sortByChange', 'columnsChange'],
             this._uiSetSortable);
 
         if (this._theadNode) {
@@ -115,15 +143,21 @@ Y.mix(Sortable.prototype, {
     },
             
     _defSortFn: function (e) {
-        this._sort = e.sortBy || this._sort;
+        this.set.apply(this, ['sortBy', e.sortBy].concat(e.details));
+    },
 
-        this.data.sort();
+    destructor: function () {
+        if (this._sortHandle) {
+            this._sortHandle.detach();
+        }
     },
 
     initializer: function () {
         var boundParseSortable = Y.bind('_parseSortable', this);
 
         this._parseSortable();
+
+        this._sort = toArray(this.get('sortBy'));
 
         this._initSortFn();
 
@@ -136,11 +170,12 @@ Y.mix(Sortable.prototype, {
 
         this.publish('sort', {
             defaultFn: Y.bind('_defSortFn', this)
+            // TODO: preventedFn to restore sortDir applied before fire()
         });
     },
 
     _initSortFn: function () {
-        var columns = this._sortColumns;
+        var self = this;
 
         // TODO: This should be a ModelList extension.
         // FIXME: Modifying a component of the host seems a little smelly
@@ -152,8 +187,8 @@ Y.mix(Sortable.prototype, {
             var cmp = 0,
                 i, len, col, dir, aa, bb;
 
-            for (var i = 0, len = columns.length; !cmp && i < len; ++i) {
-                col = columns[i];
+            for (i = 0, len = self._sort.length; !cmp && i < len; ++i) {
+                col = self._sort[i];
                 dir = col.sortDir;
 
                 if (col.sortFn) {
@@ -170,7 +205,7 @@ Y.mix(Sortable.prototype, {
             return cmp;
         };
 
-        if (sortable) {
+        if (this.get('sortable')) {
             this.data.comparator = this._sortComparator;
 
             // TODO: is this necessary? Should it be elsewhere?
@@ -185,19 +220,29 @@ Y.mix(Sortable.prototype, {
     _onUITriggerSort: function (e) {
         e.preventDefault();
 
-        var headers = this._theadNode.all(
-                        '.' + this.getClassName('sortable', 'column')),
-            index = headers.indexOf(e.currentTarget),
-            current;
+        var id      = e.currentTarget.get('id'),
+            columns = this._displayColumns,
+            sortBy  = this.get('sortBy'),
+            config;
 
         // TODO: if (e.ctrlKey) { /* subsort */ }
-        if (index > -1) {
-            
-            this.fire('sort', {
+        if (id) {
+            arraySearch(columns, function (col) {
+                if (id === col._yuid) {
+                    config = { column: col._id, dir: 1 };
+                    return true;
+                }
+            });
+        }
+
+        if (config) {
+            if (sortBy && sortBy.column === config.column) {
+                config.dir = sortBy.dir * -1;
+            }
+
+            this.set('sortBy', config, {
                 originEvent: e,
-                sortBy: [
-                    
-                ]
+                src: Y.Widget.UI_SRC
             });
         }
     },
@@ -213,12 +258,12 @@ Y.mix(Sortable.prototype, {
 
                 // isArray is called because arrays are objects, but will rely
                 // on getColumn to nullify them for the subsequent if (col)
-                if (!isObject(col, true) && !isArray(col)) {
+                if (!isObject(col, true) || isArray(col)) {
                     col = this.getColumn(col);
                 }
 
                 if (col) {
-                    columns.push(col);
+                    columns.push(col._yuid);
                 }
             }
         } else if (sortable) {
@@ -231,13 +276,17 @@ Y.mix(Sortable.prototype, {
                     }
                 }
             }
+
+            for (i = 0, len = columns.length; i < len; ++i) {
+                columns[i] = columns[i]._yuid;
+            }
         }
 
-        this._sort = columns;
+        this._sortable = columns;
     },
 
     _renderSortable: function () {
-        this._uiSetSortable()
+        this._uiSetSortable();
 
         this._bindSortUI();
     },
@@ -252,9 +301,16 @@ Y.mix(Sortable.prototype, {
     },
 
     _uiSetSortable: function () {
+        var columns     = this._sortable || [],
+            sortableClass = this.getClassName('sortable', 'column');
+
         this.get('boundingBox').toggleClass(
             this.getClassName('sortable'),
-            (this._sort && this._sort.length));
+            columns.length);
+
+        this._theadNode.all('.' + sortableClass).removeClass(sortableClass);
+
+        this._theadNode.all('#' + columns.join(', #')).addClass(sortableClass);
     }
 }, true);
 
