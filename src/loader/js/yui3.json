@@ -324,6 +324,7 @@
     }, 
     "calendar": {
         "lang": [
+            "de", 
             "en", 
             "ja", 
             "ru"
@@ -336,6 +337,7 @@
     }, 
     "calendar-base": {
         "lang": [
+            "de", 
             "en", 
             "ja", 
             "ru"
