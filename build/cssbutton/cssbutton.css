@@ -30,7 +30,7 @@
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#80ffffff', endColorstr='#00ffffff', GradientType=0);
     text-decoration: none;
     border: none;
-    *border: solid 1px #999;
+    border: solid 1px #999\9; /*ie hack*/
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
@@ -47,6 +47,12 @@
 }
 
 
+a.yui3-button {
+    color: rgba(0,0,0, 0.80);
+    color: #444;
+    text-decoration:none;
+}
+
 
 .yui3-button:hover {
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(transparent), color-stop(40%, rgba(0,0,0, 0.05)), to(rgba(0,0,0, 0.15)));
@@ -57,7 +63,6 @@
     background-image: linear-gradient(transparent, rgba(0,0,0, 0.05) 40%, rgba(0,0,0, 0.15));
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00000000', endColorstr='#26000000', GradientType=0);
 }
-
 
 
 .yui3-button:active {
@@ -72,7 +77,6 @@
     -moz-box-shadow: 0 0 0 1px rgba(0,0,0, 0.25) inset, 0 2px 4px rgba(0,0,0, 0.30) inset;
     box-shadow: 0 0 0 1px rgba(0,0,0, 0.25) inset, 0 2px 4px rgba(0,0,0, 0.30) inset;
 }
-
 
 
 .yui3-button-disabled,
