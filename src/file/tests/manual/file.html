@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>File Manual Tests</title>
+    <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+<style>
+.yui3-skin-sam .redtext {
+        color:#ff0000;
+}
+</style>
+</head>
+<body class="yui3-skin-sam">
+
+
+<div id="File Tests">File Tests</div>
+<div id="fileinput">
+  <input type="file" id="fileupload" />
+  <input type="button" id="startupload" value="Start Upload" />
+  <input type="button" id="cancelupload" value="Cancel Upload" />
+</div>
+
+<div id="secondfileinput">
+<form id="simpleinput" action="upload.php" enctype="multipart/form-data" method="post">
+  <input type="file" name="Filedata" id="Filedata" />
+  <input type="hidden" name="foo" id="foo" value="bar" />
+  <input type="submit" value="Upload" />
+</form>
+</div>
+<script type="text/javascript" src="file.js"></script>
+</body>
+</html>
