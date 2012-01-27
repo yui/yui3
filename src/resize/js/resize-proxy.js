@@ -114,8 +114,8 @@ Y.extend(ResizeProxy, Y.Plugin.Base, {
 	},
 
     /**
-      * Render the <a href="ResizeProxy.html#config_proxyNode">proxyNode</a> element and
-      * make it sibling of the <a href="Resize.html#config_node">node</a>.
+      * Render the <a href="ResizeProxy.html#attr_proxyNode">proxyNode</a> element and
+      * make it sibling of the <a href="Resize.html#attr_node">node</a>.
       *
       * @method _renderProxy
       * @protected
