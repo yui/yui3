@@ -67,9 +67,9 @@ Y.mix(Scrollable.prototype, {
 
     @property SCROLLING_CONTAINER_TEMPLATE
     @type {HTML}
-    @value '<div class="{classes}"><table></table></div>'
+    @value '<div class="{className}"><table class="{tableClassName}"></table></div>'
     **/
-    SCROLLING_CONTAINER_TEMPLATE: '<div class="{classes}"><table></table></div>',
+    SCROLLING_CONTAINER_TEMPLATE: '<div class="{className}"><table class="{tableClassName}"></table></div>',
 
     /**
     Scrolls a given row or cell into view if the table is scrolling.  Pass the
@@ -120,8 +120,8 @@ Y.mix(Scrollable.prototype, {
     },
 
     /**
-    Reacts to changes in the `scrollable` attribute by updating the `\_xScroll`
-    and `\_yScroll` properties and syncing the scrolling structure accordingly.
+    Reacts to changes in the `scrollable` attribute by updating the `_xScroll`
+    and `_yScroll` properties and syncing the scrolling structure accordingly.
 
     @method _afterScrollableChange
     @param {EventFacade} e The relevant change event (ignored)
@@ -146,7 +146,7 @@ Y.mix(Scrollable.prototype, {
     /**
     Attaches internal subscriptions to keep the scrolling structure up to date
     with changes in the table's `data`, `columns`, `caption`, or `height`.  The
-    `width is taken care of already.
+    `width` is taken care of already.
 
     This executes after the table's native `bindUI` method.
 
@@ -185,8 +185,8 @@ Y.mix(Scrollable.prototype, {
     },
 
     /**
-    Populates the `\_yScrollNode` property by creating the `<div>` Node described
-    by the `SCROLLING_CONTAINER_TEMPLATE`.
+    Populates the `_yScrollNode` property by creating the `<div>` Node described
+    by the `SCROLLING\_CONTAINER_TEMPLATE`.
 
     @method _createYScrollNode
     @protected
@@ -195,7 +195,8 @@ Y.mix(Scrollable.prototype, {
         if (!this._yScrollNode) {
             this._yScrollNode = Y.Node.create(
                 Y.Lang.sub(this.SCROLLING_CONTAINER_TEMPLATE, {
-                    classes: this.getClassName('data','container')
+                    className: this.getClassName('y','scroller'),
+                    tableClassName: this.getClassName('y', 'scroll', 'table')
                 }));
         }
     },
@@ -375,7 +376,7 @@ Y.mix(Scrollable.prototype, {
     },
 
     /**
-    Assigns the `\_xScroll` and `\_yScroll` properties to true if an
+    Assigns the `_xScroll` and `_yScroll` properties to true if an
     appropriate value is set in the `scrollable` attribute and the `height`
     and/or `width` is set.
 
@@ -392,10 +393,10 @@ Y.mix(Scrollable.prototype, {
     },
 
     /**
-    Clones the fixed (see `\_fixColumnWidths` method) `<colgroup>` for use by the
+    Clones the fixed (see `_fixColumnWidths` method) `<colgroup>` for use by the
     table in the vertical scrolling container.  The last column's width is reduced
     by the width of the scrollbar (which is offset by additional padding on the
-    last header cell(s) in the header table - see `\_setHeaderScrollPadding`).
+    last header cell(s) in the header table - see `_setHeaderScrollPadding`).
 
     @method _setYScrollColWidths
     @protected
@@ -469,7 +470,7 @@ Y.mix(Scrollable.prototype, {
                 width : (width - 2) + 'px'
             });
 
-            scrollTable.setStyle('width', (width - scrollbar - 1) + 'px');
+            scrollTable.setStyle('width', scrollNode.get('clientWidth') + 'px');
             this._setARIARoles();
         }
 
@@ -477,7 +478,7 @@ Y.mix(Scrollable.prototype, {
     },
 
     /**
-    Calls `\_mergeYScrollContent` or `\_splitYScrollContent` depending on the
+    Calls `_mergeYScrollContent` or `_splitYScrollContent` depending on the
     current widget state, accounting for current state.  That is, if the table
     needs to be split, but is already, nothing happens.
 
@@ -513,7 +514,7 @@ Y.mix(Scrollable.prototype, {
     },
 
     /**
-    Overrides the default Widget `\_uiSetWidth` to assign the width to either
+    Overrides the default Widget `_uiSetWidth` to assign the width to either
     the table or the `contentBox` (for horizontal scrolling) in addition to the
     native behavior of setting the width of the `boundingBox`.
 
