@@ -51,8 +51,7 @@
 }
 
 .yui3-skin-sam .yui3-datatable-columns .yui3-datatable-sorted::after,
-.yui3-skin-sam .yui3-datatable-sortable-column:hover::after,
-.yui3-skin-sam .yui3-datatable-columns .yui3-datatable-sorted-desc:hover::after {
+.yui3-skin-sam .yui3-datatable-sortable-column:hover::after {
     content: ' ';
     position: absolute;
     right: 1ex;
@@ -63,6 +62,10 @@
     border-color: #000 transparent transparent;
 }
 
+.yui3-skin-sam .yui3-datatable-columns .yui3-datatable-sorted::after {
+    border-color: #666 transparent transparent;
+}
+
 .yui3-skin-sam .yui3-datatable-columns .yui3-datatable-sorted-desc::after,
 .yui3-skin-sam .yui3-datatable-sortable-column-desc:hover::after,
 .yui3-skin-sam .yui3-datatable-columns .yui3-datatable-sorted:hover::after {
@@ -70,14 +73,13 @@
     bottom: 1.5ex;
 }
 
-/*
-.yui3-skin-sam .yui3-datatable-columns .yui3-datatable-sorted::after {
-    border-color: #666 transparent transparent;
+.yui3-skin-sam .yui3-datatable-columns .yui3-datatable-sorted-desc:hover::after {
+    border-color: #000 transparent transparent;
 }
+
 .yui3-skin-sam .yui3-datatable-columns .yui3-datatable-sorted-desc::after {
     border-color: transparent transparent #666;
 }
-*/
 
 .yui3-skin-sam .yui3-datatable-even .yui3-datatable-sorted {
     background-color: #edf5ff;
