@@ -363,10 +363,12 @@ YUI.add('loader-tests', function(Y) {
             var test = this,
                 fMsg;
 
+
             YUI({
                 timeout: 1,
                 onTimeout: function(e) {
-                    fMsg = e;
+                    Assert.isFalse(e.success, 'Bogus module reported it was loaded');
+                    Assert.areSame('timeout', e.msg, 'Failure event was not sent');
                 },
                 modules: {
                     'bogus-module': {
@@ -374,14 +376,9 @@ YUI.add('loader-tests', function(Y) {
                     }
                 }
             }).use('bogus-module', function(Y) {
-                test.resume(function() {
-                    var e = fMsg;
-                    Assert.isFalse(e.success, 'Bogus module reported it was loaded');
-                    Assert.areSame('timeout', e.msg, 'Failure event was not sent');
-                });
             });
 
-            test.wait();
+
             
         },
         test_condpattern: function() {
