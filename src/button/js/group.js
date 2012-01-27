@@ -102,7 +102,6 @@ Y.extend(ButtonGroup, Y.Base, {
     */
     addButton: function(button){
         var type = this.get('type');
-        
         if (type === 'checkbox') {
             button.set('type', 'checkbox');
             button.on('click', this._onCBButtonClick, this);
@@ -120,7 +119,6 @@ Y.extend(ButtonGroup, Y.Base, {
     * @protected
     */
     _onRadioButtonClick: function(e) {
-
         var clickedButton = e.target;
         
         if (!clickedButton.get('selected')) {
@@ -159,6 +157,7 @@ Y.extend(ButtonGroup, Y.Base, {
     */
     ATTRS: {
         type: {
+            writeOnce: 'initOnly',
             value: 'radio'
         }
     }

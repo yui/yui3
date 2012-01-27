@@ -9,8 +9,8 @@
                 base: '../../../../build/',
                 debug: true,
                 combo: false,
-                filter: 'raw'
-            }).use('button', 'cssfonts', 'console', function(Y){
+                filter: 'raw',
+            }).use('button-base', 'button-group', 'cssbutton', 'cssfonts', 'console', function(Y){
                 
                 new Y.Console().render();
                 
@@ -94,7 +94,7 @@
                 });
 
                 buttonGroup2.after('selectionChange', function(e){
-                    var selection = buttonGroup2.get('selection');
+                    var selection = buttonGroup2.getSelectedButtons();
                     Y.log('buttonGroup2 selected count = ' + selection.length);
                 });
 
@@ -132,7 +132,7 @@
                     button = new Y.Button(config);
                     
                     Y.one('#generated').append(button.getNode());
-                })
+                });
                 
             });
         </script>

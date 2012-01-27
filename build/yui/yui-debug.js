@@ -4887,8 +4887,10 @@ add('load', '0', {
     "name": "graphics-canvas-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
-	return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (canvas && canvas.getContext && canvas.getContext("2d")));
+        useCanvas = Y.config.defaultGraphicEngine && Y.config.defaultGraphicEngine == "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    return (!svg || useCanvas) && (canvas && canvas.getContext && canvas.getContext("2d"));
 }, 
     "trigger": "graphics"
 });
@@ -4915,8 +4917,12 @@ add('load', '1', {
 add('load', '2', {
     "name": "graphics-svg", 
     "test": function(Y) {
-    var DOCUMENT = Y.config.doc;
-	return (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    var DOCUMENT = Y.config.doc,
+        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    
+    return svg && (useSVG || !canvas);
 }, 
     "trigger": "graphics"
 });
@@ -4945,8 +4951,12 @@ add('load', '4', {
 add('load', '5', {
     "name": "graphics-svg-default", 
     "test": function(Y) {
-    var DOCUMENT = Y.config.doc;
-	return (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    var DOCUMENT = Y.config.doc,
+        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    
+    return svg && (useSVG || !canvas);
 }, 
     "trigger": "graphics"
 });
@@ -5042,8 +5052,10 @@ add('load', '13', {
     "name": "graphics-canvas", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
-	return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (canvas && canvas.getContext && canvas.getContext("2d")));
+        useCanvas = Y.config.defaultGraphicEngine && Y.config.defaultGraphicEngine == "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    return (!svg || useCanvas) && (canvas && canvas.getContext && canvas.getContext("2d"));
 }, 
     "trigger": "graphics"
 });
@@ -5349,7 +5361,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.01.18-21-09',
+            GALLERY_VERSION = 'gallery-2012.01.25-21-14',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -6001,7 +6013,25 @@ Y.Loader = function(o) {
 };
 
 Y.Loader.prototype = {
+    /**
+    Regex that matches a CSS URL. Used to guess the file type when it's not
+    specified.
 
+    @property REGEX_CSS
+    @type RegExp
+    @final
+    @protected
+    @since 3.5.0
+    **/
+    REGEX_CSS: /\.css(?:[?;].*)?$/i,
+    
+    /**
+    * Default filters for raw and debug
+    * @property FILTER_DEFS
+    * @type Object
+    * @final
+    * @protected
+    */
     FILTER_DEFS: {
         RAW: {
             'searchExp': '-min\\.js',
@@ -6334,6 +6364,10 @@ Y.Loader.prototype = {
     addModule: function(o, name) {
         name = name || o.name;
         
+        if (typeof o === 'string') {
+            o = { name: name, fullpath: o };
+        }
+        
         //Only merge this data if the temp flag is set
         //from an earlier pass from a pattern or else
         //an override module (YUI_config) can not be used to
@@ -6354,7 +6388,13 @@ Y.Loader.prototype = {
         }
 
         if (!o.type) {
+            //Always assume it's javascript unless the CSS pattern is matched.
             o.type = JS;
+            var p = o.path || o.fullpath;
+            if (p && this.REGEX_CSS.test(p)) {
+                Y.log('Auto determined module type as CSS', 'warn', 'loader');
+                o.type = CSS;
+            }
         }
 
         if (!o.path && !o.fullpath) {
@@ -8381,8 +8421,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "widget", 
             "widget-position", 
             "widget-stack", 
-            "graphics", 
-            "escape"
+            "graphics"
         ]
     }, 
     "classnamemanager": {
@@ -8632,7 +8671,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "datatable-core": {
         "requires": [
             "escape", 
-            "model-list"
+            "model-list", 
+            "node-event-delegate"
         ]
     }, 
     "datatable-datasource": {
@@ -9191,6 +9231,17 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "yui-base"
         ]
     }, 
+    "file": {
+        "requires": [
+            "base"
+        ]
+    }, 
+    "filelist": {
+        "requires": [
+            "file", 
+            "base"
+        ]
+    }, 
     "frame": {
         "requires": [
             "base", 
@@ -9218,8 +9269,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "name": "graphics-canvas", 
             "test": function(Y) {
     var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
-	return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (canvas && canvas.getContext && canvas.getContext("2d")));
+        useCanvas = Y.config.defaultGraphicEngine && Y.config.defaultGraphicEngine == "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    return (!svg || useCanvas) && (canvas && canvas.getContext && canvas.getContext("2d"));
 }, 
             "trigger": "graphics"
         }, 
@@ -9232,8 +9285,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "name": "graphics-canvas-default", 
             "test": function(Y) {
     var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
-	return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (canvas && canvas.getContext && canvas.getContext("2d")));
+        useCanvas = Y.config.defaultGraphicEngine && Y.config.defaultGraphicEngine == "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    return (!svg || useCanvas) && (canvas && canvas.getContext && canvas.getContext("2d"));
 }, 
             "trigger": "graphics"
         }
@@ -9242,8 +9297,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "condition": {
             "name": "graphics-svg", 
             "test": function(Y) {
-    var DOCUMENT = Y.config.doc;
-	return (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    var DOCUMENT = Y.config.doc,
+        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    
+    return svg && (useSVG || !canvas);
 }, 
             "trigger": "graphics"
         }, 
@@ -9255,8 +9314,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "condition": {
             "name": "graphics-svg-default", 
             "test": function(Y) {
-    var DOCUMENT = Y.config.doc;
-	return (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    var DOCUMENT = Y.config.doc,
+        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    
+    return svg && (useSVG || !canvas);
 }, 
             "trigger": "graphics"
         }
@@ -10043,10 +10106,34 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "uploader": {
         "requires": [
-            "event-custom", 
-            "node", 
+            "uploader-html5", 
+            "uploader-flash"
+        ]
+    }, 
+    "uploader-flash": {
+        "requires": [
+            "swf", 
+            "widget", 
+            "substitute", 
             "base", 
-            "swf"
+            "node", 
+            "event-custom", 
+            "file", 
+            "uploader-queue"
+        ]
+    }, 
+    "uploader-html5": {
+        "requires": [
+            "widget", 
+            "node-event-simulate", 
+            "substitute", 
+            "file", 
+            "uploader-queue"
+        ]
+    }, 
+    "uploader-queue": {
+        "requires": [
+            "base"
         ]
     }, 
     "view": {
@@ -10212,7 +10299,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'b006701b144fdd54014542330c92d138';
+YUI.Env[Y.version].md5 = 'cceb9753cd8ccb1e1b515421af254f73';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

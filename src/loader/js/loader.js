@@ -575,7 +575,25 @@ Y.Loader = function(o) {
 };
 
 Y.Loader.prototype = {
+    /**
+    Regex that matches a CSS URL. Used to guess the file type when it's not
+    specified.
 
+    @property REGEX_CSS
+    @type RegExp
+    @final
+    @protected
+    @since 3.5.0
+    **/
+    REGEX_CSS: /\.css(?:[?;].*)?$/i,
+    
+    /**
+    * Default filters for raw and debug
+    * @property FILTER_DEFS
+    * @type Object
+    * @final
+    * @protected
+    */
     FILTER_DEFS: {
         RAW: {
             'searchExp': '-min\\.js',
@@ -908,6 +926,10 @@ Y.Loader.prototype = {
     addModule: function(o, name) {
         name = name || o.name;
         
+        if (typeof o === 'string') {
+            o = { name: name, fullpath: o };
+        }
+        
         //Only merge this data if the temp flag is set
         //from an earlier pass from a pattern or else
         //an override module (YUI_config) can not be used to
@@ -928,7 +950,13 @@ Y.Loader.prototype = {
         }
 
         if (!o.type) {
+            //Always assume it's javascript unless the CSS pattern is matched.
             o.type = JS;
+            var p = o.path || o.fullpath;
+            if (p && this.REGEX_CSS.test(p)) {
+                Y.log('Auto determined module type as CSS', 'warn', 'loader');
+                o.type = CSS;
+            }
         }
 
         if (!o.path && !o.fullpath) {

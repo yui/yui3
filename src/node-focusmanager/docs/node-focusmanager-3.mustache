@@ -37,9 +37,9 @@
 <h2>Setting Up the HTML</h2>
 
 <p>
-For a menu button, start with an <code>&#60;a&#62;</code> element whose
-<code>href</code> attribute is set to the id of an <code>&#60;div&#62;</code>
-that wraps a list of <code>&#60;input&#62;</code> elements.
+For a menu button, start with an `<a>` element whose
+`href` attribute is set to the id of an `<div>`
+that wraps a list of `<input>` elements.
 Therefore, without JavaScript and CSS, the menu button is simply an in-page
 link to a set of additional buttons.
 </p>
@@ -83,9 +83,9 @@ YUI({
 
 <p>
 To prevent the user from seeing a flash unstyled content when JavaScript is enabled,
-a style rule is created using YUI's <code>yui3-js-enabled</code> class name that will temporarily
+a style rule is created using YUI's `yui3-js-enabled` class name that will temporarily
 hide the markup while the JavaScript and CSS are in the process of loading.  For more on using the
-<code>yui3-js-enabled</code> class name, see the
+`yui3-js-enabled` class name, see the
 <a href="../widget/index.html#progressive">Hiding Progressively Enhanced Markup</a> section of the
 <a href="../widget/index.html">YUI Widget landing page</a>.
 </p>
@@ -117,18 +117,18 @@ readers perceive it as a menu button control.
 <p>
 The keyboard functionality for the button's menu will be provided by the Focus
 Manager Node Plugin.  The Focus Manager's
-<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_descendants"><code>descendants</code></a>
+<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#attr_descendants">`descendants`</a>
 attribute is set to a value of "input", so that only one menuitem in the
 button's menu  is in the browser's default tab flow.  This allows users
 navigating via the keyboard to use the tab key to quickly move into and out of
 the menu.  Once the menu has focus, the user can move focus among each menuitem
 using the up and down arrows keys, as defined by the value of the
-<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_keys"><code>keys</code></a>
+<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#attr_keys">`keys`</a>
 attribute.  The
-<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_focusClass"><code>focusClass</code></a>
-attribute is used to apply a class of <code>yui-menuitem-active</code> to
-the parent <code>&#60;li&#62;</code> of each
-<code>&#60;input&#62;</code> when it is focused, making it easy to style the
+<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#attr_focusClass">`focusClass`</a>
+attribute is used to apply a class of `yui-menuitem-active` to
+the parent `<li>` of each
+`<input>` when it is focused, making it easy to style the
 menuitem's focused state in all browsers.
 
 ```

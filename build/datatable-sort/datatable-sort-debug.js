@@ -1,365 +1,424 @@
 YUI.add('datatable-sort', function(Y) {
 
 /**
- * Plugs DataTable with sorting functionality.
- *
- * @module datatable
- * @submodule datatable-sort
- */
+Adds support for column sort.
 
-/**
- * Adds column sorting to DataTable.
- * @class DataTableSort
- * @extends Plugin.Base
- */
-var YgetClassName = Y.ClassNameManager.getClassName,
+@module datatable-sort
+**/
+var YLang     = Y.Lang,
+    isBoolean = YLang.isBoolean,
+    isString  = YLang.isString,
+    isArray   = YLang.isArray,
+    isObject  = YLang.isObject,
 
-    DATATABLE = "datatable",
-    COLUMN = "column",
-    ASC = "asc",
-    DESC = "desc",
+    toArray     = Y.Array,
 
-    //TODO: Don't use hrefs - use tab/arrow/enter
-    TEMPLATE = '<a class="{link_class}" title="{link_title}" href="{link_href}">{value}</a>';
+    dirMap = {
+        asc : 1,
+        desc: -1,
+        "1" : 1,
+        "-1": -1
+    };
 
 
-function DataTableSort() {
-    DataTableSort.superclass.constructor.apply(this, arguments);
-}
+function Sortable() {}
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// STATIC PROPERTIES
-//
-/////////////////////////////////////////////////////////////////////////////
-Y.mix(DataTableSort, {
-    /**
-     * The namespace for the plugin. This will be the property on the host which
-     * references the plugin instance.
-     *
-     * @property NS
-     * @type String
-     * @static
-     * @final
-     * @value "sort"
-     */
-    NS: "sort",
-
-    /**
-     * Class name.
-     *
-     * @property NAME
-     * @type String
-     * @static
-     * @final
-     * @value "dataTableSort"
-     */
-    NAME: "dataTableSort",
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// ATTRIBUTES
-//
-/////////////////////////////////////////////////////////////////////////////
-    ATTRS: {
-        /**
-        * @attribute trigger
-        * @description Defines the trigger that causes a column to be sorted:
-        * {event, selector}, where "event" is an event type and "selector" is
-        * is a node query selector.
-        * @type Object
-        * @default {event:"click", selector:"th"}
-        * @writeOnce "initOnly"
-        */
-        trigger: {
-            value: {event:"click", selector:"th"},
-            writeOnce: "initOnly"
-        },
-        
-        /**
-        * @attribute lastSortedBy
-        * @description Describes last known sort state: {key,dir}, where
-        * "key" is column key and "dir" is either "asc" or "desc".
-        * @type Object
-        */
-        lastSortedBy: {
-            setter: "_setLastSortedBy",
-            lazyAdd: false
-        },
-        
-        /**
-        * @attribute template
-        * @description Tokenized markup template for TH sort element.
-        * @type String
-        * @default '<a class="{link_class}" title="{link_title}" href="{link_href}">{value}</a>'
-        */
-        template: {
-            value: TEMPLATE
-        },
-
-        /**
-         * Strings used in the UI elements.
-         *
-         * The strings used are defaulted from the datatable-sort language pack
-         * for the language identified in the YUI "lang" configuration (which
-         * defaults to "en").
-         *
-         * Configurable strings are "sortBy" and "reverseSortBy", which are
-         * assigned to the sort link's title attribute.
-         *
-         * @attribute strings
-         * @type {Object}
-         */
-        strings: {
-            valueFn: function () { return Y.Intl.get('datatable-sort'); }
-        }
-    }
-});
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// PROTOTYPE
-//
-/////////////////////////////////////////////////////////////////////////////
-Y.extend(DataTableSort, Y.Plugin.Base, {
-
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // METHODS
-    //
-    /////////////////////////////////////////////////////////////////////////////
-    /**
-    * Initializer.
-    *
-    * @method initializer
-    * @param config {Object} Config object.
-    * @private
-    */
-    initializer: function(config) {
-        var dt = this.get("host"),
-            trigger = this.get("trigger");
-            
-        dt.get("recordset").plug(Y.Plugin.RecordsetSort, {dt: dt});
-        dt.get("recordset").sort.addTarget(dt);
-        
-        // Wrap link around TH value
-        this.doBefore("_createTheadThNode", this._beforeCreateTheadThNode);
-        
-        // Add class
-        this.doBefore("_attachTheadThNode", this._beforeAttachTheadThNode);
-        this.doBefore("_attachTbodyTdNode", this._beforeAttachTbodyTdNode);
-
-        // Attach trigger handlers
-        dt.delegate(trigger.event, Y.bind(this._onEventSortColumn,this), trigger.selector);
-
-        // Attach UI hooks
-        dt.after("recordsetSort:sort", function() {
-            this._uiSetRecordset(this.get("recordset"));
-        });
-        this.on("lastSortedByChange", function(e) {
-            this._uiSetLastSortedBy(e.prevVal, e.newVal, dt);
-        });
-
-        //TODO
-        //dt.after("recordset:mutation", function() {//reset lastSortedBy});
-        
-        //TODO
-        //add Column sortFn ATTR
-        
-        // Update UI after the fact (render-then-plug case)
-        if(dt.get("rendered")) {
-            dt._uiSetColumnset(dt.get("columnset"));
-            this._uiSetLastSortedBy(null, this.get("lastSortedBy"), dt);
-        }
+Sortable.ATTRS = {
+    // Which columns in the UI should suggest and respond to sorting interaction
+    // pass an empty array if no UI columns should show sortable, but you want the
+    // table.sort(...) API
+    sortable: {
+        value: 'auto',
+        validator: '_validateSortable'
     },
 
-    /**
-    * @method _setLastSortedBy
-    * @description Normalizes lastSortedBy
-    * @param val {String | Object} {key, dir} or "key"
-    * @return {key, dir, notdir}
-    * @private
-    */
-    _setLastSortedBy: function(val) {
-        if (Y.Lang.isString(val)) {
-            val = { key: val, dir: "desc" };
+    // Last sort params
+    sortBy: {
+        validator: '_validateSortBy',
+        getter: '_getSortBy'
+    },
+
+    strings: {
+        valueFn: function () {
+            return Y.Intl.get('datatable-sort');
+        }
+    }
+};
+
+Y.mix(Sortable.prototype, {
+
+    sort: function (fields, payload) {
+        this.fire('sort', Y.merge((payload || {}), {
+            sortBy: fields || this.get('sortBy')
+        }));
+    },
+
+    toggleSort: function (columns, payload) {
+        var current = this._sortBy,
+            sortBy = [],
+            i, len, j, col, index;
+
+        // To avoid updating column configs or sortBy directly
+        for (i = 0, len = current.length; i < len; ++i) {
+            col = {};
+            col[current[i]._id] = current[i].sortDir;
+            sortBy.push(col);
         }
 
-        if (val) {
-            return (val.dir === "desc") ?
-                { key: val.key, dir: "desc", notdir: "asc" } :
-                { key: val.key, dir: "asc",  notdir:"desc" };
+        if (columns) {
+            columns = toArray(columns);
+
+            for (i = 0, len = columns.length; i < len; ++i) {
+                col = columns[i];
+                index = -1;
+
+                for (j = sortBy.length - 1; i >= 0; --i) {
+                    if (sortBy[j][col]) {
+                        sortBy[j][col] *= -1;
+                        break;
+                    }
+                }
+            }
         } else {
-            return null;
+            for (i = 0, len = sortBy.length; i < len; ++i) {
+                for (col in sortBy[i]) {
+                    if (sortBy[i].hasOwnProperty(col)) {
+                        sortBy[i][col] *= -1;
+                        break;
+                    }
+                }
+            }
+        }
+
+        this.fire('sort', Y.merge((payload || {}), {
+            sortBy: sortBy
+        }));
+    },
+
+    //----------------------------------------------------------------------------
+    // Protected properties and methods
+    //----------------------------------------------------------------------------
+    _afterDataChange: function (e) {
+        // object values always trigger a change event, but we only want to
+        // call _initSortFn if the value passed to the `data` attribute was a
+        // new ModelList, not a set of new data as an array, or even the same
+        // ModelList.
+        if (e.prevVal !== e.newVal || e.newVal.hasOwnProperty('_compare')) {
+            this._initSortFn();
         }
     },
 
-    /**
-     * Updates sort UI.
-     *
-     * @method _uiSetLastSortedBy
-     * @param val {Object} New lastSortedBy object {key,dir}.
-     * @param dt {Y.DataTable.Base} Host.
-     * @protected
-     */
-    _uiSetLastSortedBy: function(prevVal, newVal, dt) {
-        var strings    = this.get('strings'),
-            columnset  = dt.get("columnset"),
-            prevKey    = prevVal && prevVal.key,
-            newKey     = newVal && newVal.key,
-            prevClass  = prevVal && dt.getClassName(prevVal.dir),
-            newClass   = newVal && dt.getClassName(newVal.dir),
-            prevColumn = columnset.keyHash[prevKey],
-            newColumn  = columnset.keyHash[newKey],
-            tbodyNode  = dt._tbodyNode,
-            fromTemplate = Y.Lang.sub,
-            th, sortArrow, sortLabel;
+    _afterSortByChange: function (e) {
+        // Can't use a setter because it's a chicken and egg problem. The columns
+        // need to be set up to translate, but columns are initialized from
+        // Core's initializer.  So construction-time assignment would fail.
+        this._setSortBy();
 
-        // Clear previous UI
-        if (prevColumn && prevClass) {
-            th = prevColumn.thNode;
-            sortArrow = th.one('a');
-
-            if (sortArrow) {
-                sortArrow.set('title', fromTemplate(strings.sortBy, {
-                    column: prevColumn.get('label')
-                }));
+        // Don't sort unless sortBy has been set
+        if (this._sortBy.length) {
+            if (!this.data.comparator) {
+                 this.data.comparator = this._sortComparator;
             }
 
-            th.removeClass(prevClass);
-            tbodyNode.all("." + YgetClassName(COLUMN, prevColumn.get("id")))
-                .removeClass(prevClass);
+            this.data.sort();
         }
+    },
 
-        // Add new sort UI
-        if (newColumn && newClass) {
-            th = newColumn.thNode;
-            sortArrow = th.one('a');
+    _bindSortUI: function () {
+        this.after(['sortableChange', 'sortByChange', 'columnsChange'],
+            this._uiSetSortable);
 
-            if (sortArrow) {
-                sortLabel = (newVal.dir === ASC) ? "reverseSortBy" : "sortBy";
+        if (this._theadNode) {
+            this._sortHandle = this._theadNode.delegate('click',
+                Y.rbind('_onUITriggerSort', this),
+                '.' + this.getClassName('sortable', 'column'));
+        }
+    },
+            
+    _defSortFn: function (e) {
+        this.set.apply(this, ['sortBy', e.sortBy].concat(e.details));
+    },
 
-                sortArrow.set('title', fromTemplate(strings[sortLabel], {
-                    column: newColumn.get('label')
-                }));
+    destructor: function () {
+        if (this._sortHandle) {
+            this._sortHandle.detach();
+        }
+    },
+
+    _getSortBy: function (val, detail) {
+        var state, i, len, col;
+
+        // "sortBy." is 7 characters. Used to catch 
+        detail = detail.slice(7);
+
+        // TODO: table.get('sortBy.asObject')? table.get('sortBy.json')?
+        if (detail === 'state') {
+            state = [];
+
+            for (i = 0, len = this._sortBy.length; i < len; ++i) {
+                col = this._sortBy[i];
+                state.push({
+                    column: col._id,
+                    dir: col.sortDir
+                });
             }
 
-            th.addClass(newClass);
-
-            tbodyNode.all("." + YgetClassName(COLUMN, newColumn.get("id")))
-                .addClass(newClass);
+            // TODO: Always return an array?
+            return { state: (state.length === 1) ? state[0] : state };
+        } else {
+            return val;
         }
     },
 
-    /**
-    * Before header cell element is created, inserts link markup around {value}.
-    *
-    * @method _beforeCreateTheadThNode
-    * @param o {Object} {value, column, tr}.
-    * @protected
-    */
-    _beforeCreateTheadThNode: function(o) {
-        var sortedBy, sortLabel;
+    initializer: function () {
+        var boundParseSortable = Y.bind('_parseSortable', this);
 
-        if (o.column.get("sortable")) {
-            sortedBy = this.get('lastSortedBy');
+        this._parseSortable();
 
-            sortLabel = (sortedBy && sortedBy.dir === ASC &&
-                         sortedBy.key === o.column.get('key')) ?
-                            "reverseSortBy" : "sortBy";
+        this._setSortBy();
 
-            o.value = Y.Lang.sub(this.get("template"), {
-                link_class: o.link_class || "",
-                link_title: Y.Lang.sub(this.get('strings.' + sortLabel), {
-                                column: o.column.get('label')
-                            }),
-                link_href: "#",
-                value: o.value
+        this._initSortFn();
+
+        this.after({
+            renderHeader  : Y.bind('_renderSortable', this),
+            dataChange    : Y.bind('_afterDataChange', this),
+            sortByChange  : Y.bind('_afterSortByChange', this),
+            sortableChange: boundParseSortable,
+            columnsChange : boundParseSortable
+        });
+
+        this.publish('sort', {
+            defaultFn: Y.bind('_defSortFn', this)
+        });
+    },
+
+    _initSortFn: function () {
+        var self = this;
+
+        // TODO: This should be a ModelList extension.
+        // FIXME: Modifying a component of the host seems a little smelly
+        // FIXME: Declaring inline override to leverage closure vs
+        // compiling a new function for each column/sortable change or
+        // binding the _compare implementation to this, resulting in an
+        // extra function hop during sorting. Lesser of three evils?
+        this.data._compare = function (a, b) {
+            var cmp = 0,
+                i, len, col, dir, aa, bb;
+
+            for (i = 0, len = self._sortBy.length; !cmp && i < len; ++i) {
+                col = self._sortBy[i];
+                dir = col.sortDir;
+
+                if (col.sortFn) {
+                    cmp = col.sortFn(a, b) * dir;
+                } else {
+                    // FIXME? Requires columns without sortFns to have key
+                    aa = a.get(col.key);
+                    bb = b.get(col.key);
+
+                    cmp = (aa > bb) ? dir : ((aa < bb) ? -dir : 0);
+                }
+            }
+
+            return cmp;
+        };
+
+        if (this.get('sortable') && this._sortBy.length) {
+            this.data.comparator = this._sortComparator;
+
+            // TODO: is this necessary? Should it be elsewhere?
+            this.data.sort();
+        } else {
+            // Leave the _compare method in place to avoid having to set it
+            // up again.  Mistake?
+            delete this.data.comparator;
+        }
+    },
+
+    _onUITriggerSort: function (e) {
+        var id = e.currentTarget.get('id'),
+            config = {},
+            dir    = 1,
+            column;
+
+        e.preventDefault();
+
+        // TODO: if (e.ctrlKey) { /* subsort */ }
+        if (id) {
+            Y.Array.each(this._displayColumns, function (col) {
+                if (id === col._yuid) {
+                    column = col._id;
+                    // Flip current sortDir or default to 1 (asc)
+                    dir    = -(col.sortDir|0) || 1;
+                }
             });
+
+            if (column) {
+                config[column] = dir;
+
+                this.fire('sort', {
+                    originEvent: e,
+                    sortBy: [config]
+                });
+            }
         }
     },
 
-    /**
-    * Before header cell element is attached, sets applicable class names.
-    *
-    * @method _beforeAttachTheadThNode
-    * @param o {Object} {value, column, tr}.
-    * @protected
-    */
-    _beforeAttachTheadThNode: function(o) {
-        var lastSortedBy = this.get("lastSortedBy"),
-            key = lastSortedBy && lastSortedBy.key,
-            dir = lastSortedBy && lastSortedBy.dir,
-            notdir = lastSortedBy && lastSortedBy.notdir;
+    _parseSortable: function () {
+        var sortable = this.get('sortable'),
+            columns  = [],
+            i, len, col;
 
-        // This Column is sortable
-        if(o.column.get("sortable")) {
-            o.th.addClass(YgetClassName(DATATABLE, "sortable"));
+        if (isArray(sortable)) {
+            for (i = 0, len = sortable.length; i < len; ++i) {
+                col = sortable[i];
+
+                // isArray is called because arrays are objects, but will rely
+                // on getColumn to nullify them for the subsequent if (col)
+                if (!isObject(col, true) || isArray(col)) {
+                    col = this.getColumn(col);
+                }
+
+                if (col) {
+                    columns.push(col._yuid);
+                }
+            }
+        } else if (sortable) {
+            columns = this._displayColumns.slice();
+
+            if (sortable === 'auto') {
+                for (i = columns.length - 1; i >= 0; --i) {
+                    if (!columns[i].sortable) {
+                        columns.splice(i, 1);
+                    }
+                }
+            }
         }
-        // This Column is currently sorted
-        if(key && (key === o.column.get("key"))) {
-            o.th.replaceClass(YgetClassName(DATATABLE, notdir), YgetClassName(DATATABLE, dir));
+
+        this._sortable = columns;
+    },
+
+
+    _renderSortable: function () {
+        this._uiSetSortable();
+
+        this._bindSortUI();
+    },
+
+    _setSortBy: function () {
+        var columns     = this._displayColumns,
+            sortBy      = this.get('sortBy') || [],
+            sortedClass = ' ' + this.getClassName('sorted'),
+            i, len, name, dir, field, column;
+
+        this._sortBy = [];
+
+        // Purge current sort state from column configs
+        for (i = 0, len = columns.length; i < len; ++i) {
+            column = columns[i];
+
+            delete column.sortDir;
+
+            if (column.className) {
+                // TODO: be more thorough
+                column.className = column.className.replace(sortedClass, '');
+            }
+        }
+
+        sortBy = toArray(sortBy);
+
+        for (i = 0, len = sortBy.length; i < len; ++i) {
+            name = sortBy[i];
+            dir  = 1;
+
+            if (isObject(name)) {
+                field = name;
+                // Have to use a for-in loop to process sort({ foo: -1 })
+                for (name in field) {
+                    if (field.hasOwnProperty(name)) {
+                        dir = dirMap[field[name]];
+                        break;
+                    }
+                }
+            }
+
+            if (name) {
+                // Allow sorting of any model field and any column
+                // FIXME: this isn't limited to model attributes, but there's no
+                // convenient way to get a list of the attributes for a Model
+                // subclass *including* the attributes of its superclasses.
+                column = this.getColumn(name) || { _id: name, key: name };
+
+                if (column) {
+                    column.sortDir = dir;
+
+                    if (!column.className) {
+                        column.className = '';
+                    }
+
+                    column.className += sortedClass;
+
+                    this._sortBy.push(column);
+                }
+            }
         }
     },
 
-    /**
-    * Before header cell element is attached, sets applicable class names.
-    *
-    * @method _beforeAttachTbodyTdNode
-    * @param o {Object} {record, column, tr, headers, classnames, value}.
-    * @protected
-    */
-    _beforeAttachTbodyTdNode: function(o) {
-        var lastSortedBy = this.get("lastSortedBy"),
-            key = lastSortedBy && lastSortedBy.key,
-            dir = lastSortedBy && lastSortedBy.dir,
-            notdir = lastSortedBy && lastSortedBy.notdir;
+    _sortComparator: function (item) {
+        // Defer sorting to ModelList's _compare
+        return item;
+    },
 
-        // This Column is sortable
-        if(o.column.get("sortable")) {
-            o.td.addClass(YgetClassName(DATATABLE, "sortable"));
-        }
-        // This Column is currently sorted
-        if(key && (key === o.column.get("key"))) {
-            o.td.replaceClass(YgetClassName(DATATABLE, notdir), YgetClassName(DATATABLE, dir));
+    _validateSortable: function (val) {
+        return val === 'auto' || isBoolean(val) || isArray(val);
+    },
+
+    _uiSetSortable: function () {
+        var columns       = this._sortable || [],
+            sortableClass = this.getClassName('sortable', 'column'),
+            ascClass      = this.getClassName('sorted'),
+            descClass     = this.getClassName('sorted', 'desc'),
+            i, len, col, node;
+
+        this.get('boundingBox').toggleClass(
+            this.getClassName('sortable'),
+            columns.length);
+
+        // TODO: this.head.render() + decorate cells?
+        this._theadNode.all('.' + sortableClass)
+            .removeClass(sortableClass)
+            .removeClass(ascClass)
+            .removeClass(descClass);
+
+        for (i = 0, len = columns.length; i < len; ++i) {
+            col  = columns[i];
+            node = this._theadNode.one('#' + col._yuid);
+
+            if (node) {
+                node.addClass(sortableClass);
+                if (col.sortDir) {
+                    node.addClass(ascClass);
+
+                    if (col.sortDir === -1) {
+                        node.addClass(descClass);
+                    }
+                }
+            }
         }
     },
-    /**
-    * In response to the "trigger" event, sorts the underlying Recordset and
-    * updates the lastSortedBy attribute.
-    *
-    * @method _onEventSortColumn
-    * @param o {Object} {value, column, tr}.
-    * @protected
-    */
-    _onEventSortColumn: function(e) {
-        e.halt();
-        //TODO: normalize e.currentTarget to TH
-        var table  = this.get("host"),
-            column = table.get("columnset").idHash[e.currentTarget.get("id")],
-            key, field, lastSort, desc, sorter;
 
-        if (column.get("sortable")) {
-            key       = column.get("key");
-            field     = column.get("field");
-            lastSort  = this.get("lastSortedBy") || {};
-            desc      = (lastSort.key === key && lastSort.dir === ASC);
-            sorter    = column.get("sortFn");
-
-            table.get("recordset").sort.sort(field, desc, sorter);
-
-            this.set("lastSortedBy", {
-                key: key,
-                dir: (desc) ? DESC : ASC
-            });
-        }
+    _validateSortBy: function (val) {
+        return val === null ||
+               isString(val) ||
+               isObject(val, true) ||
+               (isArray(val) && (isString(val[0]) || isObject(val, true)));
     }
-});
 
-Y.namespace("Plugin").DataTableSort = DataTableSort;
+}, true);
+
+Y.DataTable.Sortable = Sortable;
+
+Y.Base.mix(Y.DataTable, [Sortable]);
 
 
-
-
-
-}, '@VERSION@' ,{requires:['datatable-base','plugin','recordset-sort'], lang:['en']});
+}, '@VERSION@' ,{requires:['datatable-base'], lang:['en']});
