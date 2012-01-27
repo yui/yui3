@@ -69,37 +69,40 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
             weight = line.weight,
             alpha = line.alpha,
             lineFunction = direction == "vertical" ? this._verticalLine : this._horizontalLine;
-        if(axisPosition == "none")
+        if(isFinite(w) && isFinite(h) && w > 0 && h > 0)
         {
-            points = [];
-            l = axis.get("styles").majorUnit.count;
+            if(axisPosition != "none" && axis && axis.get("tickPoints"))
+            {
+                points = axis.get("tickPoints");
+                l = points.length;
+            }
+            else
+            {
+                points = [];
+                l = axis.get("styles").majorUnit.count;
+                for(; i < l; ++i)
+                {
+                    points[i] = {
+                        x: w * (i/(l-1)),
+                        y: h * (i/(l-1))
+                    };
+                }
+                i = 0;
+            }
+            path = graph.get("gridlines");
+            path.set("width", w);
+            path.set("height", h);
+            path.set("stroke", {
+                weight: weight,
+                color: color,
+                opacity: alpha
+            });
             for(; i < l; ++i)
             {
-                points[i] = {
-                    x: w * (i/(l-1)),
-                    y: h * (i/(l-1))
-                };
+                lineFunction(path, points[i], w, h);
             }
-            i = 0;
+            path.end();
         }
-        else
-        {
-            points = axis.get("tickPoints");
-            l = points.length;
-        }
-        path = graph.get("gridlines");
-        path.set("width", w);
-        path.set("height", h);
-        path.set("stroke", {
-            weight: weight,
-            color: color,
-            opacity: alpha
-        });
-        for(; i < l; ++i)
-        {
-            lineFunction(path, points[i], w, h);
-        }
-        path.end();
     },
 
     /**

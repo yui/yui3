@@ -238,7 +238,7 @@ PjaxBase.prototype = {
             slash = '/',
             i, len, normalized, segments, segment, stack;
 
-        if (!path) {
+        if (!path || path === slash) {
             return slash;
         }
 
@@ -285,11 +285,7 @@ PjaxBase.prototype = {
 
     /**
     Returns the normalized result of resolving the `path` against the current
-    path.
-
-    A host-relative `path` (one that begins with '/') is assumed to be resolved
-    and is returned as is. Falsy values for `path` will return just the current
-    path.
+    path. Falsy values for `path` will return just the current path.
 
     @method _resolvePath
     @param {String} path URL path to resolve.
@@ -304,7 +300,7 @@ PjaxBase.prototype = {
         // Path is host-relative and assumed to be resolved and normalized,
         // meaning silly paths like: '/foo/../bar/' will be returned as-is.
         if (path.charAt(0) === '/') {
-            return path;
+            return this._normalizePath(path);
         }
 
         return this._normalizePath(this._getRoot() + path);
