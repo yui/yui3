@@ -2283,63 +2283,67 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             len = this.getTotalMajorUnits(majorUnit);
             majorUnitDistance = this.getMajorUnitDistance(len, layoutLength, majorUnit);
             this.set("edgeOffset", this.getEdgeOffset(len, layoutLength) * 0.5);
-            tickPoint = this.getFirstPoint(lineStart);
-            this.drawLine(path, lineStart, this.getLineEnd(tickPoint));
-            if(drawTicks) 
-            {
-                tickPath = this.get("tickPath");
-                tickPath.clear();
-                tickPath.set("stroke", {
-                    weight: majorTickStyles.weight,
-                    color: majorTickStyles.color,
-                    opacity: majorTickStyles.alpha
-                });
-               layout.drawTick.apply(this, [tickPath, tickPoint, majorTickStyles]);
-            }
             if(len < 1)
             {
                 this._clearLabelCache();
-                return;
             }
-            this._createLabelCache();
-            this._tickPoints = [];
-            this._maxLabelSize = 0; 
-            this._totalTitleSize = 0;
-            this._titleSize = 0;
-            this._setTitle();
-            explicitlySized = layout.getExplicitlySized.apply(this, [styles]);
-            for(; i < len; ++i)
+            else
             {
+                tickPoint = this.getFirstPoint(lineStart);
+                this.drawLine(path, lineStart, this.getLineEnd(tickPoint));
                 if(drawTicks) 
                 {
-                    layout.drawTick.apply(this, [tickPath, tickPoint, majorTickStyles]);
+                    tickPath = this.get("tickPath");
+                    tickPath.clear();
+                    tickPath.set("stroke", {
+                        weight: majorTickStyles.weight,
+                        color: majorTickStyles.color,
+                        opacity: majorTickStyles.alpha
+                    });
+                   layout.drawTick.apply(this, [tickPath, tickPoint, majorTickStyles]);
                 }
-                position = this.getPosition(tickPoint);
-                label = this.getLabel(tickPoint, labelStyles);
-                this.get("appendLabelFunction")(label, labelFunction.apply(labelFunctionScope, [this.getLabelByIndex(i, len), labelFormat]));
-                labelWidth = Math.round(label.offsetWidth);
-                labelHeight = Math.round(label.offsetHeight);
-                if(!explicitlySized)
+                this._createLabelCache();
+                this._tickPoints = [];
+                this._maxLabelSize = 0; 
+                this._totalTitleSize = 0;
+                this._titleSize = 0;
+                this._setTitle();
+                explicitlySized = layout.getExplicitlySized.apply(this, [styles]);
+                for(; i < len; ++i)
                 {
-                    this._layout.updateMaxLabelSize.apply(this, [labelWidth, labelHeight]);
+                    if(drawTicks) 
+                    {
+                        layout.drawTick.apply(this, [tickPath, tickPoint, majorTickStyles]);
+                    }
+                    position = this.getPosition(tickPoint);
+                    label = this.getLabel(tickPoint, labelStyles);
+                    this._labels.push(label);
+                    this._tickPoints.push({x:tickPoint.x, y:tickPoint.y});
+                    this.get("appendLabelFunction")(label, labelFunction.apply(labelFunctionScope, [this.getLabelByIndex(i, len), labelFormat]));
+                    labelWidth = Math.round(label.offsetWidth);
+                    labelHeight = Math.round(label.offsetHeight);
+                    if(!explicitlySized)
+                    {
+                        this._layout.updateMaxLabelSize.apply(this, [labelWidth, labelHeight]);
+                    }
+                    this._labelWidths.push(labelWidth);
+                    this._labelHeights.push(labelHeight);
+                    tickPoint = this.getNextPoint(tickPoint, majorUnitDistance);
                 }
-                this._labelWidths.push(labelWidth);
-                this._labelHeights.push(labelHeight);
-                tickPoint = this.getNextPoint(tickPoint, majorUnitDistance);
-            }
-            this._clearLabelCache();
-            if(this.get("overlapGraph"))
-            {
-               layout.offsetNodeForTick.apply(this, [this.get("contentBox")]);
-            }
-            layout.setCalculatedSize.apply(this);
-            if(this._titleTextField)
-            {
-                this._layout.positionTitle.apply(this, [this._titleTextField]);
-            }
-            for(i = 0; i < len; ++i)
-            {
-                layout.positionLabel.apply(this, [this.get("labels")[i], this._tickPoints[i], styles, i]);
+                this._clearLabelCache();
+                if(this.get("overlapGraph"))
+                {
+                   layout.offsetNodeForTick.apply(this, [this.get("contentBox")]);
+                }
+                layout.setCalculatedSize.apply(this);
+                if(this._titleTextField)
+                {
+                    this._layout.positionTitle.apply(this, [this._titleTextField]);
+                }
+                for(i = 0; i < len; ++i)
+                {
+                    layout.positionLabel.apply(this, [this.get("labels")[i], this._tickPoints[i], styles, i]);
+                }
             }
         }
         this._drawing = false;
@@ -2523,8 +2527,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         label.style.display = "block";
         label.style.whiteSpace = "nowrap";
         label.style.position = "absolute";
-        this._labels.push(label);
-        this._tickPoints.push({x:pt.x, y:pt.y});
         for(i in styles)
         {
             if(styles.hasOwnProperty(i) && !customStyles.hasOwnProperty(i))
@@ -2533,7 +2535,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             }
         }
         return label;
-    },   
+    },
 
     /**
      * Creates a cache of labels that can be re-used when the axis redraws.
@@ -2872,7 +2874,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         this.get("appendLabelFunction")(label, this.get("labelFunction").apply(this, [val, this.get("labelFormat")]));
         props.labelWidth = label.offsetWidth;
         props.labelHeight = label.offsetHeight;
-        label = this._labels.pop();
         this._removeChildren(label);
         Y.Event.purgeElement(label, true);
         label.parentNode.removeChild(label);
@@ -2955,6 +2956,14 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     _setText: function(textField, val)
     { 
         textField.innerHTML = "";
+        if(Y_Lang.isNumber(val))
+        {
+            val = val + "";
+        }
+        else if(!val)
+        {
+            val = "";
+        }
         if(IS_STRING(val))
         {
             val = DOCUMENT.createTextNode(val);
@@ -4998,7 +5007,7 @@ TimeAxis.ATTRS =
             {
                 return Y.DataType.Date.format(val, {format:format});
             }
-            return Y.Escape.html(val.toString());
+            return val;
         }
     },
 
@@ -5101,7 +5110,7 @@ Y.extend(TimeAxis, Y.AxisType, {
                     {
                         if(typeof obj != "string")
                         {
-                            obj = obj.toString();
+                            obj = obj;
                         }
                         val = new Date(obj).valueOf();
                     }
@@ -5401,7 +5410,7 @@ Y.extend(CategoryAxis, Y.AxisType,
         {
             value = keys[key][index];
         }
-        return value.toString();
+        return value;
     },
    
     /**
@@ -5426,7 +5435,7 @@ Y.extend(CategoryAxis, Y.AxisType,
         {
             label = data[l - (i + 1)];
         }   
-        return label.toString();
+        return label;
     },
 
     /**
@@ -5440,7 +5449,7 @@ Y.extend(CategoryAxis, Y.AxisType,
     {
         var data = this.get("data"),
             label = data[0];
-        return Y.Escape.html(label.toString());
+        return label;
     },
 
     /**
@@ -5455,7 +5464,7 @@ Y.extend(CategoryAxis, Y.AxisType,
         var data = this.get("data"),
             len = data.length - 1,
             label = data[len];
-        return Y.Escape.html(label.toString());
+        return label;
     }
 });
 
@@ -7513,7 +7522,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
 
             setter: function(val)
             {
-                this._xDisplayName = Y.Escape.html(val);
+                this._xDisplayName = val.toString();
                 return val;
             }
         },
@@ -7532,7 +7541,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
 
             setter: function(val)
             {
-                this._yDisplayName = Y.Escape.html(val);
+                this._yDisplayName = val.toString();
                 return val;
             }
         },
@@ -7664,7 +7673,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         xKey: {
             setter: function(val)
             {
-                return Y.Escape.html(val);
+                return val.toString();
             }
         },
 
@@ -7678,7 +7687,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         yKey: {
             setter: function(val)
             {
-                return Y.Escape.html(val);
+                return val.toString();
             }
         },
 
@@ -8716,7 +8725,7 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
         {
             this._path.set("visible", visible);
         }
-        if(this.get("showLines"))
+        if(this.get("showLines") && this._lineGraphic)
         {
             this._lineGraphic.set("visible", visible);
         }
@@ -10688,37 +10697,40 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
             weight = line.weight,
             alpha = line.alpha,
             lineFunction = direction == "vertical" ? this._verticalLine : this._horizontalLine;
-        if(axisPosition == "none")
+        if(isFinite(w) && isFinite(h) && w > 0 && h > 0)
         {
-            points = [];
-            l = axis.get("styles").majorUnit.count;
+            if(axisPosition != "none" && axis && axis.get("tickPoints"))
+            {
+                points = axis.get("tickPoints");
+                l = points.length;
+            }
+            else
+            {
+                points = [];
+                l = axis.get("styles").majorUnit.count;
+                for(; i < l; ++i)
+                {
+                    points[i] = {
+                        x: w * (i/(l-1)),
+                        y: h * (i/(l-1))
+                    };
+                }
+                i = 0;
+            }
+            path = graph.get("gridlines");
+            path.set("width", w);
+            path.set("height", h);
+            path.set("stroke", {
+                weight: weight,
+                color: color,
+                opacity: alpha
+            });
             for(; i < l; ++i)
             {
-                points[i] = {
-                    x: w * (i/(l-1)),
-                    y: h * (i/(l-1))
-                };
+                lineFunction(path, points[i], w, h);
             }
-            i = 0;
+            path.end();
         }
-        else
-        {
-            points = axis.get("tickPoints");
-            l = points.length;
-        }
-        path = graph.get("gridlines");
-        path.set("width", w);
-        path.set("height", h);
-        path.set("stroke", {
-            weight: weight,
-            color: color,
-            opacity: alpha
-        });
-        for(; i < l; ++i)
-        {
-            lineFunction(path, points[i], w, h);
-        }
-        path.end();
     },
 
     /**
@@ -12529,6 +12541,14 @@ ChartBase.prototype = {
     _setText: function(textField, val)
     { 
         textField.setContent("");
+        if(Y_Lang.isNumber(val))
+        {
+            val = val + "";
+        }
+        else if(!val)
+        {
+            val = "";
+        }
         if(IS_STRING(val))
         {
             val = DOCUMENT.createTextNode(val);
@@ -14886,19 +14906,21 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
      * @param {Number} itemIndex The index of the item within the series.
      * @param {CartesianSeries} series The `PieSeries` instance of the item.
      * @param {Number} seriesIndex The index of the series in the `seriesCollection`.
-     * @return {String | HTML}
+     * @return {HTML}
      * @private
      */
     _tooltipLabelFunction: function(categoryItem, valueItem, itemIndex, series, seriesIndex)
     {
-        var msg,
+        var msg = DOCUMENT.createElement("div"),
             total = series.getTotalValues(),
             pct = Math.round((valueItem.value / total) * 10000)/100;
-        msg = categoryItem.displayName +
-        ":&nbsp;" + categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]) + 
-        "<br/>" + valueItem.displayName + 
-        ":&nbsp;" + valueItem.axis.get("labelFunction").apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]) + 
-        "<br/>" + pct + "%";
+        msg.appendChild(DOCUMENT.createTextNode(categoryItem.displayName +
+        ": " + categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]))); 
+        msg.appendChild(DOCUMENT.createElement("br"));
+        msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName + 
+        ": " + valueItem.axis.get("labelFunction").apply(this, [valueItem.value, valueItem.axis.get("labelFormat")])));
+        msg.appendChild(DOCUMENT.createElement("br"));
+        msg.appendChild(DOCUMENT.createTextNode(pct + "%")); 
         return msg; 
     }
 }, {
