@@ -5367,6 +5367,9 @@ Y.Loader.prototype = {
 
         if (mods) {
             oeach(mods, function(v, k) {
+                if (typeof v === 'string') {
+                    v = { name: k, fullpath: v };
+                }
                 v.group = name;
                 self.addModule(v, k);
             }, self);
@@ -6868,7 +6871,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                             if (m && (m.combine || !m.ext)) {
                                 resCombos[j].comboSep = m.comboSep;
                                 resCombos[j].maxURLLength = m.maxURLLength;
-                                frag = ((L.isValue(m.root)) ? m.root : self.root) + m.path;
+                                frag = ((L.isValue(m.root)) ? m.root : self.root) + (m.path || m.fullpath);
                                 frag = self._filter(frag, m.name);
                                 resCombos[j][m.type].push(frag);
                                 resCombos[j][m.type + 'Mods'].push(m);
