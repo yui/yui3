@@ -157,7 +157,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
                 colspan: 1,
                 rowspan: 1
             },
-            i, len, j, jlen, col, className, html, content, values;
+            i, len, j, jlen, col, html, content, values;
 
         if (thead && columns) {
             html = '';
@@ -168,16 +168,19 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
 
                     for (j = 0, jlen = columns[i].length; j < jlen; ++j) {
                         col = columns[i][j];
-                        className = this.getClassName('header');
                         values = Y.merge(
                             defaults,
                             col, {
-                                className: className,
+                                className: this.getClassName('header'),
                                 content  : col.label || col.key ||
                                            ("Column " + (j + 1)),
                                 headers  : ''
                             }
                         );
+
+                        if (col.className) {
+                            value.className += ' ' + col.className;
+                        }
 
                         if (col._id) {
                             values.className +=
