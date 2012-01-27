@@ -2151,7 +2151,9 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         //console.log('Resolved Modules: ', modules);
 
         var complete = function(d) {
-            actions++;
+            if (d.type !== 'timeout') {
+                actions++;
+            }
             var errs = {}, i = 0, u = '', fn;
 
             if (d && d.errors) {
@@ -2207,14 +2209,17 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                     self._onProgress.call(self, e);
                 },
                 onTimeout: function(d) {
+                    d.type = 'timeout';
                     d.fn = self._onTimeout;
                     complete.call(self, d);
                 },
                 onSuccess: function(d) {
+                    d.type = 'success';
                     d.fn = self._onSuccess;
                     complete.call(self, d);
                 },
                 onFailure: function(d) {
+                    d.type = 'failure';
                     d.fn = self._onFailure;
                     complete.call(self, d);
                 }
@@ -2235,14 +2240,17 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                     self._onProgress.call(self, e);
                 },
                 onTimeout: function(d) {
+                    d.type = 'timeout';
                     d.fn = self._onTimeout;
                     complete.call(self, d);
                 },
                 onSuccess: function(d) {
+                    d.type = 'success';
                     d.fn = self._onSuccess;
                     complete.call(self, d);
                 },
                 onFailure: function(d) {
+                    d.type = 'failure';
                     d.fn = self._onFailure;
                     complete.call(self, d);
                 }
