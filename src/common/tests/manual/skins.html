@@ -11,6 +11,7 @@
     <link type="text/css" rel="stylesheet" href="../../../../build/slider-base/assets/skins/night/slider-base.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/tabview/assets/skins/night/tabview.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/datatable-base/assets/skins/night/datatable-base.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/datatable-sort/assets/skins/night/datatable-sort.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/dial/assets/skins/night/dial.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/scrollview-list/assets/skins/night/scrollview-list.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/scrollview-scrollbars/assets/skins/night/scrollview-scrollbars.css">
@@ -68,6 +69,7 @@
         }
 
         /* workaround site CSS */
+        /*
         .yui3-datatable th,
         .yui3-calendar th,
         .yui3-calendar h4 {
@@ -76,7 +78,7 @@
             color: inherit;
             font-size: inherit;
         }
-
+        */
 
     </style> 
 
@@ -506,24 +508,32 @@ YUI({filter: 'raw'}).use('autocomplete', 'autocomplete-filters', 'autocomplete-h
     // Y.TabView('#demo-tabview');
     // Y.one('#demo-tabview').plug('tabs');
 
-    new Y.DataTable.Base({
+    new Y.DataTable({
         srcNode: '#demo-datatable',
-        columnset: [
-            {key:"Company", label:"Column A", sortable:true},
-            {key:"Phone", label:"Column B", sortable:true},
-            {key:"Contact", label:"Column C", sortable:true}
+        columns: [
+            { key: "Company", label:" Column A", sortable: true },
+            { key: "Phone",   label:" Column B", sortable: true },
+            { key: "Contact", label:" Column C", sortable: true }
         ],
-        recordset: [
-            {Company:"Company Bee", Phone:"415-555-1234", Contact:"Sally Spencer"},
-            {Company:"Acme Company", Phone:"650-555-4444", Contact:"John Jones"},
-            {Company:"Industrial Industries", Phone:"408-555-5678", Contact:"Robin Smith"}
+        data: [
+            {
+                Company: "Company Bee",
+                Phone:   "415-555-1234",
+                Contact: "Sally Spencer"
+            },
+            {
+                Company: "Acme Company",
+                Phone:   "650-555-4444",
+                Contact: "John Jones"
+            },
+            {
+                Company: "Industrial Industries",
+                Phone:   "408-555-5678",
+                Contact: "Robin Smith"
+            }
         ],
         caption: "Example table with sortable columns"
-    }).plug(Y.Plugin.DataTableSort).render();
-
-    // what if...
-    // plug('sort').render(); 
-
+    }).render();
 
     new Y.Calendar({
         render: "#demo-calendar"
