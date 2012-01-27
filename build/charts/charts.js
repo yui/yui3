@@ -1090,7 +1090,7 @@ RightAxisLayout.prototype = {
         }
         else
         {
-            topOffset = labelHeight * -0.5;
+            topOffset = labelHeight * 0.5;
             leftOffset = labelHeight/2 * absRot/90;
         }
         props.x -= leftOffset;
