@@ -621,7 +621,7 @@ YUI.add('loader-tests', function(Y) {
             Assert.areSame('bar.js', out.js[0], 'Failed to serve single JS file properly');
             Assert.areSame('path/to/baz.js', out.js[1], 'Failed to serve single JS file properly');
             Assert.areSame('http://foobar.com/combo?foo/foo.js', out.js[2], 'Failed to combine manual JS file properly');
-            Assert.areSame('http://foobar.com/combo?my/css/files.css', out.css[0], 'Failed to combine CSS files properly');
+            Assert.areSame('my/css/files.css', out.css[0], 'Failed to serve single CSS file properly');
         
         },
         test_combine_no_core_group: function() {
