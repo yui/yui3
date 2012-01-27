@@ -52,7 +52,7 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
         {
             this._path.set("visible", visible);
         }
-        if(this.get("showLines"))
+        if(this.get("showLines") && this._lineGraphic)
         {
             this._lineGraphic.set("visible", visible);
         }

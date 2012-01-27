@@ -22,7 +22,7 @@ function Button(config) {
 
 
 // -- Private Methods ----------------------------------------------------------
- 
+
 /**
 * returns a properly formed yui class name
 *
@@ -34,9 +34,8 @@ function Button(config) {
 function makeClassName(str) {
     if (str) {
         return Y.ClassNameManager.getClassName(Button.NAME, str);
-    }
-    else {
-        return Y.ClassNameManager.getClassName(Button.NAME); 
+    } else {
+        return Y.ClassNameManager.getClassName(Button.NAME);
     }
 }
 
@@ -256,7 +255,7 @@ Y.extend(Button, Y.Base, {
             }, button);
         }
         else if (value === 'radio') {
-            // nothing ?
+            // TODO: nothing ?
         }
         else {
             if (!node.test('input') && !node.test('button')) {
@@ -326,12 +325,12 @@ Button.CLASS_NAMES = {
     SELECTED: makeClassName('selected'),
     FOCUSED : makeClassName('focused'),
     DISABLED: makeClassName('disabled')
-}
+};
 
 Button.ARIA = {
     CHECKED: 'aria-checked',
-    PRESSED: 'aria-pressed',
-}
+    PRESSED: 'aria-pressed'
+};
 
 
 // -- Protected Methods ----------------------------------------------------------

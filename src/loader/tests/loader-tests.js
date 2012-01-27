@@ -555,6 +555,37 @@ YUI.add('loader-tests', function(Y) {
             });
             Assert.isTrue(hasOptional, 'Optional modules failed to load');
         },
+        test_load_css_without_type: function() {
+            var loader = new Y.Loader({
+                combine: false,
+                ignoreRegistered: true,
+                modules: {
+                    somecss: {
+                        fullpath: './some/css/file.css'
+                    }
+                },
+                require: [ 'somecss' ]
+            });
+
+            var out = loader.resolve(true);
+            Assert.areEqual(0, out.js.length, 'JS Returned, should only return CSS');
+            Assert.areEqual(1, out.css.length, 'Only one CSS module URL expected');
+        },
+        test_load_as_string: function() {
+            var loader = new Y.Loader({
+                combine: false,
+                ignoreRegistered: true,
+                modules: {
+                    somecss: './some/css/file.css',
+                    somejs: './some/js/file.js'
+                },
+                require: [ 'somecss', 'somejs' ]
+            });
+
+            var out = loader.resolve(true);
+            Assert.areEqual(1, out.js.length, 'Only one JS module URL expected');
+            Assert.areEqual(1, out.css.length, 'Only one CSS module URL expected');
+        },
         test_outside_group: function() {
             var loader = new Y.Loader({
                 combine: true,

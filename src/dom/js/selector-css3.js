@@ -21,7 +21,7 @@ Y.Selector._getNth = function(node, expr, tag, reverse) {
         oddeven = RegExp.$3, // "odd" or "even"
         b = parseInt(RegExp.$4, 10) || 0, // start scan from element _b_
         result = [],
-        siblings = Y.Selector._children(node.parentNode, tag),
+        siblings = Y.DOM._children(node.parentNode, tag),
         op;
 
     if (oddeven) {
@@ -87,26 +87,26 @@ Y.mix(Y.Selector.pseudos, {
     },
      
     'last-child': function(node) {
-        var children = Y.Selector._children(node.parentNode);
+        var children = Y.DOM._children(node.parentNode);
         return children[children.length - 1] === node;
     },
 
     'first-of-type': function(node) {
-        return Y.Selector._children(node.parentNode, node.tagName)[0] === node;
+        return Y.DOM._children(node.parentNode, node.tagName)[0] === node;
     },
      
     'last-of-type': function(node) {
-        var children = Y.Selector._children(node.parentNode, node.tagName);
+        var children = Y.DOM._children(node.parentNode, node.tagName);
         return children[children.length - 1] === node;
     },
      
     'only-child': function(node) {
-        var children = Y.Selector._children(node.parentNode);
+        var children = Y.DOM._children(node.parentNode);
         return children.length === 1 && children[0] === node;
     },
 
     'only-of-type': function(node) {
-        var children = Y.Selector._children(node.parentNode, node.tagName);
+        var children = Y.DOM._children(node.parentNode, node.tagName);
         return children.length === 1 && children[0] === node;
     },
 
