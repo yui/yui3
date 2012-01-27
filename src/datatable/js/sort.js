@@ -1,5 +1,3 @@
-YUI.add('datatable-sort', function(Y) {
-
 /**
 Adds support for column sort.
 
@@ -431,6 +429,3 @@ Y.mix(Sortable.prototype, {
 Y.DataTable.Sortable = Sortable;
 
 Y.Base.mix(Y.DataTable, [Sortable]);
-
-
-}, '@VERSION@' ,{requires:['datatable-base'], lang:['en']});
