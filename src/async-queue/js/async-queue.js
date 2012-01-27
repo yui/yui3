@@ -1,3 +1,4 @@
+
 /**
  * <p>AsyncQueue allows you create a chain of function callbacks executed
  * via setTimeout (or synchronously) that are guaranteed to run in order.
@@ -17,7 +18,9 @@
  *
  * <ul>
  * <li><code>fn</code> -- The callback function</li>
- * <li><code>context</code> -- The execution context for the callbackFn.</li>
+ * <li><code>context</code> -- The execution context for the callbackFn. 
+ *                        Specify "callback" to use the callback's 
+ *                        configuration object as it's execution context.</li>
  * <li><code>args</code> -- Arguments to pass to callbackFn.</li>
  * <li><code>timeout</code> -- Millisecond delay before executing callbackFn.
  *                     (Applies to each iterative execution of callback)</li>
@@ -27,6 +30,8 @@
  * <li><code>autoContinue</code> -- Set to false to prevent the AsyncQueue from
  *                        executing the next callback in the Queue after
  *                        the callback completes.</li>
+ * <li><code>alwaysPause</code> -- "true" pauses the queue before every 
+ *                        callback execution.</li>
  * <li><code>id</code> -- Name that can be used to get, promote, get the
  *                        indexOf, or delete this callback.</li>
  * </ul>
@@ -195,6 +200,9 @@ Y.extend(Queue, Y.EventTarget, {
                 if (!wrapper._running) {
                     wrapper.iterations--;
                 }
+                if (wrapper.context === 'callback') {
+                    wrapper.context = wrapper;
+                }
                 if (isFunction(wrapper.fn)) {
                     wrapper.fn.apply(wrapper.context || Y,
                                      Y.Array(wrapper.args));
@@ -247,8 +255,9 @@ Y.extend(Queue, Y.EventTarget, {
      * @protected
      */
     _execute : function (callback) {
-        this._running = callback._running = true;
-
+        callback._running = true;
+        this._running = !callback.alwaysPause;
+        
         callback.iterations--;
         this.fire(EXECUTE, { callback: callback });
 
@@ -514,4 +523,4 @@ Y.extend(Queue, Y.EventTarget, {
         return this._q.length;
     }
 });
-
+         
