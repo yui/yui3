@@ -42,6 +42,7 @@ function toggle(e,cnsl) {
 
 function report(e,type) {
     Y.log(this.get('value'),type);
+    e.preventDefault();
 }
 
 // Display a message in the Console for reference

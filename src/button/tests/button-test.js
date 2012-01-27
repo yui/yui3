@@ -162,7 +162,7 @@ suite.add(new Y.Test.Case({
     name: 'Attributes',
     
     setUp : function () {
-        Y.one('#container').append('<button id="foo">Test label</button>')
+        Y.one('#container').append('<button id="foo">Test label</button>');
         this.button = new Y.Button({
             srcNode : '#foo'
         });
@@ -178,7 +178,7 @@ suite.add(new Y.Test.Case({
         var eventsTriggered = 0;
         
         button.on('labelChange', function(){
-            eventsTriggered++;
+            eventsTriggered+=1;
         });
         
         Assert.areEqual(0, eventsTriggered);
@@ -196,7 +196,7 @@ suite.add(new Y.Test.Case({
         var eventsTriggered = 0;
         
         button.on('disabledChange', function(){
-            eventsTriggered++;
+            eventsTriggered+=1;
         });
         
         Assert.areEqual(0, eventsTriggered);
@@ -214,7 +214,7 @@ suite.add(new Y.Test.Case({
         var eventsTriggered = 0;
         
         button.on('selectedChange', function(){
-            eventsTriggered++;
+            eventsTriggered+=1;
         });
         
         Assert.areEqual(0, eventsTriggered);
@@ -232,7 +232,7 @@ suite.add(new Y.Test.Case({
         var eventsTriggered = 0;
         
         button.on('typeChange', function(){
-            eventsTriggered++;
+            eventsTriggered+=1;
         });
         
         Assert.areEqual(0, eventsTriggered);

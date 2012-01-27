@@ -442,28 +442,6 @@ Y.mix(Table.prototype, {
             }
 
             return (cols && cols[i]) || null;
-        } else if (isString(name)) {
-            stack = [[columns, 0]];
-            while (stack.length) {
-                entry = stack[stack.length - 1];
-                cols  = entry[0];
-                for (i = entry[1], len = cols.length; i < len; ++i) {
-                    col = cols[i];
-                    // Only need to check against name because the initial
-                    // col = get('columns.' + name) would get it from the key map
-                    if (col.name === name) {
-                        return col;
-                    } else if (col.children) {
-                        entry[1] = i + 1;
-                        stack.push([col.children, 0]);
-                        break;
-                    }
-                }
-
-                if (i > len) {
-                    stack.pop();
-                }
-            }
         }
 
         return null;

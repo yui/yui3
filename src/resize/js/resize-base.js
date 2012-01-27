@@ -496,7 +496,7 @@ Y.Resize = Y.extend(
 		totalVSurrounding: 0,
 
 		/**
-		 * Stores the <a href="Resize.html#config_node">node</a>
+		 * Stores the <a href="Resize.html#attr_node">node</a>
 		 * surrounding information retrieved from
 		 * <a href="Resize.html#method__getBoxSurroundingInfo">_getBoxSurroundingInfo</a>.
 		 *
@@ -507,7 +507,7 @@ Y.Resize = Y.extend(
 		nodeSurrounding: null,
 
 		/**
-		 * Stores the <a href="Resize.html#config_wrapper">wrapper</a>
+		 * Stores the <a href="Resize.html#attr_wrapper">wrapper</a>
 		 * surrounding information retrieved from
 		 * <a href="Resize.html#method__getBoxSurroundingInfo">_getBoxSurroundingInfo</a>.
 		 *
@@ -936,8 +936,8 @@ Y.Resize = Y.extend(
 		},
 
 	    /**
-	     * Copy relevant styles of the <a href="Resize.html#config_node">node</a>
-	     * to the <a href="Resize.html#config_wrapper">wrapper</a>.
+	     * Copy relevant styles of the <a href="Resize.html#attr_node">node</a>
+	     * to the <a href="Resize.html#attr_wrapper">wrapper</a>.
 	     *
 	     * @method _copyStyles
 	     * @param {Node} node Node from.
@@ -1492,7 +1492,7 @@ Y.Resize = Y.extend(
 		},
 
 		/**
-		 * Mouseenter event handler for the <a href="Resize.html#config_wrapper">wrapper</a>.
+		 * Mouseenter event handler for the <a href="Resize.html#attr_wrapper">wrapper</a>.
 		 *
 		 * @method _onWrapperMouseEnter
 	     * @param {EventFacade} event
@@ -1507,7 +1507,7 @@ Y.Resize = Y.extend(
 		},
 
 		/**
-		 * Mouseleave event handler for the <a href="Resize.html#config_wrapper">wrapper</a>.
+		 * Mouseleave event handler for the <a href="Resize.html#attr_wrapper">wrapper</a>.
 		 *
 		 * @method _onWrapperMouseLeave
 	     * @param {EventFacade} event

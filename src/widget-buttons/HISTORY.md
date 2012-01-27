@@ -4,6 +4,11 @@ Widget Buttons Change History
 3.5.0
 -----
 
+  * Fixed issue with multiplying subscriptions to `buttonsChange` event. The
+    event handler was itself subscripting _again_ to the event causing an
+    ever-increasing number of subscriptions all doing the same work.
+    [Ticket #2531449]
+
   * Configurations of named button types, e.g. "close", are now merged with the
     user-provided configuration allowing overriding of the default options for
     the named button.
