@@ -23,7 +23,7 @@ myuploader.after("fileListChange", function (ev) {
 	postVars = [];
 	Y.each(myuploader.get("fileList"), function (value) {
 	  out.append("<div id='" + value.get("id") + "'>" + value.get("name") + " | " + 0 + "%</div>");
-      postVars.push({customvar: "file:" + value.get("name")});
+      postVars[value.get("id")] = {filename: value.get("name"), filesize: value.get("size")};
     });
     myuploader.set("postVarsPerFile", postVars);
 });

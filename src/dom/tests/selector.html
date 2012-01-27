@@ -16,7 +16,10 @@
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
 
 <script>
+document.createElement('foo'); // enable custom element for IE native querySelector
+
 onload = function() {
+
     var SELECTOR_MODULE = 'selector-css3';
     YUI({filter: 'raw'}).use('node', SELECTOR_MODULE, 'console', 'test', 'dom-deprecated', function(Y) {
         String.prototype.test = function() {
@@ -554,8 +557,22 @@ onload = function() {
                 frag.appendChild(document.createElement('span'));
                 Assert.areEqual('SPAN',
                         Y.Selector.query('span', frag, true).tagName);
-            }
+            },
 
+            'should find custom element by tag': function() {
+                var node = Y.Selector.query('foo', null, true);
+                Assert.areEqual(document.getElementsByTagName('foo')[0], node);
+            },
+
+            'should find custom element by class': function() {
+                var node = Y.Selector.query('.custom-foo', null, true);
+                Assert.areEqual(document.getElementsByTagName('foo')[0], node);
+            },
+
+            'should find custom element by tag and class': function() {
+                var node = Y.Selector.query('foo.custom-foo', null, true);
+                Assert.areEqual(document.getElementsByTagName('foo')[0], node);
+            }
         });
 
         suite.add(selectorQueryAll);
@@ -654,6 +671,8 @@ onload = function() {
     <div id="test-custom-attr" foo="bar" foo-bar="bar">custom attribute</div>
     <div id="1"></div>
     <div id="foo:bar"></div>
+
+    <foo class="custom-foo"></foo>
 
 </body>
 </html>
