@@ -955,6 +955,9 @@ Y.Loader.prototype = {
 
         if (mods) {
             oeach(mods, function(v, k) {
+                if (typeof v === 'string') {
+                    v = { name: k, fullpath: v };
+                }
                 v.group = name;
                 self.addModule(v, k);
             }, self);
@@ -2456,7 +2459,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                             if (m && (m.combine || !m.ext)) {
                                 resCombos[j].comboSep = m.comboSep;
                                 resCombos[j].maxURLLength = m.maxURLLength;
-                                frag = ((L.isValue(m.root)) ? m.root : self.root) + m.path;
+                                frag = ((L.isValue(m.root)) ? m.root : self.root) + (m.path || m.fullpath);
                                 frag = self._filter(frag, m.name);
                                 resCombos[j][m.type].push(frag);
                                 resCombos[j][m.type + 'Mods'].push(m);
@@ -3359,8 +3362,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "en"
         ], 
         "requires": [
-            "datatable-base", 
-            "recordset-sort"
+            "datatable-base"
         ], 
         "skinnable": true
     }, 
@@ -4951,7 +4953,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'cceb9753cd8ccb1e1b515421af254f73';
+YUI.Env[Y.version].md5 = '1cab8b7f30e8353fcfa963884e842e30';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

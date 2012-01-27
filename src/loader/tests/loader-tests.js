@@ -586,6 +586,74 @@ YUI.add('loader-tests', function(Y) {
             Assert.areEqual(1, out.js.length, 'Only one JS module URL expected');
             Assert.areEqual(1, out.css.length, 'Only one CSS module URL expected');
         },
+        test_combine_no_core_top_level: function() {
+            /*
+                I don't like this test, it's not EXACTLY how I would do it..
+                This assumes that anything in the top level modules config
+                is to not obey the combine parameter unless the module def
+                contains the combine flag.
+
+                Maybe this needs a new flag for combineTopLevel: true or something
+                so that Loader can work stand-alone.
+            */
+            var loader = new Y.Loader({
+                root: '',
+                base: '',
+                combine: true,
+                comboBase: 'http://foobar.com/combo?',
+                modules: {
+                    foobar: {
+                        combine: true,
+                        type: 'js',
+                        path: 'foo/foo.js',
+                        requires: [ 'bar', 'baz' ]
+                    },
+                    baz: 'path/to/baz.js',
+                    bar: 'bar.js',
+                    somecss: 'my/css/files.css'
+                },
+                require: [ 'foobar', 'somecss' ]
+            });
+
+            var out = loader.resolve(true);
+            Assert.areSame(3, out.js.length, 'Returned too many JS files');
+            Assert.areSame(1, out.css.length, 'Returned too many CSS files');
+            Assert.areSame('bar.js', out.js[0], 'Failed to serve single JS file properly');
+            Assert.areSame('path/to/baz.js', out.js[1], 'Failed to serve single JS file properly');
+            Assert.areSame('http://foobar.com/combo?foo/foo.js', out.js[2], 'Failed to combine manual JS file properly');
+            Assert.areSame('my/css/files.css', out.css[0], 'Failed to serve single CSS file properly');
+        
+        },
+        test_combine_no_core_group: function() {
+            var loader = new Y.Loader({
+                groups: {
+                    local: {
+                        root: '',
+                        base: '',
+                        combine: true,
+                        comboBase: 'http://foobar.com/combo?',
+                        modules: {
+                            foobar: {
+                                type: 'js',
+                                path: 'foo/foo.js',
+                                requires: [ 'bar', 'baz' ]
+                            },
+                            baz: 'path/to/baz.js',
+                            bar: 'bar.js',
+                            somecss: 'my/css/files.css'
+                        }
+                    }
+                },
+                require: [ 'foobar', 'somecss' ]
+            });
+
+            var out = loader.resolve(true);
+            Assert.areSame(1, out.js.length, 'Returned too many JS files');
+            Assert.areSame(1, out.css.length, 'Returned too many CSS files');
+            Assert.areSame('http://foobar.com/combo?bar.js&path/to/baz.js&foo/foo.js', out.js[0], 'Failed to combine JS files properly');
+            Assert.areSame('http://foobar.com/combo?my/css/files.css', out.css[0], 'Failed to combine CSS files properly');
+        
+        },
         test_outside_group: function() {
             var loader = new Y.Loader({
                 combine: true,

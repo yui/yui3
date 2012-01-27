@@ -62,8 +62,7 @@
             },
             "datatable-sort": {
                 "requires": [
-                    "datatable-base",
-                    "recordset-sort"
+                    "datatable-base"
                 ],
                 "lang": ["en"],
                 "skinnable": true
