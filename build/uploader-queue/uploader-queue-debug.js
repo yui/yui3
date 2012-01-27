@@ -12,6 +12,8 @@ YUI.add('uploader-queue', function(Y) {
         Bind = Y.bind,
         Win = Y.config.win,
         currentUploads,
+        currentFiles,
+        errorFiles,
         lastUploadPointer,
         fileListLength,
         uploadsLeftCounter,
@@ -27,6 +29,8 @@ YUI.add('uploader-queue', function(Y) {
      */
     var UploaderQueue = function(o) {
         currentUploads = {};
+        currentFiles = {};
+        errorFiles = [];
         lastUploadPointer = 0;
         fileListLength = 0;
         uploadsLeftCounter = 0;
@@ -38,36 +42,76 @@ YUI.add('uploader-queue', function(Y) {
 
     Y.extend(UploaderQueue, Y.Base, {
 
+        _currentState: UploaderQueue.STOPPED,
+
         initializer : function (cfg) {
 
         },
 
         _uploadErrorHandler : function (event) {
+           var errorAction = this.get("errorAction");
            var updatedEvent = event;
            updatedEvent.file = event.target;
            updatedEvent.originEvent = event;
            
+           if (errorAction === UploaderQueue.STOP) {
+             this.pauseUpload();
+           }
+           else if (errorAction === UploaderQueue.RESTART_ASAP || errorAction === UploaderQueue.RESTART_AFTER) {
+            errorFiles.push(event.target);
+           }
+
            this.fire("uploaderror", updatedEvent);  
         },
 
         _uploadCompleteHandler : function (event) {
-           
+                      
            uploadsLeftCounter -= 1;
 
            totalBytesUploaded += event.target.get("size");
            delete currentUploads[event.target.get("id")];
+           delete currentFiles[event.target.get("id")];
 
-           if (lastUploadPointer < fileListLength) {
+           var errorAction = this.get("errorAction");
+
+           console.log(errorAction);
+           console.log(lastUploadPointer < fileListLength);
+           console.log(this._currentState === UploaderQueue.UPLOADING);
+           console.log(errorAction === UploaderQueue.STOP);
+           console.log(errorAction === UploaderQueue.CONTINUE);
+           console.log((errorAction === UploaderQueue.STOP || errorAction === UploaderQueue.CONTINUE));
+
+           if (lastUploadPointer < fileListLength && this._currentState === UploaderQueue.UPLOADING && 
+               (errorAction === UploaderQueue.STOP || errorAction === UploaderQueue.CONTINUE)) {
                var currentFile = this.get("fileList")[lastUploadPointer],
-                   parameters = this.get("perFileParameters"),
-                   fileParameters = Lang.isArray(parameters) ? parameters[lastUploadPointer] : parameters;
+                   fid = currentFile.get("id"),
+               parameters = this.get("perFileParameters"),
+               fileParameters = parameters.hasOwnProperty(fid) ? parameters[fid] : parameters;
  
                currentFile.on("uploadprogress", this._uploadProgressHandler, this);
                currentFile.on("uploadcomplete", this._uploadCompleteHandler, this);
+               currentFile.on("uploaderror", this._uploadErrorHandler, this);
 
                currentFile.startUpload(this.get("uploadURL"), fileParameters, this.get("fileFieldName"));
                currentUploads[currentFile.get("id")] = 0;
+               currentFiles[currentFile.get("id")] = currentFile;
+            
                lastUploadPointer += 1;
+           }
+
+           else if (this._currentState === UploaderQueue.UPLOADING && errorAction === UploaderQueue.RESTART_ASAP && errorFiles.length > 0) {
+               var currentFile = errorFiles.shift(),
+                   fid = currentFile.get("id"),
+                   parameters = this.get("perFileParameters"),
+                   fileParameters = parameters.hasOwnProperty(fid) ? parameters[fid] : parameters;
+ 
+                   currentFile.on("uploadprogress", this._uploadProgressHandler, this);
+                   currentFile.on("uploadcomplete", this._uploadCompleteHandler, this);
+                   currentFile.on("uploaderror", this._uploadErrorHandler, this);
+
+                   currentFile.startUpload(this.get("uploadURL"), fileParameters, this.get("fileFieldName"));
+                   currentUploads[currentFile.get("id")] = 0;
+                   currentFiles[currentFile.get("id")] = currentFile;
            }
            
            var updatedEvent = event;
@@ -104,15 +148,25 @@ YUI.add('uploader-queue', function(Y) {
         },
 
         startUpload: function() {
+           
+           currentUploads = {};
+           currentFiles = {};
+           errorFiles = [];
+           uploadsLeftCounter = fileListLength;
+           lastUploadPointer = 0; 
+           totalBytesUploaded = 0;
+           
+           this._currentState = UploaderQueue.UPLOADING;
 
            while (lastUploadPointer < this.get("simUploads") && lastUploadPointer < fileListLength) {
 
                var currentFile = this.get("fileList")[lastUploadPointer],
                    fileId = currentFile.get("id"),
                    parameters = this.get("perFileParameters"),
-                   fileParameters = Lang.isArray(parameters) ? parameters[lastUploadPointer] : parameters;
+                   fileParameters = parameters.hasOwnProperty(fileId) ? parameters[fileId] : parameters;
 
                currentUploads[fileId] = 0;
+               currentFiles[fileId] = currentFile;
 
                currentFile.on("uploadprogress", this._uploadProgressHandler, this);
                currentFile.on("uploadcomplete", this._uploadCompleteHandler, this);
@@ -125,17 +179,50 @@ YUI.add('uploader-queue', function(Y) {
 
 
         pauseUpload: function () {
-            
+            this._currentState = UploaderQueue.STOPPED;
         },
 
         restartUpload: function () {
+            this._currentState = UploaderQueue.UPLOADING;
+            if (lastUploadPointer < fileListLength) {
+               var currentFile = this.get("fileList")[lastUploadPointer],
+                   fid = currentFile.get("id"),
+               parameters = this.get("perFileParameters"),
+               fileParameters = parameters.hasOwnProperty(fid) ? parameters[fid] : parameters;
+ 
+               currentFile.on("uploadprogress", this._uploadProgressHandler, this);
+               currentFile.on("uploadcomplete", this._uploadCompleteHandler, this);
+               currentFile.on("uploaderror", this._uploadErrorHandler, this);
+
+               currentFile.startUpload(this.get("uploadURL"), fileParameters, this.get("fileFieldName"));
+               currentUploads[currentFile.get("id")] = 0;
+               currentFiles[currentFile.get("id")] = currentFile;
             
+               lastUploadPointer += 1;
+           }
         },
 
         cancelUpload: function () {
-            
+            var fList = this.get("fileList");
+            for (fid in currentFiles) {
+              currentFiles[fid].cancel();
+            }
+
+            currentUploads = {};
+            currentFiles = {};
+            errorFiles = [];
+            uploadsLeftCounter = fileListLength;
+            lastUploadPointer = 0;
+            totalBytesUploaded = 0;
         }
     }, {
+
+        CONTINUE: "continue",
+        STOP: "stop",
+        RESTART_ASAP: "restartasap",
+        RESTART_AFTER: "restartafter",
+        STOPPED: "stopped",
+        UPLOADING: "uploading",
 
         NAME: 'uploaderqueue',
 
@@ -154,9 +241,9 @@ YUI.add('uploader-queue', function(Y) {
         },
 
         errorAction: {
-            value: UploaderQueue.CONTINUE,
+            value: "continue",
             validator: function (val, name) {
-                return (val === UploaderQueue.CONTINUE || val === UploaderQueue.STOP || val === UploaderQueue.RESTART);
+                return (val === UploaderQueue.CONTINUE || val === UploaderQueue.STOP || val === UploaderQueue.RESTART_ASAP || val === UploaderQueue.RESTART_AFTER);
             }
         },
 
@@ -193,13 +280,9 @@ YUI.add('uploader-queue', function(Y) {
         },
 
         perFileParameters: {
-          value: []
+          value: {}
         }
-        },
-
-        CONTINUE: "continue",
-        STOP: "stop",
-        RESTART: "restart"
+        }
     });
 
 
