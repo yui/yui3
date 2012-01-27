@@ -36,7 +36,7 @@ Y.extend(CanvasRect, Y.CanvasShape, {
 			h = this.get("height");
 		this.clear();
         this.drawRect(0, 0, w, h);
-		this._paint();
+		this._closePath();
 	}
 });
 CanvasRect.ATTRS = Y.CanvasShape.ATTRS;

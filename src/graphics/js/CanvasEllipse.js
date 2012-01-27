@@ -38,7 +38,7 @@ Y.extend(CanvasEllipse, CanvasShape, {
 			h = this.get("height");
 		this.clear();
         this.drawEllipse(0, 0, w, h);
-		this._paint();
+		this._closePath();
 	}
 });
 CanvasEllipse.ATTRS = CanvasShape.ATTRS;
