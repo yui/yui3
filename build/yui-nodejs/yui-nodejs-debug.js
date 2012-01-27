@@ -6447,7 +6447,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 success: false
             });
         }
-        this._finish('timeout', false);
     },
 
     /**
@@ -6563,9 +6562,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         //console.log('Resolved Modules: ', modules);
 
         var complete = function(d) {
-            if (d.type !== 'timeout') {
-                actions++;
-            }
+            actions++;
             var errs = {}, i = 0, u = '', fn;
 
             if (d && d.errors) {
@@ -6579,12 +6576,12 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 }
             }
             
-            if (d && d.data && d.data.length) {
+            if (d && d.data && d.data.length && (d.type === 'success')) {
                 for (i = 0; i < d.data.length; i++) {
                     self.inserted[d.data[i].name] = true;
                 }
             }
-            
+
             if (actions === comp) {
                 self._loading = null;
                 Y.log('Loader actions complete!', 'info', 'loader');
@@ -6621,9 +6618,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                     self._onProgress.call(self, e);
                 },
                 onTimeout: function(d) {
-                    d.type = 'timeout';
-                    d.fn = self._onTimeout;
-                    complete.call(self, d);
+                    self._onTimeout.call(self, d);
                 },
                 onSuccess: function(d) {
                     d.type = 'success';
@@ -6652,9 +6647,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                     self._onProgress.call(self, e);
                 },
                 onTimeout: function(d) {
-                    d.type = 'timeout';
-                    d.fn = self._onTimeout;
-                    complete.call(self, d);
+                    self._onTimeout.call(self, d);
                 },
                 onSuccess: function(d) {
                     d.type = 'success';

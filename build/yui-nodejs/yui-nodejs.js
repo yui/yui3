@@ -6400,7 +6400,6 @@ Y.Loader.prototype = {
                 success: false
             });
         }
-        this._finish('timeout', false);
     },
 
     /**
@@ -6515,9 +6514,7 @@ Y.Loader.prototype = {
         //console.log('Resolved Modules: ', modules);
 
         var complete = function(d) {
-            if (d.type !== 'timeout') {
-                actions++;
-            }
+            actions++;
             var errs = {}, i = 0, u = '', fn;
 
             if (d && d.errors) {
@@ -6531,12 +6528,12 @@ Y.Loader.prototype = {
                 }
             }
             
-            if (d && d.data && d.data.length) {
+            if (d && d.data && d.data.length && (d.type === 'success')) {
                 for (i = 0; i < d.data.length; i++) {
                     self.inserted[d.data[i].name] = true;
                 }
             }
-            
+
             if (actions === comp) {
                 self._loading = null;
                 if (d && d.fn) {
@@ -6569,9 +6566,7 @@ Y.Loader.prototype = {
                     self._onProgress.call(self, e);
                 },
                 onTimeout: function(d) {
-                    d.type = 'timeout';
-                    d.fn = self._onTimeout;
-                    complete.call(self, d);
+                    self._onTimeout.call(self, d);
                 },
                 onSuccess: function(d) {
                     d.type = 'success';
@@ -6599,9 +6594,7 @@ Y.Loader.prototype = {
                     self._onProgress.call(self, e);
                 },
                 onTimeout: function(d) {
-                    d.type = 'timeout';
-                    d.fn = self._onTimeout;
-                    complete.call(self, d);
+                    self._onTimeout.call(self, d);
                 },
                 onSuccess: function(d) {
                     d.type = 'success';
