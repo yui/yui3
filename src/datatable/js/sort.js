@@ -376,7 +376,8 @@ Y.mix(Sortable.prototype, {
             sortableClass = this.getClassName('sortable', 'column'),
             ascClass      = this.getClassName('sorted'),
             descClass     = this.getClassName('sorted', 'desc'),
-            i, len, col, node;
+            linerClass    = this.getClassName('sort', 'liner'),
+            i, len, col, node, content;
 
         this.get('boundingBox').toggleClass(
             this.getClassName('sortable'),
@@ -386,7 +387,14 @@ Y.mix(Sortable.prototype, {
         this._theadNode.all('.' + sortableClass)
             .removeClass(sortableClass)
             .removeClass(ascClass)
-            .removeClass(descClass);
+            .removeClass(descClass)
+            .each(function (th) {
+                var liner = th.one('.' + linerClass);
+
+                if (liner) {
+                    liner.replace(liner.get('childNodes').toFrag());
+                }
+            });
 
         for (i = 0, len = columns.length; i < len; ++i) {
             col  = columns[i];
@@ -401,6 +409,10 @@ Y.mix(Sortable.prototype, {
                         node.addClass(descClass);
                     }
                 }
+
+                Y.Node.create('<div class="' + linerClass + '"></div>')
+                    .append(node.get('childNodes').toFrag())
+                    .appendTo(node);
             }
         }
     },
