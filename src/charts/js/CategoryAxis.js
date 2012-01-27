@@ -202,7 +202,7 @@ Y.extend(CategoryAxis, Y.AxisType,
         {
             value = keys[key][index];
         }
-        return value.toString();
+        return value;
     },
    
     /**
@@ -227,7 +227,7 @@ Y.extend(CategoryAxis, Y.AxisType,
         {
             label = data[l - (i + 1)];
         }   
-        return label.toString();
+        return label;
     },
 
     /**
@@ -241,7 +241,7 @@ Y.extend(CategoryAxis, Y.AxisType,
     {
         var data = this.get("data"),
             label = data[0];
-        return Y.Escape.html(label.toString());
+        return label;
     },
 
     /**
@@ -256,7 +256,7 @@ Y.extend(CategoryAxis, Y.AxisType,
         var data = this.get("data"),
             len = data.length - 1,
             label = data[len];
-        return Y.Escape.html(label.toString());
+        return label;
     }
 });
 
