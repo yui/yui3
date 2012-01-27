@@ -117,15 +117,15 @@ readers perceive it as a menu button control.
 <p>
 The keyboard functionality for the button's menu will be provided by the Focus
 Manager Node Plugin.  The Focus Manager's
-<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_descendants">`descendants`</a>
+<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#attr_descendants">`descendants`</a>
 attribute is set to a value of "input", so that only one menuitem in the
 button's menu  is in the browser's default tab flow.  This allows users
 navigating via the keyboard to use the tab key to quickly move into and out of
 the menu.  Once the menu has focus, the user can move focus among each menuitem
 using the up and down arrows keys, as defined by the value of the
-<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_keys">`keys`</a>
+<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#attr_keys">`keys`</a>
 attribute.  The
-<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#config_focusClass">`focusClass`</a>
+<a href="{{apiDocs}}/classes/plugin.NodeFocusManager.html#attr_focusClass">`focusClass`</a>
 attribute is used to apply a class of `yui-menuitem-active` to
 the parent `<li>` of each
 `<input>` when it is focused, making it easy to style the
