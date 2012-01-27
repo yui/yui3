@@ -1,0 +1,15 @@
+/* foundational CSS */
+.yui3-datatable-scrollable-x .yui3-datatable-content {
+    overflow-x: auto;
+}
+
+.yui3-datatable-scrollable-y .yui3-datatable-content {
+    /*
+    To allow offsetTop calculation for assigning height to the scrolling div
+    */
+    position: relative;
+}
+.yui3-datatable-scrollable-y .yui3-datatable-y-scroller {
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
