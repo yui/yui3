@@ -7,9 +7,11 @@
 }
 .yui3-skin-night .yui3-datatable-scrollable-x .yui3-datatable-content {
     border-right: 1px solid #303030;
+    border-left: 1px solid #303030;
 }
 .yui3-skin-night .yui3-datatable-scrollable-x .yui3-datatable-table {
     border-right: 0 none;
+    border-left: 0 none;
 }
 .yui3-skin-night .yui3-datatable-scrollable-x .yui3-datatable-y-scroller {
     border-right: 0 none;
