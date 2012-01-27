@@ -16,7 +16,10 @@
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
 
 <script>
+document.createElement('foo'); // enable custom element for IE native querySelector
+
 onload = function() {
+
     var SELECTOR_MODULE = 'selector-css3';
     YUI({filter: 'raw'}).use('node', SELECTOR_MODULE, 'console', 'test', 'dom-deprecated', function(Y) {
         String.prototype.test = function() {
