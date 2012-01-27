@@ -119,7 +119,7 @@ TimeAxis.ATTRS =
             {
                 return Y.DataType.Date.format(val, {format:format});
             }
-            return Y.Escape.html(val.toString());
+            return val;
         }
     },
 
@@ -222,7 +222,7 @@ Y.extend(TimeAxis, Y.AxisType, {
                     {
                         if(typeof obj != "string")
                         {
-                            obj = obj.toString();
+                            obj = obj;
                         }
                         val = new Date(obj).valueOf();
                     }

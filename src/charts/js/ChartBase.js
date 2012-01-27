@@ -962,6 +962,14 @@ ChartBase.prototype = {
     _setText: function(textField, val)
     { 
         textField.setContent("");
+        if(Y_Lang.isNumber(val))
+        {
+            val = val + "";
+        }
+        else if(!val)
+        {
+            val = "";
+        }
         if(IS_STRING(val))
         {
             val = DOCUMENT.createTextNode(val);

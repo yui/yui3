@@ -387,63 +387,67 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             len = this.getTotalMajorUnits(majorUnit);
             majorUnitDistance = this.getMajorUnitDistance(len, layoutLength, majorUnit);
             this.set("edgeOffset", this.getEdgeOffset(len, layoutLength) * 0.5);
-            tickPoint = this.getFirstPoint(lineStart);
-            this.drawLine(path, lineStart, this.getLineEnd(tickPoint));
-            if(drawTicks) 
-            {
-                tickPath = this.get("tickPath");
-                tickPath.clear();
-                tickPath.set("stroke", {
-                    weight: majorTickStyles.weight,
-                    color: majorTickStyles.color,
-                    opacity: majorTickStyles.alpha
-                });
-               layout.drawTick.apply(this, [tickPath, tickPoint, majorTickStyles]);
-            }
             if(len < 1)
             {
                 this._clearLabelCache();
-                return;
             }
-            this._createLabelCache();
-            this._tickPoints = [];
-            this._maxLabelSize = 0; 
-            this._totalTitleSize = 0;
-            this._titleSize = 0;
-            this._setTitle();
-            explicitlySized = layout.getExplicitlySized.apply(this, [styles]);
-            for(; i < len; ++i)
+            else
             {
+                tickPoint = this.getFirstPoint(lineStart);
+                this.drawLine(path, lineStart, this.getLineEnd(tickPoint));
                 if(drawTicks) 
                 {
-                    layout.drawTick.apply(this, [tickPath, tickPoint, majorTickStyles]);
+                    tickPath = this.get("tickPath");
+                    tickPath.clear();
+                    tickPath.set("stroke", {
+                        weight: majorTickStyles.weight,
+                        color: majorTickStyles.color,
+                        opacity: majorTickStyles.alpha
+                    });
+                   layout.drawTick.apply(this, [tickPath, tickPoint, majorTickStyles]);
                 }
-                position = this.getPosition(tickPoint);
-                label = this.getLabel(tickPoint, labelStyles);
-                this.get("appendLabelFunction")(label, labelFunction.apply(labelFunctionScope, [this.getLabelByIndex(i, len), labelFormat]));
-                labelWidth = Math.round(label.offsetWidth);
-                labelHeight = Math.round(label.offsetHeight);
-                if(!explicitlySized)
+                this._createLabelCache();
+                this._tickPoints = [];
+                this._maxLabelSize = 0; 
+                this._totalTitleSize = 0;
+                this._titleSize = 0;
+                this._setTitle();
+                explicitlySized = layout.getExplicitlySized.apply(this, [styles]);
+                for(; i < len; ++i)
                 {
-                    this._layout.updateMaxLabelSize.apply(this, [labelWidth, labelHeight]);
+                    if(drawTicks) 
+                    {
+                        layout.drawTick.apply(this, [tickPath, tickPoint, majorTickStyles]);
+                    }
+                    position = this.getPosition(tickPoint);
+                    label = this.getLabel(tickPoint, labelStyles);
+                    this._labels.push(label);
+                    this._tickPoints.push({x:tickPoint.x, y:tickPoint.y});
+                    this.get("appendLabelFunction")(label, labelFunction.apply(labelFunctionScope, [this.getLabelByIndex(i, len), labelFormat]));
+                    labelWidth = Math.round(label.offsetWidth);
+                    labelHeight = Math.round(label.offsetHeight);
+                    if(!explicitlySized)
+                    {
+                        this._layout.updateMaxLabelSize.apply(this, [labelWidth, labelHeight]);
+                    }
+                    this._labelWidths.push(labelWidth);
+                    this._labelHeights.push(labelHeight);
+                    tickPoint = this.getNextPoint(tickPoint, majorUnitDistance);
                 }
-                this._labelWidths.push(labelWidth);
-                this._labelHeights.push(labelHeight);
-                tickPoint = this.getNextPoint(tickPoint, majorUnitDistance);
-            }
-            this._clearLabelCache();
-            if(this.get("overlapGraph"))
-            {
-               layout.offsetNodeForTick.apply(this, [this.get("contentBox")]);
-            }
-            layout.setCalculatedSize.apply(this);
-            if(this._titleTextField)
-            {
-                this._layout.positionTitle.apply(this, [this._titleTextField]);
-            }
-            for(i = 0; i < len; ++i)
-            {
-                layout.positionLabel.apply(this, [this.get("labels")[i], this._tickPoints[i], styles, i]);
+                this._clearLabelCache();
+                if(this.get("overlapGraph"))
+                {
+                   layout.offsetNodeForTick.apply(this, [this.get("contentBox")]);
+                }
+                layout.setCalculatedSize.apply(this);
+                if(this._titleTextField)
+                {
+                    this._layout.positionTitle.apply(this, [this._titleTextField]);
+                }
+                for(i = 0; i < len; ++i)
+                {
+                    layout.positionLabel.apply(this, [this.get("labels")[i], this._tickPoints[i], styles, i]);
+                }
             }
         }
         this._drawing = false;
@@ -627,8 +631,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         label.style.display = "block";
         label.style.whiteSpace = "nowrap";
         label.style.position = "absolute";
-        this._labels.push(label);
-        this._tickPoints.push({x:pt.x, y:pt.y});
         for(i in styles)
         {
             if(styles.hasOwnProperty(i) && !customStyles.hasOwnProperty(i))
@@ -637,7 +639,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             }
         }
         return label;
-    },   
+    },
 
     /**
      * Creates a cache of labels that can be re-used when the axis redraws.
@@ -976,7 +978,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         this.get("appendLabelFunction")(label, this.get("labelFunction").apply(this, [val, this.get("labelFormat")]));
         props.labelWidth = label.offsetWidth;
         props.labelHeight = label.offsetHeight;
-        label = this._labels.pop();
         this._removeChildren(label);
         Y.Event.purgeElement(label, true);
         label.parentNode.removeChild(label);
@@ -1059,6 +1060,14 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     _setText: function(textField, val)
     { 
         textField.innerHTML = "";
+        if(Y_Lang.isNumber(val))
+        {
+            val = val + "";
+        }
+        else if(!val)
+        {
+            val = "";
+        }
         if(IS_STRING(val))
         {
             val = DOCUMENT.createTextNode(val);

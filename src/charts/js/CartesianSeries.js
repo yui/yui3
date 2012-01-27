@@ -511,7 +511,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
 
             setter: function(val)
             {
-                this._xDisplayName = Y.Escape.html(val);
+                this._xDisplayName = val.toString();
                 return val;
             }
         },
@@ -530,7 +530,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
 
             setter: function(val)
             {
-                this._yDisplayName = Y.Escape.html(val);
+                this._yDisplayName = val.toString();
                 return val;
             }
         },
@@ -662,7 +662,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         xKey: {
             setter: function(val)
             {
-                return Y.Escape.html(val);
+                return val.toString();
             }
         },
 
@@ -676,7 +676,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         yKey: {
             setter: function(val)
             {
-                return Y.Escape.html(val);
+                return val.toString();
             }
         },
 
