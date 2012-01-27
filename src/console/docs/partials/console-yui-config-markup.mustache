@@ -1,84 +1,86 @@
-<div id="demo" class="yui3-skin-sam">
-    <div id="console"></div>
+<form>
+    <div id="demo" class="yui3-skin-sam">
+        <div id="console"></div>
 
-    <div class="filter-controls">
-        <h4>Source filter</h4>
-        <p>
-            <select id="incexc">
-                <option value="logExclude" selected="selected">Exclude</option>
-                <option value="logInclude">Include</option>
-            </select>
-            <label for="filter_a"><input type="checkbox" name="src_filter" value="sourceA" id="filter_a"> <code>sourceA</code></label>
-            <label for="filter_b"><input type="checkbox" name="src_filter" value="sourceB" id="filter_b"> <code>sourceB</code></label>
-            <label for="filter_c"><input type="checkbox" name="src_filter" value="sourceC" id="filter_c" checked="checked"> <code>sourceC</code></label>
-        </p>
-    </div>
-
-    <div class="filter-controls">
-        <h4>Log level</h4>
-        <p>
-            <label for="lvl_info">
-                <input type="radio" name="log_level" id="lvl_info" value="info" checked="checked">
-                info
-            </label>
-            <label for="lvl_warn">
-                <input type="radio" name="log_level" id="lvl_warn" value="warn">
-                warn
-            </label>
-            <label for="lvl_error">
-                <input type="radio" name="log_level" id="lvl_error" value="error">
-                error
-            </label>
-        </p>
-    </div>
-
-    <div class="form">
-        <h4>Log a message</h4>
-        <div>
-            <input type="text" id="msg" value="This is a log message!">
-            <button type="button" id="log">log message</button>
-
+        <div class="filter-controls">
+            <h4>Source filter</h4>
             <p>
-                Source:
-                <label for="msg_src_a">
-                    <input type="radio" name="msg_src" id="msg_src_a" value="sourceA" checked="checked">
-                    A
-                </label>
-                <label for="msg_src_b">
-                    <input type="radio" name="msg_src" id="msg_src_b" value="sourceB">
-                    B
-                </label>
-                <label for="msg_src_c">
-                    <input type="radio" name="msg_src" id="msg_src_c" value="sourceC">
-                    C
-                </label>
+                <select id="incexc">
+                    <option value="logExclude" selected="selected">Exclude</option>
+                    <option value="logInclude">Include</option>
+                </select>
+                <label for="filter_a"><input type="checkbox" name="src_filter" value="sourceA" id="filter_a"> <code>sourceA</code></label>
+                <label for="filter_b"><input type="checkbox" name="src_filter" value="sourceB" id="filter_b"> <code>sourceB</code></label>
+                <label for="filter_c"><input type="checkbox" name="src_filter" value="sourceC" id="filter_c" checked="checked"> <code>sourceC</code></label>
+            </p>
+        </div>
 
-                <span>Category:</span>
-                <label for="msg_info">
-                    <input type="radio" name="msg_cat" id="msg_info" value="info" checked="checked">
+        <div class="filter-controls">
+            <h4>Log level</h4>
+            <p>
+                <label for="lvl_info">
+                    <input type="radio" name="log_level" id="lvl_info" value="info" checked="checked">
                     info
                 </label>
-                <label for="msg_warn">
-                    <input type="radio" name="msg_cat" id="msg_warn" value="warn">
+                <label for="lvl_warn">
+                    <input type="radio" name="log_level" id="lvl_warn" value="warn">
                     warn
                 </label>
-                <label for="msg_error">
-                    <input type="radio" name="msg_cat" id="msg_error" value="error">
+                <label for="lvl_error">
+                    <input type="radio" name="log_level" id="lvl_error" value="error">
                     error
                 </label>
             </p>
         </div>
 
-        <h4>Code preview</h4>
-        <pre id="preview">// YUI instance configuration
-var Y = YUI({
-    "logLevel": "info",
-    "logExclude": {
-        "sourceC": true
-    }
-});
+        <div class="form">
+            <h4>Log a message</h4>
+            <div>
+                <input type="text" id="msg" value="This is a log message!">
+                <input type="submit" id="log">log message</button>
 
-// Log statement
-Y.log(&quot;This is a log message!&quot;, &quot;info&quot;, &quot;sourceA&quot;);</pre>
+                <p>
+                    Source:
+                    <label for="msg_src_a">
+                        <input type="radio" name="msg_src" id="msg_src_a" value="sourceA" checked="checked">
+                        A
+                    </label>
+                    <label for="msg_src_b">
+                        <input type="radio" name="msg_src" id="msg_src_b" value="sourceB">
+                        B
+                    </label>
+                    <label for="msg_src_c">
+                        <input type="radio" name="msg_src" id="msg_src_c" value="sourceC">
+                        C
+                    </label>
+
+                    <span>Category:</span>
+                    <label for="msg_info">
+                        <input type="radio" name="msg_cat" id="msg_info" value="info" checked="checked">
+                        info
+                    </label>
+                    <label for="msg_warn">
+                        <input type="radio" name="msg_cat" id="msg_warn" value="warn">
+                        warn
+                    </label>
+                    <label for="msg_error">
+                        <input type="radio" name="msg_cat" id="msg_error" value="error">
+                        error
+                    </label>
+                </p>
+            </div>
+
+            <h4>Code preview</h4>
+            <pre id="preview">// YUI instance configuration
+    var Y = YUI({
+        "logLevel": "info",
+        "logExclude": {
+            "sourceC": true
+        }
+    });
+
+    // Log statement
+    Y.log(&quot;This is a log message!&quot;, &quot;info&quot;, &quot;sourceA&quot;);</pre>
+        </div>
     </div>
-</div>
+</form>

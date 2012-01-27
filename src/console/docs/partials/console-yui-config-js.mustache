@@ -55,6 +55,7 @@ Y.on("click", function (e) {
         src = Y.one("#demo input[name=msg_src]:checked").get("value");
 
     Y.log(msg,cat,src);
+    e.preventDefault(); // Don't submit the form
 }, "#log");
 
 // Support functions

@@ -6334,6 +6334,10 @@ Y.Loader.prototype = {
     addModule: function(o, name) {
         name = name || o.name;
         
+        if (typeof o === 'string') {
+            o = { name: name, fullpath: o };
+        }
+        
         //Only merge this data if the temp flag is set
         //from an earlier pass from a pattern or else
         //an override module (YUI_config) can not be used to
@@ -6355,6 +6359,10 @@ Y.Loader.prototype = {
 
         if (!o.type) {
             o.type = JS;
+            var p = o.path || o.fullpath;
+            if (p && p.indexOf('.' + CSS) > -1) {
+                o.type = CSS;
+            }
         }
 
         if (!o.path && !o.fullpath) {

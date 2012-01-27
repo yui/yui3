@@ -12,10 +12,10 @@ suite.add(new Y.Test.Case({
     name: 'Methods',
 
     setUp : function () {
-        var buttons = [];
+        var button, buttons = [], i;
         
         // Create a few buttons
-        for(var i=0; i < 5; i++) {
+        for(i=0; i < 5; i+=1) {
             button = new Y.Button({
                 srcNode: Y.Node.create('<button>' + i + '</button>')
             });
@@ -88,7 +88,7 @@ suite.add(new Y.Test.Case({
         var ButtonGroup = this.ButtonGroup;
         
         // Create a new button
-        newButton = new Y.Button({
+        var newButton = new Y.Button({
             srcNode: Y.Node.create('<button>6</button>')
         });
         
@@ -106,10 +106,10 @@ suite.add(new Y.Test.Case({
     name: 'Methods',
 
     setUp : function () {
-        var buttons = [];
+        var button, buttons = [], i;
         
         // Create a few buttons
-        for(var i=0; i < 5; i++) {
+        for(i=0; i < 5; i+=1) {
             button = new Y.Button({
                 srcNode: Y.Node.create('<button>' + i + '</button>')
             });

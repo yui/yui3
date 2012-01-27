@@ -894,4 +894,4 @@ YUI.add('editor-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['base', 'frame', 'node', 'exec-command', 'editor-selection']});
+}, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command', 'editor-selection'], skinnable:false});
