@@ -541,11 +541,35 @@ onload = function() {
 
             'should omit comments from children': function() {
                 var node = document.getElementById('test-dl');
-                debugger;
                 Assert.areEqual(document.getElementById('last-dd'),
                         Y.Selector.query(':last-child', node, true));
-            }
+            },
 
+            'should allow documentFragment root node': function() {
+                var frag = document.createDocumentFragment();
+                frag.appendChild(document.createElement('div'));
+                Assert.areEqual('DIV',
+                        Y.Selector.query('div', frag, true).tagName);
+
+                frag.appendChild(document.createElement('span'));
+                Assert.areEqual('SPAN',
+                        Y.Selector.query('span', frag, true).tagName);
+            },
+
+            'should find custom element by tag': function() {
+                var node = Y.Selector.query('foo', null, true);
+                Assert.areEqual(document.getElementsByTagName('foo')[0], node);
+            },
+
+            'should find custom element by class': function() {
+                var node = Y.Selector.query('.custom-foo', null, true);
+                Assert.areEqual(document.getElementsByTagName('foo')[0], node);
+            },
+
+            'should find custom element by tag and class': function() {
+                var node = Y.Selector.query('foo.custom-foo', null, true);
+                Assert.areEqual(document.getElementsByTagName('foo')[0], node);
+            }
         });
 
         suite.add(selectorQueryAll);
@@ -644,6 +668,8 @@ onload = function() {
     <div id="test-custom-attr" foo="bar" foo-bar="bar">custom attribute</div>
     <div id="1"></div>
     <div id="foo:bar"></div>
+
+    <foo class="custom-foo"></foo>
 
 </body>
 </html>

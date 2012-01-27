@@ -1,247 +1,530 @@
 <div class="intro">
-<p>The Get Utility provides a mechanism for attaching script and CSS resources
-&mdash; including cross-domain resources &mdash; to the DOM after the page has
-loaded.</p>
-
-<p>Common use cases for the Get Utility include:</p>
-
-<ul>
-  <li>
-  <p><strong>Cross-site data retrieval:</strong> Because XMLHttpRequest and the
-  <a href="../io/index.html">YUI IO Utility</a> (which uses
-  XMLHttpRequest) adhere to a strict <a
-  href="http://en.wikipedia.org/wiki/Same_origin_policy">same-origin
-  policy</a>, the retrieval of third-party data via XHR requires a server-side
-  proxy.</p>
-
-  <p>When you control or absolutely trust a cross-domain source, you can
-  eliminate the server-side proxy by loading a script file directly from the
-  external domain. That script file, which would typically contain
-  JSON-formatted data, is executed immediately upon load.</p>
-
-  <p>That said, it's crucial to
-  understand that if there is malicious code present in the loaded script there
-  is no safe way to protect your users from that malicious code; the
-  browser will execute the code with full privileges. <strong>Never expose
-  your users to JavaScript whose source is not absolutely
-  trustworthy.</strong>.</p>
-  </li>
-
-  <li>
-  <p><strong>Progressive loading of functionality:</strong> In rich web
-  applications, it's often useful to load some script and CSS resources only
-  when they become necessary (based on user action). The Get Utility provides
-  a flexible mechanism for bringing additional resources on-demand.</p>
-
-  <p>If you're loading YUI resources specifically, you may want to use the <a href="../yui/index.html#loader">YUI Loader Utility</a>. Loader employs the Get Utility under the hood to bring in YUI components and has an intrinsic understanding of the YUI dependency tree.</p>
-  </li>
-</ul>
+<p>
+The Get Utility makes it easy to dynamically load JavaScript and CSS resources and be notified when they've finished loading. Get is used internally by the <a href="../yui/index.html">YUI Loader</a> to load YUI modules and by the <a href="../jsonp/index.html">JSONP module</a> to make JSONP requests. The Get Utility is transactional in nature and is capable of loading multiple resources either serially or in parallel.
+</p>
 </div>
 
 {{>getting-started}}
 
 <h2>Using the Get Utility</h2>
 
-<p>With the Get Utility present, you can make use of it to fetch JavaScript files using `Y.Get.script()`, and CSS files using `Y.Get.css()`.  The `script()` and `css()` methods each take the following arguments:</p>
+<h3>Loading CSS and JavaScript</h3>
 
-<dl>
-  <dt>urls (String|String[])</dt>
-  <dd>A string or an array of strings designating the URL(s) you wish to load into the page.</dd>
+<h4>`js()`</h4>
 
-  <dt>options (Object)</dt>
-  <dd>An optional object containing configuration information for the transaction; see the [[#Configuring a Transaction]] section below for the full list of configuraton options you can include here.</dd>
-</dl>
+<p>
+To load a JavaScript resource, pass a URL (both relative and absolute URLs are fine) and a callback function to the <a href="{{apiDocs}}/classes/Get.html#method_js">`Y.Get.js()`</a> method. Get will execute the callback function when the resource has finished loading. If an error occurs, the first argument passed to the callback will be an array of error objects.
+</p>
 
-<p>A sample request for a file might look like this:</p>
+<p>
+`Y.Get` is a static class, so you don't need to instantiate it before calling its methods.
+</p>
 
 ```
-Y.Get.script('http://example.com/file.js', {
-  onSuccess: function () {
-    Y.log('file loaded');
-  }
+// Load a single JavaScript resource.
+Y.Get.js('http://example.com/file.js', function (err) {
+    if (err) {
+        Y.log('Error loading JS: ' + err[0].error, 'error');
+        return;
+    }
+
+    Y.log('file.js loaded successfully!');
 });
 ```
 
-<p>If you want to hold onto a transaction object for the request, assign the return value to a variable:</p>
+<h4>`css()`</h4>
+
+<p>
+Loading CSS works the same way as JS, but you call the <a href="{{apiDocs}}/classes/Get.html#method_css">`css()`</a> method instead of `js()`:
+</p>
 
 ```
-var transaction = Y.Get.script('http://example.com/file.js', {
-  onSuccess: function () {
-    Y.log('file loaded');
-  }
+// Load a single CSS resource.
+Y.Get.css('file.css', function (err) {
+    if (err) {
+        Y.log('Error loading CSS: ' + err[0].error, 'error');
+        return;
+    }
+
+    Y.log('file.css loaded successfully!');
 });
 ```
 
-<p>`transaction` will be an object with a single property, `tId`, which is a unique identifier of the transaction following the pattern "q0", "q1", "q2", etc.</p>
+<h4>`load()`</h4>
 
-<p>It's only necessary to store the transaction object if you want to abort the request later.</p>
+<p>
+If you want to load more than one resource in a single transaction and be notified when all of them have finished loading, you may pass an array of URLs to `css()` or `js()`.
+</p>
 
-<h3>Configuring a Transaction</h3>
-
-<p>The Get Utility is configured via the second argument to the `script()` or `css()` methods.  This optional argument should be an object containing one or more of the following fields:</p>
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <tr>
-      <td>`attributes`</td>
-      <td>Object</td>
-      <td>A hash of attributes to apply to the dynamically created nodes.  You might use this to add `media="print"` to a CSS file, for example.</td>
-    </tr>
-
-    <tr>
-      <td>`autopurge`</td>
-      <td>Boolean</td>
-      <td>If `true`, script nodes will automatically be removed every 20 transactions (this number is globally configurable via the `Y.Get.PURGE_THRESH` property). Script nodes can be safely removed in most cases, as their contents (having executed) remain available. CSS nodes should not have this set to true as it will remove the CSS rules. Default:
-      `true` for script nodes, `false` for CSS nodes.</td>
-    </tr>
-
-    <tr>
-      <td>`context`</td>
-      <td>Object</td>
-      <td>The `this` object to use when executing callbacks. Default: the current YUI instance.</td>
-    </tr>
-
-    <tr>
-      <td>`data`</td>
-      <td>Any</td>
-      <td>Data to pass as an argument to `onSuccess` or `onFailure` callbacks.  Default: `null`.</td>
-    </tr>
-
-    <tr>
-      <td>`onEnd`</td>
-      <td>Function</td>
-      <td>Callback function invoked when a transaction completes, no matter how the transaction ended.</td>
-    </tr>
-
-    <tr>
-      <td>`onFailure`</td>
-      <td>Function</td>
-      <td>Callback function invoked when an error is detected or `abort()` is called.</td>
-    </tr>
-
-    <tr>
-      <td>`onProgress`</td>
-      <td>Function</td>
-      <td>Callback function invoked after each node is inserted.</td>
-    </tr>
-
-    <tr>
-      <td>`onSuccess`</td>
-      <td>Function</th>
-      <td>Callback function invoked when the requested file(s) have loaded successfully.</td>
-    </tr>
-
-    <tr>
-      <td>`onTimeout`</td>
-      <td>Function</td>
-      <td>Callback function invoked if a timeout is detected.</td>
-    </tr>
-
-    <tr>
-      <td>`timeout`</td>
-      <td>Number</td>
-      <td>Number of milliseconds to wait for a file to finish loading before timing out.</td>
-    </tr>
-
-    <tr>
-      <td>`win`</td>
-      <td>Window</td>
-      <td>The window into which the loaded resource(s) should be inserted.  Default: `Y.config.win`.</td>
-    </tr>
-  </tbody>
-</table>
-
-<h3>Making Use of Arguments Supplied to Your Callback</h3>
-
-<p>As noted above, callback methods will have access to the `data` member supplied in the configuration object, assuming you provided one.  But the `data` member is just one of several fields included in the object passed to a callback.  Here's a summary of the fields contained in that argument object:</p>
-
-<table>
-  <thead>
-    <tr>
-      <th>Property</th>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <tr>
-      <td>`data`</td>
-      <td>Any</td>
-      <td>The `data` field you passed in the configuration object when the `script()` or `css()` method was called. Default: `null`.</td>
-    </tr>
-
-    <tr>
-      <td>`nodes`</td>
-      <td>Array</td>
-      <td>An array containing references to DOM node(s) created in processing the transaction.  These will be script nodes for JavaScript and link nodes for CSS.</td>
-    </tr>
-
-    <tr>
-      <td>`purge`</td>
-      <td>Function</td>
-      <td>Calling the returned `purge()` method will immediately remove the created nodes. This is safe and prudent for JavaScript nodes, which do not need to persist.  If CSS nodes are purged, the rules they contain are no longer available and the page will repaint accordingly.</td>
-    </tr>
-
-    <tr>
-      <td>`tId`</td>
-      <td>String</td>
-      <td>The unique identifier for this transaction. This string is available as the `tId` member of the object returned to you upon calling the `script()` or `css()` method.</td>
-    </tr>
-
-    <tr>
-      <td>`win`</td>
-      <td>Window</td>
-      <td>The window object in which the nodes were created.</td>
-    </tr>
-  </tbody>
-</table>
-
-<p>All of these fields are accessible on the object passed to your `onSuccess` callback:</p>
 ```
-Y.Get.script('http://json.org/json.js', {
-  onSuccess: function (e) {
-    // e contains all of the fields described in the table above.
+// Load multiple JS resources and execute the callback after all have finished
+// loading.
+Y.Get.js(['one.js', 'two.js', 'http://example.com/three.js'], function (err) {
+    if (err) {
+        Y.Array.each(err, function (error) {
+            Y.log('Error loading JS: ' + error.error, 'error');
+        });
+        return;
+    }
 
-    e.purge(); // Removes the script node immediately after executing.
-    Y.log(e.data); // Logs the data passed in the configuration object.
-  },
-
-  data: {
-    foo: 'bar',
-    baz: 'quux'
-  }
+    Y.log('All JS files loaded successfully!');
 });
 ```
 
-<h3>Using JSONP APIs</h3>
+<p>
+You can even mix and match both JavaScript and CSS files in the same transaction by calling <a href="{{apiDocs}}/classes/Get.html#method_load">`Y.Get.load()`</a>, which will guess the type of each URL by looking at the file extension.
+</p>
 
-<p>A common way to consume a web service that returns JSON data is to use a convention called JSONP. The way it works is that the consumer of the web service supplies the name of a function to execute on the client. The web service response is expected to return a JavaScript response that executes this function and provides a JSON payload as a parameter to the function.</p>
+```
+// Load both CSS and JS in a single transaction and execute the callback after
+// all resources have finished loading.
+Y.Get.load(['widget.js', 'widget.css'], function (err) {
+    if (err) {
+        Y.Array.each(err, function (error) {
+            Y.log('Error loading file: ' + error.error, 'error');
+        });
+        return;
+    }
 
-<p>The <a href="../jsonp/index.html">JSONP component</a> provides a simplified API for making JSONP requests using the Get Utility.</p>
+    Y.log('All CSS and JS files loaded successfully!');
+});
+```
 
-<h3>How is the Get Utility Different From IO?</h3>
+<p>
+This should be enough to get you started using the Get Utility, but keep reading to learn about Get's more advanced functionality.
+</p>
 
-<p>The Get Utility inserts new script or CSS content into a window by creating new nodes and supplying a `src` or `href` attribute.  Files inserted into the window in this manner are processed (and, in the case of scripts, executed) immediately upon load.</p>
+<h3>Serial vs. Parallel Loading</h3>
 
-<p>While query parameters can be passed in the URL, no data can be sent to the server via HTTP POST using this method; the Get Utility can only make HTTP GET requests.</p>
+<p>
+The `css()`, `js()`, and `load()` methods execute <em>asynchronously</em>, which means that they return instantly rather than blocking subsequent code until the operation finishes. This is why it's necessary to provide a callback function if you want to be notified when loading is complete.
+</p>
 
-<p>As noted above, the Get Utility is ideal for loading your own scripts or CSS progressively (lazy loading) or for retrieving cross-domain JSON data from sources in which you have total trust.</p>
+<p>
+It's also important to understand when resources will be loaded <em>serially</em> (one after another) versus in <em>parallel</em> (all at the same time). Loading resources in parallel is always faster than loading them serially, but can sometimes be dangerous because resources won't always finish loading in the same order they were requested.
+</p>
 
-<p>The basic version of the <a href="../io/index.html">IO Utility</a> (`io-base`) uses the `XMLHttpRequest` object to interact with the server. `XMLHttpRequest` is limited by a strict <a href="http://en.wikipedia.org/wiki/Same_origin_policy">same origin policy</a>, but it supports a greater range of HTTP methods (including POST).</p> As a result, IO is a more appropriate choice for rich two-way communication between browser and server and gives you more control over data before it's processed within the browser.</p>
-
-<p>The IO Utility also supports cross domain requests through the `io-xdr` module.  However, there are specific trust requirements as described in the documentation for the <a href="../io/index.html#xdr">IO Utility</a>. The `io-xdr` submodule may be a better choice than the Get Utility for cross-domain communication if the service you are accessing can be configured to trust the server that is hosting your application.</p>
-
-<h2>Known Issues</h2>
+<p>
+The Get Utility always does the safest thing by default:
+</p>
 
 <ul>
-  <li><p>Gecko and WebKit-based browsers (Firefox, Chrome, and Safari) don't fire the DOM `load` event on a `<link>` node when a CSS file finishes loading. As a result, the Get Utility fires the `onSuccess` event immediately in these browsers. A workaround for this issue will be provided in a future release.</p></li>
+<li>
+<p>
+Transactions are processed serially. This means that only one transaction is in progress at a time, and it must finish before the next transaction will begin. Each call to `css()`, `js()`, or `load()` creates a transaction, although a single transaction may involve multiple requests.
+</p>
+</li>
+
+<li>
+<p>
+Within a transaction, CSS resources are always loaded in parallel. This is because, with CSS, load order has no effect on the end result, since style precedence is determined by the order of `<link>` nodes in the DOM.
+</p>
+</li>
+
+<li>
+<p>
+Within a transaction, JS resources are loaded in parallel in Firefox and Opera, because these browsers are capable of preserving script execution order regardless of load order. In all other browsers, JS resources are loaded serially unless the <a href="{{apiDocs}}/classes/Get.html#property_options">`async` option</a> is set to `true`.
+</p>
+</li>
+
+<li>
+<p>
+When the <a href="{{apiDocs}}/classes/Get.html#property_options">`async` option</a> is set to `true`, JS resources are loaded in parallel regardless of the browser, and execution order is not guaranteed.
+</p>
+</li>
+
 </ul>
+
+<h3>Working With Transactions</h3>
+
+<p>
+A transaction object is an instance of the <a href="{{apiDocs}}/classes/Get.Transaction.html">`Y.Get.Transaction`</a> class. It contains methods and properties that allow you to inspect and manipulate a transaction, which encompasses one or more CSS or JS requests and a set of config options associated with those requests.
+</p>
+
+<p>
+The `css()`, `js()`, and `load()` methods each return a transaction object. This same transaction object is also passed as the second argument to the completion callback.
+</p>
+
+```
+// Load a script and assign the transaction object to a var.
+var tx = Y.Get.js('hello.js', function (err, tx) {
+    // The transaction object is also passed as the second arg to completion
+    // callbacks.
+});
+```
+
+<p>
+It's not necessary to hold onto a transaction object unless you want to be able to abort a request before it finishes or manually purge `<script>` or `<link>` nodes created by the transaction.
+</p>
+
+<h4>Aborting Transactions</h4>
+
+<p>
+You can abort a transaction in progress by calling the transaction's <a href="{{apiDocs}}/classes/Get.Transaction.html#method_abort">`abort()`</a> method.
+</p>
+
+```
+var tx = Y.Get.js(['one.js', 'two.js'], function (err) {
+    if (err) {
+        Y.log(err[0].error, 'error');
+    }
+});
+
+tx.abort(); // Results in the log message "Aborted."
+```
+
+<p>
+Pass a string to the `abort()` method to customize the error message passed to callbacks.
+</p>
+
+<p>
+Note that since browsers don't expose a safe API for aborting in-progress JS and CSS requests, the Get Utility can't actually stop requests that have already started. Calling `abort()` will immediately cause callbacks to execute and will cancel any pending requests within the transaction that haven't yet begun, but if there are any requests already in progress, the browser will finish them silently.
+</p>
+
+<h4>Purging Inserted Nodes</h4>
+
+<p>
+If you plan to load lots of JavaScript resources&mdash;for example, maybe your app makes frequent JSONP requests to a remote API&mdash;you'll end up creating lots of `<script>` nodes behind the scenes. Each node on the page uses a small amount of memory, and since the actual script nodes aren't usually needed once the JS has been executed, it's a good idea to clean them up occasionally by purging them.
+</p>
+
+<p>
+By default, the Get Utility will automatically purge script nodes after every 20 requests. This number is relatively high since purging incurs a slight processing cost. If you want to manually purge the nodes inserted by a transaction instead of waiting for the automatic purge, you can do so by calling the transaction's `purge()` method.
+</p>
+
+```
+Y.Get.js(['one.js', 'two.js'], function (err, tx) {
+    // Purge all the DOM nodes created by this transaction.
+    tx.purge();
+});
+```
+
+<p>
+You can customize the automatic purge threshold by setting the <a href="{{apiDocs}}/classes/Get.html#property_options">`purgethreshold`</a> config option, and you can disable automatic purging completely by setting the <a href="{{apiDocs}}/classes/Get.html#property_options">`autopurge`</a> option to `false`.
+</p>
+
+<p>
+Note that the Get Utility will not automatically purge CSS `<link>` nodes by default, since removing a `<link>` node from the DOM also removes any styles it applied. Calling `purge()` manually on a transaction that included CSS requests will purge the `<link>` nodes and remove styles, so be careful.
+</p>
+
+<h4>Manually Executing Transactions</h4>
+
+<p>
+As described in [[#Serial vs. Parallel Loading]], the Get Utility executes transactions serially (one after the other) to ensure that they don't conflict with one another. If for some reason you want multiple transactions to execute in parallel and you're willing to take your life into your own hands, you can manually start a transaction by calling its `execute()` method.
+</p>
+
+```
+var txOne = Y.Get.js(['foo.js', 'bar.js']),
+    txTwo = Y.Get.js(['baz.js', 'quux.js']);
+
+// txOne is started automatically, and we can manually start txTwo in parallel.
+txTwo.execute();
+```
+
+<p>
+Calling `execute()` on a transaction that's already in progress or has already finished is safe and won't restart the transaction.
+</p>
+
+<p>
+An additional feature of `execute()` is that it accepts a callback function, which works just like the callback function passed to `css()`, `js()`, or `load()`. In fact, you can even call `execute()` multiple times to register multiple callback functions, and they'll be queued and executed in order once the transaction finishes. If you call `execute()` with a callback function on a transaction that's already finished, the callback will be executed immediately.
+</p>
+
+<h3>Configuration Options</h3>
+
+<p>
+The Get Utility supports the following config options. All options may be set at the transaction level. Some options may also be set at the request level (i.e., for a specific URL within a transaction). Options that may be set at the request level are indicated by a "Y" in the "Request?" column.
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Default</th>
+            <th>Request?</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td>`async`</td>
+            <td>`false`</td>
+            <td style="text-align:center">Y</td>
+            <td>
+                Whether or not to load scripts asynchronously, meaning they're requested in parallel and execution order is not guaranteed. Has no effect on CSS, since CSS is always loaded asynchronously.
+            </td>
+        </tr>
+
+        <tr>
+            <td>`attributes`</td>
+            <td>
+<pre class="">
+{
+  charset: "utf-8",
+  id     : <em>auto</em>
+}
+</pre>
+            </td>
+            <td style="text-align:center">Y</td>
+            <td>
+                HTML attribute name/value pairs that should be added to inserted nodes. By default, the `charset` attribute will be set to "utf-8" and nodes will be given an auto-generated `id` attribute, but you can override these with your own values if desired.
+            </td>
+        </tr>
+
+        <tr>
+            <td>`autopurge`</td>
+            <td>
+                `true` for JS<br>
+                `false` for CSS
+            </td>
+            <td></td>
+            <td>
+                Whether or not to automatically purge inserted nodes after the purge threshold is reached. This is `true` by default for JavaScript, but `false` for CSS since purging a CSS node will also remove any styling applied by the referenced file.
+            </td>
+        </tr>
+
+        <tr>
+            <td>`context`</td>
+            <td><em>transaction object</em></td>
+            <td></td>
+            <td>
+                `this` object to use when calling callback functions. Defaults to the transaction object.
+            </td>
+        </tr>
+
+        <tr>
+            <td>`data`</td>
+            <td>`undefined`</td>
+            <td></td>
+            <td>
+                Arbitrary data object to pass to "on*" callbacks.
+            </td>
+        </tr>
+
+        <tr>
+            <td>`doc`</td>
+            <td>`Y.config.doc`</td>
+            <td style="text-align:center">Y</td>
+            <td>
+                Document into which nodes should be inserted. By default, the current document is used.
+            </td>
+        </tr>
+
+        <tr>
+            <td>`insertBefore`</td>
+            <td><em>auto</em></td>
+            <td style="text-align:center">Y</td>
+            <td>
+                HTML element or id string of an element before which all generated nodes should be inserted. If not specified, Get will automatically determine the best place to insert nodes for maximum compatibility.
+            </td>
+        </tr>
+
+        <tr>
+            <td>`onEnd`</td>
+            <td>`undefined`</td>
+            <td></td>
+            <td>
+                Callback to execute after a transaction is complete, regardless of whether it succeeded or failed.
+            </td>
+        </tr>
+
+        <tr>
+            <td>`onFailure`</td>
+            <td>`undefined`</td>
+            <td></td>
+            <td>
+                Callback to execute after a transaction fails, times out, or is aborted.
+            </td>
+        </tr>
+
+        <tr>
+            <td>`onProgress`</td>
+            <td>`undefined`</td>
+            <td></td>
+            <td>
+                Callback to execute after each individual request in a transaction either succeeds or fails.
+            </td>
+        </tr>
+
+        <tr>
+            <td>`onSuccess`</td>
+            <td>`undefined`</td>
+            <td></td>
+            <td>
+                Callback to execute after a transaction completes successfully with no errors. Note that in browsers that don't support the `error` event on CSS `<link>` nodes, a failed CSS request may still be reported as a success because in these browsers it can be difficult or impossible to distinguish between success and failure for CSS resources.
+            </td>
+        </tr>
+
+        <tr>
+            <td>`onTimeout`</td>
+            <td>`undefined`</td>
+            <td></td>
+            <td>
+                Callback to execute after a transaction times out.
+            </td>
+        </tr>
+
+        <tr>
+            <td>`pollInterval`</td>
+            <td>`50`</td>
+            <td></td>
+            <td>
+                Polling interval (in milliseconds) for detecting CSS load completion in browsers that don't support the `load` event on `<link>` nodes. This isn't used for JavaScript.
+            </td>
+        </tr>
+
+        <tr>
+            <td>`purgethreshold`</td>
+            <td>`20`</td>
+            <td></td>
+            <td>
+                Number of nodes to insert before triggering an automatic purge when `autopurge` is `true`.
+            </td>
+        </tr>
+
+        <tr>
+            <td>`timeout`</td>
+            <td>`undefined`</td>
+            <td></td>
+            <td>
+                Number of milliseconds to wait before aborting a transaction. When a timeout occurs, the `onTimeout` callback is called, followed by `onFailure` and finally `onEnd`. By default, there is no timeout.
+            </td>
+        </tr>
+
+        <tr>
+            <td>`type`</td>
+            <td><em>auto</em></td>
+            <td style="text-align:center">Y</td>
+            <td>
+                Resource type ("css" or "js"). This option is set automatically by the `css()` and `js()` functions and will be ignored there, but may be useful when using the `load()` function. If not specified, the type will be inferred from the URL, defaulting to "js" if the URL doesn't contain a recognizable file extension.
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h4>Using Transaction-Specific Options</h4>
+
+<p>
+Transaction-specific configuration options apply only to a single transaction. To specify one or more transaction-specific options, just pass a config object as the second argument to `css()`, `js()` or `load()`.
+</p>
+
+```
+Y.Get.js('intl-jp.js', {
+    attributes: {
+        'charset': 'shift-jis', // custom charset attribute for inserted DOM nodes
+        'class'  : 'intl' // custom 'class' attribute for inserted DOM nodes
+    },
+
+    timeout: 10000 // timeout after 10 seconds
+}, function (err) {
+    // ...
+});
+```
+
+<p>
+You may have noticed that in the example above, the options object is the second argument and the callback is the third argument, whereas previous examples pass a callback as the second argument and no options object. The `css()`, `js()`, and `load()` methods support both signatures for convenience. The only required argument is the first one.
+</p>
+
+<h4>Using Request-Specific Options</h4>
+
+<p>
+Certain config options (see [[#Configuration Options|the table above]] for a complete list) can be specified on a per-request basis, meaning they'll apply only to a single URL.
+</p>
+
+<p>
+To specify request-specific options, pass an object or array of objects to `css()`, `js()`, or `load()` instead of passing a string or array of strings. Each object must have a `url` property specifying the URL to load, and may also contain request-specific options. You can freely mix and match string URLs and objects if desired.
+</p>
+
+```
+Y.Get.js([
+    {url: 'thing-one.js', attributes: {id: 'thing-one'}},
+    {url: 'thing-two.js', attributes: {id: 'thing-two'}, async: true}
+], function (err) {
+    // ...
+});
+```
+
+<p>
+When both request-specific options and transaction-specific options are specified, the options will be merged per request, with request-specific options taking precedence when there are collisions.
+</p>
+
+<h3>Granular Callbacks</h3>
+
+<p>
+While the callback parameter of the `css()`, `js()`, and `load()` methods makes it easy to define a combined success/failure callback for a transaction, there are times when more granularity is needed. Perhaps you want to use separate callbacks for success and failure, or perhaps you want to be notified of the progress of each request in a transaction rather than waiting until the entire transaction is complete. That's where granular callbacks come in.
+</p>
+
+<p>
+The Get Utility supports five different granular callbacks per transaction: `onEnd`, `onFailure`, `onProgress`, `onSuccess`, and `onTimeout`. See [[#Configuration Options]] for descriptions of when each callback is called.
+</p>
+
+<p>
+Granular callbacks receive the transaction object as an argument.
+</p>
+
+```
+Y.Get.js('kittens.js', {
+    onFailure: function () {
+        Y.log('Failure!');
+    },
+
+    onSuccess: function () {
+        Y.log('Success!');
+    }
+});
+```
+
+<p>
+You can pass arbitrary data to your callbacks by setting the `data` option on the transaction.
+</p>
+
+```
+Y.Get.js(['one.js', 'two.js', 'three.js'], {
+    data: {progress: 0},
+
+    onProgress: function (tx) {
+        tx.data.progress += 1;
+        Y.log('Loaded ' + tx.data.progress + ' file(s)');
+    }
+});
+```
+
+<p>
+By default, the `this` object inside a granular callback refers to the transaction object, but you can customize it by setting the `context` option.
+</p>
+
+```
+Y.Get.js('puppies.js', {
+    context: {bark: 'ruff ruff!'},
+
+    onSuccess: function () {
+        Y.log(this.bark);
+    }
+});
+```
+
+<h2>Using JSONP APIs</h2>
+
+<p>
+A common way to consume a web service that returns JSON data is to use a convention called <a href="http://en.wikipedia.org/wiki/JSONP">JSONP</a>. The remote service returns data wrapped in a JavaScript function call (the name of which is supplied in the request), so retrieving the data is simple as loading and executing the JSONP URL as if it were a script. When the returned JS executes, the data is passed to the named function.
+</p>
+
+<p>
+The Get Utility can be used to consume JSONP APIs by loading JSONP URLs as scripts. However, the <a href="../jsonp/index.html">JSONP Utility</a> (which uses Get under the hood) provides a simplified API for making JSONP requests, so we recommend using that component for JSONP rather than using Get directly.
+</p>
+
+<h2>How is the Get Utility Different From IO?</h2>
+
+<p>
+In simple terms, the Get Utility loads new JS or CSS resources into a document by creating new DOM nodes and setting the `src` or `href` attribute. Files loaded in this manner are processed (and, in the case of scripts, executed) as soon as they load.
+</p>
+
+<p>While query parameters can be passed in the URL, no data can be sent to the server via HTTP POST using this method; the Get Utility can only make HTTP GET requests. This makes the Get Utility ideal for loading scripts or CSS progressively (lazy loading) or for retrieving cross-domain JSON data from trusted sources, but somewhat less ideal for more sophisticated communication.
+</p>
+
+<p>
+The basic version of the <a href="../io/index.html">IO Utility</a> (`io-base`) uses the `XMLHttpRequest` object to interact with the server. `XMLHttpRequest` is limited by a strict <a href="http://en.wikipedia.org/wiki/Same_origin_policy">same origin policy</a>, but it supports a greater range of HTTP methods (including POST). As a result, IO is a more appropriate choice for rich two-way communication between browser and server and gives you more control over data before it's processed within the browser.
+</p>
+
+<p>
+The IO Utility also supports cross domain requests through the `io-xdr` module. However, there are specific trust requirements as described in the documentation for the <a href="../io/index.html#xdr">IO Utility</a>. The `io-xdr` submodule may be a better choice than the Get Utility for cross-domain communication if the service you are accessing can be configured to trust the server that is hosting your application.
+</p>

@@ -1052,13 +1052,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "node-base"
         ]
     }, 
-    "event-contextmenu": {
-        "requires": [
-            "event-synthetic", 
-            "event-simulate", 
-            "dom-screen"
-        ]
-    }, 
     "event-custom": {
         "use": [
             "event-custom-base", 
@@ -2189,4 +2182,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '70208d964b99c781f195947e268c9e7a';
+YUI.Env[Y.version].md5 = '4d48b229bf0f105ff3567a5a9d83f8cb';

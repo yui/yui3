@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<html class="foo">
 <head>
 <title>YUI Seed Tests</title>
 </head>
@@ -7,14 +7,38 @@
 
 <div id="log"></div>
 
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+
+<script>
+var YUI = {};
+</script>
+<!-- This is the main test file, notice it's using the `yui-base` seed file 
+without Loader on the page, so Loader is fetched before tests are executed. -->
+<script type="text/javascript" src="../../../build/yui-base/yui-base.js"></script>
 <script type="text/javascript">
 
+YUI.GlobalConfig = {
+    modules: {
+        'global-mod': {
+            fullpath: './assets/globalmod.js'
+        }
+    },
+    groups: {
+        //Just for code coverage..
+        noop: {
+            modules: {
+                noop: {
+                    fullpath: './noop.js'
+                }
+            }
+        }
+    }
+};
+
 var YUI_config = {
+    loaderPath: 'loader/loader.js',
     gconfig: true,
     gfilter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
 };
-
 
 YUI({
     allowRollup: false,
@@ -40,21 +64,15 @@ YUI({
 
         'namespace-test': {
             fullpath: 'namespace-test.js'
-        },
-
-        'test-console': {
-            fullpath : '../../common/tests/assets/test-console.js',
-            requires : ['console-filters'],
-            skinnable: true
-        },
-
-        'skin-sam-test-console': {
-            fullpath: '../../common/tests/assets/test-console.css',
-            type    : 'css'
         }
         
     }
 }).use('seed-tests', 'core-tests', 'config-test', 'later-test', 'namespace-test', 'test-console', 'test', function(Y) {
+    new Y.Test.Console().render('#log');
+
+    //This is a YUITest hack to rename this test for reporting
+    Y.Test.Runner.masterSuite.name = 'YUI Seed Fetch Loader Test Suite';
+    Y.Test.Runner.masterSuite.items[0].name = 'YUI Seed Fetch Loader Test Suite';
     Y.Test.Runner.run();
 });
 

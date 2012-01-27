@@ -21,14 +21,35 @@
 -->
 <yuitest>
     <tests base="@TEST_ARTIFACTS_BASE@" timeout="120000">
+        <!-- Using a better coverage page for loader tests. -->
+        <url>loader/tests/index-automated.html</url>
+        <!-- Combined yui-base, array, object, lang, features
+            test page -->
+        <url>yui/tests/index-automated.html</url>
+
+
         <url>app/tests/app.html</url>
-        <!-- Autocomplete uses selector-css3, which doesn't
-             instrument due to a bug in YUI Test Coverage.
+        <url>arraysort/tests/arraysort.html</url>
+        <url>async-queue/tests/async-queue.html</url>
+        <url>attribute/tests/attribute.html</url>
+        <url>attribute/tests/attribute-core.html</url>
         <url>autocomplete/tests/functional/autocomplete.html</url>
-        -->
+        <url>base/tests/base-core.html</url>
         <url>base/tests/base.html</url>
         <url>cache/tests/cache.html</url>
+        <url>cache/tests/cache-offline.html</url>
         <url>cache/tests/cache-plugin.html</url>
+        <url>calendar/tests/calendar.html</url>
+        <url>charts/tests/axesattrs.html</url>
+        <url>charts/tests/charts.html</url>
+        <url>charts/tests/dataprovider.html</url>
+        <url>charts/tests/graph.html</url>
+        <url>charts/tests/pie.html</url>
+        <!--url>charts/tests/axes.html</url-->
+        <url>charts/tests/seriestests.html</url>
+        <url>classnamemanager/tests/classnamemanager.html</url>
+        <url>collection/tests/arraylist.html</url>
+        <url>collection/tests/collection.html</url>
         <url>console/tests/console.html</url>
         <url>console-filters/tests/console-filters.html</url>
         <url>dataschema/tests/dataschema.html</url>
@@ -42,10 +63,24 @@
         <url>datasource/tests/datasource-polling.html</url>
         <url>datasource/tests/datasource-textschema.html</url>
         <url>datasource/tests/datasource-xmlschema.html</url>
+        <url>datatype/tests/date.html</url>
+        <url>datatype/tests/number.html</url>
+        <url>datatype/tests/xml.html</url>
+        <url>datatype/tests/datatype-date-math.html</url>
+        <url>dd/tests/index.html</url>
         <url>dial/tests/dial.html</url>
+        <url>dom/tests/dom.html</url>
+        <url>dom/tests/dom-base.html</url>
+        <!-- This test fails to complete under automation.
+             Removed until the cause is discovered.
+             http://yuilibrary.com/projects/yui3/ticket/2531536
+        <url>dom/tests/dom-xy.html</url>
+        -->
         <url>dump/tests/dump.html</url>
+	    <url>editor/tests/editor.html</url>
         <url>escape/tests/functional/escape.html</url>
         <url>event-custom/tests/customevent.html</url>
+        <url>event-custom/tests/event-custom-base.html</url>
         <url>event-valuechange/tests/functional/event-valuechange.html</url>
         <url>event/tests/dom.html</url>
         <url>event/tests/delegate.html</url>
@@ -55,16 +90,41 @@
         <url>event/tests/focusblur.html</url>
         <url>get/tests/get.html</url>
         <url>graphics/tests/graphics.html</url>
+        <url>handlebars/tests/handlebars.html</url>
         <url>highlight/tests/functional/highlight.html</url>
         <url>history/tests/functional/history-base.html</url>
+        <!-- history-hash doesn't work properly with Selenium. Bug #2530385.
+        <url>history/tests/functional/history-hash.html</url>
+        -->
         <url>history/tests/functional/history-html5.html</url>
-        <!-- This test hangs on the CI system.
-             <url>json/tests/json.html</url>
-        -->
+        <url>intl/tests/intl.html</url>
+        <url>json/tests/json.html</url>
+        <!--url>jsonp/tests/jsonp.html</url>
+        <url>jsonp/tests/jsonp-url.html</url-->
+        <url>matrix/tests/matrix.html</url>
+        <url>node/tests/node.html</url>
+        <!--url>node-focusmanager/tests/focusmanager.html</url-->
+        <url>parallel/tests/index.html</url>
+        <url>pjax/tests/pjax.html</url>
+        <url>pluginhost/tests/plugins.html</url>
+        <url>slider/tests/slider.html</url>
+        <url>test/tests/arrayassert.html</url>
+        <url>test/tests/mock.html</url>
+        <url>test/tests/objectassert.html</url>
+        <url>text/tests/functional/text-accentfold.html</url>
+        <url>text/tests/functional/text-wordbreak.html</url>
+        <url>widget/tests/widget.html</url>
+        <url>widget-parent/tests/parent-child.html</url>
+        <url>yql/tests/index.html</url>
         <url>oop/tests/oop.html</url>
-        <!-- These tests hang on the CI system.
-            <url>pjax/tests/pjax.html</url>
-            <url>parallel/tests/index.html</url>
-        -->
+        <url>substitute/tests/substitute.html</url>
+
+        <url>yui-throttle/tests/index.html</url>
+
+        <url>scrollview/tests/scrollview-list-unit-test.html</url>
+        <url>panel/tests/unit-tests.html</url>
+        <url>widget-buttons/tests/widget-buttons.html</url>
+        <url>widget-position-align/tests/widget-position-align.html</url>
+
     </tests>
 </yuitest>

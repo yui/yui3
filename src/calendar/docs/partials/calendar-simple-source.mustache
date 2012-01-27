@@ -1,18 +1,9 @@
-<!-- Load the YUI CSSButton CSS file from gallery to create simple and quick buttons -->
-<link href="http://yui.yahooapis.com/gallery-2011.08.31-20-57/build/gallerycss-cssbutton/gallerycss-cssbutton.css" type="text/css" rel="stylesheet" />
-
 <!-- Add an additional blue button style -->
 <style>
-.yui3-skin-sam .yui3-button-color-blue {
-  color: #fff;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#599bdc), to(#3476b7));
-  background-image: -webkit-linear-gradient(top, #599bdc, #3476b7);
-  background-image: -moz-linear-gradient(top, #599bdc, #3476b7);
-  background-image: -ms-linear-gradient(top, #599bdc, #3476b7);
-  background-image: -o-linear-gradient(top, #599bdc, #3476b7);
-  background-image: linear-gradient(top, #599bdc, #3476b7);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#599bdc', EndColorStr='#3476b7');
-  background-color: #3476b7;
+.yui3-button {
+    margin:10px 0px 10px 0px;
+    color: #fff;
+    background-color: #3476b7;
 }
 </style>
 
@@ -24,15 +15,15 @@
   <div id="rightcolumn" class="yui3-u">
    <div id="links" style="padding-left:20px;">
       <!-- The buttons are created simply by assigning the correct CSS class -->
-      <div id="togglePrevMonth" class="yui3-button yui3-button-color-blue">Toggle Previous Month's Dates</div><br>
-      <div id="toggleNextMonth" class="yui3-button yui3-button-color-blue">Toggle Next Month's Dates</div><br>
+      <button id="togglePrevMonth" class="yui3-button">Toggle Previous Month's Dates</button><br>
+      <button id="toggleNextMonth" class="yui3-button">Toggle Next Month's Dates</button><br>
       Selected date: <span id="selecteddate"></span>
    </div>
   </div>
 </div>
 
 <script type="text/javascript">
-YUI().use('calendar', 'datatype-date',  function(Y) {
+YUI().use('calendar', 'datatype-date', 'cssbutton',  function(Y) {
     
     // Create a new instance of calendar, placing it in 
     // #mycalendar container, setting its width to 340px,

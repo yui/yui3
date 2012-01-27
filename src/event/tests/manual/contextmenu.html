@@ -6,50 +6,71 @@
         <title>contextmenu synthetic event</title>
         <meta name="author" content="Todd Kloots">
         <style type="text/css">
-        
+
           body {
+/*
             padding-top: 500px;
             padding-bottom: 200px;
+*/
           }
-        
+          
+          #menu {
+            position: absolute;
+            display: none;
+            background: #ccc;
+            padding: 0;
+            margin: 0;
+            list-style-type: none;
+          }
+
         </style>
-        
+
       	<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
         <script type="text/javascript">
-        
+
           YUI({
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
             allowRollup: false,
             lazyEventFacade: true
-          }).use("event-contextmenu", "node", "event", "overlay", function (Y) {
+          }).use("event-contextmenu", "node-event-delegate", "node-style", "node-screen", function (Y) {
+
 
             Y.one("doc").delegate("contextmenu", function (e) {
-              Y.log(e.pageX);
-              Y.log(e.pageY);
+
+              e.preventDefault();
+
+              var menu = Y.one("#menu");
+              menu.setStyle("display", "block");
+              menu.setXY([e.pageX, e.pageY]);
               
-              var overlay = Y.Overlay({ bodyContent: "Hello, World" });
-              overlay.render(Y.one("body"));
-              
-              
+
             }, "button");
-          
+
+
+/*
             Y.one("#btn-1").on("contextmenu", function (e) {
               Y.log(e.pageX);
               Y.log(e.pageY);
             });
-          
+*/
+
           });
 
-        
+
         </script>
 
 	</head>
 	<body>
 
-
-
 	   <button id="btn-1">Button 1</button>
 	   <button id="detach-btn">Detach Listeners</button>
+
+     <ul id="menu">
+        <li>Option 1</li>
+        <li>Option 2</li>
+        <li>Option 3</li>
+     </ul>
+
 
 	</body>
 </html>

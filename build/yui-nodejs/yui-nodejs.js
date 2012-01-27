@@ -517,7 +517,7 @@ proto = {
                     this.log('applyTo not found: ' + method, 'warn', 'yui');
                 }
             }
-            return m.apply(instance, args);
+            return m && m.apply(instance, args);
         }
 
         return null;
@@ -975,6 +975,10 @@ with any configuration info required for the module.
                 handleLoader();
             }
             return Y;
+        }
+
+        if (mods['loader'] && !Y.Loader) {
+            Y._attach(['loader']);
         }
 
 
@@ -2471,7 +2475,9 @@ utilities for the library.
 var CACHED_DELIMITER = '__',
 
     hasOwn   = Object.prototype.hasOwnProperty,
-    isObject = Y.Lang.isObject;
+    isObject = Y.Lang.isObject,
+
+    win = Y.config.win;
 
 /**
 Returns a wrapper for a function which caches the return value of that function,
@@ -2511,6 +2517,31 @@ Y.cached = function (source, cache, refetch) {
 
         return cache[key];
     };
+};
+
+/**
+Returns the `location` object from the window/frame in which this YUI instance
+operates, or `undefined` when executing in a non-browser environment
+(e.g. Node.js).
+
+It is _not_ recommended to hold references to the `window.location` object
+outside of the scope of a function in which its properties are being accessed or
+its methods are being called. This is because of a nasty bug/issue that exists
+in both Safari and MobileSafari browsers:
+[WebKit Bug 34679](https://bugs.webkit.org/show_bug.cgi?id=34679).
+
+@method getLocation
+@return {location} The `location` object from the window/frame in which this YUI
+    instance operates.
+@since 3.5.0
+**/
+Y.getLocation = function () {
+    // The reference to the `window` object created outside this function's
+    // scope is safe to hold on to, but it is not safe to do so with the
+    // `location` object. The WebKit engine used in Safari and MobileSafari will
+    // "disconnect" the `location` object from the `window` when a page is
+    // restored from back/forward history cache.
+    return win && win.location;
 };
 
 /**
@@ -3466,7 +3497,7 @@ YUI.Env.aliases = {
     "controller": ["router"],
     "dataschema": ["dataschema-base","dataschema-json","dataschema-xml","dataschema-array","dataschema-text"],
     "datasource": ["datasource-local","datasource-io","datasource-get","datasource-function","datasource-cache","datasource-jsonschema","datasource-xmlschema","datasource-arrayschema","datasource-textschema","datasource-polling"],
-    "datatable": ["datatable-base","datatable-datasource","datatable-sort","datatable-scroll"],
+    "datatable": ["datatable-core","datatable-head","datatable-body","datatable-base","datatable-column-widths","datatable-mutable","datatable-scroll","datatable-datasource","datatable-sort"],
     "datatype": ["datatype-number","datatype-date","datatype-xml"],
     "datatype-date": ["datatype-date-parse","datatype-date-format"],
     "datatype-number": ["datatype-number-parse","datatype-number-format"],
@@ -5341,6 +5372,10 @@ Y.Loader.prototype = {
     addModule: function(o, name) {
         name = name || o.name;
         
+        if (typeof o === 'string') {
+            o = { name: name, fullpath: o };
+        }
+        
         //Only merge this data if the temp flag is set
         //from an earlier pass from a pattern or else
         //an override module (YUI_config) can not be used to
@@ -5362,6 +5397,10 @@ Y.Loader.prototype = {
 
         if (!o.type) {
             o.type = JS;
+            var p = o.path || o.fullpath;
+            if (p && p.indexOf('.' + CSS) > -1) {
+                o.type = CSS;
+            }
         }
 
         if (!o.path && !o.fullpath) {
@@ -6447,7 +6486,11 @@ Y.Loader.prototype = {
 
             if (d && d.errors) {
                 for (i = 0; i < d.errors.length; i++) {
-                    u = d.errors[i].request.url;
+                    if (d.errors[i].request) {
+                        u = d.errors[i].request.url;
+                    } else {
+                        u = d.errors[i];
+                    }
                     errs[u] = u;
                 }
             }
@@ -6589,11 +6632,12 @@ Y.Loader.prototype = {
         var f = this.filter,
             hasFilter = name && (name in this.filters),
             modFilter = hasFilter && this.filters[name],
-	    groupName = this.moduleInfo[name] ? this.moduleInfo[name].group:null;		
-	    if (groupName && this.groups[groupName].filter) {		
-	 	   modFilter = this.groups[groupName].filter;
-		   hasFilter = true;		
-	     };
+	        groupName = this.moduleInfo[name] ? this.moduleInfo[name].group : null;
+
+	    if (groupName && this.groups[groupName] && this.groups[groupName].filter) {		
+	 	    modFilter = this.groups[groupName].filter;
+		    hasFilter = true;		
+	    };
 
         if (u) {
             if (hasFilter) {
@@ -6655,7 +6699,23 @@ Y.Loader.prototype = {
         }
         s = s || self.sorted;
 
-        if (self.combine) {
+        var addSingle = function(m) {
+            
+            if (m) {
+                group = (m.group && self.groups[m.group]) || NOT_FOUND;
+
+                url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :
+                      self._url(m.path, s[i], group.base || m.base);
+                
+
+                resolved[m.type].push(url);
+                resolved[m.type + 'Mods'].push(m);
+            } else {
+            }
+            
+        };
+
+        //if (self.combine) {
 
             len = s.length;
 
@@ -6670,14 +6730,13 @@ Y.Loader.prototype = {
                 comboSource = comboBase;
                 m = self.getModule(s[i]);
                 groupName = m && m.group;
-                if (groupName) {
-
-                    group = self.groups[groupName];
+                group = self.groups[groupName];
+                if (groupName && group) {
 
                     if (!group.combine) {
-                        m.combine = false;
                         //This is not a combo module, skip it and load it singly later.
-                        singles.push(s[i]);
+                        //singles.push(s[i]);
+                        addSingle(m);
                         continue;
                     }
                     m.combine = true;
@@ -6690,6 +6749,13 @@ Y.Loader.prototype = {
                     }
                     m.comboSep = group.comboSep || self.comboSep;
                     m.maxURLLength = group.maxURLLength || self.maxURLLength;
+                } else {
+                    if (!self.combine) {
+                        //This is not a combo module, skip it and load it singly later.
+                        //singles.push(s[i]);
+                        addSingle(m);
+                        continue;
+                    }
                 }
 
                 comboSources[comboSource] = comboSources[comboSource] || [];
@@ -6721,7 +6787,8 @@ Y.Loader.prototype = {
                             } else {
                                 //Add them to the next process..
                                 if (mods[i]) {
-                                    singles.push(mods[i].name);
+                                    //singles.push(mods[i].name);
+                                    addSingle(mods[i]);
                                 }
                             }
 
@@ -6778,8 +6845,10 @@ Y.Loader.prototype = {
 
             resCombos = null;
             
-        }
+        //}
 
+        
+        /*
         if (!self.combine || singles.length) {
 
             s = singles.length ? singles : self.sorted;
@@ -6804,10 +6873,22 @@ Y.Loader.prototype = {
                 url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :
                       self._url(m.path, s[i], group.base || m.base);
                 
-                resolved[m.type].push(url);
+                /*
+                * This is so top level (non-comboed) YUI modules are at the top of the list.
+                * All other modules come below, this should only happen when `self.combine`
+                * is false.
+                * /
+                if (!self.combine) {
+                    resolved[m.type].unshift(url);
+                } else {
+                    resolved[m.type].push(url);
+                }
+
+
                 resolved[m.type + 'Mods'].push(m);
             }
         }
+        */
 
 
         return resolved;
@@ -7524,20 +7605,45 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "datatable": {
         "use": [
+            "datatable-core", 
+            "datatable-head", 
+            "datatable-body", 
             "datatable-base", 
+            "datatable-column-widths", 
+            "datatable-mutable", 
+            "datatable-scroll", 
             "datatable-datasource", 
-            "datatable-sort", 
-            "datatable-scroll"
+            "datatable-sort"
         ]
     }, 
     "datatable-base": {
         "requires": [
-            "recordset-base", 
-            "widget", 
-            "substitute", 
-            "event-mouseenter"
+            "datatable-core", 
+            "datatable-head", 
+            "datatable-body", 
+            "base-build", 
+            "widget"
         ], 
         "skinnable": true
+    }, 
+    "datatable-body": {
+        "requires": [
+            "datatable-core", 
+            "view", 
+            "classnamemanager"
+        ]
+    }, 
+    "datatable-column-widths": {
+        "requires": [
+            "datatable-base"
+        ]
+    }, 
+    "datatable-core": {
+        "requires": [
+            "escape", 
+            "model-list", 
+            "node-event-delegate"
+        ]
     }, 
     "datatable-datasource": {
         "requires": [
@@ -7546,11 +7652,25 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "datasource-local"
         ]
     }, 
+    "datatable-head": {
+        "requires": [
+            "datatable-core", 
+            "view", 
+            "classnamemanager"
+        ]
+    }, 
+    "datatable-mutable": {
+        "requires": [
+            "datatable-base"
+        ]
+    }, 
     "datatable-scroll": {
         "requires": [
             "datatable-base", 
-            "plugin"
-        ]
+            "datatable-column-widths", 
+            "dom-screen"
+        ], 
+        "skinnable": true
     }, 
     "datatable-sort": {
         "lang": [
@@ -7558,9 +7678,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "requires": [
             "datatable-base", 
-            "plugin", 
             "recordset-sort"
-        ]
+        ], 
+        "skinnable": true
     }, 
     "datatype": {
         "use": [
@@ -8079,6 +8199,17 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "features": {
         "requires": [
             "yui-base"
+        ]
+    }, 
+    "file": {
+        "requires": [
+            "base"
+        ]
+    }, 
+    "filelist": {
+        "requires": [
+            "file", 
+            "base"
         ]
     }, 
     "frame": {
@@ -8933,10 +9064,34 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "uploader": {
         "requires": [
-            "event-custom", 
-            "node", 
+            "uploader-html5", 
+            "uploader-flash"
+        ]
+    }, 
+    "uploader-flash": {
+        "requires": [
+            "swf", 
+            "widget", 
+            "substitute", 
             "base", 
-            "swf"
+            "node", 
+            "event-custom", 
+            "file", 
+            "uploader-queue"
+        ]
+    }, 
+    "uploader-html5": {
+        "requires": [
+            "widget", 
+            "node-event-simulate", 
+            "substitute", 
+            "file", 
+            "uploader-queue"
+        ]
+    }, 
+    "uploader-queue": {
+        "requires": [
+            "base"
         ]
     }, 
     "view": {
@@ -9102,7 +9257,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '4d48b229bf0f105ff3567a5a9d83f8cb';
+YUI.Env[Y.version].md5 = '562a95110a35488f3b9b6b9a68c41354';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
