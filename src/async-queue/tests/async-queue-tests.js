@@ -438,6 +438,14 @@ suite.add(new Y.Test.Case({
                         Y.Assert.areSame('B', this.test);
                     },
                     context : { test : 'B' }
+                },
+            
+                {
+                    fn: function () {
+                        Y.Assert.areSame('C', this.test);
+                    },
+                    context : 'callback',
+                    test: 'C'
                 });
 
         q.getCallback('a').context = a;
@@ -645,6 +653,76 @@ suite.add(new Y.Test.Case({
     }
     */
 }));
+
+suite.add(new Y.Test.Case({
+    name : "Test autoContinue and alwaysPause",
+    
+    qTestResult : '',
+    qTester: function (q) {
+        var self = this;
+        self.qTestResult = '';      
+        
+        q.add(function () {
+            self.qTestResult += 'A';
+            setTimeout(function () {
+                self.qTestResult += 'B';
+                q.run();
+            }, 50);
+        });
+        
+        q.add(function () {
+            self.qTestResult += 'C';
+            // The difference between the two config options shows up here.
+            // q.run() in this callback is ignored with autoContinue=false,
+            // so the next task doesn't get executed.
+            // In contrast alwaysPause=true respects q.run() in this callback.
+            q.run();
+        });
+        
+        q.add(function () {
+            // With the defaults (autoContinue=true, alwaysPause=undefined)
+            // the first queue task is not paused, so this gets executed
+            // before the timeout of that task.
+            self.qTestResult += 'D';
+        });                     
+        
+        q.run();
+    },
+
+    test_autoContinue: function () {
+        var self = this,
+            q = new Y.AsyncQueue();
+        q.defaults.autoContinue = false;
+        
+        this.qTester(q);
+        this.wait(function () {
+            Y.Assert.areSame('ABC', self.qTestResult);
+        }, 100);
+    },
+    
+    test_alwaysPause: function () {
+        var self = this,
+            q = new Y.AsyncQueue();
+        q.defaults.alwaysPause = true;
+        
+        this.qTester(q);
+        this.wait(function () {
+            Y.Assert.areSame('ABCD', self.qTestResult);
+        }, 100);
+    },
+    
+    test_defaultNoAutomaticPausing: function () {
+        var self = this,
+            q = new Y.AsyncQueue();
+        
+        this.qTester(q);
+        this.wait(function () {
+            Y.Assert.areSame('ACDB', self.qTestResult);
+        }, 100);
+    }
+    
+}));
+    
 
 suite.add(new Y.Test.Case({
     name : "Test Events",
