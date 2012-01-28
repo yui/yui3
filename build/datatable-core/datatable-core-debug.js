@@ -1337,40 +1337,21 @@ Y.mix(Table.prototype, {
     @protected
     **/
     _uiSetCaption: function (htmlContent) {
-        var caption = this._tableNode.one('> caption');
-
         if (htmlContent) {
             if (!this._captionNode) {
                 this._captionNode = Y.Node.create(
                     fromTemplate(this.CAPTION_TEMPLATE, {
                         className: this.getClassName('caption')
                     }));
-            }
 
-            this._captionNode.setContent(htmlContent);
-
-            if (caption) {
-                if (!caption.compareTo(this._captionNode)) {
-                    caption.replace(this._captionNode);
-                }
-            } else {
                 this._tableNode.prepend(this._captionNode);
             }
 
-            this._captionNode = caption;
-        } else {
-            if (this._captionNode) {
-                if (caption && caption.compareTo(this._captionNode)) {
-                    caption = null;
-                }
+            this._captionNode.setContent(htmlContent);
+        } else if (this._captionNode) {
+            this._captionNode.remove(true);
 
-                this._captionNode.remove(true);
-                delete this._captionNode;
-            }
-
-            if (caption) {
-                caption.remove(true);
-            }
+            delete this._captionNode;
         }
     },
 
