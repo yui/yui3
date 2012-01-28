@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>pjax Test — Index</title>
+</head>
+<body>
+
+    <h1>pjax Test</h1>
+    <p>Current Time: <strong id="now"></strong></p>
+
+    <ul id="nav">
+        <li><a href="css.html">CSS</a></li>
+        <li><a href="javascript.html">JavaScript</a></li>
+    </ul>
+
+    <div id="content">
+        <h2>Index</h2>
+    </div>
+
+    <script src="../../../../../build/yui/yui.js"></script>
+    <script>
+    YUI({filter: 'raw'}).use('pjax-plugin', function (Y) {
+
+        // Shows a timestamp so you notice full page reloads.
+        Y.one('#now').set('text', new Date());
+
+        // Plug-in the pjax.
+        Y.one('#content').plug(Y.Plugin.Pjax, {
+            linkSelector   : '#nav a',
+            contentSelector: '#content *',
+
+            on: {
+                load: function (e) {
+                    e.scripts = e.content.node.all('script');
+                }
+            },
+
+            after: {
+                load: function (e) {
+                    var scripts = e.scripts,
+                        queue, next;
+
+                    if (!scripts || !scripts.size()) {
+                        return;
+                    }
+
+                    queue = new Y.Queue();
+
+                    scripts.each(function (script) {
+                        script.remove();
+
+                        queue.add(function () {
+                            next = queue.next();
+
+                            var src = script.get('src'),
+                                node, text;
+
+                            if (src) {
+                                Y.Get.js(src, function () {
+                                    next && next();
+                                });
+                            } else {
+                                node = Y.one(Y.config.doc.createElement('script'));
+                                text = Y.config.doc.createTextNode(script.getContent());
+
+                                node.append(text).appendTo('head');
+                                next && next();
+                            }
+                        });
+                    });
+
+                    next = queue.next();
+                    next && next();
+                }
+            }
+        });
+
+    });
+    </script>
+
+</body>
+</html>
