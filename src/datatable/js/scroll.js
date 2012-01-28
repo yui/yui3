@@ -61,35 +61,6 @@ Scrollable.ATTRS = {
 };
 
 Y.mix(Scrollable.prototype, {
-    /**
-    Template for the `<table>` that is used to fix the caption in place when
-    the table is horizontally scrolling.
-
-    @property X_SCROLL_CAPTION_TABLE_TEMPLATE
-    @type {HTML}
-    @value '<table class="{className}"></table>'
-    **/
-    X_SCROLL_CAPTION_TABLE_TEMPLATE: '<table class="{className}"></table>',
-
-    /**
-    Template for the `<div>` that is used to contain the table when the table is
-    horizontally scrolling.
-
-    @property X_SCROLLER_TEMPLATE
-    @type {HTML}
-    @value '<div class="{className}"></div>'
-    **/
-    X_SCROLLER_TEMPLATE: '<div class="{className}"></div>',
-
-    /**
-    Template for the `<div>` that is used to contain the rows when the table is
-    vertically scrolling.
-
-    @property Y_SCROLLER_TEMPLATE
-    @type {HTML}
-    @value '<div class="{className}"><table class="{tableClassName}"></table></div>'
-    **/
-    Y_SCROLLER_TEMPLATE: '<div class="{className}"><table class="{tableClassName}"></table></div>',
 
     /**
     Scrolls a given row or cell into view if the table is scrolling.  Pass the
@@ -126,6 +97,85 @@ Y.mix(Scrollable.prototype, {
     //----------------------------------------------------------------------------
     // Protected properties and methods
     //----------------------------------------------------------------------------
+
+    /**
+    Template for the `<table>` that is used to fix the caption in place when
+    the table is horizontally scrolling.
+
+    @property _CAPTION_TABLE_TEMPLATE
+    @type {HTML}
+    @value '<table class="{className}"></table>'
+    @protected
+    **/
+    _CAPTION_TABLE_TEMPLATE: '<table class="{className}"></table>',
+
+    /**
+    Template for the virtual scrollbar needed in "xy" scrolling setups.
+
+    @property _SCROLLBAR_TEMPLATE
+    @type {HTML}
+    @value '<div class="{className}"><div></div></div>'
+    @protected
+    **/
+    _SCROLLBAR_TEMPLATE: '<div class="{className}"><div></div></div>',
+
+    /**
+    Template for the `<div>` that is used to contain the table when the table is
+    horizontally scrolling.
+
+    @property _X_SCROLLER_TEMPLATE
+    @type {HTML}
+    @value '<div class="{className}"></div>'
+    @protected
+    **/
+    _X_SCROLLER_TEMPLATE: '<div class="{className}"></div>',
+
+    /**
+    Template for the `<div>` that is used to contain the rows when the table is
+    vertically scrolling.
+
+    @property _Y_SCROLLER_TEMPLATE
+    @type {HTML}
+    @value '<div class="{className}"><table class="{tableClassName}"></table></div>'
+    @protected
+    **/
+    _Y_SCROLLER_TEMPLATE: '<div class="{className}"><table class="{tableClassName}"></table></div>',
+    /**
+    Creates a vertical scrollbar absolutely positioned over the right edge of the 
+    `_xScrollNode` to relay scrolling to the `_xScrollNode` (masked) below.
+    Without this, the `_yScrollNode`'s scrollbar would not be visible until the
+    `_xScrollNode` was scrolled to the far right.
+
+    @method _addVirtualScrollbar
+    @protected
+    **/
+    _addVirtualScrollbar: function () {
+        var scroller       = this._yScrollNode,
+            scrollbarWidth = Y.DOM.getScrollbarWidth() + 'px',
+            scrollbar      = Y.Node.create(
+                Y.Lang.sub(this._SCROLLBAR_TEMPLATE, {
+                    className: this.getClassName('virtual', 'scrollbar')
+                }));
+
+        this._scrollbarNode = scrollbar;
+
+        scrollbar.setStyles({
+            height: scroller.get('clientHeight') + 'px',
+            width : scrollbarWidth,
+            bottom : scrollbarWidth
+        });
+
+        scrollbar.one('div')
+            .setStyle('height', scroller.get('scrollHeight') + 'px');
+
+        this._virtualScrollHandle = new Y.EventHandle([
+            scrollbar.on('scroll', Y.rbind('_syncVirtualScroll', this)),
+            scroller.on('scroll', Y.rbind('_syncVirtualScroll', this))
+        ]);
+
+        this.get('contentBox').appendChild(scrollbar);
+    },
+
     /**
     Relays changes in the table structure or content to trigger a reflow of the
     scrolling setup.
@@ -209,7 +259,7 @@ Y.mix(Scrollable.prototype, {
 
     /**
     Populates the `_xScrollNode` property by creating the `<div>` Node described
-    by the `X_SCROLLER_TEMPLATE`.
+    by the `_X_SCROLLER_TEMPLATE`.
 
     @method _createXScrollNode
     @protected
@@ -217,7 +267,7 @@ Y.mix(Scrollable.prototype, {
     _createXScrollNode: function () {
         if (!this._xScrollNode) {
             this._xScrollNode = Y.Node.create(
-                Y.Lang.sub(this.X_SCROLLER_TEMPLATE, {
+                Y.Lang.sub(this._X_SCROLLER_TEMPLATE, {
                     className: this.getClassName('x','scroller')
                 }));
         }
@@ -225,7 +275,7 @@ Y.mix(Scrollable.prototype, {
 
     /**
     Populates the `_yScrollNode` property by creating the `<div>` Node described
-    by the `Y_SCROLLER_TEMPLATE`.
+    by the `_Y_SCROLLER_TEMPLATE`.
 
     @method _createYScrollNode
     @protected
@@ -233,7 +283,7 @@ Y.mix(Scrollable.prototype, {
     _createYScrollNode: function () {
         if (!this._yScrollNode) {
             this._yScrollNode = Y.Node.create(
-                Y.Lang.sub(this.Y_SCROLLER_TEMPLATE, {
+                Y.Lang.sub(this._Y_SCROLLER_TEMPLATE, {
                     className: this.getClassName('y','scroller'),
                     tableClassName: this.getClassName('y', 'scroll', 'table')
                 }));
@@ -333,6 +383,14 @@ Y.mix(Scrollable.prototype, {
             scrollNode.replace(scrollNode.get('childNodes').toFrag());
 
             this._xScrollNode = null;
+
+            if (this._scrollbarNode) {
+                this._virtualScrollHandle.detach();
+                this._virtualScrollHandle = null;
+
+                this._scrollbarNode.remove().destroy(true);
+                this._scrollbarNode = null;
+            }
         }
     },
 
@@ -517,8 +575,7 @@ Y.mix(Scrollable.prototype, {
 
         if (this._captionNode) {
             captionTable = Y.Node.create(
-                // TODO: Please someone give this a shorter name!
-                Y.Lang.sub(this.X_SCROLL_CAPTION_TABLE_TEMPLATE, {
+                Y.Lang.sub(this._CAPTION_TABLE_TEMPLATE, {
                     className: this.getClassName('caption', 'table')
                 }));
 
@@ -540,7 +597,6 @@ Y.mix(Scrollable.prototype, {
     _splitYScrollContent: function () {
         var table = this._tableNode,
             scrollNode = this._yScrollTable,
-            scrollbar  = Y.DOM.getScrollbarWidth(),
             scrollTable, width;
             
         this.get('boundingBox').addClass(this.getClassName('scrollable','y'));
@@ -592,6 +648,9 @@ Y.mix(Scrollable.prototype, {
             node        = this._yScrollNode || cBox,
             table       = node.one('table');
 
+        this._uiSetDim('width', '');
+        this._tableNode.setStyle('width', '');
+
         this._uiSetScrollable();
 
         if (this._yScroll) {
@@ -606,20 +665,42 @@ Y.mix(Scrollable.prototype, {
         }
 
         if (this._xScroll) {
-            // Only split the table if the content is longer than the height
-            if (table.get('scrollWidth') > node.get('clientWidth')) {
+            // Only split the table if the content is wider than the config width
+            if (table.get('scrollWidth') > parseInt(this.get('width'), 10)) {
                 this._splitXScrollContent();
+
+                if (this._yScrollNode) {
+                    this._yScrollNode.setStyle('height',
+                        (this._yScrollNode.get('offsetHeight') -
+                         Y.DOM.getScrollbarWidth()) + 'px');
+
+                    this._addVirtualScrollbar();
+                }
             } else {
                 this._mergeXScrollContent();
             }
         } else {
             this._mergeXScrollContent();
         }
-        // TODO: fix X scroll.  I'll need to split tables here as well for the
-        // caption if there is one present, so the horizontal scroll happens
-        // under the stationary caption.
-        // Also, similarly, only activate the x scrolling if the table is wider
-        // than the configured width.
+
+        this._uiSetDim('width', this.get('width'));
+    },
+
+    /**
+    Keeps the `_yScrollNode` scroll position in sync with the `_scrollbarNode`
+    in an "xy" scroll configuration.
+
+    @method _syncVirtualScroll
+    @param {DOMEventFacade} e The scroll event
+    @param {Object} details subscription details, including which of the two
+        scrolling elements is being scrolled
+    @protected
+    **/
+    _syncVirtualScroll: function (e) {
+        var move = (e.currentTarget === this._scrollbarNode) ?
+                    this._yScrollNode : this._scrollbarNode;
+
+        move.set('scrollTop', e.currentTarget.get('scrollTop'));
     },
 
     /**
@@ -638,13 +719,13 @@ Y.mix(Scrollable.prototype, {
             width += this.DEF_UNIT;
         }
 
-        this._uiSetDim('width', width);
-        this._tableNode.setStyle('width', scrollable ? '' : width);
-
         if (scrollable) {
             this._mergeXScrollContent();
             this._mergeYScrollContent();
             this._syncScrollUI();
+        } else {
+            this._uiSetDim('width', width);
+            this._tableNode.setStyle('width', width);
         }
     },
 
