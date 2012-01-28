@@ -14,7 +14,8 @@
     border-left: 0 none;
 }
 .yui3-skin-sam .yui3-datatable-scrollable-x .yui3-datatable-y-scroller {
-    border-right: 0 none;
+    border-bottom: 0 none;
+    border-left: 0 none;
 }
 .yui3-skin-sam .yui3-datatable-y-scroller {
     border: 1px solid #cbcbcb;

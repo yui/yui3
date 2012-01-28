@@ -13,6 +13,19 @@
 }
 
 .yui3-datatable-scrollable-y .yui3-datatable-y-scroller {
-    overflow-y: scroll;
     overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.yui3-datatable-virtual-scrollbar {
+    position: absolute;
+    right: -1px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.yui3-datatable-virtual-scrollbar div {
+    position: absolute;
+    width: 1px;
+    visibility: hidden;
 }
