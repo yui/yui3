@@ -49,7 +49,7 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
      */
     updateMarkerState: function(type, i)
     {
-        if(this._markers[i])
+        if(this._markers && this._markers[i])
         {
             var styles = Y.clone(this.get("styles").marker),
                 markerStyles,

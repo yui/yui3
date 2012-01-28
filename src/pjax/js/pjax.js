@@ -190,7 +190,7 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase], {
             content     : content,
             responseText: res.responseText,
             status      : res.status,
-            url         : details.url,
+            url         : details.url
         });
     },
 

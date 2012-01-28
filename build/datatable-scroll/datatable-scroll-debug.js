@@ -69,9 +69,9 @@ Y.mix(Scrollable.prototype, {
 
     @property SCROLLING_CONTAINER_TEMPLATE
     @type {HTML}
-    @value '<div class="{classes}"><table></table></div>'
+    @value '<div class="{className}"><table class="{tableClassName}"></table></div>'
     **/
-    SCROLLING_CONTAINER_TEMPLATE: '<div class="{classes}"><table></table></div>',
+    SCROLLING_CONTAINER_TEMPLATE: '<div class="{className}"><table class="{tableClassName}"></table></div>',
 
     /**
     Scrolls a given row or cell into view if the table is scrolling.  Pass the
@@ -197,7 +197,8 @@ Y.mix(Scrollable.prototype, {
         if (!this._yScrollNode) {
             this._yScrollNode = Y.Node.create(
                 Y.Lang.sub(this.SCROLLING_CONTAINER_TEMPLATE, {
-                    classes: this.getClassName('data','container')
+                    className: this.getClassName('y','scroller'),
+                    tableClassName: this.getClassName('y', 'scroll', 'table')
                 }));
         }
     },
@@ -471,7 +472,7 @@ Y.mix(Scrollable.prototype, {
                 width : (width - 2) + 'px'
             });
 
-            scrollTable.setStyle('width', (width - scrollbar - 1) + 'px');
+            scrollTable.setStyle('width', scrollNode.get('clientWidth') + 'px');
             this._setARIARoles();
         }
 

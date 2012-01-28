@@ -4855,8 +4855,10 @@ add('load', '0', {
     "name": "graphics-canvas-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
-	return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (canvas && canvas.getContext && canvas.getContext("2d")));
+        useCanvas = Y.config.defaultGraphicEngine && Y.config.defaultGraphicEngine == "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    return (!svg || useCanvas) && (canvas && canvas.getContext && canvas.getContext("2d"));
 }, 
     "trigger": "graphics"
 });
@@ -4883,8 +4885,12 @@ add('load', '1', {
 add('load', '2', {
     "name": "graphics-svg", 
     "test": function(Y) {
-    var DOCUMENT = Y.config.doc;
-	return (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    var DOCUMENT = Y.config.doc,
+        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    
+    return svg && (useSVG || !canvas);
 }, 
     "trigger": "graphics"
 });
@@ -4913,8 +4919,12 @@ add('load', '4', {
 add('load', '5', {
     "name": "graphics-svg-default", 
     "test": function(Y) {
-    var DOCUMENT = Y.config.doc;
-	return (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    var DOCUMENT = Y.config.doc,
+        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    
+    return svg && (useSVG || !canvas);
 }, 
     "trigger": "graphics"
 });
@@ -5010,8 +5020,10 @@ add('load', '13', {
     "name": "graphics-canvas", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
-	return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (canvas && canvas.getContext && canvas.getContext("2d")));
+        useCanvas = Y.config.defaultGraphicEngine && Y.config.defaultGraphicEngine == "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    return (!svg || useCanvas) && (canvas && canvas.getContext && canvas.getContext("2d"));
 }, 
     "trigger": "graphics"
 });
@@ -5969,7 +5981,25 @@ Y.Loader = function(o) {
 };
 
 Y.Loader.prototype = {
+    /**
+    Regex that matches a CSS URL. Used to guess the file type when it's not
+    specified.
 
+    @property REGEX_CSS
+    @type RegExp
+    @final
+    @protected
+    @since 3.5.0
+    **/
+    REGEX_CSS: /\.css(?:[?;].*)?$/i,
+    
+    /**
+    * Default filters for raw and debug
+    * @property FILTER_DEFS
+    * @type Object
+    * @final
+    * @protected
+    */
     FILTER_DEFS: {
         RAW: {
             'searchExp': '-min\\.js',
@@ -6238,6 +6268,9 @@ Y.Loader.prototype = {
 
         if (mods) {
             oeach(mods, function(v, k) {
+                if (typeof v === 'string') {
+                    v = { name: k, fullpath: v };
+                }
                 v.group = name;
                 self.addModule(v, k);
             }, self);
@@ -6323,9 +6356,10 @@ Y.Loader.prototype = {
         }
 
         if (!o.type) {
+            //Always assume it's javascript unless the CSS pattern is matched.
             o.type = JS;
             var p = o.path || o.fullpath;
-            if (p && p.indexOf('.' + CSS) > -1) {
+            if (p && this.REGEX_CSS.test(p)) {
                 o.type = CSS;
             }
         }
@@ -7293,7 +7327,6 @@ Y.Loader.prototype = {
                 success: false
             });
         }
-        this._finish('timeout', false);
     },
 
     /**
@@ -7422,12 +7455,12 @@ Y.Loader.prototype = {
                 }
             }
             
-            if (d && d.data && d.data.length) {
+            if (d && d.data && d.data.length && (d.type === 'success')) {
                 for (i = 0; i < d.data.length; i++) {
                     self.inserted[d.data[i].name] = true;
                 }
             }
-            
+
             if (actions === comp) {
                 self._loading = null;
                 if (d && d.fn) {
@@ -7460,14 +7493,15 @@ Y.Loader.prototype = {
                     self._onProgress.call(self, e);
                 },
                 onTimeout: function(d) {
-                    d.fn = self._onTimeout;
-                    complete.call(self, d);
+                    self._onTimeout.call(self, d);
                 },
                 onSuccess: function(d) {
+                    d.type = 'success';
                     d.fn = self._onSuccess;
                     complete.call(self, d);
                 },
                 onFailure: function(d) {
+                    d.type = 'failure';
                     d.fn = self._onFailure;
                     complete.call(self, d);
                 }
@@ -7487,14 +7521,15 @@ Y.Loader.prototype = {
                     self._onProgress.call(self, e);
                 },
                 onTimeout: function(d) {
-                    d.fn = self._onTimeout;
-                    complete.call(self, d);
+                    self._onTimeout.call(self, d);
                 },
                 onSuccess: function(d) {
+                    d.type = 'success';
                     d.fn = self._onSuccess;
                     complete.call(self, d);
                 },
                 onFailure: function(d) {
+                    d.type = 'failure';
                     d.fn = self._onFailure;
                     complete.call(self, d);
                 }
@@ -7707,7 +7742,7 @@ Y.Loader.prototype = {
                             if (m && (m.combine || !m.ext)) {
                                 resCombos[j].comboSep = m.comboSep;
                                 resCombos[j].maxURLLength = m.maxURLLength;
-                                frag = ((L.isValue(m.root)) ? m.root : self.root) + m.path;
+                                frag = ((L.isValue(m.root)) ? m.root : self.root) + (m.path || m.fullpath);
                                 frag = self._filter(frag, m.name);
                                 resCombos[j][m.type].push(frag);
                                 resCombos[j][m.type + 'Mods'].push(m);
@@ -8317,8 +8352,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "widget", 
             "widget-position", 
             "widget-stack", 
-            "graphics", 
-            "escape"
+            "graphics"
         ]
     }, 
     "classnamemanager": {
@@ -8604,8 +8638,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "en"
         ], 
         "requires": [
-            "datatable-base", 
-            "recordset-sort"
+            "datatable-base"
         ], 
         "skinnable": true
     }, 
@@ -9166,8 +9199,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "name": "graphics-canvas", 
             "test": function(Y) {
     var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
-	return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (canvas && canvas.getContext && canvas.getContext("2d")));
+        useCanvas = Y.config.defaultGraphicEngine && Y.config.defaultGraphicEngine == "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    return (!svg || useCanvas) && (canvas && canvas.getContext && canvas.getContext("2d"));
 }, 
             "trigger": "graphics"
         }, 
@@ -9180,8 +9215,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "name": "graphics-canvas-default", 
             "test": function(Y) {
     var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
-	return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (canvas && canvas.getContext && canvas.getContext("2d")));
+        useCanvas = Y.config.defaultGraphicEngine && Y.config.defaultGraphicEngine == "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    return (!svg || useCanvas) && (canvas && canvas.getContext && canvas.getContext("2d"));
 }, 
             "trigger": "graphics"
         }
@@ -9190,8 +9227,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "condition": {
             "name": "graphics-svg", 
             "test": function(Y) {
-    var DOCUMENT = Y.config.doc;
-	return (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    var DOCUMENT = Y.config.doc,
+        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    
+    return svg && (useSVG || !canvas);
 }, 
             "trigger": "graphics"
         }, 
@@ -9203,8 +9244,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "condition": {
             "name": "graphics-svg-default", 
             "test": function(Y) {
-    var DOCUMENT = Y.config.doc;
-	return (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    var DOCUMENT = Y.config.doc,
+        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    
+    return svg && (useSVG || !canvas);
 }, 
             "trigger": "graphics"
         }
@@ -10184,7 +10229,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '562a95110a35488f3b9b6b9a68c41354';
+YUI.Env[Y.version].md5 = '1cab8b7f30e8353fcfa963884e842e30';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
