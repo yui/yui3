@@ -999,6 +999,90 @@ nodelist.each(function (node) {
 });
 ```
 
+<h2>More Reading</h2>
+
+<h3><a href="domready.html">Page Lifecycle events</a></h3>
+
+<p>
+    Details about `domready`, `available`, and `contentready` events provided in
+    the event core. <a href="domready.html">Read more...</a>
+</p>
+
+<h3><a href="delegation.html">Event Delegation</a></h3>
+
+<p>
+    What is event delegation and why you should be using it.  A lot.
+    <a href="delegation.html">Read more...</a>
+</p>
+
+<h3><a href="simulate.html">Event Simulation</a></h3>
+
+<p>
+    How to simulate user events like "click" or "keypress", what events can be
+    simulated, and some important caveats. 
+    <a href="simulate.html">Read more...</a>
+</p>
+
+<h3><a href="synths.html">Create New DOM Events</a></h3>
+
+<p>
+    How to create a tailor made DOM event for subscription or delegation from
+    any Node.  This is a great way to encapsulate and label more comples user
+    behaviors.
+    <a href="synths.html">Read more...</a>
+</p>
+
+<h3><a href="touch.html">Working With Touch Events</a></h3>
+
+<p>
+    Details on the supported touch events, the touch/mouse abstraction layer
+    events, and gesture based events like "flick".
+    <a href="touch.html">Read more...</a>
+</p>
+
+<h3><a href="focus.html">Delegating the `focus` and `blur` Events</a></h3>
+
+<p>
+    Using the `event-focus` module to simulate support for bubbling `focus` and
+    `blur` events.
+    <a href="focus.html">Read more...</a>
+</p>
+
+<h3><a href="mouseenter.html">The `hover`, `mouseenter`, and `mouseleave` Events</a></h3>
+
+<p>
+    Describes why `mouseenter` and `mouseleave` events are usually what you
+    want when you subscribe to `mouseover` and `mouseout`, and goes over using
+    the `hover` event (which uses the other two under the hood).
+    <a href="mouseenter.html">Read more...</a>
+</p>
+
+<h3><a href="key.html">Complex Keyboard Input Filtering</a></h3>
+
+<p>
+    Using the `key` event to respond to specific users pressing specific keys or
+    or key combinations.
+    <a href="key.html">Read more...</a>
+</p>
+
+<h3><a href="outside.html">Responding to Events <em>outside</em> of a Node</a></h3>
+
+<p>
+    Details the host of "outside" events that can be used to trigger behavior
+    when users interact with element outside of the relevant Node.  Think
+    closing popups if a user clicks somewhere else on the page.
+    <a href="outside.html">Read more...</a>
+</p>
+
+<h3><a href="valuechange.html">Monitoring Changes to `<input>` and `<textarea>` Values</a></h3>
+
+<p>
+    Using the `valueChange` event to catch the moments when a user types, cuts,
+    pastes, or otherwise alters the value in an input field.  No,
+    `input.on('change', callback)` is not enough.
+    <a href="valuechange.html">Read more...</a>
+</p>
+
 <h2 id="event-whitelist">Appendix A: Whitelisted DOM events</h2>
 
 <div id="events">
@@ -1385,13 +1469,12 @@ YUI({ filter: 'raw' }).use('selector-css3', 'datatable-sort', function (Y) {
     });
 
     node.empty().addClass('yui3-skin-sam');
-    new Y.DataTable.Base({
-        columnset: [
-            { key: 'Event', sortable: true },
-            { key: 'Added By', sortable: true }
-        ],
-        recordset: data
-    }).plug(Y.Plugin.DataTableSort).render(node);
+
+    new Y.DataTable({
+        columns : [ 'Event', 'Added By' ],
+        data    : data,
+        sortable: true
+    }).render(node);
 
 });
 </script>
