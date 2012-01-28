@@ -1,35 +1,92 @@
-/* sortable columns */
-.yui3-skin-night th.yui3-datatable-asc,
-.yui3-skin-night th.yui3-datatable-desc {
-	background-color:#555658;
-	background: -moz-linear-gradient(
-		0% 100% 90deg, 
-		#343536 0%, 
-		#555658 96%,
-		#3E3F41 100%
-	);
-    background: -webkit-gradient(
+.yui3-skin-night .yui3-datatable-sortable-column {
+    cursor: pointer;
+    padding-right: 30px;
+    position: relative;
+}
+
+.yui3-skin-night .yui3-datatable-columns .yui3-datatable-sorted {
+    *background: #505152 url(../../../../assets/skins/night/sprite.png) repeat-x 0 -100px;
+    background-color: #3B3C3D;
+
+    background-image: -webkit-gradient(
         linear,
-        left bottom,
-        left top,
-        from(#343536),
-        color-stop(0.96, #555658),
-        to(#3E3F41)     
-    );
+        0 0,
+        0 100%,
+        from(rgba(255,255,255, 0.2)),
+        color-stop(40%, rgba(255,255,255, 0.1)),
+        color-stop(80%, rgba(255,255,255, 0.01)),
+        to(transparent));
 
-}
-.yui3-skin-night th.yui3-datatable-sortable .yui3-datatable-liner {
-    padding-right:20px; /* room for arrow */
-}
-.yui3-skin-night th.yui3-datatable-asc .yui3-datatable-liner {
-    background:url(dt-arrow-up.png) no-repeat right; /* up arrow */
-}
-.yui3-skin-night th.yui3-datatable-desc .yui3-datatable-liner {
-    background:url(dt-arrow-dn.png) no-repeat right; /* down arrow */
+    background-image: -webkit-linear-gradient(
+        rgba(255,255,255, 0.2),
+        rgba(255,255,255, 0.1) 40%,
+        rgba(255,255,255, 0.01) 80%,
+        transparent);
+
+    background-image: -moz-linear-gradient(
+        top,
+        rgba(255,255,255, 0.2),
+        rgba(255,255,255, 0.1) 40%,
+        rgba(255,255,255, 0.01) 80%,
+        transparent);
+
+    background-image: -ms-linear-gradient(
+        rgba(255,255,255, 0.2),
+        rgba(255,255,255, 0.1) 40%,
+        rgba(255,255,255, 0.01) 80%,
+        transparent);
+
+    background-image: -o-linear-gradient(
+        rgba(255,255,255, 0.2),
+        rgba(255,255,255, 0.1) 40%,
+        rgba(255,255,255, 0.01) 80%,
+        transparent);
+
+    background-image: linear-gradient(
+        rgba(255,255,255, 0.2),
+        rgba(255,255,255, 0.1) 40%,
+        rgba(255,255,255, 0.01) 80%,
+        transparent);
 }
 
-/* striping */
-.yui3-skin-night tr.yui3-datatable-even td.yui3-datatable-asc,
-.yui3-skin-night tr.yui3-datatable-even td.yui3-datatable-desc { background-color:#191a1A; } /* dark sorted */
-.yui3-skin-night tr.yui3-datatable-odd td.yui3-datatable-asc,
-.yui3-skin-night tr.yui3-datatable-odd td.yui3-datatable-desc { background-color:#2B2C2C; } /* light sorted */
+.yui3-skin-night .yui3-datatable-columns .yui3-datatable-sorted::after,
+.yui3-skin-night .yui3-datatable-sortable-column:hover::after {
+    content: ' ';
+    position: absolute;
+    right: 1ex;
+    bottom: .8ex;
+    height: 0px;
+    width: 0px;
+    border: .7ex solid #686868;
+    border-color: #686868 transparent transparent;
+}
+
+.yui3-skin-night .yui3-datatable-columns .yui3-datatable-sorted::after {
+    border-color: #8E8E8E transparent transparent;
+}
+
+.yui3-skin-night .yui3-datatable-columns .yui3-datatable-sorted-desc::after,
+.yui3-skin-night .yui3-datatable-sortable-column-desc:hover::after,
+.yui3-skin-night .yui3-datatable-columns .yui3-datatable-sorted:hover::after {
+    border-color: transparent transparent #CBCBCB;
+    bottom: 1.5ex;
+}
+
+.yui3-skin-night .yui3-datatable-columns .yui3-datatable-sorted-desc:hover::after {
+    border-color: #CBCBCB transparent transparent;
+    bottom: .8ex;
+}
+
+.yui3-skin-night .yui3-datatable-columns .yui3-datatable-sorted-desc::after {
+    border-color: transparent transparent #8E8E8E;
+}
+
+.yui3-skin-night .yui3-datatable-even .yui3-datatable-sorted {
+    background-color: #262626;
+    color: #B3B2B2;
+}
+
+.yui3-skin-night .yui3-datatable-odd .yui3-datatable-sorted {
+    background-color: #393A3A;
+    color: #CBCBCB;
+}
