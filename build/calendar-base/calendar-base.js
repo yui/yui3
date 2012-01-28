@@ -144,7 +144,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
     this._calendarId = Y.guid('calendar');
     this._selectedDates = {};
     this._rules = {};
-    this.storedDateCells = {};
+    this._storedDateCells = {};
   },
 
   /**
@@ -1641,4 +1641,4 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
 });
 
 
-}, '@VERSION@' ,{lang:['en', 'ja', 'ru'], requires:['widget', 'substitute', 'datatype-date', 'datatype-date-math', 'cssgrids']});
+}, '@VERSION@' ,{requires:['widget', 'substitute', 'datatype-date', 'datatype-date-math', 'cssgrids'], lang:['en', 'ja', 'ru']});
