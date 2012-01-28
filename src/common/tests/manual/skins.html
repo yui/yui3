@@ -19,10 +19,8 @@
     <link type="text/css" rel="stylesheet" href="../../../../build/panel/assets/skins/night/panel.css" charset="utf-8">
     <link type="text/css" rel="stylesheet" href="../../../../build/node-menunav/assets/skins/night/node-menunav.css" charset="utf-8">
     <link type="text/css" rel="stylesheet" href="../../../../build/calendar/assets/skins/night/calendar-base-skin.css">
-    <link type="text/css" rel="stylesheet" href="../../../../build/calendar/assets/skins/night/calendarnavigator-skin.css"
+    <link type="text/css" rel="stylesheet" href="../../../../build/calendar/assets/skins/night/calendarnavigator-skin.css">
     
-    <!---->
-
 <!--
     <link type="text/css" rel="stylesheet" href="../../../calendar/assets/skins/night/calendar-base-skin.css">
     <link type="text/css" rel="stylesheet" href="../../../calendar/assets/skins/night/calendarnavigator-skin.css">
@@ -396,14 +394,39 @@
         </div>      
     </div> 
 <script>
-YUI({filter: 'raw'}).use('autocomplete', 'autocomplete-filters', 'autocomplete-highlighters', 'tabview', 'datatable-sort', 'calendar', 'panel', 'dial', 'node-menunav', 'node-event-delegate', 'slider', 'scrollview', 'scrollview-list', function(Y) {
+YUI({
+    filter: 'raw'
+})
+.use(
+    'autocomplete', 'autocomplete-filters', 'autocomplete-highlighters',
+    'tabview',
+    'datatable-sort',
+    'calendar',
+    'panel',
+    'dial',
+    'node-menunav',
+    'node-event-delegate',
+    'slider',
+    'scrollview', 'scrollview-list',
+
+function(Y) {
     var buttonHandlers = {
         sam: function(e) {
             Y.one('body').replaceClass('yui3-skin-night', 'yui3-skin-sam');
+            slider1.set('thumbUrl', '')._initThumbUrl();
+            slider1.thumb.all('img').set('src', slider1.get('thumbUrl'));
+
+            slider2.set('thumbUrl', '')._initThumbUrl();
+            slider2.thumb.all('img').set('src', slider2.get('thumbUrl'));
         },
 
         night: function(e) {
             Y.one('body').replaceClass('yui3-skin-sam', 'yui3-skin-night');
+            slider1.set('thumbUrl', '')._initThumbUrl();
+            slider1.thumb.all('img').set('src', slider1.get('thumbUrl'));
+
+            slider2.set('thumbUrl', '')._initThumbUrl();
+            slider2.thumb.all('img').set('src', slider2.get('thumbUrl'));
         },
         
         togglebkg: function(e) {
@@ -546,12 +569,12 @@ YUI({filter: 'raw'}).use('autocomplete', 'autocomplete-filters', 'autocomplete-h
         render: "#demo-dial"
     });
 
-    new Y.Slider({
+    var slider1 = new Y.Slider({
         axis: 'y',
         render: '#demo-yslider'
     });
 
-    new Y.Slider({
+    var slider2 = new Y.Slider({
         render: '#demo-xslider'
     });
 
