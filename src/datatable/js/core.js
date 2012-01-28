@@ -415,7 +415,7 @@ Y.mix(Table.prototype, {
     @return {Object} the column configuration object
     **/
     getColumn: function (name) {
-        var col, columns, stack, entry, i, len, cols;
+        var col, columns, i, len, cols;
 
         if (isObject(name) && !isArray(name)) {
             // TODO: support getting a column from a DOM node - this will cross
@@ -1335,21 +1335,34 @@ Y.mix(Table.prototype, {
     @protected
     **/
     _uiSetCaption: function (htmlContent) {
+        var table   = this._tableNode,
+            caption = this._captionNode,
+            captionId;
+
         if (htmlContent) {
-            if (!this._captionNode) {
-                this._captionNode = Y.Node.create(
+            if (!caption) {
+                this._captionNode = caption = Y.Node.create(
                     fromTemplate(this.CAPTION_TEMPLATE, {
                         className: this.getClassName('caption')
                     }));
 
-                this._tableNode.prepend(this._captionNode);
+                captionId = Y.stamp(caption);
+
+                caption.set('id', captionId);
+
+                table.prepend(this._captionNode);
+
+                table.setAttribute('aria-describedby', captionId);
             }
 
-            this._captionNode.setContent(htmlContent);
-        } else if (this._captionNode) {
-            this._captionNode.remove(true);
+            caption.setContent(htmlContent);
+
+        } else if (caption) {
+            caption.remove(true);
 
             delete this._captionNode;
+
+            table.removeAttribute('aria-describedby');
         }
     },
 
