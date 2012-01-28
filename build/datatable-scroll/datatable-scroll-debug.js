@@ -106,10 +106,10 @@ Y.mix(Scrollable.prototype, {
 
     @property _CAPTION_TABLE_TEMPLATE
     @type {HTML}
-    @value '<table class="{className}"></table>'
+    @value '<table class="{className}" role="presentation"></table>'
     @protected
     **/
-    _CAPTION_TABLE_TEMPLATE: '<table class="{className}"></table>',
+    _CAPTION_TABLE_TEMPLATE: '<table class="{className}" role="presentation"></table>',
 
     /**
     Template for the virtual scrollbar needed in "xy" scrolling setups.
@@ -138,10 +138,10 @@ Y.mix(Scrollable.prototype, {
 
     @property _Y_SCROLLER_TEMPLATE
     @type {HTML}
-    @value '<div class="{className}"><table class="{tableClassName}"></table></div>'
+    @value '<div class="{className}"><table class="{tableClassName}" role="presentation"></table></div>'
     @protected
     **/
-    _Y_SCROLLER_TEMPLATE: '<div class="{className}"><table class="{tableClassName}"></table></div>',
+    _Y_SCROLLER_TEMPLATE: '<div class="{className}"><table class="{tableClassName}" role="presentation"></table></div>',
     /**
     Creates a vertical scrollbar absolutely positioned over the right edge of the 
     `_xScrollNode` to relay scrolling to the `_xScrollNode` (masked) below.
@@ -412,8 +412,6 @@ Y.mix(Scrollable.prototype, {
             this._yScrollNode = null;
 
             this._removeHeaderScrollPadding();
-
-            this._setARIARoles();
         }
 
         this._uiSetColumns();
@@ -434,27 +432,6 @@ Y.mix(Scrollable.prototype, {
         for (i = 0, len = rows.length; i < len; i += (cell.rowSpan || 1)) {
             cell = Y.one(rows[i].cells[rows[i].cells.length - 1])
                 .setStyle('paddingRight', '');
-        }
-    },
-
-    /**
-    Moves the ARIA "grid" role from the table to the `contentBox` and adds the
-    "presentation" role to both header and data tables to support the two
-    tables reporting as one table for screen readers.
-
-    @method _setARIARoles
-    @protected
-    **/
-    _setARIARoles: function () {
-        var contentBox = this.get('contentBox');
-
-        if (this._yScrollNode) {
-            this._tableNode.setAttribute('role', 'presentation');
-            this._yScrollNode.one('> table').setAttribute('role', 'presentation');
-            contentBox.setAttribute('role', 'grid');
-        } else {
-            this._tableNode.setAttribute('role', 'grid');
-            contentBox.removeAttribute('role');
         }
     },
 
@@ -632,7 +609,6 @@ Y.mix(Scrollable.prototype, {
             });
 
             scrollTable.setStyle('width', scrollNode.get('clientWidth') + 'px');
-            this._setARIARoles();
         }
 
         this._setYScrollColWidths();

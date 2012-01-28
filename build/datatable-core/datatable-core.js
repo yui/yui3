@@ -1138,7 +1138,11 @@ Y.mix(Table.prototype, {
             this._viewConfig.columns   = this.get('columns');
             this._viewConfig.modelList = this.data;
 
-            contentBox.setAttribute('role', 'grid');
+            contentBox.setAttrs({
+                'role'         : 'grid',
+                'aria-readonly': true // until further notice
+            });
+
 
             this.fire('renderTable', {
                 headerView  : this.get('headerView'),
