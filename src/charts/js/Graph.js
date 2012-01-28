@@ -516,6 +516,28 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
             }
         };
         return defs;
+    },
+
+    /**
+     * Destructor implementation Graph class. Removes all Graphic instances from the widget.
+     *
+     * @method destructor
+     * @protected
+     */
+    destructor: function()
+    {
+        if(this._graphic)
+        {
+            this._graphic.destroy();
+        }
+        if(this._background)
+        {
+            this._background.get("graphic").destroy();
+        }
+        if(this._gridlines)
+        {
+            this._gridlines.get("graphic").destroy();
+        }
     }
 }, {
     ATTRS: {
@@ -650,7 +672,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 if(!this._background)
                 {
                     this._backgroundGraphic = new Y.Graphic({render:this.get("contentBox")});
-                    Y.one(this._backgroundGraphic.get("node")).setStyle("zIndex", 0); 
+                    this._backgroundGraphic.get("node").style.zIndex = 0; 
                     this._background = this._backgroundGraphic.addShape({type: "rect"});
                 }
                 return this._background;
@@ -672,7 +694,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 if(!this._gridlines)
                 {
                     this._gridlinesGraphic = new Y.Graphic({render:this.get("contentBox")});
-                    Y.one(this._gridlinesGraphic.get("node")).setStyle("zIndex", 1); 
+                    this._gridlinesGraphic.get("node").style.zIndex = 1; 
                     this._gridlines = this._gridlinesGraphic.addShape({type: "path"});
                 }
                 return this._gridlines;
@@ -694,11 +716,21 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 if(!this._graphic)
                 {
                     this._graphic = new Y.Graphic({render:this.get("contentBox")});
-                    Y.one(this._graphic.get("node")).setStyle("zIndex", 2); 
+                    this._graphic.get("node").style.zIndex = 2; 
                     this._graphic.set("autoDraw", false);
                 }
                 return this._graphic;
             }
+        },
+
+        /**
+         * Indicates whether or not markers for a series will be grouped and rendered in a single complex shape instance.
+         *
+         * @attribute groupMarkers
+         * @type Boolean
+         */
+        groupMarkers: {
+            value: false
         }
 
         /**

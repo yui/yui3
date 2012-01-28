@@ -158,6 +158,72 @@ SVGDrawing.prototype = {
 	},
 
     /**
+     * Draws a circle.     
+     * 
+     * @method drawCircle
+     * @param {Number} x y-coordinate
+     * @param {Number} y x-coordinate
+     * @param {Number} r radius
+     * @protected
+     */
+	drawCircle: function(x, y, radius) {
+        var circum = radius * 2;
+        this._drawingComplete = false;
+        this._trackSize(x, y);
+        this._trackSize(x + circum, y + circum);
+        this._pathArray = this._pathArray || [];
+        this._pathArray.push(["M", x + radius, y]);
+        this._pathArray.push(["A",  radius, radius, 0, 1, 0, x + radius, y + circum]);
+        this._pathArray.push(["A",  radius, radius, 0, 1, 0, x + radius, y]);
+        return this;
+    },
+   
+    /**
+     * Draws an ellipse.
+     *
+     * @method drawEllipse
+     * @param {Number} x x-coordinate
+     * @param {Number} y y-coordinate
+     * @param {Number} w width
+     * @param {Number} h height
+     * @protected
+     */
+	drawEllipse: function(x, y, w, h) {
+        var radius = w * 0.5,
+            yRadius = h * 0.5;
+        this._drawingComplete = false;
+        this._trackSize(x, y);
+        this._trackSize(x + w, y + h);
+        this._pathArray = this._pathArray || [];
+        this._pathArray.push(["M", x + radius, y]);
+        this._pathArray.push(["A",  radius, yRadius, 0, 1, 0, x + radius, y + h]);
+        this._pathArray.push(["A",  radius, yRadius, 0, 1, 0, x + radius, y]);
+        return this;
+    },
+
+    /**
+     * Draws a diamond.     
+     * 
+     * @method drawDiamond
+     * @param {Number} x y-coordinate
+     * @param {Number} y x-coordinate
+     * @param {Number} width width
+     * @param {Number} height height
+     * @protected
+     */
+    drawDiamond: function(x, y, width, height)
+    {
+        var midWidth = width * 0.5,
+            midHeight = height * 0.5;
+        this.moveTo(x + midWidth, y);
+        this.lineTo(x + width, y + midHeight);
+        this.lineTo(x + midWidth, y + height);
+        this.lineTo(x, y + midHeight);
+        this.lineTo(x + midWidth, y);
+        return this;
+    },
+
+    /**
      * Draws a wedge.
      *
      * @method drawWedge
@@ -381,7 +447,18 @@ SVGDrawing.prototype = {
                 segmentArray = pathArray.shift();
                 len = segmentArray.length;
                 pathType = segmentArray[0];
-                path += " " + pathType + (segmentArray[1] - left);
+                if(pathType === "A")
+                {
+                    path += pathType + segmentArray[1] + "," + segmentArray[2];
+                }
+                else if(pathType != "z")
+                {
+                    path += " " + pathType + (segmentArray[1] - left);
+                }
+                else
+                {
+                    path += " z ";
+                }
                 switch(pathType)
                 {
                     case "L" :
@@ -394,6 +471,12 @@ SVGDrawing.prototype = {
                             path += ", " + val;
                         }
                     break;
+                    case "A" :
+                        val = " " + segmentArray[3] + " " + segmentArray[4];
+                        val += "," + segmentArray[5] + " " + (segmentArray[6] - left);
+                        val += "," + (segmentArray[7] - top);
+                        path += " " + val;
+                    break;
                     case "C" :
                         for(i = 2; i < len; ++i)
                         {
@@ -403,7 +486,6 @@ SVGDrawing.prototype = {
                             path += " " + val2;
                         }
                     break;
-
                 }
             }
             if(fill && fill.color)
@@ -422,6 +504,16 @@ SVGDrawing.prototype = {
         }
     },
 
+    /**
+     * Ends a fill and stroke
+     *
+     * @method closePath
+     */
+    closePath: function()
+    {
+        this._pathArray.push(["z"]);
+    },
+    
     /**
      * Updates the size of the graphics object
      *

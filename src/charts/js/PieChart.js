@@ -324,19 +324,21 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
      * @param {Number} itemIndex The index of the item within the series.
      * @param {CartesianSeries} series The `PieSeries` instance of the item.
      * @param {Number} seriesIndex The index of the series in the `seriesCollection`.
-     * @return {String | HTML}
+     * @return {HTML}
      * @private
      */
     _tooltipLabelFunction: function(categoryItem, valueItem, itemIndex, series, seriesIndex)
     {
-        var msg,
+        var msg = DOCUMENT.createElement("div"),
             total = series.getTotalValues(),
             pct = Math.round((valueItem.value / total) * 10000)/100;
-        msg = categoryItem.displayName +
-        ":&nbsp;" + categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]) + 
-        "<br/>" + valueItem.displayName + 
-        ":&nbsp;" + valueItem.axis.get("labelFunction").apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]) + 
-        "<br/>" + pct + "%";
+        msg.appendChild(DOCUMENT.createTextNode(categoryItem.displayName +
+        ": " + categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]))); 
+        msg.appendChild(DOCUMENT.createElement("br"));
+        msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName + 
+        ": " + valueItem.axis.get("labelFunction").apply(this, [valueItem.value, valueItem.axis.get("labelFormat")])));
+        msg.appendChild(DOCUMENT.createElement("br"));
+        msg.appendChild(DOCUMENT.createTextNode(pct + "%")); 
         return msg; 
     }
 }, {

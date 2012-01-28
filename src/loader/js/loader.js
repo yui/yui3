@@ -575,7 +575,25 @@ Y.Loader = function(o) {
 };
 
 Y.Loader.prototype = {
+    /**
+    Regex that matches a CSS URL. Used to guess the file type when it's not
+    specified.
 
+    @property REGEX_CSS
+    @type RegExp
+    @final
+    @protected
+    @since 3.5.0
+    **/
+    REGEX_CSS: /\.css(?:[?;].*)?$/i,
+    
+    /**
+    * Default filters for raw and debug
+    * @property FILTER_DEFS
+    * @type Object
+    * @final
+    * @protected
+    */
     FILTER_DEFS: {
         RAW: {
             'searchExp': '-min\\.js',
@@ -847,6 +865,9 @@ Y.Loader.prototype = {
 
         if (mods) {
             oeach(mods, function(v, k) {
+                if (typeof v === 'string') {
+                    v = { name: k, fullpath: v };
+                }
                 v.group = name;
                 self.addModule(v, k);
             }, self);
@@ -932,9 +953,11 @@ Y.Loader.prototype = {
         }
 
         if (!o.type) {
+            //Always assume it's javascript unless the CSS pattern is matched.
             o.type = JS;
             var p = o.path || o.fullpath;
-            if (p && p.indexOf('.' + CSS) > -1) {
+            if (p && this.REGEX_CSS.test(p)) {
+                Y.log('Auto determined module type as CSS', 'warn', 'loader');
                 o.type = CSS;
             }
         }
@@ -1922,7 +1945,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 success: false
             });
         }
-        this._finish('timeout', false);
     },
 
     /**
@@ -2052,12 +2074,12 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 }
             }
             
-            if (d && d.data && d.data.length) {
+            if (d && d.data && d.data.length && (d.type === 'success')) {
                 for (i = 0; i < d.data.length; i++) {
                     self.inserted[d.data[i].name] = true;
                 }
             }
-            
+
             if (actions === comp) {
                 self._loading = null;
                 Y.log('Loader actions complete!', 'info', 'loader');
@@ -2094,14 +2116,15 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                     self._onProgress.call(self, e);
                 },
                 onTimeout: function(d) {
-                    d.fn = self._onTimeout;
-                    complete.call(self, d);
+                    self._onTimeout.call(self, d);
                 },
                 onSuccess: function(d) {
+                    d.type = 'success';
                     d.fn = self._onSuccess;
                     complete.call(self, d);
                 },
                 onFailure: function(d) {
+                    d.type = 'failure';
                     d.fn = self._onFailure;
                     complete.call(self, d);
                 }
@@ -2122,14 +2145,15 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                     self._onProgress.call(self, e);
                 },
                 onTimeout: function(d) {
-                    d.fn = self._onTimeout;
-                    complete.call(self, d);
+                    self._onTimeout.call(self, d);
                 },
                 onSuccess: function(d) {
+                    d.type = 'success';
                     d.fn = self._onSuccess;
                     complete.call(self, d);
                 },
                 onFailure: function(d) {
+                    d.type = 'failure';
                     d.fn = self._onFailure;
                     complete.call(self, d);
                 }
@@ -2346,7 +2370,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                             if (m && (m.combine || !m.ext)) {
                                 resCombos[j].comboSep = m.comboSep;
                                 resCombos[j].maxURLLength = m.maxURLLength;
-                                frag = ((L.isValue(m.root)) ? m.root : self.root) + m.path;
+                                frag = ((L.isValue(m.root)) ? m.root : self.root) + (m.path || m.fullpath);
                                 frag = self._filter(frag, m.name);
                                 resCombos[j][m.type].push(frag);
                                 resCombos[j][m.type + 'Mods'].push(m);

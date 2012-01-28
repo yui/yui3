@@ -142,7 +142,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
     this._calendarId = Y.guid('calendar');
     this._selectedDates = {};
     this._rules = {};
-    this.storedDateCells = {};
+    this._storedDateCells = {};
   },
 
   /**

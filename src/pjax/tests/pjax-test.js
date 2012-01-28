@@ -384,6 +384,10 @@ suite.add(new Y.Test.Case({
     _should: {
         ignore: {
             '`navigate()` should load the specified URL and fire a `load` event': disableXHR || !html5
+        },
+
+        error: {
+            '`navigate()` should throw an error when the specified URL is not of the same origin': true
         }
     },
 
@@ -405,15 +409,57 @@ suite.add(new Y.Test.Case({
     },
 
     '`navigate()` should load the specified URL and fire a `load` event': function () {
-        var test = this;
+        var test = this,
+            didNavigate;
 
         this.pjax.once('load', function (e) {
             e.preventDefault();
             test.resume();
         });
 
-        this.pjax.navigate('assets/page-full.html');
+        didNavigate = this.pjax.navigate('assets/page-full.html');
+        Assert.areSame(true, didNavigate, '`navigate()` did not return `true`');
+
         this.wait(1000);
+    },
+
+    '`navigate()` should normalize the specified URL': function () {
+        var test  = this,
+            calls = 0;
+
+        function navigate(wackyURL) {
+            // Browser normalizes anchor href URLs.
+            var anchor        = Y.Node.create('<a href="' + wackyURL + '"></a>'),
+                normalizedURL = anchor.get('href');
+
+            test.pjax.navigate(wackyURL, {
+                force      : true,
+                expectedURL: normalizedURL
+            });
+        }
+
+        this.pjax.on('navigate', function (e) {
+            e.preventDefault();
+            calls += 1;
+            Assert.areSame(e.expectedURL, e.url);
+        });
+
+        navigate('assets/../assets/page-full.html');
+        navigate('/');
+        // navigate(''); // IE6 has an issue with this...
+        navigate('/foo/../');
+        navigate('/foo/..');
+        navigate(this.pjax._getOrigin());
+        navigate(this.pjax._getOrigin().replace(Y.getLocation().protocol, ''));
+
+        Assert.areSame(6, calls);
+    },
+
+    '`navigate()` should throw an error when the specified URL is not of the same origin': function () {
+        var didNavigate;
+
+        didNavigate = this.pjax.navigate('http://some.random.host.example.com/foo/bar/');
+        Assert.areSame(false, didNavigate, '`navigate()` did not return `false`');
     }
 }));
 
