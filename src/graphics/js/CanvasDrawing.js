@@ -273,7 +273,7 @@ CanvasDrawing.prototype = {
 	drawCircle: function(x, y, radius) {
         var startAngle = 0,
             endAngle = 2 * Math.PI,
-            wt = this._stroke & this._strokeWeight ? this._strokeWeight : 0,
+            wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0,
             circum = radius * 2;
             circum += wt;
         this._drawingComplete = false;
