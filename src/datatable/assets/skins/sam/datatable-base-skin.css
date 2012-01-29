@@ -9,10 +9,7 @@
 
 .yui3-skin-sam .yui3-datatable-caption {
     color: #000;
-    font-size: 85%;
-    font-style: italic;
-    font-weight: normal;
-    line-height: 1;
+    font: normal italic 85%/1 arial, sans-serif;
     padding: 1em 0;
     text-align: center;
 }

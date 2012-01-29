@@ -179,7 +179,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
                         );
 
                         if (col.className) {
-                            value.className += ' ' + col.className;
+                            values.className += ' ' + col.className;
                         }
 
                         if (col._id) {
