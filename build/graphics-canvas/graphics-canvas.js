@@ -275,7 +275,7 @@ CanvasDrawing.prototype = {
 	drawCircle: function(x, y, radius) {
         var startAngle = 0,
             endAngle = 2 * Math.PI,
-            wt = this._stroke & this._strokeWeight ? this._strokeWeight : 0,
+            wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0,
             circum = radius * 2;
             circum += wt;
         this._drawingComplete = false;
@@ -790,14 +790,44 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
 	 */
 	initializer: function(cfg)
 	{
-		var host = this;
+		var host = this,
+            graphic = cfg.graphic;
         host._initProps();
 		host.createNode(); 
-		host._graphic = cfg.graphic;
 		host._xcoords = [0];
 		host._ycoords = [0];
+        if(graphic)
+        {
+            this._setGraphic(graphic);
+        }
 		host._updateHandler();
 	},
+ 
+    /**
+     * Set the Graphic instance for the shape.
+     *
+     * @method _setGraphic
+     * @param {Graphic | Node | HTMLElement | String} render This param is used to determine the graphic instance. If it is a `Graphic` instance, it will be assigned
+     * to the `graphic` attribute. Otherwise, a new Graphic instance will be created and rendered into the dom element that the render represents.
+     * @private
+     */
+    _setGraphic: function(render)
+    {
+        var graphic;
+        if(render instanceof Y.CanvasGraphic)
+        {
+		    this._graphic = render;
+        }
+        else
+        {
+            render = Y.one(render);
+            graphic = new Y.CanvasGraphic({
+                render: render
+            });
+            graphic._appendShape(this);
+            this._graphic = graphic;
+        }
+    },
    
 	/**
 	 * Add a class name to each node.
