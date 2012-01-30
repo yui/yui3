@@ -17,7 +17,11 @@ YUI().use("datatable-base", function (Y) {
         {track:"3", from:"Paris", to:"Zurich"}
     ],
 
-    cs = new Y.Columnset({definitions:nestedCols}),
-    dt = new Y.DataTable.Base({columnset:nestedCols, recordset:data, summary:"Train schedule", caption:"Table with nested column headers"}).render("#nested");
+    dt = new Y.DataTable({
+        columns: nestedCols,
+        data   : data,
+        summary: "Train schedule",
+        caption:"Table with nested column headers"})
+    .render("#nested");
 });
 </script>

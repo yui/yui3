@@ -650,7 +650,11 @@ Y.mix(Scrollable.prototype, {
                         (this._yScrollNode.get('offsetHeight') -
                          Y.DOM.getScrollbarWidth()) + 'px');
 
-                    this._addVirtualScrollbar();
+                    // Only add virtual scrollbar if the OS+browser renders
+                    // scrollbars.
+                    if (Y.DOM.getScrollbarWidth()) {
+                        this._addVirtualScrollbar();
+                    }
                 }
             } else {
                 this._mergeXScrollContent();
