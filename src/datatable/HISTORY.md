@@ -11,6 +11,9 @@ DataTable Change History
  * DataTable doesn't render the table contents or header contents. That is left to `bodyView` and `headerView` classes.
  * Support for rendering a `<tfoot>` is baked in.
  * `datatable-datasource` modified to update a DataTable's `data` attribute rather than the (deprecated) `recordset`.
+ * Scrollable tables now support captions
+ * Added datatable-mutable module to provide addRow, removeRow, addColumn, etc
+ * Added datatable-column-widths module to set column widths
  
  * Liner `<div>`s have been removed from the cell template in the default markup
  * `<colgroup>` is not rendered by default (added via `datatable-column-widths` extension)
