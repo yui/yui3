@@ -282,7 +282,6 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         @param {Boolean} [options.force] Whether the enhanced navigation
           should occur even in browsers without HTML5 history. Will default to
           `true` when `serverRouting` is falsy.
-    @protected
     @see PjaxBase.navigate()
     **/
 
