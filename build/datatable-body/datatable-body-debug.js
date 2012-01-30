@@ -533,8 +533,10 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                 };
 
                 if (typeof col.formatter === 'string') {
-                    // TODO: look for known formatters by string name
-                    value = fromTemplate(col.formatter, formatterData);
+                    if (value !== undefined) {
+                        // TODO: look for known formatters by string name
+                        value = fromTemplate(col.formatter, formatterData);
+                    }
                 } else {
                     // Formatters can either return a value
                     value = col.formatter.call(source, formatterData);
