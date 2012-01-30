@@ -266,13 +266,13 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     **Note:** The specified URL _must_ be of the same origin as the current URL,
     otherwise an error will be logged and navigation will not occur. This is
     intended as both a security constraint and a purposely imposed limitation as
-    it does not make sense to tell the router to navigate to a URL on a
+    it does not make sense to tell the app to navigate to a URL on a
     different scheme, host, or port.
 
     @method navigate
-    @param {String} url The fully-resolved URL that the router should dispatch
-      to its route handlers to fulfill the enhanced navigation "request", or use
-      to update `window.location` in non-HTML5 history capable browsers when
+    @param {String} url The fully-resolved URL that the app should dispatch to
+      its route handlers to fulfill the enhanced navigation "request", or use to
+      update `window.location` in non-HTML5 history capable browsers when
       `serverRouting` is `true`.
     @param {Object} [options] Additional options to configure the navigation.
       These are mixed into the `navigate` event facade.
@@ -592,9 +592,9 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     Underlying implementation for `navigate()`.
 
     @method _navigate
-    @param {String} url The fully-resolved URL that the router should dispatch
-      to its route handlers to fulfill the enhanced navigation "request", or use
-      to update `window.location` in non-HTML5 history capable browsers when
+    @param {String} url The fully-resolved URL that the app should dispatch to
+      its route handlers to fulfill the enhanced navigation "request", or use to
+      update `window.location` in non-HTML5 history capable browsers when
       `serverRouting` is `true`.
     @param {Object} [options] Additional options to configure the navigation.
       These are mixed into the `navigate` event facade.
