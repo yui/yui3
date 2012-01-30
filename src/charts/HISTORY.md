@@ -4,6 +4,7 @@ Charts Change History
 3.5.0
 -----
 
+  * #2531456 Fixed issue in which loading a chart with an empty data provider throw an error and not load. 
   * #2530559 Added ability to explicitly set the width/height for vertical/horizontal axes
   * #2531003 Fixed issue in which axis labels flowed outside the chart's bounding box. Added allowContentOverflow attribute to allow for the overflow if desired.
   * #2531390 Addressed performance issues with IE
