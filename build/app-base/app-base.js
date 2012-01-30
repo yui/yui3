@@ -255,6 +255,40 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     },
 
     /**
+    Navigates to the specified URL if there is a route handler that matches. In
+    browsers capable of using HTML5 history or when `serverRouting` is falsy,
+    the navigation will be enhanced by firing the `navigate` event and having
+    the app handle the "request". When `serverRouting` is `true`, non-HTML5
+    browsers will navigate to the new URL via a full page reload.
+
+    When there is a route handler for the specified URL and it is being
+    navigated to, this method will return `true`, otherwise it will return
+    `false`.
+
+    **Note:** The specified URL _must_ be of the same origin as the current URL,
+    otherwise an error will be logged and navigation will not occur. This is
+    intended as both a security constraint and a purposely imposed limitation as
+    it does not make sense to tell the router to navigate to a URL on a
+    different scheme, host, or port.
+
+    @method navigate
+    @param {String} url The fully-resolved URL that the router should dispatch
+      to its route handlers to fulfill the enhanced navigation "request", or use
+      to update `window.location` in non-HTML5 history capable browsers when
+      `serverRouting` is `true`.
+    @param {Object} [options] Additional options to configure the navigation.
+      These are mixed into the `navigate` event facade.
+        @param {Boolean} [options.replace] Whether or not the current history
+          entry will be replaced, or a new entry will be created. Will default
+          to `true` if the specified `url` is the same as the current URL.
+        @param {Boolean} [options.force] Whether the enhanced navigation
+          should occur even in browsers without HTML5 history. Will default to
+          `true` when `serverRouting` is falsy.
+    @protected
+    @see PjaxBase.navigate()
+    **/
+
+    /**
     Renders this application by appending the `viewContainer` node to the
     `container` node if it isn't already a child of the container, and the
     `activeView` will be appended the view container, if it isn't already.
@@ -557,34 +591,21 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     },
 
     /**
-    Navigates to the specified URL if there is a route-handler that matches. In
-    browsers capable of using HTML5 history or when `serverRouting` is falsy,
-    the navigation will be enhanced by firing the `navigate` and having the
-    app handle the "request". When `serverRouting` is `true`, non-HTML5 browsers
-    will navigate to the new URL via manipulation of `window.location`.
-
-    Overrides PjaxBase's `_navigate()` method to first upgrade any hash-based
-    URLs that has a path-like hash (i.e. hashes that start with '/'), and when
-    `serverRouting` is falsy, force the navigation to be handled by the app. The
-    applied changes are then delegated back to PjaxBase's `_navigate()` method
-    to complete the navigation.
-
-    When there is a route-handler for the specified URL and it is being
-    navigated to, this method will return `true`, otherwise it will return
-    `false`.
+    Underlying implementation for `navigate()`.
 
     @method _navigate
-    @param {String} url The fully-resolved URL that the app should dispatch
+    @param {String} url The fully-resolved URL that the router should dispatch
       to its route handlers to fulfill the enhanced navigation "request", or use
       to update `window.location` in non-HTML5 history capable browsers when
       `serverRouting` is `true`.
-    @param {Object} [options] Additional options to configure the navigation,
-      these are mixed into the `navigate` event facade.
+    @param {Object} [options] Additional options to configure the navigation.
+      These are mixed into the `navigate` event facade.
         @param {Boolean} [options.replace] Whether or not the current history
           entry will be replaced, or a new entry will be created. Will default
           to `true` if the specified `url` is the same as the current URL.
-        @param {Boolean} [options.force=false] Whether the enhanced navigation
-          should occur even in browsers without HTML5 history.
+        @param {Boolean} [options.force] Whether the enhanced navigation
+          should occur even in browsers without HTML5 history. Will default to
+          `true` when `serverRouting` is falsy.
     @protected
     @see PjaxBase._navigate()
     **/
@@ -596,12 +617,12 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         if (!this.get('serverRouting')) {
             // Force navigation to be enhanced and handled by the app when
             // `serverRouting` is falsy because the server might not be able to
-            // handle the request properly.
+            // properly handle the request.
             Lang.isValue(options.force) || (options.force = true);
 
             // Determine if the current history entry should be replaced. Since
-            // we're upgrading hash-based URL to a full-path URL, we'll do the
-            // same for the current URL before comparing the two URLs.
+            // we've upgraded a hash-based URL to a full-path URL, we'll do the
+            // same for the current URL before comparing the two.
             if (!Lang.isValue(options.replace)) {
                 options.replace = url === this._upgradeURL(this._getURL());
             }
