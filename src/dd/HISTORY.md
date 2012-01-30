@@ -3,7 +3,10 @@ Drag and Drop Change History
 
 ### 3.5.0
 
-* No changes.
+* 2530257 Avoid interference of Drag and Nodes Event Handles
+* 2531377 shim is not created if dd-ddm is loaded after the first drag is activated
+* 2531674 Issue with drag and drop and drop:hit event
+
 
 ### 3.4.1
 
