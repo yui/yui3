@@ -51,16 +51,9 @@ dataSource.sendRequest({
 
 <p>Now that the DataSource is created properly, define the columns that you want your table to show. These columns map directly to the parameter names returned in the data.</p>
 
-```
-var cols = ["Title", "Phone", "Rating"];
-
-```
-
 <p>Now you are ready to create a DataTable using the columns you have defined. When you plug the instance with the DataTableDataSource plugin, point to your DataSource instance, and set an `initialRequest` value so that the initial data loads right way. Then call `render()` after the data response has been processed.</p>
 
 ```
-var cols = ["Title", "Phone", "Rating"];
-
 var dataSource = new Y.DataSource.IO({
     source:"ylocal_proxy.php?zip=94089&query=chinese"
 });
@@ -76,8 +69,8 @@ dataSource.plug(Y.Plugin.DataSourceXMLSchema, {
     }
 });
 
-var table = new Y.DataTable.Base({
-    columnset: cols,
+var table = new Y.DataTable({
+    columns: ["Title", "Phone", "Rating"],
     summary: "Chinese restaurants near 98089",
     caption: "Table with XML data from same-domain script"
 });
@@ -98,8 +91,6 @@ dataSource.after("response", function() {
 
 ```
 YUI().use("datasource-get", "datasource-jsonschema", "datatable-datasource", function(Y) {
-    var cols = ["Title", "Phone", "Rating"];
-
     var dataSource = new Y.DataSource.IO({
         source: "ylocal_proxy.php?"
     });
@@ -115,8 +106,8 @@ YUI().use("datasource-get", "datasource-jsonschema", "datatable-datasource", fun
         }
     });
 
-    var table = new Y.DataTable.Base({
-        columnset: cols,
+    var table = new Y.DataTable({
+        columns: ["Title", "Phone", "Rating"],
         summary: "Chinese restaurants near 98089",
         caption: "Table with XML data from same-domain script"
     });
