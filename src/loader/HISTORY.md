@@ -8,14 +8,33 @@ The biggest change made was the use of the `async` flag on `Y.Get` requests. Loa
 build the URL's to complete this request. It will then batch those into one `Y.Get` transation and fetch
 all of them asynchronously, then return to loader for post processing of the injected dependencies.
 
-    * 2529521 Consider making the presence of YUI CSS detectable by the loader
-    * 2530135 Add support for loading YUI modules in parallel in all browsers, since execution order is unimportan...
-    * 2530177 [Pull Request] - Bug #2530111  If the condition block is defined w/o a test fn or UA check, assume i...
-    * 2530343 Loader.sorted does not contain conditional modules
-    * 2530565 Slider one-off skins not being loaded
-    * 2530958 Loader.resolve not properly handling CSS modules
-    * 2531319 The aliased modules are reported as missing 
-    * 2531324 Support regular expressions in the patterns configuration
+   * 2529521 Consider making the presence of YUI CSS detectable by the loader
+   * 2530135 Add support for loading YUI modules in parallel in all browsers, since execution order is unimportan...
+   * 2530177 [Pull Request] - Bug #2530111  If the condition block is defined w/o a test fn or UA check, assume i...
+   * 2530343 Loader.sorted does not contain conditional modules
+   * 2530565 Slider one-off skins not being loaded
+   * 2530958 Loader.resolve not properly handling CSS modules
+   * 2531319 The aliased modules are reported as missing 
+   * 2531324 Support regular expressions in the patterns configuration
+   * 2531281 specify ID when injecting CSS via loader
+   * 2529521 Consider making the presence of YUI CSS detectable by the loader
+   * 2530077 'force' ignored for on-page modules unless 'allowRollup' is true
+   * 2530135 Add support for loading YUI modules in parallel in all browsers, since execution order is unimportan...
+   * 2530177 [Pull Request] - Bug #2530111  If the condition block is defined w/o a test fn or UA check, assume i...
+   * 2530343 Loader.sorted does not contain conditional modules
+   * 2530565 Slider one-off skins not being loaded
+   * 2530958 Loader.resolve not properly handling CSS modules
+   * 2531150 Update Dynamic Loader example
+   * 2531319 The aliased modules are reported as missing 
+   * 2531324 Support regular expressions in the patterns configuration
+   * 2531433 Improve the syntax for setting a skin in the YUI.use() statement
+   * 2531451 Loading of lang modules doesn't go through configFn in loader
+   * 2531590 addModule does not update the global cache so dynamically added skins modules can get lost
+   * 2531626 maxURLlength configuration on a per group basis
+   * 2531637 Configurable 'comboSep' for groups
+   * 2531646 "undefined" error
+   * 2531697 Loading a CSS module without specifying 'type=css' will throw a syntax error
+   * 2531587 Loader will not load custom modules if combine: true
 
 
 ### 3.4.1
