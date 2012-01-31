@@ -185,7 +185,7 @@ Y.mix(Sortable.prototype, {
 
     @method sort
     @param {String|String[]|Object|Object[]} fields The field(s) to sort by
-    @param {Object} payload Any extra `sort` event payload you want to send along
+    @param {Object} [payload] Extra `sort` event payload you want to send along
     @return {DataTable}
     @chainable
     **/
@@ -199,11 +199,12 @@ Y.mix(Sortable.prototype, {
     Reverse the current sort direction of one or more fields currently being
     sorted by.
 
-    Pass the `key` of the column or columns you want the sort order reversed for.
+    Pass the `key` of the column or columns you want the sort order reversed
+    for.
 
     @method toggleSort
     @param {String|String[]} fields The field(s) to reverse sort order for
-    @param {Object} payload Any extra `sort` event payload you want to send along
+    @param {Object} [payload] Extra `sort` event payload you want to send along
     @return {DataTable}
     @chainable
     **/
@@ -249,9 +250,17 @@ Y.mix(Sortable.prototype, {
         }));
     },
 
-    //----------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     // Protected properties and methods
-    //----------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    /**
+    Applies the sorting logic to the new ModelList if the `newVal` is a new
+    ModelList.
+
+    @method _afterDataChange
+    @param {EventFacade} e the `dataChange` event
+    @protected
+    **/
     _afterDataChange: function (e) {
         // object values always trigger a change event, but we only want to
         // call _initSortFn if the value passed to the `data` attribute was a
@@ -262,10 +271,18 @@ Y.mix(Sortable.prototype, {
         }
     },
 
+    /**
+    Sorts the `data` ModelList based on the new `sortBy` configuration.
+
+    @method _afterSortByChange
+    @param {EventFacade} e The `sortByChange` event
+    @protected
+    **/
     _afterSortByChange: function (e) {
-        // Can't use a setter because it's a chicken and egg problem. The columns
-        // need to be set up to translate, but columns are initialized from
-        // Core's initializer.  So construction-time assignment would fail.
+        // Can't use a setter because it's a chicken and egg problem. The
+        // columns need to be set up to translate, but columns are initialized
+        // from Core's initializer.  So construction-time assignment would
+        // fail.
         this._setSortBy();
 
         // Don't sort unless sortBy has been set
@@ -278,6 +295,13 @@ Y.mix(Sortable.prototype, {
         }
     },
 
+    /**
+    Subscribes to state changes that warrant updating the UI, and adds the
+    click handler for triggering the sort operation from the UI.
+
+    @method _bindSortUI
+    @protected
+    **/
     _bindSortUI: function () {
         this.after(['sortableChange', 'sortByChange', 'columnsChange'],
             this._uiSetSortable);
@@ -289,16 +313,55 @@ Y.mix(Sortable.prototype, {
         }
     },
             
+    /**
+    Sets the `sortBy` attribute from the `sort` event's `e.sortBy` value.
+
+    @method _defSortFn
+    @param {EventFacade} e The `sort` event
+    @protected
+    **/
     _defSortFn: function (e) {
         this.set.apply(this, ['sortBy', e.sortBy].concat(e.details));
     },
 
+    /**
+    Removes the click subscription from the header for sorting.
+
+    @method destructor
+    @protected
+    **/
     destructor: function () {
         if (this._sortHandle) {
             this._sortHandle.detach();
         }
     },
 
+    /**
+    Getter for the `sortBy` attribute.
+    
+    Supports the special subattribute "sortBy.state" to get a normalized JSON
+    version of the current sort state.  Otherwise, returns the last assigned
+    value.
+
+    @method _getSortBy
+    @param {String|String[]|Object|Object[]} val The current sortBy value
+    @param {String} detail String passed to `get(HERE)`. to parse subattributes
+    @protected
+    @example Comparing `get("sortBy")` with `get("sortBy.state")`
+    var table = new Y.DataTable({
+        columns: [ ... ],
+        data: [ ... ],
+        sortBy: 'username'
+    });
+
+    table.get('sortBy'); // 'username'
+    table.get('sortBy.state'); // { key: 'username', dir: 1 }
+
+    table.sort(['lastName', { firstName: "desc" }]);
+    table.get('sortBy'); // ['lastName', { firstName: "desc" }]
+    table.get('sortBy.state'); // [{ key: "lastName", dir: 1 }, { key: "firstName", dir: -1 }]
+
+    **/
     _getSortBy: function (val, detail) {
         var state, i, len, col;
 
@@ -324,6 +387,13 @@ Y.mix(Sortable.prototype, {
         }
     },
 
+    /**
+    Sets up the initial sort state and instance properties.  Publishes events
+    and subscribes to attribute change events to maintain internal state.
+
+    @method initializer
+    @protected
+    **/
     initializer: function () {
         var boundParseSortable = Y.bind('_parseSortable', this);
 
@@ -346,6 +416,13 @@ Y.mix(Sortable.prototype, {
         });
     },
 
+    /**
+    Creates a `_compare` function for the `data` ModelList to allow custom
+    sorting by multiple fields.
+
+    @method _initSortFn
+    @protected
+    **/
     _initSortFn: function () {
         var self = this;
 
@@ -377,7 +454,7 @@ Y.mix(Sortable.prototype, {
             return cmp;
         };
 
-        if (this.get('sortable') && this._sortBy.length) {
+        if (this._sortBy.length) {
             this.data.comparator = this._sortComparator;
 
             // TODO: is this necessary? Should it be elsewhere?
@@ -389,6 +466,14 @@ Y.mix(Sortable.prototype, {
         }
     },
 
+    /**
+    Fires the `sort` event in response to user clicks on sortable column
+    headers.
+
+    @method _onUITriggerSort
+    @param {DOMEventFacade} e The `click` event
+    @protected
+    **/
     _onUITriggerSort: function (e) {
         var id = e.currentTarget.get('id'),
             config = {},
@@ -418,6 +503,13 @@ Y.mix(Sortable.prototype, {
         }
     },
 
+    /**
+    Normalizes the possible input values for the `sortable` attribute, storing
+    the results in the `_sortable` property.
+
+    @method _parseSortable
+    @protected
+    **/
     _parseSortable: function () {
         var sortable = this.get('sortable'),
             columns  = [],
@@ -434,7 +526,7 @@ Y.mix(Sortable.prototype, {
                 }
 
                 if (col) {
-                    columns.push(col._yuid);
+                    columns.push(col);
                 }
             }
         } else if (sortable) {
@@ -452,13 +544,26 @@ Y.mix(Sortable.prototype, {
         this._sortable = columns;
     },
 
+    /**
+    Initial application of the sortable UI.
 
+    @method _renderSortable
+    @protected
+    **/
     _renderSortable: function () {
         this._uiSetSortable();
 
         this._bindSortUI();
     },
 
+    /**
+    Parses the current `sortBy` attribute into a normalized structure for the
+    `data` ModelList's `_compare` method.  Also updates the column
+    configurations' `sortDir` properties.
+
+    @method _setSortBy
+    @protected
+    **/
     _setSortBy: function () {
         var columns     = this._displayColumns,
             sortBy      = this.get('sortBy') || [],
@@ -518,15 +623,51 @@ Y.mix(Sortable.prototype, {
         }
     },
 
+    /**
+    Array of column configuration objects of those columns that need UI setup
+    for user interaction.
+
+    @property _sortable
+    @type {Object[]}
+    @protected
+    **/
+    //_sortable: null,
+
+    /**
+    Array of column configuration objects for those columns that are currently
+    being used to sort the data.  Fake column objects are used for fields that
+    are not rendered as columns.
+
+    @property _sortBy
+    @type {Object[]}
+    @protected
+    **/
+    //_sortBy: null,
+
+    /**
+    Replacement `comparator` for the `data` ModelList that defers sorting logic
+    to the `_compare` method.  The deferral is accomplished by returning `this`.
+
+    @method _sortComparator
+    @param {Model} item The record being evaluated for sort position
+    @return {Model} The record
+    @protected
+    **/
     _sortComparator: function (item) {
         // Defer sorting to ModelList's _compare
         return item;
     },
 
-    _validateSortable: function (val) {
-        return val === 'auto' || isBoolean(val) || isArray(val);
-    },
+    /**
+    Applies the appropriate classes to the `boundingBox` and column headers to
+    indicate sort state and sortability.
 
+    Also currently wraps the header content of sortable columns in a `<div>`
+    liner to give a CSS anchor for sort indicators.
+
+    @method
+    @protected
+    **/
     _uiSetSortable: function () {
         var columns       = this._sortable || [],
             sortableClass = this.getClassName('sortable', 'column'),
@@ -573,6 +714,26 @@ Y.mix(Sortable.prototype, {
         }
     },
 
+    /**
+    Allows values `true`, `false`, "auto", or arrays of column names through.
+
+    @method _validateSortable
+    @param {Any} val The input value to `set("sortable", VAL)`
+    @return {Boolean}
+    @protected
+    **/
+    _validateSortable: function (val) {
+        return val === 'auto' || isBoolean(val) || isArray(val);
+    },
+
+    /**
+    Allows strings, arrays of strings, objects, or arrays of objects.
+
+    @method _validateSortBy
+    @param {String|String[]|Object|Object[]} val The new `sortBy` value
+    @return {Boolean}
+    @protected
+    **/
     _validateSortBy: function (val) {
         return val === null ||
                isString(val) ||
