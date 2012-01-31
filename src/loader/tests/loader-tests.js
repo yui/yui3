@@ -90,6 +90,64 @@ YUI.add('loader-tests', function(Y) {
             Assert.isTrue((out.js[0].indexOf('-min') === -1), 'Raw filter did not work');
             Assert.isTrue((out.js[0].indexOf('-debug') === -1), 'Raw filter did not work');
         },
+        test_custom_filter: function() {
+            var loader = new Y.Loader({
+                filter: {
+                    searchExp: 'JS&',
+                    replaceStr: 'js+'
+                },
+                groups: {
+                    mods: {
+                        root: '',
+                        base: '',
+                        combine: true,
+                        comboBase: 'http://test.com/?',
+                        modules: {
+                            'mods-actioninfos': {
+                                path: 'actioninfos/actioninfos.JS'
+                            },
+                            'mods-test': {
+                                path: 'test/test.JS',
+                            }
+                        }
+                    }
+                },
+                require: ['mods-actioninfos', 'mods-test']
+            });
+
+            var out = loader.resolve(true);
+            Assert.areEqual(1, out.js.length, 'Failed to combo request');
+            Assert.areEqual('http://test.com/?actioninfos/actioninfos.js+test/test.JS', out.js[0], 'Failed to replace string in combo');
+        },
+        test_custom_filter_group: function() {
+            var loader = new Y.Loader({
+                groups: {
+                    mods: {
+                        filter: {
+                            searchExp: 'JS&',
+                            replaceStr: 'js+'
+                        },
+                        root: '',
+                        base: '',
+                        combine: true,
+                        comboBase: 'http://test.com/?',
+                        modules: {
+                            'mods-actioninfos': {
+                                path: 'actioninfos/actioninfos.JS'
+                            },
+                            'mods-test': {
+                                path: 'test/test.JS',
+                            }
+                        }
+                    }
+                },
+                require: ['mods-actioninfos', 'mods-test']
+            });
+
+            var out = loader.resolve(true);
+            Assert.areEqual(1, out.js.length, 'Failed to combo request');
+            Assert.areEqual('http://test.com/?actioninfos/actioninfos.js+test/test.JS', out.js[0], 'Failed to replace string in combo');
+        },
         test_resolve_combo_sep: function() {
             var loader = new testY.Loader({
                 comboSep: '==!!==',
