@@ -6558,6 +6558,7 @@ Y.Loader.prototype = {
         if (modules.css.length) { //Load CSS first
             Y.Get.css(modules.css, {
                 data: modules.cssMods,
+                attributes: self.cssAttributes,
                 insertBefore: self.insertBefore,
                 charset: self.charset,
                 timeout: self.timeout,
@@ -6582,9 +6583,10 @@ Y.Loader.prototype = {
         }
 
         if (modules.js.length) {
-            Y.Get.script(modules.js, {
+            Y.Get.js(modules.js, {
                 data: modules.jsMods,
                 insertBefore: self.insertBefore,
+                attributes: self.jsAttributes,
                 charset: self.charset,
                 timeout: self.timeout,
                 autopurge: false,
@@ -6742,7 +6744,12 @@ Y.Loader.prototype = {
                 url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :
                       self._url(m.path, s[i], group.base || m.base);
                 
-
+                if (m.attributes) {
+                    url = {
+                        url: url,
+                        attributes: m.attributes
+                    };
+                }
                 resolved[m.type].push(url);
                 resolved[m.type + 'Mods'].push(m);
             } else {

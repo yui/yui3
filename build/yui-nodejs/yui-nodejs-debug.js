@@ -6610,6 +6610,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             Y.log('Loading CSS modules', 'info', 'loader');
             Y.Get.css(modules.css, {
                 data: modules.cssMods,
+                attributes: self.cssAttributes,
                 insertBefore: self.insertBefore,
                 charset: self.charset,
                 timeout: self.timeout,
@@ -6635,9 +6636,10 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
         if (modules.js.length) {
             Y.log('Loading JS modules', 'info', 'loader');
-            Y.Get.script(modules.js, {
+            Y.Get.js(modules.js, {
                 data: modules.jsMods,
                 insertBefore: self.insertBefore,
+                attributes: self.jsAttributes,
                 charset: self.charset,
                 timeout: self.timeout,
                 autopurge: false,
@@ -6798,7 +6800,12 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :
                       self._url(m.path, s[i], group.base || m.base);
                 
-
+                if (m.attributes) {
+                    url = {
+                        url: url,
+                        attributes: m.attributes
+                    };
+                }
                 resolved[m.type].push(url);
                 resolved[m.type + 'Mods'].push(m);
             } else {
