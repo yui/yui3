@@ -6768,7 +6768,7 @@ Y.Loader.prototype = {
                 group = self.groups[groupName];
                 if (groupName && group) {
 
-                    if (!group.combine) {
+                    if (!group.combine || m.fullpath) {
                         //This is not a combo module, skip it and load it singly later.
                         //singles.push(s[i]);
                         addSingle(m);
