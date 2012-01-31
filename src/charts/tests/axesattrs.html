@@ -110,9 +110,9 @@ YUI({
         },
         
         tearDown: function() {
-            this.chart.destroy();
+            this.chart.destroy(true);
         },
-
+        
         testStartCatAxes: function()
         {
             var assert = Y.Assert,
@@ -151,7 +151,7 @@ YUI({
             assert.areEqual(type, axis.get("type"), "The value of type should be " + type);
             assert.areEqual(majorTickDisplay, axisStyles.majorTicks.display, "The axis style majorTickDisplay.top should be " + majorTickDisplay);
         },
-
+        
         testUpdateCatAxes: function()
         {
             this.chart.set("axes", this.updateAxes);

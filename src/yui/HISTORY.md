@@ -4,13 +4,35 @@ YUI Core Change History
 3.5.0
 -----
 
+* YUI now runs natively on Node.js without a shim. See README.nodejs.md for
+  details.
+
+* YUI now detects non-native ES5 shims added to native objects by other
+  libraries and falls back to its own internal shims rather than relying on the
+  potentially broken code from the other library.
+
 * `Y.Object.isEmpty()` now casts the given value to an object if it isn't one
   already, which prevents exceptions when it's given a non-object.
+
+* Added static YUI.applyConfig to apply config settings to YUI.GlobalConfig in
+  parts instead of in whole. [Ticket #2530970]
+
+* Fixed issue #2531247: Namespace function behaves wrong with multiple
+  arguments.
+
+* Fixed issue #2531512: 'debug' parameter missing from the YUI Config object
+  documentation.
+
+* Added `Y.getLocation()` which returns the `location` object from the
+  window/frame in which a YUI instance operates. [Ticket #2531608]
+
 * 2530970 Should we provide a YUI.applyConfig(), to avoid clobbering of YUI_config in 'mashup' use cases
+* 2531164 Natively use YUI Gallery Modules form does not submit on [enter]
 * 2531247 namespace function behaves wrong with multiple arguments
 * 2531512 'debug' parameter missing from the YUI Config object documentation; the Config object documentation ...
-* YUI is now native on Node.js, no shim needed to run. See README.nodejs.md
-  
+* 2531550 Prepare npm package for 3.5.0
+* 2531551 Add support for Silk in Y.UA
+* 2531612 Wrong module name in YUI Global Object documentation 
 
 
 3.4.1

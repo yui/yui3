@@ -30,15 +30,14 @@ YUI.add('editor-br', function(Y) {
             }
             if (e.keyCode == 13) {
                 var host = this.get(HOST), inst = host.getInstance(),
-                    sel = new inst.Selection(),
+                    sel = new inst.EditorSelection(),
                     last = '';
 
                 if (sel) {
                     if (Y.UA.ie) {
                         if (!sel.anchorNode || (!sel.anchorNode.test(LI) && !sel.anchorNode.ancestor(LI))) {
-                            sel._selection.pasteHTML('<br>');
-                            sel._selection.collapse(false);
-                            sel._selection.select();
+                            var host = this.get(HOST);
+                            host.execCommand('inserthtml', inst.EditorSelection.CURSOR);
                             e.halt();
                         }
                     }
@@ -129,4 +128,4 @@ YUI.add('editor-br', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
+}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});

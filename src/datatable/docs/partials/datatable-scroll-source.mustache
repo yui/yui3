@@ -1,13 +1,15 @@
 <h4>xy-Scrolling Datatable</h4>
-<p>The following is a standard xy-scrolling datatable. The <code>width</code> and <code>height</code> are passed into the plugin.</p>
+<p>The following is a standard xy-scrolling datatable. `scrollable` is set to `true` and the `width` and `height` are provided.</p>
+
 <div id="scrolling-xy" class="tableDemo"></div>
 
 <h4>x-Scrolling Datatable</h4>
-<p>The following is a standard x-scrolling datatable. Only the <code>width</code> is passed into the plugin. The <code>height</code> is automatically set to the entire table height. For this table, a subset of the census data is used to keep the vertical size manageable.</p>
+<p>The following is a standard x-scrolling datatable. `scrollable` is set to "x" and the `width` is passed into the plugin. Note, for this table, a subset of the census data is used to keep the vertical size manageable.</p>
+
 <div id="scrolling-x" class="tableDemo"></div>
 
 <h4>y-Scrolling Datatable</h4>
-<p>The following is a standard y-scrolling datatable. Only the <code>height</code> is passed into the plugin. The <code>width</code> is automatically set to width of the container. For this table, a <code>columnset</code> with only two columns is used to keep the horizontal size manageable.</p>
+<p>The following is a standard y-scrolling datatable. `scrollable` is set to "y" and the `height` is passed into the plugin.  Note, for this table, only two columns are used to keep the horizontal size manageable.</p>
 
 <div id="scrolling-y" class="yui3-skin-sam tableDemo"></div>
 
@@ -69,51 +71,44 @@ YUI().use("datatable-scroll", function (Y) {
     ];
 
 
-    var dtScrollingXY = new Y.DataTable.Base({
-        columnset: [
+    var dtScrollingXY = new Y.DataTable({
+        columns: [
             {key:"ANSI"},
             {key:"STATE", label:"State"},
             {key:"TOTAL_POP", label:"Total Population"},
             {key:"LAND_AREA", label:"Land Area"},
             {key:"POP_PER_SQ_MILE", label:"Pop/Square Mile"}
         ],
-        recordset: state_census_data,
-        summary: "X and Y axis scrolling table"
-    });
-    dtScrollingXY.plug(Y.Plugin.DataTableScroll, {
+        data: state_census_data,
+        scrollable: true,
         width: "300px",
-        height: "150px"
-    });
-    dtScrollingXY.render("#scrolling-xy");
+        height: "150px",
+        caption: "X and Y axis scrolling table"
+    }).render("#scrolling-xy");
 
-    var dtScrollingX = new Y.DataTable.Base({
-        columnset: [
+    var dtScrollingX = new Y.DataTable({
+        columns: [
             {key:"ANSI"},
             {key:"STATE", label:"State"},
             {key:"TOTAL_POP", label:"Total Population"},
             {key:"LAND_AREA", label:"Land Area"},
             {key:"POP_PER_SQ_MILE", label:"Pop/Square Mile"}
         ],
-        recordset: state_census_data.slice(0, 7),
-        summary: "X axis scrolling table"
-    });
-    dtScrollingX.plug(Y.Plugin.DataTableScroll, {
-        width: "250px"
-    });
-    dtScrollingX.render("#scrolling-x");
+        data: state_census_data.slice(0, 7),
+        scrollable: "x",
+        width: "250px",
+        caption: "X axis scrolling table"
+    }).render("#scrolling-x");
     
-    var dtScrollingY = new Y.DataTable.Base({
-        columnset: [
+    var dtScrollingY = new Y.DataTable({
+        columns: [
             {key:"STATE", label:"State"},
             {key:"TOTAL_POP", label:"Total Population"}
         ],
-        recordset: state_census_data,
-        summary: "Y axis scrolling table"
-    });
-    dtScrollingY.plug(Y.Plugin.DataTableScroll, {
-        height:"200px"
-    });
-    dtScrollingY.render("#scrolling-y");
+        data: state_census_data,
+        scrollable: "y",
+        height:"200px",
+        caption: "Y axis scrolling table"
+    }).render("#scrolling-y");
 });
-
 </script>

@@ -30,15 +30,8 @@ function myHeaderRenderer (curDate) {
 	     };
 
 
-	     var myRules = {"all":
-	     	{
-	     		"all": {
-	     			"all": {
-	     				"0,6": "all_weekends"
-	     			}
-	     		}
-	     	},
-	     	"2010": {
+	     var myRules = {
+	     	"2011": {
 	     		"all": {
 	     			"5": "thefifths"
 	     		}
@@ -60,8 +53,9 @@ if (rules.indexOf("all_weekends") >= 0) {
 	        showPrevMonth: true,
 	        disabledDatesRule: "thefifths",
 	        selectionMode: "multiple",
-	        minimumDate: new Date(2011,6,1),
+	        minimumDate: new Date(2011,1,1),
 	        maximumDate: new Date(2011,11,1),
+	        date: new Date(2011,10,1),
 	        headerRenderer: myHeaderRenderer,
 			width:'600px'}).render();
 

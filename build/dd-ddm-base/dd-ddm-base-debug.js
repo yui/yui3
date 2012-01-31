@@ -295,6 +295,9 @@ YUI.add('dd-ddm-base', function(Y) {
         * @return {Node}
         */
         getNode: function(n) {
+            if (n instanceof Y.Node) {
+                return n;
+            }
             if (n && n.get) {
                 if (Y.Widget && (n instanceof Y.Widget)) {
                     n = n.get('boundingBox');
@@ -348,4 +351,4 @@ YUI.add('dd-ddm-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['node', 'base', 'yui-throttle', 'classnamemanager']});
+}, '@VERSION@' ,{requires:['node', 'base', 'yui-throttle', 'classnamemanager'], skinnable:false});

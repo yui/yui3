@@ -14,6 +14,8 @@ Handlebars.Exception = function (message) {
             this[key] = error[key];
         }
     }
+
+    this.message = error.message;
 };
 
 Handlebars.Exception.prototype = new Error();
@@ -28,8 +30,9 @@ Handlebars.SafeString.prototype.toString = function () {
 
 Handlebars.Utils = {
     escapeExpression: function (string) {
-        if (!string) {
-            return '';
+        // Skip escaping for empty strings.
+        if (string === '') {
+            return string;
         }
 
         // Don't escape SafeStrings, since they're already (presumed to be)

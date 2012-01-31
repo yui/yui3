@@ -76,7 +76,12 @@
             "layout"     : "graphics-path-tool-example"
         },
         "graphics-path-tool": {
-            "displayName": "Graphics: Path Drawing Tool"
+            "displayName": "Graphics: Path Drawing Tool",
+            		"hideTableOfContents": true            
+        },
+        "graphics-radial-tool": {
+            "displayName": "Graphics: Radial Gradient Tool",
+            		"hideTableOfContents": true            
         }
     }	
 }

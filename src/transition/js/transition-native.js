@@ -259,8 +259,6 @@ Transition.prototype = {
         if (!anim._running) {
             anim._running = true;
 
-            //anim._node.fire('transition:start', data);
-
             if (config.on && config.on.start) {
                 config.on.start.call(Y.one(node), data);
             }
@@ -290,7 +288,7 @@ Transition.prototype = {
             node = anim._node,
             uid = Y.stamp(node),
             style = node.style,
-            computed = getComputedStyle(node),
+            computed = node.ownerDocument.defaultView.getComputedStyle(node),
             attrs = Transition._nodeAttrs[uid],
             cssText = '',
             cssTransition = computed[Transition._toCamel(TRANSITION_PROPERTY)],
@@ -337,16 +335,12 @@ Transition.prototype = {
 
         // only one native end event per node
         if (!Transition._hasEnd[uid]) {
-            //anim._detach = Y.on(TRANSITION_END, anim._onNativeEnd, node);
-            //node[ON_TRANSITION_END] = anim._onNativeEnd;
             node.addEventListener(TRANSITION_END, anim._onNativeEnd, '');
             Transition._hasEnd[uid] = true;
 
         }
         
-        //setTimeout(function() { // allow updates to apply (size fix, onstart, etc)
-            style.cssText += transitionText + duration + easing + delay + cssText;
-        //}, 1);
+        style.cssText += transitionText + duration + easing + delay + cssText;
 
     },
 
@@ -382,7 +376,6 @@ Transition.prototype = {
                     callback.call(nodeInstance, data);
                 }, 1);
             }
-            //node.fire('transition:end', data);
         }
 
     },
@@ -391,6 +384,7 @@ Transition.prototype = {
         var node = this._node,
             value = node.ownerDocument.defaultView.getComputedStyle(node, '')[Transition._toCamel(TRANSITION_PROPERTY)];
 
+        name = Transition._toHyphen(name);
         if (typeof value === 'string') {
             value = value.replace(new RegExp('(?:^|,\\s)' + name + ',?'), ',');
             value = value.replace(/^,|,$/, '');
@@ -426,10 +420,9 @@ Transition.prototype = {
                 config.on.end.call(Y.one(node), data);
             }
 
-            //node.fire('transition:propertyEnd', data);
-
             if (anim._count <= 0)  { // after propertyEnd fires
                 anim._end(elapsed);
+                node.style[TRANSITION_PROPERTY_CAMEL] = ''; // clean up style
             }
         }
     },
@@ -437,12 +430,7 @@ Transition.prototype = {
     destroy: function() {
         var anim = this,
             node = anim._node;
-        /*
-        if (anim._detach) {
-            anim._detach.detach();
-        }
-        */
-        //anim._node[ON_TRANSITION_END] = null;
+
         if (node) {
             node.removeEventListener(TRANSITION_END, anim._onNativeEnd, false);
             anim._node = null;
@@ -565,7 +553,7 @@ Y.Node.prototype.hide = function(name, config, callback) {
             name = Transition.HIDE_TRANSITION; 
         }    
         this.transition(name, config, callback);
-    } else if (name && !Y.Transition) { Y.log('unable to transition hide; missing transition module', 'warn', 'node'); // end if on nex
+    } else if (name && !Y.Transition) { Y.log('unable to transition hide; missing transition module', 'warn', 'node');
     } else {
         this._hide();
     }    

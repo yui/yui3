@@ -1,20 +1,31 @@
 <style scoped>
+    #demo {
+        position: relative;
+    }
     #homebase {
         margin-left: 100px;
-        position: relative;
-        height: 125px;
+        position: absolute;
+        left: 0;
+        top: 40px;
+        height: 150px;
         width: 200px;
     }
     .robot {
-        height: 100px;
-        width: 74px;
-        background: url({{componentAssets}}/red_robot.png) no-repeat top left;
+        height: 210px;
+        width: 180px;
         position: absolute;
-        top: 0;
+        top: 0px;
         left: 0;
+        outline-style: none;
+        opacity: 0.5;
+        filter: alpha(opacity=50);
+    }
+    .yui3-focused {
+        opacity: 1;
+        z-index: 1;
+        filter: alpha(opacity=100);        
     }
     #B {
-        background-image: url({{componentAssets}}/blue_robot.png);
         left: 125px;
     }
     #demo input {
@@ -23,6 +34,9 @@
     #demo label {
         font-size: 87%;
         color: #555;
+    }
+    #detach {
+        margin-top: 150px;
     }
 </style>
 

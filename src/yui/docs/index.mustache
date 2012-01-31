@@ -1,198 +1,323 @@
 <div class="intro">
-    <p>The YUI module is the single core dependency for all YUI 3 implementations.  It must be included on all pages that use YUI &mdash; and it is the only dependency required to start writing YUI code.  The YUI module contains loader functionality and a dependency calculator, allowing it to serve as a "seed" for your implementation.  You provide the YUI module list you're using and the code that makes use of those modules; YUI will fetch all necessary components in a single, optimized HTTP request before executing your dependent code.  While you may use some of the script- and CSS-loading facilities of the YUI module in your own implementation, this module's core purpose is to serve as a small seed from which complex, highly modular implementations can grow.</p>
-    <p>The YUI module creates a global YUI object.  This object is instantiable, and it is used to create YUI instances to which are bound specific functional modules.  A page can share a single YUI instance or can use different, insular instances for each piece of functionality on the page.</p>
+    <p>
+    The `YUI` module is the core of YUI 3. It must be included on all pages that use YUI, and it's the only dependency required to start writing YUI code. The YUI module contains loader functionality and a dependency calculator, allowing it to serve as a "seed" that can load other dependencies as needed.
+    </p>
 </div>
 
+<h2>Getting Started</h2>
 
-<p>The YUI Global object is provided by one of our seed files:</p>
+<p>
+The first step in using YUI is to load the YUI "seed". The seed is the bare minimum core code that's needed to allow YUI to dynamically load additional dependencies on demand. YUI is extremely modular, and the small seed file makes it easy to load only the modules you want to use on a given page.
+</p>
 
-<h2 id="loader-seed">The Loader Seed</h2>
+<p>
+Include the YUI seed file by adding this script tag to your HTML:
+</p>
+
 ```
 <script src="http://yui.yahooapis.com/{{{yuiVersion}}}/build/yui/yui-min.js"></script>
 ```
 
-<p>This seed file contains everything you need to fetch/use YUI core modules. It includes our dynamic script loader as well as all of the meta-data required to load additional YUI modules.</p>
+<p>
+The seed file adds a single global variable to the page: the `YUI` object. To begin using YUI, you'll first create a new YUI instance and then tell that instance which YUI modules you want to use.
+</p>
 
+```
+<div id="demo">Click me</div>
+<script>
+// Create a new YUI sandbox and load the "node" module.
+YUI().use('node', function (Y) {
+    // YUI will call this function and pass in the YUI instance (Y) once all
+    // modules have finished loading and are ready to use.
 
-<h2 id="base-seed">The Base Seed</h2>
+    // We can now use Y.Node to get references to DOM elements using CSS
+    // selectors.
+    var demo = Y.one('#demo');
+
+    // And we can listen for DOM events.
+    demo.on('click', function (e) {
+        demo.set('text', 'You clicked me!');
+    });
+});
+</script>
+```
+
+<p>
+Calling `YUI()` creates a brand new YUI instance without any active modules. We then call `.use()` on that new instance and pass in a list of modules we want to use, in the form of string parameters. You can name as many modules as you like here. Finally, we pass a callback function that will be executed once all those modules have finished loading. The callback function receives the YUI instance as an argument, which we've named `Y`.
+</p>
+
+<p>
+This pattern is called a "sandbox", and it's the most important concept to understand about YUI. It not only makes it easy to load dependencies on demand, it also ensures that your code (and YUI's code!) doesn't pollute the global scope of the page or interfere with other global JavaScript you may be using.
+</p>
+
+<p>
+This also means that you can have multiple YUI sandboxes on the same page, and they won't interfere with each other (but they <em>will</em> avoid reloading module code that has already been loaded).
+</p>
+
+<h2>Alternative Seed Files</h2>
+
+<p>
+In [[#Getting Started]], we described the most common way to load YUI using what we call the "Loader Seed". This is a seed file that contains both the core of YUI and the code for the YUI Loader and all the metadata that's necessary to dynamically load additional YUI modules. Depending on your needs, you may want to use a different seed file to further optimize how you load YUI.
+</p>
+
+<h3 id="base-seed">The Base Seed</h3>
+
 ```
 <script src="http://yui.yahooapis.com/{{{yuiVersion}}}/build/yui-base/yui-base-min.js"></script>
 ```
 
-<p>This seed file contains the core items you need to use YUI core modules. It also includes the capability to fetch our dynamic script loader. <em>This seed was our old `yui.js`</em></p>
+<p>
+The base seed contains the YUI core and the <a href="../get/index.html">Get Utility</a>, but doesn't include Loader or any module metadata. The first time you call `YUI().use()`, it will automatically fetch Loader and the module metadata, and then will make a second request to fetch any additional modules you've asked for.
+</p>
 
-<!--h2 id="why">Why the namespace change?</h2>
+<p>
+This results in a smaller initial seed file that can speed up the initial page load, but requires more requests overall to get an actual YUI instance up and running. Prior to version 3.4.0, this was the default YUI seed file.
+</p>
+
+<h3 id="core-seed">The Core Seed</h3>
+
+```
+<script src="http://yui.yahooapis.com/{{{yuiVersion}}}/build/yui-core/yui-core-min.js"></script>
+```
+
+<p>
+The core seed contains only the YUI core, and isn't capable of dynamically loading other modules. This is the smallest of all the seed files, but requires you to manually load any dependencies you need before using them.
+</p>
+
+<h2>Loading Modules</h2>
+
+<h3>Dynamic Loading with `use()`</h3>
+
+<p>
+The `use()` method allows you to specify the modules that you want to load into your YUI instance.
+</p>
+
+```
+YUI().use('node', 'event', function (Y) {
+    // The node and event modules are available on this YUI instance.
+});
+```
+
+<p>
+YUI modules aren't actually executed until they're used and attached to a YUI instance, and two different YUI instances can have two different sets of modules attached to them. Even if both instances use the same module, each instance gets its own "copy" of that module and isn't affected by changes made in another instance.
+</p>
+
+```
+YUI().use('node', function (Y) {
+    // We can blow away the Y.Node module in this outer YUI instance...
+    Y.Node = null;
+
+    YUI().use('node', function (Y2) {
+        // ...without affecting it inside another YUI instance...
+        console.log(typeof Y2.Node); // => "function"
+    });
+});
+```
+
+<p>
+You can also call `use()` on an existing YUI instance to attach more modules to that instance without needing to create a completely new YUI instance. This is useful for lazy-loading modules that aren't needed up front.
+</p>
+
+```
+// First we create a YUI instance and use the node module.
+YUI().use('calendar', function (Y) {
+    // The calendar module is available here.
+
+    // Later, we decide we want to use the autocomplete module, so we attach it
+    // to the same instance.
+    Y.use('autocomplete', function () {
+        // The autocomplete module is available here, and the calendar module is
+        // still available as well since this is the same YUI instance.
+    });
+});
+```
+
+<h3>Understanding `YUI().use()`</h3>
+
+<p>
+The `YUI().use()` call might seem like magic, but it's actually doing something very simple. It's easier to understand what's going on if we break it into multiple steps.
+</p>
+
+<p>
+First, calling `YUI()` creates a brand new YUI instance. This instance will later be passed on to our callback function as the `Y` argument, but if we wanted to, we could just stop here and start using it immediately without even calling `use()`.
+</p>
+
+<p>
+Next, we call `use()` on the new YUI instance that was just created. We pass in a list of the modules we want to use, followed by a function that we want YUI to call once all those modules are available.
+</p>
+
+<p>
+Finally, YUI loads any necessary modules, attaches them to the YUI instance (this is when the modules are actually executed), and then calls our callback function. The YUI instance passes itself to the callback function as an argument for convenience, so that we don't have to store the instance in a global variable.
+</p>
+
+<p>
+The callback function passed to `use()` is executed asynchronously, which means that it doesn't block subsequent code while modules are being loaded.
+</p>
+
+<p>
+Broken out into more verbose code, these three steps look like this:
+</p>
+
+```
+// Step one: create a new YUI instance.
+var Y = YUI();
+
+// Step two: load and attach some modules in that instance. Note that we
+// call Y.use() here and not YUI().use().
+Y.use('node', 'event', function (Y) {
+    // Step three: do stuff with node and event.
+
+    // The Y object that gets passed to this function is exactly the same as the
+    // global Y object created in step one, so it's really only necessary when
+    // you don't store the YUI instance in a global variable.
+});
+```
+
+<p>
+Except for creating a global `Y` variable, that code does exactly the same thing
+as this code:
+</p>
+
+```
+YUI().use('node', 'event', function (Y) {
+    // Do stuff with node and event.
+});
+```
+
+<p>
+If you wanted to, you could create a global `Y` variable using the shorter style as well:
+</p>
+
+```
+var Y = YUI().use('node', 'event', function (Y) {
+    // Do stuff with node and event.
+});
+```
+
+<h3>Module States</h3>
+
+Within any given YUI instance, there are three possible states for a module:
+</p>
+
 <ol>
-    <li><strong>Backward Compatibility</strong>: With the change from <code>YAHOO</code> to <code>YUI</code> we are guaranteed not to break backward compatibility. This allows you to use both YUI 2 and YUI 3 on
-    the same page without fear of breaking existing code.</li>
-    <li><strong>Sandboxing</strong>: The new YUI Global Object is now smarter than ever, allowing you to create an instance of YUI in your own namespace and only load the modules that you need.
-    It makes it easier for multiple developers to work on different parts of the page with different modules with less worry of them stepping on each other's toes.</li>
-    <li><strong>Versioning</strong>: If another version of YUI is loaded on the page, it will not change objects used in
-    existing YUI instances.  Both versions of YUI will operate with the corresponding versions of the reqested YUI modules without impacting each other.</li>
+<li><p><strong>Not loaded</strong>: The module code has not been downloaded yet and is not available to any YUI instance.</p></li>
 
+<li><p><strong>Loaded</strong>: The module code has been downloaded, but has not been attached to this specific YUI instance. Other instances may be using it, but this instance isn't using it yet.</p></li>
 
+<li><p><strong>Attached</strong>: The module code has been downloaded and is attached to this YUI instance. The module is ready to use.</p></li>
+</ol>
 
-    <li><strong>More Dynamic</strong>: With Loader built into the core, loading files when you need them just got easier.</li>
-    <li><strong>Selector Powered</strong>: Using Selector as its base for node handling, you now get more power and ease of use for free.</li>
-    <li><strong>Event Normalization</strong>: With the new Event Facade, you get maximum event normalization for cleaner cross browser code.</li>
-</ol-->
+<h3>Static Loading</h3>
 
-
-<h2 id="core">YUI Core</h2>
-<p>The YUI Global Object is an instantiatable object that allows you to create as many YUI instances as you need. Each completely configurable and loaded with only the modules that you need.</p>
+<p>
+To reach the "loaded" state, a module's JavaScript just needs to be included on the page after the YUI seed file. The `use()` method will do this for you automatically if necessary, but you could also load a module manually if you wanted to. We call this static loading (since it's the opposite of dynamic loading).
+</p>
 
 ```
-YUI().use('node', function(Y) {
-    Y.one('#demo');
+<script src="http://yui.yahooapis.com/{{{yuiVersion}}}/build/yui-base/yui-base-min.js"></script>
+<script src="http://yui.yahooapis.com/{{{yuiVersion}}}/build/node-base/node-base-min.js"></script>
+<script>
+YUI().use('node-base', function (Y) {
+    // Since the node-base module has already been loaded statically, YUI
+    // doesn't need to download it again and can just execute and attach the
+    // module code here.
 });
+</script>
 ```
 
-<p>All of this functionality is available in the YUI Core:</p>
-
-<table>
-    <thead>
-        <tr>
-            <th>YUI 3 Component</th>
-            <th>Module</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>Array Operations</td><td>array</td>
-        </tr>
-        <tr>
-            <td>YUI Core</td><td>core</td>
-        </tr>
-        <tr>
-            <td>JavaScript language helper methods</td><td>lang</td>
-        </tr>
-        <tr>
-            <td>Periodic execution method</td><td>later</td>
-        </tr>
-        <tr>
-            <td>Logging support</td><td>log</td>
-        </tr>
-        <tr>
-            <td>Object Operations</td><td>object</td>
-        </tr>
-        <tr>
-            <td>Browser Sniffing</td><td>ua</td>
-        </tr>
-        <tr>
-            <td>YUI Object</td><td>yui</td>
-        </tr>
-        <tr>
-            <td>Dynamic script and css loading</td><td>get</td>
-        </tr>
-        <tr>
-            <td>YUI Loader</td><td>loader</td>
-        </tr>
-    </tbody>
-</table>
-
-<h2 id="use">Use method</h2>
-<p>The `use` method allows you to choose the modules that you want loaded into your YUI instance. You can pick and choose what you need, you don't have to load everything that was included on the page.</p>
-
-```
-YUI().use('dd-drop', 'anim', function(Y) {
-    // Y.DD is available
-    // Y.Anim is available
-});
-
-YUI().use('anim', function(Y) {
-    // Y.DD is NOT available
-    // Y.Anim is available
-});
-```
-
-<h2>Use callback</h2>
-<p>You can pass a function in as the last argument to <code>use</code>. This function will execute after the YUI instance loads all the modules.
-This is required if you do not have all dependencies on the page.</p>
-<p>The callback method has one argument passed, the YUI instance that we are dealing with. In this function you know that all the modules have been loaded and it's ok to use them.</p>
-
-```
-YUI().use('animation', function(Y) {
-    // Y.Anim is available
-});
-```
-
-<h2>Use shorthand</h2>
-<p>The <code>use</code> method contains a shorthand reference for all modules on the page. It uses the <code>*</code> as the module name.</p>
-<p>This will load every module that is included on the page.</p>
+<p>
+If you want to take full manual control of your dependencies, you can statically load any modules you want to use and then pass `'*'` to `use()` instead of specifying a list of module names. This tells YUI to attach all loaded modules to your YUI instance without requiring you to name each module you want to attach.
+</p>
 
 ```
 YUI().use('*', function(Y) {
-    // Implementation code
+    // Any modules that were already loaded on the page statically will now be
+    // attached and ready to use. YUI will not automatically load any modules
+    // that weren't already on the page.
 });
 ```
 
 
-<h2>Static inclusion vs. dynamic loading</h2>
-<p>YUI automatically tries to complete itself when missing dependencies are detected.
-   When dynamically loading the dependencies, the callback passed to <code>use</code>
-   will be executed <em>asynchronously</em>.  If you statically include all of the
-   library requirements (or all were previously loaded by another means), the
-   use() callback will execute synchronously.  The purpose of the callback is so
-   that it doesn't matter to the implementation whether the operation was synchronous
-   or not.  Code immediately following the <code>use</code> statement will not have
-   access to any of the requested modules if anything has to be dynamically loaded.
-   You can prevent YUI from automatically trying to obtain missing dependencies by setting the
-   YUI config <code>bootstrap</code> to false.</p>
 
 
-<h2 id="config">Configuring the YUI instance</h2>
+<h2 id="config">Configuring YUI</h2>
 
-There are 4 primary ways to configure YUI and each have their own unique benefits. The YUI object
-is configured via properties on a simple Javascript Object.
+<p>
+There are four primary ways to configure YUI and each has its own unique benefits. The YUI object is configured via properties on a simple JavaScript object.
+</p>
+
+```
+{
+    debug: true,
+    combine: true,
+    comboBase: 'http://mydomain.com/combo?',
+    root: 'yui3/'
+}
+```
+
+<p>
+A complete list of configuration options is
+<a href="{{apiDocs}}/classes/config.html">available in the API Docs</a>.
+</p>
+
+<h3>Instance Config</h3>
+
+<p>
+The most common way to specify config options for YUI is to pass them into the `YUI()` constructor when creating a new instance:
+</p>
 
     ```
-    {
+    YUI({
         debug: true,
         combine: true,
         comboBase: 'http://mydomain.com/combo?',
         root: 'yui3/'
-    }
+    }).use('node', function (Y) {
+        // ...
+    });
     ```
 
-
-A complete list of configuration options are
-<a href="/yui/docs/api/classes/config.html">available in the API Docs</a>.
+<p>
+These config options will only apply to this specific instance of YUI.
+</p>
 
 <h3>YUI_config</h3>
 
-Setting options on the global variable `YUI_config`, the implementor can configure every YUI
-instance on the page <strong>before</strong> YUI is loaded onto the page.
+<p>
+By setting options on the global variable `YUI_config`, you can configure every YUI
+instance on the page even <em>before</em> YUI is loaded.
+</p>
 
-    ```
-    YUI_config = {
-        debug: true,
-        combine: true,
-        comboBase: 'http://mydomain.com/combo?',
-        root: 'yui3/'
-    };
-    ```
+```
+YUI_config = {
+    debug: true,
+    combine: true,
+    comboBase: 'http://mydomain.com/combo?',
+    root: 'yui3/'
+};
+```
 
 <h3>YUI.GlobalConfig</h3>
 
-Setting options to the `YUI.GlobalConfig` object, the implementor can configure every YUI
-instance on the page <strong>after</strong> YUI is loaded onto the page.
-    
-    ```
-    YUI.GlobalConfig = {
-        debug: true,
-        combine: true,
-        comboBase: 'http://mydomain.com/combo?',
-        root: 'yui3/'
-    };
-    ```
+<p>
+By setting options on the `YUI.GlobalConfig` object, you can configure every YUI
+instance on the page <em>after</em> YUI is loaded.
+</p>
+
+```
+YUI.GlobalConfig = {
+    debug: true,
+    combine: true,
+    comboBase: 'http://mydomain.com/combo?',
+    root: 'yui3/'
+};
+```
 
 <h3>YUI.applyConfig</h3>
 
-The global `YUI.applyConfig()` method allows the implementor to configure every YUI instance
-on the page, but it <strong>merges</strong> configs passed to it. This can be useful if your
-module is loaded onto the page in a <em>mashup</em>. The other configuration options do not
-merge, they are simply an object.
-
+<p>
+The global `YUI.applyConfig()` method allows you to configure every YUI instance on the page, but it <em>merges</em> configs passed to it into each instance's existing config. This can be useful if your module is loaded onto the page in a <em>mashup</em>. The other configuration options do not merge, they are simply an object.
+</p>
     ```
     YUI.applyConfig({
         debug: true,
@@ -204,305 +329,84 @@ merge, they are simply an object.
     });
     ```
 
-<h3>Instance Config</h3>
+<h2 id="yuiadd">Creating Custom Modules with `YUI.add()`</h2>
 
-The instance level configuration is the most common configuration option. You simply
-pass your configuration object directly to the `YUI` constructor:
+<p>
+`YUI.add()` is a static method that registers a reusable module&mdash;essentially, it adds a module to the set of modules available to be attached to a YUI instance via the `use()` method.
+</p>
 
-    ```
-    YUI({
-        debug: true,
-        combine: true,
-        comboBase: 'http://mydomain.com/combo?',
-        root: 'yui3/'
-    }).use('node', function(Y) {
-        //
-    });
-    ```
-
-
-<h2 id="modulelist">Module List</h2>
-<p>Here is a partial list of the modules and their descriptions.</p>
-<table>
-    <thead>
-        <tr>
-            <th>YUI 3 Component</th>
-            <th>Module</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>Animation</td><td>anim</td>
-        </tr>
-        <tr>
-            <td>Attribute Engine</td><td>attribute</td>
-        </tr>
-        <tr>
-            <td>Class Builder</td><td>base</td>
-        </tr>
-        <tr>
-            <td>Collection Utilities</td><td>collection</td>
-        </tr>
-        <tr>
-            <td>Drag &amp; Drop</td><td>dd</td>
-        </tr>
-        <tr>
-            <td>DOM Element Utilites</td><td>dom</td>
-        </tr>
-        <tr>
-            <td>DOM Event Utilities</td><td>event</td>
-        </tr>
-        <tr>
-            <td>Custom Event Engine</td><td>event-custom</td>
-        </tr>
-        <tr>
-            <td>IO (XHR/XDR)</td><td>io</td>
-        </tr>
-        <tr>
-            <td>JSON</td><td>json</td>
-        </tr>
-        <tr>
-            <td>HTML Element Wrapper</td><td>node</td>
-        </tr>
-        <tr>
-            <td>Support for non-blocking iterative operations</td><td>async-queue</td>
-        </tr>
-    </tbody>
-</table>
-
-
-<h2 id="yuiadd">Creating Custom Modules with YUI.add</h2>
-<p><code>YUI.add</code> is a static global method that is
-the single entry point for first class YUI modules.  This method
-registers the module so that it can attached to a YUI instance
-via the <code>use</code> method.  Modules registered this way
-are dynamically attached during the <code>use</code> phase, so
-they can be fully protected by the YUI sandbox.</p>
-<p>During the <code>use</code> phase, the function passed to
-<code>YUI.add</code> is executed.  It receives the YUI instance
-as a parameter, and this can be used to add functionality to
-the instance.</p>
-<p>While you can add the module wrapper to your code yourself,
-the <a href="http://yuilibrary.com/projects/builder">YUI Build Tool</a>
-can wrap your code for you (it can also minify and lint your code, among
-other things).
-<p>The third parameter is a version identifier for your module.  This
-is not the YUI version you are targeting</p>
-<p>The fourth parameter is an optional metadata object.  This is read
-by YUI when <code>YUI.add</code> executes -- it is used to fill in the
-dependency information if this information was not previously provided
-in the loader metadata provided to the YUI instance.  See below for
-information about dynamically loading modules.  Dependencies are declared
-via the <code>requires</code> attribute.  The <code>use</code> attribute
-describes a module/submodule relationship -- when you build a YUI
-module with submodules, the built module file will have the entire
-YUI.add wrapped content for each submodule.  The <code>use</code> attribute
-informs YUI that these modules must be used when the parent module is.
+<p>
+Defining a reusable YUI module is as simple as providing a name and a callback function to `YUI.add()`.
+</p>
 
 ```
-YUI.add('mymodules-mod1', function(Y) {
-
-    Y.namespace('mynamespace');
-
-    Y.mynamespace.Mod1 = function() {
-        // expose an API
-    };
-
-}, '0.1.1' /* module version */, {
-    requires: ['base']
+YUI.add('my-module', function (Y) {
+   // Write your module code here, and make your module available on the Y
+   // object if desired.
+   Y.MyModule = {
+       sayHello: function () {
+           console.log('Hello!');
+       }
+   };
 });
 ```
 
+<p>
+Note that there are no parentheses after `YUI` when calling `YUI.add()` as there are when calling `YUI().use()`. This is because `add()` is a static method of the global `YUI` object, not a method on a specific YUI instance. Modules are registered globally via `add()` and are later attached to a specific YUI instance via `use()`.
+</p>
+
+<p>
+The `add()` method accepts two optional arguments after the callback function: a module version string and a config object. The most useful option in the config object is `requires`, which allows you to specify an array of other YUI modules that your module requires. YUI will then be sure to load these dependencies before executing your module.
+</p>
+
+```
+YUI.add('my-module', function (Y) {
+   // ...
+}, '0.0.1', {
+    requires: ['node', 'event']
+});
+```
+
+<p>
+After your module has been added via `YUI.add()`, you can specify its name in a `use()` call to attach it to a YUI instance.
+</p>
+
+```
+YUI().use('my-module', function (Y) {
+    // The Y instance here is the same Y instance that was passed into
+    // my-module's add() callback, so the Y.MyModule object that was created
+    // there is now available here as well.
+    Y.MyModule.sayHello();
+});
+```
+
+<p>
+A module's `add()` callback isn't executed until that module is attached to a YUI instance via `use()`. Each time a module is attached via `use()`, the module's `add()` callback will be executed, and will receive as an argument the same YUI instance that will later be passed to the `use()` callback.
+</p>
+
+<h2 id="nodejs">Using YUI on Node.js</h2>
+
+<p>As of version 3.5.0, YUI runs natively on <a href="http://nodejs.org/">Node.js</a> and comes with an official <a href="http://search.npmjs.org/#/yui">npm package</a> for easy installation. More information on using YUI on Node.js can be found in the <a href="nodejs.html">YUI on Node.js guide</a>.</p>
+
 <h2 id="loader">Loader</h2>
-<p>Loader's functionality is now built into the YUI Global Object
+<p><a href="loader.html">Loader</a>'s functionality is now built into the YUI Global Object
    (as long as it's on the page) and puts its power behind the
-   <code>YUI().use</code> method.</p>
+   `YUI().use` method.</p>
 <p>If you request a module that is not loaded on the page
 (or a dependency that is not loaded), loader will fetch a copy
 of that module (and its dependencies) and attach them to your
 YUI instance.</p>
 
-```
-YUI({
-       lang: 'ko-KR,en-GB,zh-Hant-TW', // languages in order of preference
-       base: '../../build/', // the base path to the YUI install.  Usually not needed because the default is the same base path as the yui.js include file
-       charset: 'utf-8', // specify a charset for inserted nodes, default is utf-8
-       loadOptional: true, // automatically load optional dependencies, default false
-       combine: true, // use the Yahoo! CDN combo service for YUI resources, default is true unless 'base' has been changed
-       filter: 'raw', // apply a filter to load the raw or debug version of YUI files
-       timeout: 10000, // specify the amount of time to wait for a node to finish loading before aborting
-       insertBefore: 'customstyles', // The insertion point for new nodes
-       // one or more external modules that can be loaded along side of YUI.  This is the only pattern
-       // that was supported in 3.0.0 for declaring external modules.  3.1.0 adds 'groups' support,
-       // which is an easier way to define a group of modules.  See below.
-       modules:  {
-           yui2_yde_datasource: {
-               fullpath: 'http://yui.yahooapis.com/combo?2.7.0/build/yahoo-dom-event/yahoo-dom-event.js&2.7.0/build/datasource/datasource-min.js'
-           },
-           yui_flot: {
-               fullpath: 'http://bluesmoon.github.com/yui-flot/yui.flot.js',
-               requires: ['yui2_yde_datasource']
-           }
-       },
+<p>You can find <a href="loader.html">more information about Loader here</a>.</p>
 
-       // one or more groups of modules which share the same base path and
-       // combo service specification.
-       groups: {
-           // Note, while this is a valid way to load YUI2, 3.1.0 has intrinsic
-           // YUI 2 loading built in.  See the examples to learn how to use
-           // this feature.
-           yui2: {
-               combine: true,
-               base: 'http://yui.yahooapis.com/2.8.0r4/build/',
-               comboBase: 'http://yui.yahooapis.com/combo?',
-               root: '2.8.0r4/build/',
-               modules:  { // one or more external modules that can be loaded along side of YUI
-                   yui2_yde: {
-                       path: "yahoo-dom-event/yahoo-dom-event.js"
-                   },
-                   yui2_anim: {
-                       path: "animation/animation.js",
-                       requires: ['yui2_yde']
-                   }
-               }
-           }
-       }
-}).use('dd', 'yui_flot', function(Y) {
-    // All YUI modules required to get drag and drop to work are now loaded.
-});
-```
 
-<p>The valid configuration options for Loader are as follows:<p>
-<ul>
-    <li>`lang`: The list of preferred languages, as BCP 47 language tags, in order of preference.
-    The loader uses this list to determine the best language to use for modules with
-    language sensitive behavior and to load the necessary resource bundles.
-    See the <a href="../intl/">Internationalization</a> module for more information.</li>
-    <li>`base`: The base dir</li>
-    <li>`comboBase`: The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?</li>
-    <li>`root`: The root path to prepend to module names for the combo service. Ex: 2.5.2/build/</li>
-    <li>`filter`: A filter to apply to result urls.  This filter will modify the default
-        path for all modules.  The default path for the YUI library is the
-        minified version of the files (e.g., event-min.js).  The filter property
-        can be a predefined filter or a custom filter.  The valid predefined
-        filters are:
-        <ul>
-            <li>`DEBUG`: Selects the debug versions of the library (e.g., event-debug.js). </li>
-            <li>`RAW`: Selects the non-minified version of the library (e.g., event.js).</li>
-        </ul>
-        You can also define a custom filter, which must be an object literal
-        containing a search expression and a replace string:
-        <pre>
-        myFilter: &#123;
-        'searchExp': "-min\\.js",
-        'replaceStr': "-debug.js"
-        &#125;
-        </pre>
-    </li>
-    <li>`combine`: Use the YUI combo service to reduce the number of http connections required to load your dependencies</li>
-    <li>`ignore`: A list of modules that should never be dynamically loaded</li>
-    <li>`force`: A list of modules that should always be loaded when required, even if already present on the page</li>
-    <li>`insertBefore`: Node or id for a node that should be used as the insertion point for new nodes</li>
-    <li>`charset`: charset for dynamic nodes</li>
-    <li>`jsAttributes`: attributes to apply to dynamic script nodes</li>
-    <li>`cssAttributes`: attributes to apply to dynamic link nodes</li>
-    <li>`timeout`: number of milliseconds before a timeout occurs when dynamically loading nodes.  in not set, there is no timeout</li>
-    <li>`context`: execution context for all callbacks</li>
-    <li>`modules`:  A list of module definitions.  The valid module configuration data is as follows:
-        <ul>
-            <li>`name`:       required, the component name</li>
-            <li>`type`:       required, the component type (js or css)</li>
-            <li>`path`:       required if fullpath is not specified, the path to the script from "base"</li>
-            <li>`fullpath`:   required if path isn't specified, the full path to the script.  "base" will not be used to build the url</li>
-            <li>`requires`:   array of modules required by this component</li>
-            <li>`optional`:   array of optional modules for this component</li>
-            <li>`supersedes`: array of the modules this component replaces</li>
-            <li>`after`:      array of modules the components which, if present, should be sorted above this one</li>
-            <li>`rollup`:     the number of superseded modules required for automatic rollup</li>
-            <li>`lang`:       array of BCP 47 language tags of languages for which this module has localized resource bundles</li>
-            <li>`condition`: Specifies that the module should be loaded automatically if
-                a condition is met.  This is an object with up to three fields:
-                <ul>
-                    <li>`trigger` - the name of a module that can trigger the auto-load</li>
-                    <li>`test` - a function that returns true when the module is to be loaded.</li>
-                    <li>`when` - specifies the load order of the conditional module with regard to the position of the trigger module.
-                        This should be one of three values: `before`, `after`, or `instead`.  The default is `after`.</li>
-                </ul>
-            </li>
-        </ul>
-    </li>
-    <li>`groups`: in 3.1.0, the groups config was added as an enhancement over the 'modules' config.  Each group can
-    the <code>base</code>, <code>comboBase</code>, <code>root</code>, <code>combine</code>, and <code>modules</code>
-    configs listed above.  These values are used for all of the modules listed in the group</li>
-</ul>
+<h2 id="Lang">Y.Lang</h2>
+<p>`Y.Lang` contains JavaScript language utilities and extensions that are used in the YUI library.
 
-<h2 id="Lang">Lang</h2>
-<p><code>Lang</code> contains JavaScript language utilities and extensions that are used in the YUI library.
+<p>Find more <a href="lang.html">information on `Y.Lang` here</a>.</p>
 
-```
-var Y = YUI();
+<h2 id="modulelist">Complete Module List</h2>
 
-// true, an array literal is an array
-Y.Lang.isArray([1, 2]);
-
-// false, an object literal is not an array
-Y.Lang.isArray({"one": "two"});
-
-// however, when declared as an array, it is true
-function() {
-    var a = new Array();
-    a["one"] = "two";
-    return Y.Lang.isArray(a);
-}();
-
-// false, a collection of elements is like an array, but isn't
-Y.Lang.isArray(document.getElementsByTagName("body"));
-
-// true, false is a boolean
-Y.Lang.isBoolean(false);
-
-// false, 1 and the string "true" are not booleans
-Y.Lang.isBoolean(1);
-Y.Lang.isBoolean("true");
-
-// null is null, but false, undefined and "" are not
-Y.Lang.isNull(null); // true
-Y.Lang.isNull(undefined); // false
-Y.Lang.isNull(""); // false
-
-// a function is a function, but an object is not
-Y.Lang.isFunction(function(){}); // true
-Y.Lang.isFunction({foo: "bar"}); // false
-
-// true, ints and floats are numbers
-Y.Lang.isNumber(0);
-Y.Lang.isNumber(123.123);
-
-// false, strings that can be cast to numbers aren't really numbers
-Y.Lang.isNumber("123.123");
-
-// false, undefined numbers and infinity are not numbers we want to use
-Y.Lang.isNumber(1/0);
-
-// true, objects, functions, and arrays are objects
-Y.Lang.isObject({});
-Y.Lang.isObject(function(){});
-Y.Lang.isObject([1,2]);
-
-// false, primitives are not objects
-Y.Lang.isObject(1);
-Y.Lang.isObject(true);
-Y.Lang.isObject("{}");
-
-// strings
-Y.Lang.isString("{}"); // true
-Y.Lang.isString({foo: "bar"}); // false
-Y.Lang.isString(123); // false
-Y.Lang.isString(true); // false
-
-// undefined is undefined, but null and false are not
-Y.Lang.isUndefined(undefined); // true
-Y.Lang.isUndefined(false); // false
-Y.Lang.isUndefined(null); // false
-```
-
+<p>
+YUI provides more than 250 unique modules to use in your applications. <a href="modules.html">You can view a full list of modules here.</a>
+</p>

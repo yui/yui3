@@ -12,28 +12,53 @@
 // Use an existing node
 var button = new Y.Button({
     srcNode: '#myButton'
-})
+});
 ```
 
 Or, you can also create an unattached node and append to a parent container:
 ```
-// Dynamically create the node
-var button = new Y.Button();
-var node = button.getNode();
-Y.one('#container').append(node);
+
+var button = new Y.Button(); // Dynamically create the node
+var node = button.getNode(); // Get the Y.Node instance
+Y.one('#container').append(node); // Append it to #container
 ```
 
 <p>In either case, the object you receive from the constructor will be a Y.Button instance that contains a few attributes, and wraps around a Y.Node instance.  The markup generated will look something similar to:</p>
 
 ```
-<button id='myButton'
-        role='button'
-        class='yui3-button'
-        aria-selected='false'
-        aria-pressed='false'>My Button</button>
+<button id='myButton' class='yui3-button' aria-pressed='false'>My Button</button>
 ```
 
 <p>At this point, you can modify `button`'s attributes, manipulate its state, or listen for change events.</p>
+
+```
+// Create a toggle button
+var node = button.getNode()
+node.on('click', function(){
+    button.set('selected', !button.get('selected'));
+});
+```
+
+<h3>Benefits</h3>
+<p>So what do you get from Y.Button over just creating your own button node, via something like `new Y.Node.create('<button></button>')`</p>
+
+<ul>
+    <li><strong>Accessibility</strong> - Your buttons automatically create and manage their own ARIA <a href='http://www.w3.org/TR/wai-aria/states_and_properties'>states</a> &amp; <a href='http://www.w3.org/TR/wai-aria/roles'>roles</a>.  This includes states like `aria-pressed` &amp; `aria-checked`, also appropriate roles like `button`, `checked`, `radio`, etc...</li>
+
+    <li><strong>State management</strong> - Y.Button instances automatically apply classes, such as `yui3-button-selected`, `yui3-button-disabled`, and `yui3-button-focused`, which are useful for styling purposes. Also, assigning a type of 'toggle' will fire a 'selectedChange' event only when the button state changes from selected to unselected, or vice-versa, eliminating the typical case of listening for 'click' and then checking to see if the state changed.</li>
+
+    <li><strong>Groups</strong> - `Y.ButtonGroup` allows you to group `Y.Button` instances together to create checkbox &amp; radio groups, giving your users a nicer experience when compared to the standard radio or checkbox controls.</li>
+</ul>
+
+<h2>Anatomy of Button</h2>
+<p>YUI's Button component introduces 3 modules:</p>
+<ul>
+    <li>`button-base` - Exports the Y.Button constructor.</li>
+    <li>`button-group` - Exports the Y.ButtonGroup constructor.</li>
+    <li>`cssbutton` - Imports various classes to provide default styles for your buttons.</li>
+</ul>
+
+<p>These can all be included with `use('button', ...)`, or you can specify modules individually.  This approach is recommended if you do not need functionality of all three.</p>
 
 <h3>Events</h3>
 
@@ -43,8 +68,8 @@ Y.one('#container').append(node);
 var button = new Y.Button({
     srcNode: '#myButton'
 });
-var node = button.getNode();
 
+var node = button.getNode();
 node.on('click', function(){
     alert('Hello!');
 });
@@ -66,17 +91,8 @@ var button = new Y.Button({
 
 <p>Any event handlers can also be assigned by using the `on` property in the configuration object.  Valid events include any , as well as Y.Button attribute change events (e.g. 'selectedChange').</p>
 
-<h3>Benefits</h3>
-<p>So what do you get from Y.Button over just creating your own button node, via something like `new Y.Node.create('<button></button>')`</p>
-<ul>
-    <li><strong>Accessibility</strong> - Your buttons automatically create and manage their own <a href='http://www.w3.org/TR/wai-aria/states_and_properties'>ARIA states</a>.  This includes `aria-selected` and `aria-pressed`.  Y.Button instances also automatically get the `role='button'` attribute to properly identify their purpose (as a button) to screen readers even if they are not a `<button>` or `<input type='button'>` element.</li>
-<li><strong>State management</strong> - Y.Button instances automatically apply classes, such as `yui3-button-selected`, `yui3-button-disabled`, and `yui3-button-focused`, which are useful for styling purposes. Also, assigning a type of 'toggle' will fire a 'selectedChange' event only when the button state changes from selected to unselected, or vice-versa, eliminating the typical case of listening for 'click' and then checking to see if the state changed.</li>
-</ul>
-
-<p><em>Note: In the future, Y.Button instances will be capable of being assigned to groups and managed via a new ButtonGroup module.</em></p>
-
 <h3>Styling</h3>
-<p>YUI's Button component was designed with the idea in mind that you may only want button styles, no JS functionality.  Instead of `use('button')`, you can just include the `cssbuttons` sub-module.  This can be done dynamically with `use('cssbuttons')`, or statically with a `<link>` tag.</p>
+<p>YUI's Button component was designed with the idea in mind that you may only want button styles, no JS functionality.  Instead of `use('button')`, you can just include the `cssbutton` sub-module.  This can be done dynamically with `use('cssbutton')`, or statically with a `<link>` tag.</p>
 
 <p>Including this CSS module will load in a stylesheet consisting of the following classes:</p>
 <ul>

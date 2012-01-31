@@ -1,0 +1,218 @@
+<div class="intro">
+    <p>
+        This example will guide you through the recommended way to package a YUI module as
+        an exportable package with `npm` on Node.js.
+    </p>
+</div>
+
+
+<h2>Why Package?</h2>
+
+<p>
+    Packaging up your scripts with `npm` makes them usable by others so they can benefit from
+    all your hard work. There's nothing quite like having others use something you worked hard
+    to create. So, why not make using your code as easy as possible?
+</p>
+
+<h2>How to Create a Usable Package</h2>
+
+<p>
+    There are 2 primary ways a Node.js user could use your YUI module, below we will discuss both
+    ways as well as how to package up your code so they can both be available to your end user.
+</p>
+
+<h3>Setting up the Package</h3>
+
+<p>First we need to set up the code so we can package it up all nice and neat.</p>
+
+<p>We are going to use this simple version of a module in this example:</p>
+
+```
+YUI.add('my-module', function(Y) {
+    Y.MyModule = function() {
+        Y.log('Here');
+    };
+});
+```
+<p>This file will be saved as `module.js` in a directory all by itself.</p>
+<p>Next we create a `package.json` file that describes our Node.js package:</p>
+
+```
+{
+    "version": "0.1.0",
+    "name": "my-yui-module",
+    "description": "My YUI Module",
+    "dependencies": {
+        "yui": "*"
+    },
+    "main": "./index.js"
+}
+```
+<p><strong>Note that we are using `index.js` here as our main script and not `module.js`, `index.js` will be created below.</strong></p>
+
+<p>Your `index.js` file is the main file in your `npm` package, it's the file that executed when your module
+is `required`. We need to make a special `index.js` file that will load YUI and `use` our module.</p>
+
+<h3>The All in One Package</h3>
+
+<p>
+    In this example, we will export our module as a working YUI instance. So when the user `requires` our
+    module they get all of YUI with it too. Here's the `index.js` file used in this case:
+</p>
+
+```
+var path = require('path');
+
+//setup our custom modules meta-data
+var meta = {
+    'my-module': {
+        requires: [ 'yql' ],
+        //Give it a full path on the file system
+        fullpath: path.join(__dirname, 'module.js')
+    }
+};
+
+module.exports = {
+    module: function() {
+        var inst = require('yui').getInstance();
+        inst.applyConfig({useSync: true, modules:  meta });
+        return inst.use(Object.keys(meta));
+    }
+};
+```
+
+<p>
+    This setup allows the user to do this:
+</p>
+
+```
+var mod = require('my-yui-module').module();
+mod.MyModule();
+mod.YQL('select * from ...');
+```
+
+<p>
+    At this point `mod` will be a YUI instance containing `my-module` and all of it's dependencies (`yql`, `jsonp`).
+    This will allow you to create a module that the end user doesn't even have to that YUI is there. Making it
+    easy for them to just `require` and run your module.
+</p>
+
+
+<h3>Just Let Me Use It</h3>
+
+<p>
+    The other type of user you want to deal with is the one that is already writing scripts with YUI
+    on Node.js and they want to use your module too. In this case you need to make your modules metadata
+    available so they can add it to their YUI instances. You can do this in your `index.js` to provide 
+    the metadata needed to load your module.
+</p>
+
+```
+var path = require('path');
+
+//setup our custom modules meta-data
+var meta = {
+    'my-module': {
+        requires: [ 'yql' ],
+        //Give it a full path on the file system
+        fullpath: path.join(__dirname, 'module.js')
+    }
+};
+
+module.exports = {
+    metadata: function() {
+        return meta;
+    }
+}
+```
+
+<p>
+    This will export the module metadata needed to allow `Loader` to load your module and
+    use it as if it was a native module.
+</p>
+
+```
+var YUI = require('yui').YUI,
+var mod = require('my-yui-module');
+
+YUI({
+    //Populating the modules config option
+    //   with the metadata from the package
+    modules: mod.metadata()
+}).use('my-module', function(Y) {
+    Y.MyModule();
+    Y.YQL('select * from ...');
+});
+```
+
+
+<h2>Putting Them All Together</h2>
+
+<p>
+    Now that we have them individually covered, let's put them together so you have one
+    package that now works for both types of use cases. Here is the complete `index.js`
+    file.
+</p>
+
+```
+var path = require('path');
+
+//setup our custom modules meta-data
+var meta = {
+    'my-module': {
+        requires: [ 'yql' ],
+        //Give it a full path on the file system
+        fullpath: path.join(__dirname, 'module.js')
+    }
+};
+
+module.exports = {
+    /**
+    * Calling this method will create and return a YUI instance
+    * with the modules in the meta data attached.
+    * @method module
+    * @return YUI
+    */
+    module: function() {
+        var inst = require('yui').getInstance();
+        inst.applyConfig({useSync: true, modules:  meta });
+        return inst.use(Object.keys(meta));
+    },
+    /**
+    * Calling this method will return the modules meta data
+    * so that it can be passed to the YUI constructor.
+    * @method metadata
+    * @return Object
+    */
+    metadata: function() {
+        return meta;
+    }
+}
+```
+
+<p>Now that we have our `index.js` file ready to go, we can now include our package and use it both ways.</p>
+
+```
+#!/usr/bin/env node
+
+var mod = require('my-yui-module');
+mod.MyModule();
+mod.YQL('select * from ...');
+
+// OR
+
+var YUI = require('yui').YUI;
+
+YUI({
+    modules: mod.metadata()
+}).use('my-module', function(Y) {
+    Y.MyModule();
+    Y.YQL('select * from ...');
+});
+
+```
+
+<p>
+    Using this method to setup your YUI module, you can now publish your module to `npm` and 
+    share it with others.
+</p>

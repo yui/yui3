@@ -45,7 +45,7 @@ Y.Parallel.prototype = {
     * @property results
     * @type Array
     */
-    
+
     results: null,
     /**
     * The total items in the stack
@@ -69,9 +69,9 @@ Y.Parallel.prototype = {
         self.total += 1;
         return function () {
             self.finished++;
-            self.results.push(fn.apply(self.context, arguments));
+            self.results.push(fn && fn.apply(self.context, arguments));
             self.test();
-        }
+        };
     },
     /**
     * Test to see if all registered items in the stack have completed, if so call the callback to `done`

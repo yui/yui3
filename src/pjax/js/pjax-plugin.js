@@ -1,7 +1,17 @@
 /**
 Node plugin that provides seamless, gracefully degrading pjax functionality.
 
-@module pjax-plugin
+@module pjax
+@submodule pjax-plugin
+@since 3.5.0
+**/
+
+/**
+Node plugin that provides seamless, gracefully degrading pjax functionality.
+
+@class Plugin.Pjax
+@extends Pjax
+@since 3.5.0
 **/
 
 Y.Plugin.Pjax = Y.Base.create('pjaxPlugin', Y.Pjax, [Y.Plugin.Base], {

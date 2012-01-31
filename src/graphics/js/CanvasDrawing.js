@@ -273,7 +273,7 @@ CanvasDrawing.prototype = {
 	drawCircle: function(x, y, radius) {
         var startAngle = 0,
             endAngle = 2 * Math.PI,
-            wt = this._stroke & this._strokeWeight ? this._strokeWeight : 0,
+            wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0,
             circum = radius * 2;
             circum += wt;
         this._drawingComplete = false;
@@ -281,6 +281,28 @@ CanvasDrawing.prototype = {
         this._trackSize(x - wt, y - wt);
         this._updateCoords(x, y);
         this._updateDrawingQueue(["arc", x + radius, y + radius, radius, startAngle, endAngle, false]);
+        return this;
+    },
+
+    /**
+     * Draws a diamond.     
+     * 
+     * @method drawDiamond
+     * @param {Number} x y-coordinate
+     * @param {Number} y x-coordinate
+     * @param {Number} width width
+     * @param {Number} height height
+     * @protected
+     */
+    drawDiamond: function(x, y, width, height)
+    {
+        var midWidth = width * 0.5,
+            midHeight = height * 0.5;
+        this.moveTo(x + midWidth, y);
+        this.lineTo(x + width, y + midHeight);
+        this.lineTo(x + midWidth, y + height);
+        this.lineTo(x, y + midHeight);
+        this.lineTo(x + midWidth, y);
         return this;
     },
 
@@ -463,8 +485,19 @@ CanvasDrawing.prototype = {
      * @method end
      */
     end: function() {
-        this._paint();
+        this._closePath();
         return this;
+    },
+
+    /**
+     * Ends a fill and stroke
+     *
+     * @method closePath
+     */
+    closePath: function()
+    {
+        this._updateDrawingQueue(["closePath"]);
+        this._updateDrawingQueue(["beginPath"]);
     },
 
 	/**

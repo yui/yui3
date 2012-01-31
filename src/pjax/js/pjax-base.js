@@ -1,13 +1,13 @@
 /**
 `Y.Router` extension that provides the core plumbing for enhanced navigation
-implemented using the pjax technique (HTML5 `pushState` + Ajax).
+implemented using the pjax technique (HTML5 pushState + Ajax).
 
+@module pjax
 @submodule pjax-base
 @since 3.5.0
 **/
 
-var win      = Y.config.win,
-    location = win.location,
+var win = Y.config.win,
 
     Lang = Y.Lang,
 
@@ -16,11 +16,11 @@ var win      = Y.config.win,
     CLASS_PJAX = Y.ClassNameManager.getClassName('pjax'),
 
     /**
-    Fired when navigating to the specified URL is being enhanced by the router.
+    Fired when navigating to a URL via Pjax.
 
-    When the `navigate()` method is called or a "pjax" link is clicked, this
-    event will be fired if: the browser is HTML5-history enabled, and the router
-    has a route-handler for the specified URL.
+    When the `navigate()` method is called or a pjax link is clicked, this event
+    will be fired if the browser supports HTML5 history _and_ the router has a
+    route handler for the specified URL.
 
     This is a useful event to listen to for adding a visual loading indicator
     while the route handlers are busy handling the URL change.
@@ -28,7 +28,7 @@ var win      = Y.config.win,
     @event navigate
     @param {String} url The URL that the router will dispatch to its route
       handlers in order to fulfill the enhanced navigation "request".
-    @param {Event} [originEvent] The event that caused the navigation, usually
+    @param {Event} [originEvent] The event that caused the navigation. Usually
       this would be a click event from a "pjax" anchor element.
     @param {Boolean} [replace] Whether or not the current history entry will be
       replaced, or a new entry will be created. Will default to `true` if the
@@ -47,8 +47,17 @@ in HTML5 history capable browsers by delegating to the router to fulfill the
 "request" and seamlessly falling-back to using standard full-page reloads in
 older, less-capable browsers.
 
+The `PjaxBase` class isn't useful on its own, but can be mixed into a
+`Router`-based class to add Pjax functionality to that Router. For a pre-made
+standalone Pjax router, see the `Pjax` class.
+
+    var MyRouter = Y.Base.create('myRouter', Y.Router, [Y.PjaxBase], {
+        // ...
+    });
+
 @class PjaxBase
 @extensionfor Router
+@since 3.5.0
 **/
 function PjaxBase() {}
 
@@ -60,12 +69,11 @@ PjaxBase.prototype = {
 
     @property _pjaxEvents
     @type EventHandle
-    @default undefined
     @protected
     **/
 
     /**
-    Regex used to break-up a URL string around the URL's path.
+    Regex used to break up a URL string around the URL's path.
 
     Subpattern captures:
 
@@ -83,7 +91,7 @@ PjaxBase.prototype = {
     initializer: function () {
         this.publish(EVT_NAVIGATE, {defaultFn: this._defNavigateFn});
 
-        // Pjax is all about progressively-enhancing the navigation between
+        // Pjax is all about progressively enhancing the navigation between
         // "pages", so by default we only want to handle and route link clicks
         // in HTML5 `pushState`-compatible browsers.
         if (this.get('html5')) {
@@ -98,26 +106,27 @@ PjaxBase.prototype = {
     // -- Public Methods -------------------------------------------------------
 
     /**
-    Navigates to the specified URL if there is a router-handler that matches. In
+    Navigates to the specified URL if there is a route handler that matches. In
     browsers capable of using HTML5 history, the navigation will be enhanced by
-    firing the `navigate` and having the router handle the "request". Non-HTML5
-    browsers will navigate to the new URL via manipulation of `window.location`.
+    firing the `navigate` event and having the router handle the "request".
+    Non-HTML5 browsers will navigate to the new URL via manipulation of
+    `window.location`.
 
-    When there is a route-handler for the specified URL and it is being
+    When there is a route handler for the specified URL and it is being
     navigated to, this method will return `true`, otherwise it will return
     `false`.
 
     **Note:** The specified URL _must_ be of the same origin as the current URL,
-    otherwise an error will be logged and the navigation will not be performed.
-    This is intended as both a security constraint and an purposely imposed
-    limitation as it does not make sense to tell the router to navigate to some
-    URL on a different scheme, host, or port.
+    otherwise an error will be logged and navigation will not occur. This is
+    intended as both a security constraint and a purposely imposed limitation as
+    it does not make sense to tell the router to navigate to a URL on a
+    different scheme, host, or port.
 
     @method navigate
-    @param {String} url The URL to navigate to. This must be of the same-origin
+    @param {String} url The URL to navigate to. This must be of the same origin
       as the current URL.
-    @param {Object} [options] Additional options to configure the navigation,
-      these are mixed into the `navigate` event facade.
+    @param {Object} [options] Additional options to configure the navigation.
+      These are mixed into the `navigate` event facade.
         @param {Boolean} [options.replace] Whether or not the current history
           entry will be replaced, or a new entry will be created. Will default
           to `true` if the specified `url` is the same as the current URL.
@@ -143,8 +152,8 @@ PjaxBase.prototype = {
     // -- Protected Methods ----------------------------------------------------
 
     /**
-    Returns the current path root after popping-off the last path segment making
-    it useful for resolving other URL paths against.
+    Returns the current path root after popping off the last path segment,
+    making it useful for resolving other URL paths against.
 
     The path root will always begin and end with a '/'.
 
@@ -154,7 +163,7 @@ PjaxBase.prototype = {
     **/
     _getRoot: function () {
         var slash = '/',
-            path  = location.pathname,
+            path  = Y.getLocation().pathname,
             segments;
 
         if (path.charAt(path.length - 1) === slash) {
@@ -168,25 +177,14 @@ PjaxBase.prototype = {
     },
 
     /**
-    Navigates to the specified URL if there is a router-handler that matches. In
-    browsers capable of using HTML5 history, the navigation will be enhanced by
-    firing the `navigate` and having the router handle the "request". Non-HTML5
-    browsers will navigate to the new URL via manipulation of `window.location`.
-
-    When there is a route-handler for the specified URL and it is being
-    navigated to, this method will return `true`, otherwise it will return
-    `false`.
-
-    The enhanced navigation flow can be forced causing all navigation to route
-    through the router; but this is not advised as it can will produce less
-    desirable hash-based URLs in non-HTML5 browsers.
+    Underlying implementation for `navigate()`.
 
     @method _navigate
     @param {String} url The fully-resolved URL that the router should dispatch
       to its route handlers to fulfill the enhanced navigation "request", or use
       to update `window.location` in non-HTML5 history capable browsers.
-    @param {Object} [options] Additional options to configure the navigation,
-      these are mixed into the `navigate` event facade.
+    @param {Object} [options] Additional options to configure the navigation.
+      These are mixed into the `navigate` event facade.
         @param {Boolean} [options.replace] Whether or not the current history
           entry will be replaced, or a new entry will be created. Will default
           to `true` if the specified `url` is the same as the current URL.
@@ -215,9 +213,9 @@ PjaxBase.prototype = {
             this.fire(EVT_NAVIGATE, options);
         } else {
             if (options.replace) {
-                location.replace(url);
+                win && win.location.replace(url);
             } else {
-                win.location = url;
+                win && (win.location = url);
             }
         }
 
@@ -225,12 +223,12 @@ PjaxBase.prototype = {
     },
 
     /**
-    Returns a normalized path, riding it of any '..' segments and properly
-    handling leading and trailing '/'s.
+    Returns a normalized path, ridding it of any '..' segments and properly
+    handling leading and trailing slashes.
 
     @method _normalizePath
-    @param {String} path The URL path to normalize.
-    @return {String} The normalized path.
+    @param {String} path URL path to normalize.
+    @return {String} Normalized path.
     @protected
     **/
     _normalizePath: function (path) {
@@ -238,7 +236,7 @@ PjaxBase.prototype = {
             slash = '/',
             i, len, normalized, segments, segment, stack;
 
-        if (!path) {
+        if (!path || path === slash) {
             return slash;
         }
 
@@ -285,15 +283,11 @@ PjaxBase.prototype = {
 
     /**
     Returns the normalized result of resolving the `path` against the current
-    path.
-
-    A host-relative `path` (one that begins with '/') is assumed to be resolved
-    and is returned as is. Falsy values for `path` will return just the current
-    path.
+    path. Falsy values for `path` will return just the current path.
 
     @method _resolvePath
-    @param {String} path The URL path to resolve.
-    @return {String} The resolved path.
+    @param {String} path URL path to resolve.
+    @return {String} Resolved path.
     @protected
     **/
     _resolvePath: function (path) {
@@ -304,7 +298,7 @@ PjaxBase.prototype = {
         // Path is host-relative and assumed to be resolved and normalized,
         // meaning silly paths like: '/foo/../bar/' will be returned as-is.
         if (path.charAt(0) === '/') {
-            return path;
+            return this._normalizePath(path);
         }
 
         return this._normalizePath(this._getRoot() + path);
@@ -317,11 +311,11 @@ PjaxBase.prototype = {
     absolute URL. When the specified URL is already absolute, it is assumed to
     be fully resolved and is simply returned as is. Scheme-relative URLs are
     prefixed with the current protocol. Relative URLs are giving the current
-    URL's origin and are resolved and normalized against the current path-root.
+    URL's origin and are resolved and normalized against the current path root.
 
     @method _resolveURL
-    @param {String} url The URL to resolve.
-    @return {String} The resolved URL.
+    @param {String} url URL to resolve.
+    @return {String} Resolved URL.
     @protected
     **/
     _resolveURL: function (url) {
@@ -340,7 +334,7 @@ PjaxBase.prototype = {
         if (origin) {
             // Prepend the current scheme for scheme-relative URLs.
             if (origin.indexOf('//') === 0) {
-                origin = location.protocol + origin;
+                origin = Y.getLocation().protocol + origin;
             }
 
             return origin + (path || '/') + (suffix + '');
@@ -376,7 +370,7 @@ PjaxBase.prototype = {
     },
 
     /**
-    Handler for the delegated link-click events which match the `linkSelector`.
+    Handler for delegated link-click events which match the `linkSelector`.
 
     This will attempt to enhance the navigation to the link element's `href` by
     passing the URL to the `_navigate()` method. When the navigation is being
@@ -411,15 +405,16 @@ PjaxBase.prototype = {
 PjaxBase.ATTRS = {
     /**
     CSS selector string used to filter link click events so that only the links
-    which match it will have the enhanced-navigation behavior of pjax applied.
+    which match it will have the enhanced navigation behavior of Pjax applied.
 
-    When a link is clicked and that link matches this selector, navigating to
-    the link's `href` URL using the enhanced, pjax, behavior will be attempted;
-    and the browser's default way to navigate to new pages will be the fallback.
+    When a link is clicked and that link matches this selector, Pjax will
+    attempt to dispatch to any route handlers matching the link's `href` URL. If
+    HTML5 history is not supported or if no route handlers match, the link click
+    will be handled by the browser just like any old link.
 
     @attribute linkSelector
     @type String|Function
-    @default `'a.pjax'`
+    @default "a.pjax"
     @initOnly
     **/
     linkSelector: {
@@ -430,12 +425,12 @@ PjaxBase.ATTRS = {
     /**
     Whether the page should be scrolled to the top after navigating to a URL.
 
-    When the user clicks the browser's back button, the previous scroll-position
+    When the user clicks the browser's back button, the previous scroll position
     will be maintained.
 
     @attribute scrollToTop
     @type Boolean
-    @default `true`
+    @default true
     **/
     scrollToTop: {
         value: true

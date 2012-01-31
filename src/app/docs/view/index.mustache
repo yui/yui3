@@ -426,6 +426,10 @@ You might choose to use plain old DOM manipulation to create the elements for yo
 </p>
 
 <p>
+<strong>Note:</strong> Ideally your `render()` method should also return `this` at the end to allow chaining, but that's up to you.
+</p>
+
+<p>
 In general, it makes sense to [[#Associating a View with a Model or Model List|associate a view with a Model or Model List instance]] so that you can update the view when related data changes. You can do this either by re-rendering the entire view (this is the easiest way) or by modifying only the parts of the view that have changed (harder, but possibly more performant).
 </p>
 
@@ -492,6 +496,44 @@ var pies        = new Y.PieList(),
 
 // When we add a pie to the list, the view will be re-rendered.
 pies.add({type: 'banana cream'});
+```
+
+<h2>View Extensions</h2>
+
+<h3>Y.View.NodeMap</h3>
+
+<p>
+The <a href="{{apiDocs}}/classes/View.NodeMap.html">NodeMap</a> extension adds a static `getByNode()` method to a View subclass that returns the View instance associated with a given Node instance (much like `Y.Widget.getByNode()` does for widgets). The Node may be a View container or a child of a View container.
+</p>
+
+<p>
+This functionality is provided by an optional extension because it requires you to manually call `destroy()` on your views when you're done using them in order to avoid memory leaks due to long-lived internal references.
+</p>
+
+<p>
+To use this extension, load the `view-node-map` module and pass `Y.View.NodeMap` in the extensions array when creating a View subclass.
+</p>
+
+```
+<div id="container">
+  <div id="child"></div>
+</div>
+
+<script>
+YUI().use('view', 'view-node-map', function (Y) {
+  // Create a custom View subclass that mixes in the Y.View.NodeMap extension.
+  Y.PieView = Y.Base.create('pieView', Y.View, [Y.View.NodeMap]);
+
+  // Create a new instance of the custom View.
+  var pieView = new Y.PieView({container: '#container'});
+
+  // Look up the View instance by its container.
+  Y.PieView.getByNode('#container'); // returns the pieView instance
+
+  // ...or by a child of its container.
+  Y.PieView.getByNode('#child'); // also returns the pieView instance
+});
+</script>
 ```
 
 <h2>Views vs. Widgets</h2>

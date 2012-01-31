@@ -1,0 +1,14 @@
+{
+    "uploader-flash": {
+        "requires": [
+            "swf",
+            "widget",
+            "substitute",
+            "base", 
+            "node",
+            "event-custom",
+            "file",
+            "uploader-queue"
+        ] 
+    }
+}

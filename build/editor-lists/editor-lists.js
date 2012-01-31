@@ -66,7 +66,7 @@ YUI.add('editor-lists', function(Y) {
                         li = li.append(EditorLists.NON).one(EditorLists.NON_SEL);
                     }
                     //Selection here..
-                    (new inst.Selection()).selectNode(li, true, focusEnd);
+                    (new inst.EditorSelection()).selectNode(li, true, focusEnd);
                 }
             }
         },
@@ -117,4 +117,4 @@ YUI.add('editor-lists', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
+}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});

@@ -1,19 +1,28 @@
 <style scoped>
 /* custom styles for this example */
-.dt-example {margin:1em;}
+.example .yui3-datatable {
+    margin-bottom: 1em;
+}
 
 /* css to counter global site css */
-.dt-example th {text-transform:none;}
-.dt-example table {width:auto;}
-.dt-example caption {display:table-caption;}
+.example table {
+    width: auto;
+}
+.example caption {
+    display: table-caption;
+}
+.example th,
+.example td {
+    text-transform: none;
+    border: 0 none;
+}
 </style>
 
 <div id="chinese" class="dt-example"></div>
 
-<script type="text/javascript">
-YUI().use("datasource-io", "datasource-xmlschema","datatable-base","datatable-datasource", function (Y) {
-    var cols = ["Title", "Phone", "Rating"];
-    ds = new Y.DataSource.IO({
+<script>
+YUI().use("datasource-io", "datasource-xmlschema", "datatable-datasource", function (Y) {
+    var ds = new Y.DataSource.IO({
         source:"../assets/datatable/ylocal.xml?"})
         .plug(Y.Plugin.DataSourceXMLSchema, {
             schema: {
@@ -38,11 +47,15 @@ YUI().use("datasource-io", "datasource-xmlschema","datatable-base","datatable-da
                 ]
             }
         }),
-    dt = new Y.DataTable.Base({columnset:cols, summary:"Chinese restaurants near 98089", caption:"Table with XML data from same-domain script"})
-        .plug(Y.Plugin.DataTableDataSource, {datasource:ds, initialRequest:"zip=94089&query=chinese"});
+    dt = new Y.DataTable({
+        columns: ["Title", "Phone", "Rating"],
+        summary:"Chinese restaurants near 98089",
+        caption:"Table with XML data from same-domain script"
+    }).plug(Y.Plugin.DataTableDataSource, {
+        datasource: ds,
+        initialRequest:"zip=94089&query=chinese"
+    }).render("#chinese");
 
-    ds.after("response", function() {
-        dt.render("#chinese")}
-    );
+    dt.datasource.load();
 });
 </script>

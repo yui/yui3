@@ -1827,12 +1827,6 @@ ET.prototype = {
             edata    = this._yuievt,
             pre      = edata.config.prefix;
 
-        type = (pre) ? _getType(type, pre) : type;
-
-        this._monitor('publish', type, {
-            args: arguments
-        });
-
         if (L.isObject(type)) {
             ret = {};
             Y.each(type, function(v, k) {
@@ -1841,6 +1835,12 @@ ET.prototype = {
 
             return ret;
         }
+
+        type = (pre) ? _getType(type, pre) : type;
+
+        this._monitor('publish', type, {
+            args: arguments
+        });
 
         events = edata.events;
         ce = events[type];

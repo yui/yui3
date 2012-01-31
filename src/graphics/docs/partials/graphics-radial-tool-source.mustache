@@ -1,0 +1,156 @@
+<style scoped>
+.example{
+    position: relative;
+    background-color: #000;
+    font-family: verdana;
+    color: #ccc;
+    height: 250px;
+}
+
+.example #mygraphiccontainer {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 250px;
+    height: 233px;
+    background-color: #333;
+    /*border: 3px solid #ff0000;*/
+}
+
+.example .code-div{
+    position: absolute;
+    top: 70px;
+    left: 305px;
+    text-align: left;
+}
+
+.example .code-div label{
+    display: inline-block;
+    color: #ccc;
+    width: 7em;
+    text-align: right;
+}
+
+.example #output-grad input{
+    width: 5em;
+}
+
+/*gradient controls*/
+.example .grad-c{
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    width: 1px;
+    height: 1px;
+    cursor: move;
+}
+
+.example .grad-f{
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    width: 20px;
+    height: 20px;
+    background-color: #ff8800;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    cursor: move;
+}
+
+.example .grad-r{ /* is contained within .grad-c */
+    position: absolute;
+    top: -50px;
+    left: -50px;
+    width: 100px;
+    height: 100px;
+    background-color: #300060;
+    -moz-border-radius: 50px;
+    -webkit-border-radius: 50px;
+    opacity: 0.8;
+    filter: alpha(opacity=80);
+}
+
+.example #grad-control{
+    position: relative;
+    width: 100px;
+    height: 100px;
+    border: solid 1px #555;
+
+}
+
+.example #grad-control label{
+    position: absolute;
+    width: 100px;
+    top: 100%;
+    padding-top: 0.3em;
+    text-align: center;
+    color: #555;
+}
+
+.example #output-grad {
+    position: absolute;
+    left: 200px;
+    top: -53px;
+    width: 200px;
+}
+
+.example #output-grad ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    margin-bottom: 1.3em;
+}
+
+.example #output-grad li{
+    padding: 0.3em;
+}
+
+.example #output-grad li span {
+    display: inline-block;
+    width: 5em;
+    color: #fff;
+    margin-left: 0.5em;
+}
+
+.example #panel-content textarea {
+    width: 100%;
+    height: 257px;
+    resize: none;
+}
+
+.example #output-grad .button-item{
+    text-align: right;
+    padding: 1.5em 2.3em 0 0;
+}
+
+</style>
+        <div id="mygraphiccontainer">
+        </div>
+        <div class="code-div">
+            <div id="output-grad">
+                <ul>
+                    <li><label>cx:</label> <span id='out-cx'>0.5</span></li>
+                    <li><label>cy:</label> <span id='out-cy'>0.5</span></li>
+                    <li><label>fx:</label> <span id='out-fx'>0.5</span></li>
+                    <li><label>fy:</label> <span id='out-fy'>0.5</span></li>
+                    <li><label>r:</label> <span id='out-r'>0.5</span></li>
+                    <li><label>Center color:</label> <input type="text" id='center-color' value="#ff8800" /></li>
+                    <li><label>Outer color:</label> <input type="text" id='outer-color' value="#300060" /></li>
+                    <li class="button-item"><button id="btn-get-code" class='yui3-button'>Get Code Snippet</button></li>
+                </ul>
+
+            </div>
+            <div id="grad-control" title="Represents the boundary of the object">
+                <label>Interactive Control</label>
+                <div class="grad-c">
+                    <div id="resize-r" class="grad-r" title="Drag to set 'cx,cy' properties. Resize to set 'r' property."></div>
+                </div>
+                <div class="grad-f" title="Drag to set 'fx,fy' properties."></div>
+            </div>
+        </div>
+
+        <div class="yui3-skin-night">
+            <div id="panel-content">
+            </div>
+        </div>
+<script src="{{{componentAssets}}}/js/radial-tool.js"></script>
