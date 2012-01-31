@@ -1,15 +1,25 @@
 <style scoped>
 /* custom styles for this example */
-.dt-example {margin:1em;}
+.example .yui3-datatable {
+    margin-bottom: 1em;
+}
 
 /* css to counter global site css */
-.dt-example th {text-transform:none;}
-.dt-example table {width:auto;}
-.dt-example caption {display:table-caption;}
+.example table {
+    width: auto;
+}
+.example caption {
+    display: table-caption;
+}
+.example th,
+.example td {
+    text-transform: none;
+    border: 0 none;
+}
 </style>
 
 <div class="intro">
-    <p>The DataTable widget supports nested column headers, which can be defined in the columnset definition using the `children` configuration.</p>
+    <p>The DataTable widget supports nested column headers, which can be defined in the columns definition using the `children` configuration.</p>
 </div>
 
 <div class="example yui3-skin-sam">

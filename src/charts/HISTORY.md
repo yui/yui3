@@ -4,6 +4,16 @@ Charts Change History
 3.5.0
 -----
 
+  * #2531456 Fixed issue in which loading a chart with an empty data provider throw an error and not load. 
+  * #2530559 Added ability to explicitly set the width/height for vertical/horizontal axes
+  * #2531003 Fixed issue in which axis labels flowed outside the chart's bounding box. Added allowContentOverflow attribute to allow for the overflow if desired.
+  * #2531390 Addressed performance issues with IE
+  * #2530151 Fixed issue in which charts will load large data sets loaded slowly. Added the notion of group markers to limit the number of dom nodes.
+  * #2531468 Changed axis title attribute to use appendChild
+  * #2531469 Changed axis label to use appendChild
+  * #2531472 Changed tooltip to use appendChild. 
+  * Removed memory leaks caused by orphaned dom elements.
+  * Axes performance enhancements.
   * #2529859 Fixed issue in which Chart with timeAxis was not correctly initialized when setting dataProvider.
   * #2529922 Fixed issue in which updates to axes config after chart render did not take affect.  
   * #2530032 Fixed issue in which changing dataProvider after instantiation but pre-render resulted in the original dataProvider being used by the chart.

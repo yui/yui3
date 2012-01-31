@@ -415,7 +415,7 @@ Y.mix(Table.prototype, {
     @return {Object} the column configuration object
     **/
     getColumn: function (name) {
-        var col, columns, stack, entry, i, len, cols;
+        var col, columns, i, len, cols;
 
         if (isObject(name) && !isArray(name)) {
             // TODO: support getting a column from a DOM node - this will cross
@@ -1061,6 +1061,13 @@ Y.mix(Table.prototype, {
     has a `children` property, it will be iterated, adding any nested column
     keys to the returned map. There is no limit to the levels of nesting.
 
+    All columns are assigned a `_yuid` stamp and `_id` property corresponding
+    to the column's configured `name` or `key` property.  If the same `name` or
+    `key` appears in multiple columns, subsequent appearances will have their
+    `_id` appended with an incrementing number (e.g. if column "foo" is
+    included in the `columns` attribute twice, the first will get `_id` of
+    "foo", and the second an `_id` of "foo1").
+
     The result is an object map with column keys as the property name and the
     corresponding column object as the associated value.
 
@@ -1136,7 +1143,11 @@ Y.mix(Table.prototype, {
             this._viewConfig.columns   = this.get('columns');
             this._viewConfig.modelList = this.data;
 
-            contentBox.setAttribute('role', 'grid');
+            contentBox.setAttrs({
+                'role'         : 'grid',
+                'aria-readonly': true // until further notice
+            });
+
 
             this.fire('renderTable', {
                 headerView  : this.get('headerView'),
@@ -1335,40 +1346,34 @@ Y.mix(Table.prototype, {
     @protected
     **/
     _uiSetCaption: function (htmlContent) {
-        var caption = this._tableNode.one('> caption');
+        var table   = this._tableNode,
+            caption = this._captionNode,
+            captionId;
 
         if (htmlContent) {
-            if (!this._captionNode) {
-                this._captionNode = Y.Node.create(
+            if (!caption) {
+                this._captionNode = caption = Y.Node.create(
                     fromTemplate(this.CAPTION_TEMPLATE, {
                         className: this.getClassName('caption')
                     }));
+
+                captionId = Y.stamp(caption);
+
+                caption.set('id', captionId);
+
+                table.prepend(this._captionNode);
+
+                table.setAttribute('aria-describedby', captionId);
             }
 
-            this._captionNode.setContent(htmlContent);
+            caption.setContent(htmlContent);
 
-            if (caption) {
-                if (!caption.compareTo(this._captionNode)) {
-                    caption.replace(this._captionNode);
-                }
-            } else {
-                this._tableNode.prepend(this._captionNode);
-            }
+        } else if (caption) {
+            caption.remove(true);
 
-            this._captionNode = caption;
-        } else {
-            if (this._captionNode) {
-                if (caption && caption.compareTo(this._captionNode)) {
-                    caption = null;
-                }
+            delete this._captionNode;
 
-                this._captionNode.remove(true);
-                delete this._captionNode;
-            }
-
-            if (caption) {
-                caption.remove(true);
-            }
+            table.removeAttribute('aria-describedby');
         }
     },
 

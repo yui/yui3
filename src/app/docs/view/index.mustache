@@ -426,6 +426,10 @@ You might choose to use plain old DOM manipulation to create the elements for yo
 </p>
 
 <p>
+<strong>Note:</strong> Ideally your `render()` method should also return `this` at the end to allow chaining, but that's up to you.
+</p>
+
+<p>
 In general, it makes sense to [[#Associating a View with a Model or Model List|associate a view with a Model or Model List instance]] so that you can update the view when related data changes. You can do this either by re-rendering the entire view (this is the easiest way) or by modifying only the parts of the view that have changed (harder, but possibly more performant).
 </p>
 

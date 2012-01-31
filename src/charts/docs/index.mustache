@@ -284,6 +284,8 @@ var myDataValues = [
             <dt>series</dt><dd>The series that the item belongs to</dd>
             <dt>seriesIndex</dt><dd>The index of the series in the seriesCollection</dd>
         </dl>
+        The method returns an `HTMLElement` which is written into the DOM using `appendChild`. If you override this method and choose to return an html string, you
+        will also need to override the tooltip's `setTextFunction` method to accept an html string.
     </td></tr>
 	<tr><td>`node`</td><td>`HTMLElement`</td><td>Reference (read-only) to the actual dom node of the tooltip.</td></tr>
 	<tr><td>`planarEventHandler`</td><td>`Function`</td><td>Displays and hides a tooltip based on planar events.</td></tr>
@@ -302,12 +304,21 @@ var myDataValues = [
             <dt>seriesArray</dt><dd>Array of series instances for each value item.</dd>
             <dt>seriesIndex</dt><dd>The index of the series in the `seriesCollection`.</dd>
         </dl>
+        The method returns an `HTMLElement` which is written into the DOM using `appendChild`. If you override this method and choose to return an html string, you
+        will also need to override the tooltip's `setTextFunction` method to accept an html string.
+    </td></tr>
+    <tr><td>setTextFunction</td><td>`Function`</td><td>Method that writes content returned from `planarLabelFunction` or `markerLabelFunction` into the the tooltip node.
+    has the following signature:
+        <dl>
+            <dt>label</dt><dd>The `HTMLElement` that the content is to be added.</dd>
+            <dt>val</dt><dd>The content to be rendered into tooltip. This can be a `String` or `HTMLElement`. If an HTML string is used, it will be rendered as a string.</dd>
+        </dl>
     </td></tr>
 	<tr><td>`show`</td><td>`Boolean`</td><td>Indicates whether to show a tooltip.</td></tr>
 	<tr><td>`showEvent`</td><td>`String`</td><td>Event that triggers the tooltip. This allows you to specify which mouse event will cause the tooltip to display. The default value is `mouseover`</td></tr>
 	<tr><td>`styles`</td><td>`Object`</td><td>Hash of CSS styles that are applied to the tooltip's node.</td></tr>
     </table>
-
+    
     <h3 id="usingstyles">Styling a `CartesianChart` with the `styles` Attribute</h3>
     <p>The `styles` attribute can be used to update the properties of different chart components in a `CartesianChart`.
 
@@ -335,13 +346,16 @@ var myDataValues = [
 	    <li>decimalPlaces</li>
 	    <li>suffix</li>
 	</ul></td></tr>
-	<tr><td>`labelFunction`</td><td>`Function`</td><td>Function used to format label for display.</td></tr>
-	<tr><td>`maximum`</td><td>`Object`</td><td>The maximum value to display on an axis. (`TimeAxis` and `NumericAxis` only)</td></tr>
+	<tr><td>`labelFunction`</td><td>`Function`</td><td>Function used to format axis labels for display. The return value is added to the `Axis` with `appendChild`.</td></tr>
+	<tr><td>`appendLabelFunction`</td><td>`Function`</td><td>Function used to add the output of the `labelFunction` to the `Axis` using `appendChild`. This attribute can be overridden
+    as needed.</td></tr>
+    <tr><td>`title`</td><td>`String`</td><td>Optional attribute that allows for specification of an axis title. The value of this attribute is added to the `Axis` with `appendChild`.</td></tr>
+    <tr><td>`appendTitleFunction`</td><td>`Function`</td><td>Function used to add the `title` attribute to the `Axis` using `appendChild`. This attribute can be overridden as needed.</td></tr>
+    <tr><td>`maximum`</td><td>`Object`</td><td>The maximum value to display on an axis. (`TimeAxis` and `NumericAxis` only)</td></tr>
 	<tr><td>`minimum`</td><td>`Object`</td><td>The minimum value to display on an axis. (`TimeAxis` and `NumericAxis` only)</td></tr>
 	<tr><td>`position`</td><td>`String`</td><td>Position in relationship to the graph in which to place the axis. (top, right, bottom, left)</td></tr>
 	<tr><td>`roundingMethod`</td><td>`String`</td><td>Algorithm used for rounding units on a `NumericAxis` when `minimum` and `maximum` are not explicitly set.</td></tr>
     </table>
-
 
     <h3 id="referenceseriesandaxis">Referencing Series and Axis Instances</h3>
     <p>Sometimes you'll want to update an axis or a series after a chart has been instantiatied. This can be done with the `Chart`'s `getAxisByKey` and

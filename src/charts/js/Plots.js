@@ -124,7 +124,9 @@ Plots.prototype = {
      */
     _groupShapes: {
         circle: Y.CircleGroup,
-        rect: Y.RectGroup
+        rect: Y.RectGroup,
+        ellipse: Y.EllipseGroup,
+        diamond: Y.DiamondGroup
     },
 
     /**

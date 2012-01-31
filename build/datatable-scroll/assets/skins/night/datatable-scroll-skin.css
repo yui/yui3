@@ -5,7 +5,7 @@
     border-collapse: collapse;
     border: 0 none;
 }
-.yui3-skin-night .yui3-datatable-scrollable-x .yui3-datatable-content {
+.yui3-skin-night .yui3-datatable-scrollable-x .yui3-datatable-x-scroller {
     border-right: 1px solid #303030;
     border-left: 1px solid #303030;
 }
@@ -14,7 +14,8 @@
     border-left: 0 none;
 }
 .yui3-skin-night .yui3-datatable-scrollable-x .yui3-datatable-y-scroller {
-    border-right: 0 none;
+    border-bottom: 0 none;
+    border-left: 0 none;
 }
 .yui3-skin-night .yui3-datatable-y-scroller {
     border: 1px solid #303030;

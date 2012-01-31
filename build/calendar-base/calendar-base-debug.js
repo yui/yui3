@@ -144,7 +144,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
     this._calendarId = Y.guid('calendar');
     this._selectedDates = {};
     this._rules = {};
-    this.storedDateCells = {};
+    this._storedDateCells = {};
   },
 
   /**
@@ -844,7 +844,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
 
         for (var cell = 5; cell >= 0; cell--) 
            {
-            pane.one("#" + pane_id + "_" + cell + "_" + (cell-5)).setContent(daysInPrevMonth--);
+            pane.one("#" + pane_id + "_" + cell + "_" + (cell-5)).set('text', daysInPrevMonth--);
            }
 
         }
@@ -902,7 +902,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
 
         for (var cell = daysInMonth - 22; cell < cutoffCol + 7; cell++) 
            {
-            pane.one("#" + pane_id + "_" + cell + "_" + (cell+23)).setContent(dayCounter++).addClass(CAL_NEXTMONTH_DAY);
+            pane.one("#" + pane_id + "_" + cell + "_" + (cell+23)).set("text", dayCounter++).addClass(CAL_NEXTMONTH_DAY);
            }
 
         var startingCell = cutoffCol;
@@ -914,7 +914,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
         }
   
         for (var cell = startingCell ; cell < cutoffCol + 7; cell++) {
-            pane.one("#" + pane_id + "_" + cell + "_" + (cell+30)).setContent(dayCounter++).addClass(CAL_NEXTMONTH_DAY);    
+            pane.one("#" + pane_id + "_" + cell + "_" + (cell+30)).set("text", dayCounter++).addClass(CAL_NEXTMONTH_DAY);    
         }
     },
 
@@ -1183,7 +1183,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
          case 0:
           var curCell = pane.one("#" + paneId + "_0_30");
           if (daysInMonth >= 30) {
-            curCell.setContent("30");
+            curCell.set("text", "30");
             curCell.removeClass(CAL_NEXTMONTH_DAY).addClass(CAL_DAY);
           }
           else {
@@ -1194,7 +1194,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
          case 1:
           var curCell = pane.one("#" + paneId + "_1_31");
           if (daysInMonth >= 31) {
-            curCell.setContent("31");
+            curCell.set("text", "31");
             curCell.removeClass(CAL_NEXTMONTH_DAY).addClass(CAL_DAY);
           }
           else {
@@ -1205,7 +1205,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
          case 6:
           var curCell = pane.one("#" + paneId + "_6_29");
           if (daysInMonth >= 29) {
-            curCell.setContent("29");
+            curCell.set("text", "29");
             curCell.removeClass(CAL_NEXTMONTH_DAY).addClass(CAL_DAY);
           }
           else {
@@ -1216,7 +1216,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
          case 7:
           var curCell = pane.one("#" + paneId + "_7_30");
           if (daysInMonth >= 30) {
-            curCell.setContent("30");
+            curCell.set("text", "30");
             curCell.removeClass(CAL_NEXTMONTH_DAY).addClass(CAL_DAY);
           }
           else {
@@ -1227,7 +1227,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
          case 8:
           var curCell = pane.one("#" + paneId + "_8_31");
           if (daysInMonth >= 31) {
-            curCell.setContent("31");
+            curCell.set("text", "31");
             curCell.removeClass(CAL_NEXTMONTH_DAY).addClass(CAL_DAY);
           }
           else {
@@ -1641,4 +1641,4 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
 });
 
 
-}, '@VERSION@' ,{lang:['en', 'ja', 'ru'], requires:['widget', 'substitute', 'datatype-date', 'datatype-date-math', 'cssgrids']});
+}, '@VERSION@' ,{requires:['widget', 'substitute', 'datatype-date', 'datatype-date-math', 'cssgrids'], lang:['en', 'ja', 'ru']});

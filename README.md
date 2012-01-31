@@ -36,9 +36,6 @@ The YUI source tree includes the following directories:
     raw files (unminified, but without debug logging), and minified files
     (suitable for production deployment and use).
 
-  * `sandbox`: Experiments and works in progress, including unreleased future
-     components. Here there be dragons.
-
   * `src` Raw unbuilt source code (JavaScript, CSS, image assets, ActionScript
      files, etc.) for the library. Beginning with YUI 3.4.0, the `src` directory
      also contains all module-specific documentation, tests and examples. All
