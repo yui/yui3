@@ -90,6 +90,64 @@ YUI.add('loader-tests', function(Y) {
             Assert.isTrue((out.js[0].indexOf('-min') === -1), 'Raw filter did not work');
             Assert.isTrue((out.js[0].indexOf('-debug') === -1), 'Raw filter did not work');
         },
+        test_custom_filter: function() {
+            var loader = new Y.Loader({
+                filter: {
+                    searchExp: 'JS&',
+                    replaceStr: 'js+'
+                },
+                groups: {
+                    mods: {
+                        root: '',
+                        base: '',
+                        combine: true,
+                        comboBase: 'http://test.com/?',
+                        modules: {
+                            'mods-actioninfos': {
+                                path: 'actioninfos/actioninfos.JS'
+                            },
+                            'mods-test': {
+                                path: 'test/test.JS',
+                            }
+                        }
+                    }
+                },
+                require: ['mods-actioninfos', 'mods-test']
+            });
+
+            var out = loader.resolve(true);
+            Assert.areEqual(1, out.js.length, 'Failed to combo request');
+            Assert.areEqual('http://test.com/?actioninfos/actioninfos.js+test/test.JS', out.js[0], 'Failed to replace string in combo');
+        },
+        test_custom_filter_group: function() {
+            var loader = new Y.Loader({
+                groups: {
+                    mods: {
+                        filter: {
+                            searchExp: 'JS&',
+                            replaceStr: 'js+'
+                        },
+                        root: '',
+                        base: '',
+                        combine: true,
+                        comboBase: 'http://test.com/?',
+                        modules: {
+                            'mods-actioninfos': {
+                                path: 'actioninfos/actioninfos.JS'
+                            },
+                            'mods-test': {
+                                path: 'test/test.JS',
+                            }
+                        }
+                    }
+                },
+                require: ['mods-actioninfos', 'mods-test']
+            });
+
+            var out = loader.resolve(true);
+            Assert.areEqual(1, out.js.length, 'Failed to combo request');
+            Assert.areEqual('http://test.com/?actioninfos/actioninfos.js+test/test.JS', out.js[0], 'Failed to replace string in combo');
+        },
         test_resolve_combo_sep: function() {
             var loader = new testY.Loader({
                 comboSep: '==!!==',
@@ -239,7 +297,6 @@ YUI.add('loader-tests', function(Y) {
             test.wait();
 
         },
-        /* Commenting out until bug #2531436 get's completed.
         test_module_attrs: function() {
             var test = this;
         
@@ -247,14 +304,14 @@ YUI.add('loader-tests', function(Y) {
                 modules: {
                     'attrs-js': {
                         fullpath: './assets/attrs.js',
-                        jsAttributes: {
+                        attributes: {
                             id: 'attrs-js-test'
                         }
                     },
                     'attrs-css': {
                         fullpath: './assets/attrs.css',
                         type: 'css',
-                        cssAttributes: {
+                        attributes: {
                             id: 'attrs-css-test'
                         }
                     }
@@ -269,7 +326,33 @@ YUI.add('loader-tests', function(Y) {
 
             test.wait();
         },
-        */
+        test_global_attrs: function() {
+            var test = this;
+        
+            YUI({
+                cssAttributes: {
+                    'class': 'yui-css-module'
+                },
+                jsAttributes: {
+                    'class': 'yui-js-module'
+                },
+                modules: {
+                    'attrs2-js': {
+                        fullpath: './assets/attrs.js'
+                    },
+                    'attrs2-css': {
+                        fullpath: './assets/attrs.css'
+                    }
+                }
+            }).use('attrs2-js', 'attrs2-css', 'node', function(Y) {
+                test.resume(function() {
+                    Assert.isNotNull(Y.one('.yui-js-module'), 'Failed to add classname to JS');
+                    Assert.isNotNull(Y.one('.yui-css-module'), 'Failed to add classname to CSS');
+                });                
+            });
+
+            test.wait();
+        },
         test_iter: function() {
             var test = this;
 
@@ -635,9 +718,15 @@ YUI.add('loader-tests', function(Y) {
                                 path: 'foo/foo.js',
                                 requires: [ 'bar', 'baz' ]
                             },
-                            baz: 'path/to/baz.js',
-                            bar: 'bar.js',
-                            somecss: 'my/css/files.css'
+                            baz: {
+                                path: 'path/to/baz.js',
+                            },
+                            bar: {
+                                path: 'bar.js',
+                            },
+                            somecss: {
+                                path: 'my/css/files.css'
+                            }
                         }
                     }
                 },
@@ -791,6 +880,31 @@ YUI.add('loader-tests', function(Y) {
             Assert.areSame('plug1/assets/skins/sam/subplug1.css', out.css[0], 'Failed to combine plugin with module path CSS');
             Assert.areSame('plug1/assets/skins/sam/subplug2.css', out.css[1], 'Failed to combine plugin with module path CSS');
             Assert.areEqual(2, out.css.length, 'Failed to skin plugins');
+        },
+        test_fullpath_with_combine: function() {
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                combine: true,
+                root: '',
+                base: '',
+                comboBase: 'http://my.combo.server.com/?',
+                groups: {
+                    test: {
+                        combine: true,
+                        modules: {
+                            "fullpath-module": {
+                                combine: false,
+                                fullpath: "http://ryancannon.com/bugs/fullpath/fullpath.js"
+                            }
+                        }
+                    }
+                },
+                require: [ 'oop', 'fullpath-module' ]
+            });
+            var out = loader.resolve(true);
+            Assert.areEqual(2, out.js.length, 'Too many JS files returned');
+            Assert.areEqual(out.js[0], 'http://ryancannon.com/bugs/fullpath/fullpath.js', 'Failed to return proper full path url');
+            Assert.areEqual(out.js[1], 'http://my.combo.server.com/?yui-base/yui-base-min.js&oop/oop-min.js', 'Failed to return proper full path url');
         }
     });
 

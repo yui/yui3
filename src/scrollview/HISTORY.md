@@ -5,6 +5,7 @@ ScrollView Change History
 -----
 
   * Allow scrollbar to work with non-px width scrollviews
+  * Added mousewheel support (#2529136)
 
 3.4.1
 -----

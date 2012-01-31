@@ -7,6 +7,10 @@
   </thead>
   <tbody>
       <tr>
+          <td>`@datatable-scroll`</td>
+          <td>Adds the ability to make the table rows scrollable while preserving the header</td>
+      </tr>
+      <tr>
           <td>`align-plugin`</td>
           <td>Provides advanced positioning support for Node via a Plugin</td>
       </tr>
@@ -171,6 +175,10 @@
           <td>Alias module for: `button-base, button-group, cssbutton`</td>
       </tr>
       <tr>
+          <td>`ButtonGroup`</td>
+          <td>Allows Y.Button instances to be grouped together</td>
+      </tr>
+      <tr>
           <td>`cache`</td>
           <td>Alias module for: `cache-base, cache-offline, cache-plugin`</td>
       </tr>
@@ -304,19 +312,39 @@
       </tr>
       <tr>
           <td>`datatable-base`</td>
-          <td>Provides the base DataTable implementation, which can be extended to add</td>
+          <td>A Widget for displaying tabular data.  The base implementation of DataTable</td>
+      </tr>
+      <tr>
+          <td>`datatable-body`</td>
+          <td>View class responsible for rendering the `<tbody>` section of a table. Used as</td>
+      </tr>
+      <tr>
+          <td>`datatable-column-widths`</td>
+          <td>Adds basic, programmatic column width support to DataTable. Note, this does not</td>
+      </tr>
+      <tr>
+          <td>`datatable-core`</td>
+          <td>The core implementation of the `DataTable` and `DataTable.Base` Widgets.</td>
       </tr>
       <tr>
           <td>`datatable-datasource`</td>
           <td>Plugs DataTable with DataSource integration.</td>
       </tr>
       <tr>
+          <td>`datatable-head`</td>
+          <td>View class responsible for rendering the `<thead>` section of a table. Used as</td>
+      </tr>
+      <tr>
+          <td>`datatable-mutable`</td>
+          <td>Adds mutation convenience methods to `Y.DataTable` (or other built class).</td>
+      </tr>
+      <tr>
           <td>`datatable-scroll`</td>
-          <td>Adds scrolling functionality to DataTable.</td>
+          <td>Extends DataTable base to enable x,y, and xy scrolling.</td>
       </tr>
       <tr>
           <td>`datatable-sort`</td>
-          <td>Adds sorting functionality to DataTable.</td>
+          <td>Adds support for column sort.</td>
       </tr>
       <tr>
           <td>`datatype`</td>
@@ -553,6 +581,10 @@
       <tr>
           <td>`features`</td>
           <td>Contains the core of YUI's feature test architecture.</td>
+      </tr>
+      <tr>
+          <td>`File`</td>
+          <td>The File class provides a wrapper for a file pointer, either through an HTML5 </td>
       </tr>
       <tr>
           <td>`frame`</td>
@@ -964,7 +996,19 @@
       </tr>
       <tr>
           <td>`uploader`</td>
-          <td>The Uploader widget is a tool for uploading files to the server.</td>
+          <td>Provides UI for selecting multiple files and functionality for </td>
+      </tr>
+      <tr>
+          <td>`uploader-flash`</td>
+          <td>This module provides a UI for file selection and multiple file upload capability using</td>
+      </tr>
+      <tr>
+          <td>`uploader-html5`</td>
+          <td>This module provides a UI for file selection and multiple file upload capability using</td>
+      </tr>
+      <tr>
+          <td>`uploader-queue`</td>
+          <td>The class manages a queue of files that should be uploaded to the server.</td>
       </tr>
       <tr>
           <td>`view`</td>

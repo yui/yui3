@@ -130,20 +130,41 @@
 
     Base.prototype = {
 
+        /**
+         * Internal construction logic for Base.
+         *
+         * @method _initBase
+         * @param {Object} config The constructor configuration object
+         * @private
+         */
         _initBase: function(cfg) {
             Y.log('init called', 'life', 'base');
 
-            this._eventPrefix = this.constructor.EVENT_PREFIX || this.constructor.NAME;            
+            this._eventPrefix = this.constructor.EVENT_PREFIX || this.constructor.NAME;
 
             Y.BaseCore.prototype._initBase.call(this, cfg);
         },
 
+        /**
+         * Initializes Attribute 
+         * 
+         * @method _initAttribute
+         * @private
+         */
         _initAttribute: function(cfg) {
-            this._attrCfgHash = Base._ATTR_CFG_HASH;
-
             Attribute.call(this);
-
             this._yuievt.config.prefix = this._eventPrefix;
+        },
+
+        /**
+         * Utility method to define the attribute hash used to filter/whitelist property mixes for 
+         * this class. 
+         * 
+         * @method _attrCfgHash
+         * @private
+         */
+        _attrCfgHash: function() {
+            return Base._ATTR_CFG_HASH;
         },
 
         /**
