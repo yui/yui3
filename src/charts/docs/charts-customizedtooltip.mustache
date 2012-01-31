@@ -24,17 +24,69 @@
 </ul>
 </p>
 <p>The `tooltip` attribute contains the following properties:
-    <ul>
-       <li>showEvent: event that should trigger the tooltip</li>
-       <li>hideEvent: event that should trigger the removal of a tooltip (can be an event or an array of events)</li>
-       <li>styles: hash of style properties that will be applied to the tooltip node</li>
-       <li>show: indicates whether or not to show the tooltip</li>
-       <li>markerEventHandler: displays and hides tooltip based on marker events</li>
-       <li>planarEventHandler: displays and hides tooltip based on planar events</li>
-       <li>markerLabelFunction: reference to the function used to format a marker event triggered tooltip's text</li>
-       <li>planarLabelFunction: reference to the function used to format a planar event triggered tooltip's text</li>
-    </ul>
-</p>
+
+ <dl>
+     <dt>node</dt><dd>Reference to the actual dom node</dd>
+     <dt>showEvent</dt><dd>Event that should trigger the tooltip</dd>
+     <dt>hideEvent</dt><dd>Event that should trigger the removal of a tooltip (can be an event or an array of events)</dd>
+     <dt>styles</dt><dd>A hash of style properties that will be applied to the tooltip node</dd>
+     <dt>show</dt><dd>Indicates whether or not to show the tooltip</dd>
+     <dt>markerEventHandler</dt><dd>Displays and hides tooltip based on marker events</dd>
+     <dt>planarEventHandler</dt><dd>Displays and hides tooltip based on planar events</dd>
+     <dt>markerLabelFunction</dt><dd>Reference to the function used to format a marker event triggered tooltip's text. The method contains 
+     the following arguments:
+         <dl>
+             <dt>categoryItem</dt><dd>An object containing the following:
+                 <dl>
+                     <dt>axis</dt><dd>The axis to which the category is bound.</dd>
+                     <dt>displayName</dt><dd>The display name set to the category (defaults to key if not provided).</dd>
+                     <dt>key</dt><dd>The key of the category.</dd>
+                     <dt>value</dt><dd>The value of the category.</dd>
+                 </dl>
+             </dd>
+             <dt>valueItem</dt><dd>An object containing the following:
+                 <dl>
+                     <dt>axis</dt><dd>The axis to which the item's series is bound.</dd>
+                     <dt>displayName</dt><dd>The display name of the series. (defaults to key if not provided)</dd>
+                     <dt>key</dt><dd>The key for the series.</dd>
+                     <dt>value</dt><dd>The value for the series item.</dd> 
+                 </dl>
+             </dd>
+             <dt>itemIndex</dt><dd>The index of the item within the series.</dd>
+             <dt>series</dt><dd> The `CartesianSeries` instance of the item.</dd>
+             <dt>seriesIndex</dt><dd>The index of the series in the `seriesCollection`.</dd>
+         </dl>
+     The method returns an `HTMLElement` which is written into the DOM using `appendChild`. If you override this method and choose to return an html string, you
+     will also need to override the tooltip's `setTextFunction` method to accept an html string.
+     </dd>
+     <dt>planarLabelFunction</dt><dd>Reference to the function used to format a planar event triggered tooltip's text
+         <dl>
+             <dt>categoryAxis</dt><dd> `CategoryAxis` Reference to the categoryAxis of the chart.
+             <dt>valueItems</dt><dd>Array of objects for each series that has a data point in the coordinate plane of the event. Each object contains the following data:
+                 <dl>
+                     <dt>axis</dt><dd>The value axis of the series.</dd>
+                     <dt>key</dt><dd>The key for the series.</dd>
+                     <dt>value</dt><dd>The value for the series item.</dd>
+                     <dt>displayName</dt><dd>The display name of the series. (defaults to key if not provided)</dd>
+                 </dl> 
+             </dd>
+             <dt>index</dt><dd>The index of the item within its series.</dd>
+             <dt>seriesArray</dt><dd>Array of series instances for each value item.</dd>
+             <dt>seriesIndex</dt><dd>The index of the series in the `seriesCollection`.</dd>
+         </dl>
+     The method returns an `HTMLElement` which is written into the DOM using `appendChild`. If you override this method and choose to return an html string, you
+     will also need to override the tooltip's `setTextFunction` method to accept an html string.
+     </dd>
+     <dt>setTextFunction</dt><dd>Method that writes content returned from `planarLabelFunction` or `markerLabelFunction` into the the tooltip node.
+     has the following signature:
+         <dl>
+             <dt>label</dt><dd>The `HTMLElement` that the content is to be added.</dd>
+             <dt>val</dt><dd>The content to be rendered into tooltip. This can be a `String` or `HTMLElement`. If an HTML string is used, it will be rendered as a
+             string.</dd>
+         </dl>
+     </dd>
+</dl>
+
 <p>In this example, we have changed the styles and set a custom `markerLabelFunction` to format the text.</p>
 ```
 var myDataValues = [ 
@@ -54,9 +106,18 @@ var myTooltip = {
     },
     markerLabelFunction: function(categoryItem, valueItem, itemIndex, series, seriesIndex)
     {
-        var msg = "<span style=\"text-decoration:underline\">" + valueItem.displayName + " for " + 
-        categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]) + 
-        "</span><br/><div style=\"margin-top:5px;font-weight:bold\">" + valueItem.axis.get("labelFunction").apply(this, [valueItem.value, {prefix:"$", decimalPlaces:2}]) + "</div>";
+        var msg = document.createElement("div"),
+            underlinedTextBlock = document.createElement("span"),
+            boldTextBlock = document.createElement("div");
+        underlinedTextBlock.style.textDecoration = "underline";
+        boldTextBlock.style.marginTop = "5px";
+        boldTextBlock.style.fontWeight = "bold";
+        underlinedTextBlock.appendChild(document.createTextNode(valueItem.displayName + " for " + 
+                                        categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")])));
+        boldTextBlock.appendChild(document.createTextNode(valueItem.axis.get("labelFunction").apply(this, [valueItem.value, {prefix:"$", decimalPlaces:2}])));   
+        msg.appendChild(underlinedTextBlock);
+        msg.appendChild(document.createElement("br"));
+        msg.appendChild(boldTextBlock); 
         return msg; 
     }
 };
