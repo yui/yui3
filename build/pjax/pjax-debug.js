@@ -120,8 +120,7 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase], {
     @protected
     **/
     _defaultRoute: function (req) {
-        var url = req.url,
-            hash;
+        var url = req.url;
 
         // If there's an outstanding request, abort it.
         this._request && this._request.abort();
