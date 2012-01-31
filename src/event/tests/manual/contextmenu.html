@@ -35,6 +35,7 @@
           }).use("event-contextmenu", "node-event-delegate", "node-style", "node-screen", function (Y) {
 
 
+/*
             Y.one("doc").delegate("contextmenu", function (e) {
 
               e.preventDefault();
@@ -45,14 +46,19 @@
               
 
             }, "button");
+*/
 
-
-/*
-            Y.one("#btn-1").on("contextmenu", function (e) {
+            function onContextMenu(e) {
+              Y.log("event listener called");
               Y.log(e.pageX);
               Y.log(e.pageY);
-            });
-*/
+            }
+
+            var btn = Y.one("#btn-1");
+
+            btn.on("contextmenu", onContextMenu);
+            btn.on("contextmenu", onContextMenu);
+
 
           });
 
