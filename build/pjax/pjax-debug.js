@@ -120,14 +120,21 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase], {
     @protected
     **/
     _defaultRoute: function (req) {
-        var url = req.url;
+        var url = req.url,
+            hash;
 
         // If there's an outstanding request, abort it.
         this._request && this._request.abort();
 
         // Add a 'pjax=1' query parameter if enabled.
         if (this.get('addPjaxParam')) {
-            url += (url.indexOf('?') > -1 ? '&' : '?') + 'pjax=1';
+            // Captures the path with query, and hash parts of the URL. Then
+            // properly injects the "pjax=1" query param in the right place,
+            // before any hash fragment, and returns the updated URL.
+            url = url.replace(/([^#]*)(#.*)?$/, function (match, path, hash) {
+                path += (path.indexOf('?') > -1 ? '&' : '?') + 'pjax=1';
+                return path + (hash || '');
+            });
         }
 
         // Send a request.
