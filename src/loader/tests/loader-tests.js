@@ -297,7 +297,6 @@ YUI.add('loader-tests', function(Y) {
             test.wait();
 
         },
-        /* Commenting out until bug #2531436 get's completed.
         test_module_attrs: function() {
             var test = this;
         
@@ -305,14 +304,14 @@ YUI.add('loader-tests', function(Y) {
                 modules: {
                     'attrs-js': {
                         fullpath: './assets/attrs.js',
-                        jsAttributes: {
+                        attributes: {
                             id: 'attrs-js-test'
                         }
                     },
                     'attrs-css': {
                         fullpath: './assets/attrs.css',
                         type: 'css',
-                        cssAttributes: {
+                        attributes: {
                             id: 'attrs-css-test'
                         }
                     }
@@ -327,7 +326,33 @@ YUI.add('loader-tests', function(Y) {
 
             test.wait();
         },
-        */
+        test_global_attrs: function() {
+            var test = this;
+        
+            YUI({
+                cssAttributes: {
+                    'class': 'yui-css-module'
+                },
+                jsAttributes: {
+                    'class': 'yui-js-module'
+                },
+                modules: {
+                    'attrs2-js': {
+                        fullpath: './assets/attrs.js'
+                    },
+                    'attrs2-css': {
+                        fullpath: './assets/attrs.css'
+                    }
+                }
+            }).use('attrs2-js', 'attrs2-css', 'node', function(Y) {
+                test.resume(function() {
+                    Assert.isNotNull(Y.one('.yui-js-module'), 'Failed to add classname to JS');
+                    Assert.isNotNull(Y.one('.yui-css-module'), 'Failed to add classname to CSS');
+                });                
+            });
+
+            test.wait();
+        },
         test_iter: function() {
             var test = this;
 
