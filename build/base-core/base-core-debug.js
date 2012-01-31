@@ -187,8 +187,7 @@ YUI.add('base-core', function(Y) {
          * @private
          */
         _initAttribute: function() {
-            this._attrCfgHash = BaseCore._ATTR_CFG_HASH;
-            AttributeCore.apply(this);            
+            AttributeCore.apply(this);
         },
 
         /**
@@ -344,6 +343,17 @@ YUI.add('base-core', function(Y) {
         },
 
         /**
+         * Utility method to define the attribute hash used to filter/whitelist property mixes for 
+         * this class. 
+         * 
+         * @method _attrCfgHash
+         * @private
+         */
+        _attrCfgHash: function() {
+            return BaseCore._ATTR_CFG_HASH;
+        },
+
+        /**
          * A helper method, used by _initHierarchyData to aggregate 
          * attribute configuration across the instances class hierarchy.
          *
@@ -364,8 +374,8 @@ YUI.add('base-core', function(Y) {
                 val,
                 path,
                 i,
-                clone, 
-                cfgPropsHash = this._attrCfgHash,
+                clone,
+                cfgPropsHash = this._attrCfgHash(),
                 aggAttrs = {};
 
             if (allAttrs) {
