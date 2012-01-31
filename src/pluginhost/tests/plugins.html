@@ -40,7 +40,7 @@
         YUI({
             useBrowserConsole:false,
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
-        }).use("basebase", "base-pluginhost", "console", "plugin", "test", function(Y) {
+        }).use("basebase", "base-pluginhost", "base-build", "console", "plugin", "test", function(Y) {
 
             function PluginOne() {
                 PluginOne.superclass.constructor.apply(this, arguments);
@@ -60,6 +60,8 @@
                 }
             });
 
+            // ---
+
             function PluginTwo() {
                 PluginTwo.superclass.constructor.apply(this, arguments);
             }
@@ -77,22 +79,23 @@
                 }
             });
 
-            function PluginThree() {
-                PluginThree.superclass.constructor.apply(this, arguments);
-            }
-            PluginThree.NS = "three";
-            PluginThree.NAME = "pluginThree";
-            PluginThree.ATTRS = {
-                c: {
-                    value:3
-                }
-            };
-            Y.extend(PluginThree, Y.Plugin.Base, {
+            // ---
+
+            var PluginThree = Y.Base.create("pluginThree", Y.Plugin.Base, [], {
                 initializer: function() {
                 },
                 method : function() {
                 }
+            }, {
+                NS : "three",
+                ATTRS : {
+                    c: {
+                        value:3
+                    }
+                }
             });
+
+            // ---
 
             function PluginFour() {
                 PluginFour.superclass.constructor.apply(this, arguments);
