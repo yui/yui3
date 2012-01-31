@@ -635,9 +635,15 @@ YUI.add('loader-tests', function(Y) {
                                 path: 'foo/foo.js',
                                 requires: [ 'bar', 'baz' ]
                             },
-                            baz: 'path/to/baz.js',
-                            bar: 'bar.js',
-                            somecss: 'my/css/files.css'
+                            baz: {
+                                path: 'path/to/baz.js',
+                            },
+                            bar: {
+                                path: 'bar.js',
+                            },
+                            somecss: {
+                                path: 'my/css/files.css'
+                            }
                         }
                     }
                 },
@@ -791,6 +797,31 @@ YUI.add('loader-tests', function(Y) {
             Assert.areSame('plug1/assets/skins/sam/subplug1.css', out.css[0], 'Failed to combine plugin with module path CSS');
             Assert.areSame('plug1/assets/skins/sam/subplug2.css', out.css[1], 'Failed to combine plugin with module path CSS');
             Assert.areEqual(2, out.css.length, 'Failed to skin plugins');
+        },
+        test_fullpath_with_combine: function() {
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                combine: true,
+                root: '',
+                base: '',
+                comboBase: 'http://my.combo.server.com/?',
+                groups: {
+                    test: {
+                        combine: true,
+                        modules: {
+                            "fullpath-module": {
+                                combine: false,
+                                fullpath: "http://ryancannon.com/bugs/fullpath/fullpath.js"
+                            }
+                        }
+                    }
+                },
+                require: [ 'oop', 'fullpath-module' ]
+            });
+            var out = loader.resolve(true);
+            Assert.areEqual(2, out.js.length, 'Too many JS files returned');
+            Assert.areEqual(out.js[0], 'http://ryancannon.com/bugs/fullpath/fullpath.js', 'Failed to return proper full path url');
+            Assert.areEqual(out.js[1], 'http://my.combo.server.com/?yui-base/yui-base-min.js&oop/oop-min.js', 'Failed to return proper full path url');
         }
     });
 
