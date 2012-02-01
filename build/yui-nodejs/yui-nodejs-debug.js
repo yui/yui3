@@ -3620,8 +3620,14 @@ YUI.add('get', function(Y) {
     * @param {Callback} cb The callback to fire once the content has been executed via `_exec`
     */
     Y.Get._include = function(url, cb) {
+        var self = this;
+
         if (url.match(/^https?:\/\//)) {
-            request(url, function (err, response, body) {
+            var cfg = {
+                url: url,
+                timeout: self.timeout
+            };
+            request(cfg, function (err, response, body) {
                 if (err) {
                     Y.log(err, 'error', 'get');
                     cb(err, url);

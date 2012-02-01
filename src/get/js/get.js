@@ -547,8 +547,8 @@ Y.Get = Get = {
         options = Y.merge(this.options, options);
 
         // Clone the attributes object so we don't end up modifying it by ref.
-        options.attributes = Y.merge(this.options.attributes || {},
-                options.attributes || {});
+        options.attributes = Y.merge(this.options.attributes,
+                options.attributes);
 
         for (i = 0, len = urls.length; i < len; ++i) {
             url = urls[i];

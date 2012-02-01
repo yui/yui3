@@ -561,12 +561,18 @@ appBaseSuite.add(new Y.Test.Case({
     'A registered view with a string `type` should look on the `Y` object for the constructor': function () {
         var app = this.app = new Y.App({
             views: {
-                test: {type: 'TestView'}
+                test        : {type: 'TestView'},
+                bigNamespace: {type: 'Foo.Bar.View'}
             }
         });
 
+        Y.namespace('Foo.Bar').View = Y.Base.create('fooTestView', Y.View, []);
+
         Assert.isInstanceOf(Y.View, app.createView('test'));
         Assert.isInstanceOf(Y.TestView, app.createView('test'));
+
+        Assert.isInstanceOf(Y.View, app.createView('bigNamespace'));
+        Assert.isInstanceOf(Y.Foo.Bar.View, app.createView('bigNamespace'));
     },
 
     'A View instance should be preserved when registered with `preserve` as `true`': function () {
