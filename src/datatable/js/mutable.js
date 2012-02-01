@@ -40,8 +40,9 @@ Y.mix(Mutable.prototype, {
     attribute, updating it, and calling 
     `table.set('columns', _updatedColumnsDefs_)`
 
-    @example
-    // Becomes last column
+    For example:
+
+    <pre><code>// Becomes last column
     table.addColumn('name');
 
     // Inserted after the current second column, moving the current third column
@@ -54,6 +55,7 @@ Y.mix(Mutable.prototype, {
     //   1, --  in the second child's children
     //   3 ] -- as the fourth child column
     table.addColumn({ key: 'age', sortable: true }, [ 2, 1, 3 ]);
+    </code></pre>
 
     @method addColumn
     @param {Object|String} config The new column configuration object
@@ -82,8 +84,9 @@ Y.mix(Mutable.prototype, {
     /**
     Updates an existing column definition. Fires the `modifyColumn` event.
 
-    @example
-    // Add a formatter to the existing 'price' column definition
+    For example:
+
+    <pre><code>// Add a formatter to the existing 'price' column definition
     table.modifyColumn('price', { formatter: currencyFormatter });
 
     // Change the label on a header cell in a set of nested headers three rows
@@ -92,6 +95,7 @@ Y.mix(Mutable.prototype, {
     //   1,  -- the second child
     //   3 ] -- the fourth child column
     table.modifyColumn([2, 1, 3], { label: 'Experience' });
+    </code></pre>
 
     @method modifyColumn
     @param {String|Number|Number[]|Object} name The column key, name, index, or
