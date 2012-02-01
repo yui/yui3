@@ -1,8 +1,5 @@
 YUI.add('datatable-scroll', function(Y) {
 
-// TODO: split this into a plugin and a class extension to add the ATTRS (ala
-// Plugin.addHostAttr()
-
 /**
 Adds the ability to make the table rows scrollable while preserving the header
 placement.
@@ -75,6 +72,8 @@ Y.mix(Scrollable.prototype, {
     @method scrollTo
     @param {String|Number|Number[]|Node} id A row clientId, row index, cell
             coordinate array, id string, or Node
+    @return {DataTable}
+    @chainable
     **/
     scrollTo: function (id) {
         var target;
@@ -94,6 +93,8 @@ Y.mix(Scrollable.prototype, {
 
             target && target.scrollIntoView();
         }
+
+        return this;
     },
 
     //----------------------------------------------------------------------------
