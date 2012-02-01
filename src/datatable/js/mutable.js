@@ -196,7 +196,7 @@ Y.mix(Mutable.prototype, {
 
     @method addRow
     @param {Object} data The data or Model instance for the new record
-    @param {Object} [config]* Configuration to pass along
+    @param {Object} [config] Configuration to pass along
     @param {Function} [callback] Callback function for Model's `save()`
       @param {Error|null} callback.err If an error occurred or validation
         failed, this parameter will contain the error. If the sync operation
@@ -249,7 +249,7 @@ Y.mix(Mutable.prototype, {
 
     @method removeRow
     @param {Object|String|Number} id The Model instance or identifier 
-    @param {Object} [config]* Configuration to pass along
+    @param {Object} [config] Configuration to pass along
     @param {Function} [callback] Callback function for Model's `save()`
       @param {Error|null} callback.err If an error occurred or validation
         failed, this parameter will contain the error. If the sync operation
@@ -321,7 +321,7 @@ Y.mix(Mutable.prototype, {
     @method modifyRow
     @param {Object|String|Number} id The Model instance or identifier 
     @param {Object} data New data values for the Model
-    @param {Object} [config]* Configuration to pass along to `setAttrs()`
+    @param {Object} [config] Configuration to pass along to `setAttrs()`
     @param {Function} [callback] Callback function for Model's `save()`
       @param {Error|null} callback.err If an error occurred or validation
         failed, this parameter will contain the error. If the sync operation
@@ -527,7 +527,7 @@ as a callback to each Model's `save()` method.
 
 @method addRows
 @param {Object[]} data The data or Model instances to add
-@param {Object} [config]* Configuration to pass along
+@param {Object} [config] Configuration to pass along
 @param {Function} [callback] Callback function for each Model's `save()`
   @param {Error|null} callback.err If an error occurred or validation
     failed, this parameter will contain the error. If the sync operation
