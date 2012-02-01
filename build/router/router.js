@@ -145,6 +145,7 @@ Y.Router = Y.extend(Router, Y.Base, {
 
         // Set up a history instance or hashchange listener.
         if (self._html5) {
+            self._path    = Y.getLocation().pathname;
             self._history = new Y.HistoryHTML5({force: true});
             Y.after('history:change', self._afterHistoryChange, self);
         } else {
@@ -930,11 +931,21 @@ Y.Router = Y.extend(Router, Y.Base, {
     **/
     _afterHistoryChange: function (e) {
         var self = this,
-            src  = e.src;
+            src  = e.src,
+            path;
 
-        if (self._ready || src !== 'popstate') {
-            self._dispatch(self._getPath(), self._getURL(), src);
+        // Handles the awkwardness that is the `popstate` event.
+        if (self._html5) {
+            path = Y.getLocation().pathname;
+
+            if (src === 'popstate' && (!self._ready || path === self._path)) {
+                return;
+            }
+
+            self._path = path;
         }
+
+        self._dispatch(self._getPath(), self._getURL(), src);
     },
 
     // -- Default Event Handlers -----------------------------------------------

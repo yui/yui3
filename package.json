@@ -11,7 +11,7 @@
     "directories": {
         "lib" : "."
     },
-    "main": "./package.js",
+    "main": "./index.js",
     "dependencies": {
         "request": "2.9.100"
     },

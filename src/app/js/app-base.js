@@ -203,7 +203,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     createView: function (name, config) {
         var viewInfo        = this.getViewInfo(name),
             type            = (viewInfo && viewInfo.type) || View,
-            ViewConstructor = Lang.isString(type) ? Y[type] : type,
+            ViewConstructor = Lang.isString(type) ? Y.namespace(type) : type,
             view;
 
         // Create the view instance and map it with its metadata.
