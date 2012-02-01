@@ -67,6 +67,7 @@ suite.add(new Y.Test.Case({
         ignore: {
             'Pjax param should be added when `addPjaxParam` is true': disableXHR || !html5,
             'Pjax param should be appended to an existing query string when `addPjaxParam` is true': disableXHR || !html5,
+            'Pjax param should be added before the fragment when `addPjaxParam` is true': disableXHR || !html5,
             'Pjax param should not be added when `addPjaxParam` is false': disableXHR || !html5
         }
     },
@@ -115,6 +116,21 @@ suite.add(new Y.Test.Case({
         });
 
         this.pjax.navigate('assets/page-full.html?foo=bar');
+        this.wait(1000);
+    },
+
+    'Pjax param should be added before the fragment when `addPjaxParam` is true': function () {
+        var test = this;
+
+        this.pjax.once('load', function (e) {
+            e.preventDefault();
+
+            test.resume(function () {
+                Assert.isTrue(/\.html\?pjax=1#foo$/.test(e.url), 'URL should contain a pjax param before fragment.');
+            });
+        });
+
+        this.pjax.navigate('assets/page-full.html#foo');
         this.wait(1000);
     },
 

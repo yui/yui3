@@ -343,12 +343,9 @@ Y.mix(Sortable.prototype, {
     version of the current sort state.  Otherwise, returns the last assigned
     value.
 
-    @method _getSortBy
-    @param {String|String[]|Object|Object[]} val The current sortBy value
-    @param {String} detail String passed to `get(HERE)`. to parse subattributes
-    @protected
-    @example Comparing `get("sortBy")` with `get("sortBy.state")`
-    var table = new Y.DataTable({
+    For example:
+
+    <pre><code>var table = new Y.DataTable({
         columns: [ ... ],
         data: [ ... ],
         sortBy: 'username'
@@ -360,7 +357,12 @@ Y.mix(Sortable.prototype, {
     table.sort(['lastName', { firstName: "desc" }]);
     table.get('sortBy'); // ['lastName', { firstName: "desc" }]
     table.get('sortBy.state'); // [{ key: "lastName", dir: 1 }, { key: "firstName", dir: -1 }]
+    </code></pre>
 
+    @method _getSortBy
+    @param {String|String[]|Object|Object[]} val The current sortBy value
+    @param {String} detail String passed to `get(HERE)`. to parse subattributes
+    @protected
     **/
     _getSortBy: function (val, detail) {
         var state, i, len, col;
@@ -665,7 +667,7 @@ Y.mix(Sortable.prototype, {
     Also currently wraps the header content of sortable columns in a `<div>`
     liner to give a CSS anchor for sort indicators.
 
-    @method
+    @method _uiSetSortable
     @protected
     **/
     _uiSetSortable: function () {

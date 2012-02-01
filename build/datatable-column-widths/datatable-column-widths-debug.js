@@ -131,6 +131,8 @@ Y.mix(ColumnWidths.prototype, {
     @param {Number|String|Object} id The column config object or key, name, or
             index of a column in the host's `_displayColumns` array.
     @param {Number|String} width CSS width value. Numbers are treated as pixels
+    @return {DataTable}
+    @chainable
     **/
     setColumnWidth: function (id, width) {
         var col = this.getColumn(id),
@@ -145,6 +147,8 @@ Y.mix(ColumnWidths.prototype, {
 
             this._setColumnWidth(index, width);
         }
+
+        return this;
     },
 
     //----------------------------------------------------------------------------
