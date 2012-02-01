@@ -28,9 +28,9 @@ if (!path.existsSync(start)) {
 process.chdir(start);
 
 var makeIndex = function(mod, p) {
-    var o = '../package';
+    var o = '../index';
     if (p) {
-        o = './package';
+        o = './index';
     }
     var str = 'var inst = require("' + o + '").getInstance();\n';
     str += 'module.exports = inst.use("' + mod + '");\n';
@@ -38,9 +38,9 @@ var makeIndex = function(mod, p) {
 };
 
 var makeDebug = function(mod, p) {
-    var o = '../package';
+    var o = '../index';
     if (p) {
-        o = './package';
+        o = './index';
     }
     var str = 'var inst = require("' + o + '").getInstance();\n';
     str += 'inst.applyConfig({ debug: true, filter: "debug" });\n';
