@@ -965,7 +965,7 @@ YUI.add('attribute-core', function(Y) {
                         valFn = this[valFn];
                     }
                     if (valFn) {
-                        val = valFn.call(this);
+                        val = valFn.call(this, attr);
                     }
                 }
             }
