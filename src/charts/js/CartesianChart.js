@@ -251,7 +251,20 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
      * @return Array
      * @private
      */
-    _getDefaultSeriesCollection: function(val)
+    _getDefaultSeriesCollection: function()
+    {
+        return this._parseSeriesCollection();
+    },
+
+    /**
+     * Parses and returns a series collection from an object and default properties.
+     *
+     * @method _parseSeriesCollection
+     * @param {Object} val Object contain properties for series being set.
+     * @return Object
+     * @private
+     */
+    _parseSeriesCollection: function(val)
     {
         var dir = this.get("direction"), 
             sc = val || [], 
@@ -485,14 +498,14 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
     /**
      * Creates `Axis` instances.
      *
-     * @method _parseAxes
+     * @method _setAxes
      * @param {Object} val Object containing `Axis` instances or objects in which to construct `Axis` instances.
      * @return Object
      * @private
      */
-    _parseAxes: function(val)
+    _setAxes: function(val)
     {
-        var hash = this._getDefaultAxes(val),
+        var hash = this._parseAxes(val),
             axes = {},
             axesAttrs = {
                 edgeOffset: "edgeOffset", 
@@ -771,14 +784,26 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
     },
     
     /**
-     * Generates and returns a key-indexed object containing `Axis` instances or objects used to create `Axis` instances.
+     * Default Function for the axes attribute.
      *
      * @method _getDefaultAxes
+     * @return Object
+     * @private
+     */
+    _getDefaultAxes: function()
+    {
+        return this._parseAxes();
+    },
+
+    /**
+     * Generates and returns a key-indexed object containing `Axis` instances or objects used to create `Axis` instances.
+     *
+     * @method _parseAxes
      * @param {Object} axes Object containing `Axis` instances or `Axis` attributes.
      * @return Object
      * @private
      */
-    _getDefaultAxes: function(axes)
+    _parseAxes: function(axes)
     {
         var catKey = this.get("categoryKey"),
             axis,
@@ -1767,7 +1792,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
 
             setter: function(val)
             {
-                return this._parseAxes(val);
+                return this._setAxes(val);
             }
         },
 
@@ -1783,7 +1808,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             
             setter: function(val)
             {
-                return this._getDefaultSeriesCollection(val);
+                return this._parseSeriesCollection(val);
             }
         },
 

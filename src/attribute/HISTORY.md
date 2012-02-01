@@ -62,6 +62,9 @@ Attribute Change History
     If you're working directly with Attribute's private _state.data, you
     may need to update your code to account for the change in structure. 
 
+  * Attribute now passes the attribute name to valueFn, allowing users to
+    write shared valueFn impls across attributes.
+
 3.4.1
 -----
 

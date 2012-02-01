@@ -544,6 +544,12 @@ Y.Get = Get = {
             urls = [urls];
         }
 
+        options = Y.merge(this.options, options);
+
+        // Clone the attributes object so we don't end up modifying it by ref.
+        options.attributes = Y.merge(this.options.attributes,
+                options.attributes);
+
         for (i = 0, len = urls.length; i < len; ++i) {
             url = urls[i];
             req = {attributes: {}};
@@ -565,7 +571,6 @@ Y.Get = Get = {
             }
 
             Y.mix(req, options, false, null, 0, true);
-            Y.mix(req, this.options, false, null, 0, true);
 
             // If we didn't get an explicit type for this URL either in the
             // request options or the URL-specific options, try to determine

@@ -12,6 +12,9 @@
         "lib" : "."
     },
     "main": "./package.js",
+    "dependencies": {
+        "request": "2.9.100"
+    },
     "licenses":[
         {
             "type" : "BSD",
