@@ -29,6 +29,22 @@ the DataTable instance.
 
 Y.namespace('DataTable').Mutable = Mutable = function () {};
 
+/**
+Controls whether `addRow`, `removeRow`, and `modifyRow` should trigger the
+underlying Model's sync layer by default.
+
+When `true`, it is unnecessary to pass the "sync" configuration property to
+those methods to trigger per-operation sync.
+
+
+@attribute autoSync
+@type {Boolean}
+@default `false`
+**/
+Mutable.ATTRS = {
+    autoSync: {}
+};
+
 Y.mix(Mutable.prototype, {
     /**
     Adds the column configuration to the DataTable's `columns` configuration.
@@ -42,8 +58,9 @@ Y.mix(Mutable.prototype, {
     attribute, updating it, and calling 
     `table.set('columns', _updatedColumnsDefs_)`
 
-    @example
-    // Becomes last column
+    For example:
+
+    <pre><code>// Becomes last column
     table.addColumn('name');
 
     // Inserted after the current second column, moving the current third column
@@ -56,6 +73,7 @@ Y.mix(Mutable.prototype, {
     //   1, --  in the second child's children
     //   3 ] -- as the fourth child column
     table.addColumn({ key: 'age', sortable: true }, [ 2, 1, 3 ]);
+    </code></pre>
 
     @method addColumn
     @param {Object|String} config The new column configuration object
@@ -84,8 +102,9 @@ Y.mix(Mutable.prototype, {
     /**
     Updates an existing column definition. Fires the `modifyColumn` event.
 
-    @example
-    // Add a formatter to the existing 'price' column definition
+    For example:
+
+    <pre><code>// Add a formatter to the existing 'price' column definition
     table.modifyColumn('price', { formatter: currencyFormatter });
 
     // Change the label on a header cell in a set of nested headers three rows
@@ -94,6 +113,7 @@ Y.mix(Mutable.prototype, {
     //   1,  -- the second child
     //   3 ] -- the fourth child column
     table.modifyColumn([2, 1, 3], { label: 'Experience' });
+    </code></pre>
 
     @method modifyColumn
     @param {String|Number|Number[]|Object} name The column key, name, index, or
@@ -167,14 +187,45 @@ Y.mix(Mutable.prototype, {
 
     This relays all parameters to the `data` ModelList's `add` method.
 
+    If a configuration object is passed as a second argument, and that object
+    has `sync: true` set, the underlying Model will be `save()`d.
+
+    If the DataTable's `autoSync` attribute is set to `true`, the additional
+    argument is not needed.
+
+    If syncing and the last argument is a function, that function will be used
+    as a callback to the Model's `save()` method.
+
     @method addRow
     @param {Object} data The data or Model instance for the new record
+    @param {Object} [config]* Configuration to pass along
+    @param {Function} [callback] Callback function for Model's `save()`
+      @param {Error|null} callback.err If an error occurred or validation
+        failed, this parameter will contain the error. If the sync operation
+        succeeded, _err_ will be `null`.
+      @param {Any} callback.response The server's response. This value will
+        be passed to the `parse()` method, which is expected to parse it and
+        return an attribute hash.
     @return {DataTable}
     @chainable
     **/
-    addRow: function () {
+    addRow: function (data, config) {
+        var sync = (config && ('sync' in config)) ?
+                config.sync :
+                this.get('autoSync'),
+            models, i, len, args;
+
         if (this.data) {
-            this.data.add.apply(this.data, arguments);
+            models = this.data.add.apply(this.data, arguments);
+
+            if (sync) {
+                models = toArray(models);
+                args   = toArray(arguments, 1, true);
+
+                for (i = 0, len = models.length; i < len; ++i) {
+                    models[i].save.apply(models[i], args);
+                }
+            }
         }
 
         return this;
@@ -188,14 +239,35 @@ Y.mix(Mutable.prototype, {
     After locating the target Model, this relays the Model and all other passed
     arguments to the `data` ModelList's `remove` method.
 
+    If a configuration object is passed as a second argument, and that object
+    has `sync: true` set, the underlying Model will be destroyed, passing
+    `{ delete: true }` to trigger calling the Model's sync layer.
+
+    If the DataTable's `autoSync` attribute is set to `true`, the additional
+    argument is not needed.
+
+    If syncing and the last argument is a function, that function will be used
+    as a callback to the Model's `destroy()` method.
+
     @method removeRow
     @param {Object|String|Number} id The Model instance or identifier 
+    @param {Object} [config]* Configuration to pass along
+    @param {Function} [callback] Callback function for Model's `save()`
+      @param {Error|null} callback.err If an error occurred or validation
+        failed, this parameter will contain the error. If the sync operation
+        succeeded, _err_ will be `null`.
+      @param {Any} callback.response The server's response. This value will
+        be passed to the `parse()` method, which is expected to parse it and
+        return an attribute hash.
     @return {DataTable}
     @chainable
     **/
-    removeRow: function (id) {
+    removeRow: function (id, config) {
         var modelList = this.data,
-            model;
+            sync      = (config && ('sync' in config)) ?
+                            config.sync :
+                            this.get('autoSync'),
+            models, model, i, len, args;
 
         // TODO: support removing via DOM element. This should be relayed to View
         if (isObject(id) && id instanceof this.get('recordType')) {
@@ -207,8 +279,25 @@ Y.mix(Mutable.prototype, {
         }
 
         if (model) {
-            modelList.remove.apply(modelList,
-                [model].concat(toArray(arguments, 1, true)));
+            args = toArray(arguments, 1, true);
+
+            models = modelList.remove.apply(modelList,
+                [model].concat(args));
+
+            if (sync) {
+                if (!isObject(args[0])) {
+                    args.unshift({});
+                }
+
+                args[0]['delete'] = true;
+
+                models = toArray(models);
+
+                for (i = 0, len = models.length; i < len; ++i) {
+                    model = models[i];
+                    model.destroy.apply(model, args);
+                }
+            }
         }
 
         return this;
@@ -222,14 +311,35 @@ Y.mix(Mutable.prototype, {
     After locating the target Model, this relays the all other passed
     arguments to the Model's `setAttrs` method.
 
+    If a configuration object is passed as a second argument, and that object
+    has `sync: true` set, the underlying Model will be `save()`d.
+
+    If the DataTable's `autoSync` attribute is set to `true`, the additional
+    argument is not needed.
+
+    If syncing and the last argument is a function, that function will be used
+    as a callback to the Model's `save()` method.
+
     @method modifyRow
     @param {Object|String|Number} id The Model instance or identifier 
+    @param {Object} data New data values for the Model
+    @param {Object} [config]* Configuration to pass along to `setAttrs()`
+    @param {Function} [callback] Callback function for Model's `save()`
+      @param {Error|null} callback.err If an error occurred or validation
+        failed, this parameter will contain the error. If the sync operation
+        succeeded, _err_ will be `null`.
+      @param {Any} callback.response The server's response. This value will
+        be passed to the `parse()` method, which is expected to parse it and
+        return an attribute hash.
     @return {DataTable}
     @chainable
     **/
-    modifyRow: function (id, data) {
+    modifyRow: function (id, data, config) {
         var modelList = this.data,
-            model;
+            sync      = (config && ('sync' in config)) ?
+                            config.sync :
+                            this.get('autoSync'),
+            model, args;
 
         if (isObject(id) && id instanceof this.get('recordType')) {
             model = id;
@@ -240,7 +350,13 @@ Y.mix(Mutable.prototype, {
         }
 
         if (model && isObject(data)) {
-            model.setAttrs.apply(model, toArray(arguments, 1, true));
+            args = toArray(arguments, 1, true);
+
+            model.setAttrs.apply(model, args);
+
+            if (sync) {
+                model.save.apply(model, args);
+            }
         }
 
         return this;
@@ -402,8 +518,25 @@ This relays all parameters to the `data` ModelList's `add` method.
 Technically, this is an alias to `addRow`, but please use the appropriately
 named method for readability.
 
+If a configuration object is passed as a second argument, and that object
+has `sync: true` set, the underlying Models will be `save()`d.
+
+If the DataTable's `autoSync` attribute is set to `true`, the additional
+argument is not needed.
+
+If syncing and the last argument is a function, that function will be used
+as a callback to each Model's `save()` method.
+
 @method addRows
 @param {Object[]} data The data or Model instances to add
+@param {Object} [config]* Configuration to pass along
+@param {Function} [callback] Callback function for each Model's `save()`
+  @param {Error|null} callback.err If an error occurred or validation
+    failed, this parameter will contain the error. If the sync operation
+    succeeded, _err_ will be `null`.
+  @param {Any} callback.response The server's response. This value will
+    be passed to the `parse()` method, which is expected to parse it and
+    return an attribute hash.
 @return {DataTable}
 @chainable
 **/
