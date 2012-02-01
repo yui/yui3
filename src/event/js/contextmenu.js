@@ -40,7 +40,7 @@ var Event = Y.Event,
     
             handles.push(node[filter ? "delegate" : "on"]("keydown", function (e) {
     
-                var target = this._node,
+                var target = this.getDOMNode(),
                     shiftKey = e.shiftKey,
                     keyCode = e.keyCode,
                     shiftF10 = (shiftKey && keyCode == 121),
@@ -84,6 +84,9 @@ var Event = Y.Event,
 
                     // Don't need to simulate the contextmenu event when the 
                     // menu key is pressed as it fires contextmenu by default.
+                    
+                    // TO node.getDOMNode() OR target.getDOMNode() ??
+                    
                     if (!menuKey) {
                         Event.simulate(node.getDOMNode(), "contextmenu", { 
                             bubbles: !!filter,
