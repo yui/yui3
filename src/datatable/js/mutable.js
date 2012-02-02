@@ -40,7 +40,10 @@ those methods to trigger per-operation sync.
 @default `false`
 **/
 Mutable.ATTRS = {
-    autoSync: {}
+    autoSync: {
+        value: false,
+        validator: YLang.isBoolean
+    }
 };
 
 Y.mix(Mutable.prototype, {
@@ -208,10 +211,11 @@ Y.mix(Mutable.prototype, {
     @chainable
     **/
     addRow: function (data, config) {
+        // Allow autoSync: true + addRow({ data }, { sync: false })
         var sync = (config && ('sync' in config)) ?
                 config.sync :
                 this.get('autoSync'),
-            models, i, len, args;
+            models, model, i, len, args;
 
         if (this.data) {
             models = this.data.add.apply(this.data, arguments);
@@ -221,7 +225,11 @@ Y.mix(Mutable.prototype, {
                 args   = toArray(arguments, 1, true);
 
                 for (i = 0, len = models.length; i < len; ++i) {
-                    models[i].save.apply(models[i], args);
+                    model = models[i];
+
+                    if (model.isNew()) {
+                        models[i].save.apply(models[i], args);
+                    }
                 }
             }
         }
@@ -262,6 +270,7 @@ Y.mix(Mutable.prototype, {
     **/
     removeRow: function (id, config) {
         var modelList = this.data,
+            // Allow autoSync: true + addRow({ data }, { sync: false })
             sync      = (config && ('sync' in config)) ?
                             config.sync :
                             this.get('autoSync'),
@@ -334,6 +343,7 @@ Y.mix(Mutable.prototype, {
     **/
     modifyRow: function (id, data, config) {
         var modelList = this.data,
+            // Allow autoSync: true + addRow({ data }, { sync: false })
             sync      = (config && ('sync' in config)) ?
                             config.sync :
                             this.get('autoSync'),
@@ -352,7 +362,7 @@ Y.mix(Mutable.prototype, {
 
             model.setAttrs.apply(model, args);
 
-            if (sync) {
+            if (sync && !model.isNew()) {
                 model.save.apply(model, args);
             }
         }
