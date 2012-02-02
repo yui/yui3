@@ -1,0 +1,19 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Node Test Suite</title>
+
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="node-data-test.js"></script>
+<script>
+YUI({
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+}).use('node-data-test', function(Y) {
+    new Y.Test.Console().render();
+    Y.Test.Runner.run();
+});
+</script>
+</head>
+<body class="yui3-skin-sam">
+</body>
+</html>
