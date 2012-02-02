@@ -348,6 +348,8 @@ Y_Node.DEFAULT_GETTER = function(name) {
 };
 
 Y.mix(Y_Node.prototype, {
+    DATA_PREFIX: 'data-',
+
     /**
      * The method called when outputting Node instances as strings
      * @method toString
@@ -793,7 +795,9 @@ Y.mix(Y_Node.prototype, {
     /**
     * @method getData
     * @description Retrieves arbitrary data stored on a Node instance.
-    * This is not stored with the DOM node.
+    * If no data is associated with the Node, it will attempt to retrieve
+    * a value from the corresponding HTML data attribute. (e.g. node.getData('foo')
+    * will check node.getAttribute('data-foo')).
     * @param {string} name Optional name of the data field to retrieve.
     * If no name is given, all data is returned.
     * @return {any | Object} Whatever is stored at the given field,
@@ -803,13 +807,49 @@ Y.mix(Y_Node.prototype, {
         var ret;
         this._data = this._data || {};
         if (arguments.length) {
-            ret = this._data[name];
-        } else {
-            ret = this._data;
+            if (name in this._data) {
+                ret = this._data[name];
+            } else { // initialize from HTML attribute
+                ret = this._getDataAttribute(name);
+            }
+        } else { // get all data
+            ret = {};
+            Y.Object.each(this._data, function(v, n) {
+                ret[n] = v;
+            });
+
+            ret = this._getDataAttributes(ret);
         }
 
         return ret;
 
+    },
+
+    _getDataAttributes: function(ret) {
+        ret = ret || {};
+        var i = 0,
+            attrs = this._node.attributes,
+            len = attrs.length,
+            prefix = this.DATA_PREFIX,
+            prefixLength = prefix.length,
+            name;
+
+        while (++i < len) {
+            name = attrs[i].name;
+            if (name.indexOf(prefix) === 0) {
+                name = name.substr(prefixLength);
+                if (! (name in ret)) { // only merge if not already stored 
+                    ret[name] = this._getDataAttribute(name);
+                }
+            }
+        }
+
+        return ret;
+    },
+
+    _getDataAttribute: function(name) {
+        var data = this.getAttribute(this.DATA_PREFIX + name);
+        return data;
     },
 
     /**
