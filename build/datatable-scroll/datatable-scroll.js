@@ -24,7 +24,7 @@ the following values:
  * 'y' - Activate vertical scrolling only. Requires the `height` attribute is
          also set.
 
- @module @datatable-scroll
+ @module datatable-scroll
  @class DataTable.Scrollable
  @for DataTable
 **/
