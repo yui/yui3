@@ -258,7 +258,7 @@ YUI.Env.parseUA = function(subUA) {
 
         if ((/windows|win32/i).test(ua)) {
             o.os = 'windows';
-        } else if ((/macintosh/i).test(ua) || (/mac_powerpc/i).test(ua)) {
+        } else if ((/macintosh|mac_powerpc/i).test(ua)) {
             o.os = 'macintosh';
         } else if ((/android/i).test(ua)) {
             o.os = 'android';
@@ -274,7 +274,7 @@ YUI.Env.parseUA = function(subUA) {
         if ((/KHTML/).test(ua)) {
             o.webkit = 1;
         }
-        if ((/IEMobile/).test(ua) || (/XBLWP7/).test(ua)) {
+        if ((/IEMobile|XBLWP7/).test(ua)) {
             o.mobile = 'windows';
         }
         if ((/Fennec/).test(ua)) {
