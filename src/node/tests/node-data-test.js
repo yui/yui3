@@ -172,7 +172,7 @@ YUI.add('node-data-test', function(Y) {
             var node = Y.Node.create('<div/>'); 
             node.setData(0, 'foo');
             node.clearData(0);
-            Y.Assert.isUndefined(node.getData(1));
+            Y.Assert.isUndefined(node.getData(0));
         },
 
         'should clear data for given field from all nodes': function() {
