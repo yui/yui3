@@ -658,8 +658,10 @@ suite.add(new Y.Test.Case({
     name : "Test autoContinue and alwaysPause",
     
     qTestResult : '',
-    qTester: function (q) {
-        var self = this;
+    queueToTest: function () {
+        var self = this,
+            q = new Y.AsyncQueue();
+            
         self.qTestResult = '';      
         
         q.add(function () {
@@ -684,17 +686,17 @@ suite.add(new Y.Test.Case({
             // the first queue task is not paused, so this gets executed
             // before the timeout of that task.
             self.qTestResult += 'D';
-        });                     
+        });
         
-        q.run();
+        return q;
     },
 
     test_autoContinue: function () {
         var self = this,
-            q = new Y.AsyncQueue();
+            q = this.queueToTest();
         q.defaults.autoContinue = false;
+        q.run();
         
-        this.qTester(q);
         this.wait(function () {
             Y.Assert.areSame('ABC', self.qTestResult);
         }, 100);
@@ -702,23 +704,85 @@ suite.add(new Y.Test.Case({
     
     test_alwaysPause: function () {
         var self = this,
-            q = new Y.AsyncQueue();
+            q = this.queueToTest();
         q.defaults.alwaysPause = true;
+        q.run();
         
-        this.qTester(q);
         this.wait(function () {
             Y.Assert.areSame('ABCD', self.qTestResult);
         }, 100);
     },
     
-    test_defaultNoAutomaticPausing: function () {
+    test_defaultWithoutAutomaticPausing: function () {
         var self = this,
-            q = new Y.AsyncQueue();
+            q = this.queueToTest();
+        q.run();
         
-        this.qTester(q);
         this.wait(function () {
             Y.Assert.areSame('ACDB', self.qTestResult);
         }, 100);
+    },
+    
+    test_iterationsPauseRun: function () {
+        // This fails for 3.5pr1
+        var self = this,
+            result = ''
+            q = new Y.AsyncQueue( {
+                fn: function () {
+                    q.pause();
+                    result += 'A';
+                    q.run();
+                },
+                timeout: 100,
+                iterations: 3
+            });
+        q.run();
+        this.wait(function () {
+            Y.Assert.areSame('AAA', result);
+        }, 600);
+    },
+    
+    test_interationsAutoContinue: function () {
+        var self = this,
+            result = ''
+            q = new Y.AsyncQueue( {
+                fn: function () {
+                    result += 'a';
+                    setTimeout(function () {
+                       result += 'A';
+                       q.run();
+                    }, 10);
+                },
+                timeout: 100,
+                iterations: 3
+            });
+        q.defaults.autoContinue = false;
+        q.run();
+        this.wait(function () {
+            Y.Assert.areSame('aAaAaA', result);
+        }, 600);
+    },
+    
+    test_interationsAlwaysPause: function () {
+        var self = this,
+            result = ''
+            q = new Y.AsyncQueue( {
+                fn: function () {
+                    q.pause();
+                    result += 'a';
+                    setTimeout(function () {
+                       result += 'A';
+                       q.run();
+                    }, 10);
+                },
+                timeout: 100,
+                iterations: 3
+            });
+        q.defaults.alwaysPause = true;
+        q.run();
+        this.wait(function () {
+            Y.Assert.areSame('aAaAaA', result);
+        }, 600);
     }
     
 }));

@@ -203,6 +203,9 @@ Y.extend(Queue, Y.EventTarget, {
                 if (wrapper.context === 'callback') {
                     wrapper.context = wrapper;
                 }
+                if (wrapper.alwaysPause) {
+                    this.pause();
+                }
                 if (isFunction(wrapper.fn)) {
                     wrapper.fn.apply(wrapper.context || Y,
                                      Y.Array(wrapper.args));
@@ -256,7 +259,7 @@ Y.extend(Queue, Y.EventTarget, {
      */
     _execute : function (callback) {
         callback._running = true;
-        this._running = !callback.alwaysPause;
+        this._running = this._running || true;
         
         callback.iterations--;
         this.fire(EXECUTE, { callback: callback });
