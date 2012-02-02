@@ -302,7 +302,7 @@
 	    * @method getRegion
 	    * @description Get the active region: viewport, node, custom region
 	    * @param {Boolean} inc Include the node's height and width
-	    * @return {Object}
+	    * @return {Object} The active region.
 	    */
 	    getRegion: function(inc) {
 	        var r = {}, oh = null, ow = null,
