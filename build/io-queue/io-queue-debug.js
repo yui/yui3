@@ -3,7 +3,7 @@ YUI.add('io-queue', function(Y) {
 /**
 Extends IO to implement Queue for synchronous
 transaction processing.
-@module io-base
+@module io
 @submodule io-queue
 @for IO
 **/

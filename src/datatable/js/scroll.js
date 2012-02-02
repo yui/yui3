@@ -1,6 +1,3 @@
-// TODO: split this into a plugin and a class extension to add the ATTRS (ala
-// Plugin.addHostAttr()
-
 /**
 Adds the ability to make the table rows scrollable while preserving the header
 placement.
@@ -25,7 +22,7 @@ the following values:
  * 'y' - Activate vertical scrolling only. Requires the `height` attribute is
          also set.
 
- @module @datatable-scroll
+ @module datatable-scroll
  @class DataTable.Scrollable
  @for DataTable
 **/
@@ -73,6 +70,8 @@ Y.mix(Scrollable.prototype, {
     @method scrollTo
     @param {String|Number|Number[]|Node} id A row clientId, row index, cell
             coordinate array, id string, or Node
+    @return {DataTable}
+    @chainable
     **/
     scrollTo: function (id) {
         var target;
@@ -92,6 +91,8 @@ Y.mix(Scrollable.prototype, {
 
             target && target.scrollIntoView();
         }
+
+        return this;
     },
 
     //----------------------------------------------------------------------------
@@ -650,7 +651,11 @@ Y.mix(Scrollable.prototype, {
                         (this._yScrollNode.get('offsetHeight') -
                          Y.DOM.getScrollbarWidth()) + 'px');
 
-                    this._addVirtualScrollbar();
+                    // Only add virtual scrollbar if the OS+browser renders
+                    // scrollbars.
+                    if (Y.DOM.getScrollbarWidth()) {
+                        this._addVirtualScrollbar();
+                    }
                 }
             } else {
                 this._mergeXScrollContent();

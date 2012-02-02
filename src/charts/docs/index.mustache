@@ -346,13 +346,16 @@ var myDataValues = [
 	    <li>decimalPlaces</li>
 	    <li>suffix</li>
 	</ul></td></tr>
-	<tr><td>`labelFunction`</td><td>`Function`</td><td>Function used to format label for display.</td></tr>
-	<tr><td>`maximum`</td><td>`Object`</td><td>The maximum value to display on an axis. (`TimeAxis` and `NumericAxis` only)</td></tr>
+	<tr><td>`labelFunction`</td><td>`Function`</td><td>Function used to format axis labels for display. The return value is added to the `Axis` with `appendChild`.</td></tr>
+	<tr><td>`appendLabelFunction`</td><td>`Function`</td><td>Function used to add the output of the `labelFunction` to the `Axis` using `appendChild`. This attribute can be overridden
+    as needed.</td></tr>
+    <tr><td>`title`</td><td>`String`</td><td>Optional attribute that allows for specification of an axis title. The value of this attribute is added to the `Axis` with `appendChild`.</td></tr>
+    <tr><td>`appendTitleFunction`</td><td>`Function`</td><td>Function used to add the `title` attribute to the `Axis` using `appendChild`. This attribute can be overridden as needed.</td></tr>
+    <tr><td>`maximum`</td><td>`Object`</td><td>The maximum value to display on an axis. (`TimeAxis` and `NumericAxis` only)</td></tr>
 	<tr><td>`minimum`</td><td>`Object`</td><td>The minimum value to display on an axis. (`TimeAxis` and `NumericAxis` only)</td></tr>
 	<tr><td>`position`</td><td>`String`</td><td>Position in relationship to the graph in which to place the axis. (top, right, bottom, left)</td></tr>
 	<tr><td>`roundingMethod`</td><td>`String`</td><td>Algorithm used for rounding units on a `NumericAxis` when `minimum` and `maximum` are not explicitly set.</td></tr>
     </table>
-
 
     <h3 id="referenceseriesandaxis">Referencing Series and Axis Instances</h3>
     <p>Sometimes you'll want to update an axis or a series after a chart has been instantiatied. This can be done with the `Chart`'s `getAxisByKey` and

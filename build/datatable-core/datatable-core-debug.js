@@ -966,7 +966,7 @@ Y.mix(Table.prototype, {
     @protected
     **/
     _initRecordType: function () {
-        var data, columns, recordType, handle;
+        var data, columns, recordType, handle, columnKeys;
             
         if (!this.get('recordType')) {
             data    = this.get('data');
@@ -987,8 +987,12 @@ Y.mix(Table.prototype, {
                     this._createRecordClass(keys(data[0]));
 
             // Or if the columns were defined, build a class from the keys
-            } else if (keys(columns).length) {
-                recordType = this._createRecordClass(keys(columns));
+            } else {
+                columnKeys = keys(columns);
+                
+                if (columnKeys.length) {
+                    recordType = this._createRecordClass(columnKeys);
+                }
             }
 
             if (recordType) {
@@ -1062,6 +1066,13 @@ Y.mix(Table.prototype, {
     with objects with the string assigned as the `key` property.  If a column
     has a `children` property, it will be iterated, adding any nested column
     keys to the returned map. There is no limit to the levels of nesting.
+
+    All columns are assigned a `_yuid` stamp and `_id` property corresponding
+    to the column's configured `name` or `key` property.  If the same `name` or
+    `key` appears in multiple columns, subsequent appearances will have their
+    `_id` appended with an incrementing number (e.g. if column "foo" is
+    included in the `columns` attribute twice, the first will get `_id` of
+    "foo", and the second an `_id` of "foo1").
 
     The result is an object map with column keys as the property name and the
     corresponding column object as the associated value.

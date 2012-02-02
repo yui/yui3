@@ -880,4 +880,6 @@ Don't skip the server-side changes! Without them, using the `#!` prefix won't do
   <li><p><strong>Internet Explorer 6 and 7 only retain the most recent hash-based URL from a previous pageview after navigating to another page and returning.</strong> However, history entries created within a single pageview will persist for the duration of that pageview, and bookmarked URLs will still work in all cases.</p></li>
 
   <li><p><strong>In Internet Explorer 6 and 7, the page titles displayed for history entries in the browser's history dropdown menu are not correct.</strong> Instead of showing the title of each page, it shows part of the URL of each page.</p></li>
+
+  <li><p><strong>Internet Explorer (all versions) replaces the current history entry when the hash portion of the URL is manually edited in the URL bar</strong> instead of adding a new history entry as other browsers do. There's unfortunately nothing YUI can do to detect or work around this.</p></li>
 </ul>

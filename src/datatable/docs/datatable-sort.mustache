@@ -1,15 +1,25 @@
 <style scoped>
 /* custom styles for this example */
-.dt-example {margin:1em;}
+.example .yui3-datatable {
+    margin-bottom: 1em;
+}
 
 /* css to counter global site css */
-.dt-example th {text-transform:none;}
-.dt-example table {width:auto;}
-.dt-example caption {display:table-caption;}
+.example table {
+    width: auto;
+}
+.example caption {
+    display: table-caption;
+}
+.example th,
+.example td {
+    text-transform: none;
+    border: 0 none;
+}
 </style>
 
 <div class="intro">
-    <p>The `Y.Plugin.DataTableSort` plugin adds column sorting functionality to a basic DataTable.</p>
+    <p>The `datatable-sort` module adds column sorting functionality to a basic DataTable.</p>
 </div>
 
 <div class="example yui3-skin-sam">
@@ -18,7 +28,9 @@
 
 <h2>Implementing Sortable Columns</h2>
 
-<p>To add column sorting functionality to any DataTable, simply call `.plug(Y.Plugin.DataTableSort)`. The `DataTableSort` plugin is available in the`datatable-sort` submodule. To enable sorting, you must define `sortable:true` in each column definition.</p>
+<p>To add column sorting functionality to any DataTable, simply include the `datatable-sort` module in your `use()` line and add the `sortable: true` configuration to the configuration objects of the columns you want to be sortable.</p>
+
+<p>Note, if you want all columns to be sortable, simply set `sortable: true` on the DataTable instance.</p>
 
 ```
 YUI().use("datatable-sort", function(Y) {
@@ -32,17 +44,16 @@ YUI().use("datatable-sort", function(Y) {
         {Company:"Acme Company", Phone:"650-555-4444", Contact:"John Jones"},
         {Company:"Industrial Industries", Phone:"408-555-5678", Contact:"Robin Smith"}
     ],
-    table = new Y.DataTable.Base({
-        columnset: cols,
-        recordset: data,
+    table = new Y.DataTable({
+        columns: cols,
+        data   : data,
         summary: "Contacts list",
         caption: "Table with simple column sorting"
-    }).plug(Y.Plugin.DataTableSort)
-      .render("#sort");
+    }).render("#sort");
 });
 ```
 
-<h6>Pre-sorted Data</h6>
+<!--h6>Pre-sorted Data</h6>
 
 <p>Often data is already sorted when it loads, and we want the data to reverse-sort the first time the user clicks on the column. In that case, define the `lastSortedBy` value in the DataTableSort plugin to indicate the field that is already sorted and whether it is sorted in "asc" or "desc" order.</p>
 
@@ -58,7 +69,7 @@ YUI().use("datatable-sort", function(Y) {
         {Company:"Company Bee", Phone:"650-555-4444", Contact:"Sally Spencer"},
         {Company:"Industrial Industries", Phone:"408-555-5678", Contact:"Robin Smith"}
     ],
-    table = new Y.DataTable.Base({
+    table = new Y.DataTable({
         columnset: cols,
         recordset: presortedData,
         summary: "Contacts list",
@@ -100,7 +111,7 @@ YUI().use("datatable-sort", function(Y) {
         {Company:"Acme Company", Phone:"650-555-4444", Contact:"John Jones"},
         {Company:"Industrial Industries", Phone:"408-555-5678", Contact:"Robin Smith"}
     ],
-    table = new Y.DataTable.Base({
+    table = new Y.DataTable({
         columnset: cols,
         recordset: data,
         summary: "Contacts list",
@@ -112,3 +123,4 @@ YUI().use("datatable-sort", function(Y) {
       .render("#dblclick");
 });
 ```
+-->

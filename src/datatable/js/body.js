@@ -44,6 +44,8 @@ Column `formatter`s are passed an object (`o`) with the following properties:
   * `className` - Initially empty string to allow `formatter`s to add CSS 
     classes to the cell's `<td>`.
   * `rowindex` - The zero-based row number.
+  * `rowClass` - Initially empty string to allow `formatter`s to add CSS
+    classes to the cell's containing row `<tr>`.
 
 They may return a value or update `o.value` to assign specific HTML content.  A
 returned value has higher precedence.
@@ -127,10 +129,10 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
     @property ROW_TEMPLATE
     @type {HTML}
-    @default '<tr id="{clientId}" class="{rowClasses}">{content}</tr>'
+    @default '<tr id="{clientId}" class="{rowClass}">{content}</tr>'
     **/
     ROW_TEMPLATE :
-        '<tr role="row" id="{rowId}" class="{rowClasses}">' +
+        '<tr role="row" id="{rowId}" class="{rowClass}">' +
             '{content}' +
         '</tr>',
 
@@ -256,6 +258,8 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
       * `className` - Initially empty string to allow `formatter`s to add CSS 
         classes to the cell's `<td>`.
       * `rowindex` - The zero-based row number.
+      * `rowClass` - Initially empty string to allow `formatter`s to add CSS
+        classes to the cell's containing row `<tr>`.
 
     They may return a value or update `o.value` to assign specific HTML
     content.  A returned value has higher precedence.
@@ -470,7 +474,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     supplemented by other template values to the instance's `_rowTemplate` (see
     `_createRowTemplate`).  The generated string is then returned.
 
-    The data from Model's attributes is fetched by `getAttrs` and this data
+    The data from Model's attributes is fetched by `toJSON` and this data
     object is appended with other properties to supply values to {placeholders}
     in the template.  For a template generated from a Model with 'foo' and 'bar'
     attributes, the data object would end up with the following properties
@@ -478,15 +482,16 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
       * `clientID` - From Model, used the assign the `<tr>`'s 'id' attribute.
       * `foo` - The value to populate the 'foo' column cell content.  This
-        value will be the result of the column's `formatter` if assigned, and
-        will default from '' or `undefined` to the value of the column's
-        `emptyCellValue` if assigned.
+        value will be the value stored in the Model's `foo` attribute, or the
+        result of the column's `formatter` if assigned.  If the value is '' or
+        `undefined`, and the column's `emptyCellValue` is assigned, that value
+        will be used.
       * `bar` - Same for the 'bar' column cell content.
       * `foo-className` - String of CSS classes to apply to the `<td>`.
       * `bar-className` - Same.
-      * `rowClasses`  - String of CSS classes to apply to the `<tr>`. This will
-        default to the odd/even class per the specified index, but can be
-        accessed and ammended by any column formatter via `o.data.rowClasses`.
+      * `rowClass`      - String of CSS classes to apply to the `<tr>`. This
+        will be the odd/even class per the specified index plus any additional
+        classes assigned by column formatters (via `o.rowClass`).
 
     Because this object is available to formatters, any additional properties
     can be added to fill in custom {placeholders} in the `_rowTemplate`.
@@ -500,8 +505,8 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     _createRowHTML: function (model, index) {
         var data    = model.toJSON(),
             values  = {
-                rowId: model.get('clientId'),
-                rowClasses: (index % 2) ? this.CLASS_ODD : this.CLASS_EVEN
+                rowId   : model.get('clientId'),
+                rowClass: (index % 2) ? this.CLASS_ODD : this.CLASS_EVEN
             },
             source  = this.source || this,
             columns = this.columns,
@@ -521,12 +526,15 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                     column   : col,
                     record   : model,
                     className: '',
+                    rowClass : '',
                     rowindex : index
                 };
 
                 if (typeof col.formatter === 'string') {
-                    // TODO: look for known formatters by string name
-                    value = fromTemplate(col.formatter, formatterData);
+                    if (value !== undefined) {
+                        // TODO: look for known formatters by string name
+                        value = fromTemplate(col.formatter, formatterData);
+                    }
                 } else {
                     // Formatters can either return a value
                     value = col.formatter.call(source, formatterData);
@@ -537,6 +545,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                     }
 
                     values[token + '-className'] = formatterData.className;
+                    values.rowClass += ' ' + formatterData.rowClass;
                 }
             }
 
@@ -545,6 +554,8 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             }
 
             values[token] = col.allowHTML ? value : htmlEscape(value);
+
+            values.rowClass = values.rowClass.replace(/\s+/g, ' ');
         }
 
         return fromTemplate(this._rowTemplate, values);
@@ -573,7 +584,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
             tokenValues = {
                 content  : '{' + token + '}',
-                headers  : col.headers.join(' '),
+                headers  : (col._headers || []).join(' '),
                 className: this.getClassName('col', token) + ' ' +
                            (col.className || '') + ' ' +
                            this.getClassName('cell') +
@@ -582,7 +593,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
             if (col.nodeFormatter) {
                 // Defer all node decoration to the formatter
-                tokenValues.content   = '';
+                tokenValues.content = '';
             }
 
             html += fromTemplate(cellTemplate, tokenValues);

@@ -3350,8 +3350,14 @@ YUI.Env.parseUA = function(subUA) {
 
         if ((/windows|win32/i).test(ua)) {
             o.os = 'windows';
-        } else if ((/macintosh/i).test(ua)) {
+        } else if ((/macintosh|mac_powerpc/i).test(ua)) {
             o.os = 'macintosh';
+        } else if ((/android/i).test(ua)) {
+            o.os = 'android';
+        } else if ((/symbos/i).test(ua)) {
+            o.os = 'symbos';
+        } else if ((/linux/i).test(ua)) {
+            o.os = 'linux';
         } else if ((/rhino/i).test(ua)) {
             o.os = 'rhino';
         }
@@ -3360,6 +3366,12 @@ YUI.Env.parseUA = function(subUA) {
         if ((/KHTML/).test(ua)) {
             o.webkit = 1;
         }
+        if ((/IEMobile|XBLWP7/).test(ua)) {
+            o.mobile = 'windows';
+        }
+        if ((/Fennec/).test(ua)) {
+            o.mobile = 'gecko';
+        }
         // Modern WebKit browsers are at least X-Grade
         m = ua.match(/AppleWebKit\/([^\s]*)/);
         if (m && m[1]) {
@@ -3367,7 +3379,7 @@ YUI.Env.parseUA = function(subUA) {
             o.safari = o.webkit;
 
             // Mobile browser check
-            if (/ Mobile\//.test(ua)) {
+            if (/ Mobile\//.test(ua) || (/iPad|iPod|iPhone/).test(ua)) {
                 o.mobile = 'Apple'; // iPhone or iPod Touch
 
                 m = ua.match(/OS ([^\s]*)/);
@@ -3375,6 +3387,7 @@ YUI.Env.parseUA = function(subUA) {
                     m = numberify(m[1].replace('_', '.'));
                 }
                 o.ios = m;
+                o.os = 'ios';
                 o.ipad = o.ipod = o.iphone = 0;
 
                 m = ua.match(/iPad|iPod|iPhone/);
@@ -3433,14 +3446,23 @@ YUI.Env.parseUA = function(subUA) {
 
         if (!o.webkit) { // not webkit
 // @todo check Opera/8.01 (J2ME/MIDP; Opera Mini/2.0.4509/1316; fi; U; ssr)
-            m = ua.match(/Opera[\s\/]([^\s]*)/);
-            if (m && m[1]) {
-                o.opera = numberify(m[1]);
+            if (/Opera/.test(ua)) {
+                m = ua.match(/Opera[\s\/]([^\s]*)/);
+                if (m && m[1]) {
+                    o.opera = numberify(m[1]);
+                }
                 m = ua.match(/Version\/([^\s]*)/);
                 if (m && m[1]) {
                     o.opera = numberify(m[1]); // opera 10+
                 }
 
+                if (/Opera Mobi/.test(ua)) {
+                    o.mobile = 'opera';
+                    m = ua.replace('Opera Mobi', '').match(/Opera ([^\s]*)/);
+                    if (m && m[1]) {
+                        o.opera = numberify(m[1]);
+                    }
+                }
                 m = ua.match(/Opera Mini[^;]*/);
 
                 if (m) {
@@ -4062,6 +4084,12 @@ Y.Get = Get = {
             urls = [urls];
         }
 
+        options = Y.merge(this.options, options);
+
+        // Clone the attributes object so we don't end up modifying it by ref.
+        options.attributes = Y.merge(this.options.attributes,
+                options.attributes);
+
         for (i = 0, len = urls.length; i < len; ++i) {
             url = urls[i];
             req = {attributes: {}};
@@ -4082,7 +4110,6 @@ Y.Get = Get = {
             }
 
             Y.mix(req, options, false, null, 0, true);
-            Y.mix(req, this.options, false, null, 0, true);
 
             // If we didn't get an explicit type for this URL either in the
             // request options or the URL-specific options, try to determine
@@ -7485,6 +7512,7 @@ Y.Loader.prototype = {
         if (modules.css.length) { //Load CSS first
             Y.Get.css(modules.css, {
                 data: modules.cssMods,
+                attributes: self.cssAttributes,
                 insertBefore: self.insertBefore,
                 charset: self.charset,
                 timeout: self.timeout,
@@ -7509,9 +7537,10 @@ Y.Loader.prototype = {
         }
 
         if (modules.js.length) {
-            Y.Get.script(modules.js, {
+            Y.Get.js(modules.js, {
                 data: modules.jsMods,
                 insertBefore: self.insertBefore,
+                attributes: self.jsAttributes,
                 charset: self.charset,
                 timeout: self.timeout,
                 autopurge: false,
@@ -7590,11 +7619,11 @@ Y.Loader.prototype = {
      * @return {string} the filtered string.
      * @private
      */
-    _filter: function(u, name) {
+    _filter: function(u, name, group) {
         var f = this.filter,
             hasFilter = name && (name in this.filters),
             modFilter = hasFilter && this.filters[name],
-	        groupName = this.moduleInfo[name] ? this.moduleInfo[name].group : null;
+	        groupName = group || (this.moduleInfo[name] ? this.moduleInfo[name].group : null);
 
 	    if (groupName && this.groups[groupName] && this.groups[groupName].filter) {		
 	 	    modFilter = this.groups[groupName].filter;
@@ -7669,7 +7698,12 @@ Y.Loader.prototype = {
                 url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :
                       self._url(m.path, s[i], group.base || m.base);
                 
-
+                if (m.attributes) {
+                    url = {
+                        url: url,
+                        attributes: m.attributes
+                    };
+                }
                 resolved[m.type].push(url);
                 resolved[m.type + 'Mods'].push(m);
             } else {
@@ -7677,181 +7711,134 @@ Y.Loader.prototype = {
             
         };
 
-        //if (self.combine) {
+        len = s.length;
 
-            len = s.length;
+        // the default combo base
+        comboBase = self.comboBase;
 
-            // the default combo base
-            comboBase = self.comboBase;
+        url = comboBase;
 
-            url = comboBase;
+        comboSources = {};
 
-            comboSources = {};
+        for (i = 0; i < len; i++) {
+            comboSource = comboBase;
+            m = self.getModule(s[i]);
+            groupName = m && m.group;
+            group = self.groups[groupName];
+            if (groupName && group) {
 
-            for (i = 0; i < len; i++) {
-                comboSource = comboBase;
-                m = self.getModule(s[i]);
-                groupName = m && m.group;
-                group = self.groups[groupName];
-                if (groupName && group) {
-
-                    if (!group.combine) {
-                        //This is not a combo module, skip it and load it singly later.
-                        //singles.push(s[i]);
-                        addSingle(m);
-                        continue;
-                    }
-                    m.combine = true;
-                    if (group.comboBase) {
-                        comboSource = group.comboBase;
-                    }
-
-                    if ("root" in group && L.isValue(group.root)) {
-                        m.root = group.root;
-                    }
-                    m.comboSep = group.comboSep || self.comboSep;
-                    m.maxURLLength = group.maxURLLength || self.maxURLLength;
-                } else {
-                    if (!self.combine) {
-                        //This is not a combo module, skip it and load it singly later.
-                        //singles.push(s[i]);
-                        addSingle(m);
-                        continue;
-                    }
-                }
-
-                comboSources[comboSource] = comboSources[comboSource] || [];
-                comboSources[comboSource].push(m);
-            }
-
-            for (j in comboSources) {
-                if (comboSources.hasOwnProperty(j)) {
-                    resCombos[j] = resCombos[j] || { js: [], jsMods: [], css: [], cssMods: [] };
-                    url = j;
-                    mods = comboSources[j];
-                    len = mods.length;
-                    
-                    if (len) {
-                        for (i = 0; i < len; i++) {
-                            if (inserted[mods[i]]) {
-                                continue;
-                            }
-                            m = mods[i];
-                            // Do not try to combine non-yui JS unless combo def
-                            // is found
-                            if (m && (m.combine || !m.ext)) {
-                                resCombos[j].comboSep = m.comboSep;
-                                resCombos[j].maxURLLength = m.maxURLLength;
-                                frag = ((L.isValue(m.root)) ? m.root : self.root) + (m.path || m.fullpath);
-                                frag = self._filter(frag, m.name);
-                                resCombos[j][m.type].push(frag);
-                                resCombos[j][m.type + 'Mods'].push(m);
-                            } else {
-                                //Add them to the next process..
-                                if (mods[i]) {
-                                    //singles.push(mods[i].name);
-                                    addSingle(mods[i]);
-                                }
-                            }
-
-                        }
-                    }
-                }
-            }
-
-
-            for (j in resCombos) {
-                base = j;
-                comboSep = resCombos[base].comboSep || self.comboSep;
-                maxURLLength = resCombos[base].maxURLLength || self.maxURLLength;
-                for (type in resCombos[base]) {
-                    if (type === JS || type === CSS) {
-                        urls = resCombos[base][type];
-                        mods = resCombos[base][type + 'Mods'];
-                        len = urls.length;
-                        tmpBase = base + urls.join(comboSep);
-                        baseLen = tmpBase.length;
-                        if (maxURLLength <= base.length) {
-                            maxURLLength = MAX_URL_LENGTH;
-                        }
-                        
-                        if (len) {
-                            if (baseLen > maxURLLength) {
-                                u = [];
-                                for (s = 0; s < len; s++) {
-                                    u.push(urls[s]);
-                                    tmpBase = base + u.join(comboSep);
-
-                                    if (tmpBase.length > maxURLLength) {
-                                        m = u.pop();
-                                        tmpBase = base + u.join(comboSep)
-                                        resolved[type].push(tmpBase);
-                                        u = [];
-                                        if (m) {
-                                            u.push(m);
-                                        }
-                                    }
-                                }
-                                if (u.length) {
-                                    tmpBase = base + u.join(comboSep)
-                                    resolved[type].push(tmpBase);
-                                }
-                            } else {
-                                resolved[type].push(tmpBase);
-                            }
-                        }
-                        resolved[type + 'Mods'] = resolved[type + 'Mods'].concat(mods);
-                    }
-                }
-            }
-
-            resCombos = null;
-            
-        //}
-
-        
-        /*
-        if (!self.combine || singles.length) {
-
-            s = singles.length ? singles : self.sorted;
-            len = s.length;
-
-            for (i = 0; i < len; i = i + 1) {
-                if (inserted[s[i]]) {
+                if (!group.combine || m.fullpath) {
+                    //This is not a combo module, skip it and load it singly later.
+                    //singles.push(s[i]);
+                    addSingle(m);
                     continue;
                 }
-                m = self.getModule(s[i]);
-
-                if (!m) {
-                    if (!self.skipped[s[i]]) {
-                        msg = 'Undefined module ' + s[i] + ' skipped';
-                    }
-                    continue;
-
+                m.combine = true;
+                if (group.comboBase) {
+                    comboSource = group.comboBase;
                 }
 
-                group = (m.group && self.groups[m.group]) || NOT_FOUND;
-
-                url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :
-                      self._url(m.path, s[i], group.base || m.base);
-                
-                /*
-                * This is so top level (non-comboed) YUI modules are at the top of the list.
-                * All other modules come below, this should only happen when `self.combine`
-                * is false.
-                * /
+                if ("root" in group && L.isValue(group.root)) {
+                    m.root = group.root;
+                }
+                m.comboSep = group.comboSep || self.comboSep;
+                m.maxURLLength = group.maxURLLength || self.maxURLLength;
+            } else {
                 if (!self.combine) {
-                    resolved[m.type].unshift(url);
-                } else {
-                    resolved[m.type].push(url);
+                    //This is not a combo module, skip it and load it singly later.
+                    //singles.push(s[i]);
+                    addSingle(m);
+                    continue;
                 }
+            }
 
+            comboSources[comboSource] = comboSources[comboSource] || [];
+            comboSources[comboSource].push(m);
+        }
 
-                resolved[m.type + 'Mods'].push(m);
+        for (j in comboSources) {
+            if (comboSources.hasOwnProperty(j)) {
+                resCombos[j] = resCombos[j] || { js: [], jsMods: [], css: [], cssMods: [] };
+                url = j;
+                mods = comboSources[j];
+                len = mods.length;
+                
+                if (len) {
+                    for (i = 0; i < len; i++) {
+                        if (inserted[mods[i]]) {
+                            continue;
+                        }
+                        m = mods[i];
+                        // Do not try to combine non-yui JS unless combo def
+                        // is found
+                        if (m && (m.combine || !m.ext)) {
+                            resCombos[j].comboSep = m.comboSep;
+                            resCombos[j].group = m.group;
+                            resCombos[j].maxURLLength = m.maxURLLength;
+                            frag = ((L.isValue(m.root)) ? m.root : self.root) + (m.path || m.fullpath);
+                            frag = self._filter(frag, m.name);
+                            resCombos[j][m.type].push(frag);
+                            resCombos[j][m.type + 'Mods'].push(m);
+                        } else {
+                            //Add them to the next process..
+                            if (mods[i]) {
+                                //singles.push(mods[i].name);
+                                addSingle(mods[i]);
+                            }
+                        }
+
+                    }
+                }
             }
         }
-        */
 
+
+        for (j in resCombos) {
+            base = j;
+            comboSep = resCombos[base].comboSep || self.comboSep;
+            maxURLLength = resCombos[base].maxURLLength || self.maxURLLength;
+            for (type in resCombos[base]) {
+                if (type === JS || type === CSS) {
+                    urls = resCombos[base][type];
+                    mods = resCombos[base][type + 'Mods'];
+                    len = urls.length;
+                    tmpBase = base + urls.join(comboSep);
+                    baseLen = tmpBase.length;
+                    if (maxURLLength <= base.length) {
+                        maxURLLength = MAX_URL_LENGTH;
+                    }
+                    
+                    if (len) {
+                        if (baseLen > maxURLLength) {
+                            u = [];
+                            for (s = 0; s < len; s++) {
+                                u.push(urls[s]);
+                                tmpBase = base + u.join(comboSep);
+
+                                if (tmpBase.length > maxURLLength) {
+                                    m = u.pop();
+                                    tmpBase = base + u.join(comboSep)
+                                    resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
+                                    u = [];
+                                    if (m) {
+                                        u.push(m);
+                                    }
+                                }
+                            }
+                            if (u.length) {
+                                tmpBase = base + u.join(comboSep);
+                                resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
+                            }
+                        } else {
+                            resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
+                        }
+                    }
+                    resolved[type + 'Mods'] = resolved[type + 'Mods'].concat(mods);
+                }
+            }
+        }
+
+        resCombos = null;
 
         return resolved;
     }
