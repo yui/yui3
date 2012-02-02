@@ -105,7 +105,7 @@ Y.mix(Y.Node.prototype, {
 
     /**
     * @method clearData
-    * @description Clears stored data.
+    * @description Clears internally stored data.
     * @param {string} name The name of the field to clear. If no name
     * is given, all data is cleared.
     * @chainable
@@ -135,7 +135,7 @@ Y.mix(Y.NodeList.prototype, {
     * or an object hash of all fields.
     */
     getData: function(name) {
-        var args = (name) ? [name] : [];
+        var args = (arguments.length) ? [name] : [];
         return this._invoke('getData', args, true);
     },
 
@@ -161,6 +161,7 @@ Y.mix(Y.NodeList.prototype, {
     * @chainable
     */
     clearData: function(name) {
+        var args = (arguments.length) ? [name] : [];
         return this._invoke('clearData', [name]);
     }
 });

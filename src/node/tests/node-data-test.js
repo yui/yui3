@@ -154,6 +154,70 @@ YUI.add('node-data-test', function(Y) {
             Y.Assert.areEqual('baz', nodes.item(1).getData('baz'));
         },
 
+        'should clear field data': function() {
+            var node = Y.Node.create('<div/>'); 
+            node.setData('foo', 'foo');
+            node.clearData('foo');
+            Y.Assert.isUndefined(node.getData('foo'));
+        },
+
+        'should clear number field data': function() {
+            var node = Y.Node.create('<div/>'); 
+            node.setData(1, 'foo');
+            node.clearData(1);
+            Y.Assert.isUndefined(node.getData(1));
+        },
+
+        'should clear number zero field data': function() {
+            var node = Y.Node.create('<div/>'); 
+            node.setData(0, 'foo');
+            node.clearData(0);
+            Y.Assert.isUndefined(node.getData(1));
+        },
+
+        'should clear data for given field from all nodes': function() {
+            var nodes = Y.Node.create(
+                    '<div><em></em><span></span></div>'
+                ).get('children');
+
+            nodes.setData({
+                foo: 'foo',
+                bar: 'bar',
+            });
+
+            nodes.clearData('foo');
+            Y.Assert.isUndefined(nodes.item(0).getData('foo'));
+            Y.Assert.areEqual('bar', nodes.item(0).getData('bar'));
+            Y.Assert.isUndefined(nodes.item(1).getData('foo'));
+            Y.Assert.areEqual('bar', nodes.item(1).getData('bar'));
+        },
+
+        'should clear field data from all nodes and revert to HTML attributes': function() {
+            var nodes = Y.Node.create(
+                    '<div><em data-foo="foo" data-bar="bar" data-baz="baz"></em>' +
+                    '<span data-foo="foo" data-bar="bar" data-baz="baz"></span></div>'
+                ).get('children');
+
+            nodes.setData({
+                foo: 'foo2',
+                bar: 'bar2',
+            });
+
+            nodes.clearData();
+            Y.Assert.areEqual('foo', nodes.item(0).getData('foo'));
+            Y.Assert.areEqual('bar', nodes.item(0).getData('bar'));
+            Y.Assert.areEqual('foo', nodes.item(1).getData('foo'));
+            Y.Assert.areEqual('bar', nodes.item(1).getData('bar'));
+        },
+
+        'should clear all data': function() {
+            var node = Y.Node.create('<div/>'); 
+            node.setData('foo', 'foo');
+            node.setData('bar', 'bar');
+            node.clearData();
+            Y.Assert.isUndefined(node.getData('foo'));
+            Y.Assert.isUndefined(node.getData('bar'));
+        }
     }));
 
 }, '@VERSION@' ,{requires:['node-base', 'test-console']});
