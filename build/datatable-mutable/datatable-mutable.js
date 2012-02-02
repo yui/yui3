@@ -42,7 +42,10 @@ those methods to trigger per-operation sync.
 @default `false`
 **/
 Mutable.ATTRS = {
-    autoSync: {}
+    autoSync: {
+        value: false,
+        validator: YLang.isBoolean
+    }
 };
 
 Y.mix(Mutable.prototype, {
@@ -198,7 +201,7 @@ Y.mix(Mutable.prototype, {
 
     @method addRow
     @param {Object} data The data or Model instance for the new record
-    @param {Object} [config]* Configuration to pass along
+    @param {Object} [config] Configuration to pass along
     @param {Function} [callback] Callback function for Model's `save()`
       @param {Error|null} callback.err If an error occurred or validation
         failed, this parameter will contain the error. If the sync operation
@@ -210,10 +213,11 @@ Y.mix(Mutable.prototype, {
     @chainable
     **/
     addRow: function (data, config) {
+        // Allow autoSync: true + addRow({ data }, { sync: false })
         var sync = (config && ('sync' in config)) ?
                 config.sync :
                 this.get('autoSync'),
-            models, i, len, args;
+            models, model, i, len, args;
 
         if (this.data) {
             models = this.data.add.apply(this.data, arguments);
@@ -223,7 +227,11 @@ Y.mix(Mutable.prototype, {
                 args   = toArray(arguments, 1, true);
 
                 for (i = 0, len = models.length; i < len; ++i) {
-                    models[i].save.apply(models[i], args);
+                    model = models[i];
+
+                    if (model.isNew()) {
+                        models[i].save.apply(models[i], args);
+                    }
                 }
             }
         }
@@ -251,7 +259,7 @@ Y.mix(Mutable.prototype, {
 
     @method removeRow
     @param {Object|String|Number} id The Model instance or identifier 
-    @param {Object} [config]* Configuration to pass along
+    @param {Object} [config] Configuration to pass along
     @param {Function} [callback] Callback function for Model's `save()`
       @param {Error|null} callback.err If an error occurred or validation
         failed, this parameter will contain the error. If the sync operation
@@ -264,6 +272,7 @@ Y.mix(Mutable.prototype, {
     **/
     removeRow: function (id, config) {
         var modelList = this.data,
+            // Allow autoSync: true + addRow({ data }, { sync: false })
             sync      = (config && ('sync' in config)) ?
                             config.sync :
                             this.get('autoSync'),
@@ -323,7 +332,7 @@ Y.mix(Mutable.prototype, {
     @method modifyRow
     @param {Object|String|Number} id The Model instance or identifier 
     @param {Object} data New data values for the Model
-    @param {Object} [config]* Configuration to pass along to `setAttrs()`
+    @param {Object} [config] Configuration to pass along to `setAttrs()`
     @param {Function} [callback] Callback function for Model's `save()`
       @param {Error|null} callback.err If an error occurred or validation
         failed, this parameter will contain the error. If the sync operation
@@ -336,6 +345,7 @@ Y.mix(Mutable.prototype, {
     **/
     modifyRow: function (id, data, config) {
         var modelList = this.data,
+            // Allow autoSync: true + addRow({ data }, { sync: false })
             sync      = (config && ('sync' in config)) ?
                             config.sync :
                             this.get('autoSync'),
@@ -354,7 +364,7 @@ Y.mix(Mutable.prototype, {
 
             model.setAttrs.apply(model, args);
 
-            if (sync) {
+            if (sync && !model.isNew()) {
                 model.save.apply(model, args);
             }
         }
@@ -524,7 +534,7 @@ as a callback to each Model's `save()` method.
 
 @method addRows
 @param {Object[]} data The data or Model instances to add
-@param {Object} [config]* Configuration to pass along
+@param {Object} [config] Configuration to pass along
 @param {Function} [callback] Callback function for each Model's `save()`
   @param {Error|null} callback.err If an error occurred or validation
     failed, this parameter will contain the error. If the sync operation
