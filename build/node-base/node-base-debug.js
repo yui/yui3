@@ -918,6 +918,12 @@ if (Y.config.doc.createElement('form').elements.nodeType) {
  */
 
 Y.mix(Y.Node.prototype, {
+    _initData: function() {
+        if (! ('_data' in this)) {
+            this._data = {};
+        }
+    },
+
     /**
     * @method getData
     * @description Retrieves arbitrary data stored on a Node instance.
@@ -930,17 +936,19 @@ Y.mix(Y.Node.prototype, {
     * or an object hash of all fields.
     */
     getData: function(name) {
-        var ret;
-        this._data = this._data || {};
-        if (arguments.length) {
-            if (name in this._data) {
-                ret = this._data[name];
+        this._initData();
+        var data = this._data,
+            ret = data;
+
+        if (arguments.length) { // single field
+            if (name in data) {
+                ret = data[name];
             } else { // initialize from HTML attribute
                 ret = this._getDataAttribute(name);
             }
-        } else { // get all data
+        } else if (typeof data == 'object' && data !== null) { // all fields
             ret = {};
-            Y.Object.each(this._data, function(v, n) {
+            Y.Object.each(data, function(v, n) {
                 ret[n] = v;
             });
 
@@ -996,7 +1004,7 @@ Y.mix(Y.Node.prototype, {
     * @chainable
     */
     setData: function(name, val) {
-        this._data = this._data || {};
+        this._initData();
         if (arguments.length > 1) {
             this._data[name] = val;
         } else {
@@ -1015,7 +1023,7 @@ Y.mix(Y.Node.prototype, {
     */
     clearData: function(name) {
         if ('_data' in this) {
-            if (name) {
+            if (typeof name != 'undefined') {
                 delete this._data[name];
             } else {
                 delete this._data;
@@ -1023,6 +1031,48 @@ Y.mix(Y.Node.prototype, {
         }
 
         return this;
+    }
+});
+
+Y.mix(Y.NodeList.prototype, {
+    /**
+    * @method getData
+    * @description Retrieves arbitrary data stored on each Node instance
+    * bound to the NodeList.
+    * @see Node
+    * @param {string} name Optional name of the data field to retrieve.
+    * If no name is given, all data is returned.
+    * @return {Array} An array containing all of the data for each Node instance. 
+    * or an object hash of all fields.
+    */
+    getData: function(name) {
+        var args = (name) ? [name] : [];
+        return this._invoke('getData', args, true);
+    },
+
+    /**
+    * @method setData
+    * @description Stores arbitrary data on each Node instance bound to the
+    *  NodeList. This is not stored with the DOM node.
+    * @param {string} name The name of the field to set. If no name
+    * is given, name is treated as the data and overrides any existing data.
+    * @param {any} val The value to be assigned to the field.
+    * @chainable
+    */
+    setData: function(name, val) {
+        var args = (arguments.length > 1) ? [name, val] : [name];
+        return this._invoke('setData', args);
+    },
+
+    /**
+    * @method clearData
+    * @description Clears data on all Node instances bound to the NodeList.
+    * @param {string} name The name of the field to clear. If no name
+    * is given, all data is cleared.
+    * @chainable
+    */
+    clearData: function(name) {
+        return this._invoke('clearData', [name]);
     }
 });
 
