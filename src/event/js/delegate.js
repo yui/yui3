@@ -46,7 +46,8 @@ var toArray          = Y.Array,
  * @param args* 0..n additional arguments to pass on to the callback function.
  *              These arguments will be added after the event object.
  * @return {EventHandle} the detach handle
- * @for YUI
+ * @static
+ * @for Event
  */
 function delegate(type, fn, el, filter) {
     var args     = toArray(arguments, 0, true),
