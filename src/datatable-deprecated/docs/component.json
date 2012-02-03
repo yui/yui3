@@ -1,0 +1,83 @@
+{
+    "name": "datatable",
+    "displayName": "DataTable",
+    "description": "The DataTable widget displays screen-reader accessible tabular data on a web page. Plugins add functionality such as sorting and scrolling.",
+
+    "author": ["jenny","lsmith"],
+
+    "use": ["datatable"],
+    "tags": ["beta", "widget", "datatable"],
+
+    "examples": [
+
+        {
+            "name": "datatable-basic",
+            "displayName": "Basic DataTable",
+            "modules": ["datatable"],
+            "description": "This example illustrates simple DataTable use cases.",
+	        "useModules": ["datatable-base"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "datatable-dsget",
+            "displayName": "DataTable + DataSource.Get + JSON Data",
+            "modules": ["datatable"],
+            "description": "DataTable loaded with JSON data from a remote webservice via DataSource.Get",
+	        "useModules": ["datasource-get", "datasource-jsonschema","datatable-base","datatable-datasource"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "datatable-dsio",
+            "displayName": "DataTable + DataSource.IO + XML Data",
+            "modules": ["datatable"],
+            "description": "DataTable loaded with XML data from a remote webservice via DataSource.IO.",
+	        "useModules": ["datasource-io", "datasource-xmlschema","datatable-base","datatable-datasource"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "datatable-formatting",
+            "displayName": "Formatting Row Data for Display",
+            "modules": ["datatable"],
+            "description": "Custom format data for display.",
+	        "useModules": ["datatype-date", "datatable-base"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "datatable-nestedcols",
+            "displayName": "Nested Column Headers",
+            "modules": ["datatable"],
+            "description": "DataTable with nested column headers.",
+	        "useModules": ["datatable-base"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "datatable-sort",
+            "displayName": "Column Sorting",
+            "modules": ["datatable"],
+            "description": "DataTable with column sorting.",
+	        "useModules": ["datatable-sort"],
+
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "datatable-scroll",
+            "displayName": "Scrolling DataTable",
+            "modules": ["datatable"],
+            "description": "DataTable with vertical and/or horizontal scrolling rows.",
+	        "useModules": ["datatable-scroll"],
+
+            "hideTableOfContents": true
+        }
+    ]
+}

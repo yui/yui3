@@ -1,0 +1,91 @@
+<style scoped>
+/* custom styles for this example */
+.dt-example {margin:1em;}
+
+/* css to counter global site css */
+.dt-example th {text-transform:none;}
+.dt-example table {width:auto;}
+.dt-example caption {display:table-caption;}
+</style>
+
+<div class="intro">
+    <p>This example shows how to populate a DataTable with data from the Yahoo! Local webservice retrieved via a YQL query. First we create a DataSource.Get instance pointing to YQL, then using the DataTableDataSource plugin we can load data for pizza places near our office.</p>
+
+    <p>In this example, we render the DataTable first, then load data into it in a separate call.</p>
+</div>
+
+<div class="example yui3-skin-sam">
+    {{>datatable-dsget-source}}
+</div>
+
+<h2>Populating Your DataTable with Remote Data Using DataSource.Get</h2>
+
+<p>Your table can be easily popluated with remote JSON data from a JSONP webservice by creating a DataSource instance and using the DataTableDataSource plugin to load the data into a DataTable.</p>
+
+<p>Start with the `use()` statement:</p>
+
+```
+YUI().use("datasource-get", "datasource-jsonschema", "datatable-datasource", function(Y) {
+});
+```
+
+<p>Next create a DataSource.Get instance pointing to YQL. The <a href="http://developer.yahoo.com/yql/console/">YQL Console</a> makes it easy to determine the REST URL we want to send. You also need to define the correct schema for the DataSourceJSONSchema plugin. This is a good time to call `sendRequest` to make sure the data returns as expected.</p>
+
+```
+var dataSource = new Y.DataSource.Get({
+    source: "http://query.yahooapis.com/v1/public/yql?"+
+        "q=select%20*%20from%20local.search%20where%20zip%3D%2794089%27%20"+
+        "and%20query%3D%27pizza%27&format=json&"+
+        "env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys"
+});
+
+dataSource.plug(Y.Plugin.DataSourceJSONSchema, {
+    schema: {
+        resultListLocator: "query.results.Result",
+        resultFields: ["Title", "Phone", "Rating.AverageRating"]
+    }
+});
+
+dataSource.sendRequest({
+    callback: {
+        success: function(e) {
+            Y.log(e);
+        }
+    }
+});
+```
+
+<p>Now that the DataSource is created properly, define the columns that you want your table to show. These columns map directly to the parameter names returned in the data.</p>
+
+```
+var cols = [
+    "Title",
+    "Phone",
+    { key: "Rating.AverageRating", label: "Rating" }
+];
+```
+
+<p>Now you are ready to create a DataTable using the columns you have defined. When you plug the instance with the DataTableDataSource plugin, point to your DataSource instance. After you render the table, load the data via the plugin.</p>
+
+```
+var table = new Y.DataTable.Base({
+    columnset: cols,
+    summary:"Pizza places near 98089",
+    caption:"Table with JSON data from YQL"
+});
+
+table.plug(Y.Plugin.DataTableDataSource, {
+    datasource: dataSource
+}).render("#pizza");
+
+table.datasource.load();
+```
+
+<p>One final change you can make is to split the URL between the DataSource `source` value and the `request` value sent to the DataTableDataSource plugin. Splitting the URL this way facilitates making future requests to the same DataSource.  You can see this in the <a href="#fullcode">Full Code Listing</a> below.</p>
+
+<h2 id="fullcode">Full Code Listing</h2>
+
+```
+    {{>datatable-dsget-source}}
+```
+

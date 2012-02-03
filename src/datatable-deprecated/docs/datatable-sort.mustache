@@ -1,0 +1,114 @@
+<style scoped>
+/* custom styles for this example */
+.dt-example {margin:1em;}
+
+/* css to counter global site css */
+.dt-example th {text-transform:none;}
+.dt-example table {width:auto;}
+.dt-example caption {display:table-caption;}
+</style>
+
+<div class="intro">
+    <p>The `Y.Plugin.DataTableSort` plugin adds column sorting functionality to a basic DataTable.</p>
+</div>
+
+<div class="example yui3-skin-sam">
+    {{>datatable-sort-source}}
+</div>
+
+<h2>Implementing Sortable Columns</h2>
+
+<p>To add column sorting functionality to any DataTable, simply call `.plug(Y.Plugin.DataTableSort)`. The `DataTableSort` plugin is available in the`datatable-sort` submodule. To enable sorting, you must define `sortable:true` in each column definition.</p>
+
+```
+YUI().use("datatable-sort", function(Y) {
+    var cols = [
+        {key:"Company", label:"Click to Sort Column A", sortable:true},
+        {key:"Phone", label:"Not Sortable Column B"},
+        {key:"Contact", label:"Click to Sort Column C", sortable:true}
+    ],
+    data = [
+        {Company:"Company Bee", Phone:"415-555-1234", Contact:"Sally Spencer"},
+        {Company:"Acme Company", Phone:"650-555-4444", Contact:"John Jones"},
+        {Company:"Industrial Industries", Phone:"408-555-5678", Contact:"Robin Smith"}
+    ],
+    table = new Y.DataTable.Base({
+        columnset: cols,
+        recordset: data,
+        summary: "Contacts list",
+        caption: "Table with simple column sorting"
+    }).plug(Y.Plugin.DataTableSort)
+      .render("#sort");
+});
+```
+
+<h6>Pre-sorted Data</h6>
+
+<p>Often data is already sorted when it loads, and we want the data to reverse-sort the first time the user clicks on the column. In that case, define the `lastSortedBy` value in the DataTableSort plugin to indicate the field that is already sorted and whether it is sorted in "asc" or "desc" order.</p>
+
+```
+YUI().use("datatable-sort", function(Y) {
+    var cols = [
+        {key:"Company", label:"Click to Sort Column A", sortable:true},
+        {key:"Phone", label:"Not Sortable Column B"},
+        {key:"Contact", label:"Click to Sort Column C", sortable:true}
+    ],
+    presortedData = [
+        {Company:"Acme Company", Phone:"415-555-1234", Contact:"John Jones"},
+        {Company:"Company Bee", Phone:"650-555-4444", Contact:"Sally Spencer"},
+        {Company:"Industrial Industries", Phone:"408-555-5678", Contact:"Robin Smith"}
+    ],
+    table = new Y.DataTable.Base({
+        columnset: cols,
+        recordset: presortedData,
+        summary: "Contacts list",
+        caption: "This table loads with presorted data"
+    }).plug(Y.Plugin.DataTableSort, {
+            lastSortedBy: {
+                key: "Company",
+                dir: "asc"
+            }
+        })
+      .render("#presorted");
+});
+```
+
+<h6>Configurable Trigger</h6>
+
+<p>By default, sorts will be triggered when the user clicks on the TH element
+of a sortable column, which fires a `theadCellClick` DataTable event. You can
+set this to be any other DataTable custom event by setting the `trigger`
+attribute in the DataTableSort plugin constructor. Note: Since the `trigger`
+attribute is `initOnly`, this value can only be set in the plugin constructor
+and not after the plugin has been instantiated.</p>
+
+<p>A related change worth making is to remove the link from the TH content,
+since the user will not be clicking to sort in this implementation. Simply set
+the `template` attribute to be the unadorned `"{value}"` string.</p>
+
+<p><strong>Note:</strong> touch devices don't support the `dblclick` event, so the last table won't be sortable for all users.  Be mindful of your audience when configuring triggers.</p>
+
+```
+YUI().use("datatable-sort", function(Y) {
+    var cols = [
+        {key:"Company", label:"Dblclick to Sort A", sortable:true},
+        {key:"Phone", label:"Not Sortable Column B"},
+        {key:"Contact", label:"Dblclick to Sort C", sortable:true}
+    ],
+    data = [
+        {Company:"Company Bee", Phone:"415-555-1234", Contact:"Sally Spencer"},
+        {Company:"Acme Company", Phone:"650-555-4444", Contact:"John Jones"},
+        {Company:"Industrial Industries", Phone:"408-555-5678", Contact:"Robin Smith"}
+    ],
+    table = new Y.DataTable.Base({
+        columnset: cols,
+        recordset: data,
+        summary: "Contacts list",
+        caption: "This table sorts on doubleclick"
+    }).plug(Y.Plugin.DataTableSort, {
+            trigger: "theadCellDblclick",
+            template: "{value}"
+        })
+      .render("#dblclick");
+});
+```

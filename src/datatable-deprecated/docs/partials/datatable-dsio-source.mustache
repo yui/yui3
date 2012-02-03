@@ -1,0 +1,48 @@
+<style scoped>
+/* custom styles for this example */
+.dt-example {margin:1em;}
+
+/* css to counter global site css */
+.dt-example th {text-transform:none;}
+.dt-example table {width:auto;}
+.dt-example caption {display:table-caption;}
+</style>
+
+<div id="chinese" class="dt-example"></div>
+
+<script type="text/javascript">
+YUI().use("datasource-io", "datasource-xmlschema","datatable-base","datatable-datasource", function (Y) {
+    var cols = ["Title", "Phone", "Rating"];
+    ds = new Y.DataSource.IO({
+        source:"../assets/datatable/ylocal.xml?"})
+        .plug(Y.Plugin.DataSourceXMLSchema, {
+            schema: {
+                resultListLocator: "Result",
+                resultFields: [
+                    {
+                        key:"Title",
+                        locator:"*[local-name() ='Title']"
+                    },
+                    {
+                        key:"Phone",
+                        locator:"*[local-name() ='Phone']"
+                    },
+                    {
+                        key:"Rating",
+                        locator:"*[local-name()='Rating']/*[local-name()='AverageRating']",
+                        // The data contains "NaN" for unrated restaurants
+                        parser: function (val) {
+                            return isNaN(val) ? '(none)' : val;
+                        }
+                    }
+                ]
+            }
+        }),
+    dt = new Y.DataTable.Base({columnset:cols, summary:"Chinese restaurants near 98089", caption:"Table with XML data from same-domain script"})
+        .plug(Y.Plugin.DataTableDataSource, {datasource:ds, initialRequest:"zip=94089&query=chinese"});
+
+    ds.after("response", function() {
+        dt.render("#chinese")}
+    );
+});
+</script>

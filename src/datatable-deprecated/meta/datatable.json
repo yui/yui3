@@ -1,0 +1,42 @@
+{
+    "datatable": {
+        "use": [
+            "datatable-base",
+            "datatable-datasource",
+            "datatable-sort",
+            "datatable-scroll"
+        ],
+        "submodules": {
+            "datatable-base": {
+                "requires": [
+                    "recordset-base",
+                    "widget",
+                    "substitute",
+                    "event-mouseenter"
+                ],
+                "skinnable": true
+            },
+            "datatable-datasource": {
+                "requires": [
+                    "datatable-base",
+                    "plugin",
+                    "datasource-local"
+                ]
+            },
+            "datatable-sort": {
+                "requires": [
+                    "datatable-base",
+                    "plugin",
+                    "recordset-sort"
+                ],
+                "lang": ["en"]
+            },
+			"datatable-scroll": {
+				"requires": [
+					"datatable-base",
+					"plugin"
+				]
+			}
+        }
+    }
+}
