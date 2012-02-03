@@ -1,12 +1,18 @@
 {
     "name": "datatable",
     "displayName": "DataTable",
-    "description": "The DataTable widget displays screen-reader accessible tabular data on a web page. Plugins add functionality such as sorting and scrolling.",
+    "description": "The DataTable widget displays screen-reader accessible tabular data on a web page. Class extensions add functionality such as sorting and scrolling.",
 
-    "author": ["jenny","lsmith"],
+    "author": ["lsmith"],
 
     "use": ["datatable"],
     "tags": ["beta", "widget", "datatable"],
+
+    "pages": {
+        "migration": {
+            "displayName": "3.5.0+ Migration Guide"
+        }
+    },
 
     "examples": [
 
