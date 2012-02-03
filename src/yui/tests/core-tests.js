@@ -41,7 +41,7 @@ YUI.add('core-tests', function(Y) {
         _should: {
             ignore: {
                 'getLocation() should return the location object': Y.UA.nodejs,
-                'getLocation() should return `undefined` when executing in node.js': !Y.UA.nodejs
+                'getLocation() should return `undefined` when executing in node.js': (!Y.UA.nodejs || (Y.UA.nodejs && Y.config.win)) //If there is a window object, ignore too
             }
         },
 

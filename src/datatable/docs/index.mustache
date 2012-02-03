@@ -101,7 +101,7 @@ YUI().use('datatable-base', function (Y) {
 <p>
     Some column configurations affect the table headers and others affect the
     data cells.  The full list of configurations is listed in <a
-    href="#column-config">Column Configurations list</a> below.
+    href="#column-config">Appendix A</a> below.
 </p>
 
 ```
@@ -202,8 +202,8 @@ YUI().use('datatable-sort', function (Y) {
     Use the `children` column configuration to created nested column headers.
     The `children` configuration takes an array of column configurations, just
     like the `columns` attribute itself. The columns defined in the `children`
-    property will have their header cells rendered in the row below that
-    column's header.
+    property will have their header cells rendered below the parent column's
+    header in the next row.  Sibling columns without `children` will span rows.
 </p>
 
 <p>
@@ -297,10 +297,15 @@ var table = new Y.DataTable({
 
 <p>
     Out of the box, DataTable provides three primary ways to customize how your
-    data is formatted for display in the table cell: `formatter` strings,
-    `formatter` functions, and `nodeFormatter` functions.  All are assigned in
-    the column configuration.
+    data is formatted for display in the table cell, all defined in the column
+    configuration:
 </p>
+
+<ol>
+    <li>`formatter` strings,</li>
+    <li>`formatter` functions, and</li>
+    <li>`nodeFormatter` functions
+</ol>
 
 ```
 var cols = [
@@ -314,7 +319,7 @@ var cols = [
         children: [
 
         // 1. formatter strings
-        // mix the field value into the {value} placeholder
+        // These are used as templates, and use the field data to replace the {value} placeholder
         {
             key: 'price',
             label: 'string',
@@ -325,8 +330,8 @@ var cols = [
         },
     
         // 2. formatter functions
-        // can provide alternate content, add cell classes, refer to other data
-        // fields, etc (more below)
+        // These can provide alternate content, add cell or row classes, refer
+        // to other data fields, etc (more below)
         {
             key: 'price',
             label: 'function',
@@ -342,7 +347,7 @@ var cols = [
         },
 
         // 3. nodeFormatter functions
-        // have access to the cell Node in the DOM, up to the <tbody> Node.
+        // These have access to the cell Node as well as all other DOM Nodes in the <tbody>
         // Caveats apply; see below.
         {
             key: 'price',
@@ -368,7 +373,16 @@ var cols = [
 
 <p>This code produces this table:</p>
 
-<div id="example4" class="yui3-skin-sam"></div>
+<div id="example4" class="yui3-skin-sam">
+    <style scoped>
+        .yui3-datatable .yui3-datatable-data .yellow-background {
+            background-color: #ffe;
+        }
+        .red-text td {
+            color: #900;
+        }
+    </style>
+</div>
 
 <script>
 YUI().use('datatable-base', function (Y) {
@@ -422,23 +436,75 @@ YUI().use('datatable-base', function (Y) {
 });
 </script>
 
+<h4 id="formatter-function">Setting content with `formatter` functions</h4>
+
 <p>
-    Functions assigned as a column's `formatter` may either return a content
-    string to populate the cell, or update the `value` property on the object
-    that is passed as its argument.  See <a href="#formatter-props">Appendix
-    B</a> for a list of all properties passed to `formatter` functions.
+    Set the cell content with column `formatter`s by returning the desired
+    content string from the function.  Alternately, just update `o.value` with
+    the new value in the object passed as an argument to the `formatter`.  When
+    updating `o.value` <em>do not include a return statement</em>.
 </p>
 
 <p>
-    Functions assigned as a column's `nodeFormatter` must assign content to
-    the cell via the Node provided in the `cell` property of the object passed
-    as its argument.  See <a href="#nodeformatter-props">Appendix C</a> for a
-    list of all properties passed to `nodeFormatter` functions.
+    `formatters` are very powerful because not only do they have access to the
+    record's value for that column's field, but they also receive the rest of
+    the record's data, the record Model instance itself, and the column
+    configuration object.  This allows you to include any extra configurations
+    in your column configuration that might be useful to customizing how cells
+    in the column are rendered.
+</p>
+
+```
+function currency(o) {
+    return Y.DataType.number.format(o.value, {
+        prefix            : o.column.currencySymbol     || '$',
+        decimalPlaces     : o.column.decimalPlaces      || 2,
+        decimalSeparator  : o.column.decimalSeparator   || '.',
+        thousandsSeparator: o.column.thousandsSeparator || ','
+    });
+}
+
+var cols = [
+    { key: "price", formatter: currency, decimalPlaces: 3 },
+    ...
+```
+
+<p>
+    See <a href="#formatter-props">Appendix B</a> for a list of all properties
+    passed to `formatter` functions.
+</p>
+
+<h4 id="nodeformatters">Setting content with `nodeFormatter` functions</h4>
+
+<p>
+    Unlike `formatters` which can effectively default to the normal rendering
+    logic by leave `o.value` unchanged, `nodeFormatters` must assign content to
+    the cell themselves.  The cell's initial classes will be set up, but that's
+    it.  Everything else is your responsibility.
 </p>
 
 <p>
     <strong>`nodeFormatter`s should return `false`</strong>.
     <a href="formatter-vs-nodeformatter">See below</a> for details.
+</p>
+
+<p>
+    While there are <a href="#formatter-vs-nodeformatter">few scenarios that
+    require `nodeFormatter`s</a>, they do have the benefits of having the Node
+    API for constructing more complex DOM subtrees and the ability to access
+    all nodes in the `<tbody>`. This means they can reference, and even modify,
+    cells in other rows.
+</p>
+
+<p>
+    Like `formatters`, `nodeFormatters` are provided with the data field value,
+    the record data, the record Model instance, and the column configuration
+    object.
+</p>
+    
+<p>
+    See <a href="#nodeformatter-props">Appendix C</a> for a list of all
+    properties passed to `nodeFormatter` functions.
 </p>
 
 <h4 id="formatter-vs-nodeformatter">Why `formatter` and `nodeFormatter`?</h4>
@@ -448,6 +514,15 @@ YUI().use('datatable-base', function (Y) {
     table content by assembling `innerHTML` strings from templates, with
     `{placeholder}` tokens replaced with your data.  However, this means that
     the Nodes don't exist yet when a column's `formatter`s are applied.
+</p>
+
+<p>
+    To minimize the need to create Nodes for each cell, the default rendering
+    logic supports the addition of cell classes as well as row classes via
+    `formatter` functions.  Event subscriptions should be
+    <a href="http://yuilibrary.com/yui/docs/event/delegation.html">delegated</a>
+    from the DataTable instance itself using the
+    <a href="http://yuilibrary.com/yui/docs/api/classes/DataTable.html#method_delegate">`delegate()` method</a>.
 </p>
 
 <p>
@@ -469,8 +544,7 @@ YUI().use('datatable-base', function (Y) {
 
 <p>
     In general, `nodeFormatter`s should only be used if absolutely necessary,
-    and should <em>always return `false`</em>.  Event subscriptions should be
-    delegated from the DataTable's `boundingBox` or `contentBox`.
+    and should <em>always return `false`</em>.
 </p>
 
 <h4 id="formatters-vs-empty">Formatters vs. `emptyCellValue`</h4>
@@ -493,9 +567,8 @@ YUI().use('datatable-base', function (Y) {
 </p>
 
 <p>
-    The `emptyCellValue` configuration is ignored by columns configured with
-    `nodeFormatter`s.  It is entirely the responsibility of the `nodeFormatter`
-    to populate the cell content.
+    Finally, the `emptyCellValue` configuration is ignored by columns configured with
+    `nodeFormatter`s.
 </p>
 
 

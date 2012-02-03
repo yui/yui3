@@ -136,6 +136,7 @@ Y.Router = Y.extend(Router, Y.Base, {
 
         self._html5  = self.get('html5');
         self._routes = [];
+        self._url    = self._getURL();
 
         // Necessary because setters don't run on init.
         this._setRoutes(config && config.routes ? config.routes :
@@ -929,12 +930,25 @@ Y.Router = Y.extend(Router, Y.Base, {
     @protected
     **/
     _afterHistoryChange: function (e) {
-        var self = this,
-            src  = e.src;
+        var self       = this,
+            src        = e.src,
+            prevURL    = self._url,
+            currentURL = self._getURL();
 
-        if (self._ready || src !== 'popstate') {
-            self._dispatch(self._getPath(), self._getURL(), src);
+        self._url = currentURL;
+
+        // Handles the awkwardness that is the `popstate` event. HTML5 browsers
+        // fire `popstate` right before they fire `hashchange`, and Chrome fires
+        // `popstate` on page load. If this router is not ready or the previous
+        // and current URLs only differ by their hash, then we want to ignore
+        // this `popstate` event.
+        if (src === 'popstate' &&
+                (!self._ready || prevURL.replace(/#.*$/, '') === currentURL.replace(/#.*$/, ''))) {
+
+            return;
         }
+
+        self._dispatch(self._getPath(), currentURL, src);
     },
 
     // -- Default Event Handlers -----------------------------------------------

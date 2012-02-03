@@ -19,6 +19,14 @@
 
 
 <script>
+    //Fooling into parsing the Node.js process info
+    var process = {
+        versions: {
+            node: 6
+        },
+        platform: 'Win32'
+    };
+
 var YUI = {};
 </script>
 <!-- This is the main test file, notice it's using the `yui-base` seed file 
@@ -93,10 +101,21 @@ YUI({
 
         'namespace-test': {
             fullpath: 'namespace-test.js'
+        },
+        'ua-data': {
+            fullpath: './ua-data.js'
+        },
+        'ua-yui-data': {
+            fullpath: './ua-yui-data.js',
+            requires: [ 'ua-data' ]
+        },
+        'ua-tests': {
+            fullpath: './ua-tests.js',
+            requires: [ 'ua-data', 'ua-yui-data', 'test' ]
         }
         
     }
-}).use('seed-tests', 'core-tests', 'config-test', 'later-test', 'namespace-test', 'array-test', 'object-test', 'lang-test', 'test-console', 'test', function(Y) {
+}).use('ua-tests', 'seed-tests', 'core-tests', 'config-test', 'later-test', 'namespace-test', 'array-test', 'object-test', 'lang-test', 'test-console', 'test', function(Y) {
     new Y.Test.Console().render('#log');
 
     //This is a YUITest hack to rename this test for reporting
