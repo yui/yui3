@@ -7,12 +7,6 @@
         <meta name="author" content="Todd Kloots">
         <style type="text/css">
 
-          body {
-/*
-            padding-top: 500px;
-            padding-bottom: 200px;
-*/
-          }
           
           #menu {
             position: absolute;
@@ -32,33 +26,44 @@
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
             allowRollup: false,
             lazyEventFacade: true
-          }).use("event-contextmenu", "node-event-delegate", "node-style", "node-screen", function (Y) {
+          }).use("event-contextmenu", "node-event-delegate", "node-style", "node-screen", "node-event-simulate", function (Y) {
 
-
-/*
-            Y.one("doc").delegate("contextmenu", function (e) {
-
-              e.preventDefault();
-
-              var menu = Y.one("#menu");
-              menu.setStyle("display", "block");
-              menu.setXY([e.pageX, e.pageY]);
-              
-
-            }, "button");
-*/
-
-            function onContextMenu(e) {
-              Y.log("event listener called");
-              Y.log(e.pageX);
-              Y.log(e.pageY);
-            }
 
             var btn = Y.one("#btn-1");
+            var btn2 = Y.one("#btn-2"); 
+            
+            function onContextmenu(e) {
+                var menu = Y.one("#menu");
+                menu.setStyle("display", "block");
+                menu.setXY([e.pageX, e.pageY]);          
+            }
 
-            btn.on("contextmenu", onContextMenu);
-            btn.on("contextmenu", onContextMenu);
+            
+            btn.on("contextmenu", onContextmenu);
+            btn2.on("contextmenu", onContextmenu);
 
+
+            btn.simulate("contextmenu", { keyCode: 93 });
+
+            Y.one("doc").delegate("contextmenu", function (e) {
+                Y.log("First delegate() listener called");            
+            }, "a");
+
+            Y.one("doc").delegate("contextmenu", function (e) {
+                Y.log("Second delegate() listener called");            
+            }, "a");
+            
+            btn.on("contextmenu", function (e) {
+                Y.log("First on() listener called");
+            });
+
+            btn.on("contextmenu", function (e) {
+                Y.log("Second on() listener called");
+            });
+            
+            btn.on("contextmenu", function (e) {
+                Y.log("Third on() listener called");
+            });
 
           });
 
@@ -68,8 +73,8 @@
 	</head>
 	<body>
 
-	   <button id="btn-1">Button 1</button>
-	   <button id="detach-btn">Detach Listeners</button>
+	   <a href="#" id="btn-1">Button 1</a>
+	   <button type="button" id="btn-2">Click Me</button>
 
      <ul id="menu">
         <li>Option 1</li>
