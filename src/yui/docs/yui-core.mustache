@@ -28,10 +28,37 @@ The function is supplied a reference to the <code>YUI</code> instance, so we can
 the <code>use</code> statement without saving an external reference to the instance somewhere else.
 </p>
 <p>
-Now that we know all of the modules are loaded, we can use node to update DOM nodes.
+Now that we know all of the modules are loaded, we can use `Node` 
+to update DOM nodes in many ways.
+Here's a simplified version of the fruit example above.
+</p>
+<style>
+.example-simple{
+    height: 30px;
+}
+.example-simple span{
+    padding: 0.3em;
+    margin: 0.3em;
+}
+</style>
+
+<div class="example example-simple">
+{{>yui-core-simple}}
+</div>
+
+
+```
+{{>yui-core-simple}}
+```
+<p>
+
 </p>
 
-<h3>Full Javascript</h3>
+<h3>Full Source</h3>
+<p>
+Here's the full source of the fruit example.
+</p>
+
 ```
-{{>yui-core-js}}
+{{>yui-core}}
 ```

@@ -103,6 +103,7 @@
         <url>yui/tests/array.html</url>
         <url>yui/tests/object.html</url>
         <url>yui/tests/lang.html</url>
+        <url>yui/tests/useragent.html</url>
         <url>yui/tests/index.html</url>
         <url>yui/tests/index-full.html</url>
         <url>yui/tests/index-loader.html</url>
