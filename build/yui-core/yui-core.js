@@ -44,7 +44,7 @@ by the YUI constuctor.
 @constructor
 @global
 @uses EventTarget
-@param o* {Object} 0..n optional configuration objects.  these values
+@param [o]* {Object} 0..n optional configuration objects.  these values
 are store in Y.config.  See <a href="config.html">Config</a> for the list of supported
 properties.
 */
@@ -738,10 +738,12 @@ with any configuration info required for the module.
      *   asynchronously.
      *
      * @method use
-     * @param modules* {String} 1-n modules to bind (uses arguments array).
-     * @param *callback {Function} callback function executed when
+     * @param modules* {String|Array} 1-n modules to bind (uses arguments array).
+     * @param [callback] {Function} callback function executed when
      * the instance has the required functionality.  If included, it
      * must be the last parameter.
+     * @param callback.Y {YUI} The `YUI` instance created for this sandbox
+     * @param callback.data {Object} Object data returned from `Loader`.
      *
      * @example
      *      // loads and attaches dd and its dependencies
