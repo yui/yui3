@@ -7,9 +7,9 @@
     border: 0 none;
 }
 
-.before, .after {
-    width: 47%;
-}
+.demo    { width: 40%; }
+.details { width: 60%; }
+.before, .after { width: 47%; }
 .after {
     margin-left: 5%;
 }
@@ -49,42 +49,61 @@
     <li>Table scrolling is now via configuration, not plugin.</li>
 </ol>
 
-<h2 id="before-after">A Quick Before-And-After</h2>
+<h2 id="before-and-after">Before And After</h2>
 
 <p>
-    Unless you were really digging into the guts of DataTable, just changing
-    `DataTable.Base` to `DataTable`, `columnset` to `columns`, and `recordset`
-    to `data` should get you most of the way there.
+    Below are some common DataTable setups, each showing what changes you'll
+    need to make for 3.5.0+
 </p>
 
 <h3 id="quick-basic">Basic Table</h3>
 
-<div class="demo yui3-skin-sam">
-    <div id="basic-demo"></div>
+<div class="yui3-g" dir="rtl">
+    <div class="details yui3-u" dir="ltr">
+        <h4 class="no-toc">What changed</h4>
+
+        <ul>
+            <li>`Y.DataTable.Base` &rarr; `Y.DataTable`</li>
+            <li>`columnset` &rarr; `columns`</li>
+            <li>`recordset` &rarr; `data`</li>
+        </ul>
+
+        <p>
+            `columnset` and `recordset` attributes are deprecated and pass through
+            to their new counterpart attributes.  <strong>Note</strong>:
+            `table.get("recordset")` will NOT return an instance of `Y.Recordset`
+            and `table.get("columnset")` will NOT return an instance of
+            `Y.Columnset`.  Table data is now stored in a
+            <a href="../model-list/index.html">`Y.ModelList`</a>, and column data
+            is maintained as a simple array of objects.
+        </p>
+
+        <p>
+            These changes are applicable to all examples below as well.
+        </p>
+    </div>
+
+    <div class="demo yui3-u yui3-skin-sam" dir="ltr">
+        <div id="basic-demo"></div>
+        <script>
+        YUI().use('datatable', function (Y) {
+            var table = new Y.DataTable({
+                columns: ["id", "name", "price"],
+                data: [
+                    { id: 1, name: "Bread", price: 3.45 },
+                    { id: 2, name: "Milk",  price: 4.99 },
+                    { id: 3, name: "Eggs",  price: 2.75 }
+                ],
+                caption: "Price List"
+            }).render('#basic-demo');
+        });
+        </script>
+    </div>
 </div>
-<script>
-YUI().use('datatable', function (Y) {
-    new Y.DataTable({
-        columns: ["id", "name", "price"],
-        data: [
-            { id: 1, name: "Bread", price: 3.45 },
-            { id: 2, name: "Milk",  price: 4.99 },
-            { id: 3, name: "Eggs",  price: 2.75 }
-        ],
-        caption: "Price List"
-    }).render('#basic-demo');
-});
-</script>
 
 <div class="yui3-g">
     <div class="yui3-u before">
-        <h4>Before</h4>
-
-        <ul>
-            <li>`Y.DataTable.Base`</li>
-            <li>`columnset`</li>
-            <li>`recordset`</li>
-        </ul>
+        <h4 class="no-toc">Before</h4>
 
         ```
 var table = new Y.DataTable.Base({
@@ -99,13 +118,7 @@ var table = new Y.DataTable.Base({
         ```
     </div>
     <div class="yui3-u after">
-        <h4>After</h4>
-
-        <ul>
-            <li>`Y.DataTable`</li>
-            <li>`columns`</li>
-            <li>`data`</li>
-        </ul>
+        <h4 class="no-toc">After</h4>
 
         ```
 var table = new Y.DataTable({
@@ -123,46 +136,57 @@ var table = new Y.DataTable({
 
 <h3 id="quick-remote">Table With Remote Data</h3>
 
-<div class="demo yui3-skin-sam">
-    <div id="remote-demo"></div>
+<div class="yui3-g" dir="rtl">
+    <div class="details yui3-u" dir="ltr">
+        <h4 class="no-toc">What Changed</h4>
+
+        <ul>
+            <li>`Y.DataTable.Base` &rarr; `Y.DataTable`</li>
+            <li>`columnset` &rarr; `columns`</li>
+            <li>`recordset` &rarr; `data`</li>
+        </ul>
+
+        <p>
+            Nothing beyond changing the DataTable class and attributes as noted
+            above.
+        </p>
+    </div>
+
+    <div class="demo yui3-u yui3-skin-sam" dir="ltr">
+        <div id="remote-demo"></div>
+        <script>
+        YUI().use('datatable', 'datatable-datasource', function (Y) {
+            var table = new Y.DataTable({
+                columns: ["id", "name", "price"],
+                caption: "Price List"
+            });
+            
+            // Just pretend this is remote.  It works the same anyway
+            var source = new Y.DataSource.Local({
+                source: [
+                    { id: 1, name: "Bread", price: 3.45 },
+                    { id: 2, name: "Milk",  price: 4.99 },
+                    { id: 3, name: "Eggs",  price: 2.75 }
+                ]
+            });
+
+            // (optional) Add DataSource plugins
+
+            table.plug(Y.Plugin.DataTableDataSource, {
+                datasource: source
+            });
+            
+            table.render('#remote-demo');
+
+            table.datasource.load();
+        });
+        </script>
+    </div>
 </div>
-<script>
-YUI().use('datatable', 'datatable-datasource', function (Y) {
-    var table = new Y.DataTable({
-        columns: ["id", "name", "price"],
-        caption: "Price List"
-    });
-    
-    // Just pretend this is remote.  It works the same anyway
-    var source = new Y.DataSource.Local({
-        source: [
-            { id: 1, name: "Bread", price: 3.45 },
-            { id: 2, name: "Milk",  price: 4.99 },
-            { id: 3, name: "Eggs",  price: 2.75 }
-        ]
-    });
-
-    // (optional) Add DataSource plugins
-
-    table.plug(Y.Plugin.DataTableDataSource, {
-        datasource: source
-    });
-    
-    table.render('#remote-demo');
-
-    table.datasource.load();
-});
-</script>
 
 <div class="yui3-g">
     <div class="yui3-u before">
-        <h4>Before</h4>
-
-        <ul>
-            <li>`Y.DataTable.Base`</li>
-            <li>`columnset`</li>
-            <li>`recordset`</li>
-        </ul>
+        <h4 class="no-toc">Before</h4>
 
         ```
 var table = new Y.DataTable.Base({
@@ -184,13 +208,7 @@ table.datasource.load();
         ```
     </div>
     <div class="yui3-u after">
-        <h4>After</h4>
-
-        <ul>
-            <li>`Y.DataTable`</li>
-            <li>`columns`</li>
-            <li>`data`</li>
-        </ul>
+        <h4 class="no-toc">After</h4>
 
         ```
 YUI().use('datatable', 'datatable-datasource', function (Y) {
@@ -207,56 +225,68 @@ YUI().use('datatable', 'datatable-datasource', function (Y) {
 
 <h3 id="quick-formatter">Formatted Columns</h3>
 
-<div class="demo yui3-skin-sam">
-    <div id="formatter-demo"></div>
+<div class="yui3-g" dir="rtl">
+    <div class="details yui3-u" dir="ltr">
+        <h4 class="no-toc">What Changed</h4>
+
+        <ul>
+            <li>`o.classnames` &rarr; `o.className`</li>
+            <li>`this.createCell(o)` &rarr; `o.cell` in `nodeFormatter`s</li>
+        </ul>
+
+        <p>
+            `formatter` no longer supports accessing the `<td>`, `<tr>`, or
+            `<tbody>` Nodes from the object passed to the formatter.  This
+            functionality has been moved to `nodeFormatter`s.  See the <a
+            href="index.html#formatters">Formatting Cell Data</a> section in
+            the user guide for more details.
+        </p>
+    </div>
+
+    <div class="demo yui3-u yui3-skin-sam" dir="ltr">
+        <div id="formatter-demo"></div>
+        <script>
+        YUI().use('datatable', function (Y) {
+            var table = new Y.DataTable({
+                columns: [
+                    "id",
+                    "name",
+                    { key: "price", formatter: "${value}" },
+                    { key: "price",
+                      formatter: function (o) {
+                        if (o.value > 4) {
+                            o.className += "spendy";
+                        }
+                        return '$' + o.value.toFixed(2);
+                      }
+                    },
+                    { key: "price",
+                      nodeFormatter: function (o) {
+                        if (o.value > 4) {
+                            o.cell.addClass('spendy');
+                        }
+
+                        o.cell.setContent('$' + o.value);
+
+                        return false;
+                      }
+                    }
+                ],
+                data: [
+                    { id: 1, name: "Bread", price: 3.45 },
+                    { id: 2, name: "Milk",  price: 4.99 },
+                    { id: 3, name: "Eggs",  price: 2.75 }
+                ],
+                caption: "Price List"
+            }).render('#formatter-demo');
+        });
+        </script>
+    </div>
 </div>
-<script>
-YUI().use('datatable', function (Y) {
-    new Y.DataTable({
-        columns: [
-            "id",
-            "name",
-            { key: "price", formatter: "${value}" },
-            { key: "price",
-              formatter: function (o) {
-                if (o.value > 4) {
-                    o.className += "spendy";
-                }
-                return '$' + o.value.toFixed(2);
-              }
-            },
-            { key: "price",
-              nodeFormatter: function (o) {
-                if (o.value > 4) {
-                    o.cell.addClass('spendy');
-                }
-
-                o.cell.setContent('$' + o.value);
-
-                return false;
-              }
-            }
-        ],
-        data: [
-            { id: 1, name: "Bread", price: 3.45 },
-            { id: 2, name: "Milk",  price: 4.99 },
-            { id: 3, name: "Eggs",  price: 2.75 }
-        ],
-        caption: "Price List"
-    }).render('#formatter-demo');
-});
-</script>
 
 <div class="yui3-g">
     <div class="yui3-u before">
-        <h4>Before</h4>
-
-        <ul>
-            <li>`formatter: "\\${value}"`</li>
-            <li>`o.classnames`</li>
-            <li>`formatter`</li>
-            <li>`this.createCell(o)`</li>
-        </ul>
+        <h4 class="no-toc">Before</h4>
 
         ```
 var table = new Y.DataTable.Base({
@@ -294,14 +324,7 @@ var table = new Y.DataTable.Base({
         ```
     </div>
     <div class="yui3-u after">
-        <h4>After</h4>
-
-        <ul>
-            <li>`formatter: "${value}"`</li>
-            <li>`o.className`</li>
-            <li>`nodeFormatter`</li>
-            <li>`o.cell`</li>
-        </ul>
+        <h4 class="no-toc">After</h4>
 
         ```
 var table = new Y.DataTable({
@@ -342,39 +365,77 @@ var table = new Y.DataTable({
 
 <h3 id="quick-sort">Sortable Table</h3>
 
-<div class="demo yui3-skin-sam">
-    <div id="sort-demo"></div>
-</div>
-<script>
-YUI().use('datatable', function (Y) {
-    var table = new Y.DataTable({
-        columns: [
-            { key: "id" },
-            { key: "name", sortable: true },
-            { key: "price", sortable: true }
-        ],
-        data: [
-            { id: 1, name: "Bread", price: 3.45 },
-            { id: 2, name: "Milk",  price: 4.99 },
-            { id: 3, name: "Eggs",  price: 2.75 }
-        ],
-        caption: "Price List"
-    });
+<div class="yui3-g" dir="rtl">
+    <div class="details yui3-u" dir="ltr">
+        <h4 class="no-toc">What Changed</h4>
 
-    table.plug(Y.Plugin.DataTableSort);
-    
-    table.render('#sort-demo');
-});
-</script>
+        <ul>
+            <li>Column `sortable: true` is now optional</li>
+            <li>Table attribute `sortable` added</li>
+            <li><del>`plug(Y.Plugin.DataTableSort)`</del></li>
+        </ul>
+
+        <p>
+            Table sorting has been moved from a plugin to a class extension.
+            The module to include is still `datatable-sort`, but now column
+            sorting is enabled by default for those columns declared with
+            `sortable: true`.  It is unnecessary to call
+            `table.plug(Y.Plugin.DataTableSort)` &mdash; and doesn't do anything
+            anyway.
+        </p>
+
+        <p>
+            The `sortable` attribute of DataTable instances (note, <em>not</em>
+            the column declarations) now controls a tables ability to be sorted
+            by column header clicks. The default value for `sortable` is
+            "auto", which tells the DataTable to look at your column
+            definitions for the same `sortable: true` configuration used in 3.4.1
+            and prior.
+        </p>
+        
+        <p>
+            See the "After" snippet below or the
+            <a href="index.html#sorting">Column Sorting</a> section in the main
+            use guide for details about other `sortable` options.
+        </p>
+
+    </div>
+
+    <div class="demo yui3-u yui3-skin-sam" dir="ltr">
+        <div id="sort-demo"></div>
+        <script>
+        YUI().use('datatable', function (Y) {
+            var table = new Y.DataTable({
+                columns: [
+                    { key: "id" },
+                    { key: "name", sortable: true },
+                    { key: "price", sortable: true }
+                ],
+                data: [
+                    { id: 1, name: "Bread", price: 3.45 },
+                    { id: 2, name: "Milk",  price: 4.99 },
+                    { id: 3, name: "Eggs",  price: 2.75 },
+                    { id: 4, name: "Apples", price: 0.79 },
+                    { id: 5, name: "Daikon",  price: 1.22 },
+                    { id: 6, name: "Onions",  price: 0.86 },
+                    { id: 7, name: "Garlic", price: 0.13 },
+                    { id: 8, name: "Sugar",  price: 5.99 },
+                    { id: 9, name: "Beets",  price: 0.93 }
+                ],
+                caption: "Price List"
+            });
+
+            table.plug(Y.Plugin.DataTableSort);
+            
+            table.render('#sort-demo');
+        });
+        </script>
+    </div>
+</div>
 
 <div class="yui3-g">
     <div class="yui3-u before">
-        <h4>Before</h4>
-
-        <ul>
-            <li>Column `sortable: true`</li>
-            <li>`plug(Y.Plugin.DataTableSort)`</li>
-        </ul>
+        <h4 class="no-toc">Before</h4>
 
         ```
 var table = new Y.DataTable.Base({
@@ -386,7 +447,8 @@ var table = new Y.DataTable.Base({
     recordset: [
         { id: 1, name: "Bread", price: 3.45 },
         { id: 2, name: "Milk",  price: 4.99 },
-        { id: 3, name: "Eggs",  price: 2.75 }
+        { id: 3, name: "Eggs",  price: 2.75 },
+        ...
     ],
     caption: "Price List"
 });
@@ -397,12 +459,7 @@ table.render('#sort-demo');
         ```
     </div>
     <div class="yui3-u after">
-        <h4>After</h4>
-
-        <ul>
-            <li>Column `sortable: true` OR other options</li>
-            <li><del>`plug(Y.Plugin.DataTableSort)`</del></li>
-        </ul>
+        <h4 class="no-toc">After</h4>
 
         ```
 var table = new Y.DataTable({
@@ -414,7 +471,8 @@ var table = new Y.DataTable({
     data: [
         { id: 1, name: "Bread", price: 3.45 },
         { id: 2, name: "Milk",  price: 4.99 },
-        { id: 3, name: "Eggs",  price: 2.75 }
+        { id: 3, name: "Eggs",  price: 2.75 },
+        ...
     ],
     caption: "Price List"
 });
@@ -442,34 +500,42 @@ table.render('#sort-demo');
 
 <h3 id="quick-scroll">Scrolling Table</h3>
 
-<div class="demo yui3-skin-sam">
-    <div id="scroll-demo"></div>
+<div class="yui3-g" dir="rtl">
+    <div class="details yui3-u" dir="ltr">
+        <h4 class="no-toc">What Changed"</h4>
+
+
+    </div>
+
+    <div class="demo yui3-u yui3-skin-sam" dir="ltr">
+        <div id="scroll-demo"></div>
+        <script>
+        YUI().use('datatable-scroll', function (Y) {
+            var table = new Y.DataTable({
+                columns: ["id", "name", "price"],
+                data: [
+                    { id: 1, name: "Bread", price: 3.45 },
+                    { id: 2, name: "Milk",  price: 4.99 },
+                    { id: 3, name: "Eggs",  price: 2.75 },
+                    { id: 4, name: "Apples", price: 0.79 },
+                    { id: 5, name: "Daikon",  price: 1.22 },
+                    { id: 6, name: "Onions",  price: 0.86 },
+                    { id: 7, name: "Garlic", price: 0.13 },
+                    { id: 8, name: "Sugar",  price: 5.99 },
+                    { id: 9, name: "Beets",  price: 0.93 }
+                ],
+                scrollable: "y",
+                height: "175px",
+                caption: "Price List"
+            }).render('#scroll-demo');
+        });
+        </script>
+    </div>
 </div>
-<script>
-YUI().use('datatable-scroll', function (Y) {
-    var table = new Y.DataTable({
-        columns: ["id", "name", "price"],
-        data: [
-            { id: 1, name: "Bread", price: 3.45 },
-            { id: 2, name: "Milk",  price: 4.99 },
-            { id: 3, name: "Eggs",  price: 2.75 },
-            { id: 4, name: "Apples", price: 0.79 },
-            { id: 5, name: "Daikon",  price: 1.22 },
-            { id: 6, name: "Onions",  price: 0.86 },
-            { id: 7, name: "Garlic", price: 0.13 },
-            { id: 8, name: "Sugar",  price: 5.99 },
-            { id: 9, name: "Beets",  price: 0.93 }
-        ],
-        scrollable: "y",
-        height: "175px",
-        caption: "Price List"
-    }).render('#scroll-demo');
-});
-</script>
 
 <div class="yui3-g">
     <div class="yui3-u before">
-        <h4>Before</h4>
+        <h4 class="no-toc">Before</h4>
 
         <ul>
             <li>`plug(Y.Plugin.DataTableScroll, ...)`</li>
@@ -497,7 +563,7 @@ table.render('#scroll-demo');
         ```
     </div>
     <div class="yui3-u after">
-        <h4>After</h4>
+        <h4 class="no-toc">After</h4>
 
         <ul>
             <li><del>`plug(Y.Plugin.DataTableScroll, ...)`</del></li>
@@ -547,7 +613,7 @@ YUI().use('datatable', function (Y) {
 
 <div class="yui3-g">
     <div class="yui3-u before">
-        <h4>Before</h4>
+        <h4 class="no-toc">Before</h4>
 
         <ul>
             <li>`Y.DataTable.Base`</li>
@@ -568,7 +634,7 @@ var table = new Y.DataTable.Base({
         ```
     </div>
     <div class="yui3-u after">
-        <h4>After</h4>
+        <h4 class="no-toc">After</h4>
 
         <ul>
             <li>`Y.DataTable`</li>
