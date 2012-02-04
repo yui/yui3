@@ -1,8 +1,11 @@
 /**
  * Provides extended keyboard support for the contextmenu event such that:
- * 1) On Windows there is a uniform experience regardless of how the contextmenu is fired via the keyboard (either via the Menu key or using Shift + F10)
- * 2) On the Mac it enables the use of the Shift + Control + Option + M keyboard shortcut, which (by default) is only available when VoiceOver is enabled.
- * 3) When the contextmenu event is fired via the keyboard, the pageX, pageY, clientX and clientY properties are set using the center of the event target as the point of origin. This makes it easier for contextmenu event listeners to position an overlay in respose to the event by not having to worry about special handling of the x and y coordinates based on the device that fired the event.
+ * <ul>
+ * <li>The browser's default contextmenu is supressed regardless of how the contextmenu event was triggered</li>
+ * <li>On Windows the contextmenu event is fired consistently regardless of whether the user pressed the Menu key or Shift + F10</li>
+ * <li>When the contextmenu event is fired via the keyboard, the pageX, pageY, clientX and clientY properties reference the center of the event target. This makes it easier for contextmenu event listeners to position an overlay in respose to the event by not having to worry about special handling of the x and y coordinates based on the device that fired the event.</li>
+ * <li>On the Mac it enables the use of the Shift + Control + Option + M keyboard shortcut, which (by default) is only available when VoiceOver is enabled.</li> 
+ * </ul>
  * @module event-contextmenu
  * @requires event
  */
@@ -34,12 +37,12 @@ var Event = Y.Event,
                 // the browser's context menu. So, you know, save them a step.
                 e.preventDefault();
     
-                var id = node.generateID(),
+                var id = Y.stamp(node),
                     data = eventData[id];
     
                 if (data) {
-                    e.clientX = e.clientX;
-                    e.clientY = e.clientY;
+                    e.clientX = data.clientX;
+                    e.clientY = data.clientY;
                     e.pageX = data.pageX;
                     e.pageY = data.pageY;
                     delete eventData[id];
@@ -61,6 +64,8 @@ var Event = Y.Event,
                     clientY = 0,
                     scrollX,
                     scrollY,
+                    pageX,
+                    pageY,
                     xy,
                     x,
                     y;
@@ -92,19 +97,21 @@ var Event = Y.Event,
                         clientX = (x + (target.offsetWidth/2)) - scrollX;
                         clientY = (y + (target.offsetHeight/2)) - scrollY;
                     }
+                    
+                    pageX = clientX + scrollX;
+                    pageY = clientY + scrollY;
 
                     // When the contextmenu is fired from the keyboard 
                     // clientX, clientY, pageX or pageY aren't set to useful
                     // values. So, we follow Safari's model here of setting 
                     // the x & x coords to the center of the event target.
 
-                    // TO DO: can likely use Node's getData and setData methods
                     if (menuKey || (isWin && webkit && shiftF10)) {
-                        eventData[node.generateID()] = { 
+                        eventData[Y.stamp(node)] = { 
                             clientX: clientX,
                             clientY: clientY,
-                            pageX: (clientX + scrollX),
-                            pageY: (clientY + scrollY)
+                            pageX: pageX,
+                            pageY: pageY
                         };
                     }
   
@@ -123,10 +130,11 @@ var Event = Y.Event,
                     // doesn't fire the contextmenu event when VoiceOver isn't enabled
 
                     if (((ie || (isWin && gecko)) && shiftF10) || isMac) {
+
                         e.clientX = clientX;
                         e.clientY = clientY;
-                        e.pageX = (clientX + scrollX);
-                        e.pageY = (clientY + scrollY);
+                        e.pageX = pageX;
+                        e.pageY = pageY;
                         
                         notifier.fire(e);
                     }

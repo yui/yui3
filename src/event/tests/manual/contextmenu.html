@@ -35,7 +35,10 @@
             function onContextmenu(e) {
                 var menu = Y.one("#menu");
                 menu.setStyle("display", "block");
-                menu.setXY([e.pageX, e.pageY]);          
+
+//                menu.setXY([e.pageX, e.pageY]);          
+
+                menu.setXY([e.clientX, e.clientY]);          
             }
 
             
@@ -43,7 +46,6 @@
             btn2.on("contextmenu", onContextmenu);
 
 
-            btn.simulate("contextmenu", { keyCode: 93 });
 
             Y.one("doc").delegate("contextmenu", function (e) {
                 Y.log("First delegate() listener called");            

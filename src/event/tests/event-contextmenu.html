@@ -17,7 +17,7 @@
         allowRollup: false,
         lazyEventFacade: true,
         logExclude: { Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true }
-		}).use('console', 'test', 'event-contextmenu', 'node-event-simulate', 'window-focus', function (Y) {
+		}).use('console', 'test', 'event-contextmenu', 'node-event-simulate', 'window-focus', 'node-screen', function (Y) {
 			
       var called = 0;			
 			
@@ -50,6 +50,8 @@
 					btn.simulate("keydown", keyDownConfig);					
 
 			};
+			
+
 
 
 			(new Y.Console()).render();
@@ -151,6 +153,78 @@
 					
 				},
 
+        test_xy_coords_for_menu: function () {
+
+          var passed = false;
+
+					btn.on("contextmenu", function (e) {
+			    
+              var xy = btn.getXY(),
+    
+                scrollX = Y.DOM.docScrollX(),
+                scrollY = Y.DOM.docScrollY(),          
+                
+                clientX = (xy[0] + (btn.get("offsetWidth")/2)) - scrollX,
+                clientY = (xy[1] + (btn.get("offsetHeight")/2)) - scrollY,
+                
+                pageX = clientX + scrollX,
+                pageY = clientY + scrollY;  
+
+              
+              passed = (e.clientX === clientX && e.clientY === clientY && e.pageX === pageX && e.pageY === pageY);
+    			
+    			});
+
+          if (Y.UA.os == "windows") {					
+    					btn.once("keydown", function (e) {
+                  if (e.keyCode === 93) {
+                      btn.simulate("contextmenu");
+                  }
+    					});
+					}
+					
+					btn.simulate("keydown", { keyCode: 93 });
+
+          if (Y.UA.os == "windows") {
+					   Y.Assert.isTrue(passed, "contextmenu event xy coords don't reference the center of the event target");
+					}
+					else {
+					   Y.Assert.isFalse(passed, "the Menu key should only fire the contextmenu event on windows");
+					}
+					
+					btn.detach("contextmenu");
+        
+        },
+
+        test_xy_coords_for_shift10_or_ctrl_shift_option_m: function () {
+
+          var passed = false;
+
+					btn.on("contextmenu", function (e) {
+			    
+              var xy = btn.getXY(),
+    
+                scrollX = Y.DOM.docScrollX(),
+                scrollY = Y.DOM.docScrollY(),          
+                
+                clientX = (xy[0] + (btn.get("offsetWidth")/2)) - scrollX,
+                clientY = (xy[1] + (btn.get("offsetHeight")/2)) - scrollY,
+                
+                pageX = clientX + scrollX,
+                pageY = clientY + scrollY;  
+
+              
+              passed = (e.clientX === clientX && e.clientY === clientY && e.pageX === pageX && e.pageY === pageY);
+    			
+    			});
+
+          simulateKeyDown();
+
+					Y.Assert.isTrue(passed, "contextmenu event xy coords don't reference the center of the event target");
+					
+					btn.detach("contextmenu");
+        
+        },
 				
 				test_multiple_on_listeners: function(){
 					
