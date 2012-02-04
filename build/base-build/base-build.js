@@ -18,14 +18,15 @@ YUI.add('base-build', function(Y) {
     Base._build = function(name, main, extensions, px, sx, cfg) {
 
         var build = Base._build,
-
+        
             builtClass = build._ctor(main, cfg),
             buildCfg = build._cfg(main, cfg),
 
             _mixCust = build._mixCust,
+            
+            extCfg,
 
             aggregates = buildCfg.aggregates,
-            custom = buildCfg.custom,
 
             dynamic = builtClass._yuibuild.dynamic,
 
@@ -56,9 +57,15 @@ YUI.add('base-build', function(Y) {
             // Prototype, old non-displacing augment
             Y.mix(builtClass, extClass, true, null, 1);
 
-             // Custom Statics
-            _mixCust(builtClass, extClass, aggregates, custom);
-            
+            // Custom Statics
+            _mixCust(builtClass, extClass, buildCfg);
+
+            // Extension Statics
+            extCfg = extClass._buildCfg;
+            if (extCfg) {
+                _mixCust(builtClass, extClass, extCfg, true);
+            }
+
             if (initializer) { 
                 extProto[INITIALIZER] = initializer;
             }
@@ -75,8 +82,8 @@ YUI.add('base-build', function(Y) {
         }
 
         if (sx) {
-            Y.mix(builtClass, build._clean(sx, aggregates, custom), true);
-            _mixCust(builtClass, sx, aggregates, custom);
+            Y.mix(builtClass, build._clean(sx, buildCfg), true);
+            _mixCust(builtClass, sx, buildCfg);
         }
 
         builtClass.prototype.hasImpl = build._impl;
@@ -93,19 +100,48 @@ YUI.add('base-build', function(Y) {
 
     Y.mix(build, {
 
-        _mixCust: function(r, s, aggregates, custom) {
+        _mixCust: function(r, s, cfg, isExt) {
+            
+            var aggregates, 
+                custom, 
+                statics,
+                val,
+                i, 
+                j,
+                l;
+                
+            if (cfg) {
+                aggregates = cfg.aggregates;
+                custom = cfg.custom;
+                statics = cfg.statics;
+            }
+
+            if (statics) {
+                Y.mix(r, s, true, statics === true ? null : statics);
+            }
 
             if (aggregates) {
+
+                if (isExt) {
+                    for (i = 0, l = aggregates.length; i < l; ++i) {
+                        val = aggregates[i];
+                        if (s.hasOwnProperty(val) && !r.hasOwnProperty(val)) {
+                            r[val] = L.isArray(s[val]) ? [] : {};
+                        }
+                    }
+                }
+
                 Y.aggregate(r, s, true, aggregates);
             }
 
             if (custom) {
-                for (var j in custom) {
+                for (j in custom) {
                     if (custom.hasOwnProperty(j)) {
                         custom[j](j, r, s);
                     }
                 }
             }
+            
         },
 
         _tmpl: function(main) {
@@ -162,7 +198,7 @@ YUI.add('base-build', function(Y) {
                 c = main;
 
             while (c && c.prototype) {
-                buildCfg = c._buildCfg; 
+                buildCfg = c._buildCfg;
                 if (buildCfg) {
                     if (buildCfg.aggregates) {
                         aggr = aggr.concat(buildCfg.aggregates);
@@ -187,8 +223,10 @@ YUI.add('base-build', function(Y) {
             };
         },
 
-        _clean : function(sx, aggregates, custom) {
-            var prop, i, l, sxclone = Y.merge(sx);
+        _clean : function(sx, cfg) {
+            var prop, i, l, sxclone = Y.merge(sx),
+                aggregates = cfg.aggregates,
+                custom = cfg.custom;
 
             for (prop in custom) {
                 if (sxclone.hasOwnProperty(prop)) {

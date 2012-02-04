@@ -806,6 +806,76 @@ YUI({
             o.extTwo();
 
             Y.ArrayAssert.itemsAreEqual(expectedMethodCalls, actualMethodCalls, "Unexpected method calls");
+        },
+        
+        "test:extCfg-statics-true" : function() {
+            function Ext1() {
+            }
+
+            Ext1.prototype.extOne = function() {
+            };
+
+            Ext1.prototype.initializer = function() {
+            };
+
+            Ext1.prototype.methodOne = function() {
+                return "methodOne";                
+            };
+
+            Ext1.STATIC_ONE = "static_one";
+            Ext1.STATIC_TWO = "static_two";
+
+            Ext1._buildCfg = {
+                statics: true
+            };
+                        
+            var MyClass = Y.Base.create("myClass", Y.Base, [Ext1]);
+            
+            var myclass = new MyClass();
+
+            Y.Assert.isTrue(myclass instanceof MyClass);
+
+            Y.Assert.isFunction(myclass.methodOne); // prototype properties copied
+            Y.Assert.isFunction(myclass.init); // but prototype not switched completely by mistake as part of statics:true
+            
+            Y.Assert.areEqual("static_one", MyClass.STATIC_ONE);
+            Y.Assert.areEqual("static_two", MyClass.STATIC_TWO);
+        },
+        
+        "test:extCfg-statics-whitelist" : function() {
+            function Ext1() {
+            }
+
+            Ext1.prototype.extOne = function() {
+            };
+
+            Ext1.prototype.initializer = function() {
+            };
+
+            Ext1.prototype.methodOne = function() {
+                return "methodOne";                
+            };
+
+            Ext1.STATIC_ONE = "static_one";
+            Ext1.STATIC_TWO = "static_two";
+            Ext1.STATIC_THREE = "static_three";
+
+            Ext1._buildCfg = {
+                statics: ["STATIC_ONE", "STATIC_TWO"]
+            };
+                        
+            var MyClass = Y.Base.create("myClass", Y.Base, [Ext1]);
+            
+            var myclass = new MyClass();
+
+            Y.Assert.isTrue(myclass instanceof MyClass);
+
+            Y.Assert.isFunction(myclass.methodOne); // prototype properties copied
+            Y.Assert.isFunction(myclass.init); // but prototype not switched completely by mistake as part of statics:true
+
+            Y.Assert.areEqual("static_one", MyClass.STATIC_ONE);
+            Y.Assert.areEqual("static_two", MyClass.STATIC_TWO);
+            Y.Assert.isFalse("STATIC_THREE" in MyClass);
         }
 
     }));
