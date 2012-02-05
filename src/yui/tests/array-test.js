@@ -117,8 +117,11 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(2, Y.Array.indexOf(data, 1), 'should find numbers');
         Y.Assert.areSame(4, Y.Array.indexOf(data, false), 'should perform strict equality checks');
         Y.Assert.areSame(5, Y.Array.indexOf(data, null), 'should find null');
-
-        // TODO: support fromIndex
+        Y.Assert.areSame(0, Y.Array.indexOf(data, 'a', 0), 'should find the first match');
+        Y.Assert.areSame(6, Y.Array.indexOf(data, 'a', 1), 'should find the 6th match');
+        Y.Assert.areSame(-1, Y.Array.indexOf(data, 'a', 7), 'should return -1 on no match');
+        Y.Assert.areSame(0, Y.Array.indexOf(data, 'a', -8), 'should find the first match');
+        Y.Assert.areSame(6, Y.Array.indexOf(data, 'a', -1), 'should find the 6th match');
     },
 
     'indexOf() should handle sparse arrays correctly': function () {
