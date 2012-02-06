@@ -43,6 +43,13 @@ function makeClassName(str) {
 /* Button extends the Base class */
 Y.extend(Button, Y.Node, {
     
+    renderAttrs: function(config) {
+        //this._initAttrHost(Button.ATTRS, config);
+        Y.AttributeCore.call(this, Button.ATTRS, config);
+        Y.AttributeEvents.apply(this, arguments);
+        Y.AttributeExtras.apply(this, arguments);
+    },
+
     /**
     * @method initializer
     * @description Internal init() handler.
@@ -50,7 +57,7 @@ Y.extend(Button, Y.Node, {
     * @private
     */
     initializer: function(config){
-        this._initAttrHost(Button.ATTRS, config);
+        this.renderAttrs(config);
         this.renderUI(config);
         this.bindUI();
     },
@@ -284,12 +291,15 @@ Y.extend(Button, Y.Node, {
     ATTRS: {
         label: { },
         type: {
+            _bypassProxy: true,
             value: 'push'
         },
         disabled: {
+            _bypassProxy: true,
             value: false
         },
         selected: {
+            _bypassProxy: true,
             value: false
         }
     }
@@ -351,6 +361,6 @@ Button.prototype._onFocus = function(e){
     e.target.addClass(Button.CLASS_NAMES.FOCUSED);
 };
 
-Y.mix(Button.prototype, Y.AttributeCore.prototype);
+Y.mix(Button.prototype, Y.Attribute.prototype);
 // Export Button
 Y.Button = Button;

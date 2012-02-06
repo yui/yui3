@@ -44,7 +44,8 @@ suite.add(new Y.Test.Case({
         // Now make sure it is selected and has all the approriate attributes
         Assert.isTrue(button.get('selected'));
         Assert.isTrue(node.hasClass('yui3-button-selected'));
-        Assert.areSame('true', node.get('aria-pressed'));
+        //Assert.areSame('true', node.get('aria-pressed'));
+        Assert.isTrue(node.get('aria-pressed'));
     },
     
     'button.select() should set the `selected` attribute to `true`': function () {
