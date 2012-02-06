@@ -167,23 +167,26 @@ This method wraps the native ES5 `Array.indexOf()` method if available.
 @method indexOf
 @param {Array} array Array to search.
 @param {Any} value Value to search for.
-@param {Number} from The index at which to begin the search.
+@param {Number} [from=0] The index at which to begin the search.
 @return {Number} Index of the item strictly equal to _value_, or `-1` if not
-  found.
+    found.
 @static
 **/
 YArray.indexOf = Lang._isNative(Native.indexOf) ? function (array, value, from) {
     return Native.indexOf.call(array, value, from);
 } : function (array, value, from) {
+    // http://es5.github.com/#x15.4.4.14
     var len = array.length;
 
-    if (!Lang.isUndefined(from)) {
-        from = from - 0;
+    from = +from || 0;
+    from = (from > 0 || -1) * Math.floor(Math.abs(from));
+
+    if (from < 0) {
+        from += len;
+
         if (from < 0) {
-            from = from + len;
+            from = 0;
         }
-    } else {
-        from = 0;
     }
 
     for (; from < len; ++from) {

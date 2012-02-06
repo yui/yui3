@@ -22,6 +22,9 @@ YUI Core Change History
   always fall back to non-native implementations even in ES5 browsers (useful
   for testing).
 
+* `Y.Array.indexOf()` now supports a `fromIndex` argument for full ES5
+  compatibility. [Based on a patch from Ryuichi Okumurua]
+
 * `Y.Object.isEmpty()` now casts the given value to an object if it isn't one
   already, which prevents exceptions when it's given a non-object.
 
