@@ -1,7 +1,12 @@
 function ButtonNode(config) {
-    ButtonNode.superclass.constructor.call(
-        this, config.srcNode || Y.DOM.create(this.TEMPLATE)
-    );
+    var node;
+
+    if (config && config.srcNode) { // Y.Node, selector string or DOM node
+        node = config.srcNode._node || config.srcNode; // TODO: allow new Y.Node(nodeInstance)
+    } else {
+        node = Y.DOM.create(this.TEMPLATE);
+    }
+    ButtonNode.superclass.constructor.call(this, node);
     this.initializer(config);
 }
 
@@ -23,4 +28,6 @@ ButtonNode.prototype.renderAttrs = function(config) {
 
 ButtonNode.prototype.select = Y.ButtonBase.prototype.select;
 ButtonNode.ATTRS = Y.merge(Y.Node.ATTRS, Y.ButtonBase.ATTRS);
+
 Y.ButtonNode = ButtonNode;
+Y.Button = ButtonNode;
