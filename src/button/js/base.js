@@ -15,7 +15,9 @@
 * @constructor
 */
 function Button(config) {
-    Button.superclass.constructor.apply(this, arguments);
+    Button.superclass.constructor.call(this, config.srcNode ||
+            this.create('<button/>'));
+    this.initializer(config);
 }
 
 
@@ -39,7 +41,7 @@ function makeClassName(str) {
 
 
 /* Button extends the Base class */
-Y.extend(Button, Y.Base, {
+Y.extend(Button, Y.Node, {
     
     /**
     * @method initializer
@@ -48,6 +50,7 @@ Y.extend(Button, Y.Base, {
     * @private
     */
     initializer: function(config){
+        this._initAttrHost(Button.ATTRS, config);
         this.renderUI(config);
         this.bindUI();
     },
@@ -124,7 +127,7 @@ Y.extend(Button, Y.Base, {
     * @return {Object} A node instance
     */
     getNode: function() {
-        return this.get('srcNode');
+        return this;
     },
 
     /**
@@ -279,13 +282,6 @@ Y.extend(Button, Y.Base, {
     * @static
     */
     ATTRS: {
-        srcNode: {
-            writeOnce: 'initOnly',
-            setter: Y.one,
-            valueFn: function () {
-                return Y.Node.create('<button></button>');
-            }
-        },
         label: { },
         type: {
             value: 'push'
@@ -301,6 +297,8 @@ Y.extend(Button, Y.Base, {
 
 
 // -- Static Properties ----------------------------------------------------------
+
+Y.mix(Button.ATTRS, Y.Node.ATTRS);
 
 /**
 * Name of this component.
@@ -353,5 +351,6 @@ Button.prototype._onFocus = function(e){
     e.target.addClass(Button.CLASS_NAMES.FOCUSED);
 };
 
+Y.mix(Button.prototype, Y.AttributeCore.prototype);
 // Export Button
 Y.Button = Button;
