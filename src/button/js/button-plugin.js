@@ -1,13 +1,14 @@
-function ButtonPlugin() {
+function ButtonPlugin(config) {
+    this._host = config.host;
     ButtonPlugin.superclass.constructor.apply(this, arguments);
-};
+}
 
 Y.extend(ButtonPlugin, Y.ButtonBase, {
-    initNode: function(config) {
-        this._host = config.host;
+    getNode: function(config) {
+        return this._host;
     }
 }, {
-    NAME: 'ButtonPlugin',
+    NAME: 'buttonPlugin',
     NS: 'button'
 });
 
