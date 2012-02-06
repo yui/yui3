@@ -1,14 +1,63 @@
 <style>
-    #demo {
-        height: 100px;
-        width: 100px;
-        border: 1px solid black;
-        background-color: #8DD5E7;
-        text-align: center;
-    }
+.example {
+    position: relative;
+    font-family: georgia;
+    height: 260px;
+}
+.example p {
+    margin: 0;
+}
+.example .count {
+    font-size: 250%;
+    display: inline-block;
+    line-height: 0.8em;
+    zoom: 1; *display: inline; /* IE < 8: fake inline-block */
+    width: 0.6em;
+    vertical-align: baseline;
+    font-family: verdana;
+}
+.example em {
+    font-size: 170%;
+    font-weight: bold;
+    text-shadow: 0 0 4px rgba(110, 132, 57, 0.75);
+    display: block;
+    font-style: normal;
+}
+.example .fruit {
+    position: absolute;
+    top: 21px;
+    left: 200px;
+    border: solid 3px #000;
+    background-color: #F4EBE2;
+    -moz-border-radius: 20px;
+    -webkit-border-radius: 20px;
+    padding: 0.6em 0.6em 0.9em;
+    text-align: center;
+    box-shadow: 3px 4px 10px rgba(0, 0, 0, 0.3);
+    font-size: 125%;
+}
+.example .changer {
+    left: 464px;    
+}
+.example .fruit img {
+    position: absolute;
+    top: 35px;
+    left: -202px;
+}
 </style>
 
-<div id="demo"></div>
+    <div class='fruit'>
+        <div class="speech">We're twins<br>
+            for <div class="count">5</div> sec.
+        </div>
+        <img src="{{{componentAssets}}}/images/apple.png" width="221" height="225"/>
+    </div>
+    <div class='fruit changer'>
+        <div class="speech">We're twins<br>
+            for <div class="count">5</div> sec.
+        </div>
+        <img src="{{{componentAssets}}}/images/apple.png" width="221" height="225"/>
+    </div>
 
 <script>
 {{>yui-core-js}}

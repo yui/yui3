@@ -8,7 +8,6 @@
     padding: 0 1em;
     line-height: normal;
     line-height: 2;
-    height: 2em; /* Fixes height for <input> in firefox/opera */
     white-space: nowrap;
     vertical-align: baseline;
     text-align: center;
@@ -46,6 +45,9 @@
     transition: 0.1s linear box-shadow;
 }
 
+input.yui3-button {
+    height: 2em; /* Fixes height for <input> in firefox/opera */
+}
 
 a.yui3-button {
     color: rgba(0,0,0, 0.80);

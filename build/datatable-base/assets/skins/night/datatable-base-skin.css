@@ -14,10 +14,7 @@
 
 .yui3-skin-night .yui3-datatable-caption {
     color: #474747;
-    font-size: 85%;
-    font-style: italic;
-    font-weight: normal;
-    line-height: 1;
+    font: normal italic 85%/1 HelveticaNeue,arial,helvetica,clean,sans-serif;
     padding: 1em 0;
     text-align: center;
 }
@@ -25,6 +22,7 @@
 .yui3-skin-night .yui3-datatable-cell,
 .yui3-skin-night .yui3-datatable-header {
     border-right: 1px solid #303030;/*  inner column border */
+    border-width: 0 1px 0 0;
     font-size: inherit;
     margin: 0;
 	overflow: visible; /*to make ths where the title is really long work*/

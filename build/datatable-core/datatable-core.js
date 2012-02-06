@@ -966,7 +966,7 @@ Y.mix(Table.prototype, {
     @protected
     **/
     _initRecordType: function () {
-        var data, columns, recordType, handle;
+        var data, columns, recordType, handle, columnKeys;
             
         if (!this.get('recordType')) {
             data    = this.get('data');
@@ -987,8 +987,12 @@ Y.mix(Table.prototype, {
                     this._createRecordClass(keys(data[0]));
 
             // Or if the columns were defined, build a class from the keys
-            } else if (keys(columns).length) {
-                recordType = this._createRecordClass(keys(columns));
+            } else {
+                columnKeys = keys(columns);
+                
+                if (columnKeys.length) {
+                    recordType = this._createRecordClass(columnKeys);
+                }
             }
 
             if (recordType) {
