@@ -16,9 +16,7 @@ YUI.add('button-base', function(Y) {
 * @param config {Object} Configuration object
 * @constructor
 */
-function Button(config) {
-    Button.superclass.constructor.call(this, config.srcNode ||
-            this.create('<button/>'));
+function ButtonBase(config) {
     this.initializer(config);
 }
 
@@ -35,19 +33,24 @@ function Button(config) {
 */
 function makeClassName(str) {
     if (str) {
-        return Y.ClassNameManager.getClassName(Button.NAME, str);
+        return Y.ClassNameManager.getClassName(ButtonBase.NAME, str);
     } else {
-        return Y.ClassNameManager.getClassName(Button.NAME);
+        return Y.ClassNameManager.getClassName(ButtonBase.NAME);
     }
 }
 
 
 /* Button extends the Base class */
-Y.extend(Button, Y.Node, {
+ButtonBase.prototype = {
+    constructor: ButtonBase,
     
+    initNode: function(srcNode) {
+        this._host = Y.one(srcNode || Y.DOM.create('<button/>'));
+    },
+
     renderAttrs: function(config) {
-        //this._initAttrHost(Button.ATTRS, config);
-        Y.AttributeCore.call(this, Button.ATTRS, config);
+        //this._initAttrHost(ButtonBase.ATTRS, config);
+        Y.AttributeCore.call(this, ButtonBase.ATTRS, config);
         Y.AttributeEvents.apply(this, arguments);
         Y.AttributeExtras.apply(this, arguments);
     },
@@ -59,6 +62,7 @@ Y.extend(Button, Y.Node, {
     * @private
     */
     initializer: function(config){
+        this.initNode(config.srcNode);
         this.renderAttrs(config);
         this.renderUI(config);
         this.bindUI();
@@ -74,7 +78,7 @@ Y.extend(Button, Y.Node, {
         var node = button.getNode();
         
         // Set some default node attributes
-        node.addClass(Button.CLASS_NAMES.BUTTON);
+        node.addClass(ButtonBase.CLASS_NAMES.BUTTON);
         
         
         // Apply any config attributes that may have been passed in.
@@ -136,7 +140,7 @@ Y.extend(Button, Y.Node, {
     * @return {Object} A node instance
     */
     getNode: function() {
-        return this;
+        return this._host;
     },
 
     /**
@@ -229,7 +233,7 @@ Y.extend(Button, Y.Node, {
     */
     _renderDisabled: function (value) {
         this.getNode().set('disabled', value)
-            .toggleClass(Button.CLASS_NAMES.DISABLED, value);
+            .toggleClass(ButtonBase.CLASS_NAMES.DISABLED, value);
     },
     
     /**
@@ -239,7 +243,7 @@ Y.extend(Button, Y.Node, {
     */
     _renderSelected: function(value) {
         this.getNode().set(this.ARIASelectedState, value)
-            .toggleClass(Button.CLASS_NAMES.SELECTED, value);
+            .toggleClass(ButtonBase.CLASS_NAMES.SELECTED, value);
     },
 
     /**
@@ -253,10 +257,10 @@ Y.extend(Button, Y.Node, {
         var role = value;
         
         if (value === 'checkbox') {
-            this.ARIASelectedState = Button.ARIA.CHECKED;
+            this.ARIASelectedState = ButtonBase.ARIA.CHECKED;
         }
         else {
-            this.ARIASelectedState = Button.ARIA.PRESSED;
+            this.ARIASelectedState = ButtonBase.ARIA.PRESSED;
         }
             
         if (value === 'toggle' || value === 'checkbox') {
@@ -281,36 +285,34 @@ Y.extend(Button, Y.Node, {
 
         node.set('role', role);
     }
-}, {
-    /** 
-    * Array of attributes
-    *
-    * @property ATTRS
-    * @type {Array}
-    * @private
-    * @static
-    */
-    ATTRS: {
-        label: { },
-        type: {
-            _bypassProxy: true,
-            value: 'push'
-        },
-        disabled: {
-            _bypassProxy: true,
-            value: false
-        },
-        selected: {
-            _bypassProxy: true,
-            value: false
-        }
+};
+
+/** 
+* Array of attributes
+*
+* @property ATTRS
+* @type {Array}
+* @private
+* @static
+*/
+ButtonBase.ATTRS = {
+    label: { },
+    type: {
+        _bypassProxy: true,
+        value: 'push'
+    },
+    disabled: {
+        _bypassProxy: true,
+        value: false
+    },
+    selected: {
+        _bypassProxy: true,
+        value: false
     }
-});
+};
 
 
 // -- Static Properties ----------------------------------------------------------
-
-Y.mix(Button.ATTRS, Y.Node.ATTRS);
 
 /**
 * Name of this component.
@@ -319,7 +321,7 @@ Y.mix(Button.ATTRS, Y.Node.ATTRS);
 * @type String
 * @static
 */
-Button.NAME = "button";
+ButtonBase.NAME = "button";
 
 /** 
 * Array of static constants used to identify the classnames applied to the Button DOM objects
@@ -328,14 +330,14 @@ Button.NAME = "button";
 * @type {Array}
 * @static
 */
-Button.CLASS_NAMES = {
+ButtonBase.CLASS_NAMES = {
     BUTTON  : makeClassName(),
     SELECTED: makeClassName('selected'),
     FOCUSED : makeClassName('focused'),
     DISABLED: makeClassName('disabled')
 };
 
-Button.ARIA = {
+ButtonBase.ARIA = {
     CHECKED: 'aria-checked',
     PRESSED: 'aria-pressed'
 };
@@ -349,8 +351,8 @@ Button.ARIA = {
 * @param e {DOMEvent} the event object
 * @protected
 */
-Button.prototype._onBlur = function(e){
-    e.target.removeClass(Button.CLASS_NAMES.FOCUSED);
+ButtonBase.prototype._onBlur = function(e){
+    e.target.removeClass(ButtonBase.CLASS_NAMES.FOCUSED);
 };
 
 /**
@@ -359,13 +361,28 @@ Button.prototype._onBlur = function(e){
 * @param e {DOMEvent} the event object
 * @protected
 */
-Button.prototype._onFocus = function(e){
-    e.target.addClass(Button.CLASS_NAMES.FOCUSED);
+ButtonBase.prototype._onFocus = function(e){
+    e.target.addClass(ButtonBase.CLASS_NAMES.FOCUSED);
 };
 
-Y.mix(Button.prototype, Y.Attribute.prototype);
+Y.mix(ButtonBase.prototype, Y.Attribute.prototype);
 // Export Button
-Y.Button = Button;
+Y.ButtonBase = ButtonBase;
+function ButtonNode(config) {
+    ButtonNode.superclass.constructor.call(this, config.srcNode || '<button/>');
+    this.initializer(config);
+
+};
+
+Y.extend(ButtonNode, Y.Node, {
+    initNode: function() {
+        this._host = this;
+    }
+});
+
+Y.mix(ButtonNode.prototype, Y.ButtonBase.prototype, true);
+ButtonNode.ATTRS = Y.merge(Y.ButtonBase.ATTRS, Y.Node.ATTRS);
+Y.Button = ButtonNode;
 
 
 }, '@VERSION@' ,{requires:['base', 'classnamemanager', 'node']});
