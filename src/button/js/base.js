@@ -14,7 +14,7 @@
 * @param config {Object} Configuration object
 * @constructor
 */
-function ButtonBase(config) {
+function Button(config) {
     this.initializer(config);
 }
 
@@ -31,24 +31,21 @@ function ButtonBase(config) {
 */
 function makeClassName(str) {
     if (str) {
-        return Y.ClassNameManager.getClassName(ButtonBase.NAME, str);
+        return Y.ClassNameManager.getClassName(Button.NAME, str);
     } else {
-        return Y.ClassNameManager.getClassName(ButtonBase.NAME);
+        return Y.ClassNameManager.getClassName(Button.NAME);
     }
 }
 
 
 /* Button extends the Base class */
-ButtonBase.prototype = {
-    constructor: ButtonBase,
-    
-    initNode: function(config) {
-        this._host = Y.one(config.srcNode || Y.DOM.create('<button/>'));
-    },
+Button.prototype = {
+    TEMPLATE: '<button/>',
 
+    constructor: Button,
+    
     renderAttrs: function(config) {
-        //this._initAttrHost(ButtonBase.ATTRS, config);
-        Y.AttributeCore.call(this, ButtonBase.ATTRS, config);
+        Y.AttributeCore.call(this, Button.ATTRS, config);
         Y.AttributeEvents.apply(this, arguments);
         Y.AttributeExtras.apply(this, arguments);
     },
@@ -60,7 +57,6 @@ ButtonBase.prototype = {
     * @private
     */
     initializer: function(config){
-        this.initNode(config);
         this.renderAttrs(config);
         this.renderUI(config);
         this.bindUI();
@@ -76,7 +72,7 @@ ButtonBase.prototype = {
         var node = button.getNode();
         
         // Set some default node attributes
-        node.addClass(ButtonBase.CLASS_NAMES.BUTTON);
+        node.addClass(Button.CLASS_NAMES.BUTTON);
         
         
         // Apply any config attributes that may have been passed in.
@@ -138,7 +134,11 @@ ButtonBase.prototype = {
     * @return {Object} A node instance
     */
     getNode: function() {
-        return this._host;
+        if (!this._srcNode) {
+            this._srcNode = Y.DOM.create(this.TEMPLATE);
+        }
+    
+        return this._srcNode;
     },
 
     /**
@@ -179,8 +179,10 @@ ButtonBase.prototype = {
     * @protected
     */
     _renderLabel: function (value) {
-        var node = this.getNode();
-        node.set(node.test('input') ? 'value' : 'text', value);
+        var node = this.getNode(),
+            attr = (node.get('tagName') === 'input') ? 'value' : 'text';
+
+        node.set(attr, value);
     },
 
     /**
@@ -190,7 +192,7 @@ ButtonBase.prototype = {
     */
     _renderDisabled: function (value) {
         this.getNode().set('disabled', value)
-            .toggleClass(ButtonBase.CLASS_NAMES.DISABLED, value);
+            .toggleClass(Button.CLASS_NAMES.DISABLED, value);
     },
     
     /**
@@ -200,7 +202,7 @@ ButtonBase.prototype = {
     */
     _renderSelected: function(value) {
         this.getNode().set(this.ARIASelectedState, value)
-            .toggleClass(ButtonBase.CLASS_NAMES.SELECTED, value);
+            .toggleClass(Button.CLASS_NAMES.SELECTED, value);
     },
 
     /**
@@ -214,10 +216,10 @@ ButtonBase.prototype = {
         var role = value;
         
         if (value === 'checkbox') {
-            this.ARIASelectedState = ButtonBase.ARIA.CHECKED;
+            this.ARIASelectedState = Button.ARIA.CHECKED;
         }
         else {
-            this.ARIASelectedState = ButtonBase.ARIA.PRESSED;
+            this.ARIASelectedState = Button.ARIA.PRESSED;
         }
             
         if (value === 'toggle' || value === 'checkbox') {
@@ -252,11 +254,13 @@ ButtonBase.prototype = {
 * @private
 * @static
 */
-ButtonBase.ATTRS = {
-    label: { },
+Button.ATTRS = {
+    label: {
+        _bypassProxy: true,
+    },
     type: {
         _bypassProxy: true,
-        value: 'push'
+        value: 'push',
     },
     disabled: {
         _bypassProxy: true,
@@ -278,7 +282,7 @@ ButtonBase.ATTRS = {
 * @type String
 * @static
 */
-ButtonBase.NAME = "button";
+Button.NAME = "button";
 
 /** 
 * Array of static constants used to identify the classnames applied to the Button DOM objects
@@ -287,14 +291,14 @@ ButtonBase.NAME = "button";
 * @type {Array}
 * @static
 */
-ButtonBase.CLASS_NAMES = {
+Button.CLASS_NAMES = {
     BUTTON  : makeClassName(),
     SELECTED: makeClassName('selected'),
     FOCUSED : makeClassName('focused'),
     DISABLED: makeClassName('disabled')
 };
 
-ButtonBase.ARIA = {
+Button.ARIA = {
     CHECKED: 'aria-checked',
     PRESSED: 'aria-pressed'
 };
@@ -308,8 +312,8 @@ ButtonBase.ARIA = {
 * @param e {DOMEvent} the event object
 * @protected
 */
-ButtonBase.prototype._onBlur = function(e){
-    e.target.removeClass(ButtonBase.CLASS_NAMES.FOCUSED);
+Button.prototype._onBlur = function(e){
+    e.target.removeClass(Button.CLASS_NAMES.FOCUSED);
 };
 
 /**
@@ -318,10 +322,10 @@ ButtonBase.prototype._onBlur = function(e){
 * @param e {DOMEvent} the event object
 * @protected
 */
-ButtonBase.prototype._onFocus = function(e){
-    e.target.addClass(ButtonBase.CLASS_NAMES.FOCUSED);
+Button.prototype._onFocus = function(e){
+    e.target.addClass(Button.CLASS_NAMES.FOCUSED);
 };
 
-Y.mix(ButtonBase.prototype, Y.Attribute.prototype);
+Y.mix(Button.prototype, Y.Attribute.prototype);
 // Export Button
-Y.ButtonBase = ButtonBase;
+Y.ButtonBase = Button;
