@@ -42,8 +42,8 @@ function makeClassName(str) {
 ButtonBase.prototype = {
     constructor: ButtonBase,
     
-    initNode: function(srcNode) {
-        this._host = Y.one(srcNode || Y.DOM.create('<button/>'));
+    initNode: function(config) {
+        this._host = Y.one(config.srcNode || Y.DOM.create('<button/>'));
     },
 
     renderAttrs: function(config) {
@@ -60,7 +60,7 @@ ButtonBase.prototype = {
     * @private
     */
     initializer: function(config){
-        this.initNode(config.srcNode);
+        this.initNode(config);
         this.renderAttrs(config);
         this.renderUI(config);
         this.bindUI();
@@ -173,47 +173,6 @@ ButtonBase.prototype = {
         this.set('disabled', true);
     },
     
-    /**
-    * @method on
-    * @description Determines whether to dispatch events to Y.Node (for DOM events) or Y.EventTarget (for everything else)
-    * @param {String} type The name of the event
-    * @param {Function} fn The callback to execute in response to the event
-    * @param {Object} [context] Override this object in callback
-    * @param {Any} [arg*] 0..n additional arguments to supply to the subscriber
-    * @return {EventHandle} A subscription handle capable of detaching that subscription
-    */
-    /*
-    This is close, but doesn't quite work
-    on: function(type, fn, ctx, arg) {
-        
-        // Do we have a many type/fn pairs, or just one?
-        //if (false){ // Ugh, can't get it to work properly
-        if (Y.Lang.isObject(arguments[0])){
-            
-            // Loop through each event, recursively calling this.on() with the pair
-            Y.Object.each(arguments[0], function(){
-               this.on(arguments[1], arguments[0]); 
-            }, this);
-            
-            // TODO: This should return a batch of events
-        }
-        
-        // We just have a single type/fn pair
-        else {
-            var button = this;
-            var node = button.getNode();
-            
-            // Dispatch DOM events to Y.Node, everything else to EventTarget
-            if (Y.Object.hasKey(Y.Node.DOM_EVENTS, type)) {
-                return Y.Node.prototype.on.apply(node, arguments);
-            }
-            else {
-                return Y.EventTarget.prototype.on.apply(button, arguments);
-            }
-        }
-    },
-    */
-
     /**
     * @method _labelSetter
     * @description A setter method for the label attribute
