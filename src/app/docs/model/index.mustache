@@ -748,7 +748,7 @@ If a model is new or if any of its attributes have changed since the model was l
 </p>
 
 <p>
-Finally, a model's `destroy()` method can be used to destroy the model instance. Calling `destroy()` with no arguments will destroy only the local model instance, while calling `destroy({'delete': true})` will both destroy the local model instance and call the sync layer with the "delete" action to delete the model from a persistence layer or server.
+Finally, a model's `destroy()` method can be used to destroy the model instance. Calling `destroy()` with no arguments will destroy only the local model instance, while calling `destroy({remove: true})` will both destroy the local model instance and call the sync layer with the "delete" action to delete the model from a persistence layer or server.
 </p>
 
 <p>

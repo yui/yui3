@@ -25,6 +25,10 @@ App Framework Change History
 * Options passed to `set()` and `setAttrs()` are now correctly merged into the
   event facade of the `change` event. [Ticket #2531492]
 
+* Model's `destroy` event is now fully preventable (previously it was possible
+  for the model to be deleted even if the `destroy` event was prevented by a
+  subscriber in the `on` phase).
+
 ### ModelList
 
 * Added a `filter()` method that returns a filtered array of models. [Ticket
