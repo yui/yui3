@@ -24,7 +24,7 @@ nodeMapSuite.add(new Y.Test.Case({
     },
 
     tearDown: function () {
-        this.view && this.view.destroy();
+        this.view && this.view.destroy({remove: true});
     },
 
     'getByNode() should return a View instance associated with the given Node': function () {
