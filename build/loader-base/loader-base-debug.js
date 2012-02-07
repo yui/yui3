@@ -2535,6 +2535,27 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         resCombos = null;
 
         return resolved;
+    },
+    /**
+    * Shortcut to calculate, resolve and load all modules.
+    * @method load
+    * @param {Callback} cb Executed after all load operations are complete
+    */
+    load: function(cb) {
+        if (!cb) {
+            Y.log('No callback supplied to load()', 'error', 'loader');
+            return;
+        }
+        var self = this,
+            out = self.resolve(true);
+        
+        self.data = out;
+
+        self.onEnd = function() {
+            cb.apply(self.context || self, arguments);
+        };
+
+        self.insert();
     }
 };
 

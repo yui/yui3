@@ -396,9 +396,13 @@ YUI.add('editor-tests', function(Y) {
         },
         _should: {
             fail: {
-                test_selection_methods: (Y.UA.ie ? true : false)
+                test_selection_methods: ((Y.UA.ie || Y.UA.webkit) ? true : false),
+                test_execCommands: (Y.UA.webkit ? true : false)
+
             },
             error: { //These tests should error
+                test_selection_methods: (Y.UA.webkit ? true : false),
+                test_execCommands: (Y.UA.webkit ? true : false),
                 test_double_plug: true,
                 test_double_plug2: true,
                 test_bidi_noplug: true

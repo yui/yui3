@@ -18,27 +18,17 @@
         var build = Base._build,
 
             builtClass = build._ctor(main, cfg),
-            buildCfg = build._cfg(main, cfg),
+            buildCfg = build._cfg(main, cfg, extensions),
 
             _mixCust = build._mixCust,
 
             aggregates = buildCfg.aggregates,
-            custom = buildCfg.custom,
 
             dynamic = builtClass._yuibuild.dynamic,
 
             i, l, val, extClass, extProto,
             initializer,
             destructor;
-
-        if (dynamic && aggregates) {
-            for (i = 0, l = aggregates.length; i < l; ++i) {
-                val = aggregates[i];
-                if (main.hasOwnProperty(val)) {
-                    builtClass[val] = L.isArray(main[val]) ? [] : {};
-                }
-            }
-        }
 
         // Augment/Aggregate
         for (i = 0, l = extensions.length; i < l; i++) {
@@ -54,9 +44,9 @@
             // Prototype, old non-displacing augment
             Y.mix(builtClass, extClass, true, null, 1);
 
-             // Custom Statics
-            _mixCust(builtClass, extClass, aggregates, custom);
-            
+            // Custom Statics
+            _mixCust(builtClass, extClass, buildCfg);
+
             if (initializer) { 
                 extProto[INITIALIZER] = initializer;
             }
@@ -73,8 +63,8 @@
         }
 
         if (sx) {
-            Y.mix(builtClass, build._clean(sx, aggregates, custom), true);
-            _mixCust(builtClass, sx, aggregates, custom);
+            Y.mix(builtClass, build._clean(sx, buildCfg), true);
+            _mixCust(builtClass, sx, buildCfg);
         }
 
         builtClass.prototype.hasImpl = build._impl;
@@ -91,19 +81,43 @@
 
     Y.mix(build, {
 
-        _mixCust: function(r, s, aggregates, custom) {
+        _mixCust: function(r, s, cfg) {
+            
+            var aggregates, 
+                custom, 
+                statics,
+                aggr,
+                l,
+                i;
+                
+            if (cfg) {
+                aggregates = cfg.aggregates;
+                custom = cfg.custom;
+                statics = cfg.statics;
+            }
+
+            if (statics) {
+                Y.mix(r, s, true, statics);
+            }
 
             if (aggregates) {
-                Y.aggregate(r, s, true, aggregates);
+                for (i = 0, l = aggregates.length; i < l; i++) {
+                    aggr = aggregates[i];
+                    if (!r.hasOwnProperty(aggr) && s.hasOwnProperty(aggr)) {
+                        r[aggr] = L.isArray(s[aggr]) ? [] : {};
+                    }
+                    Y.aggregate(r, s, true, [aggr]);
+                }
             }
 
             if (custom) {
-                for (var j in custom) {
-                    if (custom.hasOwnProperty(j)) {
-                        custom[j](j, r, s);
+                for (i in custom) {
+                    if (custom.hasOwnProperty(i)) {
+                        custom[i](i, r, s);
                     }
                 }
             }
+            
         },
 
         _tmpl: function(main) {
@@ -151,16 +165,21 @@
             return builtClass;
         },
 
-        _cfg : function(main, cfg) {
+        _cfg : function(main, cfg, exts) {
             var aggr = [], 
                 cust = {},
+                statics = [],
                 buildCfg,
                 cfgAggr = (cfg && cfg.aggregates),
                 cfgCustBuild = (cfg && cfg.custom),
-                c = main;
+                cfgStatics = (cfg && cfg.statics),
+                c = main,
+                i, 
+                l;
 
+            // Prototype Chain
             while (c && c.prototype) {
-                buildCfg = c._buildCfg; 
+                buildCfg = c._buildCfg;
                 if (buildCfg) {
                     if (buildCfg.aggregates) {
                         aggr = aggr.concat(buildCfg.aggregates);
@@ -168,25 +187,55 @@
                     if (buildCfg.custom) {
                         Y.mix(cust, buildCfg.custom, true);
                     }
+                    if (buildCfg.statics) {
+                        statics = statics.concat(buildCfg.statics);
+                    }
                 }
                 c = c.superclass ? c.superclass.constructor : null;
+            }
+
+            // Exts
+            if (exts) {
+                for (i = 0, l = exts.length; i < l; i++) {
+                    c = exts[i];
+                    buildCfg = c._buildCfg;
+                    if (buildCfg) {
+                        if (buildCfg.aggregates) {
+                            aggr = aggr.concat(buildCfg.aggregates);
+                        }
+                        if (buildCfg.custom) {
+                            Y.mix(cust, buildCfg.custom, true);
+                        }
+                        if (buildCfg.statics) {
+                            statics = statics.concat(buildCfg.statics);
+                        }
+                    }                    
+                }
             }
 
             if (cfgAggr) {
                 aggr = aggr.concat(cfgAggr);
             }
+
             if (cfgCustBuild) {
                 Y.mix(cust, cfg.cfgBuild, true);
             }
 
+            if (cfgStatics) {
+                statics = statics.concat(cfgStatics);
+            }
+
             return {
                 aggregates: aggr,
-                custom: cust
+                custom: cust,
+                statics: statics
             };
         },
 
-        _clean : function(sx, aggregates, custom) {
-            var prop, i, l, sxclone = Y.merge(sx);
+        _clean : function(sx, cfg) {
+            var prop, i, l, sxclone = Y.merge(sx),
+                aggregates = cfg.aggregates,
+                custom = cfg.custom;
 
             for (prop in custom) {
                 if (sxclone.hasOwnProperty(prop)) {

@@ -17,6 +17,7 @@
 .yui3-skin-sam .yui3-datatable-cell,
 .yui3-skin-sam .yui3-datatable-header {
     border-right: 1px solid #cbcbcb;/*  inner column border */
+    border-width: 0 1px 0 0;
     font-size: inherit;
     margin: 0;
 	overflow: visible; /*to make ths where the title is really long work*/
