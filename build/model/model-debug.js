@@ -193,7 +193,7 @@ Y.Model = Y.extend(Model, Y.Base, {
     Destroys this model instance and removes it from its containing lists, if
     any.
 
-    If `options['delete']` is `true`, then this method also delegates to the
+    If `options.remove` is `true`, then this method also delegates to the
     `sync()` method to delete the model from the persistence layer, which is an
     asynchronous action. Provide a _callback_ function to be notified of success
     or failure.
@@ -202,7 +202,7 @@ Y.Model = Y.extend(Model, Y.Base, {
     @param {Object} [options] Sync options. It's up to the custom sync
         implementation to determine what options it supports or requires, if
         any.
-      @param {Boolean} [options.delete=false] If `true`, the model will be
+      @param {Boolean} [options.remove=false] If `true`, the model will be
         deleted via the sync layer in addition to the instance being destroyed.
     @param {callback} [callback] Called when the sync operation finishes.
       @param {Error|null} callback.err If an error occurred, this parameter will
@@ -219,25 +219,25 @@ Y.Model = Y.extend(Model, Y.Base, {
             options  = {};
         }
 
-        function finish(err) {
-            if (!err) {
-                YArray.each(self.lists.concat(), function (list) {
-                    list.remove(self, options);
-                });
+        self.onceAfter('destroy', function () {
+            function finish(err) {
+                if (!err) {
+                    YArray.each(self.lists.concat(), function (list) {
+                        list.remove(self, options);
+                    });
+                }
 
-                Model.superclass.destroy.call(self);
+                callback && callback.apply(null, arguments);
             }
 
-            callback && callback.apply(null, arguments);
-        }
+            if (options && (options.remove || options['delete'])) {
+                self.sync('delete', options, finish);
+            } else {
+                finish();
+            }
+        });
 
-        if (options && options['delete']) {
-            this.sync('delete', options, finish);
-        } else {
-            finish();
-        }
-
-        return this;
+        return Model.superclass.destroy.call(self);
     },
 
     /**
