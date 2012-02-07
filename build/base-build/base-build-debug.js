@@ -24,11 +24,9 @@ YUI.add('base-build', function(Y) {
 
             _mixCust = build._mixCust,
 
-            aggregates = buildCfg.aggregates,
-
             dynamic = builtClass._yuibuild.dynamic,
 
-            i, l, val, extClass, extProto,
+            i, l, extClass, extProto,
             initializer,
             destructor;
 
