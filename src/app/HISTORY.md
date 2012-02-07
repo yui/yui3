@@ -25,6 +25,10 @@ App Framework Change History
 * Options passed to `set()` and `setAttrs()` are now correctly merged into the
   event facade of the `change` event. [Ticket #2531492]
 
+* Model's `destroy` event is now fully preventable (previously it was possible
+  for the model to be deleted even if the `destroy` event was prevented by a
+  subscriber in the `on` phase).
+
 ### ModelList
 
 * Added a `filter()` method that returns a filtered array of models. [Ticket
@@ -111,6 +115,10 @@ App Framework Change History
   Previously, it assumed string values represented raw HTML. To get the same
   functionality as the old behavior, pass your HTML string through
   `Y.Node.create()` before passing it to `container`.
+
+* [!] Destroying a view no longer also destroys the view's container node by
+  default. To destroy a view's container node when destroying the view, pass
+  `{remove: true}` to the view's `destroy()` method. [Ticket #2531689]
 
 * Added a View extension, `Y.View.NodeMap`, that can be mixed into a `View`
   subclass to provide a static `getByNode()` method that returns the nearest

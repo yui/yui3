@@ -135,18 +135,19 @@ Y.augment = function (receiver, supplier, overwrite, whitelist, args) {
 };
 
 /**
- * Applies object properties from the supplier to the receiver.  If
- * the target has the property, and the property is an object, the target
- * object will be augmented with the supplier's value.  If the property
- * is an array, the suppliers value will be appended to the target.
+ * Copies object properties from the supplier to the receiver. If the target has
+ * the property, and the property is an object, the target object will be
+ * augmented with the supplier's value.
+ *
  * @method aggregate
- * @param {function} r  the object to receive the augmentation.
- * @param {function} s  the object that supplies the properties to augment.
- * @param {boolean} ov if true, properties already on the receiver
- * will be overwritten if found on the supplier.
- * @param {string[]} wl a whitelist.  If supplied, only properties in
- * this list will be applied to the receiver.
- * @return {object} the extended object.
+ * @param {Object} receiver Object to receive the augmentation.
+ * @param {Object} supplier Object that supplies the properties with which to
+ *     augment the receiver.
+ * @param {Boolean} [overwrite=false] If `true`, properties already on the receiver
+ *     will be overwritten if found on the supplier.
+ * @param {String[]} [whitelist] Whitelist. If supplied, only properties in this
+ *     list will be applied to the receiver.
+ * @return {Object} Augmented object.
  */
 Y.aggregate = function(r, s, ov, wl) {
     return Y.mix(r, s, ov, wl, 0, true);

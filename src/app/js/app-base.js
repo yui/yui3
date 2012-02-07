@@ -499,7 +499,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
             // some event subscriptions are made on elements other than the
             // View's `container`.
         } else {
-            view.destroy();
+            view.destroy({remove: true});
 
             // TODO: The following should probably happen automagically from
             // `destroy()` being called! Possibly `removeTarget()` as well.
