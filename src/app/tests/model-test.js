@@ -55,7 +55,7 @@ modelSuite.add(new Y.Test.Case({
         Y.Mock.verify(mock);
     },
 
-    'destroy() should delete the model if the `delete` option is truthy': function () {
+    'destroy() should delete the model if the `remove` option is truthy': function () {
         var calls   = 0,
             mock    = Y.Mock(),
             model   = new Y.Model();
@@ -70,13 +70,13 @@ modelSuite.add(new Y.Test.Case({
 
             Assert.areSame('delete', action, 'sync action should be "delete"');
             Assert.isObject(options, 'options should be an object');
-            Assert.isTrue(options['delete'], 'options.delete should be true');
+            Assert.isTrue(options.remove, 'options.delete should be true');
             Assert.isFunction(callback, 'callback should be a function');
 
             callback();
         };
 
-        model.destroy({'delete': true}, mock.callback);
+        model.destroy({remove: true}, mock.callback);
         Y.Mock.verify(mock);
     },
 
