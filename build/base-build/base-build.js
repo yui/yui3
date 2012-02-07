@@ -323,7 +323,8 @@ YUI.add('base-build', function(Y) {
      *        custom: {
      *           "CustomProperty" : function(property, Receiver, Supplier) {
      *              ...
-     *              Receiver.CustomProperty.triggers.push(supplier.CustomProperty.triggers);
+     *              var triggers = Receiver.CustomProperty.triggers; 
+                    Receiver.CustomProperty.triggers = triggers.concat(Supplier.CustomProperty.triggers);
      *              ...
      *           }
      *        }
