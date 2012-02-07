@@ -298,13 +298,59 @@ YUI.add('base-build', function(Y) {
     };
 
     /**
-     * <p>Creates a new class (constructor function) which extends the base class passed in as the second argument, 
-     * and mixes in the array of extensions provided.</p>
-     * <p>Prototype properties or methods can be added to the new class, using the px argument (similar to Y.extend).</p>
-     * <p>Static properties or methods can be added to the new class, using the sx argument (similar to Y.extend).</p>
-     * <p>
+     * Creates a new class (constructor function) which extends the base class passed in as the second argument, 
+     * and mixes in the array of extensions provided.
      * 
-     * </p>
+     * Prototype properties or methods can be added to the new class, using the px argument (similar to Y.extend).
+     * 
+     * Static properties or methods can be added to the new class, using the sx argument (similar to Y.extend).
+     * 
+     * **NOTE FOR COMPONENT DEVELOPERS**: Both the `base` class, and `extensions` can define static a `_buildCfg` 
+     * property, which acts as class creation meta-data, and drives how special static properties from the base 
+     * class, or extensions should be copied, aggregated or (custom) mixed into the newly created class.
+     * 
+     * The `_buildCfg` property is a hash with 3 supported properties: `statics`, `aggregates` and `custom`, e.g:
+     * 
+     *     // If the Base/Main class is the thing introducing the property:
+     * 
+     *     MyBaseClass._buildCfg = {
+     *     
+     *        // Static properties/methods to copy (Alias) to the built class.
+     *        statics: ["CopyThisMethod", "CopyThisProperty"],
+     * 
+     *        // Static props to aggregate onto the built class.
+     *        aggregates: ["AggregateThisProperty"],
+     * 
+     *        // Static properties which need custom handling (e.g. deep merge etc.)
+     *        custom: {
+     *           "CustomProperty" : function(property, Receiver, Supplier) {
+     *              ...
+     *              Receiver.CustomProperty.triggers.push(supplier.CustomProperty.triggers);
+     *              ...
+     *           }
+     *        }
+     *     };
+     * 
+     *     MyBaseClass.CopyThisMethod = function() {...}; 
+     *     MyBaseClass.CopyThisProperty = "foo";
+     *     MyBaseClass.AggregateThisProperty = {...};
+     *     MyBaseClass.CustomProperty = {
+     *        triggers: [...]
+     *     }
+     *
+     *     // Or, if the Extension is the thing introducing the property:
+     * 
+     *     MyExtension._buildCfg = {
+     *         statics : ...
+     *         aggregates : ...
+     *         custom : ...  
+     *     }    
+     * 
+     * This way, when users pass your base or extension class to `Y.Base.create` or `Y.Base.mix`, they don't need to
+     * know which properties need special handling. `Y.Base` has a buildCfg which defines `ATTRS` for custom mix handling
+     * (to protect the static config objects), and `Y.Widget` has a buildCfg which specifies `HTML_PARSER` for 
+     * straight up aggregation.
+     *
      * @method create
      * @static
      * @param {Function} name The name of the newly created class. Used to defined the NAME property for the new class.
