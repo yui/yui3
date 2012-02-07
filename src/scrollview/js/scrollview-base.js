@@ -339,7 +339,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @type boolean
      * @protected
      */
-    _forceHWTransforms: Y.UA.webkit,
+    _forceHWTransforms: Y.UA.webkit ? true : false,
 
     /**
      * <p>Used to control whether or not ScrollView's internal

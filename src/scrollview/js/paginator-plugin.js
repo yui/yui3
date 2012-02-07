@@ -3,7 +3,6 @@
  *
  * @module scrollview-paginator
  */
-
 var UI = (Y.ScrollView) ? Y.ScrollView.UI_SRC : "ui",
     INDEX = "index",
     SCROLL_X = "scrollX",
@@ -97,15 +96,27 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     initializer: function() {
         var host,
             paginator = this; // kweight
-
         host = paginator._host = paginator.get('host');
-
+        
+        console.log(host._forceHWTransforms);
+        if (host._forceHWTransforms) {
+            var cb = host.get(CONTENT_BOX);
+            this.nodeList = host.get(CONTENT_BOX).all(this.get("selector"));
+            cb.empty(true);
+            cb.append(this.nodeList.item(0));
+            cb.append(this.nodeList.item(1));
+            cb.append(this.nodeList.item(2));
+            cb.append(this.nodeList.item(3));
+            console.log("enable hw accel");
+        }
+                
         paginator.beforeHostMethod('_flickFrame', paginator._flickFrame);
         paginator.afterHostMethod('_uiDimensionsChange', paginator._calcOffsets);
         paginator.afterHostEvent('scrollEnd', paginator._scrollEnded);
         paginator.afterHostEvent('render', paginator._afterRender);
 
         paginator.after('indexChange', paginator._afterIndexChange);
+
     },
 
     /**
@@ -208,7 +219,14 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @method _afterIndexChange
      * @protected
      */
-    _afterIndexChange: function(e) {
+    _afterIndexChange: function(e) { 
+         var host = this._host,
+             cb = host.get(CONTENT_BOX),
+             index = this.get(INDEX);
+             console.log(this.nodeList);
+             console.log(this.get(INDEX));
+     cb.append(this.nodeList.item(this.get(INDEX)+2));
+     this._calcOffsets();
         if(e.src !== UI) {
             this._uiIndex(e.newVal);
         }
