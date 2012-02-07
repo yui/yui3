@@ -1,0 +1,126 @@
+<div class="intro">
+    <p>
+    This example demonstrates how to create a reusable dialog for messagages and confirmations.
+    </p>
+</div>
+
+<div class="example yui3-skin-sam">
+    <style>
+    {{>dialog-css-interactive-example}}
+    {{>dialog-css}}
+    </style>
+    {{>dialog-html}}
+    <script>
+    YUI().use("panel", "escape", function (Y) {  // loading escape only for security on this page
+
+    {{>dialog-js}}
+    {{>dialog-js-interactive-example}}
+    });
+    </script>
+</div>
+
+<h2>Creating a reusable dialog</h2>
+
+<h3>The HTML</h3>
+
+<p>Panel requires you to have the class 
+`yui3-skin-sam` on a parent element, commonly the `<body>` tag.</p>
+
+```
+<body class="yui3-skin-sam">
+    <div id='dialog'></div>
+     
+    <!-- We'll use this button to just represent some user initiated event -->
+    <button class='yui3-button btn-show'>Show Dialog</button>
+    
+</body>
+```
+<h3>Setting Up The YUI Instance</h3>
+
+<p>
+The only module you need is the `panel` module. 
+</p>
+
+```
+<script>
+YUI().use('panel', function (Y) {
+    // We'll write example code here
+});
+</script>
+```
+
+<h3>Instantiating the Panel</h3>
+
+<p>The JavaScript to instantiate the panel is as follows:</p>
+
+```
+YUI().use("panel", function (Y) {  // loading escape only for security on this page
+{{>dialog-js}}
+});
+```
+<h3>Reuse the Dialog</h3>
+Since it's common to want the user to give their confirmation before some action 
+happens, this example passes a callback function to the dialog.
+```
+    // a function to do when the user clicks the "OK" button in the dialog.
+    var doSomething = function(){ 
+        Y.log('Something was done.');   
+    };
+```            
+
+Each time you want to show a dialog for a different purpose, you can reuse the same
+dialog and just:
+<ul>
+<li>Set the message text.</li>
+<li>Change the icon.</li>
+<li>Assign a function to the "OK" button (optional).</li>
+</ul>
+
+There's a callback property on the dialog object.
+If you want to, you can set its value with a reference to your own 
+function so the dialog can trigger different actions each time it's shown.
+This example removes the callback reference each time a dialog button is 
+clicked to make sure it's not unintentionally persisted. 
+If you use a callback, you'll need to add it every time the dialog is shown. 
+
+
+```
+Y.one('.btn-show').on('click', function(){
+    // set the content you want in the message
+    Y.one('#dialog .message').setContent('Are you sure you want to [take some action]?');
+    
+    // set the icon (or none) that appears next to the message.
+    // the Class 'message' also needs to be maintained.
+    Y.one('#dialog .message').set('className', 'message icon-bubble');
+    /* classnames and images provided in the CSS are:
+        .icon-bubble
+        .icon-error
+        .icon-info
+        .icon-question
+        .icon-warn
+        .icon-success
+        .icon-none
+     */
+                                             
+    // set the callback to reference a function
+    dialog.callback = doSomething; 
+    
+    dialog.show();
+});
+```
+
+
+<h3>The CSS</h3>
+
+```
+<style>
+{{>dialog-css}}
+</style>
+```
+
+<h3>The Icon Source Files</h3>
+
+Here we provide the 
+<a href="{{{componentAssets}}}/icon_image_source_files.zip">original source files</a> 
+for the icons, in case you'd like to modify them, or create others. We created
+them ourselves, just for you, so you can be sure they are open source. 
