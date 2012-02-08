@@ -608,6 +608,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "datatable-body", 
             "datatable-base", 
             "datatable-column-widths", 
+            "datatable-message", 
             "datatable-mutable", 
             "datatable-scroll", 
             "datatable-datasource", 
@@ -656,6 +657,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "view", 
             "classnamemanager"
         ]
+    }, 
+    "datatable-message": {
+        "lang": [
+            "en"
+        ], 
+        "requires": [
+            "datatable-base"
+        ], 
+        "skinnable": true
     }, 
     "datatable-mutable": {
         "requires": [
@@ -2272,4 +2282,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'b1664ffff8fda54a511ab868bf0d5a25';
+YUI.Env[Y.version].md5 = 'b308c876f46589e7e3ebcf88eafa389e';

@@ -1,10 +1,10 @@
 /**
- * Provides extended keyboard support for the contextmenu event such that:
+ * Provides extended keyboard support for the "contextmenu" event such that:
  * <ul>
- * <li>The browser's default contextmenu is supressed regardless of how the contextmenu event was triggered</li>
- * <li>On Windows the contextmenu event is fired consistently regardless of whether the user pressed the Menu key or Shift + F10</li>
- * <li>When the contextmenu event is fired via the keyboard, the pageX, pageY, clientX and clientY properties reference the center of the event target. This makes it easier for contextmenu event listeners to position an overlay in respose to the event by not having to worry about special handling of the x and y coordinates based on the device that fired the event.</li>
- * <li>On the Mac it enables the use of the Shift + Control + Option + M keyboard shortcut, which (by default) is only available when VoiceOver is enabled.</li> 
+ * <li>The browser's default context menu is suppressed regardless of how the event was triggered</li>
+ * <li>On Windows the "contextmenu" event is fired consistently regardless of whether the user pressed the Menu key or Shift + F10</li>
+ * <li>When the "contextmenu" event is fired via the keyboard, the pageX, pageY, clientX and clientY properties reference the center of the event target. This makes it easy for "contextmenu" event listeners to position an overlay in response to the event by not having to worry about special handling of the x and y coordinates based on the device that fired the event.</li>
+ * <li>On the Mac it enables the use of the Shift + Control + Option + M keyboard shortcut to fire the "contextmenu" event, which (by default) is only available when VoiceOver (the screen reader on the Mac) is enabled.</li> 
  * </ul>
  * @module event-contextmenu
  * @requires event

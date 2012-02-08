@@ -6,17 +6,18 @@
         <title>contextmenu synthetic event</title>
         <meta name="author" content="Todd Kloots">
         <style type="text/css">
-
           
-          #menu {
-            position: absolute;
-            display: none;
-            background: #ccc;
-            padding: 0;
-            margin: 0;
-            list-style-type: none;
+          .contextmenu {
+              background: #ccc;
+              padding: 0;
+              margin: 0;
+              list-style-type: none;
           }
-
+          
+          .contextmenu li {
+              white-space: nowrap;
+          }
+          
         </style>
 
       	<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
@@ -26,16 +27,26 @@
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
             allowRollup: false,
             lazyEventFacade: true
-          }).use("event-contextmenu", "node-event-delegate", "node-style", "node-screen", "node-event-simulate", function (Y) {
+          }).use("event-contextmenu", "node-event-delegate", "overlay", function (Y) {
 
 
-            var btn = Y.one("#btn-1");
-            var btn2 = Y.one("#btn-2"); 
-            
+            var btn = Y.one("#btn-1"),
+                btn2 = Y.one("#btn-2"), 
+                contextmenu;
+
             function onContextmenu(e) {
-                var menu = Y.one("#menu");
-                menu.setStyle("display", "block");
-                menu.setXY([e.pageX, e.pageY]);          
+
+                if (!contextmenu) {
+                  contextmenu = new Y.Overlay({
+                      bodyContent: "<ul class=\"contextmenu\"><li>Option 1</li><li>Option 2</li><li>Option 3</li></ul>",
+                      visible: false,
+                      constrain: true
+                  });
+                  contextmenu.render(Y.one("body"));                    
+                }
+
+                contextmenu.set("xy", [e.pageX, e.pageY]);
+                contextmenu.show();
             }
 
             
@@ -74,13 +85,6 @@
 
 	   <a href="#" id="btn-1">Button 1</a>
 	   <button type="button" id="btn-2">Click Me</button>
-
-     <ul id="menu">
-        <li>Option 1</li>
-        <li>Option 2</li>
-        <li>Option 3</li>
-     </ul>
-
 
 	</body>
 </html>

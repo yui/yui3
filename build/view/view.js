@@ -93,9 +93,6 @@ Y.View = Y.extend(View, Y.Base, {
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function (config) {
         config || (config = {});
-
-        this._attachedViewEvents = [];
-
         config.template && (this.template = config.template);
 
         // Merge events from the config into events in `this.events`, then
@@ -106,9 +103,36 @@ Y.View = Y.extend(View, Y.Base, {
         this.attachEvents(this.events);
     },
 
+    /**
+    Destroys this View, detaching any DOM events and optionally also destroying
+    its container node.
+
+    By default, the container node will not be destroyed. Pass an _options_
+    object with a truthy `remove` property to destroy the container as well.
+
+    @method destroy
+    @param {Object} [options] Options.
+        @param {Boolean} [options.remove=false] If `true`, this View's container
+            will be removed from the DOM and destroyed as well.
+    @chainable
+    */
+    destroy: function (options) {
+        // We also accept `delete` as a synonym for `remove`.
+        if (options && (options.remove || options['delete'])) {
+            // Attaching an event handler here because the `destroy` event is
+            // preventable. If we destroyed the container before calling the
+            // superclass's `destroy()` method and the event was prevented, the
+            // class would end up in a broken state.
+            this.onceAfter('destroy', function () {
+                this._destroyContainer();
+            });
+        }
+
+        return View.superclass.destroy.call(this);
+    },
+
     destructor: function () {
-        this._destroyContainer();
-        this._attachedViewEvents = [];
+        this.detachEvents();
     },
 
     // -- Public Methods -------------------------------------------------------
@@ -124,6 +148,7 @@ Y.View = Y.extend(View, Y.Base, {
     @param {Object} [events] Hash of events to attach. See the docs for the
         `events` attribute for details on the format. If not specified, this
         view's `events` property will be used.
+    @chainable
     @see detachEvents
     **/
     attachEvents: function (events) {
@@ -153,6 +178,8 @@ Y.View = Y.extend(View, Y.Base, {
                     container.delegate(name, handler, selector, this));
             }
         }
+
+        return this;
     },
 
     /**
@@ -187,6 +214,9 @@ Y.View = Y.extend(View, Y.Base, {
         Y.Array.each(this._attachedViewEvents, function (handle) {
             handle.detach();
         });
+
+        this._attachedViewEvents = [];
+        return this;
     },
 
     /**

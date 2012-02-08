@@ -37,13 +37,15 @@ NATIVE_FN_REGEX = /\{\s*\[(?:native code|function)\]\s*\}/i;
 // -- Protected Methods --------------------------------------------------------
 
 /**
-Returns _true_ if the given function appears to be implemented in native code,
-_false_ otherwise. This isn't guaranteed to be 100% accurate and won't work for
-anything other than functions, but it can be useful for determining whether
-a function like `Array.prototype.forEach` is native or a JS shim provided by
-another library.
+Returns `true` if the given function appears to be implemented in native code,
+`false` otherwise. Will always return `false` -- even in ES5-capable browsers --
+if the `useNativeES5` YUI config option is set to `false`.
 
-There's a great article by @kangax discussing the flaws with this technique:
+This isn't guaranteed to be 100% accurate and won't work for anything other than
+functions, but it can be useful for determining whether a function like
+`Array.prototype.forEach` is native or a JS shim provided by another library.
+
+There's a great article by @kangax discussing certain flaws with this technique:
 <http://perfectionkills.com/detecting-built-in-host-methods/>
 
 While his points are valid, it's still possible to benefit from this function
@@ -54,13 +56,13 @@ other libraries.
 
 @method _isNative
 @param {Function} fn Function to test.
-@return {Boolean} _true_ if _fn_ appears to be native, _false_ otherwise.
+@return {Boolean} `true` if _fn_ appears to be native, `false` otherwise.
 @static
 @protected
 @since 3.5.0
 **/
 L._isNative = function (fn) {
-    return !!(fn && NATIVE_FN_REGEX.test(fn));
+    return !!(Y.config.useNativeES5 && fn && NATIVE_FN_REGEX.test(fn));
 };
 
 // -- Public Methods -----------------------------------------------------------
