@@ -120,6 +120,14 @@ App Framework Change History
   default. To destroy a view's container node when destroying the view, pass
   `{remove: true}` to the view's `destroy()` method. [Ticket #2531689]
 
+* Added a `containerTemplate` property that contains an HTML template used to
+  create a container node when one isn't specified. Defaults to "<div/>".
+
+* When no `container` node is specified at instantiation time, the container
+  won't be created until it's needed. `create()` is now only used to create a
+  default container; it's never called when a custom container node is
+  specified.
+
 * Added a View extension, `Y.View.NodeMap`, that can be mixed into a `View`
   subclass to provide a static `getByNode()` method that returns the nearest
   View instance associated with a given Node (similar to `Widget.getByNode()`).
