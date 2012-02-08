@@ -2537,9 +2537,24 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         return resolved;
     },
     /**
-    * Shortcut to calculate, resolve and load all modules.
-    * @method load
-    * @param {Callback} cb Executed after all load operations are complete
+    Shortcut to calculate, resolve and load all modules.
+
+        var loader = new Y.Loader({
+            ignoreRegistered: true,
+            modules: {
+                mod: {
+                    path: 'mod.js'
+                }
+            },
+            requires: [ 'mod' ]
+        });
+        loader.load(function() {
+            console.log('All modules have loaded..');
+        });
+
+
+    @method load
+    @param {Callback} cb Executed after all load operations are complete
     */
     load: function(cb) {
         if (!cb) {
