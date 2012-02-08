@@ -9,8 +9,8 @@ var YArray  = Y.Array,
 
 // TODOs:
 //
+// * Call into `Y.Node.button()`, make sure to blacklist config first.
 // * Implement HTML_PARSER.
-// * Support `isDefault` button.
 // * Move `BUTTONS.close` and related CSS to Panel.
 // * Styling to add spacing between buttons?
 //
@@ -76,6 +76,7 @@ WidgetButtons.prototype = {
         delete this._buttons;
         delete this._buttonsMap;
         delete this._buttonsNames;
+        delete this._defaultButton;
     },
 
     // -- Public Methods -------------------------------------------------------
@@ -113,6 +114,7 @@ WidgetButtons.prototype = {
 
     _bindUIButtons: function () {
         this.after('buttonsChange', Y.bind('_afterButtonsChange', this));
+        this.after('visibleChange', Y.bind('_afterVisibleChangeButtons', this));
     },
 
     _createButton: function (config, section, index) {
@@ -128,10 +130,9 @@ WidgetButtons.prototype = {
         YArray.each(classNames, button.addClass, button);
         button.on(events, config.action, context);
 
-        // TODO: Modify button node when `isDefault` is `true`.
-
         (buttons[section] || (buttons[section] = [])).splice(index, 0, button);
         name && (this._buttonsMap[name] = button);
+        config.isDefault && (this._defaultButton = button);
 
         return button;
     },
@@ -239,11 +240,16 @@ WidgetButtons.prototype = {
             sectionButtons   = buttonContainer.all('.' + buttonsClassName);
 
         buttonContainer.insertBefore(button, sectionButtons.item(index));
+
+        if (this.get('visible') && button === this._defaultButton) {
+            button.focus();
+        }
     },
 
     _uiSetButtons: function (buttons) {
         YObject.each(buttons, function (sectionButtons, section) {
             var buttonContainer = this._getButtonContainer(section),
+                defaultButton   = this._defaultButton,
                 fragment        = Y.one(Y.config.doc.createDocumentFragment()),
                 i, len;
 
@@ -252,6 +258,10 @@ WidgetButtons.prototype = {
             }
 
             buttonContainer.appendChild(fragment);
+
+            if (this.get('visible') && defaultButton) {
+                defaultButton.focus();
+            }
         }, this);
     },
 
@@ -267,6 +277,14 @@ WidgetButtons.prototype = {
             this._destroyButtons();
             this._createButtons(e.newVal);
             this._uiSetButtons(this._buttons);
+        }
+    },
+
+    _afterVisibleChangeButtons: function (e) {
+        var defaultButton = this._defaultButton;
+
+        if (defaultButton && e.newVal) {
+            defaultButton.focus();
         }
     }
 };

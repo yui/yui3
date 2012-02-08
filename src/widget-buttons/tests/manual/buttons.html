@@ -14,8 +14,9 @@
             headerContent: 'Test Widget',
             buttons      : [
                 {
-                    label: 'Destroy',
-                    action: function () {
+                    label    : 'Destroy',
+                    isDefault: true,
+                    action   : function () {
                         this.destroy();
                     }
                 },
@@ -27,12 +28,22 @@
                     section   : 'footer',
                     classNames: ['foo']
                 }
-            ]
+            ],
+            visible: false
         });
 
         testWidget.render('body');
         testWidget.getButton('close').set('disabled', true);
         testWidget.getButton(1, 'footer').setStyle('color', 'purple');
+
+        testWidget.set('visible', true);
+
+        setTimeout(function () {
+            testWidget.addButton({
+                label    : 'I\'m Default!',
+                isDefault: true
+            });
+        }, 1000);
     });
     </script>
 </body>
