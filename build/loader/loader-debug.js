@@ -2537,9 +2537,24 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         return resolved;
     },
     /**
-    * Shortcut to calculate, resolve and load all modules.
-    * @method load
-    * @param {Callback} cb Executed after all load operations are complete
+    Shortcut to calculate, resolve and load all modules.
+
+        var loader = new Y.Loader({
+            ignoreRegistered: true,
+            modules: {
+                mod: {
+                    path: 'mod.js'
+                }
+            },
+            requires: [ 'mod' ]
+        });
+        loader.load(function() {
+            console.log('All modules have loaded..');
+        });
+
+
+    @method load
+    @param {Callback} cb Executed after all load operations are complete
     */
     load: function(cb) {
         if (!cb) {
@@ -3276,6 +3291,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "datatable-body", 
             "datatable-base", 
             "datatable-column-widths", 
+            "datatable-message", 
             "datatable-mutable", 
             "datatable-scroll", 
             "datatable-datasource", 
@@ -3324,6 +3340,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "view", 
             "classnamemanager"
         ]
+    }, 
+    "datatable-message": {
+        "lang": [
+            "en"
+        ], 
+        "requires": [
+            "datatable-base"
+        ], 
+        "skinnable": true
     }, 
     "datatable-mutable": {
         "requires": [
@@ -4934,7 +4959,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '1cab8b7f30e8353fcfa963884e842e30';
+YUI.Env[Y.version].md5 = '26ffc60a1e4b2a12b5a3b29443059729';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
