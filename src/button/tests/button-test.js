@@ -191,7 +191,7 @@ suite.add(new Y.Test.Case({
         Assert.areEqual(2, eventsTriggered);
     },
     
-    'setting label attribute should fire disabledChange': function () {
+    'setting disabled attribute should fire disabledChange': function () {
         var button = this.button;
         var node = button.getNode();
         var eventsTriggered = 0;

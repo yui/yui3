@@ -137,7 +137,7 @@ Button.prototype = {
     */
     getNode: function() {
         if (!this._srcNode) {
-            this._srcNode = Y.DOM.create(this.TEMPLATE);
+            this._srcNode = Y.Node.create(this.TEMPLATE);
         }
     
         return this._srcNode;
@@ -340,6 +340,7 @@ function ButtonNode(config) {
         node = Y.DOM.create(this.TEMPLATE);
     }
     ButtonNode.superclass.constructor.call(this, node);
+    Y.Node._instances[this._yuid] = this;
     this.initializer(config);
 }
 
@@ -352,6 +353,11 @@ ButtonNode.prototype.getNode = function() {
     return this;
 };
 
+// ButtonBase calls node.set('disabled') doubling notifications
+ButtonNode.prototype._renderDisabled = function (value) {
+    this.toggleClass(Button.CLASS_NAMES.DISABLED, value);
+};
+    
 // so can call with ButtonATTRS
 ButtonNode.prototype.renderAttrs = function(config) {
     Y.AttributeCore.call(this, ButtonNode.ATTRS, config);
