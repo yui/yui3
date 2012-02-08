@@ -127,6 +127,40 @@ suite.add(new Y.Test.Case({
 
         Assert.areSame(buttons.item(1), this.widget.getButton('foo1'), 'Second button is not `foo1`.');
         Assert.areSame('Bar', this.widget.getButton('foo1').get('text'), '`foo1` button does not have text "Bar".');
+    },
+
+    'Default `BUTTONS` should be usable by only providing their string name': function () {
+        var PanelWidget = Y.Base.create('panelWidget', Y.Widget, [Y.WidgetStdMod, Y.WidgetButtons], {
+            BUTTONS: {
+                close: {
+                    action: function () {
+                        this.hide();
+                    },
+
+                    label  : 'Close',
+                    section: Y.WidgetStdMod.HEADER
+                },
+
+                foo: {
+                    label  : 'Foo',
+                    section: Y.WidgetStdMod.HEADER
+                }
+            }
+        });
+
+        this.widget = new PanelWidget({
+            render : '#test',
+            buttons: {
+                header: ['close'],
+                footer: ['foo']
+            }
+        });
+
+        ArrayAssert.isNotEmpty(this.widget.get('buttons.header'), 'Header buttons array was empty.');
+        Assert.isNotNull(this.widget.getStdModNode('header').one('.yui3-button'), 'No button rendered in header.');
+
+        ArrayAssert.isNotEmpty(this.widget.get('buttons.footer'), 'Footer buttons array was empty.');
+        Assert.isNotNull(this.widget.getStdModNode('footer').one('.yui3-button'), 'No button rendered in footerButton.');
     }
 }));
 

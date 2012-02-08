@@ -4,12 +4,12 @@ var YArray  = Y.Array,
 
     getClassName = Y.ClassNameManager.getClassName,
     isArray      = YLang.isArray,
-    isNumber     = YLang.isNumber;
+    isNumber     = YLang.isNumber,
+    isString     = YLang.isString;
 
 // TODOs:
 //
 // * Implement HTML_PARSER.
-// * Support `buttons: ['close']` for named buttons.
 // * Support `isDefault` button.
 // * Move `BUTTONS.close` and related CSS to Panel.
 // * Styling to add spacing between buttons?
@@ -189,7 +189,7 @@ WidgetButtons.prototype = {
     },
 
     _mergeButtonConfig: function (config) {
-        config = Y.merge(config);
+        config = isString(config) ? {name: config} : Y.merge(config);
 
         var name      = config.name || config.type,
             defConfig = this.BUTTONS && this.BUTTONS[name];
