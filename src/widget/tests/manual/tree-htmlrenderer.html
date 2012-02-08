@@ -82,6 +82,28 @@
                 ATTRS: {
                     label: {
                         value:"Default Parent Label"
+                    },
+                    boundingBox: {
+                        getter : function(val) {
+                            if (this.get("initialized") && !this.get("rendered") && !this._handling) {
+                                this._handling = true;
+                                this.render();
+                                val = this._state.get("boundingBox", "value");
+                            }
+                            return val;
+                        }
+                    },
+                    contentBox: {
+                        getter : function(val) {
+                            if (this.get("initialized") && !this.get("rendered") && !this._handling) {
+                                this._handling = true;
+                                console.log("foo");
+ 
+                                this.render();
+                                val = this._state.get("contentBox", "value");
+                            }
+                            return val;
+                        }
                     }
                 }
             });
@@ -99,32 +121,50 @@
                 ATTRS: {
                     label: {
                         value:"Default Child Label"
+                    },
+                    boundingBox: {
+                        getter : function(val) {
+                            if (this.get("initialized") && !this.get("rendered") && !this._handling) {
+                                this._handling = true;
+                                this.render();
+                                val = this._state.get("boundingBox", "value");
+                            }
+                            return val;
+                        }
+                    },
+                    contentBox: {
+                        getter : function(val) {
+                            if (this.get("initialized") && !this.get("rendered") && !this._handling) {
+                                this._handling = true;
+                                console.log("foo");
+     
+                                    this.render();
+                                    val = this._state.get("contentBox", "value");
+                            }
+                            return val;
+                        }
                     }
                 }
             });
 
             var tree = new Y.ParentWidget({
-
                id: "tree",
                children: [
-
                    { type: Y.ChildWidget, id: "leaf-1", label: "Leaf One" },
                    { type: Y.ChildWidget, id: "leaf-2", label: "Leaf Two" },
                    { type: Y.ParentWidget, id: "subtree", label: "Subtree", children: [
-
                       { type: Y.ChildWidget, id: "subtree-leaf-1", label: "Subtree - Leaf One" },
                       { type: Y.ChildWidget, id: "subtree-leaf-2", label: "Subtree - Leaf Two" },
                       { type: Y.ChildWidget, id: "subtree-leaf-3", label: "Subtree - Leaf Three" },
                       { type: Y.ChildWidget, id: "subtree-leaf-4", label: "Subtree - Leaf Four" }
-
                    ]}
                ]
-
             });
 
             tree.render();
             
-            
+            console.log(tree.item(1).get("boundingBox"));
+
         });
         </script>
     </body>
