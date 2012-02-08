@@ -80,6 +80,7 @@ a.yui3-button {
 
 
 .yui3-button-disabled,
+.yui3-button[disabled],
 .yui3-button-disabled:hover,
 .yui3-button-disabled:active {
     cursor: default;
