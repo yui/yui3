@@ -135,7 +135,7 @@ Button.prototype = {
     */
     getNode: function() {
         if (!this._srcNode) {
-            this._srcNode = Y.DOM.create(this.TEMPLATE);
+            this._srcNode = Y.Node.create(this.TEMPLATE);
         }
     
         return this._srcNode;
