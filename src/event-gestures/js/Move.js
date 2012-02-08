@@ -7,7 +7,7 @@
  * @submodule event-move
  */
 
-var EVENT = ("ontouchstart" in Y.config.win && !Y.UA.chrome) ? {
+var EVENT = ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) ? {
         start: "touchstart",
         move: "touchmove",
         end: "touchend"
