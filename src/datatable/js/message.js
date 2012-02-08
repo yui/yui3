@@ -6,8 +6,9 @@ needed.
 Features added to `Y.DataTable`, and made available for custom classes at
 `Y.DataTable.Message`.
 
-@module datatable
-@submodule datatable-message
+@module datatable-message
+@class DataTable.Sortable
+@for DataTable
 **/
 var Message;
 
@@ -37,7 +38,7 @@ Y.mix(Message.prototype, {
     @type {HTML}
     @default <tbody class="{className}"><td class="{contentClass}" colspan="{colspan}"></td></tbody>
     **/
-    MESSAGE_TEMPLATE: '<tbody class="{className}"><td class="{contentClass}" colspan="{colspan}"></td></tbody>',
+    MESSAGE_TEMPLATE: '<tbody class="{className}"><tr><td class="{contentClass}" colspan="{colspan}"></td></tr></tbody>',
 
     /**
     Hides the message node.
@@ -103,10 +104,10 @@ Y.mix(Message.prototype, {
 
         if (this._messageNode) {
             contentNode = this._messageNode.one(
-                this.getClassName('message','content'));
+                '.' + this.getClassName('message', 'content'));
 
             if (contentNode) {
-                contentNode.set('colspan', this._displayColumns.length);
+                contentNode.set('colSpan', this._displayColumns.length);
             }
         }
     },
@@ -189,7 +190,7 @@ Y.mix(Message.prototype, {
             this._messageNode = Y.Node.create(
                 Y.Lang.sub(this.MESSAGE_TEMPLATE, {
                     className: this.getClassName('message'),
-                    contentClassName: this.getClassName('message', 'content'),
+                    contentClass: this.getClassName('message', 'content'),
                     colspan: this._displayColumns.length || 1
                 }));
 
@@ -217,6 +218,16 @@ Y.mix(Message.prototype, {
     @value `undefined` (not initially set)
     **/
     //_messageNode: null,
+
+    /**
+    Synchronizes the message UI with the table state.
+
+    @method _syncMessageUI
+    @protected
+    **/
+    _syncMessageUI: function () {
+        this._uiSetMessage();
+    },
 
     /**
     Calls `hideMessage` or `showMessage` as appropriate based on the presence of
