@@ -163,7 +163,11 @@
 
             tree.render();
             
-            console.log(tree.item(1).get("boundingBox"));
+            console.log(tree.item(1).get("boundingBox").get("id"));
+            console.log(tree.item(1).get("contentBox").get("id"));
+
+            console.log(tree.item(2).get("boundingBox").get("id"));
+            console.log(tree.item(2).get("contentBox").get("id"));
 
         });
         </script>
