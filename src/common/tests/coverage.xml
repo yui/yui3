@@ -63,6 +63,7 @@
         <url>datasource/tests/datasource-polling.html</url>
         <url>datasource/tests/datasource-textschema.html</url>
         <url>datasource/tests/datasource-xmlschema.html</url>
+        <url>datatable/tests/datatable-base.html</url>
         <url>datatype/tests/date.html</url>
         <url>datatype/tests/number.html</url>
         <url>datatype/tests/xml.html</url>
@@ -88,7 +89,7 @@
         <url>event/tests/event-key.html</url>
         <url>event/tests/event-synthetic.html</url>
         <url>event/tests/focusblur.html</url>
-        <url>get/tests/get.html</url>
+        <url>get/tests/get-coverage.html</url>
         <url>graphics/tests/graphics.html</url>
         <url>handlebars/tests/handlebars.html</url>
         <url>highlight/tests/functional/highlight.html</url>

@@ -7,10 +7,6 @@
   </thead>
   <tbody>
       <tr>
-          <td>`@datatable-scroll`</td>
-          <td>Adds the ability to make the table rows scrollable while preserving the header</td>
-      </tr>
-      <tr>
           <td>`align-plugin`</td>
           <td>Provides advanced positioning support for Node via a Plugin</td>
       </tr>
@@ -175,7 +171,7 @@
           <td>Alias module for: `button-base, button-group, cssbutton`</td>
       </tr>
       <tr>
-          <td>`ButtonGroup`</td>
+          <td>`buttongroup`</td>
           <td>Allows Y.Button instances to be grouped together</td>
       </tr>
       <tr>
@@ -308,7 +304,7 @@
       </tr>
       <tr>
           <td>`datatable`</td>
-          <td>Alias module for: `datatable-core, datatable-head, datatable-body, datatable-base, datatable-column-widths, datatable-mutable, datatable-scroll, datatable-datasource, datatable-sort`</td>
+          <td>Alias module for: `datatable-core, datatable-head, datatable-body, datatable-base, datatable-column-widths, datatable-message, datatable-mutable, datatable-scroll, datatable-datasource, datatable-sort`</td>
       </tr>
       <tr>
           <td>`datatable-base`</td>
@@ -335,16 +331,20 @@
           <td>View class responsible for rendering the `<thead>` section of a table. Used as</td>
       </tr>
       <tr>
+          <td>`datatable-message`</td>
+          <td>Adds support for a message container to appear in the table.  This can be used</td>
+      </tr>
+      <tr>
           <td>`datatable-mutable`</td>
           <td>Adds mutation convenience methods to `Y.DataTable` (or other built class).</td>
       </tr>
       <tr>
           <td>`datatable-scroll`</td>
-          <td>Extends DataTable base to enable x,y, and xy scrolling.</td>
+          <td>Adds the ability to make the table rows scrollable while preserving the header</td>
       </tr>
       <tr>
           <td>`datatable-sort`</td>
-          <td>Adds support for column sort.</td>
+          <td>Adds support for sorting the table data by API methods `table.sort(...)` or</td>
       </tr>
       <tr>
           <td>`datatype`</td>
@@ -653,6 +653,10 @@
       <tr>
           <td>`intl`</td>
           <td>Provides utilities to support the management of localized resources (strings and formatting patterns).</td>
+      </tr>
+      <tr>
+          <td>`io`</td>
+          <td>Alias module for: `io-base, io-xdr, io-form, io-upload-iframe, io-queue`</td>
       </tr>
       <tr>
           <td>`io-base`</td>

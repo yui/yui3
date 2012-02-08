@@ -2,6 +2,20 @@ YUI.add('editor-tests', function(Y) {
 
     var editor = null,
     iframe = null,
+    fireKey = function(editor, key) {
+        var inst = editor.getInstance();
+        inst.one('body').simulate('keydown', {
+            keyCode: key
+        });
+
+        inst.one('body').simulate('keypress', {
+            keyCode: key
+        });
+
+        inst.one('body').simulate('keyup', {
+            keyCode: key
+        });
+    },
     template = {
         name: 'Editor Tests',
         setUp : function() {
@@ -119,19 +133,8 @@ YUI.add('editor-tests', function(Y) {
                 inst.one('b').simulate('mousedown');
                 inst.one('body').simulate('mouseup');
                 inst.one('b').simulate('mouseup');
-
-                inst.one('body').simulate('keydown', {
-                    keyCode: 13
-                });
-
-                inst.one('body').simulate('keypress', {
-                    keyCode: 13
-                });
-
-                inst.one('body').simulate('keyup', {
-                    keyCode: 13
-                });
-
+                
+                fireKey(editor, 13);
 
             }, 1500);
         },
@@ -247,6 +250,23 @@ YUI.add('editor-tests', function(Y) {
             Y.Assert.isTrue(editor.getContent().indexOf('This is another test') > -1, 'Failed to insert content');
             Y.Assert.isTrue(html.indexOf('<div>') > -1, 'Failed to wrap the content');
         },
+        test_execCommands: function() {
+            editor.focus(true);
+            /*
+            No Asserts here yet, this test is only to
+            show that there are no syntax errors thrown running
+            an execCommand.
+
+            I still need to develop a way to properly test these commands
+            */
+            var inst = editor.getInstance();
+            var cmds = Y.Plugin.ExecCommand.COMMANDS;
+            Y.each(cmds, function(val, cmd) {
+                if (cmd !== 'bidi') { //Bidi execCommand tested later
+                    editor.execCommand(cmd, '<b>Foo</b>');
+                }
+            });
+        },
         test_window: function() {
             Y.Assert.areEqual(Y.Node.getDOMNode(Y.one('#editor iframe').get('contentWindow')), Y.Node.getDOMNode(editor.getInstance().one('win')), 'Window object is not right');
         },
@@ -266,8 +286,14 @@ YUI.add('editor-tests', function(Y) {
             editor.plug(Y.Plugin.EditorBR);
             editor.render('#editor');
             Y.Assert.isInstanceOf(Y.Plugin.EditorBR, editor.editorBR, 'EditorBR was not plugged..');
+            editor.set('content', '<br>');
+
+            fireKey(editor, 13);
+            fireKey(editor, 8);
+
             editor.destroy();
             Y.Assert.areEqual(Y.one('#editor iframe'), null, 'Second Frame was not destroyed');
+
         },
         test_para_plugin: function() {
             editor = new Y.EditorBase({
@@ -276,10 +302,16 @@ YUI.add('editor-tests', function(Y) {
             });
             Y.Assert.isInstanceOf(Y.EditorBase, editor, 'Third EditorBase instance can not be created');
             editor.plug(Y.Plugin.EditorPara);
-            editor.render('#editor');
             Y.Assert.isInstanceOf(Y.Plugin.EditorPara, editor.editorPara, 'EditorPara was not plugged..');
+            editor.render('#editor');
+            editor.set('content', '<br>');
+
+            fireKey(editor, 13);
+            fireKey(editor, 8);
+            editor.editorPara._fixFirstPara();
             editor.destroy();
             Y.Assert.areEqual(Y.one('#editor iframe'), null, 'Third Frame was not destroyed');
+            
         },
         test_double_plug_setup: function() {
             editor = new Y.EditorBase({
@@ -329,8 +361,14 @@ YUI.add('editor-tests', function(Y) {
             }, 1500);
         },
         test_bidi_plug: function() {
+            editor.destroy();
+            editor = new Y.EditorBase({
+                content: 'Hello <b>World</b>!!',
+                extracss: 'b { color: red; }'
+            });
             editor.plug(Y.Plugin.EditorPara);
             editor.plug(Y.Plugin.EditorBidi);
+            editor.render('#editor');
             Y.Assert.isInstanceOf(Y.Plugin.EditorBidi, editor.editorBidi, 'EditorBidi plugin failed to load');
             editor.focus(function() {
                 var inst = editor.getInstance();
@@ -348,13 +386,23 @@ YUI.add('editor-tests', function(Y) {
                 sel.selectNode(b, true, true);
                 editor.execCommand('bidi');
                 Y.Assert.areEqual(b.get('parentNode').get('dir'), 'rtl', 'RTL not added BACK to node');
+                
+                editor.editorBidi._afterMouseUp();
+                editor.editorBidi._afterNodeChange({
+                    changedType: 'end-up'
+                });
+
             });
         },
         _should: {
             fail: {
-                test_selection_methods: (Y.UA.ie ? true : false)
+                test_selection_methods: ((Y.UA.ie || Y.UA.webkit) ? true : false),
+                test_execCommands: (Y.UA.webkit ? true : false)
+
             },
             error: { //These tests should error
+                test_selection_methods: (Y.UA.webkit ? true : false),
+                test_execCommands: (Y.UA.webkit ? true : false),
                 test_double_plug: true,
                 test_double_plug2: true,
                 test_bidi_noplug: true

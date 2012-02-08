@@ -203,10 +203,13 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @return {View} The new view instance.
     **/
     createView: function (name, config) {
-        var viewInfo        = this.getViewInfo(name),
-            type            = (viewInfo && viewInfo.type) || View,
-            ViewConstructor = Lang.isString(type) ? Y.namespace(type) : type,
-            view;
+        var viewInfo = this.getViewInfo(name),
+            type     = (viewInfo && viewInfo.type) || View,
+            ViewConstructor, view;
+
+        // Looks for a namespaced constructor function on `Y`.
+        ViewConstructor = Lang.isString(type) ?
+                YObject.getValue(Y, type.split('.')) : type;
 
         // Create the view instance and map it with its metadata.
         view = new ViewConstructor(config);
@@ -498,7 +501,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
             // some event subscriptions are made on elements other than the
             // View's `container`.
         } else {
-            view.destroy();
+            view.destroy({remove: true});
 
             // TODO: The following should probably happen automagically from
             // `destroy()` being called! Possibly `removeTarget()` as well.

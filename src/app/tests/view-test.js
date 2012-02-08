@@ -97,13 +97,23 @@ viewSuite.add(new Y.Test.Case({
         Assert.areSame(1, calls);
     },
 
-    'destructor should remove the container from the DOM': function () {
+    'destructor should not remove the container by default': function () {
         var view = new Y.View();
 
         Y.one('body').append(view.get('container'));
         Assert.isTrue(view.get('container').inDoc());
 
         view.destroy();
+        Assert.isTrue(view.get('container').inDoc());
+    },
+
+    'destructor should remove the container from the DOM if `remove` options is truthy': function () {
+        var view = new Y.View();
+
+        Y.one('body').append(view.get('container'));
+        Assert.isTrue(view.get('container').inDoc());
+
+        view.destroy({remove: true});
         Assert.isNull(view.get('container')._node);
     }
 }));

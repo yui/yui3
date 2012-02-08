@@ -85,7 +85,8 @@ var YLang     = Y.Lang,
     isArray   = YLang.isArray,
     isObject  = YLang.isObject,
 
-    toArray     = Y.Array,
+    toArray = Y.Array,
+    sub     = YLang.sub,
 
     dirMap = {
         asc : 1,
@@ -154,11 +155,7 @@ Sortable.ATTRS = {
     @type {Object}
     @default (strings for current lang configured in the YUI instance config)
     **/
-    strings: {
-        valueFn: function () {
-            return Y.Intl.get('datatable-sort');
-        }
-    }
+    strings: {}
 };
 
 Y.mix(Sortable.prototype, {
@@ -194,6 +191,16 @@ Y.mix(Sortable.prototype, {
             sortBy: fields || this.get('sortBy')
         }));
     },
+
+    /**
+    Template for the node that will wrap the header content for sortable
+    columns.
+
+    @property SORTABLE_HEADER_TEMPLATE
+    @type {HTML}
+    @value '<div class="{className}" title="{title}" role="button"></div>'
+    **/
+    SORTABLE_HEADER_TEMPLATE: '<div class="{className}" title="{title}" role="button"></div>',
 
     /**
     Reverse the current sort direction of one or more fields currently being
@@ -254,24 +261,6 @@ Y.mix(Sortable.prototype, {
     // Protected properties and methods
     //--------------------------------------------------------------------------
     /**
-    Applies the sorting logic to the new ModelList if the `newVal` is a new
-    ModelList.
-
-    @method _afterDataChange
-    @param {EventFacade} e the `dataChange` event
-    @protected
-    **/
-    _afterDataChange: function (e) {
-        // object values always trigger a change event, but we only want to
-        // call _initSortFn if the value passed to the `data` attribute was a
-        // new ModelList, not a set of new data as an array, or even the same
-        // ModelList.
-        if (e.prevVal !== e.newVal || e.newVal.hasOwnProperty('_compare')) {
-            this._initSortFn();
-        }
-    },
-
-    /**
     Sorts the `data` ModelList based on the new `sortBy` configuration.
 
     @method _afterSortByChange
@@ -292,6 +281,43 @@ Y.mix(Sortable.prototype, {
             }
 
             this.data.sort();
+        }
+    },
+
+    /**
+    Applies the sorting logic to the new ModelList if the `newVal` is a new
+    ModelList.
+
+    @method _afterSortDataChange
+    @param {EventFacade} e the `dataChange` event
+    @protected
+    **/
+    _afterSortDataChange: function (e) {
+        // object values always trigger a change event, but we only want to
+        // call _initSortFn if the value passed to the `data` attribute was a
+        // new ModelList, not a set of new data as an array, or even the same
+        // ModelList.
+        if (e.prevVal !== e.newVal || e.newVal.hasOwnProperty('_compare')) {
+            this._initSortFn();
+        }
+    },
+
+    /**
+    Checks if any of the fields in the modified record are fields that are
+    currently being sorted by, and if so, resorts the `data` ModelList.
+
+    @method _afterSortRecordChange
+    @param {EventFacade} e The Model's `change` event
+    @protected
+    **/
+    _afterSortRecordChange: function (e) {
+        var i, len;
+
+        for (i = 0, len = this._sortBy.length; i < len; ++i) {
+            if (e.changed[this._sortBy[i].key]) {
+                this.data.sort();
+                break;
+            }
         }
     },
 
@@ -405,12 +431,15 @@ Y.mix(Sortable.prototype, {
 
         this._initSortFn();
 
+        this._initSortStrings();
+
         this.after({
             renderHeader  : Y.bind('_renderSortable', this),
-            dataChange    : Y.bind('_afterDataChange', this),
+            dataChange    : Y.bind('_afterSortDataChange', this),
             sortByChange  : Y.bind('_afterSortByChange', this),
             sortableChange: boundParseSortable,
-            columnsChange : boundParseSortable
+            columnsChange : boundParseSortable,
+            "*:change"    : Y.bind('_afterSortRecordChange', this)
         });
 
         this.publish('sort', {
@@ -466,6 +495,18 @@ Y.mix(Sortable.prototype, {
             // up again.  Mistake?
             delete this.data.comparator;
         }
+    },
+
+    /**
+    Add the sort related strings to the `strings` map.
+    
+    @method _initSortStrings
+    @protected
+    **/
+    _initSortStrings: function () {
+        // Not a valueFn because other class extensions will want to add to it
+        this.set('strings', Y.mix((this.get('strings') || {}), 
+            Y.Intl.get('datatable-sort')));
     },
 
     /**
@@ -676,7 +717,7 @@ Y.mix(Sortable.prototype, {
             ascClass      = this.getClassName('sorted'),
             descClass     = this.getClassName('sorted', 'desc'),
             linerClass    = this.getClassName('sort', 'liner'),
-            i, len, col, node, content;
+            i, len, col, node, content, title;
 
         this.get('boundingBox').toggleClass(
             this.getClassName('sortable'),
@@ -709,7 +750,16 @@ Y.mix(Sortable.prototype, {
                     }
                 }
 
-                Y.Node.create('<div class="' + linerClass + '"></div>')
+                title = sub(this.getString(
+                    (col.sortDir === 1) ? 'reverseSortBy' : 'sortBy'), {
+                        column: col.abbr || col.label ||
+                                col.key  || ('column ' + i)
+                });
+
+                Y.Node.create(Y.Lang.sub(this.SORTABLE_HEADER_TEMPLATE, {
+                        className: linerClass,
+                        title    : title
+                    }))
                     .append(node.get('childNodes').toFrag())
                     .appendTo(node);
             }

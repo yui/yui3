@@ -7,7 +7,8 @@
     position: relative;
 }
 
-.yui3-skin-sam .yui3-datatable-columns .yui3-datatable-sorted {
+.yui3-skin-sam .yui3-datatable-columns .yui3-datatable-sorted,
+.yui3-skin-sam .yui3-datatable-columns .yui3-datatable-sortable-column:hover {
     *background: #c1c4c8 url(../../../../assets/skins/sam/sprite.png) repeat-x 0 -100px;
     background-color: #c1c4c8;
 
@@ -52,8 +53,7 @@
         transparent);
 }
 
-.yui3-skin-sam .yui3-datatable-sorted .yui3-datatable-sort-liner::after,
-.yui3-skin-sam .yui3-datatable-sortable-column:hover .yui3-datatable-sort-liner::after {
+.yui3-skin-sam .yui3-datatable-sorted .yui3-datatable-sort-liner::after {
     content: ' ';
     position: absolute;
     right: -1em;
@@ -68,16 +68,9 @@
     border-color: #666 transparent transparent;
 }
 
-.yui3-skin-sam .yui3-datatable-sorted-desc .yui3-datatable-sort-liner::after,
-.yui3-skin-sam .yui3-datatable-sortable-column-desc:hover .yui3-datatable-sort-liner::after,
-.yui3-skin-sam .yui3-datatable-sorted:hover .yui3-datatable-sort-liner::after {
+.yui3-skin-sam .yui3-datatable-sorted-desc .yui3-datatable-sort-liner::after {
     border-color: transparent transparent #000;
     bottom: 1.1ex;
-}
-
-.yui3-skin-sam .yui3-datatable-sorted-desc:hover .yui3-datatable-sort-liner::after {
-    border-color: #000 transparent transparent;
-    bottom: .4ex;
 }
 
 .yui3-skin-sam .yui3-datatable-sorted-desc .yui-datatable-sort-liner::after {
