@@ -863,6 +863,7 @@ suite.add(new YUITest.TestCase({
             Assert.isTrue((loader.sorted.indexOf("datatable-body")) > -1, "Module (datatable-body) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("datatable-base")) > -1, "Module (datatable-base) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("datatable-column-widths")) > -1, "Module (datatable-column-widths) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("datatable-message")) > -1, "Module (datatable-message) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("datatable-mutable")) > -1, "Module (datatable-mutable) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("datatable-scroll")) > -1, "Module (datatable-scroll) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("datatable-datasource")) > -1, "Module (datatable-datasource) not found in sorted array");
@@ -927,6 +928,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("datatable-head")) > -1, "Module (datatable-head) not found in sorted array");
+        },
+     "Testing datatable-message": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatable-message"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datatable-message")) > -1, "Module (datatable-message) not found in sorted array");
         },
      "Testing datatable-mutable": function(data) {
             var loader = new Y.Loader({
