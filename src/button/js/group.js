@@ -1,7 +1,7 @@
 /**
 * Allows Y.Button instances to be grouped together
 *
-* @module ButtonGroup
+* @module buttongroup
 * @main ButtonGroup
 * @since 3.5.0
 */
