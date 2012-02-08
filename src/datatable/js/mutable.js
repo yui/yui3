@@ -445,7 +445,7 @@ Y.mix(Mutable.prototype, {
             fromCols, fromIndex, toCols, i, len;
 
         if (column) {
-            fromCols  = column.parent ? column.parent.children : columns;
+            fromCols  = column._parent ? column._parent.children : columns;
             fromIndex = arrayIndex(fromCols, column);
 
             if (fromIndex > -1) {
@@ -483,7 +483,7 @@ Y.mix(Mutable.prototype, {
             cols, index;
 
         if (column) {
-            cols = column.parent ? column.parent.children : columns;
+            cols = column._parent ? column._parent.children : columns;
             index = Y.Array.indexOf(cols, column);
 
             if (index > -1) {

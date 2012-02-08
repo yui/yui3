@@ -6,6 +6,7 @@
             "datatable-body",
             "datatable-base",
             "datatable-column-widths",
+            "datatable-message",
             "datatable-mutable",
             "datatable-scroll",
             "datatable-datasource",
@@ -47,6 +48,13 @@
                 "requires": [
                     "datatable-base"
                 ]
+            },
+            "datatable-message": {
+                "requires": [
+                    "datatable-base"
+                ],
+                "lang": ["en"],
+                "skinnable": true
             },
             "datatable-mutable": {
                 "requires": [
