@@ -7,7 +7,7 @@ Features added to `Y.DataTable`, and made available for custom classes at
 `Y.DataTable.Message`.
 
 @module datatable-message
-@class DataTable.Sortable
+@class DataTable.Message
 @for DataTable
 **/
 var Message;
