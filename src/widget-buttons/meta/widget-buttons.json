@@ -1,9 +1,8 @@
 {
     "widget-buttons": {
         "requires": [
+            "button-base",
             "cssbutton",
-            "base-build",
-            "widget",
             "widget-stdmod"
         ],
 

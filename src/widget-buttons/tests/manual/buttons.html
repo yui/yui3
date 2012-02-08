@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>WidgetButtons Manual Test</title>
+</head>
+<body>
+    <script src="../../../../build/yui/yui.js"></script>
+    <script>
+    YUI({filter: 'raw'}).use('base-build', 'widget', 'widget-buttons', function (Y) {
+        Y.TestWidget = Y.Base.create('testWidget', Y.Widget, [Y.WidgetStdMod, Y.WidgetButtons]);
+
+        var testWidget = new Y.TestWidget({
+            headerContent: 'Test Widget',
+            buttons      : [
+                {
+                    label: 'Destroy',
+                    action: function () {
+                        this.destroy();
+                    }
+                },
+
+                {label: 'Foo'},
+
+                {
+                    name      : 'close',
+                    section   : 'footer',
+                    classNames: ['foo']
+                }
+            ]
+        });
+
+        testWidget.render('body');
+        testWidget.getButton('close').set('disabled', true);
+        testWidget.getButton(1, 'footer').setStyle('color', 'purple');
+    });
+    </script>
+</body>
+</html>
