@@ -905,6 +905,29 @@ YUI.add('loader-tests', function(Y) {
             Assert.areEqual(2, out.js.length, 'Too many JS files returned');
             Assert.areEqual(out.js[0], 'http://ryancannon.com/bugs/fullpath/fullpath.js', 'Failed to return proper full path url');
             Assert.areEqual(out.js[1], 'http://my.combo.server.com/?yui-base/yui-base-min.js&oop/oop-min.js', 'Failed to return proper full path url');
+        },
+        test_load: function() {
+            var test = this;
+
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                modules: {
+                    loadmod: {
+                        attributes: {
+                            id: 'loadmod-test'
+                        },
+                        fullpath: './assets/mod.js'
+                    }
+                },
+                require: ['loadmod']
+            });
+            loader.load(function() {
+                test.resume(function() {
+                    Assert.isNotNull(Y.one('#loadmod-test'), 'Failed to load module');
+                });
+            });
+            
+            test.wait();
         }
     });
 

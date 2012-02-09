@@ -279,11 +279,20 @@ The <a href="{{componentAssets}}/../plugin/myplugin.js.txt">"MyPlugin" template 
 
 <p>Extension classes are similar to plugins, in that they encapsulate or bundle specific feature implementations. However extensions are used to mix and match code at the class level, to create new classes, whereas plugins are used to mix and match code at the instance level.</p>
 
-<h3>Build</h3>
+<p>In addition to `build`, Base also provides the static `create` and `mix` methods, which are sugar methods on top of `Base.build`.</p>
 
-<p>The `build` method can be used to dynamically create new classes that are derived from an existing main class and mix in additional "extension" classes to add methods, attributes, events and properties to the main class.
-By default, `build` leaves the original main and mixed-in classes untouched so that the main class can still be used without the additional features mixed in. However `build` can be invoked with a configuration
-option so that it modifies the main class if required.</p>
+<dl>
+    <dt><a href="{{apiDocs}}/Base.html#method_Base.create">`Base.create`</a></dt>
+    <dd>The `create` sugar method makes the task of creating a completely new class, which mixes in extensions, a lot more succint, by providing a way for the caller to pass in additional prototype and static properties which
+    will exist on the newly created class.</dd>
+    <dt><a href="{{apiDocs}}/Base.html#method_Base.mix">`Base.mix`</a></dt>
+    <dd>The `mix` sugar method on the other hand, can be used to add extensions into an already existing class.</dd>
+</dl>
+
+<h3>Create</h3>
+
+<p>The `Base.create` method can be used to dynamically create new classes that are derived from an existing main class and mix in additional "extension" classes to add methods, attributes, events and properties to the main class.
+`Base.create` leaves the original main and mixed-in classes untouched so that the main class can still be used without the additional features mixed in. `Base.mix`, on the other hand, can be used if modifying an existing class is the goal.</p>
 
 ```
 /* Main Class */
@@ -340,7 +349,7 @@ Modal.prototype = {
 // Create a new class WindowPanel, which extends Panel, and
 // combines methods/attributes from Resizable and Modal
 
-var WindowPanel = Y.Base.build("windowPanel", Panel, [Resizable, Modal]);
+var WindowPanel = Y.Base.create("windowPanel", Panel, [Resizable, Modal]);
 
 var wp = new WindowPanel({
     shadow: true,
@@ -353,28 +362,23 @@ wp.lock();
 
 ```
 
-<p>Under the hood, `build`:</p>
+<p>Under the hood, `Base.create`:</p>
 <ul>
     <li>Creates a new 'built' class by extending the main class passed in as the first argument.</li>
-    <li>Augments the list of feature classes (the 2nd argument) to the built class, so that it now has their prototype methods.</li>
+    <li>Augments the list of feature classes, or extensions, to the built class, so that it now has their prototype methods.</li>
     <li>
-       Aggregates any known static properties on the built class. Properties to aggregate are defined by a _buildCfg.aggregates on the main class.
-       For example Base defines the `ATTRS` property as a property which needs to be aggregated, and Widget adds the `HTML_PARSER` property.
+       <p>
+       Aggregates or copies any known static properties on the built class. Static properties to setup on the built class are defined by the component or class author, through a `_buildCfg` static property on the main class, or on the extension.
+       For example Base defines the `ATTRS` property as a property which needs to be custom aggregated when mixing in extentions, and Widget adds the `HTML_PARSER` property for aggregation.
+       </p>
+       <p>
+       The <a href="{{apiDocs}}/Base.html#method_Base.create">`Base.create` API Documention</a> provides more details about the structure of `_buildCfg` and how it can be used by component authors.
+       </p>
     </li>
 </ul>
 
-<p>The new class constructor created by `build` will invoke the constructors for the main and feature classes when the new class is instantiated, during the init part of the lifecycle.</p>
+<p>The new class constructor created by `Base.create` will invoke the constructors for the main and feature classes when the new class is instantiated, during the init part of the lifecycle.</p>
 
-<p>In addition to `build`, Base also provides the static `create` and `mix` methods, which are sugar methods on top of Base.build.</p>
-
-<dl>
-    <dt><a href="{{apiDocs}}/Base.html#method_Base.create">`Base.create`</a></dt>
-    <dd>The `create` sugar method makes the task of creating a completely new class, which mixes in extensions, a lot more succint, by providing a way for the caller to pass in additional prototype and static properties which
-    will exist on the newly created class.</dd>
-    <dt><a href="{{apiDocs}}/Base.html#method_Base.mix">`Base.mix`</a></dt>
-    <dd>The `mix` sugar method on the other hand, can be used to add extensions into an already existing class.</dd>
-</dl>
-
-<p>See Base's <a href="{{apiDocs}}/Base.html">`API documentation`</a> for more details on the `build`, `create` and `mix` methods.</p>
+<p>See Base's <a href="{{apiDocs}}/Base.html">`API documentation`</a> for more details on the `create` and `mix` methods.</p>
 
 <p>The <a href="{{componentAssets}}/myextension.js.txt">"MyExtension" template file</a> provides a starting point for you to create your own extensions.</p>

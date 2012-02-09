@@ -112,13 +112,30 @@ suite.add(new Y.Test.Case({
     testIndexOf: function () {
         var data = ['a', 'b', 1, 0, false, null, 'a'];
 
-        Y.Assert.areSame(0, Y.Array.indexOf(data, 'a'), 'should find the first match');
-        Y.Assert.areSame(-1, Y.Array.indexOf(data, 'z'), 'should return -1 on no match');
-        Y.Assert.areSame(2, Y.Array.indexOf(data, 1), 'should find numbers');
-        Y.Assert.areSame(4, Y.Array.indexOf(data, false), 'should perform strict equality checks');
-        Y.Assert.areSame(5, Y.Array.indexOf(data, null), 'should find null');
+        Assert.areSame(0, Y.Array.indexOf(data, 'a'), 'should find the first match');
+        Assert.areSame(-1, Y.Array.indexOf(data, 'z'), 'should return -1 on no match');
+        Assert.areSame(2, Y.Array.indexOf(data, 1), 'should find numbers');
+        Assert.areSame(4, Y.Array.indexOf(data, false), 'should perform strict equality checks');
+        Assert.areSame(5, Y.Array.indexOf(data, null), 'should find null');
+    },
 
-        // TODO: support fromIndex
+    'indexOf() should support an ES5-compatible fromIndex arg': function () {
+        var data = ['a', 'b', 1, 0, false, null, 'a'];
+
+        Assert.areSame(0, Y.Array.indexOf(data, 'a', 0), 'should find the first match');
+        Assert.areSame(6, Y.Array.indexOf(data, 'a', 1), 'should find the 6th match');
+        Assert.areSame(-1, Y.Array.indexOf(data, 'a', 7), 'should return -1 on no match');
+        Assert.areSame(0, Y.Array.indexOf(data, 'a', -8), 'should find the first match');
+        Assert.areSame(6, Y.Array.indexOf(data, 'a', -1), 'should find the 6th match');
+
+        Assert.areSame(0, Y.Array.indexOf(data, 'a', 0.1), 'should convert fromIndex to an int');
+        Assert.areSame(0, Y.Array.indexOf(data, 'a', -0.1), 'should floor the absolute value of fromIndex to convert to an int');
+        Assert.areSame(6, Y.Array.indexOf(data, 'a', '1'), 'should convert string fromIndex to a number');
+        Assert.areSame(0, Y.Array.indexOf(data, 'a', undefined), 'should convert undefined fromIndex to a number');
+        Assert.areSame(0, Y.Array.indexOf(data, 'a', NaN), 'should treat NaN as 0');
+        Assert.areSame(-1, Y.Array.indexOf(data, 'a', 8), 'should return -1 on too-high fromIndex');
+        Assert.areSame(-1, Y.Array.indexOf(data, 'a', Infinity), 'should return -1 on Infinity');
+        Assert.areSame(0, Y.Array.indexOf(data, 'a', -Infinity), 'should return 0 on negative Infinity');
     },
 
     'indexOf() should handle sparse arrays correctly': function () {

@@ -317,15 +317,15 @@ App is composed of <a href="../view/index.html#view-attributes">View</a>, <a hre
         </p>
 
         <p>
-        The default view container is `<div>` Node, but you can override this in a subclass, or by passing in a custom `viewContainer` config value at instantiation time.
+        The default view container is a `<div>` Node, but you can override this in a subclass, or by passing in a custom `viewContainer` config value at instantiation time.
         </p>
 
         <p>
-        When `viewContainer` is overridden by a subclass or passed as a config option at instantiation time, it may be provided as a selector string, DOM element, or a `Y.Node` instance (having the `viewContainer` and the `container` be the same node is also supported). During initialization, the app's `createViewContainer()` method will be called to convert the view container into a `Y.Node` instance if it isn't one already and stamp it with the CSS class: `"yui3-app-views"`.
+        When `viewContainer` is overridden by a subclass or passed as a config option at instantiation time, it may be provided as a selector string, DOM element, or a `Y.Node` instance. Using the same node as the `viewContainer` and the `container` is also supported.
         </p>
 
         <p>
-        The app's `render()` method will append the view container to the app's `container` node if it isn't already, and any `activeView` will be appended to this node if it isn't already.
+        The app's `render()` method will stamp the view container with the CSS class "yui3-app-views" and append the view container to the app's `container` node if it isn't there already. Any `activeView` will be appended to the view container node if it isn't there already.
         </p>
       </td>
     </tr>
@@ -567,7 +567,7 @@ By default, an app's `container` node will be the `<body>` element and its `view
 </p>
 
 <p>
-<strong>Note:</strong> The `"yui3-app"` and `"yui3-app-views"` CSS classes are added to the `container` and `viewContainer` respectively — this happens during initialization, when the app's `create()` and `createViewContainer()` methods are called.
+<strong>Note:</strong> The `"yui3-app"` and `"yui3-app-views"` CSS classes are added to the `container` and `viewContainer` respectively — this happens when the app is rendered.
 </p>
 
 <h4>Specifying Container Nodes</h4>

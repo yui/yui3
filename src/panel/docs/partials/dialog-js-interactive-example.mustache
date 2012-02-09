@@ -1,0 +1,28 @@
+
+//////////////////////  Interactive Example JS ////////////////////////////////
+
+    // action to do when the user clicks "OK" button.
+    var doSomething = function(){ 
+        Y.log('Something was done.');    
+    };
+    
+    // handle a radio click: update the icon and the code snippet
+    Y.all('#radios input').on('click', function(e){
+        var iconClass = 'message ' + e.currentTarget.getAttribute('value');
+        Y.one('#dialog .message').set('className', iconClass);
+        dialog.callback = doSomething; // add a callback so when the user clicks "OK" button, something will get done
+    });
+    
+    // handle the textarea keyup: put text in dialog, and update code snippet
+    Y.one('#test-controls textarea').on('keyup', function(e){
+        Y.one('#dialog .message').setContent(Y.Escape.html(e.target.get('value')));
+    });
+    
+    
+    Y.one('.btn-show').on('click', function(){
+        dialog.callback = doSomething; // if you want a callback, you must add it every time, because on-hide it's removed
+        dialog.show();
+    });
+    
+    // init with a callback
+    dialog.callback = doSomething; // add a callback so when the user clicks "OK" button, something will get done

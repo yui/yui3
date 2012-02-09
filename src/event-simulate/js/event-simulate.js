@@ -24,7 +24,8 @@ var L   = Y.Lang,
         mouseout:   1,
         mousedown:  1,
         mouseup:    1,
-        mousemove:  1
+        mousemove:  1,
+        contextmenu:1
     },
 
     //key events supported
