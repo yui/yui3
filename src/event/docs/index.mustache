@@ -326,6 +326,12 @@ There's <a href="#more">a lot more you can do</a>, though, so read on!</p>
             changes (this is harder than you think).
         </td>
     </tr>
+    <tr>
+        <td><a href="{{apiDocs}}/module_event-contextmenu.html">`event-contextmenu`</a></td>
+        <td>
+            <a href="contextmenu.html">Fixes bugs and inconstancies</a> that can occur when the "contextmenu" event is fired via the keyboard.  <a href="contextmenu.html#the-value-of-the-contextmenu-synthetic-event">Adds sugar for working with the "contextmenu" event</a>.
+        </td>
+    </tr>        
 </tbody>
 </table>
 
@@ -1081,6 +1087,13 @@ nodelist.each(function (node) {
     pastes, or otherwise alters the value in an input field.  No,
     `input.on('change', callback)` is not enough.
     <a href="valuechange.html">Read more...</a>
+</p>
+
+<h3><a href="contextmenu.html">Keyboard Accessible `contextmenu` Events</a></h3>
+
+<p>
+    Repairing cross browser keyboard support for the `contextmenu` event.
+    <a href="contextmenu.html">Read more...</a>
 </p>
 
 <h2 id="event-whitelist">Appendix A: Whitelisted DOM events</h2>
