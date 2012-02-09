@@ -182,7 +182,7 @@ appBaseSuite.add(new Y.Test.Case({
         Y.Router.html5 = this.html5;
         delete this.html5;
 
-        this.app && this.app.destroy();
+        this.app && this.app.destroy({remove: true});
         delete this.app;
     },
 
@@ -220,11 +220,13 @@ appBaseSuite.add(new Y.Test.Case({
 
     '`container` should be stamped with the App CSS class': function () {
         var app = this.app = new Y.App();
+        app.render();
         Assert.isTrue(app.get('container').hasClass(Y.App.Base.CSS_CLASS));
     },
 
-    '`viewContainer` should be stamped with the App Views CSS class': function () {
+    '`viewContainer` should be stamped with the App Views CSS class when the app is rendered': function () {
         var app = this.app = new Y.App();
+        app.render();
         Assert.isTrue(app.get('viewContainer').hasClass(Y.App.Base.VIEWS_CSS_CLASS));
     },
 
@@ -367,22 +369,6 @@ appBaseSuite.add(new Y.Test.Case({
     tearDown: function () {
         this.app && this.app.destroy();
         delete this.app;
-    },
-
-    '`create()` should return a `Y.Node` instance stamped with the `Y.App` CSS class': function () {
-        var app       = this.app = new Y.App(),
-            container = app.create(Y.Node.create('<div/>'));
-
-        Assert.isInstanceOf(Y.Node, container);
-        Assert.isTrue(container.hasClass(Y.App.Base.CSS_CLASS));
-    },
-
-    '`createViewContainer()` should return a `Y.Node` instance stamped with the `Y.App` Views CSS class': function () {
-        var app       = this.app = new Y.App(),
-            container = app.createViewContainer(Y.Node.create('<div/>'));
-
-        Assert.isInstanceOf(Y.Node, container, 'Should be a `Y.Node` instance');
-        Assert.isTrue(container.hasClass(Y.App.Base.VIEWS_CSS_CLASS));
     },
 
     '`createView()` should always return a new `Y.View` instance': function () {
