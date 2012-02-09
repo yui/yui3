@@ -71,6 +71,9 @@ var DOT = '.',
         if (this._initPlugins) { // when augmented with Plugin.Host
             this._initPlugins();
         }
+
+        // allow instances to customize ATTRS
+        this._ATTRS = {};
     },
 
     // used with previous/next/ancestor tests
@@ -347,6 +350,8 @@ Y_Node.DEFAULT_GETTER = function(name) {
 };
 
 Y.mix(Y_Node.prototype, {
+    DATA_PREFIX: 'data-',
+
     /**
      * The method called when outputting Node instances as strings
      * @method toString
@@ -411,11 +416,19 @@ Y.mix(Y_Node.prototype, {
      * @return {any} The current value of the attribute
      */
     _get: function(attr) {
-        var attrConfig = Y_Node.ATTRS[attr],
+        var attrConfig = this._ATTRS[attr],
+            ATTR = Y_Node.ATTRS[attr],
+            getter,
             val;
 
         if (attrConfig && attrConfig.getter) {
-            val = attrConfig.getter.call(this);
+            getter = attrConfig.getter;
+        } else if (ATTR && ATTR.getter) {
+            getter = ATTR.getter;
+        }
+
+        if (getter) {
+            val = getter.call(this);
         } else if (Y_Node.re_aria.test(attr)) {
             val = this._node.getAttribute(attr, 2);
         } else {
@@ -437,16 +450,20 @@ Y.mix(Y_Node.prototype, {
      * @chainable
      */
     set: function(attr, val) {
-        var attrConfig = Y_Node.ATTRS[attr];
+        var attrConfig = this._ATTRS[attr],
+            ATTR = Y_Node.ATTRS[attr],
+            val;
 
         if (this._setAttr) { // use Attribute imple
             this._setAttr.apply(this, arguments);
         } else { // use setters inline
-            if (attrConfig && attrConfig.setter) {
-                attrConfig.setter.call(this, val, attr);
+            if (attrConfig && attrConfig.setter) { // instance-specific setter
+                attrConfig.setter.call(this, val);
+            } else if (ATTR && ATTR.setter) { // static setter
+                ATTR.setter.call(this, val);
             } else if (Y_Node.re_aria.test(attr)) { // special case Aria
                 this._node.setAttribute(attr, val);
-            } else {
+            } else { // default
                 Y_Node.DEFAULT_SETTER.apply(this, arguments);
             }
         }
@@ -788,67 +805,6 @@ Y.mix(Y_Node.prototype, {
             return this;
         },
 
-
-    /**
-    * @method getData
-    * @description Retrieves arbitrary data stored on a Node instance.
-    * This is not stored with the DOM node.
-    * @param {string} name Optional name of the data field to retrieve.
-    * If no name is given, all data is returned.
-    * @return {any | Object} Whatever is stored at the given field,
-    * or an object hash of all fields.
-    */
-    getData: function(name) {
-        var ret;
-        this._data = this._data || {};
-        if (arguments.length) {
-            ret = this._data[name];
-        } else {
-            ret = this._data;
-        }
-
-        return ret;
-
-    },
-
-    /**
-    * @method setData
-    * @description Stores arbitrary data on a Node instance.
-    * This is not stored with the DOM node.
-    * @param {string} name The name of the field to set. If no name
-    * is given, name is treated as the data and overrides any existing data.
-    * @param {any} val The value to be assigned to the field.
-    * @chainable
-    */
-    setData: function(name, val) {
-        this._data = this._data || {};
-        if (arguments.length > 1) {
-            this._data[name] = val;
-        } else {
-            this._data = name;
-        }
-
-       return this;
-    },
-
-    /**
-    * @method clearData
-    * @description Clears stored data.
-    * @param {string} name The name of the field to clear. If no name
-    * is given, all data is cleared.
-    * @chainable
-    */
-    clearData: function(name) {
-        if ('_data' in this) {
-            if (name) {
-                delete this._data[name];
-            } else {
-                delete this._data;
-            }
-        }
-
-        return this;
-    },
 
     hasMethod: function(method) {
         var node = this._node;

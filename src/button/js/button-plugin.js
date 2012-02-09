@@ -7,6 +7,13 @@ Y.extend(ButtonPlugin, Y.ButtonBase, {
         this._host = config.host;
     },
 
+    enable: function() {
+        this.set('disabled', false);
+    },
+
+    disable: function() {
+        this.set('disabled', true);
+    }
 }, {
     NAME: 'buttonPlugin',
     NS: 'button'

@@ -74,35 +74,11 @@ Button.prototype = {
     * @private
     */
     renderUI: function(config) {
-        var node = this._host;
+        var node = this.getNode();
         
         // Set some default node attributes
         node.addClass(Button.CLASS_NAMES.BUTTON);
         node.set('role', 'button');
-    },
-
-    /**
-    * @method _labelSetter
-    * @description A setter method for the label attribute
-    * @protected
-    */
-    _labelSetter: function (value) {
-        var node = this._host,
-            attr = (node.get('tagName').toLowerCase() === 'input') ? 'value' : 'text';
-
-        node.set(attr, value);
-        return value;
-    },
-
-    /**
-    * @method _disabledSetter
-    * @description A setter method for the disabled attribute
-    * @protected
-    */
-    _disabledSetter: function (value) {
-        this._host.setAttribute('disabled', value)
-            .toggleClass(Button.CLASS_NAMES.DISABLED, value);
-        return value;
     }
 };
 
@@ -116,16 +92,37 @@ Button.prototype = {
 */
 Button.ATTRS = {
     label: {
-        setter: '_labelSetter',
+        setter: function (value) {
+            var node = this._host,
+                attr = (node.get('tagName').toLowerCase() === 'input') ? 'value' : 'text';
+
+            node.set(attr, value);
+            return value;
+        },
+
+        getter: function () {
+            var node = this._host,
+                attr = (node.get('tagName').toLowerCase() === 'input') ? 'value' : 'text',
+                value;
+
+            value = node.get(attr);
+            return value;
+        },
+
+        _lazyAdd: false
     },
 
     disabled: {
-        setter: '_disabledSetter'
+        setter: function (value) {
+            var node = this.getNode();
+            node.getDOMNode().disabled = value; // avoid rerunning setter when this === node
+            node.toggleClass(Button.CLASS_NAMES.DISABLED, value);
+            return value;
+        },
+
+        _lazyAdd: false
     }
 };
-
-
-// -- Static Properties ----------------------------------------------------------
 
 /**
 * Name of this component.
@@ -175,6 +172,7 @@ Y.mix(ButtonNode.prototype, Y.ButtonBase.prototype);
 // merge Node and Button ATTRS
 // TODO: protect existing? (what if Y.Node.ATTRS.disabled.getter)
 ButtonNode.ATTRS = Y.merge(Y.Node.ATTRS, Y.ButtonBase.ATTRS);
+ButtonNode.ATTRS.label._bypassProxy = true;
 
 Y.ButtonNode = ButtonNode;
 function ButtonPlugin(config) {
@@ -186,12 +184,68 @@ Y.extend(ButtonPlugin, Y.ButtonBase, {
         this._host = config.host;
     },
 
+    enable: function() {
+        this.set('disabled', false);
+    },
+
+    disable: function() {
+        this.set('disabled', true);
+    }
 }, {
     NAME: 'buttonPlugin',
     NS: 'button'
 });
 
 Y.Plugin.Button = ButtonPlugin;
+function ButtonWidget(config) {
+    ButtonWidget.superclass.constructor.apply(this, arguments);
+}
+
+Y.extend(ButtonWidget, Y.Widget,  {
+    initializer: function(config) {
+        this._host = this.get('contentBox');
+    },
+
+    CONTENT_TEMPLATE: Y.ButtonBase.prototype.TEMPLATE
+}, {
+    NAME: 'button',
+    ATTRS: Y.merge(Y.Widget.ATTRS, Y.ButtonBase.ATTRS, {
+        selected: {
+            setter: function(val) {
+                this.get('contentBox').toggleClass('yui3-button-selected', val); 
+                // aria
+            },
+
+            value: false
+        }
+    })
+});
+
+Y.mix(ButtonWidget.prototype, Y.ButtonBase.prototype);
+
+Y.Button = ButtonWidget;
+
+function ToggleButton(config) {
+    ButtonWidget.superclass.constructor.apply(this, arguments);
+}
+
+Y.extend(ToggleButton, Y.Button,  {
+    bindUI: function() {
+        var button = this;
+        this.get('contentBox').on('click', function() {
+            button.set('selected', !button.get('selected'));
+        });
+    },
+
+    syncUI: function() {
+        this.set('selected', this.get('selected'));
+        this.set('label', this.get('label'));
+    }
+}, {
+    NAME: 'toggleButton'
+});
+
+Y.ToggleButton = ToggleButton;
 
 
 }, '@VERSION@' ,{requires:['base', 'classnamemanager', 'node']});

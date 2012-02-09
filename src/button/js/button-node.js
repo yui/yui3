@@ -22,5 +22,6 @@ Y.mix(ButtonNode.prototype, Y.ButtonBase.prototype);
 // merge Node and Button ATTRS
 // TODO: protect existing? (what if Y.Node.ATTRS.disabled.getter)
 ButtonNode.ATTRS = Y.merge(Y.Node.ATTRS, Y.ButtonBase.ATTRS);
+ButtonNode.ATTRS.label._bypassProxy = true;
 
 Y.ButtonNode = ButtonNode;

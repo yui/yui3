@@ -72,35 +72,11 @@ Button.prototype = {
     * @private
     */
     renderUI: function(config) {
-        var node = this._host;
+        var node = this.getNode();
         
         // Set some default node attributes
         node.addClass(Button.CLASS_NAMES.BUTTON);
         node.set('role', 'button');
-    },
-
-    /**
-    * @method _labelSetter
-    * @description A setter method for the label attribute
-    * @protected
-    */
-    _labelSetter: function (value) {
-        var node = this._host,
-            attr = (node.get('tagName').toLowerCase() === 'input') ? 'value' : 'text';
-
-        node.set(attr, value);
-        return value;
-    },
-
-    /**
-    * @method _disabledSetter
-    * @description A setter method for the disabled attribute
-    * @protected
-    */
-    _disabledSetter: function (value) {
-        this._host.setAttribute('disabled', value)
-            .toggleClass(Button.CLASS_NAMES.DISABLED, value);
-        return value;
     }
 };
 
@@ -114,16 +90,37 @@ Button.prototype = {
 */
 Button.ATTRS = {
     label: {
-        setter: '_labelSetter',
+        setter: function (value) {
+            var node = this._host,
+                attr = (node.get('tagName').toLowerCase() === 'input') ? 'value' : 'text';
+
+            node.set(attr, value);
+            return value;
+        },
+
+        getter: function () {
+            var node = this._host,
+                attr = (node.get('tagName').toLowerCase() === 'input') ? 'value' : 'text',
+                value;
+
+            value = node.get(attr);
+            return value;
+        },
+
+        _lazyAdd: false
     },
 
     disabled: {
-        setter: '_disabledSetter'
+        setter: function (value) {
+            var node = this.getNode();
+            node.getDOMNode().disabled = value; // avoid rerunning setter when this === node
+            node.toggleClass(Button.CLASS_NAMES.DISABLED, value);
+            return value;
+        },
+
+        _lazyAdd: false
     }
 };
-
-
-// -- Static Properties ----------------------------------------------------------
 
 /**
 * Name of this component.
