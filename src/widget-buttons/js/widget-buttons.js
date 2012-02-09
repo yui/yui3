@@ -9,7 +9,11 @@ var YArray  = Y.Array,
 
 // TODOs:
 //
-// * Call into `Y.Node.button()`, make sure to blacklist config first.
+// * Restructure `buttons` to be `_buttons`.
+// * Call into `Y.Node.button()`:
+//   * Make sure to blacklist config first.
+//   * Pass along `name` from config.
+//   * Set
 // * Implement HTML_PARSER.
 // * Move `BUTTONS.close` and related CSS to Panel.
 // * Styling to add spacing between buttons?
@@ -240,16 +244,11 @@ WidgetButtons.prototype = {
             sectionButtons   = buttonContainer.all('.' + buttonsClassName);
 
         buttonContainer.insertBefore(button, sectionButtons.item(index));
-
-        if (this.get('visible') && button === this._defaultButton) {
-            button.focus();
-        }
     },
 
     _uiSetButtons: function (buttons) {
         YObject.each(buttons, function (sectionButtons, section) {
             var buttonContainer = this._getButtonContainer(section),
-                defaultButton   = this._defaultButton,
                 fragment        = Y.one(Y.config.doc.createDocumentFragment()),
                 i, len;
 
@@ -258,10 +257,6 @@ WidgetButtons.prototype = {
             }
 
             buttonContainer.appendChild(fragment);
-
-            if (this.get('visible') && defaultButton) {
-                defaultButton.focus();
-            }
         }, this);
     },
 
