@@ -1,3 +1,11 @@
+/**
+    var node = Y.one('#my-button').plug({
+        label: 'my button'
+    });
+
+    node.button.disable();
+    node.button.set('label');
+*/
 function ButtonPlugin(config) {
     ButtonPlugin.superclass.constructor.apply(this, arguments);
 }
