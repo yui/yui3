@@ -86,7 +86,7 @@
         <url>event/tests/dom.html</url>
         <url>event/tests/delegate.html</url>
         <url>event/tests/event-resize.html</url>
-        <url>event/tests/event-contextmenu.html</url>
+        <!--url>event/tests/event-contextmenu.html</url-->
         <url>event/tests/event-key.html</url>
         <url>event/tests/event-synthetic.html</url>
         <url>event/tests/focusblur.html</url>
