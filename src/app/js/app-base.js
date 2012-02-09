@@ -168,26 +168,6 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     // -- Public Methods -------------------------------------------------------
 
     /**
-    Creates and returns this apps's container node from the specified selector
-    string, DOM element, or existing `Y.Node` instance. This method is called
-    internally when the app is initialized.
-
-    This node is also stamped with the CSS class specified by
-    `Y.App.Base.CSS_CLASS`.
-
-    By default, the created node is _not_ added to the DOM automatically.
-
-    @method create
-    @param {String|Node|HTMLElement} container Selector string, `Y.Node`
-        instance, or DOM element to use as the container node.
-    @return {Node} Node instance of the created container node.
-    **/
-    create: function () {
-        var container = View.prototype.create.apply(this, arguments);
-        return container && container.addClass(App.CSS_CLASS);
-    },
-
-    /**
     Creates and returns a new view instance using the provided `name` to look up
     the view info metadata defined in the `views` object. The passed-in `config`
     object is passed to the view constructor function.
@@ -214,27 +194,6 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         this._viewInfoMap[Y.stamp(view, true)] = viewInfo;
 
         return view;
-    },
-
-    /**
-    Creates and returns this app's view-container node from the specified
-    selector string, DOM element, or existing `Y.Node` instance. This method is
-    called internally when the app is initialized.
-
-    This node is also stamped with the CSS class specified by
-    `Y.App.Base.VIEWS_CSS_CLASS`.
-
-    By default, the created node will appended to the `container` node by the
-    `render()` method.
-
-    @method createViewContainer
-    @param {String|Node|HTMLElement} viewContainer Selector string, `Y.Node`
-        instance, or DOM element to use as the view-container node.
-    @return {Node} Node instance of the created view-container node.
-    **/
-    createViewContainer: function (viewContainer) {
-        viewContainer = Y.one(viewContainer);
-        return viewContainer && viewContainer.addClass(App.VIEWS_CSS_CLASS);
     },
 
     /**
@@ -310,6 +269,9 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
             activeView          = this.get('activeView'),
             activeViewContainer = activeView && activeView.get('container'),
             areSame             = container.compareTo(viewContainer);
+
+        container.addClass(App.CSS_CLASS);
+        viewContainer.addClass(App.VIEWS_CSS_CLASS);
 
         if (activeView && !viewContainer.contains(activeViewContainer)) {
             viewContainer.appendChild(activeViewContainer);
@@ -968,26 +930,30 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         When `viewContainer` is overridden by a subclass or passed as a config
         option at instantiation time, it may be provided as a selector string,
         DOM element, or a `Y.Node` instance (having the `viewContainer` and the
-        `container` be the same node is also supported). During initialization,
-        the app's `createViewContainer()` method will be called to convert the
-        view container into a `Y.Node` instance if it isn't one already and
-        stamp it with the CSS class: `"yui3-app-views"`.
+        `container` be the same node is also supported).
 
-        The app's `render()` method will append the view container to the app's
-        `container` node if it isn't already, and any `activeView` will be
-        appended to this node if it isn't already.
+        The app's `render()` method will stamp the view container with the CSS
+        class `yui3-app-views` and append it to the app's `container` node if it
+        isn't already, and any `activeView` will be appended to this node if it
+        isn't already.
 
         @attribute viewContainer
         @type HTMLElement|Node|String
-        @default `Y.Node.create("<div/>")`
+        @default Y.Node.create("<div/>")
         @initOnly
         **/
         viewContainer: {
-            valueFn: function () {
-                return Y.Node.create('<div/>');
+            getter: function (value) {
+                if (!value && !this._viewContainer) {
+                    value = this._viewContainer = this.create();
+                    this._set('viewContainer', value);
+                }
+
+                return value;
             },
 
-            setter   : 'createViewContainer',
+            setter   : Y.one,
+            value    : null,
             writeOnce: 'initOnly'
         }
     },
