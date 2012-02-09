@@ -8173,6 +8173,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "node-base"
         ]
     }, 
+    "event-contextmenu": {
+        "requires": [
+            "event-synthetic", 
+            "dom-screen"
+        ]
+    }, 
     "event-custom": {
         "use": [
             "event-custom-base", 
@@ -9350,7 +9356,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '26ffc60a1e4b2a12b5a3b29443059729';
+YUI.Env[Y.version].md5 = 'b308c876f46589e7e3ebcf88eafa389e';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
