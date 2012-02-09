@@ -107,7 +107,7 @@ Button.ATTRS = {
             return value;
         },
 
-        _lazyAdd: false
+        lazyAdd: false
     },
 
     disabled: {
@@ -118,7 +118,7 @@ Button.ATTRS = {
             return value;
         },
 
-        _lazyAdd: false
+        lazyAdd: false
     }
 };
 

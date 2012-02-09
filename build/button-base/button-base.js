@@ -109,7 +109,7 @@ Button.ATTRS = {
             return value;
         },
 
-        _lazyAdd: false
+        lazyAdd: false
     },
 
     disabled: {
@@ -120,7 +120,7 @@ Button.ATTRS = {
             return value;
         },
 
-        _lazyAdd: false
+        lazyAdd: false
     }
 };
 
@@ -175,6 +175,14 @@ ButtonNode.ATTRS = Y.merge(Y.Node.ATTRS, Y.ButtonBase.ATTRS);
 ButtonNode.ATTRS.label._bypassProxy = true;
 
 Y.ButtonNode = ButtonNode;
+/**
+    var node = Y.one('#my-button').plug({
+        label: 'my button'
+    });
+
+    node.button.disable();
+    node.button.set('label');
+*/
 function ButtonPlugin(config) {
     ButtonPlugin.superclass.constructor.apply(this, arguments);
 }
@@ -203,10 +211,11 @@ function ButtonWidget(config) {
 
 Y.extend(ButtonWidget, Y.Widget,  {
     initializer: function(config) {
-        this._host = this.get('contentBox');
+        this._host = this.get('boundingBox');
     },
 
-    CONTENT_TEMPLATE: Y.ButtonBase.prototype.TEMPLATE
+    BOUNDING_TEMPLATE: Y.ButtonBase.prototype.TEMPLATE,
+    CONTENT_TEMPLATE: null
 }, {
     NAME: 'button',
     ATTRS: Y.merge(Y.Widget.ATTRS, Y.ButtonBase.ATTRS, {
@@ -232,14 +241,13 @@ function ToggleButton(config) {
 Y.extend(ToggleButton, Y.Button,  {
     bindUI: function() {
         var button = this;
-        this.get('contentBox').on('click', function() {
+        this._toggleHandle = this.get('contentBox').on('click', function() {
             button.set('selected', !button.get('selected'));
         });
     },
 
-    syncUI: function() {
-        this.set('selected', this.get('selected'));
-        this.set('label', this.get('label'));
+    destructor: function() {
+        this._toggleHandle.detach();
     }
 }, {
     NAME: 'toggleButton'
