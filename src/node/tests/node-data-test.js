@@ -102,7 +102,7 @@ YUI.add('node-data-test', function(Y) {
             var node = Y.Node.create('<div data-foo="foo" data-bar="bar" data-baz="baz"/>'); 
             node.setData({
                 foo: 'foo2',
-                bar: 'bar2',
+                bar: 'bar2'
             });
 
             Y.Assert.areEqual('foo2', node.getData('foo'));
@@ -142,7 +142,7 @@ YUI.add('node-data-test', function(Y) {
 
             nodes.setData({
                 foo: 'foo2',
-                bar: 'bar2',
+                bar: 'bar2'
             });
 
             Y.Assert.areEqual('foo2', nodes.item(0).getData('foo'));
@@ -182,7 +182,7 @@ YUI.add('node-data-test', function(Y) {
 
             nodes.setData({
                 foo: 'foo',
-                bar: 'bar',
+                bar: 'bar'
             });
 
             nodes.clearData('foo');
@@ -200,7 +200,7 @@ YUI.add('node-data-test', function(Y) {
 
             nodes.setData({
                 foo: 'foo2',
-                bar: 'bar2',
+                bar: 'bar2'
             });
 
             nodes.clearData();
