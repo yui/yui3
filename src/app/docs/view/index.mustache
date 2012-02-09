@@ -36,6 +36,12 @@ A beta version of View was first introduced in YUI 3.4.0. If you're using View i
     The `container` attribute now treats string values as CSS selectors. Previously, it assumed string values represented raw HTML. To get the same functionality as the old behavior, pass your HTML string through `Y.Node.create()` before passing it to `container`. For example, `new Y.View({container: '<div/>'})` becomes `new Y.View({container: Y.Node.create('<div/>')})`.
     </p>
   </li>
+
+  <li>
+    <p>
+    Destroying a view no longer also destroys the view's container node by default. To destroy a view's container node when destroying the view, pass `{remove: true}` to the view's `destroy()` method.
+    </p>
+  </li>
 </ul>
 
 <h2>Using View</h2>
@@ -237,6 +243,18 @@ The following properties are meaningful to View classes and subclasses.
     </tr>
   </thead>
   <tbody>
+    <tr>
+      <td>`containerTemplate`</td>
+      <td>`'<div/>'`</td>
+      <td>
+        <p>
+        HTML template for this view's container element. This will be used to
+        create the container if no custom container is specified when the view
+        is created.
+        </p>
+      </td>
+    </tr>
+
     <tr>
       <td>`events`</td>
       <td>`{}`</td>

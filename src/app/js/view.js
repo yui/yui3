@@ -30,6 +30,16 @@ Y.View = Y.extend(View, Y.Base, {
     // -- Public Properties ----------------------------------------------------
 
     /**
+    Template for this view's container.
+
+    @property containerTemplate
+    @type String
+    @default "<div/>"
+    @since 3.5.0
+    **/
+    containerTemplate: '<div/>',
+
+    /**
     Hash of CSS selectors mapped to events to delegate to elements matching
     those selectors.
 
@@ -71,7 +81,7 @@ Y.View = Y.extend(View, Y.Base, {
     events: {},
 
     /**
-    Template for this view.
+    Template for this view's contents.
 
     This is a convenience property that has no default behavior of its own.
     It's only provided as a convention to allow you to store whatever you
@@ -91,14 +101,22 @@ Y.View = Y.extend(View, Y.Base, {
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function (config) {
         config || (config = {});
+
+        // Set instance properties specified in the config.
+        config.containerTemplate &&
+            (this.containerTemplate = config.containerTemplate);
+
         config.template && (this.template = config.template);
 
-        // Merge events from the config into events in `this.events`, then
-        // attach the events to the container node.
-        this.events = config.events ?
-                Y.merge(this.events, config.events) : this.events;
+        // Merge events from the config into events in `this.events`.
+        this.events = config.events ? Y.merge(this.events, config.events) :
+            this.events;
 
-        this.attachEvents(this.events);
+        // When the container node changes (or when it's set for the first
+        // time), we'll attach events to it, but not until then. This allows the
+        // container to be created lazily the first time it's accessed rather
+        // than always on init.
+        this.after('containerChange', this._afterContainerChange);
     },
 
     /**
@@ -181,23 +199,23 @@ Y.View = Y.extend(View, Y.Base, {
     },
 
     /**
-    Creates and returns this view's container node from the specified selector
-    string, DOM element, or existing `Y.Node` instance. This method is called
-    internally when the view is initialized.
+    Creates and returns a container node for this view.
 
-    By default, the created node is _not_ added to the DOM automatically.
+    By default, the container is created from the HTML template specified in the
+    `containerTemplate` property, and is _not_ added to the DOM automatically.
 
     You may override this method to customize how the container node is created
-    (such as by rendering it from a template). Your method should return a
-    `Y.Node` instance.
+    (such as by rendering it from a custom template format). Your method must
+    return a `Y.Node` instance.
 
     @method create
-    @param {HTMLElement|Node|String} container Selector string, `Y.Node`
+    @param {HTMLElement|Node|String} [container] Selector string, `Y.Node`
         instance, or DOM element to use at the container node.
     @return {Node} Node instance of the created container node.
     **/
     create: function (container) {
-        return Y.one(container);
+        return container ? Y.one(container) :
+                Y.Node.create(this.containerTemplate);
     },
 
     /**
@@ -266,6 +284,24 @@ Y.View = Y.extend(View, Y.Base, {
     _destroyContainer: function () {
         var container = this.get('container');
         container && container.remove(true);
+    },
+
+    // -- Protected Event Handlers ---------------------------------------------
+
+    /**
+    Handles `containerChange` events. Detaches event handlers from the old
+    container (if any) and attaches them to the new container.
+
+    Right now the `container` attr is initOnly so this event should only ever
+    fire the first time the container is created, but in the future (once Y.App
+    can handle it) we may allow runtime container changes.
+
+    @method _afterContainerChange
+    @protected
+    @since 3.5.0
+    **/
+    _afterContainerChange: function () {
+        this.attachEvents(this.events);
     }
 }, {
     NAME: 'view',
@@ -285,8 +321,7 @@ Y.View = Y.extend(View, Y.Base, {
 
         When `container` is overridden by a subclass or passed as a config
         option at instantiation time, it may be provided as a selector string, a
-        DOM element, or a `Y.Node` instance. During initialization, this view's
-        `create()` method will be called to convert the container into a
+        DOM element, or a `Y.Node` instance. The value will be converted into a
         `Y.Node` instance if it isn't one already.
 
         The container is not added to the page automatically. This allows you to
@@ -295,16 +330,21 @@ Y.View = Y.extend(View, Y.Base, {
 
         @attribute container
         @type HTMLElement|Node|String
-        @default Y.Node.create('<div/>')
-        @initOnly
+        @default Y.Node.create(this.containerTemplate)
+        @writeOnce
         **/
         container: {
-            valueFn: function () {
-                return Y.Node.create('<div/>');
+            getter: function (value) {
+                if (!value && !this._container) {
+                    value = this._container = this.create();
+                    this._set('container', value);
+                }
+
+                return value;
             },
 
-            setter   : 'create',
-            writeOnce: 'initOnly'
+            setter   : Y.one,
+            writeOnce: true
         },
 
         /**

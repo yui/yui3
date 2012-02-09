@@ -56,45 +56,14 @@ viewSuite.add(new Y.Test.Case({
         Assert.areSame(template, view.template);
     },
 
-    'initializer should call create() to create the container node': function () {
-        var calls = 0,
-
-            TestView = Y.Base.create('testView', Y.View, [], {
-                create: function (container) {
-                    calls += 1;
-                    Assert.areSame('<b/>', container);
+    'create() should not be called on init': function () {
+        var TestView = Y.Base.create('testView', Y.View, [], {
+                create: function () {
+                    Assert.fail('create() should not be called');
                 }
             });
 
-        new TestView({container: '<b/>'});
-
-        Assert.areSame(1, calls);
-    },
-
-    'initializer should call attachEvents()': function () {
-        var calls  = 0,
-            events = {'#foo': {click: 'handler'}},
-
-            TestView = Y.Base.create('testView', Y.View, [], {
-                events: {'#bar': {click: 'handler'}},
-
-                attachEvents: function (events) {
-                    calls += 1;
-
-                    Assert.areSame(this.events, events);
-
-                    // Ensure that events specified at instantiation time are
-                    // merged into any default events, rather than overwriting
-                    // all default events.
-                    Assert.areSame('handler', events['#foo'].click);
-                    Assert.isObject(events['#bar'], 'Events passed at init should be merged into default events.');
-                    Assert.areSame('handler', events['#bar'].click);
-                }
-            });
-
-        new TestView({events: events});
-
-        Assert.areSame(1, calls);
+        new TestView();
     },
 
     'destructor should not remove the container by default': function () {
@@ -115,6 +84,37 @@ viewSuite.add(new Y.Test.Case({
 
         view.destroy({remove: true});
         Assert.isNull(view.get('container')._node);
+    }
+}));
+
+viewSuite.add(new Y.Test.Case({
+    name: 'Attributes',
+
+    'attachEvents() should be called when the container attr changes': function () {
+        var calls  = 0,
+            events = {'#foo': {click: 'handler'}},
+
+            TestView = Y.Base.create('testView', Y.View, [], {
+                events: {'#bar': {click: 'handler'}},
+
+                attachEvents: function (events) {
+                    calls += 1;
+
+                    Assert.areSame(this.events, events);
+
+                    // Ensure that events specified at instantiation time are
+                    // merged into any default events, rather than overwriting
+                    // all default events.
+                    Assert.areSame('handler', events['#foo'].click, '#foo click handler should exist');
+                    Assert.isObject(events['#bar'], 'Events passed at init should be merged into default events.');
+                    Assert.areSame('handler', events['#bar'].click, '#bar click handler should exist');
+                }
+            });
+
+        var view = new TestView({events: events});
+        view.get('container');
+
+        Assert.areSame(1, calls);
     }
 }));
 
