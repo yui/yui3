@@ -1,39 +1,26 @@
 function ButtonNode(config) {
-    var node;
-
-    if (config && config.srcNode) { // Y.Node, selector string or DOM node
-        node = config.srcNode._node || config.srcNode; // TODO: allow new Y.Node(nodeInstance)
-    } else {
-        node = Y.DOM.create(this.TEMPLATE);
-    }
-    ButtonNode.superclass.constructor.call(this, node);
-    Y.Node._instances[this._yuid] = this;
+    ButtonNode.superclass.constructor.call(this, config.srcNode);
     this.initializer(config);
 }
 
-Y.extend(ButtonNode, Y.Node);
+Y.extend(ButtonNode, Y.Node, {
+    // call with ButtonNode.ATTRS
+    _initAttributes: function(config) {
+        Y.AttributeCore.call(this, ButtonNode.ATTRS, config);
+    },
+
+    _initNode: function(config) {
+        // enable Y.one() to return ButtonNode (for eventTarget, etc)
+        Y.Node._instances[this._yuid] = this;
+        this._host = this;
+    }
+});
 
 // add ButtonBase API without clobbering Node/Attribute API
 Y.mix(ButtonNode.prototype, Y.ButtonBase.prototype);
-
-ButtonNode.prototype.getNode = function() {
-    return this;
-};
-
-// ButtonBase calls node.set('disabled') doubling notifications
-ButtonNode.prototype._renderDisabled = function (value) {
-    this.toggleClass(Button.CLASS_NAMES.DISABLED, value);
-};
     
-// so can call with ButtonATTRS
-ButtonNode.prototype.renderAttrs = function(config) {
-    Y.AttributeCore.call(this, ButtonNode.ATTRS, config);
-    Y.AttributeEvents.apply(this, arguments);
-    Y.AttributeExtras.apply(this, arguments);
-};
-
-ButtonNode.prototype.select = Y.ButtonBase.prototype.select;
+// merge Node and Button ATTRS
+// TODO: protect existing? (what if Y.Node.ATTRS.disabled.getter)
 ButtonNode.ATTRS = Y.merge(Y.Node.ATTRS, Y.ButtonBase.ATTRS);
 
 Y.ButtonNode = ButtonNode;
-Y.Button = ButtonNode;
