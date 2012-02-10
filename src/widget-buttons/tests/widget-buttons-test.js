@@ -311,7 +311,7 @@ suite.add(new Y.Test.Case({
         Y.one('#test').empty();
     },
 
-    '`buttonsChange` should fire when setting new `buttons` configs and re-create buttons': function () {
+    '`buttonsChange` should fire when setting new `buttons`': function () {
         var called = 0,
             buttons, button;
 
@@ -339,7 +339,7 @@ suite.add(new Y.Test.Case({
         Assert.areSame(1, called, '`buttonsChange` did not fire.');
 
         Assert.areNotSame(buttons, this.widget.get('buttons'), '`buttons` was not re-created.');
-        Assert.isNull(this.widget.getStdModNode('footer').one('.yui3-button'), 'Footer button was not removed.');
+        Assert.isNotNull(this.widget.getStdModNode('footer').one('.yui3-button'), 'Footer button was not removed.');
 
         Assert.areSame(1, this.widget.get('buttons.header').length, 'Widget header did not have a button.');
     },

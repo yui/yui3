@@ -13,12 +13,15 @@ var YArray  = Y.Array,
 //   * Make sure to blacklist config first.
 //   * Pass along `name` from config.
 //   * Set `name` and `default` as Node data.
-// * Implement HTML_PARSER.
 // * Move `BUTTONS.close` and related CSS to Panel.
 // * Styling to add spacing between buttons?
 //
 
-function WidgetButtons() {}
+function WidgetButtons() {
+    if (!this._stdModNode) {
+        Y.error('WidgetStdMod must be added to the Widget before WidgetButtons.');
+    }
+}
 
 WidgetButtons.ATTRS = {
     buttons: {
@@ -34,7 +37,11 @@ WidgetButtons.CLASS_NAMES = {
 };
 
 // TODO: Implement parsing existing buttons from DOM.
-WidgetButtons.HTML_PARSER = {};
+WidgetButtons.HTML_PARSER = {
+    buttons: function () {
+        return this._parseButtons();
+    }
+};
 
 WidgetButtons.prototype = {
     // -- Public Properties ----------------------------------------------------
@@ -64,17 +71,11 @@ WidgetButtons.prototype = {
     // -- Lifecycle Methods ----------------------------------------------------
 
     initializer: function () {
-        if (!this._stdModNode) {
-            Y.error('WidgetStdMod must be added to the Widget before WidgetButtons.');
-        }
-
         Y.after(this._bindUIButtons, this, 'bindUI');
         Y.after(this._syncUIButtons, this, 'syncUI');
     },
 
     destructor: function () {
-        this._destroyButtons();
-
         delete this._buttonsMap;
         delete this._buttonsNames;
         delete this._defaultButton;
@@ -149,11 +150,6 @@ WidgetButtons.prototype = {
         return button;
     },
 
-    _destroyButtons: function () {
-        var buttonsClassName = WidgetButtons.CLASS_NAMES.buttons;
-        this.get('contentBox').all('.' + buttonsClassName).empty();
-    },
-
     _getButtonContainer: function (section) {
         var buttonsClassName = WidgetButtons.CLASS_NAMES.buttons,
             sectionNode      = this.getStdModNode(section),
@@ -178,6 +174,20 @@ WidgetButtons.prototype = {
         }
 
         return name;
+    },
+
+    _getButtonNodes: function (section) {
+        var buttonClassName  = WidgetButtons.CLASS_NAMES.button,
+            buttonsClassName = WidgetButtons.CLASS_NAMES.buttons,
+            sectionClassName = Y.WidgetStdMod.SECTION_CLASS_NAMES[section],
+            contentBox       = this.get('contentBox'),
+            sectionNode      = contentBox.one('.' + sectionClassName),
+            buttons;
+
+        buttons = sectionNode &&
+            sectionNode.all('.' + buttonsClassName + ' .' + buttonClassName);
+
+        return buttons || new Y.NodeList();
     },
 
     _mergeButtonConfig: function (config) {
@@ -205,6 +215,28 @@ WidgetButtons.prototype = {
         }
 
         this._buttonsMap[name] = button;
+    },
+
+    _parseButtons: function () {
+        var buttonsConfig = {},
+            sections      = ['header', 'body', 'footer'],
+            i, len, section, buttons, sectionButtons;
+
+        for (i = 0, len = sections.length; i < len; i += 1) {
+            section = sections[i];
+            buttons = this._getButtonNodes(section);
+
+            if (buttons.isEmpty()) { continue; }
+
+            sectionButtons = [];
+            buttons.each(function (button) {
+                sectionButtons.push(button);
+            });
+
+            buttonsConfig[section] = sectionButtons;
+        }
+
+        return buttonsConfig;
     },
 
     _setButton: function (buttons, button, section, index) {
@@ -277,14 +309,24 @@ WidgetButtons.prototype = {
     _uiSetButtons: function (buttons) {
         YObject.each(buttons, function (sectionButtons, section) {
             var buttonContainer = this._getButtonContainer(section),
-                fragment        = Y.one(Y.config.doc.createDocumentFragment()),
-                i, len;
+                buttonNodes     = this._getButtonNodes(section),
+                i, len, button, buttonIndex;
 
             for (i = 0, len = sectionButtons.length; i < len; i += 1) {
-                fragment.appendChild(sectionButtons[i]);
+                button      = sectionButtons[i];
+                buttonIndex = buttonNodes.indexOf(button);
+
+                if (buttonIndex > -1) {
+                    buttonNodes.splice(buttonIndex, 1);
+                    if (buttonIndex !== i) {
+                        buttonContainer.insertBefore(button, i);
+                    }
+                } else {
+                    buttonContainer.appendChild(button);
+                }
             }
 
-            buttonContainer.appendChild(fragment);
+            buttonNodes.destroy(true);
         }, this);
     },
 
@@ -298,14 +340,12 @@ WidgetButtons.prototype = {
             button = this._setButton(buttons, e.button, e.section, e.index);
             this._uiInsertButton(button, e.section, e.index);
         } else {
-            this._destroyButtons();
             this._uiSetButtons(buttons);
         }
     },
 
     _afterVisibleChangeButtons: function (e) {
         var defaultButton = this._defaultButton;
-
         if (defaultButton && e.newVal) {
             defaultButton.focus();
         }

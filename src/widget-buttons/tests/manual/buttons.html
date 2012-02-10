@@ -5,44 +5,28 @@
     <title>WidgetButtons Manual Test</title>
 </head>
 <body>
+
+    <div id="awesome-widget">
+        <div class="yui3-widget-hd">
+            <h2>Awesome Widget</h2>
+            <span class="yui3-widget-buttons">
+                <button class="yui3-button" name="foo">Foo</button>
+            </span>
+        </div>
+    </div>
+
     <script src="../../../../build/yui/yui.js"></script>
     <script>
     YUI({filter: 'raw'}).use('base-build', 'widget', 'widget-buttons', function (Y) {
         Y.TestWidget = Y.Base.create('testWidget', Y.Widget, [Y.WidgetStdMod, Y.WidgetButtons]);
 
         var testWidget = new Y.TestWidget({
-            headerContent: 'Test Widget',
-            buttons      : [
-                {
-                    label    : 'Destroy',
-                    isDefault: true,
-                    action   : function () {
-                        this.destroy();
-                    }
-                },
-
-                {label: 'Foo'},
-
-                {
-                    name      : 'close',
-                    section   : 'footer',
-                    classNames: ['foo']
-                }
-            ],
-            visible: false
+            srcNode: '#awesome-widget',
+            render : true
         });
 
-        testWidget.render('body');
-        testWidget.getButton('close').set('disabled', true);
-        testWidget.getButton(1, 'footer').setStyle('color', 'purple');
-
-        testWidget.set('visible', true);
-
-        testWidget.addButton({label: 'Eric'});
-
-        new Y.NodeList(testWidget.get('buttons.footer')).remove();
-        testWidget.set('buttons', testWidget.get('buttons'));
-        console.log(testWidget.get('buttons'));
+        testWidget.getButton('foo').set('text', 'Bar');
+        testWidget.addButton({label: 'Eric'}, 'header', 0);
     });
     </script>
 </body>
