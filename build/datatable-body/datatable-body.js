@@ -551,7 +551,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                 }
             }
 
-            if (value === undefined || value === '') {
+            if (value === undefined || value === null || value === '') {
                 value = col.emptyCellValue || '';
             }
 
