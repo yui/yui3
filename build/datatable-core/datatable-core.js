@@ -1068,11 +1068,12 @@ Y.mix(Table.prototype, {
     keys to the returned map. There is no limit to the levels of nesting.
 
     All columns are assigned a `_yuid` stamp and `_id` property corresponding
-    to the column's configured `name` or `key` property.  If the same `name` or
-    `key` appears in multiple columns, subsequent appearances will have their
-    `_id` appended with an incrementing number (e.g. if column "foo" is
-    included in the `columns` attribute twice, the first will get `_id` of
-    "foo", and the second an `_id` of "foo1").
+    to the column's configured `name` or `key` property with any spaces
+    replaced with dashes.  If the same `name` or `key` appears in multiple
+    columns, subsequent appearances will have their `_id` appended with an
+    incrementing number (e.g. if column "foo" is included in the `columns`
+    attribute twice, the first will get `_id` of "foo", and the second an `_id`
+    of "foo1").
 
     The result is an object map with column keys as the property name and the
     corresponding column object as the associated value.
@@ -1113,6 +1114,10 @@ Y.mix(Table.prototype, {
                     // falling back to the yuid.  Duplicates will have a counter
                     // added to the end.
                     id = col.name || col.key || col._yuid;
+
+                    // Sanitize the _id for use in generated CSS classes.
+                    // TODO: is there more to do for other uses of _id?
+                    id = id.replace(/\s+/, '-');
 
                     if (keys[id]) {
                         id += (keys[id]++);
