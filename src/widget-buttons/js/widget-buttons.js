@@ -9,11 +9,10 @@ var YArray  = Y.Array,
 
 // TODOs:
 //
-// * Restructure `buttons` to be `_buttons`.
 // * Call into `Y.Node.button()`:
 //   * Make sure to blacklist config first.
 //   * Pass along `name` from config.
-//   * Set
+//   * Set `name` and `default` as Node data.
 // * Implement HTML_PARSER.
 // * Move `BUTTONS.close` and related CSS to Panel.
 // * Styling to add spacing between buttons?
@@ -23,8 +22,9 @@ function WidgetButtons() {}
 
 WidgetButtons.ATTRS = {
     buttons: {
-        value : {},
-        setter: '_setButtons'
+        value            : {},
+        setter           : '_setButtons',
+        cloneDefaultValue: 'shallow'
     }
 };
 
@@ -70,14 +70,11 @@ WidgetButtons.prototype = {
 
         Y.after(this._bindUIButtons, this, 'bindUI');
         Y.after(this._syncUIButtons, this, 'syncUI');
-
-        this._createButtons(this.get('buttons'));
     },
 
     destructor: function () {
         this._destroyButtons();
 
-        delete this._buttons;
         delete this._buttonsMap;
         delete this._buttonsNames;
         delete this._defaultButton;
@@ -85,33 +82,47 @@ WidgetButtons.prototype = {
 
     // -- Public Methods -------------------------------------------------------
 
-    addButton: function (config, section, index) {
-        var buttonsConfig = this.get('buttons');
+    addButton: function (button, section, index) {
+        var buttons = this.get('buttons'),
+            sectionButtons;
 
-        config = this._mergeButtonConfig(config);
-        section || (section = config.section || this.DEFAULT_BUTTONS_SECTION);
+        if (!Y.instanceOf(button, Y.Node)) {
+            button = this._mergeButtonConfig(button);
+        }
 
-        buttonsConfig[section] || (buttonsConfig[section] = []);
-        isNumber(index) || (index = buttonsConfig[section].length);
+        section || (section = button.section || this.DEFAULT_BUTTONS_SECTION);
+        sectionButtons = buttons[section] || (buttons[section] = []);
+        isNumber(index) || (index = sectionButtons.length);
 
-        buttonsConfig[section].splice(index, 0, config);
+        sectionButtons.splice(index, 0, button);
 
-        this.set('buttons', buttonsConfig, {
-            config : config,
+        this._modifyButtons = true;
+
+        this.set('buttons', buttons, {
+            button : button,
             section: section,
             index  : index,
             src    : 'add'
         });
+
+        delete this._modifyButtons;
     },
 
     getButton: function (name, section) {
+        var buttons;
+
         if (isNumber(name)) {
+            buttons = this.get('buttons');
             // TODO: Reconsider having a default `section`.
             section || (section = this.DEFAULT_BUTTONS_SECTION);
-            return this._buttons[section] && this._buttons[section][name];
+            return buttons[section] && buttons[section][name];
         }
 
         return this._buttonsMap[name];
+    },
+
+    getDefaultButton: function () {
+        return this._defaultButton;
     },
 
     // -- Protected Methods ----------------------------------------------------
@@ -121,40 +132,21 @@ WidgetButtons.prototype = {
         this.after('visibleChange', Y.bind('_afterVisibleChangeButtons', this));
     },
 
-    _createButton: function (config, section, index) {
-        var buttons    = this._buttons,
-            classNames = YArray(config.classNames),
+    _createButton: function (config) {
+        var classNames = YArray(config.classNames),
             context    = config.context || this,
             events     = config.events || 'click',
             label      = config.label || config.value,
-            name       = this._getButtonName(config),
             button;
 
         button = new Y.Button(Y.merge(config, {label: label})).getNode();
+        button.setData('name', config.name);
+        button.setData('default', config.isDefault);
+
         YArray.each(classNames, button.addClass, button);
         button.on(events, config.action, context);
 
-        (buttons[section] || (buttons[section] = [])).splice(index, 0, button);
-        name && (this._buttonsMap[name] = button);
-        config.isDefault && (this._defaultButton = button);
-
         return button;
-    },
-
-    _createButtons: function (buttonsConfig) {
-        this._buttons      = {};
-        this._buttonsMap   = {};
-        this._buttonsNames = {};
-
-        YObject.each(buttonsConfig, function (buttons, section) {
-            var i, len;
-
-            for (i = 0, len = buttons.length; i < len; i += 1) {
-                this._createButton(buttons[i], section, i);
-            }
-        }, this);
-
-        return this._buttons;
     },
 
     _destroyButtons: function () {
@@ -176,18 +168,13 @@ WidgetButtons.prototype = {
         return container;
     },
 
-    _getButtonName: function (config) {
-        var names = this._buttonsNames,
-            name  = config && (config.name || config.type);
+    _getButtonName: function (button) {
+        var name;
 
-        if (!name) {
-            return null;
-        }
-
-        if (isNumber(names[name])) {
-            name += (names[name] += 1);
+        if (Y.instanceOf(button, Y.Node)) {
+            name = button.getData('name') || button.get('name');
         } else {
-            names[name] = 0;
+            name = button && (button.name || button.type);
         }
 
         return name;
@@ -196,7 +183,7 @@ WidgetButtons.prototype = {
     _mergeButtonConfig: function (config) {
         config = isString(config) ? {name: config} : Y.merge(config);
 
-        var name      = config.name || config.type,
+        var name      = this._getButtonName(config),
             defConfig = this.BUTTONS && this.BUTTONS[name];
 
         if (defConfig) {
@@ -206,26 +193,62 @@ WidgetButtons.prototype = {
         return config;
     },
 
-    _syncUIButtons: function () {
-        // TODO: First check if buttons were parsed via HTML_PARSER.
-        this._uiSetButtons(this._buttons);
+    _mapButton: function (name, button) {
+        if (!name) { return; }
+
+        var names = this._buttonsNames;
+
+        if (isNumber(names[name])) {
+            name += (names[name] += 1);
+        } else {
+            names[name] = 0;
+        }
+
+        this._buttonsMap[name] = button;
+    },
+
+    _setButton: function (buttons, button, section, index) {
+        var config  = {},
+            isDefault, name, sectionButtons;
+
+        if (Y.instanceOf(button, Y.Node)) {
+            name      = this._getButtonName(button);
+            isDefault = button.getData('default');
+        } else {
+            config    = this._mergeButtonConfig(button);
+            button    = this._createButton(config);
+            name      = this._getButtonName(config);
+            isDefault = config.isDefault;
+        }
+
+        this._mapButton(name, button);
+        isDefault && (this._defaultButton = button);
+
+        section || (section = config.section || this.DEFAULT_BUTTONS_SECTION);
+        sectionButtons = buttons[section] || (buttons[section] = []);
+        isNumber(index) || (index = sectionButtons.length);
+
+        sectionButtons[index] = button;
+
+        return button;
     },
 
     _setButtons: function (config) {
-        var defSection    = this.DEFAULT_BUTTONS_SECTION,
-            buttonsConfig = {};
+        if (this._modifyButtons) { return config; }
 
-        function processButtons(buttons, currentSection) {
-            var i, len, button, section;
+        var buttons = {};
 
-            if (!isArray(buttons) || !buttons.length) { return; }
+        this._buttonsMap    = {};
+        this._buttonsNames  = {};
+        this._defaultButton = null;
 
-            for (i = 0, len = buttons.length; i < len; i += 1) {
-                button  = this._mergeButtonConfig(buttons[i]);
-                section = currentSection || button.section || defSection;
+        function processButtons(sectionButtons, section) {
+            if (!isArray(sectionButtons)) { return; }
 
-                buttonsConfig[section] || (buttonsConfig[section] = []);
-                buttonsConfig[section].push(button);
+            var i, len;
+
+            for (i = 0, len = sectionButtons.length; i < len; i += 1) {
+                this._setButton(buttons, sectionButtons[i], section);
             }
         }
 
@@ -235,7 +258,12 @@ WidgetButtons.prototype = {
             YObject.each(config, processButtons, this);
         }
 
-        return buttonsConfig;
+        return buttons;
+    },
+
+    _syncUIButtons: function () {
+        // TODO: First check if buttons were parsed via HTML_PARSER.
+        this._uiSetButtons(this.get('buttons'));
     },
 
     _uiInsertButton: function (button, section, index) {
@@ -263,15 +291,15 @@ WidgetButtons.prototype = {
     // -- Protected Event Handlers ---------------------------------------------
 
     _afterButtonsChange: function (e) {
-        var button;
+        var buttons = e.newVal,
+            button;
 
         if (e.src === 'add') {
-            button = this._createButton(e.config, e.section, e.index);
+            button = this._setButton(buttons, e.button, e.section, e.index);
             this._uiInsertButton(button, e.section, e.index);
         } else {
             this._destroyButtons();
-            this._createButtons(e.newVal);
-            this._uiSetButtons(this._buttons);
+            this._uiSetButtons(buttons);
         }
     },
 

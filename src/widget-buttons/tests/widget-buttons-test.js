@@ -57,16 +57,13 @@ suite.add(new Y.Test.Case({
     },
 
     '`buttons` should be added on initialization': function () {
-        var buttons;
-
         this.widget = new TestWidget({
             buttons: [
                 {value: 'Foo'}
             ]
         });
 
-        buttons = this.widget.get('buttons');
-        Assert.areSame('Foo', buttons.footer[0].value, 'Custom button was not added to `buttons`.');
+        Assert.areSame('Foo', this.widget.get('buttons.footer')[0].get('text'), 'Custom button was not added to `buttons`.');
     },
 
     '`buttons` should override defaults': function () {
@@ -90,7 +87,6 @@ suite.add(new Y.Test.Case({
                 buttons: [
                     {
                         type  : 'close',
-                        value : 'Foo',
                         action: function () {
                             clicked += 1;
                         }
@@ -99,7 +95,7 @@ suite.add(new Y.Test.Case({
             });
 
         ObjectAssert.ownsNoKeys(widget1.get('buttons'), '`widget1` has buttons.');
-        Assert.areSame('close', widget2.get('buttons').header[0].type, '`widget2` does not have a "close" button in header.');
+        Assert.areSame('Close', widget2.get('buttons.header')[0].get('text'), '`widget2` does not have a "close" button in header.');
 
         widget2.get('contentBox').one('.yui3-button').simulate('click');
         Assert.areSame(1, clicked);
@@ -179,7 +175,7 @@ suite.add(new Y.Test.Case({
 
         this.widget = new TestWidget({render: '#test'});
 
-        Assert.isUndefined(this.widget.get('buttons').header, 'Widget has button config in header.');
+        Assert.isUndefined(this.widget.get('buttons.header'), 'Widget has button config in header.');
         Assert.areSame(0, this.widget.get('contentBox').all('.yui3-button').size(), 'Widget has button in header.');
 
         this.widget.addButton({
@@ -190,7 +186,7 @@ suite.add(new Y.Test.Case({
             }
         });
 
-        Assert.areSame(1, this.widget.get('buttons').header.length, 'Widget does not have 1 button config in header.');
+        Assert.areSame(1, this.widget.get('buttons.header').length, 'Widget does not have 1 button config in header.');
         Assert.areSame(1, this.widget.getStdModNode('header').all('.yui3-button').size(), 'Widget does not have 1 button in header.');
 
         newButton = this.widget.getStdModNode('header').one('.yui3-button');
@@ -330,7 +326,7 @@ suite.add(new Y.Test.Case({
             called += 1;
         });
 
-        buttons = this.widget._buttons;
+        buttons = this.widget.get('buttons');
         button  = this.widget.getStdModNode('footer').one('.yui3-button');
 
         this.widget.set('buttons', [
@@ -342,10 +338,10 @@ suite.add(new Y.Test.Case({
 
         Assert.areSame(1, called, '`buttonsChange` did not fire.');
 
-        Assert.areNotSame(buttons, this.widget._buttons, '`_buttons` was not re-created.');
+        Assert.areNotSame(buttons, this.widget.get('buttons'), '`buttons` was not re-created.');
         Assert.isNull(this.widget.getStdModNode('footer').one('.yui3-button'), 'Footer button was not removed.');
 
-        Assert.areSame(1, this.widget.get('buttons').header.length, 'Widget header did not have a button.');
+        Assert.areSame(1, this.widget.get('buttons.header').length, 'Widget header did not have a button.');
     },
 
     '`buttonsChange` should fire when calling addButton() but not re-create all buttons': function () {
@@ -363,7 +359,7 @@ suite.add(new Y.Test.Case({
             called += 1;
         });
 
-        buttons = this.widget._buttons;
+        buttons = this.widget.get('buttons');
         button  = this.widget.getStdModNode('footer').one('.yui3-button');
 
         this.widget.addButton({
@@ -373,10 +369,10 @@ suite.add(new Y.Test.Case({
 
         Assert.areSame(1, called, '`buttonsChange` did not fire.');
 
-        Assert.areSame(buttons, this.widget._buttons, '`_buttons` was re-created.');
+        Assert.areSame(buttons, this.widget.get('buttons'), '`_buttons` was re-created.');
         Assert.areSame(button, this.widget.getStdModNode('footer').one('.yui3-button'), 'Footer button was re-created.');
 
-        Assert.areSame(1, this.widget.get('buttons').header.length, 'Widget header did not have a button.');
+        Assert.areSame(1, this.widget.get('buttons.header').length, 'Widget header did not have a button.');
     }
 }));
 

@@ -38,12 +38,11 @@
 
         testWidget.set('visible', true);
 
-        setTimeout(function () {
-            testWidget.addButton({
-                label    : 'I\'m Default!',
-                isDefault: true
-            });
-        }, 1000);
+        testWidget.addButton({label: 'Eric'});
+
+        new Y.NodeList(testWidget.get('buttons.footer')).remove();
+        testWidget.set('buttons', testWidget.get('buttons'));
+        console.log(testWidget.get('buttons'));
     });
     </script>
 </body>
