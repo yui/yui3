@@ -98,6 +98,8 @@ YUI.add('base-base', function(Y) {
     Base._ATTR_CFG = Attribute._ATTR_CFG.concat("cloneDefaultValue");
     Base._ATTR_CFG_HASH = Y.Array.hash(Base._ATTR_CFG);
 
+    Base._NON_ATTRS_CFG = BaseCore._NON_ATTRS_CFG.concat(["on", "after", "bubbleTargets"]);
+
     /**
      * <p>
      * The string to be used to identify instances of 

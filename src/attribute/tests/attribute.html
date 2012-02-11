@@ -765,6 +765,35 @@
                     Y.Assert.areEqual("TESTADHOCCONFIGURED", h.get("AdHoc"));
                 },
 
+                testAdHocConstructor : function() {
+                    AttrHost.prototype._allowAdHocAttrs = true;
+
+                    var h = this.createHost({
+                        foo: "foo",
+                        bar: "bar",
+                        plugins : ["not"],
+                        on: {
+                            fooChange: function() {}
+                        },
+                        after: {
+                            fooChange: function() {}
+                        }
+                    });
+
+                    AttrHost.prototype._allowAdHocAttrs = false;
+
+                    // Only add AdHoc Attrs       
+                    Y.Assert.areEqual("foo", h.get("foo")); 
+                    Y.Assert.areEqual("bar", h.get("bar"));
+                    
+                    Y.Assert.areEqual(true, h.get("initialized"));
+                    
+                    // Not _NON_ATTRS_CFG
+                    Y.Assert.isUndefined(h.get("plugins"));
+                    Y.Assert.isUndefined(h.get("on"));
+                    Y.Assert.isUndefined(h.get("after"));
+                },
+
                 testReset : function() {
                     var h = this.createHost({A:"MyAVal", B:"MyBVal", C:"MyCVal", D:"MyDVal", E:"MyEVal", DE:"MyDEVal"});
 
