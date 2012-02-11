@@ -74,6 +74,7 @@ WidgetButtons.prototype = {
         Y.after(this._bindUIButtons, this, 'bindUI');
         Y.after(this._syncUIButtons, this, 'syncUI');
 
+        // Creates `name` -> `button` mapping and sets the `_defaultButton`.
         this._mapButtons(this.get('buttons'));
     },
 
@@ -112,6 +113,7 @@ WidgetButtons.prototype = {
     getButton: function (name, section) {
         var buttons;
 
+        // Supports `getButton(1, 'header')` signiture.
         if (isNumber(name)) {
             buttons = this.get('buttons');
             section || (section = this.DEFAULT_BUTTONS_SECTION);
@@ -129,12 +131,16 @@ WidgetButtons.prototype = {
         var buttons = this.get('buttons'),
             index;
 
+        // Shortcut if `button` is already an index which is needed for slicing.
         if (isNumber(button)) {
             section || (section = this.DEFAULT_BUTTONS_SECTION);
             index  = button;
             button = buttons[section][index];
         } else {
+            // Supports `button` being the String name.
             isString(button) && (button = this._buttonsMap[button]);
+
+            // Determins the `section` and `index` at which the button exists.
             YObject.some(buttons, function (sectionButtons, currentSection) {
                 index = YArray.indexOf(sectionButtons, button);
 
@@ -145,7 +151,7 @@ WidgetButtons.prototype = {
             });
         }
 
-        // Remove button from Array.
+        // Remove button from `section` Array.
         buttons[section].splce(index, 1);
 
         this.set('buttons', buttons, {
@@ -177,6 +183,8 @@ WidgetButtons.prototype = {
         button.setData('default', !!config.isDefault);
 
         YArray.each(classNames, button.addClass, button);
+
+        // Supports all types of crazy configurations for event subscriptions.
         button.on(events, config.action, context);
 
         return button;
@@ -187,6 +195,7 @@ WidgetButtons.prototype = {
             sectionNode      = this.getStdModNode(section),
             container        = sectionNode && sectionNode.one('.' + buttonsClassName);
 
+        // Create the `container` if it doesn't already exist.
         if (!container) {
             container = Y.Node.create(this.BUTTONS_TEMPLATE);
             container.addClass(buttonsClassName);
@@ -224,7 +233,8 @@ WidgetButtons.prototype = {
     },
 
     _mapButtons: function (buttons) {
-        this._buttonsMap = {};
+        this._buttonsMap    = {};
+        this._defaultButton = null;
 
         YObject.each(buttons, function (sectionButtons) {
             YArray.each(sectionButtons, this._mapButton, this);
@@ -237,7 +247,7 @@ WidgetButtons.prototype = {
         var name      = this._getButtonName(config),
             defConfig = this.BUTTONS && this.BUTTONS[name];
 
-        // Merge button config with default config.
+        // Merge button `config` with defaults.
         if (defConfig) {
             Y.mix(config, defConfig, false, null, 0, true);
         }
@@ -255,7 +265,8 @@ WidgetButtons.prototype = {
             sectionClassNames = Y.WidgetStdMod.SECTION_CLASS_NAMES,
             i, len, section, sectionNode, buttons, sectionButtons;
 
-        function addToSectionButtons(button) {
+        // Hoisted support function out of for-loop.
+        function addButtonToSection(button) {
             sectionButtons.push(button);
         }
 
@@ -267,7 +278,7 @@ WidgetButtons.prototype = {
             if (!buttons || buttons.isEmpty()) { continue; }
 
             sectionButtons = [];
-            buttons.each(addToSectionButtons);
+            buttons.each(addButtonToSection);
 
             buttonsConfig[section] = sectionButtons;
         }
@@ -366,14 +377,16 @@ WidgetButtons.prototype = {
     },
 
     _unMapButton: function (button) {
-        var map = this._buttonsMap;
+        var map  = this._buttonsMap,
+            name = this._getButtonName(button);
 
-        YObject.some(map, function (currentButton, name) {
-            if (currentButton === button) {
-                delete map[name];
-                return true;
-            }
-        });
+        // Only delete the map entry if the specified `button` is mapped to it.
+        if (map[name] === button) {
+            delete map[name];
+        }
+
+        // Clear the default button if its the specified `button`.
+        this._defaultButton === button && (this._defaultButton = null);
     },
 
     // -- Protected Event Handlers ---------------------------------------------
@@ -386,16 +399,20 @@ WidgetButtons.prototype = {
         // Special cases `addButton()` to only set and insert the new button.
         if (src === 'add') {
             button = buttons[e.section][e.index];
+
             this._mapButton(button);
             this._uiInsertButton(button, e.section, e.index);
+
             return;
         }
 
         // Special cases `removeButton()` to only remove the specified button.
         if (src === 'remove') {
             button = e.button;
+
             this._unMapButton(button);
             this._uiRemoveButton(button);
+
             return;
         }
 
@@ -405,6 +422,7 @@ WidgetButtons.prototype = {
 
     _afterVisibleChangeButtons: function (e) {
         var defaultButton = this.getDefaultButton();
+
         if (defaultButton && e.newVal) {
             defaultButton.focus();
         }
