@@ -113,7 +113,7 @@ WidgetButtons.prototype = {
     getButton: function (name, section) {
         var buttons;
 
-        // Supports `getButton(1, 'header')` signiture.
+        // Supports `getButton(1, 'header')` signature.
         if (isNumber(name)) {
             buttons = this.get('buttons');
             section || (section = this.DEFAULT_BUTTONS_SECTION);
@@ -140,7 +140,7 @@ WidgetButtons.prototype = {
             // Supports `button` being the String name.
             isString(button) && (button = this._buttonsMap[button]);
 
-            // Determins the `section` and `index` at which the button exists.
+            // Determines the `section` and `index` at which the button exists.
             YObject.some(buttons, function (sectionButtons, currentSection) {
                 index = YArray.indexOf(sectionButtons, button);
 
@@ -152,7 +152,7 @@ WidgetButtons.prototype = {
         }
 
         // Remove button from `section` Array.
-        buttons[section].splce(index, 1);
+        buttons[section].splice(index, 1);
 
         this.set('buttons', buttons, {
             button : button,
@@ -180,7 +180,7 @@ WidgetButtons.prototype = {
 
         button = new Y.Button(Y.merge(config, {label: label})).getNode();
         button.setData('name', config.name);
-        button.setData('default', !!config.isDefault);
+        button.setData('default', this._getButtonDefault(config));
 
         YArray.each(classNames, button.addClass, button);
 
@@ -209,7 +209,11 @@ WidgetButtons.prototype = {
         var isDefault = Y.instanceOf(button, Y.Node) ?
                 button.getData('default') : button.isDefault;
 
-        return (isString(isDefault) && isDefault.toLowerCase() === 'true') || isDefault;
+        if (isString(isDefault)) {
+            return isDefault.toLowerCase() === 'true';
+        }
+
+        return !!isDefault;
     },
 
     _getButtonName: function (button) {
@@ -293,7 +297,7 @@ WidgetButtons.prototype = {
         function processButtons(buttonConfigs, currentSection) {
             if (!isArray(buttonConfigs)) { return; }
 
-            var i, len, button, buttonConfig, sectionButtons, index;
+            var i, len, button, buttonConfig, section;
 
             for (i = 0, len = buttonConfigs.length; i < len; i += 1) {
                 button  = buttonConfigs[i];
@@ -306,10 +310,11 @@ WidgetButtons.prototype = {
                     section || (section = buttonConfig.section);
                 }
 
+                // Use provided `section` or fallback to the default section.
                 section || (section = defSection);
 
-                sectionButtons    = buttons[section] || (buttons[section] = []);
-                sectionButtons[i] = button;
+                // Add button to the Array of buttons for the specified section.
+                (buttons[section] || (buttons[section] = [])).push(button);
             }
         }
 
@@ -363,7 +368,9 @@ WidgetButtons.prototype = {
                     // Check that the button is at the right position, if not,
                     // move it to its new position.
                     if (buttonIndex !== i) {
-                        buttonContainer.insertBefore(button, i);
+                        // Using `i + 1` because the button should be at index
+                        // `i`; it's inserted before the node which comes after.
+                        buttonContainer.insertBefore(button, i + 1);
                     }
                 } else {
                     buttonContainer.appendChild(button);
