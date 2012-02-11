@@ -104,7 +104,7 @@ suite.add(new Y.Test.Case({
         widget2.destroy();
     },
 
-    'Multiple `buttons` with same `name` should increment name counter': function () {
+    'Last button in should win when multiple `buttons` have the same `name`': function () {
         var buttons;
 
         this.widget = new TestWidget({
@@ -118,11 +118,8 @@ suite.add(new Y.Test.Case({
         buttons = this.widget.get('contentBox').all('.yui3-button');
         Assert.areSame(2, buttons.size(), 'Widget did not have 2 buttons.');
 
-        Assert.areSame(buttons.item(0), this.widget.getButton('foo'), 'First button is not `foo`.');
-        Assert.areSame('Foo', this.widget.getButton('foo').get('text'), '`foo` button does not have text "Foo".');
-
-        Assert.areSame(buttons.item(1), this.widget.getButton('foo1'), 'Second button is not `foo1`.');
-        Assert.areSame('Bar', this.widget.getButton('foo1').get('text'), '`foo1` button does not have text "Bar".');
+        Assert.areSame(buttons.item(1), this.widget.getButton('foo'), 'First button is not `foo`.');
+        Assert.areSame('Bar', this.widget.getButton('foo').get('text'), '`foo` button does not have text "Foo".');
     },
 
     'Default `BUTTONS` should be usable by only providing their string name': function () {
@@ -344,9 +341,9 @@ suite.add(new Y.Test.Case({
         Assert.areSame(1, this.widget.get('buttons.header').length, 'Widget header did not have a button.');
     },
 
-    '`buttonsChange` should fire when calling addButton() but not re-create all buttons': function () {
+    '`buttonsChange` should fire when calling addButton()': function () {
         var called = 0,
-            buttons, button;
+            button;
 
         this.widget = new TestWidget({
             render : '#test',
@@ -359,8 +356,7 @@ suite.add(new Y.Test.Case({
             called += 1;
         });
 
-        buttons = this.widget.get('buttons');
-        button  = this.widget.getStdModNode('footer').one('.yui3-button');
+        button = this.widget.getStdModNode('footer').one('.yui3-button');
 
         this.widget.addButton({
             value  : 'Bar',
@@ -368,10 +364,7 @@ suite.add(new Y.Test.Case({
         });
 
         Assert.areSame(1, called, '`buttonsChange` did not fire.');
-
-        Assert.areSame(buttons, this.widget.get('buttons'), '`_buttons` was re-created.');
         Assert.areSame(button, this.widget.getStdModNode('footer').one('.yui3-button'), 'Footer button was re-created.');
-
         Assert.areSame(1, this.widget.get('buttons.header').length, 'Widget header did not have a button.');
     }
 }));
