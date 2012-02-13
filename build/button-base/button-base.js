@@ -161,16 +161,6 @@ Button.CLASS_NAMES = {
 Y.mix(Button.prototype, Y.AttributeCore.prototype);
 // Export Button
 Y.ButtonBase = Button;
-/**
-    var node = Y.one('#my-button').plug(Y.Plugin.Button, {
-        label: 'my button'
-    });
-
-    node.button.set('label', 'my label');
-    node.set('label', this works too!');
-    node.button.disable();
-    node.disable(); // not supported, use a widget
-*/
 function ButtonPlugin(config) {
     if (!this._initNode) { // hand off to factory when called without new 
         return ButtonPlugin.factory(config);
@@ -211,13 +201,6 @@ Y.extend(ButtonPlugin, Y.ButtonBase, {
 // (node)
 // (node, config)
 // (config)
-/*
-    Y.Node.button(node, config);
-    Y.Button.createNode(node, config);
-    Y.Button.getNode(node, config);
-    Y.Plugin.Button.getNode(node, config);
-    Y.Plugin.Button(node, config);
-*/
 ButtonPlugin.factory = function(node, config) {
     if (node && !config) {
         if (! (node.nodeType || node.getDOMNode || typeof node == 'string')) {
