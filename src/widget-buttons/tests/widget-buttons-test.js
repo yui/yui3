@@ -1,12 +1,5 @@
 YUI.add('widget-buttons-test', function (Y) {
 
-// TODOS:
-//
-// * Tests for `removeButton()`
-// * More tests for `addButton()`
-// * Test preventing `buttonsChange` to see if add/remove still changed the Array.
-//
-
 var Assert       = Y.Assert,
     ArrayAssert  = Y.ArrayAssert,
     ObjectAssert = Y.ObjectAssert,
@@ -473,6 +466,51 @@ suite.add(new Y.Test.Case({
         Assert.areSame(2, called, '`newButton` action was not called.');
     },
 
+    '`addButton()` should default the new button to the end of the footer': function () {
+        this.widget = new TestWidget({
+            buttons: {
+                footer: [{label: 'Foo'}]
+            }
+        });
+
+        Assert.areSame(1, this.widget.get('buttons.footer').length, 'Footer did not have only 1 button.');
+
+        this.widget.addButton({label: 'Bar'});
+
+        Assert.areSame(2, this.widget.get('buttons.footer').length, 'Footer did not have only 2 buttons.');
+        Assert.areSame('Bar', this.widget.get('buttons.footer')[1].get('text'), 'Last footer button was not "Bar".');
+    },
+
+    '`addButton()` without an `index` should default the new button to the end of the section': function () {
+        this.widget = new TestWidget({
+            buttons: {
+                header: [{label: 'Foo'}]
+            }
+        });
+
+        Assert.areSame(1, this.widget.get('buttons.header').length, 'Header did not have only 1 button.');
+
+        this.widget.addButton({label: 'Bar'}, 'header');
+
+        Assert.areSame(2, this.widget.get('buttons.header').length, 'Header did not have only 2 buttons.');
+        Assert.areSame('Bar', this.widget.get('buttons.header')[1].get('text'), 'Last header button was not "Bar".');
+    },
+
+    '`addButton()` with an `index` should insert the new button at the correct location': function () {
+        this.widget = new TestWidget({
+            buttons: {
+                header: [{label: 'Foo'}]
+            }
+        });
+
+        Assert.areSame(1, this.widget.get('buttons.header').length, 'Header did not have only 1 button.');
+
+        this.widget.addButton({label: 'Bar'}, 'header', 0);
+
+        Assert.areSame(2, this.widget.get('buttons.header').length, 'Header did not have only 2 buttons.');
+        Assert.areSame('Bar', this.widget.get('buttons.header')[0].get('text'), 'Last header button was not "Bar".');
+    },
+
     '`getButton()` should return a button by name': function () {
         var button;
 
@@ -485,7 +523,7 @@ suite.add(new Y.Test.Case({
 
         button = this.widget.get('contentBox').one('.yui3-button');
         Assert.isNotNull(button, '`button` is `null`.');
-        Assert.areSame(button, this.widget.getButton('foo'));
+        Assert.areSame(button, this.widget.getButton('foo'), '`foo` button was not retrievable by name.');
     },
 
     '`getButton()` should return a button by index and section': function () {
@@ -505,9 +543,71 @@ suite.add(new Y.Test.Case({
         Assert.isNotNull(fooButton, 'Did not find `fooButton`.');
         Assert.isNotNull(barButton, 'Did not find `barButton`.');
 
-        Assert.areSame(fooButton, this.widget.getButton(0, 'header'));
-        Assert.areSame(barButton, this.widget.getButton(0, 'footer'));
-        Assert.areSame(barButton, this.widget.getButton(0));
+        Assert.areSame(fooButton, this.widget.getButton(0, 'header'), '`fooButton` was not the first header button.');
+        Assert.areSame(barButton, this.widget.getButton(0, 'footer'), '`barButton` was not the first footer button.');
+        Assert.areSame(barButton, this.widget.getButton(0), '`getButton()` does not default to the footer section.');
+    },
+
+    '`getDefaultButton()` should return the default button': function () {
+        this.widget = new TestWidget({
+            buttons: [{label: 'Foo', isDefault: true}]
+        });
+
+        var button = this.widget.get('buttons.footer')[0];
+
+        Assert.isNotUndefined(button, '`button` was `undefined`.');
+        Assert.areSame(button, this.widget.getDefaultButton(), '`button` was not the default button.');
+    },
+
+    '`removeButton()` should remove a button from the colleciton and the DOM': function () {
+        this.widget = new TestWidget({
+            buttons: [{name: 'foo', label: 'Foo'}],
+            render : '#test'
+        });
+
+        ArrayAssert.isNotEmpty(this.widget.get('buttons.footer'), 'Footer buttons was empty.');
+        Assert.areSame(1, this.widget.get('contentBox').all('.yui3-button').size(), 'Widget did not have 1 rendered button.');
+
+        this.widget.removeButton('foo');
+
+        Assert.isUndefined(this.widget.get('buttons.footer'), 'Footer buttons was not `undefined`.');
+        Assert.areSame(0, this.widget.get('contentBox').all('.yui3-button').size(), 'Widget had a rendered button.');
+    },
+
+    '`removeButton()` should remove a button by `index` and default to the footer section': function () {
+        this.widget = new TestWidget({
+            buttons: {
+                footer: [
+                    {label: 'Foo'},
+                    {label: 'Bar'}
+                ]
+            }
+        });
+
+        Assert.areSame(2, this.widget.get('buttons.footer').length, 'Footer did not have only 2 button.');
+
+        this.widget.removeButton(0);
+
+        Assert.areSame(1, this.widget.get('buttons.footer').length, 'Footer did not have only 1 buttons.');
+        Assert.areSame('Bar', this.widget.get('buttons.footer')[0].get('text'), 'The only footer button was not "Bar".');
+    },
+
+    '`removeButton()` should remove a button by `index` and `section`': function () {
+        this.widget = new TestWidget({
+            buttons: {
+                header: [
+                    {label: 'Foo'},
+                    {label: 'Bar'}
+                ]
+            }
+        });
+
+        Assert.areSame(2, this.widget.get('buttons.header').length, 'Header did not have only 2 button.');
+
+        this.widget.removeButton(0, 'header');
+
+        Assert.areSame(1, this.widget.get('buttons.header').length, 'Header did not have only 1 buttons.');
+        Assert.areSame('Bar', this.widget.get('buttons.header')[0].get('text'), 'The only header button was not "Bar".');
     }
 }));
 
@@ -747,6 +847,123 @@ suite.add(new Y.Test.Case({
         Assert.areSame(1, called, '`buttonsChange` did not fire.');
         Assert.isUndefined(this.widget.get('buttons.header'), 'Button was not removed from `buttons`.');
         Assert.isFalse(this.widget.getStdModNode('footer').contains(button), 'Footer button wasnot removed.');
+    },
+
+    '`buttonsChange` should be preventable': function () {
+        var onCalled    = 0,
+            afterCalled = 0,
+            buttons;
+
+        this.widget = new TestWidget({
+            render : '#test',
+            buttons: [{label: 'Foo'}],
+
+            on: {
+                buttonsChange: function (e) {
+                    onCalled += 1;
+                    e.preventDefault();
+                }
+            },
+
+            after: {
+                buttonsChange: function (e) {
+                    afterCalled += 1;
+                }
+            }
+        });
+
+        buttons = this.widget.get('buttons');
+
+        ArrayAssert.isNotEmpty(buttons.footer, 'Footer buttons was empty.');
+        Assert.areSame('Foo', this.widget.get('contentBox').one('.yui3-button').get('text'), 'Foo button was not rendered.');
+
+        this.widget.set('buttons', []);
+
+        ArrayAssert.isNotEmpty(this.widget.get('buttons.footer'), 'Footer buttons was empty.');
+        Assert.areSame(buttons.footer[0], this.widget.get('buttons.footer')[0], '`buttons` changed.');
+        Assert.areSame('Foo', this.widget.get('contentBox').one('.yui3-button').get('text'), 'Foo button was removed.');
+
+        Assert.areSame(1, onCalled);
+        Assert.areSame(0, afterCalled);
+    },
+
+    'Preventing `buttonsChange` should cause `addButton()` to not have side-effects': function () {
+        var onCalled    = 0,
+            afterCalled = 0,
+            buttons;
+
+        this.widget = new TestWidget({
+            render : '#test',
+            buttons: [{label: 'Foo'}],
+
+            on: {
+                buttonsChange: function (e) {
+                    onCalled += 1;
+                    e.preventDefault();
+                }
+            },
+
+            after: {
+                buttonsChange: function (e) {
+                    afterCalled += 1;
+                }
+            }
+        });
+
+        buttons = this.widget.get('buttons');
+
+        ArrayAssert.isNotEmpty(buttons.footer, 'Footer buttons was empty.');
+        Assert.areSame('Foo', this.widget.get('contentBox').one('.yui3-button').get('text'), 'Foo button was not rendered.');
+
+        this.widget.addButton({label: 'Bar'}, 'footer', 0);
+
+        Assert.areSame(1, this.widget.get('buttons.footer').length, 'Footer buttons does not only have 1 button.');
+        Assert.areSame(buttons.footer[0], this.widget.get('buttons.footer')[0], '`buttons` changed.');
+        Assert.areSame('Foo', this.widget.get('contentBox').one('.yui3-button').get('text'), 'Foo button was removed.');
+
+        Assert.areSame(1, onCalled);
+        Assert.areSame(0, afterCalled);
+    },
+
+    'Preventing `buttonsChange` should cause `removeButton()` to not have side-effects': function () {
+        var onCalled    = 0,
+            afterCalled = 0,
+            buttons;
+
+        this.widget = new TestWidget({
+            render : '#test',
+            buttons: [
+                {label: 'Foo'},
+                {label: 'Bar'}
+            ],
+
+            on: {
+                buttonsChange: function (e) {
+                    onCalled += 1;
+                    e.preventDefault();
+                }
+            },
+
+            after: {
+                buttonsChange: function (e) {
+                    afterCalled += 1;
+                }
+            }
+        });
+
+        buttons = this.widget.get('buttons');
+
+        ArrayAssert.isNotEmpty(buttons.footer, 'Footer buttons was empty.');
+        Assert.areSame('Foo', this.widget.get('contentBox').one('.yui3-button').get('text'), 'Foo button was not rendered.');
+
+        this.widget.removeButton(0);
+
+        Assert.areSame(2, this.widget.get('buttons.footer').length, 'Footer buttons does not only have 2 buttons.');
+        Assert.areSame(buttons.footer[0], this.widget.get('buttons.footer')[0], '`buttons` changed.');
+        Assert.areSame('Foo', this.widget.get('contentBox').one('.yui3-button').get('text'), 'Foo button was removed.');
+
+        Assert.areSame(1, onCalled);
+        Assert.areSame(0, afterCalled);
     }
 }));
 
