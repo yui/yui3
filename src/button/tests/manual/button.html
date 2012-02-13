@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<style>
+#demo {
+    border: 1em solid #000;
+    width: 20em;
+}
+</style>
+</head>
+<body>
+<button id="my-button">my button</button>
+<button id="button-widget" disabled>button widget</button>
+
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+<script type="text/javascript">
+YUI({filter: 'raw'}).use('cssbutton', 'widget', 'button-base', function(Y) {
+    
+    var button = Y.Plugin.Button.factory('#my-button', {
+        disabled: true,
+        label: 'custom label'
+    });
+    console.log(button.get('label'));
+    console.log(button.get('disabled'));
+
+    var button2 = Y.Plugin.Button.factory({label: 'foo'});
+    Y.augment(button2, Y.Attribute);
+
+    button2.on('disabledChange', function(e) {
+        console.log(e);
+    });
+
+    button2.set('disabled', true);
+
+    button2.appendTo('body');
+
+    var button3 = new Y.Button({
+        srcNode: '#button-widget'
+    });
+
+    button3.render();
+    console.log(button3.get('disabled'));
+
+    var button4 = new Y.ToggleButton({
+        label: 'toggle'
+    });
+
+    button4.render();
+    button4.select();
+});
+</script>
+</body>
+</html>
