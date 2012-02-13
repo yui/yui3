@@ -2,7 +2,7 @@
      * The File class provides a wrapper for a file pointer, either through an HTML5 
      * implementation or as a reference to a file pointer stored in Flash. The File wrapper 
      * also implements the mechanics for uploading a file and tracking its progress.
-     * @module File
+     * @module file
      */     
     /**
      * The class provides a wrapper for a file pointer.
@@ -125,6 +125,7 @@
                    break;
 
                 case "error":
+                   var xhr = this.get("xhr");
                    Y.log("An error has occurred: " + status + ", " + statusText);
                    this.fire("uploaderror", {originEvent: event,
                                                   status: xhr.status,
