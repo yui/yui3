@@ -74,13 +74,15 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
 		// Assign a unique id for the SWF container
 		this._swfContainerId = Y.guid("uploader");
 
-		// Publish available events
-		this.publish("fileselect");
-		this.publish("uploadprogress");
-		this.publish("totaluploadprogress");
-		this.publish("uploadcomplete");
-		this.publish("alluploadscomplete");
-		this.publish("uploaderror");
+        // Publish available events
+        this.publish("fileselect");
+        this.publish("uploadstart");
+        this.publish("fileuploadstart");
+        this.publish("uploadprogress");
+        this.publish("totaluploadprogress");
+        this.publish("uploadcomplete");
+        this.publish("alluploadscomplete");
+        this.publish("uploaderror");
 
 	},
 
@@ -94,7 +96,10 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
      */
 	_uploadEventHandler : function (event) {
 	
-	switch (event.type) {
+    switch (event.type) {
+                case "file:uploadstart":
+                   this.fire("fileuploadstart", event);
+                break;
                 case "file:uploadprogress":
                    this.fire("uploadprogress", event);
                 break;
@@ -109,8 +114,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
                 break;
                 case "uploaderqueue:uploaderror":
                    this.fire("uploaderror", event);
-                break;
-    }	
+    }   
 
 	},
 
@@ -244,24 +248,20 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
 	upload : function (file, url, postvars) {
         
         var uploadURL = url || this.get("uploadURL"),
-            postVars = postvars || this.get("postVarsPerFile");
+            postVars = postvars || this.get("postVarsPerFile"),
+            fileId = file.get("id");
 
-		if (file instanceof Y.File) {
-		   this._uploaderQueue = new UploaderQueue({simUploads: this.get("simLimit"), 
-	                                            errorAction: "restart",
-	                                            fileList: [file],
-	                                            uploadURL: uploadURL,
-	                                            perFileParameters: postVars
-	                                            });
-	       this._uploaderQueue.on("uploadprogress", this._uploadEventHandler, this);
-	       this._uploaderQueue.on("totaluploadprogress", this._uploadEventHandler, this);
-	       this._uploaderQueue.on("uploadcomplete", this._uploadEventHandler, this);
-	       this._uploaderQueue.on("alluploadscomplete", this._uploadEventHandler, this);
+            postVars = postVars.hasOwnProperty(fileId) ? postVars[fileId] : postVars;
 
-	       this._uploaderQueue.set("fileFieldName", this.get("fileFieldName"));
+        if (file instanceof Y.File) {
+           
+            file.on("uploadstart", this._uploadStartHandler, this);
+            file.on("uploadprogress", this._uploadProgressHandler, this);
+            file.on("uploadcomplete", this._uploadCompleteHandler, this);
+            file.on("uploaderror", this._uploadErrorHandler, this);
 
-	       this._uploaderQueue.startUpload();
-		}
+            file.startUpload(uploadURL, postVars, this.get("fileFieldName"));
+        }
 	},
 
    /**
@@ -273,34 +273,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
   	*                          If not specified, the values from the attribute `postVarsPerFile` are used instead. 
     */
 	uploadAll : function (url, postvars) {
-
-        // Starting upload of all selected files.
-        console.log("Starting upload of all selected files");
-        var uploadURL = url || this.get("uploadURL"),
-            postVars = postvars || this.get("postVarsPerFile");
-
-
-           // Creating a new upload queue with the current file list
-        console.log("Creating a new instance of upload queue");
-		   this._uploaderQueue = new UploaderQueue({simUploads: this.get("simLimit"), 
-	                                            errorAction: "restart",
-	                                            fileList: this.get("fileList"),
-	                                            uploadURL: uploadURL,
-	                                            perFileParameters: postVars
-	                                           });
-
-           // Subscribing to events
-        console.log("Subscribing to uploaderqueue's events");
-	       this._uploaderQueue.on("uploadprogress", this._uploadEventHandler, this);
-	       this._uploaderQueue.on("totaluploadprogress", this._uploadEventHandler, this);
-	       this._uploaderQueue.on("uploadcomplete", this._uploadEventHandler, this);
-	       this._uploaderQueue.on("alluploadscomplete", this._uploadEventHandler, this);
-
-	       this._uploaderQueue.set("fileFieldName", this.get("fileFieldName"));
-
-           // Starting the upload.
-        console.log("Starting upload in the queue");
-	       this._uploaderQueue.startUpload();		
+        this.uploadThese(this.get("fileList"), url, postvars);
 	},
 
    /**
@@ -316,23 +289,21 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
         var uploadURL = url || this.get("uploadURL"),
             postVars = postvars || this.get("postVarsPerFile");
 
-		    this._uploaderQueue = new UploaderQueue({simUploads: this.get("simLimit"), 
-	                                            errorAction: "restart",
-	                                            fileList: files,
-	                                            uploadURL: uploadURL,
-	                                            perFileParameters: postVars
-	                                           });
-
-	       this._uploaderQueue.on("uploadprogress", this._uploadEventHandler, this);
-	       this._uploaderQueue.on("totaluploadprogress", this._uploadEventHandler, this);
-	       this._uploaderQueue.on("uploadcomplete", this._uploadEventHandler, this);
-	       this._uploaderQueue.on("alluploadscomplete", this._uploadEventHandler, this);
-	       this._uploaderQueue.on("uploaderror", this._uploadEventHandler, this);
-
-	       this._uploaderQueue.set("fileFieldName", this.get("fileFieldName"));
-
-
-	       this._uploaderQueue.startUpload();
+           this._uploaderQueue = new UploaderQueue({simUploads: this.get("simLimit"), 
+                                                errorAction: this.get("errorAction"),
+                                                fileList: files,
+                                                uploadURL: uploadURL,
+                                                perFileParameters: postVars
+                                               });
+           this._uploaderQueue.on("uploadstart", this._uploadEventHandler, this);
+           this._uploaderQueue.on("uploadprogress", this._uploadEventHandler, this);
+           this._uploaderQueue.on("totaluploadprogress", this._uploadEventHandler, this);
+           this._uploaderQueue.on("uploadcomplete", this._uploadEventHandler, this);
+           this._uploaderQueue.on("alluploadscomplete", this._uploadEventHandler, this);
+           this._uploaderQueue.on("uploaderror", this._uploadEventHandler, this);
+           this._uploaderQueue.startUpload();  
+           
+           this.fire("uploadstart"); 
 	}
 },
 
@@ -370,6 +341,12 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
      * @static
      */
 	ATTRS: {
+
+        errorAction: {
+            value: "continue",
+            validator: function (val, name) {
+                 return (val === UploaderQueue.CONTINUE || val === UploaderQueue.STOP || val === UploaderQueue.RESTART_ASAP || val === UploaderQueue.RESTART_AFTER);           }
+        },
 
         /**
          * The widget that serves as the &lquot;Select Files&rquot; control for the file uploader
