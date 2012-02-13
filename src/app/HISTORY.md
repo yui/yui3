@@ -31,8 +31,8 @@ App Framework Change History
 
 ### ModelList
 
-* Added a `filter()` method that returns a filtered array of models. [Ticket
-  #2531250]
+* Added a `filter()` method that returns a filtered array of models or,
+  optionally, a new ModelList containing the filtered models. [Ticket #2531250]
 
 * Added a `create` event that fires when a model is created/updated via the
   `create()` method, but before that model has actually been saved and added to
