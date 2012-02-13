@@ -508,8 +508,8 @@ Y.Model = Y.extend(Model, Y.Base, {
                     self.fire(EVT_ERROR, facade);
                 } else {
                     // Lazy publish.
-                    if (!self._loadEvent) {
-                        self._loadEvent = self.publish(EVT_LOAD, {
+                    if (!self._saveEvent) {
+                        self._saveEvent = self.publish(EVT_SAVE, {
                             preventable: false
                         });
                     }
