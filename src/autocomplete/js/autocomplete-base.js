@@ -89,638 +89,89 @@ var Escape  = Y.Escape,
     EVT_QUERY   = QUERY,
     EVT_RESULTS = RESULTS;
 
-function AutoCompleteBase() {
-    // AOP bindings.
-    Y.before(this._bindUIACBase, this, 'bindUI');
-    Y.before(this._destructorACBase, this, 'destructor');
-    Y.before(this._syncUIACBase, this, 'syncUI');
-
-    // -- Public Events --------------------------------------------------------
-
-    /**
-    Fires after the query has been completely cleared or no longer meets the
-    minimum query length requirement.
-
-    @event clear
-    @param {String} prevVal Value of the query before it was cleared.
-    @param {String} src Source of the event.
-    @preventable _defClearFn
-    **/
-    this.publish(EVT_CLEAR, {
-        defaultFn: this._defClearFn
-    });
-
-    /**
-    Fires when the contents of the input field have changed and the input value
-    meets the criteria necessary to generate an autocomplete query.
-
-    @event query
-    @param {String} inputValue Full contents of the text input field or textarea
-        that generated the query.
-    @param {String} query AutoComplete query. This is the string that will be
-        used to request completion results. It may or may not be the same as
-        `inputValue`.
-    @param {String} src Source of the event.
-    @preventable _defQueryFn
-    **/
-    this.publish(EVT_QUERY, {
-        defaultFn: this._defQueryFn
-    });
-
-    /**
-    Fires after query results are received from the source. If no source has
-    been set, this event will not fire.
-
-    @event results
-    @param {Array|Object} data Raw, unfiltered result data (if available).
-    @param {String} query Query that generated these results.
-    @param {Object[]} results Array of filtered, formatted, and highlighted
-        results. Each item in the array is an object with the following
-        properties:
-
-        @param {Node|HTMLElement|String} results.display Formatted result HTML
-            suitable for display to the user. If no custom formatter is set,
-            this will be an HTML-escaped version of the string in the `text`
-            property.
-        @param {String} [results.highlighted] Highlighted (but not formatted)
-            result text. This property will only be set if a highlighter is in
-            use.
-        @param {Any} results.raw Raw, unformatted result in whatever form it was
-            provided by the source.
-        @param {String} results.text Plain text version of the result, suitable
-            for being inserted into the value of a text input field or textarea
-            when the result is selected by a user. This value is not
-            HTML-escaped and should not be inserted into the page using
-            `innerHTML` or `Node#setContent()`.
-
-    @preventable _defResultsFn
-    **/
-    this.publish(EVT_RESULTS, {
-        defaultFn: this._defResultsFn
-    });
-}
-
-// -- Public Static Properties -------------------------------------------------
-AutoCompleteBase.ATTRS = {
-    /**
-    Whether or not to enable the browser's built-in autocomplete functionality
-    for input fields.
-
-    @attribute allowBrowserAutocomplete
-    @type Boolean
-    @default false
-    **/
-    allowBrowserAutocomplete: {
-        value: false
-    },
-
-    /**
-    When a `queryDelimiter` is set, trailing delimiters will automatically be
-    stripped from the input value by default when the input node loses focus.
-    Set this to `true` to allow trailing delimiters.
-
-    @attribute allowTrailingDelimiter
-    @type Boolean
-    @default false
-    **/
-    allowTrailingDelimiter: {
-        value: false
-    },
-
-    /**
-    Whether or not to enable in-memory caching in result sources that support
-    it.
-
-    @attribute enableCache
-    @type Boolean
-    @default true
-    @since 3.5.0
-    **/
-    enableCache: {
-        lazyAdd: false, // we need the setter to run on init
-        setter: '_setEnableCache',
-        value: true
-    },
-
-    /**
-    Node to monitor for changes, which will generate `query` events when
-    appropriate. May be either an `<input>` or a `<textarea>`.
-
-    @attribute inputNode
-    @type Node|HTMLElement|String
-    @initOnly
-    **/
-    inputNode: {
-        setter: Y.one,
-        writeOnce: 'initOnly'
-    },
-
-    /**
-    Maximum number of results to return. A value of `0` or less will allow an
-    unlimited number of results.
-
-    @attribute maxResults
-    @type Number
-    @default 0
-    **/
-    maxResults: {
-        value: 0
-    },
-
-    /**
-    Minimum number of characters that must be entered before a `query` event
-    will be fired. A value of `0` allows empty queries; a negative value will
-    effectively disable all `query` events.
-
-    @attribute minQueryLength
-    @type Number
-    @default 1
-    **/
-    minQueryLength: {
-        value: 1
-    },
-
-    /**
-    Current query, or `null` if there is no current query.
-
-    The query might not be the same as the current value of the input node, both
-    for timing reasons (due to `queryDelay`) and because when one or more
-    `queryDelimiter` separators are in use, only the last portion of the
-    delimited input string will be used as the query value.
-
-    @attribute query
-    @type String|null
-    @default null
-    @readonly
-    **/
-    query: {
-        readOnly: true,
-        value: null
-    },
-
-    /**
-    Number of milliseconds to delay after input before triggering a `query`
-    event. If new input occurs before this delay is over, the previous input
-    event will be ignored and a new delay will begin.
-
-    This can be useful both to throttle queries to a remote data source and to
-    avoid distracting the user by showing them less relevant results before
-    they've paused their typing.
-
-    @attribute queryDelay
-    @type Number
-    @default 100
-    **/
-    queryDelay: {
-        value: 100
-    },
-
-    /**
-    Query delimiter string. When a delimiter is configured, the input value
-    will be split on the delimiter, and only the last portion will be used in
-    autocomplete queries and updated when the `query` attribute is
-    modified.
-
-    @attribute queryDelimiter
-    @type String|null
-    @default null
-    **/
-    queryDelimiter: {
-        value: null
-    },
-
-    /**
-    Source request template. This can be a function that accepts a query as a
-    parameter and returns a request string, or it can be a string containing the
-    placeholder "{query}", which will be replaced with the actual URI-encoded
-    query. In either case, the resulting string will be appended to the request
-    URL when the `source` attribute is set to a remote DataSource, JSONP URL, or
-    XHR URL (it will not be appended to YQL URLs).
-
-    While `requestTemplate` may be set to either a function or a string, it will
-    always be returned as a function that accepts a query argument and returns a
-    string.
-
-    @attribute requestTemplate
-    @type Function|String|null
-    @default null
-    **/
-    requestTemplate: {
-        setter: '_setRequestTemplate',
-        value: null
-    },
-
-    /**
-    Array of local result filter functions. If provided, each filter will be
-    called with two arguments when results are received: the query and an array
-    of result objects. See the documentation for the `results` event for a list
-    of the properties available on each result object.
-
-    Each filter is expected to return a filtered or modified version of the
-    results array, which will then be passed on to subsequent filters, then the
-    `resultHighlighter` function (if set), then the `resultFormatter` function
-    (if set), and finally to subscribers to the `results` event.
-
-    If no `source` is set, result filters will not be called.
-
-    Prepackaged result filters provided by the autocomplete-filters and
-    autocomplete-filters-accentfold modules can be used by specifying the filter
-    name as a string, such as `'phraseMatch'` (assuming the necessary filters
-    module is loaded).
-
-    @attribute resultFilters
-    @type Array
-    @default []
-    **/
-    resultFilters: {
-        setter: '_setResultFilters',
-        value: []
-    },
-
-    /**
-    Function which will be used to format results. If provided, this function
-    will be called with two arguments after results have been received and
-    filtered: the query and an array of result objects. The formatter is
-    expected to return an array of HTML strings or Node instances containing the
-    desired HTML for each result.
-
-    See the documentation for the `results` event for a list of the properties
-    available on each result object.
-
-    If no `source` is set, the formatter will not be called.
-
-    @attribute resultFormatter
-    @type Function|null
-    **/
-    resultFormatter: {
-        validator: _FUNCTION_VALIDATOR
-    },
-
-    /**
-    Function which will be used to highlight results. If provided, this function
-    will be called with two arguments after results have been received and
-    filtered: the query and an array of filtered result objects. The highlighter
-    is expected to return an array of highlighted result text in the form of
-    HTML strings.
-
-    See the documentation for the `results` event for a list of the properties
-    available on each result object.
-
-    If no `source` is set, the highlighter will not be called.
-
-    @attribute resultHighlighter
-    @type Function|null
-    **/
-    resultHighlighter: {
-        setter: '_setResultHighlighter'
-    },
-
-    /**
-    Locator that should be used to extract an array of results from a non-array
-    response.
-
-    By default, no locator is applied, and all responses are assumed to be
-    arrays by default. If all responses are already arrays, you don't need to
-    define a locator.
-
-    The locator may be either a function (which will receive the raw response as
-    an argument and must return an array) or a string representing an object
-    path, such as "foo.bar.baz" (which would return the value of
-    `result.foo.bar.baz` if the response is an object).
-
-    While `resultListLocator` may be set to either a function or a string, it
-    will always be returned as a function that accepts a response argument and
-    returns an array.
-
-    @attribute resultListLocator
-    @type Function|String|null
-    **/
-    resultListLocator: {
-        setter: '_setLocator'
-    },
-
-    /**
-    Current results, or an empty array if there are no results.
-
-    @attribute results
-    @type Array
-    @default []
-    @readonly
-    **/
-    results: {
-        readOnly: true,
-        value: []
-    },
-
-    /**
-    Locator that should be used to extract a plain text string from a non-string
-    result item. The resulting text value will typically be the value that ends
-    up being inserted into an input field or textarea when the user of an
-    autocomplete implementation selects a result.
-
-    By default, no locator is applied, and all results are assumed to be plain
-    text strings. If all results are already plain text strings, you don't need
-    to define a locator.
-
-    The locator may be either a function (which will receive the raw result as
-    an argument and must return a string) or a string representing an object
-    path, such as "foo.bar.baz" (which would return the value of
-    `result.foo.bar.baz` if the result is an object).
-
-    While `resultTextLocator` may be set to either a function or a string, it
-    will always be returned as a function that accepts a result argument and
-    returns a string.
-
-    @attribute resultTextLocator
-    @type Function|String|null
-    **/
-    resultTextLocator: {
-        setter: '_setLocator'
-    },
-
-    /**
-    Source for autocomplete results. The following source types are supported:
-
-    <dl>
-      <dt>Array</dt>
-      <dd>
-        <p>
-        The full array will be provided to any configured filters for each
-        query. This is an easy way to create a fully client-side autocomplete
-        implementation.
-        </p>
-
-        <p>
-        Example: `['first result', 'second result', 'etc']`
-        </p>
-      </dd>
-
-      <dt>DataSource</dt>
-      <dd>
-        A `DataSource` instance or other object that provides a DataSource-like
-        `sendRequest` method. See the `DataSource` documentation for details.
-      </dd>
-
-      <dt>Function</dt>
-      <dd>
-        <p>
-        A function source will be called with the current query and a
-        callback function as parameters, and should either return an array of
-        results (for synchronous operation) or return nothing and pass an
-        array of results to the provided callback (for asynchronous
-        operation).
-        </p>
-
-        <p>
-        Example (synchronous):
-        </p>
-
-        <pre>
-        function (query) {
-            return ['foo', 'bar'];
-        }
-        </pre>
-
-        <p>
-        Example (async):
-        </p>
-
-        <pre>
-        function (query, callback) {
-            callback(['foo', 'bar']);
-        }
-        </pre>
-      </dd>
-
-      <dt>Object</dt>
-      <dd>
-        <p>
-        An object will be treated as a query hashmap. If a property on the
-        object matches the current query, the value of that property will be
-        used as the response.
-        </p>
-
-        <p>
-        The response is assumed to be an array of results by default. If the
-        response is not an array, provide a `resultListLocator` to
-        process the response and return an array.
-        </p>
-
-        <p>
-        Example: `{foo: ['foo result 1', 'foo result 2'], bar: ['bar result']}`
-        </p>
-      </dd>
-    </dl>
-
-    If the optional `autocomplete-sources` module is loaded, then
-    the following additional source types will be supported as well:
-
-    <dl>
-      <dt>&lt;select&gt; Node</dt>
-      <dd>
-        You may provide a YUI Node instance wrapping a &lt;select&gt;
-        element, and the options in the list will be used as results. You
-        will also need to specify a `resultTextLocator` of 'text'
-        or 'value', depending on what you want to use as the text of the
-        result.
-
-        Each result will be an object with the following properties:
-
-        <dl>
-          <dt>html (String)</dt>
-          <dd>
-            <p>HTML content of the &lt;option&gt; element.</p>
-          </dd>
-
-          <dt>index (Number)</dt>
-          <dd>
-            <p>Index of the &lt;option&gt; element in the list.</p>
-          </dd>
-
-          <dt>node (Y.Node)</dt>
-          <dd>
-            <p>Node instance referring to the original &lt;option&gt; element.</p>
-          </dd>
-
-          <dt>selected (Boolean)</dt>
-          <dd>
-            <p>Whether or not this item is currently selected in the
-            &lt;select&gt; list.</p>
-          </dd>
-
-          <dt>text (String)</dt>
-          <dd>
-            <p>Text content of the &lt;option&gt; element.</p>
-          </dd>
-
-          <dt>value (String)</dt>
-          <dd>
-            <p>Value of the &lt;option&gt; element.</p>
-          </dd>
-        </dl>
-      </dd>
-
-      <dt>String (JSONP URL)</dt>
-      <dd>
-        <p>
-        If a URL with a `{callback}` placeholder is provided, it will be used to
-        make a JSONP request. The `{query}` placeholder will be replaced with
-        the current query, and the `{callback}` placeholder will be replaced
-        with an internally-generated JSONP callback name. Both placeholders must
-        appear in the URL, or the request will fail. An optional `{maxResults}`
-        placeholder may also be provided, and will be replaced with the value of
-        the maxResults attribute (or 1000 if the maxResults attribute is 0 or
-        less).
-        </p>
-
-        <p>
-        The response is assumed to be an array of results by default. If the
-        response is not an array, provide a `resultListLocator` to process the
-        response and return an array.
-        </p>
-
-        <p>
-        <strong>The `jsonp` module must be loaded in order for
-        JSONP URL sources to work.</strong> If the `jsonp` module
-        is not already loaded, it will be loaded on demand if possible.
-        </p>
-
-        <p>
-        Example: `'http://example.com/search?q={query}&callback={callback}'`
-        </p>
-      </dd>
-
-      <dt>String (XHR URL)</dt>
-      <dd>
-        <p>
-        If a URL without a `{callback}` placeholder is provided, it will be used
-        to make a same-origin XHR request. The `{query}` placeholder will be
-        replaced with the current query. An optional `{maxResults}` placeholder
-        may also be provided, and will be replaced with the value of the
-        maxResults attribute (or 1000 if the maxResults attribute is 0 or less).
-        </p>
-
-        <p>
-        The response is assumed to be a JSON array of results by default. If the
-        response is a JSON object and not an array, provide a
-        `resultListLocator` to process the response and return an array. If the
-        response is in some form other than JSON, you will need to use a custom
-        DataSource instance as the source.
-        </p>
-
-        <p>
-        <strong>The `io-base` and `json-parse` modules
-        must be loaded in order for XHR URL sources to work.</strong> If
-        these modules are not already loaded, they will be loaded on demand
-        if possible.
-        </p>
-
-        <p>
-        Example: `'http://example.com/search?q={query}'`
-        </p>
-      </dd>
-
-      <dt>String (YQL query)</dt>
-      <dd>
-        <p>
-        If a YQL query is provided, it will be used to make a YQL request. The
-        `{query}` placeholder will be replaced with the current autocomplete
-        query. This placeholder must appear in the YQL query, or the request
-        will fail. An optional `{maxResults}` placeholder may also be provided,
-        and will be replaced with the value of the maxResults attribute (or 1000
-        if the maxResults attribute is 0 or less).
-        </p>
-
-        <p>
-        <strong>The `yql` module must be loaded in order for YQL
-        sources to work.</strong> If the `yql` module is not
-        already loaded, it will be loaded on demand if possible.
-        </p>
-
-        <p>
-        Example: `'select * from search.suggest where query="{query}"'`
-        </p>
-      </dd>
-    </dl>
-
-    As an alternative to providing a source, you could simply listen for `query`
-    events and handle them any way you see fit. Providing a source is optional,
-    but will usually be simpler.
-
-    @attribute source
-    @type Array|DataSource|Function|Node|Object|String|null
-    **/
-    source: {
-        setter: '_setSource'
-    },
-
-    /**
-    May be used to force a specific source type, overriding the automatic source
-    type detection. It should almost never be necessary to do this, but as they
-    taught us in the Boy Scouts, one should always be prepared, so it's here if
-    you need it. Be warned that if you set this attribute and something breaks,
-    it's your own fault.
-
-    Supported `sourceType` values are: 'array', 'datasource', 'function', and
-    'object'.
-
-    If the `autocomplete-sources` module is loaded, the following additional
-    source types are supported: 'io', 'jsonp', 'select', 'string', 'yql'
-
-    @attribute sourceType
-    @type String
-    **/
-    sourceType: {
-        value: null
-    },
-
-    /**
-    If the `inputNode` specified at instantiation time has a `node-tokeninput`
-    plugin attached to it, this attribute will be a reference to the
-    `Y.Plugin.TokenInput` instance.
-
-    @attribute tokenInput
-    @type Plugin.TokenInput
-    @readonly
-    **/
-    tokenInput: {
-        readOnly: true
-    },
-
-    /**
-    Current value of the input node.
-
-    @attribute value
-    @type String
-    @default ''
-    **/
-    value: {
-        // Why duplicate this._inputNode.get('value')? Because we need a
-        // reliable way to track the source of value changes. We want to perform
-        // completion when the user changes the value, but not when we change
-        // the value.
-        value: ''
-    }
-};
-
-AutoCompleteBase.CSS_PREFIX = 'ac';
-AutoCompleteBase.UI_SRC = (Y.Widget && Y.Widget.UI_SRC) || 'ui';
-
-/**
-Mapping of built-in source types to their setter functions. DataSource instances
-and DataSource-like objects are handled natively, so are not mapped here.
-
-@property SOURCE_TYPES
-@type {Object}
-@static
-**/
-AutoCompleteBase.SOURCE_TYPES = {
-    array     : '_createArraySource',
-    'function': '_createFunctionSource',
-    object    : '_createObjectSource'
-};
+function AutoCompleteBase() {}
 
 AutoCompleteBase.prototype = {
+    // -- Lifecycle Methods ----------------------------------------------------
+    initializer: function () {
+        // AOP bindings.
+        Y.before(this._bindUIACBase, this, 'bindUI');
+        Y.before(this._syncUIACBase, this, 'syncUI');
+
+        // -- Public Events ----------------------------------------------------
+
+        /**
+        Fires after the query has been completely cleared or no longer meets the
+        minimum query length requirement.
+
+        @event clear
+        @param {String} prevVal Value of the query before it was cleared.
+        @param {String} src Source of the event.
+        @preventable _defClearFn
+        **/
+        this.publish(EVT_CLEAR, {
+            defaultFn: this._defClearFn
+        });
+
+        /**
+        Fires when the contents of the input field have changed and the input
+        value meets the criteria necessary to generate an autocomplete query.
+
+        @event query
+        @param {String} inputValue Full contents of the text input field or
+            textarea that generated the query.
+        @param {String} query AutoComplete query. This is the string that will
+            be used to request completion results. It may or may not be the same
+            as `inputValue`.
+        @param {String} src Source of the event.
+        @preventable _defQueryFn
+        **/
+        this.publish(EVT_QUERY, {
+            defaultFn: this._defQueryFn
+        });
+
+        /**
+        Fires after query results are received from the source. If no source has
+        been set, this event will not fire.
+
+        @event results
+        @param {Array|Object} data Raw, unfiltered result data (if available).
+        @param {String} query Query that generated these results.
+        @param {Object[]} results Array of filtered, formatted, and highlighted
+            results. Each item in the array is an object with the following
+            properties:
+
+            @param {Node|HTMLElement|String} results.display Formatted result
+                HTML suitable for display to the user. If no custom formatter is
+                set, this will be an HTML-escaped version of the string in the
+                `text` property.
+            @param {String} [results.highlighted] Highlighted (but not
+                formatted) result text. This property will only be set if a
+                highlighter is in use.
+            @param {Any} results.raw Raw, unformatted result in whatever form it
+                was provided by the source.
+            @param {String} results.text Plain text version of the result,
+                suitable for being inserted into the value of a text input field
+                or textarea when the result is selected by a user. This value is
+                not HTML-escaped and should not be inserted into the page using
+                `innerHTML` or `Node#setContent()`.
+
+        @preventable _defResultsFn
+        **/
+        this.publish(EVT_RESULTS, {
+            defaultFn: this._defResultsFn
+        });
+    },
+
+    destructor: function () {
+        this._acBaseEvents && this._acBaseEvents.detach();
+
+        delete this._acBaseEvents;
+        delete this._cache;
+        delete this._inputNode;
+        delete this._rawSource;
+    },
+
     // -- Public Prototype Methods ---------------------------------------------
 
     /**
@@ -822,16 +273,6 @@ AutoCompleteBase.prototype = {
             this.after('sourceTypeChange', this._afterSourceTypeChange),
             this.after(VALUE_CHANGE, this._afterValueChange)
         ]);
-    },
-
-    /**
-    Detaches AutoCompleteBase event listeners.
-
-    @method _destructorACBase
-    @protected
-    **/
-    _destructorACBase: function () {
-        this._acBaseEvents.detach();
     },
 
     /**
@@ -1526,5 +967,570 @@ AutoCompleteBase.prototype = {
         this._set(RESULTS, e[RESULTS]);
     }
 };
+
+AutoCompleteBase.ATTRS = {
+    /**
+    Whether or not to enable the browser's built-in autocomplete functionality
+    for input fields.
+
+    @attribute allowBrowserAutocomplete
+    @type Boolean
+    @default false
+    **/
+    allowBrowserAutocomplete: {
+        value: false
+    },
+
+    /**
+    When a `queryDelimiter` is set, trailing delimiters will automatically be
+    stripped from the input value by default when the input node loses focus.
+    Set this to `true` to allow trailing delimiters.
+
+    @attribute allowTrailingDelimiter
+    @type Boolean
+    @default false
+    **/
+    allowTrailingDelimiter: {
+        value: false
+    },
+
+    /**
+    Whether or not to enable in-memory caching in result sources that support
+    it.
+
+    @attribute enableCache
+    @type Boolean
+    @default true
+    @since 3.5.0
+    **/
+    enableCache: {
+        lazyAdd: false, // we need the setter to run on init
+        setter: '_setEnableCache',
+        value: true
+    },
+
+    /**
+    Node to monitor for changes, which will generate `query` events when
+    appropriate. May be either an `<input>` or a `<textarea>`.
+
+    @attribute inputNode
+    @type Node|HTMLElement|String
+    @initOnly
+    **/
+    inputNode: {
+        setter: Y.one,
+        writeOnce: 'initOnly'
+    },
+
+    /**
+    Maximum number of results to return. A value of `0` or less will allow an
+    unlimited number of results.
+
+    @attribute maxResults
+    @type Number
+    @default 0
+    **/
+    maxResults: {
+        value: 0
+    },
+
+    /**
+    Minimum number of characters that must be entered before a `query` event
+    will be fired. A value of `0` allows empty queries; a negative value will
+    effectively disable all `query` events.
+
+    @attribute minQueryLength
+    @type Number
+    @default 1
+    **/
+    minQueryLength: {
+        value: 1
+    },
+
+    /**
+    Current query, or `null` if there is no current query.
+
+    The query might not be the same as the current value of the input node, both
+    for timing reasons (due to `queryDelay`) and because when one or more
+    `queryDelimiter` separators are in use, only the last portion of the
+    delimited input string will be used as the query value.
+
+    @attribute query
+    @type String|null
+    @default null
+    @readonly
+    **/
+    query: {
+        readOnly: true,
+        value: null
+    },
+
+    /**
+    Number of milliseconds to delay after input before triggering a `query`
+    event. If new input occurs before this delay is over, the previous input
+    event will be ignored and a new delay will begin.
+
+    This can be useful both to throttle queries to a remote data source and to
+    avoid distracting the user by showing them less relevant results before
+    they've paused their typing.
+
+    @attribute queryDelay
+    @type Number
+    @default 100
+    **/
+    queryDelay: {
+        value: 100
+    },
+
+    /**
+    Query delimiter string. When a delimiter is configured, the input value
+    will be split on the delimiter, and only the last portion will be used in
+    autocomplete queries and updated when the `query` attribute is
+    modified.
+
+    @attribute queryDelimiter
+    @type String|null
+    @default null
+    **/
+    queryDelimiter: {
+        value: null
+    },
+
+    /**
+    Source request template. This can be a function that accepts a query as a
+    parameter and returns a request string, or it can be a string containing the
+    placeholder "{query}", which will be replaced with the actual URI-encoded
+    query. In either case, the resulting string will be appended to the request
+    URL when the `source` attribute is set to a remote DataSource, JSONP URL, or
+    XHR URL (it will not be appended to YQL URLs).
+
+    While `requestTemplate` may be set to either a function or a string, it will
+    always be returned as a function that accepts a query argument and returns a
+    string.
+
+    @attribute requestTemplate
+    @type Function|String|null
+    @default null
+    **/
+    requestTemplate: {
+        setter: '_setRequestTemplate',
+        value: null
+    },
+
+    /**
+    Array of local result filter functions. If provided, each filter will be
+    called with two arguments when results are received: the query and an array
+    of result objects. See the documentation for the `results` event for a list
+    of the properties available on each result object.
+
+    Each filter is expected to return a filtered or modified version of the
+    results array, which will then be passed on to subsequent filters, then the
+    `resultHighlighter` function (if set), then the `resultFormatter` function
+    (if set), and finally to subscribers to the `results` event.
+
+    If no `source` is set, result filters will not be called.
+
+    Prepackaged result filters provided by the autocomplete-filters and
+    autocomplete-filters-accentfold modules can be used by specifying the filter
+    name as a string, such as `'phraseMatch'` (assuming the necessary filters
+    module is loaded).
+
+    @attribute resultFilters
+    @type Array
+    @default []
+    **/
+    resultFilters: {
+        setter: '_setResultFilters',
+        value: []
+    },
+
+    /**
+    Function which will be used to format results. If provided, this function
+    will be called with two arguments after results have been received and
+    filtered: the query and an array of result objects. The formatter is
+    expected to return an array of HTML strings or Node instances containing the
+    desired HTML for each result.
+
+    See the documentation for the `results` event for a list of the properties
+    available on each result object.
+
+    If no `source` is set, the formatter will not be called.
+
+    @attribute resultFormatter
+    @type Function|null
+    **/
+    resultFormatter: {
+        validator: _FUNCTION_VALIDATOR
+    },
+
+    /**
+    Function which will be used to highlight results. If provided, this function
+    will be called with two arguments after results have been received and
+    filtered: the query and an array of filtered result objects. The highlighter
+    is expected to return an array of highlighted result text in the form of
+    HTML strings.
+
+    See the documentation for the `results` event for a list of the properties
+    available on each result object.
+
+    If no `source` is set, the highlighter will not be called.
+
+    @attribute resultHighlighter
+    @type Function|null
+    **/
+    resultHighlighter: {
+        setter: '_setResultHighlighter'
+    },
+
+    /**
+    Locator that should be used to extract an array of results from a non-array
+    response.
+
+    By default, no locator is applied, and all responses are assumed to be
+    arrays by default. If all responses are already arrays, you don't need to
+    define a locator.
+
+    The locator may be either a function (which will receive the raw response as
+    an argument and must return an array) or a string representing an object
+    path, such as "foo.bar.baz" (which would return the value of
+    `result.foo.bar.baz` if the response is an object).
+
+    While `resultListLocator` may be set to either a function or a string, it
+    will always be returned as a function that accepts a response argument and
+    returns an array.
+
+    @attribute resultListLocator
+    @type Function|String|null
+    **/
+    resultListLocator: {
+        setter: '_setLocator'
+    },
+
+    /**
+    Current results, or an empty array if there are no results.
+
+    @attribute results
+    @type Array
+    @default []
+    @readonly
+    **/
+    results: {
+        readOnly: true,
+        value: []
+    },
+
+    /**
+    Locator that should be used to extract a plain text string from a non-string
+    result item. The resulting text value will typically be the value that ends
+    up being inserted into an input field or textarea when the user of an
+    autocomplete implementation selects a result.
+
+    By default, no locator is applied, and all results are assumed to be plain
+    text strings. If all results are already plain text strings, you don't need
+    to define a locator.
+
+    The locator may be either a function (which will receive the raw result as
+    an argument and must return a string) or a string representing an object
+    path, such as "foo.bar.baz" (which would return the value of
+    `result.foo.bar.baz` if the result is an object).
+
+    While `resultTextLocator` may be set to either a function or a string, it
+    will always be returned as a function that accepts a result argument and
+    returns a string.
+
+    @attribute resultTextLocator
+    @type Function|String|null
+    **/
+    resultTextLocator: {
+        setter: '_setLocator'
+    },
+
+    /**
+    Source for autocomplete results. The following source types are supported:
+
+    <dl>
+      <dt>Array</dt>
+      <dd>
+        <p>
+        The full array will be provided to any configured filters for each
+        query. This is an easy way to create a fully client-side autocomplete
+        implementation.
+        </p>
+
+        <p>
+        Example: `['first result', 'second result', 'etc']`
+        </p>
+      </dd>
+
+      <dt>DataSource</dt>
+      <dd>
+        A `DataSource` instance or other object that provides a DataSource-like
+        `sendRequest` method. See the `DataSource` documentation for details.
+      </dd>
+
+      <dt>Function</dt>
+      <dd>
+        <p>
+        A function source will be called with the current query and a
+        callback function as parameters, and should either return an array of
+        results (for synchronous operation) or return nothing and pass an
+        array of results to the provided callback (for asynchronous
+        operation).
+        </p>
+
+        <p>
+        Example (synchronous):
+        </p>
+
+        <pre>
+        function (query) {
+            return ['foo', 'bar'];
+        }
+        </pre>
+
+        <p>
+        Example (async):
+        </p>
+
+        <pre>
+        function (query, callback) {
+            callback(['foo', 'bar']);
+        }
+        </pre>
+      </dd>
+
+      <dt>Object</dt>
+      <dd>
+        <p>
+        An object will be treated as a query hashmap. If a property on the
+        object matches the current query, the value of that property will be
+        used as the response.
+        </p>
+
+        <p>
+        The response is assumed to be an array of results by default. If the
+        response is not an array, provide a `resultListLocator` to
+        process the response and return an array.
+        </p>
+
+        <p>
+        Example: `{foo: ['foo result 1', 'foo result 2'], bar: ['bar result']}`
+        </p>
+      </dd>
+    </dl>
+
+    If the optional `autocomplete-sources` module is loaded, then
+    the following additional source types will be supported as well:
+
+    <dl>
+      <dt>&lt;select&gt; Node</dt>
+      <dd>
+        You may provide a YUI Node instance wrapping a &lt;select&gt;
+        element, and the options in the list will be used as results. You
+        will also need to specify a `resultTextLocator` of 'text'
+        or 'value', depending on what you want to use as the text of the
+        result.
+
+        Each result will be an object with the following properties:
+
+        <dl>
+          <dt>html (String)</dt>
+          <dd>
+            <p>HTML content of the &lt;option&gt; element.</p>
+          </dd>
+
+          <dt>index (Number)</dt>
+          <dd>
+            <p>Index of the &lt;option&gt; element in the list.</p>
+          </dd>
+
+          <dt>node (Y.Node)</dt>
+          <dd>
+            <p>Node instance referring to the original &lt;option&gt; element.</p>
+          </dd>
+
+          <dt>selected (Boolean)</dt>
+          <dd>
+            <p>Whether or not this item is currently selected in the
+            &lt;select&gt; list.</p>
+          </dd>
+
+          <dt>text (String)</dt>
+          <dd>
+            <p>Text content of the &lt;option&gt; element.</p>
+          </dd>
+
+          <dt>value (String)</dt>
+          <dd>
+            <p>Value of the &lt;option&gt; element.</p>
+          </dd>
+        </dl>
+      </dd>
+
+      <dt>String (JSONP URL)</dt>
+      <dd>
+        <p>
+        If a URL with a `{callback}` placeholder is provided, it will be used to
+        make a JSONP request. The `{query}` placeholder will be replaced with
+        the current query, and the `{callback}` placeholder will be replaced
+        with an internally-generated JSONP callback name. Both placeholders must
+        appear in the URL, or the request will fail. An optional `{maxResults}`
+        placeholder may also be provided, and will be replaced with the value of
+        the maxResults attribute (or 1000 if the maxResults attribute is 0 or
+        less).
+        </p>
+
+        <p>
+        The response is assumed to be an array of results by default. If the
+        response is not an array, provide a `resultListLocator` to process the
+        response and return an array.
+        </p>
+
+        <p>
+        <strong>The `jsonp` module must be loaded in order for
+        JSONP URL sources to work.</strong> If the `jsonp` module
+        is not already loaded, it will be loaded on demand if possible.
+        </p>
+
+        <p>
+        Example: `'http://example.com/search?q={query}&callback={callback}'`
+        </p>
+      </dd>
+
+      <dt>String (XHR URL)</dt>
+      <dd>
+        <p>
+        If a URL without a `{callback}` placeholder is provided, it will be used
+        to make a same-origin XHR request. The `{query}` placeholder will be
+        replaced with the current query. An optional `{maxResults}` placeholder
+        may also be provided, and will be replaced with the value of the
+        maxResults attribute (or 1000 if the maxResults attribute is 0 or less).
+        </p>
+
+        <p>
+        The response is assumed to be a JSON array of results by default. If the
+        response is a JSON object and not an array, provide a
+        `resultListLocator` to process the response and return an array. If the
+        response is in some form other than JSON, you will need to use a custom
+        DataSource instance as the source.
+        </p>
+
+        <p>
+        <strong>The `io-base` and `json-parse` modules
+        must be loaded in order for XHR URL sources to work.</strong> If
+        these modules are not already loaded, they will be loaded on demand
+        if possible.
+        </p>
+
+        <p>
+        Example: `'http://example.com/search?q={query}'`
+        </p>
+      </dd>
+
+      <dt>String (YQL query)</dt>
+      <dd>
+        <p>
+        If a YQL query is provided, it will be used to make a YQL request. The
+        `{query}` placeholder will be replaced with the current autocomplete
+        query. This placeholder must appear in the YQL query, or the request
+        will fail. An optional `{maxResults}` placeholder may also be provided,
+        and will be replaced with the value of the maxResults attribute (or 1000
+        if the maxResults attribute is 0 or less).
+        </p>
+
+        <p>
+        <strong>The `yql` module must be loaded in order for YQL
+        sources to work.</strong> If the `yql` module is not
+        already loaded, it will be loaded on demand if possible.
+        </p>
+
+        <p>
+        Example: `'select * from search.suggest where query="{query}"'`
+        </p>
+      </dd>
+    </dl>
+
+    As an alternative to providing a source, you could simply listen for `query`
+    events and handle them any way you see fit. Providing a source is optional,
+    but will usually be simpler.
+
+    @attribute source
+    @type Array|DataSource|Function|Node|Object|String|null
+    **/
+    source: {
+        setter: '_setSource'
+    },
+
+    /**
+    May be used to force a specific source type, overriding the automatic source
+    type detection. It should almost never be necessary to do this, but as they
+    taught us in the Boy Scouts, one should always be prepared, so it's here if
+    you need it. Be warned that if you set this attribute and something breaks,
+    it's your own fault.
+
+    Supported `sourceType` values are: 'array', 'datasource', 'function', and
+    'object'.
+
+    If the `autocomplete-sources` module is loaded, the following additional
+    source types are supported: 'io', 'jsonp', 'select', 'string', 'yql'
+
+    @attribute sourceType
+    @type String
+    **/
+    sourceType: {
+        value: null
+    },
+
+    /**
+    If the `inputNode` specified at instantiation time has a `node-tokeninput`
+    plugin attached to it, this attribute will be a reference to the
+    `Y.Plugin.TokenInput` instance.
+
+    @attribute tokenInput
+    @type Plugin.TokenInput
+    @readonly
+    **/
+    tokenInput: {
+        readOnly: true
+    },
+
+    /**
+    Current value of the input node.
+
+    @attribute value
+    @type String
+    @default ''
+    **/
+    value: {
+        // Why duplicate this._inputNode.get('value')? Because we need a
+        // reliable way to track the source of value changes. We want to perform
+        // completion when the user changes the value, but not when we change
+        // the value.
+        value: ''
+    }
+};
+
+// This tells Y.Base.create() to copy these static properties to any class
+// AutoCompleteBase is mixed into.
+AutoCompleteBase._buildCfg = {
+    aggregates: ['SOURCE_TYPES'],
+    statics   : ['UI_SRC']
+};
+
+/**
+Mapping of built-in source types to their setter functions. DataSource instances
+and DataSource-like objects are handled natively, so are not mapped here.
+
+@property SOURCE_TYPES
+@type {Object}
+@static
+**/
+AutoCompleteBase.SOURCE_TYPES = {
+    array     : '_createArraySource',
+    'function': '_createFunctionSource',
+    object    : '_createObjectSource'
+};
+
+AutoCompleteBase.UI_SRC = (Y.Widget && Y.Widget.UI_SRC) || 'ui';
 
 Y.AutoCompleteBase = AutoCompleteBase;
