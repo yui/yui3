@@ -189,7 +189,7 @@ ButtonNode.ATTRS.label._bypassProxy = true;
 
 Y.ButtonNode = ButtonNode;
 /**
-    var node = Y.one('#my-button').plug({
+    var node = Y.one('#my-button').plug(Y.Plugin.Button, {
         label: 'my button'
     });
 
