@@ -454,8 +454,8 @@ Y.Model = Y.extend(Model, Y.Base, {
     operation, which is an asynchronous action. Specify a _callback_ function to
     be notified of success or failure.
 
-    A successful load operation will fire a `load` event, while an unsuccessful
-    load operation will fire an `error` event with the `src` value "load".
+    A successful save operation will fire a `save` event, while an unsuccessful
+    save operation will fire an `error` event with the `src` value "save".
 
     If the save operation succeeds and one or more of the attributes returned in
     the server's response differ from this model's current attributes, a
