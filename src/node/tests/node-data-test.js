@@ -217,6 +217,12 @@ YUI.add('node-data-test', function(Y) {
             node.clearData();
             Y.Assert.isUndefined(node.getData('foo'));
             Y.Assert.isUndefined(node.getData('bar'));
+        },
+
+        'should store data for document node': function() {
+            var node = Y.one('doc');
+            node.setData('foo', 'foo');
+            Y.Assert.areEqual('foo', node.getData('foo'));
         }
     }));
 
