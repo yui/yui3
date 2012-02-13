@@ -985,11 +985,9 @@ Y.mix(Y.Node.prototype, {
 
     _getDataAttribute: function(name) {
         var name = this.DATA_PREFIX + name,
-            data;
-
-        if (this.hasAttribute(name)) {
-            data = this.getAttribute(name);
-        }
+            node = this._node,
+            attrs = node.attributes,
+            data = attrs && attrs[name] && attrs[name].value;
 
         return data;
     },
