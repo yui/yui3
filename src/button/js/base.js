@@ -65,7 +65,7 @@ Button.prototype = {
         return value;
     },
 
-    _uiGetLabel: function(value) {
+    _uiGetLabel: function() {
         var node = this._host,
             attr = (node.get('tagName').toLowerCase() === 'input') ? 'value' : 'text',
             value;
