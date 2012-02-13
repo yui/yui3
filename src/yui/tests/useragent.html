@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+    <title>User Agent Tests</title>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+
+<script>
+    //Fooling into parsing the Node.js process info
+    var process = {
+        versions: {
+            node: 6
+        },
+        platform: 'Win32'
+    };
+
+</script>
+<!-- This is the main test file, notice it's using the `yui-base` seed file 
+without Loader on the page, so Loader is fetched before tests are executed. -->
+<script type="text/javascript" src="../../../build/yui-base/yui-base.js"></script>
+<script type="text/javascript">
+var YUI_config = {
+    loaderPath: 'loader/loader.js',
+    gconfig: true,
+    gfilter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+};
+
+YUI({
+    logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true },    
+    filter: YUI_config.gfilter,
+    modules: {
+        'ua-data': {
+            fullpath: './ua-data.js'
+        },
+        'ua-yui-data': {
+            fullpath: './ua-yui-data.js',
+            requires: [ 'ua-data' ]
+        },
+        'ua-tests': {
+            fullpath: './ua-tests.js',
+            requires: [ 'ua-data', 'ua-yui-data', 'test' ]
+        }
+    }
+}).use('ua-tests', 'test-console', 'test', function(Y) {
+    new Y.Test.Console().render('#log');
+
+    Y.Test.Runner.run();
+});
+
+</script>
+</body>
+</html>

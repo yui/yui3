@@ -9,8 +9,7 @@ implemented using the pjax technique (HTML5 pushState + Ajax).
 @since 3.5.0
 **/
 
-var win      = Y.config.win,
-    location = win.location,
+var win = Y.config.win,
 
     Lang = Y.Lang,
 
@@ -166,7 +165,7 @@ PjaxBase.prototype = {
     **/
     _getRoot: function () {
         var slash = '/',
-            path  = location.pathname,
+            path  = Y.getLocation().pathname,
             segments;
 
         if (path.charAt(path.length - 1) === slash) {
@@ -216,9 +215,9 @@ PjaxBase.prototype = {
             this.fire(EVT_NAVIGATE, options);
         } else {
             if (options.replace) {
-                location.replace(url);
+                win && win.location.replace(url);
             } else {
-                win.location = url;
+                win && (win.location = url);
             }
         }
 
@@ -239,7 +238,7 @@ PjaxBase.prototype = {
             slash = '/',
             i, len, normalized, segments, segment, stack;
 
-        if (!path) {
+        if (!path || path === slash) {
             return slash;
         }
 
@@ -286,11 +285,7 @@ PjaxBase.prototype = {
 
     /**
     Returns the normalized result of resolving the `path` against the current
-    path.
-
-    A host-relative `path` (one that begins with '/') is assumed to be resolved
-    and is returned as is. Falsy values for `path` will return just the current
-    path.
+    path. Falsy values for `path` will return just the current path.
 
     @method _resolvePath
     @param {String} path URL path to resolve.
@@ -305,7 +300,7 @@ PjaxBase.prototype = {
         // Path is host-relative and assumed to be resolved and normalized,
         // meaning silly paths like: '/foo/../bar/' will be returned as-is.
         if (path.charAt(0) === '/') {
-            return path;
+            return this._normalizePath(path);
         }
 
         return this._normalizePath(this._getRoot() + path);
@@ -341,7 +336,7 @@ PjaxBase.prototype = {
         if (origin) {
             // Prepend the current scheme for scheme-relative URLs.
             if (origin.indexOf('//') === 0) {
-                origin = location.protocol + origin;
+                origin = Y.getLocation().protocol + origin;
             }
 
             return origin + (path || '/') + (suffix + '');

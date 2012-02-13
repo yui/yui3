@@ -2,8 +2,20 @@ Rich Text Editor Change History
 ===============================
 
 ### 3.5.0
-    * 2530547 Frame: src attribute doesn't do anything
-    * General fixes for Y! Mail deployment
+
+* 2530547 Frame: src attribute doesn't do anything
+* General fixes for Y! Mail deployment
+* 2531299 Pressing Backspace may cause editor to lose focus.
+* 2531301 Editor using EditorPara and EditorLIsts has JS exceptions
+* 2530547 Frame: src attribute doesn't do anything
+* 2531329 Rename Y.Selection to Y.EditorSelection (or something)
+* 2531577 Plugin.EditorBR works incorrectly in IE
+* 2531615 Newline breaks <br> replaced with <wbr> in IE8 [bz 5242614]
+* 2531329 - Breaking change, more below:
+
+
+Bug #2531329 changed the old Y.Selection to Y.EditorSelection. This has been aliased until 3.6.0, bug #2531659
+created to track that change.
 
 ###3.4.1
 

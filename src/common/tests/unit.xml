@@ -40,6 +40,7 @@
         <url>datasource/tests/datasource-polling.html</url>
         <url>datasource/tests/datasource-textschema.html</url>
         <url>datasource/tests/datasource-xmlschema.html</url>
+        <url>datatable/tests/datatable-base.html</url>
         <url>datatype/tests/date.html</url>
         <url>datatype/tests/number.html</url>
         <url>datatype/tests/xml.html</url>
@@ -62,6 +63,7 @@
         <url>event-valuechange/tests/functional/event-valuechange.html</url>
         <url>event/tests/dom.html</url>
         <url>event/tests/delegate.html</url>
+        <url>event/tests/event-contextmenu.html</url>
         <url>event/tests/event-resize.html</url>
         <url>event/tests/event-key.html</url>
         <url>event/tests/event-synthetic.html</url>
@@ -93,12 +95,23 @@
         <url>text/tests/functional/text-wordbreak.html</url>
         <url>widget/tests/widget.html</url>
         <url>widget-parent/tests/parent-child.html</url>
-        <url>yui/tests/index.html</url>
         <url>yql/tests/index.html</url>
         <url>oop/tests/oop.html</url>
-        <url>yui/tests/array.html</url>
         <url>substitute/tests/substitute.html</url>
         <url>loader/tests/index.html</url>
+        <url>loader/tests/index-full.html</url>
+        <url>loader/tests/index-loader.html</url>
+
+        <url>yui/tests/array.html</url>
+        <url>yui/tests/object.html</url>
+        <url>yui/tests/lang.html</url>
+        <url>yui/tests/useragent.html</url>
+        <url>yui/tests/index.html</url>
+        <url>yui/tests/index-full.html</url>
+        <url>yui/tests/index-loader.html</url>
+
+        <url>yui-throttle/tests/index.html</url>
+
         <url>scrollview/tests/scrollview-list-unit-test.html</url>
         <url>panel/tests/unit-tests.html</url>
         <url>widget-buttons/tests/widget-buttons.html</url>

@@ -1,0 +1,8 @@
+{
+    "filelist": {
+        "requires": [
+          "file",
+          "base"
+        ] 
+    }
+}

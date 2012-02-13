@@ -29,10 +29,15 @@ support) in newer browsers.
 Fired when an error occurs while attempting to load a URL via Ajax.
 
 @event error
-@param {String} content Content extracted from the response using the
-    `contentSelector`, if any.
+@param {Object} content Content extracted from the response, if any.
+    @param {Node} content.node A `Y.Node` instance for a document fragment
+        containing the extracted HTML content.
+    @param {String} [content.title] The title of the HTML page, if any,
+        extracted using the `titleSelector` attribute. If `titleSelector` is not
+        set or if a title could not be found, this property will be `undefined`.
 @param {String} responseText Raw Ajax response text.
 @param {Number} status HTTP status code for the Ajax response.
+@param {String} url The absolute URL that failed to load.
 **/
 var EVT_ERROR = 'error',
 
@@ -40,10 +45,15 @@ var EVT_ERROR = 'error',
 Fired when a URL is successfully loaded via Ajax.
 
 @event load
-@param {String} content Content extracted from the response using the
-    `contentSelector`, if any.
+@param {Object} content Content extracted from the response, if any.
+    @param {Node} content.node A `Y.Node` instance for a document fragment
+        containing the extracted HTML content.
+    @param {String} [content.title] The title of the HTML page, if any,
+        extracted using the `titleSelector` attribute. If `titleSelector` is not
+        set or if a title could not be found, this property will be `undefined`.
 @param {String} responseText Raw Ajax response text.
 @param {Number} status HTTP status code for the Ajax response.
+@param {String} url The absolute URL that was loaded.
 **/
 EVT_LOAD = 'load';
 
@@ -100,7 +110,7 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase], {
         return content;
     },
 
-    // -- Private Methods ------------------------------------------------------
+    // -- Protected Methods ----------------------------------------------------
 
     /**
     Default Pjax route handler. Makes an Ajax request for the requested URL.
@@ -110,14 +120,28 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase], {
     @protected
     **/
     _defaultRoute: function (req) {
+        var url = req.url;
+
         // If there's an outstanding request, abort it.
         this._request && this._request.abort();
 
+        // Add a 'pjax=1' query parameter if enabled.
+        if (this.get('addPjaxParam')) {
+            // Captures the path with query, and hash parts of the URL. Then
+            // properly injects the "pjax=1" query param in the right place,
+            // before any hash fragment, and returns the updated URL.
+            url = url.replace(/([^#]*)(#.*)?$/, function (match, path, hash) {
+                path += (path.indexOf('?') > -1 ? '&' : '?') + 'pjax=1';
+                return path + (hash || '');
+            });
+        }
+
         // Send a request.
-        this._request = Y.io(req.url, {
-            context: this,
-            headers: {'X-PJAX': 'true'},
-            timeout: this.get('timeout'),
+        this._request = Y.io(url, {
+            arguments: {url: url},
+            context  : this,
+            headers  : {'X-PJAX': 'true'},
+            timeout  : this.get('timeout'),
 
             on: {
                 end    : this._onPjaxIOEnd,
@@ -167,13 +191,14 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase], {
     @method _onPjaxIOFailure
     @protected
     **/
-    _onPjaxIOFailure: function (id, res) {
+    _onPjaxIOFailure: function (id, res, details) {
         var content = this.getContent(res.responseText);
 
         this.fire(EVT_ERROR, {
             content     : content,
             responseText: res.responseText,
-            status      : res.status
+            status      : res.status,
+            url         : details.url
         });
     },
 
@@ -183,17 +208,39 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase], {
     @method _onPjaxIOSuccess
     @protected
     **/
-    _onPjaxIOSuccess: function (id, res, args) {
+    _onPjaxIOSuccess: function (id, res, details) {
         var content = this.getContent(res.responseText);
 
         this.fire(EVT_LOAD, {
             content     : content,
             responseText: res.responseText,
-            status      : res.status
+            status      : res.status,
+            url         : details.url
         });
     }
 }, {
     ATTRS: {
+        /**
+        If `true`, a "pjax=1" query parameter will be appended to all URLs
+        requested via Pjax.
+
+        Browsers ignore HTTP request headers when caching content, so if the
+        same URL is used to request a partial Pjax page and a full page, the
+        browser will cache them under the same key and may later load the
+        cached partial page when the user actually requests a full page (or vice
+        versa).
+
+        To prevent this, we can add a bogus query parameter to the URL so that
+        Pjax URLs will always be cached separately from non-Pjax URLs.
+
+        @attribute addPjaxParam
+        @type Boolean
+        @default true
+        **/
+        addPjaxParam: {
+            value: true
+        },
+
         /**
         Node into which content should be inserted when a page is loaded via
         Pjax. This node's existing contents will be removed to make way for the

@@ -1,0 +1,222 @@
+<div class="intro">
+    <p>
+        As of 3.5.0, YUI runs natively on <a href="http://nodejs.org/">Node.js</a> and comes with an official <a href="http://search.npmjs.org/#/yui">npm</a> package for easy installation.
+        YUI supports Node.js &gt; 0.4.10, but should work on stable releases above that. Unstable releases will be supported in local developer builds as features change.
+    </p>
+</div>
+
+<h2>About YUI on Node.js</h2>
+
+<p><img src="{{componentAssets}}/nodejs.png" align="right" hspace="10" vspace="10" alt="Node.js Logo">
+    The core library will run on Node.js with minimal external dependencies. `Get.script`, `JSONP`, `YQL` &amp; `io`
+    along with our core infrastructure pieces (anything that doesn't require a DOM) will work out of the box.
+    The only dependency required to run YUI inside Node.js is Mikeal Roger's <a href="https://github.com/mikeal/request">Request</a>
+    library. It's used under the hood for `Y.Get` &amp; `Y.IO`.
+</p>
+<p>
+    However, there is <strong>no DOM support</strong> included in our releases.
+    This means that you can not do DOM manipulation on the server with this core system. With the introduction
+    of `Y.Handlebars`, we are working very hard to allow Widget rendering on the server via strings instead of raw
+    DOM manipulation. If you need DOM support, please look into our <a href="nodejs-dom.html">YUI, Node.js and DOM</a> example.
+</p>
+
+
+<h2>Install via npm</h2>
+
+<p>
+Installing YUI with npm is easy and fast. Simply use `npm` to install the offical `yui` package.
+</p>
+
+```term
+npm install yui
+```
+
+<p>
+This will install the latest YUI release into your local `./node_modules` directory to require in your Node.js application.
+</p>
+
+<h2>Using YUI on Node.js</h2>
+<p>
+Using YUI on Node.js is very similar to using it inside the browser:
+</p>
+
+```
+var YUI = require('yui').YUI;
+
+YUI().use('yql', function(Y) {
+    Y.YQL('....');
+});
+```
+
+<p>
+When you require the `yui` module in this fashion, you are returned the global YUI object. It will be
+re-used on each additional require. So if you load modules into one instance, then <em>re-require</em> YUI,
+those modules will still be available without fetching them from disk again.
+</p>
+
+<h2>Requiring a YUI module</h2>
+
+<p>
+    If you are working on a packageable application, you can also use YUI in a sync mode to allow for exporting
+    a YUI module or a custom module that requires a YUI module.
+</p>
+
+<p>For example, here we are only requiring the `YQL` module and the return is now a `YUI`
+instance with the `YQL` module already attached to it:
+</p>
+
+```
+var Y = require('yui/yql');
+```
+
+<p>
+    This way you can export a custom module like this:
+</p>
+
+
+```
+#!/usr/bin/env node
+
+var Y = require('yui/yql');
+
+module.exports.getYQLData = function(cb) {
+    Y.YQL('select * from awesome.datasource', function(r) {
+        cb(r);
+    });
+};
+
+```
+
+<p>
+    Now, your implementor can use your module like this:
+</p>
+
+```
+
+var mod = require('your-module');
+
+mod.getYQLData(function(r) {
+    //r will be the return from the above YQL call
+});
+
+```
+
+<p>
+    There are also other ways to require a single module,
+    or a set of modules.
+</p>
+
+<h3>One at a time</h3>
+
+<p>
+    In the example below, you can see that the first require returns the `YQL`
+    module, but doesn't return `Base`. However, the second require asking for `Base`
+    returns the same instance as before with both the `YQL` and `Base` modules attached.
+</p>
+
+
+```
+#!/usr/bin/env node
+
+var Y = require('yui/yql');
+console.log('YQL #1?', (Y.YQL) ? true : false); //True
+console.log('Base #1?', (Y.Base) ? true : false); //False
+
+var Y = require('yui/base-base');
+console.log('YQL #2?', (Y.YQL) ? true : false); //True
+console.log('Base #2?', (Y.Base) ? true : false); //True
+```
+
+<h3>In a batch</h3>
+
+<p>
+    In this example, we have multiple modules being required from the object
+    being returned from the inital require call.
+</p>
+
+```
+#!/usr/bin/env node
+
+var Y = require('yui').use('yql', 'oop', 'base-base');
+
+console.log('OOP?', (Y.rbind) ? true : false); //True
+console.log('YQL?', (Y.YQL) ? true : false); //True
+console.log('Base?', (Y.Base) ? true : false); //True
+```
+
+<p>The above is exactly the same as this:</p>
+
+```
+#!/usr/bin/env node
+
+var YUI = require('yui').YUI;
+
+var Y = YUI({ useSync: true }).use('yql', 'oop', 'base-base');
+
+```
+
+<p>
+    This approach makes it easy for you to create custom YUI modules and export them
+    from inside your own app.
+</p>
+
+```
+var path = require('path'),
+    YUI = require('yui').YUI;
+
+var Y = YUI({
+    useSync: true,
+    modules: {
+        awesome: {
+            fullpath: path.join(__dirname, './lib/awesome.js'),
+            requires: [ 'yql', 'oop', 'base-base' ]
+        }
+    }
+}).use('awesome');
+
+//If your module adds a Y.Awesome namespace
+
+module.exports.awesome = Y.Awesome;
+
+```
+
+<h2>Using Debug Versions</h2>
+
+<p>
+    Just like in the browser, YUI will load minimized versions of the requested modules. You
+    can choose to load either all debug files, or single modules.
+</p>
+
+<h3>Load all modules in debug mode</h3>
+
+<p>
+    This will load the debug seed and force all modules to load in debug mode:        
+</p>
+
+```
+#!/usr/bin/env node
+
+var YUI = require('yui/debug').YUI;
+
+YUI().use('base', fn);
+
+```
+
+<h3>Debugging some modules</h3>
+
+<p>
+    You may only want to debug a single module, you can do this by adding `/debug` to the original
+    require:
+</p>
+
+```
+#!/usr/bin/env node
+
+var Y = require('yui/yql/debug');
+console.log('YQL?', (Y.YQL) ? true : false);
+
+Y.YQL('select * from weather.forecast where location=90210', function(r) {
+    console.log(r.query.results.channel.item.description);
+});
+```
+

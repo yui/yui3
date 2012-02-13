@@ -47,6 +47,17 @@ var AttrProto = Y.Attribute.prototype,
     EVT_ADD = 'add',
 
     /**
+    Fired when a model is created or updated via the `create()` method, but
+    before the model is actually saved or added to the list. The `add` event
+    will be fired after the model has been saved and added to the list.
+
+    @event create
+    @param {Model} model The model being created/updated.
+    @since 3.5.0
+    **/
+    EVT_CREATE = 'create',
+
+    /**
     Fired when an error occurs, such as when an attempt is made to add a
     duplicate model to the list, or when a sync layer response can't be parsed.
 
@@ -69,6 +80,35 @@ var AttrProto = Y.Attribute.prototype,
     EVT_ERROR = 'error',
 
     /**
+    Fired after models are loaded from a sync layer.
+
+    @event load
+    @param {Object} parsed The parsed version of the sync layer's response to
+        the load request.
+    @param {Mixed} response The sync layer's raw, unparsed response to the load
+        request.
+    @since 3.5.0
+    **/
+    EVT_LOAD = 'load',
+
+    /**
+    Fired when a model is removed from the list.
+
+    Listen to the `on` phase of this event to be notified before a model is
+    removed from the list. Calling `e.preventDefault()` during the `on` phase
+    will prevent the model from being removed.
+
+    Listen to the `after` phase of this event to be notified after a model has
+    been removed from the list.
+
+    @event remove
+    @param {Model} model The model being removed.
+    @param {Number} index The index of the model being removed.
+    @preventable _defRemoveFn
+    **/
+    EVT_REMOVE = 'remove',
+
+    /**
     Fired when the list is completely reset via the `reset()` method or sorted
     via the `sort()` method.
 
@@ -85,24 +125,7 @@ var AttrProto = Y.Attribute.prototype,
       `'sort'`.
     @preventable _defResetFn
     **/
-    EVT_RESET = 'reset',
-
-    /**
-    Fired when a model is removed from the list.
-
-    Listen to the `on` phase of this event to be notified before a model is
-    removed from the list. Calling `e.preventDefault()` during the `on` phase
-    will prevent the model from being removed.
-
-    Listen to the `after` phase of this event to be notified after a model has
-    been removed from the list.
-
-    @event remove
-    @param {Model} model The model being removed.
-    @param {int} index The index of the model being removed.
-    @preventable _defRemoveFn
-    **/
-    EVT_REMOVE = 'remove';
+    EVT_RESET = 'reset';
 
 function ModelList() {
     ModelList.superclass.constructor.apply(this, arguments);
@@ -121,9 +144,24 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
     @property model
     @type Model
-    @default `null`
+    @default null
     **/
     model: null,
+
+    // -- Protected Properties -------------------------------------------------
+
+    /**
+    Total hack to allow us to identify ModelList instances without using
+    `instanceof`, which won't work when the instance was created in another
+    window or YUI sandbox.
+
+    @property _isYUIModelList
+    @type Boolean
+    @default true
+    @protected
+    @since 3.5.0
+    **/
+    _isYUIModelList: true,
 
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function (config) {
@@ -151,9 +189,12 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     // -- Public Methods -------------------------------------------------------
 
     /**
-    Adds the specified model or array of models to this list.
+    Adds the specified model or array of models to this list. You may also pass
+    another ModelList instance, in which case all the models in that list will
+    be added to this one as well.
 
     @example
+
         // Add a single model instance.
         list.add(new Model({foo: 'bar'}));
 
@@ -166,19 +207,28 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
             {baz: 'quux'}
         ]);
 
+        // Add all the models in another ModelList instance.
+        list.add(otherList);
+
     @method add
-    @param {Model|Model[]|Object|Object[]} models Models to add. May be existing
-      model instances or hashes of model attributes, in which case new model
-      instances will be created from the hashes.
+    @param {Model|Model[]|ModelList|Object|Object[]} models Model or array of
+        models to add. May be existing model instances or hashes of model
+        attributes, in which case new model instances will be created from the
+        hashes. You may also pass a ModelList instance to add all the models it
+        contains.
     @param {Object} [options] Data to be mixed into the event facade of the
         `add` event(s) for the added models.
-      @param {Boolean} [options.silent=false] If `true`, no `add` event(s) will
-          be fired.
+
+        @param {Boolean} [options.silent=false] If `true`, no `add` event(s)
+            will be fired.
+
     @return {Model|Model[]} Added model or array of added models.
     **/
     add: function (models, options) {
-        if (Lang.isArray(models)) {
-            return YArray.map(models, function (model) {
+        var isList = models._isYUIModelList;
+
+        if (isList || Lang.isArray(models)) {
+            return YArray.map(isList ? models.toArray() : models, function (model) {
                 return this._add(model, options);
             }, this);
         } else {
@@ -218,8 +268,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
       instance or a hash of model attributes, in which case a new model instance
       will be created from the hash.
     @param {Object} [options] Options to be passed to the model's `sync()` and
-        `set()` methods and mixed into the `add` event when the model is added
-        to the list.
+        `set()` methods and mixed into the `create` and `add` event facades.
       @param {Boolean} [options.silent=false] If `true`, no `add` event(s) will
           be fired.
     @param {Function} [callback] Called when the sync operation finishes.
@@ -238,9 +287,15 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
             options  = {};
         }
 
-        if (!(model instanceof Y.Model)) {
+        options || (options = {});
+
+        if (!model._isYUIModel) {
             model = new this.model(model);
         }
+
+        self.fire(EVT_CREATE, Y.merge(options, {
+            model: model
+        }));
 
         return model.save(options, function (err) {
             if (!err) {
@@ -437,9 +492,33 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
             options  = {};
         }
 
+        options || (options = {});
+
         this.sync('read', options, function (err, response) {
-            if (!err) {
-                self.reset(self.parse(response), options);
+            var facade = {
+                    options : options,
+                    response: response
+                },
+
+                parsed;
+
+            if (err) {
+                facade.error = err;
+                facade.src   = 'load';
+
+                self.fire(EVT_ERROR, facade);
+            } else {
+                // Lazy publish.
+                if (!self._loadEvent) {
+                    self._loadEvent = self.publish(EVT_LOAD, {
+                        preventable: false
+                    });
+                }
+
+                parsed = facade.parsed = self.parse(response);
+
+                self.reset(parsed, options);
+                self.fire(EVT_LOAD, facade);
             }
 
             callback && callback.apply(null, arguments);
@@ -501,19 +580,25 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     },
 
     /**
-    Removes the specified model or array of models from this list.
+    Removes the specified model or array of models from this list. You may also
+    pass another ModelList instance to remove all the models that are in both
+    that instance and this instance.
 
     @method remove
-    @param {Model|Model[]} models Models to remove.
+    @param {Model|Model[]|ModelList} models Models to remove.
     @param {Object} [options] Data to be mixed into the event facade of the
         `remove` event(s) for the removed models.
-      @param {Boolean} [options.silent=false] If `true`, no `remove` event(s)
-          will be fired.
+
+        @param {Boolean} [options.silent=false] If `true`, no `remove` event(s)
+            will be fired.
+
     @return {Model|Model[]} Removed model or array of removed models.
     **/
     remove: function (models, options) {
-        if (Lang.isArray(models)) {
-            return YArray.map(models, function (model) {
+        var isList = models._isYUIModelList;
+
+        if (isList || Lang.isArray(models)) {
+            return YArray.map(isList ? models.toArray() : models, function (model) {
                 return this._remove(model, options);
             }, this);
         } else {
@@ -526,35 +611,43 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     single `reset` event.
 
     Use `reset` when you want to add or remove a large number of items at once
-    without firing `add` or `remove` events for each one.
+    with less overhead, and without firing `add` or `remove` events for each
+    one.
 
     @method reset
-    @param {Model[]|Object[]} [models] Models to add. May be existing model
-      instances or hashes of model attributes, in which case new model instances
-      will be created from the hashes. Calling `reset()` without passing in any
-      models will clear the list.
+    @param {Model[]|ModelList|Object[]} [models] Models to add. May be existing
+        model instances or hashes of model attributes, in which case new model
+        instances will be created from the hashes. If a ModelList is passed, all
+        the models in that list will be added to this list. Calling `reset()`
+        without passing in any models will clear the list.
     @param {Object} [options] Data to be mixed into the event facade of the
         `reset` event.
-      @param {Boolean} [options.silent=false] If `true`, no `reset` event will
-          be fired.
+
+        @param {Boolean} [options.silent=false] If `true`, no `reset` event will
+            be fired.
+
     @chainable
     **/
     reset: function (models, options) {
         models  || (models  = []);
         options || (options = {});
 
-        var facade = Y.merge(options, {
-                src   : 'reset',
-                models: YArray.map(models, function (model) {
-                    return model instanceof Y.Model ? model :
-                            new this.model(model);
-                }, this)
-            });
+        var facade = Y.merge(options, {src: 'reset'});
 
-        // Sort the models in the facade before firing the reset event.
-        if (this.comparator) {
-            facade.models.sort(Y.bind(this._sort, this));
+        if (models._isYUIModelList) {
+            models = models.toArray();
+        } else {
+            models = YArray.map(models, function (model) {
+                return model._isYUIModel ? model : new this.model(model);
+            }, this);
         }
+
+        // Sort the models before firing the reset event.
+        if (this.comparator) {
+            models.sort(Y.bind(this._sort, this));
+        }
+
+        facade.models = models;
 
         options.silent ? this._defResetFn(facade) :
             this.fire(EVT_RESET, facade);
@@ -578,12 +671,12 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @chainable
     **/
     sort: function (options) {
-        var models = this._items.concat(),
-            facade;
-
         if (!this.comparator) {
             return this;
         }
+
+        var models = this._items.concat(),
+            facade;
 
         options || (options = {});
 
@@ -668,6 +761,9 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     /**
     Adds the specified _model_ if it isn't already in this list.
 
+    If the model's `clientId` or `id` matches that of a model that's already in
+    the list, an `error` event will be fired and the model will not be added.
+
     @method _add
     @param {Model|Object} model Model or object to add.
     @param {Object} [options] Data to be mixed into the event facade of the
@@ -678,15 +774,19 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @protected
     **/
     _add: function (model, options) {
-        var facade;
+        var facade, id;
 
         options || (options = {});
 
-        if (!(model instanceof Y.Model)) {
+        if (!model._isYUIModel) {
             model = new this.model(model);
         }
 
-        if (this._clientIdMap[model.get('clientId')]) {
+        id = model.get('id');
+
+        if (this._clientIdMap[model.get('clientId')]
+                || (Lang.isValue(id) && this._idMap[id])) {
+
             this.fire(EVT_ERROR, {
                 error: 'Model is already in the list.',
                 model: model,
@@ -735,6 +835,24 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     },
 
     /**
+    Compares the value _a_ to the value _b_ for sorting purposes. Values are
+    assumed to be the result of calling a model's `comparator()` method. You can
+    override this method to implement custom sorting logic, such as a descending
+    sort or multi-field sorting.
+
+    @method _compare
+    @param {Mixed} a First value to compare.
+    @param {Mixed} b Second value to compare.
+    @return {Number} `-1` if _a_ should come before _b_, `0` if they're
+        equivalent, `1` if _a_ should come after _b_.
+    @protected
+    @since 3.5.0
+    **/
+    _compare: function (a, b) {
+        return a < b ? -1 : (a > b ? 1 : 0);
+    },
+
+    /**
     Removes this list as a bubble target for the specified model's events.
 
     @method _detachList
@@ -760,15 +878,16 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @protected
     **/
     _findIndex: function (model) {
-        var comparator = this.comparator,
-            items      = this._items,
-            max        = items.length,
-            min        = 0,
+        var items = this._items,
+            max   = items.length,
+            min   = 0,
             item, middle, needle;
 
-        if (!comparator || !items.length) { return items.length; }
+        if (!this.comparator || !max) {
+            return max;
+        }
 
-        needle = comparator(model);
+        needle = this.comparator(model);
 
         // Perform an iterative binary search to determine the correct position
         // based on the return value of the `comparator` function.
@@ -776,7 +895,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
             middle = (min + max) >> 1; // Divide by two and discard remainder.
             item   = items[middle];
 
-            if (comparator(item) < needle) {
+            if (this._compare(this.comparator(item), needle) < 0) {
                 min = middle + 1;
             } else {
                 max = middle;
@@ -835,10 +954,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @protected
     **/
     _sort: function (a, b) {
-        var aValue = this.comparator(a),
-            bValue = this.comparator(b);
-
-        return aValue < bValue ? -1 : (aValue > bValue ? 1 : 0);
+        return this._compare(this.comparator(a), this.comparator(b));
     },
 
     // -- Event Handlers -------------------------------------------------------

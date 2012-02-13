@@ -75,7 +75,9 @@
         "windowresize": {
             "displayName": "The windowresize Event"
         },
-
+        "contextmenu": {
+            "displayName": "The contextmenu Event Fix"
+        },        
         "swipe-example-content": {
             "displayName": "Supporting a Swipe Left Gesture",
             "layout": "empty-layout"

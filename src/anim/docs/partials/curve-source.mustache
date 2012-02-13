@@ -160,17 +160,22 @@ code span {
     <div id="demo">A</div>
     
 <script>
-YUI().use('anim', 'dd-drag', 'graphics', 'cssbuttons', function(Y){
+YUI().use('anim', 'dd-drag', 'graphics', 'cssbutton', function(Y){
 
     var mygraphic = new Y.Graphic({render:"#mygraphiccontainer"}),
         origin = Y.one('.example'), // The XY values for the animation are based on the upper-left corner of this element
         demoA = Y.one('#demo'), // The animated element
-        
+        dotList = Y.all('.dot');
         // Draggable points
         dot0 = Y.one('#dot-0'), dot1 = Y.one('#dot-1'), dot2 = Y.one('#dot-2'), dot3 = Y.one('#dot-3'),
         
         // Array of XY arrays of draggable points
-        arrDot = [ [parseInt(dot0.getStyle('left'), 10), parseInt(dot0.getStyle('top'), 10)], [parseInt(dot1.getStyle('left'), 10), parseInt(dot1.getStyle('top'), 10)], [parseInt(dot2.getStyle('left'), 10), parseInt(dot2.getStyle('top'), 10)], [parseInt(dot3.getStyle('left'), 10), parseInt(dot3.getStyle('top'), 10)] ],
+        arrDot = [ 
+            [parseInt(dotList.item(0).getStyle('left'), 10), parseInt(dotList.item(0).getStyle('top'), 10)], 
+            [parseInt(dotList.item(1).getStyle('left'), 10), parseInt(dotList.item(1).getStyle('top'), 10)], 
+            [parseInt(dotList.item(2).getStyle('left'), 10), parseInt(dotList.item(2).getStyle('top'), 10)], 
+            [parseInt(dotList.item(3).getStyle('left'), 10), parseInt(dotList.item(3).getStyle('top'), 10)] 
+        ],
         
         // Make points draggable
         dd0 = new Y.DD.Drag({
@@ -186,49 +191,48 @@ YUI().use('anim', 'dd-drag', 'graphics', 'cssbuttons', function(Y){
             node: '#dot-3'
         });
 
-    /* drag handlers that
-     * move the animated element to the start point
-     * update the array of point XY values      
-     * update displayed XY point values in code snippet
-     * update the curve preview
-     */          
-    dd0.on('drag:drag', function(e){
-        resetToAnimStart();
-        arrDot[0] = [parseInt(dot0.getStyle('left'), 10), parseInt(dot0.getStyle('top'), 10)];
-        updateCodeSnippetValues();
+    // Puts current XY values of points into displayed code snippet
+    var updateCodeSnippetValues = function(){
+        Y.one('.arr0').setContent(arrDot[0][0] + ',' + arrDot[0][1]); // Start       
+        Y.one('.arr1').setContent(arrDot[1][0] + ',' + arrDot[1][1]); // Control point 1     
+        Y.one('.arr2').setContent(arrDot[2][0] + ',' + arrDot[2][1]); // Control point 2       
+        Y.one('.arr3').setContent(arrDot[3][0] + ',' + arrDot[3][1]); // End        
+    }
+    
+    /** 
+     * Stops the animation
+     * Updates the array of point XY values      
+     * Updates the curve preview
+     * Updates displayed XY point values in code snippet
+     */
+    var dotDragHandler = function(dot){
+        Y.Anim.stop();
+        arrDot[dotList.indexOf(dot)] = [parseInt(dot.getStyle('left'), 10), parseInt(dot.getStyle('top'), 10)];
         drawCurve();
+        updateCodeSnippetValues();
+    }
+    
+    dd0.on('drag:drag', function(e){
+        dotDragHandler(this.get('dragNode'));
     });
     dd1.on('drag:drag', function(e){
-        resetToAnimStart();
-        arrDot[1] = [parseInt(dot1.getStyle('left'), 10), parseInt(dot1.getStyle('top'), 10)];
-        updateCodeSnippetValues();
-        drawCurve();
+        dotDragHandler(this.get('dragNode'));
     });
     dd2.on('drag:drag', function(e){
-        resetToAnimStart();
-        arrDot[2] = [parseInt(dot2.getStyle('left'), 10), parseInt(dot2.getStyle('top'), 10)];
-        updateCodeSnippetValues();
-        drawCurve();
+        dotDragHandler(this.get('dragNode'));
     });
     dd3.on('drag:drag', function(e){
-        resetToAnimStart();
-        arrDot[3] = [parseInt(dot3.getStyle('left'), 10), parseInt(dot3.getStyle('top'), 10)];
-        updateCodeSnippetValues();
-        drawCurve();
+        dotDragHandler(this.get('dragNode'));
     });
-
-
-    dd0.on('drag:end', function(e){
-        startAnim();
+    
+    // button handler
+    Y.one('#btn-animate').on('click', function(){
+        Y.Anim.stop();
+        setTimeout(startAnim, 500);
     });
-    dd1.on('drag:end', function(e){
-        startAnim();
-    });
-    dd2.on('drag:end', function(e){
-        startAnim();
-    });
-    dd3.on('drag:end', function(e){
-        startAnim();
+      
+    Y.all('.dot').on('mouseup', function(e){
+        setTimeout(startAnim, 500);
     });
 
     // Create the animation instance
@@ -238,40 +242,23 @@ YUI().use('anim', 'dd-drag', 'graphics', 'cssbuttons', function(Y){
         easing: Y.Easing.easeOut
     });
     
-    // Resets the animated element to the start position. 
-    // This is needed for doing the animation multiple times
-    var resetToAnimStart = function(){
-        demoA.setStyles({'left':arrDot[0][0], 'top':arrDot[0][1]});
-    }
-    
-    /* Sets the anim curve values with the XY values from the arrDot array
+    /**
+     * Sets the anim curve values with the XY values from the arrDot array
      * Adds the origin offset values because anim works off page coordinates
-     * Runs the animation after a timeout
-     */          
+     */
     var startAnim = function(e){
         var oX = origin.getX(),
             oY = origin.getY();
-        resetToAnimStart();
+        
+        // Reset the animated element to the start position. 
+        // This is needed for running the animation multiple times
+        demoA.setStyles({'left':arrDot[0][0], 'top':arrDot[0][1]});
+        
         anim.set('to', {
             curve: [ [(arrDot[1][0] + oX), (arrDot[1][1] + oY)], [ (arrDot[2][0] + oX), (arrDot[2][1] + oY) ], [ (arrDot[3][0] + oX), (arrDot[3][1] + oY) ]  ]
         });
-        var runAnim = function(){anim.run();}
-        setTimeout(runAnim, 500);
+        anim.run();
     };
-    
-    // button handler
-    Y.one('#btn-animate').on('click', function(){
-        resetToAnimStart();
-        startAnim();
-    });
-
-    // Puts current XY values of points into displayed code snippet
-    var updateCodeSnippetValues = function(){
-        Y.one('.arr0').setContent(arrDot[0][0] + ',' + arrDot[0][1]); // Start       
-        Y.one('.arr1').setContent(arrDot[1][0] + ',' + arrDot[1][1]); // Control point 1     
-        Y.one('.arr2').setContent(arrDot[2][0] + ',' + arrDot[2][1]); // Control point 2       
-        Y.one('.arr3').setContent(arrDot[3][0] + ',' + arrDot[3][1]); // End        
-    }
     
     // Adds a YUI Graphics path shape to the Graphics instance mygraphic
     var animPath = mygraphic.addShape({

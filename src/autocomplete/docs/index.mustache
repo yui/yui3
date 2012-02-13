@@ -272,6 +272,14 @@ These attributes are provided by `AutoCompleteBase`, which is the core foundatio
     </tr>
 
     <tr>
+      <td>`enableCache`</td>
+      <td>`true`</td>
+      <td>
+        Whether or not to enable in-memory caching in result sources that support it. This can significantly improve performance for result sources that make remote requests (like JSONP, YQL, and XHR), so it's best to leave this enabled unless you have a good reason to disable it.
+      </td>
+    </tr>
+
+    <tr>
       <td>`inputNode`</td>
       <td><em>none</em></td>
       <td>

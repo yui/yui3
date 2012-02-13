@@ -1,11 +1,11 @@
 YUI.add('autocomplete-sources', function(Y) {
 
 /**
- * Mixes support for JSONP and YQL result sources into AutoCompleteBase.
- *
- * @module autocomplete
- * @submodule autocomplete-sources
- */
+Mixes support for JSONP and YQL result sources into AutoCompleteBase.
+
+@module autocomplete
+@submodule autocomplete-sources
+**/
 
 var ACBase = Y.AutoCompleteBase,
     Lang   = Y.Lang,
@@ -19,25 +19,24 @@ var ACBase = Y.AutoCompleteBase,
 // Add prototype properties and methods to AutoCompleteBase.
 Y.mix(ACBase.prototype, {
     /**
-     * Regular expression used to determine whether a String source is a YQL
-     * query.
-     *
-     * @property _YQL_SOURCE_REGEX
-     * @type RegExp
-     * @protected
-     * @for AutoCompleteBase
-     */
+    Regular expression used to determine whether a String source is a YQL query.
+
+    @property _YQL_SOURCE_REGEX
+    @type RegExp
+    @protected
+    @for AutoCompleteBase
+    **/
     _YQL_SOURCE_REGEX: /^(?:select|set|use)\s+/i,
 
     /**
-     * Runs before AutoCompleteBase's <code>_createObjectSource()</code> method
-     * and augments it to support additional object-based source types.
-     *
-     * @method _beforeCreateObjectSource
-     * @param {String} source
-     * @protected
-     * @for AutoCompleteBase
-     */
+    Runs before AutoCompleteBase's `_createObjectSource()` method and augments
+    it to support additional object-based source types.
+
+    @method _beforeCreateObjectSource
+    @param {String} source
+    @protected
+    @for AutoCompleteBase
+    **/
     _beforeCreateObjectSource: function (source) {
         // If the object is a <select> node, use the options as the result
         // source.
@@ -58,18 +57,17 @@ Y.mix(ACBase.prototype, {
     },
 
     /**
-     * Creates a DataSource-like object that uses <code>Y.io</code> as a source.
-     * See the <code>source</code> attribute for more details.
-     *
-     * @method _createIOSource
-     * @param {String} source URL.
-     * @return {Object} DataSource-like object.
-     * @protected
-     * @for AutoCompleteBase
-     */
+    Creates a DataSource-like object that uses `Y.io` as a source. See the
+    `source` attribute for more details.
+
+    @method _createIOSource
+    @param {String} source URL.
+    @return {Object} DataSource-like object.
+    @protected
+    @for AutoCompleteBase
+    **/
     _createIOSource: function (source) {
-        var cache    = {},
-            ioSource = {type: 'io'},
+        var ioSource = {type: 'io'},
             that     = this,
             ioRequest, lastRequest, loading;
 
@@ -80,8 +78,8 @@ Y.mix(ACBase.prototype, {
                 query    = request.query;
 
             // Return immediately on a cached response.
-            if (cache[cacheKey]) {
-                that[_SOURCE_SUCCESS](cache[cacheKey], request);
+            if (that._cache && cacheKey in that._cache) {
+                that[_SOURCE_SUCCESS](that._cache[cacheKey], request);
                 return;
             }
 
@@ -102,7 +100,7 @@ Y.mix(ACBase.prototype, {
                         }
 
                         if (data) {
-                            cache[cacheKey] = data;
+                            that._cache && (that._cache[cacheKey] = data);
                             that[_SOURCE_SUCCESS](data, request);
                         }
                     }
@@ -133,19 +131,17 @@ Y.mix(ACBase.prototype, {
     },
 
     /**
-     * Creates a DataSource-like object that uses the specified JSONPRequest
-     * instance as a source. See the <code>source</code> attribute for more
-     * details.
-     *
-     * @method _createJSONPSource
-     * @param {JSONPRequest|String} source URL string or JSONPRequest instance.
-     * @return {Object} DataSource-like object.
-     * @protected
-     * @for AutoCompleteBase
-     */
+    Creates a DataSource-like object that uses the specified JSONPRequest
+    instance as a source. See the `source` attribute for more details.
+
+    @method _createJSONPSource
+    @param {JSONPRequest|String} source URL string or JSONPRequest instance.
+    @return {Object} DataSource-like object.
+    @protected
+    @for AutoCompleteBase
+    **/
     _createJSONPSource: function (source) {
-        var cache       = {},
-            jsonpSource = {type: 'jsonp'},
+        var jsonpSource = {type: 'jsonp'},
             that        = this,
             lastRequest, loading;
 
@@ -153,8 +149,8 @@ Y.mix(ACBase.prototype, {
             var cacheKey = request.request,
                 query    = request.query;
 
-            if (cache[cacheKey]) {
-                that[_SOURCE_SUCCESS](cache[cacheKey], request);
+            if (that._cache && cacheKey in that._cache) {
+                that[_SOURCE_SUCCESS](that._cache[cacheKey], request);
                 return;
             }
 
@@ -167,7 +163,7 @@ Y.mix(ACBase.prototype, {
             //
             // http://yuilibrary.com/projects/yui3/ticket/2529371
             source._config.on.success = function (data) {
-                cache[cacheKey] = data;
+                that._cache && (that._cache[cacheKey] = data);
                 that[_SOURCE_SUCCESS](data, request);
             };
 
@@ -204,15 +200,15 @@ Y.mix(ACBase.prototype, {
     },
 
     /**
-     * Creates a DataSource-like object that uses the specified &lt;select&gt;
-     * node as a source.
-     *
-     * @method _createSelectSource
-     * @param {Node} source YUI Node instance wrapping a &lt;select&gt; node.
-     * @return {Object} DataSource-like object.
-     * @protected
-     * @for AutoCompleteBase
-     */
+    Creates a DataSource-like object that uses the specified `<select>` node as
+    a source.
+
+    @method _createSelectSource
+    @param {Node} source YUI Node instance wrapping a `<select>` node.
+    @return {Object} DataSource-like object.
+    @protected
+    @for AutoCompleteBase
+    **/
     _createSelectSource: function (source) {
         var that = this;
 
@@ -238,20 +234,19 @@ Y.mix(ACBase.prototype, {
     },
 
     /**
-     * Creates a DataSource-like object that calls the specified  URL or
-     * executes the specified YQL query for results. If the string starts
-     * with "select ", "use ", or "set " (case-insensitive), it's assumed to be
-     * a YQL query; otherwise, it's assumed to be a URL (which may be absolute
-     * or relative). URLs containing a "{callback}" placeholder are assumed to
-     * be JSONP URLs; all others will use XHR. See the <code>source</code>
-     * attribute for more details.
-     *
-     * @method _createStringSource
-     * @param {String} source URL or YQL query.
-     * @return {Object} DataSource-like object.
-     * @protected
-     * @for AutoCompleteBase
-     */
+    Creates a DataSource-like object that calls the specified  URL or executes
+    the specified YQL query for results. If the string starts with "select ",
+    "use ", or "set " (case-insensitive), it's assumed to be a YQL query;
+    otherwise, it's assumed to be a URL (which may be absolute or relative).
+    URLs containing a "{callback}" placeholder are assumed to be JSONP URLs; all
+    others will use XHR. See the `source` attribute for more details.
+
+    @method _createStringSource
+    @param {String} source URL or YQL query.
+    @return {Object} DataSource-like object.
+    @protected
+    @for AutoCompleteBase
+    **/
     _createStringSource: function (source) {
         if (this._YQL_SOURCE_REGEX.test(source)) {
             // Looks like a YQL query.
@@ -267,26 +262,24 @@ Y.mix(ACBase.prototype, {
     },
 
     /**
-     * Creates a DataSource-like object that uses the specified YQL query string
-     * to create a YQL-based source. See the <code>source</code> attribute for
-     * details. If no <code>resultListLocator</code> is defined, this method
-     * will set a best-guess locator that might work for many typical YQL
-     * queries.
-     *
-     * @method _createYQLSource
-     * @param {String} source YQL query.
-     * @return {Object} DataSource-like object.
-     * @protected
-     * @for AutoCompleteBase
-     */
+    Creates a DataSource-like object that uses the specified YQL query string to
+    create a YQL-based source. See the `source` attribute for details. If no
+    `resultListLocator` is defined, this method will set a best-guess locator
+    that might work for many typical YQL queries.
+
+    @method _createYQLSource
+    @param {String} source YQL query.
+    @return {Object} DataSource-like object.
+    @protected
+    @for AutoCompleteBase
+    **/
     _createYQLSource: function (source) {
-        var cache     = {},
+        var that      = this,
             yqlSource = {type: 'yql'},
-            that      = this,
             lastRequest, loading, yqlRequest;
 
-        if (!this.get(RESULT_LIST_LOCATOR)) {
-            this.set(RESULT_LIST_LOCATOR, this._defaultYQLLocator);
+        if (!that.get(RESULT_LIST_LOCATOR)) {
+            that.set(RESULT_LIST_LOCATOR, that._defaultYQLLocator);
         }
 
         function _sendRequest(request) {
@@ -301,13 +294,13 @@ Y.mix(ACBase.prototype, {
                 query     : query
             });
 
-            if (cache[yqlQuery]) {
-                that[_SOURCE_SUCCESS](cache[yqlQuery], request);
+            if (that._cache && yqlQuery in that._cache) {
+                that[_SOURCE_SUCCESS](that._cache[yqlQuery], request);
                 return;
             }
 
             callback = function (data) {
-                cache[yqlQuery] = data;
+                that._cache && (that._cache[yqlQuery] = data);
                 that[_SOURCE_SUCCESS](data, request);
             };
 
@@ -356,15 +349,15 @@ Y.mix(ACBase.prototype, {
     },
 
     /**
-     * Default resultListLocator used when a string-based YQL source is set and
-     * the implementer hasn't already specified one.
-     *
-     * @method _defaultYQLLocator
-     * @param {Object} response YQL response object.
-     * @return {Array}
-     * @protected
-     * @for AutoCompleteBase
-     */
+    Default resultListLocator used when a string-based YQL source is set and the
+    implementer hasn't already specified one.
+
+    @method _defaultYQLLocator
+    @param {Object} response YQL response object.
+    @return {Array}
+    @protected
+    @for AutoCompleteBase
+    **/
     _defaultYQLLocator: function (response) {
         var results = response && response.query && response.query.results,
             values;
@@ -388,17 +381,17 @@ Y.mix(ACBase.prototype, {
     },
 
     /**
-     * Returns a formatted XHR URL based on the specified base <i>url</i>,
-     * <i>query</i>, and the current <i>requestTemplate</i> if any.
-     *
-     * @method _getXHRUrl
-     * @param {String} url Base URL.
-     * @param {Object} request Request object containing `query` and `request`
-     *   properties.
-     * @return {String} Formatted URL.
-     * @protected
-     * @for AutoCompleteBase
-     */
+    Returns a formatted XHR URL based on the specified base _url_, _query_, and
+    the current _requestTemplate_ if any.
+
+    @method _getXHRUrl
+    @param {String} url Base URL.
+    @param {Object} request Request object containing `query` and `request`
+      properties.
+    @return {String} Formatted URL.
+    @protected
+    @for AutoCompleteBase
+    **/
     _getXHRUrl: function (url, request) {
         var maxResults = this.get(MAX_RESULTS);
 
@@ -414,16 +407,16 @@ Y.mix(ACBase.prototype, {
     },
 
     /**
-     * URL formatter passed to <code>JSONPRequest</code> instances.
-     *
-     * @method _jsonpFormatter
-     * @param {String} url
-     * @param {String} proxy
-     * @param {String} query
-     * @return {String} Formatted URL
-     * @protected
-     * @for AutoCompleteBase
-     */
+    URL formatter passed to `JSONPRequest` instances.
+
+    @method _jsonpFormatter
+    @param {String} url
+    @param {String} proxy
+    @param {String} query
+    @return {String} Formatted URL
+    @protected
+    @for AutoCompleteBase
+    **/
     _jsonpFormatter: function (url, proxy, query) {
         var maxResults      = this.get(MAX_RESULTS),
             requestTemplate = this.get(REQUEST_TEMPLATE);
@@ -443,27 +436,27 @@ Y.mix(ACBase.prototype, {
 // Add attributes to AutoCompleteBase.
 Y.mix(ACBase.ATTRS, {
     /**
-     * YQL environment file URL to load when the <code>source</code> is set to
-     * a YQL query. Set this to <code>null</code> to use the default Open Data
-     * Tables environment file (http://datatables.org/alltables.env).
-     *
-     * @attribute yqlEnv
-     * @type String
-     * @default null
-     * @for AutoCompleteBase
-     */
+    YQL environment file URL to load when the `source` is set to a YQL query.
+    Set this to `null` to use the default Open Data Tables environment file
+    (http://datatables.org/alltables.env).
+
+    @attribute yqlEnv
+    @type String
+    @default null
+    @for AutoCompleteBase
+    **/
     yqlEnv: {
         value: null
     },
 
     /**
-     * URL protocol to use when the <code>source</code> is set to a YQL query.
-     *
-     * @attribute yqlProtocol
-     * @type String
-     * @default 'http'
-     * @for AutoCompleteBase
-     */
+    URL protocol to use when the `source` is set to a YQL query.
+
+    @attribute yqlProtocol
+    @type String
+    @default 'http'
+    @for AutoCompleteBase
+    **/
     yqlProtocol: {
         value: 'http'
     }

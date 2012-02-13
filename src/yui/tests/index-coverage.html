@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html class="foo">
+<head>
+<title>YUI Seed Tests</title>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+
+<div id="tester" style="visibility: hidden;">
+    <span>test</span>
+    <span>test</span>
+    <span>test</span>
+</div>
+
+<span id="test"></span>
+
+<iframe name="xframe" id="xframe" src="assets/xframe.html" style="visibility: hidden;"></iframe>
+
+
+<script>
+    //Fooling into parsing the Node.js process info
+    var process = {
+        versions: {
+            node: 6
+        },
+        platform: 'Win32'
+    };
+
+var YUI = {};
+</script>
+<!-- This is the main test file, notice it's using the `yui-base` seed file 
+without Loader on the page, so Loader is fetched before tests are executed. -->
+<script type="text/javascript" src="../../../build/yui-core/yui-core.js"></script>
+<script type="text/javascript" src="../../../build/get/get.js"></script>
+<script type="text/javascript" src="../../../build/features/features.js"></script>
+<script type="text/javascript" src="../../../build/intl-base/intl-base.js"></script>
+<script type="text/javascript" src="../../../build/yui-log/yui-log.js"></script>
+<script type="text/javascript" src="../../../build/yui-later/yui-later.js"></script>
+<!--script type="text/javascript" src="../../../build/loader/loader.js"></script-->
+<script type="text/javascript">
+
+YUI.GlobalConfig = {
+    modules: {
+        'global-mod': {
+            fullpath: './assets/globalmod.js'
+        }
+    },
+    groups: {
+        //Just for code coverage..
+        noop: {
+            modules: {
+                noop: {
+                    fullpath: './noop.js'
+                }
+            }
+        }
+    }
+};
+
+var YUI_config = {
+    loaderPath: 'loader/loader.js',
+    gconfig: true,
+    core: ['get', 'features','intl-base','yui-log','yui-later','loader-base','loader-rollup','loader-yui3' ],
+    gfilter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+};
+
+YUI({
+    allowRollup: false,
+    logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true },    
+    filter: YUI_config.gfilter,
+    modules: {
+        'array-test': {
+            fullpath: 'array-test.js',
+            requires: ['test']
+        },
+        'object-test': {
+            fullpath: 'object-test.js',
+            requires: ['test']
+        },
+        'lang-test': {
+            fullpath: 'lang-test.js',
+            requires: ['test']
+        },        
+        'seed-tests': {
+            fullpath: './seed-tests.js',
+            requires: [ 'test']
+        },
+        'core-tests': {
+            fullpath: './core-tests.js',
+            requires: [ 'classnamemanager']
+        },
+
+        'config-test': {
+            fullpath: 'config-test.js'
+        },
+
+        'later-test': {
+            fullpath: 'later-test.js'
+        },
+
+        'namespace-test': {
+            fullpath: 'namespace-test.js'
+        },
+        'ua-data': {
+            fullpath: './ua-data.js'
+        },
+        'ua-yui-data': {
+            fullpath: './ua-yui-data.js',
+            requires: [ 'ua-data' ]
+        },
+        'ua-tests': {
+            fullpath: './ua-tests.js',
+            requires: [ 'ua-data', 'ua-yui-data', 'test' ]
+        }
+        
+    }
+}).use('ua-tests', 'seed-tests', 'core-tests', 'config-test', 'later-test', 'namespace-test', 'array-test', 'object-test', 'lang-test', 'test-console', 'test', function(Y) {
+    new Y.Test.Console().render('#log');
+
+    //This is a YUITest hack to rename this test for reporting
+    Y.Test.Runner.masterSuite.name = 'YUI Seed Fetch Loader Test Suite';
+    Y.Test.Runner.masterSuite.items[0].name = 'YUI Seed Fetch Loader Test Suite';
+    Y.Test.Runner.run();
+});
+
+</script>
+</body>
+</html>

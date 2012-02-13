@@ -8,6 +8,7 @@
 
 <div id="log"></div>
 <div id="test"></div>
+<iframe src="app-iframe.html" id="test-iframe" style="visibility:hidden"></iframe>
 
 <script src="../../../build/yui/yui.js"></script>
 <script>
@@ -16,7 +17,14 @@ var Y = YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
     modules: {
         'app-test': {
-            use: ['model-test', 'model-list-test', 'router-test', 'view-test', 'app-base-test']
+            use: [
+                'model-test',
+                'model-list-test',
+                'router-test',
+                'view-test',
+                'view-node-map-test',
+                'app-base-test'
+            ]
         },
 
         'model-test': {
@@ -37,6 +45,11 @@ var Y = YUI({
         'view-test': {
             fullpath: 'view-test.js',
             requires: ['model', 'model-list', 'view', 'test']
+        },
+
+        'view-node-map-test': {
+            fullpath: 'view-node-map-test.js',
+            requires: ['view-node-map', 'test']
         },
 
         'app-base-test': {

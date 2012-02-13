@@ -3,7 +3,7 @@ YUI.add('io-xdr', function(Y) {
 /**
 Extends IO to provide an alternate, Flash transport, for making
 cross-domain requests.
-@module io-base
+@module io
 @submodule io-xdr
 @for IO
 **/
@@ -307,7 +307,6 @@ event is fired, this value will be set to 0.
 @type {Number}
 **/
 Y.io.xdr = { delay : 100 };
-
 
 
 }, '@VERSION@' ,{requires:['io-base','datatype-xml-parse']});

@@ -143,7 +143,7 @@ YUI.add('editor-base', function(Y) {
         _defNodeChangeFn: function(e) {
             var startTime = (new Date()).getTime();
             var inst = this.getInstance(), sel, cur,
-                btag = inst.Selection.DEFAULT_BLOCK_TAG;
+                btag = inst.EditorSelection.DEFAULT_BLOCK_TAG;
 
             if (Y.UA.ie) {
                 try {
@@ -167,7 +167,7 @@ YUI.add('editor-base', function(Y) {
                 case 'keydown':
                     if (!Y.UA.gecko) {
                         if (!EditorBase.NC_KEYS[e.changedEvent.keyCode] && !e.changedEvent.shiftKey && !e.changedEvent.ctrlKey && (e.changedEvent.keyCode !== 13)) {
-                            //inst.later(100, inst, inst.Selection.cleanCursor);
+                            //inst.later(100, inst, inst.EditorSelection.cleanCursor);
                         }
                     }
                     break;
@@ -394,7 +394,7 @@ YUI.add('editor-base', function(Y) {
             this.frame.on('dom:keypress', Y.bind(this._onFrameKeyPress, this));
             this.frame.on('dom:paste', Y.bind(this._onPaste, this));
 
-            inst.Selection.filter();
+            inst.EditorSelection.filter();
             this.fire('ready');
         },
         /**
@@ -423,7 +423,7 @@ YUI.add('editor-base', function(Y) {
                 return;
             }
             var inst = this.getInstance(),
-                sel = new inst.Selection(),
+                sel = new inst.EditorSelection(),
                 range = sel.createRange(),
                 cur = inst.all('#yui-ie-cursor');
 
@@ -503,7 +503,7 @@ YUI.add('editor-base', function(Y) {
                 });
                 
                 inst = this.frame.getInstance();
-                sel = new inst.Selection(e);
+                sel = new inst.EditorSelection(e);
 
                 this._currentSelection = sel;
             } else {
@@ -511,7 +511,7 @@ YUI.add('editor-base', function(Y) {
             }
 
             inst = this.frame.getInstance();
-            sel = new inst.Selection();
+            sel = new inst.EditorSelection();
 
             this._currentSelection = sel;
             
@@ -545,7 +545,7 @@ YUI.add('editor-base', function(Y) {
         */
         _onFrameKeyUp: function(e) {
             var inst = this.frame.getInstance(),
-                sel = new inst.Selection(e);
+                sel = new inst.EditorSelection(e);
 
             if (sel && sel.anchorNode) {
                 this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keyup', selection: sel, changedEvent: e.frameEvent  });
@@ -567,7 +567,7 @@ YUI.add('editor-base', function(Y) {
         execCommand: function(cmd, val) {
             var ret = this.frame.execCommand(cmd, val),
                 inst = this.frame.getInstance(),
-                sel = new inst.Selection(), cmds = {},
+                sel = new inst.EditorSelection(), cmds = {},
                 e = { changedNode: sel.anchorNode, changedType: 'execcommand', nodes: ret };
 
             switch (cmd) {
@@ -650,8 +650,8 @@ YUI.add('editor-base', function(Y) {
         */
         getContent: function() {
             var html = '', inst = this.getInstance();
-            if (inst && inst.Selection) {
-                html = inst.Selection.unfilter();
+            if (inst && inst.EditorSelection) {
+                html = inst.EditorSelection.unfilter();
             }
             //Removing the _yuid from the objects in IE
             html = html.replace(/ _yuid="([^>]*)"/g, '');
@@ -773,7 +773,7 @@ YUI.add('editor-base', function(Y) {
         * @property USE
         * @type Array
         */
-        USE: ['substitute', 'node', 'selector-css3', 'selection', 'stylesheet'],
+        USE: ['substitute', 'node', 'selector-css3', 'editor-selection', 'stylesheet'],
         /**
         * The Class Name: editorBase
         * @static
@@ -894,4 +894,4 @@ YUI.add('editor-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['base', 'frame', 'node', 'exec-command', 'selection']});
+}, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command', 'editor-selection'], skinnable:false});

@@ -55,7 +55,7 @@ modelSuite.add(new Y.Test.Case({
         Y.Mock.verify(mock);
     },
 
-    'destroy() should delete the model if the `delete` option is truthy': function () {
+    'destroy() should delete the model if the `remove` option is truthy': function () {
         var calls   = 0,
             mock    = Y.Mock(),
             model   = new Y.Model();
@@ -70,13 +70,13 @@ modelSuite.add(new Y.Test.Case({
 
             Assert.areSame('delete', action, 'sync action should be "delete"');
             Assert.isObject(options, 'options should be an object');
-            Assert.isTrue(options['delete'], 'options.delete should be true');
+            Assert.isTrue(options.remove, 'options.delete should be true');
             Assert.isFunction(callback, 'callback should be a function');
 
             callback();
         };
 
-        model.destroy({'delete': true}, mock.callback);
+        model.destroy({remove: true}, mock.callback);
         Y.Mock.verify(mock);
     },
 
@@ -148,6 +148,11 @@ modelSuite.add(new Y.Test.Case({
         model = new this.TestModel({id: 'foo'});
         Assert.areSame('foo', model.get('id'));
         Assert.areSame('foo', model.get('customId'));
+    },
+
+    '`_isYUIModel` property should be true': function () {
+        var model = new this.TestModel();
+        Assert.isTrue(model._isYUIModel);
     },
 
     '`id` attribute should be an alias for the custom id attribute': function () {
@@ -682,6 +687,30 @@ modelSuite.add(new Y.Test.Case({
 
         model.set('foo', 'bar', {silent: true});
         model.setAttrs({bar: 'baz'}, {silent: true});
+    },
+
+    '`change` event facade should contain options passed to set()/setAttrs()': function () {
+        var calls = 0,
+            model = new this.TestModel();
+
+        model.on('change', function (e) {
+            calls += 1;
+
+            Assert.areSame(e.src, 'test');
+            Assert.areSame(e.foo, 'bar');
+        });
+
+        model.setAttrs({
+            foo: 'foo',
+            bar: 'bar'
+        }, {src: 'test', foo: 'bar'});
+
+        model.set('foo', 'bar', {
+            src: 'test',
+            foo: 'bar'
+        });
+
+        Assert.areSame(2, calls);
     },
 
     '`error` event should fire when validation fails': function () {

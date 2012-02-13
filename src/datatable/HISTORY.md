@@ -1,6 +1,41 @@
 DataTable Change History
 ========================
 
+3.5.0
+-----
+
+ * Major refactor.  See README for details about the new architecture.
+ * Y.DataTable is now instantiable, in addition to Y.DataTable.Base
+ * Recordset use has been replaced by ModelList. `recordset` attribute passes through to `data` attribute.  This is incomplete back compat because get('recordset') doesn't return a Recordset instance.
+ * Columnset use has been removed. Column configuration is managed as an array of objects. `columnset` attribute passes through to `columns` attribute.  The same incomplete back compat applies.
+ * DataTable doesn't render the table contents or header contents. That is left to `bodyView` and `headerView` classes.
+ * Support for rendering a `<tfoot>` is baked in.
+ * `datatable-datasource` modified to update a DataTable's `data` attribute rather than the (deprecated) `recordset`.
+ * Scrollable tables now support captions
+ * Added datatable-mutable module to provide addRow, removeRow, addColumn, etc
+ * Added datatable-column-widths module to set column widths
+ 
+ * Liner `<div>`s have been removed from the cell template in the default markup
+ * `<colgroup>` is not rendered by default (added via `datatable-column-widths` extension)
+ * message `<tbody>` is not added by default (compatibility module not added yet)
+ * CSS uses `border-collapse: collapse` for all user agents instead of `separate` for most, but `collapse` for IE
+ * CSS for base only includes styles appropriate to rendering the base markup
+ * header gradient rendered as CSS gradient where possible, falling back to background image.
+ * Added class "yui3-datatable-table" to the `<table>`
+ * Added class "yui3-datatable-header" to all `<th>`s
+ * Changed class "yui3-column-foo" to "yui3-datatable-col-foo" for `<th>`s and `<td>`s
+ * Added class "yui3-datatable-cell" to all `<td>`s
+ * CSS no longer references tags, only classes
+ * ARIA grid, row, and gridcell roles added to the markup templates
+ 
+ * `recordset` attribute deprecated in favor of `data` attribute
+ * `columnset` attribute deprecated in favor of `columns` attribute
+ * `tdValueTemplate`, `thValueTemplate`, and `trTemplate` attributes and `tdTemplate` and `thTemplate` properties dropped in favor of CELL_TEMPLATE and ROW_TEMPLATE properties on the `bodyView` and `headerView` instances.
+ * Now fires `renderTable`, `renderHeader`, `renderBody`, and `renderFooter` events
+ * Added `data`, `head`, `body`, and `foot` properties to contain instances of the ModelList and section Views.
+ * Columns now MAY NOT have `key`s with dots in them.  It competes with Attribute's support for complex attributes. When parsing data with DataSchema.JSON, use the `locator` configuration to extract the value, but use a simple `key` to store/reference it from DT.
+
+
 3.4.1
 -----
 

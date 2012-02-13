@@ -16,6 +16,10 @@
 
 <script src="../../../build/yui/yui.js"></script>
 <script>
+var YUI_config = {
+    useNativeES5: (/[?&]useNativeES5=(?:0|false|no)(?:&|$)/i.test(window.location.search) ? false : true)
+};
+
 var Y = YUI({
     allowRollup: false,
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',

@@ -107,7 +107,7 @@ the native ES5 `Array.forEach()` method if available.
 @return {YUI} The YUI instance.
 @static
 **/
-YArray.each = YArray.forEach = Native.forEach ? function (array, fn, thisObj) {
+YArray.each = YArray.forEach = Lang._isNative(Native.forEach) ? function (array, fn, thisObj) {
     Native.forEach.call(array || [], fn, thisObj || Y);
     return Y;
 } : function (array, fn, thisObj) {
@@ -167,17 +167,31 @@ This method wraps the native ES5 `Array.indexOf()` method if available.
 @method indexOf
 @param {Array} array Array to search.
 @param {Any} value Value to search for.
+@param {Number} [from=0] The index at which to begin the search.
 @return {Number} Index of the item strictly equal to _value_, or `-1` if not
-  found.
+    found.
 @static
 **/
-YArray.indexOf = Native.indexOf ? function (array, value) {
-    // TODO: support fromIndex
-    return Native.indexOf.call(array, value);
-} : function (array, value) {
-    for (var i = 0, len = array.length; i < len; ++i) {
-        if (i in array && array[i] === value) {
-            return i;
+YArray.indexOf = Lang._isNative(Native.indexOf) ? function (array, value, from) {
+    return Native.indexOf.call(array, value, from);
+} : function (array, value, from) {
+    // http://es5.github.com/#x15.4.4.14
+    var len = array.length;
+
+    from = +from || 0;
+    from = (from > 0 || -1) * Math.floor(Math.abs(from));
+
+    if (from < 0) {
+        from += len;
+
+        if (from < 0) {
+            from = 0;
+        }
+    }
+
+    for (; from < len; ++from) {
+        if (from in array && array[from] === value) {
+            return from;
         }
     }
 
@@ -223,7 +237,7 @@ value from the function will stop the processing of remaining items.
   items in the array; `false` otherwise.
 @static
 **/
-YArray.some = Native.some ? function (array, fn, thisObj) {
+YArray.some = Lang._isNative(Native.some) ? function (array, fn, thisObj) {
     return Native.some.call(array, fn, thisObj);
 } : function (array, fn, thisObj) {
     for (var i = 0, len = array.length; i < len; ++i) {

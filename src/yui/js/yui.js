@@ -44,7 +44,7 @@ by the YUI constuctor.
 @constructor
 @global
 @uses EventTarget
-@param o* {Object} 0..n optional configuration objects.  these values
+@param [o]* {Object} 0..n optional configuration objects.  these values
 are store in Y.config.  See <a href="config.html">Config</a> for the list of supported
 properties.
 */
@@ -76,7 +76,7 @@ properties.
                 @static
                 @example
 
-                    
+
                     YUI.GlobalConfig = {
                         filter: 'debug'
                     };
@@ -95,7 +95,7 @@ properties.
             if (YUI.GlobalConfig) {
                 Y.applyConfig(YUI.GlobalConfig);
             }
-            
+
             /**
                 YUI_config is a page-level config.  It is applied to all
                 instances created on the page.  This is applied after
@@ -106,12 +106,12 @@ properties.
                 @type {Object}
                 @example
 
-                    
+
                     //Single global var to include before YUI seed file
                     YUI_config = {
                         filter: 'debug'
                     };
-                    
+
                     YUI().use('node', function(Y) {
                         //debug files used here
                     });
@@ -430,17 +430,18 @@ proto = {
         }
 
         Y.constructor = YUI;
-        
+
         // configuration defaults
         Y.config = Y.config || {
-            win: win,
-            doc: doc,
-            debug: true,
-            useBrowserConsole: true,
-            throwFail: true,
             bootstrap: true,
             cacheUse: true,
-            fetchCSS: true
+            debug: true,
+            doc: doc,
+            fetchCSS: true,
+            throwFail: true,
+            useBrowserConsole: true,
+            useNativeES5: true,
+            win: win
         };
 
         //Register the CSS stamp element
@@ -454,7 +455,7 @@ proto = {
         Y.config.lang = Y.config.lang || 'en-US';
 
         Y.config.base = YUI.config.base || Y.Env.getBase(Y.Env._BASE_RE);
-        
+
         if (!filter || (!('mindebug').indexOf(filter))) {
             filter = 'min';
         }
@@ -518,7 +519,7 @@ proto = {
                     this.log('applyTo not found: ' + method, 'warn', 'yui');
                 }
             }
-            return m.apply(instance, args);
+            return m && m.apply(instance, args);
         }
 
         return null;
@@ -740,10 +741,12 @@ with any configuration info required for the module.
      *   asynchronously.
      *
      * @method use
-     * @param modules* {String} 1-n modules to bind (uses arguments array).
-     * @param *callback {Function} callback function executed when
+     * @param modules* {String|Array} 1-n modules to bind (uses arguments array).
+     * @param [callback] {Function} callback function executed when
      * the instance has the required functionality.  If included, it
      * must be the last parameter.
+     * @param callback.Y {YUI} The `YUI` instance created for this sandbox
+     * @param callback.data {Object} Object data returned from `Loader`.
      *
      * @example
      *      // loads and attaches dd and its dependencies
@@ -830,7 +833,7 @@ with any configuration info required for the module.
             }
         }
     },
-    
+
     /**
     * This private method is called from the `use` method queue. To ensure that only one set of loading
     * logic is performed at a time.
@@ -983,6 +986,11 @@ with any configuration info required for the module.
             return Y;
         }
 
+        if (mods['loader'] && !Y.Loader) {
+            Y.log('Loader was found in meta, but it is not attached. Attaching..', 'info', 'yui');
+            Y._attach(['loader']);
+        }
+
         // Y.log('before loader requirements: ' + args, 'info', 'yui');
 
         // use loader to expand dependencies and sort the
@@ -1022,7 +1030,6 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
             loader.ignoreRegistered = false;
             loader.require(args);
             loader.insert(null, (fetchCSS) ? null : 'js');
-            // loader.partial(missing, (fetchCSS) ? null : 'js');
 
         } else if (boot && len && Y.Get && !Env.bootstrapped) {
 
@@ -1072,24 +1079,24 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
 
          // creates Y.property.package
          Y.namespace("property.package");
-    
+
     Dots in the input string cause `namespace` to create nested objects for
     each token. If any part of the requested namespace already exists, the
     current object will be left in place.  This allows multiple calls to
     `namespace` to preserve existing namespaced properties.
-    
+
     If the first token in the namespace string is "YAHOO", the token is
     discarded.
 
     Be careful with namespace tokens. Reserved words may work in some browsers
     and not others. For instance, the following will fail in some browsers
     because the supported version of JavaScript reserves the word "long":
-    
+
          Y.namespace("really.long.nested.namespace");
 
-    <em>Note: If you pass multiple arguments to create multiple namespaces, only 
+    <em>Note: If you pass multiple arguments to create multiple namespaces, only
     the last one created is returned from this function.</em>
-    
+
     @method namespace
     @param  {String} namespace* namespaces to create.
     @return {Object}  A reference to the last namespace object created.
@@ -1121,18 +1128,19 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
     dump: function (o) { return ''+o; },
 
     /**
-     * Report an error.  The reporting mechanism is controled by
+     * Report an error.  The reporting mechanism is controlled by
      * the `throwFail` configuration attribute.  If throwFail is
      * not specified, the message is written to the Logger, otherwise
-     * a JS error is thrown
+     * a JS error is thrown. If an `errorFn` is specified in the config
+     * it must return `true` to keep the error from being thrown.
      * @method error
      * @param msg {String} the error message.
      * @param e {Error|String} Optional JS error that was caught, or an error string.
-     * @param data Optional additional info
+     * @param src Optional additional info (passed to `Y.config.errorFn` and `Y.message`)
      * and `throwFail` is specified, this error will be re-thrown.
      * @return {YUI} this YUI instance.
      */
-    error: function(msg, e, data) {
+    error: function(msg, e, src) {
         //TODO Add check for window.onerror here
 
         var Y = this, ret;
@@ -1144,7 +1152,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
         if (Y.config.throwFail && !ret) {
             throw (e || new Error(msg));
         } else {
-            Y.message(msg, 'error'); // don't scrub this one
+            Y.message(msg, 'error', ''+src); // don't scrub this one
         }
 
         return Y;
@@ -1218,6 +1226,8 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
      * memory leak in IE when the item tested is
      * window/document
      * @method instanceOf
+     * @param o {Object} The object to check.
+     * @param type {Object} The class to check against.
      * @since 3.3.0
      */
 };
@@ -1230,7 +1240,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
             YUI[prop] = proto[prop];
         }
     }
-    
+
     /**
 Static method on the Global YUI object to apply a config to all YUI instances.
 It's main use case is "mashups" where several third party scripts are trying to write to
@@ -1261,7 +1271,7 @@ overwriting other scripts configs.
     YUI().use('davglass', function(Y) {
         //Module davglass will be available here..
     });
-    
+
     */
     YUI.applyConfig = function(o) {
         if (!o) {
@@ -1494,7 +1504,7 @@ overwriting other scripts configs.
  * </dl>
  * You can also define a custom filter, which must be an object literal
  * containing a search expression and a replace string:
- * 
+ *
  *      myFilter: {
  *          'searchExp': "-min\\.js",
  *          'replaceStr': "-debug.js"
@@ -1618,7 +1628,7 @@ overwriting other scripts configs.
  * for the module.  See `Loader.addModule` for the supported module
  * metadata fields.  Also see groups, which provides a way to
  * configure the base and combo spec for a set of modules.
- * 
+ *
  *      modules: {
  *          mymod1: {
  *              requires: ['node'],
@@ -1638,22 +1648,28 @@ overwriting other scripts configs.
  * A hash of module group definitions.  It for each group you
  * can specify a list of modules and the base path and
  * combo spec to use when dynamically loading the modules.
- * 
+ *
  *      groups: {
  *          yui2: {
  *              // specify whether or not this group has a combo service
  *              combine: true,
- * 
+ *
+ *              // The comboSeperator to use with this group's combo handler
+ *              comboSep: ';',
+ *
+ *              // The maxURLLength for this server
+ *              maxURLLength: 500,
+ *
  *              // the base path for non-combo paths
  *              base: 'http://yui.yahooapis.com/2.8.0r4/build/',
- * 
+ *
  *              // the path to the combo service
  *              comboBase: 'http://yui.yahooapis.com/combo?',
- * 
+ *
  *              // a fragment to prepend to the path attribute when
  *              // when building combo urls
  *              root: '2.8.0r4/build/',
- * 
+ *
  *              // the module definitions
  *              modules:  {
  *                  yui2_yde: {
@@ -1666,7 +1682,7 @@ overwriting other scripts configs.
  *              }
  *          }
  *      }
- * 
+ *
  * @property groups
  * @type object
  */
@@ -1735,7 +1751,8 @@ overwriting other scripts configs.
  * A callback to execute when Y.error is called.  It receives the
  * error message and an javascript error object if Y.error was
  * executed because a javascript error was caught.  The function
- * is executed in the YUI instance context.
+ * is executed in the YUI instance context. Returning `true` from this
+ * function will stop the Error from being thrown.
  *
  * @since 3.2.0
  * @property errorFn
@@ -1779,3 +1796,14 @@ overwriting other scripts configs.
  * @deprecated no longer used
  */
 
+/**
+ * Whether or not YUI should use native ES5 functionality when available for
+ * features like `Y.Array.each()`, `Y.Object()`, etc. When `false`, YUI will
+ * always use its own fallback implementations instead of relying on ES5
+ * functionality, even when it's available.
+ *
+ * @method useNativeES5
+ * @type Boolean
+ * @default true
+ * @since 3.5.0
+ */

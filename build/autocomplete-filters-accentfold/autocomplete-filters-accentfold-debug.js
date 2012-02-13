@@ -1,25 +1,20 @@
 YUI.add('autocomplete-filters-accentfold', function(Y) {
 
 /**
- * <p>
- * Provides pre-built accent-folding result matching filters for AutoComplete.
- * </p>
- *
- * <p>
- * These filters are similar to the ones provided by the
- * <code>autocomplete-filters</code> module, but use accent-aware comparisons.
- * For example, "resume" and "résumé" will be considered equal when using the
- * accent-folding filters.
- * </p>
- *
- * @module autocomplete
- * @submodule autocomplete-filters-accentfold
- */
+Provides pre-built accent-folding result matching filters for AutoComplete.
+
+These filters are similar to the ones provided by the `autocomplete-filters`
+module, but use accent-aware comparisons. For example, "resume" and "résumé"
+will be considered equal when using the accent-folding filters.
+
+@module autocomplete
+@submodule autocomplete-filters-accentfold
+**/
 
 /**
- * @class AutoCompleteFilters
- * @static
- */
+@class AutoCompleteFilters
+@static
+**/
 
 var AccentFold = Y.Text.AccentFold,
     WordBreak  = Y.Text.WordBreak,
@@ -28,14 +23,14 @@ var AccentFold = Y.Text.AccentFold,
 
 Y.mix(Y.namespace('AutoCompleteFilters'), {
     /**
-     * Accent folding version of <code>charMatch()</code>.
-     *
-     * @method charMatchFold
-     * @param {String} query Query to match
-     * @param {Array} results Results to filter
-     * @return {Array} Filtered results
-     * @static
-     */
+    Accent folding version of `charMatch()`.
+
+    @method charMatchFold
+    @param {String} query Query to match
+    @param {Array} results Results to filter
+    @return {Array} Filtered results
+    @static
+    **/
     charMatchFold: function (query, results) {
         if (!query) { return results; }
 
@@ -51,14 +46,14 @@ Y.mix(Y.namespace('AutoCompleteFilters'), {
     },
 
     /**
-     * Accent folding version of <code>phraseMatch()</code>.
-     *
-     * @method phraseMatchFold
-     * @param {String} query Query to match
-     * @param {Array} results Results to filter
-     * @return {Array} Filtered results
-     * @static
-     */
+    Accent folding version of `phraseMatch()`.
+
+    @method phraseMatchFold
+    @param {String} query Query to match
+    @param {Array} results Results to filter
+    @return {Array} Filtered results
+    @static
+    **/
     phraseMatchFold: function (query, results) {
         if (!query) { return results; }
 
@@ -70,14 +65,14 @@ Y.mix(Y.namespace('AutoCompleteFilters'), {
     },
 
     /**
-     * Accent folding version of <code>startsWith()</code>.
-     *
-     * @method startsWithFold
-     * @param {String} query Query to match
-     * @param {Array} results Results to filter
-     * @return {Array} Filtered results
-     * @static
-     */
+    Accent folding version of `startsWith()`.
+
+    @method startsWithFold
+    @param {String} query Query to match
+    @param {Array} results Results to filter
+    @return {Array} Filtered results
+    @static
+    **/
     startsWithFold: function (query, results) {
         if (!query) { return results; }
 
@@ -89,14 +84,14 @@ Y.mix(Y.namespace('AutoCompleteFilters'), {
     },
 
     /**
-     * Accent folding version of <code>subWordMatch()</code>.
-     *
-     * @method subWordMatchFold
-     * @param {String} query Query to match
-     * @param {Array} results Results to filter
-     * @return {Array} Filtered results
-     * @static
-     */
+    Accent folding version of `subWordMatch()`.
+
+    @method subWordMatchFold
+    @param {String} query Query to match
+    @param {Array} results Results to filter
+    @return {Array} Filtered results
+    @static
+    **/
     subWordMatchFold: function (query, results) {
         if (!query) { return results; }
 
@@ -112,14 +107,14 @@ Y.mix(Y.namespace('AutoCompleteFilters'), {
     },
 
     /**
-     * Accent folding version of <code>wordMatch()</code>.
-     *
-     * @method wordMatchFold
-     * @param {String} query Query to match
-     * @param {Array} results Results to filter
-     * @return {Array} Filtered results
-     * @static
-     */
+    Accent folding version of `wordMatch()`.
+
+    @method wordMatchFold
+    @param {String} query Query to match
+    @param {Array} results Results to filter
+    @return {Array} Filtered results
+    @static
+    **/
     wordMatchFold: function (query, results) {
         if (!query) { return results; }
 

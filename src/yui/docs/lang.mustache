@@ -1,0 +1,101 @@
+<p>`Y.Lang` contains JavaScript language utilities and extensions that are used in the core library.
+
+
+<h2>Array</h2>
+<p>Testing for an actual `Array`, this helps fight against false positives from `arguments` and `getElementsBy*` array-like structures.</p>
+
+```
+// true, an array literal is an array
+Y.Lang.isArray([1, 2]);
+
+// false, an object literal is not an array
+Y.Lang.isArray({"one": "two"});
+
+// however, when declared as an array, it is true
+function() {
+    var a = new Array();
+    a["one"] = "two";
+    return Y.Lang.isArray(a);
+}();
+
+// false, a collection of elements is like an array, but isn't
+Y.Lang.isArray(document.getElementsByTagName("body"));
+```
+
+<h2>Object</h2>
+
+<p>Checking for `Objects`, since `new Object()`, '{}', '[]' and `function(){}` are all technically Objects.</p>
+
+```
+// true, objects, functions, and arrays are objects
+Y.Lang.isObject({});
+Y.Lang.isObject(function(){});
+Y.Lang.isObject([1,2]);
+
+// false, primitives are not objects
+Y.Lang.isObject(1);
+Y.Lang.isObject(true);
+Y.Lang.isObject("{}");
+
+```
+
+<h2>Function</h2>
+
+<p>Checking for `Function`, since a `function` is a `function`, but an `Object` is not a function.</p>
+
+```
+Y.Lang.isFunction(function(){}); // true
+Y.Lang.isFunction({foo: "bar"}); // false
+```
+
+<h2>Number &amp; String</h2>
+
+<p>Making sure that `Strings` are really `Strings` and `Numbers` are really `Numbers`.</p>
+
+```
+// true, ints and floats are numbers
+Y.Lang.isNumber(0);
+Y.Lang.isNumber(123.123);
+
+// false, strings that can be cast to numbers aren't really numbers
+Y.Lang.isNumber("123.123");
+
+// false, undefined numbers and infinity are not numbers we want to use
+Y.Lang.isNumber(1/0);
+
+// strings
+Y.Lang.isString("{}"); // true
+Y.Lang.isString({foo: "bar"}); // false
+Y.Lang.isString(123); // false
+Y.Lang.isString(true); // false
+```
+
+<h2>Boolean</h2>
+
+<p>Making sure that a `Boolean` is really a `Boolean`.</p>
+
+```
+// true, false is a boolean
+Y.Lang.isBoolean(false);
+
+// false, 1 and the string "true" are not booleans
+Y.Lang.isBoolean(1);
+Y.Lang.isBoolean("true");
+```
+
+<h2>Null &amp; Undefined</h2>
+
+<p>`null` is `null`, but `false`, `undefined` and `""` are not.</p>
+
+```
+Y.Lang.isNull(null); // true
+Y.Lang.isNull(undefined); // false
+Y.Lang.isNull(""); // false
+
+// undefined is undefined, but null and false are not
+Y.Lang.isUndefined(undefined); // true
+Y.Lang.isUndefined(false); // false
+Y.Lang.isUndefined(null); // false
+```
+
+

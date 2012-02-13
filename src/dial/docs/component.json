@@ -43,6 +43,15 @@
             "description": "This example employs Dial to drive an interactive UI.",
             "modules"    : ["dial"],
             "tags"       : ["dial", "interactive", "image", "hubble", "earth", "space", "round", "knob", "gauge", "wheel"]
+        },
+        {
+            "name"       : "duck",
+            "displayName": "Image Sprite Animation with Dial",
+            "description": "This example shows how to use Dial to animate an image sprite.",
+            "modules"    : ["dial"],
+            "tags"       : ["dial", "interactive", "image", "sprite", "duck", "rotate", "animate", "knob", "gauge", "wheel"],
+
+            "hideTableOfContents": true
         }
     ]
 }

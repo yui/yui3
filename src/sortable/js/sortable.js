@@ -1,3 +1,4 @@
+
     /**
      * The class allows you to create a Drag & Drop reordered list.
      * @module sortable
@@ -297,7 +298,7 @@
         * A custom callback to allow a user to extract some sort of id or any other data from the node to use in the "ordering list" and then that data should be returned from the callback.
         * @method getOrdering
         * @param Function callback 
-        * @returns Array
+        * @return Array
         */
         getOrdering: function(callback) {
             var ordering = [];

@@ -262,14 +262,14 @@
             inst.on('focus', Y.bind(this._onDomEvent, this), inst.config.win);
             inst.on('blur', Y.bind(this._onDomEvent, this), inst.config.win);
 
-            inst._use = inst.use;
+            inst.__use = inst.use;
             inst.use = Y.bind(this.use, this);
             this._iframe.setStyles({
                 visibility: 'inherit'
             });
             inst.one('body').setStyle('display', 'block');
             if (Y.UA.ie) {
-                this._fixIECursors();
+                //this._fixIECursors();
             }
         },
         /**
@@ -333,8 +333,8 @@
                 //TODO Circle around and deal with CSS loading...
                 args.push(Y.bind(function() {
                     Y.log('Callback from final internal use call', 'info', 'frame');
-                    if (inst.Selection) {
-                        inst.Selection.DEFAULT_BLOCK_TAG = this.get('defaultblock');
+                    if (inst.EditorSelection) {
+                        inst.EditorSelection.DEFAULT_BLOCK_TAG = this.get('defaultblock');
                     }
                     //Moved to here so that the iframe is ready before allowing editing..
                     if (this.get('designMode')) {
@@ -546,7 +546,7 @@
 
                 });
             }
-            inst._use.apply(inst, args);
+            inst.__use.apply(inst, args);
         },
         /**
         * @method delegate
@@ -645,7 +645,7 @@
         */
         _handleFocus: function() {
             var inst = this.getInstance(),
-                sel = new inst.Selection();
+                sel = new inst.EditorSelection();
 
             if (sel.anchorNode) {
                 Y.log('_handleFocus being called..', 'info', 'frame');
@@ -816,7 +816,7 @@
         * @method getDocType
         * @description Parses document.doctype and generates a DocType to match the parent page, if supported.
         * For IE8, it grabs document.all[0].nodeValue and uses that. For IE < 8, it falls back to Frame.DOC_TYPE.
-        * @returns {String} The normalized DocType to apply to the iframe
+        * @return {String} The normalized DocType to apply to the iframe
         */
         getDocType: function() {
             var dt = Y.config.doc.doctype,

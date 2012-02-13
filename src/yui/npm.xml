@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="npm" default="package">
+    <description>YUI NPM Build</description>
+    <property file="npm.properties" />
+
+    <echo level="info">Packaging YUI for npm deployment</echo>
+    <echo level="info">Using outdir: ${outdir}</echo>
+    <target name="package">
+        <echo level="info">Making outdir: ${outdir}</echo>
+        <delete dir="${outdir}" />
+        <mkdir dir="${outdir}" />
+
+        <echo level="info">Copying files to build location</echo>
+        <copy todir="${outdir}" overwrite="true">
+            <fileset dir="../../build/" />
+        </copy>
+
+        <copy file="../../package.json" tofile="${outdir}/package.json"/>
+        <copy file="./scripts/npm_package_shim.js" tofile="${outdir}/index.js"/>
+        
+        <echo level="info">Running Node.js package script</echo>
+        <exec executable="node" failonerror="true" searchpath="true" resolveexecutable="true">
+            <arg value="./scripts/npm_package.js"/>
+            <arg value="${outdir}"/>
+        </exec>
+        
+        <echo level="info">NPM package complete: ${outdir}</echo>
+    </target>
+
+</project>

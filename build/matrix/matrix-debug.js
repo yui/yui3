@@ -837,6 +837,49 @@ Matrix.prototype = {
     },
 
     /**
+     * Returns the left, top, right and bottom coordinates for a transformed
+     * item.
+     *
+     * @method getContentRect
+     * @param {Number} width The width of the item.
+     * @param {Number} height The height of the item.
+     * @param {Number} x The x-coordinate of the item.
+     * @param {Number} y The y-coordinate of the item.
+     * @return Object
+     */
+    getContentRect: function(width, height, x, y)
+    {
+        var left = !isNaN(x) ? x : 0,
+            top = !isNaN(y) ? y : 0,
+            right = left + width,
+            bottom = top + height,
+            matrix = this,
+            a = matrix.a,
+            b = matrix.b,
+            c = matrix.c,
+            d = matrix.d,
+            dx = matrix.dx,
+            dy = matrix.dy,
+            x1 = (a * left + c * top + dx), 
+            y1 = (b * left + d * top + dy),
+            //[x2, y2]
+            x2 = (a * right + c * top + dx),
+            y2 = (b * right + d * top + dy),
+            //[x3, y3]
+            x3 = (a * left + c * bottom + dx),
+            y3 = (b * left + d * bottom + dy),
+            //[x4, y4]
+            x4 = (a * right + c * bottom + dx),
+            y4 = (b * right + d * bottom + dy);
+        return {
+            left: Math.min(x3, Math.min(x1, Math.min(x2, x4))),
+            right: Math.max(x3, Math.max(x1, Math.max(x2, x4))),
+            top: Math.min(y2, Math.min(y4, Math.min(y3, y1))),
+            bottom: Math.max(y2, Math.max(y4, Math.max(y3, y1)))
+        };
+    },       
+    
+    /**
      * Returns the determinant of the matrix.
      *
      * @method getDeterminant

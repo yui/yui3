@@ -250,7 +250,7 @@ YUI({
         
         tearDown: function() {
             this.eventListener.detach();
-            this.chart.destroy();
+            this.chart.destroy(true);
         }
     });
 
@@ -471,7 +471,7 @@ YUI({
         },
 
         tearDown: function() {
-            this.chart.destroy();
+            this.chart.destroy(true);
         },
 
         //Test axes data classes
@@ -543,7 +543,7 @@ YUI({
 
         tearDown: function() {
             this.eventListener.detach();
-            this.chart.destroy();
+            this.chart.destroy(true);
         },
 
         testAlwaysShowZero: function()
@@ -596,7 +596,7 @@ YUI({
 
         tearDown: function() {
             this.eventListener.detach();
-            this.chart.destroy();
+            this.chart.destroy(true);
         },
         
         testAlwaysShowZeroEqualsFalse: function()

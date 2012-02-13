@@ -170,26 +170,6 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     // -- Public Methods -------------------------------------------------------
 
     /**
-    Creates and returns this apps's container node from the specified selector
-    string, DOM element, or existing `Y.Node` instance. This method is called
-    internally when the app is initialized.
-
-    This node is also stamped with the CSS class specified by
-    `Y.App.Base.CSS_CLASS`.
-
-    By default, the created node is _not_ added to the DOM automatically.
-
-    @method create
-    @param {String|Node|HTMLElement} container Selector string, `Y.Node`
-        instance, or DOM element to use as the container node.
-    @return {Node} Node instance of the created container node.
-    **/
-    create: function () {
-        var container = View.prototype.create.apply(this, arguments);
-        return container && container.addClass(App.CSS_CLASS);
-    },
-
-    /**
     Creates and returns a new view instance using the provided `name` to look up
     the view info metadata defined in the `views` object. The passed-in `config`
     object is passed to the view constructor function.
@@ -203,37 +183,19 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @return {View} The new view instance.
     **/
     createView: function (name, config) {
-        var viewInfo        = this.getViewInfo(name),
-            type            = (viewInfo && viewInfo.type) || View,
-            ViewConstructor = Lang.isString(type) ? Y[type] : type,
-            view;
+        var viewInfo = this.getViewInfo(name),
+            type     = (viewInfo && viewInfo.type) || View,
+            ViewConstructor, view;
+
+        // Looks for a namespaced constructor function on `Y`.
+        ViewConstructor = Lang.isString(type) ?
+                YObject.getValue(Y, type.split('.')) : type;
 
         // Create the view instance and map it with its metadata.
         view = new ViewConstructor(config);
         this._viewInfoMap[Y.stamp(view, true)] = viewInfo;
 
         return view;
-    },
-
-    /**
-    Creates and returns this app's view-container node from the specified
-    selector string, DOM element, or existing `Y.Node` instance. This method is
-    called internally when the app is initialized.
-
-    This node is also stamped with the CSS class specified by
-    `Y.App.Base.VIEWS_CSS_CLASS`.
-
-    By default, the created node will appended to the `container` node by the
-    `render()` method.
-
-    @method createViewContainer
-    @param {String|Node|HTMLElement} viewContainer Selector string, `Y.Node`
-        instance, or DOM element to use as the view-container node.
-    @return {Node} Node instance of the created view-container node.
-    **/
-    createViewContainer: function (viewContainer) {
-        viewContainer = Y.one(viewContainer);
-        return viewContainer && viewContainer.addClass(App.VIEWS_CSS_CLASS);
     },
 
     /**
@@ -255,32 +217,69 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     },
 
     /**
+    Navigates to the specified URL if there is a route handler that matches. In
+    browsers capable of using HTML5 history or when `serverRouting` is falsy,
+    the navigation will be enhanced by firing the `navigate` event and having
+    the app handle the "request". When `serverRouting` is `true`, non-HTML5
+    browsers will navigate to the new URL via a full page reload.
+
+    When there is a route handler for the specified URL and it is being
+    navigated to, this method will return `true`, otherwise it will return
+    `false`.
+
+    **Note:** The specified URL _must_ be of the same origin as the current URL,
+    otherwise an error will be logged and navigation will not occur. This is
+    intended as both a security constraint and a purposely imposed limitation as
+    it does not make sense to tell the app to navigate to a URL on a
+    different scheme, host, or port.
+
+    @method navigate
+    @param {String} url The fully-resolved URL that the app should dispatch to
+      its route handlers to fulfill the enhanced navigation "request", or use to
+      update `window.location` in non-HTML5 history capable browsers when
+      `serverRouting` is `true`.
+    @param {Object} [options] Additional options to configure the navigation.
+      These are mixed into the `navigate` event facade.
+        @param {Boolean} [options.replace] Whether or not the current history
+          entry will be replaced, or a new entry will be created. Will default
+          to `true` if the specified `url` is the same as the current URL.
+        @param {Boolean} [options.force] Whether the enhanced navigation
+          should occur even in browsers without HTML5 history. Will default to
+          `true` when `serverRouting` is falsy.
+    @see PjaxBase.navigate()
+    **/
+
+    /**
     Renders this application by appending the `viewContainer` node to the
     `container` node if it isn't already a child of the container, and the
-    `activeView` will be set as the contents of the view container.
+    `activeView` will be appended the view container, if it isn't already.
 
     You should call this method at least once, usually after the initialization
     of your app instance so the proper DOM structure is setup and optionally
     append the container to the DOM if it's not there already.
 
-    You may override this method to customize the app's rendering, but it is
-    expected that the `viewContainer`'s contents will be reserved reserved for
-    the app to manage for purpose of rendering the `activeView`.
+    You may override this method to customize the app's rendering, but you
+    should expect that the `viewContainer`'s contents will be modified by the
+    app for the purpose of rendering the `activeView` when it changes.
 
     @method render
     @chainable
     **/
     render: function () {
-        var container     = this.get('container'),
-            viewContainer = this.get('viewContainer'),
-            activeView    = this.get('activeView'),
-            areSame       = container.compareTo(viewContainer);
+        var container           = this.get('container'),
+            viewContainer       = this.get('viewContainer'),
+            activeView          = this.get('activeView'),
+            activeViewContainer = activeView && activeView.get('container'),
+            areSame             = container.compareTo(viewContainer);
 
-        if (activeView && viewContainer) {
-            viewContainer.setContent(activeView.get('container'));
+        container.addClass(App.CSS_CLASS);
+        viewContainer.addClass(App.VIEWS_CSS_CLASS);
+
+        if (activeView && !viewContainer.contains(activeViewContainer)) {
+            viewContainer.appendChild(activeViewContainer);
         }
 
-        if (container && !container.contains(viewContainer) && !areSame) {
+        if (!container.contains(viewContainer) && !areSame) {
             container.appendChild(viewContainer);
         }
 
@@ -329,7 +328,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         prepended instead of appended to the `viewContainer`.
     @param {Function} [callback] Optional callback Function to call after the
         new `activeView` is ready to use, the function will be passed:
-      @param {View} callback.view
+      @param {View} callback.view A reference to the new `activeView`.
     @chainable
     **/
     showView: function (view, config, options, callback) {
@@ -371,7 +370,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         // TODO: Should the `callback` _always_ be called, even when the
         // `activeView` does not change?
 
-        return this._set('activeView', view, options);
+        return this._set('activeView', view, {options: options});
     },
 
     // -- Protected Methods ----------------------------------------------------
@@ -464,7 +463,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
             // some event subscriptions are made on elements other than the
             // View's `container`.
         } else {
-            view.destroy();
+            view.destroy({remove: true});
 
             // TODO: The following should probably happen automagically from
             // `destroy()` being called! Possibly `removeTarget()` as well.
@@ -556,34 +555,21 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     },
 
     /**
-    Navigates to the specified URL if there is a route-handler that matches. In
-    browsers capable of using HTML5 history or when `serverRouting` is falsy,
-    the navigation will be enhanced by firing the `navigate` and having the
-    app handle the "request". When `serverRouting` is `true`, non-HTML5 browsers
-    will navigate to the new URL via manipulation of `window.location`.
-
-    Overrides PjaxBase's `_navigate()` method to first upgrade any hash-based
-    URLs that has a path-like hash (i.e. hashes that start with '/'), and when
-    `serverRouting` is falsy, force the navigation to be handled by the app. The
-    applied changes are then delegated back to PjaxBase's `_navigate()` method
-    to complete the navigation.
-
-    When there is a route-handler for the specified URL and it is being
-    navigated to, this method will return `true`, otherwise it will return
-    `false`.
+    Underlying implementation for `navigate()`.
 
     @method _navigate
-    @param {String} url The fully-resolved URL that the app should dispatch
-      to its route handlers to fulfill the enhanced navigation "request", or use
-      to update `window.location` in non-HTML5 history capable browsers when
+    @param {String} url The fully-resolved URL that the app should dispatch to
+      its route handlers to fulfill the enhanced navigation "request", or use to
+      update `window.location` in non-HTML5 history capable browsers when
       `serverRouting` is `true`.
-    @param {Object} [options] Additional options to configure the navigation,
-      these are mixed into the `navigate` event facade.
+    @param {Object} [options] Additional options to configure the navigation.
+      These are mixed into the `navigate` event facade.
         @param {Boolean} [options.replace] Whether or not the current history
           entry will be replaced, or a new entry will be created. Will default
           to `true` if the specified `url` is the same as the current URL.
-        @param {Boolean} [options.force=false] Whether the enhanced navigation
-          should occur even in browsers without HTML5 history.
+        @param {Boolean} [options.force] Whether the enhanced navigation
+          should occur even in browsers without HTML5 history. Will default to
+          `true` when `serverRouting` is falsy.
     @protected
     @see PjaxBase._navigate()
     **/
@@ -595,12 +581,12 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         if (!this.get('serverRouting')) {
             // Force navigation to be enhanced and handled by the app when
             // `serverRouting` is falsy because the server might not be able to
-            // handle the request properly.
+            // properly handle the request.
             Lang.isValue(options.force) || (options.force = true);
 
             // Determine if the current history entry should be replaced. Since
-            // we're upgrading hash-based URL to a full-path URL, we'll do the
-            // same for the current URL before comparing the two URLs.
+            // we've upgraded a hash-based URL to a full-path URL, we'll do the
+            // same for the current URL before comparing the two.
             if (!Lang.isValue(options.replace)) {
                 options.replace = url === this._upgradeURL(this._getURL());
             }
@@ -659,6 +645,53 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     },
 
     /**
+    Performs the actual change of the app's `activeView` by attaching the
+    `newView` to this app, and detaching the `oldView` from this app using any
+    specified `options`.
+
+    The `newView` is attached to the app by rendering it to the `viewContainer`,
+    and making this app a bubble target of its events.
+
+    The `oldView` is detached from the app by removing it from the
+    `viewContainer`, and removing this app as a bubble target for its events.
+    The `oldView` will either be preserved or properly destroyed.
+
+    The `activeView` attribute is read-only and can be changed by calling the
+    `showView()` method.
+
+    @method _uiSetActiveView
+    @param {View} newView The View which is now this app's `activeView`.
+    @param {View} [oldView] The View which was this app's `activeView`.
+    @param {Object} [options] Optional object containing any of the following
+        properties:
+      @param {Boolean} [options.prepend] Whether the new view should be
+        prepended instead of appended to the `viewContainer`.
+      @param {Function} [callback] Optional callback Function to call after the
+        `newView` is ready to use, the function will be passed:
+        @param {View} options.callback.view A reference to the `newView`.
+    @protected
+    **/
+    _uiSetActiveView: function (newView, oldView, options) {
+        options || (options = {});
+
+        var callback = options.callback,
+            isChild  = this._isChildView(newView, oldView),
+            isParent = !isChild && this._isParentView(newView, oldView),
+            prepend  = !!options.prepend || isParent;
+
+        // Prevent detaching (thus removing) the view we want to show.
+        // Also hard to animate out and in, the same view.
+        if (newView === oldView) {
+            return callback && callback.call(this, newView);
+        }
+
+        this._attachView(newView, prepend);
+        this._detachView(oldView);
+
+        callback && callback.call(this, newView);
+    },
+
+    /**
     Upgrades a hash-based URL to a full-path URL, if necessary.
 
     The specified `url` will be upgraded if its of the same origin as the
@@ -713,24 +746,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @protected
     **/
     _afterActiveViewChange: function (e) {
-        var newView  = e.newVal,
-            oldView  = e.prevVal,
-            callback = e.callback,
-            isChild  = this._isChildView(newView, oldView),
-            isParent = !isChild && this._isParentView(newView, oldView),
-            prepend  = !!e.prepend || isParent;
-
-        // Prevent detaching (thus removing) the view we want to show.
-        // Also hard to animate out and in, the same view.
-        if (newView === oldView) {
-            return callback && callback.call(this, newView);
-        }
-
-        // TODO: Remove `viewContainer` before making DOM updates?
-        this._attachView(newView, prepend);
-        this._detachView(oldView);
-
-        callback && callback.call(this, newView);
+        this._uiSetActiveView(e.newVal, e.prevVal, e.options);
     }
 }, {
     ATTRS: {
@@ -834,7 +850,8 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
           * `undefined`: The best form of URLs will be chosen based on the
             capabilities of the browser. Given no information about the server
-            environment a balanced approach to routing and navigation is chosen.
+            environmentm a balanced approach to routing and navigation is
+            chosen.
 
             The server should be capable of handling full-path requests, since
             full-URLs will be generated by browsers using HTML5 history. If this
@@ -900,13 +917,13 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         },
 
         /**
-        The node into which this app's views will be rendered. This node's
-        contents are fully-managed by this app instance.
+        The node into which this app's `views` will be rendered when they become
+        the `activeView`.
 
         The view container node serves as the container to hold the app's
         `activeView`. Each time the `activeView` is set via `showView()`, the
-        contents of this node will be replaced by the new active view's
-        `container` node.
+        previous view will be removed from this node, and the new active view's
+        `container` node will be appended.
 
         The default view container is `<div>` Node, but you can override this in
         a subclass, or by passing in a custom `viewContainer` config value at
@@ -915,26 +932,30 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         When `viewContainer` is overridden by a subclass or passed as a config
         option at instantiation time, it may be provided as a selector string,
         DOM element, or a `Y.Node` instance (having the `viewContainer` and the
-        `container` be the same node is also supported). During initialization,
-        the app's `createViewContainer()` method will be called to convert the
-        view container into a `Y.Node` instance if it isn't one already and
-        stamp it with the CSS class: `"yui3-app-views"`.
+        `container` be the same node is also supported).
 
-        The app's `render()` method will append the view container to the app's
-        `container` node if it isn't already, and any `activeView` will be set
-        as its contents.
+        The app's `render()` method will stamp the view container with the CSS
+        class `yui3-app-views` and append it to the app's `container` node if it
+        isn't already, and any `activeView` will be appended to this node if it
+        isn't already.
 
         @attribute viewContainer
         @type HTMLElement|Node|String
-        @default `Y.Node.create("<div/>")`
+        @default Y.Node.create("<div/>")
         @initOnly
         **/
         viewContainer: {
-            valueFn: function () {
-                return Y.Node.create('<div/>');
+            getter: function (value) {
+                if (!value && !this._viewContainer) {
+                    value = this._viewContainer = this.create();
+                    this._set('viewContainer', value);
+                }
+
+                return value;
             },
 
-            setter   : 'createViewContainer',
+            setter   : Y.one,
+            value    : null,
             writeOnce: 'initOnly'
         }
     },
@@ -959,9 +980,9 @@ instance will be **auto-mixed** on to the `Y.App` class. Consider this example:
 
     YUI().use('app-base', 'app-transitions', function (Y) {
         // This will create two YUI Apps, `basicApp` will not have transitions,
-        // but `fancyApp` will have transitions support included.
+        // but `fancyApp` will have transitions support included and turn it on.
         var basicApp = new Y.App.Base(),
-            fancyApp = new Y.App();
+            fancyApp = new Y.App({transitions: true});
     });
 
 @class App

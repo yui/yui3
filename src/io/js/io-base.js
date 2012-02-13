@@ -1,7 +1,7 @@
 /**
 Base IO functionality. Provides basic XHR transport support.
-@module io-base
-@main io-base
+@module io
+@submodule io-base
 @for IO
 **/
 
@@ -888,6 +888,7 @@ Hosted as a property on the `io` function (e.g. `Y.io.header`).
 @param {String} name HTTP header
 @param {String} value HTTP header value
 @static
+@for IO
 **/
 Y.io.header = function(name, value) {
     // Calling IO through the static interface will use and reuse

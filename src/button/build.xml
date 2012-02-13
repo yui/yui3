@@ -6,7 +6,7 @@
         <sequential>
             <ant antfile="button-base.xml" target="@{target}"/>
             <ant antfile="button-group.xml" target="@{target}"/>
-            <ant antfile="button-cssbuttons.xml" target="@{target}"/>
+            <ant antfile="button-cssbutton.xml" target="@{target}"/>
         </sequential>
     </macrodef>
 

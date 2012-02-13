@@ -1,7 +1,7 @@
 /**
 Extends the IO  to enable file uploads, with HTML forms 
 using an iframe as the transport medium.
-@module io-base
+@module io
 @submodule io-upload-iframe
 @for IO
 **/

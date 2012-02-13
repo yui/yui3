@@ -9,27 +9,15 @@ YUI.add('get', function(Y) {
     var path = require('path'),
         vm = require('vm'),
         fs = require('fs'),
-        n_url = require('url'),
-        http = require('http'),
-        https = require('https');
+        request = require('request');
 
-    Y.Get = function() {};
+
+    Y.Get = function() {
+    };
 
     //Setup the default config base path
     Y.config.base = path.join(__dirname, '../');
 
-    /**
-    * Get the port number from a URL based on the port from the URL module or http(s)
-    * @method urlInfoPort
-    * @param {Object} urlInfo Info from `require('url').parse(url)`
-    * @return {Number} The port number
-    */
-    Y.Get.urlInfoPort = function(urlInfo) {
-        return urlInfo.port ? parseInt(urlInfo.port, 10) :
-            urlInfo.protocol === 'http:' ? 80 : 443;
-    };
-
-    
     YUI.require = require;
     YUI.process = process;
     
@@ -90,40 +78,37 @@ YUI.add('get', function(Y) {
     * @param {Callback} cb The callback to fire once the content has been executed via `_exec`
     */
     Y.Get._include = function(url, cb) {
-        if (url.match(/^https?:\/\//)) {
-            var u = n_url.parse(url, parseQueryString=false),
-                p = Y.Get.urlInfoPort(u),            
-                req_url = u.pathname;
+        var self = this;
 
-            if (u.search) {
-                req_url += u.search;
-            }            
-            var h = http;
-            if (p === 443 || u.protocol === 'https:') {
-                h = https;
-            }
-            h.get({
-                host: u.hostname,
-                port: p,
-                path: req_url
-            }, function(res) {
-                var mod = '';
-                res.setEncoding('utf8');
-                res.on('data', function (chunk) {
-                    mod += chunk;
-                });
-                res.on('end', function() {
-                    Y.Get._exec(mod, url, cb);
-                });
+        if (url.match(/^https?:\/\//)) {
+            var cfg = {
+                url: url,
+                timeout: self.timeout
+            };
+            request(cfg, function (err, response, body) {
+                if (err) {
+                    Y.log(err, 'error', 'get');
+                    cb(err, url);
+                } else {
+                    Y.Get._exec(body, url, cb);
+                }
             });
         } else {
             if (Y.config.useSync) {
                 //Needs to be in useSync
-                var mod = fs.readFileSync(url,'utf8');
-                Y.Get._exec(mod, url, cb);
+                if (path.existsSync(url)) {
+                    var mod = fs.readFileSync(url,'utf8');
+                    Y.Get._exec(mod, url, cb);
+                } else {
+                    cb('Path does not exist: ' + url, url);
+                }
             } else {
                 fs.readFile(url, 'utf8', function(err, mod) {
-                    Y.Get._exec(mod, url, cb);
+                    if (err) {
+                        cb(err, url);
+                    } else {
+                        Y.Get._exec(mod, url, cb);
+                    }
                 });
             }
         }
@@ -153,16 +138,17 @@ YUI.add('get', function(Y) {
 
     /**
     * Override for Get.script for loading local or remote YUI modules.
-    * @method script
+    * @method js
     * @param {Array|String} s The URL's to load into this context
-    * @param {Callback} cb The callback to execute once the transaction is complete.
+    * @param {Object} options Transaction options
     */
-    Y.Get.script = function(s, cb) {
+    Y.Get.js = function(s, options) {
         var A = Y.Array,
+            self = this,
             urls = A(s), url, i, l = urls.length, c= 0,
             check = function() {
                 if (c === l) {
-                    pass(cb);
+                    pass(options);
                 }
             };
 
@@ -170,33 +156,45 @@ YUI.add('get', function(Y) {
 
         for (i=0; i<l; i++) {
             url = urls[i];
+            if (Y.Lang.isObject(url)) {
+                url = url.url;
+            }
 
             url = url.replace(/'/g, '%27');
             Y.log('URL: ' + url, 'info', 'get');
-            // doesn't need to be blocking, so don't block.
             Y.Get._include(url, function(err, url) {
                 if (!Y.config) {
                     Y.config = {
                         debug: true
                     };
                 }
+                if (options.onProgress) {
+                    options.onProgress.call(options.context || Y, url);
+                }
                 Y.log('After Load: ' + url, 'info', 'get');
                 if (err) {
-                    Y.log('----------------------------------------------------------', 'error', 'nodejsYUI3');
-                    if (err.stack) {
-                        A.each(err.stack.split('\n'), function(frame) {
-                            Y.log(frame, 'error', 'nodejsYUI3');
-                        });
-                    } else {
-                        console.log(err);
-                    }
-                    Y.log('----------------------------------------------------------', 'error', 'nodejsYUI3');
+                    fail(options, err);
+                    Y.log('----------------------------------------------------------', 'error', 'get');
+                    Y.log(err, 'error', 'get');
+                    Y.log('----------------------------------------------------------', 'error', 'get');
                 } else {
                     c++;
                     check();
                 }
             });
         }
+    };
+    
+    /**
+    * Alias for `Y.Get.js`
+    * @method script
+    */
+    Y.Get.script = Y.Get.js;
+    
+    //Place holder for SS Dom access
+    Y.Get.css = function(s, cb) {
+        Y.log('Y.Get.css is not supported, just reporting that it has loaded but not fetching.', 'warn', 'get');
+        pass(cb);
     };
 
 

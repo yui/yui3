@@ -1,0 +1,619 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>Widget Skins Test Page</title>
+    <script src="../../../../build/yui/yui-min.js"></script>
+    <link type="text/css" rel="stylesheet" href="../../../../build/cssreset/cssreset.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/cssfonts/cssfonts.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/cssgrids/cssgrids.css">
+<!--
+    <link type="text/css" rel="stylesheet" href="../../../../build/autocomplete-list/assets/skins/night/autocomplete-list.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/slider-base/assets/skins/night/slider-base.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/tabview/assets/skins/night/tabview.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/datatable-base/assets/skins/night/datatable-base.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/dial/assets/skins/night/dial.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/scrollview-list/assets/skins/night/scrollview-list.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/scrollview-scrollbars/assets/skins/night/scrollview-scrollbars.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/panel/assets/skins/night/panel.css" charset="utf-8">
+    <link type="text/css" rel="stylesheet" href="../../../../build/node-menunav/assets/skins/night/node-menunav.css" charset="utf-8">
+    <link type="text/css" rel="stylesheet" href="../../../../build/cssbutton/cssbutton.css">
+-->
+
+<!--
+    <link type="text/css" rel="stylesheet" href="../../../calendar/assets/skins/night/calendar-base-skin.css">
+    <link type="text/css" rel="stylesheet" href="../../../calendar/assets/skins/night/calendarnavigator-skin.css">
+-->
+    <link type="text/css" rel="stylesheet" href="../../../../build/calendar/assets/skins/night/calendar-base-skin.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/calendar/assets/skins/night/calendarnavigator-skin.css">
+
+    
+    <style>
+        body {
+            margin: 0em;
+        }
+        
+                
+        .yui3-js-enabled .yui3-widget-loading {
+            display: none;
+        }
+
+        .yui3-panel form li {
+            list-style: none;
+        }       
+
+        .yui3-panel label {
+            display: block;
+            margin-top: 1em;
+        }    
+
+        .yui3-menu,
+        .yui3-widget {
+            margin: 15px;
+        }
+
+        .yui3-tabview {
+            width: 300px;
+        }
+
+        #buttons-dir,
+        #buttons-skin {
+            margin: 1em;
+        }
+
+        .button-group {
+            text-align: center;
+        }
+
+        .yui3-panel {
+            position: static !important;
+        }
+
+        /* workaround site CSS */
+        .yui3-datatable th,
+        .yui3-calendar th,
+        .yui3-calendar h4 {
+            background: transparent;
+            border: none;
+            color: inherit;
+            font-size: inherit;
+        }
+
+
+    </style> 
+
+    <body class="yui3-skin-night">
+    <div id="skin-demo"> 
+        <div class="yui3-g button-group">
+            <div id="buttons-skin" class="yui3-u">
+                <button id="sam" class="yui3-button yui3-button-selected">Sam</button>
+                <button id="night" class="yui3-button">Night</button>
+                <button id="togglebkg" class="yui3-button">Toggle HTML Bkg Color</button>
+            </div>
+
+            <div id="buttons-dir" class="yui3-u">
+                <button id="rtl" class="yui3-button">RTL</button>
+                <button id="ltr" class="yui3-button yui3-button-selected">LTR</button>
+            </div>
+        </div>
+
+
+
+            <div class="yui3-u">
+                <div id="button-demo">
+                    <div class="yui3-u">
+                        <button class="yui3-button">Button</button>
+                        <button class="yui3-button yui3-button-selected">Selected</button>
+                        <button class="yui3-button yui3-button-disabled">Disabled</button>
+                    </div>    
+                </div>
+            </div>
+
+
+
+
+        <div class="yui3-g">
+<!-- TabView -->        
+            <div class="yui3-u">
+                <div class="yui3-widget-loading" id="demo-tabview"> 
+                    <ul> 
+                        <li> 
+                            <a href="#pork">Pork</a> 
+                        </li> 
+                        <li> 
+                            <a href="#meatball">Meatball</a> 
+                        </li> 
+                        <li> 
+                            <a href="#salami">Salami</a> 
+                        </li> 
+                    </ul> 
+                    <div> 
+                        <div id="pork"> 
+                            <p>Pork tail short loin ground round. Spare ribs bresaola cow prosciutto. Ground round shoulder shankle venison tongue, beef ribs spare ribs salami frankfurter bacon turducken tri-tip tail ribeye pork chop. Chicken tail bacon, biltong corned beef shankle pancetta shoulder brisket pork belly ham pork bresaola pig.</p> 
+                        </div> 
+                        <div id="meatball"> 
+                            <p>Meatball cow leberkäse, tenderloin sirloin spare ribs beef ribs turkey ball tip flank pork loin fatback andouille strip steak tri-tip. Kielbasa drumstick pastrami tongue, strip steak shank tail beef ribs pork turducken pork loin pork chop. Capicola ground round tail t-bone pork chop kielbasa, chicken prosciutto bacon brisket sausage jowl. Andouille shoulder pork pig swine. Venison beef ribs turducken pork chop, sausage turkey drumstick sirloin ham swine chicken.</p> 
+                        </div> 
+                        <div id="salami"> 
+                            <p>Salami short ribs corned beef, pancetta ham hock jowl frankfurter tail rump flank capicola tri-tip andouille sirloin. Biltong bresaola sausage hamburger ground round, pork loin tri-tip pig andouille fatback short ribs pork jowl. Capicola boudin sirloin tongue, beef prosciutto spare ribs shankle ball tip ham beef ribs turducken tenderloin. Drumstick tenderloin ribeye leberkäse, pork belly pancetta turducken frankfurter bresaola pig biltong.</p> 
+                        </div> 
+                    </div> 
+                </div> 
+            </div>
+
+            <div class="yui3-u"><div id="demo-datatable"></div></div>
+
+            <div class="yui3-u">
+                <div class="yui3-panel yui3-widget" id="demo-panel"> 
+                    <div class="yui3-panel-content yui3-widget-stdmod"> 
+                        <div class="yui3-widget-hd">Add A New Product</div> 
+                        <div class="yui3-widget-bd"> 
+                            <form> 
+                                <fieldset> 
+                                    <ul> 
+                                        <li> 
+                                            <label for="productId">ID</label> 
+                                            <input type="text" name="productId" id="productId">
+                                        </li> 
+                                        <li> 
+                                            <label for="name">Name</label> 
+                                            <input type="text" name="name" id="name"> 
+                                        </li> 
+                                        <!--<li> 
+                                            <label for="price">Price</label> 
+                                            <input type="text" name="price" id="price"> 
+                                        </li>--> 
+                                    </ul> 
+                                </fieldset> 
+                            </form> 
+                        </div>
+                        <div class="yui3-widget-ft"> 
+                            <button class="yui3-button">Cancel</button> 
+                            <button class="yui3-button">Add</button> 
+                        </div>
+                    </div> 
+                </div>
+            </div>
+            
+            
+            
+<!--  for panel from JS  
+            <div class="yui3-u">
+                 <div id="myPanelContent">
+                    <div class="yui3-widget-hd">I'm from JS</div>
+                    <div class="yui3-widget-bd">My buttons have no margin. Why?</div>
+                    <div class="yui3-widget-ft"></div>
+                 </div>
+            </div> 
+-->
+            <div class="yui3-u">
+                 <div id="demo-calendar"></div>
+            </div> 
+            <div class="yui3-u">
+                 <div id="demo-dial"></div>
+            </div> 
+            <div class="yui3-u">
+                 <div id="demo-xslider"></div>
+            </div> 
+            <div class="yui3-u">
+                 <div id="demo-yslider"></div>
+            </div> 
+
+            <div class="yui3-u">
+                <div id="demo-scrollview">
+                    <ul>
+                        <li>Sir DZL</li>
+                        <li>Casual</li>
+                        <li>A-Plus</li>
+                        <li>Opio</li>
+                        <li>Phesto</li>
+                        <li>Tajai</li>
+                        <li>Pep Love</li>
+                        <li>Domino</li>
+                        <li>Toure</li>
+                        <li>Bukue One</li>
+                        <li>Z-Man</li>
+                    </ul>
+                </div>
+            </div> 
+<!-- menunav -->
+            <div class="yui3-u">
+                <div id="demo-menunav" class="yui3-menu"> 
+                    <div class="yui3-menu-content"> 
+                        <ul class="first-of-type"> 
+                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://developer.yahoo.com/">Developer Network</a></li> 
+                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://www.flickr.com">Flickr</a></li> 
+                            <li> 
+                                <a class="yui3-menu-label" href="#pim">Mail</a> 
+                                <div id="pim" class="yui3-menu"> 
+                                    <div class="yui3-menu-content">    
+
+                                        <ul> 
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://mail.yahoo.com">Mail</a></li> 
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://mail.yahoo.com">Contact Lists</a></li> 
+                                        </ul> 
+
+                                        <ul> 
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://addressbook.yahoo.com">Address Book</a></li> 
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://calendar.yahoo.com">Calendar</a></li> 
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://notepad.yahoo.com">Notepad</a></li> 
+                                        </ul> 
+                                        
+                                        <ul> 
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://messenger.yahoo.com">Messenger</a></li> 
+                                        </ul> 
+                                        
+                                    </div>    
+                                </div>                    
+                            </li> 
+                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://news.yahoo.com">News</a> </li> 
+                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://mobile.yahoo.com">Mobile</a></li> 
+                        </ul>
+                        <ul>
+                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://finance.yahoo.com/">Finance</a></li> 
+                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://shine.yahoo.com/">Shine</a></li> 
+                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://shopping.yahoo.com/">Shopping</a></li> 
+                        </ul>    
+                    </div> 
+                </div>      
+            </div>      
+<!-- MenuNav horiz -->
+            <div class="yui3-u">
+               <div id="demo-menunav-horiz" class="yui3-menu yui3-menu-horizontal">
+                    <div class="yui3-menu-content">
+                        <ul class="first-of-type">
+                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://www.yahoo.com/">Home</a></li>
+                            <li>
+                                <a class="yui3-menu-label" href="#connect">Connect</a>
+        
+                                <div id="connect" class="yui3-menu">
+                                    <div class="yui3-menu-content">
+                                        <ul>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://yahoo.com/">Yahoo!</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://www.flickr.com">Flickr</a></li>
+                                            <li>
+                                                <a class="yui3-menu-label" href="#pim">Mail</a>
+        
+                                                <div id="pim" class="yui3-menu">
+                                                    <div class="yui3-menu-content">
+        
+                                                        <ul>
+                                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://mail.yahoo.com">Mail</a></li>
+                                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://calendar.yahoo.com">Calendar</a></li>
+                                                        </ul>
+        
+                                                        <ul>
+        
+                                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://addressbook.yahoo.com">Address Book</a></li>
+                                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://calendar.yahoo.com">What's New</a></li>
+                                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://notepad.yahoo.com">Notepad</a></li>
+                                                        </ul>
+        
+                                                        <ul>
+                                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://messenger.yahoo.com">Messenger</a></li>
+        
+                                                        </ul>
+        
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://movies.yahoo.com">Movies</a> </li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://mobile.yahoo.com">Mobile</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://travel.yahoo.com/">Travel</a></li>
+        
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://sports.yahoo.com/">Sports</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://finance.yahoo.com/">Finance</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </li>
+        
+                            <li>
+        
+                                <a class="yui3-menu-label" href="#find-info">Find Info</a>
+                                <div id="find-info" class="yui3-menu">
+                                    <div class="yui3-menu-content">
+                                        <ul>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://search.yahoo.com">Yahoo! Search</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://babelfish.yahoo.com/">Babel Fish Translations</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://info.yahoo.com/">Company Info</a></li>
+        
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://search.yahoo.com/cc">Creative Commons Search</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://dir.yahoo.com/">Directory</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://hotjobs.yahoo.com/">Jobs</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://local.yahoo.com">Local</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://maps.yahoo.com/">Maps</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://realestate.yahoo.com">Real Estate</a></li>
+        
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://education.yahoo.com/reference/">Reference</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </li>
+        
+        
+                        </ul>
+                    </div>
+                </div>
+            </div>      
+<!-- end menu nav horizontal-->
+<!-- MenuNav horiz split button-->
+            <div class="yui3-u">
+                <div id="menu-1" class="yui3-menu yui3-menu-horizontal yui3-splitbuttonnav"><!-- Bounding box -->
+                    <div class="yui3-menu-content"><!-- Content box -->
+                        <ul>
+                            <li>
+                
+                                <span class="yui3-menu-label"><!-- menu label root node -->
+                                    <a href="http://travel.yahoo.com">Travel</a><!-- menu label default action -->
+                                    <a href="#travel-options" class="yui3-menu-toggle">Travel Options</a><!-- menu label submenu toggle -->
+                                </span>
+                
+                                <div id="travel-options" class="yui3-menu">
+                                    <div class="yui3-menu-content">
+                                        <ul>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://travel.yahoo.com/beach;_ylt=AtWGJZLM73jp52fJNMJcOwGhpYMA">Beach</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://travel.yahoo.com/honeymoon;_ylt=ArJByEt5iYogEYMdhsWy_sWhpYMA">Honeymoon</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://travel.yahoo.com/national-parks;_ylt=Aisxea9BMnUZdmrYv.sOYk2hpYMA">National Parks</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://travel.yahoo.com/family;_ylt=Aiz4pI2rCCo6cy7G0XqfdPehpYMA">Family</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                
+                            </li>
+                            <li>
+                
+                                <span class="yui3-menu-label"><!-- menu label root node -->
+                                    <a href="http://news.yahoo.com">News</a><!-- menu label default action -->
+                                    <a href="#news-options" class="yui3-menu-toggle">News Options</a><!-- menu label submenu toggle -->
+                                </span>
+                
+                                <div id="news-options" class="yui3-menu">
+                                    <div class="yui3-menu-content">
+                                        <ul>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://news.yahoo.com/">News</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://news.yahoo.com/world">World</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://news.yahoo.com/tech">Tech</a></li>
+                                            <li class="yui3-menuitem"><a class="yui3-menuitem-content" href="http://news.yahoo.com/sports">Sports</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>      
+<!-- end menu nav horizontal split button-->
+<!-- Autocomplete -->           
+            <div class="yui3-u">
+                <div id="autocomplete" class="yui3-widget">
+                    <label for="ac-input">Enter the name of a US state:</label><br>
+                    <input id="ac-input" type="text">
+                </div>
+            </div>
+        </div>      
+    </div> 
+<script>
+YUI({ skin: 'night' }).use('autocomplete', 'autocomplete-filters', 'autocomplete-highlighters', 'tabview', 'datatable-sort', 'calendar', 'panel', 'dial', 'node-menunav', 'node-event-delegate', 'slider', 'scrollview', 'scrollview-list', function(Y) {
+    var buttonHandlers = {
+        sam: function(e) {
+            Y.one('body').replaceClass('yui3-skin-night', 'yui3-skin-sam');
+        },
+
+        night: function(e) {
+            Y.one('body').replaceClass('yui3-skin-sam', 'yui3-skin-night');
+        },
+        
+        togglebkg: function(e) {
+            if(Y.one('html').getStyle('backgroundColor') === "rgb(255, 255, 255)"){
+                Y.one('html').setStyle('backgroundColor',  "rgb(0, 0, 0)");
+                //Y.one('html').setStyle('color',  "rgb(255, 255, 255)");
+            }else{
+                Y.one('html').setStyle('backgroundColor',  "rgb(255, 255, 255)");
+                // Y.one('html').setStyle('color',  "rgb(0, 0, 0)");   the default
+            }
+        },
+
+        rtl: function(e) {
+            Y.one('body').setAttribute('dir', 'rtl');
+        },
+
+        ltr: function(e) {
+            Y.one('body').setAttribute('dir', 'ltr');
+        }
+    };
+
+    function buttonGroupHandler(e) {
+        var button = e.currentTarget,
+            handler = buttonHandlers[button.get('id')],
+            selectedClass = Y.ClassNameManager.getClassName('button', 'selected');
+
+        if (handler) {
+            button.addClass(selectedClass);
+            button.siblings().removeClass(selectedClass);
+
+            handler.call(this, e);
+        }
+    }
+/////////// autocomplete
+  var states = [
+    'Alabama',
+    'Alaska',
+    'Arizona',
+    'Arkansas',
+    'California',
+    'Colorado',
+    'Connecticut',
+    'Delaware',
+    'Florida',
+    'Georgia',
+    'Hawaii',
+    'Idaho',
+    'Illinois',
+    'Indiana',
+    'Iowa',
+    'Kansas',
+    'Kentucky',
+    'Louisiana',
+    'Maine',
+    'Maryland',
+    'Massachusetts',
+    'Michigan',
+    'Minnesota',
+    'Mississippi',
+    'Missouri',
+    'Montana',
+    'Nebraska',
+    'Nevada',
+    'New Hampshire',
+    'New Jersey',
+    'New Mexico',
+    'New York',
+    'North Dakota',
+    'North Carolina',
+    'Ohio',
+    'Oklahoma',
+    'Oregon',
+    'Pennsylvania',
+    'Rhode Island',
+    'South Carolina',
+    'South Dakota',
+    'Tennessee',
+    'Texas',
+    'Utah',
+    'Vermont',
+    'Virginia',
+    'Washington',
+    'West Virginia',
+    'Wisconsin',
+    'Wyoming'
+  ];
+
+  Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
+    resultFilters    : 'phraseMatch',
+    resultHighlighter: 'phraseMatch',
+    source           : states
+  });
+
+
+
+
+/////////// end autocomplete
+    new Y.TabView({
+        srcNode: '#demo-tabview'
+    }).render();
+
+    // what if...
+    // Y.TabView('#demo-tabview');
+    // Y.one('#demo-tabview').plug('tabs');
+
+    new Y.DataTable.Base({
+        srcNode: '#demo-datatable',
+        columnset: [
+            {key:"Company", label:"Column A", sortable:true},
+            {key:"Phone", label:"Column B", sortable:true},
+            {key:"Contact", label:"Column C", sortable:true}
+        ],
+        recordset: [
+            {Company:"Company Bee", Phone:"415-555-1234", Contact:"Sally Spencer"},
+            {Company:"Acme Company", Phone:"650-555-4444", Contact:"John Jones"},
+            {Company:"Industrial Industries", Phone:"408-555-5678", Contact:"Robin Smith"}
+        ],
+        caption: "Example table with sortable columns"
+    }).plug(Y.Plugin.DataTableSort).render();
+
+    // what if...
+    // plug('sort').render(); 
+
+
+    new Y.Calendar({
+        render: "#demo-calendar"
+    });
+    Y.one('.calendar_col7').addClass('yui3-calendar-selection-disabled');
+//    Y.one('.yui3-calendar-nextmonth-day').setstyl('hello');
+
+    new Y.Dial({
+        render: "#demo-dial"
+    });
+
+    new Y.Slider({
+        axis: 'y',
+        render: '#demo-yslider'
+    });
+
+    new Y.Slider({
+        render: '#demo-xslider'
+    });
+
+    new Y.ScrollView({
+        height: 150,
+        width: 150,
+        srcNode: '#demo-scrollview',
+        plugins:[Y.Plugin.ScrollViewList],
+        render:true
+    });
+
+    // what if...
+    // Y.Calendar('#demo-calendar');
+    // Y.Dial('#demo-dial');
+    // Y.Dial('#demo-dial');
+
+    // new Y.Slider('#demo-yslider', {
+    //    axis: 'y',
+    // });
+
+    Y.one('#demo-menunav').plug(Y.Plugin.NodeMenuNav);
+    Y.one('#demo-menunav-horiz').plug(Y.Plugin.NodeMenuNav);
+    var menu = Y.one("#menu-1");
+    menu.plug(Y.Plugin.NodeMenuNav, { autoSubmenuDisplay: false, mouseOutHideDelay: 0 });
+
+    // what if...
+    // Y.Menu('#demo-menu');
+
+    // handle button groups
+    Y.one('.button-group').delegate('click', buttonGroupHandler, 'button');
+    
+    /* what if...
+     Y.RadioButtons('.button-group', {
+         '#sam': buttonHandlers['sam'],
+         '#night': buttonHandlers['night'],
+         '#ltr': buttonHandlers['ltr'],
+         '#rtl': buttonHandlers['rtl']
+    });
+    */
+
+
+    /*panel from JS 
+    
+    var panel = new Y.Panel({
+        srcNode : '#myPanelContent',
+        width   : 200,
+        centered: true,
+        render  : true,
+                // Make changes to the buttons through the `buttons` attribute,
+        // which takes an Array of Objects.
+        buttons: [
+            {
+                // Each object has a `value` property,
+                // which can be text or an HTML string.
+                value: "Okay",
+
+                // The `section` property tells where to render the button and
+                // should be `Y.WidgetStdMod.HEADER` or `Y.WidgetStdMod.FOOTER`.
+                section: Y.WidgetStdMod.FOOTER
+            },
+            {
+                value: "Nope",
+                section: Y.WidgetStdMod.FOOTER
+            }
+        ]
+
+    });
+    */
+
+
+});
+</script>
+</body>
+</html>
