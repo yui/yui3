@@ -9,7 +9,7 @@ var YArray  = Y.Array,
 
 // TODOs:
 //
-// * Call into `Y.Node.button()`:
+// * Call into `Y.Node.button()` _always_ even if we already have a Y.Node:
 //   * Make sure to blacklist config first.
 //   * Pass along `name` from config.
 //   * Set `name` and `default` as Node data.
@@ -26,9 +26,10 @@ function WidgetButtons() {
 
 WidgetButtons.ATTRS = {
     buttons: {
-        value            : {},
+        cloneDefaultValue: 'shallow',
+        getter           : '_getButtons',
         setter           : '_setButtons',
-        cloneDefaultValue: 'shallow'
+        value            : {}
     }
 };
 
@@ -188,6 +189,18 @@ WidgetButtons.prototype = {
         button.on(events, config.action, context);
 
         return button;
+    },
+
+    _getButtons: function (buttons) {
+        var buttonsCopy = {};
+
+        // Creates a new copy of the `buttons` object.
+        YObject.each(buttons, function (sectionButtons, section) {
+            // Creates of copy of the Array of button nodes.
+            buttonsCopy[section] = sectionButtons.concat();
+        });
+
+        return buttonsCopy;
     },
 
     _getButtonContainer: function (section) {
