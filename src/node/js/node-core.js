@@ -69,9 +69,6 @@ var DOT = '.',
         if (this._initPlugins) { // when augmented with Plugin.Host
             this._initPlugins();
         }
-
-        // allow instances to customize ATTRS
-        this._ATTRS = {};
     },
 
     // used with previous/next/ancestor tests
@@ -415,19 +412,11 @@ Y.mix(Y_Node.prototype, {
      * @return {any} The current value of the attribute
      */
     _get: function(attr) {
-        var attrConfig = this._ATTRS[attr],
-            ATTR = Y_Node.ATTRS[attr],
-            getter,
+        var attrConfig = Y_Node.ATTRS[attr],
             val;
 
         if (attrConfig && attrConfig.getter) {
-            getter = attrConfig.getter;
-        } else if (ATTR && ATTR.getter) {
-            getter = ATTR.getter;
-        }
-
-        if (getter) {
-            val = getter.call(this);
+            val = attrConfig.getter.call(this);
         } else if (Y_Node.re_aria.test(attr)) {
             val = this._node.getAttribute(attr, 2);
         } else {
@@ -449,20 +438,16 @@ Y.mix(Y_Node.prototype, {
      * @chainable
      */
     set: function(attr, val) {
-        var attrConfig = this._ATTRS[attr],
-            ATTR = Y_Node.ATTRS[attr],
-            val;
+        var attrConfig = Y_Node.ATTRS[attr];
 
         if (this._setAttr) { // use Attribute imple
             this._setAttr.apply(this, arguments);
         } else { // use setters inline
-            if (attrConfig && attrConfig.setter) { // instance-specific setter
-                attrConfig.setter.call(this, val);
-            } else if (ATTR && ATTR.setter) { // static setter
-                ATTR.setter.call(this, val);
+            if (attrConfig && attrConfig.setter) {
+                attrConfig.setter.call(this, val, attr);
             } else if (Y_Node.re_aria.test(attr)) { // special case Aria
                 this._node.setAttribute(attr, val);
-            } else { // default
+            } else {
                 Y_Node.DEFAULT_SETTER.apply(this, arguments);
             }
         }
