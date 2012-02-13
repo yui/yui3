@@ -673,7 +673,7 @@ AutoCompleteBase.prototype = {
     _setResultHighlighter: function (highlighter) {
         var acHighlighters;
 
-        if (this._functionValidator(highlighter)) {
+        if (this[_FUNCTION_VALIDATOR](highlighter)) {
             return highlighter;
         }
 
@@ -1162,7 +1162,8 @@ AutoCompleteBase.ATTRS = {
     @type Function|null
     **/
     resultFormatter: {
-        validator: _FUNCTION_VALIDATOR
+        validator: _FUNCTION_VALIDATOR,
+        value: null
     },
 
     /**
@@ -1181,7 +1182,8 @@ AutoCompleteBase.ATTRS = {
     @type Function|null
     **/
     resultHighlighter: {
-        setter: '_setResultHighlighter'
+        setter: '_setResultHighlighter',
+        value: null
     },
 
     /**
@@ -1205,7 +1207,8 @@ AutoCompleteBase.ATTRS = {
     @type Function|String|null
     **/
     resultListLocator: {
-        setter: '_setLocator'
+        setter: '_setLocator',
+        value: null
     },
 
     /**
@@ -1244,7 +1247,8 @@ AutoCompleteBase.ATTRS = {
     @type Function|String|null
     **/
     resultTextLocator: {
-        setter: '_setLocator'
+        setter: '_setLocator',
+        value: null
     },
 
     /**
@@ -1460,7 +1464,8 @@ AutoCompleteBase.ATTRS = {
     @type Array|DataSource|Function|Node|Object|String|null
     **/
     source: {
-        setter: '_setSource'
+        setter: '_setSource',
+        value: null
     },
 
     /**
@@ -1538,4 +1543,4 @@ AutoCompleteBase.UI_SRC = (Y.Widget && Y.Widget.UI_SRC) || 'ui';
 Y.AutoCompleteBase = AutoCompleteBase;
 
 
-}, '@VERSION@' ,{optional:['autocomplete-sources'], requires:['array-extras', 'base-build', 'escape', 'event-valuechange', 'node-base']});
+}, '@VERSION@' ,{requires:['array-extras', 'base-build', 'escape', 'event-valuechange', 'node-base'], optional:['autocomplete-sources']});
