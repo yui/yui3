@@ -270,11 +270,6 @@ ButtonWidget.ATTRS = {
     }
 };
 
-// manage DOM via events for Widget
-//ButtonWidget.ATTRS.disabled.setter = null;
-//ButtonWidget.ATTRS.label.setter = null;
-//ButtonWidget.ATTRS.label.getter = null;
-
 Y.mix(ButtonWidget.prototype, Y.ButtonBase.prototype);
 
 Y.Button = ButtonWidget;
