@@ -37,6 +37,14 @@ Button.prototype = {
     TEMPLATE: '<button/>',
 
     constructor: Button,
+
+    enable: function() {
+        this.set('disabled', false);
+    },
+
+    disable: function() {
+        this.set('disabled', true);
+    },
     
     _initAttributes: function(config) {
         Y.AttributeCore.call(this, Button.ATTRS, config);

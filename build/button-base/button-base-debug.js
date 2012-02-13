@@ -39,6 +39,14 @@ Button.prototype = {
     TEMPLATE: '<button/>',
 
     constructor: Button,
+
+    enable: function() {
+        this.set('disabled', false);
+    },
+
+    disable: function() {
+        this.set('disabled', true);
+    },
     
     _initAttributes: function(config) {
         Y.AttributeCore.call(this, Button.ATTRS, config);
@@ -180,58 +188,46 @@ ButtonNode.ATTRS = Y.merge(Y.Node.ATTRS, Y.ButtonBase.ATTRS);
 ButtonNode.ATTRS.label._bypassProxy = true;
 
 Y.ButtonNode = ButtonNode;
-var ATTRS = Y.ButtonBase.ATTRS;
 /**
     var node = Y.one('#my-button').plug({
         label: 'my button'
     });
 
+    node.button.set('label', 'my label');
+    node.set('label', this works too!');
     node.button.disable();
-    node.button.set('label');
+    node.disable(); // not supported, use a widget
 */
 function ButtonPlugin(config) {
+    if (!this._initNode) { // hand off to factory when called without new 
+        return ButtonPlugin.factory(config);
+    }
     ButtonPlugin.superclass.constructor.apply(this, arguments);
 }
 
 Y.extend(ButtonPlugin, Y.ButtonBase, {
-    _beforeNodeGet: function (name) {
-        var fn = (ATTRS[name] && ATTRS[name].getter);
+    // TODO: point to method (_uiSetLabel, etc) instead of getter/setter
+    _afterNodeGet: function (name) {
+        var ATTRS = this.constructor.ATTRS,
+            fn = ATTRS[name] && ATTRS[name].getter && this[ATTRS[name].getter];
         if (fn) {
-            if  (!fn.call) { // string
-                fn = this[fn];
-            }
-
-            return new Y.Do.Halt('returning ' + name + ' from button-plugin',
-                    fn.call(this));
+            return new Y.Do.AlterReturn('get ' + name, fn.call(this));
         }
     },  
 
-    _beforeNodeSet: function (name, val) {
-        var fn = (ATTRS[name] && ATTRS[name].setter);
+    _afterNodeSet: function (name, val) {
+        var ATTRS = this.constructor.ATTRS,
+            fn = ATTRS[name] && ATTRS[name].setter && this[ATTRS[name].setter];
         if (fn) {
-            if  (!fn.call) { // string
-                fn = this[fn];
-            }
-
             fn.call(this, val);
-            return new Y.Do.Halt('setting ' + name + ' from button-plugin',
-                    this.getNode());
         }
     },
 
     _initNode: function(config) {
         var node = config.host;
         this._host = node;
-        Y.Do.before(this._beforeNodeGet, node, 'get', this);
-        Y.Do.before(this._beforeNodeSet, node, 'set', this);
-    },
-
-    enable: function() {
-        this.set('disabled', false);
-    },
-
-    disable: function() {
-        this.set('disabled', true);
+        Y.Do.after(this._afterNodeGet, node, 'get', this);
+        Y.Do.after(this._afterNodeSet, node, 'set', this);
     }
 }, {
     ATTRS: Y.merge(Y.ButtonBase.ATTRS),
@@ -239,7 +235,30 @@ Y.extend(ButtonPlugin, Y.ButtonBase, {
     NS: 'button'
 });
 
+// (node)
+// (node, config)
+// (config)
+/*
+    Y.Node.button(node, config);
+    Y.Button.createNode(node, config);
+    Y.Button.getNode(node, config);
+    Y.Plugin.Button.getNode(node, config);
+    Y.Plugin.Button(node, config);
+*/
+ButtonPlugin.factory = function(node, config) {
+    if (node && !config) {
+        if (! (node.nodeType || node.getDOMNode || typeof node == 'string')) {
+            config = node;
+            node = config.srcNode;
+        }
+    }
+    node = node || config.srcNode || Y.DOM.create(Y.Plugin.Button.prototype.TEMPLATE);
+
+    return Y.one(node).plug(Y.Plugin.Button, config);
+};
+
 Y.Plugin.Button = ButtonPlugin;
+
 function ButtonWidget(config) {
     ButtonWidget.superclass.constructor.apply(this, arguments);
 }
@@ -261,8 +280,8 @@ Y.extend(ButtonWidget, Y.Widget,  {
 
     _uiSetSelected: function(value) {
         this.get('contentBox').toggleClass('yui3-button-selected', value); 
+        // aria
     },
-                // aria
     _afterLabelChange: function(e) {
         this._uiSetLabel(e.newVal);
     },
@@ -299,6 +318,21 @@ ButtonWidget.ATTRS = {
     }
 };
 
+ButtonWidget.HTML_PARSER = {
+    label: function(node) {
+        this._host = node; // TODO: remove
+        return this._uiGetLabel();
+    },
+
+    disabled: function(node) {
+        return node.getDOMNode().disabled;
+    },
+
+    selected: function(node) {
+        return node.hasClass('yui3-button-selected');
+    }
+};
+
 Y.mix(ButtonWidget.prototype, Y.ButtonBase.prototype);
 
 Y.Button = ButtonWidget;
@@ -307,17 +341,27 @@ function ToggleButton(config) {
     ButtonWidget.superclass.constructor.apply(this, arguments);
 }
 
+// TODO: move to ButtonBase subclass to enable toggle plugin, widget, etc.
 Y.extend(ToggleButton, Y.Button,  {
-    bindUI: function() {
-        var button = this;
-        ButtonWidget.prototype.bindUI.call(this);
-        this._toggleHandle = this.get('contentBox').on('click', function() {
-            button.set('selected', !button.get('selected'));
-        });
+    trigger: 'click',
+
+    select: function() {
+        this.set('selected', true);
     },
 
-    destructor: function() {
-        this._toggleHandle.detach();
+    unselect: function() {
+        this.set('selected', false);
+    },
+
+    toggle: function() {
+        var button = this;
+        button.set('selected', !button.get('selected'));
+    },
+
+    bindUI: function() {
+        var button = this;
+        ToggleButton.superclass.bindUI.call(button);
+        button.get('contentBox').on(button.trigger, button.toggle, button);
     }
 }, {
     NAME: 'toggleButton'
