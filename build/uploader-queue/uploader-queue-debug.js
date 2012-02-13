@@ -11,15 +11,12 @@ YUI.add('uploader-queue', function(Y) {
     var Lang = Y.Lang,
         Bind = Y.bind,
         Win = Y.config.win,
-        currentUploads,
+        queuedFiles,
+        numberOfUploads,        
+        currentUploadedByteValues,
         currentFiles,
-        errorFiles,
-        lastUploadPointer,
-        fileListLength,
-        uploadsLeftCounter,
         totalBytesUploaded,
         totalBytes;
-
 
     /**
      * The class manages a queue of files to be uploaded to the server.
@@ -28,14 +25,13 @@ YUI.add('uploader-queue', function(Y) {
      * @constructor
      */
     var UploaderQueue = function(o) {
-        currentUploads = {};
-        currentFiles = {};
-        errorFiles = [];
-        lastUploadPointer = 0;
-        fileListLength = 0;
-        uploadsLeftCounter = 0;
-        totalBytesUploaded = 0;
-        totalBytes = 0;      
+        this.queuedFiles = [],
+        this.numberOfUploads = 0,
+        this.currentUploadedByteValues = {},
+        this.currentFiles = {},
+        this.totalBytesUploaded = 0,
+        this.totalBytes = 0;      
+  
         UploaderQueue.superclass.constructor.apply(this, arguments);
     };
 
@@ -48,70 +44,88 @@ YUI.add('uploader-queue', function(Y) {
 
         },
 
+        _uploadStartHandler : function (event) {
+           var updatedEvent = event;
+           updatedEvent.file = event.target;
+           updatedEvent.originEvent = event;
+           
+           this.fire("uploadstart", updatedEvent);          
+        },
+
         _uploadErrorHandler : function (event) {
            var errorAction = this.get("errorAction");
            var updatedEvent = event;
            updatedEvent.file = event.target;
            updatedEvent.originEvent = event;
+
+           this.numberOfUploads-=1;
+           delete this.currentFiles[event.target.get("id")];
            
+           event.target.cancelUpload();
+
            if (errorAction === UploaderQueue.STOP) {
              this.pauseUpload();
            }
-           else if (errorAction === UploaderQueue.RESTART_ASAP || errorAction === UploaderQueue.RESTART_AFTER) {
-            errorFiles.push(event.target);
+
+           else if (errorAction === UploaderQueue.RESTART_ASAP) {
+             this.queuedFiles.unshift(event.target);
+             this._startNextFile();
+           }
+           else if (errorAction === UploaderQueue.RESTART_AFTER) {
+            this.queuedFiles.push(event.target);
+            this._startNextFile();
            }
 
            this.fire("uploaderror", updatedEvent);  
         },
 
-        _uploadCompleteHandler : function (event) {
-                      
-           uploadsLeftCounter -= 1;
-
-           totalBytesUploaded += event.target.get("size");
-           delete currentUploads[event.target.get("id")];
-           delete currentFiles[event.target.get("id")];
-
-           var errorAction = this.get("errorAction");
-
-           console.log(errorAction);
-           console.log(lastUploadPointer < fileListLength);
-           console.log(this._currentState === UploaderQueue.UPLOADING);
-           console.log(errorAction === UploaderQueue.STOP);
-           console.log(errorAction === UploaderQueue.CONTINUE);
-           console.log((errorAction === UploaderQueue.STOP || errorAction === UploaderQueue.CONTINUE));
-
-           if (lastUploadPointer < fileListLength && this._currentState === UploaderQueue.UPLOADING && 
-               (errorAction === UploaderQueue.STOP || errorAction === UploaderQueue.CONTINUE)) {
-               var currentFile = this.get("fileList")[lastUploadPointer],
-                   fid = currentFile.get("id"),
+        _startNextFile : function () {
+          if (this.queuedFiles.length > 0) {
+            var currentFile = this.queuedFiles.shift(),
+               fileId = currentFile.get("id"),
                parameters = this.get("perFileParameters"),
-               fileParameters = parameters.hasOwnProperty(fid) ? parameters[fid] : parameters;
- 
+               fileParameters = parameters.hasOwnProperty(fileId) ? parameters[fileId] : parameters;
+
+               this.currentUploadedByteValues[fileId] = 0;
+
+               currentFile.on("uploadstart", this._uploadStartHandler, this);
                currentFile.on("uploadprogress", this._uploadProgressHandler, this);
                currentFile.on("uploadcomplete", this._uploadCompleteHandler, this);
                currentFile.on("uploaderror", this._uploadErrorHandler, this);
 
                currentFile.startUpload(this.get("uploadURL"), fileParameters, this.get("fileFieldName"));
-               currentUploads[currentFile.get("id")] = 0;
-               currentFiles[currentFile.get("id")] = currentFile;
-            
-               lastUploadPointer += 1;
-           }
 
-           else if (this._currentState === UploaderQueue.UPLOADING && errorAction === UploaderQueue.RESTART_ASAP && errorFiles.length > 0) {
-               var currentFile = errorFiles.shift(),
-                   fid = currentFile.get("id"),
-                   parameters = this.get("perFileParameters"),
-                   fileParameters = parameters.hasOwnProperty(fid) ? parameters[fid] : parameters;
- 
-                   currentFile.on("uploadprogress", this._uploadProgressHandler, this);
-                   currentFile.on("uploadcomplete", this._uploadCompleteHandler, this);
-                   currentFile.on("uploaderror", this._uploadErrorHandler, this);
+               this._registerUpload(currentFile);
 
-                   currentFile.startUpload(this.get("uploadURL"), fileParameters, this.get("fileFieldName"));
-                   currentUploads[currentFile.get("id")] = 0;
-                   currentFiles[currentFile.get("id")] = currentFile;
+               console.log("Number of uploads: " + this.numberOfUploads);
+               console.log("Max uploads: " + this.get("simUploads"));
+          }
+        },
+
+        _registerUpload : function (file) {
+          this.numberOfUploads += 1;
+          this.currentFiles[file.get("id")] = file;
+        },
+
+        _unregisterUpload : function (file) {
+          if (this.numberOfUploads > 0) {
+            this.numberOfUploads -=1;
+          }
+          delete this.currentFiles[file.get("id")];
+        },
+
+        _uploadCompleteHandler : function (event) {
+                      
+           console.log("Upload complete!");
+
+           this._unregisterUpload(event.target);
+
+           this.totalBytesUploaded += event.target.get("size");
+           delete this.currentUploadedByteValues[event.target.get("id")];
+
+
+           if (this.queuedFiles.length > 0 && this._currentState === UploaderQueue.UPLOADING) {
+               this._startNextFile();
            }
            
            var updatedEvent = event;
@@ -120,14 +134,14 @@ YUI.add('uploader-queue', function(Y) {
 
            this.fire("uploadcomplete", updatedEvent);
 
-           if (uploadsLeftCounter == 0) {
+           if (this.queuedFiles.length == 0 && this.currentFiles.length == 0) {
                this.fire("alluploadscomplete");
            }
         },
 
         _uploadProgressHandler : function (event) {
           
-          currentUploads[event.target.get("id")] = event.bytesLoaded;
+          this.currentUploadedByteValues[event.target.get("id")] = event.bytesLoaded;
           
           var updatedEvent = event;
           updatedEvent.originEvent = event;
@@ -135,45 +149,34 @@ YUI.add('uploader-queue', function(Y) {
 
           this.fire("uploadprogress", updatedEvent);
           
-          var uploadedTotal = totalBytesUploaded;
-          Y.each(currentUploads, function (value) {
+          var uploadedTotal = this.totalBytesUploaded;
+
+          Y.each(this.currentUploadedByteValues, function (value) {
              uploadedTotal += value; 
           });
           
-          var percentLoaded = Math.min(100, Math.round(10000*uploadedTotal/totalBytes) / 100);
+          console.log("Total bytes uploaded: " + uploadedTotal);
+          console.log("Total bytes: " + this.totalBytes);
+
+          var percentLoaded = Math.min(100, Math.round(10000*uploadedTotal/this.totalBytes) / 100);
 
           this.fire("totaluploadprogress", {bytesLoaded: uploadedTotal, 
-                                            bytesTotal: totalBytes,
+                                            bytesTotal: this.totalBytes,
                                             percentLoaded: percentLoaded});
         },
 
         startUpload: function() {
            
-           currentUploads = {};
-           currentFiles = {};
-           errorFiles = [];
-           uploadsLeftCounter = fileListLength;
-           lastUploadPointer = 0; 
-           totalBytesUploaded = 0;
+           this.queuedFiles = this.get("fileList").slice(0);
+           this.numberOfUploads = 0;
+           this.currentUploadedByteValues = {};
+           this.currentFiles = {};
+           this.totalBytesUploaded = 0;
            
            this._currentState = UploaderQueue.UPLOADING;
 
-           while (lastUploadPointer < this.get("simUploads") && lastUploadPointer < fileListLength) {
-
-               var currentFile = this.get("fileList")[lastUploadPointer],
-                   fileId = currentFile.get("id"),
-                   parameters = this.get("perFileParameters"),
-                   fileParameters = parameters.hasOwnProperty(fileId) ? parameters[fileId] : parameters;
-
-               currentUploads[fileId] = 0;
-               currentFiles[fileId] = currentFile;
-
-               currentFile.on("uploadprogress", this._uploadProgressHandler, this);
-               currentFile.on("uploadcomplete", this._uploadCompleteHandler, this);
-               currentFile.on("uploaderror", this._uploadErrorHandler, this);
-
-               currentFile.startUpload(this.get("uploadURL"), fileParameters, this.get("fileFieldName"));
-               lastUploadPointer+=1;
+           while (this.numberOfUploads < this.get("simUploads")) {
+               this._startNextFile();
            }
         },
 
@@ -184,39 +187,34 @@ YUI.add('uploader-queue', function(Y) {
 
         restartUpload: function () {
             this._currentState = UploaderQueue.UPLOADING;
-            if (lastUploadPointer < fileListLength) {
-               var currentFile = this.get("fileList")[lastUploadPointer],
-                   fid = currentFile.get("id"),
-               parameters = this.get("perFileParameters"),
-               fileParameters = parameters.hasOwnProperty(fid) ? parameters[fid] : parameters;
- 
-               currentFile.on("uploadprogress", this._uploadProgressHandler, this);
-               currentFile.on("uploadcomplete", this._uploadCompleteHandler, this);
-               currentFile.on("uploaderror", this._uploadErrorHandler, this);
+            while (this.numberOfUploads < this.get("simUploads")) {
+               this._startNextFile();
+            }
+        },
 
-               currentFile.startUpload(this.get("uploadURL"), fileParameters, this.get("fileFieldName"));
-               currentUploads[currentFile.get("id")] = 0;
-               currentFiles[currentFile.get("id")] = currentFile;
-            
-               lastUploadPointer += 1;
-           }
+        forceReupload : function (file) {
+            var id = file.get("id");
+            if (this.currentFiles.hasOwnProperty(id)) {
+              file.cancelUpload();
+              this._unregisterUpload(file);
+              this.queuedFiles.unshift(file);
+              this._startNextFile();
+            }
         },
 
         cancelUpload: function () {
-            var fList = this.get("fileList");
-            for (fid in currentFiles) {
-              currentFiles[fid].cancel();
+            for (fid in this.currentFiles) {
+              this.currentFiles[fid].cancel();
+              this._unregisterUpload(this.currentFiles[fid]);
             }
 
-            currentUploads = {};
-            currentFiles = {};
-            errorFiles = [];
-            uploadsLeftCounter = fileListLength;
-            lastUploadPointer = 0;
-            totalBytesUploaded = 0;
+            this.currentUploadedByteValues = {};
+            this.currentFiles = {};
+            this.totalBytesUploaded = 0;
         }
-    }, {
+    }, 
 
+    {
         CONTINUE: "continue",
         STOP: "stop",
         RESTART_ASAP: "restartasap",
@@ -236,7 +234,7 @@ YUI.add('uploader-queue', function(Y) {
         simUploads: {
             value: 2,
             validator: function (val, name) {
-                return (val >= 2 && val <= 5);
+                return (val >= 1 && val <= 5);
             }
         },
 
@@ -262,11 +260,10 @@ YUI.add('uploader-queue', function(Y) {
             lazyAdd: false,
             setter: function (val) {
                 var newValue = val;
-                Y.each(newValue, function (value) {
-                    totalBytes += value.get("size");
-                });
-                fileListLength = uploadsLeftCounter = newValue.length;
-
+                Y.Array.each(newValue, function (value) {
+                    this.totalBytes += value.get("size");
+                }, this);
+ 
                 return val;
             }   
         },
@@ -288,7 +285,6 @@ YUI.add('uploader-queue', function(Y) {
 
     Y.namespace('Uploader');
     Y.Uploader.Queue = UploaderQueue;
-
 
 
 }, '@VERSION@' ,{requires:['base']});

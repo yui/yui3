@@ -3910,12 +3910,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "base"
         ]
     }, 
-    "filelist": {
-        "requires": [
-            "file", 
-            "base"
-        ]
-    }, 
     "frame": {
         "requires": [
             "base", 
@@ -4973,7 +4967,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'b308c876f46589e7e3ebcf88eafa389e';
+YUI.Env[Y.version].md5 = 'd70dbaf27c1c1672482ca87e801fc233';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
