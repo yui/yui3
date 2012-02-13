@@ -23,6 +23,7 @@ Y.extend(ButtonPlugin, Y.ButtonBase, {
         this.set('disabled', true);
     }
 }, {
+    ATTRS: Y.merge(Y.ButtonBase.ATTRS),
     NAME: 'buttonPlugin',
     NS: 'button'
 });

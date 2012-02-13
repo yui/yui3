@@ -11,7 +11,7 @@ Y.extend(ButtonNode, Y.Node, {
 
     _initNode: function(config) {
         // enable Y.one() to return ButtonNode (for eventTarget, etc)
-        Y.Node._instances[this._yuid] = this;
+//        Y.Node._instances[this._yuid] = this;
         this._host = this;
     }
 });

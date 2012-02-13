@@ -45,11 +45,7 @@
     transition: 0.1s linear box-shadow;
 }
 
-<<<<<<< HEAD
 input.yui3-button {
-=======
-input.yui3-button{
->>>>>>> master
     height: 2em; /* Fixes height for <input> in firefox/opera */
 }
 

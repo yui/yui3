@@ -52,6 +52,30 @@ Button.prototype = {
         }
     },
 
+    _uiSetLabel: function(value) {
+        var node = this._host,
+            attr = (node.get('tagName').toLowerCase() === 'input') ? 'value' : 'text';
+
+        node.set(attr, value);
+        return value;
+    },
+
+    _uiSetDisabled: function(value) {
+        var node = this.getNode();
+        node.getDOMNode().disabled = value; // avoid rerunning setter when this === node
+        node.toggleClass(Button.CLASS_NAMES.DISABLED, value);
+        return value;
+    },
+
+    _uiGetLabel: function(value) {
+        var node = this._host,
+            attr = (node.get('tagName').toLowerCase() === 'input') ? 'value' : 'text',
+            value;
+
+        value = node.get(attr);
+        return value;
+    },
+
     getNode: function() {
         return this._host;
     },
@@ -92,34 +116,15 @@ Button.prototype = {
 */
 Button.ATTRS = {
     label: {
-        setter: function (value) {
-            var node = this._host,
-                attr = (node.get('tagName').toLowerCase() === 'input') ? 'value' : 'text';
-
-            node.set(attr, value);
-            return value;
-        },
-
-        getter: function () {
-            var node = this._host,
-                attr = (node.get('tagName').toLowerCase() === 'input') ? 'value' : 'text',
-                value;
-
-            value = node.get(attr);
-            return value;
-        },
-
+        value: 'default label',
+        setter: '_uiSetLabel',
+        getter: '_uiGetLabel',
         lazyAdd: false
     },
 
     disabled: {
-        setter: function (value) {
-            var node = this.getNode();
-            node.getDOMNode().disabled = value; // avoid rerunning setter when this === node
-            node.toggleClass(Button.CLASS_NAMES.DISABLED, value);
-            return value;
-        },
-
+        value: false,
+        setter: '_uiSetDisabled',
         lazyAdd: false
     }
 };
@@ -161,7 +166,7 @@ Y.extend(ButtonNode, Y.Node, {
 
     _initNode: function(config) {
         // enable Y.one() to return ButtonNode (for eventTarget, etc)
-        Y.Node._instances[this._yuid] = this;
+//        Y.Node._instances[this._yuid] = this;
         this._host = this;
     }
 });
@@ -200,6 +205,7 @@ Y.extend(ButtonPlugin, Y.ButtonBase, {
         this.set('disabled', true);
     }
 }, {
+    ATTRS: Y.merge(Y.ButtonBase.ATTRS),
     NAME: 'buttonPlugin',
     NS: 'button'
 });
@@ -215,20 +221,59 @@ Y.extend(ButtonWidget, Y.Widget,  {
     },
 
     BOUNDING_TEMPLATE: Y.ButtonBase.prototype.TEMPLATE,
-    CONTENT_TEMPLATE: null
+    CONTENT_TEMPLATE: null,
+
+    bindUI: function() {
+        var button = this;
+        this.after('labelChange', this._afterLabelChange);
+        this.after('disabledChange', this._afterDisabledChange);
+        this.after('selectedChange', this._afterSelectedChange);
+    },
+
+    _uiSetSelected: function(value) {
+        this.get('contentBox').toggleClass('yui3-button-selected', value); 
+    },
+                // aria
+    _afterLabelChange: function(e) {
+        this._uiSetLabel(e.newVal);
+    },
+
+    _afterDisabledChange: function(e) {
+        this._uiSetDisabled(e.newVal);
+    },
+
+    _afterSelectedChange: function(e) {
+        this._uiSetSelected(e.newVal);
+    },
+
+    syncUI: function() {
+        this._uiSetLabel(this.get('label'));
+        this._uiSetDisabled(this.get('disabled'));
+        this._uiSetSelected(this.get('selected'));
+    },
+
 }, {
     NAME: 'button',
-    ATTRS: Y.merge(Y.Widget.ATTRS, Y.ButtonBase.ATTRS, {
-        selected: {
-            setter: function(val) {
-                this.get('contentBox').toggleClass('yui3-button-selected', val); 
-                // aria
-            },
-
-            value: false
-        }
-    })
 });
+
+ButtonWidget.ATTRS = {
+    label: {
+        value: Y.ButtonBase.ATTRS.label.value
+    },
+
+    disabled: {
+        value: false
+    },
+
+    selected: {
+        value: false
+    }
+};
+
+// manage DOM via events for Widget
+//ButtonWidget.ATTRS.disabled.setter = null;
+//ButtonWidget.ATTRS.label.setter = null;
+//ButtonWidget.ATTRS.label.getter = null;
 
 Y.mix(ButtonWidget.prototype, Y.ButtonBase.prototype);
 
@@ -241,6 +286,7 @@ function ToggleButton(config) {
 Y.extend(ToggleButton, Y.Button,  {
     bindUI: function() {
         var button = this;
+        ButtonWidget.prototype.bindUI.call(this);
         this._toggleHandle = this.get('contentBox').on('click', function() {
             button.set('selected', !button.get('selected'));
         });

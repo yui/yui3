@@ -50,6 +50,30 @@ Button.prototype = {
         }
     },
 
+    _uiSetLabel: function(value) {
+        var node = this._host,
+            attr = (node.get('tagName').toLowerCase() === 'input') ? 'value' : 'text';
+
+        node.set(attr, value);
+        return value;
+    },
+
+    _uiSetDisabled: function(value) {
+        var node = this.getNode();
+        node.getDOMNode().disabled = value; // avoid rerunning setter when this === node
+        node.toggleClass(Button.CLASS_NAMES.DISABLED, value);
+        return value;
+    },
+
+    _uiGetLabel: function(value) {
+        var node = this._host,
+            attr = (node.get('tagName').toLowerCase() === 'input') ? 'value' : 'text',
+            value;
+
+        value = node.get(attr);
+        return value;
+    },
+
     getNode: function() {
         return this._host;
     },
@@ -90,34 +114,15 @@ Button.prototype = {
 */
 Button.ATTRS = {
     label: {
-        setter: function (value) {
-            var node = this._host,
-                attr = (node.get('tagName').toLowerCase() === 'input') ? 'value' : 'text';
-
-            node.set(attr, value);
-            return value;
-        },
-
-        getter: function () {
-            var node = this._host,
-                attr = (node.get('tagName').toLowerCase() === 'input') ? 'value' : 'text',
-                value;
-
-            value = node.get(attr);
-            return value;
-        },
-
+        value: 'default label',
+        setter: '_uiSetLabel',
+        getter: '_uiGetLabel',
         lazyAdd: false
     },
 
     disabled: {
-        setter: function (value) {
-            var node = this.getNode();
-            node.getDOMNode().disabled = value; // avoid rerunning setter when this === node
-            node.toggleClass(Button.CLASS_NAMES.DISABLED, value);
-            return value;
-        },
-
+        value: false,
+        setter: '_uiSetDisabled',
         lazyAdd: false
     }
 };

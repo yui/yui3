@@ -572,6 +572,11 @@ onload = function() {
             'should find custom element by tag and class': function() {
                 var node = Y.Selector.query('foo.custom-foo', null, true);
                 Assert.areEqual(document.getElementsByTagName('foo')[0], node);
+            },
+
+            'should find attribute with unquoted number value': function() {
+                var node = Y.Selector.query('[id=1]', null, true); 
+                Assert.areEqual(document.getElementById(1), node);
             }
         });
 
