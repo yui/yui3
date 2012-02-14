@@ -1,0 +1,706 @@
+/**
+ * ChartLegend provides a legend for a chart.
+ *
+ *
+ */
+Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
+    /**
+     * Initializes the chart.
+     *
+     * @method initializer
+     * @private
+     */
+    initializer: function()
+    {
+        this._items = [];
+    },
+
+    /**
+     * @method renderUI
+     * @private
+     */
+    renderUI: function()
+    {
+        var bb = this.get("boundingBox"),
+            cb = this.get("contentBox"),
+            styles = this.get("styles").background,
+            background = new Y.Rect({
+                graphic: cb,
+                fill: styles.fill,
+                stroke: styles.stroke
+            });
+        bb.setStyle("display", "block");
+        bb.setStyle("position", "absolute");
+        this.set("background", background);
+    },
+    
+    /**
+     * @method bindUI
+     * @private
+     */
+    bindUI: function()
+    {
+        this.get("chart").after("seriesCollectionChange", this._updateHandler);
+        this.after("stylesChange", this._updateHandler);
+        this.after("positionChange", this._updateHandler);
+        this.after("widthChange", this._handleSizeChange);
+        this.after("heightChange", this._handleSizeChange);
+    },
+    
+    /**
+     * @method syncUI
+     * @private
+     */
+    syncUI: function()
+    {
+        var w = this.get("width"),
+            h = this.get("height");
+        if(isFinite(w) && isFinite(h) && w > 0 && h > 0)
+        {
+            this._drawLegend();
+        }
+    },
+
+    /**
+     * Handles changes to legend.
+     *
+     * @method _updateHandler
+     * @param {Object} e Event object
+     * @private
+     */
+    _updateHandler: function(e)
+    {
+        if(this.get("rendered"))
+        {
+            this._drawLegend();
+        }
+    },
+    
+    /**
+     * Updates the legend when the size changes.
+     *
+     * @method _handleSizeChange
+     * @param {Object} e Event object.
+     * @private
+     */
+    _handleSizeChange: function(e)
+    {
+        var attrName = e.attrName,
+            pos = this.get(POSITION),
+            vert = pos == LEFT || pos == RIGHT,
+            hor = pos == BOTTOM || pos == TOP;
+        if((hor && attrName == WIDTH) || (vert && attrName == HEIGHT))
+        {
+            this._drawLegend();
+        }
+    },
+
+    /**
+     * Draws the legend
+     *
+     * @method _drawLegend
+     * @private
+     */
+    _drawLegend: function()
+    {
+        if(this._drawing)
+        {
+            this._callLater = true;
+            return;
+        }
+        this._drawing = true;
+        this._callLater = false;
+        if(this.get("includeInChartLayout"))
+        {
+            this.get("chart")._itemRenderQueue.unshift(this);
+        }
+        var chart = this.get("chart"),
+            node = this.get("contentBox"),
+            seriesCollection = chart.get("seriesCollection"),
+            series,
+            styles = this.get("styles"),
+            padding = styles.padding,
+            seriesStyles,
+            horizontalGap = styles.horizontalGap,
+            verticalGap = styles.verticalGap,
+            hAlign = styles.hAlign,
+            vAlign = styles.vAlign,
+            marker = styles.marker,
+            labelStyles = styles.label,
+            displayName,
+            layout = this._layout[this.get("direction")],
+            i, 
+            len,
+            isArray,
+            shape,
+            shapeClass,
+            item,
+            fill,
+            stroke,
+            fillColors,
+            strokeColors,
+            strokeWeight,
+            items = [],
+            markerWidth = marker.width,
+            markerHeight = marker.height,
+            totalWidth = 0 - horizontalGap,
+            totalHeight = 0 - verticalGap,
+            maxWidth = 0,
+            maxHeight = 0,
+            itemWidth,
+            itemHeight;
+        if(marker && marker.shape)
+        {
+            shape = marker.shape;
+        }
+        this._destroyLegendItems();
+        if(chart instanceof Y.PieChart)
+        {
+            series = seriesCollection[0];
+            displayName = series.get("categoryAxis").getDataByKey(series.get("categoryKey")); 
+            seriesStyles = series.get("styles").marker;
+            fillColors = seriesStyles.fill.colors;
+            strokeColors = seriesStyles.border.colors;
+            strokeWeight = seriesStyles.border.weight;
+            i = 0;
+            len = displayName.length;
+            shape = shape || Y.Circle;
+            isArray = Y.Lang.isArray(shape);
+            for(; i < len; ++i)
+            {
+                shape = isArray ? shape[i] : shape;
+                fill = {
+                    color: fillColors[i]
+                };
+                stroke = {
+                    colors: strokeColors[i],
+                    weight: strokeWeight
+                };
+                displayName = chart.getSeriesItems(series, i).category.value;
+                item = this.getLegendItem(node, this._getShapeClass(shape), fill, stroke, labelStyles, markerWidth, markerHeight, displayName);
+                itemWidth = item.width;
+                itemHeight = item.height;
+                maxWidth = Math.max(maxWidth, itemWidth);
+                maxHeight = Math.max(maxHeight, itemHeight);
+                totalWidth += itemWidth + horizontalGap;
+                totalHeight += itemHeight + verticalGap;
+                items.push(item);
+            }
+        }
+        else
+        {
+            i = 0;
+            len = seriesCollection.length;
+            for(; i < len; ++i)
+            {
+                series = seriesCollection[i];
+                seriesStyles = this._getStylesBySeriesType(series, shape);
+                if(!shape)
+                {
+                    shape = seriesStyles.shape;
+                    if(!shape)
+                    {
+                        shape = Y.Circle;
+                    }
+                }
+                shapeClass = Y.Lang.isArray(shape) ? shape[i] : shape;
+                item = this.getLegendItem(node, this._getShapeClass(shape), seriesStyles.fill, seriesStyles.stroke, labelStyles, markerWidth, markerHeight, series.get("valueDisplayName"));
+                itemWidth = item.width;
+                itemHeight = item.height;
+                maxWidth = Math.max(maxWidth, itemWidth);
+                maxHeight = Math.max(maxHeight, itemHeight);
+                totalWidth += itemWidth + horizontalGap;
+                totalHeight += itemHeight + verticalGap;
+                items.push(item);
+            }
+        }
+        this.set("items", items);
+        this._drawing = false;
+        if(this._callLater)
+        {
+            this._drawLegend();
+        }
+        else
+        {
+            layout._positionLegendItems.apply(this, [items, maxWidth, maxHeight, totalWidth, totalHeight, padding, horizontalGap, verticalGap, hAlign, vAlign]);
+            this._updateBackground(styles);
+            this.fire("legendRendered");
+        }
+    },
+
+    /**
+     * Updates the background for the legend.
+     *
+     * @method _updateBackground
+     * @param {Object} styles Reference to the legend's styles attribute
+     * @private
+     */
+    _updateBackground: function(styles)
+    {
+        var backgroundStyles = styles.background,
+            contentRect = this._contentRect,
+            padding = styles.padding,
+            x = contentRect.left - padding.left,
+            y = contentRect.top - padding.top,
+            w = contentRect.right - x + padding.right,
+            h = contentRect.bottom - y + padding.bottom;
+        this.get("background").set({
+            fill: backgroundStyles.fill,
+            stroke: backgroundStyles.stroke,
+            width: w,
+            height: h,
+            x: x,
+            y: y
+        });
+    },
+
+    /**
+     * Retrieves the marker styles based on the type of series. For series that contain a marker, the marker styles are returned.
+     * 
+     * @method _getStylesBySeriesType
+     * @param {CartesianSeries | PieSeries} The series in which the style properties will be received.
+     * @return Object An object containing fill, stroke and shape information.
+     * @private
+     */
+    _getStylesBySeriesType: function(series)
+    {
+        var styles = series.get("styles");
+        if(series instanceof Y.LineSeries || series instanceof Y.StackedLineSeries)
+        {
+            styles = series.get("styles").line;
+            return {
+                stroke: {
+                    weight: 1,
+                    color: styles.color
+                },
+                fill: {
+                    color: styles.color
+                }
+            };
+        }
+        else if(series instanceof Y.AreaSeries || series instanceof Y.StackedAreaSeries)
+        {
+            series = series.get("styles").fill;
+            return {
+                stroke: {
+                    weight: 1,
+                    color: styles.color
+                },
+                fill: {
+                    color: styles.color
+                }
+            };
+        }
+        else 
+        {
+            styles = series.get("styles").marker;
+            return {
+                fill: styles.fill,
+
+                stroke: {
+                    weight: styles.border.weight,
+
+                    color: styles.border.color,
+
+                    shape: styles.shape
+                },
+                shape: styles.shape
+            };
+        }
+    },
+
+    /**
+     * Returns a legend item consisting of the following properties:
+     *  <dl>
+     *    <dt>node</dt><dd>The `Node` containing the legend item elements.</dd>
+     *      <dt>shape</dt><dd>The `Shape` element for the legend item.</dd>
+     *      <dt>textNode</dt><dd>The `Node` containing the text></dd>
+     *      <dt>text</dt><dd></dd>
+     *  </dl>
+     *
+     * @method getLegendItem
+     * @param {Node} shapeProps Reference to the `node` attribute.
+     * @param {String | Class} shapeClass The type of shape
+     * @param {Object} fill Properties for the shape's fill
+     * @param {Object} stroke Properties for the shape's stroke
+     * @param {String} text String to be rendered as the legend's text
+     * @param {Number} width Total width of the legend item
+     * @param {Number} height Total height of the legend item
+     * @param {HTML | String} text Text for the legendItem
+     * @return Object
+     */
+    getLegendItem: function(node, shapeClass, fill, stroke, labelStyles, w, h, text) 
+    {
+        var containerNode = Y.one(DOCUMENT.createElement("div")),
+            textField = Y.one(DOCUMENT.createElement("span")),
+            shape,
+            dimension,
+            padding,
+            left,
+            item;
+        containerNode.setStyle(POSITION, "absolute");
+        textField.setStyle(POSITION, "absolute");
+        textField.setStyles(labelStyles);
+        textField.appendChild(DOCUMENT.createTextNode(text));
+        containerNode.appendChild(textField);
+        node.appendChild(containerNode);
+        dimension = textField.get("offsetHeight");
+        padding = dimension - h;
+        left = w + padding;
+        textField.setStyle("left", left + PX);
+        containerNode.setStyle("height", dimension + PX);
+        containerNode.setStyle("width", (left + textField.get("offsetWidth")) + PX);
+        shape = new shapeClass({
+            fill: fill,
+            stroke: stroke,
+            width: w,
+            height: h,
+            x: padding * 0.5,
+            y: padding * 0.5,
+            w: w,
+            h: h,
+            graphic: containerNode
+        });
+        textField.setStyle("left", dimension + PX);
+        item = {
+            node: containerNode,
+            width: containerNode.get("offsetWidth"),
+            height: containerNode.get("offsetHeight"),
+            shape: shape,
+            textNode: textField,
+            text: text
+        };
+        this._items.push(item);
+        return item;
+    },
+
+    /**
+     * Evaluates and returns correct class for drawing a shape.
+     *
+     * @method _getShapeClass
+     * @return Shape
+     * @private
+     */
+    _getShapeClass: function()
+    {   
+        var graphic = this.get("background").get("graphic");
+        return graphic._getShapeClass.apply(graphic, arguments);
+    },
+
+    /**
+     * Returns the default hash for the `styles` attribute.
+     *
+     * @method _getDefaultStyles
+     * @return Object
+     * @protected
+     */
+    _getDefaultStyles: function()
+    {
+        var styles = { 
+            padding: {
+                top: 5,
+                right: 5,
+                bottom: 5,
+                left: 5
+            },
+            gap: 5,
+            horizontalGap: 4,
+            verticalGap: 4,
+            hAlign: "center",
+            vAlign: "middle",
+            marker: this._getPlotDefaults(),
+            label: {
+                color:"#808080",
+                alpha: 1,
+                fontSize:"85%"
+            },
+            background: {
+                shape: "rect",
+                fill:{
+                    color:"#faf9f2"
+                },
+                stroke: {
+                    color:"#dad8c9",
+                    weight: 1
+                }
+            }
+        };
+        return styles;
+    },
+
+    /**
+     * Gets the default values for series that use the utility. This method is used by
+     * the class' `styles` attribute's getter to get build default values.
+     *
+     * @method _getPlotDefaults
+     * @return Object
+     * @protected
+     */
+    _getPlotDefaults: function()
+    {
+        var defs = {
+            width: 10,
+            height: 10
+        };
+        return defs;
+    },
+
+    /**
+     * Destroys legend items.
+     *
+     * @method _destroyLegendItems
+     * @private
+     */
+    _destroyLegendItems: function()
+    {
+        var item;
+        if(this._items)
+        {
+            while(this._items.length > 0)
+            {
+                item = this._items.shift();
+                item.shape.get("graphic").destroy();
+                item.node.empty();
+                item.node.remove(true);
+                item = null;
+            }
+        }
+        this._items = [];
+    },
+
+    /**
+     * Maps layout classes.
+     *
+     * @property _layout
+     * @private
+     */
+    _layout: {
+        vertical: VerticalLegendLayout,
+        horizontal: HorizontalLegendLayout
+    },
+
+    /**
+     * Destructor implementation ChartLegend class. Removes all items and the Graphic instance from the widget.
+     *
+     * @method destructor
+     * @protected
+     */
+    destructor: function()
+    {
+        var graphic = this.get("graphic");
+        this._destroyLegendItems();
+        if(graphic)
+        {
+            graphic.destroy();
+        }
+    }
+}, {
+    ATTRS: {
+        /**
+         * Indicates whether the chart's contentBox is the parentNode for the legend.
+         *
+         * @attribute includeInChartLayout
+         * @type Boolean
+         * @private
+         */
+        includeInChartLayout: {
+            value: false
+        },
+
+        /**
+         * Reference to the `Chart` instance.
+         *
+         * @attribute chart
+         * @type Chart
+         */
+        chart: {},
+
+        /**
+         * An array of series to be represented by the legend instance. By default, the value is the same as the `Chart's` `seriesCollection`
+         * attribute. If the `seriesKeys` attribute has been explicitly set, the `seriesCollection` will be defined by it.
+         *
+         * @attribute seriesCollection
+         * @type Array
+         */
+        seriesCollection: {},
+
+        /**
+         * Indicates the direction in relation of the legend's layout. 
+         *
+         * @attribute direction
+         * @type String
+         */
+        direction: {
+            value: "vertical"
+        },
+       
+        /**
+         * Indicates the position and direction of the legend. Possible values are `left`, `top`, `right` and `bottom`. 
+         *
+         * @attribute position
+         * @type String
+         */
+        position: {
+            lazyAdd: false,
+
+            value: "right",
+
+            setter: function(val)
+            {
+                if(val == TOP || val == BOTTOM)
+                {
+                    this.set("direction", HORIZONTAL);
+                }
+                else if(val == LEFT || val == RIGHT)
+                {
+                    this.set("direction", VERTICAL);
+                }
+                return val;
+            }
+        },
+ 
+        /**
+         * The width of the legend. Depending on the implementation of the ChartLegend, this value is `readOnly`. By default, the legend is included in the layout of the `Chart` that 
+         * it references. Under this circumstance, `width` is always `readOnly`. When the legend is rendered in its own dom element, the `readOnly` status is determined by the 
+         * direction of the legend. If the `position` is `left` or `right` or the `direction` is `vertical`, width is `readOnly`. If the position is `top` or `bottom` or the `direction`
+         * is `horizontal`, width can be explicitly set. If width is not explicitly set, the width will be determined by the width of the legend's parent element.
+         *
+         * @attribute width
+         * @type Number
+         */
+        width: {
+            getter: function()
+            {
+                var chart = this.get("chart"),
+                    parentNode = this._parentNode;
+                if(parentNode && ((chart && this.get("includeInChartLayout")) || this._width))
+                {
+                    if(!this._width)
+                    {
+                        this._width = 0;
+                    }
+                    return this._width;
+                }
+                else
+                {
+                    return parentNode.get("offsetWidth");
+                }
+            },
+
+            setter: function(val)
+            {
+                this._width = val;
+                return val;
+            }
+        },
+
+        /**
+         * The height of the legend. Depending on the implementation of the ChartLegend, this value is `readOnly`. By default, the legend is included in the layout of the `Chart` that 
+         * it references. Under this circumstance, `height` is always `readOnly`. When the legend is rendered in its own dom element, the `readOnly` status is determined by the 
+         * direction of the legend. If the `position` is `top` or `bottom` or the `direction` is `horizontal`, height is `readOnly`. If the position is `left` or `right` or the `direction`
+         * is `vertical`, height can be explicitly set. If height is not explicitly set, the height will be determined by the width of the legend's parent element.
+         *
+         * @attribute height 
+         * @type Number
+         */
+        height: {
+            getter: function()
+            {
+                var chart = this.get("chart"),
+                    parentNode = this._parentNode;
+                if(parentNode && ((chart && this.get("includeInChartLayout")) || this._height))
+                {
+                    if(!this._height)
+                    {
+                        this._height = 0;
+                    }
+                    return this._height;
+                }
+                else
+                {
+                    return parentNode.get("offsetHeight");
+                }
+            },
+
+            setter: function(val)
+            {
+                this._height = val;
+                return val;
+            }
+        },
+
+        /**
+         * Indicates the x position of legend.
+         *
+         * @attribute x
+         * @type Number
+         * @readOnly
+         */
+        x: {
+            lazyAdd: false,
+
+            value: 0,
+            
+            setter: function(val)
+            {
+                var node = this.get("boundingBox");
+                if(node)
+                {
+                    node.setStyle(LEFT, val + PX);
+                }
+                return val;
+            }
+        },
+
+        /**
+         * Indicates the y position of legend.
+         *
+         * @attribute y
+         * @type Number
+         * @readOnly
+         */
+        y: {
+            lazyAdd: false,
+
+            value: 0,
+            
+            setter: function(val)
+            {
+                var node = this.get("boundingBox");
+                if(node)
+                {
+                    node.setStyle(TOP, val + PX);
+                }
+                return val;
+            }
+        },
+
+        /**
+         * Background for the legend.
+         *
+         * @attribute background
+         * @type Rect
+         */
+        background: {}
+    }
+});
+
+/**
+ * The Chart class is the basic application used to create a chart.
+ *
+ * @module charts
+ * @class Chart
+ * @constructor
+ */
+function LegendChart(cfg)
+{
+    if(cfg.type != "pie")
+    {
+        return new Y.CartesianChartLegend(cfg);
+    }
+    else
+    {
+        return new Y.PieChartLegend(cfg);
+    }
+}
+Y.Chart = LegendChart;
