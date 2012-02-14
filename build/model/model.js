@@ -168,6 +168,20 @@ Y.Model = Y.extend(Model, Y.Base, {
     // -- Protected Properties -------------------------------------------------
 
     /**
+    This tells `Y.Base` that it should create ad-hoc attributes for config
+    properties passed to Model's constructor. This makes it possible to
+    instantiate a model and set a bunch of attributes without having to subclass
+    `Y.Model` and declare all those attributes first.
+
+    @property _allowAdHocAttrs
+    @type Boolean
+    @default true
+    @protected
+    @since 3.5.0
+    **/
+    _allowAdHocAttrs: true,
+
+    /**
     Total hack to allow us to identify Model instances without using
     `instanceof`, which won't work when the instance was created in another
     window or YUI sandbox.
