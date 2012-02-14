@@ -33,7 +33,7 @@ Widget extension that makes it easy to declaratively configure a widget's
 buttons. This adds a `buttons` attribute along with button- accessor and mutator
 methods.
 
-TODO: Add Note about HTML_PARSER feature.
+TODO: Add note about HTML_PARSER feature.
 
 @class WidgetButtons
 @extensionfor Widget
@@ -115,6 +115,7 @@ CSS class-names used by `WidgetButtons`.
 @type Object
 @static
 **/
+// TODO: Should this be `BUTTONS_CLASS_NAMES`?
 WidgetButtons.CLASS_NAMES = {
     button : getClassName('button'),
     buttons: getClassName('widget', 'buttons')
@@ -137,12 +138,9 @@ WidgetButtons.prototype = {
     @property BUTTONS
     @type Object
     @default {}
+    @since 3.5.0
     **/
-    // TODOs:
-    //
-    // * Should this move to Y.Panel, or just CSS styling of it?
-    // * Should this be named `buttons` instead?
-    //
+    // TODO: Should this move to Y.Panel, or just CSS styling of it?
     BUTTONS: {
         close: {
             action: function () {
@@ -175,6 +173,7 @@ WidgetButtons.prototype = {
     @property DEFAULT_BUTTONS_SECTION
     @type String
     @default Y.WidgetStdMod.FOOTER
+    @since 3.5.0
     **/
     // TODO: Should this be documented as protected?
     DEFAULT_BUTTONS_SECTION: Y.WidgetStdMod.FOOTER,
@@ -270,6 +269,7 @@ WidgetButtons.prototype = {
         (header/body/footer) where the button exists. Only applicable when
         looking for a button by numerical index.
     @return {Node} The button node.
+    @since 3.5.0
     **/
     getButton: function (name, section) {
         var buttons;
@@ -289,6 +289,7 @@ WidgetButtons.prototype = {
 
     @method getDefaultButton
     @return {Node} The default button node.
+    @since 3.5.0
     **/
     getDefaultButton: function () {
         return this._defaultButton;
@@ -304,6 +305,7 @@ WidgetButtons.prototype = {
         (header/body/footer) where the button exists. Only applicable when
         removing a button by numerical index.
     @chainable
+    @since 3.5.0
     **/
     removeButton: function (button, section) {
         var buttons = this.get('buttons'),
@@ -647,6 +649,7 @@ WidgetButtons.prototype = {
     @param {Node} button The button node to insert into this widget's DOM.
     @param {String} section The `WidgetStdMod` section (header/body/footer).
     @param {Number} index Index at which the `button` should be positioned.
+    @protected
     **/
     _uiInsertButton: function (button, section, index) {
         var buttonsClassName = WidgetButtons.CLASS_NAMES.button,
