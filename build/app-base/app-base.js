@@ -481,6 +481,30 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     },
 
     /**
+    Getter for the `viewContainer` attribute.
+
+    @method _getViewContainer
+    @param {Node|null} value Current attribute value.
+    @return {Node} View container node.
+    @protected
+    **/
+    _getViewContainer: function (value) {
+        // This wackiness is necessary to enable fully lazy creation of the
+        // container node both when no container is specified and when one is
+        // specified via a valueFn.
+
+        if (!value && !this._viewContainer) {
+            // Create a default container and set that as the new attribute
+            // value. The `this._viewContainer` property prevents infinite
+            // recursion.
+            value = this._viewContainer = this.create();
+            this._set('viewContainer', value);
+        }
+
+        return value;
+    },
+
+    /**
     Provides the default value for the `html5` attribute.
 
     The value returned is dependent on the value of the `serverRouting`
@@ -945,15 +969,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         @initOnly
         **/
         viewContainer: {
-            getter: function (value) {
-                if (!value && !this._viewContainer) {
-                    value = this._viewContainer = this.create();
-                    this._set('viewContainer', value);
-                }
-
-                return value;
-            },
-
+            getter   : '_getViewContainer',
             setter   : Y.one,
             value    : null,
             writeOnce: 'initOnly'
