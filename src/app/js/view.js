@@ -149,6 +149,7 @@ Y.View = Y.extend(View, Y.Base, {
 
     destructor: function () {
         this.detachEvents();
+        delete this._container;
     },
 
     // -- Public Methods -------------------------------------------------------
@@ -286,6 +287,38 @@ Y.View = Y.extend(View, Y.Base, {
         container && container.remove(true);
     },
 
+    /**
+    Getter for the `container` attribute.
+
+    @method _getContainer
+    @param {Node|null} value Current attribute value.
+    @return {Node} Container node.
+    @protected
+    @since 3.5.0
+    **/
+    _getContainer: function (value) {
+        // This wackiness is necessary to enable fully lazy creation of the
+        // container node both when no container is specified and when one is
+        // specified via a valueFn.
+
+        if (!this._container) {
+            if (value) {
+                // Attach events to the container when it's specified via a
+                // valueFn, which won't fire the containerChange event.
+                this._container = value;
+                this.attachEvents();
+            } else {
+                // Create a default container and set that as the new attribute
+                // value. The `this._container` property prevents infinite
+                // recursion.
+                value = this._container = this.create();
+                this._set('container', value);
+            }
+        }
+
+        return value;
+    },
+
     // -- Protected Event Handlers ---------------------------------------------
 
     /**
@@ -334,15 +367,7 @@ Y.View = Y.extend(View, Y.Base, {
         @writeOnce
         **/
         container: {
-            getter: function (value) {
-                if (!value && !this._container) {
-                    value = this._container = this.create();
-                    this._set('container', value);
-                }
-
-                return value;
-            },
-
+            getter   : '_getContainer',
             setter   : Y.one,
             writeOnce: true
         },

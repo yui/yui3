@@ -312,6 +312,9 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     containing the models for which the supplied function returned a truthy
     value.
 
+    The callback function's `this` object will refer to this ModelList. Use
+    `Y.bind()` to bind the `this` object to another object if desired.
+
     @example
 
         // Get an array containing only the models whose "enabled" attribute is
@@ -320,33 +323,54 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
             return model.get('enabled');
         });
 
+        // Get a new ModelList containing only the models whose "enabled"
+        // attribute is truthy.
+        var filteredList = list.filter({asList: true}, function (model) {
+            return model.get('enabled');
+        });
+
     @method filter
+    @param {Object} [options] Filter options.
+        @param {Boolean} [options.asList=false] If truthy, results will be
+            returned as a new ModelList instance rather than as an array.
+
     @param {Function} callback Function to execute on each model.
         @param {Model} callback.model Model instance.
         @param {Number} callback.index Index of the current model.
         @param {ModelList} callback.list The ModelList being filtered.
-    @param {Object} [thisObj] Optional `this` object (defaults to this
-        ModelList instance).
-    @return {Array} Array of models for which the callback function returned a
-        truthy value (empty if it never returned a truthy value).
+
+    @return {Array|ModelList} Array of models for which the callback function
+        returned a truthy value (empty if it never returned a truthy value). If
+        the `options.asList` option is truthy, a new ModelList instance will be
+        returned instead of an array.
     @since 3.5.0
     */
-    filter: function (callback, thisObj) {
+    filter: function (options, callback) {
         var filtered = [],
             items    = this._items,
-            i, item, len;
+            i, item, len, list;
 
-        thisObj || (thisObj = this);
+        // Allow options as first arg.
+        if (typeof options === 'function') {
+            callback = options;
+            options  = {};
+        }
 
         for (i = 0, len = items.length; i < len; ++i) {
             item = items[i];
 
-            if (callback.call(thisObj, item, i, this)) {
+            if (callback.call(this, item, i, this)) {
                 filtered.push(item);
             }
         }
 
-        return filtered;
+        if (options.asList) {
+            list = new Y.ModelList({model: this.model});
+            filtered.length && list.add(filtered, {silent: true});
+            return list;
+        } else {
+            return filtered;
+        }
     },
 
     /**
@@ -643,15 +667,18 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
             }, this);
         }
 
-        // Sort the models before firing the reset event.
-        if (this.comparator) {
-            models.sort(Y.bind(this._sort, this));
-        }
-
         facade.models = models;
 
-        options.silent ? this._defResetFn(facade) :
+        if (options.silent) {
+            this._defResetFn(facade);
+        } else {
+            // Sort the models before firing the reset event.
+            if (this.comparator) {
+                models.sort(Y.bind(this._sort, this));
+            }
+
             this.fire(EVT_RESET, facade);
+        }
 
         return this;
     },
