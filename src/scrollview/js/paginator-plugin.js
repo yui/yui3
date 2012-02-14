@@ -3,6 +3,7 @@
  *
  * @module scrollview-paginator
  */
+
 var UI = (Y.ScrollView) ? Y.ScrollView.UI_SRC : "ui",
     INDEX = "index",
     SCROLL_X = "scrollX",
@@ -96,27 +97,29 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     initializer: function() {
         var host,
             paginator = this; // kweight
+            
         host = paginator._host = paginator.get('host');
         
-        console.log(host._forceHWTransforms);
+        /*--*/
         if (host._forceHWTransforms) {
             var cb = host.get(CONTENT_BOX);
-            this.nodeList = host.get(CONTENT_BOX).all(this.get("selector"));
+            var MAX_SLIDE_COUNT = 3;
+            var currentIndex = 0;
+            this.previousIndex = currentIndex;
+            this.slideNodes = host.get(CONTENT_BOX).all(this.get("selector"));
             cb.empty(true);
-            cb.append(this.nodeList.item(0));
-            cb.append(this.nodeList.item(1));
-            cb.append(this.nodeList.item(2));
-            cb.append(this.nodeList.item(3));
-            console.log("enable hw accel");
+            // Now, fill it with the first set of items
+            for (var i=0; i < MAX_SLIDE_COUNT; i++) {
+                cb.append(this.slideNodes.item(currentIndex + i));
+            }
         }
-                
+        /*--*/
+        
         paginator.beforeHostMethod('_flickFrame', paginator._flickFrame);
         paginator.afterHostMethod('_uiDimensionsChange', paginator._calcOffsets);
         paginator.afterHostEvent('scrollEnd', paginator._scrollEnded);
         paginator.afterHostEvent('render', paginator._afterRender);
-
         paginator.after('indexChange', paginator._afterIndexChange);
-
     },
 
     /**
@@ -195,7 +198,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
              pageCount = this.get(TOTAL),
              trans = PaginatorPlugin.SNAP_TO_CURRENT;
 
-
          if(e.onGestureMoveEnd && !host._flicking) {
              if(host._scrolledHalfway) {
                  if(host._scrolledForward && pageIndex < pageCount-1) {
@@ -209,24 +211,60 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
                  this.snapToCurrent(trans.duration, trans.easing);
              }
          }
-
+         
          host._flicking = false;
+         if (e.details.length === 0){
+             this.blah(e);
+         }
+         
      },
 
+     blah: function(e){
+         var newSlide, addSlideMethod, nodeToRemove, 
+             host = this.get('host'),
+             cb = host.get(CONTENT_BOX),
+             currentIndex = this.get(INDEX),
+             previousIndex = this.previousIndex,
+             isForward = (previousIndex < currentIndex) ? true : false,
+             cbChildren = cb.get('children'),
+             slideNodes = this.slideNodes;
+             
+         if (isForward) {
+             newSlide = slideNodes.item(currentIndex+1);
+             addSlideMethod = cb.append;
+         }
+         else {
+             newSlide = slideNodes.item(currentIndex-1);
+             addSlideMethod = cb.prepend;
+         }
+         
+         // Append/Prepend the new item to the DOM
+         if (cbChildren.indexOf(newSlide) === -1) {
+             addSlideMethod.call(cb, newSlide);
+         }
+         
+         // Since we modified the DOM, get an updated reference
+         cbChildren = cb.get('children');
+
+         // Are we over the max number of items allowed?
+         if (cbChildren.size() > 3) {
+             nodeToRemove = (isForward) ? cb.one('li:first-of-type') : cb.one('li:last-of-type');
+             nodeToRemove.remove();
+             
+             this.scrollTo(1, 1000);
+             host.syncUI();
+         }
+//         this._calcOffsets();
+         this.previousIndex = currentIndex;
+     },
+     
     /**
      * index attr change handler
      *
      * @method _afterIndexChange
      * @protected
      */
-    _afterIndexChange: function(e) { 
-         var host = this._host,
-             cb = host.get(CONTENT_BOX),
-             index = this.get(INDEX);
-             console.log(this.nodeList);
-             console.log(this.get(INDEX));
-     cb.append(this.nodeList.item(this.get(INDEX)+2));
-     this._calcOffsets();
+    _afterIndexChange: function(e) {
         if(e.src !== UI) {
             this._uiIndex(e.newVal);
         }
@@ -275,11 +313,12 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @param easing {String} The timing function to use in the animation
      */
     scrollTo: function(index, duration, easing) {
+        
         var host = this._host,
             vert = host._scrollsVertical,
             scrollAxis = (vert) ? SCROLL_Y : SCROLL_X, 
             scrollVal = this._pgOff[index];
-
+            
         host.set(scrollAxis, scrollVal, {
             duration: duration,
             easing: easing
@@ -296,7 +335,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     snapToCurrent: function(duration, easing) {
         var host = this._host,
             vert = host._scrollsVertical;
-
         host._killTimer();
 
         host.set((vert) ? SCROLL_Y : SCROLL_X, this._pgOff[this.get(INDEX)], {
