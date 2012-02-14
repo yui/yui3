@@ -4,6 +4,30 @@ YUI.add('nodelist-test', function(Y) {
 
     Y.Test.Runner.add(new Y.Test.Case({
         name: 'Y.all',
+        // TODO: move to nodelist-event
+        'should fire the handler once': function() {
+            var i = 0,
+                test = this,
+                nodelist = Y.all('body');
+
+            nodelist.once('click', function() {
+                i++;
+                Assert.areEqual(1, i);
+            });
+
+            nodelist.item(0).simulate('click');
+            nodelist.item(0).simulate('click');
+
+            i = 0;
+            nodelist.onceAfter('click', function () {
+                i++;
+                Assert.areEqual(1, i);
+            });
+
+            nodelist.item(0).simulate('click');
+            nodelist.item(0).simulate('click');
+        },
+
         'should return a NodeList of size zero from empty string': function() {
             Assert.areEqual(0, Y.all('').size());
             Assert.areEqual(0, Y.all('')._nodes.length);
@@ -144,6 +168,102 @@ YUI.add('nodelist-test', function(Y) {
 
         'should return -1 from indexOf for node not in nodelist': function() {
             Assert.areEqual(-1, Y.all('div').indexOf(Y.one('#test-form')));
+        },
+
+        'should pop the nodelist': function() {
+            var nodes = Y.all('div'),
+                node = nodes.pop();
+            
+            Assert.areEqual(Y.all('div').item(Y.all('div').size() - 1), node);
+            Assert.areEqual(Y.all('div').size() - 1, nodes.size());
+        },
+
+        'should shift the nodelist': function() {
+            var nodes = Y.all('div'),
+                node = nodes.shift();
+            
+            Assert.areEqual(Y.one('div'), node);
+            Assert.areEqual(Y.all('div').size() - 1, nodes.size());
+        },
+
+        'should push the node on nodelist': function() {
+            var nodes = Y.all('div'),
+                node = Y.one(document.createElement('div'));
+            
+            Assert.areEqual(nodes.size() + 1, nodes.push(node));
+            Assert.areEqual(nodes.item(nodes.size() - 1), node);
+            Assert.areEqual(node._node, nodes._nodes[nodes.size() - 1]);
+        },
+
+        'should unshift the node on nodelist': function() {
+            var nodes = Y.all('div'),
+                size = nodes.size(),
+                node = Y.one(document.createElement('div'));
+            
+            nodes.unshift(node);
+            Assert.areEqual(size + 1, nodes.size());
+            Assert.areEqual(nodes.item(0), node);
+            Assert.areEqual(node._node, nodes._nodes[0]);
+        },
+
+        'should unshift the dom node on nodelist': function() {
+            var nodes = Y.all('div'),
+                size = nodes.size(),
+                node = document.createElement('div');
+            
+            nodes.unshift(node);
+            Assert.areEqual(size + 1, nodes.size());
+            Assert.areEqual(nodes.item(0), Y.one(node));
+            Assert.areEqual(node, nodes._nodes[0]);
+        },
+
+        'should concat the nodelists': function() {
+            var nodelist1 = Y.all('div'),
+                nodelist2 = Y.all('li'),
+                nodelist3 = nodelist1.concat(nodelist2);
+            
+            ArrayAssert.itemsAreEqual(nodelist1._nodes.concat(nodelist2._nodes), nodelist3._nodes);
+        },
+
+        'should concat the nodes': function() {
+            var nodelist1 = Y.all('div');
+                nodelist2 = nodelist1.concat(Y.one('ul'), Y.one('li'));
+            
+            ArrayAssert.itemsAreEqual(nodelist1._nodes.concat(Y.one('ul')._node, Y.one('li')._node), nodelist2._nodes);
+        },
+
+        'should return nodelist from empty concat': function() {
+            var nodelist = Y.Node.create('<div></div>').get('childNodes');
+            ArrayAssert.itemsAreEqual([], nodelist.concat()._nodes);
+        },
+
+        'should return nodelist from empty slice': function() {
+            var nodelist = Y.Node.create('<div></div>').get('childNodes');
+            ArrayAssert.itemsAreEqual([], nodelist.slice()._nodes);
+        },
+
+        'should return nodelist from empty splice': function() {
+            var nodelist = Y.Node.create('<div></div>').get('childNodes');
+            ArrayAssert.itemsAreEqual([], nodelist.splice()._nodes);
+        },
+
+        'should slice the nodes': function() {
+            var nodelist1 = Y.all('div');
+                nodelist2 = nodelist1.slice(1, 4);
+                nodelist3 = nodelist1.slice(0, 3);
+            
+            ArrayAssert.itemsAreEqual(nodelist1._nodes.slice(1, 4), nodelist2._nodes);
+            ArrayAssert.itemsAreEqual(nodelist1._nodes.slice(0, 3), nodelist3._nodes);
+        },
+
+        'should splice the nodes': function() {
+            var nodelist1 = Y.all('div'),
+                nodes = Y.all('div')._nodes,
+                spliced1 = nodes.splice(1, 2),
+                spliced2 = nodelist1.splice(1, 2)._nodes;
+
+            ArrayAssert.itemsAreEqual(nodes, nodelist1._nodes);
+            ArrayAssert.itemsAreEqual(spliced1, spliced2);
         }
     }));
 }, '@VERSION@' ,{requires:['node-base']});
