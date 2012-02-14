@@ -756,7 +756,16 @@ Y.mix(Scrollable.prototype, {
     **/
     //_yScrollNode
 
-    // TODO: Add _xScrollNode
+    /**
+    Overflow Node used to contain the table headers and data in a horizontally
+    scrolling table.
+
+    @property _xScrollNode
+    @type {Node}
+    @default undefined (not initially set)
+    @protected
+    **/
+    //_xScrollNode
 }, true);
 
 Y.Base.mix(Y.DataTable, [Scrollable]);

@@ -610,6 +610,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "datatable-body", 
             "datatable-base", 
             "datatable-column-widths", 
+            "datatable-message", 
             "datatable-mutable", 
             "datatable-scroll", 
             "datatable-datasource", 
@@ -658,6 +659,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "view", 
             "classnamemanager"
         ]
+    }, 
+    "datatable-message": {
+        "lang": [
+            "en"
+        ], 
+        "requires": [
+            "datatable-base"
+        ], 
+        "skinnable": true
     }, 
     "datatable-mutable": {
         "requires": [
@@ -867,7 +877,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "condition": {
             "name": "dd-gestures", 
             "test": function(Y) {
-    return (Y.config.win && ('ontouchstart' in Y.config.win && !Y.UA.chrome));
+    return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
 }, 
             "trigger": "dd-drag"
         }, 
@@ -1091,6 +1101,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "node-base"
         ]
     }, 
+    "event-contextmenu": {
+        "requires": [
+            "event-synthetic", 
+            "dom-screen"
+        ]
+    }, 
     "event-custom": {
         "use": [
             "event-custom-base", 
@@ -1202,12 +1218,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "file": {
         "requires": [
-            "base"
-        ]
-    }, 
-    "filelist": {
-        "requires": [
-            "file", 
             "base"
         ]
     }, 
@@ -2268,7 +2278,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '1cab8b7f30e8353fcfa963884e842e30';
+YUI.Env[Y.version].md5 = 'd70dbaf27c1c1672482ca87e801fc233';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

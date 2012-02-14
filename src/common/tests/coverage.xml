@@ -86,6 +86,7 @@
         <url>event/tests/dom.html</url>
         <url>event/tests/delegate.html</url>
         <url>event/tests/event-resize.html</url>
+        <url>event/tests/event-contextmenu.html</url>
         <url>event/tests/event-key.html</url>
         <url>event/tests/event-synthetic.html</url>
         <url>event/tests/focusblur.html</url>
@@ -109,6 +110,7 @@
         <url>pjax/tests/pjax.html</url>
         <url>pluginhost/tests/plugins.html</url>
         <url>slider/tests/slider.html</url>
+        <url>sortable/tests/index.html</url>
         <url>test/tests/arrayassert.html</url>
         <url>test/tests/mock.html</url>
         <url>test/tests/objectassert.html</url>

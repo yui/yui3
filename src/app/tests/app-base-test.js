@@ -125,7 +125,7 @@ appBaseSuite.add(new Y.Test.Case({
         Assert.areSame(app.views.home.preserve, MyApp.prototype.views.home.preserve);
     },
 
-    'Destroying an app should destroy its `container` and `viewContainer`': function () {
+    'Destroying an app with `{remove: true}` should destroy its `container` and `viewContainer`': function () {
         var container     = Y.Node.create('<div/>'),
             viewContainer = Y.Node.create('<div/>'),
             app;
@@ -145,7 +145,7 @@ appBaseSuite.add(new Y.Test.Case({
         Assert.isTrue(Y.one('body').contains(viewContainer));
         Assert.isTrue(container.contains(viewContainer));
 
-        app.destroy();
+        app.destroy({remove: true});
 
         Assert.isFalse(Y.one('body').contains(container));
         Assert.isFalse(container.inDoc(Y.config.doc));
@@ -154,14 +154,14 @@ appBaseSuite.add(new Y.Test.Case({
         Assert.isFalse(viewContainer.inDoc(Y.config.doc));
     },
 
-    'Destorying an app with the `<body>` for a container should only remove its CSS classes, not the body from the DOM': function () {
+    'Destroying an app with `{remove: true}` with the `<body>` for a container should only remove its CSS classes, not the body from the DOM': function () {
         var app = this.app = new Y.App({
             container    : 'body',
             viewContainer: 'body'
         });
 
         app.render();
-        app.destroy();
+        app.destroy({remove: true});
 
         Assert.isTrue(Y.one('body').compareTo(app.get('container')));
         Assert.isTrue(Y.one('body').inDoc(Y.config.doc));
@@ -182,7 +182,7 @@ appBaseSuite.add(new Y.Test.Case({
         Y.Router.html5 = this.html5;
         delete this.html5;
 
-        this.app && this.app.destroy();
+        this.app && this.app.destroy({remove: true});
         delete this.app;
     },
 
@@ -220,11 +220,13 @@ appBaseSuite.add(new Y.Test.Case({
 
     '`container` should be stamped with the App CSS class': function () {
         var app = this.app = new Y.App();
+        app.render();
         Assert.isTrue(app.get('container').hasClass(Y.App.Base.CSS_CLASS));
     },
 
-    '`viewContainer` should be stamped with the App Views CSS class': function () {
+    '`viewContainer` should be stamped with the App Views CSS class when the app is rendered': function () {
         var app = this.app = new Y.App();
+        app.render();
         Assert.isTrue(app.get('viewContainer').hasClass(Y.App.Base.VIEWS_CSS_CLASS));
     },
 
@@ -367,22 +369,6 @@ appBaseSuite.add(new Y.Test.Case({
     tearDown: function () {
         this.app && this.app.destroy();
         delete this.app;
-    },
-
-    '`create()` should return a `Y.Node` instance stamped with the `Y.App` CSS class': function () {
-        var app       = this.app = new Y.App(),
-            container = app.create(Y.Node.create('<div/>'));
-
-        Assert.isInstanceOf(Y.Node, container);
-        Assert.isTrue(container.hasClass(Y.App.Base.CSS_CLASS));
-    },
-
-    '`createViewContainer()` should return a `Y.Node` instance stamped with the `Y.App` Views CSS class': function () {
-        var app       = this.app = new Y.App(),
-            container = app.createViewContainer(Y.Node.create('<div/>'));
-
-        Assert.isInstanceOf(Y.Node, container, 'Should be a `Y.Node` instance');
-        Assert.isTrue(container.hasClass(Y.App.Base.VIEWS_CSS_CLASS));
     },
 
     '`createView()` should always return a new `Y.View` instance': function () {

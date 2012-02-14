@@ -905,6 +905,86 @@ YUI.add('loader-tests', function(Y) {
             Assert.areEqual(2, out.js.length, 'Too many JS files returned');
             Assert.areEqual(out.js[0], 'http://ryancannon.com/bugs/fullpath/fullpath.js', 'Failed to return proper full path url');
             Assert.areEqual(out.js[1], 'http://my.combo.server.com/?yui-base/yui-base-min.js&oop/oop-min.js', 'Failed to return proper full path url');
+        },
+        test_load: function() {
+            var test = this;
+
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                modules: {
+                    loadmod: {
+                        attributes: {
+                            id: 'loadmod-test'
+                        },
+                        fullpath: './assets/mod.js'
+                    }
+                },
+                require: ['loadmod']
+            });
+            loader.load(function() {
+                test.resume(function() {
+                    Assert.isNotNull(Y.one('#loadmod-test'), 'Failed to load module');
+                });
+            });
+            
+            test.wait();
+        },
+        test_async: function() {
+            var test = this;
+
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                modules: {
+                    loadmod2: {
+                        async: false,
+                        attributes: {
+                            id: 'loadmod-test2'
+                        },
+                        fullpath: './assets/mod.js'
+                    },
+                    loadmod3: {
+                        async: false,
+                        attributes: {
+                            id: 'loadmod-test3'
+                        },
+                        fullpath: './assets/mod.js'
+                    },
+                    loadmod4: {
+                        async: true,
+                        attributes: {
+                            id: 'loadmod-test4'
+                        },
+                        fullpath: './assets/mod.js'
+                    }
+                },
+                require: ['loadmod3', 'loadmod2', 'loadmod4']
+            });
+            loader.load(function() {
+                test.resume(function() {
+                    var node1 = Y.one('#loadmod-test2').getDOMNode(),
+                        node2 = Y.one('#loadmod-test3').getDOMNode(),
+                        node3 = Y.one('#loadmod-test4').getDOMNode();
+
+                    Assert.isNotNull(node1, 'Failed to load module 1');
+                    Assert.isNotNull(node2, 'Failed to load module 2');
+                    Assert.isNotNull(node3, 'Failed to load module 3');
+
+                    if (Y.Get._env.async) {
+                        //This browser supports the async property, check it
+                        Assert.isFalse(node1.async, 'Async flag on node1 was set incorrectly');
+                        Assert.isFalse(node2.async, 'Async flag on node2 was set incorrectly');
+                        Assert.isTrue(node3.async, 'Async flag on node3 was set incorrectly');
+                    } else {
+                        //The async attribute is still
+                        Assert.isNull(node1.getAttribute('async'), 'Async flag on node1 was set incorrectly');
+                        Assert.isNull(node2.getAttribute('async'), 'Async flag on node2 was set incorrectly');
+                        Assert.isNotNull(node3.getAttribute('async'), 'Async flag on node3 was set incorrectly');
+                    }
+                });
+            });
+            
+            test.wait();
+            
         }
     });
 

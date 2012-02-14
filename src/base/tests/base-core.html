@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-    <title>Attribute Core Tests</title>
+    <title>Base Core Tests</title>
 
     <script type="text/javascript" src="../../../build/yui/yui.js"></script>
 
@@ -449,6 +449,51 @@
 
                     h.set("AdHoc", "TestAdHocConfigured");
                     Y.Assert.areEqual("TESTADHOCCONFIGURED", h.get("AdHoc"));
+                },
+
+                testAdHocConstructorEnabled : function() {
+                    AttrHost.prototype._allowAdHocAttrs = true;
+        
+                    var h = this.createHost({
+                        A: "MyAVal",
+                        foo: "foo",
+                        bar: "bar",
+                        plugins : ["not"]
+                    });
+        
+                    AttrHost.prototype._allowAdHocAttrs = false;
+        
+                    // Only add AdHoc Attrs       
+                    Y.Assert.areEqual("foo", h.get("foo")); 
+                    Y.Assert.areEqual("bar", h.get("bar"));
+                    
+                    // Configured Attrs
+                    Y.Assert.areEqual("DVal", h.get("D"));
+                    Y.Assert.areEqual("MyAVal", h.get("A"));
+                    
+                    // Not _NON_ATTRS_CFG
+                    Y.Assert.isUndefined(h.get("plugins"));
+                },
+                        
+                testAdHocConstructorDisabled : function() {
+        
+                    var h = this.createHost({
+                        A: "MyAVal",
+                        foo: "foo",
+                        bar: "bar",
+                        plugins : ["not"]
+                    });
+        
+                    // Only add AdHoc Attrs       
+                    Y.Assert.areEqual(undefined, h.get("foo")); 
+                    Y.Assert.areEqual(undefined, h.get("bar"));
+                    
+                    // Configured attributes
+                    Y.Assert.areEqual("DVal", h.get("D"));
+                    Y.Assert.areEqual("MyAVal", h.get("A"));
+        
+                    // Not _NON_ATTRS_CFG
+                    Y.Assert.isUndefined(h.get("plugins"));
                 },
 
                 testMassSetGet : function() {

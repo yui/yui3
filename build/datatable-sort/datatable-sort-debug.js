@@ -87,7 +87,8 @@ var YLang     = Y.Lang,
     isArray   = YLang.isArray,
     isObject  = YLang.isObject,
 
-    toArray     = Y.Array,
+    toArray = Y.Array,
+    sub     = YLang.sub,
 
     dirMap = {
         asc : 1,
@@ -156,11 +157,7 @@ Sortable.ATTRS = {
     @type {Object}
     @default (strings for current lang configured in the YUI instance config)
     **/
-    strings: {
-        valueFn: function () {
-            return Y.Intl.get('datatable-sort');
-        }
-    }
+    strings: {}
 };
 
 Y.mix(Sortable.prototype, {
@@ -196,6 +193,16 @@ Y.mix(Sortable.prototype, {
             sortBy: fields || this.get('sortBy')
         }));
     },
+
+    /**
+    Template for the node that will wrap the header content for sortable
+    columns.
+
+    @property SORTABLE_HEADER_TEMPLATE
+    @type {HTML}
+    @value '<div class="{className}" title="{title}" role="button"></div>'
+    **/
+    SORTABLE_HEADER_TEMPLATE: '<div class="{className}" title="{title}" role="button"></div>',
 
     /**
     Reverse the current sort direction of one or more fields currently being
@@ -426,6 +433,8 @@ Y.mix(Sortable.prototype, {
 
         this._initSortFn();
 
+        this._initSortStrings();
+
         this.after({
             renderHeader  : Y.bind('_renderSortable', this),
             dataChange    : Y.bind('_afterSortDataChange', this),
@@ -488,6 +497,18 @@ Y.mix(Sortable.prototype, {
             // up again.  Mistake?
             delete this.data.comparator;
         }
+    },
+
+    /**
+    Add the sort related strings to the `strings` map.
+    
+    @method _initSortStrings
+    @protected
+    **/
+    _initSortStrings: function () {
+        // Not a valueFn because other class extensions will want to add to it
+        this.set('strings', Y.mix((this.get('strings') || {}), 
+            Y.Intl.get('datatable-sort')));
     },
 
     /**
@@ -698,7 +719,7 @@ Y.mix(Sortable.prototype, {
             ascClass      = this.getClassName('sorted'),
             descClass     = this.getClassName('sorted', 'desc'),
             linerClass    = this.getClassName('sort', 'liner'),
-            i, len, col, node, content;
+            i, len, col, node, content, title;
 
         this.get('boundingBox').toggleClass(
             this.getClassName('sortable'),
@@ -731,7 +752,16 @@ Y.mix(Sortable.prototype, {
                     }
                 }
 
-                Y.Node.create('<div class="' + linerClass + '"></div>')
+                title = sub(this.getString(
+                    (col.sortDir === 1) ? 'reverseSortBy' : 'sortBy'), {
+                        column: col.abbr || col.label ||
+                                col.key  || ('column ' + i)
+                });
+
+                Y.Node.create(Y.Lang.sub(this.SORTABLE_HEADER_TEMPLATE, {
+                        className: linerClass,
+                        title    : title
+                    }))
                     .append(node.get('childNodes').toFrag())
                     .appendTo(node);
             }
@@ -772,4 +802,4 @@ Y.DataTable.Sortable = Sortable;
 Y.Base.mix(Y.DataTable, [Sortable]);
 
 
-}, '@VERSION@' ,{lang:['en'], requires:['datatable-base']});
+}, '@VERSION@' ,{requires:['datatable-base'], lang:['en']});

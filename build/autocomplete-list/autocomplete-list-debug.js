@@ -1,22 +1,23 @@
 YUI.add('autocomplete-list', function(Y) {
 
 /**
- * Traditional autocomplete dropdown list widget, just like Mom used to make.
- *
- * @submodule autocomplete-list
- */
+Traditional autocomplete dropdown list widget, just like Mom used to make.
+
+@module autocomplete
+@submodule autocomplete-list
+**/
 
 /**
- * Traditional autocomplete dropdown list widget, just like Mom used to make.
- *
- * @class AutoCompleteList
- * @extends Widget
- * @uses AutoCompleteBase
- * @uses WidgetPosition
- * @uses WidgetPositionAlign
- * @constructor
- * @param {Object} config Configuration object.
- */
+Traditional autocomplete dropdown list widget, just like Mom used to make.
+
+@class AutoCompleteList
+@extends Widget
+@uses AutoCompleteBase
+@uses WidgetPosition
+@uses WidgetPositionAlign
+@constructor
+@param {Object} config Configuration object.
+**/
 
 var Lang   = Y.Lang,
     Node   = Y.Node,
@@ -82,27 +83,14 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         this[_SELECTOR_ITEM]     = '.' + this[_CLASS_ITEM];
 
         /**
-         * Fires when an autocomplete suggestion is selected from the list,
-         * typically via a keyboard action or mouse click.
-         *
-         * @event select
-         * @param {EventFacade} e Event facade with the following additional
-         *   properties:
-         *
-         * <dl>
-         *   <dt>itemNode (Node)</dt>
-         *   <dd>
-         *     List item node that was selected.
-         *   </dd>
-         *
-         *   <dt>result (Object)</dt>
-         *   <dd>
-         *     AutoComplete result object.
-         *   </dd>
-         * </dl>
-         *
-         * @preventable _defSelectFn
-         */
+        Fires when an autocomplete suggestion is selected from the list,
+        typically via a keyboard action or mouse click.
+
+        @event select
+        @param {Node} itemNode List item node that was selected.
+        @param {Object} result AutoComplete result object.
+        @preventable _defSelectFn
+        **/
         this.publish(EVT_SELECT, {
             defaultFn: this._defSelectFn
         });
@@ -169,27 +157,26 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     // -- Public Prototype Methods ---------------------------------------------
 
     /**
-     * Hides the list, unless the <code>alwaysShowList</code> attribute is
-     * <code>true</code>.
-     *
-     * @method hide
-     * @see show
-     * @chainable
-     */
+    Hides the list, unless the `alwaysShowList` attribute is `true`.
+
+    @method hide
+    @see show
+    @chainable
+    **/
     hide: function () {
         return this.get(ALWAYS_SHOW_LIST) ? this : this.set(VISIBLE, false);
     },
 
     /**
-     * Selects the specified <i>itemNode</i>, or the current
-     * <code>activeItem</code> if <i>itemNode</i> is not specified.
-     *
-     * @method selectItem
-     * @param {Node} itemNode (optional) Item node to select.
-     * @param {EventFacade} originEvent (optional) Event that triggered the
-     *     selection, if any.
-     * @chainable
-     */
+    Selects the specified _itemNode_, or the current `activeItem` if _itemNode_
+    is not specified.
+
+    @method selectItem
+    @param {Node} [itemNode] Item node to select.
+    @param {EventFacade} [originEvent] Event that triggered the selection, if
+        any.
+    @chainable
+    **/
     selectItem: function (itemNode, originEvent) {
         if (itemNode) {
             if (!itemNode.hasClass(this[_CLASS_ITEM])) {
@@ -215,14 +202,14 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     // -- Protected Prototype Methods ------------------------------------------
 
     /**
-     * Activates the next item after the currently active item. If there is no
-     * next item and the <code>circular</code> attribute is <code>true</code>,
-     * focus will wrap back to the input node.
-     *
-     * @method _activateNextItem
-     * @chainable
-     * @protected
-     */
+    Activates the next item after the currently active item. If there is no next
+    item and the `circular` attribute is `true`, focus will wrap back to the
+    input node.
+
+    @method _activateNextItem
+    @chainable
+    @protected
+    **/
     _activateNextItem: function () {
         var item = this.get(ACTIVE_ITEM),
             nextItem;
@@ -240,14 +227,14 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
-     * Activates the item previous to the currently active item. If there is no
-     * previous item and the <code>circular</code> attribute is
-     * <code>true</code>, focus will wrap back to the input node.
-     *
-     * @method _activatePrevItem
-     * @chainable
-     * @protected
-     */
+    Activates the item previous to the currently active item. If there is no
+    previous item and the `circular` attribute is `true`, focus will wrap back
+    to the input node.
+
+    @method _activatePrevItem
+    @chainable
+    @protected
+    **/
     _activatePrevItem: function () {
         var item     = this.get(ACTIVE_ITEM),
             prevItem = item ? item.previous(this[_SELECTOR_ITEM]) :
@@ -259,15 +246,14 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
-     * Appends the specified result <i>items</i> to the list inside a new item
-     * node.
-     *
-     * @method _add
-     * @param {Array|Node|HTMLElement|String} items Result item or array of
-     *   result items.
-     * @return {NodeList} Added nodes.
-     * @protected
-     */
+    Appends the specified result _items_ to the list inside a new item node.
+
+    @method _add
+    @param {Array|Node|HTMLElement|String} items Result item or array of
+        result items.
+    @return {NodeList} Added nodes.
+    @protected
+    **/
     _add: function (items) {
         var itemNodes = [];
 
@@ -282,26 +268,25 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
-     * Updates the ARIA live region with the specified message.
-     *
-     * @method _ariaSay
-     * @param {String} stringId String id (from the <code>strings</code>
-     *   attribute) of the message to speak.
-     * @param {Object} subs (optional) Substitutions for placeholders in the
-     *   string.
-     * @protected
-     */
+    Updates the ARIA live region with the specified message.
+
+    @method _ariaSay
+    @param {String} stringId String id (from the `strings` attribute) of the
+        message to speak.
+    @param {Object} [subs] Substitutions for placeholders in the string.
+    @protected
+    **/
     _ariaSay: function (stringId, subs) {
         var message = this.get('strings.' + stringId);
         this._ariaNode.setContent(subs ? Lang.sub(message, subs) : message);
     },
 
     /**
-     * Binds <code>inputNode</code> events and behavior.
-     *
-     * @method _bindInput
-     * @protected
-     */
+    Binds `inputNode` events and behavior.
+
+    @method _bindInput
+    @protected
+    **/
     _bindInput: function () {
         var inputNode = this._inputNode,
             alignNode, alignWidth, tokenInput;
@@ -336,11 +321,11 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
-     * Binds list events.
-     *
-     * @method _bindList
-     * @protected
-     */
+    Binds list events.
+
+    @method _bindList
+    @protected
+    **/
     _bindList: function () {
         this._listEvents.concat([
             Y.on('windowresize', this._syncPosition, this),
@@ -364,11 +349,11 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
-     * Clears the contents of the tray.
-     *
-     * @method _clear
-     * @protected
-     */
+    Clears the contents of the tray.
+
+    @method _clear
+    @protected
+    **/
     _clear: function () {
         this.set(ACTIVE_ITEM, null);
         this._set(HOVERED_ITEM, null);
@@ -377,12 +362,12 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
-     * Creates and returns an ARIA live region node.
-     *
-     * @method _createAriaNode
-     * @return {Node} ARIA node.
-     * @protected
-     */
+    Creates and returns an ARIA live region node.
+
+    @method _createAriaNode
+    @return {Node} ARIA node.
+    @protected
+    **/
     _createAriaNode: function () {
         var ariaNode = Node.create(this.ARIA_TEMPLATE);
 
@@ -393,13 +378,13 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
-     * Creates and returns an item node with the specified <i>content</i>.
-     *
-     * @method _createItemNode
-     * @param {Object} result Result object.
-     * @return {Node} Item node.
-     * @protected
-     */
+    Creates and returns an item node with the specified _content_.
+
+    @method _createItemNode
+    @param {Object} result Result object.
+    @return {Node} Item node.
+    @protected
+    **/
     _createItemNode: function (result) {
         var itemNode = Node.create(this.ITEM_TEMPLATE);
 
@@ -410,13 +395,13 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
-     * Creates and returns a list node. If the `listNode` attribute is already
-     * set to an existing node, that node will be used.
-     *
-     * @method _createListNode
-     * @return {Node} List node.
-     * @protected
-     */
+    Creates and returns a list node. If the `listNode` attribute is already set
+    to an existing node, that node will be used.
+
+    @method _createListNode
+    @return {Node} List node.
+    @protected
+    **/
     _createListNode: function () {
         var listNode = this.get('listNode') || Node.create(this.LIST_TEMPLATE);
 
@@ -432,35 +417,33 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
-     * Gets the first item node in the list, or <code>null</code> if the list is
-     * empty.
-     *
-     * @method _getFirstItemNode
-     * @return {Node|null}
-     * @protected
-     */
+    Gets the first item node in the list, or `null` if the list is empty.
+
+    @method _getFirstItemNode
+    @return {Node|null}
+    @protected
+    **/
     _getFirstItemNode: function () {
         return this._listNode.one(this[_SELECTOR_ITEM]);
     },
 
     /**
-     * Gets the last item node in the list, or <code>null</code> if the list is
-     * empty.
-     *
-     * @method _getLastItemNode
-     * @return {Node|null}
-     * @protected
-     */
+    Gets the last item node in the list, or `null` if the list is empty.
+
+    @method _getLastItemNode
+    @return {Node|null}
+    @protected
+    **/
     _getLastItemNode: function () {
         return this._listNode.one(this[_SELECTOR_ITEM] + ':last-child');
     },
 
     /**
-     * Synchronizes the result list's position and alignment.
-     *
-     * @method _syncPosition
-     * @protected
-     */
+    Synchronizes the result list's position and alignment.
+
+    @method _syncPosition
+    @protected
+    **/
     _syncPosition: function () {
         // Force WidgetPositionAlign to refresh its alignment.
         this._syncUIPosAlign();
@@ -470,14 +453,13 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
-     * Synchronizes the results displayed in the list with those in the
-     * <i>results</i> argument, or with the <code>results</code> attribute if an
-     * argument is not provided.
-     *
-     * @method _syncResults
-     * @param {Array} results (optional) Results.
-     * @protected
-     */
+    Synchronizes the results displayed in the list with those in the _results_
+    argument, or with the `results` attribute if an argument is not provided.
+
+    @method _syncResults
+    @param {Array} [results] Results.
+    @protected
+    **/
     _syncResults: function (results) {
         if (!results) {
             results = this.get(RESULTS);
@@ -498,25 +480,24 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
-     * Synchronizes the size of the iframe shim used for IE6 and lower. In other
-     * browsers, this method is a noop.
-     *
-     * @method _syncShim
-     * @protected
-     */
+    Synchronizes the size of the iframe shim used for IE6 and lower. In other
+    browsers, this method is a noop.
+
+    @method _syncShim
+    @protected
+    **/
     _syncShim: useShim ? function () {
         this._boundingBox.shim.sync();
     } : function () {},
 
     /**
-     * Synchronizes the visibility of the tray with the <i>visible</i> argument,
-     * or with the <code>visible</code> attribute if an argument is not
-     * provided.
-     *
-     * @method _syncVisibility
-     * @param {Boolean} visible (optional) Visibility.
-     * @protected
-     */
+    Synchronizes the visibility of the tray with the _visible_ argument, or with
+    the `visible` attribute if an argument is not provided.
+
+    @method _syncVisibility
+    @param {Boolean} [visible] Visibility.
+    @protected
+    **/
     _syncVisibility: function (visible) {
         if (this.get(ALWAYS_SHOW_LIST)) {
             visible = true;
@@ -555,12 +536,12 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     // -- Protected Event Handlers ---------------------------------------------
 
     /**
-     * Handles <code>activeItemChange</code> events.
-     *
-     * @method _afterActiveItemChange
-     * @param {EventTarget} e
-     * @protected
-     */
+    Handles `activeItemChange` events.
+
+    @method _afterActiveItemChange
+    @param {EventTarget} e
+    @protected
+    **/
     _afterActiveItemChange: function (e) {
         var inputNode = this._inputNode,
             newVal    = e.newVal,
@@ -592,23 +573,23 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
-     * Handles <code>alwaysShowListChange</code> events.
-     *
-     * @method _afterAlwaysShowListChange
-     * @param {EventTarget} e
-     * @protected
-     */
+    Handles `alwaysShowListChange` events.
+
+    @method _afterAlwaysShowListChange
+    @param {EventTarget} e
+    @protected
+    **/
     _afterAlwaysShowListChange: function (e) {
         this.set(VISIBLE, e.newVal || this.get(RESULTS).length > 0);
     },
 
     /**
-     * Handles <code>hoveredItemChange</code> events.
-     *
-     * @method _afterHoveredItemChange
-     * @param {EventTarget} e
-     * @protected
-     */
+    Handles `hoveredItemChange` events.
+
+    @method _afterHoveredItemChange
+    @param {EventTarget} e
+    @protected
+    **/
     _afterHoveredItemChange: function (e) {
         var newVal  = e.newVal,
             prevVal = e.prevVal;
@@ -623,11 +604,11 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
-     * Handles list blur events.
-     *
-     * @method _afterListBlur
-     * @protected
-     */
+    Handles list blur events.
+
+    @method _afterListBlur
+    @protected
+    **/
     _afterListBlur: function () {
         this._listFocused = false;
 
@@ -638,21 +619,21 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
-     * Handles list focus events.
-     *
-     * @method _afterListFocus
-     * @protected
-     */
+    Handles list focus events.
+
+    @method _afterListFocus
+    @protected
+    **/
     _afterListFocus: function () {
         this._listFocused = true;
     },
 
     /**
-     * Handles `inputNode` blur events.
-     *
-     * @method _afterListInputBlur
-     * @protected
-     */
+    Handles `inputNode` blur events.
+
+    @method _afterListInputBlur
+    @protected
+    **/
     _afterListInputBlur: function () {
         this._listInputFocused = false;
 
@@ -668,22 +649,22 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
-     * Handles `inputNode` focus events.
-     *
-     * @method _afterListInputFocus
-     * @protected
-     */
+    Handles `inputNode` focus events.
+
+    @method _afterListInputFocus
+    @protected
+    **/
     _afterListInputFocus: function () {
         this._listInputFocused = true;
     },
 
     /**
-     * Handles <code>mouseover</code> events.
-     *
-     * @method _afterMouseOver
-     * @param {EventTarget} e
-     * @protected
-     */
+    Handles `mouseover` events.
+
+    @method _afterMouseOver
+    @param {EventTarget} e
+    @protected
+    **/
     _afterMouseOver: function (e) {
         var itemNode = e.domEvent.target.ancestor(this[_SELECTOR_ITEM], true);
 
@@ -695,12 +676,12 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
-     * Handles <code>mouseout</code> events.
-     *
-     * @method _afterMouseOut
-     * @param {EventTarget} e
-     * @protected
-     */
+    Handles `mouseout` events.
+
+    @method _afterMouseOut
+    @param {EventTarget} e
+    @protected
+    **/
     _afterMouseOut: function () {
         this._mouseOverList = false;
         this._set(HOVERED_ITEM, null);
@@ -713,12 +694,12 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
-     * Handles <code>resultsChange</code> events.
-     *
-     * @method _afterResultsChange
-     * @param {EventFacade} e
-     * @protected
-     */
+    Handles `resultsChange` events.
+
+    @method _afterResultsChange
+    @param {EventFacade} e
+    @protected
+    **/
     _afterResultsChange: function (e) {
         this._syncResults(e.newVal);
 
@@ -728,23 +709,23 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
-     * Handles <code>visibleChange</code> events.
-     *
-     * @method _afterVisibleChange
-     * @param {EventFacade} e
-     * @protected
-     */
+    Handles `visibleChange` events.
+
+    @method _afterVisibleChange
+    @param {EventFacade} e
+    @protected
+    **/
     _afterVisibleChange: function (e) {
         this._syncVisibility(!!e.newVal);
     },
 
     /**
-     * Delegated event handler for item <code>click</code> events.
-     *
-     * @method _onItemClick
-     * @param {EventTarget} e
-     * @protected
-     */
+    Delegated event handler for item `click` events.
+
+    @method _onItemClick
+    @param {EventTarget} e
+    @protected
+    **/
     _onItemClick: function (e) {
         var itemNode = e.currentTarget;
 
@@ -755,12 +736,12 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     // -- Protected Default Event Handlers -------------------------------------
 
     /**
-     * Default <code>select</code> event handler.
-     *
-     * @method _defSelectFn
-     * @param {EventTarget} e
-     * @protected
-     */
+    Default `select` event handler.
+
+    @method _defSelectFn
+    @param {EventTarget} e
+    @protected
+    **/
     _defSelectFn: function (e) {
         var text = e.result.text;
 
@@ -773,95 +754,95 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
 }, {
     ATTRS: {
         /**
-         * If <code>true</code>, the first item in the list will be activated by
-         * default when the list is initially displayed and when results change.
-         *
-         * @attribute activateFirstItem
-         * @type Boolean
-         * @default false
-         */
+        If `true`, the first item in the list will be activated by default when
+        the list is initially displayed and when results change.
+
+        @attribute activateFirstItem
+        @type Boolean
+        @default false
+        **/
         activateFirstItem: {
             value: false
         },
 
         /**
-         * Item that's currently active, if any. When the user presses enter,
-         * this is the item that will be selected.
-         *
-         * @attribute activeItem
-         * @type Node
-         */
+        Item that's currently active, if any. When the user presses enter, this
+        is the item that will be selected.
+
+        @attribute activeItem
+        @type Node
+        **/
         activeItem: {
             setter: Y.one,
             value: null
         },
 
         /**
-         * If <code>true</code>, the list will remain visible even when there
-         * are no results to display.
-         *
-         * @attribute alwaysShowList
-         * @type Boolean
-         * @default false
-         */
+        If `true`, the list will remain visible even when there are no results
+        to display.
+
+        @attribute alwaysShowList
+        @type Boolean
+        @default false
+        **/
         alwaysShowList: {
             value: false
         },
 
         /**
-         * If <code>true</code>, keyboard navigation will wrap around to the
-         * opposite end of the list when navigating past the first or last item.
-         *
-         * @attribute circular
-         * @type Boolean
-         * @default true
-         */
+        If `true`, keyboard navigation will wrap around to the opposite end of
+        the list when navigating past the first or last item.
+
+        @attribute circular
+        @type Boolean
+        @default true
+        **/
         circular: {
             value: true
         },
 
         /**
-         * Item currently being hovered over by the mouse, if any.
-         *
-         * @attribute hoveredItem
-         * @type Node|null
-         * @readOnly
-         */
+        Item currently being hovered over by the mouse, if any.
+
+        @attribute hoveredItem
+        @type Node|null
+        @readOnly
+        **/
         hoveredItem: {
             readOnly: true,
             value: null
         },
 
         /**
-         * Node that will contain result items.
-         *
-         * @attribute listNode
-         * @type Node|null
-         * @initOnly
-         */
+        Node that will contain result items.
+
+        @attribute listNode
+        @type Node|null
+        @initOnly
+        **/
         listNode: {
             writeOnce: 'initOnly',
             value: null
         },
 
         /**
-         * If <code>true</code>, the viewport will be scrolled to ensure that
-         * the active list item is visible when necessary.
-         *
-         * @attribute scrollIntoView
-         * @type Boolean
-         * @default false
-         */
+        If `true`, the viewport will be scrolled to ensure that the active list
+        item is visible when necessary.
+
+        @attribute scrollIntoView
+        @type Boolean
+        @default false
+        **/
         scrollIntoView: {
             value: false
         },
 
         /**
-         * Translatable strings used by the AutoCompleteList widget.
-         *
-         * @attribute strings
-         * @type Object
-         */
+        Translatable strings used by the AutoCompleteList widget.
+
+        @attribute strings
+        @type Object
+        **/
         strings: {
             valueFn: function () {
                 return Y.Intl.get('autocomplete-list');
@@ -869,13 +850,13 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         },
 
         /**
-         * If <code>true</code>, pressing the tab key while the list is visible
-         * will select the active item, if any.
-         *
-         * @attribute tabSelect
-         * @type Boolean
-         * @default true
-         */
+        If `true`, pressing the tab key while the list is visible will select
+        the active item, if any.
+
+        @attribute tabSelect
+        @type Boolean
+        @default true
+        **/
         tabSelect: {
             value: true
         },
@@ -892,13 +873,13 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
 Y.AutoCompleteList = List;
 
 /**
- * Alias for <a href="AutoCompleteList.html"><code>AutoCompleteList</code></a>.
- * See that class for API docs.
- *
- * @class AutoComplete
- */
+Alias for <a href="AutoCompleteList.html">`AutoCompleteList`</a>. See that class
+for API docs.
+
+@class AutoComplete
+**/
 
 Y.AutoComplete = List;
 
 
-}, '@VERSION@' ,{requires:['autocomplete-base', 'event-resize', 'node-screen', 'selector-css3', 'shim-plugin', 'widget', 'widget-position', 'widget-position-align'], skinnable:true, after:['autocomplete-sources'], lang:['en']});
+}, '@VERSION@' ,{lang:['en'], skinnable:true, after:['autocomplete-sources'], requires:['autocomplete-base', 'event-resize', 'node-screen', 'selector-css3', 'shim-plugin', 'widget', 'widget-position', 'widget-position-align']});
