@@ -1,5 +1,5 @@
 {
-    "charts": {
+    "charts-legend": {
         "requires":["charts-base"]
     }
 }

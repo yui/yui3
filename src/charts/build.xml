@@ -1,10 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="YUIBuild" default="local">
-    <description>Build file for charts</description>
-    <property environment="env" />
-    <property file="build.properties" />
-    <import file="${builddir}/3.x/bootstrap.xml" description="Default Build Properties and Targets" />
+<project name="YUI" default="local">
+    <description>Charts - Build All Modules</description>
+
+    <macrodef name="build-charts">
+        <attribute name="target"/>
+        <sequential>
+            <ant antfile="build.charts-base.xml" target="@{target}"/>
+            <ant antfile="build.charts.xml" target="@{target}"/>
+            <ant antfile="build.charts-legend.xml" target="@{target}"/>
+        </sequential>
+    </macrodef>
+
+    <target name="local">
+        <build-charts target="local"/>
+    </target>
+    <target name="deploy">
+        <build-charts target="deploy"/>
+    </target>
+    <target name="all">
+        <build-charts target="all"/>
+    </target>
+    <target name="clean">
+        <build-charts target="clean"/>
+    </target>
+
 </project>
-
-
-    
