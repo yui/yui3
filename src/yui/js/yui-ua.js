@@ -237,7 +237,7 @@ YUI.Env.parseUA = function(subUA) {
 
     ua = subUA || nav && nav.userAgent,
 
-    loc = win && win.location,
+    loc = Y.getLocation(),
 
     href = loc && loc.href,
 

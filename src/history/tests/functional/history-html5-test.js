@@ -2,7 +2,7 @@ YUI.add('history-html5-test', function (Y) {
 
 var win              = Y.config.win,
     lastLength,
-    location         = win.location,
+    location         = Y.getLocation(),
     urlBug           = (Y.UA.chrome && Y.UA.chrome < 6) ||
                          (Y.UA.android && Y.UA.android < 2.4) ||
                          (Y.UA.webkit && navigator.vendor.indexOf('Apple') !== -1),
