@@ -24,6 +24,111 @@ viewSuite.add(new Y.Test.Case({
         Assert.areSame('div', view.get('container').get('tagName').toLowerCase());
     },
 
+    'default container should be created lazily': function () {
+        var calls = {
+                attachEvents: 0,
+                create: 0
+            },
+
+            MyView = Y.Base.create('myView', Y.View, [], {
+                attachEvents: function () {
+                    calls.attachEvents += 1;
+                    return Y.View.prototype.attachEvents.apply(this, arguments);
+                },
+
+                create: function () {
+                    calls.create += 1;
+                    return Y.View.prototype.create.apply(this, arguments);
+                }
+            });
+
+        a = new MyView();
+        Assert.areSame(0, calls.create, 'create() should not be called before the container is retrieved');
+        Assert.areSame(0, calls.attachEvents, 'attachEvents() should not be called before the container is retrieved');
+
+        a.get('container');
+        Assert.areSame(1, calls.create, 'create() should be called the first time the container is retrieved');
+        Assert.areSame(1, calls.attachEvents, 'attachEvents() should be called the first time the container is retrieved');
+
+        a.get('container');
+        Assert.areSame(1, calls.create, 'create() should not be called more than once');
+        Assert.areSame(1, calls.attachEvents, 'attachEvents() should not be called more than once');
+    },
+
+    'container events should be attached lazily when specified via a valueFn': function () {
+        var calls = {
+                attachEvents: 0,
+                create: 0
+            },
+
+            MyView = Y.Base.create('myView', Y.View, [], {
+                attachEvents: function () {
+                    calls.attachEvents += 1;
+                    return Y.View.prototype.attachEvents.apply(this, arguments);
+                },
+
+                create: function () {
+                    calls.create += 1;
+                    return Y.View.prototype.create.apply(this, arguments);
+                }
+            }, {
+                ATTRS: {
+                    container: {
+                        valueFn: function () {
+                            return Y.Node.create('<span class="valuefn-container"/>');
+                        }
+                    }
+                }
+            });
+
+        a = new MyView();
+        Assert.areSame(0, calls.create, 'create() should not be called before the container is retrieved');
+        Assert.areSame(0, calls.attachEvents, 'attachEvents() should not be called before the container is retrieved');
+
+        Assert.areSame('valuefn-container', a.get('container').get('className'), "container's CSS class should be 'valuefn-container'");
+        Assert.areSame(0, calls.create, 'create() should not be called when the container is retrieved');
+        Assert.areSame(1, calls.attachEvents, 'attachEvents() should be called the first time the container is retrieved');
+
+        a.get('container');
+        Assert.areSame(1, calls.attachEvents, 'attachEvents() should not be called more than once');
+    },
+
+    'container events should be attached lazily when specified via an attr value': function () {
+        var calls = {
+                attachEvents: 0,
+                create: 0
+            },
+
+            MyView = Y.Base.create('myView', Y.View, [], {
+                attachEvents: function () {
+                    calls.attachEvents += 1;
+                    return Y.View.prototype.attachEvents.apply(this, arguments);
+                },
+
+                create: function () {
+                    calls.create += 1;
+                    return Y.View.prototype.create.apply(this, arguments);
+                }
+            }, {
+                ATTRS: {
+                    container: {
+                        value: Y.Node.create('<div class="value-container"/>')
+                    }
+                }
+            });
+
+        a = new MyView();
+        Assert.areSame(0, calls.create, 'create() should not be called before the container is retrieved');
+        Assert.areSame(0, calls.attachEvents, 'attachEvents() should not be called before the container is retrieved');
+
+        Assert.areSame('value-container', a.get('container').get('className'), "container's CSS class should be 'value-container'");
+        Assert.areSame(0, calls.create, 'create() should not be called');
+        Assert.areSame(1, calls.attachEvents, 'attachEvents() should be called the first time the container is retrieved');
+
+        a.get('container');
+        Assert.areSame(1, calls.attachEvents, 'attachEvents() should not be called more than once');
+    },
+
     'events property should be an empty object by default': function () {
         var view = new Y.View();
 
