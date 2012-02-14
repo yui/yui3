@@ -207,11 +207,11 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
       not registered.
     **/
     getViewInfo: function (view) {
-        if (view instanceof View) {
-            return this._viewInfoMap[Y.stamp(view, true)];
+        if (Lang.isString(view)) {
+            return this.views[view];
         }
 
-        return this.views[view];
+        return view && this._viewInfoMap[Y.stamp(view, true)];
     },
 
     /**
