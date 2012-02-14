@@ -424,7 +424,7 @@ VMLShape = function()
 
 VMLShape.NAME = "vmlShape";
 
-Y.extend(VMLShape, Y.BaseGraphic, Y.mix({
+Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	/**
 	 * Indicates the type of shape
 	 *
@@ -2362,7 +2362,7 @@ VMLGraphic.ATTRS = {
     }
 };
 
-Y.extend(VMLGraphic, Y.BaseGraphic, {
+Y.extend(VMLGraphic, Y.GraphicBase, {
     /**
      * Storage for `x` attribute.
      *

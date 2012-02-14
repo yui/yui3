@@ -566,7 +566,7 @@ SVGShape = function(cfg)
 
 SVGShape.NAME = "svgShape";
 
-Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
+Y.extend(SVGShape, Y.GraphicBase, Y.mix({
     /**
      * Init method, invoked during construction.
      * Calls `initializer` method.
@@ -2318,7 +2318,7 @@ SVGGraphic.ATTRS = {
     }
 };
 
-Y.extend(SVGGraphic, Y.BaseGraphic, {
+Y.extend(SVGGraphic, Y.GraphicBase, {
     /**
      * Storage for `x` attribute.
      *
