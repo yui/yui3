@@ -14,6 +14,11 @@ App Framework Change History
   callback function on success or failure. Old-style synchronous `validate()`
   methods will still work, but are deprecated. [Ticket #2531218]
 
+* Model now supports ad-hoc attributes, which means it's no longer necessary to
+  subclass `Y.Model` and declare attributes ahead of time. The following is now
+  perfectly valid, and will result in a model instance with "foo" and "bar"
+  attributes: `var model = new Y.Model({foo: 'foo', bar: 'bar'});`
+
 * `load()` now fires a `load` event after the operation completes successfully,
   or an `error` event on failure. The `load()` callback (if provided) will still
   be called in both cases. [Ticket #2531207]
