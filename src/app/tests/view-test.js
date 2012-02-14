@@ -136,22 +136,33 @@ viewSuite.add(new Y.Test.Case({
         Assert.isTrue(Y.Object.isEmpty(view.events));
     },
 
-    'model attribute should be null by default': function () {
-        Assert.isNull(new Y.View().get('model'));
-    },
-
-    'initializer should allow setting a model reference at init': function () {
+    'initializer should allow setting a ad-hoc attrs': function () {
         var model = new Y.Model(),
-            view  = new Y.View({model: model});
+            view  = new Y.View({model: model, foo: 'bar'});
 
         Assert.areSame(model, view.get('model'));
+        Assert.areSame('bar', view.get('foo'));
     },
 
-    'initializer should allow setting a model list reference at init': function () {
-        var modelList = new Y.ModelList(),
-            view      = new Y.View({modelList: modelList});
+    'initializer should allow setting a containerTemplate at init': function () {
+        var view = new Y.View({containerTemplate: '<div class="my-container"/>'});
 
-        Assert.areSame(modelList, view.get('modelList'));
+        Assert.areSame('<div class="my-container"/>', view.containerTemplate);
+        Assert.isUndefined(view.get('containerTemplate'), 'containerTemplate config should not become an ad-hoc attr');
+    },
+
+    'initializer should allow setting events at init': function () {
+        var events = {
+                '.foo': {
+                    click: '_onFooClick'
+                }
+            },
+
+            view = new Y.View({events: events});
+
+        ObjectAssert.ownsKey('.foo', view.events);
+        Assert.areSame('_onFooClick', view.events['.foo'].click);
+        Assert.isUndefined(view.get('events'), 'events config should not become an ad-hoc attr');
     },
 
     'initializer should allow setting a template at init': function () {
@@ -159,6 +170,7 @@ viewSuite.add(new Y.Test.Case({
             view     = new Y.View({template: template});
 
         Assert.areSame(template, view.template);
+        Assert.isUndefined(view.get('template'), 'template config should not become an ad-hoc attr');
     },
 
     'create() should not be called on init': function () {

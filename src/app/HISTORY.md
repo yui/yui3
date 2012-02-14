@@ -138,6 +138,13 @@ App Framework Change History
   default. To destroy a view's container node when destroying the view, pass
   `{remove: true}` to the view's `destroy()` method. [Ticket #2531689]
 
+* View now supports ad-hoc attributes, which means it's no longer necessary to
+  subclass `Y.View` and declare attributes ahead of time. The following is now
+  perfectly valid, and will result in a view instance with "foo" and "bar"
+  attributes:
+
+          var view = new Y.View({foo: 'foo', bar: 'bar'});
+
 * Added a `containerTemplate` property that contains an HTML template used to
   create a container node when one isn't specified. Defaults to "<div/>".
 
