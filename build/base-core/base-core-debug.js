@@ -84,17 +84,42 @@ YUI.add('base-core', function(Y) {
     BaseCore._ATTR_CFG = AttributeCore._ATTR_CFG.concat("cloneDefaultValue");
     BaseCore._ATTR_CFG_HASH = Y.Array.hash(BaseCore._ATTR_CFG);
 
+    /**
+     * The array of non-attribute configuration properties supported by this class. 
+     * 
+     * For example `BaseCore` defines a "plugins" configuration property which 
+     * should not be set up as an attribute. This property is primarily required so 
+     * that when <a href="#property__allowAdHocAttrs">`_allowAdHocAttrs`</a> is enabled by a class, 
+     * non-attribute configuration properties don't get added as ad-hoc attributes.  
+     *
+     * @property _NON_ATTRS_CFG
+     * @type Array
+     * @static
+     * @private
+     */
     BaseCore._NON_ATTRS_CFG = ["plugins"];
 
     /**
-     * <p>
+     * This property controls whether or not instances of this class should
+     * allow users to add ad-hoc attributes through the constructor configuration 
+     * hash.
+     *
+     * AdHoc attributes are attributes which are not defined by the class, and are 
+     * not handled by the MyClass._NON_ATTRS_CFG  
+     * 
+     * @property _allowAdHocAttrs
+     * @type boolean
+     * @default undefined (false)
+     * @protected
+     */
+
+    /**
      * The string to be used to identify instances of this class.
-     * </p>
-     * <p>
+     * 
      * Classes extending BaseCore, should define their own
      * static NAME property, which should be camelCase by
      * convention (e.g. MyClass.NAME = "myClass";).
-     * </p>
+     *
      * @property NAME
      * @type String
      * @static

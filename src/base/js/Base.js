@@ -96,6 +96,21 @@
     Base._ATTR_CFG = Attribute._ATTR_CFG.concat("cloneDefaultValue");
     Base._ATTR_CFG_HASH = Y.Array.hash(Base._ATTR_CFG);
 
+    /**
+     * The array of non-attribute configuration properties supported by this class. 
+     * 
+     * `Base` supports "on", "after", "plugins" and "bubbleTargets" properties, 
+     * which are not set up as attributes. 
+     *
+     * This property is primarily required so that when 
+     * <a href="#property__allowAdHocAttrs">`_allowAdHocAttrs`</a> is enabled by
+     * a class, non-attribute configurations don't get added as ad-hoc attributes.  
+     *
+     * @property _NON_ATTRS_CFG
+     * @type Array
+     * @static
+     * @private
+     */
     Base._NON_ATTRS_CFG = BaseCore._NON_ATTRS_CFG.concat(["on", "after", "bubbleTargets"]);
 
     /**
