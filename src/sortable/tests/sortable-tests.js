@@ -129,6 +129,11 @@ YUI.add('sortable-tests', function(Y) {
         'test: destroy': function() {
             sort.destroy();
             Assert.isTrue(sort.get('destroyed'), 'Failed to destroy the sortable instance');
+        },
+        _should: {
+            fail: {
+                'test: dragEnd event': Y.UA.ie
+            }
         }
     };
 
