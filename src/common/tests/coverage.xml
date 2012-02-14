@@ -109,6 +109,7 @@
         <url>parallel/tests/index.html</url>
         <url>pjax/tests/pjax.html</url>
         <url>pluginhost/tests/plugins.html</url>
+        <url>resize/tests/index.html</url>
         <url>slider/tests/slider.html</url>
         <url>sortable/tests/index.html</url>
         <url>test/tests/arrayassert.html</url>
