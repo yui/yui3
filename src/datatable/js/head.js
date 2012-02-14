@@ -40,6 +40,8 @@ Supported properties of the column objects include:
   * `key`       - If `label` is not specified, the `key` is used for content.
   * `children`  - Array of columns to appear below this column in the next
                   row.
+  * `headerTemplate` - Overrides the instance's `CELL_TEMPLATE` for cells in this
+    column only.
   * `abbr`      - The content of the 'abbr' attribute of the `<th>`
   * `className` - Adds this string of CSS classes to the column header
 
@@ -193,7 +195,8 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
                                 'headers="' + col._parent._headers.join(' ') + '"';
                         }
 
-                        content += fromTemplate(this.CELL_TEMPLATE, values);
+                        content += fromTemplate(
+                            col.headerTemplate || this.CELL_TEMPLATE, values);
                     }
 
                     html += fromTemplate(this.ROW_TEMPLATE, {
@@ -333,6 +336,8 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
       * `children` - Array of columns to appear below this column in the next
                      row.
       * `abbr`     - The content of the 'abbr' attribute of the `<th>`
+      * `headerTemplate` - Overrides the instance's `CELL_TEMPLATE` for cells
+        in this column only.
 
     The output structure is basically a simulation of the `<thead>` structure
     with arrays for rows and objects for cells.  Column objects have the
