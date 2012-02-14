@@ -4,7 +4,7 @@ var Obj = Y.Object,
 
     defaultPrefix = Y.HistoryHash.hashPrefix,
     win           = Y.config.win,
-    location      = win.location;
+    location      = Y.getLocation();
 
 Y.Test.Runner.add(new Y.Test.Case({
     name: 'HistoryHash',

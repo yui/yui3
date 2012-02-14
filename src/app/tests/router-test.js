@@ -251,7 +251,7 @@ routerSuite.add(new Y.Test.Case({
 
     'hasRoute() should support full URLs': function () {
         var router = this.router = new Y.Router(),
-            loc    = win && win.location,
+            loc    = Y.getLocation(),
             origin = loc ? (loc.origin || (loc.protocol + '//' + loc.host)) : '';
 
         function noop () {}
@@ -312,7 +312,7 @@ routerSuite.add(new Y.Test.Case({
         router.route('/hashpath', function (req) {
             test.resume(function () {
                 Assert.areSame('/hashpath', req.path);
-                Assert.areSame(Y.config.win.location.pathname, '/hashpath');
+                Assert.areSame(Y.getLocation().pathname, '/hashpath');
             });
         });
 
