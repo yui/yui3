@@ -426,8 +426,8 @@ Y.extend(Widget, Y.Base, {
 
     /**
      * Destructor lifecycle implementation for the Widget class. Purges events attached
-     * to the bounding box (and all child nodes) and removes the Widget from the 
-     * list of registered widgets.
+     * to the bounding box and content box, removes them from the DOM and removes 
+     * the Widget from the list of registered widgets.
      *
      * @method destructor
      * @protected
@@ -462,7 +462,7 @@ Y.extend(Widget, Y.Base, {
      * from proceeding.
      * </p>
      * @method destroy
-     * @param destroyAllNodes {Boolean} If true, all nodes contained within the Widget are removd and destroyed. Defaults to false due to potentially high run-time cost. 
+     * @param destroyAllNodes {Boolean} If true, all nodes contained within the Widget are removed and destroyed. Defaults to false due to potentially high run-time cost. 
      * @return {Widget} A reference to this object
      * @chainable
      */
@@ -890,16 +890,24 @@ Y.extend(Widget, Y.Base, {
     _bindDOM : function() {
         var oDocument = this.get(BOUNDING_BOX).get(OWNER_DOCUMENT);
 
-        // TODO: Perf Optimization: Use Widget.getByNode delegation, to get by 
-        // with just one _onDocFocus subscription per sandbox, instead of one per widget
-        this._hDocFocus = oDocument.on("focus", this._onDocFocus, this);
+        if (!Widget._hDocFocus) {
+            Widget._hDocFocus = oDocument.on("focus", this._onDocFocus, this);
+            Widget._hDocFocus.listeners = 1;
+        } else {
+            Widget._hDocFocus.listeners++; 
+        }
 
         //	Fix for Webkit:
         //	Document doesn't receive focus in Webkit when the user mouses 
         //	down on it, so the "focused" attribute won't get set to the 
         //	correct value.
-        if (WEBKIT) {
-            this._hDocMouseDown = oDocument.on("mousedown", this._onDocMouseDown, this);
+        if (WEBKIT){
+            if (!Widget._hDocMouseDown) {
+                Widget._hDocMouseDown = oDocument.on("mousedown", this._onDocMouseDown, this);
+                Widget._hDocMouseDown.listeners = 1;
+            } else {
+                Widget._hDocMouseDown.listeners++;
+            }
         }
     },
 
@@ -908,12 +916,21 @@ Y.extend(Widget, Y.Base, {
      * @protected
      */   
     _unbindDOM : function(boundingBox) {
-        if (this._hDocFocus) {
-            this._hDocFocus.detach();
+
+        if (Widget._hDocFocus && Widget._hDocFocus.listeners > 0) {
+            Widget._hDocFocus.listeners--;
+        } else if (Widget._hDocFocus){
+            Widget._hDocFocus.detach();
+            Widget._hDocFocus = null;
         }
 
-        if (WEBKIT && this._hDocMouseDown) {
-            this._hDocMouseDown.detach();
+        if (WEBKIT) {
+            if (Widget._hDocMouseDown && Widget._hDocMouseDown.listeners > 0) {
+                Widget._hDocMouseDown.listeners--;
+            } else if (Widget._hDocMouseDown){
+                Widget._hDocMouseDown.detach();
+                Widget._hDocMouseDown = null;
+            }
         }
     },
 
@@ -1042,8 +1059,14 @@ Y.extend(Widget, Y.Base, {
      * @param {EventFacade} evt The event facade for the DOM focus event
      */
     _onDocFocus: function (evt) {
-        this._domFocus = this.get(BOUNDING_BOX).contains(evt.target); // contains() checks invoking node also
-        this._set(FOCUSED, this._domFocus, { src: UI });
+        var widget = Widget.getByNode(evt.target);
+        if (widget) {
+            Widget._active = widget;
+            widget._domFocus = true;
+            widget._set(FOCUSED, true, {src:UI});
+        } else if (Widget._active) {
+            Widget._active.set(FOCUSED, false, {src:UI});
+        }
     },
 
     /**
