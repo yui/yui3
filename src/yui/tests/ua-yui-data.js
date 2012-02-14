@@ -494,6 +494,15 @@ Y.UAData["YUI Internal"] = [
                         "air": "AdobeAIR/1.5.1",
                         "os": "windows"
                 }
+        },
+        {
+                "ua": "Mozilla/5.0 (Linux; U; Android 3.0.1; en-us; Xoom Build/HRI66) AppleWebKit/534.13 (KHTML, like Gecko) Version/4.0 Safari/534.13",
+                "data": {
+                        "webkit": 534.13,
+                        "safari": 534.13,
+                        "android": 3.01,
+                        "os": "android"
+                }
         }
 ];
 });

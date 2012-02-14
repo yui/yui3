@@ -21,10 +21,6 @@ ACBase = Y.Base.create('autocomplete', Y.Base, [Y.AutoCompleteBase], {
     initializer: function () {
         this._bindUIACBase();
         this._syncUIACBase();
-    },
-
-    destructor: function () {
-        this._destructorACBase();
     }
 });
 
@@ -142,6 +138,16 @@ baseSuite.add(new Y.Test.Case({
 
         ac = new ACBase({inputNode: '#ac'});
         Assert.areSame(this.inputNode, ac.get('inputNode'));
+    },
+
+    'destructor should detach events': function () {
+        var ac = new ACBase({inputNode: this.inputNode});
+        ac.destroy();
+
+        Assert.isUndefined(ac._acBaseEvents, '_acBaseEvents should be undefined');
+        Assert.isUndefined(ac._cache, '_cache should be undefined');
+        Assert.isUndefined(ac._inputNode, '_inputNode should be undefined');
+        Assert.isUndefined(ac._rawSource, '_rawSource should be undefined');
     }
 
     // Note: This test is temporarily commented out since it appears to cause

@@ -41,7 +41,7 @@ add('load', '2', {
 add('load', '3', {
     "name": "dd-gestures", 
     "test": function(Y) {
-    return (Y.config.win && ('ontouchstart' in Y.config.win && !Y.UA.chrome));
+    return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
 }, 
     "trigger": "dd-drag"
 });

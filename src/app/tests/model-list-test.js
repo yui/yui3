@@ -218,28 +218,17 @@ modelListSuite.add(new Y.Test.Case({
         filtered = list.filter(function (model, i, myList) {
             var foo = model.get('foo');
 
-            Assert.areSame(model, list.item(i));
-            Assert.areSame(list, myList);
-            Assert.areSame(list, this);
+            Assert.areSame(model, list.item(i), 'model should be the first arg and item index the second');
+            Assert.areSame(list, myList, 'list should be the third arg');
+            Assert.areSame(list, this, '`this` object should be the ModelList');
 
             return foo === 'a' || foo === 'd';
         });
 
-        Assert.isArray(filtered);
-        Assert.areSame(2, filtered.length);
+        Assert.isArray(filtered, 'return value should be an array');
+        Assert.areSame(2, filtered.length, 'filtered array should contain two models');
         Assert.areSame('a', filtered[0].get('foo'));
         Assert.areSame('d', filtered[1].get('foo'));
-    },
-
-    'filter() should accept a custom `this` object': function () {
-        var list = this.createList(),
-            obj  = {};
-
-        list.add({foo: 'a'});
-
-        list.filter(function () {
-            Assert.areSame(obj, this);
-        }, obj);
     },
 
     'filter() should return an empty array if the callback never returns a truthy value': function () {
@@ -247,6 +236,30 @@ modelListSuite.add(new Y.Test.Case({
 
         list.add({foo: 'a'});
         Assert.areSame(0, list.filter(function () {}).length);
+    },
+
+    'filter() should return a new ModelList when options.asList is truthy': function () {
+        var list = this.createList(),
+            filtered;
+
+        list.add([{foo: 'a'}, {foo: 'b'}, {foo: 'c'}, {foo: 'd'}]);
+        Assert.areSame(4, list.size());
+
+        filtered = list.filter({asList: true}, function (model, i, myList) {
+            var foo = model.get('foo');
+
+            Assert.areSame(model, list.item(i), 'model should be the first arg and item index the second');
+            Assert.areSame(list, myList, 'list should be the third arg');
+            Assert.areSame(list, this, '`this` object should be the ModelList');
+
+            return foo === 'a' || foo === 'd';
+        });
+
+        Assert.isTrue(filtered._isYUIModelList, 'return value should be a ModelList instance');
+        Assert.areSame(list.model, filtered.model, 'filtered list should have the same `model` property as the original list');
+        Assert.areSame(2, filtered.size(), 'filtered list should contain two models');
+        Assert.areSame('a', filtered.item(0).get('foo'));
+        Assert.areSame('d', filtered.item(1).get('foo'));
     },
 
     'get() should return an array of attribute values from all models in the list': function () {

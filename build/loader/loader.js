@@ -13,7 +13,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.01.25-21-14',
+            GALLERY_VERSION = 'gallery-2012.02.01-21-35',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -2351,15 +2351,23 @@ Y.Loader.prototype = {
             
             if (m) {
                 group = (m.group && self.groups[m.group]) || NOT_FOUND;
+                
+                //Always assume it's async
+                if (group.async === false) {
+                    m.async = group.async;
+                }
 
                 url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :
                       self._url(m.path, s[i], group.base || m.base);
                 
-                if (m.attributes) {
+                if (m.attributes || m.async === false) {
                     url = {
                         url: url,
-                        attributes: m.attributes
+                        async: m.async
                     };
+                    if (m.attributes) {
+                        url.attributes = m.attributes
+                    }
                 }
                 resolved[m.type].push(url);
                 resolved[m.type + 'Mods'].push(m);
@@ -2498,6 +2506,41 @@ Y.Loader.prototype = {
         resCombos = null;
 
         return resolved;
+    },
+    /**
+    Shortcut to calculate, resolve and load all modules.
+
+        var loader = new Y.Loader({
+            ignoreRegistered: true,
+            modules: {
+                mod: {
+                    path: 'mod.js'
+                }
+            },
+            requires: [ 'mod' ]
+        });
+        loader.load(function() {
+            console.log('All modules have loaded..');
+        });
+
+
+    @method load
+    @param {Callback} cb Executed after all load operations are complete
+    */
+    load: function(cb) {
+        if (!cb) {
+            return;
+        }
+        var self = this,
+            out = self.resolve(true);
+        
+        self.data = out;
+
+        self.onEnd = function() {
+            cb.apply(self.context || self, arguments);
+        };
+
+        self.insert();
     }
 };
 
@@ -3225,6 +3268,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "datatable-body", 
             "datatable-base", 
             "datatable-column-widths", 
+            "datatable-message", 
             "datatable-mutable", 
             "datatable-scroll", 
             "datatable-datasource", 
@@ -3273,6 +3317,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "view", 
             "classnamemanager"
         ]
+    }, 
+    "datatable-message": {
+        "lang": [
+            "en"
+        ], 
+        "requires": [
+            "datatable-base"
+        ], 
+        "skinnable": true
     }, 
     "datatable-mutable": {
         "requires": [
@@ -3482,7 +3535,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "condition": {
             "name": "dd-gestures", 
             "test": function(Y) {
-    return (Y.config.win && ('ontouchstart' in Y.config.win && !Y.UA.chrome));
+    return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
 }, 
             "trigger": "dd-drag"
         }, 
@@ -3706,6 +3759,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "node-base"
         ]
     }, 
+    "event-contextmenu": {
+        "requires": [
+            "event-synthetic", 
+            "dom-screen"
+        ]
+    }, 
     "event-custom": {
         "use": [
             "event-custom-base", 
@@ -3817,12 +3876,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "file": {
         "requires": [
-            "base"
-        ]
-    }, 
-    "filelist": {
-        "requires": [
-            "file", 
             "base"
         ]
     }, 
@@ -4883,7 +4936,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '75ef89f18d5204ba411050ba6dc4f07e';
+YUI.Env[Y.version].md5 = '783c7f0d25d8b827cefb8a5b47101453';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

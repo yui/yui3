@@ -598,6 +598,7 @@
             "datatable-body", 
             "datatable-base", 
             "datatable-column-widths", 
+            "datatable-message", 
             "datatable-mutable", 
             "datatable-scroll", 
             "datatable-datasource", 
@@ -646,6 +647,15 @@
             "view", 
             "classnamemanager"
         ]
+    }, 
+    "datatable-message": {
+        "lang": [
+            "en"
+        ], 
+        "requires": [
+            "datatable-base"
+        ], 
+        "skinnable": true
     }, 
     "datatable-mutable": {
         "requires": [
@@ -1049,6 +1059,12 @@
             "node-base"
         ]
     }, 
+    "event-contextmenu": {
+        "requires": [
+            "event-synthetic", 
+            "dom-screen"
+        ]
+    }, 
     "event-custom": {
         "use": [
             "event-custom-base", 
@@ -1160,12 +1176,6 @@
     }, 
     "file": {
         "requires": [
-            "base"
-        ]
-    }, 
-    "filelist": {
-        "requires": [
-            "file", 
             "base"
         ]
     }, 
