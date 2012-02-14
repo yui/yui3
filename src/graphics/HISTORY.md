@@ -4,6 +4,7 @@ Graphics Change History
 3.5.0
 -----
 
+  * #2531630 Changed BaseGraphic class to GraphicBase.
   * Removed memory leaks from Shape class. 
   * Added defaultGraphicEngine config to allow developer to specify canvas as the preferred graphic technology. 
   * #2531127 Fixed issue in which transforms were not consistent across different browsers.
