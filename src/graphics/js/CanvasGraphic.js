@@ -242,7 +242,7 @@ CanvasGraphic.ATTRS = {
     }
 };
 
-Y.extend(CanvasGraphic, Y.BaseGraphic, {
+Y.extend(CanvasGraphic, Y.GraphicBase, {
     /**
      * Storage for `x` attribute.
      *

@@ -244,7 +244,7 @@ SVGGraphic.ATTRS = {
     }
 };
 
-Y.extend(SVGGraphic, Y.BaseGraphic, {
+Y.extend(SVGGraphic, Y.GraphicBase, {
     /**
      * Storage for `x` attribute.
      *

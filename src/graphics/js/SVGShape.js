@@ -19,7 +19,7 @@ SVGShape = function(cfg)
 
 SVGShape.NAME = "svgShape";
 
-Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
+Y.extend(SVGShape, Y.GraphicBase, Y.mix({
     /**
      * Init method, invoked during construction.
      * Calls `initializer` method.

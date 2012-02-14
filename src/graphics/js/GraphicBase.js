@@ -35,7 +35,7 @@ var SETTER = "setter",
     Y_LANG = Y.Lang,
     STR = "string",
     WRITE_ONCE = "writeOnce",
-    BaseGraphic,
+    GraphicBase,
     AttributeLite;
     
     /**
@@ -223,15 +223,15 @@ var SETTER = "setter",
 	Y.AttributeLite = AttributeLite;
 
     /**
-     * BaseGraphic serves as the base class for the graphic layer. It serves the same purpose as
+     * GraphicBase serves as the base class for the graphic layer. It serves the same purpose as
      * Base but uses a lightweight getter/setter class instead of Attribute.
      * This class is temporary and a work in progress.
      *
-     * @class BaseGraphic
+     * @class GraphicBase
      * @constructor
      * @param {Object} cfg Key value pairs for attributes
      */
-    BaseGraphic = function(cfg)
+    GraphicBase = function(cfg)
     {
         var host = this,
             PluginHost = Y.Plugin && Y.Plugin.Host;  
@@ -251,9 +251,9 @@ var SETTER = "setter",
         host.initialized = true;
     };
 
-    BaseGraphic.NAME = "baseGraphic";
+    GraphicBase.NAME = "baseGraphic";
 
-    BaseGraphic.prototype = {
+    GraphicBase.prototype = {
         /**
          * Init method, invoked during construction.
          * Fires an init event after calling `initializer` on implementers.
@@ -271,12 +271,12 @@ var SETTER = "setter",
         }
     };
 //Straightup augment, no wrapper functions
-Y.mix(BaseGraphic, Y.AttributeLite, false, null, 1);
-Y.mix(BaseGraphic, PluginHost, false, null, 1);
-BaseGraphic.prototype.constructor = BaseGraphic;
-BaseGraphic.plug = PluginHost.plug;
-BaseGraphic.unplug = PluginHost.unplug;
-Y.BaseGraphic = BaseGraphic;
+Y.mix(GraphicBase, Y.AttributeLite, false, null, 1);
+Y.mix(GraphicBase, PluginHost, false, null, 1);
+GraphicBase.prototype.constructor = GraphicBase;
+GraphicBase.plug = PluginHost.plug;
+GraphicBase.unplug = PluginHost.unplug;
+Y.GraphicBase = GraphicBase;
 
 
 /**
