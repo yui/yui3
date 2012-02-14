@@ -137,16 +137,19 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     /**
     The `Model` class or subclass of the models in this list.
 
-    This property is `null` by default, and is intended to be overridden in a
-    subclass or specified as a config property at instantiation time. It will be
-    used to create model instances automatically based on attribute hashes
-    passed to the `add()`, `create()`, and `reset()` methods.
+    The class specified here will be used to create model instances
+    automatically based on attribute hashes passed to the `add()`, `create()`,
+    and `reset()` methods.
+
+    You may specify the class as an actual class reference or as a string that
+    resolves to a class reference at runtime (the latter can be useful if the
+    specified class will be loaded lazily).
 
     @property model
-    @type Model
-    @default null
+    @type Model|String
+    @default Y.Model
     **/
-    model: null,
+    model: Y.Model,
 
     // -- Protected Properties -------------------------------------------------
 
@@ -169,15 +172,20 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
         var model = this.model = config.model || this.model;
 
+        if (typeof model === 'string') {
+            // Look for a namespaced Model class on `Y`.
+            this.model = Y.Object.getValue(Y, model.split('.'));
+
+            if (!this.model) {
+                Y.error('ModelList: Model class not found: ' + model);
+            }
+        }
+
         this.publish(EVT_ADD,    {defaultFn: this._defAddFn});
         this.publish(EVT_RESET,  {defaultFn: this._defResetFn});
         this.publish(EVT_REMOVE, {defaultFn: this._defRemoveFn});
 
-        if (model) {
-            this.after('*:idChange', this._afterIdChange);
-        } else {
-            Y.log('No model class specified.', 'warn', 'model-list');
-        }
+        this.after('*:idChange', this._afterIdChange);
 
         this._clear();
     },

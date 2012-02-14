@@ -17,7 +17,9 @@ App Framework Change History
 * Model now supports ad-hoc attributes, which means it's no longer necessary to
   subclass `Y.Model` and declare attributes ahead of time. The following is now
   perfectly valid, and will result in a model instance with "foo" and "bar"
-  attributes: `var model = new Y.Model({foo: 'foo', bar: 'bar'});`
+  attributes:
+
+          var model = new Y.Model({foo: 'foo', bar: 'bar'});
 
 * `load()` now fires a `load` event after the operation completes successfully,
   or an `error` event on failure. The `load()` callback (if provided) will still
@@ -35,6 +37,17 @@ App Framework Change History
   subscriber in the `on` phase).
 
 ### ModelList
+
+* ModelList's `model` property is now set to `Y.Model` by default. Since
+  `Y.Model` now supports ad-hoc attributes, this makes it much easier to create
+  and populate a ModelList without doing any subclassing:
+
+          var list = new Y.ModelList();
+
+          list.add([
+              {foo: 'bar'},
+              {baz: 'quux'}
+          ]);
 
 * Added a `filter()` method that returns a filtered array of models or,
   optionally, a new ModelList containing the filtered models. [Ticket #2531250]
