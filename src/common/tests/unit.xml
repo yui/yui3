@@ -121,6 +121,7 @@
         <url>transition/tests/transition.html</url>
         <url>widget/tests/widget.html</url>
         <url>widget-anim/tests/widget-anim.html</url>
+        <url>widget-autohide/tests/widget-autohide.html</url>
         <url>widget-buttons/tests/widget-buttons.html</url>
         <url>widget-parent/tests/parent-child.html</url>
         <url>widget-position-align/tests/widget-position-align.html</url>
