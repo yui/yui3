@@ -367,9 +367,9 @@ VerticalLegendLayout = {
         }
         return startPoint;
     }
-};
+},
 
-Y.CartesianChartLegend = Y.Base.create("cartesianChartLegend", Y.CartesianChart, [], {
+CartesianChartLegend = Y.Base.create("cartesianChartLegend", Y.CartesianChart, [], {
     /**
      * Redraws and position all the components of the chart instance.
      *
@@ -720,7 +720,9 @@ Y.CartesianChartLegend = Y.Base.create("cartesianChartLegend", Y.CartesianChart,
     }
 });
 
-Y.PieChartLegend = Y.Base.create("pieChartLegend", Y.PieChart, [], {
+Y.CartesianChart = CartesianChartLegend;
+
+var PieChartLegend = Y.Base.create("pieChartLegend", Y.PieChart, [], {
     /**
      * Redraws the chart instance.
      *
@@ -820,7 +822,7 @@ Y.PieChartLegend = Y.Base.create("pieChartLegend", Y.PieChart, [], {
         legend: LEGEND
     }
 });
-
+Y.PieChart = PieChartLegend;
 /**
  * ChartLegend provides a legend for a chart.
  *
@@ -1507,7 +1509,6 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         background: {}
     }
 });
-
 /**
  * The Chart class is the basic application used to create a chart.
  *
@@ -1515,18 +1516,18 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
  * @class Chart
  * @constructor
  */
-function LegendChart(cfg)
+function Chart(cfg)
 {
     if(cfg.type != "pie")
     {
-        return new Y.CartesianChartLegend(cfg);
+        return new Y.CartesianChart(cfg);
     }
     else
     {
-        return new Y.PieChartLegend(cfg);
+        return new Y.PieChart(cfg);
     }
 }
-Y.Chart = LegendChart;
+Y.Chart = Chart;
 
 
 }, '@VERSION@' ,{requires:['charts-base']});
