@@ -974,8 +974,21 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         }
     },
 
+    // TODO: Should these go on the `prototype`? Also Document these!
     CSS_CLASS      : Y.ClassNameManager.getClassName('app'),
-    VIEWS_CSS_CLASS: Y.ClassNameManager.getClassName('app', 'views')
+    VIEWS_CSS_CLASS: Y.ClassNameManager.getClassName('app', 'views'),
+
+    /**
+    Properties that shouldn't be turned into ad-hoc attributes when passed to
+    App's constructor.
+
+    @property _NON_ATTRS_CFG
+    @type Array
+    @static
+    @protected
+    @since 3.5.0
+    **/
+    _NON_ATTRS_CFG: ['views']
 });
 
 // -- Namespace ----------------------------------------------------------------
