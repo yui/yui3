@@ -3,7 +3,7 @@ YUI.add('button-group', function(Y) {
 /**
 * Allows Y.Button instances to be grouped together
 *
-* @module ButtonGroup
+* @module buttongroup
 * @main ButtonGroup
 * @since 3.5.0
 */
@@ -37,13 +37,15 @@ Y.extend(ButtonGroup, Y.Base, {
             if (Y.Lang.isString(config.srcNodes)){
                 config.srcNodes = Y.all(config.srcNodes);
             }
+            
             config.buttons = [];
             config.srcNodes.each(function(node){
-                config.srcNode = node;
-                config.buttons.push(new Y.Button(config));
+                var button = new Y.Button({
+                    srcNode: node
+                }).render();
+                
+                config.buttons.push(button);
             });
-
-            delete config.srcNodes;
         }
         
         if (config.buttons) {
@@ -104,9 +106,10 @@ Y.extend(ButtonGroup, Y.Base, {
     */
     addButton: function(button){
         var type = this.get('type');
+        
         if (type === 'checkbox') {
             button.set('type', 'checkbox');
-            button.on('click', this._onCBButtonClick, this);
+            button.get('contentBox').on('click', this._onCBButtonClick, this);
         }
         else if (type === 'radio') {
             button.on('click', this._onRadioButtonClick, this);
@@ -121,14 +124,15 @@ Y.extend(ButtonGroup, Y.Base, {
     * @protected
     */
     _onRadioButtonClick: function(e) {
+        console.log('radio');
         var clickedButton = e.target;
         
         if (!clickedButton.get('selected')) {
             var selectedButtons = this.getSelectedButtons();
             Y.Array.each(selectedButtons, function(button){
-                button.unselect();
+                button.set('selected', false);
             });
-            clickedButton.select();
+            clickedButton.set('selected', true);
 
             // Fire change event
             this.fire('selectionChange');
@@ -144,6 +148,9 @@ Y.extend(ButtonGroup, Y.Base, {
     * @protected
     */
     _onCBButtonClick: function(e) {
+        var clickedButton = e.target;
+        clickedButton.set('selected', !clickedButton.get('selected'));
+        
         // Fire change event
         this.fire('selectionChange');
     }
